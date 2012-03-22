@@ -32,7 +32,7 @@ public class SubTabStorageVmView extends AbstractSubTabTreeView<VMsTree<StorageV
 
     @Override
     protected VMsTree getTree() {
-        return new VMsTree();
+        return new VMsTree(resources, constants);
     }
 
 }

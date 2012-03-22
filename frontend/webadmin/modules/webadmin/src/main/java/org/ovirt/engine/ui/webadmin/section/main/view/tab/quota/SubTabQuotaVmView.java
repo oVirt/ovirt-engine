@@ -32,7 +32,7 @@ public class SubTabQuotaVmView extends AbstractSubTabTreeView<VMsTree<QuotaVmLis
 
     @Override
     protected VMsTree getTree() {
-        return new VMsTree();
+        return new VMsTree(resources, constants);
     }
 
 }

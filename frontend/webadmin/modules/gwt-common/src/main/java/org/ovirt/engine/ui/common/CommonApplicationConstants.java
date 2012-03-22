@@ -35,6 +35,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Single Destination Storage")
     String singleDestinationStorage();
 
+    @DefaultStringValue(" and Quota")
+    String singleQuota();
+
     // Model-bound widgets
 
     @DefaultStringValue("Boot Options:")
@@ -114,5 +117,38 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("Description")
     String virtualMachineSnapshotCreatePopupDescriptionLabel();
+
+    @DefaultStringValue("Loading...")
+    String loadingLabel();
+
+    @DefaultStringValue("General")
+    String generalLabel();
+
+    @DefaultStringValue("Virtual Disks")
+    String disksLabel();
+
+    @DefaultStringValue("Network Interfaces")
+    String nicsLabel();
+
+    @DefaultStringValue("Installed Applications")
+    String applicationsLabel();
+
+    @DefaultStringValue("Preview Mode")
+    String previewModelLabel();
+
+    @DefaultStringValue("%1$s (%2$s Socket(s), %3$s Core(s) per Socket)")
+    String cpuInfoLabel();
+
+    @DefaultStringValue("Read-Only")
+    String readonlyLabel();
+
+    @DefaultStringValue("Current")
+    String currentSnapshotLabel();
+
+    @DefaultStringValue("Current (Previous)")
+    String previousCurrentSnapshotLabel();
+
+    @DefaultStringValue("Clone VM from Snapshot is supported only for Clusters of version 3.1 and above")
+    String cloneVmNotSupported();
 
 }

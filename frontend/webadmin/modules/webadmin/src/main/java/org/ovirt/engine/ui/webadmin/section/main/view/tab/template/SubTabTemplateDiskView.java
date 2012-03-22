@@ -36,9 +36,9 @@ public class SubTabTemplateDiskView extends AbstractSubTabTreeView<DisksTree, Vm
 
     @Override
     protected void initHeader() {
-        table.addColumn(new EmptyColumn(), "Name", "");
+        table.addColumn(new EmptyColumn(), "Alias", "");
         table.addColumn(new EmptyColumn(), "Size", "120px");
-        table.addColumn(new EmptyColumn(), "Type", "120px");
+        table.addColumn(new EmptyColumn(), "Status", "120px");
         table.addColumn(new EmptyColumn(), "Allocation", "120px");
         table.addColumn(new EmptyColumn(), "Interface", "120px");
         table.addColumn(new EmptyColumn(), "Creation Date", "120px");
@@ -46,7 +46,7 @@ public class SubTabTemplateDiskView extends AbstractSubTabTreeView<DisksTree, Vm
 
     @Override
     protected DisksTree getTree() {
-        return new DisksTree();
+        return new DisksTree(resources, constants);
     }
 
     @Override

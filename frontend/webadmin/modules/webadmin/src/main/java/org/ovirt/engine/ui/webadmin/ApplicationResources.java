@@ -166,9 +166,6 @@ public interface ApplicationResources extends CommonApplicationResources {
     @Source("images/server.png")
     ImageResource serverImage();
 
-    @Source("images/snapshot.png")
-    ImageResource snapshotImage();
-
     @Source("images/split.png")
     ImageResource splitImage();
 
@@ -183,9 +180,6 @@ public interface ApplicationResources extends CommonApplicationResources {
 
     @Source("images/icn_stop.png")
     ImageResource stopVmImage();
-
-    @Source("images/storage.png")
-    ImageResource storageImage();
 
     @Source("images/storages.png")
     ImageResource storagesImage();
@@ -228,9 +222,6 @@ public interface ApplicationResources extends CommonApplicationResources {
 
     @Source("images/vms.png")
     ImageResource vmsImage();
-
-    @Source("images/wait.png")
-    ImageResource waitImage();
 
     @Source("images/window_bg.png")
     ImageResource windowBgImage();

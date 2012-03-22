@@ -14,6 +14,7 @@ import org.ovirt.engine.ui.userportal.section.main.presenter.popup.networkinterf
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.permissions.PermissionsPopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.template.TemplateNewPopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmChangeCDPopupPresenterWidget;
+import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmClonePopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmDesktopNewPopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmDiskPopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmMakeTemplatePopupPresenterWidget;
@@ -55,6 +56,7 @@ import org.ovirt.engine.ui.userportal.section.main.view.popup.networkinterface.N
 import org.ovirt.engine.ui.userportal.section.main.view.popup.permissions.PermissionsPopupView;
 import org.ovirt.engine.ui.userportal.section.main.view.popup.template.TemplateNewPopupView;
 import org.ovirt.engine.ui.userportal.section.main.view.popup.vm.VmChangeCDPopupView;
+import org.ovirt.engine.ui.userportal.section.main.view.popup.vm.VmClonePopupView;
 import org.ovirt.engine.ui.userportal.section.main.view.popup.vm.VmDesktopNewPopupView;
 import org.ovirt.engine.ui.userportal.section.main.view.popup.vm.VmDiskPopupView;
 import org.ovirt.engine.ui.userportal.section.main.view.popup.vm.VmMakeTemplatePopupView;
@@ -270,6 +272,9 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(VmSnapshotCreatePopupPresenterWidget.class,
                 VmSnapshotCreatePopupPresenterWidget.ViewDef.class,
                 VmSnapshotCreatePopupView.class);
+        bindPresenterWidget(VmClonePopupPresenterWidget.class,
+                VmClonePopupPresenterWidget.ViewDef.class,
+                VmClonePopupView.class);
 
         // Template popups
         bindPresenterWidget(TemplateNewPopupPresenterWidget.class,

@@ -8,11 +8,14 @@ import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.action.SubTabTreeActionPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
+import org.ovirt.engine.ui.common.widget.tree.AbstractSubTabTree;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
-import org.ovirt.engine.ui.webadmin.widget.tree.AbstractSubTabTree;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.CssResource;
@@ -48,8 +51,14 @@ public abstract class AbstractSubTabTreeView<E extends AbstractSubTabTree, I, T,
 
     boolean isActionTree;
 
+    protected final ApplicationResources resources;
+    protected final ApplicationConstants constants;
+
     public AbstractSubTabTreeView(SearchableDetailModelProvider modelProvider) {
         super(modelProvider);
+
+        resources = ClientGinjectorProvider.instance().getApplicationResources();
+        constants = ClientGinjectorProvider.instance().getApplicationConstants();
 
         table = new EntityModelCellTable<ListModel>(false, true);
         tree = getTree();
@@ -70,6 +79,7 @@ public abstract class AbstractSubTabTreeView<E extends AbstractSubTabTree, I, T,
         actionPanel = createActionPanel(modelProvider);
         if (actionPanel != null) {
             actionPanelContainer.add(actionPanel);
+            actionPanel.addContextMenuHandler(tree);
         }
 
         updateStyles();

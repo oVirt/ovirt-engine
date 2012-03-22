@@ -1,10 +1,10 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.virtualMachine;
 
+import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
-import org.ovirt.engine.ui.uicommonweb.models.vms.SnapshotModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmSnapshotListModel;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
@@ -42,7 +42,7 @@ public class SubTabVirtualMachineSnapshotPresenter extends AbstractSubTabPresent
     @Inject
     public SubTabVirtualMachineSnapshotPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager,
-            SearchableDetailModelProvider<SnapshotModel, VmListModel, VmSnapshotListModel> modelProvider) {
+            SearchableDetailModelProvider<Snapshot, VmListModel, VmSnapshotListModel> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider);
     }
 

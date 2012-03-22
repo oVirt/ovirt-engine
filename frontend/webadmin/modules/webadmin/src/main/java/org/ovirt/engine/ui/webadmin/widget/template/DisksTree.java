@@ -4,50 +4,58 @@ import java.util.ArrayList;
 
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
-import org.ovirt.engine.core.common.businessentities.DiskType;
+import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.label.DiskSizeLabel;
+import org.ovirt.engine.ui.common.widget.label.EnumLabel;
 import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
+import org.ovirt.engine.ui.common.widget.table.column.EmptyColumn;
+import org.ovirt.engine.ui.common.widget.tree.AbstractSubTabTree;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateDiskListModel;
-import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
-import org.ovirt.engine.ui.webadmin.widget.label.EnumLabel;
-import org.ovirt.engine.ui.webadmin.widget.tree.AbstractSubTabTree;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.ApplicationResources;
 
 import com.google.gwt.user.client.ui.DateLabel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.TreeItem;
 
-public class DisksTree extends AbstractSubTabTree<TemplateDiskListModel, DiskModel, storage_domains> {
+public class DisksTree extends AbstractSubTabTree<TemplateDiskListModel, DiskImage, storage_domains> {
 
-    public DisksTree() {
-        enableRootSelection();
+    ApplicationResources resources;
+    ApplicationConstants constants;
+
+    public DisksTree(ApplicationResources resources, ApplicationConstants constants) {
+        super(resources, constants);
+
+        this.resources = (ApplicationResources) resources;
+        this.constants = (ApplicationConstants) constants;
+
+        setSelectionEnabled(true);
     }
 
     @Override
-    protected TreeItem getRootItem(DiskModel diskModel) {
+    protected TreeItem getRootItem(DiskImage disk) {
         HorizontalPanel panel = new HorizontalPanel();
         panel.setSpacing(1);
         panel.setWidth("100%");
 
-        DiskImage disk = diskModel.getDiskImage();
-
         addItemToPanel(panel, new Image(resources.diskImage()), "25px");
         addTextBoxToPanel(panel, new TextBoxLabel(), "Disk " + disk.getinternal_drive_mapping(), "");
         addValueLabelToPanel(panel, new DiskSizeLabel<Long>(), disk.getSizeInGigabytes(), "120px");
-        addValueLabelToPanel(panel, new EnumLabel<DiskType>(), disk.getdisk_type(), "120px");
+        addValueLabelToPanel(panel, new EnumLabel<ImageStatus>(), disk.getimageStatus(), "120px");
         addValueLabelToPanel(panel, new EnumLabel<VolumeType>(), disk.getvolume_type(), "120px");
         addValueLabelToPanel(panel, new EnumLabel<DiskInterface>(), disk.getdisk_interface(), "120px");
         addValueLabelToPanel(panel, new DateLabel(), disk.getcreation_date(), "90px");
 
         TreeItem treeItem = new TreeItem(panel);
-        treeItem.setUserObject(disk);
+        treeItem.setUserObject(disk.getId());
         return treeItem;
     }
 
@@ -66,7 +74,7 @@ public class DisksTree extends AbstractSubTabTree<TemplateDiskListModel, DiskMod
         addValueLabelToPanel(panel, new DiskSizeLabel<Integer>(), storage.getTotalDiskSize(), "120px");
 
         TreeItem treeItem = new TreeItem(panel);
-        treeItem.setUserObject(storage);
+        treeItem.setUserObject(storage.getId());
         return treeItem;
     }
 
@@ -86,7 +94,7 @@ public class DisksTree extends AbstractSubTabTree<TemplateDiskListModel, DiskMod
     }
 
     @Override
-    protected ArrayList<storage_domains> getNodeObjects(DiskModel diskModel) {
-        return Linq.<storage_domains> Cast(diskModel.getStorageDomain().getItems());
+    protected ArrayList<storage_domains> getNodeObjects(DiskImage disk) {
+        return Linq.getStorageDomainsByIds(disk.getstorage_ids(), listModel.getStorageDomains());
     }
 }

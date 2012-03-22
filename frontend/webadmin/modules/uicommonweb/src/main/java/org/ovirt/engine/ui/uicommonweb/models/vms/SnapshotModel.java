@@ -1,58 +1,85 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
-import org.ovirt.engine.core.compat.Guid;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.Snapshot;
+import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
-import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
-import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 
 @SuppressWarnings("unused")
-public class SnapshotModel extends Model
+public class SnapshotModel extends EntityModel
 {
+    private VM vm;
 
-    private Guid privateSnapshotId = new Guid();
-
-    public Guid getSnapshotId()
+    public VM getVm()
     {
-        return privateSnapshotId;
+        return vm;
     }
 
-    public void setSnapshotId(Guid value)
+    public void setVm(VM value)
     {
-        privateSnapshotId = value;
-    }
-
-    private boolean isPreviewed;
-
-    public boolean getIsPreviewed()
-    {
-        return isPreviewed;
-    }
-
-    public void setIsPreviewed(boolean value)
-    {
-        if (isPreviewed != value)
+        if (vm != value)
         {
-            isPreviewed = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("NAME"));
+            vm = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("VM"));
         }
     }
 
-    private boolean isCurrent;
+    private ArrayList<DiskImage> disks;
 
-    public boolean getIsCurrent()
+    public ArrayList<DiskImage> getDisks()
     {
-        return isCurrent;
+        return disks;
     }
 
-    public void setIsCurrent(boolean value)
+    public void setDisks(ArrayList<DiskImage> value)
     {
-        if (isCurrent != value)
+        if (disks != value)
         {
-            isCurrent = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("NAME"));
+            disks = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("Disks"));
+        }
+    }
+
+    private List<VmNetworkInterface> nics;
+
+    public List<VmNetworkInterface> getNics()
+    {
+        return nics;
+    }
+
+    public void setNics(List<VmNetworkInterface> value)
+    {
+        if (nics != value)
+        {
+            nics = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("Nics"));
+        }
+    }
+
+    private List<String> apps;
+
+    public List<String> getApps()
+    {
+        return apps;
+    }
+
+    public void setApps(List<String> value)
+    {
+        if (apps != value)
+        {
+            apps = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("Apps"));
         }
     }
 
@@ -68,108 +95,56 @@ public class SnapshotModel extends Model
         privateDescription = value;
     }
 
-    /**
-     * DescriptionValue: A simple getter, for use in the web GUI (it is impossible to bind values with type FieldModel
-     * to an ext:Store).
-     */
-    public String getDescriptionValue()
+    private EntityModel isPropertiesUpdated;
+
+    public EntityModel getIsPropertiesUpdated()
     {
-        return getDescription() == null ? null : (String) (getDescription().getEntity());
+        return isPropertiesUpdated;
     }
 
-    private java.util.Date date;
-
-    public java.util.Date getDate()
+    public void setIsPropertiesUpdated(EntityModel value)
     {
-        return date;
-    }
-
-    public void setDate(java.util.Date value)
-    {
-        if (date == null || !date.equals(value))
-        {
-            date = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Date"));
-        }
-    }
-
-    private String participantDisks;
-
-    public String getParticipantDisks()
-    {
-        return participantDisks;
-    }
-
-    public void setParticipantDisks(String value)
-    {
-        if (!StringHelper.stringsEqual(participantDisks, value))
-        {
-            participantDisks = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("ParticipantDisks"));
-        }
-    }
-
-    private java.util.List<EntityModel> disks;
-
-    public java.util.List<EntityModel> getDisks()
-    {
-        return disks;
-    }
-
-    public void setDisks(java.util.List<EntityModel> value)
-    {
-        if (disks != value)
-        {
-            disks = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Disks"));
-        }
-    }
-
-    private String apps;
-
-    public String getApps()
-    {
-        return apps;
-    }
-
-    public void setApps(String value)
-    {
-        if (!StringHelper.stringsEqual(apps, value))
-        {
-            apps = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Apps"));
-        }
+        isPropertiesUpdated = value;
     }
 
     public SnapshotModel()
     {
         setDescription(new EntityModel());
+        setDisks(new ArrayList<DiskImage>());
+        setNics(new ArrayList<VmNetworkInterface>());
+        setApps(new ArrayList<String>());
+
+        setIsPropertiesUpdated(new EntityModel());
+        getIsPropertiesUpdated().setEntity(false);
+    }
+
+    public void UpdateVmConfiguration()
+    {
+        Snapshot snapshot = ((Snapshot) getEntity());
+
+        AsyncDataProvider.GetVmConfigurationBySnapshot(new AsyncQuery(this, new INewAsyncCallback() {
+            @Override
+            public void OnSuccess(Object target, Object returnValue) {
+                SnapshotModel snapshotModel = (SnapshotModel) target;
+                Snapshot snapshot = ((Snapshot) snapshotModel.getEntity());
+                VM vm = (VM) returnValue;
+
+                if (vm != null && snapshot != null) {
+                    snapshotModel.setVm(vm);
+                    snapshotModel.setDisks(vm.getDiskList());
+                    snapshotModel.setNics(vm.getInterfaces());
+                    snapshotModel.setApps(Arrays.asList(snapshot.getAppList() != null ?
+                            snapshot.getAppList().split(",") : new String[] {}));
+
+                    snapshotModel.getIsPropertiesUpdated().setEntity(true);
+                }
+            }
+        }), snapshot.getId());
     }
 
     public boolean Validate()
     {
         getDescription().ValidateEntity(new IValidation[] { new NotEmptyValidation() });
-
-        boolean isDisksValid = false;
-        setMessage(null);
-        if (getDisks() != null)
-        {
-            for (EntityModel a : getDisks())
-            {
-                if (a.getIsSelected())
-                {
-                    isDisksValid = true;
-                    break;
-                }
-            }
-            if (!isDisksValid)
-            {
-                setMessage("At least one disk must be marked.");
-                return false;
-            }
-
-            return getDescription().getIsValid();
-        }
 
         return getDescription().getIsValid();
     }

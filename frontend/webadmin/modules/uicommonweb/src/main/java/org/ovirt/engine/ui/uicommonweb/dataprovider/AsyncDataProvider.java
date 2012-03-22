@@ -55,6 +55,7 @@ import org.ovirt.engine.core.common.queries.GetTagsByVmIdParameters;
 import org.ovirt.engine.core.common.queries.GetVdsByVdsIdParameters;
 import org.ovirt.engine.core.common.queries.GetVdsGroupByIdParameters;
 import org.ovirt.engine.core.common.queries.GetVmByVmIdParameters;
+import org.ovirt.engine.core.common.queries.GetVmConfigurationBySnapshotQueryParams;
 import org.ovirt.engine.core.common.queries.GetVmPoolByIdParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplatesByStoragePoolIdParameters;
@@ -1740,6 +1741,20 @@ public final class AsyncDataProvider {
         };
         Frontend.RunQuery(VdcQueryType.IsVmPoolWithSameNameExists,
                 new IsVmPoolWithSameNameExistsParameters(name),
+                aQuery);
+    }
+
+    public static void GetVmConfigurationBySnapshot(AsyncQuery aQuery, Guid snapshotSourceId) {
+        aQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object Convert(Object source, AsyncQuery _asyncQuery)
+            {
+                return source != null ? (VM) source : null;
+            }
+        };
+
+        Frontend.RunQuery(VdcQueryType.GetVmConfigurationBySnapshot,
+                new GetVmConfigurationBySnapshotQueryParams(snapshotSourceId),
                 aQuery);
     }
 

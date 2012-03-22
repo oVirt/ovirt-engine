@@ -714,4 +714,24 @@ public interface Enums extends ConstantsWithLookup {
     String QuotaEnforcmentTypeEnum___SOFT_ENFORCEMENT();
 
     String QuotaEnforcmentTypeEnum___HARD_ENFORCEMENT();
+
+    String DiskInterface___IDE();
+
+    String DiskInterface___SCSI();
+
+    String DiskInterface___VirtIO();
+
+    String Snapshot$SnapshotStatus___OK();
+
+    String Snapshot$SnapshotStatus___LOCKED();
+
+    String Snapshot$SnapshotStatus___IN_PREVIEW();
+
+    String Snapshot$SnapshotType___REGULAR();
+
+    String Snapshot$SnapshotType___ACTIVE();
+
+    String Snapshot$SnapshotType___STATELESS();
+
+    String Snapshot$SnapshotType___PREVIEW();
 }

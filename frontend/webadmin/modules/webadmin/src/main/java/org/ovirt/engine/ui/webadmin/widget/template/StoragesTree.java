@@ -9,14 +9,19 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.label.DiskSizeLabel;
+import org.ovirt.engine.ui.common.widget.label.EnumLabel;
 import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
+import org.ovirt.engine.ui.common.widget.table.column.EmptyColumn;
+import org.ovirt.engine.ui.common.widget.tree.AbstractSubTabTree;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageDomainModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateDiskListModel;
-import org.ovirt.engine.ui.webadmin.widget.label.EnumLabel;
-import org.ovirt.engine.ui.webadmin.widget.tree.AbstractSubTabTree;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.ApplicationResources;
 
 import com.google.gwt.user.client.ui.DateLabel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -24,6 +29,15 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.TreeItem;
 
 public class StoragesTree extends AbstractSubTabTree<TemplateDiskListModel, StorageDomainModel, DiskImage> {
+
+    ApplicationResources resources;
+    ApplicationConstants constants;
+
+    public StoragesTree(CommonApplicationResources resources, CommonApplicationConstants constants) {
+        super(resources, constants);
+        this.resources = (ApplicationResources) resources;
+        this.constants = (ApplicationConstants) constants;
+    }
 
     @Override
     protected TreeItem getRootItem(StorageDomainModel storageDomainModel) {
@@ -42,7 +56,7 @@ public class StoragesTree extends AbstractSubTabTree<TemplateDiskListModel, Stor
         addValueLabelToPanel(panel, new DiskSizeLabel<Integer>(), storage.getTotalDiskSize(), "90px");
 
         TreeItem treeItem = new TreeItem(panel);
-        treeItem.setUserObject(storage);
+        treeItem.setUserObject(storage.getId());
         return treeItem;
     }
 
@@ -61,7 +75,7 @@ public class StoragesTree extends AbstractSubTabTree<TemplateDiskListModel, Stor
         addValueLabelToPanel(panel, new DateLabel(), disk.getcreation_date(), "90px");
 
         TreeItem treeItem = new TreeItem(panel);
-        treeItem.setUserObject(disk);
+        treeItem.setUserObject(disk.getId());
         return treeItem;
     }
 

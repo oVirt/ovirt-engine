@@ -6,11 +6,15 @@ import java.util.Arrays;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.widget.label.DiskSizeLabel;
 import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
+import org.ovirt.engine.ui.common.widget.tree.AbstractSubTabTree;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.widget.label.FullDateTimeLabel;
-import org.ovirt.engine.ui.webadmin.widget.tree.AbstractSubTabTree;
 
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -19,6 +23,15 @@ import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class VMsTree<M extends SearchableListModel> extends AbstractSubTabTree<M, VM, DiskImage> {
+
+    ApplicationResources resources;
+    ApplicationConstants constants;
+
+    public VMsTree(CommonApplicationResources resources, CommonApplicationConstants constants) {
+        super(resources, constants);
+        this.resources = (ApplicationResources) resources;
+        this.constants = (ApplicationConstants) constants;
+    }
 
     @Override
     protected TreeItem getRootItem(VM vm) {
@@ -35,7 +48,7 @@ public class VMsTree<M extends SearchableListModel> extends AbstractSubTabTree<M
         addValueLabelToPanel(panel, new FullDateTimeLabel(), vm.getvm_creation_date(), "140px");
 
         TreeItem treeItem = new TreeItem(panel);
-        treeItem.setUserObject(vm);
+        treeItem.setUserObject(vm.getId());
         return treeItem;
     }
 
@@ -75,7 +88,8 @@ public class VMsTree<M extends SearchableListModel> extends AbstractSubTabTree<M
         for (DiskImage disk : disks) {
             HorizontalPanel panel = new HorizontalPanel();
 
-            ImageResource image = isDisk ? resources.diskImage() : resources.snapshotImage();
+            ImageResource image =
+                    isDisk ? resources.diskImage() : resources.snapshotImage();
             String name = isDisk ? "Disk " + disk.getinternal_drive_mapping() : disk.getdescription();
 
             addItemToPanel(panel, new Image(image), "25px");
@@ -93,7 +107,7 @@ public class VMsTree<M extends SearchableListModel> extends AbstractSubTabTree<M
         }
 
         TreeItem treeItem = new TreeItem(vPanel);
-        treeItem.setUserObject(disks.get(0));
+        treeItem.setUserObject(disks.get(0).getId());
         return treeItem;
     }
 

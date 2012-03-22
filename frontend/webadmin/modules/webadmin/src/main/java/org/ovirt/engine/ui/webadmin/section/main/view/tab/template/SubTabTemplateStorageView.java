@@ -31,7 +31,7 @@ public class SubTabTemplateStorageView extends AbstractSubTabTreeView<StoragesTr
 
     @Override
     protected StoragesTree getTree() {
-        return new StoragesTree();
+        return new StoragesTree(resources, constants);
     }
 
 }

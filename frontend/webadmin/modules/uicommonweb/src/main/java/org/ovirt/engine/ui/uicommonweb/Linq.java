@@ -1,15 +1,17 @@
 package org.ovirt.engine.ui.uicommonweb;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.List;
+import java.util.HashSet;
 
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.NetworkInterface;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
+import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
@@ -21,6 +23,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.network;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
@@ -35,7 +38,6 @@ import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.LunModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.SanTargetModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
-import org.ovirt.engine.ui.uicommonweb.models.vms.SnapshotModel;
 import org.ovirt.engine.ui.uicompat.DateTimeUtils;
 import org.ovirt.engine.ui.uicompat.IEqualityComparer;
 
@@ -153,27 +155,6 @@ public final class Linq
 
     // C# TO JAVA CONVERTER TODO TASK: The interface type was changed to the closest equivalent Java type, but the
     // methods implemented will need adjustment:
-    public static class SnapshotModelDateComparer implements java.util.Comparator<SnapshotModel>
-    {
-
-        @Override
-        public int compare(SnapshotModel x, SnapshotModel y)
-        {
-            if (x.getDate() == null)
-            {
-                return 1;
-            }
-            if (y.getDate() == null)
-            {
-                return -1;
-            }
-            return x.getDate().compareTo(y.getDate());
-        }
-
-    }
-
-    // C# TO JAVA CONVERTER TODO TASK: The interface type was changed to the closest equivalent Java type, but the
-    // methods implemented will need adjustment:
     public static class StorageDomainByNameComparer implements java.util.Comparator<storage_domains>
     {
 
@@ -270,7 +251,6 @@ public final class Linq
 
     }
 
-
     public static class RpmVersionComparer implements Comparator<RpmVersion> {
 
         @Override
@@ -279,6 +259,16 @@ public final class Linq
         }
     }
 
+    public static class SnapshotByCreationDateCommparer implements java.util.Comparator<Snapshot>
+    {
+
+        @Override
+        public int compare(Snapshot x, Snapshot y)
+        {
+            return x.getCreationDate().compareTo(y.getCreationDate());
+        }
+
+    }
 
     public static boolean IsHostBelongsToAnyOfClusters(java.util.ArrayList<VDSGroup> clusters, VDS host)
     {
@@ -898,39 +888,28 @@ public final class Linq
         return result;
     }
 
-    public static java.util.ArrayList Disjoint(java.util.ArrayList list1, java.util.ArrayList list2)
+    public static <T> ArrayList<T> Union(ArrayList<ArrayList<T>> lists)
     {
-        java.util.ArrayList result = new java.util.ArrayList<Object>();
-        if (list1.isEmpty())
+        HashSet<T> set = new HashSet<T>();
+
+        for (ArrayList<T> list : lists)
         {
-            result = list2;
-        }
-        if (list2.isEmpty())
-        {
-            result = list1;
-        }
-        for (Object item : list1)
-        {
-            if (list2.contains(item))
-            {
-                result.add(item);
-            }
+            set.addAll(list);
         }
 
-        return result;
+        return new ArrayList<T>(set);
     }
 
-    public static java.util.ArrayList Union(java.util.ArrayList list1, java.util.ArrayList list2)
+    public static <T> ArrayList<T> Intersection(ArrayList<ArrayList<T>> lists)
     {
-        java.util.ArrayList result = new java.util.ArrayList<Object>();
-        result.addAll(list1);
+        ArrayList<T> result = new ArrayList<T>();
 
-        for (Object item : list2)
-        {
-            if (!result.contains(item))
-            {
-                result.add(item);
-            }
+        if (lists != null && !lists.isEmpty()) {
+            result.addAll(lists.get(0));
+        }
+
+        for (ArrayList<T> list : lists) {
+            result.retainAll(list);
         }
 
         return result;
@@ -959,13 +938,15 @@ public final class Linq
 
     public static ArrayList<storage_domains> getStorageDomainsDisjoint(ArrayList<DiskModel> disks,
             ArrayList<storage_domains> storageDomains) {
-        ArrayList<storage_domains> storageDomainsDisjoint = new ArrayList<storage_domains>();
+        ArrayList<ArrayList<storage_domains>> storageDomainslists = new ArrayList<ArrayList<storage_domains>>();
         for (DiskModel diskModel : disks) {
             ArrayList<storage_domains> list =
                     getStorageDomainsByIds(diskModel.getDiskImage().getstorage_ids(), storageDomains);
-            storageDomainsDisjoint = Linq.Disjoint(storageDomainsDisjoint, list);
+
+            storageDomainslists.add(list);
         }
-        return storageDomainsDisjoint;
+
+        return (ArrayList<storage_domains>) Intersection(storageDomainslists);
     }
 
     public static ListModel ToEntityListModel(ListModel list)
@@ -984,6 +965,27 @@ public final class Linq
 
         listModel.setItems(entityModelList);
         return listModel;
+    }
+
+    public static DiskModel DiskImageToModel(DiskImage disk) {
+        DiskModel diskModel = new DiskModel();
+        diskModel.setIsNew(true);
+        diskModel.setName(disk.getinternal_drive_mapping());
+
+        EntityModel sizeEntity = new EntityModel();
+        sizeEntity.setEntity(disk.getSizeInGigabytes());
+        diskModel.setSize(sizeEntity);
+
+        ListModel volumeList = new ListModel();
+        volumeList.setItems((disk.getvolume_type() == VolumeType.Preallocated ?
+                new ArrayList<VolumeType>(Arrays.asList(new VolumeType[] { VolumeType.Preallocated }))
+                : DataProvider.GetVolumeTypeList()));
+        volumeList.setSelectedItem(disk.getvolume_type());
+        diskModel.setVolumeType(volumeList);
+
+        diskModel.setDiskImage(disk);
+
+        return diskModel;
     }
 
     public final static class TimeZonePredicate implements IPredicate<java.util.Map.Entry<String, String>>

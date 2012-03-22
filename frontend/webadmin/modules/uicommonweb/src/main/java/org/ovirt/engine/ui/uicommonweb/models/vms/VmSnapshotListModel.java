@@ -1,7 +1,10 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
-import java.util.Collections;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.ovirt.engine.core.common.action.AddVmFromSnapshotParameters;
 import org.ovirt.engine.core.common.action.CreateAllSnapshotsFromVmParameters;
 import org.ovirt.engine.core.common.action.RemoveSnapshotParameters;
 import org.ovirt.engine.core.common.action.RestoreAllSnapshotsParameters;
@@ -9,24 +12,38 @@ import org.ovirt.engine.core.common.action.TryBackToAllSnapshotsOfVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.DisplayType;
+import org.ovirt.engine.core.common.businessentities.MigrationSupport;
+import org.ovirt.engine.core.common.businessentities.Snapshot;
+import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
+import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
+import org.ovirt.engine.core.common.businessentities.UsbPolicy;
+import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.vm_pools;
-import org.ovirt.engine.core.compat.EventArgs;
+import org.ovirt.engine.core.common.businessentities.VmOsType;
+import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.common.businessentities.VolumeType;
+import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.queries.GetAllVmSnapshotsByVmIdParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
+import org.ovirt.engine.ui.uicommonweb.Linq.SnapshotByCreationDateCommparer;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
+import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
@@ -36,8 +53,7 @@ public class VmSnapshotListModel extends SearchableListModel
 
     private UICommand privateNewCommand;
 
-    public UICommand getNewCommand()
-    {
+    public UICommand getNewCommand() {
         return privateNewCommand;
     }
 
@@ -94,94 +110,16 @@ public class VmSnapshotListModel extends SearchableListModel
         privateRemoveCommand = value;
     }
 
-    @Override
-    public SnapshotModel getSelectedItem()
+    private UICommand privateCloneVmCommand;
+
+    public UICommand getCloneVmCommand()
     {
-        return (SnapshotModel) ((super.getSelectedItem() instanceof SnapshotModel) ? super.getSelectedItem() : null);
+        return privateCloneVmCommand;
     }
 
-    public void setSelectedItem(SnapshotModel value)
+    private void setCloneVmCommand(UICommand value)
     {
-        super.setSelectedItem(value);
-    }
-
-    @Override
-    public Iterable getItems()
-    {
-        return items;
-    }
-
-    @Override
-    public void setItems(Iterable value)
-    {
-        if (items != value)
-        {
-            SnapshotModel lastSelectedItem = getSelectedItem();
-
-            ItemsChanging(value, items);
-            items = value;
-            getItemsChangedEvent().raise(this, EventArgs.Empty);
-            OnPropertyChanged(new PropertyChangedEventArgs("Items"));
-
-            selectedItem = null;
-
-            if (lastSelectedItem != null)
-            {
-                SnapshotModel newSelectedItem = null;
-                java.util.ArrayList<SnapshotModel> newItems = (java.util.ArrayList<SnapshotModel>) value;
-
-                if (newItems != null)
-                {
-                    for (SnapshotModel newItem : newItems)
-                    {
-                        // Search for selected item
-                        if (newItem.getSnapshotId().equals(lastSelectedItem.getSnapshotId()))
-                        {
-                            newSelectedItem = newItem;
-                            break;
-                        }
-                    }
-                }
-
-                if (newSelectedItem != null)
-                {
-                    selectedItem = newSelectedItem;
-                }
-            }
-            OnSelectedItemChanged();
-        }
-    }
-
-    private Iterable apps;
-
-    public Iterable getApps()
-    {
-        return apps;
-    }
-
-    public void setApps(Iterable value)
-    {
-        if (apps != value)
-        {
-            apps = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Apps"));
-        }
-    }
-
-    private boolean isSnapshotsAvailable;
-
-    public boolean getIsSnapshotsAvailable()
-    {
-        return isSnapshotsAvailable;
-    }
-
-    public void setIsSnapshotsAvailable(boolean value)
-    {
-        if (isSnapshotsAvailable != value)
-        {
-            isSnapshotsAvailable = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsSnapshotsAvailable"));
-        }
+        privateCloneVmCommand = value;
     }
 
     private EntityModel privateCanSelectSnapshot;
@@ -196,6 +134,72 @@ public class VmSnapshotListModel extends SearchableListModel
         privateCanSelectSnapshot = value;
     }
 
+    private VM privatecurrentVm;
+
+    public VM getcurrentVm()
+    {
+        return privatecurrentVm;
+    }
+
+    public void setcurrentVm(VM value)
+    {
+        privatecurrentVm = value;
+    }
+
+    private SystemTreeItemModel systemTreeSelectedItem;
+
+    public SystemTreeItemModel getSystemTreeSelectedItem()
+    {
+        return systemTreeSelectedItem;
+    }
+
+    public void setSystemTreeSelectedItem(SystemTreeItemModel value)
+    {
+        systemTreeSelectedItem = value;
+        OnPropertyChanged(new PropertyChangedEventArgs("SystemTreeSelectedItem"));
+    }
+
+    private ArrayList<String> privateCustomPropertiesKeysList;
+
+    private ArrayList<String> getCustomPropertiesKeysList()
+    {
+        return privateCustomPropertiesKeysList;
+    }
+
+    private void setCustomPropertiesKeysList(ArrayList<String> value)
+    {
+        privateCustomPropertiesKeysList = value;
+    }
+
+    private HashMap<Guid, SnapshotModel> snapshotsMap;
+
+    public HashMap<Guid, SnapshotModel> getSnapshotsMap()
+    {
+        return snapshotsMap;
+    }
+
+    public void setSnapshotsMap(HashMap<Guid, SnapshotModel> value)
+    {
+        snapshotsMap = value;
+        OnPropertyChanged(new PropertyChangedEventArgs("SnapshotsMap"));
+    }
+
+    private boolean isCloneVmSupported;
+
+    public boolean getIsCloneVmSupported()
+    {
+        return isCloneVmSupported;
+    }
+
+    private void setIsCloneVmSupported(boolean value)
+    {
+        if (isCloneVmSupported != value)
+        {
+            isCloneVmSupported = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("IsCloneVmSupported"));
+        }
+    }
+
     public VmSnapshotListModel()
     {
         setTitle("Snapshots");
@@ -205,8 +209,106 @@ public class VmSnapshotListModel extends SearchableListModel
         setCommitCommand(new UICommand("Commit", this));
         setUndoCommand(new UICommand("Undo", this));
         setRemoveCommand(new UICommand("Remove", this));
+        setCloneVmCommand(new UICommand("CloneVM", this));
 
         setCanSelectSnapshot(new EntityModel());
+        getCanSelectSnapshot().setEntity(true);
+
+        setSnapshotsMap(new HashMap<Guid, SnapshotModel>());
+
+        AsyncDataProvider.GetCustomPropertiesList(new AsyncQuery(this,
+                new INewAsyncCallback() {
+                    @Override
+                    public void OnSuccess(Object target, Object returnValue) {
+                        VmSnapshotListModel model = (VmSnapshotListModel) target;
+                        if (returnValue != null)
+                        {
+                            String[] array = ((String) returnValue).split("[;]", -1);
+                            model.setCustomPropertiesKeysList(new ArrayList<String>());
+                            for (String s : array)
+                            {
+                                model.getCustomPropertiesKeysList().add(s);
+                            }
+                        }
+                    }
+                }));
+    }
+
+    @Override
+    public void setItems(Iterable value)
+    {
+        ArrayList<Snapshot> snapshots =
+                value != null ? Linq.<Snapshot> Cast(value) : new ArrayList<Snapshot>();
+
+        snapshots = Linq.OrderByDescending(snapshots, new SnapshotByCreationDateCommparer());
+
+        ArrayList<Snapshot> sortedSnapshots = new ArrayList<Snapshot>();
+
+        for (Snapshot snapshot : snapshots) {
+            SnapshotModel snapshotModel = snapshotsMap.get(snapshot.getId());
+            if (snapshotModel == null) {
+                snapshotModel = new SnapshotModel();
+                snapshotsMap.put(snapshot.getId(), snapshotModel);
+            }
+            snapshotModel.setEntity(snapshot);
+
+            if ((snapshot.getType() == SnapshotType.ACTIVE && getInType(SnapshotType.PREVIEW, snapshots) == null)
+                    || snapshot.getType() == SnapshotType.PREVIEW) {
+                sortedSnapshots.add(0, snapshot);
+            }
+            else if (snapshot.getType() == SnapshotType.REGULAR || snapshot.getType() == SnapshotType.STATELESS) {
+                sortedSnapshots.add(snapshot);
+            }
+        }
+
+        super.setItems(sortedSnapshots);
+
+        UpdateActionAvailability();
+    }
+
+    @Override
+    public void setEntity(Object value)
+    {
+        super.setEntity(value);
+
+        UpdateIsCloneVmSupported();
+    }
+
+    @Override
+    protected void OnEntityChanged()
+    {
+        super.OnEntityChanged();
+
+        if (getEntity() != null)
+        {
+            getSearchCommand().Execute();
+        }
+    }
+
+    @Override
+    protected void SyncSearch()
+    {
+        VM vm = (VM) getEntity();
+        if (vm == null)
+        {
+            return;
+        }
+
+        super.SyncSearch(VdcQueryType.GetAllVmSnapshotsByVmId, new GetAllVmSnapshotsByVmIdParameters(vm.getId()));
+    }
+
+    @Override
+    protected void OnSelectedItemChanged()
+    {
+        super.OnSelectedItemChanged();
+        UpdateActionAvailability();
+    }
+
+    @Override
+    protected void SelectedItemsChanged()
+    {
+        super.SelectedItemsChanged();
+        UpdateActionAvailability();
     }
 
     private void remove()
@@ -218,13 +320,14 @@ public class VmSnapshotListModel extends SearchableListModel
                 return;
             }
 
+            Snapshot snapshot = (Snapshot) getSelectedItem();
             ConfirmationModel model = new ConfirmationModel();
             setWindow(model);
             model.setTitle("Delete Snapshot");
             model.setHashName("delete_snapshot");
             model.setMessage(StringFormat.format("Are you sure you want to delete snapshot from %1$s with description '%2$s'?",
-                    getSelectedItem().getDate(),
-                    getSelectedItem().getDescription().getEntity()));
+                    snapshot.getCreationDate(),
+                    snapshot.getDescription()));
 
             UICommand tempVar = new UICommand("OnRemove", this);
             tempVar.setTitle("OK");
@@ -239,7 +342,8 @@ public class VmSnapshotListModel extends SearchableListModel
 
     private void OnRemove()
     {
-        if (getSelectedItem() == null)
+        Snapshot snapshot = (Snapshot) getSelectedItem();
+        if (snapshot == null)
         {
             Cancel();
             return;
@@ -248,73 +352,17 @@ public class VmSnapshotListModel extends SearchableListModel
         VM vm = (VM) getEntity();
         if (vm != null)
         {
-            for (DiskImage disk : data.keySet())
-            {
-                // var snapshots = data[disk].OrderBy(a => a.lastModified);
+            Frontend.RunAction(VdcActionType.RemoveSnapshot, new RemoveSnapshotParameters(snapshot.getId(),
+                    vm.getId()),
+                    new IFrontendActionAsyncCallback() {
+                        @Override
+                        public void Executed(FrontendActionAsyncResult result) {
 
-                java.util.ArrayList<DiskImage> list = new java.util.ArrayList<DiskImage>();
-                for (DiskImage a : data.get(disk))
-                {
-                    list.add(a);
-                }
-                Collections.sort(list, new Linq.DiskImageByLastModifiedComparer());
-
-                if (list.size() < 2)
-                {
-                    continue;
-                }
-
-                // var srcSnapshot = snapshots.FirstOrDefault(a => a.vm_snapshot_id == SelectedItem.SnapshotId);
-                DiskImage srcSnapshot = null;
-                for (DiskImage a : list)
-                {
-                    if (a.getvm_snapshot_id().equals(getSelectedItem().getSnapshotId()))
-                    {
-                        srcSnapshot = a;
-                        break;
-                    }
-                }
-                if (srcSnapshot == null)
-                {
-                    continue;
-                }
-
-                // var dstSnapshot = snapshots.FirstOrDefault(a => a.ParentId == srcSnapshot.image_guid);
-                DiskImage dstSnapshot = null;
-                for (DiskImage a : list)
-                {
-                    if (a.getParentId().equals(srcSnapshot.getId()))
-                    {
-                        dstSnapshot = a;
-                        break;
-                    }
-                }
-                if (dstSnapshot == null)
-                {
-                    continue;
-                }
-
-                Guid srcSnapshotId =
-                        (srcSnapshot.getvm_snapshot_id() != null) ? srcSnapshot.getvm_snapshot_id().getValue()
-                                : NGuid.Empty;
-                Guid dstSnapshotId =
-                        (dstSnapshot.getvm_snapshot_id() != null) ? dstSnapshot.getvm_snapshot_id().getValue()
-                                : NGuid.Empty;
-
-                Frontend.RunAction(VdcActionType.RemoveSnapshot, new RemoveSnapshotParameters(srcSnapshotId,
-                        vm.getId()),
-                        new IFrontendActionAsyncCallback() {
-                            @Override
-                            public void Executed(FrontendActionAsyncResult result) {
-
-                            }
-                        }, null);
-
-                getCanSelectSnapshot().setEntity(false);
-
-                break;
-            }
+                        }
+                    }, null);
         }
+
+        getCanSelectSnapshot().setEntity(false);
 
         Cancel();
     }
@@ -324,37 +372,17 @@ public class VmSnapshotListModel extends SearchableListModel
         VM vm = (VM) getEntity();
         if (vm != null)
         {
-            Guid snapshotId = NGuid.Empty;
+            Snapshot snapshot = getPreview();
 
-            for (DiskImage disk : data.keySet())
-            {
-                // Find the last snapshot to revert to it.
-                // var snapshot = data[disk]
-                // //.OrderByDescending(a => a.lastModified)
-                // .FirstOrDefault();
+            Frontend.RunAction(VdcActionType.RestoreAllSnapshots,
+                    new RestoreAllSnapshotsParameters(vm.getId(), snapshot.getId()),
+                    new IFrontendActionAsyncCallback() {
+                        @Override
+                        public void Executed(FrontendActionAsyncResult result) {
 
-                DiskImage snapshot = data.get(disk).get(0);
-                if (snapshot != null)
-                {
-                    snapshotId =
-                            (snapshot.getvm_snapshot_id() != null) ? snapshot.getvm_snapshot_id().getValue()
-                                    : NGuid.Empty;
-                    break;
-                }
-            }
-
-            if (!snapshotId.equals(NGuid.Empty))
-            {
-                Frontend.RunAction(VdcActionType.RestoreAllSnapshots,
-                        new RestoreAllSnapshotsParameters(vm.getId(), snapshotId),
-                        new IFrontendActionAsyncCallback() {
-                            @Override
-                            public void Executed(FrontendActionAsyncResult result) {
-
-                            }
-                        },
-                        null);
-            }
+                        }
+                    },
+                    null);
         }
     }
 
@@ -363,44 +391,17 @@ public class VmSnapshotListModel extends SearchableListModel
         VM vm = (VM) getEntity();
         if (vm != null)
         {
-            Guid snapshotId = NGuid.Empty;
+            Snapshot snapshot = getInPreview();
 
-            for (DiskImage disk : data.keySet())
-            {
-                // Find a previwing snapshot by disk.
-                // var snapshot = data[disk].FirstOrDefault(a => (Guid)a.image_guid ==
-                // previewingImages[disk.image_guid]);
-                DiskImage snapshot = null;
-                for (DiskImage a : data.get(disk))
-                {
-                    if (a.getId().equals(previewingImages.get(disk.getId())))
-                    {
-                        snapshot = a;
-                        break;
-                    }
-                }
+            Frontend.RunAction(VdcActionType.RestoreAllSnapshots,
+                    new RestoreAllSnapshotsParameters(vm.getId(), snapshot.getId()),
+                    new IFrontendActionAsyncCallback() {
+                        @Override
+                        public void Executed(FrontendActionAsyncResult result) {
 
-                if (snapshot != null)
-                {
-                    snapshotId =
-                            (snapshot.getvm_snapshot_id() != null) ? snapshot.getvm_snapshot_id().getValue()
-                                    : NGuid.Empty;
-                    break;
-                }
-            }
-
-            if (!snapshotId.equals(NGuid.Empty))
-            {
-                Frontend.RunAction(VdcActionType.RestoreAllSnapshots,
-                        new RestoreAllSnapshotsParameters(vm.getId(), snapshotId),
-                        new IFrontendActionAsyncCallback() {
-                            @Override
-                            public void Executed(FrontendActionAsyncResult result) {
-
-                            }
-                        },
-                        null);
-            }
+                        }
+                    },
+                    null);
         }
     }
 
@@ -409,8 +410,10 @@ public class VmSnapshotListModel extends SearchableListModel
         VM vm = (VM) getEntity();
         if (vm != null)
         {
+            Snapshot snapshot = (Snapshot) getSelectedItem();
+
             Frontend.RunAction(VdcActionType.TryBackToAllSnapshotsOfVm,
-                    new TryBackToAllSnapshotsOfVmParameters(vm.getId(), getSelectedItem().getSnapshotId()),
+                    new TryBackToAllSnapshotsOfVmParameters(vm.getId(), snapshot.getId()),
                     new IFrontendActionAsyncCallback() {
                         @Override
                         public void Executed(FrontendActionAsyncResult result) {
@@ -423,67 +426,61 @@ public class VmSnapshotListModel extends SearchableListModel
 
     private void New()
     {
-        if (getEntity() != null)
+        VM vm = (VM) getEntity();
+        if (vm == null)
         {
-            if (getWindow() != null)
-            {
-                return;
-            }
+            return;
+        }
 
-            SnapshotModel model = new SnapshotModel();
-            setWindow(model);
-            model.setTitle("Create Snapshot");
-            model.setHashName("create_snapshot");
+        if (getWindow() != null)
+        {
+            return;
+        }
 
-            // var disks = data.getKey()s
-            // .Select(a => StringFormat.format("Disk {0}", a.internal_drive_mapping))
-            // .OrderBy(a => a)
-            // .Select(a => new EntityModel() { Entity = a })
-            // .ToList();
+        SnapshotModel model = new SnapshotModel();
+        setWindow(model);
+        model.setTitle("Create Snapshot");
+        model.setHashName("create_snapshot");
 
-            java.util.ArrayList<String> driveMappings = new java.util.ArrayList<String>();
-            for (DiskImage a : data.keySet())
-            {
-                driveMappings.add(StringFormat.format("Disk %1$s", a.getinternal_drive_mapping()));
-            }
-            Collections.sort(driveMappings);
+        model.StartProgress(null);
+        AsyncDataProvider.GetVmDiskList(new AsyncQuery(this,
+                new INewAsyncCallback() {
+                    @Override
+                    public void OnSuccess(Object target, Object returnValue) {
+                        VmSnapshotListModel vmSnapshotListModel = (VmSnapshotListModel) target;
+                        SnapshotModel snapshotModel = (SnapshotModel) vmSnapshotListModel.getWindow();
+                        ArrayList<DiskImage> disks = (ArrayList<DiskImage>) returnValue;
 
-            java.util.ArrayList<EntityModel> disks = new java.util.ArrayList<EntityModel>();
-            for (String a : driveMappings)
-            {
-                EntityModel m = new EntityModel();
-                m.setEntity(StringFormat.format("Disk %1$s", a));
-                disks.add(m);
-            }
-            model.setDisks(disks);
+                        vmSnapshotListModel.PostNew(disks);
+                        snapshotModel.StopProgress();
+                    }
+                }),
+                vm.getId());
+    }
 
-            // disks.Each(a => Selector.SetIsSelected(a, true));
-            for (EntityModel a : disks)
-            {
-                a.setIsSelected(true);
-            }
+    public void PostNew(ArrayList<DiskImage> disks) {
+        SnapshotModel model = (SnapshotModel) getWindow();
 
-            if (disks.isEmpty())
-            {
-                model.setMessage("Snapshot cannot be created since the VM has no Disks");
+        if (disks.isEmpty())
+        {
+            model.setMessage("Snapshot cannot be created since the VM has no Disks");
 
-                UICommand tempVar = new UICommand("Cancel", this);
-                tempVar.setTitle("Close");
-                tempVar.setIsDefault(true);
-                tempVar.setIsCancel(true);
-                model.getCommands().add(tempVar);
-            }
-            else
-            {
-                UICommand tempVar2 = new UICommand("OnNew", this);
-                tempVar2.setTitle("OK");
-                tempVar2.setIsDefault(true);
-                model.getCommands().add(tempVar2);
-                UICommand tempVar3 = new UICommand("Cancel", this);
-                tempVar3.setTitle("Cancel");
-                tempVar3.setIsCancel(true);
-                model.getCommands().add(tempVar3);
-            }
+            UICommand tempVar = new UICommand("Cancel", this);
+            tempVar.setTitle("Close");
+            tempVar.setIsDefault(true);
+            tempVar.setIsCancel(true);
+            model.getCommands().add(tempVar);
+        }
+        else
+        {
+            UICommand tempVar2 = new UICommand("OnNew", this);
+            tempVar2.setTitle("OK");
+            tempVar2.setIsDefault(true);
+            model.getCommands().add(tempVar2);
+            UICommand tempVar3 = new UICommand("Cancel", this);
+            tempVar3.setTitle("Cancel");
+            tempVar3.setIsCancel(true);
+            model.getCommands().add(tempVar3);
         }
     }
 
@@ -507,21 +504,12 @@ public class VmSnapshotListModel extends SearchableListModel
             return;
         }
 
-        java.util.ArrayList<String> disks = new java.util.ArrayList<String>();
-        for (EntityModel a : model.getDisks())
-        {
-            if (a.getIsSelected())
-            {
-                disks.add(GetInternalDriveMapping((String) a.getEntity()));
-            }
-        }
-
         model.StartProgress(null);
 
-        CreateAllSnapshotsFromVmParameters tempVar =
+        CreateAllSnapshotsFromVmParameters params =
                 new CreateAllSnapshotsFromVmParameters(vm.getId(), (String) model.getDescription().getEntity());
-        tempVar.setDisksList(disks);
-        Frontend.RunAction(VdcActionType.CreateAllSnapshotsFromVm, tempVar,
+
+        Frontend.RunAction(VdcActionType.CreateAllSnapshotsFromVm, params,
                 new IFrontendActionAsyncCallback() {
                     @Override
                     public void Executed(FrontendActionAsyncResult result) {
@@ -545,368 +533,287 @@ public class VmSnapshotListModel extends SearchableListModel
         }
     }
 
-    /**
-     * Getting a string in the format of "Disk x", should return "x". NOTE: When localizing, this function should be
-     * smarter.
-     *
-     * @param diskDisplayName
-     *            string in the format of "Disk x"
-     * @return "x"
-     */
-    private String GetInternalDriveMapping(String diskDisplayName)
-    {
-        return diskDisplayName.substring(5);
-    }
-
     private void Cancel()
     {
         setWindow(null);
     }
 
-    @Override
-    protected void OnEntityChanged()
+    private void CloneVM()
     {
-        super.OnEntityChanged();
-
-        // Deal with pool as Entity without failing.
-        if (getEntity() instanceof vm_pools)
-        {
-            setIsSnapshotsAvailable(false);
-            setItems(null);
-        }
-        else
-        {
-            setIsSnapshotsAvailable(true);
-            UpdateData();
-        }
-
-        if (getEntity() != null)
-        {
-            getSearchCommand().Execute();
-        }
-    }
-
-    @Override
-    protected void SyncSearch()
-    {
-        UpdateData();
-        setIsQueryFirstTime(false);
-    }
-
-    private void UpdateData()
-    {
-        VM vm = (VM) getEntity();
-        if (vm == null)
+        Snapshot snapshot = (Snapshot) getSelectedItem();
+        if (snapshot == null)
         {
             return;
         }
 
-        new GetAllVmSnapshotsExecutor(vm.getId(), new AsyncQuery(this,
-                new INewAsyncCallback() {
+        if (getWindow() != null)
+        {
+            return;
+        }
+
+        UnitVmModel model = new UnitVmModel(new CloneVmFromSnapshotModelBehavior());
+        setWindow(model);
+        model.StartProgress(null);
+
+        AsyncDataProvider.GetVmConfigurationBySnapshot(new AsyncQuery(this, new INewAsyncCallback() {
+            @Override
+            public void OnSuccess(Object target, Object returnValue) {
+                VmSnapshotListModel vmSnapshotListModel = (VmSnapshotListModel) target;
+                UnitVmModel model = (UnitVmModel) vmSnapshotListModel.getWindow();
+                VM selectedVm = (VM) getEntity();
+
+                CloneVmFromSnapshotModelBehavior behavior = (CloneVmFromSnapshotModelBehavior) model.getBehavior();
+                VM vm = (VM) returnValue;
+                vm.setstorage_pool_id(selectedVm.getstorage_pool_id());
+                vm.setvds_group_id(selectedVm.getvds_group_id());
+                behavior.setVm(vm);
+
+                model.setTitle("Clone VM from Snapshot");
+                model.setHashName("clone_vm_from_snapshot");
+                model.setCustomPropertiesKeysList(getCustomPropertiesKeysList());
+                model.Initialize(vmSnapshotListModel.getSystemTreeSelectedItem());
+
+                UICommand tempVar = new UICommand("OnCloneVM", vmSnapshotListModel);
+                tempVar.setTitle("OK");
+                tempVar.setIsDefault(true);
+                model.getCommands().add(tempVar);
+                UICommand tempVar2 = new UICommand("Cancel", vmSnapshotListModel);
+                tempVar2.setTitle("Cancel");
+                tempVar2.setIsCancel(true);
+                model.getCommands().add(tempVar2);
+
+                vmSnapshotListModel.StopProgress();
+            }
+        }), snapshot.getId());
+    }
+
+    private void OnCloneVM()
+    {
+        UnitVmModel model = (UnitVmModel) getWindow();
+        CloneVmFromSnapshotModelBehavior behavior = (CloneVmFromSnapshotModelBehavior) model.getBehavior();
+        Snapshot snapshot = (Snapshot) getSelectedItem();
+        if (snapshot == null)
+        {
+            Cancel();
+            return;
+        }
+
+        if (!model.Validate())
+        {
+            return;
+        }
+
+        setcurrentVm(behavior.getVm());
+
+        String name = (String) model.getName().getEntity();
+
+        // Save changes.
+        VmTemplate template = (VmTemplate) model.getTemplate().getSelectedItem();
+
+        getcurrentVm().setvm_type(model.getVmType());
+        getcurrentVm().setvmt_guid(template.getId());
+        getcurrentVm().setvm_name(name);
+        getcurrentVm().setvm_os((VmOsType) model.getOSType().getSelectedItem());
+        getcurrentVm().setnum_of_monitors((Integer) model.getNumOfMonitors().getSelectedItem());
+        getcurrentVm().setvm_description((String) model.getDescription().getEntity());
+        getcurrentVm().setvm_domain(model.getDomain().getIsAvailable() ?
+                (String) model.getDomain().getSelectedItem() : "");
+        getcurrentVm().setvm_mem_size_mb((Integer) model.getMemSize().getEntity());
+        getcurrentVm().setMinAllocatedMem((Integer) model.getMinAllocatedMemory().getEntity());
+        Guid newClusterID = ((VDSGroup) model.getCluster().getSelectedItem()).getId();
+        getcurrentVm().setvds_group_id(newClusterID);
+        getcurrentVm().settime_zone(
+                (model.getTimeZone().getIsAvailable() && model.getTimeZone().getSelectedItem() != null) ?
+                        ((Map.Entry<String, String>) model.getTimeZone().getSelectedItem()).getKey() : "");
+        getcurrentVm().setnum_of_sockets((Integer) model.getNumOfSockets().getEntity());
+        getcurrentVm().setcpu_per_socket((Integer) model.getTotalCPUCores().getEntity() /
+                (Integer) model.getNumOfSockets().getEntity());
+        getcurrentVm().setusb_policy((UsbPolicy) model.getUsbPolicy().getSelectedItem());
+        getcurrentVm().setis_auto_suspend(false);
+        getcurrentVm().setis_stateless((Boolean) model.getIsStateless().getEntity());
+        getcurrentVm().setdefault_boot_sequence(model.getBootSequence());
+        getcurrentVm().setiso_path(model.getCdImage().getIsChangable() ?
+                (String) model.getCdImage().getSelectedItem() : "");
+        getcurrentVm().setauto_startup((Boolean) model.getIsHighlyAvailable().getEntity());
+        getcurrentVm().setinitrd_url((String) model.getInitrd_path().getEntity());
+        getcurrentVm().setkernel_url((String) model.getKernel_path().getEntity());
+        getcurrentVm().setkernel_params((String) model.getKernel_parameters().getEntity());
+        getcurrentVm().setCustomProperties((String) model.getCustomProperties().getEntity());
+
+        EntityModel displayProtocolSelectedItem = (EntityModel) model.getDisplayProtocol().getSelectedItem();
+        getcurrentVm().setdefault_display_type((DisplayType) displayProtocolSelectedItem.getEntity());
+
+        EntityModel prioritySelectedItem = (EntityModel) model.getPriority().getSelectedItem();
+        getcurrentVm().setpriority((Integer) prioritySelectedItem.getEntity());
+
+        VDS defaultHost = (VDS) model.getDefaultHost().getSelectedItem();
+        getcurrentVm().setdedicated_vm_for_vds(
+                (Boolean) model.getIsAutoAssign().getEntity() ? null : defaultHost.getId());
+
+        getcurrentVm().setMigrationSupport(MigrationSupport.MIGRATABLE);
+        if ((Boolean) model.getRunVMOnSpecificHost().getEntity())
+        {
+            getcurrentVm().setMigrationSupport(MigrationSupport.PINNED_TO_HOST);
+        }
+        else if ((Boolean) model.getDontMigrateVM().getEntity())
+        {
+            getcurrentVm().setMigrationSupport(MigrationSupport.IMPLICITLY_NON_MIGRATABLE);
+        }
+        getcurrentVm().setDiskMap(behavior.getVm().getDiskMap());
+
+        HashMap<Guid, Guid> imageToDestinationDomainMap =
+                model.getDisksAllocationModel().getImageToDestinationDomainMap();
+        storage_domains storageDomain =
+                ((storage_domains) model.getDisksAllocationModel().getStorageDomain().getSelectedItem());
+        ArrayList<DiskImage> diskInfoList = CreateDiskInfoList();
+
+        if ((Boolean) model.getDisksAllocationModel().getIsSingleStorageDomain().getEntity()) {
+            for (Guid key : imageToDestinationDomainMap.keySet()) {
+                imageToDestinationDomainMap.put(key, storageDomain.getId());
+            }
+        }
+
+        AddVmFromSnapshotParameters parameters =
+                new AddVmFromSnapshotParameters(getcurrentVm().getStaticData(), diskInfoList, snapshot.getId());
+        parameters.setImageToDestinationDomainMap(imageToDestinationDomainMap);
+
+        model.StartProgress(null);
+
+        Frontend.RunAction(VdcActionType.AddVmFromSnapshot, parameters,
+                new IFrontendActionAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object target1, Object returnValue1) {
+                    public void Executed(FrontendActionAsyncResult result) {
 
-                        VmSnapshotListModel model = (VmSnapshotListModel) target1;
-                        model.PostUpdateData(returnValue1);
-
+                        VmSnapshotListModel vmSnapshotListModel = (VmSnapshotListModel) result.getState();
+                        vmSnapshotListModel.getWindow().StopProgress();
+                        VdcReturnValueBase returnValueBase = result.getReturnValue();
+                        if (returnValueBase != null && returnValueBase.getSucceeded())
+                        {
+                            vmSnapshotListModel.Cancel();
+                            vmSnapshotListModel.UpdateActionAvailability();
+                        }
                     }
-                }), getIsQueryFirstTime()).Execute();
+                }, this);
     }
 
-    public void PostUpdateData(Object returnValue)
+    private ArrayList<DiskImage> CreateDiskInfoList()
     {
-        VM vm = (VM) getEntity();
-        if (vm == null)
-        {
-            return;
-        }
+        UnitVmModel model = (UnitVmModel) getWindow();
+        ArrayList<DiskImage> diskInfoList = new ArrayList<DiskImage>();
 
-        // Check that we get a return value corresponding to a current VM.
-        for (AsyncDataProvider.GetSnapshotListQueryResult result : (java.util.List<AsyncDataProvider.GetSnapshotListQueryResult>) returnValue)
-        {
-            if (!result.getVmId().equals(vm.getId()))
-            {
-                return;
-            }
-        }
+        for (DiskImage diskImage : getcurrentVm().getDiskList()) {
+            for (DiskModel diskModel : model.getDisks()) {
+                if (diskImage.getId().equals(diskModel.getDiskImage().getId())) {
+                    if (!diskImage.getvolume_type().equals(diskModel.getVolumeType().getSelectedItem())) {
+                        diskModel.getDiskImage().setvolume_type(
+                                (VolumeType) diskModel.getVolumeType().getSelectedItem());
 
-        data = new java.util.HashMap<DiskImage, java.util.List<DiskImage>>();
-        previewingImages = new java.util.HashMap<Guid, Guid>();
-
-        for (AsyncDataProvider.GetSnapshotListQueryResult result : (java.util.List<AsyncDataProvider.GetSnapshotListQueryResult>) returnValue)
-        {
-            data.put(result.getDisk(), result.getSnapshots());
-            previewingImages.put(result.getDisk().getId(), result.getPreviewingImage());
-        }
-
-        UpdateItems();
-        UpdateActionAvailability();
-    }
-
-    @Override
-    protected void OnSelectedItemChanged()
-    {
-        super.OnSelectedItemChanged();
-
-        UpdateActionAvailability();
-
-        java.util.ArrayList<String> list = new java.util.ArrayList<String>();
-        if (getSelectedItem() != null && getSelectedItem().getApps() != null)
-        {
-            for (String item : getSelectedItem().getApps().split("[,]", -1))
-            {
-                list.add(item);
-            }
-        }
-
-        setApps(list);
-    }
-
-    @Override
-    protected void SelectedItemsChanged()
-    {
-        super.SelectedItemsChanged();
-        UpdateActionAvailability();
-    }
-
-    @Override
-    protected void EntityPropertyChanged(Object sender, PropertyChangedEventArgs e)
-    {
-        super.EntityPropertyChanged(sender, e);
-
-        if (e.PropertyName.equals("status"))
-        {
-            UpdateData();
-        }
-    }
-
-    private java.util.Map<DiskImage, java.util.List<DiskImage>> data;
-    private java.util.Map<Guid, Guid> previewingImages;
-
-    public void UpdateItems()
-    {
-        if (getEntity() == null)
-        {
-            setItems(null);
-            return;
-        }
-
-        VM vm = (VM) getEntity();
-        java.util.ArrayList<DiskImage> images = new java.util.ArrayList<DiskImage>();
-
-        for (java.util.List<DiskImage> item : data.values())
-        {
-            java.util.ArrayList<DiskImage> temp = new java.util.ArrayList<DiskImage>();
-            temp.addAll(item);
-
-            if (item.size() > 0)
-            {
-                temp.remove(0);
-            }
-
-            images.addAll(temp);
-        }
-
-        // Combine snapshots by disk.
-        // Items = l
-        // .Where(a => a.lastModified.Date == Date.Date)
-        // .OrderByDescending(a => a.lastModified.TimeOfDay)
-        // .GroupBy(a => a.vm_snapshot_id)
-        // .Select(a =>
-        // new SnapshotModel
-        // {
-        // SnapshotId = a.getKey().GetValueOrDefault(),
-        // Date = a.First().lastModified,
-        // IsPreviewed = a.Any(b => previewingImages.Any(c => b.image_guid == c.Value)),
-        // Description = a.Any(b => previewingImages.Any(c => b.image_guid == c.Value))
-        // ? new EntityModel() { Value = a.First().description + " (Preview Mode)" }
-        // : new EntityModel() { Value = a.First().description },
-        // ParticipantDisks = a.Select(b => b.internal_drive_mapping)
-        // .Distinct()
-        // .OrderBy(b => b)
-        // .Separate(',', b => b),
-        // Apps = a.First().appList
-        // }
-        // )
-        // .ToList();
-
-        // C# TO JAVA CONVERTER TODO TASK: There is no Java equivalent to LINQ queries:
-        Linq.OrderByDescending(images, new Linq.DiskImageByLastModifiedTimeOfDayComparer());
-
-        java.util.HashMap<NGuid, java.util.ArrayList<DiskImage>> dict =
-                new java.util.HashMap<NGuid, java.util.ArrayList<DiskImage>>();
-        for (DiskImage a : images)
-        {
-            if (!dict.containsKey(a.getvm_snapshot_id()))
-            {
-                dict.put(a.getvm_snapshot_id(), new java.util.ArrayList<DiskImage>());
-            }
-
-            java.util.ArrayList<DiskImage> ls = dict.get(a.getvm_snapshot_id());
-            ls.add(a);
-        }
-
-        java.util.ArrayList<SnapshotModel> items = new java.util.ArrayList<SnapshotModel>();
-
-        // Add hard coded "Current" snapshot.
-        SnapshotModel m = new SnapshotModel();
-        m.setIsCurrent(true);
-        m.setParticipantDisks(DriveNamesAsString(getDriveNames(data.keySet())));
-        m.getDescription().setEntity("<" + vm.getvm_name() + ">");
-        items.add(m);
-
-        for (java.util.Map.Entry<NGuid, java.util.ArrayList<DiskImage>> pair : dict.entrySet())
-        {
-            NGuid key = pair.getKey();
-            java.util.ArrayList<DiskImage> value = pair.getValue();
-
-            DiskImage firstDiskImage = Linq.FirstOrDefault(value);
-
-            m = new SnapshotModel();
-            m.setSnapshotId(key.getValue());
-            m.setDate(firstDiskImage.getlastModified());
-            m.setApps(firstDiskImage.getappList());
-
-            // IsPreviewed
-            boolean isPreviewed = false;
-            for (DiskImage b : value)
-            {
-                if (isPreviewed)
-                {
-                    break;
-                }
-
-                for (java.util.Map.Entry<Guid, Guid> c : previewingImages.entrySet())
-                {
-                    if (b.getId().equals(c.getValue()))
-                    {
-                        isPreviewed = true;
-                        break;
+                        diskInfoList.add(diskModel.getDiskImage());
                     }
                 }
             }
-            m.setIsPreviewed(isPreviewed);
-
-            // Description
-            String description = firstDiskImage.getdescription();
-            if (isPreviewed)
-            {
-                description += " (Preview Mode)";
-            }
-            EntityModel tempVar = new EntityModel();
-            tempVar.setEntity(description);
-            m.setDescription(tempVar);
-
-            m.setParticipantDisks(DriveNamesAsString(getDriveNames(value)));
-
-            items.add(m);
         }
 
-        // C# TO JAVA CONVERTER TODO TASK: There is no Java equivalent to LINQ queries:
-        items = Linq.OrderByDescending(items, new Linq.SnapshotModelDateComparer());
-        UpdateSnapshotModels(items);
-    }
-
-    private void UpdateSnapshotModels(java.util.ArrayList<SnapshotModel> items)
-    {
-        java.util.ArrayList<SnapshotModel> newItems = new java.util.ArrayList<SnapshotModel>();
-
-        if (getItems() != null)
-        {
-            java.util.ArrayList<SnapshotModel> oldItems = Linq.ToList((Iterable<SnapshotModel>) getItems());
-
-            for (SnapshotModel newItem : items)
-            {
-                boolean isItemUpdated = false;
-                for (SnapshotModel item : oldItems)
-                {
-                    if (newItem.getSnapshotId().equals(item.getSnapshotId()))
-                    {
-                        item.setDate(newItem.getDate());
-                        item.setApps(newItem.getApps());
-                        item.setIsPreviewed(newItem.getIsPreviewed());
-                        item.setDescription(newItem.getDescription());
-                        item.setParticipantDisks(newItem.getParticipantDisks());
-                        newItems.add(item);
-                        isItemUpdated = true;
-                        break;
-                    }
-                }
-
-                if (!isItemUpdated)
-                {
-                    newItems.add(newItem);
-                }
-            }
-        }
-
-        setItems(newItems);
-    }
-
-    private String DriveNamesAsString(java.util.ArrayList<String> names)
-    {
-        String result = "";
-        for (String a : names)
-        {
-            result += a;
-            if (!StringHelper.stringsEqual(a, names.get(names.size() - 1)))
-            {
-                result += ", ";
-            }
-        }
-
-        return result;
-    }
-
-    private java.util.ArrayList<String> getDriveNames(Iterable<DiskImage> images)
-    {
-        // ParticipantDisks
-        java.util.ArrayList<String> list = new java.util.ArrayList<String>();
-        for (DiskImage a : images)
-        {
-            if (!list.contains(a.getinternal_drive_mapping()))
-            {
-                list.add("Disk " + a.getinternal_drive_mapping());
-            }
-        }
-        Collections.sort(list);
-        return list;
+        return diskInfoList;
     }
 
     public void UpdateActionAvailability()
     {
-        if (getEntity() instanceof vm_pools)
+        VM vm = (VM) getEntity();
+        Snapshot snapshot = (Snapshot) getSelectedItem();
+
+        boolean isVmDown = vm != null && vm.getstatus() == VMStatus.Down;
+        boolean isVmImageLocked = vm != null && vm.getstatus() == VMStatus.ImageLocked;
+        boolean isPreviewing = getIsPreviewing();
+        boolean isLocked = getIsLocked();
+        boolean isSelected = snapshot != null && snapshot.getType() != SnapshotType.ACTIVE;
+        boolean isStateless = getIsStateless();
+
+        getCanSelectSnapshot().setEntity(!isPreviewing && !isLocked && !isVmImageLocked && !isStateless);
+        getNewCommand().setIsExecutionAllowed(!isPreviewing && !isLocked && !isVmImageLocked && !isStateless);
+        getPreviewCommand().setIsExecutionAllowed(isSelected && !isLocked && !isPreviewing && isVmDown && !isStateless);
+        getCommitCommand().setIsExecutionAllowed(isPreviewing && isVmDown && !isStateless);
+        getUndoCommand().setIsExecutionAllowed(isPreviewing && isVmDown && !isStateless);
+        getRemoveCommand().setIsExecutionAllowed(isSelected && !isLocked && !isPreviewing && isVmDown && !isStateless);
+        getCloneVmCommand().setIsExecutionAllowed(isSelected && !isLocked && !isPreviewing && isVmDown
+                && !isVmImageLocked && !isStateless);
+    }
+
+    public boolean getIsPreviewing() {
+        return getInPreview() != null;
+    }
+
+    public boolean getIsLocked() {
+        return getLocked() != null;
+    }
+
+    public boolean getIsStateless() {
+        return getInType(SnapshotType.STATELESS, (ArrayList<Snapshot>) getItems()) != null;
+    }
+
+    public Snapshot getLocked() {
+        for (Snapshot snapshot : (ArrayList<Snapshot>) getItems()) {
+            if (snapshot.getStatus() == SnapshotStatus.LOCKED) {
+                return snapshot;
+            }
+        }
+        return null;
+    }
+
+    public Snapshot getInPreview() {
+        for (Snapshot snapshot : (ArrayList<Snapshot>) getItems()) {
+            if (snapshot.getStatus() == SnapshotStatus.IN_PREVIEW) {
+                return snapshot;
+            }
+        }
+        return null;
+    }
+
+    public Snapshot getPreview() {
+        for (Snapshot snapshot : (ArrayList<Snapshot>) getItems()) {
+            if (snapshot.getType() == SnapshotType.PREVIEW) {
+                return snapshot;
+            }
+        }
+        return null;
+    }
+
+    public Snapshot getInStatus(SnapshotStatus snapshotStatus, ArrayList<Snapshot> snapshots) {
+        for (Snapshot snapshot : snapshots) {
+            if (snapshot.getStatus() == snapshotStatus) {
+                return snapshot;
+            }
+        }
+        return null;
+    }
+
+    public Snapshot getInType(SnapshotType snapshotType, ArrayList<Snapshot> snapshots) {
+        for (Snapshot snapshot : snapshots) {
+            if (snapshot.getType() == snapshotType) {
+                return snapshot;
+            }
+        }
+        return null;
+    }
+
+    public void UpdateVmConfigurationBySnapshot(Guid snapshotId)
+    {
+        SnapshotModel snapshotModel = snapshotsMap.get(snapshotId);
+        snapshotModel.UpdateVmConfiguration();
+    }
+
+    protected void UpdateIsCloneVmSupported()
+    {
+        if (getEntity() == null)
         {
             return;
         }
-
         VM vm = (VM) getEntity();
+        Version version = vm.getvds_group_compatibility_version() != null
+                ? vm.getvds_group_compatibility_version() : new Version();
 
-        // bool isPreviewing = previewingImages.Any(a => a.Value != Guid.Empty);
-        boolean isPreviewing = false;
-        for (java.util.Map.Entry<Guid, Guid> a : previewingImages.entrySet())
-        {
-            if (!a.getValue().equals(NGuid.Empty))
-            {
-                isPreviewing = true;
-                break;
-            }
-        }
-
-        boolean isVmDown = vm == null || vm.getstatus() == VMStatus.Down;
-        boolean isVmImageLocked = vm == null || vm.getstatus() == VMStatus.ImageLocked;
-
-        getPreviewCommand().setIsExecutionAllowed(!isPreviewing && getSelectedItem() != null && isVmDown);
-
-        getCanSelectSnapshot().setEntity(!isPreviewing && !isVmImageLocked);
-
-        getNewCommand().setIsExecutionAllowed(!isPreviewing && !isVmImageLocked);
-
-        getCommitCommand().setIsExecutionAllowed(isPreviewing && isVmDown);
-
-        getUndoCommand().setIsExecutionAllowed(isPreviewing && isVmDown);
-
-        getRemoveCommand().setIsExecutionAllowed(!isPreviewing && getSelectedItem() != null && isVmDown);
+        // TODO: replace with configuration value
+        setIsCloneVmSupported(version.compareTo(new Version("3.1")) >= 0);
     }
 
     @Override
@@ -934,6 +841,10 @@ public class VmSnapshotListModel extends SearchableListModel
         {
             remove();
         }
+        else if (command == getCloneVmCommand())
+        {
+            CloneVM();
+        }
         else if (StringHelper.stringsEqual(command.getName(), "OnRemove"))
         {
             OnRemove();
@@ -945,6 +856,10 @@ public class VmSnapshotListModel extends SearchableListModel
         else if (StringHelper.stringsEqual(command.getName(), "OnNew"))
         {
             OnNew();
+        }
+        else if (StringHelper.stringsEqual(command.getName(), "OnCloneVM"))
+        {
+            OnCloneVM();
         }
     }
 

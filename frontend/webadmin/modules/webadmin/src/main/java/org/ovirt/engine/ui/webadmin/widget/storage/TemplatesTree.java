@@ -4,17 +4,30 @@ import java.util.ArrayList;
 
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.widget.label.DiskSizeLabel;
 import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
+import org.ovirt.engine.ui.common.widget.tree.AbstractSubTabTree;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageTemplateListModel;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.widget.label.FullDateTimeLabel;
-import org.ovirt.engine.ui.webadmin.widget.tree.AbstractSubTabTree;
 
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.TreeItem;
 
 public class TemplatesTree extends AbstractSubTabTree<StorageTemplateListModel, VmTemplate, DiskImage> {
+
+    ApplicationResources resources;
+    ApplicationConstants constants;
+
+    public TemplatesTree(CommonApplicationResources resources, CommonApplicationConstants constants) {
+        super(resources, constants);
+        this.resources = (ApplicationResources) resources;
+        this.constants = (ApplicationConstants) constants;
+    }
 
     @Override
     protected TreeItem getRootItem(VmTemplate template) {
@@ -29,7 +42,7 @@ public class TemplatesTree extends AbstractSubTabTree<StorageTemplateListModel, 
         addValueLabelToPanel(panel, new FullDateTimeLabel(), template.getcreation_date(), "140px");
 
         TreeItem treeItem = new TreeItem(panel);
-        treeItem.setUserObject(template);
+        treeItem.setUserObject(template.getId());
         return treeItem;
     }
 
@@ -46,7 +59,7 @@ public class TemplatesTree extends AbstractSubTabTree<StorageTemplateListModel, 
         addValueLabelToPanel(panel, new FullDateTimeLabel(), disk.getcreation_date(), "140px");
 
         TreeItem treeItem = new TreeItem(panel);
-        treeItem.setUserObject(disk);
+        treeItem.setUserObject(disk.getId());
         return treeItem;
     }
 

@@ -8,6 +8,7 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;
 import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
+import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -80,7 +81,6 @@ import org.ovirt.engine.ui.uicommonweb.models.users.UserListModel;
 import org.ovirt.engine.ui.uicommonweb.models.users.UserPermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.users.UserQuotaListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
-import org.ovirt.engine.ui.uicommonweb.models.vms.SnapshotModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmAppListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmDiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmEventListModel;
@@ -373,7 +373,7 @@ public interface ManagedComponents {
 
     AsyncProvider<SubTabVirtualMachineSnapshotPresenter> getSubTabVirtualMachineSnapshotPresenter();
 
-    SearchableDetailModelProvider<SnapshotModel, VmListModel, VmSnapshotListModel> getSubTabVirtualMachineSnapshotModelProvider();
+    SearchableDetailModelProvider<Snapshot, VmListModel, VmSnapshotListModel> getSubTabVirtualMachineSnapshotModelProvider();
 
     AsyncProvider<SubTabVirtualMachineApplicationPresenter> getSubTabVirtualMachineApplicationPresenter();
 

@@ -9,7 +9,7 @@
 		}
 		
 		.content {
-			overflow: auto;
+			overflow-x: hidden;
 			position: absolute;
 			top: 34px;
 			bottom: 0px;
