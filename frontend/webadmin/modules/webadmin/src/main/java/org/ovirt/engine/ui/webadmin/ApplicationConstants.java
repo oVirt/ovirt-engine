@@ -76,6 +76,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Quotas")
     String quotaMainTabLabel();
 
+    @DefaultStringValue("Volumes")
+    String volumeMainTabLabel();
+
     @DefaultStringValue("Storage")
     String dataCenterStorageSubTabLabel();
 

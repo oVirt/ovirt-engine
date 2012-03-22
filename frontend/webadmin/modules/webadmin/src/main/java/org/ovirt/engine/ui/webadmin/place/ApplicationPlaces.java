@@ -33,6 +33,8 @@ public class ApplicationPlaces {
 
     public static final String quotaMainTabPlace = "quotas";
 
+    public static final String volumeMainTabPlace = "volumes";
+
     // Main section: sub tabs
 
     // Important: the value after SUB_TAB_PREFIX must correspond to given UiCommon model

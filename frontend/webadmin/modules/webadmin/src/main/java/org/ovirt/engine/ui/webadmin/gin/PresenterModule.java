@@ -74,6 +74,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabStoragePre
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabTemplatePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabUserPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabVirtualMachinePresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabVolumePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.ClusterSubTabPanelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.SubTabClusterGeneralPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.SubTabClusterHostPresenter;
@@ -207,6 +208,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.tab.MainTabStorageView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.MainTabTemplateView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.MainTabUserView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.MainTabVirtualMachineView;
+import org.ovirt.engine.ui.webadmin.section.main.view.tab.MainTabVolumeView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.cluster.ClusterSubTabPanelView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.cluster.SubTabClusterGeneralView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.cluster.SubTabClusterHostView;
@@ -365,6 +367,10 @@ public class PresenterModule extends BasePresenterModule {
                 MainTabQuotaPresenter.ViewDef.class,
                 MainTabQuotaView.class,
                 MainTabQuotaPresenter.ProxyDef.class);
+        bindPresenter(MainTabVolumePresenter.class,
+                MainTabVolumePresenter.ViewDef.class,
+                MainTabVolumeView.class,
+                MainTabVolumePresenter.ProxyDef.class);
 
         // Main section: sub tabs
 

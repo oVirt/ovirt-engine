@@ -17,6 +17,7 @@ import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.uicommonweb.Configurator.GlusterModeEnum;
 import org.ovirt.engine.ui.uicommonweb.DataProvider;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.ReportInit;
@@ -42,6 +43,7 @@ import org.ovirt.engine.ui.uicommonweb.models.tags.TagModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateListModel;
 import org.ovirt.engine.ui.uicommonweb.models.users.UserListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
+import org.ovirt.engine.ui.uicommonweb.models.volumes.VolumeListModel;
 
 @SuppressWarnings("unused")
 public class CommonModel extends ListModel
@@ -363,13 +365,14 @@ public class CommonModel extends ListModel
     private static CommonModel instance = null;
 
     public static CommonModel newInstance() {
-            instance = new CommonModel();
+        instance = new CommonModel();
         return instance;
     }
 
     public static CommonModel getInstance() {
         return instance;
     }
+
     private CommonModel()
     {
         setSignedOutEvent(new Event(SignedOutEventDefinition));
@@ -738,6 +741,7 @@ public class CommonModel extends ListModel
     private ReportsListModel reportsList;
     private SearchableListModel quotaList;
     private SearchableListModel monitor;
+    private SearchableListModel volumeList;
 
     private void InitItems()
     {
@@ -778,6 +782,11 @@ public class CommonModel extends ListModel
         reportsList.setIsAvailable(false);
         quotaList = new QuotaListModel();
         list.add(quotaList);
+
+        volumeList = new VolumeListModel();
+        if (!volumeList.getGlusterModeEnum().equals(GlusterModeEnum.ONLY_OVIRT)) {
+            list.add(volumeList);
+        }
 
         setItems(list);
 
