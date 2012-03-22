@@ -35,9 +35,8 @@ public class DiskImageDAOTest extends BaseGenericDaoTestCase<Guid, DiskImage, Di
 
     private DiskImage existingTemplate;
 
-
-
     private static final int TOTAL_DISK_IMAGES = 6;
+    private static final int TOTAL_DISK_IMAGES_FOR_QAUOTA = 12;
     private DiskImageDynamicDAO diskImageDynamicDao;
     private DiskDao diskDao;
     private VmDeviceDAO vmDeviceDao;
@@ -95,12 +94,12 @@ public class DiskImageDAOTest extends BaseGenericDaoTestCase<Guid, DiskImage, Di
         newImage.setimage_group_id(Guid.NewGuid());
         newImage.setQuotaId(Guid.NewGuid());
         newImage.setstorage_ids(new ArrayList<Guid>(Arrays.asList(Guid.Empty)));
-        existingTemplate = dao.get(EXISTING_IMAGE_DISK_TEMPLATE );
+        existingTemplate = dao.get(EXISTING_IMAGE_DISK_TEMPLATE);
     }
 
-     /**
-     * Ensures that saving a disk image works as expected.
-     */
+    /**
+    * Ensures that saving a disk image works as expected.
+    */
     @Test
     @Override
     public void testSave() {
@@ -175,7 +174,7 @@ public class DiskImageDAOTest extends BaseGenericDaoTestCase<Guid, DiskImage, Di
     @Test
     public void testGetAllForQuotaId() {
         List<DiskImage> disks = dao.getAllForQuotaId(FixturesTool.QUOTA_GENERAL);
-        assertEquals("VM should have five disks", 4, disks.size());
+        assertEquals("Wrong number of disk images for quota ", TOTAL_DISK_IMAGES_FOR_QAUOTA, disks.size());
     }
 
     @Test
@@ -199,7 +198,7 @@ public class DiskImageDAOTest extends BaseGenericDaoTestCase<Guid, DiskImage, Di
         assertFullGetAllForVMResult(disks);
     }
 
-   public void testGetTemplate() {
+    public void testGetTemplate() {
         DiskImage result = dao.get(EXISTING_IMAGE_DISK_TEMPLATE);
         assertNotNull(result);
         assertEquals(existingTemplate, result);
@@ -213,7 +212,7 @@ public class DiskImageDAOTest extends BaseGenericDaoTestCase<Guid, DiskImage, Di
         assertNotNull(result);
         assertFalse(result.isEmpty());
         for (DiskImage template : result) {
-            assertEquals(EXISTING_IMAGE_DISK_TEMPLATE, template.getId());
+            assertEquals(EXISTING_VM_TEMPLATE, template.getvm_guid());
         }
     }
 
