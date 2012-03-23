@@ -21,15 +21,15 @@ import com.google.gwt.xml.client.impl.DOMParseException;
 public class ReportInit {
 
     private static final ReportInit INSTANCE = new ReportInit();
-    private boolean reportsEnabled = false;
-    private boolean xmlInitialized = false;
-    private boolean urlInitialized = false;
-    private final Event reportsInitEvent = new Event("ReportsInitialize", ReportInit.class);
-    private String reportBaseUrl = "";
-    private boolean isCommunityEdition = false;
+    private boolean reportsEnabled;
+    private boolean xmlInitialized;
+    private boolean urlInitialized;
+    private Event reportsInitEvent;
+    private String reportBaseUrl;
+    private boolean isCommunityEdition;
 
-    private Map<String, Resource> resourceMap = new HashMap<String, Resource>();
-    private Map<String, Dashboard> dashboardMap = new HashMap<String, Dashboard>();
+    private Map<String, Resource> resourceMap;
+    private Map<String, Dashboard> dashboardMap;
 
     public static ReportInit getInstance() {
         return INSTANCE;
@@ -40,6 +40,10 @@ public class ReportInit {
     }
 
     public void init() {
+        // the re-init can happen after logout/login.
+        // As this class has it's state, it needs to be inited again
+        initState();
+
         AsyncDataProvider.GetRedirectServletReportsPage(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
@@ -49,6 +53,17 @@ public class ReportInit {
                 }));
 
         parseReportsXML();
+    }
+
+    private void initState() {
+        reportsEnabled = false;
+        xmlInitialized = false;
+        urlInitialized = false;
+        reportBaseUrl = "";
+        isCommunityEdition = false;
+        resourceMap = new HashMap<String, Resource>();
+        dashboardMap = new HashMap<String, Dashboard>();
+        reportsInitEvent = new Event("ReportsInitialize", ReportInit.class);
     }
 
     private ReportInit() {

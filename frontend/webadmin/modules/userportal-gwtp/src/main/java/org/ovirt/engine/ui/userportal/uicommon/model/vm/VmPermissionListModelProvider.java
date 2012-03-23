@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.userportal.uicommon.model.vm;
 
 import org.ovirt.engine.core.common.businessentities.permissions;
+import org.ovirt.engine.ui.common.auth.CurrentUser;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.RemoveConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -27,8 +28,9 @@ public class VmPermissionListModelProvider
             UserPortalListProvider parentProvider,
             UserPortalModelResolver resolver,
             Provider<PermissionsPopupPresenterWidget> permissionPopupProvider,
-            Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
-        super(ginjector, parentProvider, PermissionListModel.class, resolver);
+            Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider,
+            CurrentUser user) {
+        super(ginjector, parentProvider, PermissionListModel.class, resolver, user);
         this.permissionPopupProvider = permissionPopupProvider;
         this.removeConfirmPopupProvider = removeConfirmPopupProvider;
     }

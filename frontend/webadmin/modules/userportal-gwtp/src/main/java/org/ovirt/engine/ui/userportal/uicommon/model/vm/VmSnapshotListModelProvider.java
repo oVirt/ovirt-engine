@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.userportal.uicommon.model.vm;
 
 import org.ovirt.engine.core.common.businessentities.Snapshot;
+import org.ovirt.engine.ui.common.auth.CurrentUser;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
@@ -25,8 +26,9 @@ public class VmSnapshotListModelProvider extends UserPortalSearchableDetailModel
             UserPortalListProvider parentModelProvider,
             UserPortalModelResolver resolver,
             Provider<VmSnapshotCreatePopupPresenterWidget> createPopupProvider,
-            Provider<VmClonePopupPresenterWidget> cloneVmPopupProvider) {
-        super(ginjector, parentModelProvider, VmSnapshotListModel.class, resolver);
+            Provider<VmClonePopupPresenterWidget> cloneVmPopupProvider,
+            CurrentUser user) {
+        super(ginjector, parentModelProvider, VmSnapshotListModel.class, resolver, user);
         this.createPopupProvider = createPopupProvider;
         this.cloneVmPopupProvider = cloneVmPopupProvider;
     }

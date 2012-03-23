@@ -7,7 +7,11 @@ import org.ovirt.engine.ui.common.auth.CurrentUser;
 import org.ovirt.engine.ui.common.system.BaseApplicationInit;
 import org.ovirt.engine.ui.common.uicommon.FrontendEventsHandlerImpl;
 import org.ovirt.engine.ui.common.uicommon.FrontendFailureEventListener;
+import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.Frontend;
+import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.ITypeResolver;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalLoginModel;
 import org.ovirt.engine.ui.userportal.ApplicationConstants;
 import org.ovirt.engine.ui.userportal.auth.CurrentUserRole;
@@ -70,4 +74,31 @@ public class ApplicationInit extends BaseApplicationInit<UserPortalLoginModel> {
         loginModel.UpdateIsENGINEUser(loginModel.getLoggedUser());
     }
 
+    @Override
+    public void onLogout() {
+        AsyncQuery query = new AsyncQuery();
+        query.setHandleFailure(true);
+        query.setModel(this);
+        query.asyncCallback = new INewAsyncCallback() {
+            @Override
+            public void OnSuccess(Object model, Object ReturnValue) {
+                Frontend.setLoggedInUser(null);
+                clearLoginModel(getLoginModel());
+                AsyncDataProvider.clearCache();
+                ApplicationInit.super.onLogout();
+            }
+
+        };
+
+        Frontend.LogoffAsync(Frontend.getLoggedInUser(), query);
+    }
+
+    private void clearLoginModel(UserPortalLoginModel loginModel) {
+        loginModel.getUserName().setEntity(null);
+        loginModel.getPassword().setEntity(null);
+        loginModel.getPassword().setIsChangable(true);
+        loginModel.getUserName().setIsChangable(true);
+        loginModel.getDomain().setIsChangable(true);
+        loginModel.getLoginCommand().setIsExecutionAllowed(true);
+    }
 }

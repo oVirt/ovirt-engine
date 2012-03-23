@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.userportal.uicommon.model.vm;
 
 import org.ovirt.engine.core.common.businessentities.VmType;
+import org.ovirt.engine.ui.common.auth.CurrentUser;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.RemoveConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -36,8 +37,9 @@ public class UserPortalListProvider extends UserPortalDataBoundModelProvider<Use
             Provider<VmRunOncePopupPresenterWidget> runOncePopupProvider,
             Provider<VmChangeCDPopupPresenterWidget> changeCDPopupProvider,
             Provider<VmMakeTemplatePopupPresenterWidget> makeTemplatePopupProvider,
-            Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
-        super(ginjector);
+            Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider,
+            CurrentUser user) {
+        super(ginjector, user);
         this.newDesktopVmPopupProvider = newDesktopVmPopupProvider;
         this.newServerVmPopupProvider = newServerVmPopupProvider;
         this.runOncePopupProvider = runOncePopupProvider;

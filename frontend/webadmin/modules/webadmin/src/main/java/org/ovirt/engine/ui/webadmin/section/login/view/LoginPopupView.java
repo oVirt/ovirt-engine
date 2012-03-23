@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.login.view;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.uicommon.model.DeferredModelCommandInvoker;
-import org.ovirt.engine.ui.common.view.AbstractPopupView;
+import org.ovirt.engine.ui.common.view.AbstractLoginPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.PopupNativeKeyPressHandler;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogButton;
 import org.ovirt.engine.ui.common.widget.dialog.SimplePopupPanel;
@@ -31,7 +31,7 @@ import com.google.gwt.user.client.ui.DecoratedPopupPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.inject.Inject;
 
-public class LoginPopupView extends AbstractPopupView<DecoratedPopupPanel> implements LoginPopupPresenterWidget.ViewDef {
+public class LoginPopupView extends AbstractLoginPopupView implements LoginPopupPresenterWidget.ViewDef {
 
     interface Driver extends SimpleBeanEditorDriver<LoginModel, LoginPopupView> {
         Driver driver = GWT.create(Driver.class);

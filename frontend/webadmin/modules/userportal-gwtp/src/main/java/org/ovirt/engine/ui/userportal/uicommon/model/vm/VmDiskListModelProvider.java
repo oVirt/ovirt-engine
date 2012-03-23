@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.userportal.uicommon.model.vm;
 
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.ui.common.auth.CurrentUser;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.RemoveConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -26,8 +27,9 @@ public class VmDiskListModelProvider extends UserPortalSearchableDetailModelProv
             UserPortalListProvider parentModelProvider,
             UserPortalModelResolver resolver,
             Provider<VmDiskPopupPresenterWidget> diskPopupProvider,
-            Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
-        super(ginjector, parentModelProvider, VmDiskListModel.class, resolver);
+            Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider,
+            CurrentUser user) {
+        super(ginjector, parentModelProvider, VmDiskListModel.class, resolver, user);
         this.diskPopupProvider = diskPopupProvider;
         this.removeConfirmPopupProvider = removeConfirmPopupProvider;
     }

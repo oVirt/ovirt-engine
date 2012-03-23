@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.userportal.uicommon.model.vm;
 
+import org.ovirt.engine.ui.common.auth.CurrentUser;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmAppListModel;
 import org.ovirt.engine.ui.userportal.gin.ClientGinjector;
@@ -13,8 +14,9 @@ public class VmAppListModelProvider extends UserPortalSearchableDetailModelProvi
     @Inject
     public VmAppListModelProvider(ClientGinjector ginjector,
             UserPortalListProvider parentModelProvider,
-            UserPortalModelResolver resolver) {
-        super(ginjector, parentModelProvider, VmAppListModel.class, resolver);
+            UserPortalModelResolver resolver,
+            CurrentUser user) {
+        super(ginjector, parentModelProvider, VmAppListModel.class, resolver, user);
     }
 
     @Override

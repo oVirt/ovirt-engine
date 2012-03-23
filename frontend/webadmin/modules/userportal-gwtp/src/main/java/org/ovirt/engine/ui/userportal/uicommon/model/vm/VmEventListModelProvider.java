@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.userportal.uicommon.model.vm;
 
 import org.ovirt.engine.core.common.businessentities.AuditLog;
+import org.ovirt.engine.ui.common.auth.CurrentUser;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmEventListModel;
 import org.ovirt.engine.ui.userportal.gin.ClientGinjector;
@@ -15,8 +16,9 @@ public class VmEventListModelProvider
     @Inject
     public VmEventListModelProvider(ClientGinjector ginjector,
             UserPortalListProvider parentModelProvider,
-            UserPortalModelResolver resolver) {
-        super(ginjector, parentModelProvider, VmEventListModel.class, resolver);
+            UserPortalModelResolver resolver,
+            CurrentUser user) {
+        super(ginjector, parentModelProvider, VmEventListModel.class, resolver, user);
     }
 
     @Override

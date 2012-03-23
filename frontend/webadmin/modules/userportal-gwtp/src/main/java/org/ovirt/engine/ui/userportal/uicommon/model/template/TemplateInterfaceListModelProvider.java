@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.userportal.uicommon.model.template;
 
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
+import org.ovirt.engine.ui.common.auth.CurrentUser;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.RemoveConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -27,8 +28,9 @@ public class TemplateInterfaceListModelProvider
             UserPortalTemplateListProvider parentProvider,
             UserPortalModelResolver resolver,
             Provider<NetworkInterfacePopupPresenterWidget> newTemplateInterfacePopupProvider,
-            Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
-        super(ginjector, parentProvider, TemplateInterfaceListModel.class, resolver);
+            Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider,
+            CurrentUser user) {
+        super(ginjector, parentProvider, TemplateInterfaceListModel.class, resolver, user);
         this.newTemplateInterfacePopupProvider = newTemplateInterfacePopupProvider;
         this.removeConfirmPopupProvider = removeConfirmPopupProvider;
     }

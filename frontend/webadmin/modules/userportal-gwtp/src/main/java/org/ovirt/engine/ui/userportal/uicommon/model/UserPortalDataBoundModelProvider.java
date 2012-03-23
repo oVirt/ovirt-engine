@@ -4,6 +4,9 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
+import org.ovirt.engine.ui.common.auth.CurrentUser;
+import org.ovirt.engine.ui.common.auth.UserLoginChangeEvent;
+import org.ovirt.engine.ui.common.auth.UserLoginChangeEvent.UserLoginChangeHandler;
 import org.ovirt.engine.ui.common.gin.BaseClientGinjector;
 import org.ovirt.engine.ui.common.uicommon.model.DataBoundTabModelProvider;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
@@ -19,7 +22,7 @@ import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalModelInitEvent.Us
  * @param <M>
  *            List model type.
  */
-public abstract class UserPortalDataBoundModelProvider<T, M extends SearchableListModel> extends DataBoundTabModelProvider<T, M> implements UserPortalModelInitHandler {
+public abstract class UserPortalDataBoundModelProvider<T, M extends SearchableListModel> extends DataBoundTabModelProvider<T, M> implements UserPortalModelInitHandler, UserLoginChangeHandler {
 
     public interface DataChangeListener<T> {
 
@@ -31,10 +34,13 @@ public abstract class UserPortalDataBoundModelProvider<T, M extends SearchableLi
     private DataChangeListener<T> dataChangeListener;
 
     private List<T> selectedItems;
+    private final CurrentUser user;
 
-    public UserPortalDataBoundModelProvider(BaseClientGinjector ginjector) {
+    public UserPortalDataBoundModelProvider(BaseClientGinjector ginjector, CurrentUser user) {
         super(ginjector);
+        this.user = user;
         getEventBus().addHandler(UserPortalModelInitEvent.getType(), this);
+        getEventBus().addHandler(UserLoginChangeEvent.getType(), this);
     }
 
     @Override
@@ -102,6 +108,13 @@ public abstract class UserPortalDataBoundModelProvider<T, M extends SearchableLi
      */
     protected boolean rememberModelItemSelection() {
         return true;
+    }
+
+    @Override
+    public void onUserLoginChange(UserLoginChangeEvent event) {
+        if (!user.isLoggedIn()) {
+            getModel().EnsureAsyncSearchStopped();
+        }
     }
 
 }

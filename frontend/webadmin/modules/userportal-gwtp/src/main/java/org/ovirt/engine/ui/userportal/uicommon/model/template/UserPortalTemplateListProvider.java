@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.userportal.uicommon.model.template;
 
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.ui.common.auth.CurrentUser;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
@@ -18,8 +19,9 @@ public class UserPortalTemplateListProvider extends UserPortalDataBoundModelProv
 
     @Inject
     public UserPortalTemplateListProvider(ClientGinjector ginjector,
-            Provider<TemplateNewPopupPresenterWidget> newTemplatePopupProvider) {
-        super(ginjector);
+            Provider<TemplateNewPopupPresenterWidget> newTemplatePopupProvider,
+            CurrentUser user) {
+        super(ginjector, user);
 
         this.newTemplatePopupProvider = newTemplatePopupProvider;
     }
