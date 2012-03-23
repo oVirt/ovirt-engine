@@ -1,13 +1,14 @@
 package org.ovirt.engine.core.bll;
 
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.spy;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -122,9 +123,11 @@ public class QuotaHelperTest {
     public void testAddUnlimitedQuota() throws Exception {
         QuotaHelper quotaHelper = getQuotaHelper();
         Quota quotaUnlimited = quotaHelper.getUnlimitedQuota(mockStoragePool(), false);
-        Assert.assertEquals(QuotaHelper.UNLIMITED, quotaUnlimited.getStorageSizeGB());
-        Assert.assertTrue(QuotaHelper.UNLIMITED.intValue() == quotaUnlimited.getVirtualCpu().intValue());
-        Assert.assertEquals(QuotaHelper.UNLIMITED, quotaUnlimited.getMemSizeMB());
+        assertEquals(QuotaHelper.UNLIMITED, quotaUnlimited.getGlobalQuotaStorage().getStorageSizeGB());
+        assertEquals(QuotaHelper.UNLIMITED.intValue(), quotaUnlimited.getGlobalQuotaVdsGroup()
+                .getVirtualCpu()
+                .intValue());
+        assertEquals(QuotaHelper.UNLIMITED, quotaUnlimited.getGlobalQuotaVdsGroup().getMemSizeMB());
     }
 
     @Test
@@ -135,7 +138,7 @@ public class QuotaHelperTest {
         when(quotaDAO.getQuotaByStoragePoolGuid(storagePoolUUID)).thenReturn(listQuota);
         String quotaDefaultName = quotaHelper.getDefaultQuotaName(mockStoragePool());
         String desiredQuotaDefaultName = "Quota_Def_Storage pool name";
-        Assert.assertEquals(desiredQuotaDefaultName, quotaDefaultName);
+        assertEquals(desiredQuotaDefaultName, quotaDefaultName);
     }
 
     @Test
@@ -154,7 +157,7 @@ public class QuotaHelperTest {
         // Get and check the retrieved default quota name.
         String quotaDefaultName = quotaHelper.getDefaultQuotaName(mockStoragePool());
         String desiredQuotaDefaultName = "Quota_Def_Storage pool name_1";
-        Assert.assertEquals(desiredQuotaDefaultName, quotaDefaultName);
+        assertEquals(desiredQuotaDefaultName, quotaDefaultName);
     }
 
     @Test
@@ -178,7 +181,7 @@ public class QuotaHelperTest {
         // Get and check the retrieved default quota name.
         String quotaDefaultName = quotaHelper.getDefaultQuotaName(mockStoragePool());
         String desiredQuotaDefaultName = "Quota_Def_Storage pool name_2";
-        Assert.assertEquals(desiredQuotaDefaultName, quotaDefaultName);
+        assertEquals(desiredQuotaDefaultName, quotaDefaultName);
     }
 
     @Test
@@ -202,7 +205,7 @@ public class QuotaHelperTest {
         // Get and check the retrieved default quota name.
         String quotaDefaultName = quotaHelper.getDefaultQuotaName(mockStoragePool());
         String desiredQuotaDefaultName = "Quota_Def_Storage pool name_2";
-        Assert.assertEquals(desiredQuotaDefaultName, quotaDefaultName);
+        assertEquals(desiredQuotaDefaultName, quotaDefaultName);
     }
 
     @Test
@@ -226,7 +229,7 @@ public class QuotaHelperTest {
         // Get and check the retrieved default quota name.
         String quotaDefaultName = quotaHelper.getDefaultQuotaName(mockStoragePool());
         String desiredQuotaDefaultName = "Quota_Def_Storage pool name_54";
-        Assert.assertEquals(desiredQuotaDefaultName, quotaDefaultName);
+        assertEquals(desiredQuotaDefaultName, quotaDefaultName);
     }
 
     @Test
@@ -234,22 +237,22 @@ public class QuotaHelperTest {
         QuotaHelper quotaHelper = getQuotaHelper();
         when(quotaDAO.getDefaultQuotaByStoragePoolId(storagePoolUUID)).thenReturn(mockGeneralStorageQuota());
         Quota quotaUnlimited = quotaHelper.getUnlimitedQuota(mockStoragePool(), true);
-        Assert.assertEquals(QuotaHelper.UNLIMITED, quotaUnlimited.getStorageSizeGB());
-        Assert.assertTrue(QuotaHelper.UNLIMITED.intValue() == quotaUnlimited.getVirtualCpu().intValue());
-        Assert.assertEquals(QuotaHelper.UNLIMITED, quotaUnlimited.getMemSizeMB());
-        Assert.assertEquals("Quota_Def_" + storagePoolName, quotaUnlimited.getQuotaName());
-        Assert.assertEquals(true, quotaUnlimited.getIsDefaultQuota());
+        assertEquals(QuotaHelper.UNLIMITED, quotaUnlimited.getGlobalQuotaStorage().getStorageSizeGB());
+        assertEquals(QuotaHelper.UNLIMITED.intValue(), quotaUnlimited.getGlobalQuotaVdsGroup().getVirtualCpu().intValue());
+        assertEquals(QuotaHelper.UNLIMITED, quotaUnlimited.getGlobalQuotaVdsGroup().getMemSizeMB());
+        assertEquals("Quota_Def_" + storagePoolName, quotaUnlimited.getQuotaName());
+        assertEquals(true, quotaUnlimited.getIsDefaultQuota());
     }
 
     @Test
     public void testAddDefaultQuotaToDCWithoutDefaultQuota() throws Exception {
         QuotaHelper quotaHelper = getQuotaHelper();
         Quota quotaUnlimited = quotaHelper.getUnlimitedQuota(mockStoragePool(), true);
-        Assert.assertEquals(QuotaHelper.UNLIMITED, quotaUnlimited.getStorageSizeGB());
-        Assert.assertTrue(QuotaHelper.UNLIMITED.intValue() == quotaUnlimited.getVirtualCpu().intValue());
-        Assert.assertEquals(QuotaHelper.UNLIMITED, quotaUnlimited.getMemSizeMB());
-        Assert.assertEquals("Quota_Def_" + storagePoolName, quotaUnlimited.getQuotaName());
-        Assert.assertEquals(true, quotaUnlimited.getIsDefaultQuota());
+        assertEquals(QuotaHelper.UNLIMITED, quotaUnlimited.getGlobalQuotaStorage().getStorageSizeGB());
+        assertEquals(QuotaHelper.UNLIMITED.intValue(), quotaUnlimited.getGlobalQuotaVdsGroup().getVirtualCpu().intValue());
+        assertEquals(QuotaHelper.UNLIMITED, quotaUnlimited.getGlobalQuotaVdsGroup().getMemSizeMB());
+        assertEquals("Quota_Def_" + storagePoolName, quotaUnlimited.getQuotaName());
+        assertEquals(true, quotaUnlimited.getIsDefaultQuota());
     }
 
     @Test
@@ -258,7 +261,7 @@ public class QuotaHelperTest {
         storage_pool mockStoragePool = mockStoragePool();
         mockStoragePool.setId(null);
         Quota quotaUnlimited = quotaHelper.getUnlimitedQuota(mockStoragePool, true);
-        Assert.assertEquals(null, quotaUnlimited);
+        assertEquals(null, quotaUnlimited);
     }
 
     @Test
@@ -267,9 +270,9 @@ public class QuotaHelperTest {
         List<String> messages = new ArrayList<String>();
         Quota quota = mockGeneralStorageQuota();
         quota.setIsDefaultQuota(false);
-        quota.setStorageSizeGB(null);
+        quota.setGlobalQuotaStorage(null);
         boolean isQuotaValid = quotaHelper.checkQuotaValidationForAddEdit(quota, messages);
-        Assert.assertTrue(isQuotaValid);
+        assertTrue(isQuotaValid);
     }
 
     @Test
@@ -277,10 +280,15 @@ public class QuotaHelperTest {
         QuotaHelper quotaHelper = getQuotaHelper();
         List<String> messages = new ArrayList<String>();
         Quota quota = mockSpecificVdsGroupQuota();
-        quota.setVirtualCpu(2);
+
+        // Set new global quota for vds group.
+        QuotaVdsGroup quotaVdsGroup = new QuotaVdsGroup();
+        quotaVdsGroup.setVirtualCpu(2);
+        quota.setGlobalQuotaVdsGroup(quotaVdsGroup);
+
         boolean isQuotaValid = quotaHelper.checkQuotaValidationForAddEdit(quota, messages);
-        Assert.assertTrue(messages.contains(VdcBllMessages.ACTION_TYPE_FAILED_QUOTA_LIMIT_IS_SPECIFIC_AND_GENERAL.toString()));
-        Assert.assertFalse(isQuotaValid);
+        assertTrue(messages.contains(VdcBllMessages.ACTION_TYPE_FAILED_QUOTA_LIMIT_IS_SPECIFIC_AND_GENERAL.toString()));
+        assertFalse(isQuotaValid);
     }
 
     @Test
@@ -288,10 +296,15 @@ public class QuotaHelperTest {
         QuotaHelper quotaHelper = getQuotaHelper();
         List<String> messages = new ArrayList<String>();
         Quota quota = mockSpecificVdsGroupQuota();
-        quota.setMemSizeMB(2l);
+
+        // Set new global quota for vds group.
+        QuotaVdsGroup quotaVdsGroup = new QuotaVdsGroup();
+        quotaVdsGroup.setMemSizeMB(2l);
+        quota.setGlobalQuotaVdsGroup(quotaVdsGroup);
+
         boolean isQuotaValid = quotaHelper.checkQuotaValidationForAddEdit(quota, messages);
-        Assert.assertTrue(messages.contains(VdcBllMessages.ACTION_TYPE_FAILED_QUOTA_LIMIT_IS_SPECIFIC_AND_GENERAL.toString()));
-        Assert.assertFalse(isQuotaValid);
+        assertTrue(messages.contains(VdcBllMessages.ACTION_TYPE_FAILED_QUOTA_LIMIT_IS_SPECIFIC_AND_GENERAL.toString()));
+        assertFalse(isQuotaValid);
     }
 
     @Test
@@ -300,7 +313,7 @@ public class QuotaHelperTest {
         List<String> messages = new ArrayList<String>();
         Quota quota = mockSpecificVdsGroupQuota();
         boolean isQuotaValid = quotaHelper.checkQuotaValidationForAddEdit(quota, messages);
-        Assert.assertTrue(isQuotaValid);
+        assertTrue(isQuotaValid);
     }
 
     @Test
@@ -311,9 +324,9 @@ public class QuotaHelperTest {
         for (QuotaVdsGroup quotaVdsGroup : quota.getQuotaVdsGroups()) {
             quotaVdsGroup.setVirtualCpu(null);
         }
-        quota.setVirtualCpu(null);
+        quota.setGlobalQuotaVdsGroup(null);
         boolean isQuotaValid = quotaHelper.checkQuotaValidationForAddEdit(quota, messages);
-        Assert.assertTrue(isQuotaValid);
+        assertTrue(isQuotaValid);
     }
 
     @Test
@@ -324,9 +337,9 @@ public class QuotaHelperTest {
         for (QuotaVdsGroup quotaVdsGroup : quota.getQuotaVdsGroups()) {
             quotaVdsGroup.setMemSizeMB(null);
         }
-        quota.setMemSizeMB(null);
+        quota.setGlobalQuotaVdsGroup(null);
         boolean isQuotaValid = quotaHelper.checkQuotaValidationForAddEdit(quota, messages);
-        Assert.assertTrue(isQuotaValid);
+        assertTrue(isQuotaValid);
     }
 
     @Test
@@ -340,13 +353,16 @@ public class QuotaHelperTest {
         // Iterate over all the vds groups and set the virtual cpu to null.
         for (QuotaVdsGroup quotaVdsGroup : quota.getQuotaVdsGroups()) {
             quotaVdsGroup.setVirtualCpu(null);
-            // TODO : Should I also update usage.
         }
 
         // Set the global limitation of cpu to specific number.
-        quota.setVirtualCpu(20);
+        // Set new global quota for vds group.
+        QuotaVdsGroup quotaVdsGroup = new QuotaVdsGroup();
+        quotaVdsGroup.setVirtualCpu(20);
+        quota.setGlobalQuotaVdsGroup(quotaVdsGroup);
+
         boolean isQuotaValid = quotaHelper.checkQuotaValidationForAddEdit(quota, messages);
-        Assert.assertTrue(isQuotaValid);
+        assertFalse(isQuotaValid);
     }
 
     @Test
@@ -355,7 +371,7 @@ public class QuotaHelperTest {
         List<String> messages = new ArrayList<String>();
         Quota quota = mockMultiSpecificVdsGroupQuota();
         boolean isQuotaValid = quotaHelper.checkQuotaValidationForAddEdit(quota, messages);
-        Assert.assertTrue(isQuotaValid);
+        assertTrue(isQuotaValid);
     }
 
     @Test
@@ -371,11 +387,11 @@ public class QuotaHelperTest {
         quota.setQuotaStorages(quotaStorage.getQuotaStorages());
 
         // Set global limitation with null value to specify the quota is only for specific storage limitations.
-        quota.setStorageSizeGB(null);
+        quota.setGlobalQuotaStorage(null);
 
         // Mock storage domains with enough space for request.
         mockStorageDomains();
-        Assert.assertEquals(true, quotaHelper.checkQuotaValidationForAddEdit(quota, messages));
+        assertEquals(true, quotaHelper.checkQuotaValidationForAddEdit(quota, messages));
     }
 
     @Test
@@ -385,7 +401,7 @@ public class QuotaHelperTest {
         Quota quota = mockGeneralStorageQuota();
         quota.setIsDefaultQuota(false);
         mockStorageDomains();
-        Assert.assertEquals(true, quotaHelper.checkQuotaValidationForAddEdit(quota, messages));
+        assertEquals(true, quotaHelper.checkQuotaValidationForAddEdit(quota, messages));
     }
 
     @Test
@@ -398,7 +414,7 @@ public class QuotaHelperTest {
         quota.setIsDefaultQuota(false);
         when(storageDomainDAO.getForStoragePool(firstStorageDomainUUID, storagePoolUUID)).thenReturn(firstStorageDomains);
         boolean isQuotaValid = quotaHelper.checkQuotaValidationForAddEdit(quota, messages);
-        Assert.assertTrue(isQuotaValid);
+        assertTrue(isQuotaValid);
     }
 
     @Test
@@ -408,7 +424,7 @@ public class QuotaHelperTest {
         Quota mockQuota = mockGeneralStorageQuota();
         when(quotaDAO.getQuotaByQuotaName(quotaName)).thenReturn(mockQuota);
         boolean isQuotaValid = quotaHelper.checkQuotaNameExisting(mockQuota, messages);
-        Assert.assertTrue(isQuotaValid);
+        assertTrue(isQuotaValid);
     }
 
     @Test
@@ -419,8 +435,8 @@ public class QuotaHelperTest {
         when(quotaDAO.getQuotaByQuotaName(quotaName)).thenReturn(mockQuota);
         Quota sameMockedQuotaWithDifferentId = mockGeneralStorageQuota();
         boolean isQuotaValid = quotaHelper.checkQuotaNameExisting(sameMockedQuotaWithDifferentId, messages);
-        Assert.assertTrue(messages.contains(VdcBllMessages.ACTION_TYPE_FAILED_QUOTA_NAME_ALREADY_EXISTS.toString()));
-        Assert.assertFalse(isQuotaValid);
+        assertTrue(messages.contains(VdcBllMessages.ACTION_TYPE_FAILED_QUOTA_NAME_ALREADY_EXISTS.toString()));
+        assertFalse(isQuotaValid);
     }
 
     private static QuotaHelper getQuotaHelper() {
@@ -451,11 +467,7 @@ public class QuotaHelperTest {
         Quota quotaSpecific = mockGeneralVdsGroupQuota();
 
         // Set the global parameters to be null in the specific Quota.
-        quotaSpecific.setVirtualCpu(null);
-        quotaSpecific.setVirtualCpuUsage(null);
-        quotaSpecific.setMemSizeMB(null);
-        quotaSpecific.setMemSizeMBUsage(null);
-
+        quotaSpecific.setGlobalQuotaVdsGroup(null);
         List<QuotaVdsGroup> quotaVdsGroupList = new ArrayList<QuotaVdsGroup>();
 
         // Set first quota vds group.
@@ -513,17 +525,13 @@ public class QuotaHelperTest {
         quotaSpecific.setQuotaVdsGroups(quotaVdsGroupList);
 
         // Set the global parameters to be null in the specific Quota.
-        quotaSpecific.setVirtualCpu(null);
-        quotaSpecific.setVirtualCpuUsage(null);
-        quotaSpecific.setMemSizeMB(null);
-        quotaSpecific.setMemSizeMBUsage(null);
-
+        quotaSpecific.setGlobalQuotaVdsGroup(null);
         return quotaSpecific;
     }
 
     private Quota mockMultiSpecificStorageQuota() {
         Quota quotaSpecific = mockGeneralStorageQuota();
-        quotaSpecific.setStorageSizeGB(null);
+        quotaSpecific.setGlobalQuotaStorage(null);
         List<QuotaStorage> quotaStorageList = new ArrayList<QuotaStorage>();
 
         // Set first quota Storage.
@@ -549,12 +557,18 @@ public class QuotaHelperTest {
         Quota generalQuota = new Quota();
         generalQuota.setDescription("New Quota to create");
         generalQuota.setQuotaName(quotaName);
-        generalQuota.setStorageSizeGB(100l);
-        generalQuota.setStorageSizeGBUsage(0d);
-        generalQuota.setVirtualCpu(0);
-        generalQuota.setVirtualCpuUsage(0);
-        generalQuota.setMemSizeMB(0l);
-        generalQuota.setMemSizeMBUsage(0l);
+        QuotaStorage storageQuota = new QuotaStorage();
+        storageQuota.setStorageSizeGB(100l);
+        storageQuota.setStorageSizeGBUsage(0d);
+        generalQuota.setGlobalQuotaStorage(storageQuota);
+
+        QuotaVdsGroup vdsGroupQuota = new QuotaVdsGroup();
+        vdsGroupQuota.setVirtualCpu(0);
+        vdsGroupQuota.setVirtualCpuUsage(0);
+        vdsGroupQuota.setMemSizeMB(0l);
+        vdsGroupQuota.setMemSizeMBUsage(0l);
+        generalQuota.setGlobalQuotaVdsGroup(vdsGroupQuota);
+
         generalQuota.setId(Guid.NewGuid());
         generalQuota.setStoragePoolId(storagePoolUUID);
         generalQuota.setIsDefaultQuota(true);
@@ -565,13 +579,18 @@ public class QuotaHelperTest {
         Quota generalQuota = new Quota();
         generalQuota.setDescription("New Quota to create");
         generalQuota.setQuotaName("New Quota Name");
-        generalQuota.setStorageSizeGB(0l);
-        generalQuota.setStorageSizeGBUsage(0d);
-        generalQuota.setVirtualCpu(3);
-        generalQuota.setVirtualCpuUsage(0);
-        generalQuota.setMemSizeMB(100l);
-        generalQuota.setMemSizeMBUsage(0l);
-        generalQuota.setStorageSizeGB(0l);
+        QuotaStorage storageQuota = new QuotaStorage();
+        storageQuota.setStorageSizeGB(0l);
+        storageQuota.setStorageSizeGBUsage(0d);
+        generalQuota.setGlobalQuotaStorage(storageQuota);
+
+        QuotaVdsGroup vdsGroupQuota = new QuotaVdsGroup();
+        vdsGroupQuota.setVirtualCpu(3);
+        vdsGroupQuota.setVirtualCpuUsage(0);
+        vdsGroupQuota.setMemSizeMB(100l);
+        vdsGroupQuota.setMemSizeMBUsage(0l);
+        generalQuota.setGlobalQuotaVdsGroup(vdsGroupQuota);
+
         generalQuota.setId(Guid.NewGuid());
         generalQuota.setStoragePoolId(storagePoolUUID);
         return generalQuota;

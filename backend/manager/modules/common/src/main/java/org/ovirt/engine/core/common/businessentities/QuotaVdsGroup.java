@@ -8,9 +8,9 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.INotifyPropertyChanged;
 
 /**
- * The <code>QuotaVdsGroup</code> is a business entity that reflects vdsGroup limitation for specific vdsGroup domain.
+ * The <code>QuotaVdsGroup</code> is a business entity that reflects vdsGroup limitation.
  */
-public class QuotaVdsGroup extends IVdcQueryable implements INotifyPropertyChanged, Serializable, QuotaVdsGroupProperties {
+public class QuotaVdsGroup extends IVdcQueryable implements INotifyPropertyChanged, Serializable {
 
     /**
      * Automatic generated serial version ID.

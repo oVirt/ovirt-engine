@@ -238,11 +238,12 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
         if ((Boolean) model.getGlobalClusterQuota().getEntity()) {
             QuotaVdsGroup quotaVdsGroup;
             for (QuotaVdsGroup iter : (ArrayList<QuotaVdsGroup>) model.getQuotaClusters().getItems()) {
-                quota.setMemSizeMB(iter.getMemSizeMB());
-                quota.setVirtualCpu(iter.getVirtualCpu());
+                quota.getGlobalQuotaVdsGroup().setMemSizeMB(iter.getMemSizeMB());
+                quota.getGlobalQuotaVdsGroup().setVirtualCpu(iter.getVirtualCpu());
                 quota.getQuotaVdsGroups().clear();
             }
         } else {
+            quota.setGlobalQuotaVdsGroup(null);
             ArrayList<QuotaVdsGroup> quotaClusterList = new ArrayList<QuotaVdsGroup>();
             QuotaVdsGroup quotaVdsGroup;
             for (QuotaVdsGroup iter : (ArrayList<QuotaVdsGroup>) model.getAllDataCenterClusters().getItems()) {
@@ -257,10 +258,11 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
         if ((Boolean) model.getGlobalStorageQuota().getEntity()) {
             QuotaStorage quotaStorage;
             for (QuotaStorage iter : (ArrayList<QuotaStorage>) model.getQuotaStorages().getItems()) {
-                quota.setStorageSizeGB(iter.getStorageSizeGB());
+                quota.getGlobalQuotaStorage().setStorageSizeGB(iter.getStorageSizeGB());
                 quota.getQuotaStorages().clear();
             }
         } else {
+            quota.setGlobalQuotaStorage(null);
             ArrayList<QuotaStorage> quotaStorageList = new ArrayList<QuotaStorage>();
             QuotaStorage quotaStorage;
             for (QuotaStorage iter : (ArrayList<QuotaStorage>) model.getAllDataCenterStorages().getItems()) {
@@ -312,23 +314,27 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
                 final QuotaModel quotaModel = (QuotaModel) outer_quotaListModel.getWindow();
                 final Quota quota = (Quota) ((VdcQueryReturnValue) returnValue).getReturnValue();
                 quotaModel.setEntity(quota);
-                if (quota.getQuotaVdsGroups() == null || quota.getQuotaVdsGroups().size() == 0) {
+                boolean hasSpecificLimitation =
+                        quota.getQuotaVdsGroups() == null || quota.getQuotaVdsGroups().size() == 0;
+                if (hasSpecificLimitation
+                        && quota.getGlobalQuotaVdsGroup() != null) {
                     quotaModel.getGlobalClusterQuota().setEntity(true);
                     QuotaVdsGroup cluster =
                             ((ArrayList<QuotaVdsGroup>) quotaModel.getQuotaClusters().getItems()).get(0);
-                    cluster.setMemSizeMB(quota.getMemSizeMB());
-                    cluster.setVirtualCpu(quota.getVirtualCpu());
-                    cluster.setMemSizeMBUsage(quota.getMemSizeMBUsage());
-                    cluster.setVirtualCpuUsage(quota.getVirtualCpuUsage());
+                    cluster.setMemSizeMB(quota.getGlobalQuotaVdsGroup().getMemSizeMB());
+                    cluster.setVirtualCpu(quota.getGlobalQuotaVdsGroup().getVirtualCpu());
+                    cluster.setMemSizeMBUsage(quota.getGlobalQuotaVdsGroup().getMemSizeMBUsage());
+                    cluster.setVirtualCpuUsage(quota.getGlobalQuotaVdsGroup().getVirtualCpuUsage());
                 } else {
                     quotaModel.getSpecificClusterQuota().setEntity(true);
                 }
-
-                if (quota.getQuotaStorages() == null || quota.getQuotaStorages().size() == 0) {
+                hasSpecificLimitation = quota.getQuotaStorages() == null || quota.getQuotaStorages().size() == 0;
+                if (hasSpecificLimitation
+                        && quota.getGlobalQuotaStorage() != null) {
                     quotaModel.getGlobalStorageQuota().setEntity(true);
                     QuotaStorage storage = ((ArrayList<QuotaStorage>) quotaModel.getQuotaStorages().getItems()).get(0);
-                    storage.setStorageSizeGB(quota.getStorageSizeGB());
-                    storage.setStorageSizeGBUsage(quota.getStorageSizeGBUsage());
+                    storage.setStorageSizeGB(quota.getGlobalQuotaStorage().getStorageSizeGB());
+                    storage.setStorageSizeGBUsage(quota.getGlobalQuotaStorage().getStorageSizeGBUsage());
                 } else {
                     quotaModel.getSpecificStorageQuota().setEntity(true);
                 }
@@ -400,7 +406,7 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
                                 ArrayList<storage_domains> storageList = (ArrayList<storage_domains>) returnValue;
 
                                 if (storageList == null || storageList.size() == 0) {
-                                    quotaModel.getAllDataCenterClusters().setItems(new ArrayList<QuotaStorage>());
+                                    quotaModel.getAllDataCenterStorages().setItems(new ArrayList<QuotaStorage>());
                                     return;
                                 }
                                 ArrayList<QuotaStorage> quotaStorageList = new ArrayList<QuotaStorage>();

@@ -27,7 +27,7 @@ import org.ovirt.engine.core.compat.INotifyPropertyChanged;
  * <BR/>
  * Take in notice there can not be general limitation and specific limitation on the same resource type.
  */
-public class Quota extends IVdcQueryable implements INotifyPropertyChanged, Serializable, QuotaVdsGroupProperties, QuotaStorageProperties {
+public class Quota extends IVdcQueryable implements INotifyPropertyChanged, Serializable {
 
     /**
      * Automatic generated serial version ID.
@@ -91,37 +91,14 @@ public class Quota extends IVdcQueryable implements INotifyPropertyChanged, Seri
     private int graceStoragePercentage;
 
     /**
-     * The global storage limit in Giga bytes.
+     * The global quota vds group limit.
      */
-    @Min(-1)
-    private Long storageSizeGB;
+    private QuotaVdsGroup globalQuotaVdsGroup;
 
     /**
-     * Transient field indicates the global storage usage in Giga bytes for Quota.
+     * The global quota storage limit.
      */
-    private Double storageSizeGBUsage;
-
-    /**
-     * The global virtual CPU limitations.
-     */
-    @Min(-1)
-    private Integer virtualCpu;
-
-    /**
-     * Transient field indicates the global virtual CPU usage for Quota.
-     */
-    private Integer virtualCpuUsage;
-
-    /**
-     * The global virtual memory limitations for Quota.
-     */
-    @Min(-1)
-    private Long memSizeMB;
-
-    /**
-     * Transient field indicates the global virtual memory usage for Quota.
-     */
-    private Long memSizeMBUsage;
+    private QuotaStorage globalQuotaStorage;
 
     /**
      * The quota enforcement type.
@@ -317,96 +294,6 @@ public class Quota extends IVdcQueryable implements INotifyPropertyChanged, Seri
     }
 
     /**
-     * @return the memSizeMBUsage
-     */
-    public Long getMemSizeMBUsage() {
-        return memSizeMBUsage;
-    }
-
-    /**
-     * @param memSizeMBUsage
-     *            the memSizeMBUsage to set
-     */
-    public void setMemSizeMBUsage(Long memSizeMBUsage) {
-        this.memSizeMBUsage = memSizeMBUsage;
-    }
-
-    /**
-     * @return the memSizeMB
-     */
-    public Long getMemSizeMB() {
-        return memSizeMB;
-    }
-
-    /**
-     * @param memSizeMB
-     *            the memSizeMB to set
-     */
-    public void setMemSizeMB(Long memSizeMB) {
-        this.memSizeMB = memSizeMB;
-    }
-
-    /**
-     * @return the virtualCpuUsage
-     */
-    public Integer getVirtualCpuUsage() {
-        return virtualCpuUsage;
-    }
-
-    /**
-     * @param virtualCpuUsage
-     *            the virtualCpuUsage to set
-     */
-    public void setVirtualCpuUsage(Integer virtualCpuUsage) {
-        this.virtualCpuUsage = virtualCpuUsage;
-    }
-
-    /**
-     * @return the virtualCpu
-     */
-    public Integer getVirtualCpu() {
-        return virtualCpu;
-    }
-
-    /**
-     * @param virtualCpu
-     *            the virtualCpu to set
-     */
-    public void setVirtualCpu(Integer virtualCpu) {
-        this.virtualCpu = virtualCpu;
-    }
-
-    /**
-     * @return the storageSizeGBUsage
-     */
-    public Double getStorageSizeGBUsage() {
-        return storageSizeGBUsage;
-    }
-
-    /**
-     * @param storageSizeGBUsage
-     *            the storageSizeGBUsage to set
-     */
-    public void setStorageSizeGBUsage(Double storageSizeGBUsage) {
-        this.storageSizeGBUsage = storageSizeGBUsage;
-    }
-
-    /**
-     * @return the storageSizeGB
-     */
-    public Long getStorageSizeGB() {
-        return storageSizeGB;
-    }
-
-    /**
-     * @param storageSizeGB
-     *            the storageSizeGB to set
-     */
-    public void setStorageSizeGB(Long storageSizeGB) {
-        this.storageSizeGB = storageSizeGB;
-    }
-
-    /**
      * @return the quotaEnforcementType
      */
     public QuotaEnforcmentTypeEnum getQuotaEnforcementType() {
@@ -442,11 +329,41 @@ public class Quota extends IVdcQueryable implements INotifyPropertyChanged, Seri
         isDefaultQuota = value;
     }
 
+    /**
+     * @return If this there is a global storage limitation in the quota, returns true.
+     */
+    public boolean isGlobalStorageQuota() {
+        return globalQuotaStorage != null;
+    }
+
+    /**
+     * @return If this there is a global vds group limitation in the quota, returns true.
+     */
+    public boolean isGlobalVdsGroupQuota() {
+        return globalQuotaVdsGroup != null;
+    }
+
+    /**
+     * @return If the storage quota is empty, returns true.
+     */
+    public boolean isEmptyStorageQuota() {
+        return globalQuotaStorage == null && (getQuotaStorages() == null || getQuotaStorages().isEmpty());
+    }
+
+    /**
+     * @return If the vdsGroup quota is empty, returns true.
+     */
+    public boolean isEmptyVdsGroupQuota() {
+        return globalQuotaVdsGroup == null && (getQuotaVdsGroups() == null || getQuotaVdsGroups().isEmpty());
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((description == null) ? 0 : description.hashCode());
+        result = prime * result + ((globalQuotaStorage == null) ? 0 : globalQuotaStorage.hashCode());
+        result = prime * result + ((globalQuotaVdsGroup == null) ? 0 : globalQuotaVdsGroup.hashCode());
         result = prime * result + graceStoragePercentage;
         result = prime * result + graceVdsGroupPercentage;
         result = prime * result + ((id == null) ? 0 : id.hashCode());
@@ -454,12 +371,9 @@ public class Quota extends IVdcQueryable implements INotifyPropertyChanged, Seri
         result = prime * result + ((quotaName == null) ? 0 : quotaName.hashCode());
         result = prime * result + ((quotaStorageList == null) ? 0 : quotaStorageList.hashCode());
         result = prime * result + ((quotaVdsGroupList == null) ? 0 : quotaVdsGroupList.hashCode());
-        result = prime * result + ((storageSizeGB == null) ? 0 : storageSizeGB.hashCode());
         result = prime * result + ((storagePoolId == null) ? 0 : storagePoolId.hashCode());
         result = prime * result + thresholdStoragePercentage;
         result = prime * result + thresholdVdsGroupPercentage;
-        result = prime * result + ((virtualCpu == null) ? 0 : virtualCpu.hashCode());
-        result = prime * result + ((memSizeMB == null) ? 0 : memSizeMB.hashCode());
         return result;
     }
 
@@ -477,6 +391,16 @@ public class Quota extends IVdcQueryable implements INotifyPropertyChanged, Seri
             if (other.description != null)
                 return false;
         } else if (!description.equals(other.description))
+            return false;
+        if (globalQuotaStorage == null) {
+            if (other.globalQuotaStorage != null)
+                return false;
+        } else if (!globalQuotaStorage.equals(other.globalQuotaStorage))
+            return false;
+        if (globalQuotaVdsGroup == null) {
+            if (other.globalQuotaVdsGroup != null)
+                return false;
+        } else if (!globalQuotaVdsGroup.equals(other.globalQuotaVdsGroup))
             return false;
         if (graceStoragePercentage != other.graceStoragePercentage)
             return false;
@@ -504,11 +428,6 @@ public class Quota extends IVdcQueryable implements INotifyPropertyChanged, Seri
                 return false;
         } else if (!quotaVdsGroupList.equals(other.quotaVdsGroupList))
             return false;
-        if (storageSizeGB == null) {
-            if (other.storageSizeGB != null)
-                return false;
-        } else if (!storageSizeGB.equals(other.storageSizeGB))
-            return false;
         if (storagePoolId == null) {
             if (other.storagePoolId != null)
                 return false;
@@ -518,16 +437,22 @@ public class Quota extends IVdcQueryable implements INotifyPropertyChanged, Seri
             return false;
         if (thresholdVdsGroupPercentage != other.thresholdVdsGroupPercentage)
             return false;
-        if (virtualCpu == null) {
-            if (other.virtualCpu != null)
-                return false;
-        } else if (!virtualCpu.equals(other.virtualCpu))
-            return false;
-        if (memSizeMB == null) {
-            if (other.memSizeMB != null)
-                return false;
-        } else if (!memSizeMB.equals(other.memSizeMB))
-            return false;
         return true;
+    }
+
+    public QuotaVdsGroup getGlobalQuotaVdsGroup() {
+        return globalQuotaVdsGroup;
+    }
+
+    public void setGlobalQuotaVdsGroup(QuotaVdsGroup globalQuotaVdsGroup) {
+        this.globalQuotaVdsGroup = globalQuotaVdsGroup;
+    }
+
+    public QuotaStorage getGlobalQuotaStorage() {
+        return globalQuotaStorage;
+    }
+
+    public void setGlobalQuotaStorage(QuotaStorage globalQuotaStorage) {
+        this.globalQuotaStorage = globalQuotaStorage;
     }
 }

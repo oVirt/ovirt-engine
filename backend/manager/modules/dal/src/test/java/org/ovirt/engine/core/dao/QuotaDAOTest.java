@@ -98,8 +98,7 @@ public class QuotaDAOTest extends BaseDAOTestCase {
         quota.setGraceStoragePercentage(Config.<Integer> GetValue(ConfigValues.QuotaGraceStorage));
         quota.setQuotaVdsGroups(getQuotaVdsGroup(getSpecificQuotaVdsGroup(quotaId)));
         quota.setQuotaStorages(getQuotaStorage(null));
-        quota.setStorageSizeGB(10000l);
-        quota.setStorageSizeGBUsage(0d);
+        quota.setGlobalQuotaStorage(new QuotaStorage(null,null,null,10000l,0d));
         dao.save(quota);
 
         Quota quotaEntity = dao.getById(quota.getId());
@@ -299,11 +298,11 @@ public class QuotaDAOTest extends BaseDAOTestCase {
         // Check before the update, that the fields are not equal.
         assertEquals(quotaName.equals(quotaGeneralToSpecific.getQuotaName()), false);
         assertEquals(quotaVdsGroupList.size() == quotaGeneralToSpecific.getQuotaVdsGroups().size(), false);
-        assertEquals(quotaGeneralToSpecific.getStorageSizeGB().equals(newStorageLimit), false);
+        assertEquals(quotaGeneralToSpecific.getGlobalQuotaStorage().getStorageSizeGB().equals(newStorageLimit), false);
 
         // Update
         quotaGeneralToSpecific.setQuotaName(quotaName);
-        quotaGeneralToSpecific.setStorageSizeGB(newStorageLimit);
+        quotaGeneralToSpecific.getGlobalQuotaStorage().setStorageSizeGB(newStorageLimit);
         quotaGeneralToSpecific.setQuotaVdsGroups(quotaVdsGroupList);
 
         dao.update(quotaGeneralToSpecific);
@@ -312,7 +311,7 @@ public class QuotaDAOTest extends BaseDAOTestCase {
         // Check after the update, that the fields are equal now.
         assertEquals(quotaName.equals(quotaGeneralToSpecific.getQuotaName()), true);
         assertEquals(quotaVdsGroupList.size() == quotaGeneralToSpecific.getQuotaVdsGroups().size(), true);
-        assertEquals(quotaGeneralToSpecific.getStorageSizeGB().equals(newStorageLimit), true);
+        assertEquals(quotaGeneralToSpecific.getGlobalQuotaStorage().getStorageSizeGB().equals(newStorageLimit), true);
     }
 
     /**
@@ -482,16 +481,21 @@ public class QuotaDAOTest extends BaseDAOTestCase {
     }
 
     private void setQuotaGlobalLimitations(Quota quota) {
+        QuotaStorage quotaStorage = new QuotaStorage();
+        QuotaVdsGroup quotaVdsGroup = new QuotaVdsGroup();
         // Set Quota storage capacity definition.
-        quota.setStorageSizeGB(10000l);
-        quota.setStorageSizeGBUsage(0d);
+        quotaStorage.setStorageSizeGB(10000l);
+        quotaStorage.setStorageSizeGBUsage(0d);
 
         // Set Quota cluster virtual memory definition.
-        quota.setMemSizeMB(16000000l);
-        quota.setMemSizeMBUsage(0l);
+        quotaVdsGroup.setMemSizeMB(16000000l);
+        quotaVdsGroup.setMemSizeMBUsage(0l);
 
         // Set Quota cluster virtual CPU definition.
-        quota.setVirtualCpu(2880);
-        quota.setVirtualCpuUsage(0);
+        quotaVdsGroup.setVirtualCpu(2880);
+        quotaVdsGroup.setVirtualCpuUsage(0);
+
+        quota.setGlobalQuotaStorage(quotaStorage);
+        quota.setGlobalQuotaVdsGroup(quotaVdsGroup);
     }
 }

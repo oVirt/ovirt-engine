@@ -114,13 +114,15 @@ public class QuotaHelper {
         quota.setQuotaStorages(new ArrayList<QuotaStorage>());
 
         // Set Quota storage capacity definition.
-        quota.setStorageSizeGB(UNLIMITED);
+        QuotaStorage quotaStorage = new QuotaStorage();
+        quotaStorage.setStorageSizeGB(UNLIMITED);
+        quota.setGlobalQuotaStorage(quotaStorage);
 
-        // Set Quota cluster virtual memory definition.
-        quota.setMemSizeMB(UNLIMITED);
-
-        // Set Quota cluster virtual CPU definition.
-        quota.setVirtualCpu(UNLIMITED.intValue());
+        // Set Quota cluster virtual memory definition and virtual CPU definition.
+        QuotaVdsGroup quotaVdsGroup = new QuotaVdsGroup();
+        quotaVdsGroup.setVirtualCpu(UNLIMITED.intValue());
+        quotaVdsGroup.setMemSizeMB(UNLIMITED);
+        quota.setGlobalQuotaVdsGroup(quotaVdsGroup);
 
         return quota;
     }
@@ -241,7 +243,7 @@ public class QuotaHelper {
     private static boolean validateQuotaStorageLimitation(Quota quota, List<String> messages) {
         boolean isValid = true;
         List<QuotaStorage> quotaStorageList = quota.getQuotaStorages();
-        if (quotaStorageList != null && !quotaStorageList.isEmpty() && isGlobalLimitExist(quota.getStorageSizeGB())) {
+        if (quota.isGlobalStorageQuota() && (quotaStorageList != null && !quotaStorageList.isEmpty())) {
             messages.add(VdcBllMessages.ACTION_TYPE_FAILED_QUOTA_LIMIT_IS_SPECIFIC_AND_GENERAL.toString());
             isValid = false;
         }
@@ -274,17 +276,12 @@ public class QuotaHelper {
             }
 
             // if the global vds group limit was not specified, then specific limitation must be specified.
-            if ((isGlobalLimitExist(quota.getMemSizeMB()) && isSpecificVirtualRam)
-                    || (isGlobalLimitExist(quota.getVirtualCpu()) && isSpecificVirtualCpu)) {
+            if (quota.isGlobalVdsGroupQuota() && (isSpecificVirtualRam || isSpecificVirtualCpu)) {
                 messages.add(VdcBllMessages.ACTION_TYPE_FAILED_QUOTA_LIMIT_IS_SPECIFIC_AND_GENERAL.toString());
                 isValid = false;
             }
         }
         return isValid;
-    }
-
-    private static boolean isGlobalLimitExist(Object globalStorageLimit) {
-        return globalStorageLimit != null;
     }
 
     /**

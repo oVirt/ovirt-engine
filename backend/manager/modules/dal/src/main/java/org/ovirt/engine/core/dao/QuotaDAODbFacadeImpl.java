@@ -7,9 +7,7 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcmentTypeEnum;
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;
-import org.ovirt.engine.core.common.businessentities.QuotaStorageProperties;
 import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
-import org.ovirt.engine.core.common.businessentities.QuotaVdsGroupProperties;
 import org.ovirt.engine.core.compat.Guid;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
@@ -187,7 +185,7 @@ public class QuotaDAODbFacadeImpl extends BaseDAODbFacade implements QuotaDAO {
     /**
      * Return initialized entity with quota Vds group result set.
      */
-    private <T extends QuotaStorageProperties> ParameterizedRowMapper<QuotaVdsGroup> getVdsGroupQuotaResultSet() {
+    private ParameterizedRowMapper<QuotaVdsGroup> getVdsGroupQuotaResultSet() {
         ParameterizedRowMapper<QuotaVdsGroup> mapperQuotaLimitation = new ParameterizedRowMapper<QuotaVdsGroup>() {
             @Override
             public QuotaVdsGroup mapRow(ResultSet rs, int rowNum)
@@ -197,7 +195,11 @@ public class QuotaDAODbFacadeImpl extends BaseDAODbFacade implements QuotaDAO {
                 entity.setQuotaVdsGroupId(Guid.createGuidFromString(rs.getString("quota_vds_group_id")));
                 entity.setVdsGroupId(Guid.createGuidFromString(rs.getString("vds_group_id")));
                 entity.setVdsGroupName(rs.getString("vds_group_name"));
-                mapVdsGroupResultSet(rs, entity);
+                entity.setMemSizeMB((Long) rs.getObject("mem_size_mb"));
+                entity.setMemSizeMBUsage((Long) rs.getObject("mem_size_mb_usage"));
+                entity.setVirtualCpu((Integer) rs.getObject("virtual_cpu"));
+                entity.setVirtualCpuUsage((Integer) rs.getObject("virtual_cpu_usage"));
+
                 return entity;
             }
         };
@@ -217,7 +219,8 @@ public class QuotaDAODbFacadeImpl extends BaseDAODbFacade implements QuotaDAO {
                 entity.setQuotaStorageId(Guid.createGuidFromString(rs.getString("quota_storage_id")));
                 entity.setStorageId(Guid.createGuidFromString(rs.getString("storage_id")));
                 entity.setStorageName(rs.getString("storage_name"));
-                mapStorageResultSet(rs, entity);
+                entity.setStorageSizeGB((Long) rs.getObject("storage_size_gb"));
+                entity.setStorageSizeGBUsage((Double) rs.getObject("storage_size_gb_usage"));
                 return entity;
             }
         };
@@ -233,8 +236,29 @@ public class QuotaDAODbFacadeImpl extends BaseDAODbFacade implements QuotaDAO {
             public Quota mapRow(ResultSet rs, int rowNum)
                     throws SQLException {
                 Quota entity = getQuotaMetaDataFromResultSet(rs);
-                mapVdsGroupResultSet(rs, entity);
-                mapStorageResultSet(rs, entity);
+
+                // Check if memory size is not null, this is an indication if global limitation for vds group exists or
+                // not, since global limitation must be for all the quota vds group parameters.
+                if (rs.getObject("mem_size_mb") != null) {
+                    // Set global vds group quota.
+                    QuotaVdsGroup vdsGroupEntity = new QuotaVdsGroup();
+                    vdsGroupEntity.setMemSizeMB((Long) rs.getObject("mem_size_mb"));
+                    vdsGroupEntity.setMemSizeMBUsage((Long) rs.getObject("mem_size_mb_usage"));
+                    vdsGroupEntity.setVirtualCpu((Integer) rs.getObject("virtual_cpu"));
+                    vdsGroupEntity.setVirtualCpuUsage((Integer) rs.getObject("virtual_cpu_usage"));
+                    entity.setGlobalQuotaVdsGroup(vdsGroupEntity);
+                }
+
+                // Check if storage limit size is not null, this is an indication if global limitation for storage exists or
+                // not.
+                if (rs.getObject("storage_size_gb") != null) {
+                    // Set global storage quota.
+                    QuotaStorage storageEntity = new QuotaStorage();
+                    storageEntity.setStorageSizeGB((Long) rs.getObject("storage_size_gb"));
+                    storageEntity.setStorageSizeGBUsage((Double) rs.getObject("storage_size_gb_usage"));
+                    entity.setGlobalQuotaStorage(storageEntity);
+                }
+
                 return entity;
             }
         };
@@ -272,21 +296,6 @@ public class QuotaDAODbFacadeImpl extends BaseDAODbFacade implements QuotaDAO {
     }
 
 
-    /**
-     * Returns initialized entity with quota meta data result set.
-     */
-    private void mapStorageResultSet(ResultSet rs, QuotaStorageProperties entity) throws SQLException {
-        entity.setStorageSizeGB((Long) rs.getObject("storage_size_gb"));
-        entity.setStorageSizeGBUsage((Double) rs.getObject("storage_size_gb_usage"));
-    }
-
-    private void mapVdsGroupResultSet(ResultSet rs, QuotaVdsGroupProperties entity) throws SQLException {
-        entity.setMemSizeMB((Long) rs.getObject("mem_size_mb"));
-        entity.setMemSizeMBUsage((Long) rs.getObject("mem_size_mb_usage"));
-        entity.setVirtualCpu((Integer) rs.getObject("virtual_cpu"));
-        entity.setVirtualCpuUsage((Integer) rs.getObject("virtual_cpu_usage"));
-    }
-
     private MapSqlParameterSource createQuotaIdParameterMapper(Guid quotaId) {
         MapSqlParameterSource quotaParameterSource = getCustomMapSqlParameterSource()
                 .addValue("id", quotaId);
@@ -307,11 +316,10 @@ public class QuotaDAODbFacadeImpl extends BaseDAODbFacade implements QuotaDAO {
                 createQuotaIdParameterMapper(quotaStorage.getQuotaStorageId()).addValue("quota_id",
                         quotaId)
                         .addValue("storage_id", quotaStorage.getStorageId())
-                        .addValue("vds_group_id", null);
-        addQuotaStorageLimitMapper(quotaStorage, storageQuotaParameterMap);
-
-        // Add null to storage parameter map to indicate the limit is only for specific storage.
-        addQuotaVdsGroupLimitMapper(null, storageQuotaParameterMap);
+                        .addValue("vds_group_id", null)
+                        .addValue("storage_size_gb", quotaStorage.getStorageSizeGB())
+                        .addValue("virtual_cpu", null)
+                        .addValue("mem_size_mb", null);
         return storageQuotaParameterMap;
     }
 
@@ -329,11 +337,10 @@ public class QuotaDAODbFacadeImpl extends BaseDAODbFacade implements QuotaDAO {
         MapSqlParameterSource vdsGroupQuotaParameterMap =
                 createQuotaIdParameterMapper(quotaVdsGroup.getQuotaVdsGroupId()).addValue("quota_id", quotaId)
                         .addValue("vds_group_id", quotaVdsGroup.getVdsGroupId())
-                        .addValue("storage_id", null);
-
-        // Add null to vds group parameter map to indicate the limit is only for specific vdsGroup.
-        addQuotaStorageLimitMapper(null, vdsGroupQuotaParameterMap);
-        addQuotaVdsGroupLimitMapper(quotaVdsGroup, vdsGroupQuotaParameterMap);
+                        .addValue("storage_id", null)
+                        .addValue("storage_size_gb", null)
+                        .addValue("virtual_cpu", quotaVdsGroup.getVirtualCpu())
+                        .addValue("mem_size_mb", quotaVdsGroup.getMemSizeMB());
         return vdsGroupQuotaParameterMap;
     }
 
@@ -350,22 +357,11 @@ public class QuotaDAODbFacadeImpl extends BaseDAODbFacade implements QuotaDAO {
                         .addValue("id", quota.getId())
                         .addValue("quota_id", quota.getId())
                         .addValue("vds_group_id", null)
-                        .addValue("storage_id", null);
-        addQuotaStorageLimitMapper(quota, quotaParameterMap);
-        addQuotaVdsGroupLimitMapper(quota, quotaParameterMap);
+                        .addValue("storage_id", null)
+                        .addValue("storage_size_gb", quota.getGlobalQuotaStorage() != null ? quota.getGlobalQuotaStorage().getStorageSizeGB() : null)
+                        .addValue("virtual_cpu", quota.getGlobalQuotaVdsGroup() != null ? quota.getGlobalQuotaVdsGroup().getVirtualCpu() : null)
+                        .addValue("mem_size_mb", quota.getGlobalQuotaVdsGroup() != null ? quota.getGlobalQuotaVdsGroup().getMemSizeMB() : null);
         return quotaParameterMap;
-    }
-
-    private MapSqlParameterSource addQuotaStorageLimitMapper(QuotaStorageProperties quotaStorage,
-            MapSqlParameterSource map) {
-        return map.addValue("storage_size_gb",
-                quotaStorage != null ? quotaStorage.getStorageSizeGB() : null);
-    }
-
-    private MapSqlParameterSource addQuotaVdsGroupLimitMapper(QuotaVdsGroupProperties quotaVdsGroup,
-            MapSqlParameterSource map) {
-        return map.addValue("virtual_cpu", quotaVdsGroup != null ? quotaVdsGroup.getVirtualCpu() : null)
-                .addValue("mem_size_mb", quotaVdsGroup != null ? quotaVdsGroup.getMemSizeMB() : null);
     }
 
     private MapSqlParameterSource createQuotaMetaDataParameterMapper(Quota quota) {

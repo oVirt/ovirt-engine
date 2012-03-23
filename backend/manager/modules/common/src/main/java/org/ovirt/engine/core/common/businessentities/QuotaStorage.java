@@ -8,9 +8,9 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.INotifyPropertyChanged;
 
 /**
- * <code>QuotaStorage</code> is a business entity that reflects storage limitation for specific storage domain.
+ * <code>QuotaStorage</code> is a business entity that reflects storage limitation.
  */
-public class QuotaStorage extends IVdcQueryable implements INotifyPropertyChanged, Serializable, QuotaStorageProperties {
+public class QuotaStorage extends IVdcQueryable implements INotifyPropertyChanged, Serializable {
 
     /**
      * Automatic generated serial version ID.

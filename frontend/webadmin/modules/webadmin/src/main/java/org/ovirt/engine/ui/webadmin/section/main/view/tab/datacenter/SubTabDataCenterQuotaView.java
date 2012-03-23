@@ -47,24 +47,24 @@ public class SubTabDataCenterQuotaView extends AbstractSubTabTableView<storage_p
         getTable().addColumn(new TextColumnWithTooltip<Quota>() {
             @Override
             public String getValue(Quota object) {
-                return (object.getMemSizeMBUsage() == null ? "0" : object.getMemSizeMBUsage().toString()) + "/"
-                        + (object.getMemSizeMB() == null ? "*" : object.getMemSizeMB().toString()) + " GB";
+                return (object.getGlobalQuotaVdsGroup().getMemSizeMBUsage() == null ? "0" : object.getGlobalQuotaVdsGroup().getMemSizeMBUsage().toString()) + "/"
+                        + (object.getGlobalQuotaVdsGroup().getMemSizeMB() == null ? "*" : object.getGlobalQuotaVdsGroup().getMemSizeMB().toString()) + " GB";
             }
         },
                 "Used Memory/Total");
         getTable().addColumn(new TextColumnWithTooltip<Quota>() {
             @Override
             public String getValue(Quota object) {
-                return (object.getVirtualCpuUsage() == null ? "0" : object.getVirtualCpuUsage().toString()) + "/"
-                        + (object.getVirtualCpu() == null ? "*" : object.getVirtualCpu().toString());
+                return (object.getGlobalQuotaVdsGroup().getVirtualCpuUsage() == null ? "0" : object.getGlobalQuotaVdsGroup().getVirtualCpuUsage().toString()) + "/"
+                        + (object.getGlobalQuotaVdsGroup().getVirtualCpu() == null ? "*" : object.getGlobalQuotaVdsGroup().getVirtualCpu().toString());
             }
         },
                 "Running CPU/Total");
         getTable().addColumn(new TextColumnWithTooltip<Quota>() {
             @Override
             public String getValue(Quota object) {
-                return (object.getStorageSizeGBUsage() == null ? "0" : object.getStorageSizeGBUsage().toString()) + "/"
-                        + (object.getStorageSizeGB() == null ? "*" : object.getStorageSizeGB().toString()) + " GB";
+                return (object.getGlobalQuotaStorage().getStorageSizeGBUsage() == null ? "0" : object.getGlobalQuotaStorage().getStorageSizeGBUsage().toString()) + "/"
+                        + (object.getGlobalQuotaStorage().getStorageSizeGB() == null ? "*" : object.getGlobalQuotaStorage().getStorageSizeGB().toString()) + " GB";
             }
         },
                 "Used Storage/Total");

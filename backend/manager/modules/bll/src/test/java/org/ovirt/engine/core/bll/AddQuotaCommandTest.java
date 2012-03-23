@@ -16,6 +16,8 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.ovirt.engine.core.common.action.QuotaCRUDParameters;
 import org.ovirt.engine.core.common.businessentities.Quota;
+import org.ovirt.engine.core.common.businessentities.QuotaStorage;
+import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.compat.Guid;
@@ -94,12 +96,18 @@ public class AddQuotaCommandTest {
         Quota generalQuota = new Quota();
         generalQuota.setDescription("New Quota to create");
         generalQuota.setQuotaName("New Quota Name");
-        generalQuota.setStorageSizeGB(100l);
-        generalQuota.setStorageSizeGBUsage(0d);
-        generalQuota.setVirtualCpu(0);
-        generalQuota.setVirtualCpuUsage(0);
-        generalQuota.setMemSizeMB(0l);
-        generalQuota.setMemSizeMBUsage(0l);
+        QuotaStorage storageQuota = new QuotaStorage();
+        storageQuota.setStorageSizeGB(100l);
+        storageQuota.setStorageSizeGBUsage(0d);
+        generalQuota.setGlobalQuotaStorage(storageQuota);
+
+        QuotaVdsGroup vdsGroupQuota = new QuotaVdsGroup();
+        vdsGroupQuota.setVirtualCpu(0);
+        vdsGroupQuota.setVirtualCpuUsage(0);
+        vdsGroupQuota.setMemSizeMB(0l);
+        vdsGroupQuota.setMemSizeMBUsage(0l);
+        generalQuota.setGlobalQuotaVdsGroup(vdsGroupQuota);
+
         generalQuota.setId(Guid.NewGuid());
         generalQuota.setStoragePoolId(storagePoolUUID);
         return generalQuota;
