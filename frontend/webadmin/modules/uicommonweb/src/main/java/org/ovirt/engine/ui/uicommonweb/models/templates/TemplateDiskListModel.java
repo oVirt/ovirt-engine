@@ -15,6 +15,7 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.Linq.DiskByInternalDriveMappingComparer;
+import org.ovirt.engine.ui.uicommonweb.Linq.StorageDomainByNameComparer;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
@@ -49,6 +50,8 @@ public class TemplateDiskListModel extends SearchableListModel
         this.storageDomains = storageDomains;
     }
 
+    Iterable value;
+
     public TemplateDiskListModel()
     {
         setTitle("Virtual Disks");
@@ -58,16 +61,6 @@ public class TemplateDiskListModel extends SearchableListModel
         UpdateActionAvailability();
 
         setStorageDomains(new ArrayList<storage_domains>());
-
-        AsyncDataProvider.GetStorageDomainList(new AsyncQuery(this,
-                new INewAsyncCallback() {
-                    @Override
-                    public void OnSuccess(Object target, Object returnValue) {
-                        TemplateDiskListModel model = (TemplateDiskListModel) target;
-                        ArrayList<storage_domains> storageDomains = (ArrayList<storage_domains>) returnValue;
-                        model.storageDomains = storageDomains;
-                    }
-                }));
     }
 
     @Override
@@ -117,11 +110,30 @@ public class TemplateDiskListModel extends SearchableListModel
     @Override
     public void setItems(Iterable value)
     {
-        ArrayList<DiskImage> disks =
-                value != null ? Linq.<DiskImage> Cast(value) : new ArrayList<DiskImage>();
+        if (!getStorageDomains().isEmpty())
+        {
+            ArrayList<DiskImage> disks =
+                    value != null ? Linq.<DiskImage> Cast(value) : new ArrayList<DiskImage>();
 
-        Linq.Sort(disks, new DiskByInternalDriveMappingComparer());
-        super.setItems(disks);
+            Linq.Sort(disks, new DiskByInternalDriveMappingComparer());
+            super.setItems(disks);
+        }
+        else
+        {
+            this.value = value;
+            AsyncDataProvider.GetStorageDomainList(new AsyncQuery(this,
+                    new INewAsyncCallback() {
+                        @Override
+                        public void OnSuccess(Object target, Object returnValue) {
+                            TemplateDiskListModel model = (TemplateDiskListModel) target;
+                            ArrayList<storage_domains> storageDomains = (ArrayList<storage_domains>) returnValue;
+
+                            Linq.Sort(storageDomains, new StorageDomainByNameComparer());
+                            setStorageDomains(storageDomains);
+                            setItems(model.value);
+                        }
+                    }));
+        }
 
         UpdateActionAvailability();
     }

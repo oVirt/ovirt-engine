@@ -170,10 +170,22 @@ public class TemplateModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<storage_domains, TemplateListModel, TemplateStorageListModel> getTemplateStorageListProvider(ClientGinjector ginjector) {
+    public SearchableDetailModelProvider<storage_domains, TemplateListModel, TemplateStorageListModel> getTemplateStorageListProvider(ClientGinjector ginjector,
+            final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
         return new SearchableDetailTabModelProvider<storage_domains, TemplateListModel, TemplateStorageListModel>(ginjector,
                 TemplateListModel.class,
-                TemplateStorageListModel.class);
+                TemplateStorageListModel.class) {
+            @Override
+            protected AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(UICommand lastExecutedCommand) {
+                TemplateStorageListModel model = getModel();
+
+                if (lastExecutedCommand == model.getRemoveCommand()) {
+                    return removeConfirmPopupProvider.get();
+                } else {
+                    return super.getConfirmModelPopup(lastExecutedCommand);
+                }
+            }
+        };
     }
 
     @Provides

@@ -37,7 +37,7 @@ public class DisksTree extends AbstractSubTabTree<TemplateDiskListModel, DiskIma
         this.resources = (ApplicationResources) resources;
         this.constants = (ApplicationConstants) constants;
 
-        setSelectionEnabled(true);
+        setRootSelectionEnabled(true);
     }
 
     @Override

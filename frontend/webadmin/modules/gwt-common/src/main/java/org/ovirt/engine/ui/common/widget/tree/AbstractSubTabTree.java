@@ -47,12 +47,15 @@ public abstract class AbstractSubTabTree<M extends SearchableListModel, R, N> ex
 
     protected M listModel;
 
-    protected boolean isSelectionEnabled;
+    protected boolean isRootSelectionEnabled;
+    protected boolean isNodeSelectionEnabled;
     protected boolean isMultiSelection;
     protected boolean isControlKeyDown;
 
     protected final CommonApplicationResources resources;
     protected final CommonApplicationConstants constants;
+
+    protected final String NODE_HEADER = "nodeHeader";
 
     public AbstractSubTabTree(CommonApplicationResources resources, CommonApplicationConstants constants) {
         this.resources = resources;
@@ -66,7 +69,7 @@ public abstract class AbstractSubTabTree<M extends SearchableListModel, R, N> ex
         isMultiSelection = true;
 
         tree.addOpenHandler(treeOpenHandler);
-        addRootSelectionHandler();
+        addSelectionHandler();
     }
 
     public boolean isMultiSelection() {
@@ -77,12 +80,21 @@ public abstract class AbstractSubTabTree<M extends SearchableListModel, R, N> ex
         this.isMultiSelection = isMultiSelection;
     }
 
-    public boolean isSelectionEnabled() {
-        return isSelectionEnabled;
+    public boolean isRootSelectionEnabled() {
+        return isRootSelectionEnabled;
     }
 
-    public void setSelectionEnabled(boolean isSelectionEnabled) {
-        this.isSelectionEnabled = isSelectionEnabled;
+    public void setRootSelectionEnabled(boolean isRootSelectionEnabled) {
+        this.isRootSelectionEnabled = isRootSelectionEnabled;
+        selectedItems.clear();
+    }
+
+    public boolean isNodeSelectionEnabled() {
+        return isNodeSelectionEnabled;
+    }
+
+    public void setNodeSelectionEnabled(boolean isNodeSelectionEnabled) {
+        this.isNodeSelectionEnabled = isNodeSelectionEnabled;
         selectedItems.clear();
     }
 
@@ -125,12 +137,14 @@ public abstract class AbstractSubTabTree<M extends SearchableListModel, R, N> ex
         for (int i = 0; i < tree.getItemCount(); i++) {
             TreeItem root = tree.getItem(i);
             root.setState(getItemOldState(root));
-            updateItemSelection(root);
+            if (isRootSelectionEnabled)
+                updateItemSelection(root);
 
             for (int n = 0; n < root.getChildCount(); n++) {
                 TreeItem node = root.getChild(n);
                 node.setState(getItemOldState(node));
-                updateItemSelection(node);
+                if (isNodeSelectionEnabled)
+                    updateItemSelection(node);
             }
         }
 
@@ -291,7 +305,7 @@ public abstract class AbstractSubTabTree<M extends SearchableListModel, R, N> ex
         }
     }
 
-    public void addRootSelectionHandler() {
+    public void addSelectionHandler() {
         tree.addSelectionHandler(new SelectionHandler<TreeItem>() {
             @Override
             public void onSelection(SelectionEvent<TreeItem> event) {
@@ -326,31 +340,28 @@ public abstract class AbstractSubTabTree<M extends SearchableListModel, R, N> ex
     private void onItemSelection(TreeItem item, boolean enforceSelection) {
         Object entity = (Object) item.getUserObject();
 
-        if (!isSelectionEnabled) {
+        if ((item.getParentItem() == null && !isRootSelectionEnabled) ||
+                (item.getParentItem() != null && !isNodeSelectionEnabled)) {
             return;
         }
 
-        // Root node
-        if (item.getParentItem() == null) {
-
-            if (!isControlKeyDown || !isMultiSelection) {
-                selectedItems.clear();
-            }
-
-            saveTreeState();
-            updateTreeState();
-
-            if (!selectedItems.contains(entity)) {
-                selectedItems.add(entity);
-                onItemsSelection();
-            }
-            else if (!enforceSelection) {
-                selectedItems.remove(entity);
-                onItemsSelection();
-            }
-
-            updateItemSelection(item);
+        if (!isControlKeyDown || !isMultiSelection) {
+            selectedItems.clear();
         }
+
+        saveTreeState();
+        updateTreeState();
+
+        if (!selectedItems.contains(entity)) {
+            selectedItems.add(entity);
+            onItemsSelection();
+        }
+        else if (!enforceSelection) {
+            selectedItems.remove(entity);
+            onItemsSelection();
+        }
+
+        updateItemSelection(item);
     }
 
     private void updateItemSelection(TreeItem item) {
@@ -361,32 +372,46 @@ public abstract class AbstractSubTabTree<M extends SearchableListModel, R, N> ex
 
         boolean selected = false;
         for (Object selectedEntity : selectedItems) {
-            if (entity.equals(selectedEntity)) {
+            if (entity.equals(selectedEntity) && !newSelectedItems.contains(selectedEntity)) {
                 selected = true;
                 newSelectedItems.add(selectedEntity);
             }
         }
 
-        Element tableElement = item.getElement().getElementsByTagName("table").getItem(0);
-        tableElement.getStyle().setBackgroundColor(selected ? "#C3D0E0" : "transparent");
-        tableElement.getStyle().setProperty("borderBottom", "1px solid white");
+        Element element;
+        if (item.getParentItem() == null) {
+            element = item.getElement().getElementsByTagName("table").getItem(0);
+        }
+        else {
+            element = item.getElement();
+        }
+
+        if (!NODE_HEADER.equals(item.getUserObject())) {
+            element.getStyle().setBackgroundColor(selected ? "#C3D0E0" : "transparent");
+            element.getStyle().setProperty("borderBottom", "1px solid white");
+        }
     }
 
     protected Object getEntityId(Object entity) {
         return ((BusinessEntity) entity).getId();
     }
 
-    protected void onItemsSelection() {
-        if (listModel.getItems() == null) {
-            return;
-        }
-
+    protected ArrayList<Object> getSelectedEntities() {
         ArrayList<Object> selectedEntities = new ArrayList<Object>();
         for (Object entity : (ArrayList<Object>) listModel.getItems()) {
             if (selectedItems.contains(getEntityId(entity))) {
                 selectedEntities.add(entity);
             }
         }
+        return selectedEntities;
+    }
+
+    protected void onItemsSelection() {
+        if (listModel.getItems() == null || (!isRootSelectionEnabled && !isNodeSelectionEnabled)) {
+            return;
+        }
+
+        ArrayList<Object> selectedEntities = getSelectedEntities();
 
         listModel.setSelectedItem(selectedEntities.isEmpty() ? null : selectedEntities.get(0));
 

@@ -6,6 +6,8 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.ListModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 
 public class StorageDomainModel extends EntityModel
 {
@@ -41,6 +43,23 @@ public class StorageDomainModel extends EntityModel
     public StorageDomainModel()
     {
 
+    }
+
+    public ArrayList<DiskModel> getDisksModels() {
+        ArrayList<DiskModel> diskModels = new ArrayList<DiskModel>();
+
+        for (DiskImage diskImage : getDisks()) {
+            DiskModel diskModel = new DiskModel();
+            diskModel.setDiskImage(diskImage);
+
+            ListModel storageDomain = new ListModel();
+            storageDomain.setSelectedItem(getStorageDomain());
+            diskModel.setStorageDomain(storageDomain);
+
+            diskModels.add(diskModel);
+        }
+
+        return diskModels;
     }
 
 }

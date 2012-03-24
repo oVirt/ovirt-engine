@@ -62,7 +62,7 @@ public class SnapshotsTree<L extends ListWithDetailsModel> extends AbstractSubTa
 
         super(resources, constants);
 
-        setSelectionEnabled(true);
+        setRootSelectionEnabled(true);
         setMultiSelection(false);
     }
 
@@ -74,7 +74,7 @@ public class SnapshotsTree<L extends ListWithDetailsModel> extends AbstractSubTa
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 boolean canSelectSnapshot = (Boolean) listModel.getCanSelectSnapshot().getEntity();
-                setSelectionEnabled(canSelectSnapshot);
+                setRootSelectionEnabled(canSelectSnapshot);
             }
         });
     }

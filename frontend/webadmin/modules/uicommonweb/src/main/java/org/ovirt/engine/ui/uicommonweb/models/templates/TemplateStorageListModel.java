@@ -2,15 +2,16 @@ package org.ovirt.engine.ui.uicommonweb.models.templates;
 
 import java.util.ArrayList;
 
+import org.ovirt.engine.core.common.action.RemoveDiskParameters;
+import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.action.VmTemplateParametersBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.queries.GetStorageDomainsByVmTemplateIdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -18,11 +19,16 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
+import org.ovirt.engine.ui.uicommonweb.Linq.DiskByInternalDriveMappingComparer;
+import org.ovirt.engine.ui.uicommonweb.Linq.StorageDomainModelByNameComparer;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageDomainModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
+import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
+import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
 @SuppressWarnings("unused")
 public class TemplateStorageListModel extends SearchableListModel
@@ -95,14 +101,19 @@ public class TemplateStorageListModel extends SearchableListModel
     @Override
     public void setItems(Iterable value)
     {
-        if (storageDomainModels != null) {
-            super.setItems(storageDomainModels);
+        if (storageDomainModels != null)
+        {
+            Linq.Sort(storageDomainModels, new StorageDomainModelByNameComparer());
+            ItemsChanging(value, items);
+            items = storageDomainModels;
+            ItemsChanged();
+            getItemsChangedEvent().raise(this, EventArgs.Empty);
+            OnPropertyChanged(new PropertyChangedEventArgs("Items"));
             storageDomainModels = null;
         }
         else
         {
             this.value = value;
-
             VmTemplate template = (VmTemplate) getEntity();
             AsyncDataProvider.GetTemplateDiskList(new AsyncQuery(this,
                     new INewAsyncCallback() {
@@ -126,6 +137,7 @@ public class TemplateStorageListModel extends SearchableListModel
                                     }
                                 }
 
+                                Linq.Sort(disks, new DiskByInternalDriveMappingComparer());
                                 storageDomainModel.setDisks(disks);
                                 storageDomainModels.add(storageDomainModel);
                             }
@@ -138,7 +150,7 @@ public class TemplateStorageListModel extends SearchableListModel
         }
     }
 
-    private void remove()
+    private void Remove()
     {
         VmTemplate template = (VmTemplate) getEntity();
 
@@ -149,22 +161,18 @@ public class TemplateStorageListModel extends SearchableListModel
 
         ConfirmationModel model = new ConfirmationModel();
         setWindow(model);
-        model.setTitle("Remove Template from Storage Domain");
-        model.setHashName("remove_template_from_storage_domains");
-        model.setMessage(StringFormat.format("Are you sure you want to remove the Template %1$s from the following Storage Domain(s)?",
-                template.getname()));
+        model.setTitle("Remove Template Disk(s)");
+        model.setHashName("remove_template_disks");
+        model.setMessage("Template Disk(s)");
 
-        // Show warning if template is going to be removed from all storage domains it exist on.
-        if (getSelectedItems().size() == ((java.util.List) getItems()).size())
+        ArrayList<DiskModel> disks =
+                getSelectedItems() != null ? Linq.<DiskModel> Cast(getSelectedItems()) : new ArrayList<DiskModel>();
+        ArrayList<String> items = new ArrayList<String>();
+        for (DiskModel diskModel : disks)
         {
-            model.setNote("Note: This action will remove the Template permanently from all Storage Domains.");
-        }
-
-        java.util.ArrayList<String> items = new java.util.ArrayList<String>();
-        for (Object item : getSelectedItems())
-        {
-            storage_domains a = (storage_domains) item;
-            items.add(a.getstorage_name());
+            items.add(StringFormat.format("Disk %1$s (from Stroage Domain %2$s)",
+                    diskModel.getDiskImage().getinternal_drive_mapping(),
+                    ((storage_domains) diskModel.getStorageDomain().getSelectedItem()).getstorage_name()));
         }
         model.setItems(items);
 
@@ -181,17 +189,29 @@ public class TemplateStorageListModel extends SearchableListModel
     private void OnRemove()
     {
         VmTemplate template = (VmTemplate) getEntity();
+        ConfirmationModel model = (ConfirmationModel) getWindow();
+        ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
+        ArrayList<DiskModel> disks = (ArrayList<DiskModel>) getSelectedItems();
 
-        java.util.ArrayList<Guid> ids = new java.util.ArrayList<Guid>();
-        for (Object item : getSelectedItems())
+        for (DiskModel diskModel : disks)
         {
-            storage_domains a = (storage_domains) item;
-            ids.add(a.getId());
+            RemoveDiskParameters params =
+                    new RemoveDiskParameters(diskModel.getDiskImage().getId(),
+                            ((storage_domains) diskModel.getStorageDomain().getSelectedItem()).getId());
+            parameters.add(params);
         }
 
-        VmTemplateParametersBase tempVar = new VmTemplateParametersBase(template.getId());
-        tempVar.setStorageDomainsList(ids);
-        Frontend.RunActionAsyncroniousely(VdcActionType.RemoveVmTemplate, tempVar);
+        model.StartProgress(null);
+
+        Frontend.RunMultipleAction(VdcActionType.RemoveDisk, parameters,
+                new IFrontendMultipleActionAsyncCallback() {
+                    @Override
+                    public void Executed(FrontendMultipleActionAsyncResult result) {
+                        ConfirmationModel localModel = (ConfirmationModel) result.getState();
+                        localModel.StopProgress();
+                        Cancel();
+                    }
+                }, this);
 
         Cancel();
     }
@@ -222,12 +242,32 @@ public class TemplateStorageListModel extends SearchableListModel
     private void UpdateActionAvailability()
     {
         VmTemplate template = (VmTemplate) getEntity();
-        java.util.ArrayList<storage_domains> selectedItems =
-                getSelectedItems() != null ? Linq.<storage_domains> Cast(getSelectedItems())
-                        : new java.util.ArrayList<storage_domains>();
+        ArrayList<StorageDomainModel> selectedItems = getSelectedItems() != null ?
+                Linq.<StorageDomainModel> Cast(getSelectedItems()) : new ArrayList<StorageDomainModel>();
 
-        getRemoveCommand().setIsExecutionAllowed(template != null && template.getstatus() == VmTemplateStatus.OK
-                && selectedItems.size() > 0);
+        getRemoveCommand().setIsExecutionAllowed(isRemoveCommandAvailable());
+    }
+
+    private boolean isRemoveCommandAvailable()
+    {
+        ArrayList<DiskModel> disks =
+                getSelectedItems() != null ? Linq.<DiskModel> Cast(getSelectedItems()) : new ArrayList<DiskModel>();
+
+        if (disks.isEmpty())
+        {
+            return false;
+        }
+
+        for (DiskModel disk : disks)
+        {
+            if (disk.getDiskImage().getimageStatus() == ImageStatus.LOCKED
+                    || disk.getDiskImage().getstorage_ids().size() == 1)
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     @Override
@@ -237,7 +277,7 @@ public class TemplateStorageListModel extends SearchableListModel
 
         if (command == getRemoveCommand())
         {
-            remove();
+            Remove();
         }
         else if (StringHelper.stringsEqual(command.getName(), "Cancel"))
         {

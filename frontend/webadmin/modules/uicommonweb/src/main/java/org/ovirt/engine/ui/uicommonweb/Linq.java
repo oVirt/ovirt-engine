@@ -37,6 +37,7 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.LunModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.SanTargetModel;
+import org.ovirt.engine.ui.uicommonweb.models.storage.StorageDomainModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 import org.ovirt.engine.ui.uicompat.DateTimeUtils;
 import org.ovirt.engine.ui.uicompat.IEqualityComparer;
@@ -162,6 +163,17 @@ public final class Linq
         public int compare(storage_domains x, storage_domains y)
         {
             return x.getstorage_name().compareTo(y.getstorage_name());
+        }
+
+    }
+
+    public static class StorageDomainModelByNameComparer implements java.util.Comparator<StorageDomainModel>
+    {
+
+        @Override
+        public int compare(StorageDomainModel x, StorageDomainModel y)
+        {
+            return x.getStorageDomain().getstorage_name().compareTo(y.getStorageDomain().getstorage_name());
         }
 
     }

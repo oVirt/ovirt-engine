@@ -676,10 +676,10 @@ public class VmDiskListModel extends SearchableListModel
                 && getSelectedItems().size() == 1 && isVmDown() && !isDiskLocked);
 
         getRemoveCommand().setIsExecutionAllowed(getSelectedItems() != null && getSelectedItems().size() > 0
-                && isVmDown() && isRemoveCommandAvailable());
+                && isRemoveCommandAvailable());
 
         getMoveCommand().setIsExecutionAllowed(getSelectedItems() != null && getSelectedItems().size() > 0
-                && isVmDown() && isMoveCommandAvailable());
+                && isMoveCommandAvailable());
 
         getPlugCommand().setIsExecutionAllowed(isPlugCommandAvailable(true));
 
@@ -725,7 +725,7 @@ public class VmDiskListModel extends SearchableListModel
 
         for (DiskImage disk : disks)
         {
-            if (disk.getimageStatus() != ImageStatus.OK)
+            if (disk.getimageStatus() != ImageStatus.OK || (!isVmDown() && disk.getPlugged()))
             {
                 return false;
             }
@@ -740,7 +740,7 @@ public class VmDiskListModel extends SearchableListModel
 
         for (DiskImage disk : disks)
         {
-            if (disk.getimageStatus() == ImageStatus.LOCKED)
+            if (disk.getimageStatus() == ImageStatus.LOCKED || (!isVmDown() && disk.getPlugged()))
             {
                 return false;
             }
