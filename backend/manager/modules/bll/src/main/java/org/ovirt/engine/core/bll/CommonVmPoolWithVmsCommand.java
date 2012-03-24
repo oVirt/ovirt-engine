@@ -1,7 +1,8 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -20,6 +21,7 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -36,6 +38,7 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogField;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
+import org.ovirt.engine.core.utils.Pair;
 
 /**
  * This class responsible to create vmpool with vms within. This class not transactive, that mean that function Execute
@@ -49,7 +52,8 @@ import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 @CustomLogFields({ @CustomLogField("VmsCount") })
 public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParameters> extends AddVmPoolCommand<T> {
 
-    private HashMap<Guid, Guid> imageToDestinationDomainMap;
+    protected HashMap<Guid, DiskImage> diskInfoDestinationMap;
+    private Map<Pair<Guid, Guid>, Double> quotaForStorageConsumption;
     protected Map<Guid, List<DiskImage>> storageToDisksMap;
     protected Map<Guid, storage_domains> destStorages = new HashMap<Guid, storage_domains>();
     private boolean _addVmsSucceded = true;
@@ -65,13 +69,43 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
     public CommonVmPoolWithVmsCommand(T parameters) {
         super(parameters);
         setVmTemplateId(getParameters().getVmStaticData().getvmt_guid());
+        setQuotaId(getParameters().getVmStaticData().getQuotaId());
         if (getVmTemplate() != null) {
             VmTemplateHandler.UpdateDisksFromDb(getVmTemplate());
         }
-        imageToDestinationDomainMap = getParameters().getImageToDestinationDomainMap();
-        if(imageToDestinationDomainMap == null) {
-            imageToDestinationDomainMap = new HashMap<Guid, Guid>();
+        diskInfoDestinationMap = getParameters().getDiskInfoDestinationMap();
+        if(diskInfoDestinationMap == null) {
+            diskInfoDestinationMap = new HashMap<Guid, DiskImage>();
         }
+    }
+
+    @Override
+    protected boolean validateQuota() {
+        storage_pool storagePool = getStoragePoolDAO().get(getVmTemplate().getstorage_pool_id().getValue());
+        // Set default quota id if storage pool enforcement is disabled.
+        setQuotaId(QuotaHelper.getInstance().getQuotaIdToConsume(getQuotaId(),
+                storagePool));
+
+        // Set quota for each disk.
+        for (DiskImage diskImage : diskInfoDestinationMap.values()) {
+            diskImage.setQuotaId(QuotaHelper.getInstance()
+                    .getQuotaIdToConsume(diskImage.getQuotaId(), storagePool));
+        }
+
+        return QuotaManager.validateMultiStorageQuota(storagePool.getQuotaEnforcementType(),
+                getQuotaConsumeMap(diskInfoDestinationMap.values()),
+                getCommandId(),
+                getReturnValue().getCanDoActionMessages());
+    }
+
+    private Map<Pair<Guid, Guid>, Double> getQuotaConsumeMap(Collection<DiskImage> diskInfoList) {
+        if (quotaForStorageConsumption == null) {
+            quotaForStorageConsumption =
+                    QuotaHelper.getInstance().getQuotaConsumeMapForVmPool(diskInfoList,
+                            getParameters().getVmsCount(),
+                            getBlockSparseInitSizeInGB());
+        }
+        return quotaForStorageConsumption;
     }
 
     protected abstract Guid GetPoolId();
@@ -103,7 +137,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
             VmStatic currVm = new VmStatic(getParameters().getVmStaticData());
             currVm.setvm_name(currentVmName);
             AddVmAndAttachToPoolParameters addVmAndAttachToPoolParams = new AddVmAndAttachToPoolParameters(currVm, poolId, currentVmName,
-                    imageToDestinationDomainMap);
+                    diskInfoDestinationMap);
             addVmAndAttachToPoolParams.setSessionId(getParameters().getSessionId());
             addVmAndAttachToPoolParams.setParentCommand(VdcActionType.AddVmPoolWithVms);
             VdcReturnValueBase returnValue =
@@ -151,12 +185,15 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected void setActionMessageParameters() {
         addCanDoActionMessage(VdcBllMessages.VAR__TYPE__DESKTOP_POOL);
+    }
+
+    @Override
+    protected boolean canDoAction() {
         if (!super.canDoAction()) {
             return false;
         }
-
         String vmPoolName = getParameters().getVmPool().getvm_pool_name();
         if (vmPoolName == null || vmPoolName.isEmpty()) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NAME_MAY_NOT_BE_EMPTY);
@@ -208,13 +245,16 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
             return false;
         }
 
-        if(!ensureDomainMap()) {
+        if(!ensureDestinationImageMap()) {
             return false;
         }
         storageToDisksMap = ImagesHandler.buildStorageToDiskMap(getVmTemplate().getDiskMap().values(),
-                imageToDestinationDomainMap);
-        for (Guid storageId : new HashSet<Guid>(imageToDestinationDomainMap.values())) {
-            if (!VmTemplateCommand.isVmTemplateImagesReady(getVmTemplate(),
+                diskInfoDestinationMap);
+        List<Guid> storageIds = new ArrayList<Guid>();
+        for (DiskImage diskImage : diskInfoDestinationMap.values()) {
+            Guid storageId = diskImage.getstorage_ids().get(0);
+            if (!storageIds.contains(storageId) &&
+                    !VmTemplateCommand.isVmTemplateImagesReady(getVmTemplate(),
                     storageId,
                     getReturnValue().getCanDoActionMessages(),
                     false,
@@ -224,6 +264,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
                     storageToDisksMap.get(storageId))) {
                 return false;
             }
+            storageIds.add(storageId);
         }
 
         if (getActionType() == VdcActionType.AddVmPoolWithVms && getParameters().getVmsCount() < 1) {
@@ -244,21 +285,24 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
         return checkFreeSpaceAndTypeOnDestDomains();
     }
 
-    private boolean ensureDomainMap() {
-        if (imageToDestinationDomainMap.isEmpty()) {
+    private boolean ensureDestinationImageMap() {
+        if (diskInfoDestinationMap.isEmpty()) {
             if (getParameters().getStorageDomainId() != null
                     && !Guid.Empty.equals(getParameters().getStorageDomainId())) {
                 Guid storageId = getParameters().getStorageDomainId();
+                ArrayList<Guid> storageIds = new ArrayList<Guid>();
+                storageIds.add(storageId);
                 for (DiskImage image : getVmTemplate().getDiskMap().values()) {
-                    imageToDestinationDomainMap.put(image.getId(), storageId);
+                    image.setstorage_ids(storageIds);
+                    diskInfoDestinationMap.put(image.getId(), image);
                 }
             } else {
                 ImagesHandler.fillImagesMapBasedOnTemplate(getVmTemplate(),
-                        imageToDestinationDomainMap,
+                        diskInfoDestinationMap,
                         destStorages, false);
             }
         }
-        if (getVmTemplate().getDiskMap().values().size() != imageToDestinationDomainMap.size()) {
+        if (getVmTemplate().getDiskMap().values().size() != diskInfoDestinationMap.size()) {
             log.errorFormat("Can not found any default active domain for one of the disks of template with id : {0}",
                     getVmTemplate().getId());
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_MISSED_STORAGES_FOR_SOME_DISKS);
@@ -266,10 +310,14 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
         }
         return true;
     }
-
     public boolean checkFreeSpaceAndTypeOnDestDomains() {
         boolean retValue = true;
-        for (Guid domainId : new HashSet<Guid>(imageToDestinationDomainMap.values())) {
+        List<Guid> validDomains = new ArrayList<Guid>();
+        for (DiskImage diskImage : diskInfoDestinationMap.values()) {
+            Guid domainId = diskImage.getstorage_ids().get(0);
+            if (validDomains.contains(domainId)) {
+                continue;
+            }
             storage_domains domain = destStorages.get(domainId);
             if(domain == null) {
                 domain = DbFacade.getInstance().getStorageDomainDAO().getForStoragePool(domainId,
@@ -292,6 +340,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
                     break;
                 }
             }
+            validDomains.add(domainId);
         }
         return retValue;
     }

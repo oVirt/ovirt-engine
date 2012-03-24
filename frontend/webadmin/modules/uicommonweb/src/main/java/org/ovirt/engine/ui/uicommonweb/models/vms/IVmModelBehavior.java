@@ -5,16 +5,21 @@ import java.util.Arrays;
 import java.util.Collections;
 
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.queries.GetAllRelevantQuotasForVdsGroupParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.DataProvider;
 import org.ovirt.engine.ui.uicommonweb.Linq;
@@ -561,6 +566,7 @@ public abstract class IVmModelBehavior
 
                     for (DiskModel diskModel : disks) {
                         ArrayList<storage_domains> availableDiskStorageDomains;
+                        diskModel.getQuota().setItems(behavior.getModel().getQuota().getItems());
                         if (provisioning) {
                             availableDiskStorageDomains = activeStorageDomains;
                         }
@@ -615,6 +621,32 @@ public abstract class IVmModelBehavior
         }
 
         return list;
+    }
+
+    protected void updateQuotaByCluster(final Guid defaultQuota) {
+        if (getModel().getQuota().getIsAvailable()) {
+            VDSGroup cluster = (VDSGroup) getModel().getCluster().getSelectedItem();
+            Frontend.RunQuery(VdcQueryType.GetAllRelevantQuotasForVdsGroup,
+                    new GetAllRelevantQuotasForVdsGroupParameters(cluster.getId()), new AsyncQuery(getModel(),
+                            new INewAsyncCallback() {
+
+                                @Override
+                                public void OnSuccess(Object model, Object returnValue) {
+                                    UnitVmModel vmModel = (UnitVmModel) model;
+                                    ArrayList<Quota> quotaList =
+                                            (ArrayList<Quota>) ((VdcQueryReturnValue) returnValue).getReturnValue();
+                                    vmModel.getQuota().setItems(quotaList);
+                                    if (defaultQuota != null) {
+                                        for (Quota quota : quotaList) {
+                                            if (quota.getId().equals(defaultQuota)) {
+                                                vmModel.getQuota().setSelectedItem(quota);
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+                            }));
+        }
     }
 
 }

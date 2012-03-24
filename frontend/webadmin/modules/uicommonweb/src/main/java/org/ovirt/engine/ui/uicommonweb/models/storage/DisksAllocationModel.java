@@ -4,12 +4,21 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcmentTypeEnum;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.queries.GetAllRelevantQuotasForStorageParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
+import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.Frontend;
+import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.Linq.DiskModelByNameComparer;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -18,6 +27,13 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 
 public class DisksAllocationModel extends EntityModel
 {
+    private final IEventListener quota_storageEventListener = new IEventListener() {
+        @Override
+        public void eventRaised(Event ev, Object sender, EventArgs args) {
+            updateDisksQuota(sender);
+        }
+    };
+
     private EntityModel isSingleStorageDomain;
 
     public EntityModel getIsSingleStorageDomain()
@@ -76,19 +92,35 @@ public class DisksAllocationModel extends EntityModel
     public void setDisks(List<DiskModel> value)
     {
         disks = value;
+        sortDisks();
+    }
+
+    private void registerToEvents() {
+        for (DiskModel disk : disks) {
+            disk.getStorageDomain().getSelectedItemChangedEvent().removeListener(quota_storageEventListener);
+            disk.getStorageDomain().getSelectedItemChangedEvent().addListener(quota_storageEventListener);
+        }
+    }
+
+    public void sortDisks() {
         Linq.Sort(disks, new DiskModelByNameComparer());
         OnPropertyChanged(new PropertyChangedEventArgs("Disks"));
     }
 
-    private HashMap<Guid, Guid> imageToDestinationDomainMap;
+    private HashMap<Guid, DiskImage> imageToDestinationDomainMap;
 
-    public HashMap<Guid, Guid> getImageToDestinationDomainMap()
+    public HashMap<Guid, DiskImage> getImageToDestinationDomainMap(Boolean isSingle)
     {
-        updateImageToDestinationDomainMap();
+        updateImageToDestinationDomainMap(isSingle);
         return imageToDestinationDomainMap;
     }
 
-    public void setImageToDestinationDomainMap(HashMap<Guid, Guid> imageToDestinationDomainMap)
+    public HashMap<Guid, DiskImage> getImageToDestinationDomainMap()
+    {
+        return getImageToDestinationDomainMap(false);
+    }
+
+    public void setImageToDestinationDomainMap(HashMap<Guid, DiskImage> imageToDestinationDomainMap)
     {
         this.imageToDestinationDomainMap = imageToDestinationDomainMap;
     }
@@ -136,7 +168,6 @@ public class DisksAllocationModel extends EntityModel
     private boolean isSourceStorageDomainChangable;
     private boolean isSourceStorageDomainNameAvailable;
 
-
     public DisksAllocationModel()
     {
         setIsSingleStorageDomain(new EntityModel());
@@ -145,6 +176,7 @@ public class DisksAllocationModel extends EntityModel
 
         setStorageDomain(new ListModel());
         getStorageDomain().getItemsChangedEvent().addListener(this);
+        getStorageDomain().getSelectedItemChangedEvent().addListener(this);
 
         setQuota(new ListModel());
         getQuota().getItemsChangedEvent().addListener(this);
@@ -156,7 +188,7 @@ public class DisksAllocationModel extends EntityModel
         setSourceStorageDomainName(new EntityModel());
         getSourceStorageDomainName().setIsAvailable(false);
 
-        setImageToDestinationDomainMap(new HashMap<Guid, Guid>());
+        setImageToDestinationDomainMap(new HashMap<Guid, DiskImage>());
     }
 
     @Override
@@ -174,6 +206,39 @@ public class DisksAllocationModel extends EntityModel
             UpdateSingleStorageDomainsAvailability();
             UpdateStorageDomainsAvailability();
         }
+        else if (ev.equals(ListModel.SelectedItemChangedEventDefinition) && sender == getStorageDomain()) {
+            storage_domains storageDomain = (storage_domains) getStorageDomain().getSelectedItem();
+            if (storageDomain != null) {
+                updateQuota(storageDomain.getId(), null);
+            }
+        }
+    }
+
+    private void updateQuota(Guid storageDomainId, final ListModel isItem) {
+        if (getQuotaEnforcementType() != QuotaEnforcmentTypeEnum.DISABLED && storageDomainId != null) {
+            Frontend.RunQuery(VdcQueryType.GetAllRelevantQuotasForStorage,
+                    new GetAllRelevantQuotasForStorageParameters(storageDomainId),
+                    new AsyncQuery(this,
+                            new INewAsyncCallback() {
+
+                                @Override
+                                public void OnSuccess(Object innerModel, Object innerReturnValue) {
+                                    ArrayList<Quota> list =
+                                            (ArrayList<Quota>) ((VdcQueryReturnValue) innerReturnValue).getReturnValue();
+                                    DisksAllocationModel diskAllocationModel = (DisksAllocationModel) innerModel;
+                                    if (list != null) {
+                                        if (isItem == null) {
+                                            diskAllocationModel.getQuota().setItems(list);
+                                            for (DiskModel diskModel : diskAllocationModel.getDisks()) {
+                                                diskModel.getQuota().setItems(list);
+                                            }
+                                        } else {
+                                            isItem.setItems(list);
+                                        }
+                                    }
+                                }
+                            }));
+        }
     }
 
     @Override
@@ -185,6 +250,7 @@ public class DisksAllocationModel extends EntityModel
         {
             UpdateStorageDomainsAvailability();
             UpdateQuotaAvailability();
+            registerToEvents();
         }
     }
 
@@ -234,11 +300,30 @@ public class DisksAllocationModel extends EntityModel
         }
     }
 
-    private void updateImageToDestinationDomainMap() {
+    private void updateImageToDestinationDomainMap(boolean isSingle) {
         for (DiskModel diskModel : disks) {
             Guid diskId = diskModel.getDiskImage().getId();
-            Guid storageId = ((storage_domains) diskModel.getStorageDomain().getSelectedItem()).getId();
-            imageToDestinationDomainMap.put(diskId, storageId);
+            Guid storageId = null;
+            if (!isSingle) {
+                storageId = ((storage_domains) diskModel.getStorageDomain().getSelectedItem()).getId();
+            }
+            else {
+                storageId = ((storage_domains) getStorageDomain().getSelectedItem()).getId();
+            }
+            DiskImage diskImage = new DiskImage();
+            diskImage.setId(diskId);
+            ArrayList<Guid> storageIdList = new ArrayList<Guid>();
+            storageIdList.add(storageId);
+            diskImage.setstorage_ids(storageIdList);
+            if (diskModel.getQuota().getSelectedItem() != null) {
+                if (!isSingle) {
+                    diskImage.setQuotaId(((Quota) diskModel.getQuota().getSelectedItem()).getId());
+                }
+                else {
+                    diskImage.setQuotaId(((Quota) getQuota().getSelectedItem()).getId());
+                }
+            }
+            imageToDestinationDomainMap.put(diskId, diskImage);
         }
     }
 
@@ -248,6 +333,21 @@ public class DisksAllocationModel extends EntityModel
         if (disks != null) {
             for (DiskModel diskModel : disks) {
                 diskModel.getQuota().setIsAvailable(quotaEnforcementType != QuotaEnforcmentTypeEnum.DISABLED);
+            }
+        }
+    }
+
+    private void updateDisksQuota(Object sender) {
+        if (!(Boolean) isSingleStorageDomain.getEntity()) {
+
+            storage_domains storageDomain = (storage_domains) ((ListModel) sender).getSelectedItem();
+            if (storageDomain != null) {
+                for (DiskModel innerDisk : disks) {
+                    if (innerDisk.getStorageDomain().equals(sender)) {
+                        updateQuota(storageDomain.getId(), innerDisk.getQuota());
+                        break;
+                    }
+                }
             }
         }
     }

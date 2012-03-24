@@ -7,6 +7,7 @@ import org.codehaus.jackson.annotate.JsonTypeInfo;
 import org.codehaus.jackson.annotate.JsonTypeInfo.As;
 import org.codehaus.jackson.annotate.JsonTypeInfo.Id;
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
+import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.compat.Guid;
@@ -17,7 +18,7 @@ public abstract class JsonAddVmTemplateParametersMixIn extends AddVmTemplatePara
 
     @JsonIgnore
     @Override
-    public abstract HashMap<Guid, Guid> getImageToDestinationDomainMap();
+    public abstract HashMap<Guid, DiskImage> getDiskInfoDestinationMap();
 
     @JsonIgnore
     @Override

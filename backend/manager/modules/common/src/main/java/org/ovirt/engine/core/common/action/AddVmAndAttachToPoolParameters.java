@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.compat.Guid;
@@ -27,12 +28,12 @@ public class AddVmAndAttachToPoolParameters extends AddVmFromScratchParameters {
     public AddVmAndAttachToPoolParameters(VmStatic currVm,
             Guid poolId,
             String currentVmName,
-            HashMap<Guid, Guid> imageToDestinationDomainMap) {
+            HashMap<Guid, DiskImage> diskInfoDestinationMap) {
         super(currVm, new ArrayList<DiskImageBase>(
                 Arrays.asList(new DiskImageBase())), Guid.Empty);
         this.poolId = poolId;
         this.currentVmName = currentVmName;
-        setImageToDestinationDomainMap(imageToDestinationDomainMap);
+        setDiskInfoDestinationMap(diskInfoDestinationMap);
     }
 
     public Guid getPoolId() {

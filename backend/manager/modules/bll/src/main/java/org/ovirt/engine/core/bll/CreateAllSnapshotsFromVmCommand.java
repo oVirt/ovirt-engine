@@ -93,6 +93,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
                 ImagesActionsParametersBase tempVar = new ImagesActionsParametersBase(image.getId());
                 tempVar.setDescription(getParameters().getDescription());
                 tempVar.setSessionId(getParameters().getSessionId());
+                tempVar.setQuotaId(getParameters().getQuotaId());
                 tempVar.setVmSnapshotId(newActiveSnapshotId);
                 tempVar.setEntityId(getParameters().getEntityId());
                 tempVar.setParentCommand(getParameters().getParentCommand() != VdcActionType.Unknown ? getParameters()
@@ -201,11 +202,11 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
     @Override
     protected boolean validateQuota() {
         // Set default quota id if storage pool enforcement is disabled.
-        getParameters().setQuotaId(QuotaHelper.getInstance().getQuotaIdToConsume(getParameters().getQuotaId(),
+        setQuotaId(QuotaHelper.getInstance().getQuotaIdToConsume(getParameters().getQuotaId(),
                 getStoragePool()));
 
         return QuotaManager.validateMultiStorageQuota(getStoragePool().getQuotaEnforcementType(),
-                QuotaHelper.getInstance().getQuotaConsumeMap(getDisksList()),
+                getQuotaConsumeMap(getDisksList()),
                getCommandId(),
                getReturnValue().getCanDoActionMessages());
     }
@@ -295,7 +296,8 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
         List<PermissionSubject> permissionList = super.getPermissionCheckSubjects();
-        permissionList = QuotaHelper.getInstance().addQuotaPermissionSubject(permissionList, getStoragePool(), getQuotaId());
+        permissionList.addAll(QuotaHelper.getInstance().getPermissionsForDiskImagesList(getDisksList(),
+                getStoragePool()));
         return permissionList;
     }
 

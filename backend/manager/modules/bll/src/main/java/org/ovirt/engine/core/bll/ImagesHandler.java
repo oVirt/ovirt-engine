@@ -48,15 +48,15 @@ public final class ImagesHandler {
 
     /**
      * The following method will find all images and storages where they located for provide template and will fill an
-     * imageToDestinationDomainMap by imageId mapping on active storage id where image is located. The second map is
+     * diskInfoDestinationMap by imageId mapping on active storage id where image is located. The second map is
      * mapping of founded storage ids to storage object
      * @param template
-     * @param imageToDestinationDomainMap
+     * @param diskInfoDestinationMap
      * @param destStorages
      * @param notCheckSize - if we need to perform a size check for storage or not
      */
     public static void fillImagesMapBasedOnTemplate(VmTemplate template,
-            Map<Guid, Guid> imageToDestinationDomainMap,
+            Map<Guid, DiskImage> diskInfoDestinationMap,
             Map<Guid, storage_domains> destStorages, boolean notCheckSize) {
         List<storage_domains> domains =
                 DbFacade.getInstance()
@@ -74,23 +74,29 @@ public final class ImagesHandler {
         for (DiskImage image : template.getDiskMap().values()) {
             for (Guid storageId : image.getstorage_ids()) {
                 if (storageDomainsMap.containsKey(storageId)) {
-                    imageToDestinationDomainMap.put(image.getId(), storageId);
+                    ArrayList<Guid> storageIds = new ArrayList<Guid>();
+                    storageIds.add(storageId);
+                    image.setstorage_ids(storageIds);
+                    diskInfoDestinationMap.put(image.getId(), image);
                     break;
                 }
             }
         }
+
         if (destStorages != null) {
-            for (Guid storageDomainId : new HashSet<Guid>(imageToDestinationDomainMap.values())) {
+            for (DiskImage diskImage : diskInfoDestinationMap.values()) {
+                Guid storageDomainId = diskImage.getstorage_ids().get(0);
                 destStorages.put(storageDomainId, storageDomainsMap.get(storageDomainId));
             }
         }
     }
 
     public static Map<Guid, List<DiskImage>> buildStorageToDiskMap(Collection<DiskImage> images,
-            Map<Guid, Guid> imageToDestinationDomainMap) {
+            Map<Guid, DiskImage> diskInfoDestinationMap) {
         Map<Guid, List<DiskImage>> storageToDisksMap = new HashMap<Guid, List<DiskImage>>();
         for (DiskImage disk : images) {
-            Guid storageDomainId = imageToDestinationDomainMap.get(disk.getId());
+            DiskImage diskImage = diskInfoDestinationMap.get(disk.getId());
+            Guid storageDomainId = diskImage.getstorage_ids().get(0);
             List<DiskImage> diskList = storageToDisksMap.get(storageDomainId);
             if (diskList == null) {
                 diskList = new ArrayList<DiskImage>();

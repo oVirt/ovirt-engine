@@ -79,6 +79,7 @@ public class CreateImageTemplateCommand<T extends CreateImageTemplateParameters>
 
         newImage.setimage_group_id(destinationImageGroupID);
         newImage.setvm_snapshot_id(getParameters().getVmSnapshotId());
+        newImage.setQuotaId(getParameters().getQuotaId());
         newImage.setParentId(ImagesHandler.BlankImageTemplateId);
         newImage.setit_guid(ImagesHandler.BlankImageTemplateId);
         newImage.setstorage_ids(new ArrayList<Guid>(Arrays.asList(getParameters().getDestinationStorageDomainId())));

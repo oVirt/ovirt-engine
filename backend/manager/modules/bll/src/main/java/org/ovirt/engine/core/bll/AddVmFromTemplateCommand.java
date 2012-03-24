@@ -52,7 +52,7 @@ public class AddVmFromTemplateCommand<T extends AddVmFromTemplateParameters> ext
                 CreateCloneOfTemplateParameters p = new CreateCloneOfTemplateParameters(dit.getId(),
                         getParameters().getVmStaticData().getId(), diskInfo);
                 p.setStorageDomainId(dit.getstorage_ids().get(0));
-                p.setDestStorageDomainId(imageToDestinationDomainMap.get(dit.getId()));
+                p.setDestStorageDomainId(diskInfoDestinationMap.get(dit.getId()).getstorage_ids().get(0));
                 p.setVmSnapshotId(getVmSnapshotId());
                 p.setParentCommand(VdcActionType.AddVmFromTemplate);
                 p.setEntityId(getParameters().getEntityId());
@@ -82,7 +82,7 @@ public class AddVmFromTemplateCommand<T extends AddVmFromTemplateParameters> ext
         if (retValue) {
             for (DiskImage dit : getVmTemplate().getDiskMap().values()) {
                 retValue =
-                        ImagesHandler.CheckImageConfiguration(destStorages.get(imageToDestinationDomainMap.get(dit.getId()))
+                        ImagesHandler.CheckImageConfiguration(destStorages.get(diskInfoDestinationMap.get(dit.getId()).getstorage_ids().get(0))
                                 .getStorageStaticData(),
                                 getParameters().getDiskInfoList().get(dit.getinternal_drive_mapping()),
                                 getReturnValue().getCanDoActionMessages());

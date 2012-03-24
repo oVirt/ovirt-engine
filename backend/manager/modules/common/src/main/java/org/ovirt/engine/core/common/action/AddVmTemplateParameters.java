@@ -5,6 +5,7 @@ import java.util.HashMap;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
@@ -23,7 +24,7 @@ public class AddVmTemplateParameters extends VmTemplateParametersBase {
     private VmStatic _masterVm;
     private Guid privateVmTemplateID = Guid.Empty;
     private Guid destinationStorageDomainId;
-    private HashMap<Guid, Guid> imageToDestinationDomainMap;
+    private HashMap<Guid, DiskImage> diskInfoDestinationMap;
 
     @Size(max = 40, message = "VALIDATION.VM_TEMPLATE.NAME.MAX", groups = { CreateEntity.class, UpdateEntity.class })
     @ValidName(message = "ACTION_TYPE_FAILED_NAME_MAY_NOT_CONTAIN_SPECIAL_CHARS")
@@ -94,11 +95,11 @@ public class AddVmTemplateParameters extends VmTemplateParametersBase {
         return destinationStorageDomainId;
     }
 
-    public HashMap<Guid, Guid> getImageToDestinationDomainMap() {
-        return imageToDestinationDomainMap;
+    public HashMap<Guid, DiskImage> getDiskInfoDestinationMap() {
+        return diskInfoDestinationMap;
     }
 
-    public void setImageToDestinationDomainMap(HashMap<Guid, Guid> imageToDestinationDomainMap) {
-        this.imageToDestinationDomainMap = imageToDestinationDomainMap;
+    public void setDiskInfoDestinationMap(HashMap<Guid, DiskImage> diskInfoDestinationMap) {
+        this.diskInfoDestinationMap = diskInfoDestinationMap;
     }
 }

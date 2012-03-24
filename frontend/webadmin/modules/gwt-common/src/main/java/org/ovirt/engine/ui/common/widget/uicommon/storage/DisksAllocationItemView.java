@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.common.widget.uicommon.storage;
 
+import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.widget.AbstractValidatedWidgetWithLabel;
@@ -92,7 +93,7 @@ public class DisksAllocationItemView extends Composite implements HasEditorDrive
         quotaListEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
             @Override
             public String renderNullSafe(Object object) {
-                return ((storage_domains) object).getstorage_name();
+                return ((Quota) object).getQuotaName();
             }
         });
     }

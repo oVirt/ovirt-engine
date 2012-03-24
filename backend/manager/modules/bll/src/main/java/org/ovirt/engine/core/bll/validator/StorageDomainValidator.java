@@ -43,10 +43,10 @@ public class StorageDomainValidator {
     }
 
     public static Map<storage_domains, Integer> getSpaceRequirementsForStorageDomains(Collection<DiskImage> images,
-            Map<Guid, storage_domains> storageDomains, Map<Guid, Guid> imageToDestinationDomainMap) {
+            Map<Guid, storage_domains> storageDomains, Map<Guid, DiskImage> imageToDestinationDomainMap) {
         Map<DiskImage, storage_domains> spaceMap = new HashMap<DiskImage, storage_domains>();
         for (DiskImage image : images) {
-            Guid storageId = imageToDestinationDomainMap.get(image.getId());
+            Guid storageId = imageToDestinationDomainMap.get(image.getId()).getstorage_ids().get(0);
             storage_domains domain = storageDomains.get(storageId);
             if (domain == null) {
                 domain = DbFacade.getInstance().getStorageDomainDAO().get(storageId);

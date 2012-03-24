@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 import javax.validation.Valid;
 
+import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.compat.Guid;
@@ -17,7 +18,7 @@ public class VmManagementParametersBase extends VmOperationParameterBase {
     private boolean makeCreatorExplicitOwner;
     private Guid privateStorageDomainId = Guid.Empty;
     private boolean privateDontCheckTemplateImages;
-    private HashMap<Guid, Guid> imageToDestinationDomainMap;
+    private HashMap<Guid, DiskImage> diskInfoDestinationMap;
 
     public VmManagementParametersBase() {
     }
@@ -83,12 +84,11 @@ public class VmManagementParametersBase extends VmOperationParameterBase {
         return makeCreatorExplicitOwner;
     }
 
-    public void setImageToDestinationDomainMap(HashMap<Guid, Guid> imageToDestinationDomainMap) {
-        this.imageToDestinationDomainMap = imageToDestinationDomainMap;
+    public HashMap<Guid, DiskImage> getDiskInfoDestinationMap() {
+        return diskInfoDestinationMap;
     }
 
-    public HashMap<Guid, Guid> getImageToDestinationDomainMap() {
-        return imageToDestinationDomainMap;
+    public void setDiskInfoDestinationMap(HashMap<Guid, DiskImage> diskInfoDestinationMap) {
+        this.diskInfoDestinationMap = diskInfoDestinationMap;
     }
-
 }

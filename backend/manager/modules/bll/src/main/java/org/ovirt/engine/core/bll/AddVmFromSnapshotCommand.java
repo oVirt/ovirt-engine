@@ -128,7 +128,7 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
                     } else {// Only legal images can be copied
                         copyDiskImage(diskImage,
                                 diskImage.getstorage_ids().get(0),
-                                imageToDestinationDomainMap.get(diskImage.getId()),
+                                diskInfoDestinationMap.get(diskImage.getId()).getstorage_ids().get(0),
                                 VdcActionType.AddVmFromSnapshot);
                         numberOfStartedCopyTasks++;
                     }
@@ -320,27 +320,25 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
     @Override
     protected boolean validateQuota() {
         // Set default quota id if storage pool enforcement is disabled.
-        getParameters().setQuotaId(QuotaHelper.getInstance().getQuotaIdToConsume(getQuotaIdFromSourceVmEntity(),
+        setQuotaId(QuotaHelper.getInstance().getQuotaIdToConsume(getQuotaIdFromSourceVmEntity(),
                 getStoragePool()));
         for (DiskImage img : getImagesForQuotaValidation()) {
             img.setQuotaId(QuotaHelper.getInstance()
-                    .getQuotaIdToConsume(getQuotaIdFromSourceVmEntity(),
+                    .getQuotaIdToConsume(getQuotaId(),
                             getStoragePool()));
         }
         if (!isInternalExecution()) {
-            // TODO: Should be changed when multiple storage domain will be implemented and the desired quotas will be
-            // transferred.
             return QuotaManager.validateMultiStorageQuota(getStoragePool().getQuotaEnforcementType(),
-                        QuotaHelper.getInstance().getQuotaConsumeMap(getImagesForQuotaValidation()),
-                        getCommandId(),
-                        getReturnValue().getCanDoActionMessages());
+                    getQuotaConsumeMap(getImagesForQuotaValidation()),
+                    getCommandId(),
+                    getReturnValue().getCanDoActionMessages());
         }
         return true;
     }
 
     @Override
     protected boolean checkImageConfiguration(DiskImage diskImage) {
-        return ImagesHandler.CheckImageConfiguration(destStorages.get(imageToDestinationDomainMap.get(diskImage.getId()))
+        return ImagesHandler.CheckImageConfiguration(destStorages.get(diskImagesFromClientMap.get(diskImage.getId()).getstorage_ids().get(0))
                 .getStorageStaticData(),
                 diskImage,
                 getReturnValue().getCanDoActionMessages());
@@ -370,8 +368,7 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
 
     protected void removeQuotaCommandLeftOver() {
         if (!isInternalExecution()) {
-            QuotaManager.removeMultiStorageDeltaQuotaCommand(QuotaHelper.getInstance()
-                    .getQuotaConsumeMap(getImagesForQuotaValidation()),
+            QuotaManager.removeMultiStorageDeltaQuotaCommand(getQuotaConsumeMap(getImagesForQuotaValidation()),
                     getStoragePool().getQuotaEnforcementType(),
                     getCommandId());
         }

@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.action.VmPoolParametersBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
+import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -648,8 +649,12 @@ public class PoolListModel extends ListWithDetailsModel
                         }
                         else {
                             param.setStorageDomainId(Guid.Empty);
-                            param.setImageToDestinationDomainMap(
+                            param.setDiskInfoDestinationMap(
                                     model.getDisksAllocationModel().getImageToDestinationDomainMap());
+                        }
+
+                        if (model.getQuota().getSelectedItem() != null) {
+                            tempVar.setQuotaId(((Quota) model.getQuota().getSelectedItem()).getId());
                         }
 
                         model.StartProgress(null);

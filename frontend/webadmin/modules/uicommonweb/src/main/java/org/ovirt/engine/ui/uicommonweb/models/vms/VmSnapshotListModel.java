@@ -508,7 +508,7 @@ public class VmSnapshotListModel extends SearchableListModel
 
         CreateAllSnapshotsFromVmParameters params =
                 new CreateAllSnapshotsFromVmParameters(vm.getId(), (String) model.getDescription().getEntity());
-
+        params.setQuotaId(vm.getQuotaId());
         Frontend.RunAction(VdcActionType.CreateAllSnapshotsFromVm, params,
                 new IFrontendActionAsyncCallback() {
                     @Override
@@ -659,7 +659,7 @@ public class VmSnapshotListModel extends SearchableListModel
         }
         getcurrentVm().setDiskMap(behavior.getVm().getDiskMap());
 
-        HashMap<Guid, Guid> imageToDestinationDomainMap =
+        HashMap<Guid, DiskImage> imageToDestinationDomainMap =
                 model.getDisksAllocationModel().getImageToDestinationDomainMap();
         storage_domains storageDomain =
                 ((storage_domains) model.getDisksAllocationModel().getStorageDomain().getSelectedItem());
@@ -667,13 +667,17 @@ public class VmSnapshotListModel extends SearchableListModel
 
         if ((Boolean) model.getDisksAllocationModel().getIsSingleStorageDomain().getEntity()) {
             for (Guid key : imageToDestinationDomainMap.keySet()) {
-                imageToDestinationDomainMap.put(key, storageDomain.getId());
+                ArrayList<Guid> storageIdList = new ArrayList<Guid>();
+                storageIdList.add(storageDomain.getId());
+                DiskImage diskImage = new DiskImage();
+                diskImage.setstorage_ids(storageIdList);
+                imageToDestinationDomainMap.put(key, diskImage);
             }
         }
 
         AddVmFromSnapshotParameters parameters =
                 new AddVmFromSnapshotParameters(getcurrentVm().getStaticData(), diskInfoList, snapshot.getId());
-        parameters.setImageToDestinationDomainMap(imageToDestinationDomainMap);
+        parameters.setDiskInfoDestinationMap(imageToDestinationDomainMap);
 
         model.StartProgress(null);
 

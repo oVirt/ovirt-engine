@@ -35,6 +35,7 @@ public class CreateCloneOfTemplateCommand<T extends CreateCloneOfTemplateParamet
     protected DiskImage CloneDiskImage(Guid newImageGuid) {
         DiskImage returnValue = super.CloneDiskImage(newImageGuid);
         returnValue.setstorage_ids(new ArrayList<Guid>(Arrays.asList(getDestinationStorageDomainId())));
+        returnValue.setQuotaId(getParameters().getQuotaId());
         // override to have no template
         returnValue.setParentId(VmTemplateHandler.BlankVmTemplateId);
         returnValue.setit_guid(VmTemplateHandler.BlankVmTemplateId);

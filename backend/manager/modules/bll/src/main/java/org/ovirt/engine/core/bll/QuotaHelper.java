@@ -67,6 +67,20 @@ public class QuotaHelper {
         return returnedQuotaGuid;
     }
 
+    public Collection<PermissionSubject> getPermissionsForDiskImagesList(Collection<DiskImage> diskImages, storage_pool storagePool) {
+        List<PermissionSubject> permissionSubjectList = new ArrayList<PermissionSubject>();
+        Map<Guid, Object> quotaMap = new HashMap<Guid, Object>();
+
+        // Distinct the quotas for images.
+        for (DiskImage diskImage : diskImages) {
+            if (quotaMap.containsKey(diskImage.getQuotaId())) {
+                quotaMap.put(diskImage.getQuotaId(), diskImage.getQuotaId());
+                permissionSubjectList = addQuotaPermissionSubject(permissionSubjectList, storagePool, diskImage.getQuotaId());
+            }
+        }
+        return permissionSubjectList;
+    }
+
     public void setDefaultQuotaAsRegularQuota(storage_pool storagePool) {
         Quota quota = getQuotaDAO().getDefaultQuotaByStoragePoolId(storagePool.getId());
         if (quota != null) {
@@ -195,6 +209,36 @@ public class QuotaHelper {
         PermissionsOperationsParametes permParams = new PermissionsOperationsParametes(perm);
         Backend.getInstance().runInternalAction(VdcActionType.AddPermission,
                 permParams);
+    }
+
+    /**
+     * Helper method which get as an input disk image list for VM or template and returns a list of quotas and their
+     * desired limitation to be used.<BR/>
+     *
+     * @param diskImages
+     *            - The disk image list to be grouped by
+     * @param NumberOfVms
+     *            - Number of VMs when creating the pool.
+     * @param blockSparseInitSizeInGB
+     *            - The initial size of sparse block size.
+     * @return List of summarized requested size for quota.
+     */
+    public Map<Pair<Guid, Guid>, Double> getQuotaConsumeMapForVmPool(Collection<DiskImage> diskImages,
+            Integer NumberOfVms,
+            Integer blockSparseInitSizeInGB) {
+        Map<Pair<Guid, Guid>, Double> quotaForStorageConsumption = new HashMap<Pair<Guid, Guid>, Double>();
+        for (DiskImage disk : diskImages) {
+            Pair<Guid, Guid> quotaForStorageKey = new Pair<Guid, Guid>(disk.getQuotaId(),disk.getstorage_ids().get(0));
+            Long sizeRequested = disk.getsize() * NumberOfVms * blockSparseInitSizeInGB;
+            Double storageRequest = quotaForStorageConsumption.get(quotaForStorageKey);
+            if (storageRequest != null) {
+                storageRequest += sizeRequested;
+            } else {
+                storageRequest = new Double(sizeRequested);
+            }
+            quotaForStorageConsumption.put(quotaForStorageKey, storageRequest);
+        }
+        return quotaForStorageConsumption;
     }
 
     /**

@@ -51,7 +51,7 @@ public class ExportVmTemplateCommand<T extends MoveOrCopyParameters> extends Mov
                     p.setVolumeType(disk.getvolume_type());
                     p.setPostZero(disk.getwipe_after_delete());
                     p.setForceOverride(getParameters().getForceOverride());
-                    p.setSourceDomainId(imageFromSourceDomainMap.get(disk.getId()));
+                    p.setSourceDomainId(imageFromSourceDomainMap.get(disk.getId()).getstorage_ids().get(0));
                     VdcReturnValueBase vdcRetValue = Backend.getInstance().runInternalAction(
                                     VdcActionType.MoveOrCopyImageGroup,
                                     p,

@@ -26,8 +26,6 @@ import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.queries.GetAllDisksByVmIdParameters;
-import org.ovirt.engine.core.common.queries.GetQuotaByStoragePoolIdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
@@ -274,31 +272,10 @@ public class VmDiskListModel extends SearchableListModel
                 DiskModel dModel = (DiskModel) vmDiskListModel1.getWindow();
                 if (dataCenter.getQuotaEnforcementType().equals(QuotaEnforcmentTypeEnum.DISABLED)) {
                     dModel.getQuota().setIsAvailable(false);
-                    return;
+                } else {
+                    dModel.getQuota().setIsAvailable(true);
+                    dModel.quota_storageSelectedItemChanged(vm.getQuotaId());
                 }
-                dModel.getQuota().setIsAvailable(true);
-                GetQuotaByStoragePoolIdQueryParameters params = new GetQuotaByStoragePoolIdQueryParameters();
-                params.setStoragePoolId(dataCenter.getId());
-                Frontend.RunQuery(VdcQueryType.GetQuotaByStoragePoolId, params
-                        , new AsyncQuery(new Object[] { this,
-                                dModel }, new INewAsyncCallback() {
-
-                            @Override
-                            public void OnSuccess(Object model, Object returnValue) {
-                                Object[] array = (Object[]) model;
-                                DiskModel dModel2 = (DiskModel) array[1];
-                                ArrayList<Quota> quotaList =
-                                        (ArrayList<Quota>) ((VdcQueryReturnValue) returnValue).getReturnValue();
-                                dModel2.getQuota().setItems(quotaList);
-                                for (Quota quota : quotaList) {
-                                    if (quota.getId().equals(vm.getQuotaId())) {
-                                        dModel2.getQuota().setSelectedItem(quota);
-                                        break;
-                                    }
-                                }
-                            }
-                        }));
-
             }
         }), vm.getstorage_pool_id());
     }
@@ -408,31 +385,10 @@ public class VmDiskListModel extends SearchableListModel
                 DiskModel dModel = (DiskModel) vmDiskListModel1.getWindow();
                 if (dataCenter.getQuotaEnforcementType().equals(QuotaEnforcmentTypeEnum.DISABLED)) {
                     dModel.getQuota().setIsAvailable(false);
-                    return;
+                } else {
+                    dModel.getQuota().setIsAvailable(true);
+                    dModel.quota_storageSelectedItemChanged(disk.getQuotaId());
                 }
-                dModel.getQuota().setIsAvailable(true);
-                GetQuotaByStoragePoolIdQueryParameters params = new GetQuotaByStoragePoolIdQueryParameters();
-                params.setStoragePoolId(dataCenter.getId());
-                Frontend.RunQuery(VdcQueryType.GetQuotaByStoragePoolId, params
-                        , new AsyncQuery(new Object[] { this,
-                                dModel }, new INewAsyncCallback() {
-
-                            @Override
-                            public void OnSuccess(Object model, Object returnValue) {
-                                Object[] array = (Object[]) model;
-                                DiskModel dModel2 = (DiskModel) array[1];
-                                ArrayList<Quota> quotaList =
-                                        (ArrayList<Quota>) ((VdcQueryReturnValue) returnValue).getReturnValue();
-                                dModel2.getQuota().setItems(quotaList);
-                                for (Quota quota : quotaList) {
-                                    if (quota.getId().equals(disk.getQuotaId())) {
-                                        dModel2.getQuota().setSelectedItem(quota);
-                                        break;
-                                    }
-                                }
-                            }
-                        }));
-
             }
         }), ((VM) getEntity()).getstorage_pool_id());
     }

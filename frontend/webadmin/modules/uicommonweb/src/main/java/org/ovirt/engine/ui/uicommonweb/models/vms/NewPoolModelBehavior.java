@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import org.ovirt.engine.core.common.businessentities.DisplayType;
+import org.ovirt.engine.core.common.businessentities.QuotaEnforcmentTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -94,6 +95,12 @@ public class NewPoolModelBehavior extends IVmModelBehavior
 
                     }
                 }, getModel().getHash()), dataCenter.getId());
+
+        if (dataCenter.getQuotaEnforcementType() != QuotaEnforcmentTypeEnum.DISABLED) {
+            getModel().getQuota().setIsAvailable(true);
+        } else {
+            getModel().getQuota().setIsAvailable(false);
+        }
     }
 
     @Override
@@ -103,6 +110,7 @@ public class NewPoolModelBehavior extends IVmModelBehavior
 
         if (template != null)
         {
+            updateQuotaByCluster(template.getQuotaId());
             // Copy VM parameters from template.
             getModel().getOSType().setSelectedItem(template.getos());
             getModel().getNumOfSockets().setEntity(template.getnum_of_sockets());
@@ -202,6 +210,9 @@ public class NewPoolModelBehavior extends IVmModelBehavior
         UpdateIsCustomPropertiesAvailable();
         UpdateMinAllocatedMemory();
         UpdateNumOfSockets();
+        if ((VmTemplate) getModel().getTemplate().getSelectedItem() != null) {
+            updateQuotaByCluster(((VmTemplate) getModel().getTemplate().getSelectedItem()).getQuotaId());
+        }
     }
 
     @Override

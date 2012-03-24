@@ -1,23 +1,16 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
-import java.util.ArrayList;
-
 import org.ovirt.engine.core.common.businessentities.DisplayType;
-import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcmentTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
-import org.ovirt.engine.core.common.queries.GetQuotaByStoragePoolIdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
-import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -108,31 +101,6 @@ public class ExistingVmModelBehavior extends IVmModelBehavior
                 }, getModel().getHash()), dataCenter.getId());
         if (dataCenter.getQuotaEnforcementType() != QuotaEnforcmentTypeEnum.DISABLED) {
             getModel().getQuota().setIsAvailable(true);
-            GetQuotaByStoragePoolIdQueryParameters params = new GetQuotaByStoragePoolIdQueryParameters();
-            params.setStoragePoolId(dataCenter.getId());
-            Frontend.RunQuery(VdcQueryType.GetQuotaByStoragePoolId, params
-                    , new AsyncQuery(new Object[] { this,
-                            getModel() }, new INewAsyncCallback() {
-
-                        @Override
-                        public void OnSuccess(Object model, Object returnValue) {
-                            Object[] array = (Object[]) model;
-                            ExistingVmModelBehavior behavior = (ExistingVmModelBehavior) array[0];
-                            UnitVmModel unitVmModel = (UnitVmModel) array[1];
-                            VM vm = behavior.vm;
-                            ArrayList<Quota> quotaList =
-                                    (ArrayList<Quota>) ((VdcQueryReturnValue) returnValue).getReturnValue();
-                            unitVmModel.getQuota().setItems(quotaList);
-                            if (vm.getQuotaId() != null) {
-                                for (Quota quota : quotaList) {
-                                    if (quota.getId().equals(vm.getQuotaId())) {
-                                        unitVmModel.getQuota().setSelectedItem(quota);
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                    }));
         } else {
             getModel().getQuota().setIsAvailable(false);
         }
@@ -221,6 +189,7 @@ public class ExistingVmModelBehavior extends IVmModelBehavior
         UpdateDefaultHost();
         UpdateIsCustomPropertiesAvailable();
         UpdateNumOfSockets();
+        updateQuotaByCluster(vm.getQuotaId());
     }
 
     @Override

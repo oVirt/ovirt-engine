@@ -40,7 +40,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends StorageDomainCommandBase<T> {
 
     protected Map<Guid, Guid> imageToDestinationDomainMap;
-    protected Map<Guid, Guid> imageFromSourceDomainMap;
+    protected Map<Guid, DiskImage> imageFromSourceDomainMap;
     private  List<PermissionSubject> permissionCheckSubject;
 
     /**
@@ -57,7 +57,7 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
         setVmTemplateId(parameters.getContainerId());
         parameters.setEntityId(getVmTemplateId());
         imageToDestinationDomainMap = getParameters().getImageToDestinationDomainMap();
-        imageFromSourceDomainMap = new HashMap<Guid, Guid>();
+        imageFromSourceDomainMap = new HashMap<Guid, DiskImage>();
     }
 
     private storage_domains sourceDomain;
@@ -180,7 +180,7 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
                     p.setParentCommand(getActionType());
                     p.setEntityId(getParameters().getEntityId());
                     p.setAddImageDomainMapping(getMoveOrCopyImageOperation() == ImageOperation.Copy);
-                    p.setSourceDomainId(imageFromSourceDomainMap.get(disk.getId()));
+                    p.setSourceDomainId(imageFromSourceDomainMap.get(disk.getId()).getstorage_ids().get(0));
                     p.setParentParemeters(getParameters());
                     VdcReturnValueBase vdcRetValue = getBackend().runInternalAction(
                                     VdcActionType.MoveOrCopyImageGroup,

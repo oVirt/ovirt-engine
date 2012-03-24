@@ -4,10 +4,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
@@ -59,7 +57,7 @@ import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils.ValidationErro
 
 public class AddVmCommand<T extends VmManagementParametersBase> extends VmManagementCommandBase<T> {
 
-    protected Map<Guid, Guid> imageToDestinationDomainMap;
+    protected Map<Guid, DiskImage> diskInfoDestinationMap;
     protected Map<Guid, storage_domains> destStorages = new HashMap<Guid, storage_domains>();
     protected Map<Guid, List<DiskImage>> storageToDisksMap;
     protected String newMac = "";
@@ -74,8 +72,11 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         // if we came from EndAction the VmId is not null
         setVmId((parameters.getVmId().equals(Guid.Empty)) ? Guid.NewGuid() : parameters.getVmId());
         parameters.setVmId(getVmId());
-        setVmTemplateId(parameters.getVmStaticData().getvmt_guid());
         setStorageDomainId(getParameters().getStorageDomainId());
+        if (parameters.getVmStaticData() != null) {
+            setVmTemplateId(parameters.getVmStaticData().getvmt_guid());
+            setQuotaId(getParameters().getVmStaticData().getQuotaId());
+        }
 
         if (getVmTemplate() != null) {
             VmTemplateHandler.UpdateDisksFromDb(getVmTemplate());
@@ -85,9 +86,9 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
             setStoragePoolId(getVdsGroup().getstorage_pool_id() != null ? getVdsGroup().getstorage_pool_id()
                     .getValue() : Guid.Empty);
         }
-        imageToDestinationDomainMap = getParameters().getImageToDestinationDomainMap();
-        if (imageToDestinationDomainMap == null) {
-            imageToDestinationDomainMap = new HashMap<Guid, Guid>();
+        diskInfoDestinationMap = getParameters().getDiskInfoDestinationMap();
+        if (diskInfoDestinationMap == null) {
+            diskInfoDestinationMap = new HashMap<Guid, DiskImage>();
         }
     }
 
@@ -184,7 +185,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
 
     protected boolean shouldCheckSpaceInStorageDomains() {
         return !getImagesToCheckDestinationStorageDomains().isEmpty()
-        && !LinqUtils.firstOrNull(getImagesToCheckDestinationStorageDomains(), new All<DiskImage>())
+                && !LinqUtils.firstOrNull(getImagesToCheckDestinationStorageDomains(), new All<DiskImage>())
                         .getId().equals(VmTemplateHandler.BlankVmTemplateId);
     }
 
@@ -283,7 +284,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         if (returnValue) {
             storageToDisksMap =
                     ImagesHandler.buildStorageToDiskMap(getImagesToCheckDestinationStorageDomains(),
-                            imageToDestinationDomainMap);
+                            diskInfoDestinationMap);
             returnValue = CanDoAddVmCommand();
         }
 
@@ -320,12 +321,12 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
 
     protected boolean buildAndCheckDestStorageDomains() {
         boolean retValue = true;
-        if (imageToDestinationDomainMap.isEmpty()) {
+        if (diskInfoDestinationMap.isEmpty()) {
             retValue = fillDestMap();
         } else {
             retValue = validateProvidedDestinations();
         }
-        if (retValue && getImagesToCheckDestinationStorageDomains().size() != imageToDestinationDomainMap.size()) {
+        if (retValue && getImagesToCheckDestinationStorageDomains().size() != diskInfoDestinationMap.size()) {
             log.errorFormat("Can not found any default active domain for one of the disks of template with id : {0}",
                     getVmTemplate().getId());
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_MISSED_STORAGES_FOR_SOME_DISKS);
@@ -340,17 +341,19 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
     }
 
     private boolean validateProvidedDestinations() {
-        Set<Guid> destStorageDomains = new HashSet<Guid>(imageToDestinationDomainMap.values());
-        for (Guid destStorageDomain : destStorageDomains) {
-            storage_domains storage = DbFacade.getInstance().getStorageDomainDAO().getForStoragePool(
-                    destStorageDomain, getStoragePoolId());
-            StorageDomainValidator validator =
-                    new StorageDomainValidator(storage);
-            if (!validator.isDomainExistAndActive(getReturnValue().getCanDoActionMessages())
-                    || !validator.domainIsValidDestination(getReturnValue().getCanDoActionMessages())) {
-                return false;
+        for (DiskImage diskImage : diskInfoDestinationMap.values()) {
+            Guid storageDomainId = diskImage.getstorage_ids().get(0);
+            if (destStorages.get(storageDomainId) == null) {
+                storage_domains storage = DbFacade.getInstance().getStorageDomainDAO().getForStoragePool(
+                        storageDomainId, getStoragePoolId());
+                StorageDomainValidator validator =
+                        new StorageDomainValidator(storage);
+                if (!validator.isDomainExistAndActive(getReturnValue().getCanDoActionMessages())
+                        || !validator.domainIsValidDestination(getReturnValue().getCanDoActionMessages())) {
+                    return false;
+                }
+                destStorages.put(storage.getId(), storage);
             }
-            destStorages.put(storage.getId(), storage);
         }
         return true;
     }
@@ -360,32 +363,31 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
                 && !Guid.Empty.equals(getParameters().getStorageDomainId())) {
             Guid storageId = getParameters().getStorageDomainId();
             for (DiskImage image : getImagesToCheckDestinationStorageDomains()) {
-                imageToDestinationDomainMap.put(image.getId(), storageId);
+                ArrayList<Guid> storageIds = new ArrayList<Guid>();
+                storageIds.add(storageId);
+                image.setstorage_ids(storageIds);
+                diskInfoDestinationMap.put(image.getId(), image);
             }
             return validateProvidedDestinations();
         }
         ImagesHandler.fillImagesMapBasedOnTemplate(getVmTemplate(),
-                    imageToDestinationDomainMap,
-                    destStorages, false);
+                diskInfoDestinationMap,
+                destStorages, false);
         return true;
     }
 
     @Override
     protected boolean validateQuota() {
         // Set default quota id if storage pool enforcement is disabled.
-        getParameters().setQuotaId(QuotaHelper.getInstance().getQuotaIdToConsume(getParameters().getVmStaticData()
-                .getQuotaId(),
-                getStoragePool()));
-        for (DiskImage dit : getImagesToCheckDestinationStorageDomains()) {
-            dit.setQuotaId(QuotaHelper.getInstance()
-                    .getQuotaIdToConsume(getParameters().getVmStaticData().getQuotaId(),
-                            getStoragePool()));
+        setQuotaId(QuotaHelper.getInstance().getQuotaIdToConsume(getQuotaId(), getStoragePool()));
+
+        // Set default quota id for each disk image in the source if storage pool enforcement is disabled.
+        for (DiskImage diskImage : getImagesToCheckDestinationStorageDomains()) {
+            diskImage.setQuotaId(QuotaHelper.getInstance().getQuotaIdToConsume(diskImage.getQuotaId(), getStoragePool()));
         }
         if (!isInternalExecution()) {
-            // TODO: Should be changed when multiple storage domain will be implemented and the desired quotas will be
-            // transferred.
             return QuotaManager.validateMultiStorageQuota(getStoragePool().getQuotaEnforcementType(),
-                    QuotaHelper.getInstance().getQuotaConsumeMap(getVmTemplate().getDiskList()),
+                    getQuotaConsumeMap(diskInfoDestinationMap.values()),
                     getCommandId(),
                     getReturnValue().getCanDoActionMessages());
         }
@@ -513,7 +515,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
             vmStatic.setorigin(OriginType.valueOf(Config.<String> GetValue(ConfigValues.OriginType)));
         }
         vmStatic.setId(getVmId());
-        vmStatic.setQuotaId(getParameters().getQuotaId());
+        vmStatic.setQuotaId(getQuotaId());
         vmStatic.setcreation_date(new Date());
         // Parses the custom properties field that was filled by frontend to
         // predefined and user defined fields
@@ -557,13 +559,13 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
             for (DiskImage dit : getImagesToCheckDestinationStorageDomains()) {
                 CreateSnapshotFromTemplateParameters tempVar = new CreateSnapshotFromTemplateParameters(
                         dit.getId(), getParameters().getVmStaticData().getId());
-                tempVar.setDestStorageDomainId(imageToDestinationDomainMap.get(dit.getId()));
+                tempVar.setDestStorageDomainId(diskInfoDestinationMap.get(dit.getId()).getstorage_ids().get(0));
                 tempVar.setStorageDomainId(dit.getstorage_ids().get(0));
                 tempVar.setVmSnapshotId(getVmSnapshotId());
                 tempVar.setParentCommand(VdcActionType.AddVm);
                 tempVar.setEntityId(getParameters().getEntityId());
                 tempVar.setParentParemeters(getParameters());
-                tempVar.setQuotaId(dit.getQuotaId());
+                tempVar.setQuotaId(diskInfoDestinationMap.get(dit.getId()).getQuotaId());
                 VdcReturnValueBase result =
                         Backend.getInstance().runInternalAction(VdcActionType.CreateSnapshotFromTemplate,
                                 tempVar,
@@ -587,8 +589,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
     @Override
     protected void removeQuotaCommandLeftOver() {
         if (!isInternalExecution()) {
-            QuotaManager.removeMultiStorageDeltaQuotaCommand(QuotaHelper.getInstance()
-                    .getQuotaConsumeMap(getVmTemplate().getDiskList()),
+            QuotaManager.removeMultiStorageDeltaQuotaCommand(getQuotaConsumeMap(diskInfoDestinationMap.values()),
                     getStoragePool().getQuotaEnforcementType(),
                     getCommandId());
         }
@@ -644,6 +645,8 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
                 getActionType().getActionGroup()));
         permissionList =
                 QuotaHelper.getInstance().addQuotaPermissionSubject(permissionList, getStoragePool(), getQuotaId());
+        permissionList.addAll(QuotaHelper.getInstance()
+                .getPermissionsForDiskImagesList(diskInfoDestinationMap.values(), getStoragePool()));
         return permissionList;
     }
 

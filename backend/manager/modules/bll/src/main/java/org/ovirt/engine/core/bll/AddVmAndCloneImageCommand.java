@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -187,7 +186,7 @@ public abstract class AddVmAndCloneImageCommand<T extends VmManagementParameters
 
     @Override
     protected boolean buildAndCheckDestStorageDomains() {
-        if (imageToDestinationDomainMap.isEmpty()) {
+        if (diskInfoDestinationMap.isEmpty()) {
             List<storage_domains> domains =
                     DbFacade.getInstance()
                             .getStorageDomainDAO()
@@ -203,17 +202,22 @@ public abstract class AddVmAndCloneImageCommand<T extends VmManagementParameters
             for (DiskImage image : getDiskImagesToBeCloned()) {
                 for (Guid storageId : image.getstorage_ids()) {
                     if (storageDomainsMap.containsKey(storageId)) {
-                        imageToDestinationDomainMap.put(image.getId(), storageId);
+                        diskInfoDestinationMap.put(image.getId(), image);
                         break;
                     }
                 }
             }
-            if (getDiskImagesToBeCloned().size() != imageToDestinationDomainMap.size()) {
+            if (getDiskImagesToBeCloned().size() != diskInfoDestinationMap.size()) {
                 logErrorOneOrMoreActiveDomainsAreMissing();
                 return false;
             }
-            for (Guid storageDomainId : new HashSet<Guid>(imageToDestinationDomainMap.values())) {
-                destStorages.put(storageDomainId, storageDomainsMap.get(storageDomainId));
+           List<Guid> storageDomainDest = new ArrayList<Guid>();
+            for (DiskImage diskImage : diskInfoDestinationMap.values()) {
+                Guid storageDomainId = diskImage.getstorage_ids().get(0);
+                if (storageDomainDest.contains(storageDomainId)) {
+                    destStorages.put(storageDomainId, storageDomainsMap.get(storageDomainId));
+                }
+                storageDomainDest.add(storageDomainId);
             }
             return true;
         }

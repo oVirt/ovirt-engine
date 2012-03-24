@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -41,6 +42,7 @@ import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.utils.Pair;
 import org.ovirt.engine.core.utils.linq.Function;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
@@ -51,6 +53,7 @@ import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils.ValidationFail
 
 public abstract class VmCommand<T extends VmOperationParameterBase> extends CommandBase<T> {
 
+    private Map<Pair<Guid, Guid>, Double> quotaForStorageConsumption;
     protected final static int MAX_NETWORK_INTERFACES_SUPPORTED = 8;
     private static final Map<VmPropertiesUtils.ValidationFailureReason, String> failureReasonsToVdcBllMessagesMap =
             new HashMap<VmPropertiesUtils.ValidationFailureReason, String>();
@@ -229,6 +232,14 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         tempVar.setStorageDomainId(storageDomainId);
         return Backend.getInstance().getResourceManager().RunVdsCommand(VDSCommandType.UpdateVM, tempVar)
                 .getSucceeded();
+    }
+
+    protected Map<Pair<Guid, Guid>, Double> getQuotaConsumeMap(Collection<DiskImage> diskInfoList) {
+        if (quotaForStorageConsumption == null) {
+            quotaForStorageConsumption =
+                    QuotaHelper.getInstance().getQuotaConsumeMap(diskInfoList);
+        }
+        return quotaForStorageConsumption;
     }
 
     protected boolean RemoveVmInSpm(Guid storagePoolId, Guid vmID) {

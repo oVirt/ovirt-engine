@@ -1,15 +1,24 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
+import java.util.ArrayList;
+
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.DiskType;
+import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.queries.GetAllRelevantQuotasForStorageParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
+import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.DataProvider;
 import org.ovirt.engine.ui.uicommonweb.Linq;
@@ -289,6 +298,48 @@ public class DiskModel extends Model
                         }
                     }
                 }));
+    }
+
+    public void quota_storageSelectedItemChanged(final Guid defaultQuotaId) {
+        storage_domains storageDomain = (storage_domains) getStorageDomain().getSelectedItem();
+        if (storageDomain != null) {
+            getStorageQuota(defaultQuotaId);
+        }
+        getStorageDomain().getSelectedItemChangedEvent().addListener(new IEventListener() {
+
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                getStorageQuota(defaultQuotaId);
+            }
+        });
+    }
+
+    private void getStorageQuota(final Guid defaultQuotaId) {
+        storage_domains storageDomain = (storage_domains) getStorageDomain().getSelectedItem();
+        if (storageDomain != null) {
+            Frontend.RunQuery(VdcQueryType.GetAllRelevantQuotasForStorage,
+                    new GetAllRelevantQuotasForStorageParameters(storageDomain.getId()),
+                    new AsyncQuery(this,
+                            new INewAsyncCallback() {
+
+                                @Override
+                                public void OnSuccess(Object innerModel, Object innerReturnValue) {
+                                    ArrayList<Quota> list =
+                                            (ArrayList<Quota>) ((VdcQueryReturnValue) innerReturnValue).getReturnValue();
+                                    if (list != null) {
+                                        getQuota().setItems(list);
+                                        if (defaultQuotaId != null) {
+                                            for (Quota quota : list) {
+                                                if (quota.getId().equals(defaultQuotaId)) {
+                                                    getQuota().setSelectedItem(quota);
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }));
+        }
     }
 
     @Override

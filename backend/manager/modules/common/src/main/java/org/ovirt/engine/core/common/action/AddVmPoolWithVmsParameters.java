@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 import javax.validation.Valid;
 
+import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
@@ -16,7 +17,7 @@ public class AddVmPoolWithVmsParameters extends VmPoolOperationParameters {
     private VM _vm;
     private int _vmsCount;
     private int _diskSize;
-    private HashMap<Guid, Guid> imageToDestinationDomainMap;
+    private HashMap<Guid, DiskImage> diskInfoDestinationMap;
 
     public AddVmPoolWithVmsParameters() {
     }
@@ -41,11 +42,11 @@ public class AddVmPoolWithVmsParameters extends VmPoolOperationParameters {
         return _diskSize;
     }
 
-    public void setImageToDestinationDomainMap(HashMap<Guid, Guid> imageToDestinationDomainMap) {
-        this.imageToDestinationDomainMap = imageToDestinationDomainMap;
+    public HashMap<Guid, DiskImage> getDiskInfoDestinationMap() {
+        return diskInfoDestinationMap;
     }
 
-    public HashMap<Guid, Guid> getImageToDestinationDomainMap() {
-        return imageToDestinationDomainMap;
+    public void setDiskInfoDestinationMap(HashMap<Guid, DiskImage> diskInfoDestinationMap) {
+        this.diskInfoDestinationMap = diskInfoDestinationMap;
     }
 }

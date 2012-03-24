@@ -8,6 +8,7 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageOperation;
+import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.compat.Guid;
@@ -131,7 +132,9 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
                     model.setQuotaEnforcementType(dataCenter.getQuotaEnforcementType());
                     model.postInitStorageDomains();
                 }
-            }), storageDomains.get(0).getstorage_pool_id().getValue());
+            }),
+                    storageDomains.get(0).getstorage_pool_id().getValue());
+
         }
     }
 
@@ -172,7 +175,7 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
         Collections.sort(destStorageDomains, new Linq.StorageDomainByNameComparer());
 
         getStorageDomain().setItems(destStorageDomains);
-        setDisks(getDisks());
+        sortDisks();
 
         postCopyOrMoveInit();
     }
@@ -231,6 +234,13 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
 
             Guid sourceStorageDomainGuid = sourceStorageDomain != null ? sourceStorageDomain.getId() : Guid.Empty;
             DiskImage disk = diskModel.getDiskImage();
+            if (diskModel.getQuota().getSelectedItem() != null) {
+                if (iSingleStorageDomain) {
+                    disk.setQuotaId(((Quota) getQuota().getSelectedItem()).getId());
+                } else {
+                    disk.setQuotaId(((Quota) diskModel.getQuota().getSelectedItem()).getId());
+                }
+            }
 
             if (iSingleStorageDomain && getDisks().size() == 1) {
                 updateMoveOrCopySingleDiskParameters(parameters, diskModel);
@@ -274,6 +284,7 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
                         sourceStorageDomainGuid,
                         destStorageDomainGuid,
                         imageOperation);
+        diskParameters.setQuotaId(disk.getQuotaId());
 
         parameters.add(diskParameters);
     }

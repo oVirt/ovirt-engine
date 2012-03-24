@@ -41,11 +41,13 @@ public class AddVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParameters> exten
 
         }
 
-        if (!returnValue) {
-            addCanDoActionMessage(VdcBllMessages.VAR__ACTION__CREATE);
-        }
-
         return returnValue;
+    }
+
+    @Override
+    protected void setActionMessageParameters() {
+        super.setActionMessageParameters();
+        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__CREATE);
     }
 
     @Override

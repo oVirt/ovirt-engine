@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
@@ -38,6 +37,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
 
     public MoveOrCopyDiskCommand(T parameters) {
         super(parameters);
+        setQuotaId(getParameters().getQuotaId());
     }
 
     @Override
@@ -95,6 +95,20 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
             return false;
         }
         return true;
+    }
+
+    @Override
+    protected boolean validateQuota() {
+        // Set default quota id if storage pool enforcement is disabled.
+        getParameters().setQuotaId(QuotaHelper.getInstance().getQuotaIdToConsume(getParameters().getQuotaId(),
+                getStoragePool()));
+
+        return (QuotaManager.validateStorageQuota(getStorageDomainId().getValue(),
+                getParameters().getQuotaId(),
+                getStoragePool().getQuotaEnforcementType(),
+                getImage().getActualDiskWithSnapshotsSize(),
+                getCommandId(),
+                getReturnValue().getCanDoActionMessages()));
     }
 
     /**
@@ -254,6 +268,14 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
     }
 
     @Override
+    protected void removeQuotaCommandLeftOver() {
+        QuotaManager.removeStorageDeltaQuotaCommand(getQuotaId(),
+                getStorageDomainId().getValue(),
+                getStoragePool().getQuotaEnforcementType(),
+                getCommandId());
+    }
+
+    @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
         // TODO: change to permissions of disk when will be implemented
         DiskImage image = getImage();
@@ -261,15 +283,19 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
         if (image != null) {
             guid = image.getvm_guid();
         }
+        List<PermissionSubject> permissionList = new ArrayList<PermissionSubject>();
         if (getParameters().getOperation() == ImageOperation.Copy) {
-            return Collections.singletonList(new PermissionSubject(guid,
+            permissionList.add(new PermissionSubject(guid,
                     VdcObjectType.VmTemplate,
                     ActionGroup.COPY_TEMPLATE));
         } else {
-            return Collections.singletonList(new PermissionSubject(guid,
+            permissionList.add(new PermissionSubject(guid,
                     VdcObjectType.VM,
                     ActionGroup.MOVE_VM));
         }
+        permissionList =
+                QuotaHelper.getInstance().addQuotaPermissionSubject(permissionList, getStoragePool(), getQuotaId());
+        return permissionList;
     }
 
     /**
