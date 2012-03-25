@@ -52,7 +52,14 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("image_guid", id);
 
-        return getCallsHandler().executeRead("GetSnapshotByGuid", diskImageRowMapper, parameterSource);
+        List<DiskImage> images =
+                groupImagesStorage(getCallsHandler().executeReadList("GetSnapshotByGuid",
+                        diskImageRowMapper,
+                        parameterSource));
+        if (images == null || images.isEmpty()) {
+            return null;
+        }
+        return images.get(0);
     }
 
     @Override
@@ -83,7 +90,9 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("parent_guid", id);
 
-        return getCallsHandler().executeReadList("GetSnapshotByParentGuid", diskImageRowMapper, parameterSource);
+        return groupImagesStorage(getCallsHandler().executeReadList("GetSnapshotByParentGuid",
+                diskImageRowMapper,
+                parameterSource));
     }
 
     @Override
