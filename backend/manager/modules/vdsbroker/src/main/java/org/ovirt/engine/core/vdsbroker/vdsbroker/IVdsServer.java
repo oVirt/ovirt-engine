@@ -184,6 +184,10 @@ public interface IVdsServer {
 
     StatusOnlyReturnForXmlRpc hotunplugDisk(XmlRpcStruct info);
 
+    StatusOnlyReturnForXmlRpc hotPlugNic(XmlRpcStruct info);
+
+    StatusOnlyReturnForXmlRpc hotUnplugNic(XmlRpcStruct info);
+
     FutureTask<Map<String, Object>> poll();
 
     StatusOnlyReturnForXmlRpc snapshot(String vmId, Map<String, String>[] snapParams);

@@ -42,6 +42,7 @@ import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.VmDeviceDAO;
 import org.ovirt.engine.core.utils.Pair;
 import org.ovirt.engine.core.utils.linq.Function;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
@@ -520,4 +521,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         return false;
     }
 
+    protected VmDeviceDAO getVmDeviceDao() {
+        return DbFacade.getInstance().getVmDeviceDAO();
+    }
 }

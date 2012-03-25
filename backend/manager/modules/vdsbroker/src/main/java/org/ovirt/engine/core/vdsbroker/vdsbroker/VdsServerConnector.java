@@ -179,6 +179,10 @@ public interface VdsServerConnector {
 
     Map<String, Object> hotunplugDisk(Map<String, Object> info);
 
+    public Map<String, Object> hotplugNic(Map<String, Object> innerMap);
+
+    public Map<String, Object> hotunplugNic(Map<String, Object> innerMap);
+
     Map<String, Object> snapshot(String vmId, Map<String, String>[] snapParams);
 
     // Gluster vdsm commands

@@ -926,6 +926,27 @@ public class VdsServerWrapper implements IVdsServer {
         }
     }
 
+    public StatusOnlyReturnForXmlRpc hotPlugNic(XmlRpcStruct info) {
+        try {
+            Map<String, Object> xmlRpcReturnValue = vdsServer.hotplugNic(info.getInnerMap());
+            StatusOnlyReturnForXmlRpc wrapper = new StatusOnlyReturnForXmlRpc(xmlRpcReturnValue);
+            return wrapper;
+        } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
+    }
+
+    @Override
+    public StatusOnlyReturnForXmlRpc hotUnplugNic(XmlRpcStruct info) {
+        try {
+            Map<String, Object> xmlRpcReturnValue = vdsServer.hotunplugNic(info.getInnerMap());
+            StatusOnlyReturnForXmlRpc wrapper = new StatusOnlyReturnForXmlRpc(xmlRpcReturnValue);
+            return wrapper;
+        } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
+    }
+
     @Override
     public Future<Map<String, Object>> setupNetworks(XmlRpcStruct networks,
             XmlRpcStruct bonds,

@@ -16,7 +16,6 @@ import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DiskImageDAO;
-import org.ovirt.engine.core.dao.VmDeviceDAO;
 import org.ovirt.engine.core.dao.VmNetworkInterfaceDAO;
 import org.ovirt.engine.core.utils.linq.Function;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
@@ -129,10 +128,6 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperatinParameterBas
 
     protected DiskImageDAO getDiskImageDao() {
         return DbFacade.getInstance().getDiskImageDAO();
-    }
-
-    protected VmDeviceDAO getVmDeviceDao() {
-        return DbFacade.getInstance().getVmDeviceDAO();
     }
 
 }

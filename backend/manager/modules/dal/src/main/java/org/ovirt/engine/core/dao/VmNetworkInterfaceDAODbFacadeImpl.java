@@ -35,6 +35,7 @@ public class VmNetworkInterfaceDAODbFacadeImpl extends BaseDAODbFacade implement
                 entity.setVmTemplateId(NGuid.createGuidFromString(rs.getString("vmt_guid")));
                 entity.setId(Guid.createGuidFromString(rs.getString("id")));
                 entity.setSpeed((Integer) rs.getObject("speed"));
+                entity.setNetworkName(rs.getString("network_name"));
                 return entity;
             }
         };

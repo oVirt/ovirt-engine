@@ -9,6 +9,7 @@ import org.ovirt.engine.core.common.action.AddVmInterfaceParameters;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmInterfaceType;
@@ -20,6 +21,8 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
+import org.ovirt.engine.core.common.vdscommands.HotPlugUnplgNicVDSParameters;
+import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.Regex;
@@ -71,25 +74,36 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends V
         dbFacade
                 .getVmNetworkStatisticsDAO()
                 .save(getParameters().getInterface().getStatistics());
-        VmDeviceUtils.addManagedDevice(new VmDeviceId(getParameters().getInterface().getId(), getParameters().getVmId()),  VmDeviceType.INTERFACE, VmDeviceType.BRIDGE, "", true, false);
-        setSucceeded(true);
+        VmDevice vmDevice = VmDeviceUtils.addManagedDevice(new VmDeviceId(getParameters().getInterface().getId(), getParameters().getVmId()),  VmDeviceType.INTERFACE, VmDeviceType.BRIDGE, "", true, false);
+
+        boolean succeded = true;
+        VmDynamic vmDynamic = getVm().getDynamicData();
+        if (vmDynamic.getstatus() == VMStatus.Up) {
+            succeded = hotPlugNic(vmDevice, vmDynamic);
+            if (!succeded) {
+                getReturnValue().getExecuteFailedMessages().add("Failed hot-plugging nic to VM");
+            }
+        }
+        setSucceeded(succeded);
+    }
+
+    private boolean hotPlugNic(VmDevice vmDevice, VmDynamic vmDynamic) {
+        return runVdsCommand(VDSCommandType.HotPlugNic,
+                new HotPlugUnplgNicVDSParameters(vmDynamic.getrun_on_vds().getValue(),
+                vmDynamic.getId(),
+                getParameters().getInterface(),
+                        vmDevice)).getSucceeded();
+
     }
 
     @Override
     protected boolean canDoAction() {
-
-        VmDynamic vmDynamic = DbFacade.getInstance().getVmDynamicDAO().get(getParameters().getVmId());
-        if (vmDynamic.getstatus() != VMStatus.Down && vmDynamic.getstatus() != VMStatus.ImageLocked) {
-            addCanDoActionMessage(VdcBllMessages.NETWORK_CANNOT_CHANGE_STATUS_WHEN_NOT_DOWN);
-            return false;
-        }
-
-        VmStatic vm = DbFacade.getInstance().getVmStaticDAO().get(getParameters().getVmId());
-
+        VmStatic vm = getVm().getStaticData();
         if (vm == null) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_EXIST);
             return false;
         }
+
         List<VmNetworkInterface> interfaces = DbFacade.getInstance().getVmNetworkInterfaceDAO()
                 .getAllForVm(getParameters().getVmId());
 
