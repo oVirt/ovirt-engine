@@ -101,7 +101,7 @@ public class TemplateVmModelBehavior extends IVmModelBehavior
                     unitVmModel.getQuota().setItems(quotaList);
                     if (vmTemplate.getQuotaId() != null) {
                         for (Quota quota : quotaList) {
-                            if (quota.getId().equals(quota.getId())) {
+                            if (quota.getId().equals(vmTemplate.getQuotaId())) {
                                 unitVmModel.getQuota().setSelectedItem(quota);
                                 break;
                             }

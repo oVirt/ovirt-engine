@@ -123,9 +123,9 @@ public class ExistingVmModelBehavior extends IVmModelBehavior
                             ArrayList<Quota> quotaList =
                                     (ArrayList<Quota>) ((VdcQueryReturnValue) returnValue).getReturnValue();
                             unitVmModel.getQuota().setItems(quotaList);
-                            if (vm.getStaticData().getQuotaId() != null) {
+                            if (vm.getQuotaId() != null) {
                                 for (Quota quota : quotaList) {
-                                    if (quota.getId().equals(quota.getId())) {
+                                    if (quota.getId().equals(vm.getQuotaId())) {
                                         unitVmModel.getQuota().setSelectedItem(quota);
                                         break;
                                     }
