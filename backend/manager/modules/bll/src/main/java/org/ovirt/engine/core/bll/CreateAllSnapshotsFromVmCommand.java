@@ -85,6 +85,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
                 getCompensationContext());
 
         freeLock();
+        setActionReturnValue(createdSnapshotId);
 
         if (getDisksList().isEmpty()) {
             getParameters().setTaskGroupSuccess(true);

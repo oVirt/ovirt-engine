@@ -160,8 +160,10 @@ public class AbstractBackendResource<R extends BaseResource, Q /* extends IVdcQu
     }
 
     protected R addLinks(R model, Class<? extends BaseResource> suggestedParent, String... subCollectionMembersToExclude) {
-        return linkSubCollections(LinkHelper.addLinks(getUriInfo(), addParents(model), suggestedParent),
-                                  suggestedParent, subCollectionMembersToExclude);
+        model = addParents(model);
+        model = LinkHelper.addLinks(getUriInfo(), model, suggestedParent);
+        model = linkSubCollections(model, suggestedParent, subCollectionMembersToExclude);
+        return model;
     }
 
     protected R addLinks(R model, Class<? extends BaseResource> suggestedParent, boolean doNotLinkSubCollections) {

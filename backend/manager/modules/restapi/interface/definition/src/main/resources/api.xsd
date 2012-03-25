@@ -1834,6 +1834,23 @@
     </xs:complexContent>
   </xs:complexType>
 
+<xs:element name="preview_vms" type="PreviewVMs"/>
+
+  <xs:complexType name="PreviewVMs">
+    <xs:complexContent>
+      <xs:extension base="BaseResources">
+        <xs:sequence>
+          <xs:annotation>
+            <xs:appinfo>
+                <jaxb:property name="PreviewVMs"/>
+            </xs:appinfo>
+          </xs:annotation>
+          <xs:element type="VM" name="preview_vm" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:element name="vm_states" type="VmStates"/>
 
   <xs:complexType name="VmStates">
@@ -2075,11 +2092,11 @@
 
   <xs:complexType name="Snapshot">
     <xs:complexContent>
-      <xs:extension base="BaseResource">
+      <xs:extension base="VM">
         <xs:sequence>
           <xs:element ref="vm" minOccurs="0"/>
-          <xs:element ref="disk" minOccurs="0"/>
           <xs:element name="date" type="xs:dateTime" minOccurs="0"/>
+          <xs:element name="snapshot_status" type="xs:string" minOccurs="0"/>
           <!-- Also a rel="prev" link -->
         </xs:sequence>
       </xs:extension>

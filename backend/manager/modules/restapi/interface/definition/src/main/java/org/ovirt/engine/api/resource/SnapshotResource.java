@@ -46,4 +46,13 @@ public interface SnapshotResource extends AsynchronouslyCreatedResource {
     @Actionable
     @Path("restore")
     public Response restore(Action action);
+
+    @Path("cdroms")
+    public SnapshotCdRomsResource getSnapshotCdRomsResource();
+
+    @Path("disks")
+    public SnapshotDisksResource getSnapshotDisksResource();
+
+    @Path("nics")
+    public SnapshotNicsResource getSnapshotNicsResource();
 }

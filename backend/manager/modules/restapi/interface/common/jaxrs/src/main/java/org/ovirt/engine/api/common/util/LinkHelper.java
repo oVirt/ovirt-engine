@@ -249,6 +249,7 @@ public class LinkHelper {
 
         map = new ParentToCollectionMap(VmResource.class, VmsResource.class);
         map.add(StorageDomainContentResource.class, StorageDomainContentsResource.class, StorageDomain.class);
+//        map.add(SnapshotResource.class, SnapshotsResource.class, Snapshot.class);
         TYPES.put(VM.class, map);
 
         map = new ParentToCollectionMap(VmPoolResource.class, VmPoolsResource.class);
@@ -804,7 +805,7 @@ public class LinkHelper {
      * A #Map sub-class which maps a model type (e.g. Tag.class) to a
      * set of suitable collection definitions.
      */
-    private static class ModelToCollectionsMap extends HashMap<Class<? extends BaseResource>, ParentToCollectionMap> { }
+    private static class ModelToCollectionsMap extends HashMap<Class<? extends BaseResource>, ParentToCollectionMap> {}
 
     /**
      * A #Map sub-class which maps a parent model type to collection

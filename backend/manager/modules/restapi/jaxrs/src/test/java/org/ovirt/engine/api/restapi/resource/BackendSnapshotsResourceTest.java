@@ -1,66 +1,89 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 
 import org.junit.Ignore;
 import org.junit.Test;
-
-import org.ovirt.engine.api.model.Link;
-import org.ovirt.engine.api.model.Snapshot;
 import org.ovirt.engine.api.model.CreationStatus;
+import org.ovirt.engine.api.model.Snapshot;
 import org.ovirt.engine.core.common.action.CreateAllSnapshotsFromVmParameters;
 import org.ovirt.engine.core.common.action.RemoveSnapshotParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
-import org.ovirt.engine.core.common.queries.GetAllDisksByVmIdParameters;
+import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
+import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.queries.GetAllVmSnapshotsByVmIdParameters;
+import org.ovirt.engine.core.common.queries.GetVmConfigurationBySnapshotQueryParams;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
-import static org.easymock.classextension.EasyMock.expect;
-
 public class BackendSnapshotsResourceTest
-        extends AbstractBackendCollectionResourceTest<Snapshot, DiskImage, BackendSnapshotsResource> {
-
-    static final Guid[] SNAPSHOT_IDS = GUIDS;
-    static final Guid[] IMAGE_IDS = { new Guid("55555555-5555-5555-5555-555555555555"),
-                                      new Guid("66666666-6666-6666-6666-666666666666"),
-                                      new Guid("77777777-7777-7777-7777-777777777777") };
-
-    static final Guid TASK_ID = new Guid("88888888-8888-8888-8888-888888888888");
-    static final Guid VM_ID = GUIDS[3];
+        extends AbstractBackendCollectionResourceTest<Snapshot, org.ovirt.engine.core.common.businessentities.Snapshot, BackendSnapshotsResource> {
 
     public BackendSnapshotsResourceTest() {
         super(new BackendSnapshotsResource(VM_ID), null, "");
     }
 
-    @Test
-    @Ignore
+    static final Guid[] SNAPSHOT_IDS = GUIDS;
+    static final Date[] SNAPSHOT_DATES = {new Date(new GregorianCalendar(1978, 3, 1).getTimeInMillis()), new Date(new GregorianCalendar(1978, 3, 2).getTimeInMillis())};
+
+    static final Guid TASK_ID = new Guid("88888888-8888-8888-8888-888888888888");
+    static final Guid VM_ID = GUIDS[3];
     @Override
-    public void testQuery() throws Exception {
+    protected List<Snapshot> getCollection() {
+        return collection.list().getSnapshots();
+    }
+    @Override
+    protected org.ovirt.engine.core.common.businessentities.Snapshot getEntity(int index) {
+        org.ovirt.engine.core.common.businessentities.Snapshot entity = new org.ovirt.engine.core.common.businessentities.Snapshot();
+        entity.setId(SNAPSHOT_IDS[index]);
+        entity.setCreationDate(SNAPSHOT_DATES[index]);
+        entity.setDescription(DESCRIPTIONS[index]);
+        entity.setType(SnapshotType.REGULAR);
+        entity.setVmId(VM_ID);
+        return entity;
     }
 
     @Test
-    public void testRemoveNotFound() throws Exception {
+    public void testAddAsyncPending() throws Exception {
+        doTestAddAsync(AsyncTaskStatusEnum.init, CreationStatus.PENDING);
+    }
+
+    @Test
+    public void testAddAsyncInProgress() throws Exception {
+        doTestAddAsync(AsyncTaskStatusEnum.running, CreationStatus.IN_PROGRESS);
+    }
+
+    @Test
+    public void testAddAsyncFinished() throws Exception {
+        doTestAddAsync(AsyncTaskStatusEnum.finished, CreationStatus.COMPLETE);
+    }
+
+    @Test
+    @Override
+    public void testList() throws Exception {
+        UriInfo uriInfo = setUpUriExpectations(null);
         setUpGetEntityExpectations(1);
+        setUpGetSnapshotVmConfiguration(SNAPSHOT_IDS[0]);
+        setUpGetSnapshotVmConfiguration(SNAPSHOT_IDS[1]);
+        collection.setUriInfo(uriInfo);
         control.replay();
-        try {
-            collection.remove("c5cf0cd1-8580-44a8-b2e5-f6f9e4bc8f70");
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyNotFoundException(wae);
-        }
+        verifyCollection(getCollection());
     }
 
     @Test
     public void testRemove() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1);
+        setUpGetSnapshotVmConfiguration(SNAPSHOT_IDS[1]);
         setUpActionExpectations(VdcActionType.RemoveSnapshot,
                                 RemoveSnapshotParameters.class,
                                 new String[] { "SnapshotId", "VmId" },
@@ -82,6 +105,7 @@ public class BackendSnapshotsResourceTest
 
     protected void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
         setUpGetEntityExpectations(1);
+        setUpGetSnapshotVmConfiguration(SNAPSHOT_IDS[1]);
         setUriInfo(setUpActionExpectations(VdcActionType.RemoveSnapshot,
                                            RemoveSnapshotParameters.class,
                                            new String[] { "SnapshotId", "VmId"},
@@ -97,37 +121,45 @@ public class BackendSnapshotsResourceTest
     }
 
     @Test
-    public void testAddAsyncPending() throws Exception {
-        doTestAddAsync(AsyncTaskStatusEnum.init, CreationStatus.PENDING);
+    @Ignore
+    @Override
+    public void testQuery() throws Exception {
     }
 
     @Test
-    public void testAddAsyncInProgress() throws Exception {
-        doTestAddAsync(AsyncTaskStatusEnum.running, CreationStatus.IN_PROGRESS);
+    @Ignore
+    @Override
+    public void testListFailure() throws Exception {
     }
 
     @Test
-    public void testAddAsyncFinished() throws Exception {
-        doTestAddAsync(AsyncTaskStatusEnum.finished, CreationStatus.COMPLETE);
+    @Ignore
+    @Override
+    public void testListCrash() throws Exception {
+    }
+
+    @Test
+    @Override
+    @Ignore
+    public void testListCrashClientLocale() throws Exception {
     }
 
     private void doTestAddAsync(AsyncTaskStatusEnum asyncStatus, CreationStatus creationStatus) throws Exception {
         setUriInfo(setUpBasicUriExpectations());
-        setUpGetEntityExpectations(1);
         setUpCreationExpectations(VdcActionType.CreateAllSnapshotsFromVm,
-                                  CreateAllSnapshotsFromVmParameters.class,
-                                  new String[] { "Description", "VmId" },
-                                  new Object[] { DESCRIPTIONS[0], VM_ID },
-                                  true,
-                                  true,
-                                  GUIDS[0],
-                                  asList(TASK_ID),
-                                  asList(new AsyncTaskStatus(asyncStatus)),
-                                  VdcQueryType.GetAllDisksByVmId,
-                                  GetAllDisksByVmIdParameters.class,
-                                  new String[] { "VmId" },
-                                  new Object[] { VM_ID },
-                                  getEntity(0));
+                CreateAllSnapshotsFromVmParameters.class,
+                new String[] { "Description", "VmId" },
+                new Object[] { DESCRIPTIONS[0], VM_ID },
+                true,
+                true,
+                GUIDS[0],
+                asList(TASK_ID),
+                asList(new AsyncTaskStatus(asyncStatus)),
+                VdcQueryType.GetAllVmSnapshotsByVmId,
+                GetAllVmSnapshotsByVmIdParameters.class,
+                new String[] { "VmId" },
+                new Object[] { VM_ID },
+                getEntity(0));
         Snapshot snapshot = new Snapshot();
         snapshot.setDescription(DESCRIPTIONS[0]);
 
@@ -140,163 +172,50 @@ public class BackendSnapshotsResourceTest
         assertEquals(creationStatus.value(), created.getCreationStatus().getState());
     }
 
-    @Test
-    public void testAdd() throws Exception {
-        setUriInfo(setUpBasicUriExpectations());
-        setUpHttpHeaderExpectations("Expect", "201-created");
-        setUpGetEntityExpectations(2);
-        setUpCreationExpectations(VdcActionType.CreateAllSnapshotsFromVm,
-                                  CreateAllSnapshotsFromVmParameters.class,
-                                  new String[] { "Description", "VmId" },
-                                  new Object[] { DESCRIPTIONS[0], VM_ID },
-                                  true,
-                                  true,
-                                  GUIDS[0],
-                                  asList(GUIDS[1]),
-                                  asList(new AsyncTaskStatus(AsyncTaskStatusEnum.finished)),
-                                  VdcQueryType.GetAllDisksByVmId,
-                                  GetAllDisksByVmIdParameters.class,
-                                  new String[] { "VmId" },
-                                  new Object[] { VM_ID },
-                                  getEntity(0));
-        Snapshot snapshot = new Snapshot();
-        snapshot.setDescription(DESCRIPTIONS[0]);
-
-        Response response = collection.add(snapshot);
-        assertEquals(201, response.getStatus());
-        assertTrue(response.getEntity() instanceof Snapshot);
-        verifyModel((Snapshot)response.getEntity(), 0);
-        assertNull(((Snapshot)response.getEntity()).getCreationStatus());
-    }
-
-    @Test
-    public void testAddFromScratchCantDo() throws Exception {
-        doTestBadAddFromScratch(false, true, CANT_DO);
-    }
-
-    @Test
-    public void testAddFromScratchFailure() throws Exception {
-        doTestBadAddFromScratch(true, false, FAILURE);
-    }
-
-    private void doTestBadAddFromScratch(boolean canDo, boolean success, String detail)
-            throws Exception {
-        setUpGetEntityExpectations(1);
-        setUriInfo(setUpActionExpectations(VdcActionType.CreateAllSnapshotsFromVm,
-                                           CreateAllSnapshotsFromVmParameters.class,
-                                           new String[] { "Description", "VmId" },
-                                           new Object[] { DESCRIPTIONS[0], VM_ID },
-                                           canDo,
-                                           success));
-        Snapshot snapshot = new Snapshot();
-        snapshot.setDescription(DESCRIPTIONS[0]);
-
-        try {
-            collection.add(snapshot);
-            fail("expected WebApplicationException");
-        } catch (WebApplicationException wae) {
-            verifyFault(wae, detail);
-        }
-    }
-
-    @Test
-    public void testAddIncompleteParameters() throws Exception {
-        Snapshot snapshot = new Snapshot();
-        setUriInfo(setUpBasicUriExpectations());
-        control.replay();
-        try {
-            collection.add(snapshot);
-            fail("expected WebApplicationException on incomplete parameters");
-        } catch (WebApplicationException wae) {
-             verifyIncompleteException(wae, "Snapshot", "doAdd", "description");
-        }
-    }
-
-    @Override
-    protected List<Snapshot> getCollection() {
-        return collection.list().getSnapshots();
-    }
-
-    @Override
-    protected void setUpQueryExpectations(String query, Object failure) throws Exception {
-        assert(query.equals(""));
-
-        setUpEntityQueryExpectations(VdcQueryType.GetAllDisksByVmId,
-                                     GetAllDisksByVmIdParameters.class,
-                                     new String[] { "VmId" },
-                                     new Object[] { VM_ID },
-                                     setUpImages(),
-                                     failure);
-
-        control.replay();
-    }
-
     protected void setUpGetEntityExpectations(int times) throws Exception {
         while (times-- > 0) {
-            setUpEntityQueryExpectations(VdcQueryType.GetAllDisksByVmId,
-                                     GetAllDisksByVmIdParameters.class,
+            setUpEntityQueryExpectations(VdcQueryType.GetAllVmSnapshotsByVmId,
+                    GetAllVmSnapshotsByVmIdParameters.class,
                                      new String[] { "VmId" },
                                      new Object[] { VM_ID },
-                                     setUpImages());
+                                     getEntities());
         }
+    }
+
+    protected void setUpGetSnapshotVmConfiguration(Guid snpashotId) throws Exception {
+        setUpEntityQueryExpectations(VdcQueryType.GetVmConfigurationBySnapshot,
+                GetVmConfigurationBySnapshotQueryParams.class,
+                new String[] { "SnapshotId" },
+                new Object[] { snpashotId },
+                getVmConfiguration());
+    }
+
+    protected List<org.ovirt.engine.core.common.businessentities.Snapshot> getEntities() {
+        List<org.ovirt.engine.core.common.businessentities.Snapshot> entities = new ArrayList<org.ovirt.engine.core.common.businessentities.Snapshot>();
+        for (int i = 0; i<2; i++) {
+            entities.add(getEntity(i));
+        }
+        return entities;
     }
 
     @Override
-    protected DiskImage getEntity(int index) {
-        DiskImage image = control.createMock(DiskImage.class);
-        expect(image.getImageId()).andReturn(IMAGE_IDS[index]).anyTimes();
-        ArrayList<DiskImage> snapshots = new ArrayList<DiskImage>();
-        Guid parentId = Guid.Empty.getValue();
-        for (int i = 0 ; i < NAMES.length ; i++) {
-            DiskImage snapshot = control.createMock(DiskImage.class);
-            Guid snapshotImageId = mangle(IMAGE_IDS[index], i);
-            expect(snapshot.getImageId()).andReturn(snapshotImageId).anyTimes();
-            expect(snapshot.getvm_snapshot_id()).andReturn(SNAPSHOT_IDS[i]).anyTimes();
-            expect(snapshot.getParentId()).andReturn(parentId).anyTimes();
-            expect(snapshot.getdescription()).andReturn(DESCRIPTIONS[i]).anyTimes();
-            snapshots.add(snapshot);
-            parentId = snapshotImageId;
-        }
-        expect(image.getSnapshots()).andReturn(snapshots).anyTimes();
-        return image;
-    }
-
-    static Guid mangle(Guid imageId, int index) {
-        return new Guid(imageId.toString().replace(imageId.toString().charAt(0),
-                                            Integer.toString(index).charAt(0)));
-    }
-
-    protected List<DiskImage> setUpImages() {
-        List<DiskImage> images = new ArrayList<DiskImage>();
-        for (int i = 0; i < NAMES.length; i++) {
-            images.add(getEntity(i));
-        }
-        return images;
-    }
-
     protected void verifyModel(Snapshot model, int index) {
-        verifyModelSpecific(model, index);
+        assertEquals(GUIDS[index].toString(), model.getId());
+        assertEquals(DESCRIPTIONS[index], model.getDescription());
         verifyLinks(model);
     }
 
-    static void verifyModelSpecific(Snapshot model, int index) {
-        for (Link link : model.getLinks()) {
-            if ("prev".equals(link.getRel())) {
-                assertTrue(link.getHref().startsWith("/api/vms/" + VM_ID + "/snapshots/"));
-                // assert that prev link points to the preceding snapshot ID
-                // (checking the difference between the last chars will suffice,
-                //  as all snapshots IDs are sequences of repeated integers)
-                assertEquals(1, last(model.getId()) - last(link.getHref()));
-            }
+    protected void verifyCollection(List<Snapshot> collection) throws Exception {
+        assertNotNull(collection);
+        assertEquals(2, collection.size());
+        for (int i = 0; i < 2; i++) {
+            verifyModel(collection.get(i), i);
         }
-        if (model.getDisk() != null) {
-            assertEquals(model.getDisk().getId(), IMAGE_IDS[0].toString());
-        }
-        assertEquals(GUIDS[index].toString(), model.getId());
-        assertEquals(DESCRIPTIONS[index], model.getDescription());
     }
 
-    protected static int last(String str) {
-        return Integer.valueOf(str.charAt(str.length() - 1));
+    private VM getVmConfiguration() {
+        VM vm = new VM();
+        return vm;
     }
+
 }
