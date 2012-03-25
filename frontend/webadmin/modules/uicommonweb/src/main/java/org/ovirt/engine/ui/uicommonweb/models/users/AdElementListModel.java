@@ -24,7 +24,7 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
-import org.ovirt.engine.ui.uicommonweb.models.qouta.QuotaPermissionListModel;
+import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaPermissionListModel;
 
 @SuppressWarnings("unused")
 public class AdElementListModel extends SearchableListModel

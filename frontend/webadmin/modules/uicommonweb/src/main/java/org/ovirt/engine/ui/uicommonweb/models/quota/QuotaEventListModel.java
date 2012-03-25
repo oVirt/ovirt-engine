@@ -1,4 +1,4 @@
-package org.ovirt.engine.ui.uicommonweb.models.qouta;
+package org.ovirt.engine.ui.uicommonweb.models.quota;
 
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;

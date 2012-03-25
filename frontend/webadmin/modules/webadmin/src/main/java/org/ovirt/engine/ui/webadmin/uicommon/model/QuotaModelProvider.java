@@ -4,10 +4,10 @@ import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidg
 import org.ovirt.engine.ui.common.uicommon.model.TabModelProvider;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
-import org.ovirt.engine.ui.uicommonweb.models.qouta.QuotaModel;
+import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaModel;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.qouta.EditQuotaClusterPopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.qouta.EditQuotaStoragePopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.quota.EditQuotaClusterPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.quota.EditQuotaStoragePopupPresenterWidget;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;

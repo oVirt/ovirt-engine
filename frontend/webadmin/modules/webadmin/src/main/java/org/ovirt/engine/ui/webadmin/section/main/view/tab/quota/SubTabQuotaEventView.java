@@ -5,8 +5,8 @@ import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
-import org.ovirt.engine.ui.uicommonweb.models.qouta.QuotaEventListModel;
-import org.ovirt.engine.ui.uicommonweb.models.qouta.QuotaListModel;
+import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaEventListModel;
+import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaListModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.quota.SubTabQuotaEventPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabEventView;
 

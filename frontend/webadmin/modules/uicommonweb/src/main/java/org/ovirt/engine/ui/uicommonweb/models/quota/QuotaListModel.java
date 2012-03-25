@@ -1,4 +1,4 @@
-package org.ovirt.engine.ui.uicommonweb.models.qouta;
+package org.ovirt.engine.ui.uicommonweb.models.quota;
 
 import java.util.ArrayList;
 

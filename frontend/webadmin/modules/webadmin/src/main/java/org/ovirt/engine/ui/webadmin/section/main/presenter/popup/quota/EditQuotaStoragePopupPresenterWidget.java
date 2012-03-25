@@ -1,7 +1,7 @@
-package org.ovirt.engine.ui.webadmin.section.main.presenter.popup.qouta;
+package org.ovirt.engine.ui.webadmin.section.main.presenter.popup.quota;
 
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
-import org.ovirt.engine.ui.uicommonweb.models.qouta.EditQuotaStorageModel;
+import org.ovirt.engine.ui.uicommonweb.models.quota.EditQuotaStorageModel;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
