@@ -50,6 +50,7 @@ public abstract class AddVmAndCloneImageCommand<T extends VmManagementParameters
                 Guid.NewGuid(),
                 Guid.NewGuid(),
                 diskImage);
+        ImagesHandler.setDiskAlias(newDiskImage.getDisk(), getVm());
         MoveOrCopyImageGroupParameters parameters = createCopyParameters(newDiskImage,
                 srcStorageDomainId,
                 diskImage.getimage_group_id(),

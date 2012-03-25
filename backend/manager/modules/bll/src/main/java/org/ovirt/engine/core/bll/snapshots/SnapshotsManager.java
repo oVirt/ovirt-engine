@@ -201,7 +201,7 @@ public class SnapshotsManager {
         getVmStaticDao().update(vm.getStaticData());
         getVmDynamicDao().update(vm.getDynamicData());
         synchronizeNics(vm.getId(), vm.getInterfaces(), compensationContext);
-        synchronizeDisksFromSnapshot(vm.getId(), snapshot.getId(), activeSnapshotId, vm.getImages());
+        synchronizeDisksFromSnapshot(vm.getId(), snapshot.getId(), activeSnapshotId, vm.getImages(), vm.getvm_name());
     }
 
     /**
@@ -293,7 +293,8 @@ public class SnapshotsManager {
     protected void synchronizeDisksFromSnapshot(Guid vmId,
             Guid snapshotId,
             Guid activeSnapshotId,
-            List<DiskImage> disksFromSnapshot) {
+            List<DiskImage> disksFromSnapshot,
+            String vmName) {
         List<Guid> diskIdsFromSnapshot = new ArrayList<Guid>();
 
         // Sync disks that exist or existed in the snapshot.
@@ -301,6 +302,7 @@ public class SnapshotsManager {
             diskIdsFromSnapshot.add(diskImage.getimage_group_id());
             Disk disk = diskImage.getDisk();
             if (getDiskDao().exists(disk.getId())) {
+                disk.setDiskAlias(ImagesHandler.getSuggestedDiskAlias(disk, vmName));
                 getDiskDao().update(disk);
             } else {
 
@@ -313,6 +315,7 @@ public class SnapshotsManager {
                             diskImage.getstorage_ids().get(0)));
                 }
 
+                disk.setDiskAlias(ImagesHandler.getSuggestedDiskAlias(disk, vmName));
                 ImagesHandler.addDiskToVm(disk, vmId);
             }
         }

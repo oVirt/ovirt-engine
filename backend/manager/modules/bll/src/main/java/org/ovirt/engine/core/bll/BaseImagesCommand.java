@@ -34,6 +34,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
     private DiskImage mImage;
     private Guid mImageId = new Guid();
     private Guid mImageContainerId = Guid.Empty;
+    VM vm;
     /**
      * Default mapping - drive 1
      */
@@ -362,15 +363,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
      * @return - Calculated label name.
      */
     protected String CalculateImageDescription() {
-        VM vm = DbFacade.getInstance().getVmDAO().getById(getImageContainerId());
-
-        // If vm is null (could be because the getImageContainerId() is a Blank
-        // template) , use the vm id.
-        if (vm == null) {
-            vm = DbFacade.getInstance().getVmDAO().getById(getVmId());
-        }
-
-        return ImagesHandler.calculateImageDescription(vm);
+        return ImagesHandler.calculateImageDescription(getVm());
     }
 
     protected static void CompleteAdvancedDiskData(DiskImage from, DiskImage to) {
@@ -411,6 +404,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
      */
     protected void saveDiskIfNotExists(DiskImage image) {
         if (!getDiskDao().exists(image.getimage_group_id())) {
+            ImagesHandler.setDiskAlias(image.getDisk(), getVm());
             getDiskDao().save(image.getDisk());
         }
     }

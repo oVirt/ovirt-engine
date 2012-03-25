@@ -41,6 +41,9 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
         boolean retValue = isVmExist();
         if (retValue) {
             _oldDisk = getDiskImageDao().get(getParameters().getImageId());
+
+            // Set disk alias name in the disk retrieved from the parameters.
+            ImagesHandler.setDiskAlias(getParameters().getDiskInfo().getDisk(), getVm());
             retValue = isDiskExist(_oldDisk) && checkCanPerformRegularUpdate();
         }
         return retValue;
@@ -144,6 +147,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
                 _oldDisk.setpropagate_errors(getParameters().getDiskInfo().getpropagate_errors());
                 _oldDisk.setwipe_after_delete(getParameters().getDiskInfo().getwipe_after_delete());
                 _oldDisk.setQuotaId(getQuotaId());
+                _oldDisk.getDisk().setDiskAlias(getParameters().getDiskInfo().getDisk().getDiskAlias());
                 DbFacade.getInstance().getDiskDao().update(_oldDisk.getDisk());
                 getDiskImageDao().update(_oldDisk);
                 setSucceeded(UpdateVmInSpm(getVm().getstorage_pool_id(),

@@ -510,6 +510,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
                 }
 
                 BaseImagesCommand.saveImage(disk);
+                ImagesHandler.setDiskAlias(disk.getDisk(), getVm());
                 DbFacade.getInstance().getDiskDao().save(disk.getDisk());
                 DiskImageDynamic diskDynamic = new DiskImageDynamic();
                 diskDynamic.setId(disk.getId());

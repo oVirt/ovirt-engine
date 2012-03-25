@@ -101,6 +101,7 @@ public class AddDiskToVmCommand<T extends AddDiskToVmParameters> extends Abstrac
                 returnValue = false;
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW);
             }
+            ImagesHandler.setDiskAlias(getParameters().getDiskInfo().getDisk(), getVm());
         }
         if (returnValue) {
             if (getRequestDiskSpace() > Config
