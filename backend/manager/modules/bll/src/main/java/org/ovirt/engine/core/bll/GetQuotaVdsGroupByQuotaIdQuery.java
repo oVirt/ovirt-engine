@@ -12,6 +12,6 @@ public class GetQuotaVdsGroupByQuotaIdQuery<P extends GetQuotaVdsGroupByQuotaIdQ
     protected void executeQueryCommand() {
         getQueryReturnValue().setReturnValue(DbFacade.getInstance()
                 .getQuotaDAO()
-                .getQuotaVdsGroupByQuotaGuid(getParameters().getQuotaId()));
+                .getQuotaVdsGroupByQuotaGuidWithGeneralDefault(getParameters().getQuotaId()));
     }
 }
