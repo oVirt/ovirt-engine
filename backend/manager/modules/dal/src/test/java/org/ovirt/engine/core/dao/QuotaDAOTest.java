@@ -2,6 +2,7 @@ package org.ovirt.engine.core.dao;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -238,6 +239,38 @@ public class QuotaDAOTest extends BaseDAOTestCase {
                 assertEquals(quotaVdsGroup.getVirtualCpu(), new Integer("1000"));
                 assertEquals(quotaVdsGroup.getMemSizeMB(), unlimited);
             }
+        }
+    }
+
+    /**
+     * Asserts that when {@link QuotaDAO#getQuotaVdsGroupByQuotaGuidWithGeneralDefault(Guid)} is called
+     * with a specific quota, all the relevant VDSs are returned
+     */
+    @Test
+    public void testQuotaVdsGroupByQuotaGuidWithGeneralDefaultNoDefault() {
+        List<QuotaVdsGroup> quotaVdsGroupList =
+                dao.getQuotaVdsGroupByQuotaGuidWithGeneralDefault(FixturesTool.QUOTA_SPECIFIC);
+        assertNotNull(quotaVdsGroupList);
+        assertEquals("wrong number of quotas returned", 2, quotaVdsGroupList.size());
+        for (QuotaVdsGroup group : quotaVdsGroupList) {
+            assertNotNull("VDS ID should not be null in specific mode", group.getVdsGroupId());
+            assertNotNull("VDS name should not be null in specific mode", group.getVdsGroupName());
+        }
+    }
+
+    /**
+     * Asserts that when {@link QuotaDAO#getQuotaVdsGroupByQuotaGuidWithGeneralDefault(Guid)} is called
+     * with a non-specific quota, the general is returned
+     */
+    @Test
+    public void testQuotaVdsGroupByQuotaGuidWithGeneralDefaultWithDefault() {
+        List<QuotaVdsGroup> quotaVdsGroupList =
+                dao.getQuotaVdsGroupByQuotaGuidWithGeneralDefault(FixturesTool.QUOTA_GENERAL);
+        assertNotNull(quotaVdsGroupList);
+        assertEquals("wrong number of quotas returned", 1, quotaVdsGroupList.size());
+        for (QuotaVdsGroup group : quotaVdsGroupList) {
+            assertEquals("VDS ID should be empty in specific mode", Guid.Empty, group.getVdsGroupId());
+            assertNull("VDS name should be null in specific mode", group.getVdsGroupName());
         }
     }
 

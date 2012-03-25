@@ -38,6 +38,7 @@ public class QuotaDAODbFacadeImpl extends BaseDAODbFacade implements QuotaDAO {
      *            - The storage pool id that the quota is being searched in.
      * @return The quota entity that was found.
      */
+    @Override
     public Quota getQuotaByQuotaName(String quotaName) {
         MapSqlParameterSource quotaParameterSource = getCustomMapSqlParameterSource();
         quotaParameterSource.addValue("quota_name", quotaName);
@@ -56,6 +57,7 @@ public class QuotaDAODbFacadeImpl extends BaseDAODbFacade implements QuotaDAO {
      *            - The storage pool Id to search the quotas in (If null search all over the setup).
      * @return All quotas for user.
      */
+    @Override
     public List<Quota> getQuotaByAdElementId(Guid adElementId, Guid storagePoolId) {
         MapSqlParameterSource quotaParameterSource = getCustomMapSqlParameterSource();
         quotaParameterSource.addValue("ad_element_id", adElementId);
@@ -76,6 +78,7 @@ public class QuotaDAODbFacadeImpl extends BaseDAODbFacade implements QuotaDAO {
      *            - The <code>Quota</code> id
      * @return List of QuotaStorage
      */
+    @Override
     public List<QuotaVdsGroup> getQuotaVdsGroupByVdsGroupGuid(Guid vdsGroupId, Guid quotaId) {
         MapSqlParameterSource parameterSource =
                 createQuotaIdParameterMapper(quotaId).addValue("vds_group_id", vdsGroupId);
@@ -94,6 +97,7 @@ public class QuotaDAODbFacadeImpl extends BaseDAODbFacade implements QuotaDAO {
      *            - The quota id
      * @return List of QuotaStorage
      */
+    @Override
     public List<QuotaStorage> getQuotaStorageByStorageGuid(Guid storageId, Guid quotaId) {
         MapSqlParameterSource parameterSource = createQuotaIdParameterMapper(quotaId).addValue("storage_id", storageId);
         List<QuotaStorage> quotaStorageList = getCallsHandler().executeReadList("GetQuotaStorageByStorageGuid",
@@ -106,8 +110,10 @@ public class QuotaDAODbFacadeImpl extends BaseDAODbFacade implements QuotaDAO {
      * Returns all the Quota storages in the storage pool if v_storage_id is null, if v_storage_id is not null then a
      * specific quota storage will be returned.
      */
+    @Override
     public List<Quota> getQuotaByStoragePoolGuid(Guid storagePoolId) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("storage_pool_id", storagePoolId);
+        MapSqlParameterSource parameterSource =
+                getCustomMapSqlParameterSource().addValue("storage_pool_id", storagePoolId);
         List<Quota> quotaList = getCallsHandler().executeReadList("GetQuotaByStoragePoolGuid",
                 getQuotaFromResultSet(),
                 parameterSource);
@@ -117,6 +123,7 @@ public class QuotaDAODbFacadeImpl extends BaseDAODbFacade implements QuotaDAO {
     /**
      * Get full <code>Quota</code> entity.
      */
+    @Override
     public Quota getById(Guid quotaId) {
         MapSqlParameterSource parameterSource = createQuotaIdParameterMapper(quotaId);
 
@@ -133,6 +140,7 @@ public class QuotaDAODbFacadeImpl extends BaseDAODbFacade implements QuotaDAO {
     /**
      * Get all quota storages which belong to quota with quotaId.
      */
+    @Override
     public List<QuotaStorage> getQuotaStorageByQuotaGuid(Guid quotaId) {
         MapSqlParameterSource parameterSource = createQuotaIdParameterMapper(quotaId);
         return getCallsHandler().executeReadList("GetQuotaStorageByQuotaGuid",
@@ -143,6 +151,7 @@ public class QuotaDAODbFacadeImpl extends BaseDAODbFacade implements QuotaDAO {
     /**
      * Get all quota Vds groups, which belong to quota with quotaId.
      */
+    @Override
     public List<QuotaVdsGroup> getQuotaVdsGroupByQuotaGuid(Guid quotaId) {
         MapSqlParameterSource parameterSource = createQuotaIdParameterMapper(quotaId);
         return getCallsHandler().executeReadList("GetQuotaVdsGroupByQuotaGuid",
@@ -150,6 +159,17 @@ public class QuotaDAODbFacadeImpl extends BaseDAODbFacade implements QuotaDAO {
                 parameterSource);
     }
 
+    /**
+     * Get all quota Vds groups, which belong to quota with quotaId.
+     * In case no quota Vds Groups are returned, a fictitious QuotaVdsGroup is returned,
+     * with an {@link Guid.Empty} Vds Id and a <code>null</code> name.
+     */
+    @Override
+    public List<QuotaVdsGroup> getQuotaVdsGroupByQuotaGuidWithGeneralDefault(Guid quotaId) {
+        return getQuotaVdsGroupByVdsGroupGuid(null, quotaId);
+    }
+
+    @Override
     public Quota getDefaultQuotaByStoragePoolId(Guid storagePoolId) {
         MapSqlParameterSource quotaParameterSource = getCustomMapSqlParameterSource();
         quotaParameterSource.addValue("storage_pool_id", storagePoolId);
@@ -163,6 +183,7 @@ public class QuotaDAODbFacadeImpl extends BaseDAODbFacade implements QuotaDAO {
     /**
      * Remove quota with quota id.
      */
+    @Override
     public void remove(Guid id) {
         getCallsHandler().executeModification("DeleteQuotaByQuotaGuid",
                 createQuotaIdParameterMapper(id));
@@ -172,6 +193,7 @@ public class QuotaDAODbFacadeImpl extends BaseDAODbFacade implements QuotaDAO {
      * Update <Code>quota</Code>, by updating the quota meta data and remove all its limitations and add the limitations
      * from the quota parameter.
      */
+    @Override
     public void update(Quota quota) {
         getCallsHandler().executeModification("UpdateQuotaMetaData",
                 createQuotaMetaDataParameterMapper(quota));
@@ -294,7 +316,6 @@ public class QuotaDAODbFacadeImpl extends BaseDAODbFacade implements QuotaDAO {
         entity.setIsDefaultQuota(rs.getBoolean("is_default_quota"));
         return entity;
     }
-
 
     private MapSqlParameterSource createQuotaIdParameterMapper(Guid quotaId) {
         MapSqlParameterSource quotaParameterSource = getCustomMapSqlParameterSource()
