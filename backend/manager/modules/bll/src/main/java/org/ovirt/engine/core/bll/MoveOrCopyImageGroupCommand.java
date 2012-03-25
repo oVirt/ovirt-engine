@@ -174,19 +174,22 @@ public class MoveOrCopyImageGroupCommand<T extends MoveOrCopyImageGroupParameter
 
     @Override
     protected void RevertTasks() {
-        Guid destImageId = getParameters().getDestinationImageId();
-        RemoveImageParameters removeImageParams =
-                new RemoveImageParameters(destImageId, getParameters().getContainerId());
-        removeImageParams.setParentParemeters(getParameters());
-        removeImageParams.setParentCommand(VdcActionType.MoveOrCopyImageGroup);
-        removeImageParams.setEntityId(getDestinationImageId());
-        // Setting the image as the monitored entity, so there will not be dependency
-        VdcReturnValueBase returnValue =
-                checkAndPerformRollbackUsingCommand(VdcActionType.RemoveImage, removeImageParams);
-        if (returnValue.getSucceeded()) {
-            // Starting to monitor the the tasks - RemoveImage is an internal command
-            // which adds the taskId on the internal task ID list
-            startPollingAsyncTasks(returnValue.getInternalTaskIdList());
+        // Revert should be performed only for AddVmFromSnapshot at this point.
+        if (getParameters().getParentCommand() == VdcActionType.AddVmFromSnapshot) {
+            Guid destImageId = getParameters().getDestinationImageId();
+            RemoveImageParameters removeImageParams =
+                    new RemoveImageParameters(destImageId, getParameters().getContainerId());
+            removeImageParams.setParentParemeters(getParameters());
+            removeImageParams.setParentCommand(VdcActionType.MoveOrCopyImageGroup);
+            removeImageParams.setEntityId(getDestinationImageId());
+            // Setting the image as the monitored entity, so there will not be dependency
+            VdcReturnValueBase returnValue =
+                    checkAndPerformRollbackUsingCommand(VdcActionType.RemoveImage, removeImageParams);
+            if (returnValue.getSucceeded()) {
+                // Starting to monitor the the tasks - RemoveImage is an internal command
+                // which adds the taskId on the internal task ID list
+                startPollingAsyncTasks(returnValue.getInternalTaskIdList());
+            }
         }
     }
 
