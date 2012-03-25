@@ -20,6 +20,7 @@
 	<g:FlowPanel>
 		<e:EntityModelTextBoxEditor ui:field="sizeEditor" />
 		<e:ListModelListBoxEditor ui:field="storageDomainEditor" />
+		<e:ListModelListBoxEditor ui:field="quotaEditor" />
 		<e:ListModelListBoxEditor ui:field="presetEditor" />
 		<e:ListModelListBoxEditor ui:field="interfaceEditor" />
 		<e:ListModelListBoxEditor ui:field="volumeTypeEditor" />

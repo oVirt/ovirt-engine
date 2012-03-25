@@ -14,6 +14,8 @@ import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.DiskType;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.PropagateErrors;
+import org.ovirt.engine.core.common.businessentities.Quota;
+import org.ovirt.engine.core.common.businessentities.QuotaEnforcmentTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageType;
@@ -21,7 +23,10 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.queries.GetAllDisksByVmIdParameters;
+import org.ovirt.engine.core.common.queries.GetQuotaByStoragePoolIdQueryParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
@@ -214,7 +219,7 @@ public class VmDiskListModel extends SearchableListModel
 
     private void New()
     {
-        VM vm = (VM) getEntity();
+        final VM vm = (VM) getEntity();
 
         if (getWindow() != null)
         {
@@ -258,11 +263,48 @@ public class VmDiskListModel extends SearchableListModel
             }
         };
         AsyncDataProvider.GetStorageDomainList(_asyncQuery1, vm.getstorage_pool_id());
+
+        AsyncDataProvider.GetDataCenterById(new AsyncQuery(this, new INewAsyncCallback() {
+
+            @Override
+            public void OnSuccess(Object model, Object returnValue) {
+                storage_pool dataCenter = (storage_pool) returnValue;
+                VmDiskListModel vmDiskListModel1 = (VmDiskListModel) model;
+                DiskModel dModel = (DiskModel) vmDiskListModel1.getWindow();
+                if (dataCenter.getQuotaEnforcementType().equals(QuotaEnforcmentTypeEnum.DISABLED)) {
+                    dModel.getQuota().setIsAvailable(false);
+                    return;
+                }
+                dModel.getQuota().setIsAvailable(true);
+                GetQuotaByStoragePoolIdQueryParameters params = new GetQuotaByStoragePoolIdQueryParameters();
+                params.setStoragePoolId(dataCenter.getId());
+                Frontend.RunQuery(VdcQueryType.GetQuotaByStoragePoolId, params
+                        , new AsyncQuery(new Object[] { this,
+                                dModel }, new INewAsyncCallback() {
+
+                            @Override
+                            public void OnSuccess(Object model, Object returnValue) {
+                                Object[] array = (Object[]) model;
+                                DiskModel dModel2 = (DiskModel) array[1];
+                                ArrayList<Quota> quotaList =
+                                        (ArrayList<Quota>) ((VdcQueryReturnValue) returnValue).getReturnValue();
+                                dModel2.getQuota().setItems(quotaList);
+                                for (Quota quota : quotaList) {
+                                    if (quota.getId().equals(vm.getQuotaId())) {
+                                        dModel2.getQuota().setSelectedItem(quota);
+                                        break;
+                                    }
+                                }
+                            }
+                        }));
+
+            }
+        }), vm.getstorage_pool_id());
     }
 
     private void Edit()
     {
-        DiskImage disk = (DiskImage) getSelectedItem();
+        final DiskImage disk = (DiskImage) getSelectedItem();
 
         if (getWindow() != null)
         {
@@ -355,6 +397,43 @@ public class VmDiskListModel extends SearchableListModel
         };
 
         AsyncDataProvider.GetStorageDomainById(_asyncQuery1, disk.getstorage_ids().get(0));
+
+        AsyncDataProvider.GetDataCenterById(new AsyncQuery(this, new INewAsyncCallback() {
+
+            @Override
+            public void OnSuccess(Object model, Object returnValue) {
+                storage_pool dataCenter = (storage_pool) returnValue;
+                VmDiskListModel vmDiskListModel1 = (VmDiskListModel) model;
+                DiskModel dModel = (DiskModel) vmDiskListModel1.getWindow();
+                if (dataCenter.getQuotaEnforcementType().equals(QuotaEnforcmentTypeEnum.DISABLED)) {
+                    dModel.getQuota().setIsAvailable(false);
+                    return;
+                }
+                dModel.getQuota().setIsAvailable(true);
+                GetQuotaByStoragePoolIdQueryParameters params = new GetQuotaByStoragePoolIdQueryParameters();
+                params.setStoragePoolId(dataCenter.getId());
+                Frontend.RunQuery(VdcQueryType.GetQuotaByStoragePoolId, params
+                        , new AsyncQuery(new Object[] { this,
+                                dModel }, new INewAsyncCallback() {
+
+                            @Override
+                            public void OnSuccess(Object model, Object returnValue) {
+                                Object[] array = (Object[]) model;
+                                DiskModel dModel2 = (DiskModel) array[1];
+                                ArrayList<Quota> quotaList =
+                                        (ArrayList<Quota>) ((VdcQueryReturnValue) returnValue).getReturnValue();
+                                dModel2.getQuota().setItems(quotaList);
+                                for (Quota quota : quotaList) {
+                                    if (quota.getId().equals(disk.getQuotaId())) {
+                                        dModel2.getQuota().setSelectedItem(quota);
+                                        break;
+                                    }
+                                }
+                            }
+                        }));
+
+            }
+        }), ((VM) getEntity()).getstorage_pool_id());
     }
 
     private void remove()
@@ -453,6 +532,9 @@ public class VmDiskListModel extends SearchableListModel
         disk.setwipe_after_delete((Boolean) model.getWipeAfterDelete().getEntity());
         disk.setboot((Boolean) model.getIsBootable().getEntity());
         disk.setPlugged((Boolean) model.getIsPlugged().getEntity());
+        if (model.getQuota().getIsAvailable()) {
+            disk.setQuotaId(((Quota) model.getQuota().getSelectedItem()).getId());
+        }
 
         // NOTE: Since we doesn't support partial snapshots in GUI, propagate errors flag always must be set false.
         // disk.propagate_errors = model.PropagateErrors.ValueAsBoolean() ? PropagateErrors.On : PropagateErrors.Off;

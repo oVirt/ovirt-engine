@@ -276,6 +276,9 @@ public class DiskModel extends Model
         getIsPlugged().setEntity(true);
         getIsPlugged().setIsAvailable(false);
 
+        setQuota(new ListModel());
+        getQuota().setIsAvailable(false);
+
         AsyncDataProvider.GetDiskMaxSize(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override

@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.common.widget.uicommon.popup.vm;
 
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
+import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.widget.Align;
@@ -36,6 +37,10 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> 
     @UiField(provided = true)
     @Path("storageDomain.selectedItem")
     ListModelListBoxEditor<Object> storageDomainEditor;
+
+    @UiField(provided = true)
+    @Path("quota.selectedItem")
+    ListModelListBoxEditor<Object> quotaEditor;
 
     @UiField(provided = true)
     @Path("preset.selectedItem")
@@ -75,6 +80,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> 
     private void localize(CommonApplicationConstants constants) {
         sizeEditor.setLabel("Size(GB)");
         storageDomainEditor.setLabel("Storage Domain");
+        quotaEditor.setLabel("Quota");
         presetEditor.setLabel("Disk Type");
         interfaceEditor.setLabel("Interface");
         volumeTypeEditor.setLabel("Format");
@@ -89,6 +95,13 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> 
             @Override
             public String renderNullSafe(Object object) {
                 return ((storage_domains) object).getstorage_name();
+            }
+        });
+
+        quotaEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
+            @Override
+            public String renderNullSafe(Object object) {
+                return ((Quota) object).getQuotaName();
             }
         });
 
