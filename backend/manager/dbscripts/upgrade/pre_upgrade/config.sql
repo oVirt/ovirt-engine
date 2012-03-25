@@ -203,6 +203,7 @@ select fn_db_add_config_value('OvirtIsoPrefix','rhevh','general');
 select fn_db_add_config_value('oVirtISOsRepositoryPath','ovirt-isos','general');
 select fn_db_add_config_value('oVirtUpgradeScriptName','/usr/share/vdsm-reg/vdsm-upgrade','general');
 select fn_db_add_config_value('oVirtUploadPath','/data/updates/ovirt-node-image.iso','general');
+select fn_db_add_config_value('PayloadSize','8192','general');
 select fn_db_add_config_value('PosixStorageEnabled','false','2.2');
 select fn_db_add_config_value('PosixStorageEnabled','false','3.0');
 select fn_db_add_config_value('PosixStorageEnabled','true','3.1');

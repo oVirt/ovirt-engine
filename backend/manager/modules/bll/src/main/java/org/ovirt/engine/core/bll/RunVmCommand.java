@@ -845,6 +845,21 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
                 getVdsSelector(),
                 getSnapshotsValidator(), getVmPropertiesUtils()) &&
                 isVmInterfacesAttachedToVmNetworks();
+
+        // check for Vm Payload
+        if (canDoAction && getParameters().getVmPayload() != null) {
+            canDoAction = checkPayload(getParameters().getVmPayload(),
+                        getParameters().getDiskPath());
+
+            if (canDoAction && !StringHelper.isNullOrEmpty(getParameters().getFloppyPath()) &&
+                    getParameters().getVmPayload().getType() == VmDeviceType.FLOPPY) {
+                addCanDoActionMessage(VdcBllMessages.VMPAYLOAD_FLOPPY_EXCEEDED);
+                canDoAction = false;
+            }
+            else {
+                getVm().setVmPayload(getParameters().getVmPayload());
+            }
+        }
         return canDoAction;
     }
 

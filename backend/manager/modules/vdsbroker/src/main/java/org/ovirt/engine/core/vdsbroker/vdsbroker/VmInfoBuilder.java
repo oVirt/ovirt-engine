@@ -17,6 +17,7 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmType;
+import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
@@ -86,15 +87,31 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
     @Override
     protected void buildVmCD() {
         XmlRpcStruct struct;
-        // check first if CD was given as a parameter
-        if (vm.isRunOnce() && !StringHelper.isNullOrEmpty(vm.getCdPath())) {
+        // check if we have payload CD
+        if (vm.getVmPayload() != null && vm.getVmPayload().getType() == VmDeviceType.CDROM) {
             VmDevice vmDevice =
                     new VmDevice(new VmDeviceId(Guid.NewGuid(), vm.getId()),
                             VmDeviceType.DISK.getName(),
                             VmDeviceType.CDROM.getName(),
                             "",
                             0,
-                            new HashMap<String, Object>(),
+                            (vm.getVmPayload() == null) ? null : vm.getVmPayload().getSpecParams(),
+                            true,
+                            true,
+                            true);
+            struct = new XmlRpcStruct();
+            addCdDetails(vmDevice, struct);
+            addDevice(struct, vmDevice, "");
+        }
+        // check first if CD was given as a parameter
+        else if (vm.isRunOnce() && !StringHelper.isNullOrEmpty(vm.getCdPath())) {
+            VmDevice vmDevice =
+                    new VmDevice(new VmDeviceId(Guid.NewGuid(), vm.getId()),
+                            VmDeviceType.DISK.getName(),
+                            VmDeviceType.CDROM.getName(),
+                            "",
+                            0,
+                            (vm.getVmPayload() == null) ? null : vm.getVmPayload().getSpecParams(),
                             true,
                             true,
                             true);
@@ -112,6 +129,11 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
             for (VmDevice vmDevice : vmDevices) {
                 // skip unamanged devices (handled separtely)
                 if (!vmDevice.getIsManaged()) {
+                    continue;
+                }
+                // more then one device mean that we have payload and should use it
+                // instead of the blank cd
+                if (!VmPayload.isPayload(vmDevice.getSpecParams()) && vmDevices.size() > 1) {
                     continue;
                 }
                 struct = new XmlRpcStruct();
@@ -132,15 +154,31 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
 
     @Override
     protected void buildVmFloppy() {
-        // check first if Floppy was given as a parameter
-        if (vm.isRunOnce() && !StringHelper.isNullOrEmpty(vm.getFloppyPath())) {
+        // check if we have payload CD
+        if (vm.getVmPayload() != null && vm.getVmPayload().getType() == VmDeviceType.FLOPPY) {
             VmDevice vmDevice =
                     new VmDevice(new VmDeviceId(Guid.NewGuid(), vm.getId()),
                             VmDeviceType.DISK.getName(),
                             VmDeviceType.FLOPPY.getName(),
                             "",
                             0,
-                            new HashMap<String, Object>(),
+                            (vm.getVmPayload() == null) ? null : vm.getVmPayload().getSpecParams(),
+                            true,
+                            true,
+                            true);
+            XmlRpcStruct struct = new XmlRpcStruct();
+            addCdDetails(vmDevice, struct);
+            addDevice(struct, vmDevice, "");
+        }
+        // check first if Floppy was given as a parameter
+        else if (vm.isRunOnce() && !StringHelper.isNullOrEmpty(vm.getFloppyPath())) {
+            VmDevice vmDevice =
+                    new VmDevice(new VmDeviceId(Guid.NewGuid(), vm.getId()),
+                            VmDeviceType.DISK.getName(),
+                            VmDeviceType.FLOPPY.getName(),
+                            "",
+                            0,
+                            (vm.getVmPayload() == null) ? null : vm.getVmPayload().getSpecParams(),
                             true,
                             true,
                             true);
@@ -160,14 +198,21 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                 if (!vmDevice.getIsManaged()) {
                     continue;
                 }
-                String file = (String) vmDevice.getSpecParams().get(VdsProperties.Path);
-                if (!StringHelper.isNullOrEmpty(file)) {
-                    XmlRpcStruct struct = new XmlRpcStruct();
-                    addFloppyDetails(vmDevice, struct);
-                    addCdOrFloppyFileDetails(file, struct);
-                    addDevice(struct, vmDevice, file);
-                    break; // currently only one is supported, may change in future releases
+                // more then one device mean that we have payload and should use it
+                // instead of the blank cd
+                if (!VmPayload.isPayload(vmDevice.getSpecParams()) && vmDevices.size() > 1) {
+                    continue;
                 }
+                XmlRpcStruct struct = new XmlRpcStruct();
+                String file = (String) vmDevice.getSpecParams().get(VdsProperties.Path);
+                addFloppyDetails(vmDevice, struct);
+                if (!StringHelper.isNullOrEmpty(file)) {
+                    addCdOrFloppyFileDetails(file, struct);
+                }
+                else {
+                    file = "";
+                }
+                addDevice(struct, vmDevice, file);
             }
         }
     }

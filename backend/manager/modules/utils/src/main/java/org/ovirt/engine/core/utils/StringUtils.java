@@ -110,7 +110,14 @@ public class StringUtils {
         Map<String, String> map = new HashMap<String, String>();
         if (str != null) {
             // remove map markers
-            str = str.replaceAll("[{}]", "");
+            str = str.trim();
+            if (str.startsWith("{")) {
+                str = str.substring(1, str.length() - 1);
+            }
+            if (str.endsWith("}")) {
+                str = str.substring(0, str.length() - 1);
+            }
+            str = str.trim();
             if (str.length() > 0) {
                 String[] keyValPairs = str.split(DELIMITER);
                 for (String pair : keyValPairs) {

@@ -1124,6 +1124,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("false")
     AdvancedNFSOptionsEnabled(353),
 
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("8192")
+    PayloadSize(354),
+
     Invalid(65535);
 
     private int intValue;

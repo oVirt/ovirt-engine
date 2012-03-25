@@ -24,6 +24,7 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
     private VmStatic mVmStatic;
     private VmDynamic mVmDynamic;
     private VmStatistics mVmStatistics;
+    private VmPayload vmPayload;
 
     @Valid
     private List<Snapshot> snapshots = new ArrayList<Snapshot>();
@@ -1531,5 +1532,13 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
 
     public boolean isRunOnce() {
         return isRunOnce;
+    }
+
+    public void setVmPayload(VmPayload vmPayload) {
+        vmPayload = vmPayload;
+    }
+
+    public VmPayload getVmPayload() {
+        return vmPayload;
     }
 }

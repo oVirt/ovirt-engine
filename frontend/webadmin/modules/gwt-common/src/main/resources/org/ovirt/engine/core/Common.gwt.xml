@@ -103,6 +103,7 @@
 		<include name="common/businessentities/vm_pool_map.java" />
 		<include name="common/businessentities/vm_pools.java" />
 		<include name="common/businessentities/VM.java" />
+		<include name="common/businessentities/VmPayload.java" />
 		<include name="common/businessentities/VmBase.java" />
 		<include name="common/businessentities/VmDynamic.java" />
 		<include name="common/businessentities/VmDevice.java" />

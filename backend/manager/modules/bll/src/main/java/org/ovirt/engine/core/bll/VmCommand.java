@@ -26,6 +26,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.async_tasks;
 import org.ovirt.engine.core.common.businessentities.tags;
@@ -37,6 +38,7 @@ import org.ovirt.engine.core.common.vdscommands.RemoveVMVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.UpdateVMVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
+import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
 import org.ovirt.engine.core.compat.RefObject;
@@ -55,6 +57,7 @@ import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils.ValidationFail
 
 public abstract class VmCommand<T extends VmOperationParameterBase> extends CommandBase<T> {
 
+    private static int Kb = 1024;
     private Map<Pair<Guid, Guid>, Double> quotaForStorageConsumption;
     protected final static int MAX_NETWORK_INTERFACES_SUPPORTED = 8;
     private static final Map<VmPropertiesUtils.ValidationFailureReason, String> failureReasonsToVdcBllMessagesMap =
@@ -522,5 +525,25 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
 
     protected VmDeviceDAO getVmDeviceDao() {
         return DbFacade.getInstance().getVmDeviceDAO();
+    }
+
+    protected boolean checkPayload(VmPayload payload, String isoPath) {
+        boolean returnValue = true;
+        if (payload.getType() != VmDeviceType.CDROM && payload.getType() != VmDeviceType.FLOPPY) {
+            addCanDoActionMessage(VdcBllMessages.VMPAYLOAD_INVALID_PAYLOAD_TYPE);
+            returnValue = false;
+        }
+        else if (payload.getContent().length() > Config.<Integer> GetValue(ConfigValues.PayloadSize)) {
+            Integer lengthInKb = 2 * Config.<Integer> GetValue(ConfigValues.PayloadSize) / Kb;
+            addCanDoActionMessage(VdcBllMessages.VMPAYLOAD_SIZE_EXCEEDED);
+            addCanDoActionMessage(String.format("$size %1$s", lengthInKb.toString()));
+            returnValue = false;
+        }
+        else if (!StringHelper.isNullOrEmpty(isoPath) &&
+                payload.getType() == VmDeviceType.CDROM) {
+            addCanDoActionMessage(VdcBllMessages.VMPAYLOAD_CDROM_EXCEEDED);
+            returnValue = false;
+        }
+        return returnValue;
     }
 }

@@ -58,7 +58,8 @@ public class VmHandler {
         mUpdateVmsStatic.AddPermittedFields(new String[] { "vm_name", "description", "domain", "os", "osType",
                 "creation_date", "num_of_monitors", "usb_policy", "is_auto_suspend", "auto_startup",
                 "dedicated_vm_for_vds", "default_display_type", "priority", "default_boot_sequence", "initrd_url",
-                "kernel_url", "kernel_params", "migrationSupport", "minAllocatedMem", "quotaId", "quotaName" });
+                "kernel_url", "kernel_params", "migrationSupport", "minAllocatedMem", "quotaId", "quotaName",
+                "vmPayload" });
         mUpdateVmsStatic.AddFields(
                 Arrays.asList(new Enum[] { VMStatus.Down }),
                 Arrays.asList(new String[] { "vds_group_id", "time_zone", "is_stateless", "nice_level", "mem_size_mb",

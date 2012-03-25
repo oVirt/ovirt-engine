@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 import javax.validation.Valid;
 
+import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
@@ -19,6 +20,7 @@ public class VmManagementParametersBase extends VmOperationParameterBase {
     private Guid privateStorageDomainId = Guid.Empty;
     private boolean privateDontCheckTemplateImages;
     private HashMap<Guid, DiskImage> diskInfoDestinationMap;
+    private VmPayload payload;
 
     public VmManagementParametersBase() {
     }
@@ -90,5 +92,13 @@ public class VmManagementParametersBase extends VmOperationParameterBase {
 
     public void setDiskInfoDestinationMap(HashMap<Guid, DiskImage> diskInfoDestinationMap) {
         this.diskInfoDestinationMap = diskInfoDestinationMap;
+    }
+
+    public VmPayload getVmPayload() {
+        return this.payload;
+    }
+
+    public void setVmPayload(VmPayload value) {
+        this.payload = value;
     }
 }

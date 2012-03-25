@@ -8,10 +8,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.codec.binary.Base64;
 import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
+import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.PermissionSubject;
@@ -29,6 +31,7 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.businessentities.permissions;
@@ -40,6 +43,7 @@ import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.queries.IsVmWithSameNameExistParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
+import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.dal.VdcBllMessages;
@@ -309,6 +313,17 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
             }
         }
 
+        // check for Vm Payload
+        if (returnValue && getParameters().getVmPayload() != null) {
+            returnValue = checkPayload(getParameters().getVmPayload(),
+                        getParameters().getVmStaticData().getiso_path());
+            if (returnValue) {
+                // we save the content in base64 string
+                getParameters().getVmPayload().setContent(Base64.encodeBase64String(
+                            getParameters().getVmPayload().getContent().getBytes()));
+            }
+        }
+
         return returnValue && checkCpuSockets();
     }
 
@@ -470,11 +485,25 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
             if (AddVmImages()) {
                 copyVmDevices();
                 addDiskPermissions(newDiskImages);
+                addVmPayload();
                 setActionReturnValue(getVm().getId());
                 setSucceeded(true);
             }
         } else {
             log.errorFormat("Failed to add vm . The reasons are: {0}", StringUtils.join(errorMessages, ','));
+        }
+    }
+
+    protected void addVmPayload() {
+        VmPayload payload = getParameters().getVmPayload();
+
+        if (payload != null) {
+            VmDeviceUtils.addManagedDevice(new VmDeviceId(Guid.NewGuid(), getParameters().getVmId()),
+                    VmDeviceType.DISK,
+                    payload.getType(),
+                    payload.getSpecParams(),
+                    true,
+                    true);
         }
     }
 

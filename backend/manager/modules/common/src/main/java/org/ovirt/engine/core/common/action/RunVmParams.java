@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.action;
 
 import org.ovirt.engine.core.common.businessentities.BootSequence;
+import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.INotifyPropertyChanged;
@@ -28,6 +29,7 @@ public class RunVmParams extends VmOperationParameterBase implements INotifyProp
     private String initrd_url;
     private String kernel_url;
     private String kernel_params;
+    private VmPayload payload;
 
     public RunVmParams() {
     }
@@ -209,6 +211,14 @@ public class RunVmParams extends VmOperationParameterBase implements INotifyProp
 
     public void setkernel_params(String value) {
         this.kernel_params = value;
+    }
+
+    public VmPayload getVmPayload() {
+        return this.payload;
+    }
+
+    public void setVmPayload(VmPayload value) {
+        this.payload = value;
     }
 
     public String getCustomProperties() {
