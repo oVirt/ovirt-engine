@@ -520,6 +520,22 @@ public class VmGeneralModel extends EntityModel
         }
     }
 
+    private String compatibilityVersion;
+
+    public String getCompatibilityVersion()
+    {
+        return compatibilityVersion;
+    }
+
+    public void setCompatibilityVersion(String value)
+    {
+        if (!StringHelper.stringsEqual(compatibilityVersion, value))
+        {
+            compatibilityVersion = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("CompatibilityVersion"));
+        }
+    }
+
     static
     {
         UpdateCompleteEventDefinition = new EventDefinition("UpdateComplete", VmGeneralModel.class);
@@ -595,6 +611,9 @@ public class VmGeneralModel extends EntityModel
 
         setHasCustomProperties(!StringHelper.stringsEqual(vm.getCustomProperties(), ""));
         setCustomProperties(getHasCustomProperties() ? "Configured" : "Not-Configured");
+
+        setCompatibilityVersion(vm.getvds_group_compatibility_version() != null ?
+                vm.getvds_group_compatibility_version().toString() : "");
 
         setHasAlert(vm.getVmPauseStatus() != VmPauseStatus.NONE && vm.getVmPauseStatus() != VmPauseStatus.NOERR);
         if (getHasAlert())

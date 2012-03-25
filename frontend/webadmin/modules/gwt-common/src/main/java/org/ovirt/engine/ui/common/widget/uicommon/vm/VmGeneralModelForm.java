@@ -32,6 +32,7 @@ public class VmGeneralModelForm extends AbstractModelBoundFormWidget<VmGeneralMo
     TextBoxLabel customProperties = new TextBoxLabel();
     TextBoxLabel domain = new TextBoxLabel();
     TextBoxLabel timeZone = new TextBoxLabel();
+    TextBoxLabel compatibilityVersion = new TextBoxLabel();
 
     BooleanLabel isHighlyAvailable = new BooleanLabel("Yes", "No");
 
@@ -76,23 +77,23 @@ public class VmGeneralModelForm extends AbstractModelBoundFormWidget<VmGeneralMo
             }
         });
 
-        formBuilder.addFormItem(new FormItem("Quota", quotaName, 5, 2) {
+        formBuilder.addFormItem(new FormItem("Origin", origin, 0, 2));
+        formBuilder.addFormItem(new FormItem("Run On", defaultHost, 1, 2));
+        formBuilder.addFormItem(new FormItem("Custom Properties", customProperties, 2, 2));
+        formBuilder.addFormItem(new FormItem("Cluster Compatibility Version", compatibilityVersion, 3, 2));
+        formBuilder.addFormItem(new FormItem("Quota", quotaName, 4, 2) {
             @Override
             public boolean isVisible() {
                 return getModel().getQuotaName() != null;
             }
         });
-
-        formBuilder.addFormItem(new FormItem("Origin", origin, 0, 2));
-        formBuilder.addFormItem(new FormItem("Run On", defaultHost, 1, 2));
-        formBuilder.addFormItem(new FormItem("Custom Properties", customProperties, 2, 2));
-        formBuilder.addFormItem(new FormItem("Domain", domain, 3, 2) {
+        formBuilder.addFormItem(new FormItem("Domain", domain, 5, 2) {
             @Override
             public boolean isVisible() {
                 return getModel().getHasDomain();
             }
         });
-        formBuilder.addFormItem(new FormItem("Time Zone", timeZone, 4, 2) {
+        formBuilder.addFormItem(new FormItem("Time Zone", timeZone, 6, 2) {
             @Override
             public boolean isVisible() {
                 return getModel().getHasTimeZone();
