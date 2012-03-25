@@ -262,6 +262,9 @@ public enum VdcQueryType implements Serializable {
     //Commands
     GetCommandsCompatibilityVersions(VdcQueryAuthType.User),
 
+    // Disks
+    GetNextAvailableDiskAliasNameByVMId,
+
     // Default type instead of having to null check
     Unknown(VdcQueryAuthType.User);
 
