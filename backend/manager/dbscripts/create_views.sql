@@ -44,6 +44,8 @@ SELECT DISTINCT images.image_guid as image_guid, vm_device.vm_id as vm_guid,
     images.image_group_id as image_group_id,
     images.active,
     vm_static.entity_type as entity_type,
+    disks.disk_alias as disk_alias,
+    disks.disk_description as disk_description,
     CAST (disks.internal_drive_mapping AS VARCHAR(50)) as internal_drive_mapping,
     CASE WHEN disks.disk_interface = 'IDE' THEN 0
          WHEN disks.disk_interface = 'SCSI' THEN 1
@@ -94,20 +96,21 @@ LEFT OUTER JOIN repo_file_meta_data ON storage_pool_iso_map.storage_id = repo_fi
 
 CREATE OR REPLACE VIEW vm_images_view
 AS
-SELECT     images_storage_domain_view.storage_path as storage_path, images_storage_domain_view.storage_name as storage_name, images_storage_domain_view.storage_pool_id as storage_pool_id, images_storage_domain_view.image_guid as image_guid,
+SELECT     array_to_string(array_agg(storage_id), ',') as storage_id, array_to_string(array_agg(storage_path), ',') as storage_path, array_to_string(array_agg(storage_name), ',') as storage_name,
+					  images_storage_domain_view.storage_pool_id as storage_pool_id, images_storage_domain_view.image_guid as image_guid,
                       images_storage_domain_view.creation_date as creation_date, disk_image_dynamic.actual_size as actual_size, disk_image_dynamic.read_rate as read_rate, disk_image_dynamic.write_rate as write_rate,
                       images_storage_domain_view.size as size, images_storage_domain_view.it_guid as it_guid,
                       images_storage_domain_view.internal_drive_mapping as internal_drive_mapping, images_storage_domain_view.description as description,
                       images_storage_domain_view.ParentId as ParentId, images_storage_domain_view.imageStatus as imageStatus, images_storage_domain_view.lastModified as lastModified,
-                      images_storage_domain_view.app_list as app_list, images_storage_domain_view.storage_id as storage_id, images_storage_domain_view.vm_snapshot_id as vm_snapshot_id,
+                      images_storage_domain_view.app_list as app_list, images_storage_domain_view.vm_snapshot_id as vm_snapshot_id,
                       images_storage_domain_view.volume_type as volume_type, images_storage_domain_view.image_group_id as image_group_id, images_storage_domain_view.vm_guid as vm_guid,
                       images_storage_domain_view.active as active, images_storage_domain_view.volume_format as volume_format,
                       images_storage_domain_view.disk_interface as disk_interface, images_storage_domain_view.boot as boot, images_storage_domain_view.wipe_after_delete as wipe_after_delete, images_storage_domain_view.propagate_errors as propagate_errors,
-                      images_storage_domain_view.entity_type as entity_type,images_storage_domain_view.quota_id as quota_id, images_storage_domain_view.quota_name as quota_name, disks.disk_alias as disk_alias, disks.disk_description as disk_description
+                      images_storage_domain_view.entity_type as entity_type,images_storage_domain_view.quota_id as quota_id, images_storage_domain_view.quota_name as quota_name, images_storage_domain_view.disk_alias as disk_alias, images_storage_domain_view.disk_description as disk_description
 FROM         images_storage_domain_view
 INNER JOIN disk_image_dynamic ON images_storage_domain_view.image_guid = disk_image_dynamic.image_id
-INNER JOIN disks ON images_storage_domain_view.image_group_id = disks.disk_id
-WHERE images_storage_domain_view.active = TRUE;
+WHERE images_storage_domain_view.active = TRUE
+GROUP BY storage_pool_id,image_guid,creation_date,disk_image_dynamic.actual_size,disk_image_dynamic.read_rate,disk_image_dynamic.write_rate,size,it_guid,internal_drive_mapping,description,ParentId,imageStatus,lastModified,app_list,vm_snapshot_id,volume_type,image_group_id,vm_guid,active,volume_format,disk_interface,boot,wipe_after_delete,propagate_errors,entity_type,quota_id,quota_name,disk_alias,disk_description;
 
 
 CREATE OR REPLACE VIEW storage_domains

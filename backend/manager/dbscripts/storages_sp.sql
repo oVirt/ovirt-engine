@@ -488,13 +488,13 @@ BEGIN
          from images_storage_domain_view where entity_type = 'TEMPLATE' and storage_id = v_storage_domain_id;
    END;
 
-   delete FROM permissions where object_id in (select vm_guid from vm_images_view where storage_id = v_storage_domain_id);
-   delete FROM snapshots WHERE vm_id in (select vm_guid from vm_images_view where storage_id  = v_storage_domain_id);
+   delete FROM permissions where object_id in (select vm_guid from vm_images_view where v_storage_domain_id in (SELECT id FROM fnsplitteruuid(storage_id)));
+   delete FROM snapshots WHERE vm_id in (select vm_guid from vm_images_view where v_storage_domain_id in (SELECT id FROM fnsplitteruuid(storage_id)));
    delete FROM images where image_guid in (select image_id from tt_TEMPSTORAGEDOMAINMAPTABLE);
    delete FROM vm_interface where vmt_guid in(select vm_guid from tt_TEMPTEMPLATESTABLE);
    delete FROM permissions where object_id in (select vm_guid from tt_TEMPTEMPLATESTABLE);
    delete FROM permissions where object_id = v_storage_domain_id;
-   delete FROM vm_static where vm_guid in(select vm_guid from vm_images_view where storage_id = v_storage_domain_id and vm_images_view.entity_type <> 'TEMPLATE');
+   delete FROM vm_static where vm_guid in(select vm_guid from vm_images_view where v_storage_domain_id in (SELECT id FROM fnsplitteruuid(storage_id)) and vm_images_view.entity_type <> 'TEMPLATE');
    delete from vm_static where vm_guid in(select vm_guid from tt_TEMPTEMPLATESTABLE);
    delete FROM storage_domain_dynamic where id  = v_storage_domain_id;
    delete FROM storage_domain_static where id  = v_storage_domain_id;

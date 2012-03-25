@@ -130,6 +130,22 @@ public class DiskImageBase extends IVdcQueryable implements Serializable {
         disk.setWipeAfterDelete(value);
     }
 
+    public String getDiskAlias() {
+        return disk.getDiskAlias();
+    }
+
+    public void setDiskAlias(String value) {
+        disk.setDiskAlias(value);
+    }
+
+    public String getDiskDescription() {
+        return disk.getDiskDescription();
+    }
+
+    public void setDiskDescription(String value) {
+        disk.setDiskDescription(value);
+    }
+
     public PropagateErrors getpropagate_errors() {
         return disk.getPropagateErrors();
     }

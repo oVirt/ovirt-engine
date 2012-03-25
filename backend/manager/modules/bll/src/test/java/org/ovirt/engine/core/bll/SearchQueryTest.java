@@ -186,9 +186,9 @@ public class SearchQueryTest {
      * @param search
      */
     private String getDiskImageRegexString(SearchObjectAutoCompleter search) {
-        return ".*" + search.getDefaultSort(SearchObjects.DISK_IMAGE_OBJ_NAME) + ".*"
-                + search.getRelatedTableNameWithOutTags(SearchObjects.DISK_IMAGE_OBJ_NAME) + ".* "
-                + search.getPrimeryKeyName(SearchObjects.DISK_IMAGE_OBJ_NAME) + ".*";
+        return ".*" + search.getDefaultSort(SearchObjects.DISK_OBJ_NAME) + ".*"
+                + search.getRelatedTableNameWithOutTags(SearchObjects.DISK_OBJ_NAME) + ".* "
+                + search.getPrimeryKeyName(SearchObjects.DISK_OBJ_NAME) + ".*";
     }
 
     /**

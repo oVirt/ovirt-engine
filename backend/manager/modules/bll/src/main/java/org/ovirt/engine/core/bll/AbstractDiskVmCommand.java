@@ -92,26 +92,6 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperatinParameterBas
         return returnValue;
     }
 
-    private String getCorrectDriveForDisk() {
-        int driveNum = 1;
-        List<Integer> vmDisks = LinqUtils.foreach(getVm().getDiskMap().keySet(), new Function<String, Integer>() {
-            @Override
-            public Integer eval(String s) {
-                return new Integer(s);
-            }
-        });
-        Collections.sort(vmDisks);
-
-        for (int disk : vmDisks) {
-            if ((disk - driveNum) == 0) {
-                driveNum++;
-            } else {
-                break;
-            }
-        }
-        return Integer.toString(driveNum);
-    }
-
     protected boolean isVmUpOrDown() {
         if (getVm().getstatus() != VMStatus.Up && getVm().getstatus() != VMStatus.Down) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL);

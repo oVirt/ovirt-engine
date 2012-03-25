@@ -4,9 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
@@ -37,9 +35,7 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
                 .addValue("image_guid", id);
 
         List<DiskImage> images =
-                groupImagesStorage(getCallsHandler().executeReadList("GetImageByImageGuid",
-                        diskImageRowMapper,
-                        parameterSource));
+                getCallsHandler().executeReadList("GetImageByImageGuid", diskImageRowMapper, parameterSource);
         if (images == null || images.isEmpty()) {
             return null;
         }
@@ -52,9 +48,7 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
                 .addValue("image_guid", id);
 
         List<DiskImage> images =
-                groupImagesStorage(getCallsHandler().executeReadList("GetSnapshotByGuid",
-                        diskImageRowMapper,
-                        parameterSource));
+                getCallsHandler().executeReadList("GetSnapshotByGuid", diskImageRowMapper, parameterSource);
         if (images == null || images.isEmpty()) {
             return null;
         }
@@ -78,20 +72,14 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
     public List<DiskImage> getAllForVm(Guid id, Guid userID, boolean isFiltered) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("vm_guid", id).addValue("user_id", userID).addValue("is_filtered", isFiltered);
-
-        return groupImagesStorage(getCallsHandler().executeReadList("GetImagesByVmGuid",
-                diskImageRowMapper,
-                parameterSource));
+        return getCallsHandler().executeReadList("GetImagesByVmGuid",diskImageRowMapper,parameterSource);
     }
 
     @Override
     public List<DiskImage> getAllSnapshotsForParent(Guid id) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("parent_guid", id);
-
-        return groupImagesStorage(getCallsHandler().executeReadList("GetSnapshotByParentGuid",
-                diskImageRowMapper,
-                parameterSource));
+        return getCallsHandler().executeReadList("GetSnapshotByParentGuid",diskImageRowMapper,parameterSource);
     }
 
     @Override
@@ -121,10 +109,7 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
     @Override
     public List<DiskImage> getAll() {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource();
-
-        return groupImagesStorage(getCallsHandler().executeReadList("GetAllFromImages",
-                diskImageRowMapper,
-                parameterSource));
+        return getCallsHandler().executeReadList("GetAllFromImages", diskImageRowMapper, parameterSource);
     }
 
     @Override
@@ -261,8 +246,7 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
             entity.setlastModified(DbFacadeUtils.fromDate(rs
                     .getTimestamp("lastModified")));
             entity.setappList(rs.getString("app_list"));
-            entity.setstorage_ids(new ArrayList<Guid>(Arrays.asList(Guid.createGuidFromString(rs
-                    .getString("storage_id")))));
+            entity.setstorage_ids(new ArrayList<Guid>(Arrays.asList(Guid.createGuidFromString(rs.getString("storage_id")))));
             entity.setStoragesNames(new ArrayList<String>(Arrays.asList(rs.getString("storage_name"))));
             entity.setvm_snapshot_id(NGuid.createGuidFromString(rs
                     .getString("vm_snapshot_id")));
@@ -272,7 +256,9 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
                     .getInt("volume_format")));
             entity.setimage_group_id(Guid.createGuidFromString(rs
                     .getString("image_group_id")));
-            entity.setstorage_path(rs.getString("storage_path"));
+            if (!(rs.getString("storage_path") == null || rs.getString("storage_path").isEmpty())) {
+                entity.setstorage_path(new ArrayList<String>(Arrays.asList(rs.getString("storage_path"))));
+            }
             entity.setstorage_pool_id(NGuid.createGuidFromString(rs
                     .getString("storage_pool_id")));
             entity.setdisk_interface(DiskInterface.forValue(rs
@@ -286,33 +272,18 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
             entity.setQuotaId(Guid.createGuidFromString(rs.getString("quota_id")));
             entity.setactive((Boolean) rs.getObject("active"));
             entity.setQuotaName(rs.getString("quota_name"));
+            entity.setDiskAlias(rs.getString("disk_alias"));
+            entity.setDiskDescription(rs.getString("disk_description"));
             String entityType = rs.getString("entity_type");
             handleEntityType(entityType, entity);
         }
-
-        private void handleEntityType(String entityType, DiskImage entity) {
-            if (entityType != null && !entityType.isEmpty()) {
-                VmEntityType vmEntityType = VmEntityType.valueOf(entityType);
-                entity.setVmEntityType(vmEntityType);
-            }
-        }
     }
 
-    private List<DiskImage> groupImagesStorage(List<DiskImage> images) {
-        if (images != null && images.size() > 1) {
-            Map<Guid, DiskImage> imagesMap = new HashMap<Guid, DiskImage>();
-            for (DiskImage image : images) {
-                if (!imagesMap.containsKey(image.getId())) {
-                    imagesMap.put(image.getId(), image);
-                } else {
-                    imagesMap.get(image.getId()).getstorage_ids().addAll(image.getstorage_ids());
-                    imagesMap.get(image.getId()).getStoragesNames().addAll(image.getStoragesNames());
-                }
-            }
-            return new ArrayList<DiskImage>(imagesMap.values());
+    private static void handleEntityType(String entityType, DiskImage entity) {
+        if (entityType != null && !entityType.isEmpty()) {
+            VmEntityType vmEntityType = VmEntityType.valueOf(entityType);
+            entity.setVmEntityType(vmEntityType);
         }
-        return images;
-
     }
 
     @Override

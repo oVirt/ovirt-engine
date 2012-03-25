@@ -372,13 +372,13 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
     }
 
     // TODO from storage_domain_static
-    private String mstorage_path;
+    private ArrayList<String> mstorage_path;
 
-    public String getstorage_path() {
+    public ArrayList<String> getstorage_path() {
         return mstorage_path;
     }
 
-    public void setstorage_path(String value) {
+    public void setstorage_path(ArrayList<String> value) {
         mstorage_path = value;
         OnPropertyChanged(new PropertyChangedEventArgs("storage_path"));
     }

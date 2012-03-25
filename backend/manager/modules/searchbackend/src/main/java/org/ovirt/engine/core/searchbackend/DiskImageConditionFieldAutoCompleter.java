@@ -5,7 +5,6 @@ import java.util.Date;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
-import org.ovirt.engine.core.common.businessentities.PropagateErrors;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.StringFormat;
@@ -18,6 +17,7 @@ public class DiskImageConditionFieldAutoCompleter extends BaseConditionFieldAuto
         mVerbs.put("DESCRIPTION", "DESCRIPTION");
         mVerbs.put("PROVISIONED_SIZE", "PROVISIONED_SIZE");
         mVerbs.put("SIZE", "SIZE");
+        mVerbs.put("ACTUAL_SIZE", "ACTUAL_SIZE");
         mVerbs.put("CREATION_DATE", "CREATION_DATE");
         mVerbs.put("BOOTABLE", "BOOTABLE");
         mVerbs.put("FORMAT", "FORMAT");
@@ -31,6 +31,7 @@ public class DiskImageConditionFieldAutoCompleter extends BaseConditionFieldAuto
         getTypeDictionary().put("DESCRIPTION", String.class);
         getTypeDictionary().put("PROVISIONED_SIZE", Long.class);
         getTypeDictionary().put("SIZE", Long.class);
+        getTypeDictionary().put("ACTUAL_SIZE", Long.class);
         getTypeDictionary().put("CREATION_DATE", Date.class);
         getTypeDictionary().put("BOOTABLE", Boolean.class);
         getTypeDictionary().put("FORMAT", VolumeFormat.class);
@@ -40,7 +41,8 @@ public class DiskImageConditionFieldAutoCompleter extends BaseConditionFieldAuto
         mColumnNameDict.put("ALIAS", "disk_alias");
         mColumnNameDict.put("DESCRIPTION", "disk_description");
         mColumnNameDict.put("PROVISIONED_SIZE", "size");
-        mColumnNameDict.put("SIZE", "actual_size");
+        mColumnNameDict.put("SIZE", "size");
+        mColumnNameDict.put("ACTUAL_SIZE", "actual_size");
         mColumnNameDict.put("CREATION_DATE", "creation_date");
         mColumnNameDict.put("BOOTABLE", "boot");
         mColumnNameDict.put("FORMAT", "volume_format");
@@ -53,7 +55,7 @@ public class DiskImageConditionFieldAutoCompleter extends BaseConditionFieldAuto
     @Override
     public IAutoCompleter getFieldRelationshipAutoCompleter(String fieldName) {
         IAutoCompleter retval;
-        if (StringHelper.EqOp(fieldName, "CREATIONDATE") || StringHelper.EqOp(fieldName, "SIZE")
+        if (StringHelper.EqOp(fieldName, "CREATIONDATE") || StringHelper.EqOp(fieldName, "SIZE") || StringHelper.EqOp(fieldName, "ACTUAL_SIZE")
                 || StringHelper.EqOp(fieldName, "PROVISIONED_SIZE")) {
             retval = BiggerOrSmallerRelationAutoCompleter.INTSANCE;
         } else {
@@ -65,9 +67,7 @@ public class DiskImageConditionFieldAutoCompleter extends BaseConditionFieldAuto
     @Override
     public IConditionValueAutoCompleter getFieldValueAutoCompleter(String fieldName) {
         IConditionValueAutoCompleter retval = null;
-        if (StringHelper.EqOp(fieldName, "PROPAGATE_ERRORS")) {
-            retval = new EnumValueAutoCompleter(PropagateErrors.class);
-        } else if (StringHelper.EqOp(fieldName, "FORMAT")) {
+        if (StringHelper.EqOp(fieldName, "FORMAT")) {
             retval = new EnumValueAutoCompleter(VolumeFormat.class);
         } else if (StringHelper.EqOp(fieldName, "STATUS")) {
             retval = new EnumValueAutoCompleter(ImageStatus.class);
