@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -31,6 +32,7 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.ObjectIdentityChecker;
+import org.ovirt.engine.core.utils.linq.Function;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 import org.ovirt.engine.core.utils.log.Log;
@@ -97,6 +99,26 @@ public class VmHandler {
             }
         }
         return returnValue;
+    }
+
+    public static String getCorrectDriveForDisk(VM vm) {
+        int driveNum = 1;
+        List<Integer> vmDisks = LinqUtils.foreach(vm.getDiskMap().keySet(), new Function<String, Integer>() {
+            @Override
+            public Integer eval(String s) {
+                return new Integer(s);
+            }
+        });
+        Collections.sort(vmDisks);
+
+        for (int disk : vmDisks) {
+            if ((disk - driveNum) == 0) {
+                driveNum++;
+            } else {
+                break;
+            }
+        }
+        return Integer.toString(driveNum);
     }
 
     public static boolean isVmWithSameNameExistStatic(String vmName) {

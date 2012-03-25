@@ -91,6 +91,45 @@ public final class ImagesHandler {
         }
     }
 
+    public static boolean setDiskAlias(Disk disk, VM vm) {
+        if (disk != null) {
+            disk.setDiskAlias(getSuggestedDiskAlias(disk, vm.getvm_name()));
+            return true;
+        } else {
+            log.errorFormat("Disk object is null");
+            return false;
+        }
+    }
+
+    /**
+     * Retrieve disk alias name, if the alias name is null returns the default alias name.
+     *
+     * @param disk
+     *            - Disk which disk alias is being initialized in.
+     * @param diskPrefix
+     *            - The prefix for disk alias if needs to be initialized.
+     */
+    public static String getSuggestedDiskAlias(Disk disk, String diskPrefix) {
+        String diskAlias;
+        if (disk == null) {
+            diskAlias = getDefaultDiskAlias(diskPrefix, "1");
+            log.warnFormat("Disk object is null, the suggested default disk alias to be used is %1$s",
+                    diskAlias);
+        } else {
+            diskAlias = disk.getDiskAlias();
+            if (diskAlias == null) {
+                diskAlias = getDefaultDiskAlias(diskPrefix, String.valueOf(disk.getInternalDriveMapping()));
+                log.infoFormat("Disk alias retrieved from the client is null, the suggested default disk alias to be used is %1$s",
+                        diskAlias);
+            }
+        }
+        return diskAlias;
+    }
+
+    public static String getDefaultDiskAlias(String prefix, String suffix) {
+        return prefix + "_DISK" + suffix;
+    }
+
     public static Map<Guid, List<DiskImage>> buildStorageToDiskMap(Collection<DiskImage> images,
             Map<Guid, DiskImage> diskInfoDestinationMap) {
         Map<Guid, List<DiskImage>> storageToDisksMap = new HashMap<Guid, List<DiskImage>>();

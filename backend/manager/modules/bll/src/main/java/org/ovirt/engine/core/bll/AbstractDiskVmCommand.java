@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll;
 
-import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.core.common.action.VmDiskOperatinParameterBase;
@@ -71,7 +70,7 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperatinParameterBas
             returnValue = false;
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_LETTER_ALREADY_IN_USE);
         } else {
-            diskInfo.setinternal_drive_mapping(getCorrectDriveForDisk());
+            diskInfo.setinternal_drive_mapping(VmHandler.getCorrectDriveForDisk(getVm()));
             if (diskInfo.getinternal_drive_mapping() == null) {
                 returnValue = false;
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_LIMITATION_EXCEEDED);
