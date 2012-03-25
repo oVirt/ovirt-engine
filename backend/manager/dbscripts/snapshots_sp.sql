@@ -153,7 +153,7 @@ BEGIN
            creation_date,
            app_list,
            CASE WHEN v_fill_configuration = TRUE THEN vm_configuration ELSE NULL END,
-           vm_configuration IS NOT NULL AND LENGTH(vm_configuration > 0)
+           vm_configuration IS NOT NULL AND LENGTH(vm_configuration) > 0
     FROM   snapshots
     WHERE  vm_id = v_vm_id
     AND (NOT v_is_filtered OR EXISTS (SELECT 1
