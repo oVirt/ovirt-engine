@@ -17,7 +17,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class QuotaDAOTest extends BaseDAOTestCase {
     private QuotaDAO dao;
-    private final Long unlimited = new Long("-1");
+    private static final Long unlimited = -1L;
 
     @Override
     public void setUp() throws Exception {
@@ -25,14 +25,8 @@ public class QuotaDAOTest extends BaseDAOTestCase {
         dao = dbFacade.getQuotaDAO();
     }
 
-    public QuotaDAOTest() throws Exception {
-        setUp();
-    }
-
     @Test
     public void testGeneralQuotaLimitations() throws Exception {
-        setUp();
-
         // Set new Quota definition.
         Quota quota = new Quota();
         Guid quotaId = Guid.NewGuid();
@@ -59,8 +53,6 @@ public class QuotaDAOTest extends BaseDAOTestCase {
 
     @Test
     public void testSpecificQuotaLimitations() throws Exception {
-        setUp();
-
         // Set new Quota definition.
         Quota quota = new Quota();
         Guid quotaId = Guid.NewGuid();
@@ -83,8 +75,6 @@ public class QuotaDAOTest extends BaseDAOTestCase {
 
     @Test
     public void testSpecificAndGeneralQuotaLimitations() throws Exception {
-        setUp();
-
         // Set new Quota definition.
         Quota quota = new Quota();
         Guid quotaId = Guid.NewGuid();
@@ -114,8 +104,6 @@ public class QuotaDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testFetchVdsGroupWithUnlimitedGlobalLimitation() throws Exception {
-        setUp();
-
         List<QuotaVdsGroup> quotaVdsGroupList =
                 dao.getQuotaVdsGroupByVdsGroupGuid(FixturesTool.VDS_GROUP_RHEL6_ISCSI, FixturesTool.QUOTA_SPECIFIC);
 
@@ -138,8 +126,6 @@ public class QuotaDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testFetchGlobalQuotaUsageForSpecificVdsGroup() throws Exception {
-        setUp();
-
         List<QuotaVdsGroup> quotaVdsGroupList =
                 dao.getQuotaVdsGroupByVdsGroupGuid(FixturesTool.VDS_GROUP_RHEL6_ISCSI, FixturesTool.QUOTA_GENERAL);
         QuotaVdsGroup quotaVdsGroup = quotaVdsGroupList.get(0);
@@ -161,8 +147,6 @@ public class QuotaDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testFetchGlobalQuotaUsageForGlobalVdsGroup() throws Exception {
-        setUp();
-
         List<QuotaVdsGroup> quotaVdsGroupList = dao.getQuotaVdsGroupByVdsGroupGuid(null, FixturesTool.QUOTA_GENERAL);
         QuotaVdsGroup quotaVdsGroup = quotaVdsGroupList.get(0);
         assertEquals(true, quotaVdsGroupList.size() == 1);
@@ -182,8 +166,6 @@ public class QuotaDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testCompareFetchGlobalQuotaForSpecificAndForGlobalVdsGroup() throws Exception {
-        setUp();
-
         List<QuotaVdsGroup> quotaVdsGroupGlobalList =
                 dao.getQuotaVdsGroupByVdsGroupGuid(null, FixturesTool.QUOTA_GENERAL);
         List<QuotaVdsGroup> quotaVdsGroupSpecificList =
@@ -202,8 +184,6 @@ public class QuotaDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testFetchSpecificQuotaUsageForSpecificVdsGroup() throws Exception {
-        setUp();
-
         List<QuotaVdsGroup> quotaVdsGroupList =
                 dao.getQuotaVdsGroupByVdsGroupGuid(FixturesTool.VDS_GROUP_RHEL6_ISCSI, FixturesTool.QUOTA_SPECIFIC);
         QuotaVdsGroup quotaVdsGroup = quotaVdsGroupList.get(0);
@@ -223,20 +203,16 @@ public class QuotaDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testFetchSpecificQuotaUsageForGlobalVdsGroup() throws Exception {
-        setUp();
-
         List<QuotaVdsGroup> quotaVdsGroupList = dao.getQuotaVdsGroupByVdsGroupGuid(null, FixturesTool.QUOTA_SPECIFIC);
         QuotaVdsGroup quotaVdsGroup = quotaVdsGroupList.get(0);
         assertEquals(true, quotaVdsGroupList.size() == 2);
         assertNotNull(quotaVdsGroup);
     }
 
-
     @Test
     public void testFetchSpecificAndGeneralQuotaForStorage() throws Exception {
-        setUp();
-
-        List<QuotaStorage> quotaStorageList = dao.getQuotaStorageByStorageGuid(null, FixturesTool.QUOTA_SPECIFIC_AND_GENERAL);
+        List<QuotaStorage> quotaStorageList =
+                dao.getQuotaStorageByStorageGuid(null, FixturesTool.QUOTA_SPECIFIC_AND_GENERAL);
         QuotaStorage quotaStorage = quotaStorageList.get(0);
         assertEquals(true, quotaStorageList.size() == 1);
         assertNotNull(quotaStorage);
@@ -245,11 +221,8 @@ public class QuotaDAOTest extends BaseDAOTestCase {
         assertEquals(true, quotaStorage.getStorageSizeGBUsage() > 0);
     }
 
-
     @Test
     public void testFetchAllVdsGroupForQuota() throws Exception {
-        setUp();
-
         List<QuotaVdsGroup> quotaVdsGroupList =
                 dao.getQuotaVdsGroupByVdsGroupGuid(null, FixturesTool.QUOTA_SPECIFIC);
         assertNotNull(quotaVdsGroupList);
@@ -270,7 +243,6 @@ public class QuotaDAOTest extends BaseDAOTestCase {
 
     @Test
     public void testRemoveQuota() throws Exception {
-        setUp();
         Quota quota = dao.getById(FixturesTool.QUOTA_SPECIFIC_AND_GENERAL);
         assertNotNull(quota);
         dao.remove(FixturesTool.QUOTA_SPECIFIC_AND_GENERAL);
@@ -286,7 +258,6 @@ public class QuotaDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testUpdateQuota() throws Exception {
-        setUp();
         Quota quotaGeneralToSpecific = dao.getById(FixturesTool.QUOTA_GENERAL);
 
         // Save quotaName and vdsGroup list for future check.
@@ -321,7 +292,6 @@ public class QuotaDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetQuotaByExistingName() throws Exception {
-        setUp();
         Quota quotaGeneralToSpecific = dao.getQuotaByQuotaName("Quota General");
         assertEquals(dao.getById(FixturesTool.QUOTA_GENERAL)
                 .getQuotaName()
@@ -337,7 +307,6 @@ public class QuotaDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetQuotaByAdElementId() throws Exception {
-        setUp();
         List<Quota> quotaByAdElementIdList =
                 dao.getQuotaByAdElementId(FixturesTool.USER_EXISTING_ID, FixturesTool.STORAGE_POOL_NFS);
 
@@ -352,7 +321,6 @@ public class QuotaDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testIsDefaultQuotaFlagEnabledWhenFetchingDefaultQuota() throws Exception {
-        setUp();
         Quota defaultQuota = dao.getById(FixturesTool.DEFAULT_QUOTA_GENERAL);
         assertEquals(defaultQuota.getIsDefaultQuota(), true);
     }
@@ -364,7 +332,6 @@ public class QuotaDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testIsDefaultQuotaFlagDisabledWhenFetchingNotDefaultQuota() throws Exception {
-        setUp();
         Quota regularQuota = dao.getById(FixturesTool.QUOTA_GENERAL);
         assertEquals(regularQuota.getIsDefaultQuota(), false);
     }
@@ -376,7 +343,6 @@ public class QuotaDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetDefaultQuotaByStoragePoolId() throws Exception {
-        setUp();
         Quota defaultQuota = dao.getDefaultQuotaByStoragePoolId(FixturesTool.STORAGE_POOL_NFS);
         assertEquals(dao.getById(FixturesTool.DEFAULT_QUOTA_GENERAL).equals(defaultQuota), true);
     }
@@ -388,7 +354,6 @@ public class QuotaDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetFetchAllQuotaInTheSetup() throws Exception {
-        setUp();
         List<Quota> quotaList = dao.getQuotaByStoragePoolGuid(null);
         assertEquals(true, quotaList.size() == 4);
     }
@@ -400,7 +365,6 @@ public class QuotaDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetFetchForSpecificStoragePool() throws Exception {
-        setUp();
         List<Quota> quotaList = dao.getQuotaByStoragePoolGuid(FixturesTool.STORAGE_POOL_NFS);
         assertEquals(true, quotaList.size() == 4);
     }
@@ -412,7 +376,6 @@ public class QuotaDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testFetchStoragePoolWithNoQuota() throws Exception {
-        setUp();
         List<Quota> quotaList = dao.getQuotaByStoragePoolGuid(Guid.NewGuid());
         assertEquals(true, quotaList.size() == 0);
     }
@@ -424,7 +387,6 @@ public class QuotaDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetQuotaByExistingNameWIthNoMatchingStoragePool() throws Exception {
-        setUp();
         Quota quotaGeneralToSpecific = dao.getQuotaByQuotaName("Quota General2");
         assertEquals(null, quotaGeneralToSpecific);
     }
@@ -436,12 +398,11 @@ public class QuotaDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetQuotaWithNoExistingName() throws Exception {
-        setUp();
         Quota quotaGeneralToSpecific = dao.getQuotaByQuotaName("Any name");
         assertEquals(null, quotaGeneralToSpecific);
     }
 
-    private QuotaStorage getSpecificQuotaStorage(Guid quotaId) {
+    private static QuotaStorage getSpecificQuotaStorage(Guid quotaId) {
         QuotaStorage quotaStorage = new QuotaStorage();
         quotaStorage.setQuotaId(quotaId);
         quotaStorage.setQuotaStorageId(Guid.NewGuid());
@@ -452,7 +413,7 @@ public class QuotaDAOTest extends BaseDAOTestCase {
 
     }
 
-    private QuotaVdsGroup getSpecificQuotaVdsGroup(Guid quotaId) {
+    private static QuotaVdsGroup getSpecificQuotaVdsGroup(Guid quotaId) {
         QuotaVdsGroup quotaVdsGroup = new QuotaVdsGroup();
         quotaVdsGroup.setQuotaVdsGroupId(Guid.NewGuid());
         quotaVdsGroup.setQuotaId(quotaId);
@@ -464,7 +425,7 @@ public class QuotaDAOTest extends BaseDAOTestCase {
         return quotaVdsGroup;
     }
 
-    private List<QuotaVdsGroup> getQuotaVdsGroup(QuotaVdsGroup quotaVdsGroup) {
+    private static List<QuotaVdsGroup> getQuotaVdsGroup(QuotaVdsGroup quotaVdsGroup) {
         List<QuotaVdsGroup> quotaVdsGroupList = new ArrayList<QuotaVdsGroup>();
         if (quotaVdsGroup != null) {
             quotaVdsGroupList.add(quotaVdsGroup);
@@ -472,7 +433,7 @@ public class QuotaDAOTest extends BaseDAOTestCase {
         return quotaVdsGroupList;
     }
 
-    private List<QuotaStorage> getQuotaStorage(QuotaStorage quotaStorage) {
+    private static List<QuotaStorage> getQuotaStorage(QuotaStorage quotaStorage) {
         List<QuotaStorage> quotaStorageList = new ArrayList<QuotaStorage>();
         if (quotaStorage != null) {
             quotaStorageList.add(quotaStorage);
@@ -480,9 +441,10 @@ public class QuotaDAOTest extends BaseDAOTestCase {
         return quotaStorageList;
     }
 
-    private void setQuotaGlobalLimitations(Quota quota) {
+    private static void setQuotaGlobalLimitations(Quota quota) {
         QuotaStorage quotaStorage = new QuotaStorage();
         QuotaVdsGroup quotaVdsGroup = new QuotaVdsGroup();
+
         // Set Quota storage capacity definition.
         quotaStorage.setStorageSizeGB(10000l);
         quotaStorage.setStorageSizeGBUsage(0d);
