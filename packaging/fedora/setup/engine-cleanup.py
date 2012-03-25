@@ -26,10 +26,6 @@ LOG_PATH = "/var/log/%s" % (BASE_NAME)
 PKI_DIR = "/etc/pki/%s" % (BASE_NAME)
 TRUSTORE = os.path.join(PKI_DIR, ".truststore")
 KEYSTORE = os.path.join(PKI_DIR, ".keystore")
-JBOSS_SERVER_DIR = "/var/lib/jbossas/server"
-VAR_SLIMMED_DIR = os.path.join(JBOSS_SERVER_DIR, basedefs.JBOSS_PROFILE_NAME)
-ETC_JBOSS_DIR = "/etc/jbossas"
-ETC_SLIMMED_DIR = os.path.join(ETC_JBOSS_DIR, basedefs.JBOSS_PROFILE_NAME)
 PKI_BACKUP_DIR = "/etc/pki/%s-backups" % (BASE_NAME)
 
 # Default DB Configuration

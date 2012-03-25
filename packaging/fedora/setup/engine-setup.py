@@ -725,7 +725,7 @@ def _handleJbossCertFile():
         raise Exception(output_messages.ERR_EXP_CANT_FIND_CA_FILE % (basedefs.FILE_CA_CRT_SRC))
 
     # change ownership to jboss
-    os.chown(destCaFile, utils.getUsernameId("jboss-as"), utils.getGroupId("jboss-as"))
+    utils.chownToJboss(destCaFile)
 
     # update mime type in web.xml
     logging.debug("editing jboss conf file %s" % (basedefs.FILE_JBOSS_WEB_XML_SRC))
@@ -880,12 +880,8 @@ def _changeCaPermissions(pkiDir):
                     os.path.join(pkiDir, "private", "ca.pem"),
                     os.path.join(pkiDir,".truststore")
                     ]
-    jbossUid = utils.getUsernameId("jboss-as")
-    jbossGid = utils.getGroupId("jboss-as")
-
     for item in changeList:
-        logging.debug("changing ownership of %s to %s/%s (uid/gid)" % (item, jbossUid, jbossGid))
-        os.chown(item, int(jbossUid), int(jbossGid))
+        utils.chownToJboss(item)
         logging.debug("changing file permissions for %s to 0750" % (item))
         os.chmod(item, 0750)
 
@@ -1094,7 +1090,7 @@ def _updateVDCOptions():
             "CertificateFileName":"/etc/pki/ovirt-engine/certs/engine.cer",
             "CAEngineKey":"/etc/pki/ovirt-engine/private/ca.pem",
             "TruststoreUrl":"/etc/pki/ovirt-engine/.keystore",
-            "ENGINEEARLib":"/usr/share/jboss-as/standalone/deployments/engine.ear",
+            "ENGINEEARLib":"%s/standalone/deployments/engine.ear" %(basedefs.DIR_JBOSS),
             "CACertificatePath":"/etc/pki/ovirt-engine/ca.pem",
             "CertAlias":"engine",
         },
@@ -1960,7 +1956,7 @@ def configEncryptedPass():
         xmlObj.close()
 
         shutil.move(editFile, basedefs.FILE_JBOSS_STANDALONE)
-        os.chown(basedefs.FILE_JBOSS_STANDALONE, utils.getUsernameId("jboss-as"), utils.getGroupId("jboss-as"))
+        utils.chownToJboss(basedefs.FILE_JBOSS_STANDALONE)
         logging.debug("Jboss configuration has been saved")
 
     except:
@@ -1970,7 +1966,7 @@ def configEncryptedPass():
 
 def configJbossXml():
     """
-    configure JBoss-AS's stadnalone.xml
+    configure JBoss stadnalone.xml
     """
     editFile = None
     backupFile = None
@@ -2000,7 +1996,7 @@ def configJbossXml():
         xmlObj.close()
 
         shutil.move(editFile, basedefs.FILE_JBOSS_STANDALONE)
-        os.chown(basedefs.FILE_JBOSS_STANDALONE, utils.getUsernameId("jboss-as"), utils.getGroupId("jboss-as"))
+        utils.chownToJboss(basedefs.FILE_JBOSS_STANDALONE)
         logging.debug("Jboss configuration has been saved")
 
     except:

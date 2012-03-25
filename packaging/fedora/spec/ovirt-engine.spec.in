@@ -3,6 +3,7 @@
 %define _localdir %{_usr}/local
 %define _sharedir %{_usr}/share
 %define _jbossdir %{_sharedir}/jboss-as
+%define _jbossuser jboss-as
 %define __getent /usr/bin/getent
 %define __groupadd /usr/sbin/groupadd
 %define __useradd /usr/sbin/useradd
@@ -207,7 +208,7 @@ The configuration tool for oVirt Engine
 %install
 rm -rf %{buildroot}/*
 %if %mead_build
-make PREFIX=%{buildroot}/ SOURCE_DIR=%_sourcedir install_without_maven
+make PREFIX=%{buildroot}/ SOURCE_DIR=%_sourcedir RELEASE_VERSION=%{release} install_without_maven
 %else
 make PREFIX=%{buildroot}/ SOURCE_DIR=%_sourcedir install
 %endif
@@ -254,12 +255,12 @@ cp -rpf %{_datadir}/vdsm-bootstrap/* %{_engineeardir}/components.war/vds/ &> /de
 
 %{__getent} group ovirt > /dev/null || %{__groupadd} -g 108 ovirt
 %{__getent} passwd ovirt > /dev/null || %{__useradd} -u 108 -g ovirt -o -r ovirt -c "Ovirt Manager" -d /var/lib/ovirt -s /sbin/nologin
-%{__getent} passwd jboss-as > /dev/null && %{__usermod} -a -G jboss-as ovirt > /dev/null
+%{__getent} passwd %{_jbossuser} > /dev/null && %{__usermod} -a -G %{_jbossuser} ovirt > /dev/null
 
 %pre notification-service
 %{__getent} group ovirt > /dev/null || %{__groupadd} -g 108 ovirt
 %{__getent} passwd ovirt > /dev/null || %{__useradd} -u 108 -g ovirt -o -r ovirt -c "Ovirt Manager" -d /var/lib/ovirt -s /sbin/nologin
-%{__getent} passwd jboss-as > /dev/null && %{__usermod} -a -G jboss-as ovirt > /dev/null
+%{__getent} passwd %{_jbossuser} > /dev/null && %{__usermod} -a -G %{_jbossuser} ovirt > /dev/null
 
 %post notification-service
 %{__chown} ovirt:ovirt /etc/ovirt-engine/notifier/notifier.conf > /dev/null || /bin/true
@@ -276,8 +277,8 @@ cp -rpf %{_datadir}/vdsm-bootstrap/* %{_engineeardir}/components.war/vds/ &> /de
 %dir %{_datadir}/%{name}/db-backups
 %dir %{_datadir}/%{name}/scripts
 %dir %{_localstatedir}/run/%{name}
-%dir %attr (755,jboss-as,jboss-as) %{_var}/log/%{name}
-%dir %attr (755,jboss-as,jboss-as) %{_var}/lock/%{name}
+%dir %attr (755,%{_jbossuser},%{_jbossuser}) %{_var}/log/%{name}
+%dir %attr (755,%{_jbossuser},%{_jbossuser}) %{_var}/lock/%{name}
 %dir %{_datadir}/%{name}/sysprep
 %attr (755,root,root) %{_datadir}/%{name}/kerberos
 %{_datadir}/%{name}/conf
@@ -286,10 +287,10 @@ cp -rpf %{_datadir}/vdsm-bootstrap/* %{_engineeardir}/components.war/vds/ &> /de
 %attr (755,root,root) %{_datadir}/%{name}/scripts/ovirtlogrot.sh
 %attr (755,root,root) %{_sysconfdir}/cron.daily/ovirt-cron
 %attr (644,root,root) %{_sysconfdir}/tmpfiles.d/ovirt-engine.conf
-%attr (755,jboss-as,jboss-as) %{_datadir}/%{name}/resources/jboss
+%attr (755,%{_jbossuser},%{_jbossuser}) %{_datadir}/%{name}/resources/jboss
 %dir %{_sysconfdir}/%{name}
-%attr (755,jboss-as,jboss-as) %{_sysconfdir}/pki/%{name}
-%attr (640,jboss-as,jboss-as) %config(noreplace) %{_sysconfdir}/%{name}/engine.conf
+%attr (755,%{_jbossuser},%{_jbossuser}) %{_sysconfdir}/pki/%{name}
+%attr (640,%{_jbossuser},%{_jbossuser}) %config(noreplace) %{_sysconfdir}/%{name}/engine.conf
 
 %config(noreplace) %{_sysconfdir}/pki/%{name}/database.txt
 %config(noreplace) %{_sysconfdir}/pki/%{name}/serial.txt

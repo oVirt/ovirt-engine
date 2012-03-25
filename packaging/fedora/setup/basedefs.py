@@ -14,6 +14,8 @@ PGPASS_FILE_TEMPLATE="hostname:port:database:username:password"
 JBOSS_SECURITY_DOMAIN="EncryptDBPassword"
 JBOSS_KERB_AUTH="EngineKerberosAuth"
 JBOSS_SERVICE_NAME="jboss-as"
+JBOSS_USER_NAME="jboss-as"
+JBOSS_GROUP_NAME="jboss-as"
 NFS_SERVICE_NAME="nfs-server"
 
 JBOSS_PROFILE_NAME="default"
