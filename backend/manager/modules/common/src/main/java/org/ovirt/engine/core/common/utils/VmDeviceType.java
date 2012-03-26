@@ -10,6 +10,8 @@ public enum VmDeviceType {
     QXL("qxl"),
     CIRRUS("cirrus"),
     SOUND("sound"),
+    ICH6("ich6"),
+    AC97("act97"),
     OTHER("other", "0"),
     UNKNOWN("unknown", "-1");
 
@@ -42,6 +44,21 @@ public enum VmDeviceType {
             }
         }
         return UNKNOWN;
+    }
+
+    /**
+     * gets sound device type for a given device name
+     *
+     * @param name
+     * @return
+     */
+    public static VmDeviceType getSoundDeviceType(String name) {
+        for (VmDeviceType deviceType : values()) {
+            if (deviceType.getName().equals(name)) {
+                return deviceType;
+            }
+        }
+        return VmDeviceType.ICH6;
     }
 }
 

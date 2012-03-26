@@ -168,7 +168,14 @@ public abstract class VmInfoBuilderBase {
         return diskImages;
     }
 
-    protected String getSoundDevice() {
+    /**
+     * gets the vm sound device type
+     *
+     * @param vm
+     *            The VM
+     * @return String, the sound card device type
+     */
+    public static String getSoundDevice(VM vm) {
         final String OS_REGEX = "^.*%1s,([^,]*).*$";
         final String DEFAULT_TYPE = "default";
         String ret = DEFAULT_TYPE;
@@ -176,19 +183,19 @@ public abstract class VmInfoBuilderBase {
         if (vm.getvm_type() == VmType.Desktop) {
 
             String soundDeviceTypeConfig = Config.<String> GetValue(
-                    ConfigValues.DesktopAudioDeviceType, vm
-                            .getvds_group_compatibility_version().toString());
+                        ConfigValues.DesktopAudioDeviceType, vm
+                                .getvds_group_compatibility_version().toString());
             String vmOS = vm.getos().name();
 
             Pattern regexPattern = Pattern.compile(String
-                    .format(OS_REGEX, vmOS));
+                        .format(OS_REGEX, vmOS));
             Matcher regexMatcher = regexPattern.matcher(soundDeviceTypeConfig);
 
             if (regexMatcher.find()) {
                 ret = regexMatcher.group(1);
             } else {
                 regexPattern = Pattern.compile(String.format(OS_REGEX,
-                        DEFAULT_TYPE));
+                            DEFAULT_TYPE));
                 regexMatcher = regexPattern.matcher(soundDeviceTypeConfig);
                 if (regexMatcher.find()) {
                     ret = regexMatcher.group(1);

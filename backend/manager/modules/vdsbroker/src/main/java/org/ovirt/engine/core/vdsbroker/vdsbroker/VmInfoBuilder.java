@@ -285,6 +285,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                 XmlRpcStruct struct = new XmlRpcStruct();
                 struct.add(VdsProperties.Type, vmDevice.getType());
                 struct.add(VdsProperties.Device, vmDevice.getDevice());
+                struct.add(VdsProperties.SpecParams, StringUtils.string2Map(vmDevice.getSpecParams()));
                 addAddress(vmDevice, struct);
                 devices.add(struct);
             }

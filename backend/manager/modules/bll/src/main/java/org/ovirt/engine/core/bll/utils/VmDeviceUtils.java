@@ -24,6 +24,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.VmInfoBuilderBase;
 
 public class VmDeviceUtils {
     private static VmDeviceDAO dao = DbFacade.getInstance().getVmDeviceDAO();
@@ -131,6 +132,15 @@ public class VmDeviceUtils {
         // if destination is a VM , update devices boot order
         if (isVm) {
             updateBootOrderInVmDevice(vmBase);
+            // create sound card for a desktop VM if not exists
+            if (vmBase.getvm_type() == VmType.Desktop) {
+                List<VmDevice> list = DbFacade.getInstance().getVmDeviceDAO().getVmDeviceByVmIdAndType(vmBase.getId(), VmDeviceType.SOUND.getName());
+                if (list.size() == 0) {
+                    VM vm = DbFacade.getInstance().getVmDAO().get(vmBase.getId());
+                    String soundDevice = VmInfoBuilderBase.getSoundDevice(vm);
+                    addManagedDevice(new VmDeviceId(Guid.NewGuid(),vmBase.getId()), VmDeviceType.SOUND,VmDeviceType.getSoundDeviceType(soundDevice), "", true, true);
+                }
+            }
         }
     }
 
