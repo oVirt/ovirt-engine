@@ -78,7 +78,7 @@ public class AddVmFromTemplateCommand<T extends AddVmFromTemplateParameters> ext
 
     @Override
     protected boolean canDoAction() {
-        boolean retValue = false;
+        boolean retValue = true;
         if (super.canDoAction()) {
             for (DiskImage dit : getVmTemplate().getDiskMap().values()) {
                 retValue =
@@ -90,7 +90,6 @@ public class AddVmFromTemplateCommand<T extends AddVmFromTemplateParameters> ext
                     break;
                 }
             }
-            retValue = true;
         }
         return retValue;
     }
