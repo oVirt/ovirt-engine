@@ -12,7 +12,7 @@ public class GetQuotaStorageByQuotaIdQuery<P extends GetQuotaStorageByQuotaIdQue
     protected void executeQueryCommand() {
         getQueryReturnValue().setReturnValue(DbFacade.getInstance()
                 .getQuotaDAO()
-                .getQuotaStorageByQuotaGuid(getParameters().getQuotaId()));
+                .getQuotaStorageByQuotaGuidWithGeneralDefault(getParameters().getQuotaId()));
     }
 
 }
