@@ -17,6 +17,7 @@
 package org.ovirt.engine.api.model;
 
 
+
 public enum PermitType {
     CREATE_VM(1, RoleType.USER),
     DELETE_VM(2, RoleType.USER),
@@ -76,7 +77,14 @@ public enum PermitType {
 
     // Gluster
     CREATE_GLUSTER_VOLUME(1000, RoleType.ADMIN),
-    MANIPULATE_GLUSTER_VOLUME(1001, RoleType.ADMIN);
+    MANIPULATE_GLUSTER_VOLUME(1001, RoleType.ADMIN),
+
+    // Disks action groups
+    CREATE_DISK(1100, RoleType.USER),
+    ATTACH_DISK(1101, RoleType.USER),
+    EDIT_DISK_PROPERTIES(1102, RoleType.USER),
+    CONFIGURE_DISK_STORAGE(1103, RoleType.USER),
+    DELETE_DISK(1104, RoleType.USER);
 
     private int id;
     private RoleType role;

@@ -2,7 +2,6 @@ package org.ovirt.engine.api.restapi.types;
 
 import org.ovirt.engine.api.model.Permit;
 import org.ovirt.engine.api.model.PermitType;
-
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 
 public class PermitMapper {
@@ -133,6 +132,16 @@ public class PermitMapper {
             return PermitType.CREATE_GLUSTER_VOLUME;
         case MANIPULATE_GLUSTER_VOLUME:
             return PermitType.MANIPULATE_GLUSTER_VOLUME;
+        case CREATE_DISK:
+            return PermitType.CREATE_DISK;
+        case ATTACH_DISK:
+            return PermitType.ATTACH_DISK;
+        case EDIT_DISK_PROPERTIES:
+            return PermitType.EDIT_DISK_PROPERTIES;
+        case CONFIGURE_DISK_STORAGE:
+            return PermitType.CONFIGURE_DISK_STORAGE;
+        case DELETE_DISK:
+            return PermitType.DELETE_DISK;
         default:
             return null;
         }

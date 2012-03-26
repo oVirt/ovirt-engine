@@ -247,6 +247,7 @@ public enum VdcActionType {
     Events(1208),
     Monitor(1209),
     Quota(1210),
+    Disks(1211),
 
     // Config
     SetConfigurationValue(1300, ActionGroup.CONFIGURE_ENGINE),

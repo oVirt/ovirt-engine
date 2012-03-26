@@ -69,7 +69,14 @@ public enum ActionGroup {
 
     // Gluster
     CREATE_GLUSTER_VOLUME(1000, RoleType.ADMIN, VdcObjectType.GlusterVolume),
-    MANIPULATE_GLUSTER_VOLUME(1001, RoleType.ADMIN, VdcObjectType.GlusterVolume),;
+    MANIPULATE_GLUSTER_VOLUME(1001, RoleType.ADMIN, VdcObjectType.GlusterVolume),
+
+    // Disks action groups
+    CREATE_DISK(1100, RoleType.USER, VdcObjectType.Disk),
+    ATTACH_DISK(1101, RoleType.USER, VdcObjectType.Disk),
+    EDIT_DISK_PROPERTIES(1102, RoleType.USER, VdcObjectType.Disk),
+    CONFIGURE_DISK_STORAGE(1103, RoleType.USER, VdcObjectType.Disk),
+    DELETE_DISK(1104, RoleType.USER, VdcObjectType.Disk);
 
     private int id;
     private RoleType roleType;
