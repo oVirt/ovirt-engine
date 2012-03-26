@@ -39,7 +39,7 @@ public class HotPlugDiskToVmCommand<T extends HotPlugDiskToVmParameters> extends
             setVdsId(getVm().getrun_on_vds().getValue());
             returnValue =
                     isHotPlugEnabled() && isOsSupportingPluggableDisks(getVm())
-                            && isInterfaceSupportedForPlug(diskImage);
+                            && isInterfaceSupportedForPlugUnPlug(diskImage);
         }
         if (returnValue) {
             oldVmDevice =

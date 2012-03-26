@@ -173,7 +173,7 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperatinParameterBas
         return false;
     }
 
-    protected boolean isInterfaceSupportedForPlug(DiskImageBase diskImage) {
+    protected boolean isInterfaceSupportedForPlugUnPlug(DiskImageBase diskImage) {
         if (!DiskInterface.VirtIO.equals(diskImage.getdisk_interface())) {
             addCanDoActionMessage(VdcBllMessages.HOT_PLUG_DISK_IS_NOT_VIRTIO);
             return false;

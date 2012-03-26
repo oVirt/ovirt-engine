@@ -439,6 +439,8 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String ACTION_TYPE_FAILED_DISK_ALREADY_ATTACHED();
 
+    String ACTION_TYPE_FAILED_DISK_ALREADY_DETACHED();
+
     String ACTION_TYPE_FAILED_VM_MAX_RESOURCE_EXEEDED();
 
     String ACTION_TYPE_FAILED_CPU_NOT_FOUND();

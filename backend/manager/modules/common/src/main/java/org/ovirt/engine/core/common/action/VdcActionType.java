@@ -42,6 +42,7 @@ public enum VdcActionType {
     MoveVm(33, ActionGroup.MOVE_VM),
     UpdateVmDisk(34, ActionGroup.CONFIGURE_VM_STORAGE, false),
     AttachDiskToVm(180, ActionGroup.CONFIGURE_VM_STORAGE, false),
+    DetachDiskFromVm(181, ActionGroup.CONFIGURE_VM_STORAGE, false),
     HotPlugDiskToVm(182, ActionGroup.CONFIGURE_VM_STORAGE, false),
     HotUnPlugDiskFromVm(183, ActionGroup.CONFIGURE_VM_STORAGE, false),
     ChangeFloppy(35),

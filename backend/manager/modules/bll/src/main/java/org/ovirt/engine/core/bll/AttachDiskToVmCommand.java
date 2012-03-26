@@ -32,19 +32,14 @@ public class AttachDiskToVmCommand<T extends UpdateVmDiskParameters> extends Abs
         retValue =
                 retValue && isDiskCanBeAddedToVm(getParameters().getDiskInfo())
                         && isDiskPassPCIAndIDELimit(getParameters().getDiskInfo());
-        if (retValue && getVmDeviceDao().exists(new VmDeviceId(getParameters().getImageId(), getVmId()))) {
+        if (retValue && getVmDeviceDao().exists(new VmDeviceId(diskImage.getimage_group_id(), getVmId()))) {
             retValue = false;
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_ALREADY_ATTACHED);
         }
         if (retValue && Boolean.TRUE.equals(getParameters().getDiskInfo().getPlugged())
                 && getVm().getstatus() != VMStatus.Down) {
             retValue = isOsSupportingPluggableDisks(getVm()) && isHotPlugEnabled()
-                            && isInterfaceSupportedForPlug(getParameters().getDiskInfo());
-        }
-
-        if (!retValue) {
-            addCanDoActionMessage(VdcBllMessages.VAR__ACTION__ATTACH_ACTION_TO);
-            addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM_DISK);
+                            && isInterfaceSupportedForPlugUnPlug(getParameters().getDiskInfo());
         }
 
         return retValue;
@@ -53,7 +48,7 @@ public class AttachDiskToVmCommand<T extends UpdateVmDiskParameters> extends Abs
     @Override
     protected void ExecuteVmCommand() {
         final VmDevice vmDevice =
-                new VmDevice(new VmDeviceId(getParameters().getImageId(), getVmId()),
+                new VmDevice(new VmDeviceId(diskImage.getDisk().getId(), getVmId()),
                         VmDeviceType.DISK.getName(),
                         VmDeviceType.DISK.getName(),
                         "",
@@ -65,12 +60,17 @@ public class AttachDiskToVmCommand<T extends UpdateVmDiskParameters> extends Abs
         diskImage.setinternal_drive_mapping(getParameters().getDiskInfo().getinternal_drive_mapping());
         diskImage.setboot(getParameters().getDiskInfo().getboot());
         diskImage.setdisk_interface(getParameters().getDiskInfo().getdisk_interface());
-        diskImage.setvm_guid(getVmId());
         getDiskImageDao().update(diskImage);
         getVmDeviceDao().save(vmDevice);
-        if (!Boolean.FALSE.equals(getParameters().getDiskInfo().getPlugged()) && getVm().getstatus() != VMStatus.Down) {
+        if (Boolean.TRUE.equals(getParameters().getDiskInfo().getPlugged()) && getVm().getstatus() != VMStatus.Down) {
             performPlugCommnad(VDSCommandType.HotPlugDisk, diskImage, vmDevice);
         }
         setSucceeded(true);
+    }
+
+   @Override
+    protected void setActionMessageParameters() {
+        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__ATTACH_ACTION_TO);
+        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM_DISK);
     }
 }
