@@ -114,8 +114,7 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
                             // If the snapshot diskImage is null, it means the disk was probably
                             // erased after the snapshot was created.
                             // Create a disk to reflect the fact the disk existed during snapshot
-                            saveNewDiskAndImage(diskImage);
-                            newDiskImages.add(diskImage);
+                            saveIllegalDisk(diskImage);
                         }
                     } else {// Only legal images can be copied
                         copyDiskImage(diskImage,
@@ -180,7 +179,7 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
         return getDiskImagesFromConfiguration();
     }
 
-    private void saveNewDiskAndImage(final DiskImage diskImage) {
+    private void saveIllegalDisk(final DiskImage diskImage) {
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
             @Override
             public Void runInTransaction() {
@@ -192,7 +191,7 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
                 diskImage.setParentId(Guid.Empty);
                 diskImage.setit_guid(Guid.Empty);
                 diskImage.setvm_guid(getVmId());
-                ImagesHandler.addDiskImageWithNoVmDevice(diskImage);
+                ImagesHandler.addDiskImage(diskImage);
                 return null;
             }
         });
