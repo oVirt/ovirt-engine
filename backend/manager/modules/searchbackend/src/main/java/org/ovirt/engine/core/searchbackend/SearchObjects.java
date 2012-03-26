@@ -29,6 +29,9 @@ public final class SearchObjects {
     public static final String DISK_PLU_OBJ_NAME = "DISKS";
     public static final String GLUSTER_VOLUME_OBJ_NAME = "VOLUME";
     public static final String GLUSTER_VOLUME_PLU_OBJ_NAME = "VOLUMES";
+    public static final String QUOTA_OBJ_NAME = "QUOTA";
+    public static final String QUOTA_PLU_OBJ_NAME = "QUOTAS";
+
     //special searches
     private static final String ALERT = "EVENTS: severity=alert";
     private static final String ERROR = "Events: severity=error";
@@ -61,6 +64,8 @@ public final class SearchObjects {
         SAFE_SEARCH_EXPR.add(DISK_PLU_OBJ_NAME.toLowerCase() + SEPERATOR);
         SAFE_SEARCH_EXPR.add(GLUSTER_VOLUME_OBJ_NAME.toLowerCase() + SEPERATOR);
         SAFE_SEARCH_EXPR.add(GLUSTER_VOLUME_PLU_OBJ_NAME.toLowerCase() + SEPERATOR);
+        SAFE_SEARCH_EXPR.add(QUOTA_OBJ_NAME.toLowerCase() + SEPERATOR);
+        SAFE_SEARCH_EXPR.add(QUOTA_PLU_OBJ_NAME.toLowerCase() + SEPERATOR);
         SAFE_SEARCH_EXPR.add(ALERT.toLowerCase());
         SAFE_SEARCH_EXPR.add(ERROR.toLowerCase());
         SAFE_SEARCH_EXPR.add(HOST_BY_CPU.toLowerCase());

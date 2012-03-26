@@ -19,13 +19,14 @@ public class AuditLogConditionFieldAutoCompleter extends BaseConditionFieldAutoC
         mVerbs.put("EVENT_STORAGE", "EVENT_STORAGE");
         mVerbs.put("EVENT_DATACENTER", "EVENT_DATACENTER");
         buildCompletions();
-        //These search options remain hidden from the autocompletion
-        //but still available for the user interface
+        // These search options remain hidden from the autocompletion
+        // but still available for the user interface
         mVerbs.put("_EVENT_VM_ID", "_EVENT_VM_ID");
         mVerbs.put("_EVENT_TEMPLATE_ID", "_EVENT_TEMPLATE_ID");
         mVerbs.put("_EVENT_STORAGE_ID", "_EVENT_STORAGE_ID");
         mVerbs.put("_EVENT_HOST_ID", "_EVENT_HOST_ID");
         mVerbs.put("_EVENT_DATACENTER_ID", "_EVENT_DATACENTER_ID");
+        mVerbs.put("_EVENT_QUOTA_ID", "_EVENT_QUOTA_ID");
         mVerbs.put("USRID", "USRID");
         // Building the autoCompletion Dict
         // Building the types dict
@@ -45,6 +46,7 @@ public class AuditLogConditionFieldAutoCompleter extends BaseConditionFieldAutoC
         getTypeDictionary().put("_EVENT_TEMPLATE_ID", String.class);
         getTypeDictionary().put("_EVENT_STORAGE_ID", String.class);
         getTypeDictionary().put("_EVENT_DATACENTER_ID", String.class);
+        getTypeDictionary().put("_EVENT_QUOTA_ID", String.class);
 
         // building the ColumnName Dict
         mColumnNameDict.put("TYPE", "log_type");
@@ -63,6 +65,7 @@ public class AuditLogConditionFieldAutoCompleter extends BaseConditionFieldAutoC
         mColumnNameDict.put("_EVENT_STORAGE_ID", "storage_domain_id::varchar");
         mColumnNameDict.put("EVENT_DATACENTER", "storage_pool_name");
         mColumnNameDict.put("_EVENT_DATACENTER_ID", "storage_pool_id::varchar");
+        mColumnNameDict.put("_EVENT_QUOTA_ID", "quota_id::varchar");
         // Building the validation dict
         buildBasicValidationTable();
     }
@@ -81,7 +84,8 @@ public class AuditLogConditionFieldAutoCompleter extends BaseConditionFieldAutoC
                 || StringHelper.EqOp(fieldName, "EVENT_VM") || StringHelper.EqOp(fieldName, "_EVENT_VM_ID")
                 || StringHelper.EqOp(fieldName, "EVENT_TEMPLATE") || StringHelper.EqOp(fieldName, "_EVENT_TEMPLATE_ID")
                 || StringHelper.EqOp(fieldName, "EVENT_STORAGE") || StringHelper.EqOp(fieldName, "EVENT_DATACENTER")
-                || StringHelper.EqOp(fieldName, "_EVENT_DATACENTER_ID")) {
+                || StringHelper.EqOp(fieldName, "_EVENT_DATACENTER_ID")
+                || StringHelper.EqOp(fieldName, "_EVENT_QUOTA_ID")) {
             return StringConditionRelationAutoCompleter.INSTANCE;
         } else {
             return null;
@@ -90,10 +94,6 @@ public class AuditLogConditionFieldAutoCompleter extends BaseConditionFieldAutoC
 
     @Override
     public IConditionValueAutoCompleter getFieldValueAutoCompleter(String fieldName) {
-        // if (StringHelper.EqOp(fieldName, "TYPE")) {
-        // // retval = new EnumValueAutoCompleter(typeof(AuditLogType));
-        // }
-        // else
         if (StringHelper.EqOp(fieldName, "SEVERITY")) {
             return new EnumValueAutoCompleter(AuditLogSeverity.class);
         }

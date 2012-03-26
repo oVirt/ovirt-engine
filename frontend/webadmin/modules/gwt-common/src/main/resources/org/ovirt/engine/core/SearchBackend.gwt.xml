@@ -59,10 +59,10 @@
 		<include name="searchbackend/DateUtils.java" />
 		<include name="searchbackend/SqlInjectionChecker.java" />
 		<include name="searchbackend/PostgresSqlInjectionChecker.java" />
-
 		<!--======================SEARCHBACKEND/GLUSTER====================== -->
 		<include name="searchbackend/gluster/GlusterVolumeConditionFieldAutoCompleter.java" />
 		<include name="searchbackend/gluster/GlusterVolumeCrossRefAutoCompleter.java" />
+		<include name="searchbackend/QuotaConditionFieldAutoCompleter.java" />
 	</source>
 
 	<super-source path="ui/uioverrides" />

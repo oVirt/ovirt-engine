@@ -194,6 +194,10 @@ public class SyntaxContainer implements Iterable<SyntaxObject> {
                 || StringHelper.EqOp(obj, SearchObjects.DISK_PLU_OBJ_NAME)) {
             retval = SearchObjects.DISK_OBJ_NAME;
         }
+        else if (StringHelper.EqOp(obj, SearchObjects.QUOTA_OBJ_NAME)
+                || StringHelper.EqOp(obj, SearchObjects.QUOTA_PLU_OBJ_NAME)) {
+            retval = SearchObjects.QUOTA_OBJ_NAME;
+        }
         else if (StringHelper.EqOp(obj, SearchObjects.VDC_POOL_OBJ_NAME)
                 || StringHelper.EqOp(obj, SearchObjects.VDC_POOL_PLU_OBJ_NAME)) {
             retval = SearchObjects.VDC_POOL_OBJ_NAME;

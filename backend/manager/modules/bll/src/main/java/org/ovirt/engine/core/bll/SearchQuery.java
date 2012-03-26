@@ -127,6 +127,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
             break;
         }
         default: {
+            log.errorFormat("Search object type not handled: {0}", getParameters().getSearchTypeValue());
             break;
         }
         }

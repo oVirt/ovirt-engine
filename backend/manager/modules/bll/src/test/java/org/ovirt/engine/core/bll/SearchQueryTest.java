@@ -16,6 +16,7 @@ import org.mockito.Matchers;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -28,6 +29,7 @@ import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.dal.dbbroker.DbEngineDialect;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DiskImageDAO;
+import org.ovirt.engine.core.dao.QuotaDAO;
 import org.ovirt.engine.core.dao.StoragePoolDAO;
 import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
@@ -43,6 +45,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 public class SearchQueryTest {
 
     List<DiskImage> diskImageResultList = new ArrayList<DiskImage>();
+    List<Quota> quotaResultList = new ArrayList<Quota>();
     List<VM> vmResultList = new ArrayList<VM>();
     List<VDS> vdsResultList = new ArrayList<VDS>();
     List<VDSGroup> vdsGroupResultList = new ArrayList<VDSGroup>();
@@ -65,6 +68,7 @@ public class SearchQueryTest {
 
     private void mockDAO() {
         final DiskImageDAO diskImageDAO = Mockito.mock(DiskImageDAO.class);
+        final QuotaDAO quotaDAO = Mockito.mock(QuotaDAO.class);
         final VmDAO vmDAO = Mockito.mock(VmDAO.class);
         final VdsDAO vdsDAO = Mockito.mock(VdsDAO.class);
         final VdsGroupDAO vdsGroupDAO = Mockito.mock(VdsGroupDAO.class);
@@ -106,6 +110,11 @@ public class SearchQueryTest {
             public GlusterVolumeDao getGlusterVolumeDao() {
                 return glusterVolumeDao;
             }
+
+            @Override
+            public QuotaDAO getQuotaDAO() {
+                return quotaDAO;
+            }
         };
 
         Mockito.when(DbFacade.getInstance()).thenReturn(facadeMock);
@@ -113,6 +122,7 @@ public class SearchQueryTest {
 
         // mock DAOs
         mockDiskImageDAO(diskImageDAO);
+        mockQuotaDAO(quotaDAO);
         mockVMDAO(vmDAO);
         mockVdsDAO(vdsDAO);
         mockVdsGroupDAO(vdsGroupDAO);
@@ -133,6 +143,18 @@ public class SearchQueryTest {
         SearchObjectAutoCompleter search = new SearchObjectAutoCompleter(false);
         Mockito.when(diskImageDAO.getAllWithQuery(Matchers.matches(getDiskImageRegexString(search))))
                 .thenReturn(diskImageResultList);
+    }
+
+    private void mockQuotaDAO(final QuotaDAO quotaDAO) {
+        SearchObjectAutoCompleter search = new SearchObjectAutoCompleter(false);
+        Mockito.when(quotaDAO.getAllWithQuery(Matchers.matches(getQuotaRegexString(search))))
+                .thenReturn(quotaResultList);
+    }
+
+    private String getQuotaRegexString(SearchObjectAutoCompleter search) {
+        return ".*" + search.getDefaultSort(SearchObjects.QUOTA_OBJ_NAME) + ".*"
+                + search.getRelatedTableNameWithOutTags(SearchObjects.QUOTA_OBJ_NAME) + ".* "
+                + search.getPrimeryKeyName(SearchObjects.QUOTA_OBJ_NAME) + ".*";
     }
 
     /**
@@ -382,4 +404,13 @@ public class SearchQueryTest {
         searchQuery.executeQueryCommand();
         assertTrue(glusterVolumeList == searchQuery.getQueryReturnValue().getReturnValue());
     }
+
+    @Test
+    public void testGetAllQuotaSearch() throws Exception {
+        SearchParameters searchParam = new SearchParameters("Quota:", SearchType.Quota);
+        SearchQuery<SearchParameters> searchQuery = spy(new SearchQuery<SearchParameters>(searchParam));
+        searchQuery.executeQueryCommand();
+        assertTrue(quotaResultList == searchQuery.getQueryReturnValue().getReturnValue());
+    }
+
 }

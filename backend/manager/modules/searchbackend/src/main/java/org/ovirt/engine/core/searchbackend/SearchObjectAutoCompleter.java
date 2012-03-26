@@ -23,6 +23,7 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
         mVerbs.put(SearchObjects.VDC_STORAGE_POOL_OBJ_NAME, SearchObjects.VDC_STORAGE_POOL_OBJ_NAME);
         mVerbs.put(SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME, SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME);
         mVerbs.put(SearchObjects.GLUSTER_VOLUME_PLU_OBJ_NAME, SearchObjects.GLUSTER_VOLUME_PLU_OBJ_NAME);
+        mVerbs.put(SearchObjects.QUOTA_OBJ_NAME, SearchObjects.QUOTA_OBJ_NAME);
 
         buildCompletions();
         mVerbs.put(SearchObjects.VM_OBJ_NAME, SearchObjects.VM_OBJ_NAME);
@@ -118,11 +119,14 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
         else if (StringHelper.EqOp(obj, SearchObjects.VM_OBJ_NAME)
                 || StringHelper.EqOp(obj, SearchObjects.VM_PLU_OBJ_NAME)) {
             return new VmCrossRefAutoCompleter();
-
         }
         else if (StringHelper.EqOp(obj, SearchObjects.VDC_CLUSTER_OBJ_NAME)
                 || StringHelper.EqOp(obj, SearchObjects.VDC_CLUSTER_PLU_OBJ_NAME)) {
             return new ClusterCrossRefAutoCompleter();
+        }
+        else if (StringHelper.EqOp(obj, SearchObjects.QUOTA_OBJ_NAME)
+                || StringHelper.EqOp(obj, SearchObjects.QUOTA_PLU_OBJ_NAME)) {
+            return new QuotaConditionFieldAutoCompleter();
         }
         else if (StringHelper.EqOp(obj, SearchObjects.VDC_STORAGE_POOL_OBJ_NAME)) {
             return new StoragePoolCrossRefAutoCompleter();
@@ -199,6 +203,10 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
                 || StringHelper.EqOp(obj, SearchObjects.DISK_PLU_OBJ_NAME)) {
             retval = new DiskImageConditionFieldAutoCompleter();
         }
+        else if (StringHelper.EqOp(obj, SearchObjects.QUOTA_OBJ_NAME)
+                || StringHelper.EqOp(obj, SearchObjects.QUOTA_PLU_OBJ_NAME)) {
+            retval = new QuotaConditionFieldAutoCompleter();
+        }
         else if (StringHelper.EqOp(obj, SearchObjects.VDC_CLUSTER_OBJ_NAME)
                 || StringHelper.EqOp(obj, SearchObjects.VDC_CLUSTER_PLU_OBJ_NAME)) {
             retval = new ClusterConditionFieldAutoCompleter();
@@ -250,6 +258,10 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
         else if (StringHelper.EqOp(obj, SearchObjects.VDC_CLUSTER_OBJ_NAME)
                 || StringHelper.EqOp(obj, SearchObjects.VDC_CLUSTER_PLU_OBJ_NAME)) {
             retval = "vds_groups";
+        }
+        else if (StringHelper.EqOp(obj, SearchObjects.QUOTA_OBJ_NAME)
+                || StringHelper.EqOp(obj, SearchObjects.QUOTA_PLU_OBJ_NAME)) {
+            retval = "quota_view";
         }
         else if (StringHelper.EqOp(obj, SearchObjects.VDC_STORAGE_POOL_OBJ_NAME)) {
             retval = "storage_pool";
@@ -307,6 +319,10 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
         else if (StringHelper.EqOp(obj, SearchObjects.VDC_STORAGE_POOL_OBJ_NAME)) {
             retval = "storage_pool_with_storage_domain";
         }
+        else if (StringHelper.EqOp(obj, SearchObjects.QUOTA_OBJ_NAME)
+                || StringHelper.EqOp(obj, SearchObjects.QUOTA_PLU_OBJ_NAME)) {
+            retval = "quota_view";
+        }
         else if (StringHelper.EqOp(obj, SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME)) {
             retval = "storage_domains_with_hosts_view";
 
@@ -350,6 +366,10 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
         else if (StringHelper.EqOp(obj, SearchObjects.VDC_POOL_OBJ_NAME)
                 || StringHelper.EqOp(obj, SearchObjects.VDC_POOL_PLU_OBJ_NAME)) {
             retval = "vm_pool_id";
+        }
+        else if (StringHelper.EqOp(obj, SearchObjects.QUOTA_OBJ_NAME)
+                || StringHelper.EqOp(obj, SearchObjects.QUOTA_PLU_OBJ_NAME)) {
+            retval = "quota_id";
         }
         else if (StringHelper.EqOp(obj, SearchObjects.VDC_CLUSTER_OBJ_NAME)
                 || StringHelper.EqOp(obj, SearchObjects.VDC_CLUSTER_PLU_OBJ_NAME)) {
@@ -436,6 +456,8 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
         else if (StringHelper.EqOp(obj, SearchObjects.GLUSTER_VOLUME_OBJ_NAME)
                 || StringHelper.EqOp(obj, SearchObjects.GLUSTER_VOLUME_PLU_OBJ_NAME)) {
             retval = "vol_name ASC ";
+        } else if (StringHelper.EqOp(obj, SearchObjects.QUOTA_OBJ_NAME) || StringHelper.EqOp(obj, SearchObjects.QUOTA_PLU_OBJ_NAME)) {
+            retval = "quota_name ASC";
         }
         return retval;
     }

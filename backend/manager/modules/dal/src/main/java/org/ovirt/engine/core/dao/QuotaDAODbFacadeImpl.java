@@ -492,6 +492,6 @@ public class QuotaDAODbFacadeImpl extends BaseDAODbFacade implements QuotaDAO {
 
     @Override
     public List<Quota> getAllWithQuery(String query) {
-        return new SimpleJdbcTemplate(jdbcTemplate).query(query, getQuotaFromResultSet());
+        return new SimpleJdbcTemplate(jdbcTemplate).query(query, getQuotaMetaDataFromResultSet());
     }
 }
