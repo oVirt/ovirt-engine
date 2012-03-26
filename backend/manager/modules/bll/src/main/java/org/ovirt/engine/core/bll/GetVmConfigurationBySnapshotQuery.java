@@ -65,6 +65,9 @@ public class GetVmConfigurationBySnapshotQuery<P extends GetVmConfigurationBySna
         Map<Guid, DiskImage> imagesInDbMap = ImagesHandler.getDiskImagesByIdMap(imagesInDb);
         for (DiskImage fromConfigImg : vm.getImages()) {
             if (!imagesInDbMap.containsKey(fromConfigImg.getId())) {
+                log.debugFormat("Image {0} of Disk {1} cannot be found in database. This image will be returned as ILLEGAL from the query",
+                        fromConfigImg.getId(),
+                        fromConfigImg.getDisk().getId());
                 fromConfigImg.setimageStatus(ImageStatus.ILLEGAL);
             }
         }
