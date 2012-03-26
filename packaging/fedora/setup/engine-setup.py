@@ -124,7 +124,13 @@ def initSequences():
                         'condition'       : [],
                         'condition_match' : [],
                         'steps'           : [ { 'title'     : output_messages.INFO_UPD_RHEVM_CONF,
-                                                'functions' : [_editToolsConfFile, editPostgresConf, updateFileDescriptors] } ]
+                                                'functions' : [_editToolsConfFile, updateFileDescriptors] } ]
+                       },
+                      { 'description'     : 'Update local postgresql configuration',
+                        'condition'       : [utils.compareStrIgnoreCase, controller.CONF["DB_REMOTE_INSTALL"], "local"],
+                        'condition_match' : [True],
+                        'steps'           : [ { 'title'     : output_messages.INFO_UPD_CONF % "Postgresql",
+                                                'functions' : [editPostgresConf] } ]
                        },
                       { 'description'     : 'Config NFS',
                         'condition'       : [utils.compareStrIgnoreCase, controller.CONF["CONFIG_NFS"], "yes"],
@@ -338,7 +344,7 @@ def initConfig():
                 "USAGE"           : output_messages.INFO_CONF_PARAMS_USE_DB_PORT_USAGE,
                 "PROMPT"          : output_messages.INFO_CONF_PARAMS_USE_DB_PORT_PROMPT,
                 "OPTION_LIST"     : [],
-                "VALIDATION_FUNC" : validate.validateInteger,
+                "VALIDATION_FUNC" : validate.validateRemotePort,
                 "DEFAULT_VALUE"   : basedefs.DB_PORT,
                 "MASK_INPUT"      : False,
                 "LOOSE_VALIDATION": False,
@@ -1128,7 +1134,8 @@ def _createDB():
                        "-w", controller.CONF["DB_PASS"],
                        "-u", getDbAdminUser(),
                        "-s", getDbHostName(),
-                       "-p", getDbPort()]
+                       "-p", getDbPort(),
+                       "-r", controller.CONF["DB_REMOTE_INSTALL"]]
 
     # Create db using shell command
     output, rc = utils.execCmd(cmd, None, True, output_messages.ERR_DB_CREATE_FAILED, masked_value_set)
@@ -1307,6 +1314,15 @@ def getDbPort():
 
     return basedefs.DB_PORT
 
+def getDbUser():
+    """
+    Get user for db
+    """
+    if "DB_ADMIN" in controller.CONF.keys():
+            return controller.CONF["DB_ADMIN"]
+
+    return basedefs.DB_USER
+
 def _updatePgPassFile():
     """
     Create ~/.pgpass file with
@@ -1331,19 +1347,17 @@ def _updatePgPassFile():
         # Use parameters received from the user and skip if the install is local
         if "DB_ADMIN" in controller.CONF.keys():
             logging.info("Using db credentials provided by the user")
-            line_admin = _updatePgPassLine(controller.CONF["DB_HOST"], controller.CONF["DB_PORT"],"*",
+            # Create an admin user line
+            pglines = _updatePgPassLine(controller.CONF["DB_HOST"], controller.CONF["DB_PORT"],"*",
                                           controller.CONF["DB_ADMIN"], controller.CONF["DB_PASS"])
-
-            #insert line for user  ('engine' by default)
-            line_user = _updatePgPassLine(controller.CONF["DB_HOST"], controller.CONF["DB_PORT"],
-                                          basedefs.DB_NAME, basedefs.DB_USER, controller.CONF["DB_PASS"])
         else:
             logging.info("Using default db credentials")
-            line_admin = _updatePgPassLine(controller.CONF["DB_HOST"], basedefs.DB_PORT, "*", basedefs.DB_ADMIN, controller.CONF["DB_PASS"])
-            line_user = _updatePgPassLine(controller.CONF["DB_HOST"], basedefs.DB_PORT, basedefs.DB_NAME, basedefs.DB_USER, controller.CONF["DB_PASS"])
+            # Create an admin user line
+            pglines = _updatePgPassLine(controller.CONF["DB_HOST"], basedefs.DB_PORT, "*", basedefs.DB_ADMIN, controller.CONF["DB_PASS"])
+            # Add 'engine' user line
+            pglines = pglines + "\n" + _updatePgPassLine(controller.CONF["DB_HOST"], basedefs.DB_PORT, basedefs.DB_NAME, basedefs.DB_USER, controller.CONF["DB_PASS"])
 
-        pgPassFile.write(line_admin + "\n")
-        pgPassFile.write(line_user + "\n")
+        pgPassFile.write(pglines + "\n")
         pgPassFile.write("#####  End of oVirt-engine DB ADMIN settings section."+"\n")
         pgPassFile.close()
 
@@ -1554,7 +1568,7 @@ def _handleAnswerFileParams(answerFile):
                         logging.error("The group condition (%s) returned: %s, which differs from the excpeted output: %s"%\
                                       (group.getKey("GROUP_NAME"), postConditionValue, group.getKey("POST_CONDITION_MATCH")))
                         raise ValueError(output_messages.ERR_EXP_GROUP_VALIDATION_ANS_FILE%\
-                                         (group.getKey("GROUP_NAME"), postConditionValue, group("POST_CONDITION_MATCH")))
+                                         (group.getKey("GROUP_NAME"), postConditionValue, group.getKey("POST_CONDITION_MATCH")))
                     else:
                         logging.debug("condition (%s) passed" % group.getKey("POST_CONDITION"))
                 else:
@@ -1857,6 +1871,7 @@ def editPostgresConf():
     """
     edit /var/lib/pgsql/data/postgresql.conf and change max_connections to 150
     """
+
     try:
         tempFile = tempfile.mktemp(dir="/tmp")
 
@@ -2280,7 +2295,7 @@ def configJbossDatasource(xmlObj):
         </pool>
         <security>
             <user-name>
-                engine
+                %s
             </user-name>
             <security-domain>
                 EncryptDBPassword
@@ -2292,7 +2307,7 @@ def configJbossDatasource(xmlObj):
             </prepared-statement-cache-size>
         </statement>
     </datasource>
-''' % (getDbHostName(), getDbPort(), secure_conn)
+''' % (getDbHostName(), getDbPort(), secure_conn, getDbUser())
     logging.debug("Adding ENGINE datasource")
     xmlObj.addNodes("//datasource:subsystem/datasource:datasources", datasourceStr)
 
@@ -2341,7 +2356,7 @@ def configJbossSecurity(xmlObj):
         <security-domain name="EncryptDBPassword">
             <authentication>
                 <login-module code="org.picketbox.datasource.security.SecureIdentityLoginModule" flag="required">
-                    <module-option name="username" value="engine"/>
+                    <module-option name="username" value="'''+getDbUser()+'''"/>
                     <module-option name="password" value="'''+ controller.CONF["ENCRYPTED_DB_PASS"] +'''"/>
                     <module-option name="managedConnectionFactoryName" value="jboss.jca:name=ENGINEDataSource,service=LocalTxCM"/>
                 </login-module>

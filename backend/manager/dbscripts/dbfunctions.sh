@@ -247,14 +247,24 @@ check_and_install_uuid_osspa_pg8() {
 }
 
 check_and_install_uuid_osspa_pg9() {
-    CMD="SELECT name FROM pg_available_extensions WHERE name='uuid-ossp';"
-    RES=`execute_command "${CMD}" ${DATABASE} ${SERVERNAME} ${PORT}`
-    if [ ! "$RES" ]; then
-        return 1
+    # Checks that the extension is installed
+    CMD_CHECK_INSTALLED="SELECT COUNT(extname) FROM pg_extension WHERE extname='uuid-ossp';"
+    UUID_INSTALLED=`execute_command "${CMD_CHECK_INSTALLED}" ${DATABASE} ${SERVERNAME} ${PORT}`
+    # Checks that the extension can be installed
+    CMD_CHECK_AVAILABLE="SELECT COUNT(name) FROM pg_available_extensions WHERE name='uuid-ossp';"
+    UUID_AVAILABLE=`execute_command "${CMD_CHECK_AVAILABLE}" ${DATABASE} ${SERVERNAME} ${PORT}`
+
+    # If uuid is not installed, check whether it's available and install
+    if [ $UUID_INSTALLED ]; then
+        return 0
     else
-        CMD="CREATE EXTENSION \"uuid-ossp\";"
-        execute_command "${CMD}"  ${DATABASE} ${SERVERNAME} ${PORT} > /dev/null
-        return $?
+        if [ ! $UUID_AVAILABLE ]; then
+            return 1
+        else
+            CMD="CREATE EXTENSION \"uuid-ossp\";"
+            execute_command "${CMD}"  ${DATABASE} ${SERVERNAME} ${PORT} > /dev/null
+            return $?
+        fi
     fi
 }
 

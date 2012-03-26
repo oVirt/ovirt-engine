@@ -609,7 +609,7 @@ def restoreDB(user, host, port, backupFile):
 
     # Restore
     logging.debug("DB Restore started")
-    cmd = "%s -h %s -p %s -U %s -f %s"%(basedefs.EXEC_PSQL, host, port, user, backupFile)
+    cmd = "%s -h %s -p %s -U %s -d %s -f %s"%(basedefs.EXEC_PSQL, host, port, user, basedefs.DB_POSTGRES, backupFile)
     output, rc = execExternalCmd(cmd, True, output_messages.ERR_DB_RESTORE)
     logging.debug("DB Restore completed successfully")
 

@@ -38,6 +38,7 @@ INFO_UPGRADE_DB="Upgrading Database Schema"
 INFO_UPD_DC_TYPE="Updating the Default Data Center Storage Type"
 INFO_UPD_JBOSS_CONF="Editing JBoss Configuration"
 INFO_UPD_RHEVM_CONF="Editing %s Configuration" % MY_NAME
+INFO_UPD_CONF="Editing %s Configuration"
 INFO_CFG_NFS="Configuring the Default ISO Domain"
 INFO_START_JBOSS="Starting JBoss Service"
 INFO_START_HTTPD="Starting HTTPD Service"
@@ -132,7 +133,7 @@ INFO_CONF_PARAMS_NFS_DESC_PROMPT="Display name for the ISO Domain"
 INFO_CONF_PARAMS_MAC_RANGE_USAGE="MAC range for the virtual machines, e.g. 00:11:22:33:44:00-00:11:22:33:44:FF"
 INFO_CONF_PARAMS_MAC_RANG_PROMPT="MAC range for the virtual machines"
 INFO_CONF_PARAMS_DB_PASSWD_USAGE="Password for the local database administrator"
-INFO_CONF_PARAMS_DB_PASSWD_PROMPT="Enter local database password (required for secure authentication with the database)"
+INFO_CONF_PARAMS_DB_PASSWD_PROMPT="Local database password"
 INFO_CONF_PARAMS_PASSWD_CONFIRM_PROMPT="Confirm password"
 
 #Remote DB interaction
@@ -145,7 +146,7 @@ INFO_CONF_PARAMS_USE_DB_PORT_PROMPT="Enter DB port number"
 INFO_CONF_PARAMS_DB_ADMIN_USAGE="Remote DB admin user"
 INFO_CONF_PARAMS_DB_ADMIN_PROMPT="Enter DB admin user name"
 INFO_CONF_PARAMS_REMOTE_DB_PASSWD_USAGE="Password for the remote database administrator"
-INFO_CONF_PARAMS_REMOTE_DB_PASSWD_PROMPT="Enter remote database password (required for secure authentication with the database)"
+INFO_CONF_PARAMS_REMOTE_DB_PASSWD_PROMPT="Remote database password"
 INFO_CONF_PARAMS_DB_SECURE_CONNECTION_USAGE="Should the connection to the DB be secure? (The support must be configured on remote DB server)"
 INFO_CONF_PARAMS_DB_SECURE_CONNECTION_PROMPT="Configure secure connection?"
 
@@ -214,6 +215,9 @@ ERR_DB_DROP_PRIV = "Couldn't drop temp database on server %s. Check provided cre
 ERR_DB_CONNECTIONS_BLOCK = "Error: failed to block new DB connections"
 ERR_DB_CONNECTIONS_CLEAR = "Error: failed to clear active DB connections"
 ERR_DB_TEMP_LIST = "Error: failed fetch temp remote DB list. Verify that DB server is up and accessible."
+ERR_DB_UUID = "Error: uuid-ossp extension is not loaded into the DB.\n\
+Verify with the DB admin that uuid-ossp extension is loaded into newly created databases and \
+rerun the setup."
 
 #_updateVdcOptions
 ERR_CANT_FIND_VDC_OPTION_FILE="Unexpected error, Cannot find %s"

@@ -36,6 +36,7 @@ DB_HOST=localhost
 DB_PORT="5432"
 DB_USER=engine
 DB_NAME=engine
+LOCAL_DB_SET=1
 TABLE_NAME=vdc_options
 
 
@@ -46,7 +47,7 @@ PGSQL_SERVICE="/etc/init.d/postgresql"
 SYSTEMD_PGSQL_SERVICE=postgresql.service
 
 usage() {
-    printf "Usage: ${ME} [-h] [-s SERVERNAME [-p PORT]] [-d DATABASE] [-u USERNAME] -w PASSWORD -l LOGFILE\n"
+    printf "Usage: ${ME} [-h] [-s SERVERNAME [-p PORT]] [-d DATABASE] [-u USERNAME] [-r 'remote'] -w PASSWORD -l LOGFILE\n"
     printf "\n"
     printf "\t-s SERVERNAME - The database servername for the database  (def. ${DB_HOST})\n"
     printf "\t-p PORT       - The database port for the database        (def. ${DB_PORT})\n"
@@ -54,13 +55,14 @@ usage() {
     printf "\t-u USERNAME   - The admin username for the database.\n    (def. ${DB_ADMIN})\n"
     printf "\t-w PASSWORD   - The admin password for the database.\n    (def. ${DB_PASS})\n"
     printf "\t-l LOGFILE    - The logfile for capturing output          (def. ${LOGFILE})\n"
+    printf "\t-r REMOTE_INSTALL - The flag for peforming remote install (def. ${REMOTE_INSTALL})\n"
     printf "\t-h            - This help text.\n"
     printf "\n"
 
     exit 0
 }
 
-while getopts :s:p:d:u:w:l:h option; do
+while getopts :s:p:d:u:w:l:r:h option; do
     case $option in
         s) DB_HOST=$OPTARG;;
         p) DB_PORT=$OPTARG;;
@@ -68,6 +70,7 @@ while getopts :s:p:d:u:w:l:h option; do
         u) DB_ADMIN=$OPTARG;;
         w) DB_PASS=$OPTARG;;
         l) LOGFILE=$OPTARG;;
+        r) REMOTE_INSTALL=$OPTARG;;
         h) usage;;
     esac
 done
@@ -96,10 +99,9 @@ PSQL_BIN=/usr/bin/psql
 # Update PSQL BIN to include host and port values
 PSQL="${PSQL_BIN} -h $DB_HOST -p $DB_PORT"
 
-REMOTE_DB_SET=0
-if [[ $DB_HOST != "localhost" && $DB_HOST != "127.0.0.1" ]]
+if [[ "x${REMOTE_INSTALL}" == "xremote" ]]
 then
-    REMOTE_DB_SET=1
+    LOCAL_DB_SET=0
 fi
 
 verifyArgs()
@@ -344,23 +346,30 @@ escapeDBPassword()
 
 updateDBUsers()
 {
-	echo "[$SCRIPT_NAME] updating postgres users credentials" >> $LOGFILE
+	echo "[$SCRIPT_NAME] updating db admin credentials" >> $LOGFILE
 
-	#update user postgres password
-	$PSQL -U $DB_ADMIN -c "ALTER ROLE $DB_ADMIN WITH ENCRYPTED PASSWORD '$DB_PASS'" >> /dev/null  2>&1
+	# update admin user password
+	$PSQL -U $DB_ADMIN -d $DB_NAME -c "ALTER ROLE $DB_ADMIN WITH ENCRYPTED PASSWORD '$DB_PASS'" >> /dev/null  2>&1
 	_verifyRC $? "failed updating user $DB_ADMIN password"
 
-	#drop engine ROLE if exists
-	$PSQL -U $DB_ADMIN -c "DROP ROLE IF EXISTS $DB_USER" >> $LOGFILE 2>&1
-	_verifyRC $? "failed updating user $DB_USER password"
+    # if running on a local machine, add application user 'engine'
+    if [[ $LOCAL_DB_SET -eq 1 ]]
+    then
+	    # drop engine ROLE if exists
+        $PSQL -U $DB_ADMIN -d $DB_NAME -c "DROP ROLE IF EXISTS $DB_USER" >> $LOGFILE 2>&1
+        _verifyRC $? "failed dropping user $DB_USER"
 
-	#create user engine + password
-	$PSQL -U $DB_ADMIN -c "CREATE ROLE $DB_USER WITH LOGIN SUPERUSER ENCRYPTED PASSWORD '$DB_PASS'" >> /dev/null 2>&1
-	_verifyRC $? "failed updating user $DB_USER password"
+        # create user engine + password
+        $PSQL -U $DB_ADMIN -d $DB_NAME -c "CREATE ROLE $DB_USER WITH LOGIN ENCRYPTED PASSWORD '$DB_PASS'" >> /dev/null 2>&1
+        _verifyRC $? "failed updating user $DB_USER password"
 
-	#grant all permissions to user engine to db engine
-	$PSQL -U $DB_ADMIN -c "GRANT ALL PRIVILEGES ON DATABASE $DB_NAME to $DB_USER " >> $LOGFILE 2>&1
-	_verifyRC $? "failed updating user $DB_USER privileges"
+        # grant all permissions to user engine to db engine
+        $PSQL -U $DB_ADMIN -d $DB_NAME -c "GRANT ALL PRIVILEGES ON DATABASE $DB_NAME to $DB_USER " >> $LOGFILE 2>&1
+        $PSQL -U $DB_ADMIN -d $DB_NAME -c "GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO $DB_USER" >> $LOGFILE 2>&1
+        $PSQL -U $DB_ADMIN -d $DB_NAME -c "GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO $DB_USER" >> $LOGFILE 2>&1
+        _verifyRC $? "failed updating user $DB_USER privileges"
+    fi
+
 }
 
 turnPgsqlOnStartup()
@@ -378,7 +387,7 @@ initLogFile
 verifyPostgresPkgAreInstalled
 
 #### Only if running locally
-if [[ $REMOTE_DB_SET -eq 0 ]]
+if [[ $LOCAL_DB_SET -eq 1 ]]
 then
     echo "Running local installation"
     verifyPostgresService
@@ -405,7 +414,7 @@ then
 
 	# if we run locally,
 	# change auth to md5, now that we have users with passwords
-    if [[ $REMOTE_DB_SET -eq 0 ]]
+    if [[ $LOCAL_DB_SET -eq 1 ]]
     then
 	    changePgAuthScheme trust md5
 	    startPgsqlService engine engine

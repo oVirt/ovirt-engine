@@ -44,7 +44,7 @@ def validateInteger(param, options=[]):
         print output_messages.INFO_VAL_NOT_INTEGER
         return False
 
-def validatePort(param, options=[]):
+def validatePort(param, options = []):
     #TODO: add actual port check with socket open
     logging.debug("Validating %s as a valid TCP Port" % (param))
     minVal = 0
@@ -107,6 +107,19 @@ def checkAndSetHttpdPortPolicy(port):
     return True
 
 
+
+def validateRemotePort(param, options = []):
+    #Validate that the port is an integer betweeen 1024 and 65535
+    logging.debug("Validating %s as a valid TCP Port" % (param))
+    if validateInteger(param, options):
+        port = int(param)
+        if (port > 0 and port < 65535):
+            return True
+        else:
+            logging.warn("validatePort('%s') - failed" %(param))
+            print output_messages.INFO_VAL_PORT_NOT_RANGE
+
+    return False
 
 def validateStringNotEmpty(param, options=[]):
     if type(param) != types.StringType or len(param) == 0:
@@ -229,6 +242,9 @@ def validateRemoteDB(param={}, options=[]):
         # DB Create check
         _checkCreateDbPrivilege(param["DB_ADMIN"], param["DB_HOST"], param["DB_PORT"])
 
+        # UUID extention check.
+        _checkUUIDExtension(param["DB_ADMIN"], param["DB_HOST"], param["DB_PORT"])
+
         # Delete DB check
         _checkDropDbPrivilege(param["DB_ADMIN"], param["DB_HOST"], param["DB_PORT"])
 
@@ -242,7 +258,15 @@ def validateRemoteDB(param={}, options=[]):
 
     finally:
         # restore the original pgpass file in all cases
-        os.rename(backupFile, basedefs.DB_PASS_FILE)
+        if os.path.exists(backupFile):
+            os.rename(backupFile, basedefs.DB_PASS_FILE)
+
+        # if the test DB was created, drop it
+        sqlQuery = "DROP DATABASE IF EXISTS ovirt_engine_test;"
+        utils.execRemoteSqlCommand(param["DB_ADMIN"],
+                                   param["DB_HOST"],
+                                   param["DB_PORT"],
+                                   basedefs.DB_POSTGRES, sqlQuery, False)
 
 def validateFQDN(param, options=[]):
     logging.info("Validating %s as a FQDN"%(param))
@@ -377,8 +401,8 @@ def _checkCreateDbPrivilege(dbAdminUser, dbHost, dbPort):
 
     # Error in "CREATE DATABASE", meaning we don't have enough privileges to create database.
     if rc:
-        logging.error(output_messages.ERR_DB_CREATE_FAILED % dbHost)
-        raise Exception("\n" + output_messages.ERR_DB_CREATE_FAILED % dbHost + ".\n")
+        logging.error(output_messages.ERR_DB_CREATE_PRIV, dbHost)
+        raise Exception("\n" + output_messages.ERR_DB_CREATE_PRIV % dbHost + "\n")
     else:
         logging.info("Successfully created temp database on server %s." % dbHost)
 
@@ -395,6 +419,22 @@ def _checkDropDbPrivilege(dbAdminUser, dbHost, dbPort):
         raise Exception("\n" + output_messages.ERR_DB_DROP_PRIV % dbHost + ".\n")
     else:
         logging.info("Successfully deleted database on server %s." % dbHost)
+
+def _checkUUIDExtension(dbAdminUser, dbHost, dbPort):
+    """ Check that UUID extension is already loaded and raise Exception if not"""
+    logging.info("Checking that uuid extension is loaded by default on the remote server")
+    out, rc = utils.execRemoteSqlCommand(dbAdminUser, dbHost, dbPort,
+                                         "ovirt_engine_test",
+                                         "SELECT extname \
+                                          FROM pg_extension \
+                                          WHERE extname='uuid-ossp';")
+
+    # Extension was found
+    if not rc and out and "uuid-ossp" in out:
+        logging.info("Successfully passed UUID check")
+    else:
+        logging.error(output_messages.ERR_DB_UUID)
+        raise Exception(output_messages.ERR_DB_UUID)
 
 def _createTempPgPass(dbAdminUser, dbHost, dbPort, dbPass):
     """docstring for _createTempPgPass"""
@@ -414,7 +454,8 @@ def _createTempPgPass(dbAdminUser, dbHost, dbPort, dbPass):
         return backupFile
     except:
         # Restore original file
-        os.rename(backupFile, basedefs.DB_PASS_FILE)
+        if os.path.exists(backupFile):
+            os.rename(backupFile, basedefs.DB_PASS_FILE)
         raise Exception(output_messages.ERR_BACKUP_PGPASS % backupFile)
 
 def _validateString(string, minLen, maxLen, regex=".*"):

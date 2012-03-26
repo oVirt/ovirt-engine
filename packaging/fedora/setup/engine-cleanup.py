@@ -36,6 +36,8 @@ DB_ADMIN = basedefs.DB_ADMIN
 #MSGS
 MSG_ERROR_USER_NOT_ROOT = "Error: insufficient permissions for user %s, you must run with user root."
 MSG_RC_ERROR = "Return Code is not zero"
+MSG_ERROR_CONNECT_DB = "Error: Couldn't connect to the database server.\
+Check that connection is working and rerun the cleanup utility"
 MSG_ERROR_BACKUP_DB = "Error: Database backup failed"
 MSG_ERROR_DROP_DB = "Error: Database drop failed"
 MSG_ERROR_CHECK_LOG = "Error: Cleanup failed.\nplease check log at %s"
@@ -279,6 +281,8 @@ class DB():
                 if utils.verifyStringFormat(out,".*FATAL:\s*database\s*\"%s\"\s*does not exist" % (PREFIX)):
                     # This means that the db is not installed, so we return false
                     return False
+                else:
+                    raise Exception(MSG_ERROR_CONNECT_DB)
 
         return True
 
