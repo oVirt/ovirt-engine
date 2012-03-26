@@ -149,6 +149,14 @@ public class QuotaDAODbFacadeImpl extends BaseDAODbFacade implements QuotaDAO {
     }
 
     /**
+     * Get all quota storages which belong to quota with quotaId.
+     */
+    @Override
+    public List<QuotaStorage> getQuotaStorageByQuotaGuidWithGeneralDefault(Guid quotaId) {
+        return getQuotaStorageByStorageGuid(null, quotaId);
+    }
+
+    /**
      * Get all quota Vds groups, which belong to quota with quotaId.
      */
     @Override

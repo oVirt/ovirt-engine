@@ -269,8 +269,40 @@ public class QuotaDAOTest extends BaseDAOTestCase {
         assertNotNull(quotaVdsGroupList);
         assertEquals("wrong number of quotas returned", 1, quotaVdsGroupList.size());
         for (QuotaVdsGroup group : quotaVdsGroupList) {
-            assertEquals("VDS ID should be empty in specific mode", Guid.Empty, group.getVdsGroupId());
-            assertNull("VDS name should be null in specific mode", group.getVdsGroupName());
+            assertEquals("VDS ID should be empty in general mode", Guid.Empty, group.getVdsGroupId());
+            assertNull("VDS name should be null in general mode", group.getVdsGroupName());
+        }
+    }
+
+    /**
+     * Asserts that when {@link QuotaDAO#getQuotaStorageByQuotaGuidWithGeneralDefault(Guid)} is called
+     * with a specific quota, all the relevant VDSs are returned
+     */
+    @Test
+    public void testQuotaStorageByQuotaGuidWithGeneralDefaultNoDefault() {
+        List<QuotaStorage> quotaStorageList =
+                dao.getQuotaStorageByQuotaGuidWithGeneralDefault(FixturesTool.QUOTA_SPECIFIC);
+        assertNotNull(quotaStorageList);
+        assertEquals("wrong number of quotas returned", 1, quotaStorageList.size());
+        for (QuotaStorage group : quotaStorageList) {
+            assertNotNull("Storage ID should not be null in specific mode", group.getStorageId());
+            assertNotNull("Storage name should not be null in specific mode", group.getStorageName());
+        }
+    }
+
+    /**
+     * Asserts that when {@link QuotaDAO#getQuotaStorageByQuotaGuidWithGeneralDefault(Guid)} is called
+     * with a specific quota, all the relevant VDSs are returned
+     */
+    @Test
+    public void testQuotaStorageByQuotaGuidWithGeneralDefaultWithDefault() {
+        List<QuotaStorage> quotaStorageList =
+                dao.getQuotaStorageByQuotaGuidWithGeneralDefault(FixturesTool.DEFAULT_QUOTA_GENERAL);
+        assertNotNull(quotaStorageList);
+        assertEquals("wrong number of quotas returned", 1, quotaStorageList.size());
+        for (QuotaStorage group : quotaStorageList) {
+            assertEquals("Storage ID should not be null in general mode", Guid.Empty, group.getStorageId());
+            assertNull("Storage name should not be null in general mode", group.getStorageName());
         }
     }
 

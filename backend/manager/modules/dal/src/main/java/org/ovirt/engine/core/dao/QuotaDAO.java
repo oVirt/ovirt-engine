@@ -96,6 +96,13 @@ public interface QuotaDAO extends DAO, SearchDAO<Quota> {
     public List<QuotaStorage> getQuotaStorageByQuotaGuid(Guid quotaId);
 
     /**
+     * Get all quota storages which belong to quota with quotaId.
+     * In case no quota storages are returned, a fictitious {@link QuotaStorage} is returned,
+     * with an {@link Guid.Empty} Storage Id and a <code>null</code> name.
+     */
+    public List<QuotaStorage> getQuotaStorageByQuotaGuidWithGeneralDefault(Guid quotaId);
+
+    /**
      * Get all quota vds groups, which belong to quota with quotaId.
      */
     public List<QuotaVdsGroup> getQuotaVdsGroupByQuotaGuid(Guid quotaId);
