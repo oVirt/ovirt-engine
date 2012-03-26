@@ -284,4 +284,20 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
+Create or replace FUNCTION GetAllAttachableDisksByPoolId(v_storage_pool_id UUID, v_user_id UUID, v_is_filtered BOOLEAN)
+RETURNS SETOF images_storage_domain_view
+   AS $procedure$
+BEGIN
+	  IF v_storage_pool_id IS NULL then
+           RETURN QUERY SELECT images_storage_domain_view.*
+           FROM images_storage_domain_view 
+           WHERE images_storage_domain_view.vm_guid IS NULL;
+      ELSE
+           RETURN QUERY SELECT images_storage_domain_view.*
+           FROM images_storage_domain_view
+           WHERE images_storage_domain_view.storage_pool_id = v_storage_pool_id AND images_storage_domain_view.vm_guid IS NULL;
+      END IF;     
+END; $procedure$
+LANGUAGE plpgsql;
+
 

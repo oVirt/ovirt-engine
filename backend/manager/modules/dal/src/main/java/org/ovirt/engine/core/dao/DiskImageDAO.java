@@ -111,4 +111,6 @@ public interface DiskImageDAO extends GenericDao<DiskImage, Guid>, SearchDAO<Dis
     List<DiskImage> getAllForQuotaId(Guid quotaId);
 
     List<DiskImage> getImagesByStorageIdAndTemplateId(Guid storageId, Guid templateId);
+
+    List<DiskImage> getAllAttachableDisksByPoolId(Guid poolId, Guid userId, boolean isFiltered);
 }

@@ -120,6 +120,10 @@ public class DiskImageDAOWrapperImpl extends BaseDAOWrapperImpl implements DiskI
     @Override
     public void updateStatus(Guid id, ImageStatus status) {
         // TODO Auto-generated method stub
+    }
 
+    public List<DiskImage> getAllAttachableDisksByPoolId(Guid poolId, Guid userId, boolean isFiltered) {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

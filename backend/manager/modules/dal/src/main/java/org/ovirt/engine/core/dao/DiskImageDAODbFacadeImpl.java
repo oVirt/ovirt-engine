@@ -211,6 +211,19 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
     }
 
     @Override
+    public List<DiskImage> getAllAttachableDisksByPoolId(Guid poolId, Guid userId, boolean isFiltered) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("storage_pool_id", poolId)
+                .addValue("user_id", userId)
+                .addValue("is_filtered", isFiltered);
+
+        return getCallsHandler().executeReadList("GetAllAttachableDisksByPoolId",
+                diskImageRowMapper,
+                parameterSource);
+
+    }
+
+    @Override
     public List<DiskImage> getImagesWithNoDisk(Guid vmId) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("vm_id", vmId);

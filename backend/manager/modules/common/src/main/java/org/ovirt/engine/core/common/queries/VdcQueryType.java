@@ -82,6 +82,7 @@ public enum VdcQueryType implements Serializable {
     GetAllIsoImagesList,
     GetAllFloppyImagesList,
     GetAllDisksByVmId(VdcQueryAuthType.User),
+    GetAllAttachableDisks,
     GetImageByImageId,
     GetImagesByStorageDomainAndTemplate,
 
