@@ -256,15 +256,11 @@ BEGIN
 	  IF v_template_id IS NULL then
            RETURN QUERY SELECT images_storage_domain_view.*
            FROM images_storage_domain_view 
-           INNER JOIN vm_device ON vm_device.device_id = images_storage_domain_view.image_group_id
-           INNER JOIN vm_static ON vm_static.vm_guid = vm_device.vm_id
-           WHERE images_storage_domain_view.storage_id = v_storage_id AND vm_static.entity_type::text = 'TEMPLATE'::text;
+           WHERE images_storage_domain_view.storage_id = v_storage_id AND images_storage_domain_view.entity_type::text = 'TEMPLATE'::text;
       ELSE
            RETURN QUERY SELECT images_storage_domain_view.*
            FROM images_storage_domain_view 
-           INNER JOIN vm_device ON vm_device.device_id = images_storage_domain_view.image_group_id
-           INNER JOIN vm_static ON vm_static.vm_guid = vm_device.vm_id
-           WHERE images_storage_domain_view.storage_id = v_storage_id AND vm_static.vm_guid = v_template_id AND vm_static.entity_type::text = 'TEMPLATE'::text;
+           WHERE images_storage_domain_view.storage_id = v_storage_id AND images_storage_domain_view.vm_guid = v_template_id AND images_storage_domain_view.entity_type::text = 'TEMPLATE'::text;
       END IF;     
 END; $procedure$
 LANGUAGE plpgsql;
