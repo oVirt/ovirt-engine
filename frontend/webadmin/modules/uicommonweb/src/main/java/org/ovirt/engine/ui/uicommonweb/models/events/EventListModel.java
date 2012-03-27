@@ -69,6 +69,12 @@ public class EventListModel extends SearchableListModel
         }
     }
 
+    private boolean requestingData;
+
+    public boolean isRequestingData() {
+        return requestingData;
+    }
+
     public EventListModel()
     {
         setTitle("Events");
@@ -105,8 +111,10 @@ public class EventListModel extends SearchableListModel
     {
         super.SyncSearch();
 
+        requestingData = true;
         setItems(new ObservableCollection<AuditLog>());
         setLastEvent(null);
+
         timer.start();
     }
 
@@ -128,6 +136,7 @@ public class EventListModel extends SearchableListModel
                 EventListModel eventListModel = (EventListModel) model;
                 java.util.ArrayList<AuditLog> list =
                         (java.util.ArrayList<AuditLog>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
+                requestingData = false;
                 eventListModel.UpdateItems(list);
             }
         };
