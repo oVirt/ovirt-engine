@@ -140,21 +140,16 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
 
     @Override
     protected boolean canDoAction() {
-        return isUserCanBeAuthenticated() && persistUserSession();
+        return isUserCanBeAuthenticated() && attachUserToSession();
     }
 
-    protected boolean persistUserSession() {
+    protected boolean attachUserToSession() {
         boolean authenticated = true;
         if (!StringHelper.isNullOrEmpty(getParameters().getSessionId())) {
             SessionDataContainer.getInstance().SetData(getParameters().getSessionId(), VDC_USER, getCurrentUser());
         } else if (!SessionDataContainer.getInstance().SetData(VDC_USER, getCurrentUser())) {
             addCanDoActionMessage(VdcBllMessages.USER_CANNOT_LOGIN_SESSION_MISSING);
             authenticated = false;
-        }
-        // Persist the most updated version of the user, as received from AD, as this may
-        // affect MLA later on
-        if (authenticated) {
-            authenticated = UserCommandBase.persistAuthenticatedUser(_adUser) != null;
         }
         return authenticated;
     }
@@ -201,6 +196,9 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
         if (authenticated) {
             VdcUser currentUser = new VdcUser(_adUser);
             setCurrentUser(currentUser);
+            // Persist the most updated version of the user, as received from AD, as this may
+            // affect MLA later on
+            authenticated = UserCommandBase.persistAuthenticatedUser(_adUser) != null;
         }
         return authenticated;
     }
