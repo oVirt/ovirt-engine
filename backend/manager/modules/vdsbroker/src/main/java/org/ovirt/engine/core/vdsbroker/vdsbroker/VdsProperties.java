@@ -175,6 +175,7 @@ public final class VdsProperties {
     public static final String sysprepInf = "sysprepInf"; // for the binary sys
                                                           // prep
     public static final String Boot = "boot"; // Optional
+    public static final String BootOrder = "bootOrder";
     public static final String CDRom = "cdrom"; // Optional
     public static final String Floppy = "floppy"; // Optional
     public static final String Snapshot = "snapshotFile"; // Optional
@@ -207,6 +208,8 @@ public final class VdsProperties {
     public static final String ReadOnly = "readonly";
     public static final String Virtio = "virtio";
     public static final String Path = "path";
+    public static final String Ide = "ide";
+    public static final String Fdc = "fdc";
 
     public static final String clientIp = "clientIp";
     public static final String hash = "hash";

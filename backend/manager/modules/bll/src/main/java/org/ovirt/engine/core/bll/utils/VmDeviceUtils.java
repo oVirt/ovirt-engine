@@ -10,7 +10,6 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.DiskType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -26,9 +25,6 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
 
 public class VmDeviceUtils {
-    private final static String LOW_VIDEO_MEM = "32768";
-    private final static String HIGH_VIDEO_MEM = "65536";
-    private static VmBase vmBaseInstance;
     private static VmDeviceDAO dao = DbFacade.getInstance().getVmDeviceDAO();
     private final static String VRAM = "vram";
     /**
@@ -141,6 +137,12 @@ public class VmDeviceUtils {
                     is_plugged,
                     isReadOnly);
         dao.save(managedDevice);
+        // If we add Disk/Interface/CD/Floppy, we have to recalculate boot order
+        if (type.equals(VmDeviceType.DISK) || type.equals(VmDeviceType.INTERFACE )) {
+            // recalculate boot sequence
+            VmBase vmBase = DbFacade.getInstance().getVmStaticDAO().get(id.getVmId());
+            updateBootOrderInVmDevice(vmBase);
+        }
         return managedDevice;
     }
 
@@ -257,74 +259,14 @@ public class VmDeviceUtils {
      */
     private static void updateBootOrderInVmDevice(VmBase vmBase) {
         if (vmBase instanceof VmStatic) {
-            vmBaseInstance = vmBase;
             List<VmDevice> devices = dao.getVmDeviceByVmId(vmBase.getId());
-            int bootOrder = 1;
-            switch (vmBase.getdefault_boot_sequence()) {
-            case C:
-                bootOrder = setDiskBootOrder(devices, bootOrder);
-                break;
-            case CD:
-                bootOrder = setDiskBootOrder(devices, bootOrder);
-                bootOrder = setCDBootOrder(devices, bootOrder);
-                break;
-            case CDN:
-                bootOrder = setDiskBootOrder(devices, bootOrder);
-                bootOrder = setCDBootOrder(devices, bootOrder);
-                bootOrder = setNetworkBootOrder(devices, bootOrder);
-                break;
-            case CN:
-                bootOrder = setDiskBootOrder(devices, bootOrder);
-                bootOrder = setNetworkBootOrder(devices, bootOrder);
-                break;
-            case CND:
-                bootOrder = setDiskBootOrder(devices, bootOrder);
-                bootOrder = setNetworkBootOrder(devices, bootOrder);
-                bootOrder = setCDBootOrder(devices, bootOrder);
-                break;
-            case D:
-                bootOrder = setCDBootOrder(devices, bootOrder);
-                break;
-            case DC:
-                bootOrder = setCDBootOrder(devices, bootOrder);
-                bootOrder = setDiskBootOrder(devices, bootOrder);
-                break;
-            case DCN:
-                bootOrder = setCDBootOrder(devices, bootOrder);
-                bootOrder = setDiskBootOrder(devices, bootOrder);
-                bootOrder = setNetworkBootOrder(devices, bootOrder);
-                break;
-            case DN:
-                bootOrder = setCDBootOrder(devices, bootOrder);
-                bootOrder = setNetworkBootOrder(devices, bootOrder);
-                break;
-            case DNC:
-                bootOrder = setCDBootOrder(devices, bootOrder);
-                bootOrder = setNetworkBootOrder(devices, bootOrder);
-                bootOrder = setDiskBootOrder(devices, bootOrder);
-                break;
-            case N:
-                bootOrder = setNetworkBootOrder(devices, bootOrder);
-                break;
-            case NC:
-                bootOrder = setNetworkBootOrder(devices, bootOrder);
-                bootOrder = setDiskBootOrder(devices, bootOrder);
-                break;
-            case NCD:
-                bootOrder = setNetworkBootOrder(devices, bootOrder);
-                bootOrder = setDiskBootOrder(devices, bootOrder);
-                bootOrder = setCDBootOrder(devices, bootOrder);
-                break;
-            case ND:
-                bootOrder = setNetworkBootOrder(devices, bootOrder);
-                bootOrder = setCDBootOrder(devices, bootOrder);
-                break;
-            case NDC:
-                bootOrder = setNetworkBootOrder(devices, bootOrder);
-                bootOrder = setCDBootOrder(devices, bootOrder);
-                bootOrder = setDiskBootOrder(devices, bootOrder);
-                break;
+            // reset current boot order
+            for (VmDevice device: devices) {
+                device.setBootOrder(0);
             }
+            VM vm = DbFacade.getInstance().getVmDAO().get(vmBase.getId());
+            boolean isOldCluster = VmDeviceCommonUtils.isOldClusterVersion(vm.getvds_group_compatibility_version());
+            VmDeviceCommonUtils.updateVmDevicesBootOrder(vmBase, devices, vmBase.getdefault_boot_sequence(), isOldCluster);
             // update boot order in vm device
             for (VmDevice device : devices) {
                 dao.update(device);
@@ -332,74 +274,6 @@ public class VmDeviceUtils {
         }
     }
 
-    /**
-     * updates network devices boot order
-     * @param devices
-     * @param bootOrder
-     * @return
-     */
-    private static int setNetworkBootOrder(List<VmDevice> devices, int bootOrder) {
-        for (VmDevice device : devices) {
-            if (device.getType().equals(
-                    VmDeviceType.INTERFACE.getName())
-                    && device.getDevice().equals(
-                            VmDeviceType.BRIDGE.getName())) {
-                device.setBootOrder(bootOrder++);
-            }
-        }
-        return bootOrder;
-    }
-
-    /**
-     * updates CD boot order
-     * @param devices
-     * @param bootOrder
-     * @return
-     */
-    private static int setCDBootOrder(List<VmDevice> devices, int bootOrder) {
-        for (VmDevice device : devices) {
-            if (device.getType()
-                    .equals(VmDeviceType.DISK.getName())
-                    && device.getDevice().equals(
-                            VmDeviceType.CDROM.getName())) {
-                device.setBootOrder(bootOrder++);
-                break; // only one CD is currently supported.
-            }
-        }
-        return bootOrder;
-    }
-
-    /**
-     * updates disk boot order
-     * @param devices
-     * @param bootOrder
-     * @return
-     */
-    private static int setDiskBootOrder(List<VmDevice> devices, int bootOrder) {
-        VM vm = DbFacade.getInstance().getVmDAO().get(vmBaseInstance.getId());
-        boolean isOldCluster = VmDeviceCommonUtils.isOldClusterVersion(vm.getvds_group_compatibility_version());
-        for (VmDevice device : devices) {
-            if (device.getType()
-                    .equals(VmDeviceType.DISK.getName())
-                    && device.getDevice().equals(
-                            VmDeviceType.DISK.getName())) {
-                Guid id = device.getDeviceId();
-                Disk disk = DbFacade.getInstance().getDiskDao().get(id);
-                if (id != null && !id.equals(Guid.Empty)) {
-                    if (isOldCluster) { // Only one system disk can be bootable in
-                                        // old version.
-                        if (disk != null && disk.getDiskType().equals(DiskType.System)) {
-                            device.setBootOrder(bootOrder++);
-                            break;
-                        }
-                    } else { // supporting more than 1 bootable disk in 3.1 and up.
-                        device.setBootOrder(bootOrder++);
-                    }
-                }
-            }
-        }
-        return bootOrder;
-    }
 
     /**
      * updates new/existing VM video cards in vm device
@@ -556,7 +430,7 @@ public class VmDeviceUtils {
      * @return
      */
     private static String getMemExpr(int numOfMonitors) {
-        String mem = (numOfMonitors > 2 ? LOW_VIDEO_MEM : HIGH_VIDEO_MEM);
+        String mem = (numOfMonitors > 2 ? VmDeviceCommonUtils.LOW_VIDEO_MEM : VmDeviceCommonUtils.HIGH_VIDEO_MEM);
         StringBuilder sb = new StringBuilder();
         sb.append(VRAM);
         sb.append("=");

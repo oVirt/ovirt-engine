@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskType;
+import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
@@ -18,6 +19,7 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.StringUtils;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStruct;
@@ -26,97 +28,148 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
 
     private final String DEVICES = "devices";
     private final List<XmlRpcStruct> devices;
+    private List<VmDevice> managedDevices = null;
+    private boolean hasNonDefaultBootOrder;
 
     public VmInfoBuilder(VM vm, XmlRpcStruct createInfo) {
         this.vm = vm;
         this.createInfo = createInfo;
         devices = new ArrayList<XmlRpcStruct>();
+        hasNonDefaultBootOrder = (vm.getboot_sequence() != vm.getdefault_boot_sequence());
+        if (hasNonDefaultBootOrder) {
+            managedDevices = new ArrayList<VmDevice>();
+        }
     }
 
     @Override
     protected void buildVmVideoCards() {
         createInfo.add(VdsProperties.display, vm.getdisplay_type().toString());
-        // get vm device for Video Cards from DB
-        List<VmDevice> vmDevices =
-                DbFacade.getInstance()
-                        .getVmDeviceDAO()
-                        .getVmDeviceByVmIdAndType(vm.getId(), VmDeviceType.VIDEO.getName());
-        for (VmDevice vmDevice : vmDevices) {
-            XmlRpcStruct struct = new XmlRpcStruct();
-            struct.add(VdsProperties.Type, vmDevice.getType());
-            struct.add(VdsProperties.Device, vmDevice.getDevice());
-            addAddress(vmDevice, struct);
-            struct.add(VdsProperties.SpecParams, StringUtils.string2Map(vmDevice.getSpecParams()));
-            devices.add(struct);
+        // check if display type was changed in given parameters
+        if (vm.getdisplay_type() != vm.getdefault_display_type()) {
+            if (vm.getdisplay_type() == DisplayType.vnc) { // check spice to vnc change
+                XmlRpcStruct struct = new XmlRpcStruct();
+                StringBuilder sb = new StringBuilder();
+                // create a monitor as an unmanaged device
+                struct.add(VdsProperties.Type, VmDeviceType.VIDEO.getName());
+                struct.add(VdsProperties.Device, VmDeviceType.CIRRUS.getName());
+                struct.add(VdsProperties.SpecParams, StringUtils.string2Map(getNewMonitorSpecParams()));
+                devices.add(struct);
+            }
         }
-
+        else {
+            // get vm device for Video Cards from DB
+            List<VmDevice> vmDevices =
+                DbFacade.getInstance()
+                .getVmDeviceDAO()
+                .getVmDeviceByVmIdAndType(vm.getId(), VmDeviceType.VIDEO.getName());
+            for (VmDevice vmDevice : vmDevices) {
+                // skip unamanged devices (handled separtely)
+                if (!vmDevice.getIsManaged()) {
+                    continue;
+                }
+                XmlRpcStruct struct = new XmlRpcStruct();
+                struct.add(VdsProperties.Type, vmDevice.getType());
+                struct.add(VdsProperties.Device, vmDevice.getDevice());
+                addAddress(vmDevice, struct);
+                struct.add(VdsProperties.SpecParams, StringUtils.string2Map(vmDevice.getSpecParams()));
+                addToManagedDevices(vmDevice);
+                devices.add(struct);
+            }
+        }
     }
 
     @Override
     protected void buildVmCD() {
-        // get vm device for this CD from DB
-        List<VmDevice> vmDevices =
-                DbFacade.getInstance()
-                        .getVmDeviceDAO()
-                        .getVmDeviceByVmIdTypeAndDevice(vm.getId(),
-                                VmDeviceType.DISK.getName(),
-                                VmDeviceType.CDROM.getName());
-        for (VmDevice vmDevice : vmDevices) {
-            String file = StringUtils.string2Map(vmDevice.getSpecParams()).get("path");
-            if (!(file == null) && !(file.isEmpty())) {
-                XmlRpcStruct struct = new XmlRpcStruct();
-                struct.add(VdsProperties.Type, vmDevice.getType());
-                struct.add(VdsProperties.Device, vmDevice.getDevice());
-                struct.add(VdsProperties.Index, "2"); // IDE slot 2 is reserved by VDSM to CDROM
-                addAddress(vmDevice, struct);
-                struct.add(VdsProperties.Iface, "ide");
-                struct.add(VdsProperties.PoolId, vm.getstorage_pool_id().toString());
-                struct.add(VdsProperties.DomainId,
-                        DbFacade.getInstance()
-                                .getStorageDomainDAO()
-                                .getIsoStorageDomainIdForPool(vm.getstorage_pool_id())
-                                .toString());
-                struct.add(VdsProperties.ImageId, VmDeviceCommonUtils.CDROM_IMAGE_ID);
-                struct.add(VdsProperties.VolumeId, file.substring(file.lastIndexOf('/') + 1));
-                struct.add(VdsProperties.Path, file);
-                // CDROM is always read only
-                struct.add(VdsProperties.ReadOnly, Boolean.TRUE.toString());
-                addBootOrder(vmDevice, struct);
-                devices.add(struct);
-                break; // currently only one is supported, may change in future releases
+        // check first if CD was given as a parameter
+        if (!StringHelper.isNullOrEmpty(vm.getCdPath())) {
+            VmDevice vmDevice =
+                    new VmDevice(new VmDeviceId(Guid.NewGuid(), vm.getId()),
+                            VmDeviceType.DISK.getName(),
+                            VmDeviceType.CDROM.getName(),
+                            "",
+                            0,
+                            "",
+                            true,
+                            true,
+                            true);
+            XmlRpcStruct struct = new XmlRpcStruct();
+            addCdDetails(vmDevice, struct);
+            struct.add(VdsProperties.Path, vm.getCdPath());
+            devices.add(struct);
+            managedDevices.add(vmDevice);
+        } else {
+            // get vm device for this CD from DB
+            List<VmDevice> vmDevices =
+                    DbFacade.getInstance()
+                            .getVmDeviceDAO()
+                            .getVmDeviceByVmIdTypeAndDevice(vm.getId(),
+                                    VmDeviceType.DISK.getName(),
+                                    VmDeviceType.CDROM.getName());
+            for (VmDevice vmDevice : vmDevices) {
+                // skip unamanged devices (handled separtely)
+                if (!vmDevice.getIsManaged()) {
+                    continue;
+                }
+                String file = StringUtils.string2Map(vmDevice.getSpecParams()).get(VdsProperties.Path);
+                if (!StringHelper.isNullOrEmpty(file)) {
+                    XmlRpcStruct struct = new XmlRpcStruct();
+                    addCdDetails(vmDevice, struct);
+                    addAddress(vmDevice, struct);
+                    addCdOrFloppyDetails(file, struct);
+                    struct.add(VdsProperties.Path, file);
+                    addBootOrder(vmDevice, struct);
+                    devices.add(struct);
+                    addToManagedDevices(vmDevice);
+                    break; // currently only one is supported, may change in future releases
+                }
             }
         }
     }
 
     @Override
     protected void buildVmFloppy() {
-        // get vm device for this Floppy from DB
-        List<VmDevice> vmDevices =
-                DbFacade.getInstance()
-                        .getVmDeviceDAO()
-                        .getVmDeviceByVmIdTypeAndDevice(vm.getId(),
-                                VmDeviceType.DISK.getName(),
-                                VmDeviceType.FLOPPY.getName());
-        for (VmDevice vmDevice : vmDevices) {
+        // check first if Floppy was given as a parameter
+        if (!StringHelper.isNullOrEmpty(vm.getFloppyPath())) {
+            VmDevice vmDevice =
+                    new VmDevice(new VmDeviceId(Guid.NewGuid(), vm.getId()),
+                            VmDeviceType.DISK.getName(),
+                            VmDeviceType.FLOPPY.getName(),
+                            "",
+                            0,
+                            "",
+                            true,
+                            true,
+                            true);
             XmlRpcStruct struct = new XmlRpcStruct();
-            struct.add(VdsProperties.Type, vmDevice.getType());
-            struct.add(VdsProperties.Device, vmDevice.getDevice());
-            struct.add(VdsProperties.Index, "0");
-            addAddress(vmDevice, struct);
-            struct.add(VdsProperties.Iface, "fdc");
-            struct.add(VdsProperties.PoolId, vm.getstorage_pool_id().toString());
-            struct.add(VdsProperties.DomainId,
-                    DbFacade.getInstance()
-                            .getStorageDomainDAO()
-                            .getIsoStorageDomainIdForPool(vm.getstorage_pool_id())
-                            .toString());
-            struct.add(VdsProperties.ImageId, Guid.Empty.toString());
-            String file = StringUtils.string2Map(vmDevice.getSpecParams()).get("path");
-            struct.add(VdsProperties.VolumeId, file.substring(file.lastIndexOf('/') + 1));
-            struct.add(VdsProperties.Path, file);
-            struct.add(VdsProperties.ReadOnly, String.valueOf(vmDevice.getIsReadOnly()));
+            addFloppyDetails(vmDevice, struct);
+            struct.add(VdsProperties.Path, vm.getFloppyPath());
             devices.add(struct);
-            break; // currently only one is supported, may change in future releases
+            managedDevices.add(vmDevice);
+        } else {
+            // get vm device for this Floppy from DB
+            List<VmDevice> vmDevices =
+                DbFacade.getInstance()
+                            .getVmDeviceDAO()
+                            .getVmDeviceByVmIdTypeAndDevice(vm.getId(),
+                                    VmDeviceType.DISK.getName(),
+                                    VmDeviceType.FLOPPY.getName());
+            for (VmDevice vmDevice : vmDevices) {
+                // skip unamanged devices (handled separtely)
+                if (!vmDevice.getIsManaged()) {
+                    continue;
+                }
+                String file = StringUtils.string2Map(vmDevice.getSpecParams()).get(VdsProperties.Path);
+                if (!StringHelper.isNullOrEmpty(file)) {
+                    XmlRpcStruct struct = new XmlRpcStruct();
+                    addFloppyDetails(vmDevice, struct);
+                    addCdOrFloppyDetails(file, struct);
+                    struct.add(VdsProperties.Path, file);
+                    addBootOrder(vmDevice, struct);
+                    devices.add(struct);
+                    addToManagedDevices(vmDevice);
+                    break; // currently only one is supported, may change in future releases
+                }
+            }
         }
     }
 
@@ -131,6 +184,10 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                     DbFacade.getInstance()
                             .getVmDeviceDAO()
                             .get(new VmDeviceId(disk.getDisk().getId(), disk.getvm_guid()));
+            // skip unamanged devices (handled separtely)
+            if (!vmDevice.getIsManaged()) {
+                continue;
+            }
             if (vmDevice.getIsPlugged()) {
                 struct.add(VdsProperties.Type, vmDevice.getType());
                 struct.add(VdsProperties.Device, vmDevice.getDevice());
@@ -172,6 +229,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                 struct.add(VdsProperties.ReadOnly, String.valueOf(vmDevice.getIsReadOnly()));
                 struct.add(VdsProperties.SpecParams, StringUtils.string2Map(vmDevice.getSpecParams()));
                 devices.add(struct);
+                addToManagedDevices(vmDevice);
             }
         }
     }
@@ -191,6 +249,10 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                     DbFacade.getInstance()
                             .getVmDeviceDAO()
                             .get(new VmDeviceId(vmInterface.getId(), vmInterface.getVmId().getValue()));
+            // skip unamanged devices (handled separtely)
+            if (!vmDevice.getIsManaged()) {
+                continue;
+            }
             VmInterfaceType ifaceType = VmInterfaceType.rtl8139;
             if (vmInterface.getType() != null) {
                 ifaceType = VmInterfaceType.forValue(vmInterface.getType());
@@ -213,6 +275,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                 addNetworkInterfaceProperties(struct, vmInterface, vmDevice, ifaceType.toString());
             }
             devices.add(struct);
+            addToManagedDevices(vmDevice);
         }
     }
 
@@ -267,12 +330,28 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
 
     @Override
     protected void buildVmBootSequence() {
+        int i=0;
+        //Check if boot sequence in parameters is diffrent from default boot sequence
+        if (managedDevices != null) {
+            // recalculate boot order from source devices and set it to target devices
+            VmDeviceCommonUtils.updateVmDevicesBootOrder(vm.getStaticData(),
+                    managedDevices,
+                    vm.getboot_sequence(),
+                    VmDeviceCommonUtils.isOldClusterVersion(vm.getvds_group_compatibility_version()));
+            XmlRpcStruct[] devArray = new XmlRpcStruct[devices.size()];
+            devArray = devices.toArray(devArray);
+            for (VmDevice vmDevice : managedDevices) {
+                if (vmDevice.getType().equals(VmDeviceType.DISK) || vmDevice.getType().equals(VmDeviceType.INTERFACE)) {
+                    devArray[i++].add(VdsProperties.BootOrder, String.valueOf(vmDevice.getBootOrder()));
+                }
+            }
+        }
     }
 
     private static void addBootOrder(VmDevice vmDevice, XmlRpcStruct struct) {
         String s = new Integer(vmDevice.getBootOrder()).toString();
         if (!org.apache.commons.lang.StringUtils.isEmpty(s) && !s.equals("0")) {
-            struct.add("bootOrder", s);
+            struct.add(VdsProperties.BootOrder, s);
         }
     }
 
@@ -297,4 +376,45 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         struct.add(VdsProperties.nic_type, nicModel);
     }
 
+    private void addCdOrFloppyDetails(String file, XmlRpcStruct struct) {
+        struct.add(VdsProperties.PoolId, vm.getstorage_pool_id().toString());
+        struct.add(VdsProperties.DomainId,
+                DbFacade.getInstance()
+                        .getStorageDomainDAO()
+                        .getIsoStorageDomainIdForPool(vm.getstorage_pool_id())
+                        .toString());
+        struct.add(VdsProperties.ImageId, VmDeviceCommonUtils.CDROM_IMAGE_ID);
+        struct.add(VdsProperties.VolumeId, file.substring(file.lastIndexOf('/') + 1));
+    }
+
+    private void addFloppyDetails(VmDevice vmDevice, XmlRpcStruct struct) {
+        struct.add(VdsProperties.Type, vmDevice.getType());
+        struct.add(VdsProperties.Device, vmDevice.getDevice());
+        struct.add(VdsProperties.Index, "0"); // IDE slot 2 is reserved by VDSM to CDROM
+        struct.add(VdsProperties.Iface, VdsProperties.Fdc);
+        struct.add(VdsProperties.ReadOnly, String.valueOf(vmDevice.getIsReadOnly()));
+    }
+
+    private void addCdDetails(VmDevice vmDevice, XmlRpcStruct struct) {
+        struct.add(VdsProperties.Type, vmDevice.getType());
+        struct.add(VdsProperties.Device, vmDevice.getDevice());
+        struct.add(VdsProperties.Index, "2"); // IDE slot 2 is reserved by VDSM to CDROM
+        struct.add(VdsProperties.Iface, VdsProperties.Ide);
+        struct.add(VdsProperties.ReadOnly, Boolean.TRUE.toString());
+    }
+
+    private void addToManagedDevices(VmDevice vmDevice) {
+        if (managedDevices != null) {
+            managedDevices.add(vmDevice);
+        }
+    }
+
+    private String getNewMonitorSpecParams() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("vram=");
+        sb.append(VmDeviceCommonUtils.HIGH_VIDEO_MEM);
+        sb.append(",deviceId=");
+        sb.append(String.valueOf(Guid.NewGuid()));
+        return sb.toString();
+    }
 }
