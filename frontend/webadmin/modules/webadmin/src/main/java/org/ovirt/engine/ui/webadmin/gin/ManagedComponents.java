@@ -22,7 +22,7 @@ import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
-import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeOption;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeOptionEntity;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
@@ -555,7 +555,7 @@ public interface ManagedComponents {
     // volume - parameters
     AsyncProvider<SubTabVolumeParameterPresenter> getSubTabVolumeParameterPresenter();
 
-    SearchableDetailModelProvider<GlusterVolumeOption, VolumeListModel, VolumeParameterListModel> getSubTabVolumeParameterModelProvider();
+    SearchableDetailModelProvider<GlusterVolumeOptionEntity, VolumeListModel, VolumeParameterListModel> getSubTabVolumeParameterModelProvider();
 
     // volume - permission
     AsyncProvider<SubTabVolumePermissionPresenter> getSubTabVolumePermissionPresenter();

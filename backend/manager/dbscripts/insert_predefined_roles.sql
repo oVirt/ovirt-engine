@@ -15,6 +15,7 @@ RETURNS VOID
    v_TEMPLATE_ADMIN_ID UUID;
    v_TEMPLATE_USER_ID UUID;
    v_QUOTA_CONSUMER_USER_ID UUID;
+   v_GLUSTER_ADMIN_ROLE_ID UUID;
 BEGIN
    v_super_user_id_0001 := '00000000-0000-0000-0000-000000000001';
    v_power_user_id_0002 := '00000000-0000-0000-0001-000000000002';
@@ -30,6 +31,7 @@ BEGIN
    v_TEMPLATE_ADMIN_ID := 'DEF00008-0000-0000-0000-DEF000000008';
    v_TEMPLATE_USER_ID := 'DEF00009-0000-0000-0000-DEF000000009';
    v_QUOTA_CONSUMER_USER_ID := 'DEF0000a-0000-0000-0000-DEF00000000a';
+   v_GLUSTER_ADMIN_ROLE_ID := 'DEF0000b-0000-0000-0000-DEF00000000b';
 
 
 --insert into vdc_options (option_name,option_value,version) select  'DomainName','example.org','general' where not exists (select option_name,version from vdc_options where option_name='DomainName' and version='general');
@@ -127,6 +129,11 @@ INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_super_user_id_0001,70
 INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_super_user_id_0001,702);
 --CONFIGURE_STORAGE_POOL_NETWORK
 INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_super_user_id_0001,703);
+--CREATE_GLUSTER_VOLUME
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_super_user_id_0001,1000);
+--MANIPULATE_GLUSTER_VOLUME
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_super_user_id_0001,1001);
+
 delete from roles_groups where role_id = v_user_id_1001;
 INSERT INTO roles(id,name,description,is_readonly,role_type) select v_user_id_1001,'ENGINEUser','oVirt user',true,2 where not exists (select id,name,description,is_readonly,role_type from roles where id=v_user_id_1001 and name='ENGINEUser' and description='oVirt user' and is_readonly=true and role_type=2);
 
@@ -482,13 +489,22 @@ INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_QUOTA_CONSUMER_USER_I
 ---Vm Groups
 --CREATE_VM
 INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_TEMPLATE_USER_ID,1);
+
+--------------
+-- GLUSTER_ADMIN_USER role
+--------------
+delete from roles_groups where role_id = v_GLUSTER_ADMIN_ROLE_ID;
+INSERT INTO roles(id,name,description,is_readonly,role_type) select v_GLUSTER_ADMIN_ROLE_ID, 'GlusterAdmin','Gluster Admin',true,1 where
+not exists (select id,name,description,is_readonly,role_type from roles where id= v_GLUSTER_ADMIN_ROLE_ID and name='GlusterAdmin' and description='Gluster Admin' and is_readonly=true and role_type=1);
+
+-- Map all gluster action groups to the gluster admin role
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_GLUSTER_ADMIN_ROLE_ID, 1000);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_GLUSTER_ADMIN_ROLE_ID, 1001);
+
  RETURN;
 END; $procedure$
 LANGUAGE plpgsql;
 
-
 select insert_predefined_roles();
 drop function insert_predefined_roles();
-
-
 

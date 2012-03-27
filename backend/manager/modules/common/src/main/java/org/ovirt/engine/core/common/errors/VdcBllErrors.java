@@ -328,6 +328,11 @@ public enum VdcBllErrors {
     MiscDirCleanupFailure(2008),
     ResourceException(3000),
     VolumeGeneralException(4000),
+
+    // Gluster VDSM errors
+    GlusterVolumeCreateFailed(4122),
+    GlusterVolumeSetOptionFailed(4131),
+
     UnicodeArgumentException(4900),
 
     // oVirt errors
@@ -358,6 +363,8 @@ public enum VdcBllErrors {
     CANT_RECONSTRUCT_WHEN_A_DOMAIN_IN_POOL_IS_LOCKED(5025),
     NO_PARAMETERS_FOR_TASK(5026),
     HOST_ALREADY_EXISTS(5027),
+    // Gluster errors
+    NO_UP_SERVER_FOUND(7000),
     // error to indicate backend does not recognize the session
     SESSION_ERROR(9999), ;
 

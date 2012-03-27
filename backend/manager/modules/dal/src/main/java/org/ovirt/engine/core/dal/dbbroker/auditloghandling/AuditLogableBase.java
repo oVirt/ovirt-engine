@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.interfaces.IVdcUser;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
@@ -58,6 +59,7 @@ public class AuditLogableBase extends TimeoutBase {
     private boolean isInternalExecution = false;
     private NGuid glusterVolumeId;
     private String glusterVolumeName;
+    private GlusterVolumeEntity glusterVolume;
 
     public AuditLogableBase() {
     }
@@ -537,11 +539,21 @@ public class AuditLogableBase extends TimeoutBase {
     }
 
     public String getGlusterVolumeName() {
+        if(glusterVolumeName == null && getGlusterVolume() != null) {
+            glusterVolumeName = getGlusterVolume().getName();
+        }
         return glusterVolumeName;
     }
 
     public void setGlusterVolumeName(String value) {
         glusterVolumeName = value;
+    }
+
+    protected GlusterVolumeEntity getGlusterVolume() {
+        if (glusterVolume == null && glusterVolumeId != null) {
+            glusterVolume = DbFacade.getInstance().getGlusterVolumeDao().getById(glusterVolumeId.getValue());
+        }
+        return glusterVolume;
     }
 
     private static Log log = LogFactory.getLog(AuditLogableBase.class);

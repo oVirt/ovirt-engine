@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.AccessProtocol;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
-import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeOption;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeOptionEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
@@ -28,7 +28,7 @@ public class GlusterVolumeDaoDbFacadeImpl extends BaseDAODbFacade implements
         GlusterVolumeDao {
 
     private static final ParameterizedRowMapper<GlusterVolumeEntity> volumeRowMapper = new GlusterVolumeRowMapper();
-    private static final ParameterizedRowMapper<GlusterVolumeOption> optionRowMapper = new VolumeOptionRowMapper();
+    private static final ParameterizedRowMapper<GlusterVolumeOptionEntity> optionRowMapper = new VolumeOptionRowMapper();
     private static final ParameterizedRowMapper<AccessProtocol> accessProtocolRowMapper = new AccessProtocolRowMapper();
     // The brick row mapper can't be static as its' type (GlusterBrickRowMapper) is a non-static inner class
     // There will still be a single instance of it, as the DAO itself will be instantiated only once
@@ -138,17 +138,17 @@ public class GlusterVolumeDaoDbFacadeImpl extends BaseDAODbFacade implements
     }
 
     @Override
-    public void addVolumeOption(GlusterVolumeOption option) {
+    public void addVolumeOption(GlusterVolumeOptionEntity option) {
         getCallsHandler().executeModification("InsertGlusterVolumeOption", createVolumeOptionParams(option));
     }
 
     @Override
-    public void updateVolumeOption(GlusterVolumeOption option) {
+    public void updateVolumeOption(GlusterVolumeOptionEntity option) {
         getCallsHandler().executeModification("UpdateGlusterVolumeOption", createVolumeOptionParams(option));
     }
 
     @Override
-    public void removeVolumeOption(GlusterVolumeOption option) {
+    public void removeVolumeOption(GlusterVolumeOptionEntity option) {
         getCallsHandler().executeModification("DeleteGlusterVolumeOption",
                 createVolumeIdParams(option.getVolumeId()).addValue("option_key", option.getKey()));
     }
@@ -180,7 +180,7 @@ public class GlusterVolumeDaoDbFacadeImpl extends BaseDAODbFacade implements
         return bricks;
     }
 
-    private List<GlusterVolumeOption> getOptionsOfVolume(Guid volumeId) {
+    private List<GlusterVolumeOptionEntity> getOptionsOfVolume(Guid volumeId) {
         return getCallsHandler().executeReadList(
                 "GetOptionsByGlusterVolumeGuid", optionRowMapper,
                 createVolumeIdParams(volumeId));
@@ -204,7 +204,7 @@ public class GlusterVolumeDaoDbFacadeImpl extends BaseDAODbFacade implements
                 .addValue("status", EnumUtils.nameOrNull(brick.getStatus()));
     }
 
-    private MapSqlParameterSource createVolumeOptionParams(GlusterVolumeOption option) {
+    private MapSqlParameterSource createVolumeOptionParams(GlusterVolumeOptionEntity option) {
         return createVolumeIdParams(option.getVolumeId())
                 .addValue("option_key", option.getKey())
                 .addValue("option_val", option.getValue());
@@ -239,8 +239,8 @@ public class GlusterVolumeDaoDbFacadeImpl extends BaseDAODbFacade implements
     }
 
     private void insertVolumeOptions(GlusterVolumeEntity volume) {
-        Collection<GlusterVolumeOption> options = volume.getOptions();
-        for (GlusterVolumeOption option : options) {
+        Collection<GlusterVolumeOptionEntity> options = volume.getOptions();
+        for (GlusterVolumeOptionEntity option : options) {
             if (option.getVolumeId() == null) {
                 option.setVolumeId(volume.getId());
             }
@@ -324,11 +324,11 @@ public class GlusterVolumeDaoDbFacadeImpl extends BaseDAODbFacade implements
         }
     }
 
-    private static final class VolumeOptionRowMapper implements ParameterizedRowMapper<GlusterVolumeOption> {
+    private static final class VolumeOptionRowMapper implements ParameterizedRowMapper<GlusterVolumeOptionEntity> {
         @Override
-        public GlusterVolumeOption mapRow(ResultSet rs, int rowNum)
+        public GlusterVolumeOptionEntity mapRow(ResultSet rs, int rowNum)
                 throws SQLException {
-            GlusterVolumeOption option = new GlusterVolumeOption();
+            GlusterVolumeOptionEntity option = new GlusterVolumeOptionEntity();
             option.setVolumeId(Guid.createGuidFromString(rs.getString("volume_id")));
             option.setKey(rs.getString("option_key"));
             option.setValue(rs.getString("option_val"));

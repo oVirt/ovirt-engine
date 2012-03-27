@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.gluster;
 import java.util.ArrayList;
 
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
-import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeOption;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeOptionEntity;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 
@@ -58,8 +58,8 @@ public class VolumeParameterListModel extends SearchableListModel {
         }
         super.OnEntityChanged();
         GlusterVolumeEntity glusterVolumeEntity = (GlusterVolumeEntity) getEntity();
-        ArrayList<GlusterVolumeOption> list = new ArrayList<GlusterVolumeOption>();
-        for (GlusterVolumeOption glusterVolumeOption : glusterVolumeEntity.getOptions()) {
+        ArrayList<GlusterVolumeOptionEntity> list = new ArrayList<GlusterVolumeOptionEntity>();
+        for (GlusterVolumeOptionEntity glusterVolumeOption : glusterVolumeEntity.getOptions()) {
             list.add(glusterVolumeOption);
         }
         setItems(list);

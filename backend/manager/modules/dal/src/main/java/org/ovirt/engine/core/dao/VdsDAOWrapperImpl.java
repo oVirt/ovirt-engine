@@ -7,6 +7,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
@@ -155,6 +156,12 @@ public class VdsDAOWrapperImpl extends BaseDAOWrapperImpl implements VdsDAO {
 
     @Override
     public List<VDS> listFailedAutorecoverables() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public List<VDS> getAllForVdsGroupWithStatus(Guid vdsGroupId, VDSStatus status) {
         // TODO Auto-generated method stub
         return null;
     }

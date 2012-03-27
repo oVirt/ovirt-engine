@@ -129,6 +129,10 @@ public class PermitMapper {
             return PermitType.CONFIGURE_QUOTA;
         case CONSUME_QUOTA:
             return PermitType.CONSUME_QUOTA;
+        case CREATE_GLUSTER_VOLUME:
+            return PermitType.CREATE_GLUSTER_VOLUME;
+        case MANIPULATE_GLUSTER_VOLUME:
+            return PermitType.MANIPULATE_GLUSTER_VOLUME;
         default:
             return null;
         }

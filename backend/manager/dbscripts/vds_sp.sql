@@ -766,6 +766,20 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
+-- Returns all VDS for a given cluster and having given status
+CREATE OR REPLACE FUNCTION getVdsForVdsGroupWithStatus(v_vds_group_id UUID, v_status integer) RETURNS SETOF vds
+    AS $procedure$
+BEGIN
+    BEGIN
+        RETURN QUERY SELECT vds.*
+        FROM vds
+        WHERE (status = v_status) AND (vds_group_id = v_vds_group_id);
+    END;
+    RETURN;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
 Create or replace FUNCTION UpdateVdsDynamicStatus(
         v_vds_guid UUID,
         v_status INTEGER)

@@ -187,4 +187,9 @@ public interface IVdsServer {
     FutureTask<Map<String, Object>> poll();
 
     StatusOnlyReturnForXmlRpc snapshot(String vmId, Map<String, String>[] snapParams);
+
+    // Gluster vdsm Commands
+    OneUuidReturnForXmlRpc glusterVolumeCreate(Map<String, Object> volumeData);
+
+    StatusOnlyReturnForXmlRpc glusterVolumeSet(String volumeName, String key, String value);
 }

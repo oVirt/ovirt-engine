@@ -152,8 +152,9 @@ $function$
 		ImportExport XXX,
 		StoragePool = 14,
 		User = 15,
-		Role = 16
-		Quota = 17
+		Role = 16,
+		Quota = 17,
+		GlusterVolume = 18
 */
 DECLARE
 	v_entity_type int4 := v_object_type;
@@ -241,6 +242,20 @@ BEGIN
 			SELECT system_root_id AS id
 			UNION
 			SELECT ds_id AS id
+			UNION
+			SELECT v_entity_id AS id;
+	WHEN v_entity_type = 18 THEN -- GlusterVolume
+        -- get cluster id
+		cluster_id := ( SELECT cluster_id FROM gluster_volumes WHERE id = v_entity_id );
+		-- get data center id
+		ds_id := ( SELECT storage_pool_id FROM vds_groups WHERE vds_group_id = cluster_id );
+
+		RETURN QUERY
+			SELECT system_root_id AS id
+			UNION
+			SELECT ds_id AS id
+			UNION
+			SELECT cluster_id AS id
 			UNION
 			SELECT v_entity_id AS id;
 	ELSE

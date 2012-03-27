@@ -24,4 +24,13 @@ public class GlusterCoreUtil {
 
         return true;
     }
+
+    /**
+     * Returns a random number between zero and the given {@code maxNum}
+     * @param maxNum
+     * @return
+     */
+    public static int random(int maxNum) {
+        return (int) (Math.random() * (maxNum + 1));
+    }
 }

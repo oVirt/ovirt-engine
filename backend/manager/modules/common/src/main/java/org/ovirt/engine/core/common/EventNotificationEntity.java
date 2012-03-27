@@ -5,7 +5,8 @@ public enum EventNotificationEntity {
     Host,
     Vm,
     Storage,
-    Engine;
+    Engine,
+    GlusterVolume;
 
     public int getValue() {
         return this.ordinal();

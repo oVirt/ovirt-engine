@@ -267,7 +267,7 @@
 		<include name="common/businessentities/gluster/GlusterVolumeStatus.java" />
 		<include name="common/businessentities/gluster/TransportType.java" />
 		<include name="common/businessentities/gluster/GlusterBrickEntity.java"/>
-		<include name="common/businessentities/gluster/GlusterVolumeOption.java"/>
+		<include name="common/businessentities/gluster/GlusterVolumeOptionEntity.java"/>
 		<include name="common/businessentities/gluster/GlusterBrickStatus.java"/>
 		<include name="common/businessentities/gluster/AccessProtocol.java"/>
 		<include name="common/action/gluster/*.java"/>

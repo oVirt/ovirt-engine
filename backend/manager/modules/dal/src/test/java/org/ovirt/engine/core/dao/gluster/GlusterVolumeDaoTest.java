@@ -15,7 +15,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.AccessProtocol;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
-import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeOption;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeOptionEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
@@ -249,7 +249,7 @@ public class GlusterVolumeDaoTest extends BaseDAOTestCase {
     public void testAddVolumeOption() {
         assertNull(existingDistVol.getOptionValue(OPTION_AUTH_REJECT));
 
-        dao.addVolumeOption(new GlusterVolumeOption(EXISTING_VOL_DIST_ID, OPTION_AUTH_REJECT, OPTION_AUTH_REJECT_VALUE));
+        dao.addVolumeOption(new GlusterVolumeOptionEntity(EXISTING_VOL_DIST_ID, OPTION_AUTH_REJECT, OPTION_AUTH_REJECT_VALUE));
 
         GlusterVolumeEntity volumeAfter = dao.getById(EXISTING_VOL_DIST_ID);
 
@@ -265,7 +265,7 @@ public class GlusterVolumeDaoTest extends BaseDAOTestCase {
     public void testUpdateVolumeOption() {
         assertEquals(OPTION_AUTH_ALLOW_VALUE_ALL, existingDistVol.getOptionValue(GlusterConstants.OPTION_AUTH_ALLOW));
 
-        dao.updateVolumeOption(new GlusterVolumeOption(EXISTING_VOL_DIST_ID,
+        dao.updateVolumeOption(new GlusterVolumeOptionEntity(EXISTING_VOL_DIST_ID,
                 GlusterConstants.OPTION_AUTH_ALLOW,
                 OPTION_AUTH_ALLOW_VALUE_NEW));
 
@@ -283,7 +283,7 @@ public class GlusterVolumeDaoTest extends BaseDAOTestCase {
     public void testRemoveVolumeOption() {
         assertEquals(OPTION_AUTH_ALLOW_VALUE_ALL, existingDistVol.getOptionValue(GlusterConstants.OPTION_AUTH_ALLOW));
 
-        dao.removeVolumeOption(new GlusterVolumeOption(EXISTING_VOL_DIST_ID,
+        dao.removeVolumeOption(new GlusterVolumeOptionEntity(EXISTING_VOL_DIST_ID,
                 GlusterConstants.OPTION_AUTH_ALLOW,
                 OPTION_AUTH_ALLOW_VALUE_NEW));
 

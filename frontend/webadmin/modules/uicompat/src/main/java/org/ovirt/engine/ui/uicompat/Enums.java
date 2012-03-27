@@ -499,6 +499,10 @@ public interface Enums extends ConstantsWithLookup {
 
     String VdcActionType___RemoveVmTemplateFromImportExport();
 
+    // Gluster Action Types
+    String VdcActionType___CreateGlusterVolume();
+    String VdcActionType___SetGlusterVolumeOption();
+
     String EventNotificationEntity___VDS();
 
     String EventNotificationEntity___VM();
@@ -506,6 +510,8 @@ public interface Enums extends ConstantsWithLookup {
     String EventNotificationEntity___IRS();
 
     String EventNotificationEntity___VDC();
+
+    String EventNotificationEntity___GlusterVolume();
 
     String StorageDomainType___Master();
 
@@ -550,6 +556,12 @@ public interface Enums extends ConstantsWithLookup {
     String AuditLogType___IRS_DISK_SPACE_LOW_ERROR();
 
     String AuditLogType___VDC_STOP();
+
+    // Gluster Audit log types
+    String AuditLogType___GLUSTER_VOLUME_CREATE();
+    String AuditLogType___GLUSTER_VOLUME_CREATE_FAILED();
+    String AuditLogType___GLUSTER_VOLUME_OPTION_SET();
+    String AuditLogType___GLUSTER_VOLUME_OPTION_SET_FAILED();
 
     String VmTemplateStatus___OK();
 
@@ -669,6 +681,10 @@ public interface Enums extends ConstantsWithLookup {
 
     String ActionGroup___CONFIGURE_ENGINE();
 
+    // Gluster action groups
+    String ActionGroup___CREATE_GLUSTER_VOLUME();
+    String ActionGroup___MANIPULATE_GLUSTER_VOLUME();
+
     String NonOperationalReason___NONE();
 
     String NonOperationalReason___GENERAL();
@@ -698,15 +714,15 @@ public interface Enums extends ConstantsWithLookup {
     String VmEntityType___VM();
 
     String VmEntityType___TEMPLATE();
-    
+
     String ImageStatus___Unassigned();
-    
+
     String ImageStatus___OK();
-    
+
     String ImageStatus___LOCKED();
-    
+
     String ImageStatus___INVALID();
-    
+
     String ImageStatus___ILLEGAL();
 
     String QuotaEnforcmentTypeEnum___DISABLED();
@@ -735,9 +751,18 @@ public interface Enums extends ConstantsWithLookup {
 
     String Snapshot$SnapshotType___PREVIEW();
 
-//    String ActionGroup___GLUSTER_CREATE_VOLUME();
-//
-//    String ActionGroup___GLUSTER_VOLUME_OPERATIONS();
-//
     String AuditLogType___VDS_NETWORK_MTU_DIFFER_FROM_LOGICAL_NETWORK();
+
+    // Gluster enums
+    String GlusterVolumeType___DISTRIBUTE();
+    String GlusterVolumeType___REPLICATE();
+    String GlusterVolumeType___DISTRIBUTED_REPLICATE();
+    String GlusterVolumeType___STRIPE();
+    String GlusterVolumeType___DISTRIBUTED_STRIPE();
+    String GlusterVolumeStatus___UP();
+    String GlusterVolumeStatus___DOWN();
+    String TransportType___ETHERNET();
+    String TransportType___INFINIBAND();
+    String GlusterBrickStatus___UP();
+    String GlusterBrickStatus___DOWN();
 }

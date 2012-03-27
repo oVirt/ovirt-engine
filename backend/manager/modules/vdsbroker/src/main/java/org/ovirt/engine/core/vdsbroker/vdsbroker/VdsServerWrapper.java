@@ -13,8 +13,8 @@ import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStruct;
 
 public class VdsServerWrapper implements IVdsServer {
 
-    private VdsServerConnector vdsServer;
-    private HttpClient httpClient;
+    private final VdsServerConnector vdsServer;
+    private final HttpClient httpClient;
 
     public VdsServerWrapper(VdsServerConnector innerImplementor, HttpClient httpClient) {
         this.vdsServer = innerImplementor;
@@ -156,6 +156,7 @@ public class VdsServerWrapper implements IVdsServer {
         }
     }
 
+    @Override
     public VDSInfoReturnForXmlRpc getCapabilities() {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.getVdsCapabilities();
@@ -948,4 +949,21 @@ public class VdsServerWrapper implements IVdsServer {
         }
     }
 
+    @Override
+    public OneUuidReturnForXmlRpc glusterVolumeCreate(Map<String, Object> volumeData) {
+        try {
+            return new OneUuidReturnForXmlRpc(vdsServer.glusterVolumeCreate(volumeData));
+        } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
+    }
+
+    @Override
+    public StatusOnlyReturnForXmlRpc glusterVolumeSet(String volumeName, String key, String value) {
+        try {
+            return new StatusOnlyReturnForXmlRpc(vdsServer.glusterVolumeSet(volumeName, key, value));
+        } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
+    }
 }

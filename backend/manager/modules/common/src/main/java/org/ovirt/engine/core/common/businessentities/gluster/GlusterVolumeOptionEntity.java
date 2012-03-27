@@ -2,6 +2,9 @@ package org.ovirt.engine.core.common.businessentities.gluster;
 
 import java.io.Serializable;
 
+import javax.validation.constraints.NotNull;
+
+import org.ovirt.engine.core.common.validation.group.gluster.SetVolumeOption;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -11,17 +14,22 @@ import org.ovirt.engine.core.compat.Guid;
  *
  * @see GlusterVolumeEntity
  */
-public class GlusterVolumeOption implements Serializable {
+public class GlusterVolumeOptionEntity implements Serializable {
     private static final long serialVersionUID = 5770623263518245638L;
 
+    @NotNull(message = "VALIDATION.GLUSTER.VOLUME.ID.NOT_NULL", groups = { SetVolumeOption.class })
     private Guid volumeId;
+
+    @NotNull(message = "VALIDATION.GLUSTER.VOLUME.OPTION.KEY.NOT_NULL")
     private String key;
+
+    @NotNull(message = "VALIDATION.GLUSTER.VOLUME.OPTION.VALUE.NOT_NULL")
     private String value;
 
-    public GlusterVolumeOption() {
+    public GlusterVolumeOptionEntity() {
     }
 
-    public GlusterVolumeOption(Guid volumeId, String key, String value) {
+    public GlusterVolumeOptionEntity(Guid volumeId, String key, String value) {
         setVolumeId(volumeId);
         setKey(key);
         setValue(value);
@@ -68,11 +76,11 @@ public class GlusterVolumeOption implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof GlusterVolumeOption)) {
+        if (!(obj instanceof GlusterVolumeOptionEntity)) {
             return false;
         }
 
-        GlusterVolumeOption option = (GlusterVolumeOption) obj;
+        GlusterVolumeOptionEntity option = (GlusterVolumeOptionEntity) obj;
         return (option.getVolumeId().equals(volumeId) && option.getKey().equals(key) && option.getValue().equals(value));
     }
 }

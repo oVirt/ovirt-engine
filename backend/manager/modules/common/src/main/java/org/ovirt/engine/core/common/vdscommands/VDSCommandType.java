@@ -123,7 +123,10 @@ public enum VDSCommandType {
     UpdateSpmHostName("org.ovirt.engine.core.vdsbroker.irsbroker"),
     HotPlugDisk("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     HotUnPlugDisk("org.ovirt.engine.core.vdsbroker.vdsbroker"),
-    Snapshot("org.ovirt.engine.core.vdsbroker.vdsbroker");
+    Snapshot("org.ovirt.engine.core.vdsbroker.vdsbroker"),
+    // Gluster VDS commands
+    CreateGlusterVolume("org.ovirt.engine.core.vdsbroker.gluster"),
+    SetGlusterVolumeOption("org.ovirt.engine.core.vdsbroker.gluster");
 
     String packageName;
 

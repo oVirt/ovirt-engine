@@ -250,7 +250,11 @@ public enum VdcActionType {
     Quota(1210),
 
     // Config
-    SetConfigurationValue(1300, ActionGroup.CONFIGURE_ENGINE);
+    SetConfigurationValue(1300, ActionGroup.CONFIGURE_ENGINE),
+
+    // Gluster
+    CreateGlusterVolume(1400, ActionGroup.CREATE_GLUSTER_VOLUME),
+    SetGlusterVolumeOption(1401, ActionGroup.MANIPULATE_GLUSTER_VOLUME);
 
     private int intValue;
     private ActionGroup actionGroup;

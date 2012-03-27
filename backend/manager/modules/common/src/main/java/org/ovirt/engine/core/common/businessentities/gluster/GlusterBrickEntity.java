@@ -1,7 +1,10 @@
 package org.ovirt.engine.core.common.businessentities.gluster;
 
+import javax.validation.constraints.NotNull;
+
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
+import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -16,10 +19,17 @@ import org.ovirt.engine.core.compat.Guid;
 public class GlusterBrickEntity extends IVdcQueryable {
     private static final long serialVersionUID = 7119439284741452278L;
 
+    @NotNull(message = "VALIDATION.GLUSTER.VOLUME.ID.NOT_NULL", groups = { UpdateEntity.class })
     private Guid volumeId;
+
+    @NotNull(message = "VALIDATION.GLUSTER.VOLUME.BRICK.SERVER_ID.NOT_NULL")
     private Guid serverId;
+
     private String serverName;
+
+    @NotNull(message = "VALIDATION.GLUSTER.VOLUME.BRICK.BRICK_DIR.NOT_NULL")
     private String brickDirectory;
+
     private GlusterBrickStatus status = GlusterBrickStatus.DOWN;
 
     public GlusterBrickEntity() {

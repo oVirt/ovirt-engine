@@ -16,6 +16,7 @@
 
 package org.ovirt.engine.api.model;
 
+
 public enum PermitType {
     CREATE_VM(1, RoleType.USER),
     DELETE_VM(2, RoleType.USER),
@@ -71,7 +72,11 @@ public enum PermitType {
 
     // Quota
     CONFIGURE_QUOTA(900, RoleType.ADMIN),
-    CONSUME_QUOTA(901, RoleType.USER);
+    CONSUME_QUOTA(901, RoleType.USER),
+
+    // Gluster
+    CREATE_GLUSTER_VOLUME(1000, RoleType.ADMIN),
+    MANIPULATE_GLUSTER_VOLUME(1001, RoleType.ADMIN);
 
     private int id;
     private RoleType role;

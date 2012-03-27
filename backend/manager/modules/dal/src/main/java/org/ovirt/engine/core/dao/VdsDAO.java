@@ -3,6 +3,7 @@ package org.ovirt.engine.core.dao;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
@@ -120,4 +121,11 @@ public interface VdsDAO extends DAO, SearchDAO<VDS>, AutoRecoverDAO<VDS> {
      */
     List<VDS> getListForSpmSelection(Guid storagePoolId);
 
+    /**
+     * Retrieves all VDS instances in the given Vds group, that are in given status
+     * @param vdsGroupId
+     * @param status
+     * @return list of VDS instances
+     */
+    List<VDS> getAllForVdsGroupWithStatus(Guid vdsGroupId, VDSStatus status);
 }
