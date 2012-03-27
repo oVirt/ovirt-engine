@@ -11,6 +11,7 @@ public class VolumeBrickListModel extends SearchableListModel {
     }
 
     public VolumeBrickListModel() {
+        setTitle("Bricks");
         setIsTimerDisabled(false);
     }
 

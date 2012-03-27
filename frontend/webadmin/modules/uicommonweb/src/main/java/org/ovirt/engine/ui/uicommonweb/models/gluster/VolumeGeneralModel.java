@@ -59,6 +59,10 @@ public class VolumeGeneralModel extends EntityModel {
         this.nfsMountPoint = nfsMountPoint;
     }
 
+    public VolumeGeneralModel() {
+        setTitle("General");
+    }
+
     @Override
     protected void OnEntityChanged() {
         super.OnEntityChanged();

@@ -36,6 +36,7 @@ public class VolumeParameterListModel extends SearchableListModel {
 
     public VolumeParameterListModel()
     {
+        setTitle("Options");
         setAddParameterCommand(new UICommand("Add", this));
         setRemoveParameterCommand(new UICommand("Remove", this));
     }
