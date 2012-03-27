@@ -44,7 +44,7 @@ public class GlusterVolumeEntity extends IVdcQueryable implements BusinessEntity
     private int replicaCount;
     private int stripeCount;
 
-    private final Map<String, GlusterVolumeOption> options = new LinkedHashMap<String, GlusterVolumeOption>();
+    private Map<String, GlusterVolumeOption> options = new LinkedHashMap<String, GlusterVolumeOption>();
     private List<GlusterBrickEntity> bricks = new ArrayList<GlusterBrickEntity>();
 
     public GlusterVolumeEntity() {
