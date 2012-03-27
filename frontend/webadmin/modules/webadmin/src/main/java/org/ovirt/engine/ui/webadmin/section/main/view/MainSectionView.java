@@ -7,12 +7,10 @@ import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.view.AbstractView;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.MainSectionPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.MainTabBarOffsetUiHandlers;
-import org.ovirt.engine.ui.webadmin.system.InternalConfiguration;
 import org.ovirt.engine.ui.webadmin.uicommon.model.AlertFirstRowModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.AlertModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.BookmarkModelProvider;
@@ -33,7 +31,6 @@ import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -54,9 +51,6 @@ public class MainSectionView extends AbstractView implements MainSectionPresente
     private MainTabBarOffsetUiHandlers uiHandlers;
 
     @UiField
-    DockLayoutPanel wrapperLayoutPanel;
-
-    @UiField
     SimplePanel headerPanel;
 
     @UiField(provided = true)
@@ -67,9 +61,6 @@ public class MainSectionView extends AbstractView implements MainSectionPresente
 
     @UiField
     SimplePanel alertEventFooterPanel;
-
-    @UiField
-    Label footerMessage;
 
     @UiField(provided = true)
     SplitLayoutPanel verticalSplitLayoutPanel;
@@ -96,9 +87,7 @@ public class MainSectionView extends AbstractView implements MainSectionPresente
             EventFirstRowModelProvider eventFirstRowModelProvider,
             TaskModelProvider taskModelProvider,
             TaskFirstRowModelProvider taskFirstRowModelProvider,
-            InternalConfiguration intConf,
             ApplicationConstants constants,
-            ApplicationMessages messages,
             ApplicationResources resources,
             ApplicationTemplates templates,
             EventBus eventBus,
@@ -125,16 +114,6 @@ public class MainSectionView extends AbstractView implements MainSectionPresente
                 eventBus,
                 clientStorage);
         headerPanel.getElement().getParentElement().getStyle().setOverflow(Overflow.VISIBLE);
-
-        if (!intConf.isCurrentBrowserSupported()) {
-            // Browser is not supported
-            footerMessage.setText(messages.browserNotSupportedVersion(
-                    intConf.getCurrentBrowser(),
-                    intConf.getCurrentBrowserVersion()));
-        } else {
-            // Remove footer message
-            wrapperLayoutPanel.remove(footerMessage);
-        }
     }
 
     private void initHeaders() {

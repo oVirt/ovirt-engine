@@ -118,21 +118,13 @@
 			padding: 2px;
 		}
 		
-		.footerMessage {
-			color: red;
-			text-align: center;
-			line-height: 20px;
-		}
-		
 		.alertEventFooterPanel {
 			position: relative;
 			margin-bottom: 30px;
 		}
-		
-		
 	</ui:style>
 
-	<g:DockLayoutPanel ui:field="wrapperLayoutPanel" unit="PX">
+	<g:DockLayoutPanel unit="PX">
 		<g:north size="105">
 			<g:SimplePanel ui:field="headerPanel" />
 		</g:north>
@@ -155,10 +147,6 @@
 				</g:south>
 			</g:SplitLayoutPanel>
 		</g:center>
-
-		<g:south size="20">
-			<g:Label ui:field="footerMessage" addStyleNames="{style.footerMessage}" />
-		</g:south>
 	</g:DockLayoutPanel>
 
 </ui:UiBinder>

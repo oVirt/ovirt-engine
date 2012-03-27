@@ -13,7 +13,6 @@ import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.LoginModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.login.presenter.LoginPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.system.InternalConfiguration;
@@ -79,8 +78,7 @@ public class LoginPopupView extends AbstractLoginPopupView implements LoginPopup
     public LoginPopupView(EventBus eventBus,
             ApplicationResources resources,
             ApplicationConstants constants,
-            InternalConfiguration intConf,
-            ApplicationMessages messages) {
+            InternalConfiguration intConf) {
         super(eventBus, resources);
 
         // We need this code because resetAndFocus is called when userNameEditor is Disabled
@@ -103,9 +101,7 @@ public class LoginPopupView extends AbstractLoginPopupView implements LoginPopup
 
         if (!intConf.isCurrentBrowserSupported()) {
             // Browser is not supported
-            footerWarningMessage.setText(messages.browserNotSupportedVersion(
-                    intConf.getCurrentBrowser(),
-                    intConf.getCurrentBrowserVersion()));
+            footerWarningMessage.setText(constants.browserNotSupported());
         }
     }
 

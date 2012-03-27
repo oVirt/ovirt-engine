@@ -10,22 +10,55 @@ import com.google.inject.Inject;
 public class InternalConfiguration {
 
     /**
-     * Represents a browser supported by the application.
+     * Represents a browser fully supported by the application.
      */
     enum SupportedBrowser {
 
-        Firefox7("Firefox", 7.0f),
-        Explorer9("Explorer", 9.0f);
+        // Firefox 10 on Linux
+        Firefox10OnLinux("Firefox", 10.0f, false, "Linux"),
 
+        // Explorer 9+ on any OS
+        Explorer9AndAbove("Explorer", 9.0f, true);
+
+        // Browser identity
         private final String browser;
-        private final float version;
 
-        SupportedBrowser(String browser, float version) {
+        // Supported version range (closed interval)
+        private final float versionFrom;
+        private final float versionTo;
+
+        // OS identity (null value disables OS check)
+        private final String os;
+
+        SupportedBrowser(String browser, float versionFrom, float versionTo, String os) {
+            assert browser != null : "Browser identity cannot be null";
             this.browser = browser;
-            this.version = version;
+            this.versionFrom = versionFrom;
+            this.versionTo = versionTo;
+            this.os = os;
         }
 
-    };
+        SupportedBrowser(String browser, float version, boolean supportVersionsAbove, String os) {
+            this(browser, version, supportVersionsAbove ? Float.MAX_VALUE : version, os);
+        }
+
+        SupportedBrowser(String browser, float version, boolean supportVersionsAbove) {
+            this(browser, version, supportVersionsAbove, null);
+        }
+
+        boolean browserMatches(String actualBrowser) {
+            return browser.equalsIgnoreCase(actualBrowser);
+        }
+
+        boolean versionMatches(float actualVersion) {
+            return versionFrom <= actualVersion && actualVersion <= versionTo;
+        }
+
+        boolean osMatches(String actualOs) {
+            return os != null ? os.equalsIgnoreCase(actualOs) : true;
+        }
+
+    }
 
     private final ClientAgentType clientAgentType;
 
@@ -34,14 +67,18 @@ public class InternalConfiguration {
         this.clientAgentType = clientAgentType;
     }
 
+    /**
+     * @return {@code true} if the current browser is fully supported by the application, {@code false} otherwise.
+     */
     public boolean isCurrentBrowserSupported() {
-        return isBrowserSupported(getCurrentBrowser(), getCurrentBrowserVersion());
+        return isBrowserSupported(getCurrentBrowser(), getCurrentBrowserVersion(), getCurrentOs());
     }
 
-    boolean isBrowserSupported(String browser, float version) {
+    boolean isBrowserSupported(String browser, float version, String os) {
         for (SupportedBrowser supportedBrowser : SupportedBrowser.values()) {
-            if (supportedBrowser.browser.equalsIgnoreCase(browser)
-                    && supportedBrowser.version == version) {
+            if (supportedBrowser.browserMatches(browser)
+                    && supportedBrowser.versionMatches(version)
+                    && supportedBrowser.osMatches(os)) {
                 return true;
             }
         }
@@ -55,6 +92,10 @@ public class InternalConfiguration {
 
     public float getCurrentBrowserVersion() {
         return clientAgentType.version;
+    }
+
+    public String getCurrentOs() {
+        return clientAgentType.os;
     }
 
 }
