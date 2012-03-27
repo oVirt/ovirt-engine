@@ -7,6 +7,9 @@ import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
+import org.ovirt.engine.core.common.interfaces.SearchType;
+import org.ovirt.engine.core.common.queries.SearchParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.ObservableCollection;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -82,6 +85,8 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
         setTitle("Volumes");
 
         setDefaultSearchString("Volumes:");
+        setSearchString(getDefaultSearchString());
+
         setCreateVolumeCommand(new UICommand("Create Volume", this));
         setRemoveVolumeCommand(new UICommand("Remove", this));
         setStartCommand(new UICommand("Start", this));
@@ -115,6 +120,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
+            @Override
             public void OnSuccess(Object model, Object result)
             {
                 VolumeListModel volumeListModel = (VolumeListModel) model;
@@ -182,31 +188,9 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
 
     @Override
     protected void SyncSearch() {
-        super.SyncSearch();
-        // if (getSystemTreeSelectedItem() != null
-        // && getSystemTreeSelectedItem().getType().equals(SystemTreeItemType.Cluster)) {
-        // VDSGroup cluster = (VDSGroup) getSystemTreeSelectedItem().getEntity();
-        // Frontend.RunAction(VdcActionType.ListGlusterVolumes,
-        // new VdsGroupParametersBase(cluster.getId()),
-        // new IFrontendActionAsyncCallback() {
-        //
-        // @Override
-        // public void Executed(FrontendActionAsyncResult result) {
-        // if (result.getReturnValue().getActionReturnValue() != null) {
-        // ArrayList<GlusterVolumeEntity> volumes =
-        // new ArrayList<GlusterVolumeEntity>(Arrays.asList((GlusterVolumeEntity[]) result.getReturnValue()
-        // .getActionReturnValue()));
-        // setItems(volumes);
-        // } else {
-        // setItems(new ArrayList<GlusterVolumeEntity>());
-        // }
-        // }
-        // });
-        // }
-        // else {
-        // setItems(new ArrayList<GlusterVolumeEntity>());
-        // }
-        // setIsQueryFirstTime(false);
+        SearchParameters tempVar = new SearchParameters(getSearchString(), SearchType.GlusterVolume);
+        tempVar.setMaxCount(getSearchPageSize());
+        super.SyncSearch(VdcQueryType.Search, tempVar);
     }
 
     @Override
@@ -311,11 +295,13 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
 
     private SystemTreeItemModel systemTreeSelectedItem;
 
+    @Override
     public SystemTreeItemModel getSystemTreeSelectedItem()
     {
         return systemTreeSelectedItem;
     }
 
+    @Override
     public void setSystemTreeSelectedItem(SystemTreeItemModel value)
     {
         if (systemTreeSelectedItem != value)
