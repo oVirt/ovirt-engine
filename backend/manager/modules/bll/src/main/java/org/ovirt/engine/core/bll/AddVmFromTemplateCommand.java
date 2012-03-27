@@ -78,8 +78,8 @@ public class AddVmFromTemplateCommand<T extends AddVmFromTemplateParameters> ext
 
     @Override
     protected boolean canDoAction() {
-        boolean retValue = true;
-        if (super.canDoAction()) {
+        boolean retValue = super.canDoAction();
+        if (retValue) {
             for (DiskImage dit : getVmTemplate().getDiskMap().values()) {
                 retValue =
                         ImagesHandler.CheckImageConfiguration(destStorages.get(imageToDestinationDomainMap.get(dit.getId()))
