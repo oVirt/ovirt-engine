@@ -1436,6 +1436,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         model.setHashName("new_host_guide_me");
         model.getPort().setEntity(54321);
         model.getOverrideIpTables().setEntity(true);
+        model.setSpmPriorityValue(null);
 
         model.getDataCenter()
                 .setItems(new java.util.ArrayList<storage_pool>(java.util.Arrays.asList(new storage_pool[] { getEntity() })));
@@ -1507,6 +1508,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         host.setpm_password((Boolean) model.getIsPm().getEntity() ? (String) model.getPmPassword().getEntity() : null);
         host.setpm_type((Boolean) model.getIsPm().getEntity() ? (String) model.getPmType().getSelectedItem() : null);
         host.setPmOptionsMap(new ValueObjectMap(model.getPmOptionsMap(), false));
+        host.setVdsSpmPriority(model.getSpmPriorityValue());
 
         AddVdsActionParameters addVdsParams = new AddVdsActionParameters();
         addVdsParams.setVdsId(host.getId());

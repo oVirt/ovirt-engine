@@ -213,6 +213,7 @@ public final class Cloner
         obj.setvds_strength(instance.getvds_strength());
         obj.setvds_type(instance.getvds_type());
         obj.setUniqueId(instance.getUniqueId());
+        obj.setVdsSpmPriority(instance.getVdsSpmPriority());
 
         return obj;
     }

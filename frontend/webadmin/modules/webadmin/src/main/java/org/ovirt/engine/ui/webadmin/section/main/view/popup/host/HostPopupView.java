@@ -1,5 +1,17 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.host;
 
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.editor.client.SimpleBeanEditorDriver;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.RadioButton;
+import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.inject.Inject;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.compat.Event;
@@ -20,32 +32,31 @@ import org.ovirt.engine.ui.common.widget.editor.EntityModelPasswordBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
+import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostPopupPresenterWidget;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
-import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.Label;
-import com.google.inject.Inject;
-
 public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implements HostPopupPresenterWidget.ViewDef {
 
     interface Driver extends SimpleBeanEditorDriver<HostModel, HostPopupView> {
+
         Driver driver = GWT.create(Driver.class);
     }
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, HostPopupView> {
+
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 
     interface ViewIdHandler extends ElementIdHandler<HostPopupView> {
+
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
+
+    @UiField
+    Style style;
 
     @UiField
     DialogTabPanel tabPanel;
@@ -144,18 +155,27 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
     @Ignore
     Label testMessage;
 
+    @UiField
+    @Ignore
+    DialogTab spmTab;
+
+    @UiField()
+    @Ignore
+    VerticalPanel spmPanel;
+
     @Inject
     public HostPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
         super(eventBus, resources);
-        initListBoxEditors();
-        initCheckBoxEditors();
+        initEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
         localize(constants);
+
         Driver.driver.initialize(this);
     }
 
-    void initListBoxEditors() {
+    private void initEditors() {
+        // List boxes
         dataCenterEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
             @Override
             public String renderNullSafe(Object object) {
@@ -176,9 +196,8 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
                 return (String) object;
             }
         });
-    }
 
-    void initCheckBoxEditors() {
+        // Check boxes
         pmEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
     }
 
@@ -205,6 +224,9 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
         pmOptionsExplanationLabel.setText(constants.hostPopupPmOptionsExplanationLabel());
         pmSecureEditor.setLabel(constants.hostPopupPmSecureLabel());
         testButton.setLabel(constants.hostPopupTestButtonLabel());
+
+        // SPM tab
+        spmTab.setLabel("SPM");
     }
 
     @Override
@@ -239,6 +261,51 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
         });
 
         testButton.setCommand(object.getTestCommand());
+
+
+        // Create SPM related controls.
+        IEventListener spmListener = new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+
+                createSpmControls(object);
+            }
+        };
+
+        object.getSpmPriority().getItemsChangedEvent().addListener(spmListener);
+        object.getSpmPriority().getSelectedItemChangedEvent().addListener(spmListener);
+
+        createSpmControls(object);
+    }
+
+    private void createSpmControls(final HostModel object) {
+
+        spmPanel.clear();
+
+        Iterable items = object.getSpmPriority().getItems();
+        if (items == null) {
+            return;
+        }
+
+        // Recreate SPM related controls.
+        for (Object item : items) {
+
+            final EntityModel model = (EntityModel) item;
+
+            RadioButton rb = new RadioButton("spm");
+            rb.setText(model.getTitle());
+            rb.setValue(object.getSpmPriority().getSelectedItem() == model);
+            rb.addStyleName(style.radioButton());
+
+            rb.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+                @Override
+                public void onValueChange(ValueChangeEvent<Boolean> e) {
+                    object.getSpmPriority().setSelectedItem(model);
+                }
+            });
+
+            spmPanel.add(rb);
+        }
     }
 
     @Override
@@ -261,4 +328,9 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
         tabPanel.switchTab(powerManagementTab);
     }
 
+
+    interface Style extends CssResource {
+
+        String radioButton();
+    }
 }

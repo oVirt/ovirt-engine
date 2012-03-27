@@ -1,8 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab;
 
-import java.util.LinkedList;
-import java.util.List;
-
+import com.google.gwt.core.client.GWT;
+import com.google.inject.Inject;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
@@ -12,9 +11,13 @@ import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
 import org.ovirt.engine.ui.common.widget.action.CommandLocation;
 import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
+import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.ReportInit;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabHostPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
 import org.ovirt.engine.ui.webadmin.uicommon.ReportActionsHelper;
@@ -24,19 +27,57 @@ import org.ovirt.engine.ui.webadmin.widget.table.column.HostStatusColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.PercentColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.ProgressBarColumn;
 
-import com.google.gwt.core.client.GWT;
-import com.google.inject.Inject;
+import java.util.LinkedList;
+import java.util.List;
 
 public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, HostListModel> implements MainTabHostPresenter.ViewDef {
 
     interface ViewIdHandler extends ElementIdHandler<MainTabHostView> {
+
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
+    int maxSpmPriority;
+    int defaultSpmPriority;
+    ApplicationConstants constants;
+
     @Inject
-    public MainTabHostView(MainModelProvider<VDS, HostListModel> modelProvider) {
+    public MainTabHostView(MainModelProvider<VDS, HostListModel> modelProvider, ApplicationConstants constants) {
         super(modelProvider);
         ViewIdHandler.idHandler.generateAndSetIds(this);
+
+        this.constants = constants;
+
+        InitSpmPriorities();
+    }
+
+    private void InitSpmPriorities() {
+        AsyncDataProvider.GetMaxSpmPriority(new AsyncQuery(this, new INewAsyncCallback() {
+            @Override
+            public void OnSuccess(Object target, Object returnValue) {
+
+                MainTabHostView view = (MainTabHostView) target;
+
+                view.maxSpmPriority = (Integer) returnValue;
+                InitSpmPriorities1();
+            }
+        }));
+    }
+
+    private void InitSpmPriorities1() {
+        AsyncDataProvider.GetDefaultSpmPriority(new AsyncQuery(this, new INewAsyncCallback() {
+            @Override
+            public void OnSuccess(Object target, Object returnValue) {
+
+                MainTabHostView view = (MainTabHostView) target;
+
+                view.defaultSpmPriority = (Integer) returnValue;
+                InitSpmPriorities2();
+            }
+        }));
+    }
+
+    private void InitSpmPriorities2() {
         initTable();
         initWidget(getTable());
     }
@@ -114,13 +155,36 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
         };
         getTable().addColumn(netColumn, "Network", "60px");
 
-        TextColumnWithTooltip<VDS> spmColumn = new EnumColumn<VDS, VdsSpmStatus>() {
+        TextColumnWithTooltip<VDS> spmColumn = new TextColumnWithTooltip<VDS>() {
+            @Override
+            public String getValue(VDS object) {
+
+                int value = object.getVdsSpmPriority();
+                int lowValue = defaultSpmPriority / 2;
+                int highValue = defaultSpmPriority + (maxSpmPriority - defaultSpmPriority) / 2;
+
+                if (value == -1) {
+                    return constants.spmNeverText();
+                } else if (value == lowValue) {
+                    return constants.spmLowText() + " (" + lowValue + ")";
+                } else if (value == defaultSpmPriority) {
+                    return constants.spmNormalText() + " (" + defaultSpmPriority + ")";
+                } else if (value == highValue) {
+                    return constants.spmHighText() + " (" + highValue + ")";
+                }
+
+                return "Custom (" + value + ")";
+            }
+        };
+        getTable().addColumn(spmColumn, "SPM priority", "80px");
+
+        TextColumnWithTooltip<VDS> spmStatusColumn = new EnumColumn<VDS, VdsSpmStatus>() {
             @Override
             public VdsSpmStatus getRawValue(VDS object) {
                 return object.getspm_status();
             }
         };
-        getTable().addColumn(spmColumn, "SpmStatus");
+        getTable().addColumn(spmStatusColumn, "SpmStatus");
 
         getTable().addActionButton(new WebAdminButtonDefinition<VDS>("New") {
             @Override
@@ -154,7 +218,7 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
             }
         });
         getTable().addActionButton(new WebAdminButtonDefinition<VDS>("Confirm 'Host has been Rebooted'",
-                CommandLocation.OnlyFromFromContext) {
+            CommandLocation.OnlyFromFromContext) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getManualFenceCommand();
@@ -198,8 +262,8 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
         });
 
         getTable().addActionButton(new WebAdminMenuBarButtonDefinition<VDS>("Power Management",
-                pmSubActions,
-                CommandLocation.OnlyFromToolBar));
+            pmSubActions,
+            CommandLocation.OnlyFromToolBar));
 
         getTable().addActionButton(new WebAdminButtonDefinition<VDS>("Assign Tags") {
             @Override
@@ -210,7 +274,7 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
 
         if (ReportInit.getInstance().isReportsEnabled()) {
             List<ActionButtonDefinition<VDS>> resourceSubActions =
-                    ReportActionsHelper.getInstance().getResourceSubActions("Host", getMainModel());
+                ReportActionsHelper.getInstance().getResourceSubActions("Host", getMainModel());
             if (resourceSubActions != null && resourceSubActions.size() > 0) {
                 getTable().addActionButton(new WebAdminMenuBarButtonDefinition<VDS>("Show Report", resourceSubActions));
             }

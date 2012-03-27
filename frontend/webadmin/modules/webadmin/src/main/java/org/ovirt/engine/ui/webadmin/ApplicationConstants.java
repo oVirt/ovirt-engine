@@ -340,6 +340,21 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Test")
     String hostPopupTestButtonLabel();
 
+    @DefaultStringValue("Never")
+    String spmNeverText();
+
+    @DefaultStringValue("Low")
+    String spmLowText();
+
+    @DefaultStringValue("Normal")
+    String spmNormalText();
+
+    @DefaultStringValue("High")
+    String spmHighText();
+
+    @DefaultStringValue("Custom")
+    String spmCustomText();
+
     @DefaultStringValue("Root Password")
     String hostInstallPasswordLabel();
 

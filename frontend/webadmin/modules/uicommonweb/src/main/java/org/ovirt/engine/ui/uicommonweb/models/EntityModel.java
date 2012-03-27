@@ -65,6 +65,18 @@ public class EntityModel extends Model
         setEntityChangedEvent(new Event(EntityChangedEventDefinition));
     }
 
+    public EntityModel(Object entity) {
+        this();
+
+        setEntity(entity);
+    }
+
+    public EntityModel(String title, Object entity) {
+        this(entity);
+
+        setTitle(title);
+    }
+
     protected void EntityChanging(Object newValue, Object oldValue)
     {
         IProvidePropertyChangedEvent notifier =

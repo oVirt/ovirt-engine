@@ -31,6 +31,9 @@ import org.ovirt.engine.ui.uicommonweb.validation.RegexValidation;
 import org.ovirt.engine.ui.uicompat.FrontendQueryAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendQueryAsyncCallback;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @SuppressWarnings("unused")
 public class HostModel extends Model
 {
@@ -414,6 +417,36 @@ public class HostModel extends Model
         }
     }
 
+    private Integer postponedSpmPriority;
+
+    public void setSpmPriorityValue(Integer value) {
+        if (spmInitialized) {
+            UpdateSpmPriority(value);
+        } else {
+            postponedSpmPriority = value;
+        }
+    }
+
+    public int getSpmPriorityValue() {
+
+        EntityModel selectedItem = (EntityModel) getSpmPriority().getSelectedItem();
+        if (selectedItem != null) {
+            return (Integer) selectedItem.getEntity();
+        }
+
+        return 0;
+    }
+
+    private ListModel spmPriority;
+
+    public ListModel getSpmPriority() {
+        return spmPriority;
+    }
+
+    private void setSpmPriority(ListModel value) {
+        spmPriority = value;
+    }
+
     public HostModel()
     {
         setTestCommand(new UICommand("Test", this));
@@ -449,6 +482,97 @@ public class HostModel extends Model
 
         setIsPowerManagementTabValid(true);
         setIsGeneralTabValid(getIsPowerManagementTabValid());
+
+        setSpmPriority(new ListModel());
+
+        InitSpmPriorities();
+    }
+
+    boolean spmInitialized;
+    int maxSpmPriority;
+    int defaultSpmPriority;
+
+    private void InitSpmPriorities() {
+
+        AsyncDataProvider.GetMaxSpmPriority(new AsyncQuery(this, new INewAsyncCallback() {
+            @Override
+            public void OnSuccess(Object target, Object returnValue) {
+
+                HostModel model = (HostModel) target;
+
+                model.maxSpmPriority = (Integer) returnValue;
+                InitSpmPriorities1();
+            }
+        }));
+    }
+
+    private void InitSpmPriorities1() {
+
+        AsyncDataProvider.GetDefaultSpmPriority(new AsyncQuery(this, new INewAsyncCallback() {
+            @Override
+            public void OnSuccess(Object target, Object returnValue) {
+
+                HostModel model = (HostModel) target;
+
+                model.defaultSpmPriority = (Integer) returnValue;
+
+                if (postponedSpmPriority != null) {
+                    UpdateSpmPriority(postponedSpmPriority);
+                }
+
+                spmInitialized = true;
+            }
+        }));
+    }
+
+    private void UpdateSpmPriority(Integer value) {
+
+        List<EntityModel> items = new ArrayList<EntityModel>();
+
+        if (value == null) {
+            value = defaultSpmPriority;
+        }
+
+        int neverValue = -1;
+        EntityModel neverItem = new EntityModel("Never", neverValue);
+        items.add(neverItem);
+        int lowValue = defaultSpmPriority / 2;
+        items.add(new EntityModel("Low (" + lowValue + ")", lowValue));
+        items.add(new EntityModel("Normal (" + defaultSpmPriority + ")", defaultSpmPriority));
+        int highValue = defaultSpmPriority + (maxSpmPriority - defaultSpmPriority) / 2;
+        items.add(new EntityModel("High (" + highValue + ")", highValue));
+
+        // Determine whether to set custom SPM priority, and where.
+        EntityModel selectedItem = null;
+
+        int[] values = new int[] {neverValue, lowValue, defaultSpmPriority, highValue, maxSpmPriority + 1};
+        Integer prevValue = null;
+
+        for (int i = 0; i < values.length; i++) {
+
+            int currentValue = values[i];
+
+            if (value == currentValue) {
+                selectedItem = items.get(i);
+                break;
+            } else if (prevValue != null && value > prevValue && value < currentValue) {
+                EntityModel customItem = new EntityModel("Custom (" + value + ")", value);
+
+                items.add(i, customItem);
+                selectedItem = customItem;
+                break;
+            }
+
+            prevValue = currentValue;
+        }
+
+        // Delete 'never' item if it's not selected.
+        if (selectedItem != neverItem) {
+            items.remove(neverItem);
+        }
+
+        getSpmPriority().setItems(items);
+        getSpmPriority().setSelectedItem(selectedItem);
     }
 
     @Override
@@ -734,16 +858,28 @@ public class HostModel extends Model
             ValidatePmModels();
         }
 
-        setIsGeneralTabValid(getName().getIsValid() && getHost().getIsValid() && getPort().getIsValid()
-                && getCluster().getIsValid());
+        setIsGeneralTabValid(getName().getIsValid()
+            && getHost().getIsValid()
+            && getPort().getIsValid()
+            && getCluster().getIsValid());
 
-        setIsPowerManagementTabValid(getManagementIp().getIsValid() && getPmUserName().getIsValid()
-                && getPmPassword().getIsValid() && getPmType().getIsValid() && getPmPort().getIsValid()
-                && getPmOptions().getIsValid());
+        setIsPowerManagementTabValid(getManagementIp().getIsValid()
+            && getPmUserName().getIsValid()
+            && getPmPassword().getIsValid()
+            && getPmType().getIsValid()
+            && getPmPort().getIsValid()
+            && getPmOptions().getIsValid());
 
-        return getName().getIsValid() && getHost().getIsValid() && getPort().getIsValid() && getCluster().getIsValid()
-                && getManagementIp().getIsValid() && getPmUserName().getIsValid() && getPmPassword().getIsValid()
-                && getPmType().getIsValid() && getPmPort().getIsValid() && getPmOptions().getIsValid();
+        return getName().getIsValid()
+            && getHost().getIsValid()
+            && getPort().getIsValid()
+            && getCluster().getIsValid()
+            && getManagementIp().getIsValid()
+            && getPmUserName().getIsValid()
+            && getPmPassword().getIsValid()
+            && getPmType().getIsValid()
+            && getPmPort().getIsValid()
+            && getPmOptions().getIsValid();
     }
 
     @Override

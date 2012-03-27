@@ -338,6 +338,7 @@ public class ClusterGuideModel extends GuideModel
         model.setHashName("new_host");
         model.getPort().setEntity(54321);
         model.getOverrideIpTables().setEntity(true);
+        model.setSpmPriorityValue(null);
 
         model.getCluster().setSelectedItem(getEntity());
         model.getCluster().setIsChangable(false);
@@ -433,6 +434,7 @@ public class ClusterGuideModel extends GuideModel
         host.setpm_password((Boolean) model.getIsPm().getEntity() ? (String) model.getPmPassword().getEntity() : null);
         host.setpm_type((Boolean) model.getIsPm().getEntity() ? (String) model.getPmType().getSelectedItem() : null);
         host.setPmOptionsMap(new ValueObjectMap(model.getPmOptionsMap(), false));
+        host.setVdsSpmPriority(model.getSpmPriorityValue());
 
         AddVdsActionParameters vdsActionParams = new AddVdsActionParameters();
         vdsActionParams.setvds(host);

@@ -37,6 +37,11 @@ public class IntegerValidation implements IValidation
         setMinimum(Integer.MIN_VALUE);
     }
 
+    public IntegerValidation(int min, int max) {
+        setMinimum(min);
+        setMaximum(max);
+    }
+
     @Override
     public ValidationResult Validate(Object value)
     {

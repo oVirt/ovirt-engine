@@ -516,6 +516,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         hostModel.getPort().setEntity(54321);
         hostModel.getPmType().setSelectedItem(null);
         hostModel.getOverrideIpTables().setIsAvailable(false);
+        hostModel.setSpmPriorityValue(null);
 
         // Make sure not to set override IP tables flag back true when it was set false once.
         hostModel.getOverrideIpTables().getEntityChangedEvent().addListener(new IEventListener() {
@@ -741,6 +742,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         host.setpm_password((String) model.getPmPassword().getEntity());
         host.setpm_type((String) model.getPmType().getSelectedItem());
         host.setPmOptionsMap(new ValueObjectMap(model.getPmOptionsMap(), false));
+        host.setVdsSpmPriority(model.getSpmPriorityValue());
 
         CancelConfirm();
         model.StartProgress(null);
@@ -1038,6 +1040,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         model.setHostId(vds.getId());
         model.getRootPassword().setIsAvailable(false);
         model.getOverrideIpTables().setIsAvailable(false);
+        model.setSpmPriorityValue(vds.getVdsSpmPriority());
         model.setOriginalName(vds.getvds_name());
         model.getName().setEntity(vds.getvds_name());
         model.getHost().setEntity(vds.gethost_name());

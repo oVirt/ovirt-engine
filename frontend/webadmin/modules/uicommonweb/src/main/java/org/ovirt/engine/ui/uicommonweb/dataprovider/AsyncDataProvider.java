@@ -1493,6 +1493,36 @@ public final class AsyncDataProvider {
                 aQuery);
     }
 
+    public static void GetMaxSpmPriority(AsyncQuery aQuery) {
+        aQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+                return source != null ? ((Integer) source).intValue() : 0;
+            }
+        };
+
+        //        GetConfigFromCache(
+        //            new GetConfigurationValueParameters(ConfigurationValues.HighUtilizationForPowerSave),
+        //            aQuery);
+
+        aQuery.asyncCallback.OnSuccess(aQuery.getModel(), 10);
+    }
+
+    public static void GetDefaultSpmPriority(AsyncQuery aQuery) {
+        aQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+                return source != null ? ((Integer) source).intValue() : 0;
+            }
+        };
+
+        //        GetConfigFromCache(
+        //            new GetConfigurationValueParameters(ConfigurationValues.HighUtilizationForPowerSave),
+        //            aQuery);
+
+        aQuery.asyncCallback.OnSuccess(aQuery.getModel(), 5);
+    }
+
     public static void GetRootTag(AsyncQuery aQuery) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override

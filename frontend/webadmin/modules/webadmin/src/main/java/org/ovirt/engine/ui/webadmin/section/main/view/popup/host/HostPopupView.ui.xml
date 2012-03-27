@@ -1,91 +1,115 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
-<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
-	xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog" xmlns:t="urn:import:org.ovirt.engine.ui.common.widget.dialog.tab"
-	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor" xmlns:w="urn:import:org.ovirt.engine.ui.common.widget">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:g="urn:import:com.google.gwt.user.client.ui"
+             xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
+             xmlns:t="urn:import:org.ovirt.engine.ui.common.widget.dialog.tab"
+             xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+             xmlns:w="urn:import:org.ovirt.engine.ui.common.widget">
 
-	<ui:style>
-		.generalTabTopDecorator {
-			background-color: #D3D3D3;
-			margin-bottom: 8px;
-			margin-top: 4px;
-			margin-right: 3px;
-			padding-top: 6px;
-			padding-bottom: 6px;
-		}
-		
-		.powerManagementTabInputDecorator {
-			margin-left: 20px;
-		}
-		
-		.explanationLabel {
-			font-style: italic;
-			margin: 10px 5px;
-		}
-		
-		.testPanel {
-			margin-top: 20px;
-		}
-		
-		.testButton {
-			width: 40px;
-			float: left;
-		}
-		
-		.testMessagePanel {
-			margin-left: 70px;
-			height: 100px;
-		}
-	</ui:style>
+    <ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostPopupView.Style">
+        .generalTabTopDecorator {
+            background-color: #D3D3D3;
+            margin-bottom: 8px;
+            margin-top: 4px;
+            margin-right: 3px;
+            padding-top: 6px;
+            padding-bottom: 6px;
+        }
 
-	<d:SimpleDialogPanel width="650px" height="500px">
-		<d:content>
-			<t:DialogTabPanel ui:field="tabPanel" height="100%">
-				<t:tab>
-					<t:DialogTab ui:field="generalTab">
-						<t:content>
-							<g:FlowPanel>
-								<g:FlowPanel addStyleNames="{style.generalTabTopDecorator}">
-									<e:ListModelListBoxEditor ui:field="dataCenterEditor" />
-									<e:ListModelListBoxEditor ui:field="clusterEditor" />
-								</g:FlowPanel>
-								<e:EntityModelTextBoxEditor ui:field="nameEditor" />
-								<e:EntityModelTextBoxEditor ui:field="hostAddressEditor" />
-								<e:EntityModelPasswordBoxEditor ui:field="rootPasswordEditor" />
-                                <e:EntityModelCheckBoxEditor ui:field="overrideIpTablesEditor" />
-							</g:FlowPanel>
-						</t:content>
-					</t:DialogTab>
-				</t:tab>
-				<t:tab>
-					<t:DialogTab ui:field="powerManagementTab">
-						<t:content>
-							<g:FlowPanel>
-								<e:EntityModelCheckBoxEditor ui:field="pmEnabledEditor" />
-								<g:FlowPanel addStyleNames="{style.powerManagementTabInputDecorator}">
-									<e:EntityModelTextBoxEditor ui:field="pmAddressEditor" />
-									<e:EntityModelTextBoxEditor ui:field="pmUserNameEditor" />
-									<e:EntityModelPasswordBoxEditor ui:field="pmPasswordEditor" />
-									<e:ListModelListBoxEditor ui:field="pmTypeEditor" />
-									<e:EntityModelTextBoxEditor ui:field="pmPortEditor" />
-									<e:EntityModelTextBoxEditor ui:field="pmSlotEditor" />
-									<e:EntityModelTextBoxEditor ui:field="pmOptionsEditor" />
-									<g:Label ui:field="pmOptionsExplanationLabel" addStyleNames="{style.explanationLabel}" />
-									<e:EntityModelCheckBoxEditor ui:field="pmSecureEditor" />
-									<g:HTMLPanel addStyleNames="{style.testPanel}">
-										<w:UiCommandButton ui:field="testButton" addStyleNames="{style.testButton}" />
-										<g:ScrollPanel addStyleNames="{style.testMessagePanel}">
-											<g:Label ui:field="testMessage" />
-										</g:ScrollPanel>
-										<div style="clear: both;" />
-									</g:HTMLPanel>
-								</g:FlowPanel>
-							</g:FlowPanel>
-						</t:content>
-					</t:DialogTab>
-				</t:tab>
-			</t:DialogTabPanel>
-		</d:content>
-	</d:SimpleDialogPanel>
+        .powerManagementTabInputDecorator {
+            margin-left: 20px;
+        }
+
+        .explanationLabel {
+            font-style: italic;
+            margin: 10px 5px;
+        }
+
+        .headerLabel {
+            font-weight: bold;
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+
+        .testPanel {
+            margin-top: 20px;
+        }
+
+        .testButton {
+            width: 40px;
+            float: left;
+        }
+
+        .testMessagePanel {
+            margin-left: 70px;
+            height: 100px;
+        }
+
+        .radioButton {
+            margin-right: 15px;
+        }
+
+    </ui:style>
+
+    <d:SimpleDialogPanel width="650px" height="500px">
+        <d:content>
+            <t:DialogTabPanel ui:field="tabPanel" height="100%">
+                <t:tab>
+                    <t:DialogTab ui:field="generalTab">
+                        <t:content>
+                            <g:FlowPanel>
+                                <g:FlowPanel addStyleNames="{style.generalTabTopDecorator}">
+                                    <e:ListModelListBoxEditor ui:field="dataCenterEditor"/>
+                                    <e:ListModelListBoxEditor ui:field="clusterEditor"/>
+                                </g:FlowPanel>
+                                <e:EntityModelTextBoxEditor ui:field="nameEditor"/>
+                                <e:EntityModelTextBoxEditor ui:field="hostAddressEditor"/>
+                                <e:EntityModelPasswordBoxEditor ui:field="rootPasswordEditor"/>
+                                <e:EntityModelCheckBoxEditor ui:field="overrideIpTablesEditor"/>
+                            </g:FlowPanel>
+                        </t:content>
+                    </t:DialogTab>
+                </t:tab>
+                <t:tab>
+                    <t:DialogTab ui:field="powerManagementTab">
+                        <t:content>
+                            <g:FlowPanel>
+                                <e:EntityModelCheckBoxEditor ui:field="pmEnabledEditor"/>
+                                <g:FlowPanel addStyleNames="{style.powerManagementTabInputDecorator}">
+                                    <e:EntityModelTextBoxEditor ui:field="pmAddressEditor"/>
+                                    <e:EntityModelTextBoxEditor ui:field="pmUserNameEditor"/>
+                                    <e:EntityModelPasswordBoxEditor ui:field="pmPasswordEditor"/>
+                                    <e:ListModelListBoxEditor ui:field="pmTypeEditor"/>
+                                    <e:EntityModelTextBoxEditor ui:field="pmPortEditor"/>
+                                    <e:EntityModelTextBoxEditor ui:field="pmSlotEditor"/>
+                                    <e:EntityModelTextBoxEditor ui:field="pmOptionsEditor"/>
+                                    <g:Label ui:field="pmOptionsExplanationLabel" addStyleNames="{style.explanationLabel}"/>
+                                    <e:EntityModelCheckBoxEditor ui:field="pmSecureEditor"/>
+                                    <g:HTMLPanel addStyleNames="{style.testPanel}">
+                                        <w:UiCommandButton ui:field="testButton" addStyleNames="{style.testButton}"/>
+                                        <g:ScrollPanel addStyleNames="{style.testMessagePanel}">
+                                            <g:Label ui:field="testMessage"/>
+                                        </g:ScrollPanel>
+                                        <div style="clear: both;"/>
+                                    </g:HTMLPanel>
+                                </g:FlowPanel>
+                            </g:FlowPanel>
+                        </t:content>
+                    </t:DialogTab>
+                </t:tab>
+                <t:tab>
+                    <t:DialogTab ui:field="spmTab">
+                        <t:content>
+                            <g:VerticalPanel>
+                                <g:Label text="SPM priority" addStyleNames="{style.headerLabel}"/>
+                                <g:VerticalPanel ui:field="spmPanel"/>
+                            </g:VerticalPanel>
+                        </t:content>
+                    </t:DialogTab>
+                </t:tab>
+            </t:DialogTabPanel>
+        </d:content>
+    </d:SimpleDialogPanel>
 
 </ui:UiBinder>
