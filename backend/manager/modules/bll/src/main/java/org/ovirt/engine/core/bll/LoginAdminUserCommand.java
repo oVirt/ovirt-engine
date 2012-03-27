@@ -27,7 +27,7 @@ public class LoginAdminUserCommand<T extends LoginUserParameters> extends LoginU
                     log.debugFormat("LoginAdminUser: No admin role found for user - login failed.");
                 }
             } else {
-                autheticated = attachUserToSession();
+                autheticated = persistUserSession();
             }
 
         }
