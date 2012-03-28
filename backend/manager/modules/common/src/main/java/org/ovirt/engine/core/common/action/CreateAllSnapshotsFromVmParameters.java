@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common.action;
 
 import org.hibernate.validator.constraints.NotEmpty;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
+import org.ovirt.engine.core.common.validation.annotation.ValidDescription;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -11,6 +12,7 @@ public class CreateAllSnapshotsFromVmParameters extends VmOperationParameterBase
 
     @NotEmpty(groups = { CreateEntity.class },
             message = "VALIDATION.DISK_IMAGE.DESCRIPTION.NOT_EMPTY")
+    @ValidDescription(message = "VALIDATION.DISK_IMAGE.DESCRIPTION.NOT_ASCII", groups = { CreateEntity.class})
     private String _description;
 
     /**

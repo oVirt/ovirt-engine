@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.ovirt.engine.core.common.validation.annotation.ValidDescription;
 import org.ovirt.engine.core.common.validation.annotation.ValidName;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
@@ -40,7 +41,6 @@ public class BaseDisk extends IVdcQueryable implements BusinessEntity<Guid> {
      */
     private int internalDriveMapping;
 
-
     /**
      * The alias name of the disk.
      */
@@ -51,6 +51,8 @@ public class BaseDisk extends IVdcQueryable implements BusinessEntity<Guid> {
     /**
      * The description of the disk.
      */
+    @ValidDescription(message = "VALIDATION.DISK.DESCRIPTION.INVALID", groups = { CreateEntity.class
+            , UpdateEntity.class })
     private String diskDescription;
 
     /**
@@ -72,7 +74,6 @@ public class BaseDisk extends IVdcQueryable implements BusinessEntity<Guid> {
      * Should disk errors be propagated to the guest?
      */
     private PropagateErrors propagateErrors = PropagateErrors.Off;
-
 
     public BaseDisk() {
     }
@@ -172,7 +173,6 @@ public class BaseDisk extends IVdcQueryable implements BusinessEntity<Guid> {
     public void setShareable(boolean shareable) {
         this.shareable = shareable;
     }
-
 
     @Override
     public int hashCode() {

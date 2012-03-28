@@ -11,6 +11,7 @@ public final class BusinessEntitiesDefinitions {
 
     // VM (vm_statis)
     public static final int VM_NAME_SIZE = 255;
+    public static final int VM_DESCRIPTION_SIZE = 255;
 
     // VM Pools (vm_pools)
     public static final int VM_POOL_NAME_SIZE = 255;
@@ -52,7 +53,7 @@ public final class BusinessEntitiesDefinitions {
     public static final int ROLE_NAME_SIZE = 126;
 
     // Tags (tags)
-    public static final int TAG_NAME_SIZE = 50;
+    public static final int TAG_NAME_SIZE = 40;
 
     // Quota
     public static final int QUOTA_NAME_SIZE = 65;

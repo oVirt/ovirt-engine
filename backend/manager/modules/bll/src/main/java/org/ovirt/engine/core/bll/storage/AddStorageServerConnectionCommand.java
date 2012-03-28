@@ -9,6 +9,8 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.storage_server_connections;
+import org.ovirt.engine.core.common.validation.LinuxMountPointConstraint;
+import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.VdcBllMessages;
@@ -53,6 +55,11 @@ public class AddStorageServerConnectionCommand<T extends StorageServerConnection
         boolean returnValue = true;
         storage_server_connections paramConnection = getParameters().getStorageServerConnection();
         storage_server_connections currConnection = getConnection();
+        if (returnValue && paramConnection.getstorage_type() == StorageType.NFS
+                && !new LinuxMountPointConstraint().isValid(paramConnection.getconnection(), null)) {
+            returnValue = false;
+            addCanDoActionMessage("VALIDATION.STORAGE.CONNECTION.INVALID");
+        }
 
         if (StringHelper.isNullOrEmpty(currConnection.getid())
                 || DbFacade.getInstance().getStorageServerConnectionDAO().get(currConnection.getid()) == null) {
@@ -99,10 +106,17 @@ public class AddStorageServerConnectionCommand<T extends StorageServerConnection
         //
         // NOTE: this check must be the last check in this method
         //
-        if (returnValue && paramConnection.getstorage_type() != getParameters().getStorageServerConnection().getstorage_type()) {
+        if (returnValue
+                && paramConnection.getstorage_type() != getParameters().getStorageServerConnection().getstorage_type()) {
             paramConnection.setid(currConnection.getid());
             DbFacade.getInstance().getStorageServerConnectionDAO().update(paramConnection);
         }
         return returnValue;
+    }
+
+    @Override
+    protected List<Class<?>> getValidationGroups() {
+        addValidationGroup(CreateEntity.class);
+        return super.getValidationGroups();
     }
 }

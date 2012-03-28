@@ -15,6 +15,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.ovirt.engine.core.common.businessentities.mapping.GuidType;
+import org.ovirt.engine.core.common.validation.annotation.ValidName;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
@@ -41,6 +42,8 @@ public class vm_pools extends IVdcQueryable implements INotifyPropertyChanged, S
     @NotNull(message = "VALIDATION.VM_POOLS.NAME.NOT_NULL", groups = { CreateEntity.class, UpdateEntity.class })
     @Size(min = 1, max = BusinessEntitiesDefinitions.VM_POOL_NAME_SIZE)
     @Column(name = "vm_pool_name")
+    @ValidName(message = "ACTION_TYPE_FAILED_NAME_MAY_NOT_CONTAIN_SPECIAL_CHARS", groups = { CreateEntity.class,
+            UpdateEntity.class })
     private String name;
 
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
@@ -83,7 +86,7 @@ public class vm_pools extends IVdcQueryable implements INotifyPropertyChanged, S
      * TODO: Vitaly change it to better designed implementation
      */
     public vm_pools(String vm_pool_description, Guid vm_pool_id, String vm_pool_name, VmPoolType vmPoolType,
-                    Guid vds_group_id, int defaultTimeInDays, TimeSpan defaultStartTime, TimeSpan defaultEndTime) {
+            Guid vds_group_id, int defaultTimeInDays, TimeSpan defaultStartTime, TimeSpan defaultEndTime) {
         this(vm_pool_description, vm_pool_id, vm_pool_name, vmPoolType, vds_group_id);
         this.defaultTimeInDays = defaultTimeInDays;
         this.defaultStartTime = defaultStartTime;
@@ -187,7 +190,7 @@ public class vm_pools extends IVdcQueryable implements INotifyPropertyChanged, S
         switch (getvm_pool_type()) {
         case TimeLease: {
             return StringFormat.format("%1$s,%2$s:%3$s,%4$s:%5$s", defaultTimeInDays, defaultStartTime.Hours,
-                                       defaultStartTime.Minutes, defaultEndTime.Hours, defaultEndTime.Minutes);
+                    defaultStartTime.Minutes, defaultEndTime.Hours, defaultEndTime.Minutes);
         }
         default: {
             return parameters;
@@ -238,7 +241,7 @@ public class vm_pools extends IVdcQueryable implements INotifyPropertyChanged, S
     }
 
     public vm_pools(String vm_pool_description, Guid vm_pool_id, String vm_pool_name, VmPoolType vmPoolType,
-                    Guid vds_group_id) {
+            Guid vds_group_id) {
         this.description = vm_pool_description;
         this.id = vm_pool_id;
         this.name = vm_pool_name;

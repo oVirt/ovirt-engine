@@ -12,9 +12,9 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import javax.validation.constraints.Size;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
@@ -22,6 +22,7 @@ import org.hibernate.annotations.TypeDef;
 import org.ovirt.engine.core.common.businessentities.mapping.GuidType;
 import org.ovirt.engine.core.common.queries.ValueObjectMap;
 import org.ovirt.engine.core.common.validation.annotation.HostnameOrIp;
+import org.ovirt.engine.core.common.validation.annotation.ValidName;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.PowerManagementCheck;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
@@ -54,6 +55,7 @@ public class VdsStatic implements INotifyPropertyChanged, BusinessEntity<Guid> {
     private Guid id;
 
     @Size(min = 1, max = BusinessEntitiesDefinitions.HOST_NAME_SIZE)
+    @ValidName(message = "VALIDATION.VDS.NAME.INVALID", groups = { CreateEntity.class, UpdateEntity.class })
     @Column(name = "vds_name")
     private String name = ""; // GREGM prevents NPE
 

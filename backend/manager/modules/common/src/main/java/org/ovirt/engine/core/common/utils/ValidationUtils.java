@@ -15,10 +15,12 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 
 public class ValidationUtils {
 
+    public static final String NO_SPECIAL_CHARACTERS_I18N = "^[\\p{L}0-9_-]+$";
     public static final String NO_SPECIAL_CHARACTERS = "[0-9a-zA-Z_-]+";
+    public static final String ONLY_I18N_ASCII_OR_NONE = "[\\p{ASCII}\\p{L}]*";
     public static final String ONLY_ASCII_OR_NONE = "[\\p{ASCII}]*";
     public static final String NO_SPECIAL_CHARACTERS_OR_DASH = "[0-9a-zA-Z_]+";
-    protected static final Pattern VDS_NAME_PATTERN = Pattern.compile("[0-9a-zA-Z-_\\.]+");
+    protected static final Pattern VDS_NAME_PATTERN = Pattern.compile("[\\p{L}0-9-_\\.]+");
     public static final String DOMAIN_NAME_PATTERN =
             "^([a-zA-Z0-9]([a-zA-Z0-9\\-]{0,61}[a-zA-Z0-9])?\\.)+[a-zA-Z]{2,6}$";
     public static final String NO_WHITES_SPACE_PATTERN = "\\S+";
@@ -73,7 +75,7 @@ public class ValidationUtils {
 
         ArrayList<String> messages = null;
         Set<ConstraintViolation<T>> violations = ValidationUtils.getValidator().validate(parameters,
-                        validationGroupList.toArray(new Class<?>[validationGroupList.size()]));
+                validationGroupList.toArray(new Class<?>[validationGroupList.size()]));
 
         if (!violations.isEmpty()) {
             messages = new ArrayList<String>(violations.size());

@@ -17,7 +17,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.ovirt.engine.core.common.businessentities.mapping.GuidType;
-import org.ovirt.engine.core.common.validation.annotation.ValidName;
+import org.ovirt.engine.core.common.validation.annotation.ValidI18NName;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
@@ -52,7 +52,7 @@ public class VDSGroup extends IVdcQueryable implements INotifyPropertyChanged, S
     @Size(min = 1, max = BusinessEntitiesDefinitions.CLUSTER_NAME_SIZE, message = "VALIDATION.VDS_GROUP.NAME.MAX",
             groups = {
             CreateEntity.class, UpdateEntity.class })
-    @ValidName(message = "VALIDATION.VDS_GROUP.NAME.INVALID", groups = { CreateEntity.class, UpdateEntity.class })
+    @ValidI18NName(message = "VALIDATION.VDS_GROUP.NAME.INVALID", groups = { CreateEntity.class, UpdateEntity.class })
     @Column(name = "name")
     private String name = ""; // GREGM Prevents NPE
 

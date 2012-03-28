@@ -30,7 +30,7 @@ public class AddVmTemplateParameters extends VmTemplateParametersBase {
     @ValidName(message = "ACTION_TYPE_FAILED_NAME_MAY_NOT_CONTAIN_SPECIAL_CHARS")
     private String _name;
 
-    @Pattern(regexp = ValidationUtils.ONLY_ASCII_OR_NONE,
+    @Pattern(regexp = ValidationUtils.ONLY_I18N_ASCII_OR_NONE,
             message = "ACTION_TYPE_FAILED_DESCRIPTION_MAY_NOT_CONTAIN_SPECIAL_CHARS")
     private String _description;
 

@@ -41,7 +41,7 @@ public class tags implements Serializable {
 
     @Size(max = BusinessEntitiesDefinitions.TAG_NAME_SIZE)
     @Column(name = "tag_name")
-    @Pattern(regexp = ValidationUtils.NO_SPECIAL_CHARACTERS, message = "VALIDATION.TAGS.INVALID_TAG_NAME")
+    @Pattern(regexp = ValidationUtils.NO_SPECIAL_CHARACTERS_I18N, message = "VALIDATION.TAGS.INVALID_TAG_NAME")
     private String name;
 
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)

@@ -25,6 +25,7 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
     private VmDynamic mVmDynamic;
     private VmStatistics mVmStatistics;
 
+    @Valid
     private List<Snapshot> snapshots = new ArrayList<Snapshot>();
     private boolean isRunOnce = false;
 

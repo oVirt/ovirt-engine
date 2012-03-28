@@ -1,10 +1,14 @@
 package org.ovirt.engine.core.common.action;
 
-import org.ovirt.engine.core.compat.*;
-import org.ovirt.engine.core.common.businessentities.*;
+import javax.validation.Valid;
+
+import org.ovirt.engine.core.common.businessentities.storage_server_connections;
+import org.ovirt.engine.core.compat.Guid;
 
 public class StorageServerConnectionParametersBase extends StoragePoolParametersBase {
     private static final long serialVersionUID = 1516671099713952453L;
+
+    @Valid
     private storage_server_connections privateStorageServerConnection;
 
     public storage_server_connections getStorageServerConnection() {

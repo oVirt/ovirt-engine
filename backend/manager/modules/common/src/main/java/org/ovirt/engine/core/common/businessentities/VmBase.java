@@ -48,7 +48,7 @@ public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, Bus
     @Column(name = "creation_date", nullable = false)
     private Date creationDate = new Date(0);
 
-    @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
+    @Size(max = BusinessEntitiesDefinitions.VM_DESCRIPTION_SIZE)
     @Column(name = "description", length = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
     @Pattern(regexp = ValidationUtils.ONLY_ASCII_OR_NONE,
             message = "ACTION_TYPE_FAILED_DESCRIPTION_MAY_NOT_CONTAIN_SPECIAL_CHARS", groups = { CreateEntity.class,

@@ -13,8 +13,6 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.slf4j.Logger;
 
-
-
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ LoggerFactory.class })
 public class ValidationUtilsTest {
@@ -43,8 +41,11 @@ public class ValidationUtilsTest {
 
     @Test
     public void testIsInvalidHostname() {
-        String[] straValidHosts = new String[] { "www.redhat.com", "127.0.0.1", "www.rhn.redhat.com" };
-        String[] straInvalidHosts = new String[] { "www.redhat#com", "123/456", "www@redhat.com" };
+        String[] straValidHosts =
+                new String[] { "www.redhat.com", "127.0.0.1", "www.rhn.redhat.com" };
+        String[] straInvalidHosts =
+                new String[] { "www.redhat#com", "123/456", "www@redhat.com", "www.řhň.řěďháť.čőm", "你好世界",
+                        "שלוםעולם" };
         for (String s : straValidHosts) {
             assertTrue("Valid host name: " + s, ValidationUtils.validHostname(s));
         }
@@ -53,4 +54,18 @@ public class ValidationUtilsTest {
             assertTrue("Invalid host name: " + s, !ValidationUtils.validHostname(s));
         }
     }
+
+    @Test
+    public void testisVdsNameLegal() {
+        String[] validStrings = new String[] { "a", "aa", "abc", "á-", "áá_", "úőü.", "你好世界", "שלוםעולם" };
+        String[] invalidStrings = new String[] { "@", " ", "a a", "//" };
+        for (String s : validStrings) {
+            assertTrue("Valid vds name: " + s, ValidationUtils.isVdsNameLegal(s));
+        }
+
+        for (String s : invalidStrings) {
+            assertTrue("Invalid vds name: " + s, !ValidationUtils.isVdsNameLegal(s));
+        }
+    }
+
 }

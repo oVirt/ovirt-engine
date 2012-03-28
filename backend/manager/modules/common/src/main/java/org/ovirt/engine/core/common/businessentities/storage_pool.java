@@ -22,6 +22,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.ovirt.engine.core.common.businessentities.mapping.GuidType;
+import org.ovirt.engine.core.common.validation.annotation.ValidDescription;
 import org.ovirt.engine.core.common.validation.annotation.ValidName;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
@@ -65,6 +66,7 @@ public class storage_pool extends IVdcQueryable implements INotifyPropertyChange
 
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
     @Column(name = "description")
+    @ValidDescription(message = "VALIDATION.DATA_CENTER.DESCRIPTION.INVALID", groups = { CreateEntity.class, UpdateEntity.class })
     private String description;
 
     @Column(name = "storage_pool_type")
