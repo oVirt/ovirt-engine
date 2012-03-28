@@ -99,7 +99,7 @@
 					</tr>
 					<tr class="formRow">
 						<td>
-							<e:EntityModelCheckBoxEditor ui:field="loginAutomatically" />
+							<e:EntityModelCheckBoxEditor ui:field="connectAutomatically" />
 						</td>
 					</tr>
 					<tr class="formRow">

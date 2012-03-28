@@ -4,6 +4,8 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import org.ovirt.engine.ui.common.system.ApplicationFocusChangeEvent;
+import org.ovirt.engine.ui.common.system.ApplicationFocusChangeEvent.ApplicationFocusChangeHandler;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.ModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.UiCommonInitEvent;
@@ -22,8 +24,11 @@ import com.google.gwt.event.shared.EventBus;
  */
 public abstract class AbstractRefreshManager<T extends BaseRefreshPanel> {
 
+    // Prefix for keys used to store refresh rates of individual data grids
+    private static final String GRID_REFRESH_RATE_PREFIX = "GridRefreshRate";
+
     private static final Integer DEFAULT_REFRESH_RATE = GridTimer.DEFAULT_NORMAL_RATE;
-    private static final String REFRESH_RATE_ITEM_NAME = "GridRefreshRate";
+    private static final Integer OUT_OF_FOCUS_REFRESH_RATE = Integer.valueOf(60000);
     private static final Set<Integer> REFRESH_RATES = new LinkedHashSet<Integer>();
 
     static {
@@ -31,6 +36,7 @@ public abstract class AbstractRefreshManager<T extends BaseRefreshPanel> {
         REFRESH_RATES.add(10000);
         REFRESH_RATES.add(20000);
         REFRESH_RATES.add(30000);
+        REFRESH_RATES.add(OUT_OF_FOCUS_REFRESH_RATE);
     }
 
     /**
@@ -62,6 +68,14 @@ public abstract class AbstractRefreshManager<T extends BaseRefreshPanel> {
         });
 
         updateController();
+
+        // Add handler to be notified when the application window gains or looses its focus
+        eventBus.addHandler(ApplicationFocusChangeEvent.getType(), new ApplicationFocusChangeHandler() {
+            @Override
+            public void onApplicationFocusChange(ApplicationFocusChangeEvent event) {
+                onWindowFocusChange(event.isInFocus());
+            }
+        });
     }
 
     private void updateController() {
@@ -74,6 +88,17 @@ public abstract class AbstractRefreshManager<T extends BaseRefreshPanel> {
                 onRefresh(event.getValue());
             }
         });
+    }
+
+    /**
+     * Callback fired when the application window gains or looses its focus.
+     */
+    void onWindowFocusChange(boolean inFocus) {
+        if (inFocus) {
+            controller.setRefreshRate(readRefreshRate());
+        } else {
+            controller.setRefreshRate(OUT_OF_FOCUS_REFRESH_RATE);
+        }
     }
 
     /**
@@ -108,7 +133,7 @@ public abstract class AbstractRefreshManager<T extends BaseRefreshPanel> {
     }
 
     String getRefreshRateItemKey() {
-        return REFRESH_RATE_ITEM_NAME + "_" + controller.getId();
+        return GRID_REFRESH_RATE_PREFIX + "_" + controller.getId();
     }
 
     void saveRefreshRate(int newRefreshRate) {

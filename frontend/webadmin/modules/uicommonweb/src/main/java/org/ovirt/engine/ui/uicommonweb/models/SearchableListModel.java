@@ -898,20 +898,6 @@ public abstract class SearchableListModel extends ListModel implements GridContr
     }
 
     @Override
-    public void toBackground() {
-        // move to slow
-        logger.info("toBackground(): pausing timer");
-        getTimer().pause();
-    }
-
-    @Override
-    public void toForground() {
-        // move to normal
-        logger.info("toForground(): resuming timer");
-        getTimer().resume();
-    }
-
-    @Override
     public String getId() {
         return getListName();
     }

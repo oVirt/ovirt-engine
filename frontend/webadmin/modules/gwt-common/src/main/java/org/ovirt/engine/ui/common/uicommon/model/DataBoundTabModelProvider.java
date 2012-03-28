@@ -7,8 +7,6 @@ import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.ui.common.gin.BaseClientGinjector;
-import org.ovirt.engine.ui.common.system.ApplicationFocusChangeEvent;
-import org.ovirt.engine.ui.common.system.ApplicationFocusChangeEvent.ApplicationFocusChangeHandler;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 
 import com.google.gwt.view.client.AsyncDataProvider;
@@ -34,41 +32,13 @@ public abstract class DataBoundTabModelProvider<T, M extends SearchableListModel
     public DataBoundTabModelProvider(BaseClientGinjector ginjector, ProvidesKey<T> keyProvider) {
         super(ginjector);
 
-        dataProvider = new AsyncDataProvider<T>(keyProvider) {
+        this.dataProvider = new AsyncDataProvider<T>(keyProvider) {
             @Override
             protected void onRangeChanged(HasData<T> display) {
                 // We might get here after the ItemsChangedEvent has been triggered
                 updateData();
             }
         };
-
-        // Add handler to be notified when the application window gains or looses its focus
-        getEventBus().addHandler(ApplicationFocusChangeEvent.getType(), new ApplicationFocusChangeHandler() {
-            @Override
-            public void onApplicationFocusChange(ApplicationFocusChangeEvent event) {
-                DataBoundTabModelProvider.this.onWindowFocusChange(event.isInFocus());
-            }
-        });
-    }
-
-    /**
-     * Callback fired when the application window gains or looses its focus.
-     */
-    protected void onWindowFocusChange(boolean inFocus) {
-        if (isModelReady()) {
-            if (inFocus) {
-                getModel().toForground();
-            } else {
-                getModel().toBackground();
-            }
-        }
-    }
-
-    /**
-     * @return {@code true} when {@link #getModel} can be safely called to retrieve the model, {@code false} otherwise.
-     */
-    protected boolean isModelReady() {
-        return getCommonModel() != null;
     }
 
     @Override
@@ -86,6 +56,9 @@ public abstract class DataBoundTabModelProvider<T, M extends SearchableListModel
         });
     }
 
+    /**
+     * @return {@code true} when the ItemsChangedEvent of the model should trigger data update, {@code false} otherwise.
+     */
     protected boolean handleItemsChangedEvent() {
         return true;
     }

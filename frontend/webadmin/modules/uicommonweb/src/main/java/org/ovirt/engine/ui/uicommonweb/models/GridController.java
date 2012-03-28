@@ -16,16 +16,6 @@ public interface GridController {
     void setRefreshRate(int currentRefreshRate);
 
     /**
-     * Notified the Grid that it is out of window focus
-     */
-    void toBackground();
-
-    /**
-     * Notified the Grid that it has received window focus
-     */
-    void toForground();
-
-    /**
      * Get the timer used by the Grid
      */
     GridTimer getTimer();

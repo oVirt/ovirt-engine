@@ -13,6 +13,8 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
  */
 public interface BaseClientGinjector extends Ginjector {
 
+    // Core system components
+
     EventBus getEventBus();
 
     PlaceManager getPlaceManager();

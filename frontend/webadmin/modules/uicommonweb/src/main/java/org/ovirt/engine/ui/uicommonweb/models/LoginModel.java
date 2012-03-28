@@ -152,7 +152,9 @@ public class LoginModel extends Model
 
         UICommand tempVar = new UICommand("Login", this);
         tempVar.setIsExecutionAllowed(false);
+        tempVar.setIsDefault(true);
         setLoginCommand(tempVar);
+        getCommands().add(tempVar);
 
         UICommand tempVar2 = new UICommand("About", this);
         tempVar2.setIsExecutionAllowed(false);
@@ -287,6 +289,10 @@ public class LoginModel extends Model
                         {
                             loginModel.setMessage(Linq.FirstOrDefault(returnValue.getCanDoActionMessages()));
                         }
+                        loginModel.getUserName().setIsChangable(true);
+                        loginModel.getPassword().setIsChangable(true);
+                        loginModel.getDomain().setIsChangable(true);
+                        loginModel.getLoginCommand().setIsExecutionAllowed(true);
                         loginModel.getLoginFailedEvent().raise(this, EventArgs.Empty);
                     }
                     else

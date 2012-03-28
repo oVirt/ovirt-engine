@@ -9,7 +9,8 @@ import com.google.inject.Inject;
  */
 public class ConnectAutomaticallyProvider {
 
-    private static final String LOGIN_AUTOCONNECT_COOKIE_NAME = "Login_ConnectAutomaticallyChecked";
+    // Determines if the application should automatically open console for a running VM upon login
+    private static final String LOGIN_AUTOCONNECT = "Login_ConnectAutomaticallyChecked";
 
     private final ClientStorage clientStorage;
 
@@ -19,13 +20,13 @@ public class ConnectAutomaticallyProvider {
     }
 
     public void storeConnectAutomatically(boolean connectAutomatically) {
-        clientStorage.setLocalItem(LOGIN_AUTOCONNECT_COOKIE_NAME, Boolean.toString(connectAutomatically));
+        clientStorage.setLocalItem(LOGIN_AUTOCONNECT, Boolean.toString(connectAutomatically));
     }
 
     public boolean readConnectAutomatically() {
-        String storedConnectAutomatically = clientStorage.getLocalItem(LOGIN_AUTOCONNECT_COOKIE_NAME);
+        String storedConnectAutomatically = clientStorage.getLocalItem(LOGIN_AUTOCONNECT);
 
-        // default value is true
+        // Default value is true
         boolean connectAutomatically = true;
         if (storedConnectAutomatically != null && !"".equals(storedConnectAutomatically)) {
             connectAutomatically = Boolean.parseBoolean(storedConnectAutomatically);
