@@ -13,7 +13,7 @@ import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.StorageDomains;
 import org.ovirt.engine.api.resource.DiskResource;
 import org.ovirt.engine.core.common.action.AddDiskToVmParameters;
-import org.ovirt.engine.core.common.action.RemoveDisksFromVmParameters;
+import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
@@ -50,10 +50,10 @@ public class BackendDisksResourceTest
     @Test
     public void testRemove() throws Exception {
         setUpGetEntityExpectations();
-        setUriInfo(setUpActionExpectations(VdcActionType.RemoveDisksFromVm,
-                                           RemoveDisksFromVmParameters.class,
-                                           new String[] { "VmId", "ImageIds" },
-                                           new Object[] { PARENT_ID, asList(GUIDS[0]) },
+        setUriInfo(setUpActionExpectations(VdcActionType.RemoveDisk,
+                                           RemoveDiskParameters.class,
+                                           new String[] { "EntityId" },
+                                           new Object[] { GUIDS[0] },
                                            true,
                                            true));
         verifyRemove(collection.remove(GUIDS[0].toString()));
@@ -79,10 +79,10 @@ public class BackendDisksResourceTest
 
     protected void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
         setUpGetEntityExpectations();
-        setUriInfo(setUpActionExpectations(VdcActionType.RemoveDisksFromVm,
-                                           RemoveDisksFromVmParameters.class,
-                                           new String[] { "VmId", "ImageIds" },
-                                           new Object[] { PARENT_ID, asList(GUIDS[0]) },
+        setUriInfo(setUpActionExpectations(VdcActionType.RemoveDisk,
+                                           RemoveDiskParameters.class,
+                                           new String[] { "EntityId" },
+                                           new Object[] { GUIDS[0] },
                                            canDo,
                                            success));
         try {

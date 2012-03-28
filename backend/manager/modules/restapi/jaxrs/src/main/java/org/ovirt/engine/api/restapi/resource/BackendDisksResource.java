@@ -14,7 +14,7 @@ import org.ovirt.engine.api.model.Statistics;
 import org.ovirt.engine.api.resource.DeviceResource;
 import org.ovirt.engine.api.resource.DevicesResource;
 import org.ovirt.engine.core.common.action.AddDiskToVmParameters;
-import org.ovirt.engine.core.common.action.RemoveDisksFromVmParameters;
+import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.UpdateVmDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -40,7 +40,7 @@ public class BackendDisksResource
               queryType,
               queryParams,
               VdcActionType.AddDiskToVm,
-              VdcActionType.RemoveDisksFromVm,
+              VdcActionType.RemoveDisk,
               VdcActionType.UpdateVmDisk,
               SUB_COLLECTIONS);
     }
@@ -87,7 +87,7 @@ public class BackendDisksResource
 
     @Override
     protected VdcActionParametersBase getRemoveParameters(String id) {
-        return new RemoveDisksFromVmParameters(parentId, asList(asGuid(id)));
+        return new RemoveDiskParameters(asGuid(id));
     }
 
     @Override
