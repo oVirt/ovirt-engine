@@ -19,6 +19,7 @@ import org.ovirt.engine.core.compat.Guid;
 public class QuotaDAOTest extends BaseDAOTestCase {
     private QuotaDAO dao;
     private static final Long unlimited = -1L;
+    private static final int NUM_QUOTAS = 4;
 
     @Override
     public void setUp() throws Exception {
@@ -465,6 +466,41 @@ public class QuotaDAOTest extends BaseDAOTestCase {
     public void testGetQuotaWithNoExistingName() throws Exception {
         Quota quotaGeneralToSpecific = dao.getQuotaByQuotaName("Any name");
         assertEquals(null, quotaGeneralToSpecific);
+    }
+
+    /**
+     * Test {@link QuotaDAO#getAllRelevantQuotasForStorage(Guid)} with an existing storage domain
+     */
+    @Test
+    public void testGetRelevantQuotasExistingStorage() throws Exception {
+        // there is one specific quota and all the general ones defined on this storage domain
+        assertGetAllRelevantQuoatsForStorage(FixturesTool.STORAGE_DOAMIN_NFS_MASTER, NUM_QUOTAS);
+    }
+
+    /**
+     * Test {@link QuotaDAO#getAllRelevantQuotasForStorage(Guid)} with a storage domain with no specific quotas
+     */
+    @Test
+    public void testGetRelevantQuotasExistingStorageNoSpecificQuotas() throws Exception {
+        // there are no specific quotas, but all the general quotas relate to the storage pool containing this domain
+        assertGetAllRelevantQuoatsForStorage(FixturesTool.STORAGE_DOAMIN_NFS_ISO, NUM_QUOTAS - 1);
+    }
+
+    /**
+     * Test {@link QuotaDAO#getAllRelevantQuotasForStorage(Guid)} with a non existing storage domain
+     */
+    @Test
+    public void testGetRelevantQuotasNonExistingStorage() throws Exception {
+        // There is no such storgae, so no quotas are defined on it
+        assertGetAllRelevantQuoatsForStorage(Guid.NewGuid(), 0);
+    }
+
+    /**
+     * Asserts that {@link #expectedQuotas} are relevant for the given {@link #storageId}
+     */
+    private void assertGetAllRelevantQuoatsForStorage(Guid storageId, int expectedQuotas) {
+        List<Quota> quotas = dao.getAllRelevantQuotasForStorage(storageId);
+        assertEquals("Wrong number of quotas retuend", expectedQuotas, quotas.size());
     }
 
     private static QuotaStorage getSpecificQuotaStorage(Guid quotaId) {

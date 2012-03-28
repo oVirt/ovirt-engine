@@ -800,6 +800,30 @@ WHERE storage_pool.id = q.storage_pool_id
 AND q_limit.vds_group_id IS NULL
 AND q_limit.storage_id IS NULL;
 
+CREATE OR REPLACE VIEW quota_limitations_view
+AS
+SELECT q_limit.quota_id as quota_id,
+    q.storage_pool_id as storage_pool_id,
+    storage_pool.name as storage_pool_name,
+    q.quota_name as quota_name,
+    q.description as description,
+    q.threshold_vds_group_percentage as threshold_vds_group_percentage,
+    q.threshold_storage_percentage as threshold_storage_percentage,
+    q.grace_vds_group_percentage as grace_vds_group_percentage,
+    q.grace_storage_percentage as grace_storage_percentage,
+    virtual_cpu,
+    mem_size_mb,
+    storage_size_gb,
+    storage_pool.quota_enforcement_type as quota_enforcement_type,
+    is_default_quota,
+    vds_group_id,
+    storage_id,
+    (COALESCE(vds_group_id, storage_id) IS NULL ) AS is_global,
+    (COALESCE(virtual_cpu, mem_size_mb, storage_size_gb) IS NULL) AS is_empty
+FROM  quota q
+INNER JOIN storage_pool ON storage_pool.id = q.storage_pool_id
+LEFT OUTER JOIN quota_limitation q_limit on q_limit.quota_id = q.id;
+
 
 CREATE OR REPLACE VIEW quota_storage_view
 AS

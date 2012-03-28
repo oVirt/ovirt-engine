@@ -188,6 +188,17 @@ public class QuotaDAODbFacadeImpl extends BaseDAODbFacade implements QuotaDAO {
         return quotaEntity;
     }
 
+    @Override
+    public List<Quota> getAllRelevantQuotasForStorage(Guid storageId) {
+        MapSqlParameterSource quotaParameterSource = getCustomMapSqlParameterSource();
+        quotaParameterSource.addValue("storage_id", storageId);
+        List<Quota> quotas =
+                getCallsHandler().executeReadList("getAllThinQuotasByStorageId",
+                        getQuotaMetaDataFromResultSet(),
+                        quotaParameterSource);
+        return quotas;
+    }
+
     /**
      * Remove quota with quota id.
      */

@@ -180,3 +180,29 @@ BEGIN
      and is_default_quota = true;
 END; $procedure$
 LANGUAGE plpgsql;
+
+
+Create or replace FUNCTION GetAllThinQuotasByStorageId(v_storage_id UUID)
+RETURNS SETOF quota_view
+   AS $procedure$
+BEGIN
+   RETURN QUERY SELECT DISTINCT
+    quota_id,
+    storage_pool_id,
+    storage_pool_name,
+    quota_name,
+    description,
+    threshold_vds_group_percentage,
+    threshold_storage_percentage,
+    grace_vds_group_percentage,
+    grace_storage_percentage,
+    quota_enforcement_type,
+    is_default_quota
+   FROM   quota_limitations_view
+   WHERE  storage_id = v_storage_id
+   OR     (is_global AND NOT is_empty AND storage_pool_id IN (SELECT storage_pool_id
+                                                              FROM   storage_pool_iso_map
+                                                              WHERE  storage_id = v_storage_id));
+END; $procedure$
+LANGUAGE plpgsql;
+
