@@ -36,7 +36,7 @@ public class AddImageFromScratchCommand<T extends AddImageFromScratchParameters>
     @Override
     protected void executeCommand() {
         setImageContainerId(getVm().getvmt_guid());
-        setImageGroupId(Guid.NewGuid());
+        setImageGroupId(getParameters().getDiskInfo().getDisk().getId());
 
         if (ProcessImageInIrs()) {
             mNewCreatedDiskImage = new DiskImage();

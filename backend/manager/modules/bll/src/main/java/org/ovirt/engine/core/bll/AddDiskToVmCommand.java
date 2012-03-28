@@ -48,7 +48,8 @@ public class AddDiskToVmCommand<T extends AddDiskToVmParameters> extends Abstrac
 
     public AddDiskToVmCommand(T parameters) {
         super(parameters);
-        parameters.setEntityId(parameters.getVmId());
+        parameters.getDiskInfo().getDisk().setId(Guid.NewGuid());
+        parameters.setEntityId(parameters.getDiskInfo().getDisk().getId());
         setQuotaId(parameters.getDiskInfo() != null ? parameters.getDiskInfo().getQuotaId() : null);
     }
 
@@ -66,9 +67,6 @@ public class AddDiskToVmCommand<T extends AddDiskToVmParameters> extends Abstrac
         if (returnValue && getVm().getstatus() != VMStatus.Down) {
             returnValue = false;
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
-        } else if (hasRunningTasks()) {
-            returnValue = false;
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_TASKS_ARE_ALREADY_RUNNING);
         } else {
             // if user sent drive check that its not in use
             returnValue = returnValue && isDiskCanBeAddedToVm(getParameters().getDiskInfo());
