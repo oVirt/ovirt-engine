@@ -33,9 +33,17 @@ INSERT INTO images(creation_date, description, image_guid, it_guid, size, Parent
 END; $procedure$
 LANGUAGE plpgsql;    
 
-
-
-
+Create or replace FUNCTION UpdateImageStatus(
+    v_image_id UUID,
+    v_status INTEGER)
+RETURNS VOID
+AS $procedure$
+BEGIN
+    UPDATE images
+    SET    imageStatus = v_status
+    WHERE  image_guid = v_image_id;
+END; $procedure$
+LANGUAGE plpgsql;
 
 Create or replace FUNCTION UpdateImage(v_creation_date TIMESTAMP WITH TIME ZONE,
 	v_description VARCHAR(4000) ,

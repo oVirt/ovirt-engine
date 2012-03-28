@@ -3,6 +3,7 @@ package org.ovirt.engine.core.dao;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -10,7 +11,7 @@ import org.ovirt.engine.core.compat.Guid;
  *
  *
  */
-public interface DiskImageDAO extends GenericDao<DiskImage, Guid>, SearchDAO<DiskImage> {
+public interface DiskImageDAO extends GenericDao<DiskImage, Guid>, SearchDAO<DiskImage>, StatusAwareDao<Guid, ImageStatus> {
 
     /**
      * Retrieves the snapshot with the specified id.

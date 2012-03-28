@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.DiskType;
+import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
@@ -243,6 +244,14 @@ public class DiskImageDAOTest extends BaseGenericDaoTestCase<Guid, DiskImage, Di
 
         assertNotNull(result);
         assertTrue(result.isEmpty());
+    }
+
+    @Test
+    public void testUpdateStatus() {
+        dao.updateStatus(EXISTING_IMAGE_ID, ImageStatus.LOCKED);
+        DiskImage imageFromDb = dao.get(EXISTING_IMAGE_ID);
+        assertNotNull(imageFromDb);
+        assertEquals(ImageStatus.LOCKED, imageFromDb.getimageStatus());
     }
 
     /**

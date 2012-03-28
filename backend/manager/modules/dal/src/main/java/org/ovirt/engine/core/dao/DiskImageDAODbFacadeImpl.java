@@ -324,4 +324,12 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
     public List<DiskImage> getAllWithQuery(String query) {
         return new SimpleJdbcTemplate(jdbcTemplate).query(query, diskImageRowMapper);
     }
+
+    @Override
+    public void updateStatus(Guid id, ImageStatus status) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("image_id", id)
+                .addValue("status", status);
+        getCallsHandler().executeModification("UpdateImageStatus", parameterSource);
+    }
 }
