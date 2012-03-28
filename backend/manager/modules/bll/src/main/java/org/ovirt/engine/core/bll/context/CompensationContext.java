@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll.context;
 
+import java.util.Collection;
+
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 
 /**
@@ -17,6 +19,15 @@ public interface CompensationContext {
     public void snapshotEntity(BusinessEntity<?> entity);
 
     /**
+     * For each entity in the collection saves a snapshot of the entire data before it is changed/deleted in the DB, so
+     * it can be restored later on in case of compensation
+     *
+     * @param entities
+     *            The entities before the changes.
+     */
+    public void snapshotEntities(Collection<? extends BusinessEntity<?>> entities);
+
+    /**
      * Save a snapshot of a new entity that was added to the DB, so that if there's need for compensation it will be
      * deleted from the DB.
      *
@@ -24,6 +35,15 @@ public interface CompensationContext {
      *            The new entity which was added.
      */
     public void snapshotNewEntity(BusinessEntity<?> entity);
+
+    /**
+     * Save snapshots of new entities that were added to the DB, so that if there's a need for compensation they will be
+     * deleted from the DB.
+     *
+     * @param entities
+     *            the entities that were added.
+     */
+    public void snapshotNewEntities(Collection<? extends BusinessEntity<?>> entities);
 
     /**
      * Snapshot the entity status only, so that in case of compensation for the entity, the status will be updated to

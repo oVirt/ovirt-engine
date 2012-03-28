@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.context;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -233,6 +234,24 @@ public class DefaultCompensationContext implements CompensationContext {
 
         private DefaultCompensationContext getOuterType() {
             return DefaultCompensationContext.this;
+        }
+    }
+
+    @Override
+    public void snapshotEntities(Collection<? extends BusinessEntity<?>> entities) {
+        if (entities != null) {
+            for (BusinessEntity<?> entity : entities) {
+                snapshotEntity(entity);
+            }
+        }
+    }
+
+    @Override
+    public void snapshotNewEntities(Collection<? extends BusinessEntity<?>> entities) {
+        if (entities != null) {
+            for (BusinessEntity<?> entity : entities) {
+                snapshotNewEntity(entity);
+            }
         }
     }
 }

@@ -197,7 +197,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     private CompensationContext createCompensationContext(TransactionScopeOption transactionScopeOption,
             boolean forceCompensation) {
         if (transactionScopeOption == TransactionScopeOption.Suppress && !forceCompensation) {
-            return new NoOpCompensationContext();
+            return NoOpCompensationContext.getInstance();
         }
 
         DefaultCompensationContext context = new DefaultCompensationContext();

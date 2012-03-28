@@ -80,7 +80,7 @@ public class VmInterfaceManagerTest {
             boolean expectedResult) {
         when(macPoolManager.AddMac(iface.getMacAddress())).thenReturn(addMacResult);
 
-        assertEquals(expectedResult, vmInterfaceManager.add(iface, new NoOpCompensationContext()));
+        assertEquals(expectedResult, vmInterfaceManager.add(iface, NoOpCompensationContext.getInstance()));
         verifyAddDelegatedCorrectly(iface, addMacVerification);
     }
 
