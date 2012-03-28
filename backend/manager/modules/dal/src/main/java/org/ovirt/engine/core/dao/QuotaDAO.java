@@ -126,11 +126,20 @@ public interface QuotaDAO extends DAO, SearchDAO<Quota> {
     public List<Quota> getQuotaByStoragePoolGuid(Guid storagePoolId);
 
     /**
-     * Returns a lits of all the quotas that are relevant to the given {@link #storageId} -
+     * Returns a list of all the quotas that are relevant to the given {@link #storageId} -
      * be it specific quotas (i.e., defined directly on the storage) or
      * general (i.e., defined on the storage pool containing the storage).<br/>
      * <b>Note:</b> The quotas returned are <b>thin</b> objects, containing only the metadata of the quota,
      * not the usage data.
      */
     public List<Quota> getAllRelevantQuotasForStorage(Guid storageId);
+
+    /**
+     * Returns a list of all the quotas that are relevant to the given {@link #vdsGroupId} -
+     * be it specific quotas (i.e., defined directly on the VDS Group) or
+     * general (i.e., defined on the storage pool containing the group).<br/>
+     * <b>Note:</b> The quotas returned are <b>thin</b> objects, containing only the metadata of the quota,
+     * not the usage data.
+     */
+    public List<Quota> getAllRelevantQuotasForVdsGroup(Guid vdsGroupId);
 }

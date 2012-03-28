@@ -47,6 +47,11 @@ public class FixturesTool {
     protected static final Guid VDS_GROUP_RHEL6_NFS = new Guid("0e57070e-2469-4b38-84a2-f111aaabd49d");
 
     /**
+     * Predefined vds group, with no specific quotas associated to it.
+     */
+    protected static final Guid VDS_GROUP_RHEL6_NFS_NO_SPECIFIC_QUOTAS = new Guid("eba797fb-8e3b-4777-b63c-92e7a5957d7e");
+
+    /**
      * Predefined vds group with no running VMs
      */
     protected static final Guid VDS_GROUP_NO_RUNNING_VMS = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d3");

@@ -9,7 +9,6 @@ import java.util.List;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.Quota;
-import org.ovirt.engine.core.common.businessentities.QuotaEnforcmentTypeEnum;
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;
 import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
 import org.ovirt.engine.core.common.config.Config;
@@ -90,7 +89,7 @@ public class QuotaDAOTest extends BaseDAOTestCase {
         quota.setGraceStoragePercentage(Config.<Integer> GetValue(ConfigValues.QuotaGraceStorage));
         quota.setQuotaVdsGroups(getQuotaVdsGroup(getSpecificQuotaVdsGroup(quotaId)));
         quota.setQuotaStorages(getQuotaStorage(null));
-        quota.setGlobalQuotaStorage(new QuotaStorage(null,null,null,10000l,0d));
+        quota.setGlobalQuotaStorage(new QuotaStorage(null, null, null, 10000l, 0d));
         dao.save(quota);
 
         Quota quotaEntity = dao.getById(quota.getId());
@@ -500,6 +499,41 @@ public class QuotaDAOTest extends BaseDAOTestCase {
      */
     private void assertGetAllRelevantQuoatsForStorage(Guid storageId, int expectedQuotas) {
         List<Quota> quotas = dao.getAllRelevantQuotasForStorage(storageId);
+        assertEquals("Wrong number of quotas retuend", expectedQuotas, quotas.size());
+    }
+
+    /**
+     * Test {@link QuotaDAO#getAllRelevantQuotasForStorage(Guid)} with an existing VDS Group
+     */
+    @Test
+    public void testGetRelevantQuotasExistingVdsGroup() throws Exception {
+        // there is one specific quota and all the general ones defined on this VDS Group
+        assertGetAllRelevantQuoatsForVdsGroup(FixturesTool.VDS_GROUP_RHEL6_NFS, NUM_QUOTAS);
+    }
+
+    /**
+     * Test {@link QuotaDAO#getAllRelevantQuotasForStorage(Guid)} with a VDS Group domain with no specific quotas
+     */
+    @Test
+    public void testGetRelevantQuotasExistingVdsGroupNoSpecificQuotas() throws Exception {
+        // there are no specific quotas, but all the general quotas relate to the storage pool containing this group
+        assertGetAllRelevantQuoatsForVdsGroup(FixturesTool.VDS_GROUP_RHEL6_NFS_NO_SPECIFIC_QUOTAS, NUM_QUOTAS - 1);
+    }
+
+    /**
+     * Test {@link QuotaDAO#getAllRelevantQuotasForStorage(Guid)} with a non existing VDS Group
+     */
+    @Test
+    public void testGetRelevantQuotasNonExistingVdsGroup() throws Exception {
+        // There is no such storgae, so no quotas are defined on it
+        assertGetAllRelevantQuoatsForVdsGroup(Guid.NewGuid(), 0);
+    }
+
+    /**
+     * Asserts that {@link #expectedQuotas} are relevant for the given {@link #vdsGroupId}
+     */
+    private void assertGetAllRelevantQuoatsForVdsGroup(Guid vdsGroupId, int expectedQuotas) {
+        List<Quota> quotas = dao.getAllRelevantQuotasForVdsGroup(vdsGroupId);
         assertEquals("Wrong number of quotas retuend", expectedQuotas, quotas.size());
     }
 

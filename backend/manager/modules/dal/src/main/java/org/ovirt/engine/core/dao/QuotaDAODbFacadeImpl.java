@@ -199,6 +199,17 @@ public class QuotaDAODbFacadeImpl extends BaseDAODbFacade implements QuotaDAO {
         return quotas;
     }
 
+    @Override
+    public List<Quota> getAllRelevantQuotasForVdsGroup(Guid vdsGroupId) {
+        MapSqlParameterSource quotaParameterSource = getCustomMapSqlParameterSource();
+        quotaParameterSource.addValue("vds_group_id", vdsGroupId);
+        List<Quota> quotas =
+                getCallsHandler().executeReadList("getAllThinQuotasByVDSGroupId",
+                        getQuotaMetaDataFromResultSet(),
+                        quotaParameterSource);
+        return quotas;
+    }
+
     /**
      * Remove quota with quota id.
      */
@@ -290,7 +301,8 @@ public class QuotaDAODbFacadeImpl extends BaseDAODbFacade implements QuotaDAO {
                     entity.setGlobalQuotaVdsGroup(vdsGroupEntity);
                 }
 
-                // Check if storage limit size is not null, this is an indication if global limitation for storage exists or
+                // Check if storage limit size is not null, this is an indication if global limitation for storage
+                // exists or
                 // not.
                 if (rs.getObject("storage_size_gb") != null) {
                     // Set global storage quota.
@@ -398,9 +410,15 @@ public class QuotaDAODbFacadeImpl extends BaseDAODbFacade implements QuotaDAO {
                         .addValue("quota_id", quota.getId())
                         .addValue("vds_group_id", null)
                         .addValue("storage_id", null)
-                        .addValue("storage_size_gb", quota.getGlobalQuotaStorage() != null ? quota.getGlobalQuotaStorage().getStorageSizeGB() : null)
-                        .addValue("virtual_cpu", quota.getGlobalQuotaVdsGroup() != null ? quota.getGlobalQuotaVdsGroup().getVirtualCpu() : null)
-                        .addValue("mem_size_mb", quota.getGlobalQuotaVdsGroup() != null ? quota.getGlobalQuotaVdsGroup().getMemSizeMB() : null);
+                        .addValue("storage_size_gb",
+                                quota.getGlobalQuotaStorage() != null ? quota.getGlobalQuotaStorage()
+                                        .getStorageSizeGB() : null)
+                        .addValue("virtual_cpu",
+                                quota.getGlobalQuotaVdsGroup() != null ? quota.getGlobalQuotaVdsGroup().getVirtualCpu()
+                                        : null)
+                        .addValue("mem_size_mb",
+                                quota.getGlobalQuotaVdsGroup() != null ? quota.getGlobalQuotaVdsGroup().getMemSizeMB()
+                                        : null);
         return quotaParameterMap;
     }
 
