@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import org.ovirt.engine.core.common.action.AddDiskToVmParameters;
 import org.ovirt.engine.core.common.action.HotPlugDiskToVmParameters;
-import org.ovirt.engine.core.common.action.RemoveDisksFromVmParameters;
+import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.UpdateVmDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -484,23 +484,30 @@ public class VmDiskListModel extends SearchableListModel
     private void OnRemove()
     {
         VM vm = (VM) getEntity();
+        ConfirmationModel model = (ConfirmationModel) getWindow();
 
-        java.util.ArrayList<Guid> images = new java.util.ArrayList<Guid>();
+        ArrayList<Guid> images = new ArrayList<Guid>();
+        ArrayList<VdcActionParametersBase> paramerterList = new ArrayList<VdcActionParametersBase>();
+
         for (Object item : getSelectedItems())
         {
             DiskImage a = (DiskImage) item;
-            images.add(a.getId());
+            RemoveDiskParameters parameters = new RemoveDiskParameters(a.getId());
+            paramerterList.add(parameters);
         }
 
-        Frontend.RunAction(VdcActionType.RemoveDisksFromVm, new RemoveDisksFromVmParameters(vm.getId(), images),
-                new IFrontendActionAsyncCallback() {
+        model.StartProgress(null);
+
+        Frontend.RunMultipleAction(VdcActionType.RemoveDisk, paramerterList,
+                new IFrontendMultipleActionAsyncCallback() {
                     @Override
-                    public void Executed(FrontendActionAsyncResult result) {
-
+                    public void Executed(FrontendMultipleActionAsyncResult result) {
+                        VmDiskListModel localModel = (VmDiskListModel) result.getState();
+                        localModel.StopProgress();
+                        Cancel();
                     }
-                }, null);
-
-        Cancel();
+                },
+                this);
     }
 
     private void OnSave()

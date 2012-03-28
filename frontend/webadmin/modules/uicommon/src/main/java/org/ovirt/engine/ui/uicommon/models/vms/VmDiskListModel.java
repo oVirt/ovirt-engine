@@ -1,4 +1,6 @@
 package org.ovirt.engine.ui.uicommon.models.vms;
+
+import java.util.ArrayList;
 import java.util.Collections;
 import org.ovirt.engine.core.compat.*;
 import org.ovirt.engine.ui.uicompat.*;
@@ -352,29 +354,31 @@ public class VmDiskListModel extends SearchableListModel
 
 	private void OnRemove()
 	{
-		VM vm = (VM)getEntity();
+        VM vm = (VM) getEntity();
+        ConfirmationModel model = (ConfirmationModel) getWindow();
 
-		//TODO: Confirm system disk removal.
+        ArrayList<Guid> images = new ArrayList<Guid>();
+        ArrayList<VdcActionParametersBase> paramerterList = new ArrayList<VdcActionParametersBase>();
 
-		//List<Guid> images = SelectedItems.Cast<DiskImage>().Select(a =>(Guid) a.image_guid).ToList();
+        for (Object item : getSelectedItems())
+        {
+            DiskImage a = (DiskImage) item;
+            RemoveDiskParameters parameters = new RemoveDiskParameters(a.getId());
+            paramerterList.add(parameters);
+        }
 
-		java.util.ArrayList<Guid> images = new java.util.ArrayList<Guid>();
-		for (Object item : getSelectedItems())
-		{
-			DiskImage a = (DiskImage)item;
-			images.add(a.getId());
-		}
+        model.StartProgress(null);
 
-		Frontend.RunAction(VdcActionType.RemoveDisksFromVm, new RemoveDisksFromVmParameters(vm.getId(), images),
-		new IFrontendActionAsyncCallback() {
-			@Override
-			public void Executed(FrontendActionAsyncResult  result) {
-
-
-			}
-		}, null);
-
-		Cancel();
+        Frontend.RunMultipleAction(VdcActionType.RemoveDisk, paramerterList,
+                new IFrontendMultipleActionAsyncCallback() {
+                    @Override
+                    public void Executed(FrontendMultipleActionAsyncResult result) {
+                        VmDiskListModel localModel = (VmDiskListModel) result.getState();
+                        localModel.StopProgress();
+                        Cancel();
+                    }
+                },
+                this);
 	}
 
 	private void OnSave()
