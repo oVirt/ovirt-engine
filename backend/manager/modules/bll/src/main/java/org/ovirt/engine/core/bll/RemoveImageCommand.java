@@ -58,8 +58,7 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
             getReturnValue().getInternalTaskIdList().add(
                         CreateTask(vdsReturnValue.getCreationInfo(), getParameters().getParentCommand()));
 
-            if (getParameters().getParentCommand() != VdcActionType.RemoveDisksFromVm
-                        && getParameters().getParentCommand() != VdcActionType.RemoveVmFromImportExport
+            if (getParameters().getParentCommand() != VdcActionType.RemoveVmFromImportExport
                         && getParameters().getParentCommand() != VdcActionType.RemoveVmTemplateFromImportExport
                         && getParameters().getParentCommand() != VdcActionType.RemoveDisk) {
                 removeImageFromDB();
