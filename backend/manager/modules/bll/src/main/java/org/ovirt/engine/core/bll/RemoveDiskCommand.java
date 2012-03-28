@@ -63,6 +63,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
                 && disk.getVmEntityType() == VmEntityType.VM
                 && (getParameters().getStorageDomainId() == null || Guid.Empty.equals(getParameters().getStorageDomainId()))) {
             getParameters().setStorageDomainId(disk.getstorage_ids().get(0));
+            setStorageDomainId(disk.getstorage_ids().get(0));
         }
         if (retValue && !disk.getstorage_ids().contains(getParameters().getStorageDomainId())) {
             retValue = false;
