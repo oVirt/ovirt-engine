@@ -20,15 +20,14 @@ import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResource.Paramete
 import org.ovirt.engine.api.common.util.DetailHelper;
 import org.ovirt.engine.api.common.util.LinkHelper;
 import org.ovirt.engine.api.model.NIC;
-import org.ovirt.engine.api.model.Nics;
 import org.ovirt.engine.api.model.Statistic;
 import org.ovirt.engine.api.model.Statistics;
-import org.ovirt.engine.api.resource.DeviceResource;
-import org.ovirt.engine.api.resource.DevicesResource;
+import org.ovirt.engine.api.resource.VmNicResource;
+import org.ovirt.engine.api.resource.VmNicsResource;
 
 public class BackendVmNicsResource
              extends BackendNicsResource
-             implements DevicesResource<NIC, Nics>{
+        implements VmNicsResource {
 
     public BackendVmNicsResource(Guid parentId) {
         super(parentId,
@@ -81,7 +80,7 @@ public class BackendVmNicsResource
 
     @Override
     @SingleEntityResource
-    public DeviceResource<NIC> getDeviceSubResource(String id) {
+    public VmNicResource getDeviceSubResource(String id) {
         return inject(new BackendVmNicResource(id,
                                              this,
                                              updateType,

@@ -308,6 +308,20 @@ actions:
         optionalArguments: {nic.network.id|name: 'xs:string', nic.name: 'xs:string', nic.mac.address: 'xs:string', nic.interface: 'xs:string'}
     urlparams: {}
     headers: {Content-Type: application/xml|json}
+- name: /api/vms/{vm:id}/nics/{nic:id}|rel=activate
+  request:
+    body:
+      parameterType: Action
+      signatures: []
+    urlparams: {}
+    headers: {Content-Type: application/xml|json}
+- name: /api/vms/{vm:id}/nics/{nic:id}|rel=deactivate
+  request:
+    body:
+      parameterType: Action
+      signatures: []
+    headers: {Content-Type: application/xml|json}
+    urlparams: {}
 - name: /api/vms/{vm:id}/nics|rel=add
   request:
     body:

@@ -1,5 +1,8 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static org.ovirt.engine.api.restapi.resource.BackendVmsResource.SUB_COLLECTIONS;
+import static org.ovirt.engine.core.utils.Ticketing.GenerateOTP;
+
 import java.util.List;
 import java.util.Set;
 
@@ -13,13 +16,10 @@ import org.ovirt.engine.api.common.util.LinkHelper;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.CdRom;
 import org.ovirt.engine.api.model.CdRoms;
-import org.ovirt.engine.api.model.NIC;
-import org.ovirt.engine.api.model.Nics;
 import org.ovirt.engine.api.model.Statistic;
 import org.ovirt.engine.api.model.Statistics;
 import org.ovirt.engine.api.model.Ticket;
 import org.ovirt.engine.api.model.VM;
-import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.api.resource.ActionResource;
 import org.ovirt.engine.api.resource.AssignedPermissionsResource;
 import org.ovirt.engine.api.resource.AssignedTagsResource;
@@ -28,9 +28,9 @@ import org.ovirt.engine.api.resource.DevicesResource;
 import org.ovirt.engine.api.resource.DisksResource;
 import org.ovirt.engine.api.resource.SnapshotsResource;
 import org.ovirt.engine.api.resource.StatisticsResource;
+import org.ovirt.engine.api.resource.VmNicsResource;
 import org.ovirt.engine.api.resource.VmResource;
-import org.ovirt.engine.api.restapi.resource.AbstractBackendResource.EntityIdResolver;
-import org.ovirt.engine.api.restapi.resource.AbstractBackendResource.QueryIdResolver;
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ChangeVMClusterParameters;
 import org.ovirt.engine.core.common.action.HibernateVmParameters;
 import org.ovirt.engine.core.common.action.MigrateVmParameters;
@@ -48,18 +48,14 @@ import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
+import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetAllDisksByVmIdParameters;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.GetVmByVmIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-
-import static org.ovirt.engine.core.utils.Ticketing.GenerateOTP;
-
-import static org.ovirt.engine.api.restapi.resource.BackendVmsResource.SUB_COLLECTIONS;
 
 public class BackendVmResource extends
         AbstractBackendActionableResource<VM, org.ovirt.engine.core.common.businessentities.VM> implements
@@ -127,7 +123,7 @@ public class BackendVmResource extends
     }
 
     @Override
-    public DevicesResource<NIC, Nics> getNicsResource() {
+    public VmNicsResource getNicsResource() {
         return inject(new BackendVmNicsResource(guid));
     }
 

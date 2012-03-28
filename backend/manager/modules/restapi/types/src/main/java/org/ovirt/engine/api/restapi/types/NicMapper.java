@@ -33,6 +33,9 @@ public class NicMapper {
                 entity.setType(map(nicType));
             }
         }
+        if (model.isSetActive()) {
+            entity.setActive(model.isActive());
+        }
         return entity;
     }
 
@@ -59,6 +62,7 @@ public class NicMapper {
             model.getNetwork().setName(entity.getNetworkName());
         }
         model.setInterface(map(entity.getType()));
+        model.setActive(entity.isActive());
         return model;
     }
 
