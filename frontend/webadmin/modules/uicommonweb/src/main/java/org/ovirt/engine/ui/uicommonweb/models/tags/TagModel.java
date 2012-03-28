@@ -9,9 +9,8 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.I18NNameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
-import org.ovirt.engine.ui.uicommonweb.validation.RegexValidation;
-import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
 public class TagModel extends Model
@@ -186,10 +185,7 @@ public class TagModel extends Model
     {
         LengthValidation tempVar = new LengthValidation();
         tempVar.setMaxLength(40);
-        RegexValidation tempVar2 = new RegexValidation();
-        tempVar2.setExpression("^[A-Za-z0-9_-]+$"); //$NON-NLS-1$
-        tempVar2.setMessage(ConstantsManager.getInstance().getConstants().nameCanContainMsg());
-        getName().ValidateEntity(new IValidation[] { new NotEmptyValidation(), tempVar, tempVar2 });
+        getName().ValidateEntity(new IValidation[] { new NotEmptyValidation(), tempVar, new I18NNameValidation() });
 
         return getName().getIsValid();
     }

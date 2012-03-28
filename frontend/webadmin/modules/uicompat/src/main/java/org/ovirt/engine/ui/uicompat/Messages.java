@@ -17,14 +17,13 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String createOperationFailedDcGuideMsg(String storageName);
 
     @DefaultMessage("Name can contain only ''A-Z'', ''a-z'', ''0-9'', ''_'' or ''-'' characters, max length: {0}")
-    String nameCanContainOnlyDcMsg(int maxNameLength);
+    String nameCanContainOnlyMsg(int maxNameLength);
 
     @DefaultMessage("Note: {0} will be removed!")
     String detachNote(String localStoragesFormattedString);
 
     @DefaultMessage("You are about to disconnect the Management Interface ({0}).\nAs a result, the Host might become unreachable.\n\n"
-            +
-            "Are you sure you want to disconnect the Management Interface?")
+            + "Are you sure you want to disconnect the Management Interface?")
     String youAreAboutToDisconnectHostInterfaceMsg(String nicName);
 
     @DefaultMessage("This field can''t contain blanks or special characters, must be at least one character long, legal values are 0-9, a-z, ''_'', ''.'' and a length of up to {0} characters.")

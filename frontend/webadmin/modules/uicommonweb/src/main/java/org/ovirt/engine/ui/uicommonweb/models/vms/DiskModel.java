@@ -31,9 +31,11 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
+import org.ovirt.engine.ui.uicommonweb.validation.AsciiOrNoneValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IntegerValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
 public class DiskModel extends Model
@@ -511,10 +513,10 @@ public class DiskModel extends Model
 
                 if (storage != null) {
                     UpdateWipeAfterDelete(storage.getstorage_type(), diskModel.getWipeAfterDelete());
-                    diskModel.setMessage("");
+                    diskModel.setMessage(""); //$NON-NLS-1$
                 }
                 else {
-                    diskModel.setMessage("There is no active Storage Domain in the selected Datacenter. Please activate a Storage Domain or select a different Datacenter.");
+                    diskModel.setMessage(ConstantsManager.getInstance().getConstants().noActiveStorageDomainInDcMsg());
                 }
 
                 AsyncDataProvider.GetDiskPresetList(new AsyncQuery(diskModel, new INewAsyncCallback() {
@@ -640,7 +642,8 @@ public class DiskModel extends Model
         getSize().ValidateEntity(new IValidation[] { new NotEmptyValidation(), intValidation });
 
         getStorageDomain().ValidateSelectedItem(new IValidation[] { new NotEmptyValidation() });
+        getAlias().ValidateEntity(new IValidation[] { new AsciiOrNoneValidation() });
 
-        return getSize().getIsValid() && getStorageDomain().getIsValid();
+        return getSize().getIsValid() && getStorageDomain().getIsValid() && getAlias().getIsValid();
     }
 }

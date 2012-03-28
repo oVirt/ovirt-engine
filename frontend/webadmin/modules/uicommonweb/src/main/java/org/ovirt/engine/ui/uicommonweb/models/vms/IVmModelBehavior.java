@@ -340,7 +340,7 @@ public abstract class IVmModelBehavior
                                 && ((VdcQueryReturnValue) returnValue).getReturnValue() instanceof ArrayList) {
                             hosts = (ArrayList<VDS>) ((VdcQueryReturnValue) returnValue).getReturnValue();
                         } else {
-                            throw new IllegalArgumentException("The return value should be ArrayList<VDS> or VdcQueryReturnValue with return value ArrayList<VDS>");
+                            throw new IllegalArgumentException("The return value should be ArrayList<VDS> or VdcQueryReturnValue with return value ArrayList<VDS>"); //$NON-NLS-1$
                         }
 
                         VDS oldDefaultHost = (VDS) model.getDefaultHost().getSelectedItem();

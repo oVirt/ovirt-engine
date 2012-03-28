@@ -30,13 +30,13 @@ import org.ovirt.engine.ui.uicommonweb.models.RangeEntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.models.storage.DisksAllocationModel;
+import org.ovirt.engine.ui.uicommonweb.validation.AsciiNameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.AsciiOrNoneValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.ByteSizeValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.CustomPropertyValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
-import org.ovirt.engine.ui.uicommonweb.validation.RegexValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
@@ -1650,6 +1650,17 @@ public class UnitVmModel extends Model
         }
     }
 
+    private LengthValidation createNameLengthValidation(VmOsType osType) {
+        // for template dialog, name max length is 40 chars
+        if (this.getBehavior() instanceof TemplateVmModelBehavior) {
+            return new LengthValidation(40);
+        }
+
+        // for VM it depends on the OS type
+        return new LengthValidation(DataProvider.IsWindowsOsType(osType) ? WINDOWS_VM_NAME_MAX_LIMIT
+                : NON_WINDOWS_VM_NAME_MAX_LIMIT);
+    }
+
     public boolean Validate()
     {
         getDataCenter().ValidateSelectedItem(new IValidation[] { new NotEmptyValidation() });
@@ -1658,41 +1669,16 @@ public class UnitVmModel extends Model
         getMinAllocatedMemory().ValidateEntity(new IValidation[] { new ByteSizeValidation() });
         getOSType().ValidateSelectedItem(new NotEmptyValidation[] { new NotEmptyValidation() });
 
-        getDescription().ValidateEntity(new IValidation[] { new AsciiOrNoneValidation() });
         if (getOSType().getIsValid())
         {
             VmOsType osType = (VmOsType) getOSType().getSelectedItem();
 
-            String nameExpr;
-            String nameMsg;
-            if (DataProvider.IsWindowsOsType(osType))
-            {
-                nameExpr = "^[0-9a-zA-Z-_]{1," + WINDOWS_VM_NAME_MAX_LIMIT + "}$"; //$NON-NLS-1$ //$NON-NLS-2$
-                nameMsg =
-                        ConstantsManager.getInstance()
-                                .getMessages()
-                                .nameMustConataionOnlyAlphanumericChars(WINDOWS_VM_NAME_MAX_LIMIT);
-            }
-            else
-            {
-                nameExpr = "^[-\\w]{1," + NON_WINDOWS_VM_NAME_MAX_LIMIT + "}$"; //$NON-NLS-1$ //$NON-NLS-2$
-                nameMsg =
-                        ConstantsManager.getInstance()
-                                .getMessages()
-                                .nameCannotContainBlankOrSpecialChars(NON_WINDOWS_VM_NAME_MAX_LIMIT);
-            }
+            getName().ValidateEntity(new IValidation[] {
+                    new NotEmptyValidation(),
+                    new AsciiNameValidation(),
+                    createNameLengthValidation(osType) });
 
-            LengthValidation tempVar = new LengthValidation();
-            tempVar.setMaxLength((this.getBehavior() instanceof TemplateVmModelBehavior ? 40 : 64));
-            RegexValidation tempVar2 = new RegexValidation();
-            tempVar2.setExpression(nameExpr);
-            tempVar2.setMessage(nameMsg);
-            getName().ValidateEntity(new IValidation[] { new NotEmptyValidation(), tempVar, tempVar2 });
-            // for template dialog, name max length is 40 chars, otherwise it's 40 chars
-
-            LengthValidation tempVar3 = new LengthValidation();
-            tempVar3.setMaxLength(255);
-            getDescription().ValidateEntity(new IValidation[] { tempVar3 });
+            setupDescriptionValidation();
 
             boolean is64OsType =
                     (osType == VmOsType.Other || osType == VmOsType.OtherLinux || DataProvider.Is64bitOsType(osType));
@@ -1812,6 +1798,10 @@ public class UnitVmModel extends Model
                 && getNumOfMonitors().getIsValid() && getDomain().getIsValid() && getUsbPolicy().getIsValid()
                 && getTimeZone().getIsValid() && getOSType().getIsValid() && getCdImage().getIsValid()
                 && getKernel_path().getIsValid() && getCustomProperties().getIsValid() && behavior.Validate();
+    }
+
+    protected void setupDescriptionValidation() {
+        getDescription().ValidateEntity(new IValidation[] { new LengthValidation(255), new AsciiOrNoneValidation() });
     }
 
     private void ValidateMemorySize(EntityModel memorySizeEntityModel, int maxMemSize, int minMemSize)

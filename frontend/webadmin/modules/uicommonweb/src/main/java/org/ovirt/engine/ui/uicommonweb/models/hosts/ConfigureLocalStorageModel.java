@@ -189,7 +189,7 @@ public class ConfigureLocalStorageModel extends Model {
 
         RegexValidation validation = new RegexValidation();
         validation.setExpression("^[A-Za-z0-9_-]+$"); //$NON-NLS-1$
-        validation.setMessage(ConstantsManager.getInstance().getConstants().nameCanContainMsg());
+        validation.setMessage(ConstantsManager.getInstance().getConstants().asciiNameValidationMsg());
         getFormattedStorageName().ValidateEntity(new IValidation[] { validation });
 
         if (getFormattedStorageName().getEntity() != null

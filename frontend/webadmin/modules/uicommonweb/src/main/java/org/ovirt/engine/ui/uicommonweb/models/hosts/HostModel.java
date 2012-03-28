@@ -24,13 +24,13 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
+import org.ovirt.engine.ui.uicommonweb.validation.BaseI18NValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.HostAddressValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IntegerValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.KeyValuePairValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
-import org.ovirt.engine.ui.uicommonweb.validation.RegexValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendQueryAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendQueryAsyncCallback;
@@ -546,7 +546,7 @@ public class HostModel extends Model
         // Determine whether to set custom SPM priority, and where.
         EntityModel selectedItem = null;
 
-        int[] values = new int[] {neverValue, lowValue, defaultSpmPriority, highValue, maxSpmPriority + 1};
+        int[] values = new int[] { neverValue, lowValue, defaultSpmPriority, highValue, maxSpmPriority + 1 };
         Integer prevValue = null;
 
         for (int i = 0; i < values.length; i++) {
@@ -819,19 +819,23 @@ public class HostModel extends Model
 
     public boolean Validate()
     {
-        String hostNameRegex = StringFormat.format("^[0-9a-zA-Z-_\\.]{1,%1$s}$", HostNameMaxLength); //$NON-NLS-1$
-        String hostNameMessage = ConstantsManager.getInstance().getMessages().hostNameMsg(HostNameMaxLength);
+        getName().ValidateEntity(new IValidation[] { new NotEmptyValidation(), new LengthValidation(255),
+                new BaseI18NValidation() {
+            @Override
+            protected String composeRegex() {
+                return "^[-_\\.0-9a-zA-Z]*$"; //$NON-NLS-1$
+            }
 
-        LengthValidation tempVar = new LengthValidation();
-        tempVar.setMaxLength(255);
-        RegexValidation tempVar2 = new RegexValidation();
-        tempVar2.setExpression(hostNameRegex);
-        tempVar2.setMessage(hostNameMessage);
-        getName().ValidateEntity(new IValidation[] { new NotEmptyValidation(), tempVar, tempVar2 });
+            @Override
+            protected String composeMessage() {
+                return ConstantsManager.getInstance().getConstants().hostNameValidationMsg();
+            }
+        } });
 
-        LengthValidation tempVar3 = new LengthValidation();
-        tempVar3.setMaxLength(255);
-        getHost().ValidateEntity(new IValidation[] { new NotEmptyValidation(), tempVar3, new HostAddressValidation() });
+        getHost().ValidateEntity(new IValidation[] {
+                new NotEmptyValidation(),
+                new LengthValidation(255),
+                new HostAddressValidation() });
 
         IntegerValidation tempVar4 = new IntegerValidation();
         tempVar4.setMinimum(1);
@@ -857,27 +861,27 @@ public class HostModel extends Model
         }
 
         setIsGeneralTabValid(getName().getIsValid()
-            && getHost().getIsValid()
-            && getPort().getIsValid()
-            && getCluster().getIsValid());
+                && getHost().getIsValid()
+                && getPort().getIsValid()
+                && getCluster().getIsValid());
 
         setIsPowerManagementTabValid(getManagementIp().getIsValid()
-            && getPmUserName().getIsValid()
-            && getPmPassword().getIsValid()
-            && getPmType().getIsValid()
-            && getPmPort().getIsValid()
-            && getPmOptions().getIsValid());
+                && getPmUserName().getIsValid()
+                && getPmPassword().getIsValid()
+                && getPmType().getIsValid()
+                && getPmPort().getIsValid()
+                && getPmOptions().getIsValid());
 
         return getName().getIsValid()
-            && getHost().getIsValid()
-            && getPort().getIsValid()
-            && getCluster().getIsValid()
-            && getManagementIp().getIsValid()
-            && getPmUserName().getIsValid()
-            && getPmPassword().getIsValid()
-            && getPmType().getIsValid()
-            && getPmPort().getIsValid()
-            && getPmOptions().getIsValid();
+                && getHost().getIsValid()
+                && getPort().getIsValid()
+                && getCluster().getIsValid()
+                && getManagementIp().getIsValid()
+                && getPmUserName().getIsValid()
+                && getPmPassword().getIsValid()
+                && getPmType().getIsValid()
+                && getPmPort().getIsValid()
+                && getPmOptions().getIsValid();
     }
 
     @Override

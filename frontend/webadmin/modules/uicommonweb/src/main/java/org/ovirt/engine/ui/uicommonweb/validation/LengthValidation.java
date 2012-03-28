@@ -22,6 +22,11 @@ public class LengthValidation implements IValidation
         setMaxLength(Integer.MAX_VALUE);
     }
 
+    public LengthValidation(int maxLength)
+    {
+        setMaxLength(maxLength);
+    }
+
     @Override
     public ValidationResult Validate(Object value)
     {

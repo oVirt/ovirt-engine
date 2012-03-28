@@ -243,7 +243,7 @@ public class DataCenterNetworkListModel extends SearchableListModel implements I
         networkModel.getHasVLanTag().setEntity(network.getvlan_id() != null);
         networkModel.getVLanTag().setEntity((network.getvlan_id() == null ? 0 : network.getvlan_id()));
         networkModel.getHasMtu().setEntity(network.getMtu() != 0);
-        networkModel.getMtu().setEntity(network.getMtu() != 0 ? String.valueOf(network.getMtu()) : "");
+        networkModel.getMtu().setEntity(network.getMtu() != 0 ? String.valueOf(network.getMtu()) : ""); //$NON-NLS-1$
         networkModel.getIsVmNetwork().setEntity(network.isVmNetwork());
 
         networkModel.setDetachAllCommand(new UICommand("DetachClusters", this)); //$NON-NLS-1$

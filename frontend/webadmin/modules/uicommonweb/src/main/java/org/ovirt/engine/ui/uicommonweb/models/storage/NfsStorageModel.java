@@ -5,14 +5,13 @@ import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.EventDefinition;
-import org.ovirt.engine.ui.uicommonweb.DataProvider;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.LinuxMountPointValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.NonUtfValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
-import org.ovirt.engine.ui.uicommonweb.validation.RegexValidation;
-import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
 public class NfsStorageModel extends Model implements IStorageModel
@@ -118,10 +117,10 @@ public class NfsStorageModel extends Model implements IStorageModel
     @Override
     public boolean Validate()
     {
-        RegexValidation tempVar = new RegexValidation();
-        tempVar.setExpression(DataProvider.GetLinuxMountPointRegex());
-        tempVar.setMessage(ConstantsManager.getInstance().getConstants().nfsMountPashIsIllegalMsg());
-        getPath().ValidateEntity(new IValidation[] { new NotEmptyValidation(), tempVar });
+        getPath().ValidateEntity(new IValidation[] {
+                new NotEmptyValidation(),
+                new LinuxMountPointValidation(),
+                new NonUtfValidation() });
 
         return getPath().getIsValid();
     }

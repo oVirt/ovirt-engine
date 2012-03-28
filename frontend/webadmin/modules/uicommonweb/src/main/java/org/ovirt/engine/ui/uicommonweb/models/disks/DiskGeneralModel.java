@@ -101,7 +101,7 @@ public class DiskGeneralModel extends EntityModel
         if (privateQuotaName != value)
         {
             privateQuotaName = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Quota Name"));
+            OnPropertyChanged(new PropertyChangedEventArgs("Quota Name")); //$NON-NLS-1$
         }
     }
 

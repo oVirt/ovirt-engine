@@ -7,6 +7,8 @@ import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.IVmModelBehavior;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
+import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 
 public class PoolModel extends UnitVmModel
 {
@@ -54,6 +56,11 @@ public class PoolModel extends UnitVmModel
 
         getPoolType().setSelectedItem(automaticOption);
         getOSType().setSelectedItem(VmOsType.Unassigned);
+    }
+
+    @Override
+    protected void setupDescriptionValidation() {
+        getDescription().ValidateEntity(new IValidation[] { new LengthValidation(255) });
     }
 
 }

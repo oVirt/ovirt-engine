@@ -8,7 +8,6 @@ import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.NGuid;
-import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -18,11 +17,11 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
+import org.ovirt.engine.ui.uicommonweb.validation.AsciiNameValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.AsciiOrNoneValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
-import org.ovirt.engine.ui.uicommonweb.validation.RegexValidation;
-import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
 public class DataCenterModel extends Model
@@ -285,18 +284,17 @@ public class DataCenterModel extends Model
 
     public boolean Validate()
     {
-        String nameRegex = StringFormat.format("^[A-Za-z0-9_-]{1,%1$s}$", getMaxNameLength()); //$NON-NLS-1$
-        String nameMessage = ConstantsManager.getInstance().getMessages().nameCanContainOnlyDcMsg(getMaxNameLength());
+        getName().ValidateEntity(new IValidation[] {
+                new NotEmptyValidation(),
+                new LengthValidation(40),
+                new LengthValidation(getMaxNameLength()),
+                new AsciiNameValidation() });
 
-        LengthValidation tempVar = new LengthValidation();
-        tempVar.setMaxLength(40);
-        RegexValidation tempVar2 = new RegexValidation();
-        tempVar2.setExpression(nameRegex);
-        tempVar2.setMessage(nameMessage);
-        getName().ValidateEntity(new IValidation[] { new NotEmptyValidation(), tempVar, tempVar2 });
         getStorageTypeList().ValidateSelectedItem(new IValidation[] { new NotEmptyValidation() });
 
         getVersion().ValidateSelectedItem(new IValidation[] { new NotEmptyValidation() });
+
+        getDescription().ValidateEntity(new IValidation[] { new AsciiOrNoneValidation() });
 
         // TODO: add this code to async validate.
         // string name = (string)Name.Entity;

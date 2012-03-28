@@ -701,11 +701,8 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                                         int nameMaxLength = (Integer) returnValue1;
                                         RegexValidation tempVar2 = new RegexValidation();
                                         tempVar2.setExpression("^[A-Za-z0-9_-]{1," + nameMaxLength + "}$"); //$NON-NLS-1$ //$NON-NLS-2$
-                                        tempVar2.setMessage(ConstantsManager.getInstance()
-                                                .getConstants()
-                                                .nameCanContainOnlyMaxLengthMsg()
-                                                + " " //$NON-NLS-1$
-                                                + nameMaxLength);
+                                        tempVar2.setMessage(ConstantsManager.getInstance().getMessages()
+                                                .nameCanContainOnlyMsg(nameMaxLength));
                                         storageModel1.getName().ValidateEntity(new IValidation[] {
                                                 new NotEmptyValidation(), tempVar2 });
                                         dataCenterGuideModel1.PostOnAddStorage();

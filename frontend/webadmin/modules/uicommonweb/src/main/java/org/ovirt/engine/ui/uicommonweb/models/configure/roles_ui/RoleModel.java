@@ -146,7 +146,7 @@ public class RoleModel extends Model
         tempVar.setMessage(ConstantsManager.getInstance().getConstants().nameMustBeUpToAndStartWithMsg());
         RegexValidation tempVar2 = new RegexValidation();
         tempVar2.setExpression("^[A-Za-z0-9_-]+$"); //$NON-NLS-1$
-        tempVar2.setMessage(ConstantsManager.getInstance().getConstants().nameCanContainMsg());
+        tempVar2.setMessage(ConstantsManager.getInstance().getConstants().asciiNameValidationMsg());
         getName().ValidateEntity(new IValidation[] { new NotEmptyValidation(), tempVar, tempVar2 });
         LengthValidation lengthValidation = new LengthValidation();
         lengthValidation.setMaxLength(4000);

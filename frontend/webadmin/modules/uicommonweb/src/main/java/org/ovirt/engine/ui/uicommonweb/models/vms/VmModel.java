@@ -32,6 +32,7 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.RangeEntityModel;
+import org.ovirt.engine.ui.uicommonweb.validation.AsciiOrNoneValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.ByteSizeValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.CustomPropertyValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
@@ -1613,7 +1614,7 @@ public class VmModel extends Model
         tempVar.setExpression(nameExpr);
         tempVar.setMessage(nameMsg);
         getName().ValidateEntity(new IValidation[] { new NotEmptyValidation(), tempVar });
-
+        getDescription().ValidateEntity(new IValidation[] { new AsciiOrNoneValidation() });
         getDataCenter().setIsValid(true);
         // In case of Edit the only scenario in which it will be null - editing of Blank template
         if (getIsNew())

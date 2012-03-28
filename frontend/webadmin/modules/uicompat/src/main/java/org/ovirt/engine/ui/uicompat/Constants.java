@@ -528,7 +528,19 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 	String youAreAboutChangeClusterCompatibilityVersionMsg();
 
 	@DefaultStringValue("Name can contain only 'A-Z', 'a-z', '0-9', '_' or '-' characters.")
-	String nameCanContainMsg();
+	String asciiNameValidationMsg();
+
+	@DefaultStringValue("Only alphanumeric and some special characters that conform to the standard ASCII character set are allowed.")
+	String asciiOrNoneValidationMsg();
+
+	@DefaultStringValue("Only alphanumeric and some special characters that conform to the standard ASCII character set and UTF letters are allowed.")
+	String specialAsciiOrNoneValidationMsg();
+
+	@DefaultStringValue("Name can contain only alphanumeric characters, '0-9', '_' or '-' characters.")
+	String i18NNameValidationMsg();
+
+	@DefaultStringValue("UTF characters are not allowed.")
+	String nonUtfValidationMsg();
 
 	@DefaultStringValue("You haven't configured Power Management for this Host. Are you sure you want to continue?")
 	String youHavntConfigPmMsg();
@@ -697,9 +709,6 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
 	@DefaultStringValue("System Permission(s):")
 	String systemPermissionsMsg();
-
-	@DefaultStringValue("Name can contain only 'A-Z', 'a-z', '0-9', '_' or '-' characters, max length:")
-	String nameCanContainOnlyMaxLengthMsg();
 
 	@DefaultStringValue("Note: Local Storage is already configured for this Host. The Host belongs to")
 	String noteLocalStorageAlreadyConfiguredForThisHostMsg();
@@ -1130,6 +1139,12 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
 	@DefaultStringValue("The following templates are missing on the target Export Domain:")
 	String theFollowingTemplatesAreMissingOnTargetExportDomainMsg();
+
+	@DefaultStringValue("There is no active Storage Domain in the selected Datacenter. Please activate a Storage Domain or select a different Datacenter.")
+	String noActiveStorageDomainInDcMsg();
+
+	@DefaultStringValue("Host name can't contain blanks or special characters, must be at least one character long, and contain 'a-z', '0-9', '_' or '.' characters.")
+	String hostNameValidationMsg();
 
 	// Role tree
 

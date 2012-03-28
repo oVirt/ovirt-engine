@@ -22,10 +22,8 @@ import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
-import org.ovirt.engine.ui.uicommonweb.validation.NoSpacesValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.I18NNameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
-import org.ovirt.engine.ui.uicommonweb.validation.RegexValidation;
-import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
 public class ClusterModel extends Model
@@ -792,13 +790,11 @@ public class ClusterModel extends Model
 
     public boolean Validate(boolean validateStoragePool)
     {
-        LengthValidation tempVar = new LengthValidation();
-        tempVar.setMaxLength(40);
-        RegexValidation tempVar2 = new RegexValidation();
-        tempVar2.setExpression("^[A-Za-z0-9_-]+$"); //$NON-NLS-1$
-        tempVar2.setMessage(ConstantsManager.getInstance().getConstants().nameCanContainMsg());
-        getName().ValidateEntity(new IValidation[] { new NotEmptyValidation(), new NoSpacesValidation(), tempVar,
-                tempVar2 });
+        getName().ValidateEntity(new IValidation[] {
+                new NotEmptyValidation(),
+                new LengthValidation(40),
+                new I18NNameValidation() });
+
         if (validateStoragePool)
         {
             getDataCenter().ValidateSelectedItem(new IValidation[] { new NotEmptyValidation() });
