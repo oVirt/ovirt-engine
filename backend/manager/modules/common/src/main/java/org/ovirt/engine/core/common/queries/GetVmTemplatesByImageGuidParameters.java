@@ -4,7 +4,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class GetVmTemplatesByImageGuidParameters extends VdcQueryParametersBase {
     private static final long serialVersionUID = 903841576014422593L;
-    private final Guid imageGuid;
+    private Guid imageGuid;
 
     public GetVmTemplatesByImageGuidParameters() {
         this(new Guid());
