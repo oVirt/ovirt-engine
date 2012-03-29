@@ -11,13 +11,12 @@ Create or replace FUNCTION InsertPermission(v_ad_element_id UUID,
 	v_id UUID,
 	v_role_id UUID,
 	v_object_id UUID,
-	v_object_type_id INTEGER,
-	v_grant_mode VARCHAR(20))
+	v_object_type_id INTEGER)
 RETURNS VOID
    AS $procedure$
 BEGIN
-INSERT INTO permissions(ad_element_id, id, role_id, object_id, object_type_id, grant_mode)
-	VALUES(v_ad_element_id, v_id, v_role_id, v_object_id, v_object_type_id, v_grant_mode);
+INSERT INTO permissions(ad_element_id, id, role_id, object_id, object_type_id)
+	VALUES(v_ad_element_id, v_id, v_role_id, v_object_id, v_object_type_id);
 END; $procedure$
 LANGUAGE plpgsql;
 
