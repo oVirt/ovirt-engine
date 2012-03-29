@@ -110,7 +110,7 @@ rpm: $(SRPM)
 
 create_dirs:
 	@echo "*** Creating Directories"
-	@mkdir -p $(PREFIX)/usr/share/ovirt-engine/{sysprep,kerberos,scripts,3rd-party-lib,engine.ear,conf,dbscripts,resources,ovirt-isos,iso-uploader,log-collector,image_uploader,db-backups,engine.ear}
+	@mkdir -p $(PREFIX)/usr/share/ovirt-engine/{kerberos,scripts,3rd-party-lib,engine.ear,conf,dbscripts,resources,ovirt-isos,iso-uploader,log-collector,image_uploader,db-backups,engine.ear}
 	@mkdir -p $(PREFIX)/usr/share/ovirt-engine/engine-config/lib
 	@mkdir -p $(PREFIX)/usr/share/ovirt-engine/notifier/lib
 	@mkdir -p $(PREFIX)/usr/share/ovirt-engine/engine-manage-domains/lib
@@ -128,7 +128,7 @@ create_dirs:
 	@mkdir -p $(PREFIX)/var/run/ovirt-engine/notifier
 	@mkdir -p $(PREFIX)/var/lock/ovirt-engine
 	@mkdir -p $(PREFIX)/etc/{init.d,tmpfiles.d,cron.daily}
-	@mkdir -p $(PREFIX)/etc/ovirt-engine/{engine-config,engine-manage-domains}
+	@mkdir -p $(PREFIX)/etc/ovirt-engine/{engine-config,engine-manage-domains,sysprep}
 	@mkdir -p $(PREFIX)$(EAR_DIR)
 	@mkdir -p $(PREFIX)$(JBOSS_HOME)/modules/org/postgresql/main/
 	@mkdir -p $(PREFIX)/usr/share/ovirt-engine/resources/jboss/modules/org
@@ -285,8 +285,8 @@ install_image_uploader:
 
 install_sysprep:
 	@echo "*** Deploying sysperp"
-	cp -f ./backend/manager/conf/sysprep/* $(PREFIX)/usr/share/ovirt-engine/sysprep
-	chmod 644 $(PREFIX)/usr/share/ovirt-engine/sysprep/*
+	cp -f ./backend/manager/conf/sysprep/* $(PREFIX)/etc/ovirt-engine/sysprep
+	chmod 644 $(PREFIX)/etc/ovirt-engine/sysprep/*
 
 install_notification_service:
 	@echo "*** Deploying notification service"
