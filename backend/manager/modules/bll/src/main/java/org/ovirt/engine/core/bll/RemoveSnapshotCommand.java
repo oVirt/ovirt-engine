@@ -11,6 +11,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
+import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
@@ -53,7 +54,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
             log.error("Cannot remove VM snapshot. Vm is not Down");
             throw new VdcBLLException(VdcBllErrors.IRS_IMAGE_STATUS_ILLEGAL);
         }
-        VmHandler.LockVm(getVm().getDynamicData(), getCompensationContext());
+        DbFacade.getInstance().getSnapshotDao().updateStatus(getParameters().getSnapshotId(), SnapshotStatus.LOCKED);
         getParameters().setEntityId(getVmId());
 
         for (final DiskImage source : getSourceImages()) {
