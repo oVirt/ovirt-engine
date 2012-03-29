@@ -13,17 +13,15 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
  */
 public class GetJobsByOffsetQuery<P extends GetJobsByOffsetQueryParameters> extends QueriesCommandBase<P> {
 
-    /**
-     * Defines the page size for retrieving the Jobs
-     */
-    private static int pageSize = Config.<Integer> GetValue(ConfigValues.JobPageSize);
-
     public GetJobsByOffsetQuery(P parameters) {
         super(parameters);
     }
 
     @Override
     protected void executeQueryCommand() {
+        // Defines the page size for retrieving the Jobs
+        final int pageSize = Config.<Integer> GetValue(ConfigValues.JobPageSize);
+
         int offset = Math.max(getParameters().getOffset(), 0);
         List<Job> jobs = DbFacade.getInstance().getJobDao().getJobsByOffsetAndPageSize(offset * pageSize, pageSize);
         getQueryReturnValue().setReturnValue(jobs);

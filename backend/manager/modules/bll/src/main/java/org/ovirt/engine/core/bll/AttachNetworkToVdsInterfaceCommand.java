@@ -107,7 +107,7 @@ public class AttachNetworkToVdsInterfaceCommand<T extends AttachNetworkToVdsPara
             return false;
         }
 
-        if (!NetworkUtils.EngineNetwork.equals(getParameters().getNetwork().getname())
+        if (!NetworkUtils.getEngineNetwork().equals(getParameters().getNetwork().getname())
                 && !StringHelper.isNullOrEmpty(getParameters().getGateway())) {
             addCanDoActionMessage(VdcBllMessages.NETWORK_ATTACH_ILLEGAL_GATEWAY);
             return false;

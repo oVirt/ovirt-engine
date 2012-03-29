@@ -61,10 +61,10 @@ public class AddLocalStorageDomainCommand<T extends StorageDomainManagementParam
                         DbFacade.getInstance().getStorageServerConnectionDAO().get(getParameters().getStorageDomain()
                                 .getstorage());
 
-                if (!conn.getconnection().equals(Config.<String> GetValue(ConfigValues.RhevhLocalFSPath))) {
+                String rhevhLocalFSPath = Config.<String> GetValue(ConfigValues.RhevhLocalFSPath);
+                if (!conn.getconnection().equals(rhevhLocalFSPath)) {
                     addCanDoActionMessage(VdcBllMessages.RHEVH_LOCALFS_WRONG_PATH_LOCATION);
-                    addCanDoActionMessage(String.format("$path %1$s",
-                            Config.<String> GetValue(ConfigValues.RhevhLocalFSPath)));
+                    addCanDoActionMessage(String.format("$path %1$s", rhevhLocalFSPath));
                     retVal = false;
                 }
             }

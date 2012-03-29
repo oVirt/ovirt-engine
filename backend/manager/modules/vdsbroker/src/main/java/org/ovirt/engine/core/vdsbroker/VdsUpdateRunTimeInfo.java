@@ -78,11 +78,6 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStruct;
 
 public class VdsUpdateRunTimeInfo {
-    private static final Integer LOW_SPACE_THRESHOLD =
-            Config.<Integer> GetValue(ConfigValues.VdsLocalDisksLowFreeSpace);
-    private static final Integer LOW_SPACE_CRITICAL_THRESHOLD =
-            Config.<Integer> GetValue(ConfigValues.VdsLocalDisksCriticallyLowFreeSpace);
-
     private java.util.HashMap<Guid, java.util.Map.Entry<VmDynamic, VmStatistics>> _runningVms;
     private final java.util.HashMap<Guid, VmDynamic> _vmDynamicToSave = new java.util.HashMap<Guid, VmDynamic>();
     private final java.util.HashMap<Guid, VmStatistics> _vmStatisticsToSave =
@@ -488,19 +483,24 @@ public class VdsUpdateRunTimeInfo {
 
         List<String> disksWithLowSpace = new ArrayList<String>();
         List<String> disksWithCriticallyLowSpace = new ArrayList<String>();
+        final int lowSpaceCriticalThreshold =
+                Config.<Integer> GetValue(ConfigValues.VdsLocalDisksCriticallyLowFreeSpace);
+        final int lowSpaceThreshold =
+                Config.<Integer> GetValue(ConfigValues.VdsLocalDisksLowFreeSpace);
+
         for (Entry<String, Long> diskUsage : disksUsage.entrySet()) {
             if (diskUsage.getValue() != null) {
-                if (diskUsage.getValue() <= LOW_SPACE_CRITICAL_THRESHOLD) {
+                if (diskUsage.getValue() <= lowSpaceCriticalThreshold) {
                     disksWithCriticallyLowSpace.add(diskUsage.getKey());
-                } else if (diskUsage.getValue() <= LOW_SPACE_THRESHOLD) {
+                } else if (diskUsage.getValue() <= lowSpaceThreshold) {
                     disksWithLowSpace.add(diskUsage.getKey());
                 }
             }
         }
 
-        logLowDiskSpaceOnHostDisks(disksWithLowSpace, LOW_SPACE_THRESHOLD, AuditLogType.VDS_LOW_DISK_SPACE);
+        logLowDiskSpaceOnHostDisks(disksWithLowSpace, lowSpaceThreshold, AuditLogType.VDS_LOW_DISK_SPACE);
         logLowDiskSpaceOnHostDisks(disksWithCriticallyLowSpace,
-                LOW_SPACE_CRITICAL_THRESHOLD,
+                lowSpaceCriticalThreshold,
                 AuditLogType.VDS_LOW_DISK_SPACE_ERROR);
     }
 

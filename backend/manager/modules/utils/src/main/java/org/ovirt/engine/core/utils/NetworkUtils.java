@@ -16,11 +16,13 @@ import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.StringHelper;
 
 public final class NetworkUtils {
-    public static String EngineNetwork = Config.<String> GetValue(ConfigValues.ManagementNetwork);
     public static int MaxVmInterfaces = 8;
     public static final String DASH = "-";
     public static final String OS_REFERENCE_TO_MACHINE_NAME = "HOSTNAME";
 
+    public static String getEngineNetwork() {
+        return Config.<String> GetValue(ConfigValues.ManagementNetwork);
+    }
     // method return interface name without vlan:
     // input: eth0.5 output eth0
     // input" eth0 output eth0

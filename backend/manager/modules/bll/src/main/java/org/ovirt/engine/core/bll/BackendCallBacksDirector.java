@@ -77,19 +77,19 @@ public final class BackendCallBacksDirector {
 
             try {
                 int refreshCyclesSinceLastPolling = callBackData.RefreshCyclesWithoutPolling.incrementAndGet();
-                if (refreshCyclesSinceLastPolling < Config
-                        .<Integer> GetValue(ConfigValues.AsyncPollingCyclesBeforeRefreshSuspend)) {
+                int asyncPollingCyclesBeforeRefreshSuspend =
+                        Config.<Integer> GetValue(ConfigValues.AsyncPollingCyclesBeforeRefreshSuspend);
+                int asyncPollingCyclesBeforeCallbackCleanup =
+                        Config.<Integer> GetValue(ConfigValues.AsyncPollingCyclesBeforeCallbackCleanup);
+                if (refreshCyclesSinceLastPolling < asyncPollingCyclesBeforeRefreshSuspend) {
                     callBackData.RefreshQueries();
                 }
                 // }
-                else if (refreshCyclesSinceLastPolling == Config
-                        .<Integer> GetValue(ConfigValues.AsyncPollingCyclesBeforeRefreshSuspend))
+                else if (refreshCyclesSinceLastPolling == asyncPollingCyclesBeforeRefreshSuspend)
                     log.debugFormat(
                             "Client did not poll async queries updates for {1} cycles, suspending server side updates for session id = {0}",
-                            callBackData.getSessionId(),
-                            Config.<Integer> GetValue(ConfigValues.AsyncPollingCyclesBeforeRefreshSuspend));
-                else if (refreshCyclesSinceLastPolling > Config
-                        .<Integer> GetValue(ConfigValues.AsyncPollingCyclesBeforeCallbackCleanup)) // enough,
+                            callBackData.getSessionId(), asyncPollingCyclesBeforeRefreshSuspend);
+                else if (refreshCyclesSinceLastPolling > asyncPollingCyclesBeforeCallbackCleanup) // enough,
                                                                                                    // assume
                                                                                                    // client
                                                                                                    // is
@@ -97,8 +97,7 @@ public final class BackendCallBacksDirector {
                 {
                     log.debugFormat(
                             "Client did not poll async queries updates for {1} cycles sessionId = {0}. Callback will be removed.",
-                            callBackData.getSessionId(),
-                            Config.<Integer> GetValue(ConfigValues.AsyncPollingCyclesBeforeCallbackCleanup));
+                            callBackData.getSessionId(), asyncPollingCyclesBeforeCallbackCleanup);
                     toRemove = true;
                 }
             } catch (RuntimeException ex) {

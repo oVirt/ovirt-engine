@@ -1099,7 +1099,7 @@ public class VdsBrokerObjectsBuilder {
                                 iface.setBridged(true);
 
                                 // set the management ip
-                                if (StringHelper.EqOp(iface.getNetworkName(), NetworkUtils.EngineNetwork)) {
+                                if (StringHelper.EqOp(iface.getNetworkName(), NetworkUtils.getEngineNetwork())) {
                                     iface.setType(iface.getType() | VdsInterfaceType.Management.getValue());
                                 }
                                 iface.setSubnet(net.getsubnet());

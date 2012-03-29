@@ -108,7 +108,7 @@ public class DetachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
             }
         }
 
-        if (getParameters().getNetwork().getname().equals(NetworkUtils.EngineNetwork)) {
+        if (getParameters().getNetwork().getname().equals(NetworkUtils.getEngineNetwork())) {
             getReturnValue().getCanDoActionMessages()
                     .add(VdcBllMessages.NETWORK_DEFAULT_UPDATE_NAME_INVALID.toString());
             return false;
