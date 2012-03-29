@@ -63,7 +63,7 @@ public class AddImagesFromImportCommand<T extends AddImagesFromImportParameters>
 
             for (DiskImage image : rest) {
                 try {
-                    saveDiskImage(image);
+                    saveImage(image);
                 } catch (RuntimeException e) {
                     log.error(
                             String.format(

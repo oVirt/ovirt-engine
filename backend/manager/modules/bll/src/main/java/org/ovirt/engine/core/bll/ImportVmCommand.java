@@ -517,7 +517,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
                             .getvolume_type());
                 }
 
-                BaseImagesCommand.saveDiskImage(disk);
+                BaseImagesCommand.saveImage(disk);
                 DbFacade.getInstance().getDiskDao().save(disk.getDisk());
                 DiskImageDynamic diskDynamic = new DiskImageDynamic();
                 diskDynamic.setId(disk.getId());
@@ -530,7 +530,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
             Guid snapshotId = null;
             for (DiskImage disk : getVm().getImages()) {
                 disk.setactive(false);
-                BaseImagesCommand.saveDiskImage(disk);
+                BaseImagesCommand.saveImage(disk);
                 snapshotId = disk.getvm_snapshot_id().getValue();
                 if (!getSnapshotDao().exists(getVm().getId(), snapshotId)) {
                     getSnapshotDao().save(

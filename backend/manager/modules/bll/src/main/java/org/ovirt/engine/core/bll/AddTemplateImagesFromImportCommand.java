@@ -34,7 +34,7 @@ public class AddTemplateImagesFromImportCommand<T extends AddImagesFromImportPar
             {
                 try {
                     importedImage.setimageStatus(ImageStatus.LOCKED);
-                    saveDiskImage(importedImage);
+                    saveImage(importedImage);
                     saveDiskIfNotExists(importedImage);
                 }
 
