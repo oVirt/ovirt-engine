@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.businessentities;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -45,6 +46,18 @@ public class Entities {
             Map<String, E> map = new HashMap<String, E>();
             for (E e : entityList) {
                 map.put(e.getNetworkName(), e);
+            }
+            return map;
+        } else {
+            return Collections.emptyMap();
+        }
+    }
+
+    public static <F extends Serializable, B extends BusinessEntity<F>> Map<F, B> businessEntitiesById(List<B> entityList) {
+        if (entityList != null) {
+            Map<F, B> map = new HashMap<F, B>();
+            for (B b : entityList) {
+                map.put(b.getId(), b);
             }
             return map;
         } else {

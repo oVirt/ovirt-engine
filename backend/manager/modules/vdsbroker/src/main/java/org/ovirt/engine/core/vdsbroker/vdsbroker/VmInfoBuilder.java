@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
+import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
@@ -230,41 +231,49 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                         .getvds_group_compatibility_version()
                         .toString());
 
-        for (int i = 0; i < vm.getInterfaces().size(); i++) {
-            XmlRpcStruct struct = new XmlRpcStruct();
-            VmNetworkInterface vmInterface = vm.getInterfaces().get(i);
+        Map<VmDeviceId, VmDevice> devicesByDeviceId =
+                Entities.businessEntitiesById(DbFacade.getInstance()
+                        .getVmDeviceDAO()
+                        .getVmDeviceByVmIdTypeAndDevice(vm.getId(),
+                                VmDeviceType.INTERFACE.getName(),
+                                VmDeviceType.BRIDGE.getName()));
+
+        for (VmNetworkInterface vmInterface : vm.getInterfaces()) {
             // get vm device for this disk from DB
             VmDevice vmDevice =
-                    DbFacade.getInstance()
-                            .getVmDeviceDAO()
-                            .get(new VmDeviceId(vmInterface.getId(), vmInterface.getVmId().getValue()));
-            // skip unamanged devices (handled separtely)
-            if (!vmDevice.getIsManaged()) {
-                continue;
-            }
-            VmInterfaceType ifaceType = VmInterfaceType.rtl8139;
-            if (vmInterface.getType() != null) {
-                ifaceType = VmInterfaceType.forValue(vmInterface.getType());
-            }
-            if (ifaceType == VmInterfaceType.rtl8139_pv) {
-                if (!useRtl8139_pv) {
-                    if (vm.getHasAgent()) {
-                        addNetworkInterfaceProperties(struct, vmInterface, vmDevice, VmInterfaceType.pv.name());
+                    devicesByDeviceId.get(new VmDeviceId(vmInterface.getId(), vmInterface.getVmId().getValue()));
+
+            if (vmDevice != null && vmDevice.getIsManaged() && vmDevice.getIsPlugged()) {
+
+                XmlRpcStruct struct = new XmlRpcStruct();
+                VmInterfaceType ifaceType = VmInterfaceType.rtl8139;
+
+                if (vmInterface.getType() != null) {
+                    ifaceType = VmInterfaceType.forValue(vmInterface.getType());
+                }
+                if (ifaceType == VmInterfaceType.rtl8139_pv) {
+                    if (!useRtl8139_pv) {
+                        if (vm.getHasAgent()) {
+                            addNetworkInterfaceProperties(struct, vmInterface, vmDevice, VmInterfaceType.pv.name());
+                        } else {
+                            addNetworkInterfaceProperties(struct, vmInterface, vmDevice, VmInterfaceType.rtl8139.name());
+                        }
                     } else {
-                        addNetworkInterfaceProperties(struct, vmInterface, vmDevice, VmInterfaceType.rtl8139.name());
+                        addNetworkInterfaceProperties(struct, vmInterface, vmDevice, VmInterfaceType.pv.name());
+                        // Doual Mode: in this case we have to insert 2 interfaces with the same entries except nicModel
+                        XmlRpcStruct rtl8139Struct = new XmlRpcStruct();
+                        addNetworkInterfaceProperties(rtl8139Struct,
+                                vmInterface,
+                                vmDevice,
+                                VmInterfaceType.rtl8139.name());
+                        devices.add(rtl8139Struct);
                     }
                 } else {
-                    addNetworkInterfaceProperties(struct, vmInterface, vmDevice, VmInterfaceType.pv.name());
-                    // Doual Mode: in this case we have to insert 2 interfaces with the same entries except nicModel
-                    XmlRpcStruct rtl8139Struct = new XmlRpcStruct();
-                    addNetworkInterfaceProperties(rtl8139Struct, vmInterface, vmDevice, VmInterfaceType.rtl8139.name());
-                    devices.add(rtl8139Struct);
+                    addNetworkInterfaceProperties(struct, vmInterface, vmDevice, ifaceType.toString());
                 }
-            } else {
-                addNetworkInterfaceProperties(struct, vmInterface, vmDevice, ifaceType.toString());
+                devices.add(struct);
+                addToManagedDevices(vmDevice);
             }
-            devices.add(struct);
-            addToManagedDevices(vmDevice);
         }
     }
 
