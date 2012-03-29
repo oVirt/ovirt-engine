@@ -85,23 +85,6 @@ public class VmImportDiskListModel extends VmDiskListModel
             {
                 list.add(img);
             }
-            // for (DiskImage img : vm.getDiskMap().values())
-            // {
-            // DiskModel model = new DiskModel();
-            // model.setName(img.getinternal_drive_mapping());
-            // EntityModel tempVar = new EntityModel();
-            // tempVar.setEntity(img.getSizeInGigabytes());
-            // model.setSize(tempVar);
-            // model.getVolumeType().setSelectedItem(img.getvolume_type());
-            // //model.VolumeType.SelectedItemChanged += new EventHandler(VolumeType_SelectedItemChanged);
-            // model.getVolumeType().getSelectedItemChangedEvent().addListener(this);
-            // model.setDiskType(img.getdisk_type());
-            // model.setVolumeFormat(img.getvolume_format());
-            // model.setCreationDate(img.getcreation_date());
-            // //NOTE: The following code won't pass conversion to Java.
-            // //model.ActualSize = Convert.ToInt32(img.ActualDiskWithSnapshotsSize);
-            // list.add(model);
-            // }
             setItems(list);
         }
         else

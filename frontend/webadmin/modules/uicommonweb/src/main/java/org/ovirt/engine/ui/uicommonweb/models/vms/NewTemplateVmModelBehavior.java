@@ -302,11 +302,12 @@ public class NewTemplateVmModelBehavior extends IVmModelBehavior
 
                         ArrayList<DiskModel> disks =
                                 (ArrayList<DiskModel>) behavior.getModel().getDisksAllocationModel().getDisks();
-                        for (DiskModel diskModel : disks) {
-                            diskModel.getStorageDomain().setItems(activeStorageDomainList);
-                            diskModel.getQuota().setItems(behavior.getModel().getQuota().getItems());
+                        if (disks != null) {
+                            for (DiskModel diskModel : disks) {
+                                diskModel.getStorageDomain().setItems(activeStorageDomainList);
+                                diskModel.getQuota().setItems(behavior.getModel().getQuota().getItems());
+                            }
                         }
-
                     }
                 },
                 getModel().getHash()),

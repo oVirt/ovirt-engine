@@ -1,4 +1,6 @@
 package org.ovirt.engine.ui.uicommon;
+
+import java.util.ArrayList;
 import java.util.Collections;
 import org.ovirt.engine.core.compat.*;
 import org.ovirt.engine.ui.uicompat.*;
@@ -1545,47 +1547,16 @@ public final class DataProvider
 
 		if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
 		{
-			//List<DiskImageBase> presetList =
-			//	((List<DiskImageBase>)returnValue.ReturnValue)
-			//	.Where(a => a.disk_type == DiskType.System || a.disk_type == DiskType.Data)
-			//	.ToList();
-			java.util.ArrayList<DiskImageBase> list = new java.util.ArrayList<DiskImageBase>();
-			DiskImageBase presetData = null;
-			DiskImageBase presetSystem = null;
-			for (DiskImageBase disk : (java.util.ArrayList<DiskImageBase>)returnValue.getReturnValue())
-			{
-				if (disk.getdisk_type() == DiskType.System || disk.getdisk_type() == DiskType.Data)
-				{
-					list.add(disk);
-				}
-				if (disk.getdisk_type() == DiskType.System && presetSystem == null)
-				{
-					presetSystem = disk;
-				}
-				else if (disk.getdisk_type() == DiskType.Data && presetData == null)
-				{
-					presetData = disk;
-				}
-			}
-			java.util.ArrayList<DiskImageBase> presetList = list;
+            ArrayList<DiskImageBase> list = new java.util.ArrayList<DiskImageBase>();
+            for (DiskImageBase disk : (ArrayList<DiskImageBase>) returnValue.getReturnValue())
+            {
+                disk.setvolume_type(disk.getboot() && vmType == VmType.Desktop ?
+                        VolumeType.Sparse : VolumeType.Preallocated);
+                disk.setvolume_format(GetDiskVolumeFormat(disk.getvolume_type(), storageType));
 
-			//DiskImageBase presetData = presetList.FirstOrDefault(a => a.disk_type == DiskType.Data);
-			//DiskImageBase presetSystem = presetList.FirstOrDefault(a => a.disk_type == DiskType.System);
-
-			// Set default volume type by vm type:
-			// Set volume format by storage type and volume type:
-			if (presetData != null)
-			{
-				presetData.setvolume_type(VolumeType.Preallocated);
-				presetData.setvolume_format(GetDiskVolumeFormat(presetData.getvolume_type(), storageType));
-			}
-			if (presetSystem != null)
-			{
-				presetSystem.setvolume_type(vmType == VmType.Server ? VolumeType.Preallocated : VolumeType.Sparse);
-				presetSystem.setvolume_format(GetDiskVolumeFormat(presetSystem.getvolume_type(), storageType));
-			}
-
-			return presetList;
+                list.add(disk);
+            }
+            return list;
 		}
 
 		return new java.util.ArrayList<DiskImageBase>();

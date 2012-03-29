@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.userportal.client.binders;
 import java.util.Map.Entry;
 import java.util.MissingResourceException;
 
-import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -149,16 +148,6 @@ public class ObjectNameIdResolverFactory {
 				}
 				public String getItemId(Object o) {
 					return (((network)o).getId().toString());
-				}
-			};
-		}
-		else if (type.equals(DiskImageBase.class)) {
-			return new ObjectNameIdResolver() {
-				public String getItemName(Object o) {
-					return (((DiskImageBase)o).getdisk_type().name());
-				}
-				public String getItemId(Object o) {
-					return (((DiskImageBase)o).getdisk_type().name());
 				}
 			};
 		}

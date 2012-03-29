@@ -276,15 +276,6 @@ public class VmGuideModel extends GuideModel
 			//    : presets.FirstOrDefault(a => a.disk_type == DiskType.System);
 
 			model.getPreset().setSelectedItem(null);
-			for (DiskImageBase a : presets)
-			{
-				if ((hasDisks && a.getdisk_type() == DiskType.Data) || (!hasDisks && a.getdisk_type() == DiskType.System))
-				{
-					model.getPreset().setSelectedItem(a);
-					break;
-				}
-			}
-
 			model.getInterface().setItems(DataProvider.GetDiskInterfaceList(getEntity().getvm_os(), DataProvider.GetClusterById(getEntity().getvds_group_id()).getcompatibility_version()));
 			model.getInterface().setSelectedItem(DataProvider.GetDefaultDiskInterface(getEntity().getvm_os(), disks));
 
@@ -362,7 +353,6 @@ public class VmGuideModel extends GuideModel
 
 			DiskImage tempVar = new DiskImage();
 			tempVar.setSizeInGigabytes(Integer.parseInt(model.getSize().getEntity().toString()));
-			tempVar.setdisk_type(((DiskImageBase)model.getPreset().getSelectedItem()).getdisk_type());
 			tempVar.setdisk_interface((DiskInterface)model.getInterface().getSelectedItem());
 			tempVar.setvolume_type((VolumeType)model.getVolumeType().getSelectedItem());
 			tempVar.setvolume_format(model.getVolumeFormat());

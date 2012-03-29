@@ -43,7 +43,6 @@ public class TemplateDiskListModelBinder  implements ListModelBinder {
 				ListGridRecord r = new ListGridRecord();
 				r.setAttribute("name", "Disk " + disk.getinternal_drive_mapping());
 				r.setAttribute("size", (disk.getsize() / (1024*1024*1024)) + "GB");
-				r.setAttribute("type", disk.getdisk_type().toString());
 				r.setAttribute("format", disk.getvolume_format().toString());
 				r.setAttribute("allocation", translator.get(disk.getvolume_type()));
 				r.setAttribute("interface", disk.getdisk_interface().toString());
@@ -59,7 +58,6 @@ public class TemplateDiskListModelBinder  implements ListModelBinder {
 	private static ListGridField[] fields = {
 		new ListGridField("name", "Name", 120),
 		new ListGridField("size", "Size", 120),
-		new ListGridField("type", "Type", 120),
 		new ListGridField("format", "Format", 120),
 		new ListGridField("allocation", "Allocation", 120),
 		new ListGridField("interface", "Interface", 120),

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
-import org.ovirt.engine.core.common.businessentities.DiskType;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
@@ -94,18 +93,6 @@ public class DiskModel extends Model
     public void setActualSize(int value)
     {
         privateActualSize = value;
-    }
-
-    private DiskType privateDiskType = getDiskType().values()[0];
-
-    public DiskType getDiskType()
-    {
-        return privateDiskType;
-    }
-
-    public void setDiskType(DiskType value)
-    {
-        privateDiskType = value;
     }
 
     private EntityModel privateSize;
@@ -368,7 +355,6 @@ public class DiskModel extends Model
                 : (DiskImageBase) Linq.<DiskImageBase> FirstOrDefault(getPreset().getItems());
         setVolumeFormat(preset.getvolume_format());
         getVolumeType().setSelectedItem(preset.getvolume_type());
-        getIsPlugged().setIsChangable(preset.getdisk_type() != DiskType.System);
     }
 
     private void VolumeType_SelectedItemChanged()

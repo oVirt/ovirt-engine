@@ -7,7 +7,6 @@ import java.util.Collections;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
-import org.ovirt.engine.core.common.businessentities.DiskType;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
@@ -859,41 +858,24 @@ public final class AsyncDataProvider {
                     return null;
                 }
 
-                java.util.ArrayList<DiskImageBase> list = new java.util.ArrayList<DiskImageBase>();
-                DiskImageBase presetData = null;
-                DiskImageBase presetSystem = null;
-                for (DiskImageBase disk : (java.util.ArrayList<DiskImageBase>) source)
+                ArrayList<DiskImageBase> list = new java.util.ArrayList<DiskImageBase>();
+                boolean hasBootDisk = false;
+                for (DiskImageBase disk : (ArrayList<DiskImageBase>) source)
                 {
-                    if (disk.getdisk_type() == DiskType.System || disk.getdisk_type() == DiskType.Data)
-                    {
-                        list.add(disk);
+                    if (!hasBootDisk) {
+                        disk.setboot(true);
+                        hasBootDisk = true;
                     }
-                    if (disk.getdisk_type() == DiskType.System && presetSystem == null)
-                    {
-                        presetSystem = disk;
-                    }
-                    else if (disk.getdisk_type() == DiskType.Data && presetData == null)
-                    {
-                        presetData = disk;
-                    }
-                }
-                java.util.ArrayList<DiskImageBase> presetList = list;
 
-                if (presetData != null)
-                {
-                    presetData.setvolume_type(VolumeType.Preallocated);
-                    presetData.setvolume_format(DataProvider.GetDiskVolumeFormat(presetData.getvolume_type(),
+                    disk.setvolume_type(disk.getboot() && (VmType) _asyncQuery.Data[0] == VmType.Desktop ?
+                            VolumeType.Sparse : VolumeType.Preallocated);
+                    disk.setvolume_format(DataProvider.GetDiskVolumeFormat(disk.getvolume_type(),
                             (StorageType) _asyncQuery.Data[1]));
-                }
-                if (presetSystem != null)
-                {
-                    presetSystem.setvolume_type((VmType) _asyncQuery.Data[0] == VmType.Server ? VolumeType.Preallocated
-                            : VolumeType.Sparse);
-                    presetSystem.setvolume_format(DataProvider.GetDiskVolumeFormat(presetSystem.getvolume_type(),
-                            (StorageType) _asyncQuery.Data[1]));
-                }
 
-                return presetList;
+
+                    list.add(disk);
+                }
+                return list;
             }
         };
         Frontend.RunQuery(VdcQueryType.GetDiskConfigurationList, new VdcQueryParametersBase(), aQuery);

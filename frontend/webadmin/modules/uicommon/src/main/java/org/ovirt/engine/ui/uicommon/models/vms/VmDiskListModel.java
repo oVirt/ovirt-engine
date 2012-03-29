@@ -207,16 +207,9 @@ public class VmDiskListModel extends SearchableListModel
 															DiskImage disk2 = (DiskImage)vmDiskListModel2.getSelectedItem();
 															java.util.ArrayList<DiskImage> disks = vmDiskListModel2.getItems() != null ? Linq.<DiskImage>Cast(vmDiskListModel2.getItems()) : new java.util.ArrayList<DiskImage>();
 															java.util.ArrayList<DiskImageBase> presets = (java.util.ArrayList<DiskImageBase>)result2;
-															vmModel2.getPreset().setItems(presets);
-															vmModel2.getPreset().setSelectedItem(null);
-															for (DiskImageBase a : presets)
-															{
-																if (a.getdisk_type() == disk2.getdisk_type())
-																{
-																	vmModel2.getPreset().setSelectedItem(a);
-																	break;
-																}
-															}
+															
+											                DiskImageBase preset = new DiskImage();
+											                vmModel2.getPreset().setSelectedItem(preset);
 															vmModel2.getPreset().setIsChangable(false);
 
 															vmModel2.getVolumeType().setSelectedItem(disk2.getvolume_type());
@@ -293,19 +286,7 @@ public class VmDiskListModel extends SearchableListModel
 		for (Object item : getSelectedItems())
 		{
 			DiskImage a = (DiskImage)item;
-			if (a.getdisk_type() == DiskType.System)
-			{
-				items.add(StringFormat.format("Disk %1$s (System Disk)", a.getinternal_drive_mapping()));
-				if (!hasSystemDiskWarning)
-				{
-					model.setNote("Note that removing a system disk would make the VM unbootable.");
-					hasSystemDiskWarning = true;
-				}
-			}
-			else
-			{
-				items.add(StringFormat.format("Disk %1$s", a.getinternal_drive_mapping()));
-			}
+            items.add(StringFormat.format("Disk %1$s", a.getinternal_drive_mapping()));
 		}
 		model.setItems(items);
 
@@ -317,39 +298,6 @@ public class VmDiskListModel extends SearchableListModel
 		tempVar2.setTitle("Cancel");
 		tempVar2.setIsCancel(true);
 		model.getCommands().add(tempVar2);
-	}
-
-	public void OnSystemRemoveConfirm()
-	{
-		//var systemDisks = SelectedItems.Cast<DiskImage>().Where(a => a.disk_type == DiskType.System);
-		//if (systemDisks.Count() > 0)
-		//{
-		//    SystemDiskRemoveConfirmModel = new ConfirmModel();
-		//    SystemDiskRemoveConfirmModel.View = new ConfirmationView();
-		//    SystemDiskRemoveConfirmModel.IsOpen = true;
-		//    SystemDiskRemoveConfirmModel.Header = "Remove System Disk(s)";
-		//    SystemDiskRemoveConfirmModel.ConfirmMsg = "Are you sure you want to remove the following System Disk(s)?";
-		//    SystemDiskRemoveConfirmModel.EntityNames = systemDisks.Select(a => StringFormat.format("Disk {0}", a.internal_drive_mapping));
-		//    SystemDiskRemoveConfirmModel.Commands =
-		//        new ArrayList
-		//    {
-		//        new
-		//        {
-		//            Command = new DelegateCommand(OnRemove),
-		//            Text = "OK",
-		//            IsDefault = true
-		//        },
-		//        new
-		//        {
-		//            Command = new DelegateCommand(Cancel),
-		//            Text = "Cancel"
-		//        }
-		//    };
-		//}
-		//else
-		//{
-		//    OnRemove();
-		//}
 	}
 
 	private void OnRemove()
@@ -401,7 +349,6 @@ public class VmDiskListModel extends SearchableListModel
 
 		DiskImage disk = model.getIsNew() ? new DiskImage() : (DiskImage)getSelectedItem();
 		disk.setSizeInGigabytes(Integer.parseInt(model.getSize().getEntity().toString()));
-		disk.setdisk_type(((DiskImageBase)model.getPreset().getSelectedItem()).getdisk_type());
 		disk.setdisk_interface((DiskInterface)model.getInterface().getSelectedItem());
 		disk.setvolume_type((VolumeType)model.getVolumeType().getSelectedItem());
 		disk.setvolume_format(model.getVolumeFormat());
@@ -557,17 +504,16 @@ public class VmDiskListModel extends SearchableListModel
 											java.util.ArrayList<DiskImageBase> presets = (java.util.ArrayList<DiskImageBase>)result1;
 											vmModel.getPreset().setItems(presets);
 											vmModel.getPreset().setSelectedItem(null);
-
-											for (DiskImageBase a : presets)
-											{
-												if ((hasDisks && a.getdisk_type() == DiskType.Data) || (!hasDisks && a.getdisk_type() == DiskType.System))
-												{
-													vmModel.getPreset().setSelectedItem(a);
-													break;
-												}
-											}
-
-
+											
+							                for (DiskImageBase a : presets)
+							                {
+							                    if ((hasDisks && !a.getboot()) || (!hasDisks && a.getboot()))
+							                    {
+							                        vmModel.getPreset().setSelectedItem(a);
+							                        break;
+							                    }
+							                }
+											
 											vmModel.getInterface().setItems(DataProvider.GetDiskInterfaceList(vm1.getvm_os(), vm1.getvds_group_compatibility_version()));
 											vmModel.getInterface().setSelectedItem(DataProvider.GetDefaultDiskInterface(vm1.getvm_os(), disks));
 

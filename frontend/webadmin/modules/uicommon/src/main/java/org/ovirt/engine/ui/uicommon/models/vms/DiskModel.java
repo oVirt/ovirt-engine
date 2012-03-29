@@ -66,15 +66,6 @@ public class DiskModel extends Model
 	{
 		privateActualSize = value;
 	}
-	private DiskType privateDiskType = getDiskType().values()[0];
-	public DiskType getDiskType()
-	{
-		return privateDiskType;
-	}
-	public void setDiskType(DiskType value)
-	{
-		privateDiskType = value;
-	}
 	private EntityModel privateSize;
 	public EntityModel getSize()
 	{

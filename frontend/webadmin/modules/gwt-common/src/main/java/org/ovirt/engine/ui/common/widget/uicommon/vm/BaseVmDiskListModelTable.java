@@ -62,14 +62,6 @@ public class BaseVmDiskListModelTable<T extends SearchableListModel> extends Abs
         };
         getTable().addColumn(storageDomainColumn, "Storage Domain");
 
-        TextColumnWithTooltip<DiskImage> typeColumn = new TextColumnWithTooltip<DiskImage>() {
-            @Override
-            public String getValue(DiskImage object) {
-                return object.getdisk_type().toString();
-            }
-        };
-        getTable().addColumn(typeColumn, "Type", "120px");
-
         TextColumnWithTooltip<DiskImage> allocationColumn = new EnumColumn<DiskImage, VolumeType>() {
             @Override
             protected VolumeType getRawValue(DiskImage object) {

@@ -299,14 +299,6 @@ public class ImportTemplatePopupView extends AbstractModelBoundPopupView<ImportT
         };
         diskTable.addColumn(actualSizeColumn, "Actual Size", "100px");
 
-        TextColumnWithTooltip<DiskImage> typeColumn = new TextColumnWithTooltip<DiskImage>() {
-            @Override
-            public String getValue(DiskImage object) {
-                return object.getdisk_type().toString();
-            }
-        };
-        diskTable.addColumn(typeColumn, "Type", "60px");
-
         TextColumnWithTooltip<DiskImage> dateCreatedColumn = new FullDateTimeColumn<DiskImage>() {
             @Override
             protected Date getRawValue(DiskImage object) {

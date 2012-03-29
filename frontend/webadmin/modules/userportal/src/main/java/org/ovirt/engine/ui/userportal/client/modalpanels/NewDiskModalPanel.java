@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.userportal.client.modalpanels;
 
-import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
@@ -12,14 +11,12 @@ import org.ovirt.engine.ui.uicommon.UICommand;
 import org.ovirt.engine.ui.uicommon.models.vms.DiskModel;
 import org.ovirt.engine.ui.uicommon.models.vms.VmDiskListModel;
 import org.ovirt.engine.ui.userportal.client.binders.FormConstructor;
+import org.ovirt.engine.ui.userportal.client.components.Button;
 import org.ovirt.engine.ui.userportal.client.components.CheckboxItemModelBinded;
 import org.ovirt.engine.ui.userportal.client.components.GridController;
 import org.ovirt.engine.ui.userportal.client.components.NonDraggableModalPanel;
-import org.ovirt.engine.ui.userportal.client.components.Button;
 import org.ovirt.engine.ui.userportal.client.components.SelectBoxListModelBinded;
 import org.ovirt.engine.ui.userportal.client.components.TextItemEntityModelBinded;
-import org.ovirt.engine.ui.userportal.client.binders.ObjectNameIdResolver;
-import org.ovirt.engine.ui.userportal.client.timers.SubTabRefreshTimer;
 
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.widgets.events.ClickEvent;
@@ -45,8 +42,6 @@ public class NewDiskModalPanel extends NonDraggableModalPanel {
 
 		SelectBoxListModelBinded storageDomainSelectBox = new SelectBoxListModelBinded("Storage Domain", diskModel.getStorageDomain(), storage_domains.class);
 		
-		SelectBoxListModelBinded diskTypeSelectBox = new SelectBoxListModelBinded("Disk type", diskModel.getPreset(), DiskImageBase.class);
-
 		SelectBoxListModelBinded interfaceSelectBox = new SelectBoxListModelBinded("Interface", diskModel.getInterface(), DiskInterface.class);
 
 		SelectBoxListModelBinded formatSelectBox = new SelectBoxListModelBinded(false, "Format", diskModel.getVolumeType(), VolumeType.class);
@@ -55,7 +50,7 @@ public class NewDiskModalPanel extends NonDraggableModalPanel {
 		
 		CheckboxItemModelBinded isBootableCheckBox = new CheckboxItemModelBinded("Is bootable", diskModel.getIsBootable());
 		
-		DynamicForm f = FormConstructor.constructForm(sizeTextItem, storageDomainSelectBox, diskTypeSelectBox, interfaceSelectBox, formatSelectBox, wipeAfterDeleteCheckBox, isBootableCheckBox);
+		DynamicForm f = FormConstructor.constructForm(sizeTextItem, storageDomainSelectBox, interfaceSelectBox, formatSelectBox, wipeAfterDeleteCheckBox, isBootableCheckBox);
 		
 		if (sizeTextItem.getDisabled()) {
 			f.focus();

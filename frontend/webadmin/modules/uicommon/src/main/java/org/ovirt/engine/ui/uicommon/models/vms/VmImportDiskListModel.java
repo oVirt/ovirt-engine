@@ -70,7 +70,6 @@ public class VmImportDiskListModel extends VmDiskListModel
 				model.setSize(tempVar);
 				model.getVolumeType().setSelectedItem(img.getvolume_type());
 				model.getVolumeType().getSelectedItemChangedEvent().addListener(this);
-				model.setDiskType(img.getdisk_type());
 				model.setVolumeFormat(img.getvolume_format());
 				model.setCreationDate(img.getcreation_date());
 				//NOTE: The following code won't pass conversion to Java.

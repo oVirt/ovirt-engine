@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.common.widget.uicommon.popup.vm;
 
-import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
@@ -43,10 +42,6 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> 
     ListModelListBoxEditor<Object> quotaEditor;
 
     @UiField(provided = true)
-    @Path("preset.selectedItem")
-    ListModelListBoxEditor<Object> presetEditor;
-
-    @UiField(provided = true)
     @Path("interface.selectedItem")
     ListModelListBoxEditor<Object> interfaceEditor;
 
@@ -81,7 +76,6 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> 
         sizeEditor.setLabel("Size(GB)");
         storageDomainEditor.setLabel("Storage Domain");
         quotaEditor.setLabel("Quota");
-        presetEditor.setLabel("Disk Type");
         interfaceEditor.setLabel("Interface");
         volumeTypeEditor.setLabel("Format");
         wipeAfterDeleteEditor.setLabel("Wipe after delete");
@@ -102,13 +96,6 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> 
             @Override
             public String renderNullSafe(Object object) {
                 return ((Quota) object).getQuotaName();
-            }
-        });
-
-        presetEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
-            @Override
-            public String renderNullSafe(Object object) {
-                return ((DiskImageBase) object).getdisk_type().name();
             }
         });
 

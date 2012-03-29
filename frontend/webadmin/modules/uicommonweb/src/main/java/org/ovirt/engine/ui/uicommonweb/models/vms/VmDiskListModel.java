@@ -12,7 +12,6 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
-import org.ovirt.engine.core.common.businessentities.DiskType;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.PropagateErrors;
 import org.ovirt.engine.core.common.businessentities.Quota;
@@ -312,7 +311,6 @@ public class VmDiskListModel extends SearchableListModel
                 diskModel.getStorageDomain().setSelectedItem(storageDomain);
 
                 DiskImageBase preset = new DiskImage();
-                preset.setdisk_type(disk.getdisk_type());
                 diskModel.getPreset().setSelectedItem(preset);
                 diskModel.getPreset().setIsChangable(false);
 
@@ -411,19 +409,7 @@ public class VmDiskListModel extends SearchableListModel
         for (Object item : getSelectedItems())
         {
             DiskImage a = (DiskImage) item;
-            if (a.getdisk_type() == DiskType.System)
-            {
-                items.add(StringFormat.format("Disk %1$s (System Disk)", a.getinternal_drive_mapping()));
-                if (!hasSystemDiskWarning)
-                {
-                    model.setNote("Note that removing a system disk would make the VM unbootable.");
-                    hasSystemDiskWarning = true;
-                }
-            }
-            else
-            {
-                items.add(StringFormat.format("Disk %1$s", a.getinternal_drive_mapping()));
-            }
+            items.add(StringFormat.format("Disk %1$s", a.getinternal_drive_mapping()));
         }
         model.setItems(items);
 
@@ -488,7 +474,6 @@ public class VmDiskListModel extends SearchableListModel
         disk.setSizeInGigabytes(Integer.parseInt(model.getSize().getEntity().toString()));
 
         DiskImageBase preset = (DiskImageBase) model.getPreset().getSelectedItem();
-        disk.setdisk_type(preset.getdisk_type());
 
         disk.setdisk_interface((DiskInterface) model.getInterface().getSelectedItem());
         disk.setvolume_type((VolumeType) model.getVolumeType().getSelectedItem());
@@ -793,8 +778,7 @@ public class VmDiskListModel extends SearchableListModel
 
                 for (DiskImageBase a : presets)
                 {
-                    if ((hasDisks && a.getdisk_type() == DiskType.Data)
-                            || (!hasDisks && a.getdisk_type() == DiskType.System))
+                    if ((hasDisks && !a.getboot()) || (!hasDisks && a.getboot()))
                     {
                         vmModel.getPreset().setSelectedItem(a);
                         break;

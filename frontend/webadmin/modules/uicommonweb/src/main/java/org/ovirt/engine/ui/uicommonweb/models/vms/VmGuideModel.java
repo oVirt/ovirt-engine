@@ -9,7 +9,6 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
-import org.ovirt.engine.core.common.businessentities.DiskType;
 import org.ovirt.engine.core.common.businessentities.NetworkStatus;
 import org.ovirt.engine.core.common.businessentities.PropagateErrors;
 import org.ovirt.engine.core.common.businessentities.Quota;
@@ -452,13 +451,12 @@ public class VmGuideModel extends GuideModel
     private void AddDiskPostGetDiskPresets(java.util.ArrayList<DiskImageBase> presets) {
         DiskModel model = (DiskModel) getWindow();
         model.getPreset().setItems(presets);
-        // model.getPreset().setSelectedItem(null);
 
         boolean hasDisks = !disks.isEmpty();
+
         for (DiskImageBase a : presets)
         {
-            if ((hasDisks && a.getdisk_type() == DiskType.Data)
-                    || (!hasDisks && a.getdisk_type() == DiskType.System))
+            if ((hasDisks && !a.getboot()) || (!hasDisks && a.getboot()))
             {
                 model.getPreset().setSelectedItem(a);
                 break;
@@ -555,7 +553,6 @@ public class VmGuideModel extends GuideModel
 
             DiskImage tempVar = new DiskImage();
             tempVar.setSizeInGigabytes(Integer.parseInt(model.getSize().getEntity().toString()));
-            tempVar.setdisk_type(((DiskImageBase) model.getPreset().getSelectedItem()).getdisk_type());
             tempVar.setdisk_interface((DiskInterface) model.getInterface().getSelectedItem());
             tempVar.setvolume_type((VolumeType) model.getVolumeType().getSelectedItem());
             tempVar.setvolume_format(model.getVolumeFormat());

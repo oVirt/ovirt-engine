@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.common.widget.uicommon.template;
 
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
-import org.ovirt.engine.core.common.businessentities.DiskType;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.ui.common.system.ClientStorage;
@@ -39,14 +38,6 @@ public class TemplateDiskListModelTable extends AbstractModelBoundTableWidget<Di
             }
         };
         getTable().addColumn(sizeColumn, "Size");
-
-        TextColumnWithTooltip<DiskImage> typeColumn = new EnumColumn<DiskImage, DiskType>() {
-            @Override
-            protected DiskType getRawValue(DiskImage object) {
-                return object.getdisk_type();
-            }
-        };
-        getTable().addColumn(typeColumn, "Type");
 
         TextColumnWithTooltip<DiskImage> formatColumn = new EnumColumn<DiskImage, VolumeFormat>() {
             @Override
