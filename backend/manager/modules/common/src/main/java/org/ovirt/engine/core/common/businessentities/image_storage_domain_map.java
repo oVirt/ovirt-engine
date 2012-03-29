@@ -58,18 +58,22 @@ public class image_storage_domain_map implements BusinessEntity<image_storage_do
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (!(obj instanceof image_storage_domain_map)) {
             return false;
+        }
         image_storage_domain_map other = (image_storage_domain_map) obj;
         if (id == null) {
             if (other.id != null) {
                 return false;
-            } else if (!id.equals(id))
-                return false;
+            }
+        } else if (!id.equals(other.id)) {
+            return false;
         }
         return true;
     }
