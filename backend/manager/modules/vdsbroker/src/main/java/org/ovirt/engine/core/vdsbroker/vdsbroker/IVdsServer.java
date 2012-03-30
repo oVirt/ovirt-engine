@@ -192,4 +192,6 @@ public interface IVdsServer {
     OneUuidReturnForXmlRpc glusterVolumeCreate(Map<String, Object> volumeData);
 
     StatusOnlyReturnForXmlRpc glusterVolumeSet(String volumeName, String key, String value);
+
+    StatusOnlyReturnForXmlRpc glusterVolumeStart(String volumeName, Boolean force);
 }

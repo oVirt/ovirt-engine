@@ -57,6 +57,8 @@ public final class AuditLogDirector {
         mSeverities.put(AuditLogType.GLUSTER_VOLUME_CREATE_FAILED, AuditLogSeverity.ERROR);
         mSeverities.put(AuditLogType.GLUSTER_VOLUME_OPTION_SET, AuditLogSeverity.NORMAL);
         mSeverities.put(AuditLogType.GLUSTER_VOLUME_OPTION_SET_FAILED, AuditLogSeverity.ERROR);
+        mSeverities.put(AuditLogType.GLUSTER_VOLUME_START, AuditLogSeverity.NORMAL);
+        mSeverities.put(AuditLogType.GLUSTER_VOLUME_START_FAILED, AuditLogSeverity.ERROR);
     }
 
     private static void initDefaultSeverities() {

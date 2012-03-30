@@ -185,4 +185,6 @@ public interface VdsServerConnector {
     public Map<String, Object> glusterVolumeCreate(Map<String, Object> volumeData);
 
     public Map<String, Object> glusterVolumeSet(String volumeName, String key, String value);
+
+    public Map<String, Object> glusterVolumeStart(String volumeName, Boolean force);
 }
