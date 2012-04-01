@@ -33,7 +33,6 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
@@ -435,10 +434,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
                 addVmImagesAndSnapshots();
                 updateSnapshotsFromExport();
                 MoveOrCopyAllImageGroups();
-                VmDeviceUtils.addImportedDevices(getVm().getStaticData(),
-                        getVm().getId(),
-                        new ArrayList<VmDevice>(),
-                        new ArrayList<VmDevice>());
+                VmDeviceUtils.addImportedDevices(getVm().getStaticData());
                 VmHandler.LockVm(getVm().getId());
                 return null;
 

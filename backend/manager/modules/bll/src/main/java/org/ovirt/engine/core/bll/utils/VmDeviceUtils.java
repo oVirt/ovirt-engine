@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.utils;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -203,9 +204,10 @@ public class VmDeviceUtils {
     /**
      * adds imported VM or Template devices
      * @param entity
-     * @param id
      */
-    public static <T extends VmBase> void addImportedDevices(T entity, Guid id, List<VmDevice> vmDeviceToAdd, List<VmDevice> vmDeviceToUpdate) {
+    public static <T extends VmBase> void addImportedDevices(T entity) {
+        List<VmDevice> vmDeviceToAdd = new ArrayList<VmDevice>();
+        List<VmDevice> vmDeviceToUpdate = new ArrayList<VmDevice>();
         VmDeviceDAO dao = DbFacade.getInstance().getVmDeviceDAO();
         addImportedDisks(entity, vmDeviceToUpdate);
         addImportedInterfaces(entity, vmDeviceToUpdate);

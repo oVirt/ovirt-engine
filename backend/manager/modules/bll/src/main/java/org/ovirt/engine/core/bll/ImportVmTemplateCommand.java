@@ -21,7 +21,6 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageType;
-import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmNetworkStatistics;
@@ -226,7 +225,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImprotVmT
         });
 
         MoveOrCopyAllImageGroups(getVmTemplateId(), getParameters().getImages());
-        VmDeviceUtils.addImportedDevices(getVmTemplate(), getVmTemplate().getId(),new ArrayList<VmDevice>(), new ArrayList<VmDevice>());
+        VmDeviceUtils.addImportedDevices(getVmTemplate());
         setSucceeded(true);
     }
 
