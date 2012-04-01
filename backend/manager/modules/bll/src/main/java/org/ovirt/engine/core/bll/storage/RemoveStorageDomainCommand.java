@@ -73,6 +73,11 @@ public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters>
         }
 
         storage_domains dom = getStorageDomain();
+        if (dom == null) {
+            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);
+            return false;
+        }
+
         VDS vds = getVds();
         boolean format = getParameters().getDoFormat();
         boolean localFs = isLocalFs(dom);
@@ -180,7 +185,7 @@ public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters>
 
         return getBackend()
                 .runInternalAction(VdcActionType.DetachStorageDomainFromPool,
-                               params).getSucceeded();
+                        params).getSucceeded();
     }
 
     protected boolean formatStorage(storage_domains dom, VDS vds) {
