@@ -192,16 +192,23 @@ public class SnapshotsManager {
             Snapshot snapshot,
             Guid activeSnapshotId,
             CompensationContext compensationContext) {
-        if (snapshot.getVmConfiguration() == null || !updateVmFromConfiguration(vm, snapshot.getVmConfiguration())) {
+        boolean vmUpdatedFromConfiguration = false;
+        if (snapshot.getVmConfiguration() != null) {
+            vmUpdatedFromConfiguration = updateVmFromConfiguration(vm, snapshot.getVmConfiguration());
+        }
+
+        if (!vmUpdatedFromConfiguration) {
             vm.setImages(new ArrayList<DiskImage>(getDiskImageDao().getAllSnapshotsForVmSnapshot(snapshot.getId())));
-            vm.setInterfaces(DbFacade.getInstance().getVmNetworkInterfaceDAO().getAllForVm(vm.getId()));
         }
 
         vm.setapp_list(snapshot.getAppList());
-        getVmStaticDao().update(vm.getStaticData());
         getVmDynamicDao().update(vm.getDynamicData());
-        synchronizeNics(vm.getId(), vm.getInterfaces(), compensationContext);
         synchronizeDisksFromSnapshot(vm.getId(), snapshot.getId(), activeSnapshotId, vm.getImages(), vm.getvm_name());
+
+        if (vmUpdatedFromConfiguration) {
+            getVmStaticDao().update(vm.getStaticData());
+            synchronizeNics(vm.getId(), vm.getInterfaces(), compensationContext);
+        }
     }
 
     /**
