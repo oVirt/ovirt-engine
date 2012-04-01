@@ -7,6 +7,7 @@ import java.util.List;
 import org.ovirt.engine.core.bll.ImagesHandler;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
+import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
@@ -144,6 +145,7 @@ public class SnapshotsManager {
             vm.setvmt_name(t.getname());
         }
 
+        VmDeviceUtils.setVmDevices(vm.getStaticData());
         RefObject<String> tempRefObject = new RefObject<String>("");
         new OvfManager().ExportVm(tempRefObject,
                 vm,
@@ -208,6 +210,12 @@ public class SnapshotsManager {
         if (vmUpdatedFromConfiguration) {
             getVmStaticDao().update(vm.getStaticData());
             synchronizeNics(vm.getId(), vm.getInterfaces(), compensationContext);
+
+            for (VmDevice vmDevice : getVmDeviceDao().getVmDeviceByVmId(vm.getId())) {
+                getVmDeviceDao().remove(vmDevice.getId());
+            }
+
+            VmDeviceUtils.addImportedDevices(vm.getStaticData());
         }
     }
 
