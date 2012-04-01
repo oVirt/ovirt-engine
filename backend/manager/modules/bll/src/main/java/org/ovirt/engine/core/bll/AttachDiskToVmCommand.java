@@ -23,11 +23,7 @@ public class AttachDiskToVmCommand<T extends UpdateVmDiskParameters> extends Abs
 
     @Override
     protected boolean canDoAction() {
-        boolean retValue = isVmExist();
-        if (retValue && getVm().getstatus() != VMStatus.Up && getVm().getstatus() != VMStatus.Down) {
-            retValue = false;
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL);
-        }
+        boolean retValue = isVmExist() && isVmUpOrDown();
         diskImage = getDiskImageDao().get(getParameters().getImageId());
         if (retValue && diskImage == null) {
             retValue = false;
@@ -73,7 +69,7 @@ public class AttachDiskToVmCommand<T extends UpdateVmDiskParameters> extends Abs
         getDiskImageDao().update(diskImage);
         getVmDeviceDao().save(vmDevice);
         if (!Boolean.FALSE.equals(getParameters().getDiskInfo().getPlugged()) && getVm().getstatus() != VMStatus.Down) {
-            performPlugCommnad(VDSCommandType.HotPlugDisk, diskImage, vmDevice, false);
+            performPlugCommnad(VDSCommandType.HotPlugDisk, diskImage, vmDevice);
         }
         setSucceeded(true);
     }

@@ -9,6 +9,7 @@ import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.DiskType;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.config.Config;
@@ -39,15 +40,9 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperatinParameterBas
     }
 
     protected void performPlugCommnad(VDSCommandType commandType,
-            DiskImage diskImage,
-            VmDevice vmDevice,
-            boolean isUpdateDb) {
+                DiskImage diskImage, VmDevice vmDevice) {
         runVdsCommand(commandType, new HotPlugDiskVDSParameters(getVm().getrun_on_vds().getValue(),
-                        getVm().getId(), diskImage, vmDevice));
-        if (isUpdateDb) {
-            vmDevice.setIsPlugged(!vmDevice.getIsPlugged());
-            getVmDeviceDao().update(vmDevice);
-        }
+                                 getVm().getId(), diskImage, vmDevice));
         setSucceeded(true);
     }
 
@@ -130,8 +125,16 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperatinParameterBas
         return Integer.toString(driveNum);
     }
 
+    protected boolean isVmUpOrDown() {
+        if (getVm().getstatus() != VMStatus.Up && getVm().getstatus() != VMStatus.Down) {
+            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL);
+            return false;
+        }
+        return true;
+    }
+
     protected boolean isHotPlugEnabled() {
-        if(!Config.<Boolean> GetValue(ConfigValues.HotPlugEnabled,
+        if (!Config.<Boolean> GetValue(ConfigValues.HotPlugEnabled,
                 getVds().getvds_group_compatibility_version().getValue())) {
             addCanDoActionMessage(VdcBllMessages.HOT_PLUG_DISK_IS_NOT_SUPPORTED);
             return false;
@@ -147,6 +150,14 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperatinParameterBas
         return true;
     }
 
+    protected boolean isDiskExist(DiskImage disk) {
+        if (disk == null || !disk.getactive() || !getVmId().equals(disk.getvm_guid())) {
+            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_IMAGE_DOES_NOT_EXIST);
+            return false;
+        }
+        return true;
+    }
+
     /**
      * The following method should check if os of guest is supported for hot plug/unplug operation
      * @param vm
@@ -154,7 +165,7 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperatinParameterBas
      */
     protected boolean isOsSupportingPluggableDisks(VM vm) {
         for (String os : oses) {
-            if (os.equalsIgnoreCase(vm.getguest_os())) {
+            if (os.equalsIgnoreCase(vm.getos().name())) {
                 return true;
             }
         }

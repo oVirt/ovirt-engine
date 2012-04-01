@@ -1,11 +1,9 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.vdscommands.HotPlugDiskVDSParameters;
+import org.ovirt.engine.core.utils.StringUtils;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStruct;
 
 public class HotPlugDiskVDSCommand<P extends HotPlugDiskVDSParameters> extends VdsBrokerCommand<P> {
@@ -28,24 +26,31 @@ public class HotPlugDiskVDSCommand<P extends HotPlugDiskVDSParameters> extends V
         sendInfo.add("drive", initDriveData());
     }
 
-    private Map<String, String> initDriveData() {
-        Map<String, String> drive = new HashMap<String, String>();
+    private XmlRpcStruct initDriveData() {
+        XmlRpcStruct drive = new XmlRpcStruct();
         DiskImage diskImage = getParameters().getDiskImage();
         VmDevice vmDevice = getParameters().getVmDevice();
 
-        drive.put("type", "disk");
-        // drive.put("address", getParameters().getVmDevice().getAddress());
-        drive.put("format", diskImage.getvolume_format().toString().toLowerCase());
-        drive.put("propagateErrors", diskImage.getpropagate_errors().toString().toLowerCase());
-        drive.put("iface", diskImage.getdisk_interface().toString().toLowerCase());
-        drive.put("shared", Boolean.FALSE.toString());
-        drive.put("optional", Boolean.FALSE.toString());
-        drive.put("readonly", String.valueOf(vmDevice.getIsReadOnly()));
+        drive.add("type", "disk");
+        drive.add("device", "disk");
+        addAddress(drive, getParameters().getVmDevice().getAddress());
+        drive.add("format", diskImage.getvolume_format().toString().toLowerCase());
+        drive.add("propagateErrors", diskImage.getpropagate_errors().toString().toLowerCase());
+        drive.add("iface", diskImage.getdisk_interface().toString().toLowerCase());
+        drive.add("shared", Boolean.FALSE.toString());
+        drive.add("optional", Boolean.FALSE.toString());
+        drive.add("readonly", String.valueOf(vmDevice.getIsReadOnly()));
 
-        drive.put("domainID", diskImage.getstorage_ids().get(0).toString());
-        drive.put("poolID", diskImage.getstorage_pool_id().toString());
-        drive.put("volumeID", diskImage.getId().toString());
-        drive.put("imageID", diskImage.getimage_group_id().toString());
+        drive.add("domainID", diskImage.getstorage_ids().get(0).toString());
+        drive.add("poolID", diskImage.getstorage_pool_id().toString());
+        drive.add("volumeID", diskImage.getId().toString());
+        drive.add("imageID", diskImage.getimage_group_id().toString());
         return drive;
+    }
+
+    private void addAddress(XmlRpcStruct map, String address) {
+        if (org.apache.commons.lang.StringUtils.isNotBlank(address)) {
+            map.add("address", StringUtils.string2Map(getParameters().getVmDevice().getAddress()));
+        }
     }
 }
