@@ -429,6 +429,10 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String VAR__ACTION__DESTROY_DOMAIN();
 
+    String VAR__ACTION__HOT_PLUG();
+
+    String VAR__ACTION__HOT_UNPLUG();
+
     String ACTION_TYPE_FAILED_DISK_LETTER_ALREADY_IN_USE();
 
     String ACTION_TYPE_FAILED_DISK_LIMITATION_EXCEEDED();
