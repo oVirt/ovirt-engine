@@ -48,7 +48,6 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         if (vm.getdisplay_type() != vm.getdefault_display_type()) {
             if (vm.getdisplay_type() == DisplayType.vnc) { // check spice to vnc change
                 XmlRpcStruct struct = new XmlRpcStruct();
-                StringBuilder sb = new StringBuilder();
                 // create a monitor as an unmanaged device
                 struct.add(VdsProperties.Type, VmDeviceType.VIDEO.getName());
                 struct.add(VdsProperties.Device, VmDeviceType.CIRRUS.getName());
@@ -80,6 +79,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
 
     @Override
     protected void buildVmCD() {
+        XmlRpcStruct struct;
         // check first if CD was given as a parameter
         if (!StringHelper.isNullOrEmpty(vm.getCdPath())) {
             VmDevice vmDevice =
@@ -92,11 +92,9 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                             true,
                             true,
                             true);
-            XmlRpcStruct struct = new XmlRpcStruct();
+            struct = new XmlRpcStruct();
             addCdDetails(vmDevice, struct);
-            struct.add(VdsProperties.Path, vm.getCdPath());
-            devices.add(struct);
-            managedDevices.add(vmDevice);
+            addDevice(struct, vmDevice, vm.getCdPath());
         } else {
             // get vm device for this CD from DB
             List<VmDevice> vmDevices =
@@ -110,18 +108,18 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                 if (!vmDevice.getIsManaged()) {
                     continue;
                 }
+                struct = new XmlRpcStruct();
                 String file = StringUtils.string2Map(vmDevice.getSpecParams()).get(VdsProperties.Path);
+                addCdDetails(vmDevice, struct);
+                addAddress(vmDevice, struct);
                 if (!StringHelper.isNullOrEmpty(file)) {
-                    XmlRpcStruct struct = new XmlRpcStruct();
-                    addCdDetails(vmDevice, struct);
-                    addAddress(vmDevice, struct);
-                    addCdOrFloppyDetails(file, struct);
-                    struct.add(VdsProperties.Path, file);
-                    addBootOrder(vmDevice, struct);
-                    devices.add(struct);
-                    addToManagedDevices(vmDevice);
-                    break; // currently only one is supported, may change in future releases
+                    addCdOrFloppyFileDetails(file, struct);
                 }
+                else { // create an empty CD (path="")
+                    file = "";
+                }
+                addDevice(struct, vmDevice, file);
+                break; // currently only one is supported, may change in future releases
             }
         }
     }
@@ -142,9 +140,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                             true);
             XmlRpcStruct struct = new XmlRpcStruct();
             addFloppyDetails(vmDevice, struct);
-            struct.add(VdsProperties.Path, vm.getFloppyPath());
-            devices.add(struct);
-            managedDevices.add(vmDevice);
+            addDevice(struct, vmDevice, vm.getFloppyPath());
         } else {
             // get vm device for this Floppy from DB
             List<VmDevice> vmDevices =
@@ -162,11 +158,8 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                 if (!StringHelper.isNullOrEmpty(file)) {
                     XmlRpcStruct struct = new XmlRpcStruct();
                     addFloppyDetails(vmDevice, struct);
-                    addCdOrFloppyDetails(file, struct);
-                    struct.add(VdsProperties.Path, file);
-                    addBootOrder(vmDevice, struct);
-                    devices.add(struct);
-                    addToManagedDevices(vmDevice);
+                    addCdOrFloppyFileDetails(file, struct);
+                    addDevice(struct, vmDevice, file);
                     break; // currently only one is supported, may change in future releases
                 }
             }
@@ -376,7 +369,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         struct.add(VdsProperties.nic_type, nicModel);
     }
 
-    private void addCdOrFloppyDetails(String file, XmlRpcStruct struct) {
+    private void addCdOrFloppyFileDetails(String file, XmlRpcStruct struct) {
         struct.add(VdsProperties.PoolId, vm.getstorage_pool_id().toString());
         struct.add(VdsProperties.DomainId,
                 DbFacade.getInstance()
@@ -401,6 +394,14 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         struct.add(VdsProperties.Index, "2"); // IDE slot 2 is reserved by VDSM to CDROM
         struct.add(VdsProperties.Iface, VdsProperties.Ide);
         struct.add(VdsProperties.ReadOnly, Boolean.TRUE.toString());
+    }
+
+    private void addDevice(XmlRpcStruct struct, VmDevice vmDevice, String path) {
+        struct.add(VdsProperties.Path, path);
+        struct.add(VdsProperties.SpecParams, StringUtils.string2Map(vmDevice.getSpecParams()));
+        addBootOrder(vmDevice, struct);
+        devices.add(struct);
+        addToManagedDevices(vmDevice);
     }
 
     private void addToManagedDevices(VmDevice vmDevice) {

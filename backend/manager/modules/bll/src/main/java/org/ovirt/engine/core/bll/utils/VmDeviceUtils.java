@@ -23,6 +23,7 @@ import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
 
 public class VmDeviceUtils {
     private static VmDeviceDAO dao = DbFacade.getInstance().getVmDeviceDAO();
@@ -80,15 +81,24 @@ public class VmDeviceUtils {
             ifaces = DbFacade.getInstance().getVmNetworkInterfaceDAO().getAllForTemplate(dstId);
         }
         List<VmDevice> devices = dao.getVmDeviceByVmId(srcId);
+        boolean hasCD = false;
+        String isoPath=vmBase.getiso_path();
         for (VmDevice device : devices) {
             id = Guid.NewGuid();
             String specParams = "";
             if (srcId.equals(Guid.Empty)) {
-                // only update number of monitors if this is a desktop
+                // update number of monitors if this is a desktop
                 if (vmBase.getvm_type() == VmType.Desktop) {
                     updateNumOfMonitorsInVmDevice(null, vmBase);
                 }
-                continue; // skip Blank template devices
+                //add CD if exists
+                hasCD = !isoPath.isEmpty();
+                if (hasCD) {
+                    specParams = setCdPath(specParams, "", isoPath);
+                    addManagedDevice(new VmDeviceId(Guid.NewGuid(),dstId) , VmDeviceType.DISK, VmDeviceType.CDROM, specParams, true, true);
+                }
+
+                break; // skip other Blank template devices
             }
             if (VmDeviceType.DISK.getName().equals(device.getType())
                     && VmDeviceType.DISK.getName().equals(device.getDevice())) {
@@ -102,14 +112,42 @@ public class VmDeviceUtils {
             } else if (VmDeviceType.VIDEO.getName().equals(device.getType())) {
                 specParams = getMemExpr(vmBase.getnum_of_monitors());
             }
+            else  if (VmDeviceType.DISK.getName().equals(device.getType())
+                    && VmDeviceType.CDROM.getName().equals(device.getDevice())) {
+                String srcCdPath=org.ovirt.engine.core.utils.StringUtils.string2Map(device.getSpecParams()).get(VdsProperties.Path);
+                hasCD = (!srcCdPath.isEmpty() || !isoPath.isEmpty());
+                if (hasCD) {
+                    specParams = setCdPath(specParams, srcCdPath, isoPath);
+                }
+            }
             device.setId(new VmDeviceId(id, dstId));
             device.setSpecParams(appendDeviceIdToSpecParams(id, specParams));
             dao.save(device);
+        }
+        // if VM does not has CD, add an empty CD
+        if (!hasCD) {
+            addEmptyCD(dstId);
         }
         // if destination is a VM , update devices boot order
         if (isVm) {
             updateBootOrderInVmDevice(vmBase);
         }
+    }
+
+    private static String setCdPath(String specParams, String srcCdPath, String isoPath) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(VdsProperties.Path);
+        sb.append("=");
+        // check if CD was set specifically for this VM
+        if (!StringUtils.isEmpty(isoPath)){
+            sb.append(isoPath);
+            specParams = sb.toString();
+        }
+        else if (!srcCdPath.isEmpty()){ // get the path from the source device spec params
+            sb.append(srcCdPath);
+            specParams = sb.toString();
+        }
+        return specParams;
     }
 
     /**
@@ -198,42 +236,15 @@ public class VmDeviceUtils {
      * @param newVmBase
      *            NOTE : Only one CD is currently supported.
      */
-    private static void updateCdInVmDevice(VmBase oldVmBase,
-            VmBase newVmBase) {
-        String newIsoPath = newVmBase.getiso_path();
-        String oldIsoPath = oldVmBase.getiso_path();
-
-        if (StringUtils.isEmpty(oldIsoPath) && StringUtils.isNotEmpty(newIsoPath)) {
-            // new CD was added
-            VmDevice cd = new VmDevice(new VmDeviceId(Guid.NewGuid(),
-                    newVmBase.getId()),
-                    VmDeviceType.DISK.getName(),
-                    VmDeviceType.CDROM.getName(), "", 0,
-                    newIsoPath, true, null, false);
-            dao.save(cd);
-        } else {
-            if (StringUtils.isNotEmpty(oldIsoPath) && StringUtils.isEmpty(newIsoPath)) {
-                // existing CD was removed
-                List<VmDevice> list = DbFacade
-                        .getInstance()
-                        .getVmDeviceDAO()
-                        .getVmDeviceByVmIdTypeAndDevice(newVmBase.getId(),
-                                VmDeviceType.DISK.getName(),
-                                VmDeviceType.CDROM.getName());
-                dao.remove(list.get(0).getId());
-            } else if (StringUtils.isNotEmpty(oldIsoPath) && StringUtils.isNotEmpty(newIsoPath)
-                    && !oldIsoPath.equals(newIsoPath)) {
-                // CD was changed
-                List<VmDevice> list = DbFacade
-                        .getInstance()
-                        .getVmDeviceDAO()
-                        .getVmDeviceByVmIdTypeAndDevice(newVmBase.getId(),
-                                VmDeviceType.DISK.getName(),
-                                VmDeviceType.CDROM.getName());
-                VmDevice cd = list.get(0);
-                cd.setSpecParams(newIsoPath);
-                dao.update(cd);
-            }
+    private static void updateCdInVmDevice(VmBase oldVmBase, VmBase newVmBase) {
+        List<VmDevice> cdList = DbFacade.getInstance().getVmDeviceDAO().getVmDeviceByVmIdTypeAndDevice(oldVmBase.getId(), VmDeviceType.DISK.getName(), VmDeviceType.CDROM.getName());
+        if (cdList.size() > 0){ // this is done only for safety, each VM must have at least an Empty CD
+            VmDevice cd = cdList.get(0); // only one managed CD is currently supported.
+            Map<String, String> specParamsMap = org.ovirt.engine.core.utils.StringUtils.string2Map(cd.getSpecParams());
+            String path = newVmBase.getiso_path();
+            specParamsMap.put(VdsProperties.Path, path);
+            cd.setSpecParams(org.ovirt.engine.core.utils.StringUtils.map2String(specParamsMap));
+            dao.update(cd);
         }
     }
 
@@ -404,6 +415,7 @@ public class VmDeviceUtils {
      * @param entity
      */
     private static <T extends VmBase> void addOtherDevices(T entity, List<VmDevice> vmDeviceToAdd) {
+        boolean hasCD = false;
         String memExpr = getMemExpr(entity.getnum_of_monitors());
         for (VmDevice vmDevice : entity.getManagedVmDeviceMap().values()) {
             if ((vmDevice.getDevice().equals(VmDeviceType.DISK.getName()) && vmDevice.getType().equals(VmDeviceType.DISK.getName())) ||
@@ -415,7 +427,13 @@ public class VmDeviceUtils {
             if (vmDevice.getType().equals(VmDeviceType.VIDEO.getName())) {
                 vmDevice.setSpecParams(memExpr);
             }
+            if (vmDevice.getDevice().equals(VmDeviceType.CDROM.getName())){
+                hasCD = true;
+            }
             vmDeviceToAdd.add(vmDevice);
+        }
+        if (!hasCD) { // add an empty CD
+            addEmptyCD(entity.getId());
         }
         for (VmDevice vmDevice : entity.getUnmanagedDeviceList()) {
             vmDeviceToAdd.add(vmDevice);
@@ -436,5 +454,16 @@ public class VmDeviceUtils {
         sb.append("=");
         sb.append(mem);
         return sb.toString();
+    }
+
+    /**
+     * adds an empty CD in the case that we have no CDROM inside the device
+     * @param dstId
+     */
+    private static void addEmptyCD(Guid dstId) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(VdsProperties.Path);
+        sb.append("=");
+        VmDeviceUtils.addManagedDevice(new VmDeviceId(Guid.NewGuid(),dstId), VmDeviceType.DISK, VmDeviceType.CDROM, sb.toString(), true, true);
     }
 }
