@@ -114,14 +114,14 @@ public class RunVmCommandTest {
                 Matchers.any(VdsAndVmIDVDSParametersBase.class), Matchers.any(IVdsAsyncCommand.class))).thenReturn(returnValue);
     }
 
-    private DiskImage createImage() {
+    private static DiskImage createImage() {
         final DiskImage diskImage = new DiskImage();
         diskImage.setimage_group_id(Guid.NewGuid());
         diskImage.setstorage_ids(new ArrayList<Guid>(Arrays.asList(new Guid())));
         return diskImage;
     }
 
-    private VmDevice createDiskVmDevice(final DiskImage diskImage) {
+    private static VmDevice createDiskVmDevice(final DiskImage diskImage) {
         final VmDevice vmDevice = new VmDevice();
         vmDevice.setIsPlugged(true);
         vmDevice.setId(new VmDeviceId(diskImage.getimage_group_id(), Guid.NewGuid()));
@@ -361,7 +361,7 @@ public class RunVmCommandTest {
         Assert.assertTrue(messages.contains(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_DURING_SNAPSHOT.name()));
     }
 
-    private void canRunStatelessVmTest(boolean autoStartUp,
+    private static void canRunStatelessVmTest(boolean autoStartUp,
             boolean isVmStateless,
             Boolean isStatelessParam,
             boolean shouldPass) {
@@ -428,13 +428,13 @@ public class RunVmCommandTest {
     }
 
     /**
-     * Workaround of the singleton design pattern with PowerMock and EasyMock.
+     * Workaround of the singleton design pattern with PowerMock and Mockito.
      *
      * @param disks
      *            the disks for the VM
      */
     @SuppressWarnings("unchecked")
-    private void initMocks(final List<DiskImage> disks, final Map<VDSCommandType, Boolean> calls,
+    private static void initMocks(final List<DiskImage> disks, final Map<VDSCommandType, Boolean> calls,
             final List<VmDevice> vmDevices) {
         final Guid guid = new Guid("00000000-0000-0000-0000-000000000000");
         final IConfigUtilsInterface cfgUtils = Mockito.mock(IConfigUtilsInterface.class);
@@ -538,7 +538,7 @@ public class RunVmCommandTest {
         Mockito.when(ImagesHandler.isVmInPreview(any(Guid.class))).thenReturn(false);
     }
 
-    private SnapshotsValidator mockSuccessfulSnapshotValidator() {
+    private static SnapshotsValidator mockSuccessfulSnapshotValidator() {
         SnapshotsValidator snapshotsValidator = mock(SnapshotsValidator.class);
         when(snapshotsValidator.vmNotDuringSnapshot(any(Guid.class))).thenReturn(new ValidationResult());
         return snapshotsValidator;
