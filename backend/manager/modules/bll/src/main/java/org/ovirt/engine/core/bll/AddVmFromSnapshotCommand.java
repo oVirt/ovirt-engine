@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
+import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -91,6 +92,13 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
         permissionList =
                 QuotaHelper.getInstance().addQuotaPermissionSubject(permissionList, getStoragePool(), getQuotaId());
         return permissionList;
+    }
+
+    protected List<VmNetworkInterface> getVmInterfaces() {
+        if (_vmInterfaces == null) {
+            _vmInterfaces = vmFromConfiguration.getInterfaces();
+        }
+        return _vmInterfaces;
     }
 
     protected Guid getVmIdFromSnapshot() {
