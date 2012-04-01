@@ -252,7 +252,7 @@ public class OvfTemplateWriter extends OvfWriter {
         // CD
         writeCd(_vmTemplate);
         // ummanged devices
-        writeUnmanagedDevices(_vmTemplate, _writer);
+        writeOtherDevices(_vmTemplate, _writer);
 
     }
 }

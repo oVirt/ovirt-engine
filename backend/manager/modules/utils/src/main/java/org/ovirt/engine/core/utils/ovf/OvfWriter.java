@@ -195,8 +195,16 @@ public abstract class OvfWriter implements IOvfBuilder {
         }
     }
 
-    protected void writeUnmanagedDevices(VmBase vmBase, XmlTextWriter write) {
+    protected void writeOtherDevices(VmBase vmBase, XmlTextWriter write) {
         List<VmDevice> devices = vmBase.getUnmanagedDeviceList();
+        // sound cards are treated as managed devices but are exported using the OTHER OVF ResourceType
+        Collection<VmDevice> managedDevices = vmBase.getManagedVmDeviceMap().values();
+        for (VmDevice device : managedDevices) {
+            if (VmDeviceType.SOUND.getName().equals(device.getType())) {
+                devices.add(device);
+            }
+        }
+
         for (VmDevice vmDevice : devices) {
             _writer.WriteStartElement("Item");
             _writer.WriteStartElement("rasd:ResourceType");

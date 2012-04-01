@@ -338,7 +338,7 @@ public class OvfVmWriter extends OvfWriter {
         // CD
         writeCd(vmBase);
         // ummanged devices
-        writeUnmanagedDevices(vmBase, _writer);
+        writeOtherDevices(vmBase, _writer);
 
         // End hardware section
         _writer.WriteEndElement();
