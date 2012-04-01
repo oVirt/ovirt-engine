@@ -10,7 +10,6 @@ import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.job.JobRepositoryFactory;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.StorageHelperDirector;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.IVdsAsyncCommand;
 import org.ovirt.engine.core.common.businessentities.LUNs;
@@ -292,7 +291,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
             getVm().setlast_vds_run_on(getCurrentVdsId());
         }
         if (!StringHelper.isNullOrEmpty(getVm().gethibernation_vol_handle())) {
-            HandleHibernatedVm(VdcActionType.RunVm, true);
+            HandleHibernatedVm(getActionType(), true);
             // In order to prevent a race where VdsUpdateRuntimeInfo saves the Vm Dynamic as UP prior to execution of
             // this method (which is a part of the cached VM command,
             // so the state this method is aware to is RESTORING, in case of RunVmCommand after the VM got suspended.
