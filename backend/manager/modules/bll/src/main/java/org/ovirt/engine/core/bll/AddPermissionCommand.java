@@ -18,8 +18,15 @@ import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 public class AddPermissionCommand<T extends PermissionsOperationsParametes> extends PermissionsCommandBase<T> {
+
+    private static final long serialVersionUID = 6269302199550166497L;
+
     public AddPermissionCommand(T parameters) {
         super(parameters);
+    }
+
+    public AddPermissionCommand(Guid commandId) {
+        super(commandId);
     }
 
     @Override
@@ -30,7 +37,7 @@ public class AddPermissionCommand<T extends PermissionsOperationsParametes> exte
             return false;
         }
 
-        roles role = DbFacade.getInstance().getRoleDAO().get(perm.getrole_id());
+        roles role = getRoleDao().get(perm.getrole_id());
         Guid adElementId = perm.getad_element_id();
 
         if (role == null) {
@@ -57,20 +64,9 @@ public class AddPermissionCommand<T extends PermissionsOperationsParametes> exte
         if (adElementId != null
                 && getParameters().getVdcUser() == null
                 && getParameters().getAdGroup() == null
-                && (DbFacade.getInstance().getDbUserDAO().get(adElementId) == null && DbFacade
-                        .getInstance().getAdGroupDAO().get(adElementId) == null)) {
-            getReturnValue().getCanDoActionMessages().add(
-                    VdcBllMessages.USER_MUST_EXIST_IN_DB.toString());
-            return false;
-        }
-
-        // we check that we don't insert duplicate permissions
-        if (DbFacade
-                .getInstance()
-                .getPermissionDAO()
-                .getForRoleAndAdElementAndObject(perm.getrole_id(), adElementId,
-                        perm.getObjectId()) != null) {
-            addCanDoActionMessage(VdcBllMessages.ERROR_PERMISSION_ALREADY_EXIST);
+                && getDbUserDAO().get(adElementId) == null
+                && getAdGroupDAO().get(adElementId) == null) {
+            getReturnValue().getCanDoActionMessages().add(VdcBllMessages.USER_MUST_EXIST_IN_DB.toString());
             return false;
         }
 
@@ -94,35 +90,43 @@ public class AddPermissionCommand<T extends PermissionsOperationsParametes> exte
 
     @Override
     protected void executeCommand() {
-        final permissions perm = getParameters().getPermission();
+        final permissions paramPermission = getParameters().getPermission();
+        permissions permission =
+                getPermissionDAO().getForRoleAndAdElementAndObject(paramPermission.getrole_id(),
+                        paramPermission.getad_element_id(),
+                        paramPermission.getObjectId());
 
-        // try to add user to db if vdcUser sent
-        if (getParameters().getVdcUser() != null && _dbUser == null) {
-            _dbUser = UserCommandBase.initUser(getParameters().getVdcUser(), getParameters().getSessionId());
-            if (_dbUser == null) {
-                return;
+        if (permission == null) {
+            // try to add user to db if vdcUser sent
+            if (getParameters().getVdcUser() != null && _dbUser == null) {
+                _dbUser = UserCommandBase.initUser(getParameters().getVdcUser(), getParameters().getSessionId());
+                if (_dbUser == null) {
+                    return;
+                }
             }
-        }
-        // try to add group to db if adGroup sent
-        else if (getParameters().getAdGroup() != null) {
-            _adGroup = AdGroupsHandlingCommandBase.initAdGroup(getParameters().getAdGroup());
-        }
-
-        perm.setId(Guid.NewGuid());
-
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-            @Override
-            public Void runInTransaction() {
-                DbFacade.getInstance().getPermissionDAO().save(perm);
-                getCompensationContext().snapshotNewEntity(perm);
-                getCompensationContext().stateChanged();
-                return null;
+            // try to add group to db if adGroup sent
+            else if (getParameters().getAdGroup() != null) {
+                _adGroup = AdGroupsHandlingCommandBase.initAdGroup(getParameters().getAdGroup());
             }
-        });
-        getReturnValue().setActionReturnValue(perm.getId());
+
+            paramPermission.setId(Guid.NewGuid());
+
+            TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
+                @Override
+                public Void runInTransaction() {
+                    getPermissionDAO().save(paramPermission);
+                    getCompensationContext().snapshotNewEntity(paramPermission);
+                    getCompensationContext().stateChanged();
+                    return null;
+                }
+            });
+            permission = paramPermission;
+        }
+
+        getReturnValue().setActionReturnValue(permission.getId());
 
         if (_dbUser != null) {
-            updateAdminStatus(perm);
+            updateAdminStatus(permission);
         }
         setSucceeded(true);
     }
@@ -130,7 +134,7 @@ public class AddPermissionCommand<T extends PermissionsOperationsParametes> exte
     private void updateAdminStatus(permissions perm) {
         // if the role of the permission is of type admin update the user
         // lastAdminCheckStatus to true
-        roles role = DbFacade.getInstance().getRoleDAO().get(perm.getrole_id());
+        roles role = getRoleDao().get(perm.getrole_id());
         if (role.getType() == RoleType.ADMIN) {
             MultiLevelAdministrationHandler.setIsAdminGUIFlag(perm.getad_element_id(), true);
         }

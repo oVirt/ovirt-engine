@@ -493,8 +493,6 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String VM_CANNOT_SUSPEND_VM_FROM_POOL();
 
-    String ERROR_PERMISSION_ALREADY_EXIST();
-
     String USER_NOT_AUTHORIZED_TO_PERFORM_ACTION();
 
     String ERROR_CANNOT_REMOVE_ROLE_ATTACHED_TO_PERMISSION();
