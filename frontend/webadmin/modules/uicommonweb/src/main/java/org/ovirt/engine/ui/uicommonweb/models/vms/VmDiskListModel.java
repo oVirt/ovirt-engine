@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 import java.util.ArrayList;
 
 import org.ovirt.engine.core.common.action.AddDiskToVmParameters;
+import org.ovirt.engine.core.common.action.HotPlugDiskToVmParameters;
 import org.ovirt.engine.core.common.action.RemoveDisksFromVmParameters;
 import org.ovirt.engine.core.common.action.UpdateVmDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -590,15 +591,19 @@ public class VmDiskListModel extends SearchableListModel
         VM vm = (VM) getEntity();
 
         ArrayList<VdcActionParametersBase> paramerterList = new ArrayList<VdcActionParametersBase>();
-        for (Object item : getSelectedItems())
-        {
+        for (Object item : getSelectedItems()) {
             DiskImage disk = (DiskImage) item;
             disk.setPlugged(plug);
 
-            paramerterList.add(new UpdateVmDiskParameters(vm.getId(), disk.getId(), disk));
+            paramerterList.add(new HotPlugDiskToVmParameters(vm.getId(), disk.getId()));
         }
 
-        Frontend.RunMultipleAction(VdcActionType.UpdateVmDisk, paramerterList,
+        VdcActionType plugAction = VdcActionType.HotPlugDiskToVm;
+        if (!plug) {
+            plugAction = VdcActionType.HotUnPlugDiskFromVm;
+        }
+
+        Frontend.RunMultipleAction(plugAction, paramerterList,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void Executed(FrontendMultipleActionAsyncResult result) {
