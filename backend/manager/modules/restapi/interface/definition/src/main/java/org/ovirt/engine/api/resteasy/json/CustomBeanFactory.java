@@ -3,9 +3,8 @@ package org.ovirt.engine.api.resteasy.json;
 import java.util.List;
 
 import org.codehaus.jackson.map.SerializationConfig;
-import org.codehaus.jackson.map.introspect.BasicBeanDescription;
 import org.codehaus.jackson.map.ser.BeanPropertyWriter;
-import org.codehaus.jackson.map.ser.BeanSerializer;
+import org.codehaus.jackson.map.ser.BeanSerializerBuilder;
 import org.codehaus.jackson.map.ser.CustomSerializerFactory;
 
 /*
@@ -15,21 +14,19 @@ import org.codehaus.jackson.map.ser.CustomSerializerFactory;
 public class CustomBeanFactory extends CustomSerializerFactory
 {
     @Override
-    protected BeanSerializer processViews(SerializationConfig config,
-                                          BasicBeanDescription beanDesc,
-                                          BeanSerializer ser,
-                                          List<BeanPropertyWriter> props) {
-        ser = super.processViews(config, beanDesc, ser, props);
+    protected void processViews(SerializationConfig config, BeanSerializerBuilder builder) {
+        super.processViews(config, builder);
 
-        BeanPropertyWriter[] writers = props.toArray(new BeanPropertyWriter[props.size()]);
+        List<BeanPropertyWriter> writersList = builder.getProperties();
+        BeanPropertyWriter[] writersArray = writersList.toArray(new BeanPropertyWriter[writersList.size()]);
 
-        for (int i = 0; i < writers.length; i++) {
-            if (writers[i].getName().startsWith("set") &&
-                writers[i].getPropertyType() == boolean.class) {
-                writers[i] = null;
+        for (int i = 0; i < writersArray.length; i++) {
+            if (writersArray[i].getName().startsWith("set") &&
+                writersArray[i].getPropertyType() == boolean.class) {
+                writersArray[i] = null;
             }
         }
 
-        return ser.withFiltered(writers);
+        builder.setFilteredProperties(writersArray);
     }
 }
