@@ -6,12 +6,12 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.ejb.ConcurrencyManagement;
+import javax.ejb.ConcurrencyManagementType;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
-import javax.ejb.ConcurrencyManagement;
-import javax.ejb.ConcurrencyManagementType;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -120,34 +120,40 @@ public class SchedulerUtilQuartzImpl implements SchedulerUtil {
      */
     @Override
     public String scheduleAFixedDelayJob(Object instance,
-                                         String methodName,
-                                         Class<?>[] inputTypes,
-                                         Object[] inputParams,
-                                         long initialDelay,
-                                         long taskDelay,
-                                         TimeUnit timeUnit) {
-        String jobName = generateUniqueNameForInstance(instance, methodName);
-        JobDetail job = new JobDetail(jobName, Scheduler.DEFAULT_GROUP, JobWrapper.class);
+            String methodName,
+            Class<?>[] inputTypes,
+            Object[] inputParams,
+            long initialDelay,
+            long taskDelay,
+            TimeUnit timeUnit) {
+        JobDetail job = createJobWithBasicMapValues(instance, methodName, inputTypes, inputParams);
         job.addJobListener(FixedDelayJobListener.FIXED_JOB_LISTENER_NAME);
         JobDataMap data = job.getJobDataMap();
-        data.put(RUNNABLE_INSTANCE, instance);
-        data.put(RUN_METHOD_NAME, methodName);
-        data.put(RUN_METHOD_PARAM_TYPE, inputTypes);
-        data.put(RUN_METHOD_PARAM, inputParams);
         data.put(FIXED_DELAY_VALUE, taskDelay);
         data.put(FIXED_DELAY_TIME_UNIT, timeUnit);
-
-        Date runTime = getFutureDate(initialDelay, timeUnit);
-        String triggerName = generateUniqueNameForInstance(instance, TRIGGER_PREFIX);
-        SimpleTrigger trigger = new SimpleTrigger(triggerName, Scheduler.DEFAULT_GROUP, runTime);
-
+        SimpleTrigger trigger = createSimpleTrigger(initialDelay, timeUnit, instance);
         try {
             sched.scheduleJob(job, trigger);
         } catch (SchedulerException se) {
             log.error("failed to schedule job", se);
         }
+        return job.getName();
+    }
 
-        return jobName;
+    private JobDetail createJobWithBasicMapValues(Object instance,
+            String methodName,
+            Class<?>[] inputTypes,
+            Object[] inputParams) {
+        String jobName = generateUniqueNameForInstance(instance, methodName);
+        JobDetail job = new JobDetail(jobName, Scheduler.DEFAULT_GROUP, JobWrapper.class);
+        setBasicMapValues(job.getJobDataMap(), instance, methodName, inputTypes, inputParams);
+        return job;
+    }
+
+    private SimpleTrigger createSimpleTrigger(long initialDelay, TimeUnit timeUnit, Object instance) {
+        Date runTime = getFutureDate(initialDelay, timeUnit);
+        String triggerName = generateUniqueNameForInstance(instance, TRIGGER_PREFIX);
+        return new SimpleTrigger(triggerName, Scheduler.DEFAULT_GROUP, runTime);
     }
 
     /**
@@ -169,28 +175,19 @@ public class SchedulerUtilQuartzImpl implements SchedulerUtil {
      */
     @Override
     public String scheduleAOneTimeJob(Object instance,
-                                      String methodName,
-                                      Class<?>[] inputTypes,
-                                      Object[] inputParams,
-                                      long initialDelay,
-                                      TimeUnit timeUnit) {
-        String jobName = generateUniqueNameForInstance(instance, methodName);
-        JobDetail job = new JobDetail(jobName, Scheduler.DEFAULT_GROUP, JobWrapper.class);
-        JobDataMap data = job.getJobDataMap();
-        data.put(RUNNABLE_INSTANCE, instance);
-        data.put(RUN_METHOD_NAME, methodName);
-        data.put(RUN_METHOD_PARAM, inputParams);
-        data.put(RUN_METHOD_PARAM_TYPE, inputTypes);
-        Date runTime = getFutureDate(initialDelay, timeUnit);
-        String triggerName = generateUniqueNameForInstance(instance, TRIGGER_PREFIX);
-        SimpleTrigger trigger = new SimpleTrigger(triggerName, Scheduler.DEFAULT_GROUP, runTime);
+            String methodName,
+            Class<?>[] inputTypes,
+            Object[] inputParams,
+            long initialDelay,
+            TimeUnit timeUnit) {
+        JobDetail job = createJobWithBasicMapValues(instance, methodName, inputTypes, inputParams);
+        SimpleTrigger trigger = createSimpleTrigger(initialDelay, timeUnit, instance);
         try {
             sched.scheduleJob(job, trigger);
         } catch (SchedulerException se) {
             log.error("failed to schedule job", se);
         }
-
-        return jobName;
+        return job.getName();
     }
 
     /**
@@ -210,17 +207,11 @@ public class SchedulerUtilQuartzImpl implements SchedulerUtil {
      */
     @Override
     public String scheduleACronJob(Object instance,
-                                   String methodName,
-                                   Class<?>[] inputTypes,
-                                   Object[] inputParams,
-                                   String cronExpression) {
-        String jobName = generateUniqueNameForInstance(instance, methodName);
-        JobDetail job = new JobDetail(jobName, Scheduler.DEFAULT_GROUP, JobWrapper.class);
-        JobDataMap data = job.getJobDataMap();
-        data.put(RUNNABLE_INSTANCE, instance);
-        data.put(RUN_METHOD_NAME, methodName);
-        data.put(RUN_METHOD_PARAM, inputParams);
-        data.put(RUN_METHOD_PARAM_TYPE, inputTypes);
+            String methodName,
+            Class<?>[] inputTypes,
+            Object[] inputParams,
+            String cronExpression) {
+        JobDetail job = createJobWithBasicMapValues(instance, methodName, inputTypes, inputParams);
         try {
             String triggerName = generateUniqueNameForInstance(instance, TRIGGER_PREFIX);
             Trigger trigger = new CronTrigger(triggerName, Scheduler.DEFAULT_GROUP, cronExpression);
@@ -229,7 +220,18 @@ public class SchedulerUtilQuartzImpl implements SchedulerUtil {
             log.error("failed to schedule job", se);
         }
 
-        return jobName;
+        return job.getName();
+    }
+
+    private void setBasicMapValues(JobDataMap data,
+            Object instance,
+            String methodName,
+            Class<?>[] inputTypes,
+            Object[] inputParams) {
+        data.put(RUNNABLE_INSTANCE, instance);
+        data.put(RUN_METHOD_NAME, methodName);
+        data.put(RUN_METHOD_PARAM, inputParams);
+        data.put(RUN_METHOD_PARAM_TYPE, inputTypes);
     }
 
     /**
