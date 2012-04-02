@@ -1,9 +1,10 @@
 package org.ovirt.engine.core.bll;
 
+import static org.apache.commons.lang.StringUtils.isNotEmpty;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import org.hibernate.annotations.common.util.StringHelper;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -80,10 +81,11 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
                 List<network> networks = DbFacade.getInstance().getNetworkDAO().getAllForCluster(getParameters().getClusterId());
                 StringBuilder missingNets = new StringBuilder();
                 for (VmNetworkInterface iface: interfaces) {
-                    if (!StringHelper.isEmpty(iface.getNetworkName())) {
+                    String netName = iface.getNetworkName();
+                    if (isNotEmpty(netName)) {
                         boolean exists = false;
                         for (network net: networks) {
-                            if (net.getname().equals(iface.getNetworkName())) {
+                            if (net.getname().equals(netName)) {
                                 exists = true;
                                 break;
                             }
@@ -92,7 +94,7 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
                             if (missingNets.length() > 0) {
                                 missingNets.append(", ");
                             }
-                            missingNets.append(iface.getNetworkName());
+                            missingNets.append(netName);
                         }
                     }
                 }
