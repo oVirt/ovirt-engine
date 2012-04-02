@@ -23,7 +23,6 @@ import org.ovirt.engine.api.model.CPU;
 import org.ovirt.engine.api.model.CustomProperty;
 import org.ovirt.engine.api.model.DiskFormat;
 import org.ovirt.engine.api.model.DiskInterface;
-import org.ovirt.engine.api.model.DiskType;
 import org.ovirt.engine.api.model.DisplayType;
 import org.ovirt.engine.api.model.ErrorHandlingOptions;
 import org.ovirt.engine.api.model.FenceType;
@@ -213,7 +212,6 @@ public class BackendCapabilitiesResourceTest extends AbstractBackendResourceTest
         verifyBootDevices(version.getBootDevices().getBootDevices());
         verifyDisplayTypes(version.getDisplayTypes().getDisplayTypes());
         verifyNicTypes(version.getNicInterfaces().getNicInterfaces());
-        verifyDiskTypes(version.getDiskTypes().getDiskTypes());
         verifyDiskFormats(version.getDiskFormats().getDiskFormats());
         verifyDiskInterfaces(version.getDiskInterfaces().getDiskInterfaces());
         verifyVmAffinities(version,version.getVmAffinities());
@@ -326,13 +324,6 @@ public class BackendCapabilitiesResourceTest extends AbstractBackendResourceTest
         assertEquals(NicInterface.values().length, nicTypes.size());
         for (NicInterface nicType : NicInterface.values()) {
             assertTrue(nicTypes.contains(nicType.value()));
-        }
-    }
-
-    private void verifyDiskTypes(List<String> diskTypes) {
-        assertEquals(DiskType.values().length, diskTypes.size());
-        for (DiskType diskType : DiskType.values()) {
-            assertTrue(diskTypes.contains(diskType.value()));
         }
     }
 

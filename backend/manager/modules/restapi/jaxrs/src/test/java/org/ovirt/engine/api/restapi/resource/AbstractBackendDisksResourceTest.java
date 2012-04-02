@@ -11,7 +11,6 @@ import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.Disks;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
-import org.ovirt.engine.core.common.businessentities.DiskType;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.PropagateErrors;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
@@ -92,7 +91,6 @@ public class AbstractBackendDisksResourceTest<T extends AbstractBackendReadOnlyD
         expect(entity.getvm_guid()).andReturn(PARENT_ID).anyTimes();
         expect(entity.getvolume_format()).andReturn(VolumeFormat.RAW).anyTimes();
         expect(entity.getdisk_interface()).andReturn(DiskInterface.VirtIO).anyTimes();
-        expect(entity.getdisk_type()).andReturn(DiskType.Data).anyTimes();
         expect(entity.getimageStatus()).andReturn(ImageStatus.OK).anyTimes();
         expect(entity.getvolume_type()).andReturn(VolumeType.Sparse).anyTimes();
         expect(entity.getboot()).andReturn(false).anyTimes();

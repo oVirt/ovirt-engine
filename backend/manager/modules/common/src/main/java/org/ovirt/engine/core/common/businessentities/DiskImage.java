@@ -439,7 +439,6 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
         parentId = Guid.Empty;
         setvolume_type(diskImageBase.getvolume_type());
         setvolume_format(diskImageBase.getvolume_format());
-        setdisk_type(diskImageBase.getdisk_type());
         setsize(diskImageBase.getsize());
         setinternal_drive_mapping(diskImageBase.getinternal_drive_mapping());
         setdisk_interface(diskImageBase.getdisk_interface());
@@ -549,7 +548,6 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
         Disk otherDisk = diskImage.getDisk();
         di.setDisk(new Disk(otherDisk.getId(),
                 otherDisk.getInternalDriveMapping(),
-                otherDisk.getDiskType(),
                 otherDisk.getDiskInterface(),
                 otherDisk.isWipeAfterDelete(),
                 otherDisk.getPropagateErrors()));

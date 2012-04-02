@@ -5,7 +5,6 @@ import java.sql.SQLException;
 
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
-import org.ovirt.engine.core.common.businessentities.DiskType;
 import org.ovirt.engine.core.common.businessentities.PropagateErrors;
 import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.compat.Guid;
@@ -50,7 +49,6 @@ public class DiskDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Disk, Guid> i
                 .addValue("internal_drive_mapping", entity.getInternalDriveMapping())
                 .addValue("disk_alias", entity.getDiskAlias())
                 .addValue("disk_description", entity.getDiskDescription())
-                .addValue("disk_type", EnumUtils.nameOrNull(entity.getDiskType()))
                 .addValue("disk_interface", EnumUtils.nameOrNull(entity.getDiskInterface()))
                 .addValue("wipe_after_delete", entity.isWipeAfterDelete())
                 .addValue("propagate_errors", EnumUtils.nameOrNull(entity.getPropagateErrors()));
@@ -68,7 +66,6 @@ public class DiskDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Disk, Guid> i
                 disk.setInternalDriveMapping(rs.getInt("internal_drive_mapping"));
                 disk.setDiskAlias(rs.getString("disk_alias"));
                 disk.setDiskDescription(rs.getString("disk_description"));
-                disk.setDiskType(DiskType.valueOf(rs.getString("disk_type")));
                 disk.setDiskInterface(DiskInterface.valueOf(rs.getString("disk_interface")));
                 disk.setWipeAfterDelete(rs.getBoolean("wipe_after_delete"));
                 disk.setPropagateErrors(PropagateErrors.valueOf(rs.getString("propagate_errors")));

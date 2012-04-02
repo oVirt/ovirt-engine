@@ -45,14 +45,6 @@ SELECT DISTINCT images.image_guid as image_guid, vm_device.vm_id as vm_guid,
     images.active,
     vm_static.entity_type as entity_type,
     CAST (disks.internal_drive_mapping AS VARCHAR(50)) as internal_drive_mapping,
-    CASE WHEN disks.disk_type = 'Unassigned' THEN 0
-         WHEN disks.disk_type = 'System' THEN 1
-         WHEN disks.disk_type = 'Data' THEN 2
-         WHEN disks.disk_type = 'Shared' THEN 3
-         WHEN disks.disk_type = 'Swap' THEN 4
-         WHEN disks.disk_type = 'Temp' THEN 5
-         ELSE NULL
-    END AS disk_type,
     CASE WHEN disks.disk_interface = 'IDE' THEN 0
          WHEN disks.disk_interface = 'SCSI' THEN 1
          WHEN disks.disk_interface = 'VirtIO' THEN 2
@@ -109,7 +101,7 @@ SELECT     images_storage_domain_view.storage_path as storage_path, images_stora
                       images_storage_domain_view.ParentId as ParentId, images_storage_domain_view.imageStatus as imageStatus, images_storage_domain_view.lastModified as lastModified,
                       images_storage_domain_view.app_list as app_list, images_storage_domain_view.storage_id as storage_id, images_storage_domain_view.vm_snapshot_id as vm_snapshot_id,
                       images_storage_domain_view.volume_type as volume_type, images_storage_domain_view.image_group_id as image_group_id, images_storage_domain_view.vm_guid as vm_guid,
-                      images_storage_domain_view.active as active, images_storage_domain_view.volume_format as volume_format, images_storage_domain_view.disk_type as disk_type,
+                      images_storage_domain_view.active as active, images_storage_domain_view.volume_format as volume_format,
                       images_storage_domain_view.disk_interface as disk_interface, images_storage_domain_view.boot as boot, images_storage_domain_view.wipe_after_delete as wipe_after_delete, images_storage_domain_view.propagate_errors as propagate_errors,
                       images_storage_domain_view.entity_type as entity_type,images_storage_domain_view.quota_id as quota_id, images_storage_domain_view.quota_name as quota_name, disks.disk_alias as disk_alias, disks.disk_description as disk_description
 FROM         images_storage_domain_view

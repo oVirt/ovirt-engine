@@ -15,7 +15,6 @@ import org.mockito.MockitoAnnotations;
 import org.ovirt.engine.core.common.action.UpdateVmDiskParameters;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
-import org.ovirt.engine.core.common.businessentities.DiskType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -138,7 +137,6 @@ public class UpdateVmDiskCommandTest {
         DiskImage disk = new DiskImage();
         disk.setId(diskImageGuid);
         disk.setdisk_interface(DiskInterface.VirtIO);
-        disk.setdisk_type(DiskType.Data);
         disk.setPlugged(false);
         disk.setactive(true);
         disk.setvm_guid(vmId);

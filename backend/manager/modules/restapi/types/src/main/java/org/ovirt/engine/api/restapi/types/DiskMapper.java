@@ -5,7 +5,6 @@ import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.DiskFormat;
 import org.ovirt.engine.api.model.DiskInterface;
 import org.ovirt.engine.api.model.DiskStatus;
-import org.ovirt.engine.api.model.DiskType;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.StorageDomains;
 import org.ovirt.engine.api.model.VM;
@@ -41,12 +40,6 @@ public class DiskMapper {
             DiskInterface diskInterface = DiskInterface.fromValue(disk.getInterface());
             if (diskInterface != null) {
                 diskImage.setdisk_interface(map(diskInterface, null));
-            }
-        }
-        if (disk.isSetType()) {
-            DiskType diskType = DiskType.fromValue(disk.getType());
-            if (diskType != null) {
-                diskImage.setdisk_type(map(diskType, null));
             }
         }
         if (disk.isSetStatus()) {
@@ -88,9 +81,6 @@ public class DiskMapper {
         }
         if (entity.getdisk_interface() != null) {
             model.setInterface(map(entity.getdisk_interface(), null));
-        }
-        if (entity.getdisk_type() != null) {
-            model.setType(map(entity.getdisk_type(), null));
         }
         if (entity.getimageStatus() != null) {
             DiskStatus status = map(entity.getimageStatus());
@@ -157,31 +147,6 @@ public class DiskMapper {
             return DiskInterface.IDE.value();
         case VirtIO:
             return DiskInterface.VIRTIO.value();
-        default:
-            return null;
-        }
-    }
-
-    @Mapping(from = DiskType.class, to = org.ovirt.engine.core.common.businessentities.DiskType.class)
-    public static org.ovirt.engine.core.common.businessentities.DiskType map(DiskType diskType,
-            org.ovirt.engine.core.common.businessentities.DiskType template) {
-        switch (diskType) {
-        case DATA:
-            return org.ovirt.engine.core.common.businessentities.DiskType.Data;
-        case SYSTEM:
-            return org.ovirt.engine.core.common.businessentities.DiskType.System;
-        default:
-            return null;
-        }
-    }
-
-    @Mapping(from = org.ovirt.engine.core.common.businessentities.DiskType.class, to = String.class)
-    public static String map(org.ovirt.engine.core.common.businessentities.DiskType diskType, String template) {
-        switch (diskType) {
-        case Data:
-            return DiskType.DATA.value();
-        case System:
-            return DiskType.SYSTEM.value();
         default:
             return null;
         }

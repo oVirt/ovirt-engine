@@ -76,7 +76,6 @@ public class RemoveSnapshotSingleDiskCommand<T extends ImagesContainterParameter
             }
             getDestinationDiskImage().setvolume_format(curr.getvolume_format());
             getDestinationDiskImage().setvolume_type(curr.getvolume_type());
-            getDestinationDiskImage().setdisk_type(curr.getdisk_type());
             getDestinationDiskImage().setParentId(getDiskImage().getParentId());
             DbFacade.getInstance().getDiskDao().update(curr.getDisk());
             DbFacade.getInstance().getDiskImageDAO().update(getDestinationDiskImage());

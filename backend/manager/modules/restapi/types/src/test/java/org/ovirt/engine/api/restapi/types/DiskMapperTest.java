@@ -5,7 +5,6 @@ import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.DiskFormat;
 import org.ovirt.engine.api.model.DiskInterface;
 import org.ovirt.engine.api.model.DiskStatus;
-import org.ovirt.engine.api.model.DiskType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 
 public class DiskMapperTest extends AbstractInvertibleMappingTest<Disk, DiskImage, DiskImage> {
@@ -16,7 +15,6 @@ public class DiskMapperTest extends AbstractInvertibleMappingTest<Disk, DiskImag
 
     @Override
     protected Disk postPopulate(Disk model) {
-        model.setType(MappingTestHelper.shuffle(DiskType.class).value());
         model.setFormat(MappingTestHelper.shuffle(DiskFormat.class).value());
         model.setInterface(MappingTestHelper.shuffle(DiskInterface.class).value());
         model.setStatus(StatusUtils.create(MappingTestHelper.shuffle(DiskStatus.class)));
@@ -30,7 +28,6 @@ public class DiskMapperTest extends AbstractInvertibleMappingTest<Disk, DiskImag
         assertEquals(model.getSize(), transform.getSize());
         assertEquals(model.getFormat(), transform.getFormat());
         assertEquals(model.getInterface(), transform.getInterface());
-        assertEquals(model.getType(), transform.getType());
         assertEquals(model.isPlugged(), transform.isPlugged());
         assertEquals("unexpected status", model.getStatus().getState(), transform.getStatus().getState());
         assertEquals("unexpected sparse", model.isSparse(), transform.isSparse());

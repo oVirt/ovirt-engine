@@ -793,8 +793,6 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String ACTION_TYPE_FAILED_DISK_BOOT_IN_USE();
 
-    String ACTION_TYPE_FAILED_DISK_SYSTEM_ALREADY_EXISTS();
-
     String VDS_GROUP_CANNOT_UPDATE_CPU_WHEN_RUNNING_VMS();
 
     String VM_OR_TEMPLATE_ILLEGAL_PRIORITY_VALUE();

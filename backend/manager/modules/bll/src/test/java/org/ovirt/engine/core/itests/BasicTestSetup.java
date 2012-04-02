@@ -36,7 +36,6 @@ import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
-import org.ovirt.engine.core.common.businessentities.DiskType;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.PropagateErrors;
@@ -202,7 +201,6 @@ public class BasicTestSetup {
                         VmEntityType.VM, null,null);
         disk.setvolume_type(VolumeType.Sparse);
         disk.setvolume_format(VolumeFormat.COW);
-        disk.setdisk_type(DiskType.Data);
         disk.setsize(100);
         disk.setinternal_drive_mapping(Long.toString(AbstractBackendTest.testSequenceNumber));
         disk.setdisk_interface(DiskInterface.IDE);

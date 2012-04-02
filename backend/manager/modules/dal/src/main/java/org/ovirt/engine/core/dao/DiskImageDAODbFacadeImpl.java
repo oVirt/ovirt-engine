@@ -10,7 +10,6 @@ import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
-import org.ovirt.engine.core.common.businessentities.DiskType;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.PropagateErrors;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
@@ -271,7 +270,6 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
                     .getInt("volume_type")));
             entity.setvolume_format(VolumeFormat.forValue(rs
                     .getInt("volume_format")));
-            entity.setdisk_type(DiskType.forValue(rs.getInt("disk_type")));
             entity.setimage_group_id(Guid.createGuidFromString(rs
                     .getString("image_group_id")));
             entity.setstorage_path(rs.getString("storage_path"));

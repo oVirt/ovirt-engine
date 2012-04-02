@@ -1,33 +1,25 @@
 package org.ovirt.engine.core.common.vdscommands;
 
-import org.ovirt.engine.core.compat.*;
-import org.ovirt.engine.core.common.businessentities.*;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlType;
+import org.ovirt.engine.core.common.businessentities.VolumeFormat;
+import org.ovirt.engine.core.common.businessentities.VolumeType;
+import org.ovirt.engine.core.compat.Guid;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "CreateSnapshotVDSCommandParameters")
 public class CreateSnapshotVDSCommandParameters extends CreateImageVDSCommandParameters {
     public CreateSnapshotVDSCommandParameters(Guid storagePoolId, Guid storageDomainId, Guid imageGroupId,
-            Guid imageId, long imgSizeInBytes, VolumeType imageType, VolumeFormat volFormat, DiskType diskType,
+            Guid imageId, long imgSizeInBytes, VolumeType imageType, VolumeFormat volFormat,
             Guid sourceImageGroupId, Guid newImageId, String newImageDescription, String competabilityVersion) {
-        super(storagePoolId, storageDomainId, imageGroupId, imgSizeInBytes, imageType, volFormat, diskType, newImageId,
+        super(storagePoolId, storageDomainId, imageGroupId, imgSizeInBytes, imageType, volFormat, newImageId,
                 newImageDescription, competabilityVersion);
         _imageId = imageId;
         setSourceImageGroupId(sourceImageGroupId);
     }
 
-    @XmlElement
-    private Guid _imageId = new Guid();
+    private Guid _imageId = Guid.Empty;
+    private Guid privateSourceImageGroupId = Guid.Empty;
 
     public Guid getImageId() {
         return _imageId;
     }
-
-    @XmlElement(name = "SourceImageGroupId")
-    private Guid privateSourceImageGroupId = new Guid();
 
     public Guid getSourceImageGroupId() {
         return privateSourceImageGroupId;

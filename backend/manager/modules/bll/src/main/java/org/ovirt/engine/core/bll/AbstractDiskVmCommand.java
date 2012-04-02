@@ -7,7 +7,6 @@ import org.ovirt.engine.core.common.action.VmDiskOperatinParameterBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
-import org.ovirt.engine.core.common.businessentities.DiskType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -76,18 +75,6 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperatinParameterBas
             if (diskInfo.getinternal_drive_mapping() == null) {
                 returnValue = false;
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_LIMITATION_EXCEEDED);
-            }
-        }
-
-        if (returnValue && diskInfo.getdisk_type().equals(DiskType.System)) {
-            for (DiskImageBase disk : getVm().getDiskMap().values()) {
-                if (disk.getdisk_type().equals(DiskType.System)) {
-                    returnValue = false;
-                    addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SYSTEM_ALREADY_EXISTS);
-                    getReturnValue().getCanDoActionMessages().add(
-                            String.format("$DiskName %1$s", disk.getinternal_drive_mapping()));
-                    break;
-                }
             }
         }
 

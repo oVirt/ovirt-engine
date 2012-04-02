@@ -13,7 +13,6 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
-import org.ovirt.engine.core.common.businessentities.DiskType;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
@@ -90,7 +89,6 @@ public class DiskImageDAOTest extends BaseGenericDaoTestCase<Guid, DiskImage, Di
         newImage.setvolume_format(VolumeFormat.COW);
         newImage.setvolume_type(VolumeType.Sparse);
         newImage.setdisk_interface(DiskInterface.IDE);
-        newImage.setdisk_type(DiskType.Data);
         newImage.setimage_group_id(Guid.NewGuid());
         newImage.setQuotaId(Guid.NewGuid());
         newImage.setstorage_ids(new ArrayList<Guid>(Arrays.asList(Guid.Empty)));

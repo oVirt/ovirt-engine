@@ -3,9 +3,7 @@ package org.ovirt.engine.core.common.utils;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.BootSequence;
-import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.DiskType;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.config.Config;
@@ -176,15 +174,15 @@ public class VmDeviceCommonUtils {
                 if (id != null && !id.equals(Guid.Empty)) {
                     if (isOldCluster) { // Only one system disk can be bootable in
                                         // old version.
-                        Disk disk = null;
+                        DiskImage diskImage = null;
                         // gets the image disk
                         for (DiskImage image : vmBase.getDiskList()) {
                             if (image.getimage_group_id().equals(id)) {
-                                disk = image.getDisk();
+                                diskImage = image;
                                 break;
                             }
                         }
-                        if (disk != null && disk.getDiskType().equals(DiskType.System)) {
+                        if (diskImage != null && diskImage.getboot()) {
                             device.setBootOrder(++bootOrder);
                             break;
                         }

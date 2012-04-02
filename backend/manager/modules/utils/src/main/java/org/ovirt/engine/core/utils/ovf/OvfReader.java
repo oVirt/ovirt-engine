@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
-import org.ovirt.engine.core.common.businessentities.DiskType;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -132,16 +131,6 @@ public abstract class OvfReader implements IOvfBuilder {
             }
             else {
                 image.setdisk_interface(DiskInterface.IDE);
-            }
-            if (node.Attributes.get("ovf:disk-type") != null) {
-                if (!StringHelper.isNullOrEmpty(node.Attributes.get("ovf:disk-type").getValue())) {
-                    image.setdisk_type(DiskType.valueOf(node.Attributes.get("ovf:disk-type").getValue()));
-                } else {
-                    image.setdisk_type(DiskType.Unassigned);
-                }
-            }
-            else {
-                image.setdisk_type(DiskType.Unassigned);
             }
             if (node.Attributes.get("ovf:boot") != null) {
                 if (!StringHelper.isNullOrEmpty(node.Attributes.get("ovf:boot").getValue())) {

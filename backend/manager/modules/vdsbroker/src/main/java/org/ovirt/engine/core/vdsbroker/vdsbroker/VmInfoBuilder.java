@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.DiskType;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -200,11 +199,8 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                     logUnsupportedInterfaceType();
                     break;
                 }
-                // Insure that system disk is created first.
-                Guid diskId = vmDevice.getDeviceId();
-                if (DbFacade.getInstance().getDiskDao()
-                        .get(diskId).getDiskType()
-                        .equals(DiskType.System)) {
+                // Insure that boot disk is created first.
+                if (disk.getboot()) {
                     struct.add(VdsProperties.Index, 0);
                 }
                 addAddress(vmDevice, struct);

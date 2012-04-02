@@ -11,7 +11,6 @@ import org.ovirt.engine.core.common.action.HotPlugDiskToVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
-import org.ovirt.engine.core.common.businessentities.DiskType;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 
 public class HotUnPlugDiskFromVmCommandTest extends HotPlugDiskToVmCommandTest {
@@ -38,7 +37,6 @@ public class HotUnPlugDiskFromVmCommandTest extends HotPlugDiskToVmCommandTest {
         DiskImage disk = new DiskImage();
         disk.setId(diskImageGuid);
         disk.setdisk_interface(DiskInterface.VirtIO);
-        disk.setdisk_type(DiskType.Data);
         disk.setactive(true);
         disk.setvm_guid(vmId);
         doReturn(diskImageDao).when(command).getDiskImageDao();

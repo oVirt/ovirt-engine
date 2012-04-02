@@ -31,8 +31,6 @@ import org.ovirt.engine.api.model.DiskInterface;
 import org.ovirt.engine.api.model.DiskInterfaces;
 import org.ovirt.engine.api.model.DiskStates;
 import org.ovirt.engine.api.model.DiskStatus;
-import org.ovirt.engine.api.model.DiskType;
-import org.ovirt.engine.api.model.DiskTypes;
 import org.ovirt.engine.api.model.DisplayType;
 import org.ovirt.engine.api.model.DisplayTypes;
 import org.ovirt.engine.api.model.FenceType;
@@ -249,18 +247,6 @@ public class DefaultCapabilitiesResource implements CapabilitiesResource {
     {
         addNicInterfaces(VERSION21, NicInterface.values());
         addNicInterfaces(VERSION22, NicInterface.values());
-    }
-
-    private void addDiskTypes(VersionCaps version, DiskType... types) {
-        version.setDiskTypes(new DiskTypes());
-        for (DiskType type : types) {
-            version.getDiskTypes().getDiskTypes().add(type.value());
-        }
-    }
-
-    {
-        addDiskTypes(VERSION21, DiskType.values());
-        addDiskTypes(VERSION22, DiskType.values());
     }
 
     private void addDiskFormats(VersionCaps version, DiskFormat... types) {

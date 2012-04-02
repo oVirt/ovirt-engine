@@ -53,7 +53,6 @@ public class AddImageFromScratchCommand<T extends AddImageFromScratchParameters>
             mNewCreatedDiskImage.setsize(getParameters().getDiskInfo().getsize());
             mNewCreatedDiskImage.setvolume_type(getParameters().getDiskInfo().getvolume_type());
             mNewCreatedDiskImage.setvolume_format(getParameters().getDiskInfo().getvolume_format());
-            mNewCreatedDiskImage.setdisk_type(getParameters().getDiskInfo().getdisk_type());
             mNewCreatedDiskImage.setdescription(CalculateImageDescription());
             mNewCreatedDiskImage.setcreation_date(new Date());
             mNewCreatedDiskImage.setlastModified(new Date());
@@ -82,12 +81,11 @@ public class AddImageFromScratchCommand<T extends AddImageFromScratchParameters>
                         new CreateImageVDSCommandParameters(getVm().getstorage_pool_id(), getParameters()
                                 .getStorageDomainId(), getImageGroupId(), getParameters().getDiskInfo().getsize(),
                                 getParameters().getDiskInfo().getvolume_type(), getParameters().getDiskInfo()
-                                        .getvolume_format(), getParameters().getDiskInfo().getdisk_type(),
-                                getDestinationImageId(), CalculateImageDescription(), getStoragePool()
+                                        .getvolume_format(), getDestinationImageId(), CalculateImageDescription(), getStoragePool()
                                         .getcompatibility_version().toString()));
 
         if (vdsReturnValue.getSucceeded()) {
-            getParameters().setTaskIds(new java.util.ArrayList<Guid>());
+            getParameters().setTaskIds(new ArrayList<Guid>());
             getParameters().getTaskIds().add(
                     CreateTask(vdsReturnValue.getCreationInfo(), getParameters().getParentCommand()));
             getReturnValue().getInternalTaskIdList().add(getParameters().getTaskIds().get(0));

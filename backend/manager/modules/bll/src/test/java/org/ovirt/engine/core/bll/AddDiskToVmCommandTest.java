@@ -11,7 +11,6 @@ import org.ovirt.engine.core.common.action.AddDiskToVmParameters;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
-import org.ovirt.engine.core.common.businessentities.DiskType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -189,7 +188,6 @@ public class AddDiskToVmCommandTest {
     public void canDoActionFailsOnNullDiskInterface() throws Exception {
         Guid storageId = Guid.NewGuid();
         DiskImageBase image = new DiskImageBase();
-        image.setdisk_type(DiskType.Data);
         image.setvolume_format(VolumeFormat.COW);
         image.setvolume_type(VolumeType.Preallocated);
         AddDiskToVmParameters params = new AddDiskToVmParameters(Guid.NewGuid(), image);
@@ -405,7 +403,6 @@ public class AddDiskToVmCommandTest {
      */
     private AddDiskToVmParameters createParameters() {
         DiskImageBase image = new DiskImageBase();
-        image.setdisk_type(DiskType.Data);
         image.setdisk_interface(DiskInterface.IDE);
         AddDiskToVmParameters parameters = new AddDiskToVmParameters(Guid.NewGuid(), image);
         return parameters;
@@ -414,7 +411,6 @@ public class AddDiskToVmCommandTest {
     private DiskImageBase createSparseDiskImageBase() {
         DiskImageBase base = new DiskImageBase();
         base.setvolume_type(VolumeType.Sparse);
-        base.setdisk_type(DiskType.Data);
         base.setdisk_interface(DiskInterface.IDE);
         return base;
     }
@@ -422,7 +418,6 @@ public class AddDiskToVmCommandTest {
     private DiskImageBase createPreallocDiskImageBase() {
         DiskImageBase base = new DiskImageBase();
         base.setvolume_type(VolumeType.Preallocated);
-        base.setdisk_type(DiskType.Data);
         base.setdisk_interface(DiskInterface.IDE);
         base.setSizeInGigabytes(5);
         return base;

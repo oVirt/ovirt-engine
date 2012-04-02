@@ -11,13 +11,12 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "CreateImageVDSCommandParameters")
 public class CreateImageVDSCommandParameters extends StoragePoolDomainAndGroupIdBaseVDSCommandParameters {
     public CreateImageVDSCommandParameters(Guid storagePoolId, Guid storageDomainId, Guid imageGroupId,
-            long imageSizeInBytes, VolumeType imageType, VolumeFormat volFormat, DiskType diskType, Guid newImageId,
+            long imageSizeInBytes, VolumeType imageType, VolumeFormat volFormat, Guid newImageId,
             String newImageDescription, String competabilityVersion) {
         super(storagePoolId, storageDomainId, imageGroupId);
         _imageSizeInBytes = imageSizeInBytes;
         _imageType = imageType;
         this.setVolumeFormat(volFormat);
-        this.setDiskType(diskType);
         setNewImageID(newImageId);
         setNewImageDescription(newImageDescription);
         setCompatibilityVersion(competabilityVersion);
@@ -46,16 +45,6 @@ public class CreateImageVDSCommandParameters extends StoragePoolDomainAndGroupId
         privateVolumeFormat = value;
     }
 
-    private DiskType privateDiskType = DiskType.forValue(0);
-
-    public DiskType getDiskType() {
-        return privateDiskType;
-    }
-
-    protected void setDiskType(DiskType value) {
-        privateDiskType = value;
-    }
-
     private Guid privateNewImageID = new Guid();
 
     public Guid getNewImageID() {
@@ -81,12 +70,11 @@ public class CreateImageVDSCommandParameters extends StoragePoolDomainAndGroupId
 
     @Override
     public String toString() {
-        return String.format("%s, imageSizeInBytes = %s, volumeFormat = %s, diskType = %s, newImageId = %s, " +
+        return String.format("%s, imageSizeInBytes = %s, volumeFormat = %s, newImageId = %s, " +
                 "newImageDescription = %s",
                 super.toString(),
                 getImageSizeInBytes(),
                 getVolumeFormat(),
-                getDiskType(),
                 getNewImageID(),
                 getNewImageDescription());
     }

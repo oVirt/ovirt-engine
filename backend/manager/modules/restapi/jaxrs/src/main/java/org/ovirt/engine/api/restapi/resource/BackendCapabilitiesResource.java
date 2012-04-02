@@ -23,8 +23,6 @@ import org.ovirt.engine.api.model.DiskInterface;
 import org.ovirt.engine.api.model.DiskInterfaces;
 import org.ovirt.engine.api.model.DiskStates;
 import org.ovirt.engine.api.model.DiskStatus;
-import org.ovirt.engine.api.model.DiskType;
-import org.ovirt.engine.api.model.DiskTypes;
 import org.ovirt.engine.api.model.DisplayType;
 import org.ovirt.engine.api.model.DisplayTypes;
 import org.ovirt.engine.api.model.Features;
@@ -121,7 +119,6 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
             addBootDevices(version, BootDevice.values());
             addDisplayTypes(version, DisplayType.values());
             addNicInterfaces(version, NicInterface.values());
-            addDiskTypes(version, DiskType.values());
             addDiskFormats(version, DiskFormat.values());
             addDiskInterfaces(version, DiskInterface.values());
             addCustomProperties(version, getVmHooksEnvs(v));
@@ -246,13 +243,6 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
         version.setNicInterfaces(new NicInterfaces());
         for (NicInterface type : types) {
             version.getNicInterfaces().getNicInterfaces().add(type.value());
-        }
-    }
-
-    private void addDiskTypes(VersionCaps version, DiskType... types) {
-        version.setDiskTypes(new DiskTypes());
-        for (DiskType type : types) {
-            version.getDiskTypes().getDiskTypes().add(type.value());
         }
     }
 

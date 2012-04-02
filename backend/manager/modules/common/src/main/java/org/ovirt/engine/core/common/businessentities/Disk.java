@@ -38,10 +38,6 @@ public class Disk extends IVdcQueryable implements BusinessEntity<Guid> {
      */
     private int internalDriveMapping;
 
-    /**
-     * The type of disk (Data/System/etc).
-     */
-    private DiskType diskType;
 
     /**
      * The alias name of the disk.
@@ -74,14 +70,12 @@ public class Disk extends IVdcQueryable implements BusinessEntity<Guid> {
 
     public Disk(Guid id,
             int internalDriveMapping,
-            DiskType diskType,
             DiskInterface diskInterface,
             boolean wipeAfterDelete,
             PropagateErrors propagateErrors) {
         super();
         this.id = id;
         this.internalDriveMapping = internalDriveMapping;
-        this.diskType = diskType;
         this.diskInterface = diskInterface;
         this.wipeAfterDelete = wipeAfterDelete;
         this.propagateErrors = propagateErrors;
@@ -113,15 +107,6 @@ public class Disk extends IVdcQueryable implements BusinessEntity<Guid> {
 
     public void setInternalDriveMapping(int internalDriveMapping) {
         this.internalDriveMapping = internalDriveMapping;
-    }
-
-    @NotNull(message = "VALIDATION.DISK_TYPE.NOT_NULL", groups = { CreateEntity.class, UpdateEntity.class })
-    public DiskType getDiskType() {
-        return diskType;
-    }
-
-    public void setDiskType(DiskType diskType) {
-        this.diskType = diskType;
     }
 
     @NotNull(message = "VALIDATION.DISK_INTERFACE.NOT_NULL", groups = { CreateEntity.class, UpdateEntity.class })
@@ -172,7 +157,6 @@ public class Disk extends IVdcQueryable implements BusinessEntity<Guid> {
         result = prime * result + ((diskDescription == null) ? 0 : diskDescription.hashCode());
         result = prime * result + ((diskInterface == null) ? 0 : diskInterface.hashCode());
         result = prime * result + ((diskAlias == null) ? 0 : diskAlias.hashCode());
-        result = prime * result + ((diskType == null) ? 0 : diskType.hashCode());
         result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + internalDriveMapping;
         result = prime * result + ((propagateErrors == null) ? 0 : propagateErrors.hashCode());
@@ -200,8 +184,6 @@ public class Disk extends IVdcQueryable implements BusinessEntity<Guid> {
             if (other.diskAlias != null)
                 return false;
         } else if (!diskAlias.equals(other.diskAlias))
-            return false;
-        if (diskType != other.diskType)
             return false;
         if (id == null) {
             if (other.id != null)

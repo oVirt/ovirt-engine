@@ -11,7 +11,6 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
-import org.ovirt.engine.core.common.businessentities.DiskType;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.compat.Guid;
@@ -113,7 +112,6 @@ public class DiskImageDynamicDAOTest extends BaseDAOTestCase{
         newImage.setvolume_format(VolumeFormat.COW);
         newImage.setvolume_type(VolumeType.Sparse);
         newImage.setdisk_interface(DiskInterface.IDE);
-        newImage.setdisk_type(DiskType.Data);
         newImage.setactive(true);
         newImage.setvm_guid(EXISTING_VM_ID);
         newImage.setit_guid(EXISTING_IMAGE_DISK_TEMPLATE);

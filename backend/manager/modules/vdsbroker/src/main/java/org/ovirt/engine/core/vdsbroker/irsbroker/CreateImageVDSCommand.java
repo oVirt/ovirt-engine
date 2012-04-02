@@ -21,15 +21,14 @@ public class CreateImageVDSCommand<P extends CreateImageVDSCommandParameters> ex
                 + "\r\n" + "                spUUID={1}" + "\r\n" + "                imgGUID={2}"
                 + "\r\n" + "                size={3} bytes" + "\r\n"
                 + "                volFormat={4}" + "\r\n" + "                volType={5}" + "\r\n"
-                + "                diskType={6}" + "\r\n" + "                volUUID={7}" + "\r\n"
-                + "                descr={8}" + "\r\n" + "                srcImgGUID={9}" + "\r\n"
-                + "                srcVolUUID={10}" + "\r\n" + "                ",
+                + "                volUUID={6}" + "\r\n"
+                + "                descr={7}" + "\r\n" + "                srcImgGUID={8}" + "\r\n"
+                + "                srcVolUUID={9}" + "\r\n" + "                ",
                 getParameters().getStorageDomainId().toString(), getParameters()
                         .getStoragePoolId().toString(), getParameters().getImageGroupId()
                         .toString(), getParameters().getImageSizeInBytes(),
                 getParameters().getVolumeFormat().name(), getParameters()
-                        .getImageType().name(), getParameters().getDiskType().name(),
-                getParameters().getNewImageID().toString(), getParameters()
+                        .getImageType().name(), getParameters().getNewImageID().toString(), getParameters()
                         .getNewImageDescription(), Guid.Empty.toString(), Guid.Empty.toString());
 
         // NOTE: The 'uuidReturn' variable will contain the taskID and not the
@@ -41,7 +40,7 @@ public class CreateImageVDSCommand<P extends CreateImageVDSCommandParameters> ex
                                                 (new Long(getParameters().getImageSizeInBytes())).toString(),
                                                 getParameters().getVolumeFormat().getValue(),
                                                 getParameters().getImageType().getValue(),
-                                                getParameters().getDiskType().getValue(),
+                                                2,
                                                 getParameters().getNewImageID().toString(),
                                                 getParameters().getNewImageDescription(), Guid.Empty.toString(),
                                                 Guid.Empty.toString());

@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
-import org.ovirt.engine.core.common.businessentities.DiskType;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.config.Config;
@@ -27,7 +26,6 @@ public class GetDiskConfigurationListQuery<P extends VdcQueryParametersBase> ext
             if (configs.length == 4) {
                 try {
                     DiskImageBase tempVar = new DiskImageBase();
-                    tempVar.setdisk_type(EnumUtils.valueOf(DiskType.class, configs[0], true));
                     tempVar.setvolume_type(EnumUtils.valueOf(VolumeType.class, configs[1], true));
                     tempVar.setvolume_format(EnumUtils.valueOf(VolumeFormat.class, configs[2], true));
                     tempVar.setwipe_after_delete(Boolean.parseBoolean(configs[3]));

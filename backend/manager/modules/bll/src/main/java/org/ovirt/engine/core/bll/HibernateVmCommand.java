@@ -12,7 +12,6 @@ import org.ovirt.engine.core.common.asynctasks.AsyncTaskParameters;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskResultEnum;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
-import org.ovirt.engine.core.common.businessentities.DiskType;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageType;
@@ -30,12 +29,12 @@ import org.ovirt.engine.core.common.vdscommands.UpdateVmDynamicDataVDSCommandPar
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -129,7 +128,6 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
                                             getImageSizeInBytes(),
                                             getVolumeType(),
                                             VolumeFormat.RAW,
-                                            DiskType.Data,
                                             hiberVol1,
                                             "",
                                             getStoragePool().getcompatibility_version().toString()));
@@ -157,7 +155,6 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
                                             getMetaDataSizeInBytes(),
                                             VolumeType.Sparse,
                                             VolumeFormat.COW,
-                                            DiskType.Data,
                                             hiberVol2,
                                             "",
                                             getStoragePool().getcompatibility_version()

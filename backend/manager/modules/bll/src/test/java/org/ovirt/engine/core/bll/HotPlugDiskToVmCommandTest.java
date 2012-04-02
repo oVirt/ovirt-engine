@@ -17,7 +17,6 @@ import org.ovirt.engine.core.common.action.HotPlugDiskToVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
-import org.ovirt.engine.core.common.businessentities.DiskType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -186,7 +185,6 @@ public class HotPlugDiskToVmCommandTest {
         DiskImage disk = new DiskImage();
         disk.setId(diskImageGuid);
         disk.setdisk_interface(DiskInterface.IDE);
-        disk.setdisk_type(DiskType.Data);
         disk.setactive(true);
         disk.setvm_guid(vmId);
         doReturn(diskImageDao).when(command).getDiskImageDao();
@@ -202,7 +200,6 @@ public class HotPlugDiskToVmCommandTest {
         DiskImage disk = new DiskImage();
         disk.setId(diskImageGuid);
         disk.setdisk_interface(DiskInterface.VirtIO);
-        disk.setdisk_type(DiskType.Data);
         disk.setactive(true);
         disk.setvm_guid(vmId);
         doReturn(diskImageDao).when(command).getDiskImageDao();

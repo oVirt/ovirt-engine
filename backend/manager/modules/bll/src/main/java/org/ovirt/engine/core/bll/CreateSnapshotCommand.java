@@ -97,7 +97,6 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
                                             getDiskImage().getsize(),
                                             mNewCreatedDiskImage.getvolume_type(),
                                             mNewCreatedDiskImage.getvolume_format(),
-                                            mNewCreatedDiskImage.getdisk_type(),
                                             getDiskImage().getimage_group_id().getValue(),
                                             getDestinationImageId(),
                                             CalculateImageDescription(),

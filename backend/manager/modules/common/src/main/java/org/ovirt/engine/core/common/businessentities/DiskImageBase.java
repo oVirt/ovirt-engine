@@ -64,14 +64,6 @@ public class DiskImageBase extends IVdcQueryable implements Serializable {
         volumeFormat = value;
     }
 
-    public DiskType getdisk_type() {
-        return disk.getDiskType();
-    }
-
-    public void setdisk_type(DiskType value) {
-        disk.setDiskType(value);
-    }
-
     public Guid getQuotaId() {
         return this.quotaId;
     }
