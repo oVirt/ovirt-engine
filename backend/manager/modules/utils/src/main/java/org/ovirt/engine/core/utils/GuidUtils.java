@@ -3,7 +3,10 @@ package org.ovirt.engine.core.utils;
 import java.io.ByteArrayOutputStream;
 import java.util.UUID;
 
-import org.ovirt.engine.core.compat.*;
+import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.NGuid;
+import org.ovirt.engine.core.compat.RefObject;
+import org.ovirt.engine.core.compat.RegexOptions;
 
 public class GuidUtils {
     private static org.ovirt.engine.core.compat.Regex isGuidExp =
@@ -64,5 +67,9 @@ public class GuidUtils {
         }
         // TODO Auto-generated method stub
 
+    }
+
+    public static Guid getGuidValue(NGuid id) {
+        return id == null ? null : id.getValue();
     }
 }

@@ -46,6 +46,7 @@ import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VmDynamicDAO;
 import org.ovirt.engine.core.dao.VmStaticDAO;
+import org.ovirt.engine.core.utils.GuidUtils;
 import org.ovirt.engine.core.utils.linq.All;
 import org.ovirt.engine.core.utils.linq.Function;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
@@ -470,6 +471,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
             addVmPermission();
             if (AddVmImages()) {
                 copyVmDevices();
+                addDiskPermissions(newDiskImages);
                 setActionReturnValue(getVm().getId());
                 setSucceeded(true);
             }
@@ -666,6 +668,11 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         permissionList.add(new PermissionSubject(getVmTemplateId(),
                 VdcObjectType.VmTemplate,
                 getActionType().getActionGroup()));
+        if (getVmTemplate() != null && !getVmTemplate().getDiskList().isEmpty()) {
+            addStoragePermissionByQuotaMode(permissionList,
+                    GuidUtils.getGuidValue(getStoragePoolId()),
+                    GuidUtils.getGuidValue(getStorageDomainId()));
+        }
         permissionList =
                 QuotaHelper.getInstance().addQuotaPermissionSubject(permissionList, getStoragePool(), getQuotaId());
         permissionList.addAll(QuotaHelper.getInstance()
@@ -679,6 +686,18 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
                     getVmId(), VdcObjectType.VM);
             MultiLevelAdministrationHandler.addPermission(perms);
         }
+    }
+
+    protected void addDiskPermissions(List<DiskImage> newDiskImages) {
+        permissions[] permsArray = new permissions[newDiskImages.size()];
+        for (int i = 0; i < newDiskImages.size(); i++) {
+            permsArray[i] =
+                    new permissions(getCurrentUser().getUserId(),
+                            PredefinedRoles.DISK_OPERATOR.getId(),
+                            newDiskImages.get(i).getimage_group_id(),
+                            VdcObjectType.Disk);
+        }
+        MultiLevelAdministrationHandler.addPermission(permsArray);
     }
 
     protected void addActiveSnapshot() {

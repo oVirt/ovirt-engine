@@ -38,6 +38,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
     private static final long serialVersionUID = -7219975636530710384L;
     private boolean isVmFound = false;
     private Map<String, Guid> sharedLockMap;
+    private List<PermissionSubject> permsList = null;
 
     public MoveOrCopyDiskCommand(T parameters) {
         super(parameters);
@@ -282,25 +283,20 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
 
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
-        // TODO: change to permissions of disk when will be implemented
-        DiskImage image = getImage();
-        Guid guid = Guid.Empty;
-        if (image != null) {
-            guid = image.getvm_guid();
+        if (permsList == null) {
+            permsList = new ArrayList<PermissionSubject>();
+
+            DiskImage image = getImage();
+            Guid diskId = image == null ? Guid.Empty : image.getimage_group_id();
+            permsList.add(new PermissionSubject(diskId, VdcObjectType.Disk, ActionGroup.CONFIGURE_DISK_STORAGE));
+
+            addStoragePermissionByQuotaMode(permsList,
+                    getParameters().getStoragePoolId(),
+                    getParameters().getStorageDomainId());
+
+            permsList = QuotaHelper.getInstance().addQuotaPermissionSubject(permsList, getStoragePool(), getQuotaId());
         }
-        List<PermissionSubject> permissionList = new ArrayList<PermissionSubject>();
-        if (getParameters().getOperation() == ImageOperation.Copy) {
-            permissionList.add(new PermissionSubject(guid,
-                    VdcObjectType.VmTemplate,
-                    ActionGroup.COPY_TEMPLATE));
-        } else {
-            permissionList.add(new PermissionSubject(guid,
-                    VdcObjectType.VM,
-                    ActionGroup.MOVE_VM));
-        }
-        permissionList =
-                QuotaHelper.getInstance().addQuotaPermissionSubject(permissionList, getStoragePool(), getQuotaId());
-        return permissionList;
+        return permsList;
     }
 
     /**

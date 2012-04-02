@@ -60,7 +60,7 @@ public class AddImageFromScratchCommand<T extends AddImageFromScratchParameters>
             mNewCreatedDiskImage.setQuotaId(getParameters().getQuotaId());
 
             AddDiskImageToDb(mNewCreatedDiskImage);
-            getReturnValue().setActionReturnValue(mNewCreatedDiskImage.getImageId());
+            getReturnValue().setActionReturnValue(mNewCreatedDiskImage);
             setSucceeded(true);
         }
     }

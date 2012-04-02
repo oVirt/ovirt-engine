@@ -9,10 +9,12 @@ import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.PermissionSubject;
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.action.AddImageFromScratchParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
@@ -208,6 +210,9 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
         List<PermissionSubject> listPermissionSubjects = super.getPermissionCheckSubjects();
+        listPermissionSubjects.add(new PermissionSubject(getParameters().getStorageDomainId(),
+                VdcObjectType.Storage,
+                ActionGroup.CREATE_DISK));
         listPermissionSubjects =
                 QuotaHelper.getInstance().addQuotaPermissionSubject(listPermissionSubjects,
                         getStoragePool(),

@@ -35,7 +35,9 @@ import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitySnapshot;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitySnapshot.EntityStatusSnapshot;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitySnapshot.SnapshotType;
+import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.action_version_map;
+import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -1285,6 +1287,32 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
 
         if (commandLock == null) {
             commandLock = context.getLock();
+        }
+    }
+
+    /**
+     * Adds Storage domain to permissions subjects unless Quota is enabled.
+     * Method is used for storage consumption related commands.
+     *
+     * @param permsList
+     *            the permissions list
+     * @param storagePoolId
+     *            the storage pool id
+     * @param StorageDomainId
+     *            the storage domain
+     */
+    protected void addStoragePermissionByQuotaMode(List<PermissionSubject> permsList,
+            Guid storagePoolId,
+            Guid StorageDomainId) {
+
+        storage_pool storagePool = null;
+        if (storagePoolId != null) {
+            storagePool = getStoragePoolDAO().get(storagePoolId);
+            if (storagePool != null) {
+                if (storagePool.getQuotaEnforcementType() == QuotaEnforcementTypeEnum.DISABLED) {
+                    permsList.add(new PermissionSubject(StorageDomainId, VdcObjectType.Storage, ActionGroup.CREATE_DISK));
+                }
+            }
         }
     }
 
