@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
+import java.util.ArrayList;
+
 import org.ovirt.engine.core.common.action.AddDiskToVmParameters;
 import org.ovirt.engine.core.common.action.AddVmInterfaceParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -10,6 +12,8 @@ import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.DiskType;
 import org.ovirt.engine.core.common.businessentities.NetworkStatus;
 import org.ovirt.engine.core.common.businessentities.PropagateErrors;
+import org.ovirt.engine.core.common.businessentities.Quota;
+import org.ovirt.engine.core.common.businessentities.QuotaEnforcmentTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageType;
@@ -22,6 +26,13 @@ import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.network;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.queries.GetAllRelevantQuotasForStorageParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.compat.Event;
+import org.ovirt.engine.core.compat.EventArgs;
+import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -50,6 +61,7 @@ public class VmGuideModel extends GuideModel
     private java.util.ArrayList<storage_domains> attachedStorageDomains;
     private storage_domains storage;
     private VDSGroup cluster;
+    private QuotaEnforcmentTypeEnum quotaEnforcementType = null;
 
     @Override
     public VM getEntity()
@@ -304,7 +316,7 @@ public class VmGuideModel extends GuideModel
     }
 
     private void AddDiskUpdateData() {
-        if (!disks.isEmpty()) {
+        if (disks != null && !disks.isEmpty()) {
             AsyncDataProvider.GetStorageDomainById(new AsyncQuery(this,
                     new INewAsyncCallback() {
                         @Override
@@ -337,14 +349,28 @@ public class VmGuideModel extends GuideModel
                         vmGuideModel.AddDiskPostData();
                     }
                 }), getEntity().getvds_group_id());
+
+        AsyncDataProvider.GetDataCenterById(new AsyncQuery(this,
+                new INewAsyncCallback() {
+                    @Override
+                    public void OnSuccess(Object target, Object returnValue) {
+                        VmGuideModel vmGuideModel = (VmGuideModel) target;
+                        storage_pool dataCenter = (storage_pool) returnValue;
+                        vmGuideModel.quotaEnforcementType =
+                                dataCenter != null ? dataCenter.getQuotaEnforcementType()
+                                        : QuotaEnforcmentTypeEnum.DISABLED;
+                        vmGuideModel.AddDiskPostData();
+                    }
+                }), getEntity().getstorage_pool_id());
     }
 
     private void AddDiskPostData() {
-        if (attachedStorageDomains == null || disks == null || cluster == null || (!disks.isEmpty() && storage == null)) {
+        if (attachedStorageDomains == null || disks == null || cluster == null || (!disks.isEmpty() && storage == null)
+                || quotaEnforcementType == null) {
             return;
         }
 
-        DiskModel model = new DiskModel();
+        final DiskModel model = new DiskModel();
         setWindow(model);
         model.setTitle("New Virtual Disk");
         model.setHashName("new_virtual_disk");
@@ -361,9 +387,19 @@ public class VmGuideModel extends GuideModel
             }
         }
         model.getStorageDomain().setItems(storageDomains);
-
         storage = Linq.<storage_domains> FirstOrDefault(storageDomains);
         model.getStorageDomain().setSelectedItem(storage);
+        updateQuota(model);
+
+        if (!quotaEnforcementType.equals(QuotaEnforcmentTypeEnum.DISABLED)) {
+            model.getQuota().setIsAvailable(true);
+            model.getStorageDomain().getSelectedItemChangedEvent().addListener(new IEventListener() {
+                @Override
+                public void eventRaised(Event ev, Object sender, EventArgs args) {
+                    updateQuota(model);
+                }
+            });
+        }
 
         if (model.getStorageDomain() != null && model.getStorageDomain().getSelectedItem() != null)
         {
@@ -385,6 +421,32 @@ public class VmGuideModel extends GuideModel
                         vmGuideModel.AddDiskPostGetDiskPresets(presets);
                     }
                 }), vmType, storageType);
+    }
+
+    private void updateQuota(final DiskModel model) {
+        storage_domains storageDomain = (storage_domains) model.getStorageDomain().getSelectedItem();
+        Frontend.RunQuery(VdcQueryType.GetAllRelevantQuotasForStorage,
+                new GetAllRelevantQuotasForStorageParameters(storageDomain.getId()),
+                new AsyncQuery(this,
+                        new INewAsyncCallback() {
+
+                            @Override
+                            public void OnSuccess(Object innerModel, Object innerReturnValue) {
+                                ArrayList<Quota> list =
+                                        (ArrayList<Quota>) ((VdcQueryReturnValue) innerReturnValue).getReturnValue();
+                                if (list != null) {
+                                    model.getQuota().setItems(list);
+                                    if (getEntity().getQuotaId() != null) {
+                                        for (Quota quota : list) {
+                                            if (quota.getId().equals(getEntity().getQuotaId())) {
+                                                model.getQuota().setSelectedItem(quota);
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }));
     }
 
     private void AddDiskPostGetDiskPresets(java.util.ArrayList<DiskImageBase> presets) {
@@ -500,6 +562,9 @@ public class VmGuideModel extends GuideModel
             tempVar.setwipe_after_delete((Boolean) model.getWipeAfterDelete().getEntity());
             tempVar.setboot((Boolean) model.getIsBootable().getEntity());
             tempVar.setpropagate_errors(PropagateErrors.Off);
+            if (model.getQuota().getIsAvailable()) {
+                tempVar.setQuotaId(((Quota) model.getQuota().getSelectedItem()).getId());
+            }
             DiskImage disk = tempVar;
 
             model.StartProgress(null);
