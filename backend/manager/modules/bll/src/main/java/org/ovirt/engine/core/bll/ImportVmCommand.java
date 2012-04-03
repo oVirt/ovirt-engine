@@ -211,16 +211,6 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
             }
         }
 
-        // check that the imported vm name is not in engine
-        if (retVal) {
-            List<VmStatic> dupVmNames = getVmStaticDAO().getAllByName(getParameters().getVm().getvm_name());
-            if (dupVmNames.size() >= 1) {
-                addCanDoActionMessage(VdcBllMessages.VM_CANNOT_IMPORT_VM_EXISTS);
-                addCanDoActionMessage(String.format("$VmName %1$s", getVm().getvm_name()));
-                retVal = false;
-            }
-        }
-
         setVmTemplateId(getVm().getvmt_guid());
         if (retVal) {
             if (!TemplateExists() || !CheckTemplateInStorageDomain() || !CheckImagesGUIDsLegal() || !CanAddVm()) {
