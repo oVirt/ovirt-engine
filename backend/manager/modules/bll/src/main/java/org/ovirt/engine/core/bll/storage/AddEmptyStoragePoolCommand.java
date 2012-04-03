@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
 import org.ovirt.engine.core.common.businessentities.Quota;
-import org.ovirt.engine.core.common.businessentities.QuotaEnforcmentTypeEnum;
+import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.network;
@@ -39,7 +39,7 @@ public class AddEmptyStoragePoolCommand<T extends StoragePoolManagementParameter
 
     private Quota generateQuotaForNewStoragePool() {
         boolean isDefaultQuota = false;
-        if (getStoragePool().getQuotaEnforcementType() == QuotaEnforcmentTypeEnum.DISABLED) {
+        if (getStoragePool().getQuotaEnforcementType() == QuotaEnforcementTypeEnum.DISABLED) {
             isDefaultQuota = true;
         }
         Quota defaultStoragePoolQuota = QuotaHelper.getInstance().getUnlimitedQuota(getStoragePool(), isDefaultQuota);

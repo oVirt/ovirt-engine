@@ -13,7 +13,7 @@ import org.ovirt.engine.core.common.businessentities.DiskType;
 import org.ovirt.engine.core.common.businessentities.NetworkStatus;
 import org.ovirt.engine.core.common.businessentities.PropagateErrors;
 import org.ovirt.engine.core.common.businessentities.Quota;
-import org.ovirt.engine.core.common.businessentities.QuotaEnforcmentTypeEnum;
+import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageType;
@@ -61,7 +61,7 @@ public class VmGuideModel extends GuideModel
     private java.util.ArrayList<storage_domains> attachedStorageDomains;
     private storage_domains storage;
     private VDSGroup cluster;
-    private QuotaEnforcmentTypeEnum quotaEnforcementType = null;
+    private QuotaEnforcementTypeEnum quotaEnforcementType = null;
 
     @Override
     public VM getEntity()
@@ -358,7 +358,7 @@ public class VmGuideModel extends GuideModel
                         storage_pool dataCenter = (storage_pool) returnValue;
                         vmGuideModel.quotaEnforcementType =
                                 dataCenter != null ? dataCenter.getQuotaEnforcementType()
-                                        : QuotaEnforcmentTypeEnum.DISABLED;
+                                        : QuotaEnforcementTypeEnum.DISABLED;
                         vmGuideModel.AddDiskPostData();
                     }
                 }), getEntity().getstorage_pool_id());
@@ -391,7 +391,7 @@ public class VmGuideModel extends GuideModel
         model.getStorageDomain().setSelectedItem(storage);
         updateQuota(model);
 
-        if (!quotaEnforcementType.equals(QuotaEnforcmentTypeEnum.DISABLED)) {
+        if (!quotaEnforcementType.equals(QuotaEnforcementTypeEnum.DISABLED)) {
             model.getQuota().setIsAvailable(true);
             model.getStorageDomain().getSelectedItemChangedEvent().addListener(new IEventListener() {
                 @Override

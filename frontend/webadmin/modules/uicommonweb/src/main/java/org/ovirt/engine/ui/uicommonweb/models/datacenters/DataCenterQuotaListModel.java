@@ -17,7 +17,7 @@ import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 public class DataCenterQuotaListModel extends SearchableListModel
 {
     public DataCenterQuotaListModel() {
-        setTitle("Quotas");
+        setTitle("Quota");
     }
 
     @Override

@@ -14,7 +14,7 @@ import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 public class QuotaStorageListModel extends SearchableListModel {
 
     public QuotaStorageListModel() {
-        setTitle("Storages");
+        setTitle("Storage");
     }
 
     @Override

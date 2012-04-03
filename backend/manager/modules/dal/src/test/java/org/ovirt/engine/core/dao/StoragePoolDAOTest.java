@@ -9,7 +9,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.List;
 
 import org.junit.Test;
-import org.ovirt.engine.core.common.businessentities.QuotaEnforcmentTypeEnum;
+import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
@@ -212,7 +212,7 @@ public class StoragePoolDAOTest extends BaseDAOTestCase {
     @Test
     public void testPartialUpdate() {
         existingPool.setdescription("NewFarkle");
-        existingPool.setQuotaEnforcementType(QuotaEnforcmentTypeEnum.HARD_ENFORCEMENT);
+        existingPool.setQuotaEnforcementType(QuotaEnforcementTypeEnum.HARD_ENFORCEMENT);
 
         dao.updatePartial(existingPool);
 

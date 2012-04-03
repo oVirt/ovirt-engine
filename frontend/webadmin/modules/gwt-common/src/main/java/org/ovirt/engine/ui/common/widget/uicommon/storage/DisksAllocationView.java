@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.common.widget.uicommon.storage;
 import java.util.ArrayList;
 
 import org.ovirt.engine.core.common.businessentities.Quota;
-import org.ovirt.engine.core.common.businessentities.QuotaEnforcmentTypeEnum;
+import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
@@ -139,7 +139,7 @@ public class DisksAllocationView extends Composite implements HasEditorDriver<Di
 
     void updateColumnsAvailability(DisksAllocationModel model) {
         setShowVolumeType(model.getIsVolumeFormatAvailable());
-        setShowQuota(model.getQuotaEnforcementType() != QuotaEnforcmentTypeEnum.DISABLED);
+        setShowQuota(model.getQuotaEnforcementType() != QuotaEnforcementTypeEnum.DISABLED);
         localize(constants);
     }
 

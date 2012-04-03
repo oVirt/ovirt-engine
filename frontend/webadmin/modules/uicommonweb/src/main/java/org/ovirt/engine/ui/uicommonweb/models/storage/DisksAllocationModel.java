@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Quota;
-import org.ovirt.engine.core.common.businessentities.QuotaEnforcmentTypeEnum;
+import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.queries.GetAllRelevantQuotasForStorageParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -137,14 +137,14 @@ public class DisksAllocationModel extends EntityModel
         this.activeStorageDomains = activeStorageDomains;
     }
 
-    private QuotaEnforcmentTypeEnum quotaEnforcementType;
+    private QuotaEnforcementTypeEnum quotaEnforcementType;
 
-    public void setQuotaEnforcementType(QuotaEnforcmentTypeEnum value) {
+    public void setQuotaEnforcementType(QuotaEnforcementTypeEnum value) {
         this.quotaEnforcementType = value;
         OnPropertyChanged(new PropertyChangedEventArgs("QuotaEnforcmentType"));
     }
 
-    public QuotaEnforcmentTypeEnum getQuotaEnforcementType() {
+    public QuotaEnforcementTypeEnum getQuotaEnforcementType() {
         return quotaEnforcementType;
     }
 
@@ -215,7 +215,7 @@ public class DisksAllocationModel extends EntityModel
     }
 
     private void updateQuota(Guid storageDomainId, final ListModel isItem) {
-        if (getQuotaEnforcementType() != QuotaEnforcmentTypeEnum.DISABLED && storageDomainId != null) {
+        if (getQuotaEnforcementType() != QuotaEnforcementTypeEnum.DISABLED && storageDomainId != null) {
             Frontend.RunQuery(VdcQueryType.GetAllRelevantQuotasForStorage,
                     new GetAllRelevantQuotasForStorageParameters(storageDomainId),
                     new AsyncQuery(this,
@@ -328,11 +328,11 @@ public class DisksAllocationModel extends EntityModel
     }
 
     private void UpdateQuotaAvailability() {
-        getQuota().setIsAvailable(quotaEnforcementType != QuotaEnforcmentTypeEnum.DISABLED);
+        getQuota().setIsAvailable(quotaEnforcementType != QuotaEnforcementTypeEnum.DISABLED);
 
         if (disks != null) {
             for (DiskModel diskModel : disks) {
-                diskModel.getQuota().setIsAvailable(quotaEnforcementType != QuotaEnforcmentTypeEnum.DISABLED);
+                diskModel.getQuota().setIsAvailable(quotaEnforcementType != QuotaEnforcementTypeEnum.DISABLED);
             }
         }
     }

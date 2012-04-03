@@ -13,7 +13,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Quota;
-import org.ovirt.engine.core.common.businessentities.QuotaEnforcmentTypeEnum;
+import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;
 import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
 import org.ovirt.engine.core.common.businessentities.permissions;
@@ -56,7 +56,7 @@ public class QuotaHelper {
         Guid returnedQuotaGuid = quotaId;
         if (storagePool == null) {
             log.errorFormat("Storage pool is null, Quota id will be set from the parameter");
-        } else if (storagePool.getQuotaEnforcementType() == QuotaEnforcmentTypeEnum.DISABLED) {
+        } else if (storagePool.getQuotaEnforcementType() == QuotaEnforcementTypeEnum.DISABLED) {
             // If storage pool has disabled quota enforcement, then initialize default quota.
             log.debugFormat("Storage pool quota is disabled, Quota id which will be consume from is the default DC quota");
             returnedQuotaGuid =
@@ -92,7 +92,7 @@ public class QuotaHelper {
     public List<PermissionSubject> addQuotaPermissionSubject(List<PermissionSubject> quotaPermissionList,
             storage_pool storagePool,
             Guid quotaId) {
-        if (storagePool != null && storagePool.getQuotaEnforcementType() != QuotaEnforcmentTypeEnum.DISABLED) {
+        if (storagePool != null && storagePool.getQuotaEnforcementType() != QuotaEnforcementTypeEnum.DISABLED) {
             log.debug("Adding validation for consume quota to permission subjects list");
             quotaPermissionList.add(new PermissionSubject(quotaId, VdcObjectType.Quota, ActionGroup.CONSUME_QUOTA));
         }

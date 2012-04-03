@@ -10,7 +10,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.Quota;
-import org.ovirt.engine.core.common.businessentities.QuotaEnforcmentTypeEnum;
+import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;
 import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
 import org.ovirt.engine.core.compat.Guid;
@@ -56,8 +56,8 @@ public class QuotaManager {
                 .getQuotaDAO();
     }
 
-    public static void removeStorageDeltaQuotaCommand(Guid quotaId, Guid storageDomainId, QuotaEnforcmentTypeEnum quotaEnforcedType, Guid commandId) {
-        if (quotaEnforcedType != QuotaEnforcmentTypeEnum.DISABLED) {
+    public static void removeStorageDeltaQuotaCommand(Guid quotaId, Guid storageDomainId, QuotaEnforcementTypeEnum quotaEnforcedType, Guid commandId) {
+        if (quotaEnforcedType != QuotaEnforcementTypeEnum.DISABLED) {
             QuotaStorage quotaStorage = getQuotaStorageForStorageDomainId(quotaId, storageDomainId);
             getLockForQuotaId(quotaId).lock();
             try {
@@ -74,7 +74,7 @@ public class QuotaManager {
         }
     }
 
-    public static void removeMultiStorageDeltaQuotaCommand(Map<Pair<Guid, Guid>, Double> quotaForStorageConsumeMap, QuotaEnforcmentTypeEnum quotaEnforcedType, Guid commandId) {
+    public static void removeMultiStorageDeltaQuotaCommand(Map<Pair<Guid, Guid>, Double> quotaForStorageConsumeMap, QuotaEnforcementTypeEnum quotaEnforcedType, Guid commandId) {
         for (Pair<Guid, Guid> quotaConsumeKey : quotaForStorageConsumeMap.keySet()) {
             removeStorageDeltaQuotaCommand(quotaConsumeKey.getFirst(), quotaConsumeKey.getSecond(), quotaEnforcedType, commandId);
         }
@@ -98,7 +98,7 @@ public class QuotaManager {
 
     public static void reduceCommandVdsGroupSize(Guid vdsGroupId,
             Integer subtractedCpuSize,
-            QuotaEnforcmentTypeEnum quotaEnforcedType,
+            QuotaEnforcementTypeEnum quotaEnforcedType,
             Double subtractedMemSize,
             Guid commandId, Guid quotaId) {
         if (!validateReduceQuotaParameters(vdsGroupId, quotaEnforcedType, commandId, quotaId)) {
@@ -153,7 +153,7 @@ public class QuotaManager {
 
     public static void reduceCommandStorageSize(Guid storageDomainId,
             Long subtractedSize,
-            QuotaEnforcmentTypeEnum quotaEnforcedType,
+            QuotaEnforcementTypeEnum quotaEnforcedType,
             Guid commandId, Guid quotaId) {
         if (!validateReduceQuotaParameters(storageDomainId, quotaEnforcedType, commandId, quotaId)) {
             return;
@@ -203,11 +203,11 @@ public class QuotaManager {
 
     public static boolean validateStorageQuota(Guid storageDomainId,
             Guid quotaId,
-            QuotaEnforcmentTypeEnum quotaEnforcedType,
+            QuotaEnforcementTypeEnum quotaEnforcedType,
             Double desiredSizeInGB,
             Guid commandId,
             List<String> canDoActionMessages) {
-        if (quotaEnforcedType == QuotaEnforcmentTypeEnum.DISABLED) {
+        if (quotaEnforcedType == QuotaEnforcementTypeEnum.DISABLED) {
             return true;
         }
         if (quotaId == null || commandId == null || desiredSizeInGB == null || storageDomainId == null) {
@@ -251,12 +251,12 @@ public class QuotaManager {
 
     public static boolean validateVdsGroupQuota(Guid vdsGroupId,
             Guid quotaId,
-            QuotaEnforcmentTypeEnum quotaEnforcedType,
+            QuotaEnforcementTypeEnum quotaEnforcedType,
             Integer desiredCpu,
             Double desiredMem,
             Guid commandId,
             List<String> canDoActionMessages) {
-        if (quotaEnforcedType == QuotaEnforcmentTypeEnum.DISABLED) {
+        if (quotaEnforcedType == QuotaEnforcementTypeEnum.DISABLED) {
             return true;
         }
         if (quotaId == null || commandId == null || desiredMem == null || desiredCpu == null || vdsGroupId == null) {
@@ -295,10 +295,10 @@ public class QuotaManager {
     }
 
     private static boolean validateReduceQuotaParameters(Guid entityId,
-            QuotaEnforcmentTypeEnum quotaEnforcedType,
+            QuotaEnforcementTypeEnum quotaEnforcedType,
             Guid commandId,
             Guid quotaId) {
-        if (quotaEnforcedType == QuotaEnforcmentTypeEnum.DISABLED) {
+        if (quotaEnforcedType == QuotaEnforcementTypeEnum.DISABLED) {
             log.debugFormat("Data Center is disabled, so no delta quota will be counting.");
             return false;
         }
@@ -316,11 +316,11 @@ public class QuotaManager {
      * @param canDoActionMessages
      * @return
      */
-    public static boolean validateMultiStorageQuota(QuotaEnforcmentTypeEnum quotaEnforcedType,
+    public static boolean validateMultiStorageQuota(QuotaEnforcementTypeEnum quotaEnforcedType,
             Map<Pair<Guid, Guid>, Double> quotaForStorageConsumeMap,
             Guid commandId,
             List<String> canDoActionMessages) {
-        if (quotaEnforcedType == QuotaEnforcmentTypeEnum.DISABLED) {
+        if (quotaEnforcedType == QuotaEnforcementTypeEnum.DISABLED) {
             return true;
         }
         boolean isSucceeded = true;
@@ -345,12 +345,12 @@ public class QuotaManager {
         return true;
     }
 
-    private static boolean updateMultiStorageQuotaMap(QuotaEnforcmentTypeEnum quotaEnforcedType,
+    private static boolean updateMultiStorageQuotaMap(QuotaEnforcementTypeEnum quotaEnforcedType,
             Map<Pair<Guid, Guid>, Double> quotaForStorageConsumeMap,
             Guid commandId,
             List<String> canDoActionMessages,
             Map<Pair<Guid, Guid>, Double> quotaForStorageCompensationMap) {
-        if (quotaEnforcedType == QuotaEnforcmentTypeEnum.DISABLED) {
+        if (quotaEnforcedType == QuotaEnforcementTypeEnum.DISABLED) {
             return true;
         }
         boolean isSucceeded = true;
@@ -475,7 +475,7 @@ public class QuotaManager {
             double minThresholdVdsGroupPercentage,
             double maxGraceVdsGroupPercentage,
             String quotaName,
-            QuotaEnforcmentTypeEnum quotaEnforceType,
+            QuotaEnforcementTypeEnum quotaEnforceType,
             List<String> canDoActionMessages) {
         // if Vds group is unlimited it should be unlimited for both cpu and memory.
         Integer vdsGroupCpuLimit = quotaVdsGroup.getVirtualCpu();
@@ -529,7 +529,7 @@ public class QuotaManager {
 
         if (limitCpuUsedType == LimitQuotaUsedType.OFF_LIMIT || limitMemUsedType == LimitQuotaUsedType.OFF_LIMIT) {
             AuditLogDirector.log(auditLogableBase, AuditLogType.USER_EXCEEDED_QUOTA_VDS_GROUP_GRACE_LIMIT);
-            if (quotaEnforceType == QuotaEnforcmentTypeEnum.HARD_ENFORCEMENT) {
+            if (quotaEnforceType == QuotaEnforcementTypeEnum.HARD_ENFORCEMENT) {
                 canDoActionMessages.add(VdcBllMessages.ACTION_TYPE_FAILED_QUOTA_VDS_GROUP_LIMIT_EXCEEDED.toString());
                 return false;
             }
@@ -548,7 +548,7 @@ public class QuotaManager {
             double minThresholdStoragePercentage,
             double maxGraceStoragePercentage,
             String quotaName,
-            QuotaEnforcmentTypeEnum quotaEnforceType,
+            QuotaEnforcementTypeEnum quotaEnforceType,
             Guid commandId,
             List<String> canDoActionMessages) {
         if (quotaStorage.getStorageSizeGB().equals(QuotaHelper.UNLIMITED)) {
@@ -573,7 +573,7 @@ public class QuotaManager {
 
         if (limitStorageUsedType == LimitQuotaUsedType.OFF_LIMIT) {
             AuditLogDirector.log(auditLogableBase, AuditLogType.USER_EXCEEDED_QUOTA_STORAGE_GRACE_LIMIT);
-            if (quotaEnforceType == QuotaEnforcmentTypeEnum.HARD_ENFORCEMENT) {
+            if (quotaEnforceType == QuotaEnforcementTypeEnum.HARD_ENFORCEMENT) {
                 canDoActionMessages.add(VdcBllMessages.ACTION_TYPE_FAILED_QUOTA_STORAGE_LIMIT_EXCEEDED.toString());
                 return false;
             }

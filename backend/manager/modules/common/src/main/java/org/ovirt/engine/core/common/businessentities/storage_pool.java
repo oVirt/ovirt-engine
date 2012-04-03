@@ -120,7 +120,7 @@ public class storage_pool extends IVdcQueryable implements INotifyPropertyChange
     @Transient
     private Version version;
 
-    private QuotaEnforcmentTypeEnum quotaEnforcementType = QuotaEnforcmentTypeEnum.DISABLED;
+    private QuotaEnforcementTypeEnum quotaEnforcementType = QuotaEnforcementTypeEnum.DISABLED;
 
     public storage_pool() {
         description = "";
@@ -341,11 +341,11 @@ public class storage_pool extends IVdcQueryable implements INotifyPropertyChange
         return true;
     }
 
-    public QuotaEnforcmentTypeEnum getQuotaEnforcementType() {
+    public QuotaEnforcementTypeEnum getQuotaEnforcementType() {
         return quotaEnforcementType;
     }
 
-    public void setQuotaEnforcementType(QuotaEnforcmentTypeEnum quotaEnforcementType) {
+    public void setQuotaEnforcementType(QuotaEnforcementTypeEnum quotaEnforcementType) {
         this.quotaEnforcementType = quotaEnforcementType;
     }
 

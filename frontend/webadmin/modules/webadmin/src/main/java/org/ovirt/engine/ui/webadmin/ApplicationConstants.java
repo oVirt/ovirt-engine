@@ -73,7 +73,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Users")
     String userMainTabLabel();
 
-    @DefaultStringValue("Quotas")
+    @DefaultStringValue("Quota")
     String quotaMainTabLabel();
 
     @DefaultStringValue("Volumes")
@@ -130,7 +130,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Clusters")
     String dataCenterClusterSubTabLabel();
 
-    @DefaultStringValue("Quotas")
+    @DefaultStringValue("Quota")
     String dataCenterQuotaSubTabLabel();
 
     @DefaultStringValue("Permissions")
@@ -418,7 +418,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Permissions")
     String userPermissionSubTabLabel();
 
-    @DefaultStringValue("Quotas")
+    @DefaultStringValue("Quota")
     String userQuotaSubTabLabel();
 
     @DefaultStringValue("Directory Groups")
@@ -719,7 +719,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Clusters")
     String quotaClusterSubTabLabel();
 
-    @DefaultStringValue("Storages")
+    @DefaultStringValue("Storage")
     String quotaStorageSubTabLabel();
 
     @DefaultStringValue("Users")

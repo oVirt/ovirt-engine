@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.DiskType;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.LUNs;
-import org.ovirt.engine.core.common.businessentities.QuotaEnforcmentTypeEnum;
+import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.RepoFileMetaData;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
@@ -1900,11 +1900,11 @@ public final class AsyncDataProvider {
         GetConfigFromCache(new GetConfigurationValueParameters(configValue), aQuery);
     }
 
-    public static ArrayList<QuotaEnforcmentTypeEnum> getQuotaEnforcmentTypes() {
-        return new ArrayList<QuotaEnforcmentTypeEnum>(Arrays.asList(new QuotaEnforcmentTypeEnum[] {
-                QuotaEnforcmentTypeEnum.DISABLED,
-                QuotaEnforcmentTypeEnum.SOFT_ENFORCEMENT,
-                QuotaEnforcmentTypeEnum.HARD_ENFORCEMENT }));
+    public static ArrayList<QuotaEnforcementTypeEnum> getQuotaEnforcmentTypes() {
+        return new ArrayList<QuotaEnforcementTypeEnum>(Arrays.asList(new QuotaEnforcementTypeEnum[] {
+                QuotaEnforcementTypeEnum.DISABLED,
+                QuotaEnforcementTypeEnum.SOFT_ENFORCEMENT,
+                QuotaEnforcementTypeEnum.HARD_ENFORCEMENT }));
     }
 
     public static void clearCache() {

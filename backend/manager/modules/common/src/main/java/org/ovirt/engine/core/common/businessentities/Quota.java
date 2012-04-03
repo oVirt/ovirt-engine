@@ -103,7 +103,7 @@ public class Quota extends IVdcQueryable implements INotifyPropertyChanged, Seri
     /**
      * The quota enforcement type.
      */
-    private QuotaEnforcmentTypeEnum quotaEnforcementType;
+    private QuotaEnforcementTypeEnum quotaEnforcementType;
 
     /**
      * List of all the specific VdsGroups limitations.
@@ -296,7 +296,7 @@ public class Quota extends IVdcQueryable implements INotifyPropertyChanged, Seri
     /**
      * @return the quotaEnforcementType
      */
-    public QuotaEnforcmentTypeEnum getQuotaEnforcementType() {
+    public QuotaEnforcementTypeEnum getQuotaEnforcementType() {
         return this.quotaEnforcementType;
     }
 
@@ -304,7 +304,7 @@ public class Quota extends IVdcQueryable implements INotifyPropertyChanged, Seri
      * @param quotaEnforcementType
      *            the quotaEnforcementType to set
      */
-    public void setQuotaEnforcementType(QuotaEnforcmentTypeEnum quotaEnforcementType) {
+    public void setQuotaEnforcementType(QuotaEnforcementTypeEnum quotaEnforcementType) {
         this.quotaEnforcementType = quotaEnforcementType;
     }
 

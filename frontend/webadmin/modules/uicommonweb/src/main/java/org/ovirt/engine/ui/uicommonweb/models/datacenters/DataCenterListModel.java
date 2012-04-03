@@ -9,7 +9,7 @@ import org.ovirt.engine.core.common.action.StoragePoolParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
-import org.ovirt.engine.core.common.businessentities.QuotaEnforcmentTypeEnum;
+import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
@@ -635,7 +635,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         dataCenter.setdescription((String) model.getDescription().getEntity());
         dataCenter.setstorage_pool_type((StorageType) model.getStorageTypeList().getSelectedItem());
         dataCenter.setcompatibility_version((Version) model.getVersion().getSelectedItem());
-        dataCenter.setQuotaEnforcementType((QuotaEnforcmentTypeEnum) model.getQuotaEnforceTypeListModel()
+        dataCenter.setQuotaEnforcementType((QuotaEnforcementTypeEnum) model.getQuotaEnforceTypeListModel()
                 .getSelectedItem());
 
         model.StartProgress(null);

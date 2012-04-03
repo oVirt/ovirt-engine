@@ -16,7 +16,7 @@ import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 public class UserQuotaListModel extends SearchableListModel
 {
     public UserQuotaListModel() {
-        setTitle("Quotas");
+        setTitle("Quota");
     }
 
     @Override

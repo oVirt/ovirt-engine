@@ -67,7 +67,7 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
     }
 
     public QuotaListModel() {
-        setTitle("Quotas");
+        setTitle("Quota");
 
         setDefaultSearchString("Quota:");
         setSearchString(getDefaultSearchString());

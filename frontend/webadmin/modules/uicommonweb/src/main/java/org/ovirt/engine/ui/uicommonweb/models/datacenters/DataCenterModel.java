@@ -2,7 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.datacenters;
 
 import java.util.ArrayList;
 
-import org.ovirt.engine.core.common.businessentities.QuotaEnforcmentTypeEnum;
+import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.compat.Event;
@@ -156,7 +156,7 @@ public class DataCenterModel extends Model
         getStorageTypeList().setItems(DataProvider.GetStoragePoolTypeList());
 
         setQuotaEnforceTypeListModel(new ListModel());
-        ArrayList<QuotaEnforcmentTypeEnum> list = AsyncDataProvider.getQuotaEnforcmentTypes();
+        ArrayList<QuotaEnforcementTypeEnum> list = AsyncDataProvider.getQuotaEnforcmentTypes();
         getQuotaEnforceTypeListModel().setItems(list);
         getQuotaEnforceTypeListModel().setSelectedItem(list.get(0));
 

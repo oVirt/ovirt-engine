@@ -16,7 +16,7 @@ import org.ovirt.engine.core.common.businessentities.DiskType;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.PropagateErrors;
 import org.ovirt.engine.core.common.businessentities.Quota;
-import org.ovirt.engine.core.common.businessentities.QuotaEnforcmentTypeEnum;
+import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageType;
@@ -270,7 +270,7 @@ public class VmDiskListModel extends SearchableListModel
                 storage_pool dataCenter = (storage_pool) returnValue;
                 VmDiskListModel vmDiskListModel1 = (VmDiskListModel) model;
                 DiskModel dModel = (DiskModel) vmDiskListModel1.getWindow();
-                if (dataCenter.getQuotaEnforcementType().equals(QuotaEnforcmentTypeEnum.DISABLED)) {
+                if (dataCenter.getQuotaEnforcementType().equals(QuotaEnforcementTypeEnum.DISABLED)) {
                     dModel.getQuota().setIsAvailable(false);
                 } else {
                     dModel.getQuota().setIsAvailable(true);
@@ -383,7 +383,7 @@ public class VmDiskListModel extends SearchableListModel
                 storage_pool dataCenter = (storage_pool) returnValue;
                 VmDiskListModel vmDiskListModel1 = (VmDiskListModel) model;
                 DiskModel dModel = (DiskModel) vmDiskListModel1.getWindow();
-                if (dataCenter.getQuotaEnforcementType().equals(QuotaEnforcmentTypeEnum.DISABLED)) {
+                if (dataCenter.getQuotaEnforcementType().equals(QuotaEnforcementTypeEnum.DISABLED)) {
                     dModel.getQuota().setIsAvailable(false);
                 } else {
                     dModel.getQuota().setIsAvailable(true);

@@ -8,17 +8,17 @@ import javax.xml.bind.annotation.XmlType;
 
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name = "QuotaEnforcmentTypeEnum")
-public enum QuotaEnforcmentTypeEnum {
+public enum QuotaEnforcementTypeEnum {
     DISABLED(0),
     SOFT_ENFORCEMENT(1),
     HARD_ENFORCEMENT(2);
 
     private final int enforcementType;
-    private static java.util.HashMap<Integer, QuotaEnforcmentTypeEnum> mappings =
-            new HashMap<Integer, QuotaEnforcmentTypeEnum>();
+    private static java.util.HashMap<Integer, QuotaEnforcementTypeEnum> mappings =
+            new HashMap<Integer, QuotaEnforcementTypeEnum>();
 
     static {
-        for (QuotaEnforcmentTypeEnum component : values()) {
+        for (QuotaEnforcementTypeEnum component : values()) {
             mappings.put(component.getValue(), component);
         }
     }
@@ -27,11 +27,11 @@ public enum QuotaEnforcmentTypeEnum {
         return enforcementType;
     }
 
-    public static QuotaEnforcmentTypeEnum forValue(int value) {
+    public static QuotaEnforcementTypeEnum forValue(int value) {
         return mappings.get(value);
     }
 
-    private QuotaEnforcmentTypeEnum(int enforcementType) {
+    private QuotaEnforcementTypeEnum(int enforcementType) {
         this.enforcementType = enforcementType;
     }
 

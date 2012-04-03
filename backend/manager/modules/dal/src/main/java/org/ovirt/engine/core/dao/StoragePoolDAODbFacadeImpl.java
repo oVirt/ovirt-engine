@@ -5,7 +5,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
-import org.ovirt.engine.core.common.businessentities.QuotaEnforcmentTypeEnum;
+import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
@@ -41,7 +41,7 @@ public class StoragePoolDAODbFacadeImpl extends BaseDAODbFacade implements Stora
                     .getString("spm_vds_id")));
             entity.setcompatibility_version(new Version(rs
                     .getString("compatibility_version")));
-            entity.setQuotaEnforcementType(QuotaEnforcmentTypeEnum.forValue(rs.getInt("quota_enforcement_type")));
+            entity.setQuotaEnforcementType(QuotaEnforcementTypeEnum.forValue(rs.getInt("quota_enforcement_type")));
             entity.setStoragePoolFormatType(getStorageFormatTypeForPool(rs));
             return entity;
         }
@@ -88,7 +88,7 @@ public class StoragePoolDAODbFacadeImpl extends BaseDAODbFacade implements Stora
                         .getString("spm_vds_id")));
                 entity.setcompatibility_version(new Version(rs
                         .getString("compatibility_version")));
-                entity.setQuotaEnforcementType(QuotaEnforcmentTypeEnum.forValue(rs.getInt("quota_enforcement_type")));
+                entity.setQuotaEnforcementType(QuotaEnforcementTypeEnum.forValue(rs.getInt("quota_enforcement_type")));
                 entity.setStoragePoolFormatType(getStorageFormatTypeForPool(rs));
                 return entity;
             }
@@ -119,7 +119,7 @@ public class StoragePoolDAODbFacadeImpl extends BaseDAODbFacade implements Stora
                         .getString("spm_vds_id")));
                 entity.setcompatibility_version(new Version(rs
                         .getString("compatibility_version")));
-                entity.setQuotaEnforcementType(QuotaEnforcmentTypeEnum.forValue(rs.getInt("quota_enforcement_type")));
+                entity.setQuotaEnforcementType(QuotaEnforcementTypeEnum.forValue(rs.getInt("quota_enforcement_type")));
                 entity.setStoragePoolFormatType(getStorageFormatTypeForPool(rs));
                 return entity;
             }
@@ -150,7 +150,7 @@ public class StoragePoolDAODbFacadeImpl extends BaseDAODbFacade implements Stora
                         .getString("spm_vds_id")));
                 entity.setcompatibility_version(new Version(rs
                         .getString("compatibility_version")));
-                entity.setQuotaEnforcementType(QuotaEnforcmentTypeEnum.forValue(rs.getInt("quota_enforcement_type")));
+                entity.setQuotaEnforcementType(QuotaEnforcementTypeEnum.forValue(rs.getInt("quota_enforcement_type")));
                 entity.setStoragePoolFormatType(getStorageFormatTypeForPool(rs));
                 return entity;
             }
@@ -181,7 +181,7 @@ public class StoragePoolDAODbFacadeImpl extends BaseDAODbFacade implements Stora
                         .getString("spm_vds_id")));
                 entity.setcompatibility_version(new Version(rs
                         .getString("compatibility_version")));
-                entity.setQuotaEnforcementType(QuotaEnforcmentTypeEnum.forValue(rs.getInt("quota_enforcement_type")));
+                entity.setQuotaEnforcementType(QuotaEnforcementTypeEnum.forValue(rs.getInt("quota_enforcement_type")));
                 entity.setStoragePoolFormatType(getStorageFormatTypeForPool(rs));
                 return entity;
             }
@@ -212,7 +212,7 @@ public class StoragePoolDAODbFacadeImpl extends BaseDAODbFacade implements Stora
                         .getString("spm_vds_id")));
                 entity.setcompatibility_version(new Version(rs
                         .getString("compatibility_version")));
-                entity.setQuotaEnforcementType(QuotaEnforcmentTypeEnum.forValue(rs.getInt("quota_enforcement_type")));
+                entity.setQuotaEnforcementType(QuotaEnforcementTypeEnum.forValue(rs.getInt("quota_enforcement_type")));
                 entity.setStoragePoolFormatType(getStorageFormatTypeForPool(rs));
                 return entity;
             }
@@ -244,7 +244,7 @@ public class StoragePoolDAODbFacadeImpl extends BaseDAODbFacade implements Stora
                         .getString("spm_vds_id")));
                 entity.setcompatibility_version(new Version(rs
                         .getString("compatibility_version")));
-                entity.setQuotaEnforcementType(QuotaEnforcmentTypeEnum.forValue(rs.getInt("quota_enforcement_type")));
+                entity.setQuotaEnforcementType(QuotaEnforcementTypeEnum.forValue(rs.getInt("quota_enforcement_type")));
                 return entity;
             }
         };
@@ -273,7 +273,7 @@ public class StoragePoolDAODbFacadeImpl extends BaseDAODbFacade implements Stora
                         .getString("spm_vds_id")));
                 entity.setcompatibility_version(new Version(rs
                         .getString("compatibility_version")));
-                entity.setQuotaEnforcementType(QuotaEnforcmentTypeEnum.forValue(rs.getInt("quota_enforcement_type")));
+                entity.setQuotaEnforcementType(QuotaEnforcementTypeEnum.forValue(rs.getInt("quota_enforcement_type")));
                 return entity;
             }
         };

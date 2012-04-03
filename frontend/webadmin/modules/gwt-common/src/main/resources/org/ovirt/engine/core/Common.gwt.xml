@@ -146,7 +146,7 @@
 		
 		<!-- Quota -->
 		<include name="common/businessentities/Quota.java"/>
-		<include name="common/businessentities/QuotaEnforcmentTypeEnum.java"/>
+		<include name="common/businessentities/QuotaEnforcementTypeEnum.java"/>
 		<include name="common/businessentities/QuotaStorage.java"/>
 		<include name="common/businessentities/QuotaStorageProperties.java"/>
 		<include name="common/businessentities/QuotaVdsGroup.java"/>

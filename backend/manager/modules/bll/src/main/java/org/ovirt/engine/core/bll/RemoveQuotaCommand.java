@@ -8,7 +8,7 @@ import org.ovirt.engine.core.common.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.QuotaCRUDParameters;
 import org.ovirt.engine.core.common.businessentities.Quota;
-import org.ovirt.engine.core.common.businessentities.QuotaEnforcmentTypeEnum;
+import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 
 public class RemoveQuotaCommand<T extends QuotaCRUDParameters> extends CommandBase<T> {
@@ -37,7 +37,7 @@ public class RemoveQuotaCommand<T extends QuotaCRUDParameters> extends CommandBa
         }
 
         // Check if there is attempt to delete the default quota while storage pool enforcement type is disabled.
-        if (getStoragePoolDAO().get(quota.getStoragePoolId()).getQuotaEnforcementType() == QuotaEnforcmentTypeEnum.DISABLED && quota.getIsDefaultQuota()) {
+        if (getStoragePoolDAO().get(quota.getStoragePoolId()).getQuotaEnforcementType() == QuotaEnforcementTypeEnum.DISABLED && quota.getIsDefaultQuota()) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_QUOTA_CAN_NOT_HAVE_DEFAULT_INDICATION);
             return false;
         }

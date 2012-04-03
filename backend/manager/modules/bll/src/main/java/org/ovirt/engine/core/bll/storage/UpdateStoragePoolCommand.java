@@ -9,7 +9,7 @@ import org.ovirt.engine.core.bll.utils.VersionSupport;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
 import org.ovirt.engine.core.common.businessentities.Quota;
-import org.ovirt.engine.core.common.businessentities.QuotaEnforcmentTypeEnum;
+import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -62,11 +62,11 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
      * create a new default quota.
      */
     private void updateDefaultQuota() {
-        if ((_oldStoragePool.getQuotaEnforcementType() == QuotaEnforcmentTypeEnum.DISABLED)
-                && (getStoragePool().getQuotaEnforcementType() != QuotaEnforcmentTypeEnum.DISABLED)) {
+        if ((_oldStoragePool.getQuotaEnforcementType() == QuotaEnforcementTypeEnum.DISABLED)
+                && (getStoragePool().getQuotaEnforcementType() != QuotaEnforcementTypeEnum.DISABLED)) {
             QuotaHelper.getInstance().setDefaultQuotaAsRegularQuota(_oldStoragePool);
-        } else if (_oldStoragePool.getQuotaEnforcementType() != QuotaEnforcmentTypeEnum.DISABLED
-                && (getStoragePool().getQuotaEnforcementType() == QuotaEnforcmentTypeEnum.DISABLED)) {
+        } else if (_oldStoragePool.getQuotaEnforcementType() != QuotaEnforcementTypeEnum.DISABLED
+                && (getStoragePool().getQuotaEnforcementType() == QuotaEnforcementTypeEnum.DISABLED)) {
             Quota newDefaultQuota = QuotaHelper.getInstance().getUnlimitedQuota(getStoragePool(), true);
             newDefaultQuota.setQuotaName(QuotaHelper.getInstance().getDefaultQuotaName(getStoragePool()));
             QuotaHelper.getInstance().saveQuotaForUser(newDefaultQuota,
