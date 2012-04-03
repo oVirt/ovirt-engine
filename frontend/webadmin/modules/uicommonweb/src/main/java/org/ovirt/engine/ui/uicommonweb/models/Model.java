@@ -446,6 +446,11 @@ public class Model extends PropertyChangeNotifier implements IEventListener, ICo
         }
     }
 
+    @Override
+    public void ExecuteCommand(UICommand uiCommand, Object... parameters) {
+        ExecuteCommand(uiCommand);
+    }
+
     /**
      * Assigns a new instance to the Progress property, indicating start of some operation on the model.
      *
@@ -465,4 +470,5 @@ public class Model extends PropertyChangeNotifier implements IEventListener, ICo
     {
         setProgress(null);
     }
+
 }

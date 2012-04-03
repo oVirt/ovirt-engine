@@ -36,6 +36,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostInstal
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostInterfacePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostManagementPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostSetupNetworksPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.ManualFencePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.pool.PoolNewPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.quota.EditQuotaClusterPopupPresenterWidget;
@@ -177,6 +178,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostInstallPopu
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostInterfacePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostManagementPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostPopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostSetupNetworksPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.ManualFenceConfirmationPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.pool.PoolNewPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.quota.EditQuotaClusterPopupView;
@@ -744,6 +746,9 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(HostBondPopupPresenterWidget.class,
                 HostBondPopupPresenterWidget.ViewDef.class,
                 HostBondPopupView.class);
+        bindPresenterWidget(HostSetupNetworksPopupPresenterWidget.class,
+                HostSetupNetworksPopupPresenterWidget.ViewDef.class,
+                HostSetupNetworksPopupView.class);
         bindPresenterWidget(DetachConfirmationPopupPresenterWidget.class,
                 DetachConfirmationPopupPresenterWidget.ViewDef.class,
                 DetachConfirmationPopupView.class);

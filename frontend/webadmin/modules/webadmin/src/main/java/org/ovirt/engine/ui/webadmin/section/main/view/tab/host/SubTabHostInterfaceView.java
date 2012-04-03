@@ -48,9 +48,14 @@ public class SubTabHostInterfaceView extends AbstractSubTabFormView<VDS, HostLis
 
     @Inject
     public SubTabHostInterfaceView(SearchableDetailModelProvider<HostInterfaceLineModel, HostListModel, HostInterfaceListModel> modelProvider,
-            EventBus eventBus, ClientStorage clientStorage) {
+            EventBus eventBus,
+            ClientStorage clientStorage) {
         super(modelProvider);
-        this.table = new SimpleActionTable<HostInterfaceLineModel>(modelProvider, getTableResources(), eventBus, clientStorage);
+        table =
+                new SimpleActionTable<HostInterfaceLineModel>(modelProvider,
+                        getTableResources(),
+                        eventBus,
+                        clientStorage);
         ViewIdHandler.idHandler.generateAndSetIds(this);
         initTable();
 
@@ -108,6 +113,12 @@ public class SubTabHostInterfaceView extends AbstractSubTabFormView<VDS, HostLis
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getSaveNetworkConfigCommand();
+            }
+        });
+        table.addActionButton(new WebAdminButtonDefinition<HostInterfaceLineModel>("Setup Host Networks") {
+            @Override
+            protected UICommand resolveCommand() {
+                return getDetailModel().getSetupNetworksCommand();
             }
         });
 

@@ -842,7 +842,7 @@ public abstract class SearchableListModel extends ListModel implements GridContr
             OpenReport();
         }
 
-        if (command.isAutoRefresh()) {
+        if (command != null && command.isAutoRefresh()) {
             getTimer().fastForward();
         }
     }

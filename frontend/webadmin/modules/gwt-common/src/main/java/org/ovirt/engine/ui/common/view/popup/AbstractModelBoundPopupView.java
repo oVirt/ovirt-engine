@@ -102,6 +102,10 @@ public abstract class AbstractModelBoundPopupView<T extends Model> extends Abstr
         return button;
     }
 
+    public void addStatusWidget(Widget widget) {
+        asWidget().addStatusWidget(widget);
+    }
+
     @Override
     public void removeButtons() {
         asWidget().removeFooterButtons();

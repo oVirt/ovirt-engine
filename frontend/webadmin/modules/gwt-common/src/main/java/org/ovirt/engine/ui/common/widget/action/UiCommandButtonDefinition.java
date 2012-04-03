@@ -225,7 +225,7 @@ public abstract class UiCommandButtonDefinition<T> implements ActionButtonDefini
 
     @Override
     public boolean isVisible(List<T> selectedItems) {
-        return true;
+        return (command != null ? command.getIsVisible() : true);
     }
 
     @Override

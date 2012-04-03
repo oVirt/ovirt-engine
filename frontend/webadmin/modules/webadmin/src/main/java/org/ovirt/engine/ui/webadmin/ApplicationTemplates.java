@@ -86,4 +86,12 @@ public interface ApplicationTemplates extends CommonApplicationTemplates {
     @Template("<div style=\"text-align: center; padding-top: 6px;\">{0}</div>")
     SafeHtml statusTemplate(SafeHtml statusImage);
 
+    @Template("<button type='button' tabindex='-1' style='float: right; height: 20px;'>"
+            +
+            "<span style='position: relative; left: 0px; top: -5px; width: 100%; font-family: arial; font-size: 10px;'>{0}</span></button>")
+    SafeHtml actionButtonText(String title);
+
+    @Template("<button type='button' tabindex='-1' style='background: url({0}) no-repeat; white-space: nowrap; height: 20px; width: 20px; line-height: 20px; float: right;'></button>")
+    SafeHtml actionButtonImage(String image);
+
 }

@@ -15,7 +15,7 @@ public class UICommand extends Model implements ICommand
     private boolean isExecutionAllowed;
 
     /**
-     * Gets or sets the flag indincating whether this command is available but can't be executed from some reasons.
+     * Gets or sets the flag indicating whether this command is available but can't be executed from some reasons.
      */
     public boolean getIsExecutionAllowed()
     {
@@ -60,6 +60,18 @@ public class UICommand extends Model implements ICommand
         privateIsDefault = value;
     }
 
+    private boolean privateIsVisible = true;
+
+    public boolean getIsVisible()
+    {
+        return privateIsVisible;
+    }
+
+    public void setIsVisible(boolean value)
+    {
+        privateIsVisible = value;
+    }
+
     private boolean privateIsCancel;
 
     public boolean getIsCancel()
@@ -84,6 +96,14 @@ public class UICommand extends Model implements ICommand
         privateName = value;
     }
 
+    public ICommandTarget getTarget() {
+        return target;
+    }
+
+    public void setTarget(ICommandTarget target) {
+        this.target = target;
+    }
+
     private ICommandTarget target;
     private final boolean autoRefresh;
 
@@ -91,6 +111,7 @@ public class UICommand extends Model implements ICommand
     {
         this(autoRefresh);
         setName(name);
+        setTitle(name);
         this.target = target;
     }
 
@@ -114,10 +135,12 @@ public class UICommand extends Model implements ICommand
         return true;
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: Events are not available in Java:
-    // public event EventHandler CanExecuteChanged;
-
-    public void Execute(Object parameter)
+    /**
+     * Execute Command with parameters
+     *
+     * @param parameters
+     */
+    public void Execute(Object... parameters)
     {
         if (!getIsAvailable() || !getIsExecutionAllowed())
         {
@@ -126,12 +149,19 @@ public class UICommand extends Model implements ICommand
 
         if (target != null)
         {
-            target.ExecuteCommand(this);
+            if (parameters == null || parameters.length == 0) {
+                target.ExecuteCommand(this);
+            } else {
+                target.ExecuteCommand(this, parameters);
+            }
         }
     }
 
+    /**
+     * Execute command with no parameters
+     */
     public void Execute()
     {
-        Execute(null);
+        Execute(new Object[0]);
     }
 }

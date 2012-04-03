@@ -1,0 +1,47 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui">
+
+	<ui:style>
+		.editBox {
+			font-size: 11px;
+			width: 100px;
+			height: 12px;
+		}
+		.listBox {
+			font-size: 11px;
+			width: 100px;
+			height: 20px;
+		}
+	</ui:style>
+
+	<g:Grid>
+		<g:row>
+			<g:customCell>
+				<g:Label ui:field="protocolLabel" />
+			</g:customCell>
+			<g:customCell>
+				<g:ValueListBox ui:field="protocolEditor" styleName="{style.listBox}" />
+			</g:customCell>
+			<g:customCell>
+				<g:Label ui:field="addressLabel" />
+			</g:customCell>
+			<g:customCell>
+				<g:TextBox ui:field="addressEditor" styleName="{style.editBox}" />
+			</g:customCell>
+		</g:row>
+		<g:row>
+			<g:customCell>
+				<g:Label ui:field="subnetLabel" />
+			</g:customCell>
+			<g:customCell>
+				<g:TextBox ui:field="subnetEditor" styleName="{style.editBox}" />
+			</g:customCell>
+			<g:customCell>
+				<g:Label ui:field="gatewayLabel" />
+			</g:customCell>
+			<g:customCell>
+				<g:TextBox ui:field="gatewayEditor" styleName="{style.editBox}" />
+			</g:customCell>
+		</g:row>
+	</g:Grid>
+</ui:UiBinder> 

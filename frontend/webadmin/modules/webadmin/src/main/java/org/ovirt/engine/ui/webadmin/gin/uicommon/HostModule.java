@@ -21,12 +21,15 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
+import org.ovirt.engine.ui.uicommonweb.models.hosts.HostBondInterfaceModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostEventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostHooksListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceLineModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceListModel;
+import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
+import org.ovirt.engine.ui.uicommonweb.models.hosts.HostManagementNetworkModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostVmListModel;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.ReportPresenterWidget;
@@ -39,6 +42,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostInstal
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostInterfacePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostManagementPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostSetupNetworksPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.ManualFencePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmMigratePopupPresenterWidget;
 
@@ -135,7 +139,8 @@ public class HostModule extends AbstractGinModule {
             final Provider<DetachConfirmationPopupPresenterWidget> detachConfirmPopupProvider,
             final Provider<HostInterfacePopupPresenterWidget> hostInterfacePopupProvider,
             final Provider<HostManagementPopupPresenterWidget> hostManagementPopupProvider,
-            final Provider<HostBondPopupPresenterWidget> hostBondPopupProvider) {
+            final Provider<HostBondPopupPresenterWidget> hostBondPopupProvider,
+            final Provider<HostSetupNetworksPopupPresenterWidget> hostSetupNetworksPopupProvider) {
         return new SearchableDetailTabModelProvider<HostInterfaceLineModel, HostListModel, HostInterfaceListModel>(ginjector,
                 HostListModel.class,
                 HostInterfaceListModel.class) {
@@ -150,10 +155,27 @@ public class HostModule extends AbstractGinModule {
                 if (lastExecutedCommand == getModel().getBondCommand()) {
                     return hostBondPopupProvider.get();
                 }
+                if (lastExecutedCommand == getModel().getSetupNetworksCommand()) {
+                    return hostSetupNetworksPopupProvider.get();
+                }
                 if (lastExecutedCommand == getModel().getDetachCommand()) {
                     return detachConfirmPopupProvider.get();
                 }
                 return super.getModelPopup(lastExecutedCommand);
+            }
+
+            @Override
+            protected AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(Model window) {
+                if (window instanceof HostBondInterfaceModel) {
+                    return hostBondPopupProvider.get();
+                }
+                if (window instanceof HostInterfaceModel) {
+                    return hostInterfacePopupProvider.get();
+                }
+                if (window instanceof HostManagementNetworkModel) {
+                    return hostManagementPopupProvider.get();
+                }
+                return super.getModelPopup(window);
             }
 
             @Override

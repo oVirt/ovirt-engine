@@ -135,11 +135,16 @@ public abstract class TabModelProvider<M extends EntityModel> implements ModelPr
             AbstractModelBoundPopupPresenterWidget<?, ?> newPopup = null;
             UICommand lastExecutedCommand = getModel().getLastExecutedCommand();
 
-            // Resolve
+            // Resolve by last command
             if (windowModel instanceof ConfirmationModel) {
                 newPopup = getConfirmModelPopup(lastExecutedCommand);
             } else {
-                newPopup = getModelPopup(lastExecutedCommand);
+                // resolve by the window model
+                newPopup = getModelPopup(windowModel);
+                if (newPopup == null) {
+                    // then by last command
+                    newPopup = getModelPopup(lastExecutedCommand);
+                }
             }
 
             // Reveal
@@ -164,6 +169,11 @@ public abstract class TabModelProvider<M extends EntityModel> implements ModelPr
     }
 
     protected AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(UICommand lastExecutedCommand) {
+        // No-op, override as necessary
+        return null;
+    }
+
+    protected AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(Model window) {
         // No-op, override as necessary
         return null;
     }

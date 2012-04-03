@@ -2,7 +2,7 @@ package org.ovirt.engine.ui.webadmin.widget.tree;
 
 import org.ovirt.engine.ui.common.widget.action.AbstractActionStackPanelItem;
 import org.ovirt.engine.ui.common.widget.action.SimpleActionPanel;
-import org.ovirt.engine.ui.uicommonweb.ICommandTarget;
+import org.ovirt.engine.ui.uicommonweb.BaseCommandTarget;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -48,7 +48,7 @@ public class SystemTree extends AbstractActionStackPanelItem<SystemTreeModelProv
         actionPanel.addActionButton(new WebAdminButtonDefinition<SystemTreeModel>(constants.treeExpandAll()) {
             @Override
             protected UICommand resolveCommand() {
-                return new UICommand(constants.treeExpandAll(), new ICommandTarget() {
+                return new UICommand(constants.treeExpandAll(), new BaseCommandTarget() {
                     @Override
                     public void ExecuteCommand(UICommand command) {
                         expandTree(display.getRootTreeNode(), true);
@@ -60,7 +60,7 @@ public class SystemTree extends AbstractActionStackPanelItem<SystemTreeModelProv
         actionPanel.addActionButton(new WebAdminButtonDefinition<SystemTreeModel>(constants.treeCollapseAll()) {
             @Override
             protected UICommand resolveCommand() {
-                return new UICommand(constants.treeCollapseAll(), new ICommandTarget() {
+                return new UICommand(constants.treeCollapseAll(), new BaseCommandTarget() {
                     @Override
                     public void ExecuteCommand(UICommand command) {
                         expandTree(display.getRootTreeNode(), false);

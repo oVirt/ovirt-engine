@@ -13,13 +13,14 @@
 
 	<d:SimpleDialogPanel width="400px" height="600px">
 		<d:content>
-			<g:DockLayoutPanel>
+			<g:DockLayoutPanel ui:field="layoutPanel" >
 				<g:north size="300">
-					<g:VerticalPanel>
+					<g:VerticalPanel ui:field="mainPanel" >
 						<e:EntityModelLabelEditor ui:field="nameEditor" />
 						<e:ListModelListBoxEditor ui:field="networkEditor" />
 						<e:ListModelListBoxEditor ui:field="bondingModeEditor" />
 						<e:EntityModelTextBoxEditor ui:field="customEditor" visible="false" />
+						<e:EntityModelLabelEditor ui:field="bootProtocolLabel" />
 						<we:EnumRadioEditor ui:field="bootProtocol" />
 						<e:EntityModelTextBoxEditor ui:field="address" />
 						<e:EntityModelTextBoxEditor ui:field="subnet" />
@@ -28,7 +29,7 @@
 					</g:VerticalPanel>
 				</g:north>
 				<g:south size="80">
-					<g:VerticalPanel>
+					<g:VerticalPanel ui:field="infoPanel" >
 						<g:HTML ui:field="info" />
 						<e:EntityModelCheckBoxEditor ui:field="commitChanges" />
 					</g:VerticalPanel>

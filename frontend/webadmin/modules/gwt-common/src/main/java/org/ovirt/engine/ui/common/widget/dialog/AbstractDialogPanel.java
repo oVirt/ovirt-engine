@@ -18,6 +18,8 @@ public abstract class AbstractDialogPanel extends DialogBoxWithKeyHandlers {
 
     public abstract void addFooterButton(Widget button);
 
+    public abstract void addStatusWidget(Widget widget);
+
     public abstract void setFooterPanelVisible(boolean visible);
 
     public abstract void setHelpCommand(UICommand command);

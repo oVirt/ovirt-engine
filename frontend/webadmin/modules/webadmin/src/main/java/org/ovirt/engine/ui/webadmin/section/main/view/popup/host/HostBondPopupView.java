@@ -12,6 +12,7 @@ import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.EntityModelLabelEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
@@ -30,8 +31,10 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.inject.Inject;
 
 public class HostBondPopupView extends AbstractModelBoundPopupView<HostBondInterfaceModel> implements HostBondPopupPresenterWidget.ViewDef {
@@ -64,6 +67,10 @@ public class HostBondPopupView extends AbstractModelBoundPopupView<HostBondInter
     EnumRadioEditor<NetworkBootProtocol> bootProtocol;
 
     @UiField
+    @Ignore
+    EntityModelLabelEditor bootProtocolLabel;
+
+    @UiField
     @Path(value = "address.entity")
     EntityModelTextBoxEditor address;
 
@@ -86,6 +93,18 @@ public class HostBondPopupView extends AbstractModelBoundPopupView<HostBondInter
     @UiField
     @Ignore
     HTML info;
+
+    @UiField
+    @Ignore
+    DockLayoutPanel layoutPanel;
+
+    @UiField
+    @Ignore
+    VerticalPanel mainPanel;
+
+    @UiField
+    @Ignore
+    VerticalPanel infoPanel;
 
     @UiField(provided = true)
     @Path(value = "commitChanges.entity")
@@ -133,6 +152,8 @@ public class HostBondPopupView extends AbstractModelBoundPopupView<HostBondInter
         networkEditor.setLabel("Network:");
         bondingModeEditor.setLabel("Bonding Mode:");
         customEditor.setLabel("Custom mode:");
+        bootProtocolLabel.setLabel("Boot Protocol:");
+        bootProtocolLabel.asEditor().getSubEditor().setValue("   ");
         address.setLabel("IP:");
         subnet.setLabel("Subnet Mask:");
         gateway.setLabel("Default Gateway:");
@@ -147,6 +168,12 @@ public class HostBondPopupView extends AbstractModelBoundPopupView<HostBondInter
     @Override
     public void edit(final HostBondInterfaceModel object) {
         Driver.driver.edit(object);
+        if (!object.getBootProtocolAvailable()) {
+            bootProtocol.asWidget().setVisible(false);
+            bootProtocolLabel.setVisible(false);
+        }
+        bootProtocol.setEnabled(NetworkBootProtocol.None, object.getNoneBootProtocolAvailable());
+        updateBondOptions(object.getBondingOptions());
 
         object.getPropertyChangedEvent().addListener(new IEventListener() {
             @Override
@@ -166,16 +193,7 @@ public class HostBondPopupView extends AbstractModelBoundPopupView<HostBondInter
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 ListModel list = (ListModel) sender;
-                @SuppressWarnings("unchecked")
-                KeyValuePairCompat<String, EntityModel> pair =
-                        (KeyValuePairCompat<String, EntityModel>) list.getSelectedItem();
-                if ("custom".equals(pair.getKey())) {
-                    customEditor.setVisible(true);
-                    Object entity = pair.getValue().getEntity();
-                    customEditor.asEditor().getSubEditor().setValue(entity == null ? "" : entity);
-                } else {
-                    customEditor.setVisible(false);
-                }
+                updateBondOptions(list);
             }
         });
 
@@ -194,6 +212,19 @@ public class HostBondPopupView extends AbstractModelBoundPopupView<HostBondInter
 
         bondingModeEditor.setVisible(true);
         bondingModeEditor.asWidget().setVisible(true);
+
+        if (object.isCompactMode()) {
+            // hide widgets
+            info.setVisible(false);
+            message.setVisible(false);
+            checkConnectivity.setVisible(false);
+            commitChanges.setVisible(false);
+            // resize
+            layoutPanel.remove(infoPanel);
+            layoutPanel.setWidgetSize(mainPanel, 300);
+            asPopupPanel().setPixelSize(400, 400);
+        }
+
     }
 
     @Override
@@ -208,6 +239,19 @@ public class HostBondPopupView extends AbstractModelBoundPopupView<HostBondInter
 
     @Override
     public void setMessage(String message) {
+    }
+
+    private void updateBondOptions(ListModel list) {
+        @SuppressWarnings("unchecked")
+        KeyValuePairCompat<String, EntityModel> pair =
+                (KeyValuePairCompat<String, EntityModel>) list.getSelectedItem();
+        if ("custom".equals(pair.getKey())) {
+            customEditor.setVisible(true);
+            Object entity = pair.getValue().getEntity();
+            customEditor.asEditor().getSubEditor().setValue(entity == null ? "" : entity);
+        } else {
+            customEditor.setVisible(false);
+        }
     }
 
 }

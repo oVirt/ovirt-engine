@@ -30,8 +30,10 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.inject.Inject;
 
 public class HostInterfacePopupView extends AbstractModelBoundPopupView<HostInterfaceModel> implements HostInterfacePopupPresenterWidget.ViewDef {
@@ -64,6 +66,10 @@ public class HostInterfacePopupView extends AbstractModelBoundPopupView<HostInte
     EnumRadioEditor<NetworkBootProtocol> bootProtocol;
 
     @UiField
+    @Ignore
+    EntityModelLabelEditor bootProtocolLabel;
+
+    @UiField
     @Path(value = "address.entity")
     EntityModelTextBoxEditor address;
 
@@ -78,6 +84,18 @@ public class HostInterfacePopupView extends AbstractModelBoundPopupView<HostInte
     @UiField
     @Ignore
     Label message;
+
+    @UiField
+    @Ignore
+    DockLayoutPanel layoutPanel;
+
+    @UiField
+    @Ignore
+    VerticalPanel mainPanel;
+
+    @UiField
+    @Ignore
+    VerticalPanel infoPanel;
 
     @UiField
     @Ignore
@@ -121,6 +139,8 @@ public class HostInterfacePopupView extends AbstractModelBoundPopupView<HostInte
         nameEditor.setLabel("Name:");
         networkEditor.setLabel("Network:");
         bondingModeEditor.setLabel("Bonding Mode:");
+        bootProtocolLabel.setLabel("Boot Protocol:");
+        bootProtocolLabel.asEditor().getSubEditor().setValue("   ");
         customEditor.setLabel("Custom mode:");
         address.setLabel("IP:");
         subnet.setLabel("Subnet Mask:");
@@ -186,6 +206,20 @@ public class HostInterfacePopupView extends AbstractModelBoundPopupView<HostInte
 
         bondingModeEditor.setVisible(true);
         bondingModeEditor.asWidget().setVisible(true);
+
+        if (object.isCompactMode()) {
+            // hide widgets
+            info.setVisible(false);
+            message.setVisible(false);
+            checkConnectivity.setVisible(false);
+            bondingModeEditor.setVisible(false);
+            commitChanges.setVisible(false);
+            // resize
+            layoutPanel.remove(infoPanel);
+            layoutPanel.setWidgetSize(mainPanel, 200);
+            asPopupPanel().setPixelSize(400, 300);
+        }
+
     }
 
     @Override

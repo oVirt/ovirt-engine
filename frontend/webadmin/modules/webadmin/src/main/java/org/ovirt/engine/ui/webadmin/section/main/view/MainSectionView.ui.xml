@@ -33,6 +33,11 @@
 		  z-index: 1;
 		}
 
+		@external .gwt-MenuBarPopup;
+		.gwt-MenuBarPopup {
+		  z-index: 1;
+		}
+
 		@external .gwt-MenuBarPopup .menuPopupMiddleLeft;
 		.gwt-MenuBarPopup .menuPopupMiddleLeft {
 			background: white;

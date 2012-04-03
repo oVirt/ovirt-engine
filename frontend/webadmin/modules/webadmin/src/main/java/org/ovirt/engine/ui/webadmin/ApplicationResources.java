@@ -270,4 +270,50 @@ public interface ApplicationResources extends CommonApplicationResources {
 
     @Source("images/icon_collapse_all.png")
     ImageResource collapseAllIcon();
+
+    @Source("images/network/arrow_left.png")
+    ImageResource arrowLeft();
+
+    @Source("images/network/arrow_right_bottom.png")
+    ImageResource arrowRightBottom();
+
+    @Source("images/network/arrow_right_middle.png")
+    ImageResource arrowRightMiddle();
+
+    @Source("images/network/arrow_left_middle.png")
+    ImageResource arrowLeftMiddle();
+
+    @Source("images/network/arrow_right_one.png")
+    ImageResource arrowRightOne();
+
+    @Source("images/network/arrow_right_top.png")
+    ImageResource arrowRightTop();
+
+    @Source("images/network/item_draggable.png")
+    ImageResource itemDraggable();
+
+    @Source("images/network/mgmt_net.png")
+    ImageResource mgmtNetwork();
+
+    @Source("images/network/network_monitor.png")
+    ImageResource networkMonitor();
+
+    @Source("images/network/network_vm.png")
+    ImageResource networkVm();
+
+    @Source("images/network/nic_down.png")
+    ImageResource nicDown();
+
+    @Source("images/network/nic_up.png")
+    ImageResource nicUp();
+
+    @Source("images/network/nic_edit.png")
+    ImageResource nicEdit();
+
+    @Source("images/network/nic_icon.png")
+    ImageResource nicIcon();
+
+    @Source("images/network/bond.png")
+    ImageResource bond();
+
 }

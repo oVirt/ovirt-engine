@@ -39,6 +39,9 @@ public class SimpleDialogPanel extends AbstractDialogPanel {
     FlowPanel footerButtonPanel;
 
     @UiField
+    FlowPanel footerStatusPanel;
+
+    @UiField
     ButtonBase helpButton;
 
     @UiField
@@ -80,6 +83,11 @@ public class SimpleDialogPanel extends AbstractDialogPanel {
     public void addFooterButton(Widget button) {
         button.addStyleName(style.footerButton());
         footerButtonPanel.add(button);
+    }
+
+    @Override
+    public void addStatusWidget(Widget widget) {
+        footerStatusPanel.add(widget);
     }
 
     @Override

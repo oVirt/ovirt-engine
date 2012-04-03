@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.action.AddBondParameters;
 import org.ovirt.engine.core.common.action.AttachNetworkToVdsParameters;
+import org.ovirt.engine.core.common.action.SetupNetworksParameters;
 import org.ovirt.engine.core.common.action.UpdateNetworkToVdsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -28,6 +29,7 @@ import org.ovirt.engine.core.compat.ProvidePropertyChangedEvent;
 import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -45,6 +47,8 @@ import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 @SuppressWarnings("unused")
 public class HostInterfaceListModel extends SearchableListModel
 {
+
+    public static String ENGINE_NETWORK_NAME;
 
     private UICommand privateEditCommand;
 
@@ -104,6 +108,18 @@ public class HostInterfaceListModel extends SearchableListModel
     private void setSaveNetworkConfigCommand(UICommand value)
     {
         privateSaveNetworkConfigCommand = value;
+    }
+
+    private UICommand privateSetupNetworksCommand;
+
+    public UICommand getSetupNetworksCommand()
+    {
+        return privateSetupNetworksCommand;
+    }
+
+    private void setSetupNetworksCommand(UICommand value)
+    {
+        privateSetupNetworksCommand = value;
     }
 
     private java.util.ArrayList<VdsNetworkInterface> privateOriginalItems;
@@ -294,6 +310,16 @@ public class HostInterfaceListModel extends SearchableListModel
 
     public HostInterfaceListModel()
     {
+
+        // get management network name
+        AsyncDataProvider.GetManagementNetworkName(new AsyncQuery(this, new INewAsyncCallback() {
+            @Override
+            public void OnSuccess(Object model, Object returnValue) {
+                ENGINE_NETWORK_NAME = (String) returnValue;
+                UpdateActionAvailability();
+            }
+        }));
+
         setIsTimerDisabled(true);
         setTitle("Network Interfaces");
 
@@ -302,6 +328,7 @@ public class HostInterfaceListModel extends SearchableListModel
         setBondCommand(new UICommand("Bond", this));
         setDetachCommand(new UICommand("Detach", this));
         setSaveNetworkConfigCommand(new UICommand("SaveNetworkConfig", this));
+        setSetupNetworksCommand(new UICommand("SetupNetworks", this));
 
         UpdateActionAvailability();
     }
@@ -494,8 +521,7 @@ public class HostInterfaceListModel extends SearchableListModel
             for (VdsNetworkInterface nic : source)
             {
                 if (nic.getVlanId() != null
-                        && StringHelper.stringsEqual(StringFormat.format("%1$s.%2$s", nicName, nic.getVlanId()),
-                                nic.getName()))
+                        && StringHelper.stringsEqual(nicName + "." + nic.getVlanId(), nic.getName()))
                 {
                     HostVLan hv = new HostVLan();
                     hv.setInterface(nic);
@@ -2123,18 +2149,71 @@ public class HostInterfaceListModel extends SearchableListModel
         setConfirmWindow(null);
     }
 
+    public void SetupNetworks() {
+
+        if (getWindow() != null) {
+            return;
+        }
+
+        HostSetupNetworksModel setupNetworksWindowModel = new HostSetupNetworksModel(this);
+        setWindow(setupNetworksWindowModel);
+        setupNetworksWindowModel.setTitle("Setup Host Networks");
+        setupNetworksWindowModel.setHashName("host_setup_networks");
+
+        // ok command
+        UICommand okCommand = setupNetworksWindowModel.getOkCommand();
+        okCommand.setTarget(this);
+        setupNetworksWindowModel.getCommands().add(okCommand);
+
+        // cancel command
+        UICommand cancelCommand = setupNetworksWindowModel.getCancelCommand();
+        cancelCommand.setTarget(this);
+        setupNetworksWindowModel.getCommands().add(cancelCommand);
+
+        // set entity
+        setupNetworksWindowModel.setEntity(getEntity());
+    }
+
+    public void OnSetupNetworks() {
+        final HostSetupNetworksModel model = (HostSetupNetworksModel) getWindow();
+
+        boolean checkConnectivity = true;
+        int conectivityTimeout = 60000;
+
+        SetupNetworksParameters params = new SetupNetworksParameters();
+        params.setInterfaces(model.getAllNics());
+        params.setCheckConnectivity(checkConnectivity);
+        params.setConectivityTimeout(conectivityTimeout);
+        params.setVdsId(getEntity().getId());
+        IFrontendActionAsyncCallback callback = new IFrontendActionAsyncCallback() {
+
+            @Override
+            public void Executed(FrontendActionAsyncResult result) {
+                model.StopProgress();
+                VdcReturnValueBase returnValue = result.getReturnValue();
+                if (returnValue != null && returnValue.getSucceeded()) {
+                    Cancel();
+                    Search();
+                }
+            }
+        };
+        model.StartProgress(null);
+        Frontend.RunAction(VdcActionType.SetupNetworks, params, callback);
+    }
+
     private void UpdateActionAvailability()
     {
+        VDS host = getEntity();
         VdsNetworkInterface selectedItem = (VdsNetworkInterface) getSelectedItem();
         java.util.ArrayList<VdsNetworkInterface> selectedItems = getSelectedItems();
 
-        getEditCommand().setIsExecutionAllowed(getEntity() != null
-                && getEntity().getstatus() != VDSStatus.NonResponsive && selectedItem != null
+        getEditCommand().setIsExecutionAllowed(host != null
+                && host.getstatus() != VDSStatus.NonResponsive && selectedItem != null
                 && selectedItems.size() == 1 && StringHelper.isNullOrEmpty(selectedItem.getBondName())
                 && !selectedItem.getIsManagement());
 
-        getBondCommand().setIsExecutionAllowed(getEntity() != null
-                && getEntity().getstatus() != VDSStatus.NonResponsive
+        getBondCommand().setIsExecutionAllowed(host != null
+                && host.getstatus() != VDSStatus.NonResponsive
                 && selectedItems.size() >= 2
                 && !IsAnyBond(selectedItems)
                 && Linq.FindAllInterfaceNetworkNameNotEmpty(Linq.VdsNetworkInterfaceListToBase(selectedItems)).size() <= 1
@@ -2168,17 +2247,25 @@ public class HostInterfaceListModel extends SearchableListModel
             }
         }
 
-        getDetachCommand().setIsExecutionAllowed(getEntity() != null
-                && getEntity().getstatus() != VDSStatus.NonResponsive && selectedItems.size() == 1
+        getDetachCommand().setIsExecutionAllowed(host != null
+                && host.getstatus() != VDSStatus.NonResponsive && selectedItems.size() == 1
                 && selectedItem != null && !StringHelper.isNullOrEmpty(selectedItem.getNetworkName())
                 && !selectedItem.getIsManagement());
 
-        getSaveNetworkConfigCommand().setIsExecutionAllowed(getEntity() != null
-                && (getEntity().getnet_config_dirty() == null ? false : getEntity().getnet_config_dirty()));
+        getSaveNetworkConfigCommand().setIsExecutionAllowed(host != null
+                && (host.getnet_config_dirty() == null ? false : host.getnet_config_dirty()));
 
-        getEditManagementNetworkCommand().setIsExecutionAllowed(getEntity() != null
-                && getEntity().getstatus() != VDSStatus.NonResponsive && selectedItems.size() == 1
+        getEditManagementNetworkCommand().setIsExecutionAllowed(host != null
+                && host.getstatus() != VDSStatus.NonResponsive && selectedItems.size() == 1
                 && selectedItem != null && selectedItem.getIsManagement());
+
+        // Setup Networks is only available on 3.1 Clusters
+        if (host != null) {
+            Version v31 = new Version(3, 1);
+            boolean isLessThan31 = host.getvds_group_compatibility_version().compareTo(v31) < 0;
+            UICommand setupNetworksCommand = getSetupNetworksCommand();
+            setupNetworksCommand.setIsExecutionAllowed(!isLessThan31);
+        }
     }
 
     private boolean IsAnyBond(Iterable<VdsNetworkInterface> items)
@@ -2195,7 +2282,12 @@ public class HostInterfaceListModel extends SearchableListModel
     }
 
     @Override
-    public void ExecuteCommand(UICommand command)
+    public void ExecuteCommand(UICommand command) {
+        ExecuteCommand(command, new Object[0]);
+    }
+
+    @Override
+    public void ExecuteCommand(UICommand command, Object... parameters)
     {
         super.ExecuteCommand(command);
 
@@ -2206,6 +2298,10 @@ public class HostInterfaceListModel extends SearchableListModel
         else if (command == getEditManagementNetworkCommand())
         {
             EditManagementNetwork();
+        }
+        else if (command == getSetupNetworksCommand())
+        {
+            SetupNetworks();
         }
         else if (command == getBondCommand())
         {
@@ -2264,6 +2360,12 @@ public class HostInterfaceListModel extends SearchableListModel
         {
             CancelConfirm();
         }
+
+        else if (StringHelper.stringsEqual(command.getName(), "OnSetupNetworks"))
+        {
+            OnSetupNetworks();
+        }
+
     }
 
     @Override

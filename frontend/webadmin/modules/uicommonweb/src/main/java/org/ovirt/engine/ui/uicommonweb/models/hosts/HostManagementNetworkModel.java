@@ -13,6 +13,18 @@ import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 public class HostManagementNetworkModel extends EntityModel
 {
 
+    private boolean compactMode;
+
+    public boolean isCompactMode()
+    {
+        return compactMode;
+    }
+
+    private void setCompactMode(boolean value)
+    {
+        compactMode = value;
+    }
+
     @Override
     public network getEntity()
     {
@@ -169,8 +181,13 @@ public class HostManagementNetworkModel extends EntityModel
         OnPropertyChanged(new PropertyChangedEventArgs("BondingOptionsOverrideNotification"));
     }
 
-    public HostManagementNetworkModel()
+    public HostManagementNetworkModel() {
+        this(false);
+    }
+
+    public HostManagementNetworkModel(boolean compactMode)
     {
+        setCompactMode(compactMode);
         setInterface(new ListModel());
         setAddress(new EntityModel());
         setSubnet(new EntityModel());

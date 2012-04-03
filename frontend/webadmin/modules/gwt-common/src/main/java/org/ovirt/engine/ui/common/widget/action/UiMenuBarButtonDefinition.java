@@ -145,11 +145,6 @@ public abstract class UiMenuBarButtonDefinition<T> extends ImageUiCommandButtonD
         return null;
     }
 
-    @Override
-    public boolean isVisible(List<T> selectedItems) {
-        return true;
-    }
-
     public boolean isAsTitle() {
         return asTitle;
     }

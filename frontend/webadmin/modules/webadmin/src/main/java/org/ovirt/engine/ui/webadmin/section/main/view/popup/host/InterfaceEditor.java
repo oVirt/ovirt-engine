@@ -1,0 +1,83 @@
+package org.ovirt.engine.ui.webadmin.section.main.view.popup.host;
+
+import java.util.Arrays;
+
+import org.ovirt.engine.core.common.businessentities.NetworkBootProtocol;
+import org.ovirt.engine.ui.common.widget.HasEditorDriver;
+import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
+import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkInterfaceModel;
+
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.editor.client.SimpleBeanEditorDriver;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.ValueListBox;
+import com.google.gwt.user.client.ui.Widget;
+
+public class InterfaceEditor extends Composite implements HasEditorDriver<NetworkInterfaceModel> {
+
+    interface Driver extends SimpleBeanEditorDriver<NetworkInterfaceModel, InterfaceEditor> {
+        Driver driver = GWT.create(Driver.class);
+    }
+
+    interface ViewUiBinder extends UiBinder<Widget, InterfaceEditor> {
+        ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
+    }
+
+    @UiField
+    @Ignore
+    Label addressLabel;
+
+    @UiField
+    @Path(value = "entity.address")
+    TextBox addressEditor;
+
+    @UiField
+    @Ignore
+    Label subnetLabel;
+
+    @UiField
+    @Path(value = "entity.subnet")
+    TextBox subnetEditor;
+
+    @UiField
+    @Ignore
+    Label gatewayLabel;
+
+    @UiField
+    @Path(value = "entity.gateway")
+    TextBox gatewayEditor;
+
+    @UiField
+    @Ignore
+    Label protocolLabel;
+
+    @UiField(provided = true)
+    @Path(value = "entity.bootProtocol")
+    ValueListBox<NetworkBootProtocol> protocolEditor;
+
+    public InterfaceEditor() {
+        protocolEditor = new ValueListBox<NetworkBootProtocol>(new EnumRenderer<NetworkBootProtocol>());
+        protocolEditor.setAcceptableValues(Arrays.asList(NetworkBootProtocol.class.getEnumConstants()));
+        initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
+        addressLabel.setText("Address:");
+        subnetLabel.setText("Subnet:");
+        gatewayLabel.setText("Gateway:");
+        protocolLabel.setText("Protocol:");
+        Driver.driver.initialize(this);
+    }
+
+    @Override
+    public void edit(NetworkInterfaceModel nic) {
+        Driver.driver.edit(nic);
+    }
+
+    @Override
+    public NetworkInterfaceModel flush() {
+        return Driver.driver.flush();
+    }
+
+}

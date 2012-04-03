@@ -30,8 +30,10 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.inject.Inject;
 
 public class HostManagementPopupView extends AbstractModelBoundPopupView<HostManagementNetworkModel> implements HostManagementPopupPresenterWidget.ViewDef {
@@ -64,6 +66,10 @@ public class HostManagementPopupView extends AbstractModelBoundPopupView<HostMan
     EnumRadioEditor<NetworkBootProtocol> bootProtocol;
 
     @UiField
+    @Ignore
+    EntityModelLabelEditor bootProtocolLabel;
+
+    @UiField
     @Path(value = "address.entity")
     EntityModelTextBoxEditor address;
 
@@ -86,6 +92,18 @@ public class HostManagementPopupView extends AbstractModelBoundPopupView<HostMan
     @UiField
     @Ignore
     HTML info;
+
+    @UiField
+    @Ignore
+    DockLayoutPanel layoutPanel;
+
+    @UiField
+    @Ignore
+    VerticalPanel mainPanel;
+
+    @UiField
+    @Ignore
+    VerticalPanel infoPanel;
 
     @UiField(provided = true)
     @Path(value = "commitChanges.entity")
@@ -125,6 +143,8 @@ public class HostManagementPopupView extends AbstractModelBoundPopupView<HostMan
         nameEditor.setLabel("Network Name:");
         networkEditor.setLabel("Interface:");
         bondingModeEditor.setLabel("Bonding Mode:");
+        bootProtocolLabel.setLabel("Boot Protocol:");
+        bootProtocolLabel.asEditor().getSubEditor().setValue("   ");
         customEditor.setLabel("Custom mode:");
         address.setLabel("IP:");
         subnet.setLabel("Subnet Mask:");
@@ -140,6 +160,7 @@ public class HostManagementPopupView extends AbstractModelBoundPopupView<HostMan
     @Override
     public void edit(final HostManagementNetworkModel object) {
         Driver.driver.edit(object);
+        bootProtocol.setEnabled(NetworkBootProtocol.None, object.getNoneBootProtocolAvailable());
 
         object.getPropertyChangedEvent().addListener(new IEventListener() {
             @Override
@@ -190,6 +211,21 @@ public class HostManagementPopupView extends AbstractModelBoundPopupView<HostMan
 
         bondingModeEditor.setVisible(true);
         bondingModeEditor.asWidget().setVisible(true);
+
+        if (object.isCompactMode()) {
+            // hide widgets
+            info.setVisible(false);
+            message.setVisible(false);
+            nameEditor.setVisible(false);
+            checkConnectivity.setVisible(false);
+            bondingModeEditor.setVisible(false);
+            commitChanges.setVisible(false);
+            // resize
+            layoutPanel.remove(infoPanel);
+            layoutPanel.setWidgetSize(mainPanel, 250);
+            asPopupPanel().setPixelSize(400, 350);
+        }
+
     }
 
     @Override

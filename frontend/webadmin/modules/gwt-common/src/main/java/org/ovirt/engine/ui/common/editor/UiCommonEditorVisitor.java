@@ -177,9 +177,16 @@ public class UiCommonEditorVisitor<M extends Model> extends EditorVisitor {
         Collection<O> items = (Collection<O>) parentModel.getItems();
         if (items != null) {
             if (items.size() > 0) {
-                // Order is important
-                parentModel.setSelectedItem(items.iterator().next());
-                listEditor.setValue(items.iterator().next());
+                O value;
+                if (parentModel.getSelectedItem() != null) {
+                    value = (O) parentModel.getSelectedItem();
+                } else {
+                    value = items.iterator().next();
+                    // Order is important
+                    parentModel.setSelectedItem(value);
+                }
+                listEditor.setValue(value);
+
             }
 
             listEditor.setAcceptableValues(items);

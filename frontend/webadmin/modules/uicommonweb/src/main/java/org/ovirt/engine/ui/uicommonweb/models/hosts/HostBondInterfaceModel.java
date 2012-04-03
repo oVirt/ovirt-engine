@@ -18,6 +18,18 @@ import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 public class HostBondInterfaceModel extends Model
 {
 
+    private boolean compactMode;
+
+    public boolean isCompactMode()
+    {
+        return compactMode;
+    }
+
+    private void setCompactMode(boolean value)
+    {
+        compactMode = value;
+    }
+
     private ListModel privateBond;
 
     public ListModel getBond()
@@ -147,18 +159,40 @@ public class HostBondInterfaceModel extends Model
         }
     }
 
+    private boolean bootProtocolAvailable = true;
+
+    public boolean getBootProtocolAvailable()
+    {
+        return bootProtocolAvailable;
+    }
+
+    public void setBootProtocolAvailable(boolean value)
+    {
+        if (bootProtocolAvailable != value)
+        {
+            bootProtocolAvailable = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("BootProtocolAvailable"));
+        }
+    }
+
     public boolean getIsStaticAddress()
     {
         return getBootProtocol() == NetworkBootProtocol.StaticIp;
     }
 
-    public HostBondInterfaceModel()
+    public HostBondInterfaceModel() {
+        this(false);
+    }
+
+    public HostBondInterfaceModel(boolean compactMode)
     {
+        setCompactMode(compactMode);
         setAddress(new EntityModel());
         setSubnet(new EntityModel());
         setGateway(new EntityModel());
         setBond(new ListModel());
         setNetwork(new ListModel());
+        setBootProtocolAvailable(true);
         setBondingOptions(new ListModel());
         java.util.Map.Entry<String, EntityModel> defaultItem = null;
         RefObject<java.util.Map.Entry<String, EntityModel>> tempRef_defaultItem =
