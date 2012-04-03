@@ -1,29 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:r="urn:import:org.ovirt.engine.ui.common.widget.refresh">
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" 
+	xmlns:r="urn:import:org.ovirt.engine.ui.common.widget.refresh"
+	xmlns:w="urn:import:org.ovirt.engine.ui.userportal.widget.basic"
+	>
 
 	<ui:with field='resources'
 		type='org.ovirt.engine.ui.userportal.ApplicationResources' />
 
 	<ui:style>
 		.splitLayoutPanelStyle {
-		width: 100%;
-		height: 100%;
+			width: 100%;
+			height: 100%;
 		}
 
 		.borderPanelStyle {
-		border-style: solid;
-		border-width: 2px;
-		border-color: #719823;
-
-		margin-left: 10px;
-		margin-top: 10px;
-		margin-right: 10px;
-		margin-bottom: 10px;
-		width: 95%;
-		height: 95%;
-		min-width: 500px;
+			border-style: solid;
+			border-width: 2px;
+			border-color: #719823;
+	
+			margin-left: 10px;
+			margin-top: 10px;
+			margin-right: 10px;
+			margin-bottom: 10px;
+			min-width: 500px;
+		
+			border-radius: 3px;
 		}
 		
 		.refreshPanel {
@@ -45,8 +48,13 @@
 		
 <!-- 		There is no other possibility to configure the layer of the layout panel -->
 		.vmDetailPanelStyle>div {
-			min-width: 500px;
+			min-width: 540px;
 			min-height: 400px;
+		}
+		
+		@external .gwt-SplitLayoutPanel-HDragger;
+		.gwt-SplitLayoutPanel-HDragger {
+			background-color: transparent;
 		}
 
 	</ui:style>
@@ -59,15 +67,15 @@
 		</g:north>
 
 		<g:center>
-			<g:SplitLayoutPanel addStyleNames="{style.splitLayoutPanelStyle}">
-				<g:west size="500">
+			<w:BasicViewSplitLayoutPanel addStyleNames="{style.splitLayoutPanelStyle}" ui:field="splitLayoutPanel" >
+				<w:west size="500" >
 					<g:LayoutPanel ui:field="vmListPanel" />
-				</g:west>
+				</w:west>
 
-				<g:center>
-					<g:SimpleLayoutPanel addStyleNames="{style.vmDetailPanelStyle}" ui:field="vmDetailPanel" />
-				</g:center>
-			</g:SplitLayoutPanel>
+				<w:center>
+					<g:LayoutPanel addStyleNames="{style.vmDetailPanelStyle}" ui:field="vmDetailPanel" />
+				</w:center>
+			</w:BasicViewSplitLayoutPanel>
 		</g:center>
 	</g:DockLayoutPanel>
 

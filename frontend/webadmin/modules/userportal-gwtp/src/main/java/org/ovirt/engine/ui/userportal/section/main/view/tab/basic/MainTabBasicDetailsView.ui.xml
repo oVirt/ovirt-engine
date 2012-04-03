@@ -14,19 +14,26 @@
 		
 	<ui:style
 		type="org.ovirt.engine.ui.userportal.section.main.view.tab.basic.MainTabBasicDetailsView.Style">
+		
 		.detailsHeaderPanel {
 			margin-top: 10px;
 			margin-left: 10px;
+			margin-right: 10px;
+			border-radius: 9px;
 			border-style: solid;
 			border-width: 1px;
 			border-color: #b5c7d5;
-			width: 95%;
 			background-color: #ffffff;
 		}
 
 		.mainPanel {
 			background-color: #e1e8f2;
 			overflow: auto;
+			border-top-width: 1px;
+			border-top-color: #97b7d6;
+			border-top-style: solid;
+			margin-right: 2px;
+			margin-bottom: 2px;
 		}
 
 		.osImage {
@@ -83,6 +90,7 @@
 			font-size: 15px;
 			text-align: right;
 			padding-right: 20px;
+			padding-top: 7px;
 		}
 
 		.detailsRow {
@@ -145,8 +153,8 @@
 
 	<g:DockLayoutPanel addStyleNames="{style.mainPanel}">
 		<g:north size='80'>
-			<g:SimpleLayoutPanel>
-				<g:FlowPanel addStyleNames="{style.detailsHeaderPanel}">
+			<g:SimpleLayoutPanel addStyleNames="{style.detailsHeaderPanel}">
+				<g:FlowPanel>
 					<e:OsTypeImage ui:field="osImage" addStyleNames="{style.osImage}" resources="{itemResources}" nameUniquePart="Small" />
 					<e:VmTypeImage ui:field="vmImage" addStyleNames="{style.vmImage}" resources="{itemResources}" />
 					

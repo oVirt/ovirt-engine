@@ -3,13 +3,41 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui">
 
 	<ui:style type="org.ovirt.engine.ui.userportal.widget.basic.MainTabBasicListItemActionButton.Style">
+		@external .html-face;
+		.buttonHolder .html-face {
+			width: 24px;
+			height: 24px;
+		}
+	
+		@external .gwt-ToggleButton-up, .gwt-ToggleButton-up-hovering, .gwt-ToggleButton-up-disabled, .gwt-ToggleButton-down, .gwt-ToggleButton-down-hovering, .gwt-ToggleButton-down-disabled;
+		.buttonHolder .gwt-ToggleButton-up, .buttonHolder .gwt-ToggleButton-up-hovering, .buttonHolder .gwt-ToggleButton-up-disabled, .buttonHolder .gwt-ToggleButton-down, .buttonHolder .gwt-ToggleButton-down-hovering, .buttonHolder .gwt-ToggleButton-down-disabled {
+			padding: 0px;
+			margin: 0px;
+			border-width: 0px;
+			background: none;
+		}
+	
 		.buttonStyle {
+			width: 24px;
+			height: 24px;
+		}
+		
+		.buttonHolder {
+			height: 24px;
+			width: 26px;
 			float: left;
+		}
+		
+		.stylableButtonHolderStyle {
 			width: 24px;
 			height: 24px;
 		}
 	</ui:style>
 
-	<g:ToggleButton ui:field="button" addStyleNames="{style.buttonStyle}" />
+	<g:SimplePanel addStyleNames="{style.buttonHolder}">
+		<g:SimplePanel addStyleNames="{style.stylableButtonHolderStyle}" ui:field="stylableButtonHolder">
+			<g:ToggleButton ui:field="button" addStyleNames="{style.buttonStyle}" />
+		</g:SimplePanel>
+	</g:SimplePanel>
 
 </ui:UiBinder>

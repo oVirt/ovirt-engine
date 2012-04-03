@@ -63,10 +63,6 @@
 			z-index: 1;
 		}
 		
-		.buttonsPanel {
-			margin-left: 25px;
-		}
-		
 		.consoleBannerStyle {
 			background: url(images/general/tvlayout_doubleclick_to_console.png) repeat-x;
 			z-index: 1;
@@ -82,14 +78,16 @@
 		
 		.basicItemStyle {
 			float: left;
-			width: 170px;
+			width: 176px;
 			height: 200px;
 		}
 		
 		.basicVmViewBoxStyle, .itemSelectedStyle, .itemOverStyle, .itemNotRunningStyle, .itemRunningStyle {
 			border-style: solid;
-			border-width: 1px;
-			width: 158px;
+			border-width: 2px;
+			border-radius: 9px;
+			border-color: #d4d4d4;
+			width: 162px;
 			height: 175px;
 			margin-left: 10px;
 			margin-right: 10px;
@@ -110,6 +108,25 @@
 		.itemRunningStyle {
 			background-color: white;
 		}
+
+		.buttonsPanel {
+			margin-left: 40px;
+			width: 78px;
+			height: 30px;
+			float: left;
+		}
+		
+		.runButtonAdditionalStyle {
+			float: left;
+		}
+        
+        .shutdownButtonAdditionalStyle {
+        	margin: 0 auto;
+        }
+        
+        .suspendButtonAdditionalStyle {
+        	float: right;
+        }
 		
 	</ui:style>
 
@@ -138,11 +155,11 @@
 					</g:SimplePanel>
 				</g:layer>
 
-				<g:layer top='125px' height='20px'>
+				<g:layer top='129px' height='20px'>
 					<g:ValueLabel ui:field="vmStatus" addStyleNames="{style.machineStatusStyle}" />
 				</g:layer>
 
-				<g:layer top='140px' height='40px'>
+				<g:layer top='145px' height='40px'>
 					<g:FlowPanel ui:field="buttonsPanel" addStyleNames="{style.buttonsPanel}"/>
 				</g:layer>
 			</g:LayoutPanel>

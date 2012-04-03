@@ -106,6 +106,12 @@ public class MainTabBasicListItemView extends AbstractView implements MainTabBas
         String handCursor();
 
         String defaultCursor();
+
+        String runButtonAdditionalStyle();
+
+        String shutdownButtonAdditionalStyle();
+
+        String suspendButtonAdditionalStyle();
     }
 
     interface ViewUiBinder extends UiBinder<Widget, MainTabBasicListItemView> {
@@ -137,7 +143,8 @@ public class MainTabBasicListItemView extends AbstractView implements MainTabBas
     }
 
     protected void initButtons(ApplicationResources applicationResources, final UserPortalItemModel model) {
-        addButton(new UserPortalImageButtonDefinition<UserPortalItemModel>(model.getIsPool() ? messages.takeVm() : messages.runVm(),
+        addButton(new UserPortalImageButtonDefinition<UserPortalItemModel>(model.getIsPool() ? messages.takeVm()
+                : messages.runVm(),
                 applicationResources.playIcon(),
                 applicationResources.playDisabledIcon()) {
 
@@ -146,7 +153,7 @@ public class MainTabBasicListItemView extends AbstractView implements MainTabBas
                 return model.getIsPool() ? model.getTakeVmCommand() : model.getRunCommand();
             }
 
-        });
+        }, style.runButtonAdditionalStyle());
 
         addButton(new UserPortalImageButtonDefinition<UserPortalItemModel>(messages.shutdownVm(),
                 applicationResources.stopIcon(),
@@ -157,7 +164,7 @@ public class MainTabBasicListItemView extends AbstractView implements MainTabBas
                 return model.getShutdownCommand();
             }
 
-        });
+        }, style.shutdownButtonAdditionalStyle());
 
         addButton(new UserPortalImageButtonDefinition<UserPortalItemModel>(messages.suspendVm(),
                 applicationResources.pauseIcon(),
@@ -168,13 +175,14 @@ public class MainTabBasicListItemView extends AbstractView implements MainTabBas
                 return model.getPauseCommand();
             }
 
-        });
+        }, style.suspendButtonAdditionalStyle());
     }
 
-    private void addButton(final UserPortalImageButtonDefinition<UserPortalItemModel> buttonDefinition) {
+    private void addButton(final UserPortalImageButtonDefinition<UserPortalItemModel> buttonDefinition,
+            String additionalStyle) {
 
         final MainTabBasicListItemActionButton button = new MainTabBasicListItemActionButton();
-        button.initialize(buttonDefinition);
+        button.initialize(buttonDefinition, additionalStyle);
 
         button.addClickHandler(new ClickHandler() {
 

@@ -8,6 +8,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class MainTabBasicListItemActionButton extends AbstractActionButton {
@@ -23,8 +24,16 @@ public class MainTabBasicListItemActionButton extends AbstractActionButton {
     @UiField
     Style style;
 
+    @UiField
+    Panel stylableButtonHolder;
+
     public MainTabBasicListItemActionButton() {
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
+    }
+
+    public void initialize(UserPortalImageButtonDefinition<UserPortalItemModel> buttonDefinition, String additionalStyle) {
+        initialize(buttonDefinition);
+        stylableButtonHolder.addStyleName(additionalStyle);
     }
 
     public void initialize(UserPortalImageButtonDefinition<UserPortalItemModel> buttonDefinition) {

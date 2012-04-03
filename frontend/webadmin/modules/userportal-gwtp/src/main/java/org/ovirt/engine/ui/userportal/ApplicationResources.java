@@ -118,4 +118,10 @@ public interface ApplicationResources extends CommonApplicationResources {
     @Source("images/general/disk_icon.gif")
     ImageResource vmDiskIcon();
 
+    // splitter images
+    @Source("images/splitter/basicViewSplitterTop.png")
+    ImageResource basicViewSplitterTop();
+
+    @Source("images/splitter/basicViewSplitterSnap.png")
+    ImageResource basicViewSplitterSnap();
 }

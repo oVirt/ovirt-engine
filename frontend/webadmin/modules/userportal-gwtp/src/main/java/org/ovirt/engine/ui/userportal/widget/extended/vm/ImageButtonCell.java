@@ -56,7 +56,7 @@ public abstract class ImageButtonCell<T> extends AbstractCell<T> {
             command.onClick(cast(value));
         }
 
-        // TODO add CSS changing (the cursor to hand when crosses an enabled button)
+        // TODO change the image while the mouse is down (simmulate click)
     }
 
     @Override
