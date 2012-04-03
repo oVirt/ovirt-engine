@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -22,6 +23,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
+import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -209,7 +211,12 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
 
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
-        List<PermissionSubject> listPermissionSubjects = super.getPermissionCheckSubjects();
+        List<PermissionSubject> listPermissionSubjects;
+        if (getParameters().getVmId() == null) {
+            listPermissionSubjects = new ArrayList<PermissionSubject>();
+        } else {
+            listPermissionSubjects = super.getPermissionCheckSubjects();
+        }
         listPermissionSubjects.add(new PermissionSubject(getParameters().getStorageDomainId(),
                 VdcObjectType.Storage,
                 ActionGroup.CREATE_DISK));
@@ -256,9 +263,22 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
                         parameters,
                         ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
         getReturnValue().getTaskIdList().addAll(tmpRetValue.getInternalTaskIdList());
-        getReturnValue().setActionReturnValue(tmpRetValue.getActionReturnValue());
+        if (tmpRetValue.getActionReturnValue() != null) {
+            DiskImage diskImage = (DiskImage) tmpRetValue.getActionReturnValue();
+            addDiskPermissions(diskImage);
+            getReturnValue().setActionReturnValue(diskImage.getId());
+        }
         getReturnValue().setFault(tmpRetValue.getFault());
         setSucceeded(tmpRetValue.getSucceeded());
+    }
+
+    private void addDiskPermissions(DiskImage diskImage) {
+        permissions perms =
+                new permissions(getCurrentUser().getUserId(),
+                        PredefinedRoles.DISK_OPERATOR.getId(),
+                        diskImage.getimage_group_id(),
+                        VdcObjectType.Disk);
+        MultiLevelAdministrationHandler.addPermission(perms);
     }
 
     @Override
