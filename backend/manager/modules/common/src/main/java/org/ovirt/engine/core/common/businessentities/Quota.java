@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.common.businessentities;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,7 +26,7 @@ import org.ovirt.engine.core.compat.INotifyPropertyChanged;
  * <BR/>
  * Take in notice there can not be general limitation and specific limitation on the same resource type.
  */
-public class Quota extends IVdcQueryable implements INotifyPropertyChanged, Serializable {
+public class Quota extends IVdcQueryable implements INotifyPropertyChanged, BusinessEntity<Guid> {
 
     /**
      * Automatic generated serial version ID.
