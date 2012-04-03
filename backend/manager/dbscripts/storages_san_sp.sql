@@ -4,7 +4,7 @@
 
 
 Create or replace FUNCTION InsertLUNs(v_LUN_id VARCHAR(50),
-	v_phisical_volume_id VARCHAR(50) ,
+	v_physical_volume_id VARCHAR(50) ,
 	v_volume_group_id VARCHAR(50) ,
 	v_serial VARCHAR(4000) ,
 	v_lun_mapping INTEGER ,
@@ -14,8 +14,8 @@ Create or replace FUNCTION InsertLUNs(v_LUN_id VARCHAR(50),
 RETURNS VOID
    AS $procedure$
 BEGIN
-INSERT INTO LUNs(LUN_id, phisical_volume_id, volume_group_id, serial, lun_mapping, vendor_id, product_id, device_size)
-	VALUES(v_LUN_id, v_phisical_volume_id, v_volume_group_id, v_serial, v_lun_mapping, v_vendor_id, v_product_id, v_device_size);
+INSERT INTO LUNs(LUN_id, physical_volume_id, volume_group_id, serial, lun_mapping, vendor_id, product_id, device_size)
+	VALUES(v_LUN_id, v_physical_volume_id, v_volume_group_id, v_serial, v_lun_mapping, v_vendor_id, v_product_id, v_device_size);
 END; $procedure$
 LANGUAGE plpgsql;    
 

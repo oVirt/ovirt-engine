@@ -167,7 +167,7 @@
     </table>
 
     <table name="LUNS">
-        <column>phisical_volume_id</column>
+        <column>physical_volume_id</column>
         <column>LUN_id</column>
         <column>volume_group_id</column>
         <column>serial</column>

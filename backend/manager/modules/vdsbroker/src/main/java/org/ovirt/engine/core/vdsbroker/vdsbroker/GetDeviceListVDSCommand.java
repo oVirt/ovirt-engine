@@ -44,7 +44,7 @@ public class GetDeviceListVDSCommand<P extends GetDeviceListVDSCommandParameters
             lun.setLUN_id(xlun.getItem("GUID").toString());
         }
         if (xlun.contains("pvUUID")) {
-            lun.setphisical_volume_id(xlun.getItem("pvUUID").toString());
+            lun.setphysical_volume_id(xlun.getItem("pvUUID").toString());
         }
         if (xlun.contains("vgUUID")) {
             lun.setvolume_group_id(xlun.getItem("vgUUID").toString());

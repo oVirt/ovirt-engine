@@ -22,9 +22,9 @@ public class LUNs implements Serializable {
     public LUNs() {
     }
 
-    public LUNs(String lUN_id, String phisical_volume_id, String volume_group_id) {
+    public LUNs(String lUN_id, String physical_volume_id, String volume_group_id) {
         this.id = lUN_id;
-        this.physicalVolumeId = phisical_volume_id;
+        this.physicalVolumeId = physical_volume_id;
         this.volumeGroupId = volume_group_id;
     }
 
@@ -126,15 +126,16 @@ public class LUNs implements Serializable {
         this.id = value;
     }
 
-    @Size(max = BusinessEntitiesDefinitions.LUN_PHISICAL_VOLUME_ID)
-    @Column(name = "phisical_volume_id", length = BusinessEntitiesDefinitions.LUN_PHISICAL_VOLUME_ID)
+    // TODO rename the column
+    @Size(max = BusinessEntitiesDefinitions.LUN_PHYSICAL_VOLUME_ID)
+    @Column(name = "physical_volume_id", length = BusinessEntitiesDefinitions.LUN_PHYSICAL_VOLUME_ID)
     private String physicalVolumeId;
 
-    public String getphisical_volume_id() {
+    public String getphysical_volume_id() {
         return this.physicalVolumeId;
     }
 
-    public void setphisical_volume_id(String value) {
+    public void setphysical_volume_id(String value) {
         this.physicalVolumeId = value;
     }
 

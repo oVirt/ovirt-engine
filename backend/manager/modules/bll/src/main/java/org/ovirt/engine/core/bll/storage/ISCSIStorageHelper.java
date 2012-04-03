@@ -164,7 +164,7 @@ public class ISCSIStorageHelper extends StorageHelperBase {
                     if (CollectionUtils.subtract(strings, failedConnectionsList).size() == 0) {
                         // At case of failure the appropriate log message will be
                         // added
-                        log.infoFormat("The lun with id {0} was reported as problematic !", lun.getphisical_volume_id());
+                        log.infoFormat("The lun with id {0} was reported as problematic !", lun.getphysical_volume_id());
                         for (String connectionFailed : failedConnectionsList) {
                             String connectionField =
                                     addToAuditLogErrorMessage(connectionFailed,

@@ -19,7 +19,7 @@ public class LunDAODbFacadeImpl extends BaseDAODbFacade implements LunDAO {
         public LUNs mapRow(ResultSet rs, int rowNum) throws SQLException {
             LUNs entity = new LUNs();
             entity.setLUN_id(rs.getString("LUN_id"));
-            entity.setphisical_volume_id(rs.getString("phisical_volume_id"));
+            entity.setphysical_volume_id(rs.getString("physical_volume_id"));
             entity.setvolume_group_id(rs.getString("volume_group_id"));
             entity.setSerial(rs.getString("serial"));
             Integer lunMapping = (Integer) rs.getObject("lun_mapping");
@@ -71,7 +71,7 @@ public class LunDAODbFacadeImpl extends BaseDAODbFacade implements LunDAO {
     public void save(LUNs lun) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("LUN_id", lun.getLUN_id())
-                .addValue("phisical_volume_id", lun.getphisical_volume_id())
+                .addValue("physical_volume_id", lun.getphysical_volume_id())
                 .addValue("volume_group_id", lun.getvolume_group_id())
                 .addValue("serial", lun.getSerial())
                 .addValue("lun_mapping", lun.getLunMapping())
