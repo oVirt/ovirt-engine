@@ -82,8 +82,12 @@ public class VmDeviceUtils {
             ifaces = DbFacade.getInstance().getVmNetworkInterfaceDAO().getAllForTemplate(dstId);
         }
         List<VmDevice> devices = dao.getVmDeviceByVmId(srcId);
-        boolean hasCD = false;
         String isoPath=vmBase.getiso_path();
+        // indicates that VM should have CD either from its own (iso_path) or from the snapshot it was cloned from.
+        boolean shouldHaveCD = !isoPath.isEmpty();
+        // indicates if VM has already a non empty CD in DB
+        boolean hasAlreadyCD = (!(DbFacade.getInstance().getVmDeviceDAO().getVmDeviceByVmIdTypeAndDevice(vmBase.getId(), VmDeviceType.DISK.getName(), VmDeviceType.CDROM.getName())).isEmpty());
+        boolean addCD = (!hasAlreadyCD && shouldHaveCD);
         for (VmDevice device : devices) {
             id = Guid.NewGuid();
             String specParams = "";
@@ -92,13 +96,11 @@ public class VmDeviceUtils {
                 if (vmBase.getvm_type() == VmType.Desktop) {
                     updateNumOfMonitorsInVmDevice(null, vmBase);
                 }
-                //add CD if exists
-                hasCD = !StringUtils.isEmpty(isoPath);
-                if (hasCD) {
+                //add CD if not exists
+                if (addCD) {
                     specParams = setCdPath(specParams, "", isoPath);
                     addManagedDevice(new VmDeviceId(Guid.NewGuid(),dstId) , VmDeviceType.DISK, VmDeviceType.CDROM, specParams, true, true);
                 }
-
                 break; // skip other Blank template devices
             }
             if (VmDeviceType.DISK.getName().equals(device.getType())
@@ -115,10 +117,14 @@ public class VmDeviceUtils {
             }
             else  if (VmDeviceType.DISK.getName().equals(device.getType())
                     && VmDeviceType.CDROM.getName().equals(device.getDevice())) {
+                // check here is source VM had CD (Vm from snapshot)
                 String srcCdPath=org.ovirt.engine.core.utils.StringUtils.string2Map(device.getSpecParams()).get(VdsProperties.Path);
-                hasCD = (!StringUtils.isEmpty(srcCdPath) || !StringUtils.isEmpty(isoPath));
-                if (hasCD) {
+                shouldHaveCD = (!srcCdPath.isEmpty() || !isoPath.isEmpty());
+                if (!hasAlreadyCD && shouldHaveCD) {
                     specParams = setCdPath(specParams, srcCdPath, isoPath);
+                }
+                else {// CD already exists
+                    continue;
                 }
             }
             device.setId(new VmDeviceId(id, dstId));
@@ -126,7 +132,7 @@ public class VmDeviceUtils {
             dao.save(device);
         }
         // if VM does not has CD, add an empty CD
-        if (!hasCD) {
+        if (!shouldHaveCD) {
             addEmptyCD(dstId);
         }
         // if destination is a VM , update devices boot order
