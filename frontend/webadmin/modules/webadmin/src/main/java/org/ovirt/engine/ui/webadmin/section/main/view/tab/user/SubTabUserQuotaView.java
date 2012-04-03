@@ -44,30 +44,30 @@ public class SubTabUserQuotaView extends AbstractSubTabTableView<DbUser, Quota, 
                 return object.getStoragePoolName() == null ? "" : object.getStoragePoolName();
             }
         }, "Data Center");
-        getTable().addColumn(new TextColumnWithTooltip<Quota>() {
-            @Override
-            public String getValue(Quota object) {
-                return (object.getGlobalQuotaVdsGroup().getMemSizeMBUsage() == null ? "0" : object.getGlobalQuotaVdsGroup().getMemSizeMBUsage().toString()) + "/"
-                        + (object.getGlobalQuotaVdsGroup().getMemSizeMB() == null ? "*" : object.getGlobalQuotaVdsGroup().getMemSizeMB().toString()) + " GB";
-            }
-        },
-                "Used Memory/Total");
-        getTable().addColumn(new TextColumnWithTooltip<Quota>() {
-            @Override
-            public String getValue(Quota object) {
-                return (object.getGlobalQuotaVdsGroup().getVirtualCpuUsage() == null ? "0" : object.getGlobalQuotaVdsGroup().getVirtualCpuUsage().toString()) + "/"
-                        + (object.getGlobalQuotaVdsGroup().getVirtualCpu() == null ? "*" : object.getGlobalQuotaVdsGroup().getVirtualCpu().toString());
-            }
-        },
-                "Running CPU/Total");
-        getTable().addColumn(new TextColumnWithTooltip<Quota>() {
-            @Override
-            public String getValue(Quota object) {
-                return (object.getGlobalQuotaStorage().getStorageSizeGBUsage() == null ? "0" : object.getGlobalQuotaStorage().getStorageSizeGBUsage().toString()) + "/"
-                        + (object.getGlobalQuotaStorage().getStorageSizeGB() == null ? "*" : object.getGlobalQuotaStorage().getStorageSizeGB().toString()) + " GB";
-            }
-        },
-                "Used Storage/Total");
+        //        getTable().addColumn(new TextColumnWithTooltip<Quota>() {
+        //            @Override
+        //            public String getValue(Quota object) {
+        //                return (object.getGlobalQuotaVdsGroup().getMemSizeMBUsage() == null ? "0" : object.getGlobalQuotaVdsGroup().getMemSizeMBUsage().toString()) + "/"
+        //                        + (object.getGlobalQuotaVdsGroup().getMemSizeMB() == null ? "*" : object.getGlobalQuotaVdsGroup().getMemSizeMB().toString()) + " GB";
+        //            }
+        //        },
+        //                "Used Memory/Total");
+        //        getTable().addColumn(new TextColumnWithTooltip<Quota>() {
+        //            @Override
+        //            public String getValue(Quota object) {
+        //                return (object.getGlobalQuotaVdsGroup().getVirtualCpuUsage() == null ? "0" : object.getGlobalQuotaVdsGroup().getVirtualCpuUsage().toString()) + "/"
+        //                        + (object.getGlobalQuotaVdsGroup().getVirtualCpu() == null ? "*" : object.getGlobalQuotaVdsGroup().getVirtualCpu().toString());
+        //            }
+        //        },
+        //                "Running CPU/Total");
+        //        getTable().addColumn(new TextColumnWithTooltip<Quota>() {
+        //            @Override
+        //            public String getValue(Quota object) {
+        //                return (object.getGlobalQuotaStorage().getStorageSizeGBUsage() == null ? "0" : object.getGlobalQuotaStorage().getStorageSizeGBUsage().toString()) + "/"
+        //                        + (object.getGlobalQuotaStorage().getStorageSizeGB() == null ? "*" : object.getGlobalQuotaStorage().getStorageSizeGB().toString()) + " GB";
+        //            }
+        //        },
+        //                "Used Storage/Total");
     }
 
 }
