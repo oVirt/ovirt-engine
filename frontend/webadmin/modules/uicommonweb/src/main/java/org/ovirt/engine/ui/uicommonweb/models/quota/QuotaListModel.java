@@ -8,6 +8,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;
 import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
+import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
@@ -199,6 +200,10 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
                         ArrayList<QuotaStorage> quotaStorageList = new ArrayList<QuotaStorage>();
                         QuotaStorage quotaStorage;
                         for (storage_domains storage : storageList) {
+                            if (!storage.getstorage_domain_type().equals(StorageDomainType.Master)
+                                    && !storage.getstorage_domain_type().equals(StorageDomainType.Data)) {
+                                continue;
+                            }
                             quotaStorage = new QuotaStorage();
                             quotaStorage.setStorageId(storage.getId());
                             quotaStorage.setStorageName(storage.getstorage_name());
@@ -414,6 +419,10 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
                                 ArrayList<QuotaStorage> quotaStorageList = new ArrayList<QuotaStorage>();
                                 QuotaStorage quotaStorage;
                                 for (storage_domains storage : storageList) {
+                                    if (!storage.getstorage_domain_type().equals(StorageDomainType.Master)
+                                            && !storage.getstorage_domain_type().equals(StorageDomainType.Data)) {
+                                        continue;
+                                    }
                                     quotaStorage = new QuotaStorage();
                                     quotaStorage.setStorageId(storage.getId());
                                     quotaStorage.setStorageName(storage.getstorage_name());
