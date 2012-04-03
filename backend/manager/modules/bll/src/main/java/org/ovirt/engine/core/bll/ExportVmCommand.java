@@ -343,19 +343,13 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
         if (qretVal.getSucceeded()) {
             java.util.ArrayList<VM> vms = (java.util.ArrayList<VM>) qretVal.getReturnValue();
             for (VM vm : vms) {
-                // check the same id when not overriding
-                if (vm.getId().equals(getVm().getId()) && !getParameters().getForceOverride()) {
-                    addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_GUID_ALREADY_EXIST);
-                    retVal = false;
-                    break;
-                // check the same name when not overriding
-                } else if (vm.getvm_name().equals(getVm().getvm_name()) && !getParameters().getForceOverride()) {
-                    addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_ALREADY_EXIST);
-                    retVal = false;
-                    break;
-                // check if we have vm with the same name and overriding
-                } else if (!vm.getId().equals(getVm().getId()) &&
-                        vm.getvm_name().equals(getVm().getvm_name())) {
+                if (vm.getId().equals(getVm().getId())) {
+                    if (!getParameters().getForceOverride()) {
+                        addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_GUID_ALREADY_EXIST);
+                        retVal = false;
+                        break;
+                    }
+                } else if (vm.getvm_name().equals(getVm().getvm_name())) {
                     addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_ALREADY_EXIST);
                     retVal = false;
                     break;
