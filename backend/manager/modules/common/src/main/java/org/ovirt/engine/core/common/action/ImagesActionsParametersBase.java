@@ -28,6 +28,13 @@ public class ImagesActionsParametersBase extends StorageDomainParametersBase {
         return imageId;
     }
 
+    /**
+     * Needed in order to be able to deserialize this field.
+     */
+    protected void setImageId(Guid imageId) {
+        this.imageId = imageId;
+    }
+
     public Guid getDestinationImageId() {
         return destinationImageId;
     }
