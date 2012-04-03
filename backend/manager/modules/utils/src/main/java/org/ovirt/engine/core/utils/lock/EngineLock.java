@@ -12,6 +12,15 @@ public class EngineLock {
     private Map<String, Guid> exclusiveLocks;
     private Map<String, Guid> sharedLocks;
 
+    public EngineLock() {
+
+    }
+
+    public EngineLock(Map<String, Guid> exclusiveLocks, Map<String, Guid> sharedLocks) {
+        setExclusiveLocks(exclusiveLocks);
+        setSharedLocks(sharedLocks);
+    }
+
     public Map<String, Guid> getExclusiveLocks() {
         return exclusiveLocks;
     }
@@ -39,8 +48,8 @@ public class EngineLock {
     }
 
     private void buildEntryStrings(Map<String, Guid> locks, StringBuilder message) {
-        if(locks != null) {
-            for(Map.Entry<String, Guid> entry : locks.entrySet()) {
+        if (locks != null) {
+            for (Map.Entry<String, Guid> entry : locks.entrySet()) {
                 message.append("key: ").append(entry.getKey()).append(" value: ").append(entry.getValue()).append('\n');
             }
         }

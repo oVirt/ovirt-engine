@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.storage;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.LockIdNameAttribute;
@@ -31,10 +32,8 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 
-@LockIdNameAttribute(fieldName = "ProblematicVdsId")
+@LockIdNameAttribute
 public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends StorageHandlingCommandBase<T> {
     private final VDS _problematicVds;
     /**
@@ -221,7 +220,10 @@ public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends
         }
     }
 
-    private static Log log = LogFactory.getLog(FenceVdsManualyCommand.class);
+    @Override
+    protected Map<String, Guid> getExclusiceLocks() {
+        return Collections.singletonMap(getClass().getName(), getProblematicVdsId());
+    }
 
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {

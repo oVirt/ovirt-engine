@@ -1,17 +1,15 @@
 package org.ovirt.engine.core.common.action;
 
-import org.ovirt.engine.core.compat.*;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlType;
+import javax.validation.constraints.NotNull;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "VmPoolSimpleUserParameters")
-public class VmPoolSimpleUserParameters extends VmPoolParametersBase implements java.io.Serializable {
+import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.NGuid;
+
+public class VmPoolSimpleUserParameters extends VmPoolParametersBase {
     private static final long serialVersionUID = -956095100193433604L;
-    @XmlElement(name = "UserId")
-    private Guid _userId = new Guid();
+
+    @NotNull
+    private Guid _userId = Guid.Empty;
 
     public VmPoolSimpleUserParameters(NGuid vmPoolId, Guid userId) {
         super(vmPoolId);

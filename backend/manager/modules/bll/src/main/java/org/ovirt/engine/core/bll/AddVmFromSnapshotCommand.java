@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -35,7 +36,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
  * @param <T>
  */
 
-@LockIdNameAttribute(fieldName = "sourceSnapshotId")
+@LockIdNameAttribute
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> extends AddVmAndCloneImageCommand<T> {
 
@@ -374,6 +375,11 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
                     getStoragePool().getQuotaEnforcementType(),
                     getCommandId());
         }
+    }
+
+    @Override
+    protected Map<String, Guid> getExclusiceLocks() {
+        return Collections.singletonMap(getClass().getName(), getParameters().getSourceSnapshotId());
     }
 
 }

@@ -1,6 +1,8 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -22,7 +24,7 @@ import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
-@LockIdNameAttribute(fieldName = "AdUserId")
+@LockIdNameAttribute
 public class AttachUserToVmFromPoolAndRunCommand<T extends VmPoolUserParameters> extends
 VmPoolUserCommandBase<T> {
     protected AttachUserToVmFromPoolAndRunCommand(Guid commandId) {
@@ -221,14 +223,19 @@ VmPoolUserCommandBase<T> {
         // Detach user from vm from pool:
         if (!Guid.Empty.equals(getAdUserId())) {
             permissions perm = DbFacade
-            .getInstance()
-            .getPermissionDAO()
-            .getForRoleAndAdElementAndObject(
-                    PredefinedRoles.ENGINE_USER.getId(), getAdUserId(),
-                    getVmId());
+                    .getInstance()
+                    .getPermissionDAO()
+                    .getForRoleAndAdElementAndObject(
+                            PredefinedRoles.ENGINE_USER.getId(), getAdUserId(),
+                            getVmId());
             if (perm != null) {
                 DbFacade.getInstance().getPermissionDAO().remove(perm.getId());
             }
         }
+    }
+
+    @Override
+    protected Map<String, Guid> getExclusiceLocks() {
+        return Collections.singletonMap(getClass().getName(), getAdUserId());
     }
 }

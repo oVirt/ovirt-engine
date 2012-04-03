@@ -1,7 +1,9 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
@@ -35,7 +37,7 @@ import org.ovirt.engine.core.utils.linq.Predicate;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
-@LockIdNameAttribute(fieldName = "VmId")
+@LockIdNameAttribute
 public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmParameters> extends VmCommand<T> {
 
     private static final long serialVersionUID = -2407757772735253053L;
@@ -307,6 +309,11 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
     protected List<Class<?>> getValidationGroups() {
         addValidationGroup(CreateEntity.class);
         return super.getValidationGroups();
+    }
+
+    @Override
+    protected Map<String, Guid> getExclusiceLocks() {
+        return Collections.singletonMap(getClass().getName(), getVmId());
     }
 
 }

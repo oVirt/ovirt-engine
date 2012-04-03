@@ -1,7 +1,8 @@
 package org.ovirt.engine.core.bll;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
@@ -20,7 +21,7 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
-@LockIdNameAttribute(fieldName = "VmId")
+@LockIdNameAttribute
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> {
 
@@ -200,6 +201,11 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
         default:
             return AuditLogType.USER_REMOVE_VM_FINISHED;
         }
+    }
+
+    @Override
+    protected Map<String, Guid> getExclusiceLocks() {
+        return Collections.singletonMap(getClass().getName(), getVmId());
     }
 
     protected void RemoveVmFromDb() {

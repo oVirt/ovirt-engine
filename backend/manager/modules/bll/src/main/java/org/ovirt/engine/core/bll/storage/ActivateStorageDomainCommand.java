@@ -1,5 +1,8 @@
 package org.ovirt.engine.core.bll.storage;
 
+import java.util.Collections;
+import java.util.Map;
+
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.IsoDomainListSyncronizer;
 import org.ovirt.engine.core.bll.LockIdNameAttribute;
@@ -16,17 +19,13 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
-@LockIdNameAttribute(fieldName = "StorageDomainId")
+@LockIdNameAttribute
 @NonTransactiveCommandAttribute(forceCompensation=true)
 public class ActivateStorageDomainCommand<T extends StorageDomainPoolParametersBase> extends
         StorageDomainCommandBase<T> {
-
-    private static Log log = LogFactory.getLog(ActivateStorageDomainCommand.class);
 
     public ActivateStorageDomainCommand(T parameters) {
         super(parameters);
@@ -103,7 +102,7 @@ public class ActivateStorageDomainCommand<T extends StorageDomainPoolParametersB
 
     @Override
     public AuditLogType getAuditLogTypeValue() {
-        if(getParameters().isRunSilent()) {
+        if (getParameters().isRunSilent()) {
             return getSucceeded() ? AuditLogType.USER_ACTIVATED_STORAGE_DOMAIN_ASYNC
                     : AuditLogType.USER_ACTIVATE_STORAGE_DOMAIN_FAILED_ASYNC;
         } else {
@@ -112,9 +111,14 @@ public class ActivateStorageDomainCommand<T extends StorageDomainPoolParametersB
         }
     }
 
+    @Override
+    protected Map<String, Guid> getExclusiceLocks() {
+        return Collections.singletonMap(getClass().getName(), getStorageDomainId().getValue());
+    }
+
     private boolean storageDomainStatusIsValid() {
         boolean returnValue;
-        if(isInternalExecution()) {
+        if (isInternalExecution()) {
             returnValue = checkStorageDomainStatus(StorageDomainStatus.InActive, StorageDomainStatus.Unknown,
                     StorageDomainStatus.Locked, StorageDomainStatus.Maintenance);
         } else {

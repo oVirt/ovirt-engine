@@ -3,6 +3,8 @@ package org.ovirt.engine.core.common.action;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import javax.validation.constraints.NotNull;
+
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.compat.Guid;
@@ -30,6 +32,7 @@ public class AddVmFromSnapshotParameters extends VmManagementParametersBase impl
     }
 
     //Unique Identifier of Source Snapshot
+    @NotNull(message="VALIDATION.SOURCE_SNAPSHOT_ID.NOT_NULL")
     private Guid sourceSnapshotId;
 
     public Guid getSourceSnapshotId() {

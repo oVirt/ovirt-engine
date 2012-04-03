@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,8 +58,6 @@ import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.TimeSpan;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.compat.backendcompat.PropertyInfo;
-import org.ovirt.engine.core.compat.backendcompat.TypeCompat;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
@@ -1089,34 +1086,16 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         }
     }
 
-    protected Guid getObjectLockingId() {
-        Guid returnValue = Guid.Empty;
-        Class<?> type = getClass();
-        LockIdNameAttribute annotation = type.getAnnotation(LockIdNameAttribute.class);
-        if (annotation != null) {
-            PropertyInfo propertyInfo = TypeCompat.GetProperty(type, annotation.fieldName());
-            if (propertyInfo != null) {
-                returnValue = (Guid) propertyInfo.GetValue(this, Guid.Empty);
-
-            }
-
-        }
-        return returnValue;
-    }
-
     /**
      * Object which is representing a lock that some commands will acquire
      */
     private EngineLock commandLock = null;
 
     protected boolean acquireLock() {
-        Guid objectLockingId = getObjectLockingId();
+        LockIdNameAttribute annotation = getClass().getAnnotation(LockIdNameAttribute.class);
         boolean returnValue = true;
-        if (!Guid.Empty.equals(objectLockingId)) {
-            EngineLock lock = new EngineLock();
-            String currType = getClass().getName();
-            Map<String, Guid> exclusiveLock = Collections.singletonMap(currType, objectLockingId);
-            lock.setExclusiveLocks(exclusiveLock);
+        if (annotation != null) {
+            EngineLock lock = new EngineLock(getExclusiceLocks(), getSharedLocks());
             if (LockManagerFactory.getLockManager().acquireLock(lock)) {
                 log.infoFormat("Lock Acquired to object {0}", lock);
                 commandLock = lock;
@@ -1127,7 +1106,6 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             }
         }
         return returnValue;
-
     }
 
     protected void freeLock() {
@@ -1136,6 +1114,14 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             log.infoFormat("Lock freed to object {0}", commandLock);
             commandLock = null;
         }
+    }
+
+    protected Map<String, Guid> getExclusiceLocks() {
+        return null;
+    }
+
+    protected Map<String, Guid> getSharedLocks() {
+        return null;
     }
 
     @Override

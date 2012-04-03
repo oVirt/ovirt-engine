@@ -1,5 +1,8 @@
 package org.ovirt.engine.core.bll.storage;
 
+import java.util.Collections;
+import java.util.Map;
+
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.LockIdNameAttribute;
@@ -24,13 +27,11 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @InternalCommandAttribute
-@LockIdNameAttribute(fieldName = "StoragePoolId")
+@LockIdNameAttribute
 public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStoragesParameter> extends
         UpdateStoragePoolCommand<T> {
     public AddStoragePoolWithStoragesCommand(T parameters) {
@@ -277,6 +278,11 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
     }
 
     @Override
+    protected Map<String, Guid> getExclusiceLocks() {
+        return Collections.singletonMap(getClass().getName(), getStoragePoolId().getValue());
+    }
+
+    @Override
     public void Rollback() {
         super.Rollback();
         // try to set status of all domains in the pool that are locked back to inactive
@@ -301,6 +307,4 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
             }
         }
     }
-
-    private static Log log = LogFactory.getLog(AddStoragePoolWithStoragesCommand.class);
 }
