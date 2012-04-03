@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION add_vm_device_soundcard_0730()
+CREATE OR REPLACE FUNCTION add_vm_device_soundcard_0740()
 RETURNS void
 AS $function$
 DECLARE
@@ -30,5 +30,5 @@ BEGIN
        CLOSE v_cur;
 END; $function$
 LANGUAGE plpgsql;
-select add_vm_device_soundcard_0730();
-drop function add_vm_device_soundcard_0730();
+select add_vm_device_soundcard_0740();
+drop function add_vm_device_soundcard_0740();
