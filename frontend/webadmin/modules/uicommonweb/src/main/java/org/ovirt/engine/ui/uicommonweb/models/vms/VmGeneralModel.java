@@ -573,7 +573,7 @@ public class VmGeneralModel extends EntityModel
 
         setName(vm.getvm_name());
         setDescription(vm.getvm_description());
-        setQuotaName(vm.getStaticData().getQuotaId() != null ? vm.getStaticData().getQuotaId().toString() : "");
+        setQuotaName(vm.getQuotaName() != null ? vm.getQuotaName() : "");
         setTemplate(vm.getvmt_name());
         setDefinedMemory(vm.getvm_mem_size_mb() + " MB");
         setMinAllocatedMemory(vm.getMinAllocatedMem() + " MB");
