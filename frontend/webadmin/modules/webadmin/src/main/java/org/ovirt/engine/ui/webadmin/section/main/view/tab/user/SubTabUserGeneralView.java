@@ -60,6 +60,9 @@ public class SubTabUserGeneralView extends AbstractSubTabFormView<DbUser, UserLi
         formBuilder.addFormItem(new FormItem("E-mail", email, 2, 0) {
             @Override
             public boolean isVisible() {
+                if (getDetailModel().getEntity() == null) {
+                    return false;
+                }
                 return !((DbUser) getDetailModel().getEntity()).getIsGroup();
             }
         });
