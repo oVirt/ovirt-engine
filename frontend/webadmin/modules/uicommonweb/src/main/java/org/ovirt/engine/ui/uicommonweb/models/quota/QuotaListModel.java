@@ -238,6 +238,7 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
         if ((Boolean) model.getGlobalClusterQuota().getEntity()) {
             QuotaVdsGroup quotaVdsGroup;
             for (QuotaVdsGroup iter : (ArrayList<QuotaVdsGroup>) model.getQuotaClusters().getItems()) {
+                quota.setGlobalQuotaVdsGroup(new QuotaVdsGroup());
                 quota.getGlobalQuotaVdsGroup().setMemSizeMB(iter.getMemSizeMB());
                 quota.getGlobalQuotaVdsGroup().setVirtualCpu(iter.getVirtualCpu());
                 quota.getQuotaVdsGroups().clear();
@@ -258,6 +259,7 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
         if ((Boolean) model.getGlobalStorageQuota().getEntity()) {
             QuotaStorage quotaStorage;
             for (QuotaStorage iter : (ArrayList<QuotaStorage>) model.getQuotaStorages().getItems()) {
+                quota.setGlobalQuotaStorage(new QuotaStorage());
                 quota.getGlobalQuotaStorage().setStorageSizeGB(iter.getStorageSizeGB());
                 quota.getQuotaStorages().clear();
             }
