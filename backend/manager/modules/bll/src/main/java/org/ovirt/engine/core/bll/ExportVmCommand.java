@@ -360,13 +360,6 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
                     retVal = false;
                     break;
                 }
-                // check if we have vm with the same id and overriding
-                else if (vm.getId().equals(getVm().getId()) &&
-                        !vm.getvm_name().equals(getVm().getvm_name())) {
-                    addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_GUID_ALREADY_EXIST);
-                    retVal = false;
-                    break;
-                }
             }
         }
         return retVal;
