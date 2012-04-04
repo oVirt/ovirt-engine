@@ -80,7 +80,14 @@ public class UpdateVmDiskCommandTest {
     }
 
     protected void initializeCommand() {
-        command = spy(new UpdateVmDiskCommand<UpdateVmDiskParameters>(createParameters()));
+        command = spy(new UpdateVmDiskCommand<UpdateVmDiskParameters>(createParameters()) {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected DiskImageDAO getDiskImageDao() {
+                return diskImageDao;
+            }
+        });
         mockVds();
     }
 

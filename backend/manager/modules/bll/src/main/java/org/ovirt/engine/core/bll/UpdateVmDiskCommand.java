@@ -1,19 +1,22 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.PermissionSubject;
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.UpdateVmDiskParameters;
+import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.DiskImageDAO;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
@@ -30,6 +33,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
     public UpdateVmDiskCommand(T parameters) {
         super(parameters);
         setQuotaId(parameters.getDiskInfo() != null ? parameters.getDiskInfo().getQuotaId() : null);
+        _oldDisk = getDiskImageDao().get(getParameters().getImageId());
     }
 
 
@@ -42,8 +46,6 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
     protected boolean canDoAction() {
         boolean retValue = isVmExist();
         if (retValue) {
-            _oldDisk = getDiskImageDao().get(getParameters().getImageId());
-
             // Set disk alias name in the disk retrieved from the parameters.
             ImagesHandler.setDiskAlias(getParameters().getDiskInfo(), getVm());
             retValue = isDiskExist(_oldDisk) && checkCanPerformRegularUpdate();
@@ -55,11 +57,6 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
     protected void setActionMessageParameters() {
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__UPDATE);
         addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM_DISK);
-    }
-
-    @Override
-    protected DiskImageDAO getDiskImageDao() {
-        return DbFacade.getInstance().getDiskImageDAO();
     }
 
     @Override
@@ -124,7 +121,13 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
         if (listPermissionSubjects == null) {
-            listPermissionSubjects = super.getPermissionCheckSubjects();
+            listPermissionSubjects = new ArrayList<PermissionSubject>();
+
+            Guid diskId = _oldDisk == null ? null : _oldDisk.getimage_group_id();
+            listPermissionSubjects.add(new PermissionSubject(diskId,
+                    VdcObjectType.Disk,
+                    ActionGroup.EDIT_DISK_PROPERTIES));
+
             listPermissionSubjects =
                     QuotaHelper.getInstance().addQuotaPermissionSubject(listPermissionSubjects,
                             getStoragePool(),
@@ -170,4 +173,5 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
     public AuditLogType getAuditLogTypeValue() {
         return getSucceeded() ? AuditLogType.USER_UPDATE_VM_DISK : AuditLogType.USER_FAILED_UPDATE_VM_DISK;
     }
+
 }
