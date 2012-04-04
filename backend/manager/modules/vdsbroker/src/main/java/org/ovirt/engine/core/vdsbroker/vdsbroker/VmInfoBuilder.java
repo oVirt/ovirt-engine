@@ -324,7 +324,6 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
 
     @Override
     protected void buildVmBootSequence() {
-        int i=0;
         //Check if boot sequence in parameters is diffrent from default boot sequence
         if (managedDevices != null) {
             // recalculate boot order from source devices and set it to target devices
@@ -332,12 +331,18 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                     managedDevices,
                     vm.getboot_sequence(),
                     VmDeviceCommonUtils.isOldClusterVersion(vm.getvds_group_compatibility_version()));
-            XmlRpcStruct[] devArray = new XmlRpcStruct[devices.size()];
-            devArray = devices.toArray(devArray);
             for (VmDevice vmDevice : managedDevices) {
-                if (vmDevice.getType().equals(VmDeviceType.DISK.getName())
-                        || vmDevice.getType().equals(VmDeviceType.INTERFACE.getName())) {
-                    devArray[i++].add(VdsProperties.BootOrder, String.valueOf(vmDevice.getBootOrder()));
+                for (XmlRpcStruct struct : devices) {
+                    Object o = struct.getItem(VdsProperties.SpecParams);
+                    if (o instanceof Map<?, ?>) {
+                        if (StringUtils.map2String((Map<String, String>) o).contains(vmDevice.getDeviceId().toString())) {
+                            struct.add(VdsProperties.BootOrder, String.valueOf(vmDevice.getBootOrder()));
+                            break;
+                        }
+                    }
+                    else {
+                        log.errorFormat("Improper value of spec_params for VM {0} : {1}", vm.getvm_name(), o.toString());
+                    }
                 }
             }
         }
