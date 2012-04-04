@@ -1,13 +1,12 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.quota;
 
-import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.Quota;
+import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
-import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
-import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaEventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaListModel;
+import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaTemplateListModel;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
 import org.ovirt.engine.ui.webadmin.place.ApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.QuotaSelectionChangeEvent;
@@ -24,11 +23,11 @@ import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
-public class SubTabQuotaEventPresenter extends AbstractSubTabPresenter<Quota, QuotaListModel, QuotaEventListModel, SubTabQuotaEventPresenter.ViewDef, SubTabQuotaEventPresenter.ProxyDef> {
+public class SubTabQuotaTemplatePresenter extends AbstractSubTabPresenter<Quota, QuotaListModel, QuotaTemplateListModel, SubTabQuotaTemplatePresenter.ViewDef, SubTabQuotaTemplatePresenter.ProxyDef> {
 
     @ProxyCodeSplit
-    @NameToken(ApplicationPlaces.quotaEventSubTabPlace)
-    public interface ProxyDef extends TabContentProxyPlace<SubTabQuotaEventPresenter> {
+    @NameToken(ApplicationPlaces.quotaTemplateSubTabPlace)
+    public interface ProxyDef extends TabContentProxyPlace<SubTabQuotaTemplatePresenter> {
     }
 
     public interface ViewDef extends AbstractSubTabPresenter.ViewDef<Quota> {
@@ -36,14 +35,14 @@ public class SubTabQuotaEventPresenter extends AbstractSubTabPresenter<Quota, Qu
 
     @TabInfo(container = QuotaSubTabPanelPresenter.class)
     static TabData getTabData(ClientGinjector ginjector) {
-        return new ModelBoundTabData(ginjector.getApplicationConstants().quotaEventSubTabLabel(), 6,
-                ginjector.getSubTabQuotaEventModelProvider(), Align.RIGHT);
+        return new ModelBoundTabData(ginjector.getApplicationConstants().quotaTemplateSubTabLabel(), 3,
+                ginjector.getSubTabQuotaTemplateModelProvider());
     }
 
     @Inject
-    public SubTabQuotaEventPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
+    public SubTabQuotaTemplatePresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager,
-            SearchableDetailModelProvider<AuditLog, QuotaListModel, QuotaEventListModel> modelProvider) {
+            SearchableDetailModelProvider<VmTemplate, QuotaListModel, QuotaTemplateListModel> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider);
     }
 

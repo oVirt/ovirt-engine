@@ -12,7 +12,7 @@ import org.ovirt.engine.ui.webadmin.widget.storage.TemplatesTree;
 
 import com.google.inject.Inject;
 
-public class SubTabStorageTemplateView extends AbstractSubTabTreeView<TemplatesTree, storage_domains, VmTemplate, StorageListModel, StorageTemplateListModel>
+public class SubTabStorageTemplateView extends AbstractSubTabTreeView<TemplatesTree<StorageTemplateListModel>, storage_domains, VmTemplate, StorageListModel, StorageTemplateListModel>
         implements SubTabStorageTemplatePresenter.ViewDef {
 
     @Inject
@@ -29,8 +29,8 @@ public class SubTabStorageTemplateView extends AbstractSubTabTreeView<TemplatesT
     }
 
     @Override
-    protected TemplatesTree getTree() {
-        return new TemplatesTree(resources, constants);
+    protected TemplatesTree<StorageTemplateListModel> getTree() {
+        return new TemplatesTree<StorageTemplateListModel>(resources, constants);
     }
 
 }

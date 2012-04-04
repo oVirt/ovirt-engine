@@ -224,6 +224,9 @@ public class ApplicationPlaces {
     public static final String quotaVmSubTabPlace = quotaMainTabPlace + SUB_TAB_PREFIX
             + "vms";
 
+    public static final String quotaTemplateSubTabPlace = quotaMainTabPlace + SUB_TAB_PREFIX
+            + "templates";
+
     // Volumes
 
     public static final String volumeGeneralSubTabPlace = volumeMainTabPlace + SUB_TAB_PREFIX + "general";

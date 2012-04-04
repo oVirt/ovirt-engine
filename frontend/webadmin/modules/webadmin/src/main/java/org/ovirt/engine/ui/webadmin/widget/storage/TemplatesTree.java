@@ -3,13 +3,14 @@ package org.ovirt.engine.ui.webadmin.widget.storage;
 import java.util.ArrayList;
 
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.widget.label.DiskSizeLabel;
 import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
 import org.ovirt.engine.ui.common.widget.tree.AbstractSubTabTree;
-import org.ovirt.engine.ui.uicommonweb.models.storage.StorageTemplateListModel;
+import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.widget.label.FullDateTimeLabel;
@@ -18,7 +19,7 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.TreeItem;
 
-public class TemplatesTree extends AbstractSubTabTree<StorageTemplateListModel, VmTemplate, DiskImage> {
+public class TemplatesTree<M extends SearchableListModel> extends AbstractSubTabTree<M, VmTemplate, DiskImage> {
 
     ApplicationResources resources;
     ApplicationConstants constants;
@@ -70,6 +71,9 @@ public class TemplatesTree extends AbstractSubTabTree<StorageTemplateListModel, 
 
     @Override
     protected boolean getIsNodeEnabled(DiskImage disk) {
-        return disk.getstorage_ids().contains(listModel.getEntity().getId());
+        if (listModel.getEntity() instanceof Quota) {
+            return true;
+        }
+        return disk.getstorage_ids().contains(((DiskImage) listModel.getEntity()).getId());
     }
 }

@@ -5,6 +5,7 @@ import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;
 import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.RemoveConfirmationPopupPresenterWidget;
@@ -21,6 +22,7 @@ import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaEventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaListModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaPermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaStorageListModel;
+import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaTemplateListModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaUserListModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaVmListModel;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
@@ -87,6 +89,14 @@ public class QuotaModule extends AbstractGinModule {
         return new SearchableDetailTabModelProvider<VM, QuotaListModel, QuotaVmListModel>(ginjector,
                 QuotaListModel.class,
                 QuotaVmListModel.class);
+    }
+
+    @Provides
+    @Singleton
+    public SearchableDetailModelProvider<VmTemplate, QuotaListModel, QuotaTemplateListModel> getQuotaTemplateListProvider(ClientGinjector ginjector) {
+        return new SearchableDetailTabModelProvider<VmTemplate, QuotaListModel, QuotaTemplateListModel>(ginjector,
+                QuotaListModel.class,
+                QuotaTemplateListModel.class);
     }
 
     @Provides

@@ -35,7 +35,7 @@ public class SubTabQuotaUserPresenter extends AbstractSubTabPresenter<Quota, Quo
 
     @TabInfo(container = QuotaSubTabPanelPresenter.class)
     static TabData getTabData(ClientGinjector ginjector) {
-        return new ModelBoundTabData(ginjector.getApplicationConstants().quotaUserSubTabLabel(), 3,
+        return new ModelBoundTabData(ginjector.getApplicationConstants().quotaUserSubTabLabel(), 4,
                 ginjector.getSubTabQuotaUserModelProvider());
     }
 

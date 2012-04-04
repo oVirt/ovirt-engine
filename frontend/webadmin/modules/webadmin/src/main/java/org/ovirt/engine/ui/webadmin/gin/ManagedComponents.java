@@ -60,6 +60,7 @@ import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaEventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaListModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaPermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaStorageListModel;
+import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaTemplateListModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaUserListModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaVmListModel;
 import org.ovirt.engine.ui.uicommonweb.models.reports.ReportsListModel;
@@ -153,6 +154,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.quota.SubTabQuota
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.quota.SubTabQuotaEventPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.quota.SubTabQuotaPermissionPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.quota.SubTabQuotaStoragePresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.quota.SubTabQuotaTemplatePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.quota.SubTabQuotaUserPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.quota.SubTabQuotaVmPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.StorageSubTabPanelPresenter;
@@ -533,6 +535,10 @@ public interface ManagedComponents {
     AsyncProvider<SubTabQuotaVmPresenter> getSubTabQuotaVmPresenter();
 
     SearchableDetailModelProvider<VM, QuotaListModel, QuotaVmListModel> getSubTabQuotaVmModelProvider();
+
+    AsyncProvider<SubTabQuotaTemplatePresenter> getSubTabQuotaTemplatePresenter();
+
+    SearchableDetailModelProvider<VmTemplate, QuotaListModel, QuotaTemplateListModel> getSubTabQuotaTemplateModelProvider();
 
     // Volumes
 

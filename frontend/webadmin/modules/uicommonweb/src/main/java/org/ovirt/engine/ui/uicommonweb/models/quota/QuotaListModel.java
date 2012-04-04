@@ -102,6 +102,7 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
         list.add(new QuotaClusterListModel());
         list.add(new QuotaStorageListModel());
         list.add(new QuotaVmListModel());
+        list.add(new QuotaTemplateListModel());
         list.add(new QuotaUserListModel());
         list.add(new QuotaPermissionListModel());
         list.add(new QuotaEventListModel());

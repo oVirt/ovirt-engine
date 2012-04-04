@@ -112,6 +112,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.quota.SubTabQuota
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.quota.SubTabQuotaEventPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.quota.SubTabQuotaPermissionPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.quota.SubTabQuotaStoragePresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.quota.SubTabQuotaTemplatePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.quota.SubTabQuotaUserPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.quota.SubTabQuotaVmPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.StorageSubTabPanelPresenter;
@@ -254,6 +255,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.tab.quota.SubTabQuotaClust
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.quota.SubTabQuotaEventView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.quota.SubTabQuotaPermissionView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.quota.SubTabQuotaStorageView;
+import org.ovirt.engine.ui.webadmin.section.main.view.tab.quota.SubTabQuotaTemplateView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.quota.SubTabQuotaUserView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.quota.SubTabQuotaVmView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.storage.StorageSubTabPanelView;
@@ -657,6 +659,10 @@ public class PresenterModule extends BasePresenterModule {
                 SubTabQuotaVmPresenter.ViewDef.class,
                 SubTabQuotaVmView.class,
                 SubTabQuotaVmPresenter.ProxyDef.class);
+        bindPresenter(SubTabQuotaTemplatePresenter.class,
+                SubTabQuotaTemplatePresenter.ViewDef.class,
+                SubTabQuotaTemplateView.class,
+                SubTabQuotaTemplatePresenter.ProxyDef.class);
         bindPresenter(SubTabQuotaUserPresenter.class,
                 SubTabQuotaUserPresenter.ViewDef.class,
                 SubTabQuotaUserView.class,
