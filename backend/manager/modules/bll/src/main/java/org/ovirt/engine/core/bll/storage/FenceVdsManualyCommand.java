@@ -221,7 +221,7 @@ public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends
     }
 
     @Override
-    protected Map<String, Guid> getExclusiceLocks() {
+    protected Map<String, Guid> getExclusiveLocks() {
         return Collections.singletonMap(getClass().getName(), getProblematicVdsId());
     }
 

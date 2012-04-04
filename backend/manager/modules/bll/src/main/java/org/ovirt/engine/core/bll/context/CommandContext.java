@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.context;
 
 import org.ovirt.engine.core.bll.job.ExecutionContext;
+import org.ovirt.engine.core.utils.lock.EngineLock;
 
 /**
  * Holds the context for execution of the command.
@@ -16,6 +17,12 @@ public class CommandContext {
      * The compensation context holds the required information for compensating the failed command.
      */
     private CompensationContext compensationContext;
+
+    /**
+     * The Lock in the command context is used by the parent command to pass to the child command locks the child needs
+     * to acquire.
+     */
+    private EngineLock lock;
 
     /**
      * The execution context describe how the command should be monitored
@@ -45,6 +52,18 @@ public class CommandContext {
         setExecutionContext(executionContext);
     }
 
+    /**
+     * Creates instance which holds the execution context
+     * @param executionContext
+     *            the execution context
+     * @param lock
+     *            the lock passed from parent, can be null
+     */
+    public CommandContext(ExecutionContext executionContext, EngineLock lock) {
+        this(executionContext);
+        this.lock = lock;
+    }
+
     public void setCompensationContext(CompensationContext compensationContext) {
         this.compensationContext = compensationContext;
     }
@@ -59,5 +78,9 @@ public class CommandContext {
 
     public ExecutionContext getExecutionContext() {
         return executionContext;
+    }
+
+    public EngineLock getLock() {
+        return lock;
     }
 }

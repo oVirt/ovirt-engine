@@ -155,6 +155,9 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
         if (isShouldBeLocked) {
             LockImage();
         }
+        // Releasing the lock for cases it was set by the parent command. The lock can be released because the image
+        // status was already changed to lock.
+        freeLock();
         try {
             VDSReturnValue returnValue = runVdsCommand(VDSCommandType.DeleteImageGroup,
                     new DeleteImageGroupVDSCommandParameters(getDiskImage().getstorage_pool_id().getValue(),

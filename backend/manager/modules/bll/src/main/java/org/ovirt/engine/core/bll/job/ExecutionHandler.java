@@ -28,6 +28,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
+import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.log.LoggedUtils;
@@ -446,6 +447,20 @@ public class ExecutionHandler {
      * @return A context by which the internal command should be monitored.
      */
     public static CommandContext createDefaultContexForTasks(ExecutionContext parentContext) {
+        return createDefaultContexForTasks(parentContext, null);
+    }
+
+    /**
+     * Creates a default execution context for an inner command which creates VDSM tasks so the tasks will be monitored
+     * under the parent {@code StepEnum.EXECUTING} step. If the parent command is an internal command, its parent task
+     * step is passed to its internal command.
+     * @param parentContext
+     *            The context of the parent command
+     * @param lock
+     *            The lock which should be released at child command
+     * @return A context by which the internal command should be monitored.
+     */
+    public static CommandContext createDefaultContexForTasks(ExecutionContext parentContext, EngineLock lock) {
         ExecutionContext executionContext = new ExecutionContext();
 
         if (parentContext != null) {
@@ -458,7 +473,7 @@ public class ExecutionHandler {
                 executionContext.setParentTasksStep(parentContext.getParentTasksStep());
             }
         }
-        return new CommandContext(executionContext);
+        return new CommandContext(executionContext, lock);
     }
 
     /**

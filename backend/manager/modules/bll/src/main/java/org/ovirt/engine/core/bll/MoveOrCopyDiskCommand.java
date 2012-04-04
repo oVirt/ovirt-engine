@@ -1,7 +1,9 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
@@ -23,6 +25,7 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
@@ -34,6 +37,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
 
     private static final long serialVersionUID = -7219975636530710384L;
     private boolean isVmFound = false;
+    private Map<String, Guid> sharedLockMap;
 
     public MoveOrCopyDiskCommand(T parameters) {
         super(parameters);
@@ -54,9 +58,10 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
     protected boolean canDoAction() {
         ArrayList<String> canDoActionMessages = getReturnValue().getCanDoActionMessages();
         return isImageExist()
+                && canFindVmOrTemplate()
+                && acquireLockInternal()
                 && isImageIsNotLocked()
                 && checkOperationIsCorrect()
-                && canFindVmOrTemplate()
                 && isSourceAndDestTheSame()
                 && validateSourceStorageDomain(canDoActionMessages)
                 && validateDestStorage(canDoActionMessages)
@@ -333,12 +338,25 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
                 retValue = false;
             } else {
                 setVmTemplate(template);
+                sharedLockMap = Collections.singletonMap(LockingGroup.TEMPLATE.name(), getImage().getvm_guid());
             }
         } else if (!Guid.Empty.equals(getImage().getvm_guid())) {
             VM vm = getVmDAO().get(getImage().getvm_guid());
             isVmFound = true;
+            sharedLockMap = Collections.singletonMap(LockingGroup.VM.name(), getImage().getvm_guid());
             setVm(vm);
         }
         return retValue;
     }
+
+    @Override
+    protected Map<String, Guid> getExclusiveLocks() {
+        return Collections.singletonMap(LockingGroup.DISK.name(), getParameters().getImageId());
+    }
+
+    @Override
+    protected Map<String, Guid> getSharedLocks() {
+        return sharedLockMap;
+    }
+
 }

@@ -1091,19 +1091,33 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      */
     private EngineLock commandLock = null;
 
+    protected EngineLock getLock() {
+        return commandLock;
+    }
+
+    protected void setLock(EngineLock lock) {
+        commandLock = lock;
+    }
+
     protected boolean acquireLock() {
         LockIdNameAttribute annotation = getClass().getAnnotation(LockIdNameAttribute.class);
         boolean returnValue = true;
         if (annotation != null) {
-            EngineLock lock = new EngineLock(getExclusiceLocks(), getSharedLocks());
-            if (LockManagerFactory.getLockManager().acquireLock(lock)) {
-                log.infoFormat("Lock Acquired to object {0}", lock);
-                commandLock = lock;
-            } else {
-                log.infoFormat("Failed to Acquire Lock to object {0}", lock);
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED);
-                returnValue = false;
-            }
+            returnValue = acquireLockInternal();
+        }
+        return returnValue;
+    }
+
+    protected boolean acquireLockInternal() {
+        boolean returnValue = true;
+        EngineLock lock = new EngineLock(getExclusiveLocks(), getSharedLocks());
+        if (LockManagerFactory.getLockManager().acquireLock(lock)) {
+            log.infoFormat("Lock Acquired to object {0}", lock);
+            commandLock = lock;
+        } else {
+            log.infoFormat("Failed to Acquire Lock to object {0}", lock);
+            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED);
+            returnValue = false;
         }
         return returnValue;
     }
@@ -1116,7 +1130,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         }
     }
 
-    protected Map<String, Guid> getExclusiceLocks() {
+    protected Map<String, Guid> getExclusiveLocks() {
         return null;
     }
 
@@ -1269,6 +1283,9 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             }
         }
 
+        if (commandLock == null) {
+            commandLock = context.getLock();
+        }
     }
 
 }

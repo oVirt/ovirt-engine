@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
@@ -25,6 +26,7 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
+import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.VdcBllMessages;
@@ -37,6 +39,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
 
     private static final long serialVersionUID = -4520874214339816607L;
     private DiskImage disk;
+    private Map<String, Guid> sharedLockMap;
 
     public RemoveDiskCommand(T parameters) {
         super(parameters);
@@ -57,6 +60,11 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
         if (disk == null) {
             retValue = false;
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_IMAGE_DOES_NOT_EXIST);
+        }
+
+        if (retValue) {
+            buildSharedLockMap();
+            retValue = acquireLockInternal();
         }
 
         if (retValue
@@ -88,6 +96,14 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
         }
 
         return retValue;
+    }
+
+    private void buildSharedLockMap() {
+        if (disk.getVmEntityType() == VmEntityType.VM) {
+            sharedLockMap = Collections.singletonMap(LockingGroup.VM.name(), disk.getvm_guid());
+        } else if (disk.getVmEntityType() == VmEntityType.TEMPLATE) {
+            sharedLockMap = Collections.singletonMap(LockingGroup.TEMPLATE.name(), disk.getvm_guid());
+        }
     }
 
     private boolean canRemoveTemplateDisk() {
@@ -168,7 +184,9 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
         VdcReturnValueBase vdcReturnValue =
                             Backend.getInstance().runInternalAction(VdcActionType.RemoveImage,
                                     p,
-                                    ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
+                                    ExecutionHandler.createDefaultContexForTasks(getExecutionContext(), getLock()));
+        // Setting lock to null because the lock is released in the child command (RemoveImage)
+        setLock(null);
         if (vdcReturnValue.getSucceeded()) {
             getParameters().getImagesParameters().add(p);
             getReturnValue().getTaskIdList().addAll(vdcReturnValue.getInternalTaskIdList());
@@ -225,4 +243,13 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
         return null;
     }
 
+    @Override
+    protected Map<String, Guid> getExclusiveLocks() {
+        return Collections.singletonMap(LockingGroup.DISK.name(), (Guid) getParameters().getEntityId());
+    }
+
+    @Override
+    protected Map<String, Guid> getSharedLocks() {
+        return sharedLockMap;
+    }
 }
