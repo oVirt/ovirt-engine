@@ -20,7 +20,6 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
-import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.queries.ValueObjectMap;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
@@ -46,7 +45,6 @@ public class JsonObjectDeserializer implements Deserializer {
         mapper.getDeserializationConfig().addMixInAnnotations(ValueObjectMap.class, JsonValueObjectMapMixIn.class);
         mapper.getDeserializationConfig().addMixInAnnotations(VdsStatic.class, JsonVdsStaticMixIn.class);
         mapper.getDeserializationConfig().addMixInAnnotations(VDS.class, JsonVDSMixIn.class);
-        mapper.getDeserializationConfig().addMixInAnnotations(VmTemplate.class, JsonVmTemplateMixIn.class);
         mapper.getDeserializationConfig().addMixInAnnotations(AddVmFromTemplateParameters.class, JsonAddVmFromTemplateParametersMixIn.class);
         mapper.getDeserializationConfig().addMixInAnnotations(AddVmFromSnapshotParameters.class,
                 JsonAddVmFromSnapshotParametersMixIn.class);

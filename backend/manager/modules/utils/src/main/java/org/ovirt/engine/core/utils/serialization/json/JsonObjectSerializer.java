@@ -23,7 +23,6 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
-import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.queries.ValueObjectMap;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
@@ -46,7 +45,6 @@ public class JsonObjectSerializer implements Serializer {
         mapper.getSerializationConfig().addMixInAnnotations(ValueObjectMap.class, JsonValueObjectMapMixIn.class);
         mapper.getSerializationConfig().addMixInAnnotations(VdsStatic.class, JsonVdsStaticMixIn.class);
         mapper.getSerializationConfig().addMixInAnnotations(VDS.class, JsonVDSMixIn.class);
-        mapper.getSerializationConfig().addMixInAnnotations(VmTemplate.class, JsonVmTemplateMixIn.class);
         mapper.getSerializationConfig().addMixInAnnotations(AddVmFromTemplateParameters.class, JsonAddVmFromTemplateParametersMixIn.class);
         mapper.getSerializationConfig().addMixInAnnotations(MoveOrCopyParameters.class, JsonMoveOrCopyParametersMixIn.class);
         mapper.getSerializationConfig().addMixInAnnotations(AddVmTemplateParameters.class, JsonAddVmTemplateParametersMixIn.class);

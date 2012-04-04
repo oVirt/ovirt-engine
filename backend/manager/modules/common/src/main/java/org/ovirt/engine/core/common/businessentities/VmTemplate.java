@@ -18,6 +18,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.ovirt.engine.core.common.businessentities.mapping.GuidType;
@@ -237,6 +238,7 @@ public class VmTemplate extends VmBase {
         bootDiskSizeGB = value;
     }
 
+    @JsonIgnore
     public HashMap<String, DiskImage> getDiskMap() {
         return diskTemplateMap;
     }
@@ -267,6 +269,7 @@ public class VmTemplate extends VmBase {
     public void setActualDiskSize(double actualDiskSize) {
     }
 
+    @JsonIgnore
     public Map<String, DiskImage> getDiskImageMap() {
         return diskMap;
     }
@@ -276,6 +279,7 @@ public class VmTemplate extends VmBase {
     }
 
     @XmlElement(name = "DiskImageMap")
+    @JsonIgnore
     public ValueObjectMap getSerializedDiskImageMap() {
         return new ValueObjectMap(diskMap, false);
     }
@@ -284,6 +288,7 @@ public class VmTemplate extends VmBase {
         diskMap = (serializedDiskImageMap == null) ? null : serializedDiskImageMap.asMap();
     }
 
+    @JsonIgnore
     public ArrayList<DiskImage> getDiskList() {
         return diskList;
     }
