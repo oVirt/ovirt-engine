@@ -99,7 +99,25 @@ public class QuotaDAODbFacadeImpl extends BaseDAODbFacade implements QuotaDAO {
      */
     @Override
     public List<QuotaStorage> getQuotaStorageByStorageGuid(Guid storageId, Guid quotaId) {
-        MapSqlParameterSource parameterSource = createQuotaIdParameterMapper(quotaId).addValue("storage_id", storageId);
+        return getQuotaStorageByStorageGuid(storageId, quotaId, true);
+    }
+
+    /**
+     * Get specific limitation for storage domain.
+     *
+     * @param storageId
+     *            - The storage id, if null returns all the storages limitation in the storage pool.
+     * @param quotaId
+     *            - The quota id
+     * @param allowEmpty
+     *            - Whether to return empty quotas or not
+     * @return List of QuotaStorage
+     */
+    @Override
+    public List<QuotaStorage> getQuotaStorageByStorageGuid(Guid storageId, Guid quotaId, boolean allowEmpty) {
+        MapSqlParameterSource parameterSource =
+                createQuotaIdParameterMapper(quotaId).addValue("storage_id", storageId).addValue("allow_empty",
+                        allowEmpty);
         List<QuotaStorage> quotaStorageList = getCallsHandler().executeReadList("GetQuotaStorageByStorageGuid",
                 getQuotaStorageResultSet(),
                 parameterSource);
@@ -153,7 +171,7 @@ public class QuotaDAODbFacadeImpl extends BaseDAODbFacade implements QuotaDAO {
      */
     @Override
     public List<QuotaStorage> getQuotaStorageByQuotaGuidWithGeneralDefault(Guid quotaId) {
-        return getQuotaStorageByStorageGuid(null, quotaId);
+        return getQuotaStorageByStorageGuid(null, quotaId, false);
     }
 
     /**

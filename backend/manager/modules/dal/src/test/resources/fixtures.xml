@@ -2487,6 +2487,19 @@
             <value>20</value>
             <value>false</value>
         </row>
+        <row>
+            <value>88296e00-0cad-4e5a-9291-008a7b7f4405</value>
+            <value>72b9e200-f48b-4687-83f2-62828f249a47</value>
+            <value>Quota Empty</value>
+            <value>Empty Quota with no limitations</value>
+            <value>2010-12-12 03:38:36</value>
+            <value>2010-12-27 12:18:51</value>
+            <value>80</value>
+            <value>80</value>
+            <value>20</value>
+            <value>20</value>
+            <value>false</value>
+        </row>
     </table>
 
     <table name="quota_limitation">
@@ -2576,6 +2589,15 @@
             <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d1</value>
             <value>1000</value>
             <value>0</value>
+            <null />
+        </row>
+        <row>
+            <value>88296e00-0cad-4e5a-9291-008a7b7f4405</value>
+            <value>88296e00-0cad-4e5a-9291-008a7b7f4405</value>
+            <null />
+            <null />
+            <null />
+            <null />
             <null />
         </row>
     </table>

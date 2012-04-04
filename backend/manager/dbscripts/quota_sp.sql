@@ -20,21 +20,25 @@ LANGUAGE plpgsql;
 
 
 -- Returns all the Quota storages in the storage pool if v_storage_id is null, if v_storage_id is not null then a specific quota storage will be returned.
-Create or replace FUNCTION GetQuotaStorageByStorageGuid(v_storage_id UUID, v_id UUID)
+-- Empty quotas are returned only if v_allow_empty is set to TRUE
+Create or replace FUNCTION GetQuotaStorageByStorageGuid(v_storage_id UUID, v_id UUID, v_allow_empty BOOLEAN)
 RETURNS SETOF quota_storage_view
    AS $procedure$
 BEGIN
-   RETURN QUERY SELECT COALESCE(q_storage_view.quota_storage_id, q_g_view.quota_id) as quota_storage_id,
-   q_g_view.quota_id as quota_id,
-   q_storage_view.storage_id,
-   q_storage_view.storage_name,
-   COALESCE(q_storage_view.storage_size_gb, q_g_view.storage_size_gb) as storage_size_gb,
-   COALESCE(q_storage_view.storage_size_gb_usage, q_g_view.storage_size_gb_usage) as storage_size_gb_usage,
-   q_g_view.is_default_quota
-   FROM  quota_global_view q_g_view LEFT OUTER JOIN
-    quota_storage_view q_storage_view on q_g_view.quota_id = q_storage_view.quota_id
-    AND (v_storage_id = q_storage_view.storage_id OR v_storage_id IS NULL)
-   WHERE q_g_view.quota_id = v_id;
+   RETURN QUERY SELECT *
+   FROM
+   (SELECT  COALESCE(q_storage_view.quota_storage_id, q_g_view.quota_id) as quota_storage_id,
+            q_g_view.quota_id as quota_id,
+            q_storage_view.storage_id,
+            q_storage_view.storage_name,
+            COALESCE(q_storage_view.storage_size_gb, q_g_view.storage_size_gb) as storage_size_gb,
+            COALESCE(q_storage_view.storage_size_gb_usage, q_g_view.storage_size_gb_usage) as storage_size_gb_usage,
+            q_g_view.is_default_quota
+    FROM  quota_global_view q_g_view 
+    LEFT OUTER JOIN quota_storage_view q_storage_view ON q_g_view.quota_id = q_storage_view.quota_id
+    AND  (v_storage_id = q_storage_view.storage_id OR v_storage_id IS NULL)
+   WHERE q_g_view.quota_id = v_id) sub
+   WHERE (v_allow_empty OR storage_size_gb IS NOT NULL);
 END; $procedure$
 LANGUAGE plpgsql;
 

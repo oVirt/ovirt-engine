@@ -277,7 +277,7 @@ public class QuotaDAOTest extends BaseDAOTestCase {
 
     /**
      * Asserts that when {@link QuotaDAO#getQuotaStorageByQuotaGuidWithGeneralDefault(Guid)} is called
-     * with a specific quota, all the relevant VDSs are returned
+     * with a specific quota, all the relevant storages are returned
      */
     @Test
     public void testQuotaStorageByQuotaGuidWithGeneralDefaultNoDefault() {
@@ -289,6 +289,18 @@ public class QuotaDAOTest extends BaseDAOTestCase {
             assertNotNull("Storage ID should not be null in specific mode", group.getStorageId());
             assertNotNull("Storage name should not be null in specific mode", group.getStorageName());
         }
+    }
+
+    /**
+     * Asserts that when {@link QuotaDAO#getQuotaStorageByQuotaGuidWithGeneralDefault(Guid)} is called
+     * with an empty quota, no storage quotas are returned
+     */
+    @Test
+    public void testQuotaStorageByQuotaGuidWitheGeneralDefaultWithEmpty() {
+        List<QuotaStorage> quotaStorageList =
+                dao.getQuotaStorageByQuotaGuidWithGeneralDefault(FixturesTool.QUOTA_EMPTY);
+        assertNotNull(quotaStorageList);
+        assertEquals("wrong number of quotas returned", 0, quotaStorageList.size());
     }
 
     /**
@@ -421,7 +433,7 @@ public class QuotaDAOTest extends BaseDAOTestCase {
     @Test
     public void testGetFetchAllQuotaInTheSetup() throws Exception {
         List<Quota> quotaList = dao.getQuotaByStoragePoolGuid(null);
-        assertEquals(true, quotaList.size() == 4);
+        assertEquals(5, quotaList.size());
     }
 
     /**
@@ -432,7 +444,7 @@ public class QuotaDAOTest extends BaseDAOTestCase {
     @Test
     public void testGetFetchForSpecificStoragePool() throws Exception {
         List<Quota> quotaList = dao.getQuotaByStoragePoolGuid(FixturesTool.STORAGE_POOL_NFS);
-        assertEquals(true, quotaList.size() == 4);
+        assertEquals(5, quotaList.size());
     }
 
     /**

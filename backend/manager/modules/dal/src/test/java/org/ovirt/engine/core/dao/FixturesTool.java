@@ -94,6 +94,11 @@ public class FixturesTool {
     protected static final Guid QUOTA_SPECIFIC_AND_GENERAL = new Guid("88296e00-0cad-4e5a-9291-008a7b7f4401");
 
     /**
+     * Predefined quota with no limitations.
+     */
+    protected static final Guid QUOTA_EMPTY = new Guid("88296e00-0cad-4e5a-9291-008a7b7f4405");
+
+    /**
      * Predefined VM for testing with the following properties :
      * <ul>
      * <li>VM name: rhel5-pool-50</li>

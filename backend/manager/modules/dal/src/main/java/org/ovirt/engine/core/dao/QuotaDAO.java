@@ -63,6 +63,19 @@ public interface QuotaDAO extends DAO, SearchDAO<Quota> {
      *            - The storage id, if null returns all the storages limitation in the storage pool.
      * @param quotaId
      *            - The quota id
+     * @param allowEmpty
+     *            - Whether to return empty quotas or not
+     * @return List of QuotaStorage
+     */
+    public List<QuotaStorage> getQuotaStorageByStorageGuid(Guid storageId, Guid quotaId, boolean allowEmpty);
+
+    /**
+     * Get specific limitation for storage domain.
+     *
+     * @param storageId
+     *            - The storage id, if null returns all the storages limitation in the storage pool.
+     * @param quotaId
+     *            - The quota id
      * @return List of QuotaStorage
      */
     public List<QuotaStorage> getQuotaStorageByStorageGuid(Guid storageId, Guid quotaId);
