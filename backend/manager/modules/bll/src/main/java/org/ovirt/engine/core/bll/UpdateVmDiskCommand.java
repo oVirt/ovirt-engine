@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.PermissionSubject;
 import org.ovirt.engine.core.common.action.UpdateVmDiskParameters;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
@@ -11,6 +12,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.DiskImageDAO;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
@@ -20,21 +22,18 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends AbstractDiskVmCommand<T> {
 
     private static final long serialVersionUID = 5915267156998835363L;
+    private List<PermissionSubject> listPermissionSubjects;
     private DiskImage _oldDisk;
 
     public UpdateVmDiskCommand(T parameters) {
         super(parameters);
+        setQuotaId(parameters.getDiskInfo() != null ? parameters.getDiskInfo().getQuotaId() : null);
     }
+
 
     @Override
     protected void ExecuteVmCommand() {
         perforDiskUpdate();
-    }
-
-    @Override
-    protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__UPDATE);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM_DISK);
     }
 
     @Override
@@ -45,6 +44,35 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
             retValue = isDiskExist(_oldDisk) && checkCanPerformRegularUpdate();
         }
         return retValue;
+    }
+
+    @Override
+    protected void setActionMessageParameters() {
+        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__UPDATE);
+        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM_DISK);
+    }
+
+    @Override
+    protected DiskImageDAO getDiskImageDao() {
+        return DbFacade.getInstance().getDiskImageDAO();
+    }
+
+    @Override
+    protected boolean validateQuota() {
+        boolean quotaValid = true;
+        if (!_oldDisk.getQuotaId().equals(getQuotaId())) {
+            // Set default quota id if storage pool enforcement is disabled.
+            getParameters().setQuotaId(QuotaHelper.getInstance().getQuotaIdToConsume(getQuotaId(),
+                    getStoragePool()));
+            setStorageDomainId(_oldDisk.getstorage_ids().get(0).getValue());
+            quotaValid = (QuotaManager.validateStorageQuota(getStorageDomainId().getValue(),
+                    getParameters().getQuotaId(),
+                    getStoragePool().getQuotaEnforcementType(),
+                    new Double(getParameters().getDiskInfo().getSizeInGigabytes()),
+                    getCommandId(),
+                    getReturnValue().getCanDoActionMessages()));
+        }
+        return quotaValid;
     }
 
     private boolean checkCanPerformRegularUpdate() {
@@ -87,6 +115,26 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
         return retValue;
     }
 
+    @Override
+    public List<PermissionSubject> getPermissionCheckSubjects() {
+        if (listPermissionSubjects == null) {
+            listPermissionSubjects = super.getPermissionCheckSubjects();
+            listPermissionSubjects =
+                    QuotaHelper.getInstance().addQuotaPermissionSubject(listPermissionSubjects,
+                            getStoragePool(),
+                            getQuotaId());
+        }
+        return listPermissionSubjects;
+    }
+
+    @Override
+    protected void removeQuotaCommandLeftOver() {
+        QuotaManager.removeStorageDeltaQuotaCommand(getQuotaId(),
+                getStorageDomainId().getValue(),
+                getStoragePool().getQuotaEnforcementType(),
+                getCommandId());
+    }
+
     private void perforDiskUpdate() {
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Object>() {
             @Override
@@ -95,6 +143,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
                 _oldDisk.setdisk_interface(getParameters().getDiskInfo().getdisk_interface());
                 _oldDisk.setpropagate_errors(getParameters().getDiskInfo().getpropagate_errors());
                 _oldDisk.setwipe_after_delete(getParameters().getDiskInfo().getwipe_after_delete());
+                _oldDisk.setQuotaId(getQuotaId());
                 DbFacade.getInstance().getDiskDao().update(_oldDisk.getDisk());
                 getDiskImageDao().update(_oldDisk);
                 setSucceeded(UpdateVmInSpm(getVm().getstorage_pool_id(),
