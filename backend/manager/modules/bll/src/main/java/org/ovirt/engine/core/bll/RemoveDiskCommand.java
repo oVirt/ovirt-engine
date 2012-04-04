@@ -40,6 +40,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
     private static final long serialVersionUID = -4520874214339816607L;
     private DiskImage disk;
     private Map<String, Guid> sharedLockMap;
+    private List<PermissionSubject> permsList = null;
 
     public RemoveDiskCommand(T parameters) {
         super(parameters);
@@ -234,19 +235,13 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
 
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
-        if (disk != null) {
-            if (disk.getVmEntityType() == VmEntityType.VM) {
-                return Collections.singletonList(new PermissionSubject(disk.getvm_guid(),
-                        VdcObjectType.VM,
-                        ActionGroup.CONFIGURE_VM_STORAGE));
-            }
-            if (disk.getVmEntityType() == VmEntityType.TEMPLATE) {
-                return Collections.singletonList(new PermissionSubject(disk.getvm_guid(),
-                        VdcObjectType.VmTemplate,
-                        ActionGroup.DELETE_TEMPLATE));
-            }
+        if (permsList == null && disk != null) {
+            permsList = new ArrayList<PermissionSubject>();
+            permsList.add(new PermissionSubject(disk.getimage_group_id(),
+                    VdcObjectType.Disk,
+                    ActionGroup.DELETE_DISK));
         }
-        return null;
+        return permsList;
     }
 
     @Override
