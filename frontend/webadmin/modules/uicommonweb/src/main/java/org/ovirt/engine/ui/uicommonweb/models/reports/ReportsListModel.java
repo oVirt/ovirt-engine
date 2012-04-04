@@ -19,6 +19,7 @@ import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicompat.ReportParser.Dashboard;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Cookies;
 
 public class ReportsListModel extends SearchableListModel {
 
@@ -33,7 +34,9 @@ public class ReportsListModel extends SearchableListModel {
     }
 
     public ReportsListModel(String baseUrl) {
+        String sessionID = Cookies.getCookie("JSESSIONID");
         reportUrl = baseUrl + "/flow.html" + "?viewAsDashboardFrame=true";
+        htmlParams.setParameter("sessionID", sessionID);
 
         setFlowId();
 

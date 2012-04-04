@@ -6,6 +6,8 @@ import java.util.Map;
 import org.ovirt.engine.ui.uicommonweb.HtmlParameters;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 
+import com.google.gwt.user.client.Cookies;
+
 public class ReportModel extends EntityModel {
 
     private final HtmlParameters paramsMap = new HtmlParameters();
@@ -13,7 +15,10 @@ public class ReportModel extends EntityModel {
     private final String reportUrl;
 
     public ReportModel(String baseUrl) {
+        String sessionID = Cookies.getCookie("JSESSIONID");
+
         reportUrl = baseUrl + "/flow.html" + "?viewAsDashboardFrame=false";
+        paramsMap.setParameter("sessionID", sessionID);
         paramsMap.setParameter("_flowId", "viewReportFlow");
         paramsMap.setParameter("active_hosts_select",
                "AND+delete_date+IS+NULL");

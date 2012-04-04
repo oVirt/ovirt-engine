@@ -783,8 +783,6 @@ public class CommonModel extends ListModel
         list.add(eventList);
 
         reportsList = new ReportsListModel(ReportInit.getInstance().getReportBaseUrl());
-        reportsList.setUser("ovirt");
-        reportsList.setPassword("1234");
         list.add(reportsList);
 
         reportsList.setIsAvailable(false);

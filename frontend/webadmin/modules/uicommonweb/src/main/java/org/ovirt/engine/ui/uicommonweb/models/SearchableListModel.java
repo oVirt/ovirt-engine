@@ -444,11 +444,6 @@ public abstract class SearchableListModel extends ListModel implements GridContr
         ReportCommand reportCommand = (ReportCommand) getLastExecutedCommand();
         ReportModel reportModel = new ReportModel(ReportInit.getInstance().getReportBaseUrl());
 
-        // TODO: remove user and password from the code when the sso will be ready
-        reportModel.setUser("ovirt");
-        reportModel.setPassword("1234");
-        // -----------------------------------------------------------------------
-
         reportModel.setReportUnit(reportCommand.getUriValue());
 
         if (reportCommand.getIdParamName() != null) {

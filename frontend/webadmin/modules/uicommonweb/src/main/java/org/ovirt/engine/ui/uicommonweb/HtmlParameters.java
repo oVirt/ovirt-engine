@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import com.google.gwt.http.client.URL;
 
 public class HtmlParameters {
 
@@ -17,12 +18,12 @@ public class HtmlParameters {
         if (oldParams == null) {
             setParameter(key, value);
         } else {
-            oldParams.add(value);
+            oldParams.add(encodeParameter(value));
         }
     }
 
     public void setParameter(String key, String... value) {
-        paramsMap.put(key, new LinkedList<String>(Arrays.asList(value)));
+        paramsMap.put(key, new LinkedList<String>(Arrays.asList(encodeParameters(value))));
     }
 
     public Map<String, List<String>> getParameters() {
@@ -31,5 +32,16 @@ public class HtmlParameters {
 
     public void removeParameter(String key) {
         paramsMap.remove(key);
+    }
+
+    private static String[] encodeParameters(String[] values) {
+        for (int index = 0; index < values.length; ++index) {
+                values[index] = encodeParameter(values[index]);
+        }
+        return values;
+    }
+
+    private static String encodeParameter(String value) {
+        return URL.encode(value);
     }
 }
