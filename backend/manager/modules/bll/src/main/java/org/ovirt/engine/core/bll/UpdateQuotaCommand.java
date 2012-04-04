@@ -7,6 +7,10 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.QuotaCRUDParameters;
+import org.ovirt.engine.core.common.businessentities.Quota;
+import org.ovirt.engine.core.common.businessentities.QuotaStorage;
+import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.QuotaDAO;
@@ -41,6 +45,7 @@ public class UpdateQuotaCommand<T extends QuotaCRUDParameters> extends CommandBa
 
     @Override
     protected void executeCommand() {
+        setQuotaParameter();
         QuotaDAO dao = DbFacade.getInstance().getQuotaDAO();
         dao.update(getParameters().getQuota());
         getReturnValue().setSucceeded(true);
@@ -61,5 +66,30 @@ public class UpdateQuotaCommand<T extends QuotaCRUDParameters> extends CommandBa
     @Override
     public AuditLogType getAuditLogTypeValue() {
           return getSucceeded() ? AuditLogType.USER_UPDATE_QUOTA : AuditLogType.USER_FAILED_UPDATE_QUOTA;
+    }
+
+    /**
+     * Set quota from the parameter
+     *
+     * @param parameters
+     * @return
+     */
+    private void setQuotaParameter() {
+        Quota quotaParameter = getParameters().getQuota();
+        setStoragePoolId(quotaParameter.getStoragePoolId());
+        setQuotaName(quotaParameter.getQuotaName());
+        if (quotaParameter.getQuotaStorages() != null) {
+            for (QuotaStorage quotaStorage : quotaParameter.getQuotaStorages()) {
+                quotaStorage.setQuotaId(getQuotaId());
+                quotaStorage.setQuotaStorageId(Guid.NewGuid());
+            }
+        }
+        if (quotaParameter.getQuotaVdsGroups() != null) {
+            for (QuotaVdsGroup quotaVdsGroup : quotaParameter.getQuotaVdsGroups()) {
+                quotaVdsGroup.setQuotaId(getQuotaId());
+                quotaVdsGroup.setQuotaVdsGroupId(Guid.NewGuid());
+            }
+        }
+        setQuota(quotaParameter);
     }
 }
