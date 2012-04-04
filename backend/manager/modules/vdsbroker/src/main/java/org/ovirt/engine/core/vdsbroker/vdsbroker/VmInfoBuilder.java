@@ -335,7 +335,8 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
             XmlRpcStruct[] devArray = new XmlRpcStruct[devices.size()];
             devArray = devices.toArray(devArray);
             for (VmDevice vmDevice : managedDevices) {
-                if (vmDevice.getType().equals(VmDeviceType.DISK) || vmDevice.getType().equals(VmDeviceType.INTERFACE)) {
+                if (vmDevice.getType().equals(VmDeviceType.DISK.getName())
+                        || vmDevice.getType().equals(VmDeviceType.INTERFACE.getName())) {
                     devArray[i++].add(VdsProperties.BootOrder, String.valueOf(vmDevice.getBootOrder()));
                 }
             }
