@@ -277,7 +277,9 @@ public class AddVmCommandTest {
         AddVmFromTemplateParameters param = new AddVmFromTemplateParameters();
         param.setVm(vm);
         AddVmFromTemplateCommand<AddVmFromTemplateParameters> concrete = new AddVmFromTemplateCommand<AddVmFromTemplateParameters>(param);
-        return spy(concrete);
+        AddVmFromTemplateCommand<AddVmFromTemplateParameters> result = spy(concrete);
+        doReturn(true).when(result).checkNumberOfMonitors();
+        return result;
     }
 
     private AddVmFromSnapshotCommand<AddVmFromSnapshotParameters> createVmFromSnapshotCommand(VM vm,Guid sourceSnapshotId) {

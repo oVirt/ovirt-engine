@@ -202,9 +202,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         // Check if number of monitors passed is legal
         returnValue =
                 returnValue
-                        && VmHandler.isNumOfMonitorsLegal(getParameters().getVmStaticData().getdefault_display_type(),
-                                getParameters().getVmStaticData().getnum_of_monitors(),
-                                getReturnValue().getCanDoActionMessages());
+                        && checkNumberOfMonitors();
 
         returnValue =
                 returnValue
@@ -214,6 +212,12 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
                         && CanAddVm(getReturnValue().getCanDoActionMessages(), destStorages.values())
                         && hostToRunExist();
         return returnValue;
+    }
+
+    protected boolean checkNumberOfMonitors() {
+        return VmHandler.isNumOfMonitorsLegal(getParameters().getVmStaticData().getdefault_display_type(),
+                getParameters().getVmStaticData().getnum_of_monitors(),
+                getReturnValue().getCanDoActionMessages());
     }
 
     protected boolean hostToRunExist() {
