@@ -13,6 +13,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
@@ -131,6 +132,7 @@ private network_cluster cluster = new network_cluster();
         this.id = value;
     }
 
+    @JsonIgnore
     @Override
     public String getName() {
         return this.name;
