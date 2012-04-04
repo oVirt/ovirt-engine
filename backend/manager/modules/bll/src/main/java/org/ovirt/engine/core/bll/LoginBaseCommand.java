@@ -222,8 +222,6 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
             @Override
             public void run() {
                 DbFacade.getInstance().updateLastAdminCheckStatus(_adUser.getUserId());
-                // test what happends whern RTE is being thrown
-                throw new RuntimeException("---- Test RT exception throwing fro login command by another thread ----");
             }
         });
     }
