@@ -1,34 +1,40 @@
 package org.ovirt.engine.core.bll;
 
+
 import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
+import org.ovirt.engine.core.common.PermissionSubject;
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.UpdateVmDiskParameters;
+import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 
 public class AttachDiskToVmCommand<T extends UpdateVmDiskParameters> extends AbstractDiskVmCommand<T> {
 
     private static final long serialVersionUID = -1686587389737849288L;
     private DiskImage diskImage;
+    private List<PermissionSubject> permsList = null;
 
     public AttachDiskToVmCommand(T parameters) {
         super(parameters);
         if (getParameters().getDiskInfo().getPlugged() == null) {
             getParameters().getDiskInfo().setPlugged(false);
         }
+        diskImage = getDiskImageDao().get(getParameters().getImageId());
     }
 
     @Override
     protected boolean canDoAction() {
         boolean retValue = isVmExist() && isVmUpOrDown();
-        diskImage = getDiskImageDao().get(getParameters().getImageId());
         if (retValue && diskImage == null) {
             retValue = false;
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_IMAGE_DOES_NOT_EXIST);
@@ -83,4 +89,15 @@ public class AttachDiskToVmCommand<T extends UpdateVmDiskParameters> extends Abs
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__ATTACH_ACTION_TO);
         addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM_DISK);
     }
+
+    @Override
+   public List<PermissionSubject> getPermissionCheckSubjects(){
+       if (permsList == null) {
+           permsList = super.getPermissionCheckSubjects();
+            Guid diskId = diskImage == null ? null : diskImage.getimage_group_id();
+            permsList.add(new PermissionSubject(diskId, VdcObjectType.Disk, ActionGroup.ATTACH_DISK));
+       }
+        return permsList;
+   }
+
 }
