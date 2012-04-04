@@ -93,7 +93,7 @@ public class VmDeviceUtils {
                     updateNumOfMonitorsInVmDevice(null, vmBase);
                 }
                 //add CD if exists
-                hasCD = !isoPath.isEmpty();
+                hasCD = !StringUtils.isEmpty(isoPath);
                 if (hasCD) {
                     specParams = setCdPath(specParams, "", isoPath);
                     addManagedDevice(new VmDeviceId(Guid.NewGuid(),dstId) , VmDeviceType.DISK, VmDeviceType.CDROM, specParams, true, true);
@@ -116,7 +116,7 @@ public class VmDeviceUtils {
             else  if (VmDeviceType.DISK.getName().equals(device.getType())
                     && VmDeviceType.CDROM.getName().equals(device.getDevice())) {
                 String srcCdPath=org.ovirt.engine.core.utils.StringUtils.string2Map(device.getSpecParams()).get(VdsProperties.Path);
-                hasCD = (!srcCdPath.isEmpty() || !isoPath.isEmpty());
+                hasCD = (!StringUtils.isEmpty(srcCdPath) || !StringUtils.isEmpty(isoPath));
                 if (hasCD) {
                     specParams = setCdPath(specParams, srcCdPath, isoPath);
                 }
@@ -153,7 +153,7 @@ public class VmDeviceUtils {
             sb.append(isoPath);
             specParams = sb.toString();
         }
-        else if (!srcCdPath.isEmpty()){ // get the path from the source device spec params
+ else if (!StringUtils.isEmpty(srcCdPath)) { // get the path from the source device spec params
             sb.append(srcCdPath);
             specParams = sb.toString();
         }
