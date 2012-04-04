@@ -1389,8 +1389,17 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String editCellQuota();
 
     // Network
+    @DefaultStringValue("Attached")
+    String attachedNetwork();
+
     @DefaultStringValue("Name")
     String nameNetwork();
+
+    @DefaultStringValue("Required")
+    String requiredNetwork();
+
+    @DefaultStringValue("VM")
+    String vmNetwork();
 
     @DefaultStringValue("Status")
     String statusNetwork();

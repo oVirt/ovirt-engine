@@ -2,6 +2,8 @@ package org.ovirt.engine.ui.uicommonweb.models.clusters;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
 import org.ovirt.engine.core.common.action.AttachNetworkToVdsGroupParameter;
@@ -25,12 +27,14 @@ import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
-import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
+import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
+import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
+import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
 @SuppressWarnings("unused")
 public class ClusterNetworkListModel extends SearchableListModel
@@ -71,6 +75,17 @@ public class ClusterNetworkListModel extends SearchableListModel
     {
         privateSetAsDisplayCommand = value;
     }
+
+    private network displayNetwork = null;
+
+    private final Comparator<ClusterNetworkManageModel> networkComparator =
+            new Comparator<ClusterNetworkManageModel>() {
+                @Override
+                public int compare(ClusterNetworkManageModel o1, ClusterNetworkManageModel o2) {
+                    // management first
+                    return o1.isManagement() ? -1 : o1.getName().compareTo(o2.getName());
+                }
+            };
 
     @Override
     public VDSGroup getEntity()
@@ -128,7 +143,16 @@ public class ClusterNetworkListModel extends SearchableListModel
             public void OnSuccess(Object model, Object ReturnValue)
             {
                 SearchableListModel searchableListModel = (SearchableListModel) model;
-                searchableListModel.setItems((ArrayList<network>) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
+                ArrayList<network> newItems = (ArrayList<network>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
+                Collections.sort(newItems, new Comparator<network>() {
+                    @Override
+                    public int compare(network o1, network o2) {
+                        // management first
+                        return HostInterfaceListModel.ENGINE_NETWORK_NAME.equals(o1.getname()) ? -1
+                                : o1.getname().compareTo(o2.getname());
+                    }
+                });
+                searchableListModel.setItems(newItems);
             }
         };
 
@@ -173,135 +197,125 @@ public class ClusterNetworkListModel extends SearchableListModel
             public void OnSuccess(Object model, Object result)
             {
                 ClusterNetworkListModel clusterNetworkListModel = (ClusterNetworkListModel) model;
-                ArrayList<network> networkList = (ArrayList<network>) result;
-                ListModel listModel = new ListModel();
-                clusterNetworkListModel.setWindow(listModel);
-                listModel.setTitle(ConstantsManager.getInstance().getConstants().assignDetachNetworksTitle());
-                listModel.setHashName("assign_networks"); //$NON-NLS-1$
-                clusterNetworkListModel.PostManage(networkList, listModel);
+                ArrayList<network> dcNetworks = (ArrayList<network>) result;
+                ListModel networkToManage = createNetworkList(dcNetworks);
+                clusterNetworkListModel.setWindow(networkToManage);
+                networkToManage.setTitle(ConstantsManager.getInstance().getConstants().assignDetachNetworksTitle());
+                networkToManage.setHashName("assign_networks"); //$NON-NLS-1$
             }
         };
+        // fetch the list of DC Networks
         AsyncDataProvider.GetNetworkList(_asyncQuery, storagePoolId);
     }
 
-    public void PostManage(ArrayList<network> networkList, ListModel model)
-    {
-        Collections.sort(networkList, new Linq.NetworkByNameComparer());
-
-        ArrayList<EntityModel> items = new ArrayList<EntityModel>();
-        for (network a : networkList)
-        {
-            if (!a.getname().equals("engine")) //$NON-NLS-1$
-            {
-                EntityModel tempVar = new EntityModel();
-                tempVar.setEntity(a);
-                tempVar.setTitle(a.getname());
-                items.add(tempVar);
-            }
-        }
-        model.setItems(items);
-
-        boolean noItems = items.isEmpty();
-
-        ArrayList<network> networks = Linq.<network> Cast(getItems());
-        ArrayList<EntityModel> selectedItems = new ArrayList<EntityModel>();
-        for (EntityModel item : items)
-        {
-            network net = (network) item.getEntity();
-            boolean value = false;
-            for (network a : networks)
-            {
-                if (a.getId().equals(net.getId()))
-                {
-                    value = true;
-                    break;
+    private ListModel createNetworkList(List<network> dcNetworks) {
+        List<ClusterNetworkManageModel> networkList = new ArrayList<ClusterNetworkManageModel>();
+        java.util.ArrayList<network> clusterNetworks = Linq.<network> Cast(getItems());
+        for (network network : dcNetworks) {
+            ClusterNetworkManageModel networkManageModel = new ClusterNetworkManageModel(network);
+            int index = clusterNetworks.indexOf(network);
+            if (index >= 0) {
+                network clusterNetwork = clusterNetworks.get(index);
+                networkManageModel.setVmNetwork(clusterNetwork.isVmNetwork());
+                networkManageModel.setRequired(clusterNetwork.isRequired());
+                networkManageModel.setDisplayNetwork(clusterNetwork.getis_display());
+                if (clusterNetwork.getis_display()) {
+                    displayNetwork = clusterNetwork;
                 }
+                networkManageModel.setAttached(true);
+            } else {
+                networkManageModel.setAttached(false);
             }
-            item.setIsSelected(value);
-            if (value) {
-                selectedItems.add(item);
-            }
+            networkList.add(networkManageModel);
         }
 
-        model.setSelectedItems(selectedItems);
+        Collections.sort(networkList, networkComparator);
 
-        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
-        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        tempVar2.setIsDefault(noItems);
-        tempVar2.setIsCancel(true);
-        model.getCommands().add(tempVar2);
+        ListModel listModel = new ListModel();
+        listModel.setItems(networkList);
 
-        if (!noItems)
-        {
-            UICommand tempVar3 = new UICommand("OnManage", this); //$NON-NLS-1$
-            tempVar3.setTitle(ConstantsManager.getInstance().getConstants().ok());
-            tempVar3.setIsDefault(true);
-            model.getCommands().add(0, tempVar3);
-        }
+        UICommand cancelCommand = new UICommand("Cancel", this); //$NON-NLS-1$
+        cancelCommand.setTitle(ConstantsManager.getInstance().getConstants().cancel());
+        cancelCommand.setIsCancel(true);
+        listModel.getCommands().add(cancelCommand);
+
+        UICommand okCommand = new UICommand("OnManage", this); //$NON-NLS-1$
+        okCommand.setTitle(ConstantsManager.getInstance().getConstants().ok());
+        okCommand.setIsDefault(true);
+        listModel.getCommands().add(0, okCommand);
+
+        return listModel;
     }
 
-    public void OnManage()
-    {
-        ListModel model = (ListModel) getWindow();
+    public void OnManage() {
+        final ListModel windowModel = (ListModel) getWindow();
 
-        ArrayList<EntityModel> items = Linq.<EntityModel> Cast(model.getItems());
-        ArrayList<network> networks = Linq.<network> Cast(getItems());
+        List<ClusterNetworkManageModel> manageList = Linq.<ClusterNetworkManageModel> Cast(windowModel.getItems());
+        List<network> existingClusterNetworks = Linq.<network> Cast(getItems());
+        final ArrayList<VdcActionParametersBase> toAttach = new ArrayList<VdcActionParametersBase>();
+        final ArrayList<VdcActionParametersBase> toDetach = new ArrayList<VdcActionParametersBase>();
 
-        if (getEntity() == null)
-        {
-            Cancel();
-            return;
-        }
+        for (ClusterNetworkManageModel networkModel : manageList) {
+            network network = networkModel.getEntity();
+            boolean contains = existingClusterNetworks.contains(network);
 
-        ArrayList<VdcActionParametersBase> prms1 = new ArrayList<VdcActionParametersBase>();
-        for (EntityModel a : items)
-        {
-            boolean value = false;
-            for (network b : networks)
-            {
-                if (b.getId().equals(((network) a.getEntity()).getId()))
-                {
-                    value = true;
-                    break;
+            boolean needsAttach = networkModel.isAttached() && !contains;
+            boolean needsDetach = !networkModel.isAttached() && contains;
+            boolean needsUpdate = false;
+
+            if (contains && !needsDetach) {
+                network clusterNetwork = existingClusterNetworks.get(existingClusterNetworks.indexOf(network));
+
+                if ((networkModel.isRequired() != clusterNetwork.isRequired())
+                                || (networkModel.isDisplayNetwork() != clusterNetwork.getis_display())) {
+                    needsUpdate = true;
                 }
             }
-            if (a.getIsSelected() && !value)
-            {
-                prms1.add(new AttachNetworkToVdsGroupParameter(getEntity(), (network) a.getEntity()));
+
+            if (needsAttach || needsUpdate) {
+                toAttach.add(new AttachNetworkToVdsGroupParameter(getEntity(), network));
+            }
+
+            if (needsDetach) {
+                toDetach.add(new AttachNetworkToVdsGroupParameter(getEntity(), network));
             }
         }
 
-        // Call the command only if necessary (i.e. only if there are paramters):
-        if (prms1.size() > 0)
-        {
-            Frontend.RunMultipleAction(VdcActionType.AttachNetworkToVdsGroup, prms1);
-        }
+        final IFrontendMultipleActionAsyncCallback callback = new IFrontendMultipleActionAsyncCallback() {
+            Boolean needsAttach = !toAttach.isEmpty();
+            Boolean needsDetach = !toDetach.isEmpty();
 
-        ArrayList<VdcActionParametersBase> prms2 = new ArrayList<VdcActionParametersBase>();
-        for (EntityModel a : items)
-        {
-            boolean value = true;
-            for (network b : networks)
-            {
-                if (b.getId().equals(((network) a.getEntity()).getId()))
-                {
-                    value = false;
-                    break;
+            @Override
+            public void Executed(FrontendMultipleActionAsyncResult result) {
+                if (result.getActionType() == VdcActionType.DetachNetworkToVdsGroup) {
+                    needsDetach = false;
+                }
+                if (result.getActionType() == VdcActionType.AttachNetworkToVdsGroup) {
+                    needsAttach = false;
+                }
+
+                if (needsAttach) {
+                    Frontend.RunMultipleAction(VdcActionType.AttachNetworkToVdsGroup, toAttach, this, null);
+                }
+
+                if (needsDetach) {
+                    Frontend.RunMultipleAction(VdcActionType.DetachNetworkToVdsGroup, toDetach, this, null);
+                }
+
+                if (!needsAttach && !needsDetach) {
+                    doFinish();
                 }
             }
-            if (!a.getIsSelected() && !value)
-            {
-                prms2.add(new AttachNetworkToVdsGroupParameter(getEntity(), (network) a.getEntity()));
+
+            private void doFinish() {
+                windowModel.StopProgress();
+                Cancel();
+                ForceRefresh();
             }
-        }
+        };
 
-        // Call the command only if necessary (i.e. only if there are paramters):
-        if (prms2.size() > 0)
-        {
-            Frontend.RunMultipleAction(VdcActionType.DetachNetworkToVdsGroup, prms2);
-        }
-
-        Cancel();
+        callback.Executed(new FrontendMultipleActionAsyncResult(null, null, null));
+        windowModel.StartProgress(null);
     }
 
     public void Cancel()

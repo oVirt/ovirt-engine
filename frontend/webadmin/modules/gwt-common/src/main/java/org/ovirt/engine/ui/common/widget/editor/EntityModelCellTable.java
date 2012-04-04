@@ -213,6 +213,9 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
     @Override
     public void edit(M object) {
         this.listModel = object;
+        // get items
+        List<EntityModel> items = (List<EntityModel>) listModel.getItems();
+        setRowData(items == null ? new ArrayList<EntityModel>() : items);
 
         // Add ItemsChangedEvent Listener
         object.getItemsChangedEvent().addListener(new IEventListener() {
