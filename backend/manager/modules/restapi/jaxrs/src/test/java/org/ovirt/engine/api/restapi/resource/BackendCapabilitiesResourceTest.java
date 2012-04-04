@@ -381,13 +381,14 @@ public class BackendCapabilitiesResourceTest extends AbstractBackendResourceTest
     }
 
     protected String getSessionId() {
-        return resource.getSessionHelper().getSessionId(principal);
+        return sessionHelper.getSessionId();
     }
 
     @Override
     protected void init() {
         resource.setBackend(backend);
         resource.setMappingLocator(mapperLocator);
+        sessionHelper.setSessionId(sessionId);
         resource.setSessionHelper(sessionHelper);
         resource.setMessageBundle(messageBundle);
         resource.setHttpHeaders(httpHeaders);

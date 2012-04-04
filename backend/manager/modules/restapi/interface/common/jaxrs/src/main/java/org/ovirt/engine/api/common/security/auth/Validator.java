@@ -29,5 +29,10 @@ public interface Validator {
      * @param principal  the decoded principal
      * @return           true iff dispatch should continue
      */
-    boolean validate(Principal principal);
+    boolean validate(Principal principal, String sessionId);
+
+    Principal validate(String sessionID);
+
+    void usePersistentSession(boolean persistentSession);
+
 }

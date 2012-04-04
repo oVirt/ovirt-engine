@@ -18,6 +18,7 @@ package org.ovirt.engine.api.common.security.auth;
 
 import java.util.List;
 
+import javax.servlet.http.HttpSession;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
@@ -75,21 +76,92 @@ public class Challenger implements PreProcessInterceptor {
 
     @Override
     public ServerResponse preProcess(HttpRequest request, ResourceMethod method) throws Failure, WebApplicationException {
+
         ServerResponse response = null;
+        boolean successful = false;
         HttpHeaders headers = request.getHttpHeaders();
-        List<String> auth = headers.getRequestHeader(HttpHeaders.AUTHORIZATION);
-        if (auth == null || auth.size() == 0) {
-            response = challenge();
+        boolean preferPersistentAuth = checkPersistentAuthentication(headers);
+
+        // Will create a new one if it is the first session, and then the "isNew" test below will return true
+        HttpSession httpSession = getCurrentSession(true);
+
+        // If the session isn't a new session then we validate it, otherwise we authenticate
+        if (validator != null && httpSession != null && !httpSession.isNew()) {
+            successful = executeSessionValidation(httpSession, preferPersistentAuth);
         } else {
-            Principal principal = scheme.decode(headers);
-            if (validator == null || validator.validate(principal)) {
-                current.set(principal);
-                current.set(this);
-            } else {
-                response = challenge();
+            successful = executeBasicAuthentication(headers, httpSession, preferPersistentAuth);
+        }
+
+        if (!successful) {
+            response = challenge();
+            // In this case we invalidate the session, so that a new one will be created on the next attempt
+            if (httpSession != null) {
+                httpSession.invalidate();
             }
         }
         return response;
+    }
+
+    /*
+     * This method executes the basic authentication, and returns true whether it was successful and false otherwise.
+     * It also sets the logged-in principal and the challenger object in the Current object
+     */
+    private boolean executeBasicAuthentication(HttpHeaders headers, HttpSession httpSession, boolean preferPersistentAuth) {
+        boolean successful = false;
+        List<String> auth = headers.getRequestHeader(HttpHeaders.AUTHORIZATION);
+
+        String engineSessionId = SessionUtils.generateEngineSessionId();
+        SessionUtils.setEngineSessionId(httpSession, engineSessionId);
+
+        if (auth != null && auth.size() != 0) {
+            Principal principal = scheme.decode(headers);
+            if (validator == null || validator.validate(principal, engineSessionId)) {
+                successful = true;
+                updateAuthenticationProperties(preferPersistentAuth, principal);
+            }
+        }
+        return successful;
+    }
+
+    /*
+     * This method executes session validation, and returns true whether it was successful and false otherwise.
+     * It also sets the logged-in principal and the challenger object in the Current object
+     */
+    private boolean executeSessionValidation(HttpSession session, boolean preferPersistentAuth) {
+        boolean successful = false;
+        Principal principal = validator.validate(SessionUtils.getEngineSessionId(session));
+        if (principal != null) {
+            successful = true;
+            updateAuthenticationProperties(preferPersistentAuth, principal);
+        }
+        return successful;
+    }
+
+    private void updateAuthenticationProperties(boolean preferPersistentAuth, Principal principal) {
+        current.set(principal);
+        current.set(this);
+
+        if (validator != null) {
+            validator.usePersistentSession(preferPersistentAuth);
+        }
+    }
+
+    private boolean checkPersistentAuthentication(HttpHeaders headers) {
+        List<String> preferField = SessionUtils.getHeaderField(headers, SessionUtils.PREFER_HEADER_FIELD);
+
+        if (preferField != null) {
+            for (String currValue : preferField) {
+                if (currValue.equalsIgnoreCase(SessionUtils.PERSIST_FIELD_VALUE)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    // Here to ease mocking it in the tester
+    protected HttpSession getCurrentSession(boolean create) {
+        return SessionUtils.getCurrentSession(create);
     }
 
     /**

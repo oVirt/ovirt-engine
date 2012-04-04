@@ -78,6 +78,8 @@ public abstract class AbstractBackendResourceTest<R extends BaseResource, Q /* e
     protected static final String SECRET = "open sesame";
     protected static final String DOMAIN = "Maghreb.Maghreb.Maghreb.com";
 
+    protected static final String sessionId = Guid.NewGuid().toString();
+
     protected BackendLocal backend;
     protected Current current;
     protected Principal principal;
@@ -98,6 +100,7 @@ public abstract class AbstractBackendResourceTest<R extends BaseResource, Q /* e
         current = control.createMock(Current.class);
         sessionHelper = new SessionHelper();
         sessionHelper.setCurrent(current);
+        sessionHelper.setSessionId(sessionId);
         principal = new Principal(USER, SECRET, DOMAIN);
         expect(current.get(Principal.class)).andReturn(principal).anyTimes();
         httpHeaders = control.createMock(HttpHeaders.class);
@@ -401,7 +404,7 @@ public abstract class AbstractBackendResourceTest<R extends BaseResource, Q /* e
         for (int i = 0 ; i < values.length ; i++) {
             ret[i] = values[i];
         }
-        ret[values.length] = sessionHelper.getSessionId(principal);
+        ret[values.length] = sessionHelper.getSessionId();
         return ret;
     }
 }

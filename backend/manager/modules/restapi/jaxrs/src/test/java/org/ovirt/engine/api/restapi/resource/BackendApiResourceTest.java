@@ -33,6 +33,7 @@ import org.ovirt.engine.core.common.queries.GetSystemStatisticsQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.api.restapi.logging.MessageBundle;
 import org.ovirt.engine.api.restapi.util.SessionHelper;
 
@@ -72,6 +73,7 @@ public class BackendApiResourceTest extends Assert {
     protected static final String BASE_PATH = "/api";
     protected static final String URI_BASE = URI_ROOT + BASE_PATH;
     protected static final String BUNDLE_PATH = "org/ovirt/engine/api/restapi/logging/Messages";
+    protected static final String sessionId = Guid.NewGuid().toString();
 
     protected static final int MAJOR = 11;
     protected static final int MINOR = 0;
@@ -162,6 +164,7 @@ public class BackendApiResourceTest extends Assert {
 
         sessionHelper = new SessionHelper();
         sessionHelper.setCurrent(current);
+        sessionHelper.setSessionId(sessionId);
         resource.setSessionHelper(sessionHelper);
 
         backend = createMock(BackendLocal.class);
@@ -333,7 +336,7 @@ public class BackendApiResourceTest extends Assert {
     }
 
     protected String getSessionId() {
-        return sessionHelper.getSessionId(principal);
+        return sessionHelper.getSessionId();
     }
 }
 

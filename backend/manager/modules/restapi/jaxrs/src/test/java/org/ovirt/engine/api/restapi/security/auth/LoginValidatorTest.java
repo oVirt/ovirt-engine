@@ -19,12 +19,19 @@ import org.ovirt.engine.core.common.action.LogoutUserParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
+import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
+import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.api.restapi.util.SessionHelper;
 
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
 import static org.ovirt.engine.api.restapi.test.util.TestHelper.eqActionParams;
+import static org.ovirt.engine.api.restapi.test.util.TestHelper.eqQueryParams;
 import static org.easymock.classextension.EasyMock.expect;
+import static org.easymock.classextension.EasyMock.eq;
 
 public class LoginValidatorTest extends Assert {
 
@@ -38,6 +45,7 @@ public class LoginValidatorTest extends Assert {
     protected LoginValidator validator;
     protected SessionHelper session;
     protected IMocksControl control;
+    protected String sessionId = Guid.NewGuid().toString();
 
     @Before
     public void setUp() {
@@ -46,10 +54,13 @@ public class LoginValidatorTest extends Assert {
         current = control.createMock(Current.class);
         session = new SessionHelper();
         session.setCurrent(current);
-        validator = new LoginValidator();
+        validator = spy(new LoginValidator());
+        doReturn(null).when(validator).getCurrentSession(false);
         validator.setBackend(backend);
         validator.setCurrent(current);
         validator.setSessionHelper(session);
+        validator.usePersistentSession(false);
+        session.setSessionId(sessionId);
     }
 
     @After
@@ -59,17 +70,29 @@ public class LoginValidatorTest extends Assert {
 
     @Test
     public void testLogin() {
-        assertTrue(validator.validate(setUpLoginExpectations(true, true)));
+        assertTrue(validator.validate(setUpLoginExpectations(true, true), sessionId));
+    }
+
+    @Test
+    public void testValidateSessionTrue() {
+        setUpValidateSession(true);
+        validator.validate(sessionId);
+    }
+
+    @Test
+    public void testValidateSessionFalse() {
+        setUpValidateSession(false);
+        validator.validate(sessionId);
     }
 
     @Test
     public void testLoginCantDo() {
-        assertFalse(validator.validate(setUpLoginExpectations(false, false)));
+        assertFalse(validator.validate(setUpLoginExpectations(false, false), sessionId));
     }
 
     @Test
     public void testLoginfailed() {
-        assertFalse(validator.validate(setUpLoginExpectations(true, false)));
+        assertFalse(validator.validate(setUpLoginExpectations(true, false), sessionId));
     }
 
     @Test
@@ -103,7 +126,7 @@ public class LoginValidatorTest extends Assert {
         expect(
             backend.Login((LoginUserParameters) eqActionParams(LoginUserParameters.class,
                     new String[] { "UserName", "UserPassword", "Domain", "ActionType", "SessionId" },
-                    new Object[] { USER, SECRET, DOMAIN, VdcActionType.LoginAdminUser, session.getSessionId(principal) }))).andReturn(result);
+                    new Object[] { USER, SECRET, DOMAIN, VdcActionType.LoginAdminUser, session.getSessionId() }))).andReturn(result);
         expect(result.getCanDoAction()).andReturn(canDo);
         expect(result.getSucceeded()).andReturn(success).anyTimes();
         VdcUser user = control.createMock(VdcUser.class);
@@ -116,17 +139,33 @@ public class LoginValidatorTest extends Assert {
         return principal;
     }
 
+    private Principal setUpValidateSession(boolean success) {
+        VdcQueryReturnValue queryReturnValue = control.createMock(VdcQueryReturnValue.class);
+        Principal principal = new Principal(USER, SECRET, DOMAIN);
+        VdcUser user = control.createMock(VdcUser.class);
+        expect(backend.RunPublicQuery(eq(VdcQueryType.ValidateSession), eqQueryParams(VdcQueryParametersBase.class,
+                new String[] { "SessionId" },
+                new Object[] { sessionId }) )).andReturn(queryReturnValue);
+        expect(queryReturnValue.getSucceeded()).andReturn(success).anyTimes();
+        if (success) {
+            expect(queryReturnValue.getReturnValue()).andReturn(user);
+            current.set(user);
+            EasyMock.expectLastCall();
+        }
+        control.replay();
+        return principal;
+    }
+
     private ServerResponse setUpLogoutExpectations() {
         VdcReturnValueBase result = control.createMock(VdcReturnValueBase.class);
         Principal principal = new Principal(USER, SECRET, DOMAIN);
-        expect(current.get(Principal.class)).andReturn(principal);
         VdcUser user = control.createMock(VdcUser.class);
         expect(current.get(VdcUser.class)).andReturn(user);
         expect(user.getUserId()).andReturn(GUID);
         expect(
             backend.Logoff((LogoutUserParameters) eqActionParams(LogoutUserParameters.class,
                     new String[] { "UserId", "SessionId" },
-                    new Object[] { GUID, session.getSessionId(principal) }))).andReturn(result);
+                    new Object[] { GUID, session.getSessionId() }))).andReturn(result);
         ServerResponse response = control.createMock(ServerResponse.class);
         control.replay();
         return response;

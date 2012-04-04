@@ -31,6 +31,7 @@ public class ValidateSessionQuery<P extends VdcQueryParametersBase> extends Quer
                 getQueryReturnValue().setReturnValue(vdcUser);
                 getQueryReturnValue().setSucceeded(true);
             } else {
+                getQueryReturnValue().setExceptionString("Session does not exist.");
                 log.debug("Didn't find session user");
             }
         }
