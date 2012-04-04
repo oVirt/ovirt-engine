@@ -38,6 +38,7 @@ BuildRequires: unzip
 BuildRequires: openssl-devel
 BuildRequires: gcc-c++
 BuildRequires: make
+BuildRequires: maven
 Requires: java-1.6.0-openjdk
 Requires: policycoreutils-python
 Requires: cracklib-python
@@ -405,6 +406,11 @@ cp -rpf %{_datadir}/vdsm-bootstrap/* %{_engineeardir}/components.war/vds/ &> /de
 %config(noreplace) %{_sysconfdir}/%{name}/notifier/notifier.conf
 
 %changelog
+* Wed Apr 04 2012 Stephen Gordon <sgordon@redhat.com> - 3.1.0-2
+- The ovirt-engine spec file did not previously contain a BuildRequires
+  statement for the maven package. As a result in mock environments the
+  build failed with an error when attempting to call the 'mvn' binary -
+  BZ#807761.
 * Wed Jan 04 2012 Ronen Angluste <ranglust@redhat.com> - 3.1.0-1
 - Adjust code for Jboss AS 7.1
 * Sun Dec 11 2011 Ronen Angluster <ranglust@redhat.com> - 3.1.0-1
