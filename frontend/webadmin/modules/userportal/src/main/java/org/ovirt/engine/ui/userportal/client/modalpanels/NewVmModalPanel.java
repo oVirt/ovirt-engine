@@ -319,12 +319,40 @@ public class NewVmModalPanel extends NonDraggableModalPanel {
 			final SelectBoxListModelBinded usbPolicyBox = new SelectBoxListModelBinded(false, "USB Policy", userVmModel.getUsbPolicy(), UsbPolicy.class);		
 			
 			final SelectBoxListModelBinded monitorsBox = new SelectBoxListModelBinded(false, "Monitors", userVmModel.getNumOfMonitors(), Integer.class);		
-			
+
+			final CheckboxItemModelBinded allowConsoleReconnectCheckBox = new CheckboxItemModelBinded(
+                "Allow a user to connect to the console of " +
+                "<br/><span class=\"checkBoxWrapIndent\">" +
+                "this VM when a different user has also " +
+                "</span>" +
+                "<br/><span class=\"checkBoxWrapIndent\">" +
+                "connected since the last boot. Note: With " +
+                "</span>" +
+                "<br/><span class=\"checkBoxWrapIndent\">" +
+                "this option selected, the VM will not need " +
+                "</span>" +
+                "<br/><span class=\"checkBoxWrapIndent\">" +
+                "to be rebooted before allowing a new user " +
+                "</span>" +
+                "<br/><span class=\"checkBoxWrapIndent\">" +
+                "to connect. This may result in exposure of " +
+                "</span>" +
+                "<br/><span class=\"checkBoxWrapIndent\">" +
+                "the previous user's session under certain " +
+                "</span>" +
+                "<br/><span class=\"checkBoxWrapIndent\">" +
+                "conditions." +
+                "</span>",
+	             userVmModel.getAllowConsoleReconnect()
+	        );
+
 			DynamicForm f;
-			if (!isServer)
-			    f = FormConstructor.constructForm(protocolBox, usbPolicyBox, monitorsBox);
-			else
-			    f = FormConstructor.constructForm(protocolBox, usbPolicyBox);
+			if (!isServer) {
+			    f = FormConstructor.constructForm(protocolBox, usbPolicyBox, monitorsBox, allowConsoleReconnectCheckBox);
+			}
+			else {
+ 			    f = FormConstructor.constructForm(protocolBox, usbPolicyBox);
+			}
 			    
 			addChild(f);
 			

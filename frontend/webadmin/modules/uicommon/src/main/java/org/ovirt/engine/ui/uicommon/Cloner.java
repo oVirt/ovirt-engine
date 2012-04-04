@@ -114,6 +114,7 @@ public final class Cloner
 		vm.setfail_back(instance.getfail_back());
 		vm.setguest_cur_user_id(instance.getguest_cur_user_id());
 		vm.setguest_cur_user_name(instance.getguest_cur_user_name());
+		vm.setConsoleUserId(instance.getConsoleUserId());
 		vm.setguest_last_login_time(instance.getguest_last_login_time());
 		vm.setguest_last_logout_time(instance.getguest_last_logout_time());
 		vm.setguest_os(instance.getguest_os());
@@ -141,6 +142,7 @@ public final class Cloner
 		// options: use calculation here in cloner, or still wrap this in VM instead of serializing it
 		//vm.num_of_cpus = instance.num_of_cpus;
 		vm.setnum_of_monitors(instance.getnum_of_monitors());
+        vm.setAllowConsoleReconnect(instance.getAllowConsoleReconnect());
 		vm.setnum_of_sockets(instance.getnum_of_sockets());
 		vm.setorigin(instance.getorigin());
 		vm.setVmPauseStatus(instance.getVmPauseStatus());
@@ -340,6 +342,7 @@ public final class Cloner
 		obj.setname(instance.getname());
 		obj.setnice_level(instance.getnice_level());
 		obj.setnum_of_monitors(instance.getnum_of_monitors());
+		obj.setAllowConsoleReconnect(instance.getAllowConsoleReconnect());
 		obj.setnum_of_sockets(instance.getnum_of_sockets());
 		obj.setoperation_mode(instance.getoperation_mode());
 		obj.setstatus(instance.getstatus());
@@ -377,6 +380,7 @@ public final class Cloner
 		obj.setDiskSize(instance.getDiskSize());
 		obj.setnice_level(instance.getnice_level());
 		obj.setnum_of_monitors(instance.getnum_of_monitors());
+		obj.setAllowConsoleReconnect(instance.getAllowConsoleReconnect());
 		obj.setnum_of_sockets(instance.getnum_of_sockets());
 		obj.settime_zone(instance.gettime_zone());
 		obj.setusb_policy(instance.getusb_policy());

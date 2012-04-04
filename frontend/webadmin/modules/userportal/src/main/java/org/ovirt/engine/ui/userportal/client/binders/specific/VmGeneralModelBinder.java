@@ -28,7 +28,8 @@ public class VmGeneralModelBinder implements EntityModelBinder {
 		r.setAttribute("definedMemory", model.getDefinedMemory());
 		r.setAttribute("minAllocatedMemory", model.getMinAllocatedMemory());		
 		r.setAttribute("cpuCores", model.getCpuInfo());
-		r.setAttribute("monitors", model.getMonitorCount());		
+		r.setAttribute("monitors", model.getMonitorCount());	
+		r.setAttribute("allowConsoleReconnect", model.getAllowConsoleReconnect());
 		r.setAttribute("usbPolicy", model.getUsbPolicy());			
 		r.setAttribute("highlyAvailable", model.getIsHighlyAvailable());
 		r.setAttribute("priority", model.getPriority());
@@ -41,6 +42,7 @@ public class VmGeneralModelBinder implements EntityModelBinder {
 		
 		// Set hidden property for hidable items
 		r.setAttribute("monitors_hidden", !model.getHasMonitorCount());
+		r.setAttribute("allowConsoleReconnect_hidden", !model.getHasAllowConsoleReconnectt());
 		r.setAttribute("usbPolicy_hidden", !model.getHasUsbPolicy());
 		r.setAttribute("highlyAvailable_hidden", !model.getHasHighlyAvailable());
 		r.setAttribute("priority_hidden", !model.getHasPriority());		

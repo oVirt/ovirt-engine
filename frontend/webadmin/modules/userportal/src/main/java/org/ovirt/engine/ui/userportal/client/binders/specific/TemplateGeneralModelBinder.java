@@ -32,6 +32,7 @@ public class TemplateGeneralModelBinder implements EntityModelBinder {
 		r.setAttribute("definedMemory", UserPortalTools.getSizeString(template.getmem_size_mb()));
 		r.setAttribute("cpuCores", model.getCpuInfo());
 		r.setAttribute("monitors", template.getnum_of_monitors());		
+		r.setAttribute("allowConsoleReconnect", template.getAllowConsoleReconnect());		
 		r.setAttribute("usbPolicy", template.getusb_policy());			
 		r.setAttribute("highlyAvailable", template.getauto_startup());
 		r.setAttribute("origin", UserPortalTools.getTranslatedEnum(template.getorigin()));

@@ -161,6 +161,20 @@ public class VmGeneralModel extends EntityModel
 		}
 	}
 
+	private boolean allowConsoleReconnect;
+	public boolean getAllowConsoleReconnect()
+	{
+		return allowConsoleReconnect;
+	}
+	public void setAllowConsoleReconnect(boolean value)
+	{
+		if (allowConsoleReconnect != value)
+		{
+			allowConsoleReconnect = value;
+			OnPropertyChanged(new PropertyChangedEventArgs("AllowConsoleReconnect"));
+		}
+	}
+
 	private boolean hasMonitorCount;
 	public boolean getHasMonitorCount()
 	{
@@ -174,6 +188,21 @@ public class VmGeneralModel extends EntityModel
 			OnPropertyChanged(new PropertyChangedEventArgs("HasMonitorCount"));
 		}
 	}
+
+	private boolean hasAllowConsoleReconnect;
+	public boolean getHasAllowConsoleReconnectt()
+	{
+		return hasAllowConsoleReconnect;
+	}
+	public void setHasAllowConsoleReconnect(boolean value)
+	{
+		if (hasAllowConsoleReconnect != value)
+		{
+			hasAllowConsoleReconnect = value;
+			OnPropertyChanged(new PropertyChangedEventArgs("HasAllowConsoleReconnect"));
+		}
+	}
+
 
 	private boolean hasDomain;
 	public boolean getHasDomain()
@@ -500,6 +529,9 @@ public class VmGeneralModel extends EntityModel
 
 		setHasMonitorCount(vm.getvm_type() == VmType.Desktop);
 		setMonitorCount(vm.getnum_of_monitors());
+
+		setHasAllowConsoleReconnect(vm.getvm_type() == VmType.Desktop);
+		setAllowConsoleReconnect(vm.getAllowConsoleReconnect());
 
 		setHasUsbPolicy(true);
 		translator = EnumTranslator.Create(UsbPolicy.class);
