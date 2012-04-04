@@ -13,6 +13,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IpAddressValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.SubnetMaskValidation;
 
 @SuppressWarnings("unused")
 public class HostInterfaceModel extends EntityModel
@@ -291,7 +292,7 @@ public class HostInterfaceModel extends EntityModel
         if (getIsStaticAddress() && getNetwork().getSelectedItem() != null && !net.getId().equals(NGuid.Empty))
         {
             getAddress().ValidateEntity(new IValidation[] { new NotEmptyValidation(), new IpAddressValidation() });
-            getSubnet().ValidateEntity(new IValidation[] { new NotEmptyValidation(), new IpAddressValidation() });
+            getSubnet().ValidateEntity(new IValidation[] { new NotEmptyValidation(), new SubnetMaskValidation() });
         }
 
         return getNetwork().getIsValid() && getAddress().getIsValid() && getSubnet().getIsValid();

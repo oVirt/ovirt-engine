@@ -8,6 +8,7 @@ import org.ovirt.engine.ui.uicommonweb.validation.IpAddressValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.RegexValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.SubnetMaskValidation;
 
 @SuppressWarnings("unused")
 public class NetworkModel extends Model
@@ -158,7 +159,7 @@ public class NetworkModel extends Model
 
         getAddress().ValidateEntity(new IValidation[] { new IpAddressValidation() });
 
-        getSubnet().ValidateEntity(new IValidation[] { new IpAddressValidation() });
+        getSubnet().ValidateEntity(new IValidation[] { new SubnetMaskValidation() });
 
         getGateway().ValidateEntity(new IValidation[] { new IpAddressValidation() });
 
