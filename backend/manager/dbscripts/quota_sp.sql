@@ -70,23 +70,25 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
-Create or replace FUNCTION GetQuotaVdsGroupByVdsGroupGuid(v_vds_group_id UUID, v_id UUID)
+Create or replace FUNCTION GetQuotaVdsGroupByVdsGroupGuid(v_vds_group_id UUID, v_id UUID, v_allow_empty BOOLEAN)
 RETURNS SETOF quota_vds_group_view
    AS $procedure$
 BEGIN
-   RETURN QUERY SELECT COALESCE(q_vds_view.quota_vds_group_id, q_g_view.quota_id) as quota_vds_group_id,
-   q_g_view.quota_id as quota_id,
-   q_vds_view.vds_group_id as vds_group_id,
-   q_vds_view.vds_group_name as vds_group_name,
-   COALESCE(q_vds_view.virtual_cpu,q_g_view.virtual_cpu) as virtual_cpu,
-   COALESCE(q_vds_view.virtual_cpu_usage, q_g_view.virtual_cpu_usage) as virtual_cpu_usage,
-   COALESCE(q_vds_view.mem_size_mb,q_g_view.mem_size_mb) as mem_size_mb,
-   COALESCE(q_vds_view.mem_size_mb_usage, q_g_view.mem_size_mb_usage) as mem_size_mb_usage,
-   q_g_view.is_default_quota
-   FROM quota_global_view q_g_view LEFT OUTER JOIN
-    quota_vds_group_view q_vds_view on q_g_view.quota_id = q_vds_view.quota_id
-    AND (v_vds_group_id = q_vds_view.vds_group_id or v_vds_group_id IS NULL)
-   WHERE q_g_view.quota_id = v_id;
+   RETURN QUERY SELECT *
+   FROM (SELECT COALESCE(q_vds_view.quota_vds_group_id, q_g_view.quota_id) as quota_vds_group_id,
+                q_g_view.quota_id as quota_id,
+                q_vds_view.vds_group_id as vds_group_id,
+                q_vds_view.vds_group_name as vds_group_name,
+                COALESCE(q_vds_view.virtual_cpu,q_g_view.virtual_cpu) as virtual_cpu,
+                COALESCE(q_vds_view.virtual_cpu_usage, q_g_view.virtual_cpu_usage) as virtual_cpu_usage,
+                COALESCE(q_vds_view.mem_size_mb,q_g_view.mem_size_mb) as mem_size_mb,
+                COALESCE(q_vds_view.mem_size_mb_usage, q_g_view.mem_size_mb_usage) as mem_size_mb_usage,
+                q_g_view.is_default_quota
+         FROM   quota_global_view q_g_view 
+         LEFT OUTER JOIN quota_vds_group_view q_vds_view ON q_g_view.quota_id = q_vds_view.quota_id
+         AND   (v_vds_group_id = q_vds_view.vds_group_id OR v_vds_group_id IS NULL)
+         WHERE q_g_view.quota_id = v_id) sub
+   WHERE v_allow_empty OR virtual_cpu IS NOT NULL OR mem_size_mb IS NOT NULL;
 END; $procedure$
 LANGUAGE plpgsql;
 

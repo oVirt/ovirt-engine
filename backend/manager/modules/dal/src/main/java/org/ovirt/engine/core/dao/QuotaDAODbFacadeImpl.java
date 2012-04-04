@@ -80,8 +80,26 @@ public class QuotaDAODbFacadeImpl extends BaseDAODbFacade implements QuotaDAO {
      */
     @Override
     public List<QuotaVdsGroup> getQuotaVdsGroupByVdsGroupGuid(Guid vdsGroupId, Guid quotaId) {
+        return getQuotaVdsGroupByVdsGroupGuid(vdsGroupId, quotaId, true);
+    }
+
+    /**
+     * Get specific limitation for <code>VdsGroup</code>.
+     *
+     * @param vdsGroupId
+     *            - The vds group id, if null returns all the vds group limitations in the storage pool.
+     * @param quotaId
+     *            - The <code>Quota</code> id
+     * @param allowEmpty
+     *            - Whether to return empty quotas or not
+     * @return List of QuotaStorage
+     */
+    @Override
+    public List<QuotaVdsGroup> getQuotaVdsGroupByVdsGroupGuid(Guid vdsGroupId, Guid quotaId, boolean allowEmpty) {
         MapSqlParameterSource parameterSource =
-                createQuotaIdParameterMapper(quotaId).addValue("vds_group_id", vdsGroupId);
+                createQuotaIdParameterMapper(quotaId)
+                        .addValue("vds_group_id", vdsGroupId)
+                        .addValue("allow_empty", allowEmpty);
         List<QuotaVdsGroup> quotaVdsGroupList = getCallsHandler().executeReadList("GetQuotaVdsGroupByVdsGroupGuid",
                 getVdsGroupQuotaResultSet(),
                 parameterSource);
@@ -192,7 +210,7 @@ public class QuotaDAODbFacadeImpl extends BaseDAODbFacade implements QuotaDAO {
      */
     @Override
     public List<QuotaVdsGroup> getQuotaVdsGroupByQuotaGuidWithGeneralDefault(Guid quotaId) {
-        return getQuotaVdsGroupByVdsGroupGuid(null, quotaId);
+        return getQuotaVdsGroupByVdsGroupGuid(null, quotaId, false);
     }
 
     @Override

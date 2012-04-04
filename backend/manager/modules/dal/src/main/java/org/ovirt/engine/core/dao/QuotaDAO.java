@@ -52,6 +52,19 @@ public interface QuotaDAO extends DAO, SearchDAO<Quota> {
      *            - The vds group id, if null returns all the vds group limitations in the storage pool.
      * @param quotaId
      *            - The <code>Quota</code> id
+     * @param allowEmpty
+     *            - Whether to return empty quotas or not
+     * @return List of QuotaStorage
+     */
+    public List<QuotaVdsGroup> getQuotaVdsGroupByVdsGroupGuid(Guid vdsGroupId, Guid quotaId, boolean allowEmpty);
+
+    /**
+     * Get specific limitation for <code>VdsGroup</code>.
+     *
+     * @param vdsGroupId
+     *            - The vds group id, if null returns all the vds group limitations in the storage pool.
+     * @param quotaId
+     *            - The <code>Quota</code> id
      * @return List of QuotaStorage
      */
     public List<QuotaVdsGroup> getQuotaVdsGroupByVdsGroupGuid(Guid vdsGroupId, Guid quotaId);

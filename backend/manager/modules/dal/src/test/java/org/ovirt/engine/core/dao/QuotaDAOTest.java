@@ -276,6 +276,18 @@ public class QuotaDAOTest extends BaseDAOTestCase {
     }
 
     /**
+     * Asserts that when {@link QuotaDAO#getQuotaVdsGroupByQuotaGuidWithGeneralDefault(Guid)} is called
+     * with an empty quota, no vds quotas are returned
+     */
+    @Test
+    public void testQuotaVdsGroupByQuotaGuidWithGeneralDefaultWithEmpty() {
+        List<QuotaVdsGroup> quotaVdsGroupList =
+                dao.getQuotaVdsGroupByQuotaGuidWithGeneralDefault(FixturesTool.QUOTA_EMPTY);
+        assertNotNull(quotaVdsGroupList);
+        assertEquals("wrong number of quotas returned", 0, quotaVdsGroupList.size());
+    }
+
+    /**
      * Asserts that when {@link QuotaDAO#getQuotaStorageByQuotaGuidWithGeneralDefault(Guid)} is called
      * with a specific quota, all the relevant storages are returned
      */
