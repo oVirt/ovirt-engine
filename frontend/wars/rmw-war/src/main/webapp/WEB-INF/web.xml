@@ -24,6 +24,10 @@
 			<servlet-name>RedirectServlet</servlet-name>
 			<servlet-class>org.ovirt.engine.core.redirect.RedirectServlet</servlet-class>
 		</servlet>
+		<servlet>
+			<servlet-name>ValidateSession</servlet-name>
+			<servlet-class>org.ovirt.engine.core.validate.ValidateSession</servlet-class>
+		</servlet>
 
 		<!-- Access the new way -->
 	    <servlet-mapping>
@@ -46,6 +50,10 @@
 	    <servlet-mapping>
 	      <servlet-name>RedirectServlet</servlet-name>
 	      <url-pattern>/RedirectServlet</url-pattern>
+	    </servlet-mapping>
+	    <servlet-mapping>
+	      <servlet-name>ValidateSession</servlet-name>
+	      <url-pattern>/ValidateSession</url-pattern>
 	    </servlet-mapping>
 
         <!-- Define, in order of preference, which file to show when no filename is defined in the path -->

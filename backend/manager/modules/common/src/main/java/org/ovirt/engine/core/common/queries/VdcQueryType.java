@@ -167,6 +167,7 @@ public enum VdcQueryType implements Serializable {
     IsLicenseSupported,
     RegisterVds,
     CheckDBConnection,
+    ValidateSession,
 
     // License queries
     GetLicenseProperties,

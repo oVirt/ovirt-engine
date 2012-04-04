@@ -513,6 +513,7 @@ public class Backend implements BackendInternal, BackendRemote {
         case GetLicenseProperties:
         case RegisterVds:
         case CheckDBConnection:
+        case ValidateSession:
             return runQueryImpl(actionType, parameters, false);
         case GetConfigurationValue: {
             GetConfigurationValueParameters configParameters = (GetConfigurationValueParameters) parameters;
