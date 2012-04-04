@@ -128,7 +128,9 @@ public class VmDeviceCommonUtils {
                     VmDeviceType.INTERFACE.getName())
                     && device.getDevice().equals(
                             VmDeviceType.BRIDGE.getName())) {
-                device.setBootOrder(++bootOrder);
+                if (device.getIsPlugged()) {
+                    device.setBootOrder(++bootOrder);
+                }
             }
         }
         return bootOrder;
@@ -147,7 +149,9 @@ public class VmDeviceCommonUtils {
                     .equals(VmDeviceType.DISK.getName())
                     && device.getDevice().equals(
                             VmDeviceType.CDROM.getName())) {
-                device.setBootOrder(++bootOrder);
+                if (device.getIsPlugged()) {
+                    device.setBootOrder(++bootOrder);
+                }
                 break; // only one CD is currently supported.
             }
         }
@@ -275,5 +279,4 @@ public class VmDeviceCommonUtils {
         sb.append(" ");
         return sb.toString();
     }
-
 }

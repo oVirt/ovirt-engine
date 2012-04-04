@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.action.UpdateVmDiskParameters;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -69,6 +70,10 @@ public class DetachDiskFromVmCommand<T extends UpdateVmDiskParameters> extends A
         diskImage.setinternal_drive_mapping(null);
         getDiskImageDao().update(diskImage);
         getVmDeviceDao().remove(vmDevice.getId());
+        // update cached image
+        VmHandler.updateDisksFromDb(getVm());
+        // update vm device boot order
+        VmDeviceUtils.updateBootOrderInVmDevice(getVm().getStaticData());
         setSucceeded(true);
     }
 }

@@ -1,5 +1,9 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.action.UpdateVmDiskParameters;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -62,6 +66,12 @@ public class AttachDiskToVmCommand<T extends UpdateVmDiskParameters> extends Abs
         diskImage.setDiskInterface(getParameters().getDiskInfo().getDiskInterface());
         getDiskImageDao().update(diskImage);
         getVmDeviceDao().save(vmDevice);
+        // update cached image
+        List<DiskImage> imageList = new ArrayList<DiskImage>();
+        imageList.add(diskImage);
+        VmHandler.updateDisksForVm(getVm(), imageList);
+        // update vm device boot order
+        VmDeviceUtils.updateBootOrderInVmDevice(getVm().getStaticData());
         if (Boolean.TRUE.equals(getParameters().getDiskInfo().getPlugged()) && getVm().getstatus() != VMStatus.Down) {
             performPlugCommnad(VDSCommandType.HotPlugDisk, diskImage, vmDevice);
         }

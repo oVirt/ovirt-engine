@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.HotPlugDiskToVmParameters;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -8,6 +9,8 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.dal.VdcBllMessages;
+import org.ovirt.engine.core.utils.transaction.TransactionMethod;
+import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute
 public class HotPlugDiskToVmCommand<T extends HotPlugDiskToVmParameters> extends AbstractDiskVmCommand<T> {
@@ -66,7 +69,17 @@ public class HotPlugDiskToVmCommand<T extends HotPlugDiskToVmParameters> extends
             performPlugCommnad(getPlugAction(), diskImage, oldVmDevice);
         }
         oldVmDevice.setIsPlugged(!oldVmDevice.getIsPlugged());
-        getVmDeviceDao().update(oldVmDevice);
+        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
+            @Override
+            public Void runInTransaction() {
+                getVmDeviceDao().update(oldVmDevice);
+                // update cached image
+                VmHandler.updateDisksFromDb(getVm());
+                // update vm device boot order
+                VmDeviceUtils.updateBootOrderInVmDevice(getVm().getStaticData());
+                return null;
+            }
+        });
         setSucceeded(true);
     }
 

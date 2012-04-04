@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.Arrays;
 import java.util.List;
 
+import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.PermissionSubject;
 import org.ovirt.engine.core.common.action.UpdateVmDiskParameters;
@@ -154,6 +155,10 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
                 _oldDisk.setDiskAlias(getParameters().getDiskInfo().getDiskAlias());
                 DbFacade.getInstance().getBaseDiskDao().update(_oldDisk);
                 getDiskImageDao().update(_oldDisk);
+                // update cached image
+                VmHandler.updateDisksFromDb(getVm());
+                // update vm device boot order
+                VmDeviceUtils.updateBootOrderInVmDevice(getVm().getStaticData());
                 setSucceeded(UpdateVmInSpm(getVm().getstorage_pool_id(),
                         Arrays.asList(getVm())));
                 return null;

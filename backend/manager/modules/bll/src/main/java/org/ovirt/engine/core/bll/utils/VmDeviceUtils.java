@@ -246,6 +246,27 @@ public class VmDeviceUtils {
     }
 
     /**
+     * Updates VM boot order in vm device according to the BootSequence enum value.
+     * @param vmBase
+     */
+    public static void updateBootOrderInVmDevice(VmBase vmBase) {
+        if (vmBase instanceof VmStatic) {
+            List<VmDevice> devices = dao.getVmDeviceByVmId(vmBase.getId());
+            // reset current boot order
+            for (VmDevice device: devices) {
+                device.setBootOrder(0);
+            }
+            VM vm = DbFacade.getInstance().getVmDAO().get(vmBase.getId());
+            boolean isOldCluster = VmDeviceCommonUtils.isOldClusterVersion(vm.getvds_group_compatibility_version());
+            VmDeviceCommonUtils.updateVmDevicesBootOrder(vmBase, devices, vmBase.getdefault_boot_sequence(), isOldCluster);
+            // update boot order in vm device
+            for (VmDevice device : devices) {
+                dao.update(device);
+            }
+        }
+    }
+
+    /**
      * updates existing VM CD ROM in vm_device
      *
      * @param oldVmBase
@@ -279,28 +300,6 @@ public class VmDeviceUtils {
             dao.save(cd);
         }
     }
-
-    /**
-     * Updates VM boot order in vm device according to the BootSequence enum value.
-     * @param vmBase
-     */
-    private static void updateBootOrderInVmDevice(VmBase vmBase) {
-        if (vmBase instanceof VmStatic) {
-            List<VmDevice> devices = dao.getVmDeviceByVmId(vmBase.getId());
-            // reset current boot order
-            for (VmDevice device: devices) {
-                device.setBootOrder(0);
-            }
-            VM vm = DbFacade.getInstance().getVmDAO().get(vmBase.getId());
-            boolean isOldCluster = VmDeviceCommonUtils.isOldClusterVersion(vm.getvds_group_compatibility_version());
-            VmDeviceCommonUtils.updateVmDevicesBootOrder(vmBase, devices, vmBase.getdefault_boot_sequence(), isOldCluster);
-            // update boot order in vm device
-            for (VmDevice device : devices) {
-                dao.update(device);
-            }
-        }
-    }
-
 
     /**
      * updates new/existing VM video cards in vm device
