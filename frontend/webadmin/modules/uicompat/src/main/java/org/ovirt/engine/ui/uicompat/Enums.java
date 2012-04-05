@@ -691,6 +691,16 @@ public interface Enums extends ConstantsWithLookup {
     String ActionGroup___CREATE_GLUSTER_VOLUME();
     String ActionGroup___MANIPULATE_GLUSTER_VOLUME();
 
+    String ActionGroup___CREATE_DISK();
+
+    String ActionGroup___ATTACH_DISK();
+
+    String ActionGroup___EDIT_DISK_PROPERTIES();
+
+    String ActionGroup___CONFIGURE_DISK_STORAGE();
+
+    String ActionGroup___DELETE_DISK();
+
     String NonOperationalReason___NONE();
 
     String NonOperationalReason___GENERAL();

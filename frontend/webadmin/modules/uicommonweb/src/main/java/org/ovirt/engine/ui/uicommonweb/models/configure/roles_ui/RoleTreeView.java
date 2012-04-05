@@ -96,6 +96,11 @@ public class RoleTreeView
         array.add(ActionGroup.DELETE_VM_POOL);
         array.add(ActionGroup.VM_POOL_BASIC_OPERATIONS);
         array.add(ActionGroup.MANIPULATE_PERMISSIONS);
+        array.add(ActionGroup.CREATE_DISK);
+        array.add(ActionGroup.ATTACH_DISK);
+        array.add(ActionGroup.DELETE_DISK);
+        array.add(ActionGroup.CONFIGURE_DISK_STORAGE);
+        array.add(ActionGroup.EDIT_DISK_PROPERTIES);
         return array;
 
     }
@@ -224,7 +229,24 @@ public class RoleTreeView
                                                                 new RoleNode(ActionGroup.DELETE_VM_POOL,
                                                                         "Allow to delete VM-Pool"),
                                                                 new RoleNode(ActionGroup.EDIT_VM_POOL_CONFIGURATION,
-                                                                        "Allow to change properties of the VM-Pool") }) }) });
+                                                                        "Allow to change properties of the VM-Pool") }) }),
+
+                                new RoleNode("Disk",
+                                        new RoleNode[] {
+                                                new RoleNode("Provisioning Operations",
+                                                        "note: Permissions containig these operations should be associated with Disk or Storage Domain Object (or above)",
+                                                        new RoleNode[] {
+                                                                new RoleNode(ActionGroup.CREATE_DISK,
+                                                                        "Allow to create Disk"),
+                                                                new RoleNode(ActionGroup.DELETE_DISK,
+                                                                        "Allow to delete Disk"),
+                                                                new RoleNode(ActionGroup.CONFIGURE_DISK_STORAGE,
+                                                                        "Allow to move Disk to another Storage Domain"),
+                                                                new RoleNode(ActionGroup.ATTACH_DISK,
+                                                                        "Allow to attach Disk to a VM"),
+                                                                new RoleNode(ActionGroup.EDIT_DISK_PROPERTIES,
+                                                                        "Allow to change properties of the Disk") }) }) });
+
         return tree;
     }
 }
