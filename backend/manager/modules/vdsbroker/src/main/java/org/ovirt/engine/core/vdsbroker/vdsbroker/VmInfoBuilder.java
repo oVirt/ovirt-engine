@@ -335,7 +335,9 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                 for (XmlRpcStruct struct : devices) {
                     Object o = struct.getItem(VdsProperties.SpecParams);
                     if (o instanceof Map<?, ?>) {
-                        if (StringUtils.map2String((Map<String, String>) o).contains(vmDevice.getDeviceId().toString())) {
+                        if (vmDevice.getBootOrder() > 0
+                                && StringUtils.map2String((Map<String, String>) o).contains(vmDevice.getDeviceId()
+                                        .toString())) {
                             struct.add(VdsProperties.BootOrder, String.valueOf(vmDevice.getBootOrder()));
                             break;
                         }
