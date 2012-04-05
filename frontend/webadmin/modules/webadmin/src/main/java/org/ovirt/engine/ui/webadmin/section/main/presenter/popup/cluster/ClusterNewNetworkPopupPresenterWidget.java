@@ -17,16 +17,16 @@ public class ClusterNewNetworkPopupPresenterWidget extends AbstractModelBoundPop
         /**
          * Set the name of the data center.
          *
-         * @param name the name of the data center that should
-         *   be displayed in the notes area
+         * @param name
+         *            the name of the data center that should be displayed in the notes area
          */
         void setDataCenterName(String name);
 
         /**
          * Tell the view to enable/disable the text box for the VLAN tag.
          *
-         * @param flag <code>true</code> to enable, <code>false</code> to
-         *   disable
+         * @param flag
+         *            <code>true</code> to enable, <code>false</code> to disable
          */
         void setVLanTagEnabled(boolean flag);
     }
@@ -48,30 +48,28 @@ public class ClusterNewNetworkPopupPresenterWidget extends AbstractModelBoundPop
 
         // Listen for changes in the VLAN enable/disable status in order
         // to enable/disable the VLAN tag field accordingly:
-        model.getHasVLanTag().getEntityChangedEvent().addListener(
-                new IEventListener() {
-                    public void eventRaised(Event ev, Object sender, EventArgs args) {
-                        EntityModel hasVLanTagEntity = (EntityModel) sender;
-                        Boolean hasVLanTagValue = (Boolean) hasVLanTagEntity.getEntity();
-                        getView().setVLanTagEnabled(hasVLanTagValue);
-                    }
-                }
-                );
+        model.getHasVLanTag().getEntityChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                EntityModel hasVLanTagEntity = (EntityModel) sender;
+                Boolean hasVLanTagValue = (Boolean) hasVLanTagEntity.getEntity();
+                getView().setVLanTagEnabled(hasVLanTagValue);
+            }
+        });
 
         // Listen for changes in the properties of the model in order
         // to update the view accordingly:
-        model.getPropertyChangedEvent().addListener(
-                new IEventListener() {
-                    public void eventRaised(Event ev, Object sender, EventArgs args) {
-                        if (args instanceof PropertyChangedEventArgs) {
-                            PropertyChangedEventArgs changedArgs = (PropertyChangedEventArgs) args;
-                            if ("DataCenterName".equals(changedArgs.PropertyName)) {
-                                getView().setDataCenterName(model.getDataCenterName());
-                            }
-                        }
+        model.getPropertyChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                if (args instanceof PropertyChangedEventArgs) {
+                    PropertyChangedEventArgs changedArgs = (PropertyChangedEventArgs) args;
+                    if ("DataCenterName".equals(changedArgs.PropertyName)) {
+                        getView().setDataCenterName(model.getDataCenterName());
                     }
                 }
-                );
+            }
+        });
     }
 
 }

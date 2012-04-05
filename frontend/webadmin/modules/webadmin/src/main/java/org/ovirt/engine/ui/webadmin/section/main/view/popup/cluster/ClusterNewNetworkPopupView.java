@@ -40,6 +40,14 @@ public class ClusterNewNetworkPopupView extends AbstractModelBoundPopupView<Clus
     EntityModelCheckBoxEditor isStpEnabledEditor;
 
     @UiField
+    @Path(value = "isVmNetwork.entity")
+    EntityModelCheckBoxEditor isVmNetworkEditor;
+
+    @UiField
+    @Path(value = "mtu.entity")
+    EntityModelTextBoxEditor mtuEditor;
+
+    @UiField
     @Path(value = "hasVLanTag.entity")
     EntityModelCheckBoxEditor hasVLanTagEditor;
 
@@ -64,6 +72,8 @@ public class ClusterNewNetworkPopupView extends AbstractModelBoundPopupView<Clus
         descriptionEditor.setLabel(constants.clusterNewNetworkDescriptionLabel());
         hasVLanTagEditor.setLabel(constants.clusterNewNetworkPopupVlanEnabledLabel());
         isStpEnabledEditor.setLabel(constants.clusterNewNetworkPopupStpEnabledLabel());
+        isVmNetworkEditor.setLabel(constants.clusterNewNetworkPopupVmNetworkLabel());
+        mtuEditor.setLabel(constants.clusterNewNetworkPopupMtuLabel());
         vLanTagEditor.setLabel(constants.clusterNewNetworkPopupVlanIdLabel());
     }
 
@@ -91,4 +101,5 @@ public class ClusterNewNetworkPopupView extends AbstractModelBoundPopupView<Clus
     public void setVLanTagEnabled(boolean flag) {
         vLanTagEditor.setEnabled(flag);
     }
+
 }

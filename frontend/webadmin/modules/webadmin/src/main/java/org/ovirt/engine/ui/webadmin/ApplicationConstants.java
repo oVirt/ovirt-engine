@@ -121,6 +121,12 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("STP support")
     String clusterNewNetworkPopupStpEnabledLabel();
 
+    @DefaultStringValue("VM network")
+    String clusterNewNetworkPopupVmNetworkLabel();
+
+    @DefaultStringValue("MTU")
+    String clusterNewNetworkPopupMtuLabel();
+
     @DefaultStringValue("Enable VLAN tagging")
     String clusterNewNetworkPopupVlanEnabledLabel();
 
