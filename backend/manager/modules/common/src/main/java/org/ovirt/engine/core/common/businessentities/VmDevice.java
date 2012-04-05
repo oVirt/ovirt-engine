@@ -250,4 +250,30 @@ public class VmDevice extends IVdcQueryable implements BusinessEntity<VmDeviceId
 
         return true;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("VmId=");
+        sb.append(id.getVmId());
+        sb.append(",DeviceId=");
+        sb.append(id.getDeviceId());
+        sb.append(",Device=");
+        sb.append(getDevice());
+        sb.append(",Type=");
+        sb.append(getType());
+        sb.append(",BootOrder=");
+        sb.append(getBootOrder());
+        sb.append(",SpecParams=");
+        sb.append(getSpecParams());
+        sb.append(",Address=");
+        sb.append(getAddress());
+        sb.append(",IsManaged=");
+        sb.append(getIsManaged());
+        sb.append(",IsPlugged=");
+        sb.append(getIsPlugged());
+        sb.append(",IsReadOnly=");
+        sb.append(getIsReadOnly());
+        return sb.toString();
+    }
 }
