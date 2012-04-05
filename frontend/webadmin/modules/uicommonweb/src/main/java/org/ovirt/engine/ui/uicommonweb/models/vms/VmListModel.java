@@ -2472,11 +2472,8 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
                                     new AddVmFromTemplateParameters(vmListModel.getcurrentVm(),
                                             dict, storageDomain.getId());
 
-                            if (!(Boolean) unitVmModel.getDisksAllocationModel().getIsSingleStorageDomain().getEntity())
-                            {
-                                parameters.setDiskInfoDestinationMap(
-                                        unitVmModel.getDisksAllocationModel().getImageToDestinationDomainMap());
-                            }
+                            parameters.setDiskInfoDestinationMap(
+                                    unitVmModel.getDisksAllocationModel().getImageToDestinationDomainMap());
 
                             Frontend.RunAction(VdcActionType.AddVmFromTemplate, parameters,
                                     new IFrontendActionAsyncCallback() {
