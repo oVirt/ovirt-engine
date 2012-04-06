@@ -537,6 +537,13 @@
           <xs:element ref="host_nic_states" minOccurs="0"/>
           <xs:element ref="data_center_states" minOccurs="0"/>
           <xs:element ref="vm_device_types" minOccurs="0"/>
+
+          <!-- Gluster related -->
+          <xs:element ref="gluster_volume_types" minOccurs="0"/>
+          <xs:element ref="transport_types" minOccurs="0"/>
+          <xs:element ref="access_protocols" minOccurs="0"/>
+          <xs:element ref="gluster_volume_states" minOccurs="0"/>
+          <xs:element ref="brick_states" minOccurs="0"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
@@ -2497,4 +2504,145 @@
      <xs:attribute name="rel" type="xs:string"/>
   </xs:complexType>
 
+  <!-- Gluster Types -->
+  <xs:element name="gluster_volume" type="GlusterVolume"/>
+  <xs:complexType name="GlusterVolume">
+    <xs:annotation>
+      <xs:appinfo>
+         <jaxb:class name="GlusterVolume"/>
+      </xs:appinfo>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="BaseResource">
+        <xs:sequence>
+          <xs:element ref="cluster" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="volume_type" type="xs:string" minOccurs="0" maxOccurs="1"/>
+          <xs:element ref="transport_types" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="replica_count" type="xs:unsignedShort" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="stripe_count" type="xs:unsignedShort" minOccurs="0" maxOccurs="1"/>
+          <xs:element ref="bricks" minOccurs="0" maxOccurs="1"/>
+          <xs:element ref="access_protocols" minOccurs="0" maxOccurs="1"/>
+          <xs:element ref="access_control_list" minOccurs="0" maxOccurs="1"/>
+          <xs:element ref="options" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="state" type="xs:string" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="access_control_list" type="AccessControlList"/>
+  <xs:complexType name="AccessControlList">
+    <xs:sequence>
+      <xs:element name="ip" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="AccessControlList"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:element name="gluster_volume_types" type="GlusterVolumeTypes"/>
+  <xs:complexType name="GlusterVolumeTypes">
+    <xs:sequence>
+      <xs:element name="gluster_volume_type" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="GlusterVolumeTypes"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:element name="access_protocols" type="AccessProtocols"/>
+  <xs:complexType name="AccessProtocols">
+    <xs:sequence>
+      <xs:element name="access_protocol" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="AccessProtocols"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:element name="transport_types" type="TransportTypes"/>
+  <xs:complexType name="TransportTypes">
+    <xs:sequence>
+      <xs:element name="transport_type" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="TransportTypes"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:element name="gluster_volume_states" type="GlusterStates"/>
+  <xs:element name="brick_states" type="GlusterStates"/>
+  <xs:complexType name="GlusterStates">
+    <xs:sequence>
+      <xs:element name="state" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="GlusterStates"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:element name="gluster_volumes" type="GlusterVolumes"/>
+  <xs:complexType name="GlusterVolumes">
+    <xs:complexContent>
+      <xs:extension base="BaseResources">
+        <xs:sequence>
+          <xs:annotation>
+            <xs:appinfo>
+                <jaxb:property name="GlusterVolumes"/>
+            </xs:appinfo>
+          </xs:annotation>
+          <xs:element ref="gluster_volume" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="brick" type="GlusterBrick"/>
+  <xs:complexType name="GlusterBrick">
+    <xs:annotation>
+      <xs:appinfo>
+         <jaxb:class name="GlusterBrick"/>
+      </xs:appinfo>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="BaseResource">
+        <xs:sequence>
+          <xs:element name="server_id" type="xs:string" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="brick_dir" type="xs:string" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="state" type="xs:string" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="bricks" type="GlusterBricks"/>
+  <xs:complexType name="GlusterBricks">
+    <xs:complexContent>
+      <xs:extension base="BaseResources">
+        <xs:sequence>
+          <xs:annotation>
+            <xs:appinfo>
+                <jaxb:property name="GlusterBricks"/>
+            </xs:appinfo>
+          </xs:annotation>
+          <xs:element ref="brick" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
 </xs:schema>

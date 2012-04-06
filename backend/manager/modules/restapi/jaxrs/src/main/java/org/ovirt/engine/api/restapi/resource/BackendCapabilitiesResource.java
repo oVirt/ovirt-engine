@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import org.ovirt.engine.api.model.AccessProtocol;
+import org.ovirt.engine.api.model.AccessProtocols;
 import org.ovirt.engine.api.model.BootDevice;
 import org.ovirt.engine.api.model.BootDevices;
 import org.ovirt.engine.api.model.BootProtocol;
@@ -28,6 +30,10 @@ import org.ovirt.engine.api.model.DisplayTypes;
 import org.ovirt.engine.api.model.Features;
 import org.ovirt.engine.api.model.FenceType;
 import org.ovirt.engine.api.model.FenceTypes;
+import org.ovirt.engine.api.model.GlusterState;
+import org.ovirt.engine.api.model.GlusterStates;
+import org.ovirt.engine.api.model.GlusterVolumeType;
+import org.ovirt.engine.api.model.GlusterVolumeTypes;
 import org.ovirt.engine.api.model.HostNICStates;
 import org.ovirt.engine.api.model.HostNonOperationalDetails;
 import org.ovirt.engine.api.model.HostStates;
@@ -59,6 +65,8 @@ import org.ovirt.engine.api.model.StorageTypes;
 import org.ovirt.engine.api.model.TemplateStates;
 import org.ovirt.engine.api.model.TemplateStatus;
 import org.ovirt.engine.api.model.TransparentHugePages;
+import org.ovirt.engine.api.model.TransportType;
+import org.ovirt.engine.api.model.TransportTypes;
 import org.ovirt.engine.api.model.Version;
 import org.ovirt.engine.api.model.VersionCaps;
 import org.ovirt.engine.api.model.VmAffinities;
@@ -95,6 +103,7 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
     private static final Version VERSION_3_1 = new Version() {{ major = 3; minor = 1; }};
     private static Version currentVersion = null;
 
+    @Override
     public Capabilities get() {
     Capabilities caps = new Capabilities();
         VersionCaps current = null;
@@ -132,6 +141,8 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
             addStorageFormatOptions(version, StorageFormat.values());
             addOsTypes(version, OsType.values());
 
+            addGlusterTypesAndStates(version);
+
             //Add States. User can't update States, but he still needs to know which exist.
             addCreationStates(version, CreationStatus.values());
             addStorageDomaintStates(version, StorageDomainStatus.values());
@@ -162,6 +173,16 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
         caps.setSchedulingPolicies(getSchedulingPolicies());
 
         return caps;
+    }
+
+    private void addGlusterTypesAndStates(VersionCaps version) {
+        if (VersionUtils.greaterOrEqual(version, VERSION_3_1)) {
+            addGlusterVolumeTypes(version, GlusterVolumeType.values());
+            addTransportTypes(version, TransportType.values());
+            addAccessProtocols(version, AccessProtocol.values());
+            addGlusterVolumeStates(version, GlusterState.values());
+            addGlusterBrickStates(version, GlusterState.values());
+        }
     }
 
     private Version getCurrentVersion() {
@@ -452,4 +473,39 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
         }
     }
 
+    // Gluster related types and states
+    private void addGlusterVolumeTypes(VersionCaps version, GlusterVolumeType[] types) {
+        version.setGlusterVolumeTypes(new GlusterVolumeTypes());
+        for(GlusterVolumeType type : types) {
+            version.getGlusterVolumeTypes().getGlusterVolumeTypes().add(type.value());
+        }
+    }
+
+    private void addTransportTypes(VersionCaps version, TransportType[] types) {
+        version.setTransportTypes(new TransportTypes());
+        for(TransportType type : types) {
+            version.getTransportTypes().getTransportTypes().add(type.value());
+        }
+    }
+
+    private void addAccessProtocols(VersionCaps version, AccessProtocol[] protocols) {
+        version.setAccessProtocols(new AccessProtocols());
+        for(AccessProtocol type : protocols) {
+            version.getAccessProtocols().getAccessProtocols().add(type.value());
+        }
+    }
+
+    private void addGlusterVolumeStates(VersionCaps version, GlusterState[] states) {
+        version.setGlusterVolumeStates(new GlusterStates());
+        for(GlusterState type : states) {
+            version.getGlusterVolumeStates().getGlusterStates().add(type.value());
+        }
+    }
+
+    private void addGlusterBrickStates(VersionCaps version, GlusterState[] states) {
+        version.setBrickStates(new GlusterStates());
+        for(GlusterState type : states) {
+            version.getBrickStates().getGlusterStates().add(type.value());
+        }
+    }
 }
