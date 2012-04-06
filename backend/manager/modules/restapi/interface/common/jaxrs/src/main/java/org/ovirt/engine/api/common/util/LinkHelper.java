@@ -60,6 +60,8 @@ import org.ovirt.engine.api.model.Url;
 import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.api.model.VmPool;
 import org.ovirt.engine.api.model.VM;
+import org.ovirt.engine.api.model.GlusterVolume;
+import org.ovirt.engine.api.model.GlusterBrick;
 import org.ovirt.engine.api.resource.AssignedNetworkResource;
 import org.ovirt.engine.api.resource.AssignedNetworksResource;
 import org.ovirt.engine.api.resource.AssignedTagResource;
@@ -123,6 +125,10 @@ import org.ovirt.engine.api.resource.DomainGroupResource;
 import org.ovirt.engine.api.resource.DomainGroupsResource;
 import org.ovirt.engine.api.resource.DomainUserResource;
 import org.ovirt.engine.api.resource.DomainUsersResource;
+import org.ovirt.engine.api.resource.gluster.GlusterBricksResource;
+import org.ovirt.engine.api.resource.gluster.GlusterBrickResource;
+import org.ovirt.engine.api.resource.gluster.GlusterVolumesResource;
+import org.ovirt.engine.api.resource.gluster.GlusterVolumeResource;
 
 /**
  * Contains a static addLinks() method which constructs any href attributes
@@ -273,6 +279,12 @@ public class LinkHelper {
 
         map = new ParentToCollectionMap(QuotaResource.class, QuotasResource.class, DataCenter.class);
         TYPES.put(Quota.class, map);
+
+        map = new ParentToCollectionMap(GlusterVolumeResource.class, GlusterVolumesResource.class, Cluster.class);
+        TYPES.put(GlusterVolume.class, map);
+
+        map = new ParentToCollectionMap(GlusterBrickResource.class, GlusterBricksResource.class, GlusterVolume.class);
+        TYPES.put(GlusterBrick.class, map);
     }
 
     /**
