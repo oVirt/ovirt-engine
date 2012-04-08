@@ -4,9 +4,9 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.MockitoAnnotations.initMocks;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
-import static org.powermock.api.mockito.PowerMockito.when;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -17,6 +17,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.utils.VersionSupport;
 import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
@@ -24,20 +25,14 @@ import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.storage_domain_static;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
-import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.VdcBllMessages;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.StorageDomainStaticDAO;
 import org.ovirt.engine.core.dao.StoragePoolDAO;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
-@PrepareForTest({DbFacade.class, Config.class})
-@RunWith(PowerMockRunner.class)
+@RunWith(MockitoJUnitRunner.class)
 public class UpdateStoragePoolCommandTest {
 
     private static final Version VERSION_1_0 = new Version(1, 0);
@@ -45,39 +40,34 @@ public class UpdateStoragePoolCommandTest {
     private static final Version VERSION_1_2 = new Version(1, 2);
     private static final Version VERSION_2_0 = new Version(2, 0);
 
+    private UpdateStoragePoolCommand<StoragePoolManagementParameter> cmd;
 
-    private UpdateStoragePoolCommand cmd;
-
-    @Mock private DbFacade facade;
-    @Mock private StoragePoolDAO spDao;
-    @Mock private StorageDomainStaticDAO sdDao;
-    @Mock private List<storage_domain_static> sdList;
-    @Mock private VdsGroupDAO vdsDao;
+    @Mock
+    private StoragePoolDAO spDao;
+    @Mock
+    private StorageDomainStaticDAO sdDao;
+    @Mock
+    private List<storage_domain_static> sdList;
+    @Mock
+    private VdsGroupDAO vdsDao;
 
     @Before
     public void setUp() {
-        initMocks(this);
-
-        mockStatic(DbFacade.class);
-        mockStatic(Config.class);
-
-        when(DbFacade.getInstance()).thenReturn(facade);
-
-        when(facade.getStoragePoolDAO()).thenReturn(spDao);
-        when(facade.getStorageDomainStaticDAO()).thenReturn(sdDao);
-        when(facade.getVdsGroupDAO()).thenReturn(vdsDao);
-
-        when(Config.GetValue(ConfigValues.StoragePoolNameSizeLimit)).thenReturn(10);
-        when(Config.GetValue(ConfigValues.SupportedClusterLevels)).thenReturn(createVersionSet());
-
         when(spDao.get(any(Guid.class))).thenReturn(createDefaultStoragePool());
-
         when(sdDao.getAllForStoragePool(any(Guid.class))).thenReturn(sdList);
-
         when(vdsDao.getAllForStoragePool(any(Guid.class))).thenReturn(createClusterList());
 
-        cmd = new UpdateStoragePoolCommand<StoragePoolManagementParameter>(
-                new StoragePoolManagementParameter(createNewStoragePool()));
+        spyCommand(new StoragePoolManagementParameter(createNewStoragePool()));
+    }
+
+    protected void spyCommand(StoragePoolManagementParameter params) {
+        cmd = spy(new UpdateStoragePoolCommand<StoragePoolManagementParameter>(params));
+        doReturn(10).when(cmd).getStoragePoolNameSizeLimit();
+        doReturn(createVersionSet().contains(cmd.getStoragePool().getcompatibility_version())).when(cmd)
+                .isStoragePoolVersionSupported();
+        doReturn(spDao).when(cmd).getStoragePoolDAO();
+        doReturn(sdDao).when(cmd).getStorageDomainStaticDAO();
+        doReturn(vdsDao).when(cmd).getVdsGroupDAO();
     }
 
     @Test
@@ -112,16 +102,14 @@ public class UpdateStoragePoolCommandTest {
     @Test
     public void versionHigherThanCluster() {
         storagePoolWithVersionHigherThanCluster();
-        canDoActionFailed(
-                VdcBllMessages.ERROR_CANNOT_UPDATE_STORAGE_POOL_COMPATIBILITY_VERSION_BIGGER_THAN_CLUSTERS.toString());
+        canDoActionFailed(VdcBllMessages.ERROR_CANNOT_UPDATE_STORAGE_POOL_COMPATIBILITY_VERSION_BIGGER_THAN_CLUSTERS.toString());
     }
 
     @Test
     public void poolHasDefaultCluster() {
         addDefaultClusterToPool();
         storagePoolWithLocalFS();
-        canDoActionFailed(
-                VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_WITH_DEFAULT_VDS_GROUP_CANNOT_BE_LOCALFS.toString());
+        canDoActionFailed(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_WITH_DEFAULT_VDS_GROUP_CANNOT_BE_LOCALFS.toString());
     }
 
     private void newPoolNameIsAlreadyTaken() {
@@ -131,30 +119,26 @@ public class UpdateStoragePoolCommandTest {
     }
 
     private void storagePoolWithVersionHigherThanCluster() {
-        cmd = new UpdateStoragePoolCommand<StoragePoolManagementParameter>(
-                new StoragePoolManagementParameter(createHigherVersionStoragePool()));
+        spyCommand(new StoragePoolManagementParameter(createHigherVersionStoragePool()));
     }
 
     private void storagePoolWithLowerVersion() {
-        cmd = new UpdateStoragePoolCommand<StoragePoolManagementParameter>(
-                new StoragePoolManagementParameter(createLowerVersionStoragePool()));
+        spyCommand(new StoragePoolManagementParameter(createLowerVersionStoragePool()));
     }
 
     private void storagePoolWithInvalidVersion() {
-        cmd = new UpdateStoragePoolCommand<StoragePoolManagementParameter>(
-                new StoragePoolManagementParameter(createInvalidVersionStoragePool()));
+        spyCommand(new StoragePoolManagementParameter(createInvalidVersionStoragePool()));
     }
 
     private void storagePoolWithLocalFS() {
-        cmd = new UpdateStoragePoolCommand<StoragePoolManagementParameter>(
-                new StoragePoolManagementParameter(createDefaultStoragePool()));
+        spyCommand(new StoragePoolManagementParameter(createDefaultStoragePool()));
     }
 
     private void domainListNotEmpty() {
         when(sdList.size()).thenReturn(1);
     }
 
-    private Set<Version> createVersionSet() {
+    private static Set<Version> createVersionSet() {
         Set<Version> versions = new HashSet<Version>();
         versions.add(VERSION_1_0);
         versions.add(VERSION_1_1);
@@ -162,49 +146,49 @@ public class UpdateStoragePoolCommandTest {
         return versions;
     }
 
-    private storage_pool createNewStoragePool() {
+    private static storage_pool createNewStoragePool() {
         storage_pool pool = createBasicPool();
         pool.setstorage_pool_type(StorageType.NFS);
         pool.setcompatibility_version(VERSION_1_1);
         return pool;
     }
 
-    private storage_pool createDefaultStoragePool() {
+    private static storage_pool createDefaultStoragePool() {
         storage_pool pool = createBasicPool();
         pool.setstorage_pool_type(StorageType.LOCALFS);
         pool.setcompatibility_version(VERSION_1_1);
         return pool;
     }
 
-    private storage_pool createLowerVersionStoragePool() {
+    private static storage_pool createLowerVersionStoragePool() {
         storage_pool pool = createBasicPool();
         pool.setstorage_pool_type(StorageType.LOCALFS);
         pool.setcompatibility_version(VERSION_1_0);
         return pool;
     }
 
-    private storage_pool createBasicPool() {
+    private static storage_pool createBasicPool() {
         storage_pool pool = new storage_pool();
         pool.setId(Guid.NewGuid());
         pool.setname("Default");
         return pool;
     }
 
-    private storage_pool createHigherVersionStoragePool() {
+    private static storage_pool createHigherVersionStoragePool() {
         storage_pool pool = createBasicPool();
         pool.setstorage_pool_type(StorageType.LOCALFS);
         pool.setcompatibility_version(VERSION_1_2);
         return pool;
     }
 
-    private storage_pool createInvalidVersionStoragePool() {
+    private static storage_pool createInvalidVersionStoragePool() {
         storage_pool pool = createBasicPool();
         pool.setstorage_pool_type(StorageType.LOCALFS);
         pool.setcompatibility_version(VERSION_2_0);
         return pool;
     }
 
-    private List<VDSGroup> createClusterList() {
+    private static List<VDSGroup> createClusterList() {
         List<VDSGroup> clusters = new ArrayList<VDSGroup>();
         VDSGroup cluster = new VDSGroup();
         cluster.setcompatibility_version(VERSION_1_0);

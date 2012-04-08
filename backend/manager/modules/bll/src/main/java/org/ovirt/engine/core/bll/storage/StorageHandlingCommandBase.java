@@ -62,12 +62,13 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
     public static final String DesktopsInStoragePoolQuery = "VMS: DATACENTER = {0}";
 
     public static List<VDS> GetAllRunningVdssInPool(storage_pool pool) {
-        java.util.ArrayList<VDS> returnValue = new java.util.ArrayList<VDS>();
+        List<VDS> returnValue = new ArrayList<VDS>();
 
         SearchParameters p = new SearchParameters(MessageFormat.format(UpVdssInStoragePoolQuery, pool.getname()),
                 SearchType.VDS);
         p.setMaxCount(Integer.MAX_VALUE);
 
+        @SuppressWarnings("unchecked")
         Iterable<IVdcQueryable> fromVds = (Iterable<IVdcQueryable>) (Backend.getInstance().runInternalQuery(
                 VdcQueryType.Search, p).getReturnValue());
         if (fromVds != null) {
@@ -90,21 +91,22 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
         });
     }
 
-
     protected List<VDS> getAllRunningVdssInPool() {
         return GetAllRunningVdssInPool(getStoragePool());
     }
 
     protected Guid getMasterDomainIdFromDb() {
+        Guid ret = Guid.Empty;
         if (getStoragePool() != null) {
-            return DbFacade.getInstance()
+            ret = DbFacade.getInstance()
                     .getStorageDomainDAO()
                     .getMasterStorageDomainIdForPool(getStoragePool().getId());
-        } else {
-            return Guid.Empty;
         }
+
+        return ret;
     }
 
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     protected boolean InitializeVds() {
         boolean returnValue = true;
         if (getVds() == null) {
@@ -200,20 +202,20 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
         // Nothing to check if the storage domain is not an ISO or export:
         final StorageDomainType type = storageDomain.getstorage_domain_type();
         if (type != StorageDomainType.ISO && type != StorageDomainType.ImportExport) {
-          return true;
+            return true;
         }
 
         // Get the number of storage domains of the given type currently attached
         // to the pool:
         int count = LinqUtils.filter(
-            DbFacade.getInstance().getStorageDomainDAO().getAllForStoragePool(getStoragePool().getId()),
-            new Predicate<storage_domains>() {
-                @Override
-                public boolean eval(storage_domains a) {
-                    return a.getstorage_domain_type() == type;
+                DbFacade.getInstance().getStorageDomainDAO().getAllForStoragePool(getStoragePool().getId()),
+                new Predicate<storage_domains>() {
+                    @Override
+                    public boolean eval(storage_domains a) {
+                        return a.getstorage_domain_type() == type;
+                    }
                 }
-            }
-        ).size();
+                ).size();
 
         // If the count is zero we are okay, we can add a new one:
         if (count == 0) {
@@ -221,7 +223,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
         }
 
         // If we are here then we already have at least one storage type of the given type
-        // so whe have to prepare a friendy message for the user (see #713160) and fail:
+        // so when have to prepare a friendly message for the user (see #713160) and fail:
         if (type == StorageDomainType.ISO) {
             addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_ATTACH_MORE_THAN_ONE_ISO_DOMAIN);
         }
@@ -252,8 +254,8 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
     protected void CalcStoragePoolStatusByDomainsStatus() {
         List<storage_domains> domains = DbFacade.getInstance().getStorageDomainDAO().getAllForStoragePool(
                 getStoragePool().getId());
-        // storage_domains masterDomain = null; //LINQ 31899 domains.Where(a =>
-        // a.storage_domain_type == StorageDomainType.Master).FirstOrDefault();
+
+        // set masterDomain to the first element of domains with type=master, or null if non have this type.
         storage_domains masterDomain = LinqUtils.firstOrNull(domains, new Predicate<storage_domains>() {
             @Override
             public boolean eval(storage_domains a) {
@@ -294,7 +296,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
 
     protected boolean CheckStoragePoolNameLengthValid() {
         boolean result = true;
-        if (getStoragePool().getname().length() > Config.<Integer> GetValue(ConfigValues.StoragePoolNameSizeLimit)) {
+        if (getStoragePool().getname().length() > getStoragePoolNameSizeLimit()) {
             result = false;
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NAME_LENGTH_IS_TOO_LONG);
         }
@@ -316,7 +318,8 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
                 || storageDomain.getstorage_domain_type() == StorageDomainType.ImportExport) {
             return true;
         }
-        Set<StorageFormatType> supportedFormatsSet = getSupportedStorageFormatSet(storagePool.getcompatibility_version());
+        Set<StorageFormatType> supportedFormatsSet =
+                getSupportedStorageFormatSet(storagePool.getcompatibility_version());
         if (supportedFormatsSet.contains(storageDomain.getStorageFormat())) {
             if (storagePool.getStoragePoolFormatType() == null
                     || storagePool.getStoragePoolFormatType() == storageDomain.getStorageFormat()) {
@@ -331,9 +334,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
     }
 
     protected Set<StorageFormatType> getSupportedStorageFormatSet(Version version) {
-        String[] supportedFormats =
-                Config.<String> GetValue(ConfigValues.SupportedStorageFormats,
-                        version.toString()).split("[,]");
+        String[] supportedFormats = getSupportedStorageFormats(version).split("[,]");
         Set<StorageFormatType> supportedFormatsSet = new HashSet<StorageFormatType>();
         for (String supportedFormat : supportedFormats) {
             supportedFormatsSet.add(StorageFormatType.forValue(supportedFormat));
@@ -344,7 +345,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
     protected void runSynchronizeOperation(ActivateDeactivateSingleAsyncOperationFactory factory,
             Object... addionalParams) {
         List<VDS> allRunningVdsInPool = getAllRunningVdssInPool();
-        ArrayList parameters = InitAsyncOperationParameters(allRunningVdsInPool);
+        ArrayList<Object> parameters = InitAsyncOperationParameters(allRunningVdsInPool);
         if (addionalParams.length > 0) {
             parameters.addAll(Arrays.asList(addionalParams));
         }
@@ -353,18 +354,30 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
         sync.Execute();
     }
 
-    private java.util.ArrayList InitAsyncOperationParameters(List<VDS> allRunningVdsInPool) {
-        java.util.ArrayList parameters = new java.util.ArrayList();
+    private ArrayList<Object> InitAsyncOperationParameters(List<VDS> allRunningVdsInPool) {
+        ArrayList<Object> parameters = new ArrayList<Object>();
         parameters.add(allRunningVdsInPool);
         parameters.add(getStorageDomain());
         parameters.add(getStoragePool());
         return parameters;
     }
 
-
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
-        return Collections.singletonList(new PermissionSubject(getStoragePoolId() == null ? null : getStoragePoolId().getValue(),
+        return Collections.singletonList(new PermissionSubject(getStoragePoolId() == null ? null
+                : getStoragePoolId().getValue(),
                 VdcObjectType.StoragePool, getActionType().getActionGroup()));
+    }
+
+    /* Config methods - for easier testing */
+
+    /** @return The maximum length for a storage pool's name, from the configuration. */
+    protected Integer getStoragePoolNameSizeLimit() {
+        return Config.<Integer> GetValue(ConfigValues.StoragePoolNameSizeLimit);
+    }
+
+    /** @return The supported storage domain formats, delimited by commas (","). */
+    protected String getSupportedStorageFormats(Version version) {
+        return Config.<String> GetValue(ConfigValues.SupportedStorageFormats, version.toString());
     }
 }

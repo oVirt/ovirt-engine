@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.vdscommands.SetStoragePoolDescriptionVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
@@ -21,6 +22,8 @@ import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.StorageDomainStaticDAO;
+import org.ovirt.engine.core.dao.VdsGroupDAO;
 
 public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> extends
         StoragePoolManagementCommandBase<T> {
@@ -43,11 +46,10 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
     @Override
     protected void executeCommand() {
         updateDefaultQuota();
-        DbFacade.getInstance().getStoragePoolDAO().updatePartial(getStoragePool());
+        getStoragePoolDAO().updatePartial(getStoragePool());
         if (getStoragePool().getstatus() == StoragePoolStatus.Up
                 && !StringHelper.EqOp(_oldStoragePool.getname(), getStoragePool().getname())) {
-            Backend.getInstance()
-                    .getResourceManager()
+            getResourceManager()
                     .RunVdsCommand(
                             VDSCommandType.SetStoragePoolDescription,
                             new SetStoragePoolDescriptionVDSCommandParameters(getStoragePool().getId(),
@@ -64,12 +66,12 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
     private void updateDefaultQuota() {
         if ((_oldStoragePool.getQuotaEnforcementType() == QuotaEnforcementTypeEnum.DISABLED)
                 && (getStoragePool().getQuotaEnforcementType() != QuotaEnforcementTypeEnum.DISABLED)) {
-            QuotaHelper.getInstance().setDefaultQuotaAsRegularQuota(_oldStoragePool);
+            getQutoaHelper().setDefaultQuotaAsRegularQuota(_oldStoragePool);
         } else if (_oldStoragePool.getQuotaEnforcementType() != QuotaEnforcementTypeEnum.DISABLED
                 && (getStoragePool().getQuotaEnforcementType() == QuotaEnforcementTypeEnum.DISABLED)) {
-            Quota newDefaultQuota = QuotaHelper.getInstance().getUnlimitedQuota(getStoragePool(), true);
-            newDefaultQuota.setQuotaName(QuotaHelper.getInstance().getDefaultQuotaName(getStoragePool()));
-            QuotaHelper.getInstance().saveQuotaForUser(newDefaultQuota,
+            Quota newDefaultQuota = getQutoaHelper().getUnlimitedQuota(getStoragePool(), true);
+            newDefaultQuota.setQuotaName(getQutoaHelper().getDefaultQuotaName(getStoragePool()));
+            getQutoaHelper().saveQuotaForUser(newDefaultQuota,
                     MultiLevelAdministrationHandler.EVERYONE_OBJECT_ID);
         }
     }
@@ -82,19 +84,16 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
     @Override
     protected boolean canDoAction() {
         boolean returnValue = super.canDoAction() && checkStoragePool();
-        _oldStoragePool = DbFacade.getInstance().getStoragePoolDAO().get(getStoragePool().getId());
+        _oldStoragePool = getStoragePoolDAO().get(getStoragePool().getId());
         if (returnValue && !StringHelper.EqOp(_oldStoragePool.getname(), getStoragePool().getname())
-                && DbFacade.getInstance().getStoragePoolDAO().getByName(getStoragePool().getname()) != null) {
+                && getStoragePoolDAO().getByName(getStoragePool().getname()) != null) {
             returnValue = false;
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NAME_ALREADY_EXIST);
         }
         if (returnValue
                 && _oldStoragePool.getstorage_pool_type() != getStoragePool()
                         .getstorage_pool_type()
-                && DbFacade.getInstance()
-                        .getStorageDomainStaticDAO()
-                        .getAllForStoragePool(getStoragePool().getId())
-                        .size() > 0) {
+                && getStorageDomainStaticDAO().getAllForStoragePool(getStoragePool().getId()).size() > 0) {
             returnValue = false;
             getReturnValue()
                     .getCanDoActionMessages()
@@ -105,7 +104,7 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
         if (returnValue
                 && Version.OpInequality(_oldStoragePool.getcompatibility_version(), getStoragePool()
                         .getcompatibility_version())) {
-            if (!VersionSupport.checkVersionSupported(getStoragePool().getcompatibility_version())) {
+            if (!isStoragePoolVersionSupported()) {
                 addCanDoActionMessage(VersionSupport.getUnsupportedVersionMessage());
                 returnValue = false;
             }
@@ -116,8 +115,7 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
             } else {
                 // check all clusters has at least the same compatibility
                 // version
-                List<VDSGroup> clusters = DbFacade.getInstance().getVdsGroupDAO().getAllForStoragePool(
-                        getStoragePool().getId());
+                List<VDSGroup> clusters = getVdsGroupDAO().getAllForStoragePool(getStoragePool().getId());
                 for (VDSGroup cluster : clusters) {
                     if (getStoragePool().getcompatibility_version().compareTo(cluster.getcompatibility_version()) > 0) {
                         returnValue = false;
@@ -137,8 +135,12 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
         return returnValue;
     }
 
+    protected boolean isStoragePoolVersionSupported() {
+        return VersionSupport.checkVersionSupported(getStoragePool().getcompatibility_version());
+    }
+
     private boolean isNotLocalfsWithDefaultCluster() {
-        if(getStoragePool().getstorage_pool_type() == StorageType.LOCALFS && containsDefaultCluster()) {
+        if (getStoragePool().getstorage_pool_type() == StorageType.LOCALFS && containsDefaultCluster()) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_WITH_DEFAULT_VDS_GROUP_CANNOT_BE_LOCALFS);
             return false;
         }
@@ -146,14 +148,37 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
     }
 
     private boolean containsDefaultCluster() {
-        List<VDSGroup> clusters = DbFacade.getInstance().getVdsGroupDAO().getAllForStoragePool(getStoragePool().getId());
+        List<VDSGroup> clusters = getVdsGroupDAO().getAllForStoragePool(getStoragePool().getId());
         boolean hasDefaultCluster = false;
-        for(VDSGroup cluster : clusters) {
-            if(cluster.getId().equals(VDSGroup.DEFAULT_VDS_GROUP_ID)) {
+        for (VDSGroup cluster : clusters) {
+            if (cluster.getId().equals(VDSGroup.DEFAULT_VDS_GROUP_ID)) {
                 hasDefaultCluster = true;
                 break;
             }
         }
         return hasDefaultCluster;
+    }
+
+    /* Getters for external resources and handlers */
+
+    protected VDSBrokerFrontend getResourceManager() {
+        return Backend.getInstance().getResourceManager();
+    }
+
+    protected QuotaHelper getQutoaHelper() {
+        return QuotaHelper.getInstance();
+    }
+
+    protected StorageDomainStaticDAO getStorageDomainStaticDAO() {
+        return DbFacade.getInstance().getStorageDomainStaticDAO();
+    }
+
+    /**
+      * Overriding in order to make the method visible to tests in the current package.
+      * @see org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase#getVdsGroupDAO()
+      */
+    @Override
+    protected VdsGroupDAO getVdsGroupDAO() {
+        return super.getVdsGroupDAO();
     }
 }
