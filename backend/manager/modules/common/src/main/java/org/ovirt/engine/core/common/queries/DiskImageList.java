@@ -1,17 +1,11 @@
 package org.ovirt.engine.core.common.queries;
 
-import org.ovirt.engine.core.common.businessentities.DiskImage;
-
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlElement;
-
 import java.io.Serializable;
 import java.util.List;
 
-@XmlType(name = "DiskImageList")
-@XmlAccessorType(XmlAccessType.NONE)
+import org.codehaus.jackson.annotate.JsonIgnore;
+import org.ovirt.engine.core.common.businessentities.DiskImage;
+
 public class DiskImageList implements Serializable {
     private DiskImage[] diskImages;
     private String csharpworkaround; // without this, C# wsdl processing will
@@ -25,12 +19,12 @@ public class DiskImageList implements Serializable {
         this.diskImages = diskImanages.toArray(new DiskImage[diskImanages.size()]);
     }
 
-    @XmlElement
+    @JsonIgnore
     public DiskImage[] getDiskImages() {
         return diskImages;
     }
 
-    @XmlElement
+    @JsonIgnore
     public String getCsharpworkaround() {
         return csharpworkaround;
     }
