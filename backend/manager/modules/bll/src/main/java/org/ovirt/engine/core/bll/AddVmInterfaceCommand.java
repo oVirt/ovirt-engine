@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
@@ -104,17 +105,8 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends V
         }
 
         // check that not exceeded PCI and IDE limit
-        java.util.ArrayList<VmNetworkInterface> allInterfaces = new java.util.ArrayList<VmNetworkInterface>(interfaces);
+        List<VmNetworkInterface> allInterfaces = new ArrayList<VmNetworkInterface>(interfaces);
         allInterfaces.add(getParameters().getInterface());
-        // LINQ 29456
-        // List<DiskImageBase> allDisks =
-        // DbFacade.Instance.GetImagesByVmGuid(AddVmInterfaceParameters.VmId).Select(a
-        // => (DiskImageBase)a).ToList();
-        // if (!CheckPCIAndIDELimit(vm.num_of_monitors, allInterfaces,
-        // allDisks))
-        // {
-        // return false;
-        // }
 
         List<DiskImageBase> allDisks = LinqUtils.foreach(
                 DbFacade.getInstance().getDiskImageDAO().getAllForVm(getParameters().getVmId()),
