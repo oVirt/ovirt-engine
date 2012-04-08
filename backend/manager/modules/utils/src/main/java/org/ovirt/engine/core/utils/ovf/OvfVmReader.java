@@ -16,7 +16,6 @@ import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
@@ -41,6 +40,7 @@ public class OvfVmReader extends OvfReader {
             ArrayList<VmNetworkInterface> interfaces) {
         super(document, images, interfaces);
         _vm = vm;
+        _vm.setInterfaces(interfaces);
     }
 
     @Override
@@ -124,16 +124,7 @@ public class OvfVmReader extends OvfReader {
                 readVmDevice(node, _vm.getStaticData(), image.getimage_group_id(), Boolean.TRUE);
             } else if (StringHelper.EqOp(resourceType, OvfHardware.Network)) {
                 VmNetworkInterface iface = getNetwotkInterface(node);
-                if (!StringHelper.isNullOrEmpty(node.SelectSingleNode("rasd:ResourceSubType", _xmlNS).InnerText)) {
-                    iface.setType(Integer.parseInt(node.SelectSingleNode("rasd:ResourceSubType", _xmlNS).InnerText));
-                }
-                iface.setNetworkName(node.SelectSingleNode("rasd:Connection", _xmlNS).InnerText);
-                iface.setName(node.SelectSingleNode("rasd:Name", _xmlNS).InnerText);
-                iface.setMacAddress((node.SelectSingleNode("rasd:MACAddress", _xmlNS) != null) ? node.SelectSingleNode(
-                        "rasd:MACAddress", _xmlNS).InnerText : "");
-                iface.setSpeed((node.SelectSingleNode("rasd:speed", _xmlNS) != null) ? Integer
-                        .parseInt(node.SelectSingleNode("rasd:speed", _xmlNS).InnerText)
-                        : VmInterfaceType.forValue(iface.getType()).getSpeed());
+                updateSingleNic(node, iface);
                 _vm.getInterfaces().add(iface);
                 readVmDevice(node, _vm.getStaticData(), iface.getId(), Boolean.TRUE);
             } else if (StringHelper.EqOp(resourceType, OvfHardware.USB)) {
@@ -390,5 +381,8 @@ public class OvfVmReader extends OvfReader {
 
             snapshots.add(snapshot);
         }
+    }
+
+    protected void buildNicReference() {
     }
 }

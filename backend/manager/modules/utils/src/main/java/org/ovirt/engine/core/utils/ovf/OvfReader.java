@@ -236,6 +236,10 @@ public abstract class OvfReader implements IOvfBuilder {
                     return iface.getId().equals(guid);
                 }
             });
+            if (iface == null) {
+                iface = new VmNetworkInterface();
+                iface.setId(guid);
+            }
         } else { // 3.0 and below OVF format
             iface = new VmNetworkInterface();
         }
@@ -248,7 +252,7 @@ public abstract class OvfReader implements IOvfBuilder {
 
     protected abstract void ReadGeneralData();
 
-    private void buildNicReference() {
+    protected void buildNicReference() {
         XmlNodeList list = _document.SelectNodes("//*/Nic", _xmlNS);
         for (XmlNode node : list) {
             VmNetworkInterface iface = new VmNetworkInterface();
@@ -266,11 +270,28 @@ public abstract class OvfReader implements IOvfBuilder {
             for (XmlNode node : list) {
                 VmNetworkInterface iface = new VmNetworkInterface();
                 iface.setId(Guid.NewGuid());
-                iface.setName(node.SelectSingleNode(OvfProperties.VMD_NAME, _xmlNS).InnerText);
-                iface.setNetworkName(node.SelectSingleNode(OvfProperties.VMD_CONNECTION, _xmlNS).InnerText);
+                updateSingleNic(node, iface);
                 interfaces.add(iface);
             }
         }
+    }
+
+    protected void updateSingleNic(XmlNode node, VmNetworkInterface iface) {
+
+        iface.setName(node.SelectSingleNode(OvfProperties.VMD_NAME, _xmlNS).InnerText);
+        iface.setMacAddress((node.SelectSingleNode("rasd:MACAddress", _xmlNS) != null) ? node.SelectSingleNode(
+                "rasd:MACAddress", _xmlNS).InnerText : "");
+        iface.setNetworkName(node.SelectSingleNode(OvfProperties.VMD_CONNECTION, _xmlNS).InnerText);
+
+        String resourceSubType = node.SelectSingleNode("rasd:ResourceSubType", _xmlNS).InnerText;
+        if (StringUtils.isNotEmpty(resourceSubType)) {
+            iface.setType(Integer.parseInt(resourceSubType));
+        }
+
+        XmlNode speed = node.SelectSingleNode("rasd:speed", _xmlNS);
+        iface.setSpeed((speed != null) ? Integer.parseInt(speed.InnerText) : VmInterfaceType.forValue(iface.getType())
+                .getSpeed());
+
     }
 
     private void buildImageReference() {
