@@ -61,20 +61,6 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
                 .getStorageDomainId() : super.getStorageDomainId() : super.getStorageDomainId();
     }
 
-    public static boolean IsDomainActive(Guid domainId, NGuid storagePoolId, java.util.ArrayList<String> messages) {
-        storage_domains storage =
-                DbFacade.getInstance().getStorageDomainDAO().getForStoragePool(domainId, storagePoolId);
-        if (storage == null) {
-            messages.add(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST.toString());
-            return false;
-        }
-        if (storage.getstatus() == null || storage.getstatus() != StorageDomainStatus.Active) {
-            messages.add(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL.toString());
-            return false;
-        }
-        return true;
-    }
-
     protected boolean canDetachDomain(boolean isDestroyStoragePool, boolean isRemoveLast, boolean isInternal) {
         return checkStoragePool()
                 && CheckStorageDomain()
