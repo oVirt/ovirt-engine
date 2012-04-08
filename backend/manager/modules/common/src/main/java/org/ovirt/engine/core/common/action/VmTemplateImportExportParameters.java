@@ -9,7 +9,6 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.ovirt.engine.core.common.queries.*;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.LinkedList;
 
@@ -46,8 +45,8 @@ public class VmTemplateImportExportParameters extends VmTemplateParametersBase i
         return privateImages == null ? new LinkedList<DiskImage>() : privateImages;
     }
 
-    public void setImages(DiskImageList value) {
-        privateImages = Arrays.asList(value.getDiskImages());
+    public void setImages(List<DiskImage> value) {
+        privateImages = value;
     }
 
     public VmTemplateImportExportParameters(Guid vmTemplateId, Guid storageDomainId, Guid storagePoolId) {

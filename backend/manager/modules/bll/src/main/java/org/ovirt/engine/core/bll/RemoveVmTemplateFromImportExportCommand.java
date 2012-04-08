@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -62,7 +63,7 @@ public class RemoveVmTemplateFromImportExportCommand<T extends VmTemplateImportE
             });
             setVmTemplate(template);
             if (images != null) {
-                getParameters().setImages(images);
+                getParameters().setImages(Arrays.asList(images.getDiskImages()));
             } else {
                 retVal = false;
             }
