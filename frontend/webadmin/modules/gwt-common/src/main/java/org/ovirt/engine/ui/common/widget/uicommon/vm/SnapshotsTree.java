@@ -55,6 +55,8 @@ import com.google.gwt.view.client.NoSelectionModel;
 
 public class SnapshotsTree<L extends ListWithDetailsModel> extends AbstractSubTabTree<VmSnapshotListModel, Snapshot, SnapshotDetailModel> {
 
+    private SnapshotModel snapshotModel = null;
+
     public SnapshotsTree(SearchableDetailModelProvider<Snapshot, L, VmSnapshotListModel> modelProvider,
             EventBus eventBus,
             CommonApplicationResources resources,
@@ -66,17 +68,29 @@ public class SnapshotsTree<L extends ListWithDetailsModel> extends AbstractSubTa
         setMultiSelection(false);
     }
 
+    private final IEventListener canSelectSnapshotEventListener = new IEventListener() {
+        @Override
+        public void eventRaised(Event ev, Object sender, EventArgs args) {
+            boolean canSelectSnapshot = (Boolean) listModel.getCanSelectSnapshot().getEntity();
+            setRootSelectionEnabled(canSelectSnapshot);
+        }
+    };
+
+    private final IEventListener isPropertiesUpdatedEventListener = new IEventListener() {
+        @Override
+        public void eventRaised(Event ev, Object sender, EventArgs args) {
+            if ((Boolean) snapshotModel.getIsPropertiesUpdated().getEntity()) {
+                refreshTree();
+            }
+        }
+    };
+
     @Override
     public void updateTree(final VmSnapshotListModel listModel) {
         super.updateTree(listModel);
 
-        listModel.getCanSelectSnapshot().getEntityChangedEvent().addListener(new IEventListener() {
-            @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                boolean canSelectSnapshot = (Boolean) listModel.getCanSelectSnapshot().getEntity();
-                setRootSelectionEnabled(canSelectSnapshot);
-            }
-        });
+        listModel.getCanSelectSnapshot().getEntityChangedEvent().removeListener(canSelectSnapshotEventListener);
+        listModel.getCanSelectSnapshot().getEntityChangedEvent().addListener(canSelectSnapshotEventListener);
     }
 
     @Override
@@ -151,7 +165,8 @@ public class SnapshotsTree<L extends ListWithDetailsModel> extends AbstractSubTa
         SnapshotModel snapshotModel = listModel.getSnapshotsMap().get(snapshot.getId());
 
         if (!(Boolean) snapshotModel.getIsPropertiesUpdated().getEntity()) {
-            addRefershListener(snapshotModel);
+            this.snapshotModel = snapshotModel;
+            addRefershListener();
             nodes.add(new SnapshotDetailModel());
             return nodes;
         }
@@ -182,6 +197,13 @@ public class SnapshotsTree<L extends ListWithDetailsModel> extends AbstractSubTa
         nodes.add(apps);
 
         return nodes;
+    }
+
+    private void addRefershListener() {
+        snapshotModel.getIsPropertiesUpdated().getEntityChangedEvent().removeListener(
+                isPropertiesUpdatedEventListener);
+        snapshotModel.getIsPropertiesUpdated().getEntityChangedEvent().addListener(
+                isPropertiesUpdatedEventListener);
     }
 
     @Override
@@ -219,18 +241,6 @@ public class SnapshotsTree<L extends ListWithDetailsModel> extends AbstractSubTa
                 listModel.UpdateVmConfigurationBySnapshot(snapshotId);
             }
         }
-    }
-
-    private void addRefershListener(final SnapshotModel snapshotModel) {
-        snapshotModel.getIsPropertiesUpdated().getEntityChangedEvent().addListener(
-                new IEventListener() {
-                    @Override
-                    public void eventRaised(Event ev, Object sender, EventArgs args) {
-                        if ((Boolean) snapshotModel.getIsPropertiesUpdated().getEntity()) {
-                            refreshTree();
-                        }
-                    }
-                });
     }
 
     private TreeItem getGeneralTreeItem(SnapshotDetailModel snapshotDetailModel) {

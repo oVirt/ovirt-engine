@@ -173,6 +173,10 @@ public abstract class AbstractSubTabTree<M extends SearchableListModel, R, N> ex
 
         listModel.getItemsChangedEvent().removeListener(itemsChangedEventListener);
         listModel.getItemsChangedEvent().addListener(itemsChangedEventListener);
+
+        if (listModel.getItems() != null) {
+            refreshTree();
+        }
     }
 
     public void refreshTree() {
