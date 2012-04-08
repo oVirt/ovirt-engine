@@ -784,9 +784,8 @@ public class CommonModel extends ListModel
         list.add(quotaList);
 
         volumeList = new VolumeListModel();
-        if (!volumeList.getGlusterModeEnum().equals(GlusterModeEnum.ONLY_OVIRT)) {
-            list.add(volumeList);
-        }
+        list.add(volumeList);
+        volumeList.setIsAvailable(!volumeList.getGlusterModeEnum().equals(GlusterModeEnum.ONLY_OVIRT));
 
         setItems(list);
 

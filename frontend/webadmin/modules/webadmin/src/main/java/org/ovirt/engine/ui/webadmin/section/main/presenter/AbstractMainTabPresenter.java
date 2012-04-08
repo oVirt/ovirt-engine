@@ -57,8 +57,13 @@ public abstract class AbstractMainTabPresenter<T, M extends SearchableListModel,
     @ProxyEvent
     public void onMainModelSelectionChange(MainModelSelectionChangeEvent event) {
         if (event.getMainModel() == modelProvider.getModel()) {
-            // Reveal main tab place when the corresponding model is selected
-            placeManager.revealPlace(getMainTabRequest());
+            if (event.getMainModel().getIsAvailable()) {
+                // Reveal main tab place when the corresponding model is selected
+                placeManager.revealPlace(getMainTabRequest());
+            }
+            else {
+                placeManager.revealDefaultPlace();
+            }
         }
     }
 
