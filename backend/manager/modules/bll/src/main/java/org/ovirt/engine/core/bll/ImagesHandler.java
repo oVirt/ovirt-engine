@@ -53,10 +53,11 @@ public final class ImagesHandler {
      * @param template
      * @param imageToDestinationDomainMap
      * @param destStorages
+     * @param notCheckSize - if we need to perform a size check for storage or not
      */
     public static void fillImagesMapBasedOnTemplate(VmTemplate template,
             Map<Guid, Guid> imageToDestinationDomainMap,
-            Map<Guid, storage_domains> destStorages) {
+            Map<Guid, storage_domains> destStorages, boolean notCheckSize) {
         List<storage_domains> domains =
                 DbFacade.getInstance()
                         .getStorageDomainDAO()
@@ -66,7 +67,7 @@ public final class ImagesHandler {
             StorageDomainValidator validator = new StorageDomainValidator(storageDomain);
             ArrayList<String> messages = new ArrayList<String>();
             if (validator.isDomainExistAndActive(messages) && validator.domainIsValidDestination(messages)
-                    && StorageDomainSpaceChecker.isBelowThresholds(storageDomain)) {
+                    && (notCheckSize || StorageDomainSpaceChecker.isBelowThresholds(storageDomain))) {
                 storageDomainsMap.put(storageDomain.getId(), storageDomain);
             }
         }
@@ -78,8 +79,10 @@ public final class ImagesHandler {
                 }
             }
         }
-        for (Guid storageDomainId : new HashSet<Guid>(imageToDestinationDomainMap.values())) {
-            destStorages.put(storageDomainId, storageDomainsMap.get(storageDomainId));
+        if (destStorages != null) {
+            for (Guid storageDomainId : new HashSet<Guid>(imageToDestinationDomainMap.values())) {
+                destStorages.put(storageDomainId, storageDomainsMap.get(storageDomainId));
+            }
         }
     }
 

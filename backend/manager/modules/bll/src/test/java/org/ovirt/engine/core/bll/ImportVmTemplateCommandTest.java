@@ -33,7 +33,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
 import org.ovirt.engine.core.dao.StorageDomainStaticDAO;
@@ -146,7 +145,6 @@ public class ImportVmTemplateCommandTest {
         mockGetTemplatesFromExportDomainQuery(volumeFormat, volumeType, command);
         mockStorageDomainStatic(command, storageType);
         doReturn(mock(VmTemplateDAO.class)).when(command).getVmTemplateDAO();
-        doReturn(true).when(command).IsDomainActive(any(Guid.class), any(NGuid.class));
         mockStoragePool(command);
         mockStorageDomains(command);
 

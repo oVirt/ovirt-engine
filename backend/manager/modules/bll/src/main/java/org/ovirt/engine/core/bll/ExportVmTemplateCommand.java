@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.Arrays;
+
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -10,7 +12,6 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.CopyVolumeType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
-import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
@@ -18,9 +19,9 @@ import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 public class ExportVmTemplateCommand<T extends MoveOrCopyParameters> extends MoveOrCopyTemplateCommand<T> {
+
     public ExportVmTemplateCommand(T parameters) {
         super(parameters);
-        setVmTemplateId(parameters.getContainerId());
         setStoragePoolId(getVmTemplate().getstorage_pool_id());
     }
 
@@ -38,22 +39,19 @@ public class ExportVmTemplateCommand<T extends MoveOrCopyParameters> extends Mov
                     // we force export template image to COW+Sparse but we don't update
                     // the ovf so the import
                     // will set the original format
-                    MoveOrCopyImageGroupParameters tempVar = new MoveOrCopyImageGroupParameters(containerID, disk
+                    MoveOrCopyImageGroupParameters p = new MoveOrCopyImageGroupParameters(containerID, disk
                             .getimage_group_id().getValue(), disk.getId(), getParameters().getStorageDomainId(),
                             getMoveOrCopyImageOperation());
-                    tempVar.setParentCommand(getActionType());
-                    tempVar.setParentParemeters(getParameters());
-                    tempVar.setEntityId(getParameters().getEntityId());
-                    tempVar.setUseCopyCollapse(true);
-                    tempVar.setCopyVolumeType(CopyVolumeType.SharedVol);
-                    tempVar.setVolumeFormat(disk.getvolume_format());
-                    tempVar.setVolumeType(disk.getvolume_type());
-                    tempVar.setPostZero(disk.getwipe_after_delete());
-                    tempVar.setForceOverride(getParameters().getForceOverride());
-                    MoveOrCopyImageGroupParameters p = tempVar;
-                    if (getSourceDomain() != null) {
-                        p.setSourceDomainId(getSourceDomain().getId());
-                    }
+                    p.setParentCommand(getActionType());
+                    p.setParentParemeters(getParameters());
+                    p.setEntityId(getParameters().getEntityId());
+                    p.setUseCopyCollapse(true);
+                    p.setCopyVolumeType(CopyVolumeType.SharedVol);
+                    p.setVolumeFormat(disk.getvolume_format());
+                    p.setVolumeType(disk.getvolume_type());
+                    p.setPostZero(disk.getwipe_after_delete());
+                    p.setForceOverride(getParameters().getForceOverride());
+                    p.setSourceDomainId(imageFromSourceDomainMap.get(disk.getId()));
                     VdcReturnValueBase vdcRetValue = Backend.getInstance().runInternalAction(
                                     VdcActionType.MoveOrCopyImageGroup,
                                     p,
@@ -90,16 +88,6 @@ public class ExportVmTemplateCommand<T extends MoveOrCopyParameters> extends Mov
 
         retVal = retVal && super.canDoAction();
 
-        if (retVal) {
-            // check that we have at least one disk
-            if (getParameters().getDiskInfoList() != null) {
-                if (getParameters().getDiskInfoList().size() > 0) {
-                    addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
-                    retVal = false;
-                }
-            }
-        }
-
         // check if template (with no override option)
         if (retVal && !getParameters().getForceOverride()) {
             retVal = !ExportVmCommand.CheckTemplateInStorageDomain(getVmTemplate().getstorage_pool_id().getValue(),
@@ -108,38 +96,13 @@ public class ExportVmTemplateCommand<T extends MoveOrCopyParameters> extends Mov
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_NAME_ALREADY_EXISTS);
             }
         }
-
-        // set source storage
-        if (retVal) {
-            DiskImage image = getTemplateDisks().get(0);
-            if (image == null) {
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_HAS_NO_DISKS);
-                retVal = false;
-            }
-            if (retVal) {
-                if (getSourceDomain() == null) {
-                    addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);
-                    retVal = false;
-                }
-            }
-        }
-        // check that source domain is leagal
-        if (retVal) {
-            retVal = IsDomainActive(getSourceDomain().getId(), getVmTemplate().getstorage_pool_id());
-        }
-        // check that source domain is not ISO or Export domain
-        if (retVal) {
-            if (getSourceDomain().getstorage_domain_type() == StorageDomainType.ISO
-                    || getSourceDomain().getstorage_domain_type() == StorageDomainType.ImportExport) {
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
-                retVal = false;
-            }
-        }
-        if (!retVal) {
-            addCanDoActionMessage(VdcBllMessages.VAR__ACTION__EXPORT);
-            addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM);
-        }
         return retVal;
+    }
+
+    @Override
+    protected void setActionMessageParameters() {
+        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__EXPORT);
+        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM);
     }
 
     @Override
@@ -160,7 +123,7 @@ public class ExportVmTemplateCommand<T extends MoveOrCopyParameters> extends Mov
     protected void UpdateTemplateInSpm() {
         // update the target (export) domain
         VmTemplateCommand.UpdateTemplateInSpm(getVmTemplate().getstorage_pool_id().getValue(),
-                new java.util.ArrayList<VmTemplate>(java.util.Arrays.asList(new VmTemplate[] { getVmTemplate() })),
+                Arrays.asList(getVmTemplate()),
                 getParameters().getStorageDomainId(), null);
     }
 }

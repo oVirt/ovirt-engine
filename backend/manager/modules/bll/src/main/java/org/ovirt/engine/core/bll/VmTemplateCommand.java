@@ -179,11 +179,11 @@ public abstract class VmTemplateCommand<T extends VmTemplateParametersBase> exte
      * @param templatesList
      * @return Returns true if updateVm succeeded.
      */
-    public static boolean UpdateTemplateInSpm(Guid storagePoolId, java.util.ArrayList<VmTemplate> templatesList) {
+    public static boolean UpdateTemplateInSpm(Guid storagePoolId, List<VmTemplate> templatesList) {
         return UpdateTemplateInSpm(storagePoolId, templatesList, Guid.Empty, null);
     }
 
-    public static boolean UpdateTemplateInSpm(Guid storagePoolId, java.util.ArrayList<VmTemplate> templatesList,
+    public static boolean UpdateTemplateInSpm(Guid storagePoolId, List<VmTemplate> templatesList,
                                               Guid storageDomainId, List<DiskImage> images) {
         java.util.HashMap<Guid, KeyValuePairCompat<String, List<Guid>>> templatesAndMetaDictionary =
                 new java.util.HashMap<Guid, KeyValuePairCompat<String, List<Guid>>>(

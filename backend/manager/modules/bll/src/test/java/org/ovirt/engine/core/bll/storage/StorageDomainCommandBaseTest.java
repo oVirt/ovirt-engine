@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll.storage;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
 import static org.powermock.api.mockito.PowerMockito.doReturn;
 import static org.powermock.api.mockito.PowerMockito.spy;
@@ -13,8 +12,6 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
-import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 
 public class StorageDomainCommandBaseTest {
@@ -54,12 +51,6 @@ public class StorageDomainCommandBaseTest {
         assertFalse(cmd.checkStorageDomainStatus(StorageDomainStatus.Locked, StorageDomainStatus.Active,
                 StorageDomainStatus.Unknown));
         assertTrue(commandHasInvalidStatusMessage());
-    }
-
-    @Test
-    public void activeDomain() {
-        doReturn(true).when(cmd).IsDomainActive(any(Guid.class), any(NGuid.class));
-        assertTrue(cmd.IsDomainActive(Guid.NewGuid(), Guid.NewGuid()));
     }
 
     @Test

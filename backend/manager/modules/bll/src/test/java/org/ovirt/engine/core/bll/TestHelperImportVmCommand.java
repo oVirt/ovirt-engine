@@ -21,7 +21,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.BusinessEntitySnapshotDAO;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
@@ -42,11 +41,6 @@ public class TestHelperImportVmCommand extends ImportVmCommand {
 
     @Override
     protected boolean checkStoragePool() {
-        return true;
-    }
-
-    @Override
-    public boolean IsDomainActive(final Guid g1, final NGuid g2) {
         return true;
     }
 

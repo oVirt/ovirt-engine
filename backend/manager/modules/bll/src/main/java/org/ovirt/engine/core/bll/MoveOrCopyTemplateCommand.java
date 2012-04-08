@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -28,8 +29,6 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
-import org.ovirt.engine.core.common.queries.GetStorageDomainsByVmTemplateIdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.vdscommands.GetImageDomainsListVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
@@ -41,6 +40,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends StorageDomainCommandBase<T> {
 
     protected Map<Guid, Guid> imageToDestinationDomainMap;
+    protected Map<Guid, Guid> imageFromSourceDomainMap;
     private  List<PermissionSubject> permissionCheckSubject;
 
     /**
@@ -57,35 +57,25 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
         setVmTemplateId(parameters.getContainerId());
         parameters.setEntityId(getVmTemplateId());
         imageToDestinationDomainMap = getParameters().getImageToDestinationDomainMap();
+        imageFromSourceDomainMap = new HashMap<Guid, Guid>();
     }
 
-    private storage_domains _sourceDomain;
-    private Guid _sourceDomainId = Guid.Empty;
+    private storage_domains sourceDomain;
+    private Guid sourceDomainId = Guid.Empty;
 
     protected storage_domains getSourceDomain() {
-        if (_sourceDomain == null && !Guid.Empty.equals(_sourceDomainId)) {
-            _sourceDomain = getStorageDomainDAO().getForStoragePool(_sourceDomainId, getStoragePool().getId());
-        } else if (_sourceDomain == null) {
-            ArrayList<storage_domains> result = (ArrayList<storage_domains>) getBackend()
-                    .runInternalQuery(VdcQueryType.GetStorageDomainsByVmTemplateId,
-                            new GetStorageDomainsByVmTemplateIdQueryParameters(getVmTemplateId())).getReturnValue();
-            if (result != null) {
-                for (storage_domains domain : result) {
-                    if (domain.getstatus() != null && domain.getstatus() == StorageDomainStatus.Active) {
-                        _sourceDomain = domain;
-                    }
-                }
-            }
+        if (sourceDomain == null && !Guid.Empty.equals(sourceDomainId)) {
+            sourceDomain = getStorageDomainDAO().getForStoragePool(sourceDomainId, getStoragePool().getId());
         }
-        return _sourceDomain;
+        return sourceDomain;
+    }
+
+    protected void SetSourceDomainId(Guid storageId) {
+        sourceDomainId = storageId;
     }
 
     protected BackendInternal getBackend() {
         return Backend.getInstance();
-    }
-
-    protected void SetSourceDomainId(Guid storageId) {
-        _sourceDomainId = storageId;
     }
 
     protected ImageOperation getMoveOrCopyImageOperation() {
@@ -93,9 +83,9 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
 
     }
 
-    private java.util.List<DiskImage> _templateDisks;
+    private List<DiskImage> _templateDisks;
 
-    protected java.util.List<DiskImage> getTemplateDisks() {
+    protected List<DiskImage> getTemplateDisks() {
         if (_templateDisks == null && getVmTemplate() != null) {
             _templateDisks = VmTemplateHandler.UpdateDisksFromDb(getVmTemplate());
         }
@@ -114,13 +104,18 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
         } else {
             ensureDomainMap(getTemplateDisks(), getParameters().getStorageDomainId());
             // check that images are ok
-            if (retValue && getSourceDomain() == null) {
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL);
+            ImagesHandler.fillImagesMapBasedOnTemplate(getVmTemplate(),
+                    imageFromSourceDomainMap,
+                    null, true);
+            if (getVmTemplate().getDiskMap().values().size() != imageFromSourceDomainMap.size()) {
+                log.errorFormat("Can not found any default active domain for one of the disks of template with id : {0}",
+                        getVmTemplate().getId());
+                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_MISSED_STORAGES_FOR_SOME_DISKS);
                 retValue = false;
             }
             retValue = retValue
-                    && VmTemplateCommand.isVmTemplateImagesReady(getVmTemplate(), getSourceDomain().getId(),
-                            getReturnValue().getCanDoActionMessages(), true, true, true, false, null);
+                    && VmTemplateCommand.isVmTemplateImagesReady(getVmTemplate(), null,
+                            getReturnValue().getCanDoActionMessages(), true, true, true, false, getTemplateDisks());
             if (retValue) {
                 setStoragePoolId(getVmTemplate().getstorage_pool_id());
                 retValue =
@@ -138,17 +133,18 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
                 retValue = false;
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_MATCH);
             }
-
-            if (!retValue) {
-                if (getMoveOrCopyImageOperation() == ImageOperation.Move) {
-                    addCanDoActionMessage(VdcBllMessages.VAR__ACTION__MOVE);
-                } else {
-                    addCanDoActionMessage(VdcBllMessages.VAR__ACTION__COPY);
-                }
-                addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM_TEMPLATE);
-            }
         }
         return retValue;
+    }
+
+    @Override
+    protected void setActionMessageParameters() {
+        if (getMoveOrCopyImageOperation() == ImageOperation.Move) {
+            addCanDoActionMessage(VdcBllMessages.VAR__ACTION__MOVE);
+        } else {
+            addCanDoActionMessage(VdcBllMessages.VAR__ACTION__COPY);
+        }
+        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM_TEMPLATE);
     }
 
     private boolean checkFreeSpaceOnDestinationDomain(storage_domains domain, int requestedSizeGB) {
@@ -178,17 +174,13 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
             @Override
             public Void runInTransaction() {
                 for (DiskImage disk : disks) {
-                    MoveOrCopyImageGroupParameters tempVar = new MoveOrCopyImageGroupParameters(containerID, disk
+                    MoveOrCopyImageGroupParameters p = new MoveOrCopyImageGroupParameters(containerID, disk
                             .getimage_group_id().getValue(), disk.getId(), getParameters().getStorageDomainId(),
                             getMoveOrCopyImageOperation());
-                    tempVar.setParentCommand(getActionType());
-                    tempVar.setEntityId(getParameters().getEntityId());
-                    tempVar.setAddImageDomainMapping(getMoveOrCopyImageOperation() == ImageOperation.Copy);
-                    MoveOrCopyImageGroupParameters p = tempVar;
-                    // if copying template then AddImageDomainMapping should be true
-                    if (getSourceDomain() != null) {
-                        p.setSourceDomainId(getSourceDomain().getId());
-                    }
+                    p.setParentCommand(getActionType());
+                    p.setEntityId(getParameters().getEntityId());
+                    p.setAddImageDomainMapping(getMoveOrCopyImageOperation() == ImageOperation.Copy);
+                    p.setSourceDomainId(imageFromSourceDomainMap.get(disk.getId()));
                     p.setParentParemeters(getParameters());
                     VdcReturnValueBase vdcRetValue = getBackend().runInternalAction(
                                     VdcActionType.MoveOrCopyImageGroup,
@@ -263,7 +255,7 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
     protected void UpdateTemplateInSpm() {
         VmTemplate vmt = getVmTemplate();
         VmTemplateCommand.UpdateTemplateInSpm(vmt.getstorage_pool_id().getValue(),
-                new java.util.ArrayList<VmTemplate>(java.util.Arrays.asList(new VmTemplate[] { vmt })));
+                Arrays.asList(vmt));
     }
 
     @Override

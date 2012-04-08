@@ -61,10 +61,6 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
                 .getStorageDomainId() : super.getStorageDomainId() : super.getStorageDomainId();
     }
 
-    public boolean IsDomainActive(Guid domainId, NGuid storagePoolId) {
-        return IsDomainActive(domainId, storagePoolId, getReturnValue().getCanDoActionMessages());
-    }
-
     public static boolean IsDomainActive(Guid domainId, NGuid storagePoolId, java.util.ArrayList<String> messages) {
         storage_domains storage =
                 DbFacade.getInstance().getStorageDomainDAO().getForStoragePool(domainId, storagePoolId);

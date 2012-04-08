@@ -366,7 +366,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         }
         ImagesHandler.fillImagesMapBasedOnTemplate(getVmTemplate(),
                     imageToDestinationDomainMap,
-                    destStorages);
+                    destStorages, false);
         return true;
     }
 
