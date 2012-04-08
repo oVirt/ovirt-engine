@@ -42,7 +42,7 @@ public class DetachDiskFromVmCommand<T extends UpdateVmDiskParameters> extends A
         }
         if (retValue && Boolean.TRUE.equals(getParameters().getDiskInfo().getPlugged())
                 && getVm().getstatus() != VMStatus.Down) {
-            retValue = isHotPlugEnabled() && isOsSupportingPluggableDisks(getVm())
+            retValue = isHotPlugSupported() && isOSSupportingHotPlug()
                             && isInterfaceSupportedForPlugUnPlug(diskImage);
         }
 

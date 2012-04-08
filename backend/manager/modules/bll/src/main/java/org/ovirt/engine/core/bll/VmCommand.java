@@ -495,4 +495,29 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         return (ifCount <= MAX_NETWORK_INTERFACES_SUPPORTED);
     }
 
+    protected boolean isHotPlugSupported() {
+        if(Config.<Boolean> GetValue(ConfigValues.HotPlugEnabled, getVds().getvds_group_compatibility_version()
+                .getValue())) {
+            return true;
+        }
+        addCanDoActionMessage(VdcBllMessages.HOT_PLUG_IS_NOT_SUPPORTED);
+        return false;
+    }
+
+    /**
+     * The following method should check if os of guest is supported for hot plug/unplug operation
+     * @return
+     */
+    protected boolean isOSSupportingHotPlug() {
+        String vmOs = getVm().getos().name();
+        String[] oses = Config.<String> GetValue(ConfigValues.HotPlugSupportedOsList).split(",");
+        for (String os : oses) {
+            if (os.equalsIgnoreCase(vmOs)) {
+                return true;
+            }
+        }
+        addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_GUEST_OS_VERSION_IS_NOT_SUPPORTED);
+        return false;
+    }
+
 }

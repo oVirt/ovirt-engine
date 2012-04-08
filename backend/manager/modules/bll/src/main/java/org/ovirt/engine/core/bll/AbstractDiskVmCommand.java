@@ -6,12 +6,9 @@ import org.ovirt.engine.core.common.action.VmDiskOperatinParameterBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
-import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
-import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.vdscommands.HotPlugDiskVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
@@ -27,7 +24,6 @@ import org.ovirt.engine.core.utils.linq.LinqUtils;
 public abstract class AbstractDiskVmCommand<T extends VmDiskOperatinParameterBase> extends VmCommand<T> {
 
     private static final long serialVersionUID = -4596432908703489958L;
-    private static final String[] oses = Config.<String> GetValue(ConfigValues.HotPlugSupportedOsList).split(",");
 
     public AbstractDiskVmCommand(T parameters) {
         super(parameters);
@@ -99,15 +95,6 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperatinParameterBas
         return true;
     }
 
-    protected boolean isHotPlugEnabled() {
-        if (!Config.<Boolean> GetValue(ConfigValues.HotPlugEnabled,
-                getVds().getvds_group_compatibility_version().getValue())) {
-            addCanDoActionMessage(VdcBllMessages.HOT_PLUG_DISK_IS_NOT_SUPPORTED);
-            return false;
-        }
-        return true;
-    }
-
     protected boolean isVmExist() {
         if (getVm() == null) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND);
@@ -124,20 +111,6 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperatinParameterBas
         return true;
     }
 
-    /**
-     * The following method should check if os of guest is supported for hot plug/unplug operation
-     * @param vm
-     * @return
-     */
-    protected boolean isOsSupportingPluggableDisks(VM vm) {
-        for (String os : oses) {
-            if (os.equalsIgnoreCase(vm.getos().name())) {
-                return true;
-            }
-        }
-        addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_GUEST_OS_VERSION_IS_NOT_SUPPORTED);
-        return false;
-    }
 
     protected boolean isInterfaceSupportedForPlugUnPlug(DiskImageBase diskImage) {
         if (!DiskInterface.VirtIO.equals(diskImage.getdisk_interface())) {

@@ -38,7 +38,7 @@ public class HotPlugDiskToVmCommand<T extends HotPlugDiskToVmParameters> extends
         if (getVm().getstatus() == VMStatus.Up) {
             setVdsId(getVm().getrun_on_vds().getValue());
             returnValue =
-                    isHotPlugEnabled() && isOsSupportingPluggableDisks(getVm())
+                    isHotPlugSupported() && isOSSupportingHotPlug()
                             && isInterfaceSupportedForPlugUnPlug(diskImage);
         }
         if (returnValue) {

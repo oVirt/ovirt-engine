@@ -38,7 +38,7 @@ public class AttachDiskToVmCommand<T extends UpdateVmDiskParameters> extends Abs
         }
         if (retValue && Boolean.TRUE.equals(getParameters().getDiskInfo().getPlugged())
                 && getVm().getstatus() != VMStatus.Down) {
-            retValue = isOsSupportingPluggableDisks(getVm()) && isHotPlugEnabled()
+            retValue = isOSSupportingHotPlug() && isHotPlugSupported()
                             && isInterfaceSupportedForPlugUnPlug(getParameters().getDiskInfo());
         }
 
