@@ -1,12 +1,15 @@
 package org.ovirt.engine.core.config;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.ConnectException;
 import java.security.InvalidParameterException;
 import java.sql.SQLException;
 import java.text.MessageFormat;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +21,7 @@ import org.apache.commons.configuration.SubnodeConfiguration;
 import org.apache.commons.configuration.tree.ConfigurationNode;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.log4j.xml.DOMConfigurator;
 import org.ovirt.engine.core.config.db.ConfigDAO;
 import org.ovirt.engine.core.config.db.ConfigDaoImpl;
 import org.ovirt.engine.core.config.entity.ConfigKey;
@@ -31,6 +35,9 @@ import org.ovirt.engine.core.config.validation.ConfigActionType;
 public class EngineConfigLogic {
 
     private final static String ALTERNATE_KEY = "alternateKey";
+    private final static String DEFAULT_LOG4J_CONF_PATH = "/etc/ovirt-engine/engine-config/log4j.xml";
+    private final static String LOG4J_CONF_PATH_KEY = "log4jConfPath";
+
     private final static Logger log = Logger.getLogger(EngineConfigLogic.class);
 
     private Configuration appConfig;
@@ -54,6 +61,13 @@ public class EngineConfigLogic {
         log.debug("init: beginning initiation of EngineConfigLogic");
         appConfig = new AppConfig<PropertiesConfiguration>(parser.getAlternateConfigFile()).getFile();
         keysConfig = new KeysConfig<HierarchicalConfiguration>(parser.getAlternatePropertiesFile()).getFile();
+        for (String currentLog4jConfPath : getPossibleLog4jConfPaths()) {
+            File f = new File(currentLog4jConfPath);
+            if (f.exists()) {
+                DOMConfigurator.configure(currentLog4jConfPath);
+                break;
+            }
+        }
         populateAlternateKeyMap(keysConfig);
         ConfigKeyFactory.init(keysConfig, alternateKeysMap);
         configKeyFactory = ConfigKeyFactory.getInstance();
@@ -63,6 +77,10 @@ public class EngineConfigLogic {
             log.debug("init: caught connection error. Error details: ", se);
             throw new ConnectException("Connection to the Database failed. Please check that the hostname and port number are correct and that the Database service is up and running.");
         }
+    }
+
+    private Collection<String> getPossibleLog4jConfPaths() {
+        return Arrays.asList(appConfig.getString(LOG4J_CONF_PATH_KEY, DEFAULT_LOG4J_CONF_PATH), DEFAULT_LOG4J_CONF_PATH);
     }
 
     private void populateAlternateKeyMap(HierarchicalConfiguration config) {
