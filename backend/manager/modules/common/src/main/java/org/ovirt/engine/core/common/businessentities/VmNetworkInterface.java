@@ -3,19 +3,12 @@ package org.ovirt.engine.core.common.businessentities;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
-
 import org.ovirt.engine.core.compat.NGuid;
 
 /**
  * <code>VmNetworkInterface</code> defines a type of {@link BaseNetworkInterface} for instances of {@link VM}.
  *
  */
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "VmNetworkInterface")
 public class VmNetworkInterface extends NetworkInterface<VmNetworkStatistics> {
     private static final long serialVersionUID = 7428150502868988886L;
 
@@ -25,13 +18,8 @@ public class VmNetworkInterface extends NetworkInterface<VmNetworkStatistics> {
                     "VmTemplateId"
             }));
 
-    @XmlElement(name = "VmId")
     private NGuid vmId;
-
-    @XmlElement(name = "VmName")
     private String vmName;
-
-    @XmlElement(name = "VmTemplateId")
     private NGuid vmTemplateId;
 
     public VmNetworkInterface() {
