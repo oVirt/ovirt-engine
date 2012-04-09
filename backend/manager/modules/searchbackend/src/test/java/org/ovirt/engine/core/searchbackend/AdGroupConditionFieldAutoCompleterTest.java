@@ -8,6 +8,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.Arrays;
 import java.util.List;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -51,6 +52,7 @@ public class AdGroupConditionFieldAutoCompleterTest {
     }
 
     @Test
+    @Ignore
     public void testBuildFreeTextConditionSql() {
         IConditionFieldAutoCompleter comp = new AdGroupConditionFieldAutoCompleter();
         String sql = comp.buildFreeTextConditionSql("ATable", "=", "JarJar", false);
