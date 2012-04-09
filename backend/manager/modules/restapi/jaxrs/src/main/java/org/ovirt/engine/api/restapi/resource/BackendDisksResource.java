@@ -13,7 +13,7 @@ import org.ovirt.engine.api.model.Statistic;
 import org.ovirt.engine.api.model.Statistics;
 import org.ovirt.engine.api.resource.DeviceResource;
 import org.ovirt.engine.api.resource.DevicesResource;
-import org.ovirt.engine.core.common.action.AddDiskToVmParameters;
+import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.UpdateVmDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -39,7 +39,7 @@ public class BackendDisksResource
               parentId,
               queryType,
               queryParams,
-              VdcActionType.AddDiskToVm,
+              VdcActionType.AddDisk,
               VdcActionType.RemoveDisk,
               VdcActionType.UpdateVmDisk,
               SUB_COLLECTIONS);
@@ -78,7 +78,7 @@ public class BackendDisksResource
 
     @Override
     protected VdcActionParametersBase getAddParameters(DiskImage entity, Disk disk) {
-        AddDiskToVmParameters parameters = new AddDiskToVmParameters(parentId, entity);
+        AddDiskParameters parameters = new AddDiskParameters(parentId, entity);
         if (disk.isSetStorageDomains() && disk.getStorageDomains().getStorageDomains().get(0).isSetId()) {
             parameters.setStorageDomainId(new Guid(disk.getStorageDomains().getStorageDomains().get(0).getId()));
         }

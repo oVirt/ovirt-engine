@@ -12,7 +12,7 @@ import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.StorageDomains;
 import org.ovirt.engine.api.resource.DiskResource;
-import org.ovirt.engine.core.common.action.AddDiskToVmParameters;
+import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
@@ -110,8 +110,8 @@ public class BackendDisksResourceTest
 
     private void doTestAddAsync(AsyncTaskStatusEnum asyncStatus, CreationStatus creationStatus) throws Exception {
         setUriInfo(setUpBasicUriExpectations());
-        setUpCreationExpectations(VdcActionType.AddDiskToVm,
-                                  AddDiskToVmParameters.class,
+        setUpCreationExpectations(VdcActionType.AddDisk,
+                                  AddDiskParameters.class,
                                   new String[] { "VmId" },
                                   new Object[] { PARENT_ID },
                                   true,
@@ -145,8 +145,8 @@ public class BackendDisksResourceTest
                                      new String[] { "VmId" },
                                      new Object[] { PARENT_ID },
                                      asList(getEntity(0)));
-        setUpCreationExpectations(VdcActionType.AddDiskToVm,
-                                  AddDiskToVmParameters.class,
+        setUpCreationExpectations(VdcActionType.AddDisk,
+                                  AddDiskParameters.class,
                                   new String[] { "VmId" },
                                   new Object[] { PARENT_ID },
                                   true,
@@ -178,8 +178,8 @@ public class BackendDisksResourceTest
                                      new String[] { "VmId" },
                                      new Object[] { PARENT_ID },
                                      asList(getEntity(0)));
-        setUpCreationExpectations(VdcActionType.AddDiskToVm,
-                                  AddDiskToVmParameters.class,
+        setUpCreationExpectations(VdcActionType.AddDisk,
+                                  AddDiskParameters.class,
                                   new String[] { "VmId", "StorageDomainId" },
                                   new Object[] { PARENT_ID, GUIDS[3] },
                                   true,
@@ -217,8 +217,8 @@ public class BackendDisksResourceTest
     }
 
     private void doTestBadAddDisk(boolean canDo, boolean success, String detail) throws Exception {
-        setUriInfo(setUpActionExpectations(VdcActionType.AddDiskToVm,
-                                           AddDiskToVmParameters.class,
+        setUriInfo(setUpActionExpectations(VdcActionType.AddDisk,
+                                           AddDiskParameters.class,
                                            new String[] { "VmId" },
                                            new Object[] { PARENT_ID },
                                            canDo,
