@@ -2522,7 +2522,11 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
                             ((storage_domains) model.getDisksAllocationModel().getStorageDomain().getSelectedItem());
 
                     VmManagementParametersBase params = new VmManagementParametersBase(getcurrentVm());
-                    params.setDiskInfoDestinationMap(imageToDestinationDomainMap);
+                    params.setDiskInfoDestinationMap(
+                            model.getDisksAllocationModel()
+                                    .getImageToDestinationDomainMap((Boolean) model.getDisksAllocationModel()
+                                            .getIsSingleStorageDomain()
+                                            .getEntity()));
 
                     Frontend.RunAction(VdcActionType.AddVm, params,
                             new IFrontendActionAsyncCallback() {
