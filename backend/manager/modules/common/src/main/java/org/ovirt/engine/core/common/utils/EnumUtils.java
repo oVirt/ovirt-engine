@@ -1,6 +1,9 @@
 package org.ovirt.engine.core.common.utils;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.compat.MatchCollection;
@@ -57,7 +60,6 @@ public class EnumUtils {
         return result;
     }
 
-
     /**
      * Return the value of the {@link Enum#name()} method for the given enum instance if it's not <code>null</code>,
      * otherwise return <code>null</code>.
@@ -70,5 +72,27 @@ public class EnumUtils {
      */
     public static <E extends Enum<E>> String nameOrNull(E enumInstance) {
         return enumInstance == null ? null : enumInstance.name();
+    }
+
+    /**
+     * Converts the given collection of enum values to a collection of strings, containing enum names (retrieved using
+     * {@link Enum#name()} method) of each element of the collection.
+     *
+     * @param collection
+     *            The collection of Enum values to be converted to a delimiter-separated string.
+     * @return A String collection containing enum names of all elements of the given collection.
+     */
+    public static <T extends Enum<?>> List<String> enumCollectionToStringList(Collection<T> collection) {
+        if(collection == null) {
+            return null;
+        }
+
+        List<String> stringList = new ArrayList<String>();
+
+        for(T element : collection) {
+            stringList.add(element.name());
+        }
+
+        return stringList;
     }
 }
