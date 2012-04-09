@@ -171,7 +171,7 @@ public class DisksAllocationModel extends EntityModel
     public DisksAllocationModel()
     {
         setIsSingleStorageDomain(new EntityModel());
-        getIsSingleStorageDomain().setEntity(true);
+        getIsSingleStorageDomain().setEntity(false);
         getIsSingleStorageDomain().getEntityChangedEvent().addListener(this);
 
         setStorageDomain(new ListModel());
@@ -284,8 +284,6 @@ public class DisksAllocationModel extends EntityModel
 
             diskModel.getSourceStorageDomain().setIsAvailable(isSourceStorageDomainAvailable);
             diskModel.getSourceStorageDomain().setIsChangable(!isSingleStorageDomain && isSourceStorageDomainChangable);
-            diskModel.getStorageDomain().setIsChangable(!isSingleStorageDomain && !isDestStoragesEmpty);
-            diskModel.getQuota().setIsChangable(!isSingleStorageDomain && !isDestStoragesEmpty);
             diskModel.getVolumeType().setIsAvailable(isVolumeFormatAvailable);
             diskModel.getVolumeType().setIsChangable(isVolumeFormatChangable);
 

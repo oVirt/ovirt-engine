@@ -94,6 +94,9 @@ public class DisksAllocationView extends Composite implements HasEditorDriver<Di
         localize(constants);
         addStyles();
         Driver.driver.initialize(this);
+
+        // Hide single destination storage and quota panel
+        singleStoragePanel.setVisible(false);
     }
 
     void initListBoxEditors() {
