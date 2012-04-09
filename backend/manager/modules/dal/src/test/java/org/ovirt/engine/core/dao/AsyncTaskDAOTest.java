@@ -7,7 +7,7 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
-import org.ovirt.engine.core.common.action.AddDiskToVmParameters;
+import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskResultEnum;
@@ -43,7 +43,7 @@ public class AsyncTaskDAOTest extends BaseDAOTestCase {
         // create some test data
         newAsyncTask = new async_tasks();
         newAsyncTask.settask_id(Guid.NewGuid());
-        newAsyncTask.setaction_type(VdcActionType.AddDiskToVm);
+        newAsyncTask.setaction_type(VdcActionType.AddDisk);
         newAsyncTask.setstatus(AsyncTaskStatusEnum.running);
         newAsyncTask.setresult(AsyncTaskResultEnum.success);
         newAsyncTask.setaction_parameters(params);
@@ -103,8 +103,8 @@ public class AsyncTaskDAOTest extends BaseDAOTestCase {
     public void testUpdate() {
         existingAsyncTask.setstatus(AsyncTaskStatusEnum.aborting);
         existingAsyncTask.setresult(AsyncTaskResultEnum.failure);
-        existingAsyncTask.setaction_type(VdcActionType.AddDiskToVm);
-        AddDiskToVmParameters addDiskToVmParams = new AddDiskToVmParameters();
+        existingAsyncTask.setaction_type(VdcActionType.AddDisk);
+        AddDiskParameters addDiskToVmParams = new AddDiskParameters();
         addDiskToVmParams.setSessionId("SESSION_ID");
         existingAsyncTask.setaction_parameters(addDiskToVmParams);
         dao.update(existingAsyncTask);

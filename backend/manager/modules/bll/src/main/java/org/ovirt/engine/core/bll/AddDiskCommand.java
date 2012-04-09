@@ -5,20 +5,25 @@ import java.util.List;
 
 import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
+import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.PermissionSubject;
-import org.ovirt.engine.core.common.action.AddDiskToVmParameters;
+import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.action.AddImageFromScratchParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
@@ -33,7 +38,7 @@ import org.ovirt.engine.core.dao.StoragePoolIsoMapDAO;
 
 @CustomLogFields({ @CustomLogField("DiskName") })
 @NonTransactiveCommandAttribute(forceCompensation = true)
-public class AddDiskToVmCommand<T extends AddDiskToVmParameters> extends AbstractDiskVmCommand<T> {
+public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmCommand<T> {
 
     private static final long serialVersionUID = 4499428315430159917L;
 
@@ -42,11 +47,11 @@ public class AddDiskToVmCommand<T extends AddDiskToVmParameters> extends Abstrac
      *
      * @param commandId
      */
-    protected AddDiskToVmCommand(Guid commandId) {
+    protected AddDiskCommand(Guid commandId) {
         super(commandId);
     }
 
-    public AddDiskToVmCommand(T parameters) {
+    public AddDiskCommand(T parameters) {
         super(parameters);
         parameters.getDiskInfo().getDisk().setId(Guid.NewGuid());
         parameters.setEntityId(parameters.getDiskInfo().getDisk().getId());
@@ -64,63 +69,64 @@ public class AddDiskToVmCommand<T extends AddDiskToVmParameters> extends Abstrac
     @Override
     protected boolean canDoAction() {
         boolean returnValue = isVmExist();
-        if (returnValue && getVm().getstatus() != VMStatus.Down) {
+        VM vm = getVm();
+        if (returnValue && (vm != null && vm.getstatus() != VMStatus.Down)) {
             returnValue = false;
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
         } else {
             // if user sent drive check that its not in use
-            returnValue = returnValue && isDiskCanBeAddedToVm(getParameters().getDiskInfo());
-            storage_domains storageDomain = null;
+            returnValue = returnValue && (vm == null || isDiskCanBeAddedToVm(getParameters().getDiskInfo()));
             if (returnValue) {
-                storageDomain = getStorageDomainDao().get(
-                        getStorageDomainId().getValue());
-                if (storageDomain == null) {
+                StorageDomainValidator validator = new StorageDomainValidator(getStorageDomain());
+                returnValue = validator.isDomainExistAndActive(getReturnValue().getCanDoActionMessages());
+                if (returnValue && vm != null && getStoragePoolIsoMapDao().get(new StoragePoolIsoMapId(
+                            getStorageDomainId().getValue(), vm.getstorage_pool_id())) == null) {
                     returnValue = false;
-                    addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);
-                } else {
-                    if (getStoragePoolIsoMapDao().get(new StoragePoolIsoMapId(
-                            getStorageDomainId().getValue(), getVm().getstorage_pool_id())) == null) {
-                        returnValue = false;
-                        addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_MATCH);
-                    } else {
-                        returnValue = ImagesHandler.CheckImageConfiguration(
-                                storageDomain.getStorageStaticData(),
-                                getParameters().getDiskInfo(),
-                                getReturnValue().getCanDoActionMessages()) && isDiskPassPCIAndIDELimit(getParameters().getDiskInfo());
-                    }
+                    addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_MATCH);
                 }
+                returnValue = returnValue &&
+                                ImagesHandler.CheckImageConfiguration(
+                                        getStorageDomain().getStorageStaticData(),
+                                        getParameters().getDiskInfo(),
+                                        getReturnValue().getCanDoActionMessages())
+                                        && (vm == null || isDiskPassPCIAndIDELimit(getParameters().getDiskInfo()));
             }
-
             List<DiskImage> emptyList = Collections.emptyList();
-            returnValue = returnValue
-                         && ImagesHandler.PerformImagesChecks(getVm(), getReturnValue().getCanDoActionMessages(), getVm()
-                                 .getstorage_pool_id(), getStorageDomainId().getValue(), false, false, false, false, true,
-                                 false, false, true, emptyList);
+            returnValue =
+                    returnValue
+                            && (vm == null
+                            || ImagesHandler.PerformImagesChecks(vm,
+                                    getReturnValue().getCanDoActionMessages(),
+                                    vm.getstorage_pool_id(),
+                                    getStorageDomainId().getValue(),
+                                    false,
+                                    false,
+                                    false,
+                                    false,
+                                    true,
+                                    false,
+                                    false,
+                                    true,
+                                    emptyList));
 
-            if (returnValue && !hasFreeSpace(storageDomain)) {
+            if (returnValue && !hasFreeSpace(getStorageDomain())) {
                 returnValue = false;
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW);
             }
-            ImagesHandler.setDiskAlias(getParameters().getDiskInfo().getDisk(), getVm());
         }
-        if (returnValue) {
-            if (getRequestDiskSpace() > Config
+        if (returnValue && getRequestDiskSpace() > Config
                     .<Integer> GetValue(ConfigValues.MaxDiskSize)) {
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_MAX_SIZE_EXCEEDED);
-                getReturnValue().getCanDoActionMessages().add(
+            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_MAX_SIZE_EXCEEDED);
+            getReturnValue().getCanDoActionMessages().add(
                         String.format("$max_disk_size %1$s", Config.<Integer> GetValue(ConfigValues.MaxDiskSize)));
-                returnValue = false;
-            }
+            returnValue = false;
         }
         return returnValue;
     }
 
-    protected boolean hasRunningTasks() {
-        return getAsycTaskManager().EntityHasTasks(getVmId());
-    }
-
-    protected AsyncTaskManager getAsycTaskManager() {
-        return AsyncTaskManager.getInstance();
+    @Override
+    protected boolean isVmExist() {
+        return getParameters().getVmId() == null || Guid.Empty.equals(getParameters().getVmId()) || super.isVmExist();
     }
 
     private VolumeType getVolumeType() {
@@ -216,18 +222,25 @@ public class AddDiskToVmCommand<T extends AddDiskToVmParameters> extends Abstrac
     @Override
     protected void ExecuteVmCommand() {
         // NOTE: Assuming that we need to lock the vm before adding a disk!
-        VmHandler.checkStatusAndLockVm(getVm().getId(), getCompensationContext());
+        if (getVm() != null) {
+            VmHandler.checkStatusAndLockVm(getVm().getId(), getCompensationContext());
+        }
 
         // create from blank template, create new vm snapshot id
-        AddImageFromScratchParameters parameters = new AddImageFromScratchParameters(Guid.Empty, getVmId(),
-                getParameters().getDiskInfo());
+        AddImageFromScratchParameters parameters =
+                new AddImageFromScratchParameters(Guid.Empty, getParameters().getVmId(), getParameters().getDiskInfo());
         parameters.setQuotaId(getParameters().getQuotaId());
         parameters.setStorageDomainId(getStorageDomainId().getValue());
-        parameters.setVmSnapshotId(getSnapshotDao().getId(getVmId(), SnapshotType.ACTIVE));
-        parameters.setParentCommand(VdcActionType.AddDiskToVm);
+        parameters.setParentCommand(VdcActionType.AddDisk);
         parameters.setEntityId(getParameters().getEntityId());
+        parameters.setStoragePoolId(getStorageDomain().getstorage_pool_id().getValue());
         getParameters().getImagesParameters().add(parameters);
         parameters.setParentParemeters(getParameters());
+        if (getVm() != null) {
+            parameters.setVmSnapshotId(getSnapshotDao().getId(getVmId(), SnapshotType.ACTIVE));
+            VmDeviceUtils.addManagedDevice(new VmDeviceId(getParameters().getDiskInfo().getDisk().getId(), getVmId()),
+                    VmDeviceType.DISK, VmDeviceType.DISK, "", true, false);
+        }
         VdcReturnValueBase tmpRetValue =
                 Backend.getInstance().runInternalAction(VdcActionType.AddImageFromScratch,
                         parameters,

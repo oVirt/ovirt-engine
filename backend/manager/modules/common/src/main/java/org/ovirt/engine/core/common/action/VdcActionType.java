@@ -37,7 +37,7 @@ public enum VdcActionType {
     AddVmInterface(28, ActionGroup.CONFIGURE_VM_NETWORK, false),
     RemoveVmInterface(29, ActionGroup.CONFIGURE_VM_NETWORK, false),
     UpdateVmInterface(30, ActionGroup.CONFIGURE_VM_NETWORK, false),
-    AddDiskToVm(31, ActionGroup.CONFIGURE_VM_STORAGE),
+    AddDisk(31, ActionGroup.CONFIGURE_VM_STORAGE),
     MoveVm(33, ActionGroup.MOVE_VM),
     UpdateVmDisk(34, ActionGroup.CONFIGURE_VM_STORAGE, false),
     AttachDiskToVm(180, ActionGroup.CONFIGURE_VM_STORAGE, false),

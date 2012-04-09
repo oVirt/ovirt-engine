@@ -363,7 +363,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
      * @return - Calculated label name.
      */
     protected String CalculateImageDescription() {
-        return ImagesHandler.calculateImageDescription(getVm());
+        return ImagesHandler.calculateImageDescription(getVm().getvm_name());
     }
 
     protected static void CompleteAdvancedDiskData(DiskImage from, DiskImage to) {

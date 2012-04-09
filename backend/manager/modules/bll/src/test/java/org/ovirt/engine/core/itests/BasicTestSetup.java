@@ -217,7 +217,7 @@ public class BasicTestSetup {
         AddImageFromScratchParameters addImageParams = new AddImageFromScratchParameters(ImageId, vmId, disk);
         addImageParams.setStorageDomainId(storage.getId());
         addImageParams.setVmSnapshotId(Guid.NewGuid());
-        addImageParams.setParentCommand(VdcActionType.AddDiskToVm);
+        addImageParams.setParentCommand(VdcActionType.AddDisk);
         addImageParams.setEntityId(ImageId);
         addImageParams.setDestinationImageId(ImageId);
         AddImageFromScratchParameters parameters = addImageParams;

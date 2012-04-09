@@ -6,8 +6,7 @@ import org.ovirt.engine.core.compat.Guid;
 public class AddImageFromScratchParameters extends ImagesActionsParametersBase {
 
     private static final long serialVersionUID = 8249273209551108387L;
-
-    private Guid masterVmId = new Guid();
+    private Guid masterVmId = Guid.Empty;;
     private DiskImageBase diskInfo;
 
     public AddImageFromScratchParameters() {

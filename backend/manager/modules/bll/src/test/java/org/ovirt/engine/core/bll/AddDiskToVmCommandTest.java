@@ -7,7 +7,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
-import org.ovirt.engine.core.common.action.AddDiskToVmParameters;
+import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
@@ -75,7 +75,7 @@ public class AddDiskToVmCommandTest {
     /**
      * The command under test.
      */
-    protected AddDiskToVmCommand<AddDiskToVmParameters> command;
+    protected AddDiskCommand<AddDiskParameters> command;
 
     @SuppressWarnings("unchecked")
     @Before
@@ -178,7 +178,7 @@ public class AddDiskToVmCommandTest {
         image.setdisk_interface(DiskInterface.IDE);
         image.setvolume_type(VolumeType.Preallocated);
         image.setvolume_format(VolumeFormat.COW);
-        AddDiskToVmParameters params = new AddDiskToVmParameters(Guid.NewGuid(), image);
+        AddDiskParameters params = new AddDiskParameters(Guid.NewGuid(), image);
         initializeCommand(storageId, params);
         assertFalse(command.validateInputs());
         assertTrue(command.getReturnValue().getCanDoActionMessages().contains("VALIDATION.DISK_TYPE.NOT_NULL"));
@@ -190,7 +190,7 @@ public class AddDiskToVmCommandTest {
         DiskImageBase image = new DiskImageBase();
         image.setvolume_format(VolumeFormat.COW);
         image.setvolume_type(VolumeType.Preallocated);
-        AddDiskToVmParameters params = new AddDiskToVmParameters(Guid.NewGuid(), image);
+        AddDiskParameters params = new AddDiskParameters(Guid.NewGuid(), image);
         initializeCommand(storageId, params);
         assertFalse(command.validateInputs());
         assertTrue(command.getReturnValue().getCanDoActionMessages().contains("VALIDATION.DISK_INTERFACE.NOT_NULL"));
@@ -314,7 +314,7 @@ public class AddDiskToVmCommandTest {
     }
 
     private void initializeCommand(Guid storageId, VolumeType volumeType) {
-        AddDiskToVmParameters parameters = createParameters();
+        AddDiskParameters parameters = createParameters();
         parameters.setStorageDomainId(storageId);
         if (volumeType == VolumeType.Preallocated) {
             parameters.setDiskInfo(createPreallocDiskImageBase());
@@ -324,9 +324,9 @@ public class AddDiskToVmCommandTest {
         initializeCommand(storageId, parameters);
     }
 
-    private void initializeCommand(Guid storageId, AddDiskToVmParameters params) {
+    private void initializeCommand(Guid storageId, AddDiskParameters params) {
         params.setStorageDomainId(storageId);
-        command = spy(new AddDiskToVmCommand<AddDiskToVmParameters>(params));
+        command = spy(new AddDiskCommand<AddDiskParameters>(params));
     }
 
     /**
@@ -401,10 +401,10 @@ public class AddDiskToVmCommandTest {
     /**
      * @return Valid parameters for the command.
      */
-    private AddDiskToVmParameters createParameters() {
+    private AddDiskParameters createParameters() {
         DiskImageBase image = new DiskImageBase();
         image.setdisk_interface(DiskInterface.IDE);
-        AddDiskToVmParameters parameters = new AddDiskToVmParameters(Guid.NewGuid(), image);
+        AddDiskParameters parameters = new AddDiskParameters(Guid.NewGuid(), image);
         return parameters;
     }
 

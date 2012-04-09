@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
@@ -43,6 +44,7 @@ import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 
 public final class ImagesHandler {
+    private static final String DISK = "_DISK";
     public static final Guid BlankImageTemplateId = new Guid("00000000-0000-0000-0000-000000000000");
     public static final String DefaultDriveName = "1";
 
@@ -93,7 +95,11 @@ public final class ImagesHandler {
 
     public static boolean setDiskAlias(Disk disk, VM vm) {
         if (disk != null) {
-            disk.setDiskAlias(getSuggestedDiskAlias(disk, vm.getvm_name()));
+            String vmName = "";
+            if (vm != null) {
+                vmName = vm.getvm_name();
+            }
+            disk.setDiskAlias(getSuggestedDiskAlias(disk, vmName));
             return true;
         } else {
             log.errorFormat("Disk object is null");
@@ -112,14 +118,14 @@ public final class ImagesHandler {
     public static String getSuggestedDiskAlias(Disk disk, String diskPrefix) {
         String diskAlias;
         if (disk == null) {
-            diskAlias = getDefaultDiskAlias(diskPrefix, "1");
+            diskAlias = getDefaultDiskAlias(diskPrefix, DefaultDriveName);
             log.warnFormat("Disk object is null, the suggested default disk alias to be used is %1$s",
                     diskAlias);
         } else {
             diskAlias = disk.getDiskAlias();
-            if (diskAlias == null) {
+            if (StringUtils.isEmpty(diskAlias)) {
                 diskAlias = getDefaultDiskAlias(diskPrefix, String.valueOf(disk.getInternalDriveMapping()));
-                log.infoFormat("Disk alias retrieved from the client is null, the suggested default disk alias to be used is %1$s",
+                log.infoFormat("Disk alias retrieved from the client is null or empty, the suggested default disk alias to be used is %1$s",
                         diskAlias);
             }
         }
@@ -127,7 +133,7 @@ public final class ImagesHandler {
     }
 
     public static String getDefaultDiskAlias(String prefix, String suffix) {
-        return prefix + "_DISK" + suffix;
+        return prefix + DISK + suffix;
     }
 
     public static Map<Guid, List<DiskImage>> buildStorageToDiskMap(Collection<DiskImage> images,
@@ -566,11 +572,6 @@ public final class ImagesHandler {
             }
         }
         return returnValue;
-    }
-
-    public static String calculateImageDescription(VM vm) {
-        String vmName = (vm == null) ? null : vm.getvm_name();
-        return calculateImageDescription(vmName);
     }
 
     public static String calculateImageDescription(String vmName) {

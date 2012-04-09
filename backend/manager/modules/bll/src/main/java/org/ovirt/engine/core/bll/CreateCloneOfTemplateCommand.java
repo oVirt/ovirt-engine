@@ -71,7 +71,7 @@ public class CreateCloneOfTemplateCommand<T extends CreateCloneOfTemplateParamet
                             new CopyImageVDSCommandParameters(storagePoolID, getDiskImage().getstorage_ids().get(0),
                                     getVmTemplateId(), getDiskImage().getimage_group_id().getValue(), getImage()
                                             .getId(), mNewCreatedDiskImage.getimage_group_id(), getDestinationImageId(),
-                                    CalculateImageDescription(), getDestinationStorageDomainId(),
+                                    "", getDestinationStorageDomainId(),
                                     CopyVolumeType.LeafVol, mNewCreatedDiskImage.getvolume_format(),
                                     mNewCreatedDiskImage.getvolume_type(), getDiskImage().getwipe_after_delete(),
                                     false, getStoragePool().getcompatibility_version().toString()));
