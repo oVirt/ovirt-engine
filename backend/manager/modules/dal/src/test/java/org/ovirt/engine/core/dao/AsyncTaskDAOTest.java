@@ -119,10 +119,16 @@ public class AsyncTaskDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testRemove() {
-        dao.remove(existingAsyncTask.gettask_id());
-
         async_tasks result = dao.get(existingAsyncTask.gettask_id());
 
+        assertNotNull(result);
+
+        assertEquals(dao.remove(existingAsyncTask.gettask_id()), 1);
+
+        result = dao.get(existingAsyncTask.gettask_id());
+
         assertNull(result);
+
+        assertEquals(dao.remove(existingAsyncTask.gettask_id()), 0);
     }
 }

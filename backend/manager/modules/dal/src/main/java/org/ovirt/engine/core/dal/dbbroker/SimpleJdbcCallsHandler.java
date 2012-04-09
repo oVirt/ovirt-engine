@@ -13,8 +13,6 @@ import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 
 public class SimpleJdbcCallsHandler {
-    private static SimpleJdbcCallsHandler instance = new SimpleJdbcCallsHandler();
-
 
     private ConcurrentMap<String, SimpleJdbcCall> callsMap =
             new ConcurrentHashMap<String, SimpleJdbcCall>();
@@ -39,6 +37,20 @@ public class SimpleJdbcCallsHandler {
         return executeImpl(procedureName, paramSource, createCallForModification(procedureName));
     }
 
+    public int executeModificationRowsAffected(final String procedureName, final MapSqlParameterSource paramSource) {
+        Integer numOfRows = null;
+        Map<String, Object> result = executeImpl(procedureName, paramSource, createCallForModification(procedureName));
+        if (!result.isEmpty()) {
+            List<?> resultArray = (List<?>) result.values().iterator().next();
+            if (resultArray != null && !resultArray.isEmpty()) {
+                Map<?, ?> resultMap = (Map<?, ?>) resultArray.get(0);
+                if (!resultMap.isEmpty()) {
+                    numOfRows = (Integer) resultMap.values().iterator().next();
+                }
+            }
+        }
+        return (numOfRows != null) ? numOfRows : 0;
+    }
 
     public <T> T executeRead(final String procedureName,
             final ParameterizedRowMapper<T> mapper,

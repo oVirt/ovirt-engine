@@ -48,5 +48,5 @@ public interface AsyncTaskDAO extends DAO {
      *
      * @param id
      */
-    void remove(Guid id);
+    int remove(Guid id);
 }

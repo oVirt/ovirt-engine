@@ -9,12 +9,12 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.async_tasks;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.dbbroker.CustomMapSqlParameterSource;
 import org.ovirt.engine.core.dal.dbbroker.DbEngineDialect;
 import org.ovirt.engine.core.utils.ReflectionUtils;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.serialization.json.JsonObjectDeserializer;
 import org.ovirt.engine.core.utils.serialization.json.JsonObjectSerializer;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -88,7 +88,6 @@ public class AsyncTaskDAODbFacadeImpl extends BaseDAODbFacade implements AsyncTa
         return getCallsHandler().executeRead("Getasync_tasksBytask_id", mapper, parameterSource);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public List<async_tasks> getAll() {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource();
@@ -132,10 +131,10 @@ public class AsyncTaskDAODbFacadeImpl extends BaseDAODbFacade implements AsyncTa
     }
 
     @Override
-    public void remove(Guid id) {
+    public int remove(Guid id) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("task_id", id);
 
-        getCallsHandler().executeModification("Deleteasync_tasks", parameterSource);
+        return getCallsHandler().executeModificationRowsAffected("Deleteasync_tasks", parameterSource);
     }
 }

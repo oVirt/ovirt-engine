@@ -42,12 +42,16 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION Deleteasync_tasks(v_task_id UUID)
-RETURNS VOID
+RETURNS integer
    AS $procedure$
+DECLARE
+deleted_rows int;
 BEGIN
 	
    DELETE FROM async_tasks
    WHERE task_id = v_task_id;
+   GET DIAGNOSTICS deleted_rows = ROW_COUNT;
+   RETURN deleted_rows;
     
 END; $procedure$
 LANGUAGE plpgsql;
