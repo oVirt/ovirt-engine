@@ -1718,7 +1718,8 @@ public class UnitVmModel extends Model
         getTemplate().ValidateSelectedItem(new IValidation[] { new NotEmptyValidation() });
 
         getStorageDomain().setIsValid(true);
-        if (template != null && !template.getId().equals(Guid.Empty) && storageDomain == null)
+        if (template != null && !template.getId().equals(Guid.Empty) && storageDomain == null
+                && getStorageDomain().getIsChangable())
         {
             getStorageDomain().setIsValid(false);
             getStorageDomain().getInvalidityReasons().add("Storage Domain must be specified.");
