@@ -61,6 +61,8 @@ public interface VdsServerConnector {
 
     public Map<String, Object> setVmTicket(String vmId, String otp64, String sec);
 
+    public Map<String, Object> setVmTicket(String vmId, String otp64, String sec, String connectionAction, Map<String, String> params);
+
     public Map<String, Object> startSpice(String vdsIp, int port, String ticket);
 
     public Map<String, Object> addNetwork(String bridge, String vlan, String bond, String[] nics,

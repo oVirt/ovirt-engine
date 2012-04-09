@@ -250,7 +250,7 @@ public class VdsEventListener implements IVdsEventListener {
                 Backend.getInstance()
                         .getResourceManager()
                         .RunVdsCommand(VDSCommandType.SetVmTicket,
-                                new SetVmTicketVDSCommandParameters(vds_id, vmid, otp64, 60));
+                                new SetVmTicketVDSCommandParameters(vds_id, vmid, otp64, 60, "", Guid.Empty));
                 log.infoFormat(
                         "VdsEventListener.ProcessOnVmPoweringUp - Auto start logic, starting spice to vm - {0} ", vmid);
                 Backend.getInstance()

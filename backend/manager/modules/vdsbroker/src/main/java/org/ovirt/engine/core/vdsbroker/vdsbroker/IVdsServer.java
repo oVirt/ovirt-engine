@@ -64,6 +64,8 @@ public interface IVdsServer {
 
     StatusOnlyReturnForXmlRpc setVmTicket(String vmId, String otp64, String sec);
 
+    StatusOnlyReturnForXmlRpc setVmTicket(String vmId, String otp64, String sec, String connectionAction, Map<String, String> params);
+
     StatusOnlyReturnForXmlRpc startSpice(String vdsIp, int port, String ticket);
 
     StatusOnlyReturnForXmlRpc addNetwork(String bridge, String vlan, String bond, String[] nics,

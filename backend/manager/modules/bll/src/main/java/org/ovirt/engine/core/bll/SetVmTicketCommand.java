@@ -51,7 +51,8 @@ public class SetVmTicketCommand<T extends SetVmTicketParameters> extends VmOpera
                 .getInstance()
                 .getResourceManager()
                 .RunVdsCommand(VDSCommandType.SetVmTicket,
-                        new SetVmTicketVDSCommandParameters(getVdsId(), getVmId(), mTicket, mValidTime)).getSucceeded());
+                    new SetVmTicketVDSCommandParameters(getVdsId(), getVmId(), mTicket, mValidTime,
+                        getCurrentUser().getUserName(), getCurrentUser().getUserId())).getSucceeded());
 
         if (getSucceeded()) {
             setActionReturnValue(mTicket);

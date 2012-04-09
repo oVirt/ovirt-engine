@@ -1112,6 +1112,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("false")
     PosixStorageEnabled(350),
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("false")
+    SendVmTicketUID(351),
+
     Invalid(65535);
 
     private int intValue;
