@@ -1,15 +1,21 @@
 package org.ovirt.engine.core.searchbackend;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Arrays;
 import java.util.List;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * this is the main test class for the BaseConditionFieldAutoCompleter class
- *
  */
-public class AdGroupConditionFieldAutoCompleterTest extends TestCase {
+public class AdGroupConditionFieldAutoCompleterTest {
+
+    @Test
     public void testEmpty() {
         IConditionFieldAutoCompleter comp = new AdGroupConditionFieldAutoCompleter();
         List<String> comps = Arrays.asList(comp.getCompletion(""));
@@ -18,6 +24,7 @@ public class AdGroupConditionFieldAutoCompleterTest extends TestCase {
         assertFalse("False", comps.contains("False"));
     }
 
+    @Test
     public void testValidateFieldValue() {
         IConditionFieldAutoCompleter comp = new AdGroupConditionFieldAutoCompleter();
         assertTrue("Jar Jar", comp.validateFieldValue("NAME", "Jar Jar"));
@@ -27,6 +34,7 @@ public class AdGroupConditionFieldAutoCompleterTest extends TestCase {
         assertTrue("Lowercase Field", comp.validateFieldValue("name", "<>"));
     }
 
+    @Test
     public void testGetDbFieldName() {
         IConditionFieldAutoCompleter comp = new AdGroupConditionFieldAutoCompleter();
         assertEquals("$CN", "$CN", comp.getDbFieldName("NAME"));
@@ -34,6 +42,7 @@ public class AdGroupConditionFieldAutoCompleterTest extends TestCase {
         assertNull("22", comp.getDbFieldType("22"));
     }
 
+    @Test
     public void testGetDbFieldType() {
         IConditionFieldAutoCompleter comp = new AdGroupConditionFieldAutoCompleter();
         assertEquals("NAME", String.class, comp.getDbFieldType("NAME"));
@@ -41,6 +50,7 @@ public class AdGroupConditionFieldAutoCompleterTest extends TestCase {
         assertNull("22", comp.getDbFieldType("22"));
     }
 
+    @Test
     public void testBuildFreeTextConditionSql() {
         IConditionFieldAutoCompleter comp = new AdGroupConditionFieldAutoCompleter();
         String sql = comp.buildFreeTextConditionSql("ATable", "=", "JarJar", false);
