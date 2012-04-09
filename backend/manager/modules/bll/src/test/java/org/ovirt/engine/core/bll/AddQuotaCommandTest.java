@@ -64,7 +64,7 @@ public class AddQuotaCommandTest {
     private void mockQuotaHelper() {
         mockStatic(QuotaHelper.class);
         Mockito.when(QuotaHelper.getInstance()).thenReturn(quotaHelper);
-        when(quotaHelper.checkQuotaValidationForAddEdit(Matchers.any(Quota.class), Matchers.any(ArrayList.class))).thenReturn(true);
+        when(quotaHelper.checkQuotaValidationForAdd(Matchers.any(Quota.class), Matchers.any(ArrayList.class))).thenReturn(true);
     }
 
     private void mockDbFacade() {

@@ -12,7 +12,6 @@ import org.ovirt.engine.core.common.businessentities.QuotaStorage;
 import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.QuotaDAO;
 
 public class UpdateQuotaCommand<T extends QuotaCRUDParameters> extends CommandBase<T> {
@@ -30,7 +29,7 @@ public class UpdateQuotaCommand<T extends QuotaCRUDParameters> extends CommandBa
 
     @Override
     protected boolean canDoAction() {
-        if (!QuotaHelper.getInstance().checkQuotaValidationForAddEdit(getParameters().getQuota(),
+        if (!QuotaHelper.getInstance().checkQuotaValidationForEdit(getParameters().getQuota(),
                 getReturnValue().getCanDoActionMessages())) {
             return false;
         } else if (getParameters().getQuota().getId() == null) {
@@ -46,7 +45,7 @@ public class UpdateQuotaCommand<T extends QuotaCRUDParameters> extends CommandBa
     @Override
     protected void executeCommand() {
         setQuotaParameter();
-        QuotaDAO dao = DbFacade.getInstance().getQuotaDAO();
+        QuotaDAO dao = getQuotaDAO();
         dao.update(getParameters().getQuota());
         getReturnValue().setSucceeded(true);
     }
@@ -58,6 +57,7 @@ public class UpdateQuotaCommand<T extends QuotaCRUDParameters> extends CommandBa
                 VdcObjectType.Quota, getActionType().getActionGroup()));
     }
 
+    @Override
     protected void setActionMessageParameters() {
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__UPDATE);
         addCanDoActionMessage(VdcBllMessages.VAR__TYPE__QUOTA);
@@ -65,7 +65,7 @@ public class UpdateQuotaCommand<T extends QuotaCRUDParameters> extends CommandBa
 
     @Override
     public AuditLogType getAuditLogTypeValue() {
-          return getSucceeded() ? AuditLogType.USER_UPDATE_QUOTA : AuditLogType.USER_FAILED_UPDATE_QUOTA;
+        return getSucceeded() ? AuditLogType.USER_UPDATE_QUOTA : AuditLogType.USER_FAILED_UPDATE_QUOTA;
     }
 
     /**
@@ -76,15 +76,16 @@ public class UpdateQuotaCommand<T extends QuotaCRUDParameters> extends CommandBa
      */
     private void setQuotaParameter() {
         Quota quotaParameter = getParameters().getQuota();
+        quotaParameter.setIsDefaultQuota(false);
         setStoragePoolId(quotaParameter.getStoragePoolId());
         setQuotaName(quotaParameter.getQuotaName());
-        if (quotaParameter.getQuotaStorages() != null) {
+        if (!quotaParameter.isEmptyStorageQuota()) {
             for (QuotaStorage quotaStorage : quotaParameter.getQuotaStorages()) {
                 quotaStorage.setQuotaId(getQuotaId());
                 quotaStorage.setQuotaStorageId(Guid.NewGuid());
             }
         }
-        if (quotaParameter.getQuotaVdsGroups() != null) {
+        if (!quotaParameter.isEmptyVdsGroupQuota()) {
             for (QuotaVdsGroup quotaVdsGroup : quotaParameter.getQuotaVdsGroups()) {
                 quotaVdsGroup.setQuotaId(getQuotaId());
                 quotaVdsGroup.setQuotaVdsGroupId(Guid.NewGuid());

@@ -216,7 +216,41 @@ public class QuotaHelper {
                 : quotaDefaultName;
     }
 
-    public boolean checkQuotaValidationForAddEdit(Quota quota, List<String> messages) {
+    public boolean checkQuotaValidationForAdd(Quota quota, List<String> messages) {
+        // All common checks
+        if (!checkQuotaValidationCommon(quota, messages)) {
+            return false;
+        }
+
+        // Check quota added is not default quota.
+        if (quota.getIsDefaultQuota()) {
+            messages.add(VdcBllMessages.ACTION_TYPE_FAILED_QUOTA_CAN_NOT_HAVE_DEFAULT_INDICATION.toString());
+            return false;
+        }
+
+        return true;
+    }
+
+    public boolean checkQuotaValidationForEdit(Quota quota, List<String> messages) {
+        // All common checks
+        if (!checkQuotaValidationCommon(quota, messages)) {
+            return false;
+        }
+
+        // Check editing the default quota is not allowed for a disabled DC
+        // Note that the check is made vs. the existing quota in the database,
+        // in order to prevent making the quota not default if the DC has quota disabled
+        Quota oldQuota = getQuotaDAO().getById(quota.getId());
+        if (oldQuota != null && oldQuota.getIsDefaultQuota()
+                && oldQuota.getQuotaEnforcementType() == QuotaEnforcementTypeEnum.DISABLED) {
+            messages.add(VdcBllMessages.ACTION_TYPE_FAILED_QUOTA_CAN_NOT_HAVE_DEFAULT_INDICATION.toString());
+            return false;
+        }
+
+        return true;
+    }
+
+    private boolean checkQuotaValidationCommon(Quota quota, List<String> messages) {
         if (quota == null) {
             messages.add(VdcBllMessages.ACTION_TYPE_FAILED_QUOTA_IS_NOT_VALID.toString());
             return false;
@@ -224,12 +258,6 @@ public class QuotaHelper {
 
         // Check if quota name exists.
         if (!checkQuotaNameExisting(quota, messages)) {
-            return false;
-        }
-
-        // Check quota added is not default quota.
-        if (quota.getIsDefaultQuota()) {
-            messages.add(VdcBllMessages.ACTION_TYPE_FAILED_QUOTA_CAN_NOT_HAVE_DEFAULT_INDICATION.toString());
             return false;
         }
 

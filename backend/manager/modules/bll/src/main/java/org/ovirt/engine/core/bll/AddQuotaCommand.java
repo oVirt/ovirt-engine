@@ -27,7 +27,7 @@ public class AddQuotaCommand<T extends QuotaCRUDParameters> extends CommandBase<
 
     @Override
     protected boolean canDoAction() {
-        return (QuotaHelper.getInstance().checkQuotaValidationForAddEdit(getParameters().getQuota(),
+        return (QuotaHelper.getInstance().checkQuotaValidationForAdd(getParameters().getQuota(),
                 getReturnValue().getCanDoActionMessages()));
     }
 
@@ -46,6 +46,7 @@ public class AddQuotaCommand<T extends QuotaCRUDParameters> extends CommandBase<
                 getActionType().getActionGroup()));
     }
 
+    @Override
     protected void setActionMessageParameters() {
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__ADD);
         addCanDoActionMessage(VdcBllMessages.VAR__TYPE__QUOTA);

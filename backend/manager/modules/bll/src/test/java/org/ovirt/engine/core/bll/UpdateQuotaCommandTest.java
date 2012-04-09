@@ -1,0 +1,98 @@
+package org.ovirt.engine.core.bll;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.common.action.QuotaCRUDParameters;
+import org.ovirt.engine.core.common.businessentities.Quota;
+import org.ovirt.engine.core.common.businessentities.QuotaStorage;
+import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
+import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.QuotaDAO;
+import org.ovirt.engine.core.utils.RandomUtils;
+
+/** A test case for the {@link UpdateQuotaCommand} class. */
+@RunWith(MockitoJUnitRunner.class)
+public class UpdateQuotaCommandTest {
+    /** The command to test */
+    private UpdateQuotaCommand<QuotaCRUDParameters> command;
+
+    /** The parameters to test the command with */
+    private QuotaCRUDParameters params;
+
+    /** The quota to use for testing */
+    private Quota quota;
+
+    /** A mock of the QuotaDAO used by the command */
+    @Mock
+    private QuotaDAO quotaDAO;
+
+    @Before
+    public void setUp() {
+        setUpQuota();
+        params = new QuotaCRUDParameters(quota);
+        command = spy(new UpdateQuotaCommand<QuotaCRUDParameters>(params));
+        doReturn(quotaDAO).when(command).getQuotaDAO();
+    }
+
+    private void setUpQuota() {
+        quota = new Quota();
+        quota.setIsDefaultQuota(true);
+        quota.setId(Guid.NewGuid());
+
+        int numQutoaVdsGroups = RandomUtils.instance().nextInt(10);
+        List<QuotaVdsGroup> quotaVdsGroups = new ArrayList<QuotaVdsGroup>(numQutoaVdsGroups);
+        for (int i = 0; i < numQutoaVdsGroups; ++i) {
+            quotaVdsGroups.add(new QuotaVdsGroup());
+        }
+
+        quota.setQuotaVdsGroups(quotaVdsGroups);
+
+        int numQutoaStorages = RandomUtils.instance().nextInt(10);
+        List<QuotaStorage> quotaStorages = new ArrayList<QuotaStorage>(numQutoaStorages);
+        for (int i = 0; i < numQutoaVdsGroups; ++i) {
+            quotaStorages.add(new QuotaStorage());
+        }
+
+        quota.setQuotaStorages(quotaStorages);
+    }
+
+    @Test
+    public void testExecuteCommand() {
+        // Execute the command
+        command.executeCommand();
+
+        // Assert that the quota was modified correctly
+        assertFalse("Quota should not be default after updating", quota.getIsDefaultQuota());
+
+        Guid quotaId = quota.getId();
+        for (QuotaStorage quotaStorage : quota.getQuotaStorages()) {
+            assertNotNull("Quota Storage should have been assigned an ID", quotaStorage.getQuotaStorageId());
+            assertEquals("Wrong Qutoa ID on Quota Storage", quotaId, quotaStorage.getQuotaId());
+        }
+
+        for (QuotaVdsGroup quotaVdsGroup : quota.getQuotaVdsGroups()) {
+            assertNotNull("Quota VdsGroup should have been assigned an ID", quotaVdsGroup.getQuotaVdsGroupId());
+            assertEquals("Wrong Qutoa ID on Quota VdsGroup", quotaId, quotaVdsGroup.getQuotaId());
+        }
+
+        // Verify the quota was updated in the database
+        verify(quotaDAO).update(quota);
+
+        // Assert the return value
+        assertTrue("Execution should be successful", command.getReturnValue().getSucceeded());
+    }
+}

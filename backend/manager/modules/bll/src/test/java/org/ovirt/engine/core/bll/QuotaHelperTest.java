@@ -292,7 +292,9 @@ public class QuotaHelperTest {
         Quota quota = mockGeneralStorageQuota();
         quota.setIsDefaultQuota(false);
         quota.setGlobalQuotaStorage(null);
-        boolean isQuotaValid = quotaHelper.checkQuotaValidationForAddEdit(quota, messages);
+        boolean isQuotaValid = quotaHelper.checkQuotaValidationForAdd(quota, messages);
+        assertTrue(isQuotaValid);
+        isQuotaValid = quotaHelper.checkQuotaValidationForEdit(quota, messages);
         assertTrue(isQuotaValid);
     }
 
@@ -306,7 +308,11 @@ public class QuotaHelperTest {
         quotaVdsGroup.setVirtualCpu(2);
         quota.setGlobalQuotaVdsGroup(quotaVdsGroup);
 
-        boolean isQuotaValid = quotaHelper.checkQuotaValidationForAddEdit(quota, messages);
+        boolean isQuotaValid = quotaHelper.checkQuotaValidationForAdd(quota, messages);
+        assertTrue(messages.contains(VdcBllMessages.ACTION_TYPE_FAILED_QUOTA_LIMIT_IS_SPECIFIC_AND_GENERAL.toString()));
+        assertFalse(isQuotaValid);
+
+        isQuotaValid = quotaHelper.checkQuotaValidationForEdit(quota, messages);
         assertTrue(messages.contains(VdcBllMessages.ACTION_TYPE_FAILED_QUOTA_LIMIT_IS_SPECIFIC_AND_GENERAL.toString()));
         assertFalse(isQuotaValid);
     }
@@ -321,7 +327,11 @@ public class QuotaHelperTest {
         quotaVdsGroup.setMemSizeMB(2l);
         quota.setGlobalQuotaVdsGroup(quotaVdsGroup);
 
-        boolean isQuotaValid = quotaHelper.checkQuotaValidationForAddEdit(quota, messages);
+        boolean isQuotaValid = quotaHelper.checkQuotaValidationForAdd(quota, messages);
+        assertTrue(messages.contains(VdcBllMessages.ACTION_TYPE_FAILED_QUOTA_LIMIT_IS_SPECIFIC_AND_GENERAL.toString()));
+        assertFalse(isQuotaValid);
+
+        isQuotaValid = quotaHelper.checkQuotaValidationForEdit(quota, messages);
         assertTrue(messages.contains(VdcBllMessages.ACTION_TYPE_FAILED_QUOTA_LIMIT_IS_SPECIFIC_AND_GENERAL.toString()));
         assertFalse(isQuotaValid);
     }
@@ -330,7 +340,11 @@ public class QuotaHelperTest {
     public void testSpecificValidQuotaForVdsGroup() throws Exception {
         List<String> messages = new ArrayList<String>();
         Quota quota = mockSpecificVdsGroupQuota();
-        boolean isQuotaValid = quotaHelper.checkQuotaValidationForAddEdit(quota, messages);
+
+        boolean isQuotaValid = quotaHelper.checkQuotaValidationForAdd(quota, messages);
+        assertTrue(isQuotaValid);
+
+        isQuotaValid = quotaHelper.checkQuotaValidationForEdit(quota, messages);
         assertTrue(isQuotaValid);
     }
 
@@ -342,7 +356,11 @@ public class QuotaHelperTest {
             quotaVdsGroup.setVirtualCpu(null);
         }
         quota.setGlobalQuotaVdsGroup(null);
-        boolean isQuotaValid = quotaHelper.checkQuotaValidationForAddEdit(quota, messages);
+
+        boolean isQuotaValid = quotaHelper.checkQuotaValidationForAdd(quota, messages);
+        assertTrue(isQuotaValid);
+
+        isQuotaValid = quotaHelper.checkQuotaValidationForEdit(quota, messages);
         assertTrue(isQuotaValid);
     }
 
@@ -354,7 +372,11 @@ public class QuotaHelperTest {
             quotaVdsGroup.setMemSizeMB(null);
         }
         quota.setGlobalQuotaVdsGroup(null);
-        boolean isQuotaValid = quotaHelper.checkQuotaValidationForAddEdit(quota, messages);
+
+        boolean isQuotaValid = quotaHelper.checkQuotaValidationForAdd(quota, messages);
+        assertTrue(isQuotaValid);
+
+        isQuotaValid = quotaHelper.checkQuotaValidationForEdit(quota, messages);
         assertTrue(isQuotaValid);
     }
 
@@ -376,7 +398,10 @@ public class QuotaHelperTest {
         quotaVdsGroup.setVirtualCpu(20);
         quota.setGlobalQuotaVdsGroup(quotaVdsGroup);
 
-        boolean isQuotaValid = quotaHelper.checkQuotaValidationForAddEdit(quota, messages);
+        boolean isQuotaValid = quotaHelper.checkQuotaValidationForAdd(quota, messages);
+        assertFalse(isQuotaValid);
+
+        isQuotaValid = quotaHelper.checkQuotaValidationForEdit(quota, messages);
         assertFalse(isQuotaValid);
     }
 
@@ -384,7 +409,11 @@ public class QuotaHelperTest {
     public void testMultiSpecificVdsGroupQuota() throws Exception {
         List<String> messages = new ArrayList<String>();
         Quota quota = mockMultiSpecificVdsGroupQuota();
-        boolean isQuotaValid = quotaHelper.checkQuotaValidationForAddEdit(quota, messages);
+
+        boolean isQuotaValid = quotaHelper.checkQuotaValidationForAdd(quota, messages);
+        assertTrue(isQuotaValid);
+
+        isQuotaValid = quotaHelper.checkQuotaValidationForEdit(quota, messages);
         assertTrue(isQuotaValid);
     }
 
@@ -404,7 +433,8 @@ public class QuotaHelperTest {
 
         // Mock storage domains with enough space for request.
         mockStorageDomains();
-        assertEquals(true, quotaHelper.checkQuotaValidationForAddEdit(quota, messages));
+        assertTrue(quotaHelper.checkQuotaValidationForAdd(quota, messages));
+        assertTrue(quotaHelper.checkQuotaValidationForEdit(quota, messages));
     }
 
     @Test
@@ -413,7 +443,8 @@ public class QuotaHelperTest {
         Quota quota = mockGeneralStorageQuota();
         quota.setIsDefaultQuota(false);
         mockStorageDomains();
-        assertEquals(true, quotaHelper.checkQuotaValidationForAddEdit(quota, messages));
+        assertTrue(quotaHelper.checkQuotaValidationForAdd(quota, messages));
+        assertTrue(quotaHelper.checkQuotaValidationForEdit(quota, messages));
     }
 
     @Test
@@ -424,7 +455,11 @@ public class QuotaHelperTest {
         Quota quota = mockGeneralStorageQuota();
         quota.setIsDefaultQuota(false);
         when(storageDomainDAO.getForStoragePool(firstStorageDomainUUID, storagePoolUUID)).thenReturn(firstStorageDomains);
-        boolean isQuotaValid = quotaHelper.checkQuotaValidationForAddEdit(quota, messages);
+
+        boolean isQuotaValid = quotaHelper.checkQuotaValidationForAdd(quota, messages);
+        assertTrue(isQuotaValid);
+
+        isQuotaValid = quotaHelper.checkQuotaValidationForEdit(quota, messages);
         assertTrue(isQuotaValid);
     }
 
