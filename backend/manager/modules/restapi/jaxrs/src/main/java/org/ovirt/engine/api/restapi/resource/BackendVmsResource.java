@@ -24,6 +24,9 @@ import org.ovirt.engine.api.model.VMs;
 import org.ovirt.engine.api.resource.VmResource;
 import org.ovirt.engine.api.resource.VmsResource;
 import org.ovirt.engine.api.restapi.types.DiskMapper;
+import org.ovirt.engine.api.model.Payload;
+import org.ovirt.engine.api.model.Payloads;
+
 import org.ovirt.engine.core.common.action.AddVmFromScratchParameters;
 import org.ovirt.engine.core.common.action.AddVmFromSnapshotParameters;
 import org.ovirt.engine.core.common.action.AddVmFromTemplateParameters;
@@ -33,6 +36,7 @@ import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.interfaces.SearchType;
@@ -107,13 +111,21 @@ public class BackendVmsResource extends
                                 snapshotId,
                                 diskImagesByImageId);
         } else if (vm.isSetDisks() && vm.getDisks().isSetClone() && vm.getDisks().isClone()) {
-            response = cloneVmFromTemplate(staticVm, vm.getDisks(), templateId);
+            response = cloneVmFromTemplate(staticVm, vm, templateId);
         } else if (Guid.Empty.equals(templateId)) {
-            response = addVmFromScratch(staticVm, storageDomainId, vm.getDisks());
+            response = addVmFromScratch(staticVm, vm, storageDomainId);
         } else {
-            response = addVm(staticVm, storageDomainId, vm.getDisks(), templateId);
+            response = addVm(staticVm, vm, storageDomainId, templateId);
         }
         return response;
+    }
+
+    protected VmPayload getPayload(VM vm) {
+        VmPayload payload = null;
+        if (vm.isSetPayloads() && vm.getPayloads().isSetPayload()) {
+            payload = getMapper(Payload.class, VmPayload.class).map(vm.getPayloads().getPayload().get(0), new VmPayload());
+        }
+        return payload;
     }
 
     protected org.ovirt.engine.core.common.businessentities.VM getVmConfiguration(String snapshotId) {
@@ -166,9 +178,11 @@ public class BackendVmsResource extends
                                 new QueryIdResolver(VdcQueryType.GetVmByVmId, GetVmByVmIdParameters.class));
     }
 
-    private Response cloneVmFromTemplate(VmStatic staticVm, Disks disks, Guid templateId) {
+    private Response cloneVmFromTemplate(VmStatic staticVm, VM vm, Guid templateId) {
+        AddVmFromTemplateParameters params = new AddVmFromTemplateParameters(staticVm, getDisksToClone(vm.getDisks(), templateId), Guid.Empty);
+        params.setVmPayload(getPayload(vm));
         return performCreation(VdcActionType.AddVmFromTemplate,
-                               new AddVmFromTemplateParameters(staticVm, getDisksToClone(disks, templateId), Guid.Empty),
+                               params,
                                new QueryIdResolver(VdcQueryType.GetVmByVmId, GetVmByVmIdParameters.class));
     }
 
@@ -205,17 +219,19 @@ public class BackendVmsResource extends
         return getMapper(Disk.class, DiskImage.class).map(entity, template);
     }
 
-    protected Response addVm(VmStatic staticVm, Guid storageDomainId, Disks disks, Guid templateId) {
+    protected Response addVm(VmStatic staticVm, VM vm, Guid storageDomainId, Guid templateId) {
         VmManagementParametersBase params = new VmManagementParametersBase(staticVm);
+        params.setVmPayload(getPayload(vm));
         params.setStorageDomainId(storageDomainId);
-        params.setDiskInfoDestinationMap(getDisksToClone(disks, templateId));
+        params.setDiskInfoDestinationMap(getDisksToClone(vm.getDisks(), templateId));
         return performCreation(VdcActionType.AddVm,
                                params,
                                new QueryIdResolver(VdcQueryType.GetVmByVmId, GetVmByVmIdParameters.class));
     }
 
-    protected Response addVmFromScratch(VmStatic staticVm, Guid storageDomainId, Disks disks) {
-        AddVmFromScratchParameters params = new AddVmFromScratchParameters(staticVm, mapDisks(disks), Guid.Empty);
+    protected Response addVmFromScratch(VmStatic staticVm, VM vm, Guid storageDomainId) {
+        AddVmFromScratchParameters params = new AddVmFromScratchParameters(staticVm, mapDisks(vm.getDisks()), Guid.Empty);
+        params.setVmPayload(getPayload(vm));
         params.setStorageDomainId(storageDomainId);
         return performCreation(VdcActionType.AddVmFromScratch,
                                params,
@@ -294,9 +310,37 @@ public class BackendVmsResource extends
     protected VMs mapCollection(List<org.ovirt.engine.core.common.businessentities.VM> entities) {
         VMs collection = new VMs();
         for (org.ovirt.engine.core.common.businessentities.VM entity : entities) {
-            collection.getVMs().add(addLinks(populate(map(entity), entity)));
+            VM vm = map(entity);
+            collection.getVMs().add(addLinks(populate(vm, entity)));
         }
         return collection;
+    }
+
+    protected void setPayload(VM vm) {
+        try {
+            VmPayload payload = getEntity(VmPayload.class,
+                    VdcQueryType.GetVmPayload,
+                    new GetVmByVmIdParameters(new Guid(vm.getId())),
+                    null,
+                    true);
+
+            if (payload != null) {
+                Payload p = getMapper(VmPayload.class, Payload.class).map(payload, null);
+                Payloads payloads = new Payloads();
+                payloads.getPayload().add(p);
+                vm.setPayloads(payloads);
+            }
+        }
+        catch (WebApplicationException ex) {
+            if (ex.getResponse().getStatus()==Response.Status.NOT_FOUND.getStatusCode()) {
+                //It's legal to not receive a payload for this VM, so the exception is caught and ignored.
+                //(TODO: 'getEntity()' should be refactored to make it the programmer's decision,
+                //whether to throw an exception or not in case the entity is not found.) Then
+                //this try-catch won't be necessary.
+            } else{
+                throw ex;
+            }
+        }
     }
 
     protected boolean templated(VM vm) {
@@ -329,6 +373,7 @@ public class BackendVmsResource extends
         if (details.contains(Detail.STATISTICS)) {
             addInlineStatistics(model);
         }
+        setPayload(model);
         return model;
     }
 }

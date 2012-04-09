@@ -536,6 +536,7 @@
           <xs:element ref="disk_states" minOccurs="0"/>
           <xs:element ref="host_nic_states" minOccurs="0"/>
           <xs:element ref="data_center_states" minOccurs="0"/>
+          <xs:element ref="vm_device_types" minOccurs="0"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
@@ -1749,6 +1750,40 @@
     </xs:sequence>
   </xs:complexType>
 
+  <xs:complexType name="Payloads">
+    <xs:sequence>
+      <xs:element name="payload" type="Payload" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="Payload">
+    <xs:sequence>
+      <xs:element name="file" type="PayloadFile"/>
+    </xs:sequence>
+    <xs:attribute name="type" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:complexType name="PayloadFile">
+    <xs:sequence>
+      <xs:element name="content" type="xs:string" />
+    </xs:sequence>
+    <xs:attribute name="name" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:element name="vm_device_types" type="VmDeviceTypes"/>
+
+  <xs:complexType name="VmDeviceTypes">
+    <xs:sequence>
+      <xs:element name="vm_device_types" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="VmDeviceTypes"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
   <xs:complexType name="VmPlacementPolicy">
     <xs:sequence>
       <xs:element name="host" type="Host" minOccurs="0" maxOccurs="1"/>
@@ -1792,6 +1827,7 @@
           <xs:element name="timezone" type="xs:string" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="domain" minOccurs="0" maxOccurs="1"/>
           <xs:element name="custom_properties" type="CustomProperties" minOccurs="0"/>
+          <xs:element name="payloads" type="Payloads" minOccurs="0"/>
           <xs:element name="statistics" type="Statistics" minOccurs="0" maxOccurs="1"/>
           <xs:element name="disks" type="Disks" minOccurs="0" maxOccurs="1"/>
           <xs:element name="nics" type="Nics" minOccurs="0" maxOccurs="1"/>

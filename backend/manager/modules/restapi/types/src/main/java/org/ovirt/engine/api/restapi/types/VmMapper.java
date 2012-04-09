@@ -25,15 +25,18 @@ import org.ovirt.engine.api.model.IP;
 import org.ovirt.engine.api.model.IPs;
 import org.ovirt.engine.api.model.OperatingSystem;
 import org.ovirt.engine.api.model.OsType;
+import org.ovirt.engine.api.model.Payload;
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.Usb;
 import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.api.model.VmAffinity;
+import org.ovirt.engine.api.model.PayloadFile;
 import org.ovirt.engine.api.model.VmPlacementPolicy;
 import org.ovirt.engine.api.model.MemoryPolicy;
 import org.ovirt.engine.api.model.VmPool;
 import org.ovirt.engine.api.model.VmStatus;
 import org.ovirt.engine.api.model.VmType;
+import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.action.RunVmOnceParams;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
@@ -43,6 +46,7 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -537,6 +541,24 @@ public class VmMapper {
         return type.name().toLowerCase();
     }
 
+    @Mapping(from = org.ovirt.engine.api.model.VmDeviceType.class, to = VmDeviceType.class)
+    public static VmDeviceType map(org.ovirt.engine.api.model.VmDeviceType deviceType, VmDeviceType template) {
+        switch (deviceType) {
+            case FLOPPY:            return VmDeviceType.FLOPPY;
+            case CDROM:             return VmDeviceType.CDROM;
+            default:                return null;
+        }
+    }
+
+    @Mapping(from = VmDeviceType.class, to = org.ovirt.engine.api.model.VmDeviceType.class)
+    public static org.ovirt.engine.api.model.VmDeviceType map(VmDeviceType deviceType, org.ovirt.engine.api.model.VmDeviceType template) {
+        switch (deviceType) {
+            case FLOPPY:            return org.ovirt.engine.api.model.VmDeviceType.FLOPPY;
+            case CDROM:             return org.ovirt.engine.api.model.VmDeviceType.CDROM;
+            default:                return null;
+        }
+    }
+
     @Mapping(from = VMStatus.class, to = VmStatus.class)
     public static VmStatus map(VMStatus entityStatus, VmStatus template) {
         switch (entityStatus) {
@@ -812,5 +834,37 @@ public class VmMapper {
         default:
             return null;
         }
+    }
+
+    @Mapping(from = VmPayload.class, to = Payload.class)
+    public static Payload map(VmPayload entity, Payload template) {
+        Payload model = template != null ? template : new Payload();
+        if (entity.getType() != null) {
+            org.ovirt.engine.api.model.VmDeviceType deviceType = map(entity.getType(), null);
+            if (deviceType!=null) {
+                model.setType(deviceType.value());
+            }
+        }
+        PayloadFile file = new PayloadFile();
+        file.setName(entity.getFileName());
+        file.setContent(entity.getContent());
+        model.setFile(file);
+        return model;
+    }
+
+    @Mapping(from = Payload.class, to = VmPayload.class)
+    public static VmPayload map(Payload model, VmPayload template) {
+        VmPayload entity = template != null ? template : new VmPayload();
+        if (model.isSetType()) {
+            org.ovirt.engine.api.model.VmDeviceType deviceType = org.ovirt.engine.api.model.VmDeviceType.fromValue(model.getType());
+            if (deviceType!=null) {
+                entity.setType(map(deviceType, null));
+            }
+        }
+        if (model.isSetFile()) {
+            entity.setFileName(model.getFile().getName());
+            entity.setContent(model.getFile().getContent());
+        }
+        return entity;
     }
 }

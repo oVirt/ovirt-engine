@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.ovirt.engine.api.model.Boot;
 import org.ovirt.engine.api.model.BootDevice;
 import org.ovirt.engine.api.model.DisplayType;
+import org.ovirt.engine.api.model.VmDeviceType;
 import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.api.model.VmType;
 import org.ovirt.engine.core.common.businessentities.OriginType;
@@ -53,6 +54,7 @@ public class VmMapperTest extends
         from.setType(MappingTestHelper.shuffle(VmType.class).value());
         from.setOrigin(OriginType.VMWARE.name().toLowerCase());
         from.getDisplay().setType(MappingTestHelper.shuffle(DisplayType.class).value());
+        from.getPayloads().getPayload().get(0).setType(MappingTestHelper.shuffle(VmDeviceType.class).value());
         for (Boot boot : from.getOs().getBoot()) {
             boot.setDev(MappingTestHelper.shuffle(BootDevice.class).value());
         }

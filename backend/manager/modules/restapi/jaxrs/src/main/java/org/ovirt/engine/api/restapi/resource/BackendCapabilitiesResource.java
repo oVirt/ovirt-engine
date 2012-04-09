@@ -68,6 +68,8 @@ import org.ovirt.engine.api.model.VmStates;
 import org.ovirt.engine.api.model.VmStatus;
 import org.ovirt.engine.api.model.VmType;
 import org.ovirt.engine.api.model.VmTypes;
+import org.ovirt.engine.api.model.VmDeviceType;
+import org.ovirt.engine.api.model.VmDeviceTypes;
 import org.ovirt.engine.api.resource.CapabilitiesResource;
 import org.ovirt.engine.api.restapi.model.StorageFormat;
 import org.ovirt.engine.api.restapi.types.MappingLocator;
@@ -90,6 +92,7 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
     }
 
     private static final Version VERSION_3_0 = new Version() {{ major = 3; minor = 0; }};
+    private static final Version VERSION_3_1 = new Version() {{ major = 3; minor = 1; }};
     private static Version currentVersion = null;
 
     public Capabilities get() {
@@ -123,6 +126,7 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
             addDiskInterfaces(version, DiskInterface.values());
             addCustomProperties(version, getVmHooksEnvs(v));
             addVmAffinities(version, VmAffinity.values());
+            addVmDeviceType(version, VmDeviceType.values());
             addnetworkBootProtocols(version, BootProtocol.values());
             addMigrateOnErrorOptions(version, MigrateOnError.values());
             addStorageFormatOptions(version, StorageFormat.values());
@@ -188,6 +192,15 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
             version.setVmAffinities(new VmAffinities());
             for (VmAffinity affinity : values) {
                 version.getVmAffinities().getVmAffinities().add(affinity.value());
+            }
+        }
+    }
+
+    private void addVmDeviceType(VersionCaps version, VmDeviceType[] values) {
+        if (VersionUtils.greaterOrEqual(version, VERSION_3_1)) {
+            version.setVmDeviceTypes(new VmDeviceTypes());
+            for (VmDeviceType type : values) {
+                version.getVmDeviceTypes().getVmDeviceTypes().add(type.value());
             }
         }
     }

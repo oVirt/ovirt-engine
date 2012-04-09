@@ -319,6 +319,7 @@ public class BackendVmResource extends
         Set<Detail> details = DetailHelper.getDetails(getHttpHeaders());
         parent.addInlineDetails(details, model);
         addStatistics(model, entity, uriInfo, httpHeaders);
+        parent.setPayload(model);
         return model;
     }
 
@@ -342,7 +343,12 @@ public class BackendVmResource extends
                 org.ovirt.engine.core.common.businessentities.VM entity) {
             VmStatic updated = getMapper(modelType, VmStatic.class).map(incoming,
                     entity.getStaticData());
-            return new VmManagementParametersBase(updated);
+            VmManagementParametersBase params = new VmManagementParametersBase(updated);
+
+            if (incoming.isSetPayloads()) {
+                params.setVmPayload(parent.getPayload(incoming));
+            }
+            return params;
         }
     }
 
@@ -351,4 +357,9 @@ public class BackendVmResource extends
         return doAction(VdcActionType.CancelMigrateVm,
                 new VmOperationParameterBase(guid), action);
     }
+
+    public BackendVmsResource getParent() {
+        return parent;
+    }
+
 }

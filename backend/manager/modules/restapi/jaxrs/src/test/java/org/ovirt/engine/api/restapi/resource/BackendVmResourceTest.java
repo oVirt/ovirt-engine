@@ -47,6 +47,7 @@ import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
+import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
@@ -70,6 +71,14 @@ public class BackendVmResourceTest
 
     public BackendVmResourceTest() {
         super(new BackendVmResource(GUIDS[0].toString(), new BackendVmsResource()));
+    }
+
+    @Override
+    protected void init() {
+        super.init();
+        resource.getParent().backend = backend;
+        resource.getParent().sessionHelper = sessionHelper;
+        resource.getParent().mappingLocator = resource.mappingLocator;
     }
 
     @Test
@@ -100,8 +109,8 @@ public class BackendVmResourceTest
     public void testGet() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1);
+        setUpGetPayloadExpectations(0);
         control.replay();
-
         verifyModel(resource.get(), 0);
     }
 
@@ -111,6 +120,7 @@ public class BackendVmResourceTest
             accepts.add("application/xml; detail=statistics");
             setUriInfo(setUpBasicUriExpectations());
             setUpGetEntityExpectations(1);
+            setUpGetPayloadExpectations(0);
             control.replay();
 
             VM vm = resource.get();
@@ -137,7 +147,7 @@ public class BackendVmResourceTest
     @Test
     public void testUpdate() throws Exception {
         setUpGetEntityExpectations(2);
-
+        setUpGetPayloadExpectations(0);
         setUriInfo(setUpActionExpectations(VdcActionType.UpdateVm,
                                            VmManagementParametersBase.class,
                                            new String[] {},
@@ -151,6 +161,7 @@ public class BackendVmResourceTest
     @Test
     public void testUpdateVmPolicy() throws Exception {
         setUpGetEntityExpectations(2);
+        setUpGetPayloadExpectations(0);
         setUpGetEntityExpectations("Hosts: name=" + NAMES[1],
                 SearchType.VDS,
                 getHost());
@@ -177,7 +188,8 @@ public class BackendVmResourceTest
     @Test
     public void testUpdateMovingCluster() throws Exception {
         setUpGetEntityExpectations(3);
-
+        setUpGetPayloadExpectations(0);
+        setUpGetPayloadExpectations(0);
         setUriInfo(setUpActionExpectations(VdcActionType.ChangeVMCluster,
                                            ChangeVMClusterParameters.class,
                                            new String[] {"ClusterId", "VmId"},
@@ -709,4 +721,14 @@ public class BackendVmResourceTest
         dom.setId(GUIDS[idx]);
         return dom;
     }
+
+    protected void setUpGetPayloadExpectations(int index) throws Exception {
+        VmPayload payload = new VmPayload();
+        setUpGetEntityExpectations(VdcQueryType.GetVmPayload,
+                                   GetVmByVmIdParameters.class,
+                                   new String[] { "Id" },
+                                   new Object[] { GUIDS[index] },
+                                   payload);
+    }
+
 }
