@@ -15,6 +15,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class ActionGroupDAOTest extends BaseDAOTestCase {
     private static final int ACTION_GROUP_COUNT = 2;
+    private static final int ACTION_VERSION_MAP_COUNT = 2;
     private static final Guid EXISTING_ROLE_ID = new Guid("f5972bfa-7102-4d33-ad22-9dd421bfba78");
     private ActionGroupDAO dao;
     private action_version_map existingActionMap;
@@ -36,6 +37,14 @@ public class ActionGroupDAOTest extends BaseDAOTestCase {
         assertNotNull(result);
         assertFalse(result.isEmpty());
         assertEquals(ACTION_GROUP_COUNT, result.size());
+    }
+
+    @Test
+    public void testGetAllActionVersionMap() {
+        List<action_version_map> result = dao.getAllActionVersionMap();
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
+        assertEquals(ACTION_VERSION_MAP_COUNT, result.size());
     }
 
     @Test

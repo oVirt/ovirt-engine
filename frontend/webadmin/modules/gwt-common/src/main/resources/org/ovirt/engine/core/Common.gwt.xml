@@ -183,6 +183,8 @@
 		<include name="common/queries/ValueObjectSingle.java" />
 		<include name="common/queries/GetVmsMessagesParameters.java" />
 		<include name="common/queries/GetUserMessagesParameters.java" />
+		<include name="common/queries/CommandVersionsInfo.java" />
+
 
 		<!-- Required by frontend -->
 		<include name="common/queries/VdcQueryReturnValue.java" />

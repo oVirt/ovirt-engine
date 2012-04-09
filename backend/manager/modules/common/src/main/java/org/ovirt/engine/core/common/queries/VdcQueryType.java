@@ -259,6 +259,9 @@ public enum VdcQueryType implements Serializable {
     GetJobsByCorrelationId,
     GetJobsByOffset,
 
+    //Commands
+    GetCommandsCompatibilityVersions(VdcQueryAuthType.User),
+
     // Default type instead of having to null check
     Unknown(VdcQueryAuthType.User);
 

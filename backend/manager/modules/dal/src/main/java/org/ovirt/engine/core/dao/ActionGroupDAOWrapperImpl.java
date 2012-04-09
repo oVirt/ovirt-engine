@@ -2,6 +2,7 @@ package org.ovirt.engine.core.dao;
 
 import java.util.List;
 
+import org.apache.commons.lang.NotImplementedException;
 import org.hibernate.Session;
 
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -40,5 +41,10 @@ public class ActionGroupDAOWrapperImpl extends BaseDAOWrapperImpl implements Act
     @Override
     public void removeActionVersionMap(VdcActionType action_type) {
         actionVersionMapDAO.remove(action_type.getValue());
+    }
+
+    @Override
+    public List<action_version_map> getAllActionVersionMap() {
+        throw new NotImplementedException();
     }
 }

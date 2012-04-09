@@ -17,6 +17,8 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcCommandBase;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.ActionGroupDAO;
 import org.ovirt.engine.core.utils.log.Logged;
 import org.ovirt.engine.core.utils.log.Logged.LogLevel;
 
@@ -189,4 +191,10 @@ public abstract class QueriesCommandBase<P extends VdcQueryParametersBase> exten
         }
         return user.getUserId();
     }
+
+    protected ActionGroupDAO getActionGroupDao() {
+        return DbFacade.getInstance()
+                .getActionGroupDAO();
+    }
+
 }

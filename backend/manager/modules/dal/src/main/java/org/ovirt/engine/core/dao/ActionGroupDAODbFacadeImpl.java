@@ -20,6 +20,18 @@ import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
  */
 public class ActionGroupDAODbFacadeImpl extends BaseDAODbFacade implements ActionGroupDAO {
 
+    private static ParameterizedRowMapper<action_version_map> actionVersionMapMapper =
+            new ParameterizedRowMapper<action_version_map>() {
+                @Override
+                public action_version_map mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    action_version_map entity = new action_version_map();
+                    entity.setaction_type(VdcActionType.forValue(rs.getInt("action_type")));
+                    entity.setcluster_minimal_version(rs.getString("cluster_minimal_version"));
+                    entity.setstorage_pool_minimal_version(rs.getString("storage_pool_minimal_version"));
+                    return entity;
+                }
+            };
+
     @SuppressWarnings("unchecked")
     @Override
     public List<ActionGroup> getAllForRole(Guid id) {
@@ -41,18 +53,9 @@ public class ActionGroupDAODbFacadeImpl extends BaseDAODbFacade implements Actio
     public action_version_map getActionVersionMapByActionType(VdcActionType action_type) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("action_type", action_type);
 
-        ParameterizedRowMapper<action_version_map> mapper = new ParameterizedRowMapper<action_version_map>() {
-            @Override
-            public action_version_map mapRow(ResultSet rs, int rowNum) throws SQLException {
-                action_version_map entity = new action_version_map();
-                entity.setaction_type(VdcActionType.forValue(rs.getInt("action_type")));
-                entity.setcluster_minimal_version(rs.getString("cluster_minimal_version"));
-                entity.setstorage_pool_minimal_version(rs.getString("storage_pool_minimal_version"));
-                return entity;
-            }
-        };
-
-        return getCallsHandler().executeRead("Getaction_version_mapByaction_type", mapper, parameterSource);
+        return getCallsHandler().executeRead("Getaction_version_mapByaction_type",
+                actionVersionMapMapper,
+                parameterSource);
     }
 
     @Override
@@ -69,6 +72,15 @@ public class ActionGroupDAODbFacadeImpl extends BaseDAODbFacade implements Actio
     public void removeActionVersionMap(VdcActionType action_type) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("action_type", action_type);
         getCallsHandler().executeModification("Deleteaction_version_map", parameterSource);
+    }
+
+    @Override
+    public List<action_version_map> getAllActionVersionMap() {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource();
+        return getCallsHandler().executeReadList("GetAllFromaction_version_map",
+                actionVersionMapMapper,
+                parameterSource);
+
     }
 
 }

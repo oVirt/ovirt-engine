@@ -2386,6 +2386,11 @@
             <value>2.3</value>
             <value>2.3</value>
         </row>
+        <row>
+            <value>2</value>
+            <value>2.2</value>
+            <value>2.2</value>
+        </row>
     </table>
 
     <table name="vds_spm_id_map">

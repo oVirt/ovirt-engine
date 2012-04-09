@@ -11,6 +11,7 @@ import org.hibernate.annotations.TypeDef;
 
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.mapping.GuidType;
+import org.ovirt.engine.core.compat.Version;
 
 @Entity
 @Table(name = "action_version_map")
@@ -25,6 +26,10 @@ public class action_version_map implements Serializable {
         setaction_type(actionType);
         setcluster_minimal_version(clusterMinimalVersion);
         setstorage_pool_minimal_version(storagePoolMinimalVersion);
+    }
+
+    public action_version_map(VdcActionType actionType, Version clusterMinimalVersion, Version storagePoolMinimalVersion) {
+        this(actionType, clusterMinimalVersion.toString(), storagePoolMinimalVersion.toString());
     }
 
     @Id
