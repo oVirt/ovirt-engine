@@ -643,15 +643,12 @@ public class PoolListModel extends ListWithDetailsModel
                                 new AddVmPoolWithVmsParameters(pool, desktop, model.getIsAddVMMode() ?
                                         Integer.parseInt(model.getNumOfDesktops().getEntity().toString()) : 0, 0);
 
-                        if ((Boolean) model.getDisksAllocationModel().getIsSingleStorageDomain().getEntity()) {
-                            param.setStorageDomainId(
-                                    ((storage_domains) model.getStorageDomain().getSelectedItem()).getId());
-                        }
-                        else {
-                            param.setStorageDomainId(Guid.Empty);
-                            param.setDiskInfoDestinationMap(
-                                    model.getDisksAllocationModel().getImageToDestinationDomainMap());
-                        }
+                        param.setStorageDomainId(Guid.Empty);
+                        param.setDiskInfoDestinationMap(
+                                model.getDisksAllocationModel()
+                                        .getImageToDestinationDomainMap((Boolean) model.getDisksAllocationModel()
+                                                .getIsSingleStorageDomain()
+                                                .getEntity()));
 
                         if (model.getQuota().getSelectedItem() != null) {
                             tempVar.setQuotaId(((Quota) model.getQuota().getSelectedItem()).getId());

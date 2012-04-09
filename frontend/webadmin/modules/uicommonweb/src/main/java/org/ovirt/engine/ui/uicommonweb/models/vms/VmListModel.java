@@ -2473,7 +2473,10 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
                                             dict, storageDomain.getId());
 
                             parameters.setDiskInfoDestinationMap(
-                                    unitVmModel.getDisksAllocationModel().getImageToDestinationDomainMap());
+                                    unitVmModel.getDisksAllocationModel()
+                                            .getImageToDestinationDomainMap((Boolean) unitVmModel.getDisksAllocationModel()
+                                                    .getIsSingleStorageDomain()
+                                                    .getEntity()));
 
                             Frontend.RunAction(VdcActionType.AddVmFromTemplate, parameters,
                                     new IFrontendActionAsyncCallback() {
@@ -2509,16 +2512,6 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
                             model.getDisksAllocationModel().getImageToDestinationDomainMap();
                     storage_domains storageDomain =
                             ((storage_domains) model.getDisksAllocationModel().getStorageDomain().getSelectedItem());
-
-                    if ((Boolean) model.getDisksAllocationModel().getIsSingleStorageDomain().getEntity()) {
-                        for (Guid key : imageToDestinationDomainMap.keySet()) {
-                            ArrayList<Guid> storageIdList = new ArrayList<Guid>();
-                            storageIdList.add(storageDomain.getId());
-                            DiskImage diskImage = new DiskImage();
-                            diskImage.setstorage_ids(storageIdList);
-                            imageToDestinationDomainMap.put(key, diskImage);
-                        }
-                    }
 
                     VmManagementParametersBase params = new VmManagementParametersBase(getcurrentVm());
                     params.setDiskInfoDestinationMap(imageToDestinationDomainMap);
