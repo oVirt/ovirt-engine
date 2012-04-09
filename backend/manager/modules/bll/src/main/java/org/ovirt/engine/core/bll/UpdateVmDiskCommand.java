@@ -24,6 +24,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
     private static final long serialVersionUID = 5915267156998835363L;
     private List<PermissionSubject> listPermissionSubjects;
     private DiskImage _oldDisk;
+    private boolean shouldUpdateQuotaForDisk;
 
     public UpdateVmDiskCommand(T parameters) {
         super(parameters);
@@ -63,7 +64,8 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
     @Override
     protected boolean validateQuota() {
         boolean quotaValid = true;
-        if (!_oldDisk.getQuotaId().equals(getQuotaId())) {
+        shouldUpdateQuotaForDisk = !_oldDisk.getQuotaId().equals(getQuotaId());
+        if (shouldUpdateQuotaForDisk) {
             // Set default quota id if storage pool enforcement is disabled.
             getParameters().setQuotaId(QuotaHelper.getInstance().getQuotaIdToConsume(getQuotaId(),
                     getStoragePool()));
@@ -132,10 +134,12 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
 
     @Override
     protected void removeQuotaCommandLeftOver() {
-        QuotaManager.removeStorageDeltaQuotaCommand(getQuotaId(),
-                getStorageDomainId().getValue(),
-                getStoragePool().getQuotaEnforcementType(),
-                getCommandId());
+        if (shouldUpdateQuotaForDisk) {
+            QuotaManager.removeStorageDeltaQuotaCommand(getQuotaId(),
+                    getStorageDomainId().getValue(),
+                    getStoragePool().getQuotaEnforcementType(),
+                    getCommandId());
+        }
     }
 
     private void perforDiskUpdate() {
