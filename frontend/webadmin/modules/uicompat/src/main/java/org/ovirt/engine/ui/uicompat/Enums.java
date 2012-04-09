@@ -335,7 +335,7 @@ public interface Enums extends ConstantsWithLookup {
 
     String VdcActionType___DetachVmFromTag();
 
-    String VdcActionType___AddDiskToVm();
+    String VdcActionType___AddDisk();
 
     String VdcActionType___RemoveDiskFromVm();
 

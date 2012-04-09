@@ -1,8 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
-
-import org.ovirt.engine.core.common.action.AddDiskToVmParameters;
+import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.action.AddVmInterfaceParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -566,9 +565,9 @@ public class VmGuideModel extends GuideModel
 
             model.StartProgress(null);
 
-            AddDiskToVmParameters tempVar2 = new AddDiskToVmParameters(getEntity().getId(), disk);
+            AddDiskParameters tempVar2 = new AddDiskParameters(getEntity().getId(), disk);
             tempVar2.setStorageDomainId(storageDomain.getId());
-            Frontend.RunAction(VdcActionType.AddDiskToVm, tempVar2,
+            Frontend.RunAction(VdcActionType.AddDisk, tempVar2,
                     new IFrontendActionAsyncCallback() {
                         @Override
                         public void Executed(FrontendActionAsyncResult result) {

@@ -363,9 +363,9 @@ public class VmGuideModel extends GuideModel
 
 			model.StartProgress(null);
 
-			AddDiskToVmParameters tempVar2 = new AddDiskToVmParameters(getEntity().getId(), disk);
+			AddDiskParameters tempVar2 = new AddDiskParameters(getEntity().getId(), disk);
 			tempVar2.setStorageDomainId(storageDomain.getId());
-			Frontend.RunAction(VdcActionType.AddDiskToVm, tempVar2,
+			Frontend.RunAction(VdcActionType.AddDisk, tempVar2,
 		new IFrontendActionAsyncCallback() {
 			@Override
 			public void Executed(FrontendActionAsyncResult  result) {

@@ -2,7 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
 
-import org.ovirt.engine.core.common.action.AddDiskToVmParameters;
+import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.action.HotPlugDiskToVmParameters;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.UpdateVmDiskParameters;
@@ -493,9 +493,9 @@ public class VmDiskListModel extends SearchableListModel
 
         if (model.getIsNew())
         {
-            AddDiskToVmParameters tempVar = new AddDiskToVmParameters(vm.getId(), disk);
+            AddDiskParameters tempVar = new AddDiskParameters(vm.getId(), disk);
             tempVar.setStorageDomainId(storageDomain.getId());
-            Frontend.RunAction(VdcActionType.AddDiskToVm, tempVar,
+            Frontend.RunAction(VdcActionType.AddDisk, tempVar,
                     new IFrontendActionAsyncCallback() {
                         @Override
                         public void Executed(FrontendActionAsyncResult result) {

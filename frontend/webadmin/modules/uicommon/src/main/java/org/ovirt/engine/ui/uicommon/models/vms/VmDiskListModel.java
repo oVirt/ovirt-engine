@@ -364,9 +364,9 @@ public class VmDiskListModel extends SearchableListModel
 
 		if (model.getIsNew())
 		{
-			AddDiskToVmParameters tempVar = new AddDiskToVmParameters(vm.getId(), disk);
+			AddDiskParameters tempVar = new AddDiskParameters(vm.getId(), disk);
 			tempVar.setStorageDomainId(storageDomain.getId());
-			Frontend.RunAction(VdcActionType.AddDiskToVm, tempVar,
+			Frontend.RunAction(VdcActionType.AddDisk, tempVar,
 		new IFrontendActionAsyncCallback() {
 			@Override
 			public void Executed(FrontendActionAsyncResult  result) {
