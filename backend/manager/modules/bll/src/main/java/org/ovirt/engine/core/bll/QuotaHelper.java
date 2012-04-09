@@ -121,10 +121,10 @@ public class QuotaHelper {
         quota.setStoragePoolId(storagePool.getId());
         quota.setQuotaName(getDefaultQuotaName(storagePool));
         quota.setDescription("Automatic generated Quota for Data Center " + storagePool.getname());
-        quota.setThresholdVdsGroupPercentage(Config.<Integer> GetValue(ConfigValues.QuotaThresholdVdsGroup));
-        quota.setThresholdStoragePercentage(Config.<Integer> GetValue(ConfigValues.QuotaThresholdStorage));
-        quota.setGraceVdsGroupPercentage(Config.<Integer> GetValue(ConfigValues.QuotaGraceVdsGroup));
-        quota.setGraceStoragePercentage(Config.<Integer> GetValue(ConfigValues.QuotaGraceStorage));
+        quota.setThresholdVdsGroupPercentage(getQuotaThresholdVdsGroup());
+        quota.setThresholdStoragePercentage(getQuotaThresholdStorage());
+        quota.setGraceVdsGroupPercentage(getQuotaGraceVdsGroup());
+        quota.setGraceStoragePercentage(getQuotaGraceStorage());
         quota.setIsDefaultQuota(isDefaultQuota);
         quota.setQuotaVdsGroups(new ArrayList<QuotaVdsGroup>());
         quota.setQuotaStorages(new ArrayList<QuotaStorage>());
@@ -356,5 +356,33 @@ public class QuotaHelper {
      */
     protected StoragePoolDAO getStoragePoolDao() {
         return DbFacade.getInstance().getStoragePoolDAO();
+    }
+
+    /** @return The VDS Group's quota threshold */
+    protected int getQuotaThresholdVdsGroup() {
+        return getIntegerConfig(ConfigValues.QuotaThresholdVdsGroup);
+    }
+
+    /** @return The Storage's quota threshold */
+    protected int getQuotaThresholdStorage() {
+        return getIntegerConfig(ConfigValues.QuotaThresholdStorage);
+    }
+
+    /** @return The VDS Group's quota grace */
+    protected int getQuotaGraceVdsGroup() {
+        return getIntegerConfig(ConfigValues.QuotaGraceVdsGroup);
+    }
+
+    /** @return The Storage's quota grace */
+    protected int getQuotaGraceStorage() {
+        return getIntegerConfig(ConfigValues.QuotaGraceStorage);
+    }
+
+    /**
+     * @param value The required configuration value
+     * @return The appropriate int-value from the configuration
+     */
+    private static int getIntegerConfig(ConfigValues value) {
+        return Config.<Integer> GetValue(value);
     }
 }
