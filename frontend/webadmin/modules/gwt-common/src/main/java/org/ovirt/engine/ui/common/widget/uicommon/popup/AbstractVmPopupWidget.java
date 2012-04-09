@@ -1,19 +1,9 @@
 package org.ovirt.engine.ui.common.widget.uicommon.popup;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.resources.client.CssResource;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.cellview.client.CellTable;
-import com.google.gwt.user.cellview.client.CellTable.Resources;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.RadioButton;
+import java.util.ArrayList;
+import java.util.Map.Entry;
+
+import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -45,11 +35,24 @@ import org.ovirt.engine.ui.common.widget.table.column.EntityModelTextColumn;
 import org.ovirt.engine.ui.common.widget.uicommon.storage.DisksAllocationView;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 
-import java.util.ArrayList;
-import java.util.Map.Entry;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.editor.client.SimpleBeanEditorDriver;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.cellview.client.CellTable;
+import com.google.gwt.user.cellview.client.CellTable.Resources;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.RadioButton;
 
 public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidget<UnitVmModel> {
 
@@ -116,6 +119,10 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
     @UiField(provided = true)
     @Path(value = "oSType.selectedItem")
     ListModelListBoxEditor<Object> oSTypeEditor;
+
+    @UiField
+    @Ignore
+    Label generalWarningMessage;
 
     // == Pools ==
     @UiField
@@ -289,8 +296,12 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
     @Path(value = "customProperties.entity")
     EntityModelTextBoxEditor customPropertiesEditor;
 
+    CommonApplicationConstants constants;
+
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public AbstractVmPopupWidget(CommonApplicationConstants constants) {
+        this.constants = constants;
+
         initListBoxEditors();
 
         // Contains a special parser/renderer
@@ -635,6 +646,13 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
 
                     boolean isProvisioningAvailable = vm.getProvisioning().getIsAvailable();
                     storageAllocationPanel.setVisible(isProvisioningAvailable || isDisksAvailable);
+
+                    for (DiskModel diskModel : vm.getDisks()) {
+                        if (diskModel.getDiskImage().getimageStatus() == ImageStatus.ILLEGAL) {
+                            generalWarningMessage.setText(constants.illegalDisksInVm());
+                            return;
+                        }
+                    }
                 }
             }
         });

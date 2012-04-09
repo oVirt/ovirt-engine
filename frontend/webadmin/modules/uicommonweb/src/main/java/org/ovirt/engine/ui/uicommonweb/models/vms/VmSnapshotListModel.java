@@ -26,6 +26,7 @@ import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.queries.GetAllVmSnapshotsByVmIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -551,8 +552,12 @@ public class VmSnapshotListModel extends SearchableListModel
             return;
         }
 
+        VM selectedVm = (VM) getEntity();
+
         UnitVmModel model = new UnitVmModel(new CloneVmFromSnapshotModelBehavior());
+        model.setVmType(selectedVm.getvm_type());
         setWindow(model);
+
         model.StartProgress(null);
 
         AsyncDataProvider.GetVmConfigurationBySnapshot(new AsyncQuery(this, new INewAsyncCallback() {
@@ -811,12 +816,28 @@ public class VmSnapshotListModel extends SearchableListModel
         {
             return;
         }
-        VM vm = (VM) getEntity();
-        Version version = vm.getvds_group_compatibility_version() != null
-                ? vm.getvds_group_compatibility_version() : new Version();
 
-        // TODO: replace with configuration value
-        setIsCloneVmSupported(version.compareTo(new Version("3.1")) >= 0);
+        VM vm = (VM) getEntity();
+
+        AsyncDataProvider.GetDataCenterById(new AsyncQuery(this, new INewAsyncCallback() {
+            @Override
+            public void OnSuccess(Object target, Object returnValue) {
+                VmSnapshotListModel model = (VmSnapshotListModel) target;
+                storage_pool dataCenter = (storage_pool) returnValue;
+                VM vm = (VM) model.getEntity();
+
+                Version minClusterVersion = vm.getvds_group_compatibility_version();
+                Version minDcVersion = dataCenter.getcompatibility_version();
+
+                AsyncDataProvider.IsCommandCompatible(new AsyncQuery(model, new INewAsyncCallback() {
+                    @Override
+                    public void OnSuccess(Object target, Object returnValue) {
+                        VmSnapshotListModel model = (VmSnapshotListModel) target;
+                        model.setIsCloneVmSupported((Boolean) returnValue);
+                    }
+                }), VdcActionType.AddVmFromSnapshot, minClusterVersion, minDcVersion);
+            }
+        }), vm.getstorage_pool_id().getValue());
     }
 
     @Override

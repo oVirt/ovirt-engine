@@ -98,6 +98,12 @@
 		label {
 
 		}
+
+		.warningMessageLabel {
+			color: #CD2127;
+			position: absolute;
+			bottom: 10px;
+		}
 	</ui:style>
 
 	<t:DialogTabPanel width="100%" height="100%">
@@ -127,6 +133,7 @@
 							<e:ListModelListBoxEditor ui:field="oSTypeEditor" />
 							<e:EntityModelCheckBoxEditor ui:field="isStatelessEditor" addStyleNames="{style.checkbox}" />
 						</g:FlowPanel>
+						<g:Label ui:field="generalWarningMessage" addStyleNames="{style.warningMessageLabel}" />
 					</g:FlowPanel>
 				</t:content>
 			</t:DialogTab>

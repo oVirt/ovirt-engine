@@ -1,6 +1,9 @@
 package org.ovirt.engine.ui.common.widget.uicommon.vm;
 
+import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
+import org.ovirt.engine.core.common.queries.CommandVersionsInfo;
+import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
@@ -11,6 +14,7 @@ import org.ovirt.engine.ui.common.widget.table.column.EmptyColumn;
 import org.ovirt.engine.ui.common.widget.tree.AbstractSubTabTree;
 import org.ovirt.engine.ui.common.widget.uicommon.AbstractModelBoundTreeWidget;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.SnapshotDetailModel;
@@ -95,7 +99,11 @@ public class VmSnapshotListModelTree<L extends ListWithDetailsModel> extends Abs
             @Override
             public String getCustomToolTip() {
                 if (!modelProvider.getModel().getIsCloneVmSupported()) {
-                    return constants.cloneVmNotSupported();
+                    CommandVersionsInfo commandVersionsInfo =
+                            AsyncDataProvider.GetCommandVersionsInfo(VdcActionType.AddVmFromSnapshot);
+                    String minimalClusterVersion = commandVersionsInfo != null ?
+                            commandVersionsInfo.getClusterVersion().toString(2) : "";
+                    return StringFormat.format(constants.cloneVmNotSupported(), minimalClusterVersion);
                 }
                 else {
                     return this.getTitle();

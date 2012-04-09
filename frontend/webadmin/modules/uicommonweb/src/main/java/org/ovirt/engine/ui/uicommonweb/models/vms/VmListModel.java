@@ -495,6 +495,14 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 
                     }
                 }));
+
+        // Call 'IsCommandCompatible' for precaching
+        AsyncDataProvider.IsCommandCompatible(new AsyncQuery(this,
+                new INewAsyncCallback() {
+                    @Override
+                    public void OnSuccess(Object target, Object returnValue) {
+                    }
+                }), null, null, null);
     }
 
     private void AssignTags()

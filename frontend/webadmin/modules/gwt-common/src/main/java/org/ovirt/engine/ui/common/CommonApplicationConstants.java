@@ -148,7 +148,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Current (Previous)")
     String previousCurrentSnapshotLabel();
 
-    @DefaultStringValue("Clone VM from Snapshot is supported only for Clusters of version 3.1 and above")
+    @DefaultStringValue("Clone VM from Snapshot is supported only for Clusters of version %1$s and above")
     String cloneVmNotSupported();
 
+    @DefaultStringValue("The VM contains disks in illegal status")
+    String illegalDisksInVm();
 }
