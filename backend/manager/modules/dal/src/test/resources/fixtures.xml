@@ -1776,7 +1776,6 @@
     <table name="disks">
         <column>disk_id</column>
         <column>internal_drive_mapping</column>
-        <column>disk_type</column>
         <column>disk_interface</column>
         <column>wipe_after_delete</column>
         <column>propagate_errors</column>
@@ -1785,7 +1784,6 @@
         <row>
             <value>1b26a52b-b60f-44cb-9f46-3ef333b04a34</value>
             <value>2</value>
-            <value>System</value>
             <value>VirtIO</value>
             <value>1</value>
             <value>Off</value>
@@ -1795,7 +1793,6 @@
         <row>
             <value>1b26a52b-b60f-44cb-9f46-3ef333b04a35</value>
             <value>2</value>
-            <value>System</value>
             <value>VirtIO</value>
             <value>1</value>
             <value>Off</value>
