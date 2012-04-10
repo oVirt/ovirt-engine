@@ -40,7 +40,6 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> extends AddVmAndCloneImageCommand<T> {
 
-    private Map<Guid, DiskImage> diskImagesFromClientMap;
     private Guid sourceSnapshotId;
     private Snapshot snapshot;
     private VM sourceVmFromDb;
@@ -55,7 +54,6 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
     public AddVmFromSnapshotCommand(T params) {
         super(params);
         sourceSnapshotId = params.getSourceSnapshotId();
-        diskImagesFromClientMap = ImagesHandler.getDiskImagesByIdMap(params.getDiskInfoList());
     }
 
     @Override
@@ -156,8 +154,8 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
         // If disk image information was passed from client , use its volume information
         // In case the disk image information was not passed from client, use the volume information of the ancestral
         // image
-        if (diskImagesFromClientMap != null && diskImagesFromClientMap.containsKey(srcDiskImage.getId())) {
-            DiskImage diskImageFromClient = diskImagesFromClientMap.get(srcDiskImage.getId());
+        if (diskInfoDestinationMap != null && diskInfoDestinationMap.containsKey(srcDiskImage.getId())) {
+            DiskImage diskImageFromClient = diskInfoDestinationMap.get(srcDiskImage.getId());
             changeVolumeInfo(clonedDiskImage, diskImageFromClient);
         } else {
             DiskImage ancestorDiskImage = getDiskImageDao().getAncestor(srcDiskImage.getId());
@@ -339,14 +337,16 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
 
     @Override
     protected boolean checkImageConfiguration(DiskImage diskImage) {
-        return ImagesHandler.CheckImageConfiguration(destStorages.get(diskImagesFromClientMap.get(diskImage.getId()).getstorage_ids().get(0))
+        return ImagesHandler.CheckImageConfiguration(destStorages.get(diskInfoDestinationMap.get(diskImage.getId())
+                .getstorage_ids()
+                .get(0))
                 .getStorageStaticData(),
                 diskImage,
                 getReturnValue().getCanDoActionMessages());
     }
 
     protected Collection<DiskImage> getImagesForQuotaValidation() {
-        return getDiskImagesFromConfiguration();
+        return diskInfoDestinationMap.values();
     }
 
     protected Guid getQuotaIdFromSourceVmEntity() {
