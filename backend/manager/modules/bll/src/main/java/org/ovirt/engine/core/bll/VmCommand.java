@@ -496,6 +496,14 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         return (ifCount <= MAX_NETWORK_INTERFACES_SUPPORTED);
     }
 
+    protected boolean canPerformHotPlug() {
+        return isHotPlugSupported() && isOSSupportingHotPlug();
+    }
+
+    /**
+     * check that hotplug is enabled via the 3.1 config paramter {@literal ConfigValues.HotPlugEnabled,
+     * @return
+     */
     protected boolean isHotPlugSupported() {
         if(Config.<Boolean> GetValue(ConfigValues.HotPlugEnabled, getVds().getvds_group_compatibility_version()
                 .getValue())) {
