@@ -24,6 +24,7 @@ import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.StorageDomainStaticDAO;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
+import org.ovirt.engine.core.utils.Pair;
 
 public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> extends
         StoragePoolManagementCommandBase<T> {
@@ -59,21 +60,32 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
     }
 
     /**
-     * If quota storage pool enforcement type was disable, and now we want to enforce the quota in the DC, the default
-     * quota configuration should be relinquished. If the storage pool enforcement type has been changed to disable,
-     * create a new default quota.
+     * If the storage pool enforcement type has been changed to disable, make sure there is a default quota for it.
      */
     private void updateDefaultQuota() {
-        if ((_oldStoragePool.getQuotaEnforcementType() == QuotaEnforcementTypeEnum.DISABLED)
-                && (getStoragePool().getQuotaEnforcementType() != QuotaEnforcementTypeEnum.DISABLED)) {
-            getQutoaHelper().setDefaultQuotaAsRegularQuota(_oldStoragePool);
-        } else if (_oldStoragePool.getQuotaEnforcementType() != QuotaEnforcementTypeEnum.DISABLED
-                && (getStoragePool().getQuotaEnforcementType() == QuotaEnforcementTypeEnum.DISABLED)) {
-            Quota newDefaultQuota = getQutoaHelper().getUnlimitedQuota(getStoragePool(), true);
-            newDefaultQuota.setQuotaName(getQutoaHelper().getDefaultQuotaName(getStoragePool()));
-            getQutoaHelper().saveQuotaForUser(newDefaultQuota,
-                    MultiLevelAdministrationHandler.EVERYONE_OBJECT_ID);
+        if (wasQuotaEnforcementDisabled()) {
+            Pair<Quota, Boolean> defaultQuotaPair = getQutoaHelper().getUnlimitedQuota(getStoragePool(), true, true);
+            Quota defaultQuota = defaultQuotaPair.getFirst();
+            boolean isQuotaReused = defaultQuotaPair.getSecond();
+            if (isQuotaReused) {
+                log.debugFormat("Reusing quota {0} as the default quota for Storage Pool {1}",
+                        defaultQuota.getId(),
+                        defaultQuota.getStoragePoolId());
+            } else {
+                defaultQuota.setQuotaName(getQutoaHelper().getDefaultQuotaName(getStoragePool()));
+            }
+            getQutoaHelper().saveOrUpdateQuotaForUser(defaultQuota,
+                    MultiLevelAdministrationHandler.EVERYONE_OBJECT_ID,
+                    isQuotaReused);
         }
+    }
+
+    /**
+     * Checks whether part of the update was disabling quota enforcement on the Data Center
+     */
+    private boolean wasQuotaEnforcementDisabled() {
+        return _oldStoragePool.getQuotaEnforcementType() != QuotaEnforcementTypeEnum.DISABLED
+                && getStoragePool().getQuotaEnforcementType() == QuotaEnforcementTypeEnum.DISABLED;
     }
 
     @Override
