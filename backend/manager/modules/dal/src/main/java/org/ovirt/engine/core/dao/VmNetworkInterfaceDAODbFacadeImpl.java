@@ -8,7 +8,6 @@ import org.apache.commons.lang.NotImplementedException;
 import org.ovirt.engine.core.common.businessentities.InterfaceComparerByMAC;
 import org.ovirt.engine.core.common.businessentities.InterfaceStatus;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.VmNetworkStatistics;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -19,27 +18,51 @@ import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
  */
 public class VmNetworkInterfaceDAODbFacadeImpl extends BaseDAODbFacade implements VmNetworkInterfaceDAO {
 
+    protected static final ParameterizedRowMapper<VmNetworkInterface> mapper =
+            new ParameterizedRowMapper<VmNetworkInterface>() {
+                @Override
+                public VmNetworkInterface mapRow(ResultSet rs, int rowNum)
+                        throws SQLException {
+                    VmNetworkInterface entity = new VmNetworkInterface();
+                    entity.setType((Integer) rs.getObject("type"));
+                    entity.setMacAddress(rs.getString("mac_addr"));
+                    entity.setName(rs.getString("name"));
+                    entity.setVmId(NGuid.createGuidFromString(rs.getString("vm_guid")));
+                    entity.setVmTemplateId(NGuid.createGuidFromString(rs.getString("vmt_guid")));
+                    entity.setId(Guid.createGuidFromString(rs.getString("id")));
+                    entity.setSpeed((Integer) rs.getObject("speed"));
+                    return entity;
+                }
+            };
+
+    protected final ParameterizedRowMapper<VmNetworkInterface> mapperWithStats =
+            new ParameterizedRowMapper<VmNetworkInterface>() {
+                @Override
+                public VmNetworkInterface mapRow(ResultSet rs, int rowNum)
+                        throws SQLException {
+                    VmNetworkInterface entity = new VmNetworkInterface();
+                    entity.getStatistics().setId(Guid.createGuidFromString(rs.getString("id")));
+                    entity.getStatistics().setReceiveRate(rs.getDouble("rx_rate"));
+                    entity.getStatistics().setTransmitRate(rs.getDouble("tx_rate"));
+                    entity.getStatistics().setReceiveDropRate(rs.getDouble("rx_drop"));
+                    entity.getStatistics().setTransmitDropRate(rs.getDouble("tx_drop"));
+                    entity.getStatistics().setStatus(InterfaceStatus.forValue(rs.getInt("iface_status")));
+                    entity.setType((Integer) rs.getObject("type"));
+                    entity.setMacAddress(rs.getString("mac_addr"));
+                    entity.setNetworkName(rs.getString("network_name"));
+                    entity.setName(rs.getString("name"));
+                    entity.setVmId(NGuid.createGuidFromString(rs.getString("vm_guid")));
+                    entity.setVmTemplateId(NGuid.createGuidFromString(rs.getString("vmt_guid")));
+                    entity.setVmName(rs.getString("vm_name"));
+                    entity.setId(Guid.createGuidFromString(rs.getString("id")));
+                    entity.setSpeed((Integer) rs.getObject("speed"));
+                    return entity;
+                }
+            };
+
     @Override
     public VmNetworkInterface get(Guid id) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("id", id);
-
-        ParameterizedRowMapper<VmNetworkInterface> mapper = new ParameterizedRowMapper<VmNetworkInterface>() {
-            @Override
-            public VmNetworkInterface mapRow(ResultSet rs, int rowNum)
-                    throws SQLException {
-                VmNetworkInterface entity = new VmNetworkInterface();
-                entity.setType((Integer) rs.getObject("type"));
-                entity.setMacAddress(rs.getString("mac_addr"));
-                entity.setName(rs.getString("name"));
-                entity.setVmId(NGuid.createGuidFromString(rs.getString("vm_guid")));
-                entity.setVmTemplateId(NGuid.createGuidFromString(rs.getString("vmt_guid")));
-                entity.setId(Guid.createGuidFromString(rs.getString("id")));
-                entity.setSpeed((Integer) rs.getObject("speed"));
-                entity.setNetworkName(rs.getString("network_name"));
-                return entity;
-            }
-        };
-
         return getCallsHandler().executeRead("Getvm_interfaceById", mapper, parameterSource);
     }
 
@@ -53,33 +76,8 @@ public class VmNetworkInterfaceDAODbFacadeImpl extends BaseDAODbFacade implement
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("vm_id", id).addValue("user_id", userID).addValue("is_filtered", isFiltered);
 
-        ParameterizedRowMapper<VmNetworkInterface> mapper = new ParameterizedRowMapper<VmNetworkInterface>() {
-            @Override
-            public VmNetworkInterface mapRow(ResultSet rs, int rowNum)
-                    throws SQLException {
-                VmNetworkInterface entity = new VmNetworkInterface();
-                entity.getStatistics().setId(Guid.createGuidFromString(rs.getString("id")));
-                entity.getStatistics().setReceiveRate(rs.getDouble("rx_rate"));
-                entity.getStatistics().setTransmitRate(rs.getDouble("tx_rate"));
-                entity.getStatistics().setReceiveDropRate(rs.getDouble("rx_drop"));
-                entity.getStatistics().setTransmitDropRate(rs.getDouble("tx_drop"));
-                entity.getStatistics().setStatus(InterfaceStatus.forValue(rs.getInt("iface_status")));
-                entity.getStatistics().setVmId(NGuid.createGuidFromString(rs.getString("vm_guid")));
-                entity.setType((Integer) rs.getObject("type"));
-                entity.setMacAddress(rs.getString("mac_addr"));
-                entity.setNetworkName(rs.getString("network_name"));
-                entity.setName(rs.getString("name"));
-                entity.setVmId(NGuid.createGuidFromString(rs.getString("vm_guid")));
-                entity.setVmTemplateId(NGuid.createGuidFromString(rs.getString("vmt_guid")));
-                entity.setVmName(rs.getString("vm_name"));
-                entity.setId(Guid.createGuidFromString(rs.getString("id")));
-                entity.setSpeed((Integer)rs.getObject("speed"));
-                return entity;
-            }
-        };
-
         List<VmNetworkInterface> results =
-                getCallsHandler().executeReadList("Getvm_interfaceByvm_id", mapper, parameterSource);
+                getCallsHandler().executeReadList("Getvm_interfaceByvm_id", mapperWithStats, parameterSource);
         java.util.Collections.sort(results, new InterfaceComparerByMAC());
         return results;
     }
@@ -94,31 +92,7 @@ public class VmNetworkInterfaceDAODbFacadeImpl extends BaseDAODbFacade implement
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("template_id", id).addValue("user_id", userID).addValue("is_filtered", isFiltered);
 
-        ParameterizedRowMapper<VmNetworkInterface> mapper = new ParameterizedRowMapper<VmNetworkInterface>() {
-            @Override
-            public VmNetworkInterface mapRow(ResultSet rs, int rowNum)
-                    throws SQLException {
-                VmNetworkInterface entity = new VmNetworkInterface();
-                entity.setStatistics(new VmNetworkStatistics());
-                entity.getStatistics().setId(Guid.createGuidFromString(rs.getString("id")));
-                entity.getStatistics().setReceiveRate(rs.getDouble("rx_rate"));
-                entity.getStatistics().setTransmitRate(rs.getDouble("tx_rate"));
-                entity.getStatistics().setReceiveDropRate(rs.getDouble("rx_drop"));
-                entity.getStatistics().setTransmitDropRate(rs.getDouble("tx_drop"));
-                entity.getStatistics().setStatus(InterfaceStatus.forValue(rs.getInt("iface_status")));
-                entity.setType((Integer) rs.getObject("type"));
-                entity.setMacAddress(rs.getString("mac_addr"));
-                entity.setNetworkName(rs.getString("network_name"));
-                entity.setName(rs.getString("name"));
-                entity.setVmId(NGuid.createGuidFromString(rs.getString("vm_guid")));
-                entity.setVmTemplateId(NGuid.createGuidFromString(rs.getString("vmt_guid")));
-                entity.setVmName(rs.getString("vm_name"));
-                entity.setId(Guid.createGuidFromString(rs.getString("id")));
-                return entity;
-            }
-        };
-
-        return getCallsHandler().executeReadList("Getvm_interfaceBytemplate_id", mapper, parameterSource);
+        return getCallsHandler().executeReadList("Getvm_interfaceBytemplate_id", mapperWithStats, parameterSource);
     }
 
     @Override
