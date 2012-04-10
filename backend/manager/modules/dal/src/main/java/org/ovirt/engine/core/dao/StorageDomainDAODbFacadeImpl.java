@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
+import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
@@ -158,6 +159,26 @@ public class StorageDomainDAODbFacadeImpl extends BaseDAODbFacade implements Sto
     @Override
     public List<storage_domains> listFailedAutorecoverables() {
         return getCallsHandler().executeReadList("GetFailingStorage_domains", StorageDomainRowMapper.instance, null);
+    }
+
+    @Override
+    public List<storage_domains> getPermittedStorageDomainsByStoragePool(Guid userId, ActionGroup actionGroup, Guid storagePoolId) {
+        return getCallsHandler().executeReadList("Getstorage_domains_by_storage_pool_id_with_permitted_action",
+                StorageDomainRowMapper.instance,
+                getCustomMapSqlParameterSource()
+                        .addValue("user_id", userId)
+                        .addValue("action_group_id", actionGroup.getId())
+                        .addValue("storage_pool_id", storagePoolId));
+    }
+
+    @Override
+    public storage_domains getPermittedStorageDomainsById(Guid userId, ActionGroup actionGroup, Guid storageDomainId) {
+        return getCallsHandler().executeRead("Getstorage_domain_by_id_with_permitted_action",
+                StorageDomainRowMapper.instance,
+                getCustomMapSqlParameterSource()
+                        .addValue("user_id", userId)
+                        .addValue("action_group_id", actionGroup.getId())
+                        .addValue("storage_id", storageDomainId));
     }
 
     /**

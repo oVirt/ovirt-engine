@@ -15,15 +15,21 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class GetStorageDomainsByVmTemplateIdQuery<P extends GetStorageDomainsByVmTemplateIdQueryParameters>
         extends GetVmTemplatesDisksQuery<P> {
+
+    private VmTemplate vmTemplate;
+
     public GetStorageDomainsByVmTemplateIdQuery(P parameters) {
         super(parameters);
+        vmTemplate =
+                DbFacade.getInstance()
+                        .getVmTemplateDAO()
+                        .get(getParameters().getId(), getUserID(), getParameters().isFiltered());
     }
 
     @Override
     protected void executeQueryCommand() {
         ArrayList<storage_domains> result = new ArrayList<storage_domains>();
-        VmTemplate vmTemplate = DbFacade.getInstance().getVmTemplateDAO()
-                .get(getParameters().getId(), getUserID(), getParameters().isFiltered());
+
         if (vmTemplate != null && vmTemplate.getstorage_pool_id() != null) {
             List<DiskImage> templateDisks = getTemplateDisks();
 
@@ -35,8 +41,7 @@ public class GetStorageDomainsByVmTemplateIdQuery<P extends GetStorageDomainsByV
                 }
 
                 for (Guid domainId : domains) {
-                    storage_domains domain = DbFacade.getInstance().getStorageDomainDAO().getForStoragePool(domainId,
-                            vmTemplate.getstorage_pool_id().getValue());
+                    storage_domains domain = getStorageDomain(domainId);
                     if (domain != null) {
                         result.add(domain);
                     }
@@ -44,5 +49,11 @@ public class GetStorageDomainsByVmTemplateIdQuery<P extends GetStorageDomainsByV
             }
         }
         getQueryReturnValue().setReturnValue(result);
+    }
+
+    protected storage_domains getStorageDomain(Guid domainId) {
+        return DbFacade.getInstance()
+                .getStorageDomainDAO()
+                .getForStoragePool(domainId, vmTemplate.getstorage_pool_id().getValue());
     }
 }

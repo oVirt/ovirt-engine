@@ -9,6 +9,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.List;
 
 import org.junit.Test;
+import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.storage_domain_static;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.compat.Guid;
@@ -19,6 +20,7 @@ public class StorageDomainDAOTest extends BaseDAOTestCase {
     private static final String EXISTING_DOMAIN_ID = "72e3a666-89e1-4005-a7ca-f7548004a9ab";
     private static final Guid EXISTING_STORAGE_POOL_ID = new Guid("6d849ebf-755f-4552-ad09-9a090cda105d");
     private static final String EXISTING_CONNECTION = "10.35.64.25";
+    private static final Guid EXISTING_USER_ID = new Guid("9bf7c640-b620-456f-a550-0348f366544b");
 
     private StorageDomainDAO dao;
     private storage_domains existingDomain;
@@ -313,6 +315,36 @@ public class StorageDomainDAOTest extends BaseDAOTestCase {
         assertNotNull(result);
         assertFalse(result.isEmpty());
         assertEquals(result.get(0), existingDomain.getId());
+    }
+
+    @Test
+    public void testGetPermittedStorageDomains() {
+        List<storage_domains> result =
+                dao.getPermittedStorageDomainsByStoragePool(EXISTING_USER_ID,
+                        ActionGroup.CONFIGURE_VM_STORAGE,
+                        EXISTING_STORAGE_POOL_ID);
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
+        assertEquals(result.get(0).getId(), existingDomain.getId());
+    }
+
+    @Test
+    public void testGetNonePermittedStorageDomains() {
+        List<storage_domains> result =
+                dao.getPermittedStorageDomainsByStoragePool(EXISTING_USER_ID,
+                        ActionGroup.CONSUME_QUOTA,
+                        EXISTING_STORAGE_POOL_ID);
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    public void testGetPermittedStorageDomainsById() {
+        storage_domains result = dao.getPermittedStorageDomainsById(EXISTING_USER_ID,
+                        ActionGroup.CONFIGURE_VM_STORAGE,
+                        existingDomain.getId());
+        assertNotNull(result);
+        assertEquals(result.getId(), existingDomain.getId());
     }
 
 }

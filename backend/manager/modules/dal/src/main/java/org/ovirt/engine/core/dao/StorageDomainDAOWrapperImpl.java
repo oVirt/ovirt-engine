@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.storage_domain_dynamic;
 import org.ovirt.engine.core.common.businessentities.storage_domain_static;
@@ -177,5 +178,15 @@ public class StorageDomainDAOWrapperImpl extends BaseDAOWrapperImpl implements S
     public List<storage_domains> listFailedAutorecoverables() {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    @Override
+    public List<storage_domains> getPermittedStorageDomainsByStoragePool(Guid userId, ActionGroup actionGroup, Guid storagePoolId) {
+        throw new NotImplementedException();
+    }
+
+    @Override
+    public storage_domains getPermittedStorageDomainsById(Guid userId, ActionGroup actionGroup, Guid storageDomainId) {
+        throw new NotImplementedException();
     }
 }

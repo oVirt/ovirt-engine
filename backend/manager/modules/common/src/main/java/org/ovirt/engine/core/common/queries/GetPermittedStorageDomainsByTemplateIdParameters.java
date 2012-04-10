@@ -2,12 +2,12 @@ package org.ovirt.engine.core.common.queries;
 
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 
-public class GetEntitiesWithPermittedActionParameters extends VdcQueryParametersBase {
+public class GetPermittedStorageDomainsByTemplateIdParameters extends GetStorageDomainsByVmTemplateIdQueryParameters {
 
-    private static final long serialVersionUID = -5471065721016495847L;
+    private static final long serialVersionUID = -6978898086667409681L;
     private ActionGroup actionGroup;
 
-    public GetEntitiesWithPermittedActionParameters() {
+    public GetPermittedStorageDomainsByTemplateIdParameters() {
     }
 
     public void setActionGroup(ActionGroup actionGroup) {

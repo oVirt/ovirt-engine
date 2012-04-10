@@ -2,6 +2,7 @@ package org.ovirt.engine.core.dao;
 
 import java.util.List;
 
+import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
@@ -135,5 +136,31 @@ public interface StorageDomainDAO extends DAO, SearchDAO<storage_domains>, AutoR
      * @return the list of storage domains (empty if no storage is using this connection)
      */
     List<storage_domains> getAllByStoragePoolAndConnection(Guid storagePoolId, String connection);
+
+    /**
+     * Retrieves all storage domains of a given storage pool having a user permissions for a specific action.
+     *
+     * @param userId
+     *            The user ID
+     * @param actionGroup
+     *            The action group ID
+     * @param storagePoolId
+     *            The storage pool ID
+     * @return the list of storage domains (empty if no storage matches the criteria)
+     */
+    List<storage_domains> getPermittedStorageDomainsByStoragePool(Guid userId, ActionGroup actionGroup, Guid storagePoolId);
+
+    /**
+     * Retrieves storage domain of a given storage ID having a user permissions for a specific action.
+     *
+     * @param userId
+     *            The user ID
+     * @param actionGroup
+     *            The action group ID
+     * @param storageDomainId
+     *            The storage domain ID
+     * @return the storage domain (null if storage doesn't match the criteria)
+     */
+    storage_domains getPermittedStorageDomainsById(Guid userId, ActionGroup actionGroup, Guid storageDomainId);
 
 }
