@@ -7,15 +7,9 @@ import javax.persistence.Entity;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
 
 import org.ovirt.engine.core.compat.StringHelper;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "storage_server_connections")
 @Entity
 @Table(name = "storage_server_connections")
 public class storage_server_connections implements Serializable {
@@ -42,7 +36,6 @@ public class storage_server_connections implements Serializable {
         this.portal = portal;
     }
 
-    @XmlElement(name = "connection")
     @Column(name = "connection", length = 250, nullable = false)
     private String connection;
 
@@ -54,7 +47,6 @@ public class storage_server_connections implements Serializable {
         this.connection = value;
     }
 
-    @XmlElement(name = "id")
     @Id
     @Column(name = "id", length = 50)
     private String id;
@@ -68,7 +60,6 @@ public class storage_server_connections implements Serializable {
     }
 
     // TODO this field needs to be made unique in the database
-    @XmlElement(name = "iqn")
     @Column(name = "iqn", length = 128)
     private String iqn;
 
@@ -80,7 +71,6 @@ public class storage_server_connections implements Serializable {
         this.iqn = value;
     }
 
-    @XmlElement(name = "port")
     @Column(name = "port", length = 50)
     private String port;
 
@@ -92,7 +82,6 @@ public class storage_server_connections implements Serializable {
         this.port = value;
     }
 
-    @XmlElement(name = "portal")
     @Column(name = "portal", length = 50)
     private String portal;
 
@@ -104,7 +93,6 @@ public class storage_server_connections implements Serializable {
         this.portal = value;
     }
 
-    @XmlElement(name = "password")
     @Column(name = "password", length = 50)
     private String password;
 
@@ -116,7 +104,6 @@ public class storage_server_connections implements Serializable {
         this.password = value;
     }
 
-    @XmlElement(name = "storage_type")
     @Column(name = "storage_type", nullable = false)
     @Enumerated
     private StorageType storageType = StorageType.forValue(0);
@@ -129,7 +116,6 @@ public class storage_server_connections implements Serializable {
         this.storageType = value;
     }
 
-    @XmlElement(name = "user_name")
     @Column(name = "user_name", length = 50)
     private String username;
 
