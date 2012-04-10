@@ -74,11 +74,19 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends V
         dbFacade
                 .getVmNetworkStatisticsDAO()
                 .save(getParameters().getInterface().getStatistics());
-        VmDevice vmDevice = VmDeviceUtils.addManagedDevice(new VmDeviceId(getParameters().getInterface().getId(), getParameters().getVmId()),  VmDeviceType.INTERFACE, VmDeviceType.BRIDGE, "", true, false);
+
+        VmDevice vmDevice =
+                VmDeviceUtils.addManagedDevice(new VmDeviceId(getParameters().getInterface().getId(),
+                        getParameters().getVmId()),
+                        VmDeviceType.INTERFACE,
+                        VmDeviceType.BRIDGE,
+                        "",
+                        getParameters().getInterface().isActive(),
+                        false);
 
         boolean succeded = true;
         VmDynamic vmDynamic = getVm().getDynamicData();
-        if (vmDynamic.getstatus() == VMStatus.Up) {
+        if (getParameters().getInterface().isActive() && vmDynamic.getstatus() == VMStatus.Up) {
             succeded = hotPlugNic(vmDevice, vmDynamic);
             if (!succeded) {
                 getReturnValue().getExecuteFailedMessages().add("Failed hot-plugging nic to VM");
@@ -101,6 +109,16 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends V
         VmStatic vm = getVm().getStaticData();
         if (vm == null) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_EXIST);
+            return false;
+        }
+
+        switch (DbFacade.getInstance().getVmDynamicDAO().get(getParameters().getVmId()).getstatus()) {
+        case Up:
+        case Down:
+        case ImageLocked:
+            break;
+        default:
+            addCanDoActionMessage(VdcBllMessages.NETWORK_CANNOT_ADD_INTERFACE_WHEN_VM_STATUS_NOT_UP_DOWN_LOCKED);
             return false;
         }
 
@@ -192,9 +210,8 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends V
             return false;
         }
 
-
-
-        return super.canDoAction();
+        return (getParameters().getInterface().isActive() ? canPerformHotPlug() : true)
+                && super.canDoAction();
     }
 
     @Override

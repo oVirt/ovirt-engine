@@ -71,8 +71,11 @@ public class RemoveVmInterfaceCommand<T extends RemoveVmInterfaceParameters> ext
     @Override
     protected boolean canDoAction() {
         VmDynamic vm = DbFacade.getInstance().getVmDynamicDAO().get(getParameters().getVmId());
-        if (vm.getstatus() != VMStatus.Down) {
-            addCanDoActionMessage(VdcBllMessages.NETWORK_CANNOT_CHANGE_STATUS_WHEN_NOT_DOWN);
+        if (vm.getstatus() != VMStatus.Down && DbFacade.getInstance()
+                .getVmDeviceDAO()
+                .get(new VmDeviceId(getParameters().getInterfaceId(), getParameters().getVmId()))
+                .getIsPlugged()) {
+            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_REMOVE_ACTIVE_DEVICE);
             return false;
         }
         return true;
