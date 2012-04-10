@@ -18,24 +18,7 @@ import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
  */
 public class VmNetworkInterfaceDAODbFacadeImpl extends BaseDAODbFacade implements VmNetworkInterfaceDAO {
 
-    protected static final ParameterizedRowMapper<VmNetworkInterface> mapper =
-            new ParameterizedRowMapper<VmNetworkInterface>() {
-                @Override
-                public VmNetworkInterface mapRow(ResultSet rs, int rowNum)
-                        throws SQLException {
-                    VmNetworkInterface entity = new VmNetworkInterface();
-                    entity.setType((Integer) rs.getObject("type"));
-                    entity.setMacAddress(rs.getString("mac_addr"));
-                    entity.setName(rs.getString("name"));
-                    entity.setVmId(NGuid.createGuidFromString(rs.getString("vm_guid")));
-                    entity.setVmTemplateId(NGuid.createGuidFromString(rs.getString("vmt_guid")));
-                    entity.setId(Guid.createGuidFromString(rs.getString("id")));
-                    entity.setSpeed((Integer) rs.getObject("speed"));
-                    return entity;
-                }
-            };
-
-    protected final ParameterizedRowMapper<VmNetworkInterface> mapperWithStats =
+    protected final ParameterizedRowMapper<VmNetworkInterface> mapper =
             new ParameterizedRowMapper<VmNetworkInterface>() {
                 @Override
                 public VmNetworkInterface mapRow(ResultSet rs, int rowNum)
@@ -56,6 +39,7 @@ public class VmNetworkInterfaceDAODbFacadeImpl extends BaseDAODbFacade implement
                     entity.setVmName(rs.getString("vm_name"));
                     entity.setId(Guid.createGuidFromString(rs.getString("id")));
                     entity.setSpeed((Integer) rs.getObject("speed"));
+                    entity.setActive(rs.getBoolean("is_plugged"));
                     return entity;
                 }
             };
@@ -77,7 +61,7 @@ public class VmNetworkInterfaceDAODbFacadeImpl extends BaseDAODbFacade implement
                 .addValue("vm_id", id).addValue("user_id", userID).addValue("is_filtered", isFiltered);
 
         List<VmNetworkInterface> results =
-                getCallsHandler().executeReadList("Getvm_interfaceByvm_id", mapperWithStats, parameterSource);
+                getCallsHandler().executeReadList("Getvm_interfaceByvm_id", mapper, parameterSource);
         java.util.Collections.sort(results, new InterfaceComparerByMAC());
         return results;
     }
@@ -92,7 +76,7 @@ public class VmNetworkInterfaceDAODbFacadeImpl extends BaseDAODbFacade implement
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("template_id", id).addValue("user_id", userID).addValue("is_filtered", isFiltered);
 
-        return getCallsHandler().executeReadList("Getvm_interfaceBytemplate_id", mapperWithStats, parameterSource);
+        return getCallsHandler().executeReadList("Getvm_interfaceBytemplate_id", mapper, parameterSource);
     }
 
     @Override

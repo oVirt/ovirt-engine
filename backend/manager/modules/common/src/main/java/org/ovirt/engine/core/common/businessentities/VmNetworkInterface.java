@@ -11,16 +11,17 @@ import org.ovirt.engine.core.compat.NGuid;
  */
 public class VmNetworkInterface extends NetworkInterface<VmNetworkStatistics> {
     private static final long serialVersionUID = 7428150502868988886L;
+    private NGuid vmId;
+    private String vmName;
+    private NGuid vmTemplateId;
+    /* status of the nic. Active nic is one that is plugged to its VM */
+    private boolean active;
 
     private static final ArrayList<String> _changeablePropertiesList =
             new ArrayList<String>(Arrays.asList(new String[] {
                     "Id", "Name", "MacAddress", "NetworkName", "Type", "Speed", "Statistics", "VmId", "VmName",
                     "VmTemplateId"
             }));
-
-    private NGuid vmId;
-    private String vmName;
-    private NGuid vmTemplateId;
 
     public VmNetworkInterface() {
         super(new VmNetworkStatistics(), VmInterfaceType.pv.getValue());
@@ -92,5 +93,13 @@ public class VmNetworkInterface extends NetworkInterface<VmNetworkStatistics> {
     @Override
     public ArrayList<String> getChangeablePropertiesList() {
         return _changeablePropertiesList;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 }
