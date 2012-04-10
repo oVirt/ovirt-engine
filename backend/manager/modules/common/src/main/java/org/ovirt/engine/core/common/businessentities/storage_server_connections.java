@@ -22,18 +22,33 @@ public class storage_server_connections implements Serializable {
             String id,
             String iqn,
             String password,
-            StorageType storage_type,
-            String user_name,
+            StorageType storageType,
+            String userName,
             String port,
-            String portal) {
+            String portal,
+            String vfsType,
+            String mountOptions) {
         this.connection = connection;
         this.id = id;
         this.iqn = iqn;
         this.password = password;
-        this.storageType = storage_type;
-        this.username = user_name;
+        this.storageType = storageType;
+        this.username = userName;
         this.port = port;
         this.portal = portal;
+        this.vfsType = vfsType;
+        this.mountOptions = mountOptions;
+    }
+
+    public storage_server_connections(String connection,
+            String id,
+            String iqn,
+            String password,
+            StorageType storageType,
+            String userName,
+            String port,
+            String portal) {
+        this(connection, id, iqn, password, storageType, userName, port, portal, null, null);
     }
 
     @Column(name = "connection", length = 250, nullable = false)
@@ -127,6 +142,36 @@ public class storage_server_connections implements Serializable {
         this.username = value;
     }
 
+    private String mountOptions;
+
+    public void setMountOptions(String mountOptions) {
+        this.mountOptions = mountOptions;
+    }
+
+    public String getMountOptions() {
+        return mountOptions;
+    }
+
+    private String vfsType;
+
+    public void setVfsType(String vfsType) {
+        this.vfsType = vfsType;
+    }
+
+    public String getVfsType() {
+        return vfsType;
+    }
+
+    private String spec;
+
+    public void setSpec(String spec) {
+        this.spec = spec;
+    }
+
+    public String getSpec() {
+        return spec;
+    }
+
     @Override
     public boolean equals(Object obj) {
         boolean returnValue = super.equals(obj);
@@ -147,7 +192,7 @@ public class storage_server_connections implements Serializable {
         // is immutable,
         // and storage_type is an enum
         return new storage_server_connections(ssc.connection, ssc.id, ssc.iqn, ssc.password,
-                ssc.storageType, ssc.username, ssc.port, ssc.portal);
+                ssc.storageType, ssc.username, ssc.port, ssc.portal, ssc.vfsType, ssc.mountOptions);
     }
 
 }
