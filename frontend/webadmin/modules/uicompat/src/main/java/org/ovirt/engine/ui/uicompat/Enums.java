@@ -725,11 +725,11 @@ public interface Enums extends ConstantsWithLookup {
 
     String ImageStatus___ILLEGAL();
 
-    String QuotaEnforcmentTypeEnum___DISABLED();
+    String QuotaEnforcementTypeEnum___DISABLED();
 
-    String QuotaEnforcmentTypeEnum___SOFT_ENFORCEMENT();
+    String QuotaEnforcementTypeEnum___SOFT_ENFORCEMENT();
 
-    String QuotaEnforcmentTypeEnum___HARD_ENFORCEMENT();
+    String QuotaEnforcementTypeEnum___HARD_ENFORCEMENT();
 
     String DiskInterface___IDE();
 
