@@ -18,30 +18,28 @@ import org.ovirt.engine.core.compat.Guid;
 public class StorageServerConnectionDAODbFacadeImpl extends BaseDAODbFacade implements
         StorageServerConnectionDAO {
 
+    private static final ParameterizedRowMapper<storage_server_connections> mapper = new ParameterizedRowMapper<storage_server_connections>() {
+        @Override
+        public storage_server_connections mapRow(ResultSet rs, int rowNum)
+                throws SQLException {
+            storage_server_connections entity = new storage_server_connections();
+            entity.setconnection(rs.getString("connection"));
+            entity.setid(rs.getString("id"));
+            entity.setiqn(rs.getString("iqn"));
+            entity.setport(rs.getString("port"));
+            entity.setportal(rs.getString("portal"));
+            entity.setpassword(rs.getString("password"));
+            entity.setstorage_type(StorageType.forValue(rs
+                    .getInt("storage_type")));
+            entity.setuser_name(rs.getString("user_name"));
+            return entity;
+        }
+            };
+
     @Override
     public storage_server_connections get(String id) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("id", id);
-
-        ParameterizedRowMapper<storage_server_connections> mapper =
-                new ParameterizedRowMapper<storage_server_connections>() {
-                    @Override
-                    public storage_server_connections mapRow(ResultSet rs, int rowNum)
-                            throws SQLException {
-                        storage_server_connections entity = new storage_server_connections();
-                        entity.setconnection(rs.getString("connection"));
-                        entity.setid(rs.getString("id"));
-                        entity.setiqn(rs.getString("iqn"));
-                        entity.setport(rs.getString("port"));
-                        entity.setportal(rs.getString("portal"));
-                        entity.setpassword(rs.getString("password"));
-                        entity.setstorage_type(StorageType.forValue(rs
-                                .getInt("storage_type")));
-                        entity.setuser_name(rs.getString("user_name"));
-                        return entity;
-                    }
-                };
-
         return getCallsHandler().executeRead("Getstorage_server_connectionsByid", mapper, parameterSource);
     }
 
@@ -49,26 +47,6 @@ public class StorageServerConnectionDAODbFacadeImpl extends BaseDAODbFacade impl
     public storage_server_connections getForIqn(String iqn) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("iqn", iqn);
-
-        ParameterizedRowMapper<storage_server_connections> mapper =
-                new ParameterizedRowMapper<storage_server_connections>() {
-                    @Override
-                    public storage_server_connections mapRow(ResultSet rs, int rowNum)
-                            throws SQLException {
-                        storage_server_connections entity = new storage_server_connections();
-                        entity.setconnection(rs.getString("connection"));
-                        entity.setid(rs.getString("id"));
-                        entity.setiqn(rs.getString("iqn"));
-                        entity.setport(rs.getString("port"));
-                        entity.setportal(rs.getString("portal"));
-                        entity.setpassword(rs.getString("password"));
-                        entity.setstorage_type(StorageType.forValue(rs
-                                .getInt("storage_type")));
-                        entity.setuser_name(rs.getString("user_name"));
-                        return entity;
-                    }
-                };
-
         return getCallsHandler().executeRead("Getstorage_server_connectionsByIqn", mapper,
                 parameterSource);
     }
@@ -77,26 +55,6 @@ public class StorageServerConnectionDAODbFacadeImpl extends BaseDAODbFacade impl
     @Override
     public List<storage_server_connections> getAll() {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource();
-
-        ParameterizedRowMapper<storage_server_connections> mapper =
-                new ParameterizedRowMapper<storage_server_connections>() {
-                    @Override
-                    public storage_server_connections mapRow(ResultSet rs, int rowNum)
-                            throws SQLException {
-                        storage_server_connections entity = new storage_server_connections();
-                        entity.setconnection(rs.getString("connection"));
-                        entity.setid(rs.getString("id"));
-                        entity.setiqn(rs.getString("iqn"));
-                        entity.setport(rs.getString("port"));
-                        entity.setportal(rs.getString("portal"));
-                        entity.setpassword(rs.getString("password"));
-                        entity.setstorage_type(StorageType.forValue(rs
-                                .getInt("storage_type")));
-                        entity.setuser_name(rs.getString("user_name"));
-                        return entity;
-                    }
-                };
-
         return getCallsHandler().executeReadList("GetAllFromstorage_server_connections", mapper, parameterSource);
     }
 
@@ -105,26 +63,6 @@ public class StorageServerConnectionDAODbFacadeImpl extends BaseDAODbFacade impl
     public List<storage_server_connections> getAllForStoragePool(Guid pool) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("storage_pool_id", pool);
-
-        ParameterizedRowMapper<storage_server_connections> mapper =
-                new ParameterizedRowMapper<storage_server_connections>() {
-                    @Override
-                    public storage_server_connections mapRow(ResultSet rs, int rowNum)
-                            throws SQLException {
-                        storage_server_connections entity = new storage_server_connections();
-                        entity.setconnection(rs.getString("connection"));
-                        entity.setid(rs.getString("id"));
-                        entity.setiqn(rs.getString("iqn"));
-                        entity.setport(rs.getString("port"));
-                        entity.setportal(rs.getString("portal"));
-                        entity.setpassword(rs.getString("password"));
-                        entity.setstorage_type(StorageType.forValue(rs
-                                .getInt("storage_type")));
-                        entity.setuser_name(rs.getString("user_name"));
-                        return entity;
-                    }
-                };
-
         return getCallsHandler().executeReadList("Getstorage_server_connectionsByStoragePoolId",
                 mapper,
                 parameterSource);
@@ -135,26 +73,6 @@ public class StorageServerConnectionDAODbFacadeImpl extends BaseDAODbFacade impl
     public List<storage_server_connections> getAllForVolumeGroup(String group) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("volume_group_id", group);
-
-        ParameterizedRowMapper<storage_server_connections> mapper =
-                new ParameterizedRowMapper<storage_server_connections>() {
-                    @Override
-                    public storage_server_connections mapRow(ResultSet rs, int rowNum)
-                            throws SQLException {
-                        storage_server_connections entity = new storage_server_connections();
-                        entity.setconnection(rs.getString("connection"));
-                        entity.setid(rs.getString("id"));
-                        entity.setiqn(rs.getString("iqn"));
-                        entity.setport(rs.getString("port"));
-                        entity.setportal(rs.getString("portal"));
-                        entity.setpassword(rs.getString("password"));
-                        entity.setstorage_type(StorageType.forValue(rs
-                                .getInt("storage_type")));
-                        entity.setuser_name(rs.getString("user_name"));
-                        return entity;
-                    }
-                };
-
         return getCallsHandler().executeReadList("Getstorage_server_connectionsByVolumeGroupId",
                 mapper,
                 parameterSource);
@@ -165,26 +83,6 @@ public class StorageServerConnectionDAODbFacadeImpl extends BaseDAODbFacade impl
     public List<storage_server_connections> getAllForStorage(String storage) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("connection", storage);
-
-        ParameterizedRowMapper<storage_server_connections> mapper =
-                new ParameterizedRowMapper<storage_server_connections>() {
-                    @Override
-                    public storage_server_connections mapRow(ResultSet rs, int rowNum)
-                            throws SQLException {
-                        storage_server_connections entity = new storage_server_connections();
-                        entity.setconnection(rs.getString("connection"));
-                        entity.setid(rs.getString("id"));
-                        entity.setiqn(rs.getString("iqn"));
-                        entity.setport(rs.getString("port"));
-                        entity.setportal(rs.getString("portal"));
-                        entity.setpassword(rs.getString("password"));
-                        entity.setstorage_type(StorageType.forValue(rs
-                                .getInt("storage_type")));
-                        entity.setuser_name(rs.getString("user_name"));
-                        return entity;
-                    }
-                };
-
         return getCallsHandler().executeReadList("Getstorage_server_connectionsByConnection", mapper,
                 parameterSource);
     }
@@ -200,26 +98,6 @@ public class StorageServerConnectionDAODbFacadeImpl extends BaseDAODbFacade impl
                 .addValue("portal", connection.getportal())
                 .addValue("username", connection.getuser_name())
                 .addValue("password", connection.getpassword());
-
-        ParameterizedRowMapper<storage_server_connections> mapper =
-                new ParameterizedRowMapper<storage_server_connections>() {
-                    @Override
-                    public storage_server_connections mapRow(ResultSet rs, int rowNum)
-                            throws SQLException {
-                        storage_server_connections entity = new storage_server_connections();
-                        entity.setconnection(rs.getString("connection"));
-                        entity.setid(rs.getString("id"));
-                        entity.setiqn(rs.getString("iqn"));
-                        entity.setport(rs.getString("port"));
-                        entity.setportal(rs.getString("portal"));
-                        entity.setpassword(rs.getString("password"));
-                        entity.setstorage_type(StorageType.forValue(rs
-                                .getInt("storage_type")));
-                        entity.setuser_name(rs.getString("user_name"));
-                        return entity;
-                    }
-                };
-
       return getCallsHandler().executeReadList("Getstorage_server_connectionsByKey",mapper,parameterSource);
     }
 
