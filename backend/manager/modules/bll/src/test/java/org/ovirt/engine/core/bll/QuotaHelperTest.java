@@ -2,9 +2,11 @@ package org.ovirt.engine.core.bll;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -94,7 +96,7 @@ public class QuotaHelperTest {
     }
 
     @Test
-    public void testAddUnlimitedQuota() throws Exception {
+    public void testGetUnlimitedQuota() throws Exception {
         Quota quotaUnlimited = quotaHelper.getUnlimitedQuota(mockStoragePool(), false);
         assertEquals(QuotaHelper.UNLIMITED, quotaUnlimited.getGlobalQuotaStorage().getStorageSizeGB());
         assertEquals(QuotaHelper.UNLIMITED.intValue(), quotaUnlimited.getGlobalQuotaVdsGroup()
@@ -201,36 +203,87 @@ public class QuotaHelperTest {
     }
 
     @Test
-    public void testAddDefaultQuotaToDCWithDefaultQuota() throws Exception {
+    public void testGetDefaultQuotaForDCWithDefaultQuota() throws Exception {
         when(quotaDAO.getDefaultQuotaByStoragePoolId(storagePoolUUID)).thenReturn(mockGeneralStorageQuota());
         Quota quotaUnlimited = quotaHelper.getUnlimitedQuota(mockStoragePool(), true);
-        assertEquals(QuotaHelper.UNLIMITED, quotaUnlimited.getGlobalQuotaStorage().getStorageSizeGB());
-        assertEquals(QuotaHelper.UNLIMITED.intValue(), quotaUnlimited.getGlobalQuotaVdsGroup()
-                .getVirtualCpu()
-                .intValue());
-        assertEquals(QuotaHelper.UNLIMITED, quotaUnlimited.getGlobalQuotaVdsGroup().getMemSizeMB());
-        assertEquals("Quota_Def_" + storagePoolName, quotaUnlimited.getQuotaName());
-        assertEquals(true, quotaUnlimited.getIsDefaultQuota());
+        assertQuotaUnlimited(quotaUnlimited);
+        assertQuotaUnlimitedName(quotaUnlimited);
     }
 
     @Test
-    public void testAddDefaultQuotaToDCWithoutDefaultQuota() throws Exception {
+    public void testGetDefaultQuotaForDCWithDefaultQuotaWithNoReuse() throws Exception {
+        when(quotaDAO.getDefaultQuotaByStoragePoolId(storagePoolUUID)).thenReturn(mockGeneralStorageQuota());
+        Quota quotaUnlimited = quotaHelper.getUnlimitedQuota(mockStoragePool(), true, false).getFirst();
+        assertQuotaUnlimited(quotaUnlimited);
+        assertQuotaUnlimitedName(quotaUnlimited);
+    }
+
+    @Test
+    public void testGetDefaultQuotaForDCWithDefaultQuotaWithReuse() throws Exception {
+        when(quotaDAO.getDefaultQuotaByStoragePoolId(storagePoolUUID)).thenReturn(mockUnlimitedQuota());
+        Quota quotaUnlimited = quotaHelper.getUnlimitedQuota(mockStoragePool(), true, true).getFirst();
+        assertQuotaUnlimited(quotaUnlimited);
+    }
+
+    @Test
+    public void testGetDefaultQuotaToDCWithoutDefaultQuota() throws Exception {
         Quota quotaUnlimited = quotaHelper.getUnlimitedQuota(mockStoragePool(), true);
-        assertEquals(QuotaHelper.UNLIMITED, quotaUnlimited.getGlobalQuotaStorage().getStorageSizeGB());
-        assertEquals(QuotaHelper.UNLIMITED.intValue(), quotaUnlimited.getGlobalQuotaVdsGroup()
-                .getVirtualCpu()
-                .intValue());
-        assertEquals(QuotaHelper.UNLIMITED, quotaUnlimited.getGlobalQuotaVdsGroup().getMemSizeMB());
-        assertEquals("Quota_Def_" + storagePoolName, quotaUnlimited.getQuotaName());
-        assertEquals(true, quotaUnlimited.getIsDefaultQuota());
+        assertQuotaUnlimited(quotaUnlimited);
+        assertQuotaUnlimitedName(quotaUnlimited);
     }
 
     @Test
-    public void testAddDefaultQuotaWithNullID() throws Exception {
+    public void testGetDefaultQuotaToDCWithoutDefaultQuotaWithNoReuse() throws Exception {
+        Quota quotaUnlimited = quotaHelper.getUnlimitedQuota(mockStoragePool(), true, false).getFirst();
+        assertQuotaUnlimited(quotaUnlimited);
+        assertQuotaUnlimitedName(quotaUnlimited);
+    }
+
+    @Test
+    public void testGetDefaultQuotaToDCWithoutDefaultQuotaWithReuse() throws Exception {
+        when(quotaDAO.getDefaultQuotaByStoragePoolId(storagePoolUUID)).thenReturn(null);
+        Quota quotaUnlimited = quotaHelper.getUnlimitedQuota(mockStoragePool(), true, true).getFirst();
+        assertQuotaUnlimited(quotaUnlimited);
+    }
+
+    @Test
+    public void testGetDefaultQuotaWithNullID() throws Exception {
         storage_pool mockStoragePool = mockStoragePool();
         mockStoragePool.setId(null);
         Quota quotaUnlimited = quotaHelper.getUnlimitedQuota(mockStoragePool, true);
-        assertEquals(null, quotaUnlimited);
+        assertNull(quotaUnlimited);
+        verifyZeroInteractions(quotaDAO);
+    }
+
+    @Test
+    public void testGetDefaultQuotaWithNullIDWithNoResue() throws Exception {
+        storage_pool mockStoragePool = mockStoragePool();
+        mockStoragePool.setId(null);
+        Quota quotaUnlimited = quotaHelper.getUnlimitedQuota(mockStoragePool, true, false).getFirst();
+        assertNull(quotaUnlimited);
+        verifyZeroInteractions(quotaDAO);
+    }
+
+    @Test
+    public void testGetDefaultQuotaWithNullIDWithResue() throws Exception {
+        storage_pool mockStoragePool = mockStoragePool();
+        mockStoragePool.setId(null);
+        Quota quotaUnlimited = quotaHelper.getUnlimitedQuota(mockStoragePool, true, true).getFirst();
+        assertNull(quotaUnlimited);
+        verifyZeroInteractions(quotaDAO);
+    }
+
+    protected void assertQuotaUnlimited(Quota quotaUnlimited) {
+        assertEquals(QuotaHelper.UNLIMITED, quotaUnlimited.getGlobalQuotaStorage().getStorageSizeGB());
+        assertEquals(QuotaHelper.UNLIMITED.intValue(), quotaUnlimited.getGlobalQuotaVdsGroup()
+                .getVirtualCpu()
+                .intValue());
+        assertEquals(QuotaHelper.UNLIMITED, quotaUnlimited.getGlobalQuotaVdsGroup().getMemSizeMB());
+        assertEquals(true, quotaUnlimited.getIsDefaultQuota());
+    }
+
+    protected void assertQuotaUnlimitedName(Quota quotaUnlimited) {
+        assertEquals("Quota_Def_" + storagePoolName, quotaUnlimited.getQuotaName());
     }
 
     @Test
@@ -549,6 +602,29 @@ public class QuotaHelperTest {
 
         generalQuota.setId(Guid.NewGuid());
         generalQuota.setStoragePoolId(storagePoolUUID);
+        return generalQuota;
+    }
+
+    private Quota mockUnlimitedQuota() {
+        Quota generalQuota = new Quota();
+        generalQuota.setDescription("New Quota to create");
+        generalQuota.setQuotaName(quotaName);
+
+        QuotaStorage storageQuota = new QuotaStorage();
+        storageQuota.setStorageSizeGB(QuotaHelper.UNLIMITED);
+        storageQuota.setStorageSizeGBUsage(0d);
+        generalQuota.setGlobalQuotaStorage(storageQuota);
+
+        QuotaVdsGroup vdsGroupQuota = new QuotaVdsGroup();
+        vdsGroupQuota.setVirtualCpu(QuotaHelper.UNLIMITED.intValue());
+        vdsGroupQuota.setVirtualCpuUsage(0);
+        vdsGroupQuota.setMemSizeMB(QuotaHelper.UNLIMITED);
+        vdsGroupQuota.setMemSizeMBUsage(0l);
+        generalQuota.setGlobalQuotaVdsGroup(vdsGroupQuota);
+
+        generalQuota.setId(Guid.NewGuid());
+        generalQuota.setStoragePoolId(storagePoolUUID);
+        generalQuota.setIsDefaultQuota(true);
         return generalQuota;
     }
 }

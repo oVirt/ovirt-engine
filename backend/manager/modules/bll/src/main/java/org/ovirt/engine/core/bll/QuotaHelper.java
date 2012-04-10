@@ -106,14 +106,66 @@ public class QuotaHelper {
      *
      * @param storagePool
      *            - The storage pool to create the unlimited Quota for.
-     * @return Boolean value if succeeded or not.
+     * @param isDefaultQuota
+     *            - If the generated quota should be the default one or not
+     * @return The quota
      */
     public Quota getUnlimitedQuota(storage_pool storagePool, boolean isDefaultQuota) {
+        return getUnlimitedQuota(storagePool, isDefaultQuota, false).getFirst();
+    }
+
+    /**
+     * Returns unlimited Quota for storage pool.
+     *
+     * The return value is a {@link Pair} of the unlimited quota for the storage pool and a {@link Boolean}
+     * indicating if an existing quota was really reused or not.
+     * <b>Notes:</b>
+     * 1. If {@link #allowReuseExisting} is <code>false</code> the return value will always be
+     * a {@link Pair} of a new quota object and <code>false</code>.
+     * 2. If the {@link Quota} object could not be created for any reason (e.g., the given
+     * {@link #storage_pool} was <code>null</code>), a {@link Pair} of <code>null</code> and <code>false</code>
+     * is returned.
+     *
+     * @param storagePool
+     *            - The storage pool to create the unlimited Quota for.
+     * @param isDefaultQuota
+     *            - If the generated quota should be the default one or not
+     * @param allowReuseExisting
+     *            - Whether to use an exiting quota unlimited quota or not
+     * @return A {@link Pair} of a {@link Quota} object and an indication if it was reused or not.
+     */
+    @SuppressWarnings("null")
+    public Pair<Quota, Boolean> getUnlimitedQuota(storage_pool storagePool,
+            boolean isDefaultQuota,
+            boolean allowReuseExisting) {
         if (storagePool == null || storagePool.getId() == null) {
-            log.error("Unlimited Quota cannot be created, Storage pool is not valid ");
-            return null;
+            log.error("Unlimited Quota cannot be created or reused, Storage pool is not valid ");
+            return new Pair<Quota, Boolean>(null, false);
         }
 
+        Quota quota = null;
+        boolean isExistingQuotaReused = false;
+        if (allowReuseExisting) {
+            quota = getQuotaDAO().getDefaultQuotaByStoragePoolId(storagePool.getId());
+            isExistingQuotaReused = (quota != null);
+        }
+
+        if (!isExistingQuotaReused) {
+            quota = generateUnlimitedQuota(storagePool);
+        }
+
+        quota.setIsDefaultQuota(isDefaultQuota);
+
+        return new Pair<Quota, Boolean>(quota, isExistingQuotaReused);
+    }
+
+    /**
+     * Generates a new default quota
+     * @param storagePool
+     *            - The storage pool to create the unlimited Quota for.
+     * @return The generated quota
+     */
+    private Quota generateUnlimitedQuota(storage_pool storagePool) {
         // Set new Quota definition.
         Quota quota = new Quota();
         Guid quotaId = Guid.NewGuid();
@@ -125,7 +177,6 @@ public class QuotaHelper {
         quota.setThresholdStoragePercentage(getQuotaThresholdStorage());
         quota.setGraceVdsGroupPercentage(getQuotaGraceVdsGroup());
         quota.setGraceStoragePercentage(getQuotaGraceStorage());
-        quota.setIsDefaultQuota(isDefaultQuota);
         quota.setQuotaVdsGroups(new ArrayList<QuotaVdsGroup>());
         quota.setQuotaStorages(new ArrayList<QuotaStorage>());
 
@@ -200,9 +251,29 @@ public class QuotaHelper {
      *            - The quota to be saved
      * @param ad_element_id
      *            - The user which will have consume permissions on the quota.
+     * @param reuse
+     *            - whether to update an existing quota or create a new one
      */
     public void saveQuotaForUser(Quota quota, Guid ad_element_id) {
-        getQuotaDAO().save(quota);
+        saveOrUpdateQuotaForUser(quota, ad_element_id, false);
+    }
+
+    /**
+     * Save <code>Quota</code> with permissions for ad_element_id to consume from.
+     *
+     * @param quota
+     *            - The quota to be saved
+     * @param ad_element_id
+     *            - The user which will have consume permissions on the quota.
+     * @param reuse
+     *            - whether to update an existing quota or create a new one
+     */
+    public void saveOrUpdateQuotaForUser(Quota quota, Guid ad_element_id, boolean reuse) {
+        if (reuse) {
+            getQuotaDAO().update(quota);
+        } else {
+            getQuotaDAO().save(quota);
+        }
         permissions perm =
                 new permissions(ad_element_id,
                         PredefinedRoles.QUOTA_CONSUMER.getId(),
