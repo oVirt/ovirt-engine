@@ -112,7 +112,7 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
                                 }
                             }
 
-                            getDiskDao().remove(diskImage.getimage_group_id());
+                            getBaseDiskDao().remove(diskImage.getimage_group_id());
                             DbFacade.getInstance()
                                     .getVmDeviceDAO()
                                     .remove(new VmDeviceId(diskImage.getimage_group_id(),

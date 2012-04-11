@@ -160,7 +160,7 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
             List<DiskImage> imagesForDisk =
                     DbFacade.getInstance().getDiskImageDAO().getAllSnapshotsForImageGroup(image.getimage_group_id());
             if (imagesForDisk == null || imagesForDisk.isEmpty()) {
-                DbFacade.getInstance().getDiskDao().remove(image.getimage_group_id());
+                DbFacade.getInstance().getBaseDiskDao().remove(image.getimage_group_id());
             }
         }
     }

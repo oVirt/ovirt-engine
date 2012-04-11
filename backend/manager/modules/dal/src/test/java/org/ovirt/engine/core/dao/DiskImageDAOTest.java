@@ -36,7 +36,7 @@ public class DiskImageDAOTest extends BaseGenericDaoTestCase<Guid, DiskImage, Di
 
     private static final int TOTAL_DISK_IMAGES = 7;
     private DiskImageDynamicDAO diskImageDynamicDao;
-    private DiskDao diskDao;
+    private BaseDiskDao diskDao;
     private VmDeviceDAO vmDeviceDao;
     private DiskImage newImage;
 
@@ -76,7 +76,7 @@ public class DiskImageDAOTest extends BaseGenericDaoTestCase<Guid, DiskImage, Di
         super.setUp();
 
         diskImageDynamicDao = prepareDAO(dbFacade.getDiskImageDynamicDAO());
-        diskDao = prepareDAO(dbFacade.getDiskDao());
+        diskDao = prepareDAO(dbFacade.getBaseDiskDao());
         vmDeviceDao = prepareDAO(dbFacade.getVmDeviceDAO());
 
         newImage = new DiskImage();

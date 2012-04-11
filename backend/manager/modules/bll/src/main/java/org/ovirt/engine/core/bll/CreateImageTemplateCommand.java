@@ -81,7 +81,7 @@ public class CreateImageTemplateCommand<T extends CreateImageTemplateParameters>
         newImage.setactive(true);
         saveImage(newImage);
         newImage.getDisk().setDiskAlias(ImagesHandler.getSuggestedDiskAlias(newImage.getDisk(), getVmTemplateName()));
-        DbFacade.getInstance().getDiskDao().save(newImage.getDisk());
+        DbFacade.getInstance().getBaseDiskDao().save(newImage.getDisk());
 
         DiskImageDynamic diskDynamic = new DiskImageDynamic();
         diskDynamic.setId(newImage.getId());
@@ -130,7 +130,7 @@ public class CreateImageTemplateCommand<T extends CreateImageTemplateParameters>
         setVmTemplate(DbFacade.getInstance().getVmTemplateDAO()
                 .get(getVmTemplateId()));
         if (getDestinationDiskImage() != null) {
-            DbFacade.getInstance().getDiskDao().remove(getDestinationDiskImage().getimage_group_id());
+            DbFacade.getInstance().getBaseDiskDao().remove(getDestinationDiskImage().getimage_group_id());
             if (DbFacade.getInstance().getDiskImageDynamicDAO().get(getDestinationDiskImage().getId()) != null) {
                 DbFacade.getInstance().getDiskImageDynamicDAO().remove(getDestinationDiskImage().getId());
             }

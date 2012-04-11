@@ -507,7 +507,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
 
                 BaseImagesCommand.saveImage(disk);
                 ImagesHandler.setDiskAlias(disk.getDisk(), getVm());
-                DbFacade.getInstance().getDiskDao().save(disk.getDisk());
+                DbFacade.getInstance().getBaseDiskDao().save(disk.getDisk());
                 DiskImageDynamic diskDynamic = new DiskImageDynamic();
                 diskDynamic.setId(disk.getId());
                 diskDynamic.setactual_size(disk.getactual_size());
@@ -545,7 +545,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
                 snapshotId = disk.getvm_snapshot_id().getValue();
                 disk.setactive(true);
                 DbFacade.getInstance().getDiskImageDAO().update(disk);
-                DbFacade.getInstance().getDiskDao().save(disk.getDisk());
+                DbFacade.getInstance().getBaseDiskDao().save(disk.getDisk());
             }
 
             // Update active snapshot's data, since it was inserted as a regular snapshot.
@@ -764,7 +764,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
                 List<DiskImage> imagesForDisk =
                         DbFacade.getInstance().getDiskImageDAO().getAllSnapshotsForImageGroup(disk.getimage_group_id());
                 if (imagesForDisk == null || imagesForDisk.isEmpty()) {
-                    DbFacade.getInstance().getDiskDao().remove(disk.getimage_group_id());
+                    DbFacade.getInstance().getBaseDiskDao().remove(disk.getimage_group_id());
                 }
             }
             RemoveVmNetwork();

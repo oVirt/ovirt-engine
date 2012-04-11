@@ -152,7 +152,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
                 _oldDisk.setwipe_after_delete(getParameters().getDiskInfo().getwipe_after_delete());
                 _oldDisk.setQuotaId(getQuotaId());
                 _oldDisk.getDisk().setDiskAlias(getParameters().getDiskInfo().getDisk().getDiskAlias());
-                DbFacade.getInstance().getDiskDao().update(_oldDisk.getDisk());
+                DbFacade.getInstance().getBaseDiskDao().update(_oldDisk.getDisk());
                 getDiskImageDao().update(_oldDisk);
                 setSucceeded(UpdateVmInSpm(getVm().getstorage_pool_id(),
                         Arrays.asList(getVm())));

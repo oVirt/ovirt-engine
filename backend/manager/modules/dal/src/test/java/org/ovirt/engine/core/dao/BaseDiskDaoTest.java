@@ -10,9 +10,9 @@ import org.ovirt.engine.core.common.businessentities.PropagateErrors;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
- * Unit tests to validate {@link DiskDao}.
+ * Unit tests to validate {@link BaseDiskDao}.
  */
-public class DiskDaoTest extends BaseGenericDaoTestCase<Guid, BaseDisk, DiskDao> {
+public class BaseDiskDaoTest extends BaseGenericDaoTestCase<Guid, BaseDisk, BaseDiskDao> {
 
     private static final Guid EXISTING_DISK_ID = new Guid("1b26a52b-b60f-44cb-9f46-3ef333b04a34");
     private static final int TOTAL_DISKS = 2;
@@ -42,8 +42,8 @@ public class DiskDaoTest extends BaseGenericDaoTestCase<Guid, BaseDisk, DiskDao>
     }
 
     @Override
-    protected DiskDao prepareDao() {
-        return prepareDAO(dbFacade.getDiskDao());
+    protected BaseDiskDao prepareDao() {
+        return prepareDAO(dbFacade.getBaseDiskDao());
     }
 
     @Override

@@ -23,7 +23,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.DiskDao;
+import org.ovirt.engine.core.dao.BaseDiskDao;
 import org.ovirt.engine.core.dao.DiskImageDAO;
 
 /**
@@ -394,14 +394,14 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
      *            The image to take the disk's details from.
      */
     protected void saveDiskIfNotExists(DiskImage image) {
-        if (!getDiskDao().exists(image.getimage_group_id())) {
+        if (!getBaseDiskDao().exists(image.getimage_group_id())) {
             ImagesHandler.setDiskAlias(image.getDisk(), getVm());
-            getDiskDao().save(image.getDisk());
+            getBaseDiskDao().save(image.getDisk());
         }
     }
 
-    protected DiskDao getDiskDao() {
-        return DbFacade.getInstance().getDiskDao();
+    protected BaseDiskDao getBaseDiskDao() {
+        return DbFacade.getInstance().getBaseDiskDao();
     }
 
     protected void LockImage() {
@@ -496,7 +496,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
         List<DiskImage> imagesForDisk =
                 getDiskImageDao().getAllSnapshotsForImageGroup(snapshot.getimage_group_id());
         if (imagesForDisk == null || imagesForDisk.isEmpty()) {
-            getDiskDao().remove(snapshot.getimage_group_id());
+            getBaseDiskDao().remove(snapshot.getimage_group_id());
         }
     }
 

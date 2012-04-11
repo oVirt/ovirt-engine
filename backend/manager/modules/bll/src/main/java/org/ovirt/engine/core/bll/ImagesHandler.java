@@ -238,8 +238,8 @@ public final class ImagesHandler {
      *            ID of the VM the disk will be associated with
      */
     public static void addDisk(BaseDisk disk) {
-        if (!DbFacade.getInstance().getDiskDao().exists(disk.getId())) {
-            DbFacade.getInstance().getDiskDao().save(disk);
+        if (!DbFacade.getInstance().getBaseDiskDao().exists(disk.getId())) {
+            DbFacade.getInstance().getBaseDiskDao().save(disk);
         }
     }
 
@@ -286,7 +286,7 @@ public final class ImagesHandler {
      *            the ID of the vm to add to if the disk does not exist for this VM
      */
     public static void addDiskToVmIfNotExists(BaseDisk disk, Guid vmId) {
-        if (!DbFacade.getInstance().getDiskDao().exists(disk.getId())) {
+        if (!DbFacade.getInstance().getBaseDiskDao().exists(disk.getId())) {
             addDiskToVm(disk, vmId);
         }
     }
@@ -300,7 +300,7 @@ public final class ImagesHandler {
      *            the ID of the VM to add to
      */
     public static void addDiskToVm(BaseDisk disk, Guid vmId) {
-        DbFacade.getInstance().getDiskDao().save(disk);
+        DbFacade.getInstance().getBaseDiskDao().save(disk);
         VmDeviceUtils.addManagedDevice(new VmDeviceId(disk.getId(), vmId),
                 VmDeviceType.DISK, VmDeviceType.DISK, "", true, false);
     }
@@ -594,7 +594,7 @@ public final class ImagesHandler {
 
     public static void removeDiskFromVm(Guid vmGuid, Guid diskId) {
         DbFacade.getInstance().getVmDeviceDAO().remove(new VmDeviceId(diskId, vmGuid));
-        DbFacade.getInstance().getDiskDao().remove(diskId);
+        DbFacade.getInstance().getBaseDiskDao().remove(diskId);
     }
 
     protected static Log log = LogFactory.getLog(ImagesHandler.class);

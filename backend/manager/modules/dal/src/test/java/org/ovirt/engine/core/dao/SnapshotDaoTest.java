@@ -18,7 +18,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.RandomUtils;
 
 /**
- * Unit tests to validate {@link DiskDao}.
+ * Unit tests to validate {@link BaseDiskDao}.
  */
 public class SnapshotDaoTest extends BaseGenericDaoTestCase<Guid, Snapshot, SnapshotDao> {
 

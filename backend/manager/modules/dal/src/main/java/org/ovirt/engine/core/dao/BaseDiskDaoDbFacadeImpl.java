@@ -11,7 +11,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 
-public class DiskDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<BaseDisk, Guid> implements DiskDao {
+public class BaseDiskDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<BaseDisk, Guid> implements BaseDiskDao {
 
     @Override
     protected String getProcedureNameForUpdate() {

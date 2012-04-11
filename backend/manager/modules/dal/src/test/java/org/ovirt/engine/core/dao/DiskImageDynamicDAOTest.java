@@ -26,7 +26,7 @@ public class DiskImageDynamicDAOTest extends BaseDAOTestCase{
 
     private DiskImageDynamicDAO dao;
     private DiskImageDAO diskImageDao;
-    private DiskDao diskDao;
+    private BaseDiskDao diskDao;
     private DiskImageDynamic existingDynamic;
 
     @Override
@@ -34,7 +34,7 @@ public class DiskImageDynamicDAOTest extends BaseDAOTestCase{
         super.setUp();
         dao = prepareDAO(dbFacade.getDiskImageDynamicDAO());
         diskImageDao = prepareDAO(dbFacade.getDiskImageDAO());
-        diskDao = prepareDAO(dbFacade.getDiskDao());
+        diskDao = prepareDAO(dbFacade.getBaseDiskDao());
         existingDynamic = dao.get(EXISTING_IMAGE_ID);
     }
 

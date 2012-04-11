@@ -3,7 +3,7 @@ package org.ovirt.engine.core.dao;
 import org.ovirt.engine.core.common.businessentities.BaseDisk;
 import org.ovirt.engine.core.compat.Guid;
 
-public interface DiskDao extends GenericDao<BaseDisk, Guid> {
+public interface BaseDiskDao extends GenericDao<BaseDisk, Guid> {
 
     /**
      * Check if the {@link BaseDisk} with the given id exists or not.

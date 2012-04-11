@@ -487,7 +487,7 @@ public class DbFacadeDAOTest extends BaseDAOTestCase {
 
     @Test
     public void testGetEntityNameByIdAndTypeForDisk() {
-        BaseDisk disk = dbFacade.getDiskDao().get(DISK_ID);
+        BaseDisk disk = dbFacade.getBaseDiskDao().get(DISK_ID);
         assertNotNull(disk);
         String name = disk.getDiskAlias();
         assertTrue(name.equals(dbFacade.getEntityNameByIdAndType(DISK_ID, VdcObjectType.Disk)));

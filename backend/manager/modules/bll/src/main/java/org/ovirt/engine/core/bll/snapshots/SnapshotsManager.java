@@ -26,7 +26,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.DiskDao;
+import org.ovirt.engine.core.dao.BaseDiskDao;
 import org.ovirt.engine.core.dao.DiskImageDAO;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
@@ -316,9 +316,9 @@ public class SnapshotsManager {
         for (DiskImage diskImage : disksFromSnapshot) {
             diskIdsFromSnapshot.add(diskImage.getimage_group_id());
             BaseDisk disk = diskImage.getDisk();
-            if (getDiskDao().exists(disk.getId())) {
+            if (getBaseDiskDao().exists(disk.getId())) {
                 disk.setDiskAlias(ImagesHandler.getSuggestedDiskAlias(disk, vmName));
-                getDiskDao().update(disk);
+                getBaseDiskDao().update(disk);
             } else {
 
                 // If can't find the image, insert it as illegal so that it can't be used and make the device unplugged.
@@ -339,7 +339,7 @@ public class SnapshotsManager {
         for (VmDevice vmDevice : getVmDeviceDao().getVmDeviceByVmIdTypeAndDevice(
                 vmId, VmDeviceType.DISK.getName(), VmDeviceType.DISK.getName())) {
             if (!diskIdsFromSnapshot.contains(vmDevice.getDeviceId())) {
-                getDiskDao().remove(vmDevice.getDeviceId());
+                getBaseDiskDao().remove(vmDevice.getDeviceId());
                 getVmDeviceDao().remove(vmDevice.getId());
             }
         }
@@ -349,8 +349,8 @@ public class SnapshotsManager {
         return DbFacade.getInstance().getVmDeviceDAO();
     }
 
-    protected DiskDao getDiskDao() {
-        return DbFacade.getInstance().getDiskDao();
+    protected BaseDiskDao getBaseDiskDao() {
+        return DbFacade.getInstance().getBaseDiskDao();
     }
 
     protected VmDAO getVmDao() {
