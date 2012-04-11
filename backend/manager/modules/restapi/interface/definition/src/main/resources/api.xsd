@@ -1060,6 +1060,11 @@
     <xs:simpleContent>
       <xs:extension base="xs:boolean">
         <xs:attribute name="priority" type="xs:int">
+          <xs:annotation>
+            <xs:appinfo>
+              <jaxb:property generateIsSetMethod="false"/>
+            </xs:appinfo>
+          </xs:annotation>
         </xs:attribute>
       </xs:extension>
     </xs:simpleContent>

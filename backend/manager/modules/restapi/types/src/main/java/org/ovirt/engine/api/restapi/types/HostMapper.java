@@ -57,7 +57,7 @@ public class HostMapper {
             entity = map(model.getPowerManagement(), entity);
         }
         if (model.isSetStorageManager()) {
-            if (model.getStorageManager().isSetPriority()) {
+            if (model.getStorageManager().getPriority() != null) {
                 entity.setVdsSpmPriority(model.getStorageManager().getPriority());
             }
         }
