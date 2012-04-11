@@ -16,7 +16,7 @@ import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.CopyVolumeType;
-import org.ovirt.engine.core.common.businessentities.Disk;
+import org.ovirt.engine.core.common.businessentities.BaseDisk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
@@ -280,7 +280,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImprotVmT
             BaseImagesCommand.saveImage(image);
             getCompensationContext().snapshotNewEntity(image);
             if (!DbFacade.getInstance().getDiskDao().exists(image.getimage_group_id())) {
-                Disk disk = image.getDisk();
+                BaseDisk disk = image.getDisk();
                 disk.setDiskAlias(ImagesHandler.getSuggestedDiskAlias(disk, getVmTemplateName()));
                 DbFacade.getInstance().getDiskDao().save(disk);
                 getCompensationContext().snapshotNewEntity(disk);

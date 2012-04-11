@@ -544,8 +544,8 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
         di.storageIds = new ArrayList<Guid>(diskImage.storageIds);
         di.vmSnapshotId = new NGuid(diskImage.vmSnapshotId.getUuid());
         di.mstorage_path = diskImage.mstorage_path;
-        Disk otherDisk = diskImage.getDisk();
-        di.setDisk(new Disk(otherDisk.getId(),
+        BaseDisk otherDisk = diskImage.getDisk();
+        di.setDisk(new BaseDisk(otherDisk.getId(),
                 otherDisk.getInternalDriveMapping(),
                 otherDisk.getDiskInterface(),
                 otherDisk.isWipeAfterDelete(),

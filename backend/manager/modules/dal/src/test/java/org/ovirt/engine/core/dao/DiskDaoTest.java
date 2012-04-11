@@ -4,7 +4,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
-import org.ovirt.engine.core.common.businessentities.Disk;
+import org.ovirt.engine.core.common.businessentities.BaseDisk;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.PropagateErrors;
 import org.ovirt.engine.core.compat.Guid;
@@ -12,7 +12,7 @@ import org.ovirt.engine.core.compat.Guid;
 /**
  * Unit tests to validate {@link DiskDao}.
  */
-public class DiskDaoTest extends BaseGenericDaoTestCase<Guid, Disk, DiskDao> {
+public class DiskDaoTest extends BaseGenericDaoTestCase<Guid, BaseDisk, DiskDao> {
 
     private static final Guid EXISTING_DISK_ID = new Guid("1b26a52b-b60f-44cb-9f46-3ef333b04a34");
     private static final int TOTAL_DISKS = 2;
@@ -28,8 +28,8 @@ public class DiskDaoTest extends BaseGenericDaoTestCase<Guid, Disk, DiskDao> {
     }
 
     @Override
-    protected Disk generateNewEntity() {
-        return new Disk(Guid.NewGuid(),
+    protected BaseDisk generateNewEntity() {
+        return new BaseDisk(Guid.NewGuid(),
                 1,
                 DiskInterface.SCSI,
                 true,

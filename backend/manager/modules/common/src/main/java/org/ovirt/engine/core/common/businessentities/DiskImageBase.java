@@ -24,7 +24,7 @@ public class DiskImageBase extends IVdcQueryable implements Serializable {
     private boolean boot;
 
     @Valid
-    private Disk disk = new Disk();
+    private BaseDisk disk = new BaseDisk();
 
     @NotNull(message = "VALIDATION.VOLUME_FORMAT.NOT_NULL", groups = { CreateEntity.class, UpdateEntity.class })
     private VolumeFormat volumeFormat;
@@ -154,11 +154,11 @@ public class DiskImageBase extends IVdcQueryable implements Serializable {
         disk.setPropagateErrors(value);
     }
 
-    public Disk getDisk() {
+    public BaseDisk getDisk() {
         return disk;
     }
 
-    public void setDisk(Disk disk) {
+    public void setDisk(BaseDisk disk) {
         this.disk = disk;
     }
 

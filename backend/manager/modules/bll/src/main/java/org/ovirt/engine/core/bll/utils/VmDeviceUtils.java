@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.common.businessentities.Disk;
+import org.ovirt.engine.core.common.businessentities.BaseDisk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmBase;
@@ -366,7 +366,7 @@ public class VmDeviceUtils {
      */
     private static <T extends VmBase> void addImportedDisks(T entity, List<VmDevice> vmDeviceToUpdate) {
         final Guid id = entity.getId();
-        for (Disk disk : getDisks(entity.getImages())) {
+        for (BaseDisk disk : getDisks(entity.getImages())) {
             Guid deviceId = disk.getId();
             String specParams = appendDeviceIdToSpecParams(deviceId, "");
             VmDevice vmDevice =
@@ -387,8 +387,8 @@ public class VmDeviceUtils {
      *            collection DiskImage objects to get a set of Disks from
      * @return set of disks of the images collection
      */
-    protected static Set<Disk> getDisks(Collection<DiskImage> diskImages) {
-        Set<Disk> disks = new HashSet<Disk>();
+    protected static Set<BaseDisk> getDisks(Collection<DiskImage> diskImages) {
+        Set<BaseDisk> disks = new HashSet<BaseDisk>();
         for (DiskImage diskImage : diskImages) {
             disks.add(diskImage.getDisk());
         }

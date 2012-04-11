@@ -12,7 +12,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
-import org.ovirt.engine.core.common.businessentities.Disk;
+import org.ovirt.engine.core.common.businessentities.BaseDisk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
@@ -93,7 +93,7 @@ public final class ImagesHandler {
         }
     }
 
-    public static boolean setDiskAlias(Disk disk, VM vm) {
+    public static boolean setDiskAlias(BaseDisk disk, VM vm) {
         if (disk != null) {
             String vmName = "";
             if (vm != null) {
@@ -115,7 +115,7 @@ public final class ImagesHandler {
      * @param diskPrefix
      *            - The prefix for disk alias if needs to be initialized.
      */
-    public static String getSuggestedDiskAlias(Disk disk, String diskPrefix) {
+    public static String getSuggestedDiskAlias(BaseDisk disk, String diskPrefix) {
         String diskAlias;
         if (disk == null) {
             diskAlias = getDefaultDiskAlias(diskPrefix, DefaultDriveName);
@@ -237,7 +237,7 @@ public final class ImagesHandler {
      * @param vmId
      *            ID of the VM the disk will be associated with
      */
-    public static void addDisk(Disk disk) {
+    public static void addDisk(BaseDisk disk) {
         if (!DbFacade.getInstance().getDiskDao().exists(disk.getId())) {
             DbFacade.getInstance().getDiskDao().save(disk);
         }
@@ -285,7 +285,7 @@ public final class ImagesHandler {
      * @param vmId
      *            the ID of the vm to add to if the disk does not exist for this VM
      */
-    public static void addDiskToVmIfNotExists(Disk disk, Guid vmId) {
+    public static void addDiskToVmIfNotExists(BaseDisk disk, Guid vmId) {
         if (!DbFacade.getInstance().getDiskDao().exists(disk.getId())) {
             addDiskToVm(disk, vmId);
         }
@@ -299,7 +299,7 @@ public final class ImagesHandler {
      * @param vmId
      *            the ID of the VM to add to
      */
-    public static void addDiskToVm(Disk disk, Guid vmId) {
+    public static void addDiskToVm(BaseDisk disk, Guid vmId) {
         DbFacade.getInstance().getDiskDao().save(disk);
         VmDeviceUtils.addManagedDevice(new VmDeviceId(disk.getId(), vmId),
                 VmDeviceType.DISK, VmDeviceType.DISK, "", true, false);

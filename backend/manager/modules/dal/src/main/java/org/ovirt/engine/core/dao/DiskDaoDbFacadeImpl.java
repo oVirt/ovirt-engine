@@ -3,7 +3,7 @@ package org.ovirt.engine.core.dao;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import org.ovirt.engine.core.common.businessentities.Disk;
+import org.ovirt.engine.core.common.businessentities.BaseDisk;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.PropagateErrors;
 import org.ovirt.engine.core.common.utils.EnumUtils;
@@ -11,7 +11,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 
-public class DiskDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Disk, Guid> implements DiskDao {
+public class DiskDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<BaseDisk, Guid> implements DiskDao {
 
     @Override
     protected String getProcedureNameForUpdate() {
@@ -44,7 +44,7 @@ public class DiskDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Disk, Guid> i
     }
 
     @Override
-    protected MapSqlParameterSource createFullParametersMapper(Disk entity) {
+    protected MapSqlParameterSource createFullParametersMapper(BaseDisk entity) {
         return createIdParameterMapper(entity.getId())
                 .addValue("internal_drive_mapping", entity.getInternalDriveMapping())
                 .addValue("disk_alias", entity.getDiskAlias())
@@ -55,12 +55,12 @@ public class DiskDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Disk, Guid> i
     }
 
     @Override
-    protected ParameterizedRowMapper<Disk> createEntityRowMapper() {
-        return new ParameterizedRowMapper<Disk>() {
+    protected ParameterizedRowMapper<BaseDisk> createEntityRowMapper() {
+        return new ParameterizedRowMapper<BaseDisk>() {
 
             @Override
-            public Disk mapRow(ResultSet rs, int rowNum) throws SQLException {
-                Disk disk = new Disk();
+            public BaseDisk mapRow(ResultSet rs, int rowNum) throws SQLException {
+                BaseDisk disk = new BaseDisk();
 
                 disk.setId(Guid.createGuidFromString(rs.getString("disk_id")));
                 disk.setInternalDriveMapping(rs.getInt("internal_drive_mapping"));

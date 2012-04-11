@@ -1,12 +1,12 @@
 package org.ovirt.engine.core.dao;
 
-import org.ovirt.engine.core.common.businessentities.Disk;
+import org.ovirt.engine.core.common.businessentities.BaseDisk;
 import org.ovirt.engine.core.compat.Guid;
 
-public interface DiskDao extends GenericDao<Disk, Guid> {
+public interface DiskDao extends GenericDao<BaseDisk, Guid> {
 
     /**
-     * Check if the {@link Disk} with the given id exists or not.
+     * Check if the {@link BaseDisk} with the given id exists or not.
      *
      * @param id
      *            The disk's id.

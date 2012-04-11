@@ -20,7 +20,7 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.DbUser;
-import org.ovirt.engine.core.common.businessentities.Disk;
+import org.ovirt.engine.core.common.businessentities.BaseDisk;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.RoleType;
@@ -487,7 +487,7 @@ public class DbFacadeDAOTest extends BaseDAOTestCase {
 
     @Test
     public void testGetEntityNameByIdAndTypeForDisk() {
-        Disk disk = dbFacade.getDiskDao().get(DISK_ID);
+        BaseDisk disk = dbFacade.getDiskDao().get(DISK_ID);
         assertNotNull(disk);
         String name = disk.getDiskAlias();
         assertTrue(name.equals(dbFacade.getEntityNameByIdAndType(DISK_ID, VdcObjectType.Disk)));

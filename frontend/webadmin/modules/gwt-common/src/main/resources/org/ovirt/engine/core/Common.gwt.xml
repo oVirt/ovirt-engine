@@ -15,7 +15,7 @@
 		<include name="common/businessentities/AdUser.java" />
 		<include name="common/businessentities/AuditLog.java" />
 		<include name="common/businessentities/bookmarks.java" />
-		<include name="common/businessentities/Disk.java" />
+		<include name="common/businessentities/BaseDisk.java" />
 		<include name="common/businessentities/DiskImage.java" />
 		<include name="common/businessentities/DiskImageBase.java" />
 		<include name="common/businessentities/DiskImageDynamic.java" />

@@ -8,7 +8,7 @@ import org.ovirt.engine.core.bll.ImagesHandler;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
-import org.ovirt.engine.core.common.businessentities.Disk;
+import org.ovirt.engine.core.common.businessentities.BaseDisk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
@@ -315,7 +315,7 @@ public class SnapshotsManager {
         // Sync disks that exist or existed in the snapshot.
         for (DiskImage diskImage : disksFromSnapshot) {
             diskIdsFromSnapshot.add(diskImage.getimage_group_id());
-            Disk disk = diskImage.getDisk();
+            BaseDisk disk = diskImage.getDisk();
             if (getDiskDao().exists(disk.getId())) {
                 disk.setDiskAlias(ImagesHandler.getSuggestedDiskAlias(disk, vmName));
                 getDiskDao().update(disk);

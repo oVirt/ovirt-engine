@@ -19,11 +19,11 @@ import org.ovirt.engine.core.compat.Guid;
  * the drive's data at a certain point in time. An image of a snapshot is immutable, and there is usually (in case of a
  * VM) one or more mutable images which the VM can run with.<br>
  * <br>
- * Due to this, the {@link Disk} entity always points to the active mutable image that the VM will run with (or the
+ * Due to this, the {@link BaseDisk} entity always points to the active mutable image that the VM will run with (or the
  * image the Template represents).<br>
  * The active image can also be <code>null</code>, in case that it's missing but should be there.
  */
-public class Disk extends IVdcQueryable implements BusinessEntity<Guid> {
+public class BaseDisk extends IVdcQueryable implements BusinessEntity<Guid> {
 
     /**
      * Needed for java serialization/deserialization mechanism.
@@ -69,10 +69,10 @@ public class Disk extends IVdcQueryable implements BusinessEntity<Guid> {
     private PropagateErrors propagateErrors = PropagateErrors.Off;
 
 
-    public Disk() {
+    public BaseDisk() {
     }
 
-    public Disk(Guid id,
+    public BaseDisk(Guid id,
             int internalDriveMapping,
             DiskInterface diskInterface,
             boolean wipeAfterDelete,
@@ -176,7 +176,7 @@ public class Disk extends IVdcQueryable implements BusinessEntity<Guid> {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        Disk other = (Disk) obj;
+        BaseDisk other = (BaseDisk) obj;
         if (diskDescription == null) {
             if (other.diskDescription != null)
                 return false;
