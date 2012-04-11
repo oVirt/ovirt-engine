@@ -32,8 +32,8 @@ import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class QuotaHelper {
-    public static final Long UNLIMITED = -1l;
-    public static final Long EMPTY = 0l;
+    public static final Long UNLIMITED = -1L;
+    public static final Long EMPTY = 0L;
     private static final Log log = LogFactory.getLog(QuotaHelper.class);
 
     private QuotaHelper() {
@@ -67,7 +67,8 @@ public class QuotaHelper {
         return returnedQuotaGuid;
     }
 
-    public Collection<PermissionSubject> getPermissionsForDiskImagesList(Collection<DiskImage> diskImages, storage_pool storagePool) {
+    public Collection<PermissionSubject> getPermissionsForDiskImagesList(Collection<DiskImage> diskImages,
+            storage_pool storagePool) {
         List<PermissionSubject> permissionSubjectList = new ArrayList<PermissionSubject>();
         Map<Guid, Object> quotaMap = new HashMap<Guid, Object>();
 
@@ -75,7 +76,8 @@ public class QuotaHelper {
         for (DiskImage diskImage : diskImages) {
             if (quotaMap.containsKey(diskImage.getQuotaId())) {
                 quotaMap.put(diskImage.getQuotaId(), diskImage.getQuotaId());
-                permissionSubjectList = addQuotaPermissionSubject(permissionSubjectList, storagePool, diskImage.getQuotaId());
+                permissionSubjectList =
+                        addQuotaPermissionSubject(permissionSubjectList, storagePool, diskImage.getQuotaId());
             }
         }
         return permissionSubjectList;
@@ -200,7 +202,7 @@ public class QuotaHelper {
      *            - The user which will have consume permissions on the quota.
      */
     public void saveQuotaForUser(Quota quota, Guid ad_element_id) {
-        DbFacade.getInstance().getQuotaDAO().save(quota);
+        getQuotaDAO().save(quota);
         permissions perm =
                 new permissions(ad_element_id,
                         PredefinedRoles.QUOTA_CONSUMER.getId(),
@@ -228,7 +230,7 @@ public class QuotaHelper {
             Integer blockSparseInitSizeInGB) {
         Map<Pair<Guid, Guid>, Double> quotaForStorageConsumption = new HashMap<Pair<Guid, Guid>, Double>();
         for (DiskImage disk : diskImages) {
-            Pair<Guid, Guid> quotaForStorageKey = new Pair<Guid, Guid>(disk.getQuotaId(),disk.getstorage_ids().get(0));
+            Pair<Guid, Guid> quotaForStorageKey = new Pair<Guid, Guid>(disk.getQuotaId(), disk.getstorage_ids().get(0));
             Long sizeRequested = disk.getsize() * NumberOfVms * blockSparseInitSizeInGB;
             Double storageRequest = quotaForStorageConsumption.get(quotaForStorageKey);
             if (storageRequest != null) {
