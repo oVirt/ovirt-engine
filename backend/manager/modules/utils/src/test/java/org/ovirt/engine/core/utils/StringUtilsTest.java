@@ -2,10 +2,13 @@ package org.ovirt.engine.core.utils;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.junit.Test;
+import org.ovirt.engine.core.compat.Guid;
 
 /**
  * The following tests covers the string2Map and map2String methods.
@@ -81,4 +84,82 @@ public class StringUtilsTest {
         expectedMap.put(EMPTY_SIGN_KEY_VAL, "");
         assertEquals(expectedMap, string2Map);
     }
+
+    @Test
+    public void testStringListValuesWithGuids() {
+        String listValues = "e61f7070-cd52-46ca-88c2-686e1c70fe44,1eaa381a-fbf9-4ef5-bec2-6e4337f85d66";
+        List<String> stringList = StringUtils.splitStringList(listValues);
+        List<String> expectedList = new ArrayList<String>();
+        expectedList.add("e61f7070-cd52-46ca-88c2-686e1c70fe44");
+        expectedList.add("1eaa381a-fbf9-4ef5-bec2-6e4337f85d66");
+        assertEquals(expectedList, stringList);
+    }
+
+    @Test
+    public void testStringListValuesWithStrings() {
+        String listValues = "data1,data2";
+        List<String> stringList = StringUtils.splitStringList(listValues);
+        List<String> expectedList = new ArrayList<String>();
+        expectedList.add("data1");
+        expectedList.add("data2");
+        assertEquals(expectedList, stringList);
+    }
+
+    @Test
+    public void testEmptyStringListValues() {
+        String listValues = "";
+        List<String> stringList = StringUtils.splitStringList(listValues);
+        List<String> expectedList = null;
+        assertEquals(expectedList, stringList);
+    }
+
+    @Test
+    public void testNullStringListValues() {
+        List<String> stringList = StringUtils.splitStringList(null);
+        List<String> expectedList = null;
+        assertEquals(expectedList, stringList);
+    }
+
+    @Test
+    public void testOneValueStringListValues() {
+        List<String> stringList = StringUtils.splitStringList("Data");
+        List<String> expectedList = new ArrayList<String>();
+        expectedList.add("Data");
+        assertEquals(expectedList, stringList);
+    }
+
+    @Test
+    public void testGuidListValues() {
+        String listValues = "e61f7070-cd52-46ca-88c2-686e1c70fe44,1eaa381a-fbf9-4ef5-bec2-6e4337f85d66";
+        List<Guid> stringList = StringUtils.getStorageIdList(listValues);
+        List<Guid> expectedList = new ArrayList<Guid>();
+        expectedList.add(Guid.createGuidFromString("e61f7070-cd52-46ca-88c2-686e1c70fe44"));
+        expectedList.add(Guid.createGuidFromString("1eaa381a-fbf9-4ef5-bec2-6e4337f85d66"));
+        assertEquals(expectedList, stringList);
+    }
+
+    @Test
+    public void testGuidListValuesWithOneGuid() {
+        String listValues = "e61f7070-cd52-46ca-88c2-686e1c70fe44";
+        List<Guid> stringList = StringUtils.getStorageIdList(listValues);
+        List<Guid> expectedList = new ArrayList<Guid>();
+        expectedList.add(Guid.createGuidFromString("e61f7070-cd52-46ca-88c2-686e1c70fe44"));
+        assertEquals(expectedList, stringList);
+    }
+
+    @Test
+    public void testEmptyGuidListValues() {
+        String listValues = "";
+        List<Guid> stringList = StringUtils.getStorageIdList(listValues);
+        List<Guid> expectedList = new ArrayList<Guid>();
+        assertEquals(expectedList, stringList);
+    }
+
+    @Test
+    public void testNullGuidListValues() {
+        List<Guid> stringList = StringUtils.getStorageIdList(null);
+        List<Guid> expectedList = new ArrayList<Guid>();
+        assertEquals(expectedList, stringList);
+    }
+
 }

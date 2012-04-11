@@ -1,10 +1,14 @@
 package org.ovirt.engine.core.utils;
 
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+
+import org.ovirt.engine.core.compat.Guid;
 
 /**
  * String helper utilities
@@ -143,5 +147,42 @@ public class StringUtils {
             }
         }
         return sb.toString();
+    }
+
+    /**
+     * Returns an array list of strings after split from one <code>stringDelimitedSeperated</code> which use delimiter
+     * comma. This should support string list with compatible format as array_agg function which retrieved from
+     * postgres.
+     * If the string is empty or null the returned list will be null.
+     *
+     * @param stringCommaSeperated
+     *            - String which contains list of strings.
+     * @return - Array of strings.
+     */
+    public static ArrayList<String> splitStringList(String stringDelimitedSeperated) {
+        ArrayList<String> stringList = null;
+        if (!(stringDelimitedSeperated == null || stringDelimitedSeperated.isEmpty())) {
+            stringList = new ArrayList<String>(Arrays.asList(stringDelimitedSeperated.split(DELIMITER)));
+        }
+        return stringList;
+    }
+
+    /**
+     * Get string of multiple storage <code>Guid</code>, and returns array list of <code>Guid</code>. If the list is
+     * empty returns an array which contains an empty <code>Guid</code>.
+     *
+     * @param storageIds
+     *            - String which contains list of <code>Guid</code>.
+     * @return - Array of storage <code>Guid</code> type.
+     */
+    public static ArrayList<Guid> getStorageIdList(String storageIds) {
+        ArrayList<String> storageStringList = splitStringList(storageIds);
+        ArrayList<Guid> storageGuidsList = new ArrayList<Guid>();
+        if (storageStringList != null) {
+            for (String storageGuidString : storageStringList) {
+                storageGuidsList.add(Guid.createGuidFromString(storageGuidString));
+            }
+        }
+        return storageGuidsList;
     }
 }

@@ -3,7 +3,6 @@ package org.ovirt.engine.core.dao;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -17,6 +16,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
+import org.ovirt.engine.core.utils.StringUtils;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
@@ -246,8 +246,8 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
             entity.setlastModified(DbFacadeUtils.fromDate(rs
                     .getTimestamp("lastModified")));
             entity.setappList(rs.getString("app_list"));
-            entity.setstorage_ids(new ArrayList<Guid>(Arrays.asList(Guid.createGuidFromString(rs.getString("storage_id")))));
-            entity.setStoragesNames(new ArrayList<String>(Arrays.asList(rs.getString("storage_name"))));
+            entity.setstorage_ids(StringUtils.getStorageIdList(rs.getString("storage_id")));
+            entity.setStoragesNames(StringUtils.splitStringList(rs.getString("storage_name")));
             entity.setvm_snapshot_id(NGuid.createGuidFromString(rs
                     .getString("vm_snapshot_id")));
             entity.setvolume_type(VolumeType.forValue(rs
@@ -256,9 +256,7 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
                     .getInt("volume_format")));
             entity.setimage_group_id(Guid.createGuidFromString(rs
                     .getString("image_group_id")));
-            if (!(rs.getString("storage_path") == null || rs.getString("storage_path").isEmpty())) {
-                entity.setstorage_path(new ArrayList<String>(Arrays.asList(rs.getString("storage_path"))));
-            }
+            entity.setstorage_path(StringUtils.splitStringList(rs.getString("storage_path")));
             entity.setstorage_pool_id(NGuid.createGuidFromString(rs
                     .getString("storage_pool_id")));
             entity.setdisk_interface(DiskInterface.forValue(rs
