@@ -83,6 +83,14 @@ public class ConnectStorageServerVDSCommand<P extends ConnectStorageServerVDSCom
         } else {
             con.put("password", "");
         }
+        // For mnt_options and vfs_type - if they are null or empty
+        // we should not send a key with an empty value
+        if (!StringHelper.isNullOrEmpty(connection.getMountOptions())) {
+            con.put("mnt_options", connection.getMountOptions());
+        }
+        if (!StringHelper.isNullOrEmpty(connection.getVfsType())) {
+            con.put("vfs_type", connection.getVfsType());
+        }
         return con;
     }
 
