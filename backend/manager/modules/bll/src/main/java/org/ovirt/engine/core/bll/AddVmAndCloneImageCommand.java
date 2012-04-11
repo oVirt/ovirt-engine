@@ -40,6 +40,11 @@ public abstract class AddVmAndCloneImageCommand<T extends VmManagementParameters
         super(parameters);
     }
 
+    @Override
+    protected boolean validateIsImagesOnDomains() {
+        return true;
+    }
+
     protected void copyDiskImage(
             DiskImage diskImage,
             Guid srcStorageDomainId,

@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.bll;
 
-import java.util.HashMap;
-
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.action.AddVmAndAttachToPoolParameters;
 import org.ovirt.engine.core.common.action.AddVmFromScratchParameters;
@@ -9,9 +7,7 @@ import org.ovirt.engine.core.common.action.AddVmToPoolParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
-import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
-import org.ovirt.engine.core.compat.Guid;
 
 @InternalCommandAttribute
 public class AddVmAndAttachToPoolCommand<T extends AddVmAndAttachToPoolParameters> extends AddVmCommand<T> {
@@ -42,7 +38,7 @@ public class AddVmAndAttachToPoolCommand<T extends AddVmAndAttachToPoolParameter
             tempVar2.setSessionId(getParameters().getSessionId());
             tempVar2.setDontCheckTemplateImages(true);
             tempVar2.setDontAttachToDefaultTag(true);
-            tempVar2.setDiskInfoDestinationMap((HashMap<Guid, DiskImage>)diskInfoDestinationMap);
+            tempVar2.setDiskInfoDestinationMap(diskInfoDestinationMap);
             returnValueFromAddVm =
                     Backend.getInstance().runInternalAction(VdcActionType.AddVm,
                             tempVar2,

@@ -57,7 +57,7 @@ import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils.ValidationErro
 
 public class AddVmCommand<T extends VmManagementParametersBase> extends VmManagementCommandBase<T> {
 
-    protected Map<Guid, DiskImage> diskInfoDestinationMap;
+    protected HashMap<Guid, DiskImage> diskInfoDestinationMap;
     protected Map<Guid, storage_domains> destStorages = new HashMap<Guid, storage_domains>();
     protected Map<Guid, List<DiskImage>> storageToDisksMap;
     protected String newMac = "";
@@ -333,7 +333,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
             retValue = false;
         }
 
-        return retValue;
+        return retValue && validateIsImagesOnDomains();
     }
 
     protected Collection<DiskImage> getImagesToCheckDestinationStorageDomains() {
@@ -363,10 +363,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
                 && !Guid.Empty.equals(getParameters().getStorageDomainId())) {
             Guid storageId = getParameters().getStorageDomainId();
             for (DiskImage image : getImagesToCheckDestinationStorageDomains()) {
-                ArrayList<Guid> storageIds = new ArrayList<Guid>();
-                storageIds.add(storageId);
-                image.setstorage_ids(storageIds);
-                diskInfoDestinationMap.put(image.getId(), image);
+                diskInfoDestinationMap.put(image.getId(), makeNewImage(storageId, image));
             }
             return validateProvidedDestinations();
         }
@@ -374,6 +371,28 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
                 diskInfoDestinationMap,
                 destStorages, false);
         return true;
+    }
+
+    protected boolean validateIsImagesOnDomains() {
+        for (DiskImage image : getImagesToCheckDestinationStorageDomains()) {
+            if (!image.getstorage_ids().containsAll(diskInfoDestinationMap.get(image.getId()).getstorage_ids())) {
+                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_NOT_FOUND_ON_DESTINATION_DOMAIN);
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private DiskImage makeNewImage(Guid storageId, DiskImage image) {
+        DiskImage newImage = new DiskImage();
+        newImage.setId(image.getId());
+        newImage.setvolume_format(image.getvolume_format());
+        newImage.setvolume_type(image.getvolume_type());
+        ArrayList<Guid> storageIds = new ArrayList<Guid>();
+        storageIds.add(storageId);
+        newImage.setstorage_ids(storageIds);
+        newImage.setQuotaId(image.getQuotaId());
+        return newImage;
     }
 
     @Override

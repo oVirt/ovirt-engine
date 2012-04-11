@@ -28,6 +28,11 @@ public class AddVmFromTemplateCommand<T extends AddVmFromTemplateParameters> ext
     }
 
     @Override
+    protected boolean validateIsImagesOnDomains() {
+        return true;
+    }
+
+    @Override
     protected void ExecuteVmCommand() {
         super.ExecuteVmCommand();
         // override template id to blank
