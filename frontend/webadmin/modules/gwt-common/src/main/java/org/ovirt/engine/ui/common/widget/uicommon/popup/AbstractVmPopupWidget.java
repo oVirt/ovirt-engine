@@ -647,10 +647,12 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
                     boolean isProvisioningAvailable = vm.getProvisioning().getIsAvailable();
                     storageAllocationPanel.setVisible(isProvisioningAvailable || isDisksAvailable);
 
-                    for (DiskModel diskModel : vm.getDisks()) {
-                        if (diskModel.getDiskImage().getimageStatus() == ImageStatus.ILLEGAL) {
-                            generalWarningMessage.setText(constants.illegalDisksInVm());
-                            return;
+                    if (vm.getDisks() != null) {
+                        for (DiskModel diskModel : vm.getDisks()) {
+                            if (diskModel.getDiskImage().getimageStatus() == ImageStatus.ILLEGAL) {
+                                generalWarningMessage.setText(constants.illegalDisksInVm());
+                                return;
+                            }
                         }
                     }
                 }
