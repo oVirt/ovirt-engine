@@ -15,27 +15,27 @@ public class DiskDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<BaseDisk, Gui
 
     @Override
     protected String getProcedureNameForUpdate() {
-        return "UpdateDisk";
+        return "UpdateBaseDisk";
     }
 
     @Override
     protected String getProcedureNameForGet() {
-        return "GetDiskByDiskId";
+        return "GetBaseDiskByBaseDiskId";
     }
 
     @Override
     protected String getProcedureNameForGetAll() {
-        return "GetAllFromDisks";
+        return "GetAllFromBaseDisks";
     }
 
     @Override
     protected String getProcedureNameForSave() {
-        return "InsertDisk";
+        return "InsertBaseDisk";
     }
 
     @Override
     protected String getProcedureNameForRemove() {
-        return "DeleteDisk";
+        return "DeleteBaseDisk";
     }
 
     @Override

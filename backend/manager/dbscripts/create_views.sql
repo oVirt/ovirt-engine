@@ -44,17 +44,17 @@ SELECT DISTINCT images.image_guid as image_guid, vm_device.vm_id as vm_guid,
     images.image_group_id as image_group_id,
     images.active,
     vm_static.entity_type as entity_type,
-    disks.disk_alias as disk_alias,
-    disks.disk_description as disk_description,
-    CAST (disks.internal_drive_mapping AS VARCHAR(50)) as internal_drive_mapping,
-    CASE WHEN disks.disk_interface = 'IDE' THEN 0
-         WHEN disks.disk_interface = 'SCSI' THEN 1
-         WHEN disks.disk_interface = 'VirtIO' THEN 2
+    base_disks.disk_alias as disk_alias,
+    base_disks.disk_description as disk_description,
+    CAST (base_disks.internal_drive_mapping AS VARCHAR(50)) as internal_drive_mapping,
+    CASE WHEN base_disks.disk_interface = 'IDE' THEN 0
+         WHEN base_disks.disk_interface = 'SCSI' THEN 1
+         WHEN base_disks.disk_interface = 'VirtIO' THEN 2
          ELSE NULL
     END AS disk_interface,
-    disks.wipe_after_delete as wipe_after_delete,
-    CASE WHEN disks.propagate_errors = 'Off' THEN 0
-         WHEN disks.propagate_errors = 'On' THEN 1
+    base_disks.wipe_after_delete as wipe_after_delete,
+    CASE WHEN base_disks.propagate_errors = 'Off' THEN 0
+         WHEN base_disks.propagate_errors = 'On' THEN 1
          ELSE NULL
     END AS propagate_errors,
     images.quota_id as quota_id,
@@ -65,7 +65,7 @@ SELECT DISTINCT images.image_guid as image_guid, vm_device.vm_id as vm_guid,
 FROM
 images
 left outer join disk_image_dynamic on images.image_guid = disk_image_dynamic.image_id
-LEFT OUTER JOIN disks ON images.image_group_id = disks.disk_id left outer JOIN vm_device on vm_device.device_id = images.image_group_id left outer join vm_static on vm_static.vm_guid = vm_device.vm_id
+LEFT OUTER JOIN base_disks ON images.image_group_id = base_disks.disk_id left outer JOIN vm_device on vm_device.device_id = images.image_group_id left outer join vm_static on vm_static.vm_guid = vm_device.vm_id
 LEFT JOIN image_storage_domain_map ON image_storage_domain_map.image_id = images.image_guid
 LEFT OUTER JOIN storage_domain_static_view ON image_storage_domain_map.storage_domain_id = storage_domain_static_view.id
 LEFT OUTER JOIN snapshots ON images.vm_snapshot_id = snapshots.snapshot_id

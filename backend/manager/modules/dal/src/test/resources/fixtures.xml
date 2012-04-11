@@ -1791,7 +1791,7 @@
         </row>
     </table>
 
-    <table name="disks">
+    <table name="base_disks">
         <column>disk_id</column>
         <column>internal_drive_mapping</column>
         <column>disk_interface</column>

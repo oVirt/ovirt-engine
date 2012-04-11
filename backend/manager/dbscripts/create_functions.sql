@@ -455,7 +455,7 @@ BEGIN
     WHEN v_entity_type = 17 THEN
         result := ( SELECT quota_name FROM quota WHERE id = v_entity_id );
     WHEN v_entity_type = 19 THEN
-        result := ( SELECT disk_alias FROM disks WHERE disk_id = v_entity_id );
+        result := ( SELECT disk_alias FROM base_disks WHERE disk_id = v_entity_id );
     ELSE
         result := 'Unknown type ' ||  v_entity_type;
     END CASE;

@@ -315,7 +315,7 @@ SELECT i.image_guid AS vm_disk_id,
        i._update_date AS update_date
 FROM   images as i
            INNER JOIN
-               disks as d ON i.image_group_id = d.disk_id
+               base_disks as d ON i.image_group_id = d.disk_id
            INNER JOIN
                vm_device as vd ON d.disk_id = vd.device_id
 		              INNER JOIN

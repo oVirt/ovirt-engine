@@ -279,7 +279,7 @@ BEGIN
       WHERE  s.vm_id = v_vm_id
       AND    NOT EXISTS (
           SELECT 1
-          FROM   disks d
+          FROM   base_disks d
           WHERE  d.disk_id = i.image_group_id);
 END; $procedure$
 LANGUAGE plpgsql;
