@@ -22,17 +22,19 @@ public class StorageServerConnectionDAODbFacadeImpl extends BaseDAODbFacade impl
         @Override
         public storage_server_connections mapRow(ResultSet rs, int rowNum)
                 throws SQLException {
-            storage_server_connections entity = new storage_server_connections();
-            entity.setconnection(rs.getString("connection"));
-            entity.setid(rs.getString("id"));
-            entity.setiqn(rs.getString("iqn"));
-            entity.setport(rs.getString("port"));
-            entity.setportal(rs.getString("portal"));
-            entity.setpassword(rs.getString("password"));
-            entity.setstorage_type(StorageType.forValue(rs
-                    .getInt("storage_type")));
-            entity.setuser_name(rs.getString("user_name"));
-            return entity;
+                    storage_server_connections entity = new storage_server_connections();
+                    entity.setconnection(rs.getString("connection"));
+                    entity.setid(rs.getString("id"));
+                    entity.setiqn(rs.getString("iqn"));
+                    entity.setport(rs.getString("port"));
+                    entity.setportal(rs.getString("portal"));
+                    entity.setpassword(rs.getString("password"));
+                    entity.setstorage_type(StorageType.forValue(rs
+                            .getInt("storage_type")));
+                    entity.setuser_name(rs.getString("user_name"));
+                    entity.setMountOptions(rs.getString("mount_options"));
+                    entity.setVfsType(rs.getString("vfs_type"));
+                    return entity;
         }
             };
 
@@ -111,7 +113,9 @@ public class StorageServerConnectionDAODbFacadeImpl extends BaseDAODbFacade impl
                 .addValue("portal", connection.getportal())
                 .addValue("password", connection.getpassword())
                 .addValue("storage_type", connection.getstorage_type())
-                .addValue("user_name", connection.getuser_name());
+                .addValue("user_name", connection.getuser_name())
+                .addValue("mount_options", connection.getMountOptions())
+                .addValue("vfs_type", connection.getVfsType());
 
         getCallsHandler().executeModification("Insertstorage_server_connections", parameterSource);
     }
@@ -126,7 +130,9 @@ public class StorageServerConnectionDAODbFacadeImpl extends BaseDAODbFacade impl
                 .addValue("storage_type", connection.getstorage_type())
                 .addValue("port", connection.getport())
                 .addValue("portal", connection.getportal())
-                .addValue("user_name", connection.getuser_name());
+                .addValue("user_name", connection.getuser_name())
+                .addValue("mount_options", connection.getMountOptions())
+                .addValue("vfs_type", connection.getVfsType());
 
         getCallsHandler().executeModification("Updatestorage_server_connections", parameterSource);
     }

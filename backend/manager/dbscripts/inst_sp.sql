@@ -28,7 +28,7 @@ BEGIN
     v_connection_id := uuid_generate_v1();
     if not exists (select 1 from storage_server_connections where connection = v_connection) then
         -- Insert storage server connection info
-        perform Insertstorage_server_connections(v_connection,cast(v_connection_id as varchar(250)),NULL,NULL,NULL,NULL,1,NULL);
+        perform Insertstorage_server_connections(v_connection,cast(v_connection_id as varchar(250)),NULL,NULL,NULL,NULL,1,NULL,NULL,NULL);
         -- Insert storage domain static info
         perform Insertstorage_domain_static(v_storage_domain_id,cast(v_connection_id as varchar(250)),v_name,1,2,'0');
         -- Insert storage domain dynamic  info

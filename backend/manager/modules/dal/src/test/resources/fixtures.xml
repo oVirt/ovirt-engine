@@ -39,15 +39,19 @@
         <column>port</column>
         <column>portal</column>
         <column>storage_type</column>
+        <column>mount_options</column>
+        <column>vfs_type</column>
         <row>
             <value>0cc146e8-e5ed-482c-8814-270bc48c297f</value>
-            <value>10.35.64.25</value>
+            <value>10.35.64.25:/export/share</value>
             <null />
             <null />
-            <value>iqn.2008-09.com.hateya:server.target9</value>
-            <value>3260</value>
+            <value></value>
+            <value></value>
             <value>1</value>
             <value>3</value>
+            <value>rw</value>
+            <value>nfs</value>
         </row>
         <row>
             <value>0cc146e8-e5ed-482c-8814-270bc48c297e</value>
@@ -58,6 +62,8 @@
             <value>3260</value>
             <value>1</value>
             <value>3</value>
+            <null />
+            <null />
         </row>
         <row>
             <value>0cc146e8-e5ed-482c-8814-270bc48c297d</value>
@@ -68,6 +74,8 @@
             <value>3260</value>
             <value>1</value>
             <value>3</value>
+            <null />
+            <null />
         </row>
         <row>
             <value>0cc146e8-e5ed-482c-8814-270bc48c297c</value>
@@ -78,6 +86,8 @@
             <value>3260</value>
             <value>1</value>
             <value>3</value>
+            <null />
+            <null />
         </row>
         <row>
             <value>0cc146e8-e5ed-482c-8814-270bc48c297b</value>
@@ -88,6 +98,8 @@
             <value>3260</value>
             <value>1</value>
             <value>3</value>
+            <null />
+            <null />
         </row>
         <row>
             <value>0cc146e8-e5ed-482c-8814-270bc48c297a</value>
@@ -98,6 +110,8 @@
             <value>3260</value>
             <value>1</value>
             <value>3</value>
+            <null />
+            <null />
         </row>
         <row>
             <value>0cc146e8-e5ed-482c-8814-270bc48c2979</value>
@@ -108,6 +122,8 @@
             <value>3260</value>
             <value>1</value>
             <value>3</value>
+            <null />
+            <null />
         </row>
         <row>
             <value>fDMzhE-wx3s-zo3q-Qcxd-T0li-yoYU-QvVePk</value>
@@ -118,6 +134,8 @@
             <value>3260</value>
             <value>1</value>
             <value>3</value>
+            <null />
+            <null />
         </row>
     </table>
 

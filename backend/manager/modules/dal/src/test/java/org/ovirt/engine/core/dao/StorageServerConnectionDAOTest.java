@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.businessentities.storage_server_connections;
 import org.ovirt.engine.core.compat.Guid;
 
 public class StorageServerConnectionDAOTest extends BaseDAOTestCase {
+    private static final int SERVER_CONNECTION_COUNT_FOR_SPECIFIC_STORAGE = 7;
     private static final int SERVER_CONNECTION_COUNT = 8;
     private static final String EXISTING_DOMAIN_STORAGE_NAME = "fDMzhE-wx3s-zo3q-Qcxd-T0li-yoYU-QvVePk";
     private static final Guid EXISTING_STORAGE_POOL_ID = new Guid("6d849ebf-755f-4552-ad09-9a090cda105d");;
@@ -126,7 +127,7 @@ public class StorageServerConnectionDAOTest extends BaseDAOTestCase {
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
-        assertEquals(SERVER_CONNECTION_COUNT, result.size());
+        assertEquals(SERVER_CONNECTION_COUNT_FOR_SPECIFIC_STORAGE, result.size());
     }
 
     /**
