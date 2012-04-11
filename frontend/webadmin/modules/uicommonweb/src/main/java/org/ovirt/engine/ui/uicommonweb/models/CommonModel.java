@@ -535,6 +535,9 @@ public class CommonModel extends ListModel
                 || model.getType() == SystemTreeItemType.Storages || model.getType() == SystemTreeItemType.Storage
                 || model.getType() == SystemTreeItemType.System);
 
+        quotaList.setIsAvailable(model.getType() == SystemTreeItemType.DataCenter
+                || model.getType() == SystemTreeItemType.System);
+
         boolean isDataStorage = false;
         if (model.getType() == SystemTreeItemType.Storage)
         {

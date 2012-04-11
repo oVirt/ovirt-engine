@@ -32,6 +32,7 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
+import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
@@ -125,6 +126,11 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
             }
         };
         GetQuotaByStoragePoolIdQueryParameters parameters = new GetQuotaByStoragePoolIdQueryParameters();
+        if (getSystemTreeSelectedItem() != null
+                && getSystemTreeSelectedItem().getType().equals(SystemTreeItemType.DataCenter)) {
+            parameters.setStoragePoolId(((storage_pool) getSystemTreeSelectedItem().getEntity()).getId());
+        }
+
         parameters.setRefresh(getIsQueryFirstTime());
         Frontend.RunQuery(VdcQueryType.GetQuotaByStoragePoolId,
                 parameters,
@@ -546,15 +552,23 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
         }
     }
 
+    private SystemTreeItemModel systemTreeSelectedItem;
+
     @Override
     public SystemTreeItemModel getSystemTreeSelectedItem() {
-        // TODO Auto-generated method stub
-        return null;
+        return systemTreeSelectedItem;
     }
 
     @Override
     public void setSystemTreeSelectedItem(SystemTreeItemModel value) {
-        // TODO Auto-generated method stub
+        if (systemTreeSelectedItem != value) {
+            systemTreeSelectedItem = value;
+            OnSystemTreeSelectedItemChanged();
+        }
+    }
+
+    private void OnSystemTreeSelectedItemChanged() {
+        Search();
     }
 
     @Override
