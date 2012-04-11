@@ -12,7 +12,6 @@ import org.ovirt.engine.core.common.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
 import org.ovirt.engine.core.common.businessentities.Quota;
-import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.network;
@@ -21,6 +20,7 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.NetworkDAO;
 
 public class AddEmptyStoragePoolCommand<T extends StoragePoolManagementParameter> extends
         StoragePoolManagementCommandBase<T> {
@@ -32,25 +32,20 @@ public class AddEmptyStoragePoolCommand<T extends StoragePoolManagementParameter
         getStoragePool().setId(Guid.NewGuid());
         getStoragePool().setstatus(StoragePoolStatus.Uninitialized);
         Quota defaultStoragePoolQuota = generateQuotaForNewStoragePool();
-        DbFacade.getInstance().getStoragePoolDAO().save(getStoragePool());
-        QuotaHelper.getInstance().saveQuotaForUser(defaultStoragePoolQuota,
+        getStoragePoolDAO().save(getStoragePool());
+        getQuotaHelper().saveQuotaForUser(defaultStoragePoolQuota,
                 MultiLevelAdministrationHandler.EVERYONE_OBJECT_ID);
     }
 
     private Quota generateQuotaForNewStoragePool() {
-        boolean isDefaultQuota = false;
-        if (getStoragePool().getQuotaEnforcementType() == QuotaEnforcementTypeEnum.DISABLED) {
-            isDefaultQuota = true;
-        }
-        Quota defaultStoragePoolQuota = QuotaHelper.getInstance().getUnlimitedQuota(getStoragePool(), isDefaultQuota);
-        return defaultStoragePoolQuota;
+        return getQuotaHelper().getUnlimitedQuota(getStoragePool(), true);
     }
 
     @Override
     protected void executeCommand() {
         AddStoragePoolToDb();
         getReturnValue().setActionReturnValue(getStoragePool().getId());
-        AddDefaultNetworks();
+        addDefaultNetworks();
         setSucceeded(true);
     }
 
@@ -59,14 +54,14 @@ public class AddEmptyStoragePoolCommand<T extends StoragePoolManagementParameter
         return getSucceeded() ? AuditLogType.USER_ADD_STORAGE_POOL : AuditLogType.USER_ADD_STORAGE_POOL_FAILED;
     }
 
-    private void AddDefaultNetworks() {
+    private void addDefaultNetworks() {
         network net = new network();
         net.setId(Guid.NewGuid());
         net.setname(Config.<String> GetValue(ConfigValues.ManagementNetwork));
         net.setdescription(AddVdsGroupCommand.DefaultNetworkDescription);
         net.setstorage_pool_id(getStoragePool().getId());
         net.setVmNetwork(true);
-        DbFacade.getInstance().getNetworkDAO().save(net);
+        getNetworkDAO().save(net);
     }
 
     @Override
@@ -79,7 +74,7 @@ public class AddEmptyStoragePoolCommand<T extends StoragePoolManagementParameter
         } else if (!CheckStoragePoolNameLengthValid()) {
             result = false;
         } else if (!VersionSupport.checkVersionSupported(getStoragePool().getcompatibility_version()
-        )) {
+                )) {
             addCanDoActionMessage(VersionSupport.getUnsupportedVersionMessage());
             result = false;
         } else if (getStoragePool().getstorage_pool_type() == StorageType.LOCALFS
@@ -96,5 +91,15 @@ public class AddEmptyStoragePoolCommand<T extends StoragePoolManagementParameter
         return Collections.singletonList(new PermissionSubject(MultiLevelAdministrationHandler.SYSTEM_OBJECT_ID,
                 VdcObjectType.System,
                 getActionType().getActionGroup()));
+    }
+
+    /* Getters for util classes */
+
+    protected NetworkDAO getNetworkDAO() {
+        return DbFacade.getInstance().getNetworkDAO();
+    }
+
+    protected QuotaHelper getQuotaHelper() {
+        return QuotaHelper.getInstance();
     }
 }
