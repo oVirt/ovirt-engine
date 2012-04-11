@@ -1108,6 +1108,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("9000")
     MaxMTU(349),
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("false")
+    PosixStorageEnabled(350),
+
     Invalid(65535);
 
     private int intValue;
