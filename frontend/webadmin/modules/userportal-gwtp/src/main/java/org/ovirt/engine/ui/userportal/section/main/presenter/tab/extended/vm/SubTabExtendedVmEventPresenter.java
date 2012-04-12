@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
-import org.ovirt.engine.ui.uicommonweb.models.vms.VmEventListModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.UserPortalVmEventListModel;
 import org.ovirt.engine.ui.userportal.gin.ClientGinjector;
 import org.ovirt.engine.ui.userportal.place.ApplicationPlaces;
 import org.ovirt.engine.ui.userportal.uicommon.model.vm.VmEventListModelProvider;
@@ -18,7 +18,7 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
 public class SubTabExtendedVmEventPresenter
-        extends AbstractSubTabExtendedVmPresenter<VmEventListModel, SubTabExtendedVmEventPresenter.ViewDef, SubTabExtendedVmEventPresenter.ProxyDef> {
+        extends AbstractSubTabExtendedVmPresenter<UserPortalVmEventListModel, SubTabExtendedVmEventPresenter.ViewDef, SubTabExtendedVmEventPresenter.ProxyDef> {
 
     @ProxyCodeSplit
     @NameToken(ApplicationPlaces.extendedVirtualMachineEventSubTabPlace)

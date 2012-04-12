@@ -2,7 +2,7 @@ package org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.templ
 
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
-import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateEventListModel;
+import org.ovirt.engine.ui.uicommonweb.models.templates.UserPortalTemplateEventListModel;
 import org.ovirt.engine.ui.userportal.gin.ClientGinjector;
 import org.ovirt.engine.ui.userportal.place.ApplicationPlaces;
 import org.ovirt.engine.ui.userportal.uicommon.model.template.TemplateEventListModelProvider;
@@ -18,7 +18,7 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
 public class SubTabExtendedTemplateEventsPresenter
-        extends AbstractSubTabExtendedTemplatePresenter<TemplateEventListModel, SubTabExtendedTemplateEventsPresenter.ViewDef, SubTabExtendedTemplateEventsPresenter.ProxyDef> {
+        extends AbstractSubTabExtendedTemplatePresenter<UserPortalTemplateEventListModel, SubTabExtendedTemplateEventsPresenter.ViewDef, SubTabExtendedTemplateEventsPresenter.ProxyDef> {
 
     @ProxyCodeSplit
     @NameToken(ApplicationPlaces.extendedTempplateEventsSubTabPlace)

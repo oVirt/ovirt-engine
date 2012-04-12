@@ -417,9 +417,13 @@ public class TemplateListModel extends ListWithDetailsModel implements ISupportS
         list.add(new TemplateInterfaceListModel());
         list.add(new TemplateDiskListModel());
         list.add(new TemplateStorageListModel());
-        list.add(new TemplateEventListModel());
         list.add(new PermissionListModel());
+        addCustomModelsDetailModelList(list);
         setDetailModels(list);
+    }
+
+    protected void addCustomModelsDetailModelList(ObservableCollection<EntityModel> list) {
+        list.add(new TemplateEventListModel());
     }
 
     @Override
@@ -460,7 +464,6 @@ public class TemplateListModel extends ListWithDetailsModel implements ISupportS
         model.setVmType(template.getvm_type());
 
         model.Initialize(this.getSystemTreeSelectedItem());
-
 
         UICommand command;
 

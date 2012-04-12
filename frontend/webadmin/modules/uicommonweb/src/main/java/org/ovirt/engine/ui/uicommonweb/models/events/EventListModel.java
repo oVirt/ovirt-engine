@@ -125,7 +125,7 @@ public class EventListModel extends SearchableListModel
         SyncSearch();
     }
 
-    private void Refresh()
+    protected void Refresh()
     {
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);

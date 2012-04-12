@@ -7,7 +7,7 @@ import org.ovirt.engine.ui.common.view.AbstractSubTabTableWidgetView;
 import org.ovirt.engine.ui.common.widget.uicommon.events.EventListModelTable;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalListModel;
-import org.ovirt.engine.ui.uicommonweb.models.vms.VmEventListModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.UserPortalVmEventListModel;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.SubTabExtendedVmEventPresenter;
 import org.ovirt.engine.ui.userportal.uicommon.model.vm.VmEventListModelProvider;
 
@@ -15,7 +15,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 
-public class SubTabExtendedVmEventView extends AbstractSubTabTableWidgetView<UserPortalItemModel, AuditLog, UserPortalListModel, VmEventListModel>
+public class SubTabExtendedVmEventView extends AbstractSubTabTableWidgetView<UserPortalItemModel, AuditLog, UserPortalListModel, UserPortalVmEventListModel>
         implements SubTabExtendedVmEventPresenter.ViewDef {
 
     interface ViewIdHandler extends ElementIdHandler<SubTabExtendedVmEventView> {
@@ -25,7 +25,7 @@ public class SubTabExtendedVmEventView extends AbstractSubTabTableWidgetView<Use
     @Inject
     public SubTabExtendedVmEventView(VmEventListModelProvider modelProvider,
             EventBus eventBus, ClientStorage clientStorage) {
-        super(new EventListModelTable<VmEventListModel>(modelProvider, eventBus, clientStorage));
+        super(new EventListModelTable<UserPortalVmEventListModel>(modelProvider, eventBus, clientStorage));
         ViewIdHandler.idHandler.generateAndSetIds(this);
         initTable();
         initWidget(getModelBoundTableWidget());

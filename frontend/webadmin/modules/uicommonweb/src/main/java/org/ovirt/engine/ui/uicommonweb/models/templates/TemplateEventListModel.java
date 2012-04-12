@@ -40,9 +40,13 @@ public class TemplateEventListModel extends EventListModel
     {
         if (getEntity() != null)
         {
-            setSearchString(StringFormat.format("Events:event_template=%1$s", getEntity().getname()));
+            preSearchCalled(getEntity());
             super.Search();
         }
+    }
+
+    protected void preSearchCalled(VmTemplate template) {
+        setSearchString(StringFormat.format("Events:event_template=%1$s", template.getname()));
     }
 
     @Override

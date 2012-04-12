@@ -66,9 +66,9 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.SpiceConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UserPortalExistingVmModelBehavior;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UserPortalNewVmModelBehavior;
+import org.ovirt.engine.ui.uicommonweb.models.vms.UserPortalVmEventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmAppListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmDiskListModel;
-import org.ovirt.engine.ui.uicommonweb.models.vms.VmEventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmInterfaceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmMonitorModel;
@@ -440,7 +440,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         permissionListModel = new PermissionListModel();
         permissionListModel.setIsAvailable(false);
 
-        vmEventListModel = new VmEventListModel();
+        vmEventListModel = new UserPortalVmEventListModel();
         vmEventListModel.setIsAvailable(false);
 
         vmAppListModel = new VmAppListModel();

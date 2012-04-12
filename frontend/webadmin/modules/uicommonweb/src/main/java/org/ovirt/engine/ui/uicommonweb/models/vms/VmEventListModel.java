@@ -31,9 +31,13 @@ public class VmEventListModel extends EventListModel
 
         if (getEntity() != null)
         {
-            setSearchString("events: vm.name=" + vm.getvm_name());
+            preSearchCalled(vm);
             super.Search();
         }
+    }
+
+    protected void preSearchCalled(VM vm) {
+        setSearchString("events: vm.name=" + vm.getvm_name());
     }
 
     @Override
