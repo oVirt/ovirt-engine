@@ -101,6 +101,7 @@ public class MoveOrCopyDiskCommandTest {
     public void canDoActionWrongDiskImageTypeVm() throws Exception {
         initializeCommand(ImageOperation.Copy);
         initVmDiskImage();
+        doReturn(vmTemplateDao).when(command).getVmTemplateDAO();
         assertFalse(command.canDoAction());
         assertTrue(command.getReturnValue()
                 .getCanDoActionMessages()
@@ -209,6 +210,11 @@ public class MoveOrCopyDiskCommandTest {
         @Override
         protected DiskImageDAO getDiskImageDao() {
             return diskImageDao;
+        }
+
+        @Override
+        protected boolean acquireLockInternal() {
+            return true;
         }
 
     }

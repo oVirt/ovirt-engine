@@ -58,10 +58,10 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
     protected boolean canDoAction() {
         ArrayList<String> canDoActionMessages = getReturnValue().getCanDoActionMessages();
         return isImageExist()
+                && checkOperationIsCorrect()
                 && canFindVmOrTemplate()
                 && acquireLockInternal()
                 && isImageIsNotLocked()
-                && checkOperationIsCorrect()
                 && isSourceAndDestTheSame()
                 && validateSourceStorageDomain(canDoActionMessages)
                 && validateDestStorage(canDoActionMessages)
@@ -125,7 +125,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
     protected boolean checkOperationIsCorrect() {
         boolean retValue = true;
         if (getParameters().getOperation() == ImageOperation.Copy
-                && getImage().getVmEntityType() == VmEntityType.VM) {
+                && getImage().getVmEntityType() != VmEntityType.TEMPLATE) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_IS_NOT_TEMPLATE_DISK);
             retValue = false;
         }
