@@ -722,6 +722,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Clusters")
     String quotaClusterSubTabLabel();
 
+    @DefaultStringValue("Enable Gluster Service")
+    String clusterEnableGlusterServiceLabel();
+
     @DefaultStringValue("Storage")
     String quotaStorageSubTabLabel();
 

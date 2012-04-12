@@ -8,6 +8,7 @@ import org.ovirt.engine.core.common.action.VdsGroupParametersBase;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -210,7 +211,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         }
 
         ClusterModel clusterModel = new ClusterModel();
-        clusterModel.Init(false);
+        clusterModel.Init(false, getGlusterModeEnum());
         setWindow(clusterModel);
         clusterModel.setTitle("New Cluster");
         clusterModel.setHashName("new_cluster");
@@ -259,7 +260,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
 
     public void Edit()
     {
-        VDSGroup cluster = (VDSGroup) getSelectedItem();
+        final VDSGroup cluster = (VDSGroup) getSelectedItem();
 
         if (getWindow() != null)
         {
@@ -268,15 +269,33 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
 
         ClusterModel model = new ClusterModel();
         model.setEntity(cluster);
-        model.Init(true);
+        model.Init(true, getGlusterModeEnum());
         setWindow(model);
         model.setTitle("Edit Cluster");
         model.setHashName("edit_cluster");
         model.setOriginalName(cluster.getname());
         model.getName().setEntity(cluster.getname());
+        model.getEnableGlusterService().setEntity(cluster.supportsGlusterService());
 
-        if (getSystemTreeSelectedItem() != null && getSystemTreeSelectedItem().getType() == SystemTreeItemType.Cluster)
-        {
+        AsyncQuery asyncQuery = new AsyncQuery();
+        asyncQuery.setModel(model);
+        asyncQuery.asyncCallback = new INewAsyncCallback() {
+            @Override
+            public void OnSuccess(Object model1, Object result)
+            {
+                ClusterModel clusterModel = (ClusterModel) model1;
+                java.util.ArrayList<GlusterVolumeEntity> volumes =
+                        (java.util.ArrayList<GlusterVolumeEntity>) result;
+                if (volumes.size() != 0)
+                {
+                    if (cluster.supportsGlusterService()) {
+                        clusterModel.getEnableGlusterService().setIsChangable(false);
+                    }
+                }
+            }
+        };
+        AsyncDataProvider.GetVolumeList(asyncQuery, cluster.getname());
+        if (getSystemTreeSelectedItem() != null && getSystemTreeSelectedItem().getType() == SystemTreeItemType.Cluster) {
             model.getName().setIsChangable(false);
             model.getName().setInfo("Cannot edit Cluster's Name in tree context");
         }
@@ -407,6 +426,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         cluster.setTransparentHugepages(version.compareTo(new Version("3.0")) >= 0);
         cluster.setcompatibility_version(version);
         cluster.setMigrateOnError(model.getMigrateOnErrorOption());
+        cluster.setGlusterService((Boolean) model.getEnableGlusterService().getEntity());
 
         model.StartProgress(null);
 

@@ -942,7 +942,7 @@ public final class AsyncDataProvider {
         Frontend.RunQuery(VdcQueryType.Search, searchParameters, aQuery);
     }
 
-    public static void GetVolumeList(AsyncQuery aQuery) {
+    public static void GetVolumeList(AsyncQuery aQuery, String clusterName) {
 
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
@@ -958,7 +958,10 @@ public final class AsyncDataProvider {
                 return new java.util.ArrayList<GlusterVolumeEntity>();
             }
         };
-        SearchParameters searchParameters = new SearchParameters("Volumes:", SearchType.GlusterVolume);
+        SearchParameters searchParameters;
+        searchParameters =
+                clusterName == null ? new SearchParameters("Volumes:", SearchType.GlusterVolume)
+                        : new SearchParameters("Volumes: cluster.name=" + clusterName, SearchType.GlusterVolume);
         searchParameters.setMaxCount(9999);
         Frontend.RunQuery(VdcQueryType.Search, searchParameters, aQuery);
     }

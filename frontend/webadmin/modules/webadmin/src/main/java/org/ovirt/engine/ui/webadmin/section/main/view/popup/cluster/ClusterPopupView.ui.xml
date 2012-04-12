@@ -46,6 +46,7 @@
 								<e:EntityModelTextBoxEditor ui:field="descriptionEditor" />
 								<e:ListModelListBoxEditor ui:field="cPUEditor" />
 								<e:ListModelListBoxEditor ui:field="versionEditor" />
+								<e:EntityModelCheckBoxEditor ui:field="enableGlusterServiceEditor" />
 							</g:FlowPanel>
 						</t:content>
 					</t:DialogTab>

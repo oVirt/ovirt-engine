@@ -234,7 +234,6 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
 
                                         for (GlusterVolumeEntity volume : volumes)
                                         {
-                                            // volume id
                                             Guid key = volume.getClusterId();
                                             if (!systemTreeModel3.getVolumeMap().containsKey(key))
                                             {
@@ -257,10 +256,9 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
                                             queryParamList.add(new StoragePoolQueryParametersBase(dataCenter.getId()));
                                         }
                                         Frontend.RunMultipleQueries(queryTypeList, queryParamList, systemTreeModel3);
-
                                     }
                                 };
-                                AsyncDataProvider.GetVolumeList(_asyncQuery3);
+                                AsyncDataProvider.GetVolumeList(_asyncQuery3, null);
                             }
                         };
                         AsyncDataProvider.GetHostList(_asyncQuery2);

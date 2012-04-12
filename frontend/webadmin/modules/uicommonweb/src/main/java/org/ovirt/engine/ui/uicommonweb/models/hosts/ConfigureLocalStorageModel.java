@@ -25,6 +25,7 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.uicommonweb.Configurator.GlusterModeEnum;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -133,7 +134,7 @@ public class ConfigureLocalStorageModel extends Model {
         getDataCenter().getVersion().getSelectedItemChangedEvent().addListener(this);
 
         setCluster(new ClusterModel());
-        getCluster().Init(false);
+        getCluster().Init(false, GlusterModeEnum.ONLY_OVIRT);
 
         setFormattedStorageName(new EntityModel());
 

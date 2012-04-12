@@ -36,6 +36,7 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.uicommonweb.Configurator.GlusterModeEnum;
 import org.ovirt.engine.ui.uicommonweb.Extensions;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -102,6 +103,11 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
     private java.util.ArrayList<storage_domains> isoStorageDomains;
     private java.util.ArrayList<VDS> allHosts;
     private VDS localStorageHost;
+    private GlusterModeEnum glusterModeEnum;
+
+    public DataCenterGuideModel(GlusterModeEnum glusterModeEnum) {
+        this.glusterModeEnum = glusterModeEnum;
+    }
 
     @Override
     public storage_pool getEntity()
@@ -1245,7 +1251,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
     public void AddCluster()
     {
         ClusterModel model = new ClusterModel();
-        model.Init(false);
+        model.Init(false, glusterModeEnum);
         setWindow(model);
         model.setTitle("New Cluster");
         model.setHashName("new_cluster");
@@ -1292,6 +1298,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         cluster.setmax_vds_memory_over_commit(model.getMemoryOverCommit());
         cluster.setTransparentHugepages(version.compareTo(new Version("3.0")) >= 0);
         cluster.setcompatibility_version(version);
+        cluster.setGlusterService((Boolean) model.getEnableGlusterService().getEntity());
 
         model.StartProgress(null);
 

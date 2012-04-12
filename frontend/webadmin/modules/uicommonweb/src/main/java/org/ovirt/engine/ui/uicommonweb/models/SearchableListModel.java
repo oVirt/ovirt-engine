@@ -29,6 +29,7 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.frontend.RegistrationResult;
+import org.ovirt.engine.ui.uicommonweb.Configurator.GlusterModeEnum;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.ProvideTickEvent;
 import org.ovirt.engine.ui.uicommonweb.ReportCommand;
@@ -95,6 +96,16 @@ public abstract class SearchableListModel extends ListModel implements GridContr
     private void setForceRefreshCommand(UICommand value)
     {
         privateForceRefreshCommand = value;
+    }
+
+    private GlusterModeEnum privateGlusterModeEnum;
+
+    public GlusterModeEnum getGlusterModeEnum() {
+        return privateGlusterModeEnum;
+    }
+
+    public void setGlusterModeEnum(GlusterModeEnum privateGlusterModeEnum) {
+        this.privateGlusterModeEnum = privateGlusterModeEnum;
     }
 
     private final List<ReportCommand> openReportCommands = new LinkedList<ReportCommand>();

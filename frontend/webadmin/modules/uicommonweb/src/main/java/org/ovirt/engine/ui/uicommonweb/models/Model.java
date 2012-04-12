@@ -9,7 +9,6 @@ import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.core.compat.ProvidePropertyChangedEvent;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.uicommonweb.Configurator;
-import org.ovirt.engine.ui.uicommonweb.Configurator.GlusterModeEnum;
 import org.ovirt.engine.ui.uicommonweb.ICommandTarget;
 import org.ovirt.engine.ui.uicommonweb.ILogger;
 import org.ovirt.engine.ui.uicommonweb.TypeResolver;
@@ -380,16 +379,6 @@ public class Model extends PropertyChangeNotifier implements IEventListener, ICo
     {
         setinfo(value);
         OnPropertyChanged(new PropertyChangedEventArgs("Info"));
-    }
-
-    private GlusterModeEnum privateGlusterModeEnum;
-
-    public GlusterModeEnum getGlusterModeEnum() {
-        return privateGlusterModeEnum;
-    }
-
-    public void setGlusterModeEnum(GlusterModeEnum privateGlusterModeEnum) {
-        this.privateGlusterModeEnum = privateGlusterModeEnum;
     }
 
     public Model()

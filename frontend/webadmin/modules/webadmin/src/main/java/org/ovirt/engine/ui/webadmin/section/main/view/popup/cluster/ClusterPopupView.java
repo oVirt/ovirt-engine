@@ -12,6 +12,7 @@ import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
+import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelRadioButtonEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
@@ -75,6 +76,11 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
     @Path(value = "version.selectedItem")
     @WithElementId
     ListModelListBoxEditor<Object> versionEditor;
+
+    @UiField
+    @Path(value = "enableGlusterService.entity")
+    @WithElementId("enableGlusterService")
+    EntityModelCheckBoxEditor enableGlusterServiceEditor;
 
     @UiField
     @WithElementId
@@ -161,6 +167,7 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
         descriptionEditor.setLabel(constants.clusterPopupDescriptionLabel());
         cPUEditor.setLabel(constants.clusterPopupCPULabel());
         versionEditor.setLabel(constants.clusterPopupVersionLabel());
+        enableGlusterServiceEditor.setLabel(constants.clusterEnableGlusterServiceLabel());
 
         memoryOptimizationTab.setLabel(constants.clusterPopupMemoryOptimizationTabLabel());
 

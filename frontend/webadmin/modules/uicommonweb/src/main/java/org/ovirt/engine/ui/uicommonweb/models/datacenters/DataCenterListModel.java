@@ -189,7 +189,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
 
     public void Guide()
     {
-        DataCenterGuideModel model = new DataCenterGuideModel();
+        DataCenterGuideModel model = new DataCenterGuideModel(getGlusterModeEnum());
         setWindow(model);
         model.setTitle("New Data Center - Guide Me");
         model.setHashName("new_data_center_-_guide_me");
