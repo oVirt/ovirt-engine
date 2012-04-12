@@ -248,7 +248,7 @@ BEGIN
 			SELECT v_entity_id AS id;
 	WHEN v_entity_type = 18 THEN -- GlusterVolume
         -- get cluster id
-		cluster_id := ( SELECT cluster_id FROM gluster_volumes WHERE id = v_entity_id );
+		cluster_id := ( SELECT v.cluster_id FROM gluster_volumes v WHERE id = v_entity_id );
 		-- get data center id
 		ds_id := ( SELECT storage_pool_id FROM vds_groups WHERE vds_group_id = cluster_id );
 

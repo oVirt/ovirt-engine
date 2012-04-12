@@ -189,7 +189,11 @@ public interface IVdsServer {
     StatusOnlyReturnForXmlRpc snapshot(String vmId, Map<String, String>[] snapParams);
 
     // Gluster vdsm Commands
-    OneUuidReturnForXmlRpc glusterVolumeCreate(Map<String, Object> volumeData);
+    OneUuidReturnForXmlRpc glusterVolumeCreate(String volumeName,
+            String[] brickList,
+            int replicaCount,
+            int stripeCount,
+            String[] transportList);
 
     StatusOnlyReturnForXmlRpc glusterVolumeSet(String volumeName, String key, String value);
 

@@ -115,7 +115,7 @@ public class GlusterBrickEntity extends IVdcQueryable {
         }
 
         GlusterBrickEntity brick = (GlusterBrickEntity) obj;
-        return (volumeId.equals(brick.getVolumeId())
+        return ((volumeId != null && volumeId.equals(brick.getVolumeId()))
                 && serverId.equals(brick.getServerId())
                 && serverName.equals(brick.getServerName())
                 && brickDirectory.equals(brick.getBrickDirectory())

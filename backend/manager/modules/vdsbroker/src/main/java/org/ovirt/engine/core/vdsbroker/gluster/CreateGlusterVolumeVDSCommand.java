@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.vdsbroker.gluster;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeOptionEntity;
@@ -32,19 +31,12 @@ public class CreateGlusterVolumeVDSCommand<P extends CreateGlusterVolumeVDSParam
     protected void ExecuteVdsBrokerCommand() {
         GlusterVolumeEntity volume = getParameters().getVolume();
 
-        Map<String, Object> parameters = new HashMap<String, Object>();
-
-        parameters.put("volumeName", volume.getName());
-        parameters.put("volumeType", volume.getVolumeType().name());
-        parameters.put("replicaCount", volume.getReplicaCount());
-        parameters.put("stripeCount", volume.getStripeCount());
-
-        // TODO: Send list of transport types to VDSM, instead of a single transport type.
-        parameters.put("transportType", TransportType.TCP);
-
-        parameters.put("bricks", volume.getBrickDirectories().toArray());
-
-        OneUuidReturnForXmlRpc uuidReturn = getBroker().glusterVolumeCreate(parameters);
+        OneUuidReturnForXmlRpc uuidReturn =
+                getBroker().glusterVolumeCreate(volume.getName(),
+                        volume.getBrickDirectories().toArray(new String[0]),
+                        volume.getReplicaCount(),
+                        volume.getStripeCount(),
+                        getTransportTypeArr(volume));
         status = uuidReturn.mStatus;
         volume.setId(Guid.createGuidFromString(uuidReturn.mUuid));
 
@@ -65,5 +57,20 @@ public class CreateGlusterVolumeVDSCommand<P extends CreateGlusterVolumeVDSParam
 
         // set the volume updated with id as the return value
         setReturnValue(volume);
+    }
+
+    private String[] getTransportTypeArr(GlusterVolumeEntity volume) {
+        Set<TransportType> transportTypes = volume.getTransportTypes();
+        if(transportTypes == null) {
+            return null;
+        }
+
+        String[] transportTypeArr = new String[transportTypes.size()];
+        int index = 0;
+        for(TransportType transportType : transportTypes) {
+            transportTypeArr[index++] = transportType.name();
+        }
+
+        return transportTypeArr;
     }
 }

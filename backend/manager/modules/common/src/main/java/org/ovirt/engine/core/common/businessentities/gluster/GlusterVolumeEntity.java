@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
@@ -55,9 +56,11 @@ public class GlusterVolumeEntity extends IVdcQueryable implements BusinessEntity
     @NotNull(message = "VALIDATION.GLUSTER.VOLUME.STRIPE_COUNT.NOT_NULL", groups = { CreateStripedVolume.class })
     private int stripeCount;
 
-    private final Map<String, GlusterVolumeOptionEntity> options = new LinkedHashMap<String, GlusterVolumeOptionEntity>();
+    @Valid
+    private Map<String, GlusterVolumeOptionEntity> options = new LinkedHashMap<String, GlusterVolumeOptionEntity>();
 
     @NotNull(message = "VALIDATION.GLUSTER.VOLUME.BRICKS.NOT_NULL")
+    @Valid
     private List<GlusterBrickEntity> bricks = new ArrayList<GlusterBrickEntity>();
 
     private GlusterVolumeStatus status = GlusterVolumeStatus.DOWN;

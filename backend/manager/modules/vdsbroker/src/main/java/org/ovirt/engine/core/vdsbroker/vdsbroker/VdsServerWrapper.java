@@ -950,9 +950,17 @@ public class VdsServerWrapper implements IVdsServer {
     }
 
     @Override
-    public OneUuidReturnForXmlRpc glusterVolumeCreate(Map<String, Object> volumeData) {
+    public OneUuidReturnForXmlRpc glusterVolumeCreate(String volumeName,
+            String[] brickList,
+            int replicaCount,
+            int stripeCount,
+            String[] transportList) {
         try {
-            return new OneUuidReturnForXmlRpc(vdsServer.glusterVolumeCreate(volumeData));
+            return new OneUuidReturnForXmlRpc(vdsServer.glusterVolumeCreate(volumeName,
+                    brickList,
+                    replicaCount,
+                    stripeCount,
+                    transportList));
         } catch (UndeclaredThrowableException ute) {
             throw new XmlRpcRunTimeException(ute);
         }

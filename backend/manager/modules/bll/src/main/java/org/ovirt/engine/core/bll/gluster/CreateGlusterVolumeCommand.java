@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.gluster.CreateGlusterVolumeParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeOptionParameters;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.gluster.AccessProtocol;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
@@ -194,6 +195,15 @@ public class CreateGlusterVolumeCommand extends GlusterCommandBase<CreateGluster
                 return false;
             }
             break;
+        }
+
+        for(GlusterBrickEntity brick : bricks) {
+            VdsStatic server = DbFacade.getInstance().getVdsStaticDAO().get(brick.getServerId());
+            if(server == null || !server.getvds_group_id().equals(getVdsGroupId())) {
+                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_INVALID_BRICK_SERVER_ID);
+                return false;
+            }
+            brick.setServerName(server.gethost_name());
         }
 
         return true;

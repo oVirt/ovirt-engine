@@ -182,7 +182,11 @@ public interface VdsServerConnector {
     Map<String, Object> snapshot(String vmId, Map<String, String>[] snapParams);
 
     // Gluster vdsm commands
-    public Map<String, Object> glusterVolumeCreate(Map<String, Object> volumeData);
+    public Map<String, Object> glusterVolumeCreate(String volumeName,
+            String[] brickList,
+            int replicaCount,
+            int stripeCount,
+            String[] transportList);
 
     public Map<String, Object> glusterVolumeSet(String volumeName, String key, String value);
 
