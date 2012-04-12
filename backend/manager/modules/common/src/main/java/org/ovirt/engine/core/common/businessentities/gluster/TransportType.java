@@ -5,6 +5,6 @@ package org.ovirt.engine.core.common.businessentities.gluster;
  * @see GlusterVolumeEntity
  */
 public enum TransportType {
-    ETHERNET,
-    INFINIBAND;
+    TCP,
+    RDMA;
 }

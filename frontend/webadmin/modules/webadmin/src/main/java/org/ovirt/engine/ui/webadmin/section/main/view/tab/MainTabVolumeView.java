@@ -66,7 +66,8 @@ public class MainTabVolumeView extends AbstractMainTabWithDetailsTableView<Glust
 
                     @Override
                     protected TransportType getRawValue(GlusterVolumeEntity object) {
-                        return object.getTransportType();
+                        // TODO: Display list of all transport types of the volume in this column.
+                        return TransportType.TCP;
                     }
 
                 };

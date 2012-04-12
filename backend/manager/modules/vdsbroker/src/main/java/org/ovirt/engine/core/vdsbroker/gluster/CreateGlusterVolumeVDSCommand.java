@@ -39,8 +39,9 @@ public class CreateGlusterVolumeVDSCommand<P extends CreateGlusterVolumeVDSParam
         parameters.put("replicaCount", volume.getReplicaCount());
         parameters.put("stripeCount", volume.getStripeCount());
 
-        TransportType transportType = volume.getTransportType();
-        parameters.put("transportType", transportType.name());
+        // TODO: Send list of transport types to VDSM, instead of a single transport type.
+        parameters.put("transportType", TransportType.TCP);
+
         parameters.put("bricks", volume.getBrickDirectories().toArray());
 
         OneUuidReturnForXmlRpc uuidReturn = getBroker().glusterVolumeCreate(parameters);

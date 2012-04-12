@@ -3192,7 +3192,6 @@
         <column>cluster_id</column>
         <column>vol_name</column>
         <column>vol_type</column>
-        <column>transport_type</column>
         <column>status</column>
         <column>replica_count</column>
         <column>stripe_count</column>
@@ -3203,7 +3202,6 @@
             <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d1</value>
             <value>test-vol-distribute-1</value>
             <value>DISTRIBUTE</value>
-            <value>ETHERNET</value>
             <value>UP</value>
             <value>0</value>
             <value>0</value>
@@ -3215,7 +3213,6 @@
             <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d1</value>
             <value>test-vol-replicate-1</value>
             <value>DISTRIBUTED_REPLICATE</value>
-            <value>ETHERNET</value>
             <value>UP</value>
             <value>2</value>
             <value>0</value>
@@ -3333,6 +3330,27 @@
         <row>
             <value>b2cb2f73-fab3-4a42-93f0-d5e4c069a43e</value>
             <value>NFS</value>
+        </row>
+    </table>
+
+    <table name="gluster_volume_transport_types">
+        <column>volume_id</column>
+        <column>transport_type</column>
+
+        <!-- Access Protocols for volume 0c3f45f6-3fe9-4b35-a30c-be0d1a835ea8 -->
+        <row>
+            <value>0c3f45f6-3fe9-4b35-a30c-be0d1a835ea8</value>
+            <value>TCP</value>
+        </row>
+
+        <!-- Access Protocols for volume b2cb2f73-fab3-4a42-93f0-d5e4c069a43e -->
+        <row>
+            <value>b2cb2f73-fab3-4a42-93f0-d5e4c069a43e</value>
+            <value>TCP</value>
+        </row>
+        <row>
+            <value>b2cb2f73-fab3-4a42-93f0-d5e4c069a43e</value>
+            <value>RDMA</value>
         </row>
     </table>
 </dataset>

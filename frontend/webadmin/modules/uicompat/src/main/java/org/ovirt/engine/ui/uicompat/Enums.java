@@ -767,8 +767,8 @@ public interface Enums extends ConstantsWithLookup {
     String GlusterVolumeType___DISTRIBUTED_STRIPE();
     String GlusterVolumeStatus___UP();
     String GlusterVolumeStatus___DOWN();
-    String TransportType___ETHERNET();
-    String TransportType___INFINIBAND();
+    String TransportType___TCP();
+    String TransportType___RDMA();
     String GlusterBrickStatus___UP();
     String GlusterBrickStatus___DOWN();
 }

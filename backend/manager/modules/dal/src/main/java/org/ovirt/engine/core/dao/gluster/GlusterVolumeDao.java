@@ -7,6 +7,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeOptionEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeStatus;
+import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DAO;
 import org.ovirt.engine.core.dao.SearchDAO;
@@ -52,4 +53,8 @@ public interface GlusterVolumeDao extends DAO, SearchDAO<GlusterVolumeEntity> {
     public void addAccessProtocol(Guid volumeId, AccessProtocol protocol);
 
     public void removeAccessProtocol(Guid volumeId, AccessProtocol protocol);
+
+    public void addTransportType(Guid volumeId, TransportType transportType);
+
+    public void removeTransportType(Guid volumeId, TransportType transportType);
 }

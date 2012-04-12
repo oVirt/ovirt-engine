@@ -68,8 +68,8 @@ public class StartGlusterVolumeCommandTest {
         GlusterVolumeEntity volumeEntity = new GlusterVolumeEntity();
         volumeEntity.setId(id);
         volumeEntity.setName("test-vol");
-        volumeEntity.setAccessProtocol(AccessProtocol.GLUSTER);
-        volumeEntity.setTransportType(TransportType.ETHERNET);
+        volumeEntity.addAccessProtocol(AccessProtocol.GLUSTER);
+        volumeEntity.addTransportType(TransportType.TCP);
         volumeEntity.setVolumeType(GlusterVolumeType.DISTRIBUTE);
         return volumeEntity;
     }

@@ -5,12 +5,12 @@
       - gluster_volume_bricks
       - gluster_volume_options
       - gluster_volume_access_protocols
+      - gluster_volume_transport_types
 ----------------------------------------------------------------*/
 
 Create or replace FUNCTION InsertGlusterVolume(v_id UUID, v_cluster_id UUID,
                                                 v_vol_name VARCHAR(1000),
                                                 v_vol_type VARCHAR(32),
-                                                v_transport_type VARCHAR(32),
                                                 v_status VARCHAR(32),
                                                 v_replica_count INTEGER,
                                                 v_stripe_count INTEGER)
@@ -18,8 +18,8 @@ Create or replace FUNCTION InsertGlusterVolume(v_id UUID, v_cluster_id UUID,
     AS $procedure$
 BEGIN
     INSERT INTO gluster_volumes (id, cluster_id, vol_name, vol_type,
-        transport_type, status, replica_count, stripe_count)
-    VALUES (v_id,  v_cluster_id, v_vol_name, v_vol_type,  v_transport_type,
+        status, replica_count, stripe_count)
+    VALUES (v_id,  v_cluster_id, v_vol_name, v_vol_type,
         v_status, v_replica_count,  v_stripe_count);
 END; $procedure$
 LANGUAGE plpgsql;
@@ -57,6 +57,17 @@ Create or replace FUNCTION InsertGlusterVolumeAccessProtocol(v_volume_id UUID,
 BEGIN
     INSERT INTO gluster_volume_access_protocols (volume_id, access_protocol)
     VALUES (v_volume_id, v_access_protocol);
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+Create or replace FUNCTION InsertGlusterVolumeTransportType(v_volume_id UUID,
+                                                    v_transport_type VARCHAR(32))
+    RETURNS VOID
+    AS $procedure$
+BEGIN
+    INSERT INTO gluster_volume_transport_types (volume_id, transport_type)
+    VALUES (v_volume_id, v_transport_type);
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -129,6 +140,17 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
+Create or replace FUNCTION GetTransportTypesByGlusterVolumeGuid(v_volume_id UUID)
+    RETURNS SETOF gluster_volume_transport_types
+       AS $procedure$
+BEGIN
+       RETURN QUERY SELECT *
+       FROM  gluster_volume_transport_types
+       WHERE volume_id = v_volume_id;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
 Create or replace FUNCTION DeleteGlusterVolumeByGuid(v_volume_id UUID)
     RETURNS VOID
     AS $procedure$
@@ -188,11 +210,22 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
+Create or replace FUNCTION DeleteGlusterVolumeTransportType(v_volume_id UUID,
+                                                    v_transport_type VARCHAR(32))
+    RETURNS VOID
+    AS $procedure$
+BEGIN
+    DELETE FROM gluster_volume_transport_types
+    WHERE volume_id = v_volume_id
+    AND   transport_type = v_transport_type;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
 Create or replace FUNCTION UpdateGlusterVolume(v_id UUID,
                                                 v_cluster_id UUID,
                                                 v_vol_name VARCHAR(1000),
                                                 v_vol_type VARCHAR(32),
-                                                v_transport_type VARCHAR(32),
                                                 v_status VARCHAR(32),
                                                 v_replica_count INTEGER,
                                                 v_stripe_count INTEGER)
@@ -203,7 +236,6 @@ BEGIN
     SET cluster_id = v_cluster_id,
         vol_name = v_vol_name,
         vol_type = v_vol_type,
-        transport_type = v_transport_type,
         status = v_status,
         replica_count = v_replica_count,
         stripe_count = v_stripe_count,

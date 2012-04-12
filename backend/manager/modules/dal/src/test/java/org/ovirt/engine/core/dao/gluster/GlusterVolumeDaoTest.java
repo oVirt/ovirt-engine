@@ -318,7 +318,7 @@ public class GlusterVolumeDaoTest extends BaseDAOTestCase {
     }
 
     @Test
-    public void removeAccessProtocol() {
+    public void testRemoveAccessProtocol() {
         Set<AccessProtocol> protocols = existingReplVol.getAccessProtocols();
         assertEquals(2, protocols.size());
         assertTrue(protocols.contains(AccessProtocol.NFS));
@@ -334,6 +334,46 @@ public class GlusterVolumeDaoTest extends BaseDAOTestCase {
 
         assertFalse(volumeAfter.equals(existingReplVol));
         existingReplVol.removeAccessProtocol(AccessProtocol.NFS);
+        assertEquals(volumeAfter, existingReplVol);
+    }
+
+    @Test
+    public void testAddTransportType() {
+        Set<TransportType> transportTypes = existingDistVol.getTransportTypes();
+        assertEquals(1, transportTypes.size());
+        assertFalse(transportTypes.contains(TransportType.RDMA));
+
+        dao.addTransportType(EXISTING_VOL_DIST_ID, TransportType.RDMA);
+
+        GlusterVolumeEntity volumeAfter = dao.getById(EXISTING_VOL_DIST_ID);
+        assertNotNull(volumeAfter);
+
+        transportTypes = volumeAfter.getTransportTypes();
+        assertEquals(2, transportTypes.size());
+        assertTrue(transportTypes.contains(TransportType.RDMA));
+
+        assertFalse(volumeAfter.equals(existingDistVol));
+        existingDistVol.addTransportType(TransportType.RDMA);
+        assertEquals(volumeAfter, existingDistVol);
+    }
+
+    @Test
+    public void testRemoveTransportType() {
+        Set<TransportType> transportTypes = existingReplVol.getTransportTypes();
+        assertEquals(2, transportTypes.size());
+        assertTrue(transportTypes.contains(TransportType.RDMA));
+
+        dao.removeTransportType(EXISTING_VOL_REPL_ID, TransportType.RDMA);
+
+        GlusterVolumeEntity volumeAfter = dao.getById(EXISTING_VOL_REPL_ID);
+        assertNotNull(volumeAfter);
+
+        transportTypes = volumeAfter.getTransportTypes();
+        assertEquals(1, transportTypes.size());
+        assertFalse(transportTypes.contains(TransportType.RDMA));
+
+        assertFalse(volumeAfter.equals(existingReplVol));
+        existingReplVol.removeTransportType(TransportType.RDMA);
         assertEquals(volumeAfter, existingReplVol);
     }
 
@@ -354,12 +394,13 @@ public class GlusterVolumeDaoTest extends BaseDAOTestCase {
         volume.setClusterId(CLUSTER_ID);
         volume.setId(volumeId);
         volume.setVolumeType(GlusterVolumeType.DISTRIBUTE);
-        volume.setTransportType(TransportType.ETHERNET);
+        volume.addTransportType(TransportType.TCP);
         volume.setReplicaCount(0);
         volume.setStripeCount(0);
         volume.setStatus(GlusterVolumeStatus.UP);
         volume.setOption("auth.allow", "*");
-        volume.setAccessProtocols("GLUSTER,NFS");
+        volume.addAccessProtocol(AccessProtocol.GLUSTER);
+        volume.addAccessProtocol(AccessProtocol.NFS);
 
         GlusterBrickEntity brick =
                 new GlusterBrickEntity(volumeId, server, "/export/testVol1", GlusterBrickStatus.UP);

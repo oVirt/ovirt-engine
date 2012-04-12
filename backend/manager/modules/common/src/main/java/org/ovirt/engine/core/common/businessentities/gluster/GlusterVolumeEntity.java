@@ -3,7 +3,6 @@ package org.ovirt.engine.core.common.businessentities.gluster;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -11,7 +10,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
@@ -51,30 +49,29 @@ public class GlusterVolumeEntity extends IVdcQueryable implements BusinessEntity
     @NotNull(message = "VALIDATION.GLUSTER.VOLUME.TYPE.NOT_NULL")
     private GlusterVolumeType volumeType = GlusterVolumeType.DISTRIBUTE;
 
-    @NotNull(message = "VALIDATION.GLUSTER.VOLUME.TRANSPORT_TYPE.NOT_NULL")
-    private TransportType transportType = TransportType.ETHERNET;
-
     @NotNull(message = "VALIDATION.GLUSTER.VOLUME.REPLICA_COUNT.NOT_NULL", groups = { CreateReplicatedVolume.class })
     private int replicaCount;
 
     @NotNull(message = "VALIDATION.GLUSTER.VOLUME.STRIPE_COUNT.NOT_NULL", groups = { CreateStripedVolume.class })
     private int stripeCount;
 
-    @Valid
     private final Map<String, GlusterVolumeOptionEntity> options = new LinkedHashMap<String, GlusterVolumeOptionEntity>();
 
     @NotNull(message = "VALIDATION.GLUSTER.VOLUME.BRICKS.NOT_NULL")
-    @Valid
     private List<GlusterBrickEntity> bricks = new ArrayList<GlusterBrickEntity>();
 
     private GlusterVolumeStatus status = GlusterVolumeStatus.DOWN;
 
-    public GlusterVolumeEntity() {
-    }
-
     // Gluster and NFS are enabled by default
     private Set<AccessProtocol> accessProtocols = new LinkedHashSet<AccessProtocol>(Arrays.asList(new AccessProtocol[] {
             AccessProtocol.GLUSTER, AccessProtocol.NFS }));
+
+    // Transport type TCP is enabled by default
+    private Set<TransportType> transportTypes = new LinkedHashSet<TransportType>(Arrays.asList(new TransportType[] {
+            TransportType.TCP }));
+
+    public GlusterVolumeEntity() {
+    }
 
     @Override
     public Guid getId() {
@@ -129,18 +126,6 @@ public class GlusterVolumeEntity extends IVdcQueryable implements BusinessEntity
         setVolumeType(GlusterVolumeType.valueOf(volumeType));
     }
 
-    public TransportType getTransportType() {
-        return transportType;
-    }
-
-    public void setTransportType(TransportType transportType) {
-        this.transportType = transportType;
-    }
-
-    public void setTransportType(String transportType) {
-        setTransportType(TransportType.valueOf(transportType));
-    }
-
     public GlusterVolumeStatus getStatus() {
         return status;
     }
@@ -177,16 +162,6 @@ public class GlusterVolumeEntity extends IVdcQueryable implements BusinessEntity
         this.accessProtocols = accessProtocols;
     }
 
-    /**
-     * Sets a single access protocol, removing other if set already
-     *
-     * @param protocol
-     */
-    public void setAccessProtocol(AccessProtocol protocol) {
-        accessProtocols = new HashSet<AccessProtocol>();
-        addAccessProtocol(protocol);
-    }
-
     public void addAccessProtocol(AccessProtocol protocol) {
         accessProtocols.add(protocol);
     }
@@ -195,24 +170,20 @@ public class GlusterVolumeEntity extends IVdcQueryable implements BusinessEntity
         accessProtocols.remove(protocol);
     }
 
-    /**
-     * Sets access protocols from comma separated list. Each element must be a string representation of valid values of
-     * the enum {@code AccessProtocol}
-     *
-     * @param accessProtocols
-     * @see AccessProtocol
-     */
-    public void setAccessProtocols(String accessProtocols) {
-        if (accessProtocols == null || accessProtocols.trim().isEmpty()) {
-            this.accessProtocols = null;
-            return;
-        }
+    public Set<TransportType> getTransportTypes() {
+        return transportTypes;
+    }
 
-        this.accessProtocols = new HashSet<AccessProtocol>();
-        String[] accessProtocolList = accessProtocols.split(",", -1);
-        for (String accessProtocol : accessProtocolList) {
-            addAccessProtocol(AccessProtocol.valueOf(accessProtocol.trim()));
-        }
+    public void setTransportTypes(Set<TransportType> transportTypes) {
+        this.transportTypes = transportTypes;
+    }
+
+    public void addTransportType(TransportType transportType) {
+        transportTypes.add(transportType);
+    }
+
+    public void removeTransportType(TransportType transportType) {
+        transportTypes.remove(transportType);
     }
 
     public String getAccessControlList() {
@@ -371,7 +342,7 @@ public class GlusterVolumeEntity extends IVdcQueryable implements BusinessEntity
         result = prime * result + ((name == null) ? 0 : name.hashCode());
         result = prime * result + ((clusterId == null) ? 0 : clusterId.hashCode());
         result = prime * result + ((volumeType == null) ? 0 : volumeType.hashCode());
-        result = prime * result + ((transportType == null) ? 0 : transportType.hashCode());
+        result = prime * result + ((transportTypes == null) ? 0 : transportTypes.hashCode());
         result = prime * result + ((status == null) ? 0 : status.hashCode());
         result = prime * result + replicaCount;
         result = prime * result + stripeCount;
@@ -393,8 +364,9 @@ public class GlusterVolumeEntity extends IVdcQueryable implements BusinessEntity
             return false;
         }
 
-        if (!(name.equals(volume.getName()) && volumeType == volume.getVolumeType()
-                && transportType == volume.getTransportType() && status == volume.getStatus()
+        if (!(name.equals(volume.getName())
+                && volumeType == volume.getVolumeType()
+                && status == volume.getStatus()
                 && replicaCount == volume.getReplicaCount()
                 && stripeCount == volume.getStripeCount())) {
             return false;
@@ -405,6 +377,10 @@ public class GlusterVolumeEntity extends IVdcQueryable implements BusinessEntity
         }
 
         if (!GlusterCoreUtil.listsEqual(accessProtocols, volume.getAccessProtocols())) {
+            return false;
+        }
+
+        if (!GlusterCoreUtil.listsEqual(transportTypes, volume.getTransportTypes())) {
             return false;
         }
 

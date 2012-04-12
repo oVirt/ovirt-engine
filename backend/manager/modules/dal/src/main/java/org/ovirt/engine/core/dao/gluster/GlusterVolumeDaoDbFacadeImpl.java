@@ -30,6 +30,7 @@ public class GlusterVolumeDaoDbFacadeImpl extends BaseDAODbFacade implements
     private static final ParameterizedRowMapper<GlusterVolumeEntity> volumeRowMapper = new GlusterVolumeRowMapper();
     private static final ParameterizedRowMapper<GlusterVolumeOptionEntity> optionRowMapper = new VolumeOptionRowMapper();
     private static final ParameterizedRowMapper<AccessProtocol> accessProtocolRowMapper = new AccessProtocolRowMapper();
+    private static final ParameterizedRowMapper<TransportType> transportTypeRowMapper = new TransportTypeRowMapper();
     // The brick row mapper can't be static as its' type (GlusterBrickRowMapper) is a non-static inner class
     // There will still be a single instance of it, as the DAO itself will be instantiated only once
     private final ParameterizedRowMapper<GlusterBrickEntity> brickRowMapper = new GlusterBrickRowMapper();
@@ -40,6 +41,7 @@ public class GlusterVolumeDaoDbFacadeImpl extends BaseDAODbFacade implements
         insertVolumeBricks(volume);
         insertVolumeOptions(volume);
         insertVolumeAccessProtocols(volume);
+        insertVolumeTransportTypes(volume);
     }
 
     @Override
@@ -165,6 +167,18 @@ public class GlusterVolumeDaoDbFacadeImpl extends BaseDAODbFacade implements
                 createAccessProtocolParams(volumeId, protocol));
     }
 
+    @Override
+    public void addTransportType(Guid volumeId, TransportType transportType) {
+        getCallsHandler().executeModification("InsertGlusterVolumeTransportType",
+                createTransportTypeParams(volumeId, transportType));
+    }
+
+    @Override
+    public void removeTransportType(Guid volumeId, TransportType transportType) {
+        getCallsHandler().executeModification("DeleteGlusterVolumeTransportType",
+                createTransportTypeParams(volumeId, transportType));
+    }
+
     private List<GlusterBrickEntity> getBricksOfVolume(Guid volumeId) {
         List<GlusterBrickEntity> bricks = getCallsHandler().executeReadList(
                 "GetBricksByGlusterVolumeGuid", brickRowMapper,
@@ -193,6 +207,13 @@ public class GlusterVolumeDaoDbFacadeImpl extends BaseDAODbFacade implements
                 createVolumeIdParams(volumeId));
     }
 
+    private List<TransportType> getTransportTypesOfVolume(Guid volumeId) {
+        return getCallsHandler().executeReadList(
+                "GetTransportTypesByGlusterVolumeGuid",
+                transportTypeRowMapper,
+                createVolumeIdParams(volumeId));
+    }
+
     private MapSqlParameterSource createVolumeIdParams(Guid id) {
         return getCustomMapSqlParameterSource().addValue("volume_id", id.getUuid());
     }
@@ -214,6 +235,10 @@ public class GlusterVolumeDaoDbFacadeImpl extends BaseDAODbFacade implements
         return createVolumeIdParams(volumeId).addValue("access_protocol", EnumUtils.nameOrNull(protocol));
     }
 
+    private MapSqlParameterSource createTransportTypeParams(Guid volumeId, TransportType transportType) {
+        return createVolumeIdParams(volumeId).addValue("transport_type", EnumUtils.nameOrNull(transportType));
+    }
+
     private void insertVolumeEntity(GlusterVolumeEntity volume) {
         getCallsHandler().executeModification(
                 "InsertGlusterVolume",
@@ -222,7 +247,6 @@ public class GlusterVolumeDaoDbFacadeImpl extends BaseDAODbFacade implements
                         .addValue("cluster_id", volume.getClusterId().getUuid())
                         .addValue("vol_name", volume.getName())
                         .addValue("vol_type", EnumUtils.nameOrNull(volume.getVolumeType()))
-                        .addValue("transport_type", EnumUtils.nameOrNull(volume.getTransportType()))
                         .addValue("status", EnumUtils.nameOrNull(volume.getStatus()))
                         .addValue("replica_count", volume.getReplicaCount())
                         .addValue("stripe_count", volume.getStripeCount()));
@@ -254,6 +278,12 @@ public class GlusterVolumeDaoDbFacadeImpl extends BaseDAODbFacade implements
         }
     }
 
+    private void insertVolumeTransportTypes(GlusterVolumeEntity volume) {
+        for (TransportType transportType : volume.getTransportTypes()) {
+            addTransportType(volume.getId(), transportType);
+        }
+    }
+
     /**
      * Fetches and populates related entities like bricks, options, access protocols for the given volumes
      *
@@ -275,6 +305,7 @@ public class GlusterVolumeDaoDbFacadeImpl extends BaseDAODbFacade implements
             volume.setBricks(getBricksOfVolume(volume.getId()));
             volume.setOptions(getOptionsOfVolume(volume.getId()));
             volume.setAccessProtocols(new HashSet<AccessProtocol>(getAccessProtocolsOfVolume(volume.getId())));
+            volume.setTransportTypes(new HashSet<TransportType>(getTransportTypesOfVolume(volume.getId())));
         }
     }
 
@@ -294,7 +325,6 @@ public class GlusterVolumeDaoDbFacadeImpl extends BaseDAODbFacade implements
                     .getString("cluster_id")));
             entity.setName(rs.getString("vol_name"));
             entity.setVolumeType(GlusterVolumeType.valueOf(rs.getString("vol_type")));
-            entity.setTransportType(TransportType.valueOf(rs.getString("transport_type")));
             entity.setStatus(GlusterVolumeStatus.valueOf(rs.getString("status")));
             entity.setReplicaCount(rs.getInt("replica_count"));
             entity.setStripeCount(rs.getInt("stripe_count"));
@@ -341,6 +371,14 @@ public class GlusterVolumeDaoDbFacadeImpl extends BaseDAODbFacade implements
         public AccessProtocol mapRow(ResultSet rs, int rowNum)
                 throws SQLException {
             return AccessProtocol.valueOf(rs.getString("access_protocol"));
+        }
+    }
+
+    private static final class TransportTypeRowMapper implements ParameterizedRowMapper<TransportType> {
+        @Override
+        public TransportType mapRow(ResultSet rs, int rowNum)
+                throws SQLException {
+            return TransportType.valueOf(rs.getString("transport_type"));
         }
     }
 }
