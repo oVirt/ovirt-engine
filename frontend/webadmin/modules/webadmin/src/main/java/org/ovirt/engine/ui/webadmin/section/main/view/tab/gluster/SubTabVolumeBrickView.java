@@ -6,10 +6,12 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
+import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeBrickListModel;
 import org.ovirt.engine.ui.uicommonweb.models.volumes.VolumeListModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.SubTabVolumeBrickPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
+import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 
 import com.google.inject.Inject;
 
@@ -64,5 +66,12 @@ public class SubTabVolumeBrickView extends AbstractSubTabTableView<GlusterVolume
                     }
                 };
         getTable().addColumn(statusColumn, "Status");
+
+        getTable().addActionButton(new WebAdminButtonDefinition<GlusterBrickEntity>("Add Bricks") {
+            @Override
+            protected UICommand resolveCommand() {
+                return getDetailModel().getAddBricksCommand();
+            }
+        });
     }
 }

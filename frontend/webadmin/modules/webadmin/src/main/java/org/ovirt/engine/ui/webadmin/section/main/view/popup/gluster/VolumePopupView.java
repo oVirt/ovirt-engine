@@ -5,6 +5,8 @@ import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
+import org.ovirt.engine.ui.common.widget.Align;
+import org.ovirt.engine.ui.common.widget.UiCommandButton;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
@@ -17,6 +19,8 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.VolumeP
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -57,9 +61,28 @@ public class VolumePopupView extends AbstractModelBoundPopupView<VolumeModel> im
     ListModelListBoxEditor<Object> typeListEditor;
 
     @UiField
-    @Path(value = "bricks.entity")
+    @Path(value = "replicaCount.entity")
     @WithElementId
-    EntityModelTextBoxEditor bricksEditor;
+    EntityModelTextBoxEditor replicaCountEditor;
+
+    @UiField
+    @Path(value = "stripeCount.entity")
+    @WithElementId
+    EntityModelTextBoxEditor stripeCountEditor;
+
+    @UiField(provided = true)
+    @Path(value = "tcpTransportType.entity")
+    @WithElementId
+    EntityModelCheckBoxEditor tcpTransportTypeEditor;
+
+    @UiField(provided = true)
+    @Path(value = "rdmaTransportType.entity")
+    @WithElementId
+    EntityModelCheckBoxEditor rdmaTransportTypeEditor;
+
+    @UiField
+    @WithElementId
+    UiCommandButton addBricksButton;
 
     @UiField
     @Path(value = "gluster_accecssProtocol.entity")
@@ -77,11 +100,6 @@ public class VolumePopupView extends AbstractModelBoundPopupView<VolumeModel> im
     EntityModelCheckBoxEditor cifs_accecssProtocolEditor;
 
     @UiField
-    @Path(value = "users.entity")
-    @WithElementId
-    EntityModelTextBoxEditor usersEditor;
-
-    @UiField
     @Path(value = "allowAccess.entity")
     @WithElementId
     EntityModelTextBoxEditor allowAccessEditor;
@@ -91,10 +109,17 @@ public class VolumePopupView extends AbstractModelBoundPopupView<VolumeModel> im
         super(eventBus, resources);
         initListBoxEditors();
         initRadioButtonEditors();
+        initCheckboxEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
         localize(constants);
+        initAddBricksButton();
         Driver.driver.initialize(this);
+    }
+
+    private void initCheckboxEditors() {
+        tcpTransportTypeEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+        rdmaTransportTypeEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
     }
 
     private void initRadioButtonEditors() {
@@ -117,16 +142,29 @@ public class VolumePopupView extends AbstractModelBoundPopupView<VolumeModel> im
         });
     }
 
+    private void initAddBricksButton() {
+        addBricksButton.addClickHandler(new ClickHandler() {
+
+            @Override
+            public void onClick(ClickEvent event) {
+                addBricksButton.getCommand().Execute();
+            }
+        });
+    }
+
     private void localize(ApplicationConstants constants) {
         dataCenterEditor.setLabel("Data Center");
         clusterEditor.setLabel("Volume Cluster");
         nameEditor.setLabel(constants.clusterPopupNameLabel());
         typeListEditor.setLabel("Type");
-        bricksEditor.setLabel("Bricks");
+        replicaCountEditor.setLabel("Replica Count");
+        stripeCountEditor.setLabel("Stripe Count");
+        tcpTransportTypeEditor.setLabel("TCP");
+        rdmaTransportTypeEditor.setLabel("RDMA");
+        addBricksButton.setLabel("Add Bricks");
         gluster_accecssProtocolEditor.setLabel("Gluster");
         nfs_accecssProtocolEditor.setLabel("NFS");
         cifs_accecssProtocolEditor.setLabel("CIFS");
-        usersEditor.setLabel("CIFS Users");
         allowAccessEditor.setLabel("Allow Access From");
 
     }
@@ -139,6 +177,7 @@ public class VolumePopupView extends AbstractModelBoundPopupView<VolumeModel> im
     @Override
     public void edit(final VolumeModel object) {
         Driver.driver.edit(object);
+        addBricksButton.setCommand(object.getAddBricksCommand());
     }
 
     @Override

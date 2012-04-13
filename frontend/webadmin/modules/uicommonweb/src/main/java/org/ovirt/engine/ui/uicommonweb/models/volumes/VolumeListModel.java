@@ -2,17 +2,21 @@ package org.ovirt.engine.ui.uicommonweb.models.volumes;
 
 import java.util.List;
 
+import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.gluster.CreateGlusterVolumeParameters;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
+import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.ObservableCollection;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -27,6 +31,8 @@ import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeEventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeParameterListModel;
+import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
+import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
 public class VolumeListModel extends ListWithDetailsModel implements ISupportSystemTreeContext {
     private UICommand createVolumeCommand;
@@ -265,6 +271,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
         VolumeModel model = (VolumeModel) getWindow();
         Guid clusterId = ((VDSGroup) model.getCluster().getSelectedItem()).getId();
         GlusterVolumeEntity volume = new GlusterVolumeEntity();
+        volume.setClusterId(clusterId);
         volume.setName((String) model.getName().getEntity());
         GlusterVolumeType type = (GlusterVolumeType) model.getTypeList().getSelectedItem();
 
@@ -274,18 +281,35 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
             volume.setReplicaCount(2);
         }
         volume.setVolumeType(type);
+
+        if ((Boolean) model.getTcpTransportType().getEntity())
+            volume.getTransportTypes().add(TransportType.TCP);
+        if ((Boolean) model.getRdmaTransportType().getEntity())
+            volume.getTransportTypes().add(TransportType.RDMA);
+
         volume.setBricks((List<GlusterBrickEntity>) model.getBricks().getItems());
-        // CreateGlusterVolumeParameters parameter = new CreateGlusterVolumeParameters(clusterId, volume);
-        //
-        // Frontend.RunAction(VdcActionType.CreateGlusterVolume, parameter, new IFrontendActionAsyncCallback() {
-        //
-        // @Override
-        // public void Executed(FrontendActionAsyncResult result) {
-        // int x =10;
-        // x;
-        //
-        // }
-        // });
+
+        if ((Boolean) model.getNfs_accecssProtocol().getEntity())
+            volume.enableNFS();
+        else
+            volume.disableNFS();
+
+        if ((Boolean) model.getCifs_accecssProtocol().getEntity())
+            volume.enableCifs();
+        else
+            volume.disableCifs();
+
+        volume.setAccessControlList((String) model.getAllowAccess().getEntity());
+
+        CreateGlusterVolumeParameters parameter = new CreateGlusterVolumeParameters(volume);
+
+        Frontend.RunAction(VdcActionType.CreateGlusterVolume, parameter, new IFrontendActionAsyncCallback() {
+
+            @Override
+            public void Executed(FrontendActionAsyncResult result) {
+
+            }
+        });
     }
 
     @Override
