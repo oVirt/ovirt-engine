@@ -484,7 +484,7 @@ public class ExecutionHandler {
      *            The unique identifier of the step. Must not be {@code null}.
      * @return The context for monitoring the finalizing step of the job, or {@code null} if no such step.
      */
-    public static ExecutionContext createFinlalizingContext(Guid stepId) {
+    public static ExecutionContext createFinalizingContext(Guid stepId) {
         ExecutionContext context = null;
         try {
             Step step = JobRepositoryFactory.getJobRepository().getStep(stepId);

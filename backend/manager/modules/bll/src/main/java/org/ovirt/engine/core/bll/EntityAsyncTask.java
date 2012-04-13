@@ -137,7 +137,7 @@ public class EntityAsyncTask extends SPMAsyncTask {
                  */
                 NGuid stepId = dbAsyncTask.getStepId();
                 if (stepId != null) {
-                    context = ExecutionHandler.createFinlalizingContext(stepId.getValue());
+                    context = ExecutionHandler.createFinalizingContext(stepId.getValue());
                 }
 
                 vdcReturnValue =
