@@ -46,6 +46,11 @@ public class ApplicationInit extends BaseApplicationInit<UserPortalLoginModel> {
     }
 
     @Override
+    protected boolean filterFrontendQueries() {
+        return true;
+    }
+
+    @Override
     protected void initLoginModel() {
         super.initLoginModel();
 

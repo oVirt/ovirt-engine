@@ -39,6 +39,11 @@ public class ApplicationInit extends BaseApplicationInit<LoginModel> {
     }
 
     @Override
+    protected boolean filterFrontendQueries() {
+        return false;
+    }
+
+    @Override
     public void onLogout() {
         // Logout operation happens within the CommonModel SignOut event handler
         CommonModelManager.instance().SignOut();

@@ -118,9 +118,20 @@ public class Frontend {
         frontendFailureEvent.raise(Frontend.class, new FrontendFailureEventArgs(messages));
     }
 
+    private static boolean filterQueries;
+
+    public static void setFilterQueries(boolean filterQueries) {
+        Frontend.filterQueries = filterQueries;
+    }
+
+    private static void initQueryParamsFilter(VdcQueryParametersBase parameters) {
+        parameters.setFiltered(filterQueries);
+    }
+
     public static void RunQuery(final VdcQueryType queryType,
             final VdcQueryParametersBase parameters,
             final IFrontendQueryAsyncCallback callback) {
+        initQueryParamsFilter(parameters);
         dumpQueryDetails(queryType, parameters);
         logger.finer("Frontend: Invoking async runQuery.");
 
@@ -160,6 +171,7 @@ public class Frontend {
     public static void RunQuery(final VdcQueryType queryType,
             final VdcQueryParametersBase parameters,
             final AsyncQuery callback) {
+        initQueryParamsFilter(parameters);
         dumpQueryDetails(queryType, parameters);
         logger.finer("Frontend: Invoking async runQuery.");
         raiseQueryStartedEvent(queryType, callback.getContext());
@@ -217,7 +229,6 @@ public class Frontend {
     }
 
     public static VdcQueryReturnValue RunQuery(VdcQueryType queryType, VdcQueryParametersBase parameters) {
-        dumpQueryDetails(queryType, parameters);
         logger.fine("Sync RunQuery is invoked, this is not supported! replace the call with the async method!");
         return null;
     }
@@ -225,7 +236,7 @@ public class Frontend {
     public static void RunPublicQuery(final VdcQueryType queryType,
             final VdcQueryParametersBase parameters,
             final IFrontendQueryAsyncCallback callback) {
-
+        initQueryParamsFilter(parameters);
         dumpQueryDetails(queryType, parameters);
         logger.finer("Frontend: Invoking async runPublicQuery.");
 
@@ -266,6 +277,7 @@ public class Frontend {
     public static void RunPublicQuery(final VdcQueryType queryType,
             final VdcQueryParametersBase parameters,
             final AsyncQuery callback) {
+        initQueryParamsFilter(parameters);
         dumpQueryDetails(queryType, parameters);
         logger.finer("Frontend: Invoking async runQuery.");
 
@@ -317,7 +329,6 @@ public class Frontend {
 
     public static VdcQueryReturnValue RunPublicQuery(VdcQueryType queryType, VdcQueryParametersBase parameters) {
         logger.warning("Frontend: RunPublicQuery -sync- was executed, this method is not supported!");
-
         return null;
     }
 
@@ -334,9 +345,11 @@ public class Frontend {
         logger.finer("Frontend: Invoking async runMultipleQueries.");
 
         raiseQueryStartedEvent(queryTypeList, context);
-        for (VdcQueryParametersBase vdcQueryParametersBase : queryParamsList) {
-            vdcQueryParametersBase.setRefresh(false);
+        for (VdcQueryParametersBase parameters : queryParamsList) {
+            parameters.setRefresh(false);
+            initQueryParamsFilter(parameters);
         }
+
         GenericApiGWTServiceAsync service = GenericApiGWTServiceAsync.Util.getInstance();
         service.RunMultipleQueries(queryTypeList, queryParamsList, new AsyncCallback<ArrayList<VdcQueryReturnValue>>() {
             @Override

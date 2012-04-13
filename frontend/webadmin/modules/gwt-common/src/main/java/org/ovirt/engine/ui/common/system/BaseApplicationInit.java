@@ -135,7 +135,17 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Logou
                 user.logout();
             }
         });
+
+        Frontend.setFilterQueries(filterFrontendQueries());
     }
+
+    /**
+     * Indicates if all queries triggered through {@link Frontend} should be filtered or not.
+     * <p>
+     * A query that is filtered has its results constrained by user permissions. On the other hand, a query that is not
+     * filtered returns all matching results without additional constraints.
+     */
+    protected abstract boolean filterFrontendQueries();
 
     /**
      * When a user is already logged in on the server, the server provides user data within the host page.
