@@ -1,9 +1,14 @@
 package org.ovirt.engine.core.bll.storage;
 
-import org.ovirt.engine.core.compat.*;
-import org.ovirt.engine.core.common.businessentities.*;
-
 import java.util.List;
+import java.util.Map;
+
+import org.ovirt.engine.core.common.businessentities.LUNs;
+import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.storage_domain_static;
+import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.storage_server_connections;
+import org.ovirt.engine.core.compat.Guid;
 
 public interface IStorageHelper {
     boolean ConnectStorageToDomainByStoragePoolId(storage_domains storageDomain, Guid storagePoolId);
@@ -26,6 +31,6 @@ public interface IStorageHelper {
     List<storage_server_connections> GetStorageServerConnectionsByDomain(
             storage_domain_static storageDomain);
 
-    boolean IsConnectSucceeded(java.util.HashMap<String, String> returnValue,
+    boolean IsConnectSucceeded(Map<String, String> returnValue,
             List<storage_server_connections> connections);
 }

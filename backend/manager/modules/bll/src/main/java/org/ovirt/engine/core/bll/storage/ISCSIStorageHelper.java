@@ -1,9 +1,9 @@
 package org.ovirt.engine.core.bll.storage;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.ovirt.engine.core.bll.Backend;
@@ -34,6 +34,7 @@ public class ISCSIStorageHelper extends StorageHelperBase {
         return RunConnectionStorageToDomain(storageDomain, vdsId, type, null);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     protected boolean RunConnectionStorageToDomain(storage_domains storageDomain, Guid vdsId, int type, LUNs lun) {
         boolean isSuccess = true;
@@ -57,7 +58,7 @@ public class ISCSIStorageHelper extends StorageHelperBase {
                                             .getValue() : Guid.Empty, StorageType.ISCSI, list));
             isSuccess = returnValue.getSucceeded();
             if (isSuccess && VDSCommandType.forValue(type) == VDSCommandType.ConnectStorageServer) {
-                isSuccess = IsConnectSucceeded((HashMap<String, String>) returnValue.getReturnValue(), list);
+                isSuccess = IsConnectSucceeded((Map<String, String>) returnValue.getReturnValue(), list);
             }
         }
         return isSuccess;
@@ -68,10 +69,12 @@ public class ISCSIStorageHelper extends StorageHelperBase {
         return FilterConnectionsUsedByOthers(connections, vgId, "");
     }
 
+    @SuppressWarnings("unchecked")
     private List<storage_server_connections> FilterConnectionsUsedByOthers(
             List<storage_server_connections> connections, String vgId, final String lunId) {
         // if we have lun id then filter by this lun
         // else get vg's luns from db
+        @SuppressWarnings("serial")
         List<String> lunsByVg =
                 lunId.isEmpty() ? LinqUtils.foreach(DbFacade.getInstance().getLunDAO().getAllForVolumeGroup(vgId),
                         new Function<LUNs, String>() {
@@ -85,8 +88,8 @@ public class ISCSIStorageHelper extends StorageHelperBase {
                     }
                 };
 
-        java.util.ArrayList<storage_server_connections> toRemove =
-                new java.util.ArrayList<storage_server_connections>();
+        List<storage_server_connections> toRemove =
+                new ArrayList<storage_server_connections>();
         for (storage_server_connections connection : connections) {
             List<String> list = LinqUtils.foreach(
                     DbFacade.getInstance().getLunDAO().getAllForStorageServerConnection(connection.getid()),
@@ -101,14 +104,15 @@ public class ISCSIStorageHelper extends StorageHelperBase {
                 toRemove.add(connection);
             }
         }
-        return new ArrayList<storage_server_connections>(CollectionUtils.subtract(connections, toRemove));
+        return (List<storage_server_connections>) CollectionUtils.subtract(connections, toRemove);
     }
 
     @Override
     public boolean ValidateStoragePoolConnectionsInHost(VDS vds, List<storage_server_connections> connections,
             Guid storagePoolId) {
         if (connections.size() > 0) {
-            java.util.HashMap<String, String> validateConnections = (java.util.HashMap<String, String>) Backend
+            @SuppressWarnings("unchecked")
+            Map<String, String> validateConnections = (Map<String, String>) Backend
                     .getInstance()
                     .getResourceManager()
                     .RunVdsCommand(
@@ -122,7 +126,7 @@ public class ISCSIStorageHelper extends StorageHelperBase {
     }
 
     @Override
-    public boolean IsConnectSucceeded(final java.util.HashMap<String, String> returnValue,
+    public boolean IsConnectSucceeded(final Map<String, String> returnValue,
             List<storage_server_connections> connections) {
         boolean result = true;
         List<String> failedConnectionsList = LinqUtils.filter(returnValue.keySet(), new Predicate<String>() {
@@ -174,17 +178,16 @@ public class ISCSIStorageHelper extends StorageHelperBase {
 
     @Override
     public boolean StorageDomainRemoved(storage_domain_static storageDomain) {
-        List<storage_server_connections> list = DbFacade.getInstance()
+        final List<storage_server_connections> list = DbFacade.getInstance()
                 .getStorageServerConnectionDAO().getAllForVolumeGroup(storageDomain.getstorage());
-        List<LUNs> lunsList = DbFacade.getInstance().getLunDAO().getAllForVolumeGroup(storageDomain.getstorage());
-        if (lunsList.size() != 0) {
+        final List<LUNs> lunsList = DbFacade.getInstance().getLunDAO().getAllForVolumeGroup(storageDomain.getstorage());
+        if (!lunsList.isEmpty()) {
             for (LUNs lun : lunsList) {
                 DbFacade.getInstance().getLunDAO().remove(lun.getLUN_id());
             }
         }
-        if (list.size() != 0) {
-            list = FilterConnectionsUsedByOthers(list, storageDomain.getstorage());
-            for (storage_server_connections connection : list) {
+        if (!list.isEmpty()) {
+            for (storage_server_connections connection : FilterConnectionsUsedByOthers(list, storageDomain.getstorage())) {
                 DbFacade.getInstance().getStorageServerConnectionDAO().remove(connection.getid());
             }
         }

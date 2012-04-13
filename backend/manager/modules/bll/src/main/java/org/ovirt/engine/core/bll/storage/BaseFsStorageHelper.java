@@ -1,5 +1,8 @@
 package org.ovirt.engine.core.bll.storage;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -18,8 +21,6 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.log.Log;
 
 public abstract class BaseFsStorageHelper extends StorageHelperBase {
-
-    protected StorageType storageType;
 
     @Override
     protected boolean RunConnectionStorageToDomain(storage_domains storageDomain, Guid vdsId, int type) {
@@ -41,18 +42,19 @@ public abstract class BaseFsStorageHelper extends StorageHelperBase {
     @Override
     public boolean ValidateStoragePoolConnectionsInHost(VDS vds, List<storage_server_connections> connections,
             Guid storagePoolId) {
-        java.util.HashMap<String, String> validateConnections = (java.util.HashMap<String, String>) Backend
+        @SuppressWarnings("unchecked")
+        HashMap<String, String> validateConnections = (HashMap<String, String>) Backend
                 .getInstance()
                 .getResourceManager()
                 .RunVdsCommand(
                         VDSCommandType.ValidateStorageServerConnection,
-                        new ConnectStorageServerVDSCommandParameters(vds.getId(), storagePoolId, this.storageType,
+                        new ConnectStorageServerVDSCommandParameters(vds.getId(), storagePoolId, getType(),
                                 connections)).getReturnValue();
         return IsConnectSucceeded(validateConnections, connections);
     }
 
     @Override
-    public boolean IsConnectSucceeded(java.util.HashMap<String, String> returnValue,
+    public boolean IsConnectSucceeded(Map<String, String> returnValue,
             List<storage_server_connections> connections) {
         boolean result = true;
         for (Map.Entry<String, String> entry : returnValue.entrySet()) {
@@ -69,10 +71,12 @@ public abstract class BaseFsStorageHelper extends StorageHelperBase {
     @Override
     public List<storage_server_connections> GetStorageServerConnectionsByDomain(
             storage_domain_static storageDomain) {
-        return new java.util.ArrayList<storage_server_connections>(
-                java.util.Arrays.asList(new storage_server_connections[] { DbFacade.getInstance()
+        return new ArrayList<storage_server_connections>(
+                Arrays.asList(new storage_server_connections[] { DbFacade.getInstance()
                         .getStorageServerConnectionDAO().get(storageDomain.getstorage()) }));
     }
 
     protected abstract Log getLog();
+
+    protected abstract StorageType getType();
 }

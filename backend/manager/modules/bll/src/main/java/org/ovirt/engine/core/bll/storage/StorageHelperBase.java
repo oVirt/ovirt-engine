@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.storage;
 
 import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -101,7 +102,7 @@ public abstract class StorageHelperBase implements IStorageHelper {
     }
 
     @Override
-    public boolean IsConnectSucceeded(java.util.HashMap<String, String> returnValue,
+    public boolean IsConnectSucceeded(Map<String, String> returnValue,
             List<storage_server_connections> connections) {
         return true;
     }
