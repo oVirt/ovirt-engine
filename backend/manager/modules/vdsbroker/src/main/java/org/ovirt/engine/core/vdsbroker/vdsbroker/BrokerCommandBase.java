@@ -182,13 +182,7 @@ public abstract class BrokerCommandBase<P extends VDSParametersBase> extends VDS
             break;
         default:
             log.errorFormat("Failed in {0} method", getCommandName());
-            if (this instanceof IrsBrokerCommand) {
-                outEx = new IRSErrorException(String.format("Failed to %1$s, error = %2$s", getCommandName(),
-                        getReturnStatus().mMessage));
-            } else {
-                outEx = new VDSErrorException(String.format("Failed to %1$s, error = %2$s", getCommandName(),
-                        getReturnStatus().mMessage));
-            }
+            outEx = createException();
             log.errorFormat("Error code {0} and error message {1}", returnStatus, outEx.getMessage());
             break;
         }
@@ -197,6 +191,18 @@ public abstract class BrokerCommandBase<P extends VDSParametersBase> extends VDS
         tempVar.setMessage(getReturnStatus().mMessage);
         outEx.setVdsError(tempVar);
         throw outEx;
+    }
+
+    private VDSExceptionBase createException() {
+        VDSExceptionBase outEx;
+        final String errorMessage = String.format("Failed to %1$s, error = %2$s", getCommandName(),
+                getReturnStatus().mMessage);
+        if (this instanceof IrsBrokerCommand) {
+            outEx = new IRSErrorException(errorMessage);
+        } else {
+            outEx = new VDSErrorException(errorMessage);
+        }
+        return outEx;
     }
 
     protected VdcBllErrors GetReturnValueFromStatus(StatusForXmlRpc status) {
