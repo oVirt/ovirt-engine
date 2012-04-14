@@ -119,13 +119,13 @@ public final class ImagesHandler {
         String diskAlias;
         if (disk == null) {
             diskAlias = getDefaultDiskAlias(diskPrefix, DefaultDriveName);
-            log.warnFormat("Disk object is null, the suggested default disk alias to be used is %1$s",
+            log.warnFormat("Disk object is null, the suggested default disk alias to be used is {0}",
                     diskAlias);
         } else {
             diskAlias = disk.getDiskAlias();
             if (StringUtils.isEmpty(diskAlias)) {
                 diskAlias = getDefaultDiskAlias(diskPrefix, String.valueOf(disk.getInternalDriveMapping()));
-                log.infoFormat("Disk alias retrieved from the client is null or empty, the suggested default disk alias to be used is %1$s",
+                log.infoFormat("Disk alias retrieved from the client is null or empty, the suggested default disk alias to be used is {0}",
                         diskAlias);
             }
         }
