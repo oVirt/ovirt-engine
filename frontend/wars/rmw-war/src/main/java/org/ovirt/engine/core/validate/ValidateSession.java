@@ -21,7 +21,7 @@ import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 
 /*
- * This servlet gets a session ID, validates it, and returns the user name which is logged in this session.
+ * This servlet gets a session ID, validates it, checks if the logged in user is administrator, and if so returns its user name
  */
 public class ValidateSession extends HttpServlet {
     private static final long serialVersionUID = -6984391651645165467L;
@@ -67,28 +67,45 @@ public class ValidateSession extends HttpServlet {
 
         if (queryReturnValue != null) {
             returnValue = queryReturnValue.getSucceeded();
+
+            if (returnValue) {
+                VdcUser vdcUser = (VdcUser) queryReturnValue.getReturnValue();
+
+                // We get the user name only in case the validation succeeded, and the user is an administrator
+                if (isAdminUser(vdcUser)) {
+                    log.debug("Getting user name");
+                    printUPNToResponse(response, getUPN(vdcUser));
+                } else {
+                    log.error("User is not authorized to perform operation");
+                    returnValue = false;
+                }
+            }
         } else {
             log.error("Got NULL from backend.RunQuery");
-        }
-
-        // We get the user name only in case the validation succeeded
-        if (returnValue) {
-            log.debug("Getting user name");
-            printResult(queryReturnValue, response);
         }
 
         return returnValue;
     }
 
-    private void printResult(VdcQueryReturnValue queryReturnValue, HttpServletResponse response) {
-        VdcUser vdcUser = (VdcUser) queryReturnValue.getReturnValue();
-        PrintWriter out;
+    private void printUPNToResponse(HttpServletResponse response, String upn) {
         try {
-            out = response.getWriter();
-            out.print(vdcUser.getUserName());
+            response.getWriter().print(upn);
         } catch (IOException e) {
             log.error("IO Exception while writing user name: ", e);
         }
 
+    }
+
+    private String getUPN(VdcUser vdcUser) {
+        String retVal = vdcUser.getUserName();
+        if (!retVal.contains("@")) {
+            retVal = retVal + "@" + vdcUser.getDomainControler();
+        }
+        return retVal;
+    }
+
+    // In the meantime we return true, until this data will be available on the VdcUser object
+    private boolean isAdminUser(VdcUser vdcUser) {
+        return true;
     }
 }
