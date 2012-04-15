@@ -36,6 +36,7 @@
 		<include name="searchbackend/VmCrossRefAutoCompleter.java" />
 		<include name="searchbackend/ClusterCrossRefAutoCompleter.java" />
 		<include name="searchbackend/StoragePoolCrossRefAutoCompleter.java" />
+		<include name="searchbackend/DiskImageCrossRefAutoCompleter.java" />
 		<include name="searchbackend/VdsConditionFieldAutoCompleter.java" />
 		<include name="searchbackend/VmConditionFieldAutoCompleter.java" />
 		<include name="searchbackend/VmTemplateConditionFieldAutoCompleter.java" />

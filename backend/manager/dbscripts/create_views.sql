@@ -113,6 +113,13 @@ WHERE images_storage_domain_view.active = TRUE
 GROUP BY storage_pool_id,image_guid,creation_date,disk_image_dynamic.actual_size,disk_image_dynamic.read_rate,disk_image_dynamic.write_rate,size,it_guid,internal_drive_mapping,description,ParentId,imageStatus,lastModified,app_list,vm_snapshot_id,volume_type,image_group_id,vm_guid,active,volume_format,disk_interface,boot,wipe_after_delete,propagate_errors,entity_type,quota_id,quota_name,disk_alias,disk_description;
 
 
+CREATE OR REPLACE VIEW vm_images_storage_domains_view
+AS
+SELECT vm_images_view.*,  images_storage_domain_view.storage_id as storage_domain_id
+FROM vm_images_view
+INNER JOIN images_storage_domain_view ON vm_images_view.image_guid = images_storage_domain_view.image_guid;
+
+
 CREATE OR REPLACE VIEW storage_domains
 AS
 SELECT

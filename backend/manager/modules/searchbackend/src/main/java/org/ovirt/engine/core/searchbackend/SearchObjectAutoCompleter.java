@@ -61,6 +61,9 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
         // cluster - storage domain
         addJoin(SearchObjects.VDC_CLUSTER_OBJ_NAME, "storage_id", SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME, "id");
 
+        // disk - storage domain
+        addJoin(SearchObjects.DISK_OBJ_NAME, "storage_domain_id", SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME, "id");
+
         // vds - audit
         addJoin(SearchObjects.VDS_OBJ_NAME, "vds_id", SearchObjects.AUDIT_OBJ_NAME, "vds_id");
 
@@ -72,6 +75,9 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
 
         // Datacenter(Storage_pool) - Storage Domain
         addJoin(SearchObjects.VDC_STORAGE_POOL_OBJ_NAME, "id", SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME, "storage_pool_id");
+
+        // Datacenter(Storage_pool) - Disk
+        addJoin(SearchObjects.VDC_STORAGE_POOL_OBJ_NAME, "id", SearchObjects.DISK_OBJ_NAME, "storage_pool_id");
 
         // audit - cluster
         addJoin(SearchObjects.VDC_CLUSTER_OBJ_NAME, "vds_group_id", SearchObjects.AUDIT_OBJ_NAME, "vds_group_id");
@@ -120,6 +126,10 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
         }
         else if (StringHelper.EqOp(obj, SearchObjects.VDC_STORAGE_POOL_OBJ_NAME)) {
             return new StoragePoolCrossRefAutoCompleter();
+        }
+        else if (StringHelper.EqOp(obj, SearchObjects.DISK_OBJ_NAME)
+                || StringHelper.EqOp(obj, SearchObjects.DISK_PLU_OBJ_NAME)) {
+            return new DiskImageCrossRefAutoCompleter();
         }
         else if (StringHelper.EqOp(obj, SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME)) {
             return new StorageDomainCrossRefAutoCompleter();
@@ -223,7 +233,7 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
         }
         else if (StringHelper.EqOp(obj, SearchObjects.DISK_OBJ_NAME)
                 || StringHelper.EqOp(obj, SearchObjects.DISK_PLU_OBJ_NAME)) {
-            retval = "vm_images_view";
+            retval = "vm_images_storage_domains_view";
         }
         else if (StringHelper.EqOp(obj, SearchObjects.TEMPLATE_OBJ_NAME)
                 || StringHelper.EqOp(obj, SearchObjects.TEMPLATE_PLU_OBJ_NAME)) {
@@ -273,7 +283,7 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
         }
         else if (StringHelper.EqOp(obj, SearchObjects.DISK_OBJ_NAME)
                 || StringHelper.EqOp(obj, SearchObjects.DISK_PLU_OBJ_NAME)) {
-            retval = "vm_images_view";
+            retval = "vm_images_storage_domains_view";
         }
         else if (StringHelper.EqOp(obj, SearchObjects.VDC_USER_OBJ_NAME)
                 || StringHelper.EqOp(obj, SearchObjects.VDC_USER_PLU_OBJ_NAME)) {
