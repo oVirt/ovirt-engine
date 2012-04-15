@@ -30,6 +30,12 @@ public class VmPoolDAOHibernateImpl extends BaseDAOHibernateImpl<vm_pools, NGuid
     }
 
     @Override
+    public vm_pools get(NGuid id, Guid userID, boolean isFiltered) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
     public void setSession(Session session) {
         super.setSession(session);
 

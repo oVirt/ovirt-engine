@@ -165,12 +165,15 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetVm_poolsByvm_pool_id(v_vm_pool_id UUID) RETURNS SETOF vm_pools_full_view
+Create or replace FUNCTION GetVm_poolsByvm_pool_id(v_vm_pool_id UUID, v_user_id UUID, v_is_filtered BOOLEAN) RETURNS SETOF vm_pools_full_view
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT vm_pools_full_view.*
       FROM vm_pools_full_view
-      WHERE vm_pool_id = v_vm_pool_id;
+      WHERE vm_pool_id = v_vm_pool_id
+      AND (NOT v_is_filtered OR EXISTS (SELECT 1
+                                        FROM   user_vm_pool_permissions_view
+                                        WHERE  user_id = v_user_id AND entity_id = v_vm_pool_id));
 END; $procedure$
 LANGUAGE plpgsql;
 

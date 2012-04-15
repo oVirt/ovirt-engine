@@ -89,6 +89,31 @@ public class VmPoolDAOTest extends BaseDAOTestCase {
     public void testGetVmPool() {
         vm_pools result = dao.get(existingVmPool.getvm_pool_id());
 
+        assertGetResult(result);
+    }
+
+    @Test
+    public void testGetFilteredWithPermissions() {
+        vm_pools result = dao.get(existingVmPool.getvm_pool_id(), PRIVILEGED_USER_ID, true);
+
+        assertGetResult(result);
+    }
+
+    @Test
+    public void testGetFilteredWithPermissionsNoPermissions() {
+        vm_pools result = dao.get(existingVmPool.getvm_pool_id(), UNPRIVILEGED_USER_ID, true);
+
+        assertNull(result);
+    }
+
+    @Test
+    public void testGetFilteredWithPermissionsNoPermissionsAndNoFilter() {
+        vm_pools result = dao.get(existingVmPool.getvm_pool_id(), UNPRIVILEGED_USER_ID, false);
+
+        assertGetResult(result);
+    }
+
+    private void assertGetResult(vm_pools result) {
         assertNotNull(result);
         assertEquals(existingVmPool, result);
     }

@@ -13,7 +13,7 @@ import org.ovirt.engine.core.compat.NGuid;
  * <code>VmPoolDAO</code> defines a type that performs CRUD operations on instances of {@link vm_pool}.
  *
  */
-public interface VmPoolDAO extends DAO, SearchDAO<vm_pools>{
+public interface VmPoolDAO extends DAO, SearchDAO<vm_pools> {
     /**
      * Removes the specified VM from the pool.
      *
@@ -30,6 +30,19 @@ public interface VmPoolDAO extends DAO, SearchDAO<vm_pools>{
      * @return the VM pool
      */
     vm_pools get(NGuid id);
+
+    /**
+    * Retrieves the VM pool with the specified ID with optional filtering
+    *
+    * @param id
+    *            the pool id
+    * @param userID
+    *            the ID of the user requesting the information
+    * @param isFiltered
+    *            Whether the results should be filtered according to the user's permissions
+    * @return the VM pool
+    */
+    vm_pools get(NGuid id, Guid userID, boolean isFiltered);
 
     /**
      * Retrieves the VM pool with the given name.

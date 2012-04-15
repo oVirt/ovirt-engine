@@ -33,8 +33,13 @@ public class VmPoolDAODbFacadeImpl extends BaseDAODbFacade implements VmPoolDAO 
 
     @Override
     public vm_pools get(NGuid id) {
+        return get(id, null, false);
+    }
+
+    @Override
+    public vm_pools get(NGuid id, Guid userID, boolean isFiltered) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("vm_pool_id", id);
+                .addValue("vm_pool_id", id).addValue("user_id", userID).addValue("is_filtered", isFiltered);
         return getCallsHandler().executeRead("GetVm_poolsByvm_pool_id", VmPoolFullRowMapper.instance, parameterSource);
     }
 
