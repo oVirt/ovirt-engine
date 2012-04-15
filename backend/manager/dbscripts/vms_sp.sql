@@ -514,12 +514,15 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetVmByVmGuid(v_vm_guid UUID) RETURNS SETOF vms
+Create or replace FUNCTION GetVmByVmGuid(v_vm_guid UUID, v_user_id UUID, v_is_filtered boolean) RETURNS SETOF vms
    AS $procedure$
 BEGIN
 RETURN QUERY SELECT DISTINCT vms.*
    FROM vms
-   WHERE vm_guid = v_vm_guid;
+   WHERE vm_guid = v_vm_guid
+   AND   (NOT v_is_filtered OR EXISTS (SELECT 1
+                                       FROM   user_vm_permissions_view
+                                       WHERE  user_id = v_user_id AND entity_id = v_vm_guid));
 END; $procedure$
 LANGUAGE plpgsql;
 

@@ -70,6 +70,43 @@ public class VmDAOTest extends BaseDAOTestCase {
     public void testGet() {
         VM result = dao.get(existingVm.getId());
 
+        assertGetResult(result);
+    }
+
+    /**
+     * Ensures that get works as expected when a filtered for permissions of a privileged user.
+     */
+    @Test
+    public void testGetFilteredWithPermissions() {
+        VM result = dao.get(existingVm.getId(), PRIVILEGED_USER_ID, true);
+
+        assertGetResult(result);
+    }
+
+    /**
+     * Ensures that get works as expected when a filtered for permissions of an unprivileged user.
+     */
+    @Test
+    public void testGetFilteredWithPermissionsNoPermissions() {
+        VM result = dao.get(existingVm.getId(), UNPRIVILEGED_USER_ID, true);
+
+        assertNull(result);
+    }
+
+    /**
+     * Ensures that get works as expected when a filtered for permissions of an unprivileged user, and filtering disabled.
+     */
+    @Test
+    public void testGetFilteredWithPermissionsNoPermissionsAndNoFilter() {
+        VM result = dao.get(existingVm.getId(), UNPRIVILEGED_USER_ID, false);
+
+        assertGetResult(result);
+    }
+
+    /**
+     * Asserts the given VM is the expected one
+     */
+    private void assertGetResult(VM result) {
         assertNotNull(result);
         assertEquals(result, existingVm);
     }

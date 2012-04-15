@@ -39,14 +39,26 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
 
     @Override
     public VM get(Guid id) {
+        return get(id, null, false);
+    }
+
+    @Override
+    public VM get(Guid id, Guid userID, boolean isFiltered) {
         return getCallsHandler().executeRead("GetVmByVmGuid", VMRowMapper.instance, getCustomMapSqlParameterSource()
-                .addValue("vm_guid", id));
+                .addValue("vm_guid", id).addValue("user_id", userID).addValue("is_filtered", isFiltered));
     }
 
     @Override
     public VM getById(Guid id) {
-        VM vm = get(id);
+        return getById(id, null, false);
+    }
+
+    @Override
+    public VM getById(Guid id, Guid userID, boolean isFiltered) {
+        VM vm = get(id, userID, isFiltered);
         if (vm != null) {
+            // Note: if a VM was returned, the user obviously has permissions on it and thus on its interfaces.
+            // No additional filtering is required
             vm.setInterfaces(DbFacade.getInstance().getVmNetworkInterfaceDAO().getAllForVm(vm.getId()));
         }
         return vm;

@@ -22,6 +22,19 @@ public interface VmDAO extends DAO {
     VM get(Guid id);
 
     /**
+     * Returns the VM with the specified id, with optional filtering.
+     *
+     * @param id
+     *            the VM id
+     * @param userID
+     *            the ID of the user requesting the information
+     * @param isFiltered
+     *            Whether the results should be filtered according to the user's permissions
+     * @return the VM
+     */
+    VM get(Guid id, Guid userID, boolean isFiltered);
+
+    /**
      * Retrieves the VM with the specified id.
      * <b>Note:</b> Unlike {@link #get(Guid)}, this method also fills the network interfaces.
      * If you do not need them, call {@link #get(Guid)} instead, for better performance.
@@ -31,6 +44,21 @@ public interface VmDAO extends DAO {
      * @return the VM
      */
     VM getById(Guid id);
+
+    /**
+     * Retrieves the VM with the specified id, with optional filtering.
+     * <b>Note:</b> Unlike {@link #get(Guid)}, this method also fills the network interfaces.
+     * If you do not need them, call {@link #get(Guid)} instead, for better performance.
+     *
+     * @param id
+     *            the vm id
+     * @param userID
+     *            the ID of the user requesting the information
+     * @param isFiltered
+     *            Whether the results should be filtered according to the user's permissions
+     * @return the VM
+     */
+    VM getById(Guid id, Guid userID, boolean isFiltered);
 
     /**
      * Retrieves the VM for the specified hibernate image.
