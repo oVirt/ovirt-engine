@@ -17,6 +17,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.ejb.ConcurrencyManagement;
 import javax.ejb.ConcurrencyManagementType;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.DbUserCacheManager;
 import org.ovirt.engine.core.common.businessentities.ad_groups;
 import org.ovirt.engine.core.common.config.Config;
@@ -145,6 +146,7 @@ public class UsersDomainsCacheManagerService implements UsersDomainsCacheManager
             return;
         }
         List<String> domains = LdapBrokerUtils.getDomainsList(true);
+        Map<String, LdapProviderType> domainLDAPProviders = parseLDAPProviders();
         fillLdapServersMap();
         fillLdapSecurityAuthenticationMap();
         fillUsersMap();
@@ -154,7 +156,8 @@ public class UsersDomainsCacheManagerService implements UsersDomainsCacheManager
             domainName = domainName.toLowerCase();
             domainsUsersInfoByUserNameAndDomainName.put(domainName, new ConcurrentHashMap<String, UserDomainInfo>());
             Domain domain = new Domain(domainName);
-            domain.setLdapProviderType(LdapProviderType.general);
+            domain.setLdapProviderType(domainLDAPProviders.get(domainName) == null ? LdapProviderType.general
+                    : domainLDAPProviders.get(domainName));
             domain.setLdapSecurityAuthentication(getDomainSecurityAuthentication(domainName));
             domainsByName.put(domainName, domain);
             domain.setUserName(userPerDomain.get(domainName));
@@ -168,6 +171,26 @@ public class UsersDomainsCacheManagerService implements UsersDomainsCacheManager
         DbUserCacheManager.getInstance().init();
         log.infoFormat("DbUserCacheManager: {0}", new java.util.Date());
 
+    }
+
+    /**
+     * map domain -> LdapProviderType according to ConfigValue LDAPProviderTypes.<br>
+     * expected config value form is "example.com:ActiveDirectory, example.net:RHDS" and so on. null values are ignored
+     * e.g. "example.com: "
+     * @return map of domainName -> LdapProviderType
+     * @see {@link #ConfigValues.LDAPProviderTypes} and {@link LdapProviderType}
+     */
+    protected Map<String, LdapProviderType> parseLDAPProviders() {
+        Map<String, LdapProviderType> domainProviderTypes = new HashMap<String, LdapProviderType>();
+        for (String pair : StringUtils.split(Config.<String> GetValue(ConfigValues.LDAPProviderTypes), ",")) {
+            if (pair != null) {
+                String[] split = StringUtils.split(pair, ":");
+                if (split != null && split[0] != null && split[1] != null) {
+                    domainProviderTypes.put(split[0], LdapProviderType.valueOf(LdapProviderType.class, split[1]));
+                }
+            }
+        }
+        return domainProviderTypes;
     }
 
     private LDAPSecurityAuthentication getDomainSecurityAuthentication(String domainName) {

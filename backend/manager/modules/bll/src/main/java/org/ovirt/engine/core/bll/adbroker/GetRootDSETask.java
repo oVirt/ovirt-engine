@@ -57,20 +57,20 @@ public class GetRootDSETask implements Callable<Boolean> {
                 try {
                     rootDSE = domainObject.getRootDSE();
                     if (rootDSE == null) {
-                        if (ldapProviderType.equals(LdapProviderType.general)) {
-                            GetRootDSE query = createGetRootDSE(ldapURI);
-                            ldapProviderType = query.retrieveLdapProviderType(domainName);
-                            if (!ldapProviderType.equals(LdapProviderType.general)) {
-                                Attributes rootDseRecords = query.getDomainAttributes(ldapProviderType, domainName);
-                                if (rootDseRecords != null) {
-                                    setRootDSE(domainObject, ldapProviderType, rootDseRecords);
-                                    baseDNExist = true;
-                                }
-                            } else {
-                                log.errorFormat("Couldn't deduce provider type for domain {0}", domainName);
-                                throw new EngineDirectoryServiceException(AuthenticationResult.CONNECTION_ERROR,
-                                        "Failed to get rootDSE record for server " + ldapURI);
+                        GetRootDSE query = createGetRootDSE(ldapURI);
+                        ldapProviderType =
+                                (ldapProviderType == LdapProviderType.general ? query.autoDetectLdapProviderType(domainName)
+                                        : ldapProviderType);
+                        if (ldapProviderType != LdapProviderType.general) {
+                            Attributes rootDseRecords = query.getDomainAttributes(ldapProviderType, domainName);
+                            if (rootDseRecords != null) {
+                                setRootDSE(domainObject, ldapProviderType, rootDseRecords);
+                                baseDNExist = true;
                             }
+                        } else {
+                            log.errorFormat("Couldn't deduce provider type for domain {0}", domainName);
+                            throw new EngineDirectoryServiceException(AuthenticationResult.CONNECTION_ERROR,
+                                    "Failed to get rootDSE record for server " + ldapURI);
                         }
                     } else {
                         baseDNExist = true;

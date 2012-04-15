@@ -98,7 +98,16 @@ public class GetRootDSE {
         return new InitialDirContext(env);
     }
 
-    public LdapProviderType retrieveLdapProviderType(String domain) throws NamingException {
+    /**
+     * Try to detect which LDAP server type this domain is working with. Since the rootDSE attributes are not standard
+     * nor compulsory the result is somewhat fragile, therefore deprecated.
+     * @param domain
+     * @return {@link LdapProviderType} of this domain.
+     * @throws NamingException
+     */
+    @Deprecated
+    public LdapProviderType autoDetectLdapProviderType(String domain) throws NamingException {
+        log.infoFormat("Trying to auto-detect the LDAP provider type for domain {0}", domain);
         LdapProviderType retVal = LdapProviderType.general;
         Attributes attributes = getDomainAttributes(LdapProviderType.general, domain);
         if (attributes != null) {
@@ -113,7 +122,7 @@ public class GetRootDSE {
                 }
             }
         }
-
+        log.infoFormat("Provider type is {0}", retVal.name());
         return retVal;
     }
 
