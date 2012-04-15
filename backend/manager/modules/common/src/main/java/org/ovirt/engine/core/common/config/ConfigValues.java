@@ -1116,6 +1116,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("false")
     SendVmTicketUID(351),
 
+    @DefaultValueAttribute("")
+    @TypeConverterAttribute(String.class)
+    LDAPProviderTypes(352),
+
     Invalid(65535);
 
     private int intValue;
