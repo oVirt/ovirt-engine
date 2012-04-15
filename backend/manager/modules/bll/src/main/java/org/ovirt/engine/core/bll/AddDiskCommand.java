@@ -113,6 +113,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
                 returnValue = false;
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW);
             }
+            ImagesHandler.setDiskAlias(getParameters().getDiskInfo().getDisk(), getVm());
         }
         if (returnValue && getRequestDiskSpace() > Config
                     .<Integer> GetValue(ConfigValues.MaxDiskSize)) {
