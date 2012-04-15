@@ -205,7 +205,20 @@ public final class Linq
         @Override
         public int compare(DiskModel x, DiskModel y)
         {
-            return x.getDiskImage().getDiskAlias().compareTo(y.getDiskImage().getDiskAlias());
+            String xAlias = x.getDiskImage().getDiskAlias();
+            String yAlias = y.getDiskImage().getDiskAlias();
+
+            if (xAlias == null)
+            {
+                return 1;
+            }
+
+            if (yAlias == null)
+            {
+                return -1;
+            }
+
+            return xAlias.compareTo(yAlias);
         }
     }
 
