@@ -7,7 +7,7 @@ source ./dbcustomfunctions.sh
 set_defaults
 
 usage() {
-    printf "Usage: ${ME} [-h] [-s SERVERNAME [-p PORT]] [-d DATABASE] [-u USERNAME] [-v]\n"
+    printf "Usage: ${ME} [-h] [-s SERVERNAME [-p PORT]] [-d DATABASE] [-u USERNAME] [-f UUID] [-l LOGFILE] [-v]\n"
     printf "\n"
     printf "\t-s SERVERNAME - The database servername for the database  (def. ${SERVERNAME})\n"
     printf "\t-p PORT       - The database port for the database        (def. ${PORT})\n"
@@ -19,7 +19,7 @@ usage() {
     printf "\t-h            - This help text.\n"
     printf "\n"
 
-    exit 0
+    exit $ret
 }
 
 DEBUG () {
@@ -34,10 +34,11 @@ while getopts :hs:d:u:p:l:f:v option; do
         p) PORT=$OPTARG;;
         d) DATABASE=$OPTARG;;
         u) USERNAME=$OPTARG;;
-	l) LOGFILE=$OPTARG;;
+    	l) LOGFILE=$OPTARG;;
         f) UUID=$OPTARG;;
         v) VERBOSE=true;;
-        h) usage;;
+        h) ret=0 && usage;;
+       \?) ret=1 && usage;;
     esac
 done
 

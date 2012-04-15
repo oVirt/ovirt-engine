@@ -1163,7 +1163,7 @@ def _upgradeDB():
 
     # if we're here, DB was renamed.
     logging.debug("upgrading db schema")
-    dbScriptArgs = "-u %s -d %s -h %s --port=%s" %(getDbAdminUser(), DB_NAME_TEMP, getDbHostName(), getDbPort())
+    dbScriptArgs = "-u %s -d %s -s %s -p %s" %(getDbAdminUser(), DB_NAME_TEMP, getDbHostName(), getDbPort())
     cmd = os.path.join("/bin/sh ", basedefs.DIR_DB_SCRIPTS, basedefs.FILE_DB_UPGRADE_SCRIPT + " " + dbScriptArgs)
 
     # Upgrade script must run from dbscripts dir
@@ -1200,7 +1200,7 @@ def _upgradeDB():
                                    getDbPort(), \
                                    basedefs.DB_POSTGRES, \
                                    sqlQuery, False, \
-                                   output_messages.ERR_DB_DROP % DB_NAME_TEMP)
+                                   output_messages.ERR_DB_DROP)
 
         raise Exception(output_messages.ERR_DB_UPGRADE_FAILED)
 
