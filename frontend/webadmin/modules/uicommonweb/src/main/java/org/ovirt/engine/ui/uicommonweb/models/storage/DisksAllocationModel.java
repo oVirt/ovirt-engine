@@ -308,8 +308,7 @@ public class DisksAllocationModel extends EntityModel
             else {
                 storageId = ((storage_domains) getStorageDomain().getSelectedItem()).getId();
             }
-            DiskImage diskImage = new DiskImage();
-            diskImage.setId(diskId);
+            DiskImage diskImage = diskModel.getDiskImage();
             ArrayList<Guid> storageIdList = new ArrayList<Guid>();
             storageIdList.add(storageId);
             diskImage.setstorage_ids(storageIdList);
