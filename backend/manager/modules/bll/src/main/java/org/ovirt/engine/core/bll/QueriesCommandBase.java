@@ -123,16 +123,20 @@ public abstract class QueriesCommandBase<P extends VdcQueryParametersBase> exten
     *         <code>false</code> otherwise.
     */
     private final boolean validatePermissions() {
-        return true;
-        // TODO: This code is TEMPORARILY commented out, after being pushed by mistake and breaking the User Portal.
-        // It should be umcommented once all the user queries are done.
-        // if (!isInternalExecution && (type.isAdmin() || !parameters.isFiltered())) {
-        // if (user == null) {
-        // return false;
-        // }
-        // return MultiLevelAdministrationHandler.isAdminUser(user.getUserId());
-        // }
-        // return true;
+        // If the user requests filtered execution, his permissions are inconsequential.
+        // If the query supports filtering it should be allowed, and if not - not.
+        if (parameters.isFiltered()) {
+            return !type.isAdmin();
+        }
+
+        // If the query was executed internally, it should be allowed in any event.
+        if (isInternalExecution) {
+            return true;
+        }
+
+        // In any other event, we have admin execution, which should only be allowed according to the user's
+        // permissions.
+        return MultiLevelAdministrationHandler.isAdminUser(getUserID());
     }
 
     /**

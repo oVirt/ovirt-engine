@@ -13,7 +13,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ovirt.engine.core.bll.session.SessionDataContainer;
@@ -105,9 +104,7 @@ public class QueriesCommandBaseTest {
                 TestHelperQueriesCommandType.getQueryTypeFieldValue(query));
     }
 
-    // TODO: Temporarily ignored until permission checking will be re-enabled, comment this back in when possible
     /** Tests Admin permission check */
-    @Ignore
     @Test
     public void testPermissionChecking() throws Exception {
         boolean[] booleans = { true, false };
@@ -115,8 +112,12 @@ public class QueriesCommandBaseTest {
             for (boolean isFiltered : booleans) {
                 for (boolean isUserAdmin : booleans) {
                     for (boolean isInternalExecution : booleans) {
-                        boolean shouldBeAbleToRunQuery =
-                                isInternalExecution || isUserAdmin || (isFiltered && !queryType.isAdmin());
+                        boolean shouldBeAbleToRunQuery;
+                        if (isFiltered) {
+                            shouldBeAbleToRunQuery = !queryType.isAdmin();
+                        } else {
+                            shouldBeAbleToRunQuery = isInternalExecution || isUserAdmin;
+                        }
 
                         log.debug("Running on query: " + toString());
 
@@ -146,8 +147,9 @@ public class QueriesCommandBaseTest {
                         query.ExecuteCommand();
                         assertEquals("Running with type=" + queryType + " isUserAdmin=" + isUserAdmin + " isFiltered="
                                 + isFiltered + " isInternalExecution=" + isInternalExecution + "\n " +
-                                "Query should succeed is: ", shouldBeAbleToRunQuery, query.getQueryReturnValue()
-                                .getSucceeded());
+                                "Query should succeed is: ",
+                                shouldBeAbleToRunQuery,
+                                query.getQueryReturnValue().getSucceeded());
 
                         ThreadLocalParamsContainer.clean();
                         SessionDataContainer.getInstance().removeSession();
