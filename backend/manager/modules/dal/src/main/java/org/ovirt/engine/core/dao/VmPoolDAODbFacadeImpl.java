@@ -19,27 +19,10 @@ import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 
 /**
  * <code>VmPoolDAODbFacadeImpl</code> provides an implementation of {@link VmPoolDAO} based on implementation code from
- * {@link DbFacade}.
+ * {@link org.ovirt.engine.core.dal.dbbroker.DbFacade}.
  *
  */
 public class VmPoolDAODbFacadeImpl extends BaseDAODbFacade implements VmPoolDAO {
-
-    private final static VmPoolFullRowMapper vmPoolFullRowMapper = new VmPoolFullRowMapper();
-    private final static VmPoolNonFullRowMapper vmPoolNonFullRowMapper = new VmPoolNonFullRowMapper();
-
-    private class TimeLeaseVmPoolRowMapper implements ParameterizedRowMapper<time_lease_vm_pool_map> {
-        @Override
-        public time_lease_vm_pool_map mapRow(ResultSet rs, int rowNum) throws SQLException {
-            time_lease_vm_pool_map entity = new time_lease_vm_pool_map();
-            entity.setend_time(DbFacadeUtils.fromDate(rs.getTimestamp("end_time")));
-            entity.setid(Guid.createGuidFromString(rs.getString("id")));
-            entity.setstart_time(DbFacadeUtils.fromDate(rs.getTimestamp("start_time")));
-            entity.settype(rs.getInt("type"));
-            entity.setvm_pool_id(Guid.createGuidFromString(rs.getString("vm_pool_id")));
-            return entity;
-        }
-    }
-
     @Override
     public void removeVmFromVmPool(Guid id) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
@@ -52,43 +35,44 @@ public class VmPoolDAODbFacadeImpl extends BaseDAODbFacade implements VmPoolDAO 
     public vm_pools get(NGuid id) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("vm_pool_id", id);
-        return getCallsHandler().executeRead("GetVm_poolsByvm_pool_id", vmPoolFullRowMapper , parameterSource);
+        return getCallsHandler().executeRead("GetVm_poolsByvm_pool_id", VmPoolFullRowMapper.instance, parameterSource);
     }
 
     @Override
     public vm_pools getByName(String name) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("vm_pool_name", name);
-        return getCallsHandler().executeRead("GetVm_poolsByvm_pool_name", vmPoolNonFullRowMapper, parameterSource);
+        return getCallsHandler().executeRead("GetVm_poolsByvm_pool_name",
+                VmPoolNonFullRowMapper.instance,
+                parameterSource);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public List<vm_pools> getAll() {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource();
-        return getCallsHandler().executeReadList("GetAllFromVm_pools", vmPoolFullRowMapper, parameterSource);
+        return getCallsHandler().executeReadList("GetAllFromVm_pools", VmPoolFullRowMapper.instance, parameterSource);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public List<vm_pools> getAllForUser(Guid id) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("user_id", id);
         return getCallsHandler().executeReadList("GetAllVm_poolsByUser_id_with_groups_and_UserRoles",
-                vmPoolNonFullRowMapper, parameterSource);
+                VmPoolNonFullRowMapper.instance, parameterSource);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public List<vm_pools> getAllForAdGroup(Guid id) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("ad_group_id", id);
-        return getCallsHandler().executeReadList("GetVm_poolsByAdGroup_id", vmPoolNonFullRowMapper, parameterSource);
+        return getCallsHandler().executeReadList("GetVm_poolsByAdGroup_id",
+                VmPoolNonFullRowMapper.instance,
+                parameterSource);
     }
 
     @Override
     public List<vm_pools> getAllWithQuery(String query) {
-        return new SimpleJdbcTemplate(jdbcTemplate).query(query, vmPoolFullRowMapper);
+        return new SimpleJdbcTemplate(jdbcTemplate).query(query, VmPoolFullRowMapper.instance);
     }
 
     @Override
@@ -153,7 +137,6 @@ public class VmPoolDAODbFacadeImpl extends BaseDAODbFacade implements VmPoolDAO 
         getCallsHandler().executeModification("InsertVm_pool_map", parameterSource);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public List<vm_pool_map> getVmPoolsMapByVmPoolId(NGuid vmPoolId) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("vm_pool_id", vmPoolId);
@@ -177,7 +160,7 @@ public class VmPoolDAODbFacadeImpl extends BaseDAODbFacade implements VmPoolDAO 
                 "vm_pool_id", vmPoolId);
 
         return getCallsHandler().executeRead("Gettime_lease_vm_pool_mapByidAndByvm_pool_id",
-                new TimeLeaseVmPoolRowMapper(),
+                TimeLeaseVmPoolRowMapper.instance,
                 parameterSource);
     }
 
@@ -211,18 +194,20 @@ public class VmPoolDAODbFacadeImpl extends BaseDAODbFacade implements VmPoolDAO 
         getCallsHandler().executeModification("Deletetime_lease_vm_pool_map", parameterSource);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public List<time_lease_vm_pool_map> getAllTimeLeasedVmPoolMaps() {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource();
 
         return getCallsHandler().executeReadList("GetAllFromtime_lease_vm_pool_map",
-                new TimeLeaseVmPoolRowMapper(),
+                TimeLeaseVmPoolRowMapper.instance,
                 parameterSource);
     }
 
+    @Override
     public List<vm_pool_map> getVmMapsInVmPoolByVmPoolIdAndStatus(NGuid vmPoolId, VMStatus vmStatus) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("vm_pool_id", vmPoolId).addValue("status", vmStatus.getValue());
+        MapSqlParameterSource parameterSource =
+                getCustomMapSqlParameterSource().addValue("vm_pool_id", vmPoolId).addValue("status",
+                        vmStatus.getValue());
 
         ParameterizedRowMapper<vm_pool_map> mapper = new ParameterizedRowMapper<vm_pool_map>() {
             @Override
@@ -238,7 +223,9 @@ public class VmPoolDAODbFacadeImpl extends BaseDAODbFacade implements VmPoolDAO 
                 parameterSource);
     }
 
-    static final class VmPoolFullRowMapper implements ParameterizedRowMapper<vm_pools> {
+    private static final class VmPoolFullRowMapper implements ParameterizedRowMapper<vm_pools> {
+        public final static VmPoolFullRowMapper instance = new VmPoolFullRowMapper();
+
         @Override
         public vm_pools mapRow(final ResultSet rs, final int rowNum) throws SQLException {
             final vm_pools entity = new vm_pools();
@@ -260,7 +247,9 @@ public class VmPoolDAODbFacadeImpl extends BaseDAODbFacade implements VmPoolDAO 
         }
     }
 
-    static final class VmPoolNonFullRowMapper implements ParameterizedRowMapper<vm_pools> {
+    private static final class VmPoolNonFullRowMapper implements ParameterizedRowMapper<vm_pools> {
+        public final static VmPoolNonFullRowMapper instance = new VmPoolNonFullRowMapper();
+
         @Override
         public vm_pools mapRow(final ResultSet rs, final int rowNum) throws SQLException {
             final vm_pools entity = new vm_pools();
@@ -276,6 +265,21 @@ public class VmPoolDAODbFacadeImpl extends BaseDAODbFacade implements VmPoolDAO 
             entity.setvds_group_id(Guid.createGuidFromString(rs
                     .getString("vds_group_id")));
             entity.setvds_group_name(rs.getString("vds_group_name"));
+            return entity;
+        }
+    }
+
+    private static class TimeLeaseVmPoolRowMapper implements ParameterizedRowMapper<time_lease_vm_pool_map> {
+        public final static TimeLeaseVmPoolRowMapper instance = new TimeLeaseVmPoolRowMapper();
+
+        @Override
+        public time_lease_vm_pool_map mapRow(ResultSet rs, int rowNum) throws SQLException {
+            time_lease_vm_pool_map entity = new time_lease_vm_pool_map();
+            entity.setend_time(DbFacadeUtils.fromDate(rs.getTimestamp("end_time")));
+            entity.setid(Guid.createGuidFromString(rs.getString("id")));
+            entity.setstart_time(DbFacadeUtils.fromDate(rs.getTimestamp("start_time")));
+            entity.settype(rs.getInt("type"));
+            entity.setvm_pool_id(Guid.createGuidFromString(rs.getString("vm_pool_id")));
             return entity;
         }
     }

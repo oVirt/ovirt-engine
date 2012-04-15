@@ -9,7 +9,6 @@ import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
-
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.ad_groups;
@@ -83,7 +82,7 @@ public class VmPoolDAOHibernateImpl extends BaseDAOHibernateImpl<vm_pools, NGuid
         return result;
     }
 
-    private String[] splitApartNames(String text) {
+    private static String[] splitApartNames(String text) {
         List<String> names = new ArrayList<String>();
         StringTokenizer tokens = new StringTokenizer(text, ",", false);
 

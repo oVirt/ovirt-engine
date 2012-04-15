@@ -1,18 +1,20 @@
 package org.ovirt.engine.core.dao;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Date;
 import java.util.List;
 
 import org.junit.Test;
-
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.time_lease_vm_pool_map;
 import org.ovirt.engine.core.common.businessentities.vm_pool_map;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 
 public class VmPoolDAOTest extends BaseDAOTestCase {
     private static final Guid USER_ID = new Guid("9bf7c640-b620-456f-a550-0348f366544b");
@@ -75,7 +77,7 @@ public class VmPoolDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetVmPoolWithInvalidId() {
-        vm_pools result = dao.get(NGuid.NewGuid());
+        vm_pools result = dao.get(Guid.NewGuid());
 
         assertNull(result);
     }
@@ -144,19 +146,6 @@ public class VmPoolDAOTest extends BaseDAOTestCase {
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
-    }
-
-    /**
-     * Ensures an empty collection is returned.
-     */
-    @Test
-    public void testGetAllVmPoolsForAdGroupWithNoVmPools() {
-        // TODO the underlying stored procedure depends on a table that was removed
-        //
-        // List<vm_pools> result = dao.getAllVmPoolsForAdGroup(Guid.NewGuid());
-        //
-        // assertNotNull(result);
-        // assertTrue(result.isEmpty());
     }
 
     /**
