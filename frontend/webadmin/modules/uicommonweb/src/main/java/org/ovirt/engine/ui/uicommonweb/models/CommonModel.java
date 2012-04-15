@@ -548,6 +548,9 @@ public class CommonModel extends ListModel
                             || storage.getstorage_domain_type() == StorageDomainType.Master;
         }
 
+        diskList.setIsAvailable(model.getType() == SystemTreeItemType.DataCenter
+                || isDataStorage || model.getType() == SystemTreeItemType.System);
+
         vmList.setIsAvailable(model.getType() == SystemTreeItemType.DataCenter
                 || model.getType() == SystemTreeItemType.Cluster || model.getType() == SystemTreeItemType.Host
                 || isDataStorage || model.getType() == SystemTreeItemType.VMs
@@ -1028,6 +1031,10 @@ public class CommonModel extends ListModel
                 {
                     prefix.argvalue = StringFormat.format("Events: event_datacenter = %1$s", model.getTitle());
                 }
+                else if (diskList.IsSearchStringMatch(source))
+                {
+                    prefix.argvalue = StringFormat.format("Disk: datacenter.name = %1$s", model.getTitle());
+                }
             }
                 break;
             case Clusters: {
@@ -1130,6 +1137,10 @@ public class CommonModel extends ListModel
                 else if (eventList.IsSearchStringMatch(source))
                 {
                     prefix.argvalue = StringFormat.format("Events: event_storage = %1$s", model.getTitle());
+                }
+                else if (diskList.IsSearchStringMatch(source))
+                {
+                    prefix.argvalue = StringFormat.format("Disk: storage.name = %1$s", model.getTitle());
                 }
             }
                 break;
