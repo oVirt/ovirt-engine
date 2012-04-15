@@ -83,20 +83,20 @@ public class VmHandlerTest {
         when(vmDynamicDAO.get(any(Guid.class))).thenReturn(createVmDynamic(VMStatus.Down));
     }
 
-    private VmDynamic createVmDynamic(VMStatus status) {
+    private static VmDynamic createVmDynamic(VMStatus status) {
         VmDynamic dynamic = new VmDynamic();
         dynamic.setstatus(status);
         return dynamic;
     }
 
-    private void executeCheckAndLock() {
+    private static void executeCheckAndLock() {
         VmHandler.checkStatusAndLockVm(Guid.NewGuid(), mock(CompensationContext.class));
     }
 
     /**
      * Mock a VM.
      */
-    private VM mockVm() {
+    private static VM mockVm() {
         VM vm = new VM();
         vm.setstatus(VMStatus.Down);
         vm.setvm_name("VM_TEST_NAME");

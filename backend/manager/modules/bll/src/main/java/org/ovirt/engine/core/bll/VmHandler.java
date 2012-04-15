@@ -76,10 +76,10 @@ public class VmHandler {
      * @return
      */
     public static boolean VerifyAddVm(ArrayList<String> reasons,
-                                      int vmsCount,
-                                      VmTemplate vmTemplate,
-                                      Guid storagePoolId,
-                                      int vmPriority) {
+            int vmsCount,
+            VmTemplate vmTemplate,
+            Guid storagePoolId,
+            int vmPriority) {
         boolean returnValue = true;
         if (MacPoolManager.getInstance().getavailableMacsCount() < vmsCount) {
             if (reasons != null) {
@@ -244,7 +244,7 @@ public class VmHandler {
 
     public static void updateDisksFromDb(VM vm) {
         List<DiskImage> imageList = DbFacade.getInstance().getDiskImageDAO().getAllForVm(vm.getId());
-        updateDisksForVm(vm,imageList);
+        updateDisksForVm(vm, imageList);
     }
 
     public static void updateDisksForVm(VM vm, List<DiskImage> imageList) {
@@ -272,9 +272,8 @@ public class VmHandler {
         if (StringUtils.contains(part, appName + "64")) { // 64 bit Agent has extension
             // to its name.
             return appName + "64";
-        } else {
-            return appName;
         }
+        return appName;
     }
 
     /**
@@ -321,12 +320,13 @@ public class VmHandler {
      * @return
      */
     public static boolean isMemorySizeLegal(VmOsType osType, int memSizeInMB, java.util.ArrayList<String> reasons,
-                                            String clsuter_version) {
+            String clsuter_version) {
         boolean result = VmValidationUtils.isMemorySizeLegal(osType, memSizeInMB, clsuter_version);
         if (!result) {
             reasons.add(VdcBllMessages.ACTION_TYPE_FAILED_ILLEGAL_MEMORY_SIZE.toString());
             reasons.add(String.format("$minMemorySize %s", VmValidationUtils.getMinMemorySizeInMb()));
-            reasons.add(String.format("$maxMemorySize %s", VmValidationUtils.getMaxMemorySizeInMb(osType, clsuter_version)));
+            reasons.add(String.format("$maxMemorySize %s",
+                    VmValidationUtils.getMaxMemorySizeInMb(osType, clsuter_version)));
         }
         return result;
     }
@@ -343,8 +343,8 @@ public class VmHandler {
      * @return - True , if name is valid, false, if name already exist.
      */
     public static boolean IsNotDuplicateInterfaceName(List<VmNetworkInterface> interfaces,
-                final String interfaceName,
-                List<String> messages) {
+            final String interfaceName,
+            List<String> messages) {
 
         // Interface iface = interfaces.FirstOrDefault(i => i.name ==
         // AddVmInterfaceParameters.Interface.name);
@@ -373,11 +373,11 @@ public class VmHandler {
      * @return
      */
     public static boolean isNumOfMonitorsLegal(DisplayType displayType, int numOfMonitors, List<String> reasons) {
-        boolean legal=true;
+        boolean legal = true;
         if (displayType == DisplayType.vnc) {
             legal = (numOfMonitors <= 1);
         }
-        else { //Spice
+        else { // Spice
             legal = (numOfMonitors <= getMaxNumberOfMonitors());
         }
         if (!legal) {
@@ -387,13 +387,14 @@ public class VmHandler {
     }
 
     /**
-     * get max of allowed monitors fron config
+     * get max of allowed monitors from config
      * config value is a comma separated list of integers
      * @return
      */
     private static int getMaxNumberOfMonitors() {
         int max = 0;
-        String numOfMonitorsStr=Config.GetValue(ConfigValues.ValidNumOfMonitors).toString().replaceAll("[\\[\\]]", "");;
+        String numOfMonitorsStr =
+                Config.GetValue(ConfigValues.ValidNumOfMonitors).toString().replaceAll("[\\[\\]]", "");
         String values[] = numOfMonitorsStr.split(",");
         for (String val : values) {
             val = val.trim();
@@ -404,6 +405,6 @@ public class VmHandler {
         return max;
     }
 
-    private static Log log = LogFactory.getLog(VmHandler.class);
+    private static final Log log = LogFactory.getLog(VmHandler.class);
 
 }
