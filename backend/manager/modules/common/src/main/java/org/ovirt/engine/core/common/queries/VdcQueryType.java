@@ -102,7 +102,7 @@ public enum VdcQueryType implements Serializable {
     GetAdGroupById,
 
     // VM pools queries
-    GetVmPoolById,
+    GetVmPoolById(VdcQueryAuthType.User),
     GetVmPoolsMapByVmPoolId,
     GetAllVmPools,
     HasFreeVmsInPool,
@@ -259,7 +259,7 @@ public enum VdcQueryType implements Serializable {
     GetJobsByCorrelationId,
     GetJobsByOffset,
 
-    //Commands
+    // Commands
     GetCommandsCompatibilityVersions(VdcQueryAuthType.User),
 
     // Disks
