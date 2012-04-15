@@ -93,10 +93,8 @@ public class VmDeviceUtils {
             id = Guid.NewGuid();
             String specParams = "";
             if (srcId.equals(Guid.Empty)) {
-                // update number of monitors if this is a desktop
-                if (vmBase.getvm_type() == VmType.Desktop) {
-                    updateNumOfMonitorsInVmDevice(null, vmBase);
-                }
+                // update number of monitors
+                updateNumOfMonitorsInVmDevice(null, vmBase);
                 //add CD if not exists
                 if (addCD) {
                     specParams = setCdPath(specParams, "", isoPath);
