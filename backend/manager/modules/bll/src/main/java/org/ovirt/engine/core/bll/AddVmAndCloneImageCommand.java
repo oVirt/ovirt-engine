@@ -136,8 +136,6 @@ public abstract class AddVmAndCloneImageCommand<T extends VmManagementParameters
             DiskImage srcDiskImage) {
         DiskImage retDiskImage = DiskImage.copyOf(srcDiskImage);
         retDiskImage.setId(newImageGuid);
-        retDiskImage.setdescription(ImagesHandler.calculateImageDescription(getParameters().getVmStaticData()
-                .getvm_name()));
         retDiskImage.setParentId(Guid.Empty);
         retDiskImage.setit_guid(Guid.Empty);
         retDiskImage.setvm_snapshot_id(getVmSnapshotId());

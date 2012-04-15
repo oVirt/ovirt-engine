@@ -574,12 +574,6 @@ public final class ImagesHandler {
         return returnValue;
     }
 
-    public static String calculateImageDescription(String vmName) {
-        StringBuilder vmLabel = new StringBuilder("ActiveImage");
-        vmLabel = (vmName == null) ? vmLabel : vmLabel.append("_").append(vmName);
-        return String.format("_%1$s_%2$s", vmLabel, new java.util.Date());
-    }
-
     public static void removeDiskImage(DiskImage diskImage) {
         try {
             removeDiskFromVm(diskImage.getvm_guid(), diskImage.getDisk().getId());

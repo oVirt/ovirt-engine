@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.action.RemoveSnapshotParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
@@ -27,16 +28,12 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
     }
 
     private void initializeObjectState() {
-        String name = "";
-        List<DiskImage> images = DbFacade
+        Snapshot snapshot = DbFacade
                         .getInstance()
-                        .getDiskImageDAO()
-                        .getAllSnapshotsForVmSnapshot(
-                                getParameters().getSnapshotId());
-        if (images.size() > 0) {
-            name = images.get(0).getdescription();
+                        .getSnapshotDao().get(getParameters().getSnapshotId());
+        if (snapshot != null) {
+            setSnapshotName(snapshot.getDescription());
         }
-        setSnapshotName(name);
     }
 
     private List<DiskImage> getSourceImages() {

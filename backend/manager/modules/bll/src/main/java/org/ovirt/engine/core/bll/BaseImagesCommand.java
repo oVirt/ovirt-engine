@@ -290,7 +290,6 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
     protected DiskImage cloneDiskImage(Guid newImageGuid, DiskImage srcDiskImage) {
         DiskImage retDiskImage = DiskImage.copyOf(srcDiskImage);
         retDiskImage.setId(newImageGuid);
-        retDiskImage.setdescription(CalculateImageDescription());
         retDiskImage.setParentId(getDiskImage().getId());
         retDiskImage.setvm_snapshot_id(getParameters().getVmSnapshotId());
         retDiskImage.setvm_guid(getImageContainerId());
@@ -356,14 +355,6 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
             DbFacade.getInstance().getDiskImageDynamicDAO().update(destinationDiskDynamic);
         }
         // DestinationDiskImage.description = CalculateImageDescription();
-    }
-
-    /**
-     * Building the label name for volume.
-     * @return - Calculated label name.
-     */
-    protected String CalculateImageDescription() {
-        return ImagesHandler.calculateImageDescription(getVm().getvm_name());
     }
 
     protected static void CompleteAdvancedDiskData(DiskImage from, DiskImage to) {

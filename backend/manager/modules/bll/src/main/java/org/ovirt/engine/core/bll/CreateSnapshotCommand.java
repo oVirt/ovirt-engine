@@ -33,12 +33,10 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 @InternalCommandAttribute
 public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extends BaseImagesCommand<T> {
     protected DiskImage mNewCreatedDiskImage;
-    private String mDescription = "";
 
     public CreateSnapshotCommand(T parameters) {
         super(parameters);
-        mDescription = parameters.getDescription();
-        setSnapshotName(mDescription);
+        setSnapshotName(parameters.getDescription());
     }
 
     protected ImagesContainterParametersBase getImagesContainterParameters() {
@@ -99,7 +97,7 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
                                             mNewCreatedDiskImage.getvolume_format(),
                                             getDiskImage().getimage_group_id().getValue(),
                                             getDestinationImageId(),
-                                            CalculateImageDescription(),
+                                            "",
                                             getStoragePool().getcompatibility_version().toString()));
 
             if (vdsReturnValue.getSucceeded()) {

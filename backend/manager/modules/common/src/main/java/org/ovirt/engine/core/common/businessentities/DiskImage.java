@@ -276,7 +276,6 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
     @Override
     public void setdescription(String value) {
         this.description = value;
-        OnPropertyChanged(new PropertyChangedEventArgs("description"));
     }
 
     private Guid id = new Guid();

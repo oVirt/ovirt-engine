@@ -39,11 +39,6 @@ public class CreateImageTemplateCommand<T extends CreateImageTemplateParameters>
     }
 
     @Override
-    protected String CalculateImageDescription() {
-        return String.format("_%1$s_%2$s_template", getVmTemplateName(), new java.util.Date());
-    }
-
-    @Override
     protected void executeCommand() {
         super.executeCommand();
         Guid storagePoolId = getDiskImage().getstorage_pool_id() != null ? getDiskImage().getstorage_pool_id()
