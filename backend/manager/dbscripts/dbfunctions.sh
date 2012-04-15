@@ -13,7 +13,7 @@ execute_command () {
 
     printf "${command}\n" > $filename
 
-    execute_file $filename $DATABASE $dbhost $dbport
+    execute_file $filename $dbname $dbhost $dbport
 }
 
 # $1 - the file to execute
