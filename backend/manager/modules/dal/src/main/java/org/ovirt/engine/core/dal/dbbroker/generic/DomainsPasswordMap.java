@@ -30,9 +30,9 @@ public class DomainsPasswordMap implements Map<String, String> {
                 String domain = parts[0].trim().toLowerCase();
                 String password = parts[1].trim();
                 try {
-                    password = EncryptionUtils.decrypt((String) password, storeUrl, storePass, certAlias);
+                    password = EncryptionUtils.decrypt(password, storeUrl, storePass, certAlias);
                 } catch (Exception e) {
-                    // failed decrypting the password - password may ot be encrypted in first place or clear text
+                    // failed decrypting the password - password may not be encrypted in first place or clear text
                     // already
                 }
                 map.put(domain, password);

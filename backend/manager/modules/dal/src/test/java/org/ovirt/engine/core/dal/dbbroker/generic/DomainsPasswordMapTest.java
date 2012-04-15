@@ -1,13 +1,10 @@
 package org.ovirt.engine.core.dal.dbbroker.generic;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.ovirt.engine.core.engineencryptutils.EncryptionUtils;
-import org.powermock.core.classloader.annotations.PowerMockIgnore;
-import org.powermock.modules.junit4.PowerMockRunner;
+import static org.junit.Assert.assertEquals;
 
-@RunWith(PowerMockRunner.class)
-@PowerMockIgnore({ "javax.crypto*" })
+import org.junit.Test;
+import org.ovirt.engine.core.engineencryptutils.EncryptionUtils;
+
 public class DomainsPasswordMapTest {
 
     /**
@@ -33,10 +30,8 @@ public class DomainsPasswordMapTest {
                 new DomainsPasswordMap("redhat.com:" + encryptedPassword + ",jboss.com:" + encryptedPassword,
                         keyStorePath, keyStorePassword, alias);
 
-        org.junit.Assert.assertEquals(clearTextPassword, map.get("redhat.com"));
-        org.junit.Assert.assertEquals(clearTextPassword, map.get("jboss.com"));
+        assertEquals(clearTextPassword, map.get("redhat.com"));
+        assertEquals(clearTextPassword, map.get("jboss.com"));
     }
-
-
 
 }
