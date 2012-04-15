@@ -14,7 +14,7 @@ public enum VdcQueryType implements Serializable {
     GetVmsRunningOnVDS,
     GetVmsRunningOnVDSCount,
     GetTopSizeVmsFromStorageDomain,
-    GetVmCustomProperties,
+    GetVmCustomProperties(VdcQueryAuthType.User),
     GetVmConfigurationBySnapshot(VdcQueryAuthType.User),
     GetVmsByImageGuid,
 

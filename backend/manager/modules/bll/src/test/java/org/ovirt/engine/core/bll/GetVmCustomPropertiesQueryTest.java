@@ -7,7 +7,7 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.utils.RandomUtils;
 
-public class GetVmCustomPropertiesQueryTest extends AbstractQueryTest<VdcQueryParametersBase, GetVmCustomPropertiesQuery<VdcQueryParametersBase>> {
+public class GetVmCustomPropertiesQueryTest extends AbstractUserQueryTest<VdcQueryParametersBase, GetVmCustomPropertiesQuery<VdcQueryParametersBase>> {
 
     /** Tests the query if both predefined and user properties exist */
     @Test
