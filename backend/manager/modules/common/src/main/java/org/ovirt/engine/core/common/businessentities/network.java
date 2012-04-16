@@ -78,7 +78,7 @@ public class network extends IVdcQueryable implements INotifyPropertyChanged, Se
     inverseJoinColumns = @JoinColumn(name = "cluster_id"))
 private network_cluster cluster = new network_cluster();
 
-    private boolean vmNetwork;
+    private boolean vmNetwork = true;
 
     @MTU
     private int mtu;
