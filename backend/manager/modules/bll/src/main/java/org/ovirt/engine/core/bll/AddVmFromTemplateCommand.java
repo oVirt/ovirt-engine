@@ -53,7 +53,7 @@ public class AddVmFromTemplateCommand<T extends AddVmFromTemplateParameters> ext
             VmHandler.LockVm(getVm().getDynamicData(), getCompensationContext());
             for (DiskImage dit : getVmTemplate().getDiskMap().values()) {
                 DiskImageBase diskInfo = null;
-                diskInfo = getParameters().getDiskInfoList().get(dit.getinternal_drive_mapping());
+                diskInfo = getParameters().getDiskInfoDestinationMap().get(dit.getId());
                 CreateCloneOfTemplateParameters p = new CreateCloneOfTemplateParameters(dit.getId(),
                         getParameters().getVmStaticData().getId(), diskInfo);
                 p.setStorageDomainId(dit.getstorage_ids().get(0));
@@ -89,7 +89,7 @@ public class AddVmFromTemplateCommand<T extends AddVmFromTemplateParameters> ext
                 retValue =
                         ImagesHandler.CheckImageConfiguration(destStorages.get(diskInfoDestinationMap.get(dit.getId()).getstorage_ids().get(0))
                                 .getStorageStaticData(),
-                                getParameters().getDiskInfoList().get(dit.getinternal_drive_mapping()),
+                                diskInfoDestinationMap.get(dit.getId()),
                                 getReturnValue().getCanDoActionMessages());
                 if (!retValue) {
                     break;

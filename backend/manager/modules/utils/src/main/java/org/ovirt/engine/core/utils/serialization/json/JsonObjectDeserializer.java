@@ -9,7 +9,6 @@ import org.codehaus.jackson.map.DeserializationConfig.Feature;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.ovirt.engine.core.common.action.AddVmFromSnapshotParameters;
-import org.ovirt.engine.core.common.action.AddVmFromTemplateParameters;
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
 import org.ovirt.engine.core.common.action.MoveOrCopyParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -45,7 +44,6 @@ public class JsonObjectDeserializer implements Deserializer {
         mapper.getDeserializationConfig().addMixInAnnotations(ValueObjectMap.class, JsonValueObjectMapMixIn.class);
         mapper.getDeserializationConfig().addMixInAnnotations(VdsStatic.class, JsonVdsStaticMixIn.class);
         mapper.getDeserializationConfig().addMixInAnnotations(VDS.class, JsonVDSMixIn.class);
-        mapper.getDeserializationConfig().addMixInAnnotations(AddVmFromTemplateParameters.class, JsonAddVmFromTemplateParametersMixIn.class);
         mapper.getDeserializationConfig().addMixInAnnotations(AddVmFromSnapshotParameters.class,
                 JsonAddVmFromSnapshotParametersMixIn.class);
         mapper.getDeserializationConfig().addMixInAnnotations(MoveOrCopyParameters.class, JsonMoveOrCopyParametersMixIn.class);

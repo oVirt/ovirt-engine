@@ -12,7 +12,6 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig.Feature;
 import org.ovirt.engine.core.common.action.AddVmFromSnapshotParameters;
-import org.ovirt.engine.core.common.action.AddVmFromTemplateParameters;
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
 import org.ovirt.engine.core.common.action.MoveOrCopyParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -45,7 +44,6 @@ public class JsonObjectSerializer implements Serializer {
         mapper.getSerializationConfig().addMixInAnnotations(ValueObjectMap.class, JsonValueObjectMapMixIn.class);
         mapper.getSerializationConfig().addMixInAnnotations(VdsStatic.class, JsonVdsStaticMixIn.class);
         mapper.getSerializationConfig().addMixInAnnotations(VDS.class, JsonVDSMixIn.class);
-        mapper.getSerializationConfig().addMixInAnnotations(AddVmFromTemplateParameters.class, JsonAddVmFromTemplateParametersMixIn.class);
         mapper.getSerializationConfig().addMixInAnnotations(MoveOrCopyParameters.class, JsonMoveOrCopyParametersMixIn.class);
         mapper.getSerializationConfig().addMixInAnnotations(AddVmTemplateParameters.class, JsonAddVmTemplateParametersMixIn.class);
         mapper.getSerializationConfig().addMixInAnnotations(VmManagementParametersBase.class, JsonVmManagementParametersBaseMixIn.class);

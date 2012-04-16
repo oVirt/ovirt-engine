@@ -2,55 +2,27 @@ package org.ovirt.engine.core.common.action;
 
 import java.util.HashMap;
 
-import org.ovirt.engine.core.compat.*;
-import org.ovirt.engine.core.common.businessentities.*;
+import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmStatic;
+import org.ovirt.engine.core.compat.Guid;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlType;
-
-import org.ovirt.engine.core.common.queries.*;
-
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "AddVmFromTemplateParameters")
-public class AddVmFromTemplateParameters extends VmManagementParametersBase implements java.io.Serializable {
+public class AddVmFromTemplateParameters extends VmManagementParametersBase {
     private static final long serialVersionUID = -3400982291165788716L;
 
-    @XmlElement(name = "DiskInfoList")
-    public ValueObjectMap getSerializedDiskInfoList() {
-        return new ValueObjectMap(diskInfoList, false);
-    }
+    public Guid OriginalTemplate = Guid.Empty;
 
-    public void setSerializedDiskInfoList(ValueObjectMap serializedDiskInfoList) {
-        diskInfoList = (serializedDiskInfoList == null) ? null : serializedDiskInfoList.asMap();
-    }
-
-    // This is used for the internal java implementation
-    private java.util.Map<String, DiskImageBase> diskInfoList;
-
-    public java.util.Map<String, DiskImageBase> getDiskInfoList() {
-        return diskInfoList;
-    }
-
-    public void setDiskInfoList(java.util.HashMap<String, DiskImageBase> value) {
-        diskInfoList = value;
-    }
-
-    @XmlElement
-    public Guid OriginalTemplate = new Guid();
-
-    public AddVmFromTemplateParameters(VmStatic vmStatic, java.util.HashMap<String, DiskImageBase> diskInfoList,
+    public AddVmFromTemplateParameters(VmStatic vmStatic, HashMap<Guid, DiskImage> diskInfoDestinationMap,
             Guid storageDomainId) {
         super(vmStatic);
         setStorageDomainId(storageDomainId);
-        setDiskInfoList(diskInfoList);
+        setDiskInfoDestinationMap(diskInfoDestinationMap);
     }
 
     public AddVmFromTemplateParameters() {
     }
 
-    public AddVmFromTemplateParameters(VM vm, HashMap<String, DiskImageBase> diskInfoList, Guid storageDomainId) {
-        this(vm.getStaticData(), diskInfoList, storageDomainId);
+    public AddVmFromTemplateParameters(VM vm, HashMap<Guid, DiskImage> diskInfoDestinationMap, Guid storageDomainId) {
+        this(vm.getStaticData(), diskInfoDestinationMap, storageDomainId);
     }
 }

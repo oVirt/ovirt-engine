@@ -342,6 +342,10 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
 
     private boolean validateProvidedDestinations() {
         for (DiskImage diskImage : diskInfoDestinationMap.values()) {
+            if(diskImage.getstorage_ids() == null || diskImage.getstorage_ids().isEmpty()) {
+                diskImage.setstorage_ids(new ArrayList<Guid>());
+                diskImage.getstorage_ids().add(getParameters().getStorageDomainId());
+            }
             Guid storageDomainId = diskImage.getstorage_ids().get(0);
             if (destStorages.get(storageDomainId) == null) {
                 storage_domains storage = DbFacade.getInstance().getStorageDomainDAO().getForStoragePool(
