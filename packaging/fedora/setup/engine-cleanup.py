@@ -47,7 +47,8 @@ MSG_ERR_FAILED_STATUS_JBOSS_SERVICE = "Error: Can't get JBoss service status"
 
 MSG_INFO_DONE = "DONE"
 MSG_INFO_ERROR = "ERROR"
-MSG_INFO_STOP_JBOSS = "Stopping JBoss Service"
+MSG_INFO_STOP_JBOSS = "Stopping JBoss service"
+MSG_INFO_STOP_NOTIFIERD = "Stopping engine-notifierd service"
 MSG_INFO_BACKUP_DB = "Backing Up Database"
 MSG_INFO_REMOVE_DB = "Removing Database"
 MSG_INFO_REMOVE_SLIMMED = "Removing %s JBoss profile" % (PROD_NAME)
@@ -296,6 +297,12 @@ def stopJboss():
     if "[FAILED]" in output and "Timeout: Shutdown command was sent, but process is still running" in output:
         raise OSError(MSG_ERR_FAILED_JBOSS_SERVICE_STILL_RUN)
 
+def stopNotifier():
+    logging.debug("stoping engine-notifierd service.")
+
+    notifier = utils.Service(basedefs.NOTIFIER_SERVICE_NAME)
+    if notifier.isServiceAvailable():
+        notifier.stop(True)
 
 def runFunc(funcs, dispString):
     print "%s..." % (dispString),
@@ -354,6 +361,8 @@ def main(options):
     if options.unlink_ear:
         runFunc([unlinkEar], MSG_INFO_UNLINK_EAR)
 
+    # Stop notifierd service
+    runFunc(stopNotifier, MSG_INFO_STOP_NOTIFIERD)
 
     if len(err_messages) == 0:
         print MSG_INFO_CLEANUP_OK
