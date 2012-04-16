@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.userportal;
 
+import java.util.HashMap;
+
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.AddVmFromScratchParameters;
 import org.ovirt.engine.core.common.action.AddVmFromTemplateParameters;
@@ -1368,11 +1370,11 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                                 }
                             }
 
-                            java.util.HashMap<String, DiskImageBase> dict =
-                                    new java.util.HashMap<String, DiskImageBase>();
+                            HashMap<Guid, DiskImage> dict =
+                                    new HashMap<Guid, DiskImage>();
                             for (DiskImage a : templateDisks)
                             {
-                                dict.put(a.getinternal_drive_mapping(), a);
+                                dict.put(a.getId(), a);
                             }
 
                             AddVmFromTemplateParameters parameters =

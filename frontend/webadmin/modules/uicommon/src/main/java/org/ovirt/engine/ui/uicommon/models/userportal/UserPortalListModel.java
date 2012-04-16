@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.uicommon.models.userportal;
 import java.util.Collections;
+import java.util.HashMap;
+
 import org.ovirt.engine.core.compat.*;
 import org.ovirt.engine.ui.uicompat.*;
 import org.ovirt.engine.core.common.businessentities.*;
@@ -1175,10 +1177,10 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
 							templateDisk.setvolume_format(DataProvider.GetDiskVolumeFormat((VolumeType)disk.getVolumeType().getSelectedItem(), getstorageDomain().getstorage_type()));
 						}
 
-						java.util.HashMap<String, DiskImageBase> dict = new java.util.HashMap<String, DiskImageBase>();
+						HashMap<Guid, DiskImage> dict = new HashMap<Guid, DiskImage>();
 						for (DiskImage a : templateDisks)
 						{
-							dict.put(a.getinternal_drive_mapping(), a);
+							dict.put(a.getId(), a);
 						}
 
 						AddVmFromTemplateParameters parameters = new AddVmFromTemplateParameters(gettempVm(), dict, getstorageDomain().getId());

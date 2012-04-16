@@ -2430,7 +2430,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
                         public void OnSuccess(Object model1, Object result1)
                         {
                             VmListModel vmListModel = (VmListModel) model1;
-                            java.util.ArrayList<DiskImage> templateDisks = (java.util.ArrayList<DiskImage>) result1;
+                            ArrayList<DiskImage> templateDisks = (ArrayList<DiskImage>) result1;
 
                             UnitVmModel unitVmModel = (UnitVmModel) vmListModel.getWindow();
 
@@ -2440,6 +2440,10 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
                             ArrayList<storage_domains> activeStorageDomains =
                                     unitVmModel.getDisksAllocationModel().getActiveStorageDomains();
 
+                            HashMap<Guid, DiskImage> dict = unitVmModel.getDisksAllocationModel()
+                            .getImageToDestinationDomainMap((Boolean) unitVmModel.getDisksAllocationModel()
+                                    .getIsSingleStorageDomain()
+                                    .getEntity());
                             for (DiskImage templateDisk : templateDisks)
                             {
                                 DiskModel disk = null;
@@ -2459,17 +2463,12 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
                                                         .get(0), activeStorageDomains);
 
                                 if (disk != null) {
-                                    templateDisk.setvolume_type((VolumeType) disk.getVolumeType().getSelectedItem());
-                                    templateDisk.setvolume_format(DataProvider.GetDiskVolumeFormat(
+                                    dict.get(templateDisk.getId()).setvolume_type((VolumeType) disk.getVolumeType()
+                                            .getSelectedItem());
+                                    dict.get(templateDisk.getId()).setvolume_format(DataProvider.GetDiskVolumeFormat(
                                             (VolumeType) disk.getVolumeType().getSelectedItem(),
                                             storageDomain.getstorage_type()));
                                 }
-                            }
-
-                            HashMap<String, DiskImageBase> dict = new HashMap<String, DiskImageBase>();
-                            for (DiskImage a : templateDisks)
-                            {
-                                dict.put(a.getinternal_drive_mapping(), a);
                             }
 
                             storage_domains storageDomain =
@@ -2479,12 +2478,6 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
                             AddVmFromTemplateParameters parameters =
                                     new AddVmFromTemplateParameters(vmListModel.getcurrentVm(),
                                             dict, storageDomain.getId());
-
-                            parameters.setDiskInfoDestinationMap(
-                                    unitVmModel.getDisksAllocationModel()
-                                            .getImageToDestinationDomainMap((Boolean) unitVmModel.getDisksAllocationModel()
-                                                    .getIsSingleStorageDomain()
-                                                    .getEntity()));
 
                             Frontend.RunAction(VdcActionType.AddVmFromTemplate, parameters,
                                     new IFrontendActionAsyncCallback() {

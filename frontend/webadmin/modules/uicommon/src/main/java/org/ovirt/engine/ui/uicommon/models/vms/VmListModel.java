@@ -1,5 +1,8 @@
 package org.ovirt.engine.ui.uicommon.models.vms;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+
 import org.ovirt.engine.core.compat.*;
 import org.ovirt.engine.ui.uicompat.*;
 import org.ovirt.engine.core.common.businessentities.*;
@@ -2114,10 +2117,10 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 						}
 					}
 
-					java.util.HashMap<String, DiskImageBase> dict = new java.util.HashMap<String, DiskImageBase>();
+					HashMap<Guid, DiskImage> dict = new HashMap<Guid, DiskImage>();
 					for (DiskImage a : templateDisks)
 					{
-						dict.put(a.getinternal_drive_mapping(), a);
+						dict.put(a.getId(), a);
 					}
 
 					model.StartProgress(null);
