@@ -41,20 +41,22 @@ public class VmPermissionListModelProvider
     }
 
     @Override
-    protected AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(UICommand lastExecutedCommand) {
+    public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(PermissionListModel source,
+            UICommand lastExecutedCommand, Model windowModel) {
         if (lastExecutedCommand == getModel().getAddCommand()) {
             return permissionPopupProvider.get();
         } else {
-            return super.getModelPopup(lastExecutedCommand);
+            return super.getModelPopup(source, lastExecutedCommand, windowModel);
         }
     }
 
     @Override
-    protected AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(UICommand lastExecutedCommand) {
+    public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(PermissionListModel source,
+            UICommand lastExecutedCommand) {
         if (lastExecutedCommand == getModel().getRemoveCommand()) {
             return removeConfirmPopupProvider.get();
         } else {
-            return super.getConfirmModelPopup(lastExecutedCommand);
+            return super.getConfirmModelPopup(source, lastExecutedCommand);
         }
     }
 

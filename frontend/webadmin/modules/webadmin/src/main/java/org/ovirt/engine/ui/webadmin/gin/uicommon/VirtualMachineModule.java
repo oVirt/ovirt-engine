@@ -74,7 +74,8 @@ public class VirtualMachineModule extends AbstractGinModule {
             final Provider<ReportPresenterWidget> reportWindowProvider) {
         return new MainTabModelProvider<VM, VmListModel>(ginjector, VmListModel.class) {
             @Override
-            protected AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(UICommand lastExecutedCommand) {
+            public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(VmListModel source,
+                    UICommand lastExecutedCommand, Model windowModel) {
                 if (lastExecutedCommand == getModel().getAssignTagsCommand()) {
                     return assignTagsPopupProvider.get();
                 } else if (lastExecutedCommand == getModel().getNewTemplateCommand()) {
@@ -105,18 +106,19 @@ public class VirtualMachineModule extends AbstractGinModule {
                 } else if (lastExecutedCommand == getModel().getGuideCommand()) {
                     return guidePopupProvider.get();
                 } else {
-                    return super.getModelPopup(lastExecutedCommand);
+                    return super.getModelPopup(source, lastExecutedCommand, windowModel);
                 }
             }
 
             @Override
-            protected AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(UICommand lastExecutedCommand) {
+            public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(VmListModel source,
+                    UICommand lastExecutedCommand) {
                 if (lastExecutedCommand == getModel().getRemoveCommand() ||
                         lastExecutedCommand == getModel().getStopCommand() ||
                         lastExecutedCommand == getModel().getShutdownCommand()) {
                     return removeConfirmPopupProvider.get();
                 } else {
-                    return super.getConfirmModelPopup(lastExecutedCommand);
+                    return super.getConfirmModelPopup(source, lastExecutedCommand);
                 }
             }
 
@@ -151,22 +153,22 @@ public class VirtualMachineModule extends AbstractGinModule {
                 VmListModel.class,
                 PermissionListModel.class) {
             @Override
-            protected AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(UICommand lastExecutedCommand) {
-                PermissionListModel model = getModel();
-
-                if (lastExecutedCommand == model.getAddCommand()) {
+            public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(PermissionListModel source,
+                    UICommand lastExecutedCommand, Model windowModel) {
+                if (lastExecutedCommand == getModel().getAddCommand()) {
                     return popupProvider.get();
                 } else {
-                    return super.getModelPopup(lastExecutedCommand);
+                    return super.getModelPopup(source, lastExecutedCommand, windowModel);
                 }
             }
 
             @Override
-            protected AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(UICommand lastExecutedCommand) {
+            public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(PermissionListModel source,
+                    UICommand lastExecutedCommand) {
                 if (lastExecutedCommand == getModel().getRemoveCommand()) {
                     return removeConfirmPopupProvider.get();
                 } else {
-                    return super.getConfirmModelPopup(lastExecutedCommand);
+                    return super.getConfirmModelPopup(source, lastExecutedCommand);
                 }
             }
         };
@@ -182,24 +184,27 @@ public class VirtualMachineModule extends AbstractGinModule {
                 VmListModel.class,
                 VmDiskListModel.class) {
             @Override
-            protected AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(UICommand lastExecutedCommand) {
+            public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(VmDiskListModel source,
+                    UICommand lastExecutedCommand, Model windowModel) {
                 VmDiskListModel model = getModel();
 
-                if (lastExecutedCommand == model.getNewCommand() || lastExecutedCommand == model.getEditCommand()) {
+                if (lastExecutedCommand == model.getNewCommand()
+                        || lastExecutedCommand == model.getEditCommand()) {
                     return popupProvider.get();
                 } else if (lastExecutedCommand == getModel().getMoveCommand()) {
                     return movePopupProvider.get();
                 } else {
-                    return super.getModelPopup(lastExecutedCommand);
+                    return super.getModelPopup(source, lastExecutedCommand, windowModel);
                 }
             }
 
             @Override
-            protected AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(UICommand lastExecutedCommand) {
+            public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(VmDiskListModel source,
+                    UICommand lastExecutedCommand) {
                 if (lastExecutedCommand == getModel().getRemoveCommand()) {
                     return removeConfirmPopupProvider.get();
                 } else {
-                    return super.getConfirmModelPopup(lastExecutedCommand);
+                    return super.getConfirmModelPopup(source, lastExecutedCommand);
                 }
             }
         };
@@ -214,22 +219,25 @@ public class VirtualMachineModule extends AbstractGinModule {
                 VmListModel.class,
                 VmInterfaceListModel.class) {
             @Override
-            protected AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(UICommand lastExecutedCommand) {
+            public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(VmInterfaceListModel source,
+                    UICommand lastExecutedCommand, Model windowModel) {
                 VmInterfaceListModel model = getModel();
 
-                if (lastExecutedCommand == model.getNewCommand() || lastExecutedCommand == model.getEditCommand()) {
+                if (lastExecutedCommand == model.getNewCommand()
+                        || lastExecutedCommand == model.getEditCommand()) {
                     return popupProvider.get();
                 } else {
-                    return super.getModelPopup(lastExecutedCommand);
+                    return super.getModelPopup(source, lastExecutedCommand, windowModel);
                 }
             }
 
             @Override
-            protected AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(UICommand lastExecutedCommand) {
+            public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(VmInterfaceListModel source,
+                    UICommand lastExecutedCommand) {
                 if (lastExecutedCommand == getModel().getRemoveCommand()) {
                     return removeConfirmPopupProvider.get();
                 } else {
-                    return super.getConfirmModelPopup(lastExecutedCommand);
+                    return super.getConfirmModelPopup(source, lastExecutedCommand);
                 }
             }
         };
@@ -259,14 +267,15 @@ public class VirtualMachineModule extends AbstractGinModule {
         return new SearchableDetailTabModelProvider<Snapshot, VmListModel, VmSnapshotListModel>(ginjector,
                 VmListModel.class, VmSnapshotListModel.class) {
             @Override
-            protected AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(UICommand lastExecutedCommand) {
+            public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(VmSnapshotListModel source,
+                    UICommand lastExecutedCommand, Model windowModel) {
                 if (lastExecutedCommand == getModel().getNewCommand()) {
                     return createPopupProvider.get();
                 } else if (lastExecutedCommand == getModel().getCloneVmCommand()) {
                     getModel().setSystemTreeSelectedItem(this.getMainModel().getSystemTreeSelectedItem());
                     return cloneVmPopupProvider.get();
                 } else {
-                    return super.getModelPopup(lastExecutedCommand);
+                    return super.getModelPopup(source, lastExecutedCommand, windowModel);
                 }
             }
         };

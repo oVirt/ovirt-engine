@@ -27,15 +27,17 @@ public class QuotaModelProvider extends TabModelProvider<QuotaModel> {
     }
 
     @Override
-    protected AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(UICommand lastExecutedCommand) {
+    public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(QuotaModel source,
+            UICommand lastExecutedCommand, Model windowModel) {
         String lastExecutedCommandName = lastExecutedCommand.getName();
+
         if (lastExecutedCommandName == "EditQuotaCluster") {
             return clusterPopupProvider.get();
-        }
-        else if (lastExecutedCommandName == "EditQuotaStorage") {
+        } else if (lastExecutedCommandName == "EditQuotaStorage") {
             return storagePopupProvider.get();
+        } else {
+            return super.getModelPopup(source, lastExecutedCommand, windowModel);
         }
-        return super.getModelPopup(lastExecutedCommand);
     }
 
     private QuotaModel model;
@@ -49,4 +51,5 @@ public class QuotaModelProvider extends TabModelProvider<QuotaModel> {
         this.model = model;
         onCommonModelChange();
     }
+
 }

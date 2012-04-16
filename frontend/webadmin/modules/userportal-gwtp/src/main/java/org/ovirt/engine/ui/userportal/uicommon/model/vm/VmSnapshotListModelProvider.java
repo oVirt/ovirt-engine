@@ -39,13 +39,14 @@ public class VmSnapshotListModelProvider extends UserPortalSearchableDetailModel
     }
 
     @Override
-    protected AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(UICommand lastExecutedCommand) {
+    public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(VmSnapshotListModel source,
+            UICommand lastExecutedCommand, Model windowModel) {
         if (lastExecutedCommand == getModel().getNewCommand()) {
             return createPopupProvider.get();
         } else if (lastExecutedCommand == getModel().getCloneVmCommand()) {
             return cloneVmPopupProvider.get();
         } else {
-            return super.getModelPopup(lastExecutedCommand);
+            return super.getModelPopup(source, lastExecutedCommand, windowModel);
         }
     }
 

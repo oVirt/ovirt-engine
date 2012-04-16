@@ -54,35 +54,52 @@ public class UserPortalListProvider extends UserPortalDataBoundModelProvider<Use
     }
 
     @Override
-    protected String[] getWindowPropertyNames() {
+    public String[] getWindowPropertyNames() {
         return new String[] { "VmModel", "RunOnceModel", "AttachCdModel" };
     }
 
     @Override
-    protected Model getWindowModel(String propertyName) {
+    public Model getWindowModel(UserPortalListModel source, String propertyName) {
         if ("VmModel".equals(propertyName)) {
-            return getModel().getVmModel();
+            return source.getVmModel();
         } else if ("RunOnceModel".equals(propertyName)) {
-            return getModel().getRunOnceModel();
+            return source.getRunOnceModel();
         } else if ("AttachCdModel".equals(propertyName)) {
-            return getModel().getAttachCdModel();
+            return source.getAttachCdModel();
+        } else {
+            return null;
         }
-
-        return null;
     }
 
     @Override
-    protected String[] getConfirmWindowPropertyNames() {
+    public void clearWindowModel(UserPortalListModel source, String propertyName) {
+        if ("VmModel".equals(propertyName)) {
+            source.setVmModel(null);
+        } else if ("RunOnceModel".equals(propertyName)) {
+            source.setRunOnceModel(null);
+        } else if ("AttachCdModel".equals(propertyName)) {
+            source.setAttachCdModel(null);
+        }
+    }
+
+    @Override
+    public String[] getConfirmWindowPropertyNames() {
         return new String[] { "ConfirmationModel" };
     }
 
     @Override
-    protected Model getConfirmWindowModel(String propertyName) {
-        return getModel().getConfirmationModel();
+    public Model getConfirmWindowModel(UserPortalListModel source, String propertyName) {
+        return source.getConfirmationModel();
     }
 
     @Override
-    protected AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(UICommand lastExecutedCommand) {
+    public void clearConfirmWindowModel(UserPortalListModel source, String propertyName) {
+        source.setConfirmationModel(null);
+    }
+
+    @Override
+    public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(UserPortalListModel source,
+            UICommand lastExecutedCommand, Model windowModel) {
         if (lastExecutedCommand == getModel().getNewTemplateCommand()) {
             return makeTemplatePopupProvider.get();
         } else if (lastExecutedCommand == getModel().getRunOnceCommand()) {
@@ -101,16 +118,17 @@ public class UserPortalListProvider extends UserPortalDataBoundModelProvider<Use
                 return newServerVmPopupProvider.get();
             }
         } else {
-            return super.getModelPopup(lastExecutedCommand);
+            return super.getModelPopup(source, lastExecutedCommand, windowModel);
         }
     }
 
     @Override
-    protected AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(UICommand lastExecutedCommand) {
+    public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(UserPortalListModel source,
+            UICommand lastExecutedCommand) {
         if (lastExecutedCommand == getModel().getRemoveCommand()) {
             return removeConfirmPopupProvider.get();
         } else {
-            return super.getConfirmModelPopup(lastExecutedCommand);
+            return super.getConfirmModelPopup(source, lastExecutedCommand);
         }
     }
 

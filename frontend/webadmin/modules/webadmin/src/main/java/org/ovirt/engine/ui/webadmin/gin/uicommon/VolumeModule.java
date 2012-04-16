@@ -42,20 +42,22 @@ public class VolumeModule extends AbstractGinModule {
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
         return new MainTabModelProvider<GlusterVolumeEntity, VolumeListModel>(ginjector, VolumeListModel.class) {
             @Override
-            protected AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(UICommand lastExecutedCommand) {
+            public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(VolumeListModel source,
+                    UICommand lastExecutedCommand, Model windowModel) {
                 if (lastExecutedCommand == getModel().getCreateVolumeCommand()) {
                     return popupProvider.get();
                 } else {
-                    return super.getModelPopup(lastExecutedCommand);
+                    return super.getModelPopup(source, lastExecutedCommand, windowModel);
                 }
             }
 
             @Override
-            protected AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(UICommand lastExecutedCommand) {
+            public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(VolumeListModel source,
+                    UICommand lastExecutedCommand) {
                 if (lastExecutedCommand.equals(getModel().getCancelCommand())) {
                     return removeConfirmPopupProvider.get();
                 } else {
-                    return super.getConfirmModelPopup(lastExecutedCommand);
+                    return super.getConfirmModelPopup(source, lastExecutedCommand);
                 }
             }
         };
@@ -66,12 +68,7 @@ public class VolumeModule extends AbstractGinModule {
     public DetailModelProvider<VolumeListModel, VolumeGeneralModel> getVolumeGeneralProvider(ClientGinjector ginjector) {
         return new DetailTabModelProvider<VolumeListModel, VolumeGeneralModel>(ginjector,
                 VolumeListModel.class,
-                VolumeGeneralModel.class) {
-            @Override
-            protected AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(UICommand lastExecutedCommand) {
-                return super.getModelPopup(lastExecutedCommand);
-            }
-        };
+                VolumeGeneralModel.class);
     }
 
     @Provides
@@ -79,9 +76,7 @@ public class VolumeModule extends AbstractGinModule {
     public SearchableDetailModelProvider<GlusterBrickEntity, VolumeListModel, VolumeBrickListModel> getVolumeBrickListProvider(ClientGinjector ginjector) {
         return new SearchableDetailTabModelProvider<GlusterBrickEntity, VolumeListModel, VolumeBrickListModel>(ginjector,
                 VolumeListModel.class,
-                VolumeBrickListModel.class) {
-
-        };
+                VolumeBrickListModel.class);
     }
 
     @Provides
@@ -89,9 +84,7 @@ public class VolumeModule extends AbstractGinModule {
     public SearchableDetailModelProvider<GlusterVolumeOptionEntity, VolumeListModel, VolumeParameterListModel> getVolumeParameterListProvider(ClientGinjector ginjector) {
         return new SearchableDetailTabModelProvider<GlusterVolumeOptionEntity, VolumeListModel, VolumeParameterListModel>(ginjector,
                 VolumeListModel.class,
-                VolumeParameterListModel.class) {
-
-        };
+                VolumeParameterListModel.class);
     }
 
     @Provides
@@ -103,22 +96,22 @@ public class VolumeModule extends AbstractGinModule {
                 VolumeListModel.class,
                 PermissionListModel.class) {
             @Override
-            protected AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(UICommand lastExecutedCommand) {
-                PermissionListModel model = getModel();
-
-                if (lastExecutedCommand == model.getAddCommand()) {
+            public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(PermissionListModel source,
+                    UICommand lastExecutedCommand, Model windowModel) {
+                if (lastExecutedCommand == getModel().getAddCommand()) {
                     return popupProvider.get();
                 } else {
-                    return super.getModelPopup(lastExecutedCommand);
+                    return super.getModelPopup(source, lastExecutedCommand, windowModel);
                 }
             }
 
             @Override
-            protected AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(UICommand lastExecutedCommand) {
+            public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(PermissionListModel source,
+                    UICommand lastExecutedCommand) {
                 if (lastExecutedCommand == getModel().getRemoveCommand()) {
                     return removeConfirmPopupProvider.get();
                 } else {
-                    return super.getConfirmModelPopup(lastExecutedCommand);
+                    return super.getConfirmModelPopup(source, lastExecutedCommand);
                 }
             }
         };
@@ -134,6 +127,6 @@ public class VolumeModule extends AbstractGinModule {
 
     @Override
     protected void configure() {
-
     }
+
 }

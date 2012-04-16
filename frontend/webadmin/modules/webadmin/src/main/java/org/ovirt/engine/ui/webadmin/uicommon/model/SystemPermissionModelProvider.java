@@ -34,18 +34,23 @@ public class SystemPermissionModelProvider extends SearchableTabModelProvider<pe
     }
 
     @Override
-    protected AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(UICommand lastExecutedCommand) {
+    public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(SystemPermissionListModel source,
+            UICommand lastExecutedCommand, Model windowModel) {
         if (lastExecutedCommand == getModel().getAddCommand()) {
             return permissionPopupProvider.get();
+        } else {
+            return super.getModelPopup(source, lastExecutedCommand, windowModel);
         }
-        return super.getModelPopup(lastExecutedCommand);
     }
 
     @Override
-    protected AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(UICommand lastExecutedCommand) {
+    public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(SystemPermissionListModel source,
+            UICommand lastExecutedCommand) {
         if (lastExecutedCommand == getModel().getRemoveCommand()) {
             return removeConfirmPopupProvider.get();
+        } else {
+            return super.getConfirmModelPopup(source, lastExecutedCommand);
         }
-        return super.getConfirmModelPopup(lastExecutedCommand);
     }
+
 }

@@ -58,7 +58,8 @@ public class StorageModule extends AbstractGinModule {
             final Provider<ReportPresenterWidget> reportWindowProvider) {
         return new MainTabModelProvider<storage_domains, StorageListModel>(ginjector, StorageListModel.class) {
             @Override
-            protected AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(UICommand lastExecutedCommand) {
+            public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(StorageListModel source,
+                    UICommand lastExecutedCommand, Model windowModel) {
                 if (lastExecutedCommand == getModel().getNewDomainCommand()
                         || lastExecutedCommand == getModel().getImportDomainCommand()
                         || lastExecutedCommand == getModel().getEditCommand()) {
@@ -66,16 +67,17 @@ public class StorageModule extends AbstractGinModule {
                 } else if (lastExecutedCommand == getModel().getRemoveCommand()) {
                     return removePopupProvider.get();
                 } else {
-                    return super.getModelPopup(lastExecutedCommand);
+                    return super.getModelPopup(source, lastExecutedCommand, windowModel);
                 }
             }
 
             @Override
-            protected AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(UICommand lastExecutedCommand) {
+            public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(StorageListModel source,
+                    UICommand lastExecutedCommand) {
                 if (lastExecutedCommand == getModel().getDestroyCommand()) {
                     return destroyConfirmPopupProvider.get();
                 } else {
-                    return super.getConfirmModelPopup(lastExecutedCommand);
+                    return super.getConfirmModelPopup(source, lastExecutedCommand);
                 }
             }
 
@@ -110,22 +112,22 @@ public class StorageModule extends AbstractGinModule {
                 StorageListModel.class,
                 PermissionListModel.class) {
             @Override
-            protected AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(UICommand lastExecutedCommand) {
-                PermissionListModel model = getModel();
-
-                if (lastExecutedCommand == model.getAddCommand()) {
+            public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(PermissionListModel source,
+                    UICommand lastExecutedCommand, Model windowModel) {
+                if (lastExecutedCommand == getModel().getAddCommand()) {
                     return popupProvider.get();
                 } else {
-                    return super.getModelPopup(lastExecutedCommand);
+                    return super.getModelPopup(source, lastExecutedCommand, windowModel);
                 }
             }
 
             @Override
-            protected AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(UICommand lastExecutedCommand) {
+            public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(PermissionListModel source,
+                    UICommand lastExecutedCommand) {
                 if (lastExecutedCommand == getModel().getRemoveCommand()) {
                     return removeConfirmPopupProvider.get();
                 } else {
-                    return super.getConfirmModelPopup(lastExecutedCommand);
+                    return super.getConfirmModelPopup(source, lastExecutedCommand);
                 }
             }
         };
@@ -141,8 +143,10 @@ public class StorageModule extends AbstractGinModule {
                 StorageListModel.class,
                 StorageDataCenterListModel.class) {
             @Override
-            protected AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(UICommand lastExecutedCommand) {
+            public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(StorageDataCenterListModel source,
+                    UICommand lastExecutedCommand, Model windowModel) {
                 StorageDataCenterListModel model = getModel();
+
                 if (lastExecutedCommand == model.getAttachCommand()) {
                     if (model.getAttachMultiple()) {
                         return multiPopupProvider.get();
@@ -150,16 +154,17 @@ public class StorageModule extends AbstractGinModule {
                         return singlePopupProvider.get();
                     }
                 } else {
-                    return super.getModelPopup(lastExecutedCommand);
+                    return super.getModelPopup(source, lastExecutedCommand, windowModel);
                 }
             }
 
             @Override
-            protected AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(UICommand lastExecutedCommand) {
+            public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(StorageDataCenterListModel source,
+                    UICommand lastExecutedCommand) {
                 if (lastExecutedCommand == getModel().getDetachCommand()) {
                     return removeConfirmPopupProvider.get();
                 } else {
-                    return super.getConfirmModelPopup(lastExecutedCommand);
+                    return super.getConfirmModelPopup(source, lastExecutedCommand);
                 }
             }
         };
@@ -198,19 +203,23 @@ public class StorageModule extends AbstractGinModule {
                 StorageListModel.class,
                 TemplateBackupModel.class) {
             @Override
-            protected AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(UICommand lastExecutedCommand) {
+            public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(TemplateBackupModel source,
+                    UICommand lastExecutedCommand, Model windowModel) {
                 if (lastExecutedCommand == getModel().getRestoreCommand()) {
                     return importTemplatePopupProvider.get();
+                } else {
+                    return super.getModelPopup(source, lastExecutedCommand, windowModel);
                 }
-                return super.getModelPopup(lastExecutedCommand);
             }
 
             @Override
-            protected AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(UICommand lastExecutedCommand) {
+            public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(TemplateBackupModel source,
+                    UICommand lastExecutedCommand) {
                 if (lastExecutedCommand == getModel().getRemoveCommand()) {
                     return removeConfirmPopupProvider.get();
+                } else {
+                    return super.getConfirmModelPopup(source, lastExecutedCommand);
                 }
-                return super.getConfirmModelPopup(lastExecutedCommand);
             }
         };
     }
@@ -224,19 +233,23 @@ public class StorageModule extends AbstractGinModule {
                 StorageListModel.class,
                 VmBackupModel.class) {
             @Override
-            protected AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(UICommand lastExecutedCommand) {
+            public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(VmBackupModel source,
+                    UICommand lastExecutedCommand, Model windowModel) {
                 if (lastExecutedCommand == getModel().getRestoreCommand()) {
                     return importVmPopupProvider.get();
+                } else {
+                    return super.getModelPopup(source, lastExecutedCommand, windowModel);
                 }
-                return super.getModelPopup(lastExecutedCommand);
             }
 
             @Override
-            protected AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(UICommand lastExecutedCommand) {
+            public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(VmBackupModel source,
+                    UICommand lastExecutedCommand) {
                 if (lastExecutedCommand == getModel().getRemoveCommand()) {
                     return removeConfirmPopupProvider.get();
+                } else {
+                    return super.getConfirmModelPopup(source, lastExecutedCommand);
                 }
-                return super.getConfirmModelPopup(lastExecutedCommand);
             }
         };
     }

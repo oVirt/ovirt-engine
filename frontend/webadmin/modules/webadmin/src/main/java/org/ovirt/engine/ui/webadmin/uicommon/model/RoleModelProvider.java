@@ -34,21 +34,25 @@ public class RoleModelProvider extends SearchableTabModelProvider<roles, RoleLis
     }
 
     @Override
-    protected AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(UICommand lastExecutedCommand) {
+    public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(RoleListModel source,
+            UICommand lastExecutedCommand, Model windowModel) {
         if (lastExecutedCommand.equals(getModel().getNewCommand())
                 || lastExecutedCommand.equals(getModel().getEditCommand())
                 || lastExecutedCommand.equals(getModel().getCloneCommand())) {
             return rolePopupProvider.get();
+        } else {
+            return super.getModelPopup(source, lastExecutedCommand, windowModel);
         }
-
-        return super.getModelPopup(lastExecutedCommand);
     }
 
     @Override
-    protected AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(UICommand lastExecutedCommand) {
+    public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(RoleListModel source,
+            UICommand lastExecutedCommand) {
         if (lastExecutedCommand.equals(getModel().getRemoveCommand())) {
             return removeConfirmPopupProvider.get();
+        } else {
+            return super.getConfirmModelPopup(source, lastExecutedCommand);
         }
-        return super.getConfirmModelPopup(lastExecutedCommand);
     }
+
 }

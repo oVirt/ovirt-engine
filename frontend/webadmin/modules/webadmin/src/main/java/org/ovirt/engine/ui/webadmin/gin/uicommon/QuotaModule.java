@@ -16,7 +16,6 @@ import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailTabModelProvide
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
-import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaClusterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaEventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaListModel;
@@ -45,20 +44,24 @@ public class QuotaModule extends AbstractGinModule {
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
         return new MainTabModelProvider<Quota, QuotaListModel>(ginjector, QuotaListModel.class) {
             @Override
-            protected AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(UICommand lastExecutedCommand) {
+            public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(QuotaListModel source,
+                    UICommand lastExecutedCommand, Model windowModel) {
                 if (lastExecutedCommand.equals(getModel().getCreateQuotaCommand())
                         || lastExecutedCommand.equals(getModel().getEditQuotaCommand())) {
                     return quotaPopupProvider.get();
+                } else {
+                    return super.getModelPopup(source, lastExecutedCommand, windowModel);
                 }
-                return super.getModelPopup(lastExecutedCommand);
             }
 
             @Override
-            protected AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(UICommand lastExecutedCommand) {
+            public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(QuotaListModel source,
+                    UICommand lastExecutedCommand) {
                 if (lastExecutedCommand.equals(getModel().getRemoveQuotaCommand())) {
                     return removeConfirmPopupProvider.get();
+                } else {
+                    return super.getConfirmModelPopup(source, lastExecutedCommand);
                 }
-                return super.getConfirmModelPopup(lastExecutedCommand);
             }
         };
     }
@@ -108,20 +111,22 @@ public class QuotaModule extends AbstractGinModule {
                 QuotaListModel.class,
                 QuotaUserListModel.class) {
             @Override
-            protected AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(UICommand lastExecutedCommand) {
-                QuotaUserListModel model = getModel();
-                if (lastExecutedCommand == model.getAddCommand()) {
+            public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(QuotaUserListModel source,
+                    UICommand lastExecutedCommand, Model windowModel) {
+                if (lastExecutedCommand == getModel().getAddCommand()) {
                     return popupProvider.get();
+                } else {
+                    return super.getModelPopup(source, lastExecutedCommand, windowModel);
                 }
-                return super.getModelPopup(lastExecutedCommand);
             }
 
             @Override
-            protected AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(UICommand lastExecutedCommand) {
+            public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(QuotaUserListModel source,
+                    UICommand lastExecutedCommand) {
                 if (lastExecutedCommand == getModel().getRemoveCommand()) {
                     return removeConfirmPopupProvider.get();
                 } else {
-                    return super.getConfirmModelPopup(lastExecutedCommand);
+                    return super.getConfirmModelPopup(source, lastExecutedCommand);
                 }
             }
         };
@@ -136,22 +141,22 @@ public class QuotaModule extends AbstractGinModule {
                 QuotaListModel.class,
                 QuotaPermissionListModel.class) {
             @Override
-            protected AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(UICommand lastExecutedCommand) {
-                PermissionListModel model = getModel();
-
-                if (lastExecutedCommand == model.getAddCommand()) {
+            public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(QuotaPermissionListModel source,
+                    UICommand lastExecutedCommand, Model windowModel) {
+                if (lastExecutedCommand == getModel().getAddCommand()) {
                     return popupProvider.get();
                 } else {
-                    return super.getModelPopup(lastExecutedCommand);
+                    return super.getModelPopup(source, lastExecutedCommand, windowModel);
                 }
             }
 
             @Override
-            protected AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(UICommand lastExecutedCommand) {
+            public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(QuotaPermissionListModel source,
+                    UICommand lastExecutedCommand) {
                 if (lastExecutedCommand == getModel().getRemoveCommand()) {
                     return removeConfirmPopupProvider.get();
                 } else {
-                    return super.getConfirmModelPopup(lastExecutedCommand);
+                    return super.getConfirmModelPopup(source, lastExecutedCommand);
                 }
             }
         };

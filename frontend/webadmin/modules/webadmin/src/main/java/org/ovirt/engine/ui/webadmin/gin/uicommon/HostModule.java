@@ -64,10 +64,10 @@ public class HostModule extends AbstractGinModule {
             final Provider<AssignTagsPopupPresenterWidget> assignTagsPopupProvider,
             final Provider<ReportPresenterWidget> reportWindowProvider,
             final Provider<ConfigureLocalStoragePopupPresenterWidget> configureLocalStoragePopupProvider) {
-
         return new MainTabModelProvider<VDS, HostListModel>(ginjector, HostListModel.class) {
             @Override
-            protected AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(UICommand lastExecutedCommand) {
+            public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(HostListModel source,
+                    UICommand lastExecutedCommand, Model windowModel) {
                 if (lastExecutedCommand == getModel().getNewCommand()
                         || lastExecutedCommand == getModel().getEditCommand()
                         || lastExecutedCommand == getModel().getEditWithPMemphasisCommand()
@@ -78,17 +78,18 @@ public class HostModule extends AbstractGinModule {
                 } else if (lastExecutedCommand == getModel().getConfigureLocalStorageCommand()) {
                     return configureLocalStoragePopupProvider.get();
                 }
-                return super.getModelPopup(lastExecutedCommand);
+                return super.getModelPopup(source, lastExecutedCommand, windowModel);
             }
 
             @Override
-            protected AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(UICommand lastExecutedCommand) {
+            public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(HostListModel source,
+                    UICommand lastExecutedCommand) {
                 if (lastExecutedCommand == getModel().getRemoveCommand()) {
                     return removeConfirmPopupProvider.get();
                 } else if (lastExecutedCommand == getModel().getManualFenceCommand()) {
                     return manualFenceConfirmPopupProvider.get();
                 } else {
-                    return super.getConfirmModelPopup(lastExecutedCommand);
+                    return super.getConfirmModelPopup(source, lastExecutedCommand);
                 }
             }
 
@@ -113,11 +114,12 @@ public class HostModule extends AbstractGinModule {
                 HostListModel.class,
                 HostGeneralModel.class) {
             @Override
-            protected AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(UICommand lastExecutedCommand) {
+            public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(HostGeneralModel source,
+                    UICommand lastExecutedCommand, Model windowModel) {
                 if (lastExecutedCommand == getModel().getInstallCommand()) {
                     return installPopupProvider.get();
                 } else {
-                    return super.getModelPopup(lastExecutedCommand);
+                    return super.getModelPopup(source, lastExecutedCommand, windowModel);
                 }
             }
         };
@@ -145,37 +147,31 @@ public class HostModule extends AbstractGinModule {
                 HostListModel.class,
                 HostInterfaceListModel.class) {
             @Override
-            protected AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(UICommand lastExecutedCommand) {
+            public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(HostInterfaceListModel source,
+                    UICommand lastExecutedCommand, Model windowModel) {
+                // Resolve by dialog model
+                if (windowModel instanceof HostBondInterfaceModel) {
+                    return hostBondPopupProvider.get();
+                } else if (windowModel instanceof HostInterfaceModel) {
+                    return hostInterfacePopupProvider.get();
+                } else if (windowModel instanceof HostManagementNetworkModel) {
+                    return hostManagementPopupProvider.get();
+                }
+
+                // Resolve by last executed command
                 if (lastExecutedCommand == getModel().getEditCommand()) {
                     return hostInterfacePopupProvider.get();
-                }
-                if (lastExecutedCommand == getModel().getEditManagementNetworkCommand()) {
+                } else if (lastExecutedCommand == getModel().getEditManagementNetworkCommand()) {
                     return hostManagementPopupProvider.get();
-                }
-                if (lastExecutedCommand == getModel().getBondCommand()) {
+                } else if (lastExecutedCommand == getModel().getBondCommand()) {
                     return hostBondPopupProvider.get();
-                }
-                if (lastExecutedCommand == getModel().getSetupNetworksCommand()) {
+                } else if (lastExecutedCommand == getModel().getSetupNetworksCommand()) {
                     return hostSetupNetworksPopupProvider.get();
-                }
-                if (lastExecutedCommand == getModel().getDetachCommand()) {
+                } else if (lastExecutedCommand == getModel().getDetachCommand()) {
                     return detachConfirmPopupProvider.get();
+                } else {
+                    return super.getModelPopup(source, lastExecutedCommand, windowModel);
                 }
-                return super.getModelPopup(lastExecutedCommand);
-            }
-
-            @Override
-            protected AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(Model window) {
-                if (window instanceof HostBondInterfaceModel) {
-                    return hostBondPopupProvider.get();
-                }
-                if (window instanceof HostInterfaceModel) {
-                    return hostInterfacePopupProvider.get();
-                }
-                if (window instanceof HostManagementNetworkModel) {
-                    return hostManagementPopupProvider.get();
-                }
-                return super.getModelPopup(window);
             }
 
             @Override
@@ -195,11 +191,12 @@ public class HostModule extends AbstractGinModule {
                 HostVmListModel.class) {
 
             @Override
-            protected AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(UICommand lastExecutedCommand) {
+            public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(HostVmListModel source,
+                    UICommand lastExecutedCommand, Model windowModel) {
                 if (lastExecutedCommand == getModel().getMigrateCommand()) {
                     return migratePopupProvider.get();
                 }
-                return super.getModelPopup(lastExecutedCommand);
+                return super.getModelPopup(source, lastExecutedCommand, windowModel);
             }
         };
     }
@@ -212,23 +209,24 @@ public class HostModule extends AbstractGinModule {
         return new SearchableDetailTabModelProvider<permissions, HostListModel, PermissionListModel>(ginjector,
                 HostListModel.class,
                 PermissionListModel.class) {
-            @Override
-            protected AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(UICommand lastExecutedCommand) {
-                PermissionListModel model = getModel();
 
-                if (lastExecutedCommand == model.getAddCommand()) {
+            @Override
+            public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(PermissionListModel source,
+                    UICommand lastExecutedCommand, Model windowModel) {
+                if (lastExecutedCommand == getModel().getAddCommand()) {
                     return popupProvider.get();
                 } else {
-                    return super.getModelPopup(lastExecutedCommand);
+                    return super.getModelPopup(source, lastExecutedCommand, windowModel);
                 }
             }
 
             @Override
-            protected AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(UICommand lastExecutedCommand) {
+            public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(PermissionListModel source,
+                    UICommand lastExecutedCommand) {
                 if (lastExecutedCommand == getModel().getRemoveCommand()) {
                     return removeConfirmPopupProvider.get();
                 } else {
-                    return super.getConfirmModelPopup(lastExecutedCommand);
+                    return super.getConfirmModelPopup(source, lastExecutedCommand);
                 }
             }
         };

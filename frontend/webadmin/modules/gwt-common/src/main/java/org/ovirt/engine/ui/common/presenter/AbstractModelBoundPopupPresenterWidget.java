@@ -7,11 +7,14 @@ import org.ovirt.engine.core.compat.ObservableCollection;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.common.uicommon.DocumentationPathTranslator;
 import org.ovirt.engine.ui.common.uicommon.model.DeferredModelCommandInvoker;
+import org.ovirt.engine.ui.common.uicommon.model.ModelBoundPopupHandler;
+import org.ovirt.engine.ui.common.uicommon.model.ModelBoundPopupResolver;
 import org.ovirt.engine.ui.common.utils.WebUtils;
 import org.ovirt.engine.ui.common.widget.HasEditorDriver;
 import org.ovirt.engine.ui.common.widget.HasUiCommandClickHandlers;
 import org.ovirt.engine.ui.common.widget.dialog.PopupNativeKeyPressHandler;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 
@@ -20,7 +23,6 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.shared.EventBus;
-import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.PopupView;
 import com.gwtplatform.mvp.client.PresenterWidget;
 
@@ -34,7 +36,7 @@ import com.gwtplatform.mvp.client.PresenterWidget;
  * @param <V>
  *            View type.
  */
-public abstract class AbstractModelBoundPopupPresenterWidget<T extends Model, V extends AbstractModelBoundPopupPresenterWidget.ViewDef<T>> extends PresenterWidget<V> {
+public abstract class AbstractModelBoundPopupPresenterWidget<T extends Model, V extends AbstractModelBoundPopupPresenterWidget.ViewDef<T>> extends PresenterWidget<V> implements ModelBoundPopupResolver<T> {
 
     public interface ViewDef<T extends Model> extends PopupView, HasEditorDriver<T> {
 
@@ -62,9 +64,55 @@ public abstract class AbstractModelBoundPopupPresenterWidget<T extends Model, V 
 
     }
 
-    @Inject
+    private final ModelBoundPopupHandler<T> popupHandler;
+
     public AbstractModelBoundPopupPresenterWidget(EventBus eventBus, V view) {
         super(eventBus, view);
+        this.popupHandler = new ModelBoundPopupHandler<T>(this, eventBus);
+    }
+
+    @Override
+    public String[] getWindowPropertyNames() {
+        return new String[] { "Window" };
+    }
+
+    @Override
+    public Model getWindowModel(T source, String propertyName) {
+        return source.getWindow();
+    }
+
+    @Override
+    public void clearWindowModel(T source, String propertyName) {
+        source.setWindow(null);
+    }
+
+    @Override
+    public String[] getConfirmWindowPropertyNames() {
+        return new String[] { "ConfirmWindow" };
+    }
+
+    @Override
+    public Model getConfirmWindowModel(T source, String propertyName) {
+        return source.getConfirmWindow();
+    }
+
+    @Override
+    public void clearConfirmWindowModel(T source, String propertyName) {
+        source.setConfirmWindow(null);
+    }
+
+    @Override
+    public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(T source,
+            UICommand lastExecutedCommand, Model windowModel) {
+        // No-op, override as necessary
+        return null;
+    }
+
+    @Override
+    public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(T source,
+            UICommand lastExecutedCommand) {
+        // No-op, override as necessary
+        return null;
     }
 
     /**
@@ -120,6 +168,9 @@ public abstract class AbstractModelBoundPopupPresenterWidget<T extends Model, V 
                 }
             }
         });
+
+        // Register dialog model property change listener
+        popupHandler.addDialogModelListener(model);
 
         // Initialize popup contents from the model
         getView().edit(model);

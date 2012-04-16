@@ -22,7 +22,6 @@ public class UserPortalTemplateListProvider extends UserPortalDataBoundModelProv
             Provider<TemplateNewPopupPresenterWidget> newTemplatePopupProvider,
             CurrentUser user) {
         super(ginjector, user);
-
         this.newTemplatePopupProvider = newTemplatePopupProvider;
     }
 
@@ -32,13 +31,13 @@ public class UserPortalTemplateListProvider extends UserPortalDataBoundModelProv
     }
 
     @Override
-    protected AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(UICommand lastExecutedCommand) {
-
+    public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(UserPortalTemplateListModel source,
+            UICommand lastExecutedCommand, Model windowModel) {
         if (lastExecutedCommand == getModel().getEditCommand()) {
             return newTemplatePopupProvider.get();
+        } else {
+            return super.getModelPopup(source, lastExecutedCommand, windowModel);
         }
-
-        return super.getModelPopup(lastExecutedCommand);
     }
 
 }

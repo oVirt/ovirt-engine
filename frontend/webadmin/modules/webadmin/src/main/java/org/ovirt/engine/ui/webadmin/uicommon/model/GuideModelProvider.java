@@ -59,7 +59,8 @@ public class GuideModelProvider extends TabModelProvider<GuideModel> {
     }
 
     @Override
-    protected AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(UICommand lastExecutedCommand) {
+    public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(GuideModel source,
+            UICommand lastExecutedCommand, Model windowModel) {
         String lastExecutedCommandName = lastExecutedCommand.getName();
 
         if (lastExecutedCommandName.equals("AddCluster")) {
@@ -83,7 +84,7 @@ public class GuideModelProvider extends TabModelProvider<GuideModel> {
         } else if (lastExecutedCommandName.equals("AddDisk")) {
             return vmDiskPopupPopupProvider.get();
         } else {
-            return super.getModelPopup(lastExecutedCommand);
+            return super.getModelPopup(source, lastExecutedCommand, windowModel);
         }
     }
 
@@ -96,4 +97,5 @@ public class GuideModelProvider extends TabModelProvider<GuideModel> {
         this.model = model;
         onCommonModelChange();
     }
+
 }

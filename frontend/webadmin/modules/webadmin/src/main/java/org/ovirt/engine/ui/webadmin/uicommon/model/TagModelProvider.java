@@ -160,21 +160,23 @@ public class TagModelProvider extends DataBoundTabModelProvider<TagModel, TagLis
     }
 
     @Override
-    protected AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(UICommand lastExecutedCommand) {
+    public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(TagListModel source,
+            UICommand lastExecutedCommand, Model windowModel) {
         if (lastExecutedCommand == getModel().getNewCommand()
                 || lastExecutedCommand == getModel().getEditCommand()) {
             return popupProvider.get();
         } else {
-            return super.getModelPopup(lastExecutedCommand);
+            return super.getModelPopup(source, lastExecutedCommand, windowModel);
         }
     }
 
     @Override
-    protected AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(UICommand lastExecutedCommand) {
+    public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(TagListModel source,
+            UICommand lastExecutedCommand) {
         if (lastExecutedCommand == getModel().getRemoveCommand()) {
             return removeConfirmPopupProvider.get();
         } else {
-            return super.getConfirmModelPopup(lastExecutedCommand);
+            return super.getConfirmModelPopup(source, lastExecutedCommand);
         }
     }
 

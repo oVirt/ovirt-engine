@@ -40,20 +40,23 @@ public class VmInterfaceListModelProvider extends UserPortalSearchableDetailMode
     }
 
     @Override
-    protected AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(UICommand lastExecutedCommand) {
+    public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(VmInterfaceListModel source,
+            UICommand lastExecutedCommand, Model windowModel) {
         if (lastExecutedCommand == getModel().getNewCommand() || lastExecutedCommand == getModel().getEditCommand()) {
             return newTemplateInterfacePopupProvider.get();
+        } else {
+            return super.getModelPopup(source, lastExecutedCommand, windowModel);
         }
-
-        return super.getModelPopup(lastExecutedCommand);
     }
 
     @Override
-    protected AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(UICommand lastExecutedCommand) {
+    public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(VmInterfaceListModel source,
+            UICommand lastExecutedCommand) {
         if (lastExecutedCommand == getModel().getRemoveCommand()) {
             return removeConfirmPopupProvider.get();
         } else {
-            return super.getConfirmModelPopup(lastExecutedCommand);
+            return super.getConfirmModelPopup(source, lastExecutedCommand);
         }
     }
+
 }
