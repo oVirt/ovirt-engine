@@ -2080,7 +2080,7 @@ def deployJbossModules():
     except:
         logging.error("Failed to deploy modules into jboss")
         logging.error(traceback.format_exc())
-        raise output_messages.ERR_EXP_FAILED_DEPLOY_MODULES
+        raise Exception(output_messages.ERR_EXP_FAILED_DEPLOY_MODULES)
 
 def configEncryptedPass():
     """
@@ -2112,7 +2112,7 @@ def configEncryptedPass():
     except:
         logging.error("ERROR Editing jboss's configuration file")
         logging.error(traceback.format_exc())
-        raise output_messages.ERR_EXP_FAILED_CONFIG_JBOSS
+        raise Exception(output_messages.ERR_EXP_FAILED_CONFIG_JBOSS)
 
 def configJbossXml():
     """
@@ -2155,7 +2155,7 @@ def configJbossXml():
     except:
         logging.error("ERROR Editing jboss's configuration file")
         logging.error(traceback.format_exc())
-        raise output_messages.ERR_EXP_FAILED_CONFIG_JBOSS
+        raise Exception(output_messages.ERR_EXP_FAILED_CONFIG_JBOSS)
 
 def configJbossAjpConnector(xmlObj):
     """

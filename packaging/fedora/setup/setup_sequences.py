@@ -48,9 +48,9 @@ class Step(object):
             try:
                 logging.debug("running %s"%(function.func_name))
                 function()
-            except Exception, (instance):
+            except:
                 print ("[ " + utils.getColoredText(output_messages.INFO_ERROR, basedefs.RED) + " ]").rjust(spaceLen)
-                raise Exception(instance)
+                raise
         print ("[ " + utils.getColoredText(output_messages.INFO_DONE, basedefs.GREEN) + " ]").rjust(spaceLen)
 
 class Sequence(object):

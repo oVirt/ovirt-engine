@@ -323,9 +323,9 @@ def validateFQDN(param, options=[]):
 
         #conditions passed
         return True
-    except Exception, (instance):
+    except:
         logging.error(traceback.format_exc())
-        raise Exception(instance)
+        raise
 
 def validateIsoDomainName(param, options=[]):
     """
