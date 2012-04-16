@@ -70,15 +70,6 @@ public interface VmPoolDAO extends DAO, SearchDAO<vm_pools> {
     List<vm_pools> getAllForUser(Guid user);
 
     /**
-     * Gets all VM pools for the specified AD group.
-     *
-     * @param adGroup
-     *            the AD group
-     * @return the list of pools
-     */
-    List<vm_pools> getAllForAdGroup(Guid adGroup);
-
-    /**
      * Saves the specified pool.
      *
      * @param pool

@@ -98,7 +98,6 @@ public enum VdcQueryType implements Serializable {
     // AdGroups queries
     GetAllAdGroups,
     GetAdGroupsAttachedToTimeLeasedVmPool,
-    GetVmPoolsAttachedToAdGroup,
     GetAdGroupById,
 
     // VM pools queries

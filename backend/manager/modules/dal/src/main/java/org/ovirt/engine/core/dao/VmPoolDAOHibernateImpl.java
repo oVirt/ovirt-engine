@@ -103,12 +103,6 @@ public class VmPoolDAOHibernateImpl extends BaseDAOHibernateImpl<vm_pools, NGuid
         return result;
     }
 
-    @Override
-    public List<vm_pools> getAllForAdGroup(Guid adGroup) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
     @SuppressWarnings("unchecked")
     @Override
     public List<vm_pools> getAllWithQuery(String sql) {

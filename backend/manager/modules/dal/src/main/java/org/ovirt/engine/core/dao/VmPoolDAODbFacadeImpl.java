@@ -67,15 +67,6 @@ public class VmPoolDAODbFacadeImpl extends BaseDAODbFacade implements VmPoolDAO 
     }
 
     @Override
-    public List<vm_pools> getAllForAdGroup(Guid id) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("ad_group_id", id);
-        return getCallsHandler().executeReadList("GetVm_poolsByAdGroup_id",
-                VmPoolNonFullRowMapper.instance,
-                parameterSource);
-    }
-
-    @Override
     public List<vm_pools> getAllWithQuery(String query) {
         return new SimpleJdbcTemplate(jdbcTemplate).query(query, VmPoolFullRowMapper.instance);
     }

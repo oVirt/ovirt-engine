@@ -208,19 +208,6 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetVm_poolsByAdGroup_id(v_ad_group_id UUID) RETURNS SETOF vm_pools_view
-   AS $procedure$
-BEGIN
-      RETURN QUERY SELECT DISTINCT vm_pools_view.*
-      FROM  ad_vm_pool_group_map INNER JOIN
-      vm_pools_view ON ad_vm_pool_group_map.vm_pool_id = vm_pools_view.vm_pool_id
-      WHERE(ad_vm_pool_group_map.group_id = v_ad_group_id);
-END; $procedure$
-LANGUAGE plpgsql;
-
-
-
-
 Create or replace FUNCTION GetVm_poolsByAdGroup_names(v_ad_group_names VARCHAR(4000)) RETURNS SETOF vm_pools_view
    AS $procedure$
 BEGIN
