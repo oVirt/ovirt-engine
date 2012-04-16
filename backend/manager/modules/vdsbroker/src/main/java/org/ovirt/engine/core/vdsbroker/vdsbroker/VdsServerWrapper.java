@@ -6,6 +6,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
 
 import org.apache.commons.httpclient.HttpClient;
+import org.ovirt.engine.core.vdsbroker.irsbroker.GlusterVolumeOptionsInfoReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IsoListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.OneUuidReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcRunTimeException;
@@ -938,6 +939,7 @@ public class VdsServerWrapper implements IVdsServer {
         }
     }
 
+    @Override
     public StatusOnlyReturnForXmlRpc hotPlugNic(XmlRpcStruct info) {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.hotplugNic(info.getInnerMap());
@@ -1043,4 +1045,14 @@ public class VdsServerWrapper implements IVdsServer {
             throw new XmlRpcRunTimeException(ute);
         }
     }
+
+    @Override
+    public GlusterVolumeOptionsInfoReturnForXmlRpc glusterVolumeSetOptionsList() {
+        try {
+            return new GlusterVolumeOptionsInfoReturnForXmlRpc(vdsServer.glusterVolumeSetOptionsList());
+        } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
+    }
+
 }

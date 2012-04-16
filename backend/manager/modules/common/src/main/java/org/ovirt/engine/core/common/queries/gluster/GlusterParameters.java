@@ -1,0 +1,31 @@
+package org.ovirt.engine.core.common.queries.gluster;
+
+import javax.validation.constraints.NotNull;
+
+import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
+import org.ovirt.engine.core.compat.Guid;
+
+/**
+ * Parameter class with cluster Id as parameters. <br>
+ * This will be used by gluster volume option help command. <br>
+ */
+public class GlusterParameters extends VdcQueryParametersBase {
+    private static final long serialVersionUID = -1224829720081853632L;
+
+    @NotNull(message = "VALIDATION.GLUSTER.VOLUME.CLUSTER_ID.NOT_NULL")
+    private Guid clusterId;
+
+    public GlusterParameters(Guid clusterId) {
+        setClusterId(clusterId);
+    }
+
+    public Guid getClusterId() {
+        return clusterId;
+    }
+
+    public void setClusterId(Guid clusterId) {
+        this.clusterId = clusterId;
+    }
+
+
+}

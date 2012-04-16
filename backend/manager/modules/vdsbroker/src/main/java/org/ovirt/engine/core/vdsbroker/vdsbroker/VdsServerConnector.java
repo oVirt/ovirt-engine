@@ -203,4 +203,6 @@ public interface VdsServerConnector {
     public Map<String, Object> glusterVolumeDelete(String volumeName);
 
     public Map<String, Object> glusterVolumeReset(String volumeName, String volumeOption, Boolean force);
+
+    public Map<String, Object> glusterVolumeSetOptionsList();
 }
