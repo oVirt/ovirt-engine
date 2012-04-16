@@ -51,14 +51,14 @@ public class VmHandler {
      */
     public static void Init() {
         mUpdateVmsStatic = new ObjectIdentityChecker(VmHandler.class,
-                java.util.Arrays.asList(new String[] { "VM", "VmStatic", "VmDynamic" }), VMStatus.class);
+                Arrays.asList(new String[] { "VM", "VmStatic", "VmDynamic" }), VMStatus.class);
 
         mUpdateVmsStatic.AddPermittedFields(new String[] { "vm_name", "description", "domain", "os", "osType",
                 "creation_date", "num_of_monitors", "usb_policy", "is_auto_suspend", "auto_startup",
                 "dedicated_vm_for_vds", "default_display_type", "priority", "default_boot_sequence", "initrd_url",
                 "kernel_url", "kernel_params", "migrationSupport", "minAllocatedMem", "quotaId", "quotaName" });
         mUpdateVmsStatic.AddFields(
-                java.util.Arrays.asList(new Enum[] { VMStatus.Down }),
+                Arrays.asList(new Enum[] { VMStatus.Down }),
                 Arrays.asList(new String[] { "vds_group_id", "time_zone", "is_stateless", "nice_level", "mem_size_mb",
                         "num_of_sockets", "cpu_per_socket", "iso_path", "userDefinedProperties",
                         "predefinedProperties", "customProperties", "images", "interfaces" }));
@@ -319,7 +319,9 @@ public class VmHandler {
      *            The reasons.VdsGroups
      * @return
      */
-    public static boolean isMemorySizeLegal(VmOsType osType, int memSizeInMB, java.util.ArrayList<String> reasons,
+    public static boolean isMemorySizeLegal(VmOsType osType,
+            int memSizeInMB,
+            ArrayList<String> reasons,
             String clsuter_version) {
         boolean result = VmValidationUtils.isMemorySizeLegal(osType, memSizeInMB, clsuter_version);
         if (!result) {
