@@ -84,7 +84,7 @@ public class VmDeviceUtils {
         List<VmDevice> devices = dao.getVmDeviceByVmId(srcId);
         String isoPath=vmBase.getiso_path();
         // indicates that VM should have CD either from its own (iso_path) or from the snapshot it was cloned from.
-        boolean shouldHaveCD = !isoPath.isEmpty();
+        boolean shouldHaveCD = StringUtils.isNotEmpty(isoPath);
         // indicates if VM has already a non empty CD in DB
         boolean hasAlreadyCD = (!(DbFacade.getInstance().getVmDeviceDAO().getVmDeviceByVmIdTypeAndDevice(vmBase.getId(), VmDeviceType.DISK.getName(), VmDeviceType.CDROM.getName())).isEmpty());
         boolean addCD = (!hasAlreadyCD && shouldHaveCD);
