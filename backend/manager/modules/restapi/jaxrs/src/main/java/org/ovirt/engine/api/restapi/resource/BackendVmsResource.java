@@ -99,15 +99,14 @@ public class BackendVmsResource extends
             // The parameters to AddVmFromSnapshot hold an array list of Disks
             // and not List of Disks, as this is a GWT serialization limitation,
             // and this parameter class serves GWT clients as well.
-            ArrayList<DiskImage> changedDisks = null;
+            HashMap<Guid, DiskImage> diskImagesById = getDiskImagesByIdMap(vmConfiguration.getDiskMap().values());
             if (vm.isSetDisks()) {
-                Map<Guid, DiskImage> diskImagesById = getDiskImagesByIdMap(vmConfiguration.getDiskMap().values());
-                changedDisks = getDiskImagesForCloneFromSnapshotParams(vm.getDisks(), diskImagesById);
+                prepareImagesForCloneFromSnapshotParams(vm.getDisks(), diskImagesById);
             }
             response =
                         cloneVmFromSnapshot(vmConfiguration.getStaticData(),
                                 snapshotId,
-                                changedDisks);
+                                diskImagesById);
         } else if (vm.isSetDisks() && vm.getDisks().isSetClone() && vm.getDisks().isClone()) {
             response = cloneVmFromTemplate(staticVm, vm.getDisks(), templateId);
         } else if (Guid.Empty.equals(templateId)) {
@@ -127,22 +126,19 @@ public class BackendVmsResource extends
         return vmConfiguration;
     }
 
-    private ArrayList<DiskImage> getDiskImagesForCloneFromSnapshotParams(Disks disks,
+    private void prepareImagesForCloneFromSnapshotParams(Disks disks,
             Map<Guid, DiskImage> imagesFromConfiguration) {
-        ArrayList<DiskImage> result = null;
         if (disks.getDisks() != null) {
-            result = new ArrayList<DiskImage>();
             for (Disk disk : disks.getDisks()) {
                 DiskImage diskImageFromConfig = imagesFromConfiguration.get(asGuid(disk.getId()));
                 DiskImage diskImage = getMapper(Disk.class, DiskImage.class).map(disk, diskImageFromConfig);
-                result.add(diskImage);
+                imagesFromConfiguration.put(diskImage.getId(), diskImage);
             }
         }
-        return result;
     }
 
-    private Map<Guid, DiskImage> getDiskImagesByIdMap(Collection<DiskImage> values) {
-        Map<Guid, DiskImage> result = new HashMap<Guid, DiskImage>();
+    private HashMap<Guid, DiskImage> getDiskImagesByIdMap(Collection<DiskImage> values) {
+        HashMap<Guid, DiskImage> result = new HashMap<Guid, DiskImage>();
         for (DiskImage diskImage : values) {
             result.put(diskImage.getId(), diskImage);
         }
@@ -161,10 +157,11 @@ public class BackendVmsResource extends
 
     private Response cloneVmFromSnapshot(VmStatic staticVm,
             String snapshotId,
-            ArrayList<DiskImage> diskInfoList) {
+            HashMap<Guid, DiskImage> images) {
         Guid sourceSnapshotId = asGuid(snapshotId);
         AddVmFromSnapshotParameters params =
-                new AddVmFromSnapshotParameters(staticVm, diskInfoList, sourceSnapshotId);
+                new AddVmFromSnapshotParameters(staticVm, sourceSnapshotId);
+        params.setDiskInfoDestinationMap(images);
         return performCreation(VdcActionType.AddVmFromSnapshot,
                                 params,
                                 new QueryIdResolver(VdcQueryType.GetVmByVmId, GetVmByVmIdParameters.class));

@@ -150,12 +150,17 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
 
         DiskImage clonedDiskImage =
                 super.cloneDiskImage(newVmId, storageDomainId, newImageGroupId, newImageGuid, srcDiskImage);
-
-        // If disk image information was passed from client , use its volume information
-        // In case the disk image information was not passed from client, use the volume information of the ancestral
-        // image
+        DiskImage diskImageFromClient = diskInfoDestinationMap.get(srcDiskImage.getId());
+        // If volume information was changed at client , use its volume information.
+        // If volume information was not changed at client - use the volume information of the ancestral image
+        if (volumeInfoChanged(diskImageFromClient, srcDiskImage)) {
+            changeVolumeInfo(clonedDiskImage, diskImageFromClient);
+        } else {
+            DiskImage ancestorDiskImage = getDiskImageDao().getAncestor(srcDiskImage.getId());
+            changeVolumeInfo(clonedDiskImage, ancestorDiskImage);
+        }
         if (diskInfoDestinationMap != null && diskInfoDestinationMap.containsKey(srcDiskImage.getId())) {
-            DiskImage diskImageFromClient = diskInfoDestinationMap.get(srcDiskImage.getId());
+            diskImageFromClient = diskInfoDestinationMap.get(srcDiskImage.getId());
             changeVolumeInfo(clonedDiskImage, diskImageFromClient);
         } else {
             DiskImage ancestorDiskImage = getDiskImageDao().getAncestor(srcDiskImage.getId());
@@ -163,6 +168,10 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
         }
 
         return clonedDiskImage;
+    }
+
+    private boolean volumeInfoChanged(DiskImage diskImageFromClient, DiskImage srcDiskImage) {
+        return (diskImageFromClient.getvolume_format() != srcDiskImage.getvolume_format() || diskImageFromClient.getvolume_type() != srcDiskImage.getvolume_type());
     }
 
     protected void changeVolumeInfo(DiskImage clonedDiskImage, DiskImage diskImageFromClient) {

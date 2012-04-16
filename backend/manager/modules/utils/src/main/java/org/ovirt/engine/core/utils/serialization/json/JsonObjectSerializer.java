@@ -11,7 +11,6 @@ import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig.Feature;
-import org.ovirt.engine.core.common.action.AddVmFromSnapshotParameters;
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
 import org.ovirt.engine.core.common.action.MoveOrCopyParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -49,8 +48,6 @@ public class JsonObjectSerializer implements Serializer {
         mapper.getSerializationConfig().addMixInAnnotations(VmManagementParametersBase.class, JsonVmManagementParametersBaseMixIn.class);
         mapper.getSerializationConfig().addMixInAnnotations(VmBase.class, JsonVmBaseMixIn.class);
         mapper.getSerializationConfig().addMixInAnnotations(VmStatic.class, JsonVmStaticMixIn.class);
-        mapper.getSerializationConfig().addMixInAnnotations(AddVmFromSnapshotParameters.class,
-                JsonAddVmFromSnapshotParametersMixIn.class);
 
         mapper.configure(Feature.INDENT_OUTPUT, true);
         mapper.enableDefaultTyping();

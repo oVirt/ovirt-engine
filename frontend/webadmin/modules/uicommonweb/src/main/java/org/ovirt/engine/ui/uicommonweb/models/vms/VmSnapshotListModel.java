@@ -681,7 +681,7 @@ public class VmSnapshotListModel extends SearchableListModel
         }
 
         AddVmFromSnapshotParameters parameters =
-                new AddVmFromSnapshotParameters(getcurrentVm().getStaticData(), diskInfoList, snapshot.getId());
+                new AddVmFromSnapshotParameters(getcurrentVm().getStaticData(), snapshot.getId());
         parameters.setDiskInfoDestinationMap(imageToDestinationDomainMap);
 
         model.StartProgress(null);
