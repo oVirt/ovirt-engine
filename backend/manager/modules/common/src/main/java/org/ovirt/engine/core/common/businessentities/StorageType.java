@@ -15,7 +15,7 @@ public enum StorageType {
     ISCSI(3),
     LOCALFS(4),
     // CIFS(5)
-    ALL(-1);
+    ALL(6);
 
     private int intValue;
     private static java.util.HashMap<Integer, StorageType> mappings = new HashMap<Integer, StorageType>();
