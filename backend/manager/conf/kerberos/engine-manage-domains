@@ -49,10 +49,11 @@ fi
 usage () {
         printf "engine-manage-domains: add/edit/delete/validate/list domains\n"
         printf "USAGE:\n"
-        printf "\tengine-manage-domains -action=ACTION [-domain=DOMAIN -user=USER -passwordFile=PASSWORD_FILE -interactive -configFile=PATH -addPermissions] -report\n"
+        printf "\tengine-manage-domains -action=ACTION [-domain=DOMAIN -provider=PROVIDER -user=USER -passwordFile=PASSWORD_FILE -interactive -configFile=PATH -addPermissions] -report\n"
         printf "Where:\n"
         printf "\tACTION             action to perform (add/edit/delete/validate/list). See details below.\n"
         printf "\tDOMAIN             	(mandatory for add, edit and delete) the domain you wish to perform the action on.\n"
+        printf "\tPROVIDER             	(mandatory for add, optional for edit) the LDAP provider type of server used for the domain. Among the supported providers IPA,RHDS and ActiveDirectory.\n"
         printf "\tUSER   			 (optional for edit, mandatory for add) the domain user.\n"
         printf "\tPASSWORD_FILE   		 (optional for edit, mandatory for add) a file containing the password in the first line.\n"
 	printf "\tinteractive        alternative for using -passwordFile - read the password interactively.\n"
@@ -61,10 +62,10 @@ usage () {
         printf "\tAvailable actions:\n"
         printf "\tadd\n"
 		printf "\tExamples:\n"
-		printf "\t\t-action=add -domain=example.com -user=admin -passwordFile=/tmp/.pwd\n"
-		printf "\t\t\tAdd a domain called example.com, using user admin and read the password from /tmp/.pwd.\n"
-		printf "\t\t-action=edit -domain=example.com -passwordFile=/tmp/.new_password\n"
-		printf "\t\t\tEdit the domain example.com, using another password file.\n"
+		printf "\t\t-action=add -domain=example.com -user=admin -provider=IPA -passwordFile=/tmp/.pwd\n"
+		printf "\t\t\tAdd a domain called example.com, using user admin with ldap server type IPA and read the password from /tmp/.pwd.\n"
+		printf "\t\t-action=edit -domain=example.com -provider=ActiveDirectory -passwordFile=/tmp/.new_password\n"
+		printf "\t\t\tEdit the domain example.com, using another password file and updated the provider type to Active Directory.\n"
 		printf "\t\t-action=delete -domain=example.com\n"
 		printf "\t\t\tDelete the domain example.com.\n"
 		printf "\t\t-action=validate\n"
@@ -81,7 +82,7 @@ usage () {
         return 0
 }
 
-if [ "$#" -gt 5 -o "$#" -lt 1 ]; then
+if [ "$#" -gt 6 -o "$#" -lt 1 ]; then
         usage
 		exit 1
 fi
@@ -127,6 +128,7 @@ LDAPSecurityAuthentication
 DomainName
 AdUserId
 LdapServers
+LDAPProviderTypes
 EOF
 
 java -cp .:$CP org.ovirt.engine.core.utils.kerberos.ManageDomains "$@" -propertiesFile=$PROPERTIES_FILE

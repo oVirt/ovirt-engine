@@ -33,10 +33,10 @@ public class JndiAction implements PrivilegedAction {
     private StringBuffer userGuid;
     private final static Logger log = Logger.getLogger(JndiAction.class);
 
-    public JndiAction(String userName, String domainName, StringBuffer userGuid) {
+    public JndiAction(String userName, String domainName, StringBuffer userGuid, LdapProviderType ldapProviderType) {
         this.userName = userName;
         this.domainName = domainName;
-        this.ldapProviderType = LdapProviderType.activeDirectory;
+        this.ldapProviderType = ldapProviderType;
         this.userGuid = userGuid;
     }
 
@@ -196,7 +196,6 @@ public class JndiAction implements PrivilegedAction {
 
     private String getDomainDN(DirContext ctx) throws NamingException {
         RootDSEData rootDSEData = new RootDSEData(ctx);
-        ldapProviderType = rootDSEData.getLdapProviderType();
         return rootDSEData.getDomainDN();
     }
 

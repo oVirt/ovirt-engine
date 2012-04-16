@@ -12,6 +12,7 @@ import javax.security.auth.login.LoginContext;
 import javax.security.auth.login.LoginException;
 
 import org.apache.log4j.Logger;
+import org.ovirt.engine.core.ldap.LdapProviderType;
 import org.ovirt.engine.core.utils.CLIParser;
 
 /**
@@ -28,7 +29,8 @@ public class KerberosConfigCheck {
         password,
         jaas_file,
         jboss_dir,
-        krb5_conf_path;
+        krb5_conf_path,
+        ldapProviderType;
     }
 
     // This function gets the username and adjusts it doing the following:
@@ -119,8 +121,9 @@ public class KerberosConfigCheck {
         String krb5ConfFile = parser.getArg(Arguments.krb5_conf_path.name());
         String domains = parser.getArg(Arguments.domains.name());
         StringBuffer userGuid = new StringBuffer();
+        LdapProviderType ldapProviderType = LdapProviderType.valueOf(Arguments.ldapProviderType.name());
         try {
-            util.checkInstallation(domains, username, password, jaasFile, krb5ConfFile, userGuid);
+            util.checkInstallation(domains, username, password, jaasFile, krb5ConfFile, userGuid, ldapProviderType);
         } catch (AuthenticationException e) {
             System.err.println(ERROR_PREFIX + e.getMessage());
             System.exit(e.getAuthResult().getExitCode());
@@ -132,12 +135,13 @@ public class KerberosConfigCheck {
             String password,
             String jaasFile,
             String krb5ConfFile,
-            StringBuffer userGuid)
+            StringBuffer userGuid,
+            LdapProviderType ldapProviderType)
             throws AuthenticationException {
         String[] domainsList = domains.split(",", -1);
         String domain = domainsList[0].trim();
         String realm = domain.toUpperCase();
-        validateKerberosInstallation(realm, username, password, jaasFile, krb5ConfFile, userGuid);
+        validateKerberosInstallation(realm, username, password, jaasFile, krb5ConfFile, userGuid, ldapProviderType);
     }
 
     public void validateKerberosInstallation(String realm,
@@ -145,13 +149,15 @@ public class KerberosConfigCheck {
             String password,
             String pathToJAASFile,
             String pathToKrb5ConfFile,
-            StringBuffer userGuid) throws AuthenticationException {
+            StringBuffer userGuid,
+            LdapProviderType ldapProviderType) throws AuthenticationException {
 
         AuthenticationResult authResult = authenticate(realm, username, password, pathToJAASFile, pathToKrb5ConfFile);
         if (authResult == AuthenticationResult.OK) {
             // Successful authentication was acehived, no point in searching for
             // KDcs that use UDP
-            AuthenticationResult actionResult = promptSuccessfulAuthentication(realm, username, userGuid);
+            AuthenticationResult actionResult =
+                    promptSuccessfulAuthentication(realm, username, userGuid, ldapProviderType);
 
             if (actionResult != AuthenticationResult.OK) {
                 throw new AuthenticationException(actionResult);
@@ -163,7 +169,10 @@ public class KerberosConfigCheck {
         }
     }
 
-    private AuthenticationResult promptSuccessfulAuthentication(String realm, String username, StringBuffer userGuid) {
+    private AuthenticationResult promptSuccessfulAuthentication(String realm,
+            String username,
+            StringBuffer userGuid,
+            LdapProviderType ldapProviderType) {
 
         AuthenticationResult authResult = AuthenticationResult.OTHER;
 
@@ -174,7 +183,7 @@ public class KerberosConfigCheck {
             authResult =
                     (AuthenticationResult) Subject.doAs(lc.getSubject(), new JndiAction(username,
                             realm.toLowerCase(),
-                            userGuid));
+                            userGuid, ldapProviderType));
 
         } finally {
             if (lc != null) {

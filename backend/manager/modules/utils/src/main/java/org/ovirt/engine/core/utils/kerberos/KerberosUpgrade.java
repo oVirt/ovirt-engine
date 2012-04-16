@@ -100,7 +100,7 @@ public class KerberosUpgrade {
                     adPassword,
                     parser.getArg(Arguments.jaas_file.name()),
                     krb5ConfPath,
-                    userGuid);
+                    userGuid, null);
         } catch (Exception e) {
             System.err.println(ERROR_PREFIX + e.getMessage());
             System.exit(1);

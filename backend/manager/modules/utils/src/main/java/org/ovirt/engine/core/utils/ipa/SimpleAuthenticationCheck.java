@@ -13,7 +13,6 @@ import javax.naming.directory.DirContext;
 import javax.naming.directory.InitialDirContext;
 
 import org.ovirt.engine.core.ldap.LdapProviderType;
-import org.ovirt.engine.core.ldap.RootDSEData;
 import org.ovirt.engine.core.utils.CLIParser;
 import org.springframework.ldap.AuthenticationException;
 import org.springframework.ldap.core.ContextMapper;
@@ -27,13 +26,14 @@ public class SimpleAuthenticationCheck {
     public enum Arguments {
         domain,
         user,
-        password
+        password,
+        ldapProviderType
     }
 
     private void printUsage() {
         System.out.println("Usage:");
         System.out
-                .println("SimpleAuthenticationCheck: -domain=<domains> -user=<user> -password=<password>");
+                .println("SimpleAuthenticationCheck: -domain=<domains> -user=<user> -password=<password> -ldapProviderType=<ldapProviderType>");
     }
 
     private String getLdapUrl(String ldapServer) {
@@ -46,6 +46,12 @@ public class SimpleAuthenticationCheck {
             if (!parser.hasArg(argument.name())) {
                 System.out.println(argument.name() + " is required");
                 return false;
+            }
+        }
+        if (LdapProviderType.valueOf(parser.getArg(Arguments.ldapProviderType.name())) == null) {
+            System.out.println(Arguments.ldapProviderType.name() + " must be one of ");
+            for (LdapProviderType type : LdapProviderType.values()) {
+                System.out.println(type.name());
             }
         }
         return true;
@@ -61,41 +67,21 @@ public class SimpleAuthenticationCheck {
         String username = parser.getArg(Arguments.user.name());
         String password = parser.getArg(Arguments.password.name());
         String domain = parser.getArg(Arguments.domain.name());
+        LdapProviderType ldapProviderType = LdapProviderType.valueOf(parser.getArg(Arguments.ldapProviderType.name()));
         StringBuffer userGuid = new StringBuffer();
 
-        ReturnStatus status = util.printUserGuid(domain, username, password, "localhost:389", userGuid);
+        ReturnStatus status =
+                util.printUserGuid(domain, username, password, "localhost:389", userGuid, ldapProviderType);
 
         System.exit(status.ordinal());
     }
 
-    private ReturnStatus updateProviderType(String ldapServer,
-            String domain,
-            String username,
-            String password) {
-
-        try {
-            RootDSEData rootDSEData = new RootDSEData(getDirContext(getLdapUrl(ldapServer)));
-            ldapProviderType = rootDSEData.getLdapProviderType();
-
-            return ReturnStatus.OK;
-        } catch (Exception ex) {
-            System.err.println(ERROR_PREFIX + "Cannot detect LDAP provider type for domain " + domain
-                    + ", details: " + ex.getMessage());
-            return ReturnStatus.CANNOT_DETECT_PROVIDER_TYPE;
-        }
-    }
 
     public ReturnStatus printUserGuid(String domain,
             String username,
             String password,
             String ldapServerUrl,
-            StringBuffer userGuid) {
-
-        ReturnStatus updateProviderTypeStatus =
-                updateProviderType(ldapServerUrl, domain, username, password);
-        if (updateProviderTypeStatus != ReturnStatus.OK) {
-            return updateProviderTypeStatus;
-        }
+            StringBuffer userGuid, LdapProviderType ldapProviderType) {
 
         LdapContextSource contextSource = getContextSource(domain, username, password, ldapServerUrl);
         try {
@@ -105,7 +91,6 @@ public class SimpleAuthenticationCheck {
             return ReturnStatus.LDAP_CONTEXT_FAILURE;
         }
 
-        if (updateProviderTypeStatus.equals(ReturnStatus.OK)) {
             LdapTemplate ldapTemplate = new LdapTemplate(contextSource);
             String query = "";
             ContextMapper contextMapper;
@@ -140,10 +125,7 @@ public class SimpleAuthenticationCheck {
                 return ReturnStatus.CANNOT_QUERY_USER;
             }
 
-            return ReturnStatus.OK;
-        } else {
-            return updateProviderTypeStatus;
-        }
+        return ReturnStatus.OK;
     }
 
     /***

@@ -10,7 +10,6 @@ import javax.naming.directory.SearchResult;
 
 public class RootDSEData {
     private String domainDN = null;
-    private LdapProviderType ldapProviderType = null;
     private final static String RHDS_NAMING_CONTEXT = "o=netscaperoot";
 
     public static String getDefaultNamingContextFromNamingContexts(Attribute namingContexts) {
@@ -34,19 +33,11 @@ public class RootDSEData {
 
         if (attribute != null) {
             domainDN = (String) attribute.get();
-            ldapProviderType = LdapProviderType.activeDirectory;
             retVal = true;
         } else {
             Attribute namingContextAttribute = attributes.get(RootDSEQueryInfo.NAMING_CONTEXTS_RESULT_ATTRIBUTE);
-            Attribute vendorNameAttribute = attributes.get(RootDSEQueryInfo.PROVIDER_TYPE_PROPERTY);
             if (namingContextAttribute != null) {
                 domainDN = getDefaultNamingContextFromNamingContexts(namingContextAttribute);
-                String vendorName = (String) vendorNameAttribute.get(0);
-                if (vendorName.equals(LdapVendorNameEnum.IPAVendorName.getName())) {
-                    ldapProviderType = LdapProviderType.ipa;
-                } else if (vendorName.equals(LdapVendorNameEnum.RHDSVendorName.getName())) {
-                    ldapProviderType = LdapProviderType.rhds;
-                }
                 retVal = true;
             }
         }
@@ -75,14 +66,6 @@ public class RootDSEData {
 
     public void setDomainDN(String domainDN) {
         this.domainDN = domainDN;
-    }
-
-    public LdapProviderType getLdapProviderType() {
-        return ldapProviderType;
-    }
-
-    public void setLdapProviderType(LdapProviderType ldapProviderType) {
-        this.ldapProviderType = ldapProviderType;
     }
 
 }

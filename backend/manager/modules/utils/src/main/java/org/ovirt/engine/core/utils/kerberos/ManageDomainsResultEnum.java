@@ -20,7 +20,7 @@ public enum ManageDomainsResultEnum {
             "Failed setting configuration value for option %1$s. Details: %2$s",
             13),
     INVALID_ARGUMENT_FOR_COMMAND(
-            "Invalid argument %1$s.",
+            "Invalid argument %1$s",
             14),
     FAILED_READING_CURRENT_CONFIGURATION(
             "Failed reading current configuration. Details: %1$s",

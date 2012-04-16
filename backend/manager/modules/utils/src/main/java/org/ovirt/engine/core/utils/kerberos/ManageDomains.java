@@ -23,6 +23,7 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.ldap.LdapProviderType;
 import org.ovirt.engine.core.utils.CLIParser;
 import org.ovirt.engine.core.utils.FileUtil;
 import org.ovirt.engine.core.utils.ipa.ReturnStatus;
@@ -67,7 +68,8 @@ public class ManageDomains {
         propertiesFile,
         report,
         interactive,
-        addPermissions
+        addPermissions,
+        provider
     }
 
     public enum ActionType {
@@ -209,6 +211,8 @@ public class ManageDomains {
             String domainName = getConfigValue(engineConfigExecutable, engineConfigProperties, ConfigValues.DomainName);
             String adUserId = getConfigValue(engineConfigExecutable, engineConfigProperties, ConfigValues.AdUserId);
             String ldapServers = getConfigValue(engineConfigExecutable, engineConfigProperties, ConfigValues.LdapServers);
+            String ldapProviderTypes =
+                    getConfigValue(engineConfigExecutable, engineConfigProperties, ConfigValues.LDAPProviderTypes);
 
             configurationProvider =
                     new ConfigurationProvider(adUserName,
@@ -217,6 +221,7 @@ public class ManageDomains {
                             ldapSecurityAuthentication,
                             ldapServers,
                             adUserId,
+                            ldapProviderTypes,
                             utilityConfiguration.getEngineConfigExecutablePath(),
                             engineConfigProperties);
 
@@ -243,12 +248,13 @@ public class ManageDomains {
             addDomain(parser.getArg(Arguments.domain.name()).toLowerCase(),
                     parser.getArg(Arguments.user.name()),
                     getPasswordInput(parser),
-                    REMOTE_LOCATION);
+                    REMOTE_LOCATION,
+                    getLdapProviderType(parser));
         } else if (actionType.equals(ActionType.edit)) {
             editDomain(parser.getArg(Arguments.domain.name()).toLowerCase(),
                     parser.getArg(Arguments.user.name()),
                     getPasswordInput(parser),
-                    null);
+                    null, parser.hasArg(Arguments.provider.name()) ? getLdapProviderType(parser) : null);
         } else if (actionType.equals(ActionType.delete)) {
             deleteDomain(parser.getArg(Arguments.domain.name()).toLowerCase());
         } else if (actionType.equals(ActionType.validate)) {
@@ -258,6 +264,24 @@ public class ManageDomains {
         } else {
             throw new ManageDomainsResult(ManageDomainsResultEnum.INVALID_ACTION, action);
         }
+    }
+
+    protected LdapProviderType getLdapProviderType(CLIParser parser) throws ManageDomainsResult {
+
+        try {
+            return LdapProviderType.valueOfIgnoreCase(parser.getArg(Arguments.provider.name()));
+        } catch (IllegalArgumentException i) {
+            // continue and print message
+        } catch (NullPointerException e) {
+            // continue and print message
+        }
+
+        StringBuffer sb = new StringBuffer();
+        sb.append(parser.getArg(Arguments.provider.name()) + ". Supported provider types are:\n");
+        for (LdapProviderType t : LdapProviderType.values()) {
+            sb.append(" " + t.name() + "\n");
+        }
+        throw new ManageDomainsResult(ManageDomainsResultEnum.INVALID_ARGUMENT_FOR_COMMAND, sb.toString());
     }
 
     private String getPasswordInput(CLIParser parser) throws ManageDomainsResult {
@@ -312,6 +336,7 @@ public class ManageDomains {
         String currentAdUserPasswordEntry = configurationProvider.getConfigValue(ConfigValues.AdUserPassword);
         String currentAuthModeEntry = configurationProvider.getConfigValue(ConfigValues.LDAPSecurityAuthentication);
         String currentAdUserIdEntry = configurationProvider.getConfigValue(ConfigValues.AdUserId);
+        String currentLdapProviderTypesEntry = configurationProvider.getConfigValue(ConfigValues.LDAPProviderTypes);
 
         DomainsConfigurationEntry domainNameEntry =
                 new DomainsConfigurationEntry(currentDomainNameEntry, DOMAIN_SEPERATOR, null);
@@ -323,6 +348,8 @@ public class ManageDomains {
                 new DomainsConfigurationEntry(currentAuthModeEntry, DOMAIN_SEPERATOR, VALUE_SEPERATOR);
         DomainsConfigurationEntry adUserIdEntry =
             new DomainsConfigurationEntry(currentAdUserIdEntry, DOMAIN_SEPERATOR, VALUE_SEPERATOR);
+        DomainsConfigurationEntry ldapProviderTypeEntry =
+                new DomainsConfigurationEntry(currentLdapProviderTypesEntry, DOMAIN_SEPERATOR, VALUE_SEPERATOR);
 
         testConfiguration(null,
                 domainNameEntry,
@@ -330,6 +357,7 @@ public class ManageDomains {
                 adUserPasswordEntry,
                 authModeEntry,
                 adUserIdEntry,
+                ldapProviderTypeEntry,
                 false,
                 true);
     }
@@ -365,7 +393,8 @@ public class ManageDomains {
     public void addDomain(String domainName,
             String userName,
             String password,
-            String mode) throws ManageDomainsResult {
+            String mode,
+            LdapProviderType ldapProviderType) throws ManageDomainsResult {
         String authMode = DEFAULT_AUTH_MODE;
         if (mode.equalsIgnoreCase(LdapModeEnum.LOCAL.name())) {
             authMode = LdapAuthModeEnum.SIMPLE.name();
@@ -389,6 +418,7 @@ public class ManageDomains {
         String currentAuthModeEntry = configurationProvider.getConfigValue(ConfigValues.LDAPSecurityAuthentication);
         String currentLdapServersEntry = configurationProvider.getConfigValue(ConfigValues.LdapServers);
         String currentAdUserIdEntry = configurationProvider.getConfigValue(ConfigValues.AdUserId);
+        String currentLDAPProviderTypes = configurationProvider.getConfigValue(ConfigValues.LDAPProviderTypes);
 
         DomainsConfigurationEntry adUserNameEntry =
                 new DomainsConfigurationEntry(currentAdUserNameEntry, DOMAIN_SEPERATOR, VALUE_SEPERATOR);
@@ -400,10 +430,13 @@ public class ManageDomains {
                 new DomainsConfigurationEntry(currentLdapServersEntry, DOMAIN_SEPERATOR, VALUE_SEPERATOR);
         DomainsConfigurationEntry adUserIdEntry =
                 new DomainsConfigurationEntry(currentAdUserIdEntry, DOMAIN_SEPERATOR, VALUE_SEPERATOR);
+        DomainsConfigurationEntry ldapProviderTypesEntry =
+                new DomainsConfigurationEntry(currentLDAPProviderTypes, DOMAIN_SEPERATOR, VALUE_SEPERATOR);
 
         adUserNameEntry.setValueForDomain(domainName, userName);
         adUserPasswordEntry.setValueForDomain(domainName, password);
         authModeEntry.setValueForDomain(domainName, authMode);
+        ldapProviderTypesEntry.setValueForDomain(domainName, ldapProviderType.name());
 
         if (authMode.equalsIgnoreCase(LdapAuthModeEnum.SIMPLE.name())) {
             ldapServersEntry.setValueForDomain(domainName, utilityConfiguration.getLocalHostEntry());
@@ -415,6 +448,7 @@ public class ManageDomains {
                 adUserPasswordEntry,
                 authModeEntry,
                 adUserIdEntry,
+                ldapProviderTypesEntry,
                 true,
                 false);
 
@@ -430,7 +464,8 @@ public class ManageDomains {
                 adUserPasswordEntry,
                 authModeEntry,
                 ldapServersEntry,
-                adUserIdEntry);
+                adUserIdEntry,
+                ldapProviderTypesEntry);
 
         System.out.println(String.format(SUCCESSFULLY_COMPLETED_ACTION_ON_DOMAIN, "added", domainName));
     }
@@ -454,7 +489,11 @@ public class ManageDomains {
         }
     }
 
-    public void editDomain(String domainName, String userName, String password, String mode) throws ManageDomainsResult {
+    public void editDomain(String domainName,
+            String userName,
+            String password,
+            String mode,
+            LdapProviderType ldapProviderType) throws ManageDomainsResult {
         String authMode;
         if (mode == null) {
             authMode = getDomainAuthMode(domainName);
@@ -484,6 +523,7 @@ public class ManageDomains {
         String currentAuthModeEntry = configurationProvider.getConfigValue(ConfigValues.LDAPSecurityAuthentication);
         String currentLdapServersEntry = configurationProvider.getConfigValue(ConfigValues.LdapServers);
         String currentAdUserIdEntry = configurationProvider.getConfigValue(ConfigValues.AdUserId);
+        String currentLdapProviderTypeEntry = configurationProvider.getConfigValue(ConfigValues.LDAPProviderTypes);
 
         DomainsConfigurationEntry adUserNameEntry =
                 new DomainsConfigurationEntry(currentAdUserNameEntry, DOMAIN_SEPERATOR, VALUE_SEPERATOR);
@@ -495,6 +535,8 @@ public class ManageDomains {
                 new DomainsConfigurationEntry(currentLdapServersEntry, DOMAIN_SEPERATOR, VALUE_SEPERATOR);
         DomainsConfigurationEntry adUserIdEntry =
                 new DomainsConfigurationEntry(currentAdUserIdEntry, DOMAIN_SEPERATOR, VALUE_SEPERATOR);
+        DomainsConfigurationEntry ldapProviderTypeEntry =
+                new DomainsConfigurationEntry(currentLdapProviderTypeEntry, DOMAIN_SEPERATOR, VALUE_SEPERATOR);
 
         if (userName != null) {
             adUserNameEntry.setValueForDomain(domainName, userName);
@@ -510,6 +552,9 @@ public class ManageDomains {
         if (authMode.equalsIgnoreCase(LdapAuthModeEnum.SIMPLE.name())) {
             ldapServersEntry.setValueForDomain(domainName, utilityConfiguration.getLocalHostEntry());
         }
+        if (ldapProviderType != null) {
+            ldapProviderTypeEntry.setValueForDomain(domainName, ldapProviderType.name());
+        }
 
         testConfiguration(domainName,
                 domainNameEntry,
@@ -517,6 +562,7 @@ public class ManageDomains {
                 adUserPasswordEntry,
                 authModeEntry,
                 adUserIdEntry,
+                ldapProviderTypeEntry,
                 true,
                 false);
 
@@ -531,7 +577,8 @@ public class ManageDomains {
                         adUserPasswordEntry,
                         authModeEntry,
                         ldapServersEntry,
-                        adUserIdEntry);
+                adUserIdEntry,
+                ldapProviderTypeEntry);
 
         System.out.println(String.format(SUCCESSFULLY_COMPLETED_ACTION_ON_DOMAIN, "edited", domainName));
     }
@@ -563,6 +610,7 @@ public class ManageDomains {
             DomainsConfigurationEntry passwords,
             DomainsConfigurationEntry gssapiDomains,
             DomainsConfigurationEntry userIds,
+            DomainsConfigurationEntry ldapProviderTypes,
             String kerberosConfigFile,
             boolean isValidate) throws ManageDomainsResult {
 
@@ -582,7 +630,8 @@ public class ManageDomains {
                         passwords.getValueForDomain(domain),
                         utilityConfiguration.getJaasFilePath(),
                         kerberosConfigFile,
-                        userGuid);
+                        userGuid,
+                        LdapProviderType.valueOf(ldapProviderTypes.getValueForDomain(domain)));
                 userIds.setValueForDomain(domain, userGuid.toString());
                 if (isValidate) {
                     System.out.println("Domain " + domain + " is valid.");
@@ -626,11 +675,11 @@ public class ManageDomains {
             String userName,
             String password,
             String address,
-            StringBuffer userGuid) {
+            StringBuffer userGuid, LdapProviderType ldapProviderType) {
         log.info("Testing domain " + domain);
         SimpleAuthenticationCheck simpleAuthenticationCheck = new SimpleAuthenticationCheck();
         ReturnStatus returnStatus =
-                simpleAuthenticationCheck.printUserGuid(domain, userName, password, address, userGuid);
+                simpleAuthenticationCheck.printUserGuid(domain, userName, password, address, userGuid, ldapProviderType);
         if (!returnStatus.equals(ReturnStatus.OK)) {
             return new ManageDomainsResult(ManageDomainsResultEnum.FAILURE_WHILE_TESTING_DOMAIN, new String[] { domain,
                     returnStatus.getDetailedMessage() });
@@ -644,6 +693,7 @@ public class ManageDomains {
             DomainsConfigurationEntry passwords,
             DomainsConfigurationEntry simpleDomains,
             DomainsConfigurationEntry userIds,
+            DomainsConfigurationEntry ldapProviderType,
             String address,
             boolean isValidate) throws ManageDomainsResult {
 
@@ -655,7 +705,7 @@ public class ManageDomains {
                     users.getValueForDomain(domain),
                     passwords.getValueForDomain(domain),
                     address,
-                    userGuid);
+                    userGuid, LdapProviderType.valueOf(ldapProviderType.getValueForDomain(domain)));
             if (!result.isSuccessful()) {
                 if (isValidate || ((domainName != null) && !domain.equals(domainName))) {
                     if (reportAllErrors) {
@@ -684,6 +734,7 @@ public class ManageDomains {
             DomainsConfigurationEntry passwords,
             DomainsConfigurationEntry authModes,
             DomainsConfigurationEntry userIds,
+            DomainsConfigurationEntry ldapProviderType,
             boolean reconfigure,
             boolean isValidate) throws ManageDomainsResult {
 
@@ -710,6 +761,7 @@ public class ManageDomains {
                         passwords,
                         simpleDomains,
                         userIds,
+                ldapProviderType,
                         utilityConfiguration.getLocalHostEntry(),
                         isValidate);
 
@@ -728,6 +780,7 @@ public class ManageDomains {
                     passwords,
                     gssapiDomains,
                     userIds,
+                    ldapProviderType,
                     kerberosConfigFile,
                     isValidate);
             if (domainIsGssapi && reconfigure) {
@@ -741,7 +794,8 @@ public class ManageDomains {
             DomainsConfigurationEntry adPasswordEntry,
             DomainsConfigurationEntry authModeEntry,
             DomainsConfigurationEntry ldapServersEntry,
-            DomainsConfigurationEntry adUserIdEntry) throws ManageDomainsResult {
+            DomainsConfigurationEntry adUserIdEntry,
+            DomainsConfigurationEntry ldapProviderTypeEntry) throws ManageDomainsResult {
         // Update the configuration
         configurationProvider.setConfigValue(ConfigValues.AdUserName,
                 adUserNameEntry.getDomainsConfigurationEntry(),
@@ -766,6 +820,10 @@ public class ManageDomains {
         configurationProvider.setConfigValue(ConfigValues.DomainName,
                 domainNameEntry.getDomainsConfigurationEntry(),
                 domainNameEntry.getDomainsLoggingEntry());
+
+        configurationProvider.setConfigValue(ConfigValues.LDAPProviderTypes,
+                ldapProviderTypeEntry.getDomainsConfigurationEntry(),
+                ldapProviderTypeEntry.getDomainsLoggingEntry());
     }
 
     public void deleteDomain(String domainName) throws ManageDomainsResult {
@@ -790,6 +848,7 @@ public class ManageDomains {
         String currentAuthModeEntry = configurationProvider.getConfigValue(ConfigValues.LDAPSecurityAuthentication);
         String currentLdapServersEntry = configurationProvider.getConfigValue(ConfigValues.LdapServers);
         String currentAdUserId = configurationProvider.getConfigValue(ConfigValues.AdUserId);
+        String ldapProviderType = configurationProvider.getConfigValue(ConfigValues.LDAPProviderTypes);
 
         DomainsConfigurationEntry adUserNameEntry =
                 new DomainsConfigurationEntry(currentAdUserNameEntry, DOMAIN_SEPERATOR, VALUE_SEPERATOR);
@@ -801,12 +860,15 @@ public class ManageDomains {
                 new DomainsConfigurationEntry(currentLdapServersEntry, DOMAIN_SEPERATOR, VALUE_SEPERATOR);
         DomainsConfigurationEntry adUserIdEntry =
                 new DomainsConfigurationEntry(currentAdUserId, DOMAIN_SEPERATOR, VALUE_SEPERATOR);
+        DomainsConfigurationEntry ldapProviderTypeEntry =
+                new DomainsConfigurationEntry(ldapProviderType, DOMAIN_SEPERATOR, VALUE_SEPERATOR);
 
         adUserNameEntry.removeValueForDomain(domainName);
         adUserIdEntry.removeValueForDomain(domainName);
         adUserPasswordEntry.removeValueForDomain(domainName);
         authModeEntry.removeValueForDomain(domainName);
         ldapServersEntry.removeValueForDomain(domainName);
+        ldapProviderTypeEntry.removeValueForDomain(domainName);
 
         // Update the configuration
         setConfigurationEntries(domainNameEntry,
@@ -814,7 +876,8 @@ public class ManageDomains {
                 adUserPasswordEntry,
                 authModeEntry,
                 ldapServersEntry,
-                adUserIdEntry);
+                adUserIdEntry,
+                ldapProviderTypeEntry);
 
         System.out.println(String.format(DELETE_DOMAIN_SUCCESS, domainName));
     }
@@ -831,7 +894,7 @@ public class ManageDomains {
                     throw new ManageDomainsResult(ManageDomainsResultEnum.INVALID_ACTION, action);
                 }
                 if (actionType.equals(ActionType.add)) {
-                    requireArgs(parser, Arguments.domain, Arguments.user);
+                    requireArgs(parser, Arguments.domain, Arguments.user, Arguments.provider);
                     requireAtLeastOneArg(parser, Arguments.passwordFile, Arguments.interactive);
                 } else if (actionType.equals(ActionType.edit)) {
                     requireArgs(parser, Arguments.domain);
