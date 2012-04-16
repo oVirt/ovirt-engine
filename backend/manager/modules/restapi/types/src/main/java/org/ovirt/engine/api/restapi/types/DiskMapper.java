@@ -1,5 +1,7 @@
 package org.ovirt.engine.api.restapi.types;
 
+import java.util.ArrayList;
+
 import org.ovirt.engine.api.common.util.StatusUtils;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.DiskFormat;
@@ -60,6 +62,12 @@ public class DiskMapper {
         }
         if (disk.isSetPlugged()) {
             diskImage.setPlugged(disk.isPlugged());
+        }
+        if (disk.isSetStorageDomains() && disk.getStorageDomains().isSetStorageDomains()
+                && disk.getStorageDomains().getStorageDomains().get(0).isSetId()) {
+            StorageDomain storageDomain = disk.getStorageDomains().getStorageDomains().get(0);
+            diskImage.setstorage_ids(new ArrayList<Guid>());
+            diskImage.getstorage_ids().add(Guid.createGuidFromString(storageDomain.getId()));
         }
         return diskImage;
     }

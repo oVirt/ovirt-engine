@@ -11,10 +11,10 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.common.util.DetailHelper;
-import org.ovirt.engine.api.model.Disk;
-import org.ovirt.engine.api.model.Disks;
 import org.ovirt.engine.api.common.util.DetailHelper.Detail;
 import org.ovirt.engine.api.model.Action;
+import org.ovirt.engine.api.model.Disk;
+import org.ovirt.engine.api.model.Disks;
 import org.ovirt.engine.api.model.Nics;
 import org.ovirt.engine.api.model.Snapshots;
 import org.ovirt.engine.api.model.Statistics;
@@ -23,31 +23,27 @@ import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.api.model.VMs;
 import org.ovirt.engine.api.resource.VmResource;
 import org.ovirt.engine.api.resource.VmsResource;
-
+import org.ovirt.engine.api.restapi.types.DiskMapper;
 import org.ovirt.engine.core.common.action.AddVmFromScratchParameters;
 import org.ovirt.engine.core.common.action.AddVmFromSnapshotParameters;
 import org.ovirt.engine.core.common.action.AddVmFromTemplateParameters;
+import org.ovirt.engine.core.common.action.RemoveVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
-import org.ovirt.engine.core.common.action.RemoveVmParameters;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetAllDisksByVmIdParameters;
-import org.ovirt.engine.core.common.queries.GetStorageDomainsByVmTemplateIdQueryParameters;
 import org.ovirt.engine.core.common.queries.GetVmByVmIdParameters;
 import org.ovirt.engine.core.common.queries.GetVmConfigurationBySnapshotQueryParams;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplatesDisksParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.api.restapi.types.DiskMapper;
 
 
 public class BackendVmsResource extends
@@ -113,13 +109,11 @@ public class BackendVmsResource extends
                                 snapshotId,
                                 changedDisks);
         } else if (vm.isSetDisks() && vm.getDisks().isSetClone() && vm.getDisks().isClone()) {
-            //disks are always cloned on the storage-domain, which contains the disk from which they are cloned.
-            //therefore, even if user passed storage-domain, it is ignored in this context.
             response = cloneVmFromTemplate(staticVm, vm.getDisks(), templateId);
-        } else if (templateId.equals(Guid.Empty)) {
+        } else if (Guid.Empty.equals(templateId)) {
             response = addVmFromScratch(staticVm, storageDomainId, vm.getDisks());
         } else {
-            response = addVm(staticVm, storageDomainId.equals(Guid.Empty) ? getTemplateStorageDomain(templateId) : storageDomainId);
+            response = addVm(staticVm, storageDomainId, vm.getDisks(), templateId);
         }
         return response;
     }
@@ -178,19 +172,19 @@ public class BackendVmsResource extends
 
     private Response cloneVmFromTemplate(VmStatic staticVm, Disks disks, Guid templateId) {
         return performCreation(VdcActionType.AddVmFromTemplate,
-                               new AddVmFromTemplateParameters(staticVm, getDisksToClone(disks, templateId), getTemplateStorageDomain(templateId)),
+                               new AddVmFromTemplateParameters(staticVm, getDisksToClone(disks, templateId), Guid.Empty),
                                new QueryIdResolver(VdcQueryType.GetVmByVmId, GetVmByVmIdParameters.class));
     }
 
-    private HashMap<String, DiskImageBase> getDisksToClone(Disks disks, Guid templateId) {
-        HashMap<String, DiskImageBase> disksMap = new HashMap<String, DiskImageBase>();
+    private HashMap<Guid, DiskImage> getDisksToClone(Disks disks, Guid templateId) {
+        HashMap<Guid, DiskImage> disksMap = new HashMap<Guid, DiskImage>();
 
-        if (disks.isSetDisks() && disks.getDisks().size() > 0){
+        if (disks != null && disks.isSetDisks() && disks.getDisks().size() > 0){
             HashMap<Guid, DiskImage> templatesDisksMap = getTemplateDisks(templateId);
-            for(Disk disk : disks.getDisks()){
+            for (Disk disk : disks.getDisks()) {
                 DiskImage templateDisk = templatesDisksMap.get(Guid.createGuidFromString(disk.getId()));
-                if( templateDisk != null ){
-                    disksMap.put(templateDisk.getinternal_drive_mapping(), map(disk, templateDisk));
+                if( templateDisk != null ) {
+                    disksMap.put(templateDisk.getId(), map(disk, templateDisk));
                 } else {
                     throw new WebApplicationException(Response.Status.NOT_FOUND);
                 }
@@ -215,9 +209,10 @@ public class BackendVmsResource extends
         return getMapper(Disk.class, DiskImage.class).map(entity, template);
     }
 
-    protected Response addVm(VmStatic staticVm, Guid storageDomainId) {
+    protected Response addVm(VmStatic staticVm, Guid storageDomainId, Disks disks, Guid templateId) {
         VmManagementParametersBase params = new VmManagementParametersBase(staticVm);
         params.setStorageDomainId(storageDomainId);
+        params.setDiskInfoDestinationMap(getDisksToClone(disks, templateId));
         return performCreation(VdcActionType.AddVm,
                                params,
                                new QueryIdResolver(VdcQueryType.GetVmByVmId, GetVmByVmIdParameters.class));
@@ -306,24 +301,6 @@ public class BackendVmsResource extends
             collection.getVMs().add(addLinks(populate(map(entity), entity)));
         }
         return collection;
-    }
-
-    protected Guid getTemplateStorageDomain(Guid templateId) {
-        Guid domainId = Guid.Empty;
-        try {
-            VdcQueryReturnValue queryReturn = backend.RunQuery(
-                    VdcQueryType.GetStorageDomainsByVmTemplateId,
-                    sessionize(new GetStorageDomainsByVmTemplateIdQueryParameters(templateId)));
-            if (queryReturn.getSucceeded()) {
-                storage_domains domain = (asCollection(storage_domains.class, queryReturn.getReturnValue())).get(0);
-                if (domain != null) {
-                    domainId = domain.getId();
-                }
-            }
-        } catch (Exception e) {
-            // best effort semantics
-        }
-        return domainId;
     }
 
     protected boolean templated(VM vm) {

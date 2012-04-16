@@ -1,18 +1,20 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static org.easymock.EasyMock.expect;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.junit.Test;
-
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Cluster;
+import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.Disks;
 import org.ovirt.engine.api.model.Host;
@@ -20,12 +22,12 @@ import org.ovirt.engine.api.model.Snapshot;
 import org.ovirt.engine.api.model.Snapshots;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.Template;
-import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.api.model.VmPlacementPolicy;
+import org.ovirt.engine.api.restapi.types.DiskMapper;
 import org.ovirt.engine.core.common.action.AddVmFromScratchParameters;
-import org.ovirt.engine.core.common.action.AddVmFromTemplateParameters;
 import org.ovirt.engine.core.common.action.AddVmFromSnapshotParameters;
+import org.ovirt.engine.core.common.action.AddVmFromTemplateParameters;
 import org.ovirt.engine.core.common.action.RemoveVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
@@ -35,21 +37,16 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.interfaces.SearchType;
-import org.ovirt.engine.core.common.queries.GetStorageDomainsByVmTemplateIdQueryParameters;
-import org.ovirt.engine.core.common.queries.GetVmConfigurationBySnapshotQueryParams;
 import org.ovirt.engine.core.common.queries.GetVmByVmIdParameters;
+import org.ovirt.engine.core.common.queries.GetVmConfigurationBySnapshotQueryParams;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplatesDisksParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.api.restapi.types.DiskMapper;
-
-import static org.easymock.EasyMock.expect;
 
 public class BackendVmsResourceTest
         extends AbstractBackendCollectionResourceTest<VM, org.ovirt.engine.core.common.businessentities.VM, BackendVmsResource> {
@@ -393,7 +390,6 @@ public class BackendVmsResourceTest
     @Test
     public void testCloneWithDisk() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
-        setUpStorageDomainsExpectations(0, 1);
         setUpTemplateDisksExpectations(GUIDS[1]);
         setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
                                      GetVmTemplateParameters.class,
@@ -466,7 +462,6 @@ public class BackendVmsResourceTest
     @Test
     public void testClone() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
-        setUpStorageDomainsExpectations(0, 1);
         setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
                                      GetVmTemplateParameters.class,
                                      new String[] { "Id" },
@@ -495,7 +490,6 @@ public class BackendVmsResourceTest
     @Test
     public void testAdd() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
-        setUpStorageDomainsExpectations(0, 1);
         setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
                                      GetVmTemplateParameters.class,
                                      new String[] { "Id" },
@@ -523,7 +517,6 @@ public class BackendVmsResourceTest
     @Test
     public void testAddWithPlacementPolicy() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
-        setUpStorageDomainsExpectations(0, 1);
         setUpGetEntityExpectations("Hosts: name=" + NAMES[1],
                 SearchType.VDS,
                 getHost());
@@ -594,7 +587,6 @@ public class BackendVmsResourceTest
     @Test
     public void testAddNamedCluster() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
-        setUpStorageDomainsExpectations(0, 1);
 
         setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
                                      GetVmTemplateParameters.class,
@@ -643,7 +635,6 @@ public class BackendVmsResourceTest
 
     private void doTestBadAdd(boolean canDo, boolean success, String detail)
             throws Exception {
-        setUpStorageDomainsExpectations(0, 1);
         setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
                                      GetVmTemplateParameters.class,
                                      new String[] { "Id" },
@@ -676,17 +667,6 @@ public class BackendVmsResourceTest
         } catch (WebApplicationException wae) {
             verifyIncompleteException(wae, "VM", "add", "template.id|name", "cluster.id|name");
         }
-    }
-
-    private void setUpStorageDomainsExpectations(int storageIndex, int templateIndex) {
-        storage_domains domain = control.createMock(storage_domains.class);
-        expect(domain.getId()).andReturn(GUIDS[storageIndex]).anyTimes();
-
-        setUpEntityQueryExpectations(VdcQueryType.GetStorageDomainsByVmTemplateId,
-                                     GetStorageDomainsByVmTemplateIdQueryParameters.class,
-                                     new String[] { "Id" },
-                                     new Object[] { GUIDS[templateIndex] },
-                                     domain);
     }
 
     private void setUpTemplateDisksExpectations(Guid templateId) {
