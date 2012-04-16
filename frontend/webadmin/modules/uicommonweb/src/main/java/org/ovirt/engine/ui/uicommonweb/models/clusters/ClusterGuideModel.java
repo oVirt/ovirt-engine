@@ -205,7 +205,7 @@ public class ClusterGuideModel extends GuideModel
         getCompulsoryActions().clear();
         getOptionalActions().clear();
 
-        if (getEntity() != null)
+        if (getEntity() != null && getEntity().getstorage_pool_id() != null)
         {
             StartProgress(null);
 
