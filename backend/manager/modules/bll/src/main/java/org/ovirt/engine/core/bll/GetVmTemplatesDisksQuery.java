@@ -17,6 +17,6 @@ public class GetVmTemplatesDisksQuery<P extends GetVmTemplatesDisksParameters> e
     }
 
     protected List<DiskImage> getTemplateDisks() {
-        return DbFacade.getInstance().getDiskImageDAO().getAllForVm(getParameters().getId());
+        return DbFacade.getInstance().getDiskImageDAO().getAllForVm(getParameters().getId(), getUserID(), getParameters().isFiltered());
     }
 }
