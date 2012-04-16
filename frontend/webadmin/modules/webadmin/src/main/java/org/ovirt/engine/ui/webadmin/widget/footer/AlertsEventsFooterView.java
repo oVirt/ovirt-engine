@@ -4,6 +4,7 @@ import java.util.Date;
 
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.job.Job;
+import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTabModelProvider;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
@@ -110,7 +111,8 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
             ApplicationResources resources,
             ApplicationTemplates templates,
             EventBus eventBus,
-            ClientStorage clientStorage) {
+            ClientStorage clientStorage,
+            CommonApplicationConstants commonConstants) {
         this.resources = resources;
         this.templates = templates;
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
@@ -136,7 +138,7 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
         _eventsTable.getElement().getStyle().setOverflowY(Overflow.HIDDEN);
         initTable(_eventsTable);
 
-        tasksTree = new TasksTree();
+        tasksTree = new TasksTree(resources, commonConstants);
         tasksTree.updateTree(taskModelProvider.getModel());
 
         _tasksTable =

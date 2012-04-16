@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Random;
 
 import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
@@ -49,17 +50,20 @@ public class TaskListModel extends SearchableListModel {
                 for (Job task : taskList) {
                     if (task.getCorrelationId().startsWith(_WEBADMIN_)) {
                         if (!correlationTaskMap.containsKey(task.getCorrelationId())) {
-                            Entry<Job, ArrayList<Job>> entry = new TaskEntry(task);
+                            Job rootTask = new Job();
+                            rootTask.setCorrelationId(task.getCorrelationId());
+                            Entry<Job, ArrayList<Job>> entry = new TaskEntry(rootTask);
                             entry.setValue(new ArrayList<Job>());
-                            correlationTaskMap.put(task.getCorrelationId(), entry);
-                            String[] taskDeskArray = task.getCorrelationId().replace(_WEBADMIN_, "").split("_");
-                            String taskDesk = "";
-                            for (int i = 1; i < taskDeskArray.length; i++) {
-                                taskDesk += taskDeskArray[i] + " ";
+                            correlationTaskMap.put(rootTask.getCorrelationId(), entry);
+                            String[] taskDescreptionArray =
+                                    rootTask.getCorrelationId().replace(_WEBADMIN_, "").split("_");
+                            String taskDesc = "";
+                            for (int i = 1; i < taskDescreptionArray.length; i++) {
+                                taskDesc += taskDescreptionArray[i] + " ";
                             }
-                            task.setId(Guid.NewGuid());
-                            task.setDescription(taskDesk);
-                            taskListWithCorrelationFilter.add(task);
+                            rootTask.setId(Guid.NewGuid());
+                            rootTask.setDescription(taskDesc);
+                            taskListWithCorrelationFilter.add(rootTask);
                         }
                         Entry<Job, ArrayList<Job>> entry = correlationTaskMap.get(task.getCorrelationId());
                         entry.getValue().add(task);
@@ -69,12 +73,32 @@ public class TaskListModel extends SearchableListModel {
                 }
 
                 for (Entry<Job, ArrayList<Job>> entry : correlationTaskMap.values()) {
-                    entry.getKey().setStatus(JobExecutionStatus.FINISHED);
+                    entry.getKey().setStatus(JobExecutionStatus.UNKNOWN);
+                    boolean hasFailedStatus = false;
+                    boolean hasStartedStatus = false;
+                    boolean hasAbortedStatus = false;
+                    int finishedCount = 0;
+
                     for (Job task : entry.getValue()) {
-                        if (!task.getStatus().equals(JobExecutionStatus.FINISHED)
-                                && !entry.getKey().getStatus().equals(JobExecutionStatus.FINISHED)) {
-                            entry.getKey().setStatus(task.getStatus());
+                        switch (task.getStatus()) {
+                        case STARTED:
+                            hasStartedStatus = true;
+                            break;
+                        case FINISHED:
+                            finishedCount++;
+                            break;
+                        case FAILED:
+                            hasFailedStatus = true;
+                            break;
+                        case ABORTED:
+                            hasAbortedStatus = true;
+                            break;
+                        case UNKNOWN:
+                            break;
+                        default:
+                            break;
                         }
+
                         if (entry.getKey().getLastUpdateTime() == null
                                 || (entry.getKey().getLastUpdateTime().before(task.getLastUpdateTime())
                                 && !entry.getKey().getLastUpdateTime().equals(task.getLastUpdateTime()))) {
@@ -91,6 +115,17 @@ public class TaskListModel extends SearchableListModel {
                             entry.getKey().setEndTime(task.getEndTime());
                         }
                         entry.getKey().setLastUpdateTime(tempDate);
+                    }
+                    if (hasFailedStatus) {
+                        entry.getKey().setStatus(JobExecutionStatus.FAILED);
+                    } else if (finishedCount == entry.getValue().size()) {
+                        entry.getKey().setStatus(JobExecutionStatus.FINISHED);
+                    } else if (hasStartedStatus) {
+                        entry.getKey().setStatus(JobExecutionStatus.STARTED);
+                    } else if (hasAbortedStatus) {
+                        entry.getKey().setStatus(JobExecutionStatus.ABORTED);
+                    } else {
+                        entry.getKey().setStatus(JobExecutionStatus.UNKNOWN);
                     }
                 }
 
@@ -201,6 +236,9 @@ public class TaskListModel extends SearchableListModel {
                     {
                         TaskListModel taskListModel = (TaskListModel) model;
                         Job retTask = (Job) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
+                        if (retTask == null) {
+                            return;
+                        }
                         detailedTaskMap.put(retTask.getId().toString(), retTask);
                         ArrayList<Job> taskList = (ArrayList<Job>) taskListModel.getItems();
                         ArrayList<Job> newTaskList = new ArrayList<Job>();
@@ -255,4 +293,17 @@ public class TaskListModel extends SearchableListModel {
 
     }
 
+    /**
+     * @param string - the name of the action (e.g. "Remove multiple disk from vm-Win7") cannot exceed 40 chars.
+     * @return frontend correlation id Description
+     * example: _WEBADMIN_098437232_Remove_multiple_disk_from_vm-Win7
+     */
+    public static String createCorrelationId(String actionDescription) {
+        actionDescription = actionDescription.replace(' ', '_');
+        Random rand = new Random();
+        String hashStr = rand.nextInt(9000000) + 999999 + "";
+
+        String correlationId = TaskListModel._WEBADMIN_ + hashStr + "_" + actionDescription;
+        return correlationId;
+    }
 }

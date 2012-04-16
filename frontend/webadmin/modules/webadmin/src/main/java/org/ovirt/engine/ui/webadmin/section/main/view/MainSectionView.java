@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.system.ClientStorage;
@@ -91,7 +92,7 @@ public class MainSectionView extends AbstractView implements MainSectionPresente
             ApplicationResources resources,
             ApplicationTemplates templates,
             EventBus eventBus,
-            ClientStorage clientStorage) {
+            ClientStorage clientStorage, CommonApplicationConstants commonConstants) {
         westStackPanel = createWestStackPanel(treeModelProvider, bookmarkModelProvider, tagModelProvider);
 
         verticalSplitLayoutPanel = new SplitLayoutPanel(2);
@@ -112,7 +113,8 @@ public class MainSectionView extends AbstractView implements MainSectionPresente
                 resources,
                 templates,
                 eventBus,
-                clientStorage);
+                clientStorage,
+                commonConstants);
         headerPanel.getElement().getParentElement().getStyle().setOverflow(Overflow.VISIBLE);
     }
 
@@ -156,13 +158,12 @@ public class MainSectionView extends AbstractView implements MainSectionPresente
             ApplicationResources resources,
             ApplicationTemplates templates,
             EventBus eventBus,
-            ClientStorage clientStorage
-            ) {
+            ClientStorage clientStorage, CommonApplicationConstants commonConstants) {
         alertEventFooterPanel.add(new AlertsEventsFooterView(
                 alertModelProvider, alertFirstRowModelProvider,
                 eventModelProvider, eventFirstRowModelProvider,
                 taskModelProvider, taskFirstRowModelProvider,
-                resources, templates, eventBus, clientStorage));
+                resources, templates, eventBus, clientStorage, commonConstants));
     }
 
     @Override

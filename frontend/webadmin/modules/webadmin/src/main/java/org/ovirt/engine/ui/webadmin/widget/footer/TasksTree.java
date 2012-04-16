@@ -1,236 +1,158 @@
 package org.ovirt.engine.ui.webadmin.widget.footer;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
 
 import org.ovirt.engine.core.common.job.Job;
+import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.job.Step;
-import org.ovirt.engine.core.compat.Event;
-import org.ovirt.engine.core.compat.EventArgs;
-import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.IEventListener;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
-import org.ovirt.engine.ui.common.widget.table.column.FullDateTimeColumn;
-import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
-import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
-import org.ovirt.engine.ui.uicommonweb.models.ListModel;
+import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.CommonApplicationResources;
+import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
+import org.ovirt.engine.ui.common.widget.tree.AbstractSubTabTree;
 import org.ovirt.engine.ui.uicommonweb.models.events.TaskListModel;
-import org.ovirt.engine.ui.webadmin.widget.table.column.TaskStatusColumn;
-import org.ovirt.engine.ui.webadmin.widget.tree.AbstractTaskSubTabTree;
+import org.ovirt.engine.ui.webadmin.widget.label.FullDateTimeLabel;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.logical.shared.CloseEvent;
-import com.google.gwt.event.logical.shared.CloseHandler;
-import com.google.gwt.event.logical.shared.OpenEvent;
-import com.google.gwt.event.logical.shared.OpenHandler;
-import com.google.gwt.user.cellview.client.CellTable;
-import com.google.gwt.user.cellview.client.CellTable.Resources;
+import com.google.gwt.dom.client.Style.VerticalAlign;
+import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TreeItem;
+import com.google.gwt.user.client.ui.Widget;
 
-public class TasksTree extends AbstractTaskSubTabTree<TaskListModel> {
-    ArrayList<String> openTasks = new ArrayList<String>();
-    ArrayList<String> openSteps = new ArrayList<String>();
+public class TasksTree extends AbstractSubTabTree<TaskListModel, Job, Step> {
+
+    public TasksTree(CommonApplicationResources resources, CommonApplicationConstants constants) {
+        super(resources, constants);
+    }
 
     @Override
-    public void updateTree(final TaskListModel listModel) {
-        tree.addOpenHandler(new OpenHandler<TreeItem>() {
+    protected TreeItem getRootItem(Job task) {
+        HorizontalPanel panel = new HorizontalPanel();
+        panel.setSpacing(1);
+        panel.setWidth("100%");
 
-            @Override
-            public void onOpen(OpenEvent<TreeItem> event) {
-                TreeItem item = event.getTarget();
-                String guidOrCorrelationId = "";
-                if (item.getParentItem() != null) {
-                    guidOrCorrelationId = item.getElement().getId();
-                    if (!openSteps.contains(guidOrCorrelationId)) {
-                        openSteps.add(guidOrCorrelationId);
-                    }
-                    return;
-                }
-                guidOrCorrelationId = item.getElement().getId();
-                if (item.getChildCount() == 1) {
-                    item.addItem(new Label("Loading..."));
-                }
-                openTasks.add(guidOrCorrelationId);
-                listModel.updateSingleTask(guidOrCorrelationId);
-            }
-        });
+        addItemToPanel(panel, new Image(getStatusImage(task.getStatus())), "25px");
+        addTextBoxToPanel(panel, new TextBoxLabel(), task.getDescription(), "");
+        addValueLabelToPanel(panel, new FullDateTimeLabel(), task.getStartTime(), "150px");
+        addTextBoxToPanel(panel, new TextBoxLabel(), task.getEndTime() == null ? "" : "till", "40px");
+        addValueLabelToPanel(panel, new FullDateTimeLabel(), task.getEndTime(), "150px");
 
-        tree.addCloseHandler(new CloseHandler<TreeItem>() {
-
-            @Override
-            public void onClose(CloseEvent<TreeItem> event) {
-                String guidOrCorrelationId = null;
-                TreeItem item = event.getTarget();
-                if (item.getParentItem() != null) {
-                    guidOrCorrelationId = item.getElement().getId();
-                    openSteps.remove(guidOrCorrelationId);
-                    return;
-                }
-                guidOrCorrelationId = item.getElement().getId();
-                openTasks.remove(guidOrCorrelationId);
-                listModel.removeSingleTask(item.getElement().getId());
-            }
-        });
-
-        listModel.getItemsChangedEvent().addListener(new IEventListener() {
-            @SuppressWarnings("unchecked")
-            @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                TaskListModel model = (TaskListModel) sender;
-                final List<Job> tasks = (List<Job>) model.getItems();
-
-                tree.clear();
-                if (tasks == null || tasks.size() == 0) {
-                    openTasks.clear();
-                    openSteps.clear();
-                    return;
-                }
-                ArrayList<String> currentTasks = new ArrayList<String>();
-
-                for (Job task : tasks) {
-                    String id = "";
-                    if (task.getCorrelationId().startsWith(TaskListModel._WEBADMIN_)) {
-                        id = task.getCorrelationId();
-                    } else {
-                        id = task.getId().toString();
-                    }
-                    currentTasks.add(id);
-
-                    TreeItem taskItem = getJobNode(task);
-
-                    taskItem.getElement().setId(id);
-                    boolean isTaskOpen = openTasks.contains(id);
-                    if (task.getSteps() == null || task.getSteps().size() == 0) {
-                        taskItem.addItem(new TreeItem());
-                    } else {
-                        addItem(task.getSteps(), taskItem);
-                    }
-                    taskItem.setState(isTaskOpen);
-                    openSteps(taskItem);
-
-                    tree.addItem(taskItem);
-                }
-                ArrayList<String> removedTasks = new ArrayList<String>();
-                for (String guidOrCorrelationId : openTasks) {
-                    if (!currentTasks.contains(guidOrCorrelationId)) {
-                        removedTasks.add(guidOrCorrelationId);
-                    }
-                }
-                openTasks.removeAll(removedTasks);
-            }
-
-            private void openSteps(TreeItem taskItem) {
-                if (taskItem == null || taskItem.getElement().getId() == null) {
-                    return;
-                }
-                for (int i = 0; i < taskItem.getChildCount(); i++) {
-                    String stepId = taskItem.getChild(i).getElement().getId();
-                    boolean isOpen = openSteps.contains(stepId);
-                    taskItem.getChild(i).setState(isOpen);
-                    openSteps(taskItem.getChild(i));
-                }
-            }
-
-            private void addItem(List<Step> list, TreeItem treeItem) {
-                if (list == null || list.size() == 0) {
-                    return;
-                }
-                TreeItem stepItem = null;
-                for (Step step : list) {
-                    stepItem = getStepNode(step);
-                    Guid guid = step.getId();
-                    stepItem.getElement().setId(guid.toString());
-                    treeItem.addItem(stepItem);
-                    addItem(step.getSteps(), stepItem);
-                }
-            }
-        });
+        TreeItem treeItem = new TreeItem(panel);
+        String id =
+                task.getCorrelationId().startsWith(TaskListModel._WEBADMIN_) ? task.getCorrelationId() : task.getId()
+                        .toString();
+        treeItem.setUserObject(id);
+        return treeItem;
     }
 
-    private TreeItem getJobNode(Job task) {
-        EntityModelCellTable<ListModel> table =
-                new EntityModelCellTable<ListModel>(false,
-                        (Resources) GWT.create(TaskTreeHeaderlessTableResources.class),
-                        true);
-
-        table.addColumn(new TaskStatusColumn(), "Status", "30px");
-
-        FullDateTimeColumn<EntityModel> timeColumn = new FullDateTimeColumn<EntityModel>() {
-            @Override
-            protected Date getRawValue(EntityModel entity) {
-                Job object = (Job) entity.getEntity();
-                return object.getEndTime() == null ? object.getStartTime() : object.getEndTime();
-            }
-        };
-        table.addColumn(timeColumn, "Time", "160px");
-
-        TextColumnWithTooltip<EntityModel> descriptionColumn = new TextColumnWithTooltip<EntityModel>() {
-            @Override
-            public String getValue(EntityModel entity) {
-                Job object = (Job) entity.getEntity();
-                return object.getDescription();
-            }
-        };
-        table.addColumn(descriptionColumn, "Description");
-
-        ArrayList<EntityModel> entityModelList = toEntityModelList(new ArrayList<Job>(Arrays.asList(task)));
-        return createTreeItem(table, entityModelList);
+    @Override
+    protected void emptyRoot(TreeItem rootItem) {
+        super.emptyRoot(rootItem);
+        rootItem.addItem(new Label("Loading..."));
     }
 
-    private TreeItem getStepNode(Step step) {
-        EntityModelCellTable<ListModel> table =
-                new EntityModelCellTable<ListModel>(false,
-                        (Resources) GWT.create(TaskTreeHeaderlessTableResources.class),
-                        true);
-
-        table.addColumn(new TaskStatusColumn(), "Status", "30px");
-
-        FullDateTimeColumn<EntityModel> timeColumn = new FullDateTimeColumn<EntityModel>() {
-            @Override
-            protected Date getRawValue(EntityModel entity) {
-                Step object = (Step) entity.getEntity();
-                return object.getEndTime() == null ? object.getStartTime() : object.getEndTime();
-            }
-        };
-        table.addColumn(timeColumn, "Time", "160px");
-
-        TextColumnWithTooltip<EntityModel> descriptionColumn = new TextColumnWithTooltip<EntityModel>() {
-            @Override
-            public String getValue(EntityModel entity) {
-                Step object = (Step) entity.getEntity();
-                return object.getDescription();
-            }
-        };
-        table.addColumn(descriptionColumn, "Description");
-
-        ArrayList<EntityModel> entityModelList = toEntityModelList(new ArrayList<Step>(Arrays.asList(step)));
-        return createTreeItem(table, entityModelList);
-    }
-
-    public interface TaskTreeHeaderlessTableResources extends CellTable.Resources {
-        interface TableStyle extends CellTable.Style {
+    @Override
+    protected void addLeaves(TreeItem nodeItem, Step step) {
+        if (step.getSteps() == null) {
+            return;
         }
+        TreeItem innerItem;
+        for (Step innerStep : step.getSteps()) {
+            innerItem = getNodeItem(innerStep);
+            if (innerItem != null) {
+                styleItem(innerItem, true);
+                nodeItem.addItem(innerItem);
+                addLeaves(innerItem, innerStep);
+            }
+        }
+    }
 
-        @Override
-        @Source({ CellTable.Style.DEFAULT_CSS, "org/ovirt/engine/ui/webadmin/css/TaskTreeHeaderlessTable.css" })
-        TableStyle cellTableStyle();
+    @Override
+    protected void onTreeItemOpen(TreeItem treeItem) {
+        super.onTreeItemOpen(treeItem);
+        // Root node
+        if (treeItem.getParentItem() == null) {
+            String idOrCorrelationId = (String) treeItem.getUserObject();
+            listModel.updateSingleTask(idOrCorrelationId);
+        }
+    }
+
+    @Override
+    protected TreeItem getLeafItem(Step step) {
+        HorizontalPanel panel = new HorizontalPanel();
+        panel.setSpacing(1);
+        panel.setWidth("100%");
+
+        addItemToPanel(panel, new Image(getStatusImage(step.getStatus())), "25px");
+        addTextBoxToPanel(panel, new TextBoxLabel(), step.getDescription(), "");
+        addValueLabelToPanel(panel, new FullDateTimeLabel(), step.getStartTime(), "150px");
+        addTextBoxToPanel(panel, new TextBoxLabel(), step.getEndTime() == null ? "" : "till", "40px");
+        addValueLabelToPanel(panel, new FullDateTimeLabel(), step.getEndTime(), "150px");
+
+        TreeItem treeItem = new TreeItem(panel);
+        treeItem.setUserObject(step.getId());
+        return treeItem;
+    }
+
+    @Override
+    protected TreeItem getNodeItem(Step step) {
+        return getLeafItem(step);
+    }
+
+    @Override
+    protected ArrayList<Step> getNodeObjects(Job task) {
+        return (ArrayList<Step>) task.getSteps();
     }
 
     public void collapseAllTasks() {
-        openTasks.clear();
-        openSteps.clear();
         for (int i = 0; i < tree.getItemCount(); i++) {
-            collapseAllTasksHelper(tree.getItem(i));
+            collapseAllTasksHelper((TreeItem) tree.getItem(i));
         }
     }
 
     private void collapseAllTasksHelper(TreeItem item) {
         item.setState(false);
         for (int i = 0; i < item.getChildCount(); i++) {
-            collapseAllTasksHelper(item.getChild(i));
+            collapseAllTasksHelper((TreeItem) item.getChild(i));
+        }
+    }
+
+    public ImageResource getStatusImage(JobExecutionStatus jobExecutionStatus) {
+        if (jobExecutionStatus == null) {
+            return resources.questionMarkImage();
+        }
+        switch (jobExecutionStatus) {
+        case STARTED:
+            return resources.waitImage();
+        case FINISHED:
+            return resources.logNormalImage();
+        case FAILED:
+            return resources.logErrorImage();
+        case ABORTED:
+            return resources.logWarningImage();
+        case UNKNOWN:
+            return resources.questionMarkImage();
+        default:
+            return null;
+        }
+    }
+
+    @Override
+    protected void addItemToPanel(HorizontalPanel panel, Widget item, String width) {
+        super.addItemToPanel(panel, item, width);
+        item.getElement().getStyle().setColor("white");
+        item.getElement().getStyle().setVerticalAlign(VerticalAlign.MIDDLE);
+        panel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+    }
+
+    @Override
+    protected void styleItem(TreeItem item, boolean enabled) {
+        super.styleItem(item, enabled);
+        item.getElement().getStyle().setProperty("borderTop", "1px solid white");
+        if (item.getParentItem() != null) {
+            item.getElement().getStyle().setBackgroundColor("grey");
         }
     }
 }

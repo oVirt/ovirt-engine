@@ -166,4 +166,7 @@ public interface CommonApplicationResources extends ClientBundle {
     @Source("images/wait.png")
     ImageResource waitImage();
 
+    @Source("images/question_mark.png")
+    ImageResource questionMarkImage();
+
 }

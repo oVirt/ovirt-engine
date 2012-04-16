@@ -196,17 +196,17 @@ public abstract class AbstractSubTabTree<M extends SearchableListModel, R, N> ex
                 rootItem.addItem(nodeHeader);
             }
 
-            for (N node : getNodeObjects(root)) {
-                TreeItem nodeItem = getNodeItem(node);
+            if (getNodeObjects(root).isEmpty()) {
+                emptyRoot(rootItem);
+            } else {
+                for (N node : getNodeObjects(root)) {
+                    TreeItem nodeItem = getNodeItem(node);
 
-                TreeItem leafItem = getLeafItem(node);
-                if (leafItem != null) {
-                    nodeItem.addItem(leafItem);
-                    styleItem(leafItem, getIsNodeEnabled(node));
+                    addLeaves(nodeItem, node);
+
+                    rootItem.addItem(nodeItem);
+                    styleItem(nodeItem, getIsNodeEnabled(node));
                 }
-
-                rootItem.addItem(nodeItem);
-                styleItem(nodeItem, getIsNodeEnabled(node));
             }
 
             tree.addItem(rootItem);
@@ -214,6 +214,18 @@ public abstract class AbstractSubTabTree<M extends SearchableListModel, R, N> ex
         }
 
         updateTreeState();
+    }
+
+    protected void addLeaves(TreeItem nodeItem, N node) {
+        TreeItem leafItem = getLeafItem(node);
+        if (leafItem != null) {
+            nodeItem.addItem(leafItem);
+            styleItem(leafItem, getIsNodeEnabled(node));
+        }
+    }
+
+    protected void emptyRoot(TreeItem rootItem) {
+
     }
 
     protected abstract TreeItem getRootItem(R rootObject);
