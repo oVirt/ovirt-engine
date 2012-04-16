@@ -1817,6 +1817,15 @@
         </row>
     </table>
 
+    <table name="disk_lun_map">
+      <column>disk_id</column>
+      <column>lun_id</column>
+      <row>
+            <value>1b26a52b-b60f-44cb-9f46-3ef333b04a35</value>
+            <value>1IET_00180002</value>
+      </row>
+    </table>
+
     <table name="users">
       <column>user_id</column>
       <column>name</column>

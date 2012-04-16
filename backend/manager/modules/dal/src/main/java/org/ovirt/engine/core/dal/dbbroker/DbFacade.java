@@ -11,8 +11,8 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
-import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.BaseDisk;
+import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
@@ -44,14 +44,15 @@ import org.ovirt.engine.core.dao.AdGroupDAO;
 import org.ovirt.engine.core.dao.AsyncTaskDAO;
 import org.ovirt.engine.core.dao.AuditLogDAO;
 import org.ovirt.engine.core.dao.BaseDAODbFacade;
+import org.ovirt.engine.core.dao.BaseDiskDao;
 import org.ovirt.engine.core.dao.BookmarkDAO;
 import org.ovirt.engine.core.dao.BusinessEntitySnapshotDAO;
 import org.ovirt.engine.core.dao.DAO;
 import org.ovirt.engine.core.dao.DaoFactory;
 import org.ovirt.engine.core.dao.DbUserDAO;
-import org.ovirt.engine.core.dao.BaseDiskDao;
 import org.ovirt.engine.core.dao.DiskImageDAO;
 import org.ovirt.engine.core.dao.DiskImageDynamicDAO;
+import org.ovirt.engine.core.dao.DiskLunMapDao;
 import org.ovirt.engine.core.dao.EventDAO;
 import org.ovirt.engine.core.dao.GenericDao;
 import org.ovirt.engine.core.dao.ImageStorageDomainMapDao;
@@ -507,6 +508,15 @@ public class DbFacade {
      */
     public BaseDiskDao getBaseDiskDao() {
         return getDAO(BaseDiskDao.class);
+    }
+
+    /**
+     * Returns the singleton instance of {@link DiskLunMapDao}.
+     *
+     * @return the dao
+     */
+    public DiskLunMapDao getDiskLunMapDao() {
+        return getDAO(DiskLunMapDao.class);
     }
 
     /**
