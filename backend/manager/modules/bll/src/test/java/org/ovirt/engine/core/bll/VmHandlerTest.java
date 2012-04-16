@@ -72,7 +72,7 @@ public class VmHandlerTest {
     public void testGetDiskAliasForVM() {
         String suggestedDiskAlias =
                 ImagesHandler.getDefaultDiskAlias(mockVm().getvm_name(), VmHandler.getCorrectDriveForDisk(mockVm()));
-        assertEquals(suggestedDiskAlias, "VM_TEST_NAME_DISK2");
+        assertEquals(suggestedDiskAlias, "VM_TEST_NAME_Disk2");
     }
 
     private void mockVmDynamicDAOWithLockedVm() {
