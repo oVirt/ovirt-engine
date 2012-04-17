@@ -245,31 +245,6 @@ public class VmDeviceCommonUtils {
         return (whiteList.indexOf(expr) >= 0);
     }
 
-    /**
-     * appends device id key/value to specParams
-     * @param deviceId
-     * @param specParams
-     * @return
-     */
-    public static String appendDeviceIdToSpecParams(Guid deviceId, String specParams) {
-        StringBuilder sb = new StringBuilder();
-        final String DEVICE = "deviceId=";
-        final String SEP = ",";
-        // device id is included in special parameters
-        // this is done in order to recognize the device when changes are passed from VDSM
-        if (specParams.indexOf(DEVICE) >= 0) {
-            return specParams;
-        } else {
-            if (specParams.length() > 0) {
-                sb.append(specParams);
-                sb.append(SEP);
-            }
-            sb.append(DEVICE);
-            sb.append(deviceId);
-        }
-        return sb.toString();
-    }
-
     private static String getDeviceTypeSearchExpr(String type, String device) {
         StringBuilder sb = new StringBuilder();
         sb.append("type=");

@@ -2,7 +2,6 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.util.ArrayList;
 
-import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -155,8 +154,7 @@ public class VmDevice extends IVdcQueryable implements BusinessEntity<VmDeviceId
     }
 
     public String getSpecParams() {
-        specParams = VmDeviceCommonUtils.appendDeviceIdToSpecParams(this.getId().getDeviceId(), specParams);
-        return this.specParams;
+        return specParams;
     }
 
     public void setSpecParams(String specParams) {

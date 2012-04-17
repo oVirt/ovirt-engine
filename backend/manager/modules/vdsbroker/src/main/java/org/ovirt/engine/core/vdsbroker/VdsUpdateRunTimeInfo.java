@@ -1038,11 +1038,8 @@ public class VdsUpdateRunTimeInfo {
      * @return
      */
     private Guid getDeviceId(XmlRpcStruct device) {
-        Map<String, String> specParams = (Map<String, String>) device.getItem("specParams");
-        if (specParams == null)
-            return null;
-        else
-            return new Guid(specParams.get("deviceId"));
+        String deviceId = (String) device.getItem(VdsProperties.DeviceId);
+        return deviceId == null ? null : new Guid(deviceId);
     }
 
     // if not statistics check if status changed and add to running list

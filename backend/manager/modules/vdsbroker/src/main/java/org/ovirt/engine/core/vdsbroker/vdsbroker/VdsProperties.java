@@ -193,6 +193,7 @@ public final class VdsProperties {
     public static final String KernelParams = "kernelArgs";
     public static final String Custom = "custom";
     public static final String Type = "type";
+    public static final String DeviceId = "deviceId";
     public static final String Device = "device";
     public static final String Devices = "devices";
     public static final String Index = "index";

@@ -52,6 +52,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                 struct.add(VdsProperties.Type, VmDeviceType.VIDEO.getName());
                 struct.add(VdsProperties.Device, VmDeviceType.CIRRUS.getName());
                 struct.add(VdsProperties.SpecParams, StringUtils.string2Map(getNewMonitorSpecParams()));
+                struct.add(VdsProperties.DeviceId, String.valueOf(Guid.NewGuid()));
                 devices.add(struct);
             }
         }
@@ -71,6 +72,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                 struct.add(VdsProperties.Device, vmDevice.getDevice());
                 addAddress(vmDevice, struct);
                 struct.add(VdsProperties.SpecParams, StringUtils.string2Map(vmDevice.getSpecParams()));
+                struct.add(VdsProperties.DeviceId, String.valueOf(vmDevice.getId().getDeviceId()));
                 addToManagedDevices(vmDevice);
                 devices.add(struct);
             }
@@ -218,6 +220,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                 struct.add(VdsProperties.Optional, Boolean.FALSE.toString());
                 struct.add(VdsProperties.ReadOnly, String.valueOf(vmDevice.getIsReadOnly()));
                 struct.add(VdsProperties.SpecParams, StringUtils.string2Map(vmDevice.getSpecParams()));
+                struct.add(VdsProperties.DeviceId, String.valueOf(vmDevice.getId().getDeviceId()));
                 devices.add(struct);
                 addToManagedDevices(vmDevice);
             }
@@ -291,6 +294,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                 struct.add(VdsProperties.Type, vmDevice.getType());
                 struct.add(VdsProperties.Device, vmDevice.getDevice());
                 struct.add(VdsProperties.SpecParams, StringUtils.string2Map(vmDevice.getSpecParams()));
+                struct.add(VdsProperties.DeviceId, String.valueOf(vmDevice.getId().getDeviceId()));
                 addAddress(vmDevice, struct);
                 devices.add(struct);
             }
@@ -316,6 +320,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                     struct.add(VdsProperties.Device, vmDevice.getDevice());
                     addAddress(vmDevice, struct);
                     struct.add(VdsProperties.SpecParams, StringUtils.string2Map(vmDevice.getSpecParams()));
+                    struct.add(VdsProperties.DeviceId, String.valueOf(vmDevice.getId().getDeviceId()));
                     devices.add(struct);
                 } else {
                     customMap.put(id.toString(), vmDevice.toString());
@@ -338,17 +343,13 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                     VmDeviceCommonUtils.isOldClusterVersion(vm.getvds_group_compatibility_version()));
             for (VmDevice vmDevice : managedDevices) {
                 for (XmlRpcStruct struct : devices) {
-                    Object o = struct.getItem(VdsProperties.SpecParams);
-                    if (o instanceof Map<?, ?>) {
-                        if (vmDevice.getBootOrder() > 0
-                                && StringUtils.map2String((Map<String, String>) o).contains(vmDevice.getDeviceId()
-                                        .toString())) {
-                            struct.add(VdsProperties.BootOrder, String.valueOf(vmDevice.getBootOrder()));
-                            break;
-                        }
-                    }
-                    else {
-                        log.errorFormat("Improper value of spec_params for VM {0} : {1}", vm.getvm_name(), o.toString());
+                    String deviceId = (String) struct.getItem(VdsProperties.DeviceId);
+                    if (vmDevice.getBootOrder() > 0
+                            && deviceId != null && deviceId.equals(vmDevice.getDeviceId().toString())) {
+                        struct.add(VdsProperties.BootOrder, String.valueOf(vmDevice.getBootOrder()));
+                        break;
+                    } else {
+                        log.errorFormat("No value for device-Id for VM {0} : {1}", vm.getvm_name());
                     }
                 }
             }
@@ -380,6 +381,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         struct.add(VdsProperties.mac_addr, vmInterface.getMacAddress());
         addBootOrder(vmDevice, struct);
         struct.add(VdsProperties.SpecParams, StringUtils.string2Map(vmDevice.getSpecParams()));
+        struct.add(VdsProperties.DeviceId, String.valueOf(vmDevice.getId().getDeviceId()));
         struct.add(VdsProperties.nic_type, nicModel);
     }
 
@@ -413,6 +415,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
     private void addDevice(XmlRpcStruct struct, VmDevice vmDevice, String path) {
         struct.add(VdsProperties.Path, path);
         struct.add(VdsProperties.SpecParams, StringUtils.string2Map(vmDevice.getSpecParams()));
+        struct.add(VdsProperties.DeviceId, String.valueOf(vmDevice.getId().getDeviceId()));
         addBootOrder(vmDevice, struct);
         devices.add(struct);
         addToManagedDevices(vmDevice);
@@ -428,8 +431,6 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         StringBuilder sb = new StringBuilder();
         sb.append("vram=");
         sb.append(VmDeviceCommonUtils.HIGH_VIDEO_MEM);
-        sb.append(",deviceId=");
-        sb.append(String.valueOf(Guid.NewGuid()));
         return sb.toString();
     }
 }
