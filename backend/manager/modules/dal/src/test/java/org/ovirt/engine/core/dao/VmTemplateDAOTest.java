@@ -56,8 +56,7 @@ public class VmTemplateDAOTest extends BaseDAOTestCase {
     public void testGet() {
         VmTemplate result = dao.get(EXISTING_TEMPLATE_ID);
 
-        assertNotNull(result);
-        assertEquals(EXISTING_TEMPLATE_ID, result.getId());
+        assertGetResult(result);
     }
 
     /**
@@ -177,5 +176,37 @@ public class VmTemplateDAOTest extends BaseDAOTestCase {
         VmTemplate after = dbFacade.getVmTemplateDAO().get(DELETABLE_TEMPLATE_ID);
 
         assertNull(after);
+    }
+
+    /**
+    * Asserts that the right template is returned for a privileged user with filtering enabled
+    */
+    @Test
+    public void testGetWithPermissionsForPriviligedUser() {
+        VmTemplate result = dao.get(EXISTING_TEMPLATE_ID, PRIVILEGED_USER_ID, true);
+        assertGetResult(result);
+    }
+
+    /**
+    * Asserts that no result is returned for a non privileged user with filtering enabled
+    */
+    @Test
+    public void testGetWithPermissionsForUnpriviligedUser() {
+        VmTemplate result = dao.get(EXISTING_TEMPLATE_ID, UNPRIVILEGED_USER_ID, true);
+        assertNull(result);
+    }
+
+    /**
+    * Asserts that the right template is returned for a non privileged user with filtering disabled
+    */
+    @Test
+    public void testGetWithPermissionsDisabledForUnpriviligedUser() {
+        VmTemplate result = dao.get(EXISTING_TEMPLATE_ID, UNPRIVILEGED_USER_ID, false);
+        assertGetResult(result);
+    }
+
+    private void assertGetResult(VmTemplate result) {
+        assertNotNull(result);
+        assertEquals(EXISTING_TEMPLATE_ID, result.getId());
     }
 }

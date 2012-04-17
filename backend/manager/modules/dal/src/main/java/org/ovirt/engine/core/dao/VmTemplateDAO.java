@@ -14,6 +14,19 @@ import org.ovirt.engine.core.compat.Guid;
 public interface VmTemplateDAO extends GenericDao<VmTemplate, Guid>, StatusAwareDao<Guid, VmTemplateStatus>, SearchDAO<VmTemplate> {
 
     /**
+    * Retrieves the template with the given id with optional filtering.
+    *
+    * @param id
+    *            The id to look by (can't be <code>null</code>).
+    * @param userID
+    *            the ID of the user requesting the information
+    * @param isFiltered
+    *            Whether the results should be filtered according to the user's permissions
+    * @return The entity instance, or <code>null</code> if not found.
+    */
+    public VmTemplate get(Guid id, Guid userID, boolean isFiltered);
+
+    /**
      * Retrieves all templates for the specified storage domain.
      *
      * @param storageDomain

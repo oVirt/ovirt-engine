@@ -12,8 +12,7 @@ public class GetVmTemplateQuery<P extends GetVmTemplateParameters> extends Queri
     @Override
     protected void executeQueryCommand() {
         VmTemplate vmt = DbFacade.getInstance().getVmTemplateDAO()
-                .get(getParameters().getId());
-
+                .get(getParameters().getId(), getUserID(), getParameters().isFiltered());
         VmTemplateHandler.UpdateDisksFromDb(vmt);
         getQueryReturnValue().setReturnValue(vmt);
     }

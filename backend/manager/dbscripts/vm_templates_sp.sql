@@ -243,12 +243,15 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
-Create or replace FUNCTION GetVmTemplateByVmtGuid(v_vmt_guid UUID) RETURNS SETOF vm_templates_view
+Create or replace FUNCTION GetVmTemplateByVmtGuid(v_vmt_guid UUID, v_user_id UUID, v_is_filtered boolean) RETURNS SETOF vm_templates_view
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT vm_templates.*
       FROM vm_templates_view vm_templates
-      WHERE vmt_guid = v_vmt_guid;
+      WHERE vmt_guid = v_vmt_guid
+      AND (NOT v_is_filtered OR EXISTS (SELECT 1
+                                        FROM   user_vm_template_permissions_view
+                                        WHERE  user_id = v_user_id AND entity_id = v_vmt_guid));
 END; $procedure$
 LANGUAGE plpgsql;
 
