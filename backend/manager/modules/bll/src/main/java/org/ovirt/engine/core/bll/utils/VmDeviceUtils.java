@@ -119,7 +119,7 @@ public class VmDeviceUtils {
                     && VmDeviceType.CDROM.getName().equals(device.getDevice())) {
                 // check here is source VM had CD (Vm from snapshot)
                 String srcCdPath=org.ovirt.engine.core.utils.StringUtils.string2Map(device.getSpecParams()).get(VdsProperties.Path);
-                shouldHaveCD = (!srcCdPath.isEmpty() || !isoPath.isEmpty());
+                shouldHaveCD = (!srcCdPath.isEmpty() || shouldHaveCD);
                 if (!hasAlreadyCD && shouldHaveCD) {
                     specParams = setCdPath(specParams, srcCdPath, isoPath);
                 }
