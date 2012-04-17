@@ -53,7 +53,7 @@ public enum VdcQueryType implements Serializable {
     GetTemplateInterfacesByTemplateId(VdcQueryAuthType.User),
 
     // VdsGroups
-    GetVdsCertificateSubjectByVdsId,
+    GetVdsCertificateSubjectByVdsId(VdcQueryAuthType.User),
     GetAllVdsGroups,
     GetVdsGroupByVdsGroupId,
     GetVdsGroupById(VdcQueryAuthType.User),

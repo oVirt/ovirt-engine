@@ -14,14 +14,23 @@ public class GetVdsCertificateSubjectByVdsIdQuery<P extends GetVdsByVdsIdParamet
     @Override
     protected void executeQueryCommand() {
         getQueryReturnValue().setSucceeded(false);
-        VDS vds = DbFacade.getInstance().getVdsDAO().get(getParameters().getVdsId());
+        VDS vds = DbFacade.getInstance()
+                .getVdsDAO()
+                .get(getParameters().getVdsId(), getUserID(), getParameters().isFiltered());
         if (vds != null) {
             getQueryReturnValue().setSucceeded(true);
             getQueryReturnValue()
                     .setReturnValue(
-                            String.format("O=%1$s,CN=%2$s", Config.<String> GetValue(ConfigValues.OrganizationName)
+                            String.format("O=%1$s,CN=%2$s", getOrganizationName()
                                     .replace("\\", "\\\\").replace(",", "\\,"), vds.gethost_name()
                                     .replace("\\", "\\\\").replace(",", "\\,")));
         }
+    }
+
+    /**
+     * @return The organization's name from {@link Config}
+     */
+    protected String getOrganizationName() {
+        return Config.<String> GetValue(ConfigValues.OrganizationName);
     }
 }
