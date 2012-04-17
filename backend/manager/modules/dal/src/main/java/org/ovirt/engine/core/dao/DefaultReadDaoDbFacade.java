@@ -3,13 +3,10 @@ package org.ovirt.engine.core.dao;
 import java.io.Serializable;
 import java.text.MessageFormat;
 import java.util.List;
-import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
-import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
-import org.springframework.jdbc.core.simple.SimpleJdbcCallOperations;
 
 /**
  * Implementation for the {@link ReadDao} which provides a default implementation for all the methods which only
@@ -68,25 +65,18 @@ public abstract class DefaultReadDaoDbFacade<T extends BusinessEntity<ID>, ID ex
         this.procedureNameForGetAll = procedureNameForGetAll;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public T get(ID id) {
-        Map<String, Object> dbResults = createQueryCall(getProcedureNameForGet())
-                .returningResultSet("RETURN_VALUE", createEntityRowMapper())
-                .execute(createIdParameterMapper(id));
-
-        return (T) DbFacadeUtils
-                .asSingleResult((List<?>) (dbResults.get("RETURN_VALUE")));
+        return getCallsHandler().executeRead(getProcedureNameForGet(),
+                createEntityRowMapper(),
+                createIdParameterMapper(id));
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public List<T> getAll() {
-        Map<String, Object> dbResults = createQueryCall(getProcedureNameForGetAll())
-                .returningResultSet("RETURN_VALUE", createEntityRowMapper())
-                .execute(getCustomMapSqlParameterSource());
-
-        return (List<T>) dbResults.get("RETURN_VALUE");
+        return getCallsHandler().executeReadList(getProcedureNameForGetAll(),
+                createEntityRowMapper(),
+                getCustomMapSqlParameterSource());
     }
 
     /**
@@ -104,17 +94,4 @@ public abstract class DefaultReadDaoDbFacade<T extends BusinessEntity<ID>, ID ex
      * @return A row mapper which can map results to an entity.
      */
     protected abstract ParameterizedRowMapper<T> createEntityRowMapper();
-
-    /**
-     * Create a {@link SimpleJdbcCallOperations} used to call the given query procedure.<br>
-     * <b>Warning:</b> This call should be used only for fetching entities.
-     *
-     * @param procedureName
-     *            The name of the stored procedure to call.
-     * @return The {@link SimpleJdbcCallOperations} which can be used to call the procedure.
-     */
-    protected SimpleJdbcCallOperations createQueryCall(String procedureName) {
-        return dialect.createJdbcCallForQuery(jdbcTemplate).withProcedureName(procedureName);
-    }
-
 }

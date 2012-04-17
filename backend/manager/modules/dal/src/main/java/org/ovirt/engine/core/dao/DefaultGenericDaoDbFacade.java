@@ -5,7 +5,6 @@ import java.text.MessageFormat;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.simple.SimpleJdbcCallOperations;
 
 /**
  * Implementation for the {@link GenericDao} which provides a default implementation for all the methods which only
@@ -65,36 +64,12 @@ public abstract class DefaultGenericDaoDbFacade<T extends BusinessEntity<ID>, ID
         procedureNameForRemove = MessageFormat.format(DEFAULT_REMOVE_PROCEDURE_FORMAT, entityStoredProcedureName);
     }
 
-    /**
-     * Update the entity in the DB using the given {@link SimpleJdbcCallOperations}.
-     *
-     * @param entity
-     *            The image dynamic data.
-     */
-
-    public void update(T entity) {
-        modify(getProcedureNameForUpdate(), createFullParametersMapper(entity));
-    }
-
     protected final String getProcedureNameForUpdate() {
         return procedureNameForUpdate;
     }
 
     protected void setProcedureNameForUpdate(String procedureNameForUpdate) {
         this.procedureNameForUpdate = procedureNameForUpdate;
-    }
-
-    protected void update(SimpleJdbcCallOperations callToUpdate, T entity) {
-        callToUpdate.execute(createFullParametersMapper(entity));
-    }
-
-    protected void modify(String procedureName, MapSqlParameterSource paramSource) {
-        getCallsHandler().executeModification(procedureName, paramSource);
-    }
-
-    @Override
-    public void save(T entity) {
-        modify(getProcedureNameForSave(), createFullParametersMapper(entity));
     }
 
     protected final String getProcedureNameForSave() {
@@ -105,17 +80,27 @@ public abstract class DefaultGenericDaoDbFacade<T extends BusinessEntity<ID>, ID
         this.procedureNameForSave = procedureNameForSave;
     }
 
-    @Override
-    public void remove(ID id) {
-        modify(getProcedureNameForRemove(), createIdParameterMapper(id));
-    }
-
     protected final String getProcedureNameForRemove() {
         return procedureNameForRemove;
     }
 
     protected void setProcedureNameForRemove(String procedureNameForRemove) {
         this.procedureNameForRemove = procedureNameForRemove;
+    }
+
+    @Override
+    public void save(T entity) {
+        getCallsHandler().executeModification(getProcedureNameForSave(), createFullParametersMapper(entity));
+    }
+
+    @Override
+    public void update(T entity) {
+        getCallsHandler().executeModification(getProcedureNameForUpdate(), createFullParametersMapper(entity));
+    }
+
+    @Override
+    public void remove(ID id) {
+        getCallsHandler().executeModification(getProcedureNameForRemove(), createIdParameterMapper(id));
     }
 
     /**
@@ -126,5 +111,4 @@ public abstract class DefaultGenericDaoDbFacade<T extends BusinessEntity<ID>, ID
      * @return The mapper for the parameters from the entity.
      */
     protected abstract MapSqlParameterSource createFullParametersMapper(T entity);
-
 }
