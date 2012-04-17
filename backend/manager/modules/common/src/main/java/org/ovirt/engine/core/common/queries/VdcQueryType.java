@@ -212,7 +212,7 @@ public enum VdcQueryType implements Serializable {
     GetDeviceList,
     DiscoverSendTargets,
     GetStorageSessionsList,
-    GetStorageDomainsByVmTemplateId,
+    GetStorageDomainsByVmTemplateId(VdcQueryAuthType.User),
     GetVmsFromExportDomain("org.ovirt.engine.core.bll.storage"),
     GetTemplatesFromExportDomain,
     GetVmTemplatesFromStorageDomain(VdcQueryAuthType.User),

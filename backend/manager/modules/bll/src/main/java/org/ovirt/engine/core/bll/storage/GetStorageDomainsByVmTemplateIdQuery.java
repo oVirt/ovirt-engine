@@ -23,7 +23,7 @@ public class GetStorageDomainsByVmTemplateIdQuery<P extends GetStorageDomainsByV
     protected void executeQueryCommand() {
         ArrayList<storage_domains> result = new ArrayList<storage_domains>();
         VmTemplate vmTemplate = DbFacade.getInstance().getVmTemplateDAO()
-                .get(getParameters().getId());
+                .get(getParameters().getId(), getUserID(), getParameters().isFiltered());
         if (vmTemplate != null && vmTemplate.getstorage_pool_id() != null) {
             List<DiskImage> templateDisks = getTemplateDisks();
 
