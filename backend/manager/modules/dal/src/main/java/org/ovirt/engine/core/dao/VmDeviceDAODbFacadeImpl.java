@@ -15,29 +15,10 @@ public class VmDeviceDAODbFacadeImpl extends
 
     private static VmDeviceRowMapper vmDeviceRowMapper = new VmDeviceRowMapper();
 
-    @Override
-    protected String getProcedureNameForUpdate() {
-        return "UpdateVmDevice";
-    }
-
-    @Override
-    protected String getProcedureNameForGet() {
-        return "GetVmDeviceByDeviceId";
-    }
-
-    @Override
-    protected String getProcedureNameForGetAll() {
-        return "GetAllFromVmDevice";
-    }
-
-    @Override
-    protected String getProcedureNameForSave() {
-        return "InsertVmDevice";
-    }
-
-    @Override
-    protected String getProcedureNameForRemove() {
-        return "DeleteVmDevice";
+    public VmDeviceDAODbFacadeImpl() {
+        super("VmDevice");
+        setProcedureNameForGet("GetVmDeviceByDeviceId");
+        setProcedureNameForGetAll("GetAllFromVmDevice");
     }
 
     @Override

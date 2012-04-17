@@ -13,29 +13,8 @@ import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 
 public class BaseDiskDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<BaseDisk, Guid> implements BaseDiskDao {
 
-    @Override
-    protected String getProcedureNameForUpdate() {
-        return "UpdateBaseDisk";
-    }
-
-    @Override
-    protected String getProcedureNameForGet() {
-        return "GetBaseDiskByBaseDiskId";
-    }
-
-    @Override
-    protected String getProcedureNameForGetAll() {
-        return "GetAllFromBaseDisks";
-    }
-
-    @Override
-    protected String getProcedureNameForSave() {
-        return "InsertBaseDisk";
-    }
-
-    @Override
-    protected String getProcedureNameForRemove() {
-        return "DeleteBaseDisk";
+    public BaseDiskDaoDbFacadeImpl() {
+        super("BaseDisk");
     }
 
     @Override

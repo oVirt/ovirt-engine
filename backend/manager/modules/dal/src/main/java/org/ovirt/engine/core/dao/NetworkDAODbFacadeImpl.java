@@ -19,6 +19,12 @@ import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
  */
 public class NetworkDAODbFacadeImpl extends DefaultGenericDaoDbFacade<network, Guid> implements NetworkDAO {
 
+    public NetworkDAODbFacadeImpl() {
+        super("network");
+        setProcedureNameForGet("GetnetworkByid");
+        setProcedureNameForGetAll("GetAllFromnetwork");
+    }
+
     @Override
     public network getByName(String name) {
         Map<String, Object> dbResults = dialect.createJdbcCallForQuery(jdbcTemplate)
@@ -61,31 +67,6 @@ public class NetworkDAODbFacadeImpl extends DefaultGenericDaoDbFacade<network, G
                 NetworkRowMapper.instance,
                 getCustomMapSqlParameterSource()
                         .addValue("id", id).addValue("user_id", userID).addValue("is_filtered", isFiltered));
-    }
-
-    @Override
-    protected String getProcedureNameForUpdate() {
-        return "Updatenetwork";
-    }
-
-    @Override
-    protected String getProcedureNameForGet() {
-        return "GetnetworkByid";
-    }
-
-    @Override
-    protected String getProcedureNameForGetAll() {
-        return "GetAllFromnetwork";
-    }
-
-    @Override
-    protected String getProcedureNameForSave() {
-        return "Insertnetwork";
-    }
-
-    @Override
-    protected String getProcedureNameForRemove() {
-        return "Deletenetwork";
     }
 
     @Override

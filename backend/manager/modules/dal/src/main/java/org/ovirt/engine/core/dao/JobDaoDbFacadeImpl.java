@@ -20,29 +20,9 @@ public class JobDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Job, Guid> imp
 
     private static JobRowMapper jobRowMapper = new JobRowMapper();
 
-    @Override
-    protected String getProcedureNameForSave() {
-        return "InsertJob";
-    }
-
-    @Override
-    protected String getProcedureNameForUpdate() {
-        return "UpdateJob";
-    }
-
-    @Override
-    protected String getProcedureNameForGet() {
-        return "GetJobByJobId";
-    }
-
-    @Override
-    protected String getProcedureNameForGetAll() {
-        return "GetAllJobs";
-    }
-
-    @Override
-    protected String getProcedureNameForRemove() {
-        return "DeleteJob";
+    public JobDaoDbFacadeImpl() {
+        super("Job");
+        setProcedureNameForGetAll("GetAllJobs");
     }
 
     @Override

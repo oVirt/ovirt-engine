@@ -20,29 +20,8 @@ public class SnapshotDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Snapshot,
     private static final ParameterizedRowMapper<Snapshot> NO_CONFIG_ROW_MAPPER =
             new SnapshotRowMapperWithConfigurationAvailable();
 
-    @Override
-    protected String getProcedureNameForUpdate() {
-        return "UpdateSnapshot";
-    }
-
-    @Override
-    protected String getProcedureNameForGet() {
-        return "GetSnapshotBySnapshotId";
-    }
-
-    @Override
-    protected String getProcedureNameForGetAll() {
-        return "GetAllFromSnapshots";
-    }
-
-    @Override
-    protected String getProcedureNameForSave() {
-        return "InsertSnapshot";
-    }
-
-    @Override
-    protected String getProcedureNameForRemove() {
-        return "DeleteSnapshot";
+    public SnapshotDaoDbFacadeImpl() {
+        super("Snapshot");
     }
 
     @Override

@@ -2,6 +2,7 @@ package org.ovirt.engine.core.dao;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 import org.apache.commons.lang.NotImplementedException;
 import org.ovirt.engine.core.common.businessentities.InterfaceStatus;
@@ -16,29 +17,14 @@ import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 public class VmNetworkStatisticsDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<VmNetworkStatistics, Guid>
         implements VmNetworkStatisticsDAO {
 
-    @Override
-    protected String getProcedureNameForUpdate() {
-        return "Updatevm_interface_statistics";
+    public VmNetworkStatisticsDAODbFacadeImpl() {
+        super("vm_interface_statistics");
+        setProcedureNameForGet("Getvm_interface_statisticsById");
     }
 
     @Override
-    protected String getProcedureNameForGet() {
-        return "Getvm_interface_statisticsById";
-    }
-
-    @Override
-    protected String getProcedureNameForGetAll() {
+    public List<VmNetworkStatistics> getAll() {
         throw new NotImplementedException();
-    }
-
-    @Override
-    protected String getProcedureNameForSave() {
-        return "Insertvm_interface_statistics";
-    }
-
-    @Override
-    protected String getProcedureNameForRemove() {
-        return "Deletevm_interface_statistics";
     }
 
     @Override

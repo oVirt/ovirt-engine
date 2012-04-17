@@ -20,6 +20,12 @@ import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 
 public class VmDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<VmDynamic, Guid>
         implements VmDynamicDAO {
+
+    public VmDynamicDAODbFacadeImpl() {
+        super("VmDynamic");
+        setProcedureNameForGet("GetVmDynamicByVmGuid");
+    }
+
     @SuppressWarnings("unchecked")
     @Override
     public List<VmDynamic> getAllRunningForVds(Guid id) {
@@ -41,28 +47,8 @@ public class VmDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<V
     }
 
     @Override
-    protected String getProcedureNameForUpdate() {
-        return "UpdateVmDynamic";
-    }
-
-    @Override
-    protected String getProcedureNameForGet() {
-        return "GetVmDynamicByVmGuid";
-    }
-
-    @Override
-    protected String getProcedureNameForGetAll() {
+    public List<VmDynamic> getAll() {
         throw new NotImplementedException();
-    }
-
-    @Override
-    protected String getProcedureNameForSave() {
-        return "InsertVmDynamic";
-    }
-
-    @Override
-    protected String getProcedureNameForRemove() {
-        return "DeleteVmDynamic";
     }
 
     @Override

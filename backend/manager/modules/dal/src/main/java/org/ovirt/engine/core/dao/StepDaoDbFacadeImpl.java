@@ -20,34 +20,14 @@ public class StepDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Step, Guid> i
 
     private static StepRowMapper stepRowMapper = new StepRowMapper();
 
+    public StepDaoDbFacadeImpl() {
+        super("Step");
+        setProcedureNameForGetAll("GetAllSteps");
+    }
+
     @Override
     public boolean exists(Guid id) {
         return get(id) != null;
-    }
-
-    @Override
-    protected String getProcedureNameForUpdate() {
-        return "UpdateStep";
-    }
-
-    @Override
-    protected String getProcedureNameForGet() {
-        return "GetStepByStepId";
-    }
-
-    @Override
-    protected String getProcedureNameForGetAll() {
-        return "GetAllSteps";
-    }
-
-    @Override
-    protected String getProcedureNameForSave() {
-        return "InsertStep";
-    }
-
-    @Override
-    protected String getProcedureNameForRemove() {
-        return "DeleteStep";
     }
 
     @Override

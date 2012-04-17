@@ -15,29 +15,10 @@ import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 public class DiskImageDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<DiskImageDynamic, Guid>
         implements DiskImageDynamicDAO {
 
-    @Override
-    protected String getProcedureNameForGet() {
-        return "Getdisk_image_dynamicByimage_id";
-    }
-
-    @Override
-    protected String getProcedureNameForGetAll() {
-        return "GetAllFromdisk_image_dynamic";
-    }
-
-    @Override
-    protected String getProcedureNameForSave() {
-        return "Insertdisk_image_dynamic";
-    }
-
-    @Override
-    protected String getProcedureNameForRemove() {
-        return "Deletedisk_image_dynamic";
-    }
-
-    @Override
-    protected String getProcedureNameForUpdate() {
-        return "Updatedisk_image_dynamic";
+    public DiskImageDynamicDAODbFacadeImpl() {
+        super("disk_image_dynamic");
+        setProcedureNameForGet("Getdisk_image_dynamicByimage_id");
+        setProcedureNameForGetAll("GetAllFromdisk_image_dynamic");
     }
 
     @Override
