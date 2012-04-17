@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.ovirt.engine.core.bll.MultiLevelAdministrationHandler;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -104,8 +105,8 @@ public class ValidateSession extends HttpServlet {
         return retVal;
     }
 
-    // In the meantime we return true, until this data will be available on the VdcUser object
     private boolean isAdminUser(VdcUser vdcUser) {
-        return true;
+        // In the meantime we use MLA to acquire this information, until this data will be available on the VdcUser object (or other similar object)
+        return MultiLevelAdministrationHandler.isAdminUser(vdcUser.getUserId());
     }
 }
