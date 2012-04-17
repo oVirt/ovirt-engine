@@ -27,14 +27,12 @@ import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
  */
 public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskImageDAO {
 
-    private static DiskImageRowMapper diskImageRowMapper = new DiskImageRowMapper();
-
     @Override
     public DiskImage get(Guid id) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("image_guid", id);
 
-        return getCallsHandler().executeRead("GetImageByImageGuid", diskImageRowMapper, parameterSource);
+        return getCallsHandler().executeRead("GetImageByImageGuid", DiskImageRowMapper.instance, parameterSource);
     }
 
     @Override
@@ -42,7 +40,7 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("image_guid", id);
 
-        return getCallsHandler().executeRead("GetSnapshotByGuid", diskImageRowMapper, parameterSource);
+        return getCallsHandler().executeRead("GetSnapshotByGuid", DiskImageRowMapper.instance, parameterSource);
     }
 
     @Override
@@ -55,21 +53,23 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("quota_id", quotaId);
 
-        return getCallsHandler().executeReadList("GetImagesByQuotaId", new DiskImageRowMapper(), parameterSource);
+        return getCallsHandler().executeReadList("GetImagesByQuotaId", DiskImageRowMapper.instance, parameterSource);
     }
 
     @Override
     public List<DiskImage> getAllForVm(Guid id, Guid userID, boolean isFiltered) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("vm_guid", id).addValue("user_id", userID).addValue("is_filtered", isFiltered);
-        return getCallsHandler().executeReadList("GetImagesByVmGuid",diskImageRowMapper,parameterSource);
+        return getCallsHandler().executeReadList("GetImagesByVmGuid", DiskImageRowMapper.instance, parameterSource);
     }
 
     @Override
     public List<DiskImage> getAllSnapshotsForParent(Guid id) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("parent_guid", id);
-        return getCallsHandler().executeReadList("GetSnapshotByParentGuid",diskImageRowMapper,parameterSource);
+        return getCallsHandler().executeReadList("GetSnapshotByParentGuid",
+                DiskImageRowMapper.instance,
+                parameterSource);
     }
 
     @Override
@@ -77,7 +77,9 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("storage_domain_id", id);
 
-        return getCallsHandler().executeReadList("GetSnapshotsByStorageDomainId", diskImageRowMapper, parameterSource);
+        return getCallsHandler().executeReadList("GetSnapshotsByStorageDomainId",
+                DiskImageRowMapper.instance,
+                parameterSource);
     }
 
     @Override
@@ -85,7 +87,9 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("vm_snapshot_id", id);
 
-        return getCallsHandler().executeReadList("GetSnapshotsByVmSnapshotId", diskImageRowMapper, parameterSource);
+        return getCallsHandler().executeReadList("GetSnapshotsByVmSnapshotId",
+                DiskImageRowMapper.instance,
+                parameterSource);
     }
 
     @Override
@@ -93,13 +97,15 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("image_group_id", id);
 
-        return getCallsHandler().executeReadList("GetSnapshotsByImageGroupId", diskImageRowMapper, parameterSource);
+        return getCallsHandler().executeReadList("GetSnapshotsByImageGroupId",
+                DiskImageRowMapper.instance,
+                parameterSource);
     }
 
     @Override
     public List<DiskImage> getAll() {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource();
-        return getCallsHandler().executeReadList("GetAllFromImages", diskImageRowMapper, parameterSource);
+        return getCallsHandler().executeReadList("GetAllFromImages", DiskImageRowMapper.instance, parameterSource);
     }
 
     @Override
@@ -170,7 +176,9 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("image_guid", id);
 
-        return getCallsHandler().executeRead("GetAncestralImageByImageGuid", diskImageRowMapper, parameterSource);
+        return getCallsHandler().executeRead("GetAncestralImageByImageGuid",
+                DiskImageRowMapper.instance,
+                parameterSource);
     }
 
     @Override
@@ -180,7 +188,7 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
                 .addValue("template_id", templateId);
 
         return getCallsHandler().executeReadList("GetImageByStorageIdAndTemplateId",
-                diskImageRowMapper,
+                DiskImageRowMapper.instance,
                 parameterSource);
     }
 
@@ -192,7 +200,7 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
                 .addValue("is_filtered", isFiltered);
 
         return getCallsHandler().executeReadList("GetAllAttachableDisksByPoolId",
-                diskImageRowMapper,
+                DiskImageRowMapper.instance,
                 parameterSource);
 
     }
@@ -202,11 +210,18 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("vm_id", vmId);
 
-        return getCallsHandler().executeReadList("GetImagesWhichHaveNoDisk", diskImageRowMapper, parameterSource);
+        return getCallsHandler().executeReadList("GetImagesWhichHaveNoDisk",
+                DiskImageRowMapper.instance,
+                parameterSource);
     }
 
     private static class DiskImageRowMapper implements
             ParameterizedRowMapper<DiskImage> {
+
+        public static DiskImageRowMapper instance = new DiskImageRowMapper();
+
+        private DiskImageRowMapper() {
+        }
 
         @Override
         public DiskImage mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -276,7 +291,7 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
 
     @Override
     public List<DiskImage> getAllWithQuery(String query) {
-        return new SimpleJdbcTemplate(jdbcTemplate).query(query, diskImageRowMapper);
+        return new SimpleJdbcTemplate(jdbcTemplate).query(query, DiskImageRowMapper.instance);
     }
 
     @Override
