@@ -231,6 +231,7 @@ public enum VdcActionType {
     ConnectStorageToVds(1006, ActionGroup.CREATE_STORAGE_DOMAIN),
     SetStoragePoolStatus(1007),
     ConnectAllHostsToLun(1008),
+    AddPosixFsStorageDomain(1009, ActionGroup.CREATE_STORAGE_DOMAIN),
     // Event Notification
     AddEventSubscription(1100),
     RemoveEventSubscription(1101),
