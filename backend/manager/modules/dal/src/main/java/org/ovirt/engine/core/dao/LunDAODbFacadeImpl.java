@@ -3,17 +3,18 @@ package org.ovirt.engine.core.dao;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+
+import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
-import org.ovirt.engine.core.common.businessentities.LUNs;
 
 /**
  * <code>LunDAODbFacadeImpl</code> provides a concrete implementation of {@link LunDAO}. The original code was
- * refactored from the {@link DbFacade} class.
+ * refactored from the {@link org.ovirt.engine.core.dal.dbbroker.DbFacade} class.
  */
 public class LunDAODbFacadeImpl extends BaseDAODbFacade implements LunDAO {
 
-    private static final ParameterizedRowMapper<LUNs> MAPPER = new ParameterizedRowMapper<LUNs>() {
+    protected static final ParameterizedRowMapper<LUNs> MAPPER = new ParameterizedRowMapper<LUNs>() {
         @Override
         public LUNs mapRow(ResultSet rs, int rowNum) throws SQLException {
             LUNs entity = new LUNs();

@@ -213,7 +213,7 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
                 parameterSource);
     }
 
-    private static class DiskImageRowMapper extends AbstractDiskRowMapper<DiskImage> implements
+    protected static class DiskImageRowMapper extends AbstractDiskRowMapper<DiskImage> implements
             ParameterizedRowMapper<DiskImage> {
 
         public static DiskImageRowMapper instance = new DiskImageRowMapper();

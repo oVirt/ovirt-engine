@@ -51,6 +51,7 @@ import org.ovirt.engine.core.dao.BusinessEntitySnapshotDAO;
 import org.ovirt.engine.core.dao.DAO;
 import org.ovirt.engine.core.dao.DaoFactory;
 import org.ovirt.engine.core.dao.DbUserDAO;
+import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskImageDAO;
 import org.ovirt.engine.core.dao.DiskImageDynamicDAO;
 import org.ovirt.engine.core.dao.DiskLunMapDao;
@@ -510,6 +511,15 @@ public class DbFacade {
      */
     public BaseDiskDao getBaseDiskDao() {
         return getDAO(BaseDiskDao.class);
+    }
+
+    /**
+     * Returns the singleton instance of {@link DiskDao}.
+     *
+     * @return the dao
+     */
+    public DiskDao getDiskDao() {
+        return getDAO(DiskDao.class);
     }
 
     /**

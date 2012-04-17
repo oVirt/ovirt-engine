@@ -108,6 +108,106 @@ WHERE images_storage_domain_view.active = TRUE
 GROUP BY storage_pool_id,image_guid,creation_date,disk_image_dynamic.actual_size,disk_image_dynamic.read_rate,disk_image_dynamic.write_rate,size,it_guid,internal_drive_mapping,description,ParentId,imageStatus,lastModified,app_list,vm_snapshot_id,volume_type,image_group_id,vm_guid,active,volume_format,disk_interface,boot,wipe_after_delete,propagate_errors,entity_type,quota_id,quota_name,disk_id,disk_alias,disk_description,shareable;
 
 
+
+
+
+
+CREATE OR REPLACE VIEW all_disks
+AS
+SELECT storage_impl.*,
+       bd.disk_id, -- Disk fields
+       bd.internal_drive_mapping,
+       bd.disk_interface,
+       bd.wipe_after_delete,
+       bd.propagate_errors,
+       bd.disk_alias,
+       bd.disk_description,
+       bd.shareable
+FROM
+(
+    SELECT 'IMAGE' AS disk_storage_type,
+           storage_id, -- Storage domain fields
+           storage_path,
+           storage_name,
+           storage_pool_id,
+           image_guid, -- Image fields
+           creation_date,
+           actual_size,
+           read_rate,
+           write_rate,
+           size,
+           it_guid,
+           imageStatus,
+           lastModified,
+           volume_type,
+           volume_format,
+           image_group_id,
+           boot,
+           description, -- Snapshot fields
+           ParentId,
+           app_list,
+           vm_snapshot_id,
+           active,
+           vm_guid, -- VM fields
+           entity_type,
+           quota_id, -- Quota fields
+           quota_name,
+           null AS lun_id, -- LUN fields
+           null AS phisical_volume_id,
+           null AS volume_group_id,
+           null AS serial,
+           null AS lun_mapping,
+           null AS vendor_id,
+           null AS product_id,
+           null AS device_size
+    FROM vm_images_view viw
+    UNION
+    SELECT 'LUN' AS disk_storage_type,
+           null AS storage_id, -- Storage domain fields
+           null AS storage_path,
+           null AS storage_name,
+           null AS storage_pool_id,
+           null AS image_guid, -- Image fields
+           null AS creation_date,
+           null AS actual_size,
+           null AS read_rate,
+           null AS write_rate,
+           null AS size,
+           null AS it_guid,
+           null AS imageStatus,
+           null AS lastModified,
+           null AS volume_type,
+           null AS volume_format,
+           dlm.disk_id AS image_group_id,
+           null AS boot,
+           null AS description, -- Snapshot fields
+           null AS ParentId,
+           null AS app_list,
+           null AS vm_snapshot_id,
+           null AS active,
+           vm_guid, -- VM fields
+           entity_type,
+           null AS quota_id, -- Quota fields
+           null AS quota_name,
+           l.lun_id, -- LUN fields
+           l.phisical_volume_id,
+           l.volume_group_id,
+           l.serial,
+           l.lun_mapping,
+           l.vendor_id,
+           l.product_id,
+           l.device_size
+    FROM disk_lun_map dlm
+    JOIN luns l ON l.lun_id = dlm.lun_id
+    LEFT JOIN vm_device vd ON vd.device_id = dlm.disk_id
+    LEFT JOIN vm_static vs ON vs.vm_guid = vd.vm_id
+) AS storage_impl
+JOIN base_disks bd ON bd.disk_id = storage_impl.image_group_id;
+
+
+
+
+
 CREATE OR REPLACE VIEW storage_domains
 AS
 SELECT
