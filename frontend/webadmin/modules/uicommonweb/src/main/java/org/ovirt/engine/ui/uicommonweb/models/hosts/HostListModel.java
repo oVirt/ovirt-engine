@@ -58,6 +58,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
+import org.ovirt.engine.ui.uicommonweb.models.events.TaskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.tags.TagListModel;
 import org.ovirt.engine.ui.uicommonweb.models.tags.TagModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -586,7 +587,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
                             if (dc.getId().equals(cluster.getstorage_pool_id()))
                             {
                                 innerHostModel.getDataCenter()
-                                        .setItems(new ArrayList<storage_pool>(Arrays.asList(new storage_pool[] {dc})));
+                                        .setItems(new ArrayList<storage_pool>(Arrays.asList(new storage_pool[] { dc })));
                                 innerHostModel.getDataCenter().setSelectedItem(dc);
                                 break;
                             }
@@ -1386,10 +1387,13 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
                 },
                 model);
 
-        flow.enlist(new AddDataCenterRM());
-        flow.enlist(new AddClusterRM());
-        flow.enlist(new ChangeHostClusterRM());
-        flow.enlist(new AddStorageDomainRM());
+        String correlationId = TaskListModel.createCorrelationId(ConstantsManager.getInstance()
+                .getConstants()
+                .configuringLocalStorage());
+        flow.enlist(new AddDataCenterRM(correlationId));
+        flow.enlist(new AddClusterRM(correlationId));
+        flow.enlist(new ChangeHostClusterRM(correlationId));
+        flow.enlist(new AddStorageDomainRM(correlationId));
 
         flow.run(new EnlistmentContext(this));
     }

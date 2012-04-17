@@ -1,10 +1,20 @@
 package org.ovirt.engine.ui.uicompat;
 
-public interface IEnlistmentNotification {
+public abstract class IEnlistmentNotification {
+    
+    private final String correlationId;
+ 
+    public IEnlistmentNotification(String correlationId){
+        this.correlationId = correlationId;
+    }
+    
+    public abstract void prepare(PreparingEnlistment preparingEnlistment);
+ 
+    public abstract void commit(Enlistment enlistment);
+ 
+    public abstract void rollback(Enlistment enlistment);
 
-    public void prepare(PreparingEnlistment preparingEnlistment);
-
-    public void commit(Enlistment enlistment);
-
-    public void rollback(Enlistment enlistment);
+    public String getCorrelationId() {
+        return correlationId;
+    }
 }

@@ -27,7 +27,11 @@ import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PreparingEnlistment;
 
 @SuppressWarnings("unused")
-public class AddDataCenterRM implements IEnlistmentNotification {
+public class AddDataCenterRM extends IEnlistmentNotification {
+
+    public AddDataCenterRM(String correlationId) {
+        super(correlationId);
+    }
 
     @Override
     public void prepare(PreparingEnlistment enlistment) {

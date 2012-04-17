@@ -21,7 +21,11 @@ import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PreparingEnlistment;
 
 @SuppressWarnings("unused")
-public class AddClusterRM implements IEnlistmentNotification {
+public class AddClusterRM extends IEnlistmentNotification {
+
+    public AddClusterRM(String correlationId) {
+        super(correlationId);
+    }
 
     @Override
     public void prepare(PreparingEnlistment enlistment) {
@@ -93,8 +97,9 @@ public class AddClusterRM implements IEnlistmentNotification {
                 cluster.setTransparentHugepages(version.compareTo(new Version("3.0")) >= 0); //$NON-NLS-1$
                 cluster.setcompatibility_version(version);
                 cluster.setMigrateOnError(clusterModel.getMigrateOnErrorOption());
-
-                Frontend.RunAction(VdcActionType.AddVdsGroup, new VdsGroupOperationParameters(cluster),
+                VdsGroupOperationParameters parameters = new VdsGroupOperationParameters(cluster);
+                parameters.setCorrelationId(getCorrelationId());
+                Frontend.RunAction(VdcActionType.AddVdsGroup, parameters,
                         new IFrontendActionAsyncCallback() {
                             @Override
                             public void Executed(FrontendActionAsyncResult result) {

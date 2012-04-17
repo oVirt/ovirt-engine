@@ -1,16 +1,34 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
-import com.google.gwt.user.client.Timer;
-import org.ovirt.engine.core.common.action.*;
-import org.ovirt.engine.core.common.businessentities.*;
+import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
+import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
+import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.action.VdsActionParameters;
+import org.ovirt.engine.core.common.businessentities.StorageDomainType;
+import org.ovirt.engine.core.common.businessentities.StorageType;
+import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VDSStatus;
+import org.ovirt.engine.core.common.businessentities.storage_domain_static;
+import org.ovirt.engine.core.common.businessentities.storage_server_connections;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
-import org.ovirt.engine.ui.uicompat.*;
+import org.ovirt.engine.ui.uicompat.Enlistment;
+import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
+import org.ovirt.engine.ui.uicompat.IEnlistmentNotification;
+import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
+import org.ovirt.engine.ui.uicompat.PreparingEnlistment;
+
+import com.google.gwt.user.client.Timer;
 
 @SuppressWarnings("unused")
-public class AddStorageDomainRM implements IEnlistmentNotification {
+public class AddStorageDomainRM extends IEnlistmentNotification {
+
+    public AddStorageDomainRM(String correlationId) {
+        super(correlationId);
+    }
 
     private static final int WaitInterval = 5000;
     private static final int MaxWaitTries = 6;
@@ -32,15 +50,14 @@ public class AddStorageDomainRM implements IEnlistmentNotification {
         HostListModel model = enlistmentContext.getModel();
         ConfigureLocalStorageModel configureModel = (ConfigureLocalStorageModel) model.getWindow();
 
-        VDS host = (VDS) model.getSelectedItem();
-
-        Frontend.RunAction(VdcActionType.ActivateVds, new VdsActionParameters(host.getId()),
+        final VDS host = (VDS) model.getSelectedItem();
+        VdsActionParameters parameters = new VdsActionParameters(host.getId());
+        parameters.setCorrelationId(getCorrelationId());
+        Frontend.RunAction(VdcActionType.ActivateVds, parameters,
                 new IFrontendActionAsyncCallback() {
                     @Override
                     public void Executed(FrontendActionAsyncResult result) {
-
                         VdcReturnValueBase returnValue = result.getReturnValue();
-
                         context.activateVdsReturnValue = returnValue;
                         prepare2();
                     }
@@ -119,9 +136,11 @@ public class AddStorageDomainRM implements IEnlistmentNotification {
             connection.setconnection((String) configureModel.getStorage().getPath().getEntity());
             connection.setstorage_type(StorageType.LOCALFS);
             context.connection = connection;
-
+            StorageServerConnectionParametersBase parameters =
+                    new StorageServerConnectionParametersBase(connection, context.host.getId());
+            parameters.setCorrelationId(getCorrelationId());
             Frontend.RunAction(VdcActionType.AddStorageServerConnection,
-                    new StorageServerConnectionParametersBase(connection, context.host.getId()),
+                    parameters,
                     new IFrontendActionAsyncCallback() {
                         @Override
                         public void Executed(FrontendActionAsyncResult result) {
@@ -156,10 +175,11 @@ public class AddStorageDomainRM implements IEnlistmentNotification {
             storage.setstorage_name((String) configureModel.getFormattedStorageName().getEntity());
             storage.setstorage((String) returnValue.getActionReturnValue());
 
-            StorageDomainManagementParameter parameter = new StorageDomainManagementParameter(storage);
-            parameter.setVdsId(context.host.getId());
+            StorageDomainManagementParameter parameters = new StorageDomainManagementParameter(storage);
+            parameters.setVdsId(context.host.getId());
+            parameters.setCorrelationId(getCorrelationId());
 
-            Frontend.RunAction(VdcActionType.AddLocalStorageDomain, parameter,
+            Frontend.RunAction(VdcActionType.AddLocalStorageDomain, parameters,
                     new IFrontendActionAsyncCallback() {
                         @Override
                         public void Executed(FrontendActionAsyncResult result) {
@@ -179,9 +199,11 @@ public class AddStorageDomainRM implements IEnlistmentNotification {
         VdcReturnValueBase returnValue = context.addLocalStorageDomainReturnValue;
 
         if (returnValue == null || !returnValue.getSucceeded()) {
-
+            StorageServerConnectionParametersBase parameter =
+                    new StorageServerConnectionParametersBase(context.connection, context.host.getId());
+            parameter.setCorrelationId(getCorrelationId());
             Frontend.RunAction(VdcActionType.RemoveStorageServerConnection,
-                    new StorageServerConnectionParametersBase(context.connection, context.host.getId()),
+                    parameter,
                     new IFrontendActionAsyncCallback() {
                         @Override
                         public void Executed(FrontendActionAsyncResult result) {

@@ -12,7 +12,11 @@ import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PreparingEnlistment;
 
 @SuppressWarnings("unused")
-public class ChangeHostClusterRM implements IEnlistmentNotification {
+public class ChangeHostClusterRM extends IEnlistmentNotification {
+
+    public ChangeHostClusterRM(String correlationId) {
+        super(correlationId);
+    }
 
     @Override
     public void prepare(PreparingEnlistment enlistment) {
@@ -34,9 +38,11 @@ public class ChangeHostClusterRM implements IEnlistmentNotification {
         if (!enlistmentContext.getClusterId().equals(host.getvds_group_id())) {
 
             enlistmentContext.setOldClusterId(host.getvds_group_id());
-
+            ChangeVDSClusterParameters parameters =
+                    new ChangeVDSClusterParameters(enlistmentContext.getClusterId(), host.getId());
+            parameters.setCorrelationId(getCorrelationId());
             Frontend.RunAction(VdcActionType.ChangeVDSCluster,
-                    new ChangeVDSClusterParameters(enlistmentContext.getClusterId(), host.getId()),
+                    parameters,
                     new IFrontendActionAsyncCallback() {
                         @Override
                         public void Executed(FrontendActionAsyncResult result) {
