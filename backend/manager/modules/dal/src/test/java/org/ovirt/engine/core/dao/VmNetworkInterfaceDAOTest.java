@@ -81,11 +81,38 @@ public class VmNetworkInterfaceDAOTest extends BaseDAOTestCase {
     public void testGetAllForTemplate() {
         List<VmNetworkInterface> result = dao.getAllForTemplate(TEMPLATE_ID);
 
+        assertCorrectResultForTemplate(result);
+    }
+
+    /**
+     * Asserts that the right collection containing the network interfaces is returned for a privileged user with filtering enabled
+     */
+    @Test
+    public void testGetAllForTemplateWithPermissionsForPrivilegedUser() {
+        List<VmNetworkInterface> result = dao.getAllForTemplate(TEMPLATE_ID, PRIVILEGED_USER_ID, true);
+
+        assertCorrectResultForTemplate(result);
+    }
+
+    /**
+     * Asserts that an empty list is returned for a non privileged user with filtering enabled
+     */
+    @Test
+    public void testGetAllForTemplateWithPermissionsForUnprivilegedUser() {
+        List<VmNetworkInterface> result = dao.getAllForTemplate(TEMPLATE_ID, UNPRIVILEGED_USER_ID, true);
+
         assertNotNull(result);
-        assertFalse(result.isEmpty());
-        for (VmNetworkInterface iface : result) {
-            assertEquals(TEMPLATE_ID, iface.getVmTemplateId());
-        }
+        assertTrue(result.isEmpty());
+    }
+
+    /**
+     * Asserts that the right collection containing the network interfaces is returned for a non privileged user with filtering disabled
+     */
+    @Test
+    public void testGetAllForTemplateWithPermissionsDisabledForUnprivilegedUser() {
+        List<VmNetworkInterface> result = dao.getAllForTemplate(TEMPLATE_ID, UNPRIVILEGED_USER_ID, false);
+
+        assertCorrectResultForTemplate(result);
     }
 
     /**
@@ -204,5 +231,13 @@ public class VmNetworkInterfaceDAOTest extends BaseDAOTestCase {
     @Test(expected = NotImplementedException.class)
     public void testGetAll() throws Exception {
         dao.getAll();
+    }
+
+    private void assertCorrectResultForTemplate(List<VmNetworkInterface> result) {
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
+        for (VmNetworkInterface iface : result) {
+            assertEquals(TEMPLATE_ID, iface.getVmTemplateId());
+        }
     }
 }

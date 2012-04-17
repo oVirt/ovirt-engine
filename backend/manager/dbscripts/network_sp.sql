@@ -721,13 +721,16 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION Getvm_interfaceBytemplate_id(v_template_id UUID) 
+Create or replace FUNCTION Getvm_interfaceBytemplate_id(v_template_id UUID, v_user_id UUID, v_is_filtered boolean)
 RETURNS SETOF vm_interface_view
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
    FROM vm_interface_view
-   WHERE vmt_guid = v_template_id;
+   WHERE vmt_guid = v_template_id
+   AND (NOT v_is_filtered OR EXISTS (SELECT 1
+                                     FROM   user_vm_template_permissions_view
+                                     WHERE  user_id = v_user_id AND entity_id = v_template_id));
 
 END; $procedure$
 LANGUAGE plpgsql;

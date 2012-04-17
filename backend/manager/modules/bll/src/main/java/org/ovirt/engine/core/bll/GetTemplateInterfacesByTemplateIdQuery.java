@@ -12,6 +12,6 @@ public class GetTemplateInterfacesByTemplateIdQuery<P extends GetVmTemplateParam
     protected void executeQueryCommand() {
         getQueryReturnValue().setReturnValue(DbFacade.getInstance()
                 .getVmNetworkInterfaceDAO()
-                .getAllForTemplate(getParameters().getId()));
+                .getAllForTemplate(getParameters().getId(), getUserID(), getParameters().isFiltered()));
     }
 }
