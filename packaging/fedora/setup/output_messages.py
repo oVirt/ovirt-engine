@@ -401,7 +401,6 @@ ERR_CREATE_OVIRT_HTTPD_CONF="Failed creating ovirt-engine.conf file %s"
 # start httpd
 ERR_FAILED_CHKCFG_HTTPD="Failed to configure httpd service to start on boot"
 ERR_RESTARTING_HTTPD_SERVICE="Failed to restart httpd service"
-ERR_FAILED_START_SERVICE="Error: Can't restart the httpd service"
 ERR_FAILED_TO_START_HTTPD_SERVICE="Error: Can't start the httpd service"
 
 # enable selinux boolean
