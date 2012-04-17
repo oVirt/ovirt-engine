@@ -299,6 +299,11 @@ public class DisksAllocationModel extends EntityModel
     }
 
     private void updateImageToDestinationDomainMap(boolean isSingle) {
+
+        if (disks == null) {
+            return;
+        }
+
         for (DiskModel diskModel : disks) {
             Guid diskId = diskModel.getDiskImage().getId();
             Guid storageId = null;
