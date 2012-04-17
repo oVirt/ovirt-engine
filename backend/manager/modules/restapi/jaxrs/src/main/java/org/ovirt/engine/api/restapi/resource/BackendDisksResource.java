@@ -11,8 +11,8 @@ import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.Disks;
 import org.ovirt.engine.api.model.Statistic;
 import org.ovirt.engine.api.model.Statistics;
-import org.ovirt.engine.api.resource.DeviceResource;
-import org.ovirt.engine.api.resource.DevicesResource;
+import org.ovirt.engine.api.resource.DiskResource;
+import org.ovirt.engine.api.resource.DisksResource;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.UpdateVmDiskParameters;
@@ -26,7 +26,7 @@ import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResource.Paramete
 
 public class BackendDisksResource
         extends AbstractBackendDevicesResource<Disk, Disks, DiskImage>
-        implements DevicesResource<Disk, Disks> {
+        implements DisksResource {
 
     private static final String SUB_COLLECTIONS = "statistics";
 
@@ -47,7 +47,7 @@ public class BackendDisksResource
 
     @Override
     @SingleEntityResource
-    public DeviceResource<Disk> getDeviceSubResource(String id) {
+    public DiskResource getDeviceSubResource(String id) {
         return inject(new BackendDiskResource(id,
                                               this,
                                               updateType,

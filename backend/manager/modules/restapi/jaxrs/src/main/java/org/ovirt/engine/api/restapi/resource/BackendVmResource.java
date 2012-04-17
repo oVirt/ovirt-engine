@@ -13,8 +13,6 @@ import org.ovirt.engine.api.common.util.LinkHelper;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.CdRom;
 import org.ovirt.engine.api.model.CdRoms;
-import org.ovirt.engine.api.model.Disk;
-import org.ovirt.engine.api.model.Disks;
 import org.ovirt.engine.api.model.NIC;
 import org.ovirt.engine.api.model.Nics;
 import org.ovirt.engine.api.model.Statistic;
@@ -27,6 +25,7 @@ import org.ovirt.engine.api.resource.AssignedPermissionsResource;
 import org.ovirt.engine.api.resource.AssignedTagsResource;
 import org.ovirt.engine.api.resource.CreationResource;
 import org.ovirt.engine.api.resource.DevicesResource;
+import org.ovirt.engine.api.resource.DisksResource;
 import org.ovirt.engine.api.resource.SnapshotsResource;
 import org.ovirt.engine.api.resource.StatisticsResource;
 import org.ovirt.engine.api.resource.VmResource;
@@ -121,7 +120,7 @@ public class BackendVmResource extends
     }
 
     @Override
-    public DevicesResource<Disk, Disks> getDisksResource() {
+    public DisksResource getDisksResource() {
         return inject(new BackendDisksResource(guid,
                                                VdcQueryType.GetAllDisksByVmId,
                                                new GetAllDisksByVmIdParameters(guid)));

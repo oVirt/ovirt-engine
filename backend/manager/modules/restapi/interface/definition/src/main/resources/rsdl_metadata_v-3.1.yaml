@@ -263,6 +263,20 @@ actions:
           disk.storage_domains--COLLECTION: {storage_domain.id|name: 'xs:string'}
     urlparams: {}
     headers: {Content-Type: application/xml|json, Expect: 201-created}
+- name: /api/vms/{vm:id}/disks/{disk:id}|rel=activate
+  request:
+    body:
+      parameterType: Action
+      signatures: []
+    urlparams: {}
+    headers: {Content-Type: application/xml|json}
+- name: /api/vms/{vm:id}/disks/{disk:id}|rel=deactivate
+  request:
+    body:
+      parameterType: Action
+      signatures: []
+    urlparams: {}
+    headers: {Content-Type: application/xml|json}
 - name: /api/vms/{vm:id}/nics|rel=get
   request:
     body:

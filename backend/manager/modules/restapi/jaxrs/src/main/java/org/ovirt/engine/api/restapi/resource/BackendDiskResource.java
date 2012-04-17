@@ -1,9 +1,14 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import javax.ws.rs.core.Response;
+
+import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.Disks;
+import org.ovirt.engine.api.resource.ActionResource;
 import org.ovirt.engine.api.resource.DiskResource;
 import org.ovirt.engine.api.resource.StatisticsResource;
+import org.ovirt.engine.core.common.action.HotPlugDiskToVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
@@ -43,5 +48,26 @@ public class BackendDiskResource extends BackendDeviceResource<Disk, Disks, Disk
     @Override
     protected Disk populate(Disk model, DiskImage entity) {
         return ((BackendDisksResource)collection).addStatistics(model, entity, uriInfo, httpHeaders);
+    }
+
+    @Override
+    public ActionResource getActionSubresource(String action, String oid) {
+        return inject(new BackendActionResource(action, oid));
+    }
+
+    @Override
+    public Response activate(Action action) {
+        HotPlugDiskToVmParameters params =
+                new HotPlugDiskToVmParameters(((BackendDisksResource) collection).parentId,
+                        guid);
+        return performAction(VdcActionType.HotPlugDiskToVm, params);
+    }
+
+    @Override
+    public Response deactivate(Action action) {
+        HotPlugDiskToVmParameters params =
+                new HotPlugDiskToVmParameters(((BackendDisksResource) collection).parentId,
+                        guid);
+        return performAction(VdcActionType.HotUnPlugDiskFromVm, params);
     }
 }

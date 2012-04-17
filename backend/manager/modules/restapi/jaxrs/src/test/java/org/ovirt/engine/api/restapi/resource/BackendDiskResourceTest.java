@@ -4,13 +4,16 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
 
 import org.junit.Test;
 
+import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.Disks;
 import org.ovirt.engine.api.model.Statistic;
 import org.ovirt.engine.api.resource.DiskResource;
+import org.ovirt.engine.core.common.action.HotPlugDiskToVmParameters;
 import org.ovirt.engine.core.common.action.UpdateVmDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -119,6 +122,32 @@ public class BackendDiskResourceTest
 
         Disk disk = resource.update(getUpdate());
         assertNotNull(disk);
+    }
+
+    @Test
+    public void testActivate() throws Exception {
+        setUriInfo(setUpActionExpectations(VdcActionType.HotPlugDiskToVm,
+                                           HotPlugDiskToVmParameters.class,
+                                           new String[] { "VmId", "DiskId" },
+                                           new Object[] { PARENT_ID, DISK_ID },
+                                           true,
+                                           true));
+
+        Response response = ((DiskResource) resource).activate(new Action());
+        assertEquals(200, response.getStatus());
+    }
+
+    @Test
+    public void testDeactivate() throws Exception {
+        setUriInfo(setUpActionExpectations(VdcActionType.HotUnPlugDiskFromVm,
+                                           HotPlugDiskToVmParameters.class,
+                                           new String[] { "VmId", "DiskId" },
+                                           new Object[] { PARENT_ID, DISK_ID },
+                                           true,
+                                           true));
+
+        Response response = ((DiskResource) resource).deactivate(new Action());
+        assertEquals(200, response.getStatus());
     }
 
     @Test

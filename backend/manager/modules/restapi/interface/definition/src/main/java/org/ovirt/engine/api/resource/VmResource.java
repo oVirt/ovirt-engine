@@ -28,8 +28,6 @@ import org.ovirt.engine.api.model.Actionable;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.CdRom;
 import org.ovirt.engine.api.model.CdRoms;
-import org.ovirt.engine.api.model.Disk;
-import org.ovirt.engine.api.model.Disks;
 import org.ovirt.engine.api.model.NIC;
 import org.ovirt.engine.api.model.Nics;
 import org.ovirt.engine.api.model.VM;
@@ -115,7 +113,7 @@ public interface VmResource extends UpdatableResource<VM>, AsynchronouslyCreated
     public DevicesResource<CdRom, CdRoms> getCdRomsResource();
 
     @Path("disks")
-    public DevicesResource<Disk, Disks> getDisksResource();
+    public DisksResource getDisksResource();
 
     @Path("nics")
     public DevicesResource<NIC, Nics> getNicsResource();
