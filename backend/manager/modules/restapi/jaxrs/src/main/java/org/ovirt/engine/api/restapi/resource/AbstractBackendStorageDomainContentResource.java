@@ -1,8 +1,11 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import java.util.HashMap;
+
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.BaseResources;
+import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -84,5 +87,19 @@ public abstract class AbstractBackendStorageDomainContentResource<C extends Base
                          VdcQueryType.GetVdsGroupById,
                          new GetVdsGroupByIdParameters(Guid.createGuidFromString(id)),
                          id);
+    }
+
+    protected HashMap<Guid, Guid> getDiskToDestinationMap(Action action) {
+        HashMap<Guid, Guid> diskToDestinationMap = new HashMap<Guid, Guid>();
+        if (action.isSetVm() && action.getVm().isSetDisks() && action.getVm().getDisks().isSetDisks()) {
+            for (Disk disk : action.getVm().getDisks().getDisks()) {
+                if (disk.isSetId() && disk.isSetStorageDomains() && disk.getStorageDomains().isSetStorageDomains()
+                        && disk.getStorageDomains().getStorageDomains().get(0).isSetId()) {
+                    diskToDestinationMap.put(Guid.createGuidFromString(disk.getId()),
+                            Guid.createGuidFromString(disk.getStorageDomains().getStorageDomains().get(0).getId()));
+                }
+            }
+        }
+        return diskToDestinationMap;
     }
 }

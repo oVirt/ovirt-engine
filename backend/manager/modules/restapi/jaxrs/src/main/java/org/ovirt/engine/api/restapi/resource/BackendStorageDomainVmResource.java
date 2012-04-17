@@ -28,7 +28,7 @@ public class BackendStorageDomainVmResource
 
     @Override
     public Response doImport(Action action) {
-        validateParameters(action, "cluster.id|name", "storageDomain.id|name");
+        validateParameters(action, "cluster.id|name");
 
         Guid destStorageDomainId = getDestStorageDomainId(action);
 
@@ -37,6 +37,7 @@ public class BackendStorageDomainVmResource
                                                            destStorageDomainId,
                                                            parent.getDataCenterId(destStorageDomainId),
                                                            getClusterId(action));
+        params.setImageToDestinationDomainMap(getDiskToDestinationMap(action));
 
         return doAction(VdcActionType.ImportVm, params, action);
     }

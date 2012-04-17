@@ -28,7 +28,7 @@ public class BackendStorageDomainTemplateResource
 
     @Override
     public Response doImport(Action action) {
-        validateParameters(action, "cluster.id|name", "storageDomain.id|name");
+        validateParameters(action, "cluster.id|name");
 
         Guid destStorageDomainId = getDestStorageDomainId(action);
 
@@ -37,6 +37,7 @@ public class BackendStorageDomainTemplateResource
                                                                            destStorageDomainId,
                                                                            getClusterId(action),
                                                                            getEntity());
+        params.setImageToDestinationDomainMap(getDiskToDestinationMap(action));
 
         return doAction(VdcActionType.ImportVmTemplate, params, action);
     }

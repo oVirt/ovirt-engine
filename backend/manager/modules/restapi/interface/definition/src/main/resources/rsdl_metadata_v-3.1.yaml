@@ -565,8 +565,8 @@ actions:
     body:
       parameterType: Action
       signatures:
-      - mandatoryArguments: {action.cluster.id|name: 'xs:string', action.storagedomain.id|name: 'xs:string'}
-        optionalArguments: {}
+      - mandatoryArguments: {action.cluster.id|name: 'xs:string'}
+        optionalArguments: {action.storagedomain.id|name: 'xs:string', action.vm.disks.disk--COLLECTION: {id: 'xs:string'}}
     urlparams: {}
     headers: {Content-Type: application/xml|json}
 - name: /api/storagedomains/{storagedomain:id}/vms|rel=get
@@ -588,8 +588,8 @@ actions:
     body:
       parameterType: Action
       signatures:
-      - mandatoryArguments: {action.cluster.id|name: 'xs:string', action.storagedomain.id|name: 'xs:string'}
-        optionalArguments: {}
+      - mandatoryArguments: {action.cluster.id|name: 'xs:string'}
+        optionalArguments: {action.storagedomain.id|name: 'xs:string', action.vm.disks.disk--COLLECTION: {id: 'xs:string'}}
     urlparams: {}
     headers: {Content-Type: application/xml|json}
 - name: /api/clusters|rel=get
