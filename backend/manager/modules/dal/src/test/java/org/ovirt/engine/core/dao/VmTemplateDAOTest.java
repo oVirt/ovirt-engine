@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 import java.util.Map;
@@ -66,8 +67,7 @@ public class VmTemplateDAOTest extends BaseDAOTestCase {
     public void testGetAll() {
         List<VmTemplate> result = dao.getAll();
 
-        assertNotNull(result);
-        assertFalse(result.isEmpty());
+        assertGetAllResult(result);
     }
 
     /**
@@ -77,8 +77,35 @@ public class VmTemplateDAOTest extends BaseDAOTestCase {
     public void testGetAllForStorageDomain() {
         List<VmTemplate> result = dao.getAllForStorageDomain(STORAGE_DOMAIN_ID);
 
+        assertGetAllResult(result);
+    }
+
+    /**
+     * Asserts that the right collection containing the vm templates is returned for a privileged user with filtering enabled
+     */
+    @Test
+    public void testGetAllForStorageDomainWithPermissionsForPriviligedUser() {
+        List<VmTemplate> result = dao.getAllForStorageDomain(STORAGE_DOMAIN_ID, PRIVILEGED_USER_ID, true);
+        assertGetAllResult(result);
+    }
+
+    /**
+     * Asserts that an empty collection is returned for a non privileged user with filtering enabled
+     */
+    @Test
+    public void testGetAllForStorageDomainWithPermissionsForUnpriviligedUser() {
+        List<VmTemplate> result = dao.getAllForStorageDomain(STORAGE_DOMAIN_ID, UNPRIVILEGED_USER_ID, true);
         assertNotNull(result);
-        assertFalse(result.isEmpty());
+        assertTrue(result.isEmpty());
+    }
+
+    /**
+     * Asserts that the right collection containing the vm templates is returned for a non privileged user with filtering disabled
+     */
+    @Test
+    public void testGetAllForStorageDomainWithPermissionsDisabledForUnpriviligedUser() {
+        List<VmTemplate> result = dao.getAllForStorageDomain(STORAGE_DOMAIN_ID, UNPRIVILEGED_USER_ID, false);
+        assertGetAllResult(result);
     }
 
     /**
@@ -88,8 +115,7 @@ public class VmTemplateDAOTest extends BaseDAOTestCase {
     public void testGetAllTemplatesRelatedToQuotaId() {
         List<VmTemplate> result = dao.getAllTemplatesRelatedToQuotaId(FixturesTool.QUOTA_GENERAL);
 
-        assertNotNull(result);
-        assertFalse(result.isEmpty());
+        assertGetAllResult(result);
     }
 
     /**
@@ -99,8 +125,7 @@ public class VmTemplateDAOTest extends BaseDAOTestCase {
     public void testGetAllForVdsGroup() {
         List<VmTemplate> result = dao.getAllForVdsGroup(VDS_GROUP_ID);
 
-        assertNotNull(result);
-        assertFalse(result.isEmpty());
+        assertGetAllResult(result);
         for (VmTemplate template : result) {
             assertEquals(VDS_GROUP_ID, template.getvds_group_id());
         }
@@ -208,5 +233,10 @@ public class VmTemplateDAOTest extends BaseDAOTestCase {
     private void assertGetResult(VmTemplate result) {
         assertNotNull(result);
         assertEquals(EXISTING_TEMPLATE_ID, result.getId());
+    }
+
+    private void assertGetAllResult(List<VmTemplate> result) {
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
     }
 }

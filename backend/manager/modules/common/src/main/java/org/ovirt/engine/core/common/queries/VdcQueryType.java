@@ -214,7 +214,7 @@ public enum VdcQueryType implements Serializable {
     GetStorageDomainsByVmTemplateId,
     GetVmsFromExportDomain("org.ovirt.engine.core.bll.storage"),
     GetTemplatesFromExportDomain,
-    GetVmTemplatesFromStorageDomain,
+    GetVmTemplatesFromStorageDomain(VdcQueryAuthType.User),
     GetAllIdsFromExportDomain,
     GetExistingStorageDomainList,
     GetStorageDomainByIdAndStoragePoolId,

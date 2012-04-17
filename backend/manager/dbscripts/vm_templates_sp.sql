@@ -282,14 +282,17 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
-Create or replace FUNCTION GetVmTemplatesByStorageDomainId(v_storage_domain_id UUID) RETURNS SETOF vm_templates_view
+Create or replace FUNCTION GetVmTemplatesByStorageDomainId(v_storage_domain_id UUID, v_user_id UUID, v_is_filtered boolean) RETURNS SETOF vm_templates_view
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT DISTINCT vm_templates.*
       FROM vm_templates_view vm_templates
       INNER JOIN vm_device vd ON vd.vm_id = vm_templates.vmt_guid
       INNER JOIN images i ON i.image_group_id = vd.device_id AND i.active = TRUE
-      where i.image_guid in(select image_id from image_storage_domain_map where storage_domain_id = v_storage_domain_id);
+      where i.image_guid in(select image_id from image_storage_domain_map where storage_domain_id = v_storage_domain_id)
+      AND (NOT v_is_filtered OR EXISTS (SELECT 1
+                                      FROM   user_vm_template_permissions_view
+                                      WHERE  user_id = v_user_id AND entity_id = vm_templates.vmt_guid));
 END; $procedure$
 LANGUAGE plpgsql;
 

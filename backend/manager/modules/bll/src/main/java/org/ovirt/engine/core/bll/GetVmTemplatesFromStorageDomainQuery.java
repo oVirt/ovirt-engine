@@ -19,7 +19,9 @@ public class GetVmTemplatesFromStorageDomainQuery<P extends StorageDomainQueryPa
     protected void executeQueryCommand() {
         List<VmTemplate> returnValue = DbFacade.getInstance()
                 .getVmTemplateDAO()
-                .getAllForStorageDomain(getParameters().getStorageDomainId());
+                        .getAllForStorageDomain(getParameters().getStorageDomainId(),
+                                getUserID(),
+                                getParameters().isFiltered());
         for (VmTemplate template : returnValue) {
             VmTemplateHandler.UpdateDisksFromDb(template);
             java.util.Collections.sort(template.getDiskList(), new ImagesComparerByName());

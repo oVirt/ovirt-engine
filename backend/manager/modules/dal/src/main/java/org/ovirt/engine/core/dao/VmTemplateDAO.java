@@ -45,6 +45,19 @@ public interface VmTemplateDAO extends GenericDao<VmTemplate, Guid>, StatusAware
     List<VmTemplate> getAllForVdsGroup(Guid vdsGroup);
 
     /**
+    * Retrieves all templates for the specified storage domain with optional filtering.
+    *
+    * @param storageDomain
+    *            the storage domain
+    * @param userID
+    *            the ID of the user requesting the information
+    * @param isFiltered
+    *            Whether the results should be filtered according to the user's permissions
+    * @return the list of templates
+    */
+    List<VmTemplate> getAllForStorageDomain(Guid storageDomain, Guid userID, boolean isFiltered);
+
+    /**
      * Retrieves all templates related to quota id.
      *
      * @param quotaId

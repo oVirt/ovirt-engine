@@ -45,11 +45,18 @@ public class VmTemplateDAODbFacadeImpl extends BaseDAODbFacade implements VmTemp
     }
 
     @Override
-    public List<VmTemplate> getAllForStorageDomain(Guid id) {
+    public List<VmTemplate> getAllForStorageDomain(Guid storageDomain) {
+        return getAllForStorageDomain(storageDomain, null, false);
+    }
+
+    @Override
+    public List<VmTemplate> getAllForStorageDomain(Guid storageDomain, Guid userID, boolean isFiltered) {
         return getCallsHandler().executeReadList("GetVmTemplatesByStorageDomainId",
                 VMTemplateRowMapper.instance,
                 getCustomMapSqlParameterSource()
-                        .addValue("storage_domain_id", id));
+                        .addValue("storage_domain_id", storageDomain)
+                        .addValue("user_id", userID)
+                        .addValue("is_filtered", isFiltered));
     }
 
     @Override
