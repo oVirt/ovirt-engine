@@ -6,7 +6,6 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.SetDedicatedVmParameters;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class SetDedicatedVmCommand<T extends SetDedicatedVmParameters> extends VmCommand<T> {
 
@@ -19,16 +18,16 @@ public class SetDedicatedVmCommand<T extends SetDedicatedVmParameters> extends V
 
     @Override
     protected void ExecuteVmCommand() {
-        List<VM> vms = DbFacade.getInstance().getVmDAO().getAllForDedicatedPowerClientByVds(getVdsId());
+        List<VM> vms = getVmDAO().getAllForDedicatedPowerClientByVds(getVdsId());
         if (vms != null && vms.size() != 0) {
             vms.get(0).setdedicated_vm_for_vds(null);
-            DbFacade.getInstance().getVmStaticDAO().update(vms.get(0).getStaticData());
+            getVmStaticDAO().update(vms.get(0).getStaticData());
         }
-        VM vm = DbFacade.getInstance().getVmDAO().getById(getVmId());
+        VM vm = getVmDAO().get(getVmId());
 
         vm.setdedicated_vm_for_vds(!(getVdsId().equals(Guid.Empty)) ? getVdsId() : null);
 
-        DbFacade.getInstance().getVmStaticDAO().update(vm.getStaticData());
+        getVmStaticDAO().update(vm.getStaticData());
 
         setSucceeded(true);
     }

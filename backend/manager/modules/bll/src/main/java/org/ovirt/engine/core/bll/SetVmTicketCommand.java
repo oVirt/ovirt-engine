@@ -5,11 +5,10 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.vdscommands.SetVmTicketVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.utils.Ticketing;
-import org.ovirt.engine.core.common.vdscommands.*;
 
 @InternalCommandAttribute
 public class SetVmTicketCommand<T extends SetVmTicketParameters> extends VmOperationCommandBase<T> {
@@ -25,7 +24,7 @@ public class SetVmTicketCommand<T extends SetVmTicketParameters> extends VmOpera
     @Override
     protected boolean canDoAction() {
         boolean returnValue = true;
-        VM vm = DbFacade.getInstance().getVmDAO().getById(getVmId());
+        VM vm = DbFacade.getInstance().getVmDAO().get(getVmId());
         if (vm == null) {
             returnValue = false;
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND);
@@ -56,7 +55,7 @@ public class SetVmTicketCommand<T extends SetVmTicketParameters> extends VmOpera
 
         if (getSucceeded()) {
             setActionReturnValue(mTicket);
-            VM vm = DbFacade.getInstance().getVmDAO().getById(getVmId());
+            VM vm = DbFacade.getInstance().getVmDAO().get(getVmId());
             vm.setguest_cur_user_name(getCurrentUser().getUserName());
             DbFacade.getInstance().getVmDynamicDAO().update(vm.getDynamicData());
         }

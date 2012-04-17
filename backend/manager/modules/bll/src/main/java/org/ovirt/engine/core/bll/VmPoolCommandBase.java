@@ -192,7 +192,7 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
             } else {
                 List<DiskImage> vmImages = DbFacade.getInstance().getDiskImageDAO().getAllForVm(vmId);
                 Guid storageDomainId = vmImages.size() > 0 ? vmImages.get(0).getstorage_ids().get(0) : Guid.Empty;
-                VM vm = DbFacade.getInstance().getVmDAO().getById(vmId);
+                VM vm = DbFacade.getInstance().getVmDAO().get(vmId);
                 returnValue =
                         ImagesHandler.PerformImagesChecks(vm,
                                 messages,
@@ -230,7 +230,12 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
     }
 
     protected static boolean CanRunPoolVm(Guid vmId, java.util.ArrayList<String> messages) {
-        VM vm = DbFacade.getInstance().getVmDAO().getById(vmId);
+        VM vm = DbFacade.getInstance().getVmDAO().get(vmId);
+
+        // TODO: This is done to keep consistency with VmDAO.getById.
+        // It can probably be removed, but that requires some more research
+        VmHandler.updateNetworkInterfacesFromDb(vm);
+
         RunVmParams tempVar = new RunVmParams(vmId);
         tempVar.setUseVnc(vm.getvm_os().isLinux() || vm.getvm_type() == VmType.Server);
         RunVmParams runVmParams = tempVar;
@@ -246,6 +251,7 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
                 .getAllForVmPools((getParameters().getVmPoolId()).toString());
     }
 
+    @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
         List<PermissionSubject> permissionList = new ArrayList<PermissionSubject>();
         permissionList.add(new PermissionSubject(getVmPoolId() == null ? null : getVmPoolId().getValue(),

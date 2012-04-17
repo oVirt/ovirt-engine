@@ -37,7 +37,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ VmHandler.class, Config.class})
+@PrepareForTest({ VmHandler.class, Config.class })
 public class HotPlugDiskToVmCommandTest {
 
     protected Guid diskImageGuid = Guid.NewGuid();
@@ -51,7 +51,6 @@ public class HotPlugDiskToVmCommandTest {
     protected DiskImageDAO diskImageDao;
     @Mock
     private VmDeviceDAO vmDeviceDAO;
-
 
     /**
      * The command under test.
@@ -141,7 +140,7 @@ public class HotPlugDiskToVmCommandTest {
 
     private void mockNullVm() {
         AuditLogableBaseMockUtils.mockVmDao(command, vmDAO);
-        when(vmDAO.getById(command.getParameters().getVmId())).thenReturn(null);
+        when(vmDAO.get(command.getParameters().getVmId())).thenReturn(null);
         cretaeVirtIODisk();
     }
 
@@ -155,7 +154,7 @@ public class HotPlugDiskToVmCommandTest {
         vm.setId(vmId);
         vm.setrun_on_vds(Guid.NewGuid());
         AuditLogableBaseMockUtils.mockVmDao(command, vmDAO);
-        when(vmDAO.getById(command.getParameters().getVmId())).thenReturn(vm);
+        when(vmDAO.get(command.getParameters().getVmId())).thenReturn(vm);
         return vm;
     }
 
@@ -168,7 +167,6 @@ public class HotPlugDiskToVmCommandTest {
         doReturn(vdsDao).when(command).getVdsDAO();
         when(vdsDao.get(Mockito.any(Guid.class))).thenReturn(vds);
     }
-
 
     /**
      * @return Valid parameters for the command.
@@ -207,11 +205,11 @@ public class HotPlugDiskToVmCommandTest {
         mockVmDevice(false);
     }
 
-   /**
-     * The following method will create a VirtIO disk with provided plug option
-     * @param plugged - the value which will be set to plug field
-     * @return
-     */
+    /**
+      * The following method will create a VirtIO disk with provided plug option
+      * @param plugged - the value which will be set to plug field
+      * @return
+      */
     protected void cretaeDiskWrongPlug(boolean plugged) {
         cretaeVirtIODisk();
         mockVmDevice(plugged);

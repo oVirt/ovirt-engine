@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -61,7 +62,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
         VmHandler.updateDisksFromDb(vm);
         hasImages = vm.getDiskMap().size() > 0;
 
-        setVm(DbFacade.getInstance().getVmDAO().getById(vmId));
+        setVm(DbFacade.getInstance().getVmDAO().get(vmId));
         RemoveVmInSpm(vm.getstorage_pool_id(), vmId);
         if (!RemoveVmImages(null)) {
             return false;
@@ -113,7 +114,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
     }
 
     public static boolean IsVmRunning(Guid vmId) {
-        VM vm = DbFacade.getInstance().getVmDAO().getById(vmId);
+        VM vm = DbFacade.getInstance().getVmDAO().get(vmId);
         if (vm != null) {
             return VM.isStatusUpOrPaused(vm.getstatus()) || vm.getstatus() == VMStatus.Unknown;
         }
@@ -121,14 +122,14 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
     }
 
     public static boolean IsVmInPool(Guid vmId) {
-        VM vm = DbFacade.getInstance().getVmDAO().getById(vmId);
+        VM vm = DbFacade.getInstance().getVmDAO().get(vmId);
         return vm != null && vm.getVmPoolId() != null;
     }
 
     public boolean CanRemoveVm(Guid vmId, List<String> message) {
         boolean returnValue = true;
-        VM vm = DbFacade.getInstance().getVmDAO().getById(vmId);
-        java.util.ArrayList<String> imagesMessages = new java.util.ArrayList<String>();
+        VM vm = DbFacade.getInstance().getVmDAO().get(vmId);
+        ArrayList<String> imagesMessages = new ArrayList<String>();
         if (vm == null) {
             message.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_EXIST.toString());
             returnValue = false;
@@ -224,7 +225,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
                 // Ensures the lock on the VM guid can be acquired. This prevents a race
                 // between ExecuteVmCommand (for example, of a first multiple VMs removal that includes VM A,
                 // and a second multiple VMs removal that include the same VM).
-                setVm(DbFacade.getInstance().getVmDAO().getById(getVmId()));
+                setVm(DbFacade.getInstance().getVmDAO().get(getVmId()));
                 if (getVm() != null) {
                     VmHandler.UnLockVm(getVmId());
                     RemoveVmFromDb();

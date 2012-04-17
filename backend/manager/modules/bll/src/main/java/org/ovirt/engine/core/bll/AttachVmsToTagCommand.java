@@ -17,7 +17,7 @@ public class AttachVmsToTagCommand<T extends AttachEntityToTagParameters> extend
     protected void executeCommand() {
         if (getTagId() != null) {
             for (Guid vmGuid : getVmsList()) {
-                VM vm = DbFacade.getInstance().getVmDAO().getById(vmGuid);
+                VM vm = DbFacade.getInstance().getVmDAO().get(vmGuid);
                 if (DbFacade.getInstance().getTagDAO().getTagVmByTagIdAndByVmId(getTagId(), vmGuid) == null) {
                     if (vm != null) {
                         AppendCustomValue("VmsNames", vm.getvm_name(), ", ");

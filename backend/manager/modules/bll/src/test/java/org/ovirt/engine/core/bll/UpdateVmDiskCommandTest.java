@@ -31,7 +31,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ VmHandler.class, Config.class})
+@PrepareForTest({ VmHandler.class, Config.class })
 public class UpdateVmDiskCommandTest {
 
     private Guid diskImageGuid = Guid.NewGuid();
@@ -86,7 +86,7 @@ public class UpdateVmDiskCommandTest {
 
     private void mockNullVm() {
         AuditLogableBaseMockUtils.mockVmDao(command, vmDAO);
-        when(vmDAO.getById(command.getParameters().getVmId())).thenReturn(null);
+        when(vmDAO.get(command.getParameters().getVmId())).thenReturn(null);
     }
 
     /**
@@ -97,7 +97,7 @@ public class UpdateVmDiskCommandTest {
         vm.setstatus(VMStatus.Down);
         vm.setguest_os("rhel6");
         AuditLogableBaseMockUtils.mockVmDao(command, vmDAO);
-        when(vmDAO.getById(command.getParameters().getVmId())).thenReturn(vm);
+        when(vmDAO.get(command.getParameters().getVmId())).thenReturn(vm);
 
         return vm;
     }

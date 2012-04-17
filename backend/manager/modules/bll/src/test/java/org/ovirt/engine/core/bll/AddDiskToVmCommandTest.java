@@ -358,7 +358,7 @@ public class AddDiskToVmCommandTest {
         vm.setstatus(VMStatus.Down);
         vm.setstorage_pool_id(Guid.NewGuid());
         AuditLogableBaseMockUtils.mockVmDao(command, vmDAO);
-        when(vmDAO.getById(command.getParameters().getVmId())).thenReturn(vm);
+        when(vmDAO.get(command.getParameters().getVmId())).thenReturn(vm);
 
         return vm;
     }

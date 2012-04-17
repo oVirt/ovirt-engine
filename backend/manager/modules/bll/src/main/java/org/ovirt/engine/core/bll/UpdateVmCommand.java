@@ -41,7 +41,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         super(parameters);
         if (getVdsGroup() != null) {
             setStoragePoolId(getVdsGroup().getstorage_pool_id() != null ? getVdsGroup().getstorage_pool_id()
-                        .getValue() : Guid.Empty);
+                    .getValue() : Guid.Empty);
         }
     }
 
@@ -83,7 +83,6 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             }
         }
     }
-
 
     private void UpdateVmNetworks() {
         VmStatic dbVm = DbFacade.getInstance().getVmStaticDAO().get(getParameters().getVmStaticData().getId());
@@ -154,7 +153,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                 retValue = false;
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NAME_LENGTH_IS_TOO_LONG);
             } else if (getVm().getStaticData() != null) {
-                VM vm = DbFacade.getInstance().getVmDAO().getById(getVm().getStaticData().getId());
+                VM vm = DbFacade.getInstance().getVmDAO().get(getVm().getStaticData().getId());
                 // Checking if a desktop with same name already exists
                 VmStatic vmStaticDataFromParams = getParameters().getVmStaticData();
                 boolean exists = (Boolean) Backend
@@ -224,8 +223,12 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                             List allDisks = DbFacade.getInstance().getDiskImageDAO().getAllForVm(getVmId());
                             List<VmNetworkInterface> interfaces = DbFacade.getInstance()
                                     .getVmNetworkInterfaceDAO().getAllForVm(getVmId());
-                            retValue = retValue && CheckPCIAndIDELimit(vmStaticDataFromParams.getnum_of_monitors(), interfaces,
-                                    allDisks, getReturnValue().getCanDoActionMessages());
+                            retValue =
+                                    retValue
+                                            && CheckPCIAndIDELimit(vmStaticDataFromParams.getnum_of_monitors(),
+                                                    interfaces,
+                                                    allDisks,
+                                                    getReturnValue().getCanDoActionMessages());
                         }
                         if (!VmTemplateCommand.IsVmPriorityValueLegal(vmStaticDataFromParams.getpriority(),
                                 getReturnValue().getCanDoActionMessages())) {

@@ -78,7 +78,8 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStruct;
 
 public class VdsUpdateRunTimeInfo {
-    private static final Integer LOW_SPACE_THRESHOLD = Config.<Integer> GetValue(ConfigValues.VdsLocalDisksLowFreeSpace);
+    private static final Integer LOW_SPACE_THRESHOLD =
+            Config.<Integer> GetValue(ConfigValues.VdsLocalDisksLowFreeSpace);
     private static final Integer LOW_SPACE_CRITICAL_THRESHOLD =
             Config.<Integer> GetValue(ConfigValues.VdsLocalDisksCriticallyLowFreeSpace);
 
@@ -169,24 +170,24 @@ public class VdsUpdateRunTimeInfo {
             TransactionSupport.executeInScope(TransactionScopeOption.Required,
                     new TransactionMethod<Void>() {
 
-                @Override
-                public Void runInTransaction() {
-                    DbFacade.getInstance().getVmDeviceDAO().removeAll(removedDeviceIds);
-                    return null;
-                }
-            });
+                        @Override
+                        public Void runInTransaction() {
+                            DbFacade.getInstance().getVmDeviceDAO().removeAll(removedDeviceIds);
+                            return null;
+                        }
+                    });
         }
 
         if (!newVmDevices.isEmpty()) {
             TransactionSupport.executeInScope(TransactionScopeOption.Required,
                     new TransactionMethod<Void>() {
 
-                @Override
-                public Void runInTransaction() {
-                    DbFacade.getInstance().getVmDeviceDAO().saveAll(newVmDevices);
-                    return null;
-                }
-            });
+                        @Override
+                        public Void runInTransaction() {
+                            DbFacade.getInstance().getVmDeviceDAO().saveAll(newVmDevices);
+                            return null;
+                        }
+                    });
         }
     }
 
@@ -242,11 +243,11 @@ public class VdsUpdateRunTimeInfo {
         _vmDict =
                 TransactionSupport.executeInScope(TransactionScopeOption.Suppress,
                         new TransactionMethod<Map<Guid, VM>>() {
-            @Override
-            public Map<Guid, VM> runInTransaction() {
-                return DbFacade.getInstance().getVmDAO().getAllRunningByVds(_vds.getId());
-            }
-        });
+                            @Override
+                            public Map<Guid, VM> runInTransaction() {
+                                return DbFacade.getInstance().getVmDAO().getAllRunningByVds(_vds.getId());
+                            }
+                        });
 
         for (VM vm : _vmDict.values()) {
             if (vm.isStatusUp() && vm.getstatus() != VMStatus.Up) {
@@ -356,7 +357,7 @@ public class VdsUpdateRunTimeInfo {
             // process all vms that their ip changed.
             for (java.util.Map.Entry<VM, VmDynamic> pair : _vmsClientIpChanged.entrySet()) {
                 ResourceManager.getInstance().getEventListener()
-                               .processOnClientIpChange(_vds, pair.getValue().getId());
+                        .processOnClientIpChange(_vds, pair.getValue().getId());
             }
 
             // process all vms that powering up.
@@ -634,15 +635,15 @@ public class VdsUpdateRunTimeInfo {
      */
     public void logMTUDifferences(Map<String, network> clusterNetworkByName,
             VdsNetworkInterface iface) {
-            if (iface.getNetworkName() != null && clusterNetworkByName.containsKey(iface.getNetworkName()) &&
-                    clusterNetworkByName.get(iface.getNetworkName()).getMtu() != 0 &&
-                    iface.getMtu() != clusterNetworkByName.get(iface.getNetworkName()).getMtu()) {
-                AuditLogableBase logable = new AuditLogableBase();
-                logable.AddCustomValue(NetworkName, iface.getNetworkName());
-                logable.AddCustomValue(HostNetworkMTU, String.valueOf(iface.getMtu()));
-                logable.AddCustomValue(LogicalNetworkMTU,
-                        String.valueOf(clusterNetworkByName.get(iface.getNetworkName()).getMtu()));
-                AuditLogDirector.log(logable, AuditLogType.VDS_NETWORK_MTU_DIFFER_FROM_LOGICAL_NETWORK);
+        if (iface.getNetworkName() != null && clusterNetworkByName.containsKey(iface.getNetworkName()) &&
+                clusterNetworkByName.get(iface.getNetworkName()).getMtu() != 0 &&
+                iface.getMtu() != clusterNetworkByName.get(iface.getNetworkName()).getMtu()) {
+            AuditLogableBase logable = new AuditLogableBase();
+            logable.AddCustomValue(NetworkName, iface.getNetworkName());
+            logable.AddCustomValue(HostNetworkMTU, String.valueOf(iface.getMtu()));
+            logable.AddCustomValue(LogicalNetworkMTU,
+                    String.valueOf(clusterNetworkByName.get(iface.getNetworkName()).getMtu()));
+            AuditLogDirector.log(logable, AuditLogType.VDS_NETWORK_MTU_DIFFER_FROM_LOGICAL_NETWORK);
         }
     }
 
@@ -1018,11 +1019,11 @@ public class VdsUpdateRunTimeInfo {
             }
             VmDeviceId id = new VmDeviceId(newDeviceId, vmId);
             VmDevice newDevice = new VmDevice(id, typeName, deviceName, address,
-                        0,
-                        specParams,
-                        false,
-                        true,
-                        false);
+                    0,
+                    specParams,
+                    false,
+                    true,
+                    false);
             newVmDevices.add(newDevice);
             log.debugFormat("New device was marked for adding to VM {0} Devices : {1}", vmId, newDevice.toString());
         } else {
@@ -1287,8 +1288,7 @@ public class VdsUpdateRunTimeInfo {
                             VmPauseStatus pauseStatus = runningVm.getPauseStatus();
                             if (pauseStatus.equals(VmPauseStatus.NOERR) || pauseStatus.equals(VmPauseStatus.NONE)) {
                                 // user requested pause, no log needed
-                            } else
-                            if (pauseStatus == VmPauseStatus.ENOSPC) {
+                            } else if (pauseStatus == VmPauseStatus.ENOSPC) {
                                 logType = AuditLogType.VM_PAUSED_ENOSPC;
                             } else if (pauseStatus == VmPauseStatus.EIO) {
                                 logType = AuditLogType.VM_PAUSED_EIO;
@@ -1472,9 +1472,15 @@ public class VdsUpdateRunTimeInfo {
     private boolean UpdateVmRunTimeInfo(RefObject<VM> vmToUpdate, VmDynamic vmNewDynamicData) {
         boolean returnValue = false;
         if (vmToUpdate.argvalue == null) {
-            vmToUpdate.argvalue = DbFacade.getInstance().getVmDAO().getById(vmNewDynamicData.getId());
+            vmToUpdate.argvalue = DbFacade.getInstance().getVmDAO().get(vmNewDynamicData.getId());
             // if vm exists in db update info
             if (vmToUpdate.argvalue != null) {
+                // TODO: This is done to keep consistency with VmDAO.getById(Guid).
+                // It should probably be removed, but some research is required.
+                vmToUpdate.argvalue.setInterfaces(DbFacade.getInstance()
+                        .getVmNetworkInterfaceDAO()
+                        .getAllForVm(vmToUpdate.argvalue.getId()));
+
                 _vmDict.put(vmToUpdate.argvalue.getId(), vmToUpdate.argvalue);
                 if (vmNewDynamicData.getstatus() == VMStatus.Up) {
                     if (!_succededToRunVms.contains(vmToUpdate.argvalue.getId())) {
@@ -1577,15 +1583,20 @@ public class VdsUpdateRunTimeInfo {
                     vmIface.getStatistics().setTransmitRate(ifStats.getStatistics().getTransmitRate());
                     vmIface.getStatistics().setTransmitDropRate(ifStats.getStatistics().getTransmitDropRate());
                 } else {
-                    vmIface.getStatistics().setReceiveRate(Math.max(vmIface.getStatistics().getReceiveRate(), ifStats.getStatistics().getReceiveRate()));
-                    vmIface.getStatistics().setReceiveDropRate(Math.max(vmIface.getStatistics().getReceiveDropRate(), ifStats.getStatistics().getReceiveDropRate()));
-                    vmIface.getStatistics().setTransmitRate(Math.max(vmIface.getStatistics().getTransmitRate(), ifStats.getStatistics().getTransmitRate()));
-                    vmIface.getStatistics().setTransmitDropRate(Math.max(vmIface.getStatistics().getTransmitDropRate(), ifStats.getStatistics().getTransmitDropRate()));
+                    vmIface.getStatistics().setReceiveRate(Math.max(vmIface.getStatistics().getReceiveRate(),
+                            ifStats.getStatistics().getReceiveRate()));
+                    vmIface.getStatistics().setReceiveDropRate(Math.max(vmIface.getStatistics().getReceiveDropRate(),
+                            ifStats.getStatistics().getReceiveDropRate()));
+                    vmIface.getStatistics().setTransmitRate(Math.max(vmIface.getStatistics().getTransmitRate(),
+                            ifStats.getStatistics().getTransmitRate()));
+                    vmIface.getStatistics().setTransmitDropRate(Math.max(vmIface.getStatistics().getTransmitDropRate(),
+                            ifStats.getStatistics().getTransmitDropRate()));
                 }
                 vmIface.setVmId(vm.getId());
             }
 
-            if (ifStats.getSpeed() != null && vmIface.getStatistics().getReceiveRate() != null && vmIface.getStatistics().getReceiveRate() > 0) {
+            if (ifStats.getSpeed() != null && vmIface.getStatistics().getReceiveRate() != null
+                    && vmIface.getStatistics().getReceiveRate() > 0) {
 
                 double rx_percent = vmIface.getStatistics().getReceiveRate();
                 double tx_percent = vmIface.getStatistics().getTransmitRate();

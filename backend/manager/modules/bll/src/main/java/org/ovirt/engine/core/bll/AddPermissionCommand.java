@@ -48,7 +48,7 @@ public class AddPermissionCommand<T extends PermissionsOperationsParametes> exte
         if ((adElementId == null)
                 || (getParameters().getVdcUser() != null && !getParameters().getVdcUser().getUserId()
                         .equals(adElementId))
-                        || (getParameters().getAdGroup() != null && !getParameters().getAdGroup().getid().equals(adElementId))) {
+                || (getParameters().getAdGroup() != null && !getParameters().getAdGroup().getid().equals(adElementId))) {
             addCanDoActionMessage(VdcBllMessages.PERMISSION_ADD_FAILED_USER_ID_MISMATCH);
             return false;
         }
@@ -60,7 +60,7 @@ public class AddPermissionCommand<T extends PermissionsOperationsParametes> exte
                 && (DbFacade.getInstance().getDbUserDAO().get(adElementId) == null && DbFacade
                         .getInstance().getAdGroupDAO().get(adElementId) == null)) {
             getReturnValue().getCanDoActionMessages().add(
-                                                          VdcBllMessages.USER_MUST_EXIST_IN_DB.toString());
+                    VdcBllMessages.USER_MUST_EXIST_IN_DB.toString());
             return false;
         }
 
@@ -69,7 +69,7 @@ public class AddPermissionCommand<T extends PermissionsOperationsParametes> exte
                 .getInstance()
                 .getPermissionDAO()
                 .getForRoleAndAdElementAndObject(perm.getrole_id(), adElementId,
-                                                 perm.getObjectId()) != null) {
+                        perm.getObjectId()) != null) {
             addCanDoActionMessage(VdcBllMessages.ERROR_PERMISSION_ALREADY_EXIST);
             return false;
         }
@@ -82,7 +82,7 @@ public class AddPermissionCommand<T extends PermissionsOperationsParametes> exte
 
         // don't allow adding permissions to vms from pool externally
         if (!isInternalExecution() && perm.getObjectType() == VdcObjectType.VM) {
-            VM vm = DbFacade.getInstance().getVmDAO().getById(perm.getObjectId());
+            VM vm = DbFacade.getInstance().getVmDAO().get(perm.getObjectId());
             if (vm != null && vm.getVmPoolId() != null) {
                 addCanDoActionMessage(VdcBllMessages.PERMISSION_ADD_FAILED_VM_IN_POOL);
                 return false;

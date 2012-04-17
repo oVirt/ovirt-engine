@@ -24,7 +24,6 @@ import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
 import org.ovirt.engine.core.utils.MultiValueMapUtils;
 import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils;
@@ -33,7 +32,7 @@ import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 
 /**
  * <code>VmDAODbFacadeImpl</code> provides a concrete implementation of {@link VmDAO}. The functionality is code
- * refactored out of {@link DbFacade}.
+ * refactored out of {@link Dorg.ovirt.engine.core.dal.dbbroker.DbFacad}.
  */
 public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
 
@@ -46,22 +45,6 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
     public VM get(Guid id, Guid userID, boolean isFiltered) {
         return getCallsHandler().executeRead("GetVmByVmGuid", VMRowMapper.instance, getCustomMapSqlParameterSource()
                 .addValue("vm_guid", id).addValue("user_id", userID).addValue("is_filtered", isFiltered));
-    }
-
-    @Override
-    public VM getById(Guid id) {
-        return getById(id, null, false);
-    }
-
-    @Override
-    public VM getById(Guid id, Guid userID, boolean isFiltered) {
-        VM vm = get(id, userID, isFiltered);
-        if (vm != null) {
-            // Note: if a VM was returned, the user obviously has permissions on it and thus on its interfaces.
-            // No additional filtering is required
-            vm.setInterfaces(DbFacade.getInstance().getVmNetworkInterfaceDAO().getAllForVm(vm.getId()));
-        }
-        return vm;
     }
 
     @Override

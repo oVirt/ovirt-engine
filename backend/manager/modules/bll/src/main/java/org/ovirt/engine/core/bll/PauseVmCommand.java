@@ -35,7 +35,7 @@ public class PauseVmCommand<T extends VmOperationParameterBase> extends VmOperat
 
     public static boolean CanPauseVm(Guid vmId, java.util.ArrayList<String> message) {
         boolean retValue = true;
-        VM vm = DbFacade.getInstance().getVmDAO().getById(vmId);
+        VM vm = DbFacade.getInstance().getVmDAO().get(vmId);
         if (vm == null) {
             retValue = false;
             message.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND.toString());

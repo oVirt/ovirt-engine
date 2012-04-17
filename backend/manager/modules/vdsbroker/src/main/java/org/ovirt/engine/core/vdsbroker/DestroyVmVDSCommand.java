@@ -7,10 +7,10 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmNetworkStatistics;
 import org.ovirt.engine.core.common.vdscommands.DestroyVmVDSCommandParameters;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.generic.RepositoryException;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.DestroyVDSCommand;
@@ -27,9 +27,12 @@ public class DestroyVmVDSCommand<P extends DestroyVmVDSCommandParameters> extend
 
             final DestroyVmVDSCommandParameters parameters = getParameters();
             ResourceManager.getInstance().RemoveAsyncRunningVm(parameters.getVmId());
-            final VM curVm = DbFacade.getInstance().getVmDAO().getById(parameters.getVmId());
+
+            final VM curVm = DbFacade.getInstance().getVmDAO().get(parameters.getVmId());
+            curVm.setInterfaces(DbFacade.getInstance().getVmNetworkInterfaceDAO().getAllForVm(curVm.getId()));
+
             DestroyVDSCommand<DestroyVmVDSCommandParameters> vdsBrokerCommand =
-                new DestroyVDSCommand<DestroyVmVDSCommandParameters>(parameters);
+                    new DestroyVDSCommand<DestroyVmVDSCommandParameters>(parameters);
             vdsBrokerCommand.Execute();
             if (vdsBrokerCommand.getVDSReturnValue().getSucceeded()) {
                 if (curVm.getstatus() == VMStatus.Down) {
@@ -61,8 +64,8 @@ public class DestroyVmVDSCommand<P extends DestroyVmVDSCommandParameters> extend
                             // will not be called from UpdateRunTimeInfo
                             if (!parameters.getGracefully()) {
                                 ResourceManager.getInstance()
-                                .getEventListener()
-                                .processOnVmStop(curVm.getId());
+                                        .getEventListener()
+                                        .processOnVmStop(curVm.getId());
                             }
                         } catch (RepositoryException ex) {
                             log.errorFormat(
@@ -89,7 +92,7 @@ public class DestroyVmVDSCommand<P extends DestroyVmVDSCommandParameters> extend
                         getVds().getId(),
                         getVds().getvds_name(),
                         vdsBrokerCommand
-                        .getVDSReturnValue().getExceptionString());
+                                .getVDSReturnValue().getExceptionString());
                 getVDSReturnValue().setSucceeded(false);
                 getVDSReturnValue().setExceptionString(vdsBrokerCommand.getVDSReturnValue()
                         .getExceptionString());

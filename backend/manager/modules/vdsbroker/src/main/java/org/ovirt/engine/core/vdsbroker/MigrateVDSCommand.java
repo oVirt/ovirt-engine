@@ -8,10 +8,10 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.vdscommands.MigrateVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
@@ -44,7 +44,8 @@ public class MigrateVDSCommand<P extends MigrateVDSCommandParameters> extends Vd
             }
             // update the db
             // VM vm = _vdsManager.VmDict[parameters.VmId];
-            final VM vm = DbFacade.getInstance().getVmDAO().getById(parameters.getVmId());
+            final VM vm = DbFacade.getInstance().getVmDAO().get(parameters.getVmId());
+
             ResourceManager.getInstance().InternalSetVmStatus(vm, retval);
             if (retval == VMStatus.MigratingFrom) {
                 vm.setmigrating_to_vds(parameters.getDstVdsId());

@@ -45,7 +45,7 @@ public class AddVmToPoolCommand<T extends AddVmToPoolParameters> extends VmPoolC
             }
         }
         if (poolId != null) {
-            VM vm = DbFacade.getInstance().getVmDAO().getById(vmId);
+            VM vm = DbFacade.getInstance().getVmDAO().get(vmId);
             if (vm != null) {
                 vm_pools pool = DbFacade.getInstance().getVmPoolDAO().get(poolId);
                 if (pool != null) {

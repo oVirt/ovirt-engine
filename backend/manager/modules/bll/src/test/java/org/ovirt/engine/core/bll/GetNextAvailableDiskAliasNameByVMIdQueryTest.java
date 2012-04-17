@@ -41,7 +41,7 @@ public class GetNextAvailableDiskAliasNameByVMIdQueryTest extends AbstractQueryT
     public void testExecuteQuery() throws Exception {
         mockDAOForQuery();
         vm = mockVm();
-        Mockito.when(vmDAO.getById(vmId)).thenReturn(vm);
+        Mockito.when(vmDAO.get(vmId)).thenReturn(vm);
         String diskAliasName = VM_NAME + "_Disk1";
 
         // Execute query.
@@ -68,7 +68,7 @@ public class GetNextAvailableDiskAliasNameByVMIdQueryTest extends AbstractQueryT
         diskImage.setinternal_drive_mapping("1");
         diskImage.setId(Guid.NewGuid());
         diskMap.put("1", diskImage);
-        Mockito.when(vmDAO.getById(vmId)).thenReturn(vm);
+        Mockito.when(vmDAO.get(vmId)).thenReturn(vm);
         String diskAliasName = VM_NAME + "_Disk2";
 
         // Execute query.
@@ -89,7 +89,7 @@ public class GetNextAvailableDiskAliasNameByVMIdQueryTest extends AbstractQueryT
         diskImage.setinternal_drive_mapping("4");
         diskImage.setId(Guid.NewGuid());
         diskMap.put("4", secondDiskImage);
-        Mockito.when(vmDAO.getById(vmId)).thenReturn(vm);
+        Mockito.when(vmDAO.get(vmId)).thenReturn(vm);
         String diskAliasName = VM_NAME + "_Disk2";
 
         // Execute query.

@@ -182,11 +182,11 @@ public class AddVmCommandTest {
         // Adding 10 disks, which each one should consume the default sparse size (which is 1GB).
         setNewDisksForTemplate(10, cmd.getVmTemplate().getDiskMap());
         doReturn(createVmTemplate()).when(cmd).getVmTemplate();
-        assertFalse("Thin vm could not be added due to storage sufficient", cmd.CanAddVm(reasons, Arrays.asList(createStorageDomain(domainSizeGB))));
+        assertFalse("Thin vm could not be added due to storage sufficient",
+                cmd.CanAddVm(reasons, Arrays.asList(createStorageDomain(domainSizeGB))));
         assertTrue("canDoAction failed for insufficient disk size",
-                 reasons.contains(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW.toString()));
+                reasons.contains(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW.toString()));
     }
-
 
     @Test
     public void canAddCloneVmFromTemplate() {
@@ -194,13 +194,15 @@ public class AddVmCommandTest {
         final int domainSizeGB = 15;
         final int sizeRequired = 4;
         final int pctRequired = 10;
-        AddVmFromTemplateCommand<AddVmFromTemplateParameters> cmd = setupCanAddVmFromTemplateTests(domainSizeGB, sizeRequired, pctRequired);
+        AddVmFromTemplateCommand<AddVmFromTemplateParameters> cmd =
+                setupCanAddVmFromTemplateTests(domainSizeGB, sizeRequired, pctRequired);
 
         // Set new Disk Image map with 3GB.
         setNewImageDiskMapForTemplate(cmd, new Long("3000000000"), cmd.getVmTemplate().getDiskImageMap());
-        assertFalse("Clone vm could not be added due to storage sufficient", cmd.CanAddVm(reasons, Arrays.asList(createStorageDomain(domainSizeGB))));
+        assertFalse("Clone vm could not be added due to storage sufficient",
+                cmd.CanAddVm(reasons, Arrays.asList(createStorageDomain(domainSizeGB))));
         assertTrue("canDoAction failed for insufficient disk size",
-                 reasons.contains(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW.toString()));
+                reasons.contains(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW.toString()));
     }
 
     @Test
@@ -215,7 +217,7 @@ public class AddVmCommandTest {
         assertFalse("Thin vm could not be added due to storage sufficient",
                 cmd.CanAddVm(reasons, Arrays.asList(createStorageDomain(domainSizeGB))));
         assertTrue("canDoAction failed for insufficient disk size",
-                 reasons.contains(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW.toString()));
+                reasons.contains(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW.toString()));
     }
 
     @Test
@@ -225,13 +227,14 @@ public class AddVmCommandTest {
         final int sizeRequired = 4;
         final int pctRequired = 10;
         final Guid sourceSnapshotId = Guid.NewGuid();
-        AddVmFromSnapshotCommand<AddVmFromSnapshotParameters> cmd = setupCanAddVmFromSnapshotTests(domainSizeGB, sizeRequired, pctRequired,sourceSnapshotId);
+        AddVmFromSnapshotCommand<AddVmFromSnapshotParameters> cmd =
+                setupCanAddVmFromSnapshotTests(domainSizeGB, sizeRequired, pctRequired, sourceSnapshotId);
         cmd.getVm().setvm_name("vm1");
         mockNonInterestingMethodsForCloneVmFromSnapshot(cmd);
         assertFalse("Clone vm should have failed due to non existing snapshot id", cmd.canDoAction());
         reasons = cmd.getReturnValue().getCanDoActionMessages();
         assertTrue("Clone vm should have failed due to non existing snapshot id",
-                 reasons.contains(VdcBllMessages.ACTION_TYPE_FAILED_VM_SNAPSHOT_DOES_NOT_EXIST.toString()));
+                reasons.contains(VdcBllMessages.ACTION_TYPE_FAILED_VM_SNAPSHOT_DOES_NOT_EXIST.toString()));
     }
 
     @Test
@@ -241,14 +244,15 @@ public class AddVmCommandTest {
         final int sizeRequired = 4;
         final int pctRequired = 10;
         final Guid sourceSnapshotId = Guid.NewGuid();
-        AddVmFromSnapshotCommand<AddVmFromSnapshotParameters> cmd = setupCanAddVmFromSnapshotTests(domainSizeGB, sizeRequired, pctRequired,sourceSnapshotId);
+        AddVmFromSnapshotCommand<AddVmFromSnapshotParameters> cmd =
+                setupCanAddVmFromSnapshotTests(domainSizeGB, sizeRequired, pctRequired, sourceSnapshotId);
         cmd.getVm().setvm_name("vm1");
         mockNonInterestingMethodsForCloneVmFromSnapshot(cmd);
         when(snapshotDao.get(sourceSnapshotId)).thenReturn(new Snapshot());
         assertFalse("Clone vm should have failed due to non existing vm configuration", cmd.canDoAction());
         reasons = cmd.getReturnValue().getCanDoActionMessages();
         assertTrue("Clone vm should have failed due to no configuration id",
-                 reasons.contains(VdcBllMessages.ACTION_TYPE_FAILED_VM_SNAPSHOT_HAS_NO_CONFIGURATION.toString()));
+                reasons.contains(VdcBllMessages.ACTION_TYPE_FAILED_VM_SNAPSHOT_HAS_NO_CONFIGURATION.toString()));
 
     }
 
@@ -276,18 +280,21 @@ public class AddVmCommandTest {
     private AddVmFromTemplateCommand<AddVmFromTemplateParameters> createVmFromTemplateCommand(VM vm) {
         AddVmFromTemplateParameters param = new AddVmFromTemplateParameters();
         param.setVm(vm);
-        AddVmFromTemplateCommand<AddVmFromTemplateParameters> concrete = new AddVmFromTemplateCommand<AddVmFromTemplateParameters>(param);
+        AddVmFromTemplateCommand<AddVmFromTemplateParameters> concrete =
+                new AddVmFromTemplateCommand<AddVmFromTemplateParameters>(param);
         AddVmFromTemplateCommand<AddVmFromTemplateParameters> result = spy(concrete);
         doReturn(true).when(result).checkNumberOfMonitors();
         return result;
     }
 
-    private AddVmFromSnapshotCommand<AddVmFromSnapshotParameters> createVmFromSnapshotCommand(VM vm,Guid sourceSnapshotId) {
+    private AddVmFromSnapshotCommand<AddVmFromSnapshotParameters> createVmFromSnapshotCommand(VM vm,
+            Guid sourceSnapshotId) {
         AddVmFromSnapshotParameters param = new AddVmFromSnapshotParameters();
         param.setVm(vm);
         param.setSourceSnapshotId(sourceSnapshotId);
         param.setStorageDomainId(Guid.NewGuid());
-        AddVmFromSnapshotCommand<AddVmFromSnapshotParameters> concrete = new AddVmFromSnapshotCommand<AddVmFromSnapshotParameters>(param);
+        AddVmFromSnapshotCommand<AddVmFromSnapshotParameters> concrete =
+                new AddVmFromSnapshotCommand<AddVmFromSnapshotParameters>(param);
         return spy(concrete);
     }
 
@@ -302,16 +309,17 @@ public class AddVmCommandTest {
 
     private AddVmFromSnapshotCommand<AddVmFromSnapshotParameters> setupCanAddVmFromSnapshotTests(final int domainSizeGB,
             final int sizeRequired,
-            final int pctRequired, Guid sourceSnapshotId) {
+            final int pctRequired,
+            Guid sourceSnapshotId) {
         VM vm = initializeMock(domainSizeGB, sizeRequired, pctRequired);
         initializeVmDAOMock(vm);
-        AddVmFromSnapshotCommand<AddVmFromSnapshotParameters> cmd = createVmFromSnapshotCommand(vm,sourceSnapshotId);
+        AddVmFromSnapshotCommand<AddVmFromSnapshotParameters> cmd = createVmFromSnapshotCommand(vm, sourceSnapshotId);
         initCommandMethods(cmd);
         return cmd;
     }
 
     private void initializeVmDAOMock(VM vm) {
-        when(vmDAO.getById(Matchers.<Guid> any(Guid.class))).thenReturn(vm);
+        when(vmDAO.get(Matchers.<Guid> any(Guid.class))).thenReturn(vm);
     }
 
     private AddVmCommand<VmManagementParametersBase> setupCanAddVmTests(final int domainSizeGB,
@@ -343,13 +351,13 @@ public class AddVmCommandTest {
         return vm;
     }
 
-     private void setNewDisksForTemplate(int numberOfNewDisks, Map<String, DiskImage> disksMap) {
-         for (int newDiskInd = 0; newDiskInd < numberOfNewDisks; newDiskInd++) {
-             DiskImage diskImageTempalte = new DiskImage();
-             diskImageTempalte.setId(Guid.NewGuid());
-             disksMap.put(Guid.NewGuid().toString(), diskImageTempalte);
-         }
-     }
+    private void setNewDisksForTemplate(int numberOfNewDisks, Map<String, DiskImage> disksMap) {
+        for (int newDiskInd = 0; newDiskInd < numberOfNewDisks; newDiskInd++) {
+            DiskImage diskImageTempalte = new DiskImage();
+            diskImageTempalte.setId(Guid.NewGuid());
+            disksMap.put(Guid.NewGuid().toString(), diskImageTempalte);
+        }
+    }
 
     private void setNewImageDiskMapForTemplate(AddVmFromTemplateCommand<AddVmFromTemplateParameters> cmd,
             long diskSize,
@@ -363,7 +371,6 @@ public class AddVmCommandTest {
     }
 
     private void setupAllMocks() {
-        mockVmDAOGetById();
         mockStorageDomainDAOGetForStoragePool();
         mockVmTemplateDAOReturnVmTemplate();
         mockDiskImageDAOGetSnapshotById();
@@ -395,10 +402,6 @@ public class AddVmCommandTest {
         when(DbFacade.getInstance()).thenReturn(db);
     }
 
-    private void mockVmDAOGetById() {
-        when(vmDAO.getById(any(Guid.class))).thenReturn(null);
-    }
-
     private void mockStorageDomainDAOGetForStoragePool(int domainSpaceGB) {
         when(sdDAO.getForStoragePool(Matchers.<Guid> any(Guid.class), Matchers.<NGuid> any(NGuid.class))).thenReturn(createStorageDomain(domainSpaceGB));
     }
@@ -409,7 +412,7 @@ public class AddVmCommandTest {
             @Override
             public storage_domains answer(InvocationOnMock invocation) throws Throwable {
                 storage_domains result = createStorageDomain(domainSpaceGB);
-                result.setId((Guid)invocation.getArguments()[0]);
+                result.setId((Guid) invocation.getArguments()[0]);
                 return result;
             }
 
@@ -443,7 +446,7 @@ public class AddVmCommandTest {
     private DiskImage createDiskImageTemplate() {
         DiskImage i = new DiskImage();
         i.setSizeInGigabytes(USED_SPACE_GB + AVAILABLE_SPACE_GB);
-        i.setactual_size((long) REQUIRED_DISK_SIZE_GB * 1024L * 1024L * 1024L);
+        i.setactual_size(REQUIRED_DISK_SIZE_GB * 1024L * 1024L * 1024L);
         i.setId(Guid.NewGuid());
         i.setstorage_ids(new ArrayList<Guid>(Arrays.asList(STORAGE_DOMAIN_ID)));
         return i;

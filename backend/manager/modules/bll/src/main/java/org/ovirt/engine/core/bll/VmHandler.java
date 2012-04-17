@@ -224,7 +224,7 @@ public class VmHandler {
     }
 
     public static void UnLockVm(Guid vmId) {
-        VM vm = DbFacade.getInstance().getVmDAO().getById(vmId);
+        VM vm = DbFacade.getInstance().getVmDAO().get(vmId);
         if (vm.getstatus() == VMStatus.ImageLocked) {
             Backend.getInstance()
                     .getResourceManager()
@@ -254,6 +254,11 @@ public class VmHandler {
                 vm.getDiskList().add(image);
             }
         }
+    }
+
+    public static void updateNetworkInterfacesFromDb(VM vm) {
+        List<VmNetworkInterface> interfaces = DbFacade.getInstance().getVmNetworkInterfaceDAO().getAllForVm(vm.getId());
+        vm.setInterfaces(interfaces);
     }
 
     private static Version GetApplicationVersion(final String part, final String appName) {

@@ -1,17 +1,23 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
 import java.util.Collections;
 
-import org.ovirt.engine.core.compat.*;
-import org.ovirt.engine.core.common.businessentities.*;
-import org.ovirt.engine.core.common.action.*;
-import org.ovirt.engine.core.common.interfaces.*;
-import org.ovirt.engine.core.common.queries.*;
-import org.ovirt.engine.core.dal.dbbroker.*;
+import org.ovirt.engine.core.common.action.RunVmParams;
+import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
+import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmsComparer;
+import org.ovirt.engine.core.common.interfaces.SearchType;
+import org.ovirt.engine.core.common.queries.SearchParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public final class HighAvailableVmsDirector {
     public static void TryRunHighAvailableVmsOnVmDown(Guid vmId) {
-        VM vm = DbFacade.getInstance().getVmDAO().getById(vmId);
+        VM vm = DbFacade.getInstance().getVmDAO().get(vmId);
         TryRunHighAvailableVm(vm.getvds_group_name());
     }
 
@@ -24,10 +30,10 @@ public final class HighAvailableVmsDirector {
         String searchStatement = String.format("Vms: status=down and cluster =%1$s", vdsGroupName);
         SearchParameters p = new SearchParameters(searchStatement, SearchType.VM);
         p.setMaxCount(Integer.MAX_VALUE);
-        java.util.ArrayList<IVdcQueryable> vmsFromDb = (java.util.ArrayList<IVdcQueryable>) Backend.getInstance()
+        ArrayList<IVdcQueryable> vmsFromDb = (ArrayList<IVdcQueryable>) Backend.getInstance()
                 .runInternalQuery(VdcQueryType.Search, p).getReturnValue();
         if (vmsFromDb != null && vmsFromDb.size() != 0) {
-            java.util.ArrayList<VM> highlyAvailableVms = new java.util.ArrayList<VM>();
+            ArrayList<VM> highlyAvailableVms = new ArrayList<VM>();
             for (IVdcQueryable vm : vmsFromDb) {
                 VM currVm = (VM) ((vm instanceof VM) ? vm : null);
                 if (currVm != null && currVm.getauto_startup() && currVm.getExitStatus().getValue() != 0) {

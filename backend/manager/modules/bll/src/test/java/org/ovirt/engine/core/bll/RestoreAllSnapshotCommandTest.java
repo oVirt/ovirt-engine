@@ -210,7 +210,7 @@ public class RestoreAllSnapshotCommandTest {
         vm.setId(vmId);
         vm.setstatus(VMStatus.Down);
         AuditLogableBaseMockUtils.mockVmDao(restoreAllSnapshotsCommand, vmDAO);
-        when(vmDAO.getById(vmId)).thenReturn(vm);
+        when(vmDAO.get(vmId)).thenReturn(vm);
         return vm;
     }
 

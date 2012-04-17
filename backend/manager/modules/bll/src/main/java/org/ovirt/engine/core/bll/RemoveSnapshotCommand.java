@@ -29,8 +29,8 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
 
     private void initializeObjectState() {
         Snapshot snapshot = DbFacade
-                        .getInstance()
-                        .getSnapshotDao().get(getParameters().getSnapshotId());
+                .getInstance()
+                .getSnapshotDao().get(getParameters().getSnapshotId());
         if (snapshot != null) {
             setSnapshotName(snapshot.getDescription());
         }
@@ -70,9 +70,9 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
             tempVar.setEntityId(getParameters().getEntityId());
             ImagesContainterParametersBase p = tempVar;
             VdcReturnValueBase vdcReturnValue = Backend.getInstance().runInternalAction(
-                            VdcActionType.RemoveSnapshotSingleDisk,
-                            p,
-                            ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
+                    VdcActionType.RemoveSnapshotSingleDisk,
+                    p,
+                    ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
             getParameters().getImagesParameters().add(p);
 
             if (vdcReturnValue != null && vdcReturnValue.getInternalTaskIdList() != null) {
@@ -95,13 +95,13 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
     protected boolean canDoAction() {
         initializeObjectState();
         // Since 'VmId' is overriden, 'Vm' should be retrieved manually.
-        setVm(DbFacade.getInstance().getVmDAO().getById(getVmId()));
+        setVm(DbFacade.getInstance().getVmDAO().get(getVmId()));
 
         getReturnValue().setCanDoAction(validate(new SnapshotsValidator().vmNotDuringSnapshot(getVmId())));
 
         if (!ImagesHandler.PerformImagesChecks(getVm(), getReturnValue().getCanDoActionMessages(),
-                        getVm().getstorage_pool_id(), Guid.Empty, true, true,
-                        true, true, true, true, true, true, null)) {
+                getVm().getstorage_pool_id(), Guid.Empty, true, true,
+                true, true, true, true, true, true, null)) {
             getReturnValue().setCanDoAction(false);
         }
 

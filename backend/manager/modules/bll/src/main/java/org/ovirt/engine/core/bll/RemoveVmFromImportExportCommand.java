@@ -67,9 +67,9 @@ public class RemoveVmFromImportExportCommand<T extends RemoveVmFromImportExportP
 
         setVm(vms.get(0));
 
-        VM vm = getVmDAO().getById(vms.get(0).getId());
+        VM vm = getVmDAO().get(vms.get(0).getId());
         if (vm != null && vm.getstatus() == VMStatus.ImageLocked) {
-            if(AsyncTaskManager.getInstance().hasTasksForEntityIdAndAction(vm.getId(), VdcActionType.ExportVm)) {
+            if (AsyncTaskManager.getInstance().hasTasksForEntityIdAndAction(vm.getId(), VdcActionType.ExportVm)) {
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_DURING_EXPORT);
                 return false;
             }

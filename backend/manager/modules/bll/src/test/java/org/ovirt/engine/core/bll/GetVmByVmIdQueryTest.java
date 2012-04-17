@@ -9,11 +9,13 @@ import java.util.Collections;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.queries.GetVmByVmIdParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DiskImageDAO;
 import org.ovirt.engine.core.dao.VmDAO;
+import org.ovirt.engine.core.dao.VmNetworkInterfaceDAO;
 
 /**
  * A test case for {@link GetVmByVmIdQuery}.
@@ -30,7 +32,7 @@ public class GetVmByVmIdQueryTest extends AbstractUserQueryTest<GetVmByVmIdParam
         when(paramsMock.getId()).thenReturn(vmID);
 
         VmDAO vmDAOMock = mock(VmDAO.class);
-        when(vmDAOMock.getById(vmID, getUser().getUserId(), paramsMock.isFiltered())).thenReturn(expectedResult);
+        when(vmDAOMock.get(vmID, getUser().getUserId(), paramsMock.isFiltered())).thenReturn(expectedResult);
 
         DiskImage disk = new DiskImage();
         disk.setvm_guid(vmID);
@@ -38,9 +40,15 @@ public class GetVmByVmIdQueryTest extends AbstractUserQueryTest<GetVmByVmIdParam
         DiskImageDAO diskImageDAO = mock(DiskImageDAO.class);
         when(diskImageDAO.getAllForVm(vmID)).thenReturn(Collections.singletonList(disk));
 
+        VmNetworkInterface netwrokInterface = new VmNetworkInterface();
+        netwrokInterface.setVmId(vmID);
+        VmNetworkInterfaceDAO vmNetworkInterfaceDAO = mock(VmNetworkInterfaceDAO.class);
+        when(vmNetworkInterfaceDAO.getAllForVm(vmID)).thenReturn(Collections.singletonList(netwrokInterface));
+
         DbFacade dbFacadeMock = getDbFacadeMockInstance();
         when(dbFacadeMock.getVmDAO()).thenReturn(vmDAOMock);
         when(dbFacadeMock.getDiskImageDAO()).thenReturn(diskImageDAO);
+        when(dbFacadeMock.getVmNetworkInterfaceDAO()).thenReturn(vmNetworkInterfaceDAO);
 
         getQuery().executeQueryCommand();
 
@@ -49,5 +57,7 @@ public class GetVmByVmIdQueryTest extends AbstractUserQueryTest<GetVmByVmIdParam
         assertEquals("Wrong VM returned", expectedResult, result);
         assertEquals("Wrong number of disks on the VM", 1, result.getDiskList().size());
         assertEquals("Wrong disk on the VM", disk, result.getDiskList().get(0));
+        assertEquals("Wrong number of network interfaces on the VM", 1, result.getInterfaces().size());
+        assertEquals("Wrong disk on the VM", netwrokInterface, result.getInterfaces().get(0));
     }
 }

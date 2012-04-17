@@ -25,6 +25,7 @@ import org.ovirt.engine.core.dao.StoragePoolDAO;
 import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
 import org.ovirt.engine.core.dao.VmDAO;
+import org.ovirt.engine.core.dao.VmNetworkInterfaceDAO;
 import org.ovirt.engine.core.dao.VmStaticDAO;
 import org.ovirt.engine.core.dao.VmStatisticsDAO;
 import org.ovirt.engine.core.dao.VmTemplateDAO;
@@ -365,8 +366,14 @@ public class AuditLogableBase extends TimeoutBase {
     public VM getVm() {
         if (mVm == null && mVmId != null && !mVmId.equals(Guid.Empty)) {
             try {
-                mVm = getVmDAO().getById(mVmId.getValue());
-            } catch (final java.lang.Exception e) {
+                mVm = getVmDAO().get(mVmId.getValue());
+
+                // TODO: This is done for backwards compatibility with VMDAO.getById(Guid)
+                // It should probably be removed, but some research is required
+                if (mVm != null) {
+                    mVm.setInterfaces(getVmNetworkInterfaceDAO().getAllForVm(mVmId.getValue()));
+                }
+            } catch (final Exception e) {
                 log.infoFormat("Failed to get vm {0}", mVmId);
                 log.debug(e);
             }
@@ -404,6 +411,10 @@ public class AuditLogableBase extends TimeoutBase {
 
     protected VmStatisticsDAO getVmStatisticsDAO() {
         return DbFacade.getInstance().getVmStatisticsDAO();
+    }
+
+    protected VmNetworkInterfaceDAO getVmNetworkInterfaceDAO() {
+        return DbFacade.getInstance().getVmNetworkInterfaceDAO();
     }
 
     protected void setVmTemplate(final VmTemplate value) {
@@ -539,7 +550,7 @@ public class AuditLogableBase extends TimeoutBase {
     }
 
     public String getGlusterVolumeName() {
-        if(glusterVolumeName == null && getGlusterVolume() != null) {
+        if (glusterVolumeName == null && getGlusterVolume() != null) {
             glusterVolumeName = getGlusterVolume().getName();
         }
         return glusterVolumeName;

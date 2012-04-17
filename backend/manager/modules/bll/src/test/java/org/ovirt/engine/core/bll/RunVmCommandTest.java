@@ -287,7 +287,7 @@ public class RunVmCommandTest {
         spyCommand.CreateVm();
 
         // Check Vm
-        VM vm = vmDAO.getById(command.getParameters().getVmId());
+        VM vm = vmDAO.get(command.getParameters().getVmId());
         return vm;
     }
 
@@ -298,7 +298,7 @@ public class RunVmCommandTest {
         VM vm = new VM();
         vm.setstatus(VMStatus.Down);
         AuditLogableBaseMockUtils.mockVmDao(spyVmCommand, vmDAO);
-        when(vmDAO.getById(command.getParameters().getVmId())).thenReturn(vm);
+        when(vmDAO.get(command.getParameters().getVmId())).thenReturn(vm);
         PowerMockito.mockStatic(QuotaManager.class);
         return vm;
     }

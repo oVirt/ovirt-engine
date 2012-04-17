@@ -35,7 +35,7 @@ public class DetachAdGroupFromTimeLeasedPoolCommand<T extends DetachAdGroupFromT
                 getAdGroup().getid(), getVmPoolId());
         // first stop all vms
         for (tags_vm_map tagVmMap : map) {
-            VM vm = DbFacade.getInstance().getVmDAO().getById(tagVmMap.getvm_id());
+            VM vm = DbFacade.getInstance().getVmDAO().get(tagVmMap.getvm_id());
             if (vm.getVmPoolId() != null && vm.getVmPoolId().equals(getVmPoolId()) && vm.isStatusUp()) {
                 StopVmParameters param = new StopVmParameters(vm.getId(), StopVmTypeEnum.NORMAL);
                 param.setSessionId(getParameters().getSessionId());
