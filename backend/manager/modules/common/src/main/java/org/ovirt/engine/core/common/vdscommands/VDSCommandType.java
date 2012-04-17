@@ -127,7 +127,8 @@ public enum VDSCommandType {
     // Gluster VDS commands
     CreateGlusterVolume("org.ovirt.engine.core.vdsbroker.gluster"),
     SetGlusterVolumeOption("org.ovirt.engine.core.vdsbroker.gluster"),
-    StartGlusterVolume("org.ovirt.engine.core.vdsbroker.gluster");
+    StartGlusterVolume("org.ovirt.engine.core.vdsbroker.gluster"),
+    StopGlusterVolume("org.ovirt.engine.core.vdsbroker.gluster");
 
     String packageName;
 

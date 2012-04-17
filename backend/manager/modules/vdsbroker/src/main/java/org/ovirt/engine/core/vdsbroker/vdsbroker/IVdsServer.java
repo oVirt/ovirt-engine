@@ -194,4 +194,6 @@ public interface IVdsServer {
     StatusOnlyReturnForXmlRpc glusterVolumeSet(String volumeName, String key, String value);
 
     StatusOnlyReturnForXmlRpc glusterVolumeStart(String volumeName, Boolean force);
+
+    StatusOnlyReturnForXmlRpc glusterVolumeStop(String volumeName, Boolean force);
 }

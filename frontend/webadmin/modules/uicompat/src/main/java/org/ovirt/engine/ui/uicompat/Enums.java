@@ -503,6 +503,7 @@ public interface Enums extends ConstantsWithLookup {
     String VdcActionType___CreateGlusterVolume();
     String VdcActionType___SetGlusterVolumeOption();
     String VdcActionType___StartGlusterVolume();
+    String VdcActionType___StopGlusterVolume();
 
     String EventNotificationEntity___VDS();
 
@@ -565,6 +566,8 @@ public interface Enums extends ConstantsWithLookup {
     String AuditLogType___GLUSTER_VOLUME_OPTION_SET_FAILED();
     String AuditLogType___GLUSTER_VOLUME_START();
     String AuditLogType___GLUSTER_VOLUME_START_FAILED();
+    String AuditLogType___GLUSTER_VOLUME_STOP();
+    String AuditLogType___GLUSTER_VOLUME_STOP_FAILED();
 
     String VmTemplateStatus___OK();
 
