@@ -117,11 +117,16 @@ public class InterfaceDAODbFacadeImpl extends BaseDAODbFacade implements Interfa
         getCallsHandler().executeModification("Updatevds_interface", parameterSource);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public List<VdsNetworkInterface> getAllInterfacesForVds(Guid id) {
+        return getAllInterfacesForVds(id, null, false);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<VdsNetworkInterface> getAllInterfacesForVds(Guid id, Guid userID, boolean isFiltered) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("vds_id", id);
+                .addValue("vds_id", id).addValue("user_id", userID).addValue("is_filtered", isFiltered);
 
         ParameterizedRowMapper<VdsNetworkInterface> mapper = new ParameterizedRowMapper<VdsNetworkInterface>() {
             @Override

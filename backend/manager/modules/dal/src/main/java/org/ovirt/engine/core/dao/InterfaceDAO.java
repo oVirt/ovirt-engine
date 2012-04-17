@@ -64,6 +64,19 @@ public interface InterfaceDAO extends DAO {
     List<VdsNetworkInterface> getAllInterfacesForVds(Guid id);
 
     /**
+     * Retrieves all interfaces for the given VDS id with optional filtering.
+     *
+     * @param id
+     *            the VDS id
+     * @param userID
+     *            the ID of the user requesting the information
+     * @param isFiltered
+     *            Whether the results should be filtered according to the user's permissions
+     * @return the list of interfaces
+     */
+    List<VdsNetworkInterface> getAllInterfacesForVds(Guid id, Guid userID, boolean isFiltered);
+
+    /**
      * Removes the specified statistics.
      *
      * @param id

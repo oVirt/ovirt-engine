@@ -17,7 +17,7 @@ public class GetVdsInterfacesByVdsIdQuery<P extends GetVdsByVdsIdParameters> ext
     @Override
     protected void executeQueryCommand() {
         final List<VdsNetworkInterface> list = DbFacade.getInstance().getInterfaceDAO()
-                .getAllInterfacesForVds(getParameters().getVdsId());
+                .getAllInterfacesForVds(getParameters().getVdsId(), getUserID(), getParameters().isFiltered());
 
         // 1. here we return all interfaces (eth0, eth1, eth2) - the first
         // condition

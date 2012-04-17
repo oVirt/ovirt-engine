@@ -67,11 +67,7 @@ public class InterfaceDAOTest extends BaseDAOTestCase {
     public void testGetAllInterfacesForVds() {
         List<VdsNetworkInterface> result = dao.getAllInterfacesForVds(VDS_ID);
 
-        assertNotNull(result);
-        assertFalse(result.isEmpty());
-        for (VdsNetworkInterface iface : result) {
-            assertEquals(VDS_ID, iface.getVdsId());
-        }
+        assertGetAllForVdsCorrectResult(result);
     }
 
     /**
@@ -215,6 +211,42 @@ public class InterfaceDAOTest extends BaseDAOTestCase {
                 }
             }
             assertTrue(found);
+        }
+    }
+
+    /**
+     * Asserts that the right collection containing network interfaces is returned for a privileged user with filtering enabled
+     */
+    @Test
+    public void testGetAllInterfacesForVdsWithPermissionsForPriviligedUser() {
+        List<VdsNetworkInterface> result = dao.getAllInterfacesForVds(VDS_ID, PRIVILEGED_USER_ID, true);
+        assertGetAllForVdsCorrectResult(result);
+    }
+
+    /**
+     * Asserts that an empty collection is returned for an non privileged user with filtering enabled
+     */
+    @Test
+    public void testGetAllInterfacesForVdsWithPermissionsForUnpriviligedUser() {
+        List<VdsNetworkInterface> result = dao.getAllInterfacesForVds(VDS_ID, UNPRIVILEGED_USER_ID, true);
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
+
+    /**
+     * Asserts that the right collection containing network interfaces is returned for a non privileged user with filtering disabled
+     */
+    @Test
+    public void testGetAllInterfacesForVdsWithPermissionsDisabledForUnpriviligedUser() {
+        List<VdsNetworkInterface> result = dao.getAllInterfacesForVds(VDS_ID, UNPRIVILEGED_USER_ID, false);
+        assertGetAllForVdsCorrectResult(result);
+    }
+
+    private void assertGetAllForVdsCorrectResult(List<VdsNetworkInterface> result) {
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
+        for (VdsNetworkInterface iface : result) {
+            assertEquals(VDS_ID, iface.getVdsId());
         }
     }
 }
