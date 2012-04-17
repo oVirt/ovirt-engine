@@ -98,7 +98,6 @@ public enum VDSCommandType {
     DestroyStoragePool("org.ovirt.engine.core.vdsbroker.irsbroker"),
     DeleteImageGroup("org.ovirt.engine.core.vdsbroker.irsbroker"),
     MoveImageGroup("org.ovirt.engine.core.vdsbroker.irsbroker"),
-    MoveMultipleImageGroups("org.ovirt.engine.core.vdsbroker.irsbroker"),
     GetImageDomainsList("org.ovirt.engine.core.vdsbroker.irsbroker"),
     CreateVG("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     RemoveVG("org.ovirt.engine.core.vdsbroker.vdsbroker"),

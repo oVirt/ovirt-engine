@@ -4,7 +4,6 @@ import java.util.Map;
 
 import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusOnlyReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.StorageDomainListReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStruct;
 
 
 public interface IIrsServer {
@@ -74,9 +73,6 @@ public interface IIrsServer {
 
     OneUuidReturnForXmlRpc moveImage(String spUUID, String srcDomUUID, String dstDomUUID, String imgGUID,
             String vmGUID, int op, String postZero, String force);
-
-    OneUuidReturnForXmlRpc moveMultipleImages(String spUUID, String srcDomUUID, String dstDomUUID,
-            XmlRpcStruct imgDict, String vmGUID);
 
     StorageDomainGuidListReturnForXmlRpc getImageDomainsList(String spUUID, String imgUUID);
 

@@ -2,11 +2,8 @@ package org.ovirt.engine.core.common.action;
 
 import java.util.HashMap;
 
-import javax.xml.bind.annotation.XmlType;
-
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 
-@XmlType(name = "VdcActionType")
 public enum VdcActionType {
     Unknown(0),
     // Vm Commands
@@ -38,6 +35,7 @@ public enum VdcActionType {
     RemoveVmInterface(29, ActionGroup.CONFIGURE_VM_NETWORK, false),
     UpdateVmInterface(30, ActionGroup.CONFIGURE_VM_NETWORK, false),
     AddDisk(31, ActionGroup.CONFIGURE_VM_STORAGE),
+    @Deprecated
     MoveVm(33, ActionGroup.MOVE_VM),
     UpdateVmDisk(34, ActionGroup.CONFIGURE_VM_STORAGE, false),
     AttachDiskToVm(180, ActionGroup.CONFIGURE_VM_STORAGE, false),
@@ -119,7 +117,6 @@ public enum VdcActionType {
     MoveOrCopyImageGroup(225),
     MoveOrCopyDisk(226),
     RemoveSnapshotSingleDisk(227),
-    MoveMultipleImageGroups(228),
     CreateCloneOfTemplate(229),
     RemoveDisk(230),
     // VmPoolCommands

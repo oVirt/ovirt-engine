@@ -5,7 +5,6 @@ import java.util.Map;
 import org.apache.commons.httpclient.HttpClient;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusOnlyReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.StorageDomainListReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStruct;
 
 public class IrsServerWrapper implements IIrsServer {
 
@@ -207,14 +206,6 @@ public class IrsServerWrapper implements IIrsServer {
             String vmGUID, int op, String postZero, String force) {
         Map<String, Object> xmlRpcReturnValue = irsServer.moveImage(spUUID, srcDomUUID, dstDomUUID, imgGUID, vmGUID,
                 op, postZero, force);
-        OneUuidReturnForXmlRpc wrapper = new OneUuidReturnForXmlRpc(xmlRpcReturnValue);
-        return wrapper;
-    }
-
-    public OneUuidReturnForXmlRpc moveMultipleImages(String spUUID, String srcDomUUID, String dstDomUUID,
-            XmlRpcStruct imgDict, String vmGUID) {
-        Map<String, Object> xmlRpcReturnValue = irsServer.moveMultipleImages(spUUID, srcDomUUID, dstDomUUID,
-                imgDict.getInnerMap(), vmGUID);
         OneUuidReturnForXmlRpc wrapper = new OneUuidReturnForXmlRpc(xmlRpcReturnValue);
         return wrapper;
     }

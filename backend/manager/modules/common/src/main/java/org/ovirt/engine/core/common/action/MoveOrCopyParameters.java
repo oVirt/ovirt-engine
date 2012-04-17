@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
-import org.ovirt.engine.core.common.queries.ValueObjectMap;
 import org.ovirt.engine.core.compat.Guid;
 
 public class MoveOrCopyParameters extends StorageDomainParametersBase implements Serializable {
@@ -48,14 +47,6 @@ public class MoveOrCopyParameters extends StorageDomainParametersBase implements
 
     public void setDiskInfoList(HashMap<String, DiskImageBase> value) {
         privateDiskInfoList = value;
-    }
-
-    public ValueObjectMap getDiskInfoValueObjectMap() {
-        return new ValueObjectMap(privateDiskInfoList, false);
-    }
-
-    public void setDiskInfoValueObjectMap(ValueObjectMap value) {
-        privateDiskInfoList = (value != null) ? new HashMap<String, DiskImageBase>(value.asMap()) : null;
     }
 
     private boolean privateTemplateMustExists;

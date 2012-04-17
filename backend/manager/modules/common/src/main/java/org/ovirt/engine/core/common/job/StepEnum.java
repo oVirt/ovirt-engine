@@ -26,7 +26,6 @@ public enum StepEnum {
     DELETE_VOLUME(AsyncTaskType.deleteVolume),
     DELETE_IMAGE(AsyncTaskType.deleteImage),
     MERGE_SNAPSHOTS(AsyncTaskType.mergeSnapshots),
-    MOVE_MULTIPLE_IMAGES(AsyncTaskType.moveMultipleImages),
     UNKNOWN(AsyncTaskType.unknown);
 
     /**

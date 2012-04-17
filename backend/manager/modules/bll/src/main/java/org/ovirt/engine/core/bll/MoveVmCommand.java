@@ -2,37 +2,30 @@ package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
-import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.action.MoveMultipleImageGroupsParameters;
 import org.ovirt.engine.core.common.action.MoveVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageOperation;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.VmDynamic;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
-import org.ovirt.engine.core.common.queries.GetStorageDomainsByVmTemplateIdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.vdscommands.IsVmDuringInitiatingVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.utils.Helper;
-import org.ovirt.engine.core.utils.linq.Function;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
 
+@Deprecated
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplateCommand<T> {
 
@@ -55,6 +48,12 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
     @Override
     protected ImageOperation getMoveOrCopyImageOperation() {
         return ImageOperation.Move;
+    }
+
+    @Override
+    protected void setActionMessageParameters() {
+        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__MOVE);
+        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM);
     }
 
     @Override
@@ -89,8 +88,11 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
         setStoragePoolId(getVm().getstorage_pool_id());
 
         ensureDomainMap(getVm().getDiskMap().values(), getParameters().getStorageDomainId());
+        for(DiskImage disk : getVm().getDiskMap().values()) {
+            imageFromSourceDomainMap.put(disk.getId(), disk);
+        }
 
-        retValue = retValue && CheckTemplateInStorageDomain();
+        retValue = retValue && checkTemplateInStorageDomain();
 
         if (retValue
                 && DbFacade.getInstance()
@@ -101,7 +103,7 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_MATCH);
         }
 
-        if (retValue && getVm().getDiskMap().size() <= 0) {
+        if (retValue && getVm().getDiskMap().size() == 0) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_HAS_NO_DISKS);
             retValue = false;
         }
@@ -111,13 +113,7 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
             diskImage.getSnapshots().addAll(
                     ImagesHandler.getAllImageSnapshots(diskImage.getId(), diskImage.getit_guid()));
         }
-        retValue = retValue && destinationHasSpace();
-
-        if (!retValue) {
-            addCanDoActionMessage(VdcBllMessages.VAR__ACTION__MOVE);
-            addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM);
-        }
-        return retValue;
+        return retValue && destinationHasSpace();
     }
 
     private boolean destinationHasSpace() {
@@ -129,25 +125,25 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
         return true;
     }
 
-    protected boolean CheckTemplateInStorageDomain() {
+    protected boolean checkTemplateInStorageDomain() {
         boolean retValue = CheckStorageDomain() && checkStorageDomainStatus(StorageDomainStatus.Active)
                 && checkIfDisksExist(getVm().getDiskMap().values());
         if (retValue && !VmTemplateHandler.BlankVmTemplateId.equals(getVm().getvmt_guid())) {
-            List<storage_domains> domains = (List) Backend
-                    .getInstance()
-                    .runInternalQuery(VdcQueryType.GetStorageDomainsByVmTemplateId,
-                            new GetStorageDomainsByVmTemplateIdQueryParameters(getVm().getvmt_guid())).getReturnValue();
-            // LINQ 32934 if (!domains.Select(a =>
-            // a.id).Contains(MoveParameters.StorageDomainId))
-            List<Guid> list = LinqUtils.foreach(domains, new Function<storage_domains, Guid>() {
-                @Override
-                public Guid eval(storage_domains a) {
-                    return a.getId();
+            List<DiskImage> imageList = DbFacade.getInstance().getDiskImageDAO().getAllForVm(getVm().getvmt_guid());
+            Map<Guid, DiskImage> templateImagesMap = new HashMap<Guid, DiskImage>();
+            for (DiskImage image : imageList) {
+                templateImagesMap.put(image.getId(), image);
+            }
+            for (DiskImage image : getVm().getDiskMap().values()) {
+                if (templateImagesMap.containsKey(image.getit_guid())) {
+                    if (!templateImagesMap.get(image.getit_guid())
+                            .getstorage_ids()
+                            .contains(getParameters().getStorageDomainId())) {
+                        retValue = false;
+                        addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_NOT_FOUND_ON_DESTINATION_DOMAIN);
+                        break;
+                    }
                 }
-            });
-            if (!list.contains(getParameters().getStorageDomainId())) {
-                retValue = false;
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_NOT_FOUND_ON_DESTINATION_DOMAIN);
             }
         }
         return retValue;
@@ -155,11 +151,10 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
 
     @Override
     protected void executeCommand() {
-        VmDynamic vmDynamic = DbFacade.getInstance().getVmDynamicDAO().get(getVm().getId());
-        if (vmDynamic.getstatus() != VMStatus.Down) {
+        VM vm = getVm();
+        if (vm.getstatus() != VMStatus.Down) {
             throw new VdcBLLException(VdcBllErrors.IRS_IMAGE_STATUS_ILLEGAL);
         }
-        VM vm = getVm();
         // Check if vm is initializing to run or already running - if it is in
         // such state,
         // we cannot move the vm
@@ -176,7 +171,7 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
             return;
         }
 
-        VmHandler.LockVm(vmDynamic, getCompensationContext());
+        VmHandler.LockVm(vm.getDynamicData(), getCompensationContext());
         MoveOrCopyAllImageGroups();
 
         setSucceeded(true);
@@ -185,27 +180,12 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
 
     protected boolean UpdateVmImSpm() {
         return VmCommand.UpdateVmInSpm(getVm().getstorage_pool_id(),
-                Arrays.asList(new VM[] { getVm() }));
+                Arrays.asList(getVm()));
     }
 
     @Override
     protected void MoveOrCopyAllImageGroups() {
-        MoveMultipleImageGroupsParameters tempVar = new MoveMultipleImageGroupsParameters(getVm().getId(),
-                Helper.ToList(getVm().getDiskMap().values()), getParameters().getStorageDomainId());
-        tempVar.setParentCommand(getActionType());
-        tempVar.setEntityId(getParameters().getEntityId());
-        MoveMultipleImageGroupsParameters p = tempVar;
-        VdcReturnValueBase vdcRetValue =
-                Backend.getInstance().runInternalAction(VdcActionType.MoveMultipleImageGroups,
-                        p,
-                        ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
-
-        if (!vdcRetValue.getSucceeded()) {
-            throw new VdcBLLException(vdcRetValue.getFault().getError(), vdcRetValue.getFault().getMessage());
-        }
-
-        getParameters().getImagesParameters().add(p);
-        getReturnValue().getTaskIdList().addAll(vdcRetValue.getInternalTaskIdList());
+        MoveOrCopyAllImageGroups(getVmId(), getVm().getDiskList());
     }
 
     @Override
@@ -251,6 +231,6 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
 
     @Override
     protected VdcActionType getImagesActionType() {
-        return VdcActionType.MoveMultipleImageGroups;
+        return VdcActionType.MoveOrCopyImageGroup;
     }
 }

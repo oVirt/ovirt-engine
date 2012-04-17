@@ -86,9 +86,6 @@ public interface IrsServerConnector {
     public Map<String, Object> moveImage(String spUUID, String srcDomUUID, String dstDomUUID, String imgGUID,
             String vmGUID, int op);
 
-    public Map<String, Object> moveMultipleImages(String spUUID, String srcDomUUID, String dstDomUUID, Map imgDict,
-            String vmGUID);
-
     public Map<String, Object> getImageDomainsList(String spUUID, String imgUUID);
 
     public Map<String, Object> setMaxHosts(int maxHosts);

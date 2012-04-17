@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.common.asynctasks;
 
-//    @XmlType(name="AsyncTaskType")
 public enum AsyncTaskType {
     unknown,
     copyImage,
@@ -8,8 +7,7 @@ public enum AsyncTaskType {
     createVolume,
     deleteVolume,
     deleteImage,
-    mergeSnapshots,
-    moveMultipleImages;
+    mergeSnapshots;
 
     public int getValue() {
         return this.ordinal();
