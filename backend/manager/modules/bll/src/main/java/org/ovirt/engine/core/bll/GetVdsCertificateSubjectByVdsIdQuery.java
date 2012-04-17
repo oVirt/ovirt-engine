@@ -1,10 +1,10 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.common.businessentities.*;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.queries.*;
-import org.ovirt.engine.core.dal.dbbroker.*;
+import org.ovirt.engine.core.common.queries.GetVdsByVdsIdParameters;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class GetVdsCertificateSubjectByVdsIdQuery<P extends GetVdsByVdsIdParameters> extends QueriesCommandBase<P> {
     public GetVdsCertificateSubjectByVdsIdQuery(P parameters) {
