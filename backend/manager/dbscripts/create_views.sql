@@ -114,13 +114,6 @@ WHERE images_storage_domain_view.active = TRUE
 GROUP BY storage_pool_id,image_guid,creation_date,disk_image_dynamic.actual_size,disk_image_dynamic.read_rate,disk_image_dynamic.write_rate,size,it_guid,internal_drive_mapping,description,ParentId,imageStatus,lastModified,app_list,vm_snapshot_id,volume_type,image_group_id,vm_guid,active,volume_format,disk_interface,boot,wipe_after_delete,propagate_errors,entity_type,quota_id,quota_name,disk_alias,disk_description,shareable;
 
 
-CREATE OR REPLACE VIEW vm_images_storage_domains_view
-AS
-SELECT vm_images_view.*,  images_storage_domain_view.storage_id as storage_domain_id
-FROM vm_images_view
-INNER JOIN images_storage_domain_view ON vm_images_view.image_guid = images_storage_domain_view.image_guid;
-
-
 CREATE OR REPLACE VIEW storage_domains
 AS
 SELECT
@@ -756,6 +749,28 @@ FROM storage_domain_static
 	LEFT OUTER JOIN storage_pool ON storage_pool_iso_map.storage_pool_id = storage_pool.id
 	LEFT OUTER JOIN vds_groups ON storage_pool_iso_map.storage_pool_id = vds_groups.storage_pool_id
 	LEFT OUTER JOIN vds_static ON vds_groups.vds_group_id = vds_static.vds_group_id;
+
+
+CREATE OR REPLACE VIEW vm_images_storage_domains_view
+AS
+SELECT vm_images_view.storage_id, vm_images_view.storage_path, vm_images_view.storage_pool_id,
+       vm_images_view.image_guid, vm_images_view.creation_date, vm_images_view.actual_size, vm_images_view.read_rate, vm_images_view.write_rate,
+       vm_images_view.size, vm_images_view.it_guid, vm_images_view.internal_drive_mapping, vm_images_view.description, vm_images_view.parentid,
+       vm_images_view.imagestatus, vm_images_view.lastmodified, vm_images_view.app_list, vm_images_view.vm_snapshot_id, vm_images_view.volume_type,
+       vm_images_view.image_group_id, vm_images_view.vm_guid, vm_images_view.active, vm_images_view.volume_format, vm_images_view.disk_interface,
+       vm_images_view.boot, vm_images_view.wipe_after_delete, vm_images_view.propagate_errors, vm_images_view.entity_type, vm_images_view.quota_id,
+       vm_images_view.quota_name, vm_images_view.disk_alias, vm_images_view.disk_description,
+       storage_domains_with_hosts_view.id, storage_domains_with_hosts_view.storage, storage_domains_with_hosts_view.storage_name,
+       storage_domains_with_hosts_view.available_disk_size, storage_domains_with_hosts_view.used_disk_size,
+       storage_domains_with_hosts_view.commited_disk_size, storage_domains_with_hosts_view.name, storage_domains_with_hosts_view.storage_type,
+       storage_domains_with_hosts_view.storage_domain_type, storage_domains_with_hosts_view.storage_domain_format_type,
+       storage_domains_with_hosts_view.storage_domain_shared_status, storage_domains_with_hosts_view.vds_group_id,
+       storage_domains_with_hosts_view.vds_id, storage_domains_with_hosts_view.recoverable, storage_domains_with_hosts_view.storage_pool_name
+
+FROM vm_images_view
+INNER JOIN images_storage_domain_view ON vm_images_view.image_guid = images_storage_domain_view.image_guid
+INNER JOIN storage_domains_with_hosts_view ON storage_domains_with_hosts_view.id = images_storage_domain_view.storage_id;
+
 
 ----------------------------------------------
 -- Quota

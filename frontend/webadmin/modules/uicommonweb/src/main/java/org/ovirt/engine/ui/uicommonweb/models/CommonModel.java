@@ -1195,7 +1195,7 @@ public class CommonModel extends ListModel
                 }
                 else if (diskList.IsSearchStringMatch(source))
                 {
-                    prefix.argvalue = StringFormat.format("Disk: storage.name = %1$s", model.getTitle());
+                    prefix.argvalue = StringFormat.format("Disk: storages.name = %1$s", model.getTitle());
                 }
             }
                 break;

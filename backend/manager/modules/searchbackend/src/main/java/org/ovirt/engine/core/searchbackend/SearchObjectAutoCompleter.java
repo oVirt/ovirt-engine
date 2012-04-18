@@ -62,7 +62,7 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
         addJoin(SearchObjects.VDC_CLUSTER_OBJ_NAME, "storage_id", SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME, "id");
 
         // disk - storage domain
-        addJoin(SearchObjects.DISK_OBJ_NAME, "storage_domain_id", SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME, "id");
+        addJoin(SearchObjects.DISK_OBJ_NAME, "image_guid", SearchObjects.VDC_STORAGE_DOMAIN_PLU_OBJ_NAME, "image_guid");
 
         // vds - audit
         addJoin(SearchObjects.VDS_OBJ_NAME, "vds_id", SearchObjects.AUDIT_OBJ_NAME, "vds_id");
@@ -209,6 +209,9 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
         else if (StringHelper.EqOp(obj, SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME)) {
             retval = new StorageDomainFieldAutoCompleter();
         }
+        else if (StringHelper.EqOp(obj, SearchObjects.VDC_STORAGE_DOMAIN_PLU_OBJ_NAME)) {
+            retval = new StorageDomainFieldAutoCompleter();
+        }
         else if (StringHelper.EqOp(obj, SearchObjects.GLUSTER_VOLUME_OBJ_NAME)
                 || StringHelper.EqOp(obj, SearchObjects.GLUSTER_VOLUME_PLU_OBJ_NAME)) {
             retval = GlusterVolumeConditionFieldAutoCompleter.INSTANCE;
@@ -233,7 +236,7 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
         }
         else if (StringHelper.EqOp(obj, SearchObjects.DISK_OBJ_NAME)
                 || StringHelper.EqOp(obj, SearchObjects.DISK_PLU_OBJ_NAME)) {
-            retval = "vm_images_storage_domains_view";
+            retval = "vm_images_view";
         }
         else if (StringHelper.EqOp(obj, SearchObjects.TEMPLATE_OBJ_NAME)
                 || StringHelper.EqOp(obj, SearchObjects.TEMPLATE_PLU_OBJ_NAME)) {
@@ -254,7 +257,11 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
         else if (StringHelper.EqOp(obj, SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME)) {
             retval = "storage_domains_without_storage_pools";
 
-        } else {
+        }
+        else if (StringHelper.EqOp(obj, SearchObjects.VDC_STORAGE_DOMAIN_PLU_OBJ_NAME)) {
+            retval = "vm_images_storage_domains_view";
+        }
+        else {
             retval = getRelatedTableName(obj);
         }
         return retval;
@@ -283,7 +290,7 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
         }
         else if (StringHelper.EqOp(obj, SearchObjects.DISK_OBJ_NAME)
                 || StringHelper.EqOp(obj, SearchObjects.DISK_PLU_OBJ_NAME)) {
-            retval = "vm_images_storage_domains_view";
+            retval = "vm_images_view";
         }
         else if (StringHelper.EqOp(obj, SearchObjects.VDC_USER_OBJ_NAME)
                 || StringHelper.EqOp(obj, SearchObjects.VDC_USER_PLU_OBJ_NAME)) {
@@ -303,6 +310,9 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
         else if (StringHelper.EqOp(obj, SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME)) {
             retval = "storage_domains_with_hosts_view";
 
+        }
+        else if (StringHelper.EqOp(obj, SearchObjects.VDC_STORAGE_DOMAIN_PLU_OBJ_NAME)) {
+            retval = "vm_images_storage_domains_view";
         }
         else if (StringHelper.EqOp(obj, SearchObjects.GLUSTER_VOLUME_OBJ_NAME)
                 || StringHelper.EqOp(obj, SearchObjects.GLUSTER_VOLUME_PLU_OBJ_NAME)) {
