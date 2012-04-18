@@ -305,9 +305,9 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                         .getVmDeviceDAO()
                         .getUnmanagedDevicesByVmId(vm.getId());
         if (vmDevices.size() > 0) {
-            XmlRpcStruct struct = new XmlRpcStruct();
             StringBuilder id = new StringBuilder();
             for (VmDevice vmDevice : vmDevices) {
+                XmlRpcStruct struct = new XmlRpcStruct();
                 id.append(VdsProperties.Device);
                 id.append("_");
                 id.append(vmDevice.getDeviceId());
