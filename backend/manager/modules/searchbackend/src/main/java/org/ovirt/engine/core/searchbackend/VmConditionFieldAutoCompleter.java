@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.searchbackend;
 
+import java.util.UUID;
+
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmType;
@@ -32,6 +34,8 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
         mVerbs.put("TYPE", "TYPE");
         // Building the autoCompletion Dict
         buildCompletions();
+        mVerbs.put("_VM_ID", "_VM_ID");
+
         // Building the types dict
         getTypeDictionary().put("NAME", String.class);
         getTypeDictionary().put("STATUS", VMStatus.class);
@@ -52,6 +56,8 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
         getTypeDictionary().put("TAG", String.class);
         getTypeDictionary().put("DATACENTER", String.class);
         getTypeDictionary().put("TYPE", VmType.class);
+        getTypeDictionary().put("_VM_ID", UUID.class);
+
         // building the ColumnName Dict
         mColumnNameDict.put("NAME", "vm_name");
         mColumnNameDict.put("STATUS", "status");
@@ -73,6 +79,7 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
         mColumnNameDict.put("TAG", "tag_name");
         mColumnNameDict.put("DATACENTER", "storage_pool_name");
         mColumnNameDict.put("TYPE", "vm_type");
+        mColumnNameDict.put("_VM_ID", "vm_guid");
         /**
          */
         mNotFreeTextSearchableFieldsList.add("APPS");

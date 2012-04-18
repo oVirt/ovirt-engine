@@ -1,7 +1,11 @@
 package org.ovirt.engine.core.searchbackend;
 
-import org.ovirt.engine.core.compat.*;
-import org.ovirt.engine.core.common.businessentities.*;
+import java.util.UUID;
+
+import org.ovirt.engine.core.common.businessentities.DateEnumForSearch;
+import org.ovirt.engine.core.common.businessentities.VmOsType;
+import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
+import org.ovirt.engine.core.compat.StringHelper;
 
 public class VmTemplateConditionFieldAutoCompleter extends BaseConditionFieldAutoCompleter {
     public VmTemplateConditionFieldAutoCompleter() {
@@ -17,6 +21,7 @@ public class VmTemplateConditionFieldAutoCompleter extends BaseConditionFieldAut
         mVerbs.put("DATACENTER", "DATACENTER");
 
         buildCompletions();
+        mVerbs.put("_VMT_ID", "_VMT_ID");
         // Building the types dict
         getTypeDictionary().put("NAME", String.class);
         getTypeDictionary().put("DOMAIN", String.class);
@@ -28,6 +33,7 @@ public class VmTemplateConditionFieldAutoCompleter extends BaseConditionFieldAut
         getTypeDictionary().put("STATUS", VmTemplateStatus.class);
         getTypeDictionary().put("CLUSTER", String.class);
         getTypeDictionary().put("DATACENTER", String.class);
+        getTypeDictionary().put("_VMT_ID", UUID.class);
 
         // building the ColumnName Dict
         mColumnNameDict.put("NAME", "name");
@@ -40,7 +46,7 @@ public class VmTemplateConditionFieldAutoCompleter extends BaseConditionFieldAut
         mColumnNameDict.put("STATUS", "status");
         mColumnNameDict.put("CLUSTER", "vds_group_name");
         mColumnNameDict.put("DATACENTER", "storage_pool_name");
-
+        mColumnNameDict.put("_VMT_ID", "vmt_guid");
         // Building the validation dict
         buildBasicValidationTable();
     }
