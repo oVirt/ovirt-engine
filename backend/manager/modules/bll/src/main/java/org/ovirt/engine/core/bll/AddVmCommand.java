@@ -143,11 +143,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         // check that template image and vm are on the same storage pool
 
         if (returnValue) {
-            List<ValidationError> validationErrors =
-                    VmPropertiesUtils.getInstance().validateVMProperties(getVdsGroupDAO()
-                            .get(getParameters().getVm().getvds_group_id())
-                            .getcompatibility_version(),
-                            vmStaticFromParams);
+            List<ValidationError> validationErrors = validateCustomProperties(vmStaticFromParams);
             if (!validationErrors.isEmpty()) {
                 handleCustomPropertiesError(validationErrors, reasons);
                 returnValue = false;
@@ -177,6 +173,13 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
             returnValue = isDedicatedVdsOnSameCluster(vmStaticFromParams);
         }
         return returnValue;
+    }
+
+    protected List<ValidationError> validateCustomProperties(VmStatic vmStaticFromParams) {
+        return VmPropertiesUtils.getInstance().validateVMProperties(getVdsGroupDAO()
+                .get(getParameters().getVm().getvds_group_id())
+                .getcompatibility_version(),
+                vmStaticFromParams);
     }
 
     protected boolean shouldCheckSpaceInStorageDomains() {

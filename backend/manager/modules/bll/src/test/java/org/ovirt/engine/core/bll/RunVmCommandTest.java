@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
@@ -12,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -33,6 +35,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
+import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -49,6 +52,7 @@ import org.ovirt.engine.core.common.vdscommands.VdsAndVmIDVDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBaseMockUtils;
@@ -56,6 +60,7 @@ import org.ovirt.engine.core.dao.DiskImageDAO;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
 import org.ovirt.engine.core.dao.VmDAO;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
+import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -319,7 +324,7 @@ public class RunVmCommandTest {
                 messages,
                 new RunVmParams(),
                 new VdsSelector(vm, new NGuid(), true),
-                mockSuccessfulSnapshotValidator()));
+                mockSuccessfulSnapshotValidator(), mockVmPropertiesUtils()));
         Assert.assertTrue(messages.contains("VM_CANNOT_RUN_FROM_DISK_WITHOUT_DISK"));
     }
 
@@ -337,7 +342,7 @@ public class RunVmCommandTest {
                 messages,
                 new RunVmParams(),
                 new VdsSelector(vm, new NGuid(), true),
-                mockSuccessfulSnapshotValidator()));
+                mockSuccessfulSnapshotValidator(), mockVmPropertiesUtils()));
         Assert.assertTrue(messages.contains("ACTION_TYPE_FAILED_VM_IS_RUNNING"));
     }
 
@@ -357,7 +362,7 @@ public class RunVmCommandTest {
                 messages,
                 new RunVmParams(),
                 new VdsSelector(vm, new NGuid(), true),
-                snapshotsValidator));
+                snapshotsValidator, mockVmPropertiesUtils()));
         Assert.assertTrue(messages.contains(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_DURING_SNAPSHOT.name()));
     }
 
@@ -386,7 +391,12 @@ public class RunVmCommandTest {
         final RunVmParams runParams = new RunVmParams();
         runParams.setRunAsStateless(isStatelessParam);
         boolean canRunVm =
-                RunVmCommand.CanRunVm(vm, messages, runParams, vdsSelector, mockSuccessfulSnapshotValidator());
+                RunVmCommand.CanRunVm(vm,
+                        messages,
+                        runParams,
+                        vdsSelector,
+                        mockSuccessfulSnapshotValidator(),
+                        mockVmPropertiesUtils());
 
         if (shouldPass) {
             Assert.assertTrue(canRunVm);
@@ -395,6 +405,18 @@ public class RunVmCommandTest {
             Assert.assertFalse(canRunVm);
             Assert.assertTrue(messages.contains("VM_CANNOT_RUN_STATELESS_HA"));
         }
+    }
+
+    private static VmPropertiesUtils mockVmPropertiesUtils() {
+        // Mocks vm properties utils (mocks a successful validation)
+        VmPropertiesUtils utils = spy(new VmPropertiesUtils());
+        doReturn(Collections.singletonMap("agent", "true")).when(utils).getPredefinedProperties(any(Version.class),
+                any(VmStatic.class));
+        doReturn(Collections.singletonMap("buff", "123")).when(utils).getUserDefinedProperties(any(Version.class),
+                any(VmStatic.class));
+        doReturn(new HashSet<Version>(Arrays.asList(Version.v3_0,Version.v3_1))).when(utils).getSupportedClusterLevels();
+        doReturn(Collections.EMPTY_LIST).when(utils).validateVMProperties(any(Version.class), any(VmStatic.class));
+        return utils;
     }
 
     @Test

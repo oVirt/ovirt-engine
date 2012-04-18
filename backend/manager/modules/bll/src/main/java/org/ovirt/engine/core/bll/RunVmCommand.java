@@ -611,7 +611,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
     }
 
     public static boolean CanRunVm(VM vm, ArrayList<String> message, RunVmParams runParams,
-            VdsSelector vdsSelector, SnapshotsValidator snapshotsValidator) {
+            VdsSelector vdsSelector, SnapshotsValidator snapshotsValidator, VmPropertiesUtils vmPropsUtils) {
         boolean retValue = true;
 
         List<VmPropertiesUtils.ValidationError> validationErrors = null;
@@ -623,7 +623,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
             }
 
         } else if (!(validationErrors =
-                VmPropertiesUtils.getInstance().validateVMProperties(vm.getvds_group_compatibility_version(),
+                vmPropsUtils.validateVMProperties(vm.getvds_group_compatibility_version(),
                         vm.getStaticData())).isEmpty()) {
             handleCustomPropertiesError(validationErrors, message);
             retValue = false;
@@ -841,9 +841,13 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
                 getReturnValue().getCanDoActionMessages(),
                 getParameters(),
                 getVdsSelector(),
-                getSnapshotsValidator()) &&
+                getSnapshotsValidator(), getVmPropertiesUtils()) &&
                 isVmInterfacesAttachedToVmNetworks();
         return canDoAction;
+    }
+
+    protected VmPropertiesUtils getVmPropertiesUtils() {
+        return VmPropertiesUtils.getInstance();
     }
 
     @Override

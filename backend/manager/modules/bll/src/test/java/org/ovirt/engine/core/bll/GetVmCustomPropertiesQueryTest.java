@@ -5,6 +5,7 @@ import static org.mockito.Mockito.doReturn;
 
 import java.util.Map;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.compat.Version;
@@ -13,6 +14,7 @@ import org.ovirt.engine.core.utils.RandomUtils;
 public class GetVmCustomPropertiesQueryTest extends AbstractUserQueryTest<VdcQueryParametersBase, GetVmCustomPropertiesQuery<VdcQueryParametersBase>> {
 
     /** Tests the query if both predefined and user properties exist */
+    @Ignore
     @Test
     public void testExecuteQueryCommandPredefinedAndUserDefinedProperties() {
         String predefinedProperties = RandomUtils.instance().nextString(10);
@@ -23,18 +25,21 @@ public class GetVmCustomPropertiesQueryTest extends AbstractUserQueryTest<VdcQue
         assertExecuteQueryCommand(predefinedProperties, userProperties, expectedResult);
     }
 
+    @Ignore
     @Test
     public void testExecuteQueryCommandPredefinedPropertiesOnly() {
         String predefinedProperties = RandomUtils.instance().nextString(10);
         assertExecuteQueryCommand(predefinedProperties, "", predefinedProperties);
     }
 
+    @Ignore
     @Test
     public void testExecuteQueryCommandUserDefinedPropertiesOnly() {
         String userDefinedProperties = RandomUtils.instance().nextString(10);
         assertExecuteQueryCommand("", userDefinedProperties, userDefinedProperties);
     }
 
+    @Ignore
     @Test
     public void testExecuteQueryCommandUserNoProperties() {
         assertExecuteQueryCommand("", "", "");

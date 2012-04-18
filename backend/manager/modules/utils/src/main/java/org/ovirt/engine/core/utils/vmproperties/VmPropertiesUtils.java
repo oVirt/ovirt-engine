@@ -120,14 +120,12 @@ public class VmPropertiesUtils {
         predefinedProperties = new HashMap<Version, Map<String, Pattern>>();
         userdefinedProperties = new HashMap<Version, Map<String, Pattern>>();
         allVmProperties = new HashMap<Version, String>();
-        Set<Version> versions = Config.<java.util.HashSet<Version>> GetValue(ConfigValues.SupportedClusterLevels);
+        Set<Version> versions = getSupportedClusterLevels();
         String predefinedVMPropertiesStr, userDefinedVMPropertiesStr;
         StringBuilder sb;
         for (Version version : versions) {
-            predefinedVMPropertiesStr =
-                    Config.<String> GetValue(ConfigValues.PredefinedVMProperties, version.getValue());
-            userDefinedVMPropertiesStr =
-                    Config.<String> GetValue(ConfigValues.UserDefinedVMProperties, version.getValue());
+            predefinedVMPropertiesStr = getPredefinedVMProperties(version);
+            userDefinedVMPropertiesStr = getUserdefinedVMProperties(version);
             sb = new StringBuilder("");
             sb.append(predefinedVMPropertiesStr);
             if (!predefinedVMPropertiesStr.isEmpty() && !userDefinedVMPropertiesStr.isEmpty()) {
@@ -141,6 +139,19 @@ public class VmPropertiesUtils {
             parseVMPropertiesRegex(predefinedVMPropertiesStr, predefinedProperties.get(version));
             parseVMPropertiesRegex(userDefinedVMPropertiesStr, userdefinedProperties.get(version));
         }
+    }
+
+    private String getUserdefinedVMProperties(Version version) {
+        return Config.<String> GetValue(ConfigValues.UserDefinedVMProperties, version.getValue());
+    }
+
+    protected String getPredefinedVMProperties(Version version) {
+        return Config.<String> GetValue(ConfigValues.PredefinedVMProperties, version.getValue());
+    }
+
+    public Set<Version> getSupportedClusterLevels() {
+        Set<Version> versions = Config.<java.util.HashSet<Version>> GetValue(ConfigValues.SupportedClusterLevels);
+        return versions;
     }
 
     public class VMCustomProperties {

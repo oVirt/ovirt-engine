@@ -144,6 +144,7 @@ public class AddVmCommandTest {
         final int sizeRequired = 5;
         final int pctRequired = 10;
         AddVmCommand<VmManagementParametersBase> cmd = setupCanAddVmTests(domainSizeGB, sizeRequired, pctRequired);
+        doReturn(Collections.EMPTY_LIST).when(cmd).validateCustomProperties(any(VmStatic.class));
         assertTrue("vm could not be added", cmd.CanAddVm(reasons, Arrays.asList(createStorageDomain(domainSizeGB))));
     }
 
@@ -154,6 +155,7 @@ public class AddVmCommandTest {
         final int pctRequired = 0;
         final int domainSizeGB = 4;
         AddVmCommand<VmManagementParametersBase> cmd = setupCanAddVmTests(domainSizeGB, sizeRequired, pctRequired);
+        doReturn(Collections.EMPTY_LIST).when(cmd).validateCustomProperties(any(VmStatic.class));
         assertFalse("vm could not be added", cmd.CanAddVm(reasons, Arrays.asList(createStorageDomain(domainSizeGB))));
         assertTrue("canDoAction failed for the wrong reason",
                 reasons.contains(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW.toString()));
@@ -166,6 +168,7 @@ public class AddVmCommandTest {
         final int pctRequired = 95;
         final int domainSizeGB = 10;
         AddVmCommand<VmManagementParametersBase> cmd = setupCanAddVmTests(domainSizeGB, sizeRequired, pctRequired);
+        doReturn(Collections.EMPTY_LIST).when(cmd).validateCustomProperties(any(VmStatic.class));
         assertFalse("vm could not be added", cmd.CanAddVm(reasons, Arrays.asList(createStorageDomain(domainSizeGB))));
         assertTrue("canDoAction failed for the wrong reason",
                 reasons.contains(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW.toString()));
@@ -178,7 +181,7 @@ public class AddVmCommandTest {
         final int sizeRequired = 10;
         final int pctRequired = 10;
         AddVmCommand<VmManagementParametersBase> cmd = setupCanAddVmTests(domainSizeGB, sizeRequired, pctRequired);
-
+        doReturn(Collections.EMPTY_LIST).when(cmd).validateCustomProperties(any(VmStatic.class));
         // Adding 10 disks, which each one should consume the default sparse size (which is 1GB).
         setNewDisksForTemplate(10, cmd.getVmTemplate().getDiskMap());
         doReturn(createVmTemplate()).when(cmd).getVmTemplate();
@@ -284,6 +287,7 @@ public class AddVmCommandTest {
                 new AddVmFromTemplateCommand<AddVmFromTemplateParameters>(param);
         AddVmFromTemplateCommand<AddVmFromTemplateParameters> result = spy(concrete);
         doReturn(true).when(result).checkNumberOfMonitors();
+        doReturn(Collections.EMPTY_LIST).when(result).validateCustomProperties(any(VmStatic.class));
         return result;
     }
 

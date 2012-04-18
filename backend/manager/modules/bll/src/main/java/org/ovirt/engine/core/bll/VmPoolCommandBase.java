@@ -23,6 +23,7 @@ import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogField;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;
+import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils;
 
 @CustomLogFields({ @CustomLogField("VmPoolName") })
 public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends CommandBase<T> {
@@ -242,7 +243,16 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
         VdsSelector vdsSelector = new VdsSelector(vm,
                 ((runVmParams.getDestinationVdsId()) != null) ? runVmParams.getDestinationVdsId()
                         : vm.getdedicated_vm_for_vds(), true);
-        return RunVmCommand.CanRunVm(vm, messages, runVmParams, vdsSelector, new SnapshotsValidator());
+        return RunVmCommand.CanRunVm(vm,
+                messages,
+                runVmParams,
+                vdsSelector,
+                new SnapshotsValidator(),
+                getVmPropertiesUtils());
+    }
+
+    protected static VmPropertiesUtils getVmPropertiesUtils() {
+        return VmPropertiesUtils.getInstance();
     }
 
     @Override
