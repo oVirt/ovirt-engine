@@ -3,8 +3,11 @@ package org.ovirt.engine.core.bll;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.doReturn;
 
+import java.util.Map;
+
 import org.junit.Test;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.utils.RandomUtils;
 
 public class GetVmCustomPropertiesQueryTest extends AbstractUserQueryTest<VdcQueryParametersBase, GetVmCustomPropertiesQuery<VdcQueryParametersBase>> {
@@ -53,6 +56,6 @@ public class GetVmCustomPropertiesQueryTest extends AbstractUserQueryTest<VdcQue
 
         assertEquals("Wrong properties string",
                 expectedResult,
-                getQuery().getQueryReturnValue().getReturnValue());
+                ((Map<Version, String>)getQuery().getQueryReturnValue().getReturnValue()).get(doReturn(userProperties).when(getQuery()).getVersion()));
     }
 }

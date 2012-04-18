@@ -408,7 +408,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     protected static void handleCustomPropertiesError(List<ValidationError> validationErrors, ArrayList<String> message) {
         String invalidSyntaxMsg = VdcBllMessages.ACTION_TYPE_FAILED_INVALID_CUSTOM_VM_PROPERTIES_INVALID_SYNTAX.name();
 
-        List<String> errorMessages = VmPropertiesUtils.generateErrorMessages(validationErrors, invalidSyntaxMsg,
+        List<String> errorMessages = VmPropertiesUtils.getInstance().generateErrorMessages(validationErrors, invalidSyntaxMsg,
                 failureReasonsToVdcBllMessagesMap, failureReasonsToFormatMessages);
         message.addAll(errorMessages);
     }

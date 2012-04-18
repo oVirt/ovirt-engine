@@ -321,7 +321,7 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
             String userDefinedProperties = rs.getString("userdefined_properties");
             entity.setPredefinedProperties(predefinedProperties);
             entity.setUserDefinedProperties(userDefinedProperties);
-            entity.setCustomProperties(VmPropertiesUtils.customProperties(predefinedProperties, userDefinedProperties));
+            entity.setCustomProperties(VmPropertiesUtils.getInstance().customProperties(predefinedProperties, userDefinedProperties));
             entity.setMinAllocatedMem(rs.getInt("min_allocated_mem"));
             entity.setHash(rs.getString("hash"));
             return entity;

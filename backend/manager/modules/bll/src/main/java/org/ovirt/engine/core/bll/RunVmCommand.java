@@ -622,7 +622,9 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
                 message.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND.toString());
             }
 
-        } else if (!(validationErrors = VmPropertiesUtils.validateVMProperties(vm.getStaticData())).isEmpty()) {
+        } else if (!(validationErrors =
+                VmPropertiesUtils.getInstance().validateVMProperties(vm.getvds_group_compatibility_version(),
+                        vm.getStaticData())).isEmpty()) {
             handleCustomPropertiesError(validationErrors, message);
             retValue = false;
         } else {

@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.itests;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 import junit.framework.Assert;
 
@@ -18,6 +19,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 
 /**
  * Test class for Queries
@@ -78,8 +80,8 @@ public class QueriesTest extends AbstractBackendTest {
     public void getCustomPermissions() {
         VdcQueryReturnValue runQuery =
             backend.RunQuery(VdcQueryType.GetVmCustomProperties, sessionize(new VdcQueryParametersBase()));
-        String properties = (String) runQuery.getReturnValue();
-        Assert.assertTrue(properties.contains("sap_agent"));
+        Map<Version, String> properties = (Map<Version, String>) runQuery.getReturnValue();
+        Assert.assertTrue(properties.get(new Version(3, 0)).contains("sap_agent"));
 
     }
 }

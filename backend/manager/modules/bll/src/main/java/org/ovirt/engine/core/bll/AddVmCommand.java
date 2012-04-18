@@ -143,7 +143,11 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         // check that template image and vm are on the same storage pool
 
         if (returnValue) {
-            List<ValidationError> validationErrors = VmPropertiesUtils.validateVMProperties(vmStaticFromParams);
+            List<ValidationError> validationErrors =
+                    VmPropertiesUtils.getInstance().validateVMProperties(getVdsGroupDAO()
+                            .get(getParameters().getVm().getvds_group_id())
+                            .getcompatibility_version(),
+                            vmStaticFromParams);
             if (!validationErrors.isEmpty()) {
                 handleCustomPropertiesError(validationErrors, reasons);
                 returnValue = false;
@@ -539,7 +543,11 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         // Parses the custom properties field that was filled by frontend to
         // predefined and user defined fields
         if (vmStatic.getCustomProperties() != null) {
-            VMCustomProperties properties = VmPropertiesUtils.parseProperties(vmStatic.getCustomProperties());
+            VMCustomProperties properties =
+                    VmPropertiesUtils.getInstance().parseProperties(getVdsGroupDAO()
+                            .get(getParameters().getVm().getvds_group_id())
+                            .getcompatibility_version(),
+                            vmStatic.getCustomProperties());
             String predefinedProperties = properties.getPredefinedProperties();
             String userDefinedProperties = properties.getUseDefinedProperties();
             vmStatic.setPredefinedProperties(predefinedProperties);

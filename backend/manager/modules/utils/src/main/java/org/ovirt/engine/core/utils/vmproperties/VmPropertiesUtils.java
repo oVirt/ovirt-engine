@@ -16,6 +16,7 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.utils.MultiValueMapUtils;
 
 /**
@@ -25,35 +26,38 @@ import org.ovirt.engine.core.utils.MultiValueMapUtils;
  */
 public class VmPropertiesUtils {
 
-    private static final Pattern SEMICOLON_PATTERN = Pattern.compile(";");
-    private static final String PROPERTIES_DELIMETER = ";";
-    private static final String KEY_VALUE_DELIMETER = "=";
+    private static VmPropertiesUtils vmPropertiesUtils;
+    private final Pattern SEMICOLON_PATTERN = Pattern.compile(";");
+    private final String PROPERTIES_DELIMETER = ";";
+    private final String KEY_VALUE_DELIMETER = "=";
 
-    private static final String LEGITIMATE_CHARACTER_FOR_KEY = "[a-z_A-Z0-9]";
-    private static final String LEGITIMATE_CHARACTER_FOR_VALUE = "[^" + PROPERTIES_DELIMETER + "]"; // all characters
+    private final String LEGITIMATE_CHARACTER_FOR_KEY = "[a-z_A-Z0-9]";
+    private final String LEGITIMATE_CHARACTER_FOR_VALUE = "[^" + PROPERTIES_DELIMETER + "]"; // all characters
                                                                                                     // but the delimiter
                                                                                                     // are allowed
-    private static final Pattern KEY_PATTERN = Pattern.compile("(" + LEGITIMATE_CHARACTER_FOR_KEY + ")+");
-    private static final Pattern VALUE_PATTERN = Pattern.compile("(" + LEGITIMATE_CHARACTER_FOR_VALUE + ")+");
+    private final Pattern KEY_PATTERN = Pattern.compile("(" + LEGITIMATE_CHARACTER_FOR_KEY + ")+");
+    private final Pattern VALUE_PATTERN = Pattern.compile("(" + LEGITIMATE_CHARACTER_FOR_VALUE + ")+");
 
     // private static final Pattern KEY_VALIDATION_PATTERN = Pattern.compile("(" + LEGITIMATE_CHARACTER + ")+");
 
     // properties are in form of key1=val1;key2=val2; .... key and include alpha numeric characters and _
-    private static final String KEY_VALUE_REGEX_STR = "((" + LEGITIMATE_CHARACTER_FOR_KEY + ")+)=(("
+    private final String KEY_VALUE_REGEX_STR = "((" + LEGITIMATE_CHARACTER_FOR_KEY + ")+)=(("
             + LEGITIMATE_CHARACTER_FOR_VALUE + ")+)";
 
     // frontend can pass custom values in the form of "key=value" or "key1=value1;... key-n=value_n" (if there is only
     // one key-value, no ; is attached to it
-    private static final Pattern VALIDATION_PATTERN = Pattern.compile(KEY_VALUE_REGEX_STR + "(;" + KEY_VALUE_REGEX_STR
+    private final Pattern VALIDATION_PATTERN = Pattern.compile(KEY_VALUE_REGEX_STR + "(;" + KEY_VALUE_REGEX_STR
             + ")*;?");
 
-    private static final List<ValidationError> invalidSyntaxValidationError =
+    private final List<ValidationError> invalidSyntaxValidationError =
             Arrays.asList(new ValidationError(ValidationFailureReason.SYNTAX_ERROR, ""));
-    private static Map<String, Pattern> predefinedProperties = new HashMap<String, Pattern>();
-    private static Map<String, Pattern> userdefinedProperties = new HashMap<String, Pattern>();
+
+    private Map<Version, Map<String, Pattern>> predefinedProperties;
+    private Map<Version, Map<String, Pattern>> userdefinedProperties;
+    private Map<Version, String> allVmProperties;
 
     // Defines why validation failed
-    public static enum ValidationFailureReason {
+    public enum ValidationFailureReason {
         KEY_DOES_NOT_EXIST,
         INCORRECT_VALUE,
         SYNTAX_ERROR,
@@ -61,7 +65,7 @@ public class VmPropertiesUtils {
         NO_ERROR
     };
 
-    public static class ValidationError {
+    public class ValidationError {
         private final ValidationFailureReason reason;
         private final String keyName;
 
@@ -102,16 +106,44 @@ public class VmPropertiesUtils {
         }
     }
 
-    static {
-        String predefinedVMPropertiesStr = Config.<String> GetValue(ConfigValues.PredefinedVMProperties, "3.0");
-        parseVMPropertiesRegex(predefinedVMPropertiesStr, predefinedProperties);
-
-        String userDefinedVMPropertiesStr = Config.<String> GetValue(ConfigValues.UserDefinedVMProperties, "3.0");
-        parseVMPropertiesRegex(userDefinedVMPropertiesStr, userdefinedProperties);
-
+    public static VmPropertiesUtils getInstance() {
+        if (vmPropertiesUtils == null) {
+            vmPropertiesUtils = new VmPropertiesUtils();
+            vmPropertiesUtils.init();
+        }
+        return vmPropertiesUtils;
     }
 
-    public static class VMCustomProperties {
+    private void init() {
+        if (allVmProperties != null)
+            return;
+        predefinedProperties = new HashMap<Version, Map<String, Pattern>>();
+        userdefinedProperties = new HashMap<Version, Map<String, Pattern>>();
+        allVmProperties = new HashMap<Version, String>();
+        Set<Version> versions = Config.<java.util.HashSet<Version>> GetValue(ConfigValues.SupportedClusterLevels);
+        String predefinedVMPropertiesStr, userDefinedVMPropertiesStr;
+        StringBuilder sb;
+        for (Version version : versions) {
+            predefinedVMPropertiesStr =
+                    Config.<String> GetValue(ConfigValues.PredefinedVMProperties, version.getValue());
+            userDefinedVMPropertiesStr =
+                    Config.<String> GetValue(ConfigValues.UserDefinedVMProperties, version.getValue());
+            sb = new StringBuilder("");
+            sb.append(predefinedVMPropertiesStr);
+            if (!predefinedVMPropertiesStr.isEmpty() && !userDefinedVMPropertiesStr.isEmpty()) {
+                sb.append(";");
+            }
+            sb.append(userDefinedVMPropertiesStr);
+            allVmProperties.put(version, sb.toString());
+
+            predefinedProperties.put(version, new HashMap<String, Pattern>());
+            userdefinedProperties.put(version, new HashMap<String, Pattern>());
+            parseVMPropertiesRegex(predefinedVMPropertiesStr, predefinedProperties.get(version));
+            parseVMPropertiesRegex(userDefinedVMPropertiesStr, userdefinedProperties.get(version));
+        }
+    }
+
+    public class VMCustomProperties {
         private final String predefinedProperties;
         private final String userDefinedProperties;
 
@@ -137,11 +169,11 @@ public class VmPropertiesUtils {
      * @param propertiesStr
      * @return
      */
-    public static VMCustomProperties parseProperties(String propertiesStr) {
+    public VMCustomProperties parseProperties(Version version, String propertiesStr) {
         HashMap<String, String> userDefinedPropertiesMap = new HashMap<String, String>();
         HashMap<String, String> predefinedPropertiesMap = new HashMap<String, String>();
 
-        convertCustomPropertiesStrToMaps(propertiesStr, predefinedPropertiesMap, userDefinedPropertiesMap);
+        convertCustomPropertiesStrToMaps(version, propertiesStr, predefinedPropertiesMap, userDefinedPropertiesMap);
         return new VMCustomProperties(vmPropertiesToString(predefinedPropertiesMap),
                 vmPropertiesToString(userDefinedPropertiesMap));
     }
@@ -152,12 +184,12 @@ public class VmPropertiesUtils {
      * @param vmStatic
      * @return
      */
-    public static List<ValidationError> validateVMProperties(VmStatic vmStatic) {
-        List<ValidationError> errors = validateProperties(vmStatic.getCustomProperties());
+    public List<ValidationError> validateVMProperties(Version version, VmStatic vmStatic) {
+        List<ValidationError> errors = validateProperties(version, vmStatic.getCustomProperties());
         return errors;
     }
 
-    private static void parseVMPropertiesRegex(String properties, Map<String, Pattern> keysToRegex) {
+    private void parseVMPropertiesRegex(String properties, Map<String, Pattern> keysToRegex) {
         if (StringHelper.isNullOrEmpty(properties)) {
             return;
         }
@@ -188,7 +220,7 @@ public class VmPropertiesUtils {
      * @param fieldValue
      * @return a list of validation errors. if there are no errors - the list will be empty
      */
-    private static List<ValidationError> validateProperties(String properties) {
+    private List<ValidationError> validateProperties(Version version, String properties) {
 
         if (StringHelper.isNullOrEmpty(properties)) { // No errors in case of empty value
             return Collections.emptyList();
@@ -202,21 +234,20 @@ public class VmPropertiesUtils {
         // 2. Check if the value of the key is valid
         // In case either 1 or 2 fails, add an error to the errors list
         Map<String, String> map = new HashMap<String, String>();
-        List<ValidationError> result = populateVMProperties(properties, map);
+        List<ValidationError> result = populateVMProperties(version, properties, map);
         return result;
     }
 
-    private static boolean syntaxErrorInProperties(String properties) {
-
+    private boolean syntaxErrorInProperties(String properties) {
         return !VALIDATION_PATTERN.matcher(properties).matches();
-
     }
 
-    private static boolean isValueValid(String key, String value) {
+    private boolean isValueValid(Version version, String key, String value) {
         // Checks that the value for the given property is valid by running by trying to perform
         // regex validation
-        Pattern userDefinedPattern = userdefinedProperties.get(key);
-        Pattern predefinedPattern = predefinedProperties.get(key);
+        Pattern userDefinedPattern = userdefinedProperties.get(version).get(key);
+        Pattern predefinedPattern = predefinedProperties.get(version).get(key);
+
         return (userDefinedPattern != null && userDefinedPattern.matcher(value).matches())
                 || (predefinedPattern != null && predefinedPattern.matcher(value).matches());
     }
@@ -226,12 +257,17 @@ public class VmPropertiesUtils {
      *
      * @return map containing the VM custom properties
      */
-    public static Map<String, String> getVMProperties(VmStatic vmStatic) {
-        separeteCustomPropertiesToUserAndPredefined(vmStatic);
+    public Map<String, String> getVMProperties(Version version, VmStatic vmStatic) {
+        separeteCustomPropertiesToUserAndPredefined(version, vmStatic);
         Map<String, String> map = new HashMap<String, String>();
-        getPredefinedProperties(vmStatic, map);
-        getUserDefinedProperties(vmStatic, map);
+        getPredefinedProperties(version, vmStatic, map);
+        getUserDefinedProperties(version, vmStatic, map);
+
         return map;
+    }
+
+    public Map<Version, String> getAllVmProperties() {
+        return allVmProperties;
     }
 
     /**
@@ -241,9 +277,9 @@ public class VmPropertiesUtils {
      *            vm to get the map for
      * @return map containing the UserDefined properties
      */
-    public static Map<String, String> getUserDefinedProperties(VmStatic vmStatic) {
+    public Map<String, String> getUserDefinedProperties(Version version, VmStatic vmStatic) {
         Map<String, String> map = new HashMap<String, String>();
-        getUserDefinedProperties(vmStatic, map);
+        getUserDefinedProperties(version, vmStatic, map);
         return map;
     }
 
@@ -254,20 +290,20 @@ public class VmPropertiesUtils {
      *            vm to get the map for
      * @return map containing the vm properties
      */
-    public static Map<String, String> getPredefinedProperties(VmStatic vmStatic) {
+    public Map<String, String> getPredefinedProperties(Version version, VmStatic vmStatic) {
         Map<String, String> map = new HashMap<String, String>();
-        getPredefinedProperties(vmStatic, map);
+        getPredefinedProperties(version, vmStatic, map);
         return map;
     }
 
-    private static void getPredefinedProperties(VmStatic vmStatic, Map<String, String> propertiesMap) {
+    private void getPredefinedProperties(Version version, VmStatic vmStatic, Map<String, String> propertiesMap) {
         String predefinedProperties = vmStatic.getPredefinedProperties();
-        getVMProperties(propertiesMap, predefinedProperties);
+        getVMProperties(version, propertiesMap, predefinedProperties);
     }
 
-    private static void getUserDefinedProperties(VmStatic vmStatic, Map<String, String> propertiesMap) {
+    private void getUserDefinedProperties(Version version, VmStatic vmStatic, Map<String, String> propertiesMap) {
         String UserDefinedProperties = vmStatic.getUserDefinedProperties();
-        getVMProperties(propertiesMap, UserDefinedProperties);
+        getVMProperties(version, propertiesMap, UserDefinedProperties);
     }
 
     /**
@@ -278,13 +314,13 @@ public class VmPropertiesUtils {
      * @param vmPropertiesFieldValue
      *            the string value that contains the properties
      */
-    public static void getVMProperties(Map<String, String> propertiesMap, String vmPropertiesFieldValue) {
+    public void getVMProperties(Version version, Map<String, String> propertiesMap, String vmPropertiesFieldValue) {
         // format of properties is key1=val1,key2=val2,key3=val3,key4=val4
         if (StringHelper.isNullOrEmpty(vmPropertiesFieldValue)) {
             return;
         }
 
-        populateVMProperties(vmPropertiesFieldValue, propertiesMap);
+        populateVMProperties(version, vmPropertiesFieldValue, propertiesMap);
 
     }
 
@@ -297,7 +333,7 @@ public class VmPropertiesUtils {
      *            the filled map
      * @return list of errors during parsing (currently holds list of duplicate keys)
      */
-    private static List<ValidationError> populateVMProperties(String vmPropertiesFieldValue,
+    private List<ValidationError> populateVMProperties(Version version, String vmPropertiesFieldValue,
             Map<String, String> propertiesMap) {
         Set<ValidationError> errorsSet = new HashSet<VmPropertiesUtils.ValidationError>();
         List<ValidationError> results = new ArrayList<VmPropertiesUtils.ValidationError>();
@@ -312,12 +348,12 @@ public class VmPropertiesUtils {
                     errorsSet.add(new ValidationError(ValidationFailureReason.DUPLICATE_KEY, key));
                     continue;
                 }
-                if (!predefinedProperties.containsKey(key) && !userdefinedProperties.containsKey(key)) {
+                if (!predefinedProperties.get(version).containsKey(key) && !userdefinedProperties.containsKey(key)) {
                     errorsSet.add(new ValidationError(ValidationFailureReason.KEY_DOES_NOT_EXIST, key));
                     continue;
                 }
 
-                if (!isValueValid(key, value)) {
+                if (!isValueValid(version, key, value)) {
                     errorsSet.add(new ValidationError(ValidationFailureReason.INCORRECT_VALUE, key));
                     continue;
                 }
@@ -348,10 +384,10 @@ public class VmPropertiesUtils {
         return result.toString();
     }
 
-    private static void convertCustomPropertiesStrToMaps(String propertiesValue,
+    private void convertCustomPropertiesStrToMaps(Version version, String propertiesValue,
             Map<String, String> predefinedPropertiesMap, Map<String, String> userDefinedPropertiesMap) {
         Map<String, String> propertiesMap = new HashMap<String, String>();
-        populateVMProperties(propertiesValue, propertiesMap);
+        populateVMProperties(version, propertiesValue, propertiesMap);
         Set<Entry<String, String>> propertiesEntries = propertiesMap.entrySet();
 
         // Go over all the properties - if the key of the property exists in the
@@ -359,8 +395,8 @@ public class VmPropertiesUtils {
         // add it to the predefined map, otherwise - add it to the user defined
         // map
 
-        Set<String> predefinedPropertiesKeys = predefinedProperties.keySet();
-        Set<String> userdefinedPropertiesKeys = userdefinedProperties.keySet();
+        Set<String> predefinedPropertiesKeys = predefinedProperties.get(version).keySet();
+        Set<String> userdefinedPropertiesKeys = userdefinedProperties.get(version).keySet();
         for (Entry<String, String> propertiesEntry : propertiesEntries) {
             String propertyKey = propertiesEntry.getKey();
             String propertyValue = propertiesEntry.getValue();
@@ -381,7 +417,7 @@ public class VmPropertiesUtils {
      * @param userDefinedProperties
      * @return
      */
-    public static String customProperties(String predefinedProperties, String userDefinedProperties) {
+    public String customProperties(String predefinedProperties, String userDefinedProperties) {
         StringBuilder result = new StringBuilder();
         result.append((StringHelper.isNullOrEmpty(predefinedProperties)) ? "" : predefinedProperties);
         result.append((result.length() == 0) ? "" : ";");
@@ -396,7 +432,7 @@ public class VmPropertiesUtils {
      * @param missingKeysList
      * @param wrongKeyValues
      */
-    public static void separateValidationErrorsList(List<ValidationError> errorsList,
+    private void separateValidationErrorsList(List<ValidationError> errorsList,
             Map<ValidationFailureReason, List<ValidationError>> resultMap) {
         if (errorsList == null || errorsList.isEmpty()) {
             return;
@@ -421,7 +457,7 @@ public class VmPropertiesUtils {
      *            AppError.resx)
      * @return
      */
-    public static List<String> generateErrorMessages(List<ValidationError> errorsList,
+    public List<String> generateErrorMessages(List<ValidationError> errorsList,
             String syntaxErrorMessage, Map<ValidationFailureReason, String> failureReasonsToVdcBllMessagesMap,
             Map<ValidationFailureReason, String> failureReasonsToParameterFormatStrings) {
         // No errors , the returned list reported to client will be empty
@@ -476,9 +512,9 @@ public class VmPropertiesUtils {
 
     }
 
-    public static void separeteCustomPropertiesToUserAndPredefined(VmStatic vmStatic) {
+    public void separeteCustomPropertiesToUserAndPredefined(Version version, VmStatic vmStatic) {
         String customProperties = vmStatic.getCustomProperties();
-        VMCustomProperties properties = VmPropertiesUtils.parseProperties(customProperties);
+        VMCustomProperties properties = parseProperties(version, customProperties);
         vmStatic.setPredefinedProperties(properties.getPredefinedProperties());
         vmStatic.setUserDefinedProperties(properties.getUseDefinedProperties());
     }

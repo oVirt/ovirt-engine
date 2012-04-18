@@ -63,7 +63,7 @@ public abstract class VmInfoBuilderBase {
                 .toLowerCase());
 
         createInfo.add(VdsProperties.Custom,
-                VmPropertiesUtils.getVMProperties(vm.getStaticData()));
+                VmPropertiesUtils.getInstance().getVMProperties(vm.getvds_group_compatibility_version(), vm.getStaticData()));
         createInfo.add(VdsProperties.vm_type, "kvm"); // "qemu", "kvm"
         if (vm.getRunAndPause()) {
             createInfo.add(VdsProperties.launch_paused_param, "true");

@@ -153,7 +153,11 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                 if (exists && (!StringHelper.EqOp(vm.getvm_name(), vmStaticDataFromParams.getvm_name()))) {
                     addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_ALREADY_EXIST);
 
-                } else if (!(validationErrors = VmPropertiesUtils.validateVMProperties(vmStaticDataFromParams)).isEmpty()) {
+                } else if (!(validationErrors =
+                        VmPropertiesUtils.getInstance()
+                                .validateVMProperties(getVdsGroupDAO().get(getParameters().getVm().getvds_group_id())
+                                        .getcompatibility_version(),
+                                        vmStaticDataFromParams)).isEmpty()) {
                     handleCustomPropertiesError(validationErrors, getReturnValue().getCanDoActionMessages());
 
                 } else if (vmStaticDataFromParams.getauto_startup()
@@ -256,7 +260,11 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
     private void setCustomDefinedProperties(VmStatic vmStaticDataFromParams) {
         VMCustomProperties properties =
-                VmPropertiesUtils.parseProperties(vmStaticDataFromParams.getCustomProperties());
+                VmPropertiesUtils.getInstance().parseProperties(getVdsGroupDAO()
+                        .get(getParameters().getVm().getvds_group_id())
+                        .getcompatibility_version(),
+                        vmStaticDataFromParams.getCustomProperties());
+
         vmStaticDataFromParams.setPredefinedProperties(properties.getPredefinedProperties());
         vmStaticDataFromParams.setUserDefinedProperties(properties.getUseDefinedProperties());
     }

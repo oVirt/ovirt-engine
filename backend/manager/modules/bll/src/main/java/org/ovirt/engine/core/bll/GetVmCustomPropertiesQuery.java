@@ -3,8 +3,12 @@ package org.ovirt.engine.core.bll;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
+import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils;
 
 public class GetVmCustomPropertiesQuery<P extends VdcQueryParametersBase> extends QueriesCommandBase<P> {
+
+    private static final String Version3_0 = "3.0";
 
     public GetVmCustomPropertiesQuery(P parameters) {
         super(parameters);
@@ -12,30 +16,28 @@ public class GetVmCustomPropertiesQuery<P extends VdcQueryParametersBase> extend
 
     @Override
     protected void executeQueryCommand() {
-        String predefinedVMProperties = getPredefinedVMProperties();
-        String userdefinedVMProperties = getUserDefinedVMProperties();
-
-        // Constructs a String that contains all the custom properties
-        // definitions, with ";" as delimiter
-        StringBuilder sb = new StringBuilder(predefinedVMProperties);
-        if (!predefinedVMProperties.isEmpty() && !userdefinedVMProperties.isEmpty()) {
-            sb.append(";");
-        }
-        sb.append(userdefinedVMProperties);
-        getQueryReturnValue().setReturnValue(sb.toString());
+        getQueryReturnValue().setReturnValue(VmPropertiesUtils.getInstance().getAllVmProperties());
     }
 
     /**
      * @return The predefined VM properties.
      */
     protected String getPredefinedVMProperties() {
-        return Config.<String> GetValue(ConfigValues.PredefinedVMProperties, "3.0");
+        return Config.<String> GetValue(ConfigValues.PredefinedVMProperties, Version3_0);
     }
 
     /**
      * @return The user-defined VM properties.
      */
     protected String getUserDefinedVMProperties() {
-        return Config.<String> GetValue(ConfigValues.UserDefinedVMProperties, "3.0");
+        return Config.<String> GetValue(ConfigValues.UserDefinedVMProperties, Version3_0);
     }
+
+    /**
+     * @return The other method version
+     */
+    protected Version getVersion() {
+        return new Version(Version3_0);
+    }
+
 }
