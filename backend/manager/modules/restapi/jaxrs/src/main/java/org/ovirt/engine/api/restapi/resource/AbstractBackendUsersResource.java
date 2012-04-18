@@ -4,7 +4,7 @@ import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.core.common.businessentities.AdUser;
 import org.ovirt.engine.core.compat.Guid;
 
-public abstract class AbstractBackendUsersResource extends BackendUsersResource
+public abstract class AbstractBackendUsersResource extends BackendUsersResourceBase
 {
     public AbstractBackendUsersResource(String id, BackendDomainResource parent) {
         super(id,parent);

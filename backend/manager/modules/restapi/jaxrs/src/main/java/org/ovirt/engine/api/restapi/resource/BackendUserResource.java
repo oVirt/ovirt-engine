@@ -11,7 +11,7 @@ import org.ovirt.engine.core.common.queries.GetDbUserByUserIdParameters;
 import org.ovirt.engine.core.common.queries.MultilevelAdministrationByAdElementIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
-import static org.ovirt.engine.api.restapi.resource.BackendUsersResource.SUB_COLLECTIONS;
+import static org.ovirt.engine.api.restapi.resource.BackendUsersResourceBase.SUB_COLLECTIONS;
 
 public class BackendUserResource
         extends AbstractBackendSubResource<User, DbUser>
