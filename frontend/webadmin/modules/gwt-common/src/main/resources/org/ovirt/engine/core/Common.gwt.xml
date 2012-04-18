@@ -17,6 +17,7 @@
 		<include name="common/businessentities/bookmarks.java" />
 		<include name="common/businessentities/BaseDisk.java" />
 		<include name="common/businessentities/DiskLunMap.java" />
+		<include name="common/businessentities/DiskLunMapId.java" />
 		<include name="common/businessentities/Disk.java" />
 		<include name="common/businessentities/LunDisk.java" />
 		<include name="common/businessentities/DiskImage.java" />
