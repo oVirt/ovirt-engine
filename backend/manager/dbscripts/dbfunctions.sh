@@ -116,6 +116,11 @@ run_pre_upgrade() {
     drop_views
     drop_sps
     install_common_func
+    #run pre upgrade scripts
+    for file in $(ls -1 upgrade/pre_upgrade/*.sql); do
+       echo "Running pre-upgrade script $file ..."
+       execute_file $file ${DATABASE} ${SERVERNAME} ${PORT} > /dev/null
+    done
 }
 
 run_post_upgrade() {
@@ -180,7 +185,6 @@ validate_version_uniqueness() {
 
 run_upgrade_files() {
     set_version
-    current=$(get_current_version)
     res=$(find upgrade/ -name "*.sql" | wc -l)
     if [ $res -gt 0 ]; then
         state="FAILED"
@@ -195,12 +199,15 @@ run_upgrade_files() {
             updated=1
         fi
 
-	    for file in upgrade/??_??_????*.sql; do
+        # get current version
+        current=$(get_current_version)
+
+        for file in upgrade/??_??_????*.sql; do
             before=$(get_db_time)
             checksum=$(md5sum $file | cut -d " " -f1)
             # upgrade/dd_dd_dddd* => dddddddd
 	        ver="${file:8:2}${file:11:2}${file:14:4}"
-	        if [ "$ver" -gt "$current" ] ; then
+	    if [ "$ver" -gt "$current" ] ; then
                 echo "Running upgrade script $file "
                 execute_file $file ${DATABASE} ${SERVERNAME} ${PORT} 1 > /dev/null
                 code=$?
@@ -222,7 +229,7 @@ run_upgrade_files() {
         # restore views & SPs if dropped
         if [ $updated -eq 1 ]; then
             run_post_upgrade
-            # aoto generate .schema file
+            # auto generate .schema file
             pg_dump -f .schema -F p -n public -s -U ${USERNAME} ${DATABASE} -h ${SERVERNAME} -p ${PORT}  >& /dev/null
         else
 	    echo "database is up to date."
