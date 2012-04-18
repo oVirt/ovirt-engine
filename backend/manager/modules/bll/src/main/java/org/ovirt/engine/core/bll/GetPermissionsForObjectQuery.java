@@ -18,12 +18,18 @@ public class GetPermissionsForObjectQuery<P extends GetPermissionsForObjectParam
         Guid objectId = getParameters().getObjectId();
         List<permissions> perms;
         if (getParameters().getDirectOnly()) {
-            perms = DbFacade.getInstance().getPermissionDAO().getAllForEntity(objectId);
+            perms =
+                    DbFacade.getInstance()
+                            .getPermissionDAO()
+                            .getAllForEntity(objectId, getUserID(), getParameters().isFiltered());
         } else {
             perms =
                     DbFacade.getInstance()
                             .getPermissionDAO()
-                            .getTreeForEntity(objectId, getParameters().getVdcObjectType());
+                            .getTreeForEntity(objectId,
+                                    getParameters().getVdcObjectType(),
+                                    getUserID(),
+                                    getParameters().isFiltered());
         }
         getQueryReturnValue().setReturnValue(perms);
     }
