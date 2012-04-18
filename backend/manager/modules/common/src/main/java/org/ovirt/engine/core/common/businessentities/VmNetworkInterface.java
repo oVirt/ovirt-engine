@@ -15,7 +15,7 @@ public class VmNetworkInterface extends NetworkInterface<VmNetworkStatistics> {
     private String vmName;
     private NGuid vmTemplateId;
     /* status of the nic. Active nic is one that is plugged to its VM */
-    private boolean active;
+    private boolean active = true;
 
     private static final ArrayList<String> _changeablePropertiesList =
             new ArrayList<String>(Arrays.asList(new String[] {
