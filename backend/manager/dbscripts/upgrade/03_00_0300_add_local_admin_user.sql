@@ -1,15 +1,3 @@
--- insert new configuration values for local admin user
-select fn_db_add_config_value('AdminUser','admin','general');
-select fn_db_add_config_value('AdminDomain','internal','general');
-select fn_db_add_config_value('AdminPassword','','general');
-
--- reset AdUserName, DomainName and DomainName to empty string if not set till now.
-
-select fn_db_update_default_config_value('AdUserId','example.com:00000000-0000-0000-0000-000000000000','','general',false);
-select fn_db_update_default_config_value('AdUserName','example.com:SampleUser','','general',false);
-select fn_db_update_default_config_value('DomainName','example.com','','general',false);
-select fn_db_update_default_config_value('AdUserPassword','example.com:SamplePassword','','general',false);
-
 -- insert local admin user to users table and assign superuser permissions
 CREATE OR REPLACE FUNCTION add_admin_user()
   RETURNS void AS
