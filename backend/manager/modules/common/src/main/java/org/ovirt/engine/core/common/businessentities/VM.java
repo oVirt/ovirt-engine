@@ -2,14 +2,13 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.validation.Valid;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
 
 import org.ovirt.engine.core.common.queries.ValueObjectMap;
 import org.ovirt.engine.core.compat.Guid;
@@ -19,8 +18,6 @@ import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "VM")
 public class VM extends IVdcQueryable implements INotifyPropertyChanged, Serializable, BusinessEntity<Guid>, HasStoragePool<Guid> {
     private static final long serialVersionUID = -4078140531074414263L;
     @Valid
@@ -42,7 +39,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         return mVmStatic.getPredefinedProperties();
     }
 
-    @XmlElement(name = "CustomProperties")
     public String getCustomProperties() {
         return mVmStatic.getCustomProperties();
     }
@@ -61,7 +57,7 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         mVmStatistics = new VmStatistics();
         setImages(new ArrayList<DiskImage>());
         setInterfaces(new ArrayList<VmNetworkInterface>());
-        mDiskMap = new java.util.HashMap<String, DiskImage>();
+        mDiskMap = new HashMap<String, DiskImage>();
         mCdPath = "";
         mFloppyPath = "";
         mRunAndPause = false;
@@ -69,7 +65,7 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
     }
 
     public VM(VmStatic vmStatic, VmDynamic vmDynamic, VmStatistics vmStatistics) {
-        mDiskMap = new java.util.HashMap<String, DiskImage>();
+        mDiskMap = new HashMap<String, DiskImage>();
         mCdPath = "";
         mFloppyPath = "";
         mRunAndPause = false;
@@ -84,18 +80,18 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
 
     public VM(Guid vm_guid, String vm_name, int vm_mem_size_mb, Guid vmt_guid, VmOsType vm_os, String vm_description,
             Guid vds_group_id, String vds_group_name, String vds_group_description, String vmt_name,
-            int vmt_mem_size_mb, VmOsType vmt_os, java.util.Date vmt_creation_date, int vmt_child_count,
+            int vmt_mem_size_mb, VmOsType vmt_os, Date vmt_creation_date, int vmt_child_count,
             int vmt_num_of_cpus, int vmt_num_of_sockets, int vmt_cpu_per_socket, String vmt_description, int status,
-            String vm_ip, String vm_host, Integer vm_pid, java.util.Date vm_last_up_time,
-            java.util.Date vm_last_boot_time, String guest_cur_user_name, java.util.Date guest_last_login_time,
-            NGuid guest_cur_user_id, java.util.Date guest_last_logout_time, String guest_os,
+            String vm_ip, String vm_host, Integer vm_pid, Date vm_last_up_time,
+            Date vm_last_boot_time, String guest_cur_user_name, Date guest_last_login_time,
+            NGuid guest_cur_user_id, Date guest_last_logout_time, String guest_os,
             Double cpu_user, Double cpu_sys, Integer vm_if_id_1, String vm_if_name_1,
             Integer vm_line_rate_1, java.math.BigDecimal rx_dropped_1, java.math.BigDecimal rx_rate_1,
             java.math.BigDecimal tx_dropped_1, java.math.BigDecimal tx_rate_1, Integer vm_if_id_2, String vm_if_name_2,
             Integer vm_line_rate_2, java.math.BigDecimal rx_dropped_2, java.math.BigDecimal rx_rate_2,
             java.math.BigDecimal tx_dropped_2, java.math.BigDecimal tx_rate_2, Double elapsed_time,
             Integer usage_network_percent, Integer usage_mem_percent, Integer usage_cpu_percent, Guid run_on_vds,
-            Guid migrating_to_vds, String app_list, Integer display, String vm_domain, java.util.Date vm_creation_date,
+            Guid migrating_to_vds, String app_list, Integer display, String vm_domain, Date vm_creation_date,
             String run_on_vds_name, String time_zone, Boolean acpi_enable, Integer session, String display_ip,
             Integer display_type, Boolean kvm_enable, Integer boot_sequence, String vmt_time_zone,
             Integer display_secure_port, Integer utc_diff, boolean is_stateless, String vds_cpu_name,
@@ -106,7 +102,7 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         mVmStatistics = new VmStatistics();
         setImages(new ArrayList<DiskImage>());
         setInterfaces(new ArrayList<VmNetworkInterface>());
-        mDiskMap = new java.util.HashMap<String, DiskImage>();
+        mDiskMap = new HashMap<String, DiskImage>();
         mCdPath = "";
         mFloppyPath = "";
         mRunAndPause = false;
@@ -173,7 +169,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         this.setMinAllocatedMem(minAllocatedMem);
     }
 
-    @XmlElement(name = "VmPauseStatus")
     public VmPauseStatus getVmPauseStatus() {
         return this.mVmDynamic.getPauseStatus();
     }
@@ -182,7 +177,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         this.mVmDynamic.setPauseStatus(aPauseStatus);
     }
 
-    @XmlElement(name = "vm_guid")
     @Override
     public Guid getId() {
         return this.mVmStatic.getId();
@@ -195,7 +189,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         this.mVmStatistics.setId(value);
     }
 
-    @XmlElement(name = "vm_name")
     public String getvm_name() {
         return this.mVmStatic.getvm_name();
     }
@@ -211,7 +204,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         return this.getvm_mem_size_mb();
     }
 
-    @XmlElement(name = "vm_mem_size_mb")
     public int getvm_mem_size_mb() {
         return this.mVmStatic.getmem_size_mb();
     }
@@ -221,7 +213,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         OnPropertyChanged(new PropertyChangedEventArgs("vm_mem_size_mb"));
     }
 
-    @XmlElement(name = "vm_domain")
     public String getvm_domain() {
         return this.mVmStatic.getdomain();
     }
@@ -235,7 +226,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         return this.getvm_os();
     }
 
-    @XmlElement(name = "vm_os")
     public VmOsType getvm_os() {
         return this.mVmStatic.getos();
     }
@@ -245,12 +235,11 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         OnPropertyChanged(new PropertyChangedEventArgs("vm_os"));
     }
 
-    @XmlElement(name = "vm_creation_date")
-    public java.util.Date getvm_creation_date() {
+    public Date getvm_creation_date() {
         return this.mVmStatic.getcreation_date();
     }
 
-    public void setvm_creation_date(java.util.Date value) {
+    public void setvm_creation_date(Date value) {
         this.mVmStatic.setcreation_date(value);
     }
 
@@ -274,7 +263,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         return this.getvm_description();
     }
 
-    @XmlElement(name = "vm_description")
     public String getvm_description() {
         return this.mVmStatic.getdescription();
     }
@@ -284,7 +272,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         OnPropertyChanged(new PropertyChangedEventArgs("vm_description"));
     }
 
-    @XmlElement(name = "num_of_monitors")
     public int getnum_of_monitors() {
         return this.mVmStatic.getnum_of_monitors();
     }
@@ -294,7 +281,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         OnPropertyChanged(new PropertyChangedEventArgs("num_of_monitors"));
     }
 
-    @XmlElement(name = "is_initialized")
     public boolean getis_initialized() {
         return this.mVmStatic.getis_initialized();
     }
@@ -304,7 +290,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         OnPropertyChanged(new PropertyChangedEventArgs("is_initialized"));
     }
 
-    @XmlElement(name = "is_auto_suspend")
     public boolean getis_auto_suspend() {
         return this.mVmStatic.getis_auto_suspend();
     }
@@ -314,7 +299,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         OnPropertyChanged(new PropertyChangedEventArgs("is_auto_suspend"));
     }
 
-    @XmlElement(name = "num_of_cpus")
     public int getnum_of_cpus() {
         return this.mVmStatic.getnum_of_cpus();
     }
@@ -330,7 +314,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
 
     }
 
-    @XmlElement(name = "num_of_sockets")
     public int getnum_of_sockets() {
         return this.mVmStatic.getnum_of_sockets();
     }
@@ -341,7 +324,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         OnPropertyChanged(new PropertyChangedEventArgs("num_of_cpus"));
     }
 
-    @XmlElement(name = "cpu_per_socket")
     public int getcpu_per_socket() {
         return this.mVmStatic.getcpu_per_socket();
     }
@@ -352,7 +334,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         OnPropertyChanged(new PropertyChangedEventArgs("num_of_cpus"));
     }
 
-    @XmlElement(name = "usb_policy")
     public UsbPolicy getusb_policy() {
         return mVmStatic.getusb_policy();
     }
@@ -362,7 +343,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         OnPropertyChanged(new PropertyChangedEventArgs("usb_policy"));
     }
 
-    @XmlElement(name = "auto_startup")
     public boolean getauto_startup() {
         return mVmStatic.getauto_startup();
     }
@@ -372,7 +352,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         OnPropertyChanged(new PropertyChangedEventArgs("auto_startup"));
     }
 
-    @XmlElement(name = "dedicated_vm_for_vds")
     public NGuid getdedicated_vm_for_vds() {
         return mVmStatic.getdedicated_vm_for_vds();
     }
@@ -382,7 +361,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         OnPropertyChanged(new PropertyChangedEventArgs("dedicated_vm_for_vds"));
     }
 
-    @XmlElement(name = "vds_group_id")
     public Guid getvds_group_id() {
         return this.mVmStatic.getvds_group_id();
     }
@@ -392,7 +370,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         OnPropertyChanged(new PropertyChangedEventArgs("vds_group_id"));
     }
 
-    @XmlElement(name = "time_zone")
     public String gettime_zone() {
         return mVmStatic.gettime_zone();
     }
@@ -401,7 +378,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         mVmStatic.settime_zone(value);
     }
 
-    @XmlElement(name = "is_stateless")
     public boolean getis_stateless() {
         return mVmStatic.getis_stateless();
     }
@@ -411,7 +387,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         OnPropertyChanged(new PropertyChangedEventArgs("is_stateless"));
     }
 
-    @XmlElement(name = "default_display_type")
     public DisplayType getdefault_display_type() {
         return mVmStatic.getdefault_display_type();
     }
@@ -421,7 +396,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         OnPropertyChanged(new PropertyChangedEventArgs("default_display_type"));
     }
 
-    @XmlElement(name = "priority")
     public int getpriority() {
         return mVmStatic.getpriority();
     }
@@ -432,7 +406,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
 
     }
 
-    @XmlElement(name = "iso_path")
     public String getiso_path() {
         return mVmStatic.getiso_path();
     }
@@ -444,7 +417,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         }
     }
 
-    @XmlElement(name = "origin")
     public OriginType getorigin() {
         return mVmStatic.getorigin();
     }
@@ -453,7 +425,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         mVmStatic.setorigin(value);
     }
 
-    @XmlElement(name = "initrd_url")
     public String getinitrd_url() {
         return mVmStatic.getinitrd_url();
     }
@@ -462,7 +433,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         mVmStatic.setinitrd_url(value);
     }
 
-    @XmlElement(name = "kernel_url")
     public String getkernel_url() {
         return mVmStatic.getkernel_url();
     }
@@ -471,7 +441,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         mVmStatic.setkernel_url(value);
     }
 
-    @XmlElement(name = "kernel_params")
     public String getkernel_params() {
         return mVmStatic.getkernel_params();
     }
@@ -483,7 +452,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
     private NGuid mVmPoolId;
     private String mVmPoolName;
 
-    @XmlElement(name = "status")
     public VMStatus getstatus() {
         return this.mVmDynamic.getstatus();
     }
@@ -495,7 +463,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         }
     }
 
-    @XmlElement(name = "vm_ip")
     public String getvm_ip() {
         return this.mVmDynamic.getvm_ip();
     }
@@ -505,7 +472,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         OnPropertyChanged(new PropertyChangedEventArgs("vm_ip"));
     }
 
-    @XmlElement(name = "vm_host")
     public String getvm_host() {
         String vmHost = this.mVmDynamic.getvm_host();
         if (!StringHelper.isNullOrEmpty(this.getvm_ip())) {
@@ -531,7 +497,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         this.mVmDynamic.setvm_host(value);
     }
 
-    @XmlElement(name = "vm_pid")
     public Integer getvm_pid() {
         return this.mVmDynamic.getvm_pid();
     }
@@ -540,25 +505,22 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         this.mVmDynamic.setvm_pid(value);
     }
 
-    @XmlElement(name = "vm_last_up_time")
-    public java.util.Date getvm_last_up_time() {
+    public Date getvm_last_up_time() {
         return this.mVmDynamic.getvm_last_up_time();
     }
 
-    public void setvm_last_up_time(java.util.Date value) {
+    public void setvm_last_up_time(Date value) {
         this.mVmDynamic.setvm_last_up_time(value);
     }
 
-    @XmlElement(name = "vm_last_boot_time")
-    public java.util.Date getvm_last_boot_time() {
+    public Date getvm_last_boot_time() {
         return this.mVmDynamic.getvm_last_boot_time();
     }
 
-    public void setvm_last_boot_time(java.util.Date value) {
+    public void setvm_last_boot_time(Date value) {
         this.mVmDynamic.setvm_last_boot_time(value);
     }
 
-    @XmlElement(name = "guest_cur_user_name")
     public String getguest_cur_user_name() {
         return this.mVmDynamic.getguest_cur_user_name();
     }
@@ -568,16 +530,14 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         OnPropertyChanged(new PropertyChangedEventArgs("guest_cur_user_name"));
     }
 
-    @XmlElement(name = "guest_last_login_time")
-    public java.util.Date getguest_last_login_time() {
+    public Date getguest_last_login_time() {
         return this.mVmDynamic.getguest_last_login_time();
     }
 
-    public void setguest_last_login_time(java.util.Date value) {
+    public void setguest_last_login_time(Date value) {
         this.mVmDynamic.setguest_last_login_time(value);
     }
 
-    @XmlElement(name = "guest_cur_user_id")
     public NGuid getguest_cur_user_id() {
         return this.mVmDynamic.getguest_cur_user_id();
     }
@@ -586,16 +546,14 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         this.mVmDynamic.setguest_cur_user_id(value);
     }
 
-    @XmlElement(name = "guest_last_logout_time")
-    public java.util.Date getguest_last_logout_time() {
+    public Date getguest_last_logout_time() {
         return this.mVmDynamic.getguest_last_logout_time();
     }
 
-    public void setguest_last_logout_time(java.util.Date value) {
+    public void setguest_last_logout_time(Date value) {
         this.mVmDynamic.setguest_last_logout_time(value);
     }
 
-    @XmlElement(name = "guest_os")
     public String getguest_os() {
         return this.mVmDynamic.getguest_os();
     }
@@ -604,7 +562,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         this.mVmDynamic.setguest_os(value);
     }
 
-    @XmlElement(name = "run_on_vds")
     public NGuid getrun_on_vds() {
         return this.mVmDynamic.getrun_on_vds();
     }
@@ -614,7 +571,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         OnPropertyChanged(new PropertyChangedEventArgs("run_on_vds"));
     }
 
-    @XmlElement(name = "migrating_to_vds")
     public NGuid getmigrating_to_vds() {
         return this.mVmDynamic.getmigrating_to_vds();
     }
@@ -623,7 +579,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         this.mVmDynamic.setmigrating_to_vds(value);
     }
 
-    @XmlElement(name = "app_list")
     public String getapp_list() {
         return this.mVmDynamic.getapp_list();
     }
@@ -633,7 +588,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         OnPropertyChanged(new PropertyChangedEventArgs("app_list"));
     }
 
-    @XmlElement(name = "display", nillable = true)
     public Integer getdisplay() {
         return this.mVmDynamic.getdisplay();
     }
@@ -642,7 +596,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         this.mVmDynamic.setdisplay(value);
     }
 
-    @XmlElement(name = "acpi_enable")
     public Boolean getacpi_enable() {
         return this.mVmDynamic.getacpi_enable();
     }
@@ -651,7 +604,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         this.mVmDynamic.setacpi_enable(value);
     }
 
-    @XmlElement(name = "display_ip")
     public String getdisplay_ip() {
         return this.mVmDynamic.getdisplay_ip();
     }
@@ -660,7 +612,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         this.mVmDynamic.setdisplay_ip(value);
     }
 
-    @XmlElement(name = "display_type")
     public DisplayType getdisplay_type() {
         return this.mVmDynamic.getdisplay_type();
     }
@@ -670,7 +621,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         OnPropertyChanged(new PropertyChangedEventArgs("display_type"));
     }
 
-    @XmlElement(name = "kvm_enable")
     public Boolean getkvm_enable() {
         return this.mVmDynamic.getkvm_enable();
     }
@@ -679,7 +629,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         this.mVmDynamic.setkvm_enable(value);
     }
 
-    @XmlElement(name = "session")
     public SessionState getsession() {
         return this.mVmDynamic.getsession();
     }
@@ -688,7 +637,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         this.mVmDynamic.setsession(value);
     }
 
-    @XmlElement(name = "boot_sequence")
     public BootSequence getboot_sequence() {
         return this.mVmDynamic.getboot_sequence();
     }
@@ -697,7 +645,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         this.mVmDynamic.setboot_sequence(value);
     }
 
-    @XmlElement(name = "display_secure_port", nillable = true)
     public Integer getdisplay_secure_port() {
         return this.mVmDynamic.getdisplay_secure_port();
     }
@@ -706,7 +653,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         this.mVmDynamic.setdisplay_secure_port(value);
     }
 
-    @XmlElement(name = "ExitStatus")
     public VmExitStatus getExitStatus() {
         return this.mVmDynamic.getExitStatus();
     }
@@ -715,7 +661,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         this.mVmDynamic.setExitStatus(value);
     }
 
-    @XmlElement(name = "ExitMessage")
     public String getExitMessage() {
         return this.mVmDynamic.getExitMessage();
     }
@@ -724,7 +669,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         this.mVmDynamic.setExitMessage(value);
     }
 
-    @XmlElement(name = "utc_diff")
     public Integer getutc_diff() {
         return this.mVmDynamic.getutc_diff();
     }
@@ -733,7 +677,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         this.mVmDynamic.setutc_diff(value);
     }
 
-    @XmlElement(name = "last_vds_run_on")
     public NGuid getlast_vds_run_on() {
         return this.mVmDynamic.getlast_vds_run_on();
     }
@@ -742,7 +685,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         this.mVmDynamic.setlast_vds_run_on(value);
     }
 
-    @XmlElement(name = "client_ip")
     public String getclient_ip() {
         return this.mVmDynamic.getclient_ip();
     }
@@ -751,7 +693,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         this.mVmDynamic.setclient_ip(value);
     }
 
-    @XmlElement(name = "guest_requested_memory")
     public Integer getguest_requested_memory() {
         return this.mVmDynamic.getguest_requested_memory();
     }
@@ -761,7 +702,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         OnPropertyChanged(new PropertyChangedEventArgs("guest_requested_memory"));
     }
 
-    @XmlElement(name = "hash")
     public String getHash() {
         return mVmDynamic.getHash();
     }
@@ -770,7 +710,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         mVmDynamic.setHash(hash);
     }
 
-    @XmlElement(name = "cpu_user")
     public Double getcpu_user() {
         return this.mVmStatistics.getcpu_user();
     }
@@ -779,7 +718,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         this.mVmStatistics.setcpu_user(value);
     }
 
-    @XmlElement(name = "cpu_sys")
     public Double getcpu_sys() {
         return this.mVmStatistics.getcpu_sys();
     }
@@ -788,7 +726,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         this.mVmStatistics.setcpu_sys(value);
     }
 
-    @XmlElement(name = "elapsed_time", nillable = true)
     public Double getelapsed_time() {
         return this.mVmStatistics.getelapsed_time();
     }
@@ -797,7 +734,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         this.mVmStatistics.setelapsed_time(value);
     }
 
-    @XmlElement(name = "RoundedElapsedTime", nillable = true)
     public Double getRoundedElapsedTime() {
         return this.mVmStatistics.getRoundedElapsedTime();
     }
@@ -807,7 +743,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         OnPropertyChanged(new PropertyChangedEventArgs("roundedElapsedTime"));
     }
 
-    @XmlElement(name = "usage_network_percent", nillable = true)
     public Integer getusage_network_percent() {
         return this.mVmStatistics.getusage_network_percent();
     }
@@ -817,7 +752,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         OnPropertyChanged(new PropertyChangedEventArgs("usage_network_percent"));
     }
 
-    @XmlElement(name = "usage_mem_percent", nillable = true)
     public Integer getusage_mem_percent() {
         return this.mVmStatistics.getusage_mem_percent();
     }
@@ -827,7 +761,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         OnPropertyChanged(new PropertyChangedEventArgs("usage_mem_percent"));
     }
 
-    @XmlElement(name = "usage_cpu_percent", nillable = true)
     public Integer getusage_cpu_percent() {
         return this.mVmStatistics.getusage_cpu_percent();
     }
@@ -837,7 +770,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         OnPropertyChanged(new PropertyChangedEventArgs("usage_cpu_percent"));
     }
 
-    @XmlElement(name = "vmt_guid")
     public Guid getvmt_guid() {
         return this.mVmStatic.getvmt_guid();
     }
@@ -849,7 +781,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
 
     private String vmt_nameField;
 
-    @XmlElement(name = "vmt_name")
     public String getvmt_name() {
         return this.vmt_nameField;
     }
@@ -861,7 +792,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
 
     private int vmt_mem_size_mbField;
 
-
     public int getvmt_mem_size_mb() {
         return this.vmt_mem_size_mbField;
     }
@@ -872,7 +802,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
 
     private VmOsType vmt_osField = VmOsType.forValue(0);
 
-
     public VmOsType getvmt_os() {
         return this.vmt_osField;
     }
@@ -881,19 +810,17 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         this.vmt_osField = value;
     }
 
-    private java.util.Date vmt_creation_dateField = new java.util.Date(0);
+    private Date vmt_creation_dateField = new Date(0);
 
-
-    public java.util.Date getvmt_creation_date() {
+    public Date getvmt_creation_date() {
         return this.vmt_creation_dateField;
     }
 
-    public void setvmt_creation_date(java.util.Date value) {
+    public void setvmt_creation_date(Date value) {
         this.vmt_creation_dateField = value;
     }
 
     private int vmt_child_countField;
-
 
     public int getvmt_child_count() {
         return this.vmt_child_countField;
@@ -905,7 +832,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
 
     private int vmt_num_of_cpusField;
 
-
     public int getvmt_num_of_cpus() {
         return this.vmt_num_of_cpusField;
     }
@@ -915,7 +841,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
     }
 
     private int vmt_num_of_socketsField;
-
 
     public int getvmt_num_of_sockets() {
         return this.vmt_num_of_socketsField;
@@ -927,7 +852,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
 
     private int vmt_cpu_per_socketField;
 
-
     public int getvmt_cpu_per_socket() {
         return this.vmt_cpu_per_socketField;
     }
@@ -937,7 +861,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
     }
 
     private String vmt_descriptionField;
-
 
     public String getvmt_description() {
         return this.vmt_descriptionField;
@@ -959,7 +882,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
 
     private Version vds_group_compatibility_versionField;
 
-    @XmlElement(name = "vds_group_compatibility_version")
     public Version getvds_group_compatibility_version() {
         return this.vds_group_compatibility_versionField;
     }
@@ -971,9 +893,7 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         }
     }
 
-    @XmlElement(name = "vds_group_name")
     private String vds_group_nameField;
-
 
     public String getvds_group_name() {
         return this.vds_group_nameField;
@@ -986,7 +906,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
 
     private String vds_group_descriptionField;
 
-
     public String getvds_group_description() {
         return this.vds_group_descriptionField;
     }
@@ -997,7 +916,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
 
     private String vds_group_cpu_nameField;
 
-
     public String getvds_group_cpu_name() {
         return this.vds_group_cpu_nameField;
     }
@@ -1006,7 +924,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         this.vds_group_cpu_nameField = value;
     }
 
-    @XmlElement(name = "fail_back")
     public boolean getfail_back() {
         return this.mVmStatic.getfail_back();
     }
@@ -1015,7 +932,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         this.mVmStatic.setfail_back(value);
     }
 
-    @XmlElement(name = "default_boot_sequence")
     public BootSequence getdefault_boot_sequence() {
         return this.mVmStatic.getdefault_boot_sequence();
     }
@@ -1024,7 +940,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         this.mVmStatic.setdefault_boot_sequence(value);
     }
 
-    @XmlElement(name = "nice_level")
     public int getnice_level() {
         return this.mVmStatic.getnice_level();
     }
@@ -1033,7 +948,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         this.mVmStatic.setnice_level(value);
     }
 
-    @XmlElement(name = "MigrationSupport")
     public MigrationSupport getMigrationSupport() {
         return this.mVmStatic.getMigrationSupport();
     }
@@ -1042,7 +956,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         this.mVmStatic.setMigrationSupport(migrationSupport);
     }
 
-    @XmlElement(name = "vm_type")
     public VmType getvm_type() {
         return this.mVmStatic.getvm_type();
     }
@@ -1075,18 +988,17 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         this.mVmDynamic.sethibernation_vol_handle(value);
     }
 
-    public void setExportDate(java.util.Date value) {
+    public void setExportDate(Date value) {
         this.mVmStatic.setExportDate(value);
     }
 
-    public java.util.Date getExportDate() {
+    public Date getExportDate() {
         return this.mVmStatic.getExportDate();
     }
 
     private Guid storage_pool_idField = new Guid();
 
     @Override
-    @XmlElement(name = "storage_pool_id")
     public Guid getstorage_pool_id() {
         return storage_pool_idField;
     }
@@ -1098,7 +1010,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
 
     private String storage_pool_nameField;
 
-    @XmlElement(name = "storage_pool_name")
     public String getstorage_pool_name() {
         return storage_pool_nameField;
     }
@@ -1109,7 +1020,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
 
     private VdsSelectionAlgorithm selection_algorithmField = VdsSelectionAlgorithm.forValue(0);
 
-
     public VdsSelectionAlgorithm getselection_algorithm() {
         return selection_algorithmField;
     }
@@ -1118,7 +1028,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         selection_algorithmField = value;
     }
 
-    @XmlElement(name = "Interfaces")
     public List<VmNetworkInterface> getInterfaces() {
         return mVmStatic.getInterfaces();
     }
@@ -1135,18 +1044,11 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         mVmStatic.setImages(value);
     }
 
-    // public event PropertyChangedEventHandler PropertyChanged;
-
     protected void OnPropertyChanged(PropertyChangedEventArgs e) {
-        /* if (PropertyChanged != null) */
-        {
-            /* PropertyChanged(this, e); */
-        }
     }
 
-    private java.util.Map<String, DiskImage> mDiskMap = new java.util.HashMap<String, DiskImage>();
+    private Map<String, DiskImage> mDiskMap = new HashMap<String, DiskImage>();
 
-    @XmlElement(name = "DiskList")
     // even this field has no setter, it can not have the final modifier because the GWT serialization mechanizm
     // ignores the final fields
     private String mCdPath = "";
@@ -1160,7 +1062,7 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         if (getguest_last_login_time() != null
                 && (getguest_last_logout_time() == null || getguest_last_login_time().compareTo(
                         getguest_last_logout_time()) > 0)) {
-            setguest_last_logout_time(new java.util.Date());
+            setguest_last_logout_time(new Date());
         }
     }
 
@@ -1215,7 +1117,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
 
     private double _actualDiskWithSnapthotsSize = 0;
 
-    @XmlElement(name = "ActualDiskWithSnapshotsSize")
     public double getActualDiskWithSnapshotsSize() {
         if (_actualDiskWithSnapthotsSize == 0 && getDiskMap() != null) {
             for (DiskImage disk : getDiskMap().values()) {
@@ -1238,7 +1139,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
 
     private double _diskSize;
 
-    @XmlElement(name = "DiskSize")
     public double getDiskSize() {
         if (_diskSize == 0) {
             for (DiskImage disk : getDiskMap().values()) {
@@ -1302,7 +1202,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
 
     private String run_on_vds_nameField;
 
-    @XmlElement
     public String getrun_on_vds_name() {
         return run_on_vds_nameField;
     }
@@ -1320,7 +1219,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         return image;
     }
 
-    @XmlElement(name = "DiskValueObjectMap")
     public ValueObjectMap getDiskValueObjectMap() {
         return new ValueObjectMap(mDiskMap, false);
     }
@@ -1335,7 +1233,7 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         return mDiskMap;
     }
 
-    public void setDiskMap(Map<String,DiskImage> diskMap) {
+    public void setDiskMap(Map<String, DiskImage> diskMap) {
         mDiskMap = diskMap;
     }
 
@@ -1343,7 +1241,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         return mDiskMap.size();
     }
 
-    @XmlElement(name = "MinAllocatedMem")
     public int getMinAllocatedMem() {
         return mVmStatic.getMinAllocatedMem();
     }
@@ -1351,9 +1248,10 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
     public void setMinAllocatedMem(int value) {
         mVmStatic.setMinAllocatedMem(value);
     }
+
     // This function is left only to leave the option of creating a VM without
     // having all the data in the DB
-    // Currently it is used mainly by tests and VdcClient (for direct acccess to
+    // Currently it is used mainly by tests and VdcClient (for direct access to
     // the VDS)
     // TO CONSIDER removing this function
     public void addDriveToImageMap(String drive, DiskImage image) {
@@ -1484,42 +1382,16 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         return super.hashCode();
     }
 
-    @XmlElement(name = "VmPoolName")
     public String getVmPoolName() {
         return mVmPoolName;
-        // string returnValue = null;
-        // vm_pool_map map = DbFacade.Instance.GetVmPoolsMapByVmGuid(vm_guid);
-        // if (map != null)
-        // {
-        // vm_pools pool =
-        // DbFacade.Instance.GetVmPoolByVmPoolId(map.vm_pool_id.Value);
-        // if (pool != null)
-        // {
-        // returnValue = pool.vm_pool_name;
-        // }
-        // }
-        // return returnValue;
     }
 
     public void setVmPoolName(String value) {
         mVmPoolName = value;
     }
 
-    @XmlElement(name = "VmPoolId", nillable = true)
     public NGuid getVmPoolId() {
         return mVmPoolId;
-        // int? returnValue = null;
-        // vm_pool_map map = DbFacade.Instance.GetVmPoolsMapByVmGuid(vm_guid);
-        // if (map != null)
-        // {
-        // vm_pools pool =
-        // DbFacade.Instance.GetVmPoolByVmPoolId(map.vm_pool_id.Value);
-        // if (pool != null)
-        // {
-        // returnValue = pool.vm_pool_id;
-        // }
-        // }
-        // return returnValue;
     }
 
     public void setVmPoolId(NGuid value) {
@@ -1532,7 +1404,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
      * assumption: Qumranet Agent version stored in app_list by "Qumranet Agent" name. Qumranet Agent version, recieved
      * from vds in format : a.b.d there is no major revision recieved from vds - always 0
      */
-    @XmlElement(name = "GuestAgentVersion")
     private Version privateGuestAgentVersion;
 
     public Version getGuestAgentVersion() {
@@ -1552,7 +1423,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         return getGuestAgentVersion() != null;
     }
 
-    @XmlElement(name = "SpiceDriverVersion")
     private Version privateSpiceDriverVersion;
 
     public Version getSpiceDriverVersion() {
@@ -1567,7 +1437,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         return getSpiceDriverVersion() != null;
     }
 
-    // @XmlElement(name = "vds_group_cpu_flags_data")
     private String privatevds_group_cpu_flags_data;
 
     public String getvds_group_cpu_flags_data() {
@@ -1580,7 +1449,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
 
     private boolean transparentHugePages;
 
-    @XmlElement(name = "TransparentHugePages")
     public boolean getTransparentHugePages() {
         return this.transparentHugePages;
     }
@@ -1594,8 +1462,8 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         return getId();
     }
 
-    private static final java.util.ArrayList<String> _vmProperties = new java.util.ArrayList<String>(
-            java.util.Arrays.asList(new String[] { "vm_name", "status", "usage_cpu_percent",
+    private static final ArrayList<String> _vmProperties = new ArrayList<String>(
+            Arrays.asList(new String[] { "vm_name", "status", "usage_cpu_percent",
                     "usage_mem_percent", "usage_network_percent", "run_on_vds", "run_on_vds_name",
                     "vm_description", "vds_group_id", "vds_group_name", "vm_ip",
                     "guest_cur_user_name", "DiskSize", "vm_os", "num_of_monitors", "roundedElapsedTime",
@@ -1606,11 +1474,11 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
                     "display_ip", "priority", "default_boot_sequence", "iso_path", "VmPoolId",
                     "num_of_sockets", "cpu_per_socket", "vds_group_compatibility_version",
                     "usb_policy", "vmt_guid", "vmt_name", "initrd_url", "kernel_url",
-                    "kernel_params", "VmPauseStatus", "CustomProperties", "MigrationSupport","num_of_cpus","MinAllocatedMem"}));
+                    "kernel_params", "VmPauseStatus", "CustomProperties", "MigrationSupport", "num_of_cpus",
+                    "MinAllocatedMem" }));
 
-    // ,"DiskSize"
     @Override
-    public java.util.ArrayList<String> getChangeablePropertiesList() {
+    public ArrayList<String> getChangeablePropertiesList() {
         return _vmProperties;
     }
 
