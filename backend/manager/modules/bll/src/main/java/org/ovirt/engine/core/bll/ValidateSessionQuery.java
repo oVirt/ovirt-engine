@@ -17,7 +17,7 @@ public class ValidateSessionQuery<P extends VdcQueryParametersBase> extends Quer
 
     protected void executeQueryCommand() {
         log.debug("Calling ValidateSession");
-        validateSession(getParameters().getHttpSessionId());
+        validateSession(getParameters().getSessionId());
         log.debug("ValidateSession ended");
     }
 

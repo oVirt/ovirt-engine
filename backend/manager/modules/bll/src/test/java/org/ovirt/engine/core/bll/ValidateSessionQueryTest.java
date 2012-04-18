@@ -16,7 +16,7 @@ public class ValidateSessionQueryTest extends AbstractQueryTest<VdcQueryParamete
     @Test
     public void testSuccessfulSessionId() {
         VdcQueryParametersBase params = new VdcQueryParametersBase();;
-        params.setHttpSessionId("good_session_id");
+        params.setSessionId("good_session_id");
 
         ValidateSessionQuery<VdcQueryParametersBase> query = spy(new ValidateSessionQuery<VdcQueryParametersBase>(params));
         when(query.getSessionUser("good_session_id")).thenReturn(new VdcUser(Guid.NewGuid(), "myUser", "myDomain"));
@@ -31,7 +31,7 @@ public class ValidateSessionQueryTest extends AbstractQueryTest<VdcQueryParamete
     @Test
     public void testUnsuccessfulSessionId() {
         VdcQueryParametersBase params = new VdcQueryParametersBase();
-        params.setHttpSessionId("bad_session_id");
+        params.setSessionId("bad_session_id");
 
         ValidateSessionQuery<VdcQueryParametersBase> query = new ValidateSessionQuery<VdcQueryParametersBase>(params);
         query.Execute();

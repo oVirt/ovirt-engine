@@ -62,7 +62,7 @@ public class ValidateSession extends HttpServlet {
         log.debug("Calling ValidateSession query");
 
         params = new VdcQueryParametersBase();
-        params.setHttpSessionId(sessionID);
+        params.setSessionId(sessionID);
 
         queryReturnValue = backend.runInternalQuery(VdcQueryType.ValidateSession, params);
 
