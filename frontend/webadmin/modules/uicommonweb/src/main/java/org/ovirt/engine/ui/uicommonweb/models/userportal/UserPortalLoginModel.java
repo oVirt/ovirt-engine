@@ -185,6 +185,12 @@ public class UserPortalLoginModel extends LoginModel
             return;
         }
 
+        getUserName().setIsChangable(false);
+        getPassword().setIsChangable(false);
+        getDomain().setIsChangable(false);
+        getLoginCommand().setIsExecutionAllowed(false);
+        getIsAutoConnect().setIsChangable(false);
+
         // Clear config cache on login (to make sure we don't use old config in a new session)
         DataProvider.ClearConfigCache();
 
@@ -213,6 +219,11 @@ public class UserPortalLoginModel extends LoginModel
                             {
                                 model.setMessage(Linq.FirstOrDefault(returnValue.getCanDoActionMessages()));
                             }
+                            model.getUserName().setIsChangable(true);
+                            model.getPassword().setIsChangable(true);
+                            model.getDomain().setIsChangable(true);
+                            model.getLoginCommand().setIsExecutionAllowed(true);
+                            getIsAutoConnect().setIsChangable(true);
                             model.getLoginFailedEvent().raise(this, EventArgs.Empty);
                         }
 
@@ -390,4 +401,11 @@ public class UserPortalLoginModel extends LoginModel
 
         loginModel.getIsENGINEUser().setEntity(isENGINEUser);
     }
+
+    @Override
+    public void resetAfterLogout() {
+        super.resetAfterLogout();
+        getIsAutoConnect().setIsChangable(true);
+    }
+
 }

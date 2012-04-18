@@ -37,13 +37,7 @@ public class CommonModelManager {
                 // Clear CommonModel reference after the user signs out
                 commonModel = null;
 
-                loginModel.getUserName().setEntity(null);
-                loginModel.getPassword().setEntity(null);
-                loginModel.getPassword().setIsChangable(true);
-                loginModel.getUserName().setIsChangable(true);
-                loginModel.getDomain().setIsChangable(true);
-                loginModel.getLoginCommand().setIsExecutionAllowed(true);
-
+                loginModel.resetAfterLogout();
                 user.onUserLogout();
             }
         });

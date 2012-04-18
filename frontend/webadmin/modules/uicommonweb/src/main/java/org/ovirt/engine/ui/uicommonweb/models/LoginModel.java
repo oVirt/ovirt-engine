@@ -361,4 +361,14 @@ public class LoginModel extends Model
     {
         setWindow(null);
     }
+
+    public void resetAfterLogout() {
+        getUserName().setEntity(null);
+        getPassword().setEntity(null);
+        getPassword().setIsChangable(true);
+        getUserName().setIsChangable(true);
+        getDomain().setIsChangable(true);
+        getLoginCommand().setIsExecutionAllowed(true);
+    }
+
 }

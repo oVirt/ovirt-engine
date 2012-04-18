@@ -83,22 +83,13 @@ public class ApplicationInit extends BaseApplicationInit<UserPortalLoginModel> {
             @Override
             public void OnSuccess(Object model, Object ReturnValue) {
                 Frontend.setLoggedInUser(null);
-                clearLoginModel(getLoginModel());
+                getLoginModel().resetAfterLogout();
                 AsyncDataProvider.clearCache();
                 ApplicationInit.super.onLogout();
             }
-
         };
 
         Frontend.LogoffAsync(Frontend.getLoggedInUser(), query);
     }
 
-    private void clearLoginModel(UserPortalLoginModel loginModel) {
-        loginModel.getUserName().setEntity(null);
-        loginModel.getPassword().setEntity(null);
-        loginModel.getPassword().setIsChangable(true);
-        loginModel.getUserName().setIsChangable(true);
-        loginModel.getDomain().setIsChangable(true);
-        loginModel.getLoginCommand().setIsExecutionAllowed(true);
-    }
 }
