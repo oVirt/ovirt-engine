@@ -6,7 +6,10 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -385,129 +388,76 @@ public class PermissionDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetTreeForEntityWithVmType() {
-        List<permissions> result = dao.getTreeForEntity(VM_ENTITY_ID,
-                VdcObjectType.VM);
-
-        assertNotNull(result);
-        assertFalse(result.isEmpty());
-        for (permissions permission : result) {
-            assertTrue(VDS_GROUP_ID.equals(permission.getObjectId()) || VM_ENTITY_ID.equals(permission.getObjectId()));
-        }
+        baseTestGetTreeForEntity(VM_ENTITY_ID, VdcObjectType.VM, VDS_GROUP_ID);
     }
 
     @Test
     public void testGetTreeForEntityWithVdsType() {
-        List<permissions> result = dao.getTreeForEntity(VDS_ENTITY_ID,
-                VdcObjectType.VDS);
-
-        assertNotNull(result);
-        assertFalse(result.isEmpty());
-        for (permissions permission : result) {
-            assertTrue(VDS_GROUP_ID.equals(permission.getObjectId()) || VDS_ENTITY_ID.equals(permission.getObjectId()));
-        }
+        baseTestGetTreeForEntity(VDS_ENTITY_ID, VdcObjectType.VDS, VDS_GROUP_ID);
     }
 
     @Test
     public void testGetTreeForEntityWithVmTemplateType() {
-        List<permissions> result = dao.getTreeForEntity(VM_TEMPLATE_ENTITY_ID,
-                VdcObjectType.VmTemplate);
-
-        assertNotNull(result);
-        assertFalse(result.isEmpty());
-        for (permissions permission : result) {
-            assertTrue(VDS_GROUP_ID.equals(permission.getObjectId())
-                    || VM_TEMPLATE_ENTITY_ID.equals(permission.getObjectId()));
-        }
+        baseTestGetTreeForEntity(VM_TEMPLATE_ENTITY_ID, VdcObjectType.VmTemplate, VDS_GROUP_ID);
     }
 
     @Test
     public void testGetTreeForEntityWithVmPoolType() {
-        List<permissions> result = dao.getTreeForEntity(VM_POOL_ENTITY_ID,
-                VdcObjectType.VmPool);
-
-        assertNotNull(result);
-        assertFalse(result.isEmpty());
-        for (permissions permission : result) {
-            assertTrue(VDS_GROUP_ID.equals(permission.getObjectId())
-                    || VM_POOL_ENTITY_ID.equals(permission.getObjectId()));
-        }
+        baseTestGetTreeForEntity(VM_POOL_ENTITY_ID, VdcObjectType.VmPool, VDS_GROUP_ID);
     }
 
     @Test
     public void testGetTreeForEntityWithClusterType() {
-        List<permissions> result = dao.getTreeForEntity(CLUSTER_ENTITY_ID,
-                VdcObjectType.VdsGroups);
-
-        assertNotNull(result);
-        assertFalse(result.isEmpty());
-        for (permissions permission : result) {
-            assertTrue(VDS_GROUP_ID.equals(permission.getObjectId())
-                    || CLUSTER_ENTITY_ID.equals(permission.getObjectId()));
-        }
+        baseTestGetTreeForEntity(CLUSTER_ENTITY_ID, VdcObjectType.VdsGroups, VDS_GROUP_ID);
     }
 
     @Test
     public void testGetTreeForEntityWithSystemType() {
-        List<permissions> result = dao.getTreeForEntity(SYSTEM_ENTITY_ID,
-                VdcObjectType.System);
-
-        assertNotNull(result);
-        assertFalse(result.isEmpty());
-        for (permissions permission : result) {
-            assertTrue(SYSTEM_ENTITY_ID.equals(permission.getObjectId()));
-        }
+        baseTestGetTreeForEntity(SYSTEM_ENTITY_ID, VdcObjectType.System);
     }
 
     @Test
     public void testGetTreeForEntityWithStoragePoolType() {
-        List<permissions> result = dao.getTreeForEntity(STORAGE_POOL_ENTITY_ID,
-                VdcObjectType.StoragePool);
-
-        assertNotNull(result);
-        assertFalse(result.isEmpty());
-        for (permissions permission : result) {
-            assertEquals(STORAGE_POOL_ENTITY_ID, permission.getObjectId());
-        }
+        baseTestGetTreeForEntity(STORAGE_POOL_ENTITY_ID, VdcObjectType.StoragePool);
     }
 
     @Test
     public void testGetTreeForEntityWithStorageType() {
-        List<permissions> result = dao.getTreeForEntity(STORAGE_ENTITY_ID,
-                VdcObjectType.Storage);
-
-        assertNotNull(result);
-        assertFalse(result.isEmpty());
-        for (permissions permission : result) {
-            assertEquals(STORAGE_ENTITY_ID, permission.getObjectId());
-        }
+        baseTestGetTreeForEntity(STORAGE_ENTITY_ID, VdcObjectType.Storage);
     }
 
     @Test
     public void testGetTreeForEntityWithUserType() {
-        List<permissions> result = dao.getTreeForEntity(USER_ENTITY_ID,
-                VdcObjectType.User);
-
-        assertNotNull(result);
-        assertFalse(result.isEmpty());
-        for (permissions permission : result) {
-            assertEquals(USER_ENTITY_ID, permission.getObjectId());
-        }
+        baseTestGetTreeForEntity(USER_ENTITY_ID, VdcObjectType.User);
     }
 
     @Test
     public void testGetTreeForEntityWithRoleType() {
-        List<permissions> result = dao.getTreeForEntity(ROLE_ENTITY_ID,
-                VdcObjectType.Role);
+        baseTestGetTreeForEntity(ROLE_ENTITY_ID, VdcObjectType.Role);
+    }
+
+    /**
+     * Tests {@link PermissionDAO#getTreeForEntity(Guid, VdcObjectType)}
+     * @param entityID The object to retrieve tree for
+     * @param objectType The type of {@link #entityID}
+     * @param alternativeObjectIds Additional object IDs that are allowed in the resulting permissions
+     */
+    private void baseTestGetTreeForEntity(Guid entityID, VdcObjectType objectType, Guid... alternativeObjectIds) {
+        List<permissions> result = dao.getTreeForEntity(entityID, objectType);
+
+        Set<Guid> expectedObjectIds = new HashSet<Guid>();
+        expectedObjectIds.add(entityID);
+        expectedObjectIds.addAll(Arrays.asList(alternativeObjectIds));
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
         for (permissions permission : result) {
-            assertEquals(ROLE_ENTITY_ID, permission.getObjectId());
+            assertTrue(expectedObjectIds.contains(permission.getObjectId()));
         }
     }
 
     /**
-     * Asserts that the result of a getXXX call that should return no permissions is empty as expectrd
+     * Asserts that the result of a getXXX call that should return no permissions is empty as expected
      * @param result result The result to check
      */
     private static void assertInvalidGetPermissionList(List<permissions> result) {
