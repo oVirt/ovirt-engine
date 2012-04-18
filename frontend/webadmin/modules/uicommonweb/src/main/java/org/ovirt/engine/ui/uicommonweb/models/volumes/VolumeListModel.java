@@ -18,6 +18,7 @@ import org.ovirt.engine.core.compat.ObservableCollection;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.uicommonweb.Configurator.GlusterModeEnum;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -345,4 +346,8 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
         return searchString.trim().toLowerCase().startsWith("volume");
     }
 
+    @Override
+    public void setIsAvailable(boolean value) {
+        super.setIsAvailable(getGlusterModeEnum() != GlusterModeEnum.ONLY_OVIRT && value);
+    }
 }

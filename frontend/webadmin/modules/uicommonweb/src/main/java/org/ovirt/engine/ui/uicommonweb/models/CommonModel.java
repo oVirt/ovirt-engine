@@ -17,7 +17,6 @@ import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
-import org.ovirt.engine.ui.uicommonweb.Configurator.GlusterModeEnum;
 import org.ovirt.engine.ui.uicommonweb.DataProvider;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.ReportInit;
@@ -436,6 +435,7 @@ public class CommonModel extends ListModel
         hostList.setIsAvailable(true);
         storageList.setIsAvailable(!getHasSelectedTags());
         vmList.setIsAvailable(true);
+        volumeList.setIsAvailable(true);
 
         if (poolList != null)
         {
@@ -453,7 +453,8 @@ public class CommonModel extends ListModel
 
         // Switch the selected item as neccessary.
         ListModel oldSelectedItem = getSelectedItem();
-        if (getHasSelectedTags() && oldSelectedItem != hostList && oldSelectedItem != vmList
+        if (getHasSelectedTags() && oldSelectedItem != hostList && oldSelectedItem != volumeList
+                && oldSelectedItem != vmList
                 && oldSelectedItem != userList)
         {
             setSelectedItem(vmList);
@@ -524,12 +525,20 @@ public class CommonModel extends ListModel
 
         clusterList.setIsAvailable(model.getType() == SystemTreeItemType.DataCenter
                 || model.getType() == SystemTreeItemType.Clusters || model.getType() == SystemTreeItemType.Cluster
+                || model.getType() == SystemTreeItemType.Cluster_Gluster
                 || model.getType() == SystemTreeItemType.Storage || model.getType() == SystemTreeItemType.System);
 
         hostList.setIsAvailable(model.getType() == SystemTreeItemType.DataCenter
                 || model.getType() == SystemTreeItemType.Cluster || model.getType() == SystemTreeItemType.Hosts
                 || model.getType() == SystemTreeItemType.Host || model.getType() == SystemTreeItemType.Storage
                 || model.getType() == SystemTreeItemType.System);
+
+        volumeList.setIsAvailable(model.getType() == SystemTreeItemType.Cluster_Gluster
+                || model.getType() == SystemTreeItemType.Volume || model.getType() == SystemTreeItemType.Volumes);
+
+        if (model.getType() == SystemTreeItemType.Cluster) {
+            volumeList.setIsAvailable(false);
+        }
 
         storageList.setIsAvailable(model.getType() == SystemTreeItemType.DataCenter
                 || model.getType() == SystemTreeItemType.Cluster || model.getType() == SystemTreeItemType.Host
@@ -595,6 +604,10 @@ public class CommonModel extends ListModel
             case Hosts:
             case Host:
                 setSelectedItem(hostList);
+                break;
+            case Volumes:
+            case Volume:
+                setSelectedItem(volumeList);
                 break;
             case Storages:
             case Storage:
@@ -777,27 +790,31 @@ public class CommonModel extends ListModel
 
         templateList = new TemplateListModel();
         list.add(templateList);
-        userList = new UserListModel();
-        list.add(userList);
         /*
          * --- JUICOMMENT_BEGIN monitor = new MonitorModel(); list.add(monitor); JUICOMMENT_END ---
          */
         eventList = new EventListModel();
         list.add(eventList);
 
-        reportsList = new ReportsListModel(ReportInit.getInstance().getReportBaseUrl());
-        list.add(reportsList);
-
-        reportsList.setIsAvailable(false);
         quotaList = new QuotaListModel();
         list.add(quotaList);
 
         volumeList = new VolumeListModel();
         list.add(volumeList);
-        volumeList.setIsAvailable(!volumeList.getGlusterModeEnum().equals(GlusterModeEnum.ONLY_OVIRT));
+
 
         diskList = new DiskListModel();
         list.add(diskList);
+
+        userList = new UserListModel();
+        list.add(userList);
+
+        reportsList = new ReportsListModel(ReportInit.getInstance().getReportBaseUrl());
+        reportsList.setUser("ovirt");
+        reportsList.setPassword("1234");
+        list.add(reportsList);
+
+        reportsList.setIsAvailable(false);
 
         setItems(list);
 
@@ -1045,7 +1062,9 @@ public class CommonModel extends ListModel
                 }
             }
                 break;
-            case Cluster: {
+
+            case Cluster:
+            case Cluster_Gluster: {
                 if (clusterList.IsSearchStringMatch(source))
                 {
                     prefix.argvalue = StringFormat.format("Cluster: name = %1$s", model.getTitle());
@@ -1053,6 +1072,10 @@ public class CommonModel extends ListModel
                 else if (hostList.IsSearchStringMatch(source))
                 {
                     prefix.argvalue = StringFormat.format("Host: cluster = %1$s", model.getTitle());
+                }
+                else if (volumeList.IsSearchStringMatch(source))
+                {
+                    prefix.argvalue = StringFormat.format("Volume: cluster = %1$s", model.getTitle());
                 }
                 else if (storageList.IsSearchStringMatch(source))
                 {
@@ -1099,6 +1122,38 @@ public class CommonModel extends ListModel
                 else if (eventList.IsSearchStringMatch(source))
                 {
                     prefix.argvalue = StringFormat.format("Events: host.name = %1$s", model.getTitle());
+                }
+            }
+                break;
+
+            case Volumes: {
+                if (volumeList.IsSearchStringMatch(source))
+                {
+                    prefix.argvalue = StringFormat.format("Volume: cluster = %1$s", model.getParent().getTitle());
+                }
+            }
+                break;
+
+            case Volume: {
+                if (volumeList.IsSearchStringMatch(source))
+                {
+                    prefix.argvalue = StringFormat.format("Volume: name = %1$s", model.getTitle());
+                }
+                else if (clusterList.IsSearchStringMatch(source))
+                {
+                    prefix.argvalue = StringFormat.format("Cluster: volume.name = %1$s", model.getTitle());
+                }
+                else if (dataCenterList.IsSearchStringMatch(source))
+                {
+                    prefix.argvalue = StringFormat.format("DataCenter: volume.name = %1$s", model.getTitle());
+                }
+                else if (templateList.IsSearchStringMatch(source))
+                {
+                    prefix.argvalue = StringFormat.format("Template: Volumes.name = %1$s", model.getTitle());
+                }
+                else if (eventList.IsSearchStringMatch(source))
+                {
+                    prefix.argvalue = StringFormat.format("Events: volume.name = %1$s", model.getTitle());
                 }
             }
                 break;

@@ -10,10 +10,13 @@ public enum SystemTreeItemType
     Templates,
     Clusters,
     Cluster,
+    Cluster_Gluster,
     VMs,
     Hosts,
     Host,
-    Disk;
+    Disk,
+    Volume,
+    Volumes;
 
     public int getValue()
     {

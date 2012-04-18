@@ -36,6 +36,9 @@ public class SystemTreeItemCell extends AbstractCell<SystemTreeItemModel> {
         case DataCenter:
             imageResource = applicationResources.dataCenterImage();
             break;
+        case Cluster_Gluster:
+            imageResource = applicationResources.glusterClusterImage();
+            break;
         case Host:
             imageResource = applicationResources.hostImage();
             break;
@@ -57,6 +60,13 @@ public class SystemTreeItemCell extends AbstractCell<SystemTreeItemModel> {
         case VMs:
             imageResource = applicationResources.vmsImage();
             break;
+        case Volume:
+            imageResource = applicationResources.volumeImage();
+            break;
+        case Volumes:
+            imageResource = applicationResources.volumesImage();
+            break;
+
         default:
             imageResource = applicationResources.questionMarkImage();
         }

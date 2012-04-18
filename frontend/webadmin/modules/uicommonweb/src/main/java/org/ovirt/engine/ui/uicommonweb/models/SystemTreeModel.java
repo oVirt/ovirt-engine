@@ -4,6 +4,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.queries.StoragePoolQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -128,6 +129,16 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
         privateHostMap = value;
     }
 
+    private java.util.HashMap<Guid, java.util.ArrayList<GlusterVolumeEntity>> privateVolumeMap;
+
+    public java.util.HashMap<Guid, java.util.ArrayList<GlusterVolumeEntity>> getVolumeMap() {
+        return privateVolumeMap;
+    }
+
+    public void setVolumeMap(java.util.HashMap<Guid, java.util.ArrayList<GlusterVolumeEntity>> value) {
+        privateVolumeMap = value;
+    }
+
     static
     {
         ResetRequestedEventDefinition = new EventDefinition("ResetRequested", SystemTreeModel.class);
@@ -209,16 +220,47 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
                                     java.util.ArrayList<VDS> list = systemTreeModel2.getHostMap().get(key);
                                     list.add(host);
                                 }
-                                java.util.ArrayList<VdcQueryType> queryTypeList =
-                                        new java.util.ArrayList<VdcQueryType>();
-                                java.util.ArrayList<VdcQueryParametersBase> queryParamList =
-                                        new java.util.ArrayList<VdcQueryParametersBase>();
-                                for (storage_pool dataCenter : systemTreeModel2.getDataCenters())
-                                {
-                                    queryTypeList.add(VdcQueryType.GetStorageDomainsByStoragePoolId);
-                                    queryParamList.add(new StoragePoolQueryParametersBase(dataCenter.getId()));
-                                }
-                                Frontend.RunMultipleQueries(queryTypeList, queryParamList, systemTreeModel2);
+
+                                AsyncQuery _asyncQuery3 = new AsyncQuery();
+                                _asyncQuery3.setModel(systemTreeModel2);
+                                _asyncQuery3.asyncCallback = new INewAsyncCallback() {
+                                    @Override
+                                    public void OnSuccess(Object model3, Object result3)
+                                    {
+                                        SystemTreeModel systemTreeModel3 = (SystemTreeModel) model3;
+                                        java.util.ArrayList<GlusterVolumeEntity> volumes =
+                                                (java.util.ArrayList<GlusterVolumeEntity>) result3;
+                                        systemTreeModel3.setVolumeMap(new java.util.HashMap<Guid, java.util.ArrayList<GlusterVolumeEntity>>());
+
+                                        for (GlusterVolumeEntity volume : volumes)
+                                        {
+                                            // volume id
+                                            Guid key = volume.getClusterId();
+                                            if (!systemTreeModel3.getVolumeMap().containsKey(key))
+                                            {
+                                                systemTreeModel3.getVolumeMap().put(key,
+                                                        new java.util.ArrayList<GlusterVolumeEntity>());
+                                            }
+                                            java.util.ArrayList<GlusterVolumeEntity> list =
+                                                    systemTreeModel3.getVolumeMap().get(key);
+                                            list.add(volume);
+                                        }
+
+                                        java.util.ArrayList<VdcQueryType> queryTypeList =
+                                                new java.util.ArrayList<VdcQueryType>();
+                                        java.util.ArrayList<VdcQueryParametersBase> queryParamList =
+                                                new java.util.ArrayList<VdcQueryParametersBase>();
+
+                                        for (storage_pool dataCenter : systemTreeModel3.getDataCenters())
+                                        {
+                                            queryTypeList.add(VdcQueryType.GetStorageDomainsByStoragePoolId);
+                                            queryParamList.add(new StoragePoolQueryParametersBase(dataCenter.getId()));
+                                        }
+                                        Frontend.RunMultipleQueries(queryTypeList, queryParamList, systemTreeModel3);
+
+                                    }
+                                };
+                                AsyncDataProvider.GetVolumeList(_asyncQuery3);
                             }
                         };
                         AsyncDataProvider.GetHostList(_asyncQuery2);
@@ -339,8 +381,10 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
             {
                 for (VDSGroup cluster : getClusterMap().get(getDataCenters().get(count).getId()))
                 {
+
                     SystemTreeItemModel clusterItem = new SystemTreeItemModel();
-                    clusterItem.setType(SystemTreeItemType.Cluster);
+                    clusterItem.setType(cluster.supportsGlusterService() ? SystemTreeItemType.Cluster_Gluster
+                            : SystemTreeItemType.Cluster);
                     clusterItem.setTitle(cluster.getname());
                     clusterItem.setParent(dataCenterItem);
                     clusterItem.setEntity(cluster);
@@ -365,7 +409,26 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
                             hostsItem.getChildren().add(hostItem);
                         }
                     }
+                  if(cluster.supportsGlusterService())
+                  {
+                    SystemTreeItemModel volumesItem = new SystemTreeItemModel();
+                    volumesItem.setType(SystemTreeItemType.Volumes);
+                    volumesItem.setTitle("Volumes");
+                    volumesItem.setParent(clusterItem);
+                    volumesItem.setEntity(cluster);
+                    clusterItem.getChildren().add(volumesItem);
 
+                    if (getVolumeMap().containsKey(cluster.getId())) {
+                        for (GlusterVolumeEntity volume : getVolumeMap().get(cluster.getId())) {
+                            SystemTreeItemModel volumeItem = new SystemTreeItemModel();
+                            volumeItem.setType(SystemTreeItemType.Volume);
+                            volumeItem.setTitle(volume.getName());
+                            volumeItem.setParent(volumesItem);
+                            volumeItem.setEntity(volume);
+                            volumesItem.getChildren().add(volumeItem);
+                        }
+                    }
+                  }
                     SystemTreeItemModel vmsItem = new SystemTreeItemModel();
                     vmsItem.setType(SystemTreeItemType.VMs);
                     vmsItem.setTitle("VMs");

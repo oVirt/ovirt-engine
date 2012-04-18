@@ -39,6 +39,7 @@ public interface ApplicationResources extends CommonApplicationResources {
     @Source("images/desktop.gif")
     ImageResource desktopImage();
 
+    @Override
     @Source("images/disk.png")
     ImageResource diskImage();
 
@@ -318,4 +319,13 @@ public interface ApplicationResources extends CommonApplicationResources {
 
     @Source("images/disk_bootable.png")
     ImageResource bootableDiskIcon();
+
+    @Source("images/cluster_gluster.png")
+    ImageResource glusterClusterImage();
+
+    @Source("images/single_volume.png")
+    ImageResource volumeImage();
+
+    @Source("images/multiple_volumes.png")
+    ImageResource volumesImage();
 }

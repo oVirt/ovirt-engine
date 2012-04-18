@@ -32,6 +32,7 @@ import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.storage_server_connections;
 import org.ovirt.engine.core.common.businessentities.tags;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.CommandVersionsInfo;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
@@ -941,6 +942,26 @@ public final class AsyncDataProvider {
         Frontend.RunQuery(VdcQueryType.Search, searchParameters, aQuery);
     }
 
+    public static void GetVolumeList(AsyncQuery aQuery) {
+
+        aQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object Convert(Object source, AsyncQuery _asyncQuery)
+            {
+                if (source != null)
+                {
+                    java.util.ArrayList<GlusterVolumeEntity> list =
+                            (java.util.ArrayList<GlusterVolumeEntity>) source;
+                    return list;
+                }
+
+                return new java.util.ArrayList<GlusterVolumeEntity>();
+            }
+        };
+        SearchParameters searchParameters = new SearchParameters("Volumes:", SearchType.GlusterVolume);
+        searchParameters.setMaxCount(9999);
+        Frontend.RunQuery(VdcQueryType.Search, searchParameters, aQuery);
+    }
     public static void GetRpmVersionViaPublic(AsyncQuery aQuery) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
