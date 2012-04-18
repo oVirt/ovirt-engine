@@ -10,6 +10,8 @@ import java.util.List;
 
 import org.apache.commons.lang.NotImplementedException;
 import org.junit.Test;
+import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmNetworkStatistics;
 import org.ovirt.engine.core.compat.Guid;
@@ -23,14 +25,19 @@ public class VmNetworkInterfaceDAOTest extends BaseDAOTestCase {
     protected static final Guid UNPRIVILEGED_USER_ID = new Guid("9bf7c640-b620-456f-a550-0348f366544a");
 
     private VmNetworkInterfaceDAO dao;
+    private VmDeviceDAO vmDevicesDao;
+    private VmNetworkStatisticsDAO StatsDao;
 
     private VmNetworkInterface newVmInterface;
+    private VmDevice newVmDevice = new VmDevice();
 
     @Override
     public void setUp() throws Exception {
         super.setUp();
 
         dao = prepareDAO(dbFacade.getVmNetworkInterfaceDAO());
+        vmDevicesDao = prepareDAO(dbFacade.getVmDeviceDAO());
+        StatsDao = prepareDAO(dbFacade.getVmNetworkStatisticsDAO());
 
         newVmInterface = new VmNetworkInterface();
         newVmInterface.setStatistics(new VmNetworkStatistics());
@@ -40,6 +47,14 @@ public class VmNetworkInterfaceDAOTest extends BaseDAOTestCase {
         newVmInterface.setSpeed(1000);
         newVmInterface.setType(3);
         newVmInterface.setMacAddress("01:C0:81:21:71:17");
+
+        newVmDevice.setType("interface");
+        newVmDevice.setDevice("bridge");
+        newVmDevice.setAddress("sample");
+        newVmDevice.setBootOrder(1);
+        newVmDevice.setIsManaged(true);
+        newVmDevice.setIsPlugged(true);
+        newVmDevice.setIsReadOnly(false);
     }
 
     /**
@@ -185,11 +200,13 @@ public class VmNetworkInterfaceDAOTest extends BaseDAOTestCase {
     @Test
     public void testSave() {
         newVmInterface.setVmId(VM_ID);
+        newVmDevice.setId(new VmDeviceId(newVmInterface.getId(), VM_ID));
 
         dao.save(newVmInterface);
+        vmDevicesDao.save(newVmDevice);
+        StatsDao.save(newVmInterface.getStatistics());
 
         VmNetworkInterface savedInterface = dao.get(newVmInterface.getId());
-
         assertNotNull(savedInterface);
         assertEquals(newVmInterface.getName(), savedInterface.getName());
     }

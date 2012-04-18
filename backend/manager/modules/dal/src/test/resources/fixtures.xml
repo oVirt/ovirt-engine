@@ -2945,6 +2945,31 @@
             <value>false</value>
             <value>false</value>
         </row>
+        <row>
+            <value>e2817b12-f873-4046-b0da-0098293c14fd</value>
+            <value>77296e00-0cad-4e5a-9299-008a7b6f4355</value>
+            <value>interface</value>
+            <value>bridge</value>
+            <value>sample</value>
+            <value>1</value>
+            <value>sample</value>
+            <value>true</value>
+            <value>false</value>
+            <value>false</value>
+        </row>
+	<row>
+            <value>14550e82-1e1f-47b5-ae41-b009348dabfa</value>
+            <value>77296e00-0cad-4e5a-9299-008a7b6f4355</value>
+            <value>interface</value>
+            <value>bridge</value>
+            <value>sample</value>
+            <value>1</value>
+            <value>sample</value>
+            <value>true</value>
+            <value>false</value>
+            <value>false</value>
+        </row>
+
      </table>
 
     <table name="job">
