@@ -13,10 +13,6 @@ import javax.persistence.Enumerated;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.hibernate.annotations.Type;
@@ -32,8 +28,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.StringHelper;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "VmTemplate")
 @Entity
 @Table(name = "vm_templates")
 @TypeDef(name = "guid", typeClass = GuidType.class)
@@ -67,16 +61,13 @@ public class VmTemplate extends VmBase {
 
     private String vdsGroupName;
 
-    @XmlElement(name = "storage_pool_id")
     @Column(name = "storage_pool_id")
     @Type(type = "guid")
     private NGuid storagePoolId;
 
-    @XmlElement(name = "storage_pool_name")
     @Transient
     private String storagePoolName;
 
-    @XmlElement(name = "default_display_type")
     @Column(name = "default_display_type", nullable = false)
     @Enumerated
     private DisplayType defaultDisplayType = DisplayType.vnc;
@@ -90,7 +81,6 @@ public class VmTemplate extends VmBase {
     @Transient
     private HashMap<String, DiskImage> diskTemplateMap = new HashMap<String, DiskImage>();
 
-    @XmlElement(name = "SizeGB")
     @Transient
     private double bootDiskSizeGB;
 
@@ -131,7 +121,7 @@ public class VmTemplate extends VmBase {
                 false,
                 false,
                 null,
-                OriginType.valueOf(Config.<String>GetValue(ConfigValues.OriginType)),
+                OriginType.valueOf(Config.<String> GetValue(ConfigValues.OriginType)),
                 null,
                 null,
                 null,
@@ -145,7 +135,6 @@ public class VmTemplate extends VmBase {
         this.setstatus(VmTemplateStatus.forValue(status));
     }
 
-    @XmlElement
     public int getchild_count() {
         return this.childCount;
     }
@@ -154,7 +143,6 @@ public class VmTemplate extends VmBase {
         this.childCount = value;
     }
 
-    @XmlElement
     public String getname() {
         return this.name;
     }
@@ -165,8 +153,7 @@ public class VmTemplate extends VmBase {
         }
     }
 
-    // no need fo DataMember, it's setter and calculated from 2 other fields
-    @XmlElement
+    // no need for DataMember, it's setter and calculated from 2 other fields
     public int getnum_of_cpus() {
         return this.getcpu_per_socket() * this.getnum_of_sockets();
     }
@@ -177,7 +164,6 @@ public class VmTemplate extends VmBase {
     public void setnum_of_cpus(int val) {
     }
 
-    @XmlElement
     public VmTemplateStatus getstatus() {
         return status;
     }
@@ -188,7 +174,6 @@ public class VmTemplate extends VmBase {
         }
     }
 
-    @XmlElement
     public String getvds_group_name() {
         return vdsGroupName;
     }
@@ -197,11 +182,12 @@ public class VmTemplate extends VmBase {
         vdsGroupName = value;
     }
 
-    @XmlElement(name = "Interfaces")
+    @Override
     public List<VmNetworkInterface> getInterfaces() {
         return _Interfaces;
     }
 
+    @Override
     public void setInterfaces(List<VmNetworkInterface> value) {
         _Interfaces = value;
     }
@@ -253,7 +239,6 @@ public class VmTemplate extends VmBase {
         return _vmProperties;
     }
 
-    @XmlElement(name = "ActualDiskSize")
     public double getActualDiskSize() {
         if (actualDiskSize == 0 && getDiskImageMap() != null) {
             for (DiskImage disk : getDiskImageMap().values()) {
@@ -278,7 +263,6 @@ public class VmTemplate extends VmBase {
         diskMap = value;
     }
 
-    @XmlElement(name = "DiskImageMap")
     @JsonIgnore
     public ValueObjectMap getSerializedDiskImageMap() {
         return new ValueObjectMap(diskMap, false);
@@ -288,6 +272,7 @@ public class VmTemplate extends VmBase {
         diskMap = (serializedDiskImageMap == null) ? null : serializedDiskImageMap.asMap();
     }
 
+    @Override
     @JsonIgnore
     public ArrayList<DiskImage> getDiskList() {
         return diskList;
