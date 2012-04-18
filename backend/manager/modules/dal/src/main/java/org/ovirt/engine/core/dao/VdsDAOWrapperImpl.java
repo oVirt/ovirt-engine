@@ -165,4 +165,10 @@ public class VdsDAOWrapperImpl extends BaseDAOWrapperImpl implements VdsDAO {
         // TODO Auto-generated method stub
         return null;
     }
+
+    @Override
+    public List<VDS> getAllForVdsGroup(Guid vdsGroup, Guid userID, boolean isFiltered) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }
