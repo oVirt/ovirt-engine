@@ -258,4 +258,42 @@ public class VdsDAOTest extends BaseDAOTestCase {
         List<VDS> result = dao.getListForSpmSelection(STORAGE_POOL_ID);
         assertTrue(result.get(0).getVdsSpmPriority() >= result.get(1).getVdsSpmPriority());
     }
+
+    /**
+     * Asserts that the right collection containing the existing host is returned for a privileged user with filtering enabled
+     */
+    @Test
+    public void testGetAllForVdsGroupWithPermissionsForPriviligedUser() {
+        List<VDS> result = dao.getAllForVdsGroup(existingVds.getvds_group_id(), PRIVILEGED_USER_ID, true);
+        assertGetAllForVdsGroupCorrectResult(result);
+    }
+
+    /**
+     * Asserts that an empty collection is returned for an non privileged user with filtering enabled
+     */
+    @Test
+    public void testGetAllForVdsGroupWithPermissionsForUnpriviligedUser() {
+        List<VDS> result = dao.getAllForVdsGroup(existingVds.getvds_group_id(), UNPRIVILEGED_USER_ID, true);
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
+
+    /**
+     * Asserts that the right collection containing the existing host is returned for a non privileged user with filtering disabled
+     */
+    @Test
+    public void testGetAllForVdsGroupWithPermissionsDisabledForUnpriviligedUser() {
+        List<VDS> result = dao.getAllForVdsGroup(existingVds.getvds_group_id(), UNPRIVILEGED_USER_ID, false);
+        assertGetAllForVdsGroupCorrectResult(result);
+    }
+
+    private void assertGetAllForVdsGroupCorrectResult(List<VDS> result) {
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
+        assertEquals(result.iterator().next(), existingVds);
+
+        for (VDS vds : result) {
+            assertEquals(vds.getvds_group_id(), existingVds.getvds_group_id());
+        }
+    }
 }

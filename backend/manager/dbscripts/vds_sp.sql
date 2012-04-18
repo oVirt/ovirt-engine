@@ -748,17 +748,20 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetVdsByVdsGroupId(v_vds_group_id UUID) RETURNS SETOF vds
+Create or replace FUNCTION GetVdsByVdsGroupId(v_vds_group_id UUID, v_user_id UUID, v_is_filtered boolean) RETURNS SETOF vds
    AS $procedure$
 BEGIN
 
 	
 	-- this sp returns all vds for a given cluster
-	BEGIN
+   BEGIN
       RETURN QUERY SELECT DISTINCT vds.*
 
       FROM vds
-      WHERE vds_group_id = v_vds_group_id;
+      WHERE vds_group_id = v_vds_group_id
+      AND (NOT v_is_filtered OR EXISTS (SELECT 1
+                                        FROM   user_vds_permissions_view
+                                        WHERE  user_id = v_user_id AND entity_id = vds_id));
    END;
 
    RETURN;

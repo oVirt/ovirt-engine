@@ -112,10 +112,17 @@ public class VdsDAODbFacadeImpl extends BaseDAODbFacade implements VdsDAO {
 
     @Override
     public List<VDS> getAllForVdsGroup(Guid vdsGroupID) {
+        return getAllForVdsGroup(vdsGroupID, null, false);
+    }
+
+    @Override
+    public List<VDS> getAllForVdsGroup(Guid vdsGroupID, Guid userID, boolean isFiltered) {
         return getCallsHandler().executeReadList("GetVdsByVdsGroupId",
                 VdsRowMapper.instance,
                 getCustomMapSqlParameterSource()
-                        .addValue("vds_group_id", vdsGroupID));
+                        .addValue("vds_group_id", vdsGroupID)
+                        .addValue("user_id", userID)
+                        .addValue("is_filtered", isFiltered));
     }
 
     @Override
