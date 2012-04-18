@@ -1,11 +1,7 @@
 package org.ovirt.engine.core.dao;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 import org.ovirt.engine.core.common.businessentities.BaseDisk;
-import org.ovirt.engine.core.common.businessentities.DiskInterface;
-import org.ovirt.engine.core.common.businessentities.PropagateErrors;
 import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -36,28 +32,23 @@ public class BaseDiskDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<BaseDisk,
 
     @Override
     protected ParameterizedRowMapper<BaseDisk> createEntityRowMapper() {
-        return new ParameterizedRowMapper<BaseDisk>() {
-
-            @Override
-            public BaseDisk mapRow(ResultSet rs, int rowNum) throws SQLException {
-                BaseDisk disk = new BaseDisk();
-
-                disk.setId(Guid.createGuidFromString(rs.getString("disk_id")));
-                disk.setInternalDriveMapping(rs.getInt("internal_drive_mapping"));
-                disk.setDiskAlias(rs.getString("disk_alias"));
-                disk.setDiskDescription(rs.getString("disk_description"));
-                disk.setDiskInterface(DiskInterface.valueOf(rs.getString("disk_interface")));
-                disk.setWipeAfterDelete(rs.getBoolean("wipe_after_delete"));
-                disk.setPropagateErrors(PropagateErrors.valueOf(rs.getString("propagate_errors")));
-                disk.setShareable(rs.getBoolean("shareable"));
-
-                return disk;
-            }
-        };
+        return BaseDiskRowMapper.instance;
     }
 
     @Override
     public boolean exists(Guid id) {
         return get(id) != null;
+    }
+
+    private static class BaseDiskRowMapper extends AbstractDiskRowMapper<BaseDisk> {
+        public static BaseDiskRowMapper instance = new BaseDiskRowMapper();
+
+        private BaseDiskRowMapper() {
+        }
+
+        @Override
+        protected BaseDisk createDiskEntity() {
+            return new BaseDisk();
+        }
     }
 }
