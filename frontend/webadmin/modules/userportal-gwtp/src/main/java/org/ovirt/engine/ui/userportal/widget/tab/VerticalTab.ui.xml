@@ -9,6 +9,12 @@
 			line-height: 25px;
 		}
 		
+		.tabHolder {}
+		
+		.tabHolder:last-of-type {
+			border-bottom: solid 1px #d5d5d5;
+		}
+		
 		.middle {
 			padding: 0 5px;
 		}
@@ -18,7 +24,6 @@
 		}
 		
 		.inactiveMiddle {
-			background-color: #E5E5E5;
 		}
 		
 		a.middleLink {
@@ -33,6 +38,12 @@
 			color: #719823;
 		}
 		
+		.upperPaddingPanel {
+			height: 4px;
+			border-top: solid 1px #d5d5d5;
+			background-color: #f1f1f1;
+		}
+		
 		.activeLeft {}
 		.inactiveLeft {}
 		.activeRight {}
@@ -42,14 +53,17 @@
 		.alignLeft {}
 		.alignRight {}
 	</ui:style>
-
-	<g:HTMLPanel ui:field="tabContainer" addStyleNames="{style.tab}">
-		<div ui:field="leftElement" />
-		<div ui:field="rightElement" />
-		<div ui:field="middleElement" class="{style.middle} {style.inactiveMiddle}">
-			<g:InlineHyperlink ui:field="hyperlink" addStyleNames="{style.middleLink} {style.inactiveMiddleLink}" />
-		</div>
-		<div ui:field="arrowElement" />
-	</g:HTMLPanel>
+	
+	<g:FlowPanel addStyleNames="{style.tabHolder}">
+		<g:SimplePanel addStyleNames="{style.upperPaddingPanel}"/>
+		<g:HTMLPanel ui:field="tabContainer" addStyleNames="{style.tab}">
+			<div ui:field="leftElement" />
+			<div ui:field="rightElement" />
+			<div ui:field="middleElement" class="{style.middle} {style.inactiveMiddle}">
+				<g:InlineHyperlink ui:field="hyperlink" addStyleNames="{style.middleLink} {style.inactiveMiddleLink}" />
+			</div>
+			<div ui:field="arrowElement" />
+		</g:HTMLPanel>
+	</g:FlowPanel>
 
 </ui:UiBinder>

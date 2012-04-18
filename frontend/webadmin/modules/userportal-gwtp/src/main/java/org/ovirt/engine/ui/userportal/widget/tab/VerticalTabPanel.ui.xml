@@ -5,15 +5,14 @@
 	<ui:style>
 		.bar {
 			height: 100%;
-			background-color: #E5E5E5;
-			padding: 5px 0;
-			border: 1px solid #AAAAAA;
+			padding: 15px 0;
 		}
 		
 		.content {
 			overflow: hidden;
 			padding: 5px;
-			border: 1px solid #719823;
+			border: 2px solid #719823;
+			border-radius: 3px;
 		}
 	</ui:style>
 
@@ -22,7 +21,11 @@
 			<g:FlowPanel ui:field="tabContainer" addStyleNames="{style.bar}" />
 		</g:west>
 		<g:center>
-			<g:LayoutPanel ui:field="tabContentContainer" addStyleNames="{style.content}" />
+			<g:LayoutPanel>
+				<g:layer left="0px" right="10px" top="0px" bottom="40px">
+					<g:SimpleLayoutPanel addStyleNames="{style.content}" ui:field="tabContentContainer"/>
+				</g:layer>
+			</g:LayoutPanel>
 		</g:center>
 	</g:DockLayoutPanel>
 

@@ -1,7 +1,22 @@
-.cellTableEvenRowCell {
+.cellTableEvenRowCell, .cellTableOddRowCell {
 	border: 0px;
+	border-bottom: 1px solid #d4d4d4;
 }
 
-.cellTableOddRowCell {
-	border: 0px;
+.cellTableHeader {
+	border-bottom: 2px solid #719823;
+}
+
+.cellTableWidget {
+	padding-left: 2px;
+	padding-right: 2px;
+}
+
+.cellTableSelectedRowCell, .cellTableSelectedRow
+ {
+	background-color: #3a5f7c;
+	font-size: 14px; 
+	font-family: Arial,sans-serif; 
+	font-weight: bold;
+	color: black;
 }

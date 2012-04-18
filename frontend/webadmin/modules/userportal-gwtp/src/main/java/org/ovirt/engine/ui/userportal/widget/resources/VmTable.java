@@ -19,16 +19,21 @@ import org.ovirt.engine.ui.userportal.ApplicationConstants;
 import org.ovirt.engine.ui.userportal.ApplicationResources;
 import org.ovirt.engine.ui.userportal.uicommon.model.resources.ResourcesModelProvider;
 
+import com.google.gwt.cell.client.CompositeCell;
+import com.google.gwt.cell.client.HasCell;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.logical.shared.OpenEvent;
 import com.google.gwt.event.logical.shared.OpenHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.CellTable;
+import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Tree;
@@ -175,16 +180,17 @@ public class VmTable extends Composite implements HasEditorDriver<ResourcesModel
                         diskRowResources,
                         true);
 
-        ImageResourceColumn<EntityModel> diskImageColumn = new ImageResourceColumn<EntityModel>() {
+        Column<EntityModel, EntityModel> diskWithMappingColumn =
+                new Column<EntityModel, EntityModel>(createDiskImageWithMappingComoisiteCell()) {
 
-            @Override
-            public ImageResource getValue(EntityModel object) {
-                return resources.vmDiskIcon();
-            }
+                    @Override
+                    public EntityModel getValue(EntityModel object) {
+                        return object;
+                    }
+                };
 
-        };
+        TextColumn<EntityModel> paddingColumn = new TextColumn<EntityModel>() {
 
-        TextColumnWithTooltip<EntityModel> driveMappingColumn = new TextColumnWithTooltip<EntityModel>() {
             @Override
             public String getValue(EntityModel entity) {
                 return "Disk" + asDisk(entity).getinternal_drive_mapping(); //$NON-NLS-1$
@@ -212,11 +218,11 @@ public class VmTable extends Composite implements HasEditorDriver<ResourcesModel
             }
         };
 
-        table.addColumn(diskImageColumn, constants.diskImageColumnDisk(), "5%"); //$NON-NLS-1$
-        table.addColumn(driveMappingColumn, constants.drivaeMappingColumnDisk(), "43%"); //$NON-NLS-1$
-        table.addColumn(virtualSizeColumn, constants.virtualSizeColumnDisk(), "10%"); //$NON-NLS-1$
-        table.addColumn(actualSizeColumn, constants.actualSizeColumnDisk(), "10%"); //$NON-NLS-1$
-        table.addColumn(snapshotsColumn, constants.snapshotsColumnDisk(), "32%"); //$NON-NLS-1$
+        table.addColumn(diskWithMappingColumn, "diskWithMappingColumn", "39%"); //$NON-NLS-1$
+        table.addColumn(paddingColumn, "paddingColumn", "10%"); //$NON-NLS-1$
+        table.addColumn(virtualSizeColumn, "virtualSizeColumn", "10%"); //$NON-NLS-1$
+        table.addColumn(actualSizeColumn, "actualSizeColumn", "10%"); //$NON-NLS-1$
+        table.addColumn(snapshotsColumn, "snapshotsColumn", "31%"); //$NON-NLS-1$
         EntityModel entityModel = new EntityModel();
         entityModel.setEntity(disk);
 
@@ -230,21 +236,14 @@ public class VmTable extends Composite implements HasEditorDriver<ResourcesModel
                         vmRowResources,
                         true);
 
-        ImageResourceColumn<EntityModel> vmImageColumn = new ImageResourceColumn<EntityModel>() {
+        Column<EntityModel, EntityModel> vmImageWithNameColumn =
+                new Column<EntityModel, EntityModel>(createVmImageWithNameCompositeCell()) {
 
-            @Override
-            public ImageResource getValue(EntityModel object) {
-                return resources.vmIconWithVmTextInside();
-            }
-
-        };
-
-        TextColumnWithTooltip<EntityModel> nameColumn = new TextColumnWithTooltip<EntityModel>() {
-            @Override
-            public String getValue(EntityModel entity) {
-                return asVm(entity).getvm_name();
-            }
-        };
+                    @Override
+                    public EntityModel getValue(EntityModel object) {
+                        return object;
+                    }
+                };
 
         TextColumnWithTooltip<EntityModel> diskSizeColumn = new TextColumnWithTooltip<EntityModel>() {
             @Override
@@ -275,12 +274,12 @@ public class VmTable extends Composite implements HasEditorDriver<ResourcesModel
                         + "" : "0"; //$NON-NLS-1$ //$NON-NLS-2$
             }
         };
-        table.addColumn(vmImageColumn, constants.vmImageColumnVm(), "5%"); //$NON-NLS-1$
-        table.addColumn(nameColumn, constants.nameColumnVm(), "34%"); //$NON-NLS-1$
-        table.addColumn(diskSizeColumn, constants.diskSizeColumnVm(), "10%"); //$NON-NLS-1$
-        table.addColumn(virtualSizeColumn, constants.virtualSizeColumnVm(), "10%"); //$NON-NLS-1$
-        table.addColumn(actualSizeColumn, constants.actualSizeColumnVm(), "10%"); //$NON-NLS-1$
-        table.addColumn(snapshotsColumn, constants.snapshotsColumnVm(), "31%"); //$NON-NLS-1$
+
+        table.addColumn(vmImageWithNameColumn, "vmImageWithNameColumn", "39%"); //$NON-NLS-1$
+        table.addColumn(diskSizeColumn, "diskSizeColumn", "10%"); //$NON-NLS-1$
+        table.addColumn(virtualSizeColumn, "virtualSizeColumn", "10%"); //$NON-NLS-1$
+        table.addColumn(actualSizeColumn, "actualSizeColumn", "10%"); //$NON-NLS-1$
+        table.addColumn(snapshotsColumn, "snapshotsColumn", "31%"); //$NON-NLS-1$
         table.setSelectionModel(vmSelectionModel);
 
         EntityModel entityModel = new EntityModel();
@@ -288,6 +287,77 @@ public class VmTable extends Composite implements HasEditorDriver<ResourcesModel
 
         table.setRowData(Arrays.asList(entityModel));
         return new VmTreeItem(table, vm);
+    }
+
+    private CompositeCell<EntityModel> createDiskImageWithMappingComoisiteCell() {
+
+        final ImageResourceColumn<EntityModel> diskImageColumn = new ImageResourceColumn<EntityModel>() {
+
+            @Override
+            public ImageResource getValue(EntityModel object) {
+                return resources.vmDiskIcon();
+            }
+
+        };
+
+        final TextColumnWithTooltip<EntityModel> driveMappingColumn = new TextColumnWithTooltip<EntityModel>() {
+            @Override
+            public String getValue(EntityModel entity) {
+                return "Disk" + asDisk(entity).getinternal_drive_mapping(); //$NON-NLS-1$
+            }
+        };
+
+        return new StyledCompositeCell<EntityModel>(
+                new ArrayList<HasCell<EntityModel, ?>>(Arrays.asList(diskImageColumn, driveMappingColumn)),
+                new StyledCompositeCell.StyledProvider<EntityModel>() {
+
+                    @Override
+                    public String styleStringOf(HasCell<EntityModel, ?> cell) {
+                        if (cell == diskImageColumn) {
+                            return "float: left"; //$NON-NLS-1$
+                        } else if (cell == driveMappingColumn) {
+                            return "float: left; padding-top: 4px; padding-left: 5px;"; //$NON-NLS-1$
+                        }
+
+                        return null;
+                    }
+                });
+
+    }
+
+    private CompositeCell<EntityModel> createVmImageWithNameCompositeCell() {
+        final ImageResourceColumn<EntityModel> vmImageColumn = new ImageResourceColumn<EntityModel>() {
+
+            @Override
+            public ImageResource getValue(EntityModel object) {
+                return resources.vmIconWithVmTextInside();
+            }
+
+        };
+
+        final TextColumnWithTooltip<EntityModel> nameColumn = new TextColumnWithTooltip<EntityModel>() {
+            @Override
+            public String getValue(EntityModel entity) {
+                return asVm(entity).getvm_name();
+            }
+        };
+
+        return new StyledCompositeCell<EntityModel>(
+                new ArrayList<HasCell<EntityModel, ?>>(Arrays.asList(vmImageColumn, nameColumn)),
+                new StyledCompositeCell.StyledProvider<EntityModel>() {
+
+                    @Override
+                    public String styleStringOf(HasCell<EntityModel, ?> cell) {
+                        if (cell == vmImageColumn) {
+                            return "float: left"; //$NON-NLS-1$
+                        } else if (cell == nameColumn) {
+                            return "float: left; padding-top: 4px;"; //$NON-NLS-1$
+
+                        }
+
+                        return null;
+                    }
+                });
     }
 
     /**
@@ -366,4 +436,37 @@ public class VmTable extends Composite implements HasEditorDriver<ResourcesModel
         }
     }
 
+}
+
+class StyledCompositeCell<T> extends CompositeCell<T> {
+
+    private final List<HasCell<T, ?>> hasCells;
+    private final StyledProvider<T> styleProvider;
+
+    public StyledCompositeCell(List<HasCell<T, ?>> hasCells, StyledProvider<T> styleProvider) {
+        super(hasCells);
+        this.hasCells = hasCells;
+        this.styleProvider = styleProvider;
+    }
+
+    @Override
+    public void render(Context context, T value, SafeHtmlBuilder sb) {
+        for (HasCell<T, ?> hasCell : hasCells) {
+            String style =
+                    styleProvider.styleStringOf(hasCell) == null ? "" : "style=\""
+                            + styleProvider.styleStringOf(hasCell) + "\""; //$NON-NLS-1$ //$NON-NLS-2$
+            sb.appendHtmlConstant("<div " + style + ">"); //$NON-NLS-1$ //$NON-NLS-2$
+            render(context, value, sb, hasCell);
+            sb.appendHtmlConstant("</div>"); //$NON-NLS-1$
+        }
+    }
+
+    @Override
+    protected Element getContainerElement(Element parent) {
+        return parent.getFirstChildElement();
+    }
+
+    interface StyledProvider<T> {
+        String styleStringOf(HasCell<T, ?> cell);
+    }
 }

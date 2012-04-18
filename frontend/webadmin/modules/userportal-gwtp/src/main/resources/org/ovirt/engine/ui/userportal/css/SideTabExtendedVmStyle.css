@@ -40,11 +40,7 @@ div.disabledEditConsoleButton {
 	background-color: #e1e1e1;
 }
 
-.vmUpRow:hover {
-	background-color: #b5c5d7;
-}
-
-.vmDownRow:hover {
+.vmUpRow:hover, .vmDownRow:hover {
 	background-color: #b5c5d7;	
 }
 

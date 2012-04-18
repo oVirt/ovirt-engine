@@ -35,7 +35,7 @@ public class ImageMaskCell<T> extends CompositeCell<T> {
     @Override
     public void render(Context context, T value, SafeHtmlBuilder sb) {
         if (showMask.showMask(value)) {
-            sb.appendHtmlConstant("<div style=\"position: absolute\" >"); //$NON-NLS-1$
+            sb.appendHtmlConstant("<div style=\"position: absolute; left: 19px\" >"); ////$NON-NLS-1$
             sb.append(html);
             sb.appendHtmlConstant("</div>"); //$NON-NLS-1$
         }

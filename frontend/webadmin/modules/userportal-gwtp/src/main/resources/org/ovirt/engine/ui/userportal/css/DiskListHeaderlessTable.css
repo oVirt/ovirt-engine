@@ -4,7 +4,7 @@
 }
 
 .cellTableFirstColumn {
-	padding: 2px 15px;
+	padding: 2px 0px;
 }
 
 .cellTableLastColumn {
@@ -27,6 +27,8 @@
 	white-space: nowrap;
 	cursor: pointer;
 	color: black;
+	
+	padding-left: 9px;
 }
 
 .cellTableEvenRow {

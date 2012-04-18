@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.userportal.widget;
 
 import com.google.gwt.text.shared.AbstractRenderer;
+import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.ValueLabel;
 
 public class ToStringEntityModelLabel extends ValueLabel<Object> {
@@ -16,6 +17,9 @@ public class ToStringEntityModelLabel extends ValueLabel<Object> {
                 return object.toString();
             }
         });
+
+        // by default, there is a space
+        DOM.setInnerHTML(getElement(), "&nbsp;");
     }
 
 }
