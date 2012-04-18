@@ -877,7 +877,6 @@ public final class AsyncDataProvider {
                     disk.setvolume_format(DataProvider.GetDiskVolumeFormat(disk.getvolume_type(),
                             (StorageType) _asyncQuery.Data[1]));
 
-
                     list.add(disk);
                 }
                 return list;
@@ -1009,7 +1008,7 @@ public final class AsyncDataProvider {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
             {
-                return source != null ? (String) source : null;
+                return source != null ? (java.util.HashMap<Version, String>) source : null;
             }
         };
         Frontend.RunQuery(VdcQueryType.GetVmCustomProperties, new VdcQueryParametersBase(), aQuery);

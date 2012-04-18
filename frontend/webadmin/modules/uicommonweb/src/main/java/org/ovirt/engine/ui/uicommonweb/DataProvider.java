@@ -2689,7 +2689,7 @@ public final class DataProvider
         }
 
         userActionGroups = null;
-        cacheCustomProperties = null;
+        //        cacheCustomProperties = null;
         windowsOsTypes = null;
         linuxOsTypes = null;
         x64OsTypes = null;
@@ -2804,50 +2804,50 @@ public final class DataProvider
         return new java.util.ArrayList<ActionGroup>();
     }
 
-    private static java.util.HashMap<String, String> cacheCustomProperties;
-
-    /**
-     * Gets a dictionary in which the keys are the valid custom property keys allowed and the values are the valid
-     * RegExp to validate the custom property values with.
-     *
-     * @return dictionary of valid keys and valid values' RegExps.
-     */
-    public static java.util.HashMap<String, String> GetCustomPropertiesList()
-    {
-        if (cacheCustomProperties != null)
-        {
-            return cacheCustomProperties;
-        }
-        VdcQueryReturnValue returnValue =
-                Frontend.RunQuery(VdcQueryType.GetVmCustomProperties, new VdcQueryParametersBase());
-        if (returnValue.getSucceeded() && returnValue.getReturnValue() != null
-                && ((String) returnValue.getReturnValue()).equals("") == false) //$NON-NLS-1$
-        {
-            String temp = (String) returnValue.getReturnValue();
-            String[] tempArray = temp.split("[;]", -1); //$NON-NLS-1$
-            cacheCustomProperties = new java.util.HashMap<String, String>();
-            for (String keyRegexpPair : tempArray)
-            {
-                String[] keyAndRegexp = keyRegexpPair.split("[=]", -1); //$NON-NLS-1$
-                String key = keyAndRegexp[0];
-                String regexp = null;
-                // if there is no "=", it means that there is no RegExp to
-                // validate with, which means that all strings are valid.
-                if (keyAndRegexp.length > 1)
-                {
-                    regexp = keyAndRegexp[1];
-                }
-
-                if (!cacheCustomProperties.containsKey(key))
-                {
-                    cacheCustomProperties.put(key, regexp);
-                }
-            }
-            return cacheCustomProperties;
-        }
-
-        return new java.util.HashMap<String, String>();
-    }
+    //    private static java.util.HashMap<String, String> cacheCustomProperties;
+    //
+    //    /**
+    //     * Gets a dictionary in which the keys are the valid custom property keys allowed and the values are the valid
+    //     * RegExp to validate the custom property values with.
+    //     *
+    //     * @return dictionary of valid keys and valid values' RegExps.
+    //     */
+    //    public static java.util.HashMap<String, String> GetCustomPropertiesList()
+    //    {
+    //        if (cacheCustomProperties != null)
+    //        {
+    //            return cacheCustomProperties;
+    //        }
+    //        VdcQueryReturnValue returnValue =
+    //                Frontend.RunQuery(VdcQueryType.GetVmCustomProperties, new VdcQueryParametersBase());
+    //        if (returnValue.getSucceeded() && returnValue.getReturnValue() != null
+    //                && ((String) returnValue.getReturnValue()).equals("") == false)
+    //        {
+    //            String temp = (String) returnValue.getReturnValue();
+    //            String[] tempArray = temp.split("[;]", -1);
+    //            cacheCustomProperties = new java.util.HashMap<String, String>();
+    //            for (String keyRegexpPair : tempArray)
+    //            {
+    //                String[] keyAndRegexp = keyRegexpPair.split("[=]", -1);
+    //                String key = keyAndRegexp[0];
+    //                String regexp = null;
+    //                // if there is no "=", it means that there is no RegExp to
+    //                // validate with, which means that all strings are valid.
+    //                if (keyAndRegexp.length > 1)
+    //                {
+    //                    regexp = keyAndRegexp[1];
+    //                }
+    //
+    //                if (!cacheCustomProperties.containsKey(key))
+    //                {
+    //                    cacheCustomProperties.put(key, regexp);
+    //                }
+    //            }
+    //            return cacheCustomProperties;
+    //        }
+    //
+    //        return new java.util.HashMap<String, String>();
+    //    }
 
     private static java.util.ArrayList<VmOsType> windowsOsTypes;
     private static java.util.ArrayList<VmOsType> linuxOsTypes;

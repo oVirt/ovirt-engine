@@ -160,14 +160,14 @@ public class VmSnapshotListModel extends SearchableListModel
         OnPropertyChanged(new PropertyChangedEventArgs("SystemTreeSelectedItem")); //$NON-NLS-1$
     }
 
-    private ArrayList<String> privateCustomPropertiesKeysList;
+    private HashMap<Version, ArrayList<String>> privateCustomPropertiesKeysList;
 
-    private ArrayList<String> getCustomPropertiesKeysList()
+    private HashMap<Version, ArrayList<String>> getCustomPropertiesKeysList()
     {
         return privateCustomPropertiesKeysList;
     }
 
-    private void setCustomPropertiesKeysList(ArrayList<String> value)
+    private void setCustomPropertiesKeysList(HashMap<Version, ArrayList<String>> value)
     {
         privateCustomPropertiesKeysList = value;
     }
@@ -217,23 +217,30 @@ public class VmSnapshotListModel extends SearchableListModel
         getCanSelectSnapshot().setEntity(true);
 
         setSnapshotsMap(new HashMap<Guid, SnapshotModel>());
-
-        AsyncDataProvider.GetCustomPropertiesList(new AsyncQuery(this,
-                new INewAsyncCallback() {
-                    @Override
-                    public void OnSuccess(Object target, Object returnValue) {
-                        VmSnapshotListModel model = (VmSnapshotListModel) target;
-                        if (returnValue != null)
-                        {
-                            String[] array = ((String) returnValue).split("[;]", -1); //$NON-NLS-1$
-                            model.setCustomPropertiesKeysList(new ArrayList<String>());
-                            for (String s : array)
+        if (getCustomPropertiesKeysList() == null) {
+            AsyncDataProvider.GetCustomPropertiesList(new AsyncQuery(this,
+                    new INewAsyncCallback() {
+                        @Override
+                        public void OnSuccess(Object target, Object returnValue) {
+                            VmSnapshotListModel model = (VmSnapshotListModel) target;
+                            if (returnValue != null)
                             {
-                                model.getCustomPropertiesKeysList().add(s);
+                                model.setCustomPropertiesKeysList(new java.util.HashMap<Version, java.util.ArrayList<String>>());
+                                java.util.HashMap<Version, String> dictionary =
+                                        (java.util.HashMap<Version, String>) returnValue;
+                                for (java.util.Map.Entry<Version, String> keyValuePair : dictionary.entrySet())
+                                {
+                                    model.getCustomPropertiesKeysList().put(keyValuePair.getKey(),
+                                            new java.util.ArrayList<String>());
+                                    for (String s : keyValuePair.getValue().split("[;]", -1))
+                                    {
+                                        model.getCustomPropertiesKeysList().get(keyValuePair.getKey()).add(s);
+                                    }
+                                }
                             }
                         }
-                    }
-                }));
+                    }));
+        }
     }
 
     @Override

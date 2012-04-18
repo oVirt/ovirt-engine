@@ -56,6 +56,7 @@ import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.ObservableCollection;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -426,15 +427,13 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 
     private final java.util.HashMap<Guid, java.util.ArrayList<ConsoleModel>> cachedConsoleModels;
 
-    private java.util.ArrayList<String> privateCustomPropertiesKeysList;
+    private java.util.HashMap<Version, java.util.ArrayList<String>> privateCustomPropertiesKeysList;
 
-    private java.util.ArrayList<String> getCustomPropertiesKeysList()
-    {
+    private java.util.HashMap<Version, java.util.ArrayList<String>> getCustomPropertiesKeysList() {
         return privateCustomPropertiesKeysList;
     }
 
-    private void setCustomPropertiesKeysList(java.util.ArrayList<String> value)
-    {
+    private void setCustomPropertiesKeysList(java.util.HashMap<Version, java.util.ArrayList<String>> value) {
         privateCustomPropertiesKeysList = value;
     }
 
@@ -476,25 +475,30 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 
         getSearchNextPageCommand().setIsAvailable(true);
         getSearchPreviousPageCommand().setIsAvailable(true);
+        if (getCustomPropertiesKeysList() == null) {
+            AsyncDataProvider.GetCustomPropertiesList(new AsyncQuery(this,
+                    new INewAsyncCallback() {
+                        @Override
+                        public void OnSuccess(Object target, Object returnValue) {
 
-        AsyncDataProvider.GetCustomPropertiesList(new AsyncQuery(this,
-                new INewAsyncCallback() {
-                    @Override
-                    public void OnSuccess(Object target, Object returnValue) {
-
-                        VmListModel model = (VmListModel) target;
-                        if (returnValue != null)
-                        {
-                            String[] array = ((String) returnValue).split("[;]", -1); //$NON-NLS-1$
-                            model.setCustomPropertiesKeysList(new java.util.ArrayList<String>());
-                            for (String s : array)
+                            VmListModel model = (VmListModel) target;
+                            if (returnValue != null)
                             {
-                                model.getCustomPropertiesKeysList().add(s);
+                                model.setCustomPropertiesKeysList(new java.util.HashMap<Version, java.util.ArrayList<String>>());
+                                java.util.HashMap<Version, String> dictionary = (HashMap<Version, String>) returnValue;
+                                for (java.util.Map.Entry<Version, String> keyValuePair : dictionary.entrySet())
+                                {
+                                    model.getCustomPropertiesKeysList().put(keyValuePair.getKey(),
+                                            new java.util.ArrayList<String>());
+                                    for (String s : keyValuePair.getValue().split("[;]", -1))
+                                    {
+                                        model.getCustomPropertiesKeysList().get(keyValuePair.getKey()).add(s);
+                                    }
+                                }
                             }
                         }
-
-                    }
-                }));
+                    }));
+        }
 
         // Call 'IsCommandCompatible' for precaching
         AsyncDataProvider.IsCommandCompatible(new AsyncQuery(this,
@@ -1404,7 +1408,8 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 
         // Custom Properties
         model.getCustomProperties().setEntity(vm.getCustomProperties());
-        model.setCustomPropertiesKeysList(getCustomPropertiesKeysList());
+        model.setCustomPropertiesKeysList(this.getCustomPropertiesKeysList()
+                .get(vm.getvds_group_compatibility_version()));
 
         model.setIsLinux_Unassign_UnknownOS(DataProvider.IsLinuxOsType(vm.getvm_os())
                 || vm.getvm_os() == VmOsType.Unassigned || vm.getvm_os() == VmOsType.Other);
@@ -2472,9 +2477,9 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
                                     unitVmModel.getDisksAllocationModel().getActiveStorageDomains();
 
                             HashMap<Guid, DiskImage> dict = unitVmModel.getDisksAllocationModel()
-                            .getImageToDestinationDomainMap((Boolean) unitVmModel.getDisksAllocationModel()
-                                    .getIsSingleStorageDomain()
-                                    .getEntity());
+                                    .getImageToDestinationDomainMap((Boolean) unitVmModel.getDisksAllocationModel()
+                                            .getIsSingleStorageDomain()
+                                            .getEntity());
                             for (DiskImage templateDisk : templateDisks)
                             {
                                 DiskModel disk = null;

@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.userportal;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.ovirt.engine.core.common.VdcActionUtils;
@@ -41,6 +42,7 @@ import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.ObservableCollection;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -315,8 +317,17 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         privatestorageDomain = value;
     }
 
-    private java.util.ArrayList<String> CustomPropertiesKeysList;
-    private java.util.HashMap<Guid, java.util.ArrayList<ConsoleModel>> cachedConsoleModels;
+    private HashMap<Version, ArrayList<String>> CustomPropertiesKeysList;
+
+    public HashMap<Version, ArrayList<String>> getCustomPropertiesKeysList() {
+        return CustomPropertiesKeysList;
+    }
+
+    public void setCustomPropertiesKeysList(HashMap<Version, ArrayList<String>> customPropertiesKeysList) {
+        CustomPropertiesKeysList = customPropertiesKeysList;
+    }
+
+    private final java.util.HashMap<Guid, java.util.ArrayList<ConsoleModel>> cachedConsoleModels;
 
     static
     {
@@ -349,16 +360,24 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                 UserPortalListModel userPortalListModel = (UserPortalListModel) model;
                 if (result != null)
                 {
-                    userPortalListModel.CustomPropertiesKeysList = new java.util.ArrayList<String>();
-                    for (String s : ((String) result).split("[;]", -1)) //$NON-NLS-1$
+                    userPortalListModel.setCustomPropertiesKeysList(new java.util.HashMap<Version, java.util.ArrayList<String>>());
+                    java.util.HashMap<Version, String> dictionary = (java.util.HashMap<Version, String>) result;
+                    for (java.util.Map.Entry<Version, String> keyValuePair : dictionary.entrySet())
                     {
-                        userPortalListModel.CustomPropertiesKeysList.add(s);
+                        userPortalListModel.CustomPropertiesKeysList.put(keyValuePair.getKey(),
+                                new java.util.ArrayList<String>());
+                        for (String s : keyValuePair.getValue().split("[;]", -1))
+                        {
+                            userPortalListModel.CustomPropertiesKeysList.get(keyValuePair.getKey()).add(s);
+                        }
                     }
                 }
 
             }
         };
-        AsyncDataProvider.GetCustomPropertiesList(_asyncQuery);
+        if (getCustomPropertiesKeysList() == null) {
+            AsyncDataProvider.GetCustomPropertiesList(_asyncQuery);
+        }
     }
 
     @Override
@@ -864,7 +883,8 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         model.getDisplayProtocol().setSelectedItem(vm.getdefault_display_type() == DisplayType.vnc ? vncProtocol
                 : qxlProtocol);
 
-        model.setCustomPropertiesKeysList(this.CustomPropertiesKeysList);
+        model.setCustomPropertiesKeysList(getCustomPropertiesKeysList()
+                .get(vm.getvds_group_compatibility_version()));
 
         // Boot sequence.
         AsyncQuery _asyncQuery2 = new AsyncQuery();

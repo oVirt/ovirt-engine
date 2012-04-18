@@ -1,5 +1,8 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -17,6 +20,7 @@ import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -656,14 +660,14 @@ public class UnitVmModel extends Model
         privateCustomProperties = value;
     }
 
-    private java.util.ArrayList<String> privateCustomPropertiesKeysList;
+    private HashMap<Version, ArrayList<String>> privateCustomPropertiesKeysList;
 
-    public java.util.ArrayList<String> getCustomPropertiesKeysList()
+    public HashMap<Version, ArrayList<String>> getCustomPropertiesKeysList()
     {
         return privateCustomPropertiesKeysList;
     }
 
-    public void setCustomPropertiesKeysList(java.util.ArrayList<String> value)
+    public void setCustomPropertiesKeysList(HashMap<Version, ArrayList<String>> value)
     {
         privateCustomPropertiesKeysList = value;
     }
@@ -1773,7 +1777,10 @@ public class UnitVmModel extends Model
             getKernel_path().getInvalidityReasons().add(msg);
         }
 
-        getCustomProperties().ValidateEntity(new IValidation[] { new CustomPropertyValidation(getCustomPropertiesKeysList()) });
+        if (getCluster().getSelectedItem() != null)
+        {
+            getCustomProperties().ValidateEntity(new IValidation[] { new CustomPropertyValidation(getCustomPropertiesKeysList().get(((VDSGroup) getCluster().getSelectedItem()).getcompatibility_version())) });
+        }
 
         setIsBootSequenceTabValid(true);
         setIsAllocationTabValid(getIsBootSequenceTabValid());
