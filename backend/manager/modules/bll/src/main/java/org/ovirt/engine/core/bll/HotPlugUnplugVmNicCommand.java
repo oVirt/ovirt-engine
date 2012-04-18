@@ -33,10 +33,12 @@ public class HotPlugUnplugVmNicCommand<T extends HotPlugUnplugVmNicParameters> e
             returnValue = isHotPlugSupported() && isOSSupportingHotPlug();
         }
 
-        vmDevice = getVmDeviceDao().get(new VmDeviceId(getParameters().getNicId(), getParameters().getVmId()));
-        if (vmDevice == null) {
-            returnValue = false;
-            addCanDoActionMessage(VdcBllMessages.VM_INTERFACE_NOT_EXIST);
+        if (returnValue) {
+            vmDevice = getVmDeviceDao().get(new VmDeviceId(getParameters().getNicId(), getParameters().getVmId()));
+            if (vmDevice == null) {
+                returnValue = false;
+                addCanDoActionMessage(VdcBllMessages.VM_INTERFACE_NOT_EXIST);
+            }
         }
 
         return returnValue;
