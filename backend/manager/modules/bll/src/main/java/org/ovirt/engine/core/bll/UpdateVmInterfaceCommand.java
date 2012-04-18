@@ -2,6 +2,9 @@ package org.ovirt.engine.core.bll;
 
 import java.util.List;
 
+import org.ovirt.engine.core.common.businessentities.ActionGroup;
+import org.ovirt.engine.core.common.PermissionSubject;
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AddVmInterfaceParameters;
 import org.ovirt.engine.core.common.businessentities.Disk;
@@ -167,5 +170,16 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
     public AuditLogType getAuditLogTypeValue() {
         return getSucceeded() ? AuditLogType.NETWORK_UPDATE_VM_INTERFACE
                 : AuditLogType.NETWORK_UPDATE_VM_INTERFACE_FAILED;
+    }
+
+    @Override
+    public List<PermissionSubject> getPermissionCheckSubjects() {
+        List<PermissionSubject> permissionList = super.getPermissionCheckSubjects();
+        if (getParameters().getInterface() != null && getVm() != null && getParameters().getInterface().isPortMirroring()) {
+            permissionList.add(new PermissionSubject(getVm().getstorage_pool_id(),
+                    VdcObjectType.StoragePool,
+                    ActionGroup.PORT_MIRRORING));
+        }
+        return permissionList;
     }
 }

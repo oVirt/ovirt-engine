@@ -469,6 +469,11 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         struct.add(VdsProperties.SpecParams, vmDevice.getSpecParams());
         struct.add(VdsProperties.DeviceId, String.valueOf(vmDevice.getId().getDeviceId()));
         struct.add(VdsProperties.nic_type, nicModel);
+        if (vmInterface.isPortMirroring()) {
+            List<String> networks = new ArrayList<String>();
+            networks.add(vmInterface.getNetworkName());
+            struct.add(VdsProperties.portMirroring, networks);
+        }
     }
 
     private void addFloppyDetails(VmDevice vmDevice, XmlRpcStruct struct) {

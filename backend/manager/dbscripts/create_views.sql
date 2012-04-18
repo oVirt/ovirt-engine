@@ -764,7 +764,7 @@ CREATE OR REPLACE VIEW vm_interface_view AS
   SELECT vm_interface_statistics.rx_rate, vm_interface_statistics.tx_rate, vm_interface_statistics.rx_drop,
       vm_interface_statistics.tx_drop, vm_interface_statistics.iface_status, vm_interface.type, vm_interface.speed,
       vm_interface.mac_addr, vm_interface.network_name, vm_interface.name, vm_static.vm_guid, vm_interface.vmt_guid,
-      vm_static.vm_name, vm_interface.id, 0 AS boot_protocol, 0 AS is_vds, vm_device.is_plugged
+      vm_static.vm_name, vm_interface.id, 0 AS boot_protocol, 0 AS is_vds, vm_device.is_plugged, vm_interface.port_mirroring
   FROM vm_interface_statistics
   JOIN vm_interface ON vm_interface_statistics.id = vm_interface.id
   JOIN vm_static ON vm_interface.vm_guid = vm_static.vm_guid
@@ -774,7 +774,7 @@ CREATE OR REPLACE VIEW vm_interface_view AS
       vm_interface_statistics.tx_drop, vm_interface_statistics.iface_status, vm_interface.type, vm_interface.speed,
       vm_interface.mac_addr, vm_interface.network_name, vm_interface.name, NULL::uuid as vm_guid,
       vm_interface.vmt_guid, vm_templates.vm_name AS vm_name, vm_interface.id, 0 AS boot_protocol, 0 AS is_vds,
-      vm_device.is_plugged as is_plugged
+      vm_device.is_plugged as is_plugged, vm_interface.port_mirroring
   FROM vm_interface_statistics
   RIGHT JOIN vm_interface ON vm_interface_statistics.id = vm_interface.id
   JOIN vm_static AS vm_templates ON vm_interface.vmt_guid = vm_templates.vm_guid

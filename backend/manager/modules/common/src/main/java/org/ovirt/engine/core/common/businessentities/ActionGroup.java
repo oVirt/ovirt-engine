@@ -88,7 +88,10 @@ public enum ActionGroup {
     ATTACH_DISK(1101, RoleType.USER, VdcObjectType.Disk, true, ApplicationMode.VirtOnly),
     EDIT_DISK_PROPERTIES(1102, RoleType.USER, VdcObjectType.Disk, true, ApplicationMode.VirtOnly),
     CONFIGURE_DISK_STORAGE(1103, RoleType.USER, VdcObjectType.Disk, true, ApplicationMode.VirtOnly),
-    DELETE_DISK(1104, RoleType.USER, VdcObjectType.Disk, true, ApplicationMode.VirtOnly);
+    DELETE_DISK(1104, RoleType.USER, VdcObjectType.Disk, true, ApplicationMode.VirtOnly),
+
+    // Network
+    PORT_MIRRORING(1200, RoleType.ADMIN, VdcObjectType.VmInterface, false);
 
     private int id;
     private RoleType roleType;

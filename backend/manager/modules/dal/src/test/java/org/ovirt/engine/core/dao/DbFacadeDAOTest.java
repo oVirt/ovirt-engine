@@ -19,8 +19,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
-import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.BaseDisk;
+import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.RoleType;
@@ -29,6 +29,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
+import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.bookmarks;
@@ -63,6 +64,7 @@ public class DbFacadeDAOTest extends BaseDAOTestCase {
     private static final Guid ROLE_ID = new Guid("119caae6-5c1b-4a82-9858-dd9e5d2e1400");
     private static final Guid QUOTA_ID = new Guid("88296e00-0cad-4e5a-9291-008a7b7f4399");
     private static final Guid DISK_ID = new Guid("1b26a52b-b60f-44cb-9f46-3ef333b04a34");
+    private static final Guid VM_INTERFACE_ID = new Guid("e2817b12-f873-4046-b0da-0098293c14fd");
 
     private static final Guid ADMIN_ROLE_TYPE_FROM_FIXTURE_ID = new Guid("F5972BFA-7102-4D33-AD22-9DD421BFBA78");
     private static final Guid SYSTEM_OBJECT_ID = new Guid("AAA00000-0000-0000-0000-123456789AAA");
@@ -491,6 +493,14 @@ public class DbFacadeDAOTest extends BaseDAOTestCase {
         assertNotNull(disk);
         String name = disk.getDiskAlias();
         assertTrue(name.equals(dbFacade.getEntityNameByIdAndType(DISK_ID, VdcObjectType.Disk)));
+    }
+
+    @Test
+    public void testGetEntityNameByIdAndTypeForVmInterface() {
+        VmNetworkInterface vmInterface = dbFacade.getVmNetworkInterfaceDAO().get(VM_INTERFACE_ID);
+        assertNotNull(vmInterface);
+        String name = vmInterface.getName();
+        assertTrue(name.equals(dbFacade.getEntityNameByIdAndType(VM_INTERFACE_ID, VdcObjectType.VmInterface)));
     }
 
     @Test

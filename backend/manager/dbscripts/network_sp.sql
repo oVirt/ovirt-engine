@@ -324,12 +324,13 @@ Create or replace FUNCTION Insertvm_interface(v_id UUID,
 	v_speed INTEGER ,
 	v_vm_guid UUID ,
 	v_vmt_guid UUID , 
-    v_type INTEGER)
+    v_type INTEGER,
+    v_port_mirroring BOOLEAN)
 RETURNS VOID
    AS $procedure$
 BEGIN
-INSERT INTO vm_interface(id, mac_addr, name, network_name, speed, VM_GUID, VMT_GUID, type)
-	VALUES(v_id, v_mac_addr, v_name, v_network_name, v_speed, v_vm_guid, v_vmt_guid, v_type);
+INSERT INTO vm_interface(id, mac_addr, name, network_name, speed, VM_GUID, VMT_GUID, type, port_mirroring)
+	VALUES(v_id, v_mac_addr, v_name, v_network_name, v_speed, v_vm_guid, v_vmt_guid, v_type, v_port_mirroring);
 END; $procedure$
 LANGUAGE plpgsql;    
 
@@ -344,7 +345,8 @@ Create or replace FUNCTION Updatevm_interface(v_id UUID,
 	v_speed INTEGER ,
 	v_vm_guid UUID ,
 	v_vmt_guid UUID ,
-    v_type INTEGER)
+    v_type INTEGER,
+    v_port_mirroring BOOLEAN)
 RETURNS VOID
 
 	--The [vm_interface] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -353,7 +355,7 @@ BEGIN
       UPDATE vm_interface
       SET mac_addr = v_mac_addr,name = v_name,network_name = v_network_name, 
       speed = v_speed,VM_GUID = v_vm_guid,VMT_GUID = v_vmt_guid,type = v_type, 
-      _update_date = LOCALTIMESTAMP
+      _update_date = LOCALTIMESTAMP, port_mirroring = v_port_mirroring
       WHERE id = v_id;
 END; $procedure$
 LANGUAGE plpgsql;

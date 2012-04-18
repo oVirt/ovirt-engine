@@ -30,11 +30,12 @@ public class VmNetworkInterface extends NetworkInterface<VmNetworkStatistics> {
     private NGuid vmTemplateId;
     /* status of the nic. Active nic is one that is plugged to its VM */
     private boolean active = true;
+    private boolean portMirroring;
 
     private static final ArrayList<String> _changeablePropertiesList =
             new ArrayList<String>(Arrays.asList(new String[] {
                     "Id", "Name", "MacAddress", "NetworkName", "Type", "Speed", "Statistics", "VmId", "VmName",
-                    "VmTemplateId"
+                    "VmTemplateId", "PortMirroring"
             }));
 
     public VmNetworkInterface() {
@@ -186,5 +187,13 @@ public class VmNetworkInterface extends NetworkInterface<VmNetworkStatistics> {
             return false;
         }
         return true;
+    }
+
+    public boolean isPortMirroring() {
+        return portMirroring;
+    }
+
+    public void setPortMirroring(boolean portMirroring) {
+        this.portMirroring = portMirroring;
     }
 }

@@ -134,6 +134,7 @@ public final class VdsProperties {
     // vm configuration (i.e. VmStatic)
     public static final String mem_size_mb = "memSize";
     public static final String nic_type = "nicModel";
+    public static final String portMirroring = "portMirroring";
     public static final String bridge = "bridge";
     public static final String num_of_monitors = "spiceMonitors";
     public static final String num_of_cpus = "smp";
