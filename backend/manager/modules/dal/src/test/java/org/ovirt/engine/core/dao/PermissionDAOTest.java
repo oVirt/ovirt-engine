@@ -436,6 +436,23 @@ public class PermissionDAOTest extends BaseDAOTestCase {
         baseTestGetTreeForEntity(ROLE_ENTITY_ID, VdcObjectType.Role);
     }
 
+    @Test
+    public void testGetTreeForEntityWithRoleTypeFilteredWithPermissions() {
+        baseTestGetTreeForEntityFiltered(STORAGE_ENTITY_ID, VdcObjectType.Storage, PRIVILEGED_USER_ID, true);
+    }
+
+    @Test
+    public void testGetTreeForEntityWithRoleTypeFilteredWithNoPermissionsCheckDisabled() {
+        baseTestGetTreeForEntityFiltered(STORAGE_ENTITY_ID, VdcObjectType.Storage, UNPRIVILEGED_USER_ID, false);
+    }
+
+    @Test
+    public void testGetTreeForEntityWithRoleTypeFilteredWithNoPermissions() {
+        List<permissions> result =
+                dao.getTreeForEntity(STORAGE_ENTITY_ID, VdcObjectType.Storage, UNPRIVILEGED_USER_ID, true);
+        assertInvalidGetPermissionList(result);
+    }
+
     /**
      * Tests {@link PermissionDAO#getTreeForEntity(Guid, VdcObjectType)}
      * @param entityID The object to retrieve tree for
@@ -445,6 +462,34 @@ public class PermissionDAOTest extends BaseDAOTestCase {
     private void baseTestGetTreeForEntity(Guid entityID, VdcObjectType objectType, Guid... alternativeObjectIds) {
         List<permissions> result = dao.getTreeForEntity(entityID, objectType);
 
+        assertGetTreeForEntityResult(entityID, result, alternativeObjectIds);
+    }
+
+    /**
+     * Tests {@link PermissionDAO#getTreeForEntity(Guid, VdcObjectType, Guid, boolean))}
+     * @param entityID The object to retrieve tree for
+     * @param objectType The type of {@link #entityID}
+     * @param userID The user to use
+     * @param isFiltered are the results filtered or not
+     * @param alternativeObjectIds Additional object IDs that are allowed in the resulting permissions
+     */
+    private void baseTestGetTreeForEntityFiltered(Guid entityID,
+            VdcObjectType objectType,
+            Guid userID,
+            boolean isFiltered,
+            Guid... alternativeObjectIds) {
+        List<permissions> result = dao.getTreeForEntity(entityID, objectType, userID, isFiltered);
+
+        assertGetTreeForEntityResult(entityID, result, alternativeObjectIds);
+    }
+
+    /**
+     * asserts the result of a call to {@link PermissionDAO#getTreeForEntity(Guid, VdcObjectType)}
+     * @param entityID The object to retrieve tree for
+     * @param objectType The type of {@link #entityID}
+     * @param alternativeObjectIds Additional object IDs that are allowed in the resulting permissions
+     */
+    protected void assertGetTreeForEntityResult(Guid entityID, List<permissions> result, Guid... alternativeObjectIds) {
         Set<Guid> expectedObjectIds = new HashSet<Guid>();
         expectedObjectIds.add(entityID);
         expectedObjectIds.addAll(Arrays.asList(alternativeObjectIds));

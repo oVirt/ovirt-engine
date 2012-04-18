@@ -529,15 +529,21 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetPermissionsTreeByEntityId(v_id UUID,
-v_object_type_id INTEGER) RETURNS SETOF permissions_view
+Create or replace FUNCTION GetPermissionsTreeByEntityId
+(v_id UUID, v_object_type_id INTEGER, v_user_id UUID, v_is_filtered BOOLEAN)
+RETURNS SETOF permissions_view
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
-   FROM permissions_view
-   WHERE object_id in(select id from  fn_get_entity_parents(v_id,v_object_type_id));
+   FROM   permissions_view p
+   WHERE  object_id in(select id from  fn_get_entity_parents(v_id,v_object_type_id))
+   AND    (NOT v_is_filtered OR EXISTS (SELECT 1
+                                        FROM   user_flat_groups u
+                                        WHERE  p.ad_element_id = u.granted_id
+                                        AND    u.user_id       = v_user_id));
+
 END; $procedure$
 LANGUAGE plpgsql;
 

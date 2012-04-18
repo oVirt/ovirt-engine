@@ -136,8 +136,17 @@ public class PermissionDAODbFacadeImpl extends BaseDAODbFacade implements Permis
 
     @Override
     public List<permissions> getTreeForEntity(Guid id, VdcObjectType type) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("id", id).addValue("object_type_id", type.getValue());
+        return getTreeForEntity(id, type, null, false);
+    }
+
+    @Override
+    public List<permissions> getTreeForEntity(Guid id, VdcObjectType type, Guid userID, boolean isFiltered) {
+        MapSqlParameterSource parameterSource =
+                getCustomMapSqlParameterSource()
+                        .addValue("id", id)
+                        .addValue("object_type_id", type.getValue())
+                        .addValue("user_id", userID)
+                        .addValue("is_filtered", isFiltered);
         return getCallsHandler().executeReadList("GetPermissionsTreeByEntityId",
                 PermissionRowMapper.instance,
                 parameterSource);

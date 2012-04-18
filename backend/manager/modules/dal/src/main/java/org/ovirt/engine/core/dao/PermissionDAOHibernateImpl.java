@@ -150,6 +150,11 @@ public class PermissionDAOHibernateImpl extends BaseDAOHibernateImpl<permissions
         return fillInPermissionDetails(findByCriteria(Restrictions.in("objectId", ids)));
     }
 
+    @Override
+    public List<permissions> getTreeForEntity(Guid id, VdcObjectType type, Guid userID, boolean isFiltered) {
+        throw new NotImplementedException();
+    }
+
     private void getVmParentIds(Guid id, List<NGuid> ids) {
         Query query = getSession().createQuery("from VmStatic where id = :id");
         query.setParameter("id", id);
