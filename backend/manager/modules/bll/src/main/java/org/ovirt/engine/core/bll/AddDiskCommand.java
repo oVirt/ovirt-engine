@@ -240,7 +240,11 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         if (getVm() != null) {
             parameters.setVmSnapshotId(getSnapshotDao().getId(getVmId(), SnapshotType.ACTIVE));
             VmDeviceUtils.addManagedDevice(new VmDeviceId(getParameters().getDiskInfo().getId(), getVmId()),
-                    VmDeviceType.DISK, VmDeviceType.DISK, "", true, false);
+                    VmDeviceType.DISK,
+                    VmDeviceType.DISK,
+                    null,
+                    true,
+                    false);
         }
         VdcReturnValueBase tmpRetValue =
                 Backend.getInstance().runInternalAction(VdcActionType.AddImageFromScratch,

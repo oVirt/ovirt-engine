@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.util.HashMap;
 import java.util.List;
 
 import org.junit.Test;
@@ -39,7 +40,7 @@ public class VmDeviceDAOTest extends BaseGenericDaoTestCase<VmDeviceId, VmDevice
                 "floppy",
                 "type:'drive', controller:'0', bus:'0', unit:'1'",
                 2,
-                "",
+                new HashMap<String, Object>(),
                 true, false, false);
     }
 

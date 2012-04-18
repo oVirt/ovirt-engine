@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 import org.ovirt.engine.core.compat.Guid;
 
@@ -46,7 +47,7 @@ public class VmDevice extends IVdcQueryable implements BusinessEntity<VmDeviceId
     /**
      * The device special parameters.
      */
-    private String specParams = "";
+    private Map<String, Object> specParams = null;
 
     /**
      * The device managed/unmanaged flag
@@ -69,7 +70,7 @@ public class VmDevice extends IVdcQueryable implements BusinessEntity<VmDeviceId
 
     public VmDevice(VmDeviceId id, String type, String device, String address,
             int bootOrder,
-            String specParams,
+            Map<String, Object> specParams,
             boolean isManaged,
             Boolean isPlugged,
             boolean isReadOnly) {
@@ -153,11 +154,11 @@ public class VmDevice extends IVdcQueryable implements BusinessEntity<VmDeviceId
         this.bootOrder = bootOrder;
     }
 
-    public String getSpecParams() {
+    public Map<String, Object> getSpecParams() {
         return specParams;
     }
 
-    public void setSpecParams(String specParams) {
+    public void setSpecParams(Map<String, Object> specParams) {
         this.specParams = specParams;
     }
 
@@ -233,7 +234,11 @@ public class VmDevice extends IVdcQueryable implements BusinessEntity<VmDeviceId
         if (bootOrder != other.bootOrder) {
             return false;
         }
-        if (!specParams.equals(other.specParams)) {
+        if (specParams == null) {
+            if (other.specParams != null) {
+                return false;
+            }
+        } else if (!specParams.equals(other.specParams)) {
             return false;
         }
         if (isManaged != other.isManaged) {

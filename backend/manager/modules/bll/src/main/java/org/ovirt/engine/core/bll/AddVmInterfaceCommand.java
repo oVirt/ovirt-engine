@@ -80,7 +80,7 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends V
                         getParameters().getVmId()),
                         VmDeviceType.INTERFACE,
                         VmDeviceType.BRIDGE,
-                        "",
+                        null,
                         getParameters().getInterface().isActive(),
                         false);
 

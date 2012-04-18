@@ -57,7 +57,7 @@ public class AttachDiskToVmCommand<T extends UpdateVmDiskParameters> extends Abs
                         VmDeviceType.DISK.getName(),
                         "",
                         0,
-                        "",
+                        null,
                         true,
                         Boolean.TRUE.equals(getParameters().getDiskInfo().getPlugged()),
                         false);

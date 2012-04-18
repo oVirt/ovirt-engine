@@ -105,7 +105,7 @@ public class GetAllDisksByVmIdQueryTest extends AbstractUserQueryTest<GetAllDisk
                 VmDeviceType.DISK.getName(),
                 "",
                 1,
-                "",
+                null,
                 true,
                 true,
                 true);

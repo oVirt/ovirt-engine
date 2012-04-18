@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.utils;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -91,13 +92,13 @@ public class VmDeviceUtils {
         boolean addCD = (!hasAlreadyCD && shouldHaveCD);
         for (VmDevice device : devices) {
             id = Guid.NewGuid();
-            String specParams = "";
+            Map<String, Object> specParams = new HashMap<String, Object>();
             if (srcId.equals(Guid.Empty)) {
                 // update number of monitors
                 updateNumOfMonitorsInVmDevice(null, vmBase);
                 //add CD if not exists
                 if (addCD) {
-                    specParams = setCdPath(specParams, "", isoPath);
+                    setCdPath(specParams, "", isoPath);
                     addManagedDevice(new VmDeviceId(Guid.NewGuid(),dstId) , VmDeviceType.DISK, VmDeviceType.CDROM, specParams, true, true);
                 }
                 break; // skip other Blank template devices
@@ -112,22 +113,22 @@ public class VmDeviceUtils {
                     id = ifaces.get(ifaceCount++).getId();
                 }
             } else if (VmDeviceType.VIDEO.getName().equals(device.getType())) {
-                specParams = getMemExpr(vmBase.getnum_of_monitors());
+                specParams.putAll(getMemExpr(vmBase.getnum_of_monitors()));
             }
             else  if (VmDeviceType.DISK.getName().equals(device.getType())
                     && VmDeviceType.CDROM.getName().equals(device.getDevice())) {
                 // check here is source VM had CD (Vm from snapshot)
-                String srcCdPath=org.ovirt.engine.core.utils.StringUtils.string2Map(device.getSpecParams()).get(VdsProperties.Path);
+                String srcCdPath = (String) device.getSpecParams().get(VdsProperties.Path);
                 shouldHaveCD = (!srcCdPath.isEmpty() || shouldHaveCD);
                 if (!hasAlreadyCD && shouldHaveCD) {
-                    specParams = setCdPath(specParams, srcCdPath, isoPath);
+                    setCdPath(specParams, srcCdPath, isoPath);
                 }
                 else {// CD already exists
                     continue;
                 }
             }
             device.setId(new VmDeviceId(id, dstId));
-            device.setSpecParams(appendDeviceIdToSpecParams(id, specParams));
+            device.setSpecParams(specParams);
             dao.save(device);
         }
         // if VM does not has CD, add an empty CD
@@ -143,26 +144,24 @@ public class VmDeviceUtils {
                 if (list.size() == 0) {
                     VM vm = DbFacade.getInstance().getVmDAO().get(vmBase.getId());
                     String soundDevice = VmInfoBuilderBase.getSoundDevice(vm);
-                    addManagedDevice(new VmDeviceId(Guid.NewGuid(),vmBase.getId()), VmDeviceType.SOUND,VmDeviceType.getSoundDeviceType(soundDevice), "", true, true);
+                    addManagedDevice(new VmDeviceId(Guid.NewGuid(), vmBase.getId()),
+                            VmDeviceType.SOUND,
+                            VmDeviceType.getSoundDeviceType(soundDevice),
+                            new HashMap<String, Object>(),
+                            true,
+                            true);
                 }
             }
         }
     }
 
-    private static String setCdPath(String specParams, String srcCdPath, String isoPath) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(VdsProperties.Path);
-        sb.append("=");
+    private static void setCdPath(Map<String, Object> specParams, String srcCdPath, String isoPath) {
         // check if CD was set specifically for this VM
         if (!StringUtils.isEmpty(isoPath)){
-            sb.append(isoPath);
-            specParams = sb.toString();
+            specParams.put(VdsProperties.Path, isoPath);
+        } else if (!StringUtils.isEmpty(srcCdPath)) { // get the path from the source device spec params
+            specParams.put(VdsProperties.Path, srcCdPath);
         }
- else if (!StringUtils.isEmpty(srcCdPath)) { // get the path from the source device spec params
-            sb.append(srcCdPath);
-            specParams = sb.toString();
-        }
-        return specParams;
     }
 
     /**
@@ -176,7 +175,7 @@ public class VmDeviceUtils {
     public static VmDevice addManagedDevice(VmDeviceId id,
             VmDeviceType type,
             VmDeviceType device,
-            String specParams,
+            Map<String, Object> specParams,
             boolean is_plugged,
             boolean isReadOnly) {
         VmDevice managedDevice =
@@ -212,25 +211,6 @@ public class VmDeviceUtils {
         addOtherDevices(entity, vmDeviceToAdd);
         dao.saveAll(vmDeviceToAdd);
         dao.updateAll(vmDeviceToUpdate);
-    }
-
-    /**
-     * set device Id in special parameters
-     *
-     * @param deviceId
-     * @param specParams
-     * @return
-     */
-    public static String appendDeviceIdToSpecParams(Guid deviceId, String specParams) {
-        final String SEP = ",";
-        StringBuilder sb = new StringBuilder();
-        if (specParams.length() > 0) {
-            sb.append(specParams);
-            sb.append(SEP);
-        }
-        sb.append("deviceId=");
-        sb.append(deviceId);
-        return sb.toString();
     }
 
     public static void setVmDevices(VmBase vmBase) {
@@ -277,10 +257,7 @@ public class VmDeviceUtils {
         List<VmDevice> cdList = DbFacade.getInstance().getVmDeviceDAO().getVmDeviceByVmIdTypeAndDevice(oldVmBase.getId(), VmDeviceType.DISK.getName(), VmDeviceType.CDROM.getName());
         if (cdList.size() > 0){ // this is done only for safety, each VM must have at least an Empty CD
             VmDevice cd = cdList.get(0); // only one managed CD is currently supported.
-            Map<String, String> specParamsMap = org.ovirt.engine.core.utils.StringUtils.string2Map(cd.getSpecParams());
-            String path = newVmBase.getiso_path();
-            specParamsMap.put(VdsProperties.Path, path);
-            cd.setSpecParams(org.ovirt.engine.core.utils.StringUtils.map2String(specParamsMap));
+            cd.getSpecParams().put(VdsProperties.Path, newVmBase.getiso_path());
             dao.update(cd);
         }
     }
@@ -296,7 +273,10 @@ public class VmDeviceUtils {
             VmDevice cd = new VmDevice(new VmDeviceId(Guid.NewGuid(),
                     newVmBase.getId()), VmDeviceType.DISK.getName(),
                     VmDeviceType.CDROM.getName(), "", 0,
-                    newVmBase.getiso_path(), true, null, false);
+                            Collections.<String, Object> singletonMap(VdsProperties.Path, newVmBase.getiso_path()),
+                            true,
+                            null,
+                            false);
             dao.save(cd);
         }
     }
@@ -317,12 +297,10 @@ public class VmDeviceUtils {
             for (int i = prevNumOfMonitors; i < newStatic
                     .getnum_of_monitors(); i++) {
                 Guid newId = Guid.NewGuid();
-                StringBuilder sb =
-                        new StringBuilder(appendDeviceIdToSpecParams(newId, getMemExpr(newStatic.getnum_of_monitors())));
                 VmDeviceUtils.addManagedDevice(new VmDeviceId(newId, newStatic.getId()),
                         VmDeviceType.VIDEO,
                         VmDeviceType.QXL,
-                        sb.toString(),
+                        getMemExpr(newStatic.getnum_of_monitors()),
                         true,
                         false);
             }
@@ -365,12 +343,11 @@ public class VmDeviceUtils {
         final Guid id = entity.getId();
         for (BaseDisk disk : getDisks(entity.getImages())) {
             Guid deviceId = disk.getId();
-            String specParams = appendDeviceIdToSpecParams(deviceId, "");
             VmDevice vmDevice =
                     addManagedDevice(new VmDeviceId(deviceId, id),
                             VmDeviceType.DISK,
                             VmDeviceType.DISK,
-                            specParams,
+                            null,
                             true,
                             false);
             updateVmDevice(entity, vmDevice, deviceId, vmDeviceToUpdate);
@@ -411,12 +388,11 @@ public class VmDeviceUtils {
         final Guid id = entity.getId();
         for (VmNetworkInterface iface : entity.getInterfaces()) {
             Guid deviceId = iface.getId();
-            String specParams = appendDeviceIdToSpecParams(deviceId, "");
             VmDevice vmDevice =
                     addManagedDevice(new VmDeviceId(deviceId, id),
                             VmDeviceType.INTERFACE,
                             VmDeviceType.BRIDGE,
-                            specParams,
+                            null,
                             true,
                             false);
             updateVmDevice(entity, vmDevice, deviceId, vmDeviceToUpdate);
@@ -431,7 +407,6 @@ public class VmDeviceUtils {
      */
     private static <T extends VmBase> void addOtherDevices(T entity, List<VmDevice> vmDeviceToAdd) {
         boolean hasCD = false;
-        String memExpr = getMemExpr(entity.getnum_of_monitors());
         for (VmDevice vmDevice : entity.getManagedVmDeviceMap().values()) {
             if ((vmDevice.getDevice().equals(VmDeviceType.DISK.getName()) && vmDevice.getType().equals(VmDeviceType.DISK.getName())) ||
                     (vmDevice.getDevice().equals(VmDeviceType.BRIDGE.getName())
@@ -440,7 +415,7 @@ public class VmDeviceUtils {
             }
             vmDevice.setIsManaged(true);
             if (vmDevice.getType().equals(VmDeviceType.VIDEO.getName())) {
-                vmDevice.setSpecParams(memExpr);
+                vmDevice.setSpecParams(getMemExpr(entity.getnum_of_monitors()));
             }
             if (vmDevice.getDevice().equals(VmDeviceType.CDROM.getName())){
                 hasCD = true;
@@ -462,13 +437,11 @@ public class VmDeviceUtils {
      *            Number of monitors
      * @return
      */
-    private static String getMemExpr(int numOfMonitors) {
+    private static Map<String, Object> getMemExpr(int numOfMonitors) {
         String mem = (numOfMonitors > 2 ? VmDeviceCommonUtils.LOW_VIDEO_MEM : VmDeviceCommonUtils.HIGH_VIDEO_MEM);
-        StringBuilder sb = new StringBuilder();
-        sb.append(VRAM);
-        sb.append("=");
-        sb.append(mem);
-        return sb.toString();
+        Map<String, Object> specParams = new HashMap<String, Object>();
+        specParams.put(VRAM, mem);
+        return specParams;
     }
 
     /**
@@ -476,9 +449,11 @@ public class VmDeviceUtils {
      * @param dstId
      */
     private static void addEmptyCD(Guid dstId) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(VdsProperties.Path);
-        sb.append("=");
-        VmDeviceUtils.addManagedDevice(new VmDeviceId(Guid.NewGuid(),dstId), VmDeviceType.DISK, VmDeviceType.CDROM, sb.toString(), true, true);
+        VmDeviceUtils.addManagedDevice(new VmDeviceId(Guid.NewGuid(), dstId),
+                VmDeviceType.DISK,
+                VmDeviceType.CDROM,
+                Collections.<String, Object> singletonMap(VdsProperties.Path, ""),
+                true,
+                true);
     }
 }

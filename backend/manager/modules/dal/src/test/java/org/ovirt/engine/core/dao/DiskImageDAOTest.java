@@ -131,7 +131,7 @@ public class DiskImageDAOTest extends BaseGenericDaoTestCase<Guid, DiskImage, Di
                         "",
                         "",
                         0,
-                        "",
+                        null,
                         false,
                         false,
                         false);

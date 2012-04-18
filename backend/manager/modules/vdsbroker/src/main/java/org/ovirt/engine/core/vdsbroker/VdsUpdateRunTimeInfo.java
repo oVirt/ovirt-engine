@@ -1004,6 +1004,7 @@ public class VdsUpdateRunTimeInfo {
      * @param vmId
      * @param device
      */
+    @SuppressWarnings("unchecked")
     private Guid addNewVmDevice(Guid vmId, XmlRpcStruct device) {
         Guid newDeviceId = Guid.Empty;
         String typeName = (String) device.getItem(VdsProperties.Type);
@@ -1011,19 +1012,15 @@ public class VdsUpdateRunTimeInfo {
         // do not allow null or empty device or type values
         if (!StringUtils.isEmpty(typeName) && !StringUtils.isEmpty(deviceName)) {
             String address = ((Map<String, String>) device.getItem(VdsProperties.Address)).toString();
-            String specParams = "";
             Object o = device.getItem(VdsProperties.SpecParams);
             newDeviceId = Guid.NewGuid();
-            if (o != null) {
-                specParams = org.ovirt.engine.core.utils.StringUtils.map2String((Map<String, String>) o);
-            }
             VmDeviceId id = new VmDeviceId(newDeviceId, vmId);
             VmDevice newDevice = new VmDevice(id, typeName, deviceName, address,
-                    0,
-                    specParams,
-                    false,
-                    true,
-                    false);
+                        0,
+                        o != null ? (HashMap<String, Object>) o : new HashMap<String, Object>(),
+                        false,
+                        true,
+                        false);
             newVmDevices.add(newDevice);
             log.debugFormat("New device was marked for adding to VM {0} Devices : {1}", vmId, newDevice.toString());
         } else {

@@ -2,11 +2,14 @@ package org.ovirt.engine.core.dao;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.utils.SerializationFactory;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 
@@ -30,12 +33,16 @@ public class VmDeviceDAODbFacadeImpl extends
 
     @Override
     protected MapSqlParameterSource createFullParametersMapper(VmDevice entity) {
+
         return createIdParameterMapper(entity.getId())
                 .addValue("device", entity.getDevice())
                 .addValue("type", entity.getType())
                 .addValue("address", entity.getAddress())
                 .addValue("boot_order", entity.getBootOrder())
-                .addValue("spec_params", entity.getSpecParams())
+                .addValue("spec_params",
+                        entity.getSpecParams() == null ? null : SerializationFactory.getFactory()
+                                .createSerializer()
+                                .serialize(entity.getSpecParams()))
                 .addValue("is_managed", entity.getIsManaged())
                 .addValue("is_plugged", entity.getIsPlugged())
                 .addValue("is_readonly", entity.getIsReadOnly());
@@ -98,6 +105,7 @@ public class VmDeviceDAODbFacadeImpl extends
 
     private static class VmDeviceRowMapper implements ParameterizedRowMapper<VmDevice> {
 
+        @SuppressWarnings("unchecked")
         @Override
         public VmDevice mapRow(ResultSet rs, int rowNum)
                 throws SQLException {
@@ -110,7 +118,15 @@ public class VmDeviceDAODbFacadeImpl extends
             vmDevice.setType(rs.getString("type"));
             vmDevice.setAddress(rs.getString("address"));
             vmDevice.setBootOrder(rs.getInt("boot_order"));
-            vmDevice.setSpecParams(rs.getString("spec_params"));
+            String specParams = rs.getString("spec_params");
+            if (StringUtils.isEmpty(specParams)) {
+                vmDevice.setSpecParams(new HashMap<String, Object>());
+            } else {
+                vmDevice.setSpecParams(SerializationFactory.getFactory()
+                        .createDeserializer()
+                        .deserialize(specParams, HashMap.class));
+            }
+
             vmDevice.setIsManaged(rs.getBoolean("is_managed"));
             vmDevice.setIsPlugged(rs.getBoolean("is_plugged"));
             vmDevice.setIsReadOnly(rs.getBoolean("is_readonly"));

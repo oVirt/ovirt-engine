@@ -37,7 +37,7 @@ public class HotPlugNicVDSCommand<P extends HotPlugUnplgNicVDSParameters> extend
         map.add("macAddr", nic.getMacAddress());
         map.add("network", nic.getNetworkName());
         addAddress(map, vmDevice.getAddress());
-        map.add("specParams", StringUtils.string2Map(vmDevice.getSpecParams()));
+        map.add("specParams", vmDevice.getSpecParams());
         map.add("nicModel", VmInterfaceType.forValue(nic.getType()).name());
         if (vmDevice.getBootOrder() > 0) {
             map.add("bootOrder", String.valueOf(vmDevice.getBootOrder()));

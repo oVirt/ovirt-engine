@@ -168,7 +168,6 @@ public class VmDeviceCommonUtils {
      * @return
      */
     private static int setDiskBootOrder(VmBase vmBase, List<VmDevice> devices, int bootOrder, boolean isOldCluster) {
-        int i = 0;
         for (VmDevice device : devices) {
             if (device.getType()
                     .equals(VmDeviceType.DISK.getName())

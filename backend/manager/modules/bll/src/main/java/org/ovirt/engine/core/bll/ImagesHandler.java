@@ -302,7 +302,11 @@ public final class ImagesHandler {
     public static void addDiskToVm(BaseDisk disk, Guid vmId) {
         DbFacade.getInstance().getBaseDiskDao().save(disk);
         VmDeviceUtils.addManagedDevice(new VmDeviceId(disk.getId(), vmId),
-                VmDeviceType.DISK, VmDeviceType.DISK, "", true, false);
+                VmDeviceType.DISK,
+                VmDeviceType.DISK,
+                null,
+                true,
+                false);
     }
 
     /**

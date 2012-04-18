@@ -21,7 +21,16 @@ public class XmlRpcStruct {
         return innerMap.get(key);
     }
 
-    public void add(String key, Map<String, String> map) {
+    /**
+     * Adds a map to be passed to via the XmlRpc to the server.
+     * The supported map values are listed on {@link http://ws.apache.org/xmlrpc/types.html}
+     *
+     * @param key
+     *            the key which represents the map
+     * @param map
+     *            the map values to be sent
+     */
+    public void add(String key, Map<String, ?> map) {
         innerMap.put(key, map);
     }
 
@@ -35,7 +44,6 @@ public class XmlRpcStruct {
 
     public void add(String key, String value) {
         innerMap.put(key, value);
-
     }
 
     public boolean containsKey(String name) {
@@ -74,12 +82,10 @@ public class XmlRpcStruct {
 
     public void add(String sysprepInf, byte[] binarySysPrep) {
         innerMap.put(sysprepInf, binarySysPrep);
-
     }
 
     public void add(String key, int value) {
         innerMap.put(key, value);
-
     }
 
     public Set<Map.Entry<String, Object>> getEntries() {
@@ -89,4 +95,5 @@ public class XmlRpcStruct {
     public Map<String, Object> getInnerMap() {
         return innerMap;
     }
+
 }
