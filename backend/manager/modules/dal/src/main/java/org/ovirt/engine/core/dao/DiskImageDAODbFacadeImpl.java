@@ -277,6 +277,7 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
             entity.setQuotaName(rs.getString("quota_name"));
             entity.setDiskAlias(rs.getString("disk_alias"));
             entity.setDiskDescription(rs.getString("disk_description"));
+            entity.setShareable(rs.getBoolean("shareable"));
             String entityType = rs.getString("entity_type");
             handleEntityType(entityType, entity);
         }

@@ -30,7 +30,8 @@ public class BaseDiskDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<BaseDisk,
                 .addValue("disk_description", entity.getDiskDescription())
                 .addValue("disk_interface", EnumUtils.nameOrNull(entity.getDiskInterface()))
                 .addValue("wipe_after_delete", entity.isWipeAfterDelete())
-                .addValue("propagate_errors", EnumUtils.nameOrNull(entity.getPropagateErrors()));
+                .addValue("propagate_errors", EnumUtils.nameOrNull(entity.getPropagateErrors()))
+                .addValue("shareable", entity.isShareable());
     }
 
     @Override
@@ -48,6 +49,7 @@ public class BaseDiskDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<BaseDisk,
                 disk.setDiskInterface(DiskInterface.valueOf(rs.getString("disk_interface")));
                 disk.setWipeAfterDelete(rs.getBoolean("wipe_after_delete"));
                 disk.setPropagateErrors(PropagateErrors.valueOf(rs.getString("propagate_errors")));
+                disk.setShareable(rs.getBoolean("shareable"));
 
                 return disk;
             }

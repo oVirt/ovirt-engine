@@ -14,7 +14,8 @@ Create or replace FUNCTION InsertBaseDisk(
     v_wipe_after_delete BOOLEAN,
     v_propagate_errors VARCHAR(32),
     v_disk_alias VARCHAR(50),
-    v_disk_description VARCHAR(500))
+    v_disk_description VARCHAR(500),
+    v_shareable BOOLEAN)
 RETURNS VOID
 AS $procedure$
 BEGIN
@@ -25,7 +26,8 @@ BEGIN
         wipe_after_delete,
         propagate_errors,
         disk_alias,
-        disk_description)
+        disk_description,
+        shareable)
     VALUES(
         v_disk_id,
         v_internal_drive_mapping,
@@ -33,7 +35,8 @@ BEGIN
         v_wipe_after_delete,
         v_propagate_errors,
         v_disk_alias,
-        v_disk_description);
+        v_disk_description,
+        v_shareable);
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -48,7 +51,8 @@ Create or replace FUNCTION UpdateBaseDisk(
     v_wipe_after_delete BOOLEAN,
     v_propagate_errors VARCHAR(32),
     v_disk_alias VARCHAR(50),
-    v_disk_description VARCHAR(500))
+    v_disk_description VARCHAR(500),
+    v_shareable BOOLEAN)
 RETURNS VOID
 AS $procedure$
 BEGIN
@@ -58,7 +62,8 @@ BEGIN
            wipe_after_delete = v_wipe_after_delete,
            propagate_errors = v_propagate_errors,
            disk_alias = v_disk_alias,
-           disk_description = v_disk_description
+           disk_description = v_disk_description,
+           shareable = v_shareable
     WHERE  disk_id = v_disk_id;
 END; $procedure$
 LANGUAGE plpgsql;

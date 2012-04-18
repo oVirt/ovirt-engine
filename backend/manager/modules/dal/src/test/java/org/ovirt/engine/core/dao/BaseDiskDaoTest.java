@@ -33,7 +33,10 @@ public class BaseDiskDaoTest extends BaseGenericDaoTestCase<Guid, BaseDisk, Base
                 1,
                 DiskInterface.SCSI,
                 true,
-                PropagateErrors.Off);
+                PropagateErrors.Off,
+                "DiskName",
+                "",
+                false);
     }
 
     @Override

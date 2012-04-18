@@ -54,6 +54,11 @@ public class BaseDisk extends IVdcQueryable implements BusinessEntity<Guid> {
     private String diskDescription;
 
     /**
+     * A boolean indiaction whether the disk is shareable.
+     */
+    private boolean shareable;
+
+    /**
      * The disk interface (IDE/SCSI/etc).
      */
     private DiskInterface diskInterface;
@@ -76,13 +81,19 @@ public class BaseDisk extends IVdcQueryable implements BusinessEntity<Guid> {
             int internalDriveMapping,
             DiskInterface diskInterface,
             boolean wipeAfterDelete,
-            PropagateErrors propagateErrors) {
+            PropagateErrors propagateErrors,
+            String diskAlias,
+            String diskDescription,
+            boolean shareable) {
         super();
         this.id = id;
         this.internalDriveMapping = internalDriveMapping;
         this.diskInterface = diskInterface;
         this.wipeAfterDelete = wipeAfterDelete;
         this.propagateErrors = propagateErrors;
+        this.diskAlias = diskAlias;
+        this.diskDescription = diskDescription;
+        this.shareable = shareable;
     }
 
     @Override
@@ -154,16 +165,26 @@ public class BaseDisk extends IVdcQueryable implements BusinessEntity<Guid> {
         this.diskAlias = diskAlias;
     }
 
+    public boolean isShareable() {
+        return shareable;
+    }
+
+    public void setShareable(boolean shareable) {
+        this.shareable = shareable;
+    }
+
+
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
+        result = prime * result + ((diskAlias == null) ? 0 : diskAlias.hashCode());
         result = prime * result + ((diskDescription == null) ? 0 : diskDescription.hashCode());
         result = prime * result + ((diskInterface == null) ? 0 : diskInterface.hashCode());
-        result = prime * result + ((diskAlias == null) ? 0 : diskAlias.hashCode());
         result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + internalDriveMapping;
         result = prime * result + ((propagateErrors == null) ? 0 : propagateErrors.hashCode());
+        result = prime * result + (shareable ? 1231 : 1237);
         result = prime * result + (wipeAfterDelete ? 1231 : 1237);
         return result;
     }
@@ -177,17 +198,17 @@ public class BaseDisk extends IVdcQueryable implements BusinessEntity<Guid> {
         if (getClass() != obj.getClass())
             return false;
         BaseDisk other = (BaseDisk) obj;
+        if (diskAlias == null) {
+            if (other.diskAlias != null)
+                return false;
+        } else if (!diskAlias.equals(other.diskAlias))
+            return false;
         if (diskDescription == null) {
             if (other.diskDescription != null)
                 return false;
         } else if (!diskDescription.equals(other.diskDescription))
             return false;
         if (diskInterface != other.diskInterface)
-            return false;
-        if (diskAlias == null) {
-            if (other.diskAlias != null)
-                return false;
-        } else if (!diskAlias.equals(other.diskAlias))
             return false;
         if (id == null) {
             if (other.id != null)
@@ -197,6 +218,8 @@ public class BaseDisk extends IVdcQueryable implements BusinessEntity<Guid> {
         if (internalDriveMapping != other.internalDriveMapping)
             return false;
         if (propagateErrors != other.propagateErrors)
+            return false;
+        if (shareable != other.shareable)
             return false;
         if (wipeAfterDelete != other.wipeAfterDelete)
             return false;

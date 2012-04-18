@@ -1799,6 +1799,7 @@
         <column>propagate_errors</column>
         <column>disk_alias</column>
         <column>disk_description</column>
+        <column>shareable</column>
         <row>
             <value>1b26a52b-b60f-44cb-9f46-3ef333b04a34</value>
             <value>2</value>
@@ -1807,6 +1808,7 @@
             <value>Off</value>
             <value>New Disk Alias Name</value>
             <value>New Description</value>
+            <value>false</value>
         </row>
         <row>
             <value>1b26a52b-b60f-44cb-9f46-3ef333b04a35</value>

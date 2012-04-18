@@ -130,12 +130,12 @@ public class DiskImageBase extends IVdcQueryable implements Serializable {
         disk.setWipeAfterDelete(value);
     }
 
-    public String getDiskAlias() {
-        return disk.getDiskAlias();
+    public boolean getShareable() {
+        return disk.isShareable();
     }
 
-    public void setDiskAlias(String value) {
-        disk.setDiskAlias(value);
+    public void setShareable(boolean value) {
+        disk.setShareable(value);
     }
 
     public String getDiskDescription() {
@@ -144,6 +144,14 @@ public class DiskImageBase extends IVdcQueryable implements Serializable {
 
     public void setDiskDescription(String value) {
         disk.setDiskDescription(value);
+    }
+
+    public String getDiskAlias() {
+        return disk.getDiskAlias();
+    }
+
+    public void setDiskAlias(String value) {
+        disk.setDiskAlias(value);
     }
 
     public PropagateErrors getpropagate_errors() {

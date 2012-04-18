@@ -549,7 +549,10 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
                 otherDisk.getInternalDriveMapping(),
                 otherDisk.getDiskInterface(),
                 otherDisk.isWipeAfterDelete(),
-                otherDisk.getPropagateErrors()));
+                otherDisk.getPropagateErrors(),
+                otherDisk.getDiskAlias(),
+                otherDisk.getDiskDescription(),
+                otherDisk.isShareable()));
         di.storage_pool_idField = new NGuid(diskImage.storage_pool_idField.getUuid());
         di.actualSize = diskImage.actualSize;
         di.mReadRateKbPerSec = diskImage.mReadRateKbPerSec;

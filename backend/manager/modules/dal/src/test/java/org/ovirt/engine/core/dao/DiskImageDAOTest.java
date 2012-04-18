@@ -90,6 +90,7 @@ public class DiskImageDAOTest extends BaseGenericDaoTestCase<Guid, DiskImage, Di
         newImage.setdisk_interface(DiskInterface.IDE);
         newImage.setimage_group_id(Guid.NewGuid());
         newImage.setQuotaId(Guid.NewGuid());
+        newImage.setShareable(Boolean.TRUE.booleanValue());
         newImage.setstorage_ids(new ArrayList<Guid>());
         existingTemplate = dao.get(EXISTING_IMAGE_DISK_TEMPLATE );
     }

@@ -1,0 +1,1 @@
+select fn_db_add_column('base_disks', 'shareable', 'BOOLEAN default false');

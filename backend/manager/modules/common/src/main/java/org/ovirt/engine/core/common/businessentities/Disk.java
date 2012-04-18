@@ -28,8 +28,11 @@ public abstract class Disk extends BaseDisk {
             DiskInterface diskInterface,
             boolean wipeAfterDelete,
             PropagateErrors propagateErrors,
-            VmEntityType vmEntityType) {
-        super(id, internalDriveMapping, diskInterface, wipeAfterDelete, propagateErrors);
+            VmEntityType vmEntityType,
+            String diskAlias,
+            String diskDescription,
+            boolean shareable) {
+        super(id, internalDriveMapping, diskInterface, wipeAfterDelete, propagateErrors, diskAlias, diskDescription, shareable);
         this.vmEntityType = vmEntityType;
     }
 
