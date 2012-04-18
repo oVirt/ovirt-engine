@@ -106,6 +106,11 @@ public class PermissionDAOHibernateImpl extends BaseDAOHibernateImpl<permissions
     }
 
     @Override
+    public List<permissions> getAllForEntity(Guid id, Guid userID, boolean isFiltered) {
+        throw new NotImplementedException();
+    }
+
+    @Override
     public List<permissions> getTreeForEntity(Guid id, VdcObjectType type) {
         List<NGuid> ids = new ArrayList<NGuid>();
 

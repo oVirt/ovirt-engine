@@ -122,8 +122,13 @@ public class PermissionDAODbFacadeImpl extends BaseDAODbFacade implements Permis
 
     @Override
     public List<permissions> getAllForEntity(Guid id) {
+        return getAllForEntity(id, null, false);
+    }
+
+    @Override
+    public List<permissions> getAllForEntity(Guid id, Guid userID, boolean isFiltered) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("id", id);
+                .addValue("id", id).addValue("user_id", userID).addValue("is_filtered", isFiltered);
         return getCallsHandler().executeReadList("GetPermissionsByEntityId",
                 PermissionRowMapper.instance,
                 parameterSource);

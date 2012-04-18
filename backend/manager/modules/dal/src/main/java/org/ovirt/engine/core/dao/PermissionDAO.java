@@ -120,6 +120,20 @@ public interface PermissionDAO extends GenericDao<permissions, Guid> {
      */
     List<permissions> getAllForEntity(Guid id);
 
+    /**
+     * Retrieves all permissions for the specified entity,
+     * with optional filtering according to the permissions of the issuing user.
+     *
+     * @param id
+     *            the entity
+     * @param userID
+     *            the ID of the user requesting the information
+     * @param isFiltered
+     *            Whether the results should be filtered according to the user's permissions
+     * @return the list of permissions
+     */
+    List<permissions> getAllForEntity(Guid id, Guid userID, boolean isFiltered);
+
     List<permissions> getTreeForEntity(Guid id, VdcObjectType type);
 
     /**

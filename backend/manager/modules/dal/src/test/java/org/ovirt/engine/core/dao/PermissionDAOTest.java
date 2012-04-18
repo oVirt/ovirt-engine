@@ -130,7 +130,7 @@ public class PermissionDAOTest extends BaseDAOTestCase {
     public void testGetAllForAdElementWithInvalidId() {
         List<permissions> result = dao.getAllForAdElement(Guid.NewGuid());
 
-        assertInvalidGetByAdElement(result);
+        assertInvalidGetPermissionList(result);
     }
 
     /**
@@ -160,7 +160,7 @@ public class PermissionDAOTest extends BaseDAOTestCase {
     public void testGetAllForAdElementFilteredWithNoPermissions() {
         List<permissions> result = dao.getAllForAdElement(AD_ELEMENT_ID, UNPRIVILEGED_USER_ID, true);
 
-        assertInvalidGetByAdElement(result);
+        assertInvalidGetPermissionList(result);
     }
 
     /**
@@ -170,7 +170,7 @@ public class PermissionDAOTest extends BaseDAOTestCase {
     public void testGetAllForAdElementOnlyWithInvalidId() {
         List<permissions> result = dao.getAllDirectPermissionsForAdElement(Guid.NewGuid());
 
-        assertInvalidGetByAdElement(result);
+        assertInvalidGetPermissionList(result);
     }
 
     /**
@@ -190,7 +190,7 @@ public class PermissionDAOTest extends BaseDAOTestCase {
     public void testGetAllForEntityWithInvalidId() {
         List<permissions> result = dao.getAllForEntity(Guid.NewGuid());
 
-        assertInvalidGetByAdElement(result);
+        assertInvalidGetPermissionList(result);
     }
 
     /**
@@ -207,21 +207,49 @@ public class PermissionDAOTest extends BaseDAOTestCase {
     }
 
     /**
-     * Asserts that the result of get for AD element with no permissions is indeed empty
-     * @param result result The result to check
-     */
-    private static void assertInvalidGetByAdElement(List<permissions> result) {
-        assertNotNull(result);
-        assertTrue(result.isEmpty());
-    }
-
-    /**
      * Ensures that the right permissions are returned for the specified id.
      */
     @Test
     public void testGetAllForEntity() {
         List<permissions> result = dao.getAllForEntity(VM_ENTITY_ID);
+        assertGetAllForEntityResult(result);
+    }
 
+    /**
+     * Ensures that the right permissions are returned for the specified id., for a user with permissions.
+     */
+    @Test
+    public void testGetAllForEntityFilteredWithPermissions() {
+        List<permissions> result = dao.getAllForEntity(VM_ENTITY_ID, PRIVILEGED_USER_ID, true);
+
+        assertGetAllForEntityResult(result);
+    }
+
+    /**
+     * Ensures that the right permissions are returned for the specified id., for a user without permissions but with the filtering mechanism disabled.
+     */
+    @Test
+    public void testGetAllForEntityFilteredWithNoPermissionsFilteringDisabled() {
+        List<permissions> result = dao.getAllForEntity(VM_ENTITY_ID, UNPRIVILEGED_USER_ID, false);
+
+        assertGetAllForEntityResult(result);
+    }
+
+    /**
+     * Ensures that the right permissions are returned for the specified id., for a user without permissions.
+     */
+    @Test
+    public void testGetAllForEntityFilteredWithNoPermissions() {
+        List<permissions> result = dao.getAllForEntity(VM_ENTITY_ID, UNPRIVILEGED_USER_ID, true);
+
+        assertInvalidGetPermissionList(result);
+    }
+
+    /**
+     * Ensures a call to {@link PermissionDAO#getAllForEntity(Guid)} works properly
+     * @param result
+     */
+    private static void assertGetAllForEntityResult(List<permissions> result) {
         assertNotNull(result);
         assertFalse(result.isEmpty());
         for (permissions permission : result) {
@@ -236,7 +264,7 @@ public class PermissionDAOTest extends BaseDAOTestCase {
     public void testGetAllForRoleWithInvalidRole() {
         List<permissions> result = dao.getAllForRole(Guid.NewGuid());
 
-        assertInvalidGetByAdElement(result);
+        assertInvalidGetPermissionList(result);
     }
 
     /**
@@ -262,7 +290,7 @@ public class PermissionDAOTest extends BaseDAOTestCase {
         List<permissions> result = dao.getAllForRoleAndAdElement(
                 Guid.NewGuid(), AD_ELEMENT_ID);
 
-        assertInvalidGetByAdElement(result);
+        assertInvalidGetPermissionList(result);
     }
 
     /**
@@ -274,7 +302,7 @@ public class PermissionDAOTest extends BaseDAOTestCase {
         List<permissions> result = dao.getAllForRoleAndAdElement(ROLE_ID,
                 Guid.NewGuid());
 
-        assertInvalidGetByAdElement(result);
+        assertInvalidGetPermissionList(result);
     }
 
     /**
@@ -301,7 +329,7 @@ public class PermissionDAOTest extends BaseDAOTestCase {
         List<permissions> result = dao.getAllForRoleAndObject(Guid.NewGuid(),
                 VM_ENTITY_ID);
 
-        assertInvalidGetByAdElement(result);
+        assertInvalidGetPermissionList(result);
     }
 
     /**
@@ -312,7 +340,7 @@ public class PermissionDAOTest extends BaseDAOTestCase {
         List<permissions> result = dao.getAllForRoleAndObject(ROLE_ID,
                 Guid.NewGuid());
 
-        assertInvalidGetByAdElement(result);
+        assertInvalidGetPermissionList(result);
     }
 
     /**
@@ -338,7 +366,7 @@ public class PermissionDAOTest extends BaseDAOTestCase {
         List<permissions> result = dao.getTreeForEntity(Guid.NewGuid(),
                 VdcObjectType.AdElements);
 
-        assertInvalidGetByAdElement(result);
+        assertInvalidGetPermissionList(result);
     }
 
     /**
@@ -349,7 +377,7 @@ public class PermissionDAOTest extends BaseDAOTestCase {
         List<permissions> result = dao.getTreeForEntity(VM_ENTITY_ID,
                 VdcObjectType.Bookmarks);
 
-        assertInvalidGetByAdElement(result);
+        assertInvalidGetPermissionList(result);
     }
 
     /**
@@ -476,6 +504,15 @@ public class PermissionDAOTest extends BaseDAOTestCase {
         for (permissions permission : result) {
             assertEquals(ROLE_ENTITY_ID, permission.getObjectId());
         }
+    }
+
+    /**
+     * Asserts that the result of a getXXX call that should return no permissions is empty as expectrd
+     * @param result result The result to check
+     */
+    private static void assertInvalidGetPermissionList(List<permissions> result) {
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
     }
 
     /**
