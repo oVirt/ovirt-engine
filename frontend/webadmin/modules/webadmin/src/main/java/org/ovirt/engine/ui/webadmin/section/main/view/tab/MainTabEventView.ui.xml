@@ -5,8 +5,9 @@
 	<ui:style>
 		.viewButtonPanel {
 			padding: 10px;
+			position: absolute;
 		}
-		
+
 		.viewButton {
 			margin-right: 10px;
 		}
