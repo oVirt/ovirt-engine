@@ -24,14 +24,10 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogField;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 
 @CustomLogFields({ @CustomLogField("NetworkName") })
 public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupParameter> extends
         VdsGroupCommandBase<T> {
-
-    private static Log log = LogFactory.getLog(RunVmCommand.class);
 
     public AttachNetworkToVdsGroupCommand(T parameters) {
         super(parameters);
