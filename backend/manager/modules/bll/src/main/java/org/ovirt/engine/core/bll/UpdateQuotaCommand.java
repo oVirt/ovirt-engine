@@ -76,9 +76,9 @@ public class UpdateQuotaCommand<T extends QuotaCRUDParameters> extends CommandBa
      */
     private void setQuotaParameter() {
         Quota quotaParameter = getParameters().getQuota();
-        quotaParameter.setIsDefaultQuota(false);
         setStoragePoolId(quotaParameter.getStoragePoolId());
         setQuotaName(quotaParameter.getQuotaName());
+        quotaParameter.setIsDefaultQuota(false);
         if (!quotaParameter.isEmptyStorageQuota()) {
             for (QuotaStorage quotaStorage : quotaParameter.getQuotaStorages()) {
                 quotaStorage.setQuotaId(getQuotaId());

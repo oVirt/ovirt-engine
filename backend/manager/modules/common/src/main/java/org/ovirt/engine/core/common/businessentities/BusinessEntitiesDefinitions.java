@@ -55,7 +55,7 @@ public final class BusinessEntitiesDefinitions {
     public static final int TAG_NAME_SIZE = 50;
 
     // Quota
-    public static final int QUOTA_NAME_SIZE = 60;
+    public static final int QUOTA_NAME_SIZE = 65;
     public static final int QUOTA_DESCRIPTION_SIZE = 250;
 
     // Users (users)
