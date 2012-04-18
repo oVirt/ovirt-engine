@@ -17,10 +17,11 @@
 		}
 		
 		.hostListEditor {
-			width: 350px;
+			width: 100%;
 		}
 		
 		.formatEditor {
+			padding: 0px;
 		}
 		
 		.formatLabel {

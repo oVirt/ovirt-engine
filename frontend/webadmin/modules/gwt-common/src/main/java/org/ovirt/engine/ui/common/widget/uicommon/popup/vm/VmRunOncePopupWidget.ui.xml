@@ -89,9 +89,9 @@
 		.bootSequenceButtonPanel {
 			position: absolute;
 			background: white;
-			border-left: 1px solid black;
 			right: 0px;
 			bottom: 0px;
+			top: 16px;
 			height: 60px;
 			width: 25px
 		}
