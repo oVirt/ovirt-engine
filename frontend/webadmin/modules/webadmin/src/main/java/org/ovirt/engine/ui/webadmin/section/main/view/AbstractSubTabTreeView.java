@@ -97,7 +97,9 @@ public abstract class AbstractSubTabTreeView<E extends AbstractSubTabTree, I, T,
 
     @Override
     public void setMainTabSelectedItem(I selectedItem) {
-        table.setLoadingState(LoadingState.LOADING);
+        if (getDetailModel().getItems() == null) {
+            table.setLoadingState(LoadingState.LOADING);
+        }
         tree.clearTree();
         tree.updateTree(getDetailModel());
     }

@@ -104,6 +104,9 @@ public class AbstractSubTabTreeWidgetView<I, T, M extends ListWithDetailsModel, 
 
     @Override
     public void setMainTabSelectedItem(I selectedItem) {
+        if (getModelBoundTreeWidget().getModel().getItems() == null) {
+            table.setLoadingState(LoadingState.LOADING);
+        }
         tree.clearTree();
         tree.updateTree(getModelBoundTreeWidget().getModel());
     }
