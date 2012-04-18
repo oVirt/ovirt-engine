@@ -46,7 +46,7 @@ if [ $? -ne 0 ]
       exit 1;
 fi
 printf "Setting development configuration values ...\n"
-execute_file "fill_config_devel.sql" ${DATABASE} ${SERVERNAME} ${PORT}> /dev/null
+execute_file "config_devel.sql" ${DATABASE} ${SERVERNAME} ${PORT}> /dev/null
 ret=$?
 printf "Development setting done.\n"
 exit $?
