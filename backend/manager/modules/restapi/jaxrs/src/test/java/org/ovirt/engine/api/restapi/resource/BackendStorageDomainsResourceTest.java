@@ -42,12 +42,15 @@ public class BackendStorageDomainsResourceTest
     protected static final StorageDomainType[] TYPES = { StorageDomainType.DATA,
             StorageDomainType.ISO, StorageDomainType.EXPORT };
     protected static final StorageType[] STORAGE_TYPES = { StorageType.NFS, StorageType.NFS,
-            StorageType.LOCALFS };
+            StorageType.LOCALFS, StorageType.POSIXFS };
 
     protected static final int LOCAL_IDX = 2;
+    protected static final int POSIX_IDX = 3;
 
-    protected static final String[] ADDRESSES = { "10.11.12.13", "13.12.11.10", "10.01.10.01" };
-    protected static final String[] PATHS = { "/1", "/2", "/3" };
+    protected static final String[] ADDRESSES = { "10.11.12.13", "13.12.11.10", "10.01.10.01", "10.01.10.14" };
+    protected static final String[] PATHS = { "/1", "/2", "/3", "/4" };
+    protected static final String[] MOUNT_OPTIONS = { "", "", "", "rw" };
+    protected static final String[] VFS_TYPES = { "", "", "", "nfs" };
     protected static final String LUN = "1IET_00010001";
     protected static final String TARGET = "iqn.2009-08.org.fubar.engine:markmc.test1";
     protected static final Integer PORT = 3260;
@@ -56,10 +59,12 @@ public class BackendStorageDomainsResourceTest
             org.ovirt.engine.core.common.businessentities.StorageDomainType.Data,
             org.ovirt.engine.core.common.businessentities.StorageDomainType.ISO,
             org.ovirt.engine.core.common.businessentities.StorageDomainType.ImportExport };
+
     protected static final org.ovirt.engine.core.common.businessentities.StorageType STORAGE_TYPES_MAPPED[] = {
             org.ovirt.engine.core.common.businessentities.StorageType.NFS,
             org.ovirt.engine.core.common.businessentities.StorageType.NFS,
-            org.ovirt.engine.core.common.businessentities.StorageType.LOCALFS };
+            org.ovirt.engine.core.common.businessentities.StorageType.LOCALFS,
+            org.ovirt.engine.core.common.businessentities.StorageType.POSIXFS };
 
     public BackendStorageDomainsResourceTest() {
         super(new BackendStorageDomainsResource(), SearchType.StorageDomain, "Storage : ");
@@ -320,6 +325,51 @@ public class BackendStorageDomainsResourceTest
     }
 
     @Test
+    public void testAddPosixStorageDomain() throws Exception {
+        setUriInfo(setUpActionExpectations(VdcActionType.AddStorageServerConnection,
+                                           StorageServerConnectionParametersBase.class,
+                                           new String[] { "StorageServerConnection.connection",
+                                                   "StorageServerConnection.storage_type",
+                                                   "StorageServerConnection.MountOptions",
+                                                   "StorageServerConnection.VfsType",
+                                                   "VdsId" },
+                                           new Object[] { ADDRESSES[POSIX_IDX] + ":" + PATHS[POSIX_IDX],
+                                                   STORAGE_TYPES_MAPPED[POSIX_IDX],
+                                                   MOUNT_OPTIONS[POSIX_IDX], VFS_TYPES[POSIX_IDX], GUIDS[0] },
+                                           true,
+                                           true,
+                                           GUIDS[POSIX_IDX].toString(),
+                                           false));
+
+        setUpGetEntityExpectations(VdcQueryType.GetStorageServerConnectionById,
+                                   StorageServerConnectionQueryParametersBase.class,
+                                   new String[] { "ServerConnectionId" },
+                                   new Object[] { GUIDS[POSIX_IDX].toString() },
+                                   setUpPosixStorageServerConnection(POSIX_IDX));
+
+        setUpCreationExpectations(VdcActionType.AddPosixFsStorageDomain,
+                                  StorageDomainManagementParameter.class,
+                                  new String[] { "VdsId" },
+                                  new Object[] { GUIDS[0] },
+                                  true,
+                                  true,
+                                  GUIDS[POSIX_IDX],
+                                  VdcQueryType.GetStorageDomainById,
+                                  StorageDomainQueryParametersBase.class,
+                                  new String[] { "StorageDomainId" },
+                                  new Object[] { GUIDS[POSIX_IDX] },
+                                  getEntity(POSIX_IDX));
+
+        StorageDomain model = getModel(POSIX_IDX);
+        model.setHost(new Host());
+        model.getHost().setId(GUIDS[0].toString());
+        Response response = collection.add(model);
+        assertEquals(201, response.getStatus());
+        assertTrue(response.getEntity() instanceof StorageDomain);
+        verifyModel((StorageDomain) response.getEntity(), POSIX_IDX);
+    }
+
+    @Test
     public void testAddIscsiStorageDomain() throws Exception {
         StorageDomain model = getIscsi();
 
@@ -553,20 +603,28 @@ public class BackendStorageDomainsResourceTest
     }
 
     static storage_server_connections setUpLocalStorageServerConnection(int index) {
-        return setUpStorageServerConnection(index, index, true);
+        return setUpStorageServerConnection(index, index, StorageType.LOCALFS);
+    }
+
+    static storage_server_connections setUpPosixStorageServerConnection(int index) {
+        return setUpStorageServerConnection(index, index, StorageType.POSIXFS);
     }
 
     static storage_server_connections setUpStorageServerConnection(int index) {
-        return setUpStorageServerConnection(index, index, false);
+        return setUpStorageServerConnection(index, index, StorageType.NFS);
     }
 
-    static storage_server_connections setUpStorageServerConnection(int idIndex, int index, boolean local) {
+    static storage_server_connections setUpStorageServerConnection(int idIndex, int index, StorageType storageType) {
         storage_server_connections cnx = new storage_server_connections();
         if (idIndex != -1) {
             cnx.setid(GUIDS[idIndex].toString());
         }
-        if (local) {
+        if (storageType == StorageType.LOCALFS) {
             cnx.setconnection(PATHS[index]);
+        } else if (storageType == StorageType.POSIXFS) {
+            cnx.setconnection(ADDRESSES[index] + ":" + PATHS[index]);
+            cnx.setMountOptions(MOUNT_OPTIONS[index]);
+            cnx.setVfsType(VFS_TYPES[index]);
         } else {
             cnx.setconnection(ADDRESSES[index] + ":" + PATHS[index]);
         }
@@ -586,14 +644,18 @@ public class BackendStorageDomainsResourceTest
     }
 
     static storage_domains setUpEntityExpectations(storage_domains entity, int index) {
-        expect(entity.getId()).andReturn(GUIDS[index]).anyTimes();
-        expect(entity.getstorage_name()).andReturn(NAMES[index]).anyTimes();
+        expect(entity.getId()).andReturn(getSafeEntry(index, GUIDS)).anyTimes();
+        expect(entity.getstorage_name()).andReturn(getSafeEntry(index, NAMES)).anyTimes();
         // REVIST No descriptions for storage domains
         // expect(entity.getdescription()).andReturn(DESCRIPTIONS[index]).anyTimes();
-        expect(entity.getstorage_domain_type()).andReturn(TYPES_MAPPED[index]).anyTimes();
-        expect(entity.getstorage_type()).andReturn(STORAGE_TYPES_MAPPED[index]).anyTimes();
-        expect(entity.getstorage()).andReturn(GUIDS[index].toString()).anyTimes();
+        expect(entity.getstorage_domain_type()).andReturn(getSafeEntry(index, TYPES_MAPPED)).anyTimes();
+        expect(entity.getstorage_type()).andReturn(getSafeEntry(index, STORAGE_TYPES_MAPPED)).anyTimes();
+        expect(entity.getstorage()).andReturn(getSafeEntry(index,GUIDS).toString()).anyTimes();
         return entity;
+    }
+
+    private static <T> T getSafeEntry(int index, T[] arr) {
+        return arr[index % arr.length];
     }
 
     protected List<LUNs> setUpLuns() {
@@ -624,13 +686,15 @@ public class BackendStorageDomainsResourceTest
 
     static StorageDomain getModel(int index) {
         StorageDomain model = new StorageDomain();
-        model.setName(NAMES[index]);
-        model.setDescription(DESCRIPTIONS[index]);
-        model.setType(TYPES[index].value());
+        model.setName(getSafeEntry(index,NAMES));
+        model.setDescription(getSafeEntry(index,DESCRIPTIONS));
+        model.setType(getSafeEntry(index, TYPES).value());
         model.setStorage(new Storage());
-        model.getStorage().setType(STORAGE_TYPES[index].value());
-        model.getStorage().setAddress(ADDRESSES[index]);
-        model.getStorage().setPath(PATHS[index]);
+        model.getStorage().setType(getSafeEntry(index, STORAGE_TYPES).value());
+        model.getStorage().setAddress(getSafeEntry(index, ADDRESSES));
+        model.getStorage().setPath(getSafeEntry(index, PATHS));
+        model.getStorage().setMountOptions(getSafeEntry(index, MOUNT_OPTIONS));
+        model.getStorage().setVfsType(getSafeEntry(index, VFS_TYPES));
         return model;
     }
 
@@ -654,15 +718,15 @@ public class BackendStorageDomainsResourceTest
     }
 
     static void verifyModelSpecific(StorageDomain model, int index) {
-        assertEquals(GUIDS[index].toString(), model.getId());
-        assertEquals(NAMES[index], model.getName());
+        assertEquals(getSafeEntry(index, GUIDS).toString(), model.getId());
+        assertEquals(getSafeEntry(index, NAMES), model.getName());
         // REVIST No descriptions for storage domains
         // assertEquals(DESCRIPTIONS[index], model.getDescription());
-        assertEquals(TYPES[index].value(), model.getType());
+        assertEquals(getSafeEntry(index, TYPES).value(), model.getType());
         assertNotNull(model.getStorage());
-        assertEquals(STORAGE_TYPES[index].value(), model.getStorage().getType());
-        if (index != LOCAL_IDX) {
-            assertEquals(ADDRESSES[index], model.getStorage().getAddress());
+        assertEquals(getSafeEntry(index, STORAGE_TYPES).value(), model.getStorage().getType());
+        if (index != LOCAL_IDX && index != POSIX_IDX) {
+            assertEquals(getSafeEntry(index, ADDRESSES), model.getStorage().getAddress());
         }
         assertEquals(PATHS[index], model.getStorage().getPath());
         assertEquals("permissions", model.getLinks().get(0).getRel());

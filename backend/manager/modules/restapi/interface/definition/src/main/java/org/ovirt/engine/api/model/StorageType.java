@@ -17,7 +17,11 @@
 package org.ovirt.engine.api.model;
 
 public enum StorageType {
-    ISCSI, FCP, NFS, LOCALFS;
+    ISCSI,
+    FCP,
+    NFS,
+    LOCALFS,
+    POSIXFS;
 
     public String value() {
         return name().toLowerCase();

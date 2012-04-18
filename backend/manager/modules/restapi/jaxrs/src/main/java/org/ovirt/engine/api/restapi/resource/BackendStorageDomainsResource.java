@@ -69,7 +69,7 @@ public class BackendStorageDomainsResource
         return inject(new BackendStorageDomainResource(id, this));
     }
 
-    private Response addNfsOrLocal(VdcActionType action, StorageDomain model, storage_domain_static entity, Guid hostId) {
+    private Response addNfsOrLocalOrPosix(VdcActionType action, StorageDomain model, storage_domain_static entity, Guid hostId) {
         storage_server_connections cnx = mapToCnx(model);
 
         entity.setstorage(addStorageServerConnection(cnx, hostId));
@@ -168,12 +168,17 @@ public class BackendStorageDomainsResource
             break;
         case NFS:
             validateParameters(storageDomain.getStorage(), "address", "path");
-            resp = addNfsOrLocal(VdcActionType.AddNFSStorageDomain, storageDomain, entity, hostId);
+            resp = addNfsOrLocalOrPosix(VdcActionType.AddNFSStorageDomain, storageDomain, entity, hostId);
             break;
         case LOCALFS:
             validateParameters(storageDomain.getStorage(), "path");
-            resp = addNfsOrLocal(VdcActionType.AddLocalStorageDomain, storageDomain, entity, hostId);
+            resp = addNfsOrLocalOrPosix(VdcActionType.AddLocalStorageDomain, storageDomain, entity, hostId);
             break;
+        case POSIXFS:
+            validateParameters(storageDomain.getStorage(), "address", "path", "vfsType");
+            resp = addNfsOrLocalOrPosix(VdcActionType.AddPosixFsStorageDomain, storageDomain, entity, hostId);
+            break;
+
         default:
             break;
         }
@@ -211,14 +216,16 @@ public class BackendStorageDomainsResource
             break;
         case NFS:
         case LOCALFS:
-            mapNfsOrLocal(model, entity);
+        case POSIXFS:
+            mapNfsOrLocalOrPosix(model, entity);
             break;
         }
 
         return model;
     }
 
-    protected void mapNfsOrLocal(StorageDomain model, storage_domains entity) {
+    protected void mapNfsOrLocalOrPosix(StorageDomain model, storage_domains entity) {
+        final Storage storage = model.getStorage();
         storage_server_connections cnx = getStorageServerConnection(entity.getstorage());
         if (cnx.getconnection().contains(":")) {
             String[] parts = cnx.getconnection().split(":");
@@ -227,6 +234,8 @@ public class BackendStorageDomainsResource
         } else {
             model.getStorage().setPath(cnx.getconnection());
         }
+        storage.setMountOptions(cnx.getMountOptions());
+        storage.setVfsType(cnx.getVfsType());
     }
 
     protected void mapVolumeGroupIscsi(StorageDomain model, storage_domains entity) {

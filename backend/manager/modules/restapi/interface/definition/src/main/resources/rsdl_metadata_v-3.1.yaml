@@ -508,6 +508,10 @@ actions:
           storagdomain.type: 'xs:string', storagdomain.storage.type: 'xs:string',
           storagdomain.format: 'xs:boolean', storagdomain.storage.path: 'xs:string'}
         optionalArguments: {}
+      - mandatoryArguments: {storagdomain.name: 'xs:string', storagdomain.host.id|name: 'xs:string',
+          storagdomain.type: 'xs:string', storagdomain.storage.type: 'xs:string',
+          storagdomain.format: 'xs:boolean', storagdomain.storage.path: 'xs:string', storagedomain.storage.vfs_type: 'xs:string'}
+        optionalArguments: {storagdomain.storage.address: 'xs:string', storagdomain.storage.mount_options: 'xs:string'}
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers: {Content-Type: application/xml|json, Expect: 201-created}

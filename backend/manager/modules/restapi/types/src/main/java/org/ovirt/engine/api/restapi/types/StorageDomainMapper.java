@@ -73,6 +73,18 @@ public class StorageDomainMapper {
                     if (storage.isSetPath()) {
                         entity.setconnection(storage.getPath());
                     }
+                    break;
+                case POSIXFS:
+                    if (storage.isSetPath()) {
+                        entity.setconnection(storage.getAddress() + ":" + storage.getPath());
+                    }
+                    if (storage.isSetMountOptions()) {
+                        entity.setMountOptions(storage.getMountOptions());
+                    }
+                    if (storage.isSetVfsType()) {
+                        entity.setVfsType(storage.getVfsType());
+                    }
+
                 default:
                     break;
                 }
@@ -129,6 +141,8 @@ public class StorageDomainMapper {
             return org.ovirt.engine.core.common.businessentities.StorageType.NFS;
         case LOCALFS:
             return org.ovirt.engine.core.common.businessentities.StorageType.LOCALFS;
+        case POSIXFS:
+            return org.ovirt.engine.core.common.businessentities.StorageType.POSIXFS;
         default:
             return null;
         }
@@ -145,6 +159,8 @@ public class StorageDomainMapper {
             return StorageType.NFS.value();
         case LOCALFS:
             return StorageType.LOCALFS.value();
+        case POSIXFS:
+            return StorageType.POSIXFS.value();
         default:
             return null;
         }

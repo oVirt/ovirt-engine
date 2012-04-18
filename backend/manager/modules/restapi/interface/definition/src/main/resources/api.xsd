@@ -1507,6 +1507,8 @@
     <xs:sequence>
       <xs:element name="address" type="xs:string" minOccurs="0"/>
       <xs:element name="path" type="xs:string" minOccurs="0"/>
+      <xs:element name="mount_options" type="xs:string" minOccurs="0"/>
+      <xs:element name="vfs_type" type="xs:string" minOccurs="0"/>
     </xs:sequence>
   </xs:group>
 
