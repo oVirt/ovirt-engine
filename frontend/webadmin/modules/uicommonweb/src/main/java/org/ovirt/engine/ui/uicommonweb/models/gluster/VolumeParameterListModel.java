@@ -51,7 +51,7 @@ public class VolumeParameterListModel extends SearchableListModel {
 
     public VolumeParameterListModel()
     {
-        setTitle("Options");
+        setTitle("Parameters");
         setAddParameterCommand(new UICommand("Add", this));
         setEditParameterCommand(new UICommand("Edit", this));
         setResetAllParameterCommand(new UICommand("Reset All", this));

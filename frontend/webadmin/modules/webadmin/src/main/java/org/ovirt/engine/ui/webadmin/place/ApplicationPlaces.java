@@ -233,13 +233,13 @@ public class ApplicationPlaces {
 
     public static final String volumeGeneralSubTabPlace = volumeMainTabPlace + SUB_TAB_PREFIX + "general";
 
-    public static final String volumeParameterSubTabPlace = volumeMainTabPlace + SUB_TAB_PREFIX + "Parameter";
+    public static final String volumeParameterSubTabPlace = volumeMainTabPlace + SUB_TAB_PREFIX + "parameters";
 
-    public static final String volumeBrickSubTabPlace = volumeMainTabPlace + SUB_TAB_PREFIX + "Brick";
+    public static final String volumeBrickSubTabPlace = volumeMainTabPlace + SUB_TAB_PREFIX + "bricks";
 
-    public static final String volumePermissionSubTabPlace = volumeMainTabPlace + SUB_TAB_PREFIX + "Permission";
+    public static final String volumePermissionSubTabPlace = volumeMainTabPlace + SUB_TAB_PREFIX + "permissions";
 
-    public static final String volumeEventSubTabPlace = volumeMainTabPlace + SUB_TAB_PREFIX + "Event";
+    public static final String volumeEventSubTabPlace = volumeMainTabPlace + SUB_TAB_PREFIX + "events";
 
     // Disk
 
