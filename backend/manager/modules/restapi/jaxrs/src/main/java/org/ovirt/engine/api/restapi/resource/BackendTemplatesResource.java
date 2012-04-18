@@ -1,17 +1,22 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.ws.rs.core.Response;
 
+import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.Templates;
+import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.api.resource.TemplateResource;
 import org.ovirt.engine.api.resource.TemplatesResource;
 
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmTemplateParametersBase;
+import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -53,13 +58,38 @@ public class BackendTemplatesResource
         AddVmTemplateParameters params = new AddVmTemplateParameters(staticVm,
                                        template.getName(),
                                        template.getDescription());
+        boolean isDomainSet = false;
         if (template.isSetStorageDomain() && template.getStorageDomain().isSetId()) {
             params.setDestinationStorageDomainId(asGuid(template.getStorageDomain().getId()));
+            isDomainSet = true;
         }
+        params.setDiskInfoDestinationMap(getDiskToDestinationMap(template.getVm(),
+                params.getDestinationStorageDomainId(),
+                isDomainSet));
         return performCreation(VdcActionType.AddVmTemplate,
                                params,
                                new QueryIdResolver(VdcQueryType.GetVmTemplate,
                                                    GetVmTemplateParameters.class));
+    }
+
+    protected HashMap<Guid, DiskImage> getDiskToDestinationMap(VM vm, Guid storageDomainId, boolean isDomainSet) {
+        HashMap<Guid, DiskImage> diskToDestinationMap = null;
+        if (vm.isSetDisks() && vm.getDisks().isSetDisks()) {
+            diskToDestinationMap = new HashMap<Guid, DiskImage>();
+            for (Disk disk : vm.getDisks().getDisks()) {
+                if (disk.isSetId() && disk.isSetStorageDomains() && disk.getStorageDomains().isSetStorageDomains()
+                        && disk.getStorageDomains().getStorageDomains().get(0).isSetId()) {
+                    DiskImage diskImage = new DiskImage();
+                    diskImage.setId(asGuid(disk.getId()));
+                    diskImage.setstorage_ids(new ArrayList<Guid>());
+                    Guid newStorageDomainId = isDomainSet ? storageDomainId : asGuid(disk.getStorageDomains()
+                            .getStorageDomains().get(0).getId());
+                    diskImage.getstorage_ids().add(newStorageDomainId);
+                    diskToDestinationMap.put(diskImage.getId(), diskImage);
+                }
+            }
+        }
+        return diskToDestinationMap;
     }
 
     @Override

@@ -1640,6 +1640,7 @@ actions:
           template.display.monitors: xs:int
           template.os.initRd: xs:string
           template.usb.enabled: xs:boolean
+          template.vm.disks.disk--COLLECTION: {id: 'xs:string', storage_domains.storage_domain--COLLECTION: {id: 'xs:string'}}
     urlparams: {}
     headers: {Content-Type: application/xml|json}
 - name: /api/templates/{template:id}/export|rel=export
