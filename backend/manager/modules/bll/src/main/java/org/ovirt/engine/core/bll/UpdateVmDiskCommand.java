@@ -156,6 +156,8 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
                 _oldDisk.setWipeAfterDelete(getParameters().getDiskInfo().isWipeAfterDelete());
                 _oldDisk.setQuotaId(getQuotaId());
                 _oldDisk.setDiskAlias(getParameters().getDiskInfo().getDiskAlias());
+                _oldDisk.setDiskDescription(getParameters().getDiskInfo().getDiskDescription());
+                _oldDisk.setShareable(getParameters().getDiskInfo().isShareable());
                 DbFacade.getInstance().getBaseDiskDao().update(_oldDisk);
                 getDiskImageDao().update(_oldDisk);
                 // update cached image

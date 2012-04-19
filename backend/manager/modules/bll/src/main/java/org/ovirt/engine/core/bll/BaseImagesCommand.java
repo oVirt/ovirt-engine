@@ -395,7 +395,6 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
      */
     protected void saveDiskIfNotExists(DiskImage image) {
         if (!getBaseDiskDao().exists(image.getimage_group_id())) {
-            ImagesHandler.setDiskAlias(image, getVm());
             getBaseDiskDao().save(image);
         }
     }
