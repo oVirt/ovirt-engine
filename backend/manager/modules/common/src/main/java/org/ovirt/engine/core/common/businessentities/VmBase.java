@@ -12,10 +12,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
@@ -28,8 +24,6 @@ import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.INotifyPropertyChanged;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "VmBase")
 public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, BusinessEntity<Guid> {
     private static final long serialVersionUID = 1078548170257965614L;
     private ArrayList<DiskImage> images;
@@ -112,7 +106,6 @@ public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, Bus
     @Column(name = "is_auto_suspend", nullable = false)
     private boolean autosuspend;
 
-    @XmlElement(name = "priority")
     @Column(name = "priority", nullable = false)
     private int priority;
 
@@ -122,43 +115,38 @@ public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, Bus
     @Column(name = "is_stateless")
     private boolean stateless;
 
-    @XmlElement(name = "iso_path")
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
     @Column(name = "iso_path", length = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
     private String isoPath;
 
-    @XmlElement(name = "origin")
     @Column(name = "origin")
     @Enumerated
     private OriginType origin;
 
-    @XmlElement(name = "kernel_url")
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
     @Column(name = "kernel_url", length = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
     private String kernelUrl;
 
-    @XmlElement(name = "kernel_params")
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
     @Column(name = "kernel_params", length = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
     private String kernelParams;
 
-    @XmlElement(name = "initrd_url")
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
     @Column(name = "initrd_url", length = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
     private String initrdUrl;
 
-    // not persist to db
-    private java.util.Date exportDate;
+    // not persisted to db
+    private Date exportDate;
 
-   public VmBase() {
-   }
+    public VmBase() {
+    }
 
-   private Guid quotaId;
+    private Guid quotaId;
 
-   /**
-    * Transient field for GUI presentation purposes.
-    */
-   private String quotaName;
+    /**
+     * Transient field for GUI presentation purposes.
+     */
+    private String quotaName;
 
     public VmBase(Guid id,
             Guid vds_group_id,
@@ -216,7 +204,7 @@ public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, Bus
         this.kernelUrl = kernelUrl;
         this.kernelParams = kernelParams;
         this.initrdUrl = initrdUrl;
-        this.setQuotaId(quotaId);
+        setQuotaId(quotaId);
     }
 
     public List<VmNetworkInterface> getInterfaces() {
@@ -231,7 +219,7 @@ public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, Bus
         return images;
     }
 
-    public void setImages(java.util.ArrayList<DiskImage> value) {
+    public void setImages(ArrayList<DiskImage> value) {
         images = value;
     }
 
@@ -255,25 +243,24 @@ public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, Bus
         this.vmUnManagedDeviceList = list;
     }
 
-    @XmlElement(name = "Id")
+    @Override
     public Guid getId() {
-        return this.id;
+        return id;
     }
 
+    @Override
     public void setId(Guid value) {
         this.id = value;
     }
 
-    @XmlElement
     public Guid getvds_group_id() {
-        return this.vds_group_id;
+        return vds_group_id;
     }
 
     public void setvds_group_id(Guid value) {
         this.vds_group_id = value;
     }
 
-    @XmlElement
     public VmOsType getos() {
         return mOs;
     }
@@ -292,52 +279,46 @@ public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, Bus
         setos(value);
     }
 
-    @XmlElement
     public Date getcreation_date() {
-        return this.creationDate;
+        return creationDate;
     }
 
-    public void setcreation_date(java.util.Date value) {
+    public void setcreation_date(Date value) {
         this.creationDate = value;
     }
 
-    @XmlElement
     public String getdescription() {
-        return this.description;
+        return description;
     }
 
     public void setdescription(String value) {
         this.description = value;
     }
 
-    @XmlElement
     public int getmem_size_mb() {
-        return this.memSizeMB;
+        return memSizeMB;
     }
 
     public void setmem_size_mb(int value) {
         this.memSizeMB = value;
     }
 
-    @XmlElement(name = "num_of_sockets")
     public int getnum_of_sockets() {
-        return this.numOfSockets;
+        return numOfSockets;
     }
 
     public void setnum_of_sockets(int value) {
         this.numOfSockets = value;
     }
 
-    @XmlElement(name = "cpu_per_socket")
     public int getcpu_per_socket() {
-        return this.cpusPerSocket;
+        return cpusPerSocket;
     }
 
     public void setcpu_per_socket(int value) {
         this.cpusPerSocket = value;
     }
 
-    @XmlElement
     public int getnum_of_monitors() {
         return numOfMonitors;
     }
@@ -346,7 +327,6 @@ public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, Bus
         numOfMonitors = value;
     }
 
-    @XmlElement
     public String getdomain() {
         return domain;
     }
@@ -355,7 +335,6 @@ public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, Bus
         domain = value;
     }
 
-    @XmlElement
     public String gettime_zone() {
         return timezone;
     }
@@ -364,7 +343,6 @@ public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, Bus
         timezone = value;
     }
 
-    @XmlElement
     public VmType getvm_type() {
         return vmType;
     }
@@ -373,7 +351,6 @@ public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, Bus
         vmType = value;
     }
 
-    @XmlElement
     public UsbPolicy getusb_policy() {
         return usbPolicy;
     }
@@ -382,7 +359,6 @@ public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, Bus
         usbPolicy = value;
     }
 
-    @XmlElement
     public boolean getfail_back() {
         return fail_back;
     }
@@ -391,7 +367,6 @@ public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, Bus
         fail_back = value;
     }
 
-    @XmlElement
     public BootSequence getdefault_boot_sequence() {
         return defaultBootSequence;
     }
@@ -400,7 +375,6 @@ public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, Bus
         defaultBootSequence = value;
     }
 
-    @XmlElement
     public HypervisorType gethypervisor_type() {
         return hypervisorType;
     }
@@ -409,7 +383,6 @@ public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, Bus
         hypervisorType = value;
     }
 
-    @XmlElement
     public OperationMode getoperation_mode() {
         return operationMode;
     }
@@ -418,7 +391,6 @@ public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, Bus
         operationMode = value;
     }
 
-    @XmlElement
     public int getnice_level() {
         return niceLevel;
     }
@@ -427,7 +399,6 @@ public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, Bus
         niceLevel = value;
     }
 
-    @XmlElement
     public boolean getis_auto_suspend() {
         return autosuspend;
     }
@@ -444,7 +415,6 @@ public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, Bus
         priority = value;
     }
 
-    @XmlElement
     public boolean getauto_startup() {
         return autoStartup;
     }
@@ -453,7 +423,6 @@ public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, Bus
         autoStartup = value;
     }
 
-    @XmlElement
     public boolean getis_stateless() {
         return stateless;
     }
@@ -502,12 +471,12 @@ public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, Bus
         initrdUrl = value;
     }
 
-    public void setExportDate(java.util.Date value) {
+    public void setExportDate(Date value) {
         this.exportDate = value;
     }
 
-    public java.util.Date getExportDate() {
-        return this.exportDate;
+    public Date getExportDate() {
+        return exportDate;
     }
 
     @Override
@@ -541,7 +510,7 @@ public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, Bus
         result = prime * result + ((usbPolicy == null) ? 0 : usbPolicy.hashCode());
         result = prime * result + ((vds_group_id == null) ? 0 : vds_group_id.hashCode());
         result = prime * result + ((vmType == null) ? 0 : vmType.hashCode());
-        result = prime * result + ((quotaId== null) ? 0 : quotaId.hashCode());
+        result = prime * result + ((quotaId == null) ? 0 : quotaId.hashCode());
 
         return result;
     }
