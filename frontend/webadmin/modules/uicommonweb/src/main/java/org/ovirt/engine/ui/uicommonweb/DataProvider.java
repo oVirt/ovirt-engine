@@ -345,7 +345,7 @@ public final class DataProvider
     {
         GetDomainListParameters tempVar = new GetDomainListParameters();
         tempVar.setFilterInternalDomain(filterInternalDomain);
-        VdcQueryReturnValue returnValue = Frontend.RunQuery(VdcQueryType.GetDomainList, tempVar);
+        VdcQueryReturnValue returnValue = Frontend.RunPublicQuery(VdcQueryType.GetDomainList, tempVar);
 
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
         {

@@ -327,13 +327,22 @@ public abstract class IVmModelBehavior
             return;
         }
 
-        AsyncDataProvider.GetHostListByCluster(new AsyncQuery(getModel(),
+        AsyncQuery query = new AsyncQuery(getModel(),
                 new INewAsyncCallback() {
                     @Override
                     public void OnSuccess(Object target, Object returnValue) {
 
                         UnitVmModel model = (UnitVmModel) target;
-                        java.util.ArrayList<VDS> hosts = (java.util.ArrayList<VDS>) returnValue;
+                        java.util.ArrayList<VDS> hosts = null;
+                        if (returnValue instanceof ArrayList) {
+                            hosts = (java.util.ArrayList<VDS>) returnValue;
+                        } else if (returnValue instanceof VdcQueryReturnValue
+                                && ((VdcQueryReturnValue) returnValue).getReturnValue() instanceof ArrayList) {
+                            hosts = (ArrayList<VDS>) ((VdcQueryReturnValue) returnValue).getReturnValue();
+                        } else {
+                            throw new IllegalArgumentException("The return value should be ArrayList<VDS> or VdcQueryReturnValue with return value ArrayList<VDS>");
+                        }
+
                         VDS oldDefaultHost = (VDS) model.getDefaultHost().getSelectedItem();
                         if (model.getBehavior().getSystemTreeSelectedItem() != null
                                 && model.getBehavior().getSystemTreeSelectedItem().getType() == SystemTreeItemType.Host)
@@ -362,8 +371,16 @@ public abstract class IVmModelBehavior
 
                     }
                 },
-                getModel().getHash()),
-                cluster.getname());
+                getModel().getHash());
+
+        getHostListByCluster(cluster, query);
+    }
+
+    /**
+     * By default admin query is fired, UserPortal overrides it to fire user query
+     */
+    protected void getHostListByCluster(VDSGroup cluster, AsyncQuery query) {
+        AsyncDataProvider.GetHostListByCluster(query, cluster.getname());
     }
 
     protected void UpdateIsCustomPropertiesAvailable()

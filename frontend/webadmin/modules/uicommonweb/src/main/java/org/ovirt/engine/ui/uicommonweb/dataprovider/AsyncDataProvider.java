@@ -825,7 +825,7 @@ public final class AsyncDataProvider {
         };
         GetDomainListParameters tempVar = new GetDomainListParameters();
         tempVar.setFilterInternalDomain(filterInternalDomain);
-        Frontend.RunQuery(VdcQueryType.GetDomainList, tempVar, aQuery);
+        Frontend.RunPublicQuery(VdcQueryType.GetDomainList, tempVar, aQuery);
     }
 
     public static void GetRoleList(AsyncQuery aQuery) {

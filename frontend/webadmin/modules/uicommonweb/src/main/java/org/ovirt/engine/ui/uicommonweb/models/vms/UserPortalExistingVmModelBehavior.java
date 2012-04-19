@@ -6,8 +6,11 @@ import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.queries.GetHostsByClusterIdParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -95,5 +98,14 @@ public class UserPortalExistingVmModelBehavior extends ExistingVmModelBehavior
 
                     }
                 }, getModel().getHash()), vm.getvds_group_id());
+    }
+
+    @Override
+    protected void getHostListByCluster(VDSGroup cluster, AsyncQuery query) {
+        Frontend.RunQuery(
+                VdcQueryType.GetHostsByClusterId,
+                new GetHostsByClusterIdParameters(cluster.getId()),
+                query
+        );
     }
 }

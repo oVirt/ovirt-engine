@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.queries.GetEntitiesWithPermittedActionParameters;
+import org.ovirt.engine.core.common.queries.GetHostsByClusterIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -152,5 +153,14 @@ public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements 
                         : new Linq.TemplatePredicate(NGuid.Empty)));
 
         UpdateIsDisksAvailable();
+    }
+
+    @Override
+    protected void getHostListByCluster(VDSGroup cluster, AsyncQuery query) {
+        Frontend.RunQuery(
+                VdcQueryType.GetHostsByClusterId,
+                new GetHostsByClusterIdParameters(cluster.getId()),
+                query
+                );
     }
 }
