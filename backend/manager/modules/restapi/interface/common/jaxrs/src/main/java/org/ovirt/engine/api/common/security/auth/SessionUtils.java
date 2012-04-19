@@ -1,15 +1,15 @@
 package org.ovirt.engine.api.common.security.auth;
 
 import java.util.List;
+import java.util.UUID;
 
 import javax.security.jacc.PolicyContextException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.ws.rs.core.HttpHeaders;
 
-import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /*
  * This class contains useful session utils
@@ -67,6 +67,7 @@ public class SessionUtils {
      * This method sets the engine session ID on the http session
      */
     public static void setEngineSessionId(HttpSession session, String sessionId) {
+        log.debug("setting engine session ID to " + sessionId);
         session.setAttribute(ENGINE_SESSION_ID_KEY, sessionId);
     }
 
@@ -74,6 +75,6 @@ public class SessionUtils {
      * This method generates a random engine session ID.
      */
     public static String generateEngineSessionId() {
-        return Guid.NewGuid().toString();
+        return UUID.randomUUID().toString();
     }
 }
