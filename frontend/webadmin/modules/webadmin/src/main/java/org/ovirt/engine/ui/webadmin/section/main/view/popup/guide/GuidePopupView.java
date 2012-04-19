@@ -16,7 +16,6 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VmGuideModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.guide.GuidePopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.uicommon.model.GuideModelProvider;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
@@ -78,17 +77,13 @@ public class GuidePopupView extends AbstractModelBoundPopupView<GuideModel> impl
     @UiField
     Style style;
 
-    private final GuideModelProvider guideModelProvider;
-
     private final ApplicationResources resources;
 
     @Inject
     public GuidePopupView(EventBus eventBus,
             ApplicationResources resources,
-            ApplicationConstants constants,
-            GuideModelProvider guideModelProvider) {
+            ApplicationConstants constants) {
         super(eventBus, resources);
-        this.guideModelProvider = guideModelProvider;
         this.resources = resources;
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
@@ -109,8 +104,6 @@ public class GuidePopupView extends AbstractModelBoundPopupView<GuideModel> impl
     @Override
     public void edit(GuideModel object) {
         Driver.driver.edit(object);
-
-        guideModelProvider.setModel(object);
 
         object.getPropertyChangedEvent().addListener(new IEventListener() {
             @Override
