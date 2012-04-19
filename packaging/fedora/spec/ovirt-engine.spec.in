@@ -306,7 +306,7 @@ cp -rpf %{_datadir}/vdsm-bootstrap/* %{_engineeardir}/components.war/vds/ &> /de
 %config(noreplace) %{_sysconfdir}/%{name}/sysprep/sysprep.w7
 %config(noreplace) %{_sysconfdir}/%{name}/sysprep/sysprep.w7x64
 %config(noreplace) %{_sysconfdir}/%{name}/sysprep/sysprep.xp
-%{_jbossdir}/modules/org/postgresql/main/postgresql-jdbc.jar
+%{_jbossdir}/modules/org/postgresql
 %attr (755,root,root) %{_sysconfdir}/pki/%{name}/pubkey2ssh
 
 %files backend

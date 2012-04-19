@@ -2044,13 +2044,6 @@ def deployJbossModules():
     deploy the postgres module and edit the xml for the jdk module
     """
     try:
-        # Copy module(s) from /usr/share/ovirt-engine/resources/jboss/modules
-        logging.debug("Adding modules to jboss's modules")
-        modules = [ { 'target' : "%s/org/postgresql" % basedefs.DIR_MODULES_SRC,
-                      'link'   : "%s/org/postgresql" % basedefs.DIR_MODULES_DEST}
-                  ]
-        for module in modules:
-            utils.replaceWithLink(module['target'], module['link'])
 
         # edit module.xml for the jdk module
         backupFile = "%s.%i" % (basedefs.FILE_JDK_MODULE_XML, random.randint(1000000,9999999))

@@ -70,7 +70,7 @@ install_without_maven: create_dirs install_brew_ear common_install
 common_install: install_quartz install_tools install_image_uploader\
 	install_config install_log_collector install_iso_uploader \
 	install_sysprep install_notification_service install_db_scripts \
-	install_misc install_setup install_sec
+	install_setup install_misc install_sec
 
 # Brew compatibility hack
 # We want both env (local and brew) to work the same
@@ -130,7 +130,7 @@ create_dirs:
 	@install -dm 755 $(PREFIX)/etc/{init.d,tmpfiles.d,cron.daily}
 	@install -dm 755 $(PREFIX)/etc/ovirt-engine/{engine-config,engine-manage-domains,sysprep}
 	@install -dm 755 $(PREFIX)$(EAR_DIR)
-	@install -dm 755 $(PREFIX)$(JBOSS_HOME)/modules/org/postgresql/main/
+	@install -dm 755 $(PREFIX)$(JBOSS_HOME)/modules/org/
 	@install -dm 755 $(PREFIX)/usr/share/ovirt-engine/resources/jboss/modules/org
 	@install -dm 755 $(PREFIX)/etc/pki/ovirt-engine/{keys,private,requests,certs}
 
@@ -196,6 +196,7 @@ install_setup:
 	# JBoss modules:
 	cp -r deployment/modules/org/* $(PREFIX)/usr/share/ovirt-engine/resources/jboss/modules/org/
 	ln -s /usr/share/java/postgresql-jdbc.jar $(PREFIX)/usr/share/ovirt-engine/resources/jboss/modules/org/postgresql/main/
+	ln -s /usr/share/ovirt-engine/resources/jboss/modules/org/postgresql $(PREFIX)$(JBOSS_HOME)/modules/org/postgresql
 	sed -i "s/MYVERSION/$(RPM_VERSION)-$(RELEASE_VERSION)/" $(PREFIX)/usr/share/ovirt-engine/resources/jboss/ROOT.war/engineVersion.js
 
 
@@ -354,7 +355,6 @@ install_misc:
 	# needs when copied to the host, but I am not sure it
 	# should it have it in the manager machine.
 	install -m 755 backend/manager/conf/vds_installer.py $(PREFIX)/usr/share/ovirt-engine/scripts/
-	ln -s /usr/share/java/postgresql-jdbc.jar $(PREFIX)$(JBOSS_HOME)/modules/org/postgresql/main/postgresql-jdbc.jar
 	install -m 644 backend/manager/conf/jboss-log4j.xml $(PREFIX)/usr/share/ovirt-engine/conf
 	install -m 644 packaging/fedora/setup/resources/postgres/postgres-ds.xml $(PREFIX)/usr/share/ovirt-engine/conf
 	install -m 644 LICENSE $(PREFIX)/usr/share/ovirt-engine
