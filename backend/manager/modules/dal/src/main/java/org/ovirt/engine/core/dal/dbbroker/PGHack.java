@@ -65,7 +65,9 @@ public class PGHack implements DataSource {
     // In Java 7 the override annotation should be uncommented.
     // @Override
     public Logger getParentLogger() throws SQLFeatureNotSupportedException {
-        return real.getParentLogger();
+        // This is needed while building with Java 6:
+        // return real.getParentLogger();
+        throw new SQLFeatureNotSupportedException();
     }
 
 }
