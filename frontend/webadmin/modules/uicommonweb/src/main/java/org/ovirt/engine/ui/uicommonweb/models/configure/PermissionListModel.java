@@ -16,6 +16,7 @@ import org.ovirt.engine.core.common.businessentities.roles;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.users.VdcUser;
@@ -383,6 +384,9 @@ public class PermissionListModel extends SearchableListModel
         if (getEntity() instanceof Quota)
         {
             return VdcObjectType.Quota;
+        }
+        if (getEntity() instanceof GlusterVolumeEntity) {
+            return VdcObjectType.GlusterVolume;
         }
         return VdcObjectType.Unknown;
     }

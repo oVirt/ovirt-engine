@@ -114,11 +114,6 @@ public class RoleTreeView
                                                 "Allow to define/configure roles in the System"),
                                         new RoleNode(ActionGroup.CONFIGURE_ENGINE,
                                                 "Allow to get or set System Configuration") })),
-                                // new RoleNode("Gluster", new RoleNode("Configure Volumes", new RoleNode[] {
-                                // new RoleNode(ActionGroup.GLUSTER_CREATE_VOLUME,
-                                // "Allow to create Gluster Volumes"),
-                                // new RoleNode(ActionGroup.GLUSTER_VOLUME_OPERATIONS,
-                                // "Allow to manipulate Gluster Volumes") })),
                                 new RoleNode("Data Center", new RoleNode("Configure Data Center", new RoleNode[] {
                                         new RoleNode(ActionGroup.CREATE_STORAGE_POOL, "Allow to create Data Center"),
                                         new RoleNode(ActionGroup.DELETE_STORAGE_POOL, "Allow to remove Data Center"),
@@ -148,6 +143,13 @@ public class RoleTreeView
                                                                 "Allow to Edit Cluster properties"),
                                                         new RoleNode(ActionGroup.CONFIGURE_CLUSTER_NETWORK,
                                                                 "Allow to add/remove Logical Networks for the Cluster (from the list of Networks defined by the Data Center)") })),
+                                new RoleNode("Gluster",
+                                        new RoleNode("Configure Volumes",
+                                                new RoleNode[] {
+                                        new RoleNode(ActionGroup.CREATE_GLUSTER_VOLUME,
+                                                "Allow to create Gluster Volumes"),
+                                        new RoleNode(ActionGroup.MANIPULATE_GLUSTER_VOLUME,
+                                                "Allow to manipulate Gluster Volumes") })),
                                 new RoleNode("Host", new RoleNode("Configure Host", new RoleNode[] {
                                         new RoleNode(ActionGroup.CREATE_HOST, "Allow to add new Host to the Cluster"),
                                         new RoleNode(ActionGroup.DELETE_HOST,

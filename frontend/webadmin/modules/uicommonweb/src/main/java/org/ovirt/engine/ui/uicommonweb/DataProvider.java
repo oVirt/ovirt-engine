@@ -47,6 +47,7 @@ import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.storage_server_connections;
 import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetAllChildVlanInterfacesQueryParameters;
@@ -2776,6 +2777,10 @@ public final class DataProvider
         else if (entity instanceof DiskImage)
         {
             return ((DiskImage) entity).getId();
+        }
+        else if (entity instanceof GlusterVolumeEntity)
+        {
+            return ((GlusterVolumeEntity) entity).getId();
         }
         return new Guid();
     }
