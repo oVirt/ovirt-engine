@@ -29,6 +29,7 @@ import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.DiskSizeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.FullDateTimeColumn;
+import org.ovirt.engine.ui.common.widget.table.column.IsObjectInSystemColumn;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmAppListModel;
@@ -135,6 +136,8 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
     private Column<DiskImage, String> storageDomainsColumn;
 
     private final ApplicationConstants constants;
+
+    private IsObjectInSystemColumn<VM> isObjectInSystemColumn;
 
     @Inject
     public ImportVmPopupView(ClientGinjector ginjector,
@@ -268,6 +271,9 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
             }
         };
         table.addColumn(diskColumn, constants.disksVm(), "50px"); //$NON-NLS-1$
+
+        isObjectInSystemColumn = new IsObjectInSystemColumn<VM>();
+        table.addColumn(isObjectInSystemColumn, "VM in System", "60px");
 
         ScrollPanel sp = new ScrollPanel();
         sp.add(table);
@@ -452,6 +458,8 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
     @Override
     public void edit(final ImportVmModel object) {
         this.object = object;
+        isObjectInSystemColumn.setInSetup(object);
+        table.edit(object);
         object.getPropertyChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {

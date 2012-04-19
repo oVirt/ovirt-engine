@@ -28,6 +28,7 @@ import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.DiskSizeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.FullDateTimeColumn;
+import org.ovirt.engine.ui.common.widget.table.column.IsObjectInSystemColumn;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.models.templates.ImportTemplateModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateGeneralModel;
@@ -117,6 +118,8 @@ public class ImportTemplatePopupView extends AbstractModelBoundPopupView<ImportT
     private final ApplicationConstants constants;
 
     private Column<DiskImage, String> storageDomainsColumn;
+
+    private IsObjectInSystemColumn<VmTemplate> isObjectInSystemColumn;
 
     @Inject
     public ImportTemplatePopupView(ClientGinjector ginjector,
@@ -229,6 +232,9 @@ public class ImportTemplatePopupView extends AbstractModelBoundPopupView<ImportT
             }
         };
         table.addColumn(diskColumn, constants.disksTemplate(), "50px"); //$NON-NLS-1$
+
+        isObjectInSystemColumn = new IsObjectInSystemColumn<VmTemplate>();
+        table.addColumn(isObjectInSystemColumn, "Template in System", "60px");
 
         ScrollPanel sp = new ScrollPanel();
         sp.add(table);
@@ -391,9 +397,8 @@ public class ImportTemplatePopupView extends AbstractModelBoundPopupView<ImportT
     @Override
     public void edit(final ImportTemplateModel object) {
         this.object = object;
-
+        isObjectInSystemColumn.setInSetup(object);
         table.edit(object);
-
         SingleSelectionModel<IVdcQueryable> selectionModel =
                 (SingleSelectionModel<IVdcQueryable>) table.getSelectionModel();
         selectionModel.addSelectionChangeHandler(new Handler() {

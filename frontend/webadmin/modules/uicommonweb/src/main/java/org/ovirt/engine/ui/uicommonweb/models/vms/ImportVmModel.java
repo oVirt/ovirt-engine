@@ -16,6 +16,10 @@ import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.storage_domain_static;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.interfaces.SearchType;
+import org.ovirt.engine.core.common.queries.SearchParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.Guid;
@@ -26,6 +30,7 @@ import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -37,7 +42,7 @@ import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
-public class ImportVmModel extends ListWithDetailsModel {
+public class ImportVmModel extends ListWithDetailsModel implements IIsObjectInSetup {
     boolean sameSelectedDestinationStorage = false;
     ArrayList<storage_domains> uniqueDestStorages;
     ArrayList<storage_domains> allDestStorages;
@@ -208,6 +213,8 @@ public class ImportVmModel extends ListWithDetailsModel {
         super.setSelectedItem(value);
         OnEntityChanged();
     }
+
+    private HashMap<Guid, VM> alreadyInSystem;
 
     public ImportVmModel() {
         setProblematicItems(new ArrayList<VM>());
@@ -467,14 +474,50 @@ public class ImportVmModel extends ListWithDetailsModel {
 
     }
 
-    public void setItems(Iterable value)
+    @Override
+    public void setItems(final Iterable value)
     {
-        super.setItems(value);
+        String vm_guidKey = "_VM_ID =";
+        String orKey = " or ";
+        StringBuilder searchPattern = new StringBuilder();
+        searchPattern.append("VM: ");
 
-        for (Object vm : getItems()) {
-            getDiskStorageMap().put(((VM) vm).getId(), new HashMap<Guid, Guid>());
+        List<VM> list = (List<VM>) value;
+        for (int i = 0; i < list.size(); i++) {
+            VM vm = list.get(i);
+
+            searchPattern.append(vm_guidKey);
+            searchPattern.append(vm.getId().toString());
+            if (i < list.size() - 1) {
+                searchPattern.append(orKey);
+            }
         }
 
+        Frontend.RunQuery(VdcQueryType.Search,
+                new SearchParameters(searchPattern.toString(), SearchType.VM),
+                new AsyncQuery(this, new INewAsyncCallback() {
+
+                    @Override
+                    public void OnSuccess(Object model, Object returnValue) {
+                        List<VM> vmList =
+                                (List<VM>) ((VdcQueryReturnValue) returnValue).getReturnValue();
+                        alreadyInSystem = new HashMap<Guid, VM>();
+                        for (VM vm : vmList) {
+                            alreadyInSystem.put(vm.getId(), vm);
+                        }
+
+                        setSuperItems(value);
+                    }
+                }));
+
+    }
+
+    protected void setSuperItems(Iterable value) {
+        super.setItems(value);
+        List<VM> list = (List<VM>) getItems();
+        for (VM vm : list) {
+            getDiskStorageMap().put(vm.getId(), new HashMap<Guid, Guid>());
+        }
         initStorageDomains();
     }
 
@@ -484,7 +527,7 @@ public class ImportVmModel extends ListWithDetailsModel {
     }
 
     public void setSelectedVMsCount(int size) {
-        importDiskListModel.setSelectedVMsCount(((List) getItems()).size());
+        importDiskListModel.setSelectedVMsCount(size);
     }
 
     storage_domains currStorageDomain = null;
@@ -640,5 +683,13 @@ public class ImportVmModel extends ListWithDetailsModel {
             }
         }
         return null;
+    }
+
+    @Override
+    public boolean isObjectInSetup(Object vm) {
+        if (alreadyInSystem == null) {
+            return false;
+        }
+        return alreadyInSystem.containsKey(((VM) vm).getId());
     }
 }

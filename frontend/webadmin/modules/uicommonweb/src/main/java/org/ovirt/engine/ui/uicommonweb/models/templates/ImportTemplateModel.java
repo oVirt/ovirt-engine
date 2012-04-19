@@ -2,26 +2,34 @@ package org.ovirt.engine.ui.uicommonweb.models.templates;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage_domain_static;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.DiskImageList;
+import org.ovirt.engine.core.common.queries.SearchParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.ObservableCollection;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.Frontend;
+import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.IIsObjectInSetup;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 
 @SuppressWarnings("unused")
-public class ImportTemplateModel extends ListWithDetailsModel
+public class ImportTemplateModel extends ListWithDetailsModel implements IIsObjectInSetup
 {
 
     private storage_domain_static privateSourceStorage;
@@ -111,6 +119,8 @@ public class ImportTemplateModel extends ListWithDetailsModel
         privateDiskStorageMap = value;
     }
 
+    private HashMap<Guid, VmTemplate> alreadyInSystem;
+
     public ImportTemplateModel()
     {
         setDestinationStorage(new ListModel());
@@ -142,14 +152,50 @@ public class ImportTemplateModel extends ListWithDetailsModel
         return getDestinationStorage().getIsValid() && getCluster().getIsValid();
     }
 
-    public void setItems(Iterable value)
+    @Override
+    public void setItems(final Iterable value)
     {
-        super.setItems(value);
+        String vmt_guidKey = "_VMT_ID =";
+        String orKey = " or ";
+        StringBuilder searchPattern = new StringBuilder();
+        searchPattern.append("Template: ");
 
-        for (Object vmTemplate : getItems()) {
-            getDiskStorageMap().put(((VmTemplate) vmTemplate).getId(), new HashMap<Guid, Guid>());
+        List<VmTemplate> list = (List<VmTemplate>) value;
+        for (int i = 0; i < list.size(); i++) {
+            VmTemplate vmTemplate = list.get(i);
+
+            searchPattern.append(vmt_guidKey);
+            searchPattern.append(vmTemplate.getId().toString());
+            if (i < list.size() - 1) {
+                searchPattern.append(orKey);
+            }
         }
 
+        Frontend.RunQuery(VdcQueryType.Search,
+                new SearchParameters(searchPattern.toString(), SearchType.VmTemplate),
+                new AsyncQuery(this, new INewAsyncCallback() {
+
+                    @Override
+                    public void OnSuccess(Object model, Object returnValue) {
+                        List<VmTemplate> vmtList =
+                                (List<VmTemplate>) ((VdcQueryReturnValue) returnValue).getReturnValue();
+                        alreadyInSystem = new HashMap<Guid, VmTemplate>();
+                        for (VmTemplate vmt : vmtList) {
+                            alreadyInSystem.put(vmt.getId(), vmt);
+                        }
+
+                        setSuperItems(value);
+                    }
+                }));
+
+    }
+
+    protected void setSuperItems(Iterable value) {
+        super.setItems(value);
+        List<VmTemplate> list = (List<VmTemplate>) getItems();
+        for (VmTemplate vmTemplate : list) {
+            getDiskStorageMap().put(vmTemplate.getId(), new HashMap<Guid, Guid>());
+        }
         initDiskStorageMap();
     }
 
@@ -198,5 +244,13 @@ public class ImportTemplateModel extends ListWithDetailsModel
             }
         }
         return storage;
+    }
+
+    @Override
+    public boolean isObjectInSetup(Object vmTemplate) {
+        if (alreadyInSystem == null) {
+            return false;
+        }
+        return alreadyInSystem.containsKey(((VmTemplate) vmTemplate).getId());
     }
 }
