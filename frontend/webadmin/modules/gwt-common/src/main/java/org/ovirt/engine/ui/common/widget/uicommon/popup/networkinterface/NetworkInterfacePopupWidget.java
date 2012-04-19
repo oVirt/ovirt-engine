@@ -45,6 +45,10 @@ public class NetworkInterfacePopupWidget extends AbstractModelBoundPopupWidget<V
     ListModelListBoxEditor<Object> nicTypeEditor;
 
     @UiField
+    @Path("portMirroring.entity")
+    EntityModelCheckBoxEditor portMirroringEditor;
+
+    @UiField
     @Ignore
     CheckBox enableManualMacCheckbox;
 
@@ -77,6 +81,7 @@ public class NetworkInterfacePopupWidget extends AbstractModelBoundPopupWidget<V
         nicTypeEditor.setLabel(constants.typeNetworkIntefacePopup());
         enableManualMacCheckboxLabel.setText(constants.specipyCustMacNetworkIntefacePopup());
         activateCheckBox.setLabel(constants.activateNetworkIntefacePopup());
+        portMirroringEditor.setLabel(constants.portMirroringNetworkIntefacePopup());
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })

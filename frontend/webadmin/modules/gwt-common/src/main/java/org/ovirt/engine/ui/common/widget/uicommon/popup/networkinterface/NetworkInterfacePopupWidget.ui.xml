@@ -11,13 +11,14 @@
 			color: gray;
 			float: right;
 		}
-		
+
 	</ui:style>
 
 	<g:FlowPanel>
 		<e:EntityModelTextBoxEditor ui:field="nameEditor" />
 		<e:ListModelListBoxEditor ui:field="networkEditor" />
 		<e:ListModelListBoxEditor ui:field="nicTypeEditor" />
+        <e:EntityModelCheckBoxEditor ui:field="portMirroringEditor" />
 		<g:HorizontalPanel>
 			<g:CheckBox ui:field="enableManualMacCheckbox"
 				addStyleNames="isTemplatePrivateEditor" />

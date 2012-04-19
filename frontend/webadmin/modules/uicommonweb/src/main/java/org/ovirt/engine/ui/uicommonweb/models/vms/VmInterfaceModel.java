@@ -64,6 +64,18 @@ public class VmInterfaceModel extends Model
         privateNicType = value;
     }
 
+    private EntityModel privatePortMirroring;
+
+    public EntityModel getPortMirroring()
+    {
+        return privatePortMirroring;
+    }
+
+    public void setPortMirroring(EntityModel value)
+    {
+        privatePortMirroring = value;
+    }
+
     private EntityModel privateMAC;
 
     public EntityModel getMAC()
@@ -94,6 +106,7 @@ public class VmInterfaceModel extends Model
         setNetwork(new ListModel());
         setNicType(new ListModel());
         setMAC(new EntityModel());
+        setPortMirroring(new EntityModel());
         getMAC().getPropertyChangedEvent().addListener(this);
         setActive(new EntityModel());
     }

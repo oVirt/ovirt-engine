@@ -181,6 +181,7 @@ public class VmInterfaceListModel extends SearchableListModel
         }else{
             model.getActive().setEntity(false);
         }
+        model.getPortMirroring().setEntity(false);
 
         final UICommand okCommand = new UICommand("OnSave", this); //$NON-NLS-1$
         okCommand.setTitle(ConstantsManager.getInstance().getConstants().ok());
@@ -270,6 +271,7 @@ public class VmInterfaceListModel extends SearchableListModel
         model.getMAC().setIsChangable(false);
         model.getMAC().setEntity(nic.getMacAddress());
         model.getActive().setIsAvailable(false);
+        model.getPortMirroring().setEntity(nic.isPortMirroring());
 
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);
@@ -344,6 +346,7 @@ public class VmInterfaceListModel extends SearchableListModel
         // Save changes.
         nic.setName((String) model.getName().getEntity());
         nic.setNetworkName(((network) model.getNetwork().getSelectedItem()).getname());
+        nic.setPortMirroring((Boolean)model.getPortMirroring().getEntity());
         if (model.getNicType().getSelectedItem() == null)
         {
             nic.setType(null);

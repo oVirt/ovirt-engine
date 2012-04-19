@@ -646,6 +646,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Type")
     String typeNetworkIntefacePopup();
 
+    @DefaultStringValue("Port Mirroring")
+    String portMirroringNetworkIntefacePopup();
+
     @DefaultStringValue("Specify custom MAC address")
     String specipyCustMacNetworkIntefacePopup();
 
