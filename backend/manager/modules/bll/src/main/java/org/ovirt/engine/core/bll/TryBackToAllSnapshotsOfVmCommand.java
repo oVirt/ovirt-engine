@@ -1,7 +1,9 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
@@ -17,6 +19,7 @@ import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -24,6 +27,7 @@ import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.utils.linq.Function;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 
+@LockIdNameAttribute
 public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfVmParameters> extends VmCommand<T> {
 
     private static final long serialVersionUID = 2636628918352438919L;
@@ -97,6 +101,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
                 .getAllSnapshotsForVmSnapshot(getParameters().getDstSnapshotId());
         if (images.size() > 0) {
             VmHandler.checkStatusAndLockVm(getVmId(), getCompensationContext());
+            freeLock();
             for (DiskImage image : images) {
                 ImagesContainterParametersBase tempVar = new ImagesContainterParametersBase(image.getId(),
                         image.getinternal_drive_mapping(), getVmId());
@@ -188,5 +193,10 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
     @Override
     protected VdcActionType getChildActionType() {
         return VdcActionType.TryBackToSnapshot;
+    }
+
+    @Override
+    protected Map<String, Guid> getExclusiveLocks() {
+        return Collections.singletonMap(LockingGroup.VM.name(), (Guid) getVmId());
     }
 }
