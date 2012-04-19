@@ -210,8 +210,12 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends V
             return false;
         }
 
-        return (getParameters().getInterface().isActive() ? canPerformHotPlug() : true)
-                && super.canDoAction();
+        if (getParameters().getInterface().isActive()) {
+            if (getVm().getstatus() == VMStatus.Up && !canPerformHotPlug()) {
+                return false;
+            }
+        }
+        return super.canDoAction();
     }
 
     @Override
