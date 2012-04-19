@@ -13,9 +13,9 @@ import org.ovirt.engine.core.common.businessentities.ad_groups;
 import static org.easymock.classextension.EasyMock.expect;
 
 public abstract class AbstractBackendGroupsResourceTest
-        extends AbstractBackendCollectionResourceTest<Group, ad_groups, AbstractBackendGroupsResource> {
+        extends AbstractBackendCollectionResourceTest<Group, ad_groups, BackendGroupsResource> {
 
-    public AbstractBackendGroupsResourceTest(AbstractBackendGroupsResource collection) {
+    public AbstractBackendGroupsResourceTest(BackendGroupsResource collection) {
         super(collection, null, "");
     }
 

@@ -4,7 +4,7 @@ import org.ovirt.engine.api.model.Group;
 import org.ovirt.engine.core.common.businessentities.ad_groups;
 import org.ovirt.engine.core.compat.Guid;
 
-public abstract class AbstractBackendGroupsResource extends BackendGroupsResource
+public abstract class AbstractBackendGroupsResource extends BackendGroupsResourceBase
 {
     public AbstractBackendGroupsResource(String id, BackendDomainResource parent) {
         super(id,parent);

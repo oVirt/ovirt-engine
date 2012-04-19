@@ -2,6 +2,7 @@ package org.ovirt.engine.api.restapi.resource;
 
 import org.ovirt.engine.api.model.Domain;
 import org.ovirt.engine.api.model.Group;
+import org.ovirt.engine.api.model.Groups;
 import org.ovirt.engine.api.resource.DomainGroupResource;
 import org.ovirt.engine.api.resource.DomainGroupsResource;
 
@@ -27,4 +28,10 @@ implements DomainGroupsResource {
     public DomainGroupResource getDomainGroupSubResource(String id) {
         return inject(new BackendDomainGroupResource(id, this));
     }
+
+    @Override
+    public Groups list() {
+        return mapDomainGroupsCollection(getGroupsFromDomain());
+    }
+
 }
