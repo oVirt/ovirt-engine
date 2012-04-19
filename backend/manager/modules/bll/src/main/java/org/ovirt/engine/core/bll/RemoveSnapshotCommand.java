@@ -1,6 +1,8 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
@@ -15,10 +17,14 @@ import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.utils.transaction.TransactionMethod;
+import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
+@LockIdNameAttribute
 public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends VmCommand<T> {
 
     private static final long serialVersionUID = 3162100352844371734L;
@@ -54,7 +60,20 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
             log.error("Cannot remove VM snapshot. Vm is not Down");
             throw new VdcBLLException(VdcBllErrors.IRS_IMAGE_STATUS_ILLEGAL);
         }
-        DbFacade.getInstance().getSnapshotDao().updateStatus(getParameters().getSnapshotId(), SnapshotStatus.LOCKED);
+
+        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
+
+            @Override
+            public Void runInTransaction() {
+                Snapshot snapshot = DbFacade.getInstance().getSnapshotDao().get(getParameters().getSnapshotId());
+                getCompensationContext().snapshotEntityStatus(snapshot, snapshot.getStatus());
+                DbFacade.getInstance().getSnapshotDao().updateStatus(
+                        getParameters().getSnapshotId(), SnapshotStatus.LOCKED);
+                getCompensationContext().stateChanged();
+                return null;
+            }
+        });
+        freeLock();
         getParameters().setEntityId(getVmId());
 
         for (final DiskImage source : getSourceImages()) {
@@ -144,5 +163,10 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
     @Override
     protected VdcActionType getChildActionType() {
         return VdcActionType.RemoveSnapshotSingleDisk;
+    }
+
+    @Override
+    protected Map<String, Guid> getExclusiveLocks() {
+        return Collections.singletonMap(LockingGroup.VM.name(), (Guid) getVmId());
     }
 }
