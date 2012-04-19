@@ -141,8 +141,9 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
                 {
                     switch (volumeListModel.getSystemTreeSelectedItem().getType())
                     {
-                    case Hosts:
+                    case Volumes:
                     case Cluster:
+                    case Cluster_Gluster:
                         VDSGroup cluster = (VDSGroup) volumeListModel.getSystemTreeSelectedItem().getEntity();
                         for (storage_pool dc : (java.util.ArrayList<storage_pool>) innerVolumeModel.getDataCenter()
                                 .getItems())
@@ -156,10 +157,11 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
                             }
                         }
                         innerVolumeModel.getDataCenter().setIsChangable(false);
-                        innerVolumeModel.getDataCenter().setInfo("Cannot choose Host's Data Center in tree context");
+                        innerVolumeModel.getDataCenter().setInfo("Cannot choose Volume's Data Center in tree context");
                         innerVolumeModel.getCluster().setIsChangable(false);
-                        innerVolumeModel.getCluster().setInfo("Cannot choose Host's Cluster in tree context");
+                        innerVolumeModel.getCluster().setInfo("Cannot choose Volume's Cluster in tree context");
                         break;
+                    case Clusters:
                     case DataCenter:
                         storage_pool selectDataCenter =
                                 (storage_pool) volumeListModel.getSystemTreeSelectedItem().getEntity();
@@ -167,7 +169,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
                                 .setItems(new java.util.ArrayList<storage_pool>(java.util.Arrays.asList(new storage_pool[] { selectDataCenter })));
                         innerVolumeModel.getDataCenter().setSelectedItem(selectDataCenter);
                         innerVolumeModel.getDataCenter().setIsChangable(false);
-                        innerVolumeModel.getDataCenter().setInfo("Cannot choose Host's Data Center in tree context");
+                        innerVolumeModel.getDataCenter().setInfo("Cannot choose Volume's Data Center in tree context");
                         break;
                     default:
                         break;
