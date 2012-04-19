@@ -7,6 +7,9 @@ import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.NIC;
 import org.ovirt.engine.api.model.Nics;
+import org.ovirt.engine.api.model.Network;
+import org.ovirt.engine.api.model.Networks;
+import org.ovirt.engine.api.model.PortMirroring;
 import org.ovirt.engine.api.resource.DevicesResource;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
@@ -52,6 +55,15 @@ public abstract class BackendNicsResource
             network network = lookupClusterNetwork(clusterId, null, entity.getNetworkName(), networks);
             NIC nic = populate(map(entity), entity);
             if (network!=null && network.getId()!=null) {
+                if (entity.isPortMirroring()) {
+                    PortMirroring portMirroring = new PortMirroring();
+                    Networks nets = new Networks();
+                    Network net = new Network();
+                    net.setId(network.getId().toString());
+                    portMirroring.setNetworks(nets);
+                    portMirroring.getNetworks().getNetworks().add(net);
+                    nic.setPortMirroring(portMirroring);
+                }
                 nic.getNetwork().setId(network.getId().toString());
                 nic.getNetwork().setName(null);
             }

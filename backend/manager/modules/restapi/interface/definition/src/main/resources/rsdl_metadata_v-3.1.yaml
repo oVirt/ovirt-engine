@@ -323,7 +323,7 @@ actions:
       parameterType: NIC
       signatures:
       - mandatoryArguments: {}
-        optionalArguments: {nic.network.id|name: 'xs:string', nic.name: 'xs:string', nic.mac.address: 'xs:string', nic.interface: 'xs:string'}
+        optionalArguments: {nic.network.id|name: 'xs:string', nic.name: 'xs:string', nic.mac.address: 'xs:string', nic.interface: 'xs:string', nic.port_mirroring.networks.network--COLLECTION: {network.id: 'xs:string'}}
     urlparams: {}
     headers: {Content-Type: application/xml|json}
 - name: /api/vms/{vm:id}/nics/{nic:id}|rel=activate
@@ -346,7 +346,7 @@ actions:
       parameterType: NIC
       signatures:
       - mandatoryArguments: {nic.network.id|name: 'xs:string', nic.name: 'xs:string'}
-        optionalArguments: {nic.mac.address: 'xs:string', nic.interface: 'xs:string'}
+        optionalArguments: {nic.mac.address: 'xs:string', nic.interface: 'xs:string', nic.port_mirroring.networks.network--COLLECTION: {network.id: 'xs:string'}}
     urlparams: {}
     headers: {Content-Type: application/xml|json, Expect: 201-created}
 - name: /api/vms/{vm:id}/permissions|rel=get

@@ -2153,6 +2153,14 @@
     </xs:sequence>  
   </xs:complexType>
 
+  <xs:element name="port_mirroring" type="PortMirroring"/>
+
+  <xs:complexType name="PortMirroring">
+    <xs:sequence>
+      <xs:element ref="networks" minOccurs="0" maxOccurs="1"/>
+    </xs:sequence>
+  </xs:complexType>
+
   <xs:complexType name="NIC">
     <xs:complexContent>
       <xs:extension base="BaseDevice">
@@ -2162,6 +2170,7 @@
           <xs:element ref="mac" minOccurs="0"/>
           <xs:element name="statistics" type="Statistics" minOccurs="0" maxOccurs="1"/>
           <xs:element name="active" type="xs:boolean" minOccurs="0"/>
+          <xs:element ref="port_mirroring" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>

@@ -2,7 +2,9 @@ package org.ovirt.engine.api.restapi.resource;
 
 import java.util.List;
 
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.ovirt.engine.core.common.action.AddVmInterfaceParameters;
@@ -19,6 +21,7 @@ import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResource.Paramete
 
 import org.ovirt.engine.api.common.util.DetailHelper;
 import org.ovirt.engine.api.common.util.LinkHelper;
+import org.ovirt.engine.api.model.Fault;
 import org.ovirt.engine.api.model.NIC;
 import org.ovirt.engine.api.model.Statistic;
 import org.ovirt.engine.api.model.Statistics;
@@ -48,6 +51,39 @@ public class BackendVmNicsResource
         public VdcActionParametersBase getParameters(NIC incoming, VmNetworkInterface entity) {
             return new AddVmInterfaceParameters(parentId, map(incoming, entity));
         }
+    }
+
+    @Override
+    public Response add(NIC device) {
+        //TODO: this is temporary mapping between engine boolean port mirroring parameter, and REST
+        //      port mirroring network collection, next engine version will support the network collection
+        //      in port mirroring
+
+        // if port mirroring exists we check that the network id is equals to the nic network name
+        if (device.isSetPortMirroring() &&
+                device.getPortMirroring().isSetNetworks()
+                &&
+                device.getPortMirroring().getNetworks().getNetworks().size() == 1
+                &&
+                device.getPortMirroring().getNetworks().getNetworks().get(0).isSetId()
+                &&
+                device.isSetNetwork() && device.getNetwork().isSetId() &&
+                !device.getNetwork()
+                        .getId()
+                        .equals(device.getPortMirroring().getNetworks().getNetworks().get(0).getId())) {
+            Fault fault = new Fault();
+            fault.setReason("The port mirroring network must match the Network set on the NIC");
+            Response response = Response.status(Response.Status.BAD_REQUEST).entity(fault).build();
+            throw new WebApplicationException(response);
+        } else if (device.isSetPortMirroring() &&
+                device.getPortMirroring().isSetNetworks() &&
+                device.getPortMirroring().getNetworks().getNetworks().size() > 1) {
+            Fault fault = new Fault();
+            fault.setReason("cannot set more than one network in port mirroring mode");
+            Response response = Response.status(Response.Status.BAD_REQUEST).entity(fault).build();
+            throw new WebApplicationException(response);
+        }
+        return super.add(device);
     }
 
     @Override

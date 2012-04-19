@@ -36,6 +36,12 @@ public class NicMapper {
         if (model.isSetActive()) {
             entity.setActive(model.isActive());
         }
+        if (model.isSetPortMirroring() && model.getPortMirroring().isSetNetworks() &&
+                model.getPortMirroring().getNetworks().isSetNetworks()) {
+            entity.setPortMirroring(model.getPortMirroring().getNetworks().getNetworks().size() == 1);
+        } else {
+            entity.setPortMirroring(false);
+        }
         return entity;
     }
 

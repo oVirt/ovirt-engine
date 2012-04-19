@@ -146,6 +146,8 @@ public class PermitMapper {
             return PermitType.CONFIGURE_DISK_STORAGE;
         case DELETE_DISK:
             return PermitType.DELETE_DISK;
+        case PORT_MIRRORING:
+            return PermitType.PORT_MIRRORING;
         default:
             return null;
         }

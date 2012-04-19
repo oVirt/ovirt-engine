@@ -86,7 +86,10 @@ public enum PermitType {
     ATTACH_DISK(1101, RoleType.USER),
     EDIT_DISK_PROPERTIES(1102, RoleType.USER),
     CONFIGURE_DISK_STORAGE(1103, RoleType.USER),
-    DELETE_DISK(1104, RoleType.USER);
+    DELETE_DISK(1104, RoleType.USER),
+
+    // Vm Interface action groups
+    PORT_MIRRORING(1104, RoleType.ADMIN);
 
     private int id;
     private RoleType role;
