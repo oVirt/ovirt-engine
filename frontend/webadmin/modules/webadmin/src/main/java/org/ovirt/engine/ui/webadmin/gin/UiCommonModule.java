@@ -21,7 +21,6 @@ import org.ovirt.engine.ui.webadmin.uicommon.model.AlertModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.BookmarkModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.EventFirstRowModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.EventModelProvider;
-import org.ovirt.engine.ui.webadmin.uicommon.model.QuotaModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.RoleModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.RolePermissionModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SystemPermissionModelProvider;
@@ -89,9 +88,6 @@ public class UiCommonModule extends BaseUiCommonModule {
 
         // SystemPermissionListModel
         bind(SystemPermissionModelProvider.class).asEagerSingleton();
-
-        // Quota Models - TODO: Remove QuotaModelProvider - logic should be in QuotaPopupPresenterWidget
-        bind(QuotaModelProvider.class).asEagerSingleton();
     }
 
     void bindIntegration() {

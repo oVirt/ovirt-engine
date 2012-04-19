@@ -25,7 +25,6 @@ import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.quota.QuotaPopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.uicommon.model.QuotaModelProvider;
 import org.ovirt.engine.ui.webadmin.widget.table.column.NullableButtonCell;
 
 import com.google.gwt.cell.client.CheckboxCell;
@@ -104,8 +103,6 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
 
     private QuotaModel model;
 
-    private QuotaModelProvider quotaModelProvider;
-
     private boolean firstTime = false;
 
     ArrayList<Guid> selectedClusterGuid = new ArrayList<Guid>();
@@ -124,10 +121,8 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
     }
 
     @Inject
-    public QuotaPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants,
-            QuotaModelProvider quotaModelProvider) {
+    public QuotaPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
         super(eventBus, resources);
-        this.quotaModelProvider = quotaModelProvider;
         initListBoxEditors();
         initRadioButtonEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
@@ -346,7 +341,6 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
         this.model = object;
         if (!firstTime) {
             registerHandlers();
-            quotaModelProvider.setModel(object);
             firstTime = true;
         }
 
