@@ -2,6 +2,7 @@ package org.ovirt.engine.core.utils.serialization.json;
 
 import java.io.Serializable;
 
+import org.codehaus.jackson.annotate.JsonPropertyOrder;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.RandomUtils;
 
@@ -10,6 +11,7 @@ import org.ovirt.engine.core.utils.RandomUtils;
  * classes.
  */
 @SuppressWarnings("serial")
+@JsonPropertyOrder(value = { "integer", "object", "string", "guid" })
 public class JsonSerializablePojo implements Serializable {
 
     /* --- Fields for serialization --- */
