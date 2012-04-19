@@ -80,6 +80,7 @@ public enum ActionGroup {
     // Gluster
     CREATE_GLUSTER_VOLUME(1000, RoleType.ADMIN, VdcObjectType.GlusterVolume),
     MANIPULATE_GLUSTER_VOLUME(1001, RoleType.ADMIN, VdcObjectType.GlusterVolume),
+    DELETE_GLUSTER_VOLUME(1002, RoleType.ADMIN, VdcObjectType.GlusterVolume),
 
     // Disks action groups
     CREATE_DISK(1100, RoleType.USER, VdcObjectType.Disk),

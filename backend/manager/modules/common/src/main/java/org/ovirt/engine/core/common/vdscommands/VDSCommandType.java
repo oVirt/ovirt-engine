@@ -130,7 +130,9 @@ public enum VDSCommandType {
     SetGlusterVolumeOption("org.ovirt.engine.core.vdsbroker.gluster"),
     ResetGlusterVolumeOptions("org.ovirt.engine.core.vdsbroker.gluster"),
     StartGlusterVolume("org.ovirt.engine.core.vdsbroker.gluster"),
-    StopGlusterVolume("org.ovirt.engine.core.vdsbroker.gluster");
+    StopGlusterVolume("org.ovirt.engine.core.vdsbroker.gluster"),
+    DeleteGlusterVolume("org.ovirt.engine.core.vdsbroker.gluster"),
+    ;
 
     String packageName;
 

@@ -79,6 +79,7 @@ public enum PermitType {
     // Gluster
     CREATE_GLUSTER_VOLUME(1000, RoleType.ADMIN),
     MANIPULATE_GLUSTER_VOLUME(1001, RoleType.ADMIN),
+    DELETE_GLUSTER_VOLUME(1002, RoleType.ADMIN),
 
     // Disks action groups
     CREATE_DISK(1100, RoleType.USER),

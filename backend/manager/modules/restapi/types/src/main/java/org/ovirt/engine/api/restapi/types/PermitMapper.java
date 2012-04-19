@@ -134,6 +134,8 @@ public class PermitMapper {
             return PermitType.CREATE_GLUSTER_VOLUME;
         case MANIPULATE_GLUSTER_VOLUME:
             return PermitType.MANIPULATE_GLUSTER_VOLUME;
+        case DELETE_GLUSTER_VOLUME:
+            return PermitType.DELETE_GLUSTER_VOLUME;
         case CREATE_DISK:
             return PermitType.CREATE_DISK;
         case ATTACH_DISK:

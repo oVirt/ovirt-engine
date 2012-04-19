@@ -1845,4 +1845,8 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. Gluster Volume already stopped.")
     String ACTION_TYPE_FAILED_GLUSTER_VOLUME_ALREADY_STOPPED();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Gluster Volume is up.")
+    String ACTION_TYPE_FAILED_GLUSTER_VOLUME_IS_UP();
+
 }

@@ -666,4 +666,7 @@ public interface VdsmErrors extends ConstantsWithLookup {
     String VM_TEMPLATE_CANT_LOCATE_DISKS_IN_DB();
 
     String VM_WITH_SAME_NAME_EXIST();
+
+    @DefaultStringValue("Gluster Volume Delete Failed.")
+    String GlusterVolumeDeleteFailed();
 }
