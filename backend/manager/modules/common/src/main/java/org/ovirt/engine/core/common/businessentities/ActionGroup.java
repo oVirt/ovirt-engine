@@ -14,12 +14,25 @@ public enum ActionGroup {
     VM_BASIC_OPERATIONS(4, RoleType.USER, VdcObjectType.VM),
     CHANGE_VM_CD(5, RoleType.USER, VdcObjectType.VM),
     MIGRATE_VM(6, RoleType.USER, VdcObjectType.VM),
+
+    /**
+     * Connect to the console of a virtual machine, but only if no user
+     * has connected before:
+     */
     CONNECT_TO_VM(7, RoleType.USER, VdcObjectType.VM),
+
     IMPORT_EXPORT_VM(8, RoleType.ADMIN, VdcObjectType.VM),
     CONFIGURE_VM_NETWORK(9, RoleType.USER, VdcObjectType.VM),
     CONFIGURE_VM_STORAGE(10, RoleType.USER, VdcObjectType.VM),
     MOVE_VM(11, RoleType.USER, VdcObjectType.VM),
     MANIPULATE_VM_SNAPSHOTS(12, RoleType.USER, VdcObjectType.VM),
+
+    /**
+     * Connect to the console of a virtual machine even if a different
+     * user was connected before:
+     */
+    RECONNECT_TO_VM(13, RoleType.USER, VdcObjectType.VM),
+
     // host (vds) actions groups
     CREATE_HOST(100, RoleType.ADMIN, VdcObjectType.VDS),
     EDIT_HOST_CONFIGURATION(101, RoleType.ADMIN, VdcObjectType.VDS),

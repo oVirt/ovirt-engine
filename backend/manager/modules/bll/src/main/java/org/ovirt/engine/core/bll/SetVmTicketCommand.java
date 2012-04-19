@@ -1,6 +1,11 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.List;
+
+import org.ovirt.engine.core.common.PermissionSubject;
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.SetVmTicketParameters;
+import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.interfaces.IVdcUser;
@@ -26,6 +31,11 @@ public class SetVmTicketCommand<T extends SetVmTicketParameters> extends VmOpera
     private String mTicket;
     private final int mValidTime;
 
+    // This flag is calculated during the authorization phase and indicates if
+    // the user needed additional permission in order to connect to the console
+    // of the virtual machine:
+    private boolean neededPermissions = false;
+
     public SetVmTicketCommand(T parameters) {
         super(parameters);
         mTicket = parameters.getTicket();
@@ -38,32 +48,43 @@ public class SetVmTicketCommand<T extends SetVmTicketParameters> extends VmOpera
         addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM_TICKET);
     }
 
-    /**
-     * Checks if the user can connect to the console.
-     *
-     * @return <code>true</code> if the connection is allowed, <code>false</code>
-     *   otherwise
-     */
-    private boolean canConnectToConsole() {
-        // Check if the virtual machine has the flag that allows forced connection to
-        // the console to any user:
-        final VM vm = getVm();
-        if (vm.getAllowConsoleReconnect()) {
-            return true;
+    @Override
+    public List<PermissionSubject> getPermissionCheckSubjects () {
+        final List<PermissionSubject> permissions = super.getPermissionCheckSubjects();
+        if (needPermissionForConnectingToConsole()) {
+            permissions.add(new PermissionSubject(getVmId(), VdcObjectType.VM, ActionGroup.RECONNECT_TO_VM));
+            neededPermissions = true;
         }
+        return permissions;
+    }
 
-        // For normal users, with no special privileges, only the first user that connected to
-        // the console is allowed to reconnect:
-        final NGuid currentId = getCurrentUser().getUserId();
-        final NGuid previousId = vm.getConsoleUserId();
-        if (previousId != null && !previousId.equals(currentId)) {
-            log.warnFormat("User \"{0}\" is trying to set a ticket for virtual machine \"{1}\" but the machine is already in use by \"{2}\".", currentId, vm.getId(), previousId);
-            addCanDoActionMessage(VdcBllMessages.USER_NOT_AUTHORIZED_TO_PERFORM_ACTION);
+    /**
+     * Checks if the user needs additional permissions in order to connect
+     * to the console.
+     *
+     * @return <code>true</code> if additional permissions are needed,
+     *   <code>false</code> otherwise
+     */
+    private boolean needPermissionForConnectingToConsole() {
+        // Check if the virtual machine has the flag that allows forced connection to
+        // any user, in that case no additional permission is needed:
+        final VM vm = getVm();
+        if (vm == null || vm.getAllowConsoleReconnect()) {
             return false;
         }
 
-        // If we are here then the connection should be granted:
-        return true;
+        // If this is not the first user to connect to the console then it does need
+        // additional permissions:
+        final NGuid currentId = getCurrentUser().getUserId();
+        final NGuid previousId = vm.getConsoleUserId();
+        if (previousId != null && !previousId.equals(currentId)) {
+            log.warnFormat("User \"{0}\" is trying to take the console of virtual machine \"{1}\", but the console is already taken by user \"{2}\".", currentId, vm.getId(), previousId);
+            return true;
+        }
+
+        // If we are here then the user is the first to connect to the console, so no
+        // additional permissions are needed:
+        return false;
     }
 
     @Override
@@ -84,8 +105,9 @@ public class SetVmTicketCommand<T extends SetVmTicketParameters> extends VmOpera
             return false;
         }
 
-        // Check that the user can connect to the console:
-        return canConnectToConsole();
+        // Nothing else, all checks have been performed using permission
+        // subjects:
+        return true;
     }
 
     @Override
@@ -98,21 +120,25 @@ public class SetVmTicketCommand<T extends SetVmTicketParameters> extends VmOpera
 
         // Update the dynamic information of the virtual machine in memory (we need it
         // to update the database later):
-        // Check that the virtual machine exists:
         final VM vm = getVm();
         final IVdcUser user = getCurrentUser();
         vm.setConsoleUserId(user.getUserId());
 
-        // If the virtual machine has the allow reconnect then we just have to save
-        // the user name and the user id to the database, regardless of what was there
-        // before and without locking.
+        // If the virtual machine has the allow reconnect flag or the user
+        // needed additional permissions to connect to the console then we just
+        // have to save the user id to the database, regardless of what was
+        // there before and without locking.
         //
-        // In any other situation we try to save the new user to the database and proceed
-        // only if the previous user in the database is null. This is needed to prevent
-        // races between different users trying to access the console of the same virtual
-        // machine simultaneously.
+        // Note that the fact that the user needed permissions actually means
+        // that it has them, otherwise we will not be here, performing the
+        // operation.
+        //
+        // In any other situation we try to save the new user to the database
+        // and proceed only if the previous user in the database is null. This
+        // is needed to prevent races between different users trying to access
+        // the console of the same virtual machine simultaneously.
         final VmDynamicDAO dao = DbFacade.getInstance().getVmDynamicDAO();
-        if (vm.getAllowConsoleReconnect()) {
+        if (vm.getAllowConsoleReconnect() || neededPermissions) {
             dao.update(vm.getDynamicData());
             sendTicket();
         }
@@ -136,7 +162,7 @@ public class SetVmTicketCommand<T extends SetVmTicketParameters> extends VmOpera
         // Send messages to the log explaining the situation:
         final VM vm = getVm();
         final IVdcUser user = getCurrentUser();
-        log.warnFormat("Failed to set console user to \"{0}\" for virtual machine \"{1}\".", user.getUserId(), vm.getvm_name());
+        log.warnFormat("Can't give console of virtual machine \"{0}\" to user \"{1}\", it has probably been taken by another user.", vm.getId(), user.getUserId());
 
         // Set the result messages indicating that the operation failed:
         addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_IN_USE_BY_OTHER_USER);
