@@ -548,7 +548,7 @@ public class VdsUpdateRunTimeInfo {
                 logMTUDifferences(networksByName, iface);
 
                 // Handle nics that are non bonded and not vlan over bond
-                setHostDown = isInteraceDown(clusterNetworks, networks, nics, iface);
+                setHostDown = isRequiredInterfaceDown(networksByName, networks, nics, iface);
 
                 // Handle bond nics
                 if (iface.getBondName() != null) {
@@ -681,23 +681,30 @@ public class VdsUpdateRunTimeInfo {
         }
     }
 
-    private boolean isInteraceDown(List<network> clusterNetworks,
+    /**
+     * check if an interface implementing a required cluster network is down
+     *
+     * @param networksByName
+     * @param networks
+     * @param nics
+     * @param iface
+     */
+    private boolean isRequiredInterfaceDown(Map<String, network> networksByName,
             List<String> networks,
             List<String> nics,
             VdsNetworkInterface iface) {
         if (iface.getStatistics().getStatus() != InterfaceStatus.Up
                 && iface.getNetworkName() != null
                 && iface.getBonded() == null
-                && !isBondOrVlanOverBond(iface)) {
-            // check if the network require by the cluster
-            for (network net : clusterNetworks) {
-                if (net.getStatus() == NetworkStatus.Operational &&
-                        net.getname().equals(iface.getNetworkName()) &&
-                        (iface.getVlanId() == null || !isVlanInterfaceUp(iface))) {
-                    networks.add(iface.getNetworkName());
-                    nics.add(iface.getName());
-                    return true;
-                }
+                && !isBondOrVlanOverBond(iface)
+                && networksByName.containsKey(iface.getNetworkName())) {
+
+            network net = networksByName.get(iface.getNetworkName());
+            if (net.getStatus() == NetworkStatus.Operational && net.isRequired()
+                    && (iface.getVlanId() == null || !isVlanInterfaceUp(iface))) {
+                networks.add(iface.getNetworkName());
+                nics.add(iface.getName());
+                return true;
             }
         }
         return false;
