@@ -1008,12 +1008,13 @@ public final class DataProvider
     public static ArrayList<StorageType> GetStoragePoolTypeList()
     {
         return new ArrayList<StorageType>(Arrays.asList(new StorageType[] { StorageType.NFS,
-                StorageType.ISCSI, StorageType.FCP, StorageType.LOCALFS }));
+                StorageType.ISCSI, StorageType.FCP, StorageType.LOCALFS, StorageType.POSIXFS }));
     }
 
     public static boolean IsVersionMatchStorageType(Version version, StorageType type)
     {
-        return !(type == StorageType.LOCALFS && version.compareTo(new Version(2, 2)) <= 0);
+        return !((type == StorageType.LOCALFS && version.compareTo(new Version(2, 2)) <= 0) || (type == StorageType.POSIXFS && version.compareTo(new Version(3,
+                0)) <= 0));
     }
 
     public static String GetRpmVersionViaPublic()
