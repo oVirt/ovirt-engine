@@ -72,7 +72,7 @@ public class OvfTemplateReader extends OvfReader {
                 DiskImage image = LinqUtils.firstOrNull(_images, new Predicate<DiskImage>() {
                     @Override
                     public boolean eval(DiskImage diskImage) {
-                        return diskImage.getId().equals(guid);
+                        return diskImage.getImageId().equals(guid);
                     }
                 });
                 String drive = node.SelectSingleNode("rasd:Caption", _xmlNS).InnerText;

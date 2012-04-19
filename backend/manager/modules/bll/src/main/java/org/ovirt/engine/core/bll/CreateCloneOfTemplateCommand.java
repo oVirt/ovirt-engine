@@ -70,10 +70,10 @@ public class CreateCloneOfTemplateCommand<T extends CreateCloneOfTemplateParamet
                             VDSCommandType.CopyImage,
                             new CopyImageVDSCommandParameters(storagePoolID, getDiskImage().getstorage_ids().get(0),
                                     getVmTemplateId(), getDiskImage().getimage_group_id().getValue(), getImage()
-                                            .getId(), mNewCreatedDiskImage.getimage_group_id(), getDestinationImageId(),
+                                            .getImageId(), mNewCreatedDiskImage.getimage_group_id(), getDestinationImageId(),
                                     "", getDestinationStorageDomainId(),
                                     CopyVolumeType.LeafVol, mNewCreatedDiskImage.getvolume_format(),
-                                    mNewCreatedDiskImage.getvolume_type(), getDiskImage().getwipe_after_delete(),
+                                    mNewCreatedDiskImage.getvolume_type(), getDiskImage().isWipeAfterDelete(),
                                     false, getStoragePool().getcompatibility_version().toString()));
 
             if (vdsReturnValue.getSucceeded()) {
@@ -83,7 +83,7 @@ public class CreateCloneOfTemplateCommand<T extends CreateCloneOfTemplateParamet
         } catch (Exception e) {
             log.errorFormat(
                     "CreateCloneOfTemplateCommand::CreateSnapshotInIrsServer::Failed creating snapshot from image id -'{0}'",
-                    getImage().getId());
+                    getImage().getImageId());
             throw new VdcBLLException(VdcBllErrors.VolumeCreationError);
         }
         return vdsReturnValue;

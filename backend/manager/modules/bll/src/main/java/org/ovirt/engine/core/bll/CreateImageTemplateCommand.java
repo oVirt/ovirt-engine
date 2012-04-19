@@ -45,12 +45,12 @@ public class CreateImageTemplateCommand<T extends CreateImageTemplateParameters>
                 .getValue() : Guid.Empty;
         Guid imageGroupId = getDiskImage().getimage_group_id() != null ? getDiskImage().getimage_group_id().getValue()
                 : Guid.Empty;
-        Guid snapshotId = getDiskImage().getId();
+        Guid snapshotId = getDiskImage().getImageId();
         // Create new image group id and image id:
         Guid destinationImageGroupID = Guid.NewGuid();
         setDestinationImageId(Guid.NewGuid());
         getDiskImage().getSnapshots().addAll(
-                ImagesHandler.getAllImageSnapshots(getDiskImage().getId(), getDiskImage().getit_guid()));
+                ImagesHandler.getAllImageSnapshots(getDiskImage().getImageId(), getDiskImage().getit_guid()));
 
         setDiskImage(getDiskImage().getSnapshots().get(getDiskImage().getSnapshots().size() - 1));
         DiskImage newImage = CloneDiskImage(getDestinationImageId());
@@ -66,7 +66,7 @@ public class CreateImageTemplateCommand<T extends CreateImageTemplateParameters>
                                 getDestinationImageId(), StringUtils.defaultString(newImage.getdescription()), getParameters()
                                         .getDestinationStorageDomainId(), CopyVolumeType.SharedVol, newImage
                                         .getvolume_format(), newImage.getvolume_type(), getDiskImage()
-                                        .getwipe_after_delete(), false, getStoragePool().getcompatibility_version()
+                                        .isWipeAfterDelete(), false, getStoragePool().getcompatibility_version()
                                         .toString()));
 
         getReturnValue().getInternalTaskIdList().add(
@@ -80,11 +80,11 @@ public class CreateImageTemplateCommand<T extends CreateImageTemplateParameters>
         newImage.setstorage_ids(new ArrayList<Guid>(Arrays.asList(getParameters().getDestinationStorageDomainId())));
         newImage.setactive(true);
         saveImage(newImage);
-        newImage.getDisk().setDiskAlias(ImagesHandler.getSuggestedDiskAlias(newImage.getDisk(), getVmTemplateName()));
-        DbFacade.getInstance().getBaseDiskDao().save(newImage.getDisk());
+        newImage.setDiskAlias(ImagesHandler.getSuggestedDiskAlias(newImage, getVmTemplateName()));
+        DbFacade.getInstance().getBaseDiskDao().save(newImage);
 
         DiskImageDynamic diskDynamic = new DiskImageDynamic();
-        diskDynamic.setId(newImage.getId());
+        diskDynamic.setId(newImage.getImageId());
         diskDynamic.setactual_size(getDiskImage().getactual_size());
         DbFacade.getInstance().getDiskImageDynamicDAO().save(diskDynamic);
 
@@ -102,10 +102,10 @@ public class CreateImageTemplateCommand<T extends CreateImageTemplateParameters>
      *            The disk to fill the volume details in.
      */
     private void fillVolumeInformation(DiskImage disk) {
-        DiskImage ancestor = DbFacade.getInstance().getDiskImageDAO().getAncestor(getDiskImage().getId());
+        DiskImage ancestor = DbFacade.getInstance().getDiskImageDAO().getAncestor(getDiskImage().getImageId());
         if (ancestor == null) {
             log.warnFormat("Can't find ancestor of Disk with ID {0}, using original disk for volume info.",
-                    getDiskImage().getId());
+                    getDiskImage().getImageId());
             ancestor = getDiskImage();
         }
         disk.setvolume_format(ancestor.getvolume_format());
@@ -131,8 +131,8 @@ public class CreateImageTemplateCommand<T extends CreateImageTemplateParameters>
                 .get(getVmTemplateId()));
         if (getDestinationDiskImage() != null) {
             DbFacade.getInstance().getBaseDiskDao().remove(getDestinationDiskImage().getimage_group_id());
-            if (DbFacade.getInstance().getDiskImageDynamicDAO().get(getDestinationDiskImage().getId()) != null) {
-                DbFacade.getInstance().getDiskImageDynamicDAO().remove(getDestinationDiskImage().getId());
+            if (DbFacade.getInstance().getDiskImageDynamicDAO().get(getDestinationDiskImage().getImageId()) != null) {
+                DbFacade.getInstance().getDiskImageDynamicDAO().remove(getDestinationDiskImage().getImageId());
             }
             DbFacade.getInstance().getDiskImageDAO().remove(getDestinationImageId());
         }

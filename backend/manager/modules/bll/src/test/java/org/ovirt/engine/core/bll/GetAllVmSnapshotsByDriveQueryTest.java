@@ -37,23 +37,23 @@ public class GetAllVmSnapshotsByDriveQueryTest extends
         DiskImage activeImage = new DiskImage();
         activeImage.setactive(true);
         activeImage.setinternal_drive_mapping(drive);
-        activeImage.setId(new Guid(UUID.randomUUID()));
+        activeImage.setImageId(new Guid(UUID.randomUUID()));
         activeImage.setParentId(parentID);
 
         DiskImage inactiveImage = new DiskImage();
         inactiveImage.setactive(false);
         inactiveImage.setinternal_drive_mapping(drive);
-        inactiveImage.setId(new Guid(UUID.randomUUID()));
+        inactiveImage.setImageId(new Guid(UUID.randomUUID()));
         inactiveImage.setParentId(parentID);
 
         DiskImage parent = new DiskImage();
         parent.setinternal_drive_mapping(drive);
-        parent.setId(parentID);
+        parent.setImageId(parentID);
         parent.setParentId(Guid.Empty);
 
         when(diskImageDAOMock.getAllForVm(vmID, getUser().getUserId(), getQueryParameters().isFiltered())).thenReturn(Arrays.asList(activeImage,
                 inactiveImage));
-        when(diskImageDAOMock.getSnapshotById(inactiveImage.getId())).thenReturn(inactiveImage);
+        when(diskImageDAOMock.getSnapshotById(inactiveImage.getImageId())).thenReturn(inactiveImage);
         when(diskImageDAOMock.getSnapshotById(parentID)).thenReturn(parent);
 
         getQuery().executeQueryCommand();

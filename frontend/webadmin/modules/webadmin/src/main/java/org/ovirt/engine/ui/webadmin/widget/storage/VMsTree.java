@@ -107,7 +107,7 @@ public class VMsTree<M extends SearchableListModel> extends AbstractSubTabTree<M
         }
 
         TreeItem treeItem = new TreeItem(vPanel);
-        treeItem.setUserObject(disks.get(0).getId());
+        treeItem.setUserObject(disks.get(0).getImageId());
         return treeItem;
     }
 

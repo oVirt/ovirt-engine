@@ -76,7 +76,7 @@ public class StoragesTree extends AbstractSubTabTree<TemplateStorageListModel, S
         addValueLabelToPanel(panel, new DiskSizeLabel<Long>(), disk.getSizeInGigabytes(), "120px");
         addValueLabelToPanel(panel, new EnumLabel<ImageStatus>(), disk.getimageStatus(), "120px");
         addValueLabelToPanel(panel, new EnumLabel<VolumeType>(), disk.getvolume_type(), "120px");
-        addValueLabelToPanel(panel, new EnumLabel<DiskInterface>(), disk.getdisk_interface(), "110px");
+        addValueLabelToPanel(panel, new EnumLabel<DiskInterface>(), disk.getDiskInterface(), "110px");
         addValueLabelToPanel(panel, new DateLabel(), disk.getcreation_date(), "90px");
 
         TreeItem treeItem = new TreeItem(panel);
@@ -111,7 +111,7 @@ public class StoragesTree extends AbstractSubTabTree<TemplateStorageListModel, S
     protected Object getEntityId(Object entity) {
         DiskModel diskModel = (DiskModel) entity;
         storage_domains storageDomain = (storage_domains) diskModel.getStorageDomain().getSelectedItem();
-        return diskModel.getDiskImage().getId().toString() + storageDomain.getId().toString();
+        return diskModel.getDiskImage().getImageId().toString() + storageDomain.getId().toString();
     }
 
     protected ArrayList<Object> getSelectedEntities() {

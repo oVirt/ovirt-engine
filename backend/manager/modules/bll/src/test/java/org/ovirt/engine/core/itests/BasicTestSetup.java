@@ -203,13 +203,13 @@ public class BasicTestSetup {
         disk.setvolume_format(VolumeFormat.COW);
         disk.setsize(100);
         disk.setinternal_drive_mapping(Long.toString(AbstractBackendTest.testSequenceNumber));
-        disk.setdisk_interface(DiskInterface.IDE);
+        disk.setDiskInterface(DiskInterface.IDE);
         disk.setboot(false);
-        disk.setwipe_after_delete(false);
-        disk.setpropagate_errors(PropagateErrors.Off);
+        disk.setWipeAfterDelete(false);
+        disk.setPropagateErrors(PropagateErrors.Off);
 
         DiskImage image = new DiskImage(disk);
-        image.setId(ImageId);
+        image.setImageId(ImageId);
         image.setimageStatus(ImageStatus.OK);
         image.setvm_guid(vmId);
         image.setcreation_date(now);
@@ -411,7 +411,7 @@ public class BasicTestSetup {
         DB_FACADE.getStorageDomainDynamicDAO().remove(id);
         List<DiskImage> snapshots = DB_FACADE.getDiskImageDAO().getAllSnapshotsForStorageDomain(id);
         for (DiskImage i : snapshots) {
-            DB_FACADE.getDiskImageDAO().remove(i.getId());
+            DB_FACADE.getDiskImageDAO().remove(i.getImageId());
         }
         DB_FACADE.getStorageDomainStaticDAO().remove(id);
         System.out.println("-- removed storage " + storage.getstorage_name() + " and its snapshots -- ");

@@ -158,13 +158,13 @@ public class OvfTemplateWriter extends OvfWriter {
             _writer.WriteRaw(String.format("Drive %1$s", image.getinternal_drive_mapping()));
             _writer.WriteEndElement();
             _writer.WriteStartElement("rasd:InstanceId");
-            _writer.WriteRaw(image.getId().toString());
+            _writer.WriteRaw(image.getImageId().toString());
             _writer.WriteEndElement();
             _writer.WriteStartElement("rasd:ResourceType");
             _writer.WriteRaw(OvfHardware.DiskImage);
             _writer.WriteEndElement();
             _writer.WriteStartElement("rasd:HostResource");
-            _writer.WriteRaw(image.getimage_group_id() + "/" + image.getId());
+            _writer.WriteRaw(image.getimage_group_id() + "/" + image.getImageId());
             _writer.WriteEndElement();
             _writer.WriteStartElement("rasd:Parent");
             _writer.WriteRaw(image.getParentId().toString());

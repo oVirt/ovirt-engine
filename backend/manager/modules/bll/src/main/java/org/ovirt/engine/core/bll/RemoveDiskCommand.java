@@ -123,7 +123,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
             for (VM vm : vms) {
                 List<DiskImage> vmDisks = DbFacade.getInstance().getDiskImageDAO().getAllForVm(vm.getId());
                 for (DiskImage vmDisk : vmDisks) {
-                    if (vmDisk.getit_guid().equals(disk.getId())) {
+                    if (vmDisk.getit_guid().equals(disk.getImageId())) {
                         if (vmDisk.getstorage_ids().contains(getParameters().getStorageDomainId())) {
                             retValue = false;
                             problematicVmNames.add(vm.getvm_name());
@@ -170,7 +170,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
 
     @Override
     protected void executeCommand() {
-        RemoveImageParameters p = new RemoveImageParameters(disk.getId(), getVmId());
+        RemoveImageParameters p = new RemoveImageParameters(disk.getImageId(), getVmId());
         p.setTransactionScopeOption(TransactionScopeOption.Suppress);
         p.setDiskImage(disk);
         p.setParentCommand(VdcActionType.RemoveDisk);

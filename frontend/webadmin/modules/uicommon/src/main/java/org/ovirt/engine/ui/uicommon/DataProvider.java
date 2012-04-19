@@ -1603,7 +1603,7 @@ public final class DataProvider
 
 	public static DiskInterface GetDefaultDiskInterface(VmOsType osType, java.util.List<DiskImage> disks)
 	{
-		return osType == VmOsType.WindowsXP ? DiskInterface.IDE : disks != null && disks.size() > 0 ? disks.get(0).getdisk_interface() : DiskInterface.VirtIO;
+		return osType == VmOsType.WindowsXP ? DiskInterface.IDE : disks != null && disks.size() > 0 ? disks.get(0).getDiskInterface() : DiskInterface.VirtIO;
 	}
 
 	public static VolumeFormat[] GetVolumeFormatList()

@@ -116,7 +116,7 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
                     // query returned to UI an illegal image)
                     if (diskImage.getimageStatus() == ImageStatus.ILLEGAL) {
                         DiskImage snapshotImageInDb =
-                                getDiskImageDao().getSnapshotById(diskImage.getId());
+                                getDiskImageDao().getSnapshotById(diskImage.getImageId());
                         if (snapshotImageInDb == null) {
                             // If the snapshot diskImage is null, it means the disk was probably
                             // erased after the snapshot was created.
@@ -126,7 +126,7 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
                     } else {// Only legal images can be copied
                         copyDiskImage(diskImage,
                                 diskImage.getstorage_ids().get(0),
-                                diskInfoDestinationMap.get(diskImage.getId()).getstorage_ids().get(0),
+                                diskInfoDestinationMap.get(diskImage.getImageId()).getstorage_ids().get(0),
                                 VdcActionType.AddVmFromSnapshot);
                         numberOfStartedCopyTasks++;
                     }
@@ -150,20 +150,20 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
 
         DiskImage clonedDiskImage =
                 super.cloneDiskImage(newVmId, storageDomainId, newImageGroupId, newImageGuid, srcDiskImage);
-        DiskImage diskImageFromClient = diskInfoDestinationMap.get(srcDiskImage.getId());
+        DiskImage diskImageFromClient = diskInfoDestinationMap.get(srcDiskImage.getImageId());
         // If volume information was changed at client , use its volume information.
         // If volume information was not changed at client - use the volume information of the ancestral image
         if (volumeInfoChanged(diskImageFromClient, srcDiskImage)) {
             changeVolumeInfo(clonedDiskImage, diskImageFromClient);
         } else {
-            DiskImage ancestorDiskImage = getDiskImageDao().getAncestor(srcDiskImage.getId());
+            DiskImage ancestorDiskImage = getDiskImageDao().getAncestor(srcDiskImage.getImageId());
             changeVolumeInfo(clonedDiskImage, ancestorDiskImage);
         }
-        if (diskInfoDestinationMap != null && diskInfoDestinationMap.containsKey(srcDiskImage.getId())) {
-            diskImageFromClient = diskInfoDestinationMap.get(srcDiskImage.getId());
+        if (diskInfoDestinationMap != null && diskInfoDestinationMap.containsKey(srcDiskImage.getImageId())) {
+            diskImageFromClient = diskInfoDestinationMap.get(srcDiskImage.getImageId());
             changeVolumeInfo(clonedDiskImage, diskImageFromClient);
         } else {
-            DiskImage ancestorDiskImage = getDiskImageDao().getAncestor(srcDiskImage.getId());
+            DiskImage ancestorDiskImage = getDiskImageDao().getAncestor(srcDiskImage.getImageId());
             changeVolumeInfo(clonedDiskImage, ancestorDiskImage);
         }
 
@@ -202,12 +202,12 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
                 // Allocating new IDs for image and disk as it's possible
                 // that more than one clone will be made from this snapshot
                 // So this is required to avoid PK violation at DB.
-                diskImage.setId(Guid.NewGuid());
+                diskImage.setImageId(Guid.NewGuid());
                 diskImage.setimage_group_id(Guid.NewGuid());
                 diskImage.setParentId(Guid.Empty);
                 diskImage.setit_guid(Guid.Empty);
                 diskImage.setvm_guid(getVmId());
-                ImagesHandler.setDiskAlias(diskImage.getDisk(), getVm());
+                ImagesHandler.setDiskAlias(diskImage, getVm());
                 ImagesHandler.addDiskImage(diskImage);
                 return null;
             }
@@ -346,7 +346,7 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
 
     @Override
     protected boolean checkImageConfiguration(DiskImage diskImage) {
-        return ImagesHandler.CheckImageConfiguration(destStorages.get(diskInfoDestinationMap.get(diskImage.getId())
+        return ImagesHandler.CheckImageConfiguration(destStorages.get(diskInfoDestinationMap.get(diskImage.getImageId())
                 .getstorage_ids()
                 .get(0))
                 .getStorageStaticData(),

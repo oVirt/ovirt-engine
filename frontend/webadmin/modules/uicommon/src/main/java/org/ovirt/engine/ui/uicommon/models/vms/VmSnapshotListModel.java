@@ -217,7 +217,7 @@ public class VmSnapshotListModel extends ListModel
 				DiskImage dstSnapshot = null;
 				for (DiskImage a : list)
 				{
-					if (a.getParentId().equals(srcSnapshot.getId()))
+					if (a.getParentId().equals(srcSnapshot.getImageId()))
 					{
 						dstSnapshot = a;
 						break;
@@ -299,7 +299,7 @@ public class VmSnapshotListModel extends ListModel
 				DiskImage snapshot = null;
 				for (DiskImage a : data.get(disk))
 				{
-					if (a.getId().equals(previewingImages.get(disk.getId())))
+					if (a.getImageId().equals(previewingImages.get(disk.getImageId())))
 					{
 						snapshot = a;
 						break;
@@ -549,7 +549,7 @@ public class VmSnapshotListModel extends ListModel
 		for (AsyncDataProvider.GetSnapshotListQueryResult result : (java.util.List<AsyncDataProvider.GetSnapshotListQueryResult>)returnValue)
 		{
 			data.put(result.getDisk(), result.getSnapshots());
-			previewingImages.put(result.getDisk().getId(), result.getPreviewingImage());
+			previewingImages.put(result.getDisk().getImageId(), result.getPreviewingImage());
 		}
 
 
@@ -694,7 +694,7 @@ public class VmSnapshotListModel extends ListModel
 
 				for (java.util.Map.Entry<Guid, Guid> c : previewingImages.entrySet())
 				{
-					if (b.getId().equals(c.getValue()))
+					if (b.getImageId().equals(c.getValue()))
 					{
 						isPreviewed = true;
 						break;

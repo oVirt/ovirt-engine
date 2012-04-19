@@ -710,7 +710,7 @@ public class VmSnapshotListModel extends SearchableListModel
 
         for (DiskImage diskImage : getcurrentVm().getDiskList()) {
             for (DiskModel diskModel : model.getDisks()) {
-                if (diskImage.getId().equals(diskModel.getDiskImage().getId())) {
+                if (diskImage.getImageId().equals(diskModel.getDiskImage().getImageId())) {
                     if (!diskImage.getvolume_type().equals(diskModel.getVolumeType().getSelectedItem())) {
                         diskModel.getDiskImage().setvolume_type(
                                 (VolumeType) diskModel.getVolumeType().getSelectedItem());

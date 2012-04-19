@@ -175,12 +175,12 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
             public Void runInTransaction() {
                 for (DiskImage disk : disks) {
                     MoveOrCopyImageGroupParameters p = new MoveOrCopyImageGroupParameters(containerID, disk
-                            .getimage_group_id().getValue(), disk.getId(), getParameters().getStorageDomainId(),
+                            .getimage_group_id().getValue(), disk.getImageId(), getParameters().getStorageDomainId(),
                             getMoveOrCopyImageOperation());
                     p.setParentCommand(getActionType());
                     p.setEntityId(getParameters().getEntityId());
                     p.setAddImageDomainMapping(getMoveOrCopyImageOperation() == ImageOperation.Copy);
-                    p.setSourceDomainId(imageFromSourceDomainMap.get(disk.getId()).getstorage_ids().get(0));
+                    p.setSourceDomainId(imageFromSourceDomainMap.get(disk.getImageId()).getstorage_ids().get(0));
                     p.setParentParemeters(getParameters());
                     VdcReturnValueBase vdcRetValue = getBackend().runInternalAction(
                                     VdcActionType.MoveOrCopyImageGroup,
@@ -227,7 +227,7 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
                                             .getValue(), disk
                                             .getimage_group_id().getValue()))
                             .getReturnValue();
-            if (domains.contains(imageToDestinationDomainMap.get(disk.getId()))) {
+            if (domains.contains(imageToDestinationDomainMap.get(disk.getImageId()))) {
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_ALREADY_CONTAINS_DISK);
                 return false;
             }
@@ -285,7 +285,7 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
     protected Map<storage_domains, Integer> getSpaceRequirementsForStorageDomains(Collection<DiskImage> images) {
         Map<DiskImage, storage_domains> spaceMap = new HashMap<DiskImage,storage_domains>();
         for(DiskImage image : images) {
-            storage_domains domain = getStorageDomain(imageToDestinationDomainMap.get(image.getId()));
+            storage_domains domain = getStorageDomain(imageToDestinationDomainMap.get(image.getImageId()));
             spaceMap.put(image, domain);
         }
         return StorageDomainValidator.getSpaceRequirementsForStorageDomains(spaceMap);
@@ -298,7 +298,7 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
         if (imageToDestinationDomainMap.isEmpty() && images != null && defaultDomainId != null
                 && !Guid.Empty.equals(defaultDomainId)) {
             for (DiskImage image : images) {
-                imageToDestinationDomainMap.put(image.getId(), defaultDomainId);
+                imageToDestinationDomainMap.put(image.getImageId(), defaultDomainId);
             }
         }
     }

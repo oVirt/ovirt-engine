@@ -196,7 +196,7 @@ public class TemplateStorageListModel extends SearchableListModel
         for (DiskModel diskModel : disks)
         {
             RemoveDiskParameters params =
-                    new RemoveDiskParameters(diskModel.getDiskImage().getId(),
+                    new RemoveDiskParameters(diskModel.getDiskImage().getImageId(),
                             ((storage_domains) diskModel.getStorageDomain().getSelectedItem()).getId());
             parameters.add(params);
         }

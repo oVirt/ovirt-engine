@@ -60,7 +60,7 @@ public class TemplatesTree<M extends SearchableListModel> extends AbstractSubTab
         addValueLabelToPanel(panel, new FullDateTimeLabel(), disk.getcreation_date(), "140px");
 
         TreeItem treeItem = new TreeItem(panel);
-        treeItem.setUserObject(disk.getId());
+        treeItem.setUserObject(disk.getImageId());
         return treeItem;
     }
 
@@ -74,6 +74,6 @@ public class TemplatesTree<M extends SearchableListModel> extends AbstractSubTab
         if (listModel.getEntity() instanceof Quota) {
             return true;
         }
-        return disk.getstorage_ids().contains(((DiskImage) listModel.getEntity()).getId());
+        return disk.getstorage_ids().contains(((DiskImage) listModel.getEntity()).getImageId());
     }
 }

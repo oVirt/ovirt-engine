@@ -114,7 +114,7 @@ public class BackendSnapshotsResource
         if (diskImage != null) {
             template =  new Snapshot();
             Disk disk = new Disk();
-            disk.setId(diskImage.getId().toString());
+            disk.setId(diskImage.getImageId().toString());
             VM vm = new VM();
             vm.setId(parentId.toString());
             disk.setVm(vm);
@@ -126,7 +126,7 @@ public class BackendSnapshotsResource
     protected Map<NGuid, NGuid> getParentage(DiskImage diskImage) {
         Map<Guid, NGuid> images = new HashMap<Guid, NGuid>();
         for (DiskImage snapshotImage : diskImage.getSnapshots()) {
-            images.put(snapshotImage.getId(),
+            images.put(snapshotImage.getImageId(),
                        snapshotImage.getvm_snapshot_id());
         }
 

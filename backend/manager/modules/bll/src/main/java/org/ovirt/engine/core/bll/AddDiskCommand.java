@@ -53,8 +53,8 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
 
     public AddDiskCommand(T parameters) {
         super(parameters);
-        parameters.getDiskInfo().getDisk().setId(Guid.NewGuid());
-        parameters.setEntityId(parameters.getDiskInfo().getDisk().getId());
+        parameters.getDiskInfo().setId(Guid.NewGuid());
+        parameters.setEntityId(parameters.getDiskInfo().getId());
         setQuotaId(parameters.getDiskInfo() != null ? parameters.getDiskInfo().getQuotaId() : null);
     }
 
@@ -113,7 +113,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
                 returnValue = false;
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW);
             }
-            ImagesHandler.setDiskAlias(getParameters().getDiskInfo().getDisk(), getVm());
+            ImagesHandler.setDiskAlias(getParameters().getDiskInfo(), getVm());
         }
         if (returnValue && getRequestDiskSpace() > Config
                     .<Integer> GetValue(ConfigValues.MaxDiskSize)) {
@@ -239,7 +239,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         parameters.setParentParemeters(getParameters());
         if (getVm() != null) {
             parameters.setVmSnapshotId(getSnapshotDao().getId(getVmId(), SnapshotType.ACTIVE));
-            VmDeviceUtils.addManagedDevice(new VmDeviceId(getParameters().getDiskInfo().getDisk().getId(), getVmId()),
+            VmDeviceUtils.addManagedDevice(new VmDeviceId(getParameters().getDiskInfo().getId(), getVmId()),
                     VmDeviceType.DISK, VmDeviceType.DISK, "", true, false);
         }
         VdcReturnValueBase tmpRetValue =

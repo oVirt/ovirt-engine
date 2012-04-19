@@ -125,7 +125,7 @@ public class RestoreAllSnapshotCommandTest {
 
     private List<DiskImage> createDiskImageList() {
         DiskImage disk = new DiskImage();
-        disk.setId(diskImageId);
+        disk.setImageId(diskImageId);
         disk.setstorage_ids(new ArrayList<Guid>(Arrays.asList(storageDomainId)));
         List<DiskImage> diskImageList = new ArrayList<DiskImage>();
         diskImageList.add(disk);

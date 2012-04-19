@@ -136,7 +136,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
                                 public DiskImageBase eval(DiskImage diskImageTemplate) {
                                     return DbFacade.getInstance()
                                             .getDiskImageDAO()
-                                            .getSnapshotById(diskImageTemplate.getId());
+                                            .getSnapshotById(diskImageTemplate.getImageId());
                                 }
                             });
         }
@@ -186,7 +186,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
     protected boolean shouldCheckSpaceInStorageDomains() {
         return !getImagesToCheckDestinationStorageDomains().isEmpty()
                 && !LinqUtils.firstOrNull(getImagesToCheckDestinationStorageDomains(), new All<DiskImage>())
-                        .getId().equals(VmTemplateHandler.BlankVmTemplateId);
+                        .getImageId().equals(VmTemplateHandler.BlankVmTemplateId);
     }
 
     protected Guid getStoragePoolIdFromSourceImageContainer() {
@@ -367,7 +367,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
                 && !Guid.Empty.equals(getParameters().getStorageDomainId())) {
             Guid storageId = getParameters().getStorageDomainId();
             for (DiskImage image : getImagesToCheckDestinationStorageDomains()) {
-                diskInfoDestinationMap.put(image.getId(), makeNewImage(storageId, image));
+                diskInfoDestinationMap.put(image.getImageId(), makeNewImage(storageId, image));
             }
             return validateProvidedDestinations();
         }
@@ -379,7 +379,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
 
     protected boolean validateIsImagesOnDomains() {
         for (DiskImage image : getImagesToCheckDestinationStorageDomains()) {
-            if (!image.getstorage_ids().containsAll(diskInfoDestinationMap.get(image.getId()).getstorage_ids())) {
+            if (!image.getstorage_ids().containsAll(diskInfoDestinationMap.get(image.getImageId()).getstorage_ids())) {
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_NOT_FOUND_ON_DESTINATION_DOMAIN);
                 return false;
             }
@@ -389,7 +389,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
 
     private DiskImage makeNewImage(Guid storageId, DiskImage image) {
         DiskImage newImage = new DiskImage();
-        newImage.setId(image.getId());
+        newImage.setImageId(image.getImageId());
         newImage.setvolume_format(image.getvolume_format());
         newImage.setvolume_type(image.getvolume_type());
         ArrayList<Guid> storageIds = new ArrayList<Guid>();
@@ -581,14 +581,14 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
             VmHandler.LockVm(getVmId());
             for (DiskImage dit : getImagesToCheckDestinationStorageDomains()) {
                 CreateSnapshotFromTemplateParameters tempVar = new CreateSnapshotFromTemplateParameters(
-                        dit.getId(), getParameters().getVmStaticData().getId());
-                tempVar.setDestStorageDomainId(diskInfoDestinationMap.get(dit.getId()).getstorage_ids().get(0));
+                        dit.getImageId(), getParameters().getVmStaticData().getId());
+                tempVar.setDestStorageDomainId(diskInfoDestinationMap.get(dit.getImageId()).getstorage_ids().get(0));
                 tempVar.setStorageDomainId(dit.getstorage_ids().get(0));
                 tempVar.setVmSnapshotId(getVmSnapshotId());
                 tempVar.setParentCommand(VdcActionType.AddVm);
                 tempVar.setEntityId(getParameters().getEntityId());
                 tempVar.setParentParemeters(getParameters());
-                tempVar.setQuotaId(diskInfoDestinationMap.get(dit.getId()).getQuotaId());
+                tempVar.setQuotaId(diskInfoDestinationMap.get(dit.getImageId()).getQuotaId());
                 VdcReturnValueBase result =
                         Backend.getInstance().runInternalAction(VdcActionType.CreateSnapshotFromTemplate,
                                 tempVar,

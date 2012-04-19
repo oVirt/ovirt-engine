@@ -35,7 +35,7 @@ public class SnapshotVDSCommand<P extends SnapshotVDSCommandParameters> extends 
             imageParams.put("domainID", image.getstorage_ids().get(0).toString());
             imageParams.put("imageID", image.getimage_group_id().toString());
             imageParams.put("baseVolumeID", image.getParentId().toString());
-            imageParams.put("volumeID", image.getId().toString());
+            imageParams.put("volumeID", image.getImageId().toString());
             result[i] = imageParams;
         }
 

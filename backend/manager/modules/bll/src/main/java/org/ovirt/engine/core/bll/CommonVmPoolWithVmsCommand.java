@@ -294,7 +294,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
                 storageIds.add(storageId);
                 for (DiskImage image : getVmTemplate().getDiskMap().values()) {
                     image.setstorage_ids(storageIds);
-                    diskInfoDestinationMap.put(image.getId(), image);
+                    diskInfoDestinationMap.put(image.getImageId(), image);
                 }
             } else {
                 ImagesHandler.fillImagesMapBasedOnTemplate(getVmTemplate(),

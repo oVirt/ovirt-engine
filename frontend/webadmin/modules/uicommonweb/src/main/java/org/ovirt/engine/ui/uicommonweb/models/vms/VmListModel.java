@@ -2458,14 +2458,14 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 
                                 storage_domains storageDomain =
                                         Linq.getStorageById(
-                                                imageToDestinationDomainMap.get(templateDisk.getId())
+                                                imageToDestinationDomainMap.get(templateDisk.getImageId())
                                                         .getstorage_ids()
                                                         .get(0), activeStorageDomains);
 
                                 if (disk != null) {
-                                    dict.get(templateDisk.getId()).setvolume_type((VolumeType) disk.getVolumeType()
+                                    dict.get(templateDisk.getImageId()).setvolume_type((VolumeType) disk.getVolumeType()
                                             .getSelectedItem());
-                                    dict.get(templateDisk.getId()).setvolume_format(DataProvider.GetDiskVolumeFormat(
+                                    dict.get(templateDisk.getImageId()).setvolume_format(DataProvider.GetDiskVolumeFormat(
                                             (VolumeType) disk.getVolumeType().getSelectedItem(),
                                             storageDomain.getstorage_type()));
                                 }

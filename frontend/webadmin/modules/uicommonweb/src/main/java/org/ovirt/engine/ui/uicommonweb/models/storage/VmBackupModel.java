@@ -294,7 +294,7 @@ public class VmBackupModel extends ManageBackupModel {
                 HashMap<Guid, Guid> map = model.getDiskStorageMap().get(vm.getId());
                 storage_domains domain = (Boolean) model.getIsSingleDestStorage().getEntity() ?
                                 (storage_domains) model.getDestinationStorage().getSelectedItem()
-                        : model.getStorageById(map.get(disk.getId()));
+                        : model.getStorageById(map.get(disk.getImageId()));
                 disk.setvolume_format(DataProvider.GetDiskVolumeFormat(disk.getvolume_type(), domain.getstorage_type()));
 
                 diskDictionary.put(key, disk);

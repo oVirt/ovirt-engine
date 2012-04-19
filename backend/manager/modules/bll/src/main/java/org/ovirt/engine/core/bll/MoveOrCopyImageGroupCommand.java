@@ -80,7 +80,7 @@ public class MoveOrCopyImageGroupCommand<T extends MoveOrCopyImageGroupParameter
                                                     .getContainerId(),
                                             getParameters().getImageGroupID(),
                                             getImage()
-                                                    .getId(),
+                                                    .getImageId(),
                                             getParameters().getDestImageGroupId(),
                                             getParameters().getDestinationImageId(),
                                             StringUtils.defaultString(getImage()
@@ -124,9 +124,9 @@ public class MoveOrCopyImageGroupCommand<T extends MoveOrCopyImageGroupParameter
                 for (DiskImage snapshot : snapshots) {
                     DbFacade.getInstance()
                             .getImageStorageDomainMapDao()
-                            .remove(new image_storage_domain_map_id(snapshot.getId(), snapshot.getstorage_ids().get(0)));
+                            .remove(new image_storage_domain_map_id(snapshot.getImageId(), snapshot.getstorage_ids().get(0)));
                     DbFacade.getInstance()
-                            .getImageStorageDomainMapDao().save(new image_storage_domain_map(snapshot.getId(),
+                            .getImageStorageDomainMapDao().save(new image_storage_domain_map(snapshot.getImageId(),
                                     getParameters().getStorageDomainId()));
                 }
             } else if (getParameters().getAddImageDomainMapping()) {

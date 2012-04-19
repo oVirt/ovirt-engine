@@ -112,7 +112,7 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
     public void save(DiskImage image) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("creation_date", image.getcreation_date())
-                .addValue("image_guid", image.getId())
+                .addValue("image_guid", image.getImageId())
                 .addValue("it_guid", image.getit_guid())
                 .addValue("size", image.getsize())
                 .addValue("ParentId", image.getParentId())
@@ -132,7 +132,7 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
     public void update(DiskImage image) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("creation_date", image.getcreation_date())
-                .addValue("image_guid", image.getId())
+                .addValue("image_guid", image.getImageId())
                 .addValue("it_guid", image.getit_guid())
                 .addValue("size", image.getsize())
                 .addValue("ParentId", image.getParentId())
@@ -161,7 +161,7 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
     public void removeAllForVmId(Guid id) {
         List<Guid> imagesList = new ArrayList<Guid>();
         for (DiskImage image : getAllForVm(id)) {
-            imagesList.add(image.getId());
+            imagesList.add(image.getImageId());
 
             List<DiskImage> imagesForDisk =
                     DbFacade.getInstance().getDiskImageDAO().getAllSnapshotsForImageGroup(image.getimage_group_id());
@@ -237,7 +237,7 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
                     .getTimestamp("creation_date")));
             entity.setactual_size(rs.getLong("actual_size"));
             entity.setdescription(rs.getString("description"));
-            entity.setId(Guid.createGuidFromString(rs
+            entity.setImageId(Guid.createGuidFromString(rs
                     .getString("image_guid")));
             entity.setinternal_drive_mapping(rs
                     .getString("internal_drive_mapping"));
@@ -264,11 +264,11 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
             entity.setstorage_path(StringUtils.splitStringList(rs.getString("storage_path")));
             entity.setstorage_pool_id(NGuid.createGuidFromString(rs
                     .getString("storage_pool_id")));
-            entity.setdisk_interface(DiskInterface.forValue(rs
+            entity.setDiskInterface(DiskInterface.forValue(rs
                     .getInt("disk_interface")));
             entity.setboot(rs.getBoolean("boot"));
-            entity.setwipe_after_delete(rs.getBoolean("wipe_after_delete"));
-            entity.setpropagate_errors(PropagateErrors.forValue(rs
+            entity.setWipeAfterDelete(rs.getBoolean("wipe_after_delete"));
+            entity.setPropagateErrors(PropagateErrors.forValue(rs
                     .getInt("propagate_errors")));
             entity.setread_rate(rs.getInt("read_rate"));
             entity.setwrite_rate(rs.getInt("write_rate"));

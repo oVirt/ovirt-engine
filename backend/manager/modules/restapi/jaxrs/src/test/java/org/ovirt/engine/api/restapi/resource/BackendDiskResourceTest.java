@@ -164,7 +164,7 @@ public class BackendDiskResourceTest
 
     protected DiskImage setUpStatisticalExpectations() throws Exception {
         DiskImage entity = control.createMock(DiskImage.class);
-        expect(entity.getId()).andReturn(DISK_ID).anyTimes();
+        expect(entity.getImageId()).andReturn(DISK_ID).anyTimes();
         expect(entity.getread_rate()).andReturn(10);
         expect(entity.getwrite_rate()).andReturn(20);
         List<DiskImage> ifaces = new ArrayList<DiskImage>();

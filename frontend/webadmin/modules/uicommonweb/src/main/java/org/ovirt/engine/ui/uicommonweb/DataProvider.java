@@ -1799,7 +1799,7 @@ public final class DataProvider
     public static DiskInterface GetDefaultDiskInterface(VmOsType osType, java.util.List<DiskImage> disks)
     {
         return osType == VmOsType.WindowsXP ? DiskInterface.IDE : disks != null && disks.size() > 0 ? disks.get(0)
-                .getdisk_interface() : DiskInterface.VirtIO;
+                .getDiskInterface() : DiskInterface.VirtIO;
     }
 
     public static VolumeFormat[] GetVolumeFormatList()
@@ -2776,7 +2776,7 @@ public final class DataProvider
         }
         else if (entity instanceof DiskImage)
         {
-            return ((DiskImage) entity).getId();
+            return ((DiskImage) entity).getImageId();
         }
         else if (entity instanceof GlusterVolumeEntity)
         {

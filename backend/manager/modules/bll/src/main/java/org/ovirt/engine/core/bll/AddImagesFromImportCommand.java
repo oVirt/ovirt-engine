@@ -68,7 +68,7 @@ public class AddImagesFromImportCommand<T extends AddImagesFromImportParameters>
                     log.error(
                             String.format(
                                     "ImagesHandler::AddImagesFromImportCommand::ExecuteCommand: Failed adding image %1$s to DB",
-                                    image.getId()),
+                                    image.getImageId()),
                             e);
                     throw new VdcBLLException(VdcBllErrors.DB, e);
                 }
@@ -103,7 +103,7 @@ public class AddImagesFromImportCommand<T extends AddImagesFromImportParameters>
             List<DiskImage> rest = LinqUtils.filter(imagesList.get(drive), new Predicate<DiskImage>() {
                 @Override
                 public boolean eval(DiskImage diskImage) {
-                    return !diskImage.getId().equals(leafCopy.getId());
+                    return !diskImage.getImageId().equals(leafCopy.getImageId());
                 }
             });
 
@@ -129,7 +129,7 @@ public class AddImagesFromImportCommand<T extends AddImagesFromImportParameters>
             // the chain (it is not a 'leaf' image) -> keep going recursively
             // (find out
             // whether the child image that we found is the 'leaf'):
-            GetLeafRecurisvely(leaf, imagesList, nextInChain.get(0).getId());
+            GetLeafRecurisvely(leaf, imagesList, nextInChain.get(0).getImageId());
         } else {
             // No child images to parentImageID -> parentImageID is the 'leaf'
             // image:
@@ -139,7 +139,7 @@ public class AddImagesFromImportCommand<T extends AddImagesFromImportParameters>
             leaf.argvalue = LinqUtils.filter(imagesList, new Predicate<DiskImage>() {
                 @Override
                 public boolean eval(DiskImage diskImage) {
-                    return diskImage.getId().equals(parentImageID);
+                    return diskImage.getImageId().equals(parentImageID);
                 }
             }).get(0);
             // LINQ 29456

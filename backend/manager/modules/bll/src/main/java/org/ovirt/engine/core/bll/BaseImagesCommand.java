@@ -179,7 +179,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
              * Prevent operating image with illegal status TODO: insert it in new CanDoAction mechanism
              */
             if (diskImage == null) {
-                diskImage = getDiskImageDao().getSnapshotById(getImage().getId());
+                diskImage = getDiskImageDao().getSnapshotById(getImage().getImageId());
             }
 
             Guid storagePoolId = diskImage.getstorage_pool_id() != null ? diskImage.getstorage_pool_id().getValue()
@@ -199,7 +199,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
                     .RunVdsCommand(
                             VDSCommandType.GetImageInfo,
                             new GetImageInfoVDSCommandParameters(storagePoolId, storageDomainId, imageGroupId,
-                                    getImage().getId())).getReturnValue();
+                                    getImage().getImageId())).getReturnValue();
 
             if (image.getimageStatus() != ImageStatus.OK) {
                 if (diskImage != null) {
@@ -261,7 +261,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
                 DbFacade.getInstance().getDiskImageDAO().getAllSnapshotsForVmSnapshot(snapshotId);
         for (DiskImage diskImage : imagesFromSanpshot) {
             if (getDiskImage().getimage_group_id().equals(diskImage.getimage_group_id())) {
-                return diskImage.getId();
+                return diskImage.getImageId();
             }
         }
 
@@ -289,8 +289,8 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
      */
     protected DiskImage cloneDiskImage(Guid newImageGuid, DiskImage srcDiskImage) {
         DiskImage retDiskImage = DiskImage.copyOf(srcDiskImage);
-        retDiskImage.setId(newImageGuid);
-        retDiskImage.setParentId(getDiskImage().getId());
+        retDiskImage.setImageId(newImageGuid);
+        retDiskImage.setParentId(getDiskImage().getImageId());
         retDiskImage.setvm_snapshot_id(getParameters().getVmSnapshotId());
         retDiskImage.setvm_guid(getImageContainerId());
         retDiskImage.setimage_group_id(getImageGroupId());
@@ -349,7 +349,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
         getDestinationDiskImage().setlast_modified_date(fromIRS.getlast_modified_date());
         getDestinationDiskImage().setlastModified(getDestinationDiskImage().getlast_modified_date());
         DiskImageDynamic destinationDiskDynamic = DbFacade.getInstance().getDiskImageDynamicDAO().get(
-                getDestinationDiskImage().getId());
+                getDestinationDiskImage().getImageId());
         if (destinationDiskDynamic != null) {
             destinationDiskDynamic.setactual_size(fromIRS.getactual_size());
             DbFacade.getInstance().getDiskImageDynamicDAO().update(destinationDiskDynamic);
@@ -359,9 +359,9 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
 
     protected static void CompleteAdvancedDiskData(DiskImage from, DiskImage to) {
         to.setboot(from.getboot());
-        to.setdisk_interface(from.getdisk_interface());
-        to.setpropagate_errors(from.getpropagate_errors());
-        to.setwipe_after_delete(from.getwipe_after_delete());
+        to.setDiskInterface(from.getDiskInterface());
+        to.setPropagateErrors(from.getPropagateErrors());
+        to.setWipeAfterDelete(from.isWipeAfterDelete());
     }
 
     protected void AddDiskImageToDb(DiskImage image) {
@@ -373,12 +373,12 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
             image.setactive(true);
             getDiskImageDao().save(image);
             DiskImageDynamic diskDynamic = new DiskImageDynamic();
-            diskDynamic.setId(image.getId());
+            diskDynamic.setId(image.getImageId());
             diskDynamic.setactual_size(image.getactual_size());
             DbFacade.getInstance().getDiskImageDynamicDAO().save(diskDynamic);
             DbFacade.getInstance()
                     .getImageStorageDomainMapDao()
-                    .save(new image_storage_domain_map(image.getId(),
+                    .save(new image_storage_domain_map(image.getImageId(),
                             image.getstorage_ids().get(0)));
             saveDiskIfNotExists(image);
         } catch (RuntimeException ex) {
@@ -395,8 +395,8 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
      */
     protected void saveDiskIfNotExists(DiskImage image) {
         if (!getBaseDiskDao().exists(image.getimage_group_id())) {
-            ImagesHandler.setDiskAlias(image.getDisk(), getVm());
-            getBaseDiskDao().save(image.getDisk());
+            ImagesHandler.setDiskAlias(image, getVm());
+            getBaseDiskDao().save(image);
         }
     }
 
@@ -431,7 +431,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
 
             Guid newImageGroupId = getDestinationDiskImage().getimage_group_id() != null ? getDestinationDiskImage()
                     .getimage_group_id().getValue() : Guid.Empty;
-            Guid newImageId = getDestinationDiskImage().getId();
+            Guid newImageId = getDestinationDiskImage().getImageId();
             Guid newStorageDomainID = getDestinationDiskImage().getstorage_ids().get(0);
 
             // complete IRS data to DB disk image:
@@ -491,8 +491,8 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
     }
 
     protected void RemoveSnapshotFromDB(DiskImage snapshot) {
-        DbFacade.getInstance().getImageStorageDomainMapDao().remove(snapshot.getId());
-        getDiskImageDao().remove(snapshot.getId());
+        DbFacade.getInstance().getImageStorageDomainMapDao().remove(snapshot.getImageId());
+        getDiskImageDao().remove(snapshot.getImageId());
         List<DiskImage> imagesForDisk =
                 getDiskImageDao().getAllSnapshotsForImageGroup(snapshot.getimage_group_id());
         if (imagesForDisk == null || imagesForDisk.isEmpty()) {
@@ -503,7 +503,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
     public static void GetImageChildren(Guid snapshot, RefObject<java.util.ArrayList<Guid>> children) {
         java.util.ArrayList<Guid> list = new java.util.ArrayList<Guid>();
         for (DiskImage image : DbFacade.getInstance().getDiskImageDAO().getAllSnapshotsForParent(snapshot)) {
-            list.add(image.getId());
+            list.add(image.getImageId());
         }
         children.argvalue.addAll(list);
         for (Guid snapshotId : list) {
@@ -532,7 +532,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
         DbFacade.getInstance().getDiskImageDAO().save(diskImage);
         DbFacade.getInstance()
                 .getImageStorageDomainMapDao()
-                .save(new image_storage_domain_map(diskImage.getId(),
+                .save(new image_storage_domain_map(diskImage.getImageId(),
                         diskImage.getstorage_ids()
                                 .get(0)));
     }

@@ -88,7 +88,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
             VdcReturnValueBase returnValue = null;
             for (DiskImage image : getImagesList()) {
                 if (image.getimageStatus() != ImageStatus.ILLEGAL) {
-                    ImagesContainterParametersBase params = new RestoreFromSnapshotParameters(image.getId(),
+                    ImagesContainterParametersBase params = new RestoreFromSnapshotParameters(image.getImageId(),
                             image.getinternal_drive_mapping(), getVmId(), targetSnapshot, removedSnapshotId);
                     returnValue = runAsyncTask(VdcActionType.RestoreFromSnapshot, params);
                 }
@@ -124,7 +124,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
             if (!deletedDisksIds.contains(image.getimage_group_id())) {
                 deletedDisksIds.add(image.getimage_group_id());
                 returnValue = runAsyncTask(VdcActionType.RemoveImage,
-                        new RemoveImageParameters(image.getId(), getVmId()));
+                        new RemoveImageParameters(image.getImageId(), getVmId()));
                 if (!returnValue.getSucceeded() && noImagesRemovedYet) {
                     setSucceeded(false);
                     getReturnValue().setFault(returnValue.getFault());

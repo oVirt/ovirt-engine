@@ -154,13 +154,13 @@ public class BackendSnapshotResourceTest
     @Override
     protected DiskImage getEntity(int index) {
         DiskImage image = control.createMock(DiskImage.class);
-        expect(image.getId()).andReturn(IMAGE_IDS[index]).anyTimes();
+        expect(image.getImageId()).andReturn(IMAGE_IDS[index]).anyTimes();
         ArrayList<DiskImage> snapshots = new ArrayList<DiskImage>();
         Guid parentId = Guid.Empty.getValue();
         for (int i = 0 ; i < NAMES.length ; i++) {
             DiskImage snapshot = control.createMock(DiskImage.class);
             Guid snapshotImageId = mangle(IMAGE_IDS[index], i);
-            expect(snapshot.getId()).andReturn(snapshotImageId).anyTimes();
+            expect(snapshot.getImageId()).andReturn(snapshotImageId).anyTimes();
             expect(snapshot.getvm_snapshot_id()).andReturn(SNAPSHOT_IDS[i]).anyTimes();
             expect(snapshot.getParentId()).andReturn(parentId).anyTimes();
             expect(snapshot.getdescription()).andReturn(DESCRIPTIONS[i]).anyTimes();

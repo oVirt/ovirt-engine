@@ -2120,7 +2120,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 					HashMap<Guid, DiskImage> dict = new HashMap<Guid, DiskImage>();
 					for (DiskImage a : templateDisks)
 					{
-						dict.put(a.getId(), a);
+						dict.put(a.getImageId(), a);
 					}
 
 					model.StartProgress(null);

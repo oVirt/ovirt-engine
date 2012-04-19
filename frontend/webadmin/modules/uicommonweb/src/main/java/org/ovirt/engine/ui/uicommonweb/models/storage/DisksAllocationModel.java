@@ -305,7 +305,7 @@ public class DisksAllocationModel extends EntityModel
         }
 
         for (DiskModel diskModel : disks) {
-            Guid diskId = diskModel.getDiskImage().getId();
+            Guid diskId = diskModel.getDiskImage().getImageId();
             Guid storageId = null;
             if (!isSingle) {
                 storageId = ((storage_domains) diskModel.getStorageDomain().getSelectedItem()).getId();

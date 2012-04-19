@@ -34,16 +34,16 @@ public class AddImageFromScratchCommand<T extends AddImageFromScratchParameters>
         if (getVm() != null) {
             setImageContainerId(getVm().getvmt_guid());
         }
-        setImageGroupId(getParameters().getDiskInfo().getDisk().getId());
+        setImageGroupId(getParameters().getDiskInfo().getId());
 
         if (ProcessImageInIrs()) {
             mNewCreatedDiskImage = new DiskImage();
-            mNewCreatedDiskImage.setId(getDestinationImageId());
+            mNewCreatedDiskImage.setImageId(getDestinationImageId());
             mNewCreatedDiskImage.setinternal_drive_mapping(getParameters().getDiskInfo().getinternal_drive_mapping());
             mNewCreatedDiskImage.setboot(getParameters().getDiskInfo().getboot());
-            mNewCreatedDiskImage.setdisk_interface(getParameters().getDiskInfo().getdisk_interface());
-            mNewCreatedDiskImage.setpropagate_errors(getParameters().getDiskInfo().getpropagate_errors());
-            mNewCreatedDiskImage.setwipe_after_delete(getParameters().getDiskInfo().getwipe_after_delete());
+            mNewCreatedDiskImage.setDiskInterface(getParameters().getDiskInfo().getDiskInterface());
+            mNewCreatedDiskImage.setPropagateErrors(getParameters().getDiskInfo().getPropagateErrors());
+            mNewCreatedDiskImage.setWipeAfterDelete(getParameters().getDiskInfo().isWipeAfterDelete());
             mNewCreatedDiskImage.setvm_guid(getParameters().getMasterVmId());
             mNewCreatedDiskImage.setimage_group_id(getImageGroupId());
             mNewCreatedDiskImage.setstorage_pool_id(getParameters().getStoragePoolId());
@@ -60,7 +60,7 @@ public class AddImageFromScratchCommand<T extends AddImageFromScratchParameters>
             mNewCreatedDiskImage.setQuotaId(getParameters().getQuotaId());
 
             AddDiskImageToDb(mNewCreatedDiskImage);
-            getReturnValue().setActionReturnValue(mNewCreatedDiskImage.getId());
+            getReturnValue().setActionReturnValue(mNewCreatedDiskImage.getImageId());
             setSucceeded(true);
         }
     }
@@ -110,7 +110,7 @@ public class AddImageFromScratchCommand<T extends AddImageFromScratchParameters>
     @Override
     protected void EndWithFailure() {
         if (getDestinationDiskImage() != null) {
-            DbFacade.getInstance().getDiskImageDynamicDAO().remove(getDestinationDiskImage().getId());
+            DbFacade.getInstance().getDiskImageDynamicDAO().remove(getDestinationDiskImage().getImageId());
         }
         super.EndWithFailure();
     }

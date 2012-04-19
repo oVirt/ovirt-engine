@@ -75,7 +75,7 @@ public class OvfVmReader extends OvfReader {
                 DiskImage image = LinqUtils.firstOrNull(_images, new Predicate<DiskImage>() {
                     @Override
                     public boolean eval(DiskImage diskImage) {
-                        return diskImage.getId().equals(guid);
+                        return diskImage.getImageId().equals(guid);
                     }
                 });
                 String drive = node.SelectSingleNode("rasd:Caption", _xmlNS).InnerText;
@@ -324,7 +324,7 @@ public class OvfVmReader extends OvfReader {
     // function returns the index of the image that has no parent
     private static int GetFirstImage(java.util.ArrayList<DiskImage> images, DiskImage curr) {
         for (int i = 0; i < images.size(); i++) {
-            if (curr.getParentId().equals(images.get(i).getId())) {
+            if (curr.getParentId().equals(images.get(i).getImageId())) {
                 return i;
             }
         }
@@ -334,7 +334,7 @@ public class OvfVmReader extends OvfReader {
     // function returns the index of image that is it's child
     private static int GetNextImage(java.util.ArrayList<DiskImage> images, DiskImage curr) {
         for (int i = 0; i < images.size(); i++) {
-            if (images.get(i).getParentId().equals(curr.getId())) {
+            if (images.get(i).getParentId().equals(curr.getImageId())) {
                 return i;
             }
         }

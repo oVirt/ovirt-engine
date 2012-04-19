@@ -77,7 +77,7 @@ public class GetUserVmsByUserIdAndGroupsQueryTest
         final VM expectedVM = mockVMFromDAO(requestedUser);
 
         final DiskImage expectedDisk = mockDisk();
-        Guid diskGuid = expectedDisk.getId();
+        Guid diskGuid = expectedDisk.getImageId();
         Guid itGuid = expectedDisk.getit_guid();
 
         ArrayList<DiskImage> snapshots = mockSnapshots();
@@ -157,7 +157,7 @@ public class GetUserVmsByUserIdAndGroupsQueryTest
         Guid diskGuid = Guid.NewGuid();
         Guid itGuid = Guid.NewGuid();
         final DiskImage expectedDisk = new DiskImage();
-        expectedDisk.setId(diskGuid);
+        expectedDisk.setImageId(diskGuid);
         expectedDisk.setit_guid(itGuid);
 
         return expectedDisk;
@@ -167,7 +167,7 @@ public class GetUserVmsByUserIdAndGroupsQueryTest
     private static ArrayList<DiskImage> mockSnapshots() {
         Guid snapshotGuid = Guid.NewGuid();
         DiskImage expectedSnapshot = new DiskImage();
-        expectedSnapshot.setId(snapshotGuid);
+        expectedSnapshot.setImageId(snapshotGuid);
         ArrayList<DiskImage> snapshots = new ArrayList<DiskImage>(1);
         snapshots.add(expectedSnapshot);
 

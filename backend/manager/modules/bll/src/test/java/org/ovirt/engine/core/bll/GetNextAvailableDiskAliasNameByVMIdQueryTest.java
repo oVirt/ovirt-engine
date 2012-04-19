@@ -66,7 +66,7 @@ public class GetNextAvailableDiskAliasNameByVMIdQueryTest extends AbstractQueryT
         Map<String, DiskImage> diskMap = vm.getDiskMap();
         DiskImage diskImage = new DiskImage();
         diskImage.setinternal_drive_mapping("1");
-        diskImage.setId(Guid.NewGuid());
+        diskImage.setImageId(Guid.NewGuid());
         diskMap.put("1", diskImage);
         Mockito.when(vmDAO.get(vmId)).thenReturn(vm);
         String diskAliasName = VM_NAME + "_Disk2";
@@ -83,11 +83,11 @@ public class GetNextAvailableDiskAliasNameByVMIdQueryTest extends AbstractQueryT
         Map<String, DiskImage> diskMap = vm.getDiskMap();
         DiskImage diskImage = new DiskImage();
         diskImage.setinternal_drive_mapping("1");
-        diskImage.setId(Guid.NewGuid());
+        diskImage.setImageId(Guid.NewGuid());
         diskMap.put("1", diskImage);
         DiskImage secondDiskImage = new DiskImage();
         diskImage.setinternal_drive_mapping("4");
-        diskImage.setId(Guid.NewGuid());
+        diskImage.setImageId(Guid.NewGuid());
         diskMap.put("4", secondDiskImage);
         Mockito.when(vmDAO.get(vmId)).thenReturn(vm);
         String diskAliasName = VM_NAME + "_Disk2";

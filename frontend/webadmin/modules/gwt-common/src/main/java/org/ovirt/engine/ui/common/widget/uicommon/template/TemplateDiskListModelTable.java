@@ -58,7 +58,7 @@ public class TemplateDiskListModelTable extends AbstractModelBoundTableWidget<Di
         TextColumnWithTooltip<DiskImage> interfaceColumn = new EnumColumn<DiskImage, DiskInterface>() {
             @Override
             protected DiskInterface getRawValue(DiskImage object) {
-                return object.getdisk_interface();
+                return object.getDiskInterface();
             }
         };
         getTable().addColumn(interfaceColumn, "Interface");

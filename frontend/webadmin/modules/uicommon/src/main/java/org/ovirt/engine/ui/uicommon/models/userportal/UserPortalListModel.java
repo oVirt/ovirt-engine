@@ -1180,7 +1180,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
 						HashMap<Guid, DiskImage> dict = new HashMap<Guid, DiskImage>();
 						for (DiskImage a : templateDisks)
 						{
-							dict.put(a.getId(), a);
+							dict.put(a.getImageId(), a);
 						}
 
 						AddVmFromTemplateParameters parameters = new AddVmFromTemplateParameters(gettempVm(), dict, getstorageDomain().getId());

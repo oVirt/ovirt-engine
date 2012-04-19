@@ -36,6 +36,6 @@ public class HotPlugDiskVDSParameters extends VdsAndVmIDVDSParametersBase {
 
     @Override
     public String toString() {
-        return String.format("%s, volumeId = %s", super.toString(), diskImage.getId());
+        return String.format("%s, volumeId = %s", super.toString(), diskImage.getImageId());
     }
 }

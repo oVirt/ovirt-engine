@@ -86,15 +86,15 @@ public class AbstractBackendDisksResourceTest<T extends AbstractBackendReadOnlyD
     }
 
     static DiskImage setUpEntityExpectations(DiskImage entity, int index) {
-        expect(entity.getId()).andReturn(GUIDS[index]).anyTimes();
+        expect(entity.getImageId()).andReturn(GUIDS[index]).anyTimes();
         expect(entity.getvm_snapshot_id()).andReturn(GUIDS[2]).anyTimes();
         expect(entity.getvm_guid()).andReturn(PARENT_ID).anyTimes();
         expect(entity.getvolume_format()).andReturn(VolumeFormat.RAW).anyTimes();
-        expect(entity.getdisk_interface()).andReturn(DiskInterface.VirtIO).anyTimes();
+        expect(entity.getDiskInterface()).andReturn(DiskInterface.VirtIO).anyTimes();
         expect(entity.getimageStatus()).andReturn(ImageStatus.OK).anyTimes();
         expect(entity.getvolume_type()).andReturn(VolumeType.Sparse).anyTimes();
         expect(entity.getboot()).andReturn(false).anyTimes();
-        expect(entity.getpropagate_errors()).andReturn(PropagateErrors.On).anyTimes();
+        expect(entity.getPropagateErrors()).andReturn(PropagateErrors.On).anyTimes();
         return setUpStatisticalEntityExpectations(entity);
     }
 

@@ -51,11 +51,11 @@ public class DisksTree extends AbstractSubTabTree<TemplateDiskListModel, DiskIma
         addValueLabelToPanel(panel, new DiskSizeLabel<Long>(), disk.getSizeInGigabytes(), "120px");
         addValueLabelToPanel(panel, new EnumLabel<ImageStatus>(), disk.getimageStatus(), "120px");
         addValueLabelToPanel(panel, new EnumLabel<VolumeType>(), disk.getvolume_type(), "120px");
-        addValueLabelToPanel(panel, new EnumLabel<DiskInterface>(), disk.getdisk_interface(), "120px");
+        addValueLabelToPanel(panel, new EnumLabel<DiskInterface>(), disk.getDiskInterface(), "120px");
         addValueLabelToPanel(panel, new DateLabel(), disk.getcreation_date(), "90px");
 
         TreeItem treeItem = new TreeItem(panel);
-        treeItem.setUserObject(disk.getId());
+        treeItem.setUserObject(disk.getImageId());
         return treeItem;
     }
 

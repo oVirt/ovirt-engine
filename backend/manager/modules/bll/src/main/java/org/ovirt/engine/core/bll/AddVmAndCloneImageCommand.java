@@ -55,11 +55,11 @@ public abstract class AddVmAndCloneImageCommand<T extends VmManagementParameters
                 Guid.NewGuid(),
                 Guid.NewGuid(),
                 diskImage);
-        ImagesHandler.setDiskAlias(newDiskImage.getDisk(), getVm());
+        ImagesHandler.setDiskAlias(newDiskImage, getVm());
         MoveOrCopyImageGroupParameters parameters = createCopyParameters(newDiskImage,
                 srcStorageDomainId,
                 diskImage.getimage_group_id(),
-                diskImage.getId(), parentCommandType);
+                diskImage.getImageId(), parentCommandType);
         VdcReturnValueBase result = executeChildCopyingCommand(parameters);
         handleCopyResult(newDiskImage, parameters, result);
     }
@@ -97,7 +97,7 @@ public abstract class AddVmAndCloneImageCommand<T extends VmManagementParameters
                         srcImageGroupId,
                         srcImageId,
                         diskImage.getimage_group_id(),
-                        diskImage.getId(),
+                        diskImage.getImageId(),
                         diskImage.getstorage_ids().get(0),
                         ImageOperation.Copy);
         params.setAddImageDomainMapping(false);
@@ -106,7 +106,7 @@ public abstract class AddVmAndCloneImageCommand<T extends VmManagementParameters
         params.setVolumeType(diskImage.getvolume_type());
         params.setUseCopyCollapse(true);
         params.setSourceDomainId(srcStorageDomainId);
-        params.setWipeAfterDelete(diskImage.getwipe_after_delete());
+        params.setWipeAfterDelete(diskImage.isWipeAfterDelete());
         params.setParentParemeters(getParameters());
         params.setParentCommand(parentCommandType);
         return params;
@@ -135,7 +135,7 @@ public abstract class AddVmAndCloneImageCommand<T extends VmManagementParameters
             Guid newImageGuid,
             DiskImage srcDiskImage) {
         DiskImage retDiskImage = DiskImage.copyOf(srcDiskImage);
-        retDiskImage.setId(newImageGuid);
+        retDiskImage.setImageId(newImageGuid);
         retDiskImage.setParentId(Guid.Empty);
         retDiskImage.setit_guid(Guid.Empty);
         retDiskImage.setvm_snapshot_id(getVmSnapshotId());
@@ -206,7 +206,7 @@ public abstract class AddVmAndCloneImageCommand<T extends VmManagementParameters
             for (DiskImage image : getDiskImagesToBeCloned()) {
                 for (Guid storageId : image.getstorage_ids()) {
                     if (storageDomainsMap.containsKey(storageId)) {
-                        diskInfoDestinationMap.put(image.getId(), image);
+                        diskInfoDestinationMap.put(image.getImageId(), image);
                         break;
                     }
                 }
@@ -247,7 +247,7 @@ public abstract class AddVmAndCloneImageCommand<T extends VmManagementParameters
         DiskImage diskImage = new DiskImage();
         diskImage.setvm_guid(vmId);
         diskImage.setimage_group_id(imageGroupId);
-        diskImage.setId(imageId);
+        diskImage.setImageId(imageId);
         return diskImage;
     }
 

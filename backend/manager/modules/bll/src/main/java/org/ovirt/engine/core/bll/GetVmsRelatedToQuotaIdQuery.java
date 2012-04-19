@@ -23,7 +23,7 @@ public class GetVmsRelatedToQuotaIdQuery<P extends GetEntitiesRelatedToQuotaIdPa
             java.util.Collections.sort(vm.getDiskList(), new ImagesComparerByName());
             for (DiskImage diskImage : vm.getDiskMap().values()) {
                 diskImage.getSnapshots().addAll(
-                        ImagesHandler.getAllImageSnapshots(diskImage.getId(), diskImage.getit_guid()));
+                        ImagesHandler.getAllImageSnapshots(diskImage.getImageId(), diskImage.getit_guid()));
             }
         }
         getQueryReturnValue().setReturnValue(vms);

@@ -151,7 +151,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         pciInUse += LinqUtils.filter(disks, new Predicate<DiskImageBase>() {
             @Override
             public boolean eval(DiskImageBase a) {
-                return a.getdisk_interface() != DiskInterface.IDE;
+                return a.getDiskInterface() != DiskInterface.IDE;
             }
         }).size();
 
@@ -167,7 +167,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         else if (MAX_IDE_SLOTS < LinqUtils.filter(disks, new Predicate<DiskImageBase>() {
             @Override
             public boolean eval(DiskImageBase a) {
-                return a.getdisk_interface() == DiskInterface.IDE;
+                return a.getDiskInterface() == DiskInterface.IDE;
             }
         }).size()) {
             result = false;
@@ -201,7 +201,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
                 vm.setInterfaces(DbFacade.getInstance().getVmNetworkInterfaceDAO().getAllForVm(vm.getId()));
             }
             for (DiskImage disk : vm.getDiskMap().values()) {
-                AllVmImages.addAll(ImagesHandler.getAllImageSnapshots(disk.getId(), disk.getit_guid()));
+                AllVmImages.addAll(ImagesHandler.getAllImageSnapshots(disk.getImageId(), disk.getit_guid()));
             }
             if (StringHelper.isNullOrEmpty(vm.getvmt_name())) {
                 VmTemplate t = DbFacade.getInstance().getVmTemplateDAO().get(vm.getvmt_guid());
@@ -346,7 +346,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
                             new Predicate<DiskImage>() {
                                 @Override
                                 public boolean eval(DiskImage diskImage) {
-                                    return diskImage.getwipe_after_delete();
+                                    return diskImage.isWipeAfterDelete();
                                 }
                             }).size() > 0;
 

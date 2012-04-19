@@ -34,14 +34,14 @@ public class RemoveAllVmImagesCommand<T extends RemoveAllVmImagesParameters> ext
         }
         for (DiskImage image : images) {
             if (image.getactive() != null && image.getactive()) {
-                mImagesToBeRemoved.add(image.getId());
+                mImagesToBeRemoved.add(image.getImageId());
             }
         }
 
         boolean noImagesRemovedYet = true;
         for (DiskImage image : images) {
-            if (mImagesToBeRemoved.contains(image.getId())) {
-                RemoveImageParameters tempVar = new RemoveImageParameters(image.getId(), getVmId());
+            if (mImagesToBeRemoved.contains(image.getImageId())) {
+                RemoveImageParameters tempVar = new RemoveImageParameters(image.getImageId(), getVmId());
                 tempVar.setParentCommand(getParameters().getParentCommand());
                 tempVar.setParentParemeters(getParameters().getParentParameters());
                 tempVar.setDiskImage(image);
@@ -64,7 +64,7 @@ public class RemoveAllVmImagesCommand<T extends RemoveAllVmImagesParameters> ext
                     }
 
                     log.errorFormat("Can't remove image id: {0} for VM id: {1} due to: {2}.",
-                            image.getId(), getParameters().getVmId(),
+                            image.getImageId(), getParameters().getVmId(),
                             vdcReturnValue.getFault().getMessage());
                 }
 

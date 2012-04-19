@@ -157,7 +157,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
 
         if (retValue) {
             getImage().getSnapshots().addAll(
-                            ImagesHandler.getAllImageSnapshots(getImage().getId(),
+                            ImagesHandler.getAllImageSnapshots(getImage().getImageId(),
                                     getImage().getit_guid()));
             if (!StorageDomainSpaceChecker.hasSpaceForRequest(getStorageDomain(),
                             Math.round(getImage().getActualDiskWithSnapshotsSize()))) {
@@ -204,7 +204,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
         boolean retValue = true;
         if (isVmFound && VMStatus.Down != getVm().getstatus()) {
             VmDevice vmDevice =
-                    getVmDeviceDAO().get(new VmDeviceId(getImage().getId(), getVm().getId()));
+                    getVmDeviceDAO().get(new VmDeviceId(getImage().getImageId(), getVm().getId()));
             if (vmDevice.getIsPlugged()) {
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
                 retValue = false;

@@ -92,7 +92,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
         // update vm snapshots for storage free space check
         for (DiskImage diskImage : getVm().getDiskMap().values()) {
             diskImage.getSnapshots().addAll(
-                                ImagesHandler.getAllImageSnapshots(diskImage.getId(),
+                                ImagesHandler.getAllImageSnapshots(diskImage.getImageId(),
                                         diskImage.getit_guid()));
         }
 
@@ -238,7 +238,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
                         .RunVdsCommand(
                                 VDSCommandType.GetImageInfo,
                                 new GetImageInfoVDSCommandParameters(storagePoolId, storageDomainId, disk
-                                        .getimage_group_id().getValue(), disk.getId()));
+                                        .getimage_group_id().getValue(), disk.getImageId()));
                 if (vdsReturnValue != null && vdsReturnValue.getSucceeded()) {
                     DiskImage fromVdsm = (DiskImage) vdsReturnValue.getReturnValue();
                     disk.setactual_size(fromVdsm.getactual_size());
@@ -279,7 +279,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
     protected void MoveOrCopyAllImageGroups(Guid containerID, Iterable<DiskImage> disks) {
         for (DiskImage disk : disks) {
             MoveOrCopyImageGroupParameters tempVar = new MoveOrCopyImageGroupParameters(containerID, disk
-                    .getimage_group_id().getValue(), disk.getId(), getParameters().getStorageDomainId(),
+                    .getimage_group_id().getValue(), disk.getImageId(), getParameters().getStorageDomainId(),
                     getMoveOrCopyImageOperation());
             tempVar.setParentCommand(getActionType());
             tempVar.setEntityId(getParameters().getEntityId());
@@ -288,7 +288,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
             tempVar.setVolumeFormat(diskForVolumeInfo.getvolume_format());
             tempVar.setVolumeType(diskForVolumeInfo.getvolume_type());
             tempVar.setCopyVolumeType(CopyVolumeType.LeafVol);
-            tempVar.setPostZero(disk.getwipe_after_delete());
+            tempVar.setPostZero(disk.isWipeAfterDelete());
             tempVar.setForceOverride(getParameters().getForceOverride());
             MoveOrCopyImageGroupParameters p = tempVar;
             p.setParentParemeters(getParameters());
@@ -315,10 +315,10 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
      */
     private DiskImage getDiskForVolumeInfo(DiskImage disk) {
         if (getParameters().getCopyCollapse()) {
-            DiskImage ancestor = DbFacade.getInstance().getDiskImageDAO().getAncestor(disk.getId());
+            DiskImage ancestor = DbFacade.getInstance().getDiskImageDAO().getAncestor(disk.getImageId());
             if (ancestor == null) {
                 log.warnFormat("Can't find ancestor of Disk with ID {0}, using original disk for volume info.",
-                        disk.getId());
+                        disk.getImageId());
                 ancestor = disk;
             }
 

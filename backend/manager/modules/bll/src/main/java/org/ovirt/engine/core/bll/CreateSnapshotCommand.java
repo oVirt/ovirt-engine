@@ -91,7 +91,7 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
                                     new CreateSnapshotVDSCommandParameters(getStoragePoolId().getValue(),
                                             getDestinationStorageDomainId(),
                                             getImageGroupId(),
-                                            getImage().getId(),
+                                            getImage().getImageId(),
                                             getDiskImage().getsize(),
                                             mNewCreatedDiskImage.getvolume_type(),
                                             mNewCreatedDiskImage.getvolume_format(),
@@ -114,7 +114,7 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
         } catch (java.lang.Exception e) {
             log.errorFormat(
                     "CreateSnapshotCommand::CreateSnapshotInIrsServer::Failed creating snapshot from image id -'{0}'",
-                    getImage().getId());
+                    getImage().getImageId());
             throw new VdcBLLException(VdcBllErrors.VolumeCreationError);
         }
 

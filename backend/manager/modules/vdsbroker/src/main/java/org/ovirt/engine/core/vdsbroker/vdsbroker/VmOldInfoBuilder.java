@@ -58,18 +58,18 @@ public class VmOldInfoBuilder extends VmInfoBuilderBase {
         for (DiskImage disk : diskImages) {
 
             // Get the VM device for this disk
-            VmDevice vmDevice = findVmDeviceForDisk(disk.getDisk().getId(), vmDiskDevices);
+            VmDevice vmDevice = findVmDeviceForDisk(disk.getId(), vmDiskDevices);
             if (vmDevice == null || vmDevice.getIsPlugged()) {
                 Map<String, String> drive = new HashMap<String, String>();
                 drive.put("domainID", disk.getstorage_ids().get(0).toString());
                 drive.put("poolID", disk.getstorage_pool_id().toString());
-                drive.put("volumeID", disk.getId().toString());
+                drive.put("volumeID", disk.getImageId().toString());
                 drive.put("imageID", disk.getimage_group_id().toString());
                 drive.put("format", disk.getvolume_format().toString()
                         .toLowerCase());
-                drive.put("propagateErrors", disk.getpropagate_errors().toString()
+                drive.put("propagateErrors", disk.getPropagateErrors().toString()
                         .toLowerCase());
-                switch (disk.getdisk_interface()) {
+                switch (disk.getDiskInterface()) {
                 case IDE:
                     try {
                         drive.put("if", "ide");

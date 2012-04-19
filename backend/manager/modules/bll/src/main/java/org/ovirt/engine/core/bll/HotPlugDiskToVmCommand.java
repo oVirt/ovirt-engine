@@ -43,7 +43,7 @@ public class HotPlugDiskToVmCommand<T extends HotPlugDiskToVmParameters> extends
         }
         if (returnValue) {
             oldVmDevice =
-                    getVmDeviceDao().get(new VmDeviceId(diskImage.getDisk().getId(), getVmId()));
+                    getVmDeviceDao().get(new VmDeviceId(diskImage.getId(), getVmId()));
             if (getPlugAction() == VDSCommandType.HotPlugDisk && oldVmDevice.getIsPlugged()) {
                 returnValue = false;
                 addCanDoActionMessage(VdcBllMessages.HOT_PLUG_DISK_IS_NOT_UNPLUGGED);

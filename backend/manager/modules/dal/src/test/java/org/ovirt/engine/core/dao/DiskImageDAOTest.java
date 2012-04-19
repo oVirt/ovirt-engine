@@ -21,8 +21,6 @@ import org.ovirt.engine.core.compat.Guid;
 
 /**
  * <code.DiskImageDAOTest</code> provides unit tests to validate {@link DiskImageDAO}.
- *
- *
  */
 public class DiskImageDAOTest extends BaseGenericDaoTestCase<Guid, DiskImage, DiskImageDAO> {
     private static final Guid EXISTING_IMAGE_ID = new Guid("42058975-3d5e-484a-80c1-01c31207f578");
@@ -31,8 +29,6 @@ public class DiskImageDAOTest extends BaseGenericDaoTestCase<Guid, DiskImage, Di
     private static final Guid EXISTING_VM_TEMPLATE = new Guid("1b85420c-b84c-4f29-997e-0eb674b40b79");
 
     private DiskImage existingTemplate;
-
-
 
     private static final int TOTAL_DISK_IMAGES = 7;
     private DiskImageDynamicDAO diskImageDynamicDao;
@@ -83,19 +79,41 @@ public class DiskImageDAOTest extends BaseGenericDaoTestCase<Guid, DiskImage, Di
         newImage.setactive(true);
         newImage.setvm_guid(FixturesTool.VM_RHEL5_POOL_57);
         newImage.setit_guid(EXISTING_IMAGE_DISK_TEMPLATE);
-        newImage.setId(Guid.NewGuid());
+        newImage.setImageId(Guid.NewGuid());
         newImage.setinternal_drive_mapping("4");
         newImage.setvolume_format(VolumeFormat.COW);
         newImage.setvolume_type(VolumeType.Sparse);
-        newImage.setdisk_interface(DiskInterface.IDE);
+        newImage.setDiskInterface(DiskInterface.IDE);
         newImage.setimage_group_id(Guid.NewGuid());
         newImage.setQuotaId(Guid.NewGuid());
         newImage.setShareable(Boolean.TRUE.booleanValue());
         newImage.setstorage_ids(new ArrayList<Guid>());
-        existingTemplate = dao.get(EXISTING_IMAGE_DISK_TEMPLATE );
+        existingTemplate = dao.get(EXISTING_IMAGE_DISK_TEMPLATE);
     }
 
-     /**
+    @Test
+    @Override
+    public void testGet() {
+        DiskImage result = dao.get(existingEntity.getImageId());
+
+        assertNotNull(result);
+        assertEquals(existingEntity, result);
+    }
+
+    @Test
+    @Override
+    public void testUpdate() {
+        updateExistingEntity();
+
+        dao.update(existingEntity);
+
+        DiskImage result = dao.get(existingEntity.getImageId());
+
+        assertNotNull(result);
+        assertEquals(existingEntity, result);
+    }
+
+    /**
      * Ensures that saving a disk image works as expected.
      */
     @Test
@@ -104,8 +122,8 @@ public class DiskImageDAOTest extends BaseGenericDaoTestCase<Guid, DiskImage, Di
         dao.save(newImage);
 
         DiskImageDynamic dynamic = new DiskImageDynamic();
-        dynamic.setId(newImage.getId());
-        diskDao.save(newImage.getDisk());
+        dynamic.setId(newImage.getImageId());
+        diskDao.save(newImage);
         diskImageDynamicDao.save(dynamic);
         VmDevice vmDevice =
                 new VmDevice(new VmDeviceId(newImage.getimage_group_id(), newImage.getvm_guid()),
@@ -120,7 +138,7 @@ public class DiskImageDAOTest extends BaseGenericDaoTestCase<Guid, DiskImage, Di
         vmDeviceDao.save(vmDevice);
         DiskImageDynamic dynamicFromDB = diskImageDynamicDao.get(dynamic.getId());
         assertNotNull(dynamicFromDB);
-        DiskImage result = dao.get(newImage.getId());
+        DiskImage result = dao.get(newImage.getImageId());
 
         assertNotNull(result);
         assertEquals(newImage, result);
@@ -129,10 +147,10 @@ public class DiskImageDAOTest extends BaseGenericDaoTestCase<Guid, DiskImage, Di
 
     @Test
     public void testGetAncestorForSon() {
-        DiskImage result = dao.getAncestor(existingEntity.getId());
+        DiskImage result = dao.getAncestor(existingEntity.getImageId());
 
         assertNotNull(result);
-        assertEquals(ANCESTOR_IMAGE_ID, result.getId());
+        assertEquals(ANCESTOR_IMAGE_ID, result.getImageId());
     }
 
     @Test
@@ -140,7 +158,7 @@ public class DiskImageDAOTest extends BaseGenericDaoTestCase<Guid, DiskImage, Di
         DiskImage result = dao.getAncestor(ANCESTOR_IMAGE_ID);
 
         assertNotNull(result);
-        assertEquals(ANCESTOR_IMAGE_ID, result.getId());
+        assertEquals(ANCESTOR_IMAGE_ID, result.getImageId());
     }
 
     @Test
@@ -175,7 +193,9 @@ public class DiskImageDAOTest extends BaseGenericDaoTestCase<Guid, DiskImage, Di
     @Test
     public void testGetAllAttachableDisksByPoolId() {
         List<DiskImage> result =
-                dao.getAllAttachableDisksByPoolId(Guid.createGuidFromString("6d849ebf-755f-4552-ad09-9a090cda105d"), null, false);
+                dao.getAllAttachableDisksByPoolId(Guid.createGuidFromString("6d849ebf-755f-4552-ad09-9a090cda105d"),
+                        null,
+                        false);
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
@@ -214,7 +234,7 @@ public class DiskImageDAOTest extends BaseGenericDaoTestCase<Guid, DiskImage, Di
         assertFullGetAllForVMResult(disks);
     }
 
-   public void testGetTemplate() {
+    public void testGetTemplate() {
         DiskImage result = dao.get(EXISTING_IMAGE_DISK_TEMPLATE);
         assertNotNull(result);
         assertEquals(existingTemplate, result);
@@ -228,7 +248,7 @@ public class DiskImageDAOTest extends BaseGenericDaoTestCase<Guid, DiskImage, Di
         assertNotNull(result);
         assertFalse(result.isEmpty());
         for (DiskImage template : result) {
-            assertEquals(EXISTING_IMAGE_DISK_TEMPLATE, template.getId());
+            assertEquals(EXISTING_IMAGE_DISK_TEMPLATE, template.getImageId());
         }
     }
 
@@ -270,7 +290,8 @@ public class DiskImageDAOTest extends BaseGenericDaoTestCase<Guid, DiskImage, Di
 
     /**
      * Asserts the result of {@link DiskImageDAO#getAllForVm(Guid)} contains the correct disks.
-     * @param disks The result to check
+     * @param disks
+     *            The result to check
      */
     private static void assertFullGetAllForVMResult(List<DiskImage> disks) {
         assertEquals("VM should have two disks", 2, disks.size());

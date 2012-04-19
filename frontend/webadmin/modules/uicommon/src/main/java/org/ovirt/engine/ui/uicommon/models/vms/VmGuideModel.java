@@ -95,7 +95,7 @@ public class VmGuideModel extends GuideModel
 				int ideDiskCount = 0;
 				for (DiskImage a : disks)
 				{
-					if (a.getdisk_interface() == DiskInterface.IDE)
+					if (a.getDiskInterface() == DiskInterface.IDE)
 					{
 						ideDiskCount++;
 					}
@@ -353,12 +353,12 @@ public class VmGuideModel extends GuideModel
 
 			DiskImage tempVar = new DiskImage();
 			tempVar.setSizeInGigabytes(Integer.parseInt(model.getSize().getEntity().toString()));
-			tempVar.setdisk_interface((DiskInterface)model.getInterface().getSelectedItem());
+			tempVar.setDiskInterface((DiskInterface)model.getInterface().getSelectedItem());
 			tempVar.setvolume_type((VolumeType)model.getVolumeType().getSelectedItem());
 			tempVar.setvolume_format(model.getVolumeFormat());
-			tempVar.setwipe_after_delete((Boolean)model.getWipeAfterDelete().getEntity());
+			tempVar.setWipeAfterDelete((Boolean)model.getWipeAfterDelete().getEntity());
 			tempVar.setboot((Boolean)model.getIsBootable().getEntity());
-			tempVar.setpropagate_errors(PropagateErrors.Off);
+			tempVar.setPropagateErrors(PropagateErrors.Off);
 			DiskImage disk = tempVar;
 
 			model.StartProgress(null);

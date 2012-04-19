@@ -93,14 +93,14 @@ public class GetAllDisksByVmIdQueryTest extends AbstractUserQueryTest<GetAllDisk
 
         // Image handler
         mockStatic(ImagesHandler.class);
-        when(ImagesHandler.getAllImageSnapshots(pluggedDisk.getId(), pluggedDisk.getit_guid())).thenReturn
+        when(ImagesHandler.getAllImageSnapshots(pluggedDisk.getImageId(), pluggedDisk.getit_guid())).thenReturn
                 (new ArrayList<DiskImage>(Collections.nCopies(NUM_DISKS_OF_EACH_KIND, pluggedDisk)));
-        when(ImagesHandler.getAllImageSnapshots(unpluggedDisk.getId(), unpluggedDisk.getit_guid())).thenReturn
+        when(ImagesHandler.getAllImageSnapshots(unpluggedDisk.getImageId(), unpluggedDisk.getit_guid())).thenReturn
                 (new ArrayList<DiskImage>(Collections.nCopies(NUM_DISKS_OF_EACH_KIND, unpluggedDisk)));
     }
 
     private static VmDevice createVMDevice(Guid vmID, DiskImage disk) {
-        return new VmDevice(new VmDeviceId(disk.getId(), vmID),
+        return new VmDevice(new VmDeviceId(disk.getImageId(), vmID),
                 VmDeviceType.DISK.getName(),
                 VmDeviceType.DISK.getName(),
                 "",

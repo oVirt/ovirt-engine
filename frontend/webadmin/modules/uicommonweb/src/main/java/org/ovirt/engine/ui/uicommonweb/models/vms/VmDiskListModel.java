@@ -329,17 +329,17 @@ public class VmDiskListModel extends SearchableListModel
 
                 java.util.ArrayList<DiskInterface> interfaces =
                         DataProvider.GetDiskInterfaceList(vm.getvm_os(), vm.getvds_group_compatibility_version());
-                if (!interfaces.contains(disk.getdisk_interface()))
+                if (!interfaces.contains(disk.getDiskInterface()))
                 {
-                    interfaces.add(disk.getdisk_interface());
+                    interfaces.add(disk.getDiskInterface());
                 }
                 diskModel.getInterface().setItems(interfaces);
-                diskModel.getInterface().setSelectedItem(disk.getdisk_interface());
+                diskModel.getInterface().setSelectedItem(disk.getDiskInterface());
                 diskModel.getInterface().setIsChangable(false);
 
                 storage_domains storage = (storage_domains) diskModel.getStorageDomain().getSelectedItem();
 
-                diskModel.getWipeAfterDelete().setEntity(disk.getwipe_after_delete());
+                diskModel.getWipeAfterDelete().setEntity(disk.isWipeAfterDelete());
                 if (diskModel.getStorageDomain() != null && diskModel.getStorageDomain().getSelectedItem() != null)
                 {
                     vmDiskListModel.UpdateWipeAfterDelete(storage.getstorage_type(),
@@ -360,7 +360,7 @@ public class VmDiskListModel extends SearchableListModel
                         break;
                     }
                 }
-                if (bootableDisk != null && !bootableDisk.getId().equals(disk.getId()))
+                if (bootableDisk != null && !bootableDisk.getImageId().equals(disk.getImageId()))
                 {
                     diskModel.getIsBootable().setIsChangable(false);
                     diskModel.getIsBootable()
@@ -447,8 +447,8 @@ public class VmDiskListModel extends SearchableListModel
         {
             DiskImage disk = (DiskImage) item;
             VdcActionParametersBase parameters = removeDisk ?
-                    new RemoveDiskParameters(disk.getId()) :
-                    new UpdateVmDiskParameters(vm.getId(), disk.getId(), disk);
+                    new RemoveDiskParameters(disk.getImageId()) :
+                    new UpdateVmDiskParameters(vm.getId(), disk.getImageId(), disk);
 
             paramerterList.add(parameters);
         }
@@ -489,10 +489,10 @@ public class VmDiskListModel extends SearchableListModel
         DiskImage disk = model.getIsNew() ? new DiskImage() : (DiskImage) getSelectedItem();
         disk.setSizeInGigabytes(Integer.parseInt(model.getSize().getEntity().toString()));
         disk.setDiskAlias(model.getAlias().getEntity().toString());
-        disk.setdisk_interface((DiskInterface) model.getInterface().getSelectedItem());
+        disk.setDiskInterface((DiskInterface) model.getInterface().getSelectedItem());
         disk.setvolume_type((VolumeType) model.getVolumeType().getSelectedItem());
         disk.setvolume_format(model.getVolumeFormat());
-        disk.setwipe_after_delete((Boolean) model.getWipeAfterDelete().getEntity());
+        disk.setWipeAfterDelete((Boolean) model.getWipeAfterDelete().getEntity());
         disk.setboot((Boolean) model.getIsBootable().getEntity());
         disk.setPlugged((Boolean) model.getIsPlugged().getEntity());
         if (model.getQuota().getIsAvailable()) {
@@ -501,7 +501,7 @@ public class VmDiskListModel extends SearchableListModel
 
         // NOTE: Since we doesn't support partial snapshots in GUI, propagate errors flag always must be set false.
         // disk.propagate_errors = model.PropagateErrors.ValueAsBoolean() ? PropagateErrors.On : PropagateErrors.Off;
-        disk.setpropagate_errors(PropagateErrors.Off);
+        disk.setPropagateErrors(PropagateErrors.Off);
 
         model.StartProgress(null);
 
@@ -516,7 +516,7 @@ public class VmDiskListModel extends SearchableListModel
         }
         else
         {
-            parameters = new UpdateVmDiskParameters(vm.getId(), disk.getId(), disk);
+            parameters = new UpdateVmDiskParameters(vm.getId(), disk.getImageId(), disk);
             actionType = VdcActionType.UpdateVmDisk;
         }
 
@@ -543,7 +543,7 @@ public class VmDiskListModel extends SearchableListModel
             DiskModel disk = (DiskModel) item.getEntity();
             disk.getDiskImage().setPlugged((Boolean) model.getIsPlugged().getEntity());
             UpdateVmDiskParameters parameters =
-                    new UpdateVmDiskParameters(vm.getId(), disk.getDiskImage().getId(), disk.getDiskImage());
+                    new UpdateVmDiskParameters(vm.getId(), disk.getDiskImage().getImageId(), disk.getDiskImage());
             paramerterList.add(parameters);
         }
 
@@ -581,7 +581,7 @@ public class VmDiskListModel extends SearchableListModel
             DiskImage disk = (DiskImage) item;
             disk.setPlugged(plug);
 
-            paramerterList.add(new HotPlugDiskToVmParameters(vm.getId(), disk.getId()));
+            paramerterList.add(new HotPlugDiskToVmParameters(vm.getId(), disk.getImageId()));
         }
 
         VdcActionType plugAction = VdcActionType.HotPlugDiskToVm;
@@ -700,7 +700,7 @@ public class VmDiskListModel extends SearchableListModel
 
         for (DiskImage disk : disks)
         {
-            if (disk.getPlugged() == plug || disk.getdisk_interface() == DiskInterface.IDE ||
+            if (disk.getPlugged() == plug || disk.getDiskInterface() == DiskInterface.IDE ||
                     disk.getimageStatus() == ImageStatus.LOCKED)
             {
                 return false;

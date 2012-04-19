@@ -68,7 +68,7 @@ public abstract class OvfWriter implements IOvfBuilder {
         for (DiskImage image : _images) {
             _writer.WriteStartElement("File");
             _writer.WriteAttributeString("ovf", "href", null, OvfParser.CreateImageFile(image));
-            _writer.WriteAttributeString("ovf", "id", null, image.getId().toString());
+            _writer.WriteAttributeString("ovf", "id", null, image.getImageId().toString());
             _writer.WriteAttributeString("ovf", "size", null, (new Long(image.getsize())).toString());
             _writer.WriteAttributeString("ovf", "description", null, StringUtils.defaultString(image.getdescription()));
             _writer.WriteEndElement();
@@ -104,7 +104,7 @@ public abstract class OvfWriter implements IOvfBuilder {
         _writer.WriteEndElement();
         for (DiskImage image : _images) {
             _writer.WriteStartElement("Disk");
-            _writer.WriteAttributeString("ovf", "diskId", null, image.getId().toString());
+            _writer.WriteAttributeString("ovf", "diskId", null, image.getImageId().toString());
             _writer.WriteAttributeString("ovf", "size", null, (new Long(BytesToGigabyte(image.getsize()))).toString());
             _writer.WriteAttributeString("ovf", "actual_size", null,
                     (new Long(BytesToGigabyte(image.getactual_size()))).toString());
@@ -118,7 +118,7 @@ public abstract class OvfWriter implements IOvfBuilder {
                 // List<DiskImage> res = _images.SkipWhile(img => image.ParentId
                 // == img.image_guid).ToList();
                 int i = 0;
-                while (_images.get(i).getId().equals(image.getParentId()))
+                while (_images.get(i).getImageId().equals(image.getParentId()))
                     i++;
                 List<DiskImage> res = _images.subList(i, _images.size() - 1);
                 // LINQ 29456
@@ -147,10 +147,10 @@ public abstract class OvfWriter implements IOvfBuilder {
             _writer.WriteAttributeString("ovf", "format", null, format);
             _writer.WriteAttributeString("ovf", "volume-format", null, image.getvolume_format().toString());
             _writer.WriteAttributeString("ovf", "volume-type", null, image.getvolume_type().toString());
-            _writer.WriteAttributeString("ovf", "disk-interface", null, image.getdisk_interface().toString());
+            _writer.WriteAttributeString("ovf", "disk-interface", null, image.getDiskInterface().toString());
             _writer.WriteAttributeString("ovf", "boot", null, (new Boolean(image.getboot())).toString());
             _writer.WriteAttributeString("ovf", "wipe-after-delete", null,
-                    (new Boolean(image.getwipe_after_delete())).toString());
+                    (new Boolean(image.isWipeAfterDelete())).toString());
             _writer.WriteEndElement();
         }
         _writer.WriteEndElement();

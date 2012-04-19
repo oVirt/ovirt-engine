@@ -216,7 +216,7 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
 
     protected DiskModel getTemplateDiskByVmDisk(DiskModel vmdisk) {
         for (DiskModel disk : getAllDisks()) {
-            if (disk.getDiskImage().getId().equals(vmdisk.getDiskImage().getParentId())) {
+            if (disk.getDiskImage().getImageId().equals(vmdisk.getDiskImage().getParentId())) {
                 return disk;
             }
         }
@@ -298,7 +298,7 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
             DiskImage disk,
             ImageOperation imageOperation) {
         MoveOrCopyImageGroupParameters diskParameters =
-                new MoveOrCopyImageGroupParameters(disk.getId(),
+                new MoveOrCopyImageGroupParameters(disk.getImageId(),
                         sourceStorageDomainGuid,
                         destStorageDomainGuid,
                         imageOperation);

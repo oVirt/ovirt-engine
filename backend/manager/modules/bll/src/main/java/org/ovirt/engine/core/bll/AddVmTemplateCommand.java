@@ -144,7 +144,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         setQuotaId(QuotaHelper.getInstance().getQuotaIdToConsume(getQuotaId(),
                 getStoragePool()));
         for (DiskImage diskImage : mImages) {
-            DiskImage diskImageForQuota = diskInfoDestinationMap.get(diskImage.getId());
+            DiskImage diskImageForQuota = diskInfoDestinationMap.get(diskImage.getImageId());
             if (diskImageForQuota != null) {
                 diskImage.setQuotaId(QuotaHelper.getInstance()
                         .getQuotaIdToConsume(diskImageForQuota.getQuotaId(),
@@ -218,14 +218,14 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         Map<Guid, List<DiskImage>> sourceImageDomainsImageMap = new HashMap<Guid, List<DiskImage>>();
         for (DiskImage image : mImages) {
             MultiValueMapUtils.addToMap(image.getstorage_ids().get(0), image, sourceImageDomainsImageMap);
-            if (!diskInfoDestinationMap.containsKey(image.getId())) {
+            if (!diskInfoDestinationMap.containsKey(image.getImageId())) {
                 Guid destStorageId =
                         getParameters().getDestinationStorageDomainId() != null ? getParameters().getDestinationStorageDomainId()
                                 : image.getstorage_ids().get(0);
                 ArrayList<Guid> storageIds = new ArrayList<Guid>();
                 storageIds.add(destStorageId);
                 image.setstorage_ids(storageIds);
-                diskInfoDestinationMap.put(image.getId(), image);
+                diskInfoDestinationMap.put(image.getImageId(), image);
             }
         }
 
@@ -279,7 +279,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         // update vm snapshots for storage free space check
         for (DiskImage diskImage : getVm().getDiskMap().values()) {
             diskImage.getSnapshots().addAll(
-                    ImagesHandler.getAllImageSnapshots(diskImage.getId(),
+                    ImagesHandler.getAllImageSnapshots(diskImage.getImageId(),
                             diskImage.getit_guid()));
         }
 
@@ -358,12 +358,12 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         Guid vmSnapshotId = Guid.NewGuid();
 
         for (DiskImage diskImage : mImages) {
-            CreateImageTemplateParameters createParams = new CreateImageTemplateParameters(diskImage.getId(),
+            CreateImageTemplateParameters createParams = new CreateImageTemplateParameters(diskImage.getImageId(),
                     getVmTemplateId(), getVmTemplateName(), getVmId());
             createParams.setStorageDomainId(diskImage.getstorage_ids().get(0));
             createParams.setVmSnapshotId(vmSnapshotId);
             createParams.setEntityId(getParameters().getEntityId());
-            createParams.setDestinationStorageDomainId(diskInfoDestinationMap.get(diskImage.getId())
+            createParams.setDestinationStorageDomainId(diskInfoDestinationMap.get(diskImage.getImageId())
                     .getstorage_ids()
                     .get(0));
             createParams.setParentParemeters(getParameters());

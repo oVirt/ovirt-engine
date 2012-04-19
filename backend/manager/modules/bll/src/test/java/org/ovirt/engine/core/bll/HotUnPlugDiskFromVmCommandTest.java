@@ -35,8 +35,8 @@ public class HotUnPlugDiskFromVmCommandTest extends HotPlugDiskToVmCommandTest {
 
     protected void cretaeVirtIODisk() {
         DiskImage disk = new DiskImage();
-        disk.setId(diskImageGuid);
-        disk.setdisk_interface(DiskInterface.VirtIO);
+        disk.setImageId(diskImageGuid);
+        disk.setDiskInterface(DiskInterface.VirtIO);
         disk.setactive(true);
         disk.setvm_guid(vmId);
         doReturn(diskImageDao).when(command).getDiskImageDao();

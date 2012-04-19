@@ -87,9 +87,9 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
                     public Object runInTransaction() {
                         DiskImage diskImage = getDiskImage();
                         if (diskImage != null) {
-                            DbFacade.getInstance().getDiskImageDynamicDAO().remove(diskImage.getId());
+                            DbFacade.getInstance().getDiskImageDynamicDAO().remove(diskImage.getImageId());
                             Guid imageTemplate = diskImage.getit_guid();
-                            Guid currentGuid = diskImage.getId();
+                            Guid currentGuid = diskImage.getImageId();
                             // next 'while' statement removes snapshots from DB only (the
                             // 'DeleteImageGroup'
                             // VDS Command should take care of removing all the snapshots from
@@ -108,7 +108,7 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
                                     currentGuid = Guid.Empty;
                                     log.warnFormat(
                                             "RemoveImageCommand::RemoveImageFromDB: 'image' (snapshot of image '{0}') is null, cannot remove it.",
-                                            diskImage.getId());
+                                            diskImage.getImageId());
                                 }
                             }
 
@@ -162,7 +162,7 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
             VDSReturnValue returnValue = runVdsCommand(VDSCommandType.DeleteImageGroup,
                     new DeleteImageGroupVDSCommandParameters(getDiskImage().getstorage_pool_id().getValue(),
                             getStorageDomainId().getValue(), getDiskImage().getimage_group_id()
-                                    .getValue(), getDiskImage().getwipe_after_delete(), getParameters()
+                                    .getValue(), getDiskImage().isWipeAfterDelete(), getParameters()
                                     .getForceDelete(), getStoragePool().getcompatibility_version().toString()));
             return returnValue;
         } catch (VdcBLLException e) {

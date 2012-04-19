@@ -90,7 +90,7 @@ public abstract class OvfReader implements IOvfBuilder {
             DiskImage image = LinqUtils.firstOrNull(_images, new Predicate<DiskImage>() {
                 @Override
                 public boolean eval(DiskImage diskImage) {
-                    return diskImage.getId().equals(guid);
+                    return diskImage.getImageId().equals(guid);
                 }
             });
 
@@ -126,11 +126,11 @@ public abstract class OvfReader implements IOvfBuilder {
             }
             if (node.Attributes.get("ovf:disk-interface") != null) {
                 if (!StringHelper.isNullOrEmpty(node.Attributes.get("ovf:disk-interface").getValue())) {
-                    image.setdisk_interface(DiskInterface.valueOf(node.Attributes.get("ovf:disk-interface").getValue()));
+                    image.setDiskInterface(DiskInterface.valueOf(node.Attributes.get("ovf:disk-interface").getValue()));
                 }
             }
             else {
-                image.setdisk_interface(DiskInterface.IDE);
+                image.setDiskInterface(DiskInterface.IDE);
             }
             if (node.Attributes.get("ovf:boot") != null) {
                 if (!StringHelper.isNullOrEmpty(node.Attributes.get("ovf:boot").getValue())) {
@@ -139,7 +139,7 @@ public abstract class OvfReader implements IOvfBuilder {
             }
             if (node.Attributes.get("ovf:wipe-after-delete") != null) {
                 if (!StringHelper.isNullOrEmpty(node.Attributes.get("ovf:wipe-after-delete").getValue())) {
-                    image.setwipe_after_delete(Boolean.parseBoolean(node.Attributes.get("ovf:wipe-after-delete")
+                    image.setWipeAfterDelete(Boolean.parseBoolean(node.Attributes.get("ovf:wipe-after-delete")
                             .getValue()));
                 }
             }
@@ -287,7 +287,7 @@ public abstract class OvfReader implements IOvfBuilder {
         XmlNodeList list = _document.SelectNodes("//*/File", _xmlNS);
         for (XmlNode node : list) {
             DiskImage image = new DiskImage();
-            image.setId(new Guid(node.Attributes.get("ovf:id").getValue()));
+            image.setImageId(new Guid(node.Attributes.get("ovf:id").getValue()));
             image.setimage_group_id(OvfParser.GetImageGrupIdFromImageFile(node.Attributes.get("ovf:href").getValue()));
             // Default values:
             image.setactive(true);

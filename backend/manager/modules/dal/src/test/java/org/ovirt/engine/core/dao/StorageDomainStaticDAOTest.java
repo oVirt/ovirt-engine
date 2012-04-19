@@ -223,8 +223,8 @@ public class StorageDomainStaticDAOTest extends BaseDAOTestCase {
         }
         // First remove images that are not image templates
         for (DiskImage image : imagesToRemove) {
-            if (!itGuids.contains(image.getId())) {
-                imageDao.remove(image.getId());
+            if (!itGuids.contains(image.getImageId())) {
+                imageDao.remove(image.getImageId());
             }
         }
         // Remove images of templates - the blank image guid (empty guid was also inserted) so it is first removed from

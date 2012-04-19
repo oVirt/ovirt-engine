@@ -60,7 +60,7 @@ public class OvfParser {
         } else {
             retVal += Guid.Empty;
         }
-        retVal += "/" + image.getId().toString();
+        retVal += "/" + image.getImageId().toString();
         return retVal;
     }
 

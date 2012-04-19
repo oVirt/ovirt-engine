@@ -238,7 +238,7 @@ public class OvfVmWriter extends OvfWriter {
             _writer.WriteRaw(String.format("Drive %1$s", image.getinternal_drive_mapping()));
             _writer.WriteEndElement();
             _writer.WriteStartElement("rasd:InstanceId");
-            _writer.WriteRaw(image.getId().toString());
+            _writer.WriteRaw(image.getImageId().toString());
             _writer.WriteEndElement();
             _writer.WriteStartElement("rasd:ResourceType");
             _writer.WriteRaw(OvfHardware.DiskImage);

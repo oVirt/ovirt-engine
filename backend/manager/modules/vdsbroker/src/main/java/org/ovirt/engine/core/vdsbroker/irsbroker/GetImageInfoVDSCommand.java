@@ -77,7 +77,7 @@ public class GetImageInfoVDSCommand<P extends GetImageInfoVDSCommandParameters> 
     public DiskImage buildImageEntity(XmlRpcStruct xmlRpcStruct) {
         DiskImage newImage = new DiskImage();
         try {
-            newImage.setId(new Guid((String) xmlRpcStruct.getItem(IrsProperties.uuid)));
+            newImage.setImageId(new Guid((String) xmlRpcStruct.getItem(IrsProperties.uuid)));
 
             newImage.setParentId(new Guid((String) xmlRpcStruct.getItem(IrsProperties.parent)));
             newImage.setdescription((String) xmlRpcStruct.getItem(IrsProperties.description));

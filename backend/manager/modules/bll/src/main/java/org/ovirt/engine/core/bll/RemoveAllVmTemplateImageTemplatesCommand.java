@@ -38,13 +38,13 @@ public class RemoveAllVmTemplateImageTemplatesCommand<T extends VmTemplateParame
             // get disk
             // remove this disk in all domain that were sent
             for (Guid domain : (Collection<Guid>)CollectionUtils.intersection(getParameters().getStorageDomainsList(), template.getstorage_ids())) {
-                ImagesContainterParametersBase tempVar = new ImagesContainterParametersBase(template.getId(),
+                ImagesContainterParametersBase tempVar = new ImagesContainterParametersBase(template.getImageId(),
                         template.getinternal_drive_mapping(), getVmTemplateId());
                 tempVar.setStorageDomainId(domain);
                 tempVar.setStoragePoolId(template.getstorage_pool_id().getValue());
                 tempVar.setImageGroupID(template.getimage_group_id().getValue());
                 tempVar.setEntityId(getParameters().getEntityId());
-                tempVar.setWipeAfterDelete(template.getwipe_after_delete());
+                tempVar.setWipeAfterDelete(template.isWipeAfterDelete());
                 tempVar.setTransactionScopeOption(TransactionScopeOption.RequiresNew);
                 VdcReturnValueBase vdcReturnValue = Backend.getInstance().runInternalAction(
                                 VdcActionType.RemoveTemplateSnapshot,
@@ -61,25 +61,25 @@ public class RemoveAllVmTemplateImageTemplatesCommand<T extends VmTemplateParame
                     }
 
                     log.errorFormat("Can't remove image id: {0} for template id: {1} from domain id: {2} due to: {3}.",
-                            template.getId(), getVmTemplateId(), domain,
+                            template.getImageId(), getVmTemplateId(), domain,
                             vdcReturnValue.getFault().getMessage());
                 }
 
                 DbFacade.getInstance().getImageStorageDomainMapDao().remove(
-                        new image_storage_domain_map_id(template.getId(), domain));
+                        new image_storage_domain_map_id(template.getImageId(), domain));
                 noImagesRemovedYet = false;
             }
 
             // remove images from db only if removing template completely
             if (getParameters().isRemoveTemplateFromDb()) {
-                DiskImage diskImage = DbFacade.getInstance().getDiskImageDAO().get(template.getId());
+                DiskImage diskImage = DbFacade.getInstance().getDiskImageDAO().get(template.getImageId());
                 if (diskImage != null) {
                     DbFacade.getInstance().getBaseDiskDao().remove(diskImage.getimage_group_id());
                     DbFacade.getInstance()
                             .getVmDeviceDAO()
-                            .remove(new VmDeviceId(diskImage.getId(), diskImage.getvm_guid()));
-                    DbFacade.getInstance().getImageStorageDomainMapDao().remove(diskImage.getId());
-                    DbFacade.getInstance().getDiskImageDAO().remove(template.getId());
+                            .remove(new VmDeviceId(diskImage.getImageId(), diskImage.getvm_guid()));
+                    DbFacade.getInstance().getImageStorageDomainMapDao().remove(diskImage.getImageId());
+                    DbFacade.getInstance().getDiskImageDAO().remove(template.getImageId());
                 }
             }
         }

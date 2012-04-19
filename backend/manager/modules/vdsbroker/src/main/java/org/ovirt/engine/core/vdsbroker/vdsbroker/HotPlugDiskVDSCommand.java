@@ -35,15 +35,15 @@ public class HotPlugDiskVDSCommand<P extends HotPlugDiskVDSParameters> extends V
         drive.add("device", "disk");
         addAddress(drive, getParameters().getVmDevice().getAddress());
         drive.add("format", diskImage.getvolume_format().toString().toLowerCase());
-        drive.add("propagateErrors", diskImage.getpropagate_errors().toString().toLowerCase());
-        drive.add("iface", diskImage.getdisk_interface().toString().toLowerCase());
+        drive.add("propagateErrors", diskImage.getPropagateErrors().toString().toLowerCase());
+        drive.add("iface", diskImage.getDiskInterface().toString().toLowerCase());
         drive.add("shared", Boolean.FALSE.toString());
         drive.add("optional", Boolean.FALSE.toString());
         drive.add("readonly", String.valueOf(vmDevice.getIsReadOnly()));
 
         drive.add("domainID", diskImage.getstorage_ids().get(0).toString());
         drive.add("poolID", diskImage.getstorage_pool_id().toString());
-        drive.add("volumeID", diskImage.getId().toString());
+        drive.add("volumeID", diskImage.getImageId().toString());
         drive.add("imageID", diskImage.getimage_group_id().toString());
         return drive;
     }

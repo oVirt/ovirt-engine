@@ -41,14 +41,14 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<DiskIma
         getTable().addColumn(new TextColumnWithTooltip<DiskImage>() {
             @Override
             public String getValue(DiskImage object) {
-                return object.getDisk().getDiskAlias();
+                return object.getDiskAlias();
             }
         }, "Alias");
 
         getTable().addColumn(new TextColumnWithTooltip<DiskImage>() {
             @Override
             public String getValue(DiskImage object) {
-                return object.getDisk().getId().toString();
+                return object.getId().toString();
             }
         }, "ID", "120px");
 

@@ -386,11 +386,11 @@ public class VmDeviceUtils {
      * @return set of disks of the images collection
      */
     protected static Set<BaseDisk> getDisks(Collection<DiskImage> diskImages) {
-        Set<BaseDisk> disks = new HashSet<BaseDisk>();
+        Map<Guid, BaseDisk> diskMap = new HashMap<Guid, BaseDisk>();
         for (DiskImage diskImage : diskImages) {
-            disks.add(diskImage.getDisk());
+            diskMap.put(diskImage.getId(), diskImage);
         }
-        return disks;
+        return new HashSet<BaseDisk>(diskMap.values());
     }
 
     private static <T extends VmBase> void updateVmDevice(T entity, VmDevice vmDevice, Guid deviceId, List<VmDevice> vmDeviceToUpdate) {

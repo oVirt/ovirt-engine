@@ -38,7 +38,7 @@ public class GetAllVmSnapshotsByDriveQuery<P extends GetAllVmSnapshotsByDrivePar
         if (inactiveDisk != null) {
             tryingImage = activeDisk.getParentId();
         }
-        Guid topmostImageGuid = inactiveDisk == null ? activeDisk.getId() : inactiveDisk.getId();
+        Guid topmostImageGuid = inactiveDisk == null ? activeDisk.getImageId() : inactiveDisk.getImageId();
 
         // Note that no additional permission filtering is needed -
         // if a user could read the disk of a VM, all its snapshots are OK too

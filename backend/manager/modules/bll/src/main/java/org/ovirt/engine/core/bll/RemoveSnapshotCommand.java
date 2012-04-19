@@ -82,11 +82,11 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
             // candoaction that the vm
             // is not a template and the vm is not in preview mode and that
             // this is not the active snapshot.
-            DiskImage dest = DbFacade.getInstance().getDiskImageDAO().getAllSnapshotsForParent(source.getId()).get(0);
+            DiskImage dest = DbFacade.getInstance().getDiskImageDAO().getAllSnapshotsForParent(source.getImageId()).get(0);
 
-            ImagesContainterParametersBase tempVar = new ImagesContainterParametersBase(source.getId(),
+            ImagesContainterParametersBase tempVar = new ImagesContainterParametersBase(source.getImageId(),
                     source.getinternal_drive_mapping(), getVmId());
-            tempVar.setDestinationImageId(dest.getId());
+            tempVar.setDestinationImageId(dest.getImageId());
             tempVar.setEntityId(getParameters().getEntityId());
             ImagesContainterParametersBase p = tempVar;
             VdcReturnValueBase vdcReturnValue = Backend.getInstance().runInternalAction(
@@ -126,13 +126,13 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
         }
 
         // check that we are not deleting the template
-        if (DbFacade.getInstance().getVmTemplateDAO().get(getSourceImages().get(0).getId()) != null) {
+        if (DbFacade.getInstance().getVmTemplateDAO().get(getSourceImages().get(0).getImageId()) != null) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_REMOVE_IMAGE_TEMPLATE);
             getReturnValue().setCanDoAction(false);
         }
 
         // check that we are not deleting the vm working snapshot
-        if (DbFacade.getInstance().getDiskImageDAO().get(getSourceImages().get(0).getId()) != null) {
+        if (DbFacade.getInstance().getDiskImageDAO().get(getSourceImages().get(0).getImageId()) != null) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_REMOVE_ACTIVE_IMAGE);
             getReturnValue().setCanDoAction(false);
         }

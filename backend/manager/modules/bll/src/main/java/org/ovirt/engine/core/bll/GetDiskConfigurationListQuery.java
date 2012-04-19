@@ -28,7 +28,7 @@ public class GetDiskConfigurationListQuery<P extends VdcQueryParametersBase> ext
                     DiskImageBase tempVar = new DiskImageBase();
                     tempVar.setvolume_type(EnumUtils.valueOf(VolumeType.class, configs[1], true));
                     tempVar.setvolume_format(EnumUtils.valueOf(VolumeFormat.class, configs[2], true));
-                    tempVar.setwipe_after_delete(Boolean.parseBoolean(configs[3]));
+                    tempVar.setWipeAfterDelete(Boolean.parseBoolean(configs[3]));
                     DiskImageBase dib = tempVar;
                     result.add(dib);
                 } catch (RuntimeException exp) {

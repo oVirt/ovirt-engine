@@ -6,7 +6,6 @@ import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 
-@SuppressWarnings("unused")
 public class DiskGeneralModel extends EntityModel
 {
     private String privateAlias;
@@ -117,9 +116,9 @@ public class DiskGeneralModel extends EntityModel
     {
         DiskImage disk = (DiskImage) getEntity();
 
-        setAlias(disk.getDisk().getDiskAlias());
+        setAlias(disk.getDiskAlias());
         setDescription(disk.getDiskDescription());
         setVolumeFormat(disk.getvolume_format());
-        setDiskId(disk.getDisk().getId().toString());
+        setDiskId(disk.getId().toString());
     }
 }

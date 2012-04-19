@@ -283,7 +283,7 @@ public class VdsBrokerObjectBuilderTest {
     private List<DiskImage> setVmDiskImagesList() {
         List<DiskImage> diskImageList = new ArrayList<DiskImage>();
         DiskImage diskImage = new DiskImage();
-        diskImage.setId(imageId);
+        diskImage.setImageId(imageId);
         diskImage.setimage_group_id(imageId);
         diskImageList.add(diskImage);
         return diskImageList;

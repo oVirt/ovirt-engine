@@ -73,7 +73,7 @@ public class BaseVmDiskListModelTable<T extends SearchableListModel> extends Abs
         TextColumnWithTooltip<DiskImage> interfaceColumn = new TextColumnWithTooltip<DiskImage>() {
             @Override
             public String getValue(DiskImage object) {
-                return object.getdisk_interface().toString();
+                return object.getDiskInterface().toString();
             }
         };
         getTable().addColumn(interfaceColumn, "Interface", "120px");

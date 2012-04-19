@@ -36,7 +36,7 @@ public class CreateSnapshotFromTemplateCommand<T extends CreateSnapshotFromTempl
     @Override
     protected DiskImage CloneDiskImage(Guid newImageGuid) {
         DiskImage returnValue = super.CloneDiskImage(newImageGuid);
-        returnValue.setit_guid(getImage().getId());
+        returnValue.setit_guid(getImage().getImageId());
         return returnValue;
     }
 
@@ -55,8 +55,8 @@ public class CreateSnapshotFromTemplateCommand<T extends CreateSnapshotFromTempl
     protected void EndWithFailure() {
         if (getDestinationDiskImage() != null) {
             DbFacade.getInstance().getBaseDiskDao().remove(getDestinationDiskImage().getimage_group_id());
-            if (DbFacade.getInstance().getDiskImageDynamicDAO().get(getDestinationDiskImage().getId()) != null) {
-                DbFacade.getInstance().getDiskImageDynamicDAO().remove(getDestinationDiskImage().getId());
+            if (DbFacade.getInstance().getDiskImageDynamicDAO().get(getDestinationDiskImage().getImageId()) != null) {
+                DbFacade.getInstance().getDiskImageDynamicDAO().remove(getDestinationDiskImage().getImageId());
             }
         }
 

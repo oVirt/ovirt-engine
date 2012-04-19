@@ -52,7 +52,7 @@ public class DiskTemplateListModel extends SearchableListModel
         };
 
         GetVmTemplatesByImageGuidParameters getVmTemplatesByImageGuidParameters =
-                new GetVmTemplatesByImageGuidParameters(diskImage.getId());
+                new GetVmTemplatesByImageGuidParameters(diskImage.getImageId());
         getVmTemplatesByImageGuidParameters.setRefresh(getIsQueryFirstTime());
 
         Frontend.RunQuery(VdcQueryType.GetVmTemplatesByImageGuid, getVmTemplatesByImageGuidParameters, _asyncQuery);

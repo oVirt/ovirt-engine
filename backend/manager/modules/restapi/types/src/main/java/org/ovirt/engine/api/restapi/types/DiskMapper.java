@@ -27,7 +27,7 @@ public class DiskMapper {
             diskImage.setvm_guid(new Guid(disk.getVm().getId()));
         }
         if (disk.isSetId()) {
-            diskImage.setId(new Guid(disk.getId()));
+            diskImage.setImageId(new Guid(disk.getId()));
         }
         if (disk.isSetSize()) {
             diskImage.setsize(disk.getSize());
@@ -41,7 +41,7 @@ public class DiskMapper {
         if (disk.isSetInterface()) {
             DiskInterface diskInterface = DiskInterface.fromValue(disk.getInterface());
             if (diskInterface != null) {
-                diskImage.setdisk_interface(map(diskInterface, null));
+                diskImage.setDiskInterface(map(diskInterface, null));
             }
         }
         if (disk.isSetStatus()) {
@@ -54,11 +54,11 @@ public class DiskMapper {
             diskImage.setboot(disk.isBootable());
         }
         if (disk.isSetPropagateErrors()) {
-            diskImage.setpropagate_errors(disk.isPropagateErrors() ? PropagateErrors.On
+            diskImage.setPropagateErrors(disk.isPropagateErrors() ? PropagateErrors.On
                     : PropagateErrors.Off);
         }
         if (disk.isSetWipeAfterDelete()) {
-            diskImage.setwipe_after_delete(disk.isWipeAfterDelete());
+            diskImage.setWipeAfterDelete(disk.isWipeAfterDelete());
         }
         if (disk.isSetActive()) {
             diskImage.setPlugged(disk.isActive());
@@ -82,13 +82,13 @@ public class DiskMapper {
             model.setVm(new VM());
             model.getVm().setId(entity.getvm_guid().toString());
         }
-        model.setId(entity.getId().toString());
+        model.setId(entity.getImageId().toString());
         model.setSize(entity.getsize());
         if (entity.getvolume_format() != null) {
             model.setFormat(map(entity.getvolume_format(), null));
         }
-        if (entity.getdisk_interface() != null) {
-            model.setInterface(map(entity.getdisk_interface(), null));
+        if (entity.getDiskInterface() != null) {
+            model.setInterface(map(entity.getDiskInterface(), null));
         }
         if (entity.getimageStatus() != null) {
             DiskStatus status = map(entity.getimageStatus());
@@ -96,8 +96,8 @@ public class DiskMapper {
         }
         model.setSparse(VolumeType.Sparse == entity.getvolume_type());
         model.setBootable(entity.getboot());
-        model.setPropagateErrors(PropagateErrors.On == entity.getpropagate_errors());
-        model.setWipeAfterDelete(entity.getwipe_after_delete());
+        model.setPropagateErrors(PropagateErrors.On == entity.getPropagateErrors());
+        model.setWipeAfterDelete(entity.isWipeAfterDelete());
         if(entity.getstorage_ids()!=null && entity.getstorage_ids().size() > 0){
             StorageDomain storageDomain = new StorageDomain();
             storageDomain.setId(entity.getstorage_ids().get(0).toString());

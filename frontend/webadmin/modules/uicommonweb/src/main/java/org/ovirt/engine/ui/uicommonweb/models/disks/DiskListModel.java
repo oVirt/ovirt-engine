@@ -278,7 +278,7 @@ public class DiskListModel extends ListWithDetailsModel
         for (Object item : getSelectedItems())
         {
             DiskImage disk = (DiskImage) item;
-            VdcActionParametersBase parameters = new RemoveDiskParameters(disk.getId());
+            VdcActionParametersBase parameters = new RemoveDiskParameters(disk.getImageId());
             paramerterList.add(parameters);
         }
 

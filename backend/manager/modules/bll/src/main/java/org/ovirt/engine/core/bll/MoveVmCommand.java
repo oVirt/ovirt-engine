@@ -89,7 +89,7 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
 
         ensureDomainMap(getVm().getDiskMap().values(), getParameters().getStorageDomainId());
         for(DiskImage disk : getVm().getDiskMap().values()) {
-            imageFromSourceDomainMap.put(disk.getId(), disk);
+            imageFromSourceDomainMap.put(disk.getImageId(), disk);
         }
 
         retValue = retValue && checkTemplateInStorageDomain();
@@ -111,7 +111,7 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
         // update vm snapshots for storage free space check
         for (DiskImage diskImage : getVm().getDiskMap().values()) {
             diskImage.getSnapshots().addAll(
-                    ImagesHandler.getAllImageSnapshots(diskImage.getId(), diskImage.getit_guid()));
+                    ImagesHandler.getAllImageSnapshots(diskImage.getImageId(), diskImage.getit_guid()));
         }
         return retValue && destinationHasSpace();
     }
@@ -132,7 +132,7 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
             List<DiskImage> imageList = DbFacade.getInstance().getDiskImageDAO().getAllForVm(getVm().getvmt_guid());
             Map<Guid, DiskImage> templateImagesMap = new HashMap<Guid, DiskImage>();
             for (DiskImage image : imageList) {
-                templateImagesMap.put(image.getId(), image);
+                templateImagesMap.put(image.getImageId(), image);
             }
             for (DiskImage image : getVm().getDiskMap().values()) {
                 if (templateImagesMap.containsKey(image.getit_guid())) {

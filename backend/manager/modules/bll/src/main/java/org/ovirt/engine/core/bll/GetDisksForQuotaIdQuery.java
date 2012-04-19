@@ -16,7 +16,7 @@ public class GetDisksForQuotaIdQuery<P extends GetDisksByQuotaIdParameters> exte
         List<DiskImage> disks = DbFacade.getInstance().getDiskImageDAO().getAllForQuotaId(getParameters().getQuotaId());
         for (DiskImage diskImage : disks) {
             diskImage.getSnapshots().addAll(
-                    ImagesHandler.getAllImageSnapshots(diskImage.getId(), diskImage.getit_guid()));
+                    ImagesHandler.getAllImageSnapshots(diskImage.getImageId(), diskImage.getit_guid()));
         }
         getQueryReturnValue().setReturnValue(disks);
     }

@@ -103,9 +103,9 @@ public class VmImportDiskListModel extends VmDiskListModel
                             for (DiskImage diskImage : (ArrayList<DiskImage>) vmImportDiskListModel.getItems())
                             {
                                 for (DiskImage disk : disks) {
-                                    if (disk.getId().equals(diskImage.getParentId())) {
+                                    if (disk.getImageId().equals(diskImage.getParentId())) {
                                         ArrayList<Guid> storageIds = disk.getstorage_ids();
-                                        diskStorageMap.put(diskImage.getId(), storageIds);
+                                        diskStorageMap.put(diskImage.getImageId(), storageIds);
                                         break;
                                     }
                                 }

@@ -91,7 +91,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
             EndSuccessfully();
         } else {
             for (DiskImage image : getDisksList()) {
-                ImagesActionsParametersBase tempVar = new ImagesActionsParametersBase(image.getId());
+                ImagesActionsParametersBase tempVar = new ImagesActionsParametersBase(image.getImageId());
                 tempVar.setDescription(getParameters().getDescription());
                 tempVar.setSessionId(getParameters().getSessionId());
                 tempVar.setQuotaId(getParameters().getQuotaId());

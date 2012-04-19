@@ -42,7 +42,7 @@ public class AddTemplateImagesFromImportCommand<T extends AddImagesFromImportPar
                     log.error(
                             String.format(
                                     "ImagesHandler::AddTemplateImagesFromImportCommand::ExecuteCommand: Failed adding image %1$s to DB",
-                                    importedImage.getId()),
+                                    importedImage.getImageId()),
                             e);
                     throw new VdcBLLException(VdcBllErrors.DB, e);
                 }

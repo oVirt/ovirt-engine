@@ -175,7 +175,7 @@ public class AddDiskToVmCommandTest {
     public void canDoActionFailsOnNullDiskType() throws Exception {
         Guid storageId = Guid.NewGuid();
         DiskImageBase image = new DiskImageBase();
-        image.setdisk_interface(DiskInterface.IDE);
+        image.setDiskInterface(DiskInterface.IDE);
         image.setvolume_type(VolumeType.Preallocated);
         image.setvolume_format(VolumeFormat.COW);
         AddDiskParameters params = new AddDiskParameters(Guid.NewGuid(), image);
@@ -403,7 +403,7 @@ public class AddDiskToVmCommandTest {
      */
     private AddDiskParameters createParameters() {
         DiskImageBase image = new DiskImageBase();
-        image.setdisk_interface(DiskInterface.IDE);
+        image.setDiskInterface(DiskInterface.IDE);
         AddDiskParameters parameters = new AddDiskParameters(Guid.NewGuid(), image);
         return parameters;
     }
@@ -411,14 +411,14 @@ public class AddDiskToVmCommandTest {
     private DiskImageBase createSparseDiskImageBase() {
         DiskImageBase base = new DiskImageBase();
         base.setvolume_type(VolumeType.Sparse);
-        base.setdisk_interface(DiskInterface.IDE);
+        base.setDiskInterface(DiskInterface.IDE);
         return base;
     }
 
     private DiskImageBase createPreallocDiskImageBase() {
         DiskImageBase base = new DiskImageBase();
         base.setvolume_type(VolumeType.Preallocated);
-        base.setdisk_interface(DiskInterface.IDE);
+        base.setDiskInterface(DiskInterface.IDE);
         base.setSizeInGigabytes(5);
         return base;
     }

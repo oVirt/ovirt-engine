@@ -105,7 +105,7 @@ public class AddVmTemplateFromImportCommand<T extends AddVmTemplateFromImportPar
                     for (DiskImage image : driveImagesToImport) {
                         // check that each image's GUID doesn't exist in the
                         // VDC:
-                        Guid imageGUID = image.getId();
+                        Guid imageGUID = image.getImageId();
                         Guid storagePoolId = image.getstorage_pool_id() != null ? image.getstorage_pool_id().getValue()
                                 : Guid.Empty;
                         Guid storageDomainId = image.getstorage_ids() != null ? image.getstorage_ids().get(0)
@@ -157,7 +157,7 @@ public class AddVmTemplateFromImportCommand<T extends AddVmTemplateFromImportPar
 
         HashMap<String, Guid> baseImageIds = new HashMap<String, Guid>();
         for (String key : _candidateInfo.getImagesData().keySet()) {
-            baseImageIds.put(key, _candidateInfo.getImagesData().get(key).get(0).getId());
+            baseImageIds.put(key, _candidateInfo.getImagesData().get(key).get(0).getImageId());
         }
 
         Backend.getInstance().runInternalAction(

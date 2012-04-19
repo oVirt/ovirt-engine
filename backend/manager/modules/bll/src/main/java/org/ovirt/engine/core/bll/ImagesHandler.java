@@ -79,7 +79,7 @@ public final class ImagesHandler {
                     ArrayList<Guid> storageIds = new ArrayList<Guid>();
                     storageIds.add(storageId);
                     image.setstorage_ids(storageIds);
-                    diskInfoDestinationMap.put(image.getId(), image);
+                    diskInfoDestinationMap.put(image.getImageId(), image);
                     break;
                 }
             }
@@ -140,7 +140,7 @@ public final class ImagesHandler {
             Map<Guid, DiskImage> diskInfoDestinationMap) {
         Map<Guid, List<DiskImage>> storageToDisksMap = new HashMap<Guid, List<DiskImage>>();
         for (DiskImage disk : images) {
-            DiskImage diskImage = diskInfoDestinationMap.get(disk.getId());
+            DiskImage diskImage = diskInfoDestinationMap.get(disk.getImageId());
             Guid storageDomainId = diskImage.getstorage_ids().get(0);
             List<DiskImage> diskList = storageToDisksMap.get(storageDomainId);
             if (diskList == null) {
@@ -165,7 +165,7 @@ public final class ImagesHandler {
     public static void addDiskImage(DiskImage image, boolean active, image_storage_domain_map imageStorageDomainMap) {
         try {
             addImage(image, active, imageStorageDomainMap);
-            addDiskToVmIfNotExists(image.getDisk(), image.getvm_guid());
+            addDiskToVmIfNotExists(image, image.getvm_guid());
         } catch (RuntimeException ex) {
             log.error("Failed adding new disk image and related entities to db", ex);
             throw new VdcBLLException(VdcBllErrors.DB, ex);
@@ -184,7 +184,7 @@ public final class ImagesHandler {
         if (diskImages != null) {
             result = new HashMap<Guid, DiskImage>();
             for (DiskImage diskImage : diskImages) {
-                result.put(diskImage.getId(), diskImage);
+                result.put(diskImage.getImageId(), diskImage);
             }
         }
         return result;
@@ -207,7 +207,7 @@ public final class ImagesHandler {
             image_storage_domain_map imageStorageDomainMap) {
         try {
             addImage(image, active, imageStorageDomainMap);
-            addDisk(image.getDisk());
+            addDisk(image);
         } catch (RuntimeException ex) {
             log.error("Failed adding new disk image and related entities to db", ex);
             throw new VdcBLLException(VdcBllErrors.DB, ex);
@@ -226,7 +226,7 @@ public final class ImagesHandler {
     public static void addDiskImageWithNoVmDevice(DiskImage image) {
         addDiskImageWithNoVmDevice(image,
                 image.getactive(),
-                new image_storage_domain_map(image.getId(), image.getstorage_ids().get(0)));
+                new image_storage_domain_map(image.getImageId(), image.getstorage_ids().get(0)));
     }
 
     /**
@@ -251,7 +251,7 @@ public final class ImagesHandler {
      *            DiskImage to add
      */
     public static void addDiskImage(DiskImage image) {
-        addDiskImage(image, image.getactive(), new image_storage_domain_map(image.getId(), image.getstorage_ids()
+        addDiskImage(image, image.getactive(), new image_storage_domain_map(image.getImageId(), image.getstorage_ids()
                 .get(0)));
     }
 
@@ -269,7 +269,7 @@ public final class ImagesHandler {
         image.setactive(active);
         DbFacade.getInstance().getDiskImageDAO().save(image);
         DiskImageDynamic diskDynamic = new DiskImageDynamic();
-        diskDynamic.setId(image.getId());
+        diskDynamic.setId(image.getImageId());
         diskDynamic.setactual_size(image.getactual_size());
         DbFacade.getInstance().getDiskImageDynamicDAO().save(diskDynamic);
         if (imageStorageDomainMap != null) {
@@ -375,7 +375,7 @@ public final class ImagesHandler {
                     .RunVdsCommand(
                             VDSCommandType.GetImageInfo,
                             new GetImageInfoVDSCommandParameters(storagePoolId, storageDomainId, imageGroupId,
-                                    image.getId())).getReturnValue();
+                                    image.getImageId())).getReturnValue();
         } catch (Exception e) {
         }
         return fromIrs;
@@ -576,7 +576,7 @@ public final class ImagesHandler {
 
     public static void removeDiskImage(DiskImage diskImage) {
         try {
-            removeDiskFromVm(diskImage.getvm_guid(), diskImage.getDisk().getId());
+            removeDiskFromVm(diskImage.getvm_guid(), diskImage.getId());
             removeImage(diskImage);
         } catch (RuntimeException ex) {
             log.error("Failed adding new disk image and related entities to db", ex);
@@ -587,9 +587,9 @@ public final class ImagesHandler {
     public static void removeImage(DiskImage diskImage) {
         DbFacade.getInstance()
                 .getImageStorageDomainMapDao()
-                .remove(diskImage.getId());
-        DbFacade.getInstance().getDiskImageDynamicDAO().remove(diskImage.getId());
-        DbFacade.getInstance().getDiskImageDAO().remove(diskImage.getId());
+                .remove(diskImage.getImageId());
+        DbFacade.getInstance().getDiskImageDynamicDAO().remove(diskImage.getImageId());
+        DbFacade.getInstance().getDiskImageDAO().remove(diskImage.getImageId());
     }
 
     public static void removeDiskFromVm(Guid vmGuid, Guid diskId) {

@@ -186,7 +186,7 @@ public class ImportTemplateModel extends ListWithDetailsModel
 
     public void addToDiskStorageMap(Guid vmId, DiskImage disk, Guid storageId) {
         HashMap<Guid, Guid> vmDiskStorageMap = getDiskStorageMap().get(vmId);
-        vmDiskStorageMap.put(disk.getId(), storageId);
+        vmDiskStorageMap.put(disk.getImageId(), storageId);
     }
 
     private storage_domains getStorageDomainByName(String storageDomainName) {

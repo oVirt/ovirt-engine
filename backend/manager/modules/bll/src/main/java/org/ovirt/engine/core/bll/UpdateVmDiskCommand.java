@@ -44,7 +44,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
             _oldDisk = getDiskImageDao().get(getParameters().getImageId());
 
             // Set disk alias name in the disk retrieved from the parameters.
-            ImagesHandler.setDiskAlias(getParameters().getDiskInfo().getDisk(), getVm());
+            ImagesHandler.setDiskAlias(getParameters().getDiskInfo(), getVm());
             retValue = isDiskExist(_oldDisk) && checkCanPerformRegularUpdate();
         }
         return retValue;
@@ -85,7 +85,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
         if (VM.isStatusUpOrPausedOrSuspended(getVm().getstatus())) {
             retValue = false;
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL);
-        } else if (_oldDisk.getdisk_interface() != getParameters().getDiskInfo().getdisk_interface()) {
+        } else if (_oldDisk.getDiskInterface() != getParameters().getDiskInfo().getDiskInterface()) {
             List<VmNetworkInterface> allVmInterfaces = DbFacade.getInstance()
                     .getVmNetworkInterfaceDAO().getAllForVm(getVmId());
 
@@ -108,7 +108,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
         if (retValue && getParameters().getDiskInfo().getboot()) {
             VmHandler.updateDisksFromDb(getVm());
             for (DiskImage disk : getVm().getDiskMap().values()) {
-                if (disk.getboot() && !getParameters().getImageId().equals(disk.getId())) {
+                if (disk.getboot() && !getParameters().getImageId().equals(disk.getImageId())) {
                     retValue = false;
                     addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_BOOT_IN_USE);
                     getReturnValue().getCanDoActionMessages().add(
@@ -147,12 +147,12 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
             @Override
             public Object runInTransaction() {
                 _oldDisk.setboot(getParameters().getDiskInfo().getboot());
-                _oldDisk.setdisk_interface(getParameters().getDiskInfo().getdisk_interface());
-                _oldDisk.setpropagate_errors(getParameters().getDiskInfo().getpropagate_errors());
-                _oldDisk.setwipe_after_delete(getParameters().getDiskInfo().getwipe_after_delete());
+                _oldDisk.setDiskInterface(getParameters().getDiskInfo().getDiskInterface());
+                _oldDisk.setPropagateErrors(getParameters().getDiskInfo().getPropagateErrors());
+                _oldDisk.setWipeAfterDelete(getParameters().getDiskInfo().isWipeAfterDelete());
                 _oldDisk.setQuotaId(getQuotaId());
-                _oldDisk.getDisk().setDiskAlias(getParameters().getDiskInfo().getDisk().getDiskAlias());
-                DbFacade.getInstance().getBaseDiskDao().update(_oldDisk.getDisk());
+                _oldDisk.setDiskAlias(getParameters().getDiskInfo().getDiskAlias());
+                DbFacade.getInstance().getBaseDiskDao().update(_oldDisk);
                 getDiskImageDao().update(_oldDisk);
                 setSucceeded(UpdateVmInSpm(getVm().getstorage_pool_id(),
                         Arrays.asList(getVm())));

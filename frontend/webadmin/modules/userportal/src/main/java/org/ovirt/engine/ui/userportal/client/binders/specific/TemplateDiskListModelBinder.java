@@ -45,7 +45,7 @@ public class TemplateDiskListModelBinder  implements ListModelBinder {
 				r.setAttribute("size", (disk.getsize() / (1024*1024*1024)) + "GB");
 				r.setAttribute("format", disk.getvolume_format().toString());
 				r.setAttribute("allocation", translator.get(disk.getvolume_type()));
-				r.setAttribute("interface", disk.getdisk_interface().toString());
+				r.setAttribute("interface", disk.getDiskInterface().toString());
 				r.setAttribute("dateCreated", UserPortalTools.formatDate(disk.getcreation_date()));
 				r.setAttribute("entity", disk);
 				r.setAttribute("entityGuid", disk.getId());

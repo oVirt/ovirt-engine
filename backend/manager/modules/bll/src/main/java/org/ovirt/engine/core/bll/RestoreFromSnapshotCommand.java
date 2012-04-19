@@ -84,7 +84,7 @@ public class RestoreFromSnapshotCommand<T extends RestoreFromSnapshotParameters>
     protected void AdditionalImageRemoveTreatment(DiskImage snapshot) {
         // Vitaly
 
-        _imagesToDelete.add(_imagesToDelete.size(), snapshot.getId());
+        _imagesToDelete.add(_imagesToDelete.size(), snapshot.getImageId());
     }
 
     private void RemoveOtherImageAndParents(Guid imageId, Guid lastParent) {
@@ -124,7 +124,7 @@ public class RestoreFromSnapshotCommand<T extends RestoreFromSnapshotParameters>
             vdsReturnValue = runVdsCommand(
                             VDSCommandType.DestroyImage,
                             new DestroyImageVDSCommandParameters(storagePoolId, storageDomainId, imageGroupId,
-                                    _imagesToDelete, getDiskImage().getwipe_after_delete(), true, getStoragePool()
+                                    _imagesToDelete, getDiskImage().isWipeAfterDelete(), true, getStoragePool()
                                             .getcompatibility_version().toString()));
 
             if (vdsReturnValue.getSucceeded()) {
@@ -136,7 +136,7 @@ public class RestoreFromSnapshotCommand<T extends RestoreFromSnapshotParameters>
         catch (VdcBLLException e) {
             // Set fault for parent command RestoreAllSnapshotCommand to use, if decided to fail the command.
             getReturnValue().setFault(new VdcFault(e, e.getVdsError().getCode()));
-            log.info(String.format("%1$s Image not exist in Irs", getDiskImage().getId()));
+            log.info(String.format("%1$s Image not exist in Irs", getDiskImage().getImageId()));
         }
         return vdsReturnValue;
     }

@@ -305,7 +305,7 @@ public class SnapshotsTree<L extends ListWithDetailsModel> extends AbstractSubTa
         TextColumnWithTooltip<DiskImage> interfaceColumn = new TextColumnWithTooltip<DiskImage>() {
             @Override
             public String getValue(DiskImage object) {
-                return object.getdisk_interface().toString();
+                return object.getDiskInterface().toString();
             }
         };
         table.addColumn(interfaceColumn, "Interface", "120px");

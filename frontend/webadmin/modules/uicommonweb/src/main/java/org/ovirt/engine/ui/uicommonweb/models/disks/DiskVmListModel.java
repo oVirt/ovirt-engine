@@ -65,7 +65,7 @@ public class DiskVmListModel extends SearchableListModel
             }
         };
 
-        GetVmsByImageGuidParameters getVmsByImageGuidParameters = new GetVmsByImageGuidParameters(diskImage.getId());
+        GetVmsByImageGuidParameters getVmsByImageGuidParameters = new GetVmsByImageGuidParameters(diskImage.getImageId());
         getVmsByImageGuidParameters.setRefresh(getIsQueryFirstTime());
 
         Frontend.RunQuery(VdcQueryType.GetVmsByImageGuid, getVmsByImageGuidParameters, _asyncQuery);

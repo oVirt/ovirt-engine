@@ -48,7 +48,7 @@ public class AttachDiskToVmCommand<T extends UpdateVmDiskParameters> extends Abs
     @Override
     protected void ExecuteVmCommand() {
         final VmDevice vmDevice =
-                new VmDevice(new VmDeviceId(diskImage.getDisk().getId(), getVmId()),
+                new VmDevice(new VmDeviceId(diskImage.getId(), getVmId()),
                         VmDeviceType.DISK.getName(),
                         VmDeviceType.DISK.getName(),
                         "",
@@ -59,7 +59,7 @@ public class AttachDiskToVmCommand<T extends UpdateVmDiskParameters> extends Abs
                         false);
         diskImage.setinternal_drive_mapping(getParameters().getDiskInfo().getinternal_drive_mapping());
         diskImage.setboot(getParameters().getDiskInfo().getboot());
-        diskImage.setdisk_interface(getParameters().getDiskInfo().getdisk_interface());
+        diskImage.setDiskInterface(getParameters().getDiskInfo().getDiskInterface());
         getDiskImageDao().update(diskImage);
         getVmDeviceDao().save(vmDevice);
         if (Boolean.TRUE.equals(getParameters().getDiskInfo().getPlugged()) && getVm().getstatus() != VMStatus.Down) {

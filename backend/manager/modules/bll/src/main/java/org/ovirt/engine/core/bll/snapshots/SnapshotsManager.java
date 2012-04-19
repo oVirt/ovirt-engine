@@ -8,7 +8,6 @@ import org.ovirt.engine.core.bll.ImagesHandler;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
-import org.ovirt.engine.core.common.businessentities.BaseDisk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
@@ -315,23 +314,22 @@ public class SnapshotsManager {
         // Sync disks that exist or existed in the snapshot.
         for (DiskImage diskImage : disksFromSnapshot) {
             diskIdsFromSnapshot.add(diskImage.getimage_group_id());
-            BaseDisk disk = diskImage.getDisk();
-            if (getBaseDiskDao().exists(disk.getId())) {
-                disk.setDiskAlias(ImagesHandler.getSuggestedDiskAlias(disk, vmName));
-                getBaseDiskDao().update(disk);
+            if (getBaseDiskDao().exists(diskImage.getId())) {
+                diskImage.setDiskAlias(ImagesHandler.getSuggestedDiskAlias(diskImage, vmName));
+                getBaseDiskDao().update(diskImage);
             } else {
 
                 // If can't find the image, insert it as illegal so that it can't be used and make the device unplugged.
-                if (getDiskImageDao().getSnapshotById(diskImage.getId()) == null) {
+                if (getDiskImageDao().getSnapshotById(diskImage.getImageId()) == null) {
                     diskImage.setimageStatus(ImageStatus.ILLEGAL);
                     diskImage.setvm_snapshot_id(activeSnapshotId);
 
-                    ImagesHandler.addImage(diskImage, true, new image_storage_domain_map(diskImage.getId(),
+                    ImagesHandler.addImage(diskImage, true, new image_storage_domain_map(diskImage.getImageId(),
                             diskImage.getstorage_ids().get(0)));
                 }
 
-                disk.setDiskAlias(ImagesHandler.getSuggestedDiskAlias(disk, vmName));
-                ImagesHandler.addDiskToVm(disk, vmId);
+                diskImage.setDiskAlias(ImagesHandler.getSuggestedDiskAlias(diskImage, vmName));
+                ImagesHandler.addDiskToVm(diskImage, vmId);
             }
         }
 

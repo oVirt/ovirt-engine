@@ -176,7 +176,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
             VmDevice vmDevice =
                     DbFacade.getInstance()
                             .getVmDeviceDAO()
-                            .get(new VmDeviceId(disk.getDisk().getId(), disk.getvm_guid()));
+                            .get(new VmDeviceId(disk.getId(), disk.getvm_guid()));
             // skip unamanged devices (handled separtely)
             if (!vmDevice.getIsManaged()) {
                 continue;
@@ -184,7 +184,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
             if (vmDevice.getIsPlugged()) {
                 struct.add(VdsProperties.Type, vmDevice.getType());
                 struct.add(VdsProperties.Device, vmDevice.getDevice());
-                switch (disk.getdisk_interface()) {
+                switch (disk.getDiskInterface()) {
                 case IDE:
                     struct.add(VdsProperties.Iface, "ide");
                     // \\struct.add(VdsProperties.Index, String.valueOf(ideIndexSlots[ideCount]));
@@ -208,12 +208,12 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                 struct.add(VdsProperties.PoolId, disk.getstorage_pool_id().toString());
                 struct.add(VdsProperties.DomainId, disk.getstorage_ids().get(0).toString());
                 struct.add(VdsProperties.ImageId, disk.getimage_group_id().toString());
-                struct.add(VdsProperties.VolumeId, disk.getId().toString());
+                struct.add(VdsProperties.VolumeId, disk.getImageId().toString());
 
                 addBootOrder(vmDevice, struct);
                 struct.add(VdsProperties.Format, disk.getvolume_format().toString()
                         .toLowerCase());
-                struct.add(VdsProperties.PropagateErrors, disk.getpropagate_errors().toString()
+                struct.add(VdsProperties.PropagateErrors, disk.getPropagateErrors().toString()
                         .toLowerCase());
                 struct.add(VdsProperties.Optional, Boolean.FALSE.toString());
                 struct.add(VdsProperties.ReadOnly, String.valueOf(vmDevice.getIsReadOnly()));

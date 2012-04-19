@@ -132,7 +132,7 @@ public class BackendVmsResource extends
             for (Disk disk : disks.getDisks()) {
                 DiskImage diskImageFromConfig = imagesFromConfiguration.get(asGuid(disk.getId()));
                 DiskImage diskImage = getMapper(Disk.class, DiskImage.class).map(disk, diskImageFromConfig);
-                imagesFromConfiguration.put(diskImage.getId(), diskImage);
+                imagesFromConfiguration.put(diskImage.getImageId(), diskImage);
             }
         }
     }
@@ -140,7 +140,7 @@ public class BackendVmsResource extends
     private HashMap<Guid, DiskImage> getDiskImagesByIdMap(Collection<DiskImage> values) {
         HashMap<Guid, DiskImage> result = new HashMap<Guid, DiskImage>();
         for (DiskImage diskImage : values) {
-            result.put(diskImage.getId(), diskImage);
+            result.put(diskImage.getImageId(), diskImage);
         }
         return result;
     }
@@ -181,7 +181,7 @@ public class BackendVmsResource extends
             for (Disk disk : disks.getDisks()) {
                 DiskImage templateDisk = templatesDisksMap.get(Guid.createGuidFromString(disk.getId()));
                 if( templateDisk != null ) {
-                    disksMap.put(templateDisk.getId(), map(disk, templateDisk));
+                    disksMap.put(templateDisk.getImageId(), map(disk, templateDisk));
                 } else {
                     throw new WebApplicationException(Response.Status.NOT_FOUND);
                 }
@@ -197,7 +197,7 @@ public class BackendVmsResource extends
                                                       VdcQueryType.GetVmTemplatesDisks,
                                                       new GetVmTemplatesDisksParameters(templateId),
                                                       "Disks")){
-            templatesDisksMap.put(di.getId(), di);
+            templatesDisksMap.put(di.getImageId(), di);
         }
         return templatesDisksMap;
     }

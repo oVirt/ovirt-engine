@@ -38,8 +38,8 @@ public class RemoveSnapshotSingleDiskCommand<T extends ImagesContainterParameter
                 .RunVdsCommand(
                         VDSCommandType.MergeSnapshots,
                         new MergeSnapshotsVDSCommandParameters(storagePoolId, storageDomainId, getVmId(), imageGroupId,
-                                getDiskImage().getId(), getDestinationDiskImage().getId(),
-                                getDiskImage().getwipe_after_delete(), getStoragePool().getcompatibility_version()
+                                getDiskImage().getImageId(), getDestinationDiskImage().getImageId(),
+                                getDiskImage().isWipeAfterDelete(), getStoragePool().getcompatibility_version()
                                         .toString()));
 
         if (vdsReturnValue != null && vdsReturnValue.getCreationInfo() != null) {
@@ -72,12 +72,12 @@ public class RemoveSnapshotSingleDiskCommand<T extends ImagesContainterParameter
             DiskImage curr = getDestinationDiskImage();
             while (!curr.getParentId().equals(getDiskImage().getParentId())) {
                 curr = DbFacade.getInstance().getDiskImageDAO().getSnapshotById(curr.getParentId());
-                DbFacade.getInstance().getDiskImageDAO().remove(curr.getId());
+                DbFacade.getInstance().getDiskImageDAO().remove(curr.getImageId());
             }
             getDestinationDiskImage().setvolume_format(curr.getvolume_format());
             getDestinationDiskImage().setvolume_type(curr.getvolume_type());
             getDestinationDiskImage().setParentId(getDiskImage().getParentId());
-            DbFacade.getInstance().getBaseDiskDao().update(curr.getDisk());
+            DbFacade.getInstance().getBaseDiskDao().update(curr);
             DbFacade.getInstance().getDiskImageDAO().update(getDestinationDiskImage());
         }
 

@@ -94,7 +94,7 @@ public class AddVmFromScratchCommand<T extends AddVmFromScratchParameters> exten
                     diskImageBase.setboot(false);
             }
         }
-        return (!disks.isEmpty()) ? ConcreteAddVmImages(disks.get(0).getId()) : true;
+        return (!disks.isEmpty()) ? ConcreteAddVmImages(disks.get(0).getImageId()) : true;
     }
 
     protected boolean ConcreteAddVmImages(Guid itGuid) {

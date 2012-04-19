@@ -68,7 +68,7 @@ public class GetVmConfigurationBySnapshotQueryTest extends AbstractUserQueryTest
 
     private DiskImage createDiskImage(Guid diskImageId, Guid imageGroupId) {
         DiskImage diskImage = new DiskImage();
-        diskImage.setId(diskImageId);
+        diskImage.setImageId(diskImageId);
         diskImage.setimage_group_id(imageGroupId);
         return diskImage;
     }

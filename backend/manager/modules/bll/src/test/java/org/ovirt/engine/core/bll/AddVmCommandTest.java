@@ -354,7 +354,7 @@ public class AddVmCommandTest {
     private void setNewDisksForTemplate(int numberOfNewDisks, Map<String, DiskImage> disksMap) {
         for (int newDiskInd = 0; newDiskInd < numberOfNewDisks; newDiskInd++) {
             DiskImage diskImageTempalte = new DiskImage();
-            diskImageTempalte.setId(Guid.NewGuid());
+            diskImageTempalte.setImageId(Guid.NewGuid());
             disksMap.put(Guid.NewGuid().toString(), diskImageTempalte);
         }
     }
@@ -447,7 +447,7 @@ public class AddVmCommandTest {
         DiskImage i = new DiskImage();
         i.setSizeInGigabytes(USED_SPACE_GB + AVAILABLE_SPACE_GB);
         i.setactual_size(REQUIRED_DISK_SIZE_GB * 1024L * 1024L * 1024L);
-        i.setId(Guid.NewGuid());
+        i.setImageId(Guid.NewGuid());
         i.setstorage_ids(new ArrayList<Guid>(Arrays.asList(STORAGE_DOMAIN_ID)));
         return i;
     }

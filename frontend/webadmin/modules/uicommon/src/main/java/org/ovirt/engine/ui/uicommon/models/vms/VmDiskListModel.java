@@ -218,17 +218,17 @@ public class VmDiskListModel extends SearchableListModel
 															vmModel2.setVolumeFormat(disk2.getvolume_format());
 
 															java.util.ArrayList<DiskInterface> interfaces = DataProvider.GetDiskInterfaceList(vm2.getvm_os(), vm2.getvds_group_compatibility_version());
-															if (!interfaces.contains(disk2.getdisk_interface()))
+															if (!interfaces.contains(disk2.getDiskInterface()))
 															{
-																interfaces.add(disk2.getdisk_interface());
+																interfaces.add(disk2.getDiskInterface());
 															}
 															vmModel2.getInterface().setItems(interfaces);
-															vmModel2.getInterface().setSelectedItem(disk2.getdisk_interface());
+															vmModel2.getInterface().setSelectedItem(disk2.getDiskInterface());
 															vmModel2.getInterface().setIsChangable(false);
 
 															storage_domains storage = (storage_domains)vmModel2.getStorageDomain().getSelectedItem();
 
-															vmModel2.getWipeAfterDelete().setEntity(disk2.getwipe_after_delete());
+															vmModel2.getWipeAfterDelete().setEntity(disk2.isWipeAfterDelete());
 															if (vmModel2.getStorageDomain() != null && vmModel2.getStorageDomain().getSelectedItem() != null)
 															{
 																vmDiskListModel2.UpdateWipeAfterDelete(storage.getstorage_type(), vmModel2.getWipeAfterDelete(), false);
@@ -243,7 +243,7 @@ public class VmDiskListModel extends SearchableListModel
 																	break;
 																}
 															}
-															if (bootableDisk != null && !bootableDisk.getId().equals(disk2.getId()))
+															if (bootableDisk != null && !bootableDisk.getImageId().equals(disk2.getImageId()))
 															{
 																vmModel2.getIsBootable().setIsChangable(false);
 																vmModel2.getIsBootable().getChangeProhibitionReasons().add("There can be only one bootable disk defined.");
@@ -311,7 +311,7 @@ public class VmDiskListModel extends SearchableListModel
         for (Object item : getSelectedItems())
         {
             DiskImage a = (DiskImage) item;
-            RemoveDiskParameters parameters = new RemoveDiskParameters(a.getId());
+            RemoveDiskParameters parameters = new RemoveDiskParameters(a.getImageId());
             paramerterList.add(parameters);
         }
 
@@ -349,15 +349,15 @@ public class VmDiskListModel extends SearchableListModel
 
 		DiskImage disk = model.getIsNew() ? new DiskImage() : (DiskImage)getSelectedItem();
 		disk.setSizeInGigabytes(Integer.parseInt(model.getSize().getEntity().toString()));
-		disk.setdisk_interface((DiskInterface)model.getInterface().getSelectedItem());
+		disk.setDiskInterface((DiskInterface)model.getInterface().getSelectedItem());
 		disk.setvolume_type((VolumeType)model.getVolumeType().getSelectedItem());
 		disk.setvolume_format(model.getVolumeFormat());
-		disk.setwipe_after_delete((Boolean)model.getWipeAfterDelete().getEntity());
+		disk.setWipeAfterDelete((Boolean)model.getWipeAfterDelete().getEntity());
 		disk.setboot((Boolean)model.getIsBootable().getEntity());
 
 		//NOTE: Since we doesn't support partial snapshots in GUI, propagate errors flag always must be set false.
 		//disk.propagate_errors = model.PropagateErrors.ValueAsBoolean() ? PropagateErrors.On : PropagateErrors.Off;
-		disk.setpropagate_errors(PropagateErrors.Off);
+		disk.setPropagateErrors(PropagateErrors.Off);
 
 
 		model.StartProgress(null);
@@ -379,7 +379,7 @@ public class VmDiskListModel extends SearchableListModel
 		}
 		else
 		{
-			Frontend.RunAction(VdcActionType.UpdateVmDisk, new UpdateVmDiskParameters(vm.getId(), disk.getId(), disk),
+			Frontend.RunAction(VdcActionType.UpdateVmDisk, new UpdateVmDiskParameters(vm.getId(), disk.getImageId(), disk),
 		new IFrontendActionAsyncCallback() {
 			@Override
 			public void Executed(FrontendActionAsyncResult  result) {

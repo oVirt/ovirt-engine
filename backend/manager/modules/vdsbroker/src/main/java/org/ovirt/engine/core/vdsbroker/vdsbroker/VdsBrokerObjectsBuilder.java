@@ -784,7 +784,7 @@ public class VdsBrokerObjectsBuilder {
                     }
                 }
                 if (vmCurrentDisk != null) {
-                    diskData.setId(vmCurrentDisk.getId());
+                    diskData.setId(vmCurrentDisk.getImageId());
                     diskData.setread_rate(AssignIntValue(disk, VdsProperties.vm_disk_read_rate));
                     diskData.setwrite_rate(AssignIntValue(disk, VdsProperties.vm_disk_write_rate));
 

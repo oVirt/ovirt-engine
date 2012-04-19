@@ -64,10 +64,10 @@ public class GetVmConfigurationBySnapshotQuery<P extends GetVmConfigurationBySna
         // image data is written to OVF
         Map<Guid, DiskImage> imagesInDbMap = ImagesHandler.getDiskImagesByIdMap(imagesInDb);
         for (DiskImage fromConfigImg : vm.getImages()) {
-            if (!imagesInDbMap.containsKey(fromConfigImg.getId())) {
+            if (!imagesInDbMap.containsKey(fromConfigImg.getImageId())) {
                 log.debugFormat("Image {0} of Disk {1} cannot be found in database. This image will be returned as ILLEGAL from the query",
-                        fromConfigImg.getId(),
-                        fromConfigImg.getDisk().getId());
+                        fromConfigImg.getImageId(),
+                        fromConfigImg.getId());
                 fromConfigImg.setimageStatus(ImageStatus.ILLEGAL);
             }
         }

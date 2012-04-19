@@ -35,7 +35,7 @@ public class DiskImageDAOHibernateImpl extends BaseDAOHibernateImpl<DiskImage, G
         for (DiskImage image : images) {
             Query query = getSession().createQuery("from image_vm_map where id.imageId = :image_id");
 
-            query.setParameter("image_id", image.getId());
+            query.setParameter("image_id", image.getImageId());
         }
 
         return images;

@@ -403,7 +403,7 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
             @Override
             public String getValue(DiskImage disk) {
                 ArrayList<String> storageDomains =
-                        object.getAvailableStorageDomainsByDiskId(disk.getId());
+                        object.getAvailableStorageDomainsByDiskId(disk.getImageId());
                 if (storageDomains != null && !(Boolean) object.getCollapseSnapshots().getEntity()) {
                     ((CustomSelectionCell) getCell()).setOptions(storageDomains);
                 }
