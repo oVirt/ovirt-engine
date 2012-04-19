@@ -1,7 +1,9 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
@@ -20,6 +22,7 @@ import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
@@ -41,6 +44,7 @@ import org.ovirt.engine.core.utils.log.LogFactory;
  * <b>Note:</b> It is <b>NOT POSSIBLE</b> to restore to a snapshot of any other type other than those stated above,
  * since this command can only handle the aforementioned cases.
  */
+@LockIdNameAttribute
 public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters> extends VmCommand<T> {
 
     private static final long serialVersionUID = -461387501474222174L;
@@ -75,6 +79,10 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
     protected void ExecuteVmCommand() {
         if (getImagesList().size() > 0) {
             lockVmWithCompensationIfNeeded();
+            if (!isInternalExecution()) {
+                freeLock();
+            }
+
             restoreSnapshotAndRemoveObsoleteSnapshots();
 
             VdcReturnValueBase returnValue = null;
@@ -307,6 +315,11 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
             addCanDoActionMessage(VdcBllMessages.VAR__TYPE__SNAPSHOT);
         }
         return result;
+    }
+
+    @Override
+    protected Map<String, Guid> getExclusiveLocks() {
+        return Collections.singletonMap(LockingGroup.VM.name(), (Guid) getVmId());
     }
 
     private static Log log = LogFactory.getLog(RemoveAllVmImagesCommand.class);
