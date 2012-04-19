@@ -835,7 +835,7 @@ def _configureHttpdSslPort():
         handler = utils.TextConfigFileHandler(basedefs.FILE_HTTPD_SSL_CONFIG, " ")
         handler.open()
         handler.editParam("Listen", controller.CONF["HTTPS_PORT"])
-        handler.editLine("\s*<VirtualHost _default_:", "<VirtualHost _default_:%s>"%(controller.CONF["HTTPS_PORT"]),
+        handler.editLine("\s*<VirtualHost _default_:", "<VirtualHost _default_:%s>\n"%(controller.CONF["HTTPS_PORT"]),
                          True, output_messages.ERR_EXP_UPD_HTTPS_LISTEN_PORT%(basedefs.FILE_HTTPD_SSL_CONFIG))
         handler.close()
     except:
