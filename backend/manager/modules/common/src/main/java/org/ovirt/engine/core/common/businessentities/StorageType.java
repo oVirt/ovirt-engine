@@ -14,7 +14,7 @@ public enum StorageType {
     FCP(2),
     ISCSI(3),
     LOCALFS(4),
-    POSIX(6),
+    POSIXFS(6),
     // CIFS(5)
     ALL(-1);
 

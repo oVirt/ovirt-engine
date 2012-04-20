@@ -6,10 +6,10 @@ import org.ovirt.engine.core.utils.log.LogFactory;
 /**
  * Storage helper for Posix FS connections
  */
-public class POSIXStorageHelper extends BaseFsStorageHelper {
+public class POSIXFSStorageHelper extends BaseFsStorageHelper {
 
-    public POSIXStorageHelper() {
-        this.storageType = storageType.POSIX;
+    public POSIXFSStorageHelper() {
+        this.storageType = storageType.POSIXFS;
     }
 
     @Override
@@ -17,5 +17,5 @@ public class POSIXStorageHelper extends BaseFsStorageHelper {
         return log;
     }
 
-    private static Log log = LogFactory.getLog(POSIXStorageHelper.class);
+    private static Log log = LogFactory.getLog(POSIXFSStorageHelper.class);
 }
