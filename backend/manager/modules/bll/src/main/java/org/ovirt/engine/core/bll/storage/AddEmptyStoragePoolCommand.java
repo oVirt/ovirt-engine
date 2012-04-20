@@ -13,7 +13,6 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
-import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.network;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -68,6 +67,9 @@ public class AddEmptyStoragePoolCommand<T extends StoragePoolManagementParameter
     protected boolean canDoAction() {
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__CREATE);
         boolean result = super.canDoAction();
+
+        StoragePoolValidator storagePoolValidator =
+                new StoragePoolValidator(getStoragePool(), getReturnValue().getCanDoActionMessages());
         if (result && DbFacade.getInstance().getStoragePoolDAO().getByName(getStoragePool().getname()) != null) {
             result = false;
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NAME_ALREADY_EXIST);
@@ -77,11 +79,10 @@ public class AddEmptyStoragePoolCommand<T extends StoragePoolManagementParameter
                 )) {
             addCanDoActionMessage(VersionSupport.getUnsupportedVersionMessage());
             result = false;
-        } else if (getStoragePool().getstorage_pool_type() == StorageType.LOCALFS
-                && !Config.<Boolean> GetValue(ConfigValues.LocalStorageEnabled, getStoragePool()
-                        .getcompatibility_version().toString())) {
+        } else if (!storagePoolValidator.isLocalDcAndMatchingCompatiblityVersion()) {
             result = false;
-            addCanDoActionMessage(VdcBllMessages.DATA_CENTER_LOCAL_STORAGE_NOT_SUPPORTED_IN_CURRENT_VERSION);
+        } else if (!storagePoolValidator.isPosixDcAndMatchingCompatiblityVersion()) {
+            result = false;
         }
         return result;
     }

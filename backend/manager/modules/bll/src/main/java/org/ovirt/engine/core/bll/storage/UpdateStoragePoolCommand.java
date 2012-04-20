@@ -11,7 +11,6 @@ import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
-import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
@@ -141,8 +140,14 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
             }
         }
 
-        returnValue = returnValue && isNotLocalfsWithDefaultCluster();
-
+        StoragePoolValidator validator =
+                new StoragePoolValidator(getStoragePool(), getReturnValue().getCanDoActionMessages());
+        if (returnValue) {
+            returnValue = validator.isNotLocalfsWithDefaultCluster();
+        }
+        if (returnValue) {
+            returnValue = validator.isPosixDcAndMatchingCompatiblityVersion();
+        }
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__UPDATE);
         return returnValue;
     }
@@ -150,27 +155,6 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
     protected boolean isStoragePoolVersionSupported() {
         return VersionSupport.checkVersionSupported(getStoragePool().getcompatibility_version());
     }
-
-    private boolean isNotLocalfsWithDefaultCluster() {
-        if (getStoragePool().getstorage_pool_type() == StorageType.LOCALFS && containsDefaultCluster()) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_WITH_DEFAULT_VDS_GROUP_CANNOT_BE_LOCALFS);
-            return false;
-        }
-        return true;
-    }
-
-    private boolean containsDefaultCluster() {
-        List<VDSGroup> clusters = getVdsGroupDAO().getAllForStoragePool(getStoragePool().getId());
-        boolean hasDefaultCluster = false;
-        for (VDSGroup cluster : clusters) {
-            if (cluster.getId().equals(VDSGroup.DEFAULT_VDS_GROUP_ID)) {
-                hasDefaultCluster = true;
-                break;
-            }
-        }
-        return hasDefaultCluster;
-    }
-
     /* Getters for external resources and handlers */
 
     protected VDSBrokerFrontend getResourceManager() {
