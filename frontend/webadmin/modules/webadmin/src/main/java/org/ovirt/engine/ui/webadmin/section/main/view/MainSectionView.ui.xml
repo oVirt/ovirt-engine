@@ -120,7 +120,7 @@
 		
 		.alertEventFooterPanel {
 			position: relative;
-			margin-bottom: 30px;
+			margin-bottom: 26px;
 		}
 	</ui:style>
 
@@ -142,7 +142,7 @@
 						</g:center>
 					</g:SplitLayoutPanel>
 				</g:center>
-				<g:south size="30">
+				<g:south size="26">
 					<g:SimplePanel ui:field="alertEventFooterPanel" addStyleNames="{style.alertEventFooterPanel}" />
 				</g:south>
 			</g:SplitLayoutPanel>

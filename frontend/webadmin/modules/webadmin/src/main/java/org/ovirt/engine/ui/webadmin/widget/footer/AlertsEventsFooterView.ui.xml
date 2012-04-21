@@ -43,7 +43,8 @@
 		.eventButton,
 		.alertButton {
 			height: 20px;
-			min-width: 80px;
+			margin-left: 2px;
+			margin-right: 2px;
 		}
 		
 		.expandButton {
@@ -73,22 +74,18 @@
 
 		.eventButtonUpStyle {
 			color: #333333;
-			width: 70px;
 		}
 
 		.eventButtonDownStyle {
 			color: white;
-			width: 70px;
 		}
 
 		.taskButtonUpStyle {
 			color: #333333;
-			min-width: 70px;
 		}
 
 		.taskButtonDownStyle {
 			color: white;
-			min-width: 70px;
 		}
 
 		.alertButtonUpStyle,

@@ -309,8 +309,8 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
             @Override
             public void onClick(ClickEvent event) {
                 String height = widgetPanel.getElement().getParentElement().getParentElement().getStyle().getHeight();
-                int offset = 30;
-                if (height.equals("30px")) {
+                int offset = 26;
+                if (height.equals("26px")) {
                     offset = 162;
                 }
                 widgetPanel.getElement().getParentElement().getParentElement().getStyle().setHeight(offset, Unit.PX);
