@@ -41,7 +41,7 @@ public class MainTabVirtualMachinePresenter extends AbstractMainTabWithDetailsPr
 
     @TabInfo(container = MainTabPanelPresenter.class)
     static TabData getTabData(ClientGinjector ginjector) {
-        return new ModelBoundTabData(ginjector.getApplicationConstants().virtualMachineMainTabLabel(), 4,
+        return new ModelBoundTabData(ginjector.getApplicationConstants().virtualMachineMainTabLabel(), 5,
                 ginjector.getMainTabVirtualMachineModelProvider());
     }
 

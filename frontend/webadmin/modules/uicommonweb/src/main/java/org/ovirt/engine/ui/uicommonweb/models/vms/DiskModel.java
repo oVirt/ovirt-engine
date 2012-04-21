@@ -5,10 +5,16 @@ import java.util.ArrayList;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.Quota;
+import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
+import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageType;
+import org.ovirt.engine.core.common.businessentities.VmOsType;
+import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.queries.GetAllRelevantQuotasForStorageParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -69,6 +75,18 @@ public class DiskModel extends Model
     public void setAlias(EntityModel value)
     {
         privateAlias = value;
+    }
+
+    private EntityModel privateDescription;
+
+    public EntityModel getDescription()
+    {
+        return privateDescription;
+    }
+
+    public void setDescription(EntityModel value)
+    {
+        privateDescription = value;
     }
 
     private VolumeFormat privateVolumeFormat = getVolumeFormat().values()[0];
@@ -239,6 +257,18 @@ public class DiskModel extends Model
         sourceStorageDomainName = value;
     }
 
+    private ListModel privateDataCenter;
+
+    public ListModel getDataCenter()
+    {
+        return privateDataCenter;
+    }
+
+    private void setDataCenter(ListModel value)
+    {
+        privateDataCenter = value;
+    }
+
     private ListModel quota;
 
     public ListModel getQuota()
@@ -287,6 +317,18 @@ public class DiskModel extends Model
         datacenterId = value;
     }
 
+    private EntityModel isInVm;
+
+    public EntityModel getIsInVm()
+    {
+        return isInVm;
+    }
+
+    public void setIsInVm(EntityModel value)
+    {
+        isInVm = value;
+    }
+
     public DiskModel()
     {
         setSize(new EntityModel());
@@ -301,6 +343,10 @@ public class DiskModel extends Model
 
         setSourceStorageDomainName(new EntityModel());
         getSourceStorageDomainName().setIsAvailable(false);
+
+        setDataCenter(new ListModel());
+        getDataCenter().setIsAvailable(false);
+        getDataCenter().getSelectedItemChangedEvent().addListener(this);
 
         setPreset(new ListModel());
         getPreset().getSelectedItemChangedEvent().addListener(this);
@@ -327,7 +373,12 @@ public class DiskModel extends Model
         getQuota().setIsAvailable(false);
 
         setAlias(new EntityModel());
+        setDescription(new EntityModel());
         setAttachableDisks(new ListModel());
+
+        setIsInVm(new EntityModel());
+        getIsInVm().setEntity(true);
+        getIsInVm().getEntityChangedEvent().addListener(this);
 
         AsyncDataProvider.GetDiskMaxSize(new AsyncQuery(this,
                 new INewAsyncCallback() {
@@ -396,6 +447,10 @@ public class DiskModel extends Model
         {
             AttachDisk_EntityChanged(args);
         }
+        else if (ev.equals(ListModel.EntityChangedEventDefinition) && sender == getIsInVm())
+        {
+            IsInVm_EntityChanged();
+        }
         else if (ev.equals(ListModel.SelectedItemChangedEventDefinition) && sender == getPreset())
         {
             Preset_SelectedItemChanged();
@@ -404,6 +459,110 @@ public class DiskModel extends Model
         {
             VolumeType_SelectedItemChanged();
         }
+        else if (ev.equals(ListModel.SelectedItemChangedEventDefinition) && sender == getDataCenter())
+        {
+            Datacenter_SelectedItemChanged();
+        }
+    }
+
+    private void Datacenter_SelectedItemChanged()
+    {
+        storage_pool datacenter = (storage_pool) getDataCenter().getSelectedItem();
+        if (datacenter == null)
+        {
+            return;
+        }
+
+        if (datacenter.getQuotaEnforcementType().equals(QuotaEnforcementTypeEnum.DISABLED)) {
+            getQuota().setIsAvailable(false);
+        } else {
+            getQuota().setIsAvailable(true);
+            quota_storageSelectedItemChanged(null);
+        }
+
+        getInterface().setItems(DataProvider.GetDiskInterfaceList(
+                VmOsType.Unassigned, datacenter.getcompatibility_version()));
+        getInterface().setSelectedItem(DataProvider.GetDefaultDiskInterface(
+                VmOsType.Unassigned, null));
+
+        AsyncDataProvider.GetStorageDomainList(new AsyncQuery(this, new INewAsyncCallback() {
+            @Override
+            public void OnSuccess(Object target, Object returnValue) {
+                DiskModel diskModel = (DiskModel) target;
+                ArrayList<storage_domains> storageDomains = (ArrayList<storage_domains>) returnValue;
+
+                ArrayList<storage_domains> filteredStorageDomains = new ArrayList<storage_domains>();
+                for (storage_domains a : (ArrayList<storage_domains>) storageDomains)
+                {
+                    if (a.getstorage_domain_type() != StorageDomainType.ISO
+                            && a.getstorage_domain_type() != StorageDomainType.ImportExport
+                            && a.getstatus() == StorageDomainStatus.Active)
+                    {
+                        filteredStorageDomains.add(a);
+                    }
+                }
+
+                Linq.Sort(filteredStorageDomains, new Linq.StorageDomainByNameComparer());
+                storage_domains storage = Linq.FirstOrDefault(filteredStorageDomains);
+                StorageType storageType = storage == null ? StorageType.UNKNOWN : storage.getstorage_type();
+
+                diskModel.getStorageDomain().setItems(filteredStorageDomains);
+                diskModel.getStorageDomain().setSelectedItem(storage);
+
+                if (storage != null) {
+                    UpdateWipeAfterDelete(storage.getstorage_type(), diskModel.getWipeAfterDelete());
+                    diskModel.setMessage("");
+                }
+                else {
+                    diskModel.setMessage("There is no active Storage Domain in the selected Datacenter. Please activate a Storage Domain or select a different Datacenter.");
+                }
+
+                AsyncDataProvider.GetDiskPresetList(new AsyncQuery(diskModel, new INewAsyncCallback() {
+                    @Override
+                    public void OnSuccess(Object target, Object returnValue) {
+                        DiskModel diskModel1 = (DiskModel) target;
+                        ArrayList<DiskImageBase> presets = (ArrayList<DiskImageBase>) returnValue;
+
+                        diskModel1.getPreset().setItems(presets);
+                    }
+                }), VmType.Server, storageType);
+            }
+        }),
+                datacenter.getId());
+    }
+
+    private void UpdateWipeAfterDelete(StorageType storageType, EntityModel wipeAfterDeleteModel)
+    {
+        if (storageType == StorageType.NFS || storageType == StorageType.LOCALFS) {
+            wipeAfterDeleteModel.setIsChangable(false);
+        }
+        else {
+            wipeAfterDeleteModel.setIsChangable(true);
+            AsyncDataProvider.GetSANWipeAfterDelete(new AsyncQuery(this, new INewAsyncCallback() {
+                @Override
+                public void OnSuccess(Object target, Object returnValue) {
+                    DiskModel diskModel = (DiskModel) target;
+                    diskModel.getWipeAfterDelete().setEntity(returnValue);
+                }
+            }));
+        }
+    }
+
+    private void IsInVm_EntityChanged() {
+        if ((Boolean) getIsInVm().getEntity()) {
+            return;
+        }
+
+        AsyncDataProvider.GetDataCenterList(new AsyncQuery(this, new INewAsyncCallback() {
+            @Override
+            public void OnSuccess(Object target, Object returnValue) {
+                DiskModel diskModel = (DiskModel) target;
+                ArrayList<storage_pool> dataCenters = (ArrayList<storage_pool>) returnValue;
+
+                diskModel.getDataCenter().setItems(dataCenters);
+                diskModel.getDataCenter().setIsAvailable(true);
+            }
+        }));
     }
 
     private void Preset_SelectedItemChanged()
@@ -468,6 +627,10 @@ public class DiskModel extends Model
     {
         if ((Boolean) getAttachDisk().getEntity()) {
             return true;
+        }
+
+        if (!(Boolean) getIsInVm().getEntity()) {
+            getAlias().ValidateEntity(new IValidation[] { new NotEmptyValidation() });
         }
 
         IntegerValidation tempVar = new IntegerValidation();

@@ -2,30 +2,47 @@ package org.ovirt.engine.ui.uicommonweb.models.disks;
 
 import java.util.ArrayList;
 
+import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
+import org.ovirt.engine.core.common.action.UpdateVmDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.action.VmDiskOperatinParameterBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
+import org.ovirt.engine.core.common.businessentities.PropagateErrors;
+import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
+import org.ovirt.engine.core.common.businessentities.VolumeType;
+import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.ObservableCollection;
 import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
+import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.CopyDiskModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.MoveDiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.RemoveDiskModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
+import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
+import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
 @SuppressWarnings("unused")
@@ -184,7 +201,37 @@ public class DiskListModel extends ListWithDetailsModel
 
     private void New()
     {
+        DiskModel model = new DiskModel();
+        setWindow(model);
+        model.setTitle(ConstantsManager.getInstance().getConstants().addVirtualDiskTitle());
+        model.setHashName("new_virtual_disk"); //$NON-NLS-1$
+        model.setIsNew(true);
+        model.getIsInVm().setEntity(false);
+        model.StartProgress(null);
 
+        AsyncDataProvider.GetDataCenterList(new AsyncQuery(this, new INewAsyncCallback() {
+            @Override
+            public void OnSuccess(Object target, Object returnValue) {
+                DiskListModel diskListModel = (DiskListModel) target;
+                DiskModel diskModel = (DiskModel) diskListModel.getWindow();
+                ArrayList<storage_pool> dataCenters = (ArrayList<storage_pool>) returnValue;
+
+                diskModel.getDataCenter().setItems(dataCenters);
+                diskModel.getDataCenter().setSelectedItem(Linq.FirstOrDefault(dataCenters));
+
+                ArrayList<UICommand> commands = new ArrayList<UICommand>();
+                UICommand tempVar2 = new UICommand("OnSave", diskListModel); //$NON-NLS-1$
+                tempVar2.setTitle(ConstantsManager.getInstance().getConstants().ok());
+                tempVar2.setIsDefault(true);
+                diskModel.getCommands().add(tempVar2);
+                UICommand tempVar3 = new UICommand("Cancel", diskListModel); //$NON-NLS-1$
+                tempVar3.setTitle(ConstantsManager.getInstance().getConstants().cancel());
+                tempVar3.setIsCancel(true);
+                diskModel.getCommands().add(tempVar3);
+
+                diskModel.StopProgress();
+            }
+        }));
     }
 
     private void Edit()
@@ -194,7 +241,101 @@ public class DiskListModel extends ListWithDetailsModel
 
     private void OnSave()
     {
+        DiskModel model = (DiskModel) getWindow();
 
+        if (model.getProgress() != null || !model.Validate())
+        {
+            return;
+        }
+
+        if ((Boolean) model.getAttachDisk().getEntity())
+        {
+            OnAttachDisks();
+            return;
+        }
+
+        // Save changes.
+        storage_domains storageDomain = (storage_domains) model.getStorageDomain().getSelectedItem();
+
+        DiskImage disk = model.getIsNew() ? new DiskImage() : (DiskImage) getSelectedItem();
+        disk.setSizeInGigabytes(Integer.parseInt(model.getSize().getEntity().toString()));
+        disk.setDiskAlias(model.getAlias().getEntity().toString());
+        disk.setDiskDescription(model.getDescription().getEntity().toString());
+        disk.setDiskInterface((DiskInterface) model.getInterface().getSelectedItem());
+        disk.setvolume_type((VolumeType) model.getVolumeType().getSelectedItem());
+        disk.setvolume_format(model.getVolumeFormat());
+        disk.setWipeAfterDelete((Boolean) model.getWipeAfterDelete().getEntity());
+        disk.setboot((Boolean) model.getIsBootable().getEntity());
+        disk.setPlugged((Boolean) model.getIsPlugged().getEntity());
+        disk.setPropagateErrors(PropagateErrors.Off);
+        if (model.getQuota().getIsAvailable()) {
+            disk.setQuotaId(((Quota) model.getQuota().getSelectedItem()).getId());
+        }
+
+        VdcActionType actionType;
+        VmDiskOperatinParameterBase parameters;
+        if (model.getIsNew())
+        {
+            parameters = new AddDiskParameters(Guid.Empty, disk);
+            ((AddDiskParameters) parameters).setStorageDomainId(storageDomain.getId());
+            actionType = VdcActionType.AddDisk;
+        }
+        else
+        {
+            parameters = new UpdateVmDiskParameters(Guid.Empty, disk.getId(), disk);
+            actionType = VdcActionType.UpdateVmDisk;
+        }
+
+        model.StartProgress(null);
+
+        Frontend.RunAction(actionType, parameters, new IFrontendActionAsyncCallback() {
+            @Override
+            public void Executed(FrontendActionAsyncResult result) {
+                DiskListModel localModel = (DiskListModel) result.getState();
+                localModel.PostOnSaveInternal(result.getReturnValue());
+            }
+        }, this);
+    }
+
+    private void OnAttachDisks()
+    {
+        VM vm = (VM) getEntity();
+        DiskModel model = (DiskModel) getWindow();
+        ArrayList<VdcActionParametersBase> paramerterList = new ArrayList<VdcActionParametersBase>();
+
+        for (EntityModel item : (ArrayList<EntityModel>) model.getAttachableDisks().getSelectedItems())
+        {
+            DiskModel disk = (DiskModel) item.getEntity();
+            disk.getDiskImage().setPlugged((Boolean) model.getIsPlugged().getEntity());
+            UpdateVmDiskParameters parameters =
+                    new UpdateVmDiskParameters(vm.getId(), disk.getDiskImage().getId(), disk.getDiskImage());
+            paramerterList.add(parameters);
+        }
+
+        model.StartProgress(null);
+
+        Frontend.RunMultipleAction(VdcActionType.AttachDiskToVm, paramerterList,
+                new IFrontendMultipleActionAsyncCallback() {
+                    @Override
+                    public void Executed(FrontendMultipleActionAsyncResult result) {
+                        DiskListModel localModel = (DiskListModel) result.getState();
+                        localModel.getWindow().StopProgress();
+                        Cancel();
+                    }
+                },
+                this);
+    }
+
+    public void PostOnSaveInternal(VdcReturnValueBase returnValue)
+    {
+        DiskModel model = (DiskModel) getWindow();
+
+        model.StopProgress();
+
+        if (returnValue != null && returnValue.getSucceeded())
+        {
+            Cancel();
+        }
     }
 
     private void Move()
@@ -296,7 +437,6 @@ public class DiskListModel extends ListWithDetailsModel
                 },
                 this);
     }
-
 
     private void UpdateActionAvailability()
     {

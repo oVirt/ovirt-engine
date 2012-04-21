@@ -104,4 +104,10 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 
     @DefaultMessage("Edit Interface {0}")
     String editInterfaceTitle(String name);
+
+    @DefaultMessage("There is no active Storage Domain to create the Disk in. Please activate a Storage Domain.")
+    String noActiveStorageDomains();
+
+    @DefaultMessage("Error in retrieving the relevant Storage Domain.")
+    String errorRetrievingStorageDomains();
 }

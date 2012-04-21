@@ -107,6 +107,13 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<DiskIma
             }
         }, constants.descriptionDisk());
 
+        getTable().addActionButton(new WebAdminButtonDefinition<DiskImage>(constants.addDisk()) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getNewCommand();
+            }
+        });
+
         getTable().addActionButton(new WebAdminButtonDefinition<DiskImage>(constants.removeDisk()) {
             @Override
             protected UICommand resolveCommand() {

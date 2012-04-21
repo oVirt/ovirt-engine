@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.common.widget.uicommon.popup.vm;
 
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
@@ -25,6 +26,7 @@ import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
@@ -39,12 +41,20 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> 
     }
 
     @UiField
+    @Path("size.entity")
+    EntityModelTextBoxEditor sizeEditor;
+
+    @UiField
     @Path("alias.entity")
     EntityModelTextBoxEditor aliasEditor;
 
     @UiField
-    @Path("size.entity")
-    EntityModelTextBoxEditor sizeEditor;
+    @Path("description.entity")
+    EntityModelTextBoxEditor descriptionEditor;
+
+    @UiField(provided = true)
+    @Path("dataCenter.selectedItem")
+    ListModelListBoxEditor<Object> datacenterEditor;
 
     @UiField(provided = true)
     @Path("storageDomain.selectedItem")
@@ -84,6 +94,9 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> 
     @UiField
     VerticalPanel attachDiskPanel;
 
+    @UiField
+    HorizontalPanel topPanel;
+
     @UiField(provided = true)
     @Ignore
     EntityModelCellTable<ListModel> diskTable;
@@ -103,6 +116,8 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> 
     private void localize(CommonApplicationConstants constants) {
         aliasEditor.setLabel(constants.aliasVmDiskPopup());
         sizeEditor.setLabel(constants.sizeVmDiskPopup());
+        descriptionEditor.setLabel(constants.descriptionVmDiskPopup());
+        datacenterEditor.setLabel(constants.dcVmDiskPopup());
         storageDomainEditor.setLabel(constants.storageDomainVmDiskPopup());
         quotaEditor.setLabel(constants.quotaVmDiskPopup());
         interfaceEditor.setLabel(constants.interfaceVmDiskPopup());
@@ -133,6 +148,13 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> 
             @Override
             public String renderNullSafe(Object object) {
                 return object.toString();
+            }
+        });
+
+        datacenterEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
+            @Override
+            public String renderNullSafe(Object object) {
+                return ((storage_pool) object).getname();
             }
         });
 
@@ -198,6 +220,15 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> 
                 boolean isAttach = (Boolean) ((EntityModel) sender).getEntity();
                 createDiskPanel.setVisible(!isAttach);
                 attachDiskPanel.setVisible(isAttach);
+            }
+        });
+
+        disk.getIsInVm().getEntityChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                boolean isInVm = (Boolean) ((EntityModel) sender).getEntity();
+                topPanel.setVisible(isInVm);
+                aliasEditor.setFocus(!isInVm);
             }
         });
 

@@ -38,6 +38,7 @@ public class SubTabDiskGeneralView extends AbstractSubTabFormView<DiskImage, Dis
     TextBoxLabel description = new TextBoxLabel();
     TextBoxLabel diskId = new TextBoxLabel();
     EnumLabel<VolumeFormat> volumeFormat = new EnumLabel<VolumeFormat>();
+    TextBoxLabel quotaName = new TextBoxLabel();
 
     @UiField(provided = true)
     GeneralFormPanel formPanel;
@@ -57,12 +58,14 @@ public class SubTabDiskGeneralView extends AbstractSubTabFormView<DiskImage, Dis
         Driver.driver.initialize(this);
 
         // Build a form using the FormBuilder
-        formBuilder = new FormBuilder(formPanel, 1, 4);
+        formBuilder = new FormBuilder(formPanel, 1, 5);
+
         formBuilder.setColumnsWidth("300px"); //$NON-NLS-1$
         formBuilder.addFormItem(new FormItem(constants.aliasDisk(), alias, 0, 0));
         formBuilder.addFormItem(new FormItem(constants.descriptionDisk(), description, 1, 0));
         formBuilder.addFormItem(new FormItem(constants.idDisk(), diskId, 2, 0));
         formBuilder.addFormItem(new FormItem(constants.volumeFormatDisk(), volumeFormat, 3, 0));
+        formBuilder.addFormItem(new FormItem(constants.quota(), quotaName, 4, 0));
     }
 
     @Override

@@ -654,8 +654,14 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Alias")
     String aliasVmDiskPopup();
 
+    @DefaultStringValue("Data Center")
+    String dcVmDiskPopup();
+
     @DefaultStringValue("Quota")
     String quotaVmDiskPopup();
+
+    @DefaultStringValue("Description")
+    String descriptionVmDiskPopup();
 
     @DefaultStringValue("Attach Disk")
     String attachDiskVmDiskPopup();

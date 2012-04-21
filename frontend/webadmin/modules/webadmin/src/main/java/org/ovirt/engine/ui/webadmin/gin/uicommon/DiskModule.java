@@ -19,6 +19,7 @@ import org.ovirt.engine.ui.uicommonweb.models.disks.DiskTemplateListModel;
 import org.ovirt.engine.ui.uicommonweb.models.disks.DiskVmListModel;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.DisksAllocationPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDiskPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDiskRemovePopupPresenterWidget;
 
 import com.google.gwt.inject.client.AbstractGinModule;
@@ -33,16 +34,20 @@ public class DiskModule extends AbstractGinModule {
     @Provides
     @Singleton
     public MainModelProvider<DiskImage, DiskListModel> getDiskListProvider(ClientGinjector ginjector,
+            final Provider<VmDiskPopupPresenterWidget> newPopupProvider,
             final Provider<VmDiskRemovePopupPresenterWidget> removeConfirmPopupProvider,
-            final Provider<DisksAllocationPopupPresenterWidget> moveorCopyPopupProvider) {
+            final Provider<DisksAllocationPopupPresenterWidget> moveOrCopyPopupProvider) {
         return new MainTabModelProvider<DiskImage, DiskListModel>(ginjector, DiskListModel.class) {
 
             @Override
             public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(DiskListModel source,
                     UICommand lastExecutedCommand, Model windowModel) {
-                if (lastExecutedCommand == getModel().getMoveCommand()
+                if (lastExecutedCommand == getModel().getNewCommand()) {
+                    return newPopupProvider.get();
+                }
+                else if (lastExecutedCommand == getModel().getMoveCommand()
                         || lastExecutedCommand == getModel().getCopyCommand()) {
-                    return moveorCopyPopupProvider.get();
+                    return moveOrCopyPopupProvider.get();
                 } else {
                     return super.getModelPopup(source, lastExecutedCommand, windowModel);
                 }

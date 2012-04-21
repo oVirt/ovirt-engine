@@ -570,6 +570,7 @@ public class VmGuideModel extends GuideModel
         if (getEntity() != null)
         {
             StartProgress(null);
+            disks = null;
 
             AddDiskUpdateData();
         }
@@ -596,7 +597,8 @@ public class VmGuideModel extends GuideModel
 
             DiskImage tempVar = new DiskImage();
             tempVar.setSizeInGigabytes(Integer.parseInt(model.getSize().getEntity().toString()));
-            tempVar.setDiskAlias(model.getAlias().getEntity().toString());
+            tempVar.setDiskAlias((String) model.getAlias().getEntity());
+            tempVar.setDiskDescription((String) model.getDescription().getEntity());
             tempVar.setDiskInterface((DiskInterface) model.getInterface().getSelectedItem());
             tempVar.setvolume_type((VolumeType) model.getVolumeType().getSelectedItem());
             tempVar.setvolume_format(model.getVolumeFormat());

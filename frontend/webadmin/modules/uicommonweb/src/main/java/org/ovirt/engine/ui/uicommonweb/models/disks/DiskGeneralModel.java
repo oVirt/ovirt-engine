@@ -89,6 +89,22 @@ public class DiskGeneralModel extends EntityModel
         }
     }
 
+    private String privateQuotaName;
+
+    public String getQuotaName()
+    {
+        return privateQuotaName;
+    }
+
+    public void setQuotaName(String value)
+    {
+        if (privateQuotaName != value)
+        {
+            privateQuotaName = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("Quota Name"));
+        }
+    }
+
     public DiskGeneralModel()
     {
         setTitle(ConstantsManager.getInstance().getConstants().generalTitle());
@@ -121,6 +137,7 @@ public class DiskGeneralModel extends EntityModel
         setAlias(disk.getDiskAlias());
         setDescription(disk.getDiskDescription());
         setVolumeFormat(disk.getvolume_format());
-        setDiskId(disk.getId().toString());
+        setDiskId(disk.getImageId().toString());
+        setQuotaName(disk.getQuotaName());
     }
 }

@@ -143,6 +143,10 @@ public class VmDiskListModel extends SearchableListModel
         privateMoveCommand = value;
     }
 
+    private ArrayList<DiskImageBase> presets;
+    private String nextAlias;
+    private storage_pool datacenter;
+
     public VmDiskListModel()
     {
         setTitle(ConstantsManager.getInstance().getConstants().virtualDisksTitle());
@@ -159,7 +163,12 @@ public class VmDiskListModel extends SearchableListModel
     }
 
     @Override
-    public void setEntity(Object value)
+    public VM getEntity()
+    {
+        return (VM) super.getEntity();
+    }
+
+    public void setEntity(VM value)
     {
         super.setEntity(value);
 
@@ -232,61 +241,153 @@ public class VmDiskListModel extends SearchableListModel
         model.setDatacenterId(vm.getstorage_pool_id());
         model.StartProgress(null);
 
-        AsyncQuery _asyncQuery1 = new AsyncQuery();
-        _asyncQuery1.setModel(this);
-        _asyncQuery1.asyncCallback = new INewAsyncCallback() {
-            @Override
-            public void OnSuccess(Object model1, Object result1)
-            {
-                VmDiskListModel vmDiskListModel = (VmDiskListModel) model1;
-                DiskModel diskModel = (DiskModel) vmDiskListModel.getWindow();
-                java.util.ArrayList<DiskImage> disks =
-                        getItems() != null ? Linq.<DiskImage> Cast(getItems()) : new java.util.ArrayList<DiskImage>();
+        AddDiskUpdateData();
+    }
 
-                java.util.ArrayList<storage_domains> storageDomains = new java.util.ArrayList<storage_domains>();
-                for (storage_domains a : (java.util.ArrayList<storage_domains>) result1)
+    private void AddDiskUpdateData() {
+        AsyncDataProvider.GetStorageDomainList(new AsyncQuery(this, new INewAsyncCallback() {
+            @Override
+            public void OnSuccess(Object target, Object returnValue) {
+                VmDiskListModel vmDiskListModel = (VmDiskListModel) target;
+                ArrayList<storage_domains> storageDomains = (ArrayList<storage_domains>) returnValue;
+                DiskModel diskModel = (DiskModel) vmDiskListModel.getWindow();
+                ArrayList<DiskImage> disks =
+                        getItems() != null ? Linq.<DiskImage> Cast(getItems()) : new ArrayList<DiskImage>();
+
+                ArrayList<storage_domains> filteredStorageDomains = new ArrayList<storage_domains>();
+                for (storage_domains a : (ArrayList<storage_domains>) storageDomains)
                 {
                     if (a.getstorage_domain_type() != StorageDomainType.ISO
                             && a.getstorage_domain_type() != StorageDomainType.ImportExport
                             && a.getstatus() == StorageDomainStatus.Active)
                     {
-                        storageDomains.add(a);
+                        filteredStorageDomains.add(a);
                     }
                 }
+                Linq.Sort(filteredStorageDomains, new Linq.StorageDomainByNameComparer());
+                storage_domains selectedStorage = Linq.FirstOrDefault(filteredStorageDomains);
+                StorageType storageType =
+                        selectedStorage == null ? StorageType.UNKNOWN : selectedStorage.getstorage_type();
 
-                diskModel.getStorageDomain().setItems(storageDomains);
-                diskModel.getStorageDomain().setSelectedItem(Linq.FirstOrDefault(storageDomains));
+                diskModel.getStorageDomain().setItems(filteredStorageDomains);
+                diskModel.getStorageDomain().setSelectedItem(selectedStorage);
 
-                AsyncDataProvider.GetNextAvailableDiskAliasNameByVMId(new AsyncQuery(vmDiskListModel,
-                        new INewAsyncCallback() {
-                            @Override
-                            public void OnSuccess(Object model, Object returnValue) {
-                                String suggestedDiskName = (String) returnValue;
-                                VmDiskListModel vmDiskListModel1 = (VmDiskListModel) model;
-                                DiskModel diskModel = (DiskModel) vmDiskListModel1.getWindow();
-                                diskModel.getAlias().setEntity(suggestedDiskName);
-                                vmDiskListModel1.StepA();
-                            }
-                        }), ((VM) vmDiskListModel.getEntity()).getId());
+                AsyncDataProvider.GetDiskPresetList(new AsyncQuery(vmDiskListModel, new INewAsyncCallback() {
+                    @Override
+                    public void OnSuccess(Object target, Object returnValue) {
+                        VmDiskListModel vmDiskListModel = (VmDiskListModel) target;
+                        DiskModel diskModel1 = (DiskModel) vmDiskListModel.getWindow();
+                        ArrayList<DiskImageBase> presets = (ArrayList<DiskImageBase>) returnValue;
+
+                        diskModel1.getPreset().setItems(presets);
+                        vmDiskListModel.presets = presets;
+                        vmDiskListModel.AddDiskPostData();
+                    }
+                }), getEntity().getvm_type(), storageType);
             }
-        };
-        AsyncDataProvider.GetStorageDomainList(_asyncQuery1, vm.getstorage_pool_id());
+        }), getEntity().getstorage_pool_id());
 
-        AsyncDataProvider.GetDataCenterById(new AsyncQuery(this, new INewAsyncCallback() {
-
+        AsyncDataProvider.GetNextAvailableDiskAliasNameByVMId(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void OnSuccess(Object model, Object returnValue) {
-                storage_pool dataCenter = (storage_pool) returnValue;
-                VmDiskListModel vmDiskListModel1 = (VmDiskListModel) model;
-                DiskModel dModel = (DiskModel) vmDiskListModel1.getWindow();
-                if (dataCenter.getQuotaEnforcementType().equals(QuotaEnforcementTypeEnum.DISABLED)) {
+                String suggestedDiskName = (String) returnValue;
+                VmDiskListModel vmDiskListModel = (VmDiskListModel) model;
+                DiskModel diskModel = (DiskModel) vmDiskListModel.getWindow();
+                diskModel.getAlias().setEntity(suggestedDiskName);
+
+                vmDiskListModel.nextAlias = suggestedDiskName;
+                vmDiskListModel.AddDiskPostData();
+            }
+        }), getEntity().getId());
+
+        AsyncDataProvider.GetDataCenterById(new AsyncQuery(this, new INewAsyncCallback() {
+            @Override
+            public void OnSuccess(Object model, Object returnValue) {
+                storage_pool datacenter = (storage_pool) returnValue;
+                VmDiskListModel vmDiskListModel = (VmDiskListModel) model;
+                DiskModel dModel = (DiskModel) vmDiskListModel.getWindow();
+                if (datacenter.getQuotaEnforcementType().equals(QuotaEnforcementTypeEnum.DISABLED)) {
                     dModel.getQuota().setIsAvailable(false);
                 } else {
                     dModel.getQuota().setIsAvailable(true);
-                    dModel.quota_storageSelectedItemChanged(vm.getQuotaId());
+                    dModel.quota_storageSelectedItemChanged(getEntity().getQuotaId());
                 }
+
+                vmDiskListModel.datacenter = datacenter;
+                vmDiskListModel.AddDiskPostData();
             }
-        }), vm.getstorage_pool_id());
+        }), getEntity().getstorage_pool_id());
+    }
+
+    private void AddDiskPostData() {
+        if (presets == null || nextAlias == null || datacenter == null) {
+            return;
+        }
+
+        DiskModel diskModel = (DiskModel) getWindow();
+        storage_domains storage = (storage_domains) diskModel.getStorageDomain().getSelectedItem();
+        ArrayList<DiskImage> disks =
+                getItems() != null ? Linq.<DiskImage> Cast(getItems()) : new ArrayList<DiskImage>();
+        boolean hasDisks = disks.size() > 0;
+
+        diskModel.getInterface().setItems(DataProvider.GetDiskInterfaceList(
+                getEntity().getvm_os(), getEntity().getvds_group_compatibility_version()));
+        diskModel.getInterface().setSelectedItem(DataProvider.GetDefaultDiskInterface(
+                getEntity().getvm_os(), disks));
+
+        if (storage != null)
+        {
+            UpdateWipeAfterDelete(storage.getstorage_type(), diskModel.getWipeAfterDelete(), true);
+        }
+        else
+        {
+            String cantCreateMessage =
+                    hasDisks ? ConstantsManager.getInstance().getMessages().errorRetrievingStorageDomains()
+                            : ConstantsManager.getInstance().getMessages().noActiveStorageDomains();
+
+            diskModel.setMessage(cantCreateMessage);
+        }
+
+        diskModel.getPreset().setItems(presets);
+        for (DiskImageBase a : presets)
+        {
+            if ((hasDisks && !a.getboot()) || (!hasDisks && a.getboot()))
+            {
+                diskModel.getPreset().setSelectedItem(a);
+                break;
+            }
+        }
+
+        boolean hasBootableDisk = false;
+        for (DiskImage a : disks)
+        {
+            if (a.getboot())
+            {
+                hasBootableDisk = true;
+                break;
+            }
+        }
+
+        diskModel.getIsBootable().setEntity(!hasBootableDisk);
+        if (hasBootableDisk)
+        {
+            diskModel.getIsBootable().setIsChangable(false);
+            diskModel.getIsBootable()
+                    .getChangeProhibitionReasons()
+                    .add("There can be only one bootable disk defined."); //$NON-NLS-1$
+        }
+
+        ArrayList<UICommand> commands = new ArrayList<UICommand>();
+        UICommand tempVar2 = new UICommand("OnSave", this); //$NON-NLS-1$
+        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().ok());
+        tempVar2.setIsDefault(true);
+        diskModel.getCommands().add(tempVar2);
+        UICommand tempVar3 = new UICommand("Cancel", this); //$NON-NLS-1$
+        tempVar3.setTitle(ConstantsManager.getInstance().getConstants().cancel());
+        tempVar3.setIsCancel(true);
+        diskModel.getCommands().add(tempVar3);
+
+        diskModel.StopProgress();
     }
 
     private void Edit()
@@ -305,6 +406,7 @@ public class VmDiskListModel extends SearchableListModel
         model.getStorageDomain().setIsChangable(false);
         model.getSize().setEntity(disk.getSizeInGigabytes());
         model.getSize().setIsChangable(false);
+        model.getAttachDisk().setIsChangable(false);
 
         AsyncQuery _asyncQuery1 = new AsyncQuery();
         _asyncQuery1.setModel(this);
@@ -372,6 +474,7 @@ public class VmDiskListModel extends SearchableListModel
                 diskModel.getIsBootable().setEntity(disk.getboot());
 
                 diskModel.getAlias().setEntity(disk.getDiskAlias());
+                diskModel.getDescription().setEntity(disk.getDiskDescription());
 
                 UICommand tempVar = new UICommand("OnSave", vmDiskListModel); //$NON-NLS-1$
                 tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
@@ -490,7 +593,8 @@ public class VmDiskListModel extends SearchableListModel
 
         DiskImage disk = model.getIsNew() ? new DiskImage() : (DiskImage) getSelectedItem();
         disk.setSizeInGigabytes(Integer.parseInt(model.getSize().getEntity().toString()));
-        disk.setDiskAlias(model.getAlias().getEntity().toString());
+        disk.setDiskAlias((String) model.getAlias().getEntity());
+        disk.setDiskDescription((String) model.getDescription().getEntity());
         disk.setDiskInterface((DiskInterface) model.getInterface().getSelectedItem());
         disk.setvolume_type((VolumeType) model.getVolumeType().getSelectedItem());
         disk.setvolume_format(model.getVolumeFormat());
@@ -556,7 +660,7 @@ public class VmDiskListModel extends SearchableListModel
                     @Override
                     public void Executed(FrontendMultipleActionAsyncResult result) {
                         VmDiskListModel localModel = (VmDiskListModel) result.getState();
-                        localModel.StopProgress();
+                        localModel.getWindow().StopProgress();
                         Cancel();
                     }
                 },
@@ -627,9 +731,16 @@ public class VmDiskListModel extends SearchableListModel
         model.StartProgress(null);
     }
 
+    private void ResetData() {
+        presets = null;
+        nextAlias = null;
+        datacenter = null;
+    }
+
     private void Cancel()
     {
         setWindow(null);
+        ResetData();
     }
 
     @Override
@@ -783,101 +894,6 @@ public class VmDiskListModel extends SearchableListModel
         {
             Plug(false);
         }
-    }
-
-    public void StepA()
-    {
-        DiskModel model = (DiskModel) getWindow();
-        VM vm = (VM) getEntity();
-
-        storage_domains storage = (storage_domains) model.getStorageDomain().getSelectedItem();
-
-        if (storage != null)
-        {
-            UpdateWipeAfterDelete(storage.getstorage_type(), model.getWipeAfterDelete(), true);
-        }
-
-        AsyncQuery _asyncQuery1 = new AsyncQuery();
-        _asyncQuery1.setModel(this);
-        _asyncQuery1.asyncCallback = new INewAsyncCallback() {
-            @Override
-            public void OnSuccess(Object model1, Object result1)
-            {
-                VmDiskListModel vmDiskListModel1 = (VmDiskListModel) model1;
-                DiskModel vmModel = (DiskModel) vmDiskListModel1.getWindow();
-                VM vm1 = (VM) vmDiskListModel1.getEntity();
-
-                java.util.ArrayList<DiskImage> disks =
-                        vmDiskListModel1.getItems() != null ? Linq.<DiskImage> Cast(vmDiskListModel1.getItems())
-                                : new java.util.ArrayList<DiskImage>();
-                boolean hasDisks = disks.size() > 0;
-                storage_domains storage1 = (storage_domains) vmModel.getStorageDomain().getSelectedItem();
-
-                java.util.ArrayList<DiskImageBase> presets = (java.util.ArrayList<DiskImageBase>) result1;
-                vmModel.getPreset().setItems(presets);
-
-                for (DiskImageBase a : presets)
-                {
-                    if ((hasDisks && !a.getboot()) || (!hasDisks && a.getboot()))
-                    {
-                        vmModel.getPreset().setSelectedItem(a);
-                        break;
-                    }
-                }
-
-                vmModel.getInterface().setItems(DataProvider.GetDiskInterfaceList(vm1.getvm_os(),
-                        vm1.getvds_group_compatibility_version()));
-                vmModel.getInterface().setSelectedItem(DataProvider.GetDefaultDiskInterface(vm1.getvm_os(), disks));
-
-                boolean hasBootableDisk = false;
-                for (DiskImage a : disks)
-                {
-                    if (a.getboot())
-                    {
-                        hasBootableDisk = true;
-                        break;
-                    }
-                }
-
-                vmModel.getIsBootable().setEntity(!hasBootableDisk);
-                if (hasBootableDisk)
-                {
-                    vmModel.getIsBootable().setIsChangable(false);
-                    vmModel.getIsBootable()
-                            .getChangeProhibitionReasons()
-                            .add("There can be only one bootable disk defined."); //$NON-NLS-1$
-                }
-
-                java.util.ArrayList<UICommand> commands = new java.util.ArrayList<UICommand>();
-
-                if (storage1 == null)
-                {
-                    String cantCreateMessage =
-                            ConstantsManager.getInstance().getConstants().thereIsNoActiveStorageDomainCreateDiskInMsg();
-                    if (hasDisks)
-                    {
-                        cantCreateMessage = ConstantsManager.getInstance().getConstants().errorRetrievingRelevantStorageDomainMsg();
-                    }
-
-                    vmModel.setMessage(cantCreateMessage);
-                }
-
-                UICommand tempVar2 = new UICommand("OnSave", vmDiskListModel1); //$NON-NLS-1$
-                tempVar2.setTitle(ConstantsManager.getInstance().getConstants().ok());
-                tempVar2.setIsDefault(true);
-                vmModel.getCommands().add(tempVar2);
-
-                UICommand tempVar3 = new UICommand("Cancel", vmDiskListModel1); //$NON-NLS-1$
-                tempVar3.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-                tempVar3.setIsCancel(true);
-                vmModel.getCommands().add(tempVar3);
-
-                vmModel.StopProgress();
-            }
-        };
-        AsyncDataProvider.GetDiskPresetList(_asyncQuery1,
-                vm.getvm_type(),
-                model.getStorageDomain().getSelectedItem() == null ? StorageType.UNKNOWN : storage.getstorage_type());
     }
 
     private void UpdateWipeAfterDelete(StorageType storageType, EntityModel wipeAfterDeleteModel, boolean isNew)

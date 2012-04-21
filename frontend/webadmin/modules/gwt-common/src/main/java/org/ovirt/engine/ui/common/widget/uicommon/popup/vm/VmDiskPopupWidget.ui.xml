@@ -32,12 +32,14 @@
 	</ui:style>
 
 	<g:FlowPanel>
-		<g:HorizontalPanel addStyleNames="{style.topPanel}">
-			<e:EntityModelCheckBoxEditor ui:field="attachEditor" />	
+		<g:HorizontalPanel ui:field="topPanel" addStyleNames="{style.topPanel}">
+			<e:EntityModelCheckBoxEditor ui:field="attachEditor" />
 		</g:HorizontalPanel>
 		<g:VerticalPanel ui:field="createDiskPanel" addStyleNames="{style.mainPanel}">
+			<e:EntityModelTextBoxEditor ui:field="sizeEditor" />
 			<e:EntityModelTextBoxEditor ui:field="aliasEditor" />
-			<e:EntityModelTextBoxEditor ui:field="sizeEditor" />						
+			<e:EntityModelTextBoxEditor ui:field="descriptionEditor" />
+			<e:ListModelListBoxEditor ui:field="datacenterEditor" />
 			<e:ListModelListBoxEditor ui:field="storageDomainEditor" />
 			<e:ListModelListBoxEditor ui:field="quotaEditor" />
 			<e:ListModelListBoxEditor ui:field="interfaceEditor" />
@@ -47,7 +49,7 @@
 			<g:Label ui:field="message" addStyleNames="{style.errorMessageLabel}" />
 		</g:VerticalPanel>
 		<g:VerticalPanel ui:field="attachDiskPanel" addStyleNames="{style.mainPanel}" visible="false">
-			<g:ScrollPanel height="250px">			
+			<g:ScrollPanel height="300px">			
 				<e:EntityModelCellTable ui:field="diskTable" />			
 			</g:ScrollPanel>
 			<e:EntityModelCheckBoxEditor ui:field="isPluggedEditor" addStyleNames="{style.isPluggedEditor}" />

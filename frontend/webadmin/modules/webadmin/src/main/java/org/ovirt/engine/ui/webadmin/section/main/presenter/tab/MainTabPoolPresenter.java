@@ -41,7 +41,7 @@ public class MainTabPoolPresenter extends AbstractMainTabWithDetailsPresenter<vm
 
     @TabInfo(container = MainTabPanelPresenter.class)
     static TabData getTabData(ClientGinjector ginjector) {
-        return new ModelBoundTabData(ginjector.getApplicationConstants().poolMainTabLabel(), 5,
+        return new ModelBoundTabData(ginjector.getApplicationConstants().poolMainTabLabel(), 6,
                 ginjector.getMainTabPoolModelProvider());
     }
 

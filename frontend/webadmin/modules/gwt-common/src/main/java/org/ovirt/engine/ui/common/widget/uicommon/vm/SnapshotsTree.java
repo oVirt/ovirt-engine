@@ -45,6 +45,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.SnapshotModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmSnapshotListModel;
 
 import com.google.gwt.dom.client.Style.FontStyle;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.ui.DateLabel;
@@ -131,6 +132,7 @@ public class SnapshotsTree<L extends ListWithDetailsModel> extends AbstractSubTa
         else if (snapshot.getType() == SnapshotType.ACTIVE || snapshot.getType() == SnapshotType.PREVIEW) {
             descriptionLabel.getElement().getStyle().setColor("gray"); //$NON-NLS-1$
         }
+        descriptionLabel.getElement().getStyle().setPadding(0, Unit.PX);
 
         TreeItem treeItem = new TreeItem(panel);
         treeItem.setUserObject(snapshot.isVmConfigurationAvailable() ? snapshot.getId() : true);

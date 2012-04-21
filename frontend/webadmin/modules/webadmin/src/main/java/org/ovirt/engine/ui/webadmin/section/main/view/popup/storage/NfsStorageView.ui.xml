@@ -13,7 +13,7 @@
 		}
 		
 		.nfsPathContentWidget {
-			width: 575px;	
+			width: 585px;	
 		}
 		
 		.nfsMessageLabel {

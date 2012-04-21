@@ -78,7 +78,7 @@ public class BaseVmDiskListModelTable<T extends SearchableListModel> extends Abs
                 return object.getDiskInterface().toString();
             }
         };
-        getTable().addColumn(interfaceColumn, constants.interfaceDisk(), "120px"); //$NON-NLS-1$
+        getTable().addColumn(interfaceColumn, constants.interfaceDisk(), "100px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<DiskImage> statusColumn = new EnumColumn<DiskImage, ImageStatus>() {
             @Override
@@ -86,7 +86,8 @@ public class BaseVmDiskListModelTable<T extends SearchableListModel> extends Abs
                 return object.getimageStatus();
             }
         };
-        getTable().addColumn(statusColumn, constants.statusDisk(), "120px"); //$NON-NLS-1$
+
+        getTable().addColumn(statusColumn, constants.statusDisk(), "100px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<DiskImage> dateCreatedColumn = new FullDateTimeColumn<DiskImage>() {
             @Override
@@ -96,6 +97,13 @@ public class BaseVmDiskListModelTable<T extends SearchableListModel> extends Abs
         };
         getTable().addColumn(dateCreatedColumn, constants.creationDateDisk(), "140px"); //$NON-NLS-1$
 
+        TextColumnWithTooltip<DiskImage> descriptionColumn = new TextColumnWithTooltip<DiskImage>() {
+            @Override
+            public String getValue(DiskImage object) {
+                return object.getDiskDescription();
+            }
+        };
+        getTable().addColumn(descriptionColumn, constants.deactivateDisk());
     }
 
 }
