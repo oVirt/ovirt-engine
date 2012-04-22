@@ -11,7 +11,7 @@ final class TestHelperQueriesCommandType {
     /** @return The private type field, via reflection */
     private static Field getAccessibleQueryTypeField() {
         for (Field f : QueriesCommandBase.class.getDeclaredFields()) {
-            if (f.getName().equals("type")) {
+            if (f.getName().equals("queryType")) {
                 f.setAccessible(true);
                 return f;
             }

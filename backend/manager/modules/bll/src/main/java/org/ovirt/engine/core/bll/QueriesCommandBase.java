@@ -49,7 +49,7 @@ public abstract class QueriesCommandBase<P extends VdcQueryParametersBase> exten
 
     // get correct return value type
     private final VdcQueryReturnValue returnValue;
-    private final VdcQueryType type;
+    private final VdcQueryType queryType;
     private final IVdcUser user;
     private final P parameters;
     private boolean isInternalExecution = false;
@@ -57,7 +57,7 @@ public abstract class QueriesCommandBase<P extends VdcQueryParametersBase> exten
     public QueriesCommandBase(P parameters) {
         this.parameters = parameters;
         returnValue = CreateReturnValue();
-        type = initQueryType();
+        queryType = initQueryType();
         user = initUser();
     }
 
@@ -126,7 +126,7 @@ public abstract class QueriesCommandBase<P extends VdcQueryParametersBase> exten
         // If the user requests filtered execution, his permissions are inconsequential.
         // If the query supports filtering it should be allowed, and if not - not.
         if (parameters.isFiltered()) {
-            return !type.isAdmin();
+            return !queryType.isAdmin();
         }
 
         // If the query was executed internally, it should be allowed in any event.
