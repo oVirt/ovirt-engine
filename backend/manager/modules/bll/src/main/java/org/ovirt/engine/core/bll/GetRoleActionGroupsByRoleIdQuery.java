@@ -1,13 +1,11 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.common.queries.*;
-import org.ovirt.engine.core.dal.dbbroker.*;
+import org.ovirt.engine.core.common.queries.MultilevelAdministrationByRoleIdParameters;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class GetRoleActionGroupsByRoleIdQuery<P extends MultilevelAdministrationByRoleIdParameters>
         extends QueriesCommandBase<P> {
-    public GetRoleActionGroupsByRoleIdQuery(P parameters)
-
-    {
+    public GetRoleActionGroupsByRoleIdQuery(P parameters) {
         super(parameters);
     }
 
