@@ -69,7 +69,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
 
         if (retValue && disk.getVmEntityType() == VmEntityType.TEMPLATE) {
             // Temporary fix until re factoring vm_images_view and image_storage_domain_view
-            disk.setstorage_ids(getDiskImageDAO().get(disk.getId()).getstorage_ids());
+            disk.setstorage_ids(getDiskImageDAO().get(disk.getImageId()).getstorage_ids());
         }
 
         if (retValue
