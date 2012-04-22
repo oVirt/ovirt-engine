@@ -40,6 +40,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmParameters> extends VmCommand<T> {
 
     private static final long serialVersionUID = -2407757772735253053L;
+    List<DiskImage> selectedActiveDisks;
 
     protected CreateAllSnapshotsFromVmCommand(Guid commandId) {
         super(commandId);
@@ -53,10 +54,17 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
         setStoragePoolId(getVm().getstorage_pool_id());
     }
 
+    /**
+     * Filter all allowed snapshot disks.
+     * @return list of disks to be snapshot.
+     */
     private List<DiskImage> getDisksList() {
-        return ImagesHandler.filterImageDisks(DbFacade.getInstance().getDiskDao().getAllForVm(getVmId()),
-                false,
-                true);
+        if (selectedActiveDisks == null) {
+            selectedActiveDisks = ImagesHandler.filterImageDisks(DbFacade.getInstance().getDiskDao().getAllForVm(getVmId()),
+                    false,
+                    true);
+        }
+        return selectedActiveDisks;
     }
 
     @Override
