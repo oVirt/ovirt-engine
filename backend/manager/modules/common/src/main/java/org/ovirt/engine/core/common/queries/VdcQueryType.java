@@ -191,7 +191,7 @@ public enum VdcQueryType implements Serializable {
     GetPermissionsByAdElement,
     GetRolesByAdElementId,
     GetPermissionsByAdElementId(VdcQueryAuthType.User),
-    GetRoleActionGroupsByRoleId,
+    GetRoleActionGroupsByRoleId(VdcQueryAuthType.User),
     IsUserPowerUserOrAbove,
     GetRolesForDelegationByUser,
     GetPermissionsForObject(VdcQueryAuthType.User),

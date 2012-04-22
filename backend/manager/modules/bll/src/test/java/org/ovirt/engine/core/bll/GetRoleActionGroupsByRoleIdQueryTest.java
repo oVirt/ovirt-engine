@@ -1,0 +1,39 @@
+package org.ovirt.engine.core.bll;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.util.Collections;
+import java.util.List;
+
+import org.junit.Test;
+import org.ovirt.engine.core.common.businessentities.ActionGroup;
+import org.ovirt.engine.core.common.queries.MultilevelAdministrationByRoleIdParameters;
+import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.ActionGroupDAO;
+import org.ovirt.engine.core.utils.RandomUtils;
+
+public class GetRoleActionGroupsByRoleIdQueryTest extends AbstractUserQueryTest<MultilevelAdministrationByRoleIdParameters, GetRoleActionGroupsByRoleIdQuery<MultilevelAdministrationByRoleIdParameters>> {
+
+    @Test
+    public void testExecuteQueryCommand() {
+        // Mock parameters
+        Guid roleId = Guid.NewGuid();
+        when(getQueryParameters().getRoleId()).thenReturn(roleId);
+
+        // Mock the expected result
+        ActionGroup group = RandomUtils.instance().nextEnum(ActionGroup.class);
+        List<ActionGroup> expected = Collections.singletonList(group);
+
+        // Mock the DAO
+        ActionGroupDAO actionGroupDAOMock = mock(ActionGroupDAO.class);
+        when(actionGroupDAOMock.getAllForRole(roleId)).thenReturn(expected);
+        when(getDbFacadeMockInstance().getActionGroupDAO()).thenReturn(actionGroupDAOMock);
+
+        // Execute the query and assert the result
+        getQuery().executeQueryCommand();
+
+        assertEquals("Wrong query result", expected, getQuery().getQueryReturnValue().getReturnValue());
+    }
+}
