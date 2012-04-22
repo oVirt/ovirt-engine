@@ -20,8 +20,8 @@ import org.ovirt.engine.core.common.action.CreateSnapshotFromTemplateParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
+import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -48,7 +48,6 @@ import org.ovirt.engine.core.dao.VmDynamicDAO;
 import org.ovirt.engine.core.dao.VmStaticDAO;
 import org.ovirt.engine.core.utils.GuidUtils;
 import org.ovirt.engine.core.utils.linq.All;
-import org.ovirt.engine.core.utils.linq.Function;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -124,22 +123,14 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         return _vmInterfaces;
     }
 
-    protected List<DiskImageBase> _vmDisks;
+    protected List<? extends Disk> _vmDisks;
 
-    protected List<DiskImageBase> getVmDisks() {
+    protected List<? extends Disk> getVmDisks() {
         if (_vmDisks == null) {
             _vmDisks =
-                    LinqUtils.foreach(DbFacade.getInstance()
+                    DbFacade.getInstance()
                             .getDiskImageDAO()
-                            .getAllForVm(getVmTemplateId()),
-                            new Function<DiskImage, DiskImageBase>() {
-                                @Override
-                                public DiskImageBase eval(DiskImage diskImageTemplate) {
-                                    return DbFacade.getInstance()
-                                            .getDiskImageDAO()
-                                            .getSnapshotById(diskImageTemplate.getImageId());
-                                }
-                            });
+                            .getAllForVm(getVmTemplateId());
         }
 
         return _vmDisks;

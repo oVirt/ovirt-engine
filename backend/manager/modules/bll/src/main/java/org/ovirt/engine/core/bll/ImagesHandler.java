@@ -13,6 +13,8 @@ import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.businessentities.BaseDisk;
+import org.ovirt.engine.core.common.businessentities.Disk;
+import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
@@ -371,8 +373,7 @@ public final class ImagesHandler {
             Guid storageDomainId =
                     image.getstorage_ids() != null && !image.getstorage_ids().isEmpty() ? image.getstorage_ids()
                             .get(0) : domainId;
-            Guid imageGroupId = image.getimage_group_id() != null ? image.getimage_group_id().getValue()
-                    : Guid.Empty;
+            Guid imageGroupId = image.getId() != null ? image.getId() : Guid.Empty;
             fromIrs = (DiskImage) Backend
                     .getInstance()
                     .getResourceManager()
@@ -404,12 +405,14 @@ public final class ImagesHandler {
     }
 
     public static boolean CheckImagesConfiguration(Guid storageDomainId,
-            Collection<? extends DiskImageBase> disksConfigList,
+            Collection<? extends Disk> disksConfigList,
             List<String> messages) {
         boolean result = true;
         storage_domain_static storageDomain = DbFacade.getInstance().getStorageDomainStaticDAO().get(storageDomainId);
-        for (DiskImageBase diskInfo : disksConfigList) {
-            result = CheckImageConfiguration(storageDomain, diskInfo, messages);
+        for (Disk diskInfo : disksConfigList) {
+            if (DiskStorageType.IMAGE == diskInfo.getDiskStorageType()) {
+                result = CheckImageConfiguration(storageDomain, (DiskImage) diskInfo, messages);
+            }
             if (!result)
                 break;
         }
@@ -427,7 +430,7 @@ public final class ImagesHandler {
             boolean checkVmInPreview,
             boolean checkVmIsDown,
             boolean checkStorageDomain,
-            boolean checkIsValid, List<DiskImage> diskImageList) {
+            boolean checkIsValid, Collection<DiskImage> diskImageList) {
 
         boolean returnValue = true;
         boolean isValid = checkIsValid
@@ -445,8 +448,9 @@ public final class ImagesHandler {
             if (vm.getstatus() == VMStatus.ImageLocked) {
                 returnValue = false;
             } else if (diskImageList != null) {
-                for (DiskImage diskImage : diskImageList) {
-                    if (diskImage.getimageStatus() == ImageStatus.LOCKED) {
+                for (Disk disk : diskImageList) {
+                    if (DiskStorageType.IMAGE == disk.getDiskStorageType()
+                            && ((DiskImage) disk).getimageStatus() == ImageStatus.LOCKED) {
                         returnValue = false;
                         break;
                     }
@@ -470,7 +474,7 @@ public final class ImagesHandler {
             if (diskImageList == null) {
                 images = DbFacade.getInstance().getDiskImageDAO().getAllForVm(vm.getId());
             } else {
-                images = diskImageList;
+                images = (List<DiskImage>) diskImageList;
             }
             if (images.size() > 0) {
                 returnValue = returnValue &&
@@ -576,6 +580,27 @@ public final class ImagesHandler {
             }
         }
         return returnValue;
+    }
+
+    public static void fillImagesBySnapshots(VM vm) {
+        for (Disk disk : vm.getDiskMap().values()) {
+            if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
+                DiskImage diskImage = (DiskImage) disk;
+                diskImage.getSnapshots().addAll(
+                        ImagesHandler.getAllImageSnapshots(diskImage.getImageId(),
+                                diskImage.getit_guid()));
+            }
+        }
+    }
+
+    public static List<DiskImage> filterDiskBasedOnImages(Collection<Disk> listOfDisks) {
+        List<DiskImage> diskImages = new ArrayList<DiskImage>();
+        for (Disk disk : listOfDisks) {
+            if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
+                diskImages.add((DiskImage) disk);
+            }
+        }
+        return diskImages;
     }
 
     public static void removeDiskImage(DiskImage diskImage) {

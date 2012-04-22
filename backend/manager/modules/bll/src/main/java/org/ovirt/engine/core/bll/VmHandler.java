@@ -9,6 +9,8 @@ import java.util.Map;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CompensationContext;
+import org.ovirt.engine.core.common.businessentities.Disk;
+import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -247,11 +249,16 @@ public class VmHandler {
         updateDisksForVm(vm, imageList);
     }
 
-    public static void updateDisksForVm(VM vm, List<DiskImage> imageList) {
-        for (DiskImage image : imageList) {
-            if (image.getactive() != null && image.getactive()) {
-                vm.getDiskMap().put(image.getinternal_drive_mapping(), image);
-                vm.getDiskList().add(image);
+    public static void updateDisksForVm(VM vm, List<? extends Disk> imageList) {
+        for (Disk disk : imageList) {
+            if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
+                DiskImage image = (DiskImage) disk;
+                if (image.getactive() != null && image.getactive()) {
+                    vm.getDiskMap().put(image.getinternal_drive_mapping(), image);
+                    vm.getDiskList().add(image);
+                }
+            } else {
+                vm.getDiskMap().put(disk.getinternal_drive_mapping(), disk);
             }
         }
     }

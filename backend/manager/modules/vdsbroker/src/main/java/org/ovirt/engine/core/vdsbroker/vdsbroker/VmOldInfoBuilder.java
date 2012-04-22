@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
+import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -52,11 +53,12 @@ public class VmOldInfoBuilder extends VmInfoBuilderBase {
     protected void buildVmDrives() {
         List<Map<String, String>> drives = new ArrayList<Map<String, String>>(vm.getDiskMap().size());
         int ideCount = 0, pciCount = 0;
-        List<DiskImage> diskImages = getSortedDiskImages();
+        List<Disk> disks = getSortedDisks();
         List<VmDevice> vmDiskDevices = DbFacade.getInstance().getVmDeviceDAO().getVmDeviceByVmIdTypeAndDevice(
                 vm.getId(), VmDeviceType.DISK.getName(), VmDeviceType.DISK.getName());
-        for (DiskImage disk : diskImages) {
+        for (Disk temp : disks) {
 
+            DiskImage disk = (DiskImage) temp;
             // Get the VM device for this disk
             VmDevice vmDevice = findVmDeviceForDisk(disk.getId(), vmDiskDevices);
             if (vmDevice == null || vmDevice.getIsPlugged()) {
@@ -64,7 +66,7 @@ public class VmOldInfoBuilder extends VmInfoBuilderBase {
                 drive.put("domainID", disk.getstorage_ids().get(0).toString());
                 drive.put("poolID", disk.getstorage_pool_id().toString());
                 drive.put("volumeID", disk.getImageId().toString());
-                drive.put("imageID", disk.getimage_group_id().toString());
+                drive.put("imageID", disk.getId().toString());
                 drive.put("format", disk.getvolume_format().toString()
                         .toLowerCase());
                 drive.put("propagateErrors", disk.getPropagateErrors().toString()

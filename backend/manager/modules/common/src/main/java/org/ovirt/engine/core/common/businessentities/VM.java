@@ -10,7 +10,7 @@ import java.util.Map;
 
 import javax.validation.Valid;
 
-import org.ovirt.engine.core.common.queries.ValueObjectMap;
+import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.INotifyPropertyChanged;
 import org.ovirt.engine.core.compat.NGuid;
@@ -57,7 +57,7 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         mVmStatistics = new VmStatistics();
         setImages(new ArrayList<DiskImage>());
         setInterfaces(new ArrayList<VmNetworkInterface>());
-        mDiskMap = new HashMap<String, DiskImage>();
+        mDiskMap = new HashMap<String, Disk>();
         mCdPath = "";
         mFloppyPath = "";
         mRunAndPause = false;
@@ -65,7 +65,7 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
     }
 
     public VM(VmStatic vmStatic, VmDynamic vmDynamic, VmStatistics vmStatistics) {
-        mDiskMap = new HashMap<String, DiskImage>();
+        mDiskMap = new HashMap<String, Disk>();
         mCdPath = "";
         mFloppyPath = "";
         mRunAndPause = false;
@@ -102,7 +102,7 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         mVmStatistics = new VmStatistics();
         setImages(new ArrayList<DiskImage>());
         setInterfaces(new ArrayList<VmNetworkInterface>());
-        mDiskMap = new HashMap<String, DiskImage>();
+        mDiskMap = new HashMap<String, Disk>();
         mCdPath = "";
         mFloppyPath = "";
         mRunAndPause = false;
@@ -1047,7 +1047,7 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
     protected void OnPropertyChanged(PropertyChangedEventArgs e) {
     }
 
-    private Map<String, DiskImage> mDiskMap = new HashMap<String, DiskImage>();
+    private Map<String, Disk> mDiskMap = new HashMap<String, Disk>();
 
     // even this field has no setter, it can not have the final modifier because the GWT serialization mechanizm
     // ignores the final fields
@@ -1119,8 +1119,10 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
 
     public double getActualDiskWithSnapshotsSize() {
         if (_actualDiskWithSnapthotsSize == 0 && getDiskMap() != null) {
-            for (DiskImage disk : getDiskMap().values()) {
-                _actualDiskWithSnapthotsSize += disk.getActualDiskWithSnapshotsSize();
+            for (Disk disk : getDiskMap().values()) {
+                if (DiskStorageType.IMAGE == disk.getDiskStorageType()) {
+                    _actualDiskWithSnapthotsSize += ((DiskImage) disk).getActualDiskWithSnapshotsSize();
+                }
             }
         }
         return _actualDiskWithSnapthotsSize;
@@ -1141,8 +1143,10 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
 
     public double getDiskSize() {
         if (_diskSize == 0) {
-            for (DiskImage disk : getDiskMap().values()) {
-                _diskSize += disk.getsize() / Double.valueOf(1024 * 1024 * 1024);
+            for (Disk disk : getDiskMap().values()) {
+                if (DiskStorageType.IMAGE == disk.getDiskStorageType()) {
+                    _diskSize += ((DiskImage) disk).getsize() / Double.valueOf(1024 * 1024 * 1024);
+                }
             }
         }
         return _diskSize;
@@ -1211,29 +1215,19 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         OnPropertyChanged(new PropertyChangedEventArgs("run_on_vds_name"));
     }
 
-    public DiskImage getDriveToImageMap(String drive) {
-        DiskImage image = null;
+    public Disk getDriveToImageMap(String drive) {
+        Disk image = null;
         if (mDiskMap.containsKey(drive)) {
             image = mDiskMap.get(drive);
         }
         return image;
     }
 
-    public ValueObjectMap getDiskValueObjectMap() {
-        return new ValueObjectMap(mDiskMap, false);
-    }
-
-    public void setDiskValueObjectMap(ValueObjectMap serializedDiskMap) {
-        if (serializedDiskMap != null) {
-            mDiskMap = serializedDiskMap.asMap();
-        }
-    }
-
-    public Map<String, DiskImage> getDiskMap() {
+    public Map<String, Disk> getDiskMap() {
         return mDiskMap;
     }
 
-    public void setDiskMap(Map<String, DiskImage> diskMap) {
+    public void setDiskMap(Map<String, Disk> diskMap) {
         mDiskMap = diskMap;
     }
 

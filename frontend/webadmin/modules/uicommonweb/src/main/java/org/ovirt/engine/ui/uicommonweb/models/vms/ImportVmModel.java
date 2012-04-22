@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.StorageType;
@@ -313,18 +314,18 @@ public class ImportVmModel extends ListWithDetailsModel {
     private void initDiskStorageMap() {
         for (Object item : getItems()) {
             VM vm = (VM) item;
-            for (DiskImage disk : vm.getDiskMap().values()) {
+            for (Disk disk : vm.getDiskMap().values()) {
                 if (NGuid.Empty.equals(vm.getvmt_guid())) {
                     Guid storageId = !allDestStorages.isEmpty() ?
                             allDestStorages.get(0).getId() : new Guid();
-                    addToDiskStorageMap(vm.getId(), disk, storageId);
+                    addToDiskStorageMap(vm.getId(), (DiskImage)disk, storageId);
                 }
                 else {
                     ArrayList<Guid> storageIds =
                             templateGuidUniqueStorageDomainDic.get(vm.getvmt_guid());
                     Guid storageId = storageIds != null ?
                             templateGuidUniqueStorageDomainDic.get(vm.getvmt_guid()).get(0) : new Guid();
-                    addToDiskStorageMap(vm.getId(), disk, storageId);
+                    addToDiskStorageMap(vm.getId(), (DiskImage)disk, storageId);
                 }
             }
         }
@@ -546,9 +547,9 @@ public class ImportVmModel extends ListWithDetailsModel {
             VM vm = (VM) item;
 
             if (vm.getDiskMap() != null) {
-                for (java.util.Map.Entry<String, DiskImage> pair : vm
+                for (java.util.Map.Entry<String, Disk> pair : vm
                         .getDiskMap().entrySet()) {
-                    DiskImage disk = pair.getValue();
+                    DiskImage disk = (DiskImage)pair.getValue();
 
                     if (disk.getvolume_type() == VolumeType.Sparse
                             && disk.getvolume_format() == VolumeFormat.RAW
@@ -591,10 +592,10 @@ public class ImportVmModel extends ListWithDetailsModel {
             VM vm = (VM) item;
             java.util.HashMap<String, DiskImageBase> diskDictionary = new java.util.HashMap<String, DiskImageBase>();
 
-            for (java.util.Map.Entry<String, DiskImage> a : vm.getDiskMap()
+            for (java.util.Map.Entry<String, Disk> a : vm.getDiskMap()
                     .entrySet()) {
                 if (a.getValue().getQueryableId().equals(disk.getQueryableId())) {
-                    a.getValue().setvolume_type(tempVolumeType);
+                    ((DiskImage)a.getValue()).setvolume_type(tempVolumeType);
                     break;
                 }
             }

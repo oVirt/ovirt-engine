@@ -15,6 +15,8 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.CopyVolumeType;
+import org.ovirt.engine.core.common.businessentities.Disk;
+import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageOperation;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
@@ -58,7 +60,7 @@ public abstract class AddVmAndCloneImageCommand<T extends VmManagementParameters
         ImagesHandler.setDiskAlias(newDiskImage, getVm());
         MoveOrCopyImageGroupParameters parameters = createCopyParameters(newDiskImage,
                 srcStorageDomainId,
-                diskImage.getimage_group_id(),
+                diskImage.getId(),
                 diskImage.getImageId(), parentCommandType);
         VdcReturnValueBase result = executeChildCopyingCommand(parameters);
         handleCopyResult(newDiskImage, parameters, result);
@@ -96,7 +98,7 @@ public abstract class AddVmAndCloneImageCommand<T extends VmManagementParameters
                 new MoveOrCopyImageGroupParameters(diskImage.getvm_guid(),
                         srcImageGroupId,
                         srcImageId,
-                        diskImage.getimage_group_id(),
+                        diskImage.getId(),
                         diskImage.getImageId(),
                         diskImage.getstorage_ids().get(0),
                         ImageOperation.Copy);
@@ -140,7 +142,7 @@ public abstract class AddVmAndCloneImageCommand<T extends VmManagementParameters
         retDiskImage.setit_guid(Guid.Empty);
         retDiskImage.setvm_snapshot_id(getVmSnapshotId());
         retDiskImage.setvm_guid(newVmId);
-        retDiskImage.setimage_group_id(newImageGroupId);
+        retDiskImage.setId(newImageGroupId);
         retDiskImage.setlast_modified_date(new Date());
         retDiskImage.setvolume_format(srcDiskImage.getvolume_format());
         retDiskImage.setvolume_type(srcDiskImage.getvolume_type());
@@ -203,11 +205,14 @@ public abstract class AddVmAndCloneImageCommand<T extends VmManagementParameters
                     storageDomainsMap.put(storageDomain.getId(), storageDomain);
                 }
             }
-            for (DiskImage image : getDiskImagesToBeCloned()) {
-                for (Guid storageId : image.getstorage_ids()) {
-                    if (storageDomainsMap.containsKey(storageId)) {
-                        diskInfoDestinationMap.put(image.getImageId(), image);
-                        break;
+            for (Disk disk : getDiskImagesToBeCloned()) {
+                if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
+                    DiskImage image = (DiskImage) disk;
+                    for (Guid storageId : image.getstorage_ids()) {
+                        if (storageDomainsMap.containsKey(storageId)) {
+                            diskInfoDestinationMap.put(image.getImageId(), image);
+                            break;
+                        }
                     }
                 }
             }
@@ -246,7 +251,7 @@ public abstract class AddVmAndCloneImageCommand<T extends VmManagementParameters
         Guid vmId = param.getContainerId();
         DiskImage diskImage = new DiskImage();
         diskImage.setvm_guid(vmId);
-        diskImage.setimage_group_id(imageGroupId);
+        diskImage.setId(imageGroupId);
         diskImage.setImageId(imageId);
         return diskImage;
     }

@@ -21,6 +21,8 @@ public abstract class Disk extends BaseDisk {
     private VmEntityType vmEntityType;
     private boolean boot;
     private Boolean plugged;
+    // TODO comes from image_vm_map
+    private Guid vm_guidField = Guid.Empty;
 
     public Disk() {
     }
@@ -67,6 +69,14 @@ public abstract class Disk extends BaseDisk {
         this.plugged = plugged;
     }
 
+    public Guid getvm_guid() {
+        return this.vm_guidField;
+    }
+
+    public void setvm_guid(Guid value) {
+        this.vm_guidField = value;
+    }
+
     @Deprecated
     public String getinternal_drive_mapping() {
         return Integer.toString(getInternalDriveMapping());
@@ -86,6 +96,7 @@ public abstract class Disk extends BaseDisk {
         result = prime * result + (boot ? 1231 : 1237);
         result = prime * result + ((plugged == null) ? 0 : plugged.hashCode());
         result = prime * result + ((vmEntityType == null) ? 0 : vmEntityType.hashCode());
+        result = prime * result + ((vm_guidField == null) ? 0 : vm_guidField.hashCode());
         return result;
     }
 
@@ -106,6 +117,11 @@ public abstract class Disk extends BaseDisk {
         } else if (!plugged.equals(other.plugged))
             return false;
         if (vmEntityType != other.vmEntityType)
+            return false;
+        if (vm_guidField == null) {
+            if (other.vm_guidField != null)
+                return false;
+        } else if (!vm_guidField.equals(other.vm_guidField))
             return false;
         return true;
     }

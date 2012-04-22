@@ -39,7 +39,7 @@ public class AddImageFromScratchCommand<T extends AddImageFromScratchParameters>
         if (ProcessImageInIrs()) {
             mNewCreatedDiskImage = new DiskImage();
             mNewCreatedDiskImage.setImageId(getDestinationImageId());
-            mNewCreatedDiskImage.setinternal_drive_mapping(getParameters().getDiskInfo().getinternal_drive_mapping());
+            mNewCreatedDiskImage.setInternalDriveMapping(getParameters().getDiskInfo().getInternalDriveMapping());
             mNewCreatedDiskImage.setboot(getParameters().getDiskInfo().getboot());
             mNewCreatedDiskImage.setDiskInterface(getParameters().getDiskInfo().getDiskInterface());
             mNewCreatedDiskImage.setPropagateErrors(getParameters().getDiskInfo().getPropagateErrors());
@@ -48,7 +48,7 @@ public class AddImageFromScratchCommand<T extends AddImageFromScratchParameters>
             mNewCreatedDiskImage.setDiskDescription(getParameters().getDiskInfo().getDiskDescription());
             mNewCreatedDiskImage.setShareable(getParameters().getDiskInfo().isShareable());
             mNewCreatedDiskImage.setvm_guid(getParameters().getMasterVmId());
-            mNewCreatedDiskImage.setimage_group_id(getImageGroupId());
+            mNewCreatedDiskImage.setId(getImageGroupId());
             mNewCreatedDiskImage.setstorage_pool_id(getParameters().getStoragePoolId());
             mNewCreatedDiskImage.setstorage_ids(new ArrayList<Guid>(Arrays.asList(getParameters().getStorageDomainId())));
             mNewCreatedDiskImage.setsize(getParameters().getDiskInfo().getsize());

@@ -31,8 +31,6 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
     private int writeRateFromDiskImageDynamic;
     private Guid imageId = Guid.Empty;
     private String appList;
-    // TODO comes from image_vm_map
-    private Guid vm_guidField = Guid.Empty;
     private Guid parentId = Guid.Empty;
     private Guid it_guid = Guid.Empty;
     // TODO from storage_domain_static
@@ -92,7 +90,7 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
         this.setinternal_drive_mapping(internal_drive_mapping);
         this.it_guid = it_guid;
         this.setsize(size);
-        this.vm_guidField = vm_guid;
+        setvm_guid(vm_guid);
         this.setParentId(parentId);
         this.setimageStatus(imageStatus);
         this.setlastModified(lastModified);
@@ -199,14 +197,6 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
     @Override
     public void setit_guid(Guid value) {
         this.it_guid = value;
-    }
-
-    public Guid getvm_guid() {
-        return this.vm_guidField;
-    }
-
-    public void setvm_guid(Guid value) {
-        this.vm_guidField = value;
     }
 
     public Guid getParentId() {
@@ -376,7 +366,7 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
         di.imageId = new Guid(diskImage.imageId.getUuid());
         di.appList = diskImage.appList;
         di.it_guid = new Guid(diskImage.it_guid.getUuid());
-        di.vm_guidField = new Guid(diskImage.vm_guidField.getUuid());
+        di.setvm_guid(diskImage.getvm_guid());
         di.parentId = new Guid(diskImage.parentId.getUuid());
         di.status = diskImage.status;
         di.lastModified = new Date(diskImage.lastModified.getTime());
@@ -384,7 +374,7 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
         di.vmSnapshotId = new NGuid(diskImage.vmSnapshotId.getUuid());
         di.mstorage_path = diskImage.mstorage_path;
         di.setId(diskImage.getId());
-        di.setinternal_drive_mapping(diskImage.getinternal_drive_mapping());
+        di.setInternalDriveMapping(diskImage.getInternalDriveMapping());
         di.setDiskInterface(diskImage.getDiskInterface());
         di.setWipeAfterDelete(diskImage.isWipeAfterDelete());
         di.setPropagateErrors(diskImage.getPropagateErrors());
@@ -429,7 +419,6 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
         result = prime * result + ((storage_pool_idField == null) ? 0 : storage_pool_idField.hashCode());
         result = prime * result + ((storagesNames == null) ? 0 : storagesNames.hashCode());
         result = prime * result + ((vmSnapshotId == null) ? 0 : vmSnapshotId.hashCode());
-        result = prime * result + ((vm_guidField == null) ? 0 : vm_guidField.hashCode());
         result = prime * result + writeRateFromDiskImageDynamic;
         return result;
     }
@@ -517,11 +506,6 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
             if (other.vmSnapshotId != null)
                 return false;
         } else if (!vmSnapshotId.equals(other.vmSnapshotId))
-            return false;
-        if (vm_guidField == null) {
-            if (other.vm_guidField != null)
-                return false;
-        } else if (!vm_guidField.equals(other.vm_guidField))
             return false;
         if (writeRateFromDiskImageDynamic != other.writeRateFromDiskImageDynamic)
             return false;

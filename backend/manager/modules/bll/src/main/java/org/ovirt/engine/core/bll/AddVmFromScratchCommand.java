@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -10,11 +12,10 @@ import org.ovirt.engine.core.common.action.AddImageFromScratchParameters;
 import org.ovirt.engine.core.common.action.AddVmFromScratchParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
-import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
@@ -67,18 +68,19 @@ public class AddVmFromScratchCommand<T extends AddVmFromScratchParameters> exten
         if (disks.isEmpty() && !getParameters().getVmStaticData().getvmt_guid().equals(Guid.Empty)) {
             throw new VdcBLLException(VdcBllErrors.VM_TEMPLATE_CANT_LOCATE_DISKS_IN_DB);
         }
-        // only one (first) disk can be boot disk, make all other disks not boot
-        DiskImageBase defBootDisk = LinqUtils.firstOrNull(getVmDisks(), new Predicate<DiskImageBase>() {
-            @Override
-            public boolean eval(DiskImageBase diskImageBase) {
-                return diskImageBase.getboot();
+
+        Disk defBootDisk = null;
+        for(Disk disk : getVmDisks()) {
+            if(disk.getboot()) {
+                defBootDisk = disk;
+                break;
             }
-        });
+        }
 
         if (defBootDisk != null) {
-            for (DiskImageBase diskImageBase : getVmDisks()) {
-                if (diskImageBase != defBootDisk)
-                    diskImageBase.setboot(false);
+            for (Disk disk : getVmDisks()) {
+                if (!disk.equals(defBootDisk))
+                    disk.setboot(false);
             }
         }
         return (!disks.isEmpty()) ? ConcreteAddVmImages(disks.get(0).getImageId()) : true;
@@ -89,21 +91,21 @@ public class AddVmFromScratchCommand<T extends AddVmFromScratchParameters> exten
 
         if (getVmDisks().size() > 0) {
             int drivesCount = 1;
-            for (DiskImageBase diskInfo : getVmDisks()) {
-                diskInfo.setinternal_drive_mapping((Integer.toString(drivesCount)));
+            for (Disk diskInfo : getVmDisks()) {
+                diskInfo.setInternalDriveMapping(drivesCount);
 
+                VdcReturnValueBase tmpRetValue = null;
                 AddImageFromScratchParameters tempVar = new AddImageFromScratchParameters(itGuid, getParameters()
-                        .getVmStaticData().getId(), diskInfo);
+                            .getVmStaticData().getId(), (DiskImage) diskInfo);
                 tempVar.setStorageDomainId(this.getStorageDomainId().getValue());
                 tempVar.setVmSnapshotId(getVmSnapshotId());
                 tempVar.setParentCommand(VdcActionType.AddVmFromScratch);
                 tempVar.setEntityId(getParameters().getEntityId());
                 tempVar.setParentParemeters(getParameters());
-                VdcReturnValueBase tmpRetValue = Backend.getInstance().runInternalAction(
+                tmpRetValue = Backend.getInstance().runInternalAction(
                                 VdcActionType.AddImageFromScratch,
                                 tempVar,
                                 ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
-
                 drivesCount++;
                 if (!tmpRetValue.getSucceeded()) {
                     log.error("AddVmFromScratchCommand::ConcreteAddVmImages: AddImageFromScratch Command failed.");
@@ -119,8 +121,7 @@ public class AddVmFromScratchCommand<T extends AddVmFromScratchParameters> exten
             VmHandler.LockVm(getParameters().getVmStaticData().getId());
         } else {
             // if no disks send update vm here
-            UpdateVmInSpm(getVm().getstorage_pool_id(),
-                    new java.util.ArrayList<VM>(java.util.Arrays.asList(new VM[] { getVm() })));
+            UpdateVmInSpm(getVm().getstorage_pool_id(), Arrays.asList(getVm()));
         }
 
         return ret;
@@ -147,24 +148,11 @@ public class AddVmFromScratchCommand<T extends AddVmFromScratchParameters> exten
         return result;
     }
 
-    // protected override List<Interface> VmInterfaces
-    // {
-    // get
-    // {
-    // if (_vmInterfaces == null)
-    // {
-    // _vmInterfaces = AddVmFromScratchParametersData.Interfaces ?? new
-    // List<Interface>();
-    // }
-    // return _vmInterfaces;
-    // }
-    // }
-
     @Override
-    protected List<DiskImageBase> getVmDisks() {
+    protected List<? extends Disk> getVmDisks() {
         if (_vmDisks == null) {
             _vmDisks = ((getParameters().getDiskInfoList()) != null) ? getParameters().getDiskInfoList()
-                    : new java.util.ArrayList<DiskImageBase>();
+                    : new ArrayList<Disk>();
         }
         return _vmDisks;
     }

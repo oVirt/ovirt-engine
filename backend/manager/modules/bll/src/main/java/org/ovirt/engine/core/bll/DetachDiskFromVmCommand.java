@@ -35,7 +35,7 @@ public class DetachDiskFromVmCommand<T extends UpdateVmDiskParameters> extends A
             retValue = isDiskExist(diskImage);
         }
         if (retValue) {
-            vmDevice = getVmDeviceDao().get(new VmDeviceId(diskImage.getimage_group_id(), getVmId()));
+            vmDevice = getVmDeviceDao().get(new VmDeviceId(diskImage.getId(), getVmId()));
             if (vmDevice == null) {
                 retValue = false;
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_ALREADY_DETACHED);
@@ -67,7 +67,6 @@ public class DetachDiskFromVmCommand<T extends UpdateVmDiskParameters> extends A
         if (Boolean.TRUE.equals(getParameters().getDiskInfo().getPlugged()) && getVm().getstatus() != VMStatus.Down) {
             performPlugCommnad(VDSCommandType.HotUnPlugDisk, diskImage, vmDevice);
         }
-        diskImage.setinternal_drive_mapping(null);
         getDiskImageDao().update(diskImage);
         getVmDeviceDao().remove(vmDevice.getId());
         // update cached image

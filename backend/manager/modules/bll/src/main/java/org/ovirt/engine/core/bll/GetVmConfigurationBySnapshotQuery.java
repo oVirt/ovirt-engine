@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
+import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
@@ -64,7 +65,8 @@ public class GetVmConfigurationBySnapshotQuery<P extends GetVmConfigurationBySna
         // image data is written to OVF
         Map<Guid, DiskImage> imagesInDbMap = ImagesHandler.getDiskImagesByIdMap(imagesInDb);
         for (DiskImage fromConfigImg : vm.getImages()) {
-            if (!imagesInDbMap.containsKey(fromConfigImg.getImageId())) {
+            if (fromConfigImg.getDiskStorageType() == DiskStorageType.IMAGE
+                    && !imagesInDbMap.containsKey(fromConfigImg.getImageId())) {
                 log.debugFormat("Image {0} of Disk {1} cannot be found in database. This image will be returned as ILLEGAL from the query",
                         fromConfigImg.getImageId(),
                         fromConfigImg.getId());

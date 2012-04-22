@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll;
 import java.util.Collections;
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImagesComparerByName;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.queries.GetUserVmsByUserIdAndGroupsParameters;
@@ -23,10 +22,7 @@ public class GetUserVmsByUserIdAndGroupsQuery<P extends GetUserVmsByUserIdAndGro
             if (getParameters().getIncludeDiskData()) {
                 VmHandler.updateDisksFromDb(vm);
                 Collections.sort(vm.getDiskList(), new ImagesComparerByName());
-                for (DiskImage diskImage : vm.getDiskMap().values()) {
-                    diskImage.getSnapshots().addAll(
-                            ImagesHandler.getAllImageSnapshots(diskImage.getImageId(), diskImage.getit_guid()));
-                }
+                ImagesHandler.fillImagesBySnapshots(vm);
             }
         }
         return vmList;

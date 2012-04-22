@@ -8,7 +8,7 @@ import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -157,10 +157,10 @@ public abstract class VmInfoBuilderBase {
         }
     }
 
-    protected List<DiskImage> getSortedDiskImages() {
+    protected List<Disk> getSortedDisks() {
         // order first by drive numbers and then order by boot for the bootable
         // drive to be first (important for IDE to be index 0) !
-        List<DiskImage> diskImages = new ArrayList<DiskImage>(vm.getDiskMap()
+        List<Disk> diskImages = new ArrayList<Disk>(vm.getDiskMap()
                 .values());
         Collections.sort(diskImages, new DiskImageByDriveMappingComparator());
         Collections.sort(diskImages,

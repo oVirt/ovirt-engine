@@ -171,7 +171,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
         return returnValue;
     }
 
-    protected boolean RemoveVmImages(java.util.ArrayList<DiskImage> images) {
+    protected boolean RemoveVmImages(List<DiskImage> images) {
         RemoveAllVmImagesParameters tempVar = new RemoveAllVmImagesParameters(getVmId(), images);
         tempVar.setParentCommand(getActionType());
         tempVar.setEntityId(getParameters().getEntityId());

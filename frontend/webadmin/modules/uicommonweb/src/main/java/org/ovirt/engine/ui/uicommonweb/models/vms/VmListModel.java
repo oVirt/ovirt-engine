@@ -27,7 +27,6 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.Quota;
@@ -2424,7 +2423,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
                 model.StartProgress(null);
 
                 Frontend.RunAction(VdcActionType.AddVmFromScratch, new AddVmFromScratchParameters(getcurrentVm(),
-                        new java.util.ArrayList<DiskImageBase>(),
+                        new java.util.ArrayList<DiskImage>(),
                         NGuid.Empty),
                         new IFrontendActionAsyncCallback() {
                             @Override

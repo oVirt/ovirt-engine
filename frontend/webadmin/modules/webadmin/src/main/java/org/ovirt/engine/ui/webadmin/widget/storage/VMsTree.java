@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
+import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
@@ -65,7 +66,11 @@ public class VMsTree<M extends SearchableListModel> extends AbstractSubTabTree<M
 
     @Override
     protected ArrayList<DiskImage> getNodeObjects(VM vm) {
-        return new ArrayList<DiskImage>(vm.getDiskMap().values());
+        ArrayList<DiskImage> diskImages = new ArrayList<DiskImage>();
+        for (Disk disk : vm.getDiskMap().values()) {
+            diskImages.add((DiskImage) disk);
+        }
+        return diskImages;
     }
 
     @Override

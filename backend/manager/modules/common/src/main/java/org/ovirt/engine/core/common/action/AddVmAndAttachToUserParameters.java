@@ -1,24 +1,18 @@
 package org.ovirt.engine.core.common.action;
 
-import org.ovirt.engine.core.compat.*;
-import org.ovirt.engine.core.common.businessentities.*;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlType;
+import java.util.ArrayList;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "AddVmAndAttachToUserParameters")
+import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.VmStatic;
+import org.ovirt.engine.core.compat.Guid;
+
 public class AddVmAndAttachToUserParameters extends AddVmFromScratchParameters {
     private static final long serialVersionUID = -5240624372284576720L;
 
-    @XmlElement
     private boolean _fromScratch;
+    private Guid _userId = Guid.Empty;
 
-    @XmlElement(name = "UserId")
-    private Guid _userId = new Guid();
-
-    public AddVmAndAttachToUserParameters(VmStatic vmStatic, java.util.ArrayList<DiskImageBase> diskInfoList,
+    public AddVmAndAttachToUserParameters(VmStatic vmStatic, ArrayList<DiskImage> diskInfoList,
             boolean fromScratch, Guid userId, Guid storageDomainId) {
         super(vmStatic, diskInfoList, storageDomainId);
         _fromScratch = fromScratch;

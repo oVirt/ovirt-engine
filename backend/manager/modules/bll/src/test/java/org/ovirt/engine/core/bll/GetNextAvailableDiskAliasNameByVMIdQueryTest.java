@@ -15,6 +15,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.queries.GetAllDisksByVmIdParameters;
@@ -63,9 +64,9 @@ public class GetNextAvailableDiskAliasNameByVMIdQueryTest extends AbstractQueryT
     public void testExecuteQueryWithOneImage() throws Exception {
         mockDAOForQuery();
         vm = mockVm();
-        Map<String, DiskImage> diskMap = vm.getDiskMap();
+        Map<String, Disk> diskMap = vm.getDiskMap();
         DiskImage diskImage = new DiskImage();
-        diskImage.setinternal_drive_mapping("1");
+        diskImage.setInternalDriveMapping(1);
         diskImage.setImageId(Guid.NewGuid());
         diskMap.put("1", diskImage);
         Mockito.when(vmDAO.get(vmId)).thenReturn(vm);
@@ -80,13 +81,13 @@ public class GetNextAvailableDiskAliasNameByVMIdQueryTest extends AbstractQueryT
     public void testExecuteQueryWithMissisngImage() throws Exception {
         mockDAOForQuery();
         vm = mockVm();
-        Map<String, DiskImage> diskMap = vm.getDiskMap();
+        Map<String, Disk> diskMap = vm.getDiskMap();
         DiskImage diskImage = new DiskImage();
-        diskImage.setinternal_drive_mapping("1");
+        diskImage.setInternalDriveMapping(1);
         diskImage.setImageId(Guid.NewGuid());
         diskMap.put("1", diskImage);
         DiskImage secondDiskImage = new DiskImage();
-        diskImage.setinternal_drive_mapping("4");
+        diskImage.setInternalDriveMapping(4);
         diskImage.setImageId(Guid.NewGuid());
         diskMap.put("4", secondDiskImage);
         Mockito.when(vmDAO.get(vmId)).thenReturn(vm);
@@ -116,7 +117,7 @@ public class GetNextAvailableDiskAliasNameByVMIdQueryTest extends AbstractQueryT
         vm = new VM();
         vm.setId(vmId);
         vm.setvm_name(VM_NAME);
-        vm.setDiskMap(new HashMap<String, DiskImage>());
+        vm.setDiskMap(new HashMap<String, Disk>());
         return vm;
     }
 }

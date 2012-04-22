@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.common.businessentities.Disk;
+import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.Entities;
@@ -172,8 +174,8 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
     @Override
     protected void buildVmDrives() {
         // \\int ideCount = 0, pciCount = 0;
-        List<DiskImage> diskImages = getSortedDiskImages();
-        for (DiskImage disk : diskImages) {
+        List<Disk> disks = getSortedDisks();
+        for (Disk disk : disks) {
             XmlRpcStruct struct = new XmlRpcStruct();
             // get vm device for this disk from DB
             VmDevice vmDevice =
@@ -208,14 +210,17 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                     struct.add(VdsProperties.Index, 0);
                 }
                 addAddress(vmDevice, struct);
-                struct.add(VdsProperties.PoolId, disk.getstorage_pool_id().toString());
-                struct.add(VdsProperties.DomainId, disk.getstorage_ids().get(0).toString());
-                struct.add(VdsProperties.ImageId, disk.getimage_group_id().toString());
-                struct.add(VdsProperties.VolumeId, disk.getImageId().toString());
+                if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
+                    DiskImage diskImage = (DiskImage) disk;
+                    struct.add(VdsProperties.PoolId, diskImage.getstorage_pool_id().toString());
+                    struct.add(VdsProperties.DomainId, diskImage.getstorage_ids().get(0).toString());
+                    struct.add(VdsProperties.ImageId, diskImage.getId().toString());
+                    struct.add(VdsProperties.VolumeId, diskImage.getImageId().toString());
+                    struct.add(VdsProperties.Format, diskImage.getvolume_format().toString()
+                            .toLowerCase());
+                }
 
                 addBootOrder(vmDevice, struct);
-                struct.add(VdsProperties.Format, disk.getvolume_format().toString()
-                        .toLowerCase());
                 struct.add(VdsProperties.PropagateErrors, disk.getPropagateErrors().toString()
                         .toLowerCase());
                 struct.add(VdsProperties.Optional, Boolean.FALSE.toString());

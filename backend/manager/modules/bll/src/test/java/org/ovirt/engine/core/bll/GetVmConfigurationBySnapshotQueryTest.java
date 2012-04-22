@@ -12,6 +12,7 @@ import static org.mockito.Mockito.when;
 import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
+import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
@@ -69,7 +70,7 @@ public class GetVmConfigurationBySnapshotQueryTest extends AbstractUserQueryTest
     private DiskImage createDiskImage(Guid diskImageId, Guid imageGroupId) {
         DiskImage diskImage = new DiskImage();
         diskImage.setImageId(diskImageId);
-        diskImage.setimage_group_id(imageGroupId);
+        diskImage.setId(imageGroupId);
         return diskImage;
     }
 
@@ -127,8 +128,8 @@ public class GetVmConfigurationBySnapshotQueryTest extends AbstractUserQueryTest
         VdcQueryReturnValue returnValue = query.getQueryReturnValue();
         assertNotNull("Return value from query cannot be null", returnValue);
         VM vm = (VM) returnValue.getReturnValue();
-        for (DiskImage diskImage : vm.getDiskMap().values()) {
-            assertEquals(diskImage.getimageStatus(), ImageStatus.ILLEGAL);
+        for (Disk diskImage : vm.getDiskMap().values()) {
+            assertEquals(((DiskImage)diskImage).getimageStatus(), ImageStatus.ILLEGAL);
         }
     }
 

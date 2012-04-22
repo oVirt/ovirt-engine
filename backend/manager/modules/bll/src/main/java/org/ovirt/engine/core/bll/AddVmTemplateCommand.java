@@ -277,11 +277,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             storageDomains.put(destImageDomain, storage);
         }
         // update vm snapshots for storage free space check
-        for (DiskImage diskImage : getVm().getDiskMap().values()) {
-            diskImage.getSnapshots().addAll(
-                    ImagesHandler.getAllImageSnapshots(diskImage.getImageId(),
-                            diskImage.getit_guid()));
-        }
+        ImagesHandler.fillImagesBySnapshots(getVm());
 
         Map<storage_domains, Integer> domainMap =
                 StorageDomainValidator.getSpaceRequirementsForStorageDomains(

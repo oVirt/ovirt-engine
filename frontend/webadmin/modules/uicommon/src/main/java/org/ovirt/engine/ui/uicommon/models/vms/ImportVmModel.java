@@ -193,9 +193,9 @@ public class ImportVmModel extends ListWithDetailsModel
 
 			if (vm.getDiskMap() != null)
 			{
-				for (java.util.Map.Entry<String, DiskImage> pair : vm.getDiskMap().entrySet())
+				for (java.util.Map.Entry<String, Disk> pair : vm.getDiskMap().entrySet())
 				{
-					DiskImage disk = pair.getValue();
+					DiskImage disk = (DiskImage)pair.getValue();
 
 					if (disk.getvolume_type() == VolumeType.Sparse && disk.getvolume_format() == VolumeFormat.RAW && destinationStorage != null && (destinationStorage.getstorage_type() == StorageType.ISCSI || destinationStorage.getstorage_type() == StorageType.FCP))
 					{

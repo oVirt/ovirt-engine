@@ -181,7 +181,7 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
 
     protected Collection<DiskImage> getDiskImagesFromConfiguration() {
         if (diskImagesFromConfiguration == null) {
-            diskImagesFromConfiguration = vmFromConfiguration.getDiskMap().values();
+            diskImagesFromConfiguration = ImagesHandler.filterDiskBasedOnImages(vmFromConfiguration.getDiskMap().values());
         }
         return diskImagesFromConfiguration;
     }
@@ -203,7 +203,7 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
                 // that more than one clone will be made from this snapshot
                 // So this is required to avoid PK violation at DB.
                 diskImage.setImageId(Guid.NewGuid());
-                diskImage.setimage_group_id(Guid.NewGuid());
+                diskImage.setId(Guid.NewGuid());
                 diskImage.setParentId(Guid.Empty);
                 diskImage.setit_guid(Guid.Empty);
                 diskImage.setvm_guid(getVmId());

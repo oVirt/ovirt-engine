@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.RemoveVmFromImportExportParamenters;
@@ -80,7 +81,7 @@ public class RemoveVmFromImportExportCommand<T extends RemoveVmFromImportExportP
     @Override
     protected void ExecuteVmCommand() {
         RemoveVmInSpm(getParameters().getStoragePoolId(), getVmId(), getParameters().getStorageDomainId());
-        ArrayList<DiskImage> images = new ArrayList<DiskImage>(getVm().getDiskMap().values());
+        List<DiskImage> images = ImagesHandler.filterDiskBasedOnImages(getVm().getDiskMap().values());
         for (DiskImage image : images) {
             image.setstorage_ids(new ArrayList<Guid>(Arrays.asList(getParameters().getStorageDomainId())));
             image.setstorage_pool_id(getParameters().getStoragePoolId());

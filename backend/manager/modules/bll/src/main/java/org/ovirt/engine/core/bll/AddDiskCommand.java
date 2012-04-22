@@ -16,6 +16,8 @@ import org.ovirt.engine.core.common.action.AddImageFromScratchParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
+import org.ovirt.engine.core.common.businessentities.Disk;
+import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
@@ -59,15 +61,6 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         super(parameters);
         parameters.getDiskInfo().setId(Guid.NewGuid());
         parameters.setEntityId(parameters.getDiskInfo().getId());
-        setQuotaId(parameters.getDiskInfo() != null ? parameters.getDiskInfo().getQuotaId() : null);
-    }
-
-    public String getDiskName() {
-        return getParameters() == null
-                || getParameters().getDiskInfo() == null
-                || getParameters().getDiskInfo().getinternal_drive_mapping() == null
-                ? "[N/A]"
-                : String.format("Disk %1$s", getParameters().getDiskInfo().getinternal_drive_mapping());
     }
 
     @Override
@@ -88,10 +81,10 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
                     returnValue = false;
                     addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_MATCH);
                 }
-                returnValue = returnValue &&
-                                ImagesHandler.CheckImageConfiguration(
+                returnValue = returnValue && DiskStorageType.IMAGE == getParameters().getDiskInfo().getDiskStorageType()
+                              && ImagesHandler.CheckImageConfiguration(
                                         getStorageDomain().getStorageStaticData(),
-                                        getParameters().getDiskInfo(),
+                                        (DiskImage)getParameters().getDiskInfo(),
                                         getReturnValue().getCanDoActionMessages())
                                         && (vm == null || isDiskPassPCIAndIDELimit(getParameters().getDiskInfo()));
             }
@@ -129,22 +122,21 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         return returnValue;
     }
 
+    private long getRequestDiskSpace() {
+        if (getParameters().getDiskInfo().getDiskStorageType() == DiskStorageType.IMAGE) {
+            return ((DiskImage) getParameters().getDiskInfo()).getSizeInGigabytes();
+        }
+        return 0;
+    }
+
     @Override
     protected boolean isVmExist() {
         return getParameters().getVmId() == null || Guid.Empty.equals(getParameters().getVmId()) || super.isVmExist();
     }
 
-    private VolumeType getVolumeType() {
-        return getParameters().getDiskInfo().getvolume_type();
-    }
-
-    private long getRequestDiskSpace() {
-        return getParameters().getDiskInfo().getSizeInGigabytes();
-    }
-
     private boolean hasFreeSpace(storage_domains storageDomain) {
-        if (getVolumeType() == VolumeType.Preallocated) {
-            return StorageDomainSpaceChecker.hasSpaceForRequest(storageDomain, getRequestDiskSpace());
+        if (((DiskImage)getParameters().getDiskInfo()).getvolume_type() == VolumeType.Preallocated) {
+            return StorageDomainSpaceChecker.hasSpaceForRequest(storageDomain, ((DiskImage)getParameters().getDiskInfo()).getSizeInGigabytes());
         } else {
             return StorageDomainSpaceChecker.isBelowThresholds(storageDomain);
         }
@@ -179,7 +171,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
      * @return The ID of the storage domain where the VM's disks reside.
      */
     private Guid getDisksStorageDomainId() {
-        return getVm().getDiskMap().values().iterator().next().getstorage_ids().get(0);
+        return ((DiskImage)getVm().getDiskMap().values().iterator().next()).getstorage_ids().get(0);
     }
 
     @Override
@@ -197,16 +189,20 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
 
     @Override
     protected boolean validateQuota() {
-        // Set default quota id if storage pool enforcement is disabled.
-        getParameters().setQuotaId(QuotaHelper.getInstance().getQuotaIdToConsume(getParameters().getDiskInfo().getQuotaId(),
-                getStoragePool()));
+        if (getParameters().getDiskInfo().getDiskStorageType() == DiskStorageType.IMAGE) {
+            // Set default quota id if storage pool enforcement is disabled.
+            getParameters().setQuotaId(QuotaHelper.getInstance()
+                    .getQuotaIdToConsume(((DiskImage) getParameters().getDiskInfo()).getQuotaId(),
+                            getStoragePool()));
 
-        return (QuotaManager.validateStorageQuota(getStorageDomainId().getValue(),
-                getParameters().getQuotaId(),
-                getStoragePool().getQuotaEnforcementType(),
-                new Double(getRequestDiskSpace()),
-                getCommandId(),
-                getReturnValue().getCanDoActionMessages()));
+            return (QuotaManager.validateStorageQuota(getStorageDomainId().getValue(),
+                    getParameters().getQuotaId(),
+                    getStoragePool().getQuotaEnforcementType(),
+                    new Double(getRequestDiskSpace()),
+                    getCommandId(),
+                    getReturnValue().getCanDoActionMessages()));
+        }
+        return true;
     }
 
     @Override
@@ -241,7 +237,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
 
         // create from blank template, create new vm snapshot id
         AddImageFromScratchParameters parameters =
-                new AddImageFromScratchParameters(Guid.Empty, getParameters().getVmId(), getParameters().getDiskInfo());
+                new AddImageFromScratchParameters(Guid.Empty, getParameters().getVmId(), (DiskImage)getParameters().getDiskInfo());
         parameters.setQuotaId(getParameters().getQuotaId());
         parameters.setStorageDomainId(getStorageDomainId().getValue());
         parameters.setParentCommand(VdcActionType.AddDisk);
@@ -272,11 +268,11 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         setSucceeded(tmpRetValue.getSucceeded());
     }
 
-    private void addDiskPermissions(DiskImage diskImage) {
+    private void addDiskPermissions(Disk disk) {
         permissions perms =
                 new permissions(getCurrentUser().getUserId(),
                         PredefinedRoles.DISK_OPERATOR.getId(),
-                        diskImage.getimage_group_id(),
+                        disk.getId(),
                         VdcObjectType.Disk);
         MultiLevelAdministrationHandler.addPermission(perms);
     }

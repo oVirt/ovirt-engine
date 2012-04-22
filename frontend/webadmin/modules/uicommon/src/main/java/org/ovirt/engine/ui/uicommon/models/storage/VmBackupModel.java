@@ -215,13 +215,13 @@ public class VmBackupModel extends ManageBackupModel implements ITaskTarget
 			storage_domains destinationStorage = (storage_domains)model.getDestinationStorage().getSelectedItem();
 
 			java.util.HashMap<String, DiskImageBase> disks = new java.util.HashMap<String, DiskImageBase>();
-			for (java.util.Map.Entry<String, DiskImage> a : vm.getDiskMap().entrySet())
+			for (java.util.Map.Entry<String, Disk> a : vm.getDiskMap().entrySet())
 			{
-				DiskImage disk = a.getValue();
+				DiskImage disk = (DiskImage)a.getValue();
 				//Assign a right volume format for each disk.
 				disk.setvolume_format(DataProvider.GetDiskVolumeFormat(disk.getvolume_type(), destinationStorage.getstorage_type()));
 
-				disks.put(a.getKey(), a.getValue());
+				disks.put(a.getKey(), disk);
 			}
 
 			ImportVmParameters tempVar = new ImportVmParameters(vm, model.getSourceStorage().getId(), destinationStorage.getId(), model.getStoragePool().getId(), cluster.getId());

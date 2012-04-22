@@ -1,4 +1,5 @@
 package org.ovirt.engine.ui.uicommon.models.userportal;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
@@ -1137,7 +1138,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
 		{
 			if (gettempVm().getvmt_guid().equals(Guid.Empty))
 			{
-				AddVmFromScratchParameters parameters = new AddVmFromScratchParameters(gettempVm(), new java.util.ArrayList<DiskImageBase>(), Guid.Empty);
+				AddVmFromScratchParameters parameters = new AddVmFromScratchParameters(gettempVm(), new ArrayList<DiskImage>(), Guid.Empty);
 				parameters.setMakeCreatorExplicitOwner(true);
 
 				Frontend.RunAction(VdcActionType.AddVmFromScratch, parameters,

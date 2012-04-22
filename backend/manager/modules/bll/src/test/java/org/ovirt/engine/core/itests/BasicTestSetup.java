@@ -161,7 +161,7 @@ public class BasicTestSetup {
         vm.setMigrationSupport(MigrationSupport.MIGRATABLE);
         vm.setcreation_date(now);
 
-        ArrayList<DiskImageBase> diskInfoList = new ArrayList<DiskImageBase>();
+        ArrayList<DiskImage> diskInfoList = new ArrayList<DiskImage>();
 
         VmManagementParametersBase addVmFromScratchParams = new AddVmFromScratchParameters(vm, diskInfoList,
                 getStorage().getId());

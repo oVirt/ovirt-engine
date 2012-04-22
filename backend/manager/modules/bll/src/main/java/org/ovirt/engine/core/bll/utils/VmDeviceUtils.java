@@ -11,6 +11,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.BaseDisk;
+import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmBase;
@@ -106,7 +107,7 @@ public class VmDeviceUtils {
             if (VmDeviceType.DISK.getName().equals(device.getType())
                     && VmDeviceType.DISK.getName().equals(device.getDevice())) {
                 if (diskCount < disks.size()) {
-                    id = (disks.get(diskCount++)).getimage_group_id();
+                    id = (disks.get(diskCount++)).getId();
                 }
             } else if (VmDeviceType.INTERFACE.getName().equals(device.getType())) {
                 if (ifaceCount < ifaces.size()) {
@@ -363,7 +364,7 @@ public class VmDeviceUtils {
      */
     protected static Set<BaseDisk> getDisks(Collection<DiskImage> diskImages) {
         Map<Guid, BaseDisk> diskMap = new HashMap<Guid, BaseDisk>();
-        for (DiskImage diskImage : diskImages) {
+        for (Disk diskImage : diskImages) {
             diskMap.put(diskImage.getId(), diskImage);
         }
         return new HashSet<BaseDisk>(diskMap.values());

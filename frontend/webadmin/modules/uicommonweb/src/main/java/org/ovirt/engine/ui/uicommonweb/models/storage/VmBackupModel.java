@@ -11,6 +11,7 @@ import org.ovirt.engine.core.common.action.RemoveVmFromImportExportParamenters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
@@ -289,9 +290,9 @@ public class VmBackupModel extends ManageBackupModel {
             prm.setCopyCollapse((Boolean) model.getCollapseSnapshots().getEntity());
             HashMap<String, DiskImageBase> diskDictionary = new java.util.HashMap<String, DiskImageBase>();
 
-            for (Map.Entry<String, DiskImage> entry : vm.getDiskMap().entrySet()) {
+            for (Map.Entry<String, Disk> entry : vm.getDiskMap().entrySet()) {
                 String key = entry.getKey();
-                DiskImage disk = entry.getValue();
+                DiskImage disk = (DiskImage)entry.getValue();
 
                 HashMap<Guid, Guid> map = model.getDiskStorageMap().get(vm.getId());
                 storage_domains domain = (Boolean) model.getIsSingleDestStorage().getEntity() ?

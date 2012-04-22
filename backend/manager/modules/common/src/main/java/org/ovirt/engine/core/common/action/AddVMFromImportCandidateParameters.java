@@ -1,5 +1,9 @@
 package org.ovirt.engine.core.common.action;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
+import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.compat.*;
 import org.ovirt.engine.core.common.businessentities.*;
 import javax.xml.bind.annotation.XmlElement;
@@ -46,8 +50,8 @@ public class AddVMFromImportCandidateParameters extends AddVmFromScratchParamete
 
     public AddVMFromImportCandidateParameters(CandidateInfoParameters candidateInfoParameters, boolean force,
             Guid storageDomainId) {
-        super(new VmStatic(), new java.util.ArrayList<DiskImageBase>(
-                java.util.Arrays.asList(new DiskImageBase[] { new DiskImageBase() })), storageDomainId);
+        super(new VmStatic(), new ArrayList<DiskImage>(
+                Arrays.asList(new DiskImage())), storageDomainId);
         _vmNewName = null;
         _candidateInfoParameters = candidateInfoParameters;
         setForce(force);
@@ -65,8 +69,8 @@ public class AddVMFromImportCandidateParameters extends AddVmFromScratchParamete
      */
     public AddVMFromImportCandidateParameters(CandidateInfoParameters candidateInfoParameters, String vmNewName,
             boolean force, Guid storageDomainId) {
-        super(new VmStatic(), new java.util.ArrayList<DiskImageBase>(
-                java.util.Arrays.asList(new DiskImageBase[] { new DiskImageBase() })), storageDomainId);
+        super(new VmStatic(), new ArrayList<DiskImage>(
+                Arrays.asList(new DiskImage())), storageDomainId);
         _candidateInfoParameters = candidateInfoParameters;
         _vmNewName = vmNewName;
         setForce(force);

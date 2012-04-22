@@ -2066,7 +2066,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 
 				model.StartProgress(null);
 
-				Frontend.RunAction(VdcActionType.AddVmFromScratch, new AddVmFromScratchParameters(getcurrentVm(), new java.util.ArrayList<DiskImageBase>(), Guid.Empty),
+				Frontend.RunAction(VdcActionType.AddVmFromScratch, new AddVmFromScratchParameters(getcurrentVm(), new ArrayList<DiskImage>(), Guid.Empty),
 		new IFrontendActionAsyncCallback() {
 			@Override
 			public void Executed(FrontendActionAsyncResult  result) {

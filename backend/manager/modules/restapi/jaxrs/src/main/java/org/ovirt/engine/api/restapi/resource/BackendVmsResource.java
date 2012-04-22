@@ -31,7 +31,6 @@ import org.ovirt.engine.core.common.action.RemoveVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
@@ -137,10 +136,10 @@ public class BackendVmsResource extends
         }
     }
 
-    private HashMap<Guid, DiskImage> getDiskImagesByIdMap(Collection<DiskImage> values) {
+    private HashMap<Guid, DiskImage> getDiskImagesByIdMap(Collection<org.ovirt.engine.core.common.businessentities.Disk> values) {
         HashMap<Guid, DiskImage> result = new HashMap<Guid, DiskImage>();
-        for (DiskImage diskImage : values) {
-            result.put(diskImage.getImageId(), diskImage);
+        for (org.ovirt.engine.core.common.businessentities.Disk diskImage : values) {
+            result.put(((DiskImage) diskImage).getImageId(), (DiskImage) diskImage);
         }
         return result;
     }
@@ -223,10 +222,10 @@ public class BackendVmsResource extends
                                new QueryIdResolver(VdcQueryType.GetVmByVmId, GetVmByVmIdParameters.class));
     }
 
-    private ArrayList<DiskImageBase> mapDisks(Disks disks) {
-        ArrayList<DiskImageBase> diskImages = null;
+    private ArrayList<DiskImage> mapDisks(Disks disks) {
+        ArrayList<DiskImage> diskImages = null;
         if (disks!=null && disks.isSetDisks()) {
-            diskImages = new ArrayList<DiskImageBase>();
+            diskImages = new ArrayList<DiskImage>();
             for (Disk disk : disks.getDisks()) {
                 DiskImage diskImage = DiskMapper.map(disk, null);
                 diskImages.add(diskImage);

@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.common.action;
 
-import org.ovirt.engine.core.common.businessentities.DiskImageBase;
+import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.compat.Guid;
 
 public class AddDiskParameters extends VmDiskOperatinParameterBase {
@@ -11,7 +11,7 @@ public class AddDiskParameters extends VmDiskOperatinParameterBase {
     public AddDiskParameters() {
     }
 
-    public AddDiskParameters(Guid vmId, DiskImageBase diskInfo) {
+    public AddDiskParameters(Guid vmId, Disk diskInfo) {
         super(vmId, diskInfo);
     }
 

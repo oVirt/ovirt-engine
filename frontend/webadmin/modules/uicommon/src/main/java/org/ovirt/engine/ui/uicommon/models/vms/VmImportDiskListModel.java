@@ -61,8 +61,9 @@ public class VmImportDiskListModel extends VmDiskListModel
 		if (vm != null && vm.getDiskMap() != null)
 		{
 			java.util.ArrayList<DiskModel> list = new java.util.ArrayList<DiskModel>();
-			for (DiskImage img : vm.getDiskMap().values())
+			for (Disk disk : vm.getDiskMap().values())
 			{
+			    DiskImage img = (DiskImage)disk;
 				DiskModel model = new DiskModel();
 				model.setName(img.getinternal_drive_mapping());
 				EntityModel tempVar = new EntityModel();
@@ -107,9 +108,9 @@ public class VmImportDiskListModel extends VmDiskListModel
 			{
 				DiskModel model = (DiskModel)item;
 
-				for (java.util.Map.Entry<String, DiskImage> kvp : vm.getDiskMap().entrySet())
+				for (java.util.Map.Entry<String, Disk> kvp : vm.getDiskMap().entrySet())
 				{
-					DiskImage disk = kvp.getValue();
+					DiskImage disk = (DiskImage)kvp.getValue();
 					ListModel volumeType = model.getVolumeType();
 					if (StringHelper.stringsEqual(disk.getinternal_drive_mapping(), model.getName()))
 					{

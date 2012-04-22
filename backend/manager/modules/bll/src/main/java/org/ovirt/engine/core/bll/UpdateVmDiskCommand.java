@@ -10,6 +10,8 @@ import org.ovirt.engine.core.common.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.UpdateVmDiskParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
+import org.ovirt.engine.core.common.businessentities.Disk;
+import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -32,7 +34,6 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
 
     public UpdateVmDiskCommand(T parameters) {
         super(parameters);
-        setQuotaId(parameters.getDiskInfo() != null ? parameters.getDiskInfo().getQuotaId() : null);
         _oldDisk = getDiskImageDao().get(getParameters().getImageId());
     }
 
@@ -62,18 +63,20 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
     @Override
     protected boolean validateQuota() {
         boolean quotaValid = true;
-        shouldUpdateQuotaForDisk = !_oldDisk.getQuotaId().equals(getQuotaId());
-        if (shouldUpdateQuotaForDisk) {
-            // Set default quota id if storage pool enforcement is disabled.
-            getParameters().setQuotaId(QuotaHelper.getInstance().getQuotaIdToConsume(getQuotaId(),
-                    getStoragePool()));
-            setStorageDomainId(_oldDisk.getstorage_ids().get(0).getValue());
-            quotaValid = (QuotaManager.validateStorageQuota(getStorageDomainId().getValue(),
-                    getParameters().getQuotaId(),
-                    getStoragePool().getQuotaEnforcementType(),
-                    new Double(getParameters().getDiskInfo().getSizeInGigabytes()),
-                    getCommandId(),
-                    getReturnValue().getCanDoActionMessages()));
+        if (DiskStorageType.IMAGE == _oldDisk.getDiskStorageType()) {
+            shouldUpdateQuotaForDisk = !_oldDisk.getQuotaId().equals(getQuotaId());
+            if (shouldUpdateQuotaForDisk) {
+                // Set default quota id if storage pool enforcement is disabled.
+                getParameters().setQuotaId(QuotaHelper.getInstance().getQuotaIdToConsume(getQuotaId(),
+                        getStoragePool()));
+                setStorageDomainId(_oldDisk.getstorage_ids().get(0).getValue());
+                quotaValid = (QuotaManager.validateStorageQuota(getStorageDomainId().getValue(),
+                        getParameters().getQuotaId(),
+                        getStoragePool().getQuotaEnforcementType(),
+                        new Double(((DiskImage)getParameters().getDiskInfo()).getSizeInGigabytes()),
+                        getCommandId(),
+                        getReturnValue().getCanDoActionMessages()));
+            }
         }
         return quotaValid;
     }
@@ -105,8 +108,8 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
         }
         if (retValue && getParameters().getDiskInfo().getboot()) {
             VmHandler.updateDisksFromDb(getVm());
-            for (DiskImage disk : getVm().getDiskMap().values()) {
-                if (disk.getboot() && !getParameters().getImageId().equals(disk.getImageId())) {
+            for (Disk disk : getVm().getDiskMap().values()) {
+                if (disk.getboot() && !disk.getId().equals(_oldDisk.getId())) {
                     retValue = false;
                     addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_BOOT_IN_USE);
                     getReturnValue().getCanDoActionMessages().add(
@@ -123,7 +126,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
         if (listPermissionSubjects == null) {
             listPermissionSubjects = new ArrayList<PermissionSubject>();
 
-            Guid diskId = _oldDisk == null ? null : _oldDisk.getimage_group_id();
+            Guid diskId = _oldDisk == null ? null : _oldDisk.getId();
             listPermissionSubjects.add(new PermissionSubject(diskId,
                     VdcObjectType.Disk,
                     ActionGroup.EDIT_DISK_PROPERTIES));

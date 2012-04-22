@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -72,6 +71,7 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
         // not checking storage domain, there is a check in
         // CheckTemplateInStorageDomain later
         VmHandler.updateDisksFromDb(getVm());
+        List<DiskImage> diskImages = ImagesHandler.filterDiskBasedOnImages(getVm().getDiskMap().values());
         retValue = retValue && ImagesHandler.PerformImagesChecks(getVm(),
                                 getReturnValue().getCanDoActionMessages(),
                                 getVm().getstorage_pool_id(),
@@ -84,15 +84,15 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
                                 true,
                                 false,
                                 true,
-                                new ArrayList<DiskImage>(getVm().getDiskMap().values()));
+                                diskImages);
         setStoragePoolId(getVm().getstorage_pool_id());
 
-        ensureDomainMap(getVm().getDiskMap().values(), getParameters().getStorageDomainId());
-        for(DiskImage disk : getVm().getDiskMap().values()) {
+        ensureDomainMap(diskImages, getParameters().getStorageDomainId());
+        for(DiskImage disk : diskImages) {
             imageFromSourceDomainMap.put(disk.getImageId(), disk);
         }
 
-        retValue = retValue && checkTemplateInStorageDomain();
+        retValue = retValue && checkTemplateInStorageDomain(diskImages);
 
         if (retValue
                 && DbFacade.getInstance()
@@ -109,10 +109,7 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
         }
 
         // update vm snapshots for storage free space check
-        for (DiskImage diskImage : getVm().getDiskMap().values()) {
-            diskImage.getSnapshots().addAll(
-                    ImagesHandler.getAllImageSnapshots(diskImage.getImageId(), diskImage.getit_guid()));
-        }
+        ImagesHandler.fillImagesBySnapshots(getVm());
         return retValue && destinationHasSpace();
     }
 
@@ -125,16 +122,16 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
         return true;
     }
 
-    protected boolean checkTemplateInStorageDomain() {
+    protected boolean checkTemplateInStorageDomain(List<DiskImage> diskImages) {
         boolean retValue = CheckStorageDomain() && checkStorageDomainStatus(StorageDomainStatus.Active)
-                && checkIfDisksExist(getVm().getDiskMap().values());
+                && checkIfDisksExist(diskImages);
         if (retValue && !VmTemplateHandler.BlankVmTemplateId.equals(getVm().getvmt_guid())) {
             List<DiskImage> imageList = DbFacade.getInstance().getDiskImageDAO().getAllForVm(getVm().getvmt_guid());
             Map<Guid, DiskImage> templateImagesMap = new HashMap<Guid, DiskImage>();
             for (DiskImage image : imageList) {
                 templateImagesMap.put(image.getImageId(), image);
             }
-            for (DiskImage image : getVm().getDiskMap().values()) {
+            for (DiskImage image : diskImages) {
                 if (templateImagesMap.containsKey(image.getit_guid())) {
                     if (!templateImagesMap.get(image.getit_guid())
                             .getstorage_ids()

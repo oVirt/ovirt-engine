@@ -18,6 +18,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.ovirt.engine.core.bll.context.CompensationContext;
+import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -100,7 +101,7 @@ public class VmHandlerTest {
         VM vm = new VM();
         vm.setstatus(VMStatus.Down);
         vm.setvm_name("VM_TEST_NAME");
-        Map<String, DiskImage> disks = new HashMap<String, DiskImage>();
+        Map<String, Disk> disks = new HashMap<String, Disk>();
         disks.put("1", new DiskImage());
         vm.setDiskMap(disks);
         return vm;

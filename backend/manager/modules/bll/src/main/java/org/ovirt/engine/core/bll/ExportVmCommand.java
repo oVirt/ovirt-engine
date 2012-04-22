@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,8 +18,9 @@ import org.ovirt.engine.core.common.action.MoveVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.CopyVolumeType;
+import org.ovirt.engine.core.common.businessentities.Disk;
+import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
@@ -42,17 +44,16 @@ import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.utils.linq.Function;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.ovf.OvfManager;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplateCommand<T> {
+
+    private List<DiskImage> disksImages;
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -90,11 +91,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
         VmHandler.updateDisksFromDb(getVm());
 
         // update vm snapshots for storage free space check
-        for (DiskImage diskImage : getVm().getDiskMap().values()) {
-            diskImage.getSnapshots().addAll(
-                                ImagesHandler.getAllImageSnapshots(diskImage.getImageId(),
-                                        diskImage.getit_guid()));
-        }
+        ImagesHandler.fillImagesBySnapshots(getVm());
 
         setStoragePoolId(getVm().getstorage_pool_id());
 
@@ -125,21 +122,21 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
         }
 
         if (retVal) {
-            Map<String, ? extends DiskImageBase> images = getParameters().getDiskInfoList();
+            Map<String, ? extends Disk> images = getParameters().getDiskInfoList();
             if (images == null) {
                 images = getVm().getDiskMap();
             }
             // check that the images requested format are valid (COW+Sparse)
             retVal = ImagesHandler.CheckImagesConfiguration(getParameters().getStorageDomainId(),
-                    new ArrayList<DiskImageBase>(images.values()),
+                    new ArrayList<Disk>(images.values()),
                     getReturnValue().getCanDoActionMessages());
 
             if (retVal && getParameters().getCopyCollapse()) {
-                for (DiskImage img : getVm().getDiskMap().values()) {
+                for (DiskImage img : getDisksBasedOnImage()) {
                     if (images.containsKey(img.getinternal_drive_mapping())) {
                         // check that no RAW format exists (we are in collapse
                         // mode)
-                        if (images.get(img.getinternal_drive_mapping()).getvolume_format() == VolumeFormat.RAW
+                        if (((DiskImage) images.get(img.getinternal_drive_mapping())).getvolume_format() == VolumeFormat.RAW
                                 && img.getvolume_format() != VolumeFormat.RAW) {
                             addCanDoActionMessage(VdcBllMessages.VM_CANNOT_EXPORT_RAW_FORMAT);
                             retVal = false;
@@ -162,12 +159,9 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW);
         }
 
-        if (retVal) {
-            DiskImage image = LinqUtils.first(getVm().getDiskMap().values());
-            if (image == null) {
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_HAS_NO_DISKS);
-                retVal = false;
-            }
+        if (retVal && getVm().getDiskMap().size() == 0) {
+            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_HAS_NO_DISKS);
+            retVal = false;
         }
 
         retVal =
@@ -184,7 +178,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
                                     true,
                                     true,
                                     true,
-                                    new ArrayList<DiskImage>(getVm().getDiskMap().values()));
+                                    getDisksBasedOnImage());
 
         if (!retVal) {
             addCanDoActionMessage(VdcBllMessages.VAR__ACTION__EXPORT);
@@ -211,59 +205,59 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
         }
     }
 
-    public boolean UpdateCopyVmInSpm(Guid storagePoolId, List<VM> vmsList, Guid storageDomainId) {
+    public boolean UpdateCopyVmInSpm(Guid storagePoolId, VM vm, Guid storageDomainId) {
         HashMap<Guid, KeyValuePairCompat<String, List<Guid>>> vmsAndMetaDictionary =
-                new HashMap<Guid, KeyValuePairCompat<String, List<Guid>>>(
-                        vmsList.size());
+                new HashMap<Guid, KeyValuePairCompat<String, List<Guid>>>();
         OvfManager ovfManager = new OvfManager();
-        for (VM vm : vmsList) {
-            ArrayList<DiskImage> AllVmImages = new ArrayList<DiskImage>();
-            VmHandler.updateDisksFromDb(vm);
-            List<VmNetworkInterface> interfaces = vm.getInterfaces();
-            if (interfaces != null) {
-                // TODO remove this when the API changes
-                interfaces.clear();
-                interfaces.addAll(DbFacade.getInstance().getVmNetworkInterfaceDAO().getAllForVm(vm.getId()));
-            }
-            for (DiskImage disk : vm.getDiskMap().values()) {
-                disk.setParentId(VmTemplateHandler.BlankVmTemplateId);
-                disk.setit_guid(VmTemplateHandler.BlankVmTemplateId);
-                disk.setstorage_ids(new ArrayList<Guid>(Arrays.asList(storageDomainId)));
-                DiskImage diskForVolumeInfo = getDiskForVolumeInfo(disk);
-                disk.setvolume_format(diskForVolumeInfo.getvolume_format());
-                disk.setvolume_type(diskForVolumeInfo.getvolume_type());
+        ArrayList<DiskImage> AllVmImages = new ArrayList<DiskImage>();
+        VmHandler.updateDisksFromDb(vm);
+        List<VmNetworkInterface> interfaces = vm.getInterfaces();
+        if (interfaces != null) {
+            // TODO remove this when the API changes
+            interfaces.clear();
+            interfaces.addAll(DbFacade.getInstance().getVmNetworkInterfaceDAO().getAllForVm(vm.getId()));
+        }
+        for (Disk disk : vm.getDiskMap().values()) {
+            if (DiskStorageType.IMAGE == disk.getDiskStorageType()) {
+                DiskImage diskImage = (DiskImage) disk;
+                diskImage.setParentId(VmTemplateHandler.BlankVmTemplateId);
+                diskImage.setit_guid(VmTemplateHandler.BlankVmTemplateId);
+                diskImage.setstorage_ids(new ArrayList<Guid>(Arrays.asList(storageDomainId)));
+                DiskImage diskForVolumeInfo = getDiskForVolumeInfo(diskImage);
+                diskImage.setvolume_format(diskForVolumeInfo.getvolume_format());
+                diskImage.setvolume_type(diskForVolumeInfo.getvolume_type());
                 VDSReturnValue vdsReturnValue = Backend
-                        .getInstance()
-                        .getResourceManager()
-                        .RunVdsCommand(
-                                VDSCommandType.GetImageInfo,
-                                new GetImageInfoVDSCommandParameters(storagePoolId, storageDomainId, disk
-                                        .getimage_group_id().getValue(), disk.getImageId()));
+                            .getInstance()
+                            .getResourceManager()
+                            .RunVdsCommand(
+                                    VDSCommandType.GetImageInfo,
+                                    new GetImageInfoVDSCommandParameters(storagePoolId, storageDomainId, diskImage
+                                            .getId(), diskImage.getImageId()));
                 if (vdsReturnValue != null && vdsReturnValue.getSucceeded()) {
                     DiskImage fromVdsm = (DiskImage) vdsReturnValue.getReturnValue();
-                    disk.setactual_size(fromVdsm.getactual_size());
+                    diskImage.setactual_size(fromVdsm.getactual_size());
                 }
-                AllVmImages.add(disk);
+                AllVmImages.add(diskImage);
             }
-            if (StringHelper.isNullOrEmpty(vm.getvmt_name())) {
-                VmTemplate t = DbFacade.getInstance().getVmTemplateDAO()
-                        .get(vm.getvmt_guid());
-                vm.setvmt_name(t.getname());
-            }
-            getVm().setvmt_guid(VmTemplateHandler.BlankVmTemplateId);
-            String vmMeta = null;
-            RefObject<String> tempRefObject = new RefObject<String>(vmMeta);
-            ovfManager.ExportVm(tempRefObject, vm, AllVmImages);
-            vmMeta = tempRefObject.argvalue;
-            List<Guid> imageGroupIds = LinqUtils.foreach(vm.getDiskMap().values(), new Function<DiskImage, Guid>() {
-                @Override
-                public Guid eval(DiskImage diskImage) {
-                    return diskImage.getimage_group_id().getValue();
-                }
-            });
-            vmsAndMetaDictionary
-                    .put(vm.getId(), new KeyValuePairCompat<String, List<Guid>>(vmMeta, imageGroupIds));
         }
+        if (StringHelper.isNullOrEmpty(vm.getvmt_name())) {
+            VmTemplate t = DbFacade.getInstance().getVmTemplateDAO()
+                        .get(vm.getvmt_guid());
+            vm.setvmt_name(t.getname());
+        }
+        getVm().setvmt_guid(VmTemplateHandler.BlankVmTemplateId);
+        String vmMeta = null;
+        RefObject<String> tempRefObject = new RefObject<String>(vmMeta);
+        ovfManager.ExportVm(tempRefObject, vm, AllVmImages);
+        vmMeta = tempRefObject.argvalue;
+        List<Guid> imageGroupIds = new ArrayList<Guid>();
+        for(Disk disk : vm.getDiskMap().values()) {
+            if(disk.getDiskStorageType() == DiskStorageType.IMAGE) {
+                imageGroupIds.add(disk.getId());
+            }
+        }
+        vmsAndMetaDictionary
+                    .put(vm.getId(), new KeyValuePairCompat<String, List<Guid>>(vmMeta, imageGroupIds));
         UpdateVMVDSCommandParameters tempVar = new UpdateVMVDSCommandParameters(storagePoolId, vmsAndMetaDictionary);
         tempVar.setStorageDomainId(storageDomainId);
         return Backend.getInstance().getResourceManager().RunVdsCommand(VDSCommandType.UpdateVM, tempVar)
@@ -272,14 +266,21 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
 
     @Override
     protected void MoveOrCopyAllImageGroups() {
-        MoveOrCopyAllImageGroups(getVm().getId(), getVm().getDiskMap().values());
+        MoveOrCopyAllImageGroups(getVm().getId(), getDisksBasedOnImage());
+    }
+
+    private Collection<DiskImage> getDisksBasedOnImage() {
+        if (disksImages == null) {
+            disksImages = ImagesHandler.filterDiskBasedOnImages(getVm().getDiskMap().values());
+        }
+        return disksImages;
     }
 
     @Override
     protected void MoveOrCopyAllImageGroups(Guid containerID, Iterable<DiskImage> disks) {
         for (DiskImage disk : disks) {
             MoveOrCopyImageGroupParameters tempVar = new MoveOrCopyImageGroupParameters(containerID, disk
-                    .getimage_group_id().getValue(), disk.getImageId(), getParameters().getStorageDomainId(),
+                    .getId(), disk.getImageId(), getParameters().getStorageDomainId(),
                     getMoveOrCopyImageOperation());
             tempVar.setParentCommand(getActionType());
             tempVar.setEntityId(getParameters().getEntityId());
@@ -296,7 +297,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
                             VdcActionType.MoveOrCopyImageGroup,
                             p,
                             ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
-            if(!vdcRetValue.getSucceeded()) {
+            if (!vdcRetValue.getSucceeded()) {
                 throw new VdcBLLException(vdcRetValue.getFault().getError(), "Failed during ExportVmCommand");
             }
             getParameters().getImagesParameters().add(p);
@@ -341,7 +342,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
                 tempVar);
 
         if (qretVal.getSucceeded()) {
-            java.util.ArrayList<VM> vms = (java.util.ArrayList<VM>) qretVal.getReturnValue();
+            ArrayList<VM> vms = (ArrayList<VM>) qretVal.getReturnValue();
             for (VM vm : vms) {
                 if (vm.getId().equals(getVm().getId())) {
                     if (!getParameters().getForceOverride()) {
@@ -424,7 +425,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
                         DbFacade.getInstance().getSnapshotDao().getId(vm.getId(), SnapshotType.ACTIVE));
                 vm.setSnapshots(Arrays.asList(activeSnapshot));
                 UpdateCopyVmInSpm(getVm().getstorage_pool_id(),
-                        Arrays.asList(vm), getParameters()
+                        vm, getParameters()
                                 .getStorageDomainId());
             } else {
                 vm.setSnapshots(DbFacade.getInstance().getSnapshotDao().getAllWithConfiguration(getVm().getId()));
@@ -456,6 +457,4 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
 
         setSucceeded(true);
     }
-
-    private static Log log = LogFactory.getLog(ExportVmCommand.class);
 }

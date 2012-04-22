@@ -32,7 +32,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
@@ -62,18 +61,14 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
     public NGuid getStorageDomainId() {
         if (_storageDomainId.equals(Guid.Empty) && getVm() != null) {
             VmHandler.updateDisksFromDb(getVm());
-            if (getVm().getDiskMap().size() > 0) {
-                _storageDomainId = LinqUtils.first(getVm().getDiskMap().values()).getstorage_ids().get(0);
-            } else {
-                List<storage_domain_static> domainsInPool = DbFacade.getInstance()
+            List<storage_domain_static> domainsInPool = DbFacade.getInstance()
                         .getStorageDomainStaticDAO().getAllForStoragePool(getVm().getstorage_pool_id());
-                if (domainsInPool.size() > 0) {
-                    for (storage_domain_static currDomain : domainsInPool) {
-                        if (currDomain.getstorage_domain_type().equals(StorageDomainType.Master)
+            if (domainsInPool.size() > 0) {
+                for (storage_domain_static currDomain : domainsInPool) {
+                    if (currDomain.getstorage_domain_type().equals(StorageDomainType.Master)
                                 || currDomain.getstorage_domain_type().equals(StorageDomainType.Data)) {
-                            _storageDomainId = currDomain.getId();
-                            break;
-                        }
+                        _storageDomainId = currDomain.getId();
+                        break;
                     }
                 }
             }

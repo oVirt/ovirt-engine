@@ -2,15 +2,13 @@ package org.ovirt.engine.core.dal.comparators;
 
 import java.util.Comparator;
 
-import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.Disk;
 
-public class DiskImageByDriveMappingComparator implements Comparator<DiskImage> {
+public class DiskImageByDriveMappingComparator implements Comparator<Disk> {
 
     @Override
-    public int compare(DiskImage o1, DiskImage o2) {
-        String internalDriveMapping1 = o1.getinternal_drive_mapping();
-        String internalDriveMapping2 = o2.getinternal_drive_mapping();
-        return internalDriveMapping1.compareTo(internalDriveMapping2);
+    public int compare(Disk o1, Disk o2) {
+        return o1.getInternalDriveMapping() - o2.getInternalDriveMapping();
     }
 
 }

@@ -22,6 +22,8 @@ import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.CopyVolumeType;
+import org.ovirt.engine.core.common.businessentities.Disk;
+import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
@@ -85,7 +87,12 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
         parameters.setEntityId(getVm().getId());
         setVdsGroupId(parameters.getVdsGroupId());
         if (parameters.getVm() != null && getVm().getDiskMap() != null) {
-            imageList = new ArrayList<DiskImage>(getVm().getDiskMap().values());
+            imageList = new ArrayList<DiskImage>();
+            for (Disk disk : getVm().getDiskMap().values()) {
+                if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
+                    imageList.add((DiskImage) disk);
+                }
+            }
         }
         ensureDomainMap(imageList, getParameters().getDestDomainId());
     }
@@ -166,7 +173,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
                                     }
                                 }
                             }
-                            if (image.getimage_group_id().equals(p.getimage_group_id())
+                            if (image.getId().equals(p.getId())
                                     && !imageToDestinationDomainMap.containsKey(image.getImageId())) {
                                 imageToDestinationDomainMap.put(image.getImageId(),
                                         imageToDestinationDomainMap.get(p.getImageId()));
@@ -225,7 +232,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
         }
         if (retVal && getParameters().getCopyCollapse() && getParameters().getDiskInfoList() != null) {
             for (DiskImageBase imageBase : getParameters().getDiskInfoList().values()) {
-                DiskImage key = getVm().getDiskMap()
+                DiskImage key = (DiskImage)getVm().getDiskMap()
                         .get(imageBase.getinternal_drive_mapping());
                 if (key != null) {
                     retVal =
@@ -298,8 +305,8 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
         // Set default quota id if storage pool enforcement is disabled.
         getParameters().setQuotaId(QuotaHelper.getInstance().getQuotaIdToConsume(getVm().getStaticData().getQuotaId(),
                 getStoragePool()));
-        for (DiskImage dit : getVm().getDiskMap().values()) {
-            dit.setQuotaId(QuotaHelper.getInstance()
+        for (Disk dit : getVm().getDiskMap().values()) {
+            ((DiskImage) dit).setQuotaId(QuotaHelper.getInstance()
                     .getQuotaIdToConsume(getVm().getStaticData().getQuotaId(),
                             getStoragePool()));
         }
@@ -444,7 +451,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
 
     @Override
     protected void MoveOrCopyAllImageGroups() {
-        MoveOrCopyAllImageGroups(getVm().getId(), getVm().getDiskMap().values());
+        MoveOrCopyAllImageGroups(getVm().getId(), ImagesHandler.filterDiskBasedOnImages(getVm().getDiskMap().values()));
     }
 
     @Override
@@ -452,7 +459,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
         for (DiskImage disk : disks) {
             Guid destinationDomain = imageToDestinationDomainMap.get(disk.getImageId());
             MoveOrCopyImageGroupParameters p = new MoveOrCopyImageGroupParameters(containerID, disk
-                    .getimage_group_id().getValue(), disk.getImageId(), destinationDomain,
+                    .getId(), disk.getImageId(), destinationDomain,
                     getMoveOrCopyImageOperation());
             p.setParentCommand(getActionType());
             p.setEntityId(getParameters().getEntityId());
@@ -762,9 +769,9 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
                 DbFacade.getInstance().getDiskImageDAO().remove(disk.getImageId());
 
                 List<DiskImage> imagesForDisk =
-                        DbFacade.getInstance().getDiskImageDAO().getAllSnapshotsForImageGroup(disk.getimage_group_id());
+                        DbFacade.getInstance().getDiskImageDAO().getAllSnapshotsForImageGroup(disk.getId());
                 if (imagesForDisk == null || imagesForDisk.isEmpty()) {
-                    DbFacade.getInstance().getBaseDiskDao().remove(disk.getimage_group_id());
+                    DbFacade.getInstance().getBaseDiskDao().remove(disk.getId());
                 }
             }
             RemoveVmNetwork();

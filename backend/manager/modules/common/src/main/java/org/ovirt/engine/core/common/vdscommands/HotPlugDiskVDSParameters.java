@@ -1,29 +1,29 @@
 package org.ovirt.engine.core.common.vdscommands;
 
-import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.compat.Guid;
 
 public class HotPlugDiskVDSParameters extends VdsAndVmIDVDSParametersBase {
 
-    private DiskImage diskImage;
+    private Disk disk;
     private VmDevice vmDevice;
 
     public HotPlugDiskVDSParameters() {
     }
 
-    public HotPlugDiskVDSParameters(Guid vdsId, Guid vmId, DiskImage diskImage, VmDevice vmDevice) {
+    public HotPlugDiskVDSParameters(Guid vdsId, Guid vmId, Disk disk, VmDevice vmDevice) {
         super(vdsId, vmId);
-        this.diskImage = diskImage;
+        this.disk = disk;
         this.vmDevice = vmDevice;
     }
 
-    public DiskImage getDiskImage() {
-        return diskImage;
+    public Disk getDisk() {
+        return disk;
     }
 
-    public void setDiskImage(DiskImage diskImage) {
-        this.diskImage = diskImage;
+    public void setDisk(Disk disk) {
+        this.disk = disk;
     }
 
     public VmDevice getVmDevice() {
@@ -36,6 +36,6 @@ public class HotPlugDiskVDSParameters extends VdsAndVmIDVDSParametersBase {
 
     @Override
     public String toString() {
-        return String.format("%s, volumeId = %s", super.toString(), diskImage.getImageId());
+        return String.format("%s, volumeId = %s", super.toString(), disk.getId());
     }
 }

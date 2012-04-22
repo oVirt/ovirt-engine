@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -153,7 +154,8 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
     @Override
     protected boolean canDoAction() {
         VmHandler.updateDisksFromDb(getVm());
-        DiskImage vmDisk = LinqUtils.first(getVm().getDiskMap().values());
+        Collection<DiskImage> diskImages = ImagesHandler.filterDiskBasedOnImages(getVm().getDiskMap().values());
+        DiskImage vmDisk = LinqUtils.first(diskImages);
         boolean result = true;
 
         result = result && validate(new SnapshotsValidator().vmNotDuringSnapshot(getVmId()));
@@ -171,9 +173,9 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
                                     false,
                                     true,
                                     true,
-                                    true, true, new ArrayList<DiskImage>(getVm().getDiskMap().values()));
+                                    true, true, new ArrayList<DiskImage>(diskImages));
         }
-        if (result && LinqUtils.foreach(getVm().getDiskMap().values(), new Function<DiskImage, Guid>() {
+        if (result && LinqUtils.foreach(diskImages, new Function<DiskImage, Guid>() {
             @Override
             public Guid eval(DiskImage disk) {
                 return disk.getvm_snapshot_id().getValue();

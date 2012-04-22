@@ -18,8 +18,9 @@ import org.ovirt.engine.core.common.asynctasks.AsyncTaskParameters;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskResultEnum;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
+import org.ovirt.engine.core.common.businessentities.Disk;
+import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -127,8 +128,8 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
      * @param disks
      * @return
      */
-    public static boolean CheckPCIAndIDELimit(int monitorsNumber, List<VmNetworkInterface> interfaces,
-            List<DiskImageBase> disks, ArrayList<String> messages) {
+    public static <T extends Disk> boolean CheckPCIAndIDELimit(int monitorsNumber, List<VmNetworkInterface> interfaces,
+            List<T> disks, ArrayList<String> messages) {
         boolean result = true;
         // this adds: monitors + 2 * (interfaces with type rtl_pv) + (all other
         // interfaces) + (all disks that are not IDE)
@@ -141,9 +142,9 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
                 pciInUse += 1;
         }
 
-        pciInUse += LinqUtils.filter(disks, new Predicate<DiskImageBase>() {
+        pciInUse += LinqUtils.filter(disks, new Predicate<T>() {
             @Override
-            public boolean eval(DiskImageBase a) {
+            public boolean eval(T a) {
                 return a.getDiskInterface() != DiskInterface.IDE;
             }
         }).size();
@@ -152,9 +153,9 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
             result = false;
             messages.add(VdcBllMessages.ACTION_TYPE_FAILED_EXCEEDED_MAX_PCI_SLOTS.name());
         }
-        else if (MAX_IDE_SLOTS < LinqUtils.filter(disks, new Predicate<DiskImageBase>() {
+        else if (MAX_IDE_SLOTS < LinqUtils.filter(disks, new Predicate<T>() {
             @Override
-            public boolean eval(DiskImageBase a) {
+            public boolean eval(T a) {
                 return a.getDiskInterface() == DiskInterface.IDE;
             }
         }).size()) {
@@ -188,8 +189,11 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
             if (vm.getInterfaces() == null || vm.getInterfaces().isEmpty()) {
                 vm.setInterfaces(DbFacade.getInstance().getVmNetworkInterfaceDAO().getAllForVm(vm.getId()));
             }
-            for (DiskImage disk : vm.getDiskMap().values()) {
-                AllVmImages.addAll(ImagesHandler.getAllImageSnapshots(disk.getImageId(), disk.getit_guid()));
+            for (Disk disk : vm.getDiskMap().values()) {
+                if (DiskStorageType.IMAGE == disk.getDiskStorageType()) {
+                    DiskImage diskImage = (DiskImage)disk;
+                    AllVmImages.addAll(ImagesHandler.getAllImageSnapshots(diskImage.getImageId(), diskImage.getit_guid()));
+                }
             }
             if (StringHelper.isNullOrEmpty(vm.getvmt_name())) {
                 VmTemplate t = DbFacade.getInstance().getVmTemplateDAO().get(vm.getvmt_guid());
@@ -205,10 +209,10 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
             vmsAndMetaDictionary.put(
                     vm.getId(),
                     new KeyValuePairCompat<String, List<Guid>>(vmMeta, LinqUtils.foreach(vm.getDiskMap().values(),
-                            new Function<DiskImage, Guid>() {
+                            new Function<Disk, Guid>() {
                                 @Override
-                                public Guid eval(DiskImage a) {
-                                    return a.getimage_group_id().getValue();
+                                public Guid eval(Disk a) {
+                                    return a.getId();
                                 }
                             })));
         }

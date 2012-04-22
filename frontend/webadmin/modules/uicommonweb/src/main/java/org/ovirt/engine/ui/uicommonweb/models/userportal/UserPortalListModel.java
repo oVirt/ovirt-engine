@@ -13,7 +13,6 @@ import org.ovirt.engine.core.common.action.RunVmOnceParams;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
@@ -1335,7 +1334,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
             {
                 AddVmFromScratchParameters parameters =
                         new AddVmFromScratchParameters(gettempVm(),
-                                new java.util.ArrayList<DiskImageBase>(),
+                                new java.util.ArrayList<DiskImage>(),
                                 NGuid.Empty);
                 parameters.setMakeCreatorExplicitOwner(true);
 

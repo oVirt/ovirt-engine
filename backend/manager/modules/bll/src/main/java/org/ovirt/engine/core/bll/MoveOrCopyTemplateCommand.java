@@ -175,7 +175,7 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
             public Void runInTransaction() {
                 for (DiskImage disk : disks) {
                     MoveOrCopyImageGroupParameters p = new MoveOrCopyImageGroupParameters(containerID, disk
-                            .getimage_group_id().getValue(), disk.getImageId(), getParameters().getStorageDomainId(),
+                            .getId(), disk.getImageId(), getParameters().getStorageDomainId(),
                             getMoveOrCopyImageOperation());
                     p.setParentCommand(getActionType());
                     p.setEntityId(getParameters().getEntityId());
