@@ -16,8 +16,13 @@ public class VdcUser implements IVdcUser, Serializable {
     private String mGroupNames;
     private String mFirstName;
     private String mSurName;
+    private boolean mIsAdmin = false;
 
     public VdcUser(AdUser adUser) {
+        this(adUser, false);
+    }
+
+    public VdcUser(AdUser adUser, boolean isAdmin) {
         mUserName = adUser.getUserName();
         mUserId = adUser.getUserId();
         mPassword = adUser.getPassword();
@@ -25,6 +30,7 @@ public class VdcUser implements IVdcUser, Serializable {
         mGroupNames = adUser.getGroup();
         mFirstName = adUser.getName();
         mSurName = adUser.getSurName();
+        mIsAdmin = isAdmin;
     }
 
     public VdcUser() {
@@ -116,4 +122,13 @@ public class VdcUser implements IVdcUser, Serializable {
         mSurName = value;
     }
 
+    @Override
+    public boolean isAdmin() {
+        return mIsAdmin;
+    }
+
+    @Override
+    public void setAdmin(boolean isAdmin) {
+        this.mIsAdmin = isAdmin;
+    }
 }

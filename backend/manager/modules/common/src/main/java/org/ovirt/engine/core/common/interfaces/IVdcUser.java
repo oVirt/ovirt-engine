@@ -34,4 +34,8 @@ public interface IVdcUser {
     String getSurName();
 
     void setSurName(String value);
+
+    boolean isAdmin();
+
+    void setAdmin(boolean isAdmin);
 }

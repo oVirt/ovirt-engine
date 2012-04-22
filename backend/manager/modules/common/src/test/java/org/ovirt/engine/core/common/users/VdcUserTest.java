@@ -1,0 +1,48 @@
+package org.ovirt.engine.core.common.users;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.ovirt.engine.core.common.businessentities.AdUser;
+import org.ovirt.engine.core.compat.Guid;
+
+/** A test case for the {@link VdcUser} class. */
+public class VdcUserTest {
+
+    /** The AdUser to create VdcUsers from */
+    private AdUser adUser;
+
+    @Before
+    public void setUp() {
+        adUser = new AdUser("UserName", "password", Guid.NewGuid(), "DomainController");
+    }
+
+    /** Tests {@link VdcUser#VdcUser(AdUser)) */
+    @Test
+    public void testAdUserConstrcutor() {
+        VdcUser user = new VdcUser(adUser);
+        assertFalse("By default, a user should not be an admin", user.isAdmin());
+        user.setAdmin(true);
+        assertTrue("after being set as such, the user should be an admin", user.isAdmin());
+    }
+
+    /** Tests {@link VdcUser#VdcUser(AdUser, boolean)) */
+    @Test
+    public void testAdUserAndFalseBooleanConstrcutor() {
+        VdcUser user = new VdcUser(adUser, false);
+        assertFalse("If not set, a user should not be an admin", user.isAdmin());
+        user.setAdmin(true);
+        assertTrue("after being set as such, the user should be an admin", user.isAdmin());
+    }
+
+    /** Tests {@link VdcUser#VdcUser(AdUser, boolean)) */
+    @Test
+    public void testAdUserAndTrueBooleanConstrcutor() {
+        VdcUser user = new VdcUser(adUser, true);
+        assertTrue("If set, a user should not be an admin", user.isAdmin());
+        user.setAdmin(false);
+        assertFalse("after being set not to be, the user should be an admin", user.isAdmin());
+    }
+}
