@@ -415,7 +415,6 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
         result = prime * result + ((activeField == null) ? 0 : activeField.hashCode());
         result = prime * result + (int) (actualSizeFromDiskImageDynamic ^ (actualSizeFromDiskImageDynamic >>> 32));
         result = prime * result + ((appList == null) ? 0 : appList.hashCode());
-        result = prime * result + ((creation_dateField == null) ? 0 : creation_dateField.hashCode());
         result = prime * result + ((description == null) ? 0 : description.hashCode());
         result = prime * result + ((imageId == null) ? 0 : imageId.hashCode());
         result = prime * result + ((it_guid == null) ? 0 : it_guid.hashCode());
@@ -460,11 +459,6 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
             if (other.appList != null)
                 return false;
         } else if (!appList.equals(other.appList))
-            return false;
-        if (creation_dateField == null) {
-            if (other.creation_dateField != null)
-                return false;
-        } else if (!creation_dateField.equals(other.creation_dateField))
             return false;
         if (description == null) {
             if (other.description != null)

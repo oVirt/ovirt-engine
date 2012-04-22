@@ -115,7 +115,7 @@ public class BackendDiskResourceTest
         setUpGetEntityExpectations(2);
         setUriInfo(setUpActionExpectations(VdcActionType.UpdateVmDisk,
                                            UpdateVmDiskParameters.class,
-                                           new String[] { "VmId", "ImageId", "DiskInfo.wipe_after_delete" },
+                                           new String[] { "VmId", "ImageId", "DiskInfo.WipeAfterDelete" },
                                            new Object[] { PARENT_ID, GUIDS[1], Boolean.FALSE },
                                            true,
                                            true));
