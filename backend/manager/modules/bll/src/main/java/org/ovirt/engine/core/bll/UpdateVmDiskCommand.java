@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
@@ -28,14 +29,13 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
 
     private static final long serialVersionUID = 5915267156998835363L;
     private List<PermissionSubject> listPermissionSubjects;
-    private Disk _oldDisk;
+    private final Disk _oldDisk;
     private boolean shouldUpdateQuotaForDisk;
 
     public UpdateVmDiskCommand(T parameters) {
         super(parameters);
         _oldDisk = getDiskDao().get(getParameters().getDiskId());
     }
-
 
     @Override
     protected void ExecuteVmCommand() {
@@ -72,7 +72,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
                 quotaValid = (QuotaManager.validateStorageQuota(getStorageDomainId().getValue(),
                         getParameters().getQuotaId(),
                         getStoragePool().getQuotaEnforcementType(),
-                        new Double(((DiskImage)getParameters().getDiskInfo()).getSizeInGigabytes()),
+                        new Double(((DiskImage) getParameters().getDiskInfo()).getSizeInGigabytes()),
                         getCommandId(),
                         getReturnValue().getCanDoActionMessages()));
             }
@@ -105,6 +105,8 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
                 retValue = false;
             }
         }
+
+        // Validate update boot disk.
         if (retValue && getParameters().getDiskInfo().isBoot()) {
             VmHandler.updateDisksFromDb(getVm());
             for (Disk disk : getVm().getDiskMap().values()) {
@@ -116,8 +118,63 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
                     break;
                 }
             }
+
+            // If disk is shareable and it is also bootable return an appropriate CDA message.
+            if (getParameters().getDiskInfo().isBoot() && getParameters().getDiskInfo().isShareable()) {
+                addCanDoActionMessage(VdcBllMessages.SHAREABLE_DISK_IS_NOT_SUPPORTED_FOR_DISK);
+                return false;
+            }
         }
-        return retValue;
+        return retValue && validateShareableDisk();
+    }
+
+    /**
+     * Validate whether a disk can be shareable. Disk can be shareable if it is not based on qcow FS,
+     * which means it should not be based on a template image with thin provisioning,
+     * it also should not contain snapshots and it is not bootable.
+     * @return Indication whether the disk can be shared or not.
+     */
+    protected boolean validateShareableDisk() {
+        if (DiskStorageType.LUN == _oldDisk.getDiskStorageType()) {
+            return true;
+        }
+        boolean isDiskUpdatedToShareable = getParameters().getDiskInfo().isShareable();
+        boolean isDiskShareable = _oldDisk.isShareable();
+
+        // Check if VM is not during snapshot.
+        if (ImagesHandler.isVmInPreview(getVmId())) {
+            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_IN_PREVIEW);
+            return false;
+        }
+
+        // If user want to update the disk to be shareable then update the vm snapshot id to be null.
+        if (!isDiskShareable && isDiskUpdatedToShareable) {
+            ((DiskImage)_oldDisk).setvm_snapshot_id(null);
+
+            // TODO : After getForImageGroup will return list of vms, add a check for number of vms.
+            List<DiskImage> diskImageList =
+                    getDiskImageDao().getAllSnapshotsForImageGroup(_oldDisk.getId());
+
+            // If disk image list is more then one then we assume that it has a snapshot, since one image is the active
+            // disk and all the other images are the snapshots.
+            if ((diskImageList.size() > 1) || !Guid.Empty.equals(((DiskImage)_oldDisk).getit_guid())) {
+                addCanDoActionMessage(VdcBllMessages.SHAREABLE_DISK_IS_NOT_SUPPORTED_FOR_DISK);
+                return false;
+            }
+
+            // Set allow snapshot attribute to be false when disk updated to shareable.
+            _oldDisk.setAllowSnapshot(Boolean.FALSE);
+        } else if (isDiskShareable && !isDiskUpdatedToShareable) {
+            // If disk is not floating, then update its vm snapshot id to the active VM snapshot.
+            ((DiskImage) _oldDisk).setvm_snapshot_id(DbFacade.getInstance()
+                    .getSnapshotDao()
+                    .getId(getVmId(), SnapshotType.ACTIVE)
+                    .getValue());
+
+            // If disk is shared then the disk should not allow snapshots.
+            _oldDisk.setAllowSnapshot(Boolean.TRUE);
+        }
+        return true;
     }
 
     @Override
