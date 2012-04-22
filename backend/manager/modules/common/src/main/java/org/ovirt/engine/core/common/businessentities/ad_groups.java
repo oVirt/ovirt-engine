@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -9,21 +10,14 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
-
 import org.ovirt.engine.core.common.businessentities.mapping.GuidType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NotImplementedException;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "ad_groups")
 @Entity
 @Table(name = "ad_groups")
 @TypeDef(name = "guid", typeClass = GuidType.class)
@@ -65,7 +59,6 @@ public class ad_groups extends DbUserBase implements Serializable {
         this.status = AdRefStatus.forValue(status);
     }
 
-    @XmlElement
     public Guid getid() {
         return this.id;
     }
@@ -74,7 +67,6 @@ public class ad_groups extends DbUserBase implements Serializable {
         this.id = value;
     }
 
-    @XmlElement
     public String getname() {
         return this.name;
     }
@@ -83,7 +75,6 @@ public class ad_groups extends DbUserBase implements Serializable {
         this.name = value;
     }
 
-    @XmlElement
     public AdRefStatus getstatus() {
         return status;
     }
@@ -122,7 +113,6 @@ public class ad_groups extends DbUserBase implements Serializable {
         status = AdRefStatus.Inactive;
     }
 
-    @XmlElement
     public String getdomain() {
         return domain;
     }
@@ -137,7 +127,7 @@ public class ad_groups extends DbUserBase implements Serializable {
     }
 
     @Override
-    public java.util.ArrayList<String> getChangeablePropertiesList() {
+    public ArrayList<String> getChangeablePropertiesList() {
         throw new NotImplementedException();
     }
 

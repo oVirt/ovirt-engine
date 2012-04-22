@@ -1,6 +1,8 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,10 +11,6 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
@@ -22,8 +20,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.core.compat.StringHelper;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "DbUser", namespace = "http://service.engine.ovirt.org")
 @Entity
 @Table(name = "users")
 @TypeDef(name = "guid", typeClass = GuidType.class)
@@ -94,7 +90,6 @@ public class DbUser extends DbUserBase implements Serializable {
      * GUI flag only. Do not use for internal logic. The sole purpose of calculating this field is for the GUI user to
      * understand who is admin in a snap on the user-grid
      */
-    @XmlElement(name = "LastAdminCheckStatus")
     @Transient
     private boolean lastAdminCheckStatus;
 
@@ -247,7 +242,6 @@ public class DbUser extends DbUserBase implements Serializable {
         return true;
     }
 
-    @XmlElement
     public String getdepartment() {
         return this.department;
     }
@@ -256,7 +250,6 @@ public class DbUser extends DbUserBase implements Serializable {
         this.department = value;
     }
 
-    @XmlElement
     public String getdesktop_device() {
         return this.desktopDevice;
     }
@@ -265,7 +258,6 @@ public class DbUser extends DbUserBase implements Serializable {
         this.desktopDevice = value;
     }
 
-    @XmlElement
     public String getdomain() {
         return this.domain;
     }
@@ -274,7 +266,6 @@ public class DbUser extends DbUserBase implements Serializable {
         this.domain = value;
     }
 
-    @XmlElement
     public String getemail() {
         return this.email;
     }
@@ -283,7 +274,6 @@ public class DbUser extends DbUserBase implements Serializable {
         this.email = value;
     }
 
-    @XmlElement
     public String getgroups() {
         return this.groups;
     }
@@ -293,7 +283,6 @@ public class DbUser extends DbUserBase implements Serializable {
         OnPropertyChanged(new PropertyChangedEventArgs("groups"));
     }
 
-    @XmlElement
     public String getname() {
         return this.name;
     }
@@ -305,7 +294,6 @@ public class DbUser extends DbUserBase implements Serializable {
         }
     }
 
-    @XmlElement
     public String getnote() {
         return this.note;
     }
@@ -314,7 +302,6 @@ public class DbUser extends DbUserBase implements Serializable {
         this.note = value;
     }
 
-    @XmlElement
     public String getrole() {
         return this.role;
     }
@@ -323,7 +310,6 @@ public class DbUser extends DbUserBase implements Serializable {
         this.role = value;
     }
 
-    @XmlElement
     public int getstatus() {
         return this.status;
     }
@@ -332,7 +318,6 @@ public class DbUser extends DbUserBase implements Serializable {
         this.status = value;
     }
 
-    @XmlElement
     public String getsurname() {
         return this.surname;
     }
@@ -342,7 +327,6 @@ public class DbUser extends DbUserBase implements Serializable {
         OnPropertyChanged(new PropertyChangedEventArgs("surname"));
     }
 
-    @XmlElement
     public String getuser_icon_path() {
         return this.userIconPath;
     }
@@ -351,7 +335,6 @@ public class DbUser extends DbUserBase implements Serializable {
         this.userIconPath = value;
     }
 
-    @XmlElement(name = "user_id")
     public Guid getuser_id() {
         return this.id;
     }
@@ -360,7 +343,6 @@ public class DbUser extends DbUserBase implements Serializable {
         this.id = value;
     }
 
-    @XmlElement(name = "username")
     public String getusername() {
         return this.username;
     }
@@ -370,7 +352,6 @@ public class DbUser extends DbUserBase implements Serializable {
         OnPropertyChanged(new PropertyChangedEventArgs("username"));
     }
 
-    @XmlElement
     public int getsession_count() {
         return sessionCount;
     }
@@ -381,7 +362,6 @@ public class DbUser extends DbUserBase implements Serializable {
         setIsLogedin((sessionCount > 0));
     }
 
-    @XmlElement(name = "IsLogedin")
     public boolean getIsLogedin() {
         return isLoggedIn;
     }
@@ -407,9 +387,8 @@ public class DbUser extends DbUserBase implements Serializable {
     public AdRefStatus getAdStatus() {
         if (getstatus() == 0) {
             return AdRefStatus.Inactive;
-        } else {
-            return AdRefStatus.Active;
         }
+        return AdRefStatus.Active;
     }
 
     public boolean getIsGroup() {
@@ -425,12 +404,12 @@ public class DbUser extends DbUserBase implements Serializable {
         return getuser_id();
     }
 
-    private static final java.util.ArrayList<String> _vmProperties = new java.util.ArrayList<String>(java.util.Arrays
-            .asList(new String[] { "name", "surname", "username", "groups", "session_count", "IsLogedin",
+    private static final ArrayList<String> _vmProperties = new ArrayList<String>(
+            Arrays.asList(new String[] { "name", "surname", "username", "groups", "session_count", "IsLogedin",
                     "LastAdminCheckStatus" }));
 
     @Override
-    public java.util.ArrayList<String> getChangeablePropertiesList() {
+    public ArrayList<String> getChangeablePropertiesList() {
         return _vmProperties;
     }
 
