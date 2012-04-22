@@ -14,39 +14,17 @@ import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 /**
  * <code>ActionGroupDAODbFacadeImpl</code> provides a concrete implementation of {@link ActionGroupDAO}.
  *
- * The initial implementation came from {@DbFacade}.
- *
- *
+ * The initial implementation came from  {@link org.ovirt.engine.core.dal.dbbroker.DbFacade}.
  */
 public class ActionGroupDAODbFacadeImpl extends BaseDAODbFacade implements ActionGroupDAO {
-
-    private static ParameterizedRowMapper<action_version_map> actionVersionMapMapper =
-            new ParameterizedRowMapper<action_version_map>() {
-                @Override
-                public action_version_map mapRow(ResultSet rs, int rowNum) throws SQLException {
-                    action_version_map entity = new action_version_map();
-                    entity.setaction_type(VdcActionType.forValue(rs.getInt("action_type")));
-                    entity.setcluster_minimal_version(rs.getString("cluster_minimal_version"));
-                    entity.setstorage_pool_minimal_version(rs.getString("storage_pool_minimal_version"));
-                    return entity;
-                }
-            };
-
-    @SuppressWarnings("unchecked")
     @Override
     public List<ActionGroup> getAllForRole(Guid id) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("id", id);
 
-        ParameterizedRowMapper<ActionGroup> mapper = new ParameterizedRowMapper<ActionGroup>() {
-            @Override
-            public ActionGroup mapRow(ResultSet rs, int rowNum)
-                    throws SQLException {
-                return ActionGroup.forValue(rs.getInt("action_group_id"));
-            }
-        };
-
-        return getCallsHandler().executeReadList("GetRoleActionGroupsByRoleId", mapper, parameterSource);
+        return getCallsHandler().executeReadList("GetRoleActionGroupsByRoleId",
+                ActionGroupMapper.instance,
+                parameterSource);
     }
 
     @Override
@@ -54,7 +32,7 @@ public class ActionGroupDAODbFacadeImpl extends BaseDAODbFacade implements Actio
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("action_type", action_type);
 
         return getCallsHandler().executeRead("Getaction_version_mapByaction_type",
-                actionVersionMapMapper,
+                ActionVersionMapMapper.instance,
                 parameterSource);
     }
 
@@ -78,9 +56,31 @@ public class ActionGroupDAODbFacadeImpl extends BaseDAODbFacade implements Actio
     public List<action_version_map> getAllActionVersionMap() {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource();
         return getCallsHandler().executeReadList("GetAllFromaction_version_map",
-                actionVersionMapMapper,
+                ActionVersionMapMapper.instance,
                 parameterSource);
 
     }
 
+    private static class ActionVersionMapMapper implements ParameterizedRowMapper<action_version_map> {
+        public static final ActionVersionMapMapper instance = new ActionVersionMapMapper();
+
+        @Override
+        public action_version_map mapRow(ResultSet rs, int rowNum) throws SQLException {
+            action_version_map entity = new action_version_map();
+            entity.setaction_type(VdcActionType.forValue(rs.getInt("action_type")));
+            entity.setcluster_minimal_version(rs.getString("cluster_minimal_version"));
+            entity.setstorage_pool_minimal_version(rs.getString("storage_pool_minimal_version"));
+            return entity;
+        }
+    }
+
+    private static class ActionGroupMapper implements ParameterizedRowMapper<ActionGroup> {
+        public static final ActionGroupMapper instance = new ActionGroupMapper();
+
+        @Override
+        public ActionGroup mapRow(ResultSet rs, int rowNum)
+                throws SQLException {
+            return ActionGroup.forValue(rs.getInt("action_group_id"));
+        }
+    }
 }
