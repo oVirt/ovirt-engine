@@ -25,7 +25,7 @@ ovirt-engine-dbscripts vdsm-bootstrap ovirt-engine-webadmin-portal"
 RPM_BACKEND = "ovirt-engine-backend"
 RPM_DBSCRIPTS = "ovirt-engine-dbscripts"
 RPM_SETUP = "ovirt-engine-setup"
-RPM_UPGRADE = "ovirt-engine-upgrade"
+RPM_UPGRADE = "engine-upgrade"
 
 # DB default configuration
 SERVER_NAME = basedefs.DB_HOST
