@@ -21,6 +21,7 @@ import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.AdGroupDAO;
 import org.ovirt.engine.core.dao.DbUserDAO;
+import org.ovirt.engine.core.dao.NetworkClusterDAO;
 import org.ovirt.engine.core.dao.PermissionDAO;
 import org.ovirt.engine.core.dao.QuotaDAO;
 import org.ovirt.engine.core.dao.RoleDAO;
@@ -39,6 +40,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 public class AuditLogableBase extends TimeoutBase {
     private static final long serialVersionUID = -4764813076922800727L;
+    protected DbFacade dbFacade = DbFacade.getInstance();
     private NGuid mVmId = Guid.Empty;
     private IVdcUser mVdcUser;
     private Guid mUserId = Guid.Empty;
@@ -585,6 +587,10 @@ public class AuditLogableBase extends TimeoutBase {
 
     protected VmNetworkInterfaceDAO getVmNetworkInterfaceDAO() {
         return DbFacade.getInstance().getVmNetworkInterfaceDAO();
+    }
+
+    protected NetworkClusterDAO getNetworkClusterDAO() {
+        return dbFacade.getNetworkClusterDAO();
     }
 
     private static Log log = LogFactory.getLog(AuditLogableBase.class);

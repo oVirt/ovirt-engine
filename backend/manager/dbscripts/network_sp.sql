@@ -739,3 +739,21 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
+Create or replace FUNCTION set_network_exclusively_as_display(v_cluster_id UUID, v_network_id UUID)
+RETURNS VOID
+   AS $procedure$
+BEGIN
+
+   UPDATE network_cluster
+   SET is_display = true
+   WHERE cluster_id = v_cluster_id AND network_id = v_network_id;
+
+   IF FOUND THEN
+       UPDATE network_cluster
+       SET is_display = false
+       WHERE cluster_id = v_cluster_id AND network_id != v_network_id;
+   END IF;
+
+END; $procedure$
+LANGUAGE plpgsql;
+

@@ -101,4 +101,12 @@ public class NetworkClusterDAODbFacadeImpl extends BaseDAODbFacade implements Ne
 
         getCallsHandler().executeModification("Deletenetwork_cluster", parameterSource);
     }
+
+    @Override
+    public void setNetworkExclusivelyAsDisplay(Guid clusterId, Guid networkId) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("cluster_id", clusterId).addValue("network_id", networkId);
+
+        getCallsHandler().executeModification("set_network_exclusively_as_display", parameterSource);
+    }
 }

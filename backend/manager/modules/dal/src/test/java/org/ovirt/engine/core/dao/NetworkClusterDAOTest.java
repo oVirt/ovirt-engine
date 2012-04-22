@@ -14,7 +14,7 @@ import org.ovirt.engine.core.common.businessentities.network_cluster;
 import org.ovirt.engine.core.compat.Guid;
 
 public class NetworkClusterDAOTest extends BaseDAOTestCase {
-    private static final int NETWORK_CLUSTER_COUNT = 2;
+    private static final int NETWORK_CLUSTER_COUNT = 3;
     private NetworkClusterDAO dao;
     private VDSGroup cluster;
     private network network;
@@ -180,5 +180,20 @@ public class NetworkClusterDAOTest extends BaseDAOTestCase {
         int after = dao.getAll().size();
 
         assertEquals(before - 1, after);
+    }
+
+    @Test
+    public void testSetDisplay() {
+        dao.setNetworkExclusivelyAsDisplay(existingNetworkCluster.getcluster_id(),
+                existingNetworkCluster.getnetwork_id());
+        List<network_cluster> allForCluster = dao.getAllForCluster(existingNetworkCluster.getcluster_id());
+        for (network_cluster net : allForCluster) {
+            if (net.getcluster_id().equals(existingNetworkCluster.getcluster_id())
+                    && net.getnetwork_id().equals(existingNetworkCluster.getnetwork_id())) {
+                assertTrue(net.getis_display());
+            } else {
+                assertFalse(net.getis_display());
+            }
+        }
     }
 }

@@ -41,4 +41,9 @@ public class NetworkClusterDAOHibernateImpl extends BaseDAOHibernateImpl<network
         query.executeUpdate();
         session.getTransaction().commit();
     }
+
+    @Override
+    public void setNetworkExclusivelyAsDisplay(Guid vdsGroupId, Guid networkId) {
+        throw new UnsupportedOperationException();
+    }
 }

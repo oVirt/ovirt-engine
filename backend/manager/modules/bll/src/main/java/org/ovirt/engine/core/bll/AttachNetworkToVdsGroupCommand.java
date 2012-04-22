@@ -44,18 +44,17 @@ public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
 
     @Override
     protected void executeCommand() {
-        if(createNetworkCluster()) {
-            SetNetworkStatus(getVdsGroupId(), getNetwork());
-            setSucceeded(true);
+        if (networkExists()) {
+            getNetworkClusterDAO().update(getNetwork().getCluster());
+        } else {
+            getNetworkClusterDAO().save(new network_cluster(getVdsGroupId(), getNetwork().getId(),
+                    NetworkStatus.Operational.getValue(), false, getNetwork().isRequired()));
         }
-    }
-
-    private boolean createNetworkCluster() {
-        DbFacade.getInstance().getNetworkClusterDAO().save(
-                new network_cluster(getVdsGroupId(), getNetwork().getId(),
-                        NetworkStatus.Operational.getValue(), false, getNetwork().isRequired()));
-
-        return true;
+        if (getNetwork().getCluster().getis_display()) {
+            getNetworkClusterDAO().setNetworkExclusivelyAsDisplay(getVdsGroupId(), getNetwork().getId());
+        }
+        SetNetworkStatus(getVdsGroupId(), getNetwork());
+        setSucceeded(true);
     }
 
     public static void SetNetworkStatus(Guid vdsGroupId, final network net) {
@@ -103,7 +102,7 @@ public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
 
     @Override
     protected boolean canDoAction() {
-        return super.canDoAction() && noConflictingNetwork() && VdsGroupExists() && changesAreClusterCompatible();
+        return super.canDoAction() && VdsGroupExists() && changesAreClusterCompatible();
     }
 
 
@@ -111,14 +110,6 @@ public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
         if (getParameters().getNetwork().isVmNetwork() == false
                 && getVdsGroup().getcompatibility_version().compareTo(Version.v3_1) < 0) {
             addCanDoActionMessage(VdcBllMessages.NON_VM_NETWORK_NOT_SUPPORTED_FOR_POOL_LEVEL);
-            return false;
-        }
-        return true;
-    }
-
-    private boolean noConflictingNetwork() {
-        if (networkExists()) {
-            addCanDoActionMessage(VdcBllMessages.NETWROK_ALREADY_ATTACHED_TO_CLUSTER);
             return false;
         }
         return true;

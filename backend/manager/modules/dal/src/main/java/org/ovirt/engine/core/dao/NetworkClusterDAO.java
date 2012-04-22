@@ -68,4 +68,12 @@ public interface NetworkClusterDAO extends DAO {
      *            the network
      */
     void remove(Guid clusterid, Guid networkid);
+
+    /**
+     * Sets this cluster network as the only display network on the cluster.
+     *
+     * @param clusterId
+     * @param networkId
+     */
+    void setNetworkExclusivelyAsDisplay(Guid clusterId, Guid networkId);
 }
