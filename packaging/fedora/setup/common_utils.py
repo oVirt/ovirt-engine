@@ -137,8 +137,12 @@ class TextConfigFileHandler(ConfigFileHandler):
 class XMLConfigFileHandler(ConfigFileHandler):
     def __init__(self, filepath):
         ConfigFileHandler.__init__(self, filepath)
+        self.content = []
 
     def open(self):
+        with open(self.filepath, 'r') as f:
+            self.content = f.readlines()
+
         libxml2.keepBlanksDefault(0)
         self.doc = libxml2.parseFile(self.filepath)
         self.ctxt = self.doc.xpathNewContext()
@@ -153,6 +157,15 @@ class XMLConfigFileHandler(ConfigFileHandler):
 
     def registerNs(self, nsPrefix, uri):
         return self.ctxt.xpathRegisterNs(nsPrefix, uri)
+
+    def getNs(self, ns):
+        for line in self.content:
+            # Match line includes xmlns=NS:X:X
+            match = re.match("(.*)xmlns=\"(%s:\d\.\d*)(.*)" % (ns), line)
+            if match:
+                return match.group(2)
+
+        raise Exception(output_messages.ERR_EXP_UPD_XML_FILE % self.filepath)
 
     def editParams(self, paramsDict):
         editAllOkFlag = True

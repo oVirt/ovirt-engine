@@ -2057,7 +2057,7 @@ def deployJbossModules():
         xmlObj.open()
 
         logging.debug("registering name space")
-        xmlObj.registerNs('module','urn:jboss:module:1.1')
+        xmlObj.registerNs('module', xmlObj.getNs('urn:jboss:module'))
 
         paths = ['''<path name="sun/security"/>''', '''<path name="sun/security/krb5"/>''', '''<path name="com/sun/jndi/url"/>''', '''<path name="com/sun/jndi/url/dns"/>''' ]
 
@@ -2092,7 +2092,7 @@ def configEncryptedPass():
         xmlObj = utils.XMLConfigFileHandler(editFile)
         xmlObj.open()
 
-        xmlObj.registerNs('security', 'urn:jboss:domain:security:1.1')
+        xmlObj.registerNs('security', xmlObj.getNs('urn:jboss:domain:security'))
 
         configJbossSecurity(xmlObj)
 
@@ -2127,7 +2127,7 @@ def configJbossXml():
         xmlObj.open()
 
         #2a. Register the main domain Namespace
-        xmlObj.registerNs('domain','urn:jboss:domain:1.1')
+        xmlObj.registerNs('domain', xmlObj.getNs('urn:jboss:domain'))
 
         logging.debug("Configuring Jboss")
         configJbossLogging(xmlObj)
@@ -2155,13 +2155,13 @@ def configJbossAjpConnector(xmlObj):
     Configure AJP connector for jboss
     """
     logging.debug("Configuring ajp connector")
-    xmlObj.registerNs('web', 'urn:jboss:domain:web:1.1')
+    xmlObj.registerNs('web', xmlObj.getNs('urn:jboss:domain:web'))
     ajpConnectorStr='<connector name="ajp" protocol="AJP/1.3" scheme="http" socket-binding="ajp"/>'
     xmlObj.removeNodes("//web:subsystem/web:connector[@name='ajp']")
     xmlObj.addNodes("//web:subsystem", ajpConnectorStr)
 
     logging.debug("Configuring ajp socket")
-    xmlObj.registerNs('domain', 'urn:jboss:domain:1.1')
+    xmlObj.registerNs('domain', xmlObj.getNs('urn:jboss:domain'))
     ajpSocketStr='<socket-binding name="ajp" port="%s"/>'%(basedefs.JBOSS_AJP_PORT)
     xmlObj.removeNodes("//domain:socket-binding-group/domain:socket-binding[@name='ajp']")
     xmlObj.addNodes("//domain:socket-binding-group", ajpSocketStr)
@@ -2175,7 +2175,7 @@ def configJbossLogging(xmlObj):
     logging.debug("Configuring logging for jboss")
 
     logging.debug("Registering logging namespace")
-    xmlObj.registerNs('logging', 'urn:jboss:domain:logging:1.1')
+    xmlObj.registerNs('logging', xmlObj.getNs('urn:jboss:domain:logging'))
 
     logging.debug("setting attributes")
     nodes = xmlObj.xpathEval("//logging:subsystem/logging:console-handler[@name='CONSOLE']")
@@ -2244,8 +2244,8 @@ def configJbossDatasource(xmlObj):
     logging.debug("Configuring logging for jboss")
 
     logging.debug("Registering datasource namespaces")
-    xmlObj.registerNs('datasource', 'urn:jboss:domain:datasources:1.0')
-    xmlObj.registerNs('deployment-scanner', 'urn:jboss:domain:deployment-scanner:1.0')
+    xmlObj.registerNs('datasource', xmlObj.getNs('urn:jboss:domain:datasources'))
+    xmlObj.registerNs('deployment-scanner', xmlObj.getNs('urn:jboss:domain:deployment-scanner'))
 
     logging.debug("looking for ENGINEDatasource datasource")
 
@@ -2332,7 +2332,7 @@ def configJbossSecurity(xmlObj):
     logging.debug("Configuring security for jboss")
 
     logging.debug("Registering security namespaces")
-    xmlObj.registerNs('security', 'urn:jboss:domain:security:1.1')
+    xmlObj.registerNs('security', xmlObj.getNs('urn:jboss:domain:security'))
 
     xmlObj.removeNodes("//security:subsystem/security:security-domains/security:security-domain[@name='EngineKerberosAuth']")
     securityKerbStr='''
@@ -2392,7 +2392,7 @@ def configJbossSSL(xmlObj):
     logging.debug("Configuring SSL for jboss")
 
     logging.debug("Registering web namespaces")
-    xmlObj.registerNs('web', 'urn:jboss:domain:web:1.1')
+    xmlObj.registerNs('web', xmlObj.getNs('urn:jboss:domain:web'))
     sslConnectorStr='''
     <connector name="https" protocol="HTTP/1.1" socket-binding="https" scheme="https" enable-lookups="false" secure="true">
         <ssl name="ssl" password="mypass" certificate-key-file="/etc/pki/ovirt-engine/.keystore" protocol="TLSv1" verify-client="false"/>
