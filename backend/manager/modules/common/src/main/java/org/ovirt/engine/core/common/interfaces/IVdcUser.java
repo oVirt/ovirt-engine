@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.common.interfaces;
 
-import org.ovirt.engine.core.compat.*;
+import org.ovirt.engine.core.compat.Guid;
 
 public interface IVdcUser {
     String getPassword();
