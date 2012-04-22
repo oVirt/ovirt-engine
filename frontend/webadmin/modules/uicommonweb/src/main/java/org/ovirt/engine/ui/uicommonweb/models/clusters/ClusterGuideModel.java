@@ -26,6 +26,7 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.GuideModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.MoveHost;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
@@ -35,9 +36,13 @@ import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 public class ClusterGuideModel extends GuideModel
 {
 
-    public final String ClusterConfigureHostsAction = "Configure Host";
-    public final String ClusterAddAnotherHostAction = "Add another Host";
-    public final String SelectHostsAction = "Select Hosts";
+    public final String ClusterConfigureHostsAction = ConstantsManager.getInstance()
+            .getConstants()
+            .configureHostClusterGuide();
+    public final String ClusterAddAnotherHostAction = ConstantsManager.getInstance()
+            .getConstants()
+            .addAnotherHostClusterGuide();
+    public final String SelectHostsAction = ConstantsManager.getInstance().getConstants().selectHostsClusterGuide();
 
     @Override
     public VDSGroup getEntity()
@@ -121,7 +126,7 @@ public class ClusterGuideModel extends GuideModel
         }
 
         // Add host action.
-        UICommand addHostAction = new UICommand("AddHost", this);
+        UICommand addHostAction = new UICommand("AddHost", this); //$NON-NLS-1$
 
         if (hosts.size() > 1)
         {
@@ -141,7 +146,9 @@ public class ClusterGuideModel extends GuideModel
         if (getEntity().getstorage_pool_id() == null)
         {
             addHostAction.setIsExecutionAllowed(false);
-            addHostAction.getExecuteProhibitionReasons().add("The Cluster isn't attached to a Data Center");
+            addHostAction.getExecuteProhibitionReasons().add(ConstantsManager.getInstance()
+                    .getConstants()
+                    .theClusterIsntAttachedToADcClusterGuide());
             return;
         }
 
@@ -158,7 +165,7 @@ public class ClusterGuideModel extends GuideModel
             }
         }
         // Select host action.
-        UICommand selectHostAction = new UICommand("SelectHost", this);
+        UICommand selectHostAction = new UICommand("SelectHost", this); //$NON-NLS-1$
 
         if (availableHosts.size() > 0 && clusters.size() > 0)
         {
@@ -178,10 +185,10 @@ public class ClusterGuideModel extends GuideModel
     }
 
     private void UpdateOptionsLocalFS() {
-        UICommand tempVar = new UICommand("AddHost", this);
+        UICommand tempVar = new UICommand("AddHost", this); //$NON-NLS-1$
         tempVar.setTitle(ClusterAddAnotherHostAction);
         UICommand addHostAction = tempVar;
-        UICommand tempVar2 = new UICommand("SelectHost", this);
+        UICommand tempVar2 = new UICommand("SelectHost", this); //$NON-NLS-1$
         tempVar2.setTitle(SelectHostsAction);
         UICommand selectHost = tempVar2;
 
@@ -189,7 +196,10 @@ public class ClusterGuideModel extends GuideModel
         {
             addHostAction.setIsExecutionAllowed(false);
             selectHost.setIsExecutionAllowed(false);
-            String hasHostReason = "This Cluster belongs to a Local Data Center which already contain a Host";
+            String hasHostReason =
+                    ConstantsManager.getInstance()
+                            .getConstants()
+                            .thisClusterBelongsToALocalDcWhichAlreadyContainHostClusterGuide();
             addHostAction.getExecuteProhibitionReasons().add(hasHostReason);
             selectHost.getExecuteProhibitionReasons().add(hasHostReason);
         }
@@ -244,19 +254,19 @@ public class ClusterGuideModel extends GuideModel
         clusters.add(getEntity());
 
         MoveHost model = new MoveHost();
-        model.setTitle("Select Host");
-        model.setHashName("select_host");
+        model.setTitle(ConstantsManager.getInstance().getConstants().selectHostTitle());
+        model.setHashName("select_host"); //$NON-NLS-1$
         setWindow(model);
         model.getCluster().setItems(clusters);
         model.getCluster().setSelectedItem(Linq.FirstOrDefault(clusters));
         model.getCluster().setIsAvailable(false);
 
-        UICommand tempVar = new UICommand("OnSelectHost", this);
-        tempVar.setTitle("OK");
+        UICommand tempVar = new UICommand("OnSelectHost", this); //$NON-NLS-1$
+        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
         tempVar.setIsDefault(true);
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this);
-        tempVar2.setTitle("Cancel");
+        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
+        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         tempVar2.setIsCancel(true);
         model.getCommands().add(tempVar2);
     }
@@ -334,8 +344,8 @@ public class ClusterGuideModel extends GuideModel
     {
         HostModel model = new HostModel();
         setWindow(model);
-        model.setTitle("New Host");
-        model.setHashName("new_host");
+        model.setTitle(ConstantsManager.getInstance().getConstants().newHostTitle());
+        model.setHashName("new_host"); //$NON-NLS-1$
         model.getPort().setEntity(54321);
         model.getOverrideIpTables().setEntity(true);
         model.setSpmPriorityValue(null);
@@ -362,12 +372,12 @@ public class ClusterGuideModel extends GuideModel
                         }
                         model.getDataCenter().setIsChangable(false);
 
-                        UICommand tempVar = new UICommand("OnConfirmPMHost", clusterGuideModel);
-                        tempVar.setTitle("OK");
+                        UICommand tempVar = new UICommand("OnConfirmPMHost", clusterGuideModel); //$NON-NLS-1$
+                        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
                         tempVar.setIsDefault(true);
                         model.getCommands().add(tempVar);
-                        UICommand tempVar2 = new UICommand("Cancel", clusterGuideModel);
-                        tempVar2.setTitle("Cancel");
+                        UICommand tempVar2 = new UICommand("Cancel", clusterGuideModel); //$NON-NLS-1$
+                        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
                         tempVar2.setIsCancel(true);
                         model.getCommands().add(tempVar2);
                     }
@@ -387,16 +397,16 @@ public class ClusterGuideModel extends GuideModel
         {
             ConfirmationModel confirmModel = new ConfirmationModel();
             setConfirmWindow(confirmModel);
-            confirmModel.setTitle("Power Management Configuration");
-            confirmModel.setHashName("power_management_configuration");
-            confirmModel.setMessage("You haven't configured Power Management for this Host. Are you sure you want to continue?");
+            confirmModel.setTitle(ConstantsManager.getInstance().getConstants().powerManagementConfigurationTitle());
+            confirmModel.setHashName("power_management_configuration"); //$NON-NLS-1$
+            confirmModel.setMessage(ConstantsManager.getInstance().getConstants().youHavntConfigPmMsg());
 
-            UICommand tempVar = new UICommand("OnAddHost", this);
-            tempVar.setTitle("OK");
+            UICommand tempVar = new UICommand("OnAddHost", this); //$NON-NLS-1$
+            tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
             tempVar.setIsDefault(true);
             confirmModel.getCommands().add(tempVar);
-            UICommand tempVar2 = new UICommand("CancelConfirmWithFocus", this);
-            tempVar2.setTitle("Cancel");
+            UICommand tempVar2 = new UICommand("CancelConfirmWithFocus", this); //$NON-NLS-1$
+            tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
             tempVar2.setIsCancel(true);
             confirmModel.getCommands().add(tempVar2);
         }
@@ -499,35 +509,35 @@ public class ClusterGuideModel extends GuideModel
     {
         super.ExecuteCommand(command);
 
-        if (StringHelper.stringsEqual(command.getName(), "AddHost"))
+        if (StringHelper.stringsEqual(command.getName(), "AddHost")) //$NON-NLS-1$
         {
             AddHost();
         }
-        if (StringHelper.stringsEqual(command.getName(), "OnConfirmPMHost"))
+        if (StringHelper.stringsEqual(command.getName(), "OnConfirmPMHost")) //$NON-NLS-1$
         {
             OnConfirmPMHost();
         }
-        if (StringHelper.stringsEqual(command.getName(), "OnAddHost"))
+        if (StringHelper.stringsEqual(command.getName(), "OnAddHost")) //$NON-NLS-1$
         {
             OnAddHost();
         }
-        if (StringHelper.stringsEqual(command.getName(), "SelectHost"))
+        if (StringHelper.stringsEqual(command.getName(), "SelectHost")) //$NON-NLS-1$
         {
             SelectHost();
         }
-        if (StringHelper.stringsEqual(command.getName(), "OnSelectHost"))
+        if (StringHelper.stringsEqual(command.getName(), "OnSelectHost")) //$NON-NLS-1$
         {
             OnSelectHost();
         }
-        if (StringHelper.stringsEqual(command.getName(), "Cancel"))
+        if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
         {
             Cancel();
         }
-        if (StringHelper.stringsEqual(command.getName(), "CancelConfirm"))
+        if (StringHelper.stringsEqual(command.getName(), "CancelConfirm")) //$NON-NLS-1$
         {
             CancelConfirm();
         }
-        if (StringHelper.stringsEqual(command.getName(), "CancelConfirmWithFocus"))
+        if (StringHelper.stringsEqual(command.getName(), "CancelConfirmWithFocus")) //$NON-NLS-1$
         {
             CancelConfirmWithFocus();
         }

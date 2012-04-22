@@ -46,6 +46,7 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.NewPoolModelBehavior;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
@@ -110,14 +111,14 @@ public class PoolListModel extends ListWithDetailsModel
 
     public PoolListModel()
     {
-        setTitle("Pools");
+        setTitle(ConstantsManager.getInstance().getConstants().poolsTitle());
 
-        setDefaultSearchString("Pools:");
+        setDefaultSearchString("Pools:"); //$NON-NLS-1$
         setSearchString(getDefaultSearchString());
 
-        setNewCommand(new UICommand("New", this));
-        setEditCommand(new UICommand("Edit", this));
-        setRemoveCommand(new UICommand("Remove", this));
+        setNewCommand(new UICommand("New", this)); //$NON-NLS-1$
+        setEditCommand(new UICommand("Edit", this)); //$NON-NLS-1$
+        setRemoveCommand(new UICommand("Remove", this)); //$NON-NLS-1$
 
         UpdateActionAvailability();
 
@@ -140,7 +141,7 @@ public class PoolListModel extends ListWithDetailsModel
     @Override
     public boolean IsSearchStringMatch(String searchString)
     {
-        return searchString.trim().toLowerCase().startsWith("pool");
+        return searchString.trim().toLowerCase().startsWith("pool"); //$NON-NLS-1$
     }
 
     @Override
@@ -176,17 +177,17 @@ public class PoolListModel extends ListWithDetailsModel
         PoolModel model = new PoolModel(new NewPoolModelBehavior());
         model.setIsNew(true);
         setWindow(model);
-        model.setTitle("New Pool");
-        model.setHashName("new_pool");
+        model.setTitle(ConstantsManager.getInstance().getConstants().newPoolTitle());
+        model.setHashName("new_pool"); //$NON-NLS-1$
         model.setVmType(VmType.Desktop);
         model.Initialize(null);
 
-        UICommand tempVar = new UICommand("OnSave", this);
-        tempVar.setTitle("OK");
+        UICommand tempVar = new UICommand("OnSave", this); //$NON-NLS-1$
+        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
         tempVar.setIsDefault(true);
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this);
-        tempVar2.setTitle("Cancel");
+        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
+        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         tempVar2.setIsCancel(true);
         model.getCommands().add(tempVar2);
     }
@@ -451,12 +452,12 @@ public class PoolListModel extends ListWithDetailsModel
                         model.getProvisioning().setIsChangable(false);
                         model.getStorageDomain().setIsChangable(false);
 
-                        UICommand tempVar = new UICommand("OnSave", poolListModel);
-                        tempVar.setTitle("OK");
+                        UICommand tempVar = new UICommand("OnSave", poolListModel); //$NON-NLS-1$
+                        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
                         tempVar.setIsDefault(true);
                         model.getCommands().add(tempVar);
-                        UICommand tempVar2 = new UICommand("Cancel", poolListModel);
-                        tempVar2.setTitle("Cancel");
+                        UICommand tempVar2 = new UICommand("Cancel", poolListModel); //$NON-NLS-1$
+                        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
                         tempVar2.setIsCancel(true);
                         model.getCommands().add(tempVar2);
                     }
@@ -464,8 +465,8 @@ public class PoolListModel extends ListWithDetailsModel
 
                 PoolModel model = new PoolModel(behavior);
                 setWindow(model);
-                model.setTitle("Edit Pool");
-                model.setHashName("edit_pool");
+                model.setTitle(ConstantsManager.getInstance().getConstants().editPoolTitle());
+                model.setHashName("edit_pool"); //$NON-NLS-1$
                 model.setVmType(VmType.Desktop);
                 model.Initialize(null);
                 model.getName().setEntity(pool.getvm_pool_name());
@@ -485,9 +486,9 @@ public class PoolListModel extends ListWithDetailsModel
 
         ConfirmationModel model = new ConfirmationModel();
         setWindow(model);
-        model.setTitle("Remove Pool(s)");
-        model.setHashName("remove_pool");
-        model.setMessage("Pool(s)");
+        model.setTitle(ConstantsManager.getInstance().getConstants().removePoolsTitle());
+        model.setHashName("remove_pool"); //$NON-NLS-1$
+        model.setMessage(ConstantsManager.getInstance().getConstants().poolsMsg());
 
         java.util.ArrayList<String> list = new java.util.ArrayList<String>();
         for (vm_pools item : Linq.<vm_pools> Cast(getSelectedItems()))
@@ -496,12 +497,12 @@ public class PoolListModel extends ListWithDetailsModel
         }
         model.setItems(list);
 
-        UICommand tempVar = new UICommand("OnRemove", this);
-        tempVar.setTitle("OK");
+        UICommand tempVar = new UICommand("OnRemove", this); //$NON-NLS-1$
+        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
         tempVar.setIsDefault(true);
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this);
-        tempVar2.setTitle("Cancel");
+        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
+        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         tempVar2.setIsCancel(true);
         model.getCommands().add(tempVar2);
     }
@@ -570,7 +571,9 @@ public class PoolListModel extends ListWithDetailsModel
 
                         if ((model.getIsNew() && !isUnique)
                                 || (!model.getIsNew() && !isUnique && name.compareToIgnoreCase(pool.getvm_pool_name()) != 0)) {
-                            model.getName().getInvalidityReasons().add("Name must be unique.");
+                            model.getName()
+                                    .getInvalidityReasons()
+                                    .add(ConstantsManager.getInstance().getConstants().nameMustBeUniqueInvalidReason());
                             model.getName().setIsValid(false);
                             model.setIsGeneralTabValid(false);
                             return;
@@ -611,14 +614,14 @@ public class PoolListModel extends ListWithDetailsModel
                         tempVar.setvm_os((VmOsType) model.getOSType().getSelectedItem());
                         tempVar.setnum_of_monitors((Integer) model.getNumOfMonitors().getSelectedItem());
                         tempVar.setvm_domain(model.getDomain().getIsAvailable() ? (String) model.getDomain()
-                                .getSelectedItem() : "");
+                                .getSelectedItem() : ""); //$NON-NLS-1$
                         tempVar.setvm_mem_size_mb((Integer) model.getMemSize().getEntity());
                         tempVar.setMinAllocatedMem((Integer) model.getMinAllocatedMemory().getEntity());
                         tempVar.setvds_group_id(((VDSGroup) model.getCluster().getSelectedItem()).getId());
                         tempVar.settime_zone((model.getTimeZone().getIsAvailable() && model.getTimeZone()
                                 .getSelectedItem() != null) ? ((java.util.Map.Entry<String, String>) model.getTimeZone()
                                 .getSelectedItem()).getKey()
-                                : "");
+                                : ""); //$NON-NLS-1$
                         tempVar.setnum_of_sockets((Integer) model.getNumOfSockets().getEntity());
                         tempVar.setcpu_per_socket((Integer) model.getTotalCPUCores().getEntity()
                                 / (Integer) model.getNumOfSockets().getEntity());
@@ -627,7 +630,7 @@ public class PoolListModel extends ListWithDetailsModel
                         tempVar.setis_stateless(false);
                         tempVar.setdefault_boot_sequence(model.getBootSequence());
                         tempVar.setiso_path(model.getCdImage().getIsChangable() ? (String) model.getCdImage()
-                                .getSelectedItem() : "");
+                                .getSelectedItem() : ""); //$NON-NLS-1$
                         tempVar.setdedicated_vm_for_vds(default_host);
                         tempVar.setkernel_url((String) model.getKernel_path().getEntity());
                         tempVar.setkernel_params((String) model.getKernel_parameters().getEntity());
@@ -740,15 +743,15 @@ public class PoolListModel extends ListWithDetailsModel
         {
             remove();
         }
-        if (StringHelper.stringsEqual(command.getName(), "Cancel"))
+        if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
         {
             Cancel();
         }
-        if (StringHelper.stringsEqual(command.getName(), "OnSave"))
+        if (StringHelper.stringsEqual(command.getName(), "OnSave")) //$NON-NLS-1$
         {
             OnSave();
         }
-        if (StringHelper.stringsEqual(command.getName(), "OnRemove"))
+        if (StringHelper.stringsEqual(command.getName(), "OnRemove")) //$NON-NLS-1$
         {
             OnRemove();
         }
@@ -756,6 +759,6 @@ public class PoolListModel extends ListWithDetailsModel
 
     @Override
     protected String getListName() {
-        return "PoolListModel";
+        return "PoolListModel"; //$NON-NLS-1$
     }
 }

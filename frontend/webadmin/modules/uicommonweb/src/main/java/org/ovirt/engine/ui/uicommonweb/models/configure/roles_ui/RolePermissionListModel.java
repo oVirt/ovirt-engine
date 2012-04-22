@@ -15,6 +15,7 @@ import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
@@ -47,9 +48,9 @@ public class RolePermissionListModel extends SearchableListModel
 
     public RolePermissionListModel()
     {
-        setTitle("Role's Permissions");
+        setTitle(ConstantsManager.getInstance().getConstants().rolesPermissionsTitle());
 
-        setRemoveCommand(new UICommand("Remove", this));
+        setRemoveCommand(new UICommand("Remove", this)); //$NON-NLS-1$
 
         setSearchPageSize(1000);
 
@@ -135,23 +136,23 @@ public class RolePermissionListModel extends SearchableListModel
 
         ConfirmationModel model = new ConfirmationModel();
         setWindow(model);
-        model.setTitle("Remove Permission");
-        model.setHashName("remove_permission");
-        model.setMessage("Permission");
+        model.setTitle(ConstantsManager.getInstance().getConstants().removePermissionTitle());
+        model.setHashName("remove_permission"); //$NON-NLS-1$
+        model.setMessage(ConstantsManager.getInstance().getConstants().permissionMsg());
 
         java.util.ArrayList<String> items = new java.util.ArrayList<String>();
         for (Object a : getSelectedItems())
         {
-            items.add("Role " + ((permissions) a).getRoleName() + " on User " + ((permissions) a).getOwnerName());
+            items.add("Role " + ((permissions) a).getRoleName() + " on User " + ((permissions) a).getOwnerName()); //$NON-NLS-1$ //$NON-NLS-2$
         }
         model.setItems(items);
 
-        UICommand tempVar = new UICommand("OnRemove", this);
-        tempVar.setTitle("OK");
+        UICommand tempVar = new UICommand("OnRemove", this); //$NON-NLS-1$
+        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
         tempVar.setIsDefault(true);
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this);
-        tempVar2.setTitle("Cancel");
+        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
+        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         tempVar2.setIsCancel(true);
         model.getCommands().add(tempVar2);
     }
@@ -200,11 +201,11 @@ public class RolePermissionListModel extends SearchableListModel
         {
             remove();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnRemove"))
+        else if (StringHelper.stringsEqual(command.getName(), "OnRemove")) //$NON-NLS-1$
         {
             OnRemove();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "Cancel"))
+        else if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
         {
             Cancel();
         }
@@ -212,6 +213,6 @@ public class RolePermissionListModel extends SearchableListModel
 
     @Override
     protected String getListName() {
-        return "RolePermissionListModel";
+        return "RolePermissionListModel"; //$NON-NLS-1$
     }
 }

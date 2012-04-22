@@ -101,7 +101,7 @@ public class SearchPanelView extends AbstractView implements SearchPanelPresente
 
         // Create suggest box widget
         searchStringInput = new SearchSuggestBox(oracle);
-        searchStringInput.ensureDebugId("searchSuggestBox");
+        searchStringInput.ensureDebugId("searchSuggestBox"); //$NON-NLS-1$
         searchStringInput.setAutoSelectEnabled(false);
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
@@ -152,7 +152,7 @@ public class SearchPanelView extends AbstractView implements SearchPanelPresente
 
         });
 
-        searchPanelContainer.setCellWidth(searchBoxPanel, "1000px");
+        searchPanelContainer.setCellWidth(searchBoxPanel, "1000px"); //$NON-NLS-1$
 
         ViewIdHandler.idHandler.generateAndSetIds(this);
     }

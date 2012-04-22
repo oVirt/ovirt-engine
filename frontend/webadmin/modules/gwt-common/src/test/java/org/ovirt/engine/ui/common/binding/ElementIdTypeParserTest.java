@@ -75,7 +75,7 @@ public class ElementIdTypeParserTest {
             }
         };
 
-        stubPassingField(field, mock(JClassType.class), "field");
+        stubPassingField(field, mock(JClassType.class), "field"); //$NON-NLS-1$
 
         JClassType ownerTypeParent = mock(JClassType.class);
         Set<? extends JClassType> ownerTypeFlattenedSupertypeHierarchy = new HashSet<JClassType>(
@@ -83,12 +83,12 @@ public class ElementIdTypeParserTest {
         doReturn(ownerTypeFlattenedSupertypeHierarchy).when(ownerType).getFlattenedSupertypeHierarchy();
         when(ownerType.getFields()).thenReturn(new JField[] { ownerTypeField1, ownerTypeField2 });
         when(ownerTypeParent.getFields()).thenReturn(new JField[] { ownerTypeParentField });
-        when(ownerType.getName()).thenReturn("OwnerTypeName");
+        when(ownerType.getName()).thenReturn("OwnerTypeName"); //$NON-NLS-1$
 
-        JClassType ownerTypeParentFieldType = mock(JClassType.class, "ownerTypeParentFieldType");
-        stubPassingField(ownerTypeField1, mock(JClassType.class), "ownerTypeField1");
-        stubPassingField(ownerTypeField2, mock(JClassType.class), "ownerTypeField2");
-        stubPassingField(ownerTypeParentField, ownerTypeParentFieldType, "ownerTypeParentField");
+        JClassType ownerTypeParentFieldType = mock(JClassType.class, "ownerTypeParentFieldType"); //$NON-NLS-1$
+        stubPassingField(ownerTypeField1, mock(JClassType.class), "ownerTypeField1"); //$NON-NLS-1$
+        stubPassingField(ownerTypeField2, mock(JClassType.class), "ownerTypeField2"); //$NON-NLS-1$
+        stubPassingField(ownerTypeParentField, ownerTypeParentFieldType, "ownerTypeParentField"); //$NON-NLS-1$
 
         Set<? extends JClassType> ownerTypeParentFieldTypeFlattenedSupertypeHierarchy = new HashSet<JClassType>(
                 Arrays.asList(ownerTypeParentFieldType));
@@ -98,9 +98,9 @@ public class ElementIdTypeParserTest {
                 ownerTypeParentFieldTypeSubField1, ownerTypeParentFieldTypeSubField2 });
 
         stubPassingField(ownerTypeParentFieldTypeSubField1, ownerTypeParentFieldTypeSubField1Type,
-                "ownerTypeParentFieldTypeSubField1");
+                "ownerTypeParentFieldTypeSubField1"); //$NON-NLS-1$
         stubPassingField(ownerTypeParentFieldTypeSubField2, mock(JClassType.class),
-                "ownerTypeParentFieldTypeSubField2");
+                "ownerTypeParentFieldTypeSubField2"); //$NON-NLS-1$
     }
 
     void stubPassingField(JField field, JClassType fieldType, String fieldName) {
@@ -111,7 +111,7 @@ public class ElementIdTypeParserTest {
         when(field.getName()).thenReturn(fieldName);
         when(fieldType.isClass()).thenReturn(fieldType);
         when(field.getAnnotation(WithElementId.class)).thenReturn(idAnnotation);
-        when(idAnnotation.value()).thenReturn("");
+        when(idAnnotation.value()).thenReturn(""); //$NON-NLS-1$
         when(idAnnotation.processType()).thenReturn(true);
     }
 
@@ -172,16 +172,16 @@ public class ElementIdTypeParserTest {
 
     @Test
     public void doParse_defaultBehavior() throws UnableToCompleteException {
-        tested.doParse(ownerType, new ArrayList<JClassType>(), ".", "IdPrefix");
+        tested.doParse(ownerType, new ArrayList<JClassType>(), ".", "IdPrefix"); //$NON-NLS-1$ //$NON-NLS-2$
 
         List<ElementIdStatement> expected = Arrays.asList(
-                getExpectedStatement("ownerTypeParentField", "IdPrefix_ownerTypeParentField"),
-                getExpectedStatement("ownerTypeParentField.ownerTypeParentFieldTypeSubField1",
-                        "IdPrefix_ownerTypeParentField_ownerTypeParentFieldTypeSubField1"),
-                getExpectedStatement("ownerTypeParentField.ownerTypeParentFieldTypeSubField2",
-                        "IdPrefix_ownerTypeParentField_ownerTypeParentFieldTypeSubField2"),
-                getExpectedStatement("ownerTypeField1", "IdPrefix_ownerTypeField1"),
-                getExpectedStatement("ownerTypeField2", "IdPrefix_ownerTypeField2"));
+                getExpectedStatement("ownerTypeParentField", "IdPrefix_ownerTypeParentField"), //$NON-NLS-1$ //$NON-NLS-2$
+                getExpectedStatement("ownerTypeParentField.ownerTypeParentFieldTypeSubField1", //$NON-NLS-1$
+                        "IdPrefix_ownerTypeParentField_ownerTypeParentFieldTypeSubField1"), //$NON-NLS-1$
+                getExpectedStatement("ownerTypeParentField.ownerTypeParentFieldTypeSubField2", //$NON-NLS-1$
+                        "IdPrefix_ownerTypeParentField_ownerTypeParentFieldTypeSubField2"), //$NON-NLS-1$
+                getExpectedStatement("ownerTypeField1", "IdPrefix_ownerTypeField1"), //$NON-NLS-1$ //$NON-NLS-2$
+                getExpectedStatement("ownerTypeField2", "IdPrefix_ownerTypeField2")); //$NON-NLS-1$ //$NON-NLS-2$
 
         assertThat(tested.statements.size(), is(equalTo(expected.size())));
         assertThat(tested.statements.containsAll(expected), is(equalTo(true)));
@@ -189,29 +189,29 @@ public class ElementIdTypeParserTest {
 
     @Test
     public void doParse_customFieldId() throws UnableToCompleteException {
-        stubFieldIdAnnotation(ownerTypeParentField, "ownerTypeParentFieldCustomId", true);
-        tested.doParse(ownerType, new ArrayList<JClassType>(), ".", "IdPrefix");
+        stubFieldIdAnnotation(ownerTypeParentField, "ownerTypeParentFieldCustomId", true); //$NON-NLS-1$
+        tested.doParse(ownerType, new ArrayList<JClassType>(), ".", "IdPrefix"); //$NON-NLS-1$ //$NON-NLS-2$
 
         assertThat(tested.statements.contains(getExpectedStatement(
-                "ownerTypeParentField", "IdPrefix_ownerTypeParentFieldCustomId")), is(equalTo(true)));
+                "ownerTypeParentField", "IdPrefix_ownerTypeParentFieldCustomId")), is(equalTo(true))); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     @Test(expected = UnableToCompleteException.class)
     public void doParse_duplicateFieldIds() throws UnableToCompleteException {
-        stubFieldIdAnnotation(ownerTypeParentFieldTypeSubField1, "customId", true);
-        stubFieldIdAnnotation(ownerTypeParentFieldTypeSubField2, "customId", true);
-        tested.doParse(ownerType, new ArrayList<JClassType>(), ".", "IdPrefix");
+        stubFieldIdAnnotation(ownerTypeParentFieldTypeSubField1, "customId", true); //$NON-NLS-1$
+        stubFieldIdAnnotation(ownerTypeParentFieldTypeSubField2, "customId", true); //$NON-NLS-1$
+        tested.doParse(ownerType, new ArrayList<JClassType>(), ".", "IdPrefix"); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     @Test
     public void doParse_limitedFieldTypeRecursion() throws UnableToCompleteException {
-        stubFieldIdAnnotation(ownerTypeParentField, "", false);
-        tested.doParse(ownerType, new ArrayList<JClassType>(), ".", "IdPrefix");
+        stubFieldIdAnnotation(ownerTypeParentField, "", false); //$NON-NLS-1$
+        tested.doParse(ownerType, new ArrayList<JClassType>(), ".", "IdPrefix"); //$NON-NLS-1$ //$NON-NLS-2$
 
         List<ElementIdStatement> expected = Arrays.asList(
-                getExpectedStatement("ownerTypeParentField", "IdPrefix_ownerTypeParentField"),
-                getExpectedStatement("ownerTypeField1", "IdPrefix_ownerTypeField1"),
-                getExpectedStatement("ownerTypeField2", "IdPrefix_ownerTypeField2"));
+                getExpectedStatement("ownerTypeParentField", "IdPrefix_ownerTypeParentField"), //$NON-NLS-1$ //$NON-NLS-2$
+                getExpectedStatement("ownerTypeField1", "IdPrefix_ownerTypeField1"), //$NON-NLS-1$ //$NON-NLS-2$
+                getExpectedStatement("ownerTypeField2", "IdPrefix_ownerTypeField2")); //$NON-NLS-1$ //$NON-NLS-2$
 
         assertThat(tested.statements.size(), is(equalTo(expected.size())));
         assertThat(tested.statements.containsAll(expected), is(equalTo(true)));
@@ -225,7 +225,7 @@ public class ElementIdTypeParserTest {
                 .when(ownerTypeParentFieldTypeSubField1Type).getFlattenedSupertypeHierarchy();
         when(ownerTypeParentFieldTypeSubField1Type.getFields()).thenReturn(new JField[] { ownerTypeParentField });
 
-        tested.doParse(ownerType, new ArrayList<JClassType>(), ".", "IdPrefix");
+        tested.doParse(ownerType, new ArrayList<JClassType>(), ".", "IdPrefix"); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     @Test
@@ -236,13 +236,13 @@ public class ElementIdTypeParserTest {
                 .when(ownerTypeParentFieldTypeSubField1Type).getFlattenedSupertypeHierarchy();
         when(ownerTypeParentFieldTypeSubField1Type.getFields()).thenReturn(new JField[] { ownerTypeParentField });
 
-        stubFieldIdAnnotation(ownerTypeParentField, "", false);
-        tested.doParse(ownerType, new ArrayList<JClassType>(), ".", "IdPrefix");
+        stubFieldIdAnnotation(ownerTypeParentField, "", false); //$NON-NLS-1$
+        tested.doParse(ownerType, new ArrayList<JClassType>(), ".", "IdPrefix"); //$NON-NLS-1$ //$NON-NLS-2$
 
         List<ElementIdStatement> expected = Arrays.asList(
-                getExpectedStatement("ownerTypeParentField", "IdPrefix_ownerTypeParentField"),
-                getExpectedStatement("ownerTypeField1", "IdPrefix_ownerTypeField1"),
-                getExpectedStatement("ownerTypeField2", "IdPrefix_ownerTypeField2"));
+                getExpectedStatement("ownerTypeParentField", "IdPrefix_ownerTypeParentField"), //$NON-NLS-1$ //$NON-NLS-2$
+                getExpectedStatement("ownerTypeField1", "IdPrefix_ownerTypeField1"), //$NON-NLS-1$ //$NON-NLS-2$
+                getExpectedStatement("ownerTypeField2", "IdPrefix_ownerTypeField2")); //$NON-NLS-1$ //$NON-NLS-2$
 
         assertThat(tested.statements.size(), is(equalTo(expected.size())));
         assertThat(tested.statements.containsAll(expected), is(equalTo(true)));
@@ -253,14 +253,14 @@ public class ElementIdTypeParserTest {
         tested.parseStatements();
 
         List<ElementIdStatement> expected = Arrays.asList(
-                getExpectedStatement("ownerTypeParentField", "OwnerTypeName_ownerTypeParentField"),
-                getExpectedStatement("ownerTypeParentField.ownerTypeParentFieldTypeSubField1",
-                        "OwnerTypeName_ownerTypeParentField_ownerTypeParentFieldTypeSubField1"),
-                getExpectedStatement("ownerTypeParentField.ownerTypeParentFieldTypeSubField2",
-                        "OwnerTypeName_ownerTypeParentField_ownerTypeParentFieldTypeSubField2"),
-                getExpectedStatement("ownerTypeField1", "OwnerTypeName_ownerTypeField1"),
-                getExpectedStatement("ownerTypeField2", "OwnerTypeName_ownerTypeField2"),
-                getExpectedStatement(null, "OwnerTypeName")
+                getExpectedStatement("ownerTypeParentField", "OwnerTypeName_ownerTypeParentField"), //$NON-NLS-1$ //$NON-NLS-2$
+                getExpectedStatement("ownerTypeParentField.ownerTypeParentFieldTypeSubField1", //$NON-NLS-1$
+                        "OwnerTypeName_ownerTypeParentField_ownerTypeParentFieldTypeSubField1"), //$NON-NLS-1$
+                getExpectedStatement("ownerTypeParentField.ownerTypeParentFieldTypeSubField2", //$NON-NLS-1$
+                        "OwnerTypeName_ownerTypeParentField_ownerTypeParentFieldTypeSubField2"), //$NON-NLS-1$
+                getExpectedStatement("ownerTypeField1", "OwnerTypeName_ownerTypeField1"), //$NON-NLS-1$ //$NON-NLS-2$
+                getExpectedStatement("ownerTypeField2", "OwnerTypeName_ownerTypeField2"), //$NON-NLS-1$ //$NON-NLS-2$
+                getExpectedStatement(null, "OwnerTypeName") //$NON-NLS-1$
                 );
 
         assertThat(tested.statements.size(), is(equalTo(expected.size())));
@@ -278,7 +278,7 @@ public class ElementIdTypeParserTest {
         String fieldExpression = ElementIdHandlerGenerator.ElementIdHandler_generateAndSetIds_owner;
 
         if (pathToField != null) {
-            fieldExpression += "." + pathToField;
+            fieldExpression += "." + pathToField; //$NON-NLS-1$
         }
 
         return new ElementIdStatement(fieldExpression, elementId);

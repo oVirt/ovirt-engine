@@ -4,6 +4,7 @@ import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
+import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.view.AbstractSubTabTreeWidgetView;
@@ -28,8 +29,9 @@ public class SubTabVirtualMachineSnapshotView extends AbstractSubTabTreeWidgetVi
     public SubTabVirtualMachineSnapshotView(SearchableDetailModelProvider<Snapshot, VmListModel, VmSnapshotListModel> modelProvider,
             EventBus eventBus,
             CommonApplicationResources resources,
-            CommonApplicationConstants constants) {
-        super(new VmSnapshotListModelTree(modelProvider, eventBus, resources, constants), eventBus);
+            CommonApplicationConstants constants,
+            CommonApplicationTemplates templates) {
+        super(new VmSnapshotListModelTree(modelProvider, eventBus, resources, constants, templates), eventBus);
         ViewIdHandler.idHandler.generateAndSetIds(this);
         getModelBoundTreeWidget().initTree(actionPanel, table);
     }

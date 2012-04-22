@@ -17,7 +17,7 @@ import com.google.gwt.user.client.ui.TextBox;
 public class TextBoxLabel extends TextBox {
 
     private boolean handleEmptyValue = false;
-    private String unAvailablePropertyLabel = "";
+    private String unAvailablePropertyLabel = ""; //$NON-NLS-1$
     private boolean hasFocus = false;
 
     public TextBoxLabel() {
@@ -71,7 +71,7 @@ public class TextBoxLabel extends TextBox {
     @Override
     public void setText(String text) {
         String renderedText = new EmptyValueRenderer<String>(
-                handleEmptyValue ? unAvailablePropertyLabel : "").render(text);
+                handleEmptyValue ? unAvailablePropertyLabel : "").render(text); //$NON-NLS-1$
         renderedText = unEscapeRenderedText(renderedText);
 
         final int cursorPosition = getCursorPos();
@@ -97,7 +97,7 @@ public class TextBoxLabel extends TextBox {
     }
 
     private String unEscapeRenderedText(String renderedText) {
-        renderedText = renderedText.replace("&lt;", "<");
+        renderedText = renderedText.replace("&lt;", "<"); //$NON-NLS-1$ //$NON-NLS-2$
         return renderedText;
     }
 

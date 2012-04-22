@@ -58,10 +58,10 @@ public abstract class NetworkItemModel<T extends Enum<T>> extends ListModel impl
     public String toString() {
         String name = getClass().getName();
         T status = getStatus();
-        return name.substring(name.lastIndexOf(".") + 1) + " [name=" + getName() + ", status="
-                + (status == null ? "?" : status.name())
-                + ", error=" + hasError()
-                + "]";
+        return name.substring(name.lastIndexOf(".") + 1) + " [name=" + getName() + ", status=" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                + (status == null ? "?" : status.name()) //$NON-NLS-1$
+                + ", error=" + hasError() //$NON-NLS-1$
+                + "]"; //$NON-NLS-1$
     }
 
     /**

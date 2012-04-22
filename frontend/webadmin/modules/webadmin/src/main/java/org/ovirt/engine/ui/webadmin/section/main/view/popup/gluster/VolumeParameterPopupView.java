@@ -67,9 +67,9 @@ public class VolumeParameterPopupView extends AbstractModelBoundPopupView<Volume
     }
 
     private void localize(ApplicationConstants constants) {
-        keyListEditor.setLabel("Option Key");
-        descriptionEditor.setLabel("Description");
-        valueEditor.setLabel("Option Value");
+        keyListEditor.setLabel(constants.optionKeyVolumeParameter());
+        descriptionEditor.setLabel(constants.descriptionVolumeParameter());
+        valueEditor.setLabel(constants.optionValueVolumeParameter());
     }
 
     @Override

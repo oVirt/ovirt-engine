@@ -24,7 +24,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
-import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -34,6 +33,7 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.ImportTemplateModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
@@ -45,7 +45,8 @@ public class TemplateBackupModel extends ManageBackupModel
 
     public TemplateBackupModel()
     {
-        setTitle("Template Import");
+        setTitle(ConstantsManager.getInstance().getConstants().templateImportTitle());
+        setHashName("template_import"); //$NON-NLS-1$
     }
 
     @Override
@@ -60,9 +61,9 @@ public class TemplateBackupModel extends ManageBackupModel
 
         ConfirmationModel model = new ConfirmationModel();
         setWindow(model);
-        model.setTitle("Remove Backed up Template(s)");
-        model.setHashName("remove_backed_up_template");
-        model.setMessage("Template(s)");
+        model.setTitle(ConstantsManager.getInstance().getConstants().removeBackedUpTemplatesTitle());
+        model.setHashName("remove_backed_up_template"); //$NON-NLS-1$
+        model.setMessage(ConstantsManager.getInstance().getConstants().templatesMsg());
         java.util.ArrayList<String> items = new java.util.ArrayList<String>();
         for (Object a : getSelectedItems())
         {
@@ -71,14 +72,14 @@ public class TemplateBackupModel extends ManageBackupModel
         }
         model.setItems(items);
 
-        model.setNote("Note: The deleted items might still appear on the sub-tab, since the remove operation might be long. Use the Refresh button, to get the updated status.");
+        model.setNote(ConstantsManager.getInstance().getConstants().noteTheDeletedItemsMightStillAppearOntheSubTab());
 
-        UICommand tempVar = new UICommand("OnRemove", this);
-        tempVar.setTitle("OK");
+        UICommand tempVar = new UICommand("OnRemove", this); //$NON-NLS-1$
+        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
         tempVar.setIsDefault(true);
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this);
-        tempVar2.setTitle("Cancel");
+        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
+        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         tempVar2.setIsCancel(true);
         model.getCommands().add(tempVar2);
     }
@@ -123,8 +124,8 @@ public class TemplateBackupModel extends ManageBackupModel
 
         ImportTemplateModel model = new ImportTemplateModel();
         setWindow(model);
-        model.setTitle("Import Template(s)");
-        model.setHashName("import_template");
+        model.setTitle(ConstantsManager.getInstance().getConstants().importTemplatesTitle());
+        model.setHashName("import_template"); //$NON-NLS-1$
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.Model = this;
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
@@ -188,24 +189,26 @@ public class TemplateBackupModel extends ManageBackupModel
                                     iTemplateModel2.getDestinationStorage().setIsChangable(false);
                                     iTemplateModel2.getDestinationStorage()
                                             .getChangeProhibitionReasons()
-                                            .add("Cannot import Template.");
+                                            .add("Cannot import Template."); //$NON-NLS-1$
 
-                                    iTemplateModel2.setMessage("There is no Data Storage Domain to import the Template into. Please attach a Data Storage Domain to the Template's Data Center.");
+                                    iTemplateModel2.setMessage(ConstantsManager.getInstance()
+                                            .getConstants()
+                                            .thereIsNoDataStorageDomainToImportTemplateIntoMsg());
 
-                                    UICommand tempVar = new UICommand("Cancel", tempalteBackupModel2);
-                                    tempVar.setTitle("Close");
+                                    UICommand tempVar = new UICommand("Cancel", tempalteBackupModel2); //$NON-NLS-1$
+                                    tempVar.setTitle(ConstantsManager.getInstance().getConstants().close());
                                     tempVar.setIsDefault(true);
                                     tempVar.setIsCancel(true);
                                     iTemplateModel2.getCommands().add(tempVar);
                                 }
                                 else
                                 {
-                                    UICommand tempVar2 = new UICommand("OnRestore", tempalteBackupModel2);
-                                    tempVar2.setTitle("OK");
+                                    UICommand tempVar2 = new UICommand("OnRestore", tempalteBackupModel2); //$NON-NLS-1$
+                                    tempVar2.setTitle(ConstantsManager.getInstance().getConstants().ok());
                                     tempVar2.setIsDefault(true);
                                     iTemplateModel2.getCommands().add(tempVar2);
-                                    UICommand tempVar3 = new UICommand("Cancel", tempalteBackupModel2);
-                                    tempVar3.setTitle("Cancel");
+                                    UICommand tempVar3 = new UICommand("Cancel", tempalteBackupModel2); //$NON-NLS-1$
+                                    tempVar3.setTitle(ConstantsManager.getInstance().getConstants().cancel());
                                     tempVar3.setIsCancel(true);
                                     iTemplateModel2.getCommands().add(tempVar3);
                                 }
@@ -278,23 +281,24 @@ public class TemplateBackupModel extends ManageBackupModel
                         {
                             ConfirmationModel confirmModel = new ConfirmationModel();
                             templateBackupModel.setConfirmWindow(confirmModel);
-                            confirmModel.setTitle("Import Template(s)");
-                            confirmModel.setHashName("import_template");
-                            String importedTemplates = "";
+                            confirmModel.setTitle(ConstantsManager.getInstance().getConstants().importTemplatesTitle());
+                            confirmModel.setHashName("import_template"); //$NON-NLS-1$
+                            String importedTemplates = ""; //$NON-NLS-1$
                             int counter = 0;
                             for (Object a : templateBackupModel.getSelectedItems())
                             {
                                 VmTemplate template = (VmTemplate) a;
                                 if (retVals.get(counter) != null && retVals.get(counter).getSucceeded()) {
-                                    importedTemplates += template.getname() + ", ";
+                                    importedTemplates += template.getname() + ", "; //$NON-NLS-1$
                                 }
                                 counter++;
                             }
                             StringHelper.trimEnd(importedTemplates.trim(), ',');
-                            confirmModel.setMessage(StringFormat.format("Import process has begun for Template(s): %1$s.\nYou can check import status in the 'Events' tab of the specific destination storage domain, or in the main 'Events' tab",
-                                    importedTemplates));
-                            UICommand tempVar = new UICommand("CancelConfirm", templateBackupModel);
-                            tempVar.setTitle("Close");
+                            confirmModel.setMessage(ConstantsManager.getInstance()
+                                    .getMessages()
+                                    .importProcessHasBegunForTemplates(importedTemplates));
+                            UICommand tempVar = new UICommand("CancelConfirm", templateBackupModel); //$NON-NLS-1$
+                            tempVar.setTitle(ConstantsManager.getInstance().getConstants().close());
                             tempVar.setIsDefault(true);
                             tempVar.setIsCancel(true);
                             confirmModel.getCommands().add(tempVar);
@@ -310,7 +314,7 @@ public class TemplateBackupModel extends ManageBackupModel
     {
         super.EntityPropertyChanged(sender, e);
 
-        if (e.PropertyName.equals("storage_domain_shared_status"))
+        if (e.PropertyName.equals("storage_domain_shared_status")) //$NON-NLS-1$
         {
             getSearchCommand().Execute();
         }
@@ -398,11 +402,11 @@ public class TemplateBackupModel extends ManageBackupModel
     {
         super.ExecuteCommand(command);
 
-        if (StringHelper.stringsEqual(command.getName(), "OnRemove"))
+        if (StringHelper.stringsEqual(command.getName(), "OnRemove")) //$NON-NLS-1$
         {
             OnRemove();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnRestore"))
+        else if (StringHelper.stringsEqual(command.getName(), "OnRestore")) //$NON-NLS-1$
         {
             OnRestore();
         }
@@ -410,6 +414,6 @@ public class TemplateBackupModel extends ManageBackupModel
 
     @Override
     protected String getListName() {
-        return "TemplateBackupModel";
+        return "TemplateBackupModel"; //$NON-NLS-1$
     }
 }

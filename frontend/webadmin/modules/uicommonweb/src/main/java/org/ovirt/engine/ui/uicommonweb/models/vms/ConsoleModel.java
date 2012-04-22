@@ -11,7 +11,7 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 @SuppressWarnings("unused")
 public abstract class ConsoleModel extends EntityModel
 {
-    public static final String EjectLabel = "[Eject]";
+    public static final String EjectLabel = "[Eject]"; //$NON-NLS-1$
 
     public static EventDefinition ErrorEventDefinition;
     private Event privateErrorEvent;
@@ -50,7 +50,7 @@ public abstract class ConsoleModel extends EntityModel
         if (isConnected != value)
         {
             isConnected = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsConnected"));
+            OnPropertyChanged(new PropertyChangedEventArgs("IsConnected")); //$NON-NLS-1$
         }
     }
 
@@ -66,7 +66,7 @@ public abstract class ConsoleModel extends EntityModel
         if (forceVmStatusUp != value)
         {
             forceVmStatusUp = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("ForceVmStatusUp"));
+            OnPropertyChanged(new PropertyChangedEventArgs("ForceVmStatusUp")); //$NON-NLS-1$
         }
     }
 
@@ -83,14 +83,14 @@ public abstract class ConsoleModel extends EntityModel
 
     static
     {
-        ErrorEventDefinition = new EventDefinition("Error", ConsoleModel.class);
+        ErrorEventDefinition = new EventDefinition("Error", ConsoleModel.class); //$NON-NLS-1$
     }
 
     protected ConsoleModel()
     {
         setErrorEvent(new Event(ErrorEventDefinition));
 
-        setConnectCommand(new UICommand("Connect", this));
+        setConnectCommand(new UICommand("Connect", this)); //$NON-NLS-1$
     }
 
     protected abstract void Connect();
@@ -108,7 +108,7 @@ public abstract class ConsoleModel extends EntityModel
     {
         super.EntityPropertyChanged(sender, e);
 
-        if (e.PropertyName.equals("status"))
+        if (e.PropertyName.equals("status")) //$NON-NLS-1$
         {
             UpdateActionAvailability();
         }

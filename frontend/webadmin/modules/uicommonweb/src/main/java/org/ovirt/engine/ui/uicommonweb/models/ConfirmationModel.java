@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models;
 
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
 public class ConfirmationModel extends ListModel
@@ -31,7 +32,7 @@ public class ConfirmationModel extends ListModel
         if (!StringHelper.stringsEqual(note, value))
         {
             note = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Note"));
+            OnPropertyChanged(new PropertyChangedEventArgs("Note")); //$NON-NLS-1$
         }
     }
 
@@ -47,7 +48,9 @@ public class ConfirmationModel extends ListModel
         getLatch().setIsValid(true);
         if (getLatch().getIsAvailable() && !(Boolean) getLatch().getEntity())
         {
-            getLatch().getInvalidityReasons().add("You must approve the action by clicking on this checkbox.");
+            getLatch().getInvalidityReasons().add(ConstantsManager.getInstance()
+                    .getConstants()
+                    .youMustApproveTheActionByClickingOnThisCheckboxInvalidReason());
             getLatch().setIsValid(false);
         }
 

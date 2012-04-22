@@ -40,6 +40,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
@@ -166,20 +167,20 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
 
     public DataCenterListModel()
     {
-        setTitle("Data Centers");
+        setTitle(ConstantsManager.getInstance().getConstants().dataCentersTitle());
 
-        setDefaultSearchString("DataCenter:");
+        setDefaultSearchString("DataCenter:"); //$NON-NLS-1$
         setSearchString(getDefaultSearchString());
 
-        setNewCommand(new UICommand("New", this));
-        setEditCommand(new UICommand("Edit", this));
-        setRemoveCommand(new UICommand("Remove", this));
-        UICommand tempVar = new UICommand("ForceRemove", this);
+        setNewCommand(new UICommand("New", this)); //$NON-NLS-1$
+        setEditCommand(new UICommand("Edit", this)); //$NON-NLS-1$
+        setRemoveCommand(new UICommand("Remove", this)); //$NON-NLS-1$
+        UICommand tempVar = new UICommand("ForceRemove", this); //$NON-NLS-1$
         tempVar.setIsExecutionAllowed(true);
         setForceRemoveCommand(tempVar);
-        setRecoveryStorageCommand(new UICommand("RecoveryStorage", this));
-        setActivateCommand(new UICommand("Activate", this));
-        setGuideCommand(new UICommand("Guide", this));
+        setRecoveryStorageCommand(new UICommand("RecoveryStorage", this)); //$NON-NLS-1$
+        setActivateCommand(new UICommand("Activate", this)); //$NON-NLS-1$
+        setGuideCommand(new UICommand("Guide", this)); //$NON-NLS-1$
 
         UpdateActionAvailability();
 
@@ -191,8 +192,8 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
     {
         DataCenterGuideModel model = new DataCenterGuideModel(getGlusterModeEnum());
         setWindow(model);
-        model.setTitle("New Data Center - Guide Me");
-        model.setHashName("new_data_center_-_guide_me");
+        model.setTitle(ConstantsManager.getInstance().getConstants().newDataCenterGuideMeTitle());
+        model.setHashName("new_data_center_-_guide_me"); //$NON-NLS-1$
         if (getGuideContext() == null) {
             storage_pool dataCenter = (storage_pool) getSelectedItem();
             setGuideContext(dataCenter.getId());
@@ -206,8 +207,8 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
                         DataCenterGuideModel model = (DataCenterGuideModel) dataCenterListModel.getWindow();
                         model.setEntity((storage_pool) returnValue);
 
-                        UICommand tempVar = new UICommand("Cancel", dataCenterListModel);
-                        tempVar.setTitle("Configure Later");
+                        UICommand tempVar = new UICommand("Cancel", dataCenterListModel); //$NON-NLS-1$
+                        tempVar.setTitle(ConstantsManager.getInstance().getConstants().configureLaterTitle());
                         tempVar.setIsDefault(true);
                         tempVar.setIsCancel(true);
                         model.getCommands().add(tempVar);
@@ -233,7 +234,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
     @Override
     public boolean IsSearchStringMatch(String searchString)
     {
-        return searchString.trim().toLowerCase().startsWith("datacenter");
+        return searchString.trim().toLowerCase().startsWith("datacenter"); //$NON-NLS-1$
     }
 
     @Override
@@ -263,17 +264,17 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
 
         DataCenterModel model = new DataCenterModel();
         setWindow(model);
-        model.setTitle("New Data Center");
-        model.setHashName("new_data_center");
+        model.setTitle(ConstantsManager.getInstance().getConstants().newDataCenterTitle());
+        model.setHashName("new_data_center"); //$NON-NLS-1$
         model.setIsNew(true);
         model.getStorageTypeList().setSelectedItem(StorageType.NFS);
 
-        UICommand tempVar = new UICommand("OnSave", this);
-        tempVar.setTitle("OK");
+        UICommand tempVar = new UICommand("OnSave", this); //$NON-NLS-1$
+        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
         tempVar.setIsDefault(true);
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this);
-        tempVar2.setTitle("Cancel");
+        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
+        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         tempVar2.setIsCancel(true);
         model.getCommands().add(tempVar2);
     }
@@ -291,15 +292,15 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         setWindow(model);
         model.setEntity(dataCenter);
         model.setDataCenterId(dataCenter.getId());
-        model.setTitle("Edit Data Center");
-        model.setHashName("edit_data_center");
+        model.setTitle(ConstantsManager.getInstance().getConstants().editDataCenterTitle());
+        model.setHashName("edit_data_center"); //$NON-NLS-1$
         model.getName().setEntity(dataCenter.getname());
 
         if (getSystemTreeSelectedItem() != null
                 && getSystemTreeSelectedItem().getType() == SystemTreeItemType.DataCenter)
         {
             model.getName().setIsChangable(false);
-            model.getName().setInfo("Cannot edit Data Center's Name in tree context");
+            model.getName().setInfo("Cannot edit Data Center's Name in tree context"); //$NON-NLS-1$
         }
 
         model.getDescription().setEntity(dataCenter.getdescription());
@@ -309,19 +310,19 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
             model.getStorageTypeList().setIsChangable(false);
             model.getStorageTypeList()
                     .getChangeProhibitionReasons()
-                    .add("Cannot change Repository type with Storage Domains attached to it");
+                    .add("Cannot change Repository type with Storage Domains attached to it"); //$NON-NLS-1$
         }
 
         model.getStorageTypeList().setSelectedItem(dataCenter.getstorage_pool_type());
 
         model.getQuotaEnforceTypeListModel().setSelectedItem(dataCenter.getQuotaEnforcementType());
 
-        UICommand tempVar = new UICommand("OnSave", this);
-        tempVar.setTitle("OK");
+        UICommand tempVar = new UICommand("OnSave", this); //$NON-NLS-1$
+        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
         tempVar.setIsDefault(true);
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this);
-        tempVar2.setTitle("Cancel");
+        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
+        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         tempVar2.setIsCancel(true);
         model.getCommands().add(tempVar2);
     }
@@ -335,9 +336,9 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
 
         ConfirmationModel model = new ConfirmationModel();
         setWindow(model);
-        model.setTitle("Remove Data Center(s)");
-        model.setHashName("remove_data_center");
-        model.setMessage("Data Center(s)");
+        model.setTitle(ConstantsManager.getInstance().getConstants().removeDataCenterTitle());
+        model.setHashName("remove_data_center"); //$NON-NLS-1$
+        model.setMessage(ConstantsManager.getInstance().getConstants().dataCentersMsg());
 
         java.util.ArrayList<String> list = new java.util.ArrayList<String>();
         for (storage_pool a : Linq.<storage_pool> Cast(getSelectedItems()))
@@ -346,12 +347,12 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         }
         model.setItems(list);
 
-        UICommand tempVar = new UICommand("OnRemove", this);
-        tempVar.setTitle("OK");
+        UICommand tempVar = new UICommand("OnRemove", this); //$NON-NLS-1$
+        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
         tempVar.setIsDefault(true);
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this);
-        tempVar2.setTitle("Cancel");
+        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
+        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         tempVar2.setIsCancel(true);
         model.getCommands().add(tempVar2);
     }
@@ -360,9 +361,9 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
     {
         ConfirmationModel model = new ConfirmationModel();
         setWindow(model);
-        model.setTitle("Force Remove Data Center");
-        model.setHashName("force_remove_data_center");
-        model.setMessage("Data Center(s)");
+        model.setTitle(ConstantsManager.getInstance().getConstants().forceRemoveDataCenterTitle());
+        model.setHashName("force_remove_data_center"); //$NON-NLS-1$
+        model.setMessage(ConstantsManager.getInstance().getConstants().dataCentersMsg());
         model.getLatch().setIsAvailable(true);
         model.getLatch().setIsChangable(true);
 
@@ -373,12 +374,12 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         }
         model.setItems(list);
 
-        UICommand tempVar = new UICommand("OnForceRemove", this);
-        tempVar.setTitle("OK");
+        UICommand tempVar = new UICommand("OnForceRemove", this); //$NON-NLS-1$
+        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
         tempVar.setIsDefault(true);
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this);
-        tempVar2.setTitle("Cancel");
+        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
+        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         tempVar2.setIsCancel(true);
         model.getCommands().add(tempVar2);
     }
@@ -387,8 +388,8 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
     {
         final ConfirmationModel windowModel = new ConfirmationModel();
         setWindow(windowModel);
-        windowModel.setTitle("Data Center Re-Initialize");
-        windowModel.setHashName("data_center_re-initialize");
+        windowModel.setTitle(ConstantsManager.getInstance().getConstants().dataCenterReInitializeTitle());
+        windowModel.setHashName("data_center_re-initialize"); //$NON-NLS-1$
         windowModel.getLatch().setIsAvailable(true);
         windowModel.getLatch().setIsChangable(true);
 
@@ -424,22 +425,24 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
 
                 if (models.isEmpty())
                 {
-                    windowModel.setMessage("There are no compatible Storage Domains to attach to this Data Center. Please add new Storage from the Storage tab.");
+                    windowModel.setMessage(ConstantsManager.getInstance()
+                            .getConstants()
+                            .thereAreNoCompatibleStorageDomainsAttachThisDcMsg());
 
-                    UICommand tempVar2 = new UICommand("Cancel", DataCenterListModel.this);
-                    tempVar2.setTitle("Close");
+                    UICommand tempVar2 = new UICommand("Cancel", DataCenterListModel.this); //$NON-NLS-1$
+                    tempVar2.setTitle(ConstantsManager.getInstance().getConstants().close());
                     tempVar2.setIsDefault(true);
                     tempVar2.setIsCancel(true);
                     windowModel.getCommands().add(tempVar2);
                 }
                 else
                 {
-                    UICommand tempVar3 = new UICommand("OnRecover", DataCenterListModel.this);
-                    tempVar3.setTitle("OK");
+                    UICommand tempVar3 = new UICommand("OnRecover", DataCenterListModel.this); //$NON-NLS-1$
+                    tempVar3.setTitle(ConstantsManager.getInstance().getConstants().ok());
                     tempVar3.setIsDefault(true);
                     windowModel.getCommands().add(tempVar3);
-                    UICommand tempVar4 = new UICommand("Cancel", DataCenterListModel.this);
-                    tempVar4.setTitle("Cancel");
+                    UICommand tempVar4 = new UICommand("Cancel", DataCenterListModel.this); //$NON-NLS-1$
+                    tempVar4.setTitle(ConstantsManager.getInstance().getConstants().cancel());
                     tempVar4.setIsCancel(true);
                     windowModel.getCommands().add(tempVar4);
                 }
@@ -596,16 +599,20 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         {
             ConfirmationModel confirmModel = new ConfirmationModel();
             setConfirmWindow(confirmModel);
-            confirmModel.setTitle("Change Data Center Compatibility Version");
-            confirmModel.setHashName("change_data_center_compatibility_version");
-            confirmModel.setMessage("You are about to change the Data Center Compatibility Version. Are you sure you want to continue?");
+            confirmModel.setTitle(ConstantsManager.getInstance()
+                    .getConstants()
+                    .changeDataCenterCompatibilityVersionTitle());
+            confirmModel.setHashName("change_data_center_compatibility_version"); //$NON-NLS-1$
+            confirmModel.setMessage(ConstantsManager.getInstance()
+                    .getConstants()
+                    .youAreAboutChangeDcCompatibilityVersionMsg());
 
-            UICommand tempVar = new UICommand("OnSaveInternal", this);
-            tempVar.setTitle("OK");
+            UICommand tempVar = new UICommand("OnSaveInternal", this); //$NON-NLS-1$
+            tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
             tempVar.setIsDefault(true);
             confirmModel.getCommands().add(tempVar);
-            UICommand tempVar2 = new UICommand("CancelConfirmation", this);
-            tempVar2.setTitle("Cancel");
+            UICommand tempVar2 = new UICommand("CancelConfirmation", this); //$NON-NLS-1$
+            tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
             tempVar2.setIsCancel(true);
             confirmModel.getCommands().add(tempVar2);
         }
@@ -708,7 +715,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
     {
         super.SelectedItemPropertyChanged(sender, e);
 
-        if (e.PropertyName.equals("status"))
+        if (e.PropertyName.equals("status")) //$NON-NLS-1$
         {
             UpdateActionAvailability();
         }
@@ -799,31 +806,31 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         {
             RecoveryStorage();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnSave"))
+        else if (StringHelper.stringsEqual(command.getName(), "OnSave")) //$NON-NLS-1$
         {
             OnSave();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "Cancel"))
+        else if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
         {
             Cancel();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnRemove"))
+        else if (StringHelper.stringsEqual(command.getName(), "OnRemove")) //$NON-NLS-1$
         {
             OnRemove();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnForceRemove"))
+        else if (StringHelper.stringsEqual(command.getName(), "OnForceRemove")) //$NON-NLS-1$
         {
             OnForceRemove();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnSaveInternal"))
+        else if (StringHelper.stringsEqual(command.getName(), "OnSaveInternal")) //$NON-NLS-1$
         {
             OnSaveInternal();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "CancelConfirmation"))
+        else if (StringHelper.stringsEqual(command.getName(), "CancelConfirmation")) //$NON-NLS-1$
         {
             CancelConfirmation();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnRecover"))
+        else if (StringHelper.stringsEqual(command.getName(), "OnRecover")) //$NON-NLS-1$
         {
             OnRecover();
         }
@@ -854,6 +861,6 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
 
     @Override
     protected String getListName() {
-        return "DataCenterListModel";
+        return "DataCenterListModel"; //$NON-NLS-1$
     }
 }

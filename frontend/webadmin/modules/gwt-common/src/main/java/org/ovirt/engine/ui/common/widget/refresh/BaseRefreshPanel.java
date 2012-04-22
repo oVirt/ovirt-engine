@@ -99,7 +99,7 @@ public abstract class BaseRefreshPanel extends FocusPanel implements HasClickHan
                 Style border = getElement().getStyle();
                 border.setBorderWidth(1, Unit.PX);
                 border.setBorderStyle(BorderStyle.SOLID);
-                border.setBorderColor("#96B7D6");
+                border.setBorderColor("#96B7D6"); //$NON-NLS-1$
             }
 
         });
@@ -112,7 +112,7 @@ public abstract class BaseRefreshPanel extends FocusPanel implements HasClickHan
                 Style border = getElement().getStyle();
                 border.setBorderWidth(1, Unit.PX);
                 border.setBorderStyle(BorderStyle.SOLID);
-                border.setBorderColor("transparent");
+                border.setBorderColor("transparent"); //$NON-NLS-1$
             }
         });
 
@@ -185,7 +185,7 @@ public abstract class BaseRefreshPanel extends FocusPanel implements HasClickHan
         private final int refreshRate;
 
         public RefreshRateOptionMenuItem(int refreshRate, Command cmd) {
-            super("", true, cmd);
+            super("", true, cmd); //$NON-NLS-1$
 
             this.refreshRate = refreshRate;
 
@@ -317,7 +317,7 @@ public abstract class BaseRefreshPanel extends FocusPanel implements HasClickHan
         refreshOptionsMenu.setStylePrimaryName(style.refreshRateMenu());
 
         // Create menu's title and add it as the first item
-        MenuItem title = new MenuItem("Refresh Rate", new Command() {
+        MenuItem title = new MenuItem("Refresh Rate", new Command() { //$NON-NLS-1$
             @Override
             public void execute() {
             }
@@ -342,7 +342,7 @@ public abstract class BaseRefreshPanel extends FocusPanel implements HasClickHan
             refreshOptionsMenu.addItem(refreshRateOption);
             if (itemIndex != refreshRates.size() - 1) {
                 MenuItemSeparator separator = refreshOptionsMenu.addSeparator();
-                separator.getElement().getStyle().setBackgroundColor("#E0E9F2");
+                separator.getElement().getStyle().setBackgroundColor("#E0E9F2"); //$NON-NLS-1$
             }
             itemIndex++;
         }

@@ -94,19 +94,19 @@ public class EditQuotaClusterPopupView extends AbstractModelBoundPopupView<EditQ
     }
 
     private void initRadioButtonEditors() {
-        unlimitedMemRadioButtonEditor = new EntityModelRadioButtonEditor("3");
-        specificMemRadioButtonEditor = new EntityModelRadioButtonEditor("3");
-        unlimitedCpuRadioButtonEditor = new EntityModelRadioButtonEditor("4");
-        specificCpuRadioButtonEditor = new EntityModelRadioButtonEditor("4");
+        unlimitedMemRadioButtonEditor = new EntityModelRadioButtonEditor("3"); //$NON-NLS-1$
+        specificMemRadioButtonEditor = new EntityModelRadioButtonEditor("3"); //$NON-NLS-1$
+        unlimitedCpuRadioButtonEditor = new EntityModelRadioButtonEditor("4"); //$NON-NLS-1$
+        specificCpuRadioButtonEditor = new EntityModelRadioButtonEditor("4"); //$NON-NLS-1$
     }
 
     void localize(ApplicationConstants constants) {
-        unlimitedMemRadioButtonEditor.setLabel("Unlimited Quota");
-        specificMemRadioButtonEditor.setLabel("Use Quota");
-        unlimitedCpuRadioButtonEditor.setLabel("Unlimited Quota");
-        specificCpuRadioButtonEditor.setLabel("Use Quota");
-        memLabel.setText("Memory:");
-        cpuLabel.setText("CPU:");
+        unlimitedMemRadioButtonEditor.setLabel(constants.ultQuotaPopup());
+        specificMemRadioButtonEditor.setLabel(constants.useQuotaPopup());
+        unlimitedCpuRadioButtonEditor.setLabel(constants.ultQuotaPopup());
+        specificCpuRadioButtonEditor.setLabel(constants.useQuotaPopup());
+        memLabel.setText(constants.memQuotaPopup());
+        cpuLabel.setText(constants.cpuQuotaPopup());
     }
 
     @Override

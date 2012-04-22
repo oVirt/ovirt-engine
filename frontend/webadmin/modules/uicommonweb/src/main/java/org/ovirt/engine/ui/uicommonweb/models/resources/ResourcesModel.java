@@ -22,8 +22,8 @@ public class ResourcesModel extends SearchableListModel
 
         @Override
         public int compare(VM o1, VM o2) {
-            String name1 = o1.getvm_name() == null ? "" : o1.getvm_name();
-            String name2 = o2.getvm_name() == null ? "" : o2.getvm_name();
+            String name1 = o1.getvm_name() == null ? "" : o1.getvm_name(); //$NON-NLS-1$
+            String name2 = o2.getvm_name() == null ? "" : o2.getvm_name(); //$NON-NLS-1$
             return name1.compareTo(name2);
         }
     }
@@ -280,8 +280,8 @@ public class ResourcesModel extends SearchableListModel
                 getDefinedMemory().setEntity(SizeParser(definedMemory));
                 getUsedMemory().setEntity(SizeParser(usedMemory));
                 getUsedMemoryPercentage().setEntity(usedMemory * 100 / definedMemory);
-                getTotalDisksSize().setEntity(totalDisksSize >= 1 ? totalDisksSize + "GB" : "<1GB");
-                getTotalSnapshotsSize().setEntity(totalSnapshotsSize >= 1 ? totalSnapshotsSize + "GB" : "<1GB");
+                getTotalDisksSize().setEntity(totalDisksSize >= 1 ? totalDisksSize + "GB" : "<1GB"); //$NON-NLS-1$ //$NON-NLS-2$
+                getTotalSnapshotsSize().setEntity(totalSnapshotsSize >= 1 ? totalSnapshotsSize + "GB" : "<1GB"); //$NON-NLS-1$ //$NON-NLS-2$
                 getNumOfSnapshots().setEntity(numOfSnapshots);
 
                 Collections.sort(list, COMPARATOR);
@@ -301,12 +301,12 @@ public class ResourcesModel extends SearchableListModel
     // TODO: Use converters infrastructure in UICommon
     public String SizeParser(long sizeInMb)
     {
-        return ((sizeInMb >= 1024 && sizeInMb % 1024 == 0) ? (sizeInMb / 1024 + "GB") : (sizeInMb + "MB"));
+        return ((sizeInMb >= 1024 && sizeInMb % 1024 == 0) ? (sizeInMb / 1024 + "GB") : (sizeInMb + "MB")); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     @Override
     protected String getListName() {
-        return "ResourcesModel";
+        return "ResourcesModel"; //$NON-NLS-1$
     }
 
 }

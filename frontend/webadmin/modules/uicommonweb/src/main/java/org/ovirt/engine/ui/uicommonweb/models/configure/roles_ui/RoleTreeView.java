@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.ui.uicommonweb.models.common.SelectionTreeNodeModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
 public class RoleTreeView
@@ -108,144 +109,208 @@ public class RoleTreeView
     private static RoleNode initTreeView()
     {
         RoleNode tree =
-                new RoleNode("root",
+                new RoleNode(ConstantsManager.getInstance().getConstants().rootRoleTree(),
                         new RoleNode[] {
-                                new RoleNode("System", new RoleNode("Configure System", new RoleNode[] {
+                                new RoleNode(ConstantsManager.getInstance().getConstants().systemRoleTree(), new RoleNode(ConstantsManager.getInstance().getConstants().configureSystemRoleTree(), new RoleNode[] {
                                         new RoleNode(ActionGroup.MANIPULATE_USERS,
-                                                "Allow to Add/Remove Users from the System"),
+                                                ConstantsManager.getInstance().getConstants().allowToAddRemoveUsersFromTheSystemRoleTreeTooltip()),
                                         new RoleNode(ActionGroup.MANIPULATE_PERMISSIONS,
-                                                "Allow to add/remove permissions for Users on objects in the system"),
+                                                ConstantsManager.getInstance().getConstants().allowToAddRemovePermissionsForUsersOnObjectsInTheSystemRoleTreeTooltip()),
                                         new RoleNode(ActionGroup.MANIPULATE_ROLES,
-                                                "Allow to define/configure roles in the System"),
+                                                ConstantsManager.getInstance().getConstants().allowToDefineConfigureRolesInTheSystemRoleTreeTooltip()),
                                         new RoleNode(ActionGroup.CONFIGURE_ENGINE,
-                                                "Allow to get or set System Configuration") })),
-                                new RoleNode("Data Center", new RoleNode("Configure Data Center", new RoleNode[] {
-                                        new RoleNode(ActionGroup.CREATE_STORAGE_POOL, "Allow to create Data Center"),
-                                        new RoleNode(ActionGroup.DELETE_STORAGE_POOL, "Allow to remove Data Center"),
+                                                ConstantsManager.getInstance().getConstants().allowToGetOrSetSystemConfigurationRoleTreeTooltip()) })),
+                                new RoleNode(ConstantsManager.getInstance().getConstants().dataCenterRoleTree(), new RoleNode(ConstantsManager.getInstance().getConstants().configureDataCenterRoleTree(), new RoleNode[] {
+                                        new RoleNode(ActionGroup.CREATE_STORAGE_POOL, ConstantsManager.getInstance().getConstants().allowToCreateDataCenterRoleTreeTooltip()),
+                                        new RoleNode(ActionGroup.DELETE_STORAGE_POOL, ConstantsManager.getInstance().getConstants().allowToRemoveDataCenterRoleTreeTooltip()),
                                         new RoleNode(ActionGroup.EDIT_STORAGE_POOL_CONFIGURATION,
-                                                "Allow to modify Data Center properties"),
+                                                ConstantsManager.getInstance().getConstants().allowToModifyDataCenterPropertiesRoleTreeTooltip()),
                                         new RoleNode(ActionGroup.CONFIGURE_STORAGE_POOL_NETWORK,
-                                                "Allow to configure Logical Network per Data Center") })),
-                                new RoleNode("Storage Domain",
-                                        new RoleNode("Configure Storage Domain",
+                                                ConstantsManager.getInstance().getConstants().allowToConfigureLogicalNetworkPerDataCenterRoleTreeTooltip()) })),
+                                new RoleNode(ConstantsManager.getInstance().getConstants().storageDomainRoleTree(),
+                                        new RoleNode(ConstantsManager.getInstance().getConstants().configureStorageDomainRoleTree(),
                                                 new RoleNode[] {
                                                         new RoleNode(ActionGroup.CREATE_STORAGE_DOMAIN,
-                                                                "Allow to create Storage Domain"),
+                                                                ConstantsManager.getInstance()
+                                                                        .getConstants()
+                                                                        .allowToCreateStorageDomainRoleTreeTooltip()),
                                                         new RoleNode(ActionGroup.DELETE_STORAGE_DOMAIN,
-                                                                "Allow to delete Storage Domain"),
+                                                                ConstantsManager.getInstance()
+                                                                        .getConstants()
+                                                                        .allowToDeleteStorageDomainRoleTreeTooltip()),
                                                         new RoleNode(ActionGroup.EDIT_STORAGE_DOMAIN_CONFIGURATION,
-                                                                "Allow to modify Storage Domain properties"),
+                                                                ConstantsManager.getInstance()
+                                                                        .getConstants()
+                                                                        .allowToModifyStorageDomainPropertiesRoleTreeTooltip()),
                                                         new RoleNode(ActionGroup.MANIPULATE_STORAGE_DOMAIN,
-                                                                "Allow to change Storage Domain status:  maintenance/activate; attach/detach") })),
-                                new RoleNode("Cluster",
-                                        new RoleNode("Configure Cluster",
+                                                                ConstantsManager.getInstance()
+                                                                        .getConstants()
+                                                                        .allowToChangeStorageDomainStatusRoleTreeTooltip()) })),
+                                new RoleNode(ConstantsManager.getInstance().getConstants().clusterRoleTree(),
+                                        new RoleNode(ConstantsManager.getInstance().getConstants().configureClusterRoleTree(),
                                                 new RoleNode[] {
                                                         new RoleNode(ActionGroup.CREATE_CLUSTER,
-                                                                "Allow to create new Cluster"),
+                                                                ConstantsManager.getInstance()
+                                                                        .getConstants()
+                                                                        .allowToCreateNewClusterRoleTreeTooltip()),
                                                         new RoleNode(ActionGroup.DELETE_CLUSTER,
-                                                                "Allow to remove Cluster"),
+                                                                ConstantsManager.getInstance()
+                                                                        .getConstants()
+                                                                        .allowToRemoveClusterRoleTreeTooltip()),
                                                         new RoleNode(ActionGroup.EDIT_CLUSTER_CONFIGURATION,
-                                                                "Allow to Edit Cluster properties"),
+                                                                ConstantsManager.getInstance()
+                                                                        .getConstants()
+                                                                        .allowToEditClusterPropertiesRoleTreeTooltip()),
                                                         new RoleNode(ActionGroup.CONFIGURE_CLUSTER_NETWORK,
-                                                                "Allow to add/remove Logical Networks for the Cluster (from the list of Networks defined by the Data Center)") })),
-                                new RoleNode("Gluster",
-                                        new RoleNode("Configure Volumes",
+                                                                ConstantsManager.getInstance().getConstants().allowToAddRemoveLogicalNetworksForTheClusterRoleTreeTooltip()) })),
+                                new RoleNode(ConstantsManager.getInstance().getConstants().glusterRoleTree(),
+                                        new RoleNode(ConstantsManager.getInstance().getConstants().configureVolumesRoleTree(),
                                                 new RoleNode[] {
                                         new RoleNode(ActionGroup.CREATE_GLUSTER_VOLUME,
-                                                "Allow to create Gluster Volumes"),
+                                                ConstantsManager.getInstance().getConstants().allowToCreateGlusterVolumesRoleTree()),
                                         new RoleNode(ActionGroup.MANIPULATE_GLUSTER_VOLUME,
-                                                "Allow to manipulate Gluster Volumes") })),
-                                new RoleNode("Host", new RoleNode("Configure Host", new RoleNode[] {
-                                        new RoleNode(ActionGroup.CREATE_HOST, "Allow to add new Host to the Cluster"),
+                                                ConstantsManager.getInstance().getConstants().allowToManipulateGlusterVolumesRoleTree()) })),
+                                new RoleNode(ConstantsManager.getInstance().getConstants().hostRoleTree(), new RoleNode(ConstantsManager.getInstance().getConstants().configureHostRoleTree(), new RoleNode[] {
+                                        new RoleNode(ActionGroup.CREATE_HOST, ConstantsManager.getInstance().getConstants().allowToAddNewHostToTheClusterRoleTreeTooltip()),
                                         new RoleNode(ActionGroup.DELETE_HOST,
-                                                "Allow  to remove existing Host from the Cluster"),
+                                                ConstantsManager.getInstance().getConstants().allowToRemoveExistingHostFromTheClusterRoleTreeTooltip()),
                                         new RoleNode(ActionGroup.EDIT_HOST_CONFIGURATION,
-                                                "Allow to Edit Host properties; upgrade/install"),
+                                                ConstantsManager.getInstance().getConstants().allowToEditHostPropertiesRoleTreeTooltip()),
                                         new RoleNode(ActionGroup.MANIPUTLATE_HOST,
-                                                "Allow to change Host status: activate/maintenance"),
+                                                ConstantsManager.getInstance().getConstants().allowToChangeHostStatusRoleTreeTooltip()),
                                         new RoleNode(ActionGroup.CONFIGURE_HOST_NETWORK,
-                                                "Allow to configure Host's Network physical interfaces (Nics)") })),
-                                new RoleNode("Template",
+                                                ConstantsManager.getInstance().getConstants().allowToConfigureHostsNetworkPhysicalInterfacesRoleTreeTooltip()) })),
+                                new RoleNode(ConstantsManager.getInstance().getConstants().templateRoleTree(),
                                         new RoleNode[] {
-                                                new RoleNode("Basic Operations", new RoleNode[] {
-                                                        new RoleNode(ActionGroup.EDIT_TEMPLATE_PROPERTIES,
-                                                                "Allow to change  Template properties"),
-                                                        new RoleNode(ActionGroup.CONFIGURE_TEMPLATE_NETWORK,
-                                                                "Allow to configure Temlate Network") }),
-                                                new RoleNode("Provisioning Operations",
-                                                        "note: Permissions containig these operations should be associated with Storage Domain Object (or above)",
+                                                new RoleNode(ConstantsManager.getInstance().getConstants().basicOperationsRoleTree(), new RoleNode[] {
+                                                                new RoleNode(ActionGroup.EDIT_TEMPLATE_PROPERTIES,
+                                                                        ConstantsManager.getInstance()
+                                                                                .getConstants()
+                                                                                .allowToChangeTemplatePropertiesRoleTreeTooltip()),
+                                                                new RoleNode(ActionGroup.CONFIGURE_TEMPLATE_NETWORK,
+                                                                        ConstantsManager.getInstance()
+                                                                                .getConstants()
+                                                                                .allowToConfigureTemlateNetworkRoleTreeTooltip()) }),
+                                                new RoleNode(ConstantsManager.getInstance().getConstants().provisioningOperationsRoleTree(),
+                                                        ConstantsManager.getInstance()
+                                                                .getConstants()
+                                                                .notePermissionsContainigTheseOperationsShuoldAssociatSdOrAboveRoleTreeTooltip(),
                                                         new RoleNode[] {
                                                                 new RoleNode(ActionGroup.CREATE_TEMPLATE,
-                                                                        "Allow to create new Template"),
+                                                                        ConstantsManager.getInstance()
+                                                                                .getConstants()
+                                                                                .allowToCreateNewTemplateRoleTreeTooltip()),
                                                                 new RoleNode(ActionGroup.DELETE_TEMPLATE,
-                                                                        "Allow to remove existing Template"),
+                                                                        ConstantsManager.getInstance()
+                                                                                .getConstants()
+                                                                                .allowToRemoveExistingTemplateRoleTreeTooltip()),
                                                                 new RoleNode(ActionGroup.IMPORT_EXPORT_VM,
-                                                                        "Allow import/export operations"),
+                                                                        ConstantsManager.getInstance()
+                                                                                .getConstants()
+                                                                                .allowImportExportOperationsRoleTreeTooltip()),
                                                                 new RoleNode(ActionGroup.COPY_TEMPLATE,
-                                                                        "Allow to copy Template between Storage Domains") }) }),
-                                new RoleNode("VM",
+                                                                        ConstantsManager.getInstance()
+                                                                                .getConstants()
+                                                                                .allowToCopyTemplateBetweenStorageDomainsRoleTreeTooltip()) }) }),
+                                new RoleNode(ConstantsManager.getInstance().getConstants().vmRoleTree(),
                                         new RoleNode[] {
-                                                new RoleNode("Basic Operations", new RoleNode[] {
-                                                        new RoleNode(ActionGroup.VM_BASIC_OPERATIONS,
-                                                                "Allow basic VM operations - Run/Stop/Pause"),
-                                                        new RoleNode(ActionGroup.CHANGE_VM_CD,
-                                                                "Allow to attach CD to the VM"),
-                                                        new RoleNode(ActionGroup.CONNECT_TO_VM,
-                                                                "Allow viewing the  the VM Console Screen") }),
-                                                new RoleNode("Provisioning Operations",
-                                                        "note: Permissions containig these operations should be associated with Storage Domain Object (or above)",
+                                                new RoleNode(ConstantsManager.getInstance().getConstants().basicOperationsRoleTree(), new RoleNode[] {
+                                                                new RoleNode(ActionGroup.VM_BASIC_OPERATIONS,
+                                                                        ConstantsManager.getInstance()
+                                                                                .getConstants()
+                                                                                .allowBasicVmOperationsRoleTreeTooltip()),
+                                                                new RoleNode(ActionGroup.CHANGE_VM_CD,
+                                                                        ConstantsManager.getInstance()
+                                                                                .getConstants()
+                                                                                .allowToAttachCdToTheVmRoleTreeTooltip()),
+                                                                new RoleNode(ActionGroup.CONNECT_TO_VM,
+                                                                        ConstantsManager.getInstance()
+                                                                                .getConstants()
+                                                                                .allowViewingTheVmConsoleScreenRoleTreeTooltip()) }),
+                                                new RoleNode(ConstantsManager.getInstance().getConstants().provisioningOperationsRoleTree(),
+                                                        ConstantsManager.getInstance()
+                                                                .getConstants()
+                                                                .notePermissionsContainigTheseOperationsShuoldAssociatSdOrAboveRoleTreeTooltip(),
                                                         new RoleNode[] {
                                                                 new RoleNode(ActionGroup.EDIT_VM_PROPERTIES,
-                                                                        "Allow Change VM properties"),
+                                                                        ConstantsManager.getInstance()
+                                                                                .getConstants()
+                                                                                .allowChangeVmPropertiesRoleTreeTooltip()),
                                                                 new RoleNode(ActionGroup.CREATE_VM,
-                                                                        "Allow to create new Vms"),
+                                                                        ConstantsManager.getInstance()
+                                                                                .getConstants()
+                                                                                .allowToCreateNewVmsRoleTreeTooltip()),
                                                                 new RoleNode(ActionGroup.DELETE_VM,
-                                                                        "Allow to remove Vms from the system"),
+                                                                        ConstantsManager.getInstance()
+                                                                                .getConstants()
+                                                                                .allowToRemoveVmsFromTheSystemRoleTreeTooltip()),
                                                                 new RoleNode(ActionGroup.IMPORT_EXPORT_VM,
-                                                                        "Allow import/export operations"),
+                                                                        ConstantsManager.getInstance()
+                                                                                .getConstants()
+                                                                                .allowImportExportOperationsRoleTreeTooltip()),
                                                                 new RoleNode(ActionGroup.CONFIGURE_VM_NETWORK,
-                                                                        "Allow to configure VMs network"),
+                                                                        ConstantsManager.getInstance()
+                                                                                .getConstants()
+                                                                                .allowToConfigureVMsNetworkRoleTreeTooltip()),
                                                                 new RoleNode(ActionGroup.CONFIGURE_VM_STORAGE,
-                                                                        "Allow to add/remove disk to the VM"),
+                                                                        ConstantsManager.getInstance()
+                                                                                .getConstants()
+                                                                                .allowToAddRemoveDiskToTheVmRoleTreeTooltip()),
                                                                 new RoleNode(ActionGroup.MANIPULATE_VM_SNAPSHOTS,
-                                                                        "Allow to create/delete snapshots of the VM") }),
-                                                new RoleNode("Administration Operations",
-                                                        "note: Permissions containig these operations should be associated with Data Center Object or equivalent)",
+                                                                        ConstantsManager.getInstance()
+                                                                                .getConstants()
+                                                                                .allowToCreateDeleteSnapshotsOfTheVmRoleTreeTooltip()) }),
+                                                new RoleNode(ConstantsManager.getInstance().getConstants().administrationOperationsRoleTree(),
+                                                        ConstantsManager.getInstance()
+                                                                .getConstants()
+                                                                .notePermissionsContainigTheseOperationsShuoldAssociatDcOrEqualRoleTreeTooltip(),
                                                         new RoleNode[] {
                                                                 new RoleNode(ActionGroup.MOVE_VM,
-                                                                        "Allow to move VM image to another Storage Domain"),
+                                                                        ConstantsManager.getInstance()
+                                                                                .getConstants()
+                                                                                .allowToMoveVmImageToAnotherStorageDomainRoleTreeTooltip()),
                                                                 new RoleNode(ActionGroup.MIGRATE_VM,
-                                                                        "Allow migrating VM between Hosts in a Cluster") }) }),
-                                new RoleNode("VM Pool",
+                                                                        ConstantsManager.getInstance()
+                                                                                .getConstants()
+                                                                                .allowMigratingVmBetweenHostsInClusterRoleTreeTooltip()) }) }),
+                                new RoleNode(ConstantsManager.getInstance().getConstants().vmPoolRoleTree(),
                                         new RoleNode[] {
-                                                new RoleNode("Basic Operations",
+                                                new RoleNode(ConstantsManager.getInstance().getConstants().basicOperationsRoleTree(),
                                                         new RoleNode[] { new RoleNode(ActionGroup.VM_POOL_BASIC_OPERATIONS,
-                                                                "Allow to Run/Pause/Stop a VM from VM-Pool") }),
-                                                new RoleNode("Provisioning Operations",
-                                                        "note: Permissions containig these operations should be associated with Storage Domain Object (or above)",
+                                                                ConstantsManager.getInstance()
+                                                                        .getConstants()
+                                                                        .allowToRunPauseStopVmFromVmPoolRoleTreeTooltip()) }),
+                                                new RoleNode(ConstantsManager.getInstance().getConstants().provisioningOperationsRoleTree(),
+                                                        ConstantsManager.getInstance()
+                                                                .getConstants()
+                                                                .notePermissionsContainigTheseOperationsShuoldAssociatSdOrAboveRoleTreeTooltip(),
                                                         new RoleNode[] {
                                                                 new RoleNode(ActionGroup.CREATE_VM_POOL,
-                                                                        "Allow to create VM-Pool"),
+                                                                        ConstantsManager.getInstance()
+                                                                                .getConstants()
+                                                                                .allowToCreateVmPoolRoleTreeTooltip()),
                                                                 new RoleNode(ActionGroup.DELETE_VM_POOL,
-                                                                        "Allow to delete VM-Pool"),
+                                                                        ConstantsManager.getInstance()
+                                                                                .getConstants()
+                                                                                .allowToDeleteVmPoolRoleTreeTooltip()),
                                                                 new RoleNode(ActionGroup.EDIT_VM_POOL_CONFIGURATION,
-                                                                        "Allow to change properties of the VM-Pool") }) }),
+                                                                        ConstantsManager.getInstance().getConstants().allowToChangePropertiesOfTheVmPoolRoleTreeTooltip()) }) }),
 
-                                new RoleNode("Disk",
+                                new RoleNode(ConstantsManager.getInstance().getConstants().diskRoleTree(),
                                         new RoleNode[] {
-                                                new RoleNode("Provisioning Operations",
-                                                        "note: Permissions containig these operations should be associated with Disk or Storage Domain Object (or above)",
+                                                new RoleNode( ConstantsManager.getInstance().getConstants().provisioningOperationsRoleTree(),
+                                                        ConstantsManager.getInstance().getConstants().notePermissionsContainingOperationsRoleTreeTooltip(),
                                                         new RoleNode[] {
                                                                 new RoleNode(ActionGroup.CREATE_DISK,
-                                                                        "Allow to create Disk"),
+                                                                        ConstantsManager.getInstance().getConstants().allowToCreateDiskRoleTreeTooltip()),
                                                                 new RoleNode(ActionGroup.DELETE_DISK,
-                                                                        "Allow to delete Disk"),
+                                                                        ConstantsManager.getInstance().getConstants().allowToDeleteDiskRoleTreeTooltip()),
                                                                 new RoleNode(ActionGroup.CONFIGURE_DISK_STORAGE,
-                                                                        "Allow to move Disk to another Storage Domain"),
+                                                                        ConstantsManager.getInstance().getConstants().allowToMoveDiskToAnotherStorageDomainRoleTreeTooltip()),
                                                                 new RoleNode(ActionGroup.ATTACH_DISK,
-                                                                        "Allow to attach Disk to a VM"),
+                                                                        ConstantsManager.getInstance().getConstants().allowToAttachDiskToVmRoleTreeTooltip()),
                                                                 new RoleNode(ActionGroup.EDIT_DISK_PROPERTIES,
-                                                                        "Allow to change properties of the Disk") }) }) });
+                                                                        ConstantsManager.getInstance().getConstants().allowToChangePropertiesOfTheDiskRoleTreeTooltip()) }) }) });
 
         return tree;
     }

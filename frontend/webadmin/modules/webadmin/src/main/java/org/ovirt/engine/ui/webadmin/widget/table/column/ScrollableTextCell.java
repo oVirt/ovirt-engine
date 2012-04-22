@@ -17,7 +17,7 @@ public class ScrollableTextCell extends TextInputCell {
     @Override
     public void render(Context context, String value, SafeHtmlBuilder sb) {
         CellTemplate template = GWT.create(CellTemplate.class);
-        sb.append(template.input(value, ""));
+        sb.append(template.input(value, "")); //$NON-NLS-1$
     }
 
 }

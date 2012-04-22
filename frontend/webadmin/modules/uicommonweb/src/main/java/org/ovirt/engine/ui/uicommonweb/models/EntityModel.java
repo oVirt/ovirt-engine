@@ -42,7 +42,7 @@ public class EntityModel extends Model
             OnEntityChanged();
             // EntityChanged(this, EventArgs.Empty);
             getEntityChangedEvent().raise(this, EventArgs.Empty);
-            OnPropertyChanged(new PropertyChangedEventArgs("Entity"));
+            OnPropertyChanged(new PropertyChangedEventArgs("Entity")); //$NON-NLS-1$
         }
     }
 
@@ -57,7 +57,7 @@ public class EntityModel extends Model
 
     static
     {
-        EntityChangedEventDefinition = new EventDefinition("EntityChanged", EntityModel.class);
+        EntityChangedEventDefinition = new EventDefinition("EntityChanged", EntityModel.class); //$NON-NLS-1$
     }
 
     public EntityModel()

@@ -26,7 +26,7 @@ public class ClusterNetworkModel extends NetworkModel
         if (!StringHelper.stringsEqual(dataCenterName, value))
         {
             dataCenterName = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("DataCenterName"));
+            OnPropertyChanged(new PropertyChangedEventArgs("DataCenterName")); //$NON-NLS-1$
         }
     }
 

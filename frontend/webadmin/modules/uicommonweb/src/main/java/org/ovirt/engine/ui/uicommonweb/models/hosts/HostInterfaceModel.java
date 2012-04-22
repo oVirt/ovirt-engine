@@ -140,7 +140,7 @@ public class HostInterfaceModel extends EntityModel
         {
             bootProtocol = value;
             BootProtocolChanged();
-            OnPropertyChanged(new PropertyChangedEventArgs("BootProtocol"));
+            OnPropertyChanged(new PropertyChangedEventArgs("BootProtocol")); //$NON-NLS-1$
         }
     }
 
@@ -156,7 +156,7 @@ public class HostInterfaceModel extends EntityModel
         if (noneBootProtocolAvailable != value)
         {
             noneBootProtocolAvailable = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("NoneBootProtocolAvailable"));
+            OnPropertyChanged(new PropertyChangedEventArgs("NoneBootProtocolAvailable")); //$NON-NLS-1$
         }
     }
 
@@ -172,7 +172,7 @@ public class HostInterfaceModel extends EntityModel
         if (bootProtocolsAvailable != value)
         {
             bootProtocolsAvailable = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("BootProtocolsAvailable"));
+            OnPropertyChanged(new PropertyChangedEventArgs("BootProtocolsAvailable")); //$NON-NLS-1$
         }
     }
 
@@ -201,7 +201,7 @@ public class HostInterfaceModel extends EntityModel
     public void setBondingOptionsOverrideNotification(boolean value)
     {
         setbondingOptionsOverrideNotification(value);
-        OnPropertyChanged(new PropertyChangedEventArgs("BondingOptionsOverrideNotification"));
+        OnPropertyChanged(new PropertyChangedEventArgs("BondingOptionsOverrideNotification")); //$NON-NLS-1$
     }
 
     public HostInterfaceModel() {
@@ -244,7 +244,7 @@ public class HostInterfaceModel extends EntityModel
         UpdateCanSpecify();
 
         network network = (network) getNetwork().getSelectedItem();
-        setBootProtocolsAvailable((network != null && StringHelper.stringsEqual(network.getname(), "None")) ? false
+        setBootProtocolsAvailable((network != null && StringHelper.stringsEqual(network.getname(), "None")) ? false //$NON-NLS-1$
                 : true);
 
         if (getNetworks() != null)

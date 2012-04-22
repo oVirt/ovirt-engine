@@ -26,7 +26,7 @@ public abstract class ImageButtonCell<T> extends AbstractCell<T> {
 
     public ImageButtonCell(String enabledCss,
             String disabledCss) {
-        super("click");
+        super("click"); //$NON-NLS-1$
         this.enabledCss = enabledCss;
         this.disabledCss = disabledCss;
     }
@@ -48,7 +48,7 @@ public abstract class ImageButtonCell<T> extends AbstractCell<T> {
 
         UserPortalImageButtonDefinition<T> command = createButtonDefinition(value);
 
-        if ("click".equals(event.getType())) {
+        if ("click".equals(event.getType())) { //$NON-NLS-1$
 
             if (!command.isEnabled(cast(value))) {
                 return;
@@ -64,14 +64,14 @@ public abstract class ImageButtonCell<T> extends AbstractCell<T> {
 
         UserPortalImageButtonDefinition<T> buttonDefinition = createButtonDefinition(data);
         boolean isEnabled = buttonDefinition.isEnabled(cast(data));
-        sb.appendHtmlConstant("<span class=\"" + (isEnabled ? enabledCss : disabledCss) + "\" title=\""
-                + SafeHtmlUtils.htmlEscape(buttonDefinition.getTitle()) + "\">");
+        sb.appendHtmlConstant("<span class=\"" + (isEnabled ? enabledCss : disabledCss) + "\" title=\"" //$NON-NLS-1$ //$NON-NLS-2$
+                + SafeHtmlUtils.htmlEscape(buttonDefinition.getTitle()) + "\">"); //$NON-NLS-1$
         if (isEnabled) {
             sb.append(buttonDefinition.getEnabledHtml());
         } else {
             sb.append(buttonDefinition.getDisabledHtml());
         }
-        sb.appendHtmlConstant("</span>");
+        sb.appendHtmlConstant("</span>"); //$NON-NLS-1$
     }
 
     private List<T> cast(T t) {

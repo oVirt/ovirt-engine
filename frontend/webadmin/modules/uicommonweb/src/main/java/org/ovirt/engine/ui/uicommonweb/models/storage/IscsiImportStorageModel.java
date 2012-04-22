@@ -13,6 +13,6 @@ public class IscsiImportStorageModel extends ImportSanStorageModel
 
     @Override
     protected String getListName() {
-        return "IscsiImportStorageModel";
+        return "IscsiImportStorageModel"; //$NON-NLS-1$
     }
 }

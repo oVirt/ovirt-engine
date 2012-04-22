@@ -12,7 +12,7 @@ public class OsTypeImage extends AbstractDynamicImage<VmOsType, ApplicationResou
 
     private String nameUniquePart;
 
-    private static final String IMAGE = "Image";
+    private static final String IMAGE = "Image"; //$NON-NLS-1$
 
     @UiConstructor
     public OsTypeImage(ApplicationResourcesWithLookup resources, String nameUniquePart) {
@@ -27,7 +27,7 @@ public class OsTypeImage extends AbstractDynamicImage<VmOsType, ApplicationResou
 
     @Override
     protected String defaultImageName(VmOsType value) {
-        return "otherOs" + nameUniquePart + IMAGE;
+        return "otherOs" + nameUniquePart + IMAGE; //$NON-NLS-1$
     }
 
 }

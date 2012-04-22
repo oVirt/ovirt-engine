@@ -18,8 +18,8 @@ public class Configurator
         OVIRT_GLUSTER
     }
 
-    private static final String DOCUMENTATION_LANG_PATH = "/en-US/";
-    private static final String DOCUMENTATION_LIB_PATH = "html/";
+    private static final String DOCUMENTATION_LANG_PATH = "/en-US/"; //$NON-NLS-1$
+    private static final String DOCUMENTATION_LIB_PATH = "html/"; //$NON-NLS-1$
 
     /**
      * Gets the value indincating whether the model state should be changed asynchronous in response on property change
@@ -197,7 +197,7 @@ public class Configurator
     }
 
     public String getDocumentationBaseURL() {
-        return GWT.getModuleBaseURL().replaceAll(GWT.getModuleName() + "/", "") + getDocumentationBasePath()
+        return GWT.getModuleBaseURL().replaceAll(GWT.getModuleName() + "/", "") + getDocumentationBasePath() //$NON-NLS-1$ //$NON-NLS-2$
                 + DOCUMENTATION_LANG_PATH;
     }
 
@@ -210,8 +210,8 @@ public class Configurator
         setSpiceVersion(new Version(4, 4));
         setSpiceDefaultUsbPort(32023);
         setSpiceDisableUsbListenPort(0);
-        setBackendPort("8080");
-        setLogLevel("INFO");
+        setBackendPort("8080"); //$NON-NLS-1$
+        setLogLevel("INFO"); //$NON-NLS-1$
         setPollingTimerInterval(5000);
     }
 

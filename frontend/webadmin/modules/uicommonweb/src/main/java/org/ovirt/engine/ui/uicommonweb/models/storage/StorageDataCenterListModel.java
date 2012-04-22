@@ -29,6 +29,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
@@ -160,12 +161,13 @@ public class StorageDataCenterListModel extends SearchableListModel
 
     public StorageDataCenterListModel()
     {
-        setTitle("Data Center");
+        setTitle(ConstantsManager.getInstance().getConstants().dataCenterTitle());
+        setHashName("data_center"); //$NON-NLS-1$
 
-        setAttachCommand(new UICommand("Attach", this));
-        setDetachCommand(new UICommand("Detach", this));
-        setActivateCommand(new UICommand("Activate", this));
-        setMaintenanceCommand(new UICommand("Maintenance", this));
+        setAttachCommand(new UICommand("Attach", this)); //$NON-NLS-1$
+        setDetachCommand(new UICommand("Detach", this)); //$NON-NLS-1$
+        setActivateCommand(new UICommand("Activate", this)); //$NON-NLS-1$
+        setMaintenanceCommand(new UICommand("Maintenance", this)); //$NON-NLS-1$
 
         UpdateActionAvailability();
     }
@@ -211,7 +213,7 @@ public class StorageDataCenterListModel extends SearchableListModel
                     String guid =
                             domain.getstorage_pool_id() != null ? domain.getstorage_pool_id().getValue().toString()
                                     : Guid.Empty.toString();
-                    domain.setQueryableId(domain.getId() + "_" + guid);
+                    domain.setQueryableId(domain.getId() + "_" + guid); //$NON-NLS-1$
                 }
                 searchableListModel.setItems(domains);
                 setIsEmpty(((java.util.List) searchableListModel.getItems()).size() == 0);
@@ -343,27 +345,29 @@ public class StorageDataCenterListModel extends SearchableListModel
     {
         ListModel model = new ListModel();
         setWindow(model);
-        model.setTitle("Attach to Data Center");
+        model.setTitle(ConstantsManager.getInstance().getConstants().attachToDataCenterTitle());
         model.setItems(datacenters);
 
         if (datacenters.isEmpty())
         {
-            model.setMessage("There are No Data Centers to which the Storage Domain can be attached");
+            model.setMessage(ConstantsManager.getInstance()
+                    .getConstants()
+                    .thereAreNoDataCenterStorageDomainAttachedMsg());
 
-            UICommand tempVar = new UICommand("Cancel", this);
-            tempVar.setTitle("Close");
+            UICommand tempVar = new UICommand("Cancel", this); //$NON-NLS-1$
+            tempVar.setTitle(ConstantsManager.getInstance().getConstants().close());
             tempVar.setIsDefault(true);
             tempVar.setIsCancel(true);
             model.getCommands().add(tempVar);
         }
         else
         {
-            UICommand tempVar2 = new UICommand("OnAttach", this);
-            tempVar2.setTitle("OK");
+            UICommand tempVar2 = new UICommand("OnAttach", this); //$NON-NLS-1$
+            tempVar2.setTitle(ConstantsManager.getInstance().getConstants().ok());
             tempVar2.setIsDefault(true);
             model.getCommands().add(tempVar2);
-            UICommand tempVar3 = new UICommand("Cancel", this);
-            tempVar3.setTitle("Cancel");
+            UICommand tempVar3 = new UICommand("Cancel", this); //$NON-NLS-1$
+            tempVar3.setTitle(ConstantsManager.getInstance().getConstants().cancel());
             tempVar3.setIsCancel(true);
             model.getCommands().add(tempVar3);
         }
@@ -431,9 +435,9 @@ public class StorageDataCenterListModel extends SearchableListModel
 
         ConfirmationModel model = new ConfirmationModel();
         setWindow(model);
-        model.setTitle("Detach Storage");
-        model.setHashName("detach_storage");
-        model.setMessage("Are you sure you want to Detach storage from the following Data Center(s)?");
+        model.setTitle(ConstantsManager.getInstance().getConstants().detachStorageTitle());
+        model.setHashName("detach_storage"); //$NON-NLS-1$
+        model.setMessage(ConstantsManager.getInstance().getConstants().areYouSureYouWantDetachStorageFromDcsMsg());
 
         java.util.ArrayList<String> items = new java.util.ArrayList<String>();
         for (Object item : getSelectedItems())
@@ -448,27 +452,27 @@ public class StorageDataCenterListModel extends SearchableListModel
             model.getLatch().setIsAvailable(true);
             model.getLatch().setIsChangable(true);
 
-            model.setNote("Note: " + GetLocalStoragesFormattedString() + " will be removed!");
+            model.setNote(ConstantsManager.getInstance().getMessages().detachNote(GetLocalStoragesFormattedString()));
         }
 
-        UICommand tempVar = new UICommand("OnDetach", this);
-        tempVar.setTitle("OK");
+        UICommand tempVar = new UICommand("OnDetach", this); //$NON-NLS-1$
+        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
         tempVar.setIsDefault(true);
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this);
-        tempVar2.setTitle("Cancel");
+        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
+        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         tempVar2.setIsCancel(true);
         model.getCommands().add(tempVar2);
     }
 
     private String GetLocalStoragesFormattedString()
     {
-        String localStorages = "";
+        String localStorages = ""; //$NON-NLS-1$
         for (storage_domains a : Linq.<storage_domains> Cast(getSelectedItems()))
         {
             if (a.getstorage_type() == StorageType.LOCALFS)
             {
-                localStorages += a.getstorage_name() + ", ";
+                localStorages += a.getstorage_name() + ", "; //$NON-NLS-1$
             }
         }
         return localStorages.substring(0, localStorages.length() - 2);
@@ -626,7 +630,7 @@ public class StorageDataCenterListModel extends SearchableListModel
     {
         super.SelectedItemPropertyChanged(sender, e);
 
-        if (e.PropertyName.equals("status"))
+        if (e.PropertyName.equals("status")) //$NON-NLS-1$
         {
             UpdateActionAvailability();
         }
@@ -672,15 +676,15 @@ public class StorageDataCenterListModel extends SearchableListModel
         {
             Maintenance();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnAttach"))
+        else if (StringHelper.stringsEqual(command.getName(), "OnAttach")) //$NON-NLS-1$
         {
             OnAttach();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnDetach"))
+        else if (StringHelper.stringsEqual(command.getName(), "OnDetach")) //$NON-NLS-1$
         {
             OnDetach();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "Cancel"))
+        else if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
         {
             Cancel();
         }
@@ -688,6 +692,6 @@ public class StorageDataCenterListModel extends SearchableListModel
 
     @Override
     protected String getListName() {
-        return "StorageDataCenterListModel";
+        return "StorageDataCenterListModel"; //$NON-NLS-1$
     }
 }

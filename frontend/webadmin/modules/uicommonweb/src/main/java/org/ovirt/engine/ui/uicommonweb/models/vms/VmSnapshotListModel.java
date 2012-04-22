@@ -31,7 +31,6 @@ import org.ovirt.engine.core.common.queries.GetAllVmSnapshotsByVmIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
-import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -45,6 +44,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
@@ -157,7 +157,7 @@ public class VmSnapshotListModel extends SearchableListModel
     public void setSystemTreeSelectedItem(SystemTreeItemModel value)
     {
         systemTreeSelectedItem = value;
-        OnPropertyChanged(new PropertyChangedEventArgs("SystemTreeSelectedItem"));
+        OnPropertyChanged(new PropertyChangedEventArgs("SystemTreeSelectedItem")); //$NON-NLS-1$
     }
 
     private ArrayList<String> privateCustomPropertiesKeysList;
@@ -182,7 +182,7 @@ public class VmSnapshotListModel extends SearchableListModel
     public void setSnapshotsMap(HashMap<Guid, SnapshotModel> value)
     {
         snapshotsMap = value;
-        OnPropertyChanged(new PropertyChangedEventArgs("SnapshotsMap"));
+        OnPropertyChanged(new PropertyChangedEventArgs("SnapshotsMap")); //$NON-NLS-1$
     }
 
     private boolean isCloneVmSupported;
@@ -197,20 +197,21 @@ public class VmSnapshotListModel extends SearchableListModel
         if (isCloneVmSupported != value)
         {
             isCloneVmSupported = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsCloneVmSupported"));
+            OnPropertyChanged(new PropertyChangedEventArgs("IsCloneVmSupported")); //$NON-NLS-1$
         }
     }
 
     public VmSnapshotListModel()
     {
-        setTitle("Snapshots");
+        setTitle(ConstantsManager.getInstance().getConstants().snapshotsTitle());
+        setHashName("snapshots"); //$NON-NLS-1$
 
-        setNewCommand(new UICommand("New", this));
-        setPreviewCommand(new UICommand("Preview", this));
-        setCommitCommand(new UICommand("Commit", this));
-        setUndoCommand(new UICommand("Undo", this));
-        setRemoveCommand(new UICommand("Remove", this));
-        setCloneVmCommand(new UICommand("CloneVM", this));
+        setNewCommand(new UICommand("New", this)); //$NON-NLS-1$
+        setPreviewCommand(new UICommand("Preview", this)); //$NON-NLS-1$
+        setCommitCommand(new UICommand("Commit", this)); //$NON-NLS-1$
+        setUndoCommand(new UICommand("Undo", this)); //$NON-NLS-1$
+        setRemoveCommand(new UICommand("Remove", this)); //$NON-NLS-1$
+        setCloneVmCommand(new UICommand("CloneVM", this)); //$NON-NLS-1$
 
         setCanSelectSnapshot(new EntityModel());
         getCanSelectSnapshot().setEntity(true);
@@ -224,7 +225,7 @@ public class VmSnapshotListModel extends SearchableListModel
                         VmSnapshotListModel model = (VmSnapshotListModel) target;
                         if (returnValue != null)
                         {
-                            String[] array = ((String) returnValue).split("[;]", -1);
+                            String[] array = ((String) returnValue).split("[;]", -1); //$NON-NLS-1$
                             model.setCustomPropertiesKeysList(new ArrayList<String>());
                             for (String s : array)
                             {
@@ -324,18 +325,19 @@ public class VmSnapshotListModel extends SearchableListModel
             Snapshot snapshot = (Snapshot) getSelectedItem();
             ConfirmationModel model = new ConfirmationModel();
             setWindow(model);
-            model.setTitle("Delete Snapshot");
-            model.setHashName("delete_snapshot");
-            model.setMessage(StringFormat.format("Are you sure you want to delete snapshot from %1$s with description '%2$s'?",
-                    snapshot.getCreationDate(),
-                    snapshot.getDescription()));
+            model.setTitle(ConstantsManager.getInstance().getConstants().deleteSnapshotTitle());
+            model.setHashName("delete_snapshot"); //$NON-NLS-1$
+            model.setMessage(ConstantsManager.getInstance()
+                    .getMessages()
+                    .areYouSureYouWantToDeleteSanpshot(snapshot.getCreationDate(),
+                            snapshot.getDescription()));
 
-            UICommand tempVar = new UICommand("OnRemove", this);
-            tempVar.setTitle("OK");
+            UICommand tempVar = new UICommand("OnRemove", this); //$NON-NLS-1$
+            tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
             tempVar.setIsDefault(true);
             model.getCommands().add(tempVar);
-            UICommand tempVar2 = new UICommand("Cancel", this);
-            tempVar2.setTitle("Cancel");
+            UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
+            tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
             tempVar2.setIsCancel(true);
             model.getCommands().add(tempVar2);
         }
@@ -440,8 +442,8 @@ public class VmSnapshotListModel extends SearchableListModel
 
         SnapshotModel model = new SnapshotModel();
         setWindow(model);
-        model.setTitle("Create Snapshot");
-        model.setHashName("create_snapshot");
+        model.setTitle(ConstantsManager.getInstance().getConstants().createSnapshotTitle());
+        model.setHashName("create_snapshot"); //$NON-NLS-1$
 
         model.StartProgress(null);
         AsyncDataProvider.GetVmDiskList(new AsyncQuery(this,
@@ -464,22 +466,22 @@ public class VmSnapshotListModel extends SearchableListModel
 
         if (disks.isEmpty())
         {
-            model.setMessage("Snapshot cannot be created since the VM has no Disks");
+            model.setMessage(ConstantsManager.getInstance().getConstants().snapshotCannotBeCreatedSinceTheVMHasNoDisksMsg());
 
-            UICommand tempVar = new UICommand("Cancel", this);
-            tempVar.setTitle("Close");
+            UICommand tempVar = new UICommand("Cancel", this); //$NON-NLS-1$
+            tempVar.setTitle(ConstantsManager.getInstance().getConstants().close());
             tempVar.setIsDefault(true);
             tempVar.setIsCancel(true);
             model.getCommands().add(tempVar);
         }
         else
         {
-            UICommand tempVar2 = new UICommand("OnNew", this);
-            tempVar2.setTitle("OK");
+            UICommand tempVar2 = new UICommand("OnNew", this); //$NON-NLS-1$
+            tempVar2.setTitle(ConstantsManager.getInstance().getConstants().ok());
             tempVar2.setIsDefault(true);
             model.getCommands().add(tempVar2);
-            UICommand tempVar3 = new UICommand("Cancel", this);
-            tempVar3.setTitle("Cancel");
+            UICommand tempVar3 = new UICommand("Cancel", this); //$NON-NLS-1$
+            tempVar3.setTitle(ConstantsManager.getInstance().getConstants().cancel());
             tempVar3.setIsCancel(true);
             model.getCommands().add(tempVar3);
         }
@@ -571,17 +573,17 @@ public class VmSnapshotListModel extends SearchableListModel
                 VM vm = (VM) returnValue;
                 behavior.setVm(vm);
 
-                model.setTitle("Clone VM from Snapshot");
-                model.setHashName("clone_vm_from_snapshot");
+                model.setTitle(ConstantsManager.getInstance().getConstants().cloneVmFromSnapshotTitle());
+                model.setHashName("clone_vm_from_snapshot"); //$NON-NLS-1$
                 model.setCustomPropertiesKeysList(getCustomPropertiesKeysList());
                 model.Initialize(vmSnapshotListModel.getSystemTreeSelectedItem());
 
-                UICommand tempVar = new UICommand("OnCloneVM", vmSnapshotListModel);
-                tempVar.setTitle("OK");
+                UICommand tempVar = new UICommand("OnCloneVM", vmSnapshotListModel); //$NON-NLS-1$
+                tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
                 tempVar.setIsDefault(true);
                 model.getCommands().add(tempVar);
-                UICommand tempVar2 = new UICommand("Cancel", vmSnapshotListModel);
-                tempVar2.setTitle("Cancel");
+                UICommand tempVar2 = new UICommand("Cancel", vmSnapshotListModel); //$NON-NLS-1$
+                tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
                 tempVar2.setIsCancel(true);
                 model.getCommands().add(tempVar2);
 
@@ -620,14 +622,14 @@ public class VmSnapshotListModel extends SearchableListModel
         getcurrentVm().setnum_of_monitors((Integer) model.getNumOfMonitors().getSelectedItem());
         getcurrentVm().setvm_description((String) model.getDescription().getEntity());
         getcurrentVm().setvm_domain(model.getDomain().getIsAvailable() ?
-                (String) model.getDomain().getSelectedItem() : "");
+                (String) model.getDomain().getSelectedItem() : ""); //$NON-NLS-1$
         getcurrentVm().setvm_mem_size_mb((Integer) model.getMemSize().getEntity());
         getcurrentVm().setMinAllocatedMem((Integer) model.getMinAllocatedMemory().getEntity());
         Guid newClusterID = ((VDSGroup) model.getCluster().getSelectedItem()).getId();
         getcurrentVm().setvds_group_id(newClusterID);
         getcurrentVm().settime_zone(
                 (model.getTimeZone().getIsAvailable() && model.getTimeZone().getSelectedItem() != null) ?
-                        ((Map.Entry<String, String>) model.getTimeZone().getSelectedItem()).getKey() : "");
+                        ((Map.Entry<String, String>) model.getTimeZone().getSelectedItem()).getKey() : ""); //$NON-NLS-1$
         getcurrentVm().setnum_of_sockets((Integer) model.getNumOfSockets().getEntity());
         getcurrentVm().setcpu_per_socket((Integer) model.getTotalCPUCores().getEntity() /
                 (Integer) model.getNumOfSockets().getEntity());
@@ -636,7 +638,7 @@ public class VmSnapshotListModel extends SearchableListModel
         getcurrentVm().setis_stateless((Boolean) model.getIsStateless().getEntity());
         getcurrentVm().setdefault_boot_sequence(model.getBootSequence());
         getcurrentVm().setiso_path(model.getCdImage().getIsChangable() ?
-                (String) model.getCdImage().getSelectedItem() : "");
+                (String) model.getCdImage().getSelectedItem() : ""); //$NON-NLS-1$
         getcurrentVm().setauto_startup((Boolean) model.getIsHighlyAvailable().getEntity());
         getcurrentVm().setinitrd_url((String) model.getInitrd_path().getEntity());
         getcurrentVm().setkernel_url((String) model.getKernel_path().getEntity());
@@ -869,19 +871,19 @@ public class VmSnapshotListModel extends SearchableListModel
         {
             CloneVM();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnRemove"))
+        else if (StringHelper.stringsEqual(command.getName(), "OnRemove")) //$NON-NLS-1$
         {
             OnRemove();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "Cancel"))
+        else if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
         {
             Cancel();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnNew"))
+        else if (StringHelper.stringsEqual(command.getName(), "OnNew")) //$NON-NLS-1$
         {
             OnNew();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnCloneVM"))
+        else if (StringHelper.stringsEqual(command.getName(), "OnCloneVM")) //$NON-NLS-1$
         {
             OnCloneVM();
         }
@@ -889,6 +891,6 @@ public class VmSnapshotListModel extends SearchableListModel
 
     @Override
     protected String getListName() {
-        return "VmSnapshotListModel";
+        return "VmSnapshotListModel"; //$NON-NLS-1$
     }
 }

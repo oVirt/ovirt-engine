@@ -24,6 +24,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.CopyDiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.MoveDiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.RemoveDiskModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
@@ -95,16 +96,16 @@ public class DiskListModel extends ListWithDetailsModel
 
     public DiskListModel()
     {
-        setTitle("Disks");
+        setTitle(ConstantsManager.getInstance().getConstants().disksTitle());
 
-        setDefaultSearchString("Disks:");
+        setDefaultSearchString("Disks:"); //$NON-NLS-1$
         setSearchString(getDefaultSearchString());
 
-        setNewCommand(new UICommand("New", this));
-        setEditCommand(new UICommand("Edit", this));
-        setRemoveCommand(new UICommand("Remove", this));
-        setMoveCommand(new UICommand("Move", this));
-        setCopyCommand(new UICommand("Copy", this));
+        setNewCommand(new UICommand("New", this)); //$NON-NLS-1$
+        setEditCommand(new UICommand("Edit", this)); //$NON-NLS-1$
+        setRemoveCommand(new UICommand("Remove", this)); //$NON-NLS-1$
+        setMoveCommand(new UICommand("Move", this)); //$NON-NLS-1$
+        setCopyCommand(new UICommand("Copy", this)); //$NON-NLS-1$
 
         UpdateActionAvailability();
 
@@ -208,8 +209,8 @@ public class DiskListModel extends ListWithDetailsModel
         MoveDiskModel model = new MoveDiskModel();
         model.setIsSingleDiskMove(disks.size() == 1);
         setWindow(model);
-        model.setTitle("Move Disk(s)");
-        model.setHashName("move_disks");
+        model.setTitle(ConstantsManager.getInstance().getConstants().moveDisksTitle());
+        model.setHashName("move_disks"); //$NON-NLS-1$
         model.setIsSourceStorageDomainNameAvailable(true);
         model.setEntity(this);
         model.init(disks);
@@ -228,8 +229,8 @@ public class DiskListModel extends ListWithDetailsModel
         CopyDiskModel model = new CopyDiskModel();
         model.setIsSingleDiskMove(disks.size() == 1);
         setWindow(model);
-        model.setTitle("Copy Disk(s)");
-        model.setHashName("copy_disks");
+        model.setTitle(ConstantsManager.getInstance().getConstants().copyDisksTitle());
+        model.setHashName("copy_disks"); //$NON-NLS-1$
         model.setIsSourceStorageDomainNameAvailable(true);
         model.setEntity(this);
         model.init(disks);
@@ -245,9 +246,9 @@ public class DiskListModel extends ListWithDetailsModel
 
         RemoveDiskModel model = new RemoveDiskModel();
         setWindow(model);
-        model.setTitle("Remove Disk(s)");
-        model.setHashName("remove_disk");
-        model.setMessage("Disk(s)");
+        model.setTitle(ConstantsManager.getInstance().getConstants().removeDisksTitle());
+        model.setHashName("remove_disk"); //$NON-NLS-1$
+        model.setMessage(ConstantsManager.getInstance().getConstants().disksMsg());
 
         model.getLatch().setIsAvailable(false);
 
@@ -259,12 +260,12 @@ public class DiskListModel extends ListWithDetailsModel
         }
         model.setItems(items);
 
-        UICommand tempVar = new UICommand("OnRemove", this);
-        tempVar.setTitle("OK");
+        UICommand tempVar = new UICommand("OnRemove", this); //$NON-NLS-1$
+        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
         tempVar.setIsDefault(true);
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this);
-        tempVar2.setTitle("Cancel");
+        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
+        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         tempVar2.setIsCancel(true);
         model.getCommands().add(tempVar2);
     }
@@ -387,15 +388,15 @@ public class DiskListModel extends ListWithDetailsModel
         {
             Copy();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnSave"))
+        else if (StringHelper.stringsEqual(command.getName(), "OnSave")) //$NON-NLS-1$
         {
             OnSave();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "Cancel"))
+        else if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
         {
             Cancel();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnRemove"))
+        else if (StringHelper.stringsEqual(command.getName(), "OnRemove")) //$NON-NLS-1$
         {
             OnRemove();
         }
@@ -403,6 +404,6 @@ public class DiskListModel extends ListWithDetailsModel
 
     @Override
     protected String getListName() {
-        return "DiskListModel";
+        return "DiskListModel"; //$NON-NLS-1$
     }
 }

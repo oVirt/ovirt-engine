@@ -12,6 +12,7 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleQueryAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
 
@@ -35,7 +36,7 @@ public class StorageIsoListModel extends SearchableListModel implements IFronten
             ItemsChanging(value, items);
             items = value;
             getItemsChangedEvent().raise(this, EventArgs.Empty);
-            OnPropertyChanged(new PropertyChangedEventArgs("Items"));
+            OnPropertyChanged(new PropertyChangedEventArgs("Items")); //$NON-NLS-1$
 
             selectedItem = null;
             if (getSelectedItems() != null)
@@ -84,7 +85,8 @@ public class StorageIsoListModel extends SearchableListModel implements IFronten
 
     public StorageIsoListModel()
     {
-        setTitle("Images");
+        setTitle(ConstantsManager.getInstance().getConstants().imagesTitle());
+        setHashName("images"); // $//$NON-NLS-1$
 
         setIsTimerDisabled(true);
     }
@@ -178,7 +180,7 @@ public class StorageIsoListModel extends SearchableListModel implements IFronten
             EntityModel model = new EntityModel();
             model.setHashName(item.getRepoFileName());
             model.setTitle(item.getRepoFileName());
-            model.setEntity("CD/DVD");
+            model.setEntity("CD/DVD"); //$NON-NLS-1$
             items.add(model);
         }
 
@@ -193,7 +195,7 @@ public class StorageIsoListModel extends SearchableListModel implements IFronten
             EntityModel model = new EntityModel();
             model.setHashName(item.getRepoFileName());
             model.setTitle(item.getRepoFileName());
-            model.setEntity("Floppy");
+            model.setEntity("Floppy"); //$NON-NLS-1$
             items.add(model);
         }
 
@@ -236,6 +238,6 @@ public class StorageIsoListModel extends SearchableListModel implements IFronten
 
     @Override
     protected String getListName() {
-        return "StorageIsoListModel";
+        return "StorageIsoListModel"; //$NON-NLS-1$
     }
 }

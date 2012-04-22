@@ -11,6 +11,7 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicompat.Clipboard;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
 public class AboutModel extends Model
@@ -28,7 +29,7 @@ public class AboutModel extends Model
         if (hosts != value)
         {
             hosts = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Hosts"));
+            OnPropertyChanged(new PropertyChangedEventArgs("Hosts")); //$NON-NLS-1$
         }
     }
 
@@ -45,7 +46,7 @@ public class AboutModel extends Model
         {
             showOnlyVersion = value;
             ShowOnlyVersionChanged();
-            OnPropertyChanged(new PropertyChangedEventArgs("ShowOnlyVersion"));
+            OnPropertyChanged(new PropertyChangedEventArgs("ShowOnlyVersion")); //$NON-NLS-1$
         }
     }
 
@@ -61,7 +62,7 @@ public class AboutModel extends Model
         if (!StringHelper.stringsEqual(productVersion, value))
         {
             productVersion = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("ProductVersion"));
+            OnPropertyChanged(new PropertyChangedEventArgs("ProductVersion")); //$NON-NLS-1$
         }
     }
 
@@ -183,8 +184,8 @@ public class AboutModel extends Model
         // }
         // }
 
-        UICommand tempVar = new UICommand("CopyToClipboard", this);
-        tempVar.setTitle("Copy to Clipboard");
+        UICommand tempVar = new UICommand("CopyToClipboard", this); //$NON-NLS-1$
+        tempVar.setTitle(ConstantsManager.getInstance().getConstants().copytoClipboardTitle());
         tempVar.setIsAvailable(true);
         setCopyToClipboardCommand(tempVar);
         this.getCommands().add(getCopyToClipboardCommand());
@@ -218,17 +219,18 @@ public class AboutModel extends Model
                     for (VDS a : (java.util.List<VDS>) result)
                     {
                         HostInfo tempVar = new HostInfo();
-                        tempVar.setHostName(a.getvds_name() + ":");
+                        tempVar.setHostName(a.getvds_name() + ":"); //$NON-NLS-1$
                         HostInfo hi = tempVar;
                         if (!StringHelper.isNullOrEmpty(a.gethost_os()))
                         {
-                            hi.setOSVersion("OS Version - " + a.gethost_os());
+                            hi.setOSVersion(ConstantsManager.getInstance().getConstants().osVersionAbout()
+                                    + " " + a.gethost_os()); //$NON-NLS-1$
                         }
 
                         if (a.getVersion().getFullVersion() != null)
                         {
-                            hi.setVDSMVersion("VDSM Version - "
-                                    + Extensions.GetFriendlyVersion(a.getVersion().getFullVersion()) + " "
+                            hi.setVDSMVersion(ConstantsManager.getInstance().getConstants().VDSMVersionAbout() + " " //$NON-NLS-1$
+                                    + Extensions.GetFriendlyVersion(a.getVersion().getFullVersion()) + " " //$NON-NLS-1$
                                     + a.getVersion().getBuildName());
                         }
 
@@ -253,23 +255,25 @@ public class AboutModel extends Model
         sb.append(getRpmVersion());
         if (getShowOnlyVersion() == false)
         {
-            sb.append("\n");
-            sb.append("oVirt Enterprise Virtualization Engine Hypervisor Hosts:");
+            sb.append("\n"); //$NON-NLS-1$
+            sb.append(ConstantsManager.getInstance()
+                    .getConstants()
+                    .oVirtEnterpriseVirtualizationEngineHypervisorHostsAbout());
 
             if (getHosts() != null && getHosts().size() > 0)
             {
                 for (HostInfo item : getHosts())
                 {
-                    sb.append(StringFormat.format("\t%1$s\t%2$s\t%3$s",
+                    sb.append(StringFormat.format("\t%1$s\t%2$s\t%3$s", //$NON-NLS-1$
                             item.getHostName(),
                             item.getOSVersion(),
                             item.getVDSMVersion()));
-                    sb.append("\n");
+                    sb.append("\n"); //$NON-NLS-1$
                 }
             }
             else
             {
-                sb.append("[No Hosts]");
+                sb.append(ConstantsManager.getInstance().getConstants().noHostsAbout());
             }
 
             // sb.append();
@@ -307,6 +311,7 @@ public class AboutModel extends Model
 
     private String getRpmVersion()
     {
-        return "oVirt Engine for Servers and Desktops: " + getProductVersion();
+        return ConstantsManager.getInstance().getConstants().oVirtEngineForServersAndDesktopsAbout()
+                + " " + getProductVersion(); //$NON-NLS-1$
     }
 }

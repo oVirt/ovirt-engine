@@ -4,6 +4,9 @@
 
 	<ui:with field='resources' type='org.ovirt.engine.ui.webadmin.ApplicationResources' />
 
+	<ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants' />
+
+
 	<ui:style type="org.ovirt.engine.ui.webadmin.widget.footer.AlertsEventsFooterView.Style">
 		.barStyle {
 			height: 0px;
@@ -105,7 +108,7 @@
 				<g:PushButton ui:field="collapseButton" styleName="{style.collapseButton}">
 					<g:upFace image='{resources.collapseAllIcon}' />
 				</g:PushButton>
-				<g:Label ui:field="message" text="Last Message:" addStyleNames="{style.lastMessage}" />
+				<g:Label ui:field="message" text="{constants.lastMsgEventFooter}" addStyleNames="{style.lastMessage}" />
 				<g:SimplePanel ui:field="firstRowTablePanel" addStyleNames="{style.firstRowTablePanel}" />
 				<g:ToggleButton ui:field="alertButton" styleName="{style.alertButton}" />
 				<g:ToggleButton ui:field="eventButton" styleName="{style.eventButton}" />

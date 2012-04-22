@@ -110,7 +110,7 @@ public class NewVmModelBehavior extends IVmModelBehavior
             {
                 // Patch! Create key-value pair with a right key.
                 getModel().getTimeZone()
-                        .setSelectedItem(new KeyValuePairCompat<String, String>(template.gettime_zone(), ""));
+                        .setSelectedItem(new KeyValuePairCompat<String, String>(template.gettime_zone(), "")); //$NON-NLS-1$
 
                 UpdateTimeZone();
             }

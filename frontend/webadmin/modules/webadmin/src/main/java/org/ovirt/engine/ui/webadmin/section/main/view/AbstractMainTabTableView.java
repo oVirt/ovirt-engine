@@ -33,7 +33,7 @@ public abstract class AbstractMainTabTableView<T, M extends SearchableListModel>
         this.table.showRefreshButton();
         this.table.showPagingButtons();
         this.table.showItemsCount();
-        this.table.showSelectionCountTooltip();
+        this.table.showSelectionCountTooltip(ClientGinjectorProvider.instance().getApplicationConstants());
     }
 
     protected SimpleActionTable<T> createActionTable() {

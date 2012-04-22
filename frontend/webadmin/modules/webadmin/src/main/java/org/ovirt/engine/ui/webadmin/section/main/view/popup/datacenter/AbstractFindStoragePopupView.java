@@ -8,6 +8,7 @@ import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.table.column.EntityModelEnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.EntityModelTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 
 import com.google.gwt.core.client.GWT;
@@ -28,7 +29,7 @@ public class AbstractFindStoragePopupView extends AbstractModelBoundPopupView<Li
     @UiField
     Label messageLabel;
 
-    public AbstractFindStoragePopupView(EventBus eventBus, ApplicationResources resources, boolean multiSelection) {
+    public AbstractFindStoragePopupView(EventBus eventBus, ApplicationResources resources, boolean multiSelection, ApplicationConstants constants) {
         super(eventBus, resources);
         table = new EntityModelCellTable<ListModel>(multiSelection);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
@@ -39,7 +40,7 @@ public class AbstractFindStoragePopupView extends AbstractModelBoundPopupView<Li
             public String getValue(storage_domains storage) {
                 return storage.getstorage_name();
             }
-        }, "Name");
+        }, constants.nameStorage());
 
         table.addEntityModelColumn(new EntityModelEnumColumn<storage_domains, StorageDomainType>() {
 
@@ -47,18 +48,18 @@ public class AbstractFindStoragePopupView extends AbstractModelBoundPopupView<Li
             protected StorageDomainType getRawValue(storage_domains storage) {
                 return storage.getstorage_domain_type();
             }
-        }, "Type");
+        }, constants.typeStorage());
 
         table.addEntityModelColumn(new EntityModelTextColumn<storage_domains>() {
 
             @Override
             public String getValue(storage_domains storage) {
                 if (storage.getavailable_disk_size() == null || storage.getavailable_disk_size() < 1) {
-                    return "< 1 GB";
+                    return "< 1 GB"; //$NON-NLS-1$
                 }
-                return storage.getavailable_disk_size() + " GB";
+                return storage.getavailable_disk_size() + " GB"; //$NON-NLS-1$
             }
-        }, "Free Space");
+        }, constants.freeSpaceStorage());
 
     }
 

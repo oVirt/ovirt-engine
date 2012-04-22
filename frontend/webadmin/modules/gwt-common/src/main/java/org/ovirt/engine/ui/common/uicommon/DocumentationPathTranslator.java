@@ -21,9 +21,9 @@ public class DocumentationPathTranslator {
     {
         documentationPathMap = new HashMap<String, String>();
 
-        String[] lines = fileContent.split("\n");
+        String[] lines = fileContent.split("\n"); //$NON-NLS-1$
         for (String line : lines) {
-            String[] parts = line.split(",");
+            String[] parts = line.split(","); //$NON-NLS-1$
 
             if (parts.length > 1) {
                 String name = parts[0] != null && !parts[0].isEmpty() ? parts[0] : null;

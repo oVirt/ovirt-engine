@@ -23,6 +23,7 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmInterfaceModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
@@ -75,11 +76,12 @@ public class TemplateInterfaceListModel extends SearchableListModel
 
     public TemplateInterfaceListModel()
     {
-        setTitle("Network Interfaces");
+        setTitle(ConstantsManager.getInstance().getConstants().networkInterfacesTitle());
+        setHashName("network_interfaces"); //$NON-NLS-1$
 
-        setNewCommand(new UICommand("New", this));
-        setEditCommand(new UICommand("Edit", this));
-        setRemoveCommand(new UICommand("Remove", this));
+        setNewCommand(new UICommand("New", this)); //$NON-NLS-1$
+        setEditCommand(new UICommand("Edit", this)); //$NON-NLS-1$
+        setRemoveCommand(new UICommand("Remove", this)); //$NON-NLS-1$
 
         UpdateActionAvailability();
     }
@@ -134,7 +136,7 @@ public class TemplateInterfaceListModel extends SearchableListModel
         VmInterfaceModel model = new VmInterfaceModel();
         model.getMAC().setIsAvailable(false);
         setWindow(model);
-        model.setTitle("New Network Interface");
+        model.setTitle(ConstantsManager.getInstance().getConstants().newNetworkInterfaceTitle());
 
         model.setIsNew(true);
 
@@ -176,12 +178,12 @@ public class TemplateInterfaceListModel extends SearchableListModel
         model.getName().setEntity(newNicName);
         model.getMAC().setIsAvailable(false);
 
-        UICommand tempVar = new UICommand("OnSave", this);
-        tempVar.setTitle("OK");
+        UICommand tempVar = new UICommand("OnSave", this); //$NON-NLS-1$
+        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
         tempVar.setIsDefault(true);
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this);
-        tempVar2.setTitle("Cancel");
+        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
+        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         tempVar2.setIsCancel(true);
         model.getCommands().add(tempVar2);
     }
@@ -196,7 +198,7 @@ public class TemplateInterfaceListModel extends SearchableListModel
         VmInterfaceModel model = new VmInterfaceModel();
         model.getMAC().setIsAvailable(false);
         setWindow(model);
-        model.setTitle("Edit Network Interface");
+        model.setTitle(ConstantsManager.getInstance().getConstants().editNetworkInterfaceTitle());
 
         AsyncDataProvider.GetClusterNetworkList(new AsyncQuery(this,
                 new INewAsyncCallback() {
@@ -255,12 +257,12 @@ public class TemplateInterfaceListModel extends SearchableListModel
         model.getName().setEntity(nic.getName());
         model.getMAC().setIsAvailable(false);
 
-        UICommand tempVar = new UICommand("OnSave", this);
-        tempVar.setTitle("OK");
+        UICommand tempVar = new UICommand("OnSave", this); //$NON-NLS-1$
+        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
         tempVar.setIsDefault(true);
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this);
-        tempVar2.setTitle("Cancel");
+        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
+        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         tempVar2.setIsCancel(true);
         model.getCommands().add(tempVar2);
     }
@@ -288,7 +290,7 @@ public class TemplateInterfaceListModel extends SearchableListModel
             nic.setType(((VmInterfaceType) model.getNicType().getSelectedItem()).getValue());
         }
         nic.setMacAddress(model.getMAC().getIsChangable() ? (model.getMAC().getEntity() == null ? null
-                : ((String) (model.getMAC().getEntity())).toLowerCase()) : model.getIsNew() ? "" : nic.getMacAddress());
+                : ((String) (model.getMAC().getEntity())).toLowerCase()) : model.getIsNew() ? "" : nic.getMacAddress()); //$NON-NLS-1$
 
         if (model.getIsNew())
         {
@@ -331,9 +333,9 @@ public class TemplateInterfaceListModel extends SearchableListModel
 
         ConfirmationModel model = new ConfirmationModel();
         setWindow(model);
-        model.setTitle("Remove Network Interface(s)");
-        model.setHashName("remove_network_interface_tmps");
-        model.setMessage("Network Interface(s)");
+        model.setTitle(ConstantsManager.getInstance().getConstants().removeNetworkInterfacesTitle());
+        model.setHashName("remove_network_interface_tmps"); //$NON-NLS-1$
+        model.setMessage(ConstantsManager.getInstance().getConstants().networkInterfacesMsg());
 
         java.util.ArrayList<String> items = new java.util.ArrayList<String>();
         for (Object item : getSelectedItems())
@@ -343,12 +345,12 @@ public class TemplateInterfaceListModel extends SearchableListModel
         }
         model.setItems(items);
 
-        UICommand tempVar = new UICommand("OnRemove", this);
-        tempVar.setTitle("OK");
+        UICommand tempVar = new UICommand("OnRemove", this); //$NON-NLS-1$
+        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
         tempVar.setIsDefault(true);
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this);
-        tempVar2.setTitle("Cancel");
+        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
+        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         tempVar2.setIsCancel(true);
         model.getCommands().add(tempVar2);
     }
@@ -427,15 +429,15 @@ public class TemplateInterfaceListModel extends SearchableListModel
         {
             remove();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnSave"))
+        else if (StringHelper.stringsEqual(command.getName(), "OnSave")) //$NON-NLS-1$
         {
             OnSave();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "Cancel"))
+        else if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
         {
             Cancel();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnRemove"))
+        else if (StringHelper.stringsEqual(command.getName(), "OnRemove")) //$NON-NLS-1$
         {
             OnRemove();
         }
@@ -443,6 +445,6 @@ public class TemplateInterfaceListModel extends SearchableListModel
 
     @Override
     protected String getListName() {
-        return "TemplateInterfaceListModel";
+        return "TemplateInterfaceListModel"; //$NON-NLS-1$
     }
 }

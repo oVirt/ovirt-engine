@@ -14,7 +14,7 @@ public class GroupNameRenderer extends AbstractRenderer<Object[]> {
         Guid objectGuid = (Guid) arg[1];
 
         if (DataProvider.GetEntityGuid(entity).equals(objectGuid)) {
-            return "";
+            return ""; //$NON-NLS-1$
         }
         String ownerName = (String) arg[2];
         return ownerName;

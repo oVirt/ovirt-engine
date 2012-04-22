@@ -23,7 +23,7 @@ public class DragStartEvent extends DragDropEventBase<DragStartHandler> {
     /**
      * Event type for drag start events. Represents the meta-data associated with this event.
      */
-    private static final Type<DragStartHandler> TYPE = new Type<DragStartHandler>("dragstart",
+    private static final Type<DragStartHandler> TYPE = new Type<DragStartHandler>("dragstart", //$NON-NLS-1$
             new DragStartEvent());
 
     /**

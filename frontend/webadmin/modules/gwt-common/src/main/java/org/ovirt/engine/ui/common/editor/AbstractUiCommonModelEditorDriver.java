@@ -41,7 +41,7 @@ public abstract class AbstractUiCommonModelEditorDriver<T extends Model, E exten
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 String propName = ((PropertyChangedEventArgs) args).PropertyName;
-                listenerMap.callListener(propName, "PropertyChanged");
+                listenerMap.callListener(propName, "PropertyChanged"); //$NON-NLS-1$
             }
         });
 

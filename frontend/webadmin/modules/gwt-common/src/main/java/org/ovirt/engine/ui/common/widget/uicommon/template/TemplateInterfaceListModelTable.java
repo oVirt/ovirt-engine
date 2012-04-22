@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.common.widget.uicommon.template;
 
 import org.ovirt.engine.core.common.businessentities.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
+import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
 import org.ovirt.engine.ui.common.widget.action.UiCommandButtonDefinition;
@@ -22,14 +23,14 @@ public class TemplateInterfaceListModelTable extends AbstractModelBoundTableWidg
     }
 
     @Override
-    public void initTable() {
+    public void initTable(CommonApplicationConstants constants) {
         TextColumnWithTooltip<VmNetworkInterface> nameColumn = new TextColumnWithTooltip<VmNetworkInterface>() {
             @Override
             public String getValue(VmNetworkInterface object) {
                 return object.getName();
             }
         };
-        getTable().addColumn(nameColumn, "Name");
+        getTable().addColumn(nameColumn, constants.nameInterface());
 
         TextColumnWithTooltip<VmNetworkInterface> networkNameColumn = new TextColumnWithTooltip<VmNetworkInterface>() {
             @Override
@@ -37,7 +38,7 @@ public class TemplateInterfaceListModelTable extends AbstractModelBoundTableWidg
                 return object.getNetworkName();
             }
         };
-        getTable().addColumn(networkNameColumn, "Network Name");
+        getTable().addColumn(networkNameColumn, constants.networkNameInterface());
 
         TextColumnWithTooltip<VmNetworkInterface> typeColumn = new EnumColumn<VmNetworkInterface, VmInterfaceType>() {
             @Override
@@ -45,23 +46,23 @@ public class TemplateInterfaceListModelTable extends AbstractModelBoundTableWidg
                 return VmInterfaceType.forValue(object.getType());
             }
         };
-        getTable().addColumn(typeColumn, "Type");
+        getTable().addColumn(typeColumn, constants.typeInterface());
 
-        getTable().addActionButton(new UiCommandButtonDefinition<VmNetworkInterface>(getEventBus(), "New") {
+        getTable().addActionButton(new UiCommandButtonDefinition<VmNetworkInterface>(getEventBus(), constants.newInterface()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getNewCommand();
             }
         });
 
-        getTable().addActionButton(new UiCommandButtonDefinition<VmNetworkInterface>(getEventBus(), "Edit") {
+        getTable().addActionButton(new UiCommandButtonDefinition<VmNetworkInterface>(getEventBus(), constants.editInterface()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getEditCommand();
             }
         });
 
-        getTable().addActionButton(new UiCommandButtonDefinition<VmNetworkInterface>(getEventBus(), "Remove") {
+        getTable().addActionButton(new UiCommandButtonDefinition<VmNetworkInterface>(getEventBus(), constants.removeInterface()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getRemoveCommand();

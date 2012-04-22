@@ -57,13 +57,13 @@ public class UiCommonEditorDriverGenerator extends
             SourceWriter sw)
             throws UnableToCompleteException {
         TypeOracle typeOracle = context.getTypeOracle();
-        entityModelType = typeOracle.findType("org.ovirt.engine.ui.uicommonweb.models.EntityModel");
-        listModelType = typeOracle.findType("org.ovirt.engine.ui.uicommonweb.models.ListModel");
+        entityModelType = typeOracle.findType("org.ovirt.engine.ui.uicommonweb.models.EntityModel"); //$NON-NLS-1$
+        listModelType = typeOracle.findType("org.ovirt.engine.ui.uicommonweb.models.ListModel"); //$NON-NLS-1$
         this.logger = logger;
         this.model = model;
         this.sw = sw;
 
-        logger.log(Type.DEBUG, "Strating to write additional Driver code");
+        logger.log(Type.DEBUG, "Strating to write additional Driver code"); //$NON-NLS-1$
         writeListenerMap();
         writeEventMap();
         writeOwnerModels();
@@ -73,20 +73,20 @@ public class UiCommonEditorDriverGenerator extends
      * Writes the UiCommonListenerMap for the edited model
      */
     private void writeListenerMap() {
-        logger.log(Type.DEBUG, "Strating to write ListenerMap");
+        logger.log(Type.DEBUG, "Strating to write ListenerMap"); //$NON-NLS-1$
         sw.println();
-        sw.println("@Override");
-        sw.println("protected " + UiCommonListenerMap.class.getName() + " getListenerMap() {");
+        sw.println("@Override"); //$NON-NLS-1$
+        sw.println("protected " + UiCommonListenerMap.class.getName() + " getListenerMap() {"); //$NON-NLS-1$ //$NON-NLS-2$
         sw.indent();
 
-        sw.println(UiCommonListenerMap.class.getName() + " listenerMap = new " + UiCommonListenerMap.class.getName()
-                + "();");
+        sw.println(UiCommonListenerMap.class.getName() + " listenerMap = new " + UiCommonListenerMap.class.getName() //$NON-NLS-1$
+                + "();"); //$NON-NLS-1$
         sw.println();
 
-        logger.log(Type.DEBUG, "Looking for top-level Editor Fields");
+        logger.log(Type.DEBUG, "Looking for top-level Editor Fields"); //$NON-NLS-1$
 
         for (EditorData editorData : model.getEditorData()) {
-            logger.log(Type.DEBUG, "Going over Field: " + editorData);
+            logger.log(Type.DEBUG, "Going over Field: " + editorData); //$NON-NLS-1$
             String path = editorData.getPath();
             // Change first letter to Upper to comply with UiCommon Property Names
             path = Character.toUpperCase(path.charAt(0)) + path.substring(1, path.length());
@@ -97,47 +97,47 @@ public class UiCommonEditorDriverGenerator extends
 
             // only relevant for top-level properties
             if (!editorData.isDeclaredPathNested()) {
-                logger.log(Type.DEBUG, "Found top-level Field: " + editorData);
+                logger.log(Type.DEBUG, "Found top-level Field: " + editorData); //$NON-NLS-1$
 
-                sw.println("listenerMap.addListener(\"%s\", \"PropertyChanged\", new org.ovirt.engine.core.compat.IEventListener() {",
+                sw.println("listenerMap.addListener(\"%s\", \"PropertyChanged\", new org.ovirt.engine.core.compat.IEventListener() {", //$NON-NLS-1$
                         path);
                 sw.indent();
-                sw.println("@Override");
-                sw.println("public void eventRaised(org.ovirt.engine.core.compat.Event ev, Object sender, org.ovirt.engine.core.compat.EventArgs args) {");
+                sw.println("@Override"); //$NON-NLS-1$
+                sw.println("public void eventRaised(org.ovirt.engine.core.compat.Event ev, Object sender, org.ovirt.engine.core.compat.EventArgs args) {"); //$NON-NLS-1$
                 sw.indent();
-                sw.println("getEditor().%s.setValue(getObject()%s);",
+                sw.println("getEditor().%s.setValue(getObject()%s);", //$NON-NLS-1$
                         editorData.getExpression(),
                         editorData.getGetterExpression());
                 sw.outdent();
-                sw.println("}");
+                sw.println("}"); //$NON-NLS-1$
                 sw.outdent();
-                sw.println("});");
+                sw.println("});"); //$NON-NLS-1$
                 sw.println();
             }
         }
 
-        sw.println("return listenerMap;");
+        sw.println("return listenerMap;"); //$NON-NLS-1$
         sw.outdent();
-        sw.println("}");
+        sw.println("}"); //$NON-NLS-1$
     }
 
     /**
      * Writes the UiCommonEventMap for the edited model
      */
     private void writeEventMap() {
-        logger.log(Type.DEBUG, "Strating to write EventMap");
+        logger.log(Type.DEBUG, "Strating to write EventMap"); //$NON-NLS-1$
 
         sw.println();
-        sw.println("@Override");
-        sw.println("protected " + UiCommonEventMap.class.getName() + " getEventMap() {");
+        sw.println("@Override"); //$NON-NLS-1$
+        sw.println("protected " + UiCommonEventMap.class.getName() + " getEventMap() {"); //$NON-NLS-1$ //$NON-NLS-2$
         sw.indent();
 
-        sw.println(UiCommonEventMap.class.getName() + " eventMap = new " + UiCommonEventMap.class.getName() + "();");
+        sw.println(UiCommonEventMap.class.getName() + " eventMap = new " + UiCommonEventMap.class.getName() + "();"); //$NON-NLS-1$ //$NON-NLS-2$
 
-        logger.log(Type.DEBUG, "Looking for Model Fields");
+        logger.log(Type.DEBUG, "Looking for Model Fields"); //$NON-NLS-1$
 
         for (EditorData editorData : model.getEditorData()) {
-            logger.log(Type.DEBUG, "Going over Field: " + editorData);
+            logger.log(Type.DEBUG, "Going over Field: " + editorData); //$NON-NLS-1$
 
             String path = editorData.getPath();
             if (path.length() == 0) {
@@ -147,45 +147,45 @@ public class UiCommonEditorDriverGenerator extends
             JClassType propertyOwnerType = editorData.getPropertyOwnerType();
 
             if (propertyOwnerType == entityModelType) {
-                logger.log(Type.DEBUG, "Found EntityModel Field: " + editorData);
+                logger.log(Type.DEBUG, "Found EntityModel Field: " + editorData); //$NON-NLS-1$
 
-                sw.println("eventMap.addEvent(\"%s\", \"EntityChanged\", getObject()%s.getEntityChangedEvent());",
+                sw.println("eventMap.addEvent(\"%s\", \"EntityChanged\", getObject()%s.getEntityChangedEvent());", //$NON-NLS-1$
                         path, editorData.getBeanOwnerExpression());
 
             } else if (propertyOwnerType == listModelType) {
-                logger.log(Type.DEBUG, "Found ListModel Field: " + editorData);
+                logger.log(Type.DEBUG, "Found ListModel Field: " + editorData); //$NON-NLS-1$
 
-                sw.println("eventMap.addEvent(\"%s\", \"ItemsChanged\", getObject()%s.getItemsChangedEvent());",
+                sw.println("eventMap.addEvent(\"%s\", \"ItemsChanged\", getObject()%s.getItemsChangedEvent());", //$NON-NLS-1$
                         path, editorData.getBeanOwnerExpression());
-                sw.println("eventMap.addEvent(\"%s\", \"SelectedItemsChanged\", getObject()%s.getSelectedItemsChangedEvent());",
+                sw.println("eventMap.addEvent(\"%s\", \"SelectedItemsChanged\", getObject()%s.getSelectedItemsChangedEvent());", //$NON-NLS-1$
                         path,
                         editorData.getBeanOwnerExpression());
-                sw.println("eventMap.addEvent(\"%s\", \"SelectedItemChanged\", getObject()%s.getSelectedItemChangedEvent());",
+                sw.println("eventMap.addEvent(\"%s\", \"SelectedItemChanged\", getObject()%s.getSelectedItemChangedEvent());", //$NON-NLS-1$
                         path,
                         editorData.getBeanOwnerExpression());
             }
         }
 
-        sw.println("return eventMap;");
+        sw.println("return eventMap;"); //$NON-NLS-1$
         sw.outdent();
-        sw.println("}");
+        sw.println("}"); //$NON-NLS-1$
     }
 
     /**
      * Writes the map of the owner Models
      */
     private void writeOwnerModels() {
-        logger.log(Type.DEBUG, "Strating to write OwnerModels");
+        logger.log(Type.DEBUG, "Strating to write OwnerModels"); //$NON-NLS-1$
         sw.println();
-        sw.println("@Override");
-        sw.println("protected java.util.Map<String, org.ovirt.engine.ui.uicommonweb.models.EntityModel> getOwnerModels() {");
+        sw.println("@Override"); //$NON-NLS-1$
+        sw.println("protected java.util.Map<String, org.ovirt.engine.ui.uicommonweb.models.EntityModel> getOwnerModels() {"); //$NON-NLS-1$
         sw.indent();
 
-        sw.println("java.util.Map<String, org.ovirt.engine.ui.uicommonweb.models.EntityModel> regs = new java.util.HashMap<String, org.ovirt.engine.ui.uicommonweb.models.EntityModel>();");
+        sw.println("java.util.Map<String, org.ovirt.engine.ui.uicommonweb.models.EntityModel> regs = new java.util.HashMap<String, org.ovirt.engine.ui.uicommonweb.models.EntityModel>();"); //$NON-NLS-1$
 
-        logger.log(Type.DEBUG, "Going over Editor Fields");
+        logger.log(Type.DEBUG, "Going over Editor Fields"); //$NON-NLS-1$
         for (EditorData editorData : model.getEditorData()) {
-            logger.log(Type.DEBUG, "Going over Field: " + editorData);
+            logger.log(Type.DEBUG, "Going over Field: " + editorData); //$NON-NLS-1$
             String path = editorData.getPath();
             if (path.length() == 0) {
                 continue;
@@ -194,13 +194,13 @@ public class UiCommonEditorDriverGenerator extends
             JClassType propertyOwnerType = editorData.getPropertyOwnerType();
 
             if (propertyOwnerType == listModelType || propertyOwnerType == entityModelType) {
-                logger.log(Type.DEBUG, "Found owner Model Field: " + editorData);
-                sw.println("regs.put(\"%s\", getObject()%s);", path, editorData.getBeanOwnerExpression());
+                logger.log(Type.DEBUG, "Found owner Model Field: " + editorData); //$NON-NLS-1$
+                sw.println("regs.put(\"%s\", getObject()%s);", path, editorData.getBeanOwnerExpression()); //$NON-NLS-1$
             }
         }
-        sw.println("return regs;");
+        sw.println("return regs;"); //$NON-NLS-1$
         sw.outdent();
-        sw.println("}");
+        sw.println("}"); //$NON-NLS-1$
 
     }
 }

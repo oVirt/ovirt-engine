@@ -7,79 +7,79 @@ public class ApplicationPlaces {
 
     // Login section
 
-    public static final String loginPlace = "login";
+    public static final String loginPlace = "login"; //$NON-NLS-1$
 
     // Main section: main tabs
 
-    public static final String basicMainTabPlace = "basic";
+    public static final String basicMainTabPlace = "basic"; //$NON-NLS-1$
 
     // Main section: side tabs
 
-    public static final String extendedVirtualMachineSideTabPlace = "extended-vm";
+    public static final String extendedVirtualMachineSideTabPlace = "extended-vm"; //$NON-NLS-1$
 
-    public static final String extendedTemplateSideTabPlace = "extended-template";
+    public static final String extendedTemplateSideTabPlace = "extended-template"; //$NON-NLS-1$
 
-    public static final String extendedResourceSideTabPlace = "extended-resource";
+    public static final String extendedResourceSideTabPlace = "extended-resource"; //$NON-NLS-1$
 
     // Main section: sub tabs
 
     // Important: the value after SUB_TAB_PREFIX must correspond to given UiCommon model
     // title, transformed to lower case, with spaces replaced with underscores ('_')
 
-    public static final String SUB_TAB_PREFIX = "-";
+    public static final String SUB_TAB_PREFIX = "-"; //$NON-NLS-1$
 
-    public static final String POOL_SUFFIX = "-pool";
+    public static final String POOL_SUFFIX = "-pool"; //$NON-NLS-1$
 
     // Virtual Machines
 
     public static final String extendedVirtualMachineGeneralSubTabPlace = extendedVirtualMachineSideTabPlace
-            + SUB_TAB_PREFIX + "general";
+            + SUB_TAB_PREFIX + "general"; //$NON-NLS-1$
 
     public static final String extendedPoolGeneralSubTabPlace = extendedVirtualMachineGeneralSubTabPlace + POOL_SUFFIX;
 
     public static final String extendedVirtualMachineNetworkInterfaceSubTabPlace = extendedVirtualMachineSideTabPlace
-            + SUB_TAB_PREFIX + "network_interfaces";
+            + SUB_TAB_PREFIX + "network_interfaces"; //$NON-NLS-1$
 
     public static final String extendedPoolNetworkInterfaceSubTabPlace =
             extendedVirtualMachineNetworkInterfaceSubTabPlace + POOL_SUFFIX;
 
     public static final String extendedVirtualMachineVirtualDiskSubTabPlace = extendedVirtualMachineSideTabPlace
-            + SUB_TAB_PREFIX + "virtual_disks";
+            + SUB_TAB_PREFIX + "virtual_disks"; //$NON-NLS-1$
 
     public static final String extendedVirtualPoolDiskSubTabPlace = extendedVirtualMachineVirtualDiskSubTabPlace
             + POOL_SUFFIX;
 
     public static final String extendedVirtualMachineSnapshotSubTabPlace = extendedVirtualMachineSideTabPlace
-            + SUB_TAB_PREFIX + "snapshots";
+            + SUB_TAB_PREFIX + "snapshots"; //$NON-NLS-1$
 
     public static final String extendedVirtualMachinePermissionSubTabPlace = extendedVirtualMachineSideTabPlace
-            + SUB_TAB_PREFIX + "permissions";
+            + SUB_TAB_PREFIX + "permissions"; //$NON-NLS-1$
 
     public static final String extendedVirtualMachineEventSubTabPlace = extendedVirtualMachineSideTabPlace
-            + SUB_TAB_PREFIX + "events";
+            + SUB_TAB_PREFIX + "events"; //$NON-NLS-1$
 
     public static final String extendedVirtualMachineApplicationSubTabPlace = extendedVirtualMachineSideTabPlace
-            + SUB_TAB_PREFIX + "applications";
+            + SUB_TAB_PREFIX + "applications"; //$NON-NLS-1$
 
     public static final String extendedVirtualMachineMonitorSubTabPlace = extendedVirtualMachineSideTabPlace
-            + SUB_TAB_PREFIX + "monitor";
+            + SUB_TAB_PREFIX + "monitor"; //$NON-NLS-1$
 
     // Templates
 
     public static final String extendedTempplateGeneralSubTabPlace = extendedTemplateSideTabPlace
-            + SUB_TAB_PREFIX + "general";
+            + SUB_TAB_PREFIX + "general"; //$NON-NLS-1$
 
     public static final String extendedTempplateNetworkInterfacesSubTabPlace = extendedTemplateSideTabPlace
-            + SUB_TAB_PREFIX + "network_interfaces";
+            + SUB_TAB_PREFIX + "network_interfaces"; //$NON-NLS-1$
 
     public static final String extendedTempplateVirtualDisksSubTabPlace = extendedTemplateSideTabPlace
-            + SUB_TAB_PREFIX + "virtual_disks";
+            + SUB_TAB_PREFIX + "virtual_disks"; //$NON-NLS-1$
 
     public static final String extendedTempplateEventsSubTabPlace = extendedTemplateSideTabPlace
-            + SUB_TAB_PREFIX + "events";
+            + SUB_TAB_PREFIX + "events"; //$NON-NLS-1$
 
     public static final String extendedTempplatePersmissionsSubTabPlace = extendedTemplateSideTabPlace
-            + SUB_TAB_PREFIX + "permissions";
+            + SUB_TAB_PREFIX + "permissions"; //$NON-NLS-1$
 
     // Default places
 

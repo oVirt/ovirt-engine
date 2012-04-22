@@ -107,7 +107,7 @@ public class ModelBoundPopupHandler<M extends Model> {
      */
     <T extends Model> void revealPopup(final T model,
             final AbstractModelBoundPopupPresenterWidget<T, ?> popup) {
-        assert (model != null) : "Popup model must not be null";
+        assert (model != null) : "Popup model must not be null"; //$NON-NLS-1$
 
         // Initialize popup
         popup.init(model);
@@ -118,7 +118,7 @@ public class ModelBoundPopupHandler<M extends Model> {
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 PropertyChangedEventArgs pcArgs = (PropertyChangedEventArgs) args;
 
-                if ("Progress".equals(pcArgs.PropertyName)) {
+                if ("Progress".equals(pcArgs.PropertyName)) { //$NON-NLS-1$
                     if (model.getProgress() != null) {
                         popup.startProgress(model.getProgress().getCurrentOperation());
                     } else {

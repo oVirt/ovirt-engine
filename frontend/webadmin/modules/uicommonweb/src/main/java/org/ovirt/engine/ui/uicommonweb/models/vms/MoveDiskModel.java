@@ -13,6 +13,7 @@ import org.ovirt.engine.ui.uicommonweb.ICommandTarget;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.storage.MoveOrCopyDiskModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public class MoveDiskModel extends MoveOrCopyDiskModel
 {
@@ -48,27 +49,30 @@ public class MoveDiskModel extends MoveOrCopyDiskModel
         }), getDisks().get(0).getDiskImage().getstorage_pool_id().getValue());
     }
 
+    @Override
     protected void postCopyOrMoveInit() {
         ICommandTarget target = (ICommandTarget) getEntity();
 
         if (!getStorageDomain().getItems().iterator().hasNext())
         {
-            setMessage("The system could not find available target Storage Domain.\nPossible reasons:\n  - No active Storage Domain available\n  - The Template that the VM is based on does not exist on active Storage Domain");
+            setMessage(ConstantsManager.getInstance()
+                    .getConstants()
+                    .theSystemCouldNotFindAvailableTargetStorageDomainMsg());
 
-            UICommand tempVar = new UICommand("Cancel", target);
-            tempVar.setTitle("Close");
+            UICommand tempVar = new UICommand("Cancel", target); //$NON-NLS-1$
+            tempVar.setTitle(ConstantsManager.getInstance().getConstants().close());
             tempVar.setIsDefault(true);
             tempVar.setIsCancel(true);
             getCommands().add(tempVar);
         }
         else
         {
-            UICommand tempVar2 = new UICommand("OnMove", this);
-            tempVar2.setTitle("OK");
+            UICommand tempVar2 = new UICommand("OnMove", this); //$NON-NLS-1$
+            tempVar2.setTitle(ConstantsManager.getInstance().getConstants().ok());
             tempVar2.setIsDefault(true);
             getCommands().add(tempVar2);
-            UICommand tempVar3 = new UICommand("Cancel", target);
-            tempVar3.setTitle("Cancel");
+            UICommand tempVar3 = new UICommand("Cancel", target); //$NON-NLS-1$
+            tempVar3.setTitle(ConstantsManager.getInstance().getConstants().cancel());
             tempVar3.setIsCancel(true);
             getCommands().add(tempVar3);
         }

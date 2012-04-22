@@ -24,9 +24,9 @@ import com.google.gwt.user.client.Cookies;
 public class ReportsListModel extends SearchableListModel {
 
     HtmlParameters htmlParams = new HtmlParameters();
-    private String lastResourceId = "";
+    private String lastResourceId = ""; //$NON-NLS-1$
     private final String reportUrl;
-    private Event reportModelRefreshEvent = new Event(new EventDefinition("ReportModelRefreshed",
+    private Event reportModelRefreshEvent = new Event(new EventDefinition("ReportModelRefreshed", //$NON-NLS-1$
             ReportsListModel.class));
 
     public Event getReportModelRefreshEvent() {
@@ -34,13 +34,13 @@ public class ReportsListModel extends SearchableListModel {
     }
 
     public ReportsListModel(String baseUrl) {
-        String sessionID = Cookies.getCookie("JSESSIONID");
-        reportUrl = baseUrl + "/flow.html" + "?viewAsDashboardFrame=true";
-        htmlParams.setParameter("sessionID", sessionID);
+        String sessionID = Cookies.getCookie("JSESSIONID"); //$NON-NLS-1$
+        reportUrl = baseUrl + "/flow.html" + "?viewAsDashboardFrame=true"; //$NON-NLS-1$ //$NON-NLS-2$
+        htmlParams.setParameter("sessionID", sessionID); //$NON-NLS-1$
 
         setFlowId();
 
-        setDefaultSearchString("Reports:");
+        setDefaultSearchString("Reports:"); //$NON-NLS-1$
         setSearchString(getDefaultSearchString());
 
         getSearchNextPageCommand().setIsAvailable(false);
@@ -59,22 +59,22 @@ public class ReportsListModel extends SearchableListModel {
 
     private void setFlowId() {
         if (ReportInit.getInstance().isCommunityEdition()) {
-            htmlParams.setParameter("_flowId", "viewReportFlow");
+            htmlParams.setParameter("_flowId", "viewReportFlow"); //$NON-NLS-1$ //$NON-NLS-2$
         } else {
-            htmlParams.setParameter("_flowId", "dashboardRuntimeFlow");
+            htmlParams.setParameter("_flowId", "dashboardRuntimeFlow"); //$NON-NLS-1$ //$NON-NLS-2$
         }
     }
 
     public void setPassword(String password) {
-        htmlParams.setParameter("j_password", password);
+        htmlParams.setParameter("j_password", password); //$NON-NLS-1$
     }
 
     public void setUser(String user) {
-        htmlParams.setParameter("j_username", user);
+        htmlParams.setParameter("j_username", user); //$NON-NLS-1$
     }
 
     public void setDataCenterID(final String uuid) {
-        htmlParams.setParameter(getHiddenParamPrefix() + "P_DataCenter_ID", uuid);
+        htmlParams.setParameter(getHiddenParamPrefix() + "P_DataCenter_ID", uuid); //$NON-NLS-1$
     }
 
     public void setResourceId(String idParamName, String id) {
@@ -84,14 +84,14 @@ public class ReportsListModel extends SearchableListModel {
 
     public void setUri(String uri) {
         if (ReportInit.getInstance().isCommunityEdition()) {
-            htmlParams.setParameter("reportUnit", uri);
+            htmlParams.setParameter("reportUnit", uri); //$NON-NLS-1$
         } else {
-            htmlParams.setParameter("dashboardResource", uri);
+            htmlParams.setParameter("dashboardResource", uri); //$NON-NLS-1$
         }
     }
 
     private void clearTreeSensitiveParams() {
-        removeParam("P_DataCenter_ID");
+        removeParam("P_DataCenter_ID"); //$NON-NLS-1$
         removeParam(lastResourceId);
     }
 
@@ -130,19 +130,19 @@ public class ReportsListModel extends SearchableListModel {
             case Cluster: {
                 VDSGroup cluster = (VDSGroup) treeItemModel.getEntity();
                 setDataCenterID(cluster.getstorage_pool_id().toString());
-                setResourceId("P_Cluster_ID", cluster.getQueryableId().toString());
+                setResourceId("P_Cluster_ID", cluster.getQueryableId().toString()); //$NON-NLS-1$
                 break;
             }
             case Hosts: {
                 VDSGroup cluster = (VDSGroup) treeItemModel.getEntity();
                 setDataCenterID(cluster.getstorage_pool_id().toString());
-                setResourceId("P_Cluster_ID", cluster.getQueryableId().toString());
+                setResourceId("P_Cluster_ID", cluster.getQueryableId().toString()); //$NON-NLS-1$
                 break;
             }
             case Host: {
                 VDS host = (VDS) treeItemModel.getEntity();
                 setDataCenterID(host.getstorage_pool_id().toString());
-                setResourceId("P_Host_ID", host.getQueryableId().toString());
+                setResourceId("P_Host_ID", host.getQueryableId().toString()); //$NON-NLS-1$
                 break;
             }
             case Storages: {
@@ -153,7 +153,7 @@ public class ReportsListModel extends SearchableListModel {
             case Storage: {
                 storage_domains storage = (storage_domains) treeItemModel.getEntity();
                 setDataCenterID(storage.getstorage_pool_id().toString());
-                setResourceId("P_StorageDomain_ID", storage.getQueryableId().toString());
+                setResourceId("P_StorageDomain_ID", storage.getQueryableId().toString()); //$NON-NLS-1$
                 break;
             }
             case Templates:
@@ -163,35 +163,35 @@ public class ReportsListModel extends SearchableListModel {
             case VMs: {
                 VM vm = (VM) treeItemModel.getEntity();
                 setDataCenterID(vm.getstorage_pool_id().toString());
-                setResourceId("P_VM_ID", vm.getQueryableId().toString());
+                setResourceId("P_VM_ID", vm.getQueryableId().toString()); //$NON-NLS-1$
                 break;
             }
             default:
                 // webadmin: redirect to default tab in case no tab is selected.
             }
         }
-        GWT.log("Tree Item changed: " + title);
+        GWT.log("Tree Item changed: " + title); //$NON-NLS-1$
 
         reportModelRefreshEvent.raise(this, EventArgs.Empty);
     }
 
     @Override
     protected String getListName() {
-        return "DeashboardReportsListModel";
+        return "DeashboardReportsListModel"; //$NON-NLS-1$
     }
 
     private String getHiddenParamPrefix() {
         if (ReportInit.getInstance().isCommunityEdition()) {
-            return "";
+            return ""; //$NON-NLS-1$
         } else {
-            return "hidden_";
+            return "hidden_"; //$NON-NLS-1$
         }
     }
 
     @Override
     public boolean IsSearchStringMatch(String searchString)
     {
-        return searchString.trim().toLowerCase().startsWith("reports");
+        return searchString.trim().toLowerCase().startsWith("reports"); //$NON-NLS-1$
     }
 
 }

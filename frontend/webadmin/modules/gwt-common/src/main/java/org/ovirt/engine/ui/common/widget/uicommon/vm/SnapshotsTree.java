@@ -20,6 +20,7 @@ import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
+import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.form.FormBuilder;
@@ -60,9 +61,10 @@ public class SnapshotsTree<L extends ListWithDetailsModel> extends AbstractSubTa
     public SnapshotsTree(SearchableDetailModelProvider<Snapshot, L, VmSnapshotListModel> modelProvider,
             EventBus eventBus,
             CommonApplicationResources resources,
-            CommonApplicationConstants constants) {
+            CommonApplicationConstants constants,
+            CommonApplicationTemplates templates) {
 
-        super(resources, constants);
+        super(resources, constants, templates);
 
         setRootSelectionEnabled(true);
         setMultiSelection(false);
@@ -97,37 +99,37 @@ public class SnapshotsTree<L extends ListWithDetailsModel> extends AbstractSubTa
     protected TreeItem getRootItem(Snapshot snapshot) {
         HorizontalPanel panel = new HorizontalPanel();
         panel.setSpacing(1);
-        panel.setWidth("100%");
+        panel.setWidth("100%"); //$NON-NLS-1$
 
-        addItemToPanel(panel, new Image(new SnapshotStatusColumn().getValue(snapshot)), "30px");
+        addItemToPanel(panel, new Image(new SnapshotStatusColumn().getValue(snapshot)), "30px"); //$NON-NLS-1$
         if (snapshot.getType() == SnapshotType.ACTIVE) {
-            addTextBoxToPanel(panel, new TextBoxLabel(), constants.currentSnapshotLabel(), "150px");
+            addTextBoxToPanel(panel, new TextBoxLabel(), constants.currentSnapshotLabel(), "150px"); //$NON-NLS-1$
         }
         else if (snapshot.getType() == SnapshotType.PREVIEW) {
-            addTextBoxToPanel(panel, new TextBoxLabel(), constants.previousCurrentSnapshotLabel(), "150px");
+            addTextBoxToPanel(panel, new TextBoxLabel(), constants.previousCurrentSnapshotLabel(), "150px"); //$NON-NLS-1$
         }
         else {
-            DateTimeFormat dateTimeFormat = DateTimeFormat.getFormat("yyyy-MMM-dd, HH:mm:ss");
-            addValueLabelToPanel(panel, new DateLabel(dateTimeFormat), snapshot.getCreationDate(), "150px");
+            DateTimeFormat dateTimeFormat = DateTimeFormat.getFormat("yyyy-MMM-dd, HH:mm:ss"); //$NON-NLS-1$
+            addValueLabelToPanel(panel, new DateLabel(dateTimeFormat), snapshot.getCreationDate(), "150px"); //$NON-NLS-1$
         }
 
-        addValueLabelToPanel(panel, new EnumLabel<SnapshotStatus>(), snapshot.getStatus(), "150px");
+        addValueLabelToPanel(panel, new EnumLabel<SnapshotStatus>(), snapshot.getStatus(), "150px"); //$NON-NLS-1$
 
         TextBoxLabel descriptionLabel = new TextBoxLabel();
         String description = snapshot.getDescription();
 
-        addTextBoxToPanel(panel, descriptionLabel, description, "");
+        addTextBoxToPanel(panel, descriptionLabel, description, ""); //$NON-NLS-1$
 
         if (snapshot.getStatus() == SnapshotStatus.IN_PREVIEW) {
-            descriptionLabel.setValue(description + " (" + constants.previewModelLabel() + ")");
-            descriptionLabel.getElement().getStyle().setColor("orange");
+            descriptionLabel.setValue(description + " (" + constants.previewModelLabel() + ")"); //$NON-NLS-1$ //$NON-NLS-2$
+            descriptionLabel.getElement().getStyle().setColor("orange"); //$NON-NLS-1$
         }
         else if (snapshot.getType() == SnapshotType.STATELESS) {
-            descriptionLabel.setValue(description + " (" + constants.readonlyLabel() + ")");
+            descriptionLabel.setValue(description + " (" + constants.readonlyLabel() + ")"); //$NON-NLS-1$ //$NON-NLS-2$
             descriptionLabel.getElement().getStyle().setFontStyle(FontStyle.ITALIC);
         }
         else if (snapshot.getType() == SnapshotType.ACTIVE || snapshot.getType() == SnapshotType.PREVIEW) {
-            descriptionLabel.getElement().getStyle().setColor("gray");
+            descriptionLabel.getElement().getStyle().setColor("gray"); //$NON-NLS-1$
         }
 
         TreeItem treeItem = new TreeItem(panel);
@@ -140,7 +142,7 @@ public class SnapshotsTree<L extends ListWithDetailsModel> extends AbstractSubTa
     protected TreeItem getNodeItem(SnapshotDetailModel snapshotDetailModel) {
         HorizontalPanel panel = new HorizontalPanel();
         panel.setSpacing(1);
-        panel.setWidth("100%");
+        panel.setWidth("100%"); //$NON-NLS-1$
 
         TreeItem treeItem = new TreeItem(panel);
 
@@ -148,8 +150,8 @@ public class SnapshotsTree<L extends ListWithDetailsModel> extends AbstractSubTa
             panel.add(new Label(constants.loadingLabel()));
         }
         else {
-            addItemToPanel(panel, new Image(new SnapshotDetailColumn().getValue(snapshotDetailModel)), "30px");
-            addTextBoxToPanel(panel, new TextBoxLabel(), snapshotDetailModel.getName(), "");
+            addItemToPanel(panel, new Image(new SnapshotDetailColumn().getValue(snapshotDetailModel)), "30px"); //$NON-NLS-1$
+            addTextBoxToPanel(panel, new TextBoxLabel(), snapshotDetailModel.getName(), ""); //$NON-NLS-1$
 
             Snapshot snapshot = snapshotDetailModel.getSnapshot();
             treeItem.setUserObject(snapshot.getId() + snapshotDetailModel.getName());
@@ -249,18 +251,18 @@ public class SnapshotsTree<L extends ListWithDetailsModel> extends AbstractSubTa
         GeneralFormPanel formPanel = new GeneralFormPanel();
         FormBuilder formBuilder = new FormBuilder(formPanel, 1, 3);
 
-        TextBoxLabel definedMemory = new TextBoxLabel(vm.getvm_mem_size_mb() + " MB");
-        TextBoxLabel minAllocatedMemory = new TextBoxLabel(vm.getMinAllocatedMem() + " MB");
+        TextBoxLabel definedMemory = new TextBoxLabel(vm.getvm_mem_size_mb() + " MB"); //$NON-NLS-1$
+        TextBoxLabel minAllocatedMemory = new TextBoxLabel(vm.getMinAllocatedMem() + " MB"); //$NON-NLS-1$
         TextBoxLabel cpuInfo = new TextBoxLabel(StringFormat.format(
                 constants.cpuInfoLabel(), vm.getnum_of_cpus(), vm.getnum_of_sockets(), vm.getcpu_per_socket()));
 
-        formBuilder.setColumnsWidth("100%");
-        formBuilder.addFormItem(new FormItem("Defined Memory", definedMemory, 0, 0));
-        formBuilder.addFormItem(new FormItem("Physical Memory Guaranteed", minAllocatedMemory, 1, 0));
-        formBuilder.addFormItem(new FormItem("Number of CPU Cores", cpuInfo, 2, 0));
+        formBuilder.setColumnsWidth("100%"); //$NON-NLS-1$
+        formBuilder.addFormItem(new FormItem(constants.definedMemoryVm(), definedMemory, 0, 0));
+        formBuilder.addFormItem(new FormItem(constants.physMemGauranteedVm(), minAllocatedMemory, 1, 0));
+        formBuilder.addFormItem(new FormItem(constants.numOfCpuCoresVm(), cpuInfo, 2, 0));
 
         formBuilder.showForm(snapshotDetailModel);
-        formPanel.setWidth("100%");
+        formPanel.setWidth("100%"); //$NON-NLS-1$
 
         return new TreeItem(formPanel);
     }
@@ -268,15 +270,15 @@ public class SnapshotsTree<L extends ListWithDetailsModel> extends AbstractSubTa
     private TreeItem getDisksTreeItem(SnapshotDetailModel snapshotDetailModel) {
         EntityModelCellTable<ListModel> table = new EntityModelCellTable<ListModel>(false, true);
 
-        table.addColumn(new DiskImageStatusColumn(), "", "30px");
+        table.addColumn(new DiskImageStatusColumn(), constants.empty(), "30px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<DiskImage> nameColumn = new TextColumnWithTooltip<DiskImage>() {
             @Override
             public String getValue(DiskImage object) {
-                return "Disk " + object.getinternal_drive_mapping();
+                return "Disk " + object.getinternal_drive_mapping(); //$NON-NLS-1$
             }
         };
-        table.addColumn(nameColumn, "Name");
+        table.addColumn(nameColumn, constants.nameDisk());
 
         DiskSizeColumn<DiskImage> sizeColumn = new DiskSizeColumn<DiskImage>() {
             @Override
@@ -284,7 +286,7 @@ public class SnapshotsTree<L extends ListWithDetailsModel> extends AbstractSubTa
                 return object.getsize();
             }
         };
-        table.addColumn(sizeColumn, "Provisioned Size");
+        table.addColumn(sizeColumn, constants.provisionedSizeDisk());
 
         DiskSizeColumn<DiskImage> actualSizeColumn = new DiskSizeColumn<DiskImage>() {
             @Override
@@ -292,7 +294,7 @@ public class SnapshotsTree<L extends ListWithDetailsModel> extends AbstractSubTa
                 return object.getactual_size();
             }
         };
-        table.addColumn(actualSizeColumn, "Size");
+        table.addColumn(actualSizeColumn, constants.sizeDisk());
 
         TextColumnWithTooltip<DiskImage> allocationColumn = new EnumColumn<DiskImage, VolumeType>() {
             @Override
@@ -300,7 +302,7 @@ public class SnapshotsTree<L extends ListWithDetailsModel> extends AbstractSubTa
                 return VolumeType.forValue(object.getvolume_type().getValue());
             }
         };
-        table.addColumn(allocationColumn, "Allocation", "120px");
+        table.addColumn(allocationColumn, constants.allocationDisk(), "120px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<DiskImage> interfaceColumn = new TextColumnWithTooltip<DiskImage>() {
             @Override
@@ -308,7 +310,7 @@ public class SnapshotsTree<L extends ListWithDetailsModel> extends AbstractSubTa
                 return object.getDiskInterface().toString();
             }
         };
-        table.addColumn(interfaceColumn, "Interface", "120px");
+        table.addColumn(interfaceColumn, constants.interfaceDisk(), "120px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<DiskImage> statusColumn = new EnumColumn<DiskImage, ImageStatus>() {
             @Override
@@ -316,7 +318,7 @@ public class SnapshotsTree<L extends ListWithDetailsModel> extends AbstractSubTa
                 return object.getimageStatus();
             }
         };
-        table.addColumn(statusColumn, "Status", "120px");
+        table.addColumn(statusColumn, constants.statusDisk(), "120px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<DiskImage> dateCreatedColumn = new FullDateTimeColumn<DiskImage>() {
             @Override
@@ -324,10 +326,10 @@ public class SnapshotsTree<L extends ListWithDetailsModel> extends AbstractSubTa
                 return object.getcreation_date();
             }
         };
-        table.addColumn(dateCreatedColumn, "Creation Date", "140px");
+        table.addColumn(dateCreatedColumn, constants.creationDateDisk(), "140px"); //$NON-NLS-1$
 
         table.setRowData((List) snapshotDetailModel.getEntity());
-        table.setWidth("100%", true);
+        table.setWidth("100%", true); //$NON-NLS-1$
         table.setSelectionModel(new NoSelectionModel());
         return new TreeItem(table);
     }
@@ -341,7 +343,7 @@ public class SnapshotsTree<L extends ListWithDetailsModel> extends AbstractSubTa
                 return object.getName();
             }
         };
-        table.addColumn(nameColumn, "Name");
+        table.addColumn(nameColumn, constants.nameInterface());
 
         TextColumnWithTooltip<VmNetworkInterface> networkNameColumn = new TextColumnWithTooltip<VmNetworkInterface>() {
             @Override
@@ -349,7 +351,7 @@ public class SnapshotsTree<L extends ListWithDetailsModel> extends AbstractSubTa
                 return object.getNetworkName();
             }
         };
-        table.addColumn(networkNameColumn, "Network Name");
+        table.addColumn(networkNameColumn, constants.networkNameInterface());
 
         TextColumnWithTooltip<VmNetworkInterface> typeColumn = new EnumColumn<VmNetworkInterface, VmInterfaceType>() {
             @Override
@@ -357,7 +359,7 @@ public class SnapshotsTree<L extends ListWithDetailsModel> extends AbstractSubTa
                 return VmInterfaceType.forValue(object.getType());
             }
         };
-        table.addColumn(typeColumn, "Type");
+        table.addColumn(typeColumn, constants.typeInterface());
 
         TextColumnWithTooltip<VmNetworkInterface> macColumn = new TextColumnWithTooltip<VmNetworkInterface>() {
             @Override
@@ -365,7 +367,7 @@ public class SnapshotsTree<L extends ListWithDetailsModel> extends AbstractSubTa
                 return object.getMacAddress();
             }
         };
-        table.addColumn(macColumn, "MAC");
+        table.addColumn(macColumn, constants.macInterface());
 
         TextColumnWithTooltip<VmNetworkInterface> speedColumn = new TextColumnWithTooltip<VmNetworkInterface>() {
             @Override
@@ -377,7 +379,7 @@ public class SnapshotsTree<L extends ListWithDetailsModel> extends AbstractSubTa
                 }
             }
         };
-        table.addColumn(speedColumn, "Speed (Mbps)");
+        table.addColumn(speedColumn, templates.sub(constants.speedInterface(), constants.mbps()).asString());
 
         TextColumnWithTooltip<VmNetworkInterface> rxColumn = new RxTxRateColumn<VmNetworkInterface>() {
             @Override
@@ -394,7 +396,7 @@ public class SnapshotsTree<L extends ListWithDetailsModel> extends AbstractSubTa
                 }
             }
         };
-        table.addColumn(rxColumn, "Rx (Mbps)");
+        table.addColumn(rxColumn, templates.sub(constants.rxInterface(), constants.mbps()).asString());
 
         TextColumnWithTooltip<VmNetworkInterface> txColumn = new RxTxRateColumn<VmNetworkInterface>() {
             @Override
@@ -411,7 +413,7 @@ public class SnapshotsTree<L extends ListWithDetailsModel> extends AbstractSubTa
                 }
             }
         };
-        table.addColumn(txColumn, "Tx (Mbps)");
+        table.addColumn(txColumn,  templates.sub(constants.txInterface(), constants.mbps()).asString());
 
         TextColumnWithTooltip<VmNetworkInterface> dropsColumn = new SumUpColumn<VmNetworkInterface>() {
             @Override
@@ -420,10 +422,10 @@ public class SnapshotsTree<L extends ListWithDetailsModel> extends AbstractSubTa
                         object.getStatistics().getTransmitDropRate() };
             }
         };
-        table.addColumn(dropsColumn, "Drops (Pkts)");
+        table.addColumn(dropsColumn, templates.sub(constants.dropsInterface(), constants.pkts()).asString());
 
         table.setRowData((List) snapshotDetailModel.getEntity());
-        table.setWidth("100%", true);
+        table.setWidth("100%", true); //$NON-NLS-1$
         table.setSelectionModel(new NoSelectionModel());
         return new TreeItem(table);
     }
@@ -437,10 +439,10 @@ public class SnapshotsTree<L extends ListWithDetailsModel> extends AbstractSubTa
                 return appName;
             }
         };
-        table.addColumn(appNameColumn, "Name");
+        table.addColumn(appNameColumn, constants.nameSnapshot());
 
         table.setRowData((List) snapshotDetailModel.getEntity());
-        table.setWidth("100%", true);
+        table.setWidth("100%", true); //$NON-NLS-1$
         table.setSelectionModel(new NoSelectionModel());
         return new TreeItem(table);
     }

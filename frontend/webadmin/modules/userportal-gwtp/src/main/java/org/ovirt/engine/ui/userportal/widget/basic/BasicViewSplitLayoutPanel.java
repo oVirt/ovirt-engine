@@ -32,9 +32,9 @@ public class BasicViewSplitLayoutPanel extends SplitLayoutPanel {
         super(SPLILLER_WIDTH_PX);
 
         this.topBackgroundImage =
-                createImageWithStyle(topBackgroundImage, "position: absolute; top: " + 0 + "px; left: " + 0 + "px;");
+                createImageWithStyle(topBackgroundImage, "position: absolute; top: " + 0 + "px; left: " + 0 + "px;"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         this.middleBackgroundImage =
-                createImageWithStyle(middleBackgroundImage, "position: absolute; top: " + 50 + "%; left: " + 1 + "px;");
+                createImageWithStyle(middleBackgroundImage, "position: absolute; top: " + 50 + "%; left: " + 1 + "px;"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     }
 
     @Override
@@ -46,7 +46,7 @@ public class BasicViewSplitLayoutPanel extends SplitLayoutPanel {
     }
 
     public void initWidget() {
-        Element dragger = findElementByClassName(this.getElement(), "gwt-SplitLayoutPanel-HDragger");
+        Element dragger = findElementByClassName(this.getElement(), "gwt-SplitLayoutPanel-HDragger"); //$NON-NLS-1$
         if (dragger != null) {
             dragger.setInnerHTML(
                     template.dragger(
@@ -79,15 +79,15 @@ public class BasicViewSplitLayoutPanel extends SplitLayoutPanel {
     private SafeHtml createImageWithStyle(ImageResource resource, String stylePrefix) {
 
         String style =
-                stylePrefix + " width: " + resource.getWidth()
-                        + "px; height: " + resource.getHeight()
-                        + "px; background: url(" + resource.getURL() + ") no-repeat " + (-resource.getLeft() + "px ")
-                        + (-resource.getTop() + "px");
+                stylePrefix + " width: " + resource.getWidth() //$NON-NLS-1$
+                        + "px; height: " + resource.getHeight() //$NON-NLS-1$
+                        + "px; background: url(" + resource.getURL() + ") no-repeat " + (-resource.getLeft() + "px ") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                        + (-resource.getTop() + "px"); //$NON-NLS-1$
 
-        String clippedImgHtml = "<img "
-                + "onload='this.__gwtLastUnhandledEvent=\"load\";' src='"
-                + GWT.getModuleBaseURL() + "clear.cache.gif' style='" + style
-                + "' border='0'>";
+        String clippedImgHtml = "<img " //$NON-NLS-1$
+                + "onload='this.__gwtLastUnhandledEvent=\"load\";' src='" //$NON-NLS-1$
+                + GWT.getModuleBaseURL() + "clear.cache.gif' style='" + style //$NON-NLS-1$
+                + "' border='0'>"; //$NON-NLS-1$
 
         return SafeHtmlUtils.fromTrustedString(clippedImgHtml);
     }

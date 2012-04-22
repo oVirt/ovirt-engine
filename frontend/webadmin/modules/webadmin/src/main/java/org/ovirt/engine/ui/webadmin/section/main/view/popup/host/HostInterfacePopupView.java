@@ -106,7 +106,7 @@ public class HostInterfacePopupView extends AbstractModelBoundPopupView<HostInte
     EntityModelCheckBoxEditor commitChanges;
 
     @Inject
-    public HostInterfacePopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
+    public HostInterfacePopupView(EventBus eventBus, ApplicationResources resources, final ApplicationConstants constants) {
         super(eventBus, resources);
 
         networkEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
@@ -122,8 +122,8 @@ public class HostInterfacePopupView extends AbstractModelBoundPopupView<HostInte
             protected String renderNullSafe(Object object) {
                 KeyValuePairCompat<String, EntityModel> pair = (KeyValuePairCompat<String, EntityModel>) object;
                 String key = pair.getKey();
-                if ("custom".equals(key)) {
-                    return "Custom:";
+                if ("custom".equals(key)) { //$NON-NLS-1$
+                    return constants.customHostPopup() + ":"; //$NON-NLS-1$
                 }
                 EntityModel value = pair.getValue();
                 return (String) value.getEntity();
@@ -136,18 +136,16 @@ public class HostInterfacePopupView extends AbstractModelBoundPopupView<HostInte
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
 
-        nameEditor.setLabel("Name:");
-        networkEditor.setLabel("Network:");
-        bondingModeEditor.setLabel("Bonding Mode:");
-        bootProtocolLabel.setLabel("Boot Protocol:");
-        bootProtocolLabel.asEditor().getSubEditor().setValue("   ");
-        customEditor.setLabel("Custom mode:");
-        address.setLabel("IP:");
-        subnet.setLabel("Subnet Mask:");
-        checkConnectivity.setLabel("Check Connectivity:");
-        info.setHTML("<I>Changes done to the Networking configuration are temporary until explicitly saved.<BR>" +
-                "Check the check-box below to make the changes persistent.</I>");
-        commitChanges.setLabel("Save network configuration");
+        nameEditor.setLabel(constants.nameHostPopup() + ":"); //$NON-NLS-1$
+        networkEditor.setLabel(constants.networkHostPopup() + ":"); //$NON-NLS-1$
+        bondingModeEditor.setLabel(constants.bondingModeHostPopup() + ":"); //$NON-NLS-1$
+        bootProtocolLabel.setLabel(constants.bootProtocolHostPopup() +":"); //$NON-NLS-1$
+        bootProtocolLabel.asEditor().getSubEditor().setValue("   "); //$NON-NLS-1$
+        customEditor.setLabel(constants.customModeHostPopup() + ":"); //$NON-NLS-1$
+        address.setLabel(constants.ipHostPopup() + ":"); //$NON-NLS-1$
+        subnet.setLabel(constants.subnetMaskHostPopup() + ":"); //$NON-NLS-1$
+        checkConnectivity.setLabel(constants.checkConHostPopup() + ":"); //$NON-NLS-1$
+        commitChanges.setLabel(constants.saveNetConfigHostPopup());
 
         Driver.driver.initialize(this);
     }
@@ -160,15 +158,15 @@ public class HostInterfacePopupView extends AbstractModelBoundPopupView<HostInte
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 HostInterfaceModel model = (HostInterfaceModel) sender;
-                if ("BootProtocolsAvailable".equals(((PropertyChangedEventArgs) args).PropertyName)) {
+                if ("BootProtocolsAvailable".equals(((PropertyChangedEventArgs) args).PropertyName)) { //$NON-NLS-1$
                     boolean bootProtocolsAvailable = model.getBootProtocolsAvailable();
                     bootProtocol.setEnabled(bootProtocolsAvailable);
                     checkConnectivity.setEnabled(bootProtocolsAvailable);
                 }
-                if ("NoneBootProtocolAvailable".equals(((PropertyChangedEventArgs) args).PropertyName)) {
+                if ("NoneBootProtocolAvailable".equals(((PropertyChangedEventArgs) args).PropertyName)) { //$NON-NLS-1$
                     bootProtocol.setEnabled(NetworkBootProtocol.None, model.getNoneBootProtocolAvailable());
                 }
-                if ("Message".equals(((PropertyChangedEventArgs) args).PropertyName)) {
+                if ("Message".equals(((PropertyChangedEventArgs) args).PropertyName)) { //$NON-NLS-1$
                     message.setText(model.getMessage());
                 }
             }
@@ -181,10 +179,10 @@ public class HostInterfacePopupView extends AbstractModelBoundPopupView<HostInte
                 @SuppressWarnings("unchecked")
                 KeyValuePairCompat<String, EntityModel> pair =
                         (KeyValuePairCompat<String, EntityModel>) list.getSelectedItem();
-                if ("custom".equals(pair.getKey())) {
+                if ("custom".equals(pair.getKey())) { //$NON-NLS-1$
                     customEditor.setVisible(true);
                     Object entity = pair.getValue().getEntity();
-                    customEditor.asEditor().getSubEditor().setValue(entity == null ? "" : entity);
+                    customEditor.asEditor().getSubEditor().setValue(entity == null ? "" : entity); //$NON-NLS-1$
                 } else {
                     customEditor.setVisible(false);
                 }
@@ -197,7 +195,7 @@ public class HostInterfacePopupView extends AbstractModelBoundPopupView<HostInte
             public void onValueChange(ValueChangeEvent<Object> event) {
                 for (Object item : object.getBondingOptions().getItems()) {
                     KeyValuePairCompat<String, EntityModel> pair = (KeyValuePairCompat<String, EntityModel>) item;
-                    if ("custom".equals(pair.getKey())) {
+                    if ("custom".equals(pair.getKey())) { //$NON-NLS-1$
                         pair.getValue().setEntity(event.getValue());
                     }
                 }

@@ -9,6 +9,8 @@
 	<ui:with field='resources'
 		type='org.ovirt.engine.ui.userportal.ApplicationResources' />
 
+	<ui:with field='constants' type='org.ovirt.engine.ui.userportal.ApplicationConstants' />
+
 	<ui:style>
 		.mainPanel {
 			width: 95%;
@@ -149,17 +151,17 @@
 								<g:Image resource='{resources.vmIcon}' />
 							</g:FlowPanel>
 							<g:FlowPanel addStyleNames="{style.infoBoxDetails}">
-								<g:Label text="Virtual Machines:" addStyleNames="{style.resourcesGeneralLabel}" />
+								<g:Label text="{constants.vmsExtResource}:" addStyleNames="{style.resourcesGeneralLabel}" />
 								<w:PercentageProgressBar ui:field="vmsProgressBar" />
 		
 								<g:FlowPanel addStyleNames="{style.infoBoxDetailsRow}">
-									<g:Label text="Defined VMs:" addStyleNames="{style.infoBoxDetailsRowLabel}" />
+									<g:Label text="{constants.definedVmsExtResource}:" addStyleNames="{style.infoBoxDetailsRowLabel}" />
 									<w:ToStringEntityModelLabel
 										ui:field="definedVms" addStyleNames="{style.infoBoxDetailsRowValue}" />
 								</g:FlowPanel>
 		
 								<g:FlowPanel addStyleNames="{style.infoBoxDetailsRow}">
-									<g:Label text="Running VMs:" addStyleNames="{style.infoBoxDetailsRowLabel}" />
+									<g:Label text="{constants.runningVmsExtResource}:" addStyleNames="{style.infoBoxDetailsRowLabel}" />
 									<w:ToStringEntityModelLabel
 										ui:field="runningVms" addStyleNames="{style.infoBoxDetailsRowValue}" />
 								</g:FlowPanel>
@@ -176,17 +178,17 @@
 								<g:Image resource='{resources.cpuIcon}' />
 							</g:FlowPanel>
 							<g:FlowPanel addStyleNames="{style.infoBoxDetails}">
-								<g:Label text="Virtual CPUs:" addStyleNames="{style.resourcesGeneralLabel}" />
+								<g:Label text="{constants.vcpusExtResource}:" addStyleNames="{style.resourcesGeneralLabel}" />
 								<w:PercentageProgressBar ui:field="cpusProgressBar" />
 		
 								<g:FlowPanel addStyleNames="{style.infoBoxDetailsRow}">
-									<g:Label text="Defined vCPUs:" addStyleNames="{style.infoBoxDetailsRowLabel}" />
+									<g:Label text="{constants.definedvCpusExtResource}:" addStyleNames="{style.infoBoxDetailsRowLabel}" />
 									<w:ToStringEntityModelLabel
 										ui:field="definedCpus" addStyleNames="{style.infoBoxDetailsRowValue}" />
 								</g:FlowPanel>
 		
 								<g:FlowPanel addStyleNames="{style.infoBoxDetailsRow}">
-									<g:Label text="Used vCPUs: " addStyleNames="{style.infoBoxDetailsRowLabel}" />
+									<g:Label text="{constants.udedvCpusExtResource}:" addStyleNames="{style.infoBoxDetailsRowLabel}" />
 									<w:ToStringEntityModelLabel
 										ui:field="usedCpus" addStyleNames="{style.infoBoxDetailsRowValue}" />
 								</g:FlowPanel>
@@ -203,17 +205,17 @@
 								<g:Image resource='{resources.vmIcon}' />
 							</g:FlowPanel>
 							<g:FlowPanel addStyleNames="{style.infoBoxDetails}">
-								<g:Label text="Memory:" addStyleNames="{style.resourcesGeneralLabel}" />
+								<g:Label text="{constants.memExtResource}:" addStyleNames="{style.resourcesGeneralLabel}" />
 								<w:PercentageProgressBar ui:field="memoryProgressBar" />
 		
 								<g:FlowPanel addStyleNames="{style.infoBoxDetailsRow}">
-									<g:Label text="Defined Memory:" addStyleNames="{style.infoBoxDetailsRowLabel}" />
+									<g:Label text="{constants.definedMenExtResource}:" addStyleNames="{style.infoBoxDetailsRowLabel}" />
 									<w:ToStringEntityModelLabel
 										ui:field="definedMemory" addStyleNames="{style.infoBoxDetailsRowValue}" />
 								</g:FlowPanel>
 		
 								<g:FlowPanel addStyleNames="{style.infoBoxDetailsRow}">
-									<g:Label text="Memory Usage:" addStyleNames="{style.infoBoxDetailsRowLabel}" />
+									<g:Label text="{constants.memUsageExtResource}:" addStyleNames="{style.infoBoxDetailsRowLabel}" />
 									<w:ToStringEntityModelLabel
 										ui:field="memoryUsage" addStyleNames="{style.infoBoxDetailsRowValue}" />
 								</g:FlowPanel>
@@ -233,22 +235,22 @@
 							<g:Image resource='{resources.storageIcon}' />
 						</g:FlowPanel>
 						<g:FlowPanel addStyleNames="{style.infoBoxDetails}">
-							<g:Label text="Storage:" addStyleNames="{style.resourcesGeneralLabel}" />
+							<g:Label text="{constants.storageExtResource}:" addStyleNames="{style.resourcesGeneralLabel}" />
 			
 							<g:FlowPanel addStyleNames="{style.storageDetailsRow}">
-								<g:Label text="Total Size:" addStyleNames="{style.detailsBoxRowLabel}" />
+								<g:Label text="{constants.totalSizeExtResource}:" addStyleNames="{style.detailsBoxRowLabel}" />
 								<w:ToStringEntityModelLabel
 									ui:field="totalSize" addStyleNames="{style.detailsBoxRowValue}" />
 							</g:FlowPanel>
 			
 							<g:FlowPanel addStyleNames="{style.storageDetailsRow}">
-								<g:Label text="Number of Snapshots:" addStyleNames="{style.detailsBoxRowLabel}" />
+								<g:Label text="{constants.numOfSnapshotsExtResource}:" addStyleNames="{style.detailsBoxRowLabel}" />
 								<w:ToStringEntityModelLabel
 									ui:field="numOfSnapshots" addStyleNames="{style.detailsBoxRowValue}" />
 							</g:FlowPanel>
 			
 							<g:FlowPanel addStyleNames="{style.storageDetailsRow}">
-								<g:Label text="Total Size of Snapshots:" addStyleNames="{style.detailsBoxRowLabel}" />
+								<g:Label text="{constants.totalSizeExtResource}:" addStyleNames="{style.detailsBoxRowLabel}" />
 								<w:ToStringEntityModelLabel
 									ui:field="totalSizeOfSnapshots" addStyleNames="{style.detailsBoxRowValue}" />
 							</g:FlowPanel>

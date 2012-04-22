@@ -50,7 +50,7 @@ public class SanTargetModel extends EntityModel
         if (!StringHelper.stringsEqual(address, value))
         {
             address = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Address"));
+            OnPropertyChanged(new PropertyChangedEventArgs("Address")); //$NON-NLS-1$
         }
     }
 
@@ -66,7 +66,7 @@ public class SanTargetModel extends EntityModel
         if (!StringHelper.stringsEqual(port, value))
         {
             port = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Port"));
+            OnPropertyChanged(new PropertyChangedEventArgs("Port")); //$NON-NLS-1$
         }
     }
 
@@ -82,7 +82,7 @@ public class SanTargetModel extends EntityModel
         if (!StringHelper.stringsEqual(name, value))
         {
             name = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Name"));
+            OnPropertyChanged(new PropertyChangedEventArgs("Name")); //$NON-NLS-1$
         }
     }
 
@@ -98,7 +98,7 @@ public class SanTargetModel extends EntityModel
         if (isLoggedIn != value)
         {
             isLoggedIn = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsLoggedIn"));
+            OnPropertyChanged(new PropertyChangedEventArgs("IsLoggedIn")); //$NON-NLS-1$
         }
     }
 
@@ -114,7 +114,7 @@ public class SanTargetModel extends EntityModel
         if (luns != value)
         {
             luns = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Luns"));
+            OnPropertyChanged(new PropertyChangedEventArgs("Luns")); //$NON-NLS-1$
             getLunsList().setItems(luns);
         }
     }
@@ -131,19 +131,19 @@ public class SanTargetModel extends EntityModel
         if (lunsList != value)
         {
             lunsList = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("LunsList"));
+            OnPropertyChanged(new PropertyChangedEventArgs("LunsList")); //$NON-NLS-1$
         }
     }
 
     static
     {
-        LoggedInEventDefinition = new EventDefinition("LoggedIn", SanTargetModel.class);
+        LoggedInEventDefinition = new EventDefinition("LoggedIn", SanTargetModel.class); //$NON-NLS-1$
     }
 
     public SanTargetModel()
     {
         setLoggedInEvent(new Event(LoggedInEventDefinition));
-        setLoginCommand(new UICommand("Login", this));
+        setLoginCommand(new UICommand("Login", this)); //$NON-NLS-1$
         setLunsList(new ListModel());
     }
 

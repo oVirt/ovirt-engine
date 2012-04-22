@@ -32,14 +32,14 @@ public class MenuPanelPopup extends Composite {
         menu = new MenuBar(true) {
             @Override
             public MenuItem addItem(MenuItem item) {
-                item.setStylePrimaryName("menuItem");
+                item.setStylePrimaryName("menuItem"); //$NON-NLS-1$
                 return super.addItem(item);
             }
 
             @Override
             public MenuItemSeparator addSeparator(MenuItemSeparator separator) {
                 if (separator instanceof TitleMenuItemSeparator) {
-                    separator.setStylePrimaryName("menuItem");
+                    separator.setStylePrimaryName("menuItem"); //$NON-NLS-1$
                 }
                 return super.addSeparator(separator);
             }
@@ -47,8 +47,8 @@ public class MenuPanelPopup extends Composite {
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
         panel.setWidget(menu);
 
-        NodeList<Element> table = menu.getElement().getElementsByTagName("table");
-        table.getItem(0).getStyle().setProperty("width", "100%");
+        NodeList<Element> table = menu.getElement().getElementsByTagName("table"); //$NON-NLS-1$
+        table.getItem(0).getStyle().setProperty("width", "100%"); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     public PopupPanel asPopupPanel() {

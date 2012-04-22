@@ -33,6 +33,7 @@ import com.google.gwt.user.client.ui.ValueBoxBase.TextAlignment;
 public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetModel, ListModel> {
 
     protected int treeScrollPosition;
+    private ApplicationConstants constants = ClientGinjectorProvider.instance().getApplicationConstants();
 
     public SanStorageTargetToLunList(SanStorageModelBase model) {
         super(model);
@@ -63,40 +64,40 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
         table.addColumn(new TextColumn<SanTargetModel>() {
             @Override
             public String getValue(SanTargetModel model) {
-                return "";
+                return ""; //$NON-NLS-1$
             }
-        }, "", "20px");
+        }, constants.empty(), "20px"); //$NON-NLS-1$
 
         table.addColumn(new ScrollableTextColumn<SanTargetModel>() {
             @Override
             public String getValue(SanTargetModel model) {
                 return model.getName();
             }
-        }, "Target Name");
+        }, constants.targetNameSanStorage());
 
         table.addColumn(new ScrollableTextColumn<SanTargetModel>() {
             @Override
             public String getValue(SanTargetModel model) {
                 return model.getAddress();
             }
-        }, "Address", "95px");
+        }, constants.addressSanStorage(), "95px"); //$NON-NLS-1$
 
         table.addColumn(new ScrollableTextColumn<SanTargetModel>() {
             @Override
             public String getValue(SanTargetModel model) {
                 return model.getPort();
             }
-        }, "Port", "65px");
+        }, constants.portSanStorage(), "65px"); //$NON-NLS-1$
 
-        table.setWidth("100%", true);
+        table.setWidth("100%", true); //$NON-NLS-1$
 
         // Add last blank column
         table.addColumn(new TextColumn<SanTargetModel>() {
             @Override
             public String getValue(SanTargetModel model) {
-                return "";
+                return ""; //$NON-NLS-1$
             }
-        }, "", "80px");
+        }, constants.empty(), "80px"); //$NON-NLS-1$
 
         // Add blank item list
         table.setRowData(new ArrayList<EntityModel>());
@@ -106,7 +107,6 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
     }
 
     private void addLoginButton(HorizontalPanel panel, SanTargetModel rootModel) {
-        ApplicationConstants constants = ClientGinjectorProvider.instance().getApplicationConstants();
         final UiCommandButton loginButton = new UiCommandButton();
         loginButton.setCommand(rootModel.getLoginCommand());
         loginButton.setLabel(constants.storageIscsiPopupLoginButtonLabel());
@@ -117,10 +117,10 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
                 loginButton.getCommand().Execute();
             }
         });
-        loginButton.setWidth("55px");
+        loginButton.setWidth("55px"); //$NON-NLS-1$
 
         panel.add(loginButton);
-        panel.setCellWidth(loginButton, "60px");
+        panel.setCellWidth(loginButton, "60px"); //$NON-NLS-1$
         panel.setCellHorizontalAlignment(loginButton, HasHorizontalAlignment.ALIGN_RIGHT);
     }
 
@@ -129,8 +129,8 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
             String text,
             String width,
             TextAlignment align) {
-        item.getElement().getStyle().setBackgroundColor("transparent");
-        item.getElement().getStyle().setColor("black");
+        item.getElement().getStyle().setBackgroundColor("transparent"); //$NON-NLS-1$
+        item.getElement().getStyle().setColor("black"); //$NON-NLS-1$
         item.setAlignment(align);
         item.setText(text);
 
@@ -142,13 +142,13 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
     protected TreeItem createRootNode(SanTargetModel rootModel) {
         HorizontalPanel panel = new HorizontalPanel();
 
-        additemToRootNodePanel(panel, new TextBoxLabel(), rootModel.getName(), "310px", TextAlignment.LEFT);
-        additemToRootNodePanel(panel, new TextBoxLabel(), rootModel.getAddress(), "80px", TextAlignment.CENTER);
-        additemToRootNodePanel(panel, new TextBoxLabel(), rootModel.getPort(), "45px", TextAlignment.CENTER);
+        additemToRootNodePanel(panel, new TextBoxLabel(), rootModel.getName(), "310px", TextAlignment.LEFT); //$NON-NLS-1$
+        additemToRootNodePanel(panel, new TextBoxLabel(), rootModel.getAddress(), "80px", TextAlignment.CENTER); //$NON-NLS-1$
+        additemToRootNodePanel(panel, new TextBoxLabel(), rootModel.getPort(), "45px", TextAlignment.CENTER); //$NON-NLS-1$
         addLoginButton(panel, rootModel);
 
         panel.setSpacing(1);
-        panel.setWidth("100%");
+        panel.setWidth("100%"); //$NON-NLS-1$
 
         return new TreeItem(panel);
     }
@@ -175,49 +175,49 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
             }
         };
 
-        table.setCustomSelectionColumn(lunSelectionColumn, "30px");
+        table.setCustomSelectionColumn(lunSelectionColumn, "30px"); //$NON-NLS-1$
 
         table.addColumn(new LunTextColumn() {
             @Override
             public String getRawValue(LunModel model) {
                 return model.getLunId();
             }
-        }, "LUN ID");
+        }, constants.lunIdSanStorage());
 
         table.addColumn(new LunTextColumn() {
             @Override
             public String getRawValue(LunModel model) {
-                return String.valueOf(model.getSize()) + "GB";
+                return String.valueOf(model.getSize()) + "GB"; //$NON-NLS-1$
             }
-        }, "Dev. Size", "60px");
+        }, constants.devSizeSanStorage(), "60px"); //$NON-NLS-1$
 
         table.addColumn(new LunTextColumn() {
             @Override
             public String getRawValue(LunModel model) {
                 return String.valueOf(model.getMultipathing());
             }
-        }, "#path", "60px");
+        }, constants.pathSanStorage(), "60px"); //$NON-NLS-1$
 
         table.addColumn(new LunTextColumn() {
             @Override
             public String getRawValue(LunModel model) {
                 return model.getVendorId();
             }
-        }, "Vendor ID");
+        }, constants.vendorIdSanStorage());
 
         table.addColumn(new LunTextColumn() {
             @Override
             public String getRawValue(LunModel model) {
                 return model.getProductId();
             }
-        }, "Product ID");
+        }, constants.productIdSanStorage());
 
         table.addColumn(new LunTextColumn() {
             @Override
             public String getRawValue(LunModel model) {
                 return model.getSerial();
             }
-        }, "Serial", "90px");
+        }, constants.serialSanStorage(), "90px"); //$NON-NLS-1$
 
         table.setRowData(items == null ? new ArrayList<LunModel>() : items);
         table.edit(leafModel);

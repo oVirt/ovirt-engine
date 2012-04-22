@@ -45,11 +45,11 @@ public class HeaderView extends AbstractView implements HeaderPresenterWidget.Vi
         this.logoutLink = new Anchor(constants.logoutLinkLabel());
         this.guideLink = new Anchor(constants.guideLinkLabel());
         String href = Location.getProtocol()
-                + "//"
+                + "//" //$NON-NLS-1$
                 + Location.getHost()
-                + "/rhev-docs/en-US/html/User_Portal_Guide/index.html";
+                + "/rhev-docs/en-US/html/User_Portal_Guide/index.html"; //$NON-NLS-1$
         this.guideLink.setHref(href);
-        this.guideLink.setTarget("_blank");
+        this.guideLink.setTarget("_blank"); //$NON-NLS-1$
         this.aboutLink = new Anchor(constants.aboutLinkLabel());
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         mainTabBarPanel.getElement().getStyle().setZIndex(1);

@@ -100,17 +100,17 @@ public class UiCommonEditorVisitor<M extends Model> extends EditorVisitor {
                         String propName = ((PropertyChangedEventArgs) args).PropertyName;
 
                         // IsValid
-                        if ("IsValid".equals(propName)) {
+                        if ("IsValid".equals(propName)) { //$NON-NLS-1$
                             onIsValidPropertyChange(functionalEditor, ownerModel);
                         }
 
                         // IsChangable
-                        else if ("IsChangable".equals(propName)) {
+                        else if ("IsChangable".equals(propName)) { //$NON-NLS-1$
                             onIsChangablePropertyChange(functionalEditor, ownerModel);
                         }
 
                         // IsAvailable
-                        else if ("IsAvailable".equals(propName)) {
+                        else if ("IsAvailable".equals(propName)) { //$NON-NLS-1$
                             onIsAvailablePropertyChange(functionalEditor, ownerModel);
                         }
                     }
@@ -125,19 +125,19 @@ public class UiCommonEditorVisitor<M extends Model> extends EditorVisitor {
         }
 
         // Register listeners
-        eventMap.registerListener(absolutePath, "EntityChanged", new IEventListener() {
+        eventMap.registerListener(absolutePath, "EntityChanged", new IEventListener() { //$NON-NLS-1$
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 editor.setValue((T) ((EntityModel) sender).getEntity());
             }
         });
-        eventMap.registerListener(absolutePath, "ItemsChanged", new IEventListener() {
+        eventMap.registerListener(absolutePath, "ItemsChanged", new IEventListener() { //$NON-NLS-1$
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 updateListEditor((TakesConstrainedValueEditor<T>) editor, (ListModel) sender);
             }
         });
-        eventMap.registerListener(absolutePath, "SelectedItemChanged", new IEventListener() {
+        eventMap.registerListener(absolutePath, "SelectedItemChanged", new IEventListener() { //$NON-NLS-1$
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 editor.setValue((T) ((ListModel) sender).getSelectedItem());

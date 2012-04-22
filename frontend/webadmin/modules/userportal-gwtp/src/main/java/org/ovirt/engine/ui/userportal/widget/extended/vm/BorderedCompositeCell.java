@@ -24,11 +24,11 @@ public class BorderedCompositeCell<T> extends CompositeCell<T> {
 
     @Override
     public void render(Context context, T value, SafeHtmlBuilder sb) {
-        sb.appendHtmlConstant("<div style=\"border: 1px solid #c6c6c6; width: 100px; padding-top: 3px; padding-left: 3px\">");
+        sb.appendHtmlConstant("<div style=\"border: 1px solid #c6c6c6; width: 100px; padding-top: 3px; padding-left: 3px\">"); //$NON-NLS-1$
         for (HasCell<T, ?> hasCell : hasCells) {
             render(context, value, sb, hasCell);
         }
-        sb.appendHtmlConstant("</div>");
+        sb.appendHtmlConstant("</div>"); //$NON-NLS-1$
     }
 
     @Override

@@ -9,6 +9,7 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
 public class StorageGeneralModel extends EntityModel
@@ -26,7 +27,7 @@ public class StorageGeneralModel extends EntityModel
         if (isNfs != value)
         {
             isNfs = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsNfs"));
+            OnPropertyChanged(new PropertyChangedEventArgs("IsNfs")); //$NON-NLS-1$
         }
     }
 
@@ -42,7 +43,7 @@ public class StorageGeneralModel extends EntityModel
         if (isLocalS != value)
         {
             isLocalS = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsLocalS"));
+            OnPropertyChanged(new PropertyChangedEventArgs("IsLocalS")); //$NON-NLS-1$
         }
     }
 
@@ -58,7 +59,7 @@ public class StorageGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(nfsPath, value))
         {
             nfsPath = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("NfsPath"));
+            OnPropertyChanged(new PropertyChangedEventArgs("NfsPath")); //$NON-NLS-1$
         }
     }
 
@@ -74,13 +75,14 @@ public class StorageGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(localPath, value))
         {
             localPath = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("LocalPath"));
+            OnPropertyChanged(new PropertyChangedEventArgs("LocalPath")); //$NON-NLS-1$
         }
     }
 
     public StorageGeneralModel()
     {
-        setTitle("General");
+        setTitle(ConstantsManager.getInstance().getConstants().generalTitle());
+        setHashName("general"); //$NON-NLS-1$
     }
 
     @Override

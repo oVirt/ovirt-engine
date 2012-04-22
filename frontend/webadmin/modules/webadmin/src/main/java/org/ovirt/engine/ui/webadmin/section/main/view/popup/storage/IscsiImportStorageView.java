@@ -42,7 +42,7 @@ public class IscsiImportStorageView extends SanImportStorageView {
     }
 
     private void addBorder(Style style) {
-        style.setBorderColor("lightGrey");
+        style.setBorderColor("lightGrey"); //$NON-NLS-1$
         style.setBorderWidth(1, Unit.PX);
         style.setBorderStyle(BorderStyle.SOLID);
     }

@@ -14,6 +14,7 @@ import org.ovirt.engine.ui.common.widget.table.column.ImageResourceColumn;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.disks.DiskListModel;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabDiskPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
@@ -30,34 +31,34 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<DiskIma
     }
 
     @Inject
-    public MainTabDiskView(MainModelProvider<DiskImage, DiskListModel> modelProvider, ApplicationResources resources) {
+    public MainTabDiskView(MainModelProvider<DiskImage, DiskListModel> modelProvider, ApplicationResources resources, ApplicationConstants constants) {
         super(modelProvider);
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        initTable(resources);
+        initTable(resources, constants);
         initWidget(getTable());
     }
 
-    void initTable(final ApplicationResources resources) {
+    void initTable(final ApplicationResources resources, ApplicationConstants constants) {
         getTable().addColumn(new TextColumnWithTooltip<DiskImage>() {
             @Override
             public String getValue(DiskImage object) {
                 return object.getDiskAlias();
             }
-        }, "Alias");
+        }, constants.aliasDisk());
 
         getTable().addColumn(new TextColumnWithTooltip<DiskImage>() {
             @Override
             public String getValue(DiskImage object) {
                 return object.getId().toString();
             }
-        }, "ID", "120px");
+        }, constants.idDisk(), "120px"); //$NON-NLS-1$
 
         getTable().addColumn(new ImageResourceColumn<DiskImage>() {
             @Override
             public ImageResource getValue(DiskImage object) {
                 return object.getboot() ? resources.bootableDiskIcon() : null;
             }
-        }, "Bootable", "60px");
+        }, constants.bootableDisk(), "60px"); //$NON-NLS-1$
 
         DiskSizeColumn<DiskImage> sizeColumn = new DiskSizeColumn<DiskImage>() {
             @Override
@@ -65,7 +66,7 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<DiskIma
                 return object.getsize();
             }
         };
-        getTable().addColumn(sizeColumn, "Provisioned Size", "100px");
+        getTable().addColumn(sizeColumn, constants.provisionedSizeDisk(), "100px"); //$NON-NLS-1$
 
         DiskSizeColumn<DiskImage> actualSizeColumn = new DiskSizeColumn<DiskImage>() {
             @Override
@@ -73,7 +74,7 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<DiskIma
                 return object.getactual_size();
             }
         };
-        getTable().addColumn(actualSizeColumn, "Size", "100px");
+        getTable().addColumn(actualSizeColumn, constants.sizeDisk(), "100px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<DiskImage> allocationColumn = new EnumColumn<DiskImage, VolumeType>() {
             @Override
@@ -81,7 +82,7 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<DiskIma
                 return VolumeType.forValue(object.getvolume_type().getValue());
             }
         };
-        getTable().addColumn(allocationColumn, "Allocation", "100px");
+        getTable().addColumn(allocationColumn, constants.allocationDisk(), "100px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<DiskImage> dateCreatedColumn = new FullDateTimeColumn<DiskImage>() {
             @Override
@@ -89,7 +90,7 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<DiskIma
                 return object.getcreation_date();
             }
         };
-        getTable().addColumn(dateCreatedColumn, "Creation Date", "160px");
+        getTable().addColumn(dateCreatedColumn, constants.creationDateDisk(), "160px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<DiskImage> statusColumn = new EnumColumn<DiskImage, ImageStatus>() {
             @Override
@@ -97,30 +98,30 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<DiskIma
                 return object.getimageStatus();
             }
         };
-        getTable().addColumn(statusColumn, "Status", "100px");
+        getTable().addColumn(statusColumn, constants.statusDisk(), "100px"); //$NON-NLS-1$
 
         getTable().addColumn(new TextColumnWithTooltip<DiskImage>() {
             @Override
             public String getValue(DiskImage object) {
                 return object.getDiskDescription();
             }
-        }, "Description");
+        }, constants.descriptionDisk());
 
-        getTable().addActionButton(new WebAdminButtonDefinition<DiskImage>("Remove") {
+        getTable().addActionButton(new WebAdminButtonDefinition<DiskImage>(constants.removeDisk()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getRemoveCommand();
             }
         });
 
-        getTable().addActionButton(new WebAdminButtonDefinition<DiskImage>("Move") {
+        getTable().addActionButton(new WebAdminButtonDefinition<DiskImage>(constants.moveDisk()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getMoveCommand();
             }
         });
 
-        getTable().addActionButton(new WebAdminButtonDefinition<DiskImage>("Copy") {
+        getTable().addActionButton(new WebAdminButtonDefinition<DiskImage>(constants.copyDisk()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getCopyCommand();

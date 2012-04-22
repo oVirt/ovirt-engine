@@ -41,7 +41,7 @@ public class ModelBoundTab extends SimpleTab {
                 PropertyChangedEventArgs pcArgs = (PropertyChangedEventArgs) args;
 
                 // Update tab accessibility when 'IsAvailable' property changes
-                if ("IsAvailable".equals(pcArgs.PropertyName)) {
+                if ("IsAvailable".equals(pcArgs.PropertyName)) { //$NON-NLS-1$
                     boolean isAvailable = modelProvider.getModel().getIsAvailable();
                     setAccessible(isAvailable);
                 }

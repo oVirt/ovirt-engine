@@ -72,8 +72,8 @@ public class VmMigratePopupView extends AbstractModelBoundPopupView<MigrateModel
     }
 
     void initEditors() {
-        selectHostAutomaticallyEditor = new EntityModelRadioButtonEditor("1");
-        selectDestinationHostEditor = new EntityModelRadioButtonEditor("1");
+        selectHostAutomaticallyEditor = new EntityModelRadioButtonEditor("1"); //$NON-NLS-1$
+        selectDestinationHostEditor = new EntityModelRadioButtonEditor("1"); //$NON-NLS-1$
 
         hostsListEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
             @Override

@@ -11,6 +11,7 @@ import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.RegexValidation;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
 public class TagModel extends Model
@@ -148,7 +149,7 @@ public class TagModel extends Model
         {
             selection = value;
             getSelectionChangedEvent().raise(this, EventArgs.Empty);
-            OnPropertyChanged(new PropertyChangedEventArgs("Selection"));
+            OnPropertyChanged(new PropertyChangedEventArgs("Selection")); //$NON-NLS-1$
         }
     }
 
@@ -164,13 +165,13 @@ public class TagModel extends Model
         if (type != value)
         {
             type = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Type"));
+            OnPropertyChanged(new PropertyChangedEventArgs("Type")); //$NON-NLS-1$
         }
     }
 
     static
     {
-        SelectionChangedEventDefinition = new EventDefinition("SelectionChanged", TagModel.class);
+        SelectionChangedEventDefinition = new EventDefinition("SelectionChanged", TagModel.class); //$NON-NLS-1$
     }
 
     public TagModel()
@@ -186,8 +187,8 @@ public class TagModel extends Model
         LengthValidation tempVar = new LengthValidation();
         tempVar.setMaxLength(40);
         RegexValidation tempVar2 = new RegexValidation();
-        tempVar2.setExpression("^[A-Za-z0-9_-]+$");
-        tempVar2.setMessage("Name can contain only 'A-Z', 'a-z', '0-9', '_' or '-' characters.");
+        tempVar2.setExpression("^[A-Za-z0-9_-]+$"); //$NON-NLS-1$
+        tempVar2.setMessage(ConstantsManager.getInstance().getConstants().nameCanContainMsg());
         getName().ValidateEntity(new IValidation[] { new NotEmptyValidation(), tempVar, tempVar2 });
 
         return getName().getIsValid();

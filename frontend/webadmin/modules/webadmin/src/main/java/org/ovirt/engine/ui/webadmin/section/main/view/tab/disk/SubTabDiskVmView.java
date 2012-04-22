@@ -12,6 +12,7 @@ import org.ovirt.engine.ui.common.widget.table.column.ImageResourceColumn;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.models.disks.DiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.disks.DiskVmListModel;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.disk.SubTabDiskVmPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.table.column.PercentColumn;
@@ -29,14 +30,14 @@ public class SubTabDiskVmView extends AbstractSubTabTableView<DiskImage, VM, Dis
     }
 
     @Inject
-    public SubTabDiskVmView(SearchableDetailModelProvider<VM, DiskListModel, DiskVmListModel> modelProvider) {
+    public SubTabDiskVmView(SearchableDetailModelProvider<VM, DiskListModel, DiskVmListModel> modelProvider, ApplicationConstants constants) {
         super(modelProvider);
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        initTable();
+        initTable(constants);
         initWidget(getTable());
     }
 
-    void initTable() {
+    void initTable(ApplicationConstants constants) {
         ImageResourceColumn<VM> pluggedColumn = new ImageResourceColumn<VM>() {
             @Override
             public ImageResource getValue(VM object) {
@@ -44,7 +45,7 @@ public class SubTabDiskVmView extends AbstractSubTabTableView<DiskImage, VM, Dis
                         getCommonResources().upImage() : getCommonResources().downImage();
             }
         };
-        getTable().addColumn(pluggedColumn, "", "30px");
+        getTable().addColumn(pluggedColumn, constants.empty(), "30px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VM> nameColumn = new TextColumnWithTooltip<VM>() {
             @Override
@@ -52,9 +53,9 @@ public class SubTabDiskVmView extends AbstractSubTabTableView<DiskImage, VM, Dis
                 return object.getvm_name();
             }
         };
-        getTable().addColumn(nameColumn, "Name");
+        getTable().addColumn(nameColumn, constants.nameVm());
 
-        getTable().addColumn(new VmTypeColumn(), "", "30px");
+        getTable().addColumn(new VmTypeColumn(), constants.empty(), "30px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VM> clusterColumn = new TextColumnWithTooltip<VM>() {
             @Override
@@ -62,7 +63,7 @@ public class SubTabDiskVmView extends AbstractSubTabTableView<DiskImage, VM, Dis
                 return object.getvds_group_name();
             }
         };
-        getTable().addColumn(clusterColumn, "Cluster");
+        getTable().addColumn(clusterColumn, constants.clusterVm());
 
         TextColumnWithTooltip<VM> ipColumn = new TextColumnWithTooltip<VM>() {
             @Override
@@ -70,7 +71,7 @@ public class SubTabDiskVmView extends AbstractSubTabTableView<DiskImage, VM, Dis
                 return object.getvm_ip();
             }
         };
-        getTable().addColumn(ipColumn, "IP Address");
+        getTable().addColumn(ipColumn, constants.ipVm());
 
         PercentColumn<VM> memColumn = new PercentColumn<VM>() {
             @Override
@@ -78,7 +79,7 @@ public class SubTabDiskVmView extends AbstractSubTabTableView<DiskImage, VM, Dis
                 return object.getusage_mem_percent();
             }
         };
-        getTable().addColumn(memColumn, "Memory");
+        getTable().addColumn(memColumn, constants.memoryVm());
 
         PercentColumn<VM> cpuColumn = new PercentColumn<VM>() {
             @Override
@@ -86,7 +87,7 @@ public class SubTabDiskVmView extends AbstractSubTabTableView<DiskImage, VM, Dis
                 return object.getusage_cpu_percent();
             }
         };
-        getTable().addColumn(cpuColumn, "CPU");
+        getTable().addColumn(cpuColumn, constants.cpuVm());
 
         PercentColumn<VM> netColumn = new PercentColumn<VM>() {
             @Override
@@ -94,7 +95,7 @@ public class SubTabDiskVmView extends AbstractSubTabTableView<DiskImage, VM, Dis
                 return object.getusage_network_percent();
             }
         };
-        getTable().addColumn(netColumn, "Network");
+        getTable().addColumn(netColumn, constants.networkVm());
 
         TextColumnWithTooltip<VM> statusColumn = new EnumColumn<VM, VMStatus>() {
             @Override
@@ -102,7 +103,7 @@ public class SubTabDiskVmView extends AbstractSubTabTableView<DiskImage, VM, Dis
                 return object.getstatus();
             }
         };
-        getTable().addColumn(statusColumn, "Status");
+        getTable().addColumn(statusColumn, constants.statusVm());
 
         TextColumnWithTooltip<VM> hostColumn = new UptimeColumn<VM>() {
             @Override
@@ -110,7 +111,7 @@ public class SubTabDiskVmView extends AbstractSubTabTableView<DiskImage, VM, Dis
                 return object.getRoundedElapsedTime();
             }
         };
-        getTable().addColumn(hostColumn, "Uptime");
+        getTable().addColumn(hostColumn, constants.uptimeVm());
     }
 
 }

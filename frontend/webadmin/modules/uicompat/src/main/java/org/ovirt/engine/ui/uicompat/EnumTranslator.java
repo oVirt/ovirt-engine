@@ -13,10 +13,6 @@ public class EnumTranslator<T> extends Translator {
 	public static <T> Translator Create(T type) {
 	    return new EnumTranslator(type);
 	}
-
-	public static <T> Translator Create(T type, Object[] values) {
-	    return new EnumTranslator(type);
-	}
 	
 	@Override
 	public String get(Object key) {
@@ -25,8 +21,8 @@ public class EnumTranslator<T> extends Translator {
 	        return null;
 	    }
 	    String enumName = type.toString();
-	    enumName = enumName.substring(enumName.lastIndexOf(".")+1,enumName.length());
-	    String trasnlatedEnum = enums.getString(enumName + "___" + key.toString());
+	    enumName = enumName.substring(enumName.lastIndexOf(".")+1,enumName.length()); //$NON-NLS-1$
+	    String trasnlatedEnum = enums.getString(enumName + "___" + key.toString()); //$NON-NLS-1$
 
 	    return trasnlatedEnum;
 	}

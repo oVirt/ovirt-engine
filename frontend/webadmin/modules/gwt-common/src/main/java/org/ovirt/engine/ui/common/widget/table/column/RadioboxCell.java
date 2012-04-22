@@ -20,13 +20,13 @@ public class RadioboxCell extends AbstractEditableCell<Boolean, Boolean> {
      * An html string representation of a checked input box.
      */
     private static final SafeHtml INPUT_CHECKED = SafeHtmlUtils.fromSafeConstant(
-            "<input type=\"radio\" tabindex=\"-1\" checked/>");
+            "<input type=\"radio\" tabindex=\"-1\" checked/>"); //$NON-NLS-1$
 
     /**
      * An html string representation of an unchecked input box.
      */
     private static final SafeHtml INPUT_UNCHECKED = SafeHtmlUtils.fromSafeConstant(
-            "<input type=\"radio\" tabindex=\"-1\"/>");
+            "<input type=\"radio\" tabindex=\"-1\"/>"); //$NON-NLS-1$
 
     private final boolean dependsOnSelection;
     private final boolean handlesSelection;
@@ -59,7 +59,7 @@ public class RadioboxCell extends AbstractEditableCell<Boolean, Boolean> {
      *            true if the cell modifies the selection state
      */
     public RadioboxCell(boolean dependsOnSelection, boolean handlesSelection) {
-        super("change", "keydown");
+        super("change", "keydown"); //$NON-NLS-1$ //$NON-NLS-2$
         this.dependsOnSelection = dependsOnSelection;
         this.handlesSelection = handlesSelection;
     }
@@ -86,9 +86,9 @@ public class RadioboxCell extends AbstractEditableCell<Boolean, Boolean> {
             NativeEvent event, ValueUpdater<Boolean> valueUpdater) {
         String type = event.getType();
 
-        boolean enterPressed = "keydown".equals(type)
+        boolean enterPressed = "keydown".equals(type) //$NON-NLS-1$
                 && event.getKeyCode() == KeyCodes.KEY_ENTER;
-        if ("change".equals(type) || enterPressed) {
+        if ("change".equals(type) || enterPressed) { //$NON-NLS-1$
             InputElement input = parent.getFirstChild().cast();
             Boolean isChecked = input.isChecked();
 

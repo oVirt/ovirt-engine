@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.gluster;
 
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public class VolumeGeneralModel extends EntityModel {
     private String name;
@@ -60,7 +61,8 @@ public class VolumeGeneralModel extends EntityModel {
     }
 
     public VolumeGeneralModel() {
-        setTitle("General");
+        setTitle(ConstantsManager.getInstance().getConstants().generalTitle());
+        setHashName("general"); //$NON-NLS-1$
     }
 
     @Override

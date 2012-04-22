@@ -8,6 +8,7 @@ import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateListModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateVmListModel;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.template.SubTabTemplateVmPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.table.column.UptimeColumn;
@@ -20,14 +21,14 @@ public class SubTabTemplateVmView extends AbstractSubTabTableView<VmTemplate, VM
         implements SubTabTemplateVmPresenter.ViewDef {
 
     @Inject
-    public SubTabTemplateVmView(SearchableDetailModelProvider<VM, TemplateListModel, TemplateVmListModel> modelProvider) {
+    public SubTabTemplateVmView(SearchableDetailModelProvider<VM, TemplateListModel, TemplateVmListModel> modelProvider, ApplicationConstants constants) {
         super(modelProvider);
-        initTable();
+        initTable(constants);
         initWidget(getTable());
     }
 
-    void initTable() {
-        getTable().addColumn(new VmStatusColumn(), "", "30px");
+    void initTable(ApplicationConstants constants) {
+        getTable().addColumn(new VmStatusColumn(), constants.empty(), "30px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VM> nameColumn = new TextColumnWithTooltip<VM>() {
             @Override
@@ -35,9 +36,9 @@ public class SubTabTemplateVmView extends AbstractSubTabTableView<VmTemplate, VM
                 return object.getvm_name();
             }
         };
-        getTable().addColumn(nameColumn, "Name");
+        getTable().addColumn(nameColumn, constants.nameVm());
 
-        getTable().addColumn(new VmTypeColumn(), "", "30px");
+        getTable().addColumn(new VmTypeColumn(), constants.empty(), "30px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VM> hostColumn = new TextColumnWithTooltip<VM>() {
             @Override
@@ -45,7 +46,7 @@ public class SubTabTemplateVmView extends AbstractSubTabTableView<VmTemplate, VM
                 return object.getrun_on_vds_name();
             }
         };
-        getTable().addColumn(hostColumn, "Host");
+        getTable().addColumn(hostColumn, constants.hostVm());
 
         TextColumnWithTooltip<VM> ipColumn = new TextColumnWithTooltip<VM>() {
             @Override
@@ -53,7 +54,7 @@ public class SubTabTemplateVmView extends AbstractSubTabTableView<VmTemplate, VM
                 return object.getvm_ip();
             }
         };
-        getTable().addColumn(ipColumn, "IP Address");
+        getTable().addColumn(ipColumn, constants.ipVm());
 
         TextColumnWithTooltip<VM> statusColumn = new EnumColumn<VM, VMStatus>() {
             @Override
@@ -61,7 +62,7 @@ public class SubTabTemplateVmView extends AbstractSubTabTableView<VmTemplate, VM
                 return object.getstatus();
             }
         };
-        getTable().addColumn(statusColumn, "Status");
+        getTable().addColumn(statusColumn, constants.statusVm());
 
         TextColumnWithTooltip<VM> uptimeColumn = new UptimeColumn<VM>() {
             @Override
@@ -69,7 +70,7 @@ public class SubTabTemplateVmView extends AbstractSubTabTableView<VmTemplate, VM
                 return object.getRoundedElapsedTime();
             }
         };
-        getTable().addColumn(uptimeColumn, "Uptime");
+        getTable().addColumn(uptimeColumn, constants.uptimeVm());
 
         TextColumnWithTooltip<VM> loggedInUserColumn = new TextColumnWithTooltip<VM>() {
             @Override
@@ -77,7 +78,7 @@ public class SubTabTemplateVmView extends AbstractSubTabTableView<VmTemplate, VM
                 return object.getguest_cur_user_name();
             }
         };
-        getTable().addColumn(loggedInUserColumn, "Logged-in User");
+        getTable().addColumn(loggedInUserColumn, constants.loggedInUserVm());
     }
 
 }

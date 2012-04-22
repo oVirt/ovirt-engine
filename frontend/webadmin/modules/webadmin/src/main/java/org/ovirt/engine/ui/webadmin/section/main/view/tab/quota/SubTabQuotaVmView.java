@@ -8,6 +8,7 @@ import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.EmptyColumn;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaListModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaVmListModel;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.quota.SubTabQuotaVmPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTreeView;
 import org.ovirt.engine.ui.webadmin.widget.storage.VMsTree;
@@ -16,23 +17,23 @@ public class SubTabQuotaVmView extends AbstractSubTabTreeView<VMsTree<QuotaVmLis
         implements SubTabQuotaVmPresenter.ViewDef {
 
     @Inject
-    public SubTabQuotaVmView(SearchableDetailModelProvider<VM, QuotaListModel, QuotaVmListModel> modelProvider) {
-        super(modelProvider);
+    public SubTabQuotaVmView(SearchableDetailModelProvider<VM, QuotaListModel, QuotaVmListModel> modelProvider, ApplicationConstants constants) {
+        super(modelProvider, constants);
     }
 
     @Override
-    protected void initHeader() {
-        table.addColumn(new EmptyColumn(), "Alias");
-        table.addColumn(new EmptyColumn(), "Disks", "80px");
-        table.addColumn(new EmptyColumn(), "Template", "160px");
-        table.addColumn(new EmptyColumn(), "V-Size", "110px");
-        table.addColumn(new EmptyColumn(), "Actual Size", "110px");
-        table.addColumn(new EmptyColumn(), "Creation Date", "170px");
+    protected void initHeader(ApplicationConstants constants) {
+        table.addColumn(new EmptyColumn(), constants.aliasVm());
+        table.addColumn(new EmptyColumn(), constants.disksVm(), "80px"); //$NON-NLS-1$
+        table.addColumn(new EmptyColumn(), constants.templateVm(), "160px");  //$NON-NLS-1$
+        table.addColumn(new EmptyColumn(), constants.vSizeVm(), "110px"); //$NON-NLS-1$
+        table.addColumn(new EmptyColumn(), constants.actualSizeVm(), "110px"); //$NON-NLS-1$
+        table.addColumn(new EmptyColumn(), constants.creationDateVm(), "170px"); //$NON-NLS-1$
     }
 
     @Override
     protected VMsTree getTree() {
-        return new VMsTree(resources, constants);
+        return new VMsTree(resources, constants, templates);
     }
 
 }

@@ -27,6 +27,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageDomainModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
@@ -51,9 +52,10 @@ public class TemplateStorageListModel extends SearchableListModel
 
     public TemplateStorageListModel()
     {
-        setTitle("Storage");
+        setTitle(ConstantsManager.getInstance().getConstants().storageTitle());
+        setHashName("storage"); //$NON-NLS-1$
 
-        setRemoveCommand(new UICommand("Remove", this));
+        setRemoveCommand(new UICommand("Remove", this)); //$NON-NLS-1$
 
         UpdateActionAvailability();
     }
@@ -108,7 +110,7 @@ public class TemplateStorageListModel extends SearchableListModel
             items = storageDomainModels;
             ItemsChanged();
             getItemsChangedEvent().raise(this, EventArgs.Empty);
-            OnPropertyChanged(new PropertyChangedEventArgs("Items"));
+            OnPropertyChanged(new PropertyChangedEventArgs("Items")); //$NON-NLS-1$
             storageDomainModels = null;
         }
         else
@@ -161,27 +163,27 @@ public class TemplateStorageListModel extends SearchableListModel
 
         ConfirmationModel model = new ConfirmationModel();
         setWindow(model);
-        model.setTitle("Remove Template Disk(s)");
-        model.setHashName("remove_template_disks");
-        model.setMessage("Template Disk(s)");
+        model.setTitle(ConstantsManager.getInstance().getConstants().removeTemplateDisksTitle());
+        model.setHashName("remove_template_disks"); //$NON-NLS-1$
+        model.setMessage(ConstantsManager.getInstance().getConstants().templateDisksMsg());
 
         ArrayList<DiskModel> disks =
                 getSelectedItems() != null ? Linq.<DiskModel> Cast(getSelectedItems()) : new ArrayList<DiskModel>();
         ArrayList<String> items = new ArrayList<String>();
         for (DiskModel diskModel : disks)
         {
-            items.add(StringFormat.format("%1$s (from Stroage Domain %2$s)",
+            items.add(StringFormat.format("%1$s (from Stroage Domain %2$s)", //$NON-NLS-1$
                     diskModel.getDiskImage().getDiskAlias(),
                     ((storage_domains) diskModel.getStorageDomain().getSelectedItem()).getstorage_name()));
         }
         model.setItems(items);
 
-        UICommand tempVar = new UICommand("OnRemove", this);
-        tempVar.setTitle("OK");
+        UICommand tempVar = new UICommand("OnRemove", this); //$NON-NLS-1$
+        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
         tempVar.setIsDefault(true);
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this);
-        tempVar2.setTitle("Cancel");
+        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
+        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         tempVar2.setIsCancel(true);
         model.getCommands().add(tempVar2);
     }
@@ -233,7 +235,7 @@ public class TemplateStorageListModel extends SearchableListModel
     {
         super.EntityPropertyChanged(sender, e);
 
-        if (e.PropertyName.equals("status"))
+        if (e.PropertyName.equals("status")) //$NON-NLS-1$
         {
             UpdateActionAvailability();
         }
@@ -279,11 +281,11 @@ public class TemplateStorageListModel extends SearchableListModel
         {
             Remove();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "Cancel"))
+        else if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
         {
             Cancel();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnRemove"))
+        else if (StringHelper.stringsEqual(command.getName(), "OnRemove")) //$NON-NLS-1$
         {
             OnRemove();
         }
@@ -291,6 +293,6 @@ public class TemplateStorageListModel extends SearchableListModel
 
     @Override
     protected String getListName() {
-        return "TemplateStorageListModel";
+        return "TemplateStorageListModel"; //$NON-NLS-1$
     }
 }

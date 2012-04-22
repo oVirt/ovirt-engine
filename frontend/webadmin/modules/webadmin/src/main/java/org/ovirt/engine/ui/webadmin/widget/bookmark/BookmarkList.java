@@ -5,6 +5,7 @@ import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.widget.action.AbstractActionStackPanelItem;
 import org.ovirt.engine.ui.common.widget.action.SimpleActionPanel;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.BookmarkModelProvider;
@@ -35,8 +36,11 @@ public class BookmarkList extends AbstractActionStackPanelItem<BookmarkModelProv
     @UiField
     ScrollPanel scrollPanel;
 
-    public BookmarkList(BookmarkModelProvider modelProvider) {
+    private ApplicationConstants constants;
+
+    public BookmarkList(BookmarkModelProvider modelProvider, ApplicationConstants constants) {
         super(modelProvider);
+        this.constants = constants;
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
         addActionButtons(modelProvider);
@@ -63,21 +67,21 @@ public class BookmarkList extends AbstractActionStackPanelItem<BookmarkModelProv
     }
 
     private void addActionButtons(final BookmarkModelProvider modelProvider) {
-        actionPanel.addActionButton(new WebAdminButtonDefinition<bookmarks>("New") {
+        actionPanel.addActionButton(new WebAdminButtonDefinition<bookmarks>(constants.newBookmark()) {
             @Override
             protected UICommand resolveCommand() {
                 return modelProvider.getModel().getNewCommand();
             }
         });
 
-        actionPanel.addActionButton(new WebAdminButtonDefinition<bookmarks>("Edit") {
+        actionPanel.addActionButton(new WebAdminButtonDefinition<bookmarks>(constants.editBookmark()) {
             @Override
             protected UICommand resolveCommand() {
                 return modelProvider.getModel().getEditCommand();
             }
         });
 
-        actionPanel.addActionButton(new WebAdminButtonDefinition<bookmarks>("Remove") {
+        actionPanel.addActionButton(new WebAdminButtonDefinition<bookmarks>(constants.removeBookmark()) {
             @Override
             protected UICommand resolveCommand() {
                 return modelProvider.getModel().getRemoveCommand();

@@ -14,6 +14,7 @@ import org.ovirt.engine.ui.common.widget.tree.AbstractSubTabTree;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.widget.label.FullDateTimeLabel;
 
 import com.google.gwt.resources.client.ImageResource;
@@ -27,8 +28,8 @@ public class VMsTree<M extends SearchableListModel> extends AbstractSubTabTree<M
     ApplicationResources resources;
     ApplicationConstants constants;
 
-    public VMsTree(CommonApplicationResources resources, CommonApplicationConstants constants) {
-        super(resources, constants);
+    public VMsTree(CommonApplicationResources resources, CommonApplicationConstants constants, ApplicationTemplates templates) {
+        super(resources, constants, templates);
         this.resources = (ApplicationResources) resources;
         this.constants = (ApplicationConstants) constants;
     }
@@ -37,15 +38,15 @@ public class VMsTree<M extends SearchableListModel> extends AbstractSubTabTree<M
     protected TreeItem getRootItem(VM vm) {
         HorizontalPanel panel = new HorizontalPanel();
         panel.setSpacing(1);
-        panel.setWidth("100%");
+        panel.setWidth("100%"); //$NON-NLS-1$
 
-        addItemToPanel(panel, new Image(resources.vmImage()), "25px");
-        addTextBoxToPanel(panel, new TextBoxLabel(), vm.getvm_name(), "");
-        addTextBoxToPanel(panel, new TextBoxLabel(), String.valueOf(vm.getDiskMap().size()), "80px");
-        addTextBoxToPanel(panel, new TextBoxLabel(), vm.getvmt_name(), "160px");
-        addValueLabelToPanel(panel, new DiskSizeLabel<Double>(), vm.getDiskSize(), "110px");
-        addValueLabelToPanel(panel, new DiskSizeLabel<Double>(), vm.getActualDiskWithSnapshotsSize(), "110px");
-        addValueLabelToPanel(panel, new FullDateTimeLabel(), vm.getvm_creation_date(), "140px");
+        addItemToPanel(panel, new Image(resources.vmImage()), "25px"); //$NON-NLS-1$
+        addTextBoxToPanel(panel, new TextBoxLabel(), vm.getvm_name(), ""); //$NON-NLS-1$
+        addTextBoxToPanel(panel, new TextBoxLabel(), String.valueOf(vm.getDiskMap().size()), "80px"); //$NON-NLS-1$
+        addTextBoxToPanel(panel, new TextBoxLabel(), vm.getvmt_name(), "160px"); //$NON-NLS-1$
+        addValueLabelToPanel(panel, new DiskSizeLabel<Double>(), vm.getDiskSize(), "110px"); //$NON-NLS-1$
+        addValueLabelToPanel(panel, new DiskSizeLabel<Double>(), vm.getActualDiskWithSnapshotsSize(), "110px"); //$NON-NLS-1$
+        addValueLabelToPanel(panel, new FullDateTimeLabel(), vm.getvm_creation_date(), "140px"); //$NON-NLS-1$
 
         TreeItem treeItem = new TreeItem(panel);
         treeItem.setUserObject(vm.getId());
@@ -83,7 +84,7 @@ public class VMsTree<M extends SearchableListModel> extends AbstractSubTabTree<M
         }
 
         VerticalPanel vPanel = new VerticalPanel();
-        vPanel.setWidth("100%");
+        vPanel.setWidth("100%"); //$NON-NLS-1$
 
         for (DiskImage disk : disks) {
             HorizontalPanel panel = new HorizontalPanel();
@@ -92,16 +93,16 @@ public class VMsTree<M extends SearchableListModel> extends AbstractSubTabTree<M
                     isDisk ? resources.diskImage() : resources.snapshotImage();
             String name = isDisk ? disk.getDiskAlias() : disk.getdescription();
 
-            addItemToPanel(panel, new Image(image), "25px");
-            addTextBoxToPanel(panel, new TextBoxLabel(), name, "");
-            addTextBoxToPanel(panel, new TextBoxLabel(), "", "80px");
-            addTextBoxToPanel(panel, new TextBoxLabel(), "", "160px");
-            addValueLabelToPanel(panel, new DiskSizeLabel<Long>(), disk.getSizeInGigabytes(), "110px");
-            addValueLabelToPanel(panel, new DiskSizeLabel<Double>(), disk.getActualDiskWithSnapshotsSize(), "110px");
-            addValueLabelToPanel(panel, new FullDateTimeLabel(), disk.getcreation_date(), "140px");
+            addItemToPanel(panel, new Image(image), "25px"); //$NON-NLS-1$
+            addTextBoxToPanel(panel, new TextBoxLabel(), name, ""); //$NON-NLS-1$
+            addTextBoxToPanel(panel, new TextBoxLabel(), "", "80px"); //$NON-NLS-1$ //$NON-NLS-2$
+            addTextBoxToPanel(panel, new TextBoxLabel(), "", "160px"); //$NON-NLS-1$ //$NON-NLS-2$
+            addValueLabelToPanel(panel, new DiskSizeLabel<Long>(), disk.getSizeInGigabytes(), "110px"); //$NON-NLS-1$
+            addValueLabelToPanel(panel, new DiskSizeLabel<Double>(), disk.getActualDiskWithSnapshotsSize(), "110px"); //$NON-NLS-1$
+            addValueLabelToPanel(panel, new FullDateTimeLabel(), disk.getcreation_date(), "140px"); //$NON-NLS-1$
 
             panel.setSpacing(1);
-            panel.setWidth("100%");
+            panel.setWidth("100%"); //$NON-NLS-1$
 
             vPanel.add(panel);
         }

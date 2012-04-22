@@ -24,7 +24,7 @@ public class DropEvent extends DragDropEventBase<DropHandler> {
      * Event type for drop events. Represents the meta-data associated with this event.
      */
     private static final Type<DropHandler> TYPE = new Type<DropHandler>(
-            "drop", new DropEvent());
+            "drop", new DropEvent()); //$NON-NLS-1$
 
     /**
      * Gets the event type associated with drop events.

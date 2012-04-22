@@ -101,7 +101,7 @@ public class IVdcQueryableCellTable<IVdcQueryable, M extends ListModel> extends 
                 }
             };
         }
-        addColumn(checkColumn, SafeHtmlUtils.fromSafeConstant("<br/>"));
+        addColumn(checkColumn, SafeHtmlUtils.fromSafeConstant("<br/>")); //$NON-NLS-1$
         setColumnWidth(checkColumn, CHECK_COLUMN_WIDTH, Unit.PX);
     }
 

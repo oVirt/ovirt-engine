@@ -11,6 +11,7 @@ import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.TemplateBackupModel;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.SubTabStorageTemplateBackupPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
@@ -22,13 +23,13 @@ public class SubTabStorageTemplateBackupView extends AbstractSubTabTableView<sto
         implements SubTabStorageTemplateBackupPresenter.ViewDef {
 
     @Inject
-    public SubTabStorageTemplateBackupView(SearchableDetailModelProvider<VmTemplate, StorageListModel, TemplateBackupModel> modelProvider) {
+    public SubTabStorageTemplateBackupView(SearchableDetailModelProvider<VmTemplate, StorageListModel, TemplateBackupModel> modelProvider, ApplicationConstants constants) {
         super(modelProvider);
-        initTable();
+        initTable(constants);
         initWidget(getTable());
     }
 
-    void initTable() {
+    void initTable(ApplicationConstants constants) {
         TextColumnWithTooltip<VmTemplate> nameColumn =
                 new TextColumnWithTooltip<VmTemplate>() {
                     @Override
@@ -36,7 +37,7 @@ public class SubTabStorageTemplateBackupView extends AbstractSubTabTableView<sto
                         return object.getname();
                     }
                 };
-        getTable().addColumn(nameColumn, "Name");
+        getTable().addColumn(nameColumn, constants.nameTemplate());
 
         TextColumnWithTooltip<VmTemplate> originColumn =
                 new EnumColumn<VmTemplate, OriginType>() {
@@ -45,16 +46,16 @@ public class SubTabStorageTemplateBackupView extends AbstractSubTabTableView<sto
                         return object.getorigin();
                     }
                 };
-        getTable().addColumn(originColumn, "Origin");
+        getTable().addColumn(originColumn, constants.originTemplate());
 
         TextColumnWithTooltip<VmTemplate> memoryColumn =
                 new TextColumnWithTooltip<VmTemplate>() {
                     @Override
                     public String getValue(VmTemplate object) {
-                        return String.valueOf(object.getmem_size_mb()) + " MB";
+                        return String.valueOf(object.getmem_size_mb()) + " MB"; //$NON-NLS-1$
                     }
                 };
-        getTable().addColumn(memoryColumn, "Memory");
+        getTable().addColumn(memoryColumn,constants.memoryTemplate());
 
         TextColumnWithTooltip<VmTemplate> cpuColumn =
                 new TextColumnWithTooltip<VmTemplate>() {
@@ -63,7 +64,7 @@ public class SubTabStorageTemplateBackupView extends AbstractSubTabTableView<sto
                         return String.valueOf(object.getnum_of_cpus());
                     }
                 };
-        getTable().addColumn(cpuColumn, "CPUs");
+        getTable().addColumn(cpuColumn, constants.cpusVm());
 
         TextColumnWithTooltip<VmTemplate> diskColumn =
                 new TextColumnWithTooltip<VmTemplate>() {
@@ -72,7 +73,7 @@ public class SubTabStorageTemplateBackupView extends AbstractSubTabTableView<sto
                         return String.valueOf(object.getDiskList().size());
                     }
                 };
-        getTable().addColumn(diskColumn, "Disks");
+        getTable().addColumn(diskColumn, constants.disksTemplate());
 
         TextColumnWithTooltip<VmTemplate> creationDateColumn =
                 new GeneralDateTimeColumn<VmTemplate>() {
@@ -81,16 +82,16 @@ public class SubTabStorageTemplateBackupView extends AbstractSubTabTableView<sto
                         return object.getcreation_date();
                     }
                 };
-        getTable().addColumn(creationDateColumn, "Creation Date");
+        getTable().addColumn(creationDateColumn, constants.creationDateTemplate());
 
-        getTable().addActionButton(new WebAdminButtonDefinition<VmTemplate>("Restore") {
+        getTable().addActionButton(new WebAdminButtonDefinition<VmTemplate>(constants.restoreVm()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getRestoreCommand();
             }
         });
 
-        getTable().addActionButton(new WebAdminButtonDefinition<VmTemplate>("Remove") {
+        getTable().addActionButton(new WebAdminButtonDefinition<VmTemplate>(constants.removeTemplate()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getRemoveCommand();

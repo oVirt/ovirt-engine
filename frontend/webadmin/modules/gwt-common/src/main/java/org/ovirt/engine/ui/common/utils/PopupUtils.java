@@ -21,8 +21,8 @@ public class PopupUtils {
 
         style.setLeft(0, Unit.PX);
         style.setTop(0, Unit.PX);
-        style.setProperty("height", "auto");
-        style.setProperty("width", "auto");
+        style.setProperty("height", "auto"); //$NON-NLS-1$ //$NON-NLS-2$
+        style.setProperty("width", "auto"); //$NON-NLS-1$ //$NON-NLS-2$
 
         popup.show();
         adjustPopupLocationToFitScreenAndShow(popup, left, top, -parentMenu.getOffsetWidth(), 0);
@@ -41,8 +41,8 @@ public class PopupUtils {
          */
         style.setLeft(0, Unit.PX);
         style.setTop(0, Unit.PX);
-        style.setProperty("height", "auto");
-        style.setProperty("width", "auto");
+        style.setProperty("height", "auto"); //$NON-NLS-1$ //$NON-NLS-2$
+        style.setProperty("width", "auto"); //$NON-NLS-1$ //$NON-NLS-2$
 
         popup.show();
 

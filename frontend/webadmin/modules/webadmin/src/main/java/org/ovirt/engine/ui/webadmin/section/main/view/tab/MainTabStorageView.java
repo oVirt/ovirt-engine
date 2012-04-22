@@ -18,6 +18,7 @@ import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.ReportInit;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageListModel;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabStoragePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
 import org.ovirt.engine.ui.webadmin.uicommon.ReportActionsHelper;
@@ -35,15 +36,15 @@ public class MainTabStorageView extends AbstractMainTabWithDetailsTableView<stor
     }
 
     @Inject
-    public MainTabStorageView(MainModelProvider<storage_domains, StorageListModel> modelProvider) {
+    public MainTabStorageView(MainModelProvider<storage_domains, StorageListModel> modelProvider, ApplicationConstants constants) {
         super(modelProvider);
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        initTable();
+        initTable(constants);
         initWidget(getTable());
     }
 
-    void initTable() {
-        getTable().addColumn(new StorageDomainSharedStatusColumn(), "", "30px");
+    void initTable(ApplicationConstants constants) {
+        getTable().addColumn(new StorageDomainSharedStatusColumn(), constants.empty(), "30px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<storage_domains> nameColumn = new TextColumnWithTooltip<storage_domains>() {
             @Override
@@ -51,7 +52,7 @@ public class MainTabStorageView extends AbstractMainTabWithDetailsTableView<stor
                 return object.getstorage_name();
             }
         };
-        getTable().addColumn(nameColumn, "Domain Name");
+        getTable().addColumn(nameColumn, constants.domainNameStorage());
 
         TextColumnWithTooltip<storage_domains> domainTypeColumn = new EnumColumn<storage_domains, StorageDomainType>() {
             @Override
@@ -59,7 +60,7 @@ public class MainTabStorageView extends AbstractMainTabWithDetailsTableView<stor
                 return object.getstorage_domain_type();
             }
         };
-        getTable().addColumn(domainTypeColumn, "Domain Type");
+        getTable().addColumn(domainTypeColumn, constants.domainTypeStorage());
 
         TextColumnWithTooltip<storage_domains> storageTypeColumn = new EnumColumn<storage_domains, StorageType>() {
             @Override
@@ -67,7 +68,7 @@ public class MainTabStorageView extends AbstractMainTabWithDetailsTableView<stor
                 return object.getstorage_type();
             }
         };
-        getTable().addColumn(storageTypeColumn, "Storage Type");
+        getTable().addColumn(storageTypeColumn, constants.storageTypeStorage());
 
         TextColumnWithTooltip<storage_domains> formatColumn = new EnumColumn<storage_domains, StorageFormatType>() {
             @Override
@@ -75,7 +76,7 @@ public class MainTabStorageView extends AbstractMainTabWithDetailsTableView<stor
                 return object.getStorageFormat();
             }
         };
-        getTable().addColumn(formatColumn, "Format");
+        getTable().addColumn(formatColumn, constants.formatStorage());
 
         TextColumnWithTooltip<storage_domains> crossDataCenterStatusColumn =
                 new EnumColumn<storage_domains, StorageDomainSharedStatus>() {
@@ -84,7 +85,7 @@ public class MainTabStorageView extends AbstractMainTabWithDetailsTableView<stor
                         return object.getstorage_domain_shared_status();
                     }
                 };
-        getTable().addColumn(crossDataCenterStatusColumn, "Cross Data-Center Status");
+        getTable().addColumn(crossDataCenterStatusColumn, constants.crossDcStatusStorage());
 
         DiskSizeColumn<storage_domains> freeSpaceColumn = new DiskSizeColumn<storage_domains>(DiskSizeUnit.GIGABYTE) {
             @Override
@@ -93,33 +94,33 @@ public class MainTabStorageView extends AbstractMainTabWithDetailsTableView<stor
                 return (long) availableDiskSize;
             }
         };
-        getTable().addColumn(freeSpaceColumn, "Free Space");
+        getTable().addColumn(freeSpaceColumn, constants.freeSpaceStorage());
 
-        getTable().addActionButton(new WebAdminButtonDefinition<storage_domains>("New Domain") {
+        getTable().addActionButton(new WebAdminButtonDefinition<storage_domains>(constants.newDomainStorage()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getNewDomainCommand();
             }
         });
-        getTable().addActionButton(new WebAdminButtonDefinition<storage_domains>("Import Domain") {
+        getTable().addActionButton(new WebAdminButtonDefinition<storage_domains>(constants.importDomainStorage()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getImportDomainCommand();
             }
         });
-        getTable().addActionButton(new WebAdminButtonDefinition<storage_domains>("Edit") {
+        getTable().addActionButton(new WebAdminButtonDefinition<storage_domains>(constants.editStorage()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getEditCommand();
             }
         });
-        getTable().addActionButton(new WebAdminButtonDefinition<storage_domains>("Remove") {
+        getTable().addActionButton(new WebAdminButtonDefinition<storage_domains>(constants.removeStorage()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getRemoveCommand();
             }
         });
-        getTable().addActionButton(new WebAdminButtonDefinition<storage_domains>("Destroy", CommandLocation.OnlyFromFromContext) {
+        getTable().addActionButton(new WebAdminButtonDefinition<storage_domains>(constants.destroyStorage(), CommandLocation.OnlyFromFromContext) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getDestroyCommand();
@@ -127,9 +128,9 @@ public class MainTabStorageView extends AbstractMainTabWithDetailsTableView<stor
         });
         if (ReportInit.getInstance().isReportsEnabled()) {
             List<ActionButtonDefinition<storage_domains>> resourceSubActions =
-                    ReportActionsHelper.getInstance().getResourceSubActions("Storage", getMainModel());
+                    ReportActionsHelper.getInstance().getResourceSubActions("Storage", getMainModel()); //$NON-NLS-1$
             if (resourceSubActions != null && resourceSubActions.size() > 0) {
-                getTable().addActionButton(new WebAdminMenuBarButtonDefinition<storage_domains>("Show Report",
+                getTable().addActionButton(new WebAdminMenuBarButtonDefinition<storage_domains>(constants.showReportStorage(),
                         resourceSubActions));
             }
         }

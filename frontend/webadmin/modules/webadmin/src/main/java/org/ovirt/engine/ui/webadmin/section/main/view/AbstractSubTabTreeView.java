@@ -15,6 +15,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 
 import com.google.gwt.core.client.GWT;
@@ -53,17 +54,19 @@ public abstract class AbstractSubTabTreeView<E extends AbstractSubTabTree, I, T,
 
     protected final ApplicationResources resources;
     protected final ApplicationConstants constants;
+    protected final ApplicationTemplates templates;
 
-    public AbstractSubTabTreeView(SearchableDetailModelProvider modelProvider) {
+    public AbstractSubTabTreeView(SearchableDetailModelProvider modelProvider, ApplicationConstants constants) {
         super(modelProvider);
 
         resources = ClientGinjectorProvider.instance().getApplicationResources();
-        constants = ClientGinjectorProvider.instance().getApplicationConstants();
+        this.constants =constants;
+        this.templates = ClientGinjectorProvider.instance().getApplicationTemplates();
 
         table = new EntityModelCellTable<ListModel>(false, true);
         tree = getTree();
 
-        initHeader();
+        initHeader(constants);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
 
         headerTableContainer.add(table);
@@ -104,7 +107,7 @@ public abstract class AbstractSubTabTreeView<E extends AbstractSubTabTree, I, T,
         tree.updateTree(getDetailModel());
     }
 
-    protected abstract void initHeader();
+    protected abstract void initHeader(ApplicationConstants constants);
 
     protected abstract E getTree();
 

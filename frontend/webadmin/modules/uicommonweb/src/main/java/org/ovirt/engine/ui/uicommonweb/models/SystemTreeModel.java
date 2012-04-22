@@ -19,6 +19,7 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleQueryAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
 
@@ -89,7 +90,7 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
             items = value;
             ItemsChanged();
             getItemsChangedEvent().raise(this, EventArgs.Empty);
-            OnPropertyChanged(new PropertyChangedEventArgs("Items"));
+            OnPropertyChanged(new PropertyChangedEventArgs("Items")); //$NON-NLS-1$
         }
     }
 
@@ -141,16 +142,16 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
 
     static
     {
-        ResetRequestedEventDefinition = new EventDefinition("ResetRequested", SystemTreeModel.class);
+        ResetRequestedEventDefinition = new EventDefinition("ResetRequested", SystemTreeModel.class); //$NON-NLS-1$
     }
 
     public SystemTreeModel()
     {
         setResetRequestedEvent(new Event(ResetRequestedEventDefinition));
 
-        setResetCommand(new UICommand("Reset", this));
-        setExpandAllCommand(new UICommand("ExpandAll", this));
-        setCollapseAllCommand(new UICommand("CollapseAll", this));
+        setResetCommand(new UICommand("Reset", this)); //$NON-NLS-1$
+        setExpandAllCommand(new UICommand("ExpandAll", this)); //$NON-NLS-1$
+        setCollapseAllCommand(new UICommand("CollapseAll", this)); //$NON-NLS-1$
 
         setIsTimerDisabled(true);
 
@@ -324,7 +325,7 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
         SystemTreeItemModel systemItem = new SystemTreeItemModel();
         systemItem.setType(SystemTreeItemType.System);
         systemItem.setIsSelected(true);
-        systemItem.setTitle("System");
+        systemItem.setTitle(ConstantsManager.getInstance().getConstants().systemTitle());
 
         for (VdcQueryReturnValue returnValue : result.getReturnValues())
         {
@@ -343,7 +344,7 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
 
             SystemTreeItemModel storagesItem = new SystemTreeItemModel();
             storagesItem.setType(SystemTreeItemType.Storages);
-            storagesItem.setTitle("Storage");
+            storagesItem.setTitle(ConstantsManager.getInstance().getConstants().storagesTitle());
             storagesItem.setParent(dataCenterItem);
             storagesItem.setEntity(getDataCenters().get(count));
             dataCenterItem.getChildren().add(storagesItem);
@@ -363,14 +364,14 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
 
             SystemTreeItemModel templatesItem = new SystemTreeItemModel();
             templatesItem.setType(SystemTreeItemType.Templates);
-            templatesItem.setTitle("Templates");
+            templatesItem.setTitle(ConstantsManager.getInstance().getConstants().templatesTitle());
             templatesItem.setParent(dataCenterItem);
             templatesItem.setEntity(getDataCenters().get(count));
             dataCenterItem.getChildren().add(templatesItem);
 
             SystemTreeItemModel clustersItem = new SystemTreeItemModel();
             clustersItem.setType(SystemTreeItemType.Clusters);
-            clustersItem.setTitle("Clusters");
+            clustersItem.setTitle(ConstantsManager.getInstance().getConstants().clustersTitle());
             clustersItem.setParent(dataCenterItem);
             clustersItem.setEntity(getDataCenters().get(count));
             dataCenterItem.getChildren().add(clustersItem);
@@ -390,7 +391,7 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
 
                     SystemTreeItemModel hostsItem = new SystemTreeItemModel();
                     hostsItem.setType(SystemTreeItemType.Hosts);
-                    hostsItem.setTitle("Hosts");
+                    hostsItem.setTitle(ConstantsManager.getInstance().getConstants().hostsTitle());
                     hostsItem.setParent(clusterItem);
                     hostsItem.setEntity(cluster);
                     clusterItem.getChildren().add(hostsItem);
@@ -411,7 +412,7 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
                   {
                     SystemTreeItemModel volumesItem = new SystemTreeItemModel();
                     volumesItem.setType(SystemTreeItemType.Volumes);
-                    volumesItem.setTitle("Volumes");
+                    volumesItem.setTitle(ConstantsManager.getInstance().getConstants().volumesTitle());
                     volumesItem.setParent(clusterItem);
                     volumesItem.setEntity(cluster);
                     clusterItem.getChildren().add(volumesItem);
@@ -429,7 +430,7 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
                   }
                     SystemTreeItemModel vmsItem = new SystemTreeItemModel();
                     vmsItem.setType(SystemTreeItemType.VMs);
-                    vmsItem.setTitle("VMs");
+                    vmsItem.setTitle(ConstantsManager.getInstance().getConstants().vmsTitle());
                     vmsItem.setParent(clusterItem);
                     vmsItem.setEntity(cluster);
                     clusterItem.getChildren().add(vmsItem);
@@ -441,7 +442,7 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
 
     @Override
     protected String getListName() {
-        return "SystemTreeModel";
+        return "SystemTreeModel"; //$NON-NLS-1$
     }
 
 }

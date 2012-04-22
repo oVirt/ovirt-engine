@@ -41,7 +41,6 @@ public class EnlistmentContext {
         oldClusterId = value;
     }
 
-
     public EnlistmentContext(HostListModel model) {
         this.model = model;
     }

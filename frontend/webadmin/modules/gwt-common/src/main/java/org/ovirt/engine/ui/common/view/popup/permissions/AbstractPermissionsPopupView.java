@@ -100,7 +100,7 @@ public abstract class AbstractPermissionsPopupView extends AbstractModelBoundPop
         searchItems = new EntityModelCellTable<ListModel>(true);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         generateIds();
-        initTable();
+        initTable(constants);
         specificUserOrGroupRadio.setValue(true);
         everyoneRadio.setValue(false);
         localize(constants);
@@ -125,7 +125,7 @@ public abstract class AbstractPermissionsPopupView extends AbstractModelBoundPop
         });
     }
 
-    private void initTable() {
+    private void initTable(CommonApplicationConstants constants) {
         // Table Entity Columns
         searchItems.addEntityModelColumn(new EntityModelTextColumn<EntityModel>() {
             @Override
@@ -136,7 +136,7 @@ public abstract class AbstractPermissionsPopupView extends AbstractModelBoundPop
                     return model.getEntity().toString();
                 }
             }
-        }, "First Name");
+        }, constants.firsNamePermissionsPopup());
 
         searchItems.addEntityModelColumn(new EntityModelTextColumn<EntityModel>() {
             @Override
@@ -144,10 +144,10 @@ public abstract class AbstractPermissionsPopupView extends AbstractModelBoundPop
                 if (model.getEntity() instanceof DbUser)
                     return ((DbUser) model.getEntity()).getsurname();
                 else {
-                    return "";
+                    return ""; //$NON-NLS-1$
                 }
             }
-        }, "Last Name");
+        }, constants.lastNamePermissionsPopup());
 
         searchItems.addEntityModelColumn(new EntityModelTextColumn<EntityModel>() {
             @Override
@@ -155,14 +155,14 @@ public abstract class AbstractPermissionsPopupView extends AbstractModelBoundPop
                 if (model.getEntity() instanceof DbUser)
                     return ((DbUser) model.getEntity()).getusername();
                 else {
-                    return "";
+                    return ""; //$NON-NLS-1$
                 }
             }
-        }, "User Name");
+        }, constants.userNamePermissionsPopup());
     }
 
     void localize(CommonApplicationConstants constants) {
-        searchButton.setLabel("GO");
+        searchButton.setLabel(constants.goPermissionsPopup());
     }
 
     @Override

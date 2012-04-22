@@ -14,6 +14,7 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
 public abstract class SanStorageModel extends SanStorageModelBase
@@ -34,7 +35,7 @@ public abstract class SanStorageModel extends SanStorageModelBase
         {
             isGrouppedByTarget = value;
             IsGrouppedByTargetChanged();
-            OnPropertyChanged(new PropertyChangedEventArgs("IsGrouppedByTarget"));
+            OnPropertyChanged(new PropertyChangedEventArgs("IsGrouppedByTarget")); //$NON-NLS-1$
         }
     }
 
@@ -50,7 +51,7 @@ public abstract class SanStorageModel extends SanStorageModelBase
         if (!StringHelper.stringsEqual(getLUNsFailure, value))
         {
             getLUNsFailure = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("GetLUNsFailure"));
+            OnPropertyChanged(new PropertyChangedEventArgs("GetLUNsFailure")); //$NON-NLS-1$
         }
     }
 
@@ -122,11 +123,13 @@ public abstract class SanStorageModel extends SanStorageModelBase
                                 if (response.getSucceeded())
                                 {
                                     model.ApplyData((java.util.ArrayList<LUNs>) response.getReturnValue(), false);
-                                    model.setGetLUNsFailure("");
+                                    model.setGetLUNsFailure(""); //$NON-NLS-1$
                                 }
                                 else
                                 {
-                                    model.setGetLUNsFailure("Could not retrieve LUNs, please check your storage.");
+                                    model.setGetLUNsFailure(ConstantsManager.getInstance()
+                                            .getConstants()
+                                            .couldNotRetrieveLUNsLunsFailure());
                                 }
                                 model.getContainer().StopProgress();
 
@@ -483,7 +486,7 @@ public abstract class SanStorageModel extends SanStorageModelBase
 
         if (!isValid)
         {
-            getInvalidityReasons().add("No LUNs selected. Please select LUNs.");
+            getInvalidityReasons().add(ConstantsManager.getInstance().getConstants().noLUNsSelectedInvalidReason());
         }
 
         setIsValid(isValid);

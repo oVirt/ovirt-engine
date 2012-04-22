@@ -42,6 +42,6 @@ public class ConnectorPanel extends FlexTable {
             }
             setWidget(row, column, new Image(rightImage));
         }
-        setHeight((50 * networkSize) + "px");
+        setHeight((50 * networkSize) + "px"); //$NON-NLS-1$
     }
 }

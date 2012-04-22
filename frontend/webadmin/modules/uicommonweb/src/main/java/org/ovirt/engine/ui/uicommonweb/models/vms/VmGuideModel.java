@@ -32,7 +32,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
-import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -43,16 +42,25 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.GuideModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
 @SuppressWarnings("unused")
 public class VmGuideModel extends GuideModel
 {
-    public final String VmConfigureNetworkInterfacesAction = "Configure Network Interfaces";
-    public final String VmAddAnotherNetworkInterfaceAction = "Add another Network Interface";
-    public final String VmConfigureVirtualDisksAction = "Configure Virtual Disks";
-    public final String VmAddAnotherVirtualDiskAction = "Add another Virtual Disk";
+    public final String VmConfigureNetworkInterfacesAction = ConstantsManager.getInstance()
+            .getConstants()
+            .vmConfigureNetworkInterfacesAction();
+    public final String VmAddAnotherNetworkInterfaceAction = ConstantsManager.getInstance()
+            .getConstants()
+            .vmAddAnotherNetworkInterfaceAction();
+    public final String VmConfigureVirtualDisksAction = ConstantsManager.getInstance()
+            .getConstants()
+            .vmConfigureVirtualDisksAction();
+    public final String VmAddAnotherVirtualDiskAction = ConstantsManager.getInstance()
+            .getConstants()
+            .vmAddAnotherVirtualDiskAction();
 
     private java.util.ArrayList<VmNetworkInterface> nics;
     private java.util.ArrayList<DiskImage> disks;
@@ -111,7 +119,7 @@ public class VmGuideModel extends GuideModel
         }
 
         // Add NIC action.
-        UICommand addNicAction = new UICommand("AddNetwork", this);
+        UICommand addNicAction = new UICommand("AddNetwork", this); //$NON-NLS-1$
 
         if (nics.isEmpty())
         {
@@ -125,7 +133,7 @@ public class VmGuideModel extends GuideModel
         }
 
         // Add disk action.
-        UICommand addDiskAction = new UICommand("AddDisk", this);
+        UICommand addDiskAction = new UICommand("AddDisk", this); //$NON-NLS-1$
 
         if (disks.isEmpty())
         {
@@ -219,8 +227,8 @@ public class VmGuideModel extends GuideModel
 
         VmInterfaceModel model = new VmInterfaceModel();
         setWindow(model);
-        model.setTitle("New Network Interface");
-        model.setHashName("new_network_interface_vms_guide");
+        model.setTitle(ConstantsManager.getInstance().getConstants().newNetworkInterfaceTitle());
+        model.setHashName("new_network_interface_vms_guide"); //$NON-NLS-1$
         model.setIsNew(true);
         model.getNetwork().setItems(operationalNetworks);
         model.getNetwork().setSelectedItem(operationalNetworks.size() > 0 ? operationalNetworks.get(0) : null);
@@ -229,12 +237,12 @@ public class VmGuideModel extends GuideModel
         model.getName().setEntity(newNicName);
         model.getMAC().setIsChangable(false);
 
-        UICommand tempVar = new UICommand("OnAddNetwork", this);
-        tempVar.setTitle("OK");
+        UICommand tempVar = new UICommand("OnAddNetwork", this); //$NON-NLS-1$
+        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
         tempVar.setIsDefault(true);
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this);
-        tempVar2.setTitle("Cancel");
+        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
+        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         tempVar2.setIsCancel(true);
         model.getCommands().add(tempVar2);
 
@@ -284,7 +292,7 @@ public class VmGuideModel extends GuideModel
             vmNetworkInterface.setType(_type);
             vmNetworkInterface.setMacAddress(model.getMAC().getIsChangable() ? (model.getMAC().getEntity() == null ? null
                     : ((String) (model.getMAC().getEntity())).toLowerCase())
-                    : "");
+                    : ""); //$NON-NLS-1$
 
             AddVmInterfaceParameters parameters =
                     new AddVmInterfaceParameters(getEntity().getId(), vmNetworkInterface);
@@ -385,8 +393,8 @@ public class VmGuideModel extends GuideModel
 
         final DiskModel model = new DiskModel();
         setWindow(model);
-        model.setTitle("New Virtual Disk");
-        model.setHashName("new_virtual_disk");
+        model.setTitle(ConstantsManager.getInstance().getConstants().newVirtualDiskTitle());
+        model.setHashName("new_virtual_disk"); //$NON-NLS-1$
         model.setIsNew(true);
 
         java.util.ArrayList<storage_domains> storageDomains = new java.util.ArrayList<storage_domains>();
@@ -496,7 +504,7 @@ public class VmGuideModel extends GuideModel
         if (hasBootableDisk)
         {
             model.getIsBootable().setIsChangable(false);
-            model.getIsBootable().getChangeProhibitionReasons().add("There can be only one bootable disk defined.");
+            model.getIsBootable().getChangeProhibitionReasons().add("There can be only one bootable disk defined."); //$NON-NLS-1$
         }
 
         AsyncDataProvider.GetNextAvailableDiskAliasNameByVMId(new AsyncQuery(this,
@@ -519,35 +527,37 @@ public class VmGuideModel extends GuideModel
         if (storage == null)
         {
             String cantCreateMessage =
-                    "There is no active Storage Domain to create the Disk in. Please activate a Storage Domain.";
+                    ConstantsManager.getInstance().getConstants().thereIsNoActiveStorageDomainCreateDiskInMsg();
             if (hasDisks)
             {
-                cantCreateMessage = "Error in retrieving the relevant Storage Domain.";
+                cantCreateMessage =
+                        ConstantsManager.getInstance().getConstants().errorRetrievingRelevantStorageDomainMsg();
                 if (storage != null && storage.getstorage_name() != null)
                 {
                     cantCreateMessage =
-                            StringFormat.format("'%1$s' Storage Domain is not active. Please activate it.",
-                                    storage.getstorage_name());
+                            ConstantsManager.getInstance()
+                                    .getMessages()
+                                    .storageDomainIsNotActive(storage.getstorage_name());
                 }
             }
 
             model.setMessage(cantCreateMessage);
 
-            UICommand tempVar = new UICommand("Cancel", this);
-            tempVar.setTitle("Close");
+            UICommand tempVar = new UICommand("Cancel", this); //$NON-NLS-1$
+            tempVar.setTitle(ConstantsManager.getInstance().getConstants().close());
             tempVar.setIsDefault(true);
             tempVar.setIsCancel(true);
             model.getCommands().add(tempVar);
         }
         else
         {
-            UICommand tempVar2 = new UICommand("OnAddDisk", this);
-            tempVar2.setTitle("OK");
+            UICommand tempVar2 = new UICommand("OnAddDisk", this); //$NON-NLS-1$
+            tempVar2.setTitle(ConstantsManager.getInstance().getConstants().ok());
             tempVar2.setIsDefault(true);
             model.getCommands().add(tempVar2);
 
-            UICommand tempVar3 = new UICommand("Cancel", this);
-            tempVar3.setTitle("Cancel");
+            UICommand tempVar3 = new UICommand("Cancel", this); //$NON-NLS-1$
+            tempVar3.setTitle(ConstantsManager.getInstance().getConstants().cancel());
             tempVar3.setIsCancel(true);
             model.getCommands().add(tempVar3);
         }
@@ -668,23 +678,23 @@ public class VmGuideModel extends GuideModel
     {
         super.ExecuteCommand(command);
 
-        if (StringHelper.stringsEqual(command.getName(), "AddNetwork"))
+        if (StringHelper.stringsEqual(command.getName(), "AddNetwork")) //$NON-NLS-1$
         {
             AddNetwork();
         }
-        if (StringHelper.stringsEqual(command.getName(), "AddDisk"))
+        if (StringHelper.stringsEqual(command.getName(), "AddDisk")) //$NON-NLS-1$
         {
             AddDisk();
         }
-        if (StringHelper.stringsEqual(command.getName(), "OnAddNetwork"))
+        if (StringHelper.stringsEqual(command.getName(), "OnAddNetwork")) //$NON-NLS-1$
         {
             OnAddNetwork();
         }
-        if (StringHelper.stringsEqual(command.getName(), "OnAddDisk"))
+        if (StringHelper.stringsEqual(command.getName(), "OnAddDisk")) //$NON-NLS-1$
         {
             OnAddDisk();
         }
-        if (StringHelper.stringsEqual(command.getName(), "Cancel"))
+        if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
         {
             Cancel();
         }

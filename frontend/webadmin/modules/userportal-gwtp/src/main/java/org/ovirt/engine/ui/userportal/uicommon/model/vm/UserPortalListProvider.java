@@ -55,16 +55,16 @@ public class UserPortalListProvider extends UserPortalDataBoundModelProvider<Use
 
     @Override
     public String[] getWindowPropertyNames() {
-        return new String[] { "VmModel", "RunOnceModel", "AttachCdModel" };
+        return new String[] { "VmModel", "RunOnceModel", "AttachCdModel" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     }
 
     @Override
     public Model getWindowModel(UserPortalListModel source, String propertyName) {
-        if ("VmModel".equals(propertyName)) {
+        if ("VmModel".equals(propertyName)) { //$NON-NLS-1$
             return source.getVmModel();
-        } else if ("RunOnceModel".equals(propertyName)) {
+        } else if ("RunOnceModel".equals(propertyName)) { //$NON-NLS-1$
             return source.getRunOnceModel();
-        } else if ("AttachCdModel".equals(propertyName)) {
+        } else if ("AttachCdModel".equals(propertyName)) { //$NON-NLS-1$
             return source.getAttachCdModel();
         } else {
             return null;
@@ -73,18 +73,18 @@ public class UserPortalListProvider extends UserPortalDataBoundModelProvider<Use
 
     @Override
     public void clearWindowModel(UserPortalListModel source, String propertyName) {
-        if ("VmModel".equals(propertyName)) {
+        if ("VmModel".equals(propertyName)) { //$NON-NLS-1$
             source.setVmModel(null);
-        } else if ("RunOnceModel".equals(propertyName)) {
+        } else if ("RunOnceModel".equals(propertyName)) { //$NON-NLS-1$
             source.setRunOnceModel(null);
-        } else if ("AttachCdModel".equals(propertyName)) {
+        } else if ("AttachCdModel".equals(propertyName)) { //$NON-NLS-1$
             source.setAttachCdModel(null);
         }
     }
 
     @Override
     public String[] getConfirmWindowPropertyNames() {
-        return new String[] { "ConfirmationModel" };
+        return new String[] { "ConfirmationModel" }; //$NON-NLS-1$
     }
 
     @Override

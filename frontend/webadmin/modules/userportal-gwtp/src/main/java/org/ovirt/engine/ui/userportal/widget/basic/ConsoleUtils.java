@@ -5,6 +5,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.ui.common.uicommon.ClientAgentType;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.SpiceConsoleModel;
+import org.ovirt.engine.ui.userportal.gin.ClientGinjectorProvider;
 
 import com.google.gwt.core.client.GWT;
 import com.google.inject.Inject;
@@ -15,12 +16,10 @@ public class ConsoleUtils {
     private Boolean rdpAvailable;
 
     private static final String VNC_NOT_SUPPORTED_MESSAGE =
-            "VNC console access is not supported from the user portal.<br/>" +
-                    "Please ask the administrator to configure this " +
-                    "virtual machine to use SPICE for console access.";
+           ClientGinjectorProvider.instance().getApplicationConstants().vncNotSupportedMsg();
 
     private static final String BROWSER_NOT_SUPPORTED_MESSAGE =
-            "Your browser/platform does not support console opening";
+            ClientGinjectorProvider.instance().getApplicationConstants().browserNotSupportedMsg();
 
     private final ClientAgentType clientAgentType;
 
@@ -32,11 +31,11 @@ public class ConsoleUtils {
     public boolean isSpiceAvailable() {
         if (spiceAvailable == null) {
             spiceAvailable =
-                    clientAgentType.getBrowser().toLowerCase().contains("firefox")
-                            && clientAgentType.getOS().toLowerCase().contains("linux") ||
-                            clientAgentType.getBrowser().toLowerCase().contains("explorer")
-                            && clientAgentType.getOS().toLowerCase().contains("windows");
-            GWT.log("Determining if Spice console is available on current platform, result:" + spiceAvailable);
+                    clientAgentType.getBrowser().toLowerCase().contains("firefox") //$NON-NLS-1$
+                            && clientAgentType.getOS().toLowerCase().contains("linux") || //$NON-NLS-1$
+                            clientAgentType.getBrowser().toLowerCase().contains("explorer") //$NON-NLS-1$
+                            && clientAgentType.getOS().toLowerCase().contains("windows"); //$NON-NLS-1$
+            GWT.log("Determining if Spice console is available on current platform, result:" + spiceAvailable); //$NON-NLS-1$
         }
         return spiceAvailable;
     }
@@ -44,10 +43,10 @@ public class ConsoleUtils {
     public boolean isRDPAvailable() {
         if (rdpAvailable == null) {
             rdpAvailable =
-                    (clientAgentType.getBrowser().toLowerCase().contains("explorer") && clientAgentType.getOS()
+                    (clientAgentType.getBrowser().toLowerCase().contains("explorer") && clientAgentType.getOS() //$NON-NLS-1$
                             .toLowerCase()
-                            .contains("windows"));
-            GWT.log("Determining if RDP console is available on current platform, result:" + rdpAvailable);
+                            .contains("windows")); //$NON-NLS-1$
+            GWT.log("Determining if RDP console is available on current platform, result:" + rdpAvailable); //$NON-NLS-1$
         }
         return rdpAvailable;
     }
@@ -82,7 +81,7 @@ public class ConsoleUtils {
 
     public String determineProtocolMessage(UserPortalItemModel item) {
         if (item.getIsPool()) {
-            return "";
+            return ""; //$NON-NLS-1$
         }
 
         if (!(isRDPAvailable() || isSpiceAvailable())) {
@@ -96,7 +95,7 @@ public class ConsoleUtils {
             return VNC_NOT_SUPPORTED_MESSAGE;
         }
 
-        return "";
+        return ""; //$NON-NLS-1$
     }
 
     public ConsoleProtocol determineDefaultProtocol(UserPortalItemModel item) {

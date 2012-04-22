@@ -9,16 +9,16 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 public class StyledImageResourceCell extends ImageResourceCell {
 
-    private String style = "line-height: 100%; text-align: center; vertical-align: middle;";
+    private String style = "line-height: 100%; text-align: center; vertical-align: middle;"; //$NON-NLS-1$
 
     @Override
     public void render(Context context, ImageResource value, SafeHtmlBuilder sb) {
         if (value != null) {
             SafeHtml html = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(value).getHTML());
 
-            sb.appendHtmlConstant("<div style=\"" + style + "\">");
+            sb.appendHtmlConstant("<div style=\"" + style + "\">"); //$NON-NLS-1$ //$NON-NLS-2$
             sb.append(html);
-            sb.appendHtmlConstant("</div>");
+            sb.appendHtmlConstant("</div>"); //$NON-NLS-1$
         }
     }
 

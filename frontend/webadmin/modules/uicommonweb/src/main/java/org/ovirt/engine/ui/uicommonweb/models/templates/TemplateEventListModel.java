@@ -46,7 +46,7 @@ public class TemplateEventListModel extends EventListModel
     }
 
     protected void preSearchCalled(VmTemplate template) {
-        setSearchString(StringFormat.format("Events:event_template=%1$s", template.getname()));
+        setSearchString(StringFormat.format("Events:event_template=%1$s", template.getname())); //$NON-NLS-1$
     }
 
     @Override
@@ -54,7 +54,7 @@ public class TemplateEventListModel extends EventListModel
     {
         super.EntityPropertyChanged(sender, e);
 
-        if (e.PropertyName.equals("name"))
+        if (e.PropertyName.equals("name")) //$NON-NLS-1$
         {
             getSearchCommand().Execute();
         }

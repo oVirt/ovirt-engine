@@ -118,25 +118,25 @@ public class DisksAllocationView extends Composite implements HasEditorDriver<Di
     }
 
     void updateListHeader(DisksAllocationModel model) {
-        String width = showQuota ? "85px" : "100px";
+        String width = showQuota ? "85px" : "100px"; //$NON-NLS-1$ //$NON-NLS-2$
         listHeader = new EntityModelCellTable(false, (Resources) GWT.create(
                 PopupSimpleTableResources.class), true);
-        listHeader.addColumn(new EmptyColumn(), "Alias", width);
-        listHeader.addColumn(new EmptyColumn(), "Provisioned Size", width);
+        listHeader.addColumn(new EmptyColumn(), constants.aliasDisk(), width);
+        listHeader.addColumn(new EmptyColumn(), constants.provisionedSizeDisk(), width);
 
         if (showVolumeType)
-            listHeader.addColumn(new EmptyColumn(), "Allocation", width);
+            listHeader.addColumn(new EmptyColumn(), constants.allocationDisk(), width);
 
         if (showSource)
-            listHeader.addColumn(new EmptyColumn(), "Source", width);
+            listHeader.addColumn(new EmptyColumn(), constants.sourceDisk(), width);
 
-        listHeader.addColumn(new EmptyColumn(), "Target", width);
+        listHeader.addColumn(new EmptyColumn(), constants.targetDisk(), width);
 
         if (showQuota)
-            listHeader.addColumn(new EmptyColumn(), "Quota", width);
+            listHeader.addColumn(new EmptyColumn(), constants.quotaDisk(), width);
 
         listHeader.setRowData(new ArrayList());
-        listHeader.setWidth("100%", true);
+        listHeader.setWidth("100%", true); //$NON-NLS-1$
 
         diskListHeaderPanel.setWidget(listHeader);
     }
@@ -180,10 +180,10 @@ public class DisksAllocationView extends Composite implements HasEditorDriver<Di
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 if (args instanceof PropertyChangedEventArgs) {
                     PropertyChangedEventArgs changedArgs = (PropertyChangedEventArgs) args;
-                    if ("Disks".equals(changedArgs.PropertyName)) {
+                    if ("Disks".equals(changedArgs.PropertyName)) { //$NON-NLS-1$
                         addDiskList(model);
                     }
-                    else if ("QuotaEnforcmentType".equals(changedArgs.PropertyName)) {
+                    else if ("QuotaEnforcmentType".equals(changedArgs.PropertyName)) { //$NON-NLS-1$
                         updateColumnsAvailability(model);
                         updateListHeader(model);
                     }
@@ -217,19 +217,19 @@ public class DisksAllocationView extends Composite implements HasEditorDriver<Di
             public String getValue(storage_domains storage) {
                 return storage.getstorage_name();
             }
-        }, "Name");
+        }, constants.nameDisk());
 
         storageTable.addColumn(new TextColumnWithTooltip<storage_domains>() {
             @Override
             public String getValue(storage_domains storage) {
                 if (storage.getavailable_disk_size() == null || storage.getavailable_disk_size() < 1) {
-                    return "< 1 GB";
+                    return "< 1 GB"; //$NON-NLS-1$
                 }
-                return storage.getavailable_disk_size() + " GB";
+                return storage.getavailable_disk_size() + " GB"; //$NON-NLS-1$
             }
-        }, "Free Space");
+        }, constants.freeSpaceDisk());
 
-        storageTable.setWidth("100%", true);
+        storageTable.setWidth("100%", true); //$NON-NLS-1$
     }
 
     @Override

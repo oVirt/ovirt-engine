@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.validation;
 
 import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
 public class CustomPropertyValidation implements IValidation
@@ -26,7 +27,7 @@ public class CustomPropertyValidation implements IValidation
             for (String customPropertyKey : customPropertiesKeysList)
             {
                 // make sure that only non-empty strings that contain '=' within them enter to the key list:
-                if (!StringHelper.isNullOrEmpty(customPropertyKey) && customPropertyKey.contains("="))
+                if (!StringHelper.isNullOrEmpty(customPropertyKey) && customPropertyKey.contains("=")) //$NON-NLS-1$
                 {
                     getCustomPropertiesKeysList().add(customPropertyKey);
                 }
@@ -39,8 +40,8 @@ public class CustomPropertyValidation implements IValidation
     {
         // check regex first
         RegexValidation tempVar = new RegexValidation();
-        tempVar.setExpression("(([a-zA-Z0-9_]+=[^;]+)+(;)?)(([a-zA-Z0-9_]+=[^;]+;+)*$)");
-        tempVar.setMessage("Field value should follow: <parameter=value;parameter=value;...>");
+        tempVar.setExpression("(([a-zA-Z0-9_]+=[^;]+)+(;)?)(([a-zA-Z0-9_]+=[^;]+;+)*$)"); //$NON-NLS-1$
+        tempVar.setMessage(ConstantsManager.getInstance().getConstants().fieldValueShouldFollowMsg());
         RegexValidation regexValidation = tempVar;
 
         ValidationResult validationResult = regexValidation.Validate(value);
@@ -51,13 +52,13 @@ public class CustomPropertyValidation implements IValidation
 
         String[] split;
 
-        if (value == null || StringHelper.stringsEqual(((String) (value)).trim(), ""))
+        if (value == null || StringHelper.stringsEqual(((String) (value)).trim(), "")) //$NON-NLS-1$
         {
             split = new String[0];
         }
         else
         {
-            split = ((String) value).split("[;]", -1);
+            split = ((String) value).split("[;]", -1); //$NON-NLS-1$
         }
         if (getCustomPropertiesKeysList() == null || getCustomPropertiesKeysList().isEmpty()
                 || StringHelper.isNullOrEmpty(getCustomPropertiesKeysList().get(0)))
@@ -86,14 +87,19 @@ public class CustomPropertyValidation implements IValidation
             }
             if (!contains)
             {
-                String reasonStr = "One of the parameters isn't supported";
-                reasonStr += " (available parameter(s): ";
+                String parameters = ""; //$NON-NLS-1$
+
                 for (String keyValue : getCustomPropertiesKeysList())
                 {
-                    reasonStr += keyValue.substring(0, keyValue.indexOf('=')) + ", ";
+                    parameters += keyValue.substring(0, keyValue.indexOf('=')) + ", "; //$NON-NLS-1$
                 }
-                reasonStr = reasonStr.substring(0, reasonStr.length() - 2);
-                reasonStr += ")";
+                parameters = parameters.substring(0, parameters.length() - 2);
+
+                String reasonStr =
+                        ConstantsManager.getInstance()
+                                .getMessages()
+                                .customPropertyOneOfTheParamsIsntSupported(parameters);
+
                 java.util.ArrayList<String> reason = new java.util.ArrayList<String>();
                 reason.add(reasonStr);
                 ValidationResult tempVar2 = new ValidationResult();
@@ -127,8 +133,10 @@ public class CustomPropertyValidation implements IValidation
         if (falseProperty != null)
         {
             java.util.ArrayList<String> reason = new java.util.ArrayList<String>();
-            reason.add("the value for parameter <" + falseProperty.substring(0, falseProperty.indexOf('='))
-                    + "> should be in the format of: <" + falseProperty.substring(falseProperty.indexOf('=') + 1) + ">");
+            reason.add(ConstantsManager.getInstance()
+                    .getMessages()
+                    .customPropertyValueShouldBeInFormatReason(falseProperty.substring(0, falseProperty.indexOf('=')),
+                            falseProperty.substring(falseProperty.indexOf('=') + 1)));
             ValidationResult tempVar4 = new ValidationResult();
             tempVar4.setSuccess(false);
             tempVar4.setReasons(reason);

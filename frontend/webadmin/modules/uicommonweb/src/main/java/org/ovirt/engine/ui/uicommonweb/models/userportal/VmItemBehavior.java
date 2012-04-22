@@ -28,6 +28,7 @@ import org.ovirt.engine.ui.uicommonweb.models.configure.ChangeCDModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.RdpConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.SpiceConsoleModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
@@ -50,7 +51,7 @@ public class VmItemBehavior extends ItemBehavior
     public void EntityPropertyChanged(PropertyChangedEventArgs e)
     {
         UpdateProperties();
-        if (e.PropertyName.equals("status"))
+        if (e.PropertyName.equals("status")) //$NON-NLS-1$
         {
             UpdateActionAvailability();
         }
@@ -101,14 +102,14 @@ public class VmItemBehavior extends ItemBehavior
 
         // TODO: Patch!
         String imageName = model.getTitle();
-        if (StringHelper.stringsEqual(imageName, "No CDs"))
+        if (StringHelper.stringsEqual(imageName, "No CDs")) //$NON-NLS-1$
         {
             return;
         }
 
         Frontend.RunAction(VdcActionType.ChangeDisk,
                 new ChangeDiskCommandParameters(entity.getId(), StringHelper.stringsEqual(imageName,
-                        ConsoleModel.EjectLabel) ? "" : imageName));
+                        ConsoleModel.EjectLabel) ? "" : imageName)); //$NON-NLS-1$
     }
 
     private void ReturnVm()
@@ -168,7 +169,7 @@ public class VmItemBehavior extends ItemBehavior
                             {
                                 UserPortalItemModel userPortalItemModel = vmItemBehavior.getItem();
                                 ChangeCDModel tempVar2 = new ChangeCDModel();
-                                tempVar2.setTitle("No CDs");
+                                tempVar2.setTitle(ConstantsManager.getInstance().getConstants().noCDsTitle());
                                 userPortalItemModel.getCdImages().add(tempVar2);
                             }
                         }

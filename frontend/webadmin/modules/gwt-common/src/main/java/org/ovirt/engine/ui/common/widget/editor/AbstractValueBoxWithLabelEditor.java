@@ -33,7 +33,7 @@ public abstract class AbstractValueBoxWithLabelEditor<T, W extends EditorWidget<
     }
 
     public void setAutoComplete(String value) {
-        asValueBox().asWidget().getElement().setAttribute("autocomplete", "off");
+        asValueBox().asWidget().getElement().setAttribute("autocomplete", "off"); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
 }

@@ -6,6 +6,7 @@ import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
 public abstract class ManageBackupModel extends SearchableListModel
@@ -58,14 +59,14 @@ public abstract class ManageBackupModel extends SearchableListModel
         if (isRefreshing != value)
         {
             isRefreshing = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsRefreshing"));
+            OnPropertyChanged(new PropertyChangedEventArgs("IsRefreshing")); //$NON-NLS-1$
         }
     }
 
     protected ManageBackupModel()
     {
-        setRestoreCommand(new UICommand("Restore", this));
-        setRemoveCommand(new UICommand("Remove", this));
+        setRestoreCommand(new UICommand("Restore", this)); //$NON-NLS-1$
+        setRemoveCommand(new UICommand("Remove", this)); //$NON-NLS-1$
     }
 
     protected void remove()
@@ -92,7 +93,7 @@ public abstract class ManageBackupModel extends SearchableListModel
     {
         super.EntityPropertyChanged(sender, e);
 
-        if (e.PropertyName.equals("storage_domain_shared_status"))
+        if (e.PropertyName.equals("storage_domain_shared_status")) //$NON-NLS-1$
         {
             CheckStorageStatus();
         }
@@ -116,11 +117,11 @@ public abstract class ManageBackupModel extends SearchableListModel
             if (getEntity().getstorage_domain_shared_status() == StorageDomainSharedStatus.InActive
                     || getEntity().getstorage_domain_shared_status() == StorageDomainSharedStatus.Mixed)
             {
-                setMessage("The Export Domain is inactive. Data can be retrieved only when the Domain is activated");
+                setMessage(ConstantsManager.getInstance().getConstants().theExportDomainIsInactiveMsg());
             }
             else if (getEntity().getstorage_domain_shared_status() == StorageDomainSharedStatus.Unattached)
             {
-                setMessage("Export Domain is not attached to any Data Center. Data can be retrieved only when the Domain is attached to a Data Center and is active");
+                setMessage(ConstantsManager.getInstance().getConstants().ExportDomainIsNotAttachedToAnyDcMsg());
             }
             else
             {
@@ -171,11 +172,11 @@ public abstract class ManageBackupModel extends SearchableListModel
         {
             remove();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "Cancel"))
+        else if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
         {
             Cancel();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "CancelConfirm"))
+        else if (StringHelper.stringsEqual(command.getName(), "CancelConfirm")) //$NON-NLS-1$
         {
             CancelConfirm();
         }

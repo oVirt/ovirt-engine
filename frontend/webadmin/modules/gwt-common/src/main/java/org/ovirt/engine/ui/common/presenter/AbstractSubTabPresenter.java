@@ -209,7 +209,7 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 PropertyChangedEventArgs pcArgs = (PropertyChangedEventArgs) args;
-                if ("Progress".equals(pcArgs.PropertyName)) {
+                if ("Progress".equals(pcArgs.PropertyName)) { //$NON-NLS-1$
                     if (modelProvider.getModel().getProgress() != null) {
                         getView().setLoadingState(LoadingState.LOADING);
                     }
@@ -230,7 +230,7 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
             // This usually happens with synthetic item types that wrap multiple
             // logical entities into single type. Since views can typically edit
             // a single item type, we can do nothing here.
-            logger.warning("Detail model entity type is different from main model item type");
+            logger.warning("Detail model entity type is different from main model item type"); //$NON-NLS-1$
         }
     }
 

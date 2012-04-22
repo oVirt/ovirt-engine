@@ -15,6 +15,7 @@ import org.ovirt.engine.ui.uicommonweb.ReportInit;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabVirtualMachinePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
@@ -38,15 +39,15 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
 
     @Inject
     public MainTabVirtualMachineView(MainModelProvider<VM, VmListModel> modelProvider,
-            ApplicationResources resources) {
+            ApplicationResources resources, ApplicationConstants constants) {
         super(modelProvider);
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        initTable(resources);
+        initTable(resources, constants);
         initWidget(getTable());
     }
 
-    void initTable(ApplicationResources resources) {
-        getTable().addColumn(new VmStatusColumn(), "", "30px");
+    void initTable(ApplicationResources resources, ApplicationConstants constants) {
+        getTable().addColumn(new VmStatusColumn(), constants.empty(), "30px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VM> nameColumn = new TextColumnWithTooltip<VM>() {
             @Override
@@ -54,9 +55,9 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
                 return object.getvm_name();
             }
         };
-        getTable().addColumn(nameColumn, "Name", "150px");
+        getTable().addColumn(nameColumn, constants.nameVm(), "150px"); //$NON-NLS-1$
 
-        getTable().addColumn(new VmTypeColumn(), "", "40px");
+        getTable().addColumn(new VmTypeColumn(), constants.empty(), "40px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VM> clusterColumn = new TextColumnWithTooltip<VM>() {
             @Override
@@ -64,7 +65,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
                 return object.getvds_group_name();
             }
         };
-        getTable().addColumn(clusterColumn, "Cluster", "100px");
+        getTable().addColumn(clusterColumn, constants.clusterVm(), "100px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VM> hostColumn = new TextColumnWithTooltip<VM>() {
             @Override
@@ -72,7 +73,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
                 return object.getrun_on_vds_name();
             }
         };
-        getTable().addColumn(hostColumn, "Host", "100px");
+        getTable().addColumn(hostColumn, constants.hostVm(), "100px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VM> ipColumn = new TextColumnWithTooltip<VM>() {
             @Override
@@ -80,7 +81,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
                 return object.getvm_ip();
             }
         };
-        getTable().addColumn(ipColumn, "IP Address", "100px");
+        getTable().addColumn(ipColumn, constants.ipVm(), "100px"); //$NON-NLS-1$
 
         PercentColumn<VM> memoryColumn = new PercentColumn<VM>() {
             @Override
@@ -88,7 +89,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
                 return object.getusage_mem_percent();
             }
         };
-        getTable().addColumn(memoryColumn, "Memory", "60px");
+        getTable().addColumn(memoryColumn, constants.memoryVm(), "60px"); //$NON-NLS-1$
 
         PercentColumn<VM> cpuColumn = new PercentColumn<VM>() {
             @Override
@@ -96,7 +97,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
                 return object.getusage_cpu_percent();
             }
         };
-        getTable().addColumn(cpuColumn, "CPU", "60px");
+        getTable().addColumn(cpuColumn, constants.cpuVm(), "60px"); //$NON-NLS-1$
 
         PercentColumn<VM> networkColumn = new PercentColumn<VM>() {
             @Override
@@ -104,7 +105,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
                 return object.getusage_network_percent();
             }
         };
-        getTable().addColumn(networkColumn, "Network", "60px");
+        getTable().addColumn(networkColumn, constants.networkVm(), "60px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VM> displayColumn = new EnumColumn<VM, DisplayType>() {
             @Override
@@ -115,12 +116,12 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
             @Override
             public String getValue(VM object) {
                 if ((object.getstatus() == VMStatus.Down) || (object.getstatus() == VMStatus.ImageLocked))
-                    return "";
+                    return ""; //$NON-NLS-1$
                 else
                     return renderer.render(getRawValue(object));
             }
         };
-        getTable().addColumn(displayColumn, "Display", "70px");
+        getTable().addColumn(displayColumn, constants.displayVm(), "70px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VM> statusColumn = new EnumColumn<VM, VMStatus>() {
             @Override
@@ -128,7 +129,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
                 return object.getstatus();
             }
         };
-        getTable().addColumn(statusColumn, "Status", "90px");
+        getTable().addColumn(statusColumn, constants.statusVm(), "90px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VM> uptimeColumn = new UptimeColumn<VM>() {
             @Override
@@ -136,79 +137,79 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
                 return object.getRoundedElapsedTime();
             }
         };
-        getTable().addColumn(uptimeColumn, "Uptime", "70px");
+        getTable().addColumn(uptimeColumn, constants.uptimeVm(), "70px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VM> loggedInUserColumn = new TextColumnWithTooltip<VM>() {
             @Override
             public String getValue(VM object) {
                 if (object.getguest_cur_user_name() == null) {
-                    return "";
+                    return ""; //$NON-NLS-1$
                 }
                 return String.valueOf(object.getguest_cur_user_name());
             }
         };
-        getTable().addColumn(loggedInUserColumn, "Logged-in User", "90px");
+        getTable().addColumn(loggedInUserColumn, constants.loggedInUserVm(), "90px"); //$NON-NLS-1$
 
-        getTable().addActionButton(new WebAdminButtonDefinition<VM>("New Server") {
+        getTable().addActionButton(new WebAdminButtonDefinition<VM>(constants.newServerVm()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getNewServerCommand();
             }
         });
-        getTable().addActionButton(new WebAdminButtonDefinition<VM>("New Desktop") {
+        getTable().addActionButton(new WebAdminButtonDefinition<VM>(constants.newDesktopVm()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getNewDesktopCommand();
             }
         });
-        getTable().addActionButton(new WebAdminButtonDefinition<VM>("Edit") {
+        getTable().addActionButton(new WebAdminButtonDefinition<VM>(constants.editVm()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getEditCommand();
             }
         });
-        getTable().addActionButton(new WebAdminButtonDefinition<VM>("Remove") {
+        getTable().addActionButton(new WebAdminButtonDefinition<VM>(constants.removeVm()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getRemoveCommand();
             }
         });
         // TODO: separator
-        getTable().addActionButton(new WebAdminButtonDefinition<VM>("Run Once") {
+        getTable().addActionButton(new WebAdminButtonDefinition<VM>(constants.runOnceVm()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getRunOnceCommand();
             }
         });
-        getTable().addActionButton(new WebAdminImageButtonDefinition<VM>("Run",
+        getTable().addActionButton(new WebAdminImageButtonDefinition<VM>(constants.runVm(),
                 resources.runVmImage(), resources.runVmDisabledImage()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getRunCommand();
             }
         });
-        getTable().addActionButton(new WebAdminImageButtonDefinition<VM>("Suspend",
+        getTable().addActionButton(new WebAdminImageButtonDefinition<VM>(constants.suspendVm(),
                 resources.pauseVmImage(), resources.pauseVmDisabledImage()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getPauseCommand();
             }
         });
-        getTable().addActionButton(new WebAdminImageButtonDefinition<VM>("Shut down",
+        getTable().addActionButton(new WebAdminImageButtonDefinition<VM>(constants.shutDownVm(),
                 resources.stopVmImage(), resources.stopVmDisabledImage()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getShutdownCommand();
             }
         });
-        getTable().addActionButton(new WebAdminButtonDefinition<VM>("Stop", CommandLocation.OnlyFromFromContext) {
+        getTable().addActionButton(new WebAdminButtonDefinition<VM>(constants.stopVm(), CommandLocation.OnlyFromFromContext) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getStopCommand();
             }
         });
         // TODO: separator
-        getTable().addActionButton(new WebAdminImageButtonDefinition<VM>("Console",
+        getTable().addActionButton(new WebAdminImageButtonDefinition<VM>(constants.consoleVm(),
                 resources.consoleImage(), resources.consoleDisabledImage()) {
             @Override
             protected UICommand resolveCommand() {
@@ -217,46 +218,46 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
             }
         });
         // TODO: separator
-        getTable().addActionButton(new WebAdminButtonDefinition<VM>("Migrate") {
+        getTable().addActionButton(new WebAdminButtonDefinition<VM>(constants.migrateVm()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getMigrateCommand();
             }
         });
         // TODO: separator
-        getTable().addActionButton(new WebAdminButtonDefinition<VM>("Cancel Migration") {
+        getTable().addActionButton(new WebAdminButtonDefinition<VM>(constants.cancelMigrationVm()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getCancelMigrateCommand();
             }
         });
         // TODO: separator
-        getTable().addActionButton(new WebAdminButtonDefinition<VM>("Make Template") {
+        getTable().addActionButton(new WebAdminButtonDefinition<VM>(constants.makeTemplateVm()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getNewTemplateCommand();
             }
         });
         // TODO: separator
-        getTable().addActionButton(new WebAdminButtonDefinition<VM>("Export") {
+        getTable().addActionButton(new WebAdminButtonDefinition<VM>(constants.exportVm()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getExportCommand();
             }
         });
-        getTable().addActionButton(new WebAdminButtonDefinition<VM>("Move") {
+        getTable().addActionButton(new WebAdminButtonDefinition<VM>(constants.moveVm()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getMoveCommand();
             }
         });
-        getTable().addActionButton(new WebAdminButtonDefinition<VM>("Change CD") {
+        getTable().addActionButton(new WebAdminButtonDefinition<VM>(constants.cheangeCdVm()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getChangeCdCommand();
             }
         });
-        getTable().addActionButton(new WebAdminButtonDefinition<VM>("Assign Tags") {
+        getTable().addActionButton(new WebAdminButtonDefinition<VM>(constants.assignTagsVm()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getAssignTagsCommand();
@@ -265,14 +266,14 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
 
         if (ReportInit.getInstance().isReportsEnabled()) {
             List<ActionButtonDefinition<VM>> resourceSubActions =
-                    ReportActionsHelper.getInstance().getResourceSubActions("VM", getMainModel());
+                    ReportActionsHelper.getInstance().getResourceSubActions("VM", getMainModel()); //$NON-NLS-1$
             if (resourceSubActions != null && resourceSubActions.size() > 0) {
-                getTable().addActionButton(new WebAdminMenuBarButtonDefinition<VM>("Show Report",
+                getTable().addActionButton(new WebAdminMenuBarButtonDefinition<VM>(constants.showReportVm(),
                         resourceSubActions));
             }
         }
 
-        getTable().addActionButton(new WebAdminImageButtonDefinition<VM>("Guide Me",
+        getTable().addActionButton(new WebAdminImageButtonDefinition<VM>(constants.guideMeVm(),
                 resources.guideSmallImage(), resources.guideSmallDisabledImage(), true) {
             @Override
             protected UICommand resolveCommand() {

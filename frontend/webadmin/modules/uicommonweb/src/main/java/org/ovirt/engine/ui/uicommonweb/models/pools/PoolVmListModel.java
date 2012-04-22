@@ -16,6 +16,7 @@ import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
@@ -48,9 +49,10 @@ public class PoolVmListModel extends VmListModel
 
     public PoolVmListModel()
     {
-        setTitle("Virtual Machines");
+        setTitle(ConstantsManager.getInstance().getConstants().virtualMachinesTitle());
+        setHashName("virtual_machines"); //$NON-NLS-1$
 
-        setDetachCommand(new UICommand("Detach", this));
+        setDetachCommand(new UICommand("Detach", this)); //$NON-NLS-1$
 
         UpdateActionAvailability();
     }
@@ -67,7 +69,7 @@ public class PoolVmListModel extends VmListModel
     {
         if (getEntity() != null)
         {
-            setSearchString(StringFormat.format("Vms: pool=%1$s", getEntity().getvm_pool_name()));
+            setSearchString(StringFormat.format("Vms: pool=%1$s", getEntity().getvm_pool_name())); //$NON-NLS-1$
             super.Search();
         }
     }
@@ -77,7 +79,7 @@ public class PoolVmListModel extends VmListModel
     {
         super.EntityPropertyChanged(sender, e);
 
-        if (e.PropertyName.equals("vm_pool_name"))
+        if (e.PropertyName.equals("vm_pool_name")) //$NON-NLS-1$
         {
             getSearchCommand().Execute();
         }
@@ -92,8 +94,8 @@ public class PoolVmListModel extends VmListModel
 
         ConfirmationModel model = new ConfirmationModel();
         setWindow(model);
-        model.setTitle("Detach Virtual Machine(s)");
-        model.setHashName("detach_virtual_machine");
+        model.setTitle(ConstantsManager.getInstance().getConstants().detachVirtualMachinesTitle());
+        model.setHashName("detach_virtual_machine"); //$NON-NLS-1$
 
         java.util.ArrayList<String> list = new java.util.ArrayList<String>();
         for (Object item : getSelectedItems())
@@ -104,14 +106,16 @@ public class PoolVmListModel extends VmListModel
         Collections.sort(list);
         model.setItems(list);
 
-        model.setMessage("Are you sure you want to detach selected Virtual Machine(s)?");
+        model.setMessage(ConstantsManager.getInstance()
+                .getConstants()
+                .areYouSurYouWantToDetachSelectedVirtualMachinesMsg());
 
-        UICommand tempVar = new UICommand("OnDetach", this);
-        tempVar.setTitle("OK");
+        UICommand tempVar = new UICommand("OnDetach", this); //$NON-NLS-1$
+        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
         tempVar.setIsDefault(true);
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this);
-        tempVar2.setTitle("Cancel");
+        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
+        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         tempVar2.setIsCancel(true);
         model.getCommands().add(tempVar2);
     }
@@ -170,7 +174,7 @@ public class PoolVmListModel extends VmListModel
         // 'if-else' logic:
         // switch (e.PropertyName)
         // ORIGINAL LINE: case "status":
-        if (e.PropertyName.equals("status"))
+        if (e.PropertyName.equals("status")) //$NON-NLS-1$
         {
             UpdateActionAvailability();
         }
@@ -204,11 +208,11 @@ public class PoolVmListModel extends VmListModel
         {
             Detach();
         }
-        if (StringHelper.stringsEqual(command.getName(), "OnDetach"))
+        if (StringHelper.stringsEqual(command.getName(), "OnDetach")) //$NON-NLS-1$
         {
             OnDetach();
         }
-        if (StringHelper.stringsEqual(command.getName(), "Cancel"))
+        if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
         {
             Cancel();
         }

@@ -26,6 +26,7 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.DataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
 import org.ovirt.engine.ui.uicompat.Translator;
 
@@ -58,7 +59,7 @@ public class VmGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(name, value))
         {
             name = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Name"));
+            OnPropertyChanged(new PropertyChangedEventArgs("Name")); //$NON-NLS-1$
         }
     }
 
@@ -74,7 +75,7 @@ public class VmGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(description, value))
         {
             description = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Description"));
+            OnPropertyChanged(new PropertyChangedEventArgs("Description")); //$NON-NLS-1$
         }
     }
 
@@ -90,7 +91,7 @@ public class VmGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(template, value))
         {
             template = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Template"));
+            OnPropertyChanged(new PropertyChangedEventArgs("Template")); //$NON-NLS-1$
         }
     }
 
@@ -106,7 +107,7 @@ public class VmGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(definedMemory, value))
         {
             definedMemory = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("DefinedMemory"));
+            OnPropertyChanged(new PropertyChangedEventArgs("DefinedMemory")); //$NON-NLS-1$
         }
     }
 
@@ -122,7 +123,7 @@ public class VmGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(minAllocatedMemory, value))
         {
             minAllocatedMemory = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("MinAllocatedMemory"));
+            OnPropertyChanged(new PropertyChangedEventArgs("MinAllocatedMemory")); //$NON-NLS-1$
         }
     }
 
@@ -138,7 +139,7 @@ public class VmGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(os, value))
         {
             os = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("OS"));
+            OnPropertyChanged(new PropertyChangedEventArgs("OS")); //$NON-NLS-1$
         }
     }
 
@@ -154,7 +155,7 @@ public class VmGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(defaultDisplayType, value))
         {
             defaultDisplayType = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("DefaultDisplayType"));
+            OnPropertyChanged(new PropertyChangedEventArgs("DefaultDisplayType")); //$NON-NLS-1$
         }
     }
 
@@ -170,7 +171,7 @@ public class VmGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(origin, value))
         {
             origin = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Origin"));
+            OnPropertyChanged(new PropertyChangedEventArgs("Origin")); //$NON-NLS-1$
         }
     }
 
@@ -196,7 +197,7 @@ public class VmGeneralModel extends EntityModel
         if (monitorCount != value)
         {
             monitorCount = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("MonitorCount"));
+            OnPropertyChanged(new PropertyChangedEventArgs("MonitorCount")); //$NON-NLS-1$
         }
     }
 
@@ -212,7 +213,7 @@ public class VmGeneralModel extends EntityModel
         if (hasMonitorCount != value)
         {
             hasMonitorCount = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("HasMonitorCount"));
+            OnPropertyChanged(new PropertyChangedEventArgs("HasMonitorCount")); //$NON-NLS-1$
         }
     }
 
@@ -228,7 +229,7 @@ public class VmGeneralModel extends EntityModel
         if (hasDomain != value)
         {
             hasDomain = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("HasDomain"));
+            OnPropertyChanged(new PropertyChangedEventArgs("HasDomain")); //$NON-NLS-1$
         }
     }
 
@@ -244,7 +245,7 @@ public class VmGeneralModel extends EntityModel
         if (hasStorageDomain != value)
         {
             hasStorageDomain = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("HasStorageDomain"));
+            OnPropertyChanged(new PropertyChangedEventArgs("HasStorageDomain")); //$NON-NLS-1$
         }
     }
 
@@ -260,7 +261,7 @@ public class VmGeneralModel extends EntityModel
         if (hasTimeZone != value)
         {
             hasTimeZone = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("HasTimeZone"));
+            OnPropertyChanged(new PropertyChangedEventArgs("HasTimeZone")); //$NON-NLS-1$
         }
     }
 
@@ -276,7 +277,7 @@ public class VmGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(usbPolicy, value))
         {
             usbPolicy = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("UsbPolicy"));
+            OnPropertyChanged(new PropertyChangedEventArgs("UsbPolicy")); //$NON-NLS-1$
         }
     }
 
@@ -292,7 +293,7 @@ public class VmGeneralModel extends EntityModel
         if (hasUsbPolicy != value)
         {
             hasUsbPolicy = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("HasUsbPolicy"));
+            OnPropertyChanged(new PropertyChangedEventArgs("HasUsbPolicy")); //$NON-NLS-1$
         }
     }
 
@@ -308,7 +309,7 @@ public class VmGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(cpuInfo, value))
         {
             cpuInfo = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("CpuInfo"));
+            OnPropertyChanged(new PropertyChangedEventArgs("CpuInfo")); //$NON-NLS-1$
         }
     }
 
@@ -324,7 +325,7 @@ public class VmGeneralModel extends EntityModel
         if (hasHighlyAvailable != value)
         {
             hasHighlyAvailable = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("HasHighlyAvailable"));
+            OnPropertyChanged(new PropertyChangedEventArgs("HasHighlyAvailable")); //$NON-NLS-1$
         }
     }
 
@@ -340,7 +341,7 @@ public class VmGeneralModel extends EntityModel
         if (isHighlyAvailable != value)
         {
             isHighlyAvailable = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsHighlyAvailable"));
+            OnPropertyChanged(new PropertyChangedEventArgs("IsHighlyAvailable")); //$NON-NLS-1$
         }
     }
 
@@ -356,7 +357,7 @@ public class VmGeneralModel extends EntityModel
         if (hasPriority != value)
         {
             hasPriority = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("HasPriority"));
+            OnPropertyChanged(new PropertyChangedEventArgs("HasPriority")); //$NON-NLS-1$
         }
     }
 
@@ -372,7 +373,7 @@ public class VmGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(priority, value))
         {
             priority = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Priority"));
+            OnPropertyChanged(new PropertyChangedEventArgs("Priority")); //$NON-NLS-1$
         }
     }
 
@@ -388,7 +389,7 @@ public class VmGeneralModel extends EntityModel
         if (hasAlert != value)
         {
             hasAlert = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("HasAlert"));
+            OnPropertyChanged(new PropertyChangedEventArgs("HasAlert")); //$NON-NLS-1$
         }
     }
 
@@ -404,7 +405,7 @@ public class VmGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(alert, value))
         {
             alert = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Alert"));
+            OnPropertyChanged(new PropertyChangedEventArgs("Alert")); //$NON-NLS-1$
         }
     }
 
@@ -420,7 +421,7 @@ public class VmGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(domain, value))
         {
             domain = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Domain"));
+            OnPropertyChanged(new PropertyChangedEventArgs("Domain")); //$NON-NLS-1$
         }
     }
 
@@ -436,7 +437,7 @@ public class VmGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(storageDomain, value))
         {
             storageDomain = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("StorageDomain"));
+            OnPropertyChanged(new PropertyChangedEventArgs("StorageDomain")); //$NON-NLS-1$
         }
     }
 
@@ -452,7 +453,7 @@ public class VmGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(timeZone, value))
         {
             timeZone = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("TimeZone"));
+            OnPropertyChanged(new PropertyChangedEventArgs("TimeZone")); //$NON-NLS-1$
         }
     }
 
@@ -468,7 +469,7 @@ public class VmGeneralModel extends EntityModel
         if (hasDefaultHost != value)
         {
             hasDefaultHost = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("HasDefaultHost"));
+            OnPropertyChanged(new PropertyChangedEventArgs("HasDefaultHost")); //$NON-NLS-1$
         }
     }
 
@@ -484,7 +485,7 @@ public class VmGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(defaultHost, value))
         {
             defaultHost = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("DefaultHost"));
+            OnPropertyChanged(new PropertyChangedEventArgs("DefaultHost")); //$NON-NLS-1$
         }
     }
 
@@ -500,7 +501,7 @@ public class VmGeneralModel extends EntityModel
         if (hasCustomProperties != value)
         {
             hasCustomProperties = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("HasCustomProperties"));
+            OnPropertyChanged(new PropertyChangedEventArgs("HasCustomProperties")); //$NON-NLS-1$
         }
     }
 
@@ -516,7 +517,7 @@ public class VmGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(customProperties, value))
         {
             customProperties = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("CustomProperties"));
+            OnPropertyChanged(new PropertyChangedEventArgs("CustomProperties")); //$NON-NLS-1$
         }
     }
 
@@ -532,20 +533,21 @@ public class VmGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(compatibilityVersion, value))
         {
             compatibilityVersion = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("CompatibilityVersion"));
+            OnPropertyChanged(new PropertyChangedEventArgs("CompatibilityVersion")); //$NON-NLS-1$
         }
     }
 
     static
     {
-        UpdateCompleteEventDefinition = new EventDefinition("UpdateComplete", VmGeneralModel.class);
+        UpdateCompleteEventDefinition = new EventDefinition("UpdateComplete", VmGeneralModel.class); //$NON-NLS-1$
     }
 
     public VmGeneralModel()
     {
         setUpdateCompleteEvent(new Event(UpdateCompleteEventDefinition));
 
-        setTitle("General");
+        setTitle(ConstantsManager.getInstance().getConstants().generalTitle());
+        setHashName("general"); //$NON-NLS-1$
     }
 
     @Override
@@ -573,10 +575,10 @@ public class VmGeneralModel extends EntityModel
 
         setName(vm.getvm_name());
         setDescription(vm.getvm_description());
-        setQuotaName(vm.getQuotaName() != null ? vm.getQuotaName() : "");
+        setQuotaName(vm.getQuotaName() != null ? vm.getQuotaName() : ""); //$NON-NLS-1$
         setTemplate(vm.getvmt_name());
-        setDefinedMemory(vm.getvm_mem_size_mb() + " MB");
-        setMinAllocatedMemory(vm.getMinAllocatedMem() + " MB");
+        setDefinedMemory(vm.getvm_mem_size_mb() + " MB"); //$NON-NLS-1$
+        setMinAllocatedMemory(vm.getMinAllocatedMem() + " MB"); //$NON-NLS-1$
 
         Translator translator = EnumTranslator.Create(VmOsType.class);
         setOS(translator.get(vm.getvm_os()));
@@ -600,8 +602,8 @@ public class VmGeneralModel extends EntityModel
         translator = EnumTranslator.Create(UsbPolicy.class);
         setUsbPolicy(translator.get(vm.getusb_policy()));
 
-        setCpuInfo(vm.getnum_of_cpus() + " " + "(" + vm.getnum_of_sockets() + " Socket(s), " + vm.getcpu_per_socket()
-                + " Core(s) per Socket)");
+        setCpuInfo(vm.getnum_of_cpus() + " " + "(" + vm.getnum_of_sockets() + " Socket(s), " + vm.getcpu_per_socket() //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                + " Core(s) per Socket)"); //$NON-NLS-1$
 
         setHasDomain(DataProvider.IsWindowsOsType(vm.getvm_os()));
         setDomain(vm.getvm_domain());
@@ -609,11 +611,11 @@ public class VmGeneralModel extends EntityModel
         setHasTimeZone(DataProvider.IsWindowsOsType(vm.getvm_os()));
         setTimeZone(vm.gettime_zone());
 
-        setHasCustomProperties(!StringHelper.stringsEqual(vm.getCustomProperties(), ""));
-        setCustomProperties(getHasCustomProperties() ? "Configured" : "Not-Configured");
+        setHasCustomProperties(!StringHelper.stringsEqual(vm.getCustomProperties(), "")); //$NON-NLS-1$
+        setCustomProperties(getHasCustomProperties() ? "Configured" : "Not-Configured"); //$NON-NLS-1$ //$NON-NLS-2$
 
         setCompatibilityVersion(vm.getvds_group_compatibility_version() != null ?
-                vm.getvds_group_compatibility_version().toString() : "");
+                vm.getvds_group_compatibility_version().toString() : ""); //$NON-NLS-1$
 
         setHasAlert(vm.getVmPauseStatus() != VmPauseStatus.NONE && vm.getVmPauseStatus() != VmPauseStatus.NOERR);
         if (getHasAlert())
@@ -629,8 +631,8 @@ public class VmGeneralModel extends EntityModel
         setHasDefaultHost(vm.getdedicated_vm_for_vds() != null);
         if (getHasDefaultHost())
         {
-            Frontend.RunQuery(VdcQueryType.Search, new SearchParameters("Host: cluster = " + vm.getvds_group_name()
-                    + " sortby name", SearchType.VDS), new AsyncQuery(this,
+            Frontend.RunQuery(VdcQueryType.Search, new SearchParameters("Host: cluster = " + vm.getvds_group_name() //$NON-NLS-1$
+                    + " sortby name", SearchType.VDS), new AsyncQuery(this, //$NON-NLS-1$
                     new INewAsyncCallback() {
                         @Override
                         public void OnSuccess(Object target, Object returnValue) {
@@ -658,7 +660,7 @@ public class VmGeneralModel extends EntityModel
         }
         else
         {
-            setDefaultHost("Any Host in Cluster");
+            setDefaultHost("Any Host in Cluster"); //$NON-NLS-1$
         }
     }
 
@@ -723,19 +725,19 @@ public class VmGeneralModel extends EntityModel
 
         if (roundedPriority == 1)
         {
-            return "Low";
+            return "Low"; //$NON-NLS-1$
         }
         else if (roundedPriority == DataProvider.GetMaxVmPriority() / 2)
         {
-            return "Medium";
+            return "Medium"; //$NON-NLS-1$
         }
         else if (roundedPriority == DataProvider.GetMaxVmPriority())
         {
-            return "High";
+            return "High"; //$NON-NLS-1$
         }
         else
         {
-            return "Unknown";
+            return "Unknown"; //$NON-NLS-1$
         }
     }
 }

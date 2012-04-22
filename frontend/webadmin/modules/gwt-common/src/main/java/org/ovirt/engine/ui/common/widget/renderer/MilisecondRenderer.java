@@ -12,7 +12,7 @@ public class MilisecondRenderer extends AbstractRenderer<Integer> {
 
     @Override
     public String render(Integer object) {
-        return object / 1000 + " sec";
+        return object / 1000 + " sec"; //$NON-NLS-1$
     }
 
 }

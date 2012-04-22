@@ -11,6 +11,8 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.ImportSanStorageModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.SanStorageModelBase;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiField;
@@ -25,6 +27,7 @@ public class SanImportStorageView extends AbstractSanStorageView {
     Label errorMessage;
 
     EntityModelCellTable<ListModel> table;
+    private ApplicationConstants constants = ClientGinjectorProvider.instance().getApplicationConstants();
 
     @Override
     protected void initLists(SanStorageModelBase object) {
@@ -35,7 +38,7 @@ public class SanImportStorageView extends AbstractSanStorageView {
             public String getValue(storage_domains storage) {
                 return storage.getstorage_name();
             }
-        }, "Name");
+        }, constants.nameSanImStorage());
 
         table.addColumn(new EntityModelEnumColumn<storage_domains, StorageFormatType>() {
 
@@ -44,9 +47,9 @@ public class SanImportStorageView extends AbstractSanStorageView {
                 return
                 storage.getStorageStaticData().getStorageFormat();
             }
-        }, "Format", "80px");
+        }, constants.formatSanImStorage(), "80px"); //$NON-NLS-1$
 
-        table.setColumnWidth(table.getColumn(0), "20px");
+        table.setColumnWidth(table.getColumn(0), "20px"); //$NON-NLS-1$
 
         listPanel.add(table);
     }

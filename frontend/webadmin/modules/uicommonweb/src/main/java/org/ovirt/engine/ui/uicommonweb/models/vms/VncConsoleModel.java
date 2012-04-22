@@ -10,6 +10,7 @@ import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.DataProvider;
 import org.ovirt.engine.ui.uicommonweb.TypeResolver;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
 public class VncConsoleModel extends ConsoleModel
@@ -18,7 +19,7 @@ public class VncConsoleModel extends ConsoleModel
 
     public VncConsoleModel()
     {
-        setTitle("VNC");
+        setTitle(ConstantsManager.getInstance().getConstants().VNCTitle());
 
         vnc = (IVnc) TypeResolver.getInstance().Resolve(IVnc.class);
     }
@@ -28,7 +29,7 @@ public class VncConsoleModel extends ConsoleModel
     {
         if (getEntity() != null)
         {
-            getLogger().Debug("Connecting to VNC console...");
+            getLogger().Debug("Connecting to VNC console..."); //$NON-NLS-1$
 
             // Don't connect if there VM is not running on any host.
             if (getEntity().getrun_on_vds() == null)
@@ -39,7 +40,7 @@ public class VncConsoleModel extends ConsoleModel
             // Determine the display IP.
             String displayIp = getEntity().getdisplay_ip();
             if (StringHelper.isNullOrEmpty(getEntity().getdisplay_ip())
-                    || StringHelper.stringsEqual(getEntity().getdisplay_ip(), "0"))
+                    || StringHelper.stringsEqual(getEntity().getdisplay_ip(), "0")) //$NON-NLS-1$
             {
                 VDS host = DataProvider.GetHostById(getEntity().getrun_on_vds().getValue());
                 if (host == null)
@@ -73,7 +74,7 @@ public class VncConsoleModel extends ConsoleModel
                 UpdateActionAvailability();
             } catch (RuntimeException ex)
             {
-                getLogger().Error("Exception on VNC connect", ex);
+                getLogger().Error("Exception on VNC connect", ex); //$NON-NLS-1$
             }
         }
     }

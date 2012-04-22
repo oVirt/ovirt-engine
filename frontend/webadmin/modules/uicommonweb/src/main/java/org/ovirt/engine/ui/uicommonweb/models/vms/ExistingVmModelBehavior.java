@@ -143,10 +143,10 @@ public class ExistingVmModelBehavior extends IVmModelBehavior
             getModel().getTimeZone().setIsChangable(false);
             getModel().getTimeZone()
                     .getChangeProhibitionReasons()
-                    .add("Time Zone cannot be change since the Virtual Machine was booted at the first time.");
+                    .add("Time Zone cannot be change since the Virtual Machine was booted at the first time."); //$NON-NLS-1$
         }
 
-        getModel().getTimeZone().setSelectedItem(new KeyValuePairCompat<String, String>(vm.gettime_zone(), ""));
+        getModel().getTimeZone().setSelectedItem(new KeyValuePairCompat<String, String>(vm.gettime_zone(), "")); //$NON-NLS-1$
         UpdateTimeZone();
 
         // Update domain list

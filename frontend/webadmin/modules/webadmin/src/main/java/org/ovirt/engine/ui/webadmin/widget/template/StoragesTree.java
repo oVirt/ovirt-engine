@@ -9,8 +9,6 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
-import org.ovirt.engine.ui.common.CommonApplicationConstants;
-import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.label.DiskSizeLabel;
 import org.ovirt.engine.ui.common.widget.label.EnumLabel;
@@ -23,6 +21,7 @@ import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateStorageListModel
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 
 import com.google.gwt.user.client.ui.DateLabel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -33,11 +32,13 @@ public class StoragesTree extends AbstractSubTabTree<TemplateStorageListModel, S
 
     ApplicationResources resources;
     ApplicationConstants constants;
+    ApplicationTemplates templates;
 
-    public StoragesTree(CommonApplicationResources resources, CommonApplicationConstants constants) {
-        super(resources, constants);
-        this.resources = (ApplicationResources) resources;
-        this.constants = (ApplicationConstants) constants;
+    public StoragesTree(ApplicationResources resources, ApplicationConstants constants, ApplicationTemplates templates) {
+        super(resources, constants, templates);
+        this.resources = resources;
+        this.constants = constants;
+        this.templates = templates;
 
         setNodeSelectionEnabled(true);
     }
@@ -46,17 +47,17 @@ public class StoragesTree extends AbstractSubTabTree<TemplateStorageListModel, S
     protected TreeItem getRootItem(StorageDomainModel storageDomainModel) {
         HorizontalPanel panel = new HorizontalPanel();
         panel.setSpacing(1);
-        panel.setWidth("100%");
+        panel.setWidth("100%"); //$NON-NLS-1$
 
         storage_domains storage = storageDomainModel.getStorageDomain();
 
-        addItemToPanel(panel, new Image(resources.storageImage()), "25px");
-        addTextBoxToPanel(panel, new TextBoxLabel(), storage.getstorage_name(), "");
-        addValueLabelToPanel(panel, new EnumLabel<StorageDomainType>(), storage.getstorage_domain_type(), "120px");
-        addValueLabelToPanel(panel, new EnumLabel<StorageDomainStatus>(), storage.getstatus(), "120px");
-        addValueLabelToPanel(panel, new DiskSizeLabel<Integer>(), storage.getavailable_disk_size(), "120px");
-        addValueLabelToPanel(panel, new DiskSizeLabel<Integer>(), storage.getused_disk_size(), "120px");
-        addValueLabelToPanel(panel, new DiskSizeLabel<Integer>(), storage.getTotalDiskSize(), "90px");
+        addItemToPanel(panel, new Image(resources.storageImage()), "25px"); //$NON-NLS-1$
+        addTextBoxToPanel(panel, new TextBoxLabel(), storage.getstorage_name(), ""); //$NON-NLS-1$
+        addValueLabelToPanel(panel, new EnumLabel<StorageDomainType>(), storage.getstorage_domain_type(), "120px"); //$NON-NLS-1$
+        addValueLabelToPanel(panel, new EnumLabel<StorageDomainStatus>(), storage.getstatus(), "120px"); //$NON-NLS-1$
+        addValueLabelToPanel(panel, new DiskSizeLabel<Integer>(), storage.getavailable_disk_size(), "120px"); //$NON-NLS-1$
+        addValueLabelToPanel(panel, new DiskSizeLabel<Integer>(), storage.getused_disk_size(), "120px"); //$NON-NLS-1$
+        addValueLabelToPanel(panel, new DiskSizeLabel<Integer>(), storage.getTotalDiskSize(), "90px"); //$NON-NLS-1$
 
         TreeItem treeItem = new TreeItem(panel);
         treeItem.setUserObject(storage.getId());
@@ -67,17 +68,17 @@ public class StoragesTree extends AbstractSubTabTree<TemplateStorageListModel, S
     protected TreeItem getNodeItem(DiskModel diskModel) {
         HorizontalPanel panel = new HorizontalPanel();
         panel.setSpacing(1);
-        panel.setWidth("100%");
+        panel.setWidth("100%"); //$NON-NLS-1$
 
         DiskImage disk = diskModel.getDiskImage();
 
-        addItemToPanel(panel, new Image(resources.diskImage()), "25px");
-        addTextBoxToPanel(panel, new TextBoxLabel(), disk.getDiskAlias(), "");
-        addValueLabelToPanel(panel, new DiskSizeLabel<Long>(), disk.getSizeInGigabytes(), "120px");
-        addValueLabelToPanel(panel, new EnumLabel<ImageStatus>(), disk.getimageStatus(), "120px");
-        addValueLabelToPanel(panel, new EnumLabel<VolumeType>(), disk.getvolume_type(), "120px");
-        addValueLabelToPanel(panel, new EnumLabel<DiskInterface>(), disk.getDiskInterface(), "110px");
-        addValueLabelToPanel(panel, new DateLabel(), disk.getcreation_date(), "90px");
+        addItemToPanel(panel, new Image(resources.diskImage()), "25px"); //$NON-NLS-1$
+        addTextBoxToPanel(panel, new TextBoxLabel(), disk.getDiskAlias(), ""); //$NON-NLS-1$
+        addValueLabelToPanel(panel, new DiskSizeLabel<Long>(), disk.getSizeInGigabytes(), "120px"); //$NON-NLS-1$
+        addValueLabelToPanel(panel, new EnumLabel<ImageStatus>(), disk.getimageStatus(), "120px"); //$NON-NLS-1$
+        addValueLabelToPanel(panel, new EnumLabel<VolumeType>(), disk.getvolume_type(), "120px"); //$NON-NLS-1$
+        addValueLabelToPanel(panel, new EnumLabel<DiskInterface>(), disk.getDiskInterface(), "110px"); //$NON-NLS-1$
+        addValueLabelToPanel(panel, new DateLabel(), disk.getcreation_date(), "90px"); //$NON-NLS-1$
 
         TreeItem treeItem = new TreeItem(panel);
         treeItem.setUserObject(getEntityId(diskModel));
@@ -87,19 +88,19 @@ public class StoragesTree extends AbstractSubTabTree<TemplateStorageListModel, S
     @Override
     protected TreeItem getNodeHeader() {
         EntityModelCellTable<ListModel> table = new EntityModelCellTable<ListModel>(false, true);
-        table.addColumn(new EmptyColumn(), "", "25px");
-        table.addColumn(new EmptyColumn(), "Name", "");
-        table.addColumn(new EmptyColumn(), "Size", "120px");
-        table.addColumn(new EmptyColumn(), "Type", "120px");
-        table.addColumn(new EmptyColumn(), "Allocation", "120px");
-        table.addColumn(new EmptyColumn(), "Interface", "110px");
-        table.addColumn(new EmptyColumn(), "Creation Date", "100px");
+        table.addColumn(new EmptyColumn(), constants.empty(), "25px"); //$NON-NLS-1$
+        table.addColumn(new EmptyColumn(), constants.nameStorageTree(), ""); //$NON-NLS-1$
+        table.addColumn(new EmptyColumn(), constants.sizeStorageTree(), "120px"); //$NON-NLS-1$
+        table.addColumn(new EmptyColumn(), constants.typeStorageTree(), "120px"); //$NON-NLS-1$
+        table.addColumn(new EmptyColumn(), constants.allocationStorageTree(), "120px"); //$NON-NLS-1$
+        table.addColumn(new EmptyColumn(), constants.interfaceStorageTree(), "110px"); //$NON-NLS-1$
+        table.addColumn(new EmptyColumn(),constants.creationDateStorageTree(), "100px"); //$NON-NLS-1$
         table.setRowData(new ArrayList());
-        table.setWidth("100%", true);
+        table.setWidth("100%", true); //$NON-NLS-1$
 
         TreeItem item = new TreeItem(table);
         item.setUserObject(NODE_HEADER);
-        item.getElement().getStyle().setBackgroundColor("#F0F2FF");
+        item.getElement().getStyle().setBackgroundColor("#F0F2FF"); //$NON-NLS-1$
         return item;
     }
 

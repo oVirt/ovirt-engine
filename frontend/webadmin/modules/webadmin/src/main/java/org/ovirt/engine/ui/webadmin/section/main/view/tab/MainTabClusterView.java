@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.ReportInit;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabClusterPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
@@ -29,21 +30,21 @@ public class MainTabClusterView extends AbstractMainTabWithDetailsTableView<VDSG
 
     @Inject
     public MainTabClusterView(MainModelProvider<VDSGroup, ClusterListModel> modelProvider,
-            ApplicationResources resources) {
+            ApplicationResources resources, ApplicationConstants constants) {
         super(modelProvider);
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        initTable(resources);
+        initTable(resources, constants);
         initWidget(getTable());
     }
 
-    void initTable(ApplicationResources resources) {
+    void initTable(ApplicationResources resources, ApplicationConstants constants) {
         TextColumnWithTooltip<VDSGroup> nameColumn = new TextColumnWithTooltip<VDSGroup>() {
             @Override
             public String getValue(VDSGroup object) {
                 return object.getname();
             }
         };
-        getTable().addColumn(nameColumn, "Name");
+        getTable().addColumn(nameColumn, constants.nameCluster());
 
         TextColumnWithTooltip<VDSGroup> versionColumn = new TextColumnWithTooltip<VDSGroup>() {
             @Override
@@ -51,7 +52,7 @@ public class MainTabClusterView extends AbstractMainTabWithDetailsTableView<VDSG
                 return object.getcompatibility_version().getValue();
             }
         };
-        getTable().addColumn(versionColumn, "Compatiblity Version");
+        getTable().addColumn(versionColumn, constants.comptVersCluster());
 
         TextColumnWithTooltip<VDSGroup> descColumn = new TextColumnWithTooltip<VDSGroup>() {
             @Override
@@ -59,21 +60,21 @@ public class MainTabClusterView extends AbstractMainTabWithDetailsTableView<VDSG
                 return object.getdescription();
             }
         };
-        getTable().addColumn(descColumn, "Description");
+        getTable().addColumn(descColumn, constants.descriptionCluster());
 
-        getTable().addActionButton(new WebAdminButtonDefinition<VDSGroup>("New") {
+        getTable().addActionButton(new WebAdminButtonDefinition<VDSGroup>(constants.newCluster()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getNewCommand();
             }
         });
-        getTable().addActionButton(new WebAdminButtonDefinition<VDSGroup>("Edit") {
+        getTable().addActionButton(new WebAdminButtonDefinition<VDSGroup>(constants.editCluster()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getEditCommand();
             }
         });
-        getTable().addActionButton(new WebAdminButtonDefinition<VDSGroup>("Remove") {
+        getTable().addActionButton(new WebAdminButtonDefinition<VDSGroup>(constants.removeCluster()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getRemoveCommand();
@@ -82,14 +83,14 @@ public class MainTabClusterView extends AbstractMainTabWithDetailsTableView<VDSG
 
         if (ReportInit.getInstance().isReportsEnabled()) {
             List<ActionButtonDefinition<VDSGroup>> resourceSubActions =
-                    ReportActionsHelper.getInstance().getResourceSubActions("Cluster", getMainModel());
+                    ReportActionsHelper.getInstance().getResourceSubActions("Cluster", getMainModel()); //$NON-NLS-1$
             if (resourceSubActions != null && resourceSubActions.size() > 0) {
-                getTable().addActionButton(new WebAdminMenuBarButtonDefinition<VDSGroup>("Show Report",
+                getTable().addActionButton(new WebAdminMenuBarButtonDefinition<VDSGroup>(constants.showReportCluster(),
                         resourceSubActions));
             }
         }
 
-        getTable().addActionButton(new WebAdminImageButtonDefinition<VDSGroup>("Guide Me",
+        getTable().addActionButton(new WebAdminImageButtonDefinition<VDSGroup>(constants.guideMeCluster(),
                 resources.guideSmallImage(), resources.guideSmallDisabledImage(), true) {
             @Override
             protected UICommand resolveCommand() {

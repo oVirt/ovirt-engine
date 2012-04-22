@@ -20,7 +20,6 @@ import com.google.gwt.event.shared.EventBus;
 public class VmDiskListModelTable extends BaseVmDiskListModelTable<VmDiskListModel> {
 
     private final CommonApplicationResources resources;
-    private final CommonApplicationConstants constants;
 
     private final boolean showMoveButton;
 
@@ -31,40 +30,38 @@ public class VmDiskListModelTable extends BaseVmDiskListModelTable<VmDiskListMod
             SearchableTableModelProvider<DiskImage, VmDiskListModel> modelProvider,
             EventBus eventBus, ClientStorage clientStorage,
             CommonApplicationResources resources,
-            CommonApplicationConstants constants,
             boolean showMoveButton) {
         super(modelProvider, eventBus, clientStorage);
         this.resources = resources;
-        this.constants = constants;
         this.showMoveButton = showMoveButton;
     }
 
     @Override
-    public void initTable() {
-        super.initTable();
+    public void initTable(final CommonApplicationConstants constants) {
+        super.initTable(constants);
 
-        getTable().addActionButton(new UiCommandButtonDefinition<DiskImage>(getEventBus(), "Add") {
+        getTable().addActionButton(new UiCommandButtonDefinition<DiskImage>(getEventBus(), constants.addDisk()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getNewCommand();
             }
         });
 
-        getTable().addActionButton(new UiCommandButtonDefinition<DiskImage>(getEventBus(), "Edit") {
+        getTable().addActionButton(new UiCommandButtonDefinition<DiskImage>(getEventBus(), constants.editDisk()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getEditCommand();
             }
         });
 
-        getTable().addActionButton(new UiCommandButtonDefinition<DiskImage>(getEventBus(), "Remove") {
+        getTable().addActionButton(new UiCommandButtonDefinition<DiskImage>(getEventBus(), constants.removeDisk()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getRemoveCommand();
             }
         });
 
-        plugButtonDefinition = new ImageUiCommandButtonDefinition<DiskImage>(getEventBus(), "Activate",
+        plugButtonDefinition = new ImageUiCommandButtonDefinition<DiskImage>(getEventBus(), constants.activateDisk(),
                 resources.upImage(), resources.upDisabledImage(), true, false) {
             @Override
             protected UICommand resolveCommand() {
@@ -84,7 +81,7 @@ public class VmDiskListModelTable extends BaseVmDiskListModelTable<VmDiskListMod
         };
         getTable().addActionButton(plugButtonDefinition);
 
-        unPlugButtonDefinition = new ImageUiCommandButtonDefinition<DiskImage>(getEventBus(), "Deactivate",
+        unPlugButtonDefinition = new ImageUiCommandButtonDefinition<DiskImage>(getEventBus(), constants.deactivateDisk(),
                 resources.downImage(), resources.downDisabledImage(), true, false) {
             @Override
             protected UICommand resolveCommand() {
@@ -107,7 +104,7 @@ public class VmDiskListModelTable extends BaseVmDiskListModelTable<VmDiskListMod
         attachActivationListenersForModel();
 
         if (showMoveButton) {
-            getTable().addActionButton(new UiCommandButtonDefinition<DiskImage>(getEventBus(), "Move") {
+            getTable().addActionButton(new UiCommandButtonDefinition<DiskImage>(getEventBus(), constants.moveDisk()) {
                 @Override
                 protected UICommand resolveCommand() {
                     return getModel().getMoveCommand();
@@ -121,7 +118,7 @@ public class VmDiskListModelTable extends BaseVmDiskListModelTable<VmDiskListMod
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 PropertyChangedEventArgs changedArgs = (PropertyChangedEventArgs) args;
-                if ("IsDiskHotPlugAvailable".equals(changedArgs.PropertyName)) {
+                if ("IsDiskHotPlugAvailable".equals(changedArgs.PropertyName)) { //$NON-NLS-1$
                     InitializeEvent.fire(plugButtonDefinition);
                     InitializeEvent.fire(unPlugButtonDefinition);
                 }

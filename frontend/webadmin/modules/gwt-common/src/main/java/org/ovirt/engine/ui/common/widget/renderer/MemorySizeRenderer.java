@@ -14,7 +14,7 @@ public class MemorySizeRenderer<T extends Number> extends AbstractRenderer<T> {
 
     @Override
     public String render(T sizeInMB) {
-        return sizeInMB != null ? sizeInMB.toString() + " MB" : constants.unAvailablePropertyLabel();
+        return sizeInMB != null ? sizeInMB.toString() + " MB" : constants.unAvailablePropertyLabel(); //$NON-NLS-1$
     }
 
 }

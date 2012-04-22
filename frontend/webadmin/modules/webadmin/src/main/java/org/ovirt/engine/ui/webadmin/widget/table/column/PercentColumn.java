@@ -11,7 +11,7 @@ public abstract class PercentColumn<T> extends ProgressBarColumn<T> {
     @Override
     protected String getProgressText(T object) {
         Integer progressValue = getProgressValue(object);
-        return progressValue != null ? progressValue + "%" : "0%";
+        return progressValue != null ? progressValue + "%" : "0%"; //$NON-NLS-1$ //$NON-NLS-2$
     }
 
 }

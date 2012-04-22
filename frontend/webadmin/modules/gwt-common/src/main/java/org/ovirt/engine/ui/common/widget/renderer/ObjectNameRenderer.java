@@ -11,14 +11,14 @@ public class ObjectNameRenderer extends AbstractRenderer<Object[]> {
     public String render(Object[] arg) {
 
         VdcObjectType vdcObjectType = (VdcObjectType) arg[0];
-        String objectType = "(" + new EnumRenderer<VdcObjectType>().render(vdcObjectType) + ")";
+        String objectType = "(" + new EnumRenderer<VdcObjectType>().render(vdcObjectType) + ")"; //$NON-NLS-1$ //$NON-NLS-2$
         String objectName = (String) arg[1];
         if (arg.length == 4 && DataProvider.GetEntityGuid(arg[2]).equals(arg[3])) {
-            return "";
+            return ""; //$NON-NLS-1$
         }
         if (vdcObjectType.equals(VdcObjectType.System)) {
             return objectType;
         }
-        return objectName + " " + objectType;
+        return objectName + " " + objectType; //$NON-NLS-1$
     }
 }

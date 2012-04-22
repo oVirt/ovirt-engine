@@ -24,7 +24,7 @@ public class DragOverEvent extends DragDropEventBase<DragOverHandler> {
      * Event type for drag over events. Represents the meta-data associated with this event.
      */
     private static final Type<DragOverHandler> TYPE = new Type<DragOverHandler>(
-            "dragover", new DragOverEvent());
+            "dragover", new DragOverEvent()); //$NON-NLS-1$
 
     /**
      * Gets the event type associated with drag over events.

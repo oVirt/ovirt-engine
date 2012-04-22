@@ -11,7 +11,7 @@ public class ToStringEntityModelLabel extends ValueLabel<Object> {
             @Override
             public String render(Object object) {
                 if (object == null) {
-                    return "";
+                    return ""; //$NON-NLS-1$
                 }
                 return object.toString();
             }

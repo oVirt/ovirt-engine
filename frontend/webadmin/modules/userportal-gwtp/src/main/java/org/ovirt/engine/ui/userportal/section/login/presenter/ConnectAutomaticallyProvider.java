@@ -10,7 +10,7 @@ import com.google.inject.Inject;
 public class ConnectAutomaticallyProvider {
 
     // Determines if the application should automatically open console for a running VM upon login
-    private static final String LOGIN_AUTOCONNECT = "Login_ConnectAutomaticallyChecked";
+    private static final String LOGIN_AUTOCONNECT = "Login_ConnectAutomaticallyChecked"; //$NON-NLS-1$
 
     private final ClientStorage clientStorage;
 
@@ -28,7 +28,7 @@ public class ConnectAutomaticallyProvider {
 
         // Default value is true
         boolean connectAutomatically = true;
-        if (storedConnectAutomatically != null && !"".equals(storedConnectAutomatically)) {
+        if (storedConnectAutomatically != null && !"".equals(storedConnectAutomatically)) { //$NON-NLS-1$
             connectAutomatically = Boolean.parseBoolean(storedConnectAutomatically);
         }
 

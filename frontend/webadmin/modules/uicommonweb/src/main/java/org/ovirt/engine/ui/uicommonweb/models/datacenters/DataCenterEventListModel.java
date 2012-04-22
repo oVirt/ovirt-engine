@@ -40,7 +40,7 @@ public class DataCenterEventListModel extends EventListModel
     {
         if (getEntity() != null)
         {
-            setSearchString(StringFormat.format("Events: event_datacenter=%1$s", getEntity().getname()));
+            setSearchString(StringFormat.format("Events: event_datacenter=%1$s", getEntity().getname())); //$NON-NLS-1$
             super.Search();
         }
     }
@@ -50,7 +50,7 @@ public class DataCenterEventListModel extends EventListModel
     {
         super.EntityPropertyChanged(sender, e);
 
-        if (e.PropertyName.equals("name"))
+        if (e.PropertyName.equals("name")) //$NON-NLS-1$
         {
             getSearchCommand().Execute();
         }

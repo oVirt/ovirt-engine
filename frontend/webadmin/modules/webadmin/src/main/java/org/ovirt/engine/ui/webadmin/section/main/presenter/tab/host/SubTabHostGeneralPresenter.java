@@ -95,7 +95,7 @@ public class SubTabHostGeneralPresenter extends AbstractSubTabPresenter<VDS, Hos
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 if (args instanceof PropertyChangedEventArgs) {
                     PropertyChangedEventArgs changedArgs = (PropertyChangedEventArgs) args;
-                    if (changedArgs.PropertyName.contains("Alert")) {
+                    if (changedArgs.PropertyName.contains("Alert")) { //$NON-NLS-1$
                         updateAlerts(getView(), model);
                     }
                 }
@@ -168,8 +168,8 @@ public class SubTabHostGeneralPresenter extends AbstractSubTabPresenter<VDS, Hos
      */
     private void addTextAndLinkAlert(final ViewDef view, final String text, final UICommand command) {
         // Find the open and close positions of the link within the message:
-        final int openIndex = text.indexOf("<a>");
-        final int closeIndex = text.indexOf("</a>");
+        final int openIndex = text.indexOf("<a>"); //$NON-NLS-1$
+        final int closeIndex = text.indexOf("</a>"); //$NON-NLS-1$
         if (openIndex == -1 || closeIndex == -1 || closeIndex < openIndex) {
             return;
         }
@@ -184,12 +184,12 @@ public class SubTabHostGeneralPresenter extends AbstractSubTabPresenter<VDS, Hos
 
         // Create the label for the text before the tag:
         final Label beforeLabel = new Label(beforeText);
-        beforeLabel.getElement().getStyle().setProperty("display", "inline");
+        beforeLabel.getElement().getStyle().setProperty("display", "inline"); //$NON-NLS-1$ //$NON-NLS-2$
         alertPanel.add(beforeLabel);
 
         // Create the anchor:
         final Anchor betweenAnchor = new Anchor(betweenText);
-        betweenAnchor.getElement().getStyle().setProperty("display", "inline");
+        betweenAnchor.getElement().getStyle().setProperty("display", "inline"); //$NON-NLS-1$ //$NON-NLS-2$
         alertPanel.add(betweenAnchor);
 
         // Add a listener to the anchor so that the command is executed when
@@ -205,7 +205,7 @@ public class SubTabHostGeneralPresenter extends AbstractSubTabPresenter<VDS, Hos
 
         // Create the label for the text after the tag:
         final Label afterLabel = new Label(afterText);
-        afterLabel.getElement().getStyle().setProperty("display", "inline");
+        afterLabel.getElement().getStyle().setProperty("display", "inline"); //$NON-NLS-1$ //$NON-NLS-2$
         alertPanel.add(afterLabel);
 
         // Add the alert to the view:

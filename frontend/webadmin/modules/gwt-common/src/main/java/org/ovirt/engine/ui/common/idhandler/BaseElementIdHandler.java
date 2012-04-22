@@ -15,7 +15,7 @@ import com.google.gwt.user.client.ui.UIObject;
  */
 public abstract class BaseElementIdHandler<T> implements ElementIdHandler<T> {
 
-    private String idExtension = "";
+    private String idExtension = ""; //$NON-NLS-1$
 
     @Override
     public void setIdExtension(String extension) {
@@ -23,7 +23,7 @@ public abstract class BaseElementIdHandler<T> implements ElementIdHandler<T> {
             return;
         }
 
-        this.idExtension = "_" + extension;
+        this.idExtension = "_" + extension; //$NON-NLS-1$
     }
 
     protected final void setElementId(Object obj, String elementId) {

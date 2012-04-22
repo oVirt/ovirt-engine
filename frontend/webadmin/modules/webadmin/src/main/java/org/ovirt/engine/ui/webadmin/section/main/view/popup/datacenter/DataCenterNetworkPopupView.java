@@ -115,7 +115,7 @@ public class DataCenterNetworkPopupView extends AbstractModelBoundPopupView<Data
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 DataCenterNetworkModel model = (DataCenterNetworkModel) sender;
                 String propertyName = ((PropertyChangedEventArgs) args).PropertyName;
-                if ("ClusterTreeNodes".equals(propertyName)) {
+                if ("ClusterTreeNodes".equals(propertyName)) { //$NON-NLS-1$
                     // update tree data
                     ArrayList<SelectionTreeNodeModel> clusterTreeNodes = model.getClusterTreeNodes();
                     @SuppressWarnings("unchecked")
@@ -129,7 +129,7 @@ public class DataCenterNetworkPopupView extends AbstractModelBoundPopupView<Data
                     asyncTreeDataProvider.updateRowCount(rootNodes.size(), true);
                     asyncTreeDataProvider.updateRowData(0, rootNodes);
                 }
-                if ("Message".equals(propertyName)) {
+                if ("Message".equals(propertyName)) { //$NON-NLS-1$
                     messageLabel.setText(model.getMessage());
                 }
             }
@@ -200,8 +200,8 @@ public class DataCenterNetworkPopupView extends AbstractModelBoundPopupView<Data
         assignLabel.setText(constants.dataCenterNetworkPopupAssignLabel());
         nameEditor.setLabel(constants.dataCenterPopupNameLabel());
         descriptionEditor.setLabel(constants.dataCenterPopupDescriptionLabel());
-        stpSupport.setLabel("STP Support");
-        vlanTagging.setLabel("Enable VLAN tagging");
+        stpSupport.setLabel(constants.dataCenterPopupStpSupportLabel());
+        vlanTagging.setLabel(constants.dataCenterPopupEnableVlanTaggLabel());
     }
 
 }

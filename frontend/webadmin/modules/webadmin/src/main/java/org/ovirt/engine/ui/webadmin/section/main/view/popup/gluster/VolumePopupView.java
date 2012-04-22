@@ -153,19 +153,19 @@ public class VolumePopupView extends AbstractModelBoundPopupView<VolumeModel> im
     }
 
     private void localize(ApplicationConstants constants) {
-        dataCenterEditor.setLabel("Data Center");
-        clusterEditor.setLabel("Volume Cluster");
+        dataCenterEditor.setLabel(constants.dataCenterVolume());
+        clusterEditor.setLabel(constants.volumeClusterVolume());
         nameEditor.setLabel(constants.clusterPopupNameLabel());
-        typeListEditor.setLabel("Type");
-        replicaCountEditor.setLabel("Replica Count");
-        stripeCountEditor.setLabel("Stripe Count");
-        tcpTransportTypeEditor.setLabel("TCP");
-        rdmaTransportTypeEditor.setLabel("RDMA");
-        addBricksButton.setLabel("Add Bricks");
-        gluster_accecssProtocolEditor.setLabel("Gluster");
-        nfs_accecssProtocolEditor.setLabel("NFS");
-        cifs_accecssProtocolEditor.setLabel("CIFS");
-        allowAccessEditor.setLabel("Allow Access From");
+        typeListEditor.setLabel(constants.typeVolume());
+        replicaCountEditor.setLabel(constants.replicaCountVolume());
+        stripeCountEditor.setLabel(constants.stripeCountVolume());
+        tcpTransportTypeEditor.setLabel(constants.tcpVolume());
+        rdmaTransportTypeEditor.setLabel(constants.rdmaVolume());
+        addBricksButton.setLabel(constants.addBricksVolume());
+        gluster_accecssProtocolEditor.setLabel(constants.glusterVolume());
+        nfs_accecssProtocolEditor.setLabel(constants.nfsVolume());
+        cifs_accecssProtocolEditor.setLabel(constants.cifsVolume());
+        allowAccessEditor.setLabel(constants.allowAccessFromVolume());
 
     }
 

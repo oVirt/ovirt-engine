@@ -9,6 +9,9 @@
 	<ui:with field='resources'
 		type='org.ovirt.engine.ui.userportal.ApplicationResources' />
 
+	<ui:with field='constants'
+	type='org.ovirt.engine.ui.userportal.ApplicationConstants' />
+
 	<ui:with field='itemResources'
 		type='org.ovirt.engine.ui.userportal.ApplicationResourcesWithLookup' />
 		
@@ -170,7 +173,7 @@
 				<g:layer>
 					<g:FlowPanel addStyleNames="{style.detailsRow}">
 						<g:Image resource='{resources.basicOsIcon}' addStyleNames="{style.rowIcon}" />
-						<g:Label text="Operating System : " addStyleNames="{style.rowLabel}" />
+						<g:Label text="{constants.osBasicDetails} : " addStyleNames="{style.rowLabel}" />
 						<g:ValueLabel ui:field="operatingSystem" addStyleNames="{style.rowValue}" />
 					</g:FlowPanel>
 				</g:layer>
@@ -178,7 +181,7 @@
 				<g:layer top='40px' height='60px'>
 					<g:FlowPanel addStyleNames="{style.detailsRow}">
 						<g:Image resource='{resources.basicMemoryIcon}' addStyleNames="{style.rowIcon}" />
-						<g:Label text="Defined Memory : " addStyleNames="{style.rowLabel}" />
+						<g:Label text="{constants.definedMemBasicDetails} : " addStyleNames="{style.rowLabel}" />
 						<r:ToStringEntityModelLabel ui:field="memory" addStyleNames="{style.rowValue}" />
 					</g:FlowPanel>
 				</g:layer>
@@ -187,7 +190,7 @@
 					<g:FlowPanel addStyleNames="{style.detailsRow}">
 						<g:Image resource='{resources.basicCpuIcon}'
 							addStyleNames="{style.rowIcon}" />
-						<g:Label text="Number of Cores : " addStyleNames="{style.rowLabel}" />
+						<g:Label text="{constants.numOfCoresBasicDetails} : " addStyleNames="{style.rowLabel}" />
 						<r:ToStringEntityModelLabel ui:field="numberOfCores" addStyleNames="{style.rowValue}" />
 					</g:FlowPanel>
 				</g:layer>
@@ -202,7 +205,7 @@
 						<g:FlowPanel addStyleNames="{style.detailsRow}">
 							<g:Image resource='{resources.basicDriveIcon}'
 								addStyleNames="{style.rowIcon}" />
-							<g:Label text="Drives : " addStyleNames="{style.rowLabel}" />
+							<g:Label text="{constants.drivesBasicDetails} : " addStyleNames="{style.rowLabel}" />
 							<e:DisksImageWidget ui:field="disks" addStyleNames="{style.diskImageWidget}" />
 						</g:FlowPanel>
 						
@@ -212,8 +215,8 @@
 						
 						<g:FlowPanel addStyleNames="{style.detailsRow}">
 							<g:Image resource='{resources.basicConsoleIcon}' addStyleNames="{style.rowIcon}" />
-							<g:Label text="Console : " addStyleNames="{style.rowLabel}" />
-							<g:Anchor ui:field="editProtocol" text="(Edit)" addStyleNames="{style.basicInfoDetailsLinkDisabled}"/>
+							<g:Label text="{constants.consoleBasicDetails} : " addStyleNames="{style.rowLabel}" />
+							<g:Anchor ui:field="editProtocol" text="({constants.editBasicDetails})" addStyleNames="{style.basicInfoDetailsLinkDisabled}"/>
 							<g:Label ui:field="protocolMessage" />
 						</g:FlowPanel>
 					</g:FlowPanel>

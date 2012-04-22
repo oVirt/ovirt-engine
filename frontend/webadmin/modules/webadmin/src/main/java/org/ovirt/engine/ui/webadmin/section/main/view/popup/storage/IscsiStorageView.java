@@ -101,10 +101,10 @@ public class IscsiStorageView extends AbstractStorageView<IscsiStorageModel> imp
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 String propName = ((PropertyChangedEventArgs) args).PropertyName;
-                if (propName.equals("IsValid")) {
+                if (propName.equals("IsValid")) { //$NON-NLS-1$
                     onIsValidPropertyChange(object);
                 }
-                else if (propName.equals("IsGrouppedByTarget")) {
+                else if (propName.equals("IsGrouppedByTarget")) { //$NON-NLS-1$
                     updateListByGropping(object);
                 }
             }

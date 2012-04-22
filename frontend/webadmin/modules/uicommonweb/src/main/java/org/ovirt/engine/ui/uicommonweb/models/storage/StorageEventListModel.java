@@ -41,7 +41,7 @@ public class StorageEventListModel extends EventListModel
     {
         if (getEntity() != null)
         {
-            setSearchString(StringFormat.format("events: event_storage=%1$s", getEntity().getstorage_name()));
+            setSearchString(StringFormat.format("events: event_storage=%1$s", getEntity().getstorage_name())); //$NON-NLS-1$
             super.Search();
         }
     }
@@ -51,7 +51,7 @@ public class StorageEventListModel extends EventListModel
     {
         super.EntityPropertyChanged(sender, e);
 
-        if (e.PropertyName.equals("storage_name"))
+        if (e.PropertyName.equals("storage_name")) //$NON-NLS-1$
         {
             getSearchCommand().Execute();
         }

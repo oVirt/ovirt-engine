@@ -10,7 +10,7 @@ public abstract class AbstractDialogButton extends CustomButton {
 
     protected String text;
     protected SafeHtml image = SafeHtmlUtils.EMPTY_SAFE_HTML;
-    protected String customStyle = "";
+    protected String customStyle = ""; //$NON-NLS-1$
 
     protected AbstractDialogButton(String text) {
         super();

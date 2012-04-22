@@ -6,6 +6,8 @@ import org.ovirt.engine.core.common.businessentities.NetworkBootProtocol;
 import org.ovirt.engine.ui.common.widget.HasEditorDriver;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkInterfaceModel;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
@@ -59,14 +61,16 @@ public class InterfaceEditor extends Composite implements HasEditorDriver<Networ
     @Path(value = "entity.bootProtocol")
     ValueListBox<NetworkBootProtocol> protocolEditor;
 
+    private ApplicationConstants constants = ClientGinjectorProvider.instance().getApplicationConstants();
+
     public InterfaceEditor() {
         protocolEditor = new ValueListBox<NetworkBootProtocol>(new EnumRenderer<NetworkBootProtocol>());
         protocolEditor.setAcceptableValues(Arrays.asList(NetworkBootProtocol.class.getEnumConstants()));
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        addressLabel.setText("Address:");
-        subnetLabel.setText("Subnet:");
-        gatewayLabel.setText("Gateway:");
-        protocolLabel.setText("Protocol:");
+        addressLabel.setText(constants.addressInterfaceEditor());
+        subnetLabel.setText(constants.subnetInterfaceEditor());
+        gatewayLabel.setText(constants.gatewayInterfaceEditor());
+        protocolLabel.setText(constants.protocolInterfaceEditor());
         Driver.driver.initialize(this);
     }
 

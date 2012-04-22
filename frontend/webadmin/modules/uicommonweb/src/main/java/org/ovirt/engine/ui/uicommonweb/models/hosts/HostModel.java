@@ -1,5 +1,8 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.ovirt.engine.core.common.businessentities.FenceStatusReturnValue;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
@@ -28,22 +31,20 @@ import org.ovirt.engine.ui.uicommonweb.validation.KeyValuePairValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.RegexValidation;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendQueryAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendQueryAsyncCallback;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @SuppressWarnings("unused")
 public class HostModel extends Model
 {
 
     public static final int HostNameMaxLength = 255;
-    public static final String PmSecureKey = "secure";
-    public static final String PmPortKey = "port";
-    public static final String PmSlotKey = "slot";
-    public static final String BeginTestStage = "BeginTest";
-    public static final String EndTestStage = "EndTest";
+    public static final String PmSecureKey = "secure"; //$NON-NLS-1$
+    public static final String PmPortKey = "port"; //$NON-NLS-1$
+    public static final String PmSlotKey = "slot"; //$NON-NLS-1$
+    public static final String BeginTestStage = "BeginTest"; //$NON-NLS-1$
+    public static final String EndTestStage = "EndTest"; //$NON-NLS-1$
 
     private UICommand privateTestCommand;
 
@@ -290,7 +291,7 @@ public class HostModel extends Model
         if (isGeneralTabValid != value)
         {
             isGeneralTabValid = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsGeneralTabValid"));
+            OnPropertyChanged(new PropertyChangedEventArgs("IsGeneralTabValid")); //$NON-NLS-1$
         }
     }
 
@@ -306,7 +307,7 @@ public class HostModel extends Model
         if (isPowerManagementTabValid != value)
         {
             isPowerManagementTabValid = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsPowerManagementTabValid"));
+            OnPropertyChanged(new PropertyChangedEventArgs("IsPowerManagementTabValid")); //$NON-NLS-1$
         }
     }
 
@@ -322,7 +323,7 @@ public class HostModel extends Model
         if (isPowerManagementTabSelected != value)
         {
             isPowerManagementTabSelected = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsPowerManagementTabSelected"));
+            OnPropertyChanged(new PropertyChangedEventArgs("IsPowerManagementTabSelected")); //$NON-NLS-1$
         }
     }
 
@@ -333,11 +334,11 @@ public class HostModel extends Model
         // Add well known pm options.
         if (getPmPort().getIsAvailable())
         {
-            dict.put(PmPortKey, getPmPort().getEntity() == null ? "" : (String) getPmPort().getEntity());
+            dict.put(PmPortKey, getPmPort().getEntity() == null ? "" : (String) getPmPort().getEntity()); //$NON-NLS-1$
         }
         if (getPmSlot().getIsAvailable())
         {
-            dict.put(PmSlotKey, getPmSlot().getEntity() == null ? "" : (String) getPmSlot().getEntity());
+            dict.put(PmSlotKey, getPmSlot().getEntity() == null ? "" : (String) getPmSlot().getEntity()); //$NON-NLS-1$
         }
         if (getPmSecure().getIsAvailable())
         {
@@ -349,16 +350,16 @@ public class HostModel extends Model
         String pmOptions = (String) getPmOptions().getEntity();
         if (!StringHelper.isNullOrEmpty(pmOptions))
         {
-            for (String pair : pmOptions.split("[,]", -1))
+            for (String pair : pmOptions.split("[,]", -1)) //$NON-NLS-1$
             {
-                String[] array = pair.split("[=]", -1);
+                String[] array = pair.split("[=]", -1); //$NON-NLS-1$
                 if (array.length == 2)
                 {
                     dict.put(array[0], array[1]);
                 }
                 else if (array.length == 1)
                 {
-                    dict.put(array[0], "");
+                    dict.put(array[0], ""); //$NON-NLS-1$
                 }
             }
         }
@@ -368,7 +369,7 @@ public class HostModel extends Model
 
     public void setPmOptionsMap(java.util.HashMap<String, String> value)
     {
-        String pmOptions = "";
+        String pmOptions = ""; //$NON-NLS-1$
 
         for (java.util.Map.Entry<String, String> pair : value.entrySet())
         {
@@ -382,13 +383,13 @@ public class HostModel extends Model
             // ORIGINAL LINE: case PmPortKey:
             if (StringHelper.stringsEqual(k, PmPortKey))
             {
-                getPmPort().setEntity(StringHelper.isNullOrEmpty(value.get(k)) ? "" : value.get(k));
+                getPmPort().setEntity(StringHelper.isNullOrEmpty(value.get(k)) ? "" : value.get(k)); //$NON-NLS-1$
 
             }
             // ORIGINAL LINE: case PmSlotKey:
             else if (StringHelper.stringsEqual(k, PmSlotKey))
             {
-                getPmSlot().setEntity(StringHelper.isNullOrEmpty(value.get(k)) ? "" : value.get(k));
+                getPmSlot().setEntity(StringHelper.isNullOrEmpty(value.get(k)) ? "" : value.get(k)); //$NON-NLS-1$
 
             }
             // ORIGINAL LINE: case PmSecureKey:
@@ -402,11 +403,11 @@ public class HostModel extends Model
                 // Compose custom string from unknown pm options.
                 if (StringHelper.isNullOrEmpty(v))
                 {
-                    pmOptions += StringFormat.format("%1$s,", k);
+                    pmOptions += StringFormat.format("%1$s,", k); //$NON-NLS-1$
                 }
                 else
                 {
-                    pmOptions += StringFormat.format("%1$s=%2$s,", k, v);
+                    pmOptions += StringFormat.format("%1$s=%2$s,", k, v); //$NON-NLS-1$
                 }
             }
         }
@@ -449,7 +450,7 @@ public class HostModel extends Model
 
     public HostModel()
     {
-        setTestCommand(new UICommand("Test", this));
+        setTestCommand(new UICommand("Test", this)); //$NON-NLS-1$
 
         setName(new EntityModel());
         setHost(new EntityModel());
@@ -534,13 +535,13 @@ public class HostModel extends Model
         }
 
         int neverValue = -1;
-        EntityModel neverItem = new EntityModel("Never", neverValue);
+        EntityModel neverItem = new EntityModel("Never", neverValue); //$NON-NLS-1$
         items.add(neverItem);
         int lowValue = defaultSpmPriority / 2;
-        items.add(new EntityModel("Low (" + lowValue + ")", lowValue));
-        items.add(new EntityModel("Normal (" + defaultSpmPriority + ")", defaultSpmPriority));
+        items.add(new EntityModel("Low (" + lowValue + ")", lowValue)); //$NON-NLS-1$ //$NON-NLS-2$
+        items.add(new EntityModel("Normal (" + defaultSpmPriority + ")", defaultSpmPriority)); //$NON-NLS-1$ //$NON-NLS-2$
         int highValue = defaultSpmPriority + (maxSpmPriority - defaultSpmPriority) / 2;
-        items.add(new EntityModel("High (" + highValue + ")", highValue));
+        items.add(new EntityModel("High (" + highValue + ")", highValue)); //$NON-NLS-1$ //$NON-NLS-2$
 
         // Determine whether to set custom SPM priority, and where.
         EntityModel selectedItem = null;
@@ -556,7 +557,7 @@ public class HostModel extends Model
                 selectedItem = items.get(i);
                 break;
             } else if (prevValue != null && value > prevValue && value < currentValue) {
-                EntityModel customItem = new EntityModel("Custom (" + value + ")", value);
+                EntityModel customItem = new EntityModel("Custom (" + value + ")", value);//$NON-NLS-1$ //$NON-NLS-2$
 
                 items.add(i, customItem);
                 selectedItem = customItem;
@@ -752,7 +753,7 @@ public class HostModel extends Model
             return;
         }
 
-        setMessage("Testing in progress. It will take a few seconds. Please wait...");
+        setMessage(ConstantsManager.getInstance().getConstants().testingInProgressItWillTakeFewSecondsPleaseWaitMsg());
         getTestCommand().setIsExecutionAllowed(false);
 
         VDSGroup cluster = (VDSGroup) getCluster().getSelectedItem();
@@ -794,7 +795,7 @@ public class HostModel extends Model
                             (FenceStatusReturnValue) result.getReturnValue().getReturnValue();
                     message = fenceStatusReturnValue.toString();
                 } else {
-                    message = "Test Failed (unknown error).";
+                    message = ConstantsManager.getInstance().getConstants().testFailedUnknownErrorMsg();
                 }
                 setMessage(message);
                 getTestCommand().setIsExecutionAllowed(true);
@@ -818,11 +819,8 @@ public class HostModel extends Model
 
     public boolean Validate()
     {
-        String hostNameRegex = StringFormat.format("^[0-9a-zA-Z-_\\.]{1,%1$s}$", HostNameMaxLength);
-        String hostNameMessage =
-                StringFormat.format("This field can't contain blanks or special characters, must "
-                        + "be at least one character long, legal values are 0-9, a-z, '_', '.' "
-                        + "and a length of up to %1$s characters.", HostNameMaxLength);
+        String hostNameRegex = StringFormat.format("^[0-9a-zA-Z-_\\.]{1,%1$s}$", HostNameMaxLength); //$NON-NLS-1$
+        String hostNameMessage = ConstantsManager.getInstance().getMessages().hostNameMsg(HostNameMaxLength);
 
         LengthValidation tempVar = new LengthValidation();
         tempVar.setMaxLength(255);

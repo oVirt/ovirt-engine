@@ -13,6 +13,7 @@ import org.ovirt.engine.ui.common.widget.label.EnumLabel;
 import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
 import org.ovirt.engine.ui.uicommonweb.models.users.UserGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.users.UserListModel;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.user.SubTabUserGeneralPresenter;
 
 import com.google.gwt.core.client.GWT;
@@ -44,7 +45,7 @@ public class SubTabUserGeneralView extends AbstractSubTabFormView<DbUser, UserLi
     FormBuilder formBuilder;
 
     @Inject
-    public SubTabUserGeneralView(DetailModelProvider<UserListModel, UserGeneralModel> modelProvider) {
+    public SubTabUserGeneralView(DetailModelProvider<UserListModel, UserGeneralModel> modelProvider, ApplicationConstants constants) {
         super(modelProvider);
 
         // Init formPanel
@@ -55,9 +56,9 @@ public class SubTabUserGeneralView extends AbstractSubTabFormView<DbUser, UserLi
 
         // Build a form using the FormBuilder
         formBuilder = new FormBuilder(formPanel, 1, 3);
-        formBuilder.addFormItem(new FormItem("Domain", domain, 0, 0));
-        formBuilder.addFormItem(new FormItem("Status", status, 1, 0));
-        formBuilder.addFormItem(new FormItem("E-mail", email, 2, 0) {
+        formBuilder.addFormItem(new FormItem(constants.domainUserGeneral(), domain, 0, 0));
+        formBuilder.addFormItem(new FormItem(constants.statusUserGeneral(), status, 1, 0));
+        formBuilder.addFormItem(new FormItem(constants.emailUserGeneral(), email, 2, 0) {
             @Override
             public boolean isVisible() {
                 if (getDetailModel().getEntity() == null) {

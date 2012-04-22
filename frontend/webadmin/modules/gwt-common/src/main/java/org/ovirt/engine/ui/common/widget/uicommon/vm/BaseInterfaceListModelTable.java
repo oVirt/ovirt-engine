@@ -2,6 +2,8 @@ package org.ovirt.engine.ui.common.widget.uicommon.vm;
 
 import org.ovirt.engine.core.common.businessentities.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
+import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
@@ -15,21 +17,24 @@ import com.google.gwt.event.shared.EventBus;
 
 public class BaseInterfaceListModelTable<T extends SearchableListModel> extends AbstractModelBoundTableWidget<VmNetworkInterface, T> {
 
+    private CommonApplicationTemplates templates;
+
     public BaseInterfaceListModelTable(
             SearchableTableModelProvider<VmNetworkInterface, T> modelProvider,
-            EventBus eventBus, ClientStorage clientStorage) {
+            EventBus eventBus, ClientStorage clientStorage, CommonApplicationTemplates templates) {
         super(modelProvider, eventBus, clientStorage, false);
+        this.templates = templates;
     }
 
     @Override
-    public void initTable() {
+    public void initTable(CommonApplicationConstants constants) {
         TextColumnWithTooltip<VmNetworkInterface> nameColumn = new TextColumnWithTooltip<VmNetworkInterface>() {
             @Override
             public String getValue(VmNetworkInterface object) {
                 return object.getName();
             }
         };
-        getTable().addColumn(nameColumn, "Name");
+        getTable().addColumn(nameColumn, constants.nameInterface());
 
         TextColumnWithTooltip<VmNetworkInterface> networkNameColumn = new TextColumnWithTooltip<VmNetworkInterface>() {
             @Override
@@ -37,7 +42,7 @@ public class BaseInterfaceListModelTable<T extends SearchableListModel> extends 
                 return object.getNetworkName();
             }
         };
-        getTable().addColumn(networkNameColumn, "Network Name");
+        getTable().addColumn(networkNameColumn, constants.networkNameInterface());
 
         TextColumnWithTooltip<VmNetworkInterface> typeColumn = new EnumColumn<VmNetworkInterface, VmInterfaceType>() {
             @Override
@@ -45,7 +50,7 @@ public class BaseInterfaceListModelTable<T extends SearchableListModel> extends 
                 return VmInterfaceType.forValue(object.getType());
             }
         };
-        getTable().addColumn(typeColumn, "Type");
+        getTable().addColumn(typeColumn, constants.typeInterface());
 
         TextColumnWithTooltip<VmNetworkInterface> macColumn = new TextColumnWithTooltip<VmNetworkInterface>() {
             @Override
@@ -53,7 +58,7 @@ public class BaseInterfaceListModelTable<T extends SearchableListModel> extends 
                 return object.getMacAddress();
             }
         };
-        getTable().addColumn(macColumn, "MAC");
+        getTable().addColumn(macColumn, constants.macInterface());
 
         TextColumnWithTooltip<VmNetworkInterface> speedColumn = new TextColumnWithTooltip<VmNetworkInterface>() {
             @Override
@@ -65,7 +70,7 @@ public class BaseInterfaceListModelTable<T extends SearchableListModel> extends 
                 }
             }
         };
-        getTable().addColumn(speedColumn, "Speed (Mbps)");
+        getTable().addColumnWithHtmlHeader(speedColumn, templates.sub(constants.speedInterface(), constants.mbps()).asString());
 
         TextColumnWithTooltip<VmNetworkInterface> rxColumn = new RxTxRateColumn<VmNetworkInterface>() {
             @Override
@@ -82,7 +87,7 @@ public class BaseInterfaceListModelTable<T extends SearchableListModel> extends 
                 }
             }
         };
-        getTable().addColumn(rxColumn, "Rx (Mbps)");
+        getTable().addColumnWithHtmlHeader(rxColumn, templates.sub(constants.rxInterface(), constants.mbps()).asString());
 
         TextColumnWithTooltip<VmNetworkInterface> txColumn = new RxTxRateColumn<VmNetworkInterface>() {
             @Override
@@ -99,7 +104,7 @@ public class BaseInterfaceListModelTable<T extends SearchableListModel> extends 
                 }
             }
         };
-        getTable().addColumn(txColumn, "Tx (Mbps)");
+        getTable().addColumnWithHtmlHeader(txColumn, templates.sub(constants.txInterface(), constants.mbps()).asString());
 
         TextColumnWithTooltip<VmNetworkInterface> dropsColumn = new SumUpColumn<VmNetworkInterface>() {
             @Override
@@ -108,7 +113,7 @@ public class BaseInterfaceListModelTable<T extends SearchableListModel> extends 
                         object.getStatistics().getTransmitDropRate() };
             }
         };
-        getTable().addColumn(dropsColumn, "Drops (Pkts)");
+        getTable().addColumnWithHtmlHeader(dropsColumn, templates.sub(constants.dropsInterface(), constants.pkts()).asString());
     }
 
 }

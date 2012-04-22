@@ -28,6 +28,7 @@ import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
 public class NewTemplateVmModelBehavior extends IVmModelBehavior
@@ -54,7 +55,9 @@ public class NewTemplateVmModelBehavior extends IVmModelBehavior
                         storage_pool dataCenter = (storage_pool) returnValue;
                         if (dataCenter == null)
                         {
-                            DisableNewTemplateModel("Data Center is not accessible.");
+                            DisableNewTemplateModel(ConstantsManager.getInstance()
+                                    .getConstants()
+                                    .dataCenterIsNotAccessibleMsg());
                         }
                         else
                         {
@@ -109,7 +112,9 @@ public class NewTemplateVmModelBehavior extends IVmModelBehavior
                         }
                         if (disks.isEmpty())
                         {
-                            behavior.DisableNewTemplateModel("Cannot create Template. VM has no disks.");
+                            behavior.DisableNewTemplateModel(ConstantsManager.getInstance()
+                                    .getConstants()
+                                    .cannotCreateTemplateVmHasNoDisksMsg());
                         }
                         else
                         {
@@ -118,7 +123,9 @@ public class NewTemplateVmModelBehavior extends IVmModelBehavior
 
                         InitDisks(disks);
                     }
-                }, getModel().getHash()), vm.getId(), true);
+                }, getModel().getHash()),
+                vm.getId(),
+                true);
 
         if (dataCenter.getQuotaEnforcementType() != QuotaEnforcementTypeEnum.DISABLED) {
             getModel().getQuota().setIsAvailable(true);
@@ -192,7 +199,7 @@ public class NewTemplateVmModelBehavior extends IVmModelBehavior
         if (!StringHelper.isNullOrEmpty(this.vm.gettime_zone()))
         {
             getModel().getTimeZone()
-                    .setSelectedItem(new KeyValuePairCompat<String, String>(this.vm.gettime_zone(), ""));
+                    .setSelectedItem(new KeyValuePairCompat<String, String>(this.vm.gettime_zone(), "")); //$NON-NLS-1$
             UpdateTimeZone();
         }
         else
@@ -296,8 +303,9 @@ public class NewTemplateVmModelBehavior extends IVmModelBehavior
                         }
                         else
                         {
-                            behavior.DisableNewTemplateModel("VM's Storage Domain ("
-                                    + currentStorageDomain.getstorage_name() + ") is not accessible.");
+                            behavior.DisableNewTemplateModel(ConstantsManager.getInstance()
+                                    .getMessages()
+                                    .vmStorageDomainIsNotAccessible(currentStorageDomain.getstorage_name()));
                         }
 
                         ArrayList<DiskModel> disks =

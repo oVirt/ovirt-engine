@@ -65,7 +65,7 @@ public final class RegistrationResult
 
     static
     {
-        RetrievedEventDefinition = new EventDefinition("RetrievedEvent", RegistrationResult.class);
+        RetrievedEventDefinition = new EventDefinition("RetrievedEvent", RegistrationResult.class); //$NON-NLS-1$
     }
 
     public RegistrationResult(Guid id, ObservableCollection<IVdcQueryable> data)

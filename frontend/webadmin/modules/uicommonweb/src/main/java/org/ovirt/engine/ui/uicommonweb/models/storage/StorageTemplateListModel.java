@@ -9,6 +9,7 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
 public class StorageTemplateListModel extends SearchableListModel
@@ -27,7 +28,8 @@ public class StorageTemplateListModel extends SearchableListModel
 
     public StorageTemplateListModel()
     {
-        setTitle("Templates");
+        setTitle(ConstantsManager.getInstance().getConstants().templatesTitle());
+        setHashName("templates"); // $//$NON-NLS-1$
     }
 
     @Override
@@ -95,6 +97,6 @@ public class StorageTemplateListModel extends SearchableListModel
 
     @Override
     protected String getListName() {
-        return "StorageTemplateListModel";
+        return "StorageTemplateListModel"; //$NON-NLS-1$
     }
 }

@@ -52,8 +52,8 @@ public class CloneVmFromSnapshotModelBehavior extends ExistingVmModelBehavior
     {
         super.Template_SelectedItemChanged();
 
-        getModel().getName().setEntity("");
-        getModel().getDescription().setEntity("");
+        getModel().getName().setEntity(""); //$NON-NLS-1$
+        getModel().getDescription().setEntity(""); //$NON-NLS-1$
         getModel().getProvisioning().setEntity(true);
         getModel().getProvisioning().setIsAvailable(true);
         getModel().getProvisioning().setIsChangable(false);

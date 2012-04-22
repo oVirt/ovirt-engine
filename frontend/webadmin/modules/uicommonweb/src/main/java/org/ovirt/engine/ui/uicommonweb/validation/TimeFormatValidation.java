@@ -4,6 +4,7 @@ import org.ovirt.engine.core.compat.CultureInfo;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.DateTimeStyles;
 import org.ovirt.engine.core.compat.RefObject;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
 public class TimeFormatValidation implements IValidation
@@ -13,15 +14,14 @@ public class TimeFormatValidation implements IValidation
     {
         ValidationResult result = new ValidationResult();
 
-        if (value != null && value instanceof String && !((String) value).equals(""))
+        if (value != null && value instanceof String && !((String) value).equals("")) //$NON-NLS-1$
         {
             CultureInfo ci = CultureInfo.CurrentCulture;
             java.util.Date dtValue = new java.util.Date(0);
 
             RefObject<java.util.Date> tempRef_dtValue = new RefObject<java.util.Date>(dtValue);
             boolean tempVar =
-                    !DateTime.TryParseExact((String) value,
-                            "t",
+                    !DateTime.TryParseExact((String) value, "t", //$NON-NLS-1$
                             ci.DateTimeFormat,
                             DateTimeStyles.None,
                             tempRef_dtValue);
@@ -29,7 +29,9 @@ public class TimeFormatValidation implements IValidation
             if (tempVar)
             {
                 result.setSuccess(false);
-                result.getReasons().add("The field must contain a time value");
+                result.getReasons().add(ConstantsManager.getInstance()
+                        .getConstants()
+                        .theFieldMustContainTimeValueInvalidReason());
             }
         }
 

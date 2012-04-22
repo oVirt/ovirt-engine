@@ -26,6 +26,7 @@ import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.DataProvider;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
 import org.ovirt.engine.ui.uicompat.Translator;
 
@@ -70,7 +71,7 @@ public class PoolGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(name, value))
         {
             name = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Name"));
+            OnPropertyChanged(new PropertyChangedEventArgs("Name")); //$NON-NLS-1$
         }
     }
 
@@ -86,7 +87,7 @@ public class PoolGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(description, value))
         {
             description = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Description"));
+            OnPropertyChanged(new PropertyChangedEventArgs("Description")); //$NON-NLS-1$
         }
     }
 
@@ -102,7 +103,7 @@ public class PoolGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(os, value))
         {
             os = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("OS"));
+            OnPropertyChanged(new PropertyChangedEventArgs("OS")); //$NON-NLS-1$
         }
     }
 
@@ -118,7 +119,7 @@ public class PoolGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(defaultDisplayType, value))
         {
             defaultDisplayType = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("DefaultDisplayType"));
+            OnPropertyChanged(new PropertyChangedEventArgs("DefaultDisplayType")); //$NON-NLS-1$
         }
     }
 
@@ -134,7 +135,7 @@ public class PoolGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(origin, value))
         {
             origin = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Origin"));
+            OnPropertyChanged(new PropertyChangedEventArgs("Origin")); //$NON-NLS-1$
         }
     }
 
@@ -150,7 +151,7 @@ public class PoolGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(template, value))
         {
             template = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Template"));
+            OnPropertyChanged(new PropertyChangedEventArgs("Template")); //$NON-NLS-1$
         }
     }
 
@@ -166,7 +167,7 @@ public class PoolGeneralModel extends EntityModel
         if (cpuCount != value)
         {
             cpuCount = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("CpuCount"));
+            OnPropertyChanged(new PropertyChangedEventArgs("CpuCount")); //$NON-NLS-1$
         }
     }
 
@@ -182,7 +183,7 @@ public class PoolGeneralModel extends EntityModel
         if (monitorCount != value)
         {
             monitorCount = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("MonitorCount"));
+            OnPropertyChanged(new PropertyChangedEventArgs("MonitorCount")); //$NON-NLS-1$
         }
     }
 
@@ -198,7 +199,7 @@ public class PoolGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(definedMemory, value))
         {
             definedMemory = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("DefinedMemory"));
+            OnPropertyChanged(new PropertyChangedEventArgs("DefinedMemory")); //$NON-NLS-1$
         }
     }
 
@@ -214,7 +215,7 @@ public class PoolGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(minAllocatedMemory, value))
         {
             minAllocatedMemory = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("MinAllocatedMemory"));
+            OnPropertyChanged(new PropertyChangedEventArgs("MinAllocatedMemory")); //$NON-NLS-1$
         }
     }
 
@@ -230,7 +231,7 @@ public class PoolGeneralModel extends EntityModel
         if (hasDomain != value)
         {
             hasDomain = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("HasDomain"));
+            OnPropertyChanged(new PropertyChangedEventArgs("HasDomain")); //$NON-NLS-1$
         }
     }
 
@@ -246,7 +247,7 @@ public class PoolGeneralModel extends EntityModel
         if (hasStorageDomain != value)
         {
             hasStorageDomain = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("HasStorageDomain"));
+            OnPropertyChanged(new PropertyChangedEventArgs("HasStorageDomain")); //$NON-NLS-1$
         }
     }
 
@@ -262,7 +263,7 @@ public class PoolGeneralModel extends EntityModel
         if (hasTimeZone != value)
         {
             hasTimeZone = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("HasTimeZone"));
+            OnPropertyChanged(new PropertyChangedEventArgs("HasTimeZone")); //$NON-NLS-1$
         }
     }
 
@@ -278,7 +279,7 @@ public class PoolGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(usbPolicy, value))
         {
             usbPolicy = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("UsbPolicy"));
+            OnPropertyChanged(new PropertyChangedEventArgs("UsbPolicy")); //$NON-NLS-1$
         }
     }
 
@@ -294,7 +295,7 @@ public class PoolGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(domain, value))
         {
             domain = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Domain"));
+            OnPropertyChanged(new PropertyChangedEventArgs("Domain")); //$NON-NLS-1$
         }
     }
 
@@ -310,7 +311,7 @@ public class PoolGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(storageDomain, value))
         {
             storageDomain = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("StorageDomain"));
+            OnPropertyChanged(new PropertyChangedEventArgs("StorageDomain")); //$NON-NLS-1$
         }
     }
 
@@ -326,7 +327,7 @@ public class PoolGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(timeZone, value))
         {
             timeZone = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("TimeZone"));
+            OnPropertyChanged(new PropertyChangedEventArgs("TimeZone")); //$NON-NLS-1$
         }
     }
 
@@ -342,7 +343,7 @@ public class PoolGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(cpuInfo, value))
         {
             cpuInfo = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("CpuInfo"));
+            OnPropertyChanged(new PropertyChangedEventArgs("CpuInfo")); //$NON-NLS-1$
         }
     }
 
@@ -358,7 +359,7 @@ public class PoolGeneralModel extends EntityModel
         if (hasDefaultHost != value)
         {
             hasDefaultHost = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("HasDefaultHost"));
+            OnPropertyChanged(new PropertyChangedEventArgs("HasDefaultHost")); //$NON-NLS-1$
         }
     }
 
@@ -374,7 +375,7 @@ public class PoolGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(defaultHost, value))
         {
             defaultHost = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("DefaultHost"));
+            OnPropertyChanged(new PropertyChangedEventArgs("DefaultHost")); //$NON-NLS-1$
         }
     }
 
@@ -390,20 +391,21 @@ public class PoolGeneralModel extends EntityModel
         if (isStateless != value)
         {
             isStateless = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsStateless"));
+            OnPropertyChanged(new PropertyChangedEventArgs("IsStateless")); //$NON-NLS-1$
         }
     }
 
     static
     {
-        UpdateCompleteEventDefinition = new EventDefinition("UpdateComplete", PoolGeneralModel.class);
+        UpdateCompleteEventDefinition = new EventDefinition("UpdateComplete", PoolGeneralModel.class); //$NON-NLS-1$
     }
 
     public PoolGeneralModel()
     {
         setUpdateCompleteEvent(new Event(UpdateCompleteEventDefinition));
 
-        setTitle("General");
+        setTitle(ConstantsManager.getInstance().getConstants().generalTitle());
+        setHashName("general"); //$NON-NLS-1$
     }
 
     @Override
@@ -445,15 +447,15 @@ public class PoolGeneralModel extends EntityModel
                 if (getvm() != null)
                 {
                     poolGeneralModel.setTemplate(getvm().getvmt_name());
-                    poolGeneralModel.setCpuInfo(getvm().getnum_of_cpus() + " " + "(" + getvm().getnum_of_sockets()
-                            + " Socket(s), " + getvm().getcpu_per_socket() + " Core(s) per Socket)");
+                    poolGeneralModel.setCpuInfo(getvm().getnum_of_cpus() + " " + "(" + getvm().getnum_of_sockets() //$NON-NLS-1$ //$NON-NLS-2$
+                            + " Socket(s), " + getvm().getcpu_per_socket() + " Core(s) per Socket)"); //$NON-NLS-1$ //$NON-NLS-2$
                     poolGeneralModel.setMonitorCount(getvm().getnum_of_monitors());
 
                     Translator translator = EnumTranslator.Create(VmOsType.class);
                     poolGeneralModel.setOS(translator.get(getvm().getvm_os()));
 
-                    poolGeneralModel.setDefinedMemory(getvm().getvm_mem_size_mb() + " MB");
-                    poolGeneralModel.setMinAllocatedMemory(getvm().getMinAllocatedMem() + " MB");
+                    poolGeneralModel.setDefinedMemory(getvm().getvm_mem_size_mb() + " MB"); //$NON-NLS-1$
+                    poolGeneralModel.setMinAllocatedMemory(getvm().getMinAllocatedMem() + " MB"); //$NON-NLS-1$
 
                     translator = EnumTranslator.Create(DisplayType.class);
                     poolGeneralModel.setDefaultDisplayType(translator.get(getvm().getdefault_display_type()));
@@ -497,12 +499,12 @@ public class PoolGeneralModel extends EntityModel
                             }
                         };
 
-                        Frontend.RunQuery(VdcQueryType.Search, new SearchParameters("Host: cluster = "
-                                + getvm().getvds_group_name() + " sortby name", SearchType.VDS), _asyncQuery1);
+                        Frontend.RunQuery(VdcQueryType.Search, new SearchParameters("Host: cluster = " //$NON-NLS-1$
+                                + getvm().getvds_group_name() + " sortby name", SearchType.VDS), _asyncQuery1); //$NON-NLS-1$
                     }
                     else
                     {
-                        poolGeneralModel.setDefaultHost("Any Host in Cluster");
+                        poolGeneralModel.setDefaultHost("Any Host in Cluster"); //$NON-NLS-1$
 
                         poolGeneralModel.UpdateStorageDomain();
                     }

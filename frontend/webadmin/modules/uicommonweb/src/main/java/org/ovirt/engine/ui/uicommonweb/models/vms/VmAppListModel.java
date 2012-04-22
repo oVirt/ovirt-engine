@@ -11,6 +11,7 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public class VmAppListModel extends SearchableListModel
 {
@@ -30,20 +31,21 @@ public class VmAppListModel extends SearchableListModel
             items = value;
             ItemsChanged();
             getItemsChangedEvent().raise(this, EventArgs.Empty);
-            OnPropertyChanged(new PropertyChangedEventArgs("Items"));
+            OnPropertyChanged(new PropertyChangedEventArgs("Items")); //$NON-NLS-1$
         }
     }
 
     public VmAppListModel()
     {
-        setTitle("Applications");
+        setTitle(ConstantsManager.getInstance().getConstants().applicationsTitle());
+        setHashName("applications"); //$NON-NLS-1$
     }
 
     @Override
     protected void EntityPropertyChanged(Object sender, PropertyChangedEventArgs e)
     {
         super.EntityPropertyChanged(sender, e);
-        if (e.PropertyName.equals("app_list"))
+        if (e.PropertyName.equals("app_list")) //$NON-NLS-1$
         {
             updateAppList();
         }
@@ -88,7 +90,7 @@ public class VmAppListModel extends SearchableListModel
         {
             java.util.ArrayList<String> list = new java.util.ArrayList<String>();
 
-            String[] array = vm.getapp_list().split("[,]", -1);
+            String[] array = vm.getapp_list().split("[,]", -1); //$NON-NLS-1$
             for (String item : array)
             {
                 list.add(item);
@@ -110,6 +112,6 @@ public class VmAppListModel extends SearchableListModel
 
     @Override
     protected String getListName() {
-        return "VmAppListModel";
+        return "VmAppListModel"; //$NON-NLS-1$
     }
 }

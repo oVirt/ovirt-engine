@@ -226,7 +226,7 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
         testButton.setLabel(constants.hostPopupTestButtonLabel());
 
         // SPM tab
-        spmTab.setLabel("SPM");
+        spmTab.setLabel(constants.spmTestButtonLabel());
     }
 
     @Override
@@ -244,13 +244,13 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 String propName = ((PropertyChangedEventArgs) args).PropertyName;
 
-                if ("IsGeneralTabValid".equals(propName)) {
+                if ("IsGeneralTabValid".equals(propName)) { //$NON-NLS-1$
                     if (object.getIsGeneralTabValid()) {
                         generalTab.markAsValid();
                     } else {
                         generalTab.markAsInvalid(null);
                     }
-                } else if ("IsPowerManagementTabValid".equals(propName)) {
+                } else if ("IsPowerManagementTabValid".equals(propName)) { //$NON-NLS-1$
                     if (object.getIsPowerManagementTabValid()) {
                         powerManagementTab.markAsValid();
                     } else {
@@ -292,7 +292,7 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
 
             final EntityModel model = (EntityModel) item;
 
-            RadioButton rb = new RadioButton("spm");
+            RadioButton rb = new RadioButton("spm"); // $//$NON-NLS-1$
             rb.setText(model.getTitle());
             rb.setValue(object.getSpmPriority().getSelectedItem() == model);
             rb.addStyleName(style.radioButton());

@@ -111,7 +111,7 @@ public class VmBasicDiskListModel extends SearchableListModel
 
     @Override
     protected String getListName() {
-        return "VmBasicDiskListModel";
+        return "VmBasicDiskListModel"; //$NON-NLS-1$
     }
 
 }

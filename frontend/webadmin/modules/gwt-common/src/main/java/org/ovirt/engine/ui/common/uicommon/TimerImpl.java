@@ -15,10 +15,10 @@ public class TimerImpl implements ITimer {
     private static Logger logger = Logger.getLogger(TimerImpl.class.getName());
     private int interval;
 
-    private final Timer timer = TimerFactory.factoryTimer("UICommon Timer", new Timer() {
+    private final Timer timer = TimerFactory.factoryTimer("UICommon Timer", new Timer() { //$NON-NLS-1$
         @Override
         public void run() {
-            logger.info("Timer execution");
+            logger.info("Timer execution"); //$NON-NLS-1$
             tickEvent.raise(this, EventArgs.Empty);
         }
     });
@@ -34,19 +34,19 @@ public class TimerImpl implements ITimer {
 
     @Override
     public void setInterval(int value) {
-        logger.info("Timer interval set to " + value + " by UICommon");
+        logger.info("Timer interval set to " + value + " by UICommon"); //$NON-NLS-1$ //$NON-NLS-2$
         interval = value;
     }
 
     @Override
     public void start() {
-        logger.info("Timer started by UICommon");
+        logger.info("Timer started by UICommon"); //$NON-NLS-1$
         timer.scheduleRepeating(interval);
     }
 
     @Override
     public void stop() {
-        logger.info("Timer stopped by UICommon");
+        logger.info("Timer stopped by UICommon"); //$NON-NLS-1$
         timer.cancel();
     }
 

@@ -23,7 +23,7 @@ public class DragEvent extends DragDropEventBase<DragHandler> {
     /**
      * Event type for drag events. Represents the meta-data associated with this event.
      */
-    private static final Type<DragHandler> TYPE = new Type<DragHandler>("drag", new DragEvent());
+    private static final Type<DragHandler> TYPE = new Type<DragHandler>("drag", new DragEvent()); //$NON-NLS-1$
 
     /**
      * Gets the event type associated with drag events.

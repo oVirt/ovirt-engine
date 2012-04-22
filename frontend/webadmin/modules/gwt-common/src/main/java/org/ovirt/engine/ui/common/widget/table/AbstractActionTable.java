@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.common.widget.table;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
 import org.ovirt.engine.ui.common.widget.action.AbstractActionPanel;
@@ -93,7 +94,7 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> {
                 // Enable multiple selection only when Control/Shift key is pressed
                 mousePosition[0] = event.getClientX();
                 mousePosition[1] = event.getClientY();
-                if ("click".equals(event.getType()) && !multiSelectionDisabled) {
+                if ("click".equals(event.getType()) && !multiSelectionDisabled) { //$NON-NLS-1$
                     selectionModel.setMultiSelectEnabled(event.getCtrlKey());
                     selectionModel.setMultiRangeSelectEnabled(event.getShiftKey());
                 }
@@ -151,7 +152,7 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> {
         nextPageButton.setVisible(true);
     }
 
-    public void showSelectionCountTooltip() {
+    public void showSelectionCountTooltip(final CommonApplicationConstants constants) {
         this.selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
 
             private PopupPanel tooltip = null;
@@ -167,7 +168,7 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> {
                 }
                 tooltip = new PopupPanel(true);
 
-                tooltip.setWidget(new Label(selectionModel.getSelectedList().size() + " selected"));
+                tooltip.setWidget(new Label(selectionModel.getSelectedList().size() + " " + constants.selectedActionTable())); //$NON-NLS-1$
                 if (mousePosition[0] == 0 && mousePosition[1] == 0) {
                     mousePosition[0] = Window.getClientWidth() / 2;
                     mousePosition[1] = Window.getClientHeight() * 1 / 3;
@@ -258,7 +259,7 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> {
             @Override
             public void onCellPreview(CellPreviewEvent<T> event) {
                 if (event.getNativeEvent().getButton() != NativeEvent.BUTTON_RIGHT
-                        || !"mousedown".equals(event.getNativeEvent().getType())) {
+                        || !"mousedown".equals(event.getNativeEvent().getType())) { //$NON-NLS-1$
                     return;
                 }
 
@@ -273,8 +274,8 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> {
         });
 
         // Use fixed table layout
-        table.setWidth("100%", true);
-        tableHeader.setWidth("100%", true);
+        table.setWidth("100%", true); //$NON-NLS-1$
+        tableHeader.setWidth("100%", true); //$NON-NLS-1$
 
         // Attach table widget to the corresponding panel
         tableContainer.setWidget(table);
@@ -334,6 +335,21 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> {
 
         addColumn(column, header);
         setColumnWidth(column, width);
+    }
+
+    /**
+     * Adds a new table column with HTML in the header text, without specifying the column width.
+     * <p>
+     * {@code headerHtml} must honor the {@link SafeHtml} contract as specified in
+     * {@link SafeHtmlUtils#fromSafeConstant(String) fromSafeConstant}.
+     *
+     * @see SafeHtmlUtils#fromSafeConstant(String)
+     */
+    public void addColumnWithHtmlHeader(Column<T, ?> column, String headerHtml) {
+        SafeHtml headerValue = SafeHtmlUtils.fromSafeConstant(headerHtml);
+        SafeHtmlHeader header = new SafeHtmlHeader(headerValue);
+
+        addColumn(column, header);
     }
 
     /**

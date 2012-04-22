@@ -61,6 +61,7 @@ import org.ovirt.engine.ui.uicommonweb.models.storage.StorageModel;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.RegexValidation;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
@@ -73,19 +74,41 @@ import org.ovirt.engine.ui.uicompat.TaskContext;
 public class DataCenterGuideModel extends GuideModel implements ITaskTarget
 {
 
-    public final String DataCenterConfigureClustersAction = "Configure Cluster";
-    public final String DataCenterAddAnotherClusterAction = "Add another Cluster";
-    public final String DataCenterConfigureHostsAction = "Configure Host";
-    public final String DataCenterSelectHostsAction = "Select Hosts";
-    public final String DataCenterConfigureStorageAction = "Configure Storage";
-    public final String DataCenterAddMoreStorageAction = "Add more Storage";
-    public final String DataCenterAttachStorageAction = "Attach Storage";
-    public final String DataCenterAttachMoreStorageAction = "Attach more Storage";
-    public final String DataCenterConfigureISOLibraryAction = "Configure ISO Library";
-    public final String DataCenterAttachISOLibraryAction = "Attach ISO Library";
+    public final String DataCenterConfigureClustersAction = ConstantsManager.getInstance()
+            .getConstants()
+            .dataCenterConfigureClustersAction();
+    public final String DataCenterAddAnotherClusterAction = ConstantsManager.getInstance()
+            .getConstants()
+            .dataCenterAddAnotherClusterAction();
+    public final String DataCenterConfigureHostsAction = ConstantsManager.getInstance()
+            .getConstants()
+            .dataCenterConfigureHostsAction();
+    public final String DataCenterSelectHostsAction = ConstantsManager.getInstance()
+            .getConstants()
+            .dataCenterSelectHostsAction();
+    public final String DataCenterConfigureStorageAction = ConstantsManager.getInstance()
+            .getConstants()
+            .dataCenterConfigureStorageAction();
+    public final String DataCenterAddMoreStorageAction = ConstantsManager.getInstance()
+            .getConstants()
+            .dataCenterAddMoreStorageAction();
+    public final String DataCenterAttachStorageAction = ConstantsManager.getInstance()
+            .getConstants()
+            .dataCenterAttachStorageAction();
+    public final String DataCenterAttachMoreStorageAction = ConstantsManager.getInstance()
+            .getConstants()
+            .dataCenterAttachMoreStorageAction();
+    public final String DataCenterConfigureISOLibraryAction = ConstantsManager.getInstance()
+            .getConstants()
+            .dataCenterConfigureISOLibraryAction();
+    public final String DataCenterAttachISOLibraryAction = ConstantsManager.getInstance()
+            .getConstants()
+            .dataCenterAttachISOLibraryAction();
 
-    public final String NoUpHostReason = "There should be at least one active Host in the Data Center";
-    public final String NoDataDomainAttachedReason = "Cannot create an ISO domain in a non-active Data Center";
+    public final String NoUpHostReason = ConstantsManager.getInstance().getConstants().noUpHostReason();
+    public final String NoDataDomainAttachedReason = ConstantsManager.getInstance()
+            .getConstants()
+            .noDataDomainAttachedReason();
 
     private storage_domain_static storageDomain;
     private TaskContext context;
@@ -199,8 +222,8 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                     }
                 }), getEntity().getId());
 
-        Frontend.RunQuery(VdcQueryType.Search, new SearchParameters("Hosts: datacenter!= " + getEntity().getname()
-                + " status=maintenance or status=pendingapproval ", SearchType.VDS), new AsyncQuery(this,
+        Frontend.RunQuery(VdcQueryType.Search, new SearchParameters("Hosts: datacenter!= " + getEntity().getname() //$NON-NLS-1$
+                + " status=maintenance or status=pendingapproval ", SearchType.VDS), new AsyncQuery(this, //$NON-NLS-1$
                 new INewAsyncCallback() {
                     @Override
                     public void OnSuccess(Object target, Object returnValue) {
@@ -234,7 +257,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         }
 
         // Add cluster action.
-        UICommand addClusterAction = new UICommand("AddCluster", this);
+        UICommand addClusterAction = new UICommand("AddCluster", this); //$NON-NLS-1$
         if (clusters.isEmpty())
         {
             addClusterAction.setTitle(DataCenterConfigureClustersAction);
@@ -281,7 +304,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
             }
         }
 
-        UICommand tempVar = new UICommand("AddHost", this);
+        UICommand tempVar = new UICommand("AddHost", this); //$NON-NLS-1$
         tempVar.setIsExecutionAllowed(clusters.size() > 0);
         UICommand addHostAction = tempVar;
 
@@ -289,7 +312,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         getCompulsoryActions().add(addHostAction);
 
         // Select host action.
-        UICommand selectHostAction = new UICommand("SelectHost", this);
+        UICommand selectHostAction = new UICommand("SelectHost", this); //$NON-NLS-1$
 
         if (availableHosts.size() > 0 && clusters.size() > 0)
         {
@@ -347,7 +370,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
             }
         }
 
-        UICommand tempVar2 = new UICommand("AddDataStorage", this);
+        UICommand tempVar2 = new UICommand("AddDataStorage", this); //$NON-NLS-1$
         tempVar2.setIsExecutionAllowed(upHosts.size() > 0);
         UICommand addDataStorageAction = tempVar2;
         addDataStorageAction.getExecuteProhibitionReasons().add(NoUpHostReason);
@@ -364,7 +387,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         }
 
         // Attach data storage action.
-        UICommand tempVar3 = new UICommand("AttachDataStorage", this);
+        UICommand tempVar3 = new UICommand("AttachDataStorage", this); //$NON-NLS-1$
         tempVar3.setIsExecutionAllowed(unattachedStorage.size() > 0 && upHosts.size() > 0);
         UICommand attachDataStorageAction = tempVar3;
         if (upHosts.isEmpty())
@@ -382,7 +405,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
             getOptionalActions().add(attachDataStorageAction);
         }
 
-        UICommand tempVar4 = new UICommand("AddIsoStorage", this);
+        UICommand tempVar4 = new UICommand("AddIsoStorage", this); //$NON-NLS-1$
         tempVar4.setIsExecutionAllowed(getEntity().getstatus() == StoragePoolStatus.Up);
         UICommand addIsoStorageAction = tempVar4;
         addIsoStorageAction.getExecuteProhibitionReasons().add(NoDataDomainAttachedReason);
@@ -414,7 +437,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         // Data Center. It will not always be allowed.
         boolean attachIsoAvailable = attachedIsoStorages.isEmpty();
 
-        UICommand tempVar5 = new UICommand("AttachIsoStorage", this);
+        UICommand tempVar5 = new UICommand("AttachIsoStorage", this); //$NON-NLS-1$
         tempVar5.setIsExecutionAllowed(attachIsoAllowed);
         tempVar5.setIsAvailable(attachIsoAvailable);
         UICommand attachIsoStorageAction = tempVar5;
@@ -437,7 +460,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
             return;
         }
 
-        UICommand addClusterAction = new UICommand("AddCluster", this);
+        UICommand addClusterAction = new UICommand("AddCluster", this); //$NON-NLS-1$
         if (clusters.isEmpty())
         {
             addClusterAction.setTitle(DataCenterConfigureClustersAction);
@@ -445,10 +468,10 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         }
         else
         {
-            UICommand tempVar6 = new UICommand("AddHost", this);
+            UICommand tempVar6 = new UICommand("AddHost", this); //$NON-NLS-1$
             tempVar6.setTitle(DataCenterConfigureHostsAction);
             UICommand addHostAction = tempVar6;
-            UICommand tempVar7 = new UICommand("SelectHost", this);
+            UICommand tempVar7 = new UICommand("SelectHost", this); //$NON-NLS-1$
             tempVar7.setTitle(DataCenterSelectHostsAction);
             UICommand selectHost = tempVar7;
             boolean hasMaintenance3_0Host = false;
@@ -456,7 +479,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
             Version version3_0 = new Version(3, 0);
             for (VDS vds : allHosts)
             {
-                String[] hostVersions = vds.getsupported_cluster_levels().split("[,]", -1);
+                String[] hostVersions = vds.getsupported_cluster_levels().split("[,]", -1); //$NON-NLS-1$
                 for (String hostVersion : hostVersions)
                 {
                     if (version3_0.compareTo(new Version(hostVersion)) <= 0)
@@ -475,13 +498,14 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
             {
                 addHostAction.setIsExecutionAllowed(false);
                 selectHost.setIsExecutionAllowed(false);
-                String hasHostReason = "Local Data Center already contains a Host";
+                String hasHostReason =
+                        ConstantsManager.getInstance().getConstants().localDataCenterAlreadyContainsAHostDcGuide();
                 addHostAction.getExecuteProhibitionReasons().add(hasHostReason);
                 selectHost.getExecuteProhibitionReasons().add(hasHostReason);
                 if (localStorageHost.getstatus() == VDSStatus.Up)
                 {
-                    UICommand tempVar8 = new UICommand("AddLocalStorage", this);
-                    tempVar8.setTitle("Add Local Storage");
+                    UICommand tempVar8 = new UICommand("AddLocalStorage", this); //$NON-NLS-1$
+                    tempVar8.setTitle(ConstantsManager.getInstance().getConstants().addLocalStorageTitle());
                     UICommand addLocalStorageAction = tempVar8;
                     getOptionalActions().add(addLocalStorageAction);
                 }
@@ -490,7 +514,8 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
             {
                 addHostAction.setIsExecutionAllowed(false);
                 selectHost.setIsExecutionAllowed(false);
-                String dataCenterInitializeReason = "Data Center was already initialized";
+                String dataCenterInitializeReason =
+                        ConstantsManager.getInstance().getConstants().dataCenterWasAlreadyInitializedDcGuide();
                 addHostAction.getExecuteProhibitionReasons().add(dataCenterInitializeReason);
                 selectHost.getExecuteProhibitionReasons().add(dataCenterInitializeReason);
             }
@@ -547,8 +572,8 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
     {
         StorageModel model = new StorageModel(new NewEditStorageModelBehavior());
         setWindow(model);
-        model.setTitle("New Local Domain");
-        model.setHashName("new_local_domain");
+        model.setTitle(ConstantsManager.getInstance().getConstants().newLocalDomainTitle());
+        model.setHashName("new_local_domain"); //$NON-NLS-1$
         LocalStorageModel localStorageModel = new LocalStorageModel();
         localStorageModel.setRole(StorageDomainType.Data);
 
@@ -572,12 +597,12 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                         model.getDataCenter()
                                 .setItems(new java.util.ArrayList<storage_pool>(java.util.Arrays.asList(new storage_pool[] { getEntity() })));
                         model.getDataCenter().setSelectedItem(getEntity());
-                        UICommand tempVar = new UICommand("OnAddStorage", listModel);
-                        tempVar.setTitle("OK");
+                        UICommand tempVar = new UICommand("OnAddStorage", listModel); //$NON-NLS-1$
+                        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
                         tempVar.setIsDefault(true);
                         model.getCommands().add(tempVar);
-                        UICommand tempVar2 = new UICommand("Cancel", listModel);
-                        tempVar2.setTitle("Cancel");
+                        UICommand tempVar2 = new UICommand("Cancel", listModel); //$NON-NLS-1$
+                        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
                         tempVar2.setIsCancel(true);
                         model.getCommands().add(tempVar2);
                     }
@@ -587,12 +612,12 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
 
     public void AddIsoStorage()
     {
-        AddStorageInternal("New ISO Library", StorageDomainType.ISO);
+        AddStorageInternal(ConstantsManager.getInstance().getConstants().newISOLibraryTitle(), StorageDomainType.ISO);
     }
 
     public void AddDataStorage()
     {
-        AddStorageInternal("New Storage", StorageDomainType.Data);
+        AddStorageInternal(ConstantsManager.getInstance().getConstants().newStorageTitle(), StorageDomainType.Data);
     }
 
     private void AddStorageInternal(String title, StorageDomainType type)
@@ -600,7 +625,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         StorageModel model = new StorageModel(new NewEditStorageModelBehavior());
         setWindow(model);
         model.setTitle(title);
-        model.setHashName("new_domain");
+        model.setHashName("new_domain"); //$NON-NLS-1$
         model.getDataCenter().setSelectedItem(getEntity());
         model.getDataCenter().setIsChangable(false);
 
@@ -633,12 +658,12 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
 
         model.Initialize();
 
-        UICommand tempVar6 = new UICommand("OnAddStorage", this);
-        tempVar6.setTitle("OK");
+        UICommand tempVar6 = new UICommand("OnAddStorage", this); //$NON-NLS-1$
+        tempVar6.setTitle(ConstantsManager.getInstance().getConstants().ok());
         tempVar6.setIsDefault(true);
         model.getCommands().add(tempVar6);
-        UICommand tempVar7 = new UICommand("Cancel", this);
-        tempVar7.setTitle("Cancel");
+        UICommand tempVar7 = new UICommand("Cancel", this); //$NON-NLS-1$
+        tempVar7.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         tempVar7.setIsCancel(true);
         model.getCommands().add(tempVar7);
     }
@@ -657,11 +682,13 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                         StorageModel storageModel = (StorageModel) dataCenterGuideModel.getWindow();
                         String name = (String) storageModel.getName().getEntity();
                         String tempVar = storageModel.getOriginalName();
-                        String originalName = (tempVar != null) ? tempVar : "";
+                        String originalName = (tempVar != null) ? tempVar : ""; //$NON-NLS-1$
                         boolean isNameUnique = (Boolean) returnValue;
                         if (!isNameUnique && name.compareToIgnoreCase(originalName) != 0)
                         {
-                            storageModel.getName().getInvalidityReasons().add("Name must be unique.");
+                            storageModel.getName()
+                                    .getInvalidityReasons()
+                                    .add(ConstantsManager.getInstance().getConstants().nameMustBeUniqueInvalidReason());
                             storageModel.getName().setIsValid(false);
                         }
                         AsyncDataProvider.GetStorageDomainMaxNameLength(new AsyncQuery(dataCenterGuideModel,
@@ -673,8 +700,11 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                                         StorageModel storageModel1 = (StorageModel) dataCenterGuideModel1.getWindow();
                                         int nameMaxLength = (Integer) returnValue1;
                                         RegexValidation tempVar2 = new RegexValidation();
-                                        tempVar2.setExpression("^[A-Za-z0-9_-]{1," + nameMaxLength + "}$");
-                                        tempVar2.setMessage("Name can contain only 'A-Z', 'a-z', '0-9', '_' or '-' characters, max length: "
+                                        tempVar2.setExpression("^[A-Za-z0-9_-]{1," + nameMaxLength + "}$"); //$NON-NLS-1$ //$NON-NLS-2$
+                                        tempVar2.setMessage(ConstantsManager.getInstance()
+                                                .getConstants()
+                                                .nameCanContainOnlyMaxLengthMsg()
+                                                + " " //$NON-NLS-1$
                                                 + nameMaxLength);
                                         storageModel1.getName().ValidateEntity(new IValidation[] {
                                                 new NotEmptyValidation(), tempVar2 });
@@ -721,7 +751,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
 
         getWindow().StartProgress(null);
 
-        Task.Create(this, new java.util.ArrayList<Object>(java.util.Arrays.asList(new Object[] { "SaveLocal" }))).Run();
+        Task.Create(this, new java.util.ArrayList<Object>(java.util.Arrays.asList(new Object[] { "SaveLocal" }))).Run(); //$NON-NLS-1$
     }
 
     private void SaveLocalStorage(TaskContext context)
@@ -753,7 +783,9 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                             OnFinish(dataCenterGuideModel.context,
                                     false,
                                     dataCenterGuideModel.storageModel,
-                                    "Create operation failed. Domain " + storageName + " already exists in the system.");
+                                    ConstantsManager.getInstance()
+                                            .getMessages()
+                                            .createOperationFailedDcGuideMsg(storageName));
                         }
                         else
                         {
@@ -858,7 +890,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
     public void OnFinish(TaskContext context, boolean isSucceeded, IStorageModel model, String message)
     {
         context.InvokeUIThread(this,
-                new java.util.ArrayList<Object>(java.util.Arrays.asList(new Object[] { "Finish", isSucceeded, model,
+                new java.util.ArrayList<Object>(java.util.Arrays.asList(new Object[] { "Finish", isSucceeded, model, //$NON-NLS-1$
                         message })));
     }
 
@@ -871,7 +903,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
 
         getWindow().StartProgress(null);
 
-        Task.Create(this, new java.util.ArrayList<Object>(java.util.Arrays.asList(new Object[] { "SaveNfs" }))).Run();
+        Task.Create(this, new java.util.ArrayList<Object>(java.util.Arrays.asList(new Object[] { "SaveNfs" }))).Run(); //$NON-NLS-1$
     }
 
     private void SaveNfsStorage(TaskContext context)
@@ -903,7 +935,9 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                             OnFinish(dataCenterGuideModel.context,
                                     false,
                                     dataCenterGuideModel.storageModel,
-                                    "Create operation failed. Domain " + storageName + " already exists in the system.");
+                                    ConstantsManager.getInstance()
+                                            .getMessages()
+                                            .createOperationFailedDcGuideMsg(storageName));
                         }
                         else
                         {
@@ -1008,7 +1042,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
 
         getWindow().StartProgress(null);
 
-        Task.Create(this, new java.util.ArrayList<Object>(java.util.Arrays.asList(new Object[] { "SaveSan" }))).Run();
+        Task.Create(this, new java.util.ArrayList<Object>(java.util.Arrays.asList(new Object[] { "SaveSan" }))).Run(); //$NON-NLS-1$
     }
 
     private void SaveSanStorage(TaskContext context)
@@ -1038,7 +1072,9 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                             OnFinish(dataCenterGuideModel.context,
                                     false,
                                     dataCenterGuideModel.storageModel,
-                                    "Create operation failed. Domain " + storageName + " already exists in the system.");
+                                    ConstantsManager.getInstance()
+                                            .getMessages()
+                                            .createOperationFailedDcGuideMsg(storageName));
                         }
                         else
                         {
@@ -1104,12 +1140,12 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
 
         model.setItems(items);
 
-        UICommand tempVar2 = new UICommand("OnAttachStorage", this);
-        tempVar2.setTitle("OK");
+        UICommand tempVar2 = new UICommand("OnAttachStorage", this); //$NON-NLS-1$
+        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().ok());
         tempVar2.setIsDefault(true);
         model.getCommands().add(tempVar2);
-        UICommand tempVar3 = new UICommand("Cancel", this);
-        tempVar3.setTitle("Cancel");
+        UICommand tempVar3 = new UICommand("Cancel", this); //$NON-NLS-1$
+        tempVar3.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         tempVar3.setIsCancel(true);
         model.getCommands().add(tempVar3);
     }
@@ -1160,7 +1196,8 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                         java.util.ArrayList<storage_domains> attachedStorage =
                                 new java.util.ArrayList<storage_domains>();
 
-                        AsyncDataProvider.GetISOStorageDomainList(new AsyncQuery(new Object[] { dataCenterGuideModel, attachedStorage },
+                        AsyncDataProvider.GetISOStorageDomainList(new AsyncQuery(new Object[] { dataCenterGuideModel,
+                                attachedStorage },
                                 new INewAsyncCallback() {
                                     @Override
                                     public void OnSuccess(Object target, Object returnValue) {
@@ -1189,7 +1226,9 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                                                 sdl.add(a);
                                             }
                                         }
-                                        dataCenterGuideModel.AttachStorageInternal(sdl, "Attach ISO Library");
+                                        dataCenterGuideModel.AttachStorageInternal(sdl, ConstantsManager.getInstance()
+                                                .getConstants()
+                                                .attachISOLibraryTitle());
                                     }
                                 }));
                     }
@@ -1243,7 +1282,9 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                                 unattachedStorage.add(item);
                             }
                         }
-                        dataCenterGuideModel.AttachStorageInternal(unattachedStorage, "Attach Storage");
+                        dataCenterGuideModel.AttachStorageInternal(unattachedStorage, ConstantsManager.getInstance()
+                                .getConstants()
+                                .attachStorageTitle());
                     }
                 }));
     }
@@ -1253,8 +1294,8 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         ClusterModel model = new ClusterModel();
         model.Init(false, glusterModeEnum);
         setWindow(model);
-        model.setTitle("New Cluster");
-        model.setHashName("new_cluster");
+        model.setTitle(ConstantsManager.getInstance().getConstants().newClusterTitle());
+        model.setHashName("new_cluster"); //$NON-NLS-1$
         model.setIsNew(true);
 
         java.util.ArrayList<storage_pool> dataCenters = new java.util.ArrayList<storage_pool>();
@@ -1263,12 +1304,12 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         model.getDataCenter().setSelectedItem(getEntity());
         model.getDataCenter().setIsChangable(false);
 
-        UICommand tempVar = new UICommand("OnAddCluster", this);
-        tempVar.setTitle("OK");
+        UICommand tempVar = new UICommand("OnAddCluster", this); //$NON-NLS-1$
+        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
         tempVar.setIsDefault(true);
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this);
-        tempVar2.setTitle("Cancel");
+        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
+        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         tempVar2.setIsCancel(true);
         model.getCommands().add(tempVar2);
     }
@@ -1296,7 +1337,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         cluster.setstorage_pool_id(((storage_pool) model.getDataCenter().getSelectedItem()).getId());
         cluster.setcpu_name(((ServerCpu) model.getCPU().getSelectedItem()).getCpuName());
         cluster.setmax_vds_memory_over_commit(model.getMemoryOverCommit());
-        cluster.setTransparentHugepages(version.compareTo(new Version("3.0")) >= 0);
+        cluster.setTransparentHugepages(version.compareTo(new Version("3.0")) >= 0); //$NON-NLS-1$
         cluster.setcompatibility_version(version);
         cluster.setGlusterService((Boolean) model.getEnableGlusterService().getEntity());
 
@@ -1330,8 +1371,8 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
     public void SelectHost()
     {
         MoveHost model = new MoveHost();
-        model.setTitle("Select Host");
-        model.setHashName("select_host");
+        model.setTitle(ConstantsManager.getInstance().getConstants().selectHostTitle());
+        model.setHashName("select_host"); //$NON-NLS-1$
         setWindow(model);
 
         AsyncDataProvider.GetClusterList(new AsyncQuery(new Object[] { this, model },
@@ -1346,12 +1387,12 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                         moveHostModel.getCluster().setItems(clusters);
                         moveHostModel.getCluster().setSelectedItem(Linq.FirstOrDefault(clusters));
 
-                        UICommand tempVar = new UICommand("OnSelectHost", dataCenterGuideModel);
-                        tempVar.setTitle("OK");
+                        UICommand tempVar = new UICommand("OnSelectHost", dataCenterGuideModel); //$NON-NLS-1$
+                        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
                         tempVar.setIsDefault(true);
                         moveHostModel.getCommands().add(tempVar);
-                        UICommand tempVar2 = new UICommand("Cancel", dataCenterGuideModel);
-                        tempVar2.setTitle("Cancel");
+                        UICommand tempVar2 = new UICommand("Cancel", dataCenterGuideModel); //$NON-NLS-1$
+                        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
                         tempVar2.setIsCancel(true);
                         moveHostModel.getCommands().add(tempVar2);
                     }
@@ -1439,8 +1480,8 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
     {
         HostModel model = new HostModel();
         setWindow(model);
-        model.setTitle("New Host");
-        model.setHashName("new_host_guide_me");
+        model.setTitle(ConstantsManager.getInstance().getConstants().newHostTitle());
+        model.setHashName("new_host_guide_me"); //$NON-NLS-1$
         model.getPort().setEntity(54321);
         model.getOverrideIpTables().setEntity(true);
         model.setSpmPriorityValue(null);
@@ -1450,12 +1491,12 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         model.getDataCenter().setSelectedItem(getEntity());
         model.getDataCenter().setIsChangable(false);
 
-        UICommand tempVar = new UICommand("OnConfirmPMHost", this);
-        tempVar.setTitle("OK");
+        UICommand tempVar = new UICommand("OnConfirmPMHost", this); //$NON-NLS-1$
+        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
         tempVar.setIsDefault(true);
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this);
-        tempVar2.setTitle("Cancel");
+        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
+        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         tempVar2.setIsCancel(true);
         model.getCommands().add(tempVar2);
     }
@@ -1473,16 +1514,16 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         {
             ConfirmationModel confirmModel = new ConfirmationModel();
             setConfirmWindow(confirmModel);
-            confirmModel.setTitle("Power Management Configuration");
-            confirmModel.setHashName("power_management_configuration");
-            confirmModel.setMessage("You haven't configured Power Management for this Host. Are you sure you want to continue?");
+            confirmModel.setTitle(ConstantsManager.getInstance().getConstants().powerManagementConfigurationTitle());
+            confirmModel.setHashName("power_management_configuration"); //$NON-NLS-1$
+            confirmModel.setMessage(ConstantsManager.getInstance().getConstants().youHavntConfigPmMsg());
 
-            UICommand tempVar = new UICommand("OnAddHost", this);
-            tempVar.setTitle("OK");
+            UICommand tempVar = new UICommand("OnAddHost", this); //$NON-NLS-1$
+            tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
             tempVar.setIsDefault(true);
             confirmModel.getCommands().add(tempVar);
-            UICommand tempVar2 = new UICommand("CancelConfirmWithFocus", this);
-            tempVar2.setTitle("Cancel");
+            UICommand tempVar2 = new UICommand("CancelConfirmWithFocus", this); //$NON-NLS-1$
+            tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
             tempVar2.setIsCancel(true);
             confirmModel.getCommands().add(tempVar2);
         }
@@ -1580,78 +1621,78 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
     {
         super.ExecuteCommand(command);
 
-        if (StringHelper.stringsEqual(command.getName(), "AddCluster"))
+        if (StringHelper.stringsEqual(command.getName(), "AddCluster")) //$NON-NLS-1$
         {
             AddCluster();
         }
 
-        if (StringHelper.stringsEqual(command.getName(), "AddHost"))
+        if (StringHelper.stringsEqual(command.getName(), "AddHost")) //$NON-NLS-1$
         {
             AddHost();
         }
 
-        if (StringHelper.stringsEqual(command.getName(), "SelectHost"))
+        if (StringHelper.stringsEqual(command.getName(), "SelectHost")) //$NON-NLS-1$
         {
             SelectHost();
         }
-        if (StringHelper.stringsEqual(command.getName(), "AddDataStorage"))
+        if (StringHelper.stringsEqual(command.getName(), "AddDataStorage")) //$NON-NLS-1$
         {
             AddDataStorage();
         }
-        if (StringHelper.stringsEqual(command.getName(), "AttachDataStorage"))
+        if (StringHelper.stringsEqual(command.getName(), "AttachDataStorage")) //$NON-NLS-1$
         {
             AttachDataStorage();
         }
-        if (StringHelper.stringsEqual(command.getName(), "AddIsoStorage"))
+        if (StringHelper.stringsEqual(command.getName(), "AddIsoStorage")) //$NON-NLS-1$
         {
             AddIsoStorage();
         }
-        if (StringHelper.stringsEqual(command.getName(), "AttachIsoStorage"))
+        if (StringHelper.stringsEqual(command.getName(), "AttachIsoStorage")) //$NON-NLS-1$
         {
             AttachIsoStorage();
         }
-        if (StringHelper.stringsEqual(command.getName(), "OnAddCluster"))
+        if (StringHelper.stringsEqual(command.getName(), "OnAddCluster")) //$NON-NLS-1$
         {
             OnAddCluster();
         }
-        if (StringHelper.stringsEqual(command.getName(), "OnSelectHost"))
+        if (StringHelper.stringsEqual(command.getName(), "OnSelectHost")) //$NON-NLS-1$
         {
             OnSelectHost();
         }
-        if (StringHelper.stringsEqual(command.getName(), "OnAddHost"))
+        if (StringHelper.stringsEqual(command.getName(), "OnAddHost")) //$NON-NLS-1$
         {
             OnAddHost();
         }
-        if (StringHelper.stringsEqual(command.getName(), "OnAddStorage"))
+        if (StringHelper.stringsEqual(command.getName(), "OnAddStorage")) //$NON-NLS-1$
         {
             OnAddStorage();
         }
 
-        if (StringHelper.stringsEqual(command.getName(), "OnAttachStorage"))
+        if (StringHelper.stringsEqual(command.getName(), "OnAttachStorage")) //$NON-NLS-1$
         {
             OnAttachStorage();
         }
 
-        if (StringHelper.stringsEqual(command.getName(), "AddLocalStorage"))
+        if (StringHelper.stringsEqual(command.getName(), "AddLocalStorage")) //$NON-NLS-1$
         {
             AddLocalStorage();
         }
 
-        if (StringHelper.stringsEqual(command.getName(), "OnConfirmPMHost"))
+        if (StringHelper.stringsEqual(command.getName(), "OnConfirmPMHost")) //$NON-NLS-1$
         {
             OnConfirmPMHost();
         }
 
-        if (StringHelper.stringsEqual(command.getName(), "CancelConfirm"))
+        if (StringHelper.stringsEqual(command.getName(), "CancelConfirm")) //$NON-NLS-1$
         {
             CancelConfirm();
         }
-        if (StringHelper.stringsEqual(command.getName(), "CancelConfirmWithFocus"))
+        if (StringHelper.stringsEqual(command.getName(), "CancelConfirmWithFocus")) //$NON-NLS-1$
         {
             CancelConfirmWithFocus();
         }
 
-        if (StringHelper.stringsEqual(command.getName(), "Cancel"))
+        if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
         {
             Cancel();
         }
@@ -1667,25 +1708,25 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         // 'if-else' logic:
         // switch (key)
         // ORIGINAL LINE: case "SaveNfs":
-        if (StringHelper.stringsEqual(key, "SaveNfs"))
+        if (StringHelper.stringsEqual(key, "SaveNfs")) //$NON-NLS-1$
         {
             SaveNfsStorage(context);
 
         }
         // ORIGINAL LINE: case "SaveLocal":
-        else if (StringHelper.stringsEqual(key, "SaveLocal"))
+        else if (StringHelper.stringsEqual(key, "SaveLocal")) //$NON-NLS-1$
         {
             SaveLocalStorage(context);
 
         }
         // ORIGINAL LINE: case "SaveSan":
-        else if (StringHelper.stringsEqual(key, "SaveSan"))
+        else if (StringHelper.stringsEqual(key, "SaveSan")) //$NON-NLS-1$
         {
             SaveSanStorage(context);
 
         }
         // ORIGINAL LINE: case "Finish":
-        else if (StringHelper.stringsEqual(key, "Finish"))
+        else if (StringHelper.stringsEqual(key, "Finish")) //$NON-NLS-1$
         {
             getWindow().StopProgress();
 

@@ -83,7 +83,7 @@ public class LoginPopupView extends AbstractLoginPopupView implements LoginPopup
         asWidget().setGlassEnabled(false);
         localize(constants);
 
-        passwordEditor.setAutoComplete("off");
+        passwordEditor.setAutoComplete("off"); //$NON-NLS-1$
         Driver.driver.initialize(this);
         ViewIdHandler.idHandler.generateAndSetIds(this);
     }

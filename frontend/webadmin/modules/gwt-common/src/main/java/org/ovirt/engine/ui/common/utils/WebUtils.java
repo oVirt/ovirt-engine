@@ -14,7 +14,7 @@ public class WebUtils {
      *            The URL to open
      */
     public static void openUrlInNewWindow(String name, String url) {
-        Window.open(url, name.replace(" ", "_"), null);
+        Window.open(url, name.replace(" ", "_"), null); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     public static void openRelativeUrlInNewWindow(String name, String relativeUrl) {

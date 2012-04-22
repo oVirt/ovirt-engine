@@ -45,7 +45,7 @@ public class Model extends PropertyChangeNotifier implements IEventListener, ICo
         if (window != value)
         {
             window = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Window"));
+            OnPropertyChanged(new PropertyChangedEventArgs("Window")); //$NON-NLS-1$
         }
     }
 
@@ -61,7 +61,7 @@ public class Model extends PropertyChangeNotifier implements IEventListener, ICo
         if (confirmWindow != value)
         {
             confirmWindow = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("ConfirmWindow"));
+            OnPropertyChanged(new PropertyChangedEventArgs("ConfirmWindow")); //$NON-NLS-1$
         }
     }
 
@@ -77,7 +77,7 @@ public class Model extends PropertyChangeNotifier implements IEventListener, ICo
         if (widgetModel != value)
         {
             widgetModel = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("WidgetModel"));
+            OnPropertyChanged(new PropertyChangedEventArgs("WidgetModel")); //$NON-NLS-1$
         }
     }
 
@@ -132,7 +132,7 @@ public class Model extends PropertyChangeNotifier implements IEventListener, ICo
         if (progress != value)
         {
             progress = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Progress"));
+            OnPropertyChanged(new PropertyChangedEventArgs("Progress")); //$NON-NLS-1$
         }
     }
 
@@ -156,8 +156,8 @@ public class Model extends PropertyChangeNotifier implements IEventListener, ICo
     public void setHashName(String value)
     {
         sethashName(value);
-        setOpenDocumentationCommand(new UICommand("OpenDocumentation", this));
-        OnPropertyChanged(new PropertyChangedEventArgs("HashName"));
+        setOpenDocumentationCommand(new UICommand("OpenDocumentation", this)); //$NON-NLS-1$
+        OnPropertyChanged(new PropertyChangedEventArgs("HashName")); //$NON-NLS-1$
     }
 
     /**
@@ -175,7 +175,7 @@ public class Model extends PropertyChangeNotifier implements IEventListener, ICo
         if (!StringHelper.stringsEqual(title, value))
         {
             title = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Title"));
+            OnPropertyChanged(new PropertyChangedEventArgs("Title")); //$NON-NLS-1$
         }
     }
 
@@ -191,7 +191,7 @@ public class Model extends PropertyChangeNotifier implements IEventListener, ICo
         if (isValid != value)
         {
             isValid = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsValid"));
+            OnPropertyChanged(new PropertyChangedEventArgs("IsValid")); //$NON-NLS-1$
 
             if (isValid)
             {
@@ -225,7 +225,7 @@ public class Model extends PropertyChangeNotifier implements IEventListener, ICo
         {
             isAvailable = value;
             OnIsAvailableChanged();
-            OnPropertyChanged(new PropertyChangedEventArgs("IsAvailable"));
+            OnPropertyChanged(new PropertyChangedEventArgs("IsAvailable")); //$NON-NLS-1$
         }
     }
 
@@ -241,7 +241,7 @@ public class Model extends PropertyChangeNotifier implements IEventListener, ICo
         if (isChangable != value)
         {
             isChangable = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsChangable"));
+            OnPropertyChanged(new PropertyChangedEventArgs("IsChangable")); //$NON-NLS-1$
 
             if (isChangable)
             {
@@ -274,7 +274,7 @@ public class Model extends PropertyChangeNotifier implements IEventListener, ICo
         if (isSelected != value)
         {
             isSelected = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsSelected"));
+            OnPropertyChanged(new PropertyChangedEventArgs("IsSelected")); //$NON-NLS-1$
         }
     }
 
@@ -290,7 +290,7 @@ public class Model extends PropertyChangeNotifier implements IEventListener, ICo
         if (isSelectable != value)
         {
             isSelectable = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsSelectable"));
+            OnPropertyChanged(new PropertyChangedEventArgs("IsSelectable")); //$NON-NLS-1$
         }
     }
 
@@ -354,7 +354,7 @@ public class Model extends PropertyChangeNotifier implements IEventListener, ICo
         if (!StringHelper.stringsEqual(message, value))
         {
             message = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Message"));
+            OnPropertyChanged(new PropertyChangedEventArgs("Message")); //$NON-NLS-1$
         }
     }
 
@@ -378,7 +378,7 @@ public class Model extends PropertyChangeNotifier implements IEventListener, ICo
     public void setInfo(String value)
     {
         setinfo(value);
-        OnPropertyChanged(new PropertyChangedEventArgs("Info"));
+        OnPropertyChanged(new PropertyChangedEventArgs("Info")); //$NON-NLS-1$
     }
 
     public Model()
@@ -431,7 +431,7 @@ public class Model extends PropertyChangeNotifier implements IEventListener, ICo
         setLastExecutedCommand(command);
         if (command == getOpenDocumentationCommand())
         {
-            OnPropertyChanged(new PropertyChangedEventArgs("OpenDocumentation"));
+            OnPropertyChanged(new PropertyChangedEventArgs("OpenDocumentation")); //$NON-NLS-1$
         }
     }
 

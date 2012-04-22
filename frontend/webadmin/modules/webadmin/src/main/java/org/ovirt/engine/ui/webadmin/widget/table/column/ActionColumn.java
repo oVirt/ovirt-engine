@@ -104,7 +104,7 @@ public class ActionColumn<T> extends IdentityColumn<T> {
         private final ApplicationTemplates templates = ClientGinjectorProvider.instance().getApplicationTemplates();
 
         public FloatingActionCell(ActionCellDelegate<C> delegate) {
-            super("", delegate);
+            super("", delegate); //$NON-NLS-1$
             this.delegate = delegate;
         }
 
@@ -120,7 +120,7 @@ public class ActionColumn<T> extends IdentityColumn<T> {
                 } else if (buttonImage != null) {
                     sb.append(templates.actionButtonImage(buttonImage.getURL()));
                 } else {
-                    throw new IllegalArgumentException("Either getButtonText() or getButtonImage() must return non-null values");
+                    throw new IllegalArgumentException("Either getButtonText() or getButtonImage() must return non-null values"); //$NON-NLS-1$
                 }
             }
         };

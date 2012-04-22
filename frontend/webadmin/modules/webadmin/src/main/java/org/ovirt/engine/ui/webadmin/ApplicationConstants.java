@@ -1861,6 +1861,18 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Volume Cluster")
     String volumeClusterVolume();
 
+    @DefaultStringValue("Stripe Count")
+    String stripeCountVolume();
+
+    @DefaultStringValue("TCP")
+    String tcpVolume();
+
+    @DefaultStringValue("RDMA")
+    String rdmaVolume();
+
+    @DefaultStringValue("Add Bricks")
+    String addBricksVolume();
+
     @DefaultStringValue("Type")
     String typeVolume();
 
@@ -1952,6 +1964,31 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Option Key")
     String optionKeyVolumeParameter();
 
+    @DefaultStringValue("Description")
+    String descriptionVolumeParameter();
+
     @DefaultStringValue("Option Value")
     String optionValueVolumeParameter();
+
+    @DefaultStringValue("Add")
+    String addVolumeParameter();
+
+    @DefaultStringValue("Edit")
+    String editVolumeParameter();
+
+    @DefaultStringValue("Reset All")
+    String resetAllVolumeParameter();
+
+    // Brick
+    @DefaultStringValue("Status")
+    String statusBrick();
+
+    @DefaultStringValue("Add Bricks")
+    String addBricksBrick();
+
+    @DefaultStringValue("Server")
+    String serverBricks();
+
+    @DefaultStringValue("Brick Directory")
+    String brickDirectoryBricks();
 }

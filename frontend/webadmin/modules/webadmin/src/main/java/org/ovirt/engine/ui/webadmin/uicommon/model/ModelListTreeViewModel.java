@@ -80,18 +80,18 @@ public class ModelListTreeViewModel<T, M extends TreeNodeModel<T, M>> implements
          * An html string representation of a disabled checked input box.
          */
         private final SafeHtml INPUT_CHECKED_DISABLED =
-                SafeHtmlUtils.fromSafeConstant("<input type=\"checkbox\" tabindex=\"-1\" checked disabled/>");
+                SafeHtmlUtils.fromSafeConstant("<input type=\"checkbox\" tabindex=\"-1\" checked disabled/>"); //$NON-NLS-1$
         /**
          * An html string representation of a disabled unchecked input box.
          */
         private final SafeHtml INPUT_UNCHECKED_DISABLED =
-                SafeHtmlUtils.fromSafeConstant("<input type=\"checkbox\" tabindex=\"-1\" disabled/>");
+                SafeHtmlUtils.fromSafeConstant("<input type=\"checkbox\" tabindex=\"-1\" disabled/>"); //$NON-NLS-1$
 
         private final SafeHtml INPUT_CHECKED_NULL_DISABLED =
-                SafeHtmlUtils.fromSafeConstant("<input type=\"checkbox\" tabindex=\"-1\" checked style=\"-moz-Field ! important; background-color: yellow;\" disabled/>");
+                SafeHtmlUtils.fromSafeConstant("<input type=\"checkbox\" tabindex=\"-1\" checked style=\"-moz-Field ! important; background-color: yellow;\" disabled/>"); //$NON-NLS-1$
 
         private final SafeHtml INPUT_CHECKED_NULL =
-                SafeHtmlUtils.fromSafeConstant("<input type=\"checkbox\" tabindex=\"-1\" checked style=\"-moz-Field ! important; background-color: yellow;\"/>");
+                SafeHtmlUtils.fromSafeConstant("<input type=\"checkbox\" tabindex=\"-1\" checked style=\"-moz-Field ! important; background-color: yellow;\"/>"); //$NON-NLS-1$
 
         private ExCheckboxCell(boolean dependsOnSelection, boolean handlesSelection) {
             super(dependsOnSelection, handlesSelection);

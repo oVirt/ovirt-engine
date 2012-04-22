@@ -6,11 +6,12 @@ import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.EventDefinition;
 import org.ovirt.engine.ui.uicommonweb.DataProvider;
 import org.ovirt.engine.ui.uicommonweb.TypeResolver;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
 public class RdpConsoleModel extends ConsoleModel
 {
-    public static EventDefinition RdpDisconnectedEventDefinition = new EventDefinition("RdpDisconnected",
+    public static EventDefinition RdpDisconnectedEventDefinition = new EventDefinition("RdpDisconnected", //$NON-NLS-1$
             RdpConsoleModel.class);
 
     private IRdp privaterdp;
@@ -27,7 +28,7 @@ public class RdpConsoleModel extends ConsoleModel
 
     public RdpConsoleModel()
     {
-        setTitle("RDP");
+        setTitle(ConstantsManager.getInstance().getConstants().RDPTitle());
 
         setrdp((IRdp) TypeResolver.getInstance().Resolve(IRdp.class));
     }
@@ -37,9 +38,9 @@ public class RdpConsoleModel extends ConsoleModel
     {
         if (getEntity() != null)
         {
-            getLogger().Debug("Connecting to RDP console...");
+            getLogger().Debug("Connecting to RDP console..."); //$NON-NLS-1$
 
-            getrdp().setAddress(getEntity().getvm_host().split("[ ]", -1)[0]);
+            getrdp().setAddress(getEntity().getvm_host().split("[ ]", -1)[0]); //$NON-NLS-1$
             getrdp().setGuestID(getEntity().getId().toString());
 
             // Subscribe to disconnect event
@@ -55,7 +56,7 @@ public class RdpConsoleModel extends ConsoleModel
                 UpdateActionAvailability();
             } catch (RuntimeException ex)
             {
-                getLogger().Error("Exception on RDP connect", ex);
+                getLogger().Error("Exception on RDP connect", ex); //$NON-NLS-1$
             }
         }
     }

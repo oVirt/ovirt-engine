@@ -50,7 +50,7 @@ public class FindDesktopModel extends SearchableListModel
 
         VdcQueryReturnValue returnValue =
                 Frontend.RunQuery(VdcQueryType.Search,
-                        new SearchParameters(StringFormat.format("Vms: pool=null type=desktop %1$s", getSearchString()),
+                        new SearchParameters(StringFormat.format("Vms: pool=null type=desktop %1$s", getSearchString()), //$NON-NLS-1$
                                 SearchType.VM));
         if (returnValue != null && returnValue.getSucceeded())
         {
@@ -88,6 +88,6 @@ public class FindDesktopModel extends SearchableListModel
 
     @Override
     protected String getListName() {
-        return "FindDesktopModel";
+        return "FindDesktopModel"; //$NON-NLS-1$
     }
 }

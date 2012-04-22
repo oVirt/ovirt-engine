@@ -26,6 +26,7 @@ import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IntegerValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
@@ -173,7 +174,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
         if (proposeDiscoverTargets != value)
         {
             proposeDiscoverTargets = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("ProposeDiscoverTargets"));
+            OnPropertyChanged(new PropertyChangedEventArgs("ProposeDiscoverTargets")); //$NON-NLS-1$
         }
     }
 
@@ -190,7 +191,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
         {
             isAllLunsSelected = value;
             IsAllLunsSelectedChanged();
-            OnPropertyChanged(new PropertyChangedEventArgs("IsAllLunsSelected"));
+            OnPropertyChanged(new PropertyChangedEventArgs("IsAllLunsSelected")); //$NON-NLS-1$
         }
     }
 
@@ -200,15 +201,15 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
 
     protected SanStorageModelBase()
     {
-        setUpdateCommand(new UICommand("Update", this));
-        UICommand tempVar = new UICommand("LoginAll", this);
+        setUpdateCommand(new UICommand("Update", this)); //$NON-NLS-1$
+        UICommand tempVar = new UICommand("LoginAll", this); //$NON-NLS-1$
         tempVar.setIsExecutionAllowed(false);
         setLoginAllCommand(tempVar);
-        setDiscoverTargetsCommand(new UICommand("DiscoverTargets", this));
+        setDiscoverTargetsCommand(new UICommand("DiscoverTargets", this)); //$NON-NLS-1$
 
         setAddress(new EntityModel());
         EntityModel tempVar2 = new EntityModel();
-        tempVar2.setEntity("3260");
+        tempVar2.setEntity("3260"); //$NON-NLS-1$
         setPort(tempVar2);
         setUserName(new EntityModel());
         setPassword(new EntityModel());
@@ -276,10 +277,10 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
         for (int i = 0; i < targetsToConnect.size(); i++) {
             SanTargetModel model = targetsToConnect.get(i);
             storage_server_connections connection = new storage_server_connections();
-            connection.setportal("0");
+            connection.setportal("0"); //$NON-NLS-1$
             connection.setstorage_type(StorageType.ISCSI);
-            connection.setuser_name((Boolean) getUseUserAuth().getEntity() ? (String) getUserName().getEntity() : "");
-            connection.setpassword((Boolean) getUseUserAuth().getEntity() ? (String) getPassword().getEntity() : "");
+            connection.setuser_name((Boolean) getUseUserAuth().getEntity() ? (String) getUserName().getEntity() : ""); //$NON-NLS-1$
+            connection.setpassword((Boolean) getUseUserAuth().getEntity() ? (String) getPassword().getEntity() : ""); //$NON-NLS-1$
             connection.setiqn(model.getName());
             connection.setconnection(model.getAddress());
             connection.setport(String.valueOf(model.getPort()));
@@ -337,10 +338,10 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
         storage_server_connections tempVar = new storage_server_connections();
         tempVar.setconnection(((String) getAddress().getEntity()).trim());
         tempVar.setport(((String) getPort().getEntity()).trim());
-        tempVar.setportal("0");
+        tempVar.setportal("0"); //$NON-NLS-1$
         tempVar.setstorage_type(StorageType.ISCSI);
-        tempVar.setuser_name((Boolean) getUseUserAuth().getEntity() ? (String) getUserName().getEntity() : "");
-        tempVar.setpassword((Boolean) getUseUserAuth().getEntity() ? (String) getPassword().getEntity() : "");
+        tempVar.setuser_name((Boolean) getUseUserAuth().getEntity() ? (String) getUserName().getEntity() : ""); //$NON-NLS-1$
+        tempVar.setpassword((Boolean) getUseUserAuth().getEntity() ? (String) getPassword().getEntity() : ""); //$NON-NLS-1$
         DiscoverSendTargetsQueryParameters parameters =
                 new DiscoverSendTargetsQueryParameters(host.getId(), tempVar);
 
@@ -381,7 +382,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
 
         if (items.isEmpty())
         {
-            setMessage("No new devices were found. This may be due to either: incorrect multipath configuration on the Host or wrong address of the iscsi target or a failure to authenticate on the target device. Please consult your Storage Administrator.");
+            setMessage(ConstantsManager.getInstance().getConstants().noNewDevicesWereFoundMsg());
         }
 
         PostDiscoverTargets(newItems);

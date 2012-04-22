@@ -13,7 +13,7 @@ public class DiskSizeRenderer<T extends Number> extends AbstractRenderer<T> {
 
     public DiskSizeRenderer(DiskSizeUnit unit) {
         if (unit == null) {
-            throw new IllegalArgumentException("The unit can not be null!");
+            throw new IllegalArgumentException("The unit can not be null!"); //$NON-NLS-1$
         }
 
         this.unit = unit;
@@ -22,7 +22,7 @@ public class DiskSizeRenderer<T extends Number> extends AbstractRenderer<T> {
     @Override
     public String render(T size) {
         if (size == null) {
-            return "< 1 GB";
+            return "< 1 GB"; //$NON-NLS-1$
         }
 
         long sizeInGB = -1;
@@ -36,7 +36,7 @@ public class DiskSizeRenderer<T extends Number> extends AbstractRenderer<T> {
             break;
         }
 
-        return sizeInGB >= 1 ? sizeInGB + " GB" : "< 1 GB";
+        return sizeInGB >= 1 ? sizeInGB + " GB" : "< 1 GB"; //$NON-NLS-1$ //$NON-NLS-2$
     }
 
 }

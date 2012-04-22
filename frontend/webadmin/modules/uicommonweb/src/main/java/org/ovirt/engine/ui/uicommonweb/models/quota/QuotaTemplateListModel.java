@@ -9,11 +9,13 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public class QuotaTemplateListModel extends SearchableListModel {
 
     public QuotaTemplateListModel() {
-        setTitle("Templates");
+        setTitle(ConstantsManager.getInstance().getConstants().templatesTitle());
+        setHashName("templates"); //$NON-NLS-1$
         setIsTimerDisabled(true);
     }
 
@@ -54,7 +56,7 @@ public class QuotaTemplateListModel extends SearchableListModel {
 
     @Override
     protected String getListName() {
-        return "QuotaTemplateListModel";
+        return "QuotaTemplateListModel"; //$NON-NLS-1$
     }
 
 }

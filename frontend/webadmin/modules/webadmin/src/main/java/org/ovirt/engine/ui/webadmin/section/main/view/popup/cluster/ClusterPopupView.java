@@ -5,7 +5,6 @@ import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
-import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
@@ -19,6 +18,7 @@ import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ClusterPopupPresenterWidget;
 
@@ -141,9 +141,12 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
     @WithElementId
     EntityModelRadioButtonEditor migrateOnErrorOption_NOEditor;
 
+    private ApplicationMessages messages;
+
     @Inject
-    public ClusterPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
+    public ClusterPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants, ApplicationMessages messages) {
         super(eventBus, resources);
+        this.messages = messages;
         initListBoxEditors();
         initRadioButtonEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
@@ -177,9 +180,6 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
         optimizationCustomEditor.setLabel(constants.clusterPopupOptimizationCustomLabel());
 
         optimizationNoneExplanationLabel.setText(constants.clusterPopupOptimizationNoneExplainationLabel());
-        optimizationForServerExplanationLabel.setText(constants.clusterPopupOptimizationForServerExplainationLabel());
-        optimizationForDesktopExplanationLabel.setText(constants.clusterPopupOptimizationForDesktopExplainationLabel());
-        optimizationCustomExplanationLabel.setText(constants.clusterPopupOptimizationCustomExplainationLabel());
 
         resiliencePolicyTab.setLabel(constants.clusterPopupResiliencePolicyTabLabel());
 
@@ -190,14 +190,14 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
     }
 
     private void initRadioButtonEditors() {
-        optimizationNoneEditor = new EntityModelRadioButtonEditor("1");
-        optimizationForServerEditor = new EntityModelRadioButtonEditor("1");
-        optimizationForDesktopEditor = new EntityModelRadioButtonEditor("1");
-        optimizationCustomEditor = new EntityModelRadioButtonEditor("1");
+        optimizationNoneEditor = new EntityModelRadioButtonEditor("1"); //$NON-NLS-1$
+        optimizationForServerEditor = new EntityModelRadioButtonEditor("1"); //$NON-NLS-1$
+        optimizationForDesktopEditor = new EntityModelRadioButtonEditor("1"); //$NON-NLS-1$
+        optimizationCustomEditor = new EntityModelRadioButtonEditor("1"); //$NON-NLS-1$
 
-        migrateOnErrorOption_YESEditor = new EntityModelRadioButtonEditor("2");
-        migrateOnErrorOption_HA_ONLYEditor = new EntityModelRadioButtonEditor("2");
-        migrateOnErrorOption_NOEditor = new EntityModelRadioButtonEditor("2");
+        migrateOnErrorOption_YESEditor = new EntityModelRadioButtonEditor("2"); //$NON-NLS-1$
+        migrateOnErrorOption_HA_ONLYEditor = new EntityModelRadioButtonEditor("2"); //$NON-NLS-1$
+        migrateOnErrorOption_NOEditor = new EntityModelRadioButtonEditor("2"); //$NON-NLS-1$
 
         optimizationCustomExplanationLabel = new Label();
         optimizationCustomExplanationLabel.setVisible(false);
@@ -240,16 +240,14 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
 
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                optimizationForServerExplanationLabel.setText(StringFormat.format(optimizationForServerExplanationLabel.getText(),
-                        object.getOptimizationForServer().getEntity().toString() + "%"));
+                optimizationForServerExplanationLabel.setText(messages.clusterPopupOptimizationForServerExplainationLabel( object.getOptimizationForServer().getEntity().toString() + "%")); //$NON-NLS-1$
             }
         });
         object.getOptimizationForDesktop().getEntityChangedEvent().addListener(new IEventListener() {
 
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                optimizationForDesktopExplanationLabel.setText(StringFormat.format(optimizationForDesktopExplanationLabel.getText(),
-                        object.getOptimizationForDesktop().getEntity().toString() + "%"));
+                optimizationForDesktopExplanationLabel.setText(messages.clusterPopupOptimizationForDesktopExplainationLabel(object.getOptimizationForDesktop().getEntity().toString() + "%")); //$NON-NLS-1$
             }
         });
         object.getOptimizationCustom_IsSelected().getEntityChangedEvent().addListener(new IEventListener() {
@@ -257,8 +255,7 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 if ((Boolean) object.getOptimizationCustom_IsSelected().getEntity()) {
-                    optimizationCustomExplanationLabel.setText(StringFormat.format(optimizationCustomExplanationLabel.getText(),
-                            object.getOptimizationCustom().getEntity().toString() + "%"));
+                    optimizationCustomExplanationLabel.setText(messages.clusterPopupOptimizationCustomExplainationLabel(object.getOptimizationCustom().getEntity().toString() + "%")); //$NON-NLS-1$
                     optimizationCustomExplanationLabel.setVisible(true);
                 }
             }

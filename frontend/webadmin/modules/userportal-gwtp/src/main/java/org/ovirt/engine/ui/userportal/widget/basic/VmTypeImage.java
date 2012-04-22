@@ -22,17 +22,17 @@ public class VmTypeImage extends AbstractDynamicImage<UserPortalItemModel, Appli
             return defaultImageName(value);
         }
         if (value.getIsPool()) {
-            return "poolVmIcon";
+            return "poolVmIcon"; //$NON-NLS-1$
         } else if (value.getIsServer()) {
-            return "serverVmIcon";
+            return "serverVmIcon"; //$NON-NLS-1$
         }
 
-        return "desktopVmIcon";
+        return "desktopVmIcon"; //$NON-NLS-1$
     }
 
     @Override
     protected String defaultImageName(UserPortalItemModel value) {
-        return "desktopVmIcon";
+        return "desktopVmIcon"; //$NON-NLS-1$
     }
 
 }

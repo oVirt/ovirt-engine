@@ -125,7 +125,7 @@ public class DataCenterModule extends AbstractGinModule {
             public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(DataCenterNetworkListModel source,
                     UICommand lastExecutedCommand) {
                 if (lastExecutedCommand == getModel().getRemoveCommand()
-                        || lastExecutedCommand.getName().equals("DetachClusters")) {
+                        || lastExecutedCommand.getName().equals("DetachClusters")) { //$NON-NLS-1$
                     return removeConfirmPopupProvider.get();
                 } else {
                     return super.getConfirmModelPopup(source, lastExecutedCommand);

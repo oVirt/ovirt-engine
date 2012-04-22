@@ -85,7 +85,7 @@ public class ImportTemplateModel extends ListWithDetailsModel
         if (!StringHelper.stringsEqual(nameAndDescription, value))
         {
             nameAndDescription = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("NameAndDescription"));
+            OnPropertyChanged(new PropertyChangedEventArgs("NameAndDescription")); //$NON-NLS-1$
         }
     }
 
@@ -172,7 +172,7 @@ public class ImportTemplateModel extends ListWithDetailsModel
 
     @Override
     protected String getListName() {
-        return "ImportTemplateModel";
+        return "ImportTemplateModel"; //$NON-NLS-1$
     }
 
     public void setExtendedItems(ArrayList<Entry<VmTemplate, DiskImageList>> arrayList) {

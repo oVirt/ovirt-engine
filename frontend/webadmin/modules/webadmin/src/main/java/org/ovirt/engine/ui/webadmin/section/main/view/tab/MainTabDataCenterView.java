@@ -14,6 +14,7 @@ import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.ReportInit;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterListModel;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabDataCenterPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
@@ -34,15 +35,15 @@ public class MainTabDataCenterView extends AbstractMainTabWithDetailsTableView<s
 
     @Inject
     public MainTabDataCenterView(MainModelProvider<storage_pool, DataCenterListModel> modelProvider,
-            ApplicationResources resources) {
+            ApplicationResources resources, ApplicationConstants constants) {
         super(modelProvider);
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        initTable(resources);
+        initTable(resources, constants);
         initWidget(getTable());
     }
 
-    void initTable(ApplicationResources resources) {
-        getTable().addColumn(new DcStatusColumn(), "", "30px");
+    void initTable(ApplicationResources resources, ApplicationConstants constants) {
+        getTable().addColumn(new DcStatusColumn(), constants.empty(), "30px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<storage_pool> nameColumn = new TextColumnWithTooltip<storage_pool>() {
             @Override
@@ -50,7 +51,7 @@ public class MainTabDataCenterView extends AbstractMainTabWithDetailsTableView<s
                 return object.getname();
             }
         };
-        getTable().addColumn(nameColumn, "Name");
+        getTable().addColumn(nameColumn, constants.nameDc());
 
         TextColumnWithTooltip<storage_pool> storageTypeColumn = new EnumColumn<storage_pool, StorageType>() {
             @Override
@@ -58,7 +59,7 @@ public class MainTabDataCenterView extends AbstractMainTabWithDetailsTableView<s
                 return object.getstorage_pool_type();
             }
         };
-        getTable().addColumn(storageTypeColumn, "Storage Type");
+        getTable().addColumn(storageTypeColumn, constants.storgeTypeDc());
 
         TextColumnWithTooltip<storage_pool> statusColumn = new EnumColumn<storage_pool, StoragePoolStatus>() {
             @Override
@@ -66,7 +67,7 @@ public class MainTabDataCenterView extends AbstractMainTabWithDetailsTableView<s
                 return object.getstatus();
             }
         };
-        getTable().addColumn(statusColumn, "Status");
+        getTable().addColumn(statusColumn, constants.statusDc());
 
         TextColumnWithTooltip<storage_pool> versionColumn = new TextColumnWithTooltip<storage_pool>() {
             @Override
@@ -74,7 +75,7 @@ public class MainTabDataCenterView extends AbstractMainTabWithDetailsTableView<s
                 return object.getcompatibility_version().getValue();
             }
         };
-        getTable().addColumn(versionColumn, "Compatibility Version");
+        getTable().addColumn(versionColumn, constants.comptVersDc());
 
         TextColumnWithTooltip<storage_pool> descColumn = new TextColumnWithTooltip<storage_pool>() {
             @Override
@@ -82,28 +83,28 @@ public class MainTabDataCenterView extends AbstractMainTabWithDetailsTableView<s
                 return object.getdescription();
             }
         };
-        getTable().addColumn(descColumn, "Description");
+        getTable().addColumn(descColumn, constants.descriptionDc());
 
-        getTable().addActionButton(new WebAdminButtonDefinition<storage_pool>("New") {
+        getTable().addActionButton(new WebAdminButtonDefinition<storage_pool>(constants.newDC()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getNewCommand();
             }
         });
-        getTable().addActionButton(new WebAdminButtonDefinition<storage_pool>("Edit") {
+        getTable().addActionButton(new WebAdminButtonDefinition<storage_pool>(constants.editDC()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getEditCommand();
             }
         });
-        getTable().addActionButton(new WebAdminButtonDefinition<storage_pool>("Remove") {
+        getTable().addActionButton(new WebAdminButtonDefinition<storage_pool>(constants.removeDC()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getRemoveCommand();
             }
         });
 
-        getTable().addActionButton(new WebAdminButtonDefinition<storage_pool>("Force Remove") {
+        getTable().addActionButton(new WebAdminButtonDefinition<storage_pool>(constants.forceRemoveDC()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getForceRemoveCommand();
@@ -112,14 +113,14 @@ public class MainTabDataCenterView extends AbstractMainTabWithDetailsTableView<s
 
         if (ReportInit.getInstance().isReportsEnabled()) {
             List<ActionButtonDefinition<storage_pool>> resourceSubActions =
-                    ReportActionsHelper.getInstance().getResourceSubActions("DataCenter", getMainModel());
+                    ReportActionsHelper.getInstance().getResourceSubActions("DataCenter", getMainModel()); //$NON-NLS-1$
             if (resourceSubActions != null && resourceSubActions.size() > 0) {
-                getTable().addActionButton(new WebAdminMenuBarButtonDefinition<storage_pool>("Show Report",
+                getTable().addActionButton(new WebAdminMenuBarButtonDefinition<storage_pool>(constants.showReportDC(),
                         resourceSubActions));
             }
         }
 
-        getTable().addActionButton(new WebAdminImageButtonDefinition<storage_pool>("Guide Me",
+        getTable().addActionButton(new WebAdminImageButtonDefinition<storage_pool>(constants.guideMeDc(),
                 resources.guideSmallImage(), resources.guideSmallDisabledImage(), true) {
             @Override
             protected UICommand resolveCommand() {
@@ -127,7 +128,7 @@ public class MainTabDataCenterView extends AbstractMainTabWithDetailsTableView<s
             }
         });
 
-        getTable().addActionButton(new WebAdminButtonDefinition<storage_pool>("Re-Initialize Data Center", CommandLocation.OnlyFromFromContext) {
+        getTable().addActionButton(new WebAdminButtonDefinition<storage_pool>(constants.reinitializeDC(), CommandLocation.OnlyFromFromContext) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getRecoveryStorageCommand();

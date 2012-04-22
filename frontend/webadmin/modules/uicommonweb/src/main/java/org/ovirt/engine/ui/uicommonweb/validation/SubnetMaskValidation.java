@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
+
 @SuppressWarnings("unused")
 public class SubnetMaskValidation implements IValidation
 {
@@ -23,7 +25,7 @@ public class SubnetMaskValidation implements IValidation
         CORRECT_RANGE.add(255);
         CORRECT_RANGE.add(0);
 
-        reasons.add("Subnet Mask is not Valid");
+        reasons.add(ConstantsManager.getInstance().getConstants().subnetMaskIsNotValid());
     }
 
     @Override
@@ -44,7 +46,7 @@ public class SubnetMaskValidation implements IValidation
         // values[2] can be 128, 192, 224, 240, 248, 252, 254, 255 if values[1] is 255, else values[2] must be 0
         // values[3] can be 128, 192, 224, 240, 248, 252, 254, 255 if values[2] is 255, else values[3] must be 0
 
-        String[] split = mask.split("\\.");
+        String[] split = mask.split("\\."); //$NON-NLS-1$
         assert split.length == 4;
         int[] values = new int[split.length];
 

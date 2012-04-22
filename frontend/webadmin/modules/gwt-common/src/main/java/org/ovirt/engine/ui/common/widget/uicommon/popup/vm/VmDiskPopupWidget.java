@@ -95,22 +95,22 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> 
         initManualWidgets();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         localize(constants);
-        initDiskTable();
+        initDiskTable(constants);
         Driver.driver.initialize(this);
     }
 
     // TODO: Localize
     private void localize(CommonApplicationConstants constants) {
-        aliasEditor.setLabel("Alias");
-        sizeEditor.setLabel("Size(GB)");
-        storageDomainEditor.setLabel("Storage Domain");
-        quotaEditor.setLabel("Quota");
-        interfaceEditor.setLabel("Interface");
-        volumeTypeEditor.setLabel("Format");
-        wipeAfterDeleteEditor.setLabel("Wipe after delete");
-        isBootableEditor.setLabel("Is bootable");
-        attachEditor.setLabel("Attach Disk");
-        isPluggedEditor.setLabel("Activate");
+        aliasEditor.setLabel(constants.aliasVmDiskPopup());
+        sizeEditor.setLabel(constants.sizeVmDiskPopup());
+        storageDomainEditor.setLabel(constants.storageDomainVmDiskPopup());
+        quotaEditor.setLabel(constants.quotaVmDiskPopup());
+        interfaceEditor.setLabel(constants.interfaceVmDiskPopup());
+        volumeTypeEditor.setLabel(constants.formatVmDiskPopup());
+        wipeAfterDeleteEditor.setLabel(constants.wipeAfterDeleteVmDiskPopup());
+        isBootableEditor.setLabel(constants.isBootableVmDiskPopup());
+        attachEditor.setLabel(constants.attachDiskVmDiskPopup());
+        isPluggedEditor.setLabel(constants.activateVmDiskPopup());
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -146,14 +146,14 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> 
         diskTable = new EntityModelCellTable<ListModel>(true);
     }
 
-    private void initDiskTable() {
+    private void initDiskTable(CommonApplicationConstants constants) {
         TextColumnWithTooltip<EntityModel> aliasColumn = new TextColumnWithTooltip<EntityModel>() {
             @Override
             public String getValue(EntityModel object) {
                 return ((DiskModel) (object.getEntity())).getDiskImage().getDiskAlias();
             }
         };
-        diskTable.addColumn(aliasColumn, "Alias");
+        diskTable.addColumn(aliasColumn, constants.aliasVmDiskTable());
 
         DiskSizeColumn<EntityModel> sizeColumn = new DiskSizeColumn<EntityModel>() {
             @Override
@@ -161,7 +161,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> 
                 return ((DiskModel) (object.getEntity())).getDiskImage().getsize();
             }
         };
-        diskTable.addColumn(sizeColumn, "Provisioned Size");
+        diskTable.addColumn(sizeColumn, constants.provisionedSizeVmDiskTable());
 
         DiskSizeColumn<EntityModel> actualSizeColumn = new DiskSizeColumn<EntityModel>() {
             @Override
@@ -169,7 +169,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> 
                 return ((DiskModel) (object.getEntity())).getDiskImage().getactual_size();
             }
         };
-        diskTable.addColumn(actualSizeColumn, "Size");
+        diskTable.addColumn(actualSizeColumn, constants.sizeVmDiskTable());
 
         TextColumnWithTooltip<EntityModel> storageDomainColumn = new TextColumnWithTooltip<EntityModel>() {
             @Override
@@ -177,10 +177,10 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> 
                 return ((DiskModel) (object.getEntity())).getDiskImage().getStoragesNames().get(0);
             }
         };
-        diskTable.addColumn(storageDomainColumn, "Storage Domain");
+        diskTable.addColumn(storageDomainColumn, constants.storageDomainVmDiskTable());
 
-        diskTable.setWidth("100%", true);
-        diskTable.setHeight("100%");
+        diskTable.setWidth("100%", true); //$NON-NLS-1$
+        diskTable.setHeight("100%"); //$NON-NLS-1$
     }
 
     @Override

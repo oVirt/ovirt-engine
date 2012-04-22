@@ -10,7 +10,7 @@ import com.google.gwt.text.shared.AbstractRenderer;
  */
 public class GeneralDateTimeRenderer extends AbstractRenderer<Date> {
 
-    private static final DateTimeFormat format = DateTimeFormat.getFormat("yyyy-MMM-dd, HH:mm");
+    private static final DateTimeFormat format = DateTimeFormat.getFormat("yyyy-MMM-dd, HH:mm"); //$NON-NLS-1$
 
     @Override
     public String render(Date object) {

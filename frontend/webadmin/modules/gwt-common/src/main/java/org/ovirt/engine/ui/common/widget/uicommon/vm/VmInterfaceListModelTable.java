@@ -1,6 +1,8 @@
 package org.ovirt.engine.ui.common.widget.uicommon.vm;
 
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
+import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
 import org.ovirt.engine.ui.common.widget.action.UiCommandButtonDefinition;
@@ -13,29 +15,29 @@ public class VmInterfaceListModelTable extends BaseInterfaceListModelTable<VmInt
 
     public VmInterfaceListModelTable(
             SearchableTableModelProvider<VmNetworkInterface, VmInterfaceListModel> modelProvider,
-            EventBus eventBus, ClientStorage clientStorage) {
-        super(modelProvider, eventBus, clientStorage);
+            EventBus eventBus, ClientStorage clientStorage, CommonApplicationTemplates templates) {
+        super(modelProvider, eventBus, clientStorage, templates);
     }
 
     @Override
-    public void initTable() {
-        super.initTable();
+    public void initTable(CommonApplicationConstants constants) {
+        super.initTable(constants);
 
-        getTable().addActionButton(new UiCommandButtonDefinition<VmNetworkInterface>(getEventBus(), "New") {
+        getTable().addActionButton(new UiCommandButtonDefinition<VmNetworkInterface>(getEventBus(), constants.newInterface()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getNewCommand();
             }
         });
 
-        getTable().addActionButton(new UiCommandButtonDefinition<VmNetworkInterface>(getEventBus(), "Edit") {
+        getTable().addActionButton(new UiCommandButtonDefinition<VmNetworkInterface>(getEventBus(), constants.editInterface()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getEditCommand();
             }
         });
 
-        getTable().addActionButton(new UiCommandButtonDefinition<VmNetworkInterface>(getEventBus(), "Remove") {
+        getTable().addActionButton(new UiCommandButtonDefinition<VmNetworkInterface>(getEventBus(), constants.removeInterface()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getRemoveCommand();

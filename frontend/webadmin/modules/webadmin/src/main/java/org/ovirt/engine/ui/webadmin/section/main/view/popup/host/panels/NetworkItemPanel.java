@@ -33,7 +33,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 public abstract class NetworkItemPanel extends DnDPanel {
 
-    public static final String SETUP_NETWORKS_DATA = "SetupNetworksData";
+    public static final String SETUP_NETWORKS_DATA = "SetupNetworksData"; //$NON-NLS-1$
     final ApplicationResources resources = ClientGinjectorProvider.instance().getApplicationResources();
     final Image dragImage = new Image(resources.itemDraggable());
     final PushButton actionButton;
@@ -156,7 +156,7 @@ public abstract class NetworkItemPanel extends DnDPanel {
         for (final NetworkOperation operation : operationMap.keySet()) {
             final List<NetworkCommand> commands = operationMap.get(operation);
             if (operation.isUnary()) {
-                assert commands.size() == 1 : "Got a NetworkCommand List with more than one Unary Operation";
+                assert commands.size() == 1 : "Got a NetworkCommand List with more than one Unary Operation"; //$NON-NLS-1$
                 menu.addItem(operation.getVerb(item), new Command() {
                     @Override
                     public void execute() {
@@ -187,7 +187,7 @@ public abstract class NetworkItemPanel extends DnDPanel {
 
     private MenuBar rootMenu(NetworkItemModel<?> item) {
         MenuBar menuBar = new MenuBar(true);
-        menuBar.addItem("Menu for " + item.getName(), (Command) null);
+        menuBar.addItem("Menu for " + item.getName(), (Command) null); //$NON-NLS-1$
         menuBar.addSeparator();
         return menuBar;
     }

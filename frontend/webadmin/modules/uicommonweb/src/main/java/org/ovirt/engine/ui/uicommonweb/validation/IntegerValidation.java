@@ -2,7 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.validation;
 
 import org.ovirt.engine.core.compat.IntegerCompat;
 import org.ovirt.engine.core.compat.RefObject;
-import org.ovirt.engine.core.compat.StringFormat;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
 public class IntegerValidation implements IValidation
@@ -47,36 +47,50 @@ public class IntegerValidation implements IValidation
     {
         ValidationResult result = new ValidationResult();
 
-        String msg = "This field must contain integer number";
-        if (value != null && value instanceof String && !((String) value).equals(""))
+        if (value != null && value instanceof String && !((String) value).equals("")) //$NON-NLS-1$
         {
             int intValue = 0;
             RefObject<Integer> tempRef_intValue = new RefObject<Integer>(intValue);
             boolean tempVar = !IntegerCompat.TryParse((String) value, tempRef_intValue);
             intValue = tempRef_intValue.argvalue;
+            String msg = ""; //$NON-NLS-1$
+            String prefixMsg =
+                    ConstantsManager.getInstance().getConstants().thisFieldMustContainIntegerNumberInvalidReason();
             if (tempVar)
             {
                 result.setSuccess(false);
-                msg += StringFormat.format(" between %1$s and %2$s.", getMinimum(), getMaximum());
+                msg =
+                        ConstantsManager.getInstance()
+                                .getMessages()
+                                .integerValidationNumberBetweenInvalidReason(prefixMsg, getMinimum(), getMaximum());
                 result.getReasons().add(msg);
             }
             else if (intValue < getMinimum() || intValue > getMaximum())
             {
                 if (getMinimum() != Integer.MIN_VALUE && getMaximum() != Integer.MAX_VALUE)
                 {
-                    msg += StringFormat.format(" between %1$s and %2$s", getMinimum(), getMaximum());
+                    msg =
+                            ConstantsManager.getInstance()
+                                    .getMessages()
+                                    .integerValidationNumberBetweenInvalidReason(prefixMsg, getMinimum(), getMaximum());
                 }
                 else if (getMinimum() != Integer.MIN_VALUE)
                 {
-                    msg += " greater than " + getMinimum();
+                    msg =
+                            ConstantsManager.getInstance()
+                                    .getMessages()
+                                    .integerValidationNumberGreaterInvalidReason(prefixMsg, getMinimum());
                 }
                 else if (getMaximum() != Integer.MAX_VALUE)
                 {
-                    msg += " less than " + getMaximum();
+                    msg =
+                            ConstantsManager.getInstance()
+                                    .getMessages()
+                                    .integerValidationNumberLessInvalidReason(prefixMsg, getMaximum());
                 }
 
                 result.setSuccess(false);
-                result.getReasons().add(msg + ".");
+                result.getReasons().add(msg);
             }
         }
 

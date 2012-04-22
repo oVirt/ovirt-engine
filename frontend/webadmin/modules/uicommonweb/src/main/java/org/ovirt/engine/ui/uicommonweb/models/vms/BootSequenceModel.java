@@ -5,6 +5,7 @@ import org.ovirt.engine.core.compat.ObservableCollection;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
 public class BootSequenceModel extends ListModel
@@ -77,7 +78,7 @@ public class BootSequenceModel extends ListModel
         // .Select(a => (BootSequence)a.Entity)
         // .Aggregate(String.Empty, (a, b) => a += b.ToString());
 
-        String str = "";
+        String str = ""; //$NON-NLS-1$
         for (EntityModel a : getItems())
         {
             if (a.getIsChangable())
@@ -92,8 +93,8 @@ public class BootSequenceModel extends ListModel
 
     public BootSequenceModel()
     {
-        setMoveItemUpCommand(new UICommand("MoveItemUp", this));
-        setMoveItemDownCommand(new UICommand("MoveItemDown", this));
+        setMoveItemUpCommand(new UICommand("MoveItemUp", this)); //$NON-NLS-1$
+        setMoveItemDownCommand(new UICommand("MoveItemDown", this)); //$NON-NLS-1$
 
         InitializeItems();
 
@@ -125,15 +126,15 @@ public class BootSequenceModel extends ListModel
     {
         ObservableCollection<EntityModel> items = new ObservableCollection<EntityModel>();
         EntityModel tempVar = new EntityModel();
-        tempVar.setTitle("Hard Disk");
+        tempVar.setTitle(ConstantsManager.getInstance().getConstants().hardDiskTitle());
         tempVar.setEntity(BootSequence.C);
         items.add(tempVar);
         EntityModel tempVar2 = new EntityModel();
-        tempVar2.setTitle("CD-ROM");
+        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cdromTitle());
         tempVar2.setEntity(BootSequence.D);
         items.add(tempVar2);
         EntityModel tempVar3 = new EntityModel();
-        tempVar3.setTitle("Network (PXE)");
+        tempVar3.setTitle(ConstantsManager.getInstance().getConstants().networkPXETitle());
         tempVar3.setEntity(BootSequence.N);
         items.add(tempVar3);
 

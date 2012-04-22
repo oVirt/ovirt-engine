@@ -23,7 +23,7 @@ public class SnapshotDetailModel extends EntityModel
         if (!StringHelper.stringsEqual(name, value))
         {
             name = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Name"));
+            OnPropertyChanged(new PropertyChangedEventArgs("Name")); //$NON-NLS-1$
         }
     }
 
@@ -39,13 +39,13 @@ public class SnapshotDetailModel extends EntityModel
         if (snapshot != value)
         {
             snapshot = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Snapshot"));
+            OnPropertyChanged(new PropertyChangedEventArgs("Snapshot")); //$NON-NLS-1$
         }
     }
 
     public SnapshotDetailModel()
     {
-        setName("");
+        setName(""); //$NON-NLS-1$
     }
 
     public ListModel getEntityListModel() {

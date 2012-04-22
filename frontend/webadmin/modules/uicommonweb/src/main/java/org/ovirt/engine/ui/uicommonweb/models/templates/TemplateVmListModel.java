@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.templates;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
 public class TemplateVmListModel extends VmListModel
@@ -21,7 +22,8 @@ public class TemplateVmListModel extends VmListModel
 
     public TemplateVmListModel()
     {
-        setTitle("Virtual Machines");
+        setTitle(ConstantsManager.getInstance().getConstants().virtualMachinesTitle());
+        setHashName("virtual_machines"); //$NON-NLS-1$
     }
 
     @Override
@@ -36,7 +38,7 @@ public class TemplateVmListModel extends VmListModel
     {
         if (getEntity() != null)
         {
-            setSearchString(StringFormat.format("Vms: template.name=%1$s", getEntity().getname()));
+            setSearchString(StringFormat.format("Vms: template.name=%1$s", getEntity().getname())); //$NON-NLS-1$
             super.Search();
         }
     }

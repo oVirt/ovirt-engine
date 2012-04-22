@@ -115,7 +115,7 @@ public abstract class AbstractSideTabWithDetailsPresenter<T, M extends ListWithD
     }
 
     protected String createRequestToken() {
-        String subTabName = modelProvider.getModel().getActiveDetailModel().getTitle().toLowerCase().replace(" ", "_");
+        String subTabName = modelProvider.getModel().getActiveDetailModel().getTitle().toLowerCase().replace(" ", "_"); //$NON-NLS-1$ //$NON-NLS-2$
         String requestToken = getSideTabRequest().getNameToken() + ApplicationPlaces.SUB_TAB_PREFIX + subTabName;
         return requestToken;
     }

@@ -167,17 +167,17 @@ public class ImportTemplatePopupView extends AbstractModelBoundPopupView<ImportT
                         public void onSubTabSelected() {
                         }
                     };
-            generalView = new ImportTemplateGeneralSubTabView(modelProvider);
+            generalView = new ImportTemplateGeneralSubTabView(modelProvider, constants);
             generalPanel.add(generalView);
-            subTabLayoutpanel.add(generalPanel, "General");
+            subTabLayoutpanel.add(generalPanel, constants.generalImpTempTab());
 
             ScrollPanel nicPanel = new ScrollPanel();
             nicPanel.add(nicTable);
-            subTabLayoutpanel.add(nicPanel, "Network Interfaces");
+            subTabLayoutpanel.add(nicPanel, constants.networkIntImpTempTab());
 
             ScrollPanel diskPanel = new ScrollPanel();
             diskPanel.add(diskTable);
-            subTabLayoutpanel.add(diskPanel, "Virtual Disks");
+            subTabLayoutpanel.add(diskPanel, constants.virtualDisksImpTempTab());
         }
     }
 
@@ -196,7 +196,7 @@ public class ImportTemplatePopupView extends AbstractModelBoundPopupView<ImportT
                 return object.getname();
             }
         };
-        table.addColumn(nameColumn, "Name", "150px");
+        table.addColumn(nameColumn, constants.nameTemplate(), "150px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VmTemplate> originColumn = new EnumColumn<VmTemplate, OriginType>() {
             @Override
@@ -204,15 +204,15 @@ public class ImportTemplatePopupView extends AbstractModelBoundPopupView<ImportT
                 return object.getorigin();
             }
         };
-        table.addColumn(originColumn, "Origin", "100px");
+        table.addColumn(originColumn, constants.originTemplate(), "100px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VmTemplate> memoryColumn = new TextColumnWithTooltip<VmTemplate>() {
             @Override
             public String getValue(VmTemplate object) {
-                return String.valueOf(object.getmem_size_mb()) + " MB";
+                return String.valueOf(object.getmem_size_mb()) + " MB"; //$NON-NLS-1$
             }
         };
-        table.addColumn(memoryColumn, "Memory", "100px");
+        table.addColumn(memoryColumn, constants.memoryTemplate(), "100px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VmTemplate> cpuColumn = new TextColumnWithTooltip<VmTemplate>() {
             @Override
@@ -220,7 +220,7 @@ public class ImportTemplatePopupView extends AbstractModelBoundPopupView<ImportT
                 return String.valueOf(object.getnum_of_cpus());
             }
         };
-        table.addColumn(cpuColumn, "CPUs", "50px");
+        table.addColumn(cpuColumn, constants.cpusTemplate(), "50px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VmTemplate> diskColumn = new TextColumnWithTooltip<VmTemplate>() {
             @Override
@@ -228,7 +228,7 @@ public class ImportTemplatePopupView extends AbstractModelBoundPopupView<ImportT
                 return String.valueOf(object.getDiskList().size());
             }
         };
-        table.addColumn(diskColumn, "Disks", "50px");
+        table.addColumn(diskColumn, constants.disksTemplate(), "50px"); //$NON-NLS-1$
 
         ScrollPanel sp = new ScrollPanel();
         sp.add(table);
@@ -244,7 +244,7 @@ public class ImportTemplatePopupView extends AbstractModelBoundPopupView<ImportT
                 return object.getName();
             }
         };
-        nicTable.addColumn(nameColumn, "Name", "150px");
+        nicTable.addColumn(nameColumn, constants.nameInterface(), "150px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VmNetworkInterface> networkColumn = new TextColumnWithTooltip<VmNetworkInterface>() {
             @Override
@@ -252,7 +252,7 @@ public class ImportTemplatePopupView extends AbstractModelBoundPopupView<ImportT
                 return object.getNetworkName();
             }
         };
-        nicTable.addColumn(networkColumn, "Network Name", "150px");
+        nicTable.addColumn(networkColumn, constants.networkNameInterface(), "150px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VmNetworkInterface> typeColumn = new EnumColumn<VmNetworkInterface, VmInterfaceType>() {
             @Override
@@ -260,7 +260,7 @@ public class ImportTemplatePopupView extends AbstractModelBoundPopupView<ImportT
                 return VmInterfaceType.forValue(object.getType());
             }
         };
-        nicTable.addColumn(typeColumn, "Type", "150px");
+        nicTable.addColumn(typeColumn, constants.typeInterface(), "150px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VmNetworkInterface> macColumn = new TextColumnWithTooltip<VmNetworkInterface>() {
             @Override
@@ -268,7 +268,7 @@ public class ImportTemplatePopupView extends AbstractModelBoundPopupView<ImportT
                 return object.getMacAddress();
             }
         };
-        nicTable.addColumn(macColumn, "MAC", "150px");
+        nicTable.addColumn(macColumn, constants.macInterface(), "150px"); //$NON-NLS-1$
 
         nicTable.getElement().getStyle().setPosition(Position.RELATIVE);
     }
@@ -278,10 +278,10 @@ public class ImportTemplatePopupView extends AbstractModelBoundPopupView<ImportT
         TextColumnWithTooltip<DiskImage> nameColumn = new TextColumnWithTooltip<DiskImage>() {
             @Override
             public String getValue(DiskImage object) {
-                return "Disk " + object.getinternal_drive_mapping();
+                return "Disk " + object.getinternal_drive_mapping(); //$NON-NLS-1$
             }
         };
-        diskTable.addColumn(nameColumn, "Name", "100px");
+        diskTable.addColumn(nameColumn, constants.nameDisk(), "100px"); //$NON-NLS-1$
 
         DiskSizeColumn<DiskImage> sizeColumn = new DiskSizeColumn<DiskImage>() {
             @Override
@@ -289,7 +289,7 @@ public class ImportTemplatePopupView extends AbstractModelBoundPopupView<ImportT
                 return object.getsize();
             }
         };
-        diskTable.addColumn(sizeColumn, "Provisioned Size", "100px");
+        diskTable.addColumn(sizeColumn, constants.provisionedSizeDisk(), "100px"); //$NON-NLS-1$
 
         DiskSizeColumn<DiskImage> actualSizeColumn = new DiskSizeColumn<DiskImage>() {
             @Override
@@ -297,7 +297,7 @@ public class ImportTemplatePopupView extends AbstractModelBoundPopupView<ImportT
                 return object.getactual_size();
             }
         };
-        diskTable.addColumn(actualSizeColumn, "Size", "100px");
+        diskTable.addColumn(actualSizeColumn, constants.sizeDisk(), "100px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<DiskImage> dateCreatedColumn = new FullDateTimeColumn<DiskImage>() {
             @Override
@@ -305,7 +305,7 @@ public class ImportTemplatePopupView extends AbstractModelBoundPopupView<ImportT
                 return object.getcreation_date();
             }
         };
-        diskTable.addColumn(dateCreatedColumn, "Date Created", "100px");
+        diskTable.addColumn(dateCreatedColumn, constants.dateCreatedInterface(), "100px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<DiskImage> allocationColumn = new EnumColumn<DiskImage, VolumeType>() {
             @Override
@@ -313,7 +313,7 @@ public class ImportTemplatePopupView extends AbstractModelBoundPopupView<ImportT
                 return VolumeType.forValue(object.getvolume_type().getValue());
             }
         };
-        diskTable.addColumn(allocationColumn, "Allocation", "80px");
+        diskTable.addColumn(allocationColumn, constants.allocationDisk(), "80px"); //$NON-NLS-1$
 
         diskTable.getElement().getStyle().setPosition(Position.RELATIVE);
 
@@ -350,11 +350,11 @@ public class ImportTemplatePopupView extends AbstractModelBoundPopupView<ImportT
             }
         });
 
-        diskTable.addColumn(storageDomainsColumn, "Storage Domain", "100px");
+        diskTable.addColumn(storageDomainsColumn, constants.storageDomainDisk(), "100px"); //$NON-NLS-1$
     }
 
     private String getStorageNameById(NGuid storageId) {
-        String storageName = "";
+        String storageName = ""; //$NON-NLS-1$
         for (Object storageDomain : object.getDestinationStorage().getItems()) {
             storage_domains storage = (storage_domains) storageDomain;
             if (storage.getId().equals(storageId)) {
@@ -431,7 +431,7 @@ public class ImportTemplatePopupView extends AbstractModelBoundPopupView<ImportT
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 Boolean isSingleDestStorage = (Boolean) object.getIsSingleDestStorage().getEntity();
                 object.getDestinationStorage().setIsChangable(isSingleDestStorage);
-                String toolTip = isSingleDestStorage ? "" : constants.importVmTemplateSingleStorageCheckedLabel();
+                String toolTip = isSingleDestStorage ? "" : constants.importVmTemplateSingleStorageCheckedLabel(); //$NON-NLS-1$
                 customSelectionCell.setEnabledWithToolTip(!isSingleDestStorage, toolTip);
                 diskTable.edit((TemplateImportDiskListModel) object.getDetailModels().get(2));
             }

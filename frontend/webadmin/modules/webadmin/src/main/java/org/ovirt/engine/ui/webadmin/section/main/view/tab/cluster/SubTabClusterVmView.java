@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterVmListModel;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.SubTabClusterVmPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.table.column.UptimeColumn;
@@ -20,15 +21,15 @@ public class SubTabClusterVmView extends AbstractSubTabTableView<VDSGroup, VM, C
         implements SubTabClusterVmPresenter.ViewDef {
 
     @Inject
-    public SubTabClusterVmView(SearchableDetailModelProvider<VM, ClusterListModel, ClusterVmListModel> modelProvider) {
+    public SubTabClusterVmView(SearchableDetailModelProvider<VM, ClusterListModel, ClusterVmListModel> modelProvider, ApplicationConstants constants) {
         super(modelProvider);
-        initTable();
+        initTable(constants);
         initWidget(getTable());
     }
 
-    void initTable() {
+    void initTable(ApplicationConstants constants) {
 
-        getTable().addColumn(new VmStatusColumn(), "", "30px");
+        getTable().addColumn(new VmStatusColumn(), constants.empty(), "30px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VM> nameColumn = new TextColumnWithTooltip<VM>() {
             @Override
@@ -36,9 +37,9 @@ public class SubTabClusterVmView extends AbstractSubTabTableView<VDSGroup, VM, C
                 return object.getvm_name();
             }
         };
-        getTable().addColumn(nameColumn, "Name");
+        getTable().addColumn(nameColumn, constants.nameVm());
 
-        getTable().addColumn(new VmTypeColumn(), "", "30px");
+        getTable().addColumn(new VmTypeColumn(), constants.empty(), "30px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VM> statusColumn = new EnumColumn<VM, VMStatus>() {
             @Override
@@ -46,7 +47,7 @@ public class SubTabClusterVmView extends AbstractSubTabTableView<VDSGroup, VM, C
                 return object.getstatus();
             }
         };
-        getTable().addColumn(statusColumn, "Status");
+        getTable().addColumn(statusColumn, constants.statusVm());
 
         TextColumnWithTooltip<VM> uptimeColumn = new UptimeColumn<VM>() {
             @Override
@@ -54,7 +55,7 @@ public class SubTabClusterVmView extends AbstractSubTabTableView<VDSGroup, VM, C
                 return object.getRoundedElapsedTime();
             }
         };
-        getTable().addColumn(uptimeColumn, "Uptime");
+        getTable().addColumn(uptimeColumn, constants.uptimeVm());
     }
 
 }

@@ -20,7 +20,7 @@ public abstract class ListWithDetailsModel extends SearchableListModel
         if (detailModels != value)
         {
             detailModels = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("DetailModels"));
+            OnPropertyChanged(new PropertyChangedEventArgs("DetailModels")); //$NON-NLS-1$
         }
     }
 
@@ -38,7 +38,7 @@ public abstract class ListWithDetailsModel extends SearchableListModel
             ActiveDetailModelChanging(value, getActiveDetailModel());
             activeDetailModel = value;
             ActiveDetailModelChanged();
-            OnPropertyChanged(new PropertyChangedEventArgs("ActiveDetailModel"));
+            OnPropertyChanged(new PropertyChangedEventArgs("ActiveDetailModel")); //$NON-NLS-1$
         }
     }
 

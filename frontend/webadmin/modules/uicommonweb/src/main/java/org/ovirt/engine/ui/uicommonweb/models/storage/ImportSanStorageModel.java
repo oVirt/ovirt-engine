@@ -14,6 +14,7 @@ import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
 public abstract class ImportSanStorageModel extends SanStorageModelBase
@@ -31,7 +32,7 @@ public abstract class ImportSanStorageModel extends SanStorageModelBase
         if (candidates != value)
         {
             candidates = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Candidates"));
+            OnPropertyChanged(new PropertyChangedEventArgs("Candidates")); //$NON-NLS-1$
             getCandidatesList().setItems(ToEntityModelList(candidates));
         }
     }
@@ -48,7 +49,7 @@ public abstract class ImportSanStorageModel extends SanStorageModelBase
         if (candidatesList != value)
         {
             candidatesList = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("CandidatesList"));
+            OnPropertyChanged(new PropertyChangedEventArgs("CandidatesList")); //$NON-NLS-1$
         }
     }
 
@@ -64,7 +65,7 @@ public abstract class ImportSanStorageModel extends SanStorageModelBase
         if (!StringHelper.stringsEqual(error, value))
         {
             error = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Error"));
+            OnPropertyChanged(new PropertyChangedEventArgs("Error")); //$NON-NLS-1$
         }
     }
 
@@ -114,7 +115,7 @@ public abstract class ImportSanStorageModel extends SanStorageModelBase
         getContainer().StartProgress(null);
 
         Frontend.RunQuery(VdcQueryType.GetExistingStorageDomainList,
-                new GetExistingStorageDomainListParameters(host.getId(), getType(), getRole(), ""),
+                new GetExistingStorageDomainListParameters(host.getId(), getType(), getRole(), ""), //$NON-NLS-1$
                 new AsyncQuery(this,
                         new INewAsyncCallback() {
                             @Override
@@ -128,7 +129,9 @@ public abstract class ImportSanStorageModel extends SanStorageModelBase
                                 }
                                 else
                                 {
-                                    setError("Error while retrieving list of domains. Please consult your Storage Administrator.");
+                                    setError(ConstantsManager.getInstance()
+                                            .getConstants()
+                                            .errorWhileRetrievingListOfDomainsImportSanStorage());
                                 }
                                 model.getContainer().StopProgress();
 
@@ -171,7 +174,9 @@ public abstract class ImportSanStorageModel extends SanStorageModelBase
         boolean isValid = getSelectedItem() != null || getCandidatesList().getSelectedItem() != null;
         if (!isValid)
         {
-            getInvalidityReasons().add("Please select a Storage Domain to import");
+            getInvalidityReasons().add(ConstantsManager.getInstance()
+                    .getConstants()
+                    .pleaseSelectStorageDomainToImportImportSanStorage());
         }
 
         setIsValid(isValid);

@@ -39,6 +39,7 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmAppListModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
@@ -65,7 +66,8 @@ public class VmBackupModel extends ManageBackupModel {
     }
 
     public VmBackupModel() {
-        setTitle("VM Import");
+        setTitle(ConstantsManager.getInstance().getConstants().vmImportTitle());
+        setHashName("vm_import"); // //$NON-NLS-1$
 
         setAppListModel(new VmAppListModel());
     }
@@ -86,9 +88,9 @@ public class VmBackupModel extends ManageBackupModel {
 
         ConfirmationModel model = new ConfirmationModel();
         setWindow(model);
-        model.setTitle("Remove Backed up VM(s)");
-        model.setHashName("remove_backed_up_vm");
-        model.setMessage("VM(s)");
+        model.setTitle(ConstantsManager.getInstance().getConstants().removeBackedUpVMsTitle());
+        model.setHashName("remove_backed_up_vm"); //$NON-NLS-1$
+        model.setMessage(ConstantsManager.getInstance().getConstants().vmsMsg());
 
         java.util.ArrayList<String> items = new java.util.ArrayList<String>();
         for (Object item : getSelectedItems()) {
@@ -97,14 +99,14 @@ public class VmBackupModel extends ManageBackupModel {
         }
         model.setItems(items);
 
-        model.setNote("Note: The deleted items might still appear on the sub-tab, since the remove operation might be long. Use the Refresh button, to get the updated status.");
+        model.setNote(ConstantsManager.getInstance().getConstants().noteTheDeletedItemsMightStillAppearOntheSubTab());
 
-        UICommand tempVar = new UICommand("OnRemove", this);
-        tempVar.setTitle("OK");
+        UICommand tempVar = new UICommand("OnRemove", this); //$NON-NLS-1$
+        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
         tempVar.setIsDefault(true);
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this);
-        tempVar2.setTitle("Cancel");
+        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
+        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         tempVar2.setIsCancel(true);
         model.getCommands().add(tempVar2);
     }
@@ -168,8 +170,8 @@ public class VmBackupModel extends ManageBackupModel {
 
         ImportVmModel model = new ImportVmModel();
         setWindow(model);
-        model.setTitle("Import Virtual Machine(s)");
-        model.setHashName("import_virtual_machine");
+        model.setTitle(ConstantsManager.getInstance().getConstants().importVirtualMachinesTitle());
+        model.setHashName("import_virtual_machine"); //$NON-NLS-1$
 
         model.getDestinationStorage().getItemsChangedEvent().addListener(new IEventListener() {
             @Override
@@ -240,18 +242,18 @@ public class VmBackupModel extends ManageBackupModel {
         }
 
         if (iVmModel.getIsMissingStorages()) {
-            UICommand tempVar = new UICommand("Cancel", this);
-            tempVar.setTitle("Close");
+            UICommand tempVar = new UICommand("Cancel", this); //$NON-NLS-1$
+            tempVar.setTitle(ConstantsManager.getInstance().getConstants().close());
             tempVar.setIsDefault(true);
             tempVar.setIsCancel(true);
             iVmModel.getCommands().add(tempVar);
         } else {
-            UICommand tempVar2 = new UICommand("OnRestore", this);
-            tempVar2.setTitle("OK");
+            UICommand tempVar2 = new UICommand("OnRestore", this); //$NON-NLS-1$
+            tempVar2.setTitle(ConstantsManager.getInstance().getConstants().ok());
             tempVar2.setIsDefault(true);
             iVmModel.getCommands().add(tempVar2);
-            UICommand tempVar3 = new UICommand("Cancel", this);
-            tempVar3.setTitle("Cancel");
+            UICommand tempVar3 = new UICommand("Cancel", this); //$NON-NLS-1$
+            tempVar3.setTitle(ConstantsManager.getInstance().getConstants().cancel());
             tempVar3.setIsCancel(true);
             iVmModel.getCommands().add(tempVar3);
         }
@@ -329,14 +331,14 @@ public class VmBackupModel extends ManageBackupModel {
                         if (retVals != null
                                 && vmBackupModel.getSelectedItems().size() == retVals
                                         .size()) {
-                            String importedVms = "";
+                            String importedVms = ""; //$NON-NLS-1$
                             int counter = 0;
                             boolean toShowConfirmWindow = false;
                             for (Object item : vmBackupModel.getSelectedItems()) {
                                 VM vm = (VM) item;
                                 if (retVals.get(counter) != null
                                         && retVals.get(counter).getCanDoAction()) {
-                                    importedVms += vm.getvm_name() + ", ";
+                                    importedVms += vm.getvm_name() + ", "; //$NON-NLS-1$
                                     toShowConfirmWindow = true;
                                 }
                                 counter++;
@@ -346,15 +348,18 @@ public class VmBackupModel extends ManageBackupModel {
                             if (toShowConfirmWindow) {
                                 ConfirmationModel confirmModel = new ConfirmationModel();
                                 vmBackupModel.setConfirmWindow(confirmModel);
-                                confirmModel.setTitle("Import Virtual Machine(s)");
-                                confirmModel.setHashName("import_virtual_machine");
+                                confirmModel.setTitle(ConstantsManager.getInstance()
+                                        .getConstants()
+                                        .importVirtualMachinesTitle());
+                                confirmModel.setHashName("import_virtual_machine"); //$NON-NLS-1$
                                 importedVms = StringHelper.trimEnd(importedVms.trim(), ',');
                                 confirmModel.setMessage(StringFormat
-                                        .format("Import process has begun for VM(s): %1$s.\nYou can check import status in the 'Events' tab of the specific destination storage domain, or in the main 'Events' tab",
-                                                importedVms));
-                                UICommand tempVar2 = new UICommand("CancelConfirm",
+                                        .format(ConstantsManager.getInstance()
+                                                .getMessages()
+                                                .importProcessHasBegunForVms(importedVms)));
+                                UICommand tempVar2 = new UICommand("CancelConfirm", //$NON-NLS-1$
                                         vmBackupModel);
-                                tempVar2.setTitle("Close");
+                                tempVar2.setTitle(ConstantsManager.getInstance().getConstants().close());
                                 tempVar2.setIsDefault(true);
                                 tempVar2.setIsCancel(true);
                                 confirmModel.getCommands().add(tempVar2);
@@ -371,7 +376,7 @@ public class VmBackupModel extends ManageBackupModel {
             PropertyChangedEventArgs e) {
         super.EntityPropertyChanged(sender, e);
 
-        if (e.PropertyName.equals("storage_domain_shared_status")) {
+        if (e.PropertyName.equals("storage_domain_shared_status")) { //$NON-NLS-1$
             getSearchCommand().Execute();
         }
     }
@@ -431,16 +436,16 @@ public class VmBackupModel extends ManageBackupModel {
     public void ExecuteCommand(UICommand command) {
         super.ExecuteCommand(command);
 
-        if (StringHelper.stringsEqual(command.getName(), "OnRemove")) {
+        if (StringHelper.stringsEqual(command.getName(), "OnRemove")) { //$NON-NLS-1$
             OnRemove();
-        } else if (StringHelper.stringsEqual(command.getName(), "OnRestore")) {
+        } else if (StringHelper.stringsEqual(command.getName(), "OnRestore")) { //$NON-NLS-1$
             OnRestore();
         }
     }
 
     @Override
     protected String getListName() {
-        return "VmBackupModel";
+        return "VmBackupModel"; //$NON-NLS-1$
     }
 
 }

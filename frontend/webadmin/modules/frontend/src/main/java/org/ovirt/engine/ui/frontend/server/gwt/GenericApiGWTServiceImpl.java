@@ -40,13 +40,13 @@ public class GenericApiGWTServiceImpl extends AbstractGWTServiceImpl implements
 
     @Override
     public void init() throws ServletException {
-        log.debug("Initializing servlet!");
+        log.debug("Initializing servlet!"); //$NON-NLS-1$
     }
 
     @Override
     public VdcQueryReturnValue RunQuery(VdcQueryType search,
             VdcQueryParametersBase searchParameters) {
-        log.debug("Server: RunQuery invoked!");
+        log.debug("Server: RunQuery invoked!"); //$NON-NLS-1$
         searchParameters.setSessionId(getSessionId());
         return getBackend().RunQuery(search, searchParameters);
     }
@@ -54,7 +54,7 @@ public class GenericApiGWTServiceImpl extends AbstractGWTServiceImpl implements
     @Override
     public VdcQueryReturnValue RunPublicQuery(VdcQueryType queryType,
             VdcQueryParametersBase params) {
-        log.debug("Server: RunPublicQuery invoked!");
+        log.debug("Server: RunPublicQuery invoked!"); //$NON-NLS-1$
         return getBackend().RunPublicQuery(queryType, params);
     }
 
@@ -62,7 +62,7 @@ public class GenericApiGWTServiceImpl extends AbstractGWTServiceImpl implements
     public ArrayList<VdcQueryReturnValue> RunMultipleQueries(
             ArrayList<VdcQueryType> queryTypeList,
             ArrayList<VdcQueryParametersBase> queryParamsList) {
-        log.debug("Server: RunMultipleQuery invoked! [amount of queries: " + queryTypeList.size() + "]");
+        log.debug("Server: RunMultipleQuery invoked! [amount of queries: " + queryTypeList.size() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
 
         ArrayList<VdcQueryReturnValue> ret = new ArrayList<VdcQueryReturnValue>();
 
@@ -82,10 +82,10 @@ public class GenericApiGWTServiceImpl extends AbstractGWTServiceImpl implements
         }
 
         for (VdcQueryReturnValue vqrv : ret) {
-            log.debug("VdcQueryReturnValue: " + vqrv);
+            log.debug("VdcQueryReturnValue: " + vqrv); //$NON-NLS-1$
         }
 
-        log.debug("Server: RunMultipleQuery result [amount of queries: " + ret.size() + "]");
+        log.debug("Server: RunMultipleQuery result [amount of queries: " + ret.size() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
 
         return ret;
     }
@@ -93,7 +93,7 @@ public class GenericApiGWTServiceImpl extends AbstractGWTServiceImpl implements
     @Override
     public ArrayList<VdcReturnValueBase> RunMultipleActions(VdcActionType actionType,
             ArrayList<VdcActionParametersBase> multipleParams) {
-        log.debug("Server: RunMultipleAction invoked! [amount of actions: " + multipleParams.size() + "]");
+        log.debug("Server: RunMultipleAction invoked! [amount of actions: " + multipleParams.size() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
 
         for (VdcActionParametersBase params : multipleParams) {
             params.setSessionId(getSessionId());
@@ -107,7 +107,7 @@ public class GenericApiGWTServiceImpl extends AbstractGWTServiceImpl implements
     @Override
     public VdcReturnValueBase RunAction(VdcActionType actionType,
             VdcActionParametersBase params) {
-        log.debug("Server: RunAction invoked!");
+        log.debug("Server: RunAction invoked!"); //$NON-NLS-1$
 
         params.setSessionId(getSessionId());
 
@@ -191,7 +191,7 @@ public class GenericApiGWTServiceImpl extends AbstractGWTServiceImpl implements
         HttpServletRequest request = this.getThreadLocalRequest();
         HttpSession session = request.getSession();
 
-        log.debug("IP [" + request.getRemoteAddr() + "], Session ID [" + session.getId() + "]");
+        log.debug("IP [" + request.getRemoteAddr() + "], Session ID [" + session.getId() + "]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
         return session.getId();
     }

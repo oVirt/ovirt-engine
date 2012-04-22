@@ -86,14 +86,14 @@ public class EventNotificationModel extends Model
                 || (eventGroupModels != null && !eventGroupModels.equals(value)))
         {
             eventGroupModels = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("EventGroupModels"));
+            OnPropertyChanged(new PropertyChangedEventArgs("EventGroupModels")); //$NON-NLS-1$
         }
     }
 
     public EventNotificationModel()
     {
-        setExpandAllCommand(new UICommand("ExpandAll", this));
-        setCollapseAllCommand(new UICommand("CollapseAll", this));
+        setExpandAllCommand(new UICommand("ExpandAll", this)); //$NON-NLS-1$
+        setCollapseAllCommand(new UICommand("CollapseAll", this)); //$NON-NLS-1$
 
         setEmail(new EntityModel());
     }

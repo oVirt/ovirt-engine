@@ -123,7 +123,7 @@ public class ManageEventsPopupView extends AbstractModelBoundPopupView<EventNoti
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 EventNotificationModel model = (EventNotificationModel) sender;
                 String propertyName = ((PropertyChangedEventArgs) args).PropertyName;
-                if ("EventGroupModels".equals(propertyName)) {
+                if ("EventGroupModels".equals(propertyName)) { //$NON-NLS-1$
                     updateTree(model);
                 }
             }

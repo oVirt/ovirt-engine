@@ -9,6 +9,8 @@ import org.ovirt.engine.ui.common.view.AbstractSubTabTableWidgetView;
 import org.ovirt.engine.ui.common.widget.uicommon.vm.VmInterfaceListModelTable;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmInterfaceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.virtualMachine.SubTabVirtualMachineNetworkInterfacePresenter;
 
 import com.google.gwt.core.client.GWT;
@@ -24,10 +26,10 @@ public class SubTabVirtualMachineNetworkInterfaceView extends AbstractSubTabTabl
     @Inject
     public SubTabVirtualMachineNetworkInterfaceView(
             SearchableDetailModelProvider<VmNetworkInterface, VmListModel, VmInterfaceListModel> modelProvider,
-            EventBus eventBus, ClientStorage clientStorage) {
-        super(new VmInterfaceListModelTable(modelProvider, eventBus, clientStorage));
+            EventBus eventBus, ClientStorage clientStorage, ApplicationConstants constants, ApplicationTemplates templates) {
+        super(new VmInterfaceListModelTable(modelProvider, eventBus, clientStorage, templates));
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        initTable();
+        initTable(constants);
         initWidget(getModelBoundTableWidget());
     }
 

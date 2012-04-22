@@ -70,7 +70,7 @@ public class ListModel extends EntityModel
             selectedItems = value;
             SelectedItemsChanged();
             getSelectedItemsChangedEvent().raise(this, EventArgs.Empty);
-            OnPropertyChanged(new PropertyChangedEventArgs("SelectedItems"));
+            OnPropertyChanged(new PropertyChangedEventArgs("SelectedItems")); //$NON-NLS-1$
         }
     }
 
@@ -89,7 +89,7 @@ public class ListModel extends EntityModel
             selectedItem = value;
             OnSelectedItemChanged();
             getSelectedItemChangedEvent().raise(this, EventArgs.Empty);
-            OnPropertyChanged(new PropertyChangedEventArgs("SelectedItem"));
+            OnPropertyChanged(new PropertyChangedEventArgs("SelectedItem")); //$NON-NLS-1$
         }
     }
 
@@ -108,7 +108,7 @@ public class ListModel extends EntityModel
             items = value;
             ItemsChanged();
             getItemsChangedEvent().raise(this, EventArgs.Empty);
-            OnPropertyChanged(new PropertyChangedEventArgs("Items"));
+            OnPropertyChanged(new PropertyChangedEventArgs("Items")); //$NON-NLS-1$
         }
     }
 
@@ -128,7 +128,7 @@ public class ListModel extends EntityModel
         if (isEmpty != value)
         {
             isEmpty = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsEmpty"));
+            OnPropertyChanged(new PropertyChangedEventArgs("IsEmpty")); //$NON-NLS-1$
         }
     }
 
@@ -144,9 +144,9 @@ public class ListModel extends EntityModel
 
     static
     {
-        SelectedItemChangedEventDefinition = new EventDefinition("SelectedItemChanged", ListModel.class);
-        SelectedItemsChangedEventDefinition = new EventDefinition("SelectedItemsChanged", ListModel.class);
-        ItemsChangedEventDefinition = new EventDefinition("ItemsChanged", ListModel.class);
+        SelectedItemChangedEventDefinition = new EventDefinition("SelectedItemChanged", ListModel.class); //$NON-NLS-1$
+        SelectedItemsChangedEventDefinition = new EventDefinition("SelectedItemsChanged", ListModel.class); //$NON-NLS-1$
+        ItemsChangedEventDefinition = new EventDefinition("ItemsChanged", ListModel.class); //$NON-NLS-1$
     }
 
     public ListModel()

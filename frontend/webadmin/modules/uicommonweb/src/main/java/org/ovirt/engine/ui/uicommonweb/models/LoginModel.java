@@ -17,13 +17,14 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.common.AboutModel;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
 public class LoginModel extends Model
 {
 
-    public static final String BeginLoginStage = "BeginTest";
-    public static final String EndLoginStage = "EndTest";
+    public static final String BeginLoginStage = "BeginTest"; //$NON-NLS-1$
+    public static final String EndLoginStage = "EndTest"; //$NON-NLS-1$
 
     public static EventDefinition LoggedInEventDefinition;
     private Event privateLoggedInEvent;
@@ -123,7 +124,7 @@ public class LoginModel extends Model
         if (isConnecting != value)
         {
             isConnecting = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsConnecting"));
+            OnPropertyChanged(new PropertyChangedEventArgs("IsConnecting")); //$NON-NLS-1$
         }
     }
 
@@ -141,8 +142,8 @@ public class LoginModel extends Model
 
     static
     {
-        LoggedInEventDefinition = new EventDefinition("LoggedIn", LoginModel.class);
-        LoginFailedEventDefinition = new EventDefinition("LoginFailed", LoginModel.class);
+        LoggedInEventDefinition = new EventDefinition("LoggedIn", LoginModel.class); //$NON-NLS-1$
+        LoginFailedEventDefinition = new EventDefinition("LoginFailed", LoginModel.class); //$NON-NLS-1$
     }
 
     public LoginModel()
@@ -150,13 +151,13 @@ public class LoginModel extends Model
         setLoggedInEvent(new Event(LoggedInEventDefinition));
         setLoginFailedEvent(new Event(LoginFailedEventDefinition));
 
-        UICommand tempVar = new UICommand("Login", this);
+        UICommand tempVar = new UICommand("Login", this); //$NON-NLS-1$
         tempVar.setIsExecutionAllowed(false);
         tempVar.setIsDefault(true);
         setLoginCommand(tempVar);
         getCommands().add(tempVar);
 
-        UICommand tempVar2 = new UICommand("About", this);
+        UICommand tempVar2 = new UICommand("About", this); //$NON-NLS-1$
         tempVar2.setIsExecutionAllowed(false);
         setAboutCommand(tempVar2);
 
@@ -182,7 +183,9 @@ public class LoginModel extends Model
                 LoginModel loginModel = (LoginModel) model;
                 if (ReturnValue == null)
                 {
-                    loginModel.setMessage("Could not connect to oVirt Engine Service, please try to refresh the page. If the problem persists contact your System Administrator.");
+                    loginModel.setMessage(ConstantsManager.getInstance()
+                            .getConstants()
+                            .couldNotConnectToOvirtEngineServiceMsg());
                     return;
                 }
                 AsyncQuery _asyncQuery1 = new AsyncQuery();
@@ -245,7 +248,7 @@ public class LoginModel extends Model
                     index > -1 ? value.substring(index + 1) : null };
         }
 
-        return new String[] { "", null };
+        return new String[] { "", null }; //$NON-NLS-1$
     }
 
     public void Login()
@@ -284,7 +287,7 @@ public class LoginModel extends Model
                     }
                     if (user == null)
                     {
-                        loginModel.getPassword().setEntity("");
+                        loginModel.getPassword().setEntity(""); //$NON-NLS-1$
                         if (returnValue != null)
                         {
                             loginModel.setMessage(Linq.FirstOrDefault(returnValue.getCanDoActionMessages()));
@@ -336,7 +339,7 @@ public class LoginModel extends Model
         {
             About();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "Cancel"))
+        else if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
         {
             Cancel();
         }
@@ -346,12 +349,12 @@ public class LoginModel extends Model
     {
         AboutModel model = new AboutModel();
         setWindow(model);
-        model.setTitle("About oVirt Engine");
-        model.setHashName("about_rhev_manager");
+        model.setTitle(ConstantsManager.getInstance().getConstants().aboutOVirtEngineTitle());
+        model.setHashName("about_rhev_manager"); //$NON-NLS-1$
         model.setShowOnlyVersion(true);
 
-        UICommand tempVar = new UICommand("Cancel", this);
-        tempVar.setTitle("Close");
+        UICommand tempVar = new UICommand("Cancel", this); //$NON-NLS-1$
+        tempVar.setTitle(ConstantsManager.getInstance().getConstants().close());
         tempVar.setIsDefault(true);
         tempVar.setIsCancel(true);
         model.getCommands().add(tempVar);

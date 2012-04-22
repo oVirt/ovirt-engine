@@ -73,7 +73,7 @@ public abstract class AbstractModelBoundPopupPresenterWidget<T extends Model, V 
 
     @Override
     public String[] getWindowPropertyNames() {
-        return new String[] { "Window" };
+        return new String[] { "Window" }; //$NON-NLS-1$
     }
 
     @Override
@@ -88,7 +88,7 @@ public abstract class AbstractModelBoundPopupPresenterWidget<T extends Model, V 
 
     @Override
     public String[] getConfirmWindowPropertyNames() {
-        return new String[] { "ConfirmWindow" };
+        return new String[] { "ConfirmWindow" }; //$NON-NLS-1$
     }
 
     @Override
@@ -129,15 +129,15 @@ public abstract class AbstractModelBoundPopupPresenterWidget<T extends Model, V 
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 String propName = ((PropertyChangedEventArgs) args).PropertyName;
 
-                if ("Title".equals(propName)) {
+                if ("Title".equals(propName)) { //$NON-NLS-1$
                     updateTitle(model);
-                } else if ("Message".equals(propName)) {
+                } else if ("Message".equals(propName)) { //$NON-NLS-1$
                     updateMessage(model);
-                } else if ("Items".equals(propName)) {
+                } else if ("Items".equals(propName)) { //$NON-NLS-1$
                     updateItems(model);
-                } else if ("HashName".equals(propName)) {
+                } else if ("HashName".equals(propName)) { //$NON-NLS-1$
                     updateHashName(model);
-                } else if ("OpenDocumentation".equals(propName)) {
+                } else if ("OpenDocumentation".equals(propName)) { //$NON-NLS-1$
                     openDocumentation(model);
                 }
             }
@@ -269,7 +269,7 @@ public abstract class AbstractModelBoundPopupPresenterWidget<T extends Model, V 
         String documentationPath = DocumentationPathTranslator.getPath(hashName);
         String documentationLibURL = model.getConfigurator().getDocumentationLibURL();
 
-        WebUtils.openUrlInNewWindow("_blank", documentationLibURL + documentationPath);
+        WebUtils.openUrlInNewWindow("_blank", documentationLibURL + documentationPath); //$NON-NLS-1$
     }
 
 }

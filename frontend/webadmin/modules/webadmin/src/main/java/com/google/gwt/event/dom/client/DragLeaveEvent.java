@@ -23,7 +23,7 @@ public class DragLeaveEvent extends DragDropEventBase<DragLeaveHandler> {
     /**
      * Event type for drag leave events. Represents the meta-data associated with this event.
      */
-    private static final Type<DragLeaveHandler> TYPE = new Type<DragLeaveHandler>("dragleave",
+    private static final Type<DragLeaveHandler> TYPE = new Type<DragLeaveHandler>("dragleave", //$NON-NLS-1$
             new DragLeaveEvent());
 
     /**

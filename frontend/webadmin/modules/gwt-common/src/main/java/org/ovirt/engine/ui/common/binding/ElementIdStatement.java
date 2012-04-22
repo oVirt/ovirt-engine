@@ -14,7 +14,7 @@ public class ElementIdStatement {
     }
 
     public String buildIdSetterStatement() {
-        return String.format("setElementId(%s, \"%s\")", fieldExpression, elementId);
+        return String.format("setElementId(%s, \"%s\")", fieldExpression, elementId); //$NON-NLS-1$
     }
 
     public String buildGuardCondition() {
@@ -22,10 +22,10 @@ public class ElementIdStatement {
 
         String[] subPaths = getSubPaths(fieldExpression);
         for (int i = 0; i < subPaths.length; i++) {
-            sb.append(subPaths[i]).append(" != null");
+            sb.append(subPaths[i]).append(" != null"); //$NON-NLS-1$
 
             if (i < subPaths.length - 1) {
-                sb.append(" && ");
+                sb.append(" && "); //$NON-NLS-1$
             }
         }
 
@@ -33,20 +33,20 @@ public class ElementIdStatement {
     }
 
     String[] getSubPaths(String path) {
-        String[] pathElements = path.split("\\.");
+        String[] pathElements = path.split("\\."); //$NON-NLS-1$
         String[] result = new String[pathElements.length];
 
         for (int i = 0; i < pathElements.length; i++) {
             String currentElement = pathElements[i];
 
             if (currentElement.isEmpty()) {
-                throw new IllegalStateException("Malformed path: " + path);
+                throw new IllegalStateException("Malformed path: " + path); //$NON-NLS-1$
             }
 
             if (i == 0) {
                 result[i] = currentElement;
             } else {
-                result[i] = result[i - 1] + "." + currentElement;
+                result[i] = result[i - 1] + "." + currentElement; //$NON-NLS-1$
             }
         }
 

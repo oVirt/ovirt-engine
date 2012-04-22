@@ -48,7 +48,7 @@ public class UserPermissionModel extends Model
         if (tags != value)
         {
             tags = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Tags"));
+            OnPropertyChanged(new PropertyChangedEventArgs("Tags")); //$NON-NLS-1$
         }
     }
 

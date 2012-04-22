@@ -172,15 +172,15 @@
 			<t:DialogTab ui:field="hostTab">
 				<t:content>
 					<g:FlowPanel>
-						<g:Label addStyleNames="{style.sectionLabel}">Run On:</g:Label>
+						<g:Label addStyleNames="{style.sectionLabel}" text="{constants.runOnVmPopup}" />
 						<g:HorizontalPanel addStyleNames="{style.runHostPanel}" verticalAlignment='ALIGN_MIDDLE'>
 							<e:EntityModelRadioButtonEditor width="150px" ui:field="isAutoAssignEditor"
 								addStyleNames="{style.radioButton}" />
 							<g:RadioButton ui:field="specificHost" addStyleNames="{style.radioButton}" />
-							<g:Label>Specific</g:Label>
+							<g:Label text="{constants.specificVmPopup}" />
 							<e:ListModelListBoxEditor ui:field="defaultHostEditor" />
 						</g:HorizontalPanel>
-						<g:Label addStyleNames="{style.sectionLabel}">Run/Migration Options:</g:Label>
+						<g:Label addStyleNames="{style.sectionLabel}" text="{constants.runMigrationOptionsVmPopup}" />
 						<g:VerticalPanel width="100%" addStyleNames="{style.hostRunMigrationOptions}">
 							<e:EntityModelCheckBoxEditor ui:field="runVMOnSpecificHostEditor" addStyleNames="{style.checkbox}" />
 							<e:EntityModelCheckBoxEditor ui:field="dontMigrateVMEditor" addStyleNames="{style.checkboxWithLongLabel}" />
@@ -197,7 +197,7 @@
 							<e:EntityModelCheckBoxEditor ui:field="isHighlyAvailableEditor" addStyleNames="{style.checkbox}" />
 						</g:FlowPanel>
 						<g:FlowPanel addStyleNames="{style.sectionPanel}">
-							<g:Label addStyleNames="{style.sectionLabel}">Priority for Run/Migration queue:</g:Label>
+							<g:Label addStyleNames="{style.sectionLabel}" text="{constants.priorForRunMigrationQueueVmPopup}" />
 							<e:EntityModelCellTable ui:field="priorityEditor" />
 						</g:FlowPanel>
 					</g:FlowPanel>
@@ -209,13 +209,13 @@
 				<t:content>
 					<g:FlowPanel>
 						<g:FlowPanel addStyleNames="{style.sectionPanel}">
-							<g:Label addStyleNames="{style.sectionLabel}">Memory Allocation:</g:Label>
+							<g:Label addStyleNames="{style.sectionLabel}" text="{constants.memAllocVmPopup}" />
 							<e:EntityModelTextBoxEditor ui:field="minAllocatedMemoryEditor" />
 						</g:FlowPanel>
 						<g:FlowPanel ui:field="storageAllocationPanel" addStyleNames="{style.sectionPanel}">
 							<g:HorizontalPanel>
-								<g:Label addStyleNames="{style.sectionLabel}">Storage Allocation:</g:Label>
-								<g:Label addStyleNames="{style.sectionComment}">(Available only when a template is selected)</g:Label>
+								<g:Label addStyleNames="{style.sectionLabel}" text="{constants.storageAllocVmPopup}" />
+								<g:Label addStyleNames="{style.sectionComment}" text="{constants.availOnlyTemplSelectedVmPopup}" />
 							</g:HorizontalPanel>
 							<g:HorizontalPanel ui:field="provisionSelectionPanel">
 								<e:ListModelListBoxEditor ui:field="provisioningEditor" addStyleNames="{style.provisioningEditor}" />
@@ -238,16 +238,16 @@
 				<t:content>
 					<g:FlowPanel>
 						<g:FlowPanel addStyleNames="{style.sectionPanel}">
-							<g:Label addStyleNames="{style.sectionLabel}">Boot Sequence:</g:Label>
+							<g:Label addStyleNames="{style.sectionLabel}" text="{constants.bootSequenceVmPopup}" />
 							<e:ListModelListBoxEditor ui:field="firstBootDeviceEditor" />
 							<e:ListModelListBoxEditor ui:field="secondBootDeviceEditor" />
 							<g:HorizontalPanel addStyleNames="{style.attachCdPanel}" verticalAlignment="ALIGN_MIDDLE">
-								<e:EntityModelCheckBoxEditor label="Attach CD" ui:field="cdAttachedEditor" />
+								<e:EntityModelCheckBoxEditor label="{constants.attachCdVmPopup}" ui:field="cdAttachedEditor" />
 								<e:ListModelListBoxEditor ui:field="cdImageEditor" />
 							</g:HorizontalPanel>
 						</g:FlowPanel>
 						<g:FlowPanel ui:field="linuxBootOptionsPanel" addStyleNames="{style.sectionPanel}">
-							<g:Label addStyleNames="{style.sectionLabel}">Linux Boot Options:</g:Label>
+							<g:Label addStyleNames="{style.sectionLabel}" text="{constants.linuxBootOptionsVmPopup}" />
 							<e:EntityModelTextBoxEditor ui:field="kernel_pathEditor" />
 							<e:EntityModelTextBoxEditor ui:field="initrd_pathEditor" />
 							<e:EntityModelTextBoxEditor ui:field="kernel_parametersEditor" />

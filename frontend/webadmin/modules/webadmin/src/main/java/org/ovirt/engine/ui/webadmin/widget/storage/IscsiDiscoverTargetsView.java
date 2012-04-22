@@ -122,7 +122,7 @@ public class IscsiDiscoverTargetsView extends FocusComposite implements HasEdito
         chapUserEditor.addLabelStyleName(style.chapLabel());
         chapPassEditor.addLabelStyleName(style.chapLabel());
 
-        discoverTargetsImageButton.setStylePrimaryName("discoverTargetsButton");
+        discoverTargetsImageButton.setStylePrimaryName("discoverTargetsButton"); //$NON-NLS-1$
 
         SafeHtml expanderImage = SafeHtmlUtils
                 .fromTrustedString(AbstractImagePrototype.create(
@@ -165,10 +165,10 @@ public class IscsiDiscoverTargetsView extends FocusComposite implements HasEdito
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 String propName = ((PropertyChangedEventArgs) args).PropertyName;
-                if (propName.equals("ProposeDiscoverTargets")) {
+                if (propName.equals("ProposeDiscoverTargets")) { //$NON-NLS-1$
                     setProposeDiscover(object.getProposeDiscoverTargets());
                 }
-                else if (propName.equals("Message")) {
+                else if (propName.equals("Message")) { //$NON-NLS-1$
                     messageLabel.setText(object.getMessage());
                 }
             }

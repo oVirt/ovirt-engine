@@ -9,6 +9,7 @@ import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostHooksListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostHookPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 
@@ -16,44 +17,44 @@ public class SubTabHostHookView extends AbstractSubTabTableView<VDS, Map<String,
         implements SubTabHostHookPresenter.ViewDef {
 
     @Inject
-    public SubTabHostHookView(SearchableDetailModelProvider<Map<String, String>, HostListModel, HostHooksListModel> modelProvider) {
+    public SubTabHostHookView(SearchableDetailModelProvider<Map<String, String>, HostListModel, HostHooksListModel> modelProvider, ApplicationConstants constants) {
         super(modelProvider);
-        initTable();
+        initTable(constants);
         initWidget(getTable());
     }
 
-    void initTable() {
+    void initTable(ApplicationConstants constants) {
         TextColumnWithTooltip<Map<String, String>> eventColumn = new TextColumnWithTooltip<Map<String, String>>() {
             @Override
             public String getValue(Map<String, String> object) {
-                return object.get("EventName");
+                return object.get("EventName"); //$NON-NLS-1$
             }
         };
-        getTable().addColumn(eventColumn, "Event Name");
+        getTable().addColumn(eventColumn, constants.eventNameHook());
 
         TextColumnWithTooltip<Map<String, String>> scriptColumn = new TextColumnWithTooltip<Map<String, String>>() {
             @Override
             public String getValue(Map<String, String> object) {
-                return object.get("ScriptName");
+                return object.get("ScriptName"); //$NON-NLS-1$
             }
         };
-        getTable().addColumn(scriptColumn, "Script Name");
+        getTable().addColumn(scriptColumn, constants.scriptNameHook());
 
         TextColumnWithTooltip<Map<String, String>> propNameColumn = new TextColumnWithTooltip<Map<String, String>>() {
             @Override
             public String getValue(Map<String, String> object) {
-                return object.get("PropertyName");
+                return object.get("PropertyName"); //$NON-NLS-1$
             }
         };
-        getTable().addColumn(propNameColumn, "Property Name");
+        getTable().addColumn(propNameColumn, constants.propertyNameHook());
 
         TextColumnWithTooltip<Map<String, String>> propValueColumn = new TextColumnWithTooltip<Map<String, String>>() {
             @Override
             public String getValue(Map<String, String> object) {
-                return object.get("PropertyValue");
+                return object.get("PropertyValue"); //$NON-NLS-1$
             }
         };
-        getTable().addColumn(propValueColumn, "Property Value");
+        getTable().addColumn(propValueColumn, constants.propertyValueHook());
     }
 
 }

@@ -34,6 +34,7 @@ import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeParameterListModel;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public class VolumeListModel extends ListWithDetailsModel implements ISupportSystemTreeContext {
     private UICommand createVolumeCommand;
@@ -89,16 +90,16 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
     }
 
     public VolumeListModel() {
-        setTitle("Volumes");
+        setTitle(ConstantsManager.getInstance().getConstants().volumesTitle());
 
-        setDefaultSearchString("Volumes:");
+        setDefaultSearchString("Volumes:"); //$NON-NLS-1$
         setSearchString(getDefaultSearchString());
 
-        setCreateVolumeCommand(new UICommand("Create Volume", this));
-        setRemoveVolumeCommand(new UICommand("Remove", this));
-        setStartCommand(new UICommand("Start", this));
-        setStopCommand(new UICommand("Stop", this));
-        setRebalanceCommand(new UICommand("Rebalance", this));
+        setCreateVolumeCommand(new UICommand("Create Volume", this)); //$NON-NLS-1$
+        setRemoveVolumeCommand(new UICommand("Remove", this)); //$NON-NLS-1$
+        setStartCommand(new UICommand("Start", this)); //$NON-NLS-1$
+        setStopCommand(new UICommand("Stop", this)); //$NON-NLS-1$
+        setRebalanceCommand(new UICommand("Rebalance", this)); //$NON-NLS-1$
 
         getSearchNextPageCommand().setIsAvailable(true);
         getSearchPreviousPageCommand().setIsAvailable(true);
@@ -122,7 +123,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
         }
 
         VolumeModel volumeModel = new VolumeModel();
-        volumeModel.setTitle("Create Volume");
+        volumeModel.setTitle(ConstantsManager.getInstance().getConstants().createVolumeTitle());
         setWindow(volumeModel);
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);
@@ -157,9 +158,9 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
                             }
                         }
                         innerVolumeModel.getDataCenter().setIsChangable(false);
-                        innerVolumeModel.getDataCenter().setInfo("Cannot choose Volume's Data Center in tree context");
+                        innerVolumeModel.getDataCenter().setInfo("Cannot choose Volume's Data Center in tree context"); //$NON-NLS-1$
                         innerVolumeModel.getCluster().setIsChangable(false);
-                        innerVolumeModel.getCluster().setInfo("Cannot choose Volume's Cluster in tree context");
+                        innerVolumeModel.getCluster().setInfo("Cannot choose Volume's Cluster in tree context"); //$NON-NLS-1$
                         break;
                     case Clusters:
                     case DataCenter:
@@ -169,19 +170,19 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
                                 .setItems(new java.util.ArrayList<storage_pool>(java.util.Arrays.asList(new storage_pool[] { selectDataCenter })));
                         innerVolumeModel.getDataCenter().setSelectedItem(selectDataCenter);
                         innerVolumeModel.getDataCenter().setIsChangable(false);
-                        innerVolumeModel.getDataCenter().setInfo("Cannot choose Volume's Data Center in tree context");
+                        innerVolumeModel.getDataCenter().setInfo("Cannot choose Volume's Data Center in tree context"); //$NON-NLS-1$
                         break;
                     default:
                         break;
                     }
                 }
 
-                UICommand command = new UICommand("onCreateVolume", volumeListModel);
-                command.setTitle("OK");
+                UICommand command = new UICommand("onCreateVolume", volumeListModel); //$NON-NLS-1$
+                command.setTitle(ConstantsManager.getInstance().getConstants().ok());
                 command.setIsDefault(true);
                 innerVolumeModel.getCommands().add(command);
-                command = new UICommand("Cancel", volumeListModel);
-                command.setTitle("Cancel");
+                command = new UICommand("Cancel", volumeListModel);  //$NON-NLS-1$
+                command.setTitle(ConstantsManager.getInstance().getConstants().cancel());
                 command.setIsDefault(true);
                 innerVolumeModel.getCommands().add(command);
             }
@@ -228,9 +229,9 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
         else if (command.equals(getRemoveVolumeCommand())) {
             removeVolume();
         }
-        else if (command.getName().equals("Cancel")) {
+        else if (command.getName().equals("Cancel")) { //$NON-NLS-1$
             cancel();
-        } else if (command.getName().equals("onCreateVolume")) {
+        } else if (command.getName().equals("onCreateVolume")) { //$NON-NLS-1$
             onCreateVolume();
         } else if (command.equals(getStartCommand())) {
             start();
@@ -317,7 +318,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
 
     @Override
     protected String getListName() {
-        return "VolumeListModel";
+        return "VolumeListModel"; //$NON-NLS-1$
     }
 
     private SystemTreeItemModel systemTreeSelectedItem;
@@ -345,7 +346,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
 
     @Override
     public boolean IsSearchStringMatch(String searchString) {
-        return searchString.trim().toLowerCase().startsWith("volume");
+        return searchString.trim().toLowerCase().startsWith("volume"); //$NON-NLS-1$
     }
 
     @Override

@@ -115,7 +115,7 @@ public class AdElementListModel extends SearchableListModel
         if (isRoleListHidden != value)
         {
             isRoleListHidden = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsRoleListHidden"));
+            OnPropertyChanged(new PropertyChangedEventArgs("IsRoleListHidden")); //$NON-NLS-1$
         }
         if (getIsRoleListHiddenModel() != null)
         {
@@ -135,7 +135,7 @@ public class AdElementListModel extends SearchableListModel
         if (isEveryoneSelected != value)
         {
             isEveryoneSelected = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsEveryoneSelected"));
+            OnPropertyChanged(new PropertyChangedEventArgs("IsEveryoneSelected")); //$NON-NLS-1$
         }
     }
 
@@ -178,7 +178,7 @@ public class AdElementListModel extends SearchableListModel
                         java.util.ArrayList<roles> roles = (java.util.ArrayList<roles>) result1;
                         java.util.ArrayList<roles> newRoles = new ArrayList<roles>();
                         for (roles r : roles) {
-                            //ignore CONSUME_QUOTA_ROLE in UI
+                            // ignore CONSUME_QUOTA_ROLE in UI
                             if (!r.getId().equals(QuotaPermissionListModel.CONSUME_QUOTA_ROLE_ID)) {
                                 newRoles.add(r);
                             }
@@ -190,7 +190,7 @@ public class AdElementListModel extends SearchableListModel
                                 roleValue = r;
                                 first = false;
                             }
-                            if (r.getId() != null && r.getId().equals(new Guid("00000000-0000-0000-0001-000000000001")))
+                            if (r.getId() != null && r.getId().equals(new Guid("00000000-0000-0000-0001-000000000001"))) //$NON-NLS-1$
                             {
                                 roleValue = r;
                                 break;
@@ -257,8 +257,8 @@ public class AdElementListModel extends SearchableListModel
             }
         };
         Frontend.RunQuery(VdcQueryType.Search,
-                new SearchParameters("ADUSER@" + domain + ": allnames="
-                        + (StringHelper.isNullOrEmpty(getSearchString()) ? "*" : getSearchString()), SearchType.AdUser),
+                new SearchParameters("ADUSER@" + domain + ": allnames=" //$NON-NLS-1$ //$NON-NLS-2$
+                        + (StringHelper.isNullOrEmpty(getSearchString()) ? "*" : getSearchString()), SearchType.AdUser), //$NON-NLS-1$
                 _asyncQuery);
         _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);
@@ -287,8 +287,8 @@ public class AdElementListModel extends SearchableListModel
                         tempVar3.setuser_id(a.getid());
                         tempVar3.setIsGroup(true);
                         tempVar3.setname(a.getname());
-                        tempVar3.setsurname("");
-                        tempVar3.setusername("");
+                        tempVar3.setsurname(""); //$NON-NLS-1$
+                        tempVar3.setusername(""); //$NON-NLS-1$
                         tempVar3.setdomain(a.getdomain());
                         DbUser user = tempVar3;
 
@@ -303,8 +303,8 @@ public class AdElementListModel extends SearchableListModel
         };
 
         Frontend.RunQuery(VdcQueryType.Search,
-                new SearchParameters("ADGROUP@" + domain + ": name="
-                        + (StringHelper.isNullOrEmpty(getSearchString()) ? "*" : getSearchString()), SearchType.AdGroup),
+                new SearchParameters("ADGROUP@" + domain + ": name=" //$NON-NLS-1$ //$NON-NLS-2$
+                        + (StringHelper.isNullOrEmpty(getSearchString()) ? "*" : getSearchString()), SearchType.AdGroup), //$NON-NLS-1$
                 _asyncQuery);
     }
 
@@ -378,6 +378,6 @@ public class AdElementListModel extends SearchableListModel
 
     @Override
     protected String getListName() {
-        return "AdElementListModel";
+        return "AdElementListModel"; //$NON-NLS-1$
     }
 }

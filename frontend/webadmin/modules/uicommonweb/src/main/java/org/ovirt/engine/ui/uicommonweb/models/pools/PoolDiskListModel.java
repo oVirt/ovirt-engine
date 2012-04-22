@@ -8,13 +8,15 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
 public class PoolDiskListModel extends SearchableListModel
 {
     public PoolDiskListModel()
     {
-        setTitle("Virtual Disks");
+        setTitle(ConstantsManager.getInstance().getConstants().virtualDisksTitle());
+        setHashName("virtual_disks"); //$NON-NLS-1$
     }
 
     @Override
@@ -46,6 +48,6 @@ public class PoolDiskListModel extends SearchableListModel
 
     @Override
     protected String getListName() {
-        return "PoolDiskListModel";
+        return "PoolDiskListModel"; //$NON-NLS-1$
     }
 }

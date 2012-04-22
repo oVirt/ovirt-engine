@@ -12,6 +12,7 @@ import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostVmListModel;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostVmPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
@@ -30,15 +31,15 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
     }
 
     @Inject
-    public SubTabHostVmView(SearchableDetailModelProvider<VM, HostListModel, HostVmListModel> modelProvider) {
+    public SubTabHostVmView(SearchableDetailModelProvider<VM, HostListModel, HostVmListModel> modelProvider, ApplicationConstants constants) {
         super(modelProvider);
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        initTable();
+        initTable(constants);
         initWidget(getTable());
     }
 
-    void initTable() {
-        getTable().addColumn(new VmStatusColumn(), "", "30px");
+    void initTable(ApplicationConstants constants) {
+        getTable().addColumn(new VmStatusColumn(), constants.empty(), "30px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VM> nameColumn = new TextColumnWithTooltip<VM>() {
             @Override
@@ -46,9 +47,9 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
                 return object.getvm_name();
             }
         };
-        getTable().addColumn(nameColumn, "Name");
+        getTable().addColumn(nameColumn, constants.nameVm());
 
-        getTable().addColumn(new VmTypeColumn(), "", "30px");
+        getTable().addColumn(new VmTypeColumn(), constants.empty(), "30px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VM> clusterColumn = new TextColumnWithTooltip<VM>() {
             @Override
@@ -56,7 +57,7 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
                 return object.getvds_group_name();
             }
         };
-        getTable().addColumn(clusterColumn, "Cluster");
+        getTable().addColumn(clusterColumn, constants.clusterVm());
 
         TextColumnWithTooltip<VM> ipColumn = new TextColumnWithTooltip<VM>() {
             @Override
@@ -64,7 +65,7 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
                 return object.getvm_ip();
             }
         };
-        getTable().addColumn(ipColumn, "IP Address");
+        getTable().addColumn(ipColumn, constants.ipVm());
 
         PercentColumn<VM> memColumn = new PercentColumn<VM>() {
             @Override
@@ -72,7 +73,7 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
                 return object.getusage_mem_percent();
             }
         };
-        getTable().addColumn(memColumn, "Memory");
+        getTable().addColumn(memColumn, constants.memoryVm());
 
         PercentColumn<VM> cpuColumn = new PercentColumn<VM>() {
             @Override
@@ -80,7 +81,7 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
                 return object.getusage_cpu_percent();
             }
         };
-        getTable().addColumn(cpuColumn, "CPU");
+        getTable().addColumn(cpuColumn, constants.cpuVm());
 
         PercentColumn<VM> netColumn = new PercentColumn<VM>() {
             @Override
@@ -88,7 +89,7 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
                 return object.getusage_network_percent();
             }
         };
-        getTable().addColumn(netColumn, "Network");
+        getTable().addColumn(netColumn, constants.networkVm());
 
         TextColumnWithTooltip<VM> statusColumn = new EnumColumn<VM, VMStatus>() {
             @Override
@@ -96,7 +97,7 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
                 return object.getstatus();
             }
         };
-        getTable().addColumn(statusColumn, "Status");
+        getTable().addColumn(statusColumn, constants.statusVm());
 
         TextColumnWithTooltip<VM> hostColumn = new UptimeColumn<VM>() {
             @Override
@@ -104,15 +105,15 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
                 return object.getRoundedElapsedTime();
             }
         };
-        getTable().addColumn(hostColumn, "Uptime");
+        getTable().addColumn(hostColumn, constants.uptimeVm());
 
-        getTable().addActionButton(new WebAdminButtonDefinition<VM>("Suspend") {
+        getTable().addActionButton(new WebAdminButtonDefinition<VM>(constants.suspendVm()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getPauseCommand();
             }
         });
-        getTable().addActionButton(new WebAdminButtonDefinition<VM>("Shut down") {
+        getTable().addActionButton(new WebAdminButtonDefinition<VM>(constants.shutDownVm()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getShutdownCommand();
@@ -120,7 +121,7 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
         });
         // getTable().addActionButton(new WebAdminButtonDefinition<VM>(getListModel().getStopCommand(), "Stop"));
         // TODO: separator
-        getTable().addActionButton(new WebAdminButtonDefinition<VM>("Migrate") {
+        getTable().addActionButton(new WebAdminButtonDefinition<VM>(constants.migrateVm()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getMigrateCommand();

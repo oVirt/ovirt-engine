@@ -31,7 +31,7 @@ public class ConsoleButtonCell extends AbstractCell<UserPortalItemModel> {
             String disabledCss,
             String title,
             ConsoleButtonCommand command) {
-        super("click");
+        super("click"); //$NON-NLS-1$
         this.consoleUtils = consoleUtils;
         this.enabledCss = SafeHtmlUtils.htmlEscape(enabledCss);
         this.disabledCss = SafeHtmlUtils.htmlEscape(disabledCss);
@@ -55,7 +55,7 @@ public class ConsoleButtonCell extends AbstractCell<UserPortalItemModel> {
             return;
         }
 
-        if ("click".equals(event.getType())) {
+        if ("click".equals(event.getType())) { //$NON-NLS-1$
             // deferred because first the row has to be selected and than the console can be shown
             Scheduler.get().scheduleDeferred(new ScheduledCommand() {
                 @Override
@@ -69,9 +69,9 @@ public class ConsoleButtonCell extends AbstractCell<UserPortalItemModel> {
     @Override
     public void render(Context context, UserPortalItemModel model, SafeHtmlBuilder sb) {
         if (isConsoleEnabled(model)) {
-            sb.appendHtmlConstant("<div title=\"" + title + "\" class=\"" + enabledCss + "\" />");
+            sb.appendHtmlConstant("<div title=\"" + title + "\" class=\"" + enabledCss + "\" />"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         } else {
-            sb.appendHtmlConstant("<div class=\"" + disabledCss + "\" />");
+            sb.appendHtmlConstant("<div class=\"" + disabledCss + "\" />"); //$NON-NLS-1$ //$NON-NLS-2$
         }
     }
 

@@ -20,16 +20,16 @@ public class UptimeRenderer extends AbstractRenderer<Double> {
         int minutes = (totalSeconds % SECONDS_IN_AN_HOUR) / SECONDS_IN_A_MINUTE;
         int seconds = totalSeconds % SECONDS_IN_A_MINUTE;
 
-        String reply = "";
+        String reply = ""; //$NON-NLS-1$
 
         if (days > 0) {
-            reply += days + (days == 1 ? " day " : " days ");
+            reply += days + (days == 1 ? " day " : " days "); //$NON-NLS-1$ //$NON-NLS-2$
         } else if (hours > 0) {
-            reply += hours + " h ";
+            reply += hours + " h "; //$NON-NLS-1$
         } else if (minutes > 0) {
-            reply += minutes + " min ";
+            reply += minutes + " min "; //$NON-NLS-1$
         } else if (seconds > 0) {
-            reply += seconds + " sec";
+            reply += seconds + " sec"; //$NON-NLS-1$
         }
 
         return reply;

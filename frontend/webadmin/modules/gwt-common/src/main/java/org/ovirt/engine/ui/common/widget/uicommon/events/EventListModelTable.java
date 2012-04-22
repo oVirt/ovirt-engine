@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.common.widget.uicommon.events;
 import java.util.Date;
 
 import org.ovirt.engine.core.common.businessentities.AuditLog;
+import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.AuditLogSeverityColumn;
@@ -28,8 +29,8 @@ public class EventListModelTable<T extends EventListModel> extends AbstractModel
     }
 
     @Override
-    public void initTable() {
-        getTable().addColumn(new AuditLogSeverityColumn(), "", "20px");
+    public void initTable(CommonApplicationConstants constants) {
+        getTable().addColumn(new AuditLogSeverityColumn(), constants.empty(), "20px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<AuditLog> logTimeColumn = new FullDateTimeColumn<AuditLog>() {
             @Override
@@ -37,7 +38,7 @@ public class EventListModelTable<T extends EventListModel> extends AbstractModel
                 return object.getlog_time();
             }
         };
-        getTable().addColumn(logTimeColumn, "Time");
+        getTable().addColumn(logTimeColumn, constants.timeEvent());
 
         TextColumnWithTooltip<AuditLog> messageColumn = new TextColumnWithTooltip<AuditLog>() {
             @Override
@@ -45,7 +46,7 @@ public class EventListModelTable<T extends EventListModel> extends AbstractModel
                 return object.getmessage();
             }
         };
-        getTable().addColumn(messageColumn, "Message");
+        getTable().addColumn(messageColumn, constants.messageEvent());
     }
 
 }

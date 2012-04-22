@@ -68,7 +68,7 @@ public class Slider extends Composite {
     public void setPivot(int pivot) {
         this.pivot = pivot;
         if (percentLabel != null) {
-            percentLabel.setText(getPercent() + "%");
+            percentLabel.setText(getPercent() + "%"); //$NON-NLS-1$
         }
     }
 
@@ -110,7 +110,7 @@ public class Slider extends Composite {
         setPivot(pivot * getScale());
         initSlides();
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
-        slider.setWidth(getMax() - getMin() + "px");
+        slider.setWidth(getMax() - getMin() + "px"); //$NON-NLS-1$
     }
 
     public String getColor() {
@@ -145,11 +145,11 @@ public class Slider extends Composite {
             }
         };
 
-        String style = "A" + getColor().replace('#', '_') + "_clusterPolicy";
+        String style = "A" + getColor().replace('#', '_') + "_clusterPolicy"; //$NON-NLS-1$ //$NON-NLS-2$
         slider.addStyleName(style);
-        StyleInjector.inject("." + style
-                + ".gwt-SplitLayoutPanel .gwt-SplitLayoutPanel-HDragger { width: 8px !important; background: "
-                + getColor() + "; cursor: hand; cursor: pointer; }");
+        StyleInjector.inject("." + style //$NON-NLS-1$
+                + ".gwt-SplitLayoutPanel .gwt-SplitLayoutPanel-HDragger { width: 8px !important; background: " //$NON-NLS-1$
+                + getColor() + "; cursor: hand; cursor: pointer; }"); //$NON-NLS-1$
         percentLabel = new Label();
         setSlidersWidth();
 
@@ -160,11 +160,11 @@ public class Slider extends Composite {
         westPanel = new SimplePanel();
 
         int width = getPivot() - getMin();
-        westPanel.setWidth((width < 0 ? 0 : width) + "px");
-        percentLabel.setText(getPercent() + "%");
+        westPanel.setWidth((width < 0 ? 0 : width) + "px"); //$NON-NLS-1$
+        percentLabel.setText(getPercent() + "%"); //$NON-NLS-1$
         centerPanel = new SimplePanel();
         width = getMax() - getMin();
-        centerPanel.setWidth((width < 0 ? 0 : width) + "px");
+        centerPanel.setWidth((width < 0 ? 0 : width) + "px"); //$NON-NLS-1$
         slider.addWest(westPanel, getPivot() - getMin());
         slider.add(centerPanel);
     }

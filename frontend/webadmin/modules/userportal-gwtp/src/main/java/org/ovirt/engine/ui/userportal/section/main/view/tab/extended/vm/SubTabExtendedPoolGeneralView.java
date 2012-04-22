@@ -5,6 +5,7 @@ import org.ovirt.engine.ui.common.widget.uicommon.vm.PoolGeneralModelForm;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalListModel;
+import org.ovirt.engine.ui.userportal.ApplicationConstants;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.SubTabExtendedPoolGeneralPresenter;
 import org.ovirt.engine.ui.userportal.uicommon.model.vm.PoolGeneralModelProvider;
 
@@ -25,9 +26,9 @@ public class SubTabExtendedPoolGeneralView extends AbstractSubTabFormView<UserPo
     PoolGeneralModelForm form;
 
     @Inject
-    public SubTabExtendedPoolGeneralView(PoolGeneralModelProvider modelProvider) {
+    public SubTabExtendedPoolGeneralView(PoolGeneralModelProvider modelProvider, ApplicationConstants constants) {
         super(modelProvider);
-        form = new PoolGeneralModelForm(modelProvider);
+        form = new PoolGeneralModelForm(modelProvider, constants);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
     }
 

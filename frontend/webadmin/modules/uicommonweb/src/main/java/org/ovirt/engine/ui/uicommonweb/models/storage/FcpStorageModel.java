@@ -13,6 +13,6 @@ public class FcpStorageModel extends SanStorageModel
 
     @Override
     protected String getListName() {
-        return "FcpStorageModel";
+        return "FcpStorageModel"; //$NON-NLS-1$
     }
 }

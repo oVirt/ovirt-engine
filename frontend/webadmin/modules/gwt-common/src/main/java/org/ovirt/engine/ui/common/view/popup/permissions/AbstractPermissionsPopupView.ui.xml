@@ -4,6 +4,8 @@
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
 	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor" xmlns:w="urn:import:org.ovirt.engine.ui.common.widget">
 
+	<ui:with field='constants' type='org.ovirt.engine.ui.common.CommonApplicationConstants' />
+
 	<ui:style>
 		.mainLabel {
 			font-weight: bold;
@@ -51,7 +53,7 @@
 					</g:HorizontalPanel>
 				</g:SimplePanel>
 				<g:HorizontalPanel verticalAlignment="ALIGN_MIDDLE" addStyleNames="{style.searchStringPanel}">
-					<e:ListModelListBoxEditor label="Search:" ui:field="domainSelection" />
+					<e:ListModelListBoxEditor label="{constants.searchPermissionsPopup}" ui:field="domainSelection" />
 					<e:TextBoxChanger addStyleNames="{style.searchStringEditor}" ui:field="searchStringEditor" />
 					<w:UiCommandButton ui:field="searchButton" addStyleNames="{style.goButton}" />
 				</g:HorizontalPanel>
@@ -59,7 +61,7 @@
 					<e:EntityModelCellTable ui:field="searchItems" />
 				</g:ScrollPanel>
 				<g:HorizontalPanel spacing="10" ui:field="roleSelectionPanel" addStyleNames="{style.rolePanel}">
-					<g:Label ui:field="roleToAssignLabel" addStyleNames="{style.mainLabel}">Role to Assign:</g:Label>
+					<g:Label ui:field="roleToAssignLabel" addStyleNames="{style.mainLabel}" text="{constants.roleToAssignPermissionsPopup}" />
 					<e:ListModelListBoxEditor ui:field="roleSelection" />
 				</g:HorizontalPanel>
 			</g:FlowPanel>

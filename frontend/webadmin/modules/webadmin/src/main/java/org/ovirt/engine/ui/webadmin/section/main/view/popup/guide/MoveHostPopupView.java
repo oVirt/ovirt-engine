@@ -54,7 +54,7 @@ public class MoveHostPopupView extends AbstractModelBoundPopupView<MoveHost> imp
         super(eventBus, resources);
         initListBoxEditors();
         localize(constants);
-        initTable();
+        initTable(constants);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         Driver.driver.initialize(this);
     }
@@ -72,9 +72,9 @@ public class MoveHostPopupView extends AbstractModelBoundPopupView<MoveHost> imp
         });
     }
 
-    private void initTable() {
+    private void initTable(ApplicationConstants constants) {
         table = new EntityModelCellTable<MoveHost>(true);
-        table.setWidth("100%", true);
+        table.setWidth("100%", true); //$NON-NLS-1$
 
         TextColumnWithTooltip<EntityModel> nameColumn = new TextColumnWithTooltip<EntityModel>() {
             @Override
@@ -82,7 +82,7 @@ public class MoveHostPopupView extends AbstractModelBoundPopupView<MoveHost> imp
                 return ((VDS) object.getEntity()).getvds_name();
             }
         };
-        table.addColumn(nameColumn, "Name");
+        table.addColumn(nameColumn, constants.nameHost());
 
         TextColumnWithTooltip<EntityModel> hostColumn = new TextColumnWithTooltip<EntityModel>() {
             @Override
@@ -90,7 +90,7 @@ public class MoveHostPopupView extends AbstractModelBoundPopupView<MoveHost> imp
                 return ((VDS) object.getEntity()).gethost_name();
             }
         };
-        table.addColumn(hostColumn, "Host/IP");
+        table.addColumn(hostColumn, constants.ipHost());
 
         TextColumnWithTooltip<EntityModel> statusColumn = new EnumColumn<EntityModel, VDSStatus>() {
             @Override
@@ -98,7 +98,7 @@ public class MoveHostPopupView extends AbstractModelBoundPopupView<MoveHost> imp
                 return ((VDS) object.getEntity()).getstatus();
             }
         };
-        table.addColumn(statusColumn, "Status", "90px");
+        table.addColumn(statusColumn, constants.statusHost(), "90px"); //$NON-NLS-1$
     }
 
     @Override

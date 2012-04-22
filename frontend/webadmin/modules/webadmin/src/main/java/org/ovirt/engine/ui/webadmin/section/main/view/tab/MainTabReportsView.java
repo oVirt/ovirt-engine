@@ -23,7 +23,7 @@ public class MainTabReportsView extends AbstractView implements MainTabReportsPr
     }
 
     public MainTabReportsView() {
-        reportPostableFrame = new PostableFrame("dashboard");
+        reportPostableFrame = new PostableFrame("dashboard"); //$NON-NLS-1$
         initWidget(uiBinder.createAndBindUi(this));
 
     }

@@ -2,6 +2,8 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui">
 
+<ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants' />
+
 	<ui:style src='../../../defines.css'>
 		.wrapperOuter {
 			background-image: url(images/header_background_repetitive.png);
@@ -71,7 +73,7 @@
 				<g:HTML addStyleNames="{style.logo}" />
 
 				<g:HTMLPanel addStyleNames="{style.menuBar}">
-					Logged in user:
+					<g:InlineLabel text="{constants.loggedInUser}:" />
 					<g:InlineLabel ui:field="userNameLabel" addStyleNames="{style.userName}" />
 					| <g:Anchor ui:field="configureLink" addStyleNames="{style.menuLink}" /> |
 					<g:Anchor ui:field="guideLink" addStyleNames="{style.menuLink}" /> |

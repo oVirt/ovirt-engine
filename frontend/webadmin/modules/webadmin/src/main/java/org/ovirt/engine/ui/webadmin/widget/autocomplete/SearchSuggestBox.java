@@ -47,26 +47,26 @@ public class SearchSuggestBox extends SuggestBox implements HasElementId {
         }
 
         private SafeHtml getStyledSuggestPart(SuggestItemPartModel suggestionPart) {
-            String color = "";
+            String color = ""; //$NON-NLS-1$
 
             switch (suggestionPart.getPartType()) {
             case Valid:
-                color = "grey";
+                color = "grey"; //$NON-NLS-1$
                 break;
 
             case New:
-                color = "black";
+                color = "black"; //$NON-NLS-1$
                 break;
 
             case Erroneous:
-                color = "red";
+                color = "red"; //$NON-NLS-1$
                 break;
             }
 
             SafeHtmlBuilder sb = new SafeHtmlBuilder();
-            sb.appendHtmlConstant("<font color=\"" + color + "\">");
+            sb.appendHtmlConstant("<font color=\"" + color + "\">"); //$NON-NLS-1$ //$NON-NLS-2$
             sb.append(SafeHtmlUtils.fromString(suggestionPart.getPartString()));
-            sb.appendHtmlConstant("</font>");
+            sb.appendHtmlConstant("</font>"); //$NON-NLS-1$
 
             return sb.toSafeHtml();
         }

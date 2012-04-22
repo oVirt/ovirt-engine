@@ -5,6 +5,7 @@ import org.ovirt.engine.ui.common.utils.WebUtils;
 import org.ovirt.engine.ui.common.widget.tab.AbstractHeadlessTabPanel.TabWidgetHandler;
 import org.ovirt.engine.ui.uicommonweb.Configurator;
 import org.ovirt.engine.ui.uicommonweb.TypeResolver;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.configure.ConfigurePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.uicommon.WebAdminConfigurator;
 
@@ -44,6 +45,7 @@ public class HeaderPresenterWidget extends PresenterWidget<HeaderPresenterWidget
     private final SearchPanelPresenterWidget searchPanel;
     private final AboutPopupPresenterWidget aboutPopup;
     private final ConfigurePopupPresenterWidget configurePopup;
+    private final ApplicationConstants constants;
 
     @Inject
     public HeaderPresenterWidget(EventBus eventBus,
@@ -51,12 +53,13 @@ public class HeaderPresenterWidget extends PresenterWidget<HeaderPresenterWidget
             CurrentUser user,
             SearchPanelPresenterWidget searchPanel,
             AboutPopupPresenterWidget aboutPopup,
-            ConfigurePopupPresenterWidget configurePopup) {
+            ConfigurePopupPresenterWidget configurePopup, ApplicationConstants constants) {
         super(eventBus, view);
         this.user = user;
         this.searchPanel = searchPanel;
         this.aboutPopup = aboutPopup;
         this.configurePopup = configurePopup;
+        this.constants = constants;
     }
 
     @Override
@@ -105,7 +108,7 @@ public class HeaderPresenterWidget extends PresenterWidget<HeaderPresenterWidget
                 Configurator configurator = (Configurator) TypeResolver.getInstance().Resolve(Configurator.class);
                 if (configurator.isDocumentationAvailable()) {
                     String url = configurator.getDocumentationLibURL() + WebAdminConfigurator.DOCUMENTATION_GUIDE_PATH;
-                    WebUtils.openUrlInNewWindow("ENGINE Web Admin Documentation", url);
+                    WebUtils.openUrlInNewWindow(constants.engineWebAdminDoc(), url);
                 }
             }
         }));

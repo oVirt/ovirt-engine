@@ -19,6 +19,7 @@ import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.common.SelectionTreeNodeModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
 import org.ovirt.engine.ui.uicompat.Translator;
 
@@ -51,9 +52,10 @@ public class UserEventNotifierListModel extends SearchableListModel
 
     public UserEventNotifierListModel()
     {
-        setTitle("Event Notifier");
+        setTitle(ConstantsManager.getInstance().getConstants().eventNotifierTitle());
+        setHashName("event_notifier"); //$NON-NLS-1$
 
-        setManageEventsCommand(new UICommand("ManageEvents", this));
+        setManageEventsCommand(new UICommand("ManageEvents", this)); //$NON-NLS-1$
     }
 
     @Override
@@ -101,8 +103,8 @@ public class UserEventNotifierListModel extends SearchableListModel
         EventNotificationModel model = new EventNotificationModel();
         setWindow(model);
 
-        model.setTitle("Add Event Notification");
-        model.setHashName("add_event_notification");
+        model.setTitle(ConstantsManager.getInstance().getConstants().addEventNotificationTitle());
+        model.setHashName("add_event_notification"); //$NON-NLS-1$
 
         java.util.ArrayList<EventNotificationEntity> eventTypes = DataProvider.GetEventNotificationTypeList();
         java.util.Map<EventNotificationEntity, java.util.HashSet<AuditLogType>> availableEvents =
@@ -170,12 +172,12 @@ public class UserEventNotifierListModel extends SearchableListModel
 
         model.setOldEmail((String) model.getEmail().getEntity());
 
-        UICommand tempVar = new UICommand("OnSave", this);
-        tempVar.setTitle("OK");
+        UICommand tempVar = new UICommand("OnSave", this); //$NON-NLS-1$
+        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
         tempVar.setIsDefault(true);
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this);
-        tempVar2.setTitle("Cancel");
+        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
+        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         tempVar2.setIsCancel(true);
         model.getCommands().add(tempVar2);
     }
@@ -256,16 +258,14 @@ public class UserEventNotifierListModel extends SearchableListModel
                 toRemoveList.add(new EventSubscriptionParametesBase(new event_subscriber(a.getevent_up_name(),
                         EventNotificationMethods.EMAIL.getValue(),
                         a.getmethod_address(),
-                        a.getsubscriber_id(),
-                        ""), ""));
+                        a.getsubscriber_id(), ""), "")); //$NON-NLS-1$ //$NON-NLS-2$
             }
             for (SelectionTreeNodeModel a : selected)
             {
                 toAddList.add(new EventSubscriptionParametesBase(new event_subscriber(a.getTitle(),
                         EventNotificationMethods.EMAIL.getValue(),
                         (String) model.getEmail().getEntity(),
-                        getEntity().getuser_id(),
-                        ""), ""));
+                        getEntity().getuser_id(), ""), "")); //$NON-NLS-1$ //$NON-NLS-2$
             }
         }
         else
@@ -275,8 +275,7 @@ public class UserEventNotifierListModel extends SearchableListModel
                 toAddList.add(new EventSubscriptionParametesBase(new event_subscriber(a.getTitle(),
                         EventNotificationMethods.EMAIL.getValue(),
                         (String) model.getEmail().getEntity(),
-                        getEntity().getuser_id(),
-                        ""), ""));
+                        getEntity().getuser_id(), ""), "")); //$NON-NLS-1$ //$NON-NLS-2$
             }
 
             for (event_subscriber a : removed)
@@ -284,8 +283,7 @@ public class UserEventNotifierListModel extends SearchableListModel
                 toRemoveList.add(new EventSubscriptionParametesBase(new event_subscriber(a.getevent_up_name(),
                         EventNotificationMethods.EMAIL.getValue(),
                         a.getmethod_address(),
-                        a.getsubscriber_id(),
-                        ""), ""));
+                        a.getsubscriber_id(), ""), "")); //$NON-NLS-1$ //$NON-NLS-2$
             }
         }
 
@@ -337,11 +335,11 @@ public class UserEventNotifierListModel extends SearchableListModel
         {
             ManageEvents();
         }
-        if (StringHelper.stringsEqual(command.getName(), "OnSave"))
+        if (StringHelper.stringsEqual(command.getName(), "OnSave")) //$NON-NLS-1$
         {
             OnSave();
         }
-        if (StringHelper.stringsEqual(command.getName(), "Cancel"))
+        if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
         {
             Cancel();
         }
@@ -349,6 +347,6 @@ public class UserEventNotifierListModel extends SearchableListModel
 
     @Override
     protected String getListName() {
-        return "UserEventNotifierListModel";
+        return "UserEventNotifierListModel"; //$NON-NLS-1$
     }
 }

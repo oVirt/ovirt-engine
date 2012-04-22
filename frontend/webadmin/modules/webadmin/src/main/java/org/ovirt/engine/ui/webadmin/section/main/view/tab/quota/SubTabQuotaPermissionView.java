@@ -12,6 +12,7 @@ import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaListModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaPermissionListModel;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.quota.SubTabQuotaPermissionPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
@@ -26,15 +27,15 @@ public class SubTabQuotaPermissionView extends AbstractSubTabTableView<Quota, pe
     }
 
     @Inject
-    public SubTabQuotaPermissionView(SearchableDetailModelProvider<permissions, QuotaListModel, QuotaPermissionListModel> modelProvider) {
+    public SubTabQuotaPermissionView(SearchableDetailModelProvider<permissions, QuotaListModel, QuotaPermissionListModel> modelProvider, ApplicationConstants constants) {
         super(modelProvider);
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        initTable();
+        initTable(constants);
         initWidget(getTable());
     }
 
-    private void initTable() {
-        getTable().addColumn(new PermissionTypeColumn(), "", "30px");
+    private void initTable(ApplicationConstants constants) {
+        getTable().addColumn(new PermissionTypeColumn(), constants.empty(), "30px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<permissions> userColumn = new TextColumnWithTooltip<permissions>() {
             @Override
@@ -42,7 +43,7 @@ public class SubTabQuotaPermissionView extends AbstractSubTabTableView<Quota, pe
                 return object.getOwnerName();
             }
         };
-        getTable().addColumn(userColumn, "User");
+        getTable().addColumn(userColumn, constants.userPermission());
 
         TextColumnWithTooltip<permissions> roleColumn = new TextColumnWithTooltip<permissions>() {
             @Override
@@ -50,7 +51,7 @@ public class SubTabQuotaPermissionView extends AbstractSubTabTableView<Quota, pe
                 return object.getRoleName();
             }
         };
-        getTable().addColumn(roleColumn, "Role");
+        getTable().addColumn(roleColumn, constants.rolePermission());
 
         TextColumnWithTooltip<permissions> permissionColumn = new ObjectNameColumn<permissions>() {
             @Override
@@ -60,15 +61,15 @@ public class SubTabQuotaPermissionView extends AbstractSubTabTableView<Quota, pe
                 };
             }
         };
-        getTable().addColumn(permissionColumn, "Inherited From");
+        getTable().addColumn(permissionColumn, constants.inheretedFromPermission());
 
-        getTable().addActionButton(new WebAdminButtonDefinition<permissions>("Add") {
+        getTable().addActionButton(new WebAdminButtonDefinition<permissions>(constants.addPermission()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getAddCommand();
             }
         });
-        getTable().addActionButton(new WebAdminButtonDefinition<permissions>("Remove") {
+        getTable().addActionButton(new WebAdminButtonDefinition<permissions>(constants.removePermission()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getRemoveCommand();

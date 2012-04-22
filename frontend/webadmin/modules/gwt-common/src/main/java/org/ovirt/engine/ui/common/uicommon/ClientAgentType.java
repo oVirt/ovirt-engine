@@ -14,7 +14,7 @@ public class ClientAgentType {
         version = Float.parseFloat(getVersion());
         os = getOS();
         platform = getPlatform();
-        isIE = "explorer".equalsIgnoreCase(browser);
+        isIE = "explorer".equalsIgnoreCase(browser); //$NON-NLS-1$
     }
 
     public native String getBrowser() /*-{

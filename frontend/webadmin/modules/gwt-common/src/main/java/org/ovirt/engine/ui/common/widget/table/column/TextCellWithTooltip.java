@@ -26,7 +26,7 @@ public class TextCellWithTooltip extends AbstractSafeHtmlCell<String> {
     }
 
     public static final int UNLIMITED_LENGTH = -1;
-    private static final String TOO_LONG_TEXT_POSTFIX = "...";
+    private static final String TOO_LONG_TEXT_POSTFIX = "..."; //$NON-NLS-1$
 
     // DOM element ID settings for the text container element
     private String elementIdPrefix = DOM.createUniqueId();
@@ -38,7 +38,7 @@ public class TextCellWithTooltip extends AbstractSafeHtmlCell<String> {
     private static CellTemplate template;
 
     public TextCellWithTooltip(int maxTextLength) {
-        super(SimpleSafeHtmlRenderer.getInstance(), "mouseover");
+        super(SimpleSafeHtmlRenderer.getInstance(), "mouseover"); //$NON-NLS-1$
         this.maxTextLength = maxTextLength;
 
         // Delay cell template creation until the first time it's needed
@@ -57,7 +57,7 @@ public class TextCellWithTooltip extends AbstractSafeHtmlCell<String> {
 
     @Override
     public void render(Context context, SafeHtml value, SafeHtmlBuilder sb) {
-        String rawData = value != null ? value.asString() : "";
+        String rawData = value != null ? value.asString() : ""; //$NON-NLS-1$
 
         sb.append(template.textContainer(
                 getContainerElementId(context),
@@ -70,7 +70,7 @@ public class TextCellWithTooltip extends AbstractSafeHtmlCell<String> {
         super.onBrowserEvent(context, parent, value, event, valueUpdater);
 
         // Ignore events other than 'mouseover'
-        if (!"mouseover".equals(event.getType())) {
+        if (!"mouseover".equals(event.getType())) { //$NON-NLS-1$
             return;
         }
 
@@ -82,7 +82,7 @@ public class TextCellWithTooltip extends AbstractSafeHtmlCell<String> {
         if (forceTooltip || contentOverflows(parent)) {
             parent.setTitle(value);
         } else {
-            parent.setTitle("");
+            parent.setTitle(""); //$NON-NLS-1$
         }
     }
 
@@ -91,9 +91,9 @@ public class TextCellWithTooltip extends AbstractSafeHtmlCell<String> {
      */
     String getContainerElementId(Cell.Context context) {
         StringBuilder sb = new StringBuilder(elementIdPrefix);
-        sb.append("_");
-        sb.append(columnId != null ? columnId : "col" + String.valueOf(context.getColumn()));
-        sb.append("_row");
+        sb.append("_"); //$NON-NLS-1$
+        sb.append(columnId != null ? columnId : "col" + String.valueOf(context.getColumn())); //$NON-NLS-1$
+        sb.append("_row"); //$NON-NLS-1$
         sb.append(String.valueOf(context.getIndex()));
         return sb.toString();
     }
@@ -121,12 +121,12 @@ public class TextCellWithTooltip extends AbstractSafeHtmlCell<String> {
         String overflowValue = elm.getStyle().getOverflow();
 
         // Temporarily allow element content to overflow through scroll bars
-        elm.getStyle().setProperty("overflow", "auto");
+        elm.getStyle().setProperty("overflow", "auto"); //$NON-NLS-1$ //$NON-NLS-2$
         boolean overflowX = elm.getScrollWidth() > elm.getClientWidth();
         boolean overflowY = elm.getScrollHeight() > elm.getClientHeight();
 
         // Revert to the original overflow value
-        elm.getStyle().setProperty("overflow", overflowValue);
+        elm.getStyle().setProperty("overflow", overflowValue); //$NON-NLS-1$
 
         return overflowX || overflowY;
     }

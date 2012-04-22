@@ -9,6 +9,6 @@ public final class ProvideTickEvent
 
     static
     {
-        Definition = new EventDefinition("Tick", IProvideTickEvent.class);
+        Definition = new EventDefinition("Tick", IProvideTickEvent.class); //$NON-NLS-1$
     }
 }

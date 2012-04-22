@@ -9,6 +9,7 @@ import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaListModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaStorageListModel;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.quota.SubTabQuotaStoragePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 
@@ -22,28 +23,28 @@ public class SubTabQuotaStorageView extends AbstractSubTabTableView<Quota, Quota
     }
 
     @Inject
-    public SubTabQuotaStorageView(SearchableDetailModelProvider<QuotaStorage, QuotaListModel, QuotaStorageListModel> modelProvider) {
+    public SubTabQuotaStorageView(SearchableDetailModelProvider<QuotaStorage, QuotaListModel, QuotaStorageListModel> modelProvider, ApplicationConstants constants) {
         super(modelProvider);
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        initTable();
+        initTable(constants);
         initWidget(getTable());
     }
 
-    private void initTable() {
+    private void initTable(ApplicationConstants constants) {
         getTable().addColumn(new TextColumnWithTooltip<QuotaStorage>() {
             @Override
             public String getValue(QuotaStorage object) {
                 return object.getStorageName();
             }
-        }, "Name");
+        }, constants.nameQuotaStorage());
 
         getTable().addColumn(new TextColumnWithTooltip<QuotaStorage>() {
             @Override
             public String getValue(QuotaStorage object) {
-                return (object.getStorageSizeGBUsage() == null ? "0" : object.getStorageSizeGBUsage().toString()) + "/"
-                        + (object.getStorageSizeGB() == null ? "*" : object.getStorageSizeGB().toString()) + " GB";
+                return (object.getStorageSizeGBUsage() == null ? "0" : object.getStorageSizeGBUsage().toString()) + "/" //$NON-NLS-1$ //$NON-NLS-2$
+                        + (object.getStorageSizeGB() == null ? "*" : object.getStorageSizeGB().toString()) + " GB"; //$NON-NLS-1$ //$NON-NLS-2$
             }
         },
-                "Used Storage/Total");
+                constants.usedStorageTotalQuotaStorage());
     }
 }

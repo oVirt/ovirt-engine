@@ -1,21 +1,24 @@
 package org.ovirt.engine.ui.uicommon.models.bookmarks;
-import java.util.Collections;
-import org.ovirt.engine.core.compat.*;
-import org.ovirt.engine.ui.uicompat.*;
-import org.ovirt.engine.core.common.businessentities.*;
-import org.ovirt.engine.core.common.vdscommands.*;
-import org.ovirt.engine.core.common.queries.*;
-import org.ovirt.engine.core.common.action.*;
-import org.ovirt.engine.ui.frontend.*;
-import org.ovirt.engine.ui.uicommon.*;
-import org.ovirt.engine.ui.uicommon.models.*;
-import org.ovirt.engine.core.common.*;
-
-import org.ovirt.engine.ui.uicompat.*;
-import org.ovirt.engine.core.common.businessentities.*;
-
-import org.ovirt.engine.ui.uicommon.*;
-import org.ovirt.engine.ui.uicommon.models.*;
+import org.ovirt.engine.core.common.action.BookmarksOperationParameters;
+import org.ovirt.engine.core.common.action.BookmarksParametersBase;
+import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
+import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.compat.Event;
+import org.ovirt.engine.core.compat.EventDefinition;
+import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
+import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.ui.frontend.Frontend;
+import org.ovirt.engine.ui.uicommon.UICommand;
+import org.ovirt.engine.ui.uicommon.models.ConfirmationModel;
+import org.ovirt.engine.ui.uicommon.models.Model;
+import org.ovirt.engine.ui.uicommon.models.SearchableListModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
+import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
+import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
 @SuppressWarnings("unused")
 public class BookmarkListModel extends SearchableListModel
@@ -143,7 +146,7 @@ public class BookmarkListModel extends SearchableListModel
 		model.setItems(list);
 
 		UICommand tempVar = new UICommand("OnRemove", this);
-		tempVar.setTitle("OK");
+		tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
 		tempVar.setIsDefault(true);
 		model.getCommands().add(tempVar);
 		UICommand tempVar2 = new UICommand("Cancel", this);
@@ -194,7 +197,7 @@ public class BookmarkListModel extends SearchableListModel
 		model.getSearchString().setEntity(bookmark.getbookmark_value());
 
 		UICommand tempVar = new UICommand("OnSave", this);
-		tempVar.setTitle("OK");
+		tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
 		tempVar.setIsDefault(true);
 		model.getCommands().add(tempVar);
 		UICommand tempVar2 = new UICommand("Cancel", this);
@@ -218,7 +221,7 @@ public class BookmarkListModel extends SearchableListModel
 		model.getSearchString().setEntity(getSearchString());
 
 		UICommand tempVar = new UICommand("OnSave", this);
-		tempVar.setTitle("OK");
+		tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
 		tempVar.setIsDefault(true);
 		model.getCommands().add(tempVar);
 		UICommand tempVar2 = new UICommand("Cancel", this);

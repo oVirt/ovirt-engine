@@ -31,7 +31,7 @@ public class SnapshotModel extends EntityModel
         if (vm != value)
         {
             vm = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("VM"));
+            OnPropertyChanged(new PropertyChangedEventArgs("VM")); //$NON-NLS-1$
         }
     }
 
@@ -47,7 +47,7 @@ public class SnapshotModel extends EntityModel
         if (disks != value)
         {
             disks = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Disks"));
+            OnPropertyChanged(new PropertyChangedEventArgs("Disks")); //$NON-NLS-1$
         }
     }
 
@@ -63,7 +63,7 @@ public class SnapshotModel extends EntityModel
         if (nics != value)
         {
             nics = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Nics"));
+            OnPropertyChanged(new PropertyChangedEventArgs("Nics")); //$NON-NLS-1$
         }
     }
 
@@ -79,7 +79,7 @@ public class SnapshotModel extends EntityModel
         if (apps != value)
         {
             apps = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Apps"));
+            OnPropertyChanged(new PropertyChangedEventArgs("Apps")); //$NON-NLS-1$
         }
     }
 
@@ -134,7 +134,7 @@ public class SnapshotModel extends EntityModel
                     snapshotModel.setDisks(vm.getDiskList());
                     snapshotModel.setNics(vm.getInterfaces());
                     snapshotModel.setApps(Arrays.asList(snapshot.getAppList() != null ?
-                            snapshot.getAppList().split(",") : new String[] {}));
+                            snapshot.getAppList().split(",") : new String[] {})); //$NON-NLS-1$
 
                     snapshotModel.getIsPropertiesUpdated().setEntity(true);
                 }

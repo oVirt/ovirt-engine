@@ -1,7 +1,8 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab;
 
-import com.google.gwt.core.client.GWT;
-import com.google.inject.Inject;
+import java.util.LinkedList;
+import java.util.List;
+
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
@@ -27,8 +28,8 @@ import org.ovirt.engine.ui.webadmin.widget.table.column.HostStatusColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.PercentColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.ProgressBarColumn;
 
-import java.util.LinkedList;
-import java.util.List;
+import com.google.gwt.core.client.GWT;
+import com.google.inject.Inject;
 
 public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, HostListModel> implements MainTabHostPresenter.ViewDef {
 
@@ -83,7 +84,7 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
     }
 
     void initTable() {
-        getTable().addColumn(new HostStatusColumn(), "", "30px");
+        getTable().addColumn(new HostStatusColumn(), constants.empty(), "30px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VDS> nameColumn = new TextColumnWithTooltip<VDS>() {
             @Override
@@ -91,7 +92,7 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
                 return object.getvds_name();
             }
         };
-        getTable().addColumn(nameColumn, "Name");
+        getTable().addColumn(nameColumn, constants.nameHost());
 
         TextColumnWithTooltip<VDS> hostColumn = new TextColumnWithTooltip<VDS>() {
             @Override
@@ -99,7 +100,7 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
                 return object.gethost_name();
             }
         };
-        getTable().addColumn(hostColumn, "Host/IP");
+        getTable().addColumn(hostColumn, constants.ipHost());
 
         TextColumnWithTooltip<VDS> clusterColumn = new TextColumnWithTooltip<VDS>() {
             @Override
@@ -107,7 +108,7 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
                 return object.getvds_group_name();
             }
         };
-        getTable().addColumn(clusterColumn, "Cluster");
+        getTable().addColumn(clusterColumn, constants.clusterHost());
 
         TextColumnWithTooltip<VDS> statusColumn = new EnumColumn<VDS, VDSStatus>() {
             @Override
@@ -115,13 +116,13 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
                 return object.getstatus();
             }
         };
-        getTable().addColumn(statusColumn, "Status");
+        getTable().addColumn(statusColumn, constants.statusHost());
 
         ProgressBarColumn<VDS> loadColumn = new ProgressBarColumn<VDS>() {
             @Override
             protected String getProgressText(VDS object) {
                 int numOfActiveVMs = object.getvm_active() != null ? object.getvm_active() : 0;
-                return numOfActiveVMs + " VMs";
+                return numOfActiveVMs + " VMs"; //$NON-NLS-1$
             }
 
             @Override
@@ -129,7 +130,7 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
                 return object.getvm_active();
             }
         };
-        getTable().addColumn(loadColumn, "Load", "100px");
+        getTable().addColumn(loadColumn, constants.loadHost(), "100px"); //$NON-NLS-1$
 
         PercentColumn<VDS> memColumn = new PercentColumn<VDS>() {
             @Override
@@ -137,7 +138,7 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
                 return object.getusage_mem_percent();
             }
         };
-        getTable().addColumn(memColumn, "Memory", "60px");
+        getTable().addColumn(memColumn, constants.memoryHost(), "60px"); //$NON-NLS-1$
 
         PercentColumn<VDS> cpuColumn = new PercentColumn<VDS>() {
             @Override
@@ -145,7 +146,7 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
                 return object.getusage_cpu_percent();
             }
         };
-        getTable().addColumn(cpuColumn, "CPU", "60px");
+        getTable().addColumn(cpuColumn, constants.cpuHost(), "60px"); //$NON-NLS-1$
 
         PercentColumn<VDS> netColumn = new PercentColumn<VDS>() {
             @Override
@@ -153,7 +154,7 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
                 return object.getusage_network_percent();
             }
         };
-        getTable().addColumn(netColumn, "Network", "60px");
+        getTable().addColumn(netColumn, constants.networkHost(), "60px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VDS> spmColumn = new TextColumnWithTooltip<VDS>() {
             @Override
@@ -166,17 +167,17 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
                 if (value == -1) {
                     return constants.spmNeverText();
                 } else if (value == lowValue) {
-                    return constants.spmLowText() + " (" + lowValue + ")";
+                    return constants.spmLowText() + " (" + lowValue + ")"; //$NON-NLS-1$ //$NON-NLS-2$
                 } else if (value == defaultSpmPriority) {
-                    return constants.spmNormalText() + " (" + defaultSpmPriority + ")";
+                    return constants.spmNormalText() + " (" + defaultSpmPriority + ")"; //$NON-NLS-1$ //$NON-NLS-2$
                 } else if (value == highValue) {
-                    return constants.spmHighText() + " (" + highValue + ")";
+                    return constants.spmHighText() + " (" + highValue + ")"; //$NON-NLS-1$ //$NON-NLS-2$
                 }
 
-                return "Custom (" + value + ")";
+                return "Custom (" + value + ")"; //$NON-NLS-1$ //$NON-NLS-2$
             }
         };
-        getTable().addColumn(spmColumn, "SPM priority", "80px");
+        getTable().addColumn(spmColumn, constants.spmPriorityHost(), "80px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VDS> spmStatusColumn = new EnumColumn<VDS, VdsSpmStatus>() {
             @Override
@@ -184,40 +185,40 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
                 return object.getspm_status();
             }
         };
-        getTable().addColumn(spmStatusColumn, "SpmStatus");
+        getTable().addColumn(spmStatusColumn, constants.spmStatusHost());
 
-        getTable().addActionButton(new WebAdminButtonDefinition<VDS>("New") {
+        getTable().addActionButton(new WebAdminButtonDefinition<VDS>(constants.newHost()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getNewCommand();
             }
         });
-        getTable().addActionButton(new WebAdminButtonDefinition<VDS>("Edit") {
+        getTable().addActionButton(new WebAdminButtonDefinition<VDS>(constants.editHost()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getEditCommand();
             }
         });
-        getTable().addActionButton(new WebAdminButtonDefinition<VDS>("Remove") {
+        getTable().addActionButton(new WebAdminButtonDefinition<VDS>(constants.restartHost()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getRemoveCommand();
             }
         });
         // TODO: separator
-        getTable().addActionButton(new WebAdminButtonDefinition<VDS>("Activate") {
+        getTable().addActionButton(new WebAdminButtonDefinition<VDS>(constants.activateHost()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getActivateCommand();
             }
         });
-        getTable().addActionButton(new WebAdminButtonDefinition<VDS>("Maintenance") {
+        getTable().addActionButton(new WebAdminButtonDefinition<VDS>(constants.maintenanceHost()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getMaintenanceCommand();
             }
         });
-        getTable().addActionButton(new WebAdminButtonDefinition<VDS>("Confirm 'Host has been Rebooted'",
+        getTable().addActionButton(new WebAdminButtonDefinition<VDS>(constants.confirmRebootedHost(),
             CommandLocation.OnlyFromFromContext) {
             @Override
             protected UICommand resolveCommand() {
@@ -225,13 +226,13 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
             }
         });
         // TODO: separator
-        getTable().addActionButton(new WebAdminButtonDefinition<VDS>("Approve") {
+        getTable().addActionButton(new WebAdminButtonDefinition<VDS>(constants.approveHost()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getApproveCommand();
             }
         });
-        getTable().addActionButton(new WebAdminButtonDefinition<VDS>("Configure Local Storage") {
+        getTable().addActionButton(new WebAdminButtonDefinition<VDS>(constants.configureLocalStorageHost()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getConfigureLocalStorageCommand();
@@ -240,32 +241,32 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
 
         List<ActionButtonDefinition<VDS>> pmSubActions = new LinkedList<ActionButtonDefinition<VDS>>();
 
-        pmSubActions.add(new WebAdminButtonDefinition<VDS>("Restart") {
+        pmSubActions.add(new WebAdminButtonDefinition<VDS>(constants.restartHost()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getRestartCommand();
             }
         });
 
-        pmSubActions.add(new WebAdminButtonDefinition<VDS>("Start") {
+        pmSubActions.add(new WebAdminButtonDefinition<VDS>(constants.startHost()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getStartCommand();
             }
         });
 
-        pmSubActions.add(new WebAdminButtonDefinition<VDS>("Stop") {
+        pmSubActions.add(new WebAdminButtonDefinition<VDS>(constants.stopHost()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getStopCommand();
             }
         });
 
-        getTable().addActionButton(new WebAdminMenuBarButtonDefinition<VDS>("Power Management",
+        getTable().addActionButton(new WebAdminMenuBarButtonDefinition<VDS>(constants.pmHost(),
             pmSubActions,
             CommandLocation.OnlyFromToolBar));
 
-        getTable().addActionButton(new WebAdminButtonDefinition<VDS>("Assign Tags") {
+        getTable().addActionButton(new WebAdminButtonDefinition<VDS>(constants.assignTagsHost()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getAssignTagsCommand();
@@ -274,9 +275,9 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
 
         if (ReportInit.getInstance().isReportsEnabled()) {
             List<ActionButtonDefinition<VDS>> resourceSubActions =
-                ReportActionsHelper.getInstance().getResourceSubActions("Host", getMainModel());
+                ReportActionsHelper.getInstance().getResourceSubActions("Host", getMainModel()); //$NON-NLS-1$
             if (resourceSubActions != null && resourceSubActions.size() > 0) {
-                getTable().addActionButton(new WebAdminMenuBarButtonDefinition<VDS>("Show Report", resourceSubActions));
+                getTable().addActionButton(new WebAdminMenuBarButtonDefinition<VDS>(constants.showReportHost(), resourceSubActions));
             }
         }
     }

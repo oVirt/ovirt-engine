@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.users;
 
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
 public class UserGroupListModel extends SearchableListModel
@@ -20,7 +21,8 @@ public class UserGroupListModel extends SearchableListModel
 
     public UserGroupListModel()
     {
-        setTitle("Directory Groups");
+        setTitle(ConstantsManager.getInstance().getConstants().directoryGroupsTitle());
+        setHashName("directory_groups"); // $//$NON-NLS-1$
     }
 
     @Override
@@ -31,7 +33,7 @@ public class UserGroupListModel extends SearchableListModel
         if (getEntity() != null)
         {
             java.util.ArrayList<UserGroup> items = new java.util.ArrayList<UserGroup>();
-            for (String groupFullName : getEntity().getgroups().split("[,]", -1))
+            for (String groupFullName : getEntity().getgroups().split("[,]", -1)) //$NON-NLS-1$
             {
                 items.add(CreateUserGroup(groupFullName));
             }
@@ -49,11 +51,11 @@ public class UserGroupListModel extends SearchableListModel
         // Parse 'groupFullName' (representation: Domain/OrganizationalUnit/Group)
         int firstIndexOfSlash = groupFullName.indexOf('/');
         int lastIndexOfSlash = groupFullName.lastIndexOf('/');
-        String domain = firstIndexOfSlash >= 0 ? groupFullName.substring(0, firstIndexOfSlash) : "";
-        String groupName = lastIndexOfSlash >= 0 ? groupFullName.substring(lastIndexOfSlash + 1) : "";
+        String domain = firstIndexOfSlash >= 0 ? groupFullName.substring(0, firstIndexOfSlash) : ""; //$NON-NLS-1$
+        String groupName = lastIndexOfSlash >= 0 ? groupFullName.substring(lastIndexOfSlash + 1) : ""; //$NON-NLS-1$
         String organizationalUnit =
                 lastIndexOfSlash > firstIndexOfSlash ? groupFullName.substring(0, lastIndexOfSlash)
-                        .substring(firstIndexOfSlash + 1) : "";
+                        .substring(firstIndexOfSlash + 1) : ""; //$NON-NLS-1$
 
         UserGroup tempVar = new UserGroup();
         tempVar.setGroupName(groupName);
@@ -64,6 +66,6 @@ public class UserGroupListModel extends SearchableListModel
 
     @Override
     protected String getListName() {
-        return "UserGroupListModel";
+        return "UserGroupListModel"; //$NON-NLS-1$
     }
 }

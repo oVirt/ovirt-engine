@@ -27,14 +27,14 @@ public class ErrorMessageFormatter {
         // If one error message without description no need to format
         if (values.size() == 1) {
             Message msg = values.get(0);
-            if (msg.getDescription() == null || "".equals(msg.getDescription())) {
+            if (msg.getDescription() == null || "".equals(msg.getDescription())) { //$NON-NLS-1$
                 return msg.getText();
             }
         }
 
         SafeHtmlBuilder allSb = new SafeHtmlBuilder();
 
-        allSb.append(SafeHtmlUtils.fromTrustedString("</br></br>"));
+        allSb.append(SafeHtmlUtils.fromTrustedString("</br></br>")); //$NON-NLS-1$
 
         Map<String, Set<String>> desc2msgs = getDescription2MsgMap(values);
 
@@ -48,8 +48,8 @@ public class ErrorMessageFormatter {
 
             SafeHtml sh = TEMPLATES.unsignedList(listSb.toSafeHtml());
 
-            if (!desc.equals("")) {
-                allSb.append(SafeHtmlUtils.fromString(desc + ":"));
+            if (!desc.equals("")) { //$NON-NLS-1$
+                allSb.append(SafeHtmlUtils.fromString(desc + ":")); //$NON-NLS-1$
             }
 
             allSb.append(sh);
@@ -86,7 +86,7 @@ public class ErrorMessageFormatter {
         for (Message msg : msgList) {
             String desc = msg.getDescription();
             if (desc == null) {
-                desc = "";
+                desc = ""; //$NON-NLS-1$
             }
             desc = desc.trim();
 

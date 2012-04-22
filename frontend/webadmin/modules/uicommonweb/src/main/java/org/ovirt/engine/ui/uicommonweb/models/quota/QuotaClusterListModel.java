@@ -10,11 +10,13 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public class QuotaClusterListModel extends SearchableListModel {
 
     public QuotaClusterListModel() {
-        setTitle("Clusters");
+        setTitle(ConstantsManager.getInstance().getConstants().clustersTitle());
+        setHashName("clusters"); // $//$NON-NLS-1$
     }
 
     @Override
@@ -50,7 +52,7 @@ public class QuotaClusterListModel extends SearchableListModel {
 
     @Override
     protected String getListName() {
-        return "QuotaClusterListModel";
+        return "QuotaClusterListModel"; //$NON-NLS-1$
     }
 
 }

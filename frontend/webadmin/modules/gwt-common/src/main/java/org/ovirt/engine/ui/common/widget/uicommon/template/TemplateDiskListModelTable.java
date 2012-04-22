@@ -4,6 +4,7 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
+import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
@@ -17,27 +18,27 @@ public class TemplateDiskListModelTable extends AbstractModelBoundTableWidget<Di
 
     public TemplateDiskListModelTable(
             SearchableTableModelProvider<DiskImage, TemplateDiskListModel> modelProvider,
-            EventBus eventBus, ClientStorage clientStorage) {
+            EventBus eventBus, ClientStorage clientStorage, CommonApplicationConstants constants) {
         super(modelProvider, eventBus, clientStorage, false);
     }
 
     @Override
-    public void initTable() {
+    public void initTable(CommonApplicationConstants constants) {
         TextColumnWithTooltip<DiskImage> nameColumn = new TextColumnWithTooltip<DiskImage>() {
             @Override
             public String getValue(DiskImage object) {
-                return "Disk " + object.getinternal_drive_mapping();
+                return "Disk " + object.getinternal_drive_mapping(); //$NON-NLS-1$
             }
         };
-        getTable().addColumn(nameColumn, "Name");
+        getTable().addColumn(nameColumn, constants.nameDisk());
 
         TextColumnWithTooltip<DiskImage> sizeColumn = new TextColumnWithTooltip<DiskImage>() {
             @Override
             public String getValue(DiskImage object) {
-                return String.valueOf(object.getSizeInGigabytes()) + " GB";
+                return String.valueOf(object.getSizeInGigabytes()) + " GB"; //$NON-NLS-1$
             }
         };
-        getTable().addColumn(sizeColumn, "Size");
+        getTable().addColumn(sizeColumn, constants.sizeDisk());
 
         TextColumnWithTooltip<DiskImage> formatColumn = new EnumColumn<DiskImage, VolumeFormat>() {
             @Override
@@ -45,7 +46,7 @@ public class TemplateDiskListModelTable extends AbstractModelBoundTableWidget<Di
                 return object.getvolume_format();
             }
         };
-        getTable().addColumn(formatColumn, "Format");
+        getTable().addColumn(formatColumn, constants.formatDisk());
 
         TextColumnWithTooltip<DiskImage> allocationColumn = new EnumColumn<DiskImage, VolumeType>() {
             @Override
@@ -53,7 +54,7 @@ public class TemplateDiskListModelTable extends AbstractModelBoundTableWidget<Di
                 return VolumeType.forValue(object.getvolume_type().getValue());
             }
         };
-        getTable().addColumn(allocationColumn, "Allocation");
+        getTable().addColumn(allocationColumn, constants.allocationDisk());
 
         TextColumnWithTooltip<DiskImage> interfaceColumn = new EnumColumn<DiskImage, DiskInterface>() {
             @Override
@@ -61,7 +62,7 @@ public class TemplateDiskListModelTable extends AbstractModelBoundTableWidget<Di
                 return object.getDiskInterface();
             }
         };
-        getTable().addColumn(interfaceColumn, "Interface");
+        getTable().addColumn(interfaceColumn, constants.interfaceDisk());
     }
 
 }

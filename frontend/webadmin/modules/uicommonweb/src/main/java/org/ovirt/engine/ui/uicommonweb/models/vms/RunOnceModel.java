@@ -9,6 +9,7 @@ import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.validation.CustomPropertyValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
 public class RunOnceModel extends Model
@@ -302,7 +303,7 @@ public class RunOnceModel extends Model
         if (hwAcceleration != value)
         {
             hwAcceleration = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("HwAcceleration"));
+            OnPropertyChanged(new PropertyChangedEventArgs("HwAcceleration")); //$NON-NLS-1$
         }
     }
 
@@ -318,7 +319,7 @@ public class RunOnceModel extends Model
         if (bootSequence != value)
         {
             bootSequence = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("BootSequence"));
+            OnPropertyChanged(new PropertyChangedEventArgs("BootSequence")); //$NON-NLS-1$
         }
     }
 
@@ -329,18 +330,18 @@ public class RunOnceModel extends Model
     public boolean getReinitialize()
     {
         return ((Boolean) getAttachFloppy().getEntity() && getFloppyImage().getSelectedItem() != null && getFloppyImage().getSelectedItem()
-                .equals("[sysprep]"));
+                .equals("[sysprep]")); //$NON-NLS-1$
     }
 
     public String getFloppyImagePath()
     {
         if ((Boolean) getAttachFloppy().getEntity())
         {
-            return getReinitialize() ? "" : (String) getFloppyImage().getSelectedItem();
+            return getReinitialize() ? "" : (String) getFloppyImage().getSelectedItem(); //$NON-NLS-1$
         }
         else
         {
-            return "";
+            return ""; //$NON-NLS-1$
         }
     }
 
@@ -474,8 +475,8 @@ public class RunOnceModel extends Model
         getSysPrepUserName().setIsChangable((Boolean) getUseAlternateCredentials().getEntity());
         getSysPrepPassword().setIsChangable((Boolean) getUseAlternateCredentials().getEntity());
 
-        getSysPrepUserName().setEntity(useAlternateCredentials ? "" : null);
-        getSysPrepPassword().setEntity(useAlternateCredentials ? "" : null);
+        getSysPrepUserName().setEntity(useAlternateCredentials ? "" : null); //$NON-NLS-1$
+        getSysPrepPassword().setEntity(useAlternateCredentials ? "" : null); //$NON-NLS-1$
     }
 
     private void IsVmFirstRun_EntityChanged()
@@ -523,15 +524,15 @@ public class RunOnceModel extends Model
         getInitrd_path().setIsValid(true);
         if (getKernel_path().getEntity() == null)
         {
-            getKernel_path().setEntity("");
+            getKernel_path().setEntity(""); //$NON-NLS-1$
         }
         if (getKernel_parameters().getEntity() == null)
         {
-            getKernel_parameters().setEntity("");
+            getKernel_parameters().setEntity(""); //$NON-NLS-1$
         }
         if (getInitrd_path().getEntity() == null)
         {
-            getInitrd_path().setEntity("");
+            getInitrd_path().setEntity(""); //$NON-NLS-1$
         }
 
         getCustomProperties().ValidateEntity(new IValidation[] { new CustomPropertyValidation(this.getCustomPropertiesKeysList()) });
@@ -539,25 +540,31 @@ public class RunOnceModel extends Model
         if (getIsLinux_Unassign_UnknownOS()
                 && ((((String) getKernel_parameters().getEntity()).length() > 0 || ((String) getInitrd_path().getEntity()).length() > 0) && ((String) getKernel_path().getEntity()).length() == 0))
         {
-            int count = 0;
-            String msg = "When ";
+            boolean kernelParamInvalid = false;
+            boolean inetdPathInvalid = false;
             if (((String) getKernel_parameters().getEntity()).length() > 0)
             {
                 getKernel_parameters().setIsValid(false);
-                msg += "a kernel parameter argument ";
-                count++;
+                kernelParamInvalid = true;
             }
             if (((String) getInitrd_path().getEntity()).length() > 0)
             {
                 getInitrd_path().setIsValid(false);
-                if (count == 1)
-                {
-                    msg += "or ";
-                }
-                msg += "an initrd path ";
+                inetdPathInvalid = true;
             }
-            msg += "is used, kernel path must be non-empty";
 
+            String msg =
+                    ConstantsManager.getInstance()
+                            .getMessages()
+                            .invalidPath(kernelParamInvalid ? ConstantsManager.getInstance()
+                                    .getConstants()
+                                    .kernelInvalid() : "", //$NON-NLS-1$
+                                    kernelParamInvalid && inetdPathInvalid ? ConstantsManager.getInstance()
+                                            .getConstants()
+                                            .or() : "", //$NON-NLS-1$
+                                    inetdPathInvalid ? ConstantsManager.getInstance()
+                                            .getConstants()
+                                            .inetdInvalid() : ""); //$NON-NLS-1$
             getKernel_path().setIsValid(false);
             getInitrd_path().getInvalidityReasons().add(msg);
             getKernel_parameters().getInvalidityReasons().add(msg);

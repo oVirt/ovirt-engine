@@ -79,9 +79,10 @@ public class RecoveryStorageConfirmationPopupView extends AbstractModelBoundPopu
             ApplicationConstants constants) {
         super(eventBus, resources);
         storageDomainItems = new EntityModelCellTable<ListModel>(false);
-        storageDomainItems.setHeight("30%");
+        storageDomainItems.setHeight("30%"); //$NON-NLS-1$
         this.applicationConstants = constants;
         latch = new EntityModelCheckBoxEditor(Align.RIGHT);
+        latch.setLabel(constants.approveOperation());
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
         initTable();
@@ -99,7 +100,7 @@ public class RecoveryStorageConfirmationPopupView extends AbstractModelBoundPopu
 
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                if ("IsAvailable".equals(((PropertyChangedEventArgs) args).PropertyName)) {
+                if ("IsAvailable".equals(((PropertyChangedEventArgs) args).PropertyName)) { //$NON-NLS-1$
                     EntityModel entity = (EntityModel) sender;
                     if (entity.getIsAvailable()) {
                         latch.setVisible(true);
@@ -136,13 +137,13 @@ public class RecoveryStorageConfirmationPopupView extends AbstractModelBoundPopu
                 if (model.getEntity() instanceof storage_domains) {
                     return ((storage_domains) model.getEntity()).getstorage_name();
                 } else {
-                    return "";
+                    return ""; //$NON-NLS-1$
                 }
             }
         };
 
-        storageDomainItems.setColumnWidth(nameColumn, "280px");
-        storageDomainItems.addEntityModelColumn(nameColumn, "Name");
+        storageDomainItems.setColumnWidth(nameColumn, "280px"); //$NON-NLS-1$
+        storageDomainItems.addEntityModelColumn(nameColumn, applicationConstants.nameStorage());
 
         EntityModelTextColumn<EntityModel> freeSpaceColumn = new EntityModelTextColumn<EntityModel>() {
             @Override
@@ -150,16 +151,16 @@ public class RecoveryStorageConfirmationPopupView extends AbstractModelBoundPopu
                 if (model.getEntity() instanceof storage_domains) {
                     storage_domains storage = (storage_domains) model.getEntity();
                     if (storage.getavailable_disk_size() == null || storage.getavailable_disk_size() < 1) {
-                        return "< 1 GB";
+                        return "< 1 GB"; //$NON-NLS-1$
                     }
-                    return storage.getavailable_disk_size() + " GB";
+                    return storage.getavailable_disk_size() + " GB"; //$NON-NLS-1$
                 } else {
-                    return "";
+                    return ""; //$NON-NLS-1$
                 }
             }
         };
 
-        storageDomainItems.setColumnWidth(freeSpaceColumn, "80px");
-        storageDomainItems.addEntityModelColumn(freeSpaceColumn, "Free Space");
+        storageDomainItems.setColumnWidth(freeSpaceColumn, "80px"); //$NON-NLS-1$
+        storageDomainItems.addEntityModelColumn(freeSpaceColumn, applicationConstants.freeSpaceStorage());
     }
 }

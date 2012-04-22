@@ -9,6 +9,7 @@ import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.RegexValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.SubnetMaskValidation;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
 public class NetworkModel extends Model
@@ -149,12 +150,12 @@ public class NetworkModel extends Model
     public boolean Validate()
     {
         RegexValidation tempVar = new RegexValidation();
-        tempVar.setExpression("^[A-Za-z0-9_]{1,15}$");
-        tempVar.setMessage("Name must contain alphanumeric characters or '_' (maximum length 15 characters).");
+        tempVar.setExpression("^[A-Za-z0-9_]{1,15}$"); //$NON-NLS-1$
+        tempVar.setMessage(ConstantsManager.getInstance().getConstants().nameMustContainAlphanumericMaxLenMsg());
         RegexValidation tempVar2 = new RegexValidation();
         tempVar2.setIsNegate(true);
-        tempVar2.setExpression("^(bond)");
-        tempVar2.setMessage("Network name shouldn't start with 'bond'.");
+        tempVar2.setExpression("^(bond)"); //$NON-NLS-1$
+        tempVar2.setMessage(ConstantsManager.getInstance().getConstants().networkNameStartMsg());
         getName().ValidateEntity(new IValidation[] { new NotEmptyValidation(), tempVar, tempVar2 });
 
         getAddress().ValidateEntity(new IValidation[] { new IpAddressValidation() });

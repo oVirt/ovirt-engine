@@ -42,9 +42,9 @@ public class EntityModelInputWithSlider extends Composite implements EditorWidge
         t.setVisibleLength(2);
 
         minValueLabel = new Label(Integer.toString(min));
-        minValueLabel.setStyleName("gwt-SliderBar-minrange-label");
+        minValueLabel.setStyleName("gwt-SliderBar-minrange-label"); //$NON-NLS-1$
         maxValueLabel = new Label(Integer.toString(max));
-        maxValueLabel.setStyleName("gwt-SliderBar-maxrange-label");
+        maxValueLabel.setStyleName("gwt-SliderBar-maxrange-label"); //$NON-NLS-1$
 
         slider = new IntegerSlider(min, max, RESOURCES) {
             @Override
@@ -72,7 +72,7 @@ public class EntityModelInputWithSlider extends Composite implements EditorWidge
         slider.addValueChangeHandler(new ValueChangeHandler<Integer>() {
             @Override
             public void onValueChange(ValueChangeEvent<Integer> event) {
-                t.setValue(NumberFormat.getFormat("#").format(event.getValue()));
+                t.setValue(NumberFormat.getFormat("#").format(event.getValue())); //$NON-NLS-1$
             }
         });
 
@@ -80,7 +80,7 @@ public class EntityModelInputWithSlider extends Composite implements EditorWidge
         panel.setCellVerticalAlignment(t, HasVerticalAlignment.ALIGN_BOTTOM);
         panel.add(minValueLabel);
         panel.add(slider);
-        panel.setCellWidth(slider, "80%");
+        panel.setCellWidth(slider, "80%"); //$NON-NLS-1$
         panel.add(maxValueLabel);
 
         initWidget(panel);

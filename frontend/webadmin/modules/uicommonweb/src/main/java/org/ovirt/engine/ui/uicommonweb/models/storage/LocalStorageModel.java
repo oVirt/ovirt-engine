@@ -55,17 +55,16 @@ public class LocalStorageModel extends Model implements IStorageModel {
         path = value;
     }
 
-
     public LocalStorageModel() {
 
-        setUpdateCommand(new UICommand("Update", this));
+        setUpdateCommand(new UICommand("Update", this)); //$NON-NLS-1$
         setPath(new EntityModel());
     }
 
     @Override
     public boolean Validate() {
 
-        getPath().ValidateEntity(new NotEmptyValidation[] {new NotEmptyValidation()});
+        getPath().ValidateEntity(new NotEmptyValidation[] { new NotEmptyValidation() });
 
         return getPath().getIsValid();
     }

@@ -20,7 +20,7 @@ import com.google.gwt.user.rebind.SourceWriter;
  */
 public class ElementIdHandlerGenerator extends Generator {
 
-    static final String ElementIdHandler_generateAndSetIds_owner = "owner";
+    static final String ElementIdHandler_generateAndSetIds_owner = "owner"; //$NON-NLS-1$
 
     @Override
     public String generate(TreeLogger logger, GeneratorContext context, String typeName)
@@ -28,7 +28,7 @@ public class ElementIdHandlerGenerator extends Generator {
         TypeOracle oracle = context.getTypeOracle();
         JClassType toGenerate = oracle.findType(typeName).isInterface();
         if (toGenerate == null) {
-            logger.log(TreeLogger.ERROR, typeName + " is not an interface type");
+            logger.log(TreeLogger.ERROR, typeName + " is not an interface type"); //$NON-NLS-1$
             throw new UnableToCompleteException();
         }
 
@@ -36,19 +36,19 @@ public class ElementIdHandlerGenerator extends Generator {
         ElementIdStatement[] statements = parser.parseStatements();
 
         String packageName = toGenerate.getPackage().getName();
-        String simpleSourceName = toGenerate.getName().replace('.', '_') + "Impl";
+        String simpleSourceName = toGenerate.getName().replace('.', '_') + "Impl"; //$NON-NLS-1$
         PrintWriter pw = context.tryCreate(logger, packageName, simpleSourceName);
         if (pw == null) {
-            return packageName + "." + simpleSourceName;
+            return packageName + "." + simpleSourceName; //$NON-NLS-1$
         }
 
         JClassType superclass = oracle.findType(BaseElementIdHandler.class.getName()).isClass();
-        assert superclass != null : "No BaseElementIdHandler type";
+        assert superclass != null : "No BaseElementIdHandler type"; //$NON-NLS-1$
 
         ClassSourceFileComposerFactory factory = new ClassSourceFileComposerFactory(
                 packageName, simpleSourceName);
         factory.setSuperclass(superclass.getQualifiedSourceName()
-                + "<" + parser.getOwnerType().getParameterizedQualifiedSourceName() + ">");
+                + "<" + parser.getOwnerType().getParameterizedQualifiedSourceName() + ">"); //$NON-NLS-1$ //$NON-NLS-2$
         factory.addImplementedInterface(typeName);
 
         SourceWriter sw = factory.createSourceWriter(context, pw);
@@ -59,17 +59,17 @@ public class ElementIdHandlerGenerator extends Generator {
     }
 
     void writeGenerateAndSetIds(SourceWriter sw, JClassType ownerType, ElementIdStatement[] statements) {
-        sw.println("@Override public void generateAndSetIds(%s %s) {",
+        sw.println("@Override public void generateAndSetIds(%s %s) {", //$NON-NLS-1$
                 ownerType.getQualifiedSourceName(), ElementIdHandler_generateAndSetIds_owner);
         sw.indent();
 
         for (ElementIdStatement st : statements) {
-            sw.println(String.format("if (%s) %s;",
+            sw.println(String.format("if (%s) %s;", //$NON-NLS-1$
                     st.buildGuardCondition(), st.buildIdSetterStatement()));
         }
 
         sw.outdent();
-        sw.println("}");
+        sw.println("}"); //$NON-NLS-1$
     }
 
 }

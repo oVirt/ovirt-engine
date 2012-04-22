@@ -35,7 +35,7 @@ public class ClusterVmListModel extends VmListModel
     {
         if (getEntity() != null)
         {
-            setSearchString(StringFormat.format("Vms: cluster=%1$s", getEntity().getname()));
+            setSearchString(StringFormat.format("Vms: cluster=%1$s", getEntity().getname())); //$NON-NLS-1$
             super.Search();
         }
     }
@@ -53,7 +53,7 @@ public class ClusterVmListModel extends VmListModel
     {
         super.EntityPropertyChanged(sender, e);
 
-        if (e.PropertyName.equals("name"))
+        if (e.PropertyName.equals("name")) //$NON-NLS-1$
         {
             getSearchCommand().Execute();
         }

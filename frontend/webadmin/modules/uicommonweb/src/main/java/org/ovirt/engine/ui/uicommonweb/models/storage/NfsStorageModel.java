@@ -12,6 +12,7 @@ import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.RegexValidation;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
 public class NfsStorageModel extends Model implements IStorageModel
@@ -85,14 +86,14 @@ public class NfsStorageModel extends Model implements IStorageModel
 
     static
     {
-        PathChangedEventDefinition = new EventDefinition("PathChanged", NfsStorageModel.class);
+        PathChangedEventDefinition = new EventDefinition("PathChanged", NfsStorageModel.class); //$NON-NLS-1$
     }
 
     public NfsStorageModel()
     {
         setPathChangedEvent(new Event(PathChangedEventDefinition));
 
-        setUpdateCommand(new UICommand("Update", this));
+        setUpdateCommand(new UICommand("Update", this)); //$NON-NLS-1$
 
         setPath(new EntityModel());
         getPath().getEntityChangedEvent().addListener(this);
@@ -119,7 +120,7 @@ public class NfsStorageModel extends Model implements IStorageModel
     {
         RegexValidation tempVar = new RegexValidation();
         tempVar.setExpression(DataProvider.GetLinuxMountPointRegex());
-        tempVar.setMessage("NFS mount path is illegal, please use [IP:/path or FQDN:/path] convention.");
+        tempVar.setMessage(ConstantsManager.getInstance().getConstants().nfsMountPashIsIllegalMsg());
         getPath().ValidateEntity(new IValidation[] { new NotEmptyValidation(), tempVar });
 
         return getPath().getIsValid();

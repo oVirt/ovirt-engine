@@ -29,6 +29,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.models.storage.DisksAllocationModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
 public abstract class IVmModelBehavior
@@ -196,7 +197,7 @@ public abstract class IVmModelBehavior
     public void PostUpdateDefaultTimeZone()
     {
         // Patch! Create key-value pair with a right key.
-        getModel().getTimeZone().setSelectedItem(new KeyValuePairCompat<String, String>(cachedDefaultTimeZoneKey, ""));
+        getModel().getTimeZone().setSelectedItem(new KeyValuePairCompat<String, String>(cachedDefaultTimeZoneKey, "")); //$NON-NLS-1$
 
         UpdateTimeZone();
     }
@@ -211,7 +212,7 @@ public abstract class IVmModelBehavior
                         IVmModelBehavior behavior = (IVmModelBehavior) target;
                         java.util.List<String> domains = (java.util.List<String>) returnValue;
                         String oldDomain = (String) behavior.getModel().getDomain().getSelectedItem();
-                        if (oldDomain != null && !oldDomain.equals("") && !domains.contains(oldDomain))
+                        if (oldDomain != null && !oldDomain.equals("") && !domains.contains(oldDomain)) //$NON-NLS-1$
                         {
                             domains.add(0, oldDomain);
                         }
@@ -271,17 +272,17 @@ public abstract class IVmModelBehavior
     {
         java.util.ArrayList<EntityModel> items = new java.util.ArrayList<EntityModel>();
         EntityModel tempVar = new EntityModel();
-        tempVar.setTitle("Low");
+        tempVar.setTitle(ConstantsManager.getInstance().getConstants().lowTitle());
         tempVar.setEntity(1);
         items.add(tempVar);
         EntityModel tempVar2 = new EntityModel();
-        tempVar2.setTitle("Medium");
+        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().mediumTitle());
         tempVar2.setEntity(cachedMaxPrority / 2);
         // C# TO JAVA CONVERTER TODO TASK: Arithmetic operations involving nullable type instances are not converted to
         // null-value logic:
         items.add(tempVar2);
         EntityModel tempVar3 = new EntityModel();
-        tempVar3.setTitle("High");
+        tempVar3.setTitle(ConstantsManager.getInstance().getConstants().highTitle());
         tempVar3.setEntity(cachedMaxPrority);
         items.add(tempVar3);
 
@@ -346,7 +347,7 @@ public abstract class IVmModelBehavior
                                             .setItems(new java.util.ArrayList<VDS>(java.util.Arrays.asList(new VDS[] { vds })));
                                     model.getDefaultHost().setSelectedItem(vds);
                                     model.getDefaultHost().setIsChangable(false);
-                                    model.getDefaultHost().setInfo("Cannot choose other Host in tree context");
+                                    model.getDefaultHost().setInfo("Cannot choose other Host in tree context"); //$NON-NLS-1$
                                     break;
                                 }
                             }

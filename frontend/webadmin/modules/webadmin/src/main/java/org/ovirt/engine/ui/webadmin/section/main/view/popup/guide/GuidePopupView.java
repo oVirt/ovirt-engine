@@ -111,7 +111,7 @@ public class GuidePopupView extends AbstractModelBoundPopupView<GuideModel> impl
                 GuideModel guideModel = (GuideModel) sender;
                 String propertyName = ((PropertyChangedEventArgs) args).PropertyName;
 
-                if ("Progress".equals(propertyName)) {
+                if ("Progress".equals(propertyName)) { //$NON-NLS-1$
                     if (guideModel.getProgress() == null) {
                         if (guideModel.getCompulsoryActions().isEmpty()) {
                             infoLabel.setText(configurationCompleted);
@@ -134,8 +134,8 @@ public class GuidePopupView extends AbstractModelBoundPopupView<GuideModel> impl
 
                     updateActionsPanels(guideModel);
                 }
-                else if ("Window".equals(propertyName)) {
-                    if (guideModel.getLastExecutedCommand().getName().equals("Cancel")) {
+                else if ("Window".equals(propertyName)) { //$NON-NLS-1$
+                    if (guideModel.getLastExecutedCommand().getName().equals("Cancel")) { //$NON-NLS-1$
                         redrawActionsPanels();
                     }
                 }
@@ -167,7 +167,7 @@ public class GuidePopupView extends AbstractModelBoundPopupView<GuideModel> impl
     private void addButton(final UICommand command, VerticalPanel buttonsPanel, ImageResource buttonImage) {
         UiCommandButton guideButton = new UiCommandButton(command.getTitle(), buttonImage);
         guideButton.setCommand(command);
-        guideButton.getElement().setId("UiCommandButton_guideButton_" + command.getTitle());
+        guideButton.getElement().setId("UiCommandButton_guideButton_" + command.getTitle()); //$NON-NLS-1$
         guideButton.setCustomContentStyle(style.actionButtonContent());
         guideButton.addStyleName(style.actionButton());
         guideButton.addClickHandler(new ClickHandler() {

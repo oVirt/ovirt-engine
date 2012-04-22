@@ -13,6 +13,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public class QuotaModel extends EntityModel {
 
@@ -143,8 +144,8 @@ public class QuotaModel extends EntityModel {
     }
 
     public QuotaModel() {
-        setEditQuotaClusterCommand(new UICommand("EditQuotaCluster", this));
-        setEditQuotaStorageCommand(new UICommand("EditQuotaStorage", this));
+        setEditQuotaClusterCommand(new UICommand("EditQuotaCluster", this)); //$NON-NLS-1$
+        setEditQuotaStorageCommand(new UICommand("EditQuotaStorage", this)); //$NON-NLS-1$
 
         setName(new EntityModel());
         setDescription(new EntityModel());
@@ -224,7 +225,7 @@ public class QuotaModel extends EntityModel {
         getEditQuotaClusterCommand().Execute();
 
         EditQuotaClusterModel model = new EditQuotaClusterModel();
-        model.setTitle("Define Cluster Quota on Data Center");
+        model.setTitle(ConstantsManager.getInstance().getConstants().defineClusterQuotaOnDataCenterTitle());
         model.setEntity(object);
         if (object.getMemSizeMB() == null || object.getMemSizeMB() == -1) {
             model.getUnlimitedMem().setEntity(true);
@@ -241,12 +242,12 @@ public class QuotaModel extends EntityModel {
 
         setWindow(model);
 
-        UICommand command = new UICommand("OnEditClusterQuota", this);
-        command.setTitle("OK");
+        UICommand command = new UICommand("OnEditClusterQuota", this); //$NON-NLS-1$
+        command.setTitle(ConstantsManager.getInstance().getConstants().ok());
         command.setIsDefault(true);
         model.getCommands().add(command);
-        command = new UICommand("Cancel", this);
-        command.setTitle("Cancel");
+        command = new UICommand("Cancel", this); //$NON-NLS-1$
+        command.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         model.getCommands().add(command);
     }
 
@@ -254,7 +255,7 @@ public class QuotaModel extends EntityModel {
         this.quotaStorage = object;
         getEditQuotaStorageCommand().Execute();
         EditQuotaStorageModel model = new EditQuotaStorageModel();
-        model.setTitle("Define Storage Quota on Data Center");
+        model.setTitle(ConstantsManager.getInstance().getConstants().defineStorageQuotaOnDataCenterTitle());
         model.setEntity(object);
         if (object.getStorageSizeGB() == null || object.getStorageSizeGB() == -1) {
             model.getUnlimitedStorage().setEntity(true);
@@ -265,12 +266,12 @@ public class QuotaModel extends EntityModel {
 
         setWindow(model);
 
-        UICommand command = new UICommand("OnEditStorageQuota", this);
-        command.setTitle("OK");
+        UICommand command = new UICommand("OnEditStorageQuota", this); //$NON-NLS-1$
+        command.setTitle(ConstantsManager.getInstance().getConstants().ok());
         command.setIsDefault(true);
         model.getCommands().add(command);
-        command = new UICommand("Cancel", this);
-        command.setTitle("Cancel");
+        command = new UICommand("Cancel", this); //$NON-NLS-1$
+        command.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         model.getCommands().add(command);
     }
 
@@ -311,11 +312,11 @@ public class QuotaModel extends EntityModel {
     @Override
     public void ExecuteCommand(UICommand command) {
         super.ExecuteCommand(command);
-        if (command.getName().equals("OnEditClusterQuota")) {
+        if (command.getName().equals("OnEditClusterQuota")) { //$NON-NLS-1$
             onEditClusterQuota();
-        } else if (command.getName().equals("OnEditStorageQuota")) {
+        } else if (command.getName().equals("OnEditStorageQuota")) { //$NON-NLS-1$
             onEditStorageQuota();
-        } else if (command.getName().equals("Cancel")) {
+        } else if (command.getName().equals("Cancel")) { //$NON-NLS-1$
             setWindow(null);
         }
     }

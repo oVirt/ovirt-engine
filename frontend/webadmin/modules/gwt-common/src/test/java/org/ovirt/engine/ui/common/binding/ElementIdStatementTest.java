@@ -12,40 +12,40 @@ public class ElementIdStatementTest {
 
     @Before
     public void setUp() {
-        tested = new ElementIdStatement("owner.a.b.c", "abcId");
+        tested = new ElementIdStatement("owner.a.b.c", "abcId"); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     @Test
     public void buildIdSetterStatement() {
         assertThat(tested.buildIdSetterStatement(),
-                equalTo("setElementId(owner.a.b.c, \"abcId\")"));
+                equalTo("setElementId(owner.a.b.c, \"abcId\")")); //$NON-NLS-1$
     }
 
     @Test
     public void buildGuardCondition() {
         assertThat(tested.buildGuardCondition(), equalTo(
-                "owner != null && owner.a != null && owner.a.b != null && owner.a.b.c != null"));
+                "owner != null && owner.a != null && owner.a.b != null && owner.a.b.c != null")); //$NON-NLS-1$
     }
 
     @Test
     public void getSubPaths_singlePathElement() {
-        String[] subPaths = tested.getSubPaths("a");
+        String[] subPaths = tested.getSubPaths("a"); //$NON-NLS-1$
         assertThat(subPaths.length, equalTo(1));
-        assertThat(subPaths[0], equalTo("a"));
+        assertThat(subPaths[0], equalTo("a")); //$NON-NLS-1$
     }
 
     @Test
     public void getSubPaths_multiplePathElements() {
-        String[] subPaths = tested.getSubPaths("a.b.c");
+        String[] subPaths = tested.getSubPaths("a.b.c"); //$NON-NLS-1$
         assertThat(subPaths.length, equalTo(3));
-        assertThat(subPaths[0], equalTo("a"));
-        assertThat(subPaths[1], equalTo("a.b"));
-        assertThat(subPaths[2], equalTo("a.b.c"));
+        assertThat(subPaths[0], equalTo("a")); //$NON-NLS-1$
+        assertThat(subPaths[1], equalTo("a.b")); //$NON-NLS-1$
+        assertThat(subPaths[2], equalTo("a.b.c")); //$NON-NLS-1$
     }
 
     @Test(expected = IllegalStateException.class)
     public void getSubPaths_malformedPath() {
-        tested.getSubPaths(".a.");
+        tested.getSubPaths(".a."); //$NON-NLS-1$
     }
 
 }

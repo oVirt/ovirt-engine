@@ -7,6 +7,8 @@ import org.ovirt.engine.ui.uicommonweb.models.hosts.HostSetupNetworksModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.BondNetworkInterfaceModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.LogicalNetworkModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkInterfaceModel;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 import org.ovirt.engine.ui.webadmin.widget.form.DnDPanel;
 
 import com.google.gwt.dom.client.Style.Unit;
@@ -30,6 +32,7 @@ public class NetworkGroup extends DnDPanel {
     private final NetworkPanelsStyle style;
     private final NetworkInterfaceModel nicModel;
     private final FlexTable table;
+    private ApplicationConstants constants = ClientGinjectorProvider.instance().getApplicationConstants();
 
     public NetworkGroup(NetworkInterfaceModel nicModel, final NetworkPanelsStyle style) {
         super(false);
@@ -45,9 +48,9 @@ public class NetworkGroup extends DnDPanel {
 
         // columns
         ColumnFormatter columnFormatter = table.getColumnFormatter();
-        columnFormatter.setWidth(0, "45%");
-        columnFormatter.setWidth(1, "10%");
-        columnFormatter.setWidth(2, "45%");
+        columnFormatter.setWidth(0, "45%"); //$NON-NLS-1$
+        columnFormatter.setWidth(1, "10%"); //$NON-NLS-1$
+        columnFormatter.setWidth(2, "45%"); //$NON-NLS-1$
 
         // rows
         FlexCellFormatter flexCellFormatter = table.getFlexCellFormatter();
@@ -76,7 +79,7 @@ public class NetworkGroup extends DnDPanel {
             }
         } else {
             SimplePanel emptyPanel = new SimplePanel();
-            Label label = new Label("no netowrk assigned");
+            Label label = new Label(constants.noNetowrkAssigned());
             label.getElement().getStyle().setPadding(10, Unit.PX);
             emptyPanel.setWidget(label);
             emptyPanel.setStylePrimaryName(style.emptyPanel());

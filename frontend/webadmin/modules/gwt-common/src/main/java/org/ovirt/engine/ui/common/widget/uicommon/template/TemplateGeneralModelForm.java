@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.common.widget.uicommon.template;
 
+import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.uicommon.model.ModelProvider;
 import org.ovirt.engine.ui.common.widget.form.FormItem;
 import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
@@ -36,46 +37,46 @@ public class TemplateGeneralModelForm extends AbstractModelBoundFormWidget<Templ
     @Ignore
     TextBoxLabel isStateless = new TextBoxLabel();
 
-    public TemplateGeneralModelForm(ModelProvider<TemplateGeneralModel> modelProvider) {
+    public TemplateGeneralModelForm(ModelProvider<TemplateGeneralModel> modelProvider, CommonApplicationConstants constants) {
         super(modelProvider, 3, 6);
         Driver.driver.initialize(this);
 
         // Build a form using the FormBuilder
-        formBuilder.setColumnsWidth("120px", "240px", "160px");
-        formBuilder.addFormItem(new FormItem("Name", name, 0, 0));
-        formBuilder.addFormItem(new FormItem("Description", description, 1, 0));
-        formBuilder.addFormItem(new FormItem("Host Cluster", hostCluster, 2, 0));
-        formBuilder.addFormItem(new FormItem("Operating System", oS, 3, 0));
-        formBuilder.addFormItem(new FormItem("Default Display Type", defaultDisplayType, 4, 0));
+        formBuilder.setColumnsWidth("120px", "240px", "160px"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        formBuilder.addFormItem(new FormItem(constants.nameTemplateGeneral(), name, 0, 0));
+        formBuilder.addFormItem(new FormItem(constants.descriptionTemplateGeneral(), description, 1, 0));
+        formBuilder.addFormItem(new FormItem(constants.hostClusterTemplateGeneral(), hostCluster, 2, 0));
+        formBuilder.addFormItem(new FormItem(constants.osTemplateGeneral(), oS, 3, 0));
+        formBuilder.addFormItem(new FormItem(constants.defaultDisTypeTemplateGeneral(), defaultDisplayType, 4, 0));
 
-        formBuilder.addFormItem(new FormItem("Defined Memory", definedMemory, 0, 1));
-        formBuilder.addFormItem(new FormItem("Number of CPU Cores", cpuInfo, 1, 1));
-        formBuilder.addFormItem(new FormItem("Number of Monitors", monitorCount, 2, 1));
-        formBuilder.addFormItem(new FormItem("Highly Available", isHighlyAvailable, 3, 1));
-        formBuilder.addFormItem(new FormItem("Priority", priority, 4, 1));
-        formBuilder.addFormItem(new FormItem("USB Policy", usbPolicy, 5, 1) {
+        formBuilder.addFormItem(new FormItem(constants.definedMemTemplateGeneral(), definedMemory, 0, 1));
+        formBuilder.addFormItem(new FormItem(constants.numOfCpuCoresTemplateGeneral(), cpuInfo, 1, 1));
+        formBuilder.addFormItem(new FormItem(constants.numOfMonitorsTemplateGeneral(), monitorCount, 2, 1));
+        formBuilder.addFormItem(new FormItem(constants.highlyAvailTemplateGeneral(), isHighlyAvailable, 3, 1));
+        formBuilder.addFormItem(new FormItem(constants.priorityTemplateGeneral(), priority, 4, 1));
+        formBuilder.addFormItem(new FormItem(constants.usbPolicyTemplateGeneral(), usbPolicy, 5, 1) {
             @Override
             public boolean isVisible() {
                 return getModel().getHasUsbPolicy();
             }
         });
 
-        formBuilder.addFormItem(new FormItem("Origin", origin, 0, 2));
-        formBuilder.addFormItem(new FormItem("Is Stateless", isStateless, 1, 2));
-        formBuilder.addFormItem(new FormItem("Domain", domain, 2, 2) {
+        formBuilder.addFormItem(new FormItem(constants.originTemplateGeneral(), origin, 0, 2));
+        formBuilder.addFormItem(new FormItem(constants.isStatelessTemplateGeneral(), isStateless, 1, 2));
+        formBuilder.addFormItem(new FormItem(constants.domainTemplateGeneral(), domain, 2, 2) {
             @Override
             public boolean isVisible() {
                 return getModel().getHasDomain();
             }
         });
-        formBuilder.addFormItem(new FormItem("Time Zone", timeZone, 3, 2) {
+        formBuilder.addFormItem(new FormItem(constants.tzTemplateGeneral(), timeZone, 3, 2) {
             @Override
             public boolean isVisible() {
                 return getModel().getHasTimeZone();
             }
         });
 
-        formBuilder.addFormItem(new FormItem("Quota", quotaName, 4, 2) {
+        formBuilder.addFormItem(new FormItem(constants.quotaTemplateGeneral(), quotaName, 4, 2) {
             @Override
             public boolean isVisible() {
                 return getModel().getQuotaName() != null;

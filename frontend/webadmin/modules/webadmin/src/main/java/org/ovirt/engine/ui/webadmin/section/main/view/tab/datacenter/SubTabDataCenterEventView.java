@@ -9,6 +9,7 @@ import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterEventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterListModel;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTabDataCenterEventPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabEventView;
 
@@ -25,8 +26,8 @@ public class SubTabDataCenterEventView extends AbstractSubTabEventView<storage_p
     @Inject
     public SubTabDataCenterEventView(SearchableDetailModelProvider<AuditLog, DataCenterListModel, DataCenterEventListModel> modelProvider,
             EventBus eventBus,
-            ClientStorage clientStorage) {
-        super(modelProvider, eventBus, clientStorage);
+            ClientStorage clientStorage, ApplicationConstants contants) {
+        super(modelProvider, eventBus, clientStorage, contants);
     }
 
     @Override

@@ -20,6 +20,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IntegerValidation;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public class VolumeModel extends Model {
     EntityModel name;
@@ -65,7 +66,7 @@ public class VolumeModel extends Model {
 
     public VolumeModel() {
 
-        setAddBricksCommand(new UICommand("AddBricks", this));
+        setAddBricksCommand(new UICommand("AddBricks", this)); //$NON-NLS-1$
         getAddBricksCommand().setIsExecutionAllowed(false);
 
         setDataCenter(new ListModel());
@@ -135,7 +136,7 @@ public class VolumeModel extends Model {
         getCifs_accecssProtocol().setEntity(false);
 
         setAllowAccess(new EntityModel());
-        getAllowAccess().setEntity("*");
+        getAllowAccess().setEntity("*"); //$NON-NLS-1$
     }
 
     public EntityModel getName() {
@@ -233,19 +234,19 @@ public class VolumeModel extends Model {
         }
         ListModel listModel = new ListModel();
         setWindow(listModel);
-        listModel.setTitle("Add Bricks");
-        listModel.setHashName("add_bricks");
+        listModel.setTitle(ConstantsManager.getInstance().getConstants().addBricksVolume());
+        listModel.setHashName("add_bricks"); //$NON-NLS-1$
 
         // TODO: fetch the data to display
         listModel.setItems(new ArrayList<EntityModel>());
 
-        UICommand command = new UICommand("Ok", this);
-        command.setTitle("Ok");
+        UICommand command = new UICommand("Ok", this); //$NON-NLS-1$
+        command.setTitle(ConstantsManager.getInstance().getConstants().ok());
         command.setIsDefault(true);
         listModel.getCommands().add(command);
 
-        command = new UICommand("Cancel", this);
-        command.setTitle("Cancel");
+        command = new UICommand("Cancel", this); //$NON-NLS-1$
+        command.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         command.setIsDefault(true);
         listModel.getCommands().add(command);
 
@@ -332,9 +333,9 @@ public class VolumeModel extends Model {
         if (command == getAddBricksCommand())
         {
             addBricks();
-        } else if (command.getName().equals("Ok")) {
+        } else if (command.getName().equals("Ok")) { //$NON-NLS-1$
             onAddBricks();
-        } else if (command.getName().equals("Cancel")) {
+        } else if (command.getName().equals("Cancel")) { //$NON-NLS-1$
             setWindow(null);
         }
     }

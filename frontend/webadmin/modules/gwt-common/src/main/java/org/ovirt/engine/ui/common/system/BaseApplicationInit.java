@@ -106,7 +106,7 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Logou
 
         if (password != null) {
             // Replace all password characters with whitespace
-            password = password.replaceAll(".", " ");
+            password = password.replaceAll(".", " "); //$NON-NLS-1$ //$NON-NLS-2$
         }
 
         loginModel.getPassword().setEntity(password);

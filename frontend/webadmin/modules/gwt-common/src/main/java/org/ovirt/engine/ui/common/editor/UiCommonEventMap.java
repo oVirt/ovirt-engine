@@ -48,6 +48,6 @@ public class UiCommonEventMap {
     }
 
     private String getKey(String path, String type) {
-        return path + "_" + type;
+        return path + "_" + type; //$NON-NLS-1$
     }
 }

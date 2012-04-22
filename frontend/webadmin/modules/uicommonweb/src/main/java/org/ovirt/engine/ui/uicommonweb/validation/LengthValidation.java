@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.validation;
 
-import org.ovirt.engine.core.compat.StringFormat;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
 public class LengthValidation implements IValidation
@@ -30,8 +30,9 @@ public class LengthValidation implements IValidation
         if (value != null && value instanceof String && ((String) value).length() > getMaxLength())
         {
             result.setSuccess(false);
-            result.getReasons().add(StringFormat.format("Field content must not exceed %1$s characters.",
-                    getMaxLength()));
+            result.getReasons().add(ConstantsManager.getInstance()
+                    .getMessages()
+                    .lenValidationFieldMusnotExceed(getMaxLength()));
         }
 
         return result;

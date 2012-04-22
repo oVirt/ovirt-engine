@@ -32,7 +32,7 @@ public class HostVmListModel extends VmListModel
     {
         if (getEntity() != null)
         {
-            setSearchString(StringFormat.format("Vms: host.name=%1$s", getEntity().getvds_name()));
+            setSearchString(StringFormat.format("Vms: host.name=%1$s", getEntity().getvds_name())); //$NON-NLS-1$
             super.Search();
         }
     }
@@ -42,7 +42,7 @@ public class HostVmListModel extends VmListModel
     {
         super.EntityPropertyChanged(sender, e);
 
-        if (e.PropertyName.equals("vds_name"))
+        if (e.PropertyName.equals("vds_name")) //$NON-NLS-1$
         {
             getSearchCommand().Execute();
         }

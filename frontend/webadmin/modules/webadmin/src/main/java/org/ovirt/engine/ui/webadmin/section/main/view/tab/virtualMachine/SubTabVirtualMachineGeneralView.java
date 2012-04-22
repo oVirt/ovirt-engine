@@ -8,6 +8,7 @@ import org.ovirt.engine.ui.common.view.AbstractSubTabFormView;
 import org.ovirt.engine.ui.common.widget.uicommon.vm.VmGeneralModelForm;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.virtualMachine.SubTabVirtualMachineGeneralPresenter;
@@ -46,9 +47,9 @@ public class SubTabVirtualMachineGeneralView extends AbstractSubTabFormView<VM, 
     FlowPanel alertsList;
 
     @Inject
-    public SubTabVirtualMachineGeneralView(DetailModelProvider<VmListModel, VmGeneralModel> modelProvider) {
+    public SubTabVirtualMachineGeneralView(DetailModelProvider<VmListModel, VmGeneralModel> modelProvider, ApplicationConstants constants) {
         super(modelProvider);
-        this.form = new VmGeneralModelForm(modelProvider);
+        this.form = new VmGeneralModelForm(modelProvider, constants);
 
         // Inject a reference to the resources:
         resources = ClientGinjectorProvider.instance().getApplicationResources();
@@ -74,8 +75,8 @@ public class SubTabVirtualMachineGeneralView extends AbstractSubTabFormView<VM, 
         // by the caller, both rendered horizontally:
         FlowPanel alertPanel = new FlowPanel();
         Image alertIcon = new Image(resources.alertImage());
-        alertIcon.getElement().getStyle().setProperty("display", "inline");
-        alertWidget.getElement().getStyle().setProperty("display", "inline");
+        alertIcon.getElement().getStyle().setProperty("display", "inline"); //$NON-NLS-1$ //$NON-NLS-2$
+        alertWidget.getElement().getStyle().setProperty("display", "inline"); //$NON-NLS-1$ //$NON-NLS-2$
         alertPanel.add(alertIcon);
         alertPanel.add(alertWidget);
 

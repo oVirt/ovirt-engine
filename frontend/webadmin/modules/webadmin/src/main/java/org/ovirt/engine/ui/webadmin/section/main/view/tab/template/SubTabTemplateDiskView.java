@@ -9,6 +9,7 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateDiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.template.SubTabTemplateDiskPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTreeView;
@@ -19,12 +20,14 @@ import com.google.inject.Inject;
 
 public class SubTabTemplateDiskView extends AbstractSubTabTreeView<DisksTree, VmTemplate, DiskModel, TemplateListModel, TemplateDiskListModel> implements SubTabTemplateDiskPresenter.ViewDef {
 
+    private ApplicationConstants constants;
     @Inject
     public SubTabTemplateDiskView(final SearchableDetailModelProvider<DiskModel, TemplateListModel, TemplateDiskListModel> modelProvider,
-            EventBus eventBus) {
-        super(modelProvider);
+            EventBus eventBus, ApplicationConstants constants) {
+        super(modelProvider, constants);
+        this.constants = constants;
 
-        actionPanel.addActionButton(new UiCommandButtonDefinition<DiskModel>(eventBus, "Copy") {
+        actionPanel.addActionButton(new UiCommandButtonDefinition<DiskModel>(eventBus, constants.copyDisk()) {
             @Override
             protected UICommand resolveCommand() {
                 return modelProvider.getModel().getCopyCommand();
@@ -35,18 +38,18 @@ public class SubTabTemplateDiskView extends AbstractSubTabTreeView<DisksTree, Vm
     }
 
     @Override
-    protected void initHeader() {
-        table.addColumn(new EmptyColumn(), "Alias", "");
-        table.addColumn(new EmptyColumn(), "Size", "120px");
-        table.addColumn(new EmptyColumn(), "Status", "120px");
-        table.addColumn(new EmptyColumn(), "Allocation", "120px");
-        table.addColumn(new EmptyColumn(), "Interface", "120px");
-        table.addColumn(new EmptyColumn(), "Creation Date", "120px");
+    protected void initHeader(ApplicationConstants constants) {
+        table.addColumn(new EmptyColumn(), constants.aliasDisk(), ""); //$NON-NLS-1$
+        table.addColumn(new EmptyColumn(), constants.sizeDisk(), "120px"); //$NON-NLS-1$
+        table.addColumn(new EmptyColumn(), constants.statusDisk(), "120px"); //$NON-NLS-1$
+        table.addColumn(new EmptyColumn(), constants.allocationDisk(), "120px"); //$NON-NLS-1$
+        table.addColumn(new EmptyColumn(), constants.interfaceDisk(), "120px"); //$NON-NLS-1$
+        table.addColumn(new EmptyColumn(), constants.creationDateDisk(), "120px"); //$NON-NLS-1$
     }
 
     @Override
     protected DisksTree getTree() {
-        return new DisksTree(resources, constants);
+        return new DisksTree(resources, constants, templates);
     }
 
     @Override

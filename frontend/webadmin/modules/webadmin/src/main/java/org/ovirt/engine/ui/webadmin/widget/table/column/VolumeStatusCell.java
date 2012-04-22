@@ -42,9 +42,9 @@ public class VolumeStatusCell extends AbstractCell<GlusterVolumeEntity> {
         // Generate the HTML for the image:
         SafeHtml statusImageHtml =
                 SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(statusImage).getHTML());
-        sb.appendHtmlConstant("<div style=\"text-align: center; padding-top: 6px;\">");
+        sb.appendHtmlConstant("<div style=\"text-align: center; padding-top: 6px;\">"); //$NON-NLS-1$
         sb.append(statusImageHtml);
-        sb.appendHtmlConstant("</div>");
+        sb.appendHtmlConstant("</div>"); //$NON-NLS-1$
     }
 
 }

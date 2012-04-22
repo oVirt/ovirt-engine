@@ -31,7 +31,7 @@ public class DnDPanel extends FocusPanel {
     @Override
     public void sinkBitlessEvent(String eventTypeName) {
         super.sinkBitlessEvent(eventTypeName);
-        if (eventTypeName.startsWith("drag")) {
+        if (eventTypeName.startsWith("drag")) { //$NON-NLS-1$
             // extra work to register drag events
             sinkDragBitlessEventImpl(getElement(), eventTypeName);
         }

@@ -23,19 +23,19 @@ public class BondPanel extends NicPanel {
     protected Widget getContents() {
         VerticalPanel vPanel = new VerticalPanel();
         vPanel.setSpacing(5);
-        vPanel.setWidth("100%");
+        vPanel.setWidth("100%"); //$NON-NLS-1$
 
         Grid titleRow = new Grid(1, 3);
         titleRow.setCellSpacing(3);
 
         ColumnFormatter columnFormatter = titleRow.getColumnFormatter();
-        columnFormatter.setWidth(0, "30px");
-        columnFormatter.setWidth(1, "100%");
-        titleRow.setWidth("100%");
-        titleRow.setHeight("27px");
+        columnFormatter.setWidth(0, "30px"); //$NON-NLS-1$
+        columnFormatter.setWidth(1, "100%"); //$NON-NLS-1$
+        titleRow.setWidth("100%"); //$NON-NLS-1$
+        titleRow.setHeight("27px"); //$NON-NLS-1$
 
         Label titleLabel = new Label(item.getName());
-        titleLabel.setHeight("100%");
+        titleLabel.setHeight("100%"); //$NON-NLS-1$
         Image bondImage = new Image(resources.bond());
 
         titleRow.setWidget(0, 0, bondImage);

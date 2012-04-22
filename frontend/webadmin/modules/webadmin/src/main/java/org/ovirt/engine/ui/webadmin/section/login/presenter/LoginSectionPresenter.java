@@ -62,14 +62,14 @@ public class LoginSectionPresenter extends Presenter<LoginSectionPresenter.ViewD
         SilentLoginData silentLoginData = null;
 
         // Activate silent login when running in development mode
-        if (!GWT.isProdMode() && "true".equalsIgnoreCase(request.getParameter("silentLogin", null))) {
-            String adminUser = request.getParameter("user", null);
-            String password = request.getParameter("password", null);
-            String domain = request.getParameter("domain", null);
+        if (!GWT.isProdMode() && "true".equalsIgnoreCase(request.getParameter("silentLogin", null))) { //$NON-NLS-1$ //$NON-NLS-2$
+            String adminUser = request.getParameter("user", null); //$NON-NLS-1$
+            String password = request.getParameter("password", null); //$NON-NLS-1$
+            String domain = request.getParameter("domain", null); //$NON-NLS-1$
 
             if (adminUser != null && !adminUser.isEmpty()
                     && password != null && !password.isEmpty()) {
-                logger.info("Silent login is enabled");
+                logger.info("Silent login is enabled"); //$NON-NLS-1$
                 silentLoginData = new SilentLoginData(adminUser, password, domain);
             }
         }

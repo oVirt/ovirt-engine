@@ -23,8 +23,8 @@ public class PreparingEnlistment extends Enlistment {
 
     static {
 
-        PreparedEventDefinition = new EventDefinition("Prepared", PreparingEnlistment.class);
-        RollbackEventDefinition = new EventDefinition("Rollback", PreparingEnlistment.class);
+        PreparedEventDefinition = new EventDefinition("Prepared", PreparingEnlistment.class); //$NON-NLS-1$
+        RollbackEventDefinition = new EventDefinition("Rollback", PreparingEnlistment.class); //$NON-NLS-1$
     }
 
     public PreparingEnlistment(Object context) {

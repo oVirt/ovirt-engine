@@ -28,7 +28,7 @@ public abstract class UiCommandButtonDefinition<T> implements ActionButtonDefini
     /**
      * Null object singleton that represents an empty (no-op) command.
      */
-    private static final UICommand EMPTY_COMMAND = new UICommand("Empty", null) {
+    private static final UICommand EMPTY_COMMAND = new UICommand("Empty", null) { //$NON-NLS-1$
         {
             setIsAvailable(false);
             setIsExecutionAllowed(false);

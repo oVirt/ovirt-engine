@@ -48,7 +48,7 @@ public class HostPopupPresenterWidget extends AbstractModelBoundPopupPresenterWi
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 String propName = ((PropertyChangedEventArgs) args).PropertyName;
-                if (!"IsPowerManagementTabSelected".equals(propName)) {
+                if (!"IsPowerManagementTabSelected".equals(propName)) { //$NON-NLS-1$
                     return;
                 }
                 if (model.getIsPowerManagementTabSelected()) {

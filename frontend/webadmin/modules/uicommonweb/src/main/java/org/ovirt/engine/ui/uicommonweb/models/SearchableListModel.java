@@ -47,8 +47,8 @@ public abstract class SearchableListModel extends ListModel implements GridContr
 {
     private static final int UnknownInteger = -1;
     private static Logger logger = Logger.getLogger(SearchableListModel.class.getName());
-    private static final String PAGE_STRING_REGEX = "[\\s]+page[\\s]+[1-9]+[0-9]*[\\s]*$";
-    private static final String PAGE_NUMBER_REGEX = "[1-9]+[0-9]*$";
+    private static final String PAGE_STRING_REGEX = "[\\s]+page[\\s]+[1-9]+[0-9]*[\\s]*$"; //$NON-NLS-1$
+    private static final String PAGE_NUMBER_REGEX = "[1-9]+[0-9]*$"; //$NON-NLS-1$
 
     private UICommand privateSearchCommand;
 
@@ -111,7 +111,7 @@ public abstract class SearchableListModel extends ListModel implements GridContr
     private final List<ReportCommand> openReportCommands = new LinkedList<ReportCommand>();
 
     public ReportCommand addOpenReportCommand(String idParamName, boolean isMultiple, String uriId) {
-        return addOpenReportCommand(new ReportCommand("OpenReport", idParamName, isMultiple, uriId, this));
+        return addOpenReportCommand(new ReportCommand("OpenReport", idParamName, isMultiple, uriId, this)); //$NON-NLS-1$
     }
 
     private ReportCommand addOpenReportCommand(ReportCommand reportCommand)
@@ -203,7 +203,7 @@ public abstract class SearchableListModel extends ListModel implements GridContr
         {
             AsyncResultChanging(value, asyncResult);
             asyncResult = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("AsyncResult"));
+            OnPropertyChanged(new PropertyChangedEventArgs("AsyncResult")); //$NON-NLS-1$
         }
     }
 
@@ -220,7 +220,7 @@ public abstract class SearchableListModel extends ListModel implements GridContr
         {
             searchString = value;
             SearchStringChanged();
-            OnPropertyChanged(new PropertyChangedEventArgs("SearchString"));
+            OnPropertyChanged(new PropertyChangedEventArgs("SearchString")); //$NON-NLS-1$
         }
     }
 
@@ -259,16 +259,16 @@ public abstract class SearchableListModel extends ListModel implements GridContr
 
     public String getItemsCountString() {
         if (getItems() == null) {
-            return "";
+            return ""; //$NON-NLS-1$
         }
         int fromItemCount = getSearchPageSize() * (getSearchPageNumber() - 1) + 1;
         int toItemCount = (fromItemCount - 1) + ((List) getItems()).size();
 
         if (toItemCount == 0 || fromItemCount > toItemCount) {
-            return "";
+            return ""; //$NON-NLS-1$
         }
 
-        return fromItemCount + "-" + toItemCount;
+        return fromItemCount + "-" + toItemCount; //$NON-NLS-1$
     }
 
     public int getNextSearchPageNumber()
@@ -288,10 +288,10 @@ public abstract class SearchableListModel extends ListModel implements GridContr
         // Configure this instance.
         getConfigurator().Configure(this);
 
-        setSearchCommand(new UICommand("Search", this));
-        setSearchNextPageCommand(new UICommand("SearchNextPage", this));
-        setSearchPreviousPageCommand(new UICommand("SearchPreviousPage", this));
-        setForceRefreshCommand(new UICommand("ForceRefresh", this));
+        setSearchCommand(new UICommand("Search", this)); //$NON-NLS-1$
+        setSearchNextPageCommand(new UICommand("SearchNextPage", this)); //$NON-NLS-1$
+        setSearchPreviousPageCommand(new UICommand("SearchPreviousPage", this)); //$NON-NLS-1$
+        setForceRefreshCommand(new UICommand("ForceRefresh", this)); //$NON-NLS-1$
         setSearchPageSize(UnknownInteger);
         asyncCallback = new PrivateAsyncCallback(this);
 
@@ -334,7 +334,7 @@ public abstract class SearchableListModel extends ListModel implements GridContr
 
                 @Override
                 public void execute() {
-                    logger.info(SearchableListModel.this.getClass().getName() + ": Executing search");
+                    logger.info(SearchableListModel.this.getClass().getName() + ": Executing search"); //$NON-NLS-1$
                     if (getIsAsync())
                     {
                         AsyncSearch();
@@ -471,7 +471,7 @@ public abstract class SearchableListModel extends ListModel implements GridContr
 
         boolean isFromSameDc = true;
         boolean firstItem = true;
-        String dcId = "";
+        String dcId = ""; //$NON-NLS-1$
         for (Object item : getSelectedItems()) {
             if (item instanceof HasStoragePool) {
                 if (firstItem) {
@@ -485,7 +485,7 @@ public abstract class SearchableListModel extends ListModel implements GridContr
             }
         }
 
-        if (!dcId.equals("")) {
+        if (!dcId.equals("")) { //$NON-NLS-1$
             reportModel.setDataCenterID(dcId);
         }
 
@@ -493,7 +493,7 @@ public abstract class SearchableListModel extends ListModel implements GridContr
     }
 
     private String dateStr(Date date) {
-        return date.getYear() + "-" + date.getMonth() + "-" + date.getDate();
+        return date.getYear() + "-" + date.getMonth() + "-" + date.getDate(); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     private void AsyncResultChanging(RegistrationResult newValue, RegistrationResult oldValue)
@@ -591,6 +591,7 @@ public abstract class SearchableListModel extends ListModel implements GridContr
         reportCommand.setIsExecutionAllowed((!reportCommand.isMultiple() && (selectedItems.size() == 1))
                 || (reportCommand.isMultiple() && (selectedItems.size() > 1)));
     }
+
     private void UpdateActionAvailability() {
         List<?> items =
                 getSelectedItems() != null ? getSelectedItems()
@@ -616,11 +617,11 @@ public abstract class SearchableListModel extends ListModel implements GridContr
         {
             setSearchString(Regex.replace(getSearchString(),
                     PAGE_STRING_REGEX,
-                    StringFormat.format(" page %1$s", newSearchPageNumber)));
+                    StringFormat.format(" page %1$s", newSearchPageNumber))); //$NON-NLS-1$
         }
         else
         {
-            setSearchString(StringFormat.format("%1$s page %2$s", getSearchString(), newSearchPageNumber));
+            setSearchString(StringFormat.format("%1$s page %2$s", getSearchString(), newSearchPageNumber)); //$NON-NLS-1$
         }
     }
 
@@ -720,7 +721,7 @@ public abstract class SearchableListModel extends ListModel implements GridContr
             items = value;
             UpdatePagingAvailability();
             getItemsChangedEvent().raise(this, EventArgs.Empty);
-            OnPropertyChanged(new PropertyChangedEventArgs("Items"));
+            OnPropertyChanged(new PropertyChangedEventArgs("Items")); //$NON-NLS-1$
 
             selectedItem = null;
 

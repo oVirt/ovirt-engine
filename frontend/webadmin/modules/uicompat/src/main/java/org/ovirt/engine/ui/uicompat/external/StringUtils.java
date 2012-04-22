@@ -162,7 +162,7 @@ public class StringUtils {
     }
 
     private static IllegalStateException newIllegalStateException(String charsetName, UnsupportedEncodingException e) {
-        return new IllegalStateException(charsetName + ": " + e);
+        return new IllegalStateException(charsetName + ": " + e); //$NON-NLS-1$
     }
 
     /**

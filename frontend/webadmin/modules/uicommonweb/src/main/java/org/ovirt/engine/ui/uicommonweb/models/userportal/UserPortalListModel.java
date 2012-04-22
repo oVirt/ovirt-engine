@@ -76,6 +76,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VmInterfaceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmMonitorModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmSnapshotListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VncConsoleModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
@@ -204,7 +205,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         if (vmModel != value)
         {
             vmModel = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("VmModel"));
+            OnPropertyChanged(new PropertyChangedEventArgs("VmModel")); //$NON-NLS-1$
         }
     }
 
@@ -220,7 +221,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         if (confirmationModel != value)
         {
             confirmationModel = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("ConfirmationModel"));
+            OnPropertyChanged(new PropertyChangedEventArgs("ConfirmationModel")); //$NON-NLS-1$
         }
     }
 
@@ -236,7 +237,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         if (runOnceModel != value)
         {
             runOnceModel = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("RunOnceModel"));
+            OnPropertyChanged(new PropertyChangedEventArgs("RunOnceModel")); //$NON-NLS-1$
         }
     }
 
@@ -252,7 +253,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         if (attachCdModel != value)
         {
             attachCdModel = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("AttachCdModel"));
+            OnPropertyChanged(new PropertyChangedEventArgs("AttachCdModel")); //$NON-NLS-1$
         }
     }
 
@@ -320,7 +321,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
 
     static
     {
-        SearchCompletedEventDefinition = new EventDefinition("SearchCompleted", UserPortalListModel.class);
+        SearchCompletedEventDefinition = new EventDefinition("SearchCompleted", UserPortalListModel.class); //$NON-NLS-1$
     }
 
     public UserPortalListModel()
@@ -329,14 +330,14 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
 
         cachedConsoleModels = new java.util.HashMap<Guid, java.util.ArrayList<ConsoleModel>>();
 
-        setNewDesktopCommand(new UICommand("NewDesktop", this));
-        setNewServerCommand(new UICommand("NewServer", this));
-        setEditCommand(new UICommand("Edit", this));
-        setRemoveCommand(new UICommand("Remove", this));
-        setSaveCommand(new UICommand("Save", this));
-        setRunOnceCommand(new UICommand("RunOnce", this));
-        setChangeCdCommand(new UICommand("ChangeCD", this));
-        setNewTemplateCommand(new UICommand("NewTemplate", this));
+        setNewDesktopCommand(new UICommand("NewDesktop", this)); //$NON-NLS-1$
+        setNewServerCommand(new UICommand("NewServer", this)); //$NON-NLS-1$
+        setEditCommand(new UICommand("Edit", this)); //$NON-NLS-1$
+        setRemoveCommand(new UICommand("Remove", this)); //$NON-NLS-1$
+        setSaveCommand(new UICommand("Save", this)); //$NON-NLS-1$
+        setRunOnceCommand(new UICommand("RunOnce", this)); //$NON-NLS-1$
+        setChangeCdCommand(new UICommand("ChangeCD", this)); //$NON-NLS-1$
+        setNewTemplateCommand(new UICommand("NewTemplate", this)); //$NON-NLS-1$
 
         UpdateActionAvailability();
 
@@ -350,7 +351,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                 if (result != null)
                 {
                     userPortalListModel.CustomPropertiesKeysList = new java.util.ArrayList<String>();
-                    for (String s : ((String) result).split("[;]", -1))
+                    for (String s : ((String) result).split("[;]", -1)) //$NON-NLS-1$
                     {
                         userPortalListModel.CustomPropertiesKeysList.add(s);
                     }
@@ -369,7 +370,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
             ItemsChanging(value, items);
             items = value;
             getItemsChangedEvent().raise(this, EventArgs.Empty);
-            OnPropertyChanged(new PropertyChangedEventArgs("Items"));
+            OnPropertyChanged(new PropertyChangedEventArgs("Items")); //$NON-NLS-1$
         }
     }
 
@@ -549,27 +550,27 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         {
             NewTemplate();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "Cancel"))
+        else if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
         {
             Cancel();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnRemove"))
+        else if (StringHelper.stringsEqual(command.getName(), "OnRemove")) //$NON-NLS-1$
         {
             OnRemove();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnRunOnce"))
+        else if (StringHelper.stringsEqual(command.getName(), "OnRunOnce")) //$NON-NLS-1$
         {
             OnRunOnce();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnChangeCD"))
+        else if (StringHelper.stringsEqual(command.getName(), "OnChangeCD")) //$NON-NLS-1$
         {
             OnChangeCD();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnNewTemplate"))
+        else if (StringHelper.stringsEqual(command.getName(), "OnNewTemplate")) //$NON-NLS-1$
         {
             OnNewTemplate();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnSave"))
+        else if (StringHelper.stringsEqual(command.getName(), "OnSave")) //$NON-NLS-1$
         {
             OnSave();
         }
@@ -585,18 +586,18 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
 
         VM vm = (VM) selectedItem.getEntity();
         setVmModel(new UnitVmModel(new NewTemplateVmModelBehavior(vm)));
-        getVmModel().setTitle("New Template");
-        getVmModel().setHashName("new_template");
+        getVmModel().setTitle(ConstantsManager.getInstance().getConstants().newTemplateTitle());
+        getVmModel().setHashName("new_template"); //$NON-NLS-1$
         getVmModel().setIsNew(true);
         getVmModel().setVmType(vm.getvm_type());
         getVmModel().Initialize(null);
 
-        UICommand tempVar = new UICommand("OnNewTemplate", this);
-        tempVar.setTitle("OK");
+        UICommand tempVar = new UICommand("OnNewTemplate", this); //$NON-NLS-1$
+        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
         tempVar.setIsDefault(true);
         getVmModel().getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this);
-        tempVar2.setTitle("Cancel");
+        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
+        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         tempVar2.setIsCancel(true);
         getVmModel().getCommands().add(tempVar2);
     }
@@ -634,7 +635,9 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                                 userPortalListModel.getVmModel()
                                         .getName()
                                         .getInvalidityReasons()
-                                        .add("Name must be unique.");
+                                        .add(ConstantsManager.getInstance()
+                                                .getConstants()
+                                                .nameMustBeUniqueInvalidReason());
                                 userPortalListModel.getVmModel().getName().setIsValid(false);
                                 userPortalListModel.getVmModel().setIsValid(false);
                             }
@@ -661,13 +664,13 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         tempVar.setvm_type(model.getVmType());
         tempVar.setvm_os((VmOsType) model.getOSType().getSelectedItem());
         tempVar.setnum_of_monitors((Integer) model.getNumOfMonitors().getSelectedItem());
-        tempVar.setvm_domain(model.getDomain().getIsAvailable() ? (String) model.getDomain().getSelectedItem() : "");
+        tempVar.setvm_domain(model.getDomain().getIsAvailable() ? (String) model.getDomain().getSelectedItem() : ""); //$NON-NLS-1$
         tempVar.setvm_mem_size_mb((Integer) model.getMemSize().getEntity());
         tempVar.setMinAllocatedMem((Integer) model.getMinAllocatedMemory().getEntity());
         tempVar.setvds_group_id(((VDSGroup) model.getCluster().getSelectedItem()).getId());
         tempVar.settime_zone(model.getTimeZone().getIsAvailable() && model.getTimeZone().getSelectedItem() != null ? ((java.util.Map.Entry<String, String>) model.getTimeZone()
                 .getSelectedItem()).getKey()
-                : "");
+                : ""); //$NON-NLS-1$
         tempVar.setnum_of_sockets((Integer) model.getNumOfSockets().getEntity());
         tempVar.setcpu_per_socket((Integer) model.getTotalCPUCores().getEntity()
                 / (Integer) model.getNumOfSockets().getEntity());
@@ -676,7 +679,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         tempVar.setis_stateless((Boolean) model.getIsStateless().getEntity());
         tempVar.setdefault_boot_sequence(model.getBootSequence());
         tempVar.setauto_startup((Boolean) model.getIsHighlyAvailable().getEntity());
-        tempVar.setiso_path(model.getCdImage().getIsChangable() ? (String) model.getCdImage().getSelectedItem() : "");
+        tempVar.setiso_path(model.getCdImage().getIsChangable() ? (String) model.getCdImage().getSelectedItem() : ""); //$NON-NLS-1$
         tempVar.setinitrd_url(vm.getinitrd_url());
         tempVar.setkernel_url(vm.getkernel_url());
         tempVar.setkernel_params(vm.getkernel_params());
@@ -724,8 +727,8 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
 
         RunOnceModel model = new RunOnceModel();
         setRunOnceModel(model);
-        model.setTitle("Run Virtual Machine(s)");
-        model.setHashName("run_virtual_machine");
+        model.setTitle(ConstantsManager.getInstance().getConstants().runVirtualMachinesTitle());
+        model.setHashName("run_virtual_machine"); //$NON-NLS-1$
         model.getAttachIso().setEntity(false);
         model.getAttachFloppy().setEntity(false);
         model.getRunAsStateless().setEntity(vm.getis_stateless());
@@ -784,12 +787,12 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                                 // Add a pseudo floppy disk image used for Windows' sysprep.
                                 if (!selectedVM.getis_initialized())
                                 {
-                                    images.add(0, "[sysprep]");
+                                    images.add(0, "[sysprep]"); //$NON-NLS-1$
                                     runOnceModel.getAttachFloppy().setEntity(true);
                                 }
                                 else
                                 {
-                                    images.add("[sysprep]");
+                                    images.add("[sysprep]"); //$NON-NLS-1$
                                 }
                             }
                             runOnceModel.getFloppyImage().setItems(images);
@@ -831,7 +834,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                         RunOnceModel runOnceModel = (RunOnceModel) target;
                         java.util.List<String> domains = (java.util.List<String>) returnValue1;
                         String oldDomain = (String) runOnceModel.getSysPrepDomainName().getSelectedItem();
-                        if (oldDomain != null && !oldDomain.equals("") && !domains.contains(oldDomain))
+                        if (oldDomain != null && !oldDomain.equals("") && !domains.contains(oldDomain)) //$NON-NLS-1$
                         {
                             domains.add(0, oldDomain);
                         }
@@ -845,12 +848,12 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
 
         // Display protocols.
         EntityModel tempVar = new EntityModel();
-        tempVar.setTitle("VNC");
+        tempVar.setTitle(ConstantsManager.getInstance().getConstants().VNCTitle());
         tempVar.setEntity(DisplayType.vnc);
         EntityModel vncProtocol = tempVar;
 
         EntityModel tempVar2 = new EntityModel();
-        tempVar2.setTitle("Spice");
+        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().spiceTitle());
         tempVar2.setEntity(DisplayType.qxl);
         EntityModel qxlProtocol = tempVar2;
 
@@ -881,19 +884,19 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                     bootSequenceModel.getNetworkOption().setIsChangable(false);
                     bootSequenceModel.getNetworkOption()
                             .getChangeProhibitionReasons()
-                            .add("Virtual Machine must have at least one network interface defined to boot from network.");
+                            .add("Virtual Machine must have at least one network interface defined to boot from network."); //$NON-NLS-1$
                 }
             }
         };
 
         Frontend.RunQuery(VdcQueryType.GetVmInterfacesByVmId, new GetVmByVmIdParameters(vm.getId()), _asyncQuery2);
 
-        UICommand tempVar3 = new UICommand("OnRunOnce", this);
-        tempVar3.setTitle("OK");
+        UICommand tempVar3 = new UICommand("OnRunOnce", this); //$NON-NLS-1$
+        tempVar3.setTitle(ConstantsManager.getInstance().getConstants().ok());
         tempVar3.setIsDefault(true);
         model.getCommands().add(tempVar3);
-        UICommand tempVar4 = new UICommand("Cancel", this);
-        tempVar4.setTitle("Cancel");
+        UICommand tempVar4 = new UICommand("Cancel", this); //$NON-NLS-1$
+        tempVar4.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         tempVar4.setIsCancel(true);
         model.getCommands().add(tempVar4);
     }
@@ -922,7 +925,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         tempVar.setVmId(vm.getId());
         tempVar.setBootSequence(bootSequenceModel.getSequence());
         tempVar.setDiskPath((Boolean) model.getAttachIso().getEntity() ? (String) model.getIsoImage().getSelectedItem()
-                : "");
+                : ""); //$NON-NLS-1$
         tempVar.setFloppyPath(model.getFloppyImagePath());
         tempVar.setKvmEnable(model.getHwAcceleration());
         tempVar.setRunAndPause((Boolean) model.getRunAndPause().getEntity());
@@ -1019,7 +1022,10 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
     {
         UnitVmModel model = new UnitVmModel(new UserPortalNewVmModelBehavior());
         setVmModel(model);
-        getVmModel().setTitle("New " + (vmType == VmType.Server ? "Server" : "Desktop") + " Virtual Machine");
+        getVmModel().setTitle(ConstantsManager.getInstance()
+                .getMessages()
+                .newVmTitle(vmType == VmType.Server ? ConstantsManager.getInstance().getConstants().serverVmType()
+                        : ConstantsManager.getInstance().getConstants().desktopVmType()));
         vmModel.setHashName(getVmModel().getTitle().toLowerCase().replace(' ', '_'));
         getVmModel().setIsNew(true);
         getVmModel().setVmType(vmType);
@@ -1031,12 +1037,12 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         boolean selectValue = getVmModel().getVmType() == VmType.Server;
         getVmModel().getProvisioning().setEntity(selectValue);
 
-        UICommand tempVar = new UICommand("OnSave", this);
-        tempVar.setTitle("OK");
+        UICommand tempVar = new UICommand("OnSave", this); //$NON-NLS-1$
+        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
         tempVar.setIsDefault(true);
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this);
-        tempVar2.setTitle("Cancel");
+        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
+        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         tempVar2.setIsCancel(true);
         model.getCommands().add(tempVar2);
     }
@@ -1053,19 +1059,24 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
 
         UnitVmModel model = new UnitVmModel(new UserPortalExistingVmModelBehavior(vm));
         setVmModel(model);
-        getVmModel().setTitle("Edit " + (vm.getvm_type() == VmType.Server ? "Server" : "Desktop") + " Virtual Machine");
+        getVmModel().setTitle(ConstantsManager.getInstance()
+                .getMessages()
+                .editVmTitle(vm.getvm_type() == VmType.Server ? ConstantsManager.getInstance()
+                        .getConstants()
+                        .serverVmType()
+                        : ConstantsManager.getInstance().getConstants().desktopVmType()));
         vmModel.setHashName(getVmModel().getTitle().toLowerCase().replace(' ', '_'));
         getVmModel().setVmType(vm.getvm_type());
         getVmModel().setCustomPropertiesKeysList(CustomPropertiesKeysList);
 
         getVmModel().Initialize(null);
 
-        UICommand tempVar = new UICommand("OnSave", this);
-        tempVar.setTitle("OK");
+        UICommand tempVar = new UICommand("OnSave", this); //$NON-NLS-1$
+        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
         tempVar.setIsDefault(true);
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this);
-        tempVar2.setTitle("Cancel");
+        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
+        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         tempVar2.setIsCancel(true);
         model.getCommands().add(tempVar2);
     }
@@ -1076,20 +1087,20 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         VM vm = (VM) selectedItem.getEntity();
 
         setConfirmationModel(new ConfirmationModel());
-        getConfirmationModel().setTitle("Remove Virtual Machine");
-        getConfirmationModel().setHashName("remove_virtual_machine");
-        getConfirmationModel().setMessage("Virtual Machine");
+        getConfirmationModel().setTitle(ConstantsManager.getInstance().getConstants().removeVirtualMachineTitle());
+        getConfirmationModel().setHashName("remove_virtual_machine"); //$NON-NLS-1$
+        getConfirmationModel().setMessage(ConstantsManager.getInstance().getConstants().virtualMachineMsg());
 
         java.util.ArrayList<String> list = new java.util.ArrayList<String>();
         list.add(vm.getvm_name());
         getConfirmationModel().setItems(list);
 
-        UICommand tempVar = new UICommand("OnRemove", this);
-        tempVar.setTitle("OK");
+        UICommand tempVar = new UICommand("OnRemove", this); //$NON-NLS-1$
+        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
         tempVar.setIsDefault(true);
         getConfirmationModel().getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this);
-        tempVar2.setTitle("Cancel");
+        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
+        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         tempVar2.setIsCancel(true);
         getConfirmationModel().getCommands().add(tempVar2);
     }
@@ -1122,8 +1133,8 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
 
         AttachCdModel model = new AttachCdModel();
         setAttachCdModel(model);
-        model.setTitle("Change CD");
-        model.setHashName("change_cd");
+        model.setTitle(ConstantsManager.getInstance().getConstants().changeCDTitle());
+        model.setHashName("change_cd"); //$NON-NLS-1$
 
         AsyncQuery _asyncQuery0 = new AsyncQuery();
         _asyncQuery0.setModel(this);
@@ -1134,7 +1145,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
             {
                 UserPortalListModel userPortalListModel0 = (UserPortalListModel) model0;
                 java.util.ArrayList<String> images0 =
-                        new java.util.ArrayList<String>(java.util.Arrays.asList(new String[] { "No CDs" }));
+                        new java.util.ArrayList<String>(java.util.Arrays.asList(new String[] { "No CDs" })); //$NON-NLS-1$
                 userPortalListModel0.getAttachCdModel().getIsoImage().setItems(images0);
                 userPortalListModel0.getAttachCdModel().getIsoImage().setSelectedItem(Linq.FirstOrDefault(images0));
 
@@ -1170,12 +1181,12 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
 
         AsyncDataProvider.GetIsoDomainByDataCenterId(_asyncQuery0, vm.getstorage_pool_id());
 
-        UICommand tempVar = new UICommand("OnChangeCD", this);
-        tempVar.setTitle("OK");
+        UICommand tempVar = new UICommand("OnChangeCD", this); //$NON-NLS-1$
+        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
         tempVar.setIsDefault(true);
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this);
-        tempVar2.setTitle("Cancel");
+        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
+        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         tempVar2.setIsCancel(true);
         model.getCommands().add(tempVar2);
     }
@@ -1192,7 +1203,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         VM vm = (VM) selectedItem.getEntity();
         AttachCdModel model = getAttachCdModel();
         String isoName =
-                (StringHelper.stringsEqual(model.getIsoImage().getSelectedItem().toString(), ConsoleModel.EjectLabel)) ? ""
+                (StringHelper.stringsEqual(model.getIsoImage().getSelectedItem().toString(), ConsoleModel.EjectLabel)) ? "" //$NON-NLS-1$
                         : model.getIsoImage().getSelectedItem().toString();
 
         Frontend.RunAction(VdcActionType.ChangeDisk, new ChangeDiskCommandParameters(vm.getId(), isoName),
@@ -1236,7 +1247,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                             userPortalListModel.getVmModel()
                                     .getName()
                                     .getInvalidityReasons()
-                                    .add("Name must be unique.");
+                                    .add(ConstantsManager.getInstance().getConstants().nameMustBeUniqueInvalidReason());
                             userPortalListModel.getVmModel().getName().setIsValid(false);
                             userPortalListModel.getVmModel().setIsValid(false);
                             userPortalListModel.getVmModel().setIsGeneralTabValid(false);
@@ -1266,14 +1277,14 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         gettempVm().setnum_of_monitors((Integer) getVmModel().getNumOfMonitors().getSelectedItem());
         gettempVm().setvm_description((String) getVmModel().getDescription().getEntity());
         gettempVm().setvm_domain(getVmModel().getDomain().getIsAvailable() ? (String) getVmModel().getDomain()
-                .getSelectedItem() : "");
+                .getSelectedItem() : ""); //$NON-NLS-1$
         gettempVm().setvm_mem_size_mb((Integer) getVmModel().getMemSize().getEntity());
         gettempVm().setMinAllocatedMem((Integer) getVmModel().getMinAllocatedMemory().getEntity());
         Guid newClusterID = ((VDSGroup) getVmModel().getCluster().getSelectedItem()).getId();
         gettempVm().setvds_group_id(newClusterID);
         gettempVm().settime_zone((getVmModel().getTimeZone().getIsAvailable() && getVmModel().getTimeZone()
                 .getSelectedItem() != null) ? ((java.util.Map.Entry<String, String>) getVmModel().getTimeZone()
-                .getSelectedItem()).getKey() : "");
+                .getSelectedItem()).getKey() : ""); //$NON-NLS-1$
         gettempVm().setnum_of_sockets((Integer) getVmModel().getNumOfSockets().getEntity());
         gettempVm().setcpu_per_socket((Integer) getVmModel().getTotalCPUCores().getEntity()
                 / (Integer) getVmModel().getNumOfSockets().getEntity());
@@ -1282,7 +1293,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         gettempVm().setis_stateless((Boolean) getVmModel().getIsStateless().getEntity());
         gettempVm().setdefault_boot_sequence(getVmModel().getBootSequence());
         gettempVm().setiso_path(getVmModel().getCdImage().getIsChangable() ? (String) getVmModel().getCdImage()
-                .getSelectedItem() : "");
+                .getSelectedItem() : ""); //$NON-NLS-1$
         gettempVm().setauto_startup((Boolean) getVmModel().getIsHighlyAvailable().getEntity());
 
         gettempVm().setinitrd_url((String) getVmModel().getInitrd_path().getEntity());
@@ -1780,6 +1791,6 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
 
     @Override
     protected String getListName() {
-        return "UserPortalListModel";
+        return "UserPortalListModel"; //$NON-NLS-1$
     }
 }

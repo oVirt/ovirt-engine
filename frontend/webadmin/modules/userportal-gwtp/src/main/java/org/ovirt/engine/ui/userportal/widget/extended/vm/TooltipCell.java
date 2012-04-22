@@ -27,9 +27,9 @@ public class TooltipCell<T> extends CompositeCell<T> {
 
     @Override
     public void render(Context context, T value, SafeHtmlBuilder sb) {
-        sb.appendHtmlConstant("<div title=\"" + SafeHtmlUtils.htmlEscape(provider.getTooltip(value)) + "\" >");
+        sb.appendHtmlConstant("<div title=\"" + SafeHtmlUtils.htmlEscape(provider.getTooltip(value)) + "\" >"); //$NON-NLS-1$ //$NON-NLS-2$
         render(context, value, sb, hasCell);
-        sb.appendHtmlConstant("</div>");
+        sb.appendHtmlConstant("</div>"); //$NON-NLS-1$
     }
 
     public static interface TooltipProvider<T> {

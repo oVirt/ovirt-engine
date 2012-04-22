@@ -44,15 +44,15 @@ public class AddClusterRM implements IEnlistmentNotification {
         if (!StringHelper.isNullOrEmpty(clusterName)) {
 
             AsyncDataProvider.GetClusterListByName(new AsyncQuery(this,
-                new INewAsyncCallback() {
-                    @Override
-                    public void OnSuccess(Object model, Object returnValue) {
+                    new INewAsyncCallback() {
+                        @Override
+                        public void OnSuccess(Object model, Object returnValue) {
 
-                        context.clusterFoundByName = Linq.FirstOrDefault((Iterable<VDSGroup>) returnValue);
-                        prepare2();
-                    }
-                }),
-                clusterName);
+                            context.clusterFoundByName = Linq.FirstOrDefault((Iterable<VDSGroup>) returnValue);
+                            prepare2();
+                        }
+                    }),
+                    clusterName);
         } else {
             prepare2();
         }
@@ -90,21 +90,21 @@ public class AddClusterRM implements IEnlistmentNotification {
                 cluster.setstorage_pool_id(enlistmentContext.getDataCenterId());
                 cluster.setcpu_name(((ServerCpu) clusterModel.getCPU().getSelectedItem()).getCpuName());
                 cluster.setmax_vds_memory_over_commit(clusterModel.getMemoryOverCommit());
-                cluster.setTransparentHugepages(version.compareTo(new Version("3.0")) >= 0);
+                cluster.setTransparentHugepages(version.compareTo(new Version("3.0")) >= 0); //$NON-NLS-1$
                 cluster.setcompatibility_version(version);
                 cluster.setMigrateOnError(clusterModel.getMigrateOnErrorOption());
 
                 Frontend.RunAction(VdcActionType.AddVdsGroup, new VdsGroupOperationParameters(cluster),
-                    new IFrontendActionAsyncCallback() {
-                        @Override
-                        public void Executed(FrontendActionAsyncResult result) {
+                        new IFrontendActionAsyncCallback() {
+                            @Override
+                            public void Executed(FrontendActionAsyncResult result) {
 
-                            VdcReturnValueBase returnValue = result.getReturnValue();
+                                VdcReturnValueBase returnValue = result.getReturnValue();
 
-                            context.addVDSGroupReturnValue = returnValue;
-                            prepare3();
-                        }
-                    });
+                                context.addVDSGroupReturnValue = returnValue;
+                                prepare3();
+                            }
+                        });
             }
 
         } else {
@@ -135,56 +135,56 @@ public class AddClusterRM implements IEnlistmentNotification {
         }
     }
 
-    //    @Override
-    //    public void Prepare(PreparingEnlistment enlistment)
-    //    {
-    //        ConfigureLocalStorageModel model = (ConfigureLocalStorageModel) getModel().getWindow();
-    //        if (!model.getDontCreateCluster())
-    //        {
-    //            ClusterModel m = model.getCluster();
+    // @Override
+    // public void Prepare(PreparingEnlistment enlistment)
+    // {
+    // ConfigureLocalStorageModel model = (ConfigureLocalStorageModel) getModel().getWindow();
+    // if (!model.getDontCreateCluster())
+    // {
+    // ClusterModel m = model.getCluster();
     //
-    //            String name = (String) m.getName().getEntity();
+    // String name = (String) m.getName().getEntity();
     //
-    //            // Try to find existing cluster with the specified name.
-    //            VDSGroup cluster = DataProvider.GetClusterByName(name);
-    //            if (cluster != null)
-    //            {
-    //                getData().setClusterId(cluster.getID());
-    //                enlistment.Prepared();
-    //            }
-    //            else
-    //            {
-    //                Version version = (Version) m.getVersion().getSelectedItem();
+    // // Try to find existing cluster with the specified name.
+    // VDSGroup cluster = DataProvider.GetClusterByName(name);
+    // if (cluster != null)
+    // {
+    // getData().setClusterId(cluster.getID());
+    // enlistment.Prepared();
+    // }
+    // else
+    // {
+    // Version version = (Version) m.getVersion().getSelectedItem();
     //
-    //                cluster = new VDSGroup();
-    //                cluster.setname(name);
-    //                cluster.setdescription((String) m.getDescription().getEntity());
-    //                cluster.setstorage_pool_id(getData().getDataCenterId());
-    //                cluster.setcpu_name(((ServerCpu) m.getCPU().getSelectedItem()).getCpuName());
-    //                cluster.setmax_vds_memory_over_commit(m.getMemoryOverCommit());
-    //                cluster.setTransparentHugepages(version.compareTo(new Version("3.0")) >= 0);
-    //                cluster.setcompatibility_version(version);
-    //                cluster.setMigrateOnError(m.getMigrateOnErrorOption());
+    // cluster = new VDSGroup();
+    // cluster.setname(name);
+    // cluster.setdescription((String) m.getDescription().getEntity());
+    // cluster.setstorage_pool_id(getData().getDataCenterId());
+    // cluster.setcpu_name(((ServerCpu) m.getCPU().getSelectedItem()).getCpuName());
+    // cluster.setmax_vds_memory_over_commit(m.getMemoryOverCommit());
+    // cluster.setTransparentHugepages(version.compareTo(new Version("3.0")) >= 0);
+    // cluster.setcompatibility_version(version);
+    // cluster.setMigrateOnError(m.getMigrateOnErrorOption());
     //
-    //                VdcReturnValueBase returnValue =
-    //                        Frontend.RunAction(VdcActionType.AddVdsGroup, new VdsGroupOperationParameters(cluster));
+    // VdcReturnValueBase returnValue =
+    // Frontend.RunAction(VdcActionType.AddVdsGroup, new VdsGroupOperationParameters(cluster));
     //
-    //                if (returnValue != null && returnValue.getSucceeded())
-    //                {
-    //                    getData().setClusterId((Guid) returnValue.getActionReturnValue());
-    //                    enlistment.Prepared();
-    //                }
-    //                else
-    //                {
-    //                    enlistment.ForceRollback();
-    //                }
-    //            }
-    //        }
-    //        else
-    //        {
-    //            enlistment.Prepared();
-    //        }
-    //    }
+    // if (returnValue != null && returnValue.getSucceeded())
+    // {
+    // getData().setClusterId((Guid) returnValue.getActionReturnValue());
+    // enlistment.Prepared();
+    // }
+    // else
+    // {
+    // enlistment.ForceRollback();
+    // }
+    // }
+    // }
+    // else
+    // {
+    // enlistment.Prepared();
+    // }
+    // }
 
     @Override
     public void commit(Enlistment enlistment) {
@@ -195,7 +195,6 @@ public class AddClusterRM implements IEnlistmentNotification {
     public void rollback(Enlistment enlistment) {
         enlistment.Done();
     }
-
 
     private final Context context = new Context();
 

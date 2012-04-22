@@ -2,6 +2,8 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui">
 
+<ui:with field='constants' type='org.ovirt.engine.ui.userportal.ApplicationConstants' />
+
 	<ui:style>
 		.wrapper {
 			height: 74px;
@@ -61,7 +63,7 @@
 		<g:SimplePanel addStyleNames="{style.barOuter}">
 			<g:FlowPanel addStyleNames="{style.barInner}">
 				<g:HTMLPanel addStyleNames="{style.menu}">
-					Logged in user:
+					<g:InlineLabel text="{constants.loggedInUser}:" />
 					<g:InlineLabel ui:field="userNameLabel" addStyleNames="{style.userName}" />
 					|
 					<g:Anchor ui:field="logoutLink" addStyleNames="{style.menuLink}" />

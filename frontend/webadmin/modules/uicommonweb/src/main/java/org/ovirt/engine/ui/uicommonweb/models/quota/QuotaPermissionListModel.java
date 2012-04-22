@@ -12,13 +12,15 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public class QuotaPermissionListModel extends PermissionListModel {
 
-    public static final Guid CONSUME_QUOTA_ROLE_ID = new Guid("DEF0000a-0000-0000-0000-DEF00000000a");
+    public static final Guid CONSUME_QUOTA_ROLE_ID = new Guid("DEF0000a-0000-0000-0000-DEF00000000a"); //$NON-NLS-1$
 
     public QuotaPermissionListModel() {
-        setTitle("Permissions");
+        setTitle(ConstantsManager.getInstance().getConstants().permissionsTitle());
+        setHashName("permissions"); //$NON-NLS-1$
     }
 
     @Override
@@ -64,7 +66,7 @@ public class QuotaPermissionListModel extends PermissionListModel {
 
     @Override
     protected String getListName() {
-        return "QuotaPermissionListModel";
+        return "QuotaPermissionListModel"; //$NON-NLS-1$
     }
 
 }

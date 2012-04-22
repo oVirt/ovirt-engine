@@ -14,6 +14,8 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceLineModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostInterfacePresenter;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.host.HostInterfaceForm;
@@ -48,8 +50,7 @@ public class SubTabHostInterfaceView extends AbstractSubTabFormView<VDS, HostLis
 
     @Inject
     public SubTabHostInterfaceView(SearchableDetailModelProvider<HostInterfaceLineModel, HostListModel, HostInterfaceListModel> modelProvider,
-            EventBus eventBus,
-            ClientStorage clientStorage) {
+            EventBus eventBus, ClientStorage clientStorage, ApplicationConstants constants, ApplicationTemplates templates) {
         super(modelProvider);
         table =
                 new SimpleActionTable<HostInterfaceLineModel>(modelProvider,
@@ -57,12 +58,12 @@ public class SubTabHostInterfaceView extends AbstractSubTabFormView<VDS, HostLis
                         eventBus,
                         clientStorage);
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        initTable();
+        initTable(constants, templates);
 
         contentPanel = new VerticalPanel();
-        contentPanel.setWidth("100%");
+        contentPanel.setWidth("100%"); //$NON-NLS-1$
         contentPanel.add(table);
-        contentPanel.add(new Label("Empty"));
+        contentPanel.add(new Label(constants.emptyInterface()));
         initWidget(contentPanel);
     }
 
@@ -70,52 +71,52 @@ public class SubTabHostInterfaceView extends AbstractSubTabFormView<VDS, HostLis
         return GWT.<Resources> create(SubTableResources.class);
     }
 
-    void initTable() {
-        table.addColumn(new EmptyColumn(), "", "10%");
-        table.addColumn(new EmptyColumn(), "Name", "20%");
-        table.addColumn(new EmptyColumn(), "Address", "20%");
-        table.addColumn(new EmptyColumn(), "MAC", "20%");
-        table.addColumnWithHtmlHeader(new EmptyColumn(), "Speed <sub>(Mbps)</sub>", "10%");
-        table.addColumnWithHtmlHeader(new EmptyColumn(), "Rx <sub>(Mbps)</sub>", "10%");
-        table.addColumnWithHtmlHeader(new EmptyColumn(), "Tx <sub>(Mbps)</sub>", "10%");
-        table.addColumnWithHtmlHeader(new EmptyColumn(), "Drops <sub>(Pkts)</sub>", "10%");
-        table.addColumn(new EmptyColumn(), "Bond", "20%");
-        table.addColumn(new EmptyColumn(), "Vlan", "20%");
-        table.addColumn(new EmptyColumn(), "Network Name", "20%");
+    void initTable(ApplicationConstants constants, ApplicationTemplates templates) {
+        table.addColumn(new EmptyColumn(), constants.empty(), "10%"); //$NON-NLS-1$
+        table.addColumn(new EmptyColumn(), constants.nameInterface(), "20%"); //$NON-NLS-1$
+        table.addColumn(new EmptyColumn(), constants.addressInterface(), "20%"); //$NON-NLS-1$
+        table.addColumn(new EmptyColumn(), constants.macInterface(), "20%"); //$NON-NLS-1$
+        table.addColumnWithHtmlHeader(new EmptyColumn(), templates.sub(constants.speedInterface(), constants.mbps()).asString(), "10%"); //$NON-NLS-1$
+        table.addColumnWithHtmlHeader(new EmptyColumn(), templates.sub(constants.rxInterface(), constants.mbps()).asString(), "10%"); //$NON-NLS-1$
+        table.addColumnWithHtmlHeader(new EmptyColumn(), templates.sub(constants.txInterface(), constants.mbps()).asString(), "10%"); //$NON-NLS-1$
+        table.addColumnWithHtmlHeader(new EmptyColumn(), templates.sub(constants.dropsInterface(), constants.pkts()).asString(), "10%"); //$NON-NLS-1$
+        table.addColumn(new EmptyColumn(), constants.bondInterface(), "20%"); //$NON-NLS-1$
+        table.addColumn(new EmptyColumn(), constants.vlanInterface(), "20%"); //$NON-NLS-1$
+        table.addColumn(new EmptyColumn(), constants.newInterface(), "20%"); //$NON-NLS-1$
 
-        table.addActionButton(new WebAdminButtonDefinition<HostInterfaceLineModel>("Add / Edit") {
+        table.addActionButton(new WebAdminButtonDefinition<HostInterfaceLineModel>(constants.addEditInterface()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getEditCommand();
             }
         });
-        table.addActionButton(new WebAdminButtonDefinition<HostInterfaceLineModel>("Edit Management Network") {
+        table.addActionButton(new WebAdminButtonDefinition<HostInterfaceLineModel>(constants.editManageNetInterface()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getEditManagementNetworkCommand();
             }
         });
         // TODO: separator
-        table.addActionButton(new WebAdminButtonDefinition<HostInterfaceLineModel>("Bond") {
+        table.addActionButton(new WebAdminButtonDefinition<HostInterfaceLineModel>(constants.bondInterface()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getBondCommand();
             }
         });
-        table.addActionButton(new WebAdminButtonDefinition<HostInterfaceLineModel>("Detach") {
+        table.addActionButton(new WebAdminButtonDefinition<HostInterfaceLineModel>(constants.detachInterface()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getDetachCommand();
             }
         });
         // TODO: separator
-        table.addActionButton(new WebAdminButtonDefinition<HostInterfaceLineModel>("Save Network Configuration") {
+        table.addActionButton(new WebAdminButtonDefinition<HostInterfaceLineModel>(constants.saveNetConfigInterface()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getSaveNetworkConfigCommand();
             }
         });
-        table.addActionButton(new WebAdminButtonDefinition<HostInterfaceLineModel>("Setup Host Networks") {
+        table.addActionButton(new WebAdminButtonDefinition<HostInterfaceLineModel>(constants.setupHostNetworksInterface()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getSetupNetworksCommand();

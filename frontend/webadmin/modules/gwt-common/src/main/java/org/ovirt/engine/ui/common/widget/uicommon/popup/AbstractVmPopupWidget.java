@@ -326,7 +326,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
             public String getValue(EntityModel model) {
                 return model.getTitle();
             }
-        }, "");
+        }, ""); //$NON-NLS-1$
 
         disksAllocationView = new DisksAllocationView(constants);
 
@@ -415,8 +415,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
         });
 
         // Host Tab
-        specificHost = new RadioButton("runVmOnHostGroup");
-        isAutoAssignEditor = new EntityModelRadioButtonEditor("runVmOnHostGroup");
+        specificHost = new RadioButton("runVmOnHostGroup"); //$NON-NLS-1$
+        isAutoAssignEditor = new EntityModelRadioButtonEditor("runVmOnHostGroup"); //$NON-NLS-1$
         defaultHostEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
             @Override
             public String renderNullSafe(Object object) {
@@ -425,8 +425,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
         });
 
         // Resource Allocation
-        provisioningThinEditor = new EntityModelRadioButtonEditor("provisioningGroup");
-        provisioningCloneEditor = new EntityModelRadioButtonEditor("provisioningGroup");
+        provisioningThinEditor = new EntityModelRadioButtonEditor("provisioningGroup"); //$NON-NLS-1$
+        provisioningCloneEditor = new EntityModelRadioButtonEditor("provisioningGroup"); //$NON-NLS-1$
 
         // Boot Options Tab
         firstBootDeviceEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
@@ -451,67 +451,66 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
         });
     }
 
-    // TODO: Localize
     protected void localize(CommonApplicationConstants constants) {
         // Tabs
-        highAvailabilityTab.setLabel("High Availability");
-        resourceAllocationTab.setLabel("Resource Allocation");
-        bootOptionsTab.setLabel("Boot Options");
-        customPropertiesTab.setLabel("Custom Properties");
+        highAvailabilityTab.setLabel(constants.highAvailVmPopup());
+        resourceAllocationTab.setLabel(constants.resourceAllocVmPopup());
+        bootOptionsTab.setLabel(constants.bootOptionsVmPopup());
+        customPropertiesTab.setLabel(constants.customPropsVmPopup());
 
         // General Tab
-        generalTab.setLabel("General");
-        dataCenterEditor.setLabel("Data Center");
-        clusterEditor.setLabel("Host Cluster");
-        quotaEditor.setLabel("Quota");
-        nameEditor.setLabel("Name");
-        descriptionEditor.setLabel("Description");
-        templateEditor.setLabel("Based on Template");
-        memSizeEditor.setLabel("Memory Size");
-        totalCPUCoresEditor.setLabel("Total Cores");
-        numOfSocketsEditor.setLabel("CPU Sockets");
-        oSTypeEditor.setLabel("Operating System");
-        isStatelessEditor.setLabel("Stateless");
+        generalTab.setLabel(constants.GeneralVmPopup());
+        dataCenterEditor.setLabel(constants.dcVmPopup());
+        clusterEditor.setLabel(constants.hostClusterVmPopup());
+        quotaEditor.setLabel(constants.quotaVmPopup());
+        nameEditor.setLabel(constants.nameVmPopup());
+        descriptionEditor.setLabel(constants.descriptionVmPopup());
+        templateEditor.setLabel(constants.basedOnTemplateVmPopup());
+        memSizeEditor.setLabel(constants.memSizeVmPopup());
+        totalCPUCoresEditor.setLabel(constants.totalCoresVmPopup());
+        numOfSocketsEditor.setLabel(constants.cpuSocketsVmPopup());
+        oSTypeEditor.setLabel(constants.osVmPopup());
+        isStatelessEditor.setLabel(constants.statelessVmPopup());
 
         // Pools Tab
-        poolTab.setLabel("Pool");
-        poolTypeEditor.setLabel("Pool Type");
-        assignedVmsEditor.setLabel("Assigned VMs");
+        poolTab.setLabel(constants.poolVmPopup());
+        poolTypeEditor.setLabel(constants.poolTypeVmPopup());
+        assignedVmsEditor.setLabel(constants.assignedVmsVmPopup());
 
         // Windows Sysprep Tab
-        windowsSysPrepTab.setLabel("Windows Sysprep");
-        domainEditor.setLabel("Domain");
-        timeZoneEditor.setLabel("Time Zone");
+        windowsSysPrepTab.setLabel(constants.windowsSysprepVmPopup());
+        domainEditor.setLabel(constants.domainVmPopup());
+        timeZoneEditor.setLabel(constants.tzVmPopup());
 
         // Console Tab
-        consoleTab.setLabel("Console");
-        displayProtocolEditor.setLabel("Protocol");
-        usbPolicyEditor.setLabel("USB Policy");
-        numOfMonitorsEditor.setLabel("Monitors");
+        consoleTab.setLabel(constants.consoleVmPopup());
+        displayProtocolEditor.setLabel(constants.protocolVmPopup());
+        usbPolicyEditor.setLabel(constants.usbPolicyVmPopup());
+        numOfMonitorsEditor.setLabel(constants.monitorsVmPopup());
 
         // Host Tab
-        hostTab.setLabel("Host");
-        isAutoAssignEditor.setLabel("Any Host in Cluster");
+        hostTab.setLabel(constants.hostVmPopup());
+        isAutoAssignEditor.setLabel(constants.anyHostInClusterVmPopup());
         // specificHostEditor.setLabel("Specific");
-        runVMOnSpecificHostEditor.setLabel("Run VM on the selected host (no migration allowed)");
-        dontMigrateVMEditor.setLabel("Allow VM migration only upon Administrator specific request (system will not trigger automatic migration of this VM)");
+        runVMOnSpecificHostEditor.setLabel(constants.runOnSelectedHostVmPopup());
+        dontMigrateVMEditor.setLabel(constants.allowMigrationOnlyAdminVmPopup());
 
         // High Availability Tab
-        isHighlyAvailableEditor.setLabel("Highly Available");
+        isHighlyAvailableEditor.setLabel(constants.highlyAvailableVmPopup());
 
         // Resource Allocation Tab
-        provisioningEditor.setLabel("Template Provisioning");
-        provisioningThinEditor.setLabel("Thin");
-        provisioningCloneEditor.setLabel("Clone");
-        minAllocatedMemoryEditor.setLabel("Physical Memory Guaranteed");
+        provisioningEditor.setLabel(constants.templateProvisVmPopup());
+        provisioningThinEditor.setLabel(constants.thinVmPopup());
+        provisioningCloneEditor.setLabel(constants.cloneVmPopup());
+        minAllocatedMemoryEditor.setLabel(constants.physMemGuarVmPopup());
 
         // Boot Options
-        firstBootDeviceEditor.setLabel("First Device");
-        secondBootDeviceEditor.setLabel("Second Device");
-        kernel_pathEditor.setLabel("kernel path");
-        initrd_pathEditor.setLabel("initrd path");
-        kernel_parametersEditor.setLabel("kernel parameters");
-        customPropertiesEditor.setLabel("Custom Properties");
+        firstBootDeviceEditor.setLabel(constants.firstDeviceVmPopup());
+        secondBootDeviceEditor.setLabel(constants.secondDeviceVmPopup());
+        kernel_pathEditor.setLabel(constants.kernelPathVmPopup());
+        initrd_pathEditor.setLabel(constants.initrdPathVmPopup());
+        kernel_parametersEditor.setLabel(constants.kernelParamsVmPopup());
+        customPropertiesEditor.setLabel(constants.customPropsVmPopup());
     }
 
     private void applyStyles() {
@@ -576,15 +575,15 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
                     public void eventRaised(Event ev, Object sender,
                             EventArgs args) {
                         PropertyChangedEventArgs rangeArgs = (PropertyChangedEventArgs) args;
-                        if (rangeArgs.PropertyName.equalsIgnoreCase("Min")) {
+                        if (rangeArgs.PropertyName.equalsIgnoreCase("Min")) { //$NON-NLS-1$
                             totalCPUCoresEditor.setMin(((Double) object
                                     .getTotalCPUCores().getMin()).intValue());
                         } else if (rangeArgs.PropertyName
-                                .equalsIgnoreCase("Max")) {
+                                .equalsIgnoreCase("Max")) { //$NON-NLS-1$
                             totalCPUCoresEditor.setMax(((Double) object
                                     .getTotalCPUCores().getMax()).intValue());
                         } else if (rangeArgs.PropertyName
-                                .equalsIgnoreCase("Interval")) {
+                                .equalsIgnoreCase("Interval")) { //$NON-NLS-1$
                             totalCPUCoresEditor.setStepSize(((Double) object
                                     .getTotalCPUCores().getInterval())
                                     .intValue());
@@ -599,48 +598,48 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 String propName = ((PropertyChangedEventArgs) args).PropertyName;
-                if ("IsWindowsOS".equals(propName)) {
+                if ("IsWindowsOS".equals(propName)) { //$NON-NLS-1$
                     if (vm.getIsWindowsOS()) {
                         windowsSysPrepTab.setVisible(true);
                     } else {
                         windowsSysPrepTab.setVisible(false);
                     }
-                } else if ("IsGeneralTabValid".equals(propName)) {
+                } else if ("IsGeneralTabValid".equals(propName)) { //$NON-NLS-1$
                     if (vm.getIsGeneralTabValid()) {
                         generalTab.markAsValid();
                     } else {
                         generalTab.markAsInvalid(null);
                     }
-                } else if ("IsDisplayTabValid".equals(propName)) {
+                } else if ("IsDisplayTabValid".equals(propName)) { //$NON-NLS-1$
                     if (vm.getIsDisplayTabValid()) {
                         consoleTab.markAsValid();
                     } else {
                         consoleTab.markAsInvalid(null);
                     }
-                } else if ("IsAllocationTabValid".equals(propName)) {
+                } else if ("IsAllocationTabValid".equals(propName)) { //$NON-NLS-1$
                     if (vm.getIsAllocationTabValid()) {
                         resourceAllocationTab.markAsValid();
                     } else {
                         resourceAllocationTab.markAsInvalid(null);
                     }
-                } else if ("IsHighlyAvailable".equals(propName)) {
+                } else if ("IsHighlyAvailable".equals(propName)) { //$NON-NLS-1$
                     highAvailabilityTab.setVisible((Boolean) vm.getIsHighlyAvailable().getEntity());
-                } else if ("IsBootSequenceTabValid".equals(propName)) {
+                } else if ("IsBootSequenceTabValid".equals(propName)) { //$NON-NLS-1$
                     if ((Boolean) vm.getIsHighlyAvailable().getEntity()) {
                         bootOptionsTab.markAsValid();
                     } else {
                         bootOptionsTab.markAsInvalid(null);
                     }
-                } else if ("IsCustomPropertiesAvailable".equals(propName)) {
+                } else if ("IsCustomPropertiesAvailable".equals(propName)) { //$NON-NLS-1$
                     customPropertiesTab.setVisible(vm.getIsCustomPropertiesAvailable());
-                } else if ("IsCustomPropertiesTabValid".equals(propName)) {
+                } else if ("IsCustomPropertiesTabValid".equals(propName)) { //$NON-NLS-1$
                     if (vm.getIsCustomPropertiesTabValid()) {
                         customPropertiesTab.markAsValid();
                     } else {
                         customPropertiesTab.markAsInvalid(null);
                     }
                 }
-                else if ("IsDisksAvailable".equals(propName)) {
+                else if ("IsDisksAvailable".equals(propName)) { //$NON-NLS-1$
                     boolean isDisksAvailable = vm.getIsDisksAvailable();
                     disksAllocationPanel.setVisible(isDisksAvailable);
 
@@ -667,7 +666,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 String propName = ((PropertyChangedEventArgs) args).PropertyName;
-                if ("IsLinux_Unassign_UnknownOS".equals(propName)) {
+                if ("IsLinux_Unassign_UnknownOS".equals(propName)) { //$NON-NLS-1$
                     linuxBootOptionsPanel.setVisible(vm.getIsLinux_Unassign_UnknownOS());
                 }
             }

@@ -32,7 +32,7 @@ public class PercentageProgressBar extends Composite implements IsEditor<TakesVa
     @Override
     public void setValue(Object value) {
         if (!(value instanceof Integer)) {
-            throw new IllegalArgumentException(PercentageProgressBar.class + " can only accept integer, but got "
+            throw new IllegalArgumentException(PercentageProgressBar.class + " can only accept integer, but got " //$NON-NLS-1$
                     + value.getClass());
         }
 
@@ -41,7 +41,7 @@ public class PercentageProgressBar extends Composite implements IsEditor<TakesVa
 
     public void setValue(Integer value) {
         this.value = value;
-        String percentage = value + "%";
+        String percentage = value + "%"; //$NON-NLS-1$
         percentageLabel.setText(percentage);
         percentageBar.setWidth(percentage);
     }

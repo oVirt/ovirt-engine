@@ -17,7 +17,7 @@ public class RangeEntityModel extends EntityModel
         if (min != value)
         {
             min = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Min"));
+            OnPropertyChanged(new PropertyChangedEventArgs("Min")); //$NON-NLS-1$
         }
     }
 
@@ -33,7 +33,7 @@ public class RangeEntityModel extends EntityModel
         if (max != value)
         {
             max = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Max"));
+            OnPropertyChanged(new PropertyChangedEventArgs("Max")); //$NON-NLS-1$
         }
     }
 
@@ -49,7 +49,7 @@ public class RangeEntityModel extends EntityModel
         if (interval != value)
         {
             interval = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Interval"));
+            OnPropertyChanged(new PropertyChangedEventArgs("Interval")); //$NON-NLS-1$
         }
     }
 
@@ -65,7 +65,7 @@ public class RangeEntityModel extends EntityModel
         if (isAllValuesSet != value)
         {
             isAllValuesSet = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsAllValuesSet"));
+            OnPropertyChanged(new PropertyChangedEventArgs("IsAllValuesSet")); //$NON-NLS-1$
         }
     }
 }

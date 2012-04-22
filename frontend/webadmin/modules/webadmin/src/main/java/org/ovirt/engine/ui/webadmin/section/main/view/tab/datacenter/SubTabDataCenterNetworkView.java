@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterNetworkListModel;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTabDataCenterNetworkPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
@@ -24,21 +25,21 @@ public class SubTabDataCenterNetworkView extends AbstractSubTabTableView<storage
     }
 
     @Inject
-    public SubTabDataCenterNetworkView(SearchableDetailModelProvider<network, DataCenterListModel, DataCenterNetworkListModel> modelProvider) {
+    public SubTabDataCenterNetworkView(SearchableDetailModelProvider<network, DataCenterListModel, DataCenterNetworkListModel> modelProvider, ApplicationConstants constants) {
         super(modelProvider);
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        initTable();
+        initTable(constants);
         initWidget(getTable());
     }
 
-    void initTable() {
+    void initTable(ApplicationConstants constants) {
         TextColumnWithTooltip<network> nameColumn = new TextColumnWithTooltip<network>() {
             @Override
             public String getValue(network object) {
                 return object.getname();
             }
         };
-        getTable().addColumn(nameColumn, "Name");
+        getTable().addColumn(nameColumn, constants.nameNetwork());
 
         TextColumnWithTooltip<network> typeColumn = new TextColumnWithTooltip<network>() {
             @Override
@@ -46,21 +47,21 @@ public class SubTabDataCenterNetworkView extends AbstractSubTabTableView<storage
                 return object.getdescription();
             }
         };
-        getTable().addColumn(typeColumn, "Description");
+        getTable().addColumn(typeColumn, constants.descriptionNetwork());
 
-        getTable().addActionButton(new WebAdminButtonDefinition<network>("New") {
+        getTable().addActionButton(new WebAdminButtonDefinition<network>(constants.newNetwork()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getNewCommand();
             }
         });
-        getTable().addActionButton(new WebAdminButtonDefinition<network>("Edit") {
+        getTable().addActionButton(new WebAdminButtonDefinition<network>(constants.editNetwork()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getEditCommand();
             }
         });
-        getTable().addActionButton(new WebAdminButtonDefinition<network>("Remove") {
+        getTable().addActionButton(new WebAdminButtonDefinition<network>(constants.removeNetwork()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getRemoveCommand();

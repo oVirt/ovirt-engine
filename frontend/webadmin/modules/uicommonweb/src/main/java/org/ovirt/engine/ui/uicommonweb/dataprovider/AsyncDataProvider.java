@@ -265,7 +265,7 @@ public final class AsyncDataProvider {
             }
         };
         Frontend.RunQuery(VdcQueryType.Search,
-                new SearchParameters("Cluster: name=" + name + " sortby name", SearchType.Cluster),
+                new SearchParameters("Cluster: name=" + name + " sortby name", SearchType.Cluster), //$NON-NLS-1$ //$NON-NLS-2$
                 aQuery);
     }
 
@@ -300,7 +300,7 @@ public final class AsyncDataProvider {
                 return vms.size() > 0 ? vms.get(0) : null;
             }
         };
-        Frontend.RunQuery(VdcQueryType.Search, new SearchParameters("Vms: pool=" + poolName, SearchType.VM), aQuery);
+        Frontend.RunQuery(VdcQueryType.Search, new SearchParameters("Vms: pool=" + poolName, SearchType.VM), aQuery); //$NON-NLS-1$
     }
 
     public static void GetTimeZoneList(AsyncQuery aQuery) {
@@ -331,7 +331,7 @@ public final class AsyncDataProvider {
             }
         };
         Frontend.RunQuery(VdcQueryType.Search,
-                new SearchParameters("DataCenter: sortby name", SearchType.StoragePool),
+                new SearchParameters("DataCenter: sortby name", SearchType.StoragePool), //$NON-NLS-1$
                 aQuery);
     }
 
@@ -348,7 +348,7 @@ public final class AsyncDataProvider {
             }
         };
         Frontend.RunQuery(VdcQueryType.Search,
-                new SearchParameters("DataCenter: name=" + name + " sortby name", SearchType.StoragePool),
+                new SearchParameters("DataCenter: name=" + name + " sortby name", SearchType.StoragePool), //$NON-NLS-1$ //$NON-NLS-2$
                 aQuery);
     }
 
@@ -660,7 +660,7 @@ public final class AsyncDataProvider {
                 {
                     return ((java.util.Map.Entry<String, String>) source).getKey();
                 }
-                return "";
+                return ""; //$NON-NLS-1$
             }
         };
         Frontend.RunQuery(VdcQueryType.GetDefualtTimeZone, new VdcQueryParametersBase(), aQuery);
@@ -691,7 +691,7 @@ public final class AsyncDataProvider {
                 return new java.util.ArrayList<VDS>();
             }
         };
-        Frontend.RunQuery(VdcQueryType.Search, new SearchParameters("Host: cluster = " + clusterName + " sortby name",
+        Frontend.RunQuery(VdcQueryType.Search, new SearchParameters("Host: cluster = " + clusterName + " sortby name", //$NON-NLS-1$ //$NON-NLS-2$
                 SearchType.VDS), aQuery);
     }
 
@@ -709,8 +709,8 @@ public final class AsyncDataProvider {
                 return new java.util.ArrayList<VDS>();
             }
         };
-        Frontend.RunQuery(VdcQueryType.Search, new SearchParameters("Host: datacenter = " + dataCenterName
-                + " sortby name", SearchType.VDS), aQuery);
+        Frontend.RunQuery(VdcQueryType.Search, new SearchParameters("Host: datacenter = " + dataCenterName //$NON-NLS-1$
+                + " sortby name", SearchType.VDS), aQuery); //$NON-NLS-1$
     }
 
     public static void GetVmDiskList(AsyncQuery aQuery, Guid vmId, boolean isRefresh) {
@@ -937,7 +937,7 @@ public final class AsyncDataProvider {
                 return new java.util.ArrayList<VDS>();
             }
         };
-        SearchParameters searchParameters = new SearchParameters("Host:", SearchType.VDS);
+        SearchParameters searchParameters = new SearchParameters("Host:", SearchType.VDS); //$NON-NLS-1$
         searchParameters.setMaxCount(9999);
         Frontend.RunQuery(VdcQueryType.Search, searchParameters, aQuery);
     }
@@ -960,8 +960,8 @@ public final class AsyncDataProvider {
         };
         SearchParameters searchParameters;
         searchParameters =
-                clusterName == null ? new SearchParameters("Volumes:", SearchType.GlusterVolume)
-                        : new SearchParameters("Volumes: cluster.name=" + clusterName, SearchType.GlusterVolume);
+                clusterName == null ? new SearchParameters("Volumes:", SearchType.GlusterVolume) //$NON-NLS-1$
+                        : new SearchParameters("Volumes: cluster.name=" + clusterName, SearchType.GlusterVolume); //$NON-NLS-1$
         searchParameters.setMaxCount(9999);
         Frontend.RunQuery(VdcQueryType.Search, searchParameters, aQuery);
     }
@@ -970,7 +970,7 @@ public final class AsyncDataProvider {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
             {
-                return source != null ? (String) source : "";
+                return source != null ? (String) source : ""; //$NON-NLS-1$
             }
         };
         Frontend.RunPublicQuery(VdcQueryType.GetConfigurationValue,
@@ -1266,7 +1266,7 @@ public final class AsyncDataProvider {
                 java.util.ArrayList<String> list = new java.util.ArrayList<String>();
                 if (source != null)
                 {
-                    String[] array = ((String) source).split("[,]", -1);
+                    String[] array = ((String) source).split("[,]", -1); //$NON-NLS-1$
                     for (String item : array)
                     {
                         list.add(item);
@@ -1342,7 +1342,7 @@ public final class AsyncDataProvider {
             }
         };
 
-        SearchParameters searchParams = new SearchParameters("Storage:", SearchType.StorageDomain);
+        SearchParameters searchParams = new SearchParameters("Storage:", SearchType.StorageDomain); //$NON-NLS-1$
         searchParams.setMaxCount(9999);
 
         Frontend.RunQuery(VdcQueryType.Search, searchParams, aQuery);
@@ -1358,7 +1358,7 @@ public final class AsyncDataProvider {
             }
         };
 
-        SearchParameters searchParams = new SearchParameters("Storage:", SearchType.StorageDomain);
+        SearchParameters searchParams = new SearchParameters("Storage:", SearchType.StorageDomain); //$NON-NLS-1$
         searchParams.setMaxCount(9999);
 
         Frontend.RunQuery(VdcQueryType.Search, searchParams, aQuery);
@@ -1380,7 +1380,7 @@ public final class AsyncDataProvider {
             }
         };
         SearchParameters sp =
-                new SearchParameters(StringFormat.format("hosts: datacenter=%1$s", dataCenterName), SearchType.VDS);
+                new SearchParameters(StringFormat.format("hosts: datacenter=%1$s", dataCenterName), SearchType.VDS); //$NON-NLS-1$
         Frontend.RunQuery(VdcQueryType.Search, sp, aQuery);
     }
 
@@ -1425,7 +1425,7 @@ public final class AsyncDataProvider {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
             {
-                return source != null ? (String) source : "";
+                return source != null ? (String) source : ""; //$NON-NLS-1$
             }
         };
         GetConfigFromCache(
@@ -1460,7 +1460,7 @@ public final class AsyncDataProvider {
                 return source;
             }
         };
-        Frontend.RunQuery(VdcQueryType.Search, new SearchParameters(StringFormat.format("Storage: name=%1$s", name),
+        Frontend.RunQuery(VdcQueryType.Search, new SearchParameters(StringFormat.format("Storage: name=%1$s", name), //$NON-NLS-1$
                 SearchType.StorageDomain), aQuery);
     }
 
@@ -1664,8 +1664,8 @@ public final class AsyncDataProvider {
             }
         };
 
-        Frontend.RunQuery(VdcQueryType.Search, new SearchParameters("Host: cluster = " + clusterName
-                + " and status = up", SearchType.VDS), aQuery);
+        Frontend.RunQuery(VdcQueryType.Search, new SearchParameters("Host: cluster = " + clusterName //$NON-NLS-1$
+                + " and status = up", SearchType.VDS), aQuery); //$NON-NLS-1$
     }
 
     public static void GetClusterListByStorageDomain(AsyncQuery _AsyncQuery,
@@ -1762,7 +1762,7 @@ public final class AsyncDataProvider {
                 return vms;
             }
         };
-        Frontend.RunQuery(VdcQueryType.Search, new SearchParameters("Vms: pool=" + poolName, SearchType.VM), aQuery);
+        Frontend.RunQuery(VdcQueryType.Search, new SearchParameters("Vms: pool=" + poolName, SearchType.VM), aQuery); //$NON-NLS-1$
     }
 
     public static void GetDiskList(AsyncQuery aQuery) {
@@ -1774,7 +1774,7 @@ public final class AsyncDataProvider {
             }
         };
 
-        SearchParameters searchParams = new SearchParameters("Disks:", SearchType.DiskImage);
+        SearchParameters searchParams = new SearchParameters("Disks:", SearchType.DiskImage); //$NON-NLS-1$
         searchParams.setMaxCount(9999);
 
         Frontend.RunQuery(VdcQueryType.Search, searchParams, aQuery);
@@ -1831,7 +1831,7 @@ public final class AsyncDataProvider {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
             {
-                return source != null ? (String) source : "";
+                return source != null ? (String) source : ""; //$NON-NLS-1$
             }
         };
         GetConfigFromCache(
@@ -1870,7 +1870,7 @@ public final class AsyncDataProvider {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
             {
-                return source != null ? (String) source : "";
+                return source != null ? (String) source : ""; //$NON-NLS-1$
             }
         };
         GetConfigFromCache(

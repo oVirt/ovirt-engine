@@ -9,14 +9,14 @@ import org.ovirt.engine.core.compat.RegexOptions;
  */
 public class MailAddress {
 
-    private static String ATOM = "[^\\x00-\\x1F^\\(^\\)^\\<^\\>^\\@^\\,^\\;^\\:^\\\\^\\\"^\\.^\\[^\\]^\\s]";
-    private static String DOMAIN = "(" + ATOM + "+(\\." + ATOM + "+)*";
-    private static String IP_DOMAIN = "\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\]";
-    
-    private static String pattern = "^" + ATOM + "+(\\." + ATOM + "+)*@" + DOMAIN + "|" + IP_DOMAIN + ")$";
-    
-    public MailAddress(String value) { 
-        if (!Regex.IsMatch(value, pattern, RegexOptions.IgnoreCase)) {            
+    private static String ATOM = "[^\\x00-\\x1F^\\(^\\)^\\<^\\>^\\@^\\,^\\;^\\:^\\\\^\\\"^\\.^\\[^\\]^\\s]"; //$NON-NLS-1$
+    private static String DOMAIN = "(" + ATOM + "+(\\." + ATOM + "+)*"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    private static String IP_DOMAIN = "\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\]"; //$NON-NLS-1$
+
+    private static String pattern = "^" + ATOM + "+(\\." + ATOM + "+)*@" + DOMAIN + "|" + IP_DOMAIN + ")$"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+
+    public MailAddress(String value) {
+        if (!Regex.IsMatch(value, pattern, RegexOptions.IgnoreCase)) {
             throw new RuntimeException();
         }
     }

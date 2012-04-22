@@ -7,6 +7,7 @@ import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
+import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
 import org.ovirt.engine.ui.common.widget.tree.AbstractSubTabTree;
 import org.ovirt.engine.ui.uicommonweb.models.events.TaskListModel;
@@ -23,21 +24,23 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class TasksTree extends AbstractSubTabTree<TaskListModel, Job, Step> {
 
-    public TasksTree(CommonApplicationResources resources, CommonApplicationConstants constants) {
-        super(resources, constants);
+    public TasksTree(CommonApplicationResources resources,
+            CommonApplicationConstants constants,
+            CommonApplicationTemplates templates) {
+        super(resources, constants, templates);
     }
 
     @Override
     protected TreeItem getRootItem(Job task) {
         HorizontalPanel panel = new HorizontalPanel();
         panel.setSpacing(1);
-        panel.setWidth("100%");
+        panel.setWidth("100%"); //$NON-NLS-1$
 
-        addItemToPanel(panel, new Image(getStatusImage(task.getStatus())), "25px");
-        addTextBoxToPanel(panel, new TextBoxLabel(), task.getDescription(), "");
-        addValueLabelToPanel(panel, new FullDateTimeLabel(), task.getStartTime(), "150px");
-        addTextBoxToPanel(panel, new TextBoxLabel(), task.getEndTime() == null ? "" : "till", "40px");
-        addValueLabelToPanel(panel, new FullDateTimeLabel(), task.getEndTime(), "150px");
+        addItemToPanel(panel, new Image(getStatusImage(task.getStatus())), "25px"); //$NON-NLS-1$
+        addTextBoxToPanel(panel, new TextBoxLabel(), task.getDescription(), ""); //$NON-NLS-1$
+        addValueLabelToPanel(panel, new FullDateTimeLabel(), task.getStartTime(), "150px"); //$NON-NLS-1$
+        addTextBoxToPanel(panel, new TextBoxLabel(), task.getEndTime() == null ? "" : "till", "40px"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        addValueLabelToPanel(panel, new FullDateTimeLabel(), task.getEndTime(), "150px"); //$NON-NLS-1$
 
         TreeItem treeItem = new TreeItem(panel);
         String id =
@@ -50,7 +53,7 @@ public class TasksTree extends AbstractSubTabTree<TaskListModel, Job, Step> {
     @Override
     protected void emptyRoot(TreeItem rootItem) {
         super.emptyRoot(rootItem);
-        rootItem.addItem(new Label("Loading..."));
+        rootItem.addItem(new Label("Loading...")); //$NON-NLS-1$
     }
 
     @Override
@@ -83,13 +86,13 @@ public class TasksTree extends AbstractSubTabTree<TaskListModel, Job, Step> {
     protected TreeItem getLeafItem(Step step) {
         HorizontalPanel panel = new HorizontalPanel();
         panel.setSpacing(1);
-        panel.setWidth("100%");
+        panel.setWidth("100%"); //$NON-NLS-1$
 
-        addItemToPanel(panel, new Image(getStatusImage(step.getStatus())), "25px");
-        addTextBoxToPanel(panel, new TextBoxLabel(), step.getDescription(), "");
-        addValueLabelToPanel(panel, new FullDateTimeLabel(), step.getStartTime(), "150px");
-        addTextBoxToPanel(panel, new TextBoxLabel(), step.getEndTime() == null ? "" : "till", "40px");
-        addValueLabelToPanel(panel, new FullDateTimeLabel(), step.getEndTime(), "150px");
+        addItemToPanel(panel, new Image(getStatusImage(step.getStatus())), "25px"); //$NON-NLS-1$
+        addTextBoxToPanel(panel, new TextBoxLabel(), step.getDescription(), ""); //$NON-NLS-1$
+        addValueLabelToPanel(panel, new FullDateTimeLabel(), step.getStartTime(), "150px"); //$NON-NLS-1$
+        addTextBoxToPanel(panel, new TextBoxLabel(), step.getEndTime() == null ? "" : "till", "40px"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        addValueLabelToPanel(panel, new FullDateTimeLabel(), step.getEndTime(), "150px"); //$NON-NLS-1$
 
         TreeItem treeItem = new TreeItem(panel);
         treeItem.setUserObject(step.getId());
@@ -142,7 +145,7 @@ public class TasksTree extends AbstractSubTabTree<TaskListModel, Job, Step> {
     @Override
     protected void addItemToPanel(HorizontalPanel panel, Widget item, String width) {
         super.addItemToPanel(panel, item, width);
-        item.getElement().getStyle().setColor("white");
+        item.getElement().getStyle().setColor("white"); //$NON-NLS-1$
         item.getElement().getStyle().setVerticalAlign(VerticalAlign.MIDDLE);
         panel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
     }
@@ -150,9 +153,9 @@ public class TasksTree extends AbstractSubTabTree<TaskListModel, Job, Step> {
     @Override
     protected void styleItem(TreeItem item, boolean enabled) {
         super.styleItem(item, enabled);
-        item.getElement().getStyle().setProperty("borderTop", "1px solid white");
+        item.getElement().getStyle().setProperty("borderTop", "1px solid white"); //$NON-NLS-1$ //$NON-NLS-2$
         if (item.getParentItem() != null) {
-            item.getElement().getStyle().setBackgroundColor("grey");
+            item.getElement().getStyle().setBackgroundColor("grey"); //$NON-NLS-1$
         }
     }
 }

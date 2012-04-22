@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterHostListModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.SubTabClusterHostPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.table.column.HostStatusColumn;
@@ -18,14 +19,14 @@ public class SubTabClusterHostView extends AbstractSubTabTableView<VDSGroup, VDS
         implements SubTabClusterHostPresenter.ViewDef {
 
     @Inject
-    public SubTabClusterHostView(SearchableDetailModelProvider<VDS, ClusterListModel, ClusterHostListModel> modelProvider) {
+    public SubTabClusterHostView(SearchableDetailModelProvider<VDS, ClusterListModel, ClusterHostListModel> modelProvider, ApplicationConstants constants) {
         super(modelProvider);
-        initTable();
+        initTable(constants);
         initWidget(getTable());
     }
 
-    void initTable() {
-        getTable().addColumn(new HostStatusColumn(), "", "30px");
+    void initTable(final ApplicationConstants constants) {
+        getTable().addColumn(new HostStatusColumn(), constants.empty(), "30px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VDS> nameColumn = new TextColumnWithTooltip<VDS>() {
             @Override
@@ -33,7 +34,7 @@ public class SubTabClusterHostView extends AbstractSubTabTableView<VDSGroup, VDS
                 return object.getvds_name();
             }
         };
-        getTable().addColumn(nameColumn, "Name");
+        getTable().addColumn(nameColumn, constants.nameClusterHost());
 
         TextColumnWithTooltip<VDS> hostColumn = new TextColumnWithTooltip<VDS>() {
             @Override
@@ -41,7 +42,7 @@ public class SubTabClusterHostView extends AbstractSubTabTableView<VDSGroup, VDS
                 return object.gethost_name();
             }
         };
-        getTable().addColumn(hostColumn, "Host/IP");
+        getTable().addColumn(hostColumn, constants.hostIpClusterHost());
 
         TextColumnWithTooltip<VDS> statusColumn = new EnumColumn<VDS, VDSStatus>() {
             @Override
@@ -49,15 +50,15 @@ public class SubTabClusterHostView extends AbstractSubTabTableView<VDSGroup, VDS
                 return object.getstatus();
             }
         };
-        getTable().addColumn(statusColumn, "Status");
+        getTable().addColumn(statusColumn, constants.statusClusterHost());
 
         TextColumnWithTooltip<VDS> loadColumn = new TextColumnWithTooltip<VDS>() {
             @Override
             public String getValue(VDS object) {
-                return object.getvm_active() + " VMs";
+                return object.getvm_active() + " " + constants.vmsClusterHost(); //$NON-NLS-1$
             }
         };
-        getTable().addColumn(loadColumn, "Load");
+        getTable().addColumn(loadColumn, constants.loadClusterHost());
     }
 
 }

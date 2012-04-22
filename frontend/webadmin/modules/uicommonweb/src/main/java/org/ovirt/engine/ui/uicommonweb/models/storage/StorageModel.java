@@ -320,7 +320,7 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
                 getSelectedItem().getUpdateCommand().Execute();
 
                 VDSType vdsType = ((VDS) this.getHost().getSelectedItem()).getvds_type();
-                String prefix = vdsType.equals(VDSType.oVirtNode) ? localFSPath : "";
+                String prefix = vdsType.equals(VDSType.oVirtNode) ? localFSPath : ""; //$NON-NLS-1$
                 if (!StringHelper.isNullOrEmpty(prefix))
                 {
                     for (Object item : getItems())
@@ -354,7 +354,7 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
                 getDataCenter().setItems(new java.util.ArrayList<storage_pool>(java.util.Arrays.asList(new storage_pool[] { dc })));
                 getDataCenter().setSelectedItem(dc);
                 getDataCenter().setIsChangable(false);
-                getDataCenter().setInfo("Cannot choose Storage's Data Center in tree context");
+                getDataCenter().setInfo("Cannot choose Storage's Data Center in tree context"); //$NON-NLS-1$
             }
                 break;
 
@@ -362,7 +362,7 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
                 VDS host = (VDS) getSystemTreeSelectedItem().getEntity();
 
                 getHost().setIsChangable(false);
-                getHost().setInfo("Cannot choose Storage's Host in tree context");
+                getHost().setInfo("Cannot choose Storage's Host in tree context"); //$NON-NLS-1$
                 getHost().setSelectedItem(host);
 
                 SystemTreeItemModel dataCenterItem =
@@ -372,7 +372,7 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
                 getDataCenter().setItems(new java.util.ArrayList<storage_pool>(java.util.Arrays.asList(new storage_pool[] { dc })));
                 getDataCenter().setSelectedItem(dc);
                 getDataCenter().setIsChangable(false);
-                getDataCenter().setInfo("Cannot choose Storage's Data Center in tree context");
+                getDataCenter().setInfo("Cannot choose Storage's Data Center in tree context"); //$NON-NLS-1$
             }
                 break;
             }
@@ -452,7 +452,7 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
     {
         storage_pool tempVar = new storage_pool();
         tempVar.setId(UnassignedDataCenterId);
-        tempVar.setname("(none)");
+        tempVar.setname("(none)"); //$NON-NLS-1$
         dataCenters.add(tempVar);
     }
 
@@ -471,7 +471,7 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
             java.util.ArrayList<storage_pool> dataCenterList =
                     (java.util.ArrayList<storage_pool>) getDataCenter().getItems();
             java.util.ArrayList<storage_pool> localDCList = new java.util.ArrayList<storage_pool>();
-            String dataCenterQueryLine = "";
+            String dataCenterQueryLine = ""; //$NON-NLS-1$
 
             for (storage_pool storagePool : dataCenterList)
             {
@@ -486,9 +486,9 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
                 int i = 0;
                 for (; i < localDCList.size() - 1; i++)
                 {
-                    dataCenterQueryLine += "datacenter=" + localDCList.get(i).getname() + " or ";
+                    dataCenterQueryLine += "datacenter=" + localDCList.get(i).getname() + " or "; //$NON-NLS-1$ //$NON-NLS-2$
                 }
-                dataCenterQueryLine += "datacenter=" + localDCList.get(i).getname();
+                dataCenterQueryLine += "datacenter=" + localDCList.get(i).getname(); //$NON-NLS-1$
 
                 AsyncQuery _asyncQuery = new AsyncQuery();
                 _asyncQuery.setModel(this);
@@ -503,7 +503,7 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
                         storageModel.PostUpdateHost(hosts);
                     }
                 };
-                Frontend.RunQuery(VdcQueryType.Search, new SearchParameters("Hosts: status=Up " + dataCenterQueryLine,
+                Frontend.RunQuery(VdcQueryType.Search, new SearchParameters("Hosts: status=Up " + dataCenterQueryLine, //$NON-NLS-1$
                         SearchType.VDS), _asyncQuery);
             }
         }
@@ -551,7 +551,7 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
         {
             for (VDS host : hosts)
             {
-                if (host.getvds_group_compatibility_version().compareTo(new Version("2.2")) >= 0)
+                if (host.getvds_group_compatibility_version().compareTo(new Version("2.2")) >= 0) //$NON-NLS-1$
                 {
                     list.add(host);
                 }
@@ -631,12 +631,12 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
                     formats.add(StorageFormatType.V1);
                 }
                 else if ((getSelectedItem().getType() == StorageType.ISCSI || getSelectedItem().getType() == StorageType.FCP)
-                        && dataCenter.getcompatibility_version().compareTo(new Version("3.0")) < 0)
+                        && dataCenter.getcompatibility_version().compareTo(new Version("3.0")) < 0) //$NON-NLS-1$
                 {
                     formats.add(StorageFormatType.V1);
                 }
                 else if ((getSelectedItem().getType() == StorageType.ISCSI || getSelectedItem().getType() == StorageType.FCP)
-                        && dataCenter.getcompatibility_version().compareTo(new Version("3.0")) >= 0)
+                        && dataCenter.getcompatibility_version().compareTo(new Version("3.0")) >= 0) //$NON-NLS-1$
                 {
                     formats.add(StorageFormatType.V2);
                     selectItem = StorageFormatType.V2;

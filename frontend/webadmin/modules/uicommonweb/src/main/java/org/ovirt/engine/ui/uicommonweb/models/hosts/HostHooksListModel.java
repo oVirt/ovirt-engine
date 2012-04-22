@@ -9,6 +9,7 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
 public class HostHooksListModel extends SearchableListModel
@@ -27,7 +28,8 @@ public class HostHooksListModel extends SearchableListModel
 
     public HostHooksListModel()
     {
-        setTitle("Host Hooks");
+        setTitle(ConstantsManager.getInstance().getConstants().hostHooksTitle());
+        setHashName("host_hooks"); // $//$NON-NLS-1$
     }
 
     @Override
@@ -43,7 +45,7 @@ public class HostHooksListModel extends SearchableListModel
     {
         super.EntityPropertyChanged(sender, e);
 
-        if (e.PropertyName.equals("status"))
+        if (e.PropertyName.equals("status")) //$NON-NLS-1$
         {
             getSearchCommand().Execute();
         }
@@ -96,10 +98,10 @@ public class HostHooksListModel extends SearchableListModel
                         for (java.util.Map.Entry<String, String> keyValuePair2 : keyValuePair1.getValue().entrySet())
                         {
                             row = new java.util.HashMap<String, String>();
-                            row.put("EventName", keyValuePair.getKey());
-                            row.put("ScriptName", keyValuePair1.getKey());
-                            row.put("PropertyName", keyValuePair2.getKey());
-                            row.put("PropertyValue", keyValuePair2.getValue());
+                            row.put("EventName", keyValuePair.getKey()); //$NON-NLS-1$
+                            row.put("ScriptName", keyValuePair1.getKey()); //$NON-NLS-1$
+                            row.put("PropertyName", keyValuePair2.getKey()); //$NON-NLS-1$
+                            row.put("PropertyValue", keyValuePair2.getValue()); //$NON-NLS-1$
                             list.add(row);
                         }
                     }
@@ -123,6 +125,6 @@ public class HostHooksListModel extends SearchableListModel
 
     @Override
     protected String getListName() {
-        return "HostHooksListModel";
+        return "HostHooksListModel"; //$NON-NLS-1$
     }
 }

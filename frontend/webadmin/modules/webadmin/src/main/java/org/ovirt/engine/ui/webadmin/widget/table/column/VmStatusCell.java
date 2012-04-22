@@ -91,7 +91,7 @@ public class VmStatusCell extends AbstractCell<VM> {
             // Append tooltip
             Translator translator = EnumTranslator.Create(VmPauseStatus.class);
             String toolTip = translator.get(vm.getVmPauseStatus());
-            html = html.replaceFirst("img", "img " + "title='" + toolTip + "' ");
+            html = html.replaceFirst("img", "img " + "title='" + toolTip + "' "); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 
             return SafeHtmlUtils.fromTrustedString(html);
         }

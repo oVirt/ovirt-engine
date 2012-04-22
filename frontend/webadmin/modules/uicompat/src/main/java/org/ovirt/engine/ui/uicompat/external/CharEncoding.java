@@ -63,7 +63,7 @@ public class CharEncoding {
      * 
      * @see <a href="http://java.sun.com/j2se/1.4.2/docs/api/java/nio/charset/Charset.html">Standard charsets</a>
      */
-    public static final String ISO_8859_1 = "ISO-8859-1";
+    public static final String ISO_8859_1 = "ISO-8859-1"; //$NON-NLS-1$
 
     /**
      * <p>
@@ -75,7 +75,7 @@ public class CharEncoding {
      * 
      * @see <a href="http://java.sun.com/j2se/1.4.2/docs/api/java/nio/charset/Charset.html">Standard charsets</a>
      */
-    public static final String US_ASCII = "US-ASCII";
+    public static final String US_ASCII = "US-ASCII"; //$NON-NLS-1$
 
     /**
      * <p>
@@ -88,7 +88,7 @@ public class CharEncoding {
      * 
      * @see <a href="http://java.sun.com/j2se/1.4.2/docs/api/java/nio/charset/Charset.html">Standard charsets</a>
      */
-    public static final String UTF_16 = "UTF-16";
+    public static final String UTF_16 = "UTF-16"; //$NON-NLS-1$
 
     /**
      * <p>
@@ -100,7 +100,7 @@ public class CharEncoding {
      * 
      * @see <a href="http://java.sun.com/j2se/1.4.2/docs/api/java/nio/charset/Charset.html">Standard charsets</a>
      */
-    public static final String UTF_16BE = "UTF-16BE";
+    public static final String UTF_16BE = "UTF-16BE"; //$NON-NLS-1$
 
     /**
      * <p>
@@ -112,7 +112,7 @@ public class CharEncoding {
      * 
      * @see <a href="http://java.sun.com/j2se/1.4.2/docs/api/java/nio/charset/Charset.html">Standard charsets</a>
      */
-    public static final String UTF_16LE = "UTF-16LE";
+    public static final String UTF_16LE = "UTF-16LE"; //$NON-NLS-1$
 
     /**
      * <p>
@@ -124,5 +124,5 @@ public class CharEncoding {
      * 
      * @see <a href="http://java.sun.com/j2se/1.4.2/docs/api/java/nio/charset/Charset.html">Standard charsets</a>
      */
-    public static final String UTF_8 = "UTF-8";
+    public static final String UTF_8 = "UTF-8"; //$NON-NLS-1$
 }

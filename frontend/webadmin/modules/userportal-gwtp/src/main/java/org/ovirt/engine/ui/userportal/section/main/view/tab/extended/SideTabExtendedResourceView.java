@@ -4,6 +4,7 @@ import org.ovirt.engine.ui.common.SubTableResources;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.view.AbstractView;
 import org.ovirt.engine.ui.uicommonweb.models.resources.ResourcesModel;
+import org.ovirt.engine.ui.userportal.ApplicationConstants;
 import org.ovirt.engine.ui.userportal.ApplicationResources;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.SideTabExtendedResourcePresenter;
 import org.ovirt.engine.ui.userportal.uicommon.model.resources.ResourcesModelProvider;
@@ -84,9 +85,9 @@ public class SideTabExtendedResourceView extends AbstractView implements SideTab
     @Inject
     public SideTabExtendedResourceView(ResourcesModelProvider modelProvider,
             EventBus eventBus, ClientStorage clientStorage,
-            SubTableResources headerResources, ApplicationResources resources) {
+            SubTableResources headerResources, ApplicationResources resources, ApplicationConstants constans) {
 
-        vmTable = new VmTable(modelProvider, headerResources, resources);
+        vmTable = new VmTable(modelProvider, headerResources, resources, constans);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         Driver.driver.initialize(this);
     }

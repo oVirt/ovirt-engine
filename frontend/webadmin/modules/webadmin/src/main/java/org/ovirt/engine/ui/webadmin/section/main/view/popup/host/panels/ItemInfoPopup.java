@@ -8,6 +8,8 @@ import org.ovirt.engine.ui.uicommonweb.models.hosts.network.BondNetworkInterface
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.LogicalNetworkModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkInterfaceModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkItemModel;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 
 import com.google.gwt.user.client.ui.DecoratedPopupPanel;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -16,6 +18,7 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
 
     private final FlexTable contents = new FlexTable();
     private static final EnumRenderer<NetworkBootProtocol> RENDERER = new EnumRenderer<NetworkBootProtocol>();
+    private ApplicationConstants constants = ClientGinjectorProvider.instance().getApplicationConstants();
 
     public ItemInfoPopup() {
         super(true);
@@ -36,35 +39,35 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
 
     private void addRow(String label, String value) {
         int rowCount = contents.insertRow(contents.getRowCount());
-        contents.setHTML(rowCount, 0, "<B>" + label + ":</B>");
+        contents.setHTML(rowCount, 0, "<B>" + label + ":</B>"); //$NON-NLS-1$ //$NON-NLS-2$
         contents.setText(rowCount, 1, value);
     }
 
     private void showNetwork(LogicalNetworkModel networkModel) {
         contents.removeAllRows();
         network entity = networkModel.getEntity();
-        addRow("Name", networkModel.getName());
-        addRow("Description", entity.getdescription());
-        addRow("VLan", networkModel.hasVlan() ? networkModel.getVlanId() + "" : "NA");
-        addRow("Display", entity.getis_display() ? "Yes" : "No");
-        addRow("Management", networkModel.isManagement() ? "Yes" : "No");
+        addRow(constants.nameItemInfo(), networkModel.getName());
+        addRow(constants.descriptionItemInfo(), entity.getdescription());
+        addRow(constants.VLanItemInfo(), networkModel.hasVlan() ? networkModel.getVlanId() + "" : "NA"); //$NON-NLS-1$ //$NON-NLS-2$
+        addRow(constants.displayItemInfo(), entity.getis_display() ? "Yes" : "No"); //$NON-NLS-1$ //$NON-NLS-2$
+        addRow(constants.managementItemInfo(), networkModel.isManagement() ? "Yes" : "No"); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     private void showNic(NetworkInterfaceModel nic) {
         contents.removeAllRows();
         VdsNetworkInterface entity = nic.getEntity();
         NetworkBootProtocol bootProtocol = entity.getBootProtocol();
-        addRow("Name", nic.getName());
-        addRow("Boot Protocol", RENDERER.render(bootProtocol));
+        addRow(constants.nameItemInfo(), nic.getName());
+        addRow(constants.bootProtocolItemInfo(), RENDERER.render(bootProtocol));
         if (bootProtocol == NetworkBootProtocol.StaticIp) {
-            addRow("Address", entity.getAddress());
-            addRow("Subnet", entity.getSubnet());
+            addRow(constants.addressItemInfo(), entity.getAddress());
+            addRow(constants.subnetItemInfo(), entity.getSubnet());
             if (entity.getIsManagement()) {
-                addRow("Gateway", entity.getGateway());
+                addRow(constants.gatewayItemInfo(), entity.getGateway());
             }
         }
         if (nic instanceof BondNetworkInterfaceModel) {
-            addRow("Bond Options", entity.getBondOptions());
+            addRow(constants.bondOptionsItemInfo(), entity.getBondOptions());
         }
     }
 }

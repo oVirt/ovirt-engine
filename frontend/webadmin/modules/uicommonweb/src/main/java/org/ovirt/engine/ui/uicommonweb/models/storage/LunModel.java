@@ -21,7 +21,7 @@ public class LunModel extends EntityModel
         if (!StringHelper.stringsEqual(lunId, value))
         {
             lunId = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("LunId"));
+            OnPropertyChanged(new PropertyChangedEventArgs("LunId")); //$NON-NLS-1$
         }
     }
 
@@ -37,7 +37,7 @@ public class LunModel extends EntityModel
         if (!StringHelper.stringsEqual(vendorId, value))
         {
             vendorId = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("VendorId"));
+            OnPropertyChanged(new PropertyChangedEventArgs("VendorId")); //$NON-NLS-1$
         }
     }
 
@@ -53,7 +53,7 @@ public class LunModel extends EntityModel
         if (!StringHelper.stringsEqual(productId, value))
         {
             productId = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("ProductId"));
+            OnPropertyChanged(new PropertyChangedEventArgs("ProductId")); //$NON-NLS-1$
         }
     }
 
@@ -69,7 +69,7 @@ public class LunModel extends EntityModel
         if (!StringHelper.stringsEqual(serial, value))
         {
             serial = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Serial"));
+            OnPropertyChanged(new PropertyChangedEventArgs("Serial")); //$NON-NLS-1$
         }
     }
 
@@ -85,7 +85,7 @@ public class LunModel extends EntityModel
         if (size != value)
         {
             size = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Size"));
+            OnPropertyChanged(new PropertyChangedEventArgs("Size")); //$NON-NLS-1$
         }
     }
 
@@ -101,7 +101,7 @@ public class LunModel extends EntityModel
         if (multipathing != value)
         {
             multipathing = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Multipathing"));
+            OnPropertyChanged(new PropertyChangedEventArgs("Multipathing")); //$NON-NLS-1$
         }
     }
 
@@ -117,7 +117,7 @@ public class LunModel extends EntityModel
         if (isAccessible != value)
         {
             isAccessible = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsAccessible"));
+            OnPropertyChanged(new PropertyChangedEventArgs("IsAccessible")); //$NON-NLS-1$
         }
     }
 
@@ -133,7 +133,7 @@ public class LunModel extends EntityModel
         if (isIncluded != value)
         {
             isIncluded = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsIncluded"));
+            OnPropertyChanged(new PropertyChangedEventArgs("IsIncluded")); //$NON-NLS-1$
         }
     }
 
@@ -149,7 +149,7 @@ public class LunModel extends EntityModel
         if (targets != value)
         {
             targets = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Targets"));
+            OnPropertyChanged(new PropertyChangedEventArgs("Targets")); //$NON-NLS-1$
             getTargetsList().setItems(targets);
         }
     }
@@ -166,7 +166,7 @@ public class LunModel extends EntityModel
         if (targetsList != value)
         {
             targetsList = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("TargetsList"));
+            OnPropertyChanged(new PropertyChangedEventArgs("TargetsList")); //$NON-NLS-1$
         }
     }
 

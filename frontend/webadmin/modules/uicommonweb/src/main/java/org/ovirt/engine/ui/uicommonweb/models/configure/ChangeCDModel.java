@@ -39,14 +39,14 @@ public class ChangeCDModel extends Model
 
     static
     {
-        ExecutedEventDefinition = new EventDefinition("Executed", ChangeCDModel.class);
+        ExecutedEventDefinition = new EventDefinition("Executed", ChangeCDModel.class); //$NON-NLS-1$
     }
 
     public ChangeCDModel()
     {
         setExecutedEvent(new Event(ExecutedEventDefinition));
 
-        setDoCommand(new UICommand("Do", this));
+        setDoCommand(new UICommand("Do", this)); //$NON-NLS-1$
     }
 
     private void Do()

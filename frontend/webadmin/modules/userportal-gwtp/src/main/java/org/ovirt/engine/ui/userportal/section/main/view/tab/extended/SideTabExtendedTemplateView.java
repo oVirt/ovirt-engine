@@ -5,6 +5,7 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.ui.common.widget.table.column.SafeHtmlColumn;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalTemplateListModel;
+import org.ovirt.engine.ui.userportal.ApplicationConstants;
 import org.ovirt.engine.ui.userportal.ApplicationTemplates;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.SideTabExtendedTemplatePresenter;
 import org.ovirt.engine.ui.userportal.section.main.view.AbstractSideTabWithDetailsView;
@@ -21,9 +22,9 @@ public class SideTabExtendedTemplateView extends AbstractSideTabWithDetailsView<
         implements SideTabExtendedTemplatePresenter.ViewDef {
 
     @Inject
-    public SideTabExtendedTemplateView(UserPortalTemplateListProvider provider, ApplicationTemplates templates) {
+    public SideTabExtendedTemplateView(UserPortalTemplateListProvider provider, ApplicationTemplates templates, ApplicationConstants constants) {
         super(provider);
-        initTable(templates);
+        initTable(templates, constants);
     }
 
     @Override
@@ -31,14 +32,14 @@ public class SideTabExtendedTemplateView extends AbstractSideTabWithDetailsView<
         return SideTabExtendedTemplatePresenter.TYPE_SetSubTabPanelContent;
     }
 
-    private void initTable(final ApplicationTemplates templates) {
+    private void initTable(final ApplicationTemplates templates, ApplicationConstants constants) {
         getTable().addColumn(new VmImageColumn<VmTemplate>(new OsTypeExtractor<VmTemplate>() {
 
             @Override
             public VmOsType extractOsType(VmTemplate item) {
                 return item.getos();
             }
-        }), "", "77px");
+        }), "", "77px"); //$NON-NLS-1$ //$NON-NLS-2$
 
         SafeHtmlColumn<VmTemplate> nameAndDescriptionColumn = new SafeHtmlColumn<VmTemplate>() {
             @Override
@@ -53,16 +54,16 @@ public class SideTabExtendedTemplateView extends AbstractSideTabWithDetailsView<
                 return builder.toSafeHtml();
             }
         };
-        getTable().addColumn(nameAndDescriptionColumn, "");
+        getTable().addColumn(nameAndDescriptionColumn, constants.empty());
 
-        getTable().addActionButton(new UserPortalButtonDefinition<VmTemplate>("Edit") {
+        getTable().addActionButton(new UserPortalButtonDefinition<VmTemplate>(constants.editTemplate()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getEditCommand();
             }
         });
 
-        getTable().addActionButton(new UserPortalButtonDefinition<VmTemplate>("Remove") {
+        getTable().addActionButton(new UserPortalButtonDefinition<VmTemplate>(constants.removeTemplate()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getRemoveCommand();

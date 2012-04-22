@@ -18,7 +18,7 @@ public class SystemTreeItemModel extends EntityModel
         if (type != value)
         {
             type = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Type"));
+            OnPropertyChanged(new PropertyChangedEventArgs("Type")); //$NON-NLS-1$
         }
     }
 
@@ -58,7 +58,7 @@ public class SystemTreeItemModel extends EntityModel
         if (isExpanded != value)
         {
             isExpanded = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsExpanded"));
+            OnPropertyChanged(new PropertyChangedEventArgs("IsExpanded")); //$NON-NLS-1$
         }
     }
 

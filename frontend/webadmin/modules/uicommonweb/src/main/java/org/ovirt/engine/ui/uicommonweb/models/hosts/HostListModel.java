@@ -57,6 +57,7 @@ import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.tags.TagListModel;
 import org.ovirt.engine.ui.uicommonweb.models.tags.TagModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.FrontendQueryAsyncResult;
@@ -248,7 +249,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         if (isPowerManagementEnabled != value)
         {
             isPowerManagementEnabled = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("isPowerManagementEnabled"));
+            OnPropertyChanged(new PropertyChangedEventArgs("isPowerManagementEnabled")); //$NON-NLS-1$
         }
     }
 
@@ -271,24 +272,25 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
 
     public HostListModel()
     {
-        setTitle("Hosts");
+        setTitle(ConstantsManager.getInstance().getConstants().hostsTitle());
+        setHashName("hosts"); //$NON-NLS-1$
 
-        setDefaultSearchString("Host:");
+        setDefaultSearchString("Host:"); //$NON-NLS-1$
         setSearchString(getDefaultSearchString());
 
-        setNewCommand(new UICommand("New", this));
-        setEditCommand(new UICommand("Edit", this));
-        setEditWithPMemphasisCommand(new UICommand("EditWithPMemphasis", this));
-        setRemoveCommand(new UICommand("Remove", this));
-        setActivateCommand(new UICommand("Activate", this, true));
-        setMaintenanceCommand(new UICommand("Maintenance", this, true));
-        setApproveCommand(new UICommand("Approve", this));
-        setRestartCommand(new UICommand("Restart", this, true));
-        setStartCommand(new UICommand("Start", this, true));
-        setStopCommand(new UICommand("Stop", this, true));
-        setManualFenceCommand(new UICommand("ManualFence", this));
-        setAssignTagsCommand(new UICommand("AssignTags", this));
-        setConfigureLocalStorageCommand(new UICommand("ConfigureLocalStorage", this));
+        setNewCommand(new UICommand("New", this)); //$NON-NLS-1$
+        setEditCommand(new UICommand("Edit", this)); //$NON-NLS-1$
+        setEditWithPMemphasisCommand(new UICommand("EditWithPMemphasis", this)); //$NON-NLS-1$
+        setRemoveCommand(new UICommand("Remove", this)); //$NON-NLS-1$
+        setActivateCommand(new UICommand("Activate", this, true)); //$NON-NLS-1$
+        setMaintenanceCommand(new UICommand("Maintenance", this, true)); //$NON-NLS-1$
+        setApproveCommand(new UICommand("Approve", this)); //$NON-NLS-1$
+        setRestartCommand(new UICommand("Restart", this, true)); //$NON-NLS-1$
+        setStartCommand(new UICommand("Start", this, true)); //$NON-NLS-1$
+        setStopCommand(new UICommand("Stop", this, true)); //$NON-NLS-1$
+        setManualFenceCommand(new UICommand("ManualFence", this)); //$NON-NLS-1$
+        setAssignTagsCommand(new UICommand("AssignTags", this)); //$NON-NLS-1$
+        setConfigureLocalStorageCommand(new UICommand("ConfigureLocalStorage", this)); //$NON-NLS-1$
 
         UpdateActionAvailability();
 
@@ -305,17 +307,17 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
 
         TagListModel model = new TagListModel();
         setWindow(model);
-        model.setTitle("Assign Tags");
-        model.setHashName("assign_tags_hosts");
+        model.setTitle(ConstantsManager.getInstance().getConstants().assignTagsTitle());
+        model.setHashName("assign_tags_hosts"); //$NON-NLS-1$
 
         GetAttachedTagsToSelectedHosts(model);
 
-        UICommand tempVar = new UICommand("OnAssignTags", this);
-        tempVar.setTitle("OK");
+        UICommand tempVar = new UICommand("OnAssignTags", this); //$NON-NLS-1$
+        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
         tempVar.setIsDefault(true);
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this);
-        tempVar2.setTitle("Cancel");
+        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
+        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         tempVar2.setIsCancel(true);
         model.getCommands().add(tempVar2);
     }
@@ -385,7 +387,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
             }
             tagListModel.setAttachedTagsToEntities(hostListModel.attachedTagsToEntities);
         }
-        else if (StringHelper.stringsEqual(hostListModel.getLastExecutedCommand().getName(), "OnAssignTags"))
+        else if (StringHelper.stringsEqual(hostListModel.getLastExecutedCommand().getName(), "OnAssignTags")) //$NON-NLS-1$
         {
             hostListModel.PostOnAssignTags(tagListModel.getAttachedTagsToEntities());
         }
@@ -441,8 +443,8 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
     {
         ConfirmationModel model = new ConfirmationModel();
         setWindow(model);
-        model.setTitle("Are you sure?");
-        model.setHashName("manual_fence_are_you_sure");
+        model.setTitle(ConstantsManager.getInstance().getConstants().areYouSureTitle());
+        model.setHashName("manual_fence_are_you_sure"); //$NON-NLS-1$
         java.util.ArrayList<VDS> items = new java.util.ArrayList<VDS>();
         items.add((VDS) getSelectedItem());
         model.setItems(items);
@@ -450,12 +452,12 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         model.getLatch().setIsAvailable(true);
         model.getLatch().setIsChangable(true);
 
-        UICommand tempVar = new UICommand("OnManualFence", this);
-        tempVar.setTitle("OK");
+        UICommand tempVar = new UICommand("OnManualFence", this); //$NON-NLS-1$
+        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
         tempVar.setIsDefault(true);
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this);
-        tempVar2.setTitle("Cancel");
+        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
+        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         tempVar2.setIsCancel(true);
         model.getCommands().add(tempVar2);
     }
@@ -511,8 +513,8 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
 
         final HostModel hostModel = new HostModel();
         setWindow(hostModel);
-        hostModel.setTitle("New Host");
-        hostModel.setHashName("new_host");
+        hostModel.setTitle(ConstantsManager.getInstance().getConstants().newHostTitle());
+        hostModel.setHashName("new_host"); //$NON-NLS-1$
         hostModel.getPort().setEntity(54321);
         hostModel.getPmType().setSelectedItem(null);
         hostModel.getOverrideIpTables().setIsAvailable(false);
@@ -571,7 +573,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
                     {
                     case Host:
                         innerHostModel.getName().setIsChangable(false);
-                        innerHostModel.getName().setInfo("Cannot edit Host's Name in this tree context");
+                        innerHostModel.getName().setInfo("Cannot edit Host's Name in this tree context"); //$NON-NLS-1$
                         break;
                     case Hosts:
                     case Cluster:
@@ -588,9 +590,9 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
                             }
                         }
                         innerHostModel.getDataCenter().setIsChangable(false);
-                        innerHostModel.getDataCenter().setInfo("Cannot choose Host's Data Center in tree context");
+                        innerHostModel.getDataCenter().setInfo("Cannot choose Host's Data Center in tree context"); //$NON-NLS-1$
                         innerHostModel.getCluster().setIsChangable(false);
-                        innerHostModel.getCluster().setInfo("Cannot choose Host's Cluster in tree context");
+                        innerHostModel.getCluster().setInfo("Cannot choose Host's Cluster in tree context"); //$NON-NLS-1$
                         break;
                     case DataCenter:
                         storage_pool selectDataCenter =
@@ -599,19 +601,19 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
                                 .setItems(new java.util.ArrayList<storage_pool>(java.util.Arrays.asList(new storage_pool[] { selectDataCenter })));
                         innerHostModel.getDataCenter().setSelectedItem(selectDataCenter);
                         innerHostModel.getDataCenter().setIsChangable(false);
-                        innerHostModel.getDataCenter().setInfo("Cannot choose Host's Data Center in tree context");
+                        innerHostModel.getDataCenter().setInfo("Cannot choose Host's Data Center in tree context"); //$NON-NLS-1$
                         break;
                     default:
                         break;
                     }
                 }
 
-                UICommand tempVar = new UICommand("OnSaveFalse", hostListModel);
-                tempVar.setTitle("OK");
+                UICommand tempVar = new UICommand("OnSaveFalse", hostListModel); //$NON-NLS-1$
+                tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
                 tempVar.setIsDefault(true);
                 innerHostModel.getCommands().add(tempVar);
-                UICommand tempVar2 = new UICommand("Cancel", hostListModel);
-                tempVar2.setTitle("Cancel");
+                UICommand tempVar2 = new UICommand("Cancel", hostListModel); //$NON-NLS-1$
+                tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
                 tempVar2.setIsCancel(true);
                 innerHostModel.getCommands().add(tempVar2);
             }
@@ -643,15 +645,15 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
                 hostListModel.setWindow(hostModel);
                 VDS host = (VDS) hostListModel.getSelectedItem();
                 PrepareModelForApproveEdit(host, hostModel, dataCenters, isEditWithPMemphasis);
-                hostModel.setTitle("Edit Host");
-                hostModel.setHashName("edit_host");
+                hostModel.setTitle(ConstantsManager.getInstance().getConstants().editHostTitle());
+                hostModel.setHashName("edit_host"); //$NON-NLS-1$
 
-                UICommand tempVar = new UICommand("OnSaveFalse", hostListModel);
-                tempVar.setTitle("OK");
+                UICommand tempVar = new UICommand("OnSaveFalse", hostListModel); //$NON-NLS-1$
+                tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
                 tempVar.setIsDefault(true);
                 hostModel.getCommands().add(tempVar);
-                UICommand tempVar2 = new UICommand("Cancel", hostListModel);
-                tempVar2.setTitle("Cancel");
+                UICommand tempVar2 = new UICommand("Cancel", hostListModel); //$NON-NLS-1$
+                tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
                 tempVar2.setIsCancel(true);
                 hostModel.getCommands().add(tempVar2);
             }
@@ -677,17 +679,17 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         {
             ConfirmationModel confirmModel = new ConfirmationModel();
             setConfirmWindow(confirmModel);
-            confirmModel.setTitle("Power Management Configuration");
-            confirmModel.setHashName("power_management_configuration");
-            confirmModel.setMessage("You haven't configured Power Management for this Host. Are you sure you want to continue?");
+            confirmModel.setTitle(ConstantsManager.getInstance().getConstants().powerManagementConfigurationTitle());
+            confirmModel.setHashName("power_management_configuration"); //$NON-NLS-1$
+            confirmModel.setMessage(ConstantsManager.getInstance().getConstants().youHavntConfigPmMsg());
 
             UICommand tempVar =
-                    new UICommand(approveInitiated ? "OnSaveInternalFromApprove" : "OnSaveInternalNotFromApprove", this);
-            tempVar.setTitle("OK");
+                    new UICommand(approveInitiated ? "OnSaveInternalFromApprove" : "OnSaveInternalNotFromApprove", this); //$NON-NLS-1$ //$NON-NLS-2$
+            tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
             tempVar.setIsDefault(true);
             confirmModel.getCommands().add(tempVar);
-            UICommand tempVar2 = new UICommand("CancelConfirmFocusPM", this);
-            tempVar2.setTitle("Cancel");
+            UICommand tempVar2 = new UICommand("CancelConfirmFocusPM", this); //$NON-NLS-1$
+            tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
             tempVar2.setIsCancel(true);
             confirmModel.getCommands().add(tempVar2);
         }
@@ -773,7 +775,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
             UpdateVdsActionParameters parameters = new UpdateVdsActionParameters();
             parameters.setvds(host);
             parameters.setVdsId(host.getId());
-            parameters.setRootPassword("");
+            parameters.setRootPassword(""); //$NON-NLS-1$
             parameters.setInstallVds(false);
 
             if (!oldClusterId.equals(newClusterId))
@@ -865,9 +867,9 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
 
         ConfirmationModel model = new ConfirmationModel();
         setWindow(model);
-        model.setTitle("Remove Host(s)");
-        model.setHashName("remove_host");
-        model.setMessage("Host(s)");
+        model.setTitle(ConstantsManager.getInstance().getConstants().removeHostsTitle());
+        model.setHashName("remove_host"); //$NON-NLS-1$
+        model.setMessage(ConstantsManager.getInstance().getConstants().hostsMsg());
 
         java.util.ArrayList<String> list = new java.util.ArrayList<String>();
         for (VDS item : Linq.<VDS> Cast(getSelectedItems()))
@@ -876,12 +878,12 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         }
         model.setItems(list);
 
-        UICommand tempVar = new UICommand("OnRemove", this);
-        tempVar.setTitle("OK");
+        UICommand tempVar = new UICommand("OnRemove", this); //$NON-NLS-1$
+        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
         tempVar.setIsDefault(true);
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this);
-        tempVar2.setTitle("Cancel");
+        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
+        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         tempVar2.setIsCancel(true);
         model.getCommands().add(tempVar2);
     }
@@ -944,9 +946,11 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
 
         ConfirmationModel model = new ConfirmationModel();
         setConfirmWindow(model);
-        model.setTitle("Maintenance Host(s)");
-        model.setHashName("maintenance_host");
-        model.setMessage("Are you sure you want to place the following host(s) into maintenance mode?");
+        model.setTitle(ConstantsManager.getInstance().getConstants().maintenanceHostsTitle());
+        model.setHashName("maintenance_host"); //$NON-NLS-1$
+        model.setMessage(ConstantsManager.getInstance()
+                .getConstants()
+                .areYouSureYouWantToPlaceFollowingHostsIntoMaintenanceModeMsg());
         // model.Items = SelectedItems.Cast<VDS>().Select(a => a.vds_name);
         java.util.ArrayList<String> vdss = new java.util.ArrayList<String>();
         for (Object item : getSelectedItems())
@@ -956,12 +960,12 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         }
         model.setItems(vdss);
 
-        UICommand tempVar = new UICommand("OnMaintenance", this);
-        tempVar.setTitle("OK");
+        UICommand tempVar = new UICommand("OnMaintenance", this); //$NON-NLS-1$
+        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
         tempVar.setIsDefault(true);
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("CancelConfirm", this);
-        tempVar2.setTitle("Cancel");
+        UICommand tempVar2 = new UICommand("CancelConfirm", this); //$NON-NLS-1$
+        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         tempVar2.setIsCancel(true);
         model.getCommands().add(tempVar2);
     }
@@ -1016,15 +1020,15 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
                 java.util.ArrayList<storage_pool> dataCenters = (java.util.ArrayList<storage_pool>) result;
                 VDS host = (VDS) hostListModel.getSelectedItem();
                 hostListModel.PrepareModelForApproveEdit(host, innerHostModel, dataCenters, false);
-                innerHostModel.setTitle("Edit and Approve Host");
-                innerHostModel.setHashName("edit_and_approve_host");
+                innerHostModel.setTitle(ConstantsManager.getInstance().getConstants().editAndApproveHostTitle());
+                innerHostModel.setHashName("edit_and_approve_host"); //$NON-NLS-1$
 
-                UICommand tempVar = new UICommand("OnApprove", hostListModel);
-                tempVar.setTitle("OK");
+                UICommand tempVar = new UICommand("OnApprove", hostListModel); //$NON-NLS-1$
+                tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
                 tempVar.setIsDefault(true);
                 innerHostModel.getCommands().add(tempVar);
-                UICommand tempVar2 = new UICommand("Cancel", hostListModel);
-                tempVar2.setTitle("Cancel");
+                UICommand tempVar2 = new UICommand("Cancel", hostListModel); //$NON-NLS-1$
+                tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
                 tempVar2.setIsCancel(true);
                 innerHostModel.getCommands().add(tempVar2);
             }
@@ -1057,7 +1061,6 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         model.getPmType().setSelectedItem(vds.getpm_type());
         model.getPmUserName().setEntity(vds.getpm_user());
         model.getPmPassword().setEntity(vds.getpm_password());
-
 
         /*
          * --- JUICOMMENT_BEGIN // * TODO: Need to find a solution for casting ValueObjectMap to Dictionary<string,
@@ -1097,11 +1100,11 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
             model.getDataCenter().setIsChangable(false);
             model.getDataCenter()
                     .getChangeProhibitionReasons()
-                    .add("Data Center can be changed only when the Host is in Maintenance mode.");
+                    .add("Data Center can be changed only when the Host is in Maintenance mode."); //$NON-NLS-1$
             model.getCluster().setIsChangable(false);
             model.getCluster()
                     .getChangeProhibitionReasons()
-                    .add("Cluster can be changed only when the Host is in Maintenance mode.");
+                    .add("Cluster can be changed only when the Host is in Maintenance mode."); //$NON-NLS-1$
         }
         else if (getSystemTreeSelectedItem() != null)
         {
@@ -1109,12 +1112,12 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
             {
             case Host:
                 model.getName().setIsChangable(false);
-                model.getName().setInfo("Cannot edit Host's Name in this tree context");
+                model.getName().setInfo("Cannot edit Host's Name in this tree context"); //$NON-NLS-1$
                 break;
             case Hosts:
             case Cluster:
                 model.getCluster().setIsChangable(false);
-                model.getCluster().setInfo("Cannot change Host's Cluster in tree context");
+                model.getCluster().setInfo("Cannot change Host's Cluster in tree context"); //$NON-NLS-1$
                 model.getDataCenter().setIsChangable(false);
                 break;
             case DataCenter:
@@ -1139,9 +1142,9 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
     {
         ConfirmationModel model = new ConfirmationModel();
         setConfirmWindow(model);
-        model.setTitle("Restart Host(s)");
-        model.setHashName("restart_host");
-        model.setMessage("Are you sure you want to Restart the following Host(s)?");
+        model.setTitle(ConstantsManager.getInstance().getConstants().restartHostsTitle());
+        model.setHashName("restart_host"); //$NON-NLS-1$
+        model.setMessage(ConstantsManager.getInstance().getConstants().areYouSureYouWantToRestartTheFollowingHostsMsg());
         // model.Items = SelectedItems.Cast<VDS>().Select(a => a.vds_name);
         java.util.ArrayList<String> items = new java.util.ArrayList<String>();
         for (Object item : getSelectedItems())
@@ -1151,12 +1154,12 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         }
         model.setItems(items);
 
-        UICommand tempVar = new UICommand("OnRestart", this);
-        tempVar.setTitle("OK");
+        UICommand tempVar = new UICommand("OnRestart", this); //$NON-NLS-1$
+        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
         tempVar.setIsDefault(true);
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this);
-        tempVar2.setTitle("Cancel");
+        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
+        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         tempVar2.setIsCancel(true);
         model.getCommands().add(tempVar2);
     }
@@ -1214,9 +1217,9 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
     {
         ConfirmationModel model = new ConfirmationModel();
         setConfirmWindow(model);
-        model.setTitle("Stop Host(s)");
-        model.setHashName("stop_host");
-        model.setMessage("Are you sure you want to Stop the following Host(s)?");
+        model.setTitle(ConstantsManager.getInstance().getConstants().stopHostsTitle());
+        model.setHashName("stop_host"); //$NON-NLS-1$
+        model.setMessage(ConstantsManager.getInstance().getConstants().areYouSureYouWantToStopTheFollowingHostsMsg());
         // model.Items = SelectedItems.Cast<VDS>().Select(a => a.vds_name);
         java.util.ArrayList<String> items = new java.util.ArrayList<String>();
         for (Object item : getSelectedItems())
@@ -1226,12 +1229,12 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         }
         model.setItems(items);
 
-        UICommand tempVar = new UICommand("OnStop", this);
-        tempVar.setTitle("OK");
+        UICommand tempVar = new UICommand("OnStop", this); //$NON-NLS-1$
+        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
         tempVar.setIsDefault(true);
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this);
-        tempVar2.setTitle("Cancel");
+        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
+        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         tempVar2.setIsCancel(true);
         model.getCommands().add(tempVar2);
     }
@@ -1277,8 +1280,8 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
 
         ConfigureLocalStorageModel model = new ConfigureLocalStorageModel();
         setWindow(model);
-        model.setTitle("Configure Local Storage");
-        model.setHashName("configure_local_storage");
+        model.setTitle(ConstantsManager.getInstance().getConstants().configureLocalStorageTitle());
+        model.setHashName("configure_local_storage"); //$NON-NLS-1$
 
         if (host.getvds_type() == VDSType.oVirtNode) {
             configureLocalStorage2(model);
@@ -1290,24 +1293,24 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
     private void configureLocalStorage2(ConfigureLocalStorageModel model) {
 
         AsyncDataProvider.GetLocalFSPath(new AsyncQuery(model,
-            new INewAsyncCallback() {
-                @Override
-                public void OnSuccess(Object target, Object returnValue) {
+                new INewAsyncCallback() {
+                    @Override
+                    public void OnSuccess(Object target, Object returnValue) {
 
-                    String prefix = (String) returnValue;
-                    ConfigureLocalStorageModel model = (ConfigureLocalStorageModel) target;
+                        String prefix = (String) returnValue;
+                        ConfigureLocalStorageModel model = (ConfigureLocalStorageModel) target;
 
-                    if (!StringHelper.isNullOrEmpty(prefix)) {
+                        if (!StringHelper.isNullOrEmpty(prefix)) {
 
-                        EntityModel pathModel = model.getStorage().getPath();
-                        pathModel.setEntity(prefix);
-                        pathModel.setIsChangable(false);
+                            EntityModel pathModel = model.getStorage().getPath();
+                            pathModel.setEntity(prefix);
+                            pathModel.setIsChangable(false);
+                        }
+
+                        configureLocalStorage3(model);
                     }
-
-                    configureLocalStorage3(model);
-                }
-            })
-        );
+                })
+                );
     }
 
     private void configureLocalStorage3(ConfigureLocalStorageModel model) {
@@ -1319,7 +1322,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
 
         if (host.getsupported_cluster_levels() != null) {
 
-            String[] array = host.getsupported_cluster_levels().split("[,]", -1);
+            String[] array = host.getsupported_cluster_levels().split("[,]", -1); //$NON-NLS-1$
 
             for (int i = 0; i < array.length; i++) {
                 if (version3_0.compareTo(new Version(array[i])) <= 0) {
@@ -1329,28 +1332,29 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
             }
         }
 
-
         UICommand command;
 
         if (hostSupportLocalStorage) {
 
             model.SetDefaultNames(host);
 
-            command = new UICommand("OnConfigureLocalStorage", this);
-            command.setTitle("OK");
+            command = new UICommand("OnConfigureLocalStorage", this); //$NON-NLS-1$
+            command.setTitle(ConstantsManager.getInstance().getConstants().ok());
             command.setIsDefault(true);
             model.getCommands().add(command);
 
-            command = new UICommand("Cancel", this);
-            command.setTitle("Cancel");
+            command = new UICommand("Cancel", this); //$NON-NLS-1$
+            command.setTitle(ConstantsManager.getInstance().getConstants().cancel());
             command.setIsCancel(true);
             model.getCommands().add(command);
         } else {
 
-            model.setMessage("Host doesn't support Local Storage configuration");
+            model.setMessage(ConstantsManager.getInstance()
+                    .getConstants()
+                    .hostDoesntSupportLocalStorageConfigurationMsg());
 
-            command = new UICommand("Cancel", this);
-            command.setTitle("Close");
+            command = new UICommand("Cancel", this); //$NON-NLS-1$
+            command.setTitle(ConstantsManager.getInstance().getConstants().close());
             command.setIsCancel(true);
             command.setIsDefault(true);
             model.getCommands().add(command);
@@ -1369,22 +1373,21 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
             return;
         }
 
-        model.StartProgress("Configuring Local Storage...");
-
+        model.StartProgress(ConstantsManager.getInstance().getConstants().configuringLocalStorageHost());
 
         ReversibleFlow flow = new ReversibleFlow();
         flow.getCompleteEvent().addListener(
-            new IEventListener() {
-                @Override
-                public void eventRaised(Event ev, Object sender, EventArgs args) {
+                new IEventListener() {
+                    @Override
+                    public void eventRaised(Event ev, Object sender, EventArgs args) {
 
-                    ConfigureLocalStorageModel model = (ConfigureLocalStorageModel) ev.getContext();
+                        ConfigureLocalStorageModel model = (ConfigureLocalStorageModel) ev.getContext();
 
-                    model.StopProgress();
-                    Cancel();
-                }
-            },
-            model);
+                        model.StopProgress();
+                        Cancel();
+                    }
+                },
+                model);
 
         flow.enlist(new AddDataCenterRM());
         flow.enlist(new AddClusterRM());
@@ -1431,7 +1434,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
     @Override
     public boolean IsSearchStringMatch(String searchString)
     {
-        return searchString.trim().toLowerCase().startsWith("host");
+        return searchString.trim().toLowerCase().startsWith("host"); //$NON-NLS-1$
     }
 
     @Override
@@ -1495,7 +1498,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
     {
         super.SelectedItemPropertyChanged(sender, e);
 
-        if (e.PropertyName.equals("status") || e.PropertyName.equals("pm_enabled"))
+        if (e.PropertyName.equals("status") || e.PropertyName.equals("pm_enabled")) //$NON-NLS-1$ //$NON-NLS-2$
         {
             UpdateActionAvailability();
         }
@@ -1547,14 +1550,12 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
 
         getAssignTagsCommand().setIsExecutionAllowed(items.size() > 0);
 
-
         // System tree dependent actions.
         boolean isAvailable =
                 !(getSystemTreeSelectedItem() != null && getSystemTreeSelectedItem().getType() == SystemTreeItemType.Host);
 
         getNewCommand().setIsAvailable(isAvailable);
         getRemoveCommand().setIsAvailable(isAvailable);
-
 
         UpdateConfigureLocalStorageCommandAvailability();
     }
@@ -1573,30 +1574,33 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
                 return;
             }
 
-            Frontend.RunQuery(VdcQueryType.GetPermissionsByAdElementId, new MultilevelAdministrationByAdElementIdParameters(vdcUser.getUserId()),
-                new IFrontendQueryAsyncCallback() {
-                    @Override
-                    public void OnSuccess(FrontendQueryAsyncResult result) {
+            Frontend.RunQuery(VdcQueryType.GetPermissionsByAdElementId,
+                    new MultilevelAdministrationByAdElementIdParameters(vdcUser.getUserId()),
+                    new IFrontendQueryAsyncCallback() {
+                        @Override
+                        public void OnSuccess(FrontendQueryAsyncResult result) {
 
-                        ArrayList<permissions> permissions = (ArrayList<permissions>) result.getReturnValue().getReturnValue();
-                        for (permissions permission : permissions) {
+                            ArrayList<permissions> permissions =
+                                    (ArrayList<permissions>) result.getReturnValue().getReturnValue();
+                            for (permissions permission : permissions) {
 
-                            if (permission.getObjectType() == VdcObjectType.System && permission.getRoleType() == RoleType.ADMIN) {
-                                hasAdminSystemPermission = true;
-                                break;
+                                if (permission.getObjectType() == VdcObjectType.System
+                                        && permission.getRoleType() == RoleType.ADMIN) {
+                                    hasAdminSystemPermission = true;
+                                    break;
+                                }
                             }
+
+                            UpdateConfigureLocalStorageCommandAvailability1();
                         }
 
-                        UpdateConfigureLocalStorageCommandAvailability1();
-                    }
+                        @Override
+                        public void OnFailure(FrontendQueryAsyncResult result) {
 
-                    @Override
-                    public void OnFailure(FrontendQueryAsyncResult result) {
-
-                        hasAdminSystemPermission = false;
-                        UpdateConfigureLocalStorageCommandAvailability1();
-                    }
-                });
+                            hasAdminSystemPermission = false;
+                            UpdateConfigureLocalStorageCommandAvailability1();
+                        }
+                    });
         } else {
             UpdateConfigureLocalStorageCommandAvailability1();
         }
@@ -1604,15 +1608,17 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
 
     private void UpdateConfigureLocalStorageCommandAvailability1() {
 
-        ArrayList<VDS> items = getSelectedItems() != null ? Linq.<VDS>Cast(getSelectedItems()) : new ArrayList<VDS>();
+        ArrayList<VDS> items = getSelectedItems() != null ? Linq.<VDS> Cast(getSelectedItems()) : new ArrayList<VDS>();
 
         getConfigureLocalStorageCommand().setIsExecutionAllowed(items.size() == 1
-            && items.get(0).getstatus() == VDSStatus.Maintenance);
+                && items.get(0).getstatus() == VDSStatus.Maintenance);
 
         if (!hasAdminSystemPermission && getConfigureLocalStorageCommand().getIsExecutionAllowed()) {
 
             getConfigureLocalStorageCommand().setIsExecutionAllowed(false);
-            getConfigureLocalStorageCommand().getExecuteProhibitionReasons().add("Configuring local Storage is permitted only to Administrators with System-level permissions");
+            getConfigureLocalStorageCommand().getExecuteProhibitionReasons().add(ConstantsManager.getInstance()
+                    .getConstants()
+                    .configuringLocalStoragePermittedOnlyAdministratorsWithSystemLevelPermissionsReason());
         }
     }
 
@@ -1673,101 +1679,101 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         {
             ConfigureLocalStorage();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnAssignTags"))
+        else if (StringHelper.stringsEqual(command.getName(), "OnAssignTags")) //$NON-NLS-1$
         {
             OnAssignTags();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnManualFence"))
+        else if (StringHelper.stringsEqual(command.getName(), "OnManualFence")) //$NON-NLS-1$
         {
             OnManualFence();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnSaveFalse"))
+        else if (StringHelper.stringsEqual(command.getName(), "OnSaveFalse")) //$NON-NLS-1$
         {
             OnSaveFalse();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnSaveInternalFromApprove"))
+        else if (StringHelper.stringsEqual(command.getName(), "OnSaveInternalFromApprove")) //$NON-NLS-1$
         {
             OnSaveInternalFromApprove();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnSaveInternalNotFromApprove"))
+        else if (StringHelper.stringsEqual(command.getName(), "OnSaveInternalNotFromApprove")) //$NON-NLS-1$
         {
             OnSaveInternalNotFromApprove();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "Cancel"))
+        else if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
         {
             Cancel();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "CancelConfirm"))
+        else if (StringHelper.stringsEqual(command.getName(), "CancelConfirm")) //$NON-NLS-1$
         {
             CancelConfirm();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "CancelConfirmFocusPM"))
+        else if (StringHelper.stringsEqual(command.getName(), "CancelConfirmFocusPM")) //$NON-NLS-1$
         {
             CancelConfirmFocusPM();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnRemove"))
+        else if (StringHelper.stringsEqual(command.getName(), "OnRemove")) //$NON-NLS-1$
         {
             OnRemove();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnMaintenance"))
+        else if (StringHelper.stringsEqual(command.getName(), "OnMaintenance")) //$NON-NLS-1$
         {
             OnMaintenance();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnApprove"))
+        else if (StringHelper.stringsEqual(command.getName(), "OnApprove")) //$NON-NLS-1$
         {
             OnApprove();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnRestart"))
+        else if (StringHelper.stringsEqual(command.getName(), "OnRestart")) //$NON-NLS-1$
         {
             OnRestart();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnStop"))
+        else if (StringHelper.stringsEqual(command.getName(), "OnStop")) //$NON-NLS-1$
         {
             OnStop();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnConfigureLocalStorage"))
+        else if (StringHelper.stringsEqual(command.getName(), "OnConfigureLocalStorage")) //$NON-NLS-1$
         {
             OnConfigureLocalStorage();
         }
     }
 
-//    @Override
-//    public void run(TaskContext context)
-//    {
-//        switch ((Integer) context.getState())
-//        {
-//        case 1:
-//            try
-//            {
-//                // override default timeout (60 sec) with 10 minutes
-//                // C# TO JAVA CONVERTER NOTE: The following 'using' block is replaced by its Java equivalent:
-//                // using (TransactionScope scope = new TransactionScope(TransactionScopeOption.Required, new TimeSpan(0,
-//                // 10, 0)))
-//                TransactionScope scope = new TransactionScope(TransactionScopeOption.Required, new TimeSpan(0, 10, 0));
-//                try
-//                {
-//                    new AddDataCenterRM(this);
-//                    scope.Complete();
-//                } finally
-//                {
-//                    scope.dispose();
-//                }
-//            } catch (TransactionAbortedException e)
-//            {
-//                // Do nothing.
-//            } finally
-//            {
-//                context.InvokeUIThread(this, 2);
-//            }
-//            break;
-//
-//        case 2:
-//            StopProgress();
-//
-//            Cancel();
-//            break;
-//        }
-//    }
+    // @Override
+    // public void run(TaskContext context)
+    // {
+    // switch ((Integer) context.getState())
+    // {
+    // case 1:
+    // try
+    // {
+    // // override default timeout (60 sec) with 10 minutes
+    // // C# TO JAVA CONVERTER NOTE: The following 'using' block is replaced by its Java equivalent:
+    // // using (TransactionScope scope = new TransactionScope(TransactionScopeOption.Required, new TimeSpan(0,
+    // // 10, 0)))
+    // TransactionScope scope = new TransactionScope(TransactionScopeOption.Required, new TimeSpan(0, 10, 0));
+    // try
+    // {
+    // new AddDataCenterRM(this);
+    // scope.Complete();
+    // } finally
+    // {
+    // scope.dispose();
+    // }
+    // } catch (TransactionAbortedException e)
+    // {
+    // // Do nothing.
+    // } finally
+    // {
+    // context.InvokeUIThread(this, 2);
+    // }
+    // break;
+    //
+    // case 2:
+    // StopProgress();
+    //
+    // Cancel();
+    // break;
+    // }
+    // }
 
     private SystemTreeItemModel systemTreeSelectedItem;
 
@@ -1794,6 +1800,6 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
 
     @Override
     protected String getListName() {
-        return "HostListModel";
+        return "HostListModel"; //$NON-NLS-1$
     }
 }

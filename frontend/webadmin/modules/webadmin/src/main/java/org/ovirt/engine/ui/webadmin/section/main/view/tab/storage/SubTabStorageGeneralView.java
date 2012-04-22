@@ -11,6 +11,7 @@ import org.ovirt.engine.ui.common.widget.label.DiskSizeLabel;
 import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageListModel;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.SubTabStorageGeneralPresenter;
 import org.ovirt.engine.ui.webadmin.widget.label.PercentLabel;
 
@@ -62,7 +63,7 @@ public class SubTabStorageGeneralView extends AbstractSubTabFormView<storage_dom
     FormBuilder formBuilder;
 
     @Inject
-    public SubTabStorageGeneralView(DetailModelProvider<StorageListModel, StorageGeneralModel> modelProvider) {
+    public SubTabStorageGeneralView(DetailModelProvider<StorageListModel, StorageGeneralModel> modelProvider, ApplicationConstants constants) {
         super(modelProvider);
 
         // Init formPanel
@@ -73,11 +74,11 @@ public class SubTabStorageGeneralView extends AbstractSubTabFormView<storage_dom
 
         // Build a form using the FormBuilder
         formBuilder = new FormBuilder(formPanel, 1, 6);
-        formBuilder.setColumnsWidth("100%");
-        formBuilder.addFormItem(new FormItem("Size", totalSize, 0, 0));
-        formBuilder.addFormItem(new FormItem("Available", availableSize, 1, 0));
-        formBuilder.addFormItem(new FormItem("Used", usedSize, 2, 0));
-        formBuilder.addFormItem(new FormItem("Over Allocation Ratio", overAllocationRatio, 3, 0) {
+        formBuilder.setColumnsWidth("100%"); //$NON-NLS-1$
+        formBuilder.addFormItem(new FormItem(constants.sizeStorageGeneral(), totalSize, 0, 0));
+        formBuilder.addFormItem(new FormItem(constants.availableStorageGeneral(), availableSize, 1, 0));
+        formBuilder.addFormItem(new FormItem(constants.usedStorageGeneral(), usedSize, 2, 0));
+        formBuilder.addFormItem(new FormItem(constants.overAllocRatioStorageGeneral(), overAllocationRatio, 3, 0) {
             @Override
             public boolean isVisible() {
                 StorageDomainType storageDomainType =
@@ -86,14 +87,14 @@ public class SubTabStorageGeneralView extends AbstractSubTabFormView<storage_dom
                         && !storageDomainType.equals(StorageDomainType.ImportExport);
             }
         });
-        formBuilder.addFormItem(new FormItem("", new InlineLabel(""), 4, 0)); // empty cell
-        formBuilder.addFormItem(new FormItem("NFS Export Path", nfsExportPath, 5, 0) {
+        formBuilder.addFormItem(new FormItem(constants.empty(), new InlineLabel(""), 4, 0)); // empty cell //$NON-NLS-1$
+        formBuilder.addFormItem(new FormItem(constants.nfsExportPathStorageGeneral(), nfsExportPath, 5, 0) {
             @Override
             public boolean isVisible() {
                 return getDetailModel().getIsNfs();
             }
         });
-        formBuilder.addFormItem(new FormItem("Local Path on Host", hostLocalPath, 5, 0) {
+        formBuilder.addFormItem(new FormItem(constants.localPathOnHostStorageGeneral(), hostLocalPath, 5, 0) {
             @Override
             public boolean isVisible() {
                 return getDetailModel().getIsLocalS();

@@ -12,6 +12,7 @@ import org.ovirt.engine.ui.common.widget.table.column.FullDateTimeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.models.disks.DiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.disks.DiskTemplateListModel;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.disk.SubTabDiskTemplatePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 
@@ -25,21 +26,21 @@ public class SubTabDiskTemplateView extends AbstractSubTabTableView<DiskImage, V
     }
 
     @Inject
-    public SubTabDiskTemplateView(SearchableDetailModelProvider<VmTemplate, DiskListModel, DiskTemplateListModel> modelProvider) {
+    public SubTabDiskTemplateView(SearchableDetailModelProvider<VmTemplate, DiskListModel, DiskTemplateListModel> modelProvider, ApplicationConstants constants) {
         super(modelProvider);
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        initTable();
+        initTable(constants);
         initWidget(getTable());
     }
 
-    void initTable() {
+    void initTable(ApplicationConstants constants) {
         TextColumnWithTooltip<VmTemplate> nameColumn = new TextColumnWithTooltip<VmTemplate>() {
             @Override
             public String getValue(VmTemplate object) {
                 return object.getname();
             }
         };
-        getTable().addColumn(nameColumn, "Name");
+        getTable().addColumn(nameColumn, constants.nameTemplate());
 
         TextColumnWithTooltip<VmTemplate> disksColumn = new TextColumnWithTooltip<VmTemplate>() {
             @Override
@@ -47,7 +48,7 @@ public class SubTabDiskTemplateView extends AbstractSubTabTableView<DiskImage, V
                 return String.valueOf(object.getDiskMap().size());
             }
         };
-        getTable().addColumn(disksColumn, "Disks");
+        getTable().addColumn(disksColumn, constants.disksTemplate());
 
         TextColumnWithTooltip<VmTemplate> sizeColumn = new TextColumnWithTooltip<VmTemplate>() {
             @Override
@@ -55,7 +56,7 @@ public class SubTabDiskTemplateView extends AbstractSubTabTableView<DiskImage, V
                 return String.valueOf(object.getActualDiskSize());
             }
         };
-        getTable().addColumn(sizeColumn, "Actual Size");
+        getTable().addColumn(sizeColumn, constants.actualSizeTemplate());
 
         FullDateTimeColumn<VmTemplate> dateColumn = new FullDateTimeColumn<VmTemplate>() {
             @Override
@@ -63,7 +64,7 @@ public class SubTabDiskTemplateView extends AbstractSubTabTableView<DiskImage, V
                 return object.getcreation_date();
             }
         };
-        getTable().addColumn(dateColumn, "Creation Date");
+        getTable().addColumn(dateColumn, constants.creationDateTemplate());
     }
 
 }

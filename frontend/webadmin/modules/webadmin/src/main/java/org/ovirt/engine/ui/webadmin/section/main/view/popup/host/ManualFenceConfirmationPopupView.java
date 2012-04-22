@@ -84,7 +84,7 @@ public class ManualFenceConfirmationPopupView extends AbstractModelBoundPopupVie
 
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                if ("IsAvailable".equals(((PropertyChangedEventArgs) args).PropertyName)) {
+                if ("IsAvailable".equals(((PropertyChangedEventArgs) args).PropertyName)) { //$NON-NLS-1$
                     EntityModel entity = (EntityModel) sender;
                     if (entity.getIsAvailable()) {
                         latch.setVisible(true);

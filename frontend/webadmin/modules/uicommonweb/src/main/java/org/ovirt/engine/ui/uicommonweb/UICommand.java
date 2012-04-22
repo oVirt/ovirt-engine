@@ -27,7 +27,7 @@ public class UICommand extends Model implements ICommand
         if (isExecutionAllowed != value)
         {
             isExecutionAllowed = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsExecutionAllowed"));
+            OnPropertyChanged(new PropertyChangedEventArgs("IsExecutionAllowed")); //$NON-NLS-1$
 
             if (getIsExecutionAllowed())
             {

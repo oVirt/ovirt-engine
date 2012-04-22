@@ -27,13 +27,13 @@ import com.google.inject.Inject;
 
 public class ClusterPolicyPopupView extends AbstractModelBoundPopupView<ClusterPolicyModel> implements ClusterPolicyPopupPresenterWidget.ViewDef, SliderValueChange {
 
-    private static final String RIGHT = "right";
+    private static final String RIGHT = "right"; //$NON-NLS-1$
 
-    private static final String LEFT = "left";
+    private static final String LEFT = "left"; //$NON-NLS-1$
 
-    private static final String MAX_COLOR = "#4E9FDD";
+    private static final String MAX_COLOR = "#4E9FDD"; //$NON-NLS-1$
 
-    private static final String MIN_COLOR = "#AFBF27";
+    private static final String MIN_COLOR = "#AFBF27"; //$NON-NLS-1$
 
     interface Driver extends SimpleBeanEditorDriver<ClusterPolicyModel, ClusterPolicyPopupView> {
         Driver driver = GWT.create(Driver.class);
@@ -139,9 +139,9 @@ public class ClusterPolicyPopupView extends AbstractModelBoundPopupView<ClusterP
     }
 
     private void initRadioButtons() {
-        policyRadioButton_none = new RadioButton("policyRadioButtonGroup", "");
-        policyRadioButton_evenDist = new RadioButton("policyRadioButtonGroup", "");
-        policyRadioButton_powerSave = new RadioButton("policyRadioButtonGroup", "");
+        policyRadioButton_none = new RadioButton("policyRadioButtonGroup", ""); //$NON-NLS-1$ //$NON-NLS-2$
+        policyRadioButton_evenDist = new RadioButton("policyRadioButtonGroup", ""); //$NON-NLS-1$ //$NON-NLS-2$
+        policyRadioButton_powerSave = new RadioButton("policyRadioButtonGroup", ""); //$NON-NLS-1$ //$NON-NLS-2$
 
         policyRadioButton_none.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
 

@@ -4,12 +4,13 @@ import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.ui.uicommonweb.models.events.EventListModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
 public class QuotaEventListModel extends EventListModel
 {
     public QuotaEventListModel() {
-        setTitle("Events");
+        setTitle(ConstantsManager.getInstance().getConstants().eventsTitle());
     }
 
     @Override
@@ -43,7 +44,7 @@ public class QuotaEventListModel extends EventListModel
     {
         if (getEntity() != null)
         {
-            setSearchString(StringFormat.format("Events: quota=%1$s", getEntity().getQuotaName()));
+            setSearchString(StringFormat.format("Events: quota=%1$s", getEntity().getQuotaName())); //$NON-NLS-1$
             super.Search();
         }
     }
@@ -53,7 +54,7 @@ public class QuotaEventListModel extends EventListModel
     {
         super.EntityPropertyChanged(sender, e);
 
-        if (e.PropertyName.equals("name"))
+        if (e.PropertyName.equals("name")) //$NON-NLS-1$
         {
             getSearchCommand().Execute();
         }

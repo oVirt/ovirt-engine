@@ -22,6 +22,7 @@ import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.RegexValidation;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
 public class DataCenterModel extends Model
@@ -284,10 +285,8 @@ public class DataCenterModel extends Model
 
     public boolean Validate()
     {
-        String nameRegex = StringFormat.format("^[A-Za-z0-9_-]{1,%1$s}$", getMaxNameLength());
-        String nameMessage =
-                StringFormat.format("Name can contain only 'A-Z', 'a-z', '0-9', '_' or '-' characters, max length: %1$s",
-                        getMaxNameLength());
+        String nameRegex = StringFormat.format("^[A-Za-z0-9_-]{1,%1$s}$", getMaxNameLength()); //$NON-NLS-1$
+        String nameMessage = ConstantsManager.getInstance().getMessages().nameCanContainOnlyDcMsg(getMaxNameLength());
 
         LengthValidation tempVar = new LengthValidation();
         tempVar.setMaxLength(40);

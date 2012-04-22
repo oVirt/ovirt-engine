@@ -10,11 +10,13 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public class QuotaStorageListModel extends SearchableListModel {
 
     public QuotaStorageListModel() {
-        setTitle("Storage");
+        setTitle(ConstantsManager.getInstance().getConstants().storageTitle());
+        setHashName("storage"); //$NON-NLS-1$
     }
 
     @Override
@@ -50,7 +52,7 @@ public class QuotaStorageListModel extends SearchableListModel {
 
     @Override
     protected String getListName() {
-        return "QuotaStorageListModel";
+        return "QuotaStorageListModel"; //$NON-NLS-1$
     }
 
 }

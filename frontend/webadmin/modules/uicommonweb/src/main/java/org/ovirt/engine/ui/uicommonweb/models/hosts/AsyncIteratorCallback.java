@@ -9,7 +9,6 @@ public class AsyncIteratorCallback {
 
     public static EventDefinition NotifyEventDefinition;
 
-
     private Event notifyEvent;
 
     /**
@@ -36,29 +35,26 @@ public class AsyncIteratorCallback {
         asyncQuery = value;
     }
 
-
     static {
-        NotifyEventDefinition = new EventDefinition("Notify", AsyncIteratorCallback.class);
+        NotifyEventDefinition = new EventDefinition("Notify", AsyncIteratorCallback.class); //$NON-NLS-1$
     }
 
     public AsyncIteratorCallback(String frontendContext) {
 
         setNotifyEvent(new Event(NotifyEventDefinition));
 
-        //Set a stub method calling notify event on AsyncQuery complete.
+        // Set a stub method calling notify event on AsyncQuery complete.
         setAsyncQuery(new AsyncQuery(this,
-            new INewAsyncCallback() {
-                @Override
-                public void OnSuccess(Object target, Object returnValue) {
+                new INewAsyncCallback() {
+                    @Override
+                    public void OnSuccess(Object target, Object returnValue) {
 
-                    AsyncIteratorCallback callback = (AsyncIteratorCallback) target;
-                    Event notifyEvent = callback.getNotifyEvent();
+                        AsyncIteratorCallback callback = (AsyncIteratorCallback) target;
+                        Event notifyEvent = callback.getNotifyEvent();
 
-                    notifyEvent.raise(this, new ValueEventArgs(returnValue));
-                }
-            },
-            frontendContext)
-        );
+                        notifyEvent.raise(this, new ValueEventArgs(returnValue));
+                    }
+                },
+                frontendContext));
     }
 }
-

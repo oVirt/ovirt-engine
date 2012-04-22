@@ -11,7 +11,7 @@ public class UserportalDynamicHostingServlet extends GwtDynamicHostPageServlet {
 
     @Override
     protected String getSelectorScriptName() {
-        return "userportal.nocache.js";
+        return "userportal.nocache.js"; //$NON-NLS-1$
     }
 
 }

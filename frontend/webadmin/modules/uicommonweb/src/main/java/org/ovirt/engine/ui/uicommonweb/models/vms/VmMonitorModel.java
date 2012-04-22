@@ -8,6 +8,7 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.GridTimer;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
 public class VmMonitorModel extends EntityModel
@@ -37,7 +38,7 @@ public class VmMonitorModel extends EntityModel
         if (cpuUsage != value)
         {
             cpuUsage = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("CpuUsage"));
+            OnPropertyChanged(new PropertyChangedEventArgs("CpuUsage")); //$NON-NLS-1$
         }
     }
 
@@ -53,7 +54,7 @@ public class VmMonitorModel extends EntityModel
         if (memoryUsage != value)
         {
             memoryUsage = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("MemoryUsage"));
+            OnPropertyChanged(new PropertyChangedEventArgs("MemoryUsage")); //$NON-NLS-1$
         }
     }
 
@@ -69,7 +70,7 @@ public class VmMonitorModel extends EntityModel
         if (networkUsage != value)
         {
             networkUsage = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("NetworkUsage"));
+            OnPropertyChanged(new PropertyChangedEventArgs("NetworkUsage")); //$NON-NLS-1$
         }
     }
 
@@ -79,12 +80,12 @@ public class VmMonitorModel extends EntityModel
     {
         if (refreshTimer == null)
         {
-            refreshTimer = new GridTimer("VmMonitorModel") {
-                @Override
-                public void execute() {
-                    Refresh();
-                }
-            };
+            refreshTimer = new GridTimer("VmMonitorModel") { //$NON-NLS-1$
+                        @Override
+                        public void execute() {
+                            Refresh();
+                        }
+                    };
             refreshTimer.setRefreshRate(1000);
         }
 
@@ -93,9 +94,9 @@ public class VmMonitorModel extends EntityModel
 
     public VmMonitorModel()
     {
-        setTitle("Monitor");
+        setTitle(ConstantsManager.getInstance().getConstants().monitorTitle());
 
-        setRefreshCommand(new UICommand("Refresh", this));
+        setRefreshCommand(new UICommand("Refresh", this)); //$NON-NLS-1$
     }
 
     @Override

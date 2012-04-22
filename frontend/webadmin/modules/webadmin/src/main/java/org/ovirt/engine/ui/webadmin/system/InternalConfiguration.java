@@ -15,10 +15,10 @@ public class InternalConfiguration {
     enum SupportedBrowser {
 
         // Firefox 10 on Linux
-        Firefox10OnLinux("Firefox", 10.0f, false, "Linux"),
+        Firefox10OnLinux("Firefox", 10.0f, false, "Linux"), //$NON-NLS-1$ //$NON-NLS-2$
 
         // Explorer 9+ on any OS
-        Explorer9AndAbove("Explorer", 9.0f, true);
+        Explorer9AndAbove("Explorer", 9.0f, true); //$NON-NLS-1$
 
         // Browser identity
         private final String browser;
@@ -31,7 +31,7 @@ public class InternalConfiguration {
         private final String os;
 
         SupportedBrowser(String browser, float versionFrom, float versionTo, String os) {
-            assert browser != null : "Browser identity cannot be null";
+            assert browser != null : "Browser identity cannot be null"; //$NON-NLS-1$
             this.browser = browser;
             this.versionFrom = versionFrom;
             this.versionTo = versionTo;

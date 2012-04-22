@@ -8,6 +8,7 @@ import org.ovirt.engine.ui.common.view.AbstractSubTabTableWidgetView;
 import org.ovirt.engine.ui.common.widget.uicommon.template.TemplateInterfaceListModelTable;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateInterfaceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalTemplateListModel;
+import org.ovirt.engine.ui.userportal.ApplicationConstants;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.template.SubTabExtendedTemplateNetworkInterfacesPresenter;
 import org.ovirt.engine.ui.userportal.uicommon.model.template.TemplateInterfaceListModelProvider;
 
@@ -24,10 +25,10 @@ public class SubTabExtendedTemplateNetworkInterfacesView extends AbstractSubTabT
 
     @Inject
     public SubTabExtendedTemplateNetworkInterfacesView(TemplateInterfaceListModelProvider modelProvider,
-            EventBus eventBus, ClientStorage clientStorage) {
+            EventBus eventBus, ClientStorage clientStorage, ApplicationConstants constants) {
         super(new TemplateInterfaceListModelTable(modelProvider, eventBus, clientStorage));
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        initTable();
+        initTable(constants);
         initWidget(getModelBoundTableWidget());
     }
 

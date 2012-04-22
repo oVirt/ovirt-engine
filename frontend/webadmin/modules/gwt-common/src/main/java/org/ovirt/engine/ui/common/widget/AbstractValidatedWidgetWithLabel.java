@@ -68,7 +68,7 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
         contentWidgetContainer.setWidget(contentWidget);
 
         // Adjust content widget width
-        contentWidget.asWidget().setWidth("100%");
+        contentWidget.asWidget().setWidth("100%"); //$NON-NLS-1$
 
         // Assign ID to content widget element if it's missing or empty
         Element contentWidgetElement = getContentWidgetElement();

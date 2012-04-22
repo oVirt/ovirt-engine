@@ -12,6 +12,7 @@ import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.users.UserListModel;
 import org.ovirt.engine.ui.uicommonweb.models.users.UserPermissionListModel;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.user.SubTabUserPermissionPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
@@ -27,15 +28,15 @@ public class SubTabUserPermissionView extends AbstractSubTabTableView<DbUser, pe
     }
 
     @Inject
-    public SubTabUserPermissionView(SearchableDetailModelProvider<permissions, UserListModel, UserPermissionListModel> modelProvider) {
+    public SubTabUserPermissionView(SearchableDetailModelProvider<permissions, UserListModel, UserPermissionListModel> modelProvider, ApplicationConstants constants) {
         super(modelProvider);
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        initTable();
+        initTable(constants);
         initWidget(getTable());
     }
 
-    void initTable() {
-        getTable().addColumn(new PermissionTypeColumn(), "", "30px");
+    void initTable(ApplicationConstants constants) {
+        getTable().addColumn(new PermissionTypeColumn(), constants.empty(), "30px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<permissions> roleColumn = new TextColumnWithTooltip<permissions>() {
             @Override
@@ -43,7 +44,7 @@ public class SubTabUserPermissionView extends AbstractSubTabTableView<DbUser, pe
                 return object.getRoleName();
             }
         };
-        getTable().addColumn(roleColumn, "Role");
+        getTable().addColumn(roleColumn, constants.rolePermission());
 
         TextColumnWithTooltip<permissions> permissionColumn = new ObjectNameColumn<permissions>() {
             @Override
@@ -51,7 +52,7 @@ public class SubTabUserPermissionView extends AbstractSubTabTableView<DbUser, pe
                 return new Object[] { object.getObjectType(), object.getObjectName() };
             }
         };
-        getTable().addColumn(permissionColumn, "Object");
+        getTable().addColumn(permissionColumn, constants.objectPermission());
 
         TextColumnWithTooltip<permissions> groupColumn = new GroupNameColumn<permissions>() {
             @Override
@@ -59,9 +60,9 @@ public class SubTabUserPermissionView extends AbstractSubTabTableView<DbUser, pe
                 return new Object[] { getDetailModel().getEntity(), object.getad_element_id(), object.getOwnerName() };
             }
         };
-        getTable().addColumn(groupColumn, "Inherited Permission");
+        getTable().addColumn(groupColumn, constants.inheritedPermission());
 
-        getTable().addActionButton(new WebAdminButtonDefinition<permissions>("Remove") {
+        getTable().addActionButton(new WebAdminButtonDefinition<permissions>(constants.removePermission()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getRemoveCommand();

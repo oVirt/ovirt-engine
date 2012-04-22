@@ -89,14 +89,14 @@ public class UserPortalLoginModel extends LoginModel
         if (isChangingPassword != value)
         {
             isChangingPassword = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsChangingPassword"));
+            OnPropertyChanged(new PropertyChangedEventArgs("IsChangingPassword")); //$NON-NLS-1$
         }
     }
 
-    public static final String ENGINEUserRoleId = "00000000-0000-0000-0001-000000000001";
-    public Guid Everyone = new Guid("eee00000-0000-0000-0000-123456789eee");
-    public Guid Blank = new Guid("00000000-0000-0000-0000-000000000000");
-    public Guid UserTemplateBasedVM = new Guid("def00009-0000-0000-0000-def000000009");
+    public static final String ENGINEUserRoleId = "00000000-0000-0000-0001-000000000001"; //$NON-NLS-1$
+    public Guid Everyone = new Guid("eee00000-0000-0000-0000-123456789eee"); //$NON-NLS-1$
+    public Guid Blank = new Guid("00000000-0000-0000-0000-000000000000"); //$NON-NLS-1$
+    public Guid UserTemplateBasedVM = new Guid("def00009-0000-0000-0000-def000000009"); //$NON-NLS-1$
 
     private VdcUser privateLoggedUser;
 
@@ -162,7 +162,7 @@ public class UserPortalLoginModel extends LoginModel
 
     public UserPortalLoginModel()
     {
-        setChangePasswordCommand(new UICommand("ChangePassword", this));
+        setChangePasswordCommand(new UICommand("ChangePassword", this)); //$NON-NLS-1$
 
         setNewPassword(new EntityModel());
         setVerifyPassword(new EntityModel());
@@ -196,10 +196,9 @@ public class UserPortalLoginModel extends LoginModel
 
         Frontend.RunAction(VdcActionType.LoginUser, new LoginUserParameters((String) getUserName().getEntity(),
                 (String) getPassword().getEntity(),
-                (String) getDomain().getSelectedItem(),
-                "",
-                "",
-                ""),
+                (String) getDomain().getSelectedItem(), "", //$NON-NLS-1$
+                "", //$NON-NLS-1$
+                ""), //$NON-NLS-1$
                 new IFrontendActionAsyncCallback() {
                     @Override
                     public void Executed(FrontendActionAsyncResult result) {
@@ -214,7 +213,7 @@ public class UserPortalLoginModel extends LoginModel
                         }
                         else
                         {
-                            model.getPassword().setEntity("");
+                            model.getPassword().setEntity(""); //$NON-NLS-1$
                             if (returnValue != null)
                             {
                                 model.setMessage(Linq.FirstOrDefault(returnValue.getCanDoActionMessages()));
@@ -228,7 +227,8 @@ public class UserPortalLoginModel extends LoginModel
                         }
 
                     }
-                }, this);
+                },
+                this);
     }
 
     private void ChangePassword()
@@ -261,7 +261,7 @@ public class UserPortalLoginModel extends LoginModel
             {
                 getVerifyPassword().setIsValid(false);
                 getVerifyPassword().getInvalidityReasons()
-                        .add("TODO: Verify password field doesn't match a new password.");
+                        .add("TODO: Verify password field doesn't match a new password."); //$NON-NLS-1$
             }
         }
 

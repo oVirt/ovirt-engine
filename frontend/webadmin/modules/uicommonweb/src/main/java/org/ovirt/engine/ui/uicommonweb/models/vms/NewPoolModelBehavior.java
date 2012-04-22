@@ -28,7 +28,7 @@ import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 @SuppressWarnings("unused")
 public class NewPoolModelBehavior extends IVmModelBehavior
 {
-    private Event poolModelBehaviorInitializedEvent = new Event("PoolModelBehaviorInitializedEvent",
+    private Event poolModelBehaviorInitializedEvent = new Event("PoolModelBehaviorInitializedEvent", //$NON-NLS-1$
             NewPoolModelBehavior.class);
 
     public Event getPoolModelBehaviorInitializedEvent()
@@ -134,7 +134,7 @@ public class NewPoolModelBehavior extends IVmModelBehavior
             {
                 // Patch! Create key-value pair with a right key.
                 getModel().getTimeZone()
-                        .setSelectedItem(new KeyValuePairCompat<String, String>(template.gettime_zone(), ""));
+                        .setSelectedItem(new KeyValuePairCompat<String, String>(template.gettime_zone(), "")); //$NON-NLS-1$
 
                 UpdateTimeZone();
             }

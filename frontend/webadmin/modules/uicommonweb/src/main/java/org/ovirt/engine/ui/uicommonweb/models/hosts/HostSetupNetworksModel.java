@@ -35,6 +35,7 @@ import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkOperation;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkOperationFactory;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkOperationFactory.OperationMap;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.OperationCadidateEventArgs;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 /**
  * A Model for the Setup Networks Dialog<BR>
@@ -45,13 +46,13 @@ import org.ovirt.engine.ui.uicommonweb.models.hosts.network.OperationCadidateEve
  */
 public class HostSetupNetworksModel extends EntityModel {
 
-    private static final EventDefinition NICS_CHANGED_EVENT_DEFINITION = new EventDefinition("NicsChanged",
+    private static final EventDefinition NICS_CHANGED_EVENT_DEFINITION = new EventDefinition("NicsChanged", //$NON-NLS-1$
             HostSetupNetworksModel.class);
-    private static final EventDefinition NETWORKS_CHANGED_EVENT_DEFINITION = new EventDefinition("NetworksChanged",
+    private static final EventDefinition NETWORKS_CHANGED_EVENT_DEFINITION = new EventDefinition("NetworksChanged", //$NON-NLS-1$
             HostSetupNetworksModel.class);
 
     private static final EventDefinition OPERATION_CANDIDATE_EVENT_DEFINITION =
-            new EventDefinition("OperationCandidate", NetworkOperationFactory.class);
+            new EventDefinition("OperationCandidate", NetworkOperationFactory.class); //$NON-NLS-1$
 
     private Event privateOperationCandidateEvent;
 
@@ -84,13 +85,13 @@ public class HostSetupNetworksModel extends EntityModel {
         setOperationCandidateEvent(new Event(OPERATION_CANDIDATE_EVENT_DEFINITION));
 
         // ok command
-        okCommand = new UICommand("OnSetupNetworks", this);
-        okCommand.setTitle("OK");
+        okCommand = new UICommand("OnSetupNetworks", this); //$NON-NLS-1$
+        okCommand.setTitle(ConstantsManager.getInstance().getConstants().ok());
         okCommand.setIsDefault(true);
 
         // cancel command
-        cancelCommand = new UICommand("Cancel", this);
-        cancelCommand.setTitle("Cancel");
+        cancelCommand = new UICommand("Cancel", this); //$NON-NLS-1$
+        cancelCommand.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         cancelCommand.setIsCancel(true);
 
     }
@@ -106,7 +107,7 @@ public class HostSetupNetworksModel extends EntityModel {
         NetworkItemModel<?> op2 = nic2 == null ? network2 : nic2;
 
         if (op1 == null || (op1 == null && op2 == null)) {
-            throw new IllegalArgumentException("null Operands");
+            throw new IllegalArgumentException("null Operands"); //$NON-NLS-1$
         }
 
         NetworkOperation candidate = NetworkOperationFactory.operationFor(op1, op2);
@@ -163,9 +164,9 @@ public class HostSetupNetworksModel extends EntityModel {
     }
 
     public void onEdit(NetworkItemModel<?> item) {
-        assert item instanceof NetworkInterfaceModel : "only nics can be edited";
+        assert item instanceof NetworkInterfaceModel : "only nics can be edited"; //$NON-NLS-1$
         NetworkInterfaceModel nic = (NetworkInterfaceModel) item;
-        assert nic.getItems().size() > 0 : "must have at least one network to edit";
+        assert nic.getItems().size() > 0 : "must have at least one network to edit"; //$NON-NLS-1$
         final VdsNetworkInterface entity = nic.getEntity();
         Model editPopup;
         BaseCommandTarget okTarget;
@@ -176,7 +177,7 @@ public class HostSetupNetworksModel extends EntityModel {
             BondNetworkInterfaceModel bondModel = (BondNetworkInterfaceModel) nic;
             editPopup = new HostBondInterfaceModel(true);
             final HostBondInterfaceModel bondDialogModel = (HostBondInterfaceModel) editPopup;
-            bondDialogModel.setTitle("Edit Bond Interface " + entity.getName());
+            bondDialogModel.setTitle(ConstantsManager.getInstance().getMessages().editBondInterfaceTitle(entity.getName()));
             bondDialogModel.getBondingOptions().setIsAvailable(true);
             bondDialogModel.getBond().setIsAvailable(false);
 
@@ -197,7 +198,7 @@ public class HostSetupNetworksModel extends EntityModel {
                     found = true;
                     break;
                 } else {
-                    if ("custom".equals(key)) {
+                    if ("custom".equals(key)) { //$NON-NLS-1$
                         customKey = pair;
                     }
                 }
@@ -237,7 +238,7 @@ public class HostSetupNetworksModel extends EntityModel {
              *****************/
             editPopup = new HostManagementNetworkModel(true);
             final HostManagementNetworkModel mgmntDialogModel = (HostManagementNetworkModel) editPopup;
-            mgmntDialogModel.setTitle("Edit Management Interface " + entity.getName());
+            mgmntDialogModel.setTitle(ConstantsManager.getInstance().getMessages().editManagementInterfaceTitle(entity.getName()));
             mgmntDialogModel.getAddress().setEntity(entity.getAddress());
             mgmntDialogModel.getSubnet().setEntity(entity.getSubnet());
             mgmntDialogModel.getGateway().setEntity(entity.getGateway());
@@ -266,7 +267,7 @@ public class HostSetupNetworksModel extends EntityModel {
              *****************/
             editPopup = new HostInterfaceModel(true);
             final HostInterfaceModel interfaceDialogModel = (HostInterfaceModel) editPopup;
-            interfaceDialogModel.setTitle("Edit Interface " + entity.getName());
+            interfaceDialogModel.setTitle(ConstantsManager.getInstance().getMessages().editInterfaceTitle(entity.getName()));
             interfaceDialogModel.getAddress().setEntity(entity.getAddress());
             interfaceDialogModel.getSubnet().setEntity(entity.getSubnet());
             interfaceDialogModel.getName().setIsAvailable(false);
@@ -291,18 +292,18 @@ public class HostSetupNetworksModel extends EntityModel {
         }
 
         // ok command
-        UICommand okCommand = new UICommand("OK", okTarget);
-        okCommand.setTitle("OK");
+        UICommand okCommand = new UICommand("OK", okTarget); //$NON-NLS-1$
+        okCommand.setTitle(ConstantsManager.getInstance().getConstants().ok());
         okCommand.setIsDefault(true);
 
         // cancel command
-        UICommand cancelCommand = new UICommand("Cancel", new BaseCommandTarget() {
+        UICommand cancelCommand = new UICommand("Cancel", new BaseCommandTarget() { //$NON-NLS-1$
             @Override
             public void ExecuteCommand(UICommand command) {
                 hostInterfaceListModel.CancelConfirm();
             }
         });
-        cancelCommand.setTitle("Cancel");
+        cancelCommand.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         cancelCommand.setIsCancel(true);
 
         editPopup.getCommands().add(okCommand);
@@ -313,20 +314,20 @@ public class HostSetupNetworksModel extends EntityModel {
     public void onOperation(NetworkOperation operation, final NetworkCommand networkCommand) {
         Model popupWindow;
 
-        UICommand cancelCommand = new UICommand("Cancel", new BaseCommandTarget() {
+        UICommand cancelCommand = new UICommand("Cancel", new BaseCommandTarget() { //$NON-NLS-1$
             @Override
             public void ExecuteCommand(UICommand command) {
                 hostInterfaceListModel.CancelConfirm();
             }
         });
-        cancelCommand.setTitle("cancel");
+        cancelCommand.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         cancelCommand.setIsCancel(true);
 
         if (operation == NetworkOperation.NULL_OPERATION) {
             return;
         } else if (operation == NetworkOperation.BOND_WITH) {
             final HostBondInterfaceModel bondPopup = new HostBondInterfaceModel(true);
-            bondPopup.setTitle("Create New Bond");
+            bondPopup.setTitle(ConstantsManager.getInstance().getConstants().createNewBondTitle());
             bondPopup.getNetwork().setIsAvailable(false);
             bondPopup.getCheckConnectivity().setIsAvailable(false);
             bondPopup.setBootProtocol(NetworkBootProtocol.None);
@@ -336,15 +337,15 @@ public class HostSetupNetworksModel extends EntityModel {
             List<VdsNetworkInterface> freeBonds = getFreeBonds();
             if (freeBonds.isEmpty()) {
                 popupWindow = new ConfirmationModel();
-                popupWindow.setTitle("Error");
-                popupWindow.setMessage("There are no available Bonds");
+                popupWindow.setTitle(ConstantsManager.getInstance().getConstants().errorTitle());
+                popupWindow.setMessage(ConstantsManager.getInstance().getConstants().thereAreNoAvailableBondsMsg());
                 popupWindow.getCommands().add(cancelCommand);
                 hostInterfaceListModel.setConfirmWindow(popupWindow);
                 return;
             }
             bondPopup.getBond().setItems(freeBonds);
             bondPopup.setBootProtocolAvailable(false);
-            bondPopup.getCommands().add(new UICommand("OK", new BaseCommandTarget() {
+            bondPopup.getCommands().add(new UICommand("OK", new BaseCommandTarget() { //$NON-NLS-1$
 
                 @Override
                 public void ExecuteCommand(UICommand command) {
@@ -393,7 +394,7 @@ public class HostSetupNetworksModel extends EntityModel {
         errorNetwork.setname(networkName);
         errorNetwork.setvlan_id(vlanId);
         LogicalNetworkModel networkModel = new LogicalNetworkModel(errorNetwork, this);
-        networkModel.setError("This Network does not exist in the Cluster");
+        networkModel.setError(ConstantsManager.getInstance().getConstants().thisNetworkDoesNotExistInTheClusterErr());
         networkMap.put(networkName, networkModel);
         return networkModel;
     }
@@ -505,7 +506,7 @@ public class HostSetupNetworksModel extends EntityModel {
                 nicNetworks.add(networkModel);
                 // set iface bridge to network
                 NetworkInterfaceModel existingEridge = networkModel.getBridge();
-                assert existingEridge == null : "should have only one bridge, but found " + existingEridge;
+                assert existingEridge == null : "should have only one bridge, but found " + existingEridge; //$NON-NLS-1$
                 networkModel.setBridge(new NetworkInterfaceModel(nic, nicNetworks, this));
 
                 if (nicToNetwork.containsKey(ifName)) {
@@ -625,7 +626,7 @@ public class HostSetupNetworksModel extends EntityModel {
                 (KeyValuePairCompat<String, EntityModel>) bondDialogModel.getBondingOptions()
                         .getSelectedItem();
         String key = BondPair.getKey();
-        entity.setBondOptions((String) ("custom".equals(key) ? BondPair.getValue().getEntity() : key));
+        entity.setBondOptions((String) ("custom".equals(key) ? BondPair.getValue().getEntity() : key)); //$NON-NLS-1$
     }
 
     private void setNetworks(Map<String, LogicalNetworkModel> networks) {

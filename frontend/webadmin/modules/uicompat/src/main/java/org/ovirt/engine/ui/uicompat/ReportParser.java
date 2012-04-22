@@ -41,10 +41,10 @@ public class ReportParser {
         // parse the XML document into a DOM
         Document messageDom = XMLParser.parse(xmlPath);
 
-        Element reportsElement = (Element) messageDom.getElementsByTagName("reports").item(0);
-        NodeList dashboradsNodeList = reportsElement.getElementsByTagName("dashboard");
+        Element reportsElement = (Element) messageDom.getElementsByTagName("reports").item(0); //$NON-NLS-1$
+        NodeList dashboradsNodeList = reportsElement.getElementsByTagName("dashboard"); //$NON-NLS-1$
         initDashboards(dashboradsNodeList);
-        NodeList resourcesNodeList = reportsElement.getElementsByTagName("resource");
+        NodeList resourcesNodeList = reportsElement.getElementsByTagName("resource"); //$NON-NLS-1$
 
         initResources(resourcesNodeList);
     }
@@ -52,15 +52,15 @@ public class ReportParser {
     private void initDashboards(NodeList dashboardNodeList) {
         Node dashboardNode = dashboardNodeList.item(0);
         Element dashboardElement = ((Element) dashboardNode);
-        isCommunityEdition = Boolean.valueOf(dashboardElement.getAttribute("is_ce"));
+        isCommunityEdition = Boolean.valueOf(dashboardElement.getAttribute("is_ce")); //$NON-NLS-1$
 
-        NodeList resourcesNodeList = dashboardElement.getElementsByTagName("resource");
+        NodeList resourcesNodeList = dashboardElement.getElementsByTagName("resource"); //$NON-NLS-1$
         Node resourceNode;
         int i = 0;
 
         while ((resourceNode = resourcesNodeList.item(i)) != null) {
             Element resourceElement = ((Element) resourceNode);
-            dashboardMap.put(resourceElement.getAttribute("type"), new Dashboard(resourceElement.getFirstChild()
+            dashboardMap.put(resourceElement.getAttribute("type"), new Dashboard(resourceElement.getFirstChild() //$NON-NLS-1$
                     .getNodeValue()));
             i++;
         }
@@ -73,7 +73,7 @@ public class ReportParser {
         while ((resourceNode = nodeList.item(i)) != null) {
             Element resourceElement = ((Element) resourceNode);
             Resource resource =
-                    new Resource(resourceElement.getAttribute("type"));
+                    new Resource(resourceElement.getAttribute("type")); //$NON-NLS-1$
 
             // initialize resource categories
             addCategories2Resource(resourceElement, resource);
@@ -86,13 +86,13 @@ public class ReportParser {
 
     private void addCategories2Resource(Element resourceElement, Resource resource) {
 
-        NodeList nodeList = resourceElement.getElementsByTagName("category");
+        NodeList nodeList = resourceElement.getElementsByTagName("category"); //$NON-NLS-1$
         Node node;
         int i = 0;
 
         while ((node = nodeList.item(i)) != null) {
             Element categoryElement = ((Element) node);
-            Category category = new Category(categoryElement.getAttribute("name"));
+            Category category = new Category(categoryElement.getAttribute("name")); //$NON-NLS-1$
 
             // initialize categories uri's
             addUris2Category(categoryElement, category);
@@ -104,20 +104,20 @@ public class ReportParser {
 
     private void addUris2Category(Element categoryElement, Category category) {
 
-        NodeList nodeList = categoryElement.getElementsByTagName("uri");
+        NodeList nodeList = categoryElement.getElementsByTagName("uri"); //$NON-NLS-1$
         Node node;
         int i = 0;
 
         while ((node = nodeList.item(i)) != null) {
             Element uriElement = ((Element) node);
             URI uri =
-                    new URI(uriElement.getAttribute("name"),
+                    new URI(uriElement.getAttribute("name"), //$NON-NLS-1$
                             uriElement.getAttributes()
-                                    .getNamedItem("description")
+                                    .getNamedItem("description") //$NON-NLS-1$
                                     .getNodeValue(),
                             uriElement.getFirstChild().getNodeValue(),
-                            uriElement.getAttribute("idParamName"),
-                            Boolean.parseBoolean(uriElement.getAttribute("multiple")));
+                            uriElement.getAttribute("idParamName"), //$NON-NLS-1$
+                            Boolean.parseBoolean(uriElement.getAttribute("multiple"))); //$NON-NLS-1$
 
             category.addURI(uri);
             i++;

@@ -28,11 +28,11 @@ public class UserPortalConfigurator extends Configurator implements IEventListen
 
     // Temporarily save the locations of webadmin and userportal.
     // TODO: create a new SPICE RPM for webadmin
-    private static final String WEBADMIN_ROOT_FOLDER = "/webadmin/webadmin/";
-    private static final String USERPORTAL_ROOT_FOLDER = "/userportal-gwtp/userportal/";
+    private static final String WEBADMIN_ROOT_FOLDER = "/webadmin/webadmin/"; //$NON-NLS-1$
+    private static final String USERPORTAL_ROOT_FOLDER = "/userportal-gwtp/userportal/"; //$NON-NLS-1$
 
     public EventDefinition spiceVersionFileFetchedEvent_Definition =
-            new EventDefinition("spiceVersionFileFetched", UserPortalConfigurator.class);
+            new EventDefinition("spiceVersionFileFetched", UserPortalConfigurator.class); //$NON-NLS-1$
 
     public Event spiceVersionFileFetchedEvent = new Event(spiceVersionFileFetchedEvent_Definition);
 
@@ -58,21 +58,21 @@ public class UserPortalConfigurator extends Configurator implements IEventListen
         // Update spice version from the text files which are located on the server.
         // If can't update spice version - leave the default value from the Configurator.
         ClientAgentType cat = new ClientAgentType();
-        if ((cat.os.equalsIgnoreCase("Windows")) && (cat.browser.equalsIgnoreCase("Explorer"))) {
-            if (cat.getPlatform().equalsIgnoreCase("win32")) {
+        if ((cat.os.equalsIgnoreCase("Windows")) && (cat.browser.equalsIgnoreCase("Explorer"))) { //$NON-NLS-1$ //$NON-NLS-2$
+            if (cat.getPlatform().equalsIgnoreCase("win32")) { //$NON-NLS-1$
                 updateSpice32Version();
-            } else if (cat.getPlatform().equalsIgnoreCase("win64")) {
+            } else if (cat.getPlatform().equalsIgnoreCase("win64")) { //$NON-NLS-1$
                 updateSpice64Version();
             }
         }
     }
 
     public void updateSpice32Version() {
-        fetchFile("SpiceVersion.txt", spiceVersionFileFetchedEvent);
+        fetchFile("SpiceVersion.txt", spiceVersionFileFetchedEvent); //$NON-NLS-1$
     }
 
     public void updateSpice64Version() {
-        fetchFile("SpiceVersion_x64.txt", spiceVersionFileFetchedEvent);
+        fetchFile("SpiceVersion_x64.txt", spiceVersionFileFetchedEvent); //$NON-NLS-1$
     }
 
     public void updateIsUsbEnabled(final ISpice spice) {
@@ -112,7 +112,7 @@ public class UserPortalConfigurator extends Configurator implements IEventListen
 
     // Create a Version object from string
     public Version parseVersion(String versionStr) {
-        return new Version(versionStr.replace(',', '.').replace("\n", ""));
+        return new Version(versionStr.replace(',', '.').replace("\n", "")); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     @Override
@@ -148,8 +148,8 @@ public class UserPortalConfigurator extends Configurator implements IEventListen
 
         case qxl:
             ClientAgentType cat = new ClientAgentType();
-            return (cat.os.equalsIgnoreCase("Windows") && cat.browser.equalsIgnoreCase("Explorer")) ||
-                    (cat.os.equalsIgnoreCase("Linux") && cat.browser.equalsIgnoreCase("Firefox"));
+            return (cat.os.equalsIgnoreCase("Windows") && cat.browser.equalsIgnoreCase("Explorer")) || //$NON-NLS-1$ //$NON-NLS-2$
+                    (cat.os.equalsIgnoreCase("Linux") && cat.browser.equalsIgnoreCase("Firefox")); //$NON-NLS-1$ //$NON-NLS-2$
         }
 
         return false;

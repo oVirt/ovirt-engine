@@ -13,7 +13,7 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.ChangeCDModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleModel;
-
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
 public class UserPortalItemModel extends EntityModel
@@ -141,7 +141,7 @@ public class UserPortalItemModel extends EntityModel
         if (!StringHelper.stringsEqual(name, value))
         {
             name = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Name"));
+            OnPropertyChanged(new PropertyChangedEventArgs("Name")); //$NON-NLS-1$
         }
     }
 
@@ -157,7 +157,7 @@ public class UserPortalItemModel extends EntityModel
         if (!StringHelper.stringsEqual(description, value))
         {
             description = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Description"));
+            OnPropertyChanged(new PropertyChangedEventArgs("Description")); //$NON-NLS-1$
         }
     }
 
@@ -173,7 +173,7 @@ public class UserPortalItemModel extends EntityModel
         if (isPool != value)
         {
             isPool = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsPool"));
+            OnPropertyChanged(new PropertyChangedEventArgs("IsPool")); //$NON-NLS-1$
         }
     }
 
@@ -189,7 +189,7 @@ public class UserPortalItemModel extends EntityModel
         if (isServer != value)
         {
             isServer = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsServer"));
+            OnPropertyChanged(new PropertyChangedEventArgs("IsServer")); //$NON-NLS-1$
         }
     }
 
@@ -205,7 +205,7 @@ public class UserPortalItemModel extends EntityModel
         if (isFromPool != value)
         {
             isFromPool = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsFromPool"));
+            OnPropertyChanged(new PropertyChangedEventArgs("IsFromPool")); //$NON-NLS-1$
         }
     }
 
@@ -221,7 +221,7 @@ public class UserPortalItemModel extends EntityModel
         if (poolType != value)
         {
             poolType = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("PoolType"));
+            OnPropertyChanged(new PropertyChangedEventArgs("PoolType")); //$NON-NLS-1$
         }
     }
 
@@ -237,7 +237,7 @@ public class UserPortalItemModel extends EntityModel
         if (status != value)
         {
             status = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Status"));
+            OnPropertyChanged(new PropertyChangedEventArgs("Status")); //$NON-NLS-1$
         }
     }
 
@@ -253,7 +253,7 @@ public class UserPortalItemModel extends EntityModel
         if (defaultConsole != value)
         {
             defaultConsole = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("DefaultConsole"));
+            OnPropertyChanged(new PropertyChangedEventArgs("DefaultConsole")); //$NON-NLS-1$
         }
     }
 
@@ -269,7 +269,7 @@ public class UserPortalItemModel extends EntityModel
         if (additionalConsole != value)
         {
             additionalConsole = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("AdditionalConsole"));
+            OnPropertyChanged(new PropertyChangedEventArgs("AdditionalConsole")); //$NON-NLS-1$
         }
     }
 
@@ -285,7 +285,7 @@ public class UserPortalItemModel extends EntityModel
         if (hasAdditionalConsole != value)
         {
             hasAdditionalConsole = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("HasAdditionalConsole"));
+            OnPropertyChanged(new PropertyChangedEventArgs("HasAdditionalConsole")); //$NON-NLS-1$
         }
     }
 
@@ -301,7 +301,7 @@ public class UserPortalItemModel extends EntityModel
         if (cdImages != value)
         {
             cdImages = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("CdImages"));
+            OnPropertyChanged(new PropertyChangedEventArgs("CdImages")); //$NON-NLS-1$
         }
     }
 
@@ -317,7 +317,7 @@ public class UserPortalItemModel extends EntityModel
         if (osType != value)
         {
             osType = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("OsType"));
+            OnPropertyChanged(new PropertyChangedEventArgs("OsType")); //$NON-NLS-1$
         }
     }
 
@@ -332,16 +332,16 @@ public class UserPortalItemModel extends EntityModel
     {
         setResolutionService(resolutionService);
 
-        setRunCommand(new UICommand("Run", this));
-        setPauseCommand(new UICommand("Pause", this));
-        setStopCommand(new UICommand("Stop", this));
-        setShutdownCommand(new UICommand("Shutdown", this));
-        setRetrieveCdImagesCommand(new UICommand("RetrieveCdImages", this));
-        setTakeVmCommand(new UICommand("TakeVm", this));
-        setReturnVmCommand(new UICommand("ReturnVm", this));
+        setRunCommand(new UICommand("Run", this)); //$NON-NLS-1$
+        setPauseCommand(new UICommand("Pause", this)); //$NON-NLS-1$
+        setStopCommand(new UICommand("Stop", this)); //$NON-NLS-1$
+        setShutdownCommand(new UICommand("Shutdown", this)); //$NON-NLS-1$
+        setRetrieveCdImagesCommand(new UICommand("RetrieveCdImages", this)); //$NON-NLS-1$
+        setTakeVmCommand(new UICommand("TakeVm", this)); //$NON-NLS-1$
+        setReturnVmCommand(new UICommand("ReturnVm", this)); //$NON-NLS-1$
 
         ChangeCDModel tempVar = new ChangeCDModel();
-        tempVar.setTitle("Retrieving CDs...");
+        tempVar.setTitle(ConstantsManager.getInstance().getConstants().retrievingCDsTitle());
         setCdImages(new java.util.ArrayList<ChangeCDModel>(java.util.Arrays.asList(new ChangeCDModel[] { tempVar })));
     }
 

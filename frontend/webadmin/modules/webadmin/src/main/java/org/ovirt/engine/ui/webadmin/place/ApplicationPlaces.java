@@ -7,247 +7,246 @@ public class ApplicationPlaces {
 
     // Login section
 
-    public static final String loginPlace = "login";
+    public static final String loginPlace = "login"; //$NON-NLS-1$
 
     // Main section: main tabs
 
-    public static final String dataCenterMainTabPlace = "dataCenters";
+    public static final String dataCenterMainTabPlace = "dataCenters"; //$NON-NLS-1$
 
-    public static final String clusterMainTabPlace = "clusters";
+    public static final String clusterMainTabPlace = "clusters"; //$NON-NLS-1$
 
-    public static final String hostMainTabPlace = "hosts";
+    public static final String hostMainTabPlace = "hosts"; //$NON-NLS-1$
 
-    public static final String storageMainTabPlace = "storage";
+    public static final String storageMainTabPlace = "storage"; //$NON-NLS-1$
 
-    public static final String virtualMachineMainTabPlace = "vms";
+    public static final String virtualMachineMainTabPlace = "vms"; //$NON-NLS-1$
 
-    public static final String poolMainTabPlace = "pools";
+    public static final String poolMainTabPlace = "pools"; //$NON-NLS-1$
 
-    public static final String templateMainTabPlace = "templates";
+    public static final String templateMainTabPlace = "templates"; //$NON-NLS-1$
 
-    public static final String userMainTabPlace = "users";
+    public static final String userMainTabPlace = "users"; //$NON-NLS-1$
 
-    public static final String eventMainTabPlace = "events";
+    public static final String eventMainTabPlace = "events"; //$NON-NLS-1$
 
-    public static final String reportsMainTabPlace = "reports";
+    public static final String reportsMainTabPlace = "reports"; //$NON-NLS-1$
 
-    public static final String quotaMainTabPlace = "quota";
+    public static final String quotaMainTabPlace = "quota"; //$NON-NLS-1$
 
-    public static final String volumeMainTabPlace = "volumes";
+    public static final String volumeMainTabPlace = "volumes"; //$NON-NLS-1$
 
-    public static final String diskMainTabPlace = "disks";
+    public static final String diskMainTabPlace = "disks"; //$NON-NLS-1$
 
     // Main section: sub tabs
 
     // Important: the value after SUB_TAB_PREFIX must correspond to given UiCommon model
-    // title, transformed to lower case, with spaces replaced with underscores ('_')
-
-    public static final String SUB_TAB_PREFIX = "-";
+    // hashName
+    public static final String SUB_TAB_PREFIX = "-"; //$NON-NLS-1$
 
     // DataCenter
 
     public static final String dataCenterStorageSubTabPlace = dataCenterMainTabPlace + SUB_TAB_PREFIX
-            + "storage";
+            + "storage"; //$NON-NLS-1$
 
     public static final String dataCenterNetworkSubTabPlace = dataCenterMainTabPlace + SUB_TAB_PREFIX
-            + "logical_networks";
+            + "logical_networks"; //$NON-NLS-1$
 
     public static final String dataCenterClusterSubTabPlace = dataCenterMainTabPlace + SUB_TAB_PREFIX
-            + "clusters";
+            + "clusters"; //$NON-NLS-1$
 
     public static final String dataCenterQuotaSubTabPlace = dataCenterMainTabPlace + SUB_TAB_PREFIX
-            + "quota";
+            + "quota"; //$NON-NLS-1$
 
     public static final String dataCenterPermissionSubTabPlace = dataCenterMainTabPlace + SUB_TAB_PREFIX
-            + "permissions";
+            + "permissions"; //$NON-NLS-1$
 
     public static final String dataCenterEventSubTabPlace = dataCenterMainTabPlace + SUB_TAB_PREFIX
-            + "events";
+            + "events"; //$NON-NLS-1$
 
     // Storage
 
     public static final String storageGeneralSubTabPlace = storageMainTabPlace + SUB_TAB_PREFIX
-            + "general";
+            + "general"; //$NON-NLS-1$
 
     public static final String storageDataCenterSubTabPlace = storageMainTabPlace + SUB_TAB_PREFIX
-            + "data_center";
+            + "data_center"; //$NON-NLS-1$
 
     public static final String storageVmBackupSubTabPlace = storageMainTabPlace + SUB_TAB_PREFIX
-            + "vm_import";
+            + "vm_import"; //$NON-NLS-1$
 
     public static final String storageTemplateBackupSubTabPlace = storageMainTabPlace + SUB_TAB_PREFIX
-            + "template_import";
+            + "template_import"; //$NON-NLS-1$
 
     public static final String storageVmSubTabPlace = storageMainTabPlace + SUB_TAB_PREFIX
-            + "virtual_machines";
+            + "virtual_machines"; //$NON-NLS-1$
 
     public static final String storageTemplateSubTabPlace = storageMainTabPlace + SUB_TAB_PREFIX
-            + "templates";
+            + "templates"; //$NON-NLS-1$
 
     public static final String storageIsoSubTabPlace = storageMainTabPlace + SUB_TAB_PREFIX
-            + "images";
+            + "images"; //$NON-NLS-1$
 
     public static final String storagePermissionSubTabPlace = storageMainTabPlace + SUB_TAB_PREFIX
-            + "permissions";
+            + "permissions"; //$NON-NLS-1$
 
     public static final String storageEventSubTabPlace = storageMainTabPlace + SUB_TAB_PREFIX
-            + "events";
+            + "events"; //$NON-NLS-1$
 
     // Cluster
 
     public static final String clusterGeneralSubTabPlace = clusterMainTabPlace + SUB_TAB_PREFIX
-            + "general";
+            + "general"; //$NON-NLS-1$
 
     public static final String clusterHostSubTabPlace = clusterMainTabPlace + SUB_TAB_PREFIX
-            + "hosts";
+            + "hosts"; //$NON-NLS-1$
 
     public static final String clusterVmSubTabPlace = clusterMainTabPlace + SUB_TAB_PREFIX
-            + "virtual_machines";
+            + "virtual_machines"; //$NON-NLS-1$
 
     public static final String clusterNetworkSubTabPlace = clusterMainTabPlace + SUB_TAB_PREFIX
-            + "logical_networks";
+            + "logical_networks"; //$NON-NLS-1$
 
     public static final String clusterPermissionSubTabPlace = clusterMainTabPlace + SUB_TAB_PREFIX
-            + "permissions";
+            + "permissions"; //$NON-NLS-1$
 
     // VirtualMachine
 
     public static final String virtualMachineGeneralSubTabPlace = virtualMachineMainTabPlace + SUB_TAB_PREFIX
-            + "general";
+            + "general"; //$NON-NLS-1$
 
     public static final String virtualMachineNetworkInterfaceSubTabPlace = virtualMachineMainTabPlace + SUB_TAB_PREFIX
-            + "network_interfaces";
+            + "network_interfaces"; //$NON-NLS-1$
 
     public static final String virtualMachineVirtualDiskSubTabPlace = virtualMachineMainTabPlace + SUB_TAB_PREFIX
-            + "virtual_disks";
+            + "virtual_disks"; //$NON-NLS-1$
 
     public static final String virtualMachineSnapshotSubTabPlace = virtualMachineMainTabPlace + SUB_TAB_PREFIX
-            + "snapshots";
+            + "snapshots"; //$NON-NLS-1$
 
     public static final String virtualMachineApplicationSubTabPlace = virtualMachineMainTabPlace + SUB_TAB_PREFIX
-            + "applications";
+            + "applications"; //$NON-NLS-1$
 
     public static final String virtualMachinePermissionSubTabPlace = virtualMachineMainTabPlace + SUB_TAB_PREFIX
-            + "permissions";
+            + "permissions"; //$NON-NLS-1$
 
-    public static final String virtualMachineEventSubTabPlace = virtualMachineMainTabPlace + SUB_TAB_PREFIX + "events";
+    public static final String virtualMachineEventSubTabPlace = virtualMachineMainTabPlace + SUB_TAB_PREFIX + "events"; //$NON-NLS-1$
 
     // Host
 
     public static final String hostGeneralSubTabPlace = hostMainTabPlace + SUB_TAB_PREFIX
-            + "general";
+            + "general"; //$NON-NLS-1$
 
     public static final String hostVmSubTabPlace = hostMainTabPlace + SUB_TAB_PREFIX
-            + "virtual_machines";
+            + "virtual_machines"; //$NON-NLS-1$
 
     public static final String hostInterfaceSubTabPlace = hostMainTabPlace + SUB_TAB_PREFIX
-            + "network_interfaces";
+            + "network_interfaces"; //$NON-NLS-1$
 
     public static final String hostHookSubTabPlace = hostMainTabPlace + SUB_TAB_PREFIX
-            + "host_hooks";
+            + "host_hooks"; //$NON-NLS-1$
 
     public static final String hostPermissionSubTabPlace = hostMainTabPlace + SUB_TAB_PREFIX
-            + "permissions";
+            + "permissions"; //$NON-NLS-1$
 
     public static final String hostEventSubTabPlace = hostMainTabPlace + SUB_TAB_PREFIX
-            + "events";
+            + "events"; //$NON-NLS-1$
 
     // Pool
 
     public static final String poolGeneralSubTabPlace = poolMainTabPlace + SUB_TAB_PREFIX
-            + "general";
+            + "general"; //$NON-NLS-1$
 
     public static final String poolVmSubTabPlace = poolMainTabPlace + SUB_TAB_PREFIX
-            + "virtual_machines";
+            + "virtual_machines"; //$NON-NLS-1$
 
     public static final String poolPermissionSubTabPlace = poolMainTabPlace + SUB_TAB_PREFIX
-            + "permissions";
+            + "permissions"; //$NON-NLS-1$
 
     // Template
 
     public static final String templateGeneralSubTabPlace = templateMainTabPlace + SUB_TAB_PREFIX
-            + "general";
+            + "general"; //$NON-NLS-1$
 
     public static final String templateVmSubTabPlace = templateMainTabPlace + SUB_TAB_PREFIX
-            + "virtual_machines";
+            + "virtual_machines"; //$NON-NLS-1$
 
     public static final String templateInterfaceSubTabPlace = templateMainTabPlace + SUB_TAB_PREFIX
-            + "network_interfaces";
+            + "network_interfaces"; //$NON-NLS-1$
 
     public static final String templateDiskSubTabPlace = templateMainTabPlace + SUB_TAB_PREFIX
-            + "virtual_disks";
+            + "virtual_disks"; //$NON-NLS-1$
 
     public static final String templateStorageSubTabPlace = templateMainTabPlace + SUB_TAB_PREFIX
-            + "storage";
+            + "storage"; //$NON-NLS-1$
 
     public static final String templatePermissionSubTabPlace = templateMainTabPlace + SUB_TAB_PREFIX
-            + "permissions";
+            + "permissions"; //$NON-NLS-1$
 
     public static final String templateEventSubTabPlace = templateMainTabPlace + SUB_TAB_PREFIX
-            + "events";
+            + "events"; //$NON-NLS-1$
 
     // User
 
     public static final String userGeneralSubTabPlace = userMainTabPlace + SUB_TAB_PREFIX
-            + "general";
+            + "general"; //$NON-NLS-1$
 
     public static final String userQuotaSubTabPlace = userMainTabPlace + SUB_TAB_PREFIX
-            + "quota";
+            + "quota"; //$NON-NLS-1$
 
     public static final String userGroupSubTabPlace = userMainTabPlace + SUB_TAB_PREFIX
-            + "directory_groups";
+            + "directory_groups"; //$NON-NLS-1$
 
     public static final String userEventNotifierSubTabPlace = userMainTabPlace + SUB_TAB_PREFIX
-            + "event_notifier";
+            + "event_notifier"; //$NON-NLS-1$
 
     public static final String userPermissionSubTabPlace = userMainTabPlace + SUB_TAB_PREFIX
-            + "permissions";
+            + "permissions"; //$NON-NLS-1$
 
     public static final String userEventSubTabPlace = userMainTabPlace + SUB_TAB_PREFIX
-            + "events";
+            + "events"; //$NON-NLS-1$
 
     // Quota
 
     public static final String quotaClusterSubTabPlace = quotaMainTabPlace + SUB_TAB_PREFIX
-            + "clusters";
+            + "clusters"; //$NON-NLS-1$
 
     public static final String quotaStorageSubTabPlace = quotaMainTabPlace + SUB_TAB_PREFIX
-            + "storage";
+            + "storage"; //$NON-NLS-1$
 
     public static final String quotaUserSubTabPlace = quotaMainTabPlace + SUB_TAB_PREFIX
-            + "users";
+            + "users"; //$NON-NLS-1$
 
     public static final String quotaPermissionSubTabPlace = quotaMainTabPlace + SUB_TAB_PREFIX
-            + "permissions";
+            + "permissions"; //$NON-NLS-1$
 
     public static final String quotaEventSubTabPlace = quotaMainTabPlace + SUB_TAB_PREFIX
-            + "events";
+            + "events"; //$NON-NLS-1$
 
     public static final String quotaVmSubTabPlace = quotaMainTabPlace + SUB_TAB_PREFIX
-            + "vms";
+            + "vms"; //$NON-NLS-1$
 
     public static final String quotaTemplateSubTabPlace = quotaMainTabPlace + SUB_TAB_PREFIX
-            + "templates";
+            + "templates"; //$NON-NLS-1$
 
     // Volumes
 
-    public static final String volumeGeneralSubTabPlace = volumeMainTabPlace + SUB_TAB_PREFIX + "general";
+    public static final String volumeGeneralSubTabPlace = volumeMainTabPlace + SUB_TAB_PREFIX + "general"; //$NON-NLS-1$
 
-    public static final String volumeParameterSubTabPlace = volumeMainTabPlace + SUB_TAB_PREFIX + "parameters";
+    public static final String volumeParameterSubTabPlace = volumeMainTabPlace + SUB_TAB_PREFIX + "parameters"; //$NON-NLS-1$
 
-    public static final String volumeBrickSubTabPlace = volumeMainTabPlace + SUB_TAB_PREFIX + "bricks";
+    public static final String volumeBrickSubTabPlace = volumeMainTabPlace + SUB_TAB_PREFIX + "bricks"; //$NON-NLS-1$
 
-    public static final String volumePermissionSubTabPlace = volumeMainTabPlace + SUB_TAB_PREFIX + "permissions";
+    public static final String volumePermissionSubTabPlace = volumeMainTabPlace + SUB_TAB_PREFIX + "permissions"; //$NON-NLS-1$
 
-    public static final String volumeEventSubTabPlace = volumeMainTabPlace + SUB_TAB_PREFIX + "events";
+    public static final String volumeEventSubTabPlace = volumeMainTabPlace + SUB_TAB_PREFIX + "events"; //$NON-NLS-1$
 
     // Disk
 
-    public static final String diskGeneralSubTabPlace = diskMainTabPlace + SUB_TAB_PREFIX + "general";
+    public static final String diskGeneralSubTabPlace = diskMainTabPlace + SUB_TAB_PREFIX + "general"; //$NON-NLS-1$
 
-    public static final String diskVmSubTabPlace = diskMainTabPlace + SUB_TAB_PREFIX + "virtual_machines";
+    public static final String diskVmSubTabPlace = diskMainTabPlace + SUB_TAB_PREFIX + "virtual_machines"; //$NON-NLS-1$
 
-    public static final String diskTemplateSubTabPlace = diskMainTabPlace + SUB_TAB_PREFIX + "templates";
+    public static final String diskTemplateSubTabPlace = diskMainTabPlace + SUB_TAB_PREFIX + "templates"; //$NON-NLS-1$
 
     // Default places
 

@@ -4,6 +4,8 @@
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
 	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor">
 
+	<ui:with field='constants' type='org.ovirt.engine.ui.common.CommonApplicationConstants' />
+
 	<ui:style>
 		.macExample {
 			color: gray;
@@ -22,6 +24,6 @@
 			<g:Label ui:field="enableManualMacCheckboxLabel" />
 		</g:HorizontalPanel>
 		<e:EntityModelTextBoxEditor ui:field="MACEditor" />
-		<g:Label ui:field="macExample" addStyleNames="{style.macExample}">Example: 00:14:4a:23:67:55</g:Label>
+		<g:Label ui:field="macExample" addStyleNames="{style.macExample}" text="{constants.exampleInterfacePopup} 00:14:4a:23:67:55" />
 	</g:FlowPanel>
 </ui:UiBinder>

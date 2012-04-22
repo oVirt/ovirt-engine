@@ -28,9 +28,9 @@ public class SubTabExtendedVmVirtualDiskView extends AbstractSubTabTableWidgetVi
     public SubTabExtendedVmVirtualDiskView(VmDiskListModelProvider modelProvider,
             EventBus eventBus, ClientStorage clientStorage, ApplicationResources resources,
             ApplicationConstants constants) {
-        super(new VmDiskListModelTable(modelProvider, eventBus, clientStorage, resources, constants, false));
+        super(new VmDiskListModelTable(modelProvider, eventBus, clientStorage, resources, false));
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        initTable();
+        initTable(constants);
         initWidget(getModelBoundTableWidget());
     }
 

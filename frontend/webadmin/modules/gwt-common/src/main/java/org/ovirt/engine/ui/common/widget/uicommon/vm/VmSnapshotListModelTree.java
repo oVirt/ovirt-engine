@@ -6,6 +6,7 @@ import org.ovirt.engine.core.common.queries.CommandVersionsInfo;
 import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
+import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.action.SubTabTreeActionPanel;
 import org.ovirt.engine.ui.common.widget.action.UiCommandButtonDefinition;
@@ -32,15 +33,16 @@ public class VmSnapshotListModelTree<L extends ListWithDetailsModel> extends Abs
     public VmSnapshotListModelTree(SearchableDetailModelProvider modelProvider,
             EventBus eventBus,
             CommonApplicationResources resources,
-            CommonApplicationConstants constants) {
-        super(modelProvider, eventBus, resources, constants);
+            CommonApplicationConstants constants,
+            CommonApplicationTemplates templates) {
+        super(modelProvider, eventBus, resources, constants, templates);
 
         this.modelProvider = modelProvider;
     }
 
     @Override
     protected AbstractSubTabTree<VmSnapshotListModel, Snapshot, SnapshotDetailModel> createTree() {
-        return new SnapshotsTree(modelProvider, getEventBus(), resources, constants);
+        return new SnapshotsTree(modelProvider, getEventBus(), resources, constants, templates);
     }
 
     @Override
@@ -53,44 +55,44 @@ public class VmSnapshotListModelTree<L extends ListWithDetailsModel> extends Abs
     }
 
     protected void initHeader() {
-        table.addColumn(new EmptyColumn(), "", "55px");
-        table.addColumn(new EmptyColumn(), "Date", "150px");
-        table.addColumn(new EmptyColumn(), "Status", "150px");
-        table.addColumn(new EmptyColumn(), "Description");
+        table.addColumn(new EmptyColumn(), constants.empty(), "55px"); //$NON-NLS-1$
+        table.addColumn(new EmptyColumn(), constants.dateSnapshot(), "150px"); //$NON-NLS-1$
+        table.addColumn(new EmptyColumn(), constants.statusSnapshot(), "150px"); //$NON-NLS-1$
+        table.addColumn(new EmptyColumn(), constants.descriptionSnapshot());
     }
 
     private void initActionButtons() {
-        actionPanel.addActionButton(new UiCommandButtonDefinition<Snapshot>(getEventBus(), "Create") {
+        actionPanel.addActionButton(new UiCommandButtonDefinition<Snapshot>(getEventBus(), constants.createSnapshot()) {
             @Override
             protected UICommand resolveCommand() {
                 return modelProvider.getModel().getNewCommand();
             }
         });
-        actionPanel.addActionButton(new UiCommandButtonDefinition<Snapshot>(getEventBus(), "Preview") {
+        actionPanel.addActionButton(new UiCommandButtonDefinition<Snapshot>(getEventBus(), constants.previewSnapshot()) {
             @Override
             protected UICommand resolveCommand() {
                 return modelProvider.getModel().getPreviewCommand();
             }
         });
-        actionPanel.addActionButton(new UiCommandButtonDefinition<Snapshot>(getEventBus(), "Commit") {
+        actionPanel.addActionButton(new UiCommandButtonDefinition<Snapshot>(getEventBus(), constants.commitSnapshot()) {
             @Override
             protected UICommand resolveCommand() {
                 return modelProvider.getModel().getCommitCommand();
             }
         });
-        actionPanel.addActionButton(new UiCommandButtonDefinition<Snapshot>(getEventBus(), "Undo") {
+        actionPanel.addActionButton(new UiCommandButtonDefinition<Snapshot>(getEventBus(), constants.undoSnapshot()) {
             @Override
             protected UICommand resolveCommand() {
                 return modelProvider.getModel().getUndoCommand();
             }
         });
-        actionPanel.addActionButton(new UiCommandButtonDefinition<Snapshot>(getEventBus(), "Delete") {
+        actionPanel.addActionButton(new UiCommandButtonDefinition<Snapshot>(getEventBus(), constants.deleteSnapshot()) {
             @Override
             protected UICommand resolveCommand() {
                 return modelProvider.getModel().getRemoveCommand();
             }
         });
-        actionPanel.addActionButton(new UiCommandButtonDefinition<Snapshot>(getEventBus(), "Clone") {
+        actionPanel.addActionButton(new UiCommandButtonDefinition<Snapshot>(getEventBus(), constants.cloneSnapshot()) {
             @Override
             protected UICommand resolveCommand() {
                 return modelProvider.getModel().getCloneVmCommand();
@@ -102,7 +104,7 @@ public class VmSnapshotListModelTree<L extends ListWithDetailsModel> extends Abs
                     CommandVersionsInfo commandVersionsInfo =
                             AsyncDataProvider.GetCommandVersionsInfo(VdcActionType.AddVmFromSnapshot);
                     String minimalClusterVersion = commandVersionsInfo != null ?
-                            commandVersionsInfo.getClusterVersion().toString(2) : "";
+                            commandVersionsInfo.getClusterVersion().toString(2) : ""; //$NON-NLS-1$
                     return StringFormat.format(constants.cloneVmNotSupported(), minimalClusterVersion);
                 }
                 else {

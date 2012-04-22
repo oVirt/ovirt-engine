@@ -21,6 +21,7 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeModel;
 import org.ovirt.engine.ui.uicommonweb.models.common.SelectionTreeNodeModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
@@ -115,7 +116,7 @@ public class TagListModel extends SearchableListModel
             items = value;
             ItemsChanged();
             getItemsChangedEvent().raise(this, EventArgs.Empty);
-            OnPropertyChanged(new PropertyChangedEventArgs("Items"));
+            OnPropertyChanged(new PropertyChangedEventArgs("Items")); //$NON-NLS-1$
         }
     }
 
@@ -131,7 +132,7 @@ public class TagListModel extends SearchableListModel
         if (selectionNodeList != value)
         {
             selectionNodeList = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("SelectionNodeList"));
+            OnPropertyChanged(new PropertyChangedEventArgs("SelectionNodeList")); //$NON-NLS-1$
         }
     }
 
@@ -148,23 +149,23 @@ public class TagListModel extends SearchableListModel
         {
             attachedTagsToEntities = value;
             AttachedTagsToEntitiesChanged();
-            OnPropertyChanged(new PropertyChangedEventArgs("AttachedTagsToEntities"));
+            OnPropertyChanged(new PropertyChangedEventArgs("AttachedTagsToEntities")); //$NON-NLS-1$
         }
     }
 
     static
     {
-        ResetRequestedEventDefinition = new EventDefinition("ResetRequested", SystemTreeModel.class);
+        ResetRequestedEventDefinition = new EventDefinition("ResetRequested", SystemTreeModel.class); //$NON-NLS-1$
     }
 
     public TagListModel()
     {
         setResetRequestedEvent(new Event(ResetRequestedEventDefinition));
 
-        setNewCommand(new UICommand("New", this));
-        setEditCommand(new UICommand("Edit", this));
-        setRemoveCommand(new UICommand("Remove", this));
-        setResetCommand(new UICommand("Reset", this));
+        setNewCommand(new UICommand("New", this)); //$NON-NLS-1$
+        setEditCommand(new UICommand("Edit", this)); //$NON-NLS-1$
+        setRemoveCommand(new UICommand("Remove", this)); //$NON-NLS-1$
+        setResetCommand(new UICommand("Reset", this)); //$NON-NLS-1$
 
         setIsTimerDisabled(true);
 
@@ -191,7 +192,7 @@ public class TagListModel extends SearchableListModel
                         TagListModel tagListModel = (TagListModel) target;
                         TagModel rootTag =
                                 tagListModel.TagToModel((org.ovirt.engine.core.common.businessentities.tags) returnValue);
-                        rootTag.getName().setEntity("Root");
+                        rootTag.getName().setEntity(ConstantsManager.getInstance().getConstants().rootTag());
                         rootTag.setType(TagModelType.Root);
                         rootTag.setIsChangable(false);
                         tagListModel.setItems(new java.util.ArrayList<TagModel>(java.util.Arrays.asList(new TagModel[] { rootTag })));
@@ -342,7 +343,7 @@ public class TagListModel extends SearchableListModel
     protected void EntityPropertyChanged(Object sender, PropertyChangedEventArgs e)
     {
         super.EntityPropertyChanged(sender, e);
-        if (e.PropertyName.equals("IsSelectedNullable"))
+        if (e.PropertyName.equals("IsSelectedNullable")) //$NON-NLS-1$
         {
             SelectionTreeNodeModel selectionTreeNodeModel = (SelectionTreeNodeModel) sender;
             TagModel tagModel = (TagModel) selectionTreeNodeModel.getEntity();
@@ -420,22 +421,22 @@ public class TagListModel extends SearchableListModel
 
         ConfirmationModel model = new ConfirmationModel();
         setWindow(model);
-        model.setTitle("Remove Tag(s)");
-        model.setHashName("remove_tag");
-        model.setMessage("Tag(s):");
+        model.setTitle(ConstantsManager.getInstance().getConstants().removeTagsTitle());
+        model.setHashName("remove_tag"); //$NON-NLS-1$
+        model.setMessage(ConstantsManager.getInstance().getConstants().tagsMsg());
 
         java.util.ArrayList<Object> items = new java.util.ArrayList<Object>();
         items.add(getSelectedItem().getName().getEntity());
         model.setItems(items);
 
-        model.setNote("NOTE:\n  - Removing the tag will also remove all of its descendants.\n  - Tag and descendants will be erased from all objects that are attached to them.");
+        model.setNote(ConstantsManager.getInstance().getConstants().noteRemovingTheTagWillAlsoRemoveAllItsDescendants());
 
-        UICommand tempVar = new UICommand("OnRemove", this);
-        tempVar.setTitle("OK");
+        UICommand tempVar = new UICommand("OnRemove", this); //$NON-NLS-1$
+        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
         tempVar.setIsDefault(true);
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this);
-        tempVar2.setTitle("Cancel");
+        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
+        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         tempVar2.setIsCancel(true);
         model.getCommands().add(tempVar2);
     }
@@ -479,19 +480,19 @@ public class TagListModel extends SearchableListModel
 
         TagModel model = new TagModel();
         setWindow(model);
-        model.setTitle("Edit Tag");
-        model.setHashName("edit_tag");
+        model.setTitle(ConstantsManager.getInstance().getConstants().editTagTitle());
+        model.setHashName("edit_tag"); //$NON-NLS-1$
         model.setIsNew(false);
         model.getName().setEntity(getSelectedItem().getName().getEntity());
         model.getDescription().setEntity(getSelectedItem().getDescription().getEntity());
         model.setParentId(getSelectedItem().getParentId());
 
-        UICommand tempVar = new UICommand("OnSave", this);
-        tempVar.setTitle("OK");
+        UICommand tempVar = new UICommand("OnSave", this); //$NON-NLS-1$
+        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
         tempVar.setIsDefault(true);
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this);
-        tempVar2.setTitle("Cancel");
+        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
+        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         tempVar2.setIsCancel(true);
         model.getCommands().add(tempVar2);
     }
@@ -505,16 +506,16 @@ public class TagListModel extends SearchableListModel
 
         TagModel model = new TagModel();
         setWindow(model);
-        model.setTitle("New Tag");
-        model.setHashName("new_tag");
+        model.setTitle(ConstantsManager.getInstance().getConstants().newTagTitle());
+        model.setHashName("new_tag"); //$NON-NLS-1$
         model.setIsNew(true);
 
-        UICommand tempVar = new UICommand("OnSave", this);
-        tempVar.setTitle("OK");
+        UICommand tempVar = new UICommand("OnSave", this); //$NON-NLS-1$
+        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
         tempVar.setIsDefault(true);
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this);
-        tempVar2.setTitle("Cancel");
+        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
+        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         tempVar2.setIsCancel(true);
         model.getCommands().add(tempVar2);
     }
@@ -612,15 +613,15 @@ public class TagListModel extends SearchableListModel
         {
             remove();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "Cancel"))
+        else if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
         {
             Cancel();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnSave"))
+        else if (StringHelper.stringsEqual(command.getName(), "OnSave")) //$NON-NLS-1$
         {
             OnSave();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnRemove"))
+        else if (StringHelper.stringsEqual(command.getName(), "OnRemove")) //$NON-NLS-1$
         {
             OnRemove();
         }
@@ -628,6 +629,6 @@ public class TagListModel extends SearchableListModel
 
     @Override
     protected String getListName() {
-        return "TagListModel";
+        return "TagListModel"; //$NON-NLS-1$
     }
 }

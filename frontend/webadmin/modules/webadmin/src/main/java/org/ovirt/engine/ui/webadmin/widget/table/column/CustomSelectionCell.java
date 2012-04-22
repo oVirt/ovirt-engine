@@ -46,7 +46,7 @@ public class CustomSelectionCell extends AbstractInputCell<String, String> {
      *            the options in the cell
      */
     public CustomSelectionCell(List<String> options) {
-        super("change");
+        super("change"); //$NON-NLS-1$
         if (template == null) {
             template = GWT.create(CellTemplate.class);
         }
@@ -62,7 +62,7 @@ public class CustomSelectionCell extends AbstractInputCell<String, String> {
             NativeEvent event, ValueUpdater<String> valueUpdater) {
         super.onBrowserEvent(context, parent, value, event, valueUpdater);
         String type = event.getType();
-        if ("change".equals(type)) {
+        if ("change".equals(type)) { //$NON-NLS-1$
             Object key = context.getKey();
             SelectElement select = parent.getFirstChild().cast();
             String newValue = options.get(select.getSelectedIndex());
@@ -86,9 +86,9 @@ public class CustomSelectionCell extends AbstractInputCell<String, String> {
 
         int selectedIndex = getSelectedIndex(viewData == null ? value : viewData);
         if (isEnabled) {
-            sb.appendHtmlConstant("<select class='" + style + "' tabindex=\"-1\">");
+            sb.appendHtmlConstant("<select class='" + style + "' tabindex=\"-1\">"); //$NON-NLS-1$ //$NON-NLS-2$
         } else {
-            sb.appendHtmlConstant("<select class='" + style + "' tabindex=\"-1\" title=\"" + tooltip + "\" disabled>");
+            sb.appendHtmlConstant("<select class='" + style + "' tabindex=\"-1\" title=\"" + tooltip + "\" disabled>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         }
         int index = 0;
         for (String option : options) {
@@ -98,7 +98,7 @@ public class CustomSelectionCell extends AbstractInputCell<String, String> {
                 sb.append(template.deselected(option));
             }
         }
-        sb.appendHtmlConstant("</select>");
+        sb.appendHtmlConstant("</select>"); //$NON-NLS-1$
     }
 
     private int getSelectedIndex(String value) {

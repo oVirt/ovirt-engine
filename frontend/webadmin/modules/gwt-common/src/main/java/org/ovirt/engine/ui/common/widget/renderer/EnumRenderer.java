@@ -21,7 +21,7 @@ public class EnumRenderer<E extends Enum<E>> extends AbstractRenderer<E> {
     @Override
     public String render(E object) {
         if (object == null) {
-            return "N/A";
+            return "N/A"; //$NON-NLS-1$
         }
         Translator translator = EnumTranslator.Create(object.getDeclaringClass());
         String translation = object.name();
@@ -30,7 +30,7 @@ public class EnumRenderer<E extends Enum<E>> extends AbstractRenderer<E> {
             translation = translator.get(object);
         } catch (MissingResourceException e) {
             // Silently ignore missing resource
-            logger.info("Missing Enum resource: " + e.getLocalizedMessage());
+            logger.info("Missing Enum resource: " + e.getLocalizedMessage()); //$NON-NLS-1$
         }
 
         return translation;

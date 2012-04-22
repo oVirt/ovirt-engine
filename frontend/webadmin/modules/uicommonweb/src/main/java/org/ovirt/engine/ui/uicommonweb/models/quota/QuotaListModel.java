@@ -33,6 +33,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
@@ -69,14 +70,14 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
     }
 
     public QuotaListModel() {
-        setTitle("Quota");
+        setTitle(ConstantsManager.getInstance().getConstants().quotaTitle());
 
-        setDefaultSearchString("Quota:");
+        setDefaultSearchString("Quota:"); //$NON-NLS-1$
         setSearchString(getDefaultSearchString());
 
-        setCreateQuotaCommand(new UICommand("Create", this));
-        setEditQuotaCommand(new UICommand("Edit", this));
-        setRemoveQuotaCommand(new UICommand("Remove", this));
+        setCreateQuotaCommand(new UICommand("Create", this)); //$NON-NLS-1$
+        setEditQuotaCommand(new UICommand("Edit", this)); //$NON-NLS-1$
+        setRemoveQuotaCommand(new UICommand("Remove", this)); //$NON-NLS-1$
 
         updateActionAvailability();
 
@@ -147,8 +148,8 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
 
     private void createQuota() {
         final QuotaModel qModel = new QuotaModel();
-        qModel.setTitle("New Quota");
-        qModel.setHashName("new_quota");
+        qModel.setTitle(ConstantsManager.getInstance().getConstants().newQuotaTitle());
+        qModel.setHashName("new_quota"); //$NON-NLS-1$
         qModel.setEntity(new Quota());
         setWindow(qModel);
 
@@ -224,12 +225,12 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
             }
         });
 
-        UICommand command = new UICommand("OnCreateQuota", this);
-        command.setTitle("OK");
+        UICommand command = new UICommand("OnCreateQuota", this); //$NON-NLS-1$
+        command.setTitle(ConstantsManager.getInstance().getConstants().ok());
         command.setIsDefault(true);
         qModel.getCommands().add(command);
-        command = new UICommand("Cancel", this);
-        command.setTitle("Cancel");
+        command = new UICommand("Cancel", this); //$NON-NLS-1$
+        command.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         qModel.getCommands().add(command);
     }
 
@@ -308,14 +309,14 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
         QuotaModel qModel = new QuotaModel();
         qModel.getName().setEntity(outer_quota.getQuotaName());
         qModel.getDescription().setEntity(outer_quota.getDescription());
-        qModel.setTitle("Edit Quota");
-        qModel.setHashName("edit_quota");
-        UICommand command = new UICommand("OnCreateQuota", this);
-        command.setTitle("OK");
+        qModel.setTitle(ConstantsManager.getInstance().getConstants().editQuotaTitle());
+        qModel.setHashName("edit_quota"); //$NON-NLS-1$
+        UICommand command = new UICommand("OnCreateQuota", this); //$NON-NLS-1$
+        command.setTitle(ConstantsManager.getInstance().getConstants().ok());
         command.setIsDefault(true);
         qModel.getCommands().add(command);
-        command = new UICommand("Cancel", this);
-        command.setTitle("Cancel");
+        command = new UICommand("Cancel", this); //$NON-NLS-1$
+        command.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         qModel.getCommands().add(command);
         setWindow(qModel);
         AsyncQuery asyncQuery = new AsyncQuery();
@@ -508,9 +509,9 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
 
         ConfirmationModel model = new ConfirmationModel();
         setWindow(model);
-        model.setTitle("Remove Quota(s)");
-        model.setHashName("remove_quota");
-        model.setMessage("Quota(s)");
+        model.setTitle(ConstantsManager.getInstance().getConstants().removeQuotasTitle());
+        model.setHashName("remove_quota"); //$NON-NLS-1$
+        model.setMessage(ConstantsManager.getInstance().getConstants().quotasMsg());
 
         java.util.ArrayList<String> list = new java.util.ArrayList<String>();
         for (Quota a : Linq.<Quota> Cast(getSelectedItems()))
@@ -519,12 +520,12 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
         }
         model.setItems(list);
 
-        UICommand tempVar = new UICommand("OnRemove", this);
-        tempVar.setTitle("OK");
+        UICommand tempVar = new UICommand("OnRemove", this); //$NON-NLS-1$
+        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
         tempVar.setIsDefault(true);
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this);
-        tempVar2.setTitle("Cancel");
+        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
+        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         tempVar2.setIsCancel(true);
         model.getCommands().add(tempVar2);
     }
@@ -538,16 +539,16 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
         else if (command.equals(getEditQuotaCommand())) {
             editQuota();
         }
-        else if (command.getName().equals("OnCreateQuota")) {
+        else if (command.getName().equals("OnCreateQuota")) { //$NON-NLS-1$
             onCreateQuota();
         }
-        else if (command.getName().equals("Cancel")) {
+        else if (command.getName().equals("Cancel")) { //$NON-NLS-1$
             cancel();
         }
         else if (command.equals(getRemoveQuotaCommand())) {
             remove();
         }
-        else if (command.getName().equals("OnRemove")) {
+        else if (command.getName().equals("OnRemove")) { //$NON-NLS-1$
             onRemove();
         }
     }
@@ -573,13 +574,13 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
 
     @Override
     protected String getListName() {
-        return "QuotaListModel";
+        return "QuotaListModel"; //$NON-NLS-1$
     }
 
     @Override
     public boolean IsSearchStringMatch(String searchString)
     {
-        return searchString.trim().toLowerCase().startsWith("quota");
+        return searchString.trim().toLowerCase().startsWith("quota"); //$NON-NLS-1$
     }
 
 }

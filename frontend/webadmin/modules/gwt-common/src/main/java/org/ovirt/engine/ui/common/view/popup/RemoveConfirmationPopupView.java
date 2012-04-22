@@ -40,6 +40,7 @@ public class RemoveConfirmationPopupView extends AbstractConfirmationPopupView i
     }
 
     private final CommonApplicationMessages messages;
+    private final CommonApplicationConstants constants;
 
     @UiField
     protected FlowPanel itemPanel;
@@ -54,12 +55,15 @@ public class RemoveConfirmationPopupView extends AbstractConfirmationPopupView i
     protected Label noteLabel;
 
     @Inject
+
     public RemoveConfirmationPopupView(EventBus eventBus,
             CommonApplicationResources resources,
             CommonApplicationMessages messages,
             CommonApplicationConstants constants) {
         super(eventBus, resources);
         latch = new EntityModelCheckBoxEditor(Align.RIGHT);
+        latch.setLabel(constants.approveOperation());
+        this.constants= constants;
         this.messages = messages;
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
@@ -69,7 +73,7 @@ public class RemoveConfirmationPopupView extends AbstractConfirmationPopupView i
 
     @Override
     public void setMessage(String message) {
-        if (getHashName() != null && getHashName().startsWith("remove_")) {
+        if (getHashName() != null && getHashName().startsWith("remove_")) { //$NON-NLS-1$
             super.setMessage(messages.removeConfirmationPopupMessage(message));
         } else {
             super.setMessage(message);
@@ -89,12 +93,12 @@ public class RemoveConfirmationPopupView extends AbstractConfirmationPopupView i
 
     void setNote(String note) {
         if (note != null) {
-            noteLabel.getElement().setInnerHTML(note.replace("\n", "<br/>"));
+            noteLabel.getElement().setInnerHTML(note.replace("\n", "<br/>")); //$NON-NLS-1$ //$NON-NLS-2$
         }
     }
 
     String getItemText(Object item) {
-        return "- " + String.valueOf(item);
+        return "- " + String.valueOf(item); //$NON-NLS-1$
     }
 
     @Override
@@ -106,7 +110,7 @@ public class RemoveConfirmationPopupView extends AbstractConfirmationPopupView i
 
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                if ("IsAvailable".equals(((PropertyChangedEventArgs) args).PropertyName)) {
+                if ("IsAvailable".equals(((PropertyChangedEventArgs) args).PropertyName)) { //$NON-NLS-1$
                     EntityModel entity = (EntityModel) sender;
                     if (entity.getIsAvailable()) {
                         latch.setVisible(true);
@@ -119,7 +123,7 @@ public class RemoveConfirmationPopupView extends AbstractConfirmationPopupView i
         object.getPropertyChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                if ("Note".equals(((PropertyChangedEventArgs) args).PropertyName)) {
+                if ("Note".equals(((PropertyChangedEventArgs) args).PropertyName)) { //$NON-NLS-1$
                     ConfirmationModel entity = (ConfirmationModel) sender;
                     setNote(entity.getNote());
                 }

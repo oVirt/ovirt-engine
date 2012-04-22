@@ -8,8 +8,8 @@ public class TitleMenuItemSeparator extends MenuItemSeparator {
 
     public TitleMenuItemSeparator(String title) {
         super();
-        DOM.setInnerHTML(getElement(), "<b>" + title + "</b>");
-        setStyleName("gwt-MenuItem");
+        DOM.setInnerHTML(getElement(), "<b>" + title + "</b>"); //$NON-NLS-1$ //$NON-NLS-2$
+        setStyleName("gwt-MenuItem"); //$NON-NLS-1$
     }
 
     public TitleMenuItemSeparator(SafeHtml title) {

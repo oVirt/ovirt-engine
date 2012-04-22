@@ -9,11 +9,11 @@ public class NullableButtonCell extends ButtonCell {
     @Override
     public void render(com.google.gwt.cell.client.Cell.Context context, SafeHtml data, SafeHtmlBuilder sb) {
         if (data != null) {
-            sb.appendHtmlConstant("<button type=\"button\" style=\"height:24px;\" tabindex=\"-1\">");
+            sb.appendHtmlConstant("<button type=\"button\" style=\"height:24px;\" tabindex=\"-1\">"); //$NON-NLS-1$
             if (data != null) {
                 sb.append(data);
             }
-            sb.appendHtmlConstant("</button>");
+            sb.appendHtmlConstant("</button>"); //$NON-NLS-1$
         }
     }
 }

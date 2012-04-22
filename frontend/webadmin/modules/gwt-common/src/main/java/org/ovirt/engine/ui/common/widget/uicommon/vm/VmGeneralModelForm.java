@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.common.widget.uicommon.vm;
 
+import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.uicommon.model.ModelProvider;
 import org.ovirt.engine.ui.common.widget.form.FormItem;
 import org.ovirt.engine.ui.common.widget.label.BooleanLabel;
@@ -34,66 +35,69 @@ public class VmGeneralModelForm extends AbstractModelBoundFormWidget<VmGeneralMo
     TextBoxLabel timeZone = new TextBoxLabel();
     TextBoxLabel compatibilityVersion = new TextBoxLabel();
 
-    BooleanLabel isHighlyAvailable = new BooleanLabel("Yes", "No");
+    BooleanLabel isHighlyAvailable;
 
     @Ignore
     TextBoxLabel monitorCount = new TextBoxLabel();
 
-    public VmGeneralModelForm(ModelProvider<VmGeneralModel> modelProvider) {
+    public VmGeneralModelForm(ModelProvider<VmGeneralModel> modelProvider, CommonApplicationConstants constants) {
         super(modelProvider, 3, 7);
+        isHighlyAvailable = new BooleanLabel(constants.yes(), constants.no());
+
         Driver.driver.initialize(this);
 
-        formBuilder.setColumnsWidth("120px", "240px", "160px");
-        formBuilder.addFormItem(new FormItem("Name", name, 0, 0));
-        formBuilder.addFormItem(new FormItem("Description", description, 1, 0));
-        formBuilder.addFormItem(new FormItem("Template", template, 2, 0));
-        formBuilder.addFormItem(new FormItem("Operating System", oS, 3, 0));
-        formBuilder.addFormItem(new FormItem("Default Display Type", defaultDisplayType, 4, 0));
-        formBuilder.addFormItem(new FormItem("Priority", priority, 5, 0) {
+        formBuilder.setColumnsWidth("120px", "240px", "160px"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        formBuilder.addFormItem(new FormItem(constants.nameVm(), name, 0, 0));
+        formBuilder.addFormItem(new FormItem(constants.descriptionVm(), description, 1, 0));
+        formBuilder.addFormItem(new FormItem(constants.templateVm(), template, 2, 0));
+        formBuilder.addFormItem(new FormItem(constants.osVm(), oS, 3, 0));
+        formBuilder.addFormItem(new FormItem(constants.defaultDisplayTypeVm(), defaultDisplayType, 4, 0));
+        formBuilder.addFormItem(new FormItem(constants.priorityVm(), priority, 5, 0) {
             @Override
             public boolean isVisible() {
                 return getModel().getHasPriority();
             }
         });
-        formBuilder.addFormItem(new FormItem("Defined Memory", definedMemory, 0, 1));
-        formBuilder.addFormItem(new FormItem("Physical Memory Guaranteed", minAllocatedMemory, 1, 1));
-        formBuilder.addFormItem(new FormItem("Number of CPU Cores", cpuInfo, 2, 1));
-        formBuilder.addFormItem(new FormItem("Highly Available", isHighlyAvailable, 3, 1) {
+        formBuilder.addFormItem(new FormItem(constants.definedMemoryVm(), definedMemory, 0, 1));
+        formBuilder.addFormItem(new FormItem(constants.physMemGauranteedVm(), minAllocatedMemory, 1, 1));
+        formBuilder.addFormItem(new FormItem(constants.numOfCpuCoresVm(), cpuInfo, 2, 1));
+        formBuilder.addFormItem(new FormItem(constants.highlyAvailableVm(), isHighlyAvailable, 3, 1) {
             @Override
             public boolean isVisible() {
                 return getModel().getHasHighlyAvailable();
             }
         });
-        formBuilder.addFormItem(new FormItem("Number of Monitors", monitorCount, 3, 1) {
+        formBuilder.addFormItem(new FormItem(constants.numOfMonitorsVm(), monitorCount, 3, 1) {
             @Override
             public boolean isVisible() {
                 return getModel().getHasMonitorCount();
             }
         });
-        formBuilder.addFormItem(new FormItem("USB Policy", usbPolicy, 4, 1) {
+        formBuilder.addFormItem(new FormItem(constants.usbPolicyVm(), usbPolicy, 4, 1) {
             @Override
             public boolean isVisible() {
                 return getModel().getHasUsbPolicy();
             }
         });
 
-        formBuilder.addFormItem(new FormItem("Origin", origin, 0, 2));
-        formBuilder.addFormItem(new FormItem("Run On", defaultHost, 1, 2));
-        formBuilder.addFormItem(new FormItem("Custom Properties", customProperties, 2, 2));
-        formBuilder.addFormItem(new FormItem("Cluster Compatibility Version", compatibilityVersion, 3, 2));
-        formBuilder.addFormItem(new FormItem("Quota", quotaName, 4, 2) {
+        formBuilder.addFormItem(new FormItem(constants.originVm(), origin, 0, 2));
+        formBuilder.addFormItem(new FormItem(constants.runOnVm(), defaultHost, 1, 2));
+        formBuilder.addFormItem(new FormItem(constants.customPropertiesVm(), customProperties, 2, 2));
+        formBuilder.addFormItem(new FormItem(constants.clusterCompatibilityVersionVm(), compatibilityVersion, 3, 2));
+        formBuilder.addFormItem(new FormItem(constants.quotaVm(), quotaName, 4, 2) {
+
             @Override
             public boolean isVisible() {
                 return getModel().getQuotaName() != null;
             }
         });
-        formBuilder.addFormItem(new FormItem("Domain", domain, 5, 2) {
+        formBuilder.addFormItem(new FormItem(constants.domainVm(), domain, 5, 2) {
             @Override
             public boolean isVisible() {
                 return getModel().getHasDomain();
             }
         });
-        formBuilder.addFormItem(new FormItem("Time Zone", timeZone, 6, 2) {
+        formBuilder.addFormItem(new FormItem(constants.timeZoneVm(), timeZone, 6, 2) {
             @Override
             public boolean isVisible() {
                 return getModel().getHasTimeZone();

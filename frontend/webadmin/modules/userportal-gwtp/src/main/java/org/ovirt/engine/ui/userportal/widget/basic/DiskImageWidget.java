@@ -23,8 +23,8 @@ public class DiskImageWidget extends Composite {
 
     public DiskImageWidget(DiskImage diskImage) {
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
-        diskSize.setText(diskImage.getSizeInGigabytes() + "GB");
-        diskName.setText("Disk " + diskImage.getinternal_drive_mapping() + ':');
+        diskSize.setText(diskImage.getSizeInGigabytes() + "GB"); //$NON-NLS-1$
+        diskName.setText("Disk " + diskImage.getinternal_drive_mapping() + ':'); //$NON-NLS-1$
     }
 
 }

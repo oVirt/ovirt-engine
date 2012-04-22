@@ -34,7 +34,7 @@ public class AsyncCallFailureHandler implements AsyncCallFailHandler {
     @Override
     public void onAsyncCallFail(AsyncCallFailEvent event) {
         Throwable caught = event.getCaught();
-        logger.warning("Error while performing async call: " + caught.getLocalizedMessage());
+        logger.warning("Error while performing async call: " + caught.getLocalizedMessage()); //$NON-NLS-1$
         errorPopupManager.show(messages.asyncCallFailure(caught.getLocalizedMessage()));
     }
 

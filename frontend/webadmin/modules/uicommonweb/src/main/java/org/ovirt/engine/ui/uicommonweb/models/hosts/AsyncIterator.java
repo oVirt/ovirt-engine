@@ -45,7 +45,6 @@ public class AsyncIterator<T> {
         counter = value;
     }
 
-
     public AsyncIterator(List<T> source) {
         this.source = source;
     }
@@ -58,7 +57,7 @@ public class AsyncIterator<T> {
 
         setCounter(0);
 
-        //Call complete method in case source is an empty list.
+        // Call complete method in case source is an empty list.
         if (Linq.Count(getSource()) == 0) {
             if (getComplete() != null) {
                 getComplete().run(null, null);
@@ -76,46 +75,44 @@ public class AsyncIterator<T> {
             AsyncIteratorCallback callback = new AsyncIteratorCallback(frontendContext);
 
             callback.getNotifyEvent().addListener(
-                new IEventListener() {
-                    @Override
-                    public void eventRaised(Event ev, Object sender, EventArgs args) {
+                    new IEventListener() {
+                        @Override
+                        public void eventRaised(Event ev, Object sender, EventArgs args) {
 
-                        ValueEventArgs e = (ValueEventArgs) args;
+                            ValueEventArgs e = (ValueEventArgs) args;
 
-                        CallbackContext<T> context = (CallbackContext<T>) ev.getContext();
-                        AsyncIterator<T> iterator = context.getIterator();
-                        AsyncIteratorPredicate<T> action = context.getAction();
-                        T item = context.getItem();
-                        Object value = e.getValue();
+                            CallbackContext<T> context = (CallbackContext<T>) ev.getContext();
+                            AsyncIterator<T> iterator = context.getIterator();
+                            AsyncIteratorPredicate<T> action = context.getAction();
+                            T item = context.getItem();
+                            Object value = e.getValue();
 
+                            boolean callComplete = false;
 
-                        boolean callComplete = false;
+                            if (action.match(item, value)) {
 
-                        if (action.match(item, value)) {
+                                callComplete = true;
+                                iterator.setStopped(true);
+                            }
 
-                            callComplete = true;
-                            iterator.setStopped(true);
+                            // Call complete method even when there is no match.
+                            iterator.setCounter(iterator.getCounter() + 1);
+
+                            if (!iterator.getStopped() && iterator.getCounter() == Linq.Count(iterator.getSource())) {
+                                callComplete = true;
+                            }
+
+                            // Call complete method.
+                            if (callComplete && iterator.getComplete() != null) {
+                                iterator.getComplete().run(item, value);
+                            }
                         }
-
-                        //Call complete method even when there is no match.
-                        iterator.setCounter(iterator.getCounter() + 1);
-
-                        if (!iterator.getStopped() && iterator.getCounter() == Linq.Count(iterator.getSource())) {
-                            callComplete = true;
-                        }
-
-                        //Call complete method.
-                        if (callComplete && iterator.getComplete() != null) {
-                            iterator.getComplete().run(item, value);
-                        }
-                    }
-                },
-                new CallbackContext<T>(this, item, action));
+                    },
+                    new CallbackContext<T>(this, item, action));
 
             func.run(item, callback);
         }
     }
-
 
     private class CallbackContext<T> {
 
@@ -146,7 +143,6 @@ public class AsyncIterator<T> {
         public void setValue(Object value) {
             this.value = value;
         }
-
 
         private CallbackContext(AsyncIterator<T> iterator, T item, AsyncIteratorPredicate<T> action) {
             this.iterator = iterator;

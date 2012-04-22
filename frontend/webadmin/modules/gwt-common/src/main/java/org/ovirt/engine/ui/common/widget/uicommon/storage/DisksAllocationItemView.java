@@ -125,8 +125,8 @@ public class DisksAllocationItemView extends Composite implements HasEditorDrive
 
         object.getVolumeType().setSelectedItem(object.getDiskImage().getvolume_type());
 
-        sourceStorageLabel.getElement().getElementsByTagName("input").getItem(0).
-                getStyle().setBorderColor("transparent");
+        sourceStorageLabel.getElement().getElementsByTagName("input").getItem(0). //$NON-NLS-1$
+                getStyle().setBorderColor("transparent"); //$NON-NLS-1$
 
         updateStyles(object.getQuota().getIsAvailable());
     }

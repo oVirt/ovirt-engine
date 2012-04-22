@@ -18,6 +18,7 @@ import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.VmBackupModel;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.SubTabStorageVmBackupPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
@@ -54,22 +55,22 @@ public class SubTabStorageVmBackupView extends AbstractSubTabTableView<storage_d
     ActionCellTable<String> applicationsTable;
 
     @Inject
-    public SubTabStorageVmBackupView(SearchableDetailModelProvider<VM, StorageListModel, VmBackupModel> modelProvider) {
+    public SubTabStorageVmBackupView(SearchableDetailModelProvider<VM, StorageListModel, VmBackupModel> modelProvider, ApplicationConstants constants) {
         super(modelProvider);
-        initVmTable();
-        initApplicationsTable();
+        initVmTable(constants);
+        initApplicationsTable(constants);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
 
         vmTableContainer.add(getTable());
         applicationsTableContainer.add(applicationsTable);
 
-        mainContainer.setCellWidth(vmTableContainer, "50%");
-        mainContainer.setCellWidth(applicationsTableContainer, "50%");
+        mainContainer.setCellWidth(vmTableContainer, "50%"); //$NON-NLS-1$
+        mainContainer.setCellWidth(applicationsTableContainer, "50%"); //$NON-NLS-1$
     }
 
-    void initVmTable() {
+    void initVmTable(ApplicationConstants constants) {
 
-        getTable().addColumn(new VmStatusColumn(), "", "30px");
+        getTable().addColumn(new VmStatusColumn(), constants.empty(), "30px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VM> nameColumn = new TextColumnWithTooltip<VM>() {
             @Override
@@ -77,7 +78,7 @@ public class SubTabStorageVmBackupView extends AbstractSubTabTableView<storage_d
                 return object.getvm_name();
             }
         };
-        getTable().addColumn(nameColumn, "Name");
+        getTable().addColumn(nameColumn, constants.nameVm());
 
         TextColumnWithTooltip<VM> templateColumn = new TextColumnWithTooltip<VM>() {
             @Override
@@ -85,7 +86,7 @@ public class SubTabStorageVmBackupView extends AbstractSubTabTableView<storage_d
                 return object.getvmt_name();
             }
         };
-        getTable().addColumn(templateColumn, "Template");
+        getTable().addColumn(templateColumn, constants.templateVm());
 
         TextColumnWithTooltip<VM> originColumn = new EnumColumn<VM, OriginType>() {
             @Override
@@ -93,15 +94,15 @@ public class SubTabStorageVmBackupView extends AbstractSubTabTableView<storage_d
                 return object.getorigin();
             }
         };
-        getTable().addColumn(originColumn, "Origin");
+        getTable().addColumn(originColumn, constants.originVm());
 
         TextColumnWithTooltip<VM> memoryColumn = new TextColumnWithTooltip<VM>() {
             @Override
             public String getValue(VM object) {
-                return String.valueOf(object.getvm_mem_size_mb()) + " MB";
+                return String.valueOf(object.getvm_mem_size_mb()) + " MB"; //$NON-NLS-1$
             }
         };
-        getTable().addColumn(memoryColumn, "Memory");
+        getTable().addColumn(memoryColumn, constants.memoryVm());
 
         TextColumnWithTooltip<VM> cpuColumn = new TextColumnWithTooltip<VM>() {
             @Override
@@ -109,7 +110,7 @@ public class SubTabStorageVmBackupView extends AbstractSubTabTableView<storage_d
                 return String.valueOf(object.getnum_of_cpus());
             }
         };
-        getTable().addColumn(cpuColumn, "CPUs");
+        getTable().addColumn(cpuColumn, constants.cpusVm());
 
         TextColumnWithTooltip<VM> diskColumn = new TextColumnWithTooltip<VM>() {
             @Override
@@ -117,7 +118,7 @@ public class SubTabStorageVmBackupView extends AbstractSubTabTableView<storage_d
                 return String.valueOf(object.getDiskMap().size());
             }
         };
-        getTable().addColumn(diskColumn, "Disks");
+        getTable().addColumn(diskColumn, constants.disksVm());
 
         TextColumnWithTooltip<VM> creationDateColumn = new GeneralDateTimeColumn<VM>() {
             @Override
@@ -125,16 +126,16 @@ public class SubTabStorageVmBackupView extends AbstractSubTabTableView<storage_d
                 return object.getvm_creation_date();
             }
         };
-        getTable().addColumn(creationDateColumn, "Creation Date");
+        getTable().addColumn(creationDateColumn, constants.creationDateVm());
 
-        getTable().addActionButton(new WebAdminButtonDefinition<VM>("Restore") {
+        getTable().addActionButton(new WebAdminButtonDefinition<VM>(constants.restoreVm()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getRestoreCommand();
             }
         });
 
-        getTable().addActionButton(new WebAdminButtonDefinition<VM>("Remove") {
+        getTable().addActionButton(new WebAdminButtonDefinition<VM>(constants.removeVm()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getRemoveCommand();
@@ -142,7 +143,7 @@ public class SubTabStorageVmBackupView extends AbstractSubTabTableView<storage_d
         });
     }
 
-    private void initApplicationsTable() {
+    private void initApplicationsTable(ApplicationConstants constants) {
         applicationsTable = new ActionCellTable<String>(new AbstractDataProvider<String>() {
             @Override
             protected void onRangeChanged(HasData<String> display) {
@@ -156,8 +157,8 @@ public class SubTabStorageVmBackupView extends AbstractSubTabTableView<storage_d
             }
         };
 
-        applicationsTable.addColumn(nameColumn, "Installed Applications");
-        applicationsTable.setWidth("100%");
+        applicationsTable.addColumn(nameColumn, constants.installedAppsVm());
+        applicationsTable.setWidth("100%"); //$NON-NLS-1$
         applicationsTable.setRowData(new ArrayList<String>());
 
         getDetailModel().getPropertyChangedEvent().addListener(new IEventListener() {

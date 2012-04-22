@@ -23,6 +23,7 @@ import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
@@ -37,7 +38,7 @@ public class BookmarkListModel extends SearchableListModel
             String name1 = o1.getbookmark_name();
             String name2 = o2.getbookmark_name();
             if (name1 == null || name2 == null) {
-                throw new IllegalArgumentException("Bookmark name cannot be null");
+                throw new IllegalArgumentException("Bookmark name cannot be null"); //$NON-NLS-1$
             }
             return name1.compareTo(name2);
         }
@@ -96,16 +97,16 @@ public class BookmarkListModel extends SearchableListModel
 
     static
     {
-        NavigatedEventDefinition = new EventDefinition("Navigated", BookmarkListModel.class);
+        NavigatedEventDefinition = new EventDefinition("Navigated", BookmarkListModel.class); //$NON-NLS-1$
     }
 
     public BookmarkListModel()
     {
         setNavigatedEvent(new Event(NavigatedEventDefinition));
 
-        setNewCommand(new UICommand("New", this));
-        setEditCommand(new UICommand("Edit", this));
-        setRemoveCommand(new UICommand("Remove", this));
+        setNewCommand(new UICommand("New", this)); //$NON-NLS-1$
+        setEditCommand(new UICommand("Edit", this)); //$NON-NLS-1$
+        setRemoveCommand(new UICommand("Remove", this)); //$NON-NLS-1$
 
         getSearchCommand().Execute();
 
@@ -151,9 +152,9 @@ public class BookmarkListModel extends SearchableListModel
 
         ConfirmationModel model = new ConfirmationModel();
         setWindow(model);
-        model.setTitle("Remove Bookmark(s)");
-        model.setHashName("remove_bookmark");
-        model.setMessage("Bookmark(s):");
+        model.setTitle(ConstantsManager.getInstance().getConstants().removeBookmarksTitle());
+        model.setHashName("remove_bookmark"); //$NON-NLS-1$
+        model.setMessage(ConstantsManager.getInstance().getConstants().bookmarsMsg());
 
         java.util.ArrayList<String> list = new java.util.ArrayList<String>();
         for (Object item : getSelectedItems())
@@ -164,12 +165,12 @@ public class BookmarkListModel extends SearchableListModel
         }
         model.setItems(list);
 
-        UICommand tempVar = new UICommand("OnRemove", this);
-        tempVar.setTitle("OK");
+        UICommand tempVar = new UICommand("OnRemove", this); //$NON-NLS-1$
+        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
         tempVar.setIsDefault(true);
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this);
-        tempVar2.setTitle("Cancel");
+        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
+        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         tempVar2.setIsCancel(true);
         model.getCommands().add(tempVar2);
     }
@@ -204,18 +205,18 @@ public class BookmarkListModel extends SearchableListModel
 
         BookmarkModel model = new BookmarkModel();
         setWindow(model);
-        model.setTitle("Edit Bookmark");
-        model.setHashName("edit_bookmark");
+        model.setTitle(ConstantsManager.getInstance().getConstants().editBookmarkTitle());
+        model.setHashName("edit_bookmark"); //$NON-NLS-1$
         model.setIsNew(false);
         model.getName().setEntity(bookmark.getbookmark_name());
         model.getSearchString().setEntity(bookmark.getbookmark_value());
 
-        UICommand tempVar = new UICommand("OnSave", this);
-        tempVar.setTitle("OK");
+        UICommand tempVar = new UICommand("OnSave", this); //$NON-NLS-1$
+        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
         tempVar.setIsDefault(true);
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this);
-        tempVar2.setTitle("Cancel");
+        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
+        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         tempVar2.setIsCancel(true);
         model.getCommands().add(tempVar2);
     }
@@ -229,17 +230,17 @@ public class BookmarkListModel extends SearchableListModel
 
         BookmarkModel model = new BookmarkModel();
         setWindow(model);
-        model.setTitle("New Bookmark");
-        model.setHashName("new_bookmark");
+        model.setTitle(ConstantsManager.getInstance().getConstants().newBookmarkTitle());
+        model.setHashName("new_bookmark"); //$NON-NLS-1$
         model.setIsNew(true);
         model.getSearchString().setEntity(getSearchString());
 
-        UICommand tempVar = new UICommand("OnSave", this);
-        tempVar.setTitle("OK");
+        UICommand tempVar = new UICommand("OnSave", this); //$NON-NLS-1$
+        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
         tempVar.setIsDefault(true);
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this);
-        tempVar2.setTitle("Cancel");
+        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
+        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         tempVar2.setIsCancel(true);
         model.getCommands().add(tempVar2);
     }
@@ -271,15 +272,15 @@ public class BookmarkListModel extends SearchableListModel
         Frontend.RunAction(model.getIsNew() ? VdcActionType.AddBookmark : VdcActionType.UpdateBookmark,
                 new BookmarksOperationParameters(bookmark),
                 new IFrontendActionAsyncCallback() {
-            @Override
-            public void Executed(FrontendActionAsyncResult result) {
+                    @Override
+                    public void Executed(FrontendActionAsyncResult result) {
 
-                BookmarkListModel localModel = (BookmarkListModel) result.getState();
-                localModel.PostOnSave(result.getReturnValue());
+                        BookmarkListModel localModel = (BookmarkListModel) result.getState();
+                        localModel.PostOnSave(result.getReturnValue());
 
-            }
-        },
-        this);
+                    }
+                },
+                this);
     }
 
     public void PostOnSave(VdcReturnValueBase returnValue)
@@ -343,16 +344,16 @@ public class BookmarkListModel extends SearchableListModel
             remove();
         }
 
-        else if (StringHelper.stringsEqual(command.getName(), "OnRemove"))
+        else if (StringHelper.stringsEqual(command.getName(), "OnRemove")) //$NON-NLS-1$
         {
             OnRemove();
         }
 
-        else if (StringHelper.stringsEqual(command.getName(), "OnSave"))
+        else if (StringHelper.stringsEqual(command.getName(), "OnSave")) //$NON-NLS-1$
         {
             OnSave();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "Cancel"))
+        else if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
         {
             Cancel();
         }
@@ -360,6 +361,6 @@ public class BookmarkListModel extends SearchableListModel
 
     @Override
     protected String getListName() {
-        return "BookmarkListModel";
+        return "BookmarkListModel"; //$NON-NLS-1$
     }
 }

@@ -121,15 +121,15 @@ public class SearchSuggestModel extends SearchableListModel implements ITaskTarg
                     }
                 }
 
-                String space = "";
-                if ((pf.length() > 0) && (!pf.substring(pf.length() - 1, pf.length() - 1 + 1).equals("."))
-                        && (!StringHelper.stringsEqual(item, ".")))
+                String space = ""; //$NON-NLS-1$
+                if ((pf.length() > 0) && (!pf.substring(pf.length() - 1, pf.length() - 1 + 1).equals(".")) //$NON-NLS-1$
+                        && (!StringHelper.stringsEqual(item, "."))) //$NON-NLS-1$
                 {
-                    space = " ";
+                    space = " "; //$NON-NLS-1$
                 }
 
                 // Patch: monitor-desktop
-                if (!item.trim().toLowerCase().startsWith("monitor-desktop"))
+                if (!item.trim().toLowerCase().startsWith("monitor-desktop")) //$NON-NLS-1$
                 {
                     SuggestItemPartModel tempVar = new SuggestItemPartModel();
                     tempVar.setPartString(StringHelper.trimEnd(pf));
@@ -182,7 +182,7 @@ public class SearchSuggestModel extends SearchableListModel implements ITaskTarg
                 items.add(i.getPartString());
             }
 
-            String searchString = StringHelper.join("", items.toArray(new String[] {}));
+            String searchString = StringHelper.join("", items.toArray(new String[] {})); //$NON-NLS-1$
             // If there prefix exist, don't transfer it back as a part of search string.
             if (getPrefix() != null)
             {
@@ -201,6 +201,6 @@ public class SearchSuggestModel extends SearchableListModel implements ITaskTarg
 
     @Override
     protected String getListName() {
-        return "SearchSuggestModel";
+        return "SearchSuggestModel"; //$NON-NLS-1$
     }
 }

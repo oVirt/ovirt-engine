@@ -60,7 +60,7 @@ public class SpiceMenu
         if (item instanceof SpiceMenuCommandItem)
         {
             SpiceMenuCommandItem commandItem = (SpiceMenuCommandItem) item;
-            builder.append(StringFormat.format("%1$s\r%2$s\r%3$s\r%4$s\n",
+            builder.append(StringFormat.format("%1$s\r%2$s\r%3$s\r%4$s\n", //$NON-NLS-1$
                     parentID,
                     commandItem.getId(),
                     commandItem.getText(),
@@ -70,7 +70,7 @@ public class SpiceMenu
         if (item instanceof SpiceMenuContainerItem)
         {
             SpiceMenuContainerItem containerItem = (SpiceMenuContainerItem) item;
-            builder.append(StringFormat.format("%1$s\r%2$s\r%3$s\r4\n",
+            builder.append(StringFormat.format("%1$s\r%2$s\r%3$s\r4\n", //$NON-NLS-1$
                     parentID,
                     containerItem.getId(),
                     containerItem.getText()));
@@ -86,7 +86,7 @@ public class SpiceMenu
 
         if (item instanceof SpiceMenuSeparatorItem)
         {
-            builder.append(StringFormat.format("%1$s\r%2$s\r%3$s\r1\n", parentID, item.getId(), "-"));
+            builder.append(StringFormat.format("%1$s\r%2$s\r%3$s\r1\n", parentID, item.getId(), "-")); //$NON-NLS-1$ //$NON-NLS-2$
         }
 
         return builder.toString();

@@ -44,7 +44,7 @@ public class DateTimeUtils {
 	 */
 	public static String toShortTimeString(Date source) {
 		// TODO Add locale support to show the time in 12 hours format
-		return new String(source.getHours() + ":" + source.getMinutes());
+		return new String(source.getHours() + ":" + source.getMinutes()); //$NON-NLS-1$
 	}
 
 	/**

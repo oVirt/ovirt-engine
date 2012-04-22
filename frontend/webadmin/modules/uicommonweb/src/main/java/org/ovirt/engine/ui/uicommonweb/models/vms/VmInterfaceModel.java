@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.MacAddressValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.RegexValidation;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
 public class VmInterfaceModel extends Model
@@ -97,7 +98,7 @@ public class VmInterfaceModel extends Model
 
     private void MAC_PropertyChanged(PropertyChangedEventArgs e)
     {
-        if (e.PropertyName.equals("IsChangeAllowed") && !getMAC().getIsChangable())
+        if (e.PropertyName.equals("IsChangeAllowed") && !getMAC().getIsChangable()) //$NON-NLS-1$
         {
             getMAC().setIsValid(true);
         }
@@ -106,8 +107,8 @@ public class VmInterfaceModel extends Model
     public boolean Validate()
     {
         RegexValidation tempVar = new RegexValidation();
-        tempVar.setExpression("^\\w+$");
-        tempVar.setMessage("Name must contain alphanumeric characters only.");
+        tempVar.setExpression("^\\w+$"); //$NON-NLS-1$
+        tempVar.setMessage(ConstantsManager.getInstance().getConstants().nameMustContainAlphanumericCharactersOnlyMsg());
         getName().ValidateEntity(new IValidation[] { new NotEmptyValidation(), tempVar });
 
         getNetwork().ValidateSelectedItem(new IValidation[] { new NotEmptyValidation() });

@@ -47,7 +47,7 @@ public class SpiceInterfaceImpl implements ISpice {
     private String spiceBaseURL = GWT.getModuleBaseURL();
 
     public SpiceInterfaceImpl() {
-        logger.severe("Instantiating GWT Spice Implementation");
+        logger.severe("Instantiating GWT Spice Implementation"); //$NON-NLS-1$
     }
 
     @Override
@@ -339,23 +339,23 @@ public class SpiceInterfaceImpl implements ISpice {
 
     @Override
     public void Connect() {
-        logger.warning("Connecting via spice...");
+        logger.warning("Connecting via spice..."); //$NON-NLS-1$
 
-        if ((cat.os.equalsIgnoreCase("Linux"))
-                && (cat.browser.equalsIgnoreCase("Firefox"))) {
+        if ((cat.os.equalsIgnoreCase("Linux")) //$NON-NLS-1$
+                && (cat.browser.equalsIgnoreCase("Firefox"))) { //$NON-NLS-1$
             connectNativelyViaXPI();
-        } else if ((cat.os.equalsIgnoreCase("Windows"))
-                && (cat.browser.equalsIgnoreCase("Explorer"))) {
+        } else if ((cat.os.equalsIgnoreCase("Windows")) //$NON-NLS-1$
+                && (cat.browser.equalsIgnoreCase("Explorer"))) { //$NON-NLS-1$
             connectNativelyViaActiveX();
         }
     }
 
     public String getSpiceCabURL() {
         // According to the OS type, return the appropriate CAB URL
-        if (cat.getPlatform().equalsIgnoreCase("win32")) {
-            return spiceBaseURL + "SpiceX.cab";
-        } else if (cat.getPlatform().equalsIgnoreCase("win64")) {
-            return spiceBaseURL + "SpiceX_x64.cab";
+        if (cat.getPlatform().equalsIgnoreCase("win32")) { //$NON-NLS-1$
+            return spiceBaseURL + "SpiceX.cab"; //$NON-NLS-1$
+        } else if (cat.getPlatform().equalsIgnoreCase("win64")) { //$NON-NLS-1$
+            return spiceBaseURL + "SpiceX_x64.cab"; //$NON-NLS-1$
         } else {
             return null;
         }
@@ -364,10 +364,10 @@ public class SpiceInterfaceImpl implements ISpice {
     public String getSpiceObjectClassId() {
         // According to the OS type, return the appropriate (x64/x86) object
         // class ID
-        if (cat.getPlatform().equalsIgnoreCase("win32")) {
-            return "ACD6D89C-938D-49B4-8E81-DDBD13F4B48A";
-        } else if (cat.getPlatform().equalsIgnoreCase("win64")) {
-            return "ACD6D89C-938D-49B4-8E81-DDBD13F4B48B";
+        if (cat.getPlatform().equalsIgnoreCase("win32")) { //$NON-NLS-1$
+            return "ACD6D89C-938D-49B4-8E81-DDBD13F4B48A"; //$NON-NLS-1$
+        } else if (cat.getPlatform().equalsIgnoreCase("win64")) { //$NON-NLS-1$
+            return "ACD6D89C-938D-49B4-8E81-DDBD13F4B48B"; //$NON-NLS-1$
         } else {
             return null;
         }
@@ -603,7 +603,7 @@ public class SpiceInterfaceImpl implements ISpice {
 
     @Override
     public void Install() {
-        logger.finer("Spice must be installed ahead...");
+        logger.finer("Spice must be installed ahead..."); //$NON-NLS-1$
         InstallNatively();
     }
 
@@ -614,7 +614,7 @@ public class SpiceInterfaceImpl implements ISpice {
     @Override
     public boolean getIsInstalled() {
         boolean result = getIsInstalledNative();
-        logger.finer("Determining whether spice is installed [" + result + "]");
+        logger.finer("Determining whether spice is installed [" + result + "]"); //$NON-NLS-1$ //$NON-NLS-2$
 
         return result;
     }
@@ -644,16 +644,16 @@ public class SpiceInterfaceImpl implements ISpice {
 
     public static boolean isBrowserSupported() {
         ClientAgentType cat = new ClientAgentType();
-        logger.finer("Determining whether browser [" + cat.browser
-                + "], version [" + cat.version + "] on OS [" + cat.os
-                + "] is supported by spice");
+        logger.finer("Determining whether browser [" + cat.browser //$NON-NLS-1$
+                + "], version [" + cat.version + "] on OS [" + cat.os //$NON-NLS-1$ //$NON-NLS-2$
+                + "] is supported by spice"); //$NON-NLS-1$
 
-        if ((cat.os.equalsIgnoreCase("Windows"))
-                && (cat.browser.equalsIgnoreCase("Explorer"))
+        if ((cat.os.equalsIgnoreCase("Windows")) //$NON-NLS-1$
+                && (cat.browser.equalsIgnoreCase("Explorer")) //$NON-NLS-1$
                 && (cat.version >= 7.0)) {
             return true;
-        } else if ((cat.os.equalsIgnoreCase("Linux"))
-                && (cat.browser.equalsIgnoreCase("Firefox"))
+        } else if ((cat.os.equalsIgnoreCase("Linux")) //$NON-NLS-1$
+                && (cat.browser.equalsIgnoreCase("Firefox")) //$NON-NLS-1$
                 && (cat.version >= 2.0)) {
             return true;
         }

@@ -25,8 +25,8 @@ public class TogglePanel extends HorizontalPanel {
             }
         });
 
-        setWidth("100%");
-        setHeight("100%");
+        setWidth("100%"); //$NON-NLS-1$
+        setHeight("100%"); //$NON-NLS-1$
         setVerticalAlignment(ALIGN_MIDDLE);
         setChecked(false);
     }
@@ -45,7 +45,7 @@ public class TogglePanel extends HorizontalPanel {
     }
 
     void updateToggleStyle() {
-        getElement().getStyle().setBackgroundColor(checked ? "#C3D0E0" : "#F3F7FB");
+        getElement().getStyle().setBackgroundColor(checked ? "#C3D0E0" : "#F3F7FB"); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     protected ModelBoundCheckBox getCheckBox() {

@@ -6,6 +6,7 @@ import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageIsoListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageListModel;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.SubTabStorageIsoPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
@@ -17,20 +18,20 @@ public class SubTabStorageIsoView extends AbstractSubTabTableView<storage_domain
 
     @Inject
     public SubTabStorageIsoView(SearchableDetailModelProvider<EntityModel, StorageListModel, StorageIsoListModel> modelProvider,
-            ApplicationResources resources) {
+            ApplicationResources resources, ApplicationConstants constants) {
         super(modelProvider);
-        initTable(resources);
+        initTable(resources, constants);
         initWidget(getTable());
     }
 
-    void initTable(ApplicationResources resources) {
+    void initTable(ApplicationResources resources, final ApplicationConstants constants) {
         TextColumnWithTooltip<EntityModel> fileNameColumn = new TextColumnWithTooltip<EntityModel>() {
             @Override
             public String getValue(EntityModel object) {
                 return object.getTitle();
             }
         };
-        getTable().addColumn(fileNameColumn, "File Name");
+        getTable().addColumn(fileNameColumn, constants.fileNameIso());
 
         TextColumnWithTooltip<EntityModel> typeColumn = new TextColumnWithTooltip<EntityModel>() {
             @Override
@@ -38,7 +39,7 @@ public class SubTabStorageIsoView extends AbstractSubTabTableView<storage_domain
                 return object.getEntity().toString();
             }
         };
-        getTable().addColumn(typeColumn, "Type");
+        getTable().addColumn(typeColumn, constants.typeIso());
 
         getTable().showRefreshButton();
     }

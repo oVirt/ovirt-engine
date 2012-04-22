@@ -9,6 +9,7 @@ import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.RegexValidation;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
 public class RoleModel extends Model
@@ -98,14 +99,14 @@ public class RoleModel extends Model
         if (permissionGroupModels != value)
         {
             permissionGroupModels = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("PermissionGroupModels"));
+            OnPropertyChanged(new PropertyChangedEventArgs("PermissionGroupModels")); //$NON-NLS-1$
         }
     }
 
     public RoleModel()
     {
-        setExpandAllCommand(new UICommand("ExpandAll", this));
-        setCollapseAllCommand(new UICommand("CollapseAll", this));
+        setExpandAllCommand(new UICommand("ExpandAll", this)); //$NON-NLS-1$
+        setCollapseAllCommand(new UICommand("CollapseAll", this)); //$NON-NLS-1$
 
         setName(new EntityModel());
         setDescription(new EntityModel());
@@ -141,11 +142,11 @@ public class RoleModel extends Model
     public boolean Validate()
     {
         RegexValidation tempVar = new RegexValidation();
-        tempVar.setExpression("^\\w.{0,125}$");
-        tempVar.setMessage("Name must be up to 126 characters and start with any word character.");
+        tempVar.setExpression("^\\w.{0,125}$"); //$NON-NLS-1$
+        tempVar.setMessage(ConstantsManager.getInstance().getConstants().nameMustBeUpToAndStartWithMsg());
         RegexValidation tempVar2 = new RegexValidation();
-        tempVar2.setExpression("^[A-Za-z0-9_-]+$");
-        tempVar2.setMessage("Name can contain only 'A-Z', 'a-z', '0-9', '_' or '-' characters.");
+        tempVar2.setExpression("^[A-Za-z0-9_-]+$"); //$NON-NLS-1$
+        tempVar2.setMessage(ConstantsManager.getInstance().getConstants().nameCanContainMsg());
         getName().ValidateEntity(new IValidation[] { new NotEmptyValidation(), tempVar, tempVar2 });
         LengthValidation lengthValidation = new LengthValidation();
         lengthValidation.setMaxLength(4000);

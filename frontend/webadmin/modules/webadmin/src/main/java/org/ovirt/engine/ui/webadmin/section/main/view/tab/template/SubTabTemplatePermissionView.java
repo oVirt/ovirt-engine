@@ -7,6 +7,7 @@ import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateListModel;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.template.SubTabTemplatePermissionPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.AbstractSubTabPermissionsView;
 
@@ -24,8 +25,8 @@ public class SubTabTemplatePermissionView extends AbstractSubTabPermissionsView<
     @Inject
     public SubTabTemplatePermissionView(SearchableDetailModelProvider<permissions, TemplateListModel, PermissionListModel> modelProvider,
             EventBus eventBus,
-            ClientStorage clientStorage) {
-        super(modelProvider, eventBus, clientStorage);
+            ClientStorage clientStorage, ApplicationConstants constants) {
+        super(modelProvider, eventBus, clientStorage, constants);
     }
 
     @Override

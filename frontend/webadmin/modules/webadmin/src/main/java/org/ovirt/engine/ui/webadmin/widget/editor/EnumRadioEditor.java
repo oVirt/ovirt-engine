@@ -75,13 +75,13 @@ public class EnumRadioEditor<E extends Enum<E>> implements EditorWidget<E, LeafV
              * An html string representation of a checked disabled input box.
              */
             private static final SafeHtml INPUT_CHECKED_DISABLED =
-                    SafeHtmlUtils.fromSafeConstant("<input type=\"radio\" tabindex=\"-1\" checked disabled/>");
+                    SafeHtmlUtils.fromSafeConstant("<input type=\"radio\" tabindex=\"-1\" checked disabled/>"); //$NON-NLS-1$
 
             /**
              * An html string representation of an unchecked disabled input box.
              */
             private static final SafeHtml INPUT_UNCHECKED_DISABLED =
-                    SafeHtmlUtils.fromSafeConstant("<input type=\"radio\" tabindex=\"-1\" disabled/>");
+                    SafeHtmlUtils.fromSafeConstant("<input type=\"radio\" tabindex=\"-1\" disabled/>"); //$NON-NLS-1$
 
             private final Set<E> disabledSet;
 

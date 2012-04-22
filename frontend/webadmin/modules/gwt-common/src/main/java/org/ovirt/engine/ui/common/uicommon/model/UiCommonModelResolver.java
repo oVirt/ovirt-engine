@@ -19,7 +19,7 @@ public abstract class UiCommonModelResolver {
     @SuppressWarnings("unchecked")
     public static <M extends SearchableListModel> M getMainListModel(
             CommonModel commonModel, Class<M> mainModelClass) {
-        assert (commonModel != null) : "CommonModel must not be null";
+        assert (commonModel != null) : "CommonModel must not be null"; //$NON-NLS-1$
 
         for (SearchableListModel list : commonModel.getItems()) {
             if (list != null && list.getClass().equals(mainModelClass)) {
@@ -27,7 +27,7 @@ public abstract class UiCommonModelResolver {
             }
         }
 
-        throw new IllegalStateException("Cannot resolve main list model [" + mainModelClass + "]");
+        throw new IllegalStateException("Cannot resolve main list model [" + mainModelClass + "]"); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     /**
@@ -41,7 +41,7 @@ public abstract class UiCommonModelResolver {
     @SuppressWarnings("unchecked")
     public static <M extends ListWithDetailsModel, D extends EntityModel> D getDetailListModel(
             CommonModel commonModel, Class<M> mainModelClass, Class<D> detailModelClass) {
-        assert (commonModel != null) : "CommonModel must not be null";
+        assert (commonModel != null) : "CommonModel must not be null"; //$NON-NLS-1$
 
         M mainListModel = getMainListModel(commonModel, mainModelClass);
 
@@ -51,8 +51,8 @@ public abstract class UiCommonModelResolver {
             }
         }
 
-        throw new IllegalStateException("Cannot resolve detail model [" + detailModelClass
-                + "] from main list model [" + mainModelClass + "]");
+        throw new IllegalStateException("Cannot resolve detail model [" + detailModelClass //$NON-NLS-1$
+                + "] from main list model [" + mainModelClass + "]"); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
 }

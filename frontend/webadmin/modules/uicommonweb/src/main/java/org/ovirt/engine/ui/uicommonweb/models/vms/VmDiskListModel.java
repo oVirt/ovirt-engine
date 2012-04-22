@@ -40,6 +40,7 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
@@ -126,7 +127,7 @@ public class VmDiskListModel extends SearchableListModel
         if (privateIsDiskHotPlugSupported != value)
         {
             privateIsDiskHotPlugSupported = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsDiskHotPlugSupported"));
+            OnPropertyChanged(new PropertyChangedEventArgs("IsDiskHotPlugSupported")); //$NON-NLS-1$
         }
     }
 
@@ -144,14 +145,15 @@ public class VmDiskListModel extends SearchableListModel
 
     public VmDiskListModel()
     {
-        setTitle("Virtual Disks");
+        setTitle(ConstantsManager.getInstance().getConstants().virtualDisksTitle());
+        setHashName("virtual_disks"); //$NON-NLS-1$
 
-        setNewCommand(new UICommand("New", this));
-        setEditCommand(new UICommand("Edit", this));
-        setRemoveCommand(new UICommand("Remove", this));
-        setPlugCommand(new UICommand("Plug", this));
-        setUnPlugCommand(new UICommand("Unplug", this));
-        setMoveCommand(new UICommand("Move", this));
+        setNewCommand(new UICommand("New", this)); //$NON-NLS-1$
+        setEditCommand(new UICommand("Edit", this)); //$NON-NLS-1$
+        setRemoveCommand(new UICommand("Remove", this)); //$NON-NLS-1$
+        setPlugCommand(new UICommand("Plug", this)); //$NON-NLS-1$
+        setUnPlugCommand(new UICommand("Unplug", this)); //$NON-NLS-1$
+        setMoveCommand(new UICommand("Move", this)); //$NON-NLS-1$
 
         UpdateActionAvailability();
     }
@@ -224,8 +226,8 @@ public class VmDiskListModel extends SearchableListModel
 
         DiskModel model = new DiskModel();
         setWindow(model);
-        model.setTitle("Add Virtual Disk");
-        model.setHashName("new_virtual_disk");
+        model.setTitle(ConstantsManager.getInstance().getConstants().addVirtualDiskTitle());
+        model.setHashName("new_virtual_disk"); //$NON-NLS-1$
         model.setIsNew(true);
         model.setDatacenterId(vm.getstorage_pool_id());
         model.StartProgress(null);
@@ -298,8 +300,8 @@ public class VmDiskListModel extends SearchableListModel
 
         DiskModel model = new DiskModel();
         setWindow(model);
-        model.setTitle("Edit Virtual Disk");
-        model.setHashName("edit_virtual_disk");
+        model.setTitle(ConstantsManager.getInstance().getConstants().editVirtualDiskTitle());
+        model.setHashName("edit_virtual_disk"); //$NON-NLS-1$
         model.getStorageDomain().setIsChangable(false);
         model.getSize().setEntity(disk.getSizeInGigabytes());
         model.getSize().setIsChangable(false);
@@ -365,18 +367,18 @@ public class VmDiskListModel extends SearchableListModel
                     diskModel.getIsBootable().setIsChangable(false);
                     diskModel.getIsBootable()
                             .getChangeProhibitionReasons()
-                            .add("There can be only one bootable disk defined.");
+                            .add("There can be only one bootable disk defined."); //$NON-NLS-1$
                 }
                 diskModel.getIsBootable().setEntity(disk.getboot());
 
                 diskModel.getAlias().setEntity(disk.getDiskAlias());
 
-                UICommand tempVar = new UICommand("OnSave", vmDiskListModel);
-                tempVar.setTitle("OK");
+                UICommand tempVar = new UICommand("OnSave", vmDiskListModel); //$NON-NLS-1$
+                tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
                 tempVar.setIsDefault(true);
                 diskModel.getCommands().add(tempVar);
-                UICommand tempVar2 = new UICommand("Cancel", vmDiskListModel);
-                tempVar2.setTitle("Cancel");
+                UICommand tempVar2 = new UICommand("Cancel", vmDiskListModel); //$NON-NLS-1$
+                tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
                 tempVar2.setIsCancel(true);
                 diskModel.getCommands().add(tempVar2);
             }
@@ -411,9 +413,9 @@ public class VmDiskListModel extends SearchableListModel
         boolean hasSystemDiskWarning = false;
         RemoveDiskModel model = new RemoveDiskModel();
         setWindow(model);
-        model.setTitle("Remove Disk(s)");
-        model.setHashName("remove_disk");
-        model.setMessage("Disk(s)");
+        model.setTitle(ConstantsManager.getInstance().getConstants().removeDisksTitle());
+        model.setHashName("remove_disk"); //$NON-NLS-1$
+        model.setMessage(ConstantsManager.getInstance().getConstants().disksMsg());
 
         model.getLatch().setEntity(true);
 
@@ -425,12 +427,12 @@ public class VmDiskListModel extends SearchableListModel
         }
         model.setItems(items);
 
-        UICommand tempVar = new UICommand("OnRemove", this);
-        tempVar.setTitle("OK");
+        UICommand tempVar = new UICommand("OnRemove", this); //$NON-NLS-1$
+        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
         tempVar.setIsDefault(true);
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this);
-        tempVar2.setTitle("Cancel");
+        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
+        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         tempVar2.setIsCancel(true);
         model.getCommands().add(tempVar2);
     }
@@ -617,8 +619,8 @@ public class VmDiskListModel extends SearchableListModel
         MoveDiskModel model = new MoveDiskModel();
         model.setIsSingleDiskMove(disks.size() == 1);
         setWindow(model);
-        model.setTitle("Move Disk(s)");
-        model.setHashName("move_disk");
+        model.setTitle(ConstantsManager.getInstance().getConstants().moveDisksTitle());
+        model.setHashName("move_disk"); //$NON-NLS-1$
         model.setIsSourceStorageDomainNameAvailable(true);
         model.setEntity(this);
         model.init(disks);
@@ -649,7 +651,7 @@ public class VmDiskListModel extends SearchableListModel
     {
         super.EntityPropertyChanged(sender, e);
 
-        if (e.PropertyName.equals("status"))
+        if (e.PropertyName.equals("status")) //$NON-NLS-1$
         {
             UpdateActionAvailability();
         }
@@ -761,15 +763,15 @@ public class VmDiskListModel extends SearchableListModel
         {
             Move();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnSave"))
+        else if (StringHelper.stringsEqual(command.getName(), "OnSave")) //$NON-NLS-1$
         {
             OnSave();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "Cancel"))
+        else if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
         {
             Cancel();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnRemove"))
+        else if (StringHelper.stringsEqual(command.getName(), "OnRemove")) //$NON-NLS-1$
         {
             OnRemove();
         }
@@ -843,7 +845,7 @@ public class VmDiskListModel extends SearchableListModel
                     vmModel.getIsBootable().setIsChangable(false);
                     vmModel.getIsBootable()
                             .getChangeProhibitionReasons()
-                            .add("There can be only one bootable disk defined.");
+                            .add("There can be only one bootable disk defined."); //$NON-NLS-1$
                 }
 
                 java.util.ArrayList<UICommand> commands = new java.util.ArrayList<UICommand>();
@@ -851,22 +853,22 @@ public class VmDiskListModel extends SearchableListModel
                 if (storage1 == null)
                 {
                     String cantCreateMessage =
-                            "There is no active Storage Domain to create the Disk in. Please activate a Storage Domain.";
+                            ConstantsManager.getInstance().getConstants().thereIsNoActiveStorageDomainCreateDiskInMsg();
                     if (hasDisks)
                     {
-                        cantCreateMessage = "Error in retrieving the relevant Storage Domain.";
+                        cantCreateMessage = ConstantsManager.getInstance().getConstants().errorRetrievingRelevantStorageDomainMsg();
                     }
 
                     vmModel.setMessage(cantCreateMessage);
                 }
 
-                UICommand tempVar2 = new UICommand("OnSave", vmDiskListModel1);
-                tempVar2.setTitle("OK");
+                UICommand tempVar2 = new UICommand("OnSave", vmDiskListModel1); //$NON-NLS-1$
+                tempVar2.setTitle(ConstantsManager.getInstance().getConstants().ok());
                 tempVar2.setIsDefault(true);
                 vmModel.getCommands().add(tempVar2);
 
-                UICommand tempVar3 = new UICommand("Cancel", vmDiskListModel1);
-                tempVar3.setTitle("Cancel");
+                UICommand tempVar3 = new UICommand("Cancel", vmDiskListModel1); //$NON-NLS-1$
+                tempVar3.setTitle(ConstantsManager.getInstance().getConstants().cancel());
                 tempVar3.setIsCancel(true);
                 vmModel.getCommands().add(tempVar3);
 
@@ -926,6 +928,6 @@ public class VmDiskListModel extends SearchableListModel
 
     @Override
     protected String getListName() {
-        return "VmDiskListModel";
+        return "VmDiskListModel"; //$NON-NLS-1$
     }
 }

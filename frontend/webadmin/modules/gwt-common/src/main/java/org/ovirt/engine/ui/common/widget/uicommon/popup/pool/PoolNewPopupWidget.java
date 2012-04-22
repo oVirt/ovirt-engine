@@ -13,15 +13,16 @@ import com.google.gwt.event.dom.client.ClickHandler;
 
 public class PoolNewPopupWidget extends AbstractVmPopupWidget {
 
+    private CommonApplicationConstants constants;
     public PoolNewPopupWidget(CommonApplicationConstants constants) {
         super(constants);
+        this.constants = constants;
     }
 
-    // TODO: Localize
     @Override
     protected void localize(CommonApplicationConstants constants) {
         super.localize(constants);
-        dontMigrateVMEditor.setLabel("Do not migrate VM");
+        dontMigrateVMEditor.setLabel(constants.dontMigrageVmPoolPopup());
     }
 
     @Override
@@ -33,12 +34,12 @@ public class PoolNewPopupWidget extends AbstractVmPopupWidget {
         if (object.getIsNew()) {
             addVmsButton.setVisible(false);
             object.getAssignedVms().setIsAvailable(false);
-            numOfDesktopsEditor.setLabel("Number of VMs");
+            numOfDesktopsEditor.setLabel(constants.numOfVmsPoolPopup());
         } else {
             object.getAssignedVms().setIsAvailable(true);
             numOfDesktopsEditor.setVisible(false);
-            numOfDesktopsEditor.setLabel("Number of VMs to add");
-            addVmsButton.setText("Add VMs");
+            numOfDesktopsEditor.setLabel(constants.numOfVmsToAddPoolPopup());
+            addVmsButton.setText(constants.addVmsPoolPopup());
             addVmsButton.addClickHandler(new ClickHandler() {
                 @Override
                 public void onClick(ClickEvent event) {
@@ -56,7 +57,7 @@ public class PoolNewPopupWidget extends AbstractVmPopupWidget {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 String propName = ((PropertyChangedEventArgs) args).PropertyName;
-                if ("IsPoolTabValid".equals(propName)) {
+                if ("IsPoolTabValid".equals(propName)) { //$NON-NLS-1$
                     poolTab.markAsInvalid(null);
                 }
             }

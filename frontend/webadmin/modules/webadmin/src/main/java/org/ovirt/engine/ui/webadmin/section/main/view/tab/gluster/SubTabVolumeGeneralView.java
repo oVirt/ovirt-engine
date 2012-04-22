@@ -11,6 +11,7 @@ import org.ovirt.engine.ui.common.widget.form.GeneralFormPanel;
 import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.volumes.VolumeListModel;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.SubTabVolumeGeneralPresenter;
@@ -40,7 +41,7 @@ public class SubTabVolumeGeneralView extends AbstractSubTabFormView<GlusterVolum
     FormBuilder formBuilder;
 
     @Inject
-    public SubTabVolumeGeneralView(DetailModelProvider<VolumeListModel, VolumeGeneralModel> modelProvider) {
+    public SubTabVolumeGeneralView(DetailModelProvider<VolumeListModel, VolumeGeneralModel> modelProvider, ApplicationConstants constants) {
         super(modelProvider);
 
         // Inject a reference to the resources:
@@ -54,10 +55,10 @@ public class SubTabVolumeGeneralView extends AbstractSubTabFormView<GlusterVolum
 
         // Build a form using the FormBuilder
         formBuilder = new FormBuilder(formPanel, 2, 4);
-        formBuilder.addFormItem(new FormItem("Name", name, 0, 0));
-        formBuilder.addFormItem(new FormItem("Volume Type", volumeType, 1, 0));
-        formBuilder.addFormItem(new FormItem("Replica Count", replicaCount, 2, 0));
-        formBuilder.addFormItem(new FormItem("Num of Bricks", numOfBricks, 3, 0));
+        formBuilder.addFormItem(new FormItem(constants.NameVolume(), name, 0, 0));
+        formBuilder.addFormItem(new FormItem(constants.volumeTypeVolume(), volumeType, 1, 0));
+        formBuilder.addFormItem(new FormItem(constants.replicaCountVolume(), replicaCount, 2, 0));
+        formBuilder.addFormItem(new FormItem(constants.numberOfBricksVolume(), numOfBricks, 3, 0));
     }
 
     @SuppressWarnings("unchecked")

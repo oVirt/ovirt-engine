@@ -104,7 +104,7 @@ public class DisksAllocationModel extends EntityModel
 
     public void sortDisks() {
         Linq.Sort(disks, new DiskModelByAliasComparer());
-        OnPropertyChanged(new PropertyChangedEventArgs("Disks"));
+        OnPropertyChanged(new PropertyChangedEventArgs("Disks")); //$NON-NLS-1$
     }
 
     private HashMap<Guid, DiskImage> imageToDestinationDomainMap;
@@ -141,7 +141,7 @@ public class DisksAllocationModel extends EntityModel
 
     public void setQuotaEnforcementType(QuotaEnforcementTypeEnum value) {
         this.quotaEnforcementType = value;
-        OnPropertyChanged(new PropertyChangedEventArgs("QuotaEnforcmentType"));
+        OnPropertyChanged(new PropertyChangedEventArgs("QuotaEnforcmentType")); //$NON-NLS-1$
     }
 
     public QuotaEnforcementTypeEnum getQuotaEnforcementType() {
@@ -246,7 +246,7 @@ public class DisksAllocationModel extends EntityModel
     {
         super.OnPropertyChanged(e);
 
-        if (e.PropertyName.equals("Disks"))
+        if (e.PropertyName.equals("Disks")) //$NON-NLS-1$
         {
             UpdateStorageDomainsAvailability();
             UpdateQuotaAvailability();
@@ -291,7 +291,7 @@ public class DisksAllocationModel extends EntityModel
                     && diskModel.getSourceStorageDomain().getItems().iterator().hasNext()) {
                 storage_domains sourceStorage =
                         ((storage_domains) diskModel.getSourceStorageDomain().getItems().iterator().next());
-                String sourceStorageName = sourceStorage != null ? sourceStorage.getstorage_name() : "";
+                String sourceStorageName = sourceStorage != null ? sourceStorage.getstorage_name() : ""; //$NON-NLS-1$
                 diskModel.getSourceStorageDomainName().setIsAvailable(isSourceStorageDomainNameAvailable);
                 diskModel.getSourceStorageDomainName().setEntity(sourceStorageName);
             }

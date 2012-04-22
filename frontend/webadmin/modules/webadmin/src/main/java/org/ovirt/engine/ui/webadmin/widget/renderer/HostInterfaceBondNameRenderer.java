@@ -11,7 +11,7 @@ public class HostInterfaceBondNameRenderer extends AbstractRenderer<HostInterfac
         StringBuilder sb = new StringBuilder(object.getBondName());
 
         if (object.getAddress() != null && !object.getAddress().isEmpty()) {
-            sb.append(" (").append(object.getAddress()).append(")");
+            sb.append(" (").append(object.getAddress()).append(")"); //$NON-NLS-1$ //$NON-NLS-2$
         }
 
         return sb.toString();

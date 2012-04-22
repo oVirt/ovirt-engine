@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
+import java.util.ArrayList;
+
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.UpdateVdsActionParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -28,12 +30,11 @@ import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
-
-import java.util.ArrayList;
 
 @SuppressWarnings("unused")
 public class HostGeneralModel extends EntityModel
@@ -142,7 +143,7 @@ public class HostGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(os, value))
         {
             os = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("OS"));
+            OnPropertyChanged(new PropertyChangedEventArgs("OS")); //$NON-NLS-1$
         }
     }
 
@@ -158,7 +159,7 @@ public class HostGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(kernelVersion, value))
         {
             kernelVersion = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("KernelVersion"));
+            OnPropertyChanged(new PropertyChangedEventArgs("KernelVersion")); //$NON-NLS-1$
         }
     }
 
@@ -174,7 +175,7 @@ public class HostGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(kvmVersion, value))
         {
             kvmVersion = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("KvmVersion"));
+            OnPropertyChanged(new PropertyChangedEventArgs("KvmVersion")); //$NON-NLS-1$
         }
     }
 
@@ -190,7 +191,7 @@ public class HostGeneralModel extends EntityModel
         if (Version.OpInequality(vdsmVersion, value))
         {
             vdsmVersion = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("VdsmVersion"));
+            OnPropertyChanged(new PropertyChangedEventArgs("VdsmVersion")); //$NON-NLS-1$
         }
     }
 
@@ -206,7 +207,7 @@ public class HostGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(spiceVersion, value))
         {
             spiceVersion = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("SpiceVersion"));
+            OnPropertyChanged(new PropertyChangedEventArgs("SpiceVersion")); //$NON-NLS-1$
         }
     }
 
@@ -222,7 +223,7 @@ public class HostGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(iScsiInitiatorName, value))
         {
             iScsiInitiatorName = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IScsiInitiatorName"));
+            OnPropertyChanged(new PropertyChangedEventArgs("IScsiInitiatorName")); //$NON-NLS-1$
         }
     }
 
@@ -244,7 +245,7 @@ public class HostGeneralModel extends EntityModel
         if (activeVms == null || !activeVms.equals(value))
         {
             activeVms = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("ActiveVms"));
+            OnPropertyChanged(new PropertyChangedEventArgs("ActiveVms")); //$NON-NLS-1$
         }
     }
 
@@ -266,7 +267,7 @@ public class HostGeneralModel extends EntityModel
         if (memoryPageSharing == null || !memoryPageSharing.equals(value))
         {
             memoryPageSharing = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("MemoryPageSharing"));
+            OnPropertyChanged(new PropertyChangedEventArgs("MemoryPageSharing")); //$NON-NLS-1$
         }
     }
 
@@ -282,7 +283,7 @@ public class HostGeneralModel extends EntityModel
         if (automaticLargePage != value)
         {
             automaticLargePage = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("AutomaticLargePage"));
+            OnPropertyChanged(new PropertyChangedEventArgs("AutomaticLargePage")); //$NON-NLS-1$
         }
     }
 
@@ -304,7 +305,7 @@ public class HostGeneralModel extends EntityModel
         if (numberOfCPUs == null || !numberOfCPUs.equals(value))
         {
             numberOfCPUs = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("NumberOfCPUs"));
+            OnPropertyChanged(new PropertyChangedEventArgs("NumberOfCPUs")); //$NON-NLS-1$
         }
     }
 
@@ -320,7 +321,7 @@ public class HostGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(cpuName, value))
         {
             cpuName = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("CpuName"));
+            OnPropertyChanged(new PropertyChangedEventArgs("CpuName")); //$NON-NLS-1$
         }
     }
 
@@ -336,7 +337,7 @@ public class HostGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(cpuType, value))
         {
             cpuType = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("CpuType"));
+            OnPropertyChanged(new PropertyChangedEventArgs("CpuType")); //$NON-NLS-1$
         }
     }
 
@@ -358,7 +359,7 @@ public class HostGeneralModel extends EntityModel
         if (sharedMemory == null || !sharedMemory.equals(value))
         {
             sharedMemory = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("SharedMemory"));
+            OnPropertyChanged(new PropertyChangedEventArgs("SharedMemory")); //$NON-NLS-1$
         }
     }
 
@@ -380,7 +381,7 @@ public class HostGeneralModel extends EntityModel
         if (physicalMemory == null || !physicalMemory.equals(value))
         {
             physicalMemory = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("PhysicalMemory"));
+            OnPropertyChanged(new PropertyChangedEventArgs("PhysicalMemory")); //$NON-NLS-1$
         }
     }
 
@@ -402,7 +403,7 @@ public class HostGeneralModel extends EntityModel
         if (swapTotal == null || !swapTotal.equals(value))
         {
             swapTotal = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("SwapTotal"));
+            OnPropertyChanged(new PropertyChangedEventArgs("SwapTotal")); //$NON-NLS-1$
         }
     }
 
@@ -424,7 +425,7 @@ public class HostGeneralModel extends EntityModel
         if (swapFree == null || !swapFree.equals(value))
         {
             swapFree = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("SwapFree"));
+            OnPropertyChanged(new PropertyChangedEventArgs("SwapFree")); //$NON-NLS-1$
         }
     }
 
@@ -446,7 +447,7 @@ public class HostGeneralModel extends EntityModel
         if (freeMemory == null || !freeMemory.equals(value))
         {
             freeMemory = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("FreeMemory"));
+            OnPropertyChanged(new PropertyChangedEventArgs("FreeMemory")); //$NON-NLS-1$
         }
     }
 
@@ -468,7 +469,7 @@ public class HostGeneralModel extends EntityModel
         if (usedMemory == null || !usedMemory.equals(value))
         {
             usedMemory = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("UsedMemory"));
+            OnPropertyChanged(new PropertyChangedEventArgs("UsedMemory")); //$NON-NLS-1$
         }
     }
 
@@ -490,7 +491,7 @@ public class HostGeneralModel extends EntityModel
         if (usedSwap == null || !usedSwap.equals(value))
         {
             usedSwap = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("UsedSwap"));
+            OnPropertyChanged(new PropertyChangedEventArgs("UsedSwap")); //$NON-NLS-1$
         }
     }
 
@@ -506,7 +507,7 @@ public class HostGeneralModel extends EntityModel
         if (hasAnyAlert != value)
         {
             hasAnyAlert = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("HasAnyAlert"));
+            OnPropertyChanged(new PropertyChangedEventArgs("HasAnyAlert")); //$NON-NLS-1$
         }
     }
 
@@ -522,7 +523,7 @@ public class HostGeneralModel extends EntityModel
         if (hasUpgradeAlert != value)
         {
             hasUpgradeAlert = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("HasUpgradeAlert"));
+            OnPropertyChanged(new PropertyChangedEventArgs("HasUpgradeAlert")); //$NON-NLS-1$
         }
     }
 
@@ -538,7 +539,7 @@ public class HostGeneralModel extends EntityModel
         if (hasManualFenceAlert != value)
         {
             hasManualFenceAlert = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("HasManualFenceAlert"));
+            OnPropertyChanged(new PropertyChangedEventArgs("HasManualFenceAlert")); //$NON-NLS-1$
         }
     }
 
@@ -554,7 +555,7 @@ public class HostGeneralModel extends EntityModel
         if (hasNoPowerManagementAlert != value)
         {
             hasNoPowerManagementAlert = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("HasNoPowerManagementAlert"));
+            OnPropertyChanged(new PropertyChangedEventArgs("HasNoPowerManagementAlert")); //$NON-NLS-1$
         }
     }
 
@@ -570,7 +571,7 @@ public class HostGeneralModel extends EntityModel
         if (hasReinstallAlertNonResponsive != value)
         {
             hasReinstallAlertNonResponsive = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("HasReinstallAlertNonResponsive"));
+            OnPropertyChanged(new PropertyChangedEventArgs("HasReinstallAlertNonResponsive")); //$NON-NLS-1$
         }
     }
 
@@ -586,7 +587,7 @@ public class HostGeneralModel extends EntityModel
         if (hasReinstallAlertInstallFailed != value)
         {
             hasReinstallAlertInstallFailed = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("HasReinstallAlertInstallFailed"));
+            OnPropertyChanged(new PropertyChangedEventArgs("HasReinstallAlertInstallFailed")); //$NON-NLS-1$
         }
     }
 
@@ -602,7 +603,7 @@ public class HostGeneralModel extends EntityModel
         if (hasReinstallAlertMaintenance != value)
         {
             hasReinstallAlertMaintenance = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("HasReinstallAlertMaintenance"));
+            OnPropertyChanged(new PropertyChangedEventArgs("HasReinstallAlertMaintenance")); //$NON-NLS-1$
         }
     }
 
@@ -618,7 +619,7 @@ public class HostGeneralModel extends EntityModel
         if (hasNICsAlert != value)
         {
             hasNICsAlert = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("HasNICsAlert"));
+            OnPropertyChanged(new PropertyChangedEventArgs("HasNICsAlert")); //$NON-NLS-1$
         }
     }
 
@@ -634,26 +635,27 @@ public class HostGeneralModel extends EntityModel
         if (nonOperationalReasonEntity != value)
         {
             nonOperationalReasonEntity = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("NonOperationalReasonEntity"));
+            OnPropertyChanged(new PropertyChangedEventArgs("NonOperationalReasonEntity")); //$NON-NLS-1$
         }
     }
 
     static
     {
-        RequestEditEventDefinition = new EventDefinition("RequestEditEvent", HostGeneralModel.class);
-        RequestGOToEventsTabEventDefinition = new EventDefinition("RequestGOToEventsTabEvent", HostGeneralModel.class);
+        RequestEditEventDefinition = new EventDefinition("RequestEditEvent", HostGeneralModel.class); //$NON-NLS-1$
+        RequestGOToEventsTabEventDefinition = new EventDefinition("RequestGOToEventsTabEvent", HostGeneralModel.class); //$NON-NLS-1$
     }
 
     public HostGeneralModel()
     {
         setRequestEditEvent(new Event(RequestEditEventDefinition));
         setRequestGOToEventsTabEvent(new Event(RequestGOToEventsTabEventDefinition));
-        setTitle("General");
+        setTitle(ConstantsManager.getInstance().getConstants().generalTitle());
+        setHashName("general"); //$NON-NLS-1$
 
-        setSaveNICsConfigCommand(new UICommand("SaveNICsConfig", this));
-        setInstallCommand(new UICommand("Install", this));
-        setEditHostCommand(new UICommand("EditHost", this));
-        setGoToEventsCommand(new UICommand("GoToEvents", this));
+        setSaveNICsConfigCommand(new UICommand("SaveNICsConfig", this)); //$NON-NLS-1$
+        setInstallCommand(new UICommand("Install", this)); //$NON-NLS-1$
+        setEditHostCommand(new UICommand("EditHost", this)); //$NON-NLS-1$
+        setGoToEventsCommand(new UICommand("GoToEvents", this)); //$NON-NLS-1$
     }
 
     public void SaveNICsConfig()
@@ -674,12 +676,12 @@ public class HostGeneralModel extends EntityModel
         try {
             if (!StringHelper.isNullOrEmpty(os)) {
 
-                String[] parts = os.split("-");
+                String[] parts = os.split("-"); //$NON-NLS-1$
                 if (parts.length == 3) {
 
-                    parts = parts[2].trim().split("\\.");
+                    parts = parts[2].trim().split("\\."); //$NON-NLS-1$
 
-                    return new Version(parts[0] + "." + parts[1] + "." + parts[2] + "." + parts[3]);
+                    return new Version(parts[0] + "." + parts[1] + "." + parts[2] + "." + parts[3]); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                 }
             }
         } catch (Exception ex) {
@@ -697,51 +699,53 @@ public class HostGeneralModel extends EntityModel
 
         InstallModel model = new InstallModel();
         setWindow(model);
-        model.setTitle("Install Host");
-        model.setHashName("install_host");
+        model.setTitle(ConstantsManager.getInstance().getConstants().installHostTitle());
+        model.setHashName("install_host"); //$NON-NLS-1$
         model.getOVirtISO().setIsAvailable(false);
         model.getRootPassword().setIsAvailable(false);
         model.getOverrideIpTables().setIsAvailable(false);
 
         final Version hostOsVersion = GetVersionFromOS(getEntity().gethost_os());
-        model.getHostVersion().setEntity(hostOsVersion.getMajor() + "." + hostOsVersion.getMinor());
+        model.getHostVersion().setEntity(hostOsVersion.getMajor() + "." + hostOsVersion.getMinor()); //$NON-NLS-1$
         model.getHostVersion().setIsAvailable(false);
 
         if (getEntity().getvds_type() == VDSType.oVirtNode) {
 
             AsyncDataProvider.GetoVirtISOsList(new AsyncQuery(model,
-                new INewAsyncCallback() {
-                    @Override
-                    public void OnSuccess(Object target, Object returnValue) {
+                    new INewAsyncCallback() {
+                        @Override
+                        public void OnSuccess(Object target, Object returnValue) {
 
-                        InstallModel model = (InstallModel) target;
+                            InstallModel model = (InstallModel) target;
 
-                        ArrayList<RpmVersion> isos = (ArrayList<RpmVersion>) returnValue;
-                        isos = Linq.OrderByDescending(isos, new Linq.RpmVersionComparer());
+                            ArrayList<RpmVersion> isos = (ArrayList<RpmVersion>) returnValue;
+                            isos = Linq.OrderByDescending(isos, new Linq.RpmVersionComparer());
 
-                        // Filter out not compatible version (compare by major version).
-                        for (RpmVersion iso : Linq.ToList(isos)) {
+                            // Filter out not compatible version (compare by major version).
+                            for (RpmVersion iso : Linq.ToList(isos)) {
 
-                            Version version = iso;
-                            if (version.getMajor() != hostOsVersion.getMajor()) {
-                                isos.remove(iso);
+                                Version version = iso;
+                                if (version.getMajor() != hostOsVersion.getMajor()) {
+                                    isos.remove(iso);
+                                }
                             }
+
+                            model.getOVirtISO().setItems(isos);
+                            model.getOVirtISO().setSelectedItem(Linq.FirstOrDefault(isos));
+                            model.getOVirtISO().setIsAvailable(true);
+                            model.getOVirtISO().setIsChangable(!isos.isEmpty());
+                            model.getHostVersion().setIsAvailable(true);
+
+                            if (isos.isEmpty()) {
+                                model.setMessage(ConstantsManager.getInstance()
+                                        .getConstants()
+                                        .thereAreNoISOversionsVompatibleWithHostCurrentVerMsg());
+                            }
+
+                            AddInstallCommands(model, isos.isEmpty());
                         }
-
-                        model.getOVirtISO().setItems(isos);
-                        model.getOVirtISO().setSelectedItem(Linq.FirstOrDefault(isos));
-                        model.getOVirtISO().setIsAvailable(true);
-                        model.getOVirtISO().setIsChangable(!isos.isEmpty());
-                        model.getHostVersion().setIsAvailable(true);
-
-                        if (isos.isEmpty()) {
-                            model.setMessage("There are no ISO versions that are compatible with the Host's current version.");
-                        }
-
-
-                        AddInstallCommands(model, isos.isEmpty());
-                    }
-                }), null);
+                    }),
+                    null);
         } else {
             model.getRootPassword().setIsAvailable(true);
             model.getRootPassword().setIsChangable(true);
@@ -762,14 +766,15 @@ public class HostGeneralModel extends EntityModel
 
         if (!isOnlyClose) {
 
-            UICommand command = new UICommand("OnInstall", this);
-            command.setTitle("OK");
+            UICommand command = new UICommand("OnInstall", this); //$NON-NLS-1$
+            command.setTitle(ConstantsManager.getInstance().getConstants().ok());
             command.setIsDefault(true);
             model.getCommands().add(command);
         }
 
-        UICommand command = new UICommand("Cancel", this);
-        command.setTitle(isOnlyClose ? "Close" : "Cancel");
+        UICommand command = new UICommand("Cancel", this); //$NON-NLS-1$
+        command.setTitle(isOnlyClose ? ConstantsManager.getInstance().getConstants().close()
+                : ConstantsManager.getInstance().getConstants().cancel());
         command.setIsCancel(true);
         model.getCommands().add(command);
     }
@@ -844,18 +849,18 @@ public class HostGeneralModel extends EntityModel
     {
         super.EntityPropertyChanged(sender, e);
 
-        if (e.PropertyName.equals("net_config_dirty") || e.PropertyName.equals("status")
-                || e.PropertyName.equals("spm_status") || e.PropertyName.equals("vm_active"))
+        if (e.PropertyName.equals("net_config_dirty") || e.PropertyName.equals("status") //$NON-NLS-1$ //$NON-NLS-2$
+                || e.PropertyName.equals("spm_status") || e.PropertyName.equals("vm_active")) //$NON-NLS-1$ //$NON-NLS-2$
         {
             UpdateAlerts();
         }
 
-        if (e.PropertyName.equals("usage_mem_percent") || e.PropertyName.equals("physical_mem_mb"))
+        if (e.PropertyName.equals("usage_mem_percent") || e.PropertyName.equals("physical_mem_mb")) //$NON-NLS-1$ //$NON-NLS-2$
         {
             UpdateMemory();
         }
 
-        if (e.PropertyName.equals("swap_total") || e.PropertyName.equals("swap_free"))
+        if (e.PropertyName.equals("swap_total") || e.PropertyName.equals("swap_free")) //$NON-NLS-1$ //$NON-NLS-2$
         {
             UpdateSwapUsed();
         }
@@ -944,20 +949,23 @@ public class HostGeneralModel extends EntityModel
                                 hostGeneralModel.setHasUpgradeAlert(true);
                                 hostGeneralModel.getInstallCommand()
                                         .setIsExecutionAllowed(vds.getstatus() != VDSStatus.Up
-                                            && vds.getstatus() != VDSStatus.Installing
-                                            && vds.getstatus() != VDSStatus.PreparingForMaintenance
-                                            && vds.getstatus() != VDSStatus.Reboot
-                                            && vds.getstatus() != VDSStatus.PendingApproval);
+                                                && vds.getstatus() != VDSStatus.Installing
+                                                && vds.getstatus() != VDSStatus.PreparingForMaintenance
+                                                && vds.getstatus() != VDSStatus.Reboot
+                                                && vds.getstatus() != VDSStatus.PendingApproval);
                                 if (!hostGeneralModel.getInstallCommand().getIsExecutionAllowed())
                                 {
                                     hostGeneralModel.getInstallCommand()
                                             .getExecuteProhibitionReasons()
-                                            .add("Switch to maintenance mode to enable Upgrade.");
+                                            .add(ConstantsManager.getInstance()
+                                                    .getConstants()
+                                                    .switchToMaintenanceModeToEnableUpgradeReason());
                                 }
                             }
 
                         }
-                    }), getEntity().getId());
+                    }),
+                    getEntity().getId());
         }
 
         setNonOperationalReasonEntity((getEntity().getNonOperationalReason() == NonOperationalReason.NONE ? null
@@ -1021,11 +1029,11 @@ public class HostGeneralModel extends EntityModel
         {
             GoToEvents();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnInstall"))
+        else if (StringHelper.stringsEqual(command.getName(), "OnInstall")) //$NON-NLS-1$
         {
             OnInstall();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "Cancel"))
+        else if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
         {
             Cancel();
         }

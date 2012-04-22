@@ -78,7 +78,7 @@ public class DataCenterNetworkModel extends NetworkModel
     public void setClusterTreeNodes(java.util.ArrayList<SelectionTreeNodeModel> value)
     {
         setclusterTreeNodes(value);
-        OnPropertyChanged(new PropertyChangedEventArgs("ClusterTreeNodes"));
+        OnPropertyChanged(new PropertyChangedEventArgs("ClusterTreeNodes")); //$NON-NLS-1$
     }
 
     private java.util.ArrayList<VDSGroup> privateOriginalClusters;

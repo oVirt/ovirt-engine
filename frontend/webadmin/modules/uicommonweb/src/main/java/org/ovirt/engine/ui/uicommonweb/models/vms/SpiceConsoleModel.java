@@ -37,6 +37,7 @@ import org.ovirt.engine.ui.uicommonweb.DataProvider;
 import org.ovirt.engine.ui.uicommonweb.TypeResolver;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleQueryAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
@@ -65,14 +66,14 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
 
     static
     {
-        SpiceDisconnectedEventDefinition = new EventDefinition("SpiceDisconnected", SpiceConsoleModel.class);
-        SpiceConnectedEventDefinition = new EventDefinition("SpiceConnected", SpiceConsoleModel.class);
-        SpiceMenuItemSelectedEventDefinition = new EventDefinition("SpiceMenuItemSelected", SpiceConsoleModel.class);
+        SpiceDisconnectedEventDefinition = new EventDefinition("SpiceDisconnected", SpiceConsoleModel.class); //$NON-NLS-1$
+        SpiceConnectedEventDefinition = new EventDefinition("SpiceConnected", SpiceConsoleModel.class); //$NON-NLS-1$
+        SpiceMenuItemSelectedEventDefinition = new EventDefinition("SpiceMenuItemSelected", SpiceConsoleModel.class); //$NON-NLS-1$
     }
 
     public SpiceConsoleModel()
     {
-        setTitle("Spice");
+        setTitle(ConstantsManager.getInstance().getConstants().spiceTitle());
 
         setspice((ISpice) TypeResolver.getInstance().Resolve(ISpice.class));
         getConfigurator().Configure(getspice());
@@ -85,10 +86,10 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
     {
         if (getEntity() != null)
         {
-            getLogger().Debug("Connecting to Spice console...");
+            getLogger().Debug("Connecting to Spice console..."); //$NON-NLS-1$
             if (!getspice().getIsInstalled())
             {
-                getLogger().Info("Spice client is not installed.");
+                getLogger().Info("Spice client is not installed."); //$NON-NLS-1$
                 getspice().Install();
                 return;
             }
@@ -97,7 +98,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
             if (getConfigurator().getIsAdmin()
                     && getspice().getCurrentVersion().compareTo(getspice().getDesiredVersion()) < 0)
             {
-                getLogger().Info("Spice client version is not as desired (" + getspice().getDesiredVersion() + ")");
+                getLogger().Info("Spice client version is not as desired (" + getspice().getDesiredVersion() + ")"); //$NON-NLS-1$ //$NON-NLS-2$
                 getspice().Install();
                 return;
             }
@@ -185,7 +186,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
                 {
                     Frontend.RunMultipleAction(VdcActionType.ChangeDisk,
                             new java.util.ArrayList<VdcActionParametersBase>(java.util.Arrays.asList(new VdcActionParametersBase[] { new ChangeDiskCommandParameters(getEntity().getId(),
-                                    StringHelper.stringsEqual(item.getText(), EjectLabel) ? "" : item.getText()) })));
+                                    StringHelper.stringsEqual(item.getText(), EjectLabel) ? "" : item.getText()) }))); //$NON-NLS-1$
                 }
             }
         }
@@ -221,7 +222,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
     {
         super.ExecuteCommand(command);
 
-        if (StringHelper.stringsEqual(command.getName(), "Cancel"))
+        if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
         {
             Cancel();
         }
@@ -342,8 +343,8 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
             spiceSecureChannels = (String) returnValues.get(3).getReturnValue();
         }
 
-        String certificateSubject = "";
-        String caCertificate = "";
+        String certificateSubject = ""; //$NON-NLS-1$
+        String caCertificate = ""; //$NON-NLS-1$
 
         if ((Boolean) returnValues.get(4).getReturnValue())
         {
@@ -355,7 +356,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
         getspice().setPort((getEntity().getdisplay() == null ? 0 : getEntity().getdisplay()));
         getspice().setPassword(ticket);
         getspice().setNumberOfMonitors(getEntity().getnum_of_monitors());
-        getspice().setGuestHostName(getEntity().getvm_host().split("[ ]", -1)[0]);
+        getspice().setGuestHostName(getEntity().getvm_host().split("[ ]", -1)[0]); //$NON-NLS-1$
         if (getEntity().getdisplay_secure_port() != null)
         {
             getspice().setSecurePort(getEntity().getdisplay_secure_port());
@@ -374,22 +375,22 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
 
         String toggleFullScreenKeys = (String) returnValues.get(7).getReturnValue();
         String releaseCursorKeys = (String) returnValues.get(8).getReturnValue();
-        String ctrlAltDel = "ctrl+alt+del";
-        String ctrlAltEnd = "ctrl+alt+end";
+        String ctrlAltDel = "ctrl+alt+del"; //$NON-NLS-1$
+        String ctrlAltEnd = "ctrl+alt+end"; //$NON-NLS-1$
 
         String toggleFullScreenKeysTranslated =
                 DataProvider.GetComplexValueFromSpiceRedKeysResource((toggleFullScreenKeys != null) ? toggleFullScreenKeys
-                        : "shift+f11");
+                        : "shift+f11"); //$NON-NLS-1$
         String releaseCursorKeysTranslated =
                 DataProvider.GetComplexValueFromSpiceRedKeysResource((releaseCursorKeys != null) ? releaseCursorKeys
-                        : "shift+f12");
+                        : "shift+f12"); //$NON-NLS-1$
         String ctrlAltDelTranslated = DataProvider.GetComplexValueFromSpiceRedKeysResource(ctrlAltDel);
         String ctrlAltEndTranslated = DataProvider.GetComplexValueFromSpiceRedKeysResource(ctrlAltEnd);
 
         getspice().setTitle(getEntity().getvm_name()
-                + ":%d"
-                + (StringHelper.isNullOrEmpty(releaseCursorKeysTranslated) ? "" : (" - Press "
-                        + releaseCursorKeysTranslated + " to Release Cursor")));
+                + ":%d" //$NON-NLS-1$
+                + (StringHelper.isNullOrEmpty(releaseCursorKeysTranslated) ? "" : (" - Press " //$NON-NLS-1$ //$NON-NLS-2$
+                        + releaseCursorKeysTranslated + " to Release Cursor"))); //$NON-NLS-1$
 
         // If 'AdminConsole' is true, send true; otherwise, false should be sent only for VMs with SPICE driver
         // installed.
@@ -405,44 +406,44 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
         if (!StringHelper.isNullOrEmpty(releaseCursorKeys) || !StringHelper.isNullOrEmpty(toggleFullScreenKeys))
         {
             String comma =
-                    (!StringHelper.isNullOrEmpty(releaseCursorKeys) && !StringHelper.isNullOrEmpty(toggleFullScreenKeys)) ? ","
-                            : "";
+                    (!StringHelper.isNullOrEmpty(releaseCursorKeys) && !StringHelper.isNullOrEmpty(toggleFullScreenKeys)) ? "," //$NON-NLS-1$
+                            : ""; //$NON-NLS-1$
 
             String releaseCursorKeysParameter =
-                    StringHelper.isNullOrEmpty(releaseCursorKeys) ? "" : "release-cursor=" + releaseCursorKeys;
+                    StringHelper.isNullOrEmpty(releaseCursorKeys) ? "" : "release-cursor=" + releaseCursorKeys; //$NON-NLS-1$ //$NON-NLS-2$
 
             String toggleFullScreenKeysParameter =
-                    StringHelper.isNullOrEmpty(toggleFullScreenKeys) ? "" : "toggle-fullscreen=" + toggleFullScreenKeys;
+                    StringHelper.isNullOrEmpty(toggleFullScreenKeys) ? "" : "toggle-fullscreen=" + toggleFullScreenKeys; //$NON-NLS-1$ //$NON-NLS-2$
 
             getspice().setHotKey(releaseCursorKeysParameter + comma + toggleFullScreenKeysParameter);
         }
 
-        getspice().setLocalizedStrings(new String[] { "USB",
-                "USB Devices,No USB devices,Client's SPICE USB Redirector is not installed" });
+        getspice().setLocalizedStrings(new String[] { "USB", //$NON-NLS-1$
+                "USB Devices,No USB devices,Client's SPICE USB Redirector is not installed" }); //$NON-NLS-1$
 
         // Create menu.
         int id = 1;
         menu = new SpiceMenu();
 
-        menu.getItems().add(new SpiceMenuCommandItem(ID_SYS_MENU_SEND_CTRL_ALT_DEL, "S&end " + ctrlAltDelTranslated
-                + "\t" + ctrlAltEndTranslated, ""));
-        menu.getItems().add(new SpiceMenuCommandItem(ID_SYS_MENU_TOGGLE_FULL_SCREEN, "&Toggle Full Screen\t"
-                + toggleFullScreenKeysTranslated, ""));
+        menu.getItems().add(new SpiceMenuCommandItem(ID_SYS_MENU_SEND_CTRL_ALT_DEL, "S&end " + ctrlAltDelTranslated //$NON-NLS-1$
+                + "\t" + ctrlAltEndTranslated, "")); //$NON-NLS-1$ //$NON-NLS-2$
+        menu.getItems().add(new SpiceMenuCommandItem(ID_SYS_MENU_TOGGLE_FULL_SCREEN, "&Toggle Full Screen\t" //$NON-NLS-1$
+                + toggleFullScreenKeysTranslated, "")); //$NON-NLS-1$
 
-        SpiceMenuContainerItem specialKes = new SpiceMenuContainerItem(id, "&Special Keys");
+        SpiceMenuContainerItem specialKes = new SpiceMenuContainerItem(id, "&Special Keys"); //$NON-NLS-1$
         menu.getItems().add(specialKes);
 
-        specialKes.getItems().add(new SpiceMenuCommandItem(ID_SYS_MENU_SEND_SHIFT_F11, "&"
-                + toggleFullScreenKeysTranslated, ""));
-        specialKes.getItems().add(new SpiceMenuCommandItem(ID_SYS_MENU_SEND_SHIFT_F12, "&"
-                + releaseCursorKeysTranslated, ""));
+        specialKes.getItems().add(new SpiceMenuCommandItem(ID_SYS_MENU_SEND_SHIFT_F11, "&" //$NON-NLS-1$
+                + toggleFullScreenKeysTranslated, "")); //$NON-NLS-1$
+        specialKes.getItems().add(new SpiceMenuCommandItem(ID_SYS_MENU_SEND_SHIFT_F12, "&" //$NON-NLS-1$
+                + releaseCursorKeysTranslated, "")); //$NON-NLS-1$
         specialKes.getItems().add(new SpiceMenuCommandItem(ID_SYS_MENU_SEND_CTRL_ALT_END,
-                "&" + ctrlAltEndTranslated,
-                ""));
+                "&" + ctrlAltEndTranslated, //$NON-NLS-1$
+                "")); //$NON-NLS-1$
         menu.getItems().add(new SpiceMenuSeparatorItem(id));
         id++;
 
-        SpiceMenuContainerItem changeCDItem = new SpiceMenuContainerItem(id, "Change CD");
+        SpiceMenuContainerItem changeCDItem = new SpiceMenuContainerItem(id, "Change CD"); //$NON-NLS-1$
         id++;
 
         java.util.ArrayList<String> isos = new java.util.ArrayList<String>();
@@ -459,7 +460,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
 
         isos =
                 isos.size() > 0 ? isos
-                        : new java.util.ArrayList<String>(java.util.Arrays.asList(new String[] { "No CDs" }));
+                        : new java.util.ArrayList<String>(java.util.Arrays.asList(new String[] { "No CDs" })); //$NON-NLS-1$
 
         Collections.sort(isos);
 
@@ -474,11 +475,17 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
         menu.getItems().add(changeCDItem);
         menu.getItems().add(new SpiceMenuSeparatorItem(id));
         id++;
-        menu.getItems().add(new SpiceMenuCommandItem(id, "Play", CommandPlay));
+        menu.getItems().add(new SpiceMenuCommandItem(id, ConstantsManager.getInstance()
+                .getConstants()
+                .playSpiceConsole(), CommandPlay));
         id++;
-        menu.getItems().add(new SpiceMenuCommandItem(id, "Suspend", CommandSuspend));
+        menu.getItems().add(new SpiceMenuCommandItem(id, ConstantsManager.getInstance()
+                .getConstants()
+                .suspendSpiceConsole(), CommandSuspend));
         id++;
-        menu.getItems().add(new SpiceMenuCommandItem(id, "Stop", CommandStop));
+        menu.getItems().add(new SpiceMenuCommandItem(id, ConstantsManager.getInstance()
+                .getConstants()
+                .stopSpiceConsole(), CommandStop));
 
         getspice().setMenu(menu.toString());
 
@@ -489,7 +496,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
         getspice().getMenuItemSelectedEvent().addListener(this);
 
         if (StringHelper.isNullOrEmpty(getEntity().getdisplay_ip())
-                || StringHelper.stringsEqual(getEntity().getdisplay_ip(), "0"))
+                || StringHelper.stringsEqual(getEntity().getdisplay_ip(), "0")) //$NON-NLS-1$
         {
             VDS host = (VDS) returnValues.get(0).getReturnValue();
             if (host == null)
@@ -564,7 +571,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
         if (!getConfigurator().getIsAdmin() && getEntity().getGuestAgentVersion() != null
                 && getEntity().getstatus() == VMStatus.Up)
         {
-            getLogger().Info("SpiceConsoleManager::Connect: Attempting to perform SSO on Desktop "
+            getLogger().Info("SpiceConsoleManager::Connect: Attempting to perform SSO on Desktop " //$NON-NLS-1$
                     + getEntity().getvm_name());
 
             Frontend.RunAction(VdcActionType.VmLogon, new VmOperationParameterBase(getEntity().getId()),
@@ -581,10 +588,10 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
                             }
                             else
                             {
-                                String vmName = returnValue1 != null ? returnValue1.getDescription() : "";
+                                String vmName = returnValue1 != null ? returnValue1.getDescription() : ""; //$NON-NLS-1$
                                 model.getLogger()
-                                        .Info("SpiceConsoleManager::Connect: Failed to perform SSO on Destkop "
-                                                + vmName + " continuing without SSO.");
+                                        .Info("SpiceConsoleManager::Connect: Failed to perform SSO on Destkop " //$NON-NLS-1$
+                                                + vmName + " continuing without SSO."); //$NON-NLS-1$
                             }
 
                         }
@@ -604,14 +611,14 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
             getspice().Connect();
         } catch (RuntimeException ex)
         {
-            getLogger().Error("Exception on Spice connect", ex);
+            getLogger().Error("Exception on Spice connect", ex); //$NON-NLS-1$
         }
     }
 
-    private static final String CommandStop = "Stop";
-    private static final String CommandPlay = "Play";
-    private static final String CommandSuspend = "Suspend";
-    private static final String CommandChangeCD = "ChangeCD";
+    private static final String CommandStop = "Stop"; //$NON-NLS-1$
+    private static final String CommandPlay = "Play"; //$NON-NLS-1$
+    private static final String CommandSuspend = "Suspend"; //$NON-NLS-1$
+    private static final String CommandChangeCD = "ChangeCD"; //$NON-NLS-1$
 
     private static final int ID_SYS_MENU_DISCONNECT = 0x1200;
     private static final int ID_SYS_MENU_SEND_CTRL_ALT_DEL = 0x1300;

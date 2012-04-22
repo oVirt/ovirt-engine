@@ -21,8 +21,8 @@ public class UserPortalModelResolver {
             }
         }
 
-        throw new IllegalStateException("Cannot resolve detail model [" + detailModelClass +
-                "] from parent list model [" + parentModel.getClass() + "]");
+        throw new IllegalStateException("Cannot resolve detail model [" + detailModelClass + //$NON-NLS-1$
+                "] from parent list model [" + parentModel.getClass() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
 }

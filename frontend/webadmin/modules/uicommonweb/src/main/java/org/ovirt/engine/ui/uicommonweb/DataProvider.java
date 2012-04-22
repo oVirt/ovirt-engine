@@ -137,7 +137,7 @@ public final class DataProvider
             return (String) returnValue.getReturnValue();
         }
 
-        return "";
+        return ""; //$NON-NLS-1$
     }
 
     public static String GetLinuxMountPointRegex()
@@ -152,7 +152,7 @@ public final class DataProvider
         // (.*?/|.*?\\)?([^\./|^\.\\]+)(?:\.([^\\]*)|)$
 
         // [IP:/path or FQDN:/path]
-        return "^((?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)|(([a-zA-Z0-9]([a-zA-Z0-9\\-]{0,61}[a-zA-Z0-9])?\\.)+[a-zA-Z]{2,}))\\:/(.*?/|.*?\\\\)?([^\\./|^\\.\\\\]+)(?:\\.([^\\\\]*)|)$";
+        return "^((?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)|(([a-zA-Z0-9]([a-zA-Z0-9\\-]{0,61}[a-zA-Z0-9])?\\.)+[a-zA-Z]{2,}))\\:/(.*?/|.*?\\\\)?([^\\./|^\\.\\\\]+)(?:\\.([^\\\\]*)|)$"; //$NON-NLS-1$
     }
 
     public static java.util.ArrayList<UserPermissionModel> GetUserPermissionMatrix(Guid userId)
@@ -275,7 +275,7 @@ public final class DataProvider
             }
             else
             {
-                cachedDefaultTimeZone = "";
+                cachedDefaultTimeZone = ""; //$NON-NLS-1$
             }
         }
 
@@ -568,7 +568,7 @@ public final class DataProvider
             return (String) returnValue.getReturnValue();
         }
 
-        return "";
+        return ""; //$NON-NLS-1$
     }
 
     public static String GetDefaultImportPath()
@@ -581,7 +581,7 @@ public final class DataProvider
             return (String) returnValue.getReturnValue();
         }
 
-        return "";
+        return ""; //$NON-NLS-1$
     }
 
     public static java.util.ArrayList<tags> GetAllTagsList()
@@ -906,7 +906,7 @@ public final class DataProvider
             return (String) returnValue.getReturnValue();
         }
 
-        return "";
+        return ""; //$NON-NLS-1$
     }
 
     public static int GetMaxNumOfVmSockets(String version)
@@ -993,7 +993,7 @@ public final class DataProvider
 
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
         {
-            return ((String) returnValue.getReturnValue()).split("[;]", -1);
+            return ((String) returnValue.getReturnValue()).split("[;]", -1); //$NON-NLS-1$
         }
 
         return new String[] {};
@@ -1021,7 +1021,7 @@ public final class DataProvider
             return (String) returnValue.getReturnValue();
         }
 
-        return "";
+        return ""; //$NON-NLS-1$
     }
 
     /**
@@ -1118,7 +1118,7 @@ public final class DataProvider
 
     public static java.util.ArrayList<storage_pool> GetDataCenterList()
     {
-        SearchParameters tempVar = new SearchParameters("DataCenter: sortby name", SearchType.StoragePool);
+        SearchParameters tempVar = new SearchParameters("DataCenter: sortby name", SearchType.StoragePool); //$NON-NLS-1$
         tempVar.setMaxCount(SearchLimit);
         VdcQueryReturnValue returnValue = Frontend.RunQuery(VdcQueryType.Search, tempVar);
 
@@ -1150,7 +1150,7 @@ public final class DataProvider
     public static java.util.ArrayList<VDS> GetUpHostList()
     {
         VdcQueryReturnValue returnValue =
-                Frontend.RunQuery(VdcQueryType.Search, new SearchParameters("Host: status=up", SearchType.VDS));
+                Frontend.RunQuery(VdcQueryType.Search, new SearchParameters("Host: status=up", SearchType.VDS)); //$NON-NLS-1$
 
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
         {
@@ -1199,12 +1199,12 @@ public final class DataProvider
         {
             // build search query according to storage pool names:
             StringBuilder sbSearch = new StringBuilder();
-            sbSearch.append(StringFormat.format("Host: status=up and datacenter=%1$s", storageDomainWithPools.get(0)
+            sbSearch.append(StringFormat.format("Host: status=up and datacenter=%1$s", storageDomainWithPools.get(0) //$NON-NLS-1$
                     .getstorage_pool_name()));
 
             for (int i = 1; i < storageDomainWithPools.size(); i++)
             {
-                sbSearch.append(StringFormat.format(" or datacenter=%1$s", storageDomainWithPools.get(i)
+                sbSearch.append(StringFormat.format(" or datacenter=%1$s", storageDomainWithPools.get(i) //$NON-NLS-1$
                         .getstorage_pool_name()));
             }
 
@@ -1235,8 +1235,8 @@ public final class DataProvider
     public static java.util.ArrayList<VDS> GetUpHostListByCluster(String cluster)
     {
         VdcQueryReturnValue returnValue =
-                Frontend.RunQuery(VdcQueryType.Search, new SearchParameters("Host: cluster = " + cluster
-                        + " and status = up", SearchType.VDS));
+                Frontend.RunQuery(VdcQueryType.Search, new SearchParameters("Host: cluster = " + cluster //$NON-NLS-1$
+                        + " and status = up", SearchType.VDS)); //$NON-NLS-1$
 
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
         {
@@ -1249,8 +1249,8 @@ public final class DataProvider
     public static java.util.ArrayList<VDS> GetHostListByDataCenter(String dataCenterName)
     {
         VdcQueryReturnValue returnValue =
-                Frontend.RunQuery(VdcQueryType.Search, new SearchParameters("Host: datacenter = " + dataCenterName
-                        + " sortby name", SearchType.VDS));
+                Frontend.RunQuery(VdcQueryType.Search, new SearchParameters("Host: datacenter = " + dataCenterName //$NON-NLS-1$
+                        + " sortby name", SearchType.VDS)); //$NON-NLS-1$
 
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
         {
@@ -1263,8 +1263,8 @@ public final class DataProvider
     public static java.util.ArrayList<VDS> GetHostListByCluster(String cluster)
     {
         VdcQueryReturnValue returnValue =
-                Frontend.RunQuery(VdcQueryType.Search, new SearchParameters("Host: cluster = " + cluster
-                        + " sortby name", SearchType.VDS));
+                Frontend.RunQuery(VdcQueryType.Search, new SearchParameters("Host: cluster = " + cluster //$NON-NLS-1$
+                        + " sortby name", SearchType.VDS)); //$NON-NLS-1$
 
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
         {
@@ -1294,7 +1294,7 @@ public final class DataProvider
 
     public static java.util.ArrayList<VDS> GetHostList()
     {
-        SearchParameters tempVar = new SearchParameters("Host:", SearchType.VDS);
+        SearchParameters tempVar = new SearchParameters("Host:", SearchType.VDS); //$NON-NLS-1$
         tempVar.setMaxCount(SearchLimit);
         VdcQueryReturnValue returnValue = Frontend.RunQuery(VdcQueryType.Search, tempVar);
 
@@ -1310,7 +1310,7 @@ public final class DataProvider
     public static java.util.ArrayList<VM> GetServerList()
     {
         VdcQueryReturnValue returnValue =
-                Frontend.RunQuery(VdcQueryType.Search, new SearchParameters("Vms: status=up sortby cpu_usage desc",
+                Frontend.RunQuery(VdcQueryType.Search, new SearchParameters("Vms: status=up sortby cpu_usage desc", //$NON-NLS-1$
                         SearchType.VM));
 
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
@@ -1423,7 +1423,8 @@ public final class DataProvider
         if (disk != null)
         {
             Guid selectedStorageDomainId =
-                    (disk.getstorage_ids() != null && disk.getstorage_ids().size() > 0) ? disk.getstorage_ids().get(0) : NGuid.Empty;
+                    (disk.getstorage_ids() != null && disk.getstorage_ids().size() > 0) ? disk.getstorage_ids().get(0)
+                            : NGuid.Empty;
             if (!selectedStorageDomainId.equals(NGuid.Empty))
             {
                 storage_domains selectedStorageDomain = GetStorageDomainById(selectedStorageDomainId);
@@ -1440,7 +1441,7 @@ public final class DataProvider
 
     public static java.util.ArrayList<storage_domains> GetStorageDomainList()
     {
-        SearchParameters searchParameters = new SearchParameters("Storage:", SearchType.StorageDomain);
+        SearchParameters searchParameters = new SearchParameters("Storage:", SearchType.StorageDomain); //$NON-NLS-1$
         searchParameters.setMaxCount(SearchLimit);
         VdcQueryReturnValue returnValue = Frontend.RunQuery(VdcQueryType.Search, searchParameters);
 
@@ -1455,7 +1456,7 @@ public final class DataProvider
 
     public static java.util.ArrayList<storage_domains> GetISOStorageDomainList()
     {
-        SearchParameters searchParams = new SearchParameters("Storage:", SearchType.StorageDomain);
+        SearchParameters searchParams = new SearchParameters("Storage:", SearchType.StorageDomain); //$NON-NLS-1$
         searchParams.setMaxCount(9999);
 
         VdcQueryReturnValue returnValue = Frontend.RunQuery(VdcQueryType.Search, searchParams);
@@ -1542,7 +1543,7 @@ public final class DataProvider
             return (String) returnValue.getReturnValue();
         }
 
-        return "";
+        return ""; //$NON-NLS-1$
     }
 
     public static String GetCipherSuite()
@@ -1555,7 +1556,7 @@ public final class DataProvider
             return (String) returnValue.getReturnValue();
         }
 
-        return "";
+        return ""; //$NON-NLS-1$
     }
 
     public static boolean IsUSBEnabledByDefault()
@@ -1581,7 +1582,7 @@ public final class DataProvider
             return (String) returnValue.getReturnValue();
         }
 
-        return "shift+f11";
+        return "shift+f11"; //$NON-NLS-1$
     }
 
     public static String GetSpiceReleaseCursorKeys()
@@ -1594,7 +1595,7 @@ public final class DataProvider
             return (String) returnValue.getReturnValue();
         }
 
-        return "shift+f12";
+        return "shift+f12"; //$NON-NLS-1$
     }
 
     public static java.util.ArrayList<ActionGroup> GetRoleActionGroupsByRoleId(Guid roleId)
@@ -1791,7 +1792,7 @@ public final class DataProvider
 
     public static java.util.ArrayList<DiskInterface> GetDiskInterfaceList(VmOsType osType, Version Version)
     {
-        return osType == VmOsType.WindowsXP && (Version == null || Version.compareTo(new Version("2.2")) < 0) ? new java.util.ArrayList<DiskInterface>(java.util.Arrays.asList(new DiskInterface[] { DiskInterface.IDE }))
+        return osType == VmOsType.WindowsXP && (Version == null || Version.compareTo(new Version("2.2")) < 0) ? new java.util.ArrayList<DiskInterface>(java.util.Arrays.asList(new DiskInterface[] { DiskInterface.IDE })) //$NON-NLS-1$
                 : new java.util.ArrayList<DiskInterface>(java.util.Arrays.asList(new DiskInterface[] {
                         DiskInterface.IDE, DiskInterface.VirtIO }));
     }
@@ -1850,7 +1851,7 @@ public final class DataProvider
     {
         VdcQueryReturnValue returnValue =
                 Frontend.RunQuery(VdcQueryType.Search,
-                        new SearchParameters(StringFormat.format("Storage: name=%1$s", name), SearchType.StorageDomain));
+                        new SearchParameters(StringFormat.format("Storage: name=%1$s", name), SearchType.StorageDomain)); //$NON-NLS-1$
 
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
         {
@@ -1961,7 +1962,7 @@ public final class DataProvider
 
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
         {
-            String[] array = ((String) returnValue.getReturnValue()).split("[,]", -1);
+            String[] array = ((String) returnValue.getReturnValue()).split("[,]", -1); //$NON-NLS-1$
             for (String item : array)
             {
                 list.add(item);
@@ -2151,7 +2152,7 @@ public final class DataProvider
     public static java.util.ArrayList<DbUser> GetUserList()
     {
         VdcQueryReturnValue returnValue =
-                Frontend.RunQuery(VdcQueryType.Search, new SearchParameters("User:", SearchType.DBUser));
+                Frontend.RunQuery(VdcQueryType.Search, new SearchParameters("User:", SearchType.DBUser)); //$NON-NLS-1$
 
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
         {
@@ -2205,7 +2206,7 @@ public final class DataProvider
     {
         VdcQueryReturnValue returnValue =
                 Frontend.RunQuery(VdcQueryType.Search,
-                        new SearchParameters(StringFormat.format("Cluster: name=%1$s", name), SearchType.Cluster));
+                        new SearchParameters(StringFormat.format("Cluster: name=%1$s", name), SearchType.Cluster)); //$NON-NLS-1$
 
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
         {
@@ -2232,7 +2233,7 @@ public final class DataProvider
     {
         VdcQueryReturnValue returnValue =
                 Frontend.RunQuery(VdcQueryType.Search,
-                        new SearchParameters(StringFormat.format("DataCenter: name=%1$s", name), SearchType.StoragePool));
+                        new SearchParameters(StringFormat.format("DataCenter: name=%1$s", name), SearchType.StoragePool)); //$NON-NLS-1$
 
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
         {
@@ -2245,7 +2246,7 @@ public final class DataProvider
     public static java.util.ArrayList<VM> GetVmList(String poolName)
     {
         VdcQueryReturnValue returnValue =
-                Frontend.RunQuery(VdcQueryType.Search, new SearchParameters("Vms: pool=" + poolName, SearchType.VM));
+                Frontend.RunQuery(VdcQueryType.Search, new SearchParameters("Vms: pool=" + poolName, SearchType.VM)); //$NON-NLS-1$
 
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
         {
@@ -2532,7 +2533,7 @@ public final class DataProvider
             }
         }
 
-        return "nic" + (maxIfaceNumber + 1);
+        return "nic" + (maxIfaceNumber + 1); //$NON-NLS-1$
     }
 
     private static java.util.HashMap<String, ResourceManager> _resourcesCache =
@@ -2542,7 +2543,7 @@ public final class DataProvider
     {
         if (StringHelper.isNullOrEmpty(resourcePath) || StringHelper.isNullOrEmpty(key))
         {
-            return "";
+            return ""; //$NON-NLS-1$
         }
 
         synchronized (_resourcesCache)
@@ -2568,7 +2569,7 @@ public final class DataProvider
 
     public static String GetValueFromSpiceRedKeysResource(String key)
     {
-        return GetValueFromResource("UICommon.Resources.SpiceRedKeys.SpiceRedKeys", key);
+        return GetValueFromResource("UICommon.Resources.SpiceRedKeys.SpiceRedKeys", key); //$NON-NLS-1$
     }
 
     /**
@@ -2582,15 +2583,15 @@ public final class DataProvider
     {
         if (StringHelper.isNullOrEmpty(complexValue))
         {
-            return "";
+            return ""; //$NON-NLS-1$
         }
         java.util.ArrayList<String> values = new java.util.ArrayList<String>();
 
-        for (String s : complexValue.split("[+]", -1))
+        for (String s : complexValue.split("[+]", -1)) //$NON-NLS-1$
         {
             values.add(GetValueFromSpiceRedKeysResource(s));
         }
-        return StringHelper.join("+", values.toArray(new String[] {}));
+        return StringHelper.join("+", values.toArray(new String[] {})); //$NON-NLS-1$
         // return string.Join("+", complexValue.Split(new char[] { '+' }).Select(a =>
         // GetValueFromSpiceRedKeysResource(a)).ToArray());
     }
@@ -2820,14 +2821,14 @@ public final class DataProvider
         VdcQueryReturnValue returnValue =
                 Frontend.RunQuery(VdcQueryType.GetVmCustomProperties, new VdcQueryParametersBase());
         if (returnValue.getSucceeded() && returnValue.getReturnValue() != null
-                && ((String) returnValue.getReturnValue()).equals("") == false)
+                && ((String) returnValue.getReturnValue()).equals("") == false) //$NON-NLS-1$
         {
             String temp = (String) returnValue.getReturnValue();
-            String[] tempArray = temp.split("[;]", -1);
+            String[] tempArray = temp.split("[;]", -1); //$NON-NLS-1$
             cacheCustomProperties = new java.util.HashMap<String, String>();
             for (String keyRegexpPair : tempArray)
             {
-                String[] keyAndRegexp = keyRegexpPair.split("[=]", -1);
+                String[] keyAndRegexp = keyRegexpPair.split("[=]", -1); //$NON-NLS-1$
                 String key = keyAndRegexp[0];
                 String regexp = null;
                 // if there is no "=", it means that there is no RegExp to
@@ -3008,7 +3009,7 @@ public final class DataProvider
     public static VDS GetLocalStorageHost(String storagePoolName)
     {
         SearchParameters sp =
-                new SearchParameters(StringFormat.format("hosts: datacenter=%1$s", storagePoolName), SearchType.VDS);
+                new SearchParameters(StringFormat.format("hosts: datacenter=%1$s", storagePoolName), SearchType.VDS); //$NON-NLS-1$
 
         VdcQueryReturnValue result = Frontend.RunQuery(VdcQueryType.Search, sp);
         if ((result != null) && result.getSucceeded() && (result.getReturnValue() != null))
@@ -3026,27 +3027,27 @@ public final class DataProvider
         java.util.ArrayList<java.util.Map.Entry<String, EntityModel>> list =
                 new java.util.ArrayList<java.util.Map.Entry<String, EntityModel>>();
         EntityModel entityModel = new EntityModel();
-        entityModel.setEntity("(Mode 1) Active-Backup");
-        list.add(new KeyValuePairCompat<String, EntityModel>("mode=1 miimon=100", entityModel));
+        entityModel.setEntity("(Mode 1) Active-Backup"); //$NON-NLS-1$
+        list.add(new KeyValuePairCompat<String, EntityModel>("mode=1 miimon=100", entityModel)); //$NON-NLS-1$
         entityModel = new EntityModel();
-        entityModel.setEntity("(Mode 2) Load balance (balance-xor)");
-        list.add(new KeyValuePairCompat<String, EntityModel>("mode=2", entityModel));
+        entityModel.setEntity("(Mode 2) Load balance (balance-xor)"); //$NON-NLS-1$
+        list.add(new KeyValuePairCompat<String, EntityModel>("mode=2", entityModel)); //$NON-NLS-1$
         entityModel = new EntityModel();
-        entityModel.setEntity("(Mode 4) Dynamic link aggregation (802.3ad)");
-        defaultItem.argvalue = new KeyValuePairCompat<String, EntityModel>("mode=4", entityModel);
+        entityModel.setEntity("(Mode 4) Dynamic link aggregation (802.3ad)"); //$NON-NLS-1$
+        defaultItem.argvalue = new KeyValuePairCompat<String, EntityModel>("mode=4", entityModel); //$NON-NLS-1$
         list.add(defaultItem.argvalue);
         entityModel = new EntityModel();
-        entityModel.setEntity("(Mode 5) Adaptive transmit load balancing (balance-tlb)");
-        list.add(new KeyValuePairCompat<String, EntityModel>("mode=5", entityModel));
+        entityModel.setEntity("(Mode 5) Adaptive transmit load balancing (balance-tlb)"); //$NON-NLS-1$
+        list.add(new KeyValuePairCompat<String, EntityModel>("mode=5", entityModel)); //$NON-NLS-1$
         entityModel = new EntityModel();
-        entityModel.setEntity("");
-        list.add(new KeyValuePairCompat<String, EntityModel>("custom", entityModel));
+        entityModel.setEntity(""); //$NON-NLS-1$
+        list.add(new KeyValuePairCompat<String, EntityModel>("custom", entityModel)); //$NON-NLS-1$
         return list;
     }
 
     public static String GetDefaultBondingOption()
     {
-        return "mode=802.3ad miimon=150";
+        return "mode=802.3ad miimon=150"; //$NON-NLS-1$
     }
 
     public static boolean IsDomainAlreadyExist(NGuid storagePoolId, String path, RefObject<String> storageName)

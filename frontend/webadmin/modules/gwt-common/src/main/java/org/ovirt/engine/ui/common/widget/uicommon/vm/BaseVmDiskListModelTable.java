@@ -5,6 +5,7 @@ import java.util.Date;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
+import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.DiskImagePlugStatusColumn;
@@ -27,8 +28,8 @@ public class BaseVmDiskListModelTable<T extends SearchableListModel> extends Abs
     }
 
     @Override
-    public void initTable() {
-        getTable().addColumn(new DiskImagePlugStatusColumn(), "", "30px");
+    public void initTable(CommonApplicationConstants constants) {
+        getTable().addColumn(new DiskImagePlugStatusColumn(), constants.empty(), "30px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<DiskImage> nameColumn = new TextColumnWithTooltip<DiskImage>() {
             @Override
@@ -36,7 +37,7 @@ public class BaseVmDiskListModelTable<T extends SearchableListModel> extends Abs
                 return object.getDiskAlias();
             }
         };
-        getTable().addColumn(nameColumn, "Alias");
+        getTable().addColumn(nameColumn, constants.aliasDisk());
 
         DiskSizeColumn<DiskImage> sizeColumn = new DiskSizeColumn<DiskImage>() {
             @Override
@@ -44,7 +45,8 @@ public class BaseVmDiskListModelTable<T extends SearchableListModel> extends Abs
                 return object.getsize();
             }
         };
-        getTable().addColumn(sizeColumn, "Provisioned Size");
+
+        getTable().addColumn(sizeColumn, constants.provisionedSizeDisk());
 
         DiskSizeColumn<DiskImage> actualSizeColumn = new DiskSizeColumn<DiskImage>() {
             @Override
@@ -52,7 +54,7 @@ public class BaseVmDiskListModelTable<T extends SearchableListModel> extends Abs
                 return object.getactual_size();
             }
         };
-        getTable().addColumn(actualSizeColumn, "Size");
+        getTable().addColumn(actualSizeColumn, constants.sizeDisk());
 
         TextColumnWithTooltip<DiskImage> storageDomainColumn = new TextColumnWithTooltip<DiskImage>() {
             @Override
@@ -60,7 +62,7 @@ public class BaseVmDiskListModelTable<T extends SearchableListModel> extends Abs
                 return object.getStoragesNames().get(0);
             }
         };
-        getTable().addColumn(storageDomainColumn, "Storage Domain");
+        getTable().addColumn(storageDomainColumn, constants.storageDomainDisk());
 
         TextColumnWithTooltip<DiskImage> allocationColumn = new EnumColumn<DiskImage, VolumeType>() {
             @Override
@@ -68,7 +70,7 @@ public class BaseVmDiskListModelTable<T extends SearchableListModel> extends Abs
                 return VolumeType.forValue(object.getvolume_type().getValue());
             }
         };
-        getTable().addColumn(allocationColumn, "Allocation", "120px");
+        getTable().addColumn(allocationColumn, constants.allocationDisk(), "120px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<DiskImage> interfaceColumn = new TextColumnWithTooltip<DiskImage>() {
             @Override
@@ -76,7 +78,7 @@ public class BaseVmDiskListModelTable<T extends SearchableListModel> extends Abs
                 return object.getDiskInterface().toString();
             }
         };
-        getTable().addColumn(interfaceColumn, "Interface", "120px");
+        getTable().addColumn(interfaceColumn, constants.interfaceDisk(), "120px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<DiskImage> statusColumn = new EnumColumn<DiskImage, ImageStatus>() {
             @Override
@@ -84,7 +86,7 @@ public class BaseVmDiskListModelTable<T extends SearchableListModel> extends Abs
                 return object.getimageStatus();
             }
         };
-        getTable().addColumn(statusColumn, "Status", "120px");
+        getTable().addColumn(statusColumn, constants.statusDisk(), "120px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<DiskImage> dateCreatedColumn = new FullDateTimeColumn<DiskImage>() {
             @Override
@@ -92,7 +94,7 @@ public class BaseVmDiskListModelTable<T extends SearchableListModel> extends Abs
                 return object.getcreation_date();
             }
         };
-        getTable().addColumn(dateCreatedColumn, "Creation Date", "140px");
+        getTable().addColumn(dateCreatedColumn, constants.creationDateDisk(), "140px"); //$NON-NLS-1$
 
     }
 

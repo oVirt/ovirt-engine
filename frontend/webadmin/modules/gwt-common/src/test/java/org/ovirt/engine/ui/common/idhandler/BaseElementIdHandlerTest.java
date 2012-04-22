@@ -27,29 +27,29 @@ public class BaseElementIdHandlerTest {
 
     @Test
     public void setElementId_withoutIdExtension() {
-        tested.setElementId(object, "ElementId");
-        verify(object).setElementId("ElementId");
+        tested.setElementId(object, "ElementId"); //$NON-NLS-1$
+        verify(object).setElementId("ElementId"); //$NON-NLS-1$
     }
 
     @Test
     public void setElementId_withIdExtension_defaultBehavior() {
-        tested.setIdExtension("IdExtension");
-        tested.setElementId(object, "ElementId");
-        verify(object).setElementId("ElementId_IdExtension");
+        tested.setIdExtension("IdExtension"); //$NON-NLS-1$
+        tested.setElementId(object, "ElementId"); //$NON-NLS-1$
+        verify(object).setElementId("ElementId_IdExtension"); //$NON-NLS-1$
     }
 
     @Test
     public void setElementId_withIdExtension_nullValue() {
         tested.setIdExtension(null);
-        tested.setElementId(object, "ElementId");
-        verify(object).setElementId("ElementId");
+        tested.setElementId(object, "ElementId"); //$NON-NLS-1$
+        verify(object).setElementId("ElementId"); //$NON-NLS-1$
     }
 
     @Test
     public void setElementId_withIdExtension_emptyString() {
-        tested.setIdExtension("");
-        tested.setElementId(object, "ElementId");
-        verify(object).setElementId("ElementId");
+        tested.setIdExtension(""); //$NON-NLS-1$
+        tested.setElementId(object, "ElementId"); //$NON-NLS-1$
+        verify(object).setElementId("ElementId"); //$NON-NLS-1$
     }
 
 }

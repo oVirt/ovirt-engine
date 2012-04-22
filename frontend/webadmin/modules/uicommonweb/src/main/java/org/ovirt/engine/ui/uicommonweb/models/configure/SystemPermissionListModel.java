@@ -20,6 +20,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.users.AdElementListModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
@@ -53,10 +54,10 @@ public class SystemPermissionListModel extends SearchableListModel
 
     public SystemPermissionListModel()
     {
-        setTitle("System Permission");
+        setTitle(ConstantsManager.getInstance().getConstants().systemPermissionTitle());
 
-        setAddCommand(new UICommand("Add", this));
-        setRemoveCommand(new UICommand("Remove", this));
+        setAddCommand(new UICommand("Add", this)); //$NON-NLS-1$
+        setRemoveCommand(new UICommand("Remove", this)); //$NON-NLS-1$
 
         setSearchPageSize(1000);
 
@@ -122,17 +123,17 @@ public class SystemPermissionListModel extends SearchableListModel
         AdElementListModel model = new AdElementListModel();
         model.getIsEveryoneSelectionHidden().setEntity(true);
         setWindow(model);
-        model.setTitle("Add System Permission to User");
-        model.setHashName("add_system_permission_to_user");
+        model.setTitle(ConstantsManager.getInstance().getConstants().addSystemPermissionToUserTitle());
+        model.setHashName("add_system_permission_to_user"); //$NON-NLS-1$
         // model.Role.IsAvailable = true;
         // model.ExcludeItems = Items;
 
-        UICommand tempVar = new UICommand("OnAttach", this);
-        tempVar.setTitle("OK");
+        UICommand tempVar = new UICommand("OnAttach", this); //$NON-NLS-1$
+        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
         tempVar.setIsDefault(true);
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this);
-        tempVar2.setTitle("Cancel");
+        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
+        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         tempVar2.setIsCancel(true);
         model.getCommands().add(tempVar2);
     }
@@ -221,24 +222,24 @@ public class SystemPermissionListModel extends SearchableListModel
 
         ConfirmationModel model = new ConfirmationModel();
         setWindow(model);
-        model.setTitle("Remove System Permission(s)");
-        model.setHashName("remove_system_permission");
-        model.setMessage("System Permission(s):");
+        model.setTitle(ConstantsManager.getInstance().getConstants().removeSystemPermissionsTitle());
+        model.setHashName("remove_system_permission"); //$NON-NLS-1$
+        model.setMessage(ConstantsManager.getInstance().getConstants().systemPermissionsMsg());
 
         java.util.ArrayList<String> list = new java.util.ArrayList<String>();
         for (Object item : getSelectedItems())
         {
             permissions permission = (permissions) item;
-            list.add("User: " + permission.getOwnerName() + " with Role: " + permission.getRoleName());
+            list.add("User: " + permission.getOwnerName() + " with Role: " + permission.getRoleName()); //$NON-NLS-1$ //$NON-NLS-2$
         }
         model.setItems(list);
 
-        UICommand tempVar = new UICommand("OnRemove", this);
-        tempVar.setTitle("OK");
+        UICommand tempVar = new UICommand("OnRemove", this); //$NON-NLS-1$
+        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
         tempVar.setIsDefault(true);
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this);
-        tempVar2.setTitle("Cancel");
+        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
+        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         tempVar2.setIsCancel(true);
         model.getCommands().add(tempVar2);
     }
@@ -287,11 +288,11 @@ public class SystemPermissionListModel extends SearchableListModel
         {
             add();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnSave"))
+        else if (StringHelper.stringsEqual(command.getName(), "OnSave")) //$NON-NLS-1$
         {
             OnSave();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnAttach"))
+        else if (StringHelper.stringsEqual(command.getName(), "OnAttach")) //$NON-NLS-1$
         {
             OnAttach();
         }
@@ -299,11 +300,11 @@ public class SystemPermissionListModel extends SearchableListModel
         {
             remove();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnRemove"))
+        else if (StringHelper.stringsEqual(command.getName(), "OnRemove")) //$NON-NLS-1$
         {
             OnRemove();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "Cancel"))
+        else if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
         {
             Cancel();
         }
@@ -311,6 +312,6 @@ public class SystemPermissionListModel extends SearchableListModel
 
     @Override
     protected String getListName() {
-        return "SystemPermissionListModel";
+        return "SystemPermissionListModel"; //$NON-NLS-1$
     }
 }

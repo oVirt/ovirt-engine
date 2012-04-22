@@ -38,7 +38,7 @@ public class UiCommonDefaultTypeResolver implements ITypeResolver {
             return new IRdpImpl();
         }
 
-        throw new RuntimeException("UiCommon Resolver cannot resolve type: " + type);
+        throw new RuntimeException("UiCommon Resolver cannot resolve type: " + type); //$NON-NLS-1$
     }
 
 }

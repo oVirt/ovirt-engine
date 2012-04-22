@@ -75,7 +75,7 @@ public final class SearchSuggestionDisplay extends DefaultSuggestionDisplay {
         suggestionsTable.setSelectionModel(new SingleSelectionModel<SearchSuggestion>());
 
         // Set table's properties
-        suggestionsTable.setWidth("100%");
+        suggestionsTable.setWidth("100%"); //$NON-NLS-1$
         suggestionsTable.setRowCount(suggestions.size());
         suggestionsTable.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.BOUND_TO_SELECTION);
 
@@ -183,7 +183,7 @@ public final class SearchSuggestionDisplay extends DefaultSuggestionDisplay {
         suggestionPopup.showRelativeTo(searchBoxPanel);
 
         int searchBoxWidth = searchBoxPanel.getElement().getClientWidth();
-        Element table = (Element) suggestionPopup.getElement().getElementsByTagName("table").getItem(0);
+        Element table = (Element) suggestionPopup.getElement().getElementsByTagName("table").getItem(0); //$NON-NLS-1$
 
         suggestionPopup.getElement().getStyle().setWidth(searchBoxWidth, Unit.PX);
         table.getStyle().setWidth(searchBoxWidth, Unit.PX);

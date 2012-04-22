@@ -117,7 +117,7 @@ public class VmMakeTemplatePopupWidget extends AbstractModelBoundPopupWidget<Uni
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 boolean isDisksAllocationEnabled = model.getDisks() != null && !model.getDisks().isEmpty();
                 disksAllocationView.setEnabled(isDisksAllocationEnabled);
-                disksAllocationLabel.getElement().getStyle().setColor(isDisksAllocationEnabled ? "black" : "grey");
+                disksAllocationLabel.getElement().getStyle().setColor(isDisksAllocationEnabled ? "black" : "grey"); //$NON-NLS-1$ //$NON-NLS-2$
             }
         });
     }

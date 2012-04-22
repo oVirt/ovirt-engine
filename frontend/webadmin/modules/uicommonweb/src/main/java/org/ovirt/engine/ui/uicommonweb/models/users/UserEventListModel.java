@@ -40,7 +40,7 @@ public class UserEventListModel extends EventListModel
     {
         if (getEntity() != null)
         {
-            setSearchString(StringFormat.format("events: usrname=%1$s", getEntity().getusername()));
+            setSearchString(StringFormat.format("events: usrname=%1$s", getEntity().getusername())); //$NON-NLS-1$
             super.Search();
         }
     }
@@ -50,7 +50,7 @@ public class UserEventListModel extends EventListModel
     {
         super.EntityPropertyChanged(sender, e);
 
-        if (e.PropertyName.equals("name"))
+        if (e.PropertyName.equals("name")) //$NON-NLS-1$
         {
             getSearchCommand().Execute();
         }

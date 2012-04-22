@@ -23,7 +23,7 @@ import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 
 public class TaskListModel extends SearchableListModel {
 
-    public static final String _WEBADMIN_ = "_WEBADMIN_";
+    public static final String _WEBADMIN_ = "_WEBADMIN_"; //$NON-NLS-1$
     private final Map<String, Job> detailedTaskMap = new HashMap<String, Job>();
 
     public TaskListModel() {
@@ -56,10 +56,10 @@ public class TaskListModel extends SearchableListModel {
                             entry.setValue(new ArrayList<Job>());
                             correlationTaskMap.put(rootTask.getCorrelationId(), entry);
                             String[] taskDescreptionArray =
-                                    rootTask.getCorrelationId().replace(_WEBADMIN_, "").split("_");
-                            String taskDesc = "";
+                                    rootTask.getCorrelationId().replace(_WEBADMIN_, "").split("_"); //$NON-NLS-1$ //$NON-NLS-2$
+                            String taskDesc = ""; //$NON-NLS-1$
                             for (int i = 1; i < taskDescreptionArray.length; i++) {
-                                taskDesc += taskDescreptionArray[i] + " ";
+                                taskDesc += taskDescreptionArray[i] + " "; //$NON-NLS-1$
                             }
                             rootTask.setId(Guid.NewGuid());
                             rootTask.setDescription(taskDesc);
@@ -132,7 +132,7 @@ public class TaskListModel extends SearchableListModel {
                 ArrayList<Job> newTaskList = new ArrayList<Job>();
 
                 for (Job task : taskListWithCorrelationFilter) {
-                    String id = "";
+                    String id = ""; //$NON-NLS-1$
                     if (task.getCorrelationId().startsWith(_WEBADMIN_)) {
                         id = task.getCorrelationId();
                     } else {
@@ -162,7 +162,7 @@ public class TaskListModel extends SearchableListModel {
 
     @Override
     protected String getListName() {
-        return "TaskListModel";
+        return "TaskListModel"; //$NON-NLS-1$
     }
 
     public boolean updateSingleTask(final String guidOrCorrelationId) {
@@ -264,7 +264,7 @@ public class TaskListModel extends SearchableListModel {
     }
 
     public void removeSingleTask(String string) {
-        //detailTaskGuids.remove(guid);
+        // detailTaskGuids.remove(guid);
     }
 
     class TaskEntry implements Map.Entry<Job, ArrayList<Job>> {
@@ -301,9 +301,9 @@ public class TaskListModel extends SearchableListModel {
     public static String createCorrelationId(String actionDescription) {
         actionDescription = actionDescription.replace(' ', '_');
         Random rand = new Random();
-        String hashStr = rand.nextInt(9000000) + 999999 + "";
+        String hashStr = rand.nextInt(9000000) + 999999 + ""; //$NON-NLS-1$
 
-        String correlationId = TaskListModel._WEBADMIN_ + hashStr + "_" + actionDescription;
+        String correlationId = TaskListModel._WEBADMIN_ + hashStr + "_" + actionDescription; //$NON-NLS-1$
         return correlationId;
     }
 }

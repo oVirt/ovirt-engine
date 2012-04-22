@@ -64,7 +64,7 @@ public class ClusterNewNetworkPopupPresenterWidget extends AbstractModelBoundPop
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 if (args instanceof PropertyChangedEventArgs) {
                     PropertyChangedEventArgs changedArgs = (PropertyChangedEventArgs) args;
-                    if ("DataCenterName".equals(changedArgs.PropertyName)) {
+                    if ("DataCenterName".equals(changedArgs.PropertyName)) { //$NON-NLS-1$
                         getView().setDataCenterName(model.getDataCenterName());
                     }
                 }

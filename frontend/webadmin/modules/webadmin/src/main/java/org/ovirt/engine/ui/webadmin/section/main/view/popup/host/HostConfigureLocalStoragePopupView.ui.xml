@@ -4,6 +4,8 @@
              xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
              xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor" xmlns:t="urn:import:org.ovirt.engine.ui.common.widget.dialog.tab">
 
+             <ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants' />
+
 	<ui:style>
 		.generalTabTopDecorator {
 			background-color: #D3D3D3;
@@ -57,7 +59,7 @@
                             <g:VerticalPanel>
                                 <g:VerticalPanel addStyleNames="{style.generalTabTopDecorator}">
                                     <g:HorizontalPanel addStyleNames="{style.horizontalPanelStyle}">
-                                        <g:Label addStyleNames="{style.titleLabelStyle}">Data Center</g:Label>
+                                        <g:Label addStyleNames="{style.titleLabelStyle}" text="{constants.dcLocalStorage}" />
                                         <g:VerticalPanel addStyleNames="{style.verticalPanelStyle}">
                                             <e:EntityModelTextBoxEditor ui:field="dataCenterNameEditor" />
                                             <g:VerticalPanel ui:field="dataCenterPanel" addStyleNames="{style.verticalPanelStyle}">
@@ -71,7 +73,7 @@
                                         <hr/>
                                     </g:HTMLPanel>
                                     <g:HorizontalPanel addStyleNames="{style.horizontalPanelStyle}">
-                                        <g:Label addStyleNames="{style.titleLabelStyle}">Cluster</g:Label>
+                                        <g:Label addStyleNames="{style.titleLabelStyle}" text="{constants.clusterLocalStorage}" />
                                         <g:VerticalPanel addStyleNames="{style.verticalPanelStyle}">
                                             <e:EntityModelTextBoxEditor ui:field="clusterNameEditor" />
                                             <g:VerticalPanel ui:field="clusterPanel" addStyleNames="{style.verticalPanelStyle}">
@@ -85,7 +87,7 @@
                                         <hr/>
                                     </g:HTMLPanel>
                                     <g:HorizontalPanel addStyleNames="{style.horizontalPanelStyle}">
-                                        <g:Label addStyleNames="{style.titleLabelStyle}">Storage</g:Label>
+                                        <g:Label addStyleNames="{style.titleLabelStyle}" text="{constants.storageLocalStorage}" />
                                         <g:VerticalPanel addStyleNames="{style.verticalPanelStyle}">
                                             <e:EntityModelTextBoxEditor ui:field="storageNameEditor" />
                                         </g:VerticalPanel>

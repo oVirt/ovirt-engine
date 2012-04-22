@@ -77,21 +77,21 @@ public class ErrorTranslator {
      */
     public String translateErrorTextSingle(String errorMsg,
             Boolean changeIfNotFound) {
-        String ret = "";
+        String ret = ""; //$NON-NLS-1$
         try {
             if ((errorMsg != null) && (errorMsg.length() > 0)) {
                 if (!isDynamicVariable(errorMsg)) {
                     errorMsg = errorMsg.replace('.', '_');
                 }
                 if (errors.getString(errorMsg) != null) {
-                    ret = errors.getString(errorMsg).replace("\n", "<br/>");
+                    ret = errors.getString(errorMsg).replace("\n", "<br/>"); //$NON-NLS-1$ //$NON-NLS-2$
                 } else {
                     if ((isDynamicVariable(errorMsg)) || (!changeIfNotFound)) {
                         ret = errorMsg;
                     } else {
                         // just a message that doesn't have a value in the resource:
-                        String[] splitted = errorMsg.toLowerCase().split("_");
-                        ret = StringHelper.join(" ", splitted);
+                        String[] splitted = errorMsg.toLowerCase().split("_"); //$NON-NLS-1$
+                        ret = StringHelper.join(" ", splitted); //$NON-NLS-1$
                     }
                 }
             }
@@ -125,7 +125,7 @@ public class ErrorTranslator {
         Map<String, String> variables = new HashMap<String, String>();
 
         for (String currentMessage : translatedMessages) {
-            if (currentMessage.startsWith("$")) {
+            if (currentMessage.startsWith("$")) { //$NON-NLS-1$
                 addVariable(currentMessage, variables);
             } else {
                 translatedErrors.add(currentMessage);
@@ -155,7 +155,7 @@ public class ErrorTranslator {
     private String resolveMessage(String message, Map<String, String> variables) {
         String returnValue = message;
 
-        RegExp regex = RegExp.compile("\\$\\{\\w*\\}*", "gi");
+        RegExp regex = RegExp.compile("\\$\\{\\w*\\}*", "gi"); //$NON-NLS-1$ //$NON-NLS-2$
 
         int fromIndex = 0;
         int length = message.length();
@@ -188,6 +188,6 @@ public class ErrorTranslator {
      * @return true if input is dynamic variable, false otherwise.
      */
     private final boolean isDynamicVariable(String strMessage) {
-        return strMessage.startsWith("$");
+        return strMessage.startsWith("$"); //$NON-NLS-1$
     }
 }

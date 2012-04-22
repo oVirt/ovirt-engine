@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.common.widget.uicommon;
 
+import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.MainTableHeaderlessResources;
 import org.ovirt.engine.ui.common.MainTableResources;
 import org.ovirt.engine.ui.common.SubTableHeaderlessResources;
@@ -79,6 +80,6 @@ public abstract class AbstractModelBoundTableWidget<T, M extends SearchableListM
     /**
      * Performs initialization of the table widget.
      */
-    public abstract void initTable();
+    public abstract void initTable(CommonApplicationConstants constants);
 
 }

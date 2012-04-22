@@ -211,8 +211,8 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
     }
 
     void initRadioButtonEditors() {
-        displayConsoleVncEditor = new EntityModelRadioButtonEditor("1");
-        displayConsoleSpiceEditor = new EntityModelRadioButtonEditor("1");
+        displayConsoleVncEditor = new EntityModelRadioButtonEditor("1"); //$NON-NLS-1$
+        displayConsoleSpiceEditor = new EntityModelRadioButtonEditor("1"); //$NON-NLS-1$
     }
 
     void initComboBox() {
@@ -224,11 +224,11 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
 
     void initBootSequenceBox() {
         bootSequenceBox = new ListBox(false);
-        bootSequenceBox.setWidth("100%");
-        bootSequenceBox.setHeight("60px");
+        bootSequenceBox.setWidth("100%"); //$NON-NLS-1$
+        bootSequenceBox.setHeight("60px"); //$NON-NLS-1$
 
         VerticalPanel boxPanel = new VerticalPanel();
-        boxPanel.setWidth("100%");
+        boxPanel.setWidth("100%"); //$NON-NLS-1$
         boxPanel.add(bootSequenceBox);
         bootSequencePanel.add(boxPanel);
     }
@@ -346,11 +346,11 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
     private void updateItemAvailability(String itemName, boolean isEnabled) {
         for (int i = 0; i < bootSequenceBox.getItemCount(); i++) {
             if (bootSequenceBox.getItemText(i).equals(itemName)) {
-                NodeList<Element> options = bootSequenceBox.getElement().getElementsByTagName("option");
+                NodeList<Element> options = bootSequenceBox.getElement().getElementsByTagName("option"); //$NON-NLS-1$
                 if (!isEnabled) {
-                    options.getItem(i).setAttribute("disabled", "disabled");
+                    options.getItem(i).setAttribute("disabled", "disabled"); //$NON-NLS-1$ //$NON-NLS-2$
                 } else {
-                    options.getItem(i).removeAttribute("disabled");
+                    options.getItem(i).removeAttribute("disabled"); //$NON-NLS-1$
                 }
             }
         }

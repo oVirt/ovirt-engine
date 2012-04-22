@@ -12,12 +12,14 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
 public class DataCenterQuotaListModel extends SearchableListModel
 {
     public DataCenterQuotaListModel() {
-        setTitle("Quota");
+        setTitle(ConstantsManager.getInstance().getConstants().quotaTitle());
+        setHashName("quota"); //$NON-NLS-1$
     }
 
     @Override
@@ -68,7 +70,7 @@ public class DataCenterQuotaListModel extends SearchableListModel
     {
         super.EntityPropertyChanged(sender, e);
 
-        if (e.PropertyName.equals("name"))
+        if (e.PropertyName.equals("name")) //$NON-NLS-1$
         {
             getSearchCommand().Execute();
         }
@@ -76,6 +78,6 @@ public class DataCenterQuotaListModel extends SearchableListModel
 
     @Override
     protected String getListName() {
-        return "DataCenterQuotaListModel";
+        return "DataCenterQuotaListModel"; //$NON-NLS-1$
     }
 }

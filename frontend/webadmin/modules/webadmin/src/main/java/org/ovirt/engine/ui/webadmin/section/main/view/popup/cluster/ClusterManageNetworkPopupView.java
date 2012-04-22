@@ -35,7 +35,7 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<L
         super(eventBus, resources);
         addEntityModelCellTable();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        initEntityModelCellTable();
+        initEntityModelCellTable(constants);
         localize(constants);
     }
 
@@ -43,14 +43,14 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<L
         networks = new EntityModelCellTable<ListModel>(true);
     }
 
-    void initEntityModelCellTable() {
+    void initEntityModelCellTable(ApplicationConstants constants) {
         networks.addEntityModelColumn(new EntityModelTextColumn<EntityModel>() {
             @Override
             public String getValue(EntityModel model) {
                 // Window.alert("Lookey: " + ((EntityModel) model.getEntity()).toString()); // useful popup
                 return model.getTitle();
             }
-        }, "Name");
+        }, constants.nameNetwork());
     }
 
     void localize(ApplicationConstants constants) {

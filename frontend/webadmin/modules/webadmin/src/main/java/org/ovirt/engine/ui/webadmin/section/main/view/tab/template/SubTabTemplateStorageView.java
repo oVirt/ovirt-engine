@@ -11,6 +11,7 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateListModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateStorageListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.template.SubTabTemplateStoragePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTreeView;
@@ -23,10 +24,10 @@ public class SubTabTemplateStorageView extends AbstractSubTabTreeView<StoragesTr
 
     @Inject
     public SubTabTemplateStorageView(final SearchableDetailModelProvider<storage_domains, TemplateListModel, TemplateStorageListModel> modelProvider,
-            EventBus eventBus) {
-        super(modelProvider);
+            EventBus eventBus, ApplicationConstants constant) {
+        super(modelProvider, constant);
 
-        actionPanel.addActionButton(new UiCommandButtonDefinition<DiskModel>(eventBus, "Remove") {
+        actionPanel.addActionButton(new UiCommandButtonDefinition<DiskModel>(eventBus, constant.removeStorage()) {
             @Override
             protected UICommand resolveCommand() {
                 return modelProvider.getModel().getRemoveCommand();
@@ -37,18 +38,18 @@ public class SubTabTemplateStorageView extends AbstractSubTabTreeView<StoragesTr
     }
 
     @Override
-    protected void initHeader() {
-        table.addColumn(new EmptyColumn(), "Domain Name", "");
-        table.addColumn(new EmptyColumn(), "Domain Type", "120px");
-        table.addColumn(new EmptyColumn(), "Status", "120px");
-        table.addColumn(new EmptyColumn(), "Free Space", "120px");
-        table.addColumn(new EmptyColumn(), "Used Space", "120px");
-        table.addColumn(new EmptyColumn(), "Total Space", "120px");
+    protected void initHeader(ApplicationConstants constants) {
+        table.addColumn(new EmptyColumn(), constants.domainNameStorage(), ""); //$NON-NLS-1$
+        table.addColumn(new EmptyColumn(), constants.domainTypeStorage(), "120px"); //$NON-NLS-1$
+        table.addColumn(new EmptyColumn(), constants.statusStorage(), "120px"); //$NON-NLS-1$
+        table.addColumn(new EmptyColumn(), constants.freeSpaceStorage(), "120px"); //$NON-NLS-1$
+        table.addColumn(new EmptyColumn(), constants.usedSpaceStorage(), "120px"); //$NON-NLS-1$
+        table.addColumn(new EmptyColumn(), constants.totalSpaceStorage(), "120px"); //$NON-NLS-1$
     }
 
     @Override
     protected StoragesTree getTree() {
-        return new StoragesTree(resources, constants);
+        return new StoragesTree(resources, constants, templates);
     }
 
     @Override

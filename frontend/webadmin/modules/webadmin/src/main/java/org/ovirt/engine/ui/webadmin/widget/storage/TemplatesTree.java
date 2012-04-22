@@ -13,6 +13,7 @@ import org.ovirt.engine.ui.common.widget.tree.AbstractSubTabTree;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.widget.label.FullDateTimeLabel;
 
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -24,8 +25,8 @@ public class TemplatesTree<M extends SearchableListModel> extends AbstractSubTab
     ApplicationResources resources;
     ApplicationConstants constants;
 
-    public TemplatesTree(CommonApplicationResources resources, CommonApplicationConstants constants) {
-        super(resources, constants);
+    public TemplatesTree(CommonApplicationResources resources, CommonApplicationConstants constants, ApplicationTemplates templates) {
+        super(resources, constants, templates);
         this.resources = (ApplicationResources) resources;
         this.constants = (ApplicationConstants) constants;
     }
@@ -34,13 +35,13 @@ public class TemplatesTree<M extends SearchableListModel> extends AbstractSubTab
     protected TreeItem getRootItem(VmTemplate template) {
         HorizontalPanel panel = new HorizontalPanel();
         panel.setSpacing(1);
-        panel.setWidth("100%");
+        panel.setWidth("100%"); //$NON-NLS-1$
 
-        addItemToPanel(panel, new Image(resources.vmImage()), "25px");
-        addTextBoxToPanel(panel, new TextBoxLabel(), template.getname(), "");
-        addTextBoxToPanel(panel, new TextBoxLabel(), String.valueOf(template.getDiskMap().size()), "110px");
-        addValueLabelToPanel(panel, new DiskSizeLabel<Double>(), template.getActualDiskSize(), "110px");
-        addValueLabelToPanel(panel, new FullDateTimeLabel(), template.getcreation_date(), "140px");
+        addItemToPanel(panel, new Image(resources.vmImage()), "25px"); //$NON-NLS-1$
+        addTextBoxToPanel(panel, new TextBoxLabel(), template.getname(), ""); //$NON-NLS-1$
+        addTextBoxToPanel(panel, new TextBoxLabel(), String.valueOf(template.getDiskMap().size()), "110px"); //$NON-NLS-1$
+        addValueLabelToPanel(panel, new DiskSizeLabel<Double>(), template.getActualDiskSize(), "110px"); //$NON-NLS-1$
+        addValueLabelToPanel(panel, new FullDateTimeLabel(), template.getcreation_date(), "140px"); //$NON-NLS-1$
 
         TreeItem treeItem = new TreeItem(panel);
         treeItem.setUserObject(template.getId());
@@ -51,13 +52,13 @@ public class TemplatesTree<M extends SearchableListModel> extends AbstractSubTab
     protected TreeItem getNodeItem(DiskImage disk) {
         HorizontalPanel panel = new HorizontalPanel();
         panel.setSpacing(1);
-        panel.setWidth("100%");
+        panel.setWidth("100%"); //$NON-NLS-1$
 
-        addItemToPanel(panel, new Image(resources.diskImage()), "25px");
-        addTextBoxToPanel(panel, new TextBoxLabel(), disk.getDiskAlias(), "");
-        addTextBoxToPanel(panel, new TextBoxLabel(), "", "110px");
-        addValueLabelToPanel(panel, new DiskSizeLabel<Double>(), disk.getActualSize(), "110px");
-        addValueLabelToPanel(panel, new FullDateTimeLabel(), disk.getcreation_date(), "140px");
+        addItemToPanel(panel, new Image(resources.diskImage()), "25px"); //$NON-NLS-1$
+        addTextBoxToPanel(panel, new TextBoxLabel(), disk.getDiskAlias(), ""); //$NON-NLS-1$
+        addTextBoxToPanel(panel, new TextBoxLabel(), "", "110px"); //$NON-NLS-1$ //$NON-NLS-2$
+        addValueLabelToPanel(panel, new DiskSizeLabel<Double>(), disk.getActualSize(), "110px"); //$NON-NLS-1$
+        addValueLabelToPanel(panel, new FullDateTimeLabel(), disk.getcreation_date(), "140px"); //$NON-NLS-1$
 
         TreeItem treeItem = new TreeItem(panel);
         treeItem.setUserObject(disk.getImageId());

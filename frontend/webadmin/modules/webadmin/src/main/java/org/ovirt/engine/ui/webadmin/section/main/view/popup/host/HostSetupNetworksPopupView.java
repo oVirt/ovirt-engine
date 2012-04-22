@@ -17,6 +17,7 @@ import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkOperation;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.OperationCadidateEventArgs;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostSetupNetworksPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.panels.NetworkGroup;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.panels.NetworkPanel;
@@ -36,7 +37,8 @@ public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<Host
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 
-    private static final String EMPTY_STATUS = "Drag to make changes";
+    private static ApplicationConstants constants = ClientGinjectorProvider.instance().getApplicationConstants();
+    private static final String EMPTY_STATUS = constants.dragToMakeChangesSetupNetwork();
 
     @UiField
     AnimatedVerticalPanel networkList;
@@ -88,7 +90,7 @@ public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<Host
                 NetworkOperation candidate = evtArgs.getCandidate();
                 NetworkItemModel<?> op1 = evtArgs.getOp1();
                 NetworkItemModel<?> op2 = evtArgs.getOp2();
-                status.setFadeText(candidate != null ? candidate.getMessage(op1, op2) : "No Valid Action");
+                status.setFadeText(candidate != null ? candidate.getMessage(op1, op2) : constants.noValidActionSetupNetwork());
             }
         });
 

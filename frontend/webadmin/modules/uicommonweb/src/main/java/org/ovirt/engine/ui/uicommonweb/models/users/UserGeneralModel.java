@@ -5,13 +5,15 @@ import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
 public class UserGeneralModel extends EntityModel
 {
     public UserGeneralModel()
     {
-        setTitle("General");
+        setTitle(ConstantsManager.getInstance().getConstants().generalTitle());
+        setHashName("general"); //$NON-NLS-1$
     }
 
     private String domain;
@@ -26,7 +28,7 @@ public class UserGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(domain, value))
         {
             domain = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Domain"));
+            OnPropertyChanged(new PropertyChangedEventArgs("Domain")); //$NON-NLS-1$
         }
     }
 
@@ -42,7 +44,7 @@ public class UserGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(email, value))
         {
             email = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Email"));
+            OnPropertyChanged(new PropertyChangedEventArgs("Email")); //$NON-NLS-1$
         }
     }
 
@@ -58,10 +60,9 @@ public class UserGeneralModel extends EntityModel
         if (status != value)
         {
             status = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Status"));
+            OnPropertyChanged(new PropertyChangedEventArgs("Status")); //$NON-NLS-1$
         }
     }
-
 
     @Override
     protected void OnEntityChanged()

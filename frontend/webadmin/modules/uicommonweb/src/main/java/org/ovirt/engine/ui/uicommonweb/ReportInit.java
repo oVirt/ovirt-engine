@@ -59,11 +59,11 @@ public class ReportInit {
         reportsEnabled = false;
         xmlInitialized = false;
         urlInitialized = false;
-        reportBaseUrl = "";
+        reportBaseUrl = ""; //$NON-NLS-1$
         isCommunityEdition = false;
         resourceMap = new HashMap<String, Resource>();
         dashboardMap = new HashMap<String, Dashboard>();
-        reportsInitEvent = new Event("ReportsInitialize", ReportInit.class);
+        reportsInitEvent = new Event("ReportsInitialize", ReportInit.class); //$NON-NLS-1$
     }
 
     private ReportInit() {
@@ -84,7 +84,7 @@ public class ReportInit {
     private void parseReportsXML() {
 
         RequestBuilder requestBuilder =
-                new RequestBuilder(RequestBuilder.GET, "Reports.xml");
+                new RequestBuilder(RequestBuilder.GET, "Reports.xml"); //$NON-NLS-1$
         try {
             requestBuilder.sendRequest(null, new RequestCallback() {
                 @Override
@@ -138,7 +138,7 @@ public class ReportInit {
         if (xmlInitialized && urlInitialized) {
 
             // Check if the reports should be enabled in this system
-            if (!reportBaseUrl.equals("") && !resourceMap.isEmpty()) {
+            if (!reportBaseUrl.equals("") && !resourceMap.isEmpty()) { //$NON-NLS-1$
                 setReportsEnabled(true);
             } else {
                 setReportsEnabled(false);

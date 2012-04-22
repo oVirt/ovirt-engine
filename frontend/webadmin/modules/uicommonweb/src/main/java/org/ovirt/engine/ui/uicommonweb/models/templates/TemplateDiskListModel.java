@@ -19,6 +19,7 @@ import org.ovirt.engine.ui.uicommonweb.Linq.StorageDomainByNameComparer;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
 public class TemplateDiskListModel extends SearchableListModel
@@ -54,9 +55,10 @@ public class TemplateDiskListModel extends SearchableListModel
 
     public TemplateDiskListModel()
     {
-        setTitle("Virtual Disks");
+        setTitle(ConstantsManager.getInstance().getConstants().virtualDisksTitle());
+        setHashName("virtual_disks"); //$NON-NLS-1$
 
-        setCopyCommand(new UICommand("Copy", this));
+        setCopyCommand(new UICommand("Copy", this)); //$NON-NLS-1$
 
         UpdateActionAvailability();
 
@@ -157,7 +159,7 @@ public class TemplateDiskListModel extends SearchableListModel
     {
         super.EntityPropertyChanged(sender, e);
 
-        if (e.PropertyName.equals("status"))
+        if (e.PropertyName.equals("status")) //$NON-NLS-1$
         {
             UpdateActionAvailability();
         }
@@ -193,7 +195,7 @@ public class TemplateDiskListModel extends SearchableListModel
         {
             Copy();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "Cancel"))
+        else if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
         {
             Cancel();
         }
@@ -218,8 +220,8 @@ public class TemplateDiskListModel extends SearchableListModel
         CopyDiskModel model = new CopyDiskModel();
         model.setIsSingleDiskCopy(disks.size() == 1);
         setWindow(model);
-        model.setTitle("Copy Disk(s)");
-        model.setHashName("copy_disk");
+        model.setTitle(ConstantsManager.getInstance().getConstants().copyDisksTitle());
+        model.setHashName("copy_disk"); //$NON-NLS-1$
         model.setIsVolumeFormatAvailable(false);
         model.setIsSourceStorageDomainAvailable(true);
         model.setIsSourceStorageDomainChangable(true);
@@ -235,6 +237,6 @@ public class TemplateDiskListModel extends SearchableListModel
 
     @Override
     protected String getListName() {
-        return "TemplateDiskListModel";
+        return "TemplateDiskListModel"; //$NON-NLS-1$
     }
 }

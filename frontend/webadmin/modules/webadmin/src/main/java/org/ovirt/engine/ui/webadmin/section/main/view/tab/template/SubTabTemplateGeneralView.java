@@ -6,6 +6,7 @@ import org.ovirt.engine.ui.common.view.AbstractSubTabFormView;
 import org.ovirt.engine.ui.common.widget.uicommon.template.TemplateGeneralModelForm;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateListModel;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.template.SubTabTemplateGeneralPresenter;
 
 import com.google.gwt.core.client.GWT;
@@ -25,9 +26,9 @@ public class SubTabTemplateGeneralView extends AbstractSubTabFormView<VmTemplate
     TemplateGeneralModelForm form;
 
     @Inject
-    public SubTabTemplateGeneralView(DetailModelProvider<TemplateListModel, TemplateGeneralModel> modelProvider) {
+    public SubTabTemplateGeneralView(DetailModelProvider<TemplateListModel, TemplateGeneralModel> modelProvider, ApplicationConstants constants) {
         super(modelProvider);
-        this.form = new TemplateGeneralModelForm(modelProvider);
+        this.form = new TemplateGeneralModelForm(modelProvider, constants);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
     }
 

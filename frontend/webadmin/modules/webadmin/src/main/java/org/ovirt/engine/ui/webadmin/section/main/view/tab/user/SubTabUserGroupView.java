@@ -8,6 +8,7 @@ import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.models.users.UserGroup;
 import org.ovirt.engine.ui.uicommonweb.models.users.UserGroupListModel;
 import org.ovirt.engine.ui.uicommonweb.models.users.UserListModel;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.user.SubTabUserGroupPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 
@@ -15,20 +16,20 @@ public class SubTabUserGroupView extends AbstractSubTabTableView<DbUser, UserGro
         implements SubTabUserGroupPresenter.ViewDef {
 
     @Inject
-    public SubTabUserGroupView(SearchableDetailModelProvider<UserGroup, UserListModel, UserGroupListModel> modelProvider) {
+    public SubTabUserGroupView(SearchableDetailModelProvider<UserGroup, UserListModel, UserGroupListModel> modelProvider, ApplicationConstants constants) {
         super(modelProvider);
-        initTable();
+        initTable(constants);
         initWidget(getTable());
     }
 
-    void initTable() {
+    void initTable(ApplicationConstants constants) {
         TextColumnWithTooltip<UserGroup> nameColumn = new TextColumnWithTooltip<UserGroup>() {
             @Override
             public String getValue(UserGroup object) {
                 return object.getGroupName();
             }
         };
-        getTable().addColumn(nameColumn, "Group Name");
+        getTable().addColumn(nameColumn, constants.groupNameGroup());
 
         TextColumnWithTooltip<UserGroup> OrgUnitColumn = new TextColumnWithTooltip<UserGroup>() {
             @Override
@@ -36,7 +37,7 @@ public class SubTabUserGroupView extends AbstractSubTabTableView<DbUser, UserGro
                 return object.getOrganizationalUnit();
             }
         };
-        getTable().addColumn(OrgUnitColumn, "Organizational Unit");
+        getTable().addColumn(OrgUnitColumn, constants.orgUnitGroup());
 
         TextColumnWithTooltip<UserGroup> domainColumn = new TextColumnWithTooltip<UserGroup>() {
             @Override
@@ -44,7 +45,7 @@ public class SubTabUserGroupView extends AbstractSubTabTableView<DbUser, UserGro
                 return object.getDomain();
             }
         };
-        getTable().addColumn(domainColumn, "Domain");
+        getTable().addColumn(domainColumn, constants.domainGroup());
     }
 
 }

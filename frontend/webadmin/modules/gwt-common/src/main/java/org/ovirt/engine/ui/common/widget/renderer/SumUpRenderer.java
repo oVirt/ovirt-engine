@@ -13,7 +13,7 @@ public class SumUpRenderer extends AbstractRenderer<Double[]> {
 
         for (int i = 0; i < values.length; i++) {
             if (values[i] == null) {
-                return "[N/A]";
+                return "[N/A]"; //$NON-NLS-1$
             }
             sum += values[i];
         }

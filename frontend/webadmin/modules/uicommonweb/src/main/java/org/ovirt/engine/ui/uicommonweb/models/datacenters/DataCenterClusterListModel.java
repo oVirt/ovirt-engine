@@ -32,7 +32,7 @@ public class DataCenterClusterListModel extends ClusterListModel
     {
         if (getEntity() != null)
         {
-            setSearchString(StringFormat.format("clusters: datacenter.name=%1$s", getEntity().getname()));
+            setSearchString(StringFormat.format("clusters: datacenter.name=%1$s", getEntity().getname())); //$NON-NLS-1$
             super.Search();
         }
     }
@@ -42,7 +42,7 @@ public class DataCenterClusterListModel extends ClusterListModel
     {
         super.EntityPropertyChanged(sender, e);
 
-        if (e.PropertyName.equals("name"))
+        if (e.PropertyName.equals("name")) //$NON-NLS-1$
         {
             getSearchCommand().Execute();
         }

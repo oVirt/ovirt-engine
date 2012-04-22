@@ -7,7 +7,7 @@ public class StatusLabel extends Label {
 
     protected static final int DURATION = 200;
 
-    private String pendingText = "";
+    private String pendingText = ""; //$NON-NLS-1$
 
     private Animation fadeInAnimation = new Animation() {
 
@@ -24,7 +24,7 @@ public class StatusLabel extends Label {
         protected void onComplete() {
             super.onComplete();
             setText(pendingText);
-            pendingText = "";
+            pendingText = ""; //$NON-NLS-1$
             fadeInAnimation.run(DURATION);
         }
 

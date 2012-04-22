@@ -65,7 +65,7 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
         // TODO implement the enter/escape binding
         getView().removeButtons();
 
-        getView().addFooterButton("Cancel", "IDs are currently ignored").addClickHandler(new ClickHandler() {
+        getView().addFooterButton(constants.cancel(), "IDs are currently ignored").addClickHandler(new ClickHandler() { //$NON-NLS-1$
 
             @Override
             public void onClick(ClickEvent event) {
@@ -73,7 +73,7 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
             }
         });
 
-        getView().addFooterButton("OK", "IDs are currently ignored").addClickHandler(new ClickHandler() {
+        getView().addFooterButton(constants.ok(), "IDs are currently ignored").addClickHandler(new ClickHandler() { //$NON-NLS-1$
 
             @Override
             public void onClick(ClickEvent event) {

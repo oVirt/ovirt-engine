@@ -27,7 +27,7 @@ public class UiCommandButton extends AbstractUiCommandButton {
     }
 
     public UiCommandButton(ImageResource image) {
-        this("", image);
+        this("", image); //$NON-NLS-1$
     }
 
     public UiCommandButton(String label, ImageResource image) {

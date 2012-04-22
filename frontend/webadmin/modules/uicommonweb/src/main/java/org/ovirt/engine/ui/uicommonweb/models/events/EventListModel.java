@@ -19,6 +19,7 @@ import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.GridTimer;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
 public class EventListModel extends SearchableListModel
@@ -49,7 +50,7 @@ public class EventListModel extends SearchableListModel
         if (lastEvent != value)
         {
             lastEvent = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("LastEvent"));
+            OnPropertyChanged(new PropertyChangedEventArgs("LastEvent")); //$NON-NLS-1$
         }
     }
 
@@ -65,7 +66,7 @@ public class EventListModel extends SearchableListModel
         if (isAdvancedView != value)
         {
             isAdvancedView = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsAdvancedView"));
+            OnPropertyChanged(new PropertyChangedEventArgs("IsAdvancedView")); //$NON-NLS-1$
         }
     }
 
@@ -77,11 +78,12 @@ public class EventListModel extends SearchableListModel
 
     public EventListModel()
     {
-        setTitle("Events");
+        setTitle(ConstantsManager.getInstance().getConstants().eventsTitle());
+        setHashName("events"); //$NON-NLS-1$
 
-        setRefreshCommand(new UICommand("Refresh", this));
+        setRefreshCommand(new UICommand("Refresh", this)); //$NON-NLS-1$
 
-        setDefaultSearchString("Events:");
+        setDefaultSearchString("Events:"); //$NON-NLS-1$
         setSearchString(getDefaultSearchString());
 
         getSearchNextPageCommand().setIsAvailable(true);
@@ -103,7 +105,7 @@ public class EventListModel extends SearchableListModel
     @Override
     public boolean IsSearchStringMatch(String searchString)
     {
-        return searchString.trim().toLowerCase().startsWith("event");
+        return searchString.trim().toLowerCase().startsWith("event"); //$NON-NLS-1$
     }
 
     @Override
@@ -254,7 +256,7 @@ public class EventListModel extends SearchableListModel
 
     @Override
     protected String getListName() {
-        return "EventListModel";
+        return "EventListModel"; //$NON-NLS-1$
     }
 
 }

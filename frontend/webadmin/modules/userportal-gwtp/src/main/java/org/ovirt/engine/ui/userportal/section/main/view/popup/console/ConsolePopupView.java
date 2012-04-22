@@ -66,7 +66,7 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<IUserPortalLis
             ApplicationConstants constants, ApplicationMessages messages) {
         super(eventBus, resources);
 
-        spiceRadioButton = new EntityModelRadioButtonEditor("1");
+        spiceRadioButton = new EntityModelRadioButtonEditor("1"); //$NON-NLS-1$
         spiceRadioButton.setLabel(constants.spice());
 
         ctrlAltDel = new EntityModelValueCheckBoxEditor<ConsoleModel>(Align.RIGHT, new SpiceRenderer() {
@@ -138,12 +138,12 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<IUserPortalLis
                         });
         useLocalDrives.setLabel(constants.rdpOptions());
 
-        remoteDesktopRadioButton = new EntityModelRadioButtonEditor("1");
-        remoteDesktopRadioButton.setLabel(constants.remoteDesctop());
+        remoteDesktopRadioButton = new EntityModelRadioButtonEditor("1"); //$NON-NLS-1$
+        remoteDesktopRadioButton.setLabel(constants.remoteDesktop());
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
 
-        consoleTitle.setText(messages.selectConsoleFor("asd"));
+        consoleTitle.setText(messages.selectConsoleFor("asd")); //$NON-NLS-1$
 
         spicePanel.setVisible(false);
         rdpPanel.setVisible(false);

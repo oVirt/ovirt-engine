@@ -25,7 +25,7 @@
 			<g:FlowPanel addStyleNames="{style.content}">
 				<g:Label ui:field="warningLabel" addStyleNames="{style.warningLabel}"/>
 				<g:HTML ui:field="messageLabel" addStyleNames="{style.messageLabel}"/>
-				<e:EntityModelCheckBoxEditor ui:field="latch" visible="false" label="Approve operation"/>				
+				<e:EntityModelCheckBoxEditor ui:field="latch" visible="false"/>
 			</g:FlowPanel>
 		</d:content>
 	</d:SimpleDialogPanel>

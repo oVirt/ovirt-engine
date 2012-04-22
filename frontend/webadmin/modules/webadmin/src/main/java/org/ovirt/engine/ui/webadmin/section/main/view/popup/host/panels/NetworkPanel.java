@@ -30,13 +30,13 @@ public class NetworkPanel extends NetworkItemPanel {
 
         Grid rowPanel = new Grid(1, 6);
         rowPanel.setCellSpacing(3);
-        rowPanel.setWidth("100%");
-        rowPanel.setHeight("100%");
+        rowPanel.setWidth("100%"); //$NON-NLS-1$
+        rowPanel.setHeight("100%"); //$NON-NLS-1$
 
         ColumnFormatter columnFormatter = rowPanel.getColumnFormatter();
-        columnFormatter.setWidth(0, "5px");
-        columnFormatter.setWidth(1, "20px");
-        columnFormatter.setWidth(2, "100%");
+        columnFormatter.setWidth(0, "5px"); //$NON-NLS-1$
+        columnFormatter.setWidth(1, "20px"); //$NON-NLS-1$
+        columnFormatter.setWidth(2, "100%"); //$NON-NLS-1$
 
         infoImage(mgmtNetworkImage, network.isManagement());
         infoImage(monitorImage, network.getEntity().getis_display());
@@ -76,7 +76,7 @@ public class NetworkPanel extends NetworkItemPanel {
     private String getItemTitle() {
         LogicalNetworkModel networkModel = (LogicalNetworkModel) item;
         if (networkModel.hasVlan()) {
-            return networkModel.getName() + " (vlan " + networkModel.getVlanId() + ")";
+            return networkModel.getName() + " (vlan " + networkModel.getVlanId() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
         }
         return item.getName();
     }

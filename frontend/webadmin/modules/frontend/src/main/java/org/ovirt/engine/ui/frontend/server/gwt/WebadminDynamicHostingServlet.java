@@ -11,7 +11,7 @@ public class WebadminDynamicHostingServlet extends GwtDynamicHostPageServlet {
 
     @Override
     protected String getSelectorScriptName() {
-        return "webadmin.nocache.js";
+        return "webadmin.nocache.js"; //$NON-NLS-1$
     }
 
 }

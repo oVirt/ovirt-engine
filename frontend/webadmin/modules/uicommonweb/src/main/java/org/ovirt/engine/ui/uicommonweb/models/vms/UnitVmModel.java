@@ -37,6 +37,7 @@ import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.RegexValidation;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
 public class UnitVmModel extends Model
@@ -93,7 +94,7 @@ public class UnitVmModel extends Model
         if (isBlankTemplate != value)
         {
             isBlankTemplate = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsBlankTemplate"));
+            OnPropertyChanged(new PropertyChangedEventArgs("IsBlankTemplate")); //$NON-NLS-1$
         }
     }
 
@@ -109,7 +110,7 @@ public class UnitVmModel extends Model
         if (isWindowsOS != value)
         {
             isWindowsOS = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsWindowsOS"));
+            OnPropertyChanged(new PropertyChangedEventArgs("IsWindowsOS")); //$NON-NLS-1$
         }
     }
 
@@ -125,7 +126,7 @@ public class UnitVmModel extends Model
         if (isLinux_Unassign_UnknownOS != value)
         {
             isLinux_Unassign_UnknownOS = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsLinux_Unassign_UnknownOS"));
+            OnPropertyChanged(new PropertyChangedEventArgs("IsLinux_Unassign_UnknownOS")); //$NON-NLS-1$
         }
     }
 
@@ -141,7 +142,7 @@ public class UnitVmModel extends Model
         if (!StringHelper.stringsEqual(cpuNotification, value))
         {
             cpuNotification = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("CPUNotification"));
+            OnPropertyChanged(new PropertyChangedEventArgs("CPUNotification")); //$NON-NLS-1$
         }
     }
 
@@ -157,7 +158,7 @@ public class UnitVmModel extends Model
         if (isCPUsAmountValid != value)
         {
             isCPUsAmountValid = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsCPUsAmountValid"));
+            OnPropertyChanged(new PropertyChangedEventArgs("IsCPUsAmountValid")); //$NON-NLS-1$
         }
     }
 
@@ -173,7 +174,7 @@ public class UnitVmModel extends Model
         if (isGeneralTabValid != value)
         {
             isGeneralTabValid = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsGeneralTabValid"));
+            OnPropertyChanged(new PropertyChangedEventArgs("IsGeneralTabValid")); //$NON-NLS-1$
         }
     }
 
@@ -189,7 +190,7 @@ public class UnitVmModel extends Model
         if (isFirstRunTabValid != value)
         {
             isFirstRunTabValid = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsFirstRunTabValid"));
+            OnPropertyChanged(new PropertyChangedEventArgs("IsFirstRunTabValid")); //$NON-NLS-1$
         }
     }
 
@@ -205,7 +206,7 @@ public class UnitVmModel extends Model
         if (isDisplayTabValid != value)
         {
             isDisplayTabValid = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsDisplayTabValid"));
+            OnPropertyChanged(new PropertyChangedEventArgs("IsDisplayTabValid")); //$NON-NLS-1$
         }
     }
 
@@ -221,7 +222,7 @@ public class UnitVmModel extends Model
         if (isAllocationTabValid != value)
         {
             isAllocationTabValid = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsAllocationTabValid"));
+            OnPropertyChanged(new PropertyChangedEventArgs("IsAllocationTabValid")); //$NON-NLS-1$
         }
     }
 
@@ -237,7 +238,7 @@ public class UnitVmModel extends Model
         if (isHostTabValid != value)
         {
             isHostTabValid = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsHostTabValid"));
+            OnPropertyChanged(new PropertyChangedEventArgs("IsHostTabValid")); //$NON-NLS-1$
         }
     }
 
@@ -253,7 +254,7 @@ public class UnitVmModel extends Model
         if (isBootSequenceTabValid != value)
         {
             isBootSequenceTabValid = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsBootSequenceTabValid"));
+            OnPropertyChanged(new PropertyChangedEventArgs("IsBootSequenceTabValid")); //$NON-NLS-1$
         }
     }
 
@@ -269,7 +270,7 @@ public class UnitVmModel extends Model
         if (isCustomPropertiesTabValid != value)
         {
             isCustomPropertiesTabValid = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsCustomPropertiesTabValid"));
+            OnPropertyChanged(new PropertyChangedEventArgs("IsCustomPropertiesTabValid")); //$NON-NLS-1$
         }
     }
 
@@ -751,7 +752,7 @@ public class UnitVmModel extends Model
         if (disks != value)
         {
             disks = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Disks"));
+            OnPropertyChanged(new PropertyChangedEventArgs("Disks")); //$NON-NLS-1$
         }
     }
 
@@ -779,7 +780,7 @@ public class UnitVmModel extends Model
         if (isDisksAvailable != value)
         {
             isDisksAvailable = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsDisksAvailable"));
+            OnPropertyChanged(new PropertyChangedEventArgs("IsDisksAvailable")); //$NON-NLS-1$
         }
     }
 
@@ -795,11 +796,11 @@ public class UnitVmModel extends Model
         if (isCustomPropertiesAvailable != value)
         {
             isCustomPropertiesAvailable = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsCustomPropertiesAvailable"));
+            OnPropertyChanged(new PropertyChangedEventArgs("IsCustomPropertiesAvailable")); //$NON-NLS-1$
 
             if (value == false)
             {
-                getCustomProperties().setEntity("");
+                getCustomProperties().setEntity(""); //$NON-NLS-1$
             }
         }
     }
@@ -816,7 +817,7 @@ public class UnitVmModel extends Model
         if (isHostAvailable != value)
         {
             isHostAvailable = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsHostAvailable"));
+            OnPropertyChanged(new PropertyChangedEventArgs("IsHostAvailable")); //$NON-NLS-1$
         }
     }
 
@@ -838,7 +839,7 @@ public class UnitVmModel extends Model
         if (isDatacenterAvailable == null || !isDatacenterAvailable.equals(value))
         {
             isDatacenterAvailable = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsDatacenterAvailable"));
+            OnPropertyChanged(new PropertyChangedEventArgs("IsDatacenterAvailable")); //$NON-NLS-1$
         }
     }
 
@@ -1249,11 +1250,11 @@ public class UnitVmModel extends Model
         java.util.ArrayList<EntityModel> displayProtocolOptions = new java.util.ArrayList<EntityModel>();
 
         EntityModel spiceProtocol = new EntityModel();
-        spiceProtocol.setTitle("Spice");
+        spiceProtocol.setTitle(ConstantsManager.getInstance().getConstants().spiceTitle());
         spiceProtocol.setEntity(DisplayType.qxl);
 
         EntityModel vncProtocol = new EntityModel();
-        vncProtocol.setTitle("VNC");
+        vncProtocol.setTitle(ConstantsManager.getInstance().getConstants().VNCTitle());
         vncProtocol.setEntity(DisplayType.vnc);
 
         displayProtocolOptions.add(spiceProtocol);
@@ -1266,18 +1267,18 @@ public class UnitVmModel extends Model
     private void InitFirstBootDevice()
     {
         EntityModel tempVar = new EntityModel();
-        tempVar.setTitle("Hard Disk");
+        tempVar.setTitle(ConstantsManager.getInstance().getConstants().hardDiskTitle());
         tempVar.setEntity(BootSequence.C);
         EntityModel hardDiskOption = tempVar;
 
         java.util.ArrayList<EntityModel> firstBootDeviceItems = new java.util.ArrayList<EntityModel>();
         firstBootDeviceItems.add(hardDiskOption);
         EntityModel tempVar2 = new EntityModel();
-        tempVar2.setTitle("CD-ROM");
+        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cdromTitle());
         tempVar2.setEntity(BootSequence.D);
         firstBootDeviceItems.add(tempVar2);
         EntityModel tempVar3 = new EntityModel();
-        tempVar3.setTitle("Network (PXE)");
+        tempVar3.setTitle(ConstantsManager.getInstance().getConstants().networkPXETitle());
         tempVar3.setEntity(BootSequence.N);
         firstBootDeviceItems.add(tempVar3);
         getFirstBootDevice().setItems(firstBootDeviceItems);
@@ -1355,7 +1356,7 @@ public class UnitVmModel extends Model
         }
 
         EntityModel tempVar = new EntityModel();
-        tempVar.setTitle("[None]");
+        tempVar.setTitle(ConstantsManager.getInstance().getConstants().noneTitle());
         EntityModel noneOption = tempVar;
 
         list.add(0, noneOption);
@@ -1460,9 +1461,9 @@ public class UnitVmModel extends Model
         EntityModel secondSelectedItem = (EntityModel) getSecondBootDevice().getSelectedItem();
 
         String firstSelectedString =
-                firstSelectedItem.getEntity() == null ? "" : firstSelectedItem.getEntity().toString();
+                firstSelectedItem.getEntity() == null ? "" : firstSelectedItem.getEntity().toString(); //$NON-NLS-1$
         String secondSelectedString =
-                secondSelectedItem.getEntity() == null ? "" : secondSelectedItem.getEntity().toString();
+                secondSelectedItem.getEntity() == null ? "" : secondSelectedItem.getEntity().toString(); //$NON-NLS-1$
 
         return BootSequence.valueOf(firstSelectedString + secondSelectedString);
     }
@@ -1528,7 +1529,7 @@ public class UnitVmModel extends Model
                         .setItems(new java.util.ArrayList<storage_pool>(java.util.Arrays.asList(new storage_pool[] { selectDataCenter })));
                 model.getDataCenter().setSelectedItem(selectDataCenter);
                 model.getDataCenter().setIsChangable(false);
-                model.getDataCenter().setInfo("Cannot choose Data Center in tree context");
+                model.getDataCenter().setInfo("Cannot choose Data Center in tree context"); //$NON-NLS-1$
                 break;
             case Cluster:
             case VMs:
@@ -1544,7 +1545,7 @@ public class UnitVmModel extends Model
                     }
                 }
                 model.getDataCenter().setIsChangable(false);
-                model.getDataCenter().setInfo("Cannot choose Data Center in tree context");
+                model.getDataCenter().setInfo("Cannot choose Data Center in tree context"); //$NON-NLS-1$
                 break;
             case Host:
                 VDS host = (VDS) model.getBehavior().getSystemTreeSelectedItem().getEntity();
@@ -1556,7 +1557,7 @@ public class UnitVmModel extends Model
                                 .setItems(new java.util.ArrayList<storage_pool>(java.util.Arrays.asList(new storage_pool[] { dc })));
                         model.getDataCenter().setSelectedItem(dc);
                         model.getDataCenter().setIsChangable(false);
-                        model.getDataCenter().setInfo("Cannot choose Data Center in tree context");
+                        model.getDataCenter().setInfo("Cannot choose Data Center in tree context"); //$NON-NLS-1$
                         break;
                     }
                 }
@@ -1571,7 +1572,7 @@ public class UnitVmModel extends Model
                                 .setItems(new java.util.ArrayList<storage_pool>(java.util.Arrays.asList(new storage_pool[] { dc })));
                         model.getDataCenter().setSelectedItem(dc);
                         model.getDataCenter().setIsChangable(false);
-                        model.getDataCenter().setInfo("Cannot choose Data Center in tree context");
+                        model.getDataCenter().setInfo("Cannot choose Data Center in tree context"); //$NON-NLS-1$
                         break;
                     }
                 }
@@ -1602,7 +1603,7 @@ public class UnitVmModel extends Model
                         .setItems(new java.util.ArrayList<VDSGroup>(java.util.Arrays.asList(new VDSGroup[] { cluster })));
                 model.getCluster().setSelectedItem(cluster);
                 model.getCluster().setIsChangable(false);
-                model.getCluster().setInfo("Cannot choose Cluster in tree context");
+                model.getCluster().setInfo("Cannot choose Cluster in tree context"); //$NON-NLS-1$
                 break;
             case Host:
                 VDS host = (VDS) behavior.getSystemTreeSelectedItem().getEntity();
@@ -1614,7 +1615,7 @@ public class UnitVmModel extends Model
                                 .setItems(new java.util.ArrayList<VDSGroup>(java.util.Arrays.asList(new VDSGroup[] { iterCluster })));
                         model.getCluster().setSelectedItem(iterCluster);
                         model.getCluster().setIsChangable(false);
-                        model.getCluster().setInfo("Cannot choose Cluster in tree context");
+                        model.getCluster().setInfo("Cannot choose Cluster in tree context"); //$NON-NLS-1$
                         break;
                     }
                 }
@@ -1666,17 +1667,19 @@ public class UnitVmModel extends Model
             String nameMsg;
             if (DataProvider.IsWindowsOsType(osType))
             {
-                nameExpr = "^[0-9a-zA-Z-_]{1," + WINDOWS_VM_NAME_MAX_LIMIT + "}$";
+                nameExpr = "^[0-9a-zA-Z-_]{1," + WINDOWS_VM_NAME_MAX_LIMIT + "}$"; //$NON-NLS-1$ //$NON-NLS-2$
                 nameMsg =
-                        "Name must contain only alphanumeric characters. Maximum length: " + WINDOWS_VM_NAME_MAX_LIMIT
-                                + ".";
+                        ConstantsManager.getInstance()
+                                .getMessages()
+                                .nameMustConataionOnlyAlphanumericChars(WINDOWS_VM_NAME_MAX_LIMIT);
             }
             else
             {
-                nameExpr = "^[-\\w]{1," + NON_WINDOWS_VM_NAME_MAX_LIMIT + "}$";
+                nameExpr = "^[-\\w]{1," + NON_WINDOWS_VM_NAME_MAX_LIMIT + "}$"; //$NON-NLS-1$ //$NON-NLS-2$
                 nameMsg =
-                        "Name cannot contain blanks or special characters. Maximum length: "
-                                + NON_WINDOWS_VM_NAME_MAX_LIMIT + ".";
+                        ConstantsManager.getInstance()
+                                .getMessages()
+                                .nameCannotContainBlankOrSpecialChars(NON_WINDOWS_VM_NAME_MAX_LIMIT);
             }
 
             LengthValidation tempVar = new LengthValidation();
@@ -1722,7 +1725,9 @@ public class UnitVmModel extends Model
                 && getStorageDomain().getIsChangable())
         {
             getStorageDomain().setIsValid(false);
-            getStorageDomain().getInvalidityReasons().add("Storage Domain must be specified.");
+            getStorageDomain().getInvalidityReasons().add(ConstantsManager.getInstance()
+                    .getConstants()
+                    .storageDomainMustBeSpecifiedInvalidReason());
         }
 
         getCdImage().setIsValid(true);
@@ -1736,38 +1741,45 @@ public class UnitVmModel extends Model
         getInitrd_path().setIsValid(true);
         if (getKernel_path().getEntity() == null)
         {
-            getKernel_path().setEntity("");
+            getKernel_path().setEntity(""); //$NON-NLS-1$
         }
         if (getKernel_parameters().getEntity() == null)
         {
-            getKernel_parameters().setEntity("");
+            getKernel_parameters().setEntity(""); //$NON-NLS-1$
         }
         if (getInitrd_path().getEntity() == null)
         {
-            getInitrd_path().setEntity("");
+            getInitrd_path().setEntity(""); //$NON-NLS-1$
         }
 
         if (isLinux_Unassign_UnknownOS
                 && ((((String) getKernel_parameters().getEntity()).length() > 0 || ((String) getInitrd_path().getEntity()).length() > 0) && ((String) getKernel_path().getEntity()).length() == 0))
         {
-            int count = 0;
-            String msg = "When ";
+            boolean kernelParamInvalid = false;
+            boolean inetdPathInvalid = false;
             if (((String) getKernel_parameters().getEntity()).length() > 0)
             {
                 getKernel_parameters().setIsValid(false);
-                msg += "a kernel parameter argument ";
-                count++;
+                kernelParamInvalid = true;
             }
             if (((String) getInitrd_path().getEntity()).length() > 0)
             {
                 getInitrd_path().setIsValid(false);
-                if (count == 1)
-                {
-                    msg += "or ";
-                }
-                msg += "an initrd path ";
+                inetdPathInvalid = true;
             }
-            msg += "is used, kernel path must be non-empty";
+
+            String msg =
+                    ConstantsManager.getInstance()
+                            .getMessages()
+                            .invalidPath(kernelParamInvalid ? ConstantsManager.getInstance()
+                                    .getConstants()
+                                    .kernelInvalid() : "", //$NON-NLS-1$
+                                    kernelParamInvalid && inetdPathInvalid ? ConstantsManager.getInstance()
+                                            .getConstants()
+                                            .or() : "", //$NON-NLS-1$
+                                    inetdPathInvalid ? ConstantsManager.getInstance()
+                                            .getConstants()
+                                            .inetdInvalid() : ""); //$NON-NLS-1$
 
             getKernel_path().setIsValid(false);
             getInitrd_path().getInvalidityReasons().add(msg);
@@ -1810,16 +1822,21 @@ public class UnitVmModel extends Model
 
         if (memSize == 0)
         {
-            memorySizeEntityModel.getInvalidityReasons().add("Memory size is between " + minMemSize + " MB and "
-                    + maxMemSize + " MB");
+            memorySizeEntityModel.getInvalidityReasons().add(ConstantsManager.getInstance()
+                    .getMessages()
+                    .memSizeBetween(minMemSize, maxMemSize));
         }
         else if (memSize > maxMemSize)
         {
-            memorySizeEntityModel.getInvalidityReasons().add("Maximum memory size is " + maxMemSize + " MB.");
+            memorySizeEntityModel.getInvalidityReasons().add(ConstantsManager.getInstance()
+                    .getMessages()
+                    .maxMemSizeIs(maxMemSize));
         }
         else if (memSize < minMemSize)
         {
-            memorySizeEntityModel.getInvalidityReasons().add("Minimum memory size is " + minMemSize + " MB.");
+            memorySizeEntityModel.getInvalidityReasons().add(ConstantsManager.getInstance()
+                    .getMessages()
+                    .minMemSizeIs(minMemSize));
         }
         else
         {
@@ -1882,7 +1899,7 @@ public class UnitVmModel extends Model
         if (isPoolTabValid != value)
         {
             isPoolTabValid = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsPoolTabValid"));
+            OnPropertyChanged(new PropertyChangedEventArgs("IsPoolTabValid")); //$NON-NLS-1$
         }
     }
 
@@ -1898,7 +1915,7 @@ public class UnitVmModel extends Model
         if (isAddVMMode != value)
         {
             isAddVMMode = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsAddVMMode"));
+            OnPropertyChanged(new PropertyChangedEventArgs("IsAddVMMode")); //$NON-NLS-1$
         }
     }
 }

@@ -35,17 +35,18 @@ public class ChangeHostClusterRM implements IEnlistmentNotification {
 
             enlistmentContext.setOldClusterId(host.getvds_group_id());
 
-            Frontend.RunAction(VdcActionType.ChangeVDSCluster, new ChangeVDSClusterParameters(enlistmentContext.getClusterId(), host.getId()),
-                new IFrontendActionAsyncCallback() {
-                    @Override
-                    public void Executed(FrontendActionAsyncResult result) {
+            Frontend.RunAction(VdcActionType.ChangeVDSCluster,
+                    new ChangeVDSClusterParameters(enlistmentContext.getClusterId(), host.getId()),
+                    new IFrontendActionAsyncCallback() {
+                        @Override
+                        public void Executed(FrontendActionAsyncResult result) {
 
-                        VdcReturnValueBase returnValue = result.getReturnValue();
+                            VdcReturnValueBase returnValue = result.getReturnValue();
 
-                        context.changeVDSClusterReturnValue = returnValue;
-                        prepare2();
-                    }
-                });
+                            context.changeVDSClusterReturnValue = returnValue;
+                            prepare2();
+                        }
+                    });
         } else {
             context.enlistment = null;
             enlistment.Prepared();
@@ -67,25 +68,25 @@ public class ChangeHostClusterRM implements IEnlistmentNotification {
         }
     }
 
-    //    @Override
-    //    public void Prepare(PreparingEnlistment enlistment) {
+    // @Override
+    // public void Prepare(PreparingEnlistment enlistment) {
     //
-    //        ConfigureLocalStorageModel model = (ConfigureLocalStorageModel) getModel().getWindow();
-    //        if (!model.getDontChangeHostCluster()) {
-    //            VDS host = (VDS) getModel().getSelectedItem();
-    //            VdcReturnValueBase returnValue =
-    //                Frontend.RunAction(VdcActionType.ChangeVDSCluster,
-    //                    new ChangeVDSClusterParameters(getData().getClusterId(), host.getvds_id()));
+    // ConfigureLocalStorageModel model = (ConfigureLocalStorageModel) getModel().getWindow();
+    // if (!model.getDontChangeHostCluster()) {
+    // VDS host = (VDS) getModel().getSelectedItem();
+    // VdcReturnValueBase returnValue =
+    // Frontend.RunAction(VdcActionType.ChangeVDSCluster,
+    // new ChangeVDSClusterParameters(getData().getClusterId(), host.getvds_id()));
     //
-    //            if (returnValue != null && returnValue.getSucceeded()) {
-    //                enlistment.Prepared();
-    //            } else {
-    //                enlistment.ForceRollback();
-    //            }
-    //        } else {
-    //            enlistment.Prepared();
-    //        }
-    //    }
+    // if (returnValue != null && returnValue.getSucceeded()) {
+    // enlistment.Prepared();
+    // } else {
+    // enlistment.ForceRollback();
+    // }
+    // } else {
+    // enlistment.Prepared();
+    // }
+    // }
 
     @Override
     public void commit(Enlistment enlistment) {
@@ -96,7 +97,6 @@ public class ChangeHostClusterRM implements IEnlistmentNotification {
     public void rollback(Enlistment enlistment) {
         enlistment.Done();
     }
-
 
     private final Context context = new Context();
 

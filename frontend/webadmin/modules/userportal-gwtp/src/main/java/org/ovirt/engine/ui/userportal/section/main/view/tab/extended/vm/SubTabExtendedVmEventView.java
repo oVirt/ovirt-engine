@@ -8,6 +8,7 @@ import org.ovirt.engine.ui.common.widget.uicommon.events.EventListModelTable;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UserPortalVmEventListModel;
+import org.ovirt.engine.ui.userportal.ApplicationConstants;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.SubTabExtendedVmEventPresenter;
 import org.ovirt.engine.ui.userportal.uicommon.model.vm.VmEventListModelProvider;
 
@@ -24,10 +25,10 @@ public class SubTabExtendedVmEventView extends AbstractSubTabTableWidgetView<Use
 
     @Inject
     public SubTabExtendedVmEventView(VmEventListModelProvider modelProvider,
-            EventBus eventBus, ClientStorage clientStorage) {
+            EventBus eventBus, ClientStorage clientStorage, ApplicationConstants constants) {
         super(new EventListModelTable<UserPortalVmEventListModel>(modelProvider, eventBus, clientStorage));
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        initTable();
+        initTable(constants);
         initWidget(getModelBoundTableWidget());
     }
 

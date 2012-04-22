@@ -99,24 +99,24 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
         datacenterListEditor = new ListModelListBoxEditor<Object>(new AbstractRenderer<Object>() {
             @Override
             public String render(Object object) {
-                String formattedString = "";
+                String formattedString = ""; //$NON-NLS-1$
 
                 if (object != null) {
                     storage_pool storage = (storage_pool) object;
 
                     // Get formatted storage type and format using Enum renders
-                    String storageType = storage.getstorage_pool_type() == StorageType.UNKNOWN ? "" :
+                    String storageType = storage.getstorage_pool_type() == StorageType.UNKNOWN ? "" : //$NON-NLS-1$
                             (new EnumRenderer<StorageType>()).render(storage.getstorage_pool_type());
-                    String storageFormatType = storage.getStoragePoolFormatType() == null ? "" :
+                    String storageFormatType = storage.getStoragePoolFormatType() == null ? "" : //$NON-NLS-1$
                             (new EnumRenderer<StorageFormatType>()).render(storage.getStoragePoolFormatType());
 
                     // Add storage type and format if available
                     if (storageType.length() > 0) {
-                        formattedString = " (" + storageType;
+                        formattedString = " (" + storageType; //$NON-NLS-1$
                         if (storageFormatType.length() > 0) {
-                            formattedString += ", " + storageFormatType;
+                            formattedString += ", " + storageFormatType; //$NON-NLS-1$
                         }
-                        formattedString += ")";
+                        formattedString += ")"; //$NON-NLS-1$
                     }
 
                     formattedString = storage.getname() + formattedString;
@@ -131,14 +131,14 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
         hostListEditor = new ListModelListBoxEditor<Object>(new AbstractRenderer<Object>() {
             @Override
             public String render(Object object) {
-                return object == null ? "" : ((VDS) object).getvds_name();
+                return object == null ? "" : ((VDS) object).getvds_name(); //$NON-NLS-1$
             }
         });
 
         storageTypeListEditor = new ListModelListBoxEditor<Object>(new AbstractRenderer<Object>() {
             @Override
             public String render(Object object) {
-                String formattedString = "";
+                String formattedString = ""; //$NON-NLS-1$
 
                 if (object != null) {
                     EnumRenderer<StorageType> storageEnumRenderer = new EnumRenderer<StorageType>();
@@ -147,7 +147,7 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
                     String storageDomainType = storageDomainEnumRenderer.render(((IStorageModel) object).getRole());
                     String storageType = storageEnumRenderer.render(((IStorageModel) object).getType());
 
-                    formattedString = storageDomainType + " / " + storageType;
+                    formattedString = storageDomainType + " / " + storageType; //$NON-NLS-1$
                 }
                 return formattedString;
             }

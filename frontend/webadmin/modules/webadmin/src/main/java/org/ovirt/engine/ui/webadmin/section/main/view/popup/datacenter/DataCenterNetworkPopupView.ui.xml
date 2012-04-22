@@ -4,6 +4,8 @@
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
 	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor" xmlns:we="urn:import:org.ovirt.engine.ui.webadmin.widget.editor">
 
+	<ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants' />
+
 	<ui:style>
 		.dock {
 			border-right: 1px solid #BBBBBB;
@@ -52,7 +54,7 @@
 						<g:Label ui:field="assignLabel" addStyleNames="{style.mainLabel}"/>
 						<we:EntityModelCellTree ui:field="tree" />
 						<g:Label ui:field="messageLabel" addStyleNames="{style.message}"/>
-						<d:SimpleDialogButton ui:field="detachAll" text="Detach ALL Clusters" visible="false" />
+						<d:SimpleDialogButton ui:field="detachAll" text="{constants.detachAllClustersNetworkPopup}" visible="false" />
 					</g:VerticalPanel>
 				</g:east>
 			</g:DockLayoutPanel>

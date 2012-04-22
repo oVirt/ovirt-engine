@@ -24,7 +24,7 @@ public class DragEnterEvent extends DragDropEventBase<DragEnterHandler> {
      * Event type for drag enter events. Represents the meta-data associated with this event.
      */
     private static final Type<DragEnterHandler> TYPE = new Type<DragEnterHandler>(
-            "dragenter", new DragEnterEvent());
+            "dragenter", new DragEnterEvent()); //$NON-NLS-1$
 
     /**
      * Gets the event type associated with drag enter events.

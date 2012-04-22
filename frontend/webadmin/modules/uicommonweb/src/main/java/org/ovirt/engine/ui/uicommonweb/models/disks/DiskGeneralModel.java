@@ -5,6 +5,7 @@ import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public class DiskGeneralModel extends EntityModel
 {
@@ -20,7 +21,7 @@ public class DiskGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(privateAlias, value))
         {
             privateAlias = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Alias"));
+            OnPropertyChanged(new PropertyChangedEventArgs("Alias")); //$NON-NLS-1$
         }
     }
 
@@ -36,7 +37,7 @@ public class DiskGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(privateDescription, value))
         {
             privateDescription = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Description"));
+            OnPropertyChanged(new PropertyChangedEventArgs("Description")); //$NON-NLS-1$
         }
     }
 
@@ -52,7 +53,7 @@ public class DiskGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(privateStorageDomain, value))
         {
             privateStorageDomain = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Storage Domain"));
+            OnPropertyChanged(new PropertyChangedEventArgs("Storage Domain")); //$NON-NLS-1$
         }
     }
 
@@ -68,7 +69,7 @@ public class DiskGeneralModel extends EntityModel
         if (privateVolumeFormat != value)
         {
             privateVolumeFormat = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Volume Format"));
+            OnPropertyChanged(new PropertyChangedEventArgs("Volume Format")); //$NON-NLS-1$
         }
     }
 
@@ -84,13 +85,14 @@ public class DiskGeneralModel extends EntityModel
         if (diskId != value)
         {
             diskId = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("ID"));
+            OnPropertyChanged(new PropertyChangedEventArgs("ID")); //$NON-NLS-1$
         }
     }
 
     public DiskGeneralModel()
     {
-        setTitle("General");
+        setTitle(ConstantsManager.getInstance().getConstants().generalTitle());
+        setHashName("general"); //$NON-NLS-1$
     }
 
     @Override

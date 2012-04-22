@@ -24,18 +24,18 @@ public class NicPanel extends NetworkItemPanel {
     protected Widget getContents() {
         Grid rowPanel = new Grid(1, 5);
         rowPanel.setCellSpacing(3);
-        rowPanel.setWidth("100%");
-        rowPanel.setHeight("100%");
+        rowPanel.setWidth("100%"); //$NON-NLS-1$
+        rowPanel.setHeight("100%"); //$NON-NLS-1$
 
         ColumnFormatter columnFormatter = rowPanel.getColumnFormatter();
-        columnFormatter.setWidth(0, "5px");
-        columnFormatter.setWidth(1, "10px");
-        columnFormatter.setWidth(2, "30px");
-        columnFormatter.setWidth(3, "100%");
-        columnFormatter.setWidth(4, "30px");
+        columnFormatter.setWidth(0, "5px"); //$NON-NLS-1$
+        columnFormatter.setWidth(1, "10px"); //$NON-NLS-1$
+        columnFormatter.setWidth(2, "30px"); //$NON-NLS-1$
+        columnFormatter.setWidth(3, "100%"); //$NON-NLS-1$
+        columnFormatter.setWidth(4, "30px"); //$NON-NLS-1$
 
         Label titleLabel = new Label(item.getName());
-        titleLabel.setHeight("100%");
+        titleLabel.setHeight("100%"); //$NON-NLS-1$
         Image nicImage = new Image(resources.nicIcon());
 
         rowPanel.setWidget(0, 0, dragImage);

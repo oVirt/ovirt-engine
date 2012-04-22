@@ -25,6 +25,7 @@ import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NoSpacesValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.RegexValidation;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
 public class ClusterModel extends Model
@@ -342,7 +343,7 @@ public class ClusterModel extends Model
         if (isGeneralTabValid != value)
         {
             isGeneralTabValid = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsGeneralTabValid"));
+            OnPropertyChanged(new PropertyChangedEventArgs("IsGeneralTabValid")); //$NON-NLS-1$
         }
     }
 
@@ -392,7 +393,7 @@ public class ClusterModel extends Model
             default:
                 break;
             }
-            OnPropertyChanged(new PropertyChangedEventArgs("MigrateOnErrorOption"));
+            OnPropertyChanged(new PropertyChangedEventArgs("MigrateOnErrorOption")); //$NON-NLS-1$
         }
     }
 
@@ -418,7 +419,7 @@ public class ClusterModel extends Model
         if (getisResiliencePolicyTabAvailable() != value)
         {
             setisResiliencePolicyTabAvailable(value);
-            OnPropertyChanged(new PropertyChangedEventArgs("IsResiliencePolicyTabAvailable"));
+            OnPropertyChanged(new PropertyChangedEventArgs("IsResiliencePolicyTabAvailable")); //$NON-NLS-1$
         }
     }
 
@@ -794,8 +795,8 @@ public class ClusterModel extends Model
         LengthValidation tempVar = new LengthValidation();
         tempVar.setMaxLength(40);
         RegexValidation tempVar2 = new RegexValidation();
-        tempVar2.setExpression("^[A-Za-z0-9_-]+$");
-        tempVar2.setMessage("Name can contain only 'A-Z', 'a-z', '0-9', '_' or '-' characters.");
+        tempVar2.setExpression("^[A-Za-z0-9_-]+$"); //$NON-NLS-1$
+        tempVar2.setMessage(ConstantsManager.getInstance().getConstants().nameCanContainMsg());
         getName().ValidateEntity(new IValidation[] { new NotEmptyValidation(), new NoSpacesValidation(), tempVar,
                 tempVar2 });
         if (validateStoragePool)

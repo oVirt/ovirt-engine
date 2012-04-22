@@ -21,7 +21,7 @@ public class Enlistment {
 
     static {
 
-        DoneEventDefinition = new EventDefinition("Done", PreparingEnlistment.class);
+        DoneEventDefinition = new EventDefinition("Done", PreparingEnlistment.class); //$NON-NLS-1$
     }
 
     public Enlistment(Object context) {

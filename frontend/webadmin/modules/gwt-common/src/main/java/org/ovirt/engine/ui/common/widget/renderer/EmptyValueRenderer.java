@@ -7,7 +7,7 @@ public class EmptyValueRenderer<T> extends AbstractRenderer<T> {
     private final String unAvailablePropertyLabel;
 
     public EmptyValueRenderer() {
-        this("");
+        this(""); //$NON-NLS-1$
     }
 
     public EmptyValueRenderer(String unAvailablePropertyLabel) {
@@ -16,7 +16,7 @@ public class EmptyValueRenderer<T> extends AbstractRenderer<T> {
 
     @Override
     public String render(T value) {
-        return value != null && !value.equals("") ? value.toString() : unAvailablePropertyLabel;
+        return value != null && !value.equals("") ? value.toString() : unAvailablePropertyLabel; //$NON-NLS-1$
     }
 
 }

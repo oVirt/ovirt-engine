@@ -16,6 +16,7 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
 public class VmImportDiskListModel extends VmDiskListModel
@@ -33,7 +34,7 @@ public class VmImportDiskListModel extends VmDiskListModel
         {
             collapseSnapshots = value;
             // OnCollapseSnapshotsChanged();
-            OnPropertyChanged(new PropertyChangedEventArgs("CollapseSnapshots"));
+            OnPropertyChanged(new PropertyChangedEventArgs("CollapseSnapshots")); //$NON-NLS-1$
         }
     }
 
@@ -64,7 +65,7 @@ public class VmImportDiskListModel extends VmDiskListModel
     public void setDiskStorageMap(HashMap<Guid, ArrayList<Guid>> value)
     {
         diskStorageMap = value;
-        OnPropertyChanged(new PropertyChangedEventArgs("DiskStorageMap"));
+        OnPropertyChanged(new PropertyChangedEventArgs("DiskStorageMap")); //$NON-NLS-1$
     }
 
     public VmImportDiskListModel() {
@@ -167,7 +168,7 @@ public class VmImportDiskListModel extends VmDiskListModel
                     {
                         a.getVolumeType()
                                 .getChangeProhibitionReasons()
-                                .add("Allocation can be modified only when 'Collapse Snapshots' is check");
+                                .add("Allocation can be modified only when 'Collapse Snapshots' is check"); //$NON-NLS-1$
                         a.getVolumeType().setIsChangable(false);
                     }
                 }
@@ -191,7 +192,9 @@ public class VmImportDiskListModel extends VmDiskListModel
                 {
                     a.getVolumeType()
                             .getChangeProhibitionReasons()
-                            .add("Allocation can be modified only when importing a single VM");
+                            .add(ConstantsManager.getInstance()
+                                    .getConstants()
+                                    .allocCanBeModifiedOnlyWhenImportSingleVm());
                     a.getVolumeType().setIsChangable(false);
                 }
             }

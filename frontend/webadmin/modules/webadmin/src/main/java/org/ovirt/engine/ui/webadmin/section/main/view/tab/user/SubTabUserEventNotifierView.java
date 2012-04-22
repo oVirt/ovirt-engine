@@ -12,6 +12,7 @@ import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.users.UserEventNotifierListModel;
 import org.ovirt.engine.ui.uicommonweb.models.users.UserListModel;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.user.SubTabUserEventNotifierPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
@@ -26,23 +27,23 @@ public class SubTabUserEventNotifierView extends AbstractSubTabTableView<DbUser,
     }
 
     @Inject
-    public SubTabUserEventNotifierView(SearchableDetailModelProvider<event_subscriber, UserListModel, UserEventNotifierListModel> modelProvider) {
+    public SubTabUserEventNotifierView(SearchableDetailModelProvider<event_subscriber, UserListModel, UserEventNotifierListModel> modelProvider, ApplicationConstants constants) {
         super(modelProvider);
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        initTable();
+        initTable(constants);
         initWidget(getTable());
     }
 
-    void initTable() {
+    void initTable(ApplicationConstants constants) {
         TextColumnWithTooltip<event_subscriber> eventNameColumn = new EnumColumn<event_subscriber, AuditLogType>() {
             @Override
             protected AuditLogType getRawValue(event_subscriber object) {
                 return Enum.valueOf(AuditLogType.class, object.getevent_up_name());
             }
         };
-        getTable().addColumn(eventNameColumn, "Event Name");
+        getTable().addColumn(eventNameColumn, constants.eventNameEventNotifier());
 
-        getTable().addActionButton(new WebAdminButtonDefinition<event_subscriber>("Manage Events") {
+        getTable().addActionButton(new WebAdminButtonDefinition<event_subscriber>(constants.manageEventsEventNotifier()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getManageEventsCommand();

@@ -41,21 +41,21 @@ public abstract class GwtDynamicHostPageServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         PrintWriter writer = response.getWriter();
-        response.setContentType("text/html");
-        response.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html"); //$NON-NLS-1$
+        response.setCharacterEncoding("UTF-8"); //$NON-NLS-1$
 
-        writer.append("<!DOCTYPE html><html><head>");
-        writer.append("<meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\">");
-        writer.append("<meta http-equiv=\"X-UA-Compatible\" content=\"IE=9\"/>");
+        writer.append("<!DOCTYPE html><html><head>"); //$NON-NLS-1$
+        writer.append("<meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\">"); //$NON-NLS-1$
+        writer.append("<meta http-equiv=\"X-UA-Compatible\" content=\"IE=9\"/>"); //$NON-NLS-1$
 
-        writer.append("<script type=\"text/javascript\">");
+        writer.append("<script type=\"text/javascript\">"); //$NON-NLS-1$
         writeAdditionalJsData(request, writer);
-        writer.append("</script>");
+        writer.append("</script>"); //$NON-NLS-1$
 
-        writer.append("</head><body>");
-        writer.append("<iframe src=\"javascript:''\" id=\"__gwt_historyFrame\" tabIndex='-1' style=\"position:absolute;width:0;height:0;border:0\"></iframe>");
-        writer.append("<script type=\"text/javascript\" src=\"" + getSelectorScriptName() + "?nocache=" + new Date().getTime() + "\"></script>");
-        writer.append("</body></html>");
+        writer.append("</head><body>"); //$NON-NLS-1$
+        writer.append("<iframe src=\"javascript:''\" id=\"__gwt_historyFrame\" tabIndex='-1' style=\"position:absolute;width:0;height:0;border:0\"></iframe>"); //$NON-NLS-1$
+        writer.append("<script type=\"text/javascript\" src=\"" + getSelectorScriptName() + "?nocache=" + new Date().getTime() + "\"></script>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        writer.append("</body></html>"); //$NON-NLS-1$
     }
 
     @Override
@@ -67,11 +67,11 @@ public abstract class GwtDynamicHostPageServlet extends HttpServlet {
         VdcUser loggedUser = getLoggedInUser(request.getSession().getId());
 
         if (loggedUser != null) {
-            writer.append(" var userInfo = { ");
-            writer.append(" \"id\" : \"" + loggedUser.getUserId().toString() + "\",");
-            writer.append(" \"userName\" : \"" + loggedUser.getUserName() + "\",");
-            writer.append(" \"domain\" : \"" + loggedUser.getDomainControler() + "\"");
-            writer.append(" };");
+            writer.append(" var userInfo = { "); //$NON-NLS-1$
+            writer.append(" \"id\" : \"" + loggedUser.getUserId().toString() + "\","); //$NON-NLS-1$ //$NON-NLS-2$
+            writer.append(" \"userName\" : \"" + loggedUser.getUserName() + "\","); //$NON-NLS-1$ //$NON-NLS-2$
+            writer.append(" \"domain\" : \"" + loggedUser.getDomainControler() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+            writer.append(" };"); //$NON-NLS-1$
         }
     }
 

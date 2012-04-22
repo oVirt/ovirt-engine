@@ -11,6 +11,7 @@ import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.uicommonweb.DataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
 import org.ovirt.engine.ui.uicompat.Translator;
 
@@ -54,7 +55,7 @@ public class TemplateGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(name, value))
         {
             name = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Name"));
+            OnPropertyChanged(new PropertyChangedEventArgs("Name")); //$NON-NLS-1$
         }
     }
 
@@ -70,7 +71,7 @@ public class TemplateGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(description, value))
         {
             description = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Description"));
+            OnPropertyChanged(new PropertyChangedEventArgs("Description")); //$NON-NLS-1$
         }
     }
 
@@ -96,7 +97,7 @@ public class TemplateGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(hostCluster, value))
         {
             hostCluster = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("HostCluster"));
+            OnPropertyChanged(new PropertyChangedEventArgs("HostCluster")); //$NON-NLS-1$
         }
     }
 
@@ -112,7 +113,7 @@ public class TemplateGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(definedMemory, value))
         {
             definedMemory = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("DefinedMemory"));
+            OnPropertyChanged(new PropertyChangedEventArgs("DefinedMemory")); //$NON-NLS-1$
         }
     }
 
@@ -128,7 +129,7 @@ public class TemplateGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(cpuInfo, value))
         {
             cpuInfo = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("CpuInfo"));
+            OnPropertyChanged(new PropertyChangedEventArgs("CpuInfo")); //$NON-NLS-1$
         }
     }
 
@@ -144,7 +145,7 @@ public class TemplateGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(os, value))
         {
             os = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("OS"));
+            OnPropertyChanged(new PropertyChangedEventArgs("OS")); //$NON-NLS-1$
         }
     }
 
@@ -160,7 +161,7 @@ public class TemplateGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(defaultDisplayType, value))
         {
             defaultDisplayType = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("DefaultDisplayType"));
+            OnPropertyChanged(new PropertyChangedEventArgs("DefaultDisplayType")); //$NON-NLS-1$
         }
     }
 
@@ -176,7 +177,7 @@ public class TemplateGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(origin, value))
         {
             origin = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Origin"));
+            OnPropertyChanged(new PropertyChangedEventArgs("Origin")); //$NON-NLS-1$
         }
     }
 
@@ -192,7 +193,7 @@ public class TemplateGeneralModel extends EntityModel
         if (hasHighlyAvailable != value)
         {
             hasHighlyAvailable = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("HasHighlyAvailable"));
+            OnPropertyChanged(new PropertyChangedEventArgs("HasHighlyAvailable")); //$NON-NLS-1$
         }
     }
 
@@ -208,7 +209,7 @@ public class TemplateGeneralModel extends EntityModel
         if (isHighlyAvailable != value)
         {
             isHighlyAvailable = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsHighlyAvailable"));
+            OnPropertyChanged(new PropertyChangedEventArgs("IsHighlyAvailable")); //$NON-NLS-1$
         }
     }
 
@@ -224,7 +225,7 @@ public class TemplateGeneralModel extends EntityModel
         if (hasPriority != value)
         {
             hasPriority = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("HasPriority"));
+            OnPropertyChanged(new PropertyChangedEventArgs("HasPriority")); //$NON-NLS-1$
         }
     }
 
@@ -240,7 +241,7 @@ public class TemplateGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(priority, value))
         {
             priority = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Priority"));
+            OnPropertyChanged(new PropertyChangedEventArgs("Priority")); //$NON-NLS-1$
         }
     }
 
@@ -256,7 +257,7 @@ public class TemplateGeneralModel extends EntityModel
         if (hasMonitorCount != value)
         {
             hasMonitorCount = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("HasMonitorCount"));
+            OnPropertyChanged(new PropertyChangedEventArgs("HasMonitorCount")); //$NON-NLS-1$
         }
     }
 
@@ -272,7 +273,7 @@ public class TemplateGeneralModel extends EntityModel
         if (monitorCount != value)
         {
             monitorCount = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("MonitorCount"));
+            OnPropertyChanged(new PropertyChangedEventArgs("MonitorCount")); //$NON-NLS-1$
         }
     }
 
@@ -288,7 +289,7 @@ public class TemplateGeneralModel extends EntityModel
         if (hasDomain != value)
         {
             hasDomain = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("HasDomain"));
+            OnPropertyChanged(new PropertyChangedEventArgs("HasDomain")); //$NON-NLS-1$
         }
     }
 
@@ -304,7 +305,7 @@ public class TemplateGeneralModel extends EntityModel
         if (hasTimeZone != value)
         {
             hasTimeZone = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("HasTimeZone"));
+            OnPropertyChanged(new PropertyChangedEventArgs("HasTimeZone")); //$NON-NLS-1$
         }
     }
 
@@ -320,7 +321,7 @@ public class TemplateGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(domain, value))
         {
             domain = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Domain"));
+            OnPropertyChanged(new PropertyChangedEventArgs("Domain")); //$NON-NLS-1$
         }
     }
 
@@ -336,7 +337,7 @@ public class TemplateGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(timeZone, value))
         {
             timeZone = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("TimeZone"));
+            OnPropertyChanged(new PropertyChangedEventArgs("TimeZone")); //$NON-NLS-1$
         }
     }
 
@@ -352,7 +353,7 @@ public class TemplateGeneralModel extends EntityModel
         if (hasUsbPolicy != value)
         {
             hasUsbPolicy = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("HasUsbPolicy"));
+            OnPropertyChanged(new PropertyChangedEventArgs("HasUsbPolicy")); //$NON-NLS-1$
         }
     }
 
@@ -368,7 +369,7 @@ public class TemplateGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(usbPolicy, value))
         {
             usbPolicy = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("UsbPolicy"));
+            OnPropertyChanged(new PropertyChangedEventArgs("UsbPolicy")); //$NON-NLS-1$
         }
     }
 
@@ -384,13 +385,14 @@ public class TemplateGeneralModel extends EntityModel
         if (isStateless != value)
         {
             isStateless = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsStateless"));
+            OnPropertyChanged(new PropertyChangedEventArgs("IsStateless")); //$NON-NLS-1$
         }
     }
 
     public TemplateGeneralModel()
     {
-        setTitle("General");
+        setTitle(ConstantsManager.getInstance().getConstants().generalTitle());
+        setHashName("general"); //$NON-NLS-1$
     }
 
     @Override
@@ -418,13 +420,13 @@ public class TemplateGeneralModel extends EntityModel
 
         setName(template.getname());
         setDescription(template.getdescription());
-        setQuotaName(template.getQuotaName() != null ? template.getQuotaName() : "");
+        setQuotaName(template.getQuotaName() != null ? template.getQuotaName() : ""); //$NON-NLS-1$
         setHostCluster(template.getvds_group_name());
-        setDefinedMemory(template.getmem_size_mb() + " MB");
+        setDefinedMemory(template.getmem_size_mb() + " MB"); //$NON-NLS-1$
         setIsHighlyAvailable(template.getauto_startup());
         setPriority(PriorityToString(template.getpriority()));
         setMonitorCount(template.getnum_of_monitors());
-        setCpuInfo(StringFormat.format("%1$s (%2$s Socket(s), %3$s Core(s) per Socket)",
+        setCpuInfo(StringFormat.format("%1$s (%2$s Socket(s), %3$s Core(s) per Socket)", //$NON-NLS-1$
                 template.getnum_of_cpus(),
                 template.getnum_of_sockets(),
                 template.getcpu_per_socket()));
@@ -459,19 +461,19 @@ public class TemplateGeneralModel extends EntityModel
 
         if (roundedPriority == 1)
         {
-            priorityStr = "Low";
+            priorityStr = "Low"; //$NON-NLS-1$
         }
         else if (roundedPriority == highPriority / 2)
         {
-            priorityStr = "Medium";
+            priorityStr = "Medium"; //$NON-NLS-1$
         }
         else if (roundedPriority == highPriority)
         {
-            priorityStr = "High";
+            priorityStr = "High"; //$NON-NLS-1$
         }
         else
         {
-            priorityStr = "Unknown";
+            priorityStr = "Unknown"; //$NON-NLS-1$
         }
 
         return priorityStr;

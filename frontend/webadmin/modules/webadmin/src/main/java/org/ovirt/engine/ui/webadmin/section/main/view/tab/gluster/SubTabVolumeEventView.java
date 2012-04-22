@@ -9,6 +9,7 @@ import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeEventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.volumes.VolumeListModel;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.SubTabVolumeEventPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabEventView;
 
@@ -25,8 +26,8 @@ public class SubTabVolumeEventView extends AbstractSubTabEventView<GlusterVolume
     @Inject
     public SubTabVolumeEventView(SearchableDetailModelProvider<AuditLog, VolumeListModel, VolumeEventListModel> modelProvider,
             EventBus eventBus,
-            ClientStorage clientStorage) {
-        super(modelProvider, eventBus, clientStorage);
+            ClientStorage clientStorage, ApplicationConstants constants) {
+        super(modelProvider, eventBus, clientStorage, constants);
     }
 
     @Override

@@ -9,6 +9,7 @@ import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaClusterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaListModel;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.quota.SubTabQuotaClusterPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 
@@ -22,38 +23,38 @@ public class SubTabQuotaClusterView extends AbstractSubTabTableView<Quota, Quota
     }
 
     @Inject
-    public SubTabQuotaClusterView(SearchableDetailModelProvider<QuotaVdsGroup, QuotaListModel, QuotaClusterListModel> modelProvider) {
+    public SubTabQuotaClusterView(SearchableDetailModelProvider<QuotaVdsGroup, QuotaListModel, QuotaClusterListModel> modelProvider, ApplicationConstants constants) {
         super(modelProvider);
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        initTable();
+        initTable(constants);
         initWidget(getTable());
     }
 
-    private void initTable() {
+    private void initTable(ApplicationConstants constants) {
         getTable().addColumn(new TextColumnWithTooltip<QuotaVdsGroup>() {
             @Override
             public String getValue(QuotaVdsGroup object) {
                 return object.getVdsGroupName();
             }
-        }, "Name");
+        }, constants.nameCluster());
 
         getTable().addColumn(new TextColumnWithTooltip<QuotaVdsGroup>() {
             @Override
             public String getValue(QuotaVdsGroup object) {
-                return (object.getMemSizeMBUsage() == null ? "0" : object.getMemSizeMBUsage().toString()) + "/"
-                        + (object.getMemSizeMB() == null ? "*" : object.getMemSizeMB().toString()) + " GB";
+                return (object.getMemSizeMBUsage() == null ? "0" : object.getMemSizeMBUsage().toString()) + "/" //$NON-NLS-1$ //$NON-NLS-2$
+                        + (object.getMemSizeMB() == null ? "*" : object.getMemSizeMB().toString()) + " GB"; //$NON-NLS-1$ //$NON-NLS-2$
             }
         },
-                "Used Memory/Total");
+                constants.usedMemoryTotalCluster());
 
         getTable().addColumn(new TextColumnWithTooltip<QuotaVdsGroup>() {
             @Override
             public String getValue(QuotaVdsGroup object) {
-                return (object.getVirtualCpuUsage() == null ? "0" : object.getVirtualCpuUsage().toString()) + "/"
-                        + (object.getVirtualCpu() == null ? "*" : object.getVirtualCpu().toString());
+                return (object.getVirtualCpuUsage() == null ? "0" : object.getVirtualCpuUsage().toString()) + "/" //$NON-NLS-1$ //$NON-NLS-2$
+                        + (object.getVirtualCpu() == null ? "*" : object.getVirtualCpu().toString()); //$NON-NLS-1$
             }
         },
-                "Running CPU/Total");
+                constants.runningCpuTotalCluster());
     }
 
 }

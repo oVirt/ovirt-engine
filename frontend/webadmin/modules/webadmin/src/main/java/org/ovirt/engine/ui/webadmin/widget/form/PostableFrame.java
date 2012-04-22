@@ -30,10 +30,10 @@ public class PostableFrame extends Frame {
         // Form
         form = new FormPanel(frameName);
         form.setMethod(FormPanel.METHOD_POST);
-        form.setSize("0", "0");
+        form.setSize("0", "0"); //$NON-NLS-1$ //$NON-NLS-2$
 
         // Frame
-        getElement().setAttribute("name", frameName);
+        getElement().setAttribute("name", frameName); //$NON-NLS-1$
     }
 
     /**

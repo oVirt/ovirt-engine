@@ -60,7 +60,7 @@ public class SimpleSelectionTreeNodeModel implements TreeNodeModel<SelectionTree
 
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                if ("IsSelectedNullable".equals(((PropertyChangedEventArgs) args).PropertyName)) {
+                if ("IsSelectedNullable".equals(((PropertyChangedEventArgs) args).PropertyName)) { //$NON-NLS-1$
                     SelectionEvent.fire(SimpleSelectionTreeNodeModel.this, SimpleSelectionTreeNodeModel.this);
                 }
             }

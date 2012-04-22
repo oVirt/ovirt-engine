@@ -25,7 +25,7 @@ public class ReversibleFlow {
 
     static {
 
-        CompleteEventDefinition = new EventDefinition("Complete", ReversibleFlow.class);
+        CompleteEventDefinition = new EventDefinition("Complete", ReversibleFlow.class); //$NON-NLS-1$
     }
 
 

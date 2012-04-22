@@ -141,10 +141,10 @@ public class MainTabBasicDetailsPresenterWidget extends PresenterWidget<MainTabB
             if (protocol == null) {
                 getView().setConsoleWarningMessage(consoleUtils.determineProtocolMessage(item));
             } else {
-                getView().setConsoleProtocol(protocol == null ? "" : protocol.displayName);
+                getView().setConsoleProtocol(protocol == null ? "" : protocol.displayName); //$NON-NLS-1$
             }
         } else {
-            getView().setConsoleProtocol("");
+            getView().setConsoleProtocol(""); //$NON-NLS-1$
         }
     }
 

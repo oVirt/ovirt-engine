@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.common.widget.uicommon;
 
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
+import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.action.SubTabTreeActionPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
@@ -21,16 +22,18 @@ public abstract class AbstractModelBoundTreeWidget<M extends SearchableListModel
     protected final SearchableDetailModelProvider<R, T, M> modelProvider;
     protected final CommonApplicationResources resources;
     protected final CommonApplicationConstants constants;
+    protected final CommonApplicationTemplates templates;
 
     private final AbstractSubTabTree<M, R, N> tree;
 
     public AbstractModelBoundTreeWidget(SearchableDetailModelProvider<R, T, M> modelProvider,
             EventBus eventBus, CommonApplicationResources resources,
-            CommonApplicationConstants constants) {
+            CommonApplicationConstants constants, CommonApplicationTemplates templates) {
         this.modelProvider = modelProvider;
         this.eventBus = eventBus;
         this.resources = resources;
         this.constants = constants;
+        this.templates = templates;
         this.tree = createTree();
         initWidget(getWrappedWidget());
     }

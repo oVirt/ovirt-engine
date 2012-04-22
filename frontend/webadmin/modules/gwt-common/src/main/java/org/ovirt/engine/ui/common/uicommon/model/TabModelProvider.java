@@ -76,7 +76,7 @@ public abstract class TabModelProvider<M extends EntityModel> implements ModelPr
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 String propName = ((PropertyChangedEventArgs) args).PropertyName;
 
-                if ("WidgetModel".equals(propName)) {
+                if ("WidgetModel".equals(propName)) { //$NON-NLS-1$
                     modelBoundWidgetChange();
                 }
             }
@@ -92,7 +92,7 @@ public abstract class TabModelProvider<M extends EntityModel> implements ModelPr
 
     @Override
     public String[] getWindowPropertyNames() {
-        return new String[] { "Window" };
+        return new String[] { "Window" }; //$NON-NLS-1$
     }
 
     @Override
@@ -107,7 +107,7 @@ public abstract class TabModelProvider<M extends EntityModel> implements ModelPr
 
     @Override
     public String[] getConfirmWindowPropertyNames() {
-        return new String[] { "ConfirmWindow" };
+        return new String[] { "ConfirmWindow" }; //$NON-NLS-1$
     }
 
     @Override

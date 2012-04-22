@@ -227,10 +227,10 @@ public class HostConfigureLocalStoragePopupView extends AbstractModelBoundPopupV
 
 
         // Optimization options.
-        optimizationNoneEditor = new EntityModelRadioButtonEditor("1");
-        optimizationForServerEditor = new EntityModelRadioButtonEditor("1");
-        optimizationForDesktopEditor = new EntityModelRadioButtonEditor("1");
-        optimizationCustomEditor = new EntityModelRadioButtonEditor("1");
+        optimizationNoneEditor = new EntityModelRadioButtonEditor("1"); //$NON-NLS-1$
+        optimizationForServerEditor = new EntityModelRadioButtonEditor("1"); //$NON-NLS-1$
+        optimizationForDesktopEditor = new EntityModelRadioButtonEditor("1"); //$NON-NLS-1$
+        optimizationCustomEditor = new EntityModelRadioButtonEditor("1"); //$NON-NLS-1$
 
         optimizationCustomExplanationLabel = new Label();
         optimizationCustomExplanationLabel.setVisible(false);
@@ -283,7 +283,7 @@ public class HostConfigureLocalStoragePopupView extends AbstractModelBoundPopupV
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 optimizationForServerExplanationLabel.setText(StringFormat.format(optimizationForServerExplanationLabel.getText(),
-                    model.getCluster().getOptimizationForServer().getEntity().toString() + "%"));
+                    model.getCluster().getOptimizationForServer().getEntity().toString() + "%")); //$NON-NLS-1$
             }
         });
 
@@ -292,7 +292,7 @@ public class HostConfigureLocalStoragePopupView extends AbstractModelBoundPopupV
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 optimizationForDesktopExplanationLabel.setText(StringFormat.format(optimizationForDesktopExplanationLabel.getText(),
-                    model.getCluster().getOptimizationForDesktop().getEntity().toString() + "%"));
+                    model.getCluster().getOptimizationForDesktop().getEntity().toString() + "%")); //$NON-NLS-1$
             }
         });
 
@@ -302,7 +302,7 @@ public class HostConfigureLocalStoragePopupView extends AbstractModelBoundPopupV
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 if ((Boolean) model.getCluster().getOptimizationCustom_IsSelected().getEntity()) {
                     optimizationCustomExplanationLabel.setText(StringFormat.format(optimizationCustomExplanationLabel.getText(),
-                        model.getCluster().getOptimizationCustom().getEntity().toString() + "%"));
+                        model.getCluster().getOptimizationCustom().getEntity().toString() + "%")); //$NON-NLS-1$
                     optimizationCustomExplanationLabel.setVisible(true);
                 }
             }

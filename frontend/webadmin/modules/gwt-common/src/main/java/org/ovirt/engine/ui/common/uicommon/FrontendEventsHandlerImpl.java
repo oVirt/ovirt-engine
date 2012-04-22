@@ -10,6 +10,8 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.system.ErrorPopupManager;
 import org.ovirt.engine.ui.frontend.IFrontendEventsHandler;
+import org.ovirt.engine.ui.uicompat.EnumTranslator;
+import org.ovirt.engine.ui.uicompat.Translator;
 
 import com.google.inject.Inject;
 
@@ -42,15 +44,18 @@ public class FrontendEventsHandlerImpl implements IFrontendEventsHandler {
 
     @Override
     public void runActionExecutionFailed(VdcActionType action, VdcFault fault) {
+        Translator vdcActionTypeTranslator = EnumTranslator.Create(VdcActionType.class);
+
         errorPopupManager.show(
-                messages.uiCommonRunActionExecutionFailed(action.toString(), fault.getMessage()));
+                messages.uiCommonRunActionExecutionFailed(vdcActionTypeTranslator.containsKey(action) ? vdcActionTypeTranslator.get(action)
+                        : action.toString(), fault.getMessage()));
     }
 
     @Override
     public void runQueryFailed(List<VdcQueryReturnValue> returnValue) {
         errorPopupManager.show(
                 messages.uiCommonRunQueryFailed(
-                        returnValue != null ? ErrorMessageFormatter.formatQueryReturnValues(returnValue) : "null"));
+                        returnValue != null ? ErrorMessageFormatter.formatQueryReturnValues(returnValue) : "null")); //$NON-NLS-1$
     }
 
     @Override

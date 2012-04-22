@@ -56,25 +56,25 @@ public class GuidePopupPresenterWidget extends AbstractModelBoundPopupPresenterW
             UICommand lastExecutedCommand, Model windowModel) {
         String lastExecutedCommandName = lastExecutedCommand.getName();
 
-        if (lastExecutedCommandName.equals("AddCluster")) {
+        if (lastExecutedCommandName.equals("AddCluster")) { //$NON-NLS-1$
             return clusterPopupProvider.get();
-        } else if (lastExecutedCommandName.equals("AddHost")) {
+        } else if (lastExecutedCommandName.equals("AddHost")) { //$NON-NLS-1$
             return hostPopupProvider.get();
-        } else if (lastExecutedCommandName.equals("SelectHost")) {
+        } else if (lastExecutedCommandName.equals("SelectHost")) { //$NON-NLS-1$
             return moveHostPopupProvider.get();
-        } else if (lastExecutedCommandName.equals("AddDataStorage")) {
+        } else if (lastExecutedCommandName.equals("AddDataStorage")) { //$NON-NLS-1$
             return storagePopupProvider.get();
-        } else if (lastExecutedCommandName.equals("AddIsoStorage")) {
+        } else if (lastExecutedCommandName.equals("AddIsoStorage")) { //$NON-NLS-1$
             return storagePopupProvider.get();
-        } else if (lastExecutedCommandName.equals("AddLocalStorage")) {
+        } else if (lastExecutedCommandName.equals("AddLocalStorage")) { //$NON-NLS-1$
             return storagePopupProvider.get();
-        } else if (lastExecutedCommandName.equals("AttachDataStorage")) {
+        } else if (lastExecutedCommandName.equals("AttachDataStorage")) { //$NON-NLS-1$
             return multiStoragePopupProvider.get();
-        } else if (lastExecutedCommandName.equals("AttachIsoStorage")) {
+        } else if (lastExecutedCommandName.equals("AttachIsoStorage")) { //$NON-NLS-1$
             return singleStoragePopupProvider.get();
-        } else if (lastExecutedCommandName.equals("AddNetwork")) {
+        } else if (lastExecutedCommandName.equals("AddNetwork")) { //$NON-NLS-1$
             return vmInterfacePopupProvider.get();
-        } else if (lastExecutedCommandName.equals("AddDisk")) {
+        } else if (lastExecutedCommandName.equals("AddDisk")) { //$NON-NLS-1$
             return vmDiskPopupPopupProvider.get();
         } else {
             return super.getModelPopup(source, lastExecutedCommand, windowModel);

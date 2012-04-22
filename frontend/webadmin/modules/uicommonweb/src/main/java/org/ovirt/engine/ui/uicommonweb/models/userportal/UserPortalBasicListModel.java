@@ -108,7 +108,7 @@ public class UserPortalBasicListModel extends IUserPortalListModel implements IV
 
     static
     {
-        SearchCompletedEventDefinition = new EventDefinition("SearchCompleted", UserPortalBasicListModel.class);
+        SearchCompletedEventDefinition = new EventDefinition("SearchCompleted", UserPortalBasicListModel.class); //$NON-NLS-1$
     }
 
     public UserPortalBasicListModel()
@@ -178,7 +178,7 @@ public class UserPortalBasicListModel extends IUserPortalListModel implements IV
             items = value;
             ItemsChanged();
             getItemsChangedEvent().raise(this, EventArgs.Empty);
-            OnPropertyChanged(new PropertyChangedEventArgs("Items"));
+            OnPropertyChanged(new PropertyChangedEventArgs("Items")); //$NON-NLS-1$
         }
     }
 
@@ -264,15 +264,15 @@ public class UserPortalBasicListModel extends IUserPortalListModel implements IV
     public void UpdateDetails(VM vm)
     {
         getSelectedItemDefinedMemory().setEntity(SizeParser(vm.getvm_mem_size_mb()));
-        getSelectedItemNumOfCpuCores().setEntity(vm.getnum_of_cpus() + " " + "(" + vm.getnum_of_sockets()
-                + " Socket(s), " + vm.getcpu_per_socket() + " Core(s) per Socket)");
+        getSelectedItemNumOfCpuCores().setEntity(vm.getnum_of_cpus() + " " + "(" + vm.getnum_of_sockets() //$NON-NLS-1$ //$NON-NLS-2$
+                + " Socket(s), " + vm.getcpu_per_socket() + " Core(s) per Socket)"); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     // Temporarily converter
     // TODO: Use converters infrastructure in UICommon
     public String SizeParser(int sizeInMb)
     {
-        return ((sizeInMb >= 1024 && sizeInMb % 1024 == 0) ? (sizeInMb / 1024 + "GB") : (sizeInMb + "MB"));
+        return ((sizeInMb >= 1024 && sizeInMb % 1024 == 0) ? (sizeInMb / 1024 + "GB") : (sizeInMb + "MB")); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     @Override
@@ -394,7 +394,7 @@ public class UserPortalBasicListModel extends IUserPortalListModel implements IV
 
     @Override
     protected String getListName() {
-        return "UserPortalBasicListModel";
+        return "UserPortalBasicListModel"; //$NON-NLS-1$
     }
 
     // overridden only to allow the UIBinder to access this

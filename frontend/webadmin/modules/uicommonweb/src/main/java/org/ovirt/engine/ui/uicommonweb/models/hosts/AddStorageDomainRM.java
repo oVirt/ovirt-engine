@@ -35,16 +35,16 @@ public class AddStorageDomainRM implements IEnlistmentNotification {
         VDS host = (VDS) model.getSelectedItem();
 
         Frontend.RunAction(VdcActionType.ActivateVds, new VdsActionParameters(host.getId()),
-            new IFrontendActionAsyncCallback() {
-                @Override
-                public void Executed(FrontendActionAsyncResult result) {
+                new IFrontendActionAsyncCallback() {
+                    @Override
+                    public void Executed(FrontendActionAsyncResult result) {
 
-                    VdcReturnValueBase returnValue = result.getReturnValue();
+                        VdcReturnValueBase returnValue = result.getReturnValue();
 
-                    context.activateVdsReturnValue = returnValue;
-                    prepare2();
-                }
-            });
+                        context.activateVdsReturnValue = returnValue;
+                        prepare2();
+                    }
+                });
     }
 
     private void prepare2() {
@@ -75,22 +75,22 @@ public class AddStorageDomainRM implements IEnlistmentNotification {
             context.waitTries++;
 
             AsyncDataProvider.GetHostById(new AsyncQuery(this,
-                new INewAsyncCallback() {
-                    @Override
-                    public void OnSuccess(Object model, Object returnValue) {
+                    new INewAsyncCallback() {
+                        @Override
+                        public void OnSuccess(Object model, Object returnValue) {
 
-                        context.host = (VDS) returnValue;
+                            context.host = (VDS) returnValue;
 
-                        timer = new Timer() {
-                            @Override
-                            public void run() {
-                                prepare4();
-                            }
-                        };
-                        timer.scheduleRepeating(WaitInterval);
-                    }
-                }),
-                host.getId());
+                            timer = new Timer() {
+                                @Override
+                                public void run() {
+                                    prepare4();
+                                }
+                            };
+                            timer.scheduleRepeating(WaitInterval);
+                        }
+                    }),
+                    host.getId());
         } else {
 
             context.enlistment = null;
@@ -120,17 +120,18 @@ public class AddStorageDomainRM implements IEnlistmentNotification {
             connection.setstorage_type(StorageType.LOCALFS);
             context.connection = connection;
 
-            Frontend.RunAction(VdcActionType.AddStorageServerConnection, new StorageServerConnectionParametersBase(connection, context.host.getId()),
-                new IFrontendActionAsyncCallback() {
-                    @Override
-                    public void Executed(FrontendActionAsyncResult result) {
+            Frontend.RunAction(VdcActionType.AddStorageServerConnection,
+                    new StorageServerConnectionParametersBase(connection, context.host.getId()),
+                    new IFrontendActionAsyncCallback() {
+                        @Override
+                        public void Executed(FrontendActionAsyncResult result) {
 
-                        VdcReturnValueBase returnValue = result.getReturnValue();
+                            VdcReturnValueBase returnValue = result.getReturnValue();
 
-                        context.addStorageServerConnectionReturnValue = returnValue;
-                        prepare5();
-                    }
-                });
+                            context.addStorageServerConnectionReturnValue = returnValue;
+                            prepare5();
+                        }
+                    });
         }
     }
 
@@ -159,16 +160,16 @@ public class AddStorageDomainRM implements IEnlistmentNotification {
             parameter.setVdsId(context.host.getId());
 
             Frontend.RunAction(VdcActionType.AddLocalStorageDomain, parameter,
-                new IFrontendActionAsyncCallback() {
-                    @Override
-                    public void Executed(FrontendActionAsyncResult result) {
+                    new IFrontendActionAsyncCallback() {
+                        @Override
+                        public void Executed(FrontendActionAsyncResult result) {
 
-                        VdcReturnValueBase returnValue = result.getReturnValue();
+                            VdcReturnValueBase returnValue = result.getReturnValue();
 
-                        context.addLocalStorageDomainReturnValue = returnValue;
-                        prepare6();
-                    }
-                });
+                            context.addLocalStorageDomainReturnValue = returnValue;
+                            prepare6();
+                        }
+                    });
         }
     }
 
@@ -179,17 +180,18 @@ public class AddStorageDomainRM implements IEnlistmentNotification {
 
         if (returnValue == null || !returnValue.getSucceeded()) {
 
-            Frontend.RunAction(VdcActionType.RemoveStorageServerConnection, new StorageServerConnectionParametersBase(context.connection, context.host.getId()),
-                new IFrontendActionAsyncCallback() {
-                    @Override
-                    public void Executed(FrontendActionAsyncResult result) {
+            Frontend.RunAction(VdcActionType.RemoveStorageServerConnection,
+                    new StorageServerConnectionParametersBase(context.connection, context.host.getId()),
+                    new IFrontendActionAsyncCallback() {
+                        @Override
+                        public void Executed(FrontendActionAsyncResult result) {
 
-                        VdcReturnValueBase returnValue = result.getReturnValue();
+                            VdcReturnValueBase returnValue = result.getReturnValue();
 
-                        context.removeStorageServerConnectionReturnValue = returnValue;
-                        prepare7();
-                    }
-                });
+                            context.removeStorageServerConnectionReturnValue = returnValue;
+                            prepare7();
+                        }
+                    });
         } else {
             prepare7();
         }
@@ -211,87 +213,86 @@ public class AddStorageDomainRM implements IEnlistmentNotification {
         }
     }
 
-
-    //    @Override
-    //    public void Prepare(PreparingEnlistment enlistment)
-    //    {
-    //        VDS host = (VDS) getModel().getSelectedItem();
-    //        ConfigureLocalStorageModel model = (ConfigureLocalStorageModel) getModel().getWindow();
+    // @Override
+    // public void Prepare(PreparingEnlistment enlistment)
+    // {
+    // VDS host = (VDS) getModel().getSelectedItem();
+    // ConfigureLocalStorageModel model = (ConfigureLocalStorageModel) getModel().getWindow();
     //
-    //        // Activate host.
-    //        VdcReturnValueBase returnValue =
-    //                Frontend.RunAction(VdcActionType.ActivateVds, new VdsActionParameters(host.getvds_id()));
+    // // Activate host.
+    // VdcReturnValueBase returnValue =
+    // Frontend.RunAction(VdcActionType.ActivateVds, new VdsActionParameters(host.getvds_id()));
     //
-    //        if (returnValue == null || !returnValue.getSucceeded())
-    //        {
-    //            enlistment.ForceRollback();
-    //            return;
-    //        }
+    // if (returnValue == null || !returnValue.getSucceeded())
+    // {
+    // enlistment.ForceRollback();
+    // return;
+    // }
     //
-    //        // Wait for a host to be Up.
-    //        for (int i = 0; i <= MaxWaitTries; i++)
-    //        {
-    //            if (i == MaxWaitTries)
-    //            {
-    //                enlistment.ForceRollback();
-    //                return;
-    //            }
+    // // Wait for a host to be Up.
+    // for (int i = 0; i <= MaxWaitTries; i++)
+    // {
+    // if (i == MaxWaitTries)
+    // {
+    // enlistment.ForceRollback();
+    // return;
+    // }
     //
-    //            VDS tmpHost = DataProvider.GetHostById(host.getvds_id());
-    //            if (tmpHost.getstatus() != VDSStatus.Up)
-    //            {
-    //                // Wrap Thread.Sleep with try/catch to pass conversion to Java.
-    //                try
-    //                {
-    //                    Thread.sleep(WaitInterval);
-    //                } catch (InterruptedException e)
-    //                {
-    //                }
-    //            }
-    //            else
-    //            {
-    //                break;
-    //            }
-    //        }
+    // VDS tmpHost = DataProvider.GetHostById(host.getvds_id());
+    // if (tmpHost.getstatus() != VDSStatus.Up)
+    // {
+    // // Wrap Thread.Sleep with try/catch to pass conversion to Java.
+    // try
+    // {
+    // Thread.sleep(WaitInterval);
+    // } catch (InterruptedException e)
+    // {
+    // }
+    // }
+    // else
+    // {
+    // break;
+    // }
+    // }
     //
-    //        // Add storage domain.
-    //        storage_server_connections tempVar = new storage_server_connections();
-    //        tempVar.setconnection((String) model.getStorage().getPath().getEntity());
-    //        tempVar.setstorage_type(StorageType.LOCALFS);
-    //        storage_server_connections connection = tempVar;
+    // // Add storage domain.
+    // storage_server_connections tempVar = new storage_server_connections();
+    // tempVar.setconnection((String) model.getStorage().getPath().getEntity());
+    // tempVar.setstorage_type(StorageType.LOCALFS);
+    // storage_server_connections connection = tempVar;
     //
-    //        storage_domain_static storageDomain = new storage_domain_static();
-    //        storageDomain.setstorage_type(StorageType.LOCALFS);
-    //        storageDomain.setstorage_domain_type(StorageDomainType.Data);
-    //        storageDomain.setstorage_name((String) model.getFormattedStorageName().getEntity());
+    // storage_domain_static storageDomain = new storage_domain_static();
+    // storageDomain.setstorage_type(StorageType.LOCALFS);
+    // storageDomain.setstorage_domain_type(StorageDomainType.Data);
+    // storageDomain.setstorage_name((String) model.getFormattedStorageName().getEntity());
     //
-    //        returnValue =
-    //                Frontend.RunAction(VdcActionType.AddStorageServerConnection,
-    //                        new StorageServerConnectionParametersBase(connection, host.getvds_id()));
+    // returnValue =
+    // Frontend.RunAction(VdcActionType.AddStorageServerConnection,
+    // new StorageServerConnectionParametersBase(connection, host.getvds_id()));
     //
-    //        if (returnValue == null || !returnValue.getSucceeded())
-    //        {
-    //            // Don't rollback, just throw exception to indicate failure at this step.
-    //            enlistment.Done();
-    //        }
+    // if (returnValue == null || !returnValue.getSucceeded())
+    // {
+    // // Don't rollback, just throw exception to indicate failure at this step.
+    // enlistment.Done();
+    // }
     //
-    //        storageDomain.setstorage((String) returnValue.getActionReturnValue());
+    // storageDomain.setstorage((String) returnValue.getActionReturnValue());
     //
-    //        StorageDomainManagementParameter tempVar2 = new StorageDomainManagementParameter(storageDomain);
-    //        tempVar2.setVdsId(host.getvds_id());
-    //        returnValue = Frontend.RunAction(VdcActionType.AddLocalStorageDomain, tempVar2);
+    // StorageDomainManagementParameter tempVar2 = new StorageDomainManagementParameter(storageDomain);
+    // tempVar2.setVdsId(host.getvds_id());
+    // returnValue = Frontend.RunAction(VdcActionType.AddLocalStorageDomain, tempVar2);
     //
-    //        // Clean up connection.
-    //        if (returnValue == null || !returnValue.getSucceeded())
-    //        {
-    //            Frontend.RunAction(VdcActionType.RemoveStorageServerConnection,
-    //                    new StorageServerConnectionParametersBase(connection, host.getvds_id()));
+    // // Clean up connection.
+    // if (returnValue == null || !returnValue.getSucceeded())
+    // {
+    // Frontend.RunAction(VdcActionType.RemoveStorageServerConnection,
+    // new StorageServerConnectionParametersBase(connection, host.getvds_id()));
     //
-    //            enlistment.Done();
-    //        }
+    // enlistment.Done();
+    // }
     //
-    //        enlistment.Prepared();
-    //    }
+    // enlistment.Prepared();
+    // }
 
     @Override
     public void commit(Enlistment enlistment) {
@@ -302,7 +303,6 @@ public class AddStorageDomainRM implements IEnlistmentNotification {
     public void rollback(Enlistment enlistment) {
         enlistment.Done();
     }
-
 
     private final Context context = new Context();
 

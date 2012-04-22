@@ -28,4 +28,3 @@ public class ReportCommand extends UICommand {
         return uriValue;
     }
 }
-

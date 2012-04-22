@@ -91,7 +91,7 @@ public abstract class AbstractMainTabWithDetailsPresenter<T, M extends ListWithD
     }
 
     PlaceRequest getSubTabRequest() {
-        String subTabName = modelProvider.getModel().getActiveDetailModel().getTitle().toLowerCase().replace(" ", "_");
+        String subTabName = modelProvider.getModel().getActiveDetailModel().getHashName();
         String requestToken = getMainTabRequest().getNameToken() + ApplicationPlaces.SUB_TAB_PREFIX + subTabName;
 
         return new PlaceRequest(requestToken);

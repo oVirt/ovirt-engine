@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.common.widget.uicommon.permissions;
 
 import org.ovirt.engine.core.common.businessentities.permissions;
+import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
 import org.ovirt.engine.ui.common.widget.action.UiCommandButtonDefinition;
@@ -21,8 +22,8 @@ public class PermissionListModelTable<P extends PermissionListModel> extends Abs
     }
 
     @Override
-    public void initTable() {
-        getTable().addColumn(new PermissionTypeColumn(), "", "30px");
+    public void initTable(CommonApplicationConstants constants) {
+        getTable().addColumn(new PermissionTypeColumn(), constants.empty(), "30px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<permissions> userColumn = new TextColumnWithTooltip<permissions>() {
             @Override
@@ -30,7 +31,7 @@ public class PermissionListModelTable<P extends PermissionListModel> extends Abs
                 return object.getOwnerName();
             }
         };
-        getTable().addColumn(userColumn, "User");
+        getTable().addColumn(userColumn, constants.userPermission());
 
         TextColumnWithTooltip<permissions> roleColumn = new TextColumnWithTooltip<permissions>() {
             @Override
@@ -38,15 +39,15 @@ public class PermissionListModelTable<P extends PermissionListModel> extends Abs
                 return object.getRoleName();
             }
         };
-        getTable().addColumn(roleColumn, "Role");
+        getTable().addColumn(roleColumn, constants.rolePermission());
 
-        getTable().addActionButton(new UiCommandButtonDefinition<permissions>(getEventBus(), "Add") {
+        getTable().addActionButton(new UiCommandButtonDefinition<permissions>(getEventBus(), constants.addPermission()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getAddCommand();
             }
         });
-        getTable().addActionButton(new UiCommandButtonDefinition<permissions>(getEventBus(), "Remove") {
+        getTable().addActionButton(new UiCommandButtonDefinition<permissions>(getEventBus(), constants.removePermission()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getRemoveCommand();

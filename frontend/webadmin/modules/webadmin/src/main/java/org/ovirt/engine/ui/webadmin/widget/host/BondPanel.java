@@ -18,7 +18,7 @@ public class BondPanel extends TogglePanel {
         clear();
 
         Style style = getElement().getStyle();
-        style.setBorderColor("white");
+        style.setBorderColor("white"); //$NON-NLS-1$
         style.setBorderWidth(1, Unit.PX);
         style.setBorderStyle(BorderStyle.SOLID);
 
@@ -31,7 +31,7 @@ public class BondPanel extends TogglePanel {
             // Bond name
             add(new Label(new HostInterfaceBondNameRenderer().render(lineModel)));
         } else {
-            add(new Label(""));
+            add(new Label("")); //$NON-NLS-1$
         }
     }
 

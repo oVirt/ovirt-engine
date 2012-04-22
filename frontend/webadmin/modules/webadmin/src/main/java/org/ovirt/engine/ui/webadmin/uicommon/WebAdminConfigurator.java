@@ -30,17 +30,17 @@ public class WebAdminConfigurator extends Configurator implements IEventListener
 
     // Temporarily save the locations of webadmin and userportal.
     // TODO: create a new SPICE RPM for webadmin
-    private static final String WEBADMIN_ROOT_FOLDER = "/webadmin/webadmin/";
-    private static final String USERPORTAL_ROOT_FOLDER = "/userportal-gwtp/userportal/";
+    private static final String WEBADMIN_ROOT_FOLDER = "/webadmin/webadmin/"; //$NON-NLS-1$
+    private static final String USERPORTAL_ROOT_FOLDER = "/userportal-gwtp/userportal/"; //$NON-NLS-1$
 
-    public static final String DOCUMENTATION_GUIDE_PATH = "Administration_Guide/index.html";
+    public static final String DOCUMENTATION_GUIDE_PATH = "Administration_Guide/index.html"; //$NON-NLS-1$
 
     public EventDefinition spiceVersionFileFetchedEvent_Definition =
-            new EventDefinition("spiceVersionFileFetched", WebAdminConfigurator.class);
+            new EventDefinition("spiceVersionFileFetched", WebAdminConfigurator.class); //$NON-NLS-1$
 
     public Event spiceVersionFileFetchedEvent = new Event(spiceVersionFileFetchedEvent_Definition);
 
-    public EventDefinition documentationFileFetchedEvent_Definition = new EventDefinition("documentationFileFetched",
+    public EventDefinition documentationFileFetchedEvent_Definition = new EventDefinition("documentationFileFetched", //$NON-NLS-1$
             WebAdminConfigurator.class);
     public Event documentationFileFetchedEvent = new Event(documentationFileFetchedEvent_Definition);
 
@@ -68,25 +68,25 @@ public class WebAdminConfigurator extends Configurator implements IEventListener
         // Update spice version from the text files which are located on the server.
         // If can't update spice version - leave the default value from the Configurator.
         ClientAgentType cat = new ClientAgentType();
-        if ((cat.os.equalsIgnoreCase("Windows")) && (cat.browser.equalsIgnoreCase("Explorer"))) {
-            if (cat.getPlatform().equalsIgnoreCase("win32")) {
+        if ((cat.os.equalsIgnoreCase("Windows")) && (cat.browser.equalsIgnoreCase("Explorer"))) { //$NON-NLS-1$ //$NON-NLS-2$
+            if (cat.getPlatform().equalsIgnoreCase("win32")) { //$NON-NLS-1$
                 updateSpice32Version();
-            } else if (cat.getPlatform().equalsIgnoreCase("win64")) {
+            } else if (cat.getPlatform().equalsIgnoreCase("win64")) { //$NON-NLS-1$
                 updateSpice64Version();
             }
         }
     }
 
     public void updateSpice32Version() {
-        fetchFile(getSpiceBaseURL() + "SpiceVersion.txt", spiceVersionFileFetchedEvent);
+        fetchFile(getSpiceBaseURL() + "SpiceVersion.txt", spiceVersionFileFetchedEvent); //$NON-NLS-1$
     }
 
     public void updateSpice64Version() {
-        fetchFile(getSpiceBaseURL() + "SpiceVersion_x64.txt", spiceVersionFileFetchedEvent);
+        fetchFile(getSpiceBaseURL() + "SpiceVersion_x64.txt", spiceVersionFileFetchedEvent); //$NON-NLS-1$
     }
 
     public void updateDocumentationPathFile() {
-        fetchFile(getDocumentationBaseURL() + "DocumentationPath.csv", documentationFileFetchedEvent);
+        fetchFile(getDocumentationBaseURL() + "DocumentationPath.csv", documentationFileFetchedEvent); //$NON-NLS-1$
     }
 
     public void updateIsUsbEnabled(final ISpice spice) {
@@ -107,7 +107,7 @@ public class WebAdminConfigurator extends Configurator implements IEventListener
                     @Override
                     public void OnSuccess(Object target, Object returnValue) {
                         String documentationBaseURL = (String) returnValue;
-                        boolean isDocumentationAvailable = !documentationBaseURL.equals("");
+                        boolean isDocumentationAvailable = !documentationBaseURL.equals(""); //$NON-NLS-1$
 
                         setDocumentationAvailable(isDocumentationAvailable);
                         setDocumentationBasePath(documentationBaseURL);
@@ -142,7 +142,7 @@ public class WebAdminConfigurator extends Configurator implements IEventListener
 
     // Create a Version object from string
     public Version parseVersion(String versionStr) {
-        return new Version(versionStr.replace(',', '.').replace("\n", ""));
+        return new Version(versionStr.replace(',', '.').replace("\n", "")); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     @Override
@@ -183,8 +183,8 @@ public class WebAdminConfigurator extends Configurator implements IEventListener
 
         case qxl:
             ClientAgentType cat = new ClientAgentType();
-            return (cat.os.equalsIgnoreCase("Windows") && cat.browser.equalsIgnoreCase("Explorer")) ||
-                    (cat.os.equalsIgnoreCase("Linux") && cat.browser.equalsIgnoreCase("Firefox"));
+            return (cat.os.equalsIgnoreCase("Windows") && cat.browser.equalsIgnoreCase("Explorer")) || //$NON-NLS-1$ //$NON-NLS-2$
+                    (cat.os.equalsIgnoreCase("Linux") && cat.browser.equalsIgnoreCase("Firefox")); //$NON-NLS-1$ //$NON-NLS-2$
         }
 
         return false;

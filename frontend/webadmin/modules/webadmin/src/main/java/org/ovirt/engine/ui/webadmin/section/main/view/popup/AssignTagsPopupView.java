@@ -77,7 +77,7 @@ public class AssignTagsPopupView extends AbstractModelBoundPopupView<TagListMode
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 TagListModel model = (TagListModel) sender;
                 String propertyName = ((PropertyChangedEventArgs) args).PropertyName;
-                if ("SelectionNodeList".equals(propertyName)) {
+                if ("SelectionNodeList".equals(propertyName)) { //$NON-NLS-1$
                     updateTree(model);
                 }
             }

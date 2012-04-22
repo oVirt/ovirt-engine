@@ -42,7 +42,7 @@ public class ConsoleManager {
         if (consoleUtils.canOpenRDPConsole(model)) {
             model.getAdditionalConsole().getConnectCommand().Execute();
         } else if (!consoleUtils.isRDPAvailable()) {
-            return createErrorMessage(model, "RDP");
+            return createErrorMessage(model, "RDP"); //$NON-NLS-1$
         }
 
         return null;
@@ -52,7 +52,7 @@ public class ConsoleManager {
         if (consoleUtils.canOpenSpiceConsole(model)) {
             model.getDefaultConsole().getConnectCommand().Execute();
         } else if (!consoleUtils.isSpiceAvailable()) {
-            return createErrorMessage(model, "SPICE");
+            return createErrorMessage(model, "SPICE"); //$NON-NLS-1$
         }
 
         return null;

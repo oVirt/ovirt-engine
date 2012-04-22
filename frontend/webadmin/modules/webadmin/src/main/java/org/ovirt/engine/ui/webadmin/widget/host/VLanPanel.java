@@ -18,8 +18,8 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class VLanPanel extends VerticalPanel {
 
-    public static final String CHECK_BOX_COLUMN_WIDTH = "50%";
-    public static final String NETWORK_NAME_COLUMN_WIDTH = "50%";
+    public static final String CHECK_BOX_COLUMN_WIDTH = "50%"; //$NON-NLS-1$
+    public static final String NETWORK_NAME_COLUMN_WIDTH = "50%"; //$NON-NLS-1$
 
     public void addVLans(HostInterfaceLineModel lineModel) {
         for (HostVLan hostVLan : lineModel.getVLans()) {
@@ -49,19 +49,19 @@ class VLanElementPanel extends TogglePanel {
         Grid row = new Grid(1, 2);
         row.getColumnFormatter().setWidth(0, VLanPanel.CHECK_BOX_COLUMN_WIDTH);
         row.getColumnFormatter().setWidth(1, VLanPanel.NETWORK_NAME_COLUMN_WIDTH);
-        row.getCellFormatter().setHeight(0, 0, "100%");
-        row.getCellFormatter().setHeight(0, 1, "100%");
-        row.setWidth("100%");
-        row.setHeight("100%");
+        row.getCellFormatter().setHeight(0, 0, "100%"); //$NON-NLS-1$
+        row.getCellFormatter().setHeight(0, 1, "100%"); //$NON-NLS-1$
+        row.setWidth("100%"); //$NON-NLS-1$
+        row.setHeight("100%"); //$NON-NLS-1$
 
         Style gridStyle = row.getElement().getStyle();
-        gridStyle.setBorderColor("white");
+        gridStyle.setBorderColor("white"); //$NON-NLS-1$
         gridStyle.setBorderWidth(1, Unit.PX);
         gridStyle.setBorderStyle(BorderStyle.SOLID);
 
         // Check box, icon and name
         HorizontalPanel chekboxPanel = new HorizontalPanel();
-        chekboxPanel.setWidth("100%");
+        chekboxPanel.setWidth("100%"); //$NON-NLS-1$
 
         chekboxPanel.add(getCheckBox());
         chekboxPanel.add(new Image(ClientGinjectorProvider.instance().getApplicationResources().splitRotateImage()));
@@ -79,10 +79,10 @@ class VLanElementPanel extends TogglePanel {
         Grid row = new Grid(1, 2);
         row.getColumnFormatter().setWidth(0, VLanPanel.CHECK_BOX_COLUMN_WIDTH);
         row.getColumnFormatter().setWidth(1, VLanPanel.NETWORK_NAME_COLUMN_WIDTH);
-        row.getCellFormatter().setHeight(0, 0, "100%");
-        row.getCellFormatter().setHeight(0, 1, "100%");
-        row.setWidth("100%");
-        row.setHeight("100%");
+        row.getCellFormatter().setHeight(0, 0, "100%"); //$NON-NLS-1$
+        row.getCellFormatter().setHeight(0, 1, "100%"); //$NON-NLS-1$
+        row.setWidth("100%"); //$NON-NLS-1$
+        row.setHeight("100%"); //$NON-NLS-1$
 
         // Empty name
         row.setWidget(0, 0, new Label());
@@ -92,7 +92,7 @@ class VLanElementPanel extends TogglePanel {
 
         if (lineModel.getIsManagement()) {
             networkName.getElement().getStyle().setFontWeight(FontWeight.BOLD);
-            networkName.setText("* " + lineModel.getNetworkName());
+            networkName.setText("* " + lineModel.getNetworkName()); //$NON-NLS-1$
         }
 
         row.setWidget(0, 1, networkName);

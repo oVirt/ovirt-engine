@@ -41,7 +41,7 @@
 					<g:Label ui:field="warningLabel" addStyleNames="{style.warningLabel}"/>
 					<g:HTML ui:field="messageLabel" addStyleNames="{style.messageLabel}"/>
 				</g:FlowPanel>
-				<e:EntityModelCheckBoxEditor ui:field="latch" visible="false" label="Approve Operation"/>
+				<e:EntityModelCheckBoxEditor ui:field="latch" visible="false"/>
 				<g:Label ui:field="selectNewDSDLabel" addStyleNames="{style.selectNewDSDLabel}"/>
 				<g:ScrollPanel ui:field="sdItemsScrollPanel" addStyleNames="{style.sdItemsPanel}">
 					<e:EntityModelCellTable ui:field="storageDomainItems"/>

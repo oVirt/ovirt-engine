@@ -18,7 +18,7 @@ public enum NetworkOperation {
 
         @Override
         public String getVerb(NetworkItemModel<?> op1) {
-            return "Break Bond " + op1.getName();
+            return "Break Bond " + op1.getName(); //$NON-NLS-1$
         }
 
         @Override
@@ -63,7 +63,7 @@ public enum NetworkOperation {
     DETACH_NETWORK {
         @Override
         public String getVerb(NetworkItemModel<?> op1) {
-            return "Detach Network " + op1.getName();
+            return "Detach Network " + op1.getName(); //$NON-NLS-1$
         }
 
         @Override
@@ -90,7 +90,7 @@ public enum NetworkOperation {
     ATTACH_NETWORK {
         @Override
         public String getVerb(NetworkItemModel<?> op1) {
-            return "Attach " + op1.getName() + " to";
+            return "Attach " + op1.getName() + " to"; //$NON-NLS-1$ //$NON-NLS-2$
         }
 
         @Override
@@ -121,7 +121,7 @@ public enum NetworkOperation {
 
         @Override
         public String getVerb(NetworkItemModel<?> op1) {
-            return "Bond " + op1.getName() + " with";
+            return "Bond " + op1.getName() + " with"; //$NON-NLS-1$ //$NON-NLS-2$
         }
 
         @Override
@@ -133,7 +133,7 @@ public enum NetworkOperation {
                         List<VdsNetworkInterface> allNics, Object... params) {
                     assert op1 instanceof NetworkInterfaceModel && !(op1 instanceof BondNetworkInterfaceModel);
                     assert op2 instanceof NetworkInterfaceModel && !(op2 instanceof BondNetworkInterfaceModel);
-                    assert params.length == 1 : "incorrect params length";
+                    assert params.length == 1 : "incorrect params length"; //$NON-NLS-1$
                     NetworkInterfaceModel nic1 = (NetworkInterfaceModel) op1;
                     NetworkInterfaceModel nic2 = (NetworkInterfaceModel) op2;
 
@@ -155,7 +155,7 @@ public enum NetworkOperation {
 
         @Override
         public String getVerb(NetworkItemModel<?> op1) {
-            return "Add " + op1.getName() + " to Bond";
+            return "Add " + op1.getName() + " to Bond"; //$NON-NLS-1$ //$NON-NLS-2$
         }
 
         @Override
@@ -184,7 +184,7 @@ public enum NetworkOperation {
 
         @Override
         public String getVerb(NetworkItemModel<?> op1) {
-            return "Remove " + op1.getName() + " from Bond";
+            return "Remove " + op1.getName() + " from Bond"; //$NON-NLS-1$ //$NON-NLS-2$
         }
 
         @Override
@@ -217,7 +217,7 @@ public enum NetworkOperation {
 
         @Override
         public String getVerb(NetworkItemModel<?> op1) {
-            return "No valid Operation for " + op1.getName() + " and ";
+            return "No valid Operation for " + op1.getName() + " and "; //$NON-NLS-1$ //$NON-NLS-2$
         }
 
         @Override
@@ -286,14 +286,14 @@ public enum NetworkOperation {
      */
     public String getMessage(NetworkItemModel<?> op1, NetworkItemModel<?> op2) {
         String message = getVerb(op1);
-        return isUnary() ? message : message + " " + getNoun(op2);
+        return isUnary() ? message : message + " " + getNoun(op2); //$NON-NLS-1$
     }
 
     /**
      * Gets the Noun for this Operation
      */
     public String getNoun(NetworkItemModel<?> op2) {
-        assert !isUnary() : "The Unary Operation " + name() + " has no Noun";
+        assert !isUnary() : "The Unary Operation " + name() + " has no Noun"; //$NON-NLS-1$ //$NON-NLS-2$
         return op2.getName();
     }
 

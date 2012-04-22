@@ -46,7 +46,7 @@ public class UiCommonListenerMap {
     }
 
     private String getKey(String name, String type) {
-        return name + "_" + type;
+        return name + "_" + type; //$NON-NLS-1$
     }
 
 }

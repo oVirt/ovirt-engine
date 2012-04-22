@@ -8,6 +8,7 @@ import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolListModel;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabPoolPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
@@ -22,21 +23,21 @@ public class MainTabPoolView extends AbstractMainTabWithDetailsTableView<vm_pool
     }
 
     @Inject
-    public MainTabPoolView(MainModelProvider<vm_pools, PoolListModel> modelProvider) {
+    public MainTabPoolView(MainModelProvider<vm_pools, PoolListModel> modelProvider, ApplicationConstants constants) {
         super(modelProvider);
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        initTable();
+        initTable(constants);
         initWidget(getTable());
     }
 
-    void initTable() {
+    void initTable(ApplicationConstants constants) {
         TextColumnWithTooltip<vm_pools> nameColumn = new TextColumnWithTooltip<vm_pools>() {
             @Override
             public String getValue(vm_pools object) {
                 return object.getvm_pool_name();
             }
         };
-        getTable().addColumn(nameColumn, "Name");
+        getTable().addColumn(nameColumn, constants.namePool());
 
         TextColumnWithTooltip<vm_pools> assignedColumn = new TextColumnWithTooltip<vm_pools>() {
             @Override
@@ -44,7 +45,7 @@ public class MainTabPoolView extends AbstractMainTabWithDetailsTableView<vm_pool
                 return Integer.toString(object.getvm_assigned_count());
             }
         };
-        getTable().addColumn(assignedColumn, "Assigned VMs");
+        getTable().addColumn(assignedColumn, constants.assignVmsPool());
 
         TextColumnWithTooltip<vm_pools> runningColumn = new TextColumnWithTooltip<vm_pools>() {
             @Override
@@ -52,7 +53,7 @@ public class MainTabPoolView extends AbstractMainTabWithDetailsTableView<vm_pool
                 return Integer.toString(object.getvm_running_count());
             }
         };
-        getTable().addColumn(runningColumn, "Running VMs");
+        getTable().addColumn(runningColumn, constants.runningVmsPool());
 
         TextColumnWithTooltip<vm_pools> typeColumn = new EnumColumn<vm_pools, VmPoolType>() {
             @Override
@@ -60,7 +61,7 @@ public class MainTabPoolView extends AbstractMainTabWithDetailsTableView<vm_pool
                 return object.getvm_pool_type();
             }
         };
-        getTable().addColumn(typeColumn, "Type");
+        getTable().addColumn(typeColumn, constants.typePool());
 
         TextColumnWithTooltip<vm_pools> descColumn = new TextColumnWithTooltip<vm_pools>() {
             @Override
@@ -68,21 +69,21 @@ public class MainTabPoolView extends AbstractMainTabWithDetailsTableView<vm_pool
                 return object.getvm_pool_description();
             }
         };
-        getTable().addColumn(descColumn, "Description");
+        getTable().addColumn(descColumn, constants.descriptionPool());
 
-        getTable().addActionButton(new WebAdminButtonDefinition<vm_pools>("New") {
+        getTable().addActionButton(new WebAdminButtonDefinition<vm_pools>(constants.newPool()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getNewCommand();
             }
         });
-        getTable().addActionButton(new WebAdminButtonDefinition<vm_pools>("Edit") {
+        getTable().addActionButton(new WebAdminButtonDefinition<vm_pools>(constants.editPool()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getEditCommand();
             }
         });
-        getTable().addActionButton(new WebAdminButtonDefinition<vm_pools>("Remove") {
+        getTable().addActionButton(new WebAdminButtonDefinition<vm_pools>(constants.removePool()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getRemoveCommand();

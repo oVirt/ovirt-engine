@@ -16,6 +16,7 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IntegerValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
 public class ClusterPolicyModel extends EntityModel
@@ -71,7 +72,7 @@ public class ClusterPolicyModel extends EntityModel
         if (hasOverCommitLowLevel != value)
         {
             hasOverCommitLowLevel = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("HasOverCommitLowLevel"));
+            OnPropertyChanged(new PropertyChangedEventArgs("HasOverCommitLowLevel")); //$NON-NLS-1$
         }
     }
 
@@ -87,7 +88,7 @@ public class ClusterPolicyModel extends EntityModel
         if (hasOverCommitHighLevel != value)
         {
             hasOverCommitHighLevel = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("HasOverCommitHighLevel"));
+            OnPropertyChanged(new PropertyChangedEventArgs("HasOverCommitHighLevel")); //$NON-NLS-1$
         }
     }
 
@@ -105,7 +106,7 @@ public class ClusterPolicyModel extends EntityModel
         {
             selectionAlgorithm = value;
             SelectionAlgorithmChanged();
-            OnPropertyChanged(new PropertyChangedEventArgs("SelectionAlgorithm"));
+            OnPropertyChanged(new PropertyChangedEventArgs("SelectionAlgorithm")); //$NON-NLS-1$
         }
     }
 
@@ -121,7 +122,7 @@ public class ClusterPolicyModel extends EntityModel
         if (overCommitLowLevel != value)
         {
             overCommitLowLevel = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("OverCommitLowLevel"));
+            OnPropertyChanged(new PropertyChangedEventArgs("OverCommitLowLevel")); //$NON-NLS-1$
         }
     }
 
@@ -137,7 +138,7 @@ public class ClusterPolicyModel extends EntityModel
         if (overCommitHighLevel != value)
         {
             overCommitHighLevel = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("OverCommitHighLevel"));
+            OnPropertyChanged(new PropertyChangedEventArgs("OverCommitHighLevel")); //$NON-NLS-1$
         }
     }
 
@@ -156,9 +157,10 @@ public class ClusterPolicyModel extends EntityModel
 
     public ClusterPolicyModel()
     {
-        setTitle("General");
+        setTitle(ConstantsManager.getInstance().getConstants().generalTitle());
+        setHashName("general"); //$NON-NLS-1$
 
-        setEditCommand(new UICommand("Edit", this));
+        setEditCommand(new UICommand("Edit", this)); //$NON-NLS-1$
         setOverCommitTime(new EntityModel());
 
         // Set all properties according to default selected algorithm:
@@ -215,8 +217,8 @@ public class ClusterPolicyModel extends EntityModel
 
         ClusterPolicyModel model = new ClusterPolicyModel();
 
-        model.setTitle("Edit Policy");
-        model.setHashName("edit_policy");
+        model.setTitle(ConstantsManager.getInstance().getConstants().editPolicyTitle());
+        model.setHashName("edit_policy"); //$NON-NLS-1$
 
         model.setSelectionAlgorithm(getEntity().getselection_algorithm());
         model.getOverCommitTime().setEntity(getEntity().getcpu_over_commit_duration_minutes());
@@ -227,12 +229,12 @@ public class ClusterPolicyModel extends EntityModel
 
         setWindow(model);
 
-        UICommand tempVar = new UICommand("OnSave", this);
-        tempVar.setTitle("OK");
+        UICommand tempVar = new UICommand("OnSave", this); //$NON-NLS-1$
+        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
         tempVar.setIsDefault(true);
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this);
-        tempVar2.setTitle("Cancel");
+        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
+        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         tempVar2.setIsCancel(true);
         model.getCommands().add(tempVar2);
     }
@@ -301,7 +303,7 @@ public class ClusterPolicyModel extends EntityModel
     {
         super.EntityPropertyChanged(sender, e);
 
-        if (e.PropertyName.equals("selection_algorithm"))
+        if (e.PropertyName.equals("selection_algorithm")) //$NON-NLS-1$
         {
             UpdateProperties();
         }
@@ -366,11 +368,11 @@ public class ClusterPolicyModel extends EntityModel
         {
             Edit();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnSave"))
+        else if (StringHelper.stringsEqual(command.getName(), "OnSave")) //$NON-NLS-1$
         {
             OnSave();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "Cancel"))
+        else if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
         {
             Cancel();
         }

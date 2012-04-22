@@ -11,6 +11,7 @@ import org.ovirt.engine.ui.common.widget.form.GeneralFormPanel;
 import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolListModel;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.pool.SubTabPoolGeneralPresenter;
 
 import com.google.gwt.core.client.GWT;
@@ -59,7 +60,7 @@ public class SubTabPoolGeneralView extends AbstractSubTabFormView<vm_pools, Pool
     FormBuilder formBuilder;
 
     @Inject
-    public SubTabPoolGeneralView(DetailModelProvider<PoolListModel, PoolGeneralModel> modelProvider) {
+    public SubTabPoolGeneralView(DetailModelProvider<PoolListModel, PoolGeneralModel> modelProvider, ApplicationConstants constants) {
         super(modelProvider);
 
         // Init formPanel
@@ -70,35 +71,35 @@ public class SubTabPoolGeneralView extends AbstractSubTabFormView<vm_pools, Pool
 
         // Build a form using the FormBuilder
         formBuilder = new FormBuilder(formPanel, 3, 6);
-        formBuilder.setColumnsWidth("120px", "240px", "160px");
-        formBuilder.addFormItem(new FormItem("Name", name, 0, 0));
-        formBuilder.addFormItem(new FormItem("Description", description, 1, 0));
-        formBuilder.addFormItem(new FormItem("Template", template, 2, 0));
-        formBuilder.addFormItem(new FormItem("Operating System", oS, 3, 0));
-        formBuilder.addFormItem(new FormItem("Default Display Type", defaultDisplayType, 4, 0));
+        formBuilder.setColumnsWidth("120px", "240px", "160px"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        formBuilder.addFormItem(new FormItem(constants.namePoolGeneral(), name, 0, 0));
+        formBuilder.addFormItem(new FormItem(constants.descriptionPoolGeneral(), description, 1, 0));
+        formBuilder.addFormItem(new FormItem(constants.templatePoolGeneral(), template, 2, 0));
+        formBuilder.addFormItem(new FormItem(constants.osPoolGeneral(), oS, 3, 0));
+        formBuilder.addFormItem(new FormItem(constants.defaultDisplayTypePoolGeneral(), defaultDisplayType, 4, 0));
 
-        formBuilder.addFormItem(new FormItem("Defined Memory", definedMemory, 0, 1));
-        formBuilder.addFormItem(new FormItem("Physical Memory Guaranteed", minAllocatedMemory, 1, 1));
-        formBuilder.addFormItem(new FormItem("Number of CPU Cores", cpuInfo, 2, 1));
-        formBuilder.addFormItem(new FormItem("Number of Monitors", monitorCount, 3, 1));
-        formBuilder.addFormItem(new FormItem("USB Policy", usbPolicy, 4, 1));
-        formBuilder.addFormItem(new FormItem("Resides on Storage Domain", storageDomain, 5, 1, "HasStorageDomain") {
+        formBuilder.addFormItem(new FormItem(constants.definedMemPoolGeneral(), definedMemory, 0, 1));
+        formBuilder.addFormItem(new FormItem(constants.physMemGaurPoolGeneral(), minAllocatedMemory, 1, 1));
+        formBuilder.addFormItem(new FormItem(constants.numOfCpuCoresPoolGeneral(), cpuInfo, 2, 1));
+        formBuilder.addFormItem(new FormItem(constants.numOfMonitorsPoolGeneral(), monitorCount, 3, 1));
+        formBuilder.addFormItem(new FormItem(constants.usbPolicyPoolGeneral(), usbPolicy, 4, 1));
+        formBuilder.addFormItem(new FormItem(constants.residesOnSDPoolGeneral(), storageDomain, 5, 1, "HasStorageDomain") { //$NON-NLS-1$
             @Override
             public boolean isVisible() {
                 return getDetailModel().getHasStorageDomain();
             }
         });
 
-        formBuilder.addFormItem(new FormItem("Origin", origin, 0, 2));
-        formBuilder.addFormItem(new FormItem("Is Stateless", isStateless, 1, 2));
-        formBuilder.addFormItem(new FormItem("Run On", defaultHost, 2, 2));
-        formBuilder.addFormItem(new FormItem("Domain", domain, 3, 2, "HasDomain") {
+        formBuilder.addFormItem(new FormItem(constants.originPoolGeneral(), origin, 0, 2));
+        formBuilder.addFormItem(new FormItem(constants.isStatelessPoolGeneral(), isStateless, 1, 2));
+        formBuilder.addFormItem(new FormItem(constants.runOnPoolGeneral(), defaultHost, 2, 2));
+        formBuilder.addFormItem(new FormItem(constants.domainPoolGeneral(), domain, 3, 2, "HasDomain") { //$NON-NLS-1$
             @Override
             public boolean isVisible() {
                 return getDetailModel().getHasDomain();
             }
         });
-        formBuilder.addFormItem(new FormItem("Time Zone", timeZone, 4, 2, "HasTimeZone") {
+        formBuilder.addFormItem(new FormItem(constants.tzPoolGeneral(), timeZone, 4, 2, "HasTimeZone") { //$NON-NLS-1$
             @Override
             public boolean isVisible() {
                 return getDetailModel().getHasTimeZone();

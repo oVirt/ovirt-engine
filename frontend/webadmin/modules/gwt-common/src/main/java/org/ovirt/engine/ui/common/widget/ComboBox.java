@@ -42,11 +42,11 @@ public class ComboBox extends Composite {
         textBoxEditor.addContentWidgetStyleName(style.textBoxWidget());
 
         Element textBox = textBoxEditor.getContentWidgetContainer().getElement();
-        Element input = textBox.getElementsByTagName("input").getItem(0);
+        Element input = textBox.getElementsByTagName("input").getItem(0); //$NON-NLS-1$
         input.addClassName(style.textBoxInput());
 
         Element selectBox = listBoxEditor.getContentWidgetContainer().getElement();
-        Element select = selectBox.getElementsByTagName("select").getItem(0);
+        Element select = selectBox.getElementsByTagName("select").getItem(0); //$NON-NLS-1$
         select.addClassName(style.selectBoxInput());
     }
 

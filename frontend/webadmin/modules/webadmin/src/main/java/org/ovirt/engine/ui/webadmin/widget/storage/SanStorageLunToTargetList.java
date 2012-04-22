@@ -13,6 +13,8 @@ import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.LunModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.SanStorageModelBase;
 import org.ovirt.engine.ui.uicommonweb.models.storage.SanTargetModel;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 import org.ovirt.engine.ui.webadmin.widget.table.column.LunSelectionColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.LunTextColumn;
 
@@ -29,6 +31,8 @@ import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SelectionChangeEvent.Handler;
 
 public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, ListModel> {
+
+    private ApplicationConstants constants = ClientGinjectorProvider.instance().getApplicationConstants();
 
     public SanStorageLunToTargetList(SanStorageModelBase model) {
         super(model);
@@ -64,15 +68,15 @@ public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, 
         table.insertColumn(0, new TextColumn<LunModel>() {
             @Override
             public String getValue(LunModel model) {
-                return "";
+                return ""; //$NON-NLS-1$
             }
-        }, "", "20px");
+        }, "", "20px"); //$NON-NLS-1$ //$NON-NLS-2$
 
         // Add blank item list
         table.setRowData(new ArrayList<EntityModel>());
 
         // Style table
-        table.setWidth("100%", true);
+        table.setWidth("100%", true); //$NON-NLS-1$
 
         // Add table as header widget
         treeHeader.add(table);
@@ -98,9 +102,9 @@ public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, 
         table.addColumn(new TextColumn<LunModel>() {
             @Override
             public String getValue(LunModel model) {
-                return "";
+                return ""; //$NON-NLS-1$
             }
-        }, selectAllHeader, "27px");
+        }, selectAllHeader, "27px"); //$NON-NLS-1$
     }
 
     @Override
@@ -119,7 +123,7 @@ public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, 
                 return object;
             }
         };
-        table.setCustomSelectionColumn(lunSelectionColumn, "25px");
+        table.setCustomSelectionColumn(lunSelectionColumn, "25px"); //$NON-NLS-1$
 
         // Add items
         List<LunModel> items = new ArrayList<LunModel>();
@@ -132,7 +136,7 @@ public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, 
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 String propName = ((PropertyChangedEventArgs) args).PropertyName;
-                if (propName.equals("IsSelected")) {
+                if (propName.equals("IsSelected")) { //$NON-NLS-1$
                     LunModel lunModel = (LunModel) sender;
                     if (lunModel.getIsSelected() != table.getSelectionModel().isSelected(lunModel)) {
                         table.getSelectionModel().setSelected(lunModel, lunModel.getIsSelected());
@@ -151,7 +155,7 @@ public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, 
 
         // Update table
         table.setRowData(items);
-        table.setWidth("100%", true);
+        table.setWidth("100%", true); //$NON-NLS-1$
 
         // Create tree item
         HorizontalPanel panel = new HorizontalPanel();
@@ -167,42 +171,42 @@ public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, 
             public String getRawValue(LunModel model) {
                 return model.getLunId();
             }
-        }, "LUN ID", "135px");
+        }, constants.lunIdSanStorage(), "135px"); //$NON-NLS-1$
 
         table.addColumn(new LunTextColumn() {
             @Override
             public String getRawValue(LunModel model) {
-                return String.valueOf(model.getSize()) + "GB";
+                return String.valueOf(model.getSize()) + "GB"; //$NON-NLS-1$
             }
-        }, "Dev. Size", "70px");
+        }, constants.devSizeSanStorage(), "70px"); //$NON-NLS-1$
 
         table.addColumn(new LunTextColumn() {
             @Override
             public String getRawValue(LunModel model) {
                 return String.valueOf(model.getMultipathing());
             }
-        }, "#path", "40px");
+        }, constants.pathSanStorage(), "40px"); //$NON-NLS-1$
 
         table.addColumn(new LunTextColumn() {
             @Override
             public String getRawValue(LunModel model) {
                 return model.getVendorId();
             }
-        }, "Vendor ID", "80px");
+        }, constants.vendorIdSanStorage(), "80px"); //$NON-NLS-1$
 
         table.addColumn(new LunTextColumn() {
             @Override
             public String getRawValue(LunModel model) {
                 return model.getProductId();
             }
-        }, "Product ID", "80px");
+        }, constants.productIdSanStorage(), "80px"); //$NON-NLS-1$
 
         table.addColumn(new LunTextColumn() {
             @Override
             public String getRawValue(LunModel model) {
                 return model.getSerial();
             }
-        }, "Serial");
+        }, constants.serialSanStorage());
     }
 
     @SuppressWarnings("unchecked")
@@ -222,21 +226,21 @@ public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, 
             public String getValue(SanTargetModel model) {
                 return model.getName();
             }
-        }, "Target Name");
+        }, constants.targetNameSanStorage());
 
         table.addColumn(new TextColumn<SanTargetModel>() {
             @Override
             public String getValue(SanTargetModel model) {
                 return model.getAddress();
             }
-        }, "Address", "100px");
+        }, constants.addressSanStorage(), "100px"); //$NON-NLS-1$
 
         table.addColumn(new TextColumn<SanTargetModel>() {
             @Override
             public String getValue(SanTargetModel model) {
                 return model.getPort();
             }
-        }, "Port", "80px");
+        }, constants.portSanStorage(), "80px"); //$NON-NLS-1$
 
         List<SanTargetModel> items = (List<SanTargetModel>) leafModel.getItems();
         if (items.isEmpty()) {

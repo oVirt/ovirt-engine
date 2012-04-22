@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.common.widget.uicommon.vm;
 
+import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.uicommon.model.ModelProvider;
 import org.ovirt.engine.ui.common.widget.form.FormItem;
 import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
@@ -29,24 +30,24 @@ public class PoolGeneralModelForm extends AbstractModelBoundFormWidget<PoolGener
     @Ignore
     TextBoxLabel monitorCount = new TextBoxLabel();
 
-    public PoolGeneralModelForm(ModelProvider<PoolGeneralModel> modelProvider) {
+    public PoolGeneralModelForm(ModelProvider<PoolGeneralModel> modelProvider, CommonApplicationConstants constants) {
         super(modelProvider, 3, 7);
         Driver.driver.initialize(this);
 
-        formBuilder.setColumnsWidth("120px", "240px", "160px");
-        formBuilder.addFormItem(new FormItem("Name", name, 0, 0));
-        formBuilder.addFormItem(new FormItem("Description", description, 1, 0));
-        formBuilder.addFormItem(new FormItem("Template", template, 2, 0));
-        formBuilder.addFormItem(new FormItem("Operating System", oS, 3, 0));
-        formBuilder.addFormItem(new FormItem("Default Display Type", defaultDisplayType, 4, 0));
+        formBuilder.setColumnsWidth("120px", "240px", "160px"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        formBuilder.addFormItem(new FormItem(constants.namePoolGeneral(), name, 0, 0));
+        formBuilder.addFormItem(new FormItem(constants.descriptionPoolGeneral(), description, 1, 0));
+        formBuilder.addFormItem(new FormItem(constants.templatePoolGeneral(), template, 2, 0));
+        formBuilder.addFormItem(new FormItem(constants.osPoolGeneral(), oS, 3, 0));
+        formBuilder.addFormItem(new FormItem(constants.defaultDisplayTypePoolGeneral(), defaultDisplayType, 4, 0));
 
-        formBuilder.addFormItem(new FormItem("Defined Memory", definedMemory, 0, 1));
-        formBuilder.addFormItem(new FormItem("Physical Memory Guaranteed", minAllocatedMemory, 1, 1));
-        formBuilder.addFormItem(new FormItem("Number of CPU Cores", cpuInfo, 2, 1));
-        formBuilder.addFormItem(new FormItem("Number of Monitors", monitorCount, 3, 1));
-        formBuilder.addFormItem(new FormItem("USB Policy", usbPolicy, 4, 1));
+        formBuilder.addFormItem(new FormItem(constants.definedMemPoolGeneral(), definedMemory, 0, 1));
+        formBuilder.addFormItem(new FormItem(constants.physMemGaurPoolGeneral(), minAllocatedMemory, 1, 1));
+        formBuilder.addFormItem(new FormItem(constants.numOfCpuCoresPoolGeneral(), cpuInfo, 2, 1));
+        formBuilder.addFormItem(new FormItem(constants.numOfMonitorsPoolGeneral(), monitorCount, 3, 1));
+        formBuilder.addFormItem(new FormItem(constants.usbPolicyPoolGeneral(), usbPolicy, 4, 1));
 
-        formBuilder.addFormItem(new FormItem("Run On", defaultHost, 0, 2));
+        formBuilder.addFormItem(new FormItem(constants.runOnPoolGeneral(), defaultHost, 0, 2));
     }
 
     @Override

@@ -9,6 +9,7 @@ import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.SubTabClusterPermissionPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.AbstractSubTabPermissionsView;
 
@@ -25,8 +26,8 @@ public class SubTabClusterPermissionView extends AbstractSubTabPermissionsView<V
     @Inject
     public SubTabClusterPermissionView(SearchableDetailModelProvider<permissions, ClusterListModel, PermissionListModel> modelProvider,
             EventBus eventBus,
-            ClientStorage clientStorage) {
-        super(modelProvider, eventBus, clientStorage);
+            ClientStorage clientStorage, ApplicationConstants contants) {
+        super(modelProvider, eventBus, clientStorage, contants);
     }
 
     @Override

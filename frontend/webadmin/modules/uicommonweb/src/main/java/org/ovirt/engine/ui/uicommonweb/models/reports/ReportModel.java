@@ -15,13 +15,13 @@ public class ReportModel extends EntityModel {
     private final String reportUrl;
 
     public ReportModel(String baseUrl) {
-        String sessionID = Cookies.getCookie("JSESSIONID");
+        String sessionID = Cookies.getCookie("JSESSIONID"); //$NON-NLS-1$
 
-        reportUrl = baseUrl + "/flow.html" + "?viewAsDashboardFrame=false";
-        paramsMap.setParameter("sessionID", sessionID);
-        paramsMap.setParameter("_flowId", "viewReportFlow");
-        paramsMap.setParameter("active_hosts_select",
-               "AND+delete_date+IS+NULL");
+        reportUrl = baseUrl + "/flow.html" + "?viewAsDashboardFrame=false"; //$NON-NLS-1$ //$NON-NLS-2$
+        paramsMap.setParameter("sessionID", sessionID); //$NON-NLS-1$
+        paramsMap.setParameter("_flowId", "viewReportFlow"); //$NON-NLS-1$ //$NON-NLS-2$
+        paramsMap.setParameter("active_hosts_select", //$NON-NLS-1$
+               "AND+delete_date+IS+NULL"); //$NON-NLS-1$
     }
 
     public Map<String, List<String>> getReportParams() {
@@ -33,31 +33,31 @@ public class ReportModel extends EntityModel {
     }
 
     public void setDataCenterID(final String uuid) {
-        paramsMap.setParameter("P_DataCenter_ID", uuid);
+        paramsMap.setParameter("P_DataCenter_ID", uuid); //$NON-NLS-1$
     }
 
     public void addDataCenterID(final String uuid) {
-        paramsMap.addParameter("P_DataCenter_ID", uuid);
+        paramsMap.addParameter("P_DataCenter_ID", uuid); //$NON-NLS-1$
     }
 
     public void setPassword(String password) {
-        paramsMap.setParameter("j_password", password);
+        paramsMap.setParameter("j_password", password); //$NON-NLS-1$
     }
 
     public void setReportEndDate(String date) {
-        paramsMap.setParameter("P_End_Date", date);
+        paramsMap.setParameter("P_End_Date", date); //$NON-NLS-1$
     }
 
     public void setReportStartDate(String date) {
-        paramsMap.setParameter("P_Start_Date", date);
+        paramsMap.setParameter("P_Start_Date", date); //$NON-NLS-1$
     }
 
     public void setUser(String user) {
-        paramsMap.setParameter("j_username", user);
+        paramsMap.setParameter("j_username", user); //$NON-NLS-1$
     }
 
     public void setReportUnit(String uri) {
-        paramsMap.setParameter("reportUnit", uri);
+        paramsMap.setParameter("reportUnit", uri); //$NON-NLS-1$
     }
 
     public void setResourceId(String idParamName, String id) {

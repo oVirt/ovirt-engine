@@ -21,7 +21,7 @@ import com.google.gwt.editor.rebind.model.ModelUtils;
  */
 public class ElementIdTypeParser {
 
-    private static final String ID_ELEMENT_SEPARATOR = "_";
+    private static final String ID_ELEMENT_SEPARATOR = "_"; //$NON-NLS-1$
 
     private final TreeLogger logger;
     private final JClassType ownerType;
@@ -29,10 +29,10 @@ public class ElementIdTypeParser {
     final List<ElementIdStatement> statements = new ArrayList<ElementIdStatement>();
 
     public ElementIdTypeParser(TreeLogger logger, JClassType interfaceToImplement) throws UnableToCompleteException {
-        assert logger != null : "logger was null";
-        assert interfaceToImplement != null : "interfaceToImplement was null";
+        assert logger != null : "logger was null"; //$NON-NLS-1$
+        assert interfaceToImplement != null : "interfaceToImplement was null"; //$NON-NLS-1$
 
-        this.logger = logger.branch(TreeLogger.DEBUG, "Creating ElementIdTypeParser for "
+        this.logger = logger.branch(TreeLogger.DEBUG, "Creating ElementIdTypeParser for " //$NON-NLS-1$
                 + interfaceToImplement.getQualifiedSourceName());
 
         this.ownerType = resolveOwnerType(interfaceToImplement);
@@ -42,25 +42,25 @@ public class ElementIdTypeParser {
         TypeOracle oracle = interfaceToImplement.getOracle();
 
         JClassType handlerInterface = oracle.findType(ElementIdHandler.class.getName()).isInterface();
-        assert handlerInterface != null : "No ElementIdHandler type";
+        assert handlerInterface != null : "No ElementIdHandler type"; //$NON-NLS-1$
 
         if (!handlerInterface.isAssignableFrom(interfaceToImplement)) {
-            die(String.format("Unexpected input type: %s is not assignable from %s",
+            die(String.format("Unexpected input type: %s is not assignable from %s", //$NON-NLS-1$
                     handlerInterface.getQualifiedSourceName(), interfaceToImplement.getQualifiedSourceName()));
         } else if (interfaceToImplement.equals(handlerInterface)) {
-            die(String.format("You must declare an interface that extends the %s type",
+            die(String.format("You must declare an interface that extends the %s type", //$NON-NLS-1$
                     handlerInterface.getSimpleSourceName()));
         }
 
         JClassType[] interfaces = interfaceToImplement.getImplementedInterfaces();
         if (interfaces.length != 1) {
-            die(String.format("The type %s extends more than one interface",
+            die(String.format("The type %s extends more than one interface", //$NON-NLS-1$
                     interfaceToImplement.getQualifiedSourceName()));
         }
 
         JClassType[] parameters = ModelUtils.findParameterizationOf(handlerInterface, interfaceToImplement);
         if (parameters.length != 1) {
-            die(String.format("The type %s has unexpected number of type parameters",
+            die(String.format("The type %s has unexpected number of type parameters", //$NON-NLS-1$
                     interfaceToImplement.getQualifiedSourceName()));
         }
 
@@ -78,7 +78,7 @@ public class ElementIdTypeParser {
                 ElementIdHandlerGenerator.ElementIdHandler_generateAndSetIds_owner,
                 getOwnerTypeId()));
 
-        doParse(ownerType, new ArrayList<JClassType>(), ".", getOwnerTypeId());
+        doParse(ownerType, new ArrayList<JClassType>(), ".", getOwnerTypeId()); //$NON-NLS-1$
 
         return statements.toArray(new ElementIdStatement[0]);
     }
@@ -95,14 +95,14 @@ public class ElementIdTypeParser {
                 String fieldName = field.getName();
 
                 if (grandParents.contains(fieldType)) {
-                    die(String.format("Field %s of type %s is already present on path from the owner type %s: %s",
+                    die(String.format("Field %s of type %s is already present on path from the owner type %s: %s", //$NON-NLS-1$
                             fieldName, fieldType.getQualifiedSourceName(), ownerType.getQualifiedSourceName(),
                             grandParents.toString()));
                 }
 
                 WithElementId idAnnotation = field.getAnnotation(WithElementId.class);
                 String fieldId = idAnnotation.value();
-                if ("".equals(fieldId)) {
+                if ("".equals(fieldId)) { //$NON-NLS-1$
                     fieldId = fieldName;
                 }
 
@@ -112,7 +112,7 @@ public class ElementIdTypeParser {
                 ElementIdStatement statement = new ElementIdStatement(fieldExpression, elementId);
 
                 if (statements.contains(statement)) {
-                    die(String.format("Duplicate element ID %s for field %s of type %s",
+                    die(String.format("Duplicate element ID %s for field %s of type %s", //$NON-NLS-1$
                             elementId, fieldName, fieldType.getQualifiedSourceName()));
                 }
 
@@ -122,14 +122,14 @@ public class ElementIdTypeParser {
                     List<JClassType> newGrandParents = new ArrayList<JClassType>(grandParents);
                     newGrandParents.add(fieldType);
 
-                    doParse(fieldType, newGrandParents, parentFieldExpression + fieldName + ".", elementId);
+                    doParse(fieldType, newGrandParents, parentFieldExpression + fieldName + ".", elementId); //$NON-NLS-1$
                 }
             }
         }
     }
 
     String getOwnerTypeId() {
-        return ownerType.getName().replace(".", ID_ELEMENT_SEPARATOR);
+        return ownerType.getName().replace(".", ID_ELEMENT_SEPARATOR); //$NON-NLS-1$
     }
 
     boolean processField(JField field) {

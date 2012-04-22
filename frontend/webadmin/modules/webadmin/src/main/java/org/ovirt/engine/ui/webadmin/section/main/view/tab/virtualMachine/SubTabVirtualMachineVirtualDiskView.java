@@ -28,9 +28,9 @@ public class SubTabVirtualMachineVirtualDiskView extends AbstractSubTabTableWidg
             SearchableDetailModelProvider<DiskImage, VmListModel, VmDiskListModel> modelProvider,
             EventBus eventBus, ClientStorage clientStorage, ApplicationResources resources,
             ApplicationConstants constants) {
-        super(new VmDiskListModelTable(modelProvider, eventBus, clientStorage, resources, constants, true));
+        super(new VmDiskListModelTable(modelProvider, eventBus, clientStorage, resources, true));
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        initTable();
+        initTable(constants);
         initWidget(getModelBoundTableWidget());
     }
 

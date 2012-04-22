@@ -29,7 +29,7 @@ public class FeatureNotImplementedYetPopup extends DecoratedPopupPanel {
             setWidget(new Label(CONSTANTS.featureNotImplementedMessage()));
         }
 
-        setWidth("200px");
+        setWidth("200px"); //$NON-NLS-1$
         int left = target.getAbsoluteLeft() + 10;
         int top = target.getAbsoluteTop() + 10;
         setPopupPosition(left, top);

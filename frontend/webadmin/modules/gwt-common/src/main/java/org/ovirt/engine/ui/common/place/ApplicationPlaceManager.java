@@ -50,7 +50,7 @@ public class ApplicationPlaceManager extends PlaceManagerImpl implements UserLog
 
     @Override
     public void revealErrorPlace(String invalidHistoryToken) {
-        logger.warning("Invalid place request - no presenter proxy mapped to '" + invalidHistoryToken + "'");
+        logger.warning("Invalid place request - no presenter proxy mapped to '" + invalidHistoryToken + "'"); //$NON-NLS-1$ //$NON-NLS-2$
         revealDefaultPlace();
     }
 
@@ -64,8 +64,8 @@ public class ApplicationPlaceManager extends PlaceManagerImpl implements UserLog
             // Disable auto login for subsequent place requests
             user.setAutoLogin(false);
         } else {
-            logger.warning("Unauthorized place request - the user is not allowed to access '"
-                    + unauthorizedHistoryToken + "'");
+            logger.warning("Unauthorized place request - the user is not allowed to access '" //$NON-NLS-1$
+                    + unauthorizedHistoryToken + "'"); //$NON-NLS-1$
             revealDefaultPlace();
         }
     }

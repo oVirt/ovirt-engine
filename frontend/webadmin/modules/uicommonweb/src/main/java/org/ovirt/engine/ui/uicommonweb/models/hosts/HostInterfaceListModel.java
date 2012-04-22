@@ -27,7 +27,6 @@ import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.core.compat.ProvidePropertyChangedEvent;
 import org.ovirt.engine.core.compat.RefObject;
-import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -41,6 +40,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
@@ -149,7 +149,7 @@ public class HostInterfaceListModel extends SearchableListModel
             items = value;
             ItemsChanged();
             getItemsChangedEvent().raise(this, EventArgs.Empty);
-            OnPropertyChanged(new PropertyChangedEventArgs("Items"));
+            OnPropertyChanged(new PropertyChangedEventArgs("Items")); //$NON-NLS-1$
         }
     }
 
@@ -292,7 +292,7 @@ public class HostInterfaceListModel extends SearchableListModel
         if (detachConfirmationNeeded != value)
         {
             detachConfirmationNeeded = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("DetachConfirmationNeeded"));
+            OnPropertyChanged(new PropertyChangedEventArgs("DetachConfirmationNeeded")); //$NON-NLS-1$
         }
     }
 
@@ -321,14 +321,15 @@ public class HostInterfaceListModel extends SearchableListModel
         }));
 
         setIsTimerDisabled(true);
-        setTitle("Network Interfaces");
+        setTitle(ConstantsManager.getInstance().getConstants().networkInterfacesTitle());
+        setHashName("network_interfaces"); //$NON-NLS-1$
 
-        setEditCommand(new UICommand("Edit", this));
-        setEditManagementNetworkCommand(new UICommand("EditManagementNetwork", this));
-        setBondCommand(new UICommand("Bond", this));
-        setDetachCommand(new UICommand("Detach", this));
-        setSaveNetworkConfigCommand(new UICommand("SaveNetworkConfig", this));
-        setSetupNetworksCommand(new UICommand("SetupNetworks", this));
+        setEditCommand(new UICommand("Edit", this)); //$NON-NLS-1$
+        setEditManagementNetworkCommand(new UICommand("EditManagementNetwork", this)); //$NON-NLS-1$
+        setBondCommand(new UICommand("Bond", this)); //$NON-NLS-1$
+        setDetachCommand(new UICommand("Detach", this)); //$NON-NLS-1$
+        setSaveNetworkConfigCommand(new UICommand("SaveNetworkConfig", this)); //$NON-NLS-1$
+        setSetupNetworksCommand(new UICommand("SetupNetworks", this)); //$NON-NLS-1$
 
         UpdateActionAvailability();
     }
@@ -368,7 +369,7 @@ public class HostInterfaceListModel extends SearchableListModel
     {
         super.EntityPropertyChanged(sender, e);
 
-        if (e.PropertyName.equals("status") || e.PropertyName.equals("net_config_dirty"))
+        if (e.PropertyName.equals("status") || e.PropertyName.equals("net_config_dirty")) //$NON-NLS-1$ //$NON-NLS-2$
         {
             UpdateActionAvailability();
         }
@@ -521,7 +522,7 @@ public class HostInterfaceListModel extends SearchableListModel
             for (VdsNetworkInterface nic : source)
             {
                 if (nic.getVlanId() != null
-                        && StringHelper.stringsEqual(nicName + "." + nic.getVlanId(), nic.getName()))
+                        && StringHelper.stringsEqual(nicName + "." + nic.getVlanId(), nic.getName())) //$NON-NLS-1$
                 {
                     HostVLan hv = new HostVLan();
                     hv.setInterface(nic);
@@ -551,7 +552,7 @@ public class HostInterfaceListModel extends SearchableListModel
         {
             Model_PropertyChanged(sender, (PropertyChangedEventArgs) args);
         }
-        else if (sender instanceof Model && StringHelper.stringsEqual(((Model) sender).getTitle(), "InterfaceList"))
+        else if (sender instanceof Model && StringHelper.stringsEqual(((Model) sender).getTitle(), "InterfaceList")) //$NON-NLS-1$
         {
             HostManagementNetworkModel managementNetworkModel = ((HostManagementNetworkModel) getWindow());
             VdsNetworkInterface vdsNetworkInterface =
@@ -571,7 +572,7 @@ public class HostInterfaceListModel extends SearchableListModel
 
     private void Model_PropertyChanged(Object sender, PropertyChangedEventArgs args)
     {
-        if (!args.PropertyName.equals("IsSelected"))
+        if (!args.PropertyName.equals("IsSelected")) //$NON-NLS-1$
         {
             return;
         }
@@ -861,15 +862,15 @@ public class HostInterfaceListModel extends SearchableListModel
                 {
                     network tempVar = new network(null);
                     tempVar.setId(NGuid.Empty);
-                    tempVar.setname("None");
+                    tempVar.setname("None"); //$NON-NLS-1$
                     networksToAdd.add(0, tempVar);
                 }
 
                 HostInterfaceModel hostInterfaceModel = new HostInterfaceModel();
                 hostInterfaceListModel.setWindow(hostInterfaceModel);
                 hostInterfaceModel.setEntity(item.getName());
-                hostInterfaceModel.setTitle("Edit Network Interface");
-                hostInterfaceModel.setHashName("edit_network_interface_hosts");
+                hostInterfaceModel.setTitle(ConstantsManager.getInstance().getConstants().editNetworkInterfaceTitle());
+                hostInterfaceModel.setHashName("edit_network_interface_hosts"); //$NON-NLS-1$
 
                 hostInterfaceModel.setNetworks(hostInterfaceListModel.getSelectedItemsWithVlans());
 
@@ -939,22 +940,24 @@ public class HostInterfaceListModel extends SearchableListModel
 
                 if (networksToAdd.isEmpty())
                 {
-                    hostInterfaceModel.setMessage("There are no networks available. Please add additional networks.");
+                    hostInterfaceModel.setMessage(ConstantsManager.getInstance()
+                            .getConstants()
+                            .thereAreNoNetworksAvailablePleaseAddAdditionalNetworksMsg());
 
-                    UICommand tempVar2 = new UICommand("Cancel", hostInterfaceListModel);
-                    tempVar2.setTitle("Close");
+                    UICommand tempVar2 = new UICommand("Cancel", hostInterfaceListModel); //$NON-NLS-1$
+                    tempVar2.setTitle(ConstantsManager.getInstance().getConstants().close());
                     tempVar2.setIsDefault(true);
                     tempVar2.setIsCancel(true);
                     hostInterfaceModel.getCommands().add(tempVar2);
                 }
                 else
                 {
-                    UICommand tempVar3 = new UICommand("OnSave", hostInterfaceListModel);
-                    tempVar3.setTitle("OK");
+                    UICommand tempVar3 = new UICommand("OnSave", hostInterfaceListModel); //$NON-NLS-1$
+                    tempVar3.setTitle(ConstantsManager.getInstance().getConstants().ok());
                     tempVar3.setIsDefault(true);
                     hostInterfaceModel.getCommands().add(tempVar3);
-                    UICommand tempVar4 = new UICommand("Cancel", hostInterfaceListModel);
-                    tempVar4.setTitle("Cancel");
+                    UICommand tempVar4 = new UICommand("Cancel", hostInterfaceListModel); //$NON-NLS-1$
+                    tempVar4.setTitle(ConstantsManager.getInstance().getConstants().cancel());
                     tempVar4.setIsCancel(true);
                     hostInterfaceModel.getCommands().add(tempVar4);
                 }
@@ -973,8 +976,8 @@ public class HostInterfaceListModel extends SearchableListModel
 
         HostManagementNetworkModel managementNicModel = new HostManagementNetworkModel();
         setWindow(managementNicModel);
-        managementNicModel.setTitle("Edit Management Network");
-        managementNicModel.setHashName("edit_management_network");
+        managementNicModel.setTitle(ConstantsManager.getInstance().getConstants().editManagementNetworkTitle());
+        managementNicModel.setHashName("edit_management_network"); //$NON-NLS-1$
 
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);
@@ -1017,7 +1020,9 @@ public class HostInterfaceListModel extends SearchableListModel
                 // null-value logic:
                 if (item.getBonded() != null && item.getBonded().equals(true))
                 {
-                    managementModel.getInterface().setTitle("InterfaceList");
+                    managementModel.getInterface().setTitle(ConstantsManager.getInstance()
+                            .getConstants()
+                            .interfaceListTitle());
                     managementModel.getInterface().getSelectedItemChangedEvent().addListener(hostInterfaceListModel);
                 }
                 managementModel.getCheckConnectivity().setIsAvailable(true);
@@ -1066,12 +1071,12 @@ public class HostInterfaceListModel extends SearchableListModel
                     managementModel.getBondingOptions().setSelectedItem(selectBondingOpt);
                 }
 
-                UICommand tempVar = new UICommand("OnEditManagementNetworkConfirmation", hostInterfaceListModel);
-                tempVar.setTitle("OK");
+                UICommand tempVar = new UICommand("OnEditManagementNetworkConfirmation", hostInterfaceListModel); //$NON-NLS-1$
+                tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
                 tempVar.setIsDefault(true);
                 managementModel.getCommands().add(tempVar);
-                UICommand tempVar2 = new UICommand("Cancel", hostInterfaceListModel);
-                tempVar2.setTitle("Cancel");
+                UICommand tempVar2 = new UICommand("Cancel", hostInterfaceListModel); //$NON-NLS-1$
+                tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
                 tempVar2.setIsCancel(true);
                 managementModel.getCommands().add(tempVar2);
             }
@@ -1109,25 +1114,25 @@ public class HostInterfaceListModel extends SearchableListModel
         }
         ConfirmationModel confirmModel = new ConfirmationModel();
         setConfirmWindow(confirmModel);
-        confirmModel.setTitle("Confirm");
+        confirmModel.setTitle(ConstantsManager.getInstance().getConstants().confirmTitle());
         confirmModel.getLatch().setEntity(true);
 
         if (!isBond)
         {
-            UICommand tempVar = new UICommand("OnEditManagementNetwork", this);
-            tempVar.setTitle("OK");
+            UICommand tempVar = new UICommand("OnEditManagementNetwork", this); //$NON-NLS-1$
+            tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
             tempVar.setIsDefault(true);
             confirmModel.getCommands().add(tempVar);
         }
         else
         {
-            UICommand tempVar2 = new UICommand("OnBond", this);
-            tempVar2.setTitle("OK");
+            UICommand tempVar2 = new UICommand("OnBond", this); //$NON-NLS-1$
+            tempVar2.setTitle(ConstantsManager.getInstance().getConstants().ok());
             tempVar2.setIsDefault(true);
             confirmModel.getCommands().add(tempVar2);
         }
-        UICommand tempVar3 = new UICommand("CancelConfirm", this);
-        tempVar3.setTitle("Cancel");
+        UICommand tempVar3 = new UICommand("CancelConfirm", this); //$NON-NLS-1$
+        tempVar3.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         tempVar3.setIsCancel(true);
         confirmModel.getCommands().add(tempVar3);
 
@@ -1169,7 +1174,7 @@ public class HostInterfaceListModel extends SearchableListModel
         {
             bondingOption = (java.util.Map.Entry<String, EntityModel>) model.getBondingOptions().getSelectedItem();
 
-            if (!bondingOption.getKey().equals("custom"))
+            if (!bondingOption.getKey().equals("custom")) //$NON-NLS-1$
             {
                 parameters.setBondingOptions((StringHelper.isNullOrEmpty(bondingOption.getKey()) ? null
                         : bondingOption.getKey()));
@@ -1318,8 +1323,8 @@ public class HostInterfaceListModel extends SearchableListModel
 
         HostBondInterfaceModel bondModel = new HostBondInterfaceModel();
         setWindow(bondModel);
-        bondModel.setTitle("Bond Network Interfaces");
-        bondModel.setHashName("bond_network_interfaces");
+        bondModel.setTitle(ConstantsManager.getInstance().getConstants().bondNetworkInterfacesTitle());
+        bondModel.setHashName("bond_network_interfaces"); //$NON-NLS-1$
 
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);
@@ -1510,10 +1515,12 @@ public class HostInterfaceListModel extends SearchableListModel
 
         if (networksToAdd.isEmpty())
         {
-            innerBondModel.setMessage("There are no networks available. Please add additional networks.");
+            innerBondModel.setMessage(ConstantsManager.getInstance()
+                    .getConstants()
+                    .thereAreNoNetworksAvailablePleaseAddAdditionalNetworksMsg());
 
-            UICommand tempVar = new UICommand("Cancel", hostInterfaceListModel);
-            tempVar.setTitle("Close");
+            UICommand tempVar = new UICommand("Cancel", hostInterfaceListModel); //$NON-NLS-1$
+            tempVar.setTitle(ConstantsManager.getInstance().getConstants().close());
             tempVar.setIsDefault(true);
             tempVar.setIsCancel(true);
             innerBondModel.getCommands().add(tempVar);
@@ -1522,23 +1529,23 @@ public class HostInterfaceListModel extends SearchableListModel
         {
             if (interfaceWithNetwork != null && interfaceWithNetwork.getIsManagement())
             {
-                UICommand tempVar2 = new UICommand("OnEditManagementNetworkConfirmation_Bond", hostInterfaceListModel);
-                tempVar2.setTitle("OK");
+                UICommand tempVar2 = new UICommand("OnEditManagementNetworkConfirmation_Bond", hostInterfaceListModel); //$NON-NLS-1$
+                tempVar2.setTitle(ConstantsManager.getInstance().getConstants().ok());
                 tempVar2.setIsDefault(true);
                 innerBondModel.getCommands().add(tempVar2);
-                UICommand tempVar3 = new UICommand("Cancel", hostInterfaceListModel);
-                tempVar3.setTitle("Cancel");
+                UICommand tempVar3 = new UICommand("Cancel", hostInterfaceListModel); //$NON-NLS-1$
+                tempVar3.setTitle(ConstantsManager.getInstance().getConstants().cancel());
                 tempVar3.setIsCancel(true);
                 innerBondModel.getCommands().add(tempVar3);
             }
             else
             {
-                UICommand tempVar4 = new UICommand("OnBond", hostInterfaceListModel);
-                tempVar4.setTitle("OK");
+                UICommand tempVar4 = new UICommand("OnBond", hostInterfaceListModel); //$NON-NLS-1$
+                tempVar4.setTitle(ConstantsManager.getInstance().getConstants().ok());
                 tempVar4.setIsDefault(true);
                 innerBondModel.getCommands().add(tempVar4);
-                UICommand tempVar5 = new UICommand("Cancel", hostInterfaceListModel);
-                tempVar5.setTitle("Cancel");
+                UICommand tempVar5 = new UICommand("Cancel", hostInterfaceListModel); //$NON-NLS-1$
+                tempVar5.setTitle(ConstantsManager.getInstance().getConstants().cancel());
                 tempVar5.setIsCancel(true);
                 innerBondModel.getCommands().add(tempVar5);
             }
@@ -1602,7 +1609,7 @@ public class HostInterfaceListModel extends SearchableListModel
             {
                 bondingOption = (java.util.Map.Entry<String, EntityModel>) model.getBondingOptions().getSelectedItem();
 
-                if (!bondingOption.getKey().equals("custom"))
+                if (!bondingOption.getKey().equals("custom")) //$NON-NLS-1$
                 {
                     parameters.setBondingOptions((StringHelper.isNullOrEmpty(bondingOption.getKey()) ? null
                             : bondingOption.getKey()));
@@ -1691,7 +1698,7 @@ public class HostInterfaceListModel extends SearchableListModel
             {
                 bondingOption = (java.util.Map.Entry<String, EntityModel>) model.getBondingOptions().getSelectedItem();
 
-                if (!bondingOption.getKey().equals("custom"))
+                if (!bondingOption.getKey().equals("custom")) //$NON-NLS-1$
                 {
                     parameters.setBondingOptions((StringHelper.isNullOrEmpty(bondingOption.getKey()) ? null
                             : bondingOption.getKey()));
@@ -1760,18 +1767,18 @@ public class HostInterfaceListModel extends SearchableListModel
 
         HostInterfaceModel model = new HostInterfaceModel();
         setWindow(model);
-        model.setTitle("Detach Network Interfaces");
-        model.setHashName("detach_network_interfaces");
+        model.setTitle(ConstantsManager.getInstance().getConstants().detachNetworkInterfacesTitle());
+        model.setHashName("detach_network_interfaces"); //$NON-NLS-1$
 
         VdsNetworkInterface nic = (VdsNetworkInterface) getSelectedItem();
         model.getName().setEntity(nic.getName());
 
-        UICommand tempVar = new UICommand("OnDetach", this);
-        tempVar.setTitle("OK");
+        UICommand tempVar = new UICommand("OnDetach", this); //$NON-NLS-1$
+        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
         tempVar.setIsDefault(true);
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this);
-        tempVar2.setTitle("Cancel");
+        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
+        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         tempVar2.setIsCancel(true);
         model.getCommands().add(tempVar2);
     }
@@ -1861,17 +1868,20 @@ public class HostInterfaceListModel extends SearchableListModel
                 // network -> ask for the user's confirmation before doing that.
                 ConfirmationModel confirmModel = new ConfirmationModel();
                 setConfirmWindow(confirmModel);
-                confirmModel.setTitle("Edit Management Network Interface");
-                confirmModel.setHashName("edit_management_network_interface");
-                confirmModel.setMessage(StringFormat.format("You are about to disconnect the Management Interface (%1$s).\\nAs a result, the Host might become unreachable.\\n\\nAre you sure you want to disconnect the Management Interface?",
-                        nic.getName()));
+                confirmModel.setTitle(ConstantsManager.getInstance()
+                        .getConstants()
+                        .editManagementNetworkInterfaceTitle());
+                confirmModel.setHashName("edit_management_network_interface"); //$NON-NLS-1$
+                confirmModel.setMessage(ConstantsManager.getInstance()
+                        .getMessages()
+                        .youAreAboutToDisconnectHostInterfaceMsg(nic.getName()));
 
-                UICommand tempVar = new UICommand("OnConfirmManagementDetach", this);
-                tempVar.setTitle("OK");
+                UICommand tempVar = new UICommand("OnConfirmManagementDetach", this); //$NON-NLS-1$
+                tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
                 tempVar.setIsDefault(true);
                 confirmModel.getCommands().add(tempVar);
-                UICommand tempVar2 = new UICommand("Cancel", this);
-                tempVar2.setTitle("Cancel");
+                UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
+                tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
                 tempVar2.setIsCancel(true);
                 confirmModel.getCommands().add(tempVar2);
             }
@@ -1997,7 +2007,7 @@ public class HostInterfaceListModel extends SearchableListModel
             {
                 bondingOption = (java.util.Map.Entry<String, EntityModel>) model.getBondingOptions().getSelectedItem();
 
-                if (!bondingOption.getKey().equals("custom"))
+                if (!bondingOption.getKey().equals("custom")) //$NON-NLS-1$
                 {
                     parameters.setBondingOptions((StringHelper.isNullOrEmpty(bondingOption.getKey()) ? null
                             : bondingOption.getKey()));
@@ -2157,8 +2167,8 @@ public class HostInterfaceListModel extends SearchableListModel
 
         HostSetupNetworksModel setupNetworksWindowModel = new HostSetupNetworksModel(this);
         setWindow(setupNetworksWindowModel);
-        setupNetworksWindowModel.setTitle("Setup Host Networks");
-        setupNetworksWindowModel.setHashName("host_setup_networks");
+        setupNetworksWindowModel.setTitle(ConstantsManager.getInstance().getConstants().setupHostNetworksTitle());
+        setupNetworksWindowModel.setHashName("host_setup_networks"); //$NON-NLS-1$
 
         // ok command
         UICommand okCommand = setupNetworksWindowModel.getOkCommand();
@@ -2316,52 +2326,52 @@ public class HostInterfaceListModel extends SearchableListModel
             SaveNetworkConfig(getEntity().getId(), this);
         }
 
-        else if (StringHelper.stringsEqual(command.getName(), "OnSave"))
+        else if (StringHelper.stringsEqual(command.getName(), "OnSave")) //$NON-NLS-1$
         {
             OnSave();
         }
 
-        else if (StringHelper.stringsEqual(command.getName(), "OnEditManagementNetwork"))
+        else if (StringHelper.stringsEqual(command.getName(), "OnEditManagementNetwork")) //$NON-NLS-1$
         {
             OnEditManagementNetwork();
         }
 
-        else if (StringHelper.stringsEqual(command.getName(), "OnEditManagementNetworkConfirmation"))
+        else if (StringHelper.stringsEqual(command.getName(), "OnEditManagementNetworkConfirmation")) //$NON-NLS-1$
         {
             OnEditManagementNetworkConfirmation(false);
         }
 
-        else if (StringHelper.stringsEqual(command.getName(), "OnEditManagementNetworkConfirmation_Bond"))
+        else if (StringHelper.stringsEqual(command.getName(), "OnEditManagementNetworkConfirmation_Bond")) //$NON-NLS-1$
         {
             OnEditManagementNetworkConfirmation(true);
         }
 
-        else if (StringHelper.stringsEqual(command.getName(), "OnBond"))
+        else if (StringHelper.stringsEqual(command.getName(), "OnBond")) //$NON-NLS-1$
         {
             OnBond();
         }
 
-        else if (StringHelper.stringsEqual(command.getName(), "OnDetach"))
+        else if (StringHelper.stringsEqual(command.getName(), "OnDetach")) //$NON-NLS-1$
         {
             OnDetach();
         }
 
-        else if (StringHelper.stringsEqual(command.getName(), "OnConfirmManagementDetach"))
+        else if (StringHelper.stringsEqual(command.getName(), "OnConfirmManagementDetach")) //$NON-NLS-1$
         {
             OnConfirmManagementDetach();
         }
 
-        else if (StringHelper.stringsEqual(command.getName(), "Cancel"))
+        else if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
         {
             Cancel();
         }
 
-        else if (StringHelper.stringsEqual(command.getName(), "CancelConfirm"))
+        else if (StringHelper.stringsEqual(command.getName(), "CancelConfirm")) //$NON-NLS-1$
         {
             CancelConfirm();
         }
 
-        else if (StringHelper.stringsEqual(command.getName(), "OnSetupNetworks"))
+        else if (StringHelper.stringsEqual(command.getName(), "OnSetupNetworks")) //$NON-NLS-1$
         {
             OnSetupNetworks();
         }
@@ -2370,6 +2380,6 @@ public class HostInterfaceListModel extends SearchableListModel
 
     @Override
     protected String getListName() {
-        return "HostInterfaceListModel";
+        return "HostInterfaceListModel"; //$NON-NLS-1$
     }
 }

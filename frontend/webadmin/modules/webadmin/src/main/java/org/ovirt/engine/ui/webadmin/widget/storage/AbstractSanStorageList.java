@@ -82,22 +82,22 @@ public abstract class AbstractSanStorageList<M extends EntityModel, L extends Li
     }
 
     protected void addRootNode(TreeItem rootItem, TreeItem leafItem) {
-        rootItem.getElement().getStyle().setBackgroundColor("#eff3ff");
+        rootItem.getElement().getStyle().setBackgroundColor("#eff3ff"); //$NON-NLS-1$
         rootItem.getElement().getStyle().setMarginBottom(1, Unit.PX);
         rootItem.getElement().getStyle().setPadding(0, Unit.PX);
 
         if (leafItem != null) {
             rootItem.addItem(leafItem);
 
-            leafItem.getElement().getStyle().setBackgroundColor("#ffffff");
+            leafItem.getElement().getStyle().setBackgroundColor("#ffffff"); //$NON-NLS-1$
             leafItem.getElement().getStyle().setMarginLeft(0, Unit.PX);
             leafItem.getElement().getStyle().setPadding(0, Unit.PX);
 
             Boolean isLeafEmpty = (Boolean) leafItem.getUserObject();
             if (isLeafEmpty != null && isLeafEmpty.equals(Boolean.TRUE)) {
-                rootItem.getElement().getElementsByTagName("td").getItem(0).getStyle().setVisibility(Visibility.HIDDEN);
+                rootItem.getElement().getElementsByTagName("td").getItem(0).getStyle().setVisibility(Visibility.HIDDEN); //$NON-NLS-1$
             }
-            rootItem.getElement().getElementsByTagName("td").getItem(1).getStyle().setWidth(100, Unit.PCT);
+            rootItem.getElement().getElementsByTagName("td").getItem(1).getStyle().setWidth(100, Unit.PCT); //$NON-NLS-1$
         }
 
         tree.addItem(rootItem);

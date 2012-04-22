@@ -19,11 +19,11 @@ public class HostInterfaceForm extends Composite {
     @SuppressWarnings("unchecked")
     public HostInterfaceForm(HostInterfaceListModel listModel) {
         grid = new Grid(1, 3);
-        grid.getColumnFormatter().setWidth(0, "65%");
-        grid.getColumnFormatter().setWidth(1, "11%");
-        grid.getColumnFormatter().setWidth(2, "24%");
-        grid.setWidth("100%");
-        grid.setHeight("100%");
+        grid.getColumnFormatter().setWidth(0, "65%"); //$NON-NLS-1$
+        grid.getColumnFormatter().setWidth(1, "11%"); //$NON-NLS-1$
+        grid.getColumnFormatter().setWidth(2, "24%"); //$NON-NLS-1$
+        grid.setWidth("100%"); //$NON-NLS-1$
+        grid.setHeight("100%"); //$NON-NLS-1$
         initWidget(grid);
 
         List<HostInterfaceLineModel> interfaceLineModels = (List<HostInterfaceLineModel>) listModel.getItems();
@@ -43,23 +43,23 @@ public class HostInterfaceForm extends Composite {
 
     InterfacePanel createInterfacePanel(HostInterfaceLineModel lineModel) {
         InterfacePanel panel = new InterfacePanel();
-        panel.setWidth("100%");
-        panel.setHeight("100%");
+        panel.setWidth("100%"); //$NON-NLS-1$
+        panel.setHeight("100%"); //$NON-NLS-1$
         panel.addInterfaces(lineModel.getInterfaces());
         return panel;
     }
 
     BondPanel createBondPanel(HostInterfaceLineModel lineModel) {
         BondPanel panel = new BondPanel(lineModel);
-        panel.setWidth("100%");
-        panel.setHeight("100%");
+        panel.setWidth("100%"); //$NON-NLS-1$
+        panel.setHeight("100%"); //$NON-NLS-1$
         return panel;
     }
 
     VLanPanel createVLanPanel(HostInterfaceLineModel lineModel) {
         VLanPanel panel = new VLanPanel();
-        panel.setWidth("100%");
-        panel.setHeight("100%");
+        panel.setWidth("100%"); //$NON-NLS-1$
+        panel.setHeight("100%"); //$NON-NLS-1$
         panel.addVLans(lineModel);
         return panel;
     }
@@ -78,7 +78,7 @@ public class HostInterfaceForm extends Composite {
 
     void setGridWidget(int row, int col, Widget widget) {
         grid.setWidget(row, col, widget);
-        grid.getCellFormatter().setHeight(row, col, "100%");
+        grid.getCellFormatter().setHeight(row, col, "100%"); //$NON-NLS-1$
     }
 
 }

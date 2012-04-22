@@ -15,5 +15,4 @@ public abstract class EnumColumn<T, E extends Enum<E>> extends RenderedTextColum
     public EnumColumn() {
         super(new EnumRenderer<E>());
     }
-
 }

@@ -52,6 +52,7 @@ import org.ovirt.engine.ui.uicommonweb.models.reports.ReportModel;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.RegexValidation;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
@@ -146,16 +147,16 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
     public StorageListModel()
     {
-        setTitle("Storage");
+        setTitle(ConstantsManager.getInstance().getConstants().storageTitle());
 
-        setDefaultSearchString("Storage:");
+        setDefaultSearchString("Storage:"); //$NON-NLS-1$
         setSearchString(getDefaultSearchString());
 
-        setNewDomainCommand(new UICommand("NewDomain", this));
-        setImportDomainCommand(new UICommand("ImportDomain", this));
-        setEditCommand(new UICommand("Edit", this));
-        setRemoveCommand(new UICommand("Remove", this));
-        setDestroyCommand(new UICommand("Destroy", this));
+        setNewDomainCommand(new UICommand("NewDomain", this)); //$NON-NLS-1$
+        setImportDomainCommand(new UICommand("ImportDomain", this)); //$NON-NLS-1$
+        setEditCommand(new UICommand("Edit", this)); //$NON-NLS-1$
+        setRemoveCommand(new UICommand("Remove", this)); //$NON-NLS-1$
+        setDestroyCommand(new UICommand("Destroy", this)); //$NON-NLS-1$
 
         UpdateActionAvailability();
 
@@ -216,7 +217,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
     @Override
     public boolean IsSearchStringMatch(String searchString)
     {
-        return searchString.trim().toLowerCase().startsWith("storage");
+        return searchString.trim().toLowerCase().startsWith("storage"); //$NON-NLS-1$
     }
 
     @Override
@@ -245,8 +246,8 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
         StorageModel model = new StorageModel(new NewEditStorageModelBehavior());
         setWindow(model);
-        model.setTitle("New Domain");
-        model.setHashName("new_domain");
+        model.setTitle(ConstantsManager.getInstance().getConstants().newDomainTitle());
+        model.setHashName("new_domain"); //$NON-NLS-1$
         model.setSystemTreeSelectedItem(getSystemTreeSelectedItem());
 
         java.util.ArrayList<IStorageModel> items = new java.util.ArrayList<IStorageModel>();
@@ -285,12 +286,12 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
         model.Initialize();
 
-        UICommand tempVar9 = new UICommand("OnSave", this);
-        tempVar9.setTitle("OK");
+        UICommand tempVar9 = new UICommand("OnSave", this); //$NON-NLS-1$
+        tempVar9.setTitle(ConstantsManager.getInstance().getConstants().ok());
         tempVar9.setIsDefault(true);
         model.getCommands().add(tempVar9);
-        UICommand tempVar10 = new UICommand("Cancel", this);
-        tempVar10.setTitle("Cancel");
+        UICommand tempVar10 = new UICommand("Cancel", this); //$NON-NLS-1$
+        tempVar10.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         tempVar10.setIsCancel(true);
         model.getCommands().add(tempVar10);
     }
@@ -306,8 +307,8 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
         StorageModel model = new StorageModel(new NewEditStorageModelBehavior());
         setWindow(model);
-        model.setTitle("Edit Domain");
-        model.setHashName("edit_domain");
+        model.setTitle(ConstantsManager.getInstance().getConstants().editDomainTitle());
+        model.setHashName("edit_domain"); //$NON-NLS-1$
         model.setSystemTreeSelectedItem(getSystemTreeSelectedItem());
         model.setStorage(storage);
         model.getName().setEntity(storage.getstorage_name());
@@ -347,18 +348,18 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
             {
             case Storage: {
                 model.getName().setIsChangable(false);
-                model.getName().setInfo("Cannot edit Storage Domains's Name in this tree context");
+                model.getName().setInfo("Cannot edit Storage Domains's Name in this tree context"); //$NON-NLS-1$
             }
                 break;
             }
         }
 
-        UICommand tempVar = new UICommand("OnSave", this);
-        tempVar.setTitle("OK");
+        UICommand tempVar = new UICommand("OnSave", this); //$NON-NLS-1$
+        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
         tempVar.setIsDefault(true);
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this);
-        tempVar2.setTitle("Cancel");
+        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
+        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         tempVar2.setIsCancel(true);
         model.getCommands().add(tempVar2);
     }
@@ -451,8 +452,8 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
         StorageModel model = new StorageModel(new ImportStorageModelBehavior());
         setWindow(model);
-        model.setTitle("Import Pre-Configured Domain");
-        model.setHashName("import_pre-configured_domain");
+        model.setTitle(ConstantsManager.getInstance().getConstants().importPreConfiguredDomainTitle());
+        model.setHashName("import_pre-configured_domain"); //$NON-NLS-1$
         model.setSystemTreeSelectedItem(getSystemTreeSelectedItem());
         model.getName().setIsAvailable(false);
         model.getFormat().setIsAvailable(false);
@@ -477,12 +478,12 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
         model.Initialize();
 
-        UICommand tempVar5 = new UICommand("OnImport", this);
-        tempVar5.setTitle("OK");
+        UICommand tempVar5 = new UICommand("OnImport", this); //$NON-NLS-1$
+        tempVar5.setTitle(ConstantsManager.getInstance().getConstants().ok());
         tempVar5.setIsDefault(true);
         model.getCommands().add(tempVar5);
-        UICommand tempVar6 = new UICommand("Cancel", this);
-        tempVar6.setTitle("Cancel");
+        UICommand tempVar6 = new UICommand("Cancel", this); //$NON-NLS-1$
+        tempVar6.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         tempVar6.setIsCancel(true);
         model.getCommands().add(tempVar6);
     }
@@ -501,7 +502,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
             return;
         }
 
-        model.StartProgress("Importing Storage Domain...");
+        model.StartProgress(ConstantsManager.getInstance().getConstants().importingStorageDomainProgress());
 
         VDS host = (VDS) model.getHost().getSelectedItem();
 
@@ -512,13 +513,13 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
             nfsModel.setMessage(null);
 
             Task.Create(this,
-                    new java.util.ArrayList<Object>(java.util.Arrays.asList(new Object[] { "ImportNfs",
+                    new java.util.ArrayList<Object>(java.util.Arrays.asList(new Object[] { "ImportNfs", //$NON-NLS-1$
                             host.getId(), nfsModel.getPath().getEntity(), nfsModel.getRole() }))).Run();
         }
         else
         {
             Task.Create(this,
-                    new java.util.ArrayList<Object>(java.util.Arrays.asList(new Object[] { "ImportSan",
+                    new java.util.ArrayList<Object>(java.util.Arrays.asList(new Object[] { "ImportSan", //$NON-NLS-1$
                             host.getId() }))).Run();
         }
     }
@@ -537,11 +538,13 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                         StorageModel storageModel = (StorageModel) storageListModel.getWindow();
                         String name1 = (String) storageModel.getName().getEntity();
                         String tempVar = storageModel.getOriginalName();
-                        String originalName = (tempVar != null) ? tempVar : "";
+                        String originalName = (tempVar != null) ? tempVar : ""; //$NON-NLS-1$
                         boolean isNameUnique = (Boolean) returnValue;
                         if (!isNameUnique && name1.compareToIgnoreCase(originalName) != 0)
                         {
-                            storageModel.getName().getInvalidityReasons().add("Name must be unique.");
+                            storageModel.getName()
+                                    .getInvalidityReasons()
+                                    .add(ConstantsManager.getInstance().getConstants().nameMustBeUniqueInvalidReason());
                             storageModel.getName().setIsValid(false);
                             storageListModel.PostStorageNameValidation();
                         }
@@ -556,8 +559,11 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                                             StorageModel storageModel1 = (StorageModel) storageListModel1.getWindow();
                                             int nameMaxLength = (Integer) returnValue1;
                                             RegexValidation tempVar2 = new RegexValidation();
-                                            tempVar2.setExpression("^[A-Za-z0-9_-]{1," + nameMaxLength + "}$");
-                                            tempVar2.setMessage("Name can contain only 'A-Z', 'a-z', '0-9', '_' or '-' characters, max length: "
+                                            tempVar2.setExpression("^[A-Za-z0-9_-]{1," + nameMaxLength + "}$"); //$NON-NLS-1$ //$NON-NLS-2$
+                                            tempVar2.setMessage(ConstantsManager.getInstance()
+                                                    .getConstants()
+                                                    .nameCanContainOnlyMaxLengthMsg()
+                                                    + " " //$NON-NLS-1$
                                                     + nameMaxLength);
                                             storageModel1.getName().ValidateEntity(new IValidation[] {
                                                     new NotEmptyValidation(), tempVar2 });
@@ -574,7 +580,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
     public void PostStorageNameValidation()
     {
-        if (getLastExecutedCommand().getName().equals("OnSave"))
+        if (getLastExecutedCommand().getName().equals("OnSave")) //$NON-NLS-1$
         {
             OnSavePostNameValidation();
         }
@@ -602,9 +608,9 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
         RemoveStorageModel model = new RemoveStorageModel();
         setWindow(model);
-        model.setTitle("Remove Storage(s)");
-        model.setHashName("remove_storage");
-        model.setMessage("Are you sure you want to Remove the Storage Domain?");
+        model.setTitle(ConstantsManager.getInstance().getConstants().removeStoragesTitle());
+        model.setHashName("remove_storage"); //$NON-NLS-1$
+        model.setMessage(ConstantsManager.getInstance().getConstants().areYouSureYouWantToRemoveTheStorageDomainMsg());
         model.getFormat().setIsAvailable(false);
 
         AsyncDataProvider.GetHostList(new AsyncQuery(new Object[] { this, model },
@@ -624,20 +630,20 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                                         || storage.getstorage_domain_type() == StorageDomainType.ImportExport);
                         if (hosts.isEmpty())
                         {
-                            UICommand tempVar = new UICommand("Cancel", storageListModel);
-                            tempVar.setTitle("Close");
+                            UICommand tempVar = new UICommand("Cancel", storageListModel); //$NON-NLS-1$
+                            tempVar.setTitle(ConstantsManager.getInstance().getConstants().close());
                             tempVar.setIsDefault(true);
                             tempVar.setIsCancel(true);
                             removeStorageModel.getCommands().add(tempVar);
                         }
                         else
                         {
-                            UICommand tempVar2 = new UICommand("OnRemove", storageListModel);
-                            tempVar2.setTitle("OK");
+                            UICommand tempVar2 = new UICommand("OnRemove", storageListModel); //$NON-NLS-1$
+                            tempVar2.setTitle(ConstantsManager.getInstance().getConstants().ok());
                             tempVar2.setIsDefault(true);
                             removeStorageModel.getCommands().add(tempVar2);
-                            UICommand tempVar3 = new UICommand("Cancel", storageListModel);
-                            tempVar3.setTitle("Cancel");
+                            UICommand tempVar3 = new UICommand("Cancel", storageListModel); //$NON-NLS-1$
+                            tempVar3.setTitle(ConstantsManager.getInstance().getConstants().cancel());
                             tempVar3.setIsCancel(true);
                             removeStorageModel.getCommands().add(tempVar3);
                         }
@@ -680,8 +686,8 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
     {
         ConfirmationModel model = new ConfirmationModel();
         setWindow(model);
-        model.setTitle("Destroy Storage Domain");
-        model.setHashName("destroy_storage_domain");
+        model.setTitle(ConstantsManager.getInstance().getConstants().destroyStorageDomainTitle());
+        model.setHashName("destroy_storage_domain"); //$NON-NLS-1$
         java.util.ArrayList<String> items = new java.util.ArrayList<String>();
         items.add(((storage_domains) getSelectedItem()).getstorage_name());
         model.setItems(items);
@@ -689,12 +695,12 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         model.getLatch().setIsAvailable(true);
         model.getLatch().setIsChangable(true);
 
-        UICommand tempVar = new UICommand("OnDestroy", this);
-        tempVar.setTitle("OK");
+        UICommand tempVar = new UICommand("OnDestroy", this); //$NON-NLS-1$
+        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
         tempVar.setIsDefault(true);
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this);
-        tempVar2.setTitle("Cancel");
+        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
+        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         tempVar2.setIsCancel(true);
         model.getCommands().add(tempVar2);
     }
@@ -769,7 +775,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
         getWindow().StartProgress(null);
 
-        Task.Create(this, new java.util.ArrayList<Object>(java.util.Arrays.asList(new Object[] { "SaveLocal" }))).Run();
+        Task.Create(this, new java.util.ArrayList<Object>(java.util.Arrays.asList(new Object[] { "SaveLocal" }))).Run(); //$NON-NLS-1$
     }
 
     private void SaveNfsStorage()
@@ -781,7 +787,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
         getWindow().StartProgress(null);
 
-        Task.Create(this, new java.util.ArrayList<Object>(java.util.Arrays.asList(new Object[] { "SaveNfs" }))).Run();
+        Task.Create(this, new java.util.ArrayList<Object>(java.util.Arrays.asList(new Object[] { "SaveNfs" }))).Run(); //$NON-NLS-1$
     }
 
     private void SaveSanStorage()
@@ -793,7 +799,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
         getWindow().StartProgress(null);
 
-        Task.Create(this, new java.util.ArrayList<Object>(java.util.Arrays.asList(new Object[] { "SaveSan" }))).Run();
+        Task.Create(this, new java.util.ArrayList<Object>(java.util.Arrays.asList(new Object[] { "SaveSan" }))).Run(); //$NON-NLS-1$
     }
 
     private void Cancel()
@@ -857,7 +863,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
     {
         super.SelectedItemPropertyChanged(sender, e);
 
-        if (e.PropertyName.equals("storage_domain_shared_status"))
+        if (e.PropertyName.equals("storage_domain_shared_status")) //$NON-NLS-1$
         {
             UpdateActionAvailability();
         }
@@ -915,23 +921,23 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         {
             Destroy();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnSave"))
+        else if (StringHelper.stringsEqual(command.getName(), "OnSave")) //$NON-NLS-1$
         {
             OnSave();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "Cancel"))
+        else if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
         {
             Cancel();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnImport"))
+        else if (StringHelper.stringsEqual(command.getName(), "OnImport")) //$NON-NLS-1$
         {
             OnImport();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnRemove"))
+        else if (StringHelper.stringsEqual(command.getName(), "OnRemove")) //$NON-NLS-1$
         {
             OnRemove();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnDestroy"))
+        else if (StringHelper.stringsEqual(command.getName(), "OnDestroy")) //$NON-NLS-1$
         {
             OnDestroy();
         }
@@ -975,8 +981,9 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                                 OnFinish(storageListModel.context,
                                         false,
                                         storageListModel.storageModel,
-                                        "Create operation failed. Domain " + storageName
-                                                + " already exists in the system.");
+                                        ConstantsManager.getInstance()
+                                                .getMessages()
+                                                .createFailedDomainAlreadyExistStorageMsg(storageName));
                             }
                             else
                             {
@@ -1158,8 +1165,9 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                                 OnFinish(storageListModel.context,
                                         false,
                                         storageListModel.storageModel,
-                                        "Create operation failed. Domain " + storageName
-                                                + " already exists in the system.");
+                                        ConstantsManager.getInstance()
+                                                .getMessages()
+                                                .createFailedDomainAlreadyExistStorageMsg(storageName));
                             }
                             else
                             {
@@ -1265,7 +1273,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
     public void OnFinish(TaskContext context, boolean isSucceeded, IStorageModel model, String message)
     {
         context.InvokeUIThread(this,
-                new java.util.ArrayList<Object>(java.util.Arrays.asList(new Object[] { "Finish", isSucceeded, model,
+                new java.util.ArrayList<Object>(java.util.Arrays.asList(new Object[] { "Finish", isSucceeded, model, //$NON-NLS-1$
                         message })));
     }
 
@@ -1310,8 +1318,9 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                                 OnFinish(storageListModel.context,
                                         false,
                                         storageListModel.storageModel,
-                                        "Create operation failed. Domain " + storageName
-                                                + " already exists in the system.");
+                                        ConstantsManager.getInstance()
+                                                .getMessages()
+                                                .createFailedDomainAlreadyExistStorageMsg(storageName));
                             }
                             else
                             {
@@ -1432,7 +1441,9 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                             OnFinish(storageListModel.context,
                                     false,
                                     storageListModel.storageModel,
-                                    "Import operation failed. Domain " + storageName + " already exists in the system.");
+                                    ConstantsManager.getInstance()
+                                            .getMessages()
+                                            .importFailedDomainAlreadyExistStorageMsg(storageName));
                         }
                         else
                         {
@@ -1477,7 +1488,9 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                                                     PostImportNfsStorage(storageListModel1.context,
                                                             false,
                                                             storageListModel1.storageModel,
-                                                            "There is no storage domain under the specified path. Please check path.");
+                                                            ConstantsManager.getInstance()
+                                                                    .getConstants()
+                                                                    .thereIsNoStorageDomainUnderTheSpecifiedPathMsg());
                                                 }
                                                 else
                                                 {
@@ -1489,7 +1502,9 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                                                 PostImportNfsStorage(storageListModel1.context,
                                                         false,
                                                         storageListModel1.storageModel,
-                                                        "Failed to retrieve existing storage domain information.");
+                                                        ConstantsManager.getInstance()
+                                                                .getConstants()
+                                                                .failedToRetrieveExistingStorageDomainInformationMsg());
                                             }
 
                                         }
@@ -1503,7 +1518,9 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                             PostImportNfsStorage(storageListModel.context,
                                     false,
                                     storageListModel.storageModel,
-                                    "Failed to retrieve existing storage domain information.");
+                                    ConstantsManager.getInstance()
+                                            .getConstants()
+                                            .failedToRetrieveExistingStorageDomainInformationMsg());
                         }
 
                     }
@@ -1540,7 +1557,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                         }
                         else
                         {
-                            PostImportNfsStorage(storageListModel.context, false, storageListModel.storageModel, "");
+                            PostImportNfsStorage(storageListModel.context, false, storageListModel.storageModel, ""); //$NON-NLS-1$
                         }
 
                     }
@@ -1632,37 +1649,37 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         // 'if-else' logic:
         // switch (key)
         // ORIGINAL LINE: case "SaveNfs":
-        if (StringHelper.stringsEqual(key, "SaveNfs"))
+        if (StringHelper.stringsEqual(key, "SaveNfs")) //$NON-NLS-1$
         {
             SaveNfsStorage(context);
 
         }
         // ORIGINAL LINE: case "SaveLocal":
-        else if (StringHelper.stringsEqual(key, "SaveLocal"))
+        else if (StringHelper.stringsEqual(key, "SaveLocal")) //$NON-NLS-1$
         {
             SaveLocalStorage(context);
 
         }
         // ORIGINAL LINE: case "SaveSan":
-        else if (StringHelper.stringsEqual(key, "SaveSan"))
+        else if (StringHelper.stringsEqual(key, "SaveSan")) //$NON-NLS-1$
         {
             SaveSanStorage(context);
 
         }
         // ORIGINAL LINE: case "ImportNfs":
-        else if (StringHelper.stringsEqual(key, "ImportNfs"))
+        else if (StringHelper.stringsEqual(key, "ImportNfs")) //$NON-NLS-1$
         {
             ImportNfsStorage(context);
 
         }
         // ORIGINAL LINE: case "ImportSan":
-        else if (StringHelper.stringsEqual(key, "ImportSan"))
+        else if (StringHelper.stringsEqual(key, "ImportSan")) //$NON-NLS-1$
         {
             ImportSanStorage(context);
 
         }
         // ORIGINAL LINE: case "Finish":
-        else if (StringHelper.stringsEqual(key, "Finish"))
+        else if (StringHelper.stringsEqual(key, "Finish")) //$NON-NLS-1$
         {
             getWindow().StopProgress();
 
@@ -1702,7 +1719,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
     @Override
     protected String getListName() {
-        return "StorageListModel";
+        return "StorageListModel"; //$NON-NLS-1$
     }
 
     @Override

@@ -33,6 +33,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
 public class ImportVmModel extends ListWithDetailsModel {
@@ -138,7 +139,7 @@ public class ImportVmModel extends ListWithDetailsModel {
     public void setIsMissingStorages(boolean value) {
         if (isMissingStorages != value) {
             isMissingStorages = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsMissingStorages"));
+            OnPropertyChanged(new PropertyChangedEventArgs("IsMissingStorages")); //$NON-NLS-1$
         }
     }
 
@@ -152,7 +153,7 @@ public class ImportVmModel extends ListWithDetailsModel {
     public void setNameAndDescription(String value) {
         if (!StringHelper.stringsEqual(nameAndDescription, value)) {
             nameAndDescription = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("NameAndDescription"));
+            OnPropertyChanged(new PropertyChangedEventArgs("NameAndDescription")); //$NON-NLS-1$
         }
     }
 
@@ -165,7 +166,7 @@ public class ImportVmModel extends ListWithDetailsModel {
     public void setProblematicItems(java.util.List<VM> value) {
         if (problematicItems != value) {
             problematicItems = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("ProblematicItems"));
+            OnPropertyChanged(new PropertyChangedEventArgs("ProblematicItems")); //$NON-NLS-1$
         }
     }
 
@@ -455,12 +456,12 @@ public class ImportVmModel extends ListWithDetailsModel {
 
         if (getSelectedItem() != null) {
             VM vm = (VM) getSelectedItem();
-            setNameAndDescription(StringFormat.format("%1$s%2$s",
+            setNameAndDescription(StringFormat.format("%1$s%2$s", //$NON-NLS-1$
                     vm.getvm_name(),
-                    !StringHelper.isNullOrEmpty(vm.getvm_description()) ? " ["
-                            + vm.getvm_description() + "]" : ""));
+                    !StringHelper.isNullOrEmpty(vm.getvm_description()) ? " [" //$NON-NLS-1$
+                            + vm.getvm_description() + "]" : "")); //$NON-NLS-1$ //$NON-NLS-2$
         } else {
-            setNameAndDescription("");
+            setNameAndDescription(""); //$NON-NLS-1$
         }
 
     }
@@ -478,7 +479,7 @@ public class ImportVmModel extends ListWithDetailsModel {
 
     @Override
     protected String getListName() {
-        return "ImportVmModel";
+        return "ImportVmModel"; //$NON-NLS-1$
     }
 
     public void setSelectedVMsCount(int size) {
@@ -567,13 +568,15 @@ public class ImportVmModel extends ListWithDetailsModel {
                 getCollapseSnapshots().setIsChangable(false);
                 getCollapseSnapshots().setEntity(true);
                 getCollapseSnapshots()
-                        .setMessage(
-                                "Note that all snapshots will be collapsed due to different storage types");
+                        .setMessage(ConstantsManager.getInstance()
+                                .getConstants()
+                                .noteThatAllSnapshotsCollapsedDueDifferentStorageTypesMsg());
             } else {
                 // Some items are problematic.
                 getCollapseSnapshots()
-                        .setMessage(
-                                "Use a separate import operation for the marked VMs or\nApply \"Collapse Snapshots\" for all VMs");
+                        .setMessage(ConstantsManager.getInstance()
+                                .getConstants()
+                                .useSeparateImportOperationForMarkedVMsMsg());
             }
         } else {
             // No problematic items.
@@ -619,7 +622,7 @@ public class ImportVmModel extends ListWithDetailsModel {
     }
 
     public String getStorageNameById(NGuid storageId) {
-        String storageName = "";
+        String storageName = ""; //$NON-NLS-1$
         for (Object storageDomain : getAllDestinationStorage().getItems()) {
             storage_domains storage = (storage_domains) storageDomain;
             if (storage.getId().equals(storageId)) {

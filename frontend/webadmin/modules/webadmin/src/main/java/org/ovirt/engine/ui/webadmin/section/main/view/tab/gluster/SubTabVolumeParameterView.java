@@ -7,6 +7,7 @@ import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeParameterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.volumes.VolumeListModel;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.SubTabVolumeParameterPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
@@ -16,20 +17,20 @@ import com.google.inject.Inject;
 public class SubTabVolumeParameterView extends AbstractSubTabTableView<GlusterVolumeEntity, GlusterVolumeOptionEntity, VolumeListModel, VolumeParameterListModel> implements SubTabVolumeParameterPresenter.ViewDef {
 
     @Inject
-    public SubTabVolumeParameterView(SearchableDetailModelProvider<GlusterVolumeOptionEntity, VolumeListModel, VolumeParameterListModel> modelProvider) {
+    public SubTabVolumeParameterView(SearchableDetailModelProvider<GlusterVolumeOptionEntity, VolumeListModel, VolumeParameterListModel> modelProvider, ApplicationConstants constants) {
         super(modelProvider);
-        initTable();
+        initTable(constants);
         initWidget(getTable());
     }
 
-    void initTable() {
+    void initTable(ApplicationConstants constants) {
         TextColumnWithTooltip<GlusterVolumeOptionEntity> optionKeyColumn = new TextColumnWithTooltip<GlusterVolumeOptionEntity>() {
             @Override
             public String getValue(GlusterVolumeOptionEntity option) {
                 return option.getKey();
             }
         };
-        getTable().addColumn(optionKeyColumn, "Option Key");
+        getTable().addColumn(optionKeyColumn, constants.optionKeyVolumeParameter());
         TextColumnWithTooltip<GlusterVolumeOptionEntity> optionValueColumn =
                 new TextColumnWithTooltip<GlusterVolumeOptionEntity>() {
                     @Override
@@ -37,23 +38,23 @@ public class SubTabVolumeParameterView extends AbstractSubTabTableView<GlusterVo
                         return option.getValue();
                     }
                 };
-        getTable().addColumn(optionValueColumn, "Option Value");
+        getTable().addColumn(optionValueColumn, constants.optionValueVolumeParameter());
 
-        getTable().addActionButton(new WebAdminButtonDefinition<GlusterVolumeOptionEntity>("Add") {
+        getTable().addActionButton(new WebAdminButtonDefinition<GlusterVolumeOptionEntity>(constants.addVolumeParameter()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getAddParameterCommand();
             }
         });
 
-        getTable().addActionButton(new WebAdminButtonDefinition<GlusterVolumeOptionEntity>("Edit") {
+        getTable().addActionButton(new WebAdminButtonDefinition<GlusterVolumeOptionEntity>(constants.editVolumeParameter()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getEditParameterCommand();
             }
         });
 
-        getTable().addActionButton(new WebAdminButtonDefinition<GlusterVolumeOptionEntity>("Reset All") {
+        getTable().addActionButton(new WebAdminButtonDefinition<GlusterVolumeOptionEntity>(constants.resetAllVolumeParameter()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getResetAllParameterCommand();

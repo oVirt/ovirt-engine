@@ -41,7 +41,7 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
         if (allDisks != value)
         {
             allDisks = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("All Disks"));
+            OnPropertyChanged(new PropertyChangedEventArgs("All Disks")); //$NON-NLS-1$
         }
     }
 
@@ -57,7 +57,7 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
         if (storageDomains != value)
         {
             storageDomains = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Storage Domains"));
+            OnPropertyChanged(new PropertyChangedEventArgs("Storage Domains")); //$NON-NLS-1$
         }
     }
 
@@ -73,7 +73,7 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
         if (diskImages != value)
         {
             diskImages = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Disk Images"));
+            OnPropertyChanged(new PropertyChangedEventArgs("Disk Images")); //$NON-NLS-1$
         }
     }
 
@@ -312,11 +312,11 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
     {
         super.ExecuteCommand(command);
 
-        if (StringHelper.stringsEqual(command.getName(), "OnMove"))
+        if (StringHelper.stringsEqual(command.getName(), "OnMove")) //$NON-NLS-1$
         {
             OnMove();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnCopy"))
+        else if (StringHelper.stringsEqual(command.getName(), "OnCopy")) //$NON-NLS-1$
         {
             OnCopy();
         }

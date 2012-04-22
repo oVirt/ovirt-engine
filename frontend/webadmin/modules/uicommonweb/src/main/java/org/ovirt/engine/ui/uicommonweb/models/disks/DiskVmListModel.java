@@ -12,6 +12,7 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
 public class DiskVmListModel extends SearchableListModel
@@ -20,7 +21,8 @@ public class DiskVmListModel extends SearchableListModel
 
     public DiskVmListModel()
     {
-        setTitle("Virtual Machines");
+        setTitle(ConstantsManager.getInstance().getConstants().virtualMachinesTitle());
+        setHashName("virtual_machines"); //$NON-NLS-1$
     }
 
     @Override
@@ -94,7 +96,7 @@ public class DiskVmListModel extends SearchableListModel
 
     @Override
     protected String getListName() {
-        return "DiskVmListModel";
+        return "DiskVmListModel"; //$NON-NLS-1$
 
     }
 

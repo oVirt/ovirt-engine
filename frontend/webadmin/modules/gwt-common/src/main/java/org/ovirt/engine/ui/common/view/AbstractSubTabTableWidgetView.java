@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.common.view;
 
+import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.widget.table.OrderedMultiSelectionModel;
@@ -42,8 +43,8 @@ public class AbstractSubTabTableWidgetView<I, T, M extends ListWithDetailsModel,
         return modelBoundTableWidget.getTable();
     }
 
-    protected void initTable() {
-        getModelBoundTableWidget().initTable();
+    protected void initTable(CommonApplicationConstants constants) {
+        getModelBoundTableWidget().initTable(constants);
     }
 
     @Override

@@ -76,7 +76,7 @@ public abstract class AbstractSanStorageView extends AbstractStorageView<SanStor
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 String propName = ((PropertyChangedEventArgs) args).PropertyName;
-                if (propName.equals("IsValid")) {
+                if (propName.equals("IsValid")) { //$NON-NLS-1$
                     onIsValidPropertyChange(object);
                 }
             }

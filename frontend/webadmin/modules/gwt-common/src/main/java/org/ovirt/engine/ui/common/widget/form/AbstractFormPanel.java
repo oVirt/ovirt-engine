@@ -28,9 +28,9 @@ public abstract class AbstractFormPanel extends Composite {
     public void addFormDetailView(int numOfRows) {
         // Create a new column of form items
         Grid viewer = new Grid(numOfRows, 2);
-        viewer.setStyleName("formPanel_viewer");
-        viewer.getColumnFormatter().setStyleName(0, "formPanel_viewerNamesColumn");
-        viewer.getColumnFormatter().setStyleName(1, "formPanel_viewerValuesColumn");
+        viewer.setStyleName("formPanel_viewer"); //$NON-NLS-1$
+        viewer.getColumnFormatter().setStyleName(0, "formPanel_viewerNamesColumn"); //$NON-NLS-1$
+        viewer.getColumnFormatter().setStyleName(1, "formPanel_viewerValuesColumn"); //$NON-NLS-1$
 
         // Add the column to the list and view
         detailViewers.add(viewer);
@@ -40,15 +40,15 @@ public abstract class AbstractFormPanel extends Composite {
     public void addFormItem(FormItem item) {
         // Create FormItem name label
         Label name = new Label(item.getName());
-        name.setStyleName("formPanel_itemName");
+        name.setStyleName("formPanel_itemName"); //$NON-NLS-1$
         if (!name.getText().isEmpty()) {
-            name.setText(name.getText() + ":");
+            name.setText(name.getText() + ":"); //$NON-NLS-1$
         }
 
         // Create FormItem value label
         Widget widget = item.getValue();
         TextBoxLabel value = new TextBoxLabel();
-        value.setStyleName("formPanel_itemValue");
+        value.setStyleName("formPanel_itemValue"); //$NON-NLS-1$
 
         if (widget instanceof TextBoxLabel) {
             value = (TextBoxLabel) widget;

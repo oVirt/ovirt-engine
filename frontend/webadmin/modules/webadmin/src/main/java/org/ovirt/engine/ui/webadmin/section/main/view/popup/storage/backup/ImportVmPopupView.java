@@ -186,21 +186,21 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
                         public void onSubTabSelected() {
                         }
                     };
-            generalView = new ImportVmGeneralSubTabView(modelProvider);
+            generalView = new ImportVmGeneralSubTabView(modelProvider, constants);
             generalPanel.add(generalView);
-            subTabLayoutpanel.add(generalPanel, "General");
+            subTabLayoutpanel.add(generalPanel, constants.importVmGeneralSubTabLabel());
 
             ScrollPanel nicPanel = new ScrollPanel();
             nicPanel.add(nicTable);
-            subTabLayoutpanel.add(nicPanel, "Network Interfaces");
+            subTabLayoutpanel.add(nicPanel, constants.importVmNetworkIntefacesSubTabLabel());
 
             ScrollPanel diskPanel = new ScrollPanel();
             diskPanel.add(diskTable);
-            subTabLayoutpanel.add(diskPanel, "Virtual Disks");
+            subTabLayoutpanel.add(diskPanel, constants.importVmVirualDisksSubTabLabel());
 
             ScrollPanel appPanel = new ScrollPanel();
             appPanel.add(appTable);
-            subTabLayoutpanel.add(appPanel, "Applications");
+            subTabLayoutpanel.add(appPanel, constants.importVmApplicationslSubTabLabel());
         }
     }
 
@@ -219,7 +219,7 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
             public String getValue(String object) {
                 return object;
             }
-        }, "Installed Applications");
+        }, constants.installedApp());
 
         appTable.getElement().getStyle().setPosition(Position.RELATIVE);
     }
@@ -233,7 +233,7 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
                 return object.getvm_name();
             }
         };
-        table.addColumn(nameColumn, "Name", "150px");
+        table.addColumn(nameColumn, constants.nameVm(), "150px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VM> originColumn = new EnumColumn<VM, OriginType>() {
             @Override
@@ -241,17 +241,17 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
                 return object.getorigin();
             }
         };
-        table.addColumn(originColumn, "Origin", "100px");
+        table.addColumn(originColumn, constants.originVm(), "100px"); //$NON-NLS-1$
 
-        table.addColumn(new VmTypeColumn(), "", "30px");
+        table.addColumn(new VmTypeColumn(), constants.empty(), "30px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VM> memoryColumn = new TextColumnWithTooltip<VM>() {
             @Override
             public String getValue(VM object) {
-                return String.valueOf(object.getvm_mem_size_mb()) + " MB";
+                return String.valueOf(object.getvm_mem_size_mb()) + " MB"; //$NON-NLS-1$
             }
         };
-        table.addColumn(memoryColumn, "Memory", "100px");
+        table.addColumn(memoryColumn, constants.memoryVm(), "100px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VM> cpuColumn = new TextColumnWithTooltip<VM>() {
             @Override
@@ -259,7 +259,7 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
                 return String.valueOf(object.getnum_of_cpus());
             }
         };
-        table.addColumn(cpuColumn, "CPUs", "50px");
+        table.addColumn(cpuColumn, constants.cpusVm(), "50px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VM> diskColumn = new TextColumnWithTooltip<VM>() {
             @Override
@@ -267,7 +267,7 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
                 return String.valueOf(object.getDiskMap().size());
             }
         };
-        table.addColumn(diskColumn, "Disks", "50px");
+        table.addColumn(diskColumn, constants.disksVm(), "50px"); //$NON-NLS-1$
 
         ScrollPanel sp = new ScrollPanel();
         sp.add(table);
@@ -283,7 +283,7 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
                 return object.getName();
             }
         };
-        nicTable.addColumn(nameColumn, "Name", "150px");
+        nicTable.addColumn(nameColumn, constants.nameInterface(), "150px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VmNetworkInterface> networkColumn = new TextColumnWithTooltip<VmNetworkInterface>() {
             @Override
@@ -291,7 +291,7 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
                 return object.getNetworkName();
             }
         };
-        nicTable.addColumn(networkColumn, "Network Name", "150px");
+        nicTable.addColumn(networkColumn, constants.networkNameInterface(), "150px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VmNetworkInterface> typeColumn = new EnumColumn<VmNetworkInterface, VmInterfaceType>() {
             @Override
@@ -299,7 +299,7 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
                 return VmInterfaceType.forValue(object.getType());
             }
         };
-        nicTable.addColumn(typeColumn, "Type", "150px");
+        nicTable.addColumn(typeColumn, constants.typeInterface(), "150px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VmNetworkInterface> macColumn = new TextColumnWithTooltip<VmNetworkInterface>() {
             @Override
@@ -307,7 +307,7 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
                 return object.getMacAddress();
             }
         };
-        nicTable.addColumn(macColumn, "MAC", "150px");
+        nicTable.addColumn(macColumn, constants.macInterface(), "150px"); //$NON-NLS-1$
 
         nicTable.getElement().getStyle().setPosition(Position.RELATIVE);
     }
@@ -317,10 +317,10 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
         TextColumnWithTooltip<DiskImage> nameColumn = new TextColumnWithTooltip<DiskImage>() {
             @Override
             public String getValue(DiskImage object) {
-                return "Disk " + object.getinternal_drive_mapping();
+                return "Disk " + object.getinternal_drive_mapping(); //$NON-NLS-1$
             }
         };
-        diskTable.addColumn(nameColumn, "Name", "100px");
+        diskTable.addColumn(nameColumn, constants.nameDisk(), "100px"); //$NON-NLS-1$
 
         DiskSizeColumn<DiskImage> sizeColumn = new DiskSizeColumn<DiskImage>() {
             @Override
@@ -328,7 +328,7 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
                 return object.getsize();
             }
         };
-        diskTable.addColumn(sizeColumn, "Provisioned Size", "100px");
+        diskTable.addColumn(sizeColumn, constants.provisionedSizeDisk(), "100px"); //$NON-NLS-1$
 
         DiskSizeColumn<DiskImage> actualSizeColumn = new DiskSizeColumn<DiskImage>() {
             @Override
@@ -336,7 +336,7 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
                 return object.getactual_size();
             }
         };
-        diskTable.addColumn(actualSizeColumn, "Size", "100px");
+        diskTable.addColumn(actualSizeColumn, constants.sizeDisk(), "100px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<DiskImage> dateCreatedColumn = new FullDateTimeColumn<DiskImage>() {
             @Override
@@ -344,7 +344,7 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
                 return object.getcreation_date();
             }
         };
-        diskTable.addColumn(dateCreatedColumn, "Date Created", "100px");
+        diskTable.addColumn(dateCreatedColumn, constants.dateCreatedInterface(), "100px"); //$NON-NLS-1$
 
         diskTable.setSelectionModel(new NoSelectionModel<DiskImage>());
 
@@ -379,7 +379,7 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
             }
         });
 
-        diskTable.addColumn(allocationColumn, "Allocation", "80px");
+        diskTable.addColumn(allocationColumn, constants.allocationDisk(), "80px"); //$NON-NLS-1$
         diskTable.getElement().getStyle().setPosition(Position.RELATIVE);
     }
 
@@ -419,7 +419,7 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
             }
         });
 
-        diskTable.addColumn(storageDomainsColumn, "Storage Domain", "100px");
+        diskTable.addColumn(storageDomainsColumn, constants.storageDomainDisk(), "100px"); //$NON-NLS-1$
     }
 
     private void initListBoxEditors() {
@@ -455,9 +455,9 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
         object.getPropertyChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                if ("IsMissingStorages".equals(((PropertyChangedEventArgs) args).PropertyName)) {
+                if ("IsMissingStorages".equals(((PropertyChangedEventArgs) args).PropertyName)) { //$NON-NLS-1$
                     message.getElement().setInnerHTML(
-                            object.getIsMissingStorages() ? constants.importMissingStorages() : "");
+                            object.getIsMissingStorages() ? constants.importMissingStorages() : ""); //$NON-NLS-1$
                 }
             }
         });
@@ -466,7 +466,7 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
         object.getCollapseSnapshots().getPropertyChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                if ("Message".equals(((PropertyChangedEventArgs) args).PropertyName)) {
+                if ("Message".equals(((PropertyChangedEventArgs) args).PropertyName)) { //$NON-NLS-1$
                     message.setText(object.getCollapseSnapshots().getMessage());
                     if (object.getCollapseSnapshots().getMessage() != null) {
                         image.setVisible(true);
@@ -484,7 +484,7 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
                 }
                 if (!numOfVmsGreaterThan1) {
                     if ((Boolean) object.getCollapseSnapshots().getEntity()) {
-                        customSelectionCell.setEnabledWithToolTip(true, "");
+                        customSelectionCell.setEnabledWithToolTip(true, ""); //$NON-NLS-1$
                         diskTable.flush();
                         diskTable.edit((VmImportDiskListModel) object.getDetailModels().get(2));
                     } else {
@@ -496,7 +496,7 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
             }
         });
 
-        table.addColumnAt(new IsProblematicImportVmColumn(object.getProblematicItems()), "", "30px", 0);
+        table.addColumnAt(new IsProblematicImportVmColumn(object.getProblematicItems()), "", "30px", 0); //$NON-NLS-1$ //$NON-NLS-2$
 
         table.edit(object);
 
@@ -530,7 +530,7 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
 
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                if ("DiskStorageMap".equals(((PropertyChangedEventArgs) args).PropertyName)) {
+                if ("DiskStorageMap".equals(((PropertyChangedEventArgs) args).PropertyName)) { //$NON-NLS-1$
                     UpdateStorageDomainCells();
                 }
             }
@@ -564,7 +564,7 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
 
     private void UpdateStorageDomainCells() {
         Boolean isSingleDestStorage = (Boolean) object.getIsSingleDestStorage().getEntity();
-        String toolTip = isSingleDestStorage ? "" : constants.importVmTemplateSingleStorageCheckedLabel();
+        String toolTip = isSingleDestStorage ? "" : constants.importVmTemplateSingleStorageCheckedLabel(); //$NON-NLS-1$
 
         if (customSelectionCellStorageDomain != null) {
             customSelectionCellStorageDomain.setEnabledWithToolTip(!isSingleDestStorage, toolTip);

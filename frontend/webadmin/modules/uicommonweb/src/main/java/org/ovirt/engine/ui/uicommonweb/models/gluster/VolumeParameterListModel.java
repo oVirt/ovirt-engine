@@ -12,6 +12,7 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public class VolumeParameterListModel extends SearchableListModel {
 
@@ -46,15 +47,16 @@ public class VolumeParameterListModel extends SearchableListModel {
     @Override
     protected String getListName() {
         // TODO Auto-generated method stub
-        return "VolumeParameterListModel";
+        return "VolumeParameterListModel"; //$NON-NLS-1$
     }
 
     public VolumeParameterListModel()
     {
-        setTitle("Parameters");
-        setAddParameterCommand(new UICommand("Add", this));
-        setEditParameterCommand(new UICommand("Edit", this));
-        setResetAllParameterCommand(new UICommand("Reset All", this));
+        setTitle(ConstantsManager.getInstance().getConstants().parameterTitle());
+        setHashName("parameters"); //$NON-NLS-1$
+        setAddParameterCommand(new UICommand(ConstantsManager.getInstance().getConstants().AddVolume(), this));
+        setEditParameterCommand(new UICommand(ConstantsManager.getInstance().getConstants().editVolume(), this));
+        setResetAllParameterCommand(new UICommand(ConstantsManager.getInstance().getConstants().resetAllVolume(), this));
     }
 
     @Override
@@ -82,17 +84,17 @@ public class VolumeParameterListModel extends SearchableListModel {
         }
 
         VolumeParameterModel volumeParameterModel = new VolumeParameterModel();
-        volumeParameterModel.setTitle("Add Option");
+        volumeParameterModel.setTitle(ConstantsManager.getInstance().getConstants().addOptionVolume());
         setWindow(volumeParameterModel);
 
         volumeParameterModel.getKeyList().setItems(new ArrayList<GlusterVolumeOptionInfo>());
 
-        UICommand command = new UICommand("OnAddParameter", this);
-        command.setTitle("OK");
+        UICommand command = new UICommand("OnAddParameter", this); //$NON-NLS-1$
+        command.setTitle(ConstantsManager.getInstance().getConstants().ok());
         command.setIsDefault(true);
         volumeParameterModel.getCommands().add(command);
-        command = new UICommand("OnAddParameterCancel", this);
-        command.setTitle("Cancel");
+        command = new UICommand("OnAddParameterCancel", this); //$NON-NLS-1$
+        command.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         command.setIsDefault(true);
         volumeParameterModel.getCommands().add(command);
     }
@@ -138,7 +140,7 @@ public class VolumeParameterListModel extends SearchableListModel {
         }
 
         VolumeParameterModel volumeParameterModel = new VolumeParameterModel();
-        volumeParameterModel.setTitle("Edit Option");
+        volumeParameterModel.setTitle(ConstantsManager.getInstance().getConstants().editOptionVolume());
         setWindow(volumeParameterModel);
 
         ArrayList<GlusterVolumeOptionInfo> optionList = new ArrayList<GlusterVolumeOptionInfo>();
@@ -157,12 +159,12 @@ public class VolumeParameterListModel extends SearchableListModel {
 
         volumeParameterModel.getValue().setEntity(selectedOption.getValue());
 
-        UICommand command = new UICommand("OnAddParameter", this);
-        command.setTitle("OK");
+        UICommand command = new UICommand("OnAddParameter", this); //$NON-NLS-1$
+        command.setTitle(ConstantsManager.getInstance().getConstants().ok());
         command.setIsDefault(true);
         volumeParameterModel.getCommands().add(command);
-        command = new UICommand("OnAddParameterCancel", this);
-        command.setTitle("Cancel");
+        command = new UICommand("OnAddParameterCancel", this); //$NON-NLS-1$
+        command.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         command.setIsDefault(true);
         volumeParameterModel.getCommands().add(command);
     }
@@ -192,10 +194,10 @@ public class VolumeParameterListModel extends SearchableListModel {
         if (command.equals(getAddParameterCommand())) {
             addParameter();
         }
-        else if (command.getName().equals("OnAddParameter")) {
+        else if (command.getName().equals("OnAddParameter")) { //$NON-NLS-1$
             onAddParameter();
         }
-        else if (command.getName().equals("OnAddParameterCancel")) {
+        else if (command.getName().equals("OnAddParameterCancel")) { //$NON-NLS-1$
             onAddParameterCancel();
         }
         else if (command.equals(getEditParameterCommand())) {

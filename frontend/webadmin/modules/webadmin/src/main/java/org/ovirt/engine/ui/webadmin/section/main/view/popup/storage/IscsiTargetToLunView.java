@@ -70,7 +70,7 @@ public class IscsiTargetToLunView extends Composite implements HasEditorDriver<S
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 String propName = ((PropertyChangedEventArgs) args).PropertyName;
-                if (propName.equals("ProposeDiscoverTargets")) {
+                if (propName.equals("ProposeDiscoverTargets")) { //$NON-NLS-1$
                     setProposeDiscover(object.getProposeDiscoverTargets());
                 }
             }

@@ -30,7 +30,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.ObservableCollection;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
-import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -49,6 +48,7 @@ import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ExportVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.TemplateVmModelBehavior;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
@@ -145,15 +145,15 @@ public class TemplateListModel extends ListWithDetailsModel implements ISupportS
 
     public TemplateListModel()
     {
-        setTitle("Templates");
+        setTitle(ConstantsManager.getInstance().getConstants().templatesTitle());
 
-        setDefaultSearchString("Template:");
+        setDefaultSearchString("Template:"); //$NON-NLS-1$
         setSearchString(getDefaultSearchString());
 
-        setEditCommand(new UICommand("Edit", this));
-        setRemoveCommand(new UICommand("Remove", this));
-        setExportCommand(new UICommand("Export", this));
-        setCopyCommand(new UICommand("Copy", this));
+        setEditCommand(new UICommand("Edit", this)); //$NON-NLS-1$
+        setRemoveCommand(new UICommand("Remove", this)); //$NON-NLS-1$
+        setExportCommand(new UICommand("Export", this)); //$NON-NLS-1$
+        setCopyCommand(new UICommand("Copy", this)); //$NON-NLS-1$
 
         UpdateActionAvailability();
 
@@ -172,8 +172,8 @@ public class TemplateListModel extends ListWithDetailsModel implements ISupportS
 
         CopyDiskModel model = new CopyDiskModel();
         setWindow(model);
-        model.setTitle("Copy Template");
-        model.setHashName("copy_template");
+        model.setTitle(ConstantsManager.getInstance().getConstants().copyTemplateTitle());
+        model.setHashName("copy_template"); //$NON-NLS-1$
         model.setIsVolumeFormatAvailable(false);
         model.setIsSourceStorageDomainAvailable(true);
         model.setIsSourceStorageDomainChangable(true);
@@ -203,8 +203,8 @@ public class TemplateListModel extends ListWithDetailsModel implements ISupportS
 
         ExportVmModel model = new ExportVmModel();
         setWindow(model);
-        model.setTitle("Backup Template");
-        model.setHashName("backup_template");
+        model.setTitle(ConstantsManager.getInstance().getConstants().backupTemplateTitle());
+        model.setHashName("backup_template"); //$NON-NLS-1$
 
         model.getCollapseSnapshots().setIsAvailable(false);
 
@@ -248,10 +248,12 @@ public class TemplateListModel extends ListWithDetailsModel implements ISupportS
             model.getCollapseSnapshots().setIsChangable(false);
             model.getForceOverride().setIsChangable(false);
 
-            model.setMessage("Templates reside on several Data Centers. Make sure the exported Templates reside on the same Data Center.");
+            model.setMessage(ConstantsManager.getInstance()
+                    .getConstants()
+                    .templatesResideOnSeveralDcsMakeSureExportedTemplatesResideOnSameDcMsg());
 
-            UICommand tempVar = new UICommand("Cancel", this);
-            tempVar.setTitle("Close");
+            UICommand tempVar = new UICommand("Cancel", this); //$NON-NLS-1$
+            tempVar.setTitle(ConstantsManager.getInstance().getConstants().close());
             tempVar.setIsDefault(true);
             tempVar.setIsCancel(true);
             model.getCommands().add(tempVar);
@@ -260,32 +262,36 @@ public class TemplateListModel extends ListWithDetailsModel implements ISupportS
         else if (storageDomains.isEmpty()) {
             model.getForceOverride().setIsChangable(false);
 
-            model.setMessage("There is no Export Domain to export the Template into. Please attach an Export Domain to the Template's Data Center.");
+            model.setMessage(ConstantsManager.getInstance()
+                    .getConstants()
+                    .thereIsNoExportDomainToExportTheTemplateIntoMsg());
 
-            UICommand tempVar2 = new UICommand("Cancel", this);
-            tempVar2.setTitle("Close");
+            UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
+            tempVar2.setTitle(ConstantsManager.getInstance().getConstants().close());
             tempVar2.setIsDefault(true);
             tempVar2.setIsCancel(true);
             model.getCommands().add(tempVar2);
         } else if (!isAllStoragesActive) {
             model.getForceOverride().setIsChangable(false);
 
-            model.setMessage("The relevant Export Domain in not active. Please activate it.");
+            model.setMessage(ConstantsManager.getInstance()
+                    .getConstants()
+                    .theRelevantExportDomainIsNotActivePleaseActivateItMsg());
 
-            UICommand tempVar3 = new UICommand("Cancel", this);
-            tempVar3.setTitle("Close");
+            UICommand tempVar3 = new UICommand("Cancel", this); //$NON-NLS-1$
+            tempVar3.setTitle(ConstantsManager.getInstance().getConstants().close());
             tempVar3.setIsDefault(true);
             tempVar3.setIsCancel(true);
             model.getCommands().add(tempVar3);
         } else {
             showWarningOnExistingTemplates(model);
 
-            UICommand tempVar4 = new UICommand("OnExport", this);
-            tempVar4.setTitle("OK");
+            UICommand tempVar4 = new UICommand("OnExport", this); //$NON-NLS-1$
+            tempVar4.setTitle(ConstantsManager.getInstance().getConstants().ok());
             tempVar4.setIsDefault(true);
             model.getCommands().add(tempVar4);
-            UICommand tempVar5 = new UICommand("Cancel", this);
-            tempVar5.setTitle("Cancel");
+            UICommand tempVar5 = new UICommand("Cancel", this); //$NON-NLS-1$
+            tempVar5.setTitle(ConstantsManager.getInstance().getConstants().cancel());
             tempVar5.setIsCancel(true);
             model.getCommands().add(tempVar5);
         }
@@ -319,7 +325,7 @@ public class TemplateListModel extends ListWithDetailsModel implements ISupportS
     {
         Guid storageDomainId = ((storage_domains) model.getStorage().getSelectedItem()).getId();
         storage_pool storagePool = DataProvider.GetFirstStoragePoolByStorageDomain(storageDomainId);
-        String existingTemplates = "";
+        String existingTemplates = ""; //$NON-NLS-1$
         if (storagePool != null)
         {
             GetAllFromExportDomainQueryParamenters tempVar =
@@ -350,14 +356,15 @@ public class TemplateListModel extends ListWithDetailsModel implements ISupportS
                     // template.vmt_guid) != null)
                     if (found)
                     {
-                        existingTemplates += "\u2022    " + template.getname() + "\n";
+                        existingTemplates += "\u2022    " + template.getname() + "\n"; //$NON-NLS-1$ //$NON-NLS-2$
                     }
                 }
             }
             if (!StringHelper.isNullOrEmpty(existingTemplates))
             {
-                model.setMessage(StringFormat.format("Template(s):\n%1$s already exist on the target Export Domain. If you want to override them, please check the 'Force Override' check-box.",
-                        existingTemplates));
+                model.setMessage(ConstantsManager.getInstance()
+                        .getMessages()
+                        .templatesAlreadyExistonTargetExportDomain(existingTemplates));
             }
         }
     }
@@ -429,7 +436,7 @@ public class TemplateListModel extends ListWithDetailsModel implements ISupportS
     @Override
     public boolean IsSearchStringMatch(String searchString)
     {
-        return searchString.trim().toLowerCase().startsWith("template");
+        return searchString.trim().toLowerCase().startsWith("template"); //$NON-NLS-1$
     }
 
     @Override
@@ -459,21 +466,21 @@ public class TemplateListModel extends ListWithDetailsModel implements ISupportS
 
         UnitVmModel model = new UnitVmModel(new TemplateVmModelBehavior(template));
         setWindow(model);
-        model.setTitle("Edit Template");
-        model.setHashName("edit_template");
+        model.setTitle(ConstantsManager.getInstance().getConstants().editTemplateTitle());
+        model.setHashName("edit_template"); //$NON-NLS-1$
         model.setVmType(template.getvm_type());
 
         model.Initialize(this.getSystemTreeSelectedItem());
 
         UICommand command;
 
-        command = new UICommand("OnSave", this);
-        command.setTitle("OK");
+        command = new UICommand("OnSave", this); //$NON-NLS-1$
+        command.setTitle(ConstantsManager.getInstance().getConstants().ok());
         command.setIsDefault(true);
         model.getCommands().add(command);
 
-        command = new UICommand("Cancel", this);
-        command.setTitle("Cancel");
+        command = new UICommand("Cancel", this); //$NON-NLS-1$
+        command.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         command.setIsCancel(true);
         model.getCommands().add(command);
     }
@@ -487,9 +494,9 @@ public class TemplateListModel extends ListWithDetailsModel implements ISupportS
 
         ConfirmationModel model = new ConfirmationModel();
         setWindow(model);
-        model.setTitle("Remove Template(s)");
-        model.setHashName("remove_template");
-        model.setMessage("Template(s)");
+        model.setTitle(ConstantsManager.getInstance().getConstants().removeTemplatesTitle());
+        model.setHashName("remove_template"); //$NON-NLS-1$
+        model.setMessage(ConstantsManager.getInstance().getConstants().templatesMsg());
 
         java.util.ArrayList<String> items = new java.util.ArrayList<String>();
         java.util.ArrayList<VmTemplate> templates = Linq.<VmTemplate> Cast(getSelectedItems());
@@ -503,12 +510,12 @@ public class TemplateListModel extends ListWithDetailsModel implements ISupportS
 
         model.setItems(items);
 
-        UICommand tempVar = new UICommand("OnRemove", this);
-        tempVar.setTitle("OK");
+        UICommand tempVar = new UICommand("OnRemove", this); //$NON-NLS-1$
+        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
         tempVar.setIsDefault(true);
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this);
-        tempVar2.setTitle("Cancel");
+        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
+        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         tempVar2.setIsCancel(true);
         model.getCommands().add(tempVar2);
     }
@@ -585,7 +592,9 @@ public class TemplateListModel extends ListWithDetailsModel implements ISupportS
         // Check name unicitate.
         if (!isNameUnique && name.compareToIgnoreCase(template.getname()) != 0)
         {
-            model.getName().getInvalidityReasons().add("Name must be unique.");
+            model.getName()
+                    .getInvalidityReasons()
+                    .add(ConstantsManager.getInstance().getConstants().nameMustBeUniqueInvalidReason());
             model.getName().setIsValid(false);
             model.setIsGeneralTabValid(false);
             return;
@@ -597,12 +606,12 @@ public class TemplateListModel extends ListWithDetailsModel implements ISupportS
         template.setos((VmOsType) model.getOSType().getSelectedItem());
         template.setnum_of_monitors((Integer) model.getNumOfMonitors().getSelectedItem());
         template.setdescription((String) model.getDescription().getEntity());
-        template.setdomain(model.getDomain().getIsAvailable() ? (String) model.getDomain().getSelectedItem() : "");
+        template.setdomain(model.getDomain().getIsAvailable() ? (String) model.getDomain().getSelectedItem() : ""); //$NON-NLS-1$
         template.setmem_size_mb((Integer) model.getMemSize().getEntity());
         template.setvds_group_id(((VDSGroup) model.getCluster().getSelectedItem()).getId());
         template.settime_zone((model.getTimeZone().getIsAvailable() && model.getTimeZone().getSelectedItem() != null) ? ((java.util.Map.Entry<String, String>) model.getTimeZone()
                 .getSelectedItem()).getKey()
-                : "");
+                : ""); //$NON-NLS-1$
         template.setnum_of_sockets((Integer) model.getNumOfSockets().getEntity());
         template.setcpu_per_socket((Integer) model.getTotalCPUCores().getEntity()
                 / (Integer) model.getNumOfSockets().getEntity());
@@ -610,7 +619,7 @@ public class TemplateListModel extends ListWithDetailsModel implements ISupportS
         template.setis_auto_suspend(false);
         template.setis_stateless((Boolean) model.getIsStateless().getEntity());
         template.setdefault_boot_sequence(model.getBootSequence());
-        template.setiso_path(model.getCdImage().getIsChangable() ? (String) model.getCdImage().getSelectedItem() : "");
+        template.setiso_path(model.getCdImage().getIsChangable() ? (String) model.getCdImage().getSelectedItem() : ""); //$NON-NLS-1$
         template.setauto_startup((Boolean) model.getIsHighlyAvailable().getEntity());
         template.setkernel_url((String) model.getKernel_path().getEntity());
         template.setkernel_params((String) model.getKernel_parameters().getEntity());
@@ -678,7 +687,7 @@ public class TemplateListModel extends ListWithDetailsModel implements ISupportS
     {
         super.SelectedItemPropertyChanged(sender, e);
 
-        if (e.PropertyName.equals("status"))
+        if (e.PropertyName.equals("status")) //$NON-NLS-1$
         {
             UpdateActionAvailability();
         }
@@ -715,7 +724,9 @@ public class TemplateListModel extends ListWithDetailsModel implements ISupportS
         if (getEditCommand().getIsExecutionAllowed() && blankSelected)
         {
             getEditCommand().setIsExecutionAllowed(false);
-            getEditCommand().getExecuteProhibitionReasons().add("Blank Template cannot be edited");
+            getEditCommand().getExecuteProhibitionReasons().add(ConstantsManager.getInstance()
+                    .getConstants()
+                    .blankTemplateCannotBeEdited());
         }
 
         getRemoveCommand().setIsExecutionAllowed(items.size() > 0
@@ -723,7 +734,9 @@ public class TemplateListModel extends ListWithDetailsModel implements ISupportS
         if (getRemoveCommand().getIsExecutionAllowed() && blankSelected)
         {
             getRemoveCommand().setIsExecutionAllowed(false);
-            getRemoveCommand().getExecuteProhibitionReasons().add("Blank Template cannot be removed");
+            getRemoveCommand().getExecuteProhibitionReasons().add(ConstantsManager.getInstance()
+                    .getConstants()
+                    .blankTemplateCannotBeRemoved());
         }
 
         getExportCommand().setIsExecutionAllowed(items.size() > 0
@@ -732,7 +745,9 @@ public class TemplateListModel extends ListWithDetailsModel implements ISupportS
         if (getExportCommand().getIsExecutionAllowed() && blankSelected)
         {
             getExportCommand().setIsExecutionAllowed(false);
-            getExportCommand().getExecuteProhibitionReasons().add("Blank Template cannot be exported");
+            getExportCommand().getExecuteProhibitionReasons().add(ConstantsManager.getInstance()
+                    .getConstants()
+                    .blankTemplateCannotBeExported());
         }
 
         getCopyCommand().setIsExecutionAllowed(items.size() == 1 && item != null
@@ -741,7 +756,9 @@ public class TemplateListModel extends ListWithDetailsModel implements ISupportS
         if (getCopyCommand().getIsExecutionAllowed() && blankSelected)
         {
             getCopyCommand().setIsExecutionAllowed(false);
-            getCopyCommand().getExecuteProhibitionReasons().add("Blank Template cannot be copied");
+            getCopyCommand().getExecuteProhibitionReasons().add(ConstantsManager.getInstance()
+                    .getConstants()
+                    .blankTemplateCannotBeCopied());
         }
     }
 
@@ -766,19 +783,19 @@ public class TemplateListModel extends ListWithDetailsModel implements ISupportS
         {
             Export();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "Cancel"))
+        else if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
         {
             Cancel();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnExport"))
+        else if (StringHelper.stringsEqual(command.getName(), "OnExport")) //$NON-NLS-1$
         {
             OnExport();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnSave"))
+        else if (StringHelper.stringsEqual(command.getName(), "OnSave")) //$NON-NLS-1$
         {
             OnSave();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnRemove"))
+        else if (StringHelper.stringsEqual(command.getName(), "OnRemove")) //$NON-NLS-1$
         {
             OnRemove();
         }
@@ -786,6 +803,6 @@ public class TemplateListModel extends ListWithDetailsModel implements ISupportS
 
     @Override
     protected String getListName() {
-        return "TemplateListModel";
+        return "TemplateListModel"; //$NON-NLS-1$
     }
 }

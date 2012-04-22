@@ -16,12 +16,12 @@ import org.ovirt.engine.core.compat.NotifyCollectionChangedEventArgs;
 import org.ovirt.engine.core.compat.ObservableCollection;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.core.compat.ProvideCollectionChangedEvent;
-import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
 public class AlertListModel extends SearchableListModel
@@ -66,7 +66,7 @@ public class AlertListModel extends SearchableListModel
         if (hasAlerts != value)
         {
             hasAlerts = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("HasAlerts"));
+            OnPropertyChanged(new PropertyChangedEventArgs("HasAlerts")); //$NON-NLS-1$
         }
     }
 
@@ -82,13 +82,13 @@ public class AlertListModel extends SearchableListModel
         if (lastAlert != value)
         {
             lastAlert = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("LastAlert"));
+            OnPropertyChanged(new PropertyChangedEventArgs("LastAlert")); //$NON-NLS-1$
         }
     }
 
     static
     {
-        NewAlertEventDefinition = new EventDefinition("NewAlert", AlertListModel.class);
+        NewAlertEventDefinition = new EventDefinition("NewAlert", AlertListModel.class); //$NON-NLS-1$
     }
 
     public AlertListModel()
@@ -97,7 +97,7 @@ public class AlertListModel extends SearchableListModel
 
         setIsTimerDisabled(false);
 
-        setDefaultSearchString("Events: severity=alert");
+        setDefaultSearchString("Events: severity=alert"); //$NON-NLS-1$
         setSearchString(getDefaultSearchString());
 
         getSearchNextPageCommand().setIsAvailable(true);
@@ -139,7 +139,7 @@ public class AlertListModel extends SearchableListModel
             }
         };
 
-        SearchParameters tempVar = new SearchParameters("Events: severity=alert", SearchType.AuditLog);
+        SearchParameters tempVar = new SearchParameters("Events: severity=alert", SearchType.AuditLog); //$NON-NLS-1$
         tempVar.setMaxCount(getSearchPageSize());
         tempVar.setRefresh(false);
         SearchParameters searchParameters = tempVar;
@@ -246,13 +246,16 @@ public class AlertListModel extends SearchableListModel
 
     private void UpdateTitle()
     {
-        setTitle(StringFormat.format("%1$s Alerts",
-                (getItems() == null || getItems().isEmpty()) ? "No" : String.valueOf(getItems().size())));
+        setTitle(ConstantsManager.getInstance()
+                .getMessages()
+                .alertsTitle((getItems() == null || getItems().isEmpty()) ? ConstantsManager.getInstance()
+                        .getConstants()
+                        .noAlerts() : String.valueOf(getItems().size())));
         setHasAlerts(getItems() != null && getItems().size() > 0);
     }
 
     @Override
     protected String getListName() {
-        return "AlertListModel";
+        return "AlertListModel"; //$NON-NLS-1$
     }
 }

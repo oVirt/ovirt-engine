@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.volumes.VolumeListModel;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabVolumePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
@@ -25,22 +26,22 @@ public class MainTabVolumeView extends AbstractMainTabWithDetailsTableView<Glust
     }
 
     @Inject
-    public MainTabVolumeView(MainModelProvider<GlusterVolumeEntity, VolumeListModel> modelProvider) {
+    public MainTabVolumeView(MainModelProvider<GlusterVolumeEntity, VolumeListModel> modelProvider, ApplicationConstants constants) {
         super(modelProvider);
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        initTable();
+        initTable(constants);
         initWidget(getTable());
     }
 
-    void initTable() {
-        getTable().addColumn(new VolumeStatusColumn(), "", "30px");
+    void initTable(ApplicationConstants constants) {
+        getTable().addColumn(new VolumeStatusColumn(), constants.empty(), "30px"); //$NON-NLS-1$
         TextColumnWithTooltip<GlusterVolumeEntity> nameColumn = new TextColumnWithTooltip<GlusterVolumeEntity>() {
             @Override
             public String getValue(GlusterVolumeEntity object) {
                 return object.getName();
             }
         };
-        getTable().addColumn(nameColumn, "Name");
+        getTable().addColumn(nameColumn, constants.NameVolume());
 
         TextColumnWithTooltip<GlusterVolumeEntity> volumeTypeColumn =
                 new EnumColumn<GlusterVolumeEntity, GlusterVolumeType>() {
@@ -50,7 +51,7 @@ public class MainTabVolumeView extends AbstractMainTabWithDetailsTableView<Glust
                         return object.getVolumeType();
                     }
                 };
-        getTable().addColumn(volumeTypeColumn, "Volume Type");
+        getTable().addColumn(volumeTypeColumn, constants.volumeTypeVolume());
 
         TextColumnWithTooltip<GlusterVolumeEntity> numOfBricksColumn =
                 new TextColumnWithTooltip<GlusterVolumeEntity>() {
@@ -59,7 +60,7 @@ public class MainTabVolumeView extends AbstractMainTabWithDetailsTableView<Glust
                         return Integer.toString(object.getBricks().size());
                     }
                 };
-        getTable().addColumn(numOfBricksColumn, "Number of Bricks");
+        getTable().addColumn(numOfBricksColumn, constants.numberOfBricksVolume());
 
         TextColumnWithTooltip<GlusterVolumeEntity> transportColumn =
                 new EnumColumn<GlusterVolumeEntity, TransportType>() {
@@ -71,7 +72,7 @@ public class MainTabVolumeView extends AbstractMainTabWithDetailsTableView<Glust
                     }
 
                 };
-        getTable().addColumn(transportColumn, "Transport Type");
+        getTable().addColumn(transportColumn, constants.transportTypeVolume());
 
         TextColumnWithTooltip<GlusterVolumeEntity> statusColumn =
                 new EnumColumn<GlusterVolumeEntity, GlusterVolumeStatus>() {
@@ -80,33 +81,33 @@ public class MainTabVolumeView extends AbstractMainTabWithDetailsTableView<Glust
                         return object.getStatus();
                     }
                 };
-        getTable().addColumn(statusColumn, "Status");
+        getTable().addColumn(statusColumn, constants.statusVolume());
 
-        getTable().addActionButton(new WebAdminButtonDefinition<GlusterVolumeEntity>("Create Volume") {
+        getTable().addActionButton(new WebAdminButtonDefinition<GlusterVolumeEntity>(constants.createVolumeVolume()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getCreateVolumeCommand();
             }
         });
-        getTable().addActionButton(new WebAdminButtonDefinition<GlusterVolumeEntity>("Remove") {
+        getTable().addActionButton(new WebAdminButtonDefinition<GlusterVolumeEntity>(constants.removeVolume()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getRemoveVolumeCommand();
             }
         });
-        getTable().addActionButton(new WebAdminButtonDefinition<GlusterVolumeEntity>("Start") {
+        getTable().addActionButton(new WebAdminButtonDefinition<GlusterVolumeEntity>(constants.startVolume()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getStartCommand();
             }
         });
-        getTable().addActionButton(new WebAdminButtonDefinition<GlusterVolumeEntity>("Stop") {
+        getTable().addActionButton(new WebAdminButtonDefinition<GlusterVolumeEntity>(constants.stopVolume()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getStopCommand();
             }
         });
-        getTable().addActionButton(new WebAdminButtonDefinition<GlusterVolumeEntity>("Rebalance") {
+        getTable().addActionButton(new WebAdminButtonDefinition<GlusterVolumeEntity>(constants.rebalanceVolume()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getRebalanceCommand();

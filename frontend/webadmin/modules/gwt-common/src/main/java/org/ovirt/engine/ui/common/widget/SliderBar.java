@@ -308,21 +308,21 @@ public class SliderBar extends FocusPanel implements RequiresResize,
         setLabelFormatter(labelFormatter);
 
         // Create the outer shell
-        DOM.setStyleAttribute(getElement(), "position", "relative");
-        setStyleName("gwt-SliderBar-shell");
+        DOM.setStyleAttribute(getElement(), "position", "relative"); //$NON-NLS-1$ //$NON-NLS-2$
+        setStyleName("gwt-SliderBar-shell"); //$NON-NLS-1$
 
         // Create the line
         lineElement = DOM.createDiv();
         DOM.appendChild(getElement(), lineElement);
-        DOM.setStyleAttribute(lineElement, "position", "absolute");
-        DOM.setElementProperty(lineElement, "className", "gwt-SliderBar-line");
+        DOM.setStyleAttribute(lineElement, "position", "absolute"); //$NON-NLS-1$ //$NON-NLS-2$
+        DOM.setElementProperty(lineElement, "className", "gwt-SliderBar-line"); //$NON-NLS-1$ //$NON-NLS-2$
 
         // Create the knob
         knobImage.setResource(images.slider());
         Element knobElement = knobImage.getElement();
         DOM.appendChild(getElement(), knobElement);
-        DOM.setStyleAttribute(knobElement, "position", "absolute");
-        DOM.setElementProperty(knobElement, "className", "gwt-SliderBar-knob");
+        DOM.setStyleAttribute(knobElement, "position", "absolute"); //$NON-NLS-1$ //$NON-NLS-2$
+        DOM.setElementProperty(knobElement, "className", "gwt-SliderBar-knob"); //$NON-NLS-1$ //$NON-NLS-2$
 
         sinkEvents(Event.MOUSEEVENTS | Event.KEYEVENTS | Event.FOCUSEVENTS);
     }
@@ -549,7 +549,7 @@ public class SliderBar extends FocusPanel implements RequiresResize,
         // Center the line in the shell
         int lineWidth = lineElement.getOffsetWidth();
         lineLeftOffset = (width / 2) - (lineWidth / 2);
-        DOM.setStyleAttribute(lineElement, "left", lineLeftOffset + "px");
+        DOM.setStyleAttribute(lineElement, "left", lineLeftOffset + "px"); //$NON-NLS-1$ //$NON-NLS-2$
 
         // Draw the other components
         drawLabels();
@@ -617,12 +617,12 @@ public class SliderBar extends FocusPanel implements RequiresResize,
         this.enabled = enabled;
         if (enabled) {
             knobImage.setResource(images.slider());
-            DOM.setElementProperty(lineElement, "className",
-                    "gwt-SliderBar-line");
+            DOM.setElementProperty(lineElement, "className", //$NON-NLS-1$
+                    "gwt-SliderBar-line"); //$NON-NLS-1$
         } else {
             knobImage.setResource(images.sliderDisabled());
-            DOM.setElementProperty(lineElement, "className",
-                    "gwt-SliderBar-line gwt-SliderBar-line-disabled");
+            DOM.setElementProperty(lineElement, "className", //$NON-NLS-1$
+                    "gwt-SliderBar-line gwt-SliderBar-line-disabled"); //$NON-NLS-1$
         }
         redraw();
     }
@@ -762,7 +762,7 @@ public class SliderBar extends FocusPanel implements RequiresResize,
         if (labelFormatter != null) {
             return labelFormatter.formatLabel(this, value);
         } else {
-            return (int) (10 * value) / 10.0 + "";
+            return (int) (10 * value) / 10.0 + ""; //$NON-NLS-1$
         }
     }
 
@@ -790,7 +790,7 @@ public class SliderBar extends FocusPanel implements RequiresResize,
     @Override
     protected void onLoad() {
         // Reset the position attribute of the parent element
-        DOM.setStyleAttribute(getElement(), "position", "relative");
+        DOM.setStyleAttribute(getElement(), "position", "relative"); //$NON-NLS-1$ //$NON-NLS-2$
         // workaround to render properly when parent Widget does not
         // implement ProvidesResize since DOM doesn't provide element
         // height and width until onModuleLoad() finishes.
@@ -819,7 +819,7 @@ public class SliderBar extends FocusPanel implements RequiresResize,
                 + (getKnobPercent() * lineWidth) - (knobWidth / 2));
         knobLeftOffset = Math.min(knobLeftOffset, lineLeftOffset + lineWidth
                 - (knobWidth / 2) - 1);
-        DOM.setStyleAttribute(knobElement, "left", knobLeftOffset + "px");
+        DOM.setStyleAttribute(knobElement, "left", knobLeftOffset + "px"); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     /**
@@ -841,14 +841,14 @@ public class SliderBar extends FocusPanel implements RequiresResize,
                     label = labelElements.get(i);
                 } else { // Create the new label
                     label = DOM.createDiv();
-                    DOM.setStyleAttribute(label, "position", "absolute");
-                    DOM.setStyleAttribute(label, "display", "none");
+                    DOM.setStyleAttribute(label, "position", "absolute"); //$NON-NLS-1$ //$NON-NLS-2$
+                    DOM.setStyleAttribute(label, "display", "none"); //$NON-NLS-1$ //$NON-NLS-2$
                     if (enabled) {
-                        DOM.setElementProperty(label, "className",
-                                "gwt-SliderBar-label");
+                        DOM.setElementProperty(label, "className", //$NON-NLS-1$
+                                "gwt-SliderBar-label"); //$NON-NLS-1$
                     } else {
-                        DOM.setElementProperty(label, "className",
-                                "gwt-SliderBar-label-disabled");
+                        DOM.setElementProperty(label, "className", //$NON-NLS-1$
+                                "gwt-SliderBar-label-disabled"); //$NON-NLS-1$
                     }
                     DOM.appendChild(getElement(), label);
                     labelElements.add(label);
@@ -856,13 +856,13 @@ public class SliderBar extends FocusPanel implements RequiresResize,
 
                 // Set the label text
                 double value = minValue + (getTotalRange() * i / numLabels);
-                DOM.setStyleAttribute(label, "visibility", "hidden");
-                DOM.setStyleAttribute(label, "display", "");
-                DOM.setElementProperty(label, "innerHTML", formatLabel(value));
+                DOM.setStyleAttribute(label, "visibility", "hidden"); //$NON-NLS-1$ //$NON-NLS-2$
+                DOM.setStyleAttribute(label, "display", ""); //$NON-NLS-1$ //$NON-NLS-2$
+                DOM.setElementProperty(label, "innerHTML", formatLabel(value)); //$NON-NLS-1$
 
                 // Move to the left so the label width is not clipped by the
                 // shell
-                DOM.setStyleAttribute(label, "left", "0px");
+                DOM.setStyleAttribute(label, "left", "0px"); //$NON-NLS-1$ //$NON-NLS-2$
 
                 // Position the label and make it visible
                 int labelWidth = label.getOffsetWidth();
@@ -871,17 +871,17 @@ public class SliderBar extends FocusPanel implements RequiresResize,
                 labelLeftOffset = Math.min(labelLeftOffset, lineLeftOffset
                         + lineWidth - labelWidth);
                 labelLeftOffset = Math.max(labelLeftOffset, lineLeftOffset);
-                DOM.setStyleAttribute(label, "left", labelLeftOffset + "px");
-                DOM.setStyleAttribute(label, "visibility", "visible");
+                DOM.setStyleAttribute(label, "left", labelLeftOffset + "px"); //$NON-NLS-1$ //$NON-NLS-2$
+                DOM.setStyleAttribute(label, "visibility", "visible"); //$NON-NLS-1$ //$NON-NLS-2$
             }
 
             // Hide unused labels
             for (int i = (numLabels + 1); i < labelElements.size(); i++) {
-                DOM.setStyleAttribute(labelElements.get(i), "display", "none");
+                DOM.setStyleAttribute(labelElements.get(i), "display", "none"); //$NON-NLS-1$ //$NON-NLS-2$
             }
         } else { // Hide all labels
             for (Element elem : labelElements) {
-                DOM.setStyleAttribute(elem, "display", "none");
+                DOM.setStyleAttribute(elem, "display", "none"); //$NON-NLS-1$ //$NON-NLS-2$
             }
         }
     }
@@ -905,37 +905,37 @@ public class SliderBar extends FocusPanel implements RequiresResize,
                     tick = tickElements.get(i);
                 } else { // Create the new tick
                     tick = DOM.createDiv();
-                    DOM.setStyleAttribute(tick, "position", "absolute");
-                    DOM.setStyleAttribute(tick, "display", "none");
+                    DOM.setStyleAttribute(tick, "position", "absolute"); //$NON-NLS-1$ //$NON-NLS-2$
+                    DOM.setStyleAttribute(tick, "display", "none"); //$NON-NLS-1$ //$NON-NLS-2$
                     DOM.appendChild(getElement(), tick);
                     tickElements.add(tick);
                 }
                 if (enabled) {
-                    DOM.setElementProperty(tick, "className",
-                            "gwt-SliderBar-tick");
+                    DOM.setElementProperty(tick, "className", //$NON-NLS-1$
+                            "gwt-SliderBar-tick"); //$NON-NLS-1$
                 } else {
-                    DOM.setElementProperty(tick, "className",
-                            "gwt-SliderBar-tick gwt-SliderBar-tick-disabled");
+                    DOM.setElementProperty(tick, "className", //$NON-NLS-1$
+                            "gwt-SliderBar-tick gwt-SliderBar-tick-disabled"); //$NON-NLS-1$
                 }
                 // Position the tick and make it visible
-                DOM.setStyleAttribute(tick, "visibility", "hidden");
-                DOM.setStyleAttribute(tick, "display", "");
+                DOM.setStyleAttribute(tick, "visibility", "hidden"); //$NON-NLS-1$ //$NON-NLS-2$
+                DOM.setStyleAttribute(tick, "display", ""); //$NON-NLS-1$ //$NON-NLS-2$
                 int tickWidth = tick.getOffsetWidth();
                 int tickLeftOffset = lineLeftOffset
                         + (lineWidth * i / numTicks) - (tickWidth / 2);
                 tickLeftOffset = Math.min(tickLeftOffset, lineLeftOffset
                         + lineWidth - tickWidth);
-                DOM.setStyleAttribute(tick, "left", tickLeftOffset + "px");
-                DOM.setStyleAttribute(tick, "visibility", "visible");
+                DOM.setStyleAttribute(tick, "left", tickLeftOffset + "px"); //$NON-NLS-1$ //$NON-NLS-2$
+                DOM.setStyleAttribute(tick, "visibility", "visible"); //$NON-NLS-1$ //$NON-NLS-2$
             }
 
             // Hide unused ticks
             for (int i = (numTicks + 1); i < tickElements.size(); i++) {
-                DOM.setStyleAttribute(tickElements.get(i), "display", "none");
+                DOM.setStyleAttribute(tickElements.get(i), "display", "none"); //$NON-NLS-1$ //$NON-NLS-2$
             }
         } else { // Hide all ticks
             for (Element elem : tickElements) {
-                DOM.setStyleAttribute(elem, "display", "none");
+                DOM.setStyleAttribute(elem, "display", "none"); //$NON-NLS-1$ //$NON-NLS-2$
             }
         }
     }
@@ -945,8 +945,8 @@ public class SliderBar extends FocusPanel implements RequiresResize,
      */
     private void highlight() {
         String styleName = getStylePrimaryName();
-        DOM.setElementProperty(getElement(), "className", styleName + " "
-                + styleName + "-focused");
+        DOM.setElementProperty(getElement(), "className", styleName + " " //$NON-NLS-1$ //$NON-NLS-2$
+                + styleName + "-focused"); //$NON-NLS-1$
     }
 
     /**
@@ -983,10 +983,10 @@ public class SliderBar extends FocusPanel implements RequiresResize,
      */
     private void startSliding(boolean highlight, boolean fireEvent) {
         if (highlight) {
-            DOM.setElementProperty(lineElement, "className",
-                    "gwt-SliderBar-line gwt-SliderBar-line-sliding");
-            DOM.setElementProperty(knobImage.getElement(), "className",
-                    "gwt-SliderBar-knob gwt-SliderBar-knob-sliding");
+            DOM.setElementProperty(lineElement, "className", //$NON-NLS-1$
+                    "gwt-SliderBar-line gwt-SliderBar-line-sliding"); //$NON-NLS-1$
+            DOM.setElementProperty(knobImage.getElement(), "className", //$NON-NLS-1$
+                    "gwt-SliderBar-knob gwt-SliderBar-knob-sliding"); //$NON-NLS-1$
             knobImage.setResource(images.sliderSliding());
         }
     }
@@ -1001,11 +1001,11 @@ public class SliderBar extends FocusPanel implements RequiresResize,
      */
     private void stopSliding(boolean unhighlight, boolean fireEvent) {
         if (unhighlight) {
-            DOM.setElementProperty(lineElement, "className",
-                    "gwt-SliderBar-line");
+            DOM.setElementProperty(lineElement, "className", //$NON-NLS-1$
+                    "gwt-SliderBar-line"); //$NON-NLS-1$
 
-            DOM.setElementProperty(knobImage.getElement(), "className",
-                    "gwt-SliderBar-knob");
+            DOM.setElementProperty(knobImage.getElement(), "className", //$NON-NLS-1$
+                    "gwt-SliderBar-knob"); //$NON-NLS-1$
             knobImage.setResource(images.slider());
         }
     }
@@ -1014,7 +1014,7 @@ public class SliderBar extends FocusPanel implements RequiresResize,
      * Unhighlight this widget.
      */
     private void unhighlight() {
-        DOM.setElementProperty(getElement(), "className", getStylePrimaryName());
+        DOM.setElementProperty(getElement(), "className", getStylePrimaryName()); //$NON-NLS-1$
     }
 
     @Override

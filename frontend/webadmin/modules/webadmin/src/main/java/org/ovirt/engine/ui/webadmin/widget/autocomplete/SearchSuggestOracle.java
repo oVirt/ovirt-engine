@@ -17,7 +17,7 @@ public class SearchSuggestOracle extends MultiWordSuggestOracle {
 
     public SearchSuggestOracle() {
         searchSuggestModel = new SearchSuggestModel();
-        searchStringPrefix = "";
+        searchStringPrefix = ""; //$NON-NLS-1$
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })

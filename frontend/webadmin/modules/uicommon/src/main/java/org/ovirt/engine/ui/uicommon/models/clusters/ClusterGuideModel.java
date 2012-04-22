@@ -1,21 +1,36 @@
 package org.ovirt.engine.ui.uicommon.models.clusters;
-import java.util.Collections;
-import org.ovirt.engine.core.compat.*;
-import org.ovirt.engine.ui.uicompat.*;
-import org.ovirt.engine.core.common.businessentities.*;
-import org.ovirt.engine.core.common.vdscommands.*;
-import org.ovirt.engine.core.common.queries.*;
-import org.ovirt.engine.core.common.action.*;
-import org.ovirt.engine.ui.frontend.*;
-import org.ovirt.engine.ui.uicommon.*;
-import org.ovirt.engine.ui.uicommon.models.*;
-import org.ovirt.engine.core.common.*;
-
-import org.ovirt.engine.ui.uicommon.models.hosts.*;
-import org.ovirt.engine.core.common.businessentities.*;
-
-import org.ovirt.engine.ui.uicommon.*;
-import org.ovirt.engine.ui.uicommon.models.*;
+import org.ovirt.engine.core.common.action.AddVdsActionParameters;
+import org.ovirt.engine.core.common.action.ApproveVdsParameters;
+import org.ovirt.engine.core.common.action.ChangeVDSClusterParameters;
+import org.ovirt.engine.core.common.action.VdcActionParametersBase;
+import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.businessentities.StorageType;
+import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.VDSStatus;
+import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.queries.ValueObjectMap;
+import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
+import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.ui.frontend.Frontend;
+import org.ovirt.engine.ui.uicommon.DataProvider;
+import org.ovirt.engine.ui.uicommon.Extensions;
+import org.ovirt.engine.ui.uicommon.Linq;
+import org.ovirt.engine.ui.uicommon.UICommand;
+import org.ovirt.engine.ui.uicommon.models.ConfirmationModel;
+import org.ovirt.engine.ui.uicommon.models.EntityModel;
+import org.ovirt.engine.ui.uicommon.models.GuideModel;
+import org.ovirt.engine.ui.uicommon.models.Model;
+import org.ovirt.engine.ui.uicommon.models.hosts.HostModel;
+import org.ovirt.engine.ui.uicommon.models.hosts.MoveHost;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
+import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
+import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
+import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
+import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
 @SuppressWarnings("unused")
 public class ClusterGuideModel extends GuideModel
@@ -54,7 +69,8 @@ public class ClusterGuideModel extends GuideModel
 		}
 	}
 
-	public VDSGroup getEntity()
+	@Override
+    public VDSGroup getEntity()
 	{
 		return (VDSGroup)((super.getEntity() instanceof VDSGroup) ? super.getEntity() : null);
 	}
@@ -178,7 +194,7 @@ public class ClusterGuideModel extends GuideModel
 		model.getCluster().setIsAvailable(false);
 
 		UICommand tempVar = new UICommand("OnSelectHost", this);
-		tempVar.setTitle("OK");
+		tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
 		tempVar.setIsDefault(true);
 		model.getCommands().add(tempVar);
 		UICommand tempVar2 = new UICommand("Cancel", this);
@@ -273,7 +289,7 @@ public class ClusterGuideModel extends GuideModel
 
 
 		UICommand tempVar = new UICommand("OnConfirmPMHost", this);
-		tempVar.setTitle("OK");
+		tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
 		tempVar.setIsDefault(true);
 		model.getCommands().add(tempVar);
 		UICommand tempVar2 = new UICommand("Cancel", this);

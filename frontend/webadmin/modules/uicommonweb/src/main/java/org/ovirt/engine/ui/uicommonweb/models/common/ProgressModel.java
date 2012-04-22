@@ -20,7 +20,7 @@ public class ProgressModel extends Model
         if (!StringHelper.stringsEqual(currentOperation, value))
         {
             currentOperation = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("CurrentOperation"));
+            OnPropertyChanged(new PropertyChangedEventArgs("CurrentOperation")); //$NON-NLS-1$
         }
     }
 

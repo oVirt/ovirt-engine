@@ -54,23 +54,23 @@ public class SystemPermissionView extends Composite {
         localize(constants);
 
         content = new SplitLayoutPanel();
-        content.setWidth("100%");
-        content.setHeight("100%");
+        content.setWidth("100%"); //$NON-NLS-1$
+        content.setHeight("100%"); //$NON-NLS-1$
         tabContent.add(content);
 
-        initTable();
+        initTable(constants);
     }
 
     private void localize(ApplicationConstants constants) {
     }
 
-    private void initTable() {
+    private void initTable(ApplicationConstants constants) {
         table = new SimpleActionTable<permissions>(modelProvider,
                 getTableHeaderlessResources(), getTableResources(), eventBus, clientStorage);
 
         content.add(table);
 
-        table.addColumn(new PermissionTypeColumn(), "", "30px");
+        table.addColumn(new PermissionTypeColumn(), constants.empty(), "30px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<permissions> userColumn = new TextColumnWithTooltip<permissions>() {
             @Override
@@ -78,7 +78,7 @@ public class SystemPermissionView extends Composite {
                 return object.getOwnerName();
             }
         };
-        table.addColumn(userColumn, "User");
+        table.addColumn(userColumn, constants.userPermission());
 
         TextColumnWithTooltip<permissions> roleColumn = new TextColumnWithTooltip<permissions>() {
             @Override
@@ -86,16 +86,16 @@ public class SystemPermissionView extends Composite {
                 return object.getRoleName();
             }
         };
-        table.addColumn(roleColumn, "Role");
+        table.addColumn(roleColumn, constants.rolePermission());
 
-        table.addActionButton(new WebAdminButtonDefinition<permissions>("Add") {
+        table.addActionButton(new WebAdminButtonDefinition<permissions>(constants.addPermission()) {
             @Override
             protected UICommand resolveCommand() {
                 return modelProvider.getModel().getAddCommand();
             }
         });
 
-        table.addActionButton(new WebAdminButtonDefinition<permissions>("Remove") {
+        table.addActionButton(new WebAdminButtonDefinition<permissions>(constants.removePermission()) {
             @Override
             protected UICommand resolveCommand() {
                 return modelProvider.getModel().getRemoveCommand();

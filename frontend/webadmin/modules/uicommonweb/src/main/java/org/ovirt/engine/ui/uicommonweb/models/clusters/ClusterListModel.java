@@ -31,6 +31,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
@@ -121,15 +122,16 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
 
     public ClusterListModel()
     {
-        setTitle("Clusters");
+        setTitle(ConstantsManager.getInstance().getConstants().clustersTitle());
+        setHashName("clusters"); //$NON-NLS-1$
 
-        setDefaultSearchString("Cluster:");
+        setDefaultSearchString("Cluster:"); //$NON-NLS-1$
         setSearchString(getDefaultSearchString());
 
-        setNewCommand(new UICommand("New", this));
-        setEditCommand(new UICommand("Edit", this));
-        setRemoveCommand(new UICommand("Remove", this));
-        setGuideCommand(new UICommand("Guide", this));
+        setNewCommand(new UICommand("New", this)); //$NON-NLS-1$
+        setEditCommand(new UICommand("Edit", this)); //$NON-NLS-1$
+        setRemoveCommand(new UICommand("Remove", this)); //$NON-NLS-1$
+        setGuideCommand(new UICommand("Guide", this)); //$NON-NLS-1$
 
         UpdateActionAvailability();
 
@@ -141,8 +143,8 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
     {
         ClusterGuideModel model = new ClusterGuideModel();
         setWindow(model);
-        model.setTitle("New Cluster - Guide Me");
-        model.setHashName("new_cluster_-_guide_me");
+        model.setTitle(ConstantsManager.getInstance().getConstants().newClusterGuideMeTitle());
+        model.setHashName("new_cluster_-_guide_me"); //$NON-NLS-1$
 
         if (getGuideContext() == null) {
             VDSGroup cluster = (VDSGroup) getSelectedItem();
@@ -157,8 +159,8 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
                         ClusterGuideModel model = (ClusterGuideModel) clusterListModel.getWindow();
                         model.setEntity((VDSGroup) returnValue);
 
-                        UICommand tempVar = new UICommand("Cancel", clusterListModel);
-                        tempVar.setTitle("Configure Later");
+                        UICommand tempVar = new UICommand("Cancel", clusterListModel); //$NON-NLS-1$
+                        tempVar.setTitle(ConstantsManager.getInstance().getConstants().configureLaterTitle());
                         tempVar.setIsDefault(true);
                         tempVar.setIsCancel(true);
                         model.getCommands().add(tempVar);
@@ -183,7 +185,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
     @Override
     public boolean IsSearchStringMatch(String searchString)
     {
-        return searchString.trim().toLowerCase().startsWith("cluster");
+        return searchString.trim().toLowerCase().startsWith("cluster"); //$NON-NLS-1$
     }
 
     @Override
@@ -213,8 +215,8 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         ClusterModel clusterModel = new ClusterModel();
         clusterModel.Init(false, getGlusterModeEnum());
         setWindow(clusterModel);
-        clusterModel.setTitle("New Cluster");
-        clusterModel.setHashName("new_cluster");
+        clusterModel.setTitle(ConstantsManager.getInstance().getConstants().newClusterTitle());
+        clusterModel.setHashName("new_cluster"); //$NON-NLS-1$
         clusterModel.setIsNew(true);
 
         AsyncQuery _asyncQuery = new AsyncQuery();
@@ -245,12 +247,12 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
                     cModel.getDataCenter().setSelectedItem(Linq.FirstOrDefault(dataCenters));
                 }
 
-                UICommand tempVar = new UICommand("OnSave", clModel);
-                tempVar.setTitle("OK");
+                UICommand tempVar = new UICommand("OnSave", clModel); //$NON-NLS-1$
+                tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
                 tempVar.setIsDefault(true);
                 cModel.getCommands().add(tempVar);
-                UICommand tempVar2 = new UICommand("Cancel", clModel);
-                tempVar2.setTitle("Cancel");
+                UICommand tempVar2 = new UICommand("Cancel", clModel); //$NON-NLS-1$
+                tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
                 tempVar2.setIsCancel(true);
                 cModel.getCommands().add(tempVar2);
             }
@@ -271,8 +273,8 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         model.setEntity(cluster);
         model.Init(true, getGlusterModeEnum());
         setWindow(model);
-        model.setTitle("Edit Cluster");
-        model.setHashName("edit_cluster");
+        model.setTitle(ConstantsManager.getInstance().getConstants().editClusterTitle());
+        model.setHashName("edit_cluster"); //$NON-NLS-1$
         model.setOriginalName(cluster.getname());
         model.getName().setEntity(cluster.getname());
         model.getEnableGlusterService().setEntity(cluster.supportsGlusterService());
@@ -297,15 +299,15 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         AsyncDataProvider.GetVolumeList(asyncQuery, cluster.getname());
         if (getSystemTreeSelectedItem() != null && getSystemTreeSelectedItem().getType() == SystemTreeItemType.Cluster) {
             model.getName().setIsChangable(false);
-            model.getName().setInfo("Cannot edit Cluster's Name in tree context");
+            model.getName().setInfo("Cannot edit Cluster's Name in tree context"); //$NON-NLS-1$
         }
 
-        UICommand tempVar = new UICommand("OnSave", this);
-        tempVar.setTitle("OK");
+        UICommand tempVar = new UICommand("OnSave", this); //$NON-NLS-1$
+        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
         tempVar.setIsDefault(true);
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this);
-        tempVar2.setTitle("Cancel");
+        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
+        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         tempVar2.setIsCancel(true);
         model.getCommands().add(tempVar2);
     }
@@ -319,9 +321,9 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
 
         ConfirmationModel model = new ConfirmationModel();
         setWindow(model);
-        model.setTitle("Remove Cluster(s)");
-        model.setHashName("remove_cluster");
-        model.setMessage("Cluster(s)");
+        model.setTitle(ConstantsManager.getInstance().getConstants().removeClusterTitle());
+        model.setHashName("remove_cluster"); //$NON-NLS-1$
+        model.setMessage(ConstantsManager.getInstance().getConstants().clustersMsg());
 
         java.util.ArrayList<String> list = new java.util.ArrayList<String>();
         for (VDSGroup a : Linq.<VDSGroup> Cast(getSelectedItems()))
@@ -330,12 +332,12 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         }
         model.setItems(list);
 
-        UICommand tempVar = new UICommand("OnRemove", this);
-        tempVar.setTitle("OK");
+        UICommand tempVar = new UICommand("OnRemove", this); //$NON-NLS-1$
+        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
         tempVar.setIsDefault(true);
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this);
-        tempVar2.setTitle("Cancel");
+        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
+        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         tempVar2.setIsCancel(true);
         model.getCommands().add(tempVar2);
     }
@@ -383,16 +385,20 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         {
             ConfirmationModel confirmModel = new ConfirmationModel();
             setConfirmWindow(confirmModel);
-            confirmModel.setTitle("Change Cluster Compatibility Version");
-            confirmModel.setHashName("change_cluster_compatibility_version");
-            confirmModel.setMessage("You are about to change the Cluster Compatibility Version. Are you sure you want to continue?");
+            confirmModel.setTitle(ConstantsManager.getInstance()
+                    .getConstants()
+                    .changeClusterCompatibilityVersionTitle());
+            confirmModel.setHashName("change_cluster_compatibility_version"); //$NON-NLS-1$
+            confirmModel.setMessage(ConstantsManager.getInstance()
+                    .getConstants()
+                    .youAreAboutChangeClusterCompatibilityVersionMsg());
 
-            UICommand tempVar = new UICommand("OnSaveInternal", this);
-            tempVar.setTitle("OK");
+            UICommand tempVar = new UICommand("OnSaveInternal", this); //$NON-NLS-1$
+            tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
             tempVar.setIsDefault(true);
             getConfirmWindow().getCommands().add(tempVar);
-            UICommand tempVar2 = new UICommand("CancelConfirmation", this);
-            tempVar2.setTitle("Cancel");
+            UICommand tempVar2 = new UICommand("CancelConfirmation", this); //$NON-NLS-1$
+            tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
             tempVar2.setIsCancel(true);
             getConfirmWindow().getCommands().add(tempVar2);
         }
@@ -423,7 +429,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         cluster.setstorage_pool_id(((storage_pool) model.getDataCenter().getSelectedItem()).getId());
         cluster.setcpu_name(((ServerCpu) model.getCPU().getSelectedItem()).getCpuName());
         cluster.setmax_vds_memory_over_commit(model.getMemoryOverCommit());
-        cluster.setTransparentHugepages(version.compareTo(new Version("3.0")) >= 0);
+        cluster.setTransparentHugepages(version.compareTo(new Version("3.0")) >= 0); //$NON-NLS-1$
         cluster.setcompatibility_version(version);
         cluster.setMigrateOnError(model.getMigrateOnErrorOption());
         cluster.setGlusterService((Boolean) model.getEnableGlusterService().getEntity());
@@ -546,23 +552,23 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         {
             Guide();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnSave"))
+        else if (StringHelper.stringsEqual(command.getName(), "OnSave")) //$NON-NLS-1$
         {
             OnSave();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "Cancel"))
+        else if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
         {
             Cancel();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnRemove"))
+        else if (StringHelper.stringsEqual(command.getName(), "OnRemove")) //$NON-NLS-1$
         {
             OnRemove();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnSaveInternal"))
+        else if (StringHelper.stringsEqual(command.getName(), "OnSaveInternal")) //$NON-NLS-1$
         {
             OnSaveInternal();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "CancelConfirmation"))
+        else if (StringHelper.stringsEqual(command.getName(), "CancelConfirmation")) //$NON-NLS-1$
         {
             CancelConfirmation();
         }
@@ -593,6 +599,6 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
 
     @Override
     protected String getListName() {
-        return "ClusterListModel";
+        return "ClusterListModel"; //$NON-NLS-1$
     }
 }

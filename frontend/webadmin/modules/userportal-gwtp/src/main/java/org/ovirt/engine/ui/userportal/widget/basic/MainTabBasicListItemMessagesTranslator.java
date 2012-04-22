@@ -13,23 +13,23 @@ public class MainTabBasicListItemMessagesTranslator {
 
     @Inject
     public MainTabBasicListItemMessagesTranslator(MainTabBasicListItemMessages messages) {
-        dictionary.put("WaitForLaunch", messages.WaitForLaunch());
-        dictionary.put("PoweringUp", messages.PoweringUp());
-        dictionary.put("RebootInProgress", messages.RebootInProgress());
-        dictionary.put("RestoringState", messages.RestoringState());
-        dictionary.put("MigratingFrom", messages.MigratingFrom());
-        dictionary.put("MigratingTo", messages.MigratingTo());
-        dictionary.put("Up", messages.Up());
-        dictionary.put("Paused", messages.Paused());
-        dictionary.put("Suspended", messages.Suspended());
-        dictionary.put("PoweringDown", messages.PoweringDown());
-        dictionary.put("PoweredDown", messages.PoweredDown());
-        dictionary.put("Unknown", messages.Unknown());
-        dictionary.put("Unassigned", messages.Unassigned());
-        dictionary.put("NotResponding", messages.NotResponding());
-        dictionary.put("SavingState", messages.SavingState());
-        dictionary.put("ImageLocked", messages.ImageLocked());
-        dictionary.put("Down", messages.Down());
+        dictionary.put("WaitForLaunch", messages.WaitForLaunch()); //$NON-NLS-1$
+        dictionary.put("PoweringUp", messages.PoweringUp()); //$NON-NLS-1$
+        dictionary.put("RebootInProgress", messages.RebootInProgress()); //$NON-NLS-1$
+        dictionary.put("RestoringState", messages.RestoringState()); //$NON-NLS-1$
+        dictionary.put("MigratingFrom", messages.MigratingFrom()); //$NON-NLS-1$
+        dictionary.put("MigratingTo", messages.MigratingTo()); //$NON-NLS-1$
+        dictionary.put("Up", messages.Up()); //$NON-NLS-1$
+        dictionary.put("Paused", messages.Paused()); //$NON-NLS-1$
+        dictionary.put("Suspended", messages.Suspended()); //$NON-NLS-1$
+        dictionary.put("PoweringDown", messages.PoweringDown()); //$NON-NLS-1$
+        dictionary.put("PoweredDown", messages.PoweredDown()); //$NON-NLS-1$
+        dictionary.put("Unknown", messages.Unknown()); //$NON-NLS-1$
+        dictionary.put("Unassigned", messages.Unassigned()); //$NON-NLS-1$
+        dictionary.put("NotResponding", messages.NotResponding()); //$NON-NLS-1$
+        dictionary.put("SavingState", messages.SavingState()); //$NON-NLS-1$
+        dictionary.put("ImageLocked", messages.ImageLocked()); //$NON-NLS-1$
+        dictionary.put("Down", messages.Down()); //$NON-NLS-1$
     }
 
     public String translate(String key) {

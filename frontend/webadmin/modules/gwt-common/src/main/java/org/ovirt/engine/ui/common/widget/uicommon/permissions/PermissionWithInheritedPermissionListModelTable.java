@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.common.widget.uicommon.permissions;
 
 import org.ovirt.engine.core.common.businessentities.permissions;
+import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.ObjectNameColumn;
@@ -18,8 +19,8 @@ public class PermissionWithInheritedPermissionListModelTable<P extends Permissio
     }
 
     @Override
-    public void initTable() {
-        super.initTable();
+    public void initTable(CommonApplicationConstants constants) {
+        super.initTable(constants);
 
         TextColumnWithTooltip<permissions> permissionColumn = new ObjectNameColumn<permissions>() {
             @Override
@@ -29,7 +30,7 @@ public class PermissionWithInheritedPermissionListModelTable<P extends Permissio
                 };
             }
         };
-        getTable().addColumn(permissionColumn, "Inherited Permission");
+        getTable().addColumn(permissionColumn, constants.inheritedPermission());
     }
 
 }

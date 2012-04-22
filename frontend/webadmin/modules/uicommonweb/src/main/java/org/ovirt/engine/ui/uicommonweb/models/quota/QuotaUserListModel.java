@@ -28,16 +28,18 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.users.AdElementListModel;
 import org.ovirt.engine.ui.uicommonweb.models.users.UserListModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
 public class QuotaUserListModel extends SearchableListModel {
 
     public QuotaUserListModel() {
-        setTitle("Users");
+        setTitle(ConstantsManager.getInstance().getConstants().usersTitle());
+        setHashName("users"); //$NON-NLS-1$
 
-        setAddCommand(new UICommand("Add", this));
-        setRemoveCommand(new UICommand("Remove", this));
+        setAddCommand(new UICommand("Add", this)); //$NON-NLS-1$
+        setRemoveCommand(new UICommand("Remove", this)); //$NON-NLS-1$
 
         updateActionAvailability();
     }
@@ -128,7 +130,7 @@ public class QuotaUserListModel extends SearchableListModel {
 
     @Override
     protected String getListName() {
-        return "QuotaUserListModel";
+        return "QuotaUserListModel"; //$NON-NLS-1$
     }
 
     private void updateActionAvailability() {
@@ -158,17 +160,17 @@ public class QuotaUserListModel extends SearchableListModel {
 
         AdElementListModel model = new AdElementListModel();
         setWindow(model);
-        model.setTitle("Assign Users and Groups to Quota");
-        model.setHashName("assign_users_and_groups_to_quota");
+        model.setTitle(ConstantsManager.getInstance().getConstants().assignUsersAndGroupsToQuotaTitle());
+        model.setHashName("assign_users_and_groups_to_quota"); //$NON-NLS-1$
         model.setIsRoleListHidden(true);
         model.getIsEveryoneSelectionHidden().setEntity(false);
 
-        UICommand tempVar = new UICommand("OnAdd", this);
-        tempVar.setTitle("OK");
+        UICommand tempVar = new UICommand("OnAdd", this); //$NON-NLS-1$
+        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
         tempVar.setIsDefault(true);
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this);
-        tempVar2.setTitle("Cancel");
+        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
+        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         tempVar2.setIsCancel(true);
         model.getCommands().add(tempVar2);
     }
@@ -182,9 +184,9 @@ public class QuotaUserListModel extends SearchableListModel {
 
         ConfirmationModel model = new ConfirmationModel();
         setWindow(model);
-        model.setTitle("Remove Quota Assignment from User(s)");
-        model.setHashName("remove_quota_assignment_from_user");
-        model.setMessage("Assignment(s)");
+        model.setTitle(ConstantsManager.getInstance().getConstants().removeQuotaAssignmentFromUsersTitle());
+        model.setHashName("remove_quota_assignment_from_user"); //$NON-NLS-1$
+        model.setMessage(ConstantsManager.getInstance().getConstants().assignmentsMsg());
 
         java.util.ArrayList<String> list = new java.util.ArrayList<String>();
         for (permissions item : Linq.<permissions> Cast(getSelectedItems()))
@@ -193,12 +195,12 @@ public class QuotaUserListModel extends SearchableListModel {
         }
         model.setItems(list);
 
-        UICommand tempVar = new UICommand("OnRemove", this);
-        tempVar.setTitle("OK");
+        UICommand tempVar = new UICommand("OnRemove", this); //$NON-NLS-1$
+        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
         tempVar.setIsDefault(true);
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this);
-        tempVar2.setTitle("Cancel");
+        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
+        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         tempVar2.setIsCancel(true);
         model.getCommands().add(tempVar2);
     }
@@ -330,15 +332,15 @@ public class QuotaUserListModel extends SearchableListModel {
             remove();
         }
 
-        if (StringHelper.stringsEqual(command.getName(), "Cancel"))
+        if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
         {
             Cancel();
         }
-        if (StringHelper.stringsEqual(command.getName(), "OnAdd"))
+        if (StringHelper.stringsEqual(command.getName(), "OnAdd")) //$NON-NLS-1$
         {
             OnAdd();
         }
-        if (StringHelper.stringsEqual(command.getName(), "OnRemove"))
+        if (StringHelper.stringsEqual(command.getName(), "OnRemove")) //$NON-NLS-1$
         {
             OnRemove();
         }

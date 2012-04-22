@@ -30,7 +30,7 @@ public class SearchSuggestion implements Suggestion {
     public String getReplacementString() {
         String replacementString = prefix.getPartString() + postfix.getPartString();
         if (replacementString.startsWith(searchStringPrefix)) {
-            replacementString = replacementString.replace(searchStringPrefix, "");
+            replacementString = replacementString.replace(searchStringPrefix, ""); //$NON-NLS-1$
         }
         return replacementString;
     }

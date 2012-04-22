@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.validation;
 
 import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
 public class KeyValuePairValidation implements IValidation
@@ -33,25 +34,25 @@ public class KeyValuePairValidation implements IValidation
     {
         ValidationResult result = new ValidationResult();
 
-        if (value != null && value instanceof String && !((String) value).equals(""))
+        if (value != null && value instanceof String && !((String) value).equals("")) //$NON-NLS-1$
         {
             String strValue = (String) value;
 
-            if (strValue.endsWith(","))
+            if (strValue.endsWith(",")) //$NON-NLS-1$
             {
                 result.setSuccess(false);
             }
             else
             {
                 // Try parse value.
-                for (String pair : strValue.split("[,]", -1))
+                for (String pair : strValue.split("[,]", -1)) //$NON-NLS-1$
                 {
                     if (!result.getSuccess())
                     {
                         break;
                     }
 
-                    String[] array = pair.split("[=]", -1);
+                    String[] array = pair.split("[=]", -1); //$NON-NLS-1$
 
                     // if the split length is 2, its a 'key=value'
                     // if the split length is 1 (key), we accept only when we allow it (allowAlsoKey==true)
@@ -88,11 +89,15 @@ public class KeyValuePairValidation implements IValidation
         {
             if (!getallowAlsoKey())
             {
-                result.getReasons().add("Value doesn't not match pattern: key=value,key=value...");
+                result.getReasons().add(ConstantsManager.getInstance()
+                        .getConstants()
+                        .valueDoesntNotMatchPatternKeyValueKeyValueInvalidReason());
             }
             else
             {
-                result.getReasons().add("Value doesn't not match pattern: key=value,key,key=value...");
+                result.getReasons().add(ConstantsManager.getInstance()
+                        .getConstants()
+                        .valueDoesntNotNatchPatternKeyValueKeyKeyValueInvalidReason());
             }
         }
 

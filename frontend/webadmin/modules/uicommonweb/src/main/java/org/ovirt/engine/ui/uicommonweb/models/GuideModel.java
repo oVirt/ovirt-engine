@@ -20,7 +20,7 @@ public class GuideModel extends EntityModel
         if (compulsoryActions != value)
         {
             compulsoryActions = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("CompulsoryActions"));
+            OnPropertyChanged(new PropertyChangedEventArgs("CompulsoryActions")); //$NON-NLS-1$
         }
     }
 
@@ -36,7 +36,7 @@ public class GuideModel extends EntityModel
         if (optionalActions != value)
         {
             optionalActions = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("OptionalActions"));
+            OnPropertyChanged(new PropertyChangedEventArgs("OptionalActions")); //$NON-NLS-1$
         }
     }
 

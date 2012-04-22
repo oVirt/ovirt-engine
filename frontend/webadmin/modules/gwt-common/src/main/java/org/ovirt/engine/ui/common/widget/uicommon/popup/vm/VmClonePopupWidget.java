@@ -27,9 +27,9 @@ public class VmClonePopupWidget extends AbstractVmPopupWidget {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 String propName = ((PropertyChangedEventArgs) args).PropertyName;
-                if ("IsHostAvailable".equals(propName)) {
+                if ("IsHostAvailable".equals(propName)) { //$NON-NLS-1$
                     hostTab.setVisible(vm.getIsHostAvailable());
-                } else if ("IsHostTabValid".equals(propName)) {
+                } else if ("IsHostTabValid".equals(propName)) { //$NON-NLS-1$
                     if (vm.getIsHostTabValid()) {
                         hostTab.markAsValid();
                     } else {

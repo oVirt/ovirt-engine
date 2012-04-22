@@ -75,14 +75,14 @@ public class EditQuotaStoragePopupView extends AbstractModelBoundPopupView<EditQ
     }
 
     private void initRadioButtonEditors() {
-        unlimitedStorageRadioButtonEditor = new EntityModelRadioButtonEditor("5");
-        specificStorageRadioButtonEditor = new EntityModelRadioButtonEditor("5");
+        unlimitedStorageRadioButtonEditor = new EntityModelRadioButtonEditor("5"); //$NON-NLS-1$
+        specificStorageRadioButtonEditor = new EntityModelRadioButtonEditor("5"); //$NON-NLS-1$
     }
 
     void localize(ApplicationConstants constants) {
-        unlimitedStorageRadioButtonEditor.setLabel("Unlimited Quota");
-        specificStorageRadioButtonEditor.setLabel("Use Quota");
-        storageLabel.setText("Storage Quota:");
+        unlimitedStorageRadioButtonEditor.setLabel(constants.ultQuotaPopup());
+        specificStorageRadioButtonEditor.setLabel(constants.useQuotaPopup());
+        storageLabel.setText(constants.storageQuotaQuotaPopup());
     }
 
     @Override

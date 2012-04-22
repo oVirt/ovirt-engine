@@ -9,6 +9,7 @@ import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeBrickListModel;
 import org.ovirt.engine.ui.uicommonweb.models.volumes.VolumeListModel;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.SubTabVolumeBrickPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
@@ -18,20 +19,20 @@ import com.google.inject.Inject;
 public class SubTabVolumeBrickView extends AbstractSubTabTableView<GlusterVolumeEntity, GlusterBrickEntity, VolumeListModel, VolumeBrickListModel> implements SubTabVolumeBrickPresenter.ViewDef {
 
     @Inject
-    public SubTabVolumeBrickView(SearchableDetailModelProvider<GlusterBrickEntity, VolumeListModel, VolumeBrickListModel> modelProvider) {
+    public SubTabVolumeBrickView(SearchableDetailModelProvider<GlusterBrickEntity, VolumeListModel, VolumeBrickListModel> modelProvider, ApplicationConstants constants) {
         super(modelProvider);
-        initTable();
+        initTable(constants);
         initWidget(getTable());
     }
 
-    void initTable() {
+    void initTable(ApplicationConstants constants) {
         TextColumnWithTooltip<GlusterBrickEntity> serverColumn = new TextColumnWithTooltip<GlusterBrickEntity>() {
             @Override
             public String getValue(GlusterBrickEntity brick) {
                 return brick.getServerName();
             }
         };
-        getTable().addColumn(serverColumn, "Server");
+        getTable().addColumn(serverColumn, constants.serverVolumeBrick());
 
         TextColumnWithTooltip<GlusterBrickEntity> directoryColumn = new TextColumnWithTooltip<GlusterBrickEntity>() {
             @Override
@@ -39,23 +40,23 @@ public class SubTabVolumeBrickView extends AbstractSubTabTableView<GlusterVolume
                 return brick.getBrickDirectory();
             }
         };
-        getTable().addColumn(directoryColumn, "Brick Directory");
+        getTable().addColumn(directoryColumn, constants.brickDirectoryVolumeBrick());
 
         TextColumnWithTooltip<GlusterBrickEntity> freeSpaceColumn = new TextColumnWithTooltip<GlusterBrickEntity>() {
             @Override
             public String getValue(GlusterBrickEntity brick) {
-                return "???";
+                return "???"; //$NON-NLS-1$
             }
         };
-        getTable().addColumn(freeSpaceColumn, "Free Space (GB)");
+        getTable().addColumn(freeSpaceColumn, constants.freeSpaceGBVolumeBrick());
 
         TextColumnWithTooltip<GlusterBrickEntity> totalSpaceColumn = new TextColumnWithTooltip<GlusterBrickEntity>() {
             @Override
             public String getValue(GlusterBrickEntity brick) {
-                return "???";
+                return "???"; //$NON-NLS-1$
             }
         };
-        getTable().addColumn(totalSpaceColumn, "Total Space (GB)");
+        getTable().addColumn(totalSpaceColumn, constants.totalSpaceGBVolumeBrick());
 
         TextColumnWithTooltip<GlusterBrickEntity> statusColumn =
                 new EnumColumn<GlusterBrickEntity, GlusterBrickStatus>() {
@@ -65,9 +66,9 @@ public class SubTabVolumeBrickView extends AbstractSubTabTableView<GlusterVolume
                         return object.getStatus();
                     }
                 };
-        getTable().addColumn(statusColumn, "Status");
+        getTable().addColumn(statusColumn, constants.statusBrick());
 
-        getTable().addActionButton(new WebAdminButtonDefinition<GlusterBrickEntity>("Add Bricks") {
+        getTable().addActionButton(new WebAdminButtonDefinition<GlusterBrickEntity>(constants.addBricksBrick()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getAddBricksCommand();

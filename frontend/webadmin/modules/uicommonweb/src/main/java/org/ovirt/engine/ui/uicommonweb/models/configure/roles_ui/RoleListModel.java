@@ -29,13 +29,14 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.common.SelectionTreeNodeModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaPermissionListModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
 @SuppressWarnings("unused")
 public class RoleListModel extends ListWithDetailsModel
 {
-    private static final String COPY_OF = "Copy_of_";
+    private static final String COPY_OF = "Copy_of_"; //$NON-NLS-1$
 
     private enum CommandType
     {
@@ -163,15 +164,15 @@ public class RoleListModel extends ListWithDetailsModel
 
     public RoleListModel()
     {
-        setTitle("Roles");
+        setTitle(ConstantsManager.getInstance().getConstants().rolesTitle());
 
-        setNewCommand(new UICommand("New", this));
-        setEditCommand(new UICommand("Edit", this));
-        setRemoveCommand(new UICommand("Remove", this));
-        setCloneCommand(new UICommand("Clone", this));
-        setSearchAllRolesCommand(new UICommand("SearchAllRoles", this));
-        setSearchAdminRolesCommand(new UICommand("SearchAdminRoles", this));
-        setSearchUserRolesCommand(new UICommand("SearchUserRoles", this));
+        setNewCommand(new UICommand("New", this)); //$NON-NLS-1$
+        setEditCommand(new UICommand("Edit", this)); //$NON-NLS-1$
+        setRemoveCommand(new UICommand("Remove", this)); //$NON-NLS-1$
+        setCloneCommand(new UICommand("Clone", this)); //$NON-NLS-1$
+        setSearchAllRolesCommand(new UICommand("SearchAllRoles", this)); //$NON-NLS-1$
+        setSearchAdminRolesCommand(new UICommand("SearchAdminRoles", this)); //$NON-NLS-1$
+        setSearchUserRolesCommand(new UICommand("SearchUserRoles", this)); //$NON-NLS-1$
 
         setSearchPageSize(1000);
 
@@ -232,7 +233,7 @@ public class RoleListModel extends ListWithDetailsModel
                 java.util.ArrayList<roles> filteredList = new java.util.ArrayList<roles>();
                 for (roles item : (java.util.ArrayList<roles>) ((VdcQueryReturnValue) ReturnValue).getReturnValue())
                 {
-                    //ignore CONSUME_QUOTA_ROLE in UI
+                    // ignore CONSUME_QUOTA_ROLE in UI
                     if (item.getId().equals(QuotaPermissionListModel.CONSUME_QUOTA_ROLE_ID)) {
                         continue;
                     }
@@ -278,9 +279,9 @@ public class RoleListModel extends ListWithDetailsModel
 
         ConfirmationModel model = new ConfirmationModel();
         setWindow(model);
-        model.setTitle("Remove Role(s)");
-        model.setHashName("remove_role");
-        model.setMessage("Role(s):");
+        model.setTitle(ConstantsManager.getInstance().getConstants().removeRolesTitle());
+        model.setHashName("remove_role"); //$NON-NLS-1$
+        model.setMessage(ConstantsManager.getInstance().getConstants().rolesMsg());
 
         java.util.ArrayList<String> list = new java.util.ArrayList<String>();
         for (roles role : Linq.<roles> Cast(getSelectedItems()))
@@ -289,12 +290,12 @@ public class RoleListModel extends ListWithDetailsModel
         }
         model.setItems(list);
 
-        UICommand tempVar = new UICommand("OnRemove", this);
-        tempVar.setTitle("OK");
+        UICommand tempVar = new UICommand("OnRemove", this); //$NON-NLS-1$
+        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
         tempVar.setIsDefault(true);
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this);
-        tempVar2.setTitle("Cancel");
+        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
+        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         tempVar2.setIsCancel(true);
         model.getCommands().add(tempVar2);
     }
@@ -432,17 +433,17 @@ public class RoleListModel extends ListWithDetailsModel
         switch (commandType)
         {
         case New:
-            title = "New Role";
-            hashName = "new_role";
+            title = ConstantsManager.getInstance().getConstants().newRoleTitle();
+            hashName = "new_role"; //$NON-NLS-1$
             break;
         case Edit:
-            title = "Edit Role";
-            hashName = "edit_role";
+            title = ConstantsManager.getInstance().getConstants().editRoleTitle();
+            hashName = "edit_role"; //$NON-NLS-1$
             model.getIsAdminRole().setIsChangable(false);
             break;
         case Clone:
-            title = "Copy Role";
-            hashName = "copy_role";
+            title = ConstantsManager.getInstance().getConstants().copyRoleTitle();
+            hashName = "copy_role"; //$NON-NLS-1$
             model.getIsAdminRole().setIsChangable(false);
             break;
 
@@ -452,17 +453,18 @@ public class RoleListModel extends ListWithDetailsModel
         model.setHashName(hashName);
         if (!role.getis_readonly() || commandType == CommandType.Clone)
         {
-            UICommand tempVar = new UICommand("OnSave", this);
-            tempVar.setTitle("OK");
+            UICommand tempVar = new UICommand("OnSave", this); //$NON-NLS-1$
+            tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
             tempVar.setIsDefault(true);
             model.getCommands().add(tempVar);
-            UICommand tempVar2 = new UICommand("OnReset", this);
-            tempVar2.setTitle("Reset");
+            UICommand tempVar2 = new UICommand("OnReset", this); //$NON-NLS-1$
+            tempVar2.setTitle(ConstantsManager.getInstance().getConstants().resetTitle());
             model.getCommands().add(tempVar2);
         }
 
-        UICommand tempVar3 = new UICommand("Cancel", this);
-        tempVar3.setTitle(!role.getis_readonly() ? "Cancel" : "Close");
+        UICommand tempVar3 = new UICommand("Cancel", this); //$NON-NLS-1$
+        tempVar3.setTitle(!role.getis_readonly() ? ConstantsManager.getInstance().getConstants().cancel()
+                : ConstantsManager.getInstance().getConstants().close());
         tempVar3.setIsCancel(true);
         tempVar3.setIsDefault(role.getis_readonly());
         model.getCommands().add(tempVar3);
@@ -690,23 +692,23 @@ public class RoleListModel extends ListWithDetailsModel
         {
             SearchUserRoles();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnSave"))
+        else if (StringHelper.stringsEqual(command.getName(), "OnSave")) //$NON-NLS-1$
         {
             OnSave();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "Cancel"))
+        else if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
         {
             Cancel();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnRemove"))
+        else if (StringHelper.stringsEqual(command.getName(), "OnRemove")) //$NON-NLS-1$
         {
             OnRemove();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnReset"))
+        else if (StringHelper.stringsEqual(command.getName(), "OnReset")) //$NON-NLS-1$
         {
             OnReset();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "Clone"))
+        else if (StringHelper.stringsEqual(command.getName(), "Clone")) //$NON-NLS-1$
         {
             CloneRole();
         }
@@ -714,6 +716,6 @@ public class RoleListModel extends ListWithDetailsModel
 
     @Override
     protected String getListName() {
-        return "RoleListModel";
+        return "RoleListModel"; //$NON-NLS-1$
     }
 }

@@ -8,6 +8,7 @@ import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.table.column.EntityModelEnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.EntityModelTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 
 import com.google.gwt.core.client.GWT;
@@ -28,7 +29,7 @@ public class AbstractFindDcPopupView extends AbstractModelBoundPopupView<ListMod
     @UiField
     Label messageLabel;
 
-    public AbstractFindDcPopupView(EventBus eventBus, ApplicationResources resources, boolean multiSelection) {
+    public AbstractFindDcPopupView(EventBus eventBus, ApplicationResources resources, boolean multiSelection, ApplicationConstants constants) {
         super(eventBus, resources);
         table = new EntityModelCellTable<ListModel>(multiSelection);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
@@ -39,14 +40,14 @@ public class AbstractFindDcPopupView extends AbstractModelBoundPopupView<ListMod
             public String getValue(storage_pool storage) {
                 return storage.getname();
             }
-        }, "Name");
+        }, constants.nameDc());
 
         table.addEntityModelColumn(new EntityModelEnumColumn<storage_pool, StorageType>() {
             @Override
             protected StorageType getRawValue(storage_pool storage) {
                 return storage.getstorage_pool_type();
             }
-        }, "Storage Type");
+        }, constants.storgeTypeDc());
     }
 
     @Override

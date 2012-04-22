@@ -62,7 +62,7 @@ public class MigrateModel extends Model
         {
             isAutoSelect = value;
             getHosts().setIsChangable(!isAutoSelect);
-            OnPropertyChanged(new PropertyChangedEventArgs("IsAutoSelect"));
+            OnPropertyChanged(new PropertyChangedEventArgs("IsAutoSelect")); //$NON-NLS-1$
             setIsSameVdsMessageVisible(!value);
             privateSelectHostAutomatically_IsSelected.setEntity(value);
             privateSelectDestinationHost_IsSelected.setEntity(!value);
@@ -82,7 +82,7 @@ public class MigrateModel extends Model
         if (isHostSelAvailable != value)
         {
             isHostSelAvailable = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsHostSelAvailable"));
+            OnPropertyChanged(new PropertyChangedEventArgs("IsHostSelAvailable")); //$NON-NLS-1$
         }
     }
 
@@ -98,7 +98,7 @@ public class MigrateModel extends Model
         if (noSelAvailable != value)
         {
             noSelAvailable = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("NoSelAvailable"));
+            OnPropertyChanged(new PropertyChangedEventArgs("NoSelAvailable")); //$NON-NLS-1$
         }
     }
 
@@ -112,7 +112,7 @@ public class MigrateModel extends Model
     public void setIsSameVdsMessageVisible(boolean value)
     {
         isSameVdsMessageVisible = value & gethasSameVdsMessage() & !getIsAutoSelect();
-        OnPropertyChanged(new PropertyChangedEventArgs("IsSameVdsMessageVisible"));
+        OnPropertyChanged(new PropertyChangedEventArgs("IsSameVdsMessageVisible")); //$NON-NLS-1$
     }
 
     // OnPropertyChanged(new PropertyChangedEventArgs("IsSameVdsMessageVisible"));

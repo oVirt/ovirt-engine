@@ -20,6 +20,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateDiskListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 
 import com.google.gwt.user.client.ui.DateLabel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -31,8 +32,8 @@ public class DisksTree extends AbstractSubTabTree<TemplateDiskListModel, DiskIma
     ApplicationResources resources;
     ApplicationConstants constants;
 
-    public DisksTree(ApplicationResources resources, ApplicationConstants constants) {
-        super(resources, constants);
+    public DisksTree(ApplicationResources resources, ApplicationConstants constants, ApplicationTemplates templates) {
+        super(resources, constants, templates);
 
         this.resources = (ApplicationResources) resources;
         this.constants = (ApplicationConstants) constants;
@@ -44,16 +45,15 @@ public class DisksTree extends AbstractSubTabTree<TemplateDiskListModel, DiskIma
     protected TreeItem getRootItem(DiskImage disk) {
         HorizontalPanel panel = new HorizontalPanel();
         panel.setSpacing(1);
-        panel.setWidth("100%");
+        panel.setWidth("100%"); //$NON-NLS-1$
 
-        addItemToPanel(panel, new Image(resources.diskImage()), "25px");
-        addTextBoxToPanel(panel, new TextBoxLabel(), disk.getDiskAlias(), "");
-        addValueLabelToPanel(panel, new DiskSizeLabel<Long>(), disk.getSizeInGigabytes(), "120px");
-        addValueLabelToPanel(panel, new EnumLabel<ImageStatus>(), disk.getimageStatus(), "120px");
-        addValueLabelToPanel(panel, new EnumLabel<VolumeType>(), disk.getvolume_type(), "120px");
-        addValueLabelToPanel(panel, new EnumLabel<DiskInterface>(), disk.getDiskInterface(), "120px");
-        addValueLabelToPanel(panel, new DateLabel(), disk.getcreation_date(), "90px");
-
+        addItemToPanel(panel, new Image(resources.diskImage()), "25px"); //$NON-NLS-1$
+        addTextBoxToPanel(panel, new TextBoxLabel(), disk.getDiskAlias(), ""); //$NON-NLS-1$
+        addValueLabelToPanel(panel, new DiskSizeLabel<Long>(), disk.getSizeInGigabytes(), "120px"); //$NON-NLS-1$
+        addValueLabelToPanel(panel, new EnumLabel<ImageStatus>(), disk.getimageStatus(), "120px"); //$NON-NLS-1$
+        addValueLabelToPanel(panel, new EnumLabel<VolumeType>(), disk.getvolume_type(), "120px"); //$NON-NLS-1$
+        addValueLabelToPanel(panel, new EnumLabel<DiskInterface>(), disk.getDiskInterface(), "120px"); //$NON-NLS-1$
+        addValueLabelToPanel(panel, new DateLabel(), disk.getcreation_date(), "90px"); //$NON-NLS-1$
         TreeItem treeItem = new TreeItem(panel);
         treeItem.setUserObject(disk.getImageId());
         return treeItem;
@@ -63,15 +63,15 @@ public class DisksTree extends AbstractSubTabTree<TemplateDiskListModel, DiskIma
     protected TreeItem getNodeItem(storage_domains storage) {
         HorizontalPanel panel = new HorizontalPanel();
         panel.setSpacing(1);
-        panel.setWidth("100%");
+        panel.setWidth("100%"); //$NON-NLS-1$
 
-        addItemToPanel(panel, new Image(resources.storageImage()), "25px");
-        addTextBoxToPanel(panel, new TextBoxLabel(), storage.getstorage_name(), "");
-        addValueLabelToPanel(panel, new EnumLabel<StorageDomainType>(), storage.getstorage_domain_type(), "120px");
-        addValueLabelToPanel(panel, new EnumLabel<StorageDomainStatus>(), storage.getstatus(), "120px");
-        addValueLabelToPanel(panel, new DiskSizeLabel<Integer>(), storage.getavailable_disk_size(), "120px");
-        addValueLabelToPanel(panel, new DiskSizeLabel<Integer>(), storage.getused_disk_size(), "120px");
-        addValueLabelToPanel(panel, new DiskSizeLabel<Integer>(), storage.getTotalDiskSize(), "120px");
+        addItemToPanel(panel, new Image(resources.storageImage()), "25px"); //$NON-NLS-1$
+        addTextBoxToPanel(panel, new TextBoxLabel(), storage.getstorage_name(), ""); //$NON-NLS-1$
+        addValueLabelToPanel(panel, new EnumLabel<StorageDomainType>(), storage.getstorage_domain_type(), "120px"); //$NON-NLS-1$
+        addValueLabelToPanel(panel, new EnumLabel<StorageDomainStatus>(), storage.getstatus(), "120px"); //$NON-NLS-1$
+        addValueLabelToPanel(panel, new DiskSizeLabel<Integer>(), storage.getavailable_disk_size(), "120px"); //$NON-NLS-1$
+        addValueLabelToPanel(panel, new DiskSizeLabel<Integer>(), storage.getused_disk_size(), "120px"); //$NON-NLS-1$
+        addValueLabelToPanel(panel, new DiskSizeLabel<Integer>(), storage.getTotalDiskSize(), "120px"); //$NON-NLS-1$
 
         TreeItem treeItem = new TreeItem(panel);
         treeItem.setUserObject(storage.getId());
@@ -81,15 +81,15 @@ public class DisksTree extends AbstractSubTabTree<TemplateDiskListModel, DiskIma
     @Override
     protected TreeItem getNodeHeader() {
         EntityModelCellTable<ListModel> table = new EntityModelCellTable<ListModel>(false, true);
-        table.addColumn(new EmptyColumn(), "", "20px");
-        table.addColumn(new EmptyColumn(), "Domain Name", "");
-        table.addColumn(new EmptyColumn(), "Domain Type", "120px");
-        table.addColumn(new EmptyColumn(), "Status", "120px");
-        table.addColumn(new EmptyColumn(), "Free Space", "120px");
-        table.addColumn(new EmptyColumn(), "Used Space", "120px");
-        table.addColumn(new EmptyColumn(), "Total Space", "130px");
+        table.addColumn(new EmptyColumn(), constants.emptyInterface(), "20px"); //$NON-NLS-1$
+        table.addColumn(new EmptyColumn(), constants.domainNameDisksTree(), ""); //$NON-NLS-1$
+        table.addColumn(new EmptyColumn(), constants.domainTypeDisksTree(), "120px"); //$NON-NLS-1$
+        table.addColumn(new EmptyColumn(), constants.statusDisksTree(), "120px"); //$NON-NLS-1$
+        table.addColumn(new EmptyColumn(), constants.freeSpaceDisksTree(), "120px"); //$NON-NLS-1$
+        table.addColumn(new EmptyColumn(), constants.usedSpaceDisksTree(), "120px"); //$NON-NLS-1$
+        table.addColumn(new EmptyColumn(), constants.totalSpaceDisksTree(), "130px"); //$NON-NLS-1$
         table.setRowData(new ArrayList());
-        table.setWidth("100%", true);
+        table.setWidth("100%", true); //$NON-NLS-1$
         return new TreeItem(table);
     }
 

@@ -4,7 +4,6 @@ import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
-import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
@@ -14,6 +13,7 @@ import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.StorageDestroyPopupPresenterWidget;
 
@@ -55,12 +55,14 @@ public class StorageDestroyPopupView extends AbstractModelBoundPopupView<Confirm
     @Ignore
     HTML messageLabel;
 
-    String rawMessage;
+    ApplicationMessages messages;
 
     @Inject
-    public StorageDestroyPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
+    public StorageDestroyPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants, ApplicationMessages messages) {
         super(eventBus, resources);
+        this.messages = messages;
         latch = new EntityModelCheckBoxEditor(Align.RIGHT);
+        latch.setLabel(constants.approveOperation());
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
         localize(constants);
@@ -69,7 +71,6 @@ public class StorageDestroyPopupView extends AbstractModelBoundPopupView<Confirm
 
     void localize(ApplicationConstants constants) {
         warningLabel.setText(constants.storageDestroyPopupWarningLabel());
-        rawMessage = constants.storageDestroyPopupMessageLabel();
     }
 
     @Override
@@ -81,7 +82,7 @@ public class StorageDestroyPopupView extends AbstractModelBoundPopupView<Confirm
 
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                if ("IsAvailable".equals(((PropertyChangedEventArgs) args).PropertyName)) {
+                if ("IsAvailable".equals(((PropertyChangedEventArgs) args).PropertyName)) { //$NON-NLS-1$
                     EntityModel entity = (EntityModel) sender;
                     if (entity.getIsAvailable()) {
                         latch.setVisible(true);
@@ -100,9 +101,8 @@ public class StorageDestroyPopupView extends AbstractModelBoundPopupView<Confirm
     }
 
     private void updateMessage(ConfirmationModel object) {
-        String storageName = "<b>" + object.getItems().iterator().next() + "</b>";
-        String formattedMessage = StringFormat.format(rawMessage, storageName);
-        messageLabel.setHTML(SafeHtmlUtils.fromTrustedString(formattedMessage));
+        String storageName = "<b>" + object.getItems().iterator().next() + "</b>"; //$NON-NLS-1$ //$NON-NLS-2$
+        messageLabel.setHTML(SafeHtmlUtils.fromTrustedString(messages.storageDestroyPopupMessageLabel(storageName)));
     }
 
     @Override

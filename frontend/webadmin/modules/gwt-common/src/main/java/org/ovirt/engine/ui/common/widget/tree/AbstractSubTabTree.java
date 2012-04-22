@@ -9,6 +9,7 @@ import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
+import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -54,12 +55,15 @@ public abstract class AbstractSubTabTree<M extends SearchableListModel, R, N> ex
 
     protected final CommonApplicationResources resources;
     protected final CommonApplicationConstants constants;
+    protected final CommonApplicationTemplates templates;
 
-    protected final String NODE_HEADER = "nodeHeader";
 
-    public AbstractSubTabTree(CommonApplicationResources resources, CommonApplicationConstants constants) {
+    protected final String NODE_HEADER = "nodeHeader"; //$NON-NLS-1$
+
+    public AbstractSubTabTree(CommonApplicationResources resources, CommonApplicationConstants constants, CommonApplicationTemplates templates) {
         this.resources = resources;
         this.constants = constants;
+        this.templates = templates;
 
         tree = new Tree();
         initWidget(tree);
@@ -265,24 +269,24 @@ public abstract class AbstractSubTabTree<M extends SearchableListModel, R, N> ex
 
     protected TreeItem createTreeItem(EntityModelCellTable<ListModel> table, ArrayList<EntityModel> list) {
         table.setRowData(list);
-        table.setWidth("100%");
+        table.setWidth("100%"); //$NON-NLS-1$
         TreeItem item = new TreeItem(table);
         return item;
     }
 
     protected void styleItem(TreeItem item, boolean enabled) {
         Element tableElm = DOM.getFirstChild(item.getElement());
-        tableElm.setAttribute("width", "100%");
+        tableElm.setAttribute("width", "100%"); //$NON-NLS-1$ //$NON-NLS-2$
 
-        Element col = tableElm.getElementsByTagName("td").getItem(0);
-        col.setAttribute("width", "20px");
+        Element col = tableElm.getElementsByTagName("td").getItem(0); //$NON-NLS-1$
+        col.setAttribute("width", "20px"); //$NON-NLS-1$ //$NON-NLS-2$
 
         if (!enabled) {
-            NodeList<Element> inputs = item.getElement().getElementsByTagName("input");
+            NodeList<Element> inputs = item.getElement().getElementsByTagName("input"); //$NON-NLS-1$
             for (int i = 0; i < inputs.getLength(); i++) {
                 disableElement(inputs.getItem(i));
             }
-            NodeList<Element> spans = item.getElement().getElementsByTagName("span");
+            NodeList<Element> spans = item.getElement().getElementsByTagName("span"); //$NON-NLS-1$
             for (int i = 0; i < spans.getLength(); i++) {
                 disableElement(spans.getItem(i));
             }
@@ -290,7 +294,7 @@ public abstract class AbstractSubTabTree<M extends SearchableListModel, R, N> ex
 
         boolean isLeafEmpty = item.getUserObject() != null && item.getUserObject().equals(true);
         if (isLeafEmpty) {
-            item.getElement().getElementsByTagName("td").getItem(0).getStyle().setVisibility(Visibility.HIDDEN);
+            item.getElement().getElementsByTagName("td").getItem(0).getStyle().setVisibility(Visibility.HIDDEN); //$NON-NLS-1$
         }
     }
 
@@ -305,16 +309,16 @@ public abstract class AbstractSubTabTree<M extends SearchableListModel, R, N> ex
     }
 
     protected void addItemToPanel(HorizontalPanel panel, Widget item, String width) {
-        item.getElement().getStyle().setBackgroundColor("transparent");
-        item.getElement().getStyle().setColor("black");
+        item.getElement().getStyle().setBackgroundColor("transparent"); //$NON-NLS-1$
+        item.getElement().getStyle().setColor("black"); //$NON-NLS-1$
 
         panel.add(item);
         panel.setCellWidth(item, width);
     }
 
     protected void disableElement(Element element) {
-        element.getStyle().setProperty("disabled", "true");
-        element.getStyle().setColor("#999999");
+        element.getStyle().setProperty("disabled", "true"); //$NON-NLS-1$ //$NON-NLS-2$
+        element.getStyle().setColor("#999999"); //$NON-NLS-1$
 
         if (getNodeDisabledTooltip() != null) {
             element.setTitle(getNodeDisabledTooltip());
@@ -396,15 +400,15 @@ public abstract class AbstractSubTabTree<M extends SearchableListModel, R, N> ex
 
         Element element;
         if (item.getParentItem() == null) {
-            element = item.getElement().getElementsByTagName("table").getItem(0);
+            element = item.getElement().getElementsByTagName("table").getItem(0); //$NON-NLS-1$
         }
         else {
             element = item.getElement();
         }
 
         if (!NODE_HEADER.equals(item.getUserObject())) {
-            element.getStyle().setBackgroundColor(selected ? "#C3D0E0" : "transparent");
-            element.getStyle().setProperty("borderBottom", "1px solid white");
+            element.getStyle().setBackgroundColor(selected ? "#C3D0E0" : "transparent"); //$NON-NLS-1$ //$NON-NLS-2$
+            element.getStyle().setProperty("borderBottom", "1px solid white"); //$NON-NLS-1$ //$NON-NLS-2$
         }
     }
 

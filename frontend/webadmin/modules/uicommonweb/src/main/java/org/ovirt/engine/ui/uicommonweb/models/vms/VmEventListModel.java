@@ -37,7 +37,7 @@ public class VmEventListModel extends EventListModel
     }
 
     protected void preSearchCalled(VM vm) {
-        setSearchString("events: vm.name=" + vm.getvm_name());
+        setSearchString("events: vm.name=" + vm.getvm_name()); //$NON-NLS-1$
     }
 
     @Override
@@ -45,7 +45,7 @@ public class VmEventListModel extends EventListModel
     {
         super.EntityPropertyChanged(sender, e);
 
-        if (e.PropertyName.equals("vm_name"))
+        if (e.PropertyName.equals("vm_name")) //$NON-NLS-1$
         {
             getSearchCommand().Execute();
         }

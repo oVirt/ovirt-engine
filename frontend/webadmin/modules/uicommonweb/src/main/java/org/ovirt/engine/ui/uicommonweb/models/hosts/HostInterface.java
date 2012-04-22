@@ -34,7 +34,7 @@ public class HostInterface extends Model
         if (status != value)
         {
             status = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Status"));
+            OnPropertyChanged(new PropertyChangedEventArgs("Status")); //$NON-NLS-1$
         }
     }
 
@@ -50,7 +50,7 @@ public class HostInterface extends Model
         if (!StringHelper.stringsEqual(name, value))
         {
             name = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Name"));
+            OnPropertyChanged(new PropertyChangedEventArgs("Name")); //$NON-NLS-1$
         }
     }
 
@@ -66,7 +66,7 @@ public class HostInterface extends Model
         if (!StringHelper.stringsEqual(address, value))
         {
             address = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Address"));
+            OnPropertyChanged(new PropertyChangedEventArgs("Address")); //$NON-NLS-1$
         }
     }
 
@@ -82,7 +82,7 @@ public class HostInterface extends Model
         if (!StringHelper.stringsEqual(mac, value))
         {
             mac = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("MAC"));
+            OnPropertyChanged(new PropertyChangedEventArgs("MAC")); //$NON-NLS-1$
         }
     }
 
@@ -104,7 +104,7 @@ public class HostInterface extends Model
         if (speed == null || !speed.equals(value))
         {
             speed = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Speed"));
+            OnPropertyChanged(new PropertyChangedEventArgs("Speed")); //$NON-NLS-1$
         }
     }
 
@@ -126,7 +126,7 @@ public class HostInterface extends Model
         if (rxRate == null || !rxRate.equals(value))
         {
             rxRate = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("RxRate"));
+            OnPropertyChanged(new PropertyChangedEventArgs("RxRate")); //$NON-NLS-1$
         }
     }
 
@@ -148,7 +148,7 @@ public class HostInterface extends Model
         if (rxDrop == null || !rxDrop.equals(value))
         {
             rxDrop = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("RxDrop"));
+            OnPropertyChanged(new PropertyChangedEventArgs("RxDrop")); //$NON-NLS-1$
         }
     }
 
@@ -170,7 +170,7 @@ public class HostInterface extends Model
         if (txRate == null || !txRate.equals(value))
         {
             txRate = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("TxRate"));
+            OnPropertyChanged(new PropertyChangedEventArgs("TxRate")); //$NON-NLS-1$
         }
     }
 
@@ -192,7 +192,7 @@ public class HostInterface extends Model
         if (txDrop == null || !txDrop.equals(value))
         {
             txDrop = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("TxDrop"));
+            OnPropertyChanged(new PropertyChangedEventArgs("TxDrop")); //$NON-NLS-1$
         }
     }
 

@@ -23,7 +23,7 @@ public class DragEndEvent extends DragDropEventBase<DragEndHandler> {
     /**
      * Event type for drag end events. Represents the meta-data associated with this event.
      */
-    private static final Type<DragEndHandler> TYPE = new Type<DragEndHandler>("dragend", new DragEndEvent());
+    private static final Type<DragEndHandler> TYPE = new Type<DragEndHandler>("dragend", new DragEndEvent()); //$NON-NLS-1$
 
     /**
      * Gets the event type associated with drag end events.

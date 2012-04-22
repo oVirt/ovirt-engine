@@ -10,7 +10,7 @@ public class MemorySizeParser implements Parser<Object> {
 
     @Override
     public Object parse(CharSequence text) throws ParseException {
-        MatchResult match = RegExp.compile("(\\d*)\\s*(\\w*)").exec(text.toString());
+        MatchResult match = RegExp.compile("(\\d*)\\s*(\\w*)").exec(text.toString()); //$NON-NLS-1$
         String prefix = match.getGroup(1);
         String suffix = match.getGroup(2);
         Integer size = null;
@@ -21,12 +21,12 @@ public class MemorySizeParser implements Parser<Object> {
             return 0;
         }
 
-        if (suffix.equalsIgnoreCase("GB")) {
+        if (suffix.equalsIgnoreCase("GB")) { //$NON-NLS-1$
             size *= 1024;
             return size;
         }
 
-        if (suffix.equalsIgnoreCase("MB")) {
+        if (suffix.equalsIgnoreCase("MB")) { //$NON-NLS-1$
             return Integer.parseInt(prefix);
         }
 

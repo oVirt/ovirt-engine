@@ -7,6 +7,7 @@ import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.table.column.EntityModelTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.AddBrickPopupPresenterWidget;
 
@@ -30,21 +31,21 @@ public class AddBrickPopupView extends AbstractModelBoundPopupView<ListModel>  i
     Label messageLabel;
 
     @Inject
-    public AddBrickPopupView(EventBus eventBus, ApplicationResources resources) {
+    public AddBrickPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
         super(eventBus, resources);
         table = new EntityModelCellTable<ListModel>(true);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        initTableColumns();
+        initTableColumns(constants);
     }
 
-    protected void initTableColumns(){
+    protected void initTableColumns(ApplicationConstants constants){
         // Table Entity Columns
         table.addEntityModelColumn(new EntityModelTextColumn<EntityModel>() {
             @Override
             public String getValue(EntityModel entityModel) {
                 return ((GlusterBrickEntity) (entityModel.getEntity())).getServerName();
             }
-        }, "Server");
+        }, constants.serverBricks());
 
         table.addEntityModelColumn(new EntityModelTextColumn<EntityModel>() {
 
@@ -52,7 +53,7 @@ public class AddBrickPopupView extends AbstractModelBoundPopupView<ListModel>  i
             public String getValue(EntityModel entityModel) {
                 return ((GlusterBrickEntity) (entityModel.getEntity())).getBrickDirectory();
             }
-        }, "Brick Directory");
+        }, constants.brickDirectoryBricks());
 
     }
 

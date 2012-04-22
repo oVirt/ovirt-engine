@@ -13,6 +13,8 @@ import org.ovirt.engine.ui.common.widget.label.EnumLabel;
 import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
 import org.ovirt.engine.ui.uicommonweb.models.disks.DiskGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.disks.DiskListModel;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.disk.SubTabDiskGeneralPresenter;
 
 import com.google.gwt.core.client.GWT;
@@ -42,6 +44,8 @@ public class SubTabDiskGeneralView extends AbstractSubTabFormView<DiskImage, Dis
 
     FormBuilder formBuilder;
 
+    private ApplicationConstants constants = ClientGinjectorProvider.instance().getApplicationConstants();
+
     @Inject
     public SubTabDiskGeneralView(DetailModelProvider<DiskListModel, DiskGeneralModel> modelProvider) {
         super(modelProvider);
@@ -54,11 +58,11 @@ public class SubTabDiskGeneralView extends AbstractSubTabFormView<DiskImage, Dis
 
         // Build a form using the FormBuilder
         formBuilder = new FormBuilder(formPanel, 1, 4);
-        formBuilder.setColumnsWidth("300px");
-        formBuilder.addFormItem(new FormItem("Alias", alias, 0, 0));
-        formBuilder.addFormItem(new FormItem("Description", description, 1, 0));
-        formBuilder.addFormItem(new FormItem("ID", diskId, 2, 0));
-        formBuilder.addFormItem(new FormItem("Volume Format", volumeFormat, 3, 0));
+        formBuilder.setColumnsWidth("300px"); //$NON-NLS-1$
+        formBuilder.addFormItem(new FormItem(constants.aliasDisk(), alias, 0, 0));
+        formBuilder.addFormItem(new FormItem(constants.descriptionDisk(), description, 1, 0));
+        formBuilder.addFormItem(new FormItem(constants.idDisk(), diskId, 2, 0));
+        formBuilder.addFormItem(new FormItem(constants.volumeFormatDisk(), volumeFormat, 3, 0));
     }
 
     @Override

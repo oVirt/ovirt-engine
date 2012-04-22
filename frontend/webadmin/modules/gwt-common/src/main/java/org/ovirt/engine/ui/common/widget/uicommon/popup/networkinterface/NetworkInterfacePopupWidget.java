@@ -65,12 +65,11 @@ public class NetworkInterfacePopupWidget extends AbstractModelBoundPopupWidget<V
         Driver.driver.initialize(this);
     }
 
-    // TODO: Localize
     private void localize(CommonApplicationConstants constants) {
-        nameEditor.setLabel("Name");
-        networkEditor.setLabel("Network");
-        nicTypeEditor.setLabel("Type");
-        enableManualMacCheckboxLabel.setText("Specify custom MAC address");
+        nameEditor.setLabel(constants.nameNetworkIntefacePopup());
+        networkEditor.setLabel(constants.networkNetworkIntefacePopup());
+        nicTypeEditor.setLabel(constants.typeNetworkIntefacePopup());
+        enableManualMacCheckboxLabel.setText(constants.specipyCustMacNetworkIntefacePopup());
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })

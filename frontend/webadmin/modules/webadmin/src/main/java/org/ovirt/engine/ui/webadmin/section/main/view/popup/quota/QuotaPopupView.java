@@ -129,15 +129,15 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
         ViewIdHandler.idHandler.generateAndSetIds(this);
         localize(constants);
         Driver.driver.initialize(this);
-        initTables();
+        initTables(constants);
     }
 
-    private void initTables() {
-        initQuotaClusterTable();
-        initQuotaStorageTable();
+    private void initTables(ApplicationConstants constants) {
+        initQuotaClusterTable(constants);
+        initQuotaStorageTable(constants);
     }
 
-    private void initQuotaStorageTable() {
+    private void initQuotaStorageTable(final ApplicationConstants constants) {
         quotaStorageTable = new IVdcQueryableCellTable<QuotaStorage, ListModel>();
         storageQuotaTableContainer.add(quotaStorageTable);
 
@@ -173,26 +173,26 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
             @Override
             public String getValue(QuotaStorage object) {
                 if (object.getStorageName() == null || object.getStorageName().length() == 0) {
-                    return "Unlimited Storage";
+                    return "Unlimited Storage"; //$NON-NLS-1$
                 }
                 return object.getStorageName();
             }
-        }, "Storage Name");
+        }, constants.storageNameQuota());
 
         quotaStorageTable.addColumn(new TextColumnWithTooltip<QuotaStorage>() {
             @Override
             public String getValue(QuotaStorage object) {
-                String str = "";
+                String str = ""; //$NON-NLS-1$
                 if (object.getStorageSizeGB() == null) {
-                    return "";
+                    return ""; //$NON-NLS-1$
                 } else if (object.getStorageSizeGB() == -1) {
-                    str = "/*";
+                    str = "/*"; //$NON-NLS-1$
                 } else {
-                    str = "/" + object.getStorageSizeGB();
+                    str = "/" + object.getStorageSizeGB(); //$NON-NLS-1$
                 }
-                return object.getStorageSizeGBUsage() + str + " GB";
+                return object.getStorageSizeGBUsage() + str + " GB"; //$NON-NLS-1$
             }
-        }, "Quota");
+        }, constants.quota());
 
         NullableButtonCell editCellButton = new NullableButtonCell();
         Column<QuotaStorage, String> editColumn = new Column<QuotaStorage, String>(editCellButton) {
@@ -200,13 +200,13 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
             public String getValue(QuotaStorage object) {
                 if ((Boolean) model.getGlobalStorageQuota().getEntity()
                         || ((Boolean) model.getSpecificStorageQuota().getEntity() && selectedStorageGuid.contains(object.getStorageId()))) {
-                    return "Edit";
+                    return constants.editCellQuota();
                 }
                 return null;
             }
         };
 
-        quotaStorageTable.addColumn(editColumn, "", "50px");
+        quotaStorageTable.addColumn(editColumn, constants.empty(), "50px"); //$NON-NLS-1$
         editColumn.setFieldUpdater(new FieldUpdater<QuotaStorage, String>() {
             @Override
             public void update(int index, QuotaStorage object, String value) {
@@ -215,7 +215,7 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
         });
     }
 
-    private void initQuotaClusterTable() {
+    private void initQuotaClusterTable(final ApplicationConstants constants) {
         quotaClusterTable = new IVdcQueryableCellTable<QuotaVdsGroup, ListModel>();
         clusterQuotaTableContainer.add(quotaClusterTable);
 
@@ -251,41 +251,41 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
             @Override
             public String getValue(QuotaVdsGroup object) {
                 if (object.getVdsGroupName() == null || object.getVdsGroupName().length() == 0) {
-                    return "Unlimited Cluster";
+                    return "Unlimited Cluster"; //$NON-NLS-1$
                 }
                 return object.getVdsGroupName();
             }
-        }, "Cluster Name");
+        }, constants.clusterNameQuota());
 
         quotaClusterTable.addColumn(new TextColumnWithTooltip<QuotaVdsGroup>() {
             @Override
             public String getValue(QuotaVdsGroup object) {
-                String str = "";
+                String str = ""; //$NON-NLS-1$
                 if (object.getMemSizeMB() == null) {
-                    return "";
+                    return ""; //$NON-NLS-1$
                 } else if (object.getMemSizeMB() == -1) {
-                    str = "/*";
+                    str = "/*"; //$NON-NLS-1$
                 } else {
-                    str = "/" + object.getMemSizeMB();
+                    str = "/" + object.getMemSizeMB(); //$NON-NLS-1$
                 }
-                return object.getMemSizeMBUsage() + str + " GB";
+                return object.getMemSizeMBUsage() + str + " GB"; //$NON-NLS-1$
             }
-        }, "Quota of Mem");
+        }, constants.quotaOfMemQuota());
 
         quotaClusterTable.addColumn(new TextColumnWithTooltip<QuotaVdsGroup>() {
             @Override
             public String getValue(QuotaVdsGroup object) {
-                String str = "";
+                String str = ""; //$NON-NLS-1$
                 if (object.getVirtualCpu() == null) {
-                    return "";
+                    return ""; //$NON-NLS-1$
                 } else if (object.getVirtualCpu() == -1) {
-                    str = "/*";
+                    str = "/*"; //$NON-NLS-1$
                 } else {
-                    str = "/" + object.getVirtualCpu();
+                    str = "/" + object.getVirtualCpu(); //$NON-NLS-1$
                 }
-                return object.getVirtualCpuUsage() + str + " vCPUs";
+                return object.getVirtualCpuUsage() + str + " vCPUs"; //$NON-NLS-1$
             }
-        }, "Quota of vCPU");
+        }, constants.quotaOfVcpuQuota());
 
         NullableButtonCell editCellButton = new NullableButtonCell();
         Column<QuotaVdsGroup, String> editColumn = new Column<QuotaVdsGroup, String>(editCellButton) {
@@ -293,13 +293,13 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
             public String getValue(QuotaVdsGroup object) {
                 if ((Boolean) model.getGlobalClusterQuota().getEntity()
                         || ((Boolean) model.getSpecificClusterQuota().getEntity() && selectedClusterGuid.contains(object.getVdsGroupId()))) {
-                    return "Edit";
+                    return constants.editCellQuota();
                 }
                 return null;
             }
         };
 
-        quotaClusterTable.addColumn(editColumn, "", "50px");
+        quotaClusterTable.addColumn(editColumn, constants.empty(), "50px"); //$NON-NLS-1$
         editColumn.setFieldUpdater(new FieldUpdater<QuotaVdsGroup, String>() {
             @Override
             public void update(int index, QuotaVdsGroup object, String value) {
@@ -309,10 +309,10 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
     }
 
     private void initRadioButtonEditors() {
-        globalClusterQuotaRadioButtonEditor = new EntityModelRadioButtonEditor("1");
-        specificClusterQuotaRadioButtonEditor = new EntityModelRadioButtonEditor("1");
-        globalStorageQuotaRadioButtonEditor = new EntityModelRadioButtonEditor("2");
-        specificStorageQuotaRadioButtonEditor = new EntityModelRadioButtonEditor("2");
+        globalClusterQuotaRadioButtonEditor = new EntityModelRadioButtonEditor("1"); //$NON-NLS-1$
+        specificClusterQuotaRadioButtonEditor = new EntityModelRadioButtonEditor("1"); //$NON-NLS-1$
+        globalStorageQuotaRadioButtonEditor = new EntityModelRadioButtonEditor("2"); //$NON-NLS-1$
+        specificStorageQuotaRadioButtonEditor = new EntityModelRadioButtonEditor("2"); //$NON-NLS-1$
     }
 
     private void initListBoxEditors() {
@@ -325,15 +325,15 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
     }
 
     void localize(ApplicationConstants constants) {
-        nameEditor.setLabel("Name");
-        descriptionEditor.setLabel("Description");
-        dataCenterEditor.setLabel("Data Center");
-        memAndCpuLabel.setText("Mem & CPU");
-        storageLabel.setText("Storage");
-        globalClusterQuotaRadioButtonEditor.setLabel("Unlimited Quota for all Clusters");
-        specificClusterQuotaRadioButtonEditor.setLabel("Use Quota for specific Clusters");
-        globalStorageQuotaRadioButtonEditor.setLabel("Unlimited Quota for all Storages");
-        specificStorageQuotaRadioButtonEditor.setLabel("Use Quota for specific Storages");
+        nameEditor.setLabel(constants.nameQuotaPopup());
+        descriptionEditor.setLabel(constants.descriptionQuotaPopup());
+        dataCenterEditor.setLabel(constants.dataCenterQuotaPopup());
+        memAndCpuLabel.setText(constants.memAndCpuQuotaPopup());
+        storageLabel.setText(constants.storageQuotaPopup());
+        globalClusterQuotaRadioButtonEditor.setLabel(constants.ultQuotaForAllClustersQuotaPopup());
+        specificClusterQuotaRadioButtonEditor.setLabel(constants.useQuotaSpecificClusterQuotaPopup());
+        globalStorageQuotaRadioButtonEditor.setLabel(constants.utlQuotaAllStoragesQuotaPopup());
+        specificStorageQuotaRadioButtonEditor.setLabel(constants.usedQuotaSpecStoragesQuotaPopup());
     }
 
     @Override
@@ -355,7 +355,7 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 String propName = ((PropertyChangedEventArgs) args).PropertyName;
-                if ("Window".equals(propName) && model.getWindow() == null) {
+                if ("Window".equals(propName) && model.getWindow() == null) { //$NON-NLS-1$
                     if ((Boolean) model.getSpecificClusterQuota().getEntity()) {
                         quotaClusterTable.edit(model.getAllDataCenterClusters());
                     } else {

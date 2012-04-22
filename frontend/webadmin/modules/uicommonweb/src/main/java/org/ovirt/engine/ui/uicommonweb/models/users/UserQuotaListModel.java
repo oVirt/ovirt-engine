@@ -11,12 +11,14 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
 public class UserQuotaListModel extends SearchableListModel
 {
     public UserQuotaListModel() {
-        setTitle("Quota");
+        setTitle(ConstantsManager.getInstance().getConstants().quotaTitle());
+        setHashName("quota"); // $//$NON-NLS-1$
     }
 
     @Override
@@ -64,6 +66,6 @@ public class UserQuotaListModel extends SearchableListModel
 
     @Override
     protected String getListName() {
-        return "UserQuotaListModel";
+        return "UserQuotaListModel"; //$NON-NLS-1$
     }
 }

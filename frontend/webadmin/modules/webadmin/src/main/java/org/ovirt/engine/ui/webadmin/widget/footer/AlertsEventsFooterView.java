@@ -4,7 +4,6 @@ import java.util.Date;
 
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.job.Job;
-import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTabModelProvider;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
@@ -13,6 +12,7 @@ import org.ovirt.engine.ui.common.widget.table.column.FullDateTimeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.ImageResourceColumn;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
@@ -100,6 +100,7 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
 
     private final ApplicationTemplates templates;
     private final ApplicationResources resources;
+    private final ApplicationConstants constants;
     private final SafeHtml alertImage;
 
     public AlertsEventsFooterView(AlertModelProvider alertModelProvider,
@@ -112,9 +113,10 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
             ApplicationTemplates templates,
             EventBus eventBus,
             ClientStorage clientStorage,
-            CommonApplicationConstants commonConstants) {
+            ApplicationConstants constants) {
         this.resources = resources;
         this.templates = templates;
+        this.constants = constants;
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
         initButtonHandlers();
         alertModelProvider.setAlertCountChangeHandler(this);
@@ -138,7 +140,7 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
         _eventsTable.getElement().getStyle().setOverflowY(Overflow.HIDDEN);
         initTable(_eventsTable);
 
-        tasksTree = new TasksTree(resources, commonConstants);
+        tasksTree = new TasksTree(resources, constants, templates);
         tasksTree.updateTree(taskModelProvider.getModel());
 
         _tasksTable =
@@ -150,7 +152,7 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
         taskButton.setValue(false);
         alertButton.setValue(false);
         eventButton.setValue(true);
-        message.setText("Last Message:");
+        message.setText(constants.lastMsgEventFooter());
         collapseButton.setVisible(false);
 
         tablePanel.clear();
@@ -195,7 +197,7 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
 
     void setAlertCount(int count) {
 
-        String countStr = count + " " + "Alerts";
+        String countStr = count + " " + constants.alertsEventFooter(); //$NON-NLS-1$
 
         SafeHtml up = templates.alertEventButton(alertImage, countStr,
                 buttonUpStart, buttonUpStretch, buttonUpEnd, style.alertButtonUpStyle());
@@ -210,9 +212,9 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
         String tasksGrayImageSrc = AbstractImagePrototype.create(resources.iconTask()).getHTML();
         SafeHtml tasksGrayImage = SafeHtmlUtils.fromTrustedString(tasksGrayImageSrc);
 
-        SafeHtml up = templates.alertEventButton(tasksGrayImage, "Tasks (" + count + ")",
+        SafeHtml up = templates.alertEventButton(tasksGrayImage, constants.tasksEventFooter() + " (" + count + ")",  //$NON-NLS-1$  //$NON-NLS-2$
                 buttonUpStart, buttonUpStretch, buttonUpEnd, style.taskButtonUpStyle());
-        SafeHtml down = templates.alertEventButton(tasksGrayImage, "Tasks (" + count + ")",
+        SafeHtml down = templates.alertEventButton(tasksGrayImage, constants.tasksEventFooter() + " (" + count + ")",  //$NON-NLS-1$  //$NON-NLS-2$
                 buttonDownStart, buttonDownStretch, buttonDownEnd, style.taskButtonDownStyle());
 
         taskButton.getUpFace().setHTML(up);
@@ -223,9 +225,9 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
         String eventsGrayImageSrc = AbstractImagePrototype.create(resources.eventsGrayImage()).getHTML();
         SafeHtml eventsGrayImage = SafeHtmlUtils.fromTrustedString(eventsGrayImageSrc);
 
-        SafeHtml up = templates.alertEventButton(eventsGrayImage, "Events",
+        SafeHtml up = templates.alertEventButton(eventsGrayImage, constants.eventsEventFooter(),
                 buttonUpStart, buttonUpStretch, buttonUpEnd, style.eventButtonUpStyle());
-        SafeHtml down = templates.alertEventButton(eventsGrayImage, "Events",
+        SafeHtml down = templates.alertEventButton(eventsGrayImage, constants.eventsEventFooter(),
                 buttonDownStart, buttonDownStretch, buttonDownEnd, style.eventButtonDownStyle());
 
         eventButton.getUpFace().setHTML(up);
@@ -254,7 +256,7 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
                     firstRowTablePanel.clear();
                     firstRowTablePanel.add(_alertsTable);
 
-                    message.setText("Last Message:");
+                    message.setText(constants.lastMsgEventFooter());
                     collapseButton.setVisible(false);
                 }
                 else {
@@ -275,7 +277,7 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
                     firstRowTablePanel.clear();
                     firstRowTablePanel.add(_eventsTable);
 
-                    message.setText("Last Message:");
+                    message.setText(constants.lastMsgEventFooter());
                     collapseButton.setVisible(false);
                 }
                 else {
@@ -296,7 +298,7 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
                     firstRowTablePanel.clear();
                     firstRowTablePanel.add(_tasksTable);
 
-                    message.setText("Last Task:");
+                    message.setText(constants.lastTaskEventFooter());
                     collapseButton.setVisible(true);
                 }
                 else {
@@ -310,7 +312,7 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
             public void onClick(ClickEvent event) {
                 String height = widgetPanel.getElement().getParentElement().getParentElement().getStyle().getHeight();
                 int offset = 26;
-                if (height.equals("26px")) {
+                if (height.equals("26px")) { //$NON-NLS-1$
                     offset = 162;
                 }
                 widgetPanel.getElement().getParentElement().getParentElement().getStyle().setHeight(offset, Unit.PX);
@@ -342,7 +344,7 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
     }
 
     void initTable(SimpleActionTable<AuditLog> table) {
-        table.addColumn(new AuditLogSeverityColumn(), "", "30px");
+        table.addColumn(new AuditLogSeverityColumn(), constants.empty(), "30px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<AuditLog> logTimeColumn = new FullDateTimeColumn<AuditLog>() {
             @Override
@@ -350,7 +352,7 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
                 return object.getlog_time();
             }
         };
-        table.addColumn(logTimeColumn, "Time", "160px");
+        table.addColumn(logTimeColumn, constants.timeEvent(), "160px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<AuditLog> messageColumn = new TextColumnWithTooltip<AuditLog>() {
             @Override
@@ -358,7 +360,7 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
                 return object.getmessage();
             }
         };
-        table.addColumn(messageColumn, "Message");
+        table.addColumn(messageColumn, constants.messageEvent());
     }
 
     void initTaskTable(SimpleActionTable<Job> taskTable) {
@@ -371,7 +373,7 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
             }
         };
 
-        taskTable.addColumn(taskStatusColumn, "Status", "30px");
+        taskTable.addColumn(taskStatusColumn, constants.statusTask(), "30px"); //$NON-NLS-1$
 
         FullDateTimeColumn<Job> timeColumn = new FullDateTimeColumn<Job>() {
             @Override
@@ -379,7 +381,7 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
                 return object.getEndTime() == null ? object.getStartTime() : object.getEndTime();
             }
         };
-        taskTable.addColumn(timeColumn, "Time", "160px");
+        taskTable.addColumn(timeColumn, constants.timeTask(), "160px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<Job> descriptionColumn = new TextColumnWithTooltip<Job>() {
             @Override
@@ -387,7 +389,7 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
                 return object.getDescription();
             }
         };
-        taskTable.addColumn(descriptionColumn, "Description");
+        taskTable.addColumn(descriptionColumn, constants.descriptionTask());
     }
 
     public interface AlertsEventsFooterResources extends CellTable.Resources {

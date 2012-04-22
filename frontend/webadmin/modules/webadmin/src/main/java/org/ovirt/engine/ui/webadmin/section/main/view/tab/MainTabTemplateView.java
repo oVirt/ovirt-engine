@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateListModel;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabTemplatePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
@@ -25,21 +26,21 @@ public class MainTabTemplateView extends AbstractMainTabWithDetailsTableView<VmT
     }
 
     @Inject
-    public MainTabTemplateView(MainModelProvider<VmTemplate, TemplateListModel> modelProvider) {
+    public MainTabTemplateView(MainModelProvider<VmTemplate, TemplateListModel> modelProvider, ApplicationConstants constants) {
         super(modelProvider);
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        initTable();
+        initTable(constants);
         initWidget(getTable());
     }
 
-    void initTable() {
+    void initTable(ApplicationConstants constants) {
         TextColumnWithTooltip<VmTemplate> nameColumn = new TextColumnWithTooltip<VmTemplate>() {
             @Override
             public String getValue(VmTemplate object) {
                 return object.getname();
             }
         };
-        getTable().addColumn(nameColumn, "Name");
+        getTable().addColumn(nameColumn, constants.namePool());
 
         TextColumnWithTooltip<VmTemplate> domainColumn = new TextColumnWithTooltip<VmTemplate>() {
             @Override
@@ -47,7 +48,7 @@ public class MainTabTemplateView extends AbstractMainTabWithDetailsTableView<VmT
                 return object.getdomain();
             }
         };
-        getTable().addColumn(domainColumn, "Domain");
+        getTable().addColumn(domainColumn, constants.domainTemplate());
 
         TextColumnWithTooltip<VmTemplate> creationDateColumn = new GeneralDateTimeColumn<VmTemplate>() {
             @Override
@@ -55,7 +56,7 @@ public class MainTabTemplateView extends AbstractMainTabWithDetailsTableView<VmT
                 return object.getcreation_date();
             }
         };
-        getTable().addColumn(creationDateColumn, "Creation Date");
+        getTable().addColumn(creationDateColumn, constants.creationDateTemplate());
 
         TextColumnWithTooltip<VmTemplate> statusColumn = new EnumColumn<VmTemplate, VmTemplateStatus>() {
             @Override
@@ -63,7 +64,7 @@ public class MainTabTemplateView extends AbstractMainTabWithDetailsTableView<VmT
                 return object.getstatus();
             }
         };
-        getTable().addColumn(statusColumn, "Status");
+        getTable().addColumn(statusColumn, constants.statusTemplate());
 
         TextColumnWithTooltip<VmTemplate> clusterColumn = new TextColumnWithTooltip<VmTemplate>() {
             @Override
@@ -71,7 +72,7 @@ public class MainTabTemplateView extends AbstractMainTabWithDetailsTableView<VmT
                 return object.getvds_group_name();
             }
         };
-        getTable().addColumn(clusterColumn, "Cluster");
+        getTable().addColumn(clusterColumn, constants.clusterTemplate());
 
         TextColumnWithTooltip<VmTemplate> descriptionColumn = new TextColumnWithTooltip<VmTemplate>() {
             @Override
@@ -79,28 +80,28 @@ public class MainTabTemplateView extends AbstractMainTabWithDetailsTableView<VmT
                 return object.getdescription();
             }
         };
-        getTable().addColumn(descriptionColumn, "Description");
+        getTable().addColumn(descriptionColumn, constants.descriptionTemplate());
 
-        getTable().addActionButton(new WebAdminButtonDefinition<VmTemplate>("Edit") {
+        getTable().addActionButton(new WebAdminButtonDefinition<VmTemplate>(constants.editTemplate()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getEditCommand();
             }
         });
-        getTable().addActionButton(new WebAdminButtonDefinition<VmTemplate>("Remove") {
+        getTable().addActionButton(new WebAdminButtonDefinition<VmTemplate>(constants.removeTemplate()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getRemoveCommand();
             }
         });
         // TODO: separator
-        getTable().addActionButton(new WebAdminButtonDefinition<VmTemplate>("Export") {
+        getTable().addActionButton(new WebAdminButtonDefinition<VmTemplate>(constants.exportTemplate()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getExportCommand();
             }
         });
-        getTable().addActionButton(new WebAdminButtonDefinition<VmTemplate>("Copy") {
+        getTable().addActionButton(new WebAdminButtonDefinition<VmTemplate>(constants.copyTemplate()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getCopyCommand();

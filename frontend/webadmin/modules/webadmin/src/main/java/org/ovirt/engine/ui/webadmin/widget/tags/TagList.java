@@ -5,6 +5,7 @@ import org.ovirt.engine.ui.common.widget.action.AbstractActionStackPanelItem;
 import org.ovirt.engine.ui.common.widget.action.SimpleActionPanel;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.tags.TagListModel;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.TagModelProvider;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
@@ -25,11 +26,11 @@ public class TagList extends AbstractActionStackPanelItem<TagModelProvider, TagL
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
-    public TagList(TagModelProvider modelProvider) {
+    public TagList(TagModelProvider modelProvider, ApplicationConstants constants) {
         super(modelProvider);
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        addActionButtons(modelProvider);
+        addActionButtons(modelProvider, constants);
     }
 
     @Override
@@ -52,22 +53,22 @@ public class TagList extends AbstractActionStackPanelItem<TagModelProvider, TagL
                 ClientGinjectorProvider.instance().getEventBus());
     }
 
-    private void addActionButtons(final TagModelProvider modelProvider) {
-        actionPanel.addActionButton(new WebAdminButtonDefinition<TagListModel>("New") {
+    private void addActionButtons(final TagModelProvider modelProvider, final ApplicationConstants constants) {
+        actionPanel.addActionButton(new WebAdminButtonDefinition<TagListModel>(constants.newTag()) {
             @Override
             protected UICommand resolveCommand() {
                 return modelProvider.getModel().getNewCommand();
             }
         });
 
-        actionPanel.addActionButton(new WebAdminButtonDefinition<TagListModel>("Edit") {
+        actionPanel.addActionButton(new WebAdminButtonDefinition<TagListModel>(constants.editTag()) {
             @Override
             protected UICommand resolveCommand() {
                 return modelProvider.getModel().getEditCommand();
             }
         });
 
-        actionPanel.addActionButton(new WebAdminButtonDefinition<TagListModel>("Remove") {
+        actionPanel.addActionButton(new WebAdminButtonDefinition<TagListModel>(constants.removeTag()) {
             @Override
             protected UICommand resolveCommand() {
                 return modelProvider.getModel().getRemoveCommand();

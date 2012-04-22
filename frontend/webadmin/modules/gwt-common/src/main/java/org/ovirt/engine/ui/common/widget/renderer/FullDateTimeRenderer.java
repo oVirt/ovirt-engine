@@ -10,12 +10,12 @@ import com.google.gwt.text.shared.AbstractRenderer;
  */
 public class FullDateTimeRenderer extends AbstractRenderer<Date> {
 
-    private static final DateTimeFormat format = DateTimeFormat.getFormat("yyyy-MMM-dd, HH:mm:ss");
+    private static final DateTimeFormat format = DateTimeFormat.getFormat("yyyy-MMM-dd, HH:mm:ss"); //$NON-NLS-1$
 
     @Override
     public String render(Date object) {
         if(object == null){
-            return "";
+            return ""; //$NON-NLS-1$
         }
         return format.format(object);
     }

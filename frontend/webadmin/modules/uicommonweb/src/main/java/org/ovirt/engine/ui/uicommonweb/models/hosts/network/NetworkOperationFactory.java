@@ -145,16 +145,16 @@ public class NetworkOperationFactory {
         // with self
         NetworkOperation operation = operationFor(item, null);
         if (operation != NetworkOperation.NULL_OPERATION) {
-            assert operation.isUnary() : "Operation " + operation.name()
-                    + " is Binary, while a Uniary Operation is expected for " + item.getName();
+            assert operation.isUnary() : "Operation " + operation.name() //$NON-NLS-1$
+                    + " is Binary, while a Uniary Operation is expected for " + item.getName(); //$NON-NLS-1$
             operations.addCommand(operation, operation.getCommand(item, null, allNics));
         }
         return operations;
     }
 
     private void assertBinary(NetworkItemModel<?> op1, NetworkItemModel<?> op2, NetworkOperation operation) {
-        assert !operation.isUnary() : "Operation " + operation.name()
-                + " is Unary, while a Binary Operation is expected for: " + op1.getName() + " and " + op2.getName();
+        assert !operation.isUnary() : "Operation " + operation.name() //$NON-NLS-1$
+                + " is Unary, while a Binary Operation is expected for: " + op1.getName() + " and " + op2.getName(); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
 }

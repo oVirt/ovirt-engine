@@ -156,7 +156,7 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
                     }
                 };
             }
-            addColumn(checkColumn, SafeHtmlUtils.fromSafeConstant("<br/>"));
+            addColumn(checkColumn, SafeHtmlUtils.fromSafeConstant("<br/>")); //$NON-NLS-1$
             setColumnWidth(checkColumn, CHECK_COLUMN_WIDTH, Unit.PX);
         }
     }
@@ -173,7 +173,7 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
 
     public void setCustomSelectionColumn(Column customSelectionColumn, String width) {
         removeColumn(0);
-        insertColumn(0, customSelectionColumn, SafeHtmlUtils.fromSafeConstant("<br/>"));
+        insertColumn(0, customSelectionColumn, SafeHtmlUtils.fromSafeConstant("<br/>")); //$NON-NLS-1$
         setColumnWidth(customSelectionColumn, width);
     }
 

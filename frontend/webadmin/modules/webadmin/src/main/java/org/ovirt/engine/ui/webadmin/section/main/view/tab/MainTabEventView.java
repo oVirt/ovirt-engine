@@ -37,10 +37,13 @@ public class MainTabEventView extends AbstractMainTabTableView<AuditLog, EventLi
     @UiField
     SimplePanel tablePanel;
 
+    private ApplicationConstants constants;
+
     @Inject
     public MainTabEventView(MainModelProvider<AuditLog, EventListModel> modelProvider,
             ApplicationConstants constants) {
         super(modelProvider);
+        this.constants = constants;
         initTable();
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
@@ -59,18 +62,18 @@ public class MainTabEventView extends AbstractMainTabTableView<AuditLog, EventLi
     void handleViewButtonClick(ClickEvent event) {
         boolean advancedViewEnabled = advancedViewButton.getValue();
 
-        getTable().ensureColumnPresent(AdvancedViewColumns.logTypeColumn, "Event ID", advancedViewEnabled);
-        getTable().ensureColumnPresent(AdvancedViewColumns.userColumn, "User", advancedViewEnabled);
-        getTable().ensureColumnPresent(AdvancedViewColumns.hostColumn, "Host", advancedViewEnabled);
-        getTable().ensureColumnPresent(AdvancedViewColumns.virtualMachineColumn, "Virtual Machine", advancedViewEnabled);
-        getTable().ensureColumnPresent(AdvancedViewColumns.templateColumn, "Template", advancedViewEnabled);
-        getTable().ensureColumnPresent(AdvancedViewColumns.dataCenterColumn, "Data Center", advancedViewEnabled);
-        getTable().ensureColumnPresent(AdvancedViewColumns.storageColumn, "Storage", advancedViewEnabled);
-        getTable().ensureColumnPresent(AdvancedViewColumns.clusterColumn, "Cluster", advancedViewEnabled);
+        getTable().ensureColumnPresent(AdvancedViewColumns.logTypeColumn, constants.eventIdEvent(), advancedViewEnabled);
+        getTable().ensureColumnPresent(AdvancedViewColumns.userColumn, constants.userEvent(), advancedViewEnabled);
+        getTable().ensureColumnPresent(AdvancedViewColumns.hostColumn, constants.hostEvent(), advancedViewEnabled);
+        getTable().ensureColumnPresent(AdvancedViewColumns.virtualMachineColumn, constants.vmEvent(), advancedViewEnabled);
+        getTable().ensureColumnPresent(AdvancedViewColumns.templateColumn, constants.templateEvent(), advancedViewEnabled);
+        getTable().ensureColumnPresent(AdvancedViewColumns.dataCenterColumn, constants.dcEvent(), advancedViewEnabled);
+        getTable().ensureColumnPresent(AdvancedViewColumns.storageColumn, constants.storageEvent(), advancedViewEnabled);
+        getTable().ensureColumnPresent(AdvancedViewColumns.clusterColumn, constants.clusterEvent(), advancedViewEnabled);
     }
 
     void initTable() {
-        getTable().addColumn(new AuditLogSeverityColumn(), "", "30px");
+        getTable().addColumn(new AuditLogSeverityColumn(), constants.empty(), "30px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<AuditLog> logTimeColumn = new FullDateTimeColumn<AuditLog>() {
             @Override
@@ -78,7 +81,7 @@ public class MainTabEventView extends AbstractMainTabTableView<AuditLog, EventLi
                 return object.getlog_time();
             }
         };
-        getTable().addColumn(logTimeColumn, "Time");
+        getTable().addColumn(logTimeColumn, constants.timeEvent());
 
         TextColumnWithTooltip<AuditLog> messageColumn = new TextColumnWithTooltip<AuditLog>() {
             @Override
@@ -86,7 +89,7 @@ public class MainTabEventView extends AbstractMainTabTableView<AuditLog, EventLi
                 return object.getmessage();
             }
         };
-        getTable().addColumn(messageColumn, "Message");
+        getTable().addColumn(messageColumn, constants.messageEvent());
     }
 
 }

@@ -15,6 +15,7 @@ import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.resources.ResourcesModel;
+import org.ovirt.engine.ui.userportal.ApplicationConstants;
 import org.ovirt.engine.ui.userportal.ApplicationResources;
 import org.ovirt.engine.ui.userportal.uicommon.model.resources.ResourcesModelProvider;
 
@@ -59,28 +60,31 @@ public class VmTable extends Composite implements HasEditorDriver<ResourcesModel
 
     private VmSingleSelectionModel vmSelectionModel = new VmSingleSelectionModel();
 
+    private ApplicationConstants constants;
+
     interface WidgetUiBinder extends UiBinder<Widget, VmTable> {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
     }
 
     public VmTable(ResourcesModelProvider modelProvider,
             SubTableResources headerResources,
-            ApplicationResources resources) {
+            ApplicationResources resources, ApplicationConstants constants) {
         this.modelProvider = modelProvider;
         this.resources = resources;
+        this.constants = constants;
         tableHeader = new ActionCellTable<VM>(modelProvider, headerResources);
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
         initTable();
     }
 
     private void initTable() {
-        tableHeader.addColumn(new EmptyColumn(), "Virtual Machine");
-        tableHeader.addColumn(new EmptyColumn(), "Disks");
-        tableHeader.addColumn(new EmptyColumn(), "Virtual Size");
-        tableHeader.addColumn(new EmptyColumn(), "Actual Size");
-        tableHeader.addColumn(new EmptyColumn(), "Snapshots");
+        tableHeader.addColumn(new EmptyColumn(), constants.virtualMachineSnapshotCreatePopupDescriptionLabel());
+        tableHeader.addColumn(new EmptyColumn(), constants.disksVm());
+        tableHeader.addColumn(new EmptyColumn(), constants.virtualSizeVm());
+        tableHeader.addColumn(new EmptyColumn(), constants.actualSizeVm());
+        tableHeader.addColumn(new EmptyColumn(), constants.snapshotsVm());
 
-        setHeaderColumnWidths(Arrays.asList("40%", "10%", "10%", "10%", "30%"));
+        setHeaderColumnWidths(Arrays.asList("40%", "10%", "10%", "10%", "30%")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 
         tableHeader.setRowData(new ArrayList<VM>());
     }
@@ -183,36 +187,36 @@ public class VmTable extends Composite implements HasEditorDriver<ResourcesModel
         TextColumnWithTooltip<EntityModel> driveMappingColumn = new TextColumnWithTooltip<EntityModel>() {
             @Override
             public String getValue(EntityModel entity) {
-                return "Disk" + asDisk(entity).getinternal_drive_mapping();
+                return "Disk" + asDisk(entity).getinternal_drive_mapping(); //$NON-NLS-1$
             }
         };
 
         TextColumnWithTooltip<EntityModel> virtualSizeColumn = new TextColumnWithTooltip<EntityModel>() {
             @Override
             public String getValue(EntityModel entity) {
-                return asDisk(entity).getSizeInGigabytes() + "GB";
+                return asDisk(entity).getSizeInGigabytes() + "GB"; //$NON-NLS-1$
             }
         };
 
         TextColumnWithTooltip<EntityModel> actualSizeColumn = new TextColumnWithTooltip<EntityModel>() {
             @Override
             public String getValue(EntityModel entity) {
-                return ((Double) asDisk(entity).getActualDiskWithSnapshotsSize()).intValue() + "GB";
+                return ((Double) asDisk(entity).getActualDiskWithSnapshotsSize()).intValue() + "GB"; //$NON-NLS-1$
             }
         };
 
         TextColumnWithTooltip<EntityModel> snapshotsColumn = new TextColumnWithTooltip<EntityModel>() {
             @Override
             public String getValue(EntityModel entity) {
-                return asDisk(entity).getSnapshots().size() + "";
+                return asDisk(entity).getSnapshots().size() + ""; //$NON-NLS-1$
             }
         };
 
-        table.addColumn(diskImageColumn, "diskImageColumn", "5%");
-        table.addColumn(driveMappingColumn, "driveMappingColumn", "43%");
-        table.addColumn(virtualSizeColumn, "virtualSizeColumn", "10%");
-        table.addColumn(actualSizeColumn, "actualSizeColumn", "10%");
-        table.addColumn(snapshotsColumn, "snapshotsColumn", "32%");
+        table.addColumn(diskImageColumn, constants.diskImageColumnDisk(), "5%"); //$NON-NLS-1$
+        table.addColumn(driveMappingColumn, constants.drivaeMappingColumnDisk(), "43%"); //$NON-NLS-1$
+        table.addColumn(virtualSizeColumn, constants.virtualSizeColumnDisk(), "10%"); //$NON-NLS-1$
+        table.addColumn(actualSizeColumn, constants.actualSizeColumnDisk(), "10%"); //$NON-NLS-1$
+        table.addColumn(snapshotsColumn, constants.snapshotsColumnDisk(), "32%"); //$NON-NLS-1$
         EntityModel entityModel = new EntityModel();
         entityModel.setEntity(disk);
 
@@ -245,14 +249,14 @@ public class VmTable extends Composite implements HasEditorDriver<ResourcesModel
         TextColumnWithTooltip<EntityModel> diskSizeColumn = new TextColumnWithTooltip<EntityModel>() {
             @Override
             public String getValue(EntityModel entity) {
-                return asVm(entity).getDiskList().size() + "";
+                return asVm(entity).getDiskList().size() + ""; //$NON-NLS-1$
             }
         };
 
         TextColumnWithTooltip<EntityModel> virtualSizeColumn = new TextColumnWithTooltip<EntityModel>() {
             @Override
             public String getValue(EntityModel entity) {
-                return ((Double) asVm(entity).getDiskSize()).intValue() + "GB";
+                return ((Double) asVm(entity).getDiskSize()).intValue() + "GB"; //$NON-NLS-1$
             }
 
         };
@@ -260,7 +264,7 @@ public class VmTable extends Composite implements HasEditorDriver<ResourcesModel
         TextColumnWithTooltip<EntityModel> actualSizeColumn = new TextColumnWithTooltip<EntityModel>() {
             @Override
             public String getValue(EntityModel entity) {
-                return ((Double) asVm(entity).getActualDiskWithSnapshotsSize()).intValue() + "GB";
+                return ((Double) asVm(entity).getActualDiskWithSnapshotsSize()).intValue() + "GB"; //$NON-NLS-1$
             }
         };
 
@@ -268,15 +272,15 @@ public class VmTable extends Composite implements HasEditorDriver<ResourcesModel
             @Override
             public String getValue(EntityModel entity) {
                 return asVm(entity).getDiskList().size() > 0 ? asVm(entity).getDiskList().get(0).getSnapshots().size()
-                        + "" : "0";
+                        + "" : "0"; //$NON-NLS-1$ //$NON-NLS-2$
             }
         };
-        table.addColumn(vmImageColumn, "vmImageColumn", "5%");
-        table.addColumn(nameColumn, "nameColumn", "34%");
-        table.addColumn(diskSizeColumn, "diskSizeColumn", "10%");
-        table.addColumn(virtualSizeColumn, "virtualSizeColumn", "10%");
-        table.addColumn(actualSizeColumn, "actualSizeColumn", "10%");
-        table.addColumn(snapshotsColumn, "snapshotsColumn", "31%");
+        table.addColumn(vmImageColumn, constants.vmImageColumnVm(), "5%"); //$NON-NLS-1$
+        table.addColumn(nameColumn, constants.nameColumnVm(), "34%"); //$NON-NLS-1$
+        table.addColumn(diskSizeColumn, constants.diskSizeColumnVm(), "10%"); //$NON-NLS-1$
+        table.addColumn(virtualSizeColumn, constants.virtualSizeColumnVm(), "10%"); //$NON-NLS-1$
+        table.addColumn(actualSizeColumn, constants.actualSizeColumnVm(), "10%"); //$NON-NLS-1$
+        table.addColumn(snapshotsColumn, constants.snapshotsColumnVm(), "31%"); //$NON-NLS-1$
         table.setSelectionModel(vmSelectionModel);
 
         EntityModel entityModel = new EntityModel();

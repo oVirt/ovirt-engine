@@ -27,6 +27,7 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
@@ -83,11 +84,12 @@ public class ClusterNetworkListModel extends SearchableListModel
 
     public ClusterNetworkListModel()
     {
-        setTitle("Logical Networks");
+        setTitle(ConstantsManager.getInstance().getConstants().logicalNetworksTitle());
+        setHashName("logical_networks"); //$NON-NLS-1$
 
-        setManageCommand(new UICommand("Manage", this));
-        setSetAsDisplayCommand(new UICommand("SetAsDisplay", this));
-        setNewNetworkCommand(new UICommand("New", this));
+        setManageCommand(new UICommand("Manage", this)); //$NON-NLS-1$
+        setSetAsDisplayCommand(new UICommand("SetAsDisplay", this)); //$NON-NLS-1$
+        setNewNetworkCommand(new UICommand("New", this)); //$NON-NLS-1$
 
         UpdateActionAvailability();
     }
@@ -173,8 +175,8 @@ public class ClusterNetworkListModel extends SearchableListModel
                 java.util.ArrayList<network> networkList = (java.util.ArrayList<network>) result;
                 ListModel listModel = new ListModel();
                 clusterNetworkListModel.setWindow(listModel);
-                listModel.setTitle("Assign/Detach Networks");
-                listModel.setHashName("assign_networks");
+                listModel.setTitle(ConstantsManager.getInstance().getConstants().assignDetachNetworksTitle());
+                listModel.setHashName("assign_networks"); //$NON-NLS-1$
                 clusterNetworkListModel.PostManage(networkList, listModel);
             }
         };
@@ -188,7 +190,7 @@ public class ClusterNetworkListModel extends SearchableListModel
         java.util.ArrayList<EntityModel> items = new java.util.ArrayList<EntityModel>();
         for (network a : networkList)
         {
-            if (!a.getname().equals("engine"))
+            if (!a.getname().equals("engine")) //$NON-NLS-1$
             {
                 EntityModel tempVar = new EntityModel();
                 tempVar.setEntity(a);
@@ -222,16 +224,16 @@ public class ClusterNetworkListModel extends SearchableListModel
 
         model.setSelectedItems(selectedItems);
 
-        UICommand tempVar2 = new UICommand("Cancel", this);
-        tempVar2.setTitle("Cancel");
+        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
+        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         tempVar2.setIsDefault(noItems);
         tempVar2.setIsCancel(true);
         model.getCommands().add(tempVar2);
 
         if (!noItems)
         {
-            UICommand tempVar3 = new UICommand("OnManage", this);
-            tempVar3.setTitle("OK");
+            UICommand tempVar3 = new UICommand("OnManage", this); //$NON-NLS-1$
+            tempVar3.setTitle(ConstantsManager.getInstance().getConstants().ok());
             tempVar3.setIsDefault(true);
             model.getCommands().add(0, tempVar3);
         }
@@ -346,8 +348,8 @@ public class ClusterNetworkListModel extends SearchableListModel
 
         ClusterNetworkModel clusterModel = new ClusterNetworkModel();
         setWindow(clusterModel);
-        clusterModel.setTitle("New Logical Network");
-        clusterModel.setHashName("new_logical_network");
+        clusterModel.setTitle(ConstantsManager.getInstance().getConstants().newLogicalNetworkTitle());
+        clusterModel.setHashName("new_logical_network"); //$NON-NLS-1$
         clusterModel.setIsNew(true);
         if (getEntity().getstorage_pool_id() != null)
         {
@@ -364,13 +366,13 @@ public class ClusterNetworkListModel extends SearchableListModel
             };
             AsyncDataProvider.GetDataCenterById(_asyncQuery, getEntity().getstorage_pool_id().getValue());
         }
-        UICommand tempVar = new UICommand("OnSave", this);
-        tempVar.setTitle("OK");
+        UICommand tempVar = new UICommand("OnSave", this); //$NON-NLS-1$
+        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
         tempVar.setIsDefault(true);
         clusterModel.getCommands().add(tempVar);
 
-        UICommand tempVar2 = new UICommand("Cancel", this);
-        tempVar2.setTitle("Cancel");
+        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
+        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         tempVar2.setIsCancel(true);
         clusterModel.getCommands().add(tempVar2);
     }
@@ -438,19 +440,19 @@ public class ClusterNetworkListModel extends SearchableListModel
             SetAsDisplay();
         }
 
-        else if (StringHelper.stringsEqual(command.getName(), "OnManage"))
+        else if (StringHelper.stringsEqual(command.getName(), "OnManage")) //$NON-NLS-1$
         {
             OnManage();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "New"))
+        else if (StringHelper.stringsEqual(command.getName(), "New")) //$NON-NLS-1$
         {
             New();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnSave"))
+        else if (StringHelper.stringsEqual(command.getName(), "OnSave")) //$NON-NLS-1$
         {
             OnSave();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "Cancel"))
+        else if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
         {
             Cancel();
         }
@@ -458,7 +460,7 @@ public class ClusterNetworkListModel extends SearchableListModel
 
     @Override
     protected String getListName() {
-        return "ClusterNetworkListModel";
+        return "ClusterNetworkListModel"; //$NON-NLS-1$
     }
 
 }

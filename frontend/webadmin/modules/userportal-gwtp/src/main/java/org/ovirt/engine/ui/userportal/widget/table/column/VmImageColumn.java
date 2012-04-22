@@ -21,7 +21,7 @@ public class VmImageColumn<T> extends UserPortalImageResourceColumn<T> {
     @Override
     public ImageResource getValue(T item) {
         String osTypeName = extractor.extractOsType(item).name();
-        ResourcePrototype resource = getApplicationResourcesWithLookup().getResource(osTypeName + "SmallImage");
+        ResourcePrototype resource = getApplicationResourcesWithLookup().getResource(osTypeName + "SmallImage"); //$NON-NLS-1$
 
         if (resource == null || !(resource instanceof ImageResource)) {
             resource = getApplicationResourcesWithLookup().UnassignedSmallImage();

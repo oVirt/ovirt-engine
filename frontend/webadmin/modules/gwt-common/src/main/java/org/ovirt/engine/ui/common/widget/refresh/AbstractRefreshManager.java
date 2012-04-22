@@ -25,7 +25,7 @@ import com.google.gwt.event.shared.EventBus;
 public abstract class AbstractRefreshManager<T extends BaseRefreshPanel> {
 
     // Prefix for keys used to store refresh rates of individual data grids
-    private static final String GRID_REFRESH_RATE_PREFIX = "GridRefreshRate";
+    private static final String GRID_REFRESH_RATE_PREFIX = "GridRefreshRate"; //$NON-NLS-1$
 
     private static final Integer DEFAULT_REFRESH_RATE = GridTimer.DEFAULT_NORMAL_RATE;
     private static final Integer OUT_OF_FOCUS_REFRESH_RATE = Integer.valueOf(60000);
@@ -133,7 +133,7 @@ public abstract class AbstractRefreshManager<T extends BaseRefreshPanel> {
     }
 
     String getRefreshRateItemKey() {
-        return GRID_REFRESH_RATE_PREFIX + "_" + controller.getId();
+        return GRID_REFRESH_RATE_PREFIX + "_" + controller.getId(); //$NON-NLS-1$
     }
 
     void saveRefreshRate(int newRefreshRate) {

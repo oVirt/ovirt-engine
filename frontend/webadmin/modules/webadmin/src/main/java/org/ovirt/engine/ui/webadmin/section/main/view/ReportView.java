@@ -18,8 +18,8 @@ public class ReportView extends AbstractView implements ReportPresenterWidget.Vi
 
     @Inject
     public ReportView() {
-        frame = new PostableFrame("_blank");
-        frame.setSize("100%", "100%");
+        frame = new PostableFrame("_blank"); //$NON-NLS-1$
+        frame.setSize("100%", "100%"); //$NON-NLS-1$ //$NON-NLS-2$
         frame.getElement().getStyle().setPosition(Position.ABSOLUTE);
         initWidget(frame);
     }

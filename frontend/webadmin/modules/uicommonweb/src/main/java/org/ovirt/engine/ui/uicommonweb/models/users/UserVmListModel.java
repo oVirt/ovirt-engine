@@ -18,6 +18,7 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
 public class UserVmListModel extends VmListModel
@@ -60,10 +61,11 @@ public class UserVmListModel extends VmListModel
 
     public UserVmListModel()
     {
-        setTitle("Virtual Machines");
+        setTitle(ConstantsManager.getInstance().getConstants().virtualMachinesTitle());
+        setHashName("virtual_machines"); //$NON-NLS-1$
 
-        setAttachCommand(new UICommand("Attach", this));
-        setDetachCommand(new UICommand("Detach", this));
+        setAttachCommand(new UICommand("Attach", this)); //$NON-NLS-1$
+        setDetachCommand(new UICommand("Detach", this)); //$NON-NLS-1$
 
         UpdateActionAvailability();
     }
@@ -77,16 +79,16 @@ public class UserVmListModel extends VmListModel
 
         FindDesktopModel model = new FindDesktopModel();
         setWindow(model);
-        model.setTitle("Add Desktop(s) to User/AD Group");
-        model.setHashName("add_desktop_to_user_ad_group");
+        model.setTitle(ConstantsManager.getInstance().getConstants().addDesktopsToUserADGroupTitle());
+        model.setHashName("add_desktop_to_user_ad_group"); //$NON-NLS-1$
         model.setExcludeItems(getItems());
 
-        UICommand tempVar = new UICommand("OnAttach", this);
-        tempVar.setTitle("OK");
+        UICommand tempVar = new UICommand("OnAttach", this); //$NON-NLS-1$
+        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
         tempVar.setIsDefault(true);
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this);
-        tempVar2.setTitle("Cancel");
+        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
+        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         tempVar2.setIsCancel(true);
         model.getCommands().add(tempVar2);
     }
@@ -172,9 +174,9 @@ public class UserVmListModel extends VmListModel
 
         ConfirmationModel model = new ConfirmationModel();
         setWindow(model);
-        model.setTitle("Detach Virtual Machine(s)");
-        model.setHashName("detach_virtual_machine");
-        model.setMessage("Are you sure you want to Detach from the user the following Virtual Machine(s)");
+        model.setTitle(ConstantsManager.getInstance().getConstants().detachVirtualMachinesTitle());
+        model.setHashName("detach_virtual_machine"); //$NON-NLS-1$
+        model.setMessage(ConstantsManager.getInstance().getConstants().areYouSureYouWantDetachFromUserFollowingVmsMsg());
 
         java.util.ArrayList<String> list = new java.util.ArrayList<String>();
         for (Object item : getSelectedItems())
@@ -184,12 +186,12 @@ public class UserVmListModel extends VmListModel
         }
         model.setItems(list);
 
-        UICommand tempVar = new UICommand("OnDetach", this);
-        tempVar.setTitle("OK");
+        UICommand tempVar = new UICommand("OnDetach", this); //$NON-NLS-1$
+        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
         tempVar.setIsDefault(true);
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this);
-        tempVar2.setTitle("Cancel");
+        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
+        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         tempVar2.setIsCancel(true);
         model.getCommands().add(tempVar2);
     }
@@ -235,7 +237,7 @@ public class UserVmListModel extends VmListModel
     {
         if (getEntity() != null)
         {
-            setSearchString(StringFormat.format("VMs: users.name=%1$s", getEntity().getname()));
+            setSearchString(StringFormat.format("VMs: users.name=%1$s", getEntity().getname())); //$NON-NLS-1$
             super.Search();
         }
     }
@@ -259,7 +261,7 @@ public class UserVmListModel extends VmListModel
     {
         super.EntityPropertyChanged(sender, e);
 
-        if (e.PropertyName.equals("name"))
+        if (e.PropertyName.equals("name")) //$NON-NLS-1$
         {
             getSearchCommand().Execute();
             UpdateActionAvailability();
@@ -289,15 +291,15 @@ public class UserVmListModel extends VmListModel
         {
             Detach();
         }
-        if (StringHelper.stringsEqual(command.getName(), "OnAttach"))
+        if (StringHelper.stringsEqual(command.getName(), "OnAttach")) //$NON-NLS-1$
         {
             OnAttach();
         }
-        if (StringHelper.stringsEqual(command.getName(), "OnDetach"))
+        if (StringHelper.stringsEqual(command.getName(), "OnDetach")) //$NON-NLS-1$
         {
             OnDetach();
         }
-        if (StringHelper.stringsEqual(command.getName(), "Cancel"))
+        if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
         {
             Cancel();
         }

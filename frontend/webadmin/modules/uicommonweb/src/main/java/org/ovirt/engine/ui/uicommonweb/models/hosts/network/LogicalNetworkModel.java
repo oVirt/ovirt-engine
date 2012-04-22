@@ -51,7 +51,7 @@ public class LogicalNetworkModel extends NetworkItemModel<NetworkStatus> {
         if (hasVlan()) {
             // create vlan bridge (eth0.1)
             VdsNetworkInterface bridge = new VdsNetworkInterface();
-            bridge.setName(targetNic.getName() + "." + getVlanId());
+            bridge.setName(targetNic.getName() + "." + getVlanId()); //$NON-NLS-1$
             bridge.setNetworkName(getName());
             bridge.setVlanId(getVlanId());
             bridge.setVdsId(targetNicEntity.getVdsId());

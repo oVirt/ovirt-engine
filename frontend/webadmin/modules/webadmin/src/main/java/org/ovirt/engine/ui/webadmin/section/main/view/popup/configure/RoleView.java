@@ -76,14 +76,14 @@ public class RoleView extends Composite {
         initRolesFilterRadioButtons();
         initSplitLayoutPanel();
 
-        initRoleTable();
-        initPermissionTable();
+        initRoleTable(constants);
+        initPermissionTable(constants);
     }
 
     private void initSplitLayoutPanel() {
         splitLayoutPanel = new SplitLayoutPanel();
-        splitLayoutPanel.setHeight("100%");
-        splitLayoutPanel.setWidth("100%");
+        splitLayoutPanel.setHeight("100%"); //$NON-NLS-1$
+        splitLayoutPanel.setWidth("100%"); //$NON-NLS-1$
         rolesTabContent.add(splitLayoutPanel);
     }
 
@@ -144,7 +144,7 @@ public class RoleView extends Composite {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 
-    private void initRoleTable() {
+    private void initRoleTable(ApplicationConstants constants) {
         this.table = new SimpleActionTable<roles>(roleModelProvider,
                 getTableHeaderlessResources(), getTableResources(), eventBus, clientStorage);
 
@@ -155,11 +155,11 @@ public class RoleView extends Composite {
             }
         };
 
-        table.addColumn(new IsLockedImageTypeColumn(), "", "20px");
+        table.addColumn(new IsLockedImageTypeColumn(), constants.empty(), "20px"); //$NON-NLS-1$
 
-        table.addColumn(new RoleTypeColumn(), "", "20px");
+        table.addColumn(new RoleTypeColumn(), constants.empty(), "20px"); //$NON-NLS-1$
 
-        table.addColumn(nameColumn, "Name", "100px");
+        table.addColumn(nameColumn, constants.nameRole(), "100px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<roles> descColumn = new TextColumnWithTooltip<roles>() {
             @Override
@@ -167,30 +167,30 @@ public class RoleView extends Composite {
                 return object.getdescription();
             }
         };
-        table.addColumn(descColumn, "Description", "300px");
+        table.addColumn(descColumn, constants.descriptionRole(), "300px"); //$NON-NLS-1$
 
-        table.addActionButton(new WebAdminButtonDefinition<roles>("New") {
+        table.addActionButton(new WebAdminButtonDefinition<roles>(constants.newRole()) {
             @Override
             protected UICommand resolveCommand() {
                 return roleModelProvider.getModel().getNewCommand();
             }
         });
 
-        table.addActionButton(new WebAdminButtonDefinition<roles>("Edit") {
+        table.addActionButton(new WebAdminButtonDefinition<roles>(constants.editRole()) {
             @Override
             protected UICommand resolveCommand() {
                 return roleModelProvider.getModel().getEditCommand();
             }
         });
 
-        table.addActionButton(new WebAdminButtonDefinition<roles>("Copy") {
+        table.addActionButton(new WebAdminButtonDefinition<roles>(constants.copyRole()) {
             @Override
             protected UICommand resolveCommand() {
                 return roleModelProvider.getModel().getCloneCommand();
             }
         });
 
-        table.addActionButton(new WebAdminButtonDefinition<roles>("Remove") {
+        table.addActionButton(new WebAdminButtonDefinition<roles>(constants.removeRole()) {
             @Override
             protected UICommand resolveCommand() {
                 return roleModelProvider.getModel().getRemoveCommand();
@@ -214,7 +214,7 @@ public class RoleView extends Composite {
 
     }
 
-    private void initPermissionTable() {
+    private void initPermissionTable(ApplicationConstants constants) {
         permissionTable = new SimpleActionTable<permissions>(permissionModelProvider,
                 getTableHeaderlessResources(), getTableResources(), eventBus, clientStorage);
 
@@ -224,7 +224,7 @@ public class RoleView extends Composite {
                 return object.getOwnerName();
             }
         };
-        permissionTable.addColumn(userColumn, "User");
+        permissionTable.addColumn(userColumn, constants.userPermission());
 
         TextColumnWithTooltip<permissions> permissionColumn = new ObjectNameColumn<permissions>() {
             @Override
@@ -232,9 +232,9 @@ public class RoleView extends Composite {
                 return new Object[] { object.getObjectType(), object.getObjectName() };
             }
         };
-        permissionTable.addColumn(permissionColumn, "Object");
+        permissionTable.addColumn(permissionColumn, constants.objectPermission());
 
-        permissionTable.addActionButton(new WebAdminButtonDefinition<permissions>("Remove") {
+        permissionTable.addActionButton(new WebAdminButtonDefinition<permissions>(constants.removePermission()) {
             @Override
             protected UICommand resolveCommand() {
                 return permissionModelProvider.getModel().getRemoveCommand();

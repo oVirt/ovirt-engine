@@ -25,6 +25,7 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.common.SelectionTreeNodeModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleQueryAsyncResult;
@@ -119,11 +120,12 @@ public class DataCenterNetworkListModel extends SearchableListModel implements I
             }
         }));
 
-        setTitle("Logical Networks");
+        setTitle(ConstantsManager.getInstance().getConstants().logicalNetworksTitle());
+        setHashName("logical_networks"); //$NON-NLS-1$
 
-        setNewCommand(new UICommand("New", this));
-        setEditCommand(new UICommand("Edit", this));
-        setRemoveCommand(new UICommand("Remove", this));
+        setNewCommand(new UICommand("New", this)); //$NON-NLS-1$
+        setEditCommand(new UICommand("Edit", this)); //$NON-NLS-1$
+        setRemoveCommand(new UICommand("Remove", this)); //$NON-NLS-1$
 
         UpdateActionAvailability();
     }
@@ -189,9 +191,9 @@ public class DataCenterNetworkListModel extends SearchableListModel implements I
 
         ConfirmationModel model = new ConfirmationModel();
         setWindow(model);
-        model.setTitle("Remove Logical Network(s)");
-        model.setHashName("remove_logical_network");
-        model.setMessage("Logical Network(s)");
+        model.setTitle(ConstantsManager.getInstance().getConstants().removeLogicalNetworkTitle());
+        model.setHashName("remove_logical_network"); //$NON-NLS-1$
+        model.setMessage(ConstantsManager.getInstance().getConstants().logicalNetworksMsg());
 
         java.util.ArrayList<String> list = new java.util.ArrayList<String>();
         for (network a : Linq.<network> Cast(getSelectedItems()))
@@ -200,12 +202,12 @@ public class DataCenterNetworkListModel extends SearchableListModel implements I
         }
         model.setItems(list);
 
-        UICommand tempVar = new UICommand("OnRemove", this);
-        tempVar.setTitle("OK");
+        UICommand tempVar = new UICommand("OnRemove", this); //$NON-NLS-1$
+        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
         tempVar.setIsDefault(true);
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this);
-        tempVar2.setTitle("Cancel");
+        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
+        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         tempVar2.setIsCancel(true);
         model.getCommands().add(tempVar2);
     }
@@ -233,14 +235,14 @@ public class DataCenterNetworkListModel extends SearchableListModel implements I
 
         DataCenterNetworkModel networkModel = new DataCenterNetworkModel();
         setWindow(networkModel);
-        networkModel.setTitle("Edit Logical Network");
-        networkModel.setHashName("edit_logical_network");
+        networkModel.setTitle(ConstantsManager.getInstance().getConstants().editLogicalNetworkTitle());
+        networkModel.setHashName("edit_logical_network"); //$NON-NLS-1$
         networkModel.getName().setEntity(network.getname());
         networkModel.getDescription().setEntity(network.getdescription());
         networkModel.getIsStpEnabled().setEntity(network.getstp());
         networkModel.getHasVLanTag().setEntity(network.getvlan_id() != null);
         networkModel.getVLanTag().setEntity((network.getvlan_id() == null ? 0 : network.getvlan_id()));
-        networkModel.setDetachAllCommand(new UICommand("DetachClusters", this));
+        networkModel.setDetachAllCommand(new UICommand("DetachClusters", this)); //$NON-NLS-1$
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
@@ -276,7 +278,9 @@ public class DataCenterNetworkListModel extends SearchableListModel implements I
                     }
                     networkModel1.getDetachAllCommand().setIsAvailable(false);
                     networkModel1.getName().setIsChangable(false);
-                    networkModel1.setMessage("Cannot detach Management Network from Clusters");
+                    networkModel1.setMessage(ConstantsManager.getInstance()
+                            .getConstants()
+                            .cannotDetachManagementNetworkFromClustersMsg());
                 }
             }
         };
@@ -292,8 +296,8 @@ public class DataCenterNetworkListModel extends SearchableListModel implements I
 
         DataCenterNetworkModel networkModel = new DataCenterNetworkModel();
         setWindow(networkModel);
-        networkModel.setTitle("New Logical Network");
-        networkModel.setHashName("new_logical_network");
+        networkModel.setTitle(ConstantsManager.getInstance().getConstants().newLogicalNetworkTitle());
+        networkModel.setHashName("new_logical_network"); //$NON-NLS-1$
         networkModel.setIsNew(true);
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);
@@ -318,14 +322,14 @@ public class DataCenterNetworkListModel extends SearchableListModel implements I
                 }
                 networkModel1.setClusterTreeNodes(clusterTreeNodes);
 
-                UICommand tempVar = new UICommand("OnSave", networkListModel);
-                tempVar.setTitle("OK");
+                UICommand tempVar = new UICommand("OnSave", networkListModel); //$NON-NLS-1$
+                tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
                 tempVar.setIsDefault(true);
                 networkModel1.getCommands().add(tempVar);
-                networkModel1.setDetachAllCommand(new UICommand("DetachClusters", networkListModel));
+                networkModel1.setDetachAllCommand(new UICommand("DetachClusters", networkListModel)); //$NON-NLS-1$
                 networkModel1.getDetachAllAvailable().setEntity(false);
-                UICommand tempVar2 = new UICommand("Cancel", networkListModel);
-                tempVar2.setTitle("Cancel");
+                UICommand tempVar2 = new UICommand("Cancel", networkListModel); //$NON-NLS-1$
+                tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
                 tempVar2.setIsCancel(true);
                 networkModel1.getCommands().add(tempVar2);
             }
@@ -485,16 +489,18 @@ public class DataCenterNetworkListModel extends SearchableListModel implements I
     {
         ConfirmationModel confirmModel = new ConfirmationModel();
         setConfirmWindow(confirmModel);
-        confirmModel.setTitle("Detach Network from ALL Clusters");
-        confirmModel.setHashName("detach_network_from_all_clusters");
-        confirmModel.setMessage("You are about to detach the Network from all of the Clusters to which it is currentlyattached.\nAs a result, the Clusters' Hosts might become unreachable.\n\nAre you sure you want to continue?");
+        confirmModel.setTitle(ConstantsManager.getInstance().getConstants().detachNetworkFromAllClustersTitle());
+        confirmModel.setHashName("detach_network_from_all_clusters"); //$NON-NLS-1$
+        confirmModel.setMessage(ConstantsManager.getInstance()
+                .getConstants()
+                .youAreAboutToDetachNetworkFromAllClustersToWhichCurrentlyAttachedMsg());
         confirmModel.getLatch().setIsAvailable(true);
-        UICommand tempVar = new UICommand("OnDetachClusters", this);
-        tempVar.setTitle("OK");
+        UICommand tempVar = new UICommand("OnDetachClusters", this); //$NON-NLS-1$
+        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
         tempVar.setIsDefault(true);
         confirmModel.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("CancelConfirmation", this);
-        tempVar2.setTitle("Cancel");
+        UICommand tempVar2 = new UICommand("CancelConfirmation", this); //$NON-NLS-1$
+        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         tempVar2.setIsCancel(true);
         confirmModel.getCommands().add(tempVar2);
     }
@@ -614,27 +620,27 @@ public class DataCenterNetworkListModel extends SearchableListModel implements I
             remove();
         }
 
-        else if (StringHelper.stringsEqual(command.getName(), "OnSave"))
+        else if (StringHelper.stringsEqual(command.getName(), "OnSave")) //$NON-NLS-1$
         {
             OnSave();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "Cancel"))
+        else if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
         {
             Cancel();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnRemove"))
+        else if (StringHelper.stringsEqual(command.getName(), "OnRemove")) //$NON-NLS-1$
         {
             OnRemove();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "DetachClusters"))
+        else if (StringHelper.stringsEqual(command.getName(), "DetachClusters")) //$NON-NLS-1$
         {
             DetachClusters();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnDetachClusters"))
+        else if (StringHelper.stringsEqual(command.getName(), "OnDetachClusters")) //$NON-NLS-1$
         {
             OnDetachClusters();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "CancelConfirmation"))
+        else if (StringHelper.stringsEqual(command.getName(), "CancelConfirmation")) //$NON-NLS-1$
         {
             CancelConfirmation();
         }
@@ -678,20 +684,20 @@ public class DataCenterNetworkListModel extends SearchableListModel implements I
         model.setClusterTreeNodes(getSelectionNodeList());
         if (StringHelper.stringsEqual(network.getname(), ENGINE_NETWORK) && getSelectionNodeList().size() > 0)
         {
-            UICommand tempVar = new UICommand("Cancel", this);
-            tempVar.setTitle("Close");
+            UICommand tempVar = new UICommand("Cancel", this); //$NON-NLS-1$
+            tempVar.setTitle(ConstantsManager.getInstance().getConstants().close());
             tempVar.setIsDefault(true);
             tempVar.setIsCancel(true);
             model.getCommands().add(tempVar);
         }
         else
         {
-            UICommand tempVar2 = new UICommand("OnSave", this);
-            tempVar2.setTitle("OK");
+            UICommand tempVar2 = new UICommand("OnSave", this); //$NON-NLS-1$
+            tempVar2.setTitle(ConstantsManager.getInstance().getConstants().ok());
             tempVar2.setIsDefault(true);
             model.getCommands().add(tempVar2);
-            UICommand tempVar3 = new UICommand("Cancel", this);
-            tempVar3.setTitle("Cancel");
+            UICommand tempVar3 = new UICommand("Cancel", this); //$NON-NLS-1$
+            tempVar3.setTitle(ConstantsManager.getInstance().getConstants().cancel());
             tempVar3.setIsCancel(true);
             model.getCommands().add(tempVar3);
         }
@@ -699,7 +705,7 @@ public class DataCenterNetworkListModel extends SearchableListModel implements I
 
     @Override
     protected String getListName() {
-        return "DataCenterNetworkListModel";
+        return "DataCenterNetworkListModel"; //$NON-NLS-1$
     }
 
 }

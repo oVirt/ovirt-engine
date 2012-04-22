@@ -29,13 +29,14 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.tags.TagListModel;
 import org.ovirt.engine.ui.uicommonweb.models.tags.TagModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
 @SuppressWarnings("unused")
 public class UserListModel extends ListWithDetailsModel
 {
-    public static Guid EveryoneUserId = new Guid("eee00000-0000-0000-0000-123456789eee");
+    public static Guid EveryoneUserId = new Guid("eee00000-0000-0000-0000-123456789eee"); //$NON-NLS-1$
 
     private UICommand privateAddCommand;
 
@@ -94,14 +95,14 @@ public class UserListModel extends ListWithDetailsModel
 
     public UserListModel()
     {
-        setTitle("Users");
+        setTitle(ConstantsManager.getInstance().getConstants().usersTitle());
 
-        setDefaultSearchString("Users:");
+        setDefaultSearchString("Users:"); //$NON-NLS-1$
         setSearchString(getDefaultSearchString());
 
-        setAddCommand(new UICommand("Add", this));
-        setRemoveCommand(new UICommand("Remove", this));
-        setAssignTagsCommand(new UICommand("AssignTags", this));
+        setAddCommand(new UICommand("Add", this)); //$NON-NLS-1$
+        setRemoveCommand(new UICommand("Remove", this)); //$NON-NLS-1$
+        setAssignTagsCommand(new UICommand("AssignTags", this)); //$NON-NLS-1$
 
         UpdateActionAvailability();
 
@@ -118,17 +119,17 @@ public class UserListModel extends ListWithDetailsModel
 
         TagListModel model = new TagListModel();
         setWindow(model);
-        model.setTitle("Assign Tags");
-        model.setHashName("assign_tags_users");
+        model.setTitle(ConstantsManager.getInstance().getConstants().assignTagsTitle());
+        model.setHashName("assign_tags_users"); //$NON-NLS-1$
 
         GetAttachedTagsToSelectedUsers(model);
 
-        UICommand tempVar = new UICommand("OnAssignTags", this);
-        tempVar.setTitle("OK");
+        UICommand tempVar = new UICommand("OnAssignTags", this); //$NON-NLS-1$
+        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
         tempVar.setIsDefault(true);
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this);
-        tempVar2.setTitle("Cancel");
+        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
+        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         tempVar2.setIsCancel(true);
         model.getCommands().add(tempVar2);
     }
@@ -228,7 +229,7 @@ public class UserListModel extends ListWithDetailsModel
             }
             tagListModel.setAttachedTagsToEntities(userListModel.attachedTagsToEntities);
         }
-        else if (StringHelper.stringsEqual(userListModel.getLastExecutedCommand().getName(), "OnAssignTags"))
+        else if (StringHelper.stringsEqual(userListModel.getLastExecutedCommand().getName(), "OnAssignTags")) //$NON-NLS-1$
         {
             userListModel.PostOnAssignTags(tagListModel.getAttachedTagsToEntities());
         }
@@ -327,18 +328,18 @@ public class UserListModel extends ListWithDetailsModel
 
         AdElementListModel model = new AdElementListModel();
         setWindow(model);
-        model.setTitle("Add Users and Groups");
-        model.setHashName("add_users_and_groups");
+        model.setTitle(ConstantsManager.getInstance().getConstants().addUsersAndGroupsTitle());
+        model.setHashName("add_users_and_groups"); //$NON-NLS-1$
         model.setExcludeItems(DataProvider.GetUserList());
         model.setIsRoleListHidden(true);
         model.getIsEveryoneSelectionHidden().setEntity(true);
 
-        UICommand tempVar = new UICommand("OnAdd", this);
-        tempVar.setTitle("OK");
+        UICommand tempVar = new UICommand("OnAdd", this); //$NON-NLS-1$
+        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
         tempVar.setIsDefault(true);
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this);
-        tempVar2.setTitle("Cancel");
+        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
+        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         tempVar2.setIsCancel(true);
         model.getCommands().add(tempVar2);
     }
@@ -352,9 +353,9 @@ public class UserListModel extends ListWithDetailsModel
 
         ConfirmationModel model = new ConfirmationModel();
         setWindow(model);
-        model.setTitle("Remove User(s)");
-        model.setHashName("remove_user");
-        model.setMessage("User(s)");
+        model.setTitle(ConstantsManager.getInstance().getConstants().removeUsersTitle());
+        model.setHashName("remove_user"); //$NON-NLS-1$
+        model.setMessage(ConstantsManager.getInstance().getConstants().usersMsg());
 
         java.util.ArrayList<String> list = new java.util.ArrayList<String>();
         for (DbUser item : Linq.<DbUser> Cast(getSelectedItems()))
@@ -363,12 +364,12 @@ public class UserListModel extends ListWithDetailsModel
         }
         model.setItems(list);
 
-        UICommand tempVar = new UICommand("OnRemove", this);
-        tempVar.setTitle("OK");
+        UICommand tempVar = new UICommand("OnRemove", this); //$NON-NLS-1$
+        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
         tempVar.setIsDefault(true);
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this);
-        tempVar2.setTitle("Cancel");
+        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
+        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         tempVar2.setIsCancel(true);
         model.getCommands().add(tempVar2);
     }
@@ -376,7 +377,7 @@ public class UserListModel extends ListWithDetailsModel
     @Override
     public boolean IsSearchStringMatch(String searchString)
     {
-        return searchString.trim().toLowerCase().startsWith("user");
+        return searchString.trim().toLowerCase().startsWith("user"); //$NON-NLS-1$
     }
 
     @Override
@@ -643,20 +644,20 @@ public class UserListModel extends ListWithDetailsModel
             AssignTags();
         }
 
-        if (StringHelper.stringsEqual(command.getName(), "Cancel"))
+        if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
         {
             Cancel();
         }
-        if (StringHelper.stringsEqual(command.getName(), "OnAssignTags"))
+        if (StringHelper.stringsEqual(command.getName(), "OnAssignTags")) //$NON-NLS-1$
         {
             OnAssignTags();
         }
-        if (StringHelper.stringsEqual(command.getName(), "OnAdd"))
+        if (StringHelper.stringsEqual(command.getName(), "OnAdd")) //$NON-NLS-1$
         {
             OnAdd();
         }
 
-        if (StringHelper.stringsEqual(command.getName(), "OnRemove"))
+        if (StringHelper.stringsEqual(command.getName(), "OnRemove")) //$NON-NLS-1$
         {
             OnRemove();
         }
@@ -664,6 +665,6 @@ public class UserListModel extends ListWithDetailsModel
 
     @Override
     protected String getListName() {
-        return "UserListModel";
+        return "UserListModel"; //$NON-NLS-1$
     }
 }

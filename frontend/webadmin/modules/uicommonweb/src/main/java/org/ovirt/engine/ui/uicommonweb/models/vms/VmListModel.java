@@ -56,7 +56,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.ObservableCollection;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
-import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -79,6 +78,7 @@ import org.ovirt.engine.ui.uicommonweb.models.tags.TagListModel;
 import org.ovirt.engine.ui.uicommonweb.models.tags.TagModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.AttachCdModel;
 import org.ovirt.engine.ui.uicompat.Assembly;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
@@ -315,7 +315,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
         if (errorWindow != value)
         {
             errorWindow = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("ErrorWindow"));
+            OnPropertyChanged(new PropertyChangedEventArgs("ErrorWindow")); //$NON-NLS-1$
         }
     }
 
@@ -331,7 +331,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
         if (defaultConsoleModel != value)
         {
             defaultConsoleModel = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("DefaultConsoleModel"));
+            OnPropertyChanged(new PropertyChangedEventArgs("DefaultConsoleModel")); //$NON-NLS-1$
         }
     }
 
@@ -347,7 +347,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
         if (additionalConsoleModel != value)
         {
             additionalConsoleModel = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("AdditionalConsoleModel"));
+            OnPropertyChanged(new PropertyChangedEventArgs("AdditionalConsoleModel")); //$NON-NLS-1$
         }
     }
 
@@ -363,7 +363,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
         if (hasAdditionalConsoleModel != value)
         {
             hasAdditionalConsoleModel = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("HasAdditionalConsoleModel"));
+            OnPropertyChanged(new PropertyChangedEventArgs("HasAdditionalConsoleModel")); //$NON-NLS-1$
         }
     }
 
@@ -379,7 +379,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
         if ((isoImages == null && value != null) || (isoImages != null && !isoImages.equals(value)))
         {
             isoImages = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsoImages"));
+            OnPropertyChanged(new PropertyChangedEventArgs("IsoImages")); //$NON-NLS-1$
         }
     }
 
@@ -441,35 +441,36 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 
     public VmListModel()
     {
-        setTitle("Virtual Machines");
+        setTitle(ConstantsManager.getInstance().getConstants().virtualMachinesTitle());
+        setHashName("virtual_machines"); //$NON-NLS-1$
 
-        setDefaultSearchString("Vms:");
+        setDefaultSearchString("Vms:"); //$NON-NLS-1$
         setSearchString(getDefaultSearchString());
 
         cachedConsoleModels = new java.util.HashMap<Guid, java.util.ArrayList<ConsoleModel>>();
 
-        setNewServerCommand(new UICommand("NewServer", this));
-        setNewDesktopCommand(new UICommand("NewDesktop", this));
-        setEditCommand(new UICommand("Edit", this));
-        setRemoveCommand(new UICommand("Remove", this));
-        setRunCommand(new UICommand("Run", this, true));
-        setPauseCommand(new UICommand("Pause", this));
-        setStopCommand(new UICommand("Stop", this));
-        setShutdownCommand(new UICommand("Shutdown", this));
-        setMigrateCommand(new UICommand("Migrate", this));
-        setCancelMigrateCommand(new UICommand("CancelMigration", this));
-        setNewTemplateCommand(new UICommand("NewTemplate", this));
-        setRunOnceCommand(new UICommand("RunOnce", this));
-        setExportCommand(new UICommand("Export", this));
-        setMoveCommand(new UICommand("Move", this));
-        setGuideCommand(new UICommand("Guide", this));
-        setRetrieveIsoImagesCommand(new UICommand("RetrieveIsoImages", this));
-        setChangeCdCommand(new UICommand("ChangeCD", this));
-        setAssignTagsCommand(new UICommand("AssignTags", this));
+        setNewServerCommand(new UICommand("NewServer", this)); //$NON-NLS-1$
+        setNewDesktopCommand(new UICommand("NewDesktop", this)); //$NON-NLS-1$
+        setEditCommand(new UICommand("Edit", this)); //$NON-NLS-1$
+        setRemoveCommand(new UICommand("Remove", this)); //$NON-NLS-1$
+        setRunCommand(new UICommand("Run", this, true)); //$NON-NLS-1$
+        setPauseCommand(new UICommand("Pause", this)); //$NON-NLS-1$
+        setStopCommand(new UICommand("Stop", this)); //$NON-NLS-1$
+        setShutdownCommand(new UICommand("Shutdown", this)); //$NON-NLS-1$
+        setMigrateCommand(new UICommand("Migrate", this)); //$NON-NLS-1$
+        setCancelMigrateCommand(new UICommand("CancelMigration", this)); //$NON-NLS-1$
+        setNewTemplateCommand(new UICommand("NewTemplate", this)); //$NON-NLS-1$
+        setRunOnceCommand(new UICommand("RunOnce", this)); //$NON-NLS-1$
+        setExportCommand(new UICommand("Export", this)); //$NON-NLS-1$
+        setMoveCommand(new UICommand("Move", this)); //$NON-NLS-1$
+        setGuideCommand(new UICommand("Guide", this)); //$NON-NLS-1$
+        setRetrieveIsoImagesCommand(new UICommand("RetrieveIsoImages", this)); //$NON-NLS-1$
+        setChangeCdCommand(new UICommand("ChangeCD", this)); //$NON-NLS-1$
+        setAssignTagsCommand(new UICommand("AssignTags", this)); //$NON-NLS-1$
 
         setIsoImages(new ObservableCollection<ChangeCDModel>());
         ChangeCDModel tempVar = new ChangeCDModel();
-        tempVar.setTitle("Retrieving CDs...");
+        tempVar.setTitle(ConstantsManager.getInstance().getConstants().retrievingCDsTitle());
         getIsoImages().add(tempVar);
 
         UpdateActionAvailability();
@@ -485,7 +486,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
                         VmListModel model = (VmListModel) target;
                         if (returnValue != null)
                         {
-                            String[] array = ((String) returnValue).split("[;]", -1);
+                            String[] array = ((String) returnValue).split("[;]", -1); //$NON-NLS-1$
                             model.setCustomPropertiesKeysList(new java.util.ArrayList<String>());
                             for (String s : array)
                             {
@@ -514,17 +515,17 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 
         TagListModel model = new TagListModel();
         setWindow(model);
-        model.setTitle("Assign Tags");
-        model.setHashName("assign_tags_vms");
+        model.setTitle(ConstantsManager.getInstance().getConstants().assignTagsTitle());
+        model.setHashName("assign_tags_vms"); //$NON-NLS-1$
 
         GetAttachedTagsToSelectedVMs(model);
 
-        UICommand tempVar = new UICommand("OnAssignTags", this);
-        tempVar.setTitle("OK");
+        UICommand tempVar = new UICommand("OnAssignTags", this); //$NON-NLS-1$
+        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
         tempVar.setIsDefault(true);
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this);
-        tempVar2.setTitle("Cancel");
+        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
+        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         tempVar2.setIsCancel(true);
         model.getCommands().add(tempVar2);
     }
@@ -590,7 +591,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
             }
             tagListModel.setAttachedTagsToEntities(vmListModel.attachedTagsToEntities);
         }
-        else if (StringHelper.stringsEqual(vmListModel.getLastExecutedCommand().getName(), "OnAssignTags"))
+        else if (StringHelper.stringsEqual(vmListModel.getLastExecutedCommand().getName(), "OnAssignTags")) //$NON-NLS-1$
         {
             vmListModel.PostOnAssignTags(tagListModel.getAttachedTagsToEntities());
         }
@@ -646,8 +647,8 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
     {
         VmGuideModel model = new VmGuideModel();
         setWindow(model);
-        model.setTitle("New Virtual Machine - Guide Me");
-        model.setHashName("new_virtual_machine_-_guide_me");
+        model.setTitle(ConstantsManager.getInstance().getConstants().newVirtualMachineGuideMeTitle());
+        model.setHashName("new_virtual_machine_-_guide_me"); //$NON-NLS-1$
 
         if (getGuideContext() == null) {
             VM vm = (VM) getSelectedItem();
@@ -662,8 +663,8 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
                         VmGuideModel model = (VmGuideModel) vmListModel.getWindow();
                         model.setEntity((VM) returnValue);
 
-                        UICommand tempVar = new UICommand("Cancel", vmListModel);
-                        tempVar.setTitle("Configure Later");
+                        UICommand tempVar = new UICommand("Cancel", vmListModel); //$NON-NLS-1$
+                        tempVar.setTitle(ConstantsManager.getInstance().getConstants().configureLaterTitle());
                         tempVar.setIsDefault(true);
                         tempVar.setIsCancel(true);
                         model.getCommands().add(tempVar);
@@ -690,7 +691,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
     @Override
     public boolean IsSearchStringMatch(String searchString)
     {
-        return searchString.trim().toLowerCase().startsWith("vm");
+        return searchString.trim().toLowerCase().startsWith("vm"); //$NON-NLS-1$
     }
 
     @Override
@@ -794,8 +795,11 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
         }
 
         UnitVmModel model = new UnitVmModel(new NewVmModelBehavior());
-        model.setTitle(StringFormat.format("New %1$s Virtual Machine", vmType == VmType.Server ? "Server" : "Desktop"));
-        model.setHashName("new_" + (vmType == VmType.Server ? "server" : "desktop"));
+        model.setTitle(ConstantsManager.getInstance()
+                .getMessages()
+                .newVmTitle(vmType == VmType.Server ? ConstantsManager.getInstance().getConstants().serverVmType()
+                        : ConstantsManager.getInstance().getConstants().desktopVmType()));
+        model.setHashName("new_" + (vmType == VmType.Server ? "server" : "desktop")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         model.setIsNew(true);
         model.setVmType(vmType);
         model.setCustomPropertiesKeysList(getCustomPropertiesKeysList());
@@ -808,12 +812,12 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
         boolean selectValue = model.getVmType() == VmType.Server;
         model.getProvisioning().setEntity(selectValue);
 
-        UICommand tempVar = new UICommand("OnSave", this);
-        tempVar.setTitle("OK");
+        UICommand tempVar = new UICommand("OnSave", this); //$NON-NLS-1$
+        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
         tempVar.setIsDefault(true);
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this);
-        tempVar2.setTitle("Cancel");
+        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
+        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         tempVar2.setIsCancel(true);
         model.getCommands().add(tempVar2);
     }
@@ -834,9 +838,13 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
         UnitVmModel model = new UnitVmModel(new ExistingVmModelBehavior(vm));
         model.setVmType(vm.getvm_type());
         setWindow(model);
-        model.setTitle(StringFormat.format("Edit %1$s Virtual Machine", vm.getvm_type() == VmType.Server ? "Server"
-                : "Desktop"));
-        model.setHashName("edit_" + (vm.getvm_type() == VmType.Server ? "server" : "desktop"));
+        model.setTitle(ConstantsManager.getInstance()
+                .getMessages()
+                .editVmTitle(vm.getvm_type() == VmType.Server ? ConstantsManager.getInstance()
+                        .getConstants()
+                        .serverVmType()
+                        : ConstantsManager.getInstance().getConstants().desktopVmType()));
+        model.setHashName("edit_" + (vm.getvm_type() == VmType.Server ? "server" : "desktop")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         model.setCustomPropertiesKeysList(getCustomPropertiesKeysList());
 
         model.Initialize(this.getSystemTreeSelectedItem());
@@ -854,12 +862,12 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
         // return;
         // }
 
-        UICommand tempVar = new UICommand("OnSave", this);
-        tempVar.setTitle("OK");
+        UICommand tempVar = new UICommand("OnSave", this); //$NON-NLS-1$
+        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
         tempVar.setIsDefault(true);
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this);
-        tempVar2.setTitle("Cancel");
+        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
+        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         tempVar2.setIsCancel(true);
         model.getCommands().add(tempVar2);
     }
@@ -873,9 +881,9 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 
         ConfirmationModel model = new ConfirmationModel();
         setWindow(model);
-        model.setTitle("Remove Virtual Machine(s)");
-        model.setHashName("remove_virtual_machine");
-        model.setMessage("Virtual Machine(s)");
+        model.setTitle(ConstantsManager.getInstance().getConstants().removeVirtualMachinesTitle());
+        model.setHashName("remove_virtual_machine"); //$NON-NLS-1$
+        model.setMessage(ConstantsManager.getInstance().getConstants().virtualMachinesMsg());
 
         // model.Items = SelectedItems.Cast<VM>().Select(a => a.vm_name);
         java.util.ArrayList<String> list = new java.util.ArrayList<String>();
@@ -886,12 +894,12 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
         }
         model.setItems(list);
 
-        UICommand tempVar = new UICommand("OnRemove", this);
-        tempVar.setTitle("OK");
+        UICommand tempVar = new UICommand("OnRemove", this); //$NON-NLS-1$
+        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
         tempVar.setIsDefault(true);
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this);
-        tempVar2.setTitle("Cancel");
+        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
+        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         tempVar2.setIsCancel(true);
         model.getCommands().add(tempVar2);
     }
@@ -911,8 +919,8 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 
         MoveDiskModel model = new MoveDiskModel();
         setWindow(model);
-        model.setTitle("Move Virtual Machine");
-        model.setHashName("move_virtual_machine");
+        model.setTitle(ConstantsManager.getInstance().getConstants().moveVirtualMachineTitle());
+        model.setHashName("move_virtual_machine"); //$NON-NLS-1$
         model.setIsSourceStorageDomainNameAvailable(true);
         model.setEntity(this);
         model.StartProgress(null);
@@ -946,8 +954,8 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 
         ExportVmModel model = new ExportVmModel();
         setWindow(model);
-        model.setTitle("Export Virtual Machine");
-        model.setHashName("export_virtual_machine");
+        model.setTitle(ConstantsManager.getInstance().getConstants().exportVirtualMachineTitle());
+        model.setHashName("export_virtual_machine"); //$NON-NLS-1$
 
         AsyncDataProvider.GetStorageDomainList(new AsyncQuery(this,
                 new INewAsyncCallback() {
@@ -993,10 +1001,12 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
             model.getCollapseSnapshots().setIsChangable(false);
             model.getForceOverride().setIsChangable(false);
 
-            model.setMessage("Virtual Machines reside on several Data Centers. Make sure the exported Virtual Machines reside on the same Data Center.");
+            model.setMessage(ConstantsManager.getInstance()
+                    .getConstants()
+                    .vmsResideOnSeveralDCsMakeSureTheExportedVMResideOnSameDcMsg());
 
-            UICommand tempVar = new UICommand("Cancel", this);
-            tempVar.setTitle("Close");
+            UICommand tempVar = new UICommand("Cancel", this); //$NON-NLS-1$
+            tempVar.setTitle(ConstantsManager.getInstance().getConstants().close());
             tempVar.setIsDefault(true);
             tempVar.setIsCancel(true);
             model.getCommands().add(tempVar);
@@ -1006,10 +1016,12 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
             model.getCollapseSnapshots().setIsChangable(false);
             model.getForceOverride().setIsChangable(false);
 
-            model.setMessage("There is no Export Domain to Backup the Virtual Machine into. Attach an Export Domain to the Virtual Machine(s) Data Center.");
+            model.setMessage(ConstantsManager.getInstance()
+                    .getConstants()
+                    .thereIsNoExportDomainBackupVmAttachExportDomainToVmsDcMsg());
 
-            UICommand tempVar2 = new UICommand("Cancel", this);
-            tempVar2.setTitle("Close");
+            UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
+            tempVar2.setTitle(ConstantsManager.getInstance().getConstants().close());
             tempVar2.setIsDefault(true);
             tempVar2.setIsCancel(true);
             model.getCommands().add(tempVar2);
@@ -1020,10 +1032,12 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
             model.getCollapseSnapshots().setIsChangable(false);
             model.getForceOverride().setIsChangable(false);
 
-            model.setMessage("The relevant Export Domain in not active. Please activate it.");
+            model.setMessage(ConstantsManager.getInstance()
+                    .getConstants()
+                    .theRelevantExportDomainIsNotActivePleaseActivateItMsg());
 
-            UICommand tempVar3 = new UICommand("Cancel", this);
-            tempVar3.setTitle("Close");
+            UICommand tempVar3 = new UICommand("Cancel", this); //$NON-NLS-1$
+            tempVar3.setTitle(ConstantsManager.getInstance().getConstants().close());
             tempVar3.setIsDefault(true);
             tempVar3.setIsCancel(true);
             model.getCommands().add(tempVar3);
@@ -1032,12 +1046,12 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
         {
             showWarningOnExistingVms(model);
 
-            UICommand tempVar4 = new UICommand("OnExport", this);
-            tempVar4.setTitle("OK");
+            UICommand tempVar4 = new UICommand("OnExport", this); //$NON-NLS-1$
+            tempVar4.setTitle(ConstantsManager.getInstance().getConstants().ok());
             tempVar4.setIsDefault(true);
             model.getCommands().add(tempVar4);
-            UICommand tempVar5 = new UICommand("Cancel", this);
-            tempVar5.setTitle("Cancel");
+            UICommand tempVar5 = new UICommand("Cancel", this); //$NON-NLS-1$
+            tempVar5.setTitle(ConstantsManager.getInstance().getConstants().cancel());
             tempVar5.setIsCancel(true);
             model.getCommands().add(tempVar5);
         }
@@ -1065,7 +1079,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
     {
         storage_pool storagePool = storagePools.size() > 0 ? storagePools.get(0) : null;
 
-        String existingVMs = "";
+        String existingVMs = ""; //$NON-NLS-1$
         if (storagePool != null)
         {
             AsyncQuery _asyncQuery = new AsyncQuery();
@@ -1076,7 +1090,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
                 {
                     VmListModel vmListModel = (VmListModel) model;
                     ExportVmModel exportModel1 = (ExportVmModel) vmListModel.getWindow();
-                    String existingVMs = "";
+                    String existingVMs = ""; //$NON-NLS-1$
 
                     if (ReturnValue != null)
                     {
@@ -1097,14 +1111,15 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 
                             if (foundVm != null)
                             {
-                                existingVMs += "\u2022  " + vm.getvm_name() + "\n";
+                                existingVMs += "\u2022  " + vm.getvm_name() + "\n"; //$NON-NLS-1$ //$NON-NLS-2$
                             }
                         }
                     }
                     if (!StringHelper.isNullOrEmpty(existingVMs))
                     {
-                        exportModel1.setMessage(StringFormat.format("VM(s):\n%1$s already exist on the target Export Domain. If you want to override them, please check the 'Force Override' check-box.",
-                                existingVMs));
+                        exportModel1.setMessage(ConstantsManager.getInstance()
+                                .getMessages()
+                                .vmsAlreadyExistOnTargetExportDomain(existingVMs));
                     }
                 }
             };
@@ -1207,13 +1222,13 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
                             for (java.util.Map.Entry<String, java.util.ArrayList<String>> keyValuePair : templateDic.entrySet())
                             {
                                 tempList = keyValuePair.getValue();
-                                tempStr = "Template " + keyValuePair.getKey() + " (for ";
+                                tempStr = "Template " + keyValuePair.getKey() + " (for "; //$NON-NLS-1$ //$NON-NLS-2$
                                 int i;
                                 for (i = 0; i < tempList.size() - 1; i++)
                                 {
-                                    tempStr += tempList.get(i) + ", ";
+                                    tempStr += tempList.get(i) + ", "; //$NON-NLS-1$
                                 }
-                                tempStr += tempList.get(i) + ")";
+                                tempStr += tempList.get(i) + ")"; //$NON-NLS-1$
                                 missingTemplates.add(tempStr);
                             }
 
@@ -1250,19 +1265,25 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
             {
                 ConfirmationModel confirmModel = new ConfirmationModel();
                 setConfirmWindow(confirmModel);
-                confirmModel.setTitle("Template(s) not Found on Export Domain");
-                confirmModel.setHashName("template_not_found_on_export_domain");
+                confirmModel.setTitle(ConstantsManager.getInstance()
+                        .getConstants()
+                        .templatesNotFoundOnExportDomainTitle());
+                confirmModel.setHashName("template_not_found_on_export_domain"); //$NON-NLS-1$
 
-                confirmModel.setMessage(missingTemplatesFromVms == null ? "Could not read templates from Export Domain"
-                        : "The following templates are missing on the target Export Domain:");
+                confirmModel.setMessage(missingTemplatesFromVms == null ? ConstantsManager.getInstance()
+                        .getConstants()
+                        .couldNotReadTemplatesFromExportDomainMsg()
+                        : ConstantsManager.getInstance()
+                                .getConstants()
+                                .theFollowingTemplatesAreMissingOnTargetExportDomainMsg());
                 confirmModel.setItems(missingTemplatesFromVms);
 
-                UICommand tempVar = new UICommand("OnExportNoTemplates", this);
-                tempVar.setTitle("OK");
+                UICommand tempVar = new UICommand("OnExportNoTemplates", this); //$NON-NLS-1$
+                tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
                 tempVar.setIsDefault(true);
                 confirmModel.getCommands().add(tempVar);
-                UICommand tempVar2 = new UICommand("CancelConfirmation", this);
-                tempVar2.setTitle("Cancel");
+                UICommand tempVar2 = new UICommand("CancelConfirmation", this); //$NON-NLS-1$
+                tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
                 tempVar2.setIsCancel(true);
                 confirmModel.getCommands().add(tempVar2);
             }
@@ -1369,8 +1390,8 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
         VM vm = (VM) getSelectedItem();
         RunOnceModel model = new RunOnceModel();
         setWindow(model);
-        model.setTitle("Run Virtual Machine(s)");
-        model.setHashName("run_virtual_machine");
+        model.setTitle(ConstantsManager.getInstance().getConstants().runVirtualMachinesTitle());
+        model.setHashName("run_virtual_machine"); //$NON-NLS-1$
         model.getAttachIso().setEntity(false);
         model.getAttachFloppy().setEntity(false);
         model.getRunAsStateless().setEntity(vm.getis_stateless());
@@ -1399,12 +1420,12 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
         RunOnceUpdateDomains();
         RunOnceUpdateBootSequence(vm);
 
-        UICommand tempVar = new UICommand("OnRunOnce", this);
-        tempVar.setTitle("OK");
+        UICommand tempVar = new UICommand("OnRunOnce", this); //$NON-NLS-1$
+        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
         tempVar.setIsDefault(true);
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this);
-        tempVar2.setTitle("Cancel");
+        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
+        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         tempVar2.setIsCancel(true);
         model.getCommands().add(tempVar2);
     }
@@ -1414,12 +1435,12 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
         RunOnceModel model = (RunOnceModel) getWindow();
 
         EntityModel tempVar = new EntityModel();
-        tempVar.setTitle("VNC");
+        tempVar.setTitle(ConstantsManager.getInstance().getConstants().VNCTitle());
         tempVar.setEntity(DisplayType.vnc);
         EntityModel vncProtocol = tempVar;
 
         EntityModel tempVar2 = new EntityModel();
-        tempVar2.setTitle("Spice");
+        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().spiceTitle());
         tempVar2.setEntity(DisplayType.qxl);
         EntityModel qxlProtocol = tempVar2;
 
@@ -1454,7 +1475,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
                     bootSequenceModel.getNetworkOption().setIsChangable(false);
                     bootSequenceModel.getNetworkOption()
                             .getChangeProhibitionReasons()
-                            .add("Virtual Machine must have at least one network interface defined to boot from network.");
+                            .add("Virtual Machine must have at least one network interface defined to boot from network."); //$NON-NLS-1$
                 }
             }
         };
@@ -1475,13 +1496,13 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
                         RunOnceModel runOnceModel = (RunOnceModel) target;
                         java.util.List<String> domains = (java.util.List<String>) returnValue;
                         String oldDomain = (String) runOnceModel.getSysPrepDomainName().getSelectedItem();
-                        if (oldDomain != null && !oldDomain.equals("") && !domains.contains(oldDomain))
+                        if (oldDomain != null && !oldDomain.equals("") && !domains.contains(oldDomain)) //$NON-NLS-1$
                         {
                             domains.add(0, oldDomain);
                         }
                         runOnceModel.getSysPrepDomainName().setItems(domains);
                         String selectedDomain = (oldDomain != null) ? oldDomain : Linq.FirstOrDefault(domains);
-                        if (!StringHelper.stringsEqual(selectedDomain, ""))
+                        if (!StringHelper.stringsEqual(selectedDomain, "")) //$NON-NLS-1$
                         {
                             runOnceModel.getSysPrepDomainName().setSelectedItem(selectedDomain);
                         }
@@ -1499,12 +1520,12 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
             // Add a pseudo floppy disk image used for Windows' sysprep.
             if (!vm.getis_initialized())
             {
-                images.add(0, "[sysprep]");
+                images.add(0, "[sysprep]"); //$NON-NLS-1$
                 model.getAttachFloppy().setEntity(true);
             }
             else
             {
-                images.add("[sysprep]");
+                images.add("[sysprep]"); //$NON-NLS-1$
             }
         }
 
@@ -1595,7 +1616,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
         tempVar.setVmId(vm.getId());
         tempVar.setBootSequence(bootSequenceModel.getSequence());
         tempVar.setDiskPath((Boolean) model.getAttachIso().getEntity() ? (String) model.getIsoImage().getSelectedItem()
-                : "");
+                : ""); //$NON-NLS-1$
         tempVar.setFloppyPath(model.getFloppyImagePath());
         tempVar.setKvmEnable(model.getHwAcceleration());
         tempVar.setRunAndPause((Boolean) model.getRunAndPause().getEntity());
@@ -1622,7 +1643,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
         // Sysprep params
         if (model.getSysPrepDomainName().getSelectedItem() != null)
         {
-            param.setSysPrepDomainName(model.getSysPrepSelectedDomainName().getEntity().equals("") ? (String) model.getSysPrepSelectedDomainName()
+            param.setSysPrepDomainName(model.getSysPrepSelectedDomainName().getEntity().equals("") ? (String) model.getSysPrepSelectedDomainName() //$NON-NLS-1$
                     .getEntity()
                     : (String) model.getSysPrepDomainName().getSelectedItem());
         }
@@ -1669,19 +1690,19 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 
         UnitVmModel model = new UnitVmModel(new NewTemplateVmModelBehavior(vm));
         setWindow(model);
-        model.setTitle("New Template");
-        model.setHashName("new_template");
+        model.setTitle(ConstantsManager.getInstance().getConstants().newTemplateTitle());
+        model.setHashName("new_template"); //$NON-NLS-1$
         model.setIsNew(true);
         model.setVmType(vm.getvm_type());
 
         model.Initialize(getSystemTreeSelectedItem());
 
-        UICommand tempVar = new UICommand("OnNewTemplate", this);
-        tempVar.setTitle("OK");
+        UICommand tempVar = new UICommand("OnNewTemplate", this); //$NON-NLS-1$
+        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
         tempVar.setIsDefault(true);
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this);
-        tempVar2.setTitle("Cancel");
+        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
+        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         tempVar2.setIsCancel(true);
         model.getCommands().add(tempVar2);
     }
@@ -1696,8 +1717,8 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
         model.getStorageDomain().setIsChangable(false);
         model.getIsTemplatePublic().setIsChangable(false);
 
-        UICommand tempVar = new UICommand("Cancel", this);
-        tempVar.setTitle("Close");
+        UICommand tempVar = new UICommand("Cancel", this); //$NON-NLS-1$
+        tempVar.setTitle(ConstantsManager.getInstance().getConstants().close());
         tempVar.setIsCancel(true);
         model.getCommands().add(tempVar);
     }
@@ -1737,7 +1758,11 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
                             {
                                 UnitVmModel VmModel = (UnitVmModel) vmListModel.getWindow();
                                 VmModel.getInvalidityReasons().clear();
-                                VmModel.getName().getInvalidityReasons().add("Name must be unique.");
+                                VmModel.getName()
+                                        .getInvalidityReasons()
+                                        .add(ConstantsManager.getInstance()
+                                                .getConstants()
+                                                .nameMustBeUniqueInvalidReason());
                                 VmModel.getName().setIsValid(false);
                                 VmModel.setIsValid(false);
                             }
@@ -1747,7 +1772,8 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
                             }
 
                         }
-                    }), name);
+                    }),
+                    name);
         }
     }
 
@@ -1764,13 +1790,13 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
         }
         tempVar.setvm_os((VmOsType) model.getOSType().getSelectedItem());
         tempVar.setnum_of_monitors((Integer) model.getNumOfMonitors().getSelectedItem());
-        tempVar.setvm_domain(model.getDomain().getIsAvailable() ? (String) model.getDomain().getSelectedItem() : "");
+        tempVar.setvm_domain(model.getDomain().getIsAvailable() ? (String) model.getDomain().getSelectedItem() : ""); //$NON-NLS-1$
         tempVar.setvm_mem_size_mb((Integer) model.getMemSize().getEntity());
         tempVar.setMinAllocatedMem((Integer) model.getMinAllocatedMemory().getEntity());
         tempVar.setvds_group_id(((VDSGroup) model.getCluster().getSelectedItem()).getId());
         tempVar.settime_zone(model.getTimeZone().getIsAvailable() && model.getTimeZone().getSelectedItem() != null ? ((java.util.Map.Entry<String, String>) model.getTimeZone()
                 .getSelectedItem()).getKey()
-                : "");
+                : ""); //$NON-NLS-1$
         tempVar.setnum_of_sockets((Integer) model.getNumOfSockets().getEntity());
         tempVar.setcpu_per_socket((Integer) model.getTotalCPUCores().getEntity()
                 / (Integer) model.getNumOfSockets().getEntity());
@@ -1779,7 +1805,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
         tempVar.setis_stateless((Boolean) model.getIsStateless().getEntity());
         tempVar.setdefault_boot_sequence(model.getBootSequence());
         tempVar.setauto_startup((Boolean) model.getIsHighlyAvailable().getEntity());
-        tempVar.setiso_path(model.getCdImage().getIsChangable() ? (String) model.getCdImage().getSelectedItem() : "");
+        tempVar.setiso_path(model.getCdImage().getIsChangable() ? (String) model.getCdImage().getSelectedItem() : ""); //$NON-NLS-1$
         tempVar.setinitrd_url(vm.getinitrd_url());
         tempVar.setkernel_url(vm.getkernel_url());
         tempVar.setkernel_params(vm.getkernel_params());
@@ -1837,8 +1863,8 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 
         MigrateModel model = new MigrateModel();
         setWindow(model);
-        model.setTitle("Migrate Virtual Machine(s)");
-        model.setHashName("migrate_virtual_machine");
+        model.setTitle(ConstantsManager.getInstance().getConstants().migrateVirtualMachinesTitle());
+        model.setHashName("migrate_virtual_machine"); //$NON-NLS-1$
         model.setVmsOnSameCluster(true);
         model.setIsAutoSelect(true);
         model.setVmList(Linq.<VM> Cast(getSelectedItems()));
@@ -1915,8 +1941,8 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
             {
                 model.setNoSelAvailable(true);
 
-                UICommand tempVar = new UICommand("Cancel", this);
-                tempVar.setTitle("Close");
+                UICommand tempVar = new UICommand("Cancel", this); //$NON-NLS-1$
+                tempVar.setTitle(ConstantsManager.getInstance().getConstants().close());
                 tempVar.setIsDefault(true);
                 tempVar.setIsCancel(true);
                 model.getCommands().add(tempVar);
@@ -1927,12 +1953,12 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
             model.getHosts().setItems(hosts);
             model.getHosts().setSelectedItem(Linq.FirstOrDefault(hosts));
 
-            UICommand tempVar2 = new UICommand("OnMigrate", this);
-            tempVar2.setTitle("OK");
+            UICommand tempVar2 = new UICommand("OnMigrate", this); //$NON-NLS-1$
+            tempVar2.setTitle(ConstantsManager.getInstance().getConstants().ok());
             tempVar2.setIsDefault(true);
             model.getCommands().add(tempVar2);
-            UICommand tempVar3 = new UICommand("Cancel", this);
-            tempVar3.setTitle("Cancel");
+            UICommand tempVar3 = new UICommand("Cancel", this); //$NON-NLS-1$
+            tempVar3.setTitle(ConstantsManager.getInstance().getConstants().cancel());
             tempVar3.setIsCancel(true);
             model.getCommands().add(tempVar3);
         }
@@ -2004,9 +2030,11 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
     {
         ConfirmationModel model = new ConfirmationModel();
         setWindow(model);
-        model.setTitle("Shut down Virtual Machine(s)");
-        model.setHashName("shut_down_virtual_machine");
-        model.setMessage("Are you sure you want to Shut down the following Virtual Machines?");
+        model.setTitle(ConstantsManager.getInstance().getConstants().shutdownVirtualMachinesTitle());
+        model.setHashName("shut_down_virtual_machine"); //$NON-NLS-1$
+        model.setMessage(ConstantsManager.getInstance()
+                .getConstants()
+                .areYouSureYouWantToShutDownTheFollowingVirtualMachinesMsg());
         // model.Items = SelectedItems.Cast<VM>().Select(a => a.vm_name);
         java.util.ArrayList<String> items = new java.util.ArrayList<String>();
         for (Object item : getSelectedItems())
@@ -2016,12 +2044,12 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
         }
         model.setItems(items);
 
-        UICommand tempVar = new UICommand("OnShutdown", this);
-        tempVar.setTitle("OK");
+        UICommand tempVar = new UICommand("OnShutdown", this); //$NON-NLS-1$
+        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
         tempVar.setIsDefault(true);
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this);
-        tempVar2.setTitle("Cancel");
+        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
+        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         tempVar2.setIsCancel(true);
         model.getCommands().add(tempVar2);
     }
@@ -2061,9 +2089,11 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
     {
         ConfirmationModel model = new ConfirmationModel();
         setWindow(model);
-        model.setTitle("Stop Virtual Machine(s)");
-        model.setHashName("stop_virtual_machine");
-        model.setMessage("Are you sure you want to Stop the following Virtual Machines?");
+        model.setTitle(ConstantsManager.getInstance().getConstants().stopVirtualMachinesTitle());
+        model.setHashName("stop_virtual_machine"); //$NON-NLS-1$
+        model.setMessage(ConstantsManager.getInstance()
+                .getConstants()
+                .areYouSureYouWantToStopTheFollowingVirtualMachinesMsg());
         // model.Items = SelectedItems.Cast<VM>().Select(a => a.vm_name);
         java.util.ArrayList<String> items = new java.util.ArrayList<String>();
         for (Object item : getSelectedItems())
@@ -2073,12 +2103,12 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
         }
         model.setItems(items);
 
-        UICommand tempVar = new UICommand("OnStop", this);
-        tempVar.setTitle("OK");
+        UICommand tempVar = new UICommand("OnStop", this); //$NON-NLS-1$
+        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
         tempVar.setIsDefault(true);
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this);
-        tempVar2.setTitle("Cancel");
+        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
+        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         tempVar2.setIsCancel(true);
         model.getCommands().add(tempVar2);
     }
@@ -2195,8 +2225,8 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 
         AttachCdModel model = new AttachCdModel();
         setWindow(model);
-        model.setTitle("Change CD");
-        model.setHashName("change_cd");
+        model.setTitle(ConstantsManager.getInstance().getConstants().changeCDTitle());
+        model.setHashName("change_cd"); //$NON-NLS-1$
 
         AsyncQuery _asyncQuery1 = new AsyncQuery();
         _asyncQuery1.setModel(this);
@@ -2208,7 +2238,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
                 VmListModel vmListModel1 = (VmListModel) model1;
                 AttachCdModel attachCdModel = (AttachCdModel) vmListModel1.getWindow();
                 java.util.ArrayList<String> images1 =
-                        new java.util.ArrayList<String>(java.util.Arrays.asList(new String[] { "No CDs" }));
+                        new java.util.ArrayList<String>(java.util.Arrays.asList(new String[] { "No CDs" })); //$NON-NLS-1$
                 attachCdModel.getIsoImage().setItems(images1);
                 attachCdModel.getIsoImage().setSelectedItem(Linq.FirstOrDefault(images1));
 
@@ -2244,12 +2274,12 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 
         AsyncDataProvider.GetIsoDomainByDataCenterId(_asyncQuery1, vm.getstorage_pool_id());
 
-        UICommand tempVar = new UICommand("OnChangeCD", this);
-        tempVar.setTitle("OK");
+        UICommand tempVar = new UICommand("OnChangeCD", this); //$NON-NLS-1$
+        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
         tempVar.setIsDefault(true);
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this);
-        tempVar2.setTitle("Cancel");
+        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
+        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         tempVar2.setIsCancel(true);
         model.getCommands().add(tempVar2);
     }
@@ -2270,7 +2300,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
         }
 
         String isoName =
-                (StringHelper.stringsEqual(model.getIsoImage().getSelectedItem().toString(), ConsoleModel.EjectLabel)) ? ""
+                (StringHelper.stringsEqual(model.getIsoImage().getSelectedItem().toString(), ConsoleModel.EjectLabel)) ? "" //$NON-NLS-1$
                         : model.getIsoImage().getSelectedItem().toString();
 
         model.StartProgress(null);
@@ -2311,7 +2341,9 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
         if (!DataProvider.IsVmNameUnique(name) && name.compareToIgnoreCase(getcurrentVm().getvm_name()) != 0)
         {
             model.getName().setIsValid(false);
-            model.getName().getInvalidityReasons().add("Name must be unique.");
+            model.getName()
+                    .getInvalidityReasons()
+                    .add(ConstantsManager.getInstance().getConstants().nameMustBeUniqueInvalidReason());
             model.setIsGeneralTabValid(false);
             return;
         }
@@ -2329,14 +2361,14 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
         getcurrentVm().setnum_of_monitors((Integer) model.getNumOfMonitors().getSelectedItem());
         getcurrentVm().setvm_description((String) model.getDescription().getEntity());
         getcurrentVm().setvm_domain(model.getDomain().getIsAvailable() ? (String) model.getDomain().getSelectedItem()
-                : "");
+                : ""); //$NON-NLS-1$
         getcurrentVm().setvm_mem_size_mb((Integer) model.getMemSize().getEntity());
         getcurrentVm().setMinAllocatedMem((Integer) model.getMinAllocatedMemory().getEntity());
         Guid newClusterID = ((VDSGroup) model.getCluster().getSelectedItem()).getId();
         getcurrentVm().setvds_group_id(newClusterID);
         getcurrentVm().settime_zone((model.getTimeZone().getIsAvailable() && model.getTimeZone().getSelectedItem() != null) ? ((java.util.Map.Entry<String, String>) model.getTimeZone()
                 .getSelectedItem()).getKey()
-                : "");
+                : ""); //$NON-NLS-1$
         getcurrentVm().setnum_of_sockets((Integer) model.getNumOfSockets().getEntity());
         getcurrentVm().setcpu_per_socket((Integer) model.getTotalCPUCores().getEntity()
                 / (Integer) model.getNumOfSockets().getEntity());
@@ -2345,7 +2377,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
         getcurrentVm().setis_stateless((Boolean) model.getIsStateless().getEntity());
         getcurrentVm().setdefault_boot_sequence(model.getBootSequence());
         getcurrentVm().setiso_path(model.getCdImage().getIsChangable() ? (String) model.getCdImage().getSelectedItem()
-                : "");
+                : ""); //$NON-NLS-1$
         getcurrentVm().setauto_startup((Boolean) model.getIsHighlyAvailable().getEntity());
 
         getcurrentVm().setinitrd_url((String) model.getInitrd_path().getEntity());
@@ -2656,7 +2688,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
         else
         {
             ChangeCDModel tempVar4 = new ChangeCDModel();
-            tempVar4.setTitle("No CDs");
+            tempVar4.setTitle(ConstantsManager.getInstance().getConstants().noCDsTitle());
             getIsoImages().add(tempVar4);
         }
 
@@ -2668,7 +2700,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 
         // TODO: Patch!
         String isoName = model.getTitle();
-        if (StringHelper.stringsEqual(isoName, "No CDs"))
+        if (StringHelper.stringsEqual(isoName, "No CDs")) //$NON-NLS-1$
         {
             return;
         }
@@ -2682,7 +2714,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 
         Frontend.RunMultipleAction(VdcActionType.ChangeDisk,
                 new java.util.ArrayList<VdcActionParametersBase>(java.util.Arrays.asList(new VdcActionParametersBase[] { new ChangeDiskCommandParameters(vm.getId(),
-                        StringHelper.stringsEqual(isoName, ConsoleModel.EjectLabel) ? "" : isoName) })),
+                        StringHelper.stringsEqual(isoName, ConsoleModel.EjectLabel) ? "" : isoName) })), //$NON-NLS-1$
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void Executed(FrontendMultipleActionAsyncResult result) {
@@ -2741,13 +2773,13 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
         // 'if-else' logic:
         // switch (e.PropertyName)
         // ORIGINAL LINE: case "status":
-        if (e.PropertyName.equals("status"))
+        if (e.PropertyName.equals("status")) //$NON-NLS-1$
         {
             UpdateActionAvailability();
 
         }
         // ORIGINAL LINE: case "display_type":
-        else if (e.PropertyName.equals("display_type"))
+        else if (e.PropertyName.equals("display_type")) //$NON-NLS-1$
         {
             UpdateConsoleModels();
         }
@@ -2810,22 +2842,23 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
     private void SpiceConsoleModel_Error(Object sender, ErrorCodeEventArgs e)
     {
         ResourceManager rm =
-                new ResourceManager("UICommon.Resources.RdpErrors.RdpErrors", Assembly.GetExecutingAssembly());
+                new ResourceManager("UICommon.Resources.RdpErrors.RdpErrors", Assembly.GetExecutingAssembly()); //$NON-NLS-1$
 
         ConfirmationModel model = new ConfirmationModel();
         if (getErrorWindow() == null)
         {
             setErrorWindow(model);
         }
-        model.setTitle("Console Disconnected");
-        model.setHashName("console_disconnected");
-        model.setMessage(StringFormat.format("Error connecting to Virtual Machine using Spice:\n%1$s",
-                rm.GetString("E" + e.getErrorCode())));
+        model.setTitle(ConstantsManager.getInstance().getConstants().consoleDisconnectedTitle());
+        model.setHashName("console_disconnected"); //$NON-NLS-1$
+        model.setMessage(ConstantsManager.getInstance()
+                .getMessages()
+                .errConnectingVmUsingSpiceMsg(rm.GetString("E" + e.getErrorCode()))); //$NON-NLS-1$
 
         rm.ReleaseAllResources();
 
-        UICommand tempVar = new UICommand("CancelError", this);
-        tempVar.setTitle("Close");
+        UICommand tempVar = new UICommand("CancelError", this); //$NON-NLS-1$
+        tempVar.setTitle(ConstantsManager.getInstance().getConstants().close());
         tempVar.setIsDefault(true);
         tempVar.setIsCancel(true);
         model.getCommands().add(tempVar);
@@ -2904,47 +2937,47 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
         {
             AssignTags();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnAssignTags"))
+        else if (StringHelper.stringsEqual(command.getName(), "OnAssignTags")) //$NON-NLS-1$
         {
             OnAssignTags();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "Cancel"))
+        else if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
         {
             Cancel();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnSave"))
+        else if (StringHelper.stringsEqual(command.getName(), "OnSave")) //$NON-NLS-1$
         {
             OnSave();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnRemove"))
+        else if (StringHelper.stringsEqual(command.getName(), "OnRemove")) //$NON-NLS-1$
         {
             OnRemove();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnExport"))
+        else if (StringHelper.stringsEqual(command.getName(), "OnExport")) //$NON-NLS-1$
         {
             OnExport();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnExportNoTemplates"))
+        else if (StringHelper.stringsEqual(command.getName(), "OnExportNoTemplates")) //$NON-NLS-1$
         {
             OnExportNoTemplates();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "CancelConfirmation"))
+        else if (StringHelper.stringsEqual(command.getName(), "CancelConfirmation")) //$NON-NLS-1$
         {
             CancelConfirmation();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "CancelError"))
+        else if (StringHelper.stringsEqual(command.getName(), "CancelError")) //$NON-NLS-1$
         {
             CancelError();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnRunOnce"))
+        else if (StringHelper.stringsEqual(command.getName(), "OnRunOnce")) //$NON-NLS-1$
         {
             OnRunOnce();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnNewTemplate"))
+        else if (StringHelper.stringsEqual(command.getName(), "OnNewTemplate")) //$NON-NLS-1$
         {
             OnNewTemplate();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnMigrate"))
+        else if (StringHelper.stringsEqual(command.getName(), "OnMigrate")) //$NON-NLS-1$
         {
             OnMigrate();
         }
@@ -2952,15 +2985,15 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
         {
             CancelMigration();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnShutdown"))
+        else if (StringHelper.stringsEqual(command.getName(), "OnShutdown")) //$NON-NLS-1$
         {
             OnShutdown();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnStop"))
+        else if (StringHelper.stringsEqual(command.getName(), "OnStop")) //$NON-NLS-1$
         {
             OnStop();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnChangeCD"))
+        else if (StringHelper.stringsEqual(command.getName(), "OnChangeCD")) //$NON-NLS-1$
         {
             OnChangeCD();
         }
@@ -2978,11 +3011,11 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
     public void setSystemTreeSelectedItem(SystemTreeItemModel value)
     {
         systemTreeSelectedItem = value;
-        OnPropertyChanged(new PropertyChangedEventArgs("SystemTreeSelectedItem"));
+        OnPropertyChanged(new PropertyChangedEventArgs("SystemTreeSelectedItem")); //$NON-NLS-1$
     }
 
     @Override
     protected String getListName() {
-        return "VmListModel";
+        return "VmListModel"; //$NON-NLS-1$
     }
 }

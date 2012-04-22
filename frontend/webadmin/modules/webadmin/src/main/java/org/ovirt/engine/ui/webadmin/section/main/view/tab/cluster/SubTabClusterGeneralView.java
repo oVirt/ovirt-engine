@@ -31,8 +31,8 @@ import com.google.gwt.user.client.ui.Widget;
 public class SubTabClusterGeneralView extends AbstractSubTabFormView<VDSGroup, ClusterListModel, ClusterPolicyModel>
         implements SubTabClusterGeneralPresenter.ViewDef, Editor<ClusterPolicyModel> {
 
-    private static final String MAX_COLOR = "#4E9FDD";
-    private static final String MIN_COLOR = "#AFBF27";
+    private static final String MAX_COLOR = "#4E9FDD"; //$NON-NLS-1$
+    private static final String MIN_COLOR = "#AFBF27"; //$NON-NLS-1$
 
     interface Driver extends SimpleBeanEditorDriver<ClusterPolicyModel, SubTabClusterGeneralView> {
         Driver driver = GWT.create(Driver.class);
@@ -160,16 +160,16 @@ public class SubTabClusterGeneralView extends AbstractSubTabFormView<VDSGroup, C
             setVisibility(true);
             leftSlider.setValue(selectedItem.getlow_utilization());
             rightSlider.setValue(selectedItem.gethigh_utilization());
-            policyTimeLabel.setText(constants.clusterPolicyForTimeLabel() + " "
-                    + selectedItem.getcpu_over_commit_duration_minutes() + " " + constants.clusterPolicyMinTimeLabel());
+            policyTimeLabel.setText(constants.clusterPolicyForTimeLabel() + " " //$NON-NLS-1$
+                    + selectedItem.getcpu_over_commit_duration_minutes() + " " + constants.clusterPolicyMinTimeLabel()); //$NON-NLS-1$
             policyFieldLabel.setText(constants.clusterPolicyPowSaveLabel());
         } else if (selectedItem.getselection_algorithm().equals(VdsSelectionAlgorithm.EvenlyDistribute)) {
             setVisibility(true);
             leftSlider.setVisible(false);
             leftDummySlider.setVisible(true);
             rightSlider.setValue(selectedItem.gethigh_utilization());
-            policyTimeLabel.setText(constants.clusterPolicyForTimeLabel() + " "
-                    + selectedItem.getcpu_over_commit_duration_minutes() + " " + constants.clusterPolicyMinTimeLabel());
+            policyTimeLabel.setText(constants.clusterPolicyForTimeLabel() + " " //$NON-NLS-1$
+                    + selectedItem.getcpu_over_commit_duration_minutes() + " " + constants.clusterPolicyMinTimeLabel()); //$NON-NLS-1$
             policyFieldLabel.setText(constants.clusterPolicyEvenDistLabel());
         } else { // also for VdsSelectionAlgorithm.None
             setVisibility(false);

@@ -99,7 +99,7 @@ public class MainSectionView extends AbstractView implements MainSectionPresente
         horizontalSplitLayoutPanel = new SplitLayoutPanel(2);
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        initHeaders();
+        initHeaders(constants);
         ViewIdHandler.idHandler.generateAndSetIds(this);
 
         addContentToWestPanel(treeModelProvider, bookmarkModelProvider, tagModelProvider, westStackPanel, constants);
@@ -114,14 +114,14 @@ public class MainSectionView extends AbstractView implements MainSectionPresente
                 templates,
                 eventBus,
                 clientStorage,
-                commonConstants);
+                constants);
         headerPanel.getElement().getParentElement().getStyle().setOverflow(Overflow.VISIBLE);
     }
 
-    private void initHeaders() {
-        treeHeader = new Label("Tree");
-        bookmarksHeader = new Label("Bookmarks");
-        tagsHeader = new Label("Tags");
+    private void initHeaders(ApplicationConstants constants) {
+        treeHeader = new Label(constants.treeMainSection());
+        bookmarksHeader = new Label(constants.bookmarksMainSection());
+        tagsHeader = new Label(constants.tagsMainSection());
     }
 
     StackLayoutPanel createWestStackPanel(SystemTreeModelProvider treeModelProvider,
@@ -145,8 +145,8 @@ public class MainSectionView extends AbstractView implements MainSectionPresente
             TagModelProvider tagModelProvider,
             final StackLayoutPanel panel, ApplicationConstants constants) {
         panel.insert(new SystemTree(treeModelProvider, constants), treeHeader, 26, panel.getWidgetCount());
-        panel.insert(new BookmarkList(bookmarkModelProvider), bookmarksHeader, 26, panel.getWidgetCount());
-        panel.insert(new TagList(tagModelProvider), tagsHeader, 26, panel.getWidgetCount());
+        panel.insert(new BookmarkList(bookmarkModelProvider, constants), bookmarksHeader, 26, panel.getWidgetCount());
+        panel.insert(new TagList(tagModelProvider, constants), tagsHeader, 26, panel.getWidgetCount());
     }
 
     void initAlertEventFooterPanel(AlertModelProvider alertModelProvider,
@@ -158,12 +158,12 @@ public class MainSectionView extends AbstractView implements MainSectionPresente
             ApplicationResources resources,
             ApplicationTemplates templates,
             EventBus eventBus,
-            ClientStorage clientStorage, CommonApplicationConstants commonConstants) {
+            ClientStorage clientStorage, ApplicationConstants constants) {
         alertEventFooterPanel.add(new AlertsEventsFooterView(
                 alertModelProvider, alertFirstRowModelProvider,
                 eventModelProvider, eventFirstRowModelProvider,
                 taskModelProvider, taskFirstRowModelProvider,
-                resources, templates, eventBus, clientStorage, commonConstants));
+                resources, templates, eventBus, clientStorage, constants));
     }
 
     @Override

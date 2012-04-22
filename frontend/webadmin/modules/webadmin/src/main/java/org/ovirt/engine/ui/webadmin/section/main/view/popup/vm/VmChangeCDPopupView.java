@@ -13,7 +13,7 @@ public class VmChangeCDPopupView extends AbstractModelBoundWidgetPopupView<Attac
 
     @Inject
     public VmChangeCDPopupView(EventBus eventBus, ApplicationResources resources) {
-        super(eventBus, resources, new VmChangeCDPopupWidget(), "400px", "170px");
+        super(eventBus, resources, new VmChangeCDPopupWidget(), "400px", "170px"); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
 }

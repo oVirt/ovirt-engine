@@ -6,6 +6,7 @@ import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelLabelEditor;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceModel;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.DetachConfirmationPopupPresenterWidget;
@@ -51,17 +52,15 @@ public class DetachConfirmationPopupView extends AbstractModelBoundPopupView<Hos
     EntityModelCheckBoxEditor commitChanges;
 
     @Inject
-    public DetachConfirmationPopupView(EventBus eventBus, ApplicationResources resources, ApplicationMessages messages) {
+    public DetachConfirmationPopupView(EventBus eventBus, ApplicationResources resources, ApplicationMessages messages, ApplicationConstants constants) {
         super(eventBus, resources);
         commitChanges = new EntityModelCheckBoxEditor(Align.RIGHT);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
 
-        // TODO(vszocs) shouldn't ApplicationMessages be used here instead of static Strings?
-        message.setText("Are you sure you want to Detach the following Network Interface?");
+        message.setText(constants.areYouSureDetachConfirmPopup());
 
-        info.setHTML("<I>Changes done to the Networking configuration are temporary until explicitly saved.<BR>" +
-                "Check the check-box below to make the changes persistent.</I>");
-        commitChanges.setLabel("Save network configuration");
+        info.setHTML(constants.changesTempWarningDetachConfirmPopup());
+        commitChanges.setLabel(constants.saveNetCongDetachConfirmPopup());
 
         Driver.driver.initialize(this);
     }
