@@ -78,7 +78,7 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
                 result = LoginResult.PasswordExpired;
             }
         }
-        // If for some reason the error messages list is still empty - add the general "user cant authenticate" message
+        // If for some reason the error messages list is still empty - add the general "user can't authenticate" message
         if (errorMessages.size() == 0) {
             errorMessages.add(VdcBllMessages.USER_FAILED_TO_AUTHENTICATE);
         }
@@ -130,7 +130,7 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
         setActionReturnValue(getCurrentUser());
         ((VdcLoginReturnValueBase) getReturnValue()).setLoginResult(LoginResult.Autheticated);
         // Permissions for this user might been changed since last login so
-        // update he's isAdmin flag accordingly
+        // update his isAdmin flag accordingly
         updateUserData();
         setSucceeded(true);
     }

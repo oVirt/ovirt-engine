@@ -8,8 +8,6 @@ import org.ovirt.engine.core.bll.adbroker.LdapReturnValueBase;
 import org.ovirt.engine.core.bll.adbroker.LdapUserPasswordBaseParameters;
 import org.ovirt.engine.core.bll.adbroker.UserAuthenticationResult;
 import org.ovirt.engine.core.common.action.LoginUserParameters;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 
@@ -20,12 +18,13 @@ public class LoginUserCommand<T extends LoginUserParameters> extends LoginBaseCo
 
     @Override
     protected UserAuthenticationResult AuthenticateUser(RefObject<Boolean> isLocalBackend,
-                                       RefObject<Boolean> isAdmin) {
+            RefObject<Boolean> isAdmin) {
         isLocalBackend.argvalue = false;
         isAdmin.argvalue = false;
 
         // We are using the getLoginDomain method in order to get the real domain, in case of logging in with a UPN
-        // as in that case the domain we get is what chosen by the client, but the real domain is the one determined by the UPN
+        // as in that case the domain we get is what chosen by the client, but the real domain is the one determined by
+        // the UPN
         String loginDomain = BrokerUtils.getLoginDomain(getParameters().getUserName(), getDomain());
         LdapBroker adFactory =
                 LdapFactory.getInstance(loginDomain);
@@ -35,9 +34,7 @@ public class LoginUserCommand<T extends LoginUserParameters> extends LoginBaseCo
         }
         LdapReturnValueBase adReturnValue = adFactory.RunAdAction(AdActionType.AuthenticateUser,
                 new LdapUserPasswordBaseParameters(loginDomain, getParameters().getUserName(), getUserPassword()));
-        UserAuthenticationResult authResult = (UserAuthenticationResult)adReturnValue.getReturnValue();
+        UserAuthenticationResult authResult = (UserAuthenticationResult) adReturnValue.getReturnValue();
         return authResult;
     }
-
-    private static Log log = LogFactory.getLog(LoginUserCommand.class);
 }
