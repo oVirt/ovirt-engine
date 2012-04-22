@@ -223,6 +223,8 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String ACTION_TYPE_FAILED_VM_IS_SAVING_RESTORING();
 
+    String ACTION_TYPE_FAILED_VM_IS_DURING_SNAPSHOT();
+
     String ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL();
 
     String ACTION_TYPE_FAILED_VM_RUNNING_STATELESS();

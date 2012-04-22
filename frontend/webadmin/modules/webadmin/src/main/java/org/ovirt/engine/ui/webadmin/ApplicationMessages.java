@@ -38,4 +38,16 @@ public interface ApplicationMessages extends CommonApplicationMessages {
 
     @DefaultMessage("Please make sure the Host ''{0}'' has been manually shut down or rebooted.")
     String manaulFencePopupMessageLabel(String hostName);
+
+    @DefaultMessage("All references to objects that reside on Storage Domain {0} in the database will be removed. You may need to manually clean the storage in order to reuse it.")
+    String storageDestroyPopupMessageLabel(String storageName);
+
+    @DefaultMessage("Memory Page Sharing Threshold set to {0}. Allow VMs to run on the Host up to the overcommit threshold")
+    String clusterPopupOptimizationForServerExplainationLabel(String a);
+
+    @DefaultMessage("Memory Page Sharing Threshold set to {0}. Allow VMs to run on the Host up to the overcommit threshold")
+    String clusterPopupOptimizationForDesktopExplainationLabel( String a);
+
+    @DefaultMessage("Memory Page Sharing Threshold set to {0} via API/CLI")
+    String clusterPopupOptimizationCustomExplainationLabel(String a);
 }

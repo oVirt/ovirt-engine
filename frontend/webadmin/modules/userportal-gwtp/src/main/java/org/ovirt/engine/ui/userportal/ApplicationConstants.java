@@ -113,7 +113,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String rdpOptions();
 
     @DefaultStringValue("Remote Desktop")
-    String remoteDesctop();
+    String remoteDesktop();
 
     @DefaultStringValue("SPICE Options")
     String spiceOptions();
@@ -157,4 +157,162 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Edit Console Options")
     String editConsoleLabel();
 
+    @DefaultStringValue("Cancel")
+    String cancel();
+
+    @DefaultStringValue("OK")
+    String ok();
+
+    @Override
+    @DefaultStringValue("")
+    String empty();
+
+    // Template
+    @DefaultStringValue("Edit")
+    String editTemplate();
+
+    @DefaultStringValue("Remove")
+    String removeTemplate();
+
+    // Vm
+    @DefaultStringValue("New Server")
+    String newServerVm();
+
+    @DefaultStringValue("New Desktop")
+    String newDesktopVm();
+
+    @DefaultStringValue("Edit")
+    String editVm();
+
+    @DefaultStringValue("Remove")
+    String removeVm();
+
+    @DefaultStringValue("Run Once")
+    String runOnceVm();
+
+    @DefaultStringValue("Change CD")
+    String changeCdVm();
+
+    @DefaultStringValue("Make Template")
+    String makeTemplateVm();
+
+    @DefaultStringValue("Virtual Machine")
+    String virualMachineVm();
+
+    @DefaultStringValue("Disks")
+    String disksVm();
+
+    @DefaultStringValue("Virtual Size")
+    String virtualSizeVm();
+
+    @DefaultStringValue("Actual Size")
+    String actualSizeVm();
+
+    @DefaultStringValue("Snapshots")
+    String snapshotsVm();
+
+    @DefaultStringValue("vmImageColumn")
+    String vmImageColumnVm();
+
+    @DefaultStringValue("nameColumn")
+    String nameColumnVm();
+
+    @DefaultStringValue("diskSizeColumn")
+    String diskSizeColumnVm();
+
+    @DefaultStringValue("virtualSizeColumn")
+    String virtualSizeColumnVm();
+
+    @DefaultStringValue("actualSizeColumn")
+    String actualSizeColumnVm();
+
+    @DefaultStringValue("snapshotsColumn")
+    String snapshotsColumnVm();
+
+    // Disk
+    @DefaultStringValue("diskImageColumn")
+    String diskImageColumnDisk();
+
+    @DefaultStringValue("driveMappingColumn")
+    String drivaeMappingColumnDisk();
+
+    @DefaultStringValue("virtualSizeColumn")
+    String virtualSizeColumnDisk();
+
+    @DefaultStringValue("actualSizeColumn")
+    String actualSizeColumnDisk();
+
+    @DefaultStringValue("snapshotsColumn")
+    String snapshotsColumnDisk();
+
+    @DefaultStringValue("VNC console access is not supported from the user portal.<br/>" +
+                    "Please ask the administrator to configure this " +
+                    "virtual machine to use SPICE for console access.")
+    String vncNotSupportedMsg();
+
+    @DefaultStringValue("Your browser/platform does not support console opening")
+    String browserNotSupportedMsg();
+
+    // Extended resource
+    @DefaultStringValue("Virtual Machines")
+    String vmsExtResource();
+
+    @DefaultStringValue("Defined VMs")
+    String definedVmsExtResource();
+
+    @DefaultStringValue("Running VMs")
+    String runningVmsExtResource();
+
+    @DefaultStringValue("Virtual CPUs")
+    String vcpusExtResource();
+
+    @DefaultStringValue("Defined vCPUs")
+    String definedvCpusExtResource();
+
+    @DefaultStringValue("Used vCPUs")
+    String udedvCpusExtResource();
+
+    @DefaultStringValue("Memory")
+    String memExtResource();
+
+    @DefaultStringValue("Defined Memory")
+    String definedMenExtResource();
+
+    @DefaultStringValue("Memory Usage")
+    String memUsageExtResource();
+
+    @DefaultStringValue("Storage")
+    String storageExtResource();
+
+    @DefaultStringValue("Total Size")
+    String totalSizeExtResource();
+
+    @DefaultStringValue("Number of Snapshots")
+    String numOfSnapshotsExtResource();
+
+    @DefaultStringValue("Total Size of Snapshots")
+    String totalSizeSnapshotsExtResource();
+
+    // Basic details
+    @DefaultStringValue("Operating System")
+    String osBasicDetails();
+
+    @DefaultStringValue("Defined Memory")
+    String definedMemBasicDetails();
+
+    @DefaultStringValue("Number of Cores")
+    String numOfCoresBasicDetails();
+
+    @DefaultStringValue("Drives")
+    String drivesBasicDetails();
+
+    @DefaultStringValue("Console")
+    String consoleBasicDetails();
+
+    @DefaultStringValue("Edit")
+    String editBasicDetails();
+
+    // Header
+    @DefaultStringValue("Logged in user")
+    String loggedInUser();
 }

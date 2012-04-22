@@ -30,4 +30,7 @@ public interface CommonApplicationTemplates extends SafeHtmlTemplates {
     @Template("<li>{0}</li>")
     SafeHtml listItem(SafeHtml item);
 
+    @Template("{0} <sub>{1}</sub>")
+    SafeHtml sub(String main, String sub);
+
 }
