@@ -32,7 +32,7 @@ import org.ovirt.engine.core.utils.Serializer;
 public class JsonObjectSerializer implements Serializer {
 
     @Override
-    public String serialize(Serializable payload) throws SerializationExeption {
+    public String serialize(Object payload) throws SerializationExeption {
         ObjectMapper mapper = new ObjectMapper();
         mapper.getSerializationConfig().addMixInAnnotations(NGuid.class, JsonNGuidMixIn.class);
         mapper.getSerializationConfig().addMixInAnnotations(Guid.class, JsonNGuidMixIn.class);
@@ -56,12 +56,12 @@ public class JsonObjectSerializer implements Serializer {
      * Use the ObjectMapper to parse the payload to String.
      *
      * @param payload
-     *            - The payload to be reutrned.
+     *            - The payload to be returned.
      * @param mapper
      *            - The ObjectMapper.
      * @return Parsed string of the serialized object.
      */
-    private String writeJsonAsString(Serializable payload, ObjectMapper mapper) {
+    private String writeJsonAsString(Object payload, ObjectMapper mapper) {
         try {
             return mapper.writeValueAsString(payload);
         } catch (JsonGenerationException e) {

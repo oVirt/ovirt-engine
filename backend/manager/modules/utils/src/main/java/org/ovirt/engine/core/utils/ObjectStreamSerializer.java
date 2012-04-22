@@ -3,7 +3,6 @@ package org.ovirt.engine.core.utils;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
 
 /**
  * Uses ObjectOutputStream as serializer, the returned object is array of bytes
@@ -17,7 +16,7 @@ public class ObjectStreamSerializer implements Serializer {
     }
 
     @Override
-    public Object serialize(Serializable payload) throws SerializationExeption {
+    public Object serialize(Object payload) throws SerializationExeption {
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ObjectOutputStream objectOutputStream = new ObjectOutputStream(baos);
