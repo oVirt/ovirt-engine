@@ -12,6 +12,8 @@ The following sections are available:
 In each section (except simple/function sections), entries are ordered by key,
 please keep this when modifing this file.
 
+PLEASE NOTE THAT THIS SCRIPT MUST REMAIN RE-ENTRANT!
+
 ************************************************************************************/
 
 
