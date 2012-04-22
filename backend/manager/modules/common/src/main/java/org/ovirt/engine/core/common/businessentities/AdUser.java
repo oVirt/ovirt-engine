@@ -1,20 +1,15 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
-
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "AdUser")
 public class AdUser extends IVdcQueryable implements Serializable {
     // TODO - LocalAdministrative permissions ??? up to Miki to decide what it
     // is
@@ -38,7 +33,7 @@ public class AdUser extends IVdcQueryable implements Serializable {
 
     public AdUser() {
         mUserId = Guid.Empty;
-        mGroups = new java.util.HashMap<String, ad_groups>();
+        mGroups = new HashMap<String, ad_groups>();
     }
 
     public AdUser(DbUser dbUser) {
@@ -49,17 +44,17 @@ public class AdUser extends IVdcQueryable implements Serializable {
         setDepartment(dbUser.getdepartment());
         setDomainControler(dbUser.getdomain());
         setEmail(dbUser.getemail());
-        mGroups = new java.util.HashMap<String, ad_groups>();
+        mGroups = new HashMap<String, ad_groups>();
     }
+
     public AdUser(String userName, String password, Guid userId, String domainControler) {
         mUserName = userName;
         mPassword = password;
         mUserId = userId;
         mDomainControler = domainControler;
-        mGroups = new java.util.HashMap<String, ad_groups>();
+        mGroups = new HashMap<String, ad_groups>();
     }
 
-    @XmlElement(name = "UserName")
     public String getUserName() {
         return mUserName;
     }
@@ -68,7 +63,6 @@ public class AdUser extends IVdcQueryable implements Serializable {
         mUserName = value;
     }
 
-    @XmlElement(name = "Password")
     public String getPassword() {
         return mPassword;
     }
@@ -77,7 +71,6 @@ public class AdUser extends IVdcQueryable implements Serializable {
         mPassword = value;
     }
 
-    @XmlElement(name = "UserId")
     public Guid getUserId() {
         return mUserId;
     }
@@ -86,7 +79,6 @@ public class AdUser extends IVdcQueryable implements Serializable {
         mUserId = value;
     }
 
-    @XmlElement(name = "DomainControler")
     public String getDomainControler() {
         return mDomainControler;
     }
@@ -95,7 +87,6 @@ public class AdUser extends IVdcQueryable implements Serializable {
         mDomainControler = value;
     }
 
-    @XmlElement(name = "Name")
     public String getName() {
         return mName;
     }
@@ -104,7 +95,6 @@ public class AdUser extends IVdcQueryable implements Serializable {
         mName = value;
     }
 
-    @XmlElement(name = "SurName")
     public String getSurName() {
         return mSurName;
     }
@@ -113,7 +103,6 @@ public class AdUser extends IVdcQueryable implements Serializable {
         mSurName = value;
     }
 
-    @XmlElement(name = "Department")
     public String getDepartment() {
         return mDepartment;
     }
@@ -122,7 +111,6 @@ public class AdUser extends IVdcQueryable implements Serializable {
         mDepartment = value;
     }
 
-    @XmlElement(name = "Title")
     public String getTitle() {
         return mTitle;
     }
@@ -131,7 +119,6 @@ public class AdUser extends IVdcQueryable implements Serializable {
         mTitle = value;
     }
 
-    @XmlElement(name = "Email")
     public String getEmail() {
         return mEmail;
     }
@@ -140,7 +127,6 @@ public class AdUser extends IVdcQueryable implements Serializable {
         mEmail = value;
     }
 
-    @XmlElement(name = "PasswordExpired")
     public boolean getPasswordExpired() {
         return _passwordExpired;
     }
@@ -149,15 +135,14 @@ public class AdUser extends IVdcQueryable implements Serializable {
         _passwordExpired = value;
     }
 
-    public java.util.Map<String, ad_groups> getGroups() {
+    public Map<String, ad_groups> getGroups() {
         return mGroups;
     }
 
-    public void setGroups(java.util.HashMap<String, ad_groups> value) {
+    public void setGroups(HashMap<String, ad_groups> value) {
         mGroups = value;
     }
 
-    @XmlElement(name = "Group")
     public String getGroup() {
         String[] gArr = mGroups.keySet().toArray(new String[mGroups.size()]);
         return StringHelper.join(",", gArr);
@@ -177,7 +162,7 @@ public class AdUser extends IVdcQueryable implements Serializable {
     }
 
     @Override
-    public java.util.ArrayList<String> getChangeablePropertiesList() {
+    public ArrayList<String> getChangeablePropertiesList() {
         return null;
     }
 
@@ -187,7 +172,9 @@ public class AdUser extends IVdcQueryable implements Serializable {
             StringBuilder sb = new StringBuilder();
             for (Iterator<ad_groups> iterator = mGroups.values().iterator(); iterator.hasNext();) {
                 sb.append(iterator.next().getid().toString());
-                if (iterator.hasNext()) { sb.append(","); }
+                if (iterator.hasNext()) {
+                    sb.append(",");
+                }
             }
             groupIds = sb.toString();
         }
