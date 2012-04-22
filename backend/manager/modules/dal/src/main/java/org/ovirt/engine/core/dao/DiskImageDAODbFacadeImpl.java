@@ -107,55 +107,6 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
     }
 
     @Override
-    public void save(DiskImage image) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("creation_date", image.getcreation_date())
-                .addValue("image_guid", image.getImageId())
-                .addValue("it_guid", image.getit_guid())
-                .addValue("size", image.getsize())
-                .addValue("ParentId", image.getParentId())
-                .addValue("imageStatus", image.getimageStatus())
-                .addValue("lastModified", image.getlastModified())
-                .addValue("vm_snapshot_id", image.getvm_snapshot_id())
-                .addValue("volume_type", image.getvolume_type())
-                .addValue("volume_format", image.getvolume_format())
-                .addValue("image_group_id", image.getimage_group_id())
-                .addValue("active", image.getactive())
-                .addValue("boot", image.getboot())
-                .addValue("quota_id", image.getQuotaId());
-        getCallsHandler().executeModification("InsertImage", parameterSource);
-    }
-
-    @Override
-    public void update(DiskImage image) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("creation_date", image.getcreation_date())
-                .addValue("image_guid", image.getImageId())
-                .addValue("it_guid", image.getit_guid())
-                .addValue("size", image.getsize())
-                .addValue("ParentId", image.getParentId())
-                .addValue("imageStatus", image.getimageStatus())
-                .addValue("lastModified", image.getlastModified())
-                .addValue("vm_snapshot_id", image.getvm_snapshot_id())
-                .addValue("volume_type", image.getvolume_type())
-                .addValue("volume_format", image.getvolume_format())
-                .addValue("image_group_id", image.getimage_group_id())
-                .addValue("active", image.getactive())
-                .addValue("boot", image.getboot())
-                .addValue("quota_id", image.getQuotaId());
-
-        getCallsHandler().executeModification("UpdateImage", parameterSource);
-    }
-
-    @Override
-    public void remove(Guid id) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("image_guid", id);
-
-        getCallsHandler().executeModification("DeleteImage", parameterSource);
-    }
-
-    @Override
     public void removeAllForVmId(Guid id) {
         List<Guid> imagesList = new ArrayList<Guid>();
         for (DiskImage image : getAllForVm(id)) {
@@ -286,13 +237,5 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
     @Override
     public List<DiskImage> getAllWithQuery(String query) {
         return new SimpleJdbcTemplate(jdbcTemplate).query(query, DiskImageRowMapper.instance);
-    }
-
-    @Override
-    public void updateStatus(Guid id, ImageStatus status) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("image_id", id)
-                .addValue("status", status);
-        getCallsHandler().executeModification("UpdateImageStatus", parameterSource);
     }
 }

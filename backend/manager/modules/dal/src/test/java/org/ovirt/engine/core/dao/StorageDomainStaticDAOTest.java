@@ -22,7 +22,8 @@ public class StorageDomainStaticDAOTest extends BaseDAOTestCase {
 
     private StorageDomainStaticDAO dao;
     private StorageDomainDynamicDAO dynamicDao;
-    private DiskImageDAO imageDao;
+    private DiskImageDAO diskImageDao;
+    private ImageDao imageDao;
     private storage_domain_static existingDomain;
     private storage_domain_static newStaticDomain;
 
@@ -32,7 +33,8 @@ public class StorageDomainStaticDAOTest extends BaseDAOTestCase {
 
         dao = prepareDAO(dbFacade.getStorageDomainStaticDAO());
         dynamicDao = prepareDAO(dbFacade.getStorageDomainDynamicDAO());
-        imageDao = prepareDAO(dbFacade.getDiskImageDAO());
+        diskImageDao = prepareDAO(dbFacade.getDiskImageDAO());
+        imageDao = prepareDAO(dbFacade.getImageDao());
         existingDomain = dao.get(new Guid("72e3a666-89e1-4005-a7ca-f7548004a9ab"));
 
         newStaticDomain = new storage_domain_static();
@@ -216,7 +218,7 @@ public class StorageDomainStaticDAOTest extends BaseDAOTestCase {
     @Test
     public void testRemove() {
         dynamicDao.remove(existingDomain.getId());
-        List<DiskImage> imagesToRemove = imageDao.getAllSnapshotsForStorageDomain(existingDomain.getId());
+        List<DiskImage> imagesToRemove = diskImageDao.getAllSnapshotsForStorageDomain(existingDomain.getId());
         Set<Guid> itGuids = new HashSet<Guid>();
         for (DiskImage image : imagesToRemove) {
             itGuids.add(image.getit_guid());

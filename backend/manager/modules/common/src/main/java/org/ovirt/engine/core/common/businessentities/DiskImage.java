@@ -18,25 +18,18 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
                     "storage_pool_id", "boot", "volume_type", "volume_format", "disk_interface", "wipe_after_delete",
                     "propagate_errors", "read_rate", "write_rate", "ActualSize", "QuotaId" }));
 
-    private Boolean activeField;
     private ArrayList<String> storagesNames;
     // TODO why do we have two fields like this?
     private Date last_modified_dateField;
-    private Date lastModified = new Date(0);
     // TODO comes from DiskImageDynamic
     private long actualSizeFromDiskImageDynamic;
     // TODO comes from DiskImageDynamic
     private int readRateFromDiskImageDynamic;
     // TODO comes from DiskImageDynamic
     private int writeRateFromDiskImageDynamic;
-    private Guid imageId = Guid.Empty;
     private String appList;
-    private Guid parentId = Guid.Empty;
-    private Guid it_guid = Guid.Empty;
     // TODO from storage_domain_static
     private NGuid storage_pool_idField;
-    private ImageStatus status = ImageStatus.Unassigned;
-    private Date creation_dateField;
     // TODO from storage_domain_static
     private ArrayList<String> mstorage_path;
     private int mReadRateKbPerSec;
@@ -45,13 +38,13 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
     private double _actualDiskWithSnapthotsSize;
 
     public DiskImage() {
-        parentId = Guid.Empty;
-        creation_dateField = new Date();
-        last_modified_dateField = creation_dateField;
+        setParentId(Guid.Empty);
+        setcreation_date(new Date());
+        setlast_modified_date(getcreation_date());
     }
 
     public DiskImage(DiskImageBase diskImageBase) {
-        parentId = Guid.Empty;
+        setParentId(Guid.Empty);
         setvolume_type(diskImageBase.getvolume_type());
         setvolume_format(diskImageBase.getvolume_format());
         setsize(diskImageBase.getsize());
@@ -81,14 +74,14 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
             VmEntityType vmEntityType,
             Guid quotaId,
             String quotaName) {
-        this.activeField = active;
-        this.creation_dateField = creation_date;
+        setactive(active);
+        setcreation_date(creation_date);
         this.setlast_modified_date(last_modified_date);
         this.actualSizeFromDiskImageDynamic = actual_size;
         this.description = description;
-        this.imageId = image_guid;
+        setImageId(image_guid);
         this.setinternal_drive_mapping(internal_drive_mapping);
-        this.it_guid = it_guid;
+        setit_guid(it_guid);
         this.setsize(size);
         setvm_guid(vm_guid);
         this.setParentId(parentId);
@@ -101,11 +94,11 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
     }
 
     public Guid getImageId() {
-        return imageId;
+        return getImage().getId();
     }
 
     public void setImageId(Guid id) {
-        this.imageId = id;
+        getImage().setId(id);
     }
 
     private VmEntityType vmEntityType;
@@ -119,21 +112,21 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
     }
 
     public Boolean getactive() {
-        return this.activeField;
+        return getImage().isActive();
     }
 
     public void setactive(Boolean value) {
-        this.activeField = value;
+        getImage().setActive(Boolean.TRUE.equals(value));
     }
 
     @Override
     public Date getcreation_date() {
-        return this.creation_dateField;
+        return getImage().getCreationDate();
     }
 
     @Override
     public void setcreation_date(Date value) {
-        this.creation_dateField = value;
+        getImage().setCreationDate(value);
     }
 
     public Date getlast_modified_date() {
@@ -191,36 +184,36 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
 
     @Override
     public Guid getit_guid() {
-        return this.it_guid;
+        return getImage().getTemplateImageId();
     }
 
     @Override
     public void setit_guid(Guid value) {
-        this.it_guid = value;
+        getImage().setTemplateImageId(value);
     }
 
     public Guid getParentId() {
-        return parentId;
+        return getImage().getParentId();
     }
 
     public void setParentId(Guid value) {
-        parentId = value;
+        getImage().setParentId(value);
     }
 
     public ImageStatus getimageStatus() {
-        return this.status;
+        return getImage().getStatus();
     }
 
     public void setimageStatus(ImageStatus value) {
-        this.status = value;
+        getImage().setStatus(value);
     }
 
     public Date getlastModified() {
-        return this.lastModified;
+        return getImage().getLastModified();
     }
 
     public void setlastModified(Date value) {
-        this.lastModified = value;
+        getImage().setLastModified(value);
     }
 
     private ArrayList<Guid> storageIds;
@@ -233,14 +226,12 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
         storageIds = value;
     }
 
-    private NGuid vmSnapshotId;
-
     public NGuid getvm_snapshot_id() {
-        return vmSnapshotId;
+        return getImage().getSnapshotId();
     }
 
     public void setvm_snapshot_id(NGuid value) {
-        vmSnapshotId = value;
+        getImage().setSnapshotId(value == null ? null : value.getValue());
     }
 
     public ArrayList<String> getstorage_path() {
@@ -355,23 +346,23 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
         DiskImage di = new DiskImage(diskImage);
 
         // set all private fields (imitate clone - deep copy)
-        di.activeField = diskImage.activeField;
-        di.creation_dateField = new java.util.Date(diskImage.creation_dateField.getTime());
-        di.last_modified_dateField = new java.util.Date(diskImage.last_modified_dateField.getTime());
+        di.setactive(diskImage.getactive());
+        di.setcreation_date(new java.util.Date(diskImage.getcreation_date().getTime()));
+        di.setlast_modified_date(new java.util.Date(diskImage.getlast_modified_date().getTime()));
         di.actualSizeFromDiskImageDynamic = diskImage.actualSizeFromDiskImageDynamic;
         di.readRateFromDiskImageDynamic = diskImage.readRateFromDiskImageDynamic;
         di.writeRateFromDiskImageDynamic = diskImage.writeRateFromDiskImageDynamic;
         // string is immutable, so no need to deep copy it
         di.description = diskImage.description;
-        di.imageId = new Guid(diskImage.imageId.getUuid());
+        di.setImageId(new Guid(diskImage.getImageId().getUuid()));
         di.appList = diskImage.appList;
-        di.it_guid = new Guid(diskImage.it_guid.getUuid());
+        di.setit_guid(new Guid(diskImage.getit_guid().getUuid()));
         di.setvm_guid(diskImage.getvm_guid());
-        di.parentId = new Guid(diskImage.parentId.getUuid());
-        di.status = diskImage.status;
-        di.lastModified = new Date(diskImage.lastModified.getTime());
+        di.setParentId(new Guid(diskImage.getParentId().getUuid()));
+        di.setimageStatus(diskImage.getimageStatus());
+        di.setlastModified(new Date(diskImage.getlastModified().getTime()));
         di.storageIds = new ArrayList<Guid>(diskImage.storageIds);
-        di.vmSnapshotId = new NGuid(diskImage.vmSnapshotId.getUuid());
+        di.setvm_snapshot_id(diskImage.getvm_snapshot_id());
         di.mstorage_path = diskImage.mstorage_path;
         di.setId(diskImage.getId());
         di.setInternalDriveMapping(diskImage.getInternalDriveMapping());
@@ -401,24 +392,18 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();
+        result = prime * result + ((getImage() == null) ? 0 : getImage().hashCode());
         result = prime * result + ((_snapshots == null) ? 0 : _snapshots.hashCode());
-        result = prime * result + ((activeField == null) ? 0 : activeField.hashCode());
         result = prime * result + (int) (actualSizeFromDiskImageDynamic ^ (actualSizeFromDiskImageDynamic >>> 32));
         result = prime * result + ((appList == null) ? 0 : appList.hashCode());
         result = prime * result + ((description == null) ? 0 : description.hashCode());
-        result = prime * result + ((imageId == null) ? 0 : imageId.hashCode());
-        result = prime * result + ((it_guid == null) ? 0 : it_guid.hashCode());
-        result = prime * result + ((lastModified == null) ? 0 : lastModified.hashCode());
         result = prime * result + mReadRateKbPerSec;
         result = prime * result + mWriteRateKbPerSec;
         result = prime * result + ((mstorage_path == null) ? 0 : mstorage_path.hashCode());
-        result = prime * result + ((parentId == null) ? 0 : parentId.hashCode());
         result = prime * result + readRateFromDiskImageDynamic;
-        result = prime * result + ((status == null) ? 0 : status.hashCode());
         result = prime * result + ((storageIds == null) ? 0 : storageIds.hashCode());
         result = prime * result + ((storage_pool_idField == null) ? 0 : storage_pool_idField.hashCode());
         result = prime * result + ((storagesNames == null) ? 0 : storagesNames.hashCode());
-        result = prime * result + ((vmSnapshotId == null) ? 0 : vmSnapshotId.hashCode());
         result = prime * result + writeRateFromDiskImageDynamic;
         return result;
     }
@@ -432,15 +417,15 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
         if (getClass() != obj.getClass())
             return false;
         DiskImage other = (DiskImage) obj;
+        if (getImage() == null) {
+            if (other.getImage() != null)
+                return false;
+        } else if (!getImage().equals(other.getImage()))
+            return false;
         if (_snapshots == null) {
             if (other._snapshots != null)
                 return false;
         } else if (!_snapshots.equals(other._snapshots))
-            return false;
-        if (activeField == null) {
-            if (other.activeField != null)
-                return false;
-        } else if (!activeField.equals(other.activeField))
             return false;
         if (actualSizeFromDiskImageDynamic != other.actualSizeFromDiskImageDynamic)
             return false;
@@ -454,21 +439,6 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
                 return false;
         } else if (!description.equals(other.description))
             return false;
-        if (imageId == null) {
-            if (other.imageId != null)
-                return false;
-        } else if (!imageId.equals(other.imageId))
-            return false;
-        if (it_guid == null) {
-            if (other.it_guid != null)
-                return false;
-        } else if (!it_guid.equals(other.it_guid))
-            return false;
-        if (lastModified == null) {
-            if (other.lastModified != null)
-                return false;
-        } else if (!lastModified.equals(other.lastModified))
-            return false;
         if (mReadRateKbPerSec != other.mReadRateKbPerSec)
             return false;
         if (mWriteRateKbPerSec != other.mWriteRateKbPerSec)
@@ -478,14 +448,7 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
                 return false;
         } else if (!mstorage_path.equals(other.mstorage_path))
             return false;
-        if (parentId == null) {
-            if (other.parentId != null)
-                return false;
-        } else if (!parentId.equals(other.parentId))
-            return false;
         if (readRateFromDiskImageDynamic != other.readRateFromDiskImageDynamic)
-            return false;
-        if (status != other.status)
             return false;
         if (storageIds == null) {
             if (other.storageIds != null)
@@ -501,11 +464,6 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
             if (other.storagesNames != null)
                 return false;
         } else if (!storagesNames.equals(other.storagesNames))
-            return false;
-        if (vmSnapshotId == null) {
-            if (other.vmSnapshotId != null)
-                return false;
-        } else if (!vmSnapshotId.equals(other.vmSnapshotId))
             return false;
         if (writeRateFromDiskImageDynamic != other.writeRateFromDiskImageDynamic)
             return false;

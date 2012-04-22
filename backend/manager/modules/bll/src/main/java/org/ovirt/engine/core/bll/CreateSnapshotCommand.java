@@ -149,7 +149,7 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
         getParameters().setOldLastModifiedValue(getDiskImage().getlastModified());
         getDiskImage().setlastModified(new Date());
         getDiskImage().setactive(false);
-        DbFacade.getInstance().getDiskImageDAO().update(getDiskImage());
+        DbFacade.getInstance().getImageDao().update(getDiskImage().getImage());
     }
 
     @Override
@@ -171,7 +171,7 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
                         previousSnapshot.setlastModified(getParameters().getOldLastModifiedValue());
                     }
 
-                    DbFacade.getInstance().getDiskImageDAO().update(previousSnapshot);
+                    DbFacade.getInstance().getImageDao().update(previousSnapshot.getImage());
                 }
             }
         }

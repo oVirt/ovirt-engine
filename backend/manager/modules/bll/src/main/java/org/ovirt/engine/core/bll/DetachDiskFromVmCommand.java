@@ -67,7 +67,7 @@ public class DetachDiskFromVmCommand<T extends UpdateVmDiskParameters> extends A
         if (Boolean.TRUE.equals(getParameters().getDiskInfo().getPlugged()) && getVm().getstatus() != VMStatus.Down) {
             performPlugCommnad(VDSCommandType.HotUnPlugDisk, diskImage, vmDevice);
         }
-        getDiskImageDao().update(diskImage);
+        getImageDao().update(diskImage.getImage());
         getVmDeviceDao().remove(vmDevice.getId());
         // update cached image
         VmHandler.updateDisksFromDb(getVm());

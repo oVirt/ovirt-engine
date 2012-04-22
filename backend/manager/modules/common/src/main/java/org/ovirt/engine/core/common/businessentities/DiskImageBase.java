@@ -1,26 +1,15 @@
 package org.ovirt.engine.core.common.businessentities;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.Valid;
 
-import org.ovirt.engine.core.common.validation.group.CreateEntity;
-import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 
 public class DiskImageBase extends Disk {
 
     private static final long serialVersionUID = 4913899921353163969L;
 
-    @NotNull(message = "VALIDATION.VOLUME_TYPE.NOT_NULL", groups = { CreateEntity.class, UpdateEntity.class })
-    private VolumeType volumeType = VolumeType.Sparse;
-    private long size = 0L;
-
-    @NotNull(message = "VALIDATION.VOLUME_FORMAT.NOT_NULL", groups = { CreateEntity.class, UpdateEntity.class })
-    private VolumeFormat volumeFormat;
-
-    /**
-     * The quota id the image consumes from.
-     */
-    private Guid quotaId;
+    @Valid
+    private Image image = new Image();
 
     /**
      * Transient field for GUI presentation purposes.
@@ -28,40 +17,48 @@ public class DiskImageBase extends Disk {
     private String quotaName;
 
     public DiskImageBase() {
-        size = 0;
-        volumeType = VolumeType.Sparse;
+        getImage().setSize(0);
+        getImage().setVolumeType(VolumeType.Sparse);
+    }
+
+    public Image getImage() {
+        return image;
+    }
+
+    public void setImage(Image image) {
+        this.image = image;
     }
 
     public VolumeType getvolume_type() {
-        return volumeType;
+        return getImage().getVolumeType();
     }
 
     public void setvolume_type(VolumeType value) {
-        volumeType = value;
+        getImage().setVolumeType(value);
     }
 
     public VolumeFormat getvolume_format() {
-        return volumeFormat;
+        return getImage().getVolumeFormat();
     }
 
     public void setvolume_format(VolumeFormat value) {
-        volumeFormat = value;
+        getImage().setVolumeFormat(value);
     }
 
     public Guid getQuotaId() {
-        return this.quotaId;
+        return getImage().getQuotaId();
     }
 
     public void setQuotaId(Guid quotaId) {
-        this.quotaId = quotaId;
+        getImage().setQuotaId(quotaId);
     }
 
     public long getsize() {
-        return this.size;
+        return getImage().getSize();
     }
 
     public void setsize(long value) {
-        this.size = value;
+        getImage().setSize(value);
     }
 
     /**
@@ -86,5 +83,11 @@ public class DiskImageBase extends Disk {
     @Override
     public DiskStorageType getDiskStorageType() {
         return DiskStorageType.IMAGE;
+    }
+
+    @Override
+    public void setId(Guid id) {
+        super.setId(id);
+        getImage().setDiskId(id);
     }
 }

@@ -54,7 +54,7 @@ public class TryBackToSnapshotCommand<T extends ImagesContainterParametersBase> 
 
         DiskImage oldImage = DbFacade.getInstance().getDiskImageDAO().getSnapshotById(oldImageId);
         oldImage.setactive(active);
-        DbFacade.getInstance().getDiskImageDAO().update(oldImage);
+        DbFacade.getInstance().getImageDao().update(oldImage.getImage());
     }
 
     @Override

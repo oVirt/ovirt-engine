@@ -134,7 +134,7 @@ public class CreateImageTemplateCommand<T extends CreateImageTemplateParameters>
             if (DbFacade.getInstance().getDiskImageDynamicDAO().get(getDestinationDiskImage().getImageId()) != null) {
                 DbFacade.getInstance().getDiskImageDynamicDAO().remove(getDestinationDiskImage().getImageId());
             }
-            DbFacade.getInstance().getDiskImageDAO().remove(getDestinationImageId());
+            DbFacade.getInstance().getImageDao().remove(getDestinationImageId());
         }
         setSucceeded(true);
     }

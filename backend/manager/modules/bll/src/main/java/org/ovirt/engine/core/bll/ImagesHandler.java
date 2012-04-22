@@ -270,7 +270,7 @@ public final class ImagesHandler {
      */
     public static void addImage(DiskImage image, boolean active, image_storage_domain_map imageStorageDomainMap) {
         image.setactive(active);
-        DbFacade.getInstance().getDiskImageDAO().save(image);
+        DbFacade.getInstance().getImageDao().save(image.getImage());
         DiskImageDynamic diskDynamic = new DiskImageDynamic();
         diskDynamic.setId(image.getImageId());
         diskDynamic.setactual_size(image.getactual_size());
@@ -558,7 +558,7 @@ public final class ImagesHandler {
                     DiskImage image = irsImages.get(i++);
                     if (image.getimageStatus() != ImageStatus.OK) {
                         diskImage.setimageStatus(image.getimageStatus());
-                        DbFacade.getInstance().getDiskImageDAO().update(diskImage);
+                        DbFacade.getInstance().getImageDao().update(diskImage.getImage());
                         returnValue = false;
                         ListUtils.nullSafeAdd(messages, VdcBllMessages.ACTION_TYPE_FAILED_VM_IMAGE_IS_ILLEGAL.toString());
                         break;
@@ -605,7 +605,7 @@ public final class ImagesHandler {
                 .getImageStorageDomainMapDao()
                 .remove(diskImage.getImageId());
         DbFacade.getInstance().getDiskImageDynamicDAO().remove(diskImage.getImageId());
-        DbFacade.getInstance().getDiskImageDAO().remove(diskImage.getImageId());
+        DbFacade.getInstance().getImageDao().remove(diskImage.getImageId());
     }
 
     public static void removeDiskFromVm(Guid vmGuid, Guid diskId) {

@@ -162,7 +162,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
                 _oldDisk.setDiskDescription(getParameters().getDiskInfo().getDiskDescription());
                 _oldDisk.setShareable(getParameters().getDiskInfo().isShareable());
                 DbFacade.getInstance().getBaseDiskDao().update(_oldDisk);
-                getDiskImageDao().update(_oldDisk);
+                getImageDao().update(_oldDisk.getImage());
                 // update cached image
                 VmHandler.updateDisksFromDb(getVm());
                 // update vm device boot order

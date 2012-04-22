@@ -5,7 +5,6 @@ import java.util.List;
 import org.apache.commons.lang.NotImplementedException;
 import org.hibernate.Session;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.images.DiskImageDAOHibernateImpl;
 import org.ovirt.engine.core.dao.images.DiskImageDynamicDAOHibernateImpl;
@@ -78,21 +77,6 @@ public class DiskImageDAOWrapperImpl extends BaseDAOWrapperImpl implements DiskI
     }
 
     @Override
-    public void save(DiskImage image) {
-        imageDAO.save(image);
-    }
-
-    @Override
-    public void update(DiskImage image) {
-        imageDAO.update(image);
-    }
-
-    @Override
-    public void remove(Guid id) {
-        imageDAO.remove(id);
-    }
-
-    @Override
     public void removeAllForVmId(Guid id) {
         imageDAO.removeAllForVmId(id);
     }
@@ -115,11 +99,6 @@ public class DiskImageDAOWrapperImpl extends BaseDAOWrapperImpl implements DiskI
 
     public List<DiskImage> getAllWithQuery(String query) {
         throw new NotImplementedException();
-    }
-
-    @Override
-    public void updateStatus(Guid id, ImageStatus status) {
-        // TODO Auto-generated method stub
     }
 
     public List<DiskImage> getAllAttachableDisksByPoolId(Guid poolId, Guid userId, boolean isFiltered) {

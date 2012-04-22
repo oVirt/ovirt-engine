@@ -27,10 +27,10 @@ import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
+import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
-import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -551,7 +551,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
                 DiskImage disk = list.get(list.size() - 1);
                 snapshotId = disk.getvm_snapshot_id().getValue();
                 disk.setactive(true);
-                DbFacade.getInstance().getDiskImageDAO().update(disk);
+                DbFacade.getInstance().getImageDao().update(disk.getImage());
                 DbFacade.getInstance().getBaseDiskDao().save(disk);
             }
 
@@ -766,7 +766,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
             VmHandler.UnLockVm(getVm().getId());
             for (DiskImage disk : imageList) {
                 DbFacade.getInstance().getDiskImageDynamicDAO().remove(disk.getImageId());
-                DbFacade.getInstance().getDiskImageDAO().remove(disk.getImageId());
+                DbFacade.getInstance().getImageDao().remove(disk.getImageId());
 
                 List<DiskImage> imagesForDisk =
                         DbFacade.getInstance().getDiskImageDAO().getAllSnapshotsForImageGroup(disk.getId());

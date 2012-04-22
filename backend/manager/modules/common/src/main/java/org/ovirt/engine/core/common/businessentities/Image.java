@@ -20,7 +20,7 @@ public class Image implements BusinessEntity<Guid> {
 
     private Date creationDate = new Date();
 
-    private Date lastModified = new Date();
+    private Date lastModified = new Date(0);
 
     private Guid parentId = Guid.Empty;
 

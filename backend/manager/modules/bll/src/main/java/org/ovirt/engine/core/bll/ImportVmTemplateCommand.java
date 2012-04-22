@@ -339,7 +339,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImprotVmT
     protected void RemoveImages() {
         for (DiskImage image : getParameters().getImages()) {
             DbFacade.getInstance().getDiskImageDynamicDAO().remove(image.getImageId());
-            DbFacade.getInstance().getDiskImageDAO().remove(image.getImageId());
+            DbFacade.getInstance().getImageDao().remove(image.getImageId());
             DbFacade.getInstance().getVmDeviceDAO().remove(new VmDeviceId(image.getId(),image.getvm_guid()));
             DbFacade.getInstance().getBaseDiskDao().remove(image.getimage_group_id());
         }

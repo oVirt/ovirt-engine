@@ -72,7 +72,7 @@ public class AttachDiskToVmCommand<T extends UpdateVmDiskParameters> extends Abs
         disk.setboot(getParameters().getDiskInfo().getboot());
         disk.setDiskInterface(getParameters().getDiskInfo().getDiskInterface());
         if (DiskStorageType.IMAGE.equals(disk.getDiskStorageType())) {
-            getDiskImageDao().update((DiskImage) disk);
+            getImageDao().update(((DiskImage) disk).getImage());
         }
         getVmDeviceDao().save(vmDevice);
         // update cached image

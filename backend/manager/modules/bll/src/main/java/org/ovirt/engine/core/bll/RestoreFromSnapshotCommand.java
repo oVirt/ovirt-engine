@@ -41,7 +41,7 @@ public class RestoreFromSnapshotCommand<T extends RestoreFromSnapshotParameters>
         if (RemoveImages()) {
             if (getParameters().getSnapshot().getType() != SnapshotType.REGULAR) {
                 getImage().setactive(true);
-                DbFacade.getInstance().getDiskImageDAO().update(getImage());
+                DbFacade.getInstance().getImageDao().update(getImage().getImage());
             }
 
             setSucceeded(true);

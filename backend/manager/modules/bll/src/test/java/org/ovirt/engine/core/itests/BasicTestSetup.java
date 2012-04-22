@@ -411,7 +411,7 @@ public class BasicTestSetup {
         DB_FACADE.getStorageDomainDynamicDAO().remove(id);
         List<DiskImage> snapshots = DB_FACADE.getDiskImageDAO().getAllSnapshotsForStorageDomain(id);
         for (DiskImage i : snapshots) {
-            DB_FACADE.getDiskImageDAO().remove(i.getImageId());
+            DB_FACADE.getImageDao().remove(i.getImageId());
         }
         DB_FACADE.getStorageDomainStaticDAO().remove(id);
         System.out.println("-- removed storage " + storage.getstorage_name() + " and its snapshots -- ");
