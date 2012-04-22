@@ -12,13 +12,10 @@ public class DiskImageBase extends Disk {
 
     @NotNull(message = "VALIDATION.VOLUME_TYPE.NOT_NULL", groups = { CreateEntity.class, UpdateEntity.class })
     private VolumeType volumeType = VolumeType.Sparse;
-    private boolean boot;
     private long size = 0L;
 
     @NotNull(message = "VALIDATION.VOLUME_FORMAT.NOT_NULL", groups = { CreateEntity.class, UpdateEntity.class })
     private VolumeFormat volumeFormat;
-
-    private Boolean plugged;
 
     /**
      * The quota id the image consumes from.
@@ -67,16 +64,6 @@ public class DiskImageBase extends Disk {
         this.size = value;
     }
 
-    public String getinternal_drive_mapping() {
-        return Integer.toString(getInternalDriveMapping());
-    }
-
-    public void setinternal_drive_mapping(String value) {
-        if (value != null) {
-            setInternalDriveMapping(Integer.parseInt(value));
-        }
-    }
-
     /**
      * disk size in GB
      */
@@ -86,22 +73,6 @@ public class DiskImageBase extends Disk {
 
     public void setSizeInGigabytes(long value) {
         setsize(value * (1024 * 1024 * 1024));
-    }
-
-    public boolean getboot() {
-        return boot;
-    }
-
-    public void setboot(boolean value) {
-        boot = value;
-    }
-
-    public Boolean getPlugged() {
-        return plugged;
-    }
-
-    public void setPlugged(Boolean plugged) {
-        this.plugged = plugged;
     }
 
     public String getQuotaName() {

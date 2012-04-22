@@ -19,6 +19,8 @@ public abstract class Disk extends BaseDisk {
      * The VM Type is indicated by this field, or <code>null</code> if it is detached.
      */
     private VmEntityType vmEntityType;
+    private boolean boot;
+    private Boolean plugged;
 
     public Disk() {
     }
@@ -49,29 +51,62 @@ public abstract class Disk extends BaseDisk {
         this.vmEntityType = vmEntityType;
     }
 
+    public boolean getboot() {
+        return boot;
+    }
+
+    public void setboot(boolean value) {
+        boot = value;
+    }
+
+    public Boolean getPlugged() {
+        return plugged;
+    }
+
+    public void setPlugged(Boolean plugged) {
+        this.plugged = plugged;
+    }
+
+    @Deprecated
+    public String getinternal_drive_mapping() {
+        return Integer.toString(getInternalDriveMapping());
+    }
+
+    @Deprecated
+    public void setinternal_drive_mapping(String value) {
+        if (value != null) {
+            setInternalDriveMapping(Integer.parseInt(value));
+        }
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();
+        result = prime * result + (boot ? 1231 : 1237);
+        result = prime * result + ((plugged == null) ? 0 : plugged.hashCode());
         result = prime * result + ((vmEntityType == null) ? 0 : vmEntityType.hashCode());
         return result;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
+        if (this == obj)
             return true;
-        }
-        if (!super.equals(obj)) {
+        if (!super.equals(obj))
             return false;
-        }
-        if (!(obj instanceof Disk)) {
+        if (getClass() != obj.getClass())
             return false;
-        }
         Disk other = (Disk) obj;
-        if (vmEntityType != other.vmEntityType) {
+        if (boot != other.boot)
             return false;
-        }
+        if (plugged == null) {
+            if (other.plugged != null)
+                return false;
+        } else if (!plugged.equals(other.plugged))
+            return false;
+        if (vmEntityType != other.vmEntityType)
+            return false;
         return true;
     }
 
