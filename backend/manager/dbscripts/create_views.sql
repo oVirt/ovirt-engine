@@ -762,10 +762,11 @@ SELECT vm_images_view.storage_id, vm_images_view.storage_path, vm_images_view.st
        vm_images_view.quota_name, vm_images_view.disk_alias, vm_images_view.disk_description,
        storage_domains_with_hosts_view.id, storage_domains_with_hosts_view.storage, storage_domains_with_hosts_view.storage_name,
        storage_domains_with_hosts_view.available_disk_size, storage_domains_with_hosts_view.used_disk_size,
-       storage_domains_with_hosts_view.commited_disk_size, storage_domains_with_hosts_view.name, storage_domains_with_hosts_view.storage_type,
+       storage_domains_with_hosts_view.commited_disk_size, storage_domains_with_hosts_view.storage_type,
        storage_domains_with_hosts_view.storage_domain_type, storage_domains_with_hosts_view.storage_domain_format_type,
        storage_domains_with_hosts_view.storage_domain_shared_status, storage_domains_with_hosts_view.vds_group_id,
-       storage_domains_with_hosts_view.vds_id, storage_domains_with_hosts_view.recoverable, storage_domains_with_hosts_view.storage_pool_name
+       storage_domains_with_hosts_view.vds_id, storage_domains_with_hosts_view.recoverable, storage_domains_with_hosts_view.storage_pool_name,
+       storage_domains_with_hosts_view.storage_name as name
 
 FROM vm_images_view
 INNER JOIN images_storage_domain_view ON vm_images_view.image_guid = images_storage_domain_view.image_guid
