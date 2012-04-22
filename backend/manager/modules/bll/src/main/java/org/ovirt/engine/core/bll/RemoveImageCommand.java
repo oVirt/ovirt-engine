@@ -144,6 +144,7 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
                     .remove(
                             new image_storage_domain_map_id(getParameters().getImageId(),
                                     getParameters().getStorageDomainId()));
+            UnLockImage();
         }
         setSucceeded(true);
     }
