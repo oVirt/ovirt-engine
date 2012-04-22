@@ -18,7 +18,7 @@ public class GetUserBySessionIdQueryTest extends AbstractUserQueryTest<VdcQueryP
         // Mock the SessionDataContainer
         String sessionID = RandomUtils.instance().nextString(10);
         when(getQueryParameters().getSessionId()).thenReturn(sessionID);
-        SessionDataContainer.getInstance().SetData(sessionID, "VdcUser", getUser());
+        SessionDataContainer.getInstance().setUser(sessionID, getUser());
 
         getQuery().executeQueryCommand();
 

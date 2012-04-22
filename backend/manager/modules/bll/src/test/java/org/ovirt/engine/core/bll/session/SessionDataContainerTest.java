@@ -15,6 +15,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.ovirt.engine.core.common.interfaces.IVdcUser;
 import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DbUserDAO;
@@ -80,6 +81,25 @@ public class SessionDataContainerTest {
         assertEquals("Get should return the value with a given session",
                 TEST_VALUE,
                 SessionDataContainer.getInstance().GetData(TEST_SESSION_ID, TEST_KEY));
+    }
+
+    @Test
+    public void testGetUserAndSetUserWithSessionParam() {
+        IVdcUser user = mock(IVdcUser.class);
+        SessionDataContainer.getInstance().setUser(TEST_SESSION_ID, user);
+        assertEquals("Get should return the value with a given session",
+                user,
+                SessionDataContainer.getInstance().getUser(TEST_SESSION_ID));
+    }
+
+    @Test
+    public void testGetUserAndSetUserWithoutSessionParam() {
+        ThreadLocalParamsContainer.setHttpSessionId(TEST_SESSION_ID);
+        IVdcUser user = mock(IVdcUser.class);
+        SessionDataContainer.getInstance().setUser(user);
+        assertEquals("Get should return the value with a given session",
+                user,
+                SessionDataContainer.getInstance().getUser());
     }
 
     /* Tests for session management */

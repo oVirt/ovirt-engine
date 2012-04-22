@@ -31,7 +31,6 @@ public abstract class AbstractGetEntitiesWithPermittedActionParametersQueryTest<
         when(getQueryParameters().getActionGroup()).thenReturn(actionGroup);
         String sessionID = RandomUtils.instance().nextString(10);
         when(getQueryParameters().getSessionId()).thenReturn(sessionID);
-        SessionDataContainer.getInstance().SetData(sessionID, "VdcUser", getUser());
+        SessionDataContainer.getInstance().setUser(sessionID, getUser());
     }
 }
-

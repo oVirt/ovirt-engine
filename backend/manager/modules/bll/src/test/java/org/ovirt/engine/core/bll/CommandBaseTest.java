@@ -60,7 +60,7 @@ public class CommandBaseTest {
         VdcActionParametersBase paramterMock = mock(VdcActionParametersBase.class);
         when(paramterMock.getSessionId()).thenReturn(session);
 
-        SessionDataContainer.getInstance().SetData(session, "VdcUser", user);
+        SessionDataContainer.getInstance().setUser(session, user);
 
         // Create a command
         CommandBase<VdcActionParametersBase> command = new CommandBaseDummy(paramterMock);

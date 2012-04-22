@@ -31,9 +31,6 @@ import org.ovirt.engine.core.dal.dbbroker.user_sessions;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 
 public abstract class LoginBaseCommand<T extends LoginUserParameters> extends CommandBase<T> {
-
-    private static final String VDC_USER = "VdcUser";
-
     public LoginBaseCommand(T parameters) {
         super(parameters);
     }
@@ -146,8 +143,8 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
     protected boolean attachUserToSession() {
         boolean authenticated = true;
         if (!StringHelper.isNullOrEmpty(getParameters().getSessionId())) {
-            SessionDataContainer.getInstance().SetData(getParameters().getSessionId(), VDC_USER, getCurrentUser());
-        } else if (!SessionDataContainer.getInstance().SetData(VDC_USER, getCurrentUser())) {
+            SessionDataContainer.getInstance().setUser(getParameters().getSessionId(), getCurrentUser());
+        } else if (!SessionDataContainer.getInstance().setUser(getCurrentUser())) {
             addCanDoActionMessage(VdcBllMessages.USER_CANNOT_LOGIN_SESSION_MISSING);
             authenticated = false;
         }

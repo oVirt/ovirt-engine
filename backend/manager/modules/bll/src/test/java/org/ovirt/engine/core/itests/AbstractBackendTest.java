@@ -60,11 +60,11 @@ public abstract class AbstractBackendTest {
                 bootstrap.deployResourceBase(SchedulerUtilQuartzImpl.class);
 
                 SchedulerUtilQuartzImpl.getInstance().create(); // Start is
-                                                               // called as
-                                                               // post
-                                                               // construct is
-                                                               // not activated
-                                                               // upon lookup
+                                                                // called as
+                                                                // post
+                                                                // construct is
+                                                                // not activated
+                                                                // upon lookup
                 // replace this resource manager with a test resource manager
                 // for we wont have real hosts while testing
                 bootstrap.deployResourceBase(VoidResourceManager.class);
@@ -127,7 +127,7 @@ public abstract class AbstractBackendTest {
 
         DbFacade.getInstance().getDbUserDAO().save(dbUser);
 
-        SessionDataContainer.getInstance().SetData(getSessionId(), "VdcUser", vdcUser);
+        SessionDataContainer.getInstance().setUser(getSessionId(), vdcUser);
         ThreadLocalParamsContainer.setHttpSessionId(getSessionId());
         ThreadLocalParamsContainer.setVdcUser(vdcUser);
         user = vdcUser;

@@ -209,6 +209,23 @@ public class SessionDataContainer {
     }
 
     /**
+     * Sets the user for the given session Id
+     * @param sessionId The session to set
+     * @param user The user to set
+     */
+    public final void setUser(String sessionId, IVdcUser user) {
+        SetData(sessionId, VDC_USER_PARAMETER_NAME, user);
+    }
+
+    /**
+     * Sets the user for the current session
+     * @param user The user to set
+     */
+    public final boolean setUser(IVdcUser user) {
+        return SetData(VDC_USER_PARAMETER_NAME, user);
+    }
+
+    /**
      * @param sessionId The session to get the user for
      * @param refresh Whether refreshing the session is needed
      * @return The user set for the given {@link #session}

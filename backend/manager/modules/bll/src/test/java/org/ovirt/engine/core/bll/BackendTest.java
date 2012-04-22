@@ -28,7 +28,7 @@ public class BackendTest {
     @Before
     public void setUp() {
         sessionIdToUse = RandomStringUtils.random(10);
-        SessionDataContainer.getInstance().SetData(sessionIdToUse, "VdcUser", mock(IVdcUser.class));
+        SessionDataContainer.getInstance().setUser(sessionIdToUse, mock(IVdcUser.class));
     }
 
     @After
