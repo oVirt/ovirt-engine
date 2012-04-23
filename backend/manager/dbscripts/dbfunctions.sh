@@ -156,7 +156,7 @@ get_db_time(){
 }
 
 is_view_or_sp_changed() {
-    md5sum create_views.sql create_dwh_views.sql *_sp.sql upgrade/*.sql > .scripts.md5.tmp
+    md5sum create_views.sql create_dwh_views.sql *_sp.sql upgrade/*.sql upgrade/pre_upgrade/*.sql > .scripts.md5.tmp
     diff -s -q .scripts.md5 .scripts.md5.tmp >& /dev/null
     result=$?
 
@@ -194,7 +194,7 @@ run_upgrade_files() {
 
         # Checks if a view or sp file has been changed
         if [ $? -ne 0 ]; then
-            echo "upgrade script detected a change in a View or Stored Procedure..."
+            echo "upgrade script detected a change in Config, View or Stored Procedure..."
             run_pre_upgrade
             updated=1
         fi
