@@ -478,3 +478,43 @@ SELECT __temp_upgrade_remove_default_security_auth('default:GSSAPI');
 SELECT __temp_upgrade_remove_default_security_auth('default:SIMPLE');
 
 DROP FUNCTION __temp_upgrade_remove_default_security_auth(VARCHAR);
+
+
+--- upgrade domains to have a provider type
+
+create or replace function __temp_update_ldap_provier_types()
+RETURNS void
+AS $procedure$
+    DECLARE
+    v_domains text;
+    v_provider_types text;
+    v_temp text;
+    v_values record;
+    boo smallint;
+
+BEGIN
+
+    v_temp := '';
+    v_domains := (SELECT option_value FROM vdc_options where option_name = 'DomainName');
+    v_provider_types := (SELECT option_value FROM vdc_options where option_name = 'LDAPProviderTypes');
+    boo := (SELECT count(*) from regexp_matches(v_provider_types ,'[:]'));
+
+    IF (boo = 0) THEN
+
+        FOR v_values in select regexp_split_to_table(v_domains, ',') as val
+        LOOP
+        v_temp := v_temp || v_values.val || ':GENERAL,';
+        END LOOP;
+
+        v_temp = rtrim(v_temp,',');
+
+        UPDATE vdc_options SET option_value = v_temp where option_name = 'LDAPProviderTypes';
+
+    END IF;
+
+END; $procedure$
+LANGUAGE plpgsql;
+
+SELECT  __temp_update_ldap_provier_types();
+DROP FUNCTION __temp_update_ldap_provier_types();
+--
