@@ -1120,6 +1120,10 @@ public enum ConfigValues {
     @TypeConverterAttribute(String.class)
     LDAPProviderTypes(352),
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("false")
+    AdvancedNFSOptionsEnabled(353),
+
     Invalid(65535);
 
     private int intValue;
