@@ -503,7 +503,7 @@ BEGIN
 
         FOR v_values in select regexp_split_to_table(v_domains, ',') as val
         LOOP
-        v_temp := v_temp || v_values.val || ':GENERAL,';
+        v_temp := v_temp || v_values.val || ':general,';
         END LOOP;
 
         v_temp = rtrim(v_temp,',');
