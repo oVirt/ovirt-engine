@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.NotImplementedException;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
@@ -102,8 +103,7 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
 
     @Override
     public List<DiskImage> getAll() {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource();
-        return getCallsHandler().executeReadList("GetAllFromImages", DiskImageRowMapper.instance, parameterSource);
+        throw new NotImplementedException();
     }
 
     @Override

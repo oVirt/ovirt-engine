@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.businessentities.BaseDisk;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
+import org.ovirt.engine.core.common.businessentities.Image;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
@@ -57,6 +58,7 @@ import org.ovirt.engine.core.dao.DiskImageDynamicDAO;
 import org.ovirt.engine.core.dao.DiskLunMapDao;
 import org.ovirt.engine.core.dao.EventDAO;
 import org.ovirt.engine.core.dao.GenericDao;
+import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.ImageStorageDomainMapDao;
 import org.ovirt.engine.core.dao.InterfaceDAO;
 import org.ovirt.engine.core.dao.JobDao;
@@ -138,6 +140,7 @@ public class DbFacade {
             put(VmDevice.class, VmDeviceDAO.class);
             put(image_storage_domain_map.class, ImageStorageDomainMapDao.class);
             put(permissions.class, PermissionDAO.class);
+            put(Image.class, ImageDao.class);
         }
     };
 
@@ -529,6 +532,15 @@ public class DbFacade {
      */
     public DiskLunMapDao getDiskLunMapDao() {
         return getDAO(DiskLunMapDao.class);
+    }
+
+    /**
+     * Returns the singleton instance of {@link ImageDao}.
+     *
+     * @return the dao
+     */
+    public ImageDao getImageDao() {
+        return getDAO(ImageDao.class);
     }
 
     /**

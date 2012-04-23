@@ -8,6 +8,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.NotImplementedException;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
@@ -143,6 +144,12 @@ public class DiskImageDAOTest extends BaseGenericDaoTestCase<Guid, DiskImage, Di
         assertNotNull(result);
         assertEquals(newImage, result);
         assertTrue(newImage.getactive());
+    }
+
+    @Override
+    @Test(expected = NotImplementedException.class)
+    public void testGetAll() {
+        super.testGetAll();
     }
 
     @Test
