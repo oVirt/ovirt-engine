@@ -1,7 +1,9 @@
-package org.ovirt.engine.core.compat.backendcompat;
+package org.ovirt.engine.core.utils.dns;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+
+import org.ovirt.engine.core.utils.IPAddress;
 
 public class Dns {
 

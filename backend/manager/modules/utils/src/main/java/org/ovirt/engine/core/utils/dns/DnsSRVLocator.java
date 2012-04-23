@@ -1,7 +1,7 @@
 /**
  *
  */
-package org.ovirt.engine.core.dns;
+package org.ovirt.engine.core.utils.dns;
 
 import java.net.URI;
 import java.net.URISyntaxException;

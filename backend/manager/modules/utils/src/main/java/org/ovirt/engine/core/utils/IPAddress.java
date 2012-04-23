@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.compat.backendcompat;
+package org.ovirt.engine.core.utils;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;

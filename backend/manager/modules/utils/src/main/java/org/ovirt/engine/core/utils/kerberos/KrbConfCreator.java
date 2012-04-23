@@ -10,8 +10,8 @@ import java.util.List;
 import java.util.Scanner;
 
 import org.apache.log4j.Logger;
-import org.ovirt.engine.core.dns.DnsSRVLocator.DnsSRVResult;
 import org.ovirt.engine.core.utils.CLIParser;
+import org.ovirt.engine.core.utils.dns.DnsSRVLocator.DnsSRVResult;
 
 /**
  * A tool to create a krb5.conf file from a template using the supplied domain list. For each domain an SRV DNS request

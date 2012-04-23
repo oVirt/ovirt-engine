@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.utils.kerberos;
 
+import org.ovirt.engine.core.utils.dns.DnsSRVLocator;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
-import org.ovirt.engine.core.dns.DnsSRVLocator;
 
 /**
  * KDCs locator helper class. This class is used in order to locate KDCs in the DNS (based on a given realm). For each

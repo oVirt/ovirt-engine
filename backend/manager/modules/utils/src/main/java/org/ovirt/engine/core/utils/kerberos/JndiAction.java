@@ -15,10 +15,10 @@ import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 
 import org.apache.log4j.Logger;
-import org.ovirt.engine.core.dns.DnsSRVLocator.DnsSRVResult;
 import org.ovirt.engine.core.ldap.LdapProviderType;
 import org.ovirt.engine.core.ldap.LdapSRVLocator;
 import org.ovirt.engine.core.ldap.RootDSEData;
+import org.ovirt.engine.core.utils.dns.DnsSRVLocator.DnsSRVResult;
 import org.ovirt.engine.core.utils.ipa.RHDSUserContextMapper;
 
 /**
