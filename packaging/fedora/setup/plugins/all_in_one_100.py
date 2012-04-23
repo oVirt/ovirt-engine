@@ -30,6 +30,7 @@ controller = None
 
 # Plugin name
 PLUGIN_NAME = "AIO"
+PLUGIN_NAME_COLORED = utils.getColoredText(PLUGIN_NAME, basedefs.BLUE)
 
 # INFO Messages
 INFO_CONF_PARAMS_ALL_IN_ONE_USAGE = "Configure all in one"
@@ -142,7 +143,7 @@ def initConfig(controllerObject):
 
 def initSequences(controller):
     logging.debug("Setting the Sequences for VDSM all in one installation")
-    cpuSteps =  [{ 'title' : "%s: Validating CPU Compatibility" % PLUGIN_NAME,
+    cpuSteps =  [{ 'title' : "%s: Validating CPU Compatibility" % PLUGIN_NAME_COLORED,
                     'functions' : [startLibvirt, getSupportedCpus, getCPUFamily] } ]
     logging.debug("Setting sequence to validate cpu")
     controller.insertSequenceBeforeSequence("Initial Steps",
@@ -153,13 +154,13 @@ def initSequences(controller):
 
 
     # Main AIO sequences
-    aioSteps = [ { 'title'     : "%s: Creating storage directory" % PLUGIN_NAME,
+    aioSteps = [ { 'title'     : "%s: Creating storage directory" % PLUGIN_NAME_COLORED,
                    'functions' : [makeStorageDir] },
-                 { 'title'     : "%s: Adding Local Datacenter and cluster" % PLUGIN_NAME,
+                 { 'title'     : "%s: Adding Local Datacenter and cluster" % PLUGIN_NAME_COLORED,
                    'functions' : [waitForJbossUp, initAPI, createDC, createCluster]},
-                 { 'title'     : "%s: Adding Local host (This may take several minutes)" % PLUGIN_NAME,
+                 { 'title'     : "%s: Adding Local host (This may take several minutes)" % PLUGIN_NAME_COLORED,
                    'functions' : [createHost, waitForHostUp]},
-                 { 'title'     : "%s: Adding Local storage (This may take several minutes)" % PLUGIN_NAME,
+                 { 'title'     : "%s: Adding Local storage (This may take several minutes)" % PLUGIN_NAME_COLORED,
                    'functions' : [addStorageDomain]} ]
     logging.debug("Adding sequence to create host")
     controller.addSequence("Local host", [controller.CONF["CONFIG_ALLINONE"]], ["yes"], aioSteps)

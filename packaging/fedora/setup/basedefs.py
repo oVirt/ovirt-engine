@@ -170,6 +170,8 @@ BLUE="\033[94m"
 YELLOW="\033[93m"
 NO_COLOR="\033[0m"
 
+COLORS = (RED, GREEN, BLUE, YELLOW, NO_COLOR)
+
 #space len size for color print
 SPACE_LEN=70
 

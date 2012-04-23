@@ -4,6 +4,7 @@ Base class for steps & sequences
 import logging
 import sys
 import re
+import string
 import basedefs
 import output_messages
 import common_utils as utils
@@ -46,6 +47,9 @@ class Step(object):
         alignedTitle = self.getTitle()
         if re.search('\n', alignedTitle):
             alignedTitle = self.getTitle().split('\n')[-1]
+        for color in basedefs.COLORS:
+            if color in alignedTitle:
+                alignedTitle = string.replace(alignedTitle, color, '')
         spaceLen = basedefs.SPACE_LEN - len(alignedTitle)
         print "%s..."%(self.getTitle()),
         sys.stdout.flush()
