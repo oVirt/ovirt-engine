@@ -71,7 +71,7 @@ public class Version implements Comparable<Version>, Serializable {
     }
 
     public void setValue(String value) {
-        if (value == null || value.isEmpty()) {
+        if (value == null || value.isEmpty() || value.equals("*")) {
             major = minor = build = revision = -1;
         } else {
             String[] partialVersions = value.split("\\.");
