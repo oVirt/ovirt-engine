@@ -14,7 +14,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 /** A test case for the {@link IsVmWithSameNameExistQuery} class. */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(VmHandler.class)
-public class IsVmWithSameNameExistQueryTest extends AbstractQueryTest<IsVmWithSameNameExistParameters, IsVmWithSameNameExistQuery<IsVmWithSameNameExistParameters>> {
+public class IsVmWithSameNameExistQueryTest extends AbstractUserQueryTest<IsVmWithSameNameExistParameters, IsVmWithSameNameExistQuery<IsVmWithSameNameExistParameters>> {
 
     @Test
     public void testExecuteQuery() {

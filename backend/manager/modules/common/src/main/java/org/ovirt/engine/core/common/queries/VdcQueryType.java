@@ -5,7 +5,7 @@ import java.io.Serializable;
 @SuppressWarnings("unused")
 public enum VdcQueryType implements Serializable {
     // VM queries
-    IsVmWithSameNameExist,
+    IsVmWithSameNameExist(VdcQueryAuthType.User),
     GetImportCandidates,
     GetImportCandidatesInfo,
     GetAllImportCandidatesInfo,
