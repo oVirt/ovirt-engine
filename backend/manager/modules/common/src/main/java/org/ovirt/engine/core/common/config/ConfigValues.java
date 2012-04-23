@@ -1162,6 +1162,9 @@ public enum ConfigValues {
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("16")
     WANColorDepth(363),
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("3")
+    VmPoolMaxSubsequentFailures(364),
 
     Invalid(65535);
 

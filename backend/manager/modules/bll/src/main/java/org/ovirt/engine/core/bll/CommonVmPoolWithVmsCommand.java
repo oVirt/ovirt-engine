@@ -10,6 +10,7 @@ import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddVmAndAttachToPoolParameters;
 import org.ovirt.engine.core.common.action.AddVmPoolWithVmsParameters;
@@ -34,6 +35,8 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogField;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
@@ -122,6 +125,8 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
                 getCompensationContext());
 
         String vmName = getParameters().getVmStaticData().getvm_name();
+        int subsequentFailedAttempts=0;
+        int vmPoolMaxSubsequentFailures = Config.<Integer>GetValue(ConfigValues.VmPoolMaxSubsequentFailures);
         for (int i = 1, number = 1; i <= getParameters().getVmsCount(); i++, number++) {
             String currentVmName;
             number--;
@@ -150,8 +155,16 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
                     }
                 }
                 _addVmsSucceded = returnValue.getSucceeded() && _addVmsSucceded;
+                subsequentFailedAttempts++;
             }
-
+            else { // Succeed on that , reset subsequentFailedAttempts.
+                subsequentFailedAttempts=0;
+            }
+            // if subsequent attempts failure exceeds configuration value , abort the loop.
+            if (subsequentFailedAttempts == vmPoolMaxSubsequentFailures) {
+                logSubsequentFailedAttempts(subsequentFailedAttempts, i-1);
+                break;
+            }
             isAtLeastOneVMCreationFailed = isAtLeastOneVMCreationFailed || !_addVmsSucceded;
         }
         getReturnValue().setCanDoAction(!isAtLeastOneVMCreationFailed);
@@ -335,6 +348,14 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
 
     private int getBlockSparseInitSizeInGB() {
         return Config.<Integer> GetValue(ConfigValues.InitStorageSparseSizeInGB).intValue();
+    }
+
+    private void logSubsequentFailedAttempts(int subsequentFailedAttempts, int createdVms) {
+        AuditLogableBase logable = new AuditLogableBase();
+        logable.AddCustomValue("Attempts", String.valueOf(subsequentFailedAttempts));
+        logable.AddCustomValue("Num", String.valueOf(createdVms));
+        logable.AddCustomValue("Total", String.valueOf(getParameters().getVmsCount()));
+        AuditLogDirector.log(logable, AuditLogType.USER_VM_POOL_MAX_SUBSEQUENT_FAILURES_REACHED);
     }
 
     protected boolean getAddVmsSucceded() {

@@ -429,6 +429,8 @@ select fn_db_add_config_value('VM64BitMaxMemorySizeInMB','524288','3.1');
 select fn_db_add_config_value('VmGracefulShutdownMessage','The oVirt Engine is shutting down this Virtual Machine','general');
 select fn_db_add_config_value('VmGracefulShutdownTimeout','30','general');
 select fn_db_add_config_value('VMMinMemorySizeInMB','256','general');
+--Number of subsequent failures in VM creation in a pool before giving up and stop creating new VMs
+select fn_db_add_config_value('VmPoolMaxSubsequentFailures','3','general');
 select fn_db_add_config_value('VmPoolMonitorBatchSize','5','general');
 select fn_db_add_config_value('VmPoolMonitorIntervalInMinutes','5','general');
 select fn_db_add_config_value('VmPoolMonitorMaxAttempts','3','general');

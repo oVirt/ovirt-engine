@@ -144,6 +144,7 @@ public final class AuditLogDirector {
         mSeverities.put(AuditLogType.USER_UPDATE_USER_TO_TIME_LEASED_POOL, AuditLogSeverity.NORMAL);
         mSeverities.put(AuditLogType.USER_UPDATE_USER_TO_TIME_LEASED_POOL_FAILED, AuditLogSeverity.ERROR);
         mSeverities.put(AuditLogType.USER_UPDATE_VM_POOL_WITH_VMS_FAILED, AuditLogSeverity.ERROR);
+        mSeverities.put(AuditLogType.USER_VM_POOL_MAX_SUBSEQUENT_FAILURES_REACHED, AuditLogSeverity.WARNING);
     }
 
     private static void initMLASeverities() {
