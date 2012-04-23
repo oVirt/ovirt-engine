@@ -16,18 +16,18 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 public class GetStorageDomainsByVmTemplateIdQuery<P extends GetStorageDomainsByVmTemplateIdQueryParameters>
         extends GetVmTemplatesDisksQuery<P> {
 
-    private VmTemplate vmTemplate;
+    private VmTemplate vmTemplate = null;
 
     public GetStorageDomainsByVmTemplateIdQuery(P parameters) {
         super(parameters);
-        vmTemplate =
-                DbFacade.getInstance()
-                        .getVmTemplateDAO()
-                        .get(getParameters().getId(), getUserID(), getParameters().isFiltered());
     }
 
     @Override
     protected void executeQueryCommand() {
+        vmTemplate =
+                DbFacade.getInstance()
+                        .getVmTemplateDAO()
+                        .get(getParameters().getId(), getUserID(), getParameters().isFiltered());
         ArrayList<storage_domains> result = new ArrayList<storage_domains>();
 
         if (vmTemplate != null && vmTemplate.getstorage_pool_id() != null) {
