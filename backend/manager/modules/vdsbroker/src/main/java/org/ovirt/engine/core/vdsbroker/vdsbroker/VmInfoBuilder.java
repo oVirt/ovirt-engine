@@ -272,6 +272,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                 }
 
                 addBootOrder(vmDevice, struct);
+                struct.add(VdsProperties.Shareable, String.valueOf(disk.isShareable()));
                 struct.add(VdsProperties.PropagateErrors, disk.getPropagateErrors().toString()
                         .toLowerCase());
                 struct.add(VdsProperties.Optional, Boolean.FALSE.toString());

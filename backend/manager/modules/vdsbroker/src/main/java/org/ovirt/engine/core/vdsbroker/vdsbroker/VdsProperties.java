@@ -203,6 +203,7 @@ public final class VdsProperties {
     public static final String ImageId = "imageID";
     public static final String VolumeId = "volumeID";
     public static final String Format = "format";
+    public static final String Shareable = "shared";
     public static final String SpecParams = "specParams";
     public static final String Address = "address";
     public static final String PropagateErrors = "propagateErrors";
