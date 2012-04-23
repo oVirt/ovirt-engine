@@ -67,8 +67,7 @@ public class OvfTemplateReader extends OvfReader {
             // Image
             case 17:
                 final Guid guid = new Guid(node.SelectSingleNode("rasd:InstanceId", _xmlNS).InnerText);
-                // DiskImage image = null; //LINQ _images.FirstOrDefault(img =>
-                // img.image_guid == guid);
+
                 DiskImage image = LinqUtils.firstOrNull(_images, new Predicate<DiskImage>() {
                     @Override
                     public boolean eval(DiskImage diskImage) {

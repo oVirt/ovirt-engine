@@ -70,8 +70,7 @@ public class OvfVmReader extends OvfReader {
                         Integer.parseInt(node.SelectSingleNode("rasd:VirtualQuantity", _xmlNS).InnerText));
             } else if (StringHelper.EqOp(resourceType, OvfHardware.DiskImage)) {
                 final Guid guid = new Guid(node.SelectSingleNode("rasd:InstanceId", _xmlNS).InnerText);
-                // DiskImage image = null; //LINQ _images.FirstOrDefault(img =>
-                // img.image_guid == guid);
+
                 DiskImage image = LinqUtils.firstOrNull(_images, new Predicate<DiskImage>() {
                     @Override
                     public boolean eval(DiskImage diskImage) {
@@ -383,6 +382,7 @@ public class OvfVmReader extends OvfReader {
         }
     }
 
+    @Override
     protected void buildNicReference() {
     }
 }

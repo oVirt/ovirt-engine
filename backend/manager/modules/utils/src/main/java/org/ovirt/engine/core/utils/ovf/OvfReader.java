@@ -85,8 +85,7 @@ public abstract class OvfReader implements IOvfBuilder {
         XmlNodeList list = _document.SelectNodes("//*/Section/Disk");
         for (XmlNode node : list) {
             final Guid guid = new Guid(node.Attributes.get("ovf:diskId").getValue());
-            // DiskImage image = null; //LINQ _images.FirstOrDefault(img =>
-            // img.image_guid == guid);
+
             DiskImage image = LinqUtils.firstOrNull(_images, new Predicate<DiskImage>() {
                 @Override
                 public boolean eval(DiskImage diskImage) {

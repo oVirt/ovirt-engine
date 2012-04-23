@@ -114,14 +114,11 @@ public abstract class OvfWriter implements IOvfBuilder {
             if (image.getParentId().equals(Guid.Empty)) {
                 _writer.WriteAttributeString("ovf", "parentRef", null, "");
             } else {
-                // LINQ 29456
-                // List<DiskImage> res = _images.SkipWhile(img => image.ParentId
-                // == img.image_guid).ToList();
                 int i = 0;
                 while (_images.get(i).getImageId().equals(image.getParentId()))
                     i++;
                 List<DiskImage> res = _images.subList(i, _images.size() - 1);
-                // LINQ 29456
+
                 if (res.size() > 0) {
                     _writer.WriteAttributeString("ovf", "parentRef", null, OvfParser.CreateImageFile(res.get(0)));
                 } else {
