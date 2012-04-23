@@ -20,6 +20,7 @@
 		<include name="common/businessentities/DiskLunMapId.java" />
 		<include name="common/businessentities/Disk.java" />
 		<include name="common/businessentities/LunDisk.java" />
+		<include name="common/businessentities/Image.java" />
 		<include name="common/businessentities/DiskImage.java" />
 		<include name="common/businessentities/DiskImageBase.java" />
 		<include name="common/businessentities/DiskImageDynamic.java" />
