@@ -107,7 +107,6 @@ public class DataCenterNetworkModel extends NetworkModel
 
     public DataCenterNetworkModel()
     {
-        super();
         setClusterTreeNodes(new java.util.ArrayList<SelectionTreeNodeModel>());
         setOriginalClusters(new java.util.ArrayList<VDSGroup>());
         setIsEnabled(new EntityModel());
@@ -115,4 +114,5 @@ public class DataCenterNetworkModel extends NetworkModel
         setDetachAllAvailable(new EntityModel());
         getDetachAllAvailable().setEntity(false);
     }
+
 }

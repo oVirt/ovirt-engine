@@ -121,20 +121,20 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Description")
     String clusterNewNetworkDescriptionLabel();
 
-    @DefaultStringValue("STP support")
-    String clusterNewNetworkPopupStpEnabledLabel();
-
     @DefaultStringValue("VM network")
     String clusterNewNetworkPopupVmNetworkLabel();
-
-    @DefaultStringValue("MTU")
-    String clusterNewNetworkPopupMtuLabel();
 
     @DefaultStringValue("Enable VLAN tagging")
     String clusterNewNetworkPopupVlanEnabledLabel();
 
     @DefaultStringValue("VLAN tag")
-    String clusterNewNetworkPopupVlanIdLabel();
+    String clusterNewNetworkPopupVlanTagLabel();
+
+    @DefaultStringValue("Override MTU")
+    String clusterNewNetworkPopupMtuEnabledLabel();
+
+    @DefaultStringValue("MTU")
+    String clusterNewNetworkPopupMtuLabel();
 
     @DefaultStringValue("Networks")
     String clusterManageNetworkPopupLabel();
@@ -157,11 +157,14 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Description")
     String dataCenterPopupDescriptionLabel();
 
-    @DefaultStringValue("STP Support")
-    String dataCenterPopupStpSupportLabel();
+    @DefaultStringValue("VM network")
+    String dataCenterPopupVmNetworkLabel();
 
     @DefaultStringValue("Enable VLAN tagging")
-    String dataCenterPopupEnableVlanTaggLabel();
+    String dataCenterPopupEnableVlanTagLabel();
+
+    @DefaultStringValue("Override MTU")
+    String dataCenterPopupEnableMtuLabel();
 
     @DefaultStringValue("Type")
     String dataCenterPopupStorageTypeLabel();

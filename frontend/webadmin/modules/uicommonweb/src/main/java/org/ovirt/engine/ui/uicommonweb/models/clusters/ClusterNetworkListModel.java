@@ -397,6 +397,14 @@ public class ClusterNetworkListModel extends SearchableListModel
         network.setname((String) model.getName().getEntity());
         network.setstp((Boolean) model.getIsStpEnabled().getEntity());
         network.setdescription((String) model.getDescription().getEntity());
+        network.setVmNetwork((Boolean) model.getIsVmNetwork().getEntity());
+
+        network.setMtu(0);
+        if (model.getMtu().getEntity() != null)
+        {
+            network.setMtu(Integer.parseInt(model.getMtu().getEntity().toString()));
+        }
+
         network.setvlan_id(null);
         if ((Boolean) model.getHasVLanTag().getEntity())
         {

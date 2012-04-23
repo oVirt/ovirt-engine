@@ -1,20 +1,11 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.datacenter;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.ovirt.engine.core.compat.Event;
-import org.ovirt.engine.core.compat.EventArgs;
-import org.ovirt.engine.core.compat.IEventListener;
-import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogButton;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
-import org.ovirt.engine.ui.uicommonweb.UICommand;
-import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.common.SelectionTreeNodeModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterNetworkModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -26,13 +17,11 @@ import org.ovirt.engine.ui.webadmin.widget.editor.EntityModelCellTree;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.inject.Inject;
 
 public class DataCenterNetworkPopupView extends AbstractModelBoundPopupView<DataCenterNetworkModel> implements DataCenterNetworkPopupPresenterWidget.ViewDef {
@@ -66,8 +55,8 @@ public class DataCenterNetworkPopupView extends AbstractModelBoundPopupView<Data
     EntityModelTextBoxEditor descriptionEditor;
 
     @UiField(provided = true)
-    @Path(value = "isStpEnabled.entity")
-    EntityModelCheckBoxEditor stpSupport;
+    @Path(value = "isVmNetwork.entity")
+    EntityModelCheckBoxEditor isVmNetworkEditor;
 
     @UiField(provided = true)
     @Path(value = "hasVLanTag.entity")
@@ -76,6 +65,14 @@ public class DataCenterNetworkPopupView extends AbstractModelBoundPopupView<Data
     @UiField
     @Path(value = "vLanTag.entity")
     EntityModelTextBoxEditor vlanTag;
+
+    @UiField(provided = true)
+    @Path(value = "hasMtu.entity")
+    EntityModelCheckBoxEditor hasMtuEditor;
+
+    @UiField
+    @Path(value = "mtu.entity")
+    EntityModelTextBoxEditor mtuEditor;
 
     @UiField
     @Ignore
@@ -92,93 +89,29 @@ public class DataCenterNetworkPopupView extends AbstractModelBoundPopupView<Data
     @Inject
     public DataCenterNetworkPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
         super(eventBus, resources);
-        stpSupport = new EntityModelCheckBoxEditor(Align.RIGHT);
+        isVmNetworkEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         vlanTagging = new EntityModelCheckBoxEditor(Align.RIGHT);
-        initListBoxEditors();
+        hasMtuEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         localize(constants);
         // detachAll.setVisible(false);
         Driver.driver.initialize(this);
     }
 
+    void localize(ApplicationConstants constants) {
+        mainLabel.setText(constants.dataCenterNetworkPopupLabel());
+        subLabel.setText(constants.dataCenterNetworkPopupSubLabel());
+        assignLabel.setText(constants.dataCenterNetworkPopupAssignLabel());
+        nameEditor.setLabel(constants.dataCenterPopupNameLabel());
+        descriptionEditor.setLabel(constants.dataCenterPopupDescriptionLabel());
+        isVmNetworkEditor.setLabel(constants.dataCenterPopupVmNetworkLabel());
+        vlanTagging.setLabel(constants.dataCenterPopupEnableVlanTagLabel());
+        hasMtuEditor.setLabel(constants.dataCenterPopupEnableMtuLabel());
+    }
+
     @Override
     public void edit(DataCenterNetworkModel object) {
         Driver.driver.edit(object);
-
-        final UICommand detachAllCommand = object.getDetachAllCommand();
-        vlanTag.setEnabled((Boolean) object.getHasVLanTag().getEntity());
-
-        // Listen to Properties
-        object.getPropertyChangedEvent().addListener(new IEventListener() {
-
-            @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                DataCenterNetworkModel model = (DataCenterNetworkModel) sender;
-                String propertyName = ((PropertyChangedEventArgs) args).PropertyName;
-                if ("ClusterTreeNodes".equals(propertyName)) { //$NON-NLS-1$
-                    // update tree data
-                    ArrayList<SelectionTreeNodeModel> clusterTreeNodes = model.getClusterTreeNodes();
-                    @SuppressWarnings("unchecked")
-                    ModelListTreeViewModel<SelectionTreeNodeModel, SimpleSelectionTreeNodeModel> modelListTreeViewModel =
-                            (ModelListTreeViewModel<SelectionTreeNodeModel, SimpleSelectionTreeNodeModel>) tree.getTreeViewModel();
-                    List<SimpleSelectionTreeNodeModel> rootNodes =
-                            SimpleSelectionTreeNodeModel.fromList(clusterTreeNodes);
-                    modelListTreeViewModel.setRoot(rootNodes);
-                    AsyncDataProvider<SimpleSelectionTreeNodeModel> asyncTreeDataProvider =
-                            modelListTreeViewModel.getAsyncTreeDataProvider();
-                    asyncTreeDataProvider.updateRowCount(rootNodes.size(), true);
-                    asyncTreeDataProvider.updateRowData(0, rootNodes);
-                }
-                if ("Message".equals(propertyName)) { //$NON-NLS-1$
-                    messageLabel.setText(model.getMessage());
-                }
-            }
-        });
-
-        // Listen to "IsEnabled" property
-        object.getIsEnabled().getEntityChangedEvent().addListener(new IEventListener() {
-
-            @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                EntityModel entity = (EntityModel) sender;
-                if (!(Boolean) entity.getEntity()) {
-                    nameEditor.setEnabled(false);
-                    descriptionEditor.setEnabled(false);
-                    stpSupport.setEnabled(false);
-                    vlanTagging.setEnabled(false);
-                    vlanTag.setEnabled(false);
-                }
-            }
-        });
-
-        // Listen to "DetachAllAvailable" property
-        object.getDetachAllAvailable().getEntityChangedEvent().addListener(new IEventListener() {
-
-            @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                EntityModel entity = (EntityModel) sender;
-                detachAll.setVisible((Boolean) entity.getEntity());
-            }
-        });
-
-        // Listen to "HasVLanTag" property
-        object.getHasVLanTag().getEntityChangedEvent().addListener(new IEventListener() {
-
-            @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                EntityModel entity = (EntityModel) sender;
-                vlanTag.setEnabled((Boolean) entity.getEntity());
-            }
-        });
-
-        detachAll.addClickHandler(new ClickHandler() {
-
-            @Override
-            public void onClick(ClickEvent event) {
-                detachAllCommand.Execute();
-            }
-        });
-
     }
 
     @Override
@@ -191,17 +124,43 @@ public class DataCenterNetworkPopupView extends AbstractModelBoundPopupView<Data
         nameEditor.setFocus(true);
     }
 
-    void initListBoxEditors() {
+    @Override
+    public void setVLanTagEnabled(boolean flag) {
+        vlanTag.setEnabled(flag);
     }
 
-    void localize(ApplicationConstants constants) {
-        mainLabel.setText(constants.dataCenterNetworkPopupLabel());
-        subLabel.setText(constants.dataCenterNetworkPopupSubLabel());
-        assignLabel.setText(constants.dataCenterNetworkPopupAssignLabel());
-        nameEditor.setLabel(constants.dataCenterPopupNameLabel());
-        descriptionEditor.setLabel(constants.dataCenterPopupDescriptionLabel());
-        stpSupport.setLabel(constants.dataCenterPopupStpSupportLabel());
-        vlanTagging.setLabel(constants.dataCenterPopupEnableVlanTaggLabel());
+    @Override
+    public void setMtuEnabled(boolean flag) {
+        mtuEditor.setEnabled(flag);
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public ModelListTreeViewModel<SelectionTreeNodeModel, SimpleSelectionTreeNodeModel> getTreeViewModel() {
+        return (ModelListTreeViewModel<SelectionTreeNodeModel, SimpleSelectionTreeNodeModel>) tree.getTreeViewModel();
+    }
+
+    @Override
+    public void setMessageLabel(String label) {
+        messageLabel.setText(label);
+    }
+
+    @Override
+    public void disableInputFields() {
+        nameEditor.setEnabled(false);
+        descriptionEditor.setEnabled(false);
+        vlanTagging.setEnabled(false);
+        vlanTag.setEnabled(false);
+    }
+
+    @Override
+    public void setDetachAllVisible(boolean visible) {
+        detachAll.setVisible(visible);
+    }
+
+    @Override
+    public HasClickHandlers getDetachAll() {
+        return detachAll;
     }
 
 }

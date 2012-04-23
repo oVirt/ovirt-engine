@@ -44,9 +44,11 @@
 						<g:Label ui:field="subLabel" addStyleNames="{style.subLabel}" />
 						<e:EntityModelTextBoxEditor ui:field="nameEditor" />
 						<e:EntityModelTextBoxEditor ui:field="descriptionEditor" />
-						<e:EntityModelCheckBoxEditor ui:field="stpSupport" addStyleNames="{style.checkbox}" />
+						<e:EntityModelCheckBoxEditor ui:field="isVmNetworkEditor" addStyleNames="{style.checkbox}" />
 						<e:EntityModelCheckBoxEditor ui:field="vlanTagging" addStyleNames="{style.checkbox}" />
 						<e:EntityModelTextBoxEditor ui:field="vlanTag" addStyleNames="{style.tag}" />
+						<e:EntityModelCheckBoxEditor ui:field="hasMtuEditor" addStyleNames="{style.checkbox}" />
+						<e:EntityModelTextBoxEditor ui:field="mtuEditor" addStyleNames="{style.tag}" />
 					</g:FlowPanel>
 				</g:center>
 				<g:east size="50">

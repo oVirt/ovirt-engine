@@ -34,9 +34,13 @@ public class SubnetMaskValidation implements IValidation
         if (!ipValidation.getSuccess()) {
             return ipValidation;
         }
+
         ValidationResult result = new ValidationResult();
-        result.setSuccess(validateNetMask((String) value));
-        result.setReasons(reasons);
+        if (value != null && value instanceof String) {
+            result.setSuccess(validateNetMask((String) value));
+            result.setReasons(reasons);
+        }
+
         return result;
     }
 

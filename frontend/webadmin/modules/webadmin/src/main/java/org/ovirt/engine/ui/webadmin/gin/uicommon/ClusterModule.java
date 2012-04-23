@@ -28,7 +28,7 @@ import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.ReportPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.PermissionsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ClusterManageNetworkPopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ClusterNewNetworkPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ClusterNetworkPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ClusterPolicyPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ClusterPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.guide.GuidePopupPresenterWidget;
@@ -118,7 +118,7 @@ public class ClusterModule extends AbstractGinModule {
     @Provides
     @Singleton
     public SearchableDetailModelProvider<network, ClusterListModel, ClusterNetworkListModel> getClusterNetworkListProvider(ClientGinjector ginjector,
-            final Provider<ClusterNewNetworkPopupPresenterWidget> popupProvider,
+            final Provider<ClusterNetworkPopupPresenterWidget> popupProvider,
             final Provider<ClusterManageNetworkPopupPresenterWidget> managePopupProvider) {
         return new SearchableDetailTabModelProvider<network, ClusterListModel, ClusterNetworkListModel>(ginjector,
                 ClusterListModel.class,

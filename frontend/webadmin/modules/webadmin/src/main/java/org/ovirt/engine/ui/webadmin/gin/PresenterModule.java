@@ -17,7 +17,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.DetachConfirmat
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.PermissionsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.bookmark.BookmarkPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ClusterManageNetworkPopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ClusterNewNetworkPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ClusterNetworkPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ClusterPolicyPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ClusterPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.configure.ConfigurePopupPresenterWidget;
@@ -168,7 +168,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.DetachConfirmationPo
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.PermissionsPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.bookmark.BookmarkPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.cluster.ClusterManageNetworkPopupView;
-import org.ovirt.engine.ui.webadmin.section.main.view.popup.cluster.ClusterNewNetworkPopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.cluster.ClusterNetworkPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.cluster.ClusterPolicyPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.cluster.ClusterPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.configure.ConfigurePopupView;
@@ -754,9 +754,9 @@ public class PresenterModule extends BasePresenterModule {
                 DataCenterNetworkPopupView.class);
 
         // Cluster
-        bindPresenterWidget(ClusterNewNetworkPopupPresenterWidget.class,
-                ClusterNewNetworkPopupPresenterWidget.ViewDef.class,
-                ClusterNewNetworkPopupView.class);
+        bindPresenterWidget(ClusterNetworkPopupPresenterWidget.class,
+                ClusterNetworkPopupPresenterWidget.ViewDef.class,
+                ClusterNetworkPopupView.class);
 
         bindPresenterWidget(ClusterManageNetworkPopupPresenterWidget.class,
                 ClusterManageNetworkPopupPresenterWidget.ViewDef.class,

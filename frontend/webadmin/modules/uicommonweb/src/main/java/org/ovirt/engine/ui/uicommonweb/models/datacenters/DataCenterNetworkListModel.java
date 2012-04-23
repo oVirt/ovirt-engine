@@ -242,6 +242,10 @@ public class DataCenterNetworkListModel extends SearchableListModel implements I
         networkModel.getIsStpEnabled().setEntity(network.getstp());
         networkModel.getHasVLanTag().setEntity(network.getvlan_id() != null);
         networkModel.getVLanTag().setEntity((network.getvlan_id() == null ? 0 : network.getvlan_id()));
+        networkModel.getHasMtu().setEntity(network.getMtu() != 0);
+        networkModel.getMtu().setEntity(network.getMtu() != 0 ? String.valueOf(network.getMtu()) : "");
+        networkModel.getIsVmNetwork().setEntity(network.isVmNetwork());
+
         networkModel.setDetachAllCommand(new UICommand("DetachClusters", this)); //$NON-NLS-1$
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);
@@ -359,8 +363,15 @@ public class DataCenterNetworkListModel extends SearchableListModel implements I
         model.getcurrentNetwork().setname((String) model.getName().getEntity());
         model.getcurrentNetwork().setstp((Boolean) model.getIsStpEnabled().getEntity());
         model.getcurrentNetwork().setdescription((String) model.getDescription().getEntity());
-        model.getcurrentNetwork().setvlan_id(null);
+        model.getcurrentNetwork().setVmNetwork((Boolean) model.getIsVmNetwork().getEntity());
 
+        model.getcurrentNetwork().setMtu(0);
+        if (model.getMtu().getEntity() != null)
+        {
+            model.getcurrentNetwork().setMtu(Integer.parseInt(model.getMtu().getEntity().toString()));
+        }
+
+        model.getcurrentNetwork().setvlan_id(null);
         if ((Boolean) model.getHasVLanTag().getEntity())
         {
             model.getcurrentNetwork().setvlan_id(Integer.parseInt(model.getVLanTag().getEntity().toString()));

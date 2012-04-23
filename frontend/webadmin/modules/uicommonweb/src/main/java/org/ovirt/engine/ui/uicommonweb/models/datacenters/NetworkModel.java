@@ -123,6 +123,42 @@ public class NetworkModel extends Model
         privateHasVLanTag = value;
     }
 
+    private EntityModel privateHasMtu;
+
+    public EntityModel getHasMtu()
+    {
+        return privateHasMtu;
+    }
+
+    private void setHasMtu(EntityModel value)
+    {
+        privateHasMtu = value;
+    }
+
+    private EntityModel privateMtu;
+
+    public EntityModel getMtu()
+    {
+        return privateMtu;
+    }
+
+    private void setMtu(EntityModel value)
+    {
+        privateMtu = value;
+    }
+
+    private EntityModel privateIsVmNetwork;
+
+    public EntityModel getIsVmNetwork()
+    {
+        return privateIsVmNetwork;
+    }
+
+    private void setIsVmNetwork(EntityModel value)
+    {
+        privateIsVmNetwork = value;
+    }
+
     public NetworkModel()
     {
         setName(new EntityModel());
@@ -137,14 +173,13 @@ public class NetworkModel extends Model
         EntityModel tempVar2 = new EntityModel();
         tempVar2.setEntity(false);
         setHasVLanTag(tempVar2);
-    }
-
-    private void HasVLanTagChanged()
-    {
-        if (!(Boolean) getHasVLanTag().getEntity())
-        {
-            getVLanTag().setIsValid(true);
-        }
+        setMtu(new EntityModel());
+        EntityModel tempVar3 = new EntityModel();
+        tempVar3.setEntity(false);
+        setHasMtu(tempVar3);
+        EntityModel tempVar4 = new EntityModel();
+        tempVar4.setEntity(true);
+        setIsVmNetwork(tempVar4);
     }
 
     public boolean Validate()
@@ -177,7 +212,17 @@ public class NetworkModel extends Model
             getVLanTag().ValidateEntity(new IValidation[] { new NotEmptyValidation(), tempVar4 });
         }
 
+        getMtu().setIsValid(true);
+        if ((Boolean) getHasMtu().getEntity())
+        {
+            IntegerValidation tempVar5 = new IntegerValidation();
+            tempVar5.setMinimum(68);
+            tempVar5.setMaximum(9000);
+            getMtu().ValidateEntity(new IValidation[] { new NotEmptyValidation(), tempVar5 });
+        }
+
         return getName().getIsValid() && getAddress().getIsValid() && getSubnet().getIsValid()
-                && getGateway().getIsValid() && getVLanTag().getIsValid() && getDescription().getIsValid();
+                && getGateway().getIsValid() && getVLanTag().getIsValid() && getDescription().getIsValid() && getMtu().getIsValid();
     }
+
 }

@@ -16,7 +16,7 @@
 				<e:EntityModelTextBoxEditor ui:field="descriptionEditor" />
 				<e:EntityModelCheckBoxEditor ui:field="hasVLanTagEditor" />
 				<e:EntityModelTextBoxEditor ui:field="vLanTagEditor" />
-				<e:EntityModelCheckBoxEditor ui:field="isStpEnabledEditor" />
+				<e:EntityModelCheckBoxEditor ui:field="hasMtuEditor" />
 				<e:EntityModelTextBoxEditor ui:field="mtuEditor" />
 				<e:EntityModelCheckBoxEditor ui:field="isVmNetworkEditor" />
 				<g:HTMLPanel addStyleNames="{style.info}">
