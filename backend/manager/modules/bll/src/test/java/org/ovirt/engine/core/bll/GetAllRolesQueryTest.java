@@ -13,7 +13,7 @@ import org.ovirt.engine.core.common.queries.MultilevelAdministrationsQueriesPara
 import org.ovirt.engine.core.dao.RoleDAO;
 
 /** A test case for the {@link GetAllRolesQuery} class. */
-public class GetAllRolesQueryTest extends AbstractQueryTest<MultilevelAdministrationsQueriesParameters, GetAllRolesQuery<MultilevelAdministrationsQueriesParameters>> {
+public class GetAllRolesQueryTest extends AbstractUserQueryTest<MultilevelAdministrationsQueriesParameters, GetAllRolesQuery<MultilevelAdministrationsQueriesParameters>> {
 
     @Test
     public void testExecuteQueryCommand() {

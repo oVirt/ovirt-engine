@@ -181,7 +181,7 @@ public enum VdcQueryType implements Serializable {
     GetAvailableClustersByServerCpu,
 
     // Multi Level Administration queries
-    GetAllRoles,
+    GetAllRoles(VdcQueryAuthType.User),
     GetRolesByAdElement,
     GetRolesByAdElementIdAndNullTag,
     GetRoleById,
