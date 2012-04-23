@@ -29,4 +29,7 @@ public interface DataCenterResource extends UpdatableResource<DataCenter> {
 
     @Path("permissions")
     public AssignedPermissionsResource getPermissionsResource();
+
+    @Path("quotas")
+    public QuotasResource getQuotasResource();
 }

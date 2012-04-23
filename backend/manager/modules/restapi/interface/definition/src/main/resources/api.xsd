@@ -1836,6 +1836,7 @@
           <xs:element name="placement_policy" type="VmPlacementPolicy" minOccurs="0" maxOccurs="1"/>
           <xs:element name="memory_policy" type="MemoryPolicy" minOccurs="0" maxOccurs="1"/>
           <xs:element name="guest_info" type="GuestInfo" minOccurs="0" maxOccurs="1"/>
+          <xs:element ref="quota" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="usb" minOccurs="0" maxOccurs="1"/>
 
           <xs:element ref="vmpool" minOccurs="0" maxOccurs="1">
@@ -2058,6 +2059,7 @@
           <xs:element name="propagate_errors" type="xs:boolean" minOccurs="0"/>
           <xs:element name="statistics" type="Statistics" minOccurs="0" maxOccurs="1"/>
           <xs:element name="active" type="xs:boolean" minOccurs="0"/>
+          <xs:element ref="quota" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
@@ -2302,7 +2304,38 @@
       <xs:element name="enabled" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
     </xs:sequence>
   </xs:complexType>
- 
+
+  <xs:element name="quota" type="Quota"/>
+
+  <xs:complexType name="Quota">
+    <xs:complexContent>
+      <xs:extension base="BaseResource">
+        <xs:sequence>
+          <xs:element ref="data_center" minOccurs="0"/>
+          <xs:element ref="vms" minOccurs="0" maxOccurs="1"/>
+          <xs:element ref="disks" minOccurs="0" maxOccurs="1"/>
+          <xs:element ref="users" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="quotas" type="Quotas"/>
+
+  <xs:complexType name="Quotas">
+    <xs:complexContent>
+      <xs:extension base="BaseResources">
+        <xs:sequence>
+          <xs:annotation>
+            <xs:appinfo>
+                <jaxb:property name="Quotas"/>
+            </xs:appinfo>
+          </xs:annotation>
+          <xs:element ref="quota" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
 <!-- RSDL -->
 
   <xs:element name="url" type="Url"/>

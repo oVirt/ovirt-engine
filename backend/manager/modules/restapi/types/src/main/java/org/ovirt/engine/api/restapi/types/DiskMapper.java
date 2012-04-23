@@ -7,6 +7,7 @@ import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.DiskFormat;
 import org.ovirt.engine.api.model.DiskInterface;
 import org.ovirt.engine.api.model.DiskStatus;
+import org.ovirt.engine.api.model.Quota;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.StorageDomains;
 import org.ovirt.engine.api.model.VM;
@@ -72,6 +73,9 @@ public class DiskMapper {
             diskImage.setstorage_ids(new ArrayList<Guid>());
             diskImage.getstorage_ids().add(Guid.createGuidFromString(storageDomain.getId()));
         }
+        if (disk.isSetQuota() && disk.getQuota().isSetId()) {
+            diskImage.setQuotaId(new Guid(disk.getQuota().getId()));
+        }
         return diskImage;
     }
 
@@ -115,6 +119,11 @@ public class DiskMapper {
             model.getStorageDomains().getStorageDomains().add(storageDomain);
         }
         model.setActive(entity.getPlugged());
+        if (entity.getQuotaId()!=null) {
+            Quota quota = new Quota();
+            quota.setId(entity.getQuotaId().toString());
+            model.setQuota(quota);
+        }
         return model;
     }
 

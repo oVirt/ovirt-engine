@@ -67,6 +67,7 @@ actions:
       signatures:
       - mandatoryArguments: {vm.name: 'xs:string', vm.template.id|name: 'xs:string', vm.cluster.id|name: 'xs:string'}
         optionalArguments:
+          vm.quota.id: xs:string
           vm.timezone: xs:string
           vm.os.boot.dev: xs:string
           vm.custom_properties.custom_property--COLLECTION: {custom_property.name: 'xs:string', custom_property.value: 'xs:string'}

@@ -47,6 +47,7 @@ import org.ovirt.engine.api.model.Parameter;
 import org.ovirt.engine.api.model.ParametersSet;
 import org.ovirt.engine.api.model.Permission;
 import org.ovirt.engine.api.model.Permit;
+import org.ovirt.engine.api.model.Quota;
 import org.ovirt.engine.api.model.Request;
 import org.ovirt.engine.api.model.Role;
 import org.ovirt.engine.api.model.Snapshot;
@@ -76,6 +77,8 @@ import org.ovirt.engine.api.resource.DomainResource;
 import org.ovirt.engine.api.resource.DiskResource;
 import org.ovirt.engine.api.resource.EventResource;
 import org.ovirt.engine.api.resource.EventsResource;
+import org.ovirt.engine.api.resource.QuotaResource;
+import org.ovirt.engine.api.resource.QuotasResource;
 import org.ovirt.engine.api.resource.ReadOnlyDeviceResource;
 import org.ovirt.engine.api.resource.ReadOnlyDevicesResource;
 import org.ovirt.engine.api.resource.RolesResource;
@@ -267,6 +270,9 @@ public class LinkHelper {
         map.add(StatisticResource.class, StatisticsResource.class, NIC.class);
         map.add(StatisticResource.class, StatisticsResource.class, VM.class);
         TYPES.put(Statistic.class, map);
+
+        map = new ParentToCollectionMap(QuotaResource.class, QuotasResource.class, DataCenter.class);
+        TYPES.put(Quota.class, map);
     }
 
     /**

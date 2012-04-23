@@ -26,6 +26,7 @@ import org.ovirt.engine.api.model.IPs;
 import org.ovirt.engine.api.model.OperatingSystem;
 import org.ovirt.engine.api.model.OsType;
 import org.ovirt.engine.api.model.Payload;
+import org.ovirt.engine.api.model.Quota;
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.Usb;
 import org.ovirt.engine.api.model.VM;
@@ -206,6 +207,9 @@ public class VmMapper {
         if (vm.isSetUsb() && vm.getUsb().isSetEnabled()) {
             staticVm.setusb_policy(vm.getUsb().isEnabled() ? UsbPolicy.Enabled : UsbPolicy.Disabled);
         }
+        if (vm.isSetQuota() && vm.getQuota().isSetId()) {
+            staticVm.setQuotaId(new Guid(vm.getQuota().getId()));
+        }
         return staticVm;
     }
 
@@ -368,6 +372,11 @@ public class VmMapper {
             Usb usb = new Usb();
             usb.setEnabled(entity.getusb_policy()==UsbPolicy.Enabled ? true : false);
             model.setUsb(usb);
+        }
+        if (entity.getQuotaId()!=null) {
+            Quota quota = new Quota();
+            quota.setId(entity.getQuotaId().toString());
+            model.setQuota(quota);
         }
         return model;
     }
