@@ -81,8 +81,10 @@ public abstract class AbstractRefreshManager<T extends BaseRefreshPanel> {
     private void updateController() {
         this.controller = modelProvider.getModel();
 
-        controller.setRefreshRate(readRefreshRate());
-        controller.getTimer().addValueChangeHandler(new ValueChangeHandler<String>() {
+        GridTimer modelTimer = getModelTimer();
+        modelTimer.setRefreshRate(readRefreshRate());
+
+        modelTimer.addValueChangeHandler(new ValueChangeHandler<String>() {
             @Override
             public void onValueChange(ValueChangeEvent<String> event) {
                 onRefresh(event.getValue());
@@ -91,13 +93,25 @@ public abstract class AbstractRefreshManager<T extends BaseRefreshPanel> {
     }
 
     /**
+     * Returns the refresh timer used by the {@link GridController}.
+     */
+    GridTimer getModelTimer() {
+        return controller.getTimer();
+    }
+
+    /**
      * Callback fired when the application window gains or looses its focus.
      */
     void onWindowFocusChange(boolean inFocus) {
-        if (inFocus) {
-            controller.setRefreshRate(readRefreshRate());
-        } else {
-            controller.setRefreshRate(OUT_OF_FOCUS_REFRESH_RATE);
+        GridTimer modelTimer = getModelTimer();
+
+        // Change refresh rate only when the model timer is currently active and not paused
+        if (modelTimer.isActive() && !modelTimer.isPaused()) {
+            if (inFocus) {
+                modelTimer.setRefreshRate(readRefreshRate());
+            } else {
+                modelTimer.setRefreshRate(OUT_OF_FOCUS_REFRESH_RATE);
+            }
         }
     }
 
@@ -124,12 +138,12 @@ public abstract class AbstractRefreshManager<T extends BaseRefreshPanel> {
     }
 
     public void setCurrentRefreshRate(int newRefreshRate) {
-        controller.setRefreshRate(newRefreshRate);
+        getModelTimer().setRefreshRate(newRefreshRate);
         saveRefreshRate(newRefreshRate);
     }
 
     public int getCurrentRefreshRate() {
-        return controller.getRefreshRate();
+        return getModelTimer().getRefreshRate();
     }
 
     String getRefreshRateItemKey() {

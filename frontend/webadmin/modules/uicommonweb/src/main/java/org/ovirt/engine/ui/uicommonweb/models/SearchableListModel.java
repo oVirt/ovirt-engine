@@ -900,17 +900,8 @@ public abstract class SearchableListModel extends ListModel implements GridContr
     // ///////////////////////////
 
     @Override
-    public void setRefreshRate(int currentRefreshRate) {
-        getTimer().setRefreshRate(currentRefreshRate);
-    }
-
-    @Override
-    public int getRefreshRate() {
-        return getTimer().getRefreshRate();
-    }
-
-    @Override
     public String getId() {
         return getListName();
     }
+
 }
