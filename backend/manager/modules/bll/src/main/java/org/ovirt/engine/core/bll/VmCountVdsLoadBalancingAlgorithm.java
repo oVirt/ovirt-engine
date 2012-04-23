@@ -45,11 +45,6 @@ public class VmCountVdsLoadBalancingAlgorithm extends VdsLoadBalancingAlgorithm 
             break;
         }
         }
-        // LINQ 29456
-        // OverUtilizedServers = AllRelevantVdss.
-        // Where(p => p.vm_count > vmCount * p.cpu_cores).
-        // OrderByDescending(p=>p.vm_count).
-        // ToDictionary(i => i.vds_id);
 
         final int vmCountTemp = vmCount;
         List<VDS> vdses = LinqUtils.filter(getAllRelevantVdss(), new Predicate<VDS>() {
@@ -85,11 +80,6 @@ public class VmCountVdsLoadBalancingAlgorithm extends VdsLoadBalancingAlgorithm 
             break;
         }
         }
-        // LINQ 29456
-        // UnderUtilizedServers = AllRelevantVdss.
-        // Where(p => p.vm_count < vmCount *p.cpu_cores).
-        // OrderBy(p=>p.vm_count).
-        // ToDictionary(i => i.vds_id);
 
         final int vmCountTemp = vmCount;
         List<VDS> vdses = LinqUtils.filter(getAllRelevantVdss(), new Predicate<VDS>() {
@@ -135,11 +125,6 @@ public class VmCountVdsLoadBalancingAlgorithm extends VdsLoadBalancingAlgorithm 
             break;
         }
         }
-        // LINQ 29456
-        // ReadyToMigrationServers = AllRelevantVdss.Where(p => p.vm_count <
-        // highVdsCount * p.cpu_cores &&
-        // p.vm_count >= lowVdsCount * p.cpu_cores).
-        // ToDictionary(i => i.vds_id);
 
         final int highVdsCountTemp = highVdsCount;
         final int lowVdsCountTemp = lowVdsCount;

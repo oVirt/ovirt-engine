@@ -66,8 +66,6 @@ public class ConnectAllHostsToLunCommand<T extends ExtendSANStorageDomainParamet
         java.util.ArrayList<LUNs> processedLunsList = new java.util.ArrayList<LUNs>();
         boolean operationSucceeded = true;
 
-        // VDS spmVds = null; // LINQ AllRunningVdssInPool.Where(vds =>
-        // vds.spm_status == VdsSpmStatus.SPM).First();
         VDS spmVds = LinqUtils.filter(getAllRunningVdssInPool(), new Predicate<VDS>() {
             @Override
             public boolean eval(VDS vds) {

@@ -5,10 +5,10 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AddVmTemplateInterfaceParameters;
-import org.ovirt.engine.core.common.businessentities.network;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
@@ -49,7 +49,6 @@ public class AddVmTemplateInterfaceCommand<T extends AddVmTemplateInterfaceParam
     protected boolean canDoAction() {
         List<VmNetworkInterface> interfaces = DbFacade.getInstance().getVmNetworkInterfaceDAO()
                 .getAllForTemplate(getParameters().getVmTemplateId());
-        // LINQ 29456
         if (!VmHandler.IsNotDuplicateInterfaceName(interfaces,
                 getParameters().getInterface().getName(),
                 getReturnValue().getCanDoActionMessages())) {

@@ -142,8 +142,6 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
 
         // check that interface exists
         for (final VdsNetworkInterface i : getParameters().getInterfaces()) {
-            // Interface iface = null; // LINQ _interfaces.FirstOrDefault(x =>
-            // x.name == i.name);
             VdsNetworkInterface iface = LinqUtils.firstOrNull(_interfaces, new Predicate<VdsNetworkInterface>() {
                 @Override
                 public boolean eval(VdsNetworkInterface x) {
@@ -166,8 +164,6 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
         VDS vds = DbFacade.getInstance().getVdsDAO().get(getParameters().getVdsId());
         if (vds.getstatus() != VDSStatus.Maintenance) {
             // check that the old network exists in host
-            // Interface iface = null; // LINQ _interfaces.FirstOrDefault(i =>
-            // i.network_name == UpdateNetworkToVdsParameters.Network.name);
             VdsNetworkInterface iface = LinqUtils.firstOrNull(_interfaces, new Predicate<VdsNetworkInterface>() {
                 @Override
                 public boolean eval(VdsNetworkInterface i) {
@@ -184,8 +180,6 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
         }
 
         // check that the old network exists in host
-        // Interface ifacenet = null; // LINQ _interfaces.FirstOrDefault(i =>
-        // i.network_name == UpdateNetworkToVdsParameters.OldNetworkName);
         VdsNetworkInterface ifacenet = LinqUtils.firstOrNull(_interfaces, new Predicate<VdsNetworkInterface>() {
             @Override
             public boolean eval(VdsNetworkInterface i) {

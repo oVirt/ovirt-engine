@@ -145,10 +145,6 @@ public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends
     private boolean ActivateDataCenter() {
         boolean result = false;
         _fenceSpmCalled = false;
-        // storage_domains masterDomain = null; // LINQ 32934
-        // DbFacade.Instance.GetStorageDomainsByStoragePoolId(StoragePool.id)
-        // LINQ 32934 .Where(a => a.storage_domain_type ==
-        // StorageDomainType.Master).FirstOrDefault();
 
         storage_domains masterDomain = LinqUtils.firstOrNull(
                 DbFacade.getInstance().getStorageDomainDAO().getAllForStoragePool(getStoragePool().getId()),

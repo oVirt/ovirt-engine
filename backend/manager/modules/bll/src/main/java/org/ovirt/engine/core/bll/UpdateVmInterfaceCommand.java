@@ -67,16 +67,13 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
 
         List<VmNetworkInterface> interfaces = DbFacade.getInstance().getVmNetworkInterfaceDAO()
                 .getAllForVm(getParameters().getVmId());
-        // LINQ 29456
-        // Interface oldIface = interfaces.First(i => i.id ==
-        // AddVmInterfaceParameters.Interface.id);
         VmNetworkInterface oldIface = LinqUtils.firstOrNull(interfaces, new Predicate<VmNetworkInterface>() {
             @Override
             public boolean eval(VmNetworkInterface i) {
                 return i.getId().equals(getParameters().getInterface().getId());
             }
         });
-        // LINQ 29456
+
         if (!StringHelper.EqOp(oldIface.getName(), getParameters().getInterface().getName())) {
             if (!VmHandler.IsNotDuplicateInterfaceName(interfaces,
                          getParameters().getInterface().getName(),
@@ -137,9 +134,7 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
         // check that the exists in current cluster
         List<network> networks = DbFacade.getInstance().getNetworkDAO()
                 .getAllForCluster(vm.getvds_group_id());
-        // LINQ 29456
-        // if (null == null) //LINQ 29456 networks.FirstOrDefault(n => n.name ==
-        // AddVmInterfaceParameters.Interface.network_name))
+
         if (null == LinqUtils.firstOrNull(networks, new Predicate<network>() {
             @Override
             public boolean eval(network n) {

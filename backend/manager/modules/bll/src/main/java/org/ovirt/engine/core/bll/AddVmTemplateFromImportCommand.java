@@ -148,12 +148,6 @@ public class AddVmTemplateFromImportCommand<T extends AddVmTemplateFromImportPar
     @Override
     protected void AddVmTemplateImages() {
         Guid candidateID = _candidateInfo.getVmTemplateData().getId();
-        // LINQ 29456
-        // Dictionary<string, Guid> baseImageIDs =
-        // _candidateInfo.ImagesData.ToDictionary<KeyValuePair<string,
-        // List<DiskImage>>, string, Guid>
-        // (a => a.Key,
-        // a => a.Value[0].image_guid);
 
         HashMap<String, Guid> baseImageIds = new HashMap<String, Guid>();
         for (String key : _candidateInfo.getImagesData().keySet()) {

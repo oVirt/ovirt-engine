@@ -209,11 +209,6 @@ public abstract class VmTemplateCommand<T extends VmTemplateParametersBase> exte
             RefObject<String> tempRefObject = new RefObject<String>(templateMeta);
             ovfManager.ExportTemplate(tempRefObject, template, allTemplateImages);
             templateMeta = tempRefObject.argvalue;
-            // LINQ 29456
-            // templatesAndMetaDictionary.Add(template.vmt_guid, new
-            // KeyValuePair<string, List<Guid>>
-            // (templateMeta, allTemplateImages.Select(a =>
-            // a.image_group_id.Value).ToList()));
             templatesAndMetaDictionary.put(template.getId(), new KeyValuePairCompat<String, List<Guid>>(
                     templateMeta, LinqUtils.foreach(allTemplateImages, new Function<DiskImage, Guid>() {
                         @Override

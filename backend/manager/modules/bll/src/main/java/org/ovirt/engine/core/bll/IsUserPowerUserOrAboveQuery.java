@@ -21,9 +21,6 @@ public class IsUserPowerUserOrAboveQuery<P extends MultilevelAdministrationByAdE
         final Guid powerUserId = new Guid("00000000-0000-0000-0001-000000000002");
         List<permissions> list = DbFacade.getInstance().getPermissionDAO()
                 .getAllForAdElement(getParameters().getAdElementId());
-        // LINQ 29456
-        // QueryReturnValue.ReturnValue = (list.FirstOrDefault(p => (p.role_id
-        // == superUserId || p.role_id == powerUserId)) != null);
 
         permissions permissions = LinqUtils.firstOrNull(list, new Predicate<permissions>() {
             @Override

@@ -38,16 +38,12 @@ public class RemoveVmInterfaceCommand<T extends RemoveVmInterfaceParameters> ext
         List<VmNetworkInterface> interfaces = DbFacade.getInstance().getVmNetworkInterfaceDAO()
                 .getAllForVm(getParameters().getVmId());
 
-        // LINQ 29456
-        // Interface iface = interfaces.FirstOrDefault(i => i.id ==
-        // RemoveVmInterfaceParameters.InterfaceId);
         VmNetworkInterface iface = LinqUtils.firstOrNull(interfaces, new Predicate<VmNetworkInterface>() {
             @Override
             public boolean eval(VmNetworkInterface i) {
                 return i.getId().equals(getParameters().getInterfaceId());
             }
         });
-        // LINQ 29456
         if (iface != null) {
             MacPoolManager.getInstance().freeMac(iface.getMacAddress());
             _interfaceName = iface.getName();

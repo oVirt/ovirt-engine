@@ -56,11 +56,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
                 addCanDoActionMessage(VdcBllMessages.NETWROK_VLAN_OUT_OF_RANGE);
                 return false;
             }
-            // else if (false) //LINQ networks.FirstOrDefault(n => n.vlan_id ==
-            // AddNetworkParameters.Network.vlan_id.Value
-            // //LINQ && n.storage_pool_id ==
-            // AddNetworkParameters.Network.storage_pool_id
-            // //LINQ && n.id != AddNetworkParameters.Network.id) != null)
+
             else if (null != LinqUtils.firstOrNull(networks, new Predicate<network>() {
                 @Override
                 public boolean eval(network n) {
@@ -78,8 +74,6 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
         }
 
         // check that network not exsits
-        // network oldNetwork = null; //LINQ networks.FirstOrDefault(n => n.id
-        // == AddNetworkParameters.Network.id);
         network oldNetwork = LinqUtils.firstOrNull(networks, new Predicate<network>() {
             @Override
             public boolean eval(network n) {
@@ -99,11 +93,6 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
             return false;
         }
 
-        // network net = null; //LINQ networks.FirstOrDefault(n =>
-        // n.name.Trim().ToLower() ==
-        // AddNetworkParameters.Network.name.Trim().ToLower()
-        // LINQ && n.id != AddNetworkParameters.Network.id &&
-        // AddNetworkParameters.Network.storage_pool_id == n.storage_pool_id);
         network net = LinqUtils.firstOrNull(networks, new Predicate<network>() {
             @Override
             public boolean eval(network n) {

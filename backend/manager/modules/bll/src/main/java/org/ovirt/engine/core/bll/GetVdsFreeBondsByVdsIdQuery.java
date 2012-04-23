@@ -20,12 +20,6 @@ public class GetVdsFreeBondsByVdsIdQuery<P extends GetVdsByVdsIdParameters> exte
 
         // we return only bonds that are not active (that have no interfaces
         // related to them)
-        // getQueryReturnValue().setReturnValue(null); //LINQ 31899
-        // list.Where(bond =>
-        // 31899 (bond.is_bond.HasValue && bond.is_bond.Value) &&
-        // list.Where(iface => iface.bond_name == bond.name).ToList().Count ==
-        // 0).ToList();
-
         List<VdsNetworkInterface> interfaces = LinqUtils.filter(list, new Predicate<VdsNetworkInterface>() {
             @Override
             public boolean eval(final VdsNetworkInterface bond) {

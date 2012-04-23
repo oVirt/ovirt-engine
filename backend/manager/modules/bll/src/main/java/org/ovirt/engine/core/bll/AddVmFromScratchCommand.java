@@ -68,19 +68,6 @@ public class AddVmFromScratchCommand<T extends AddVmFromScratchParameters> exten
             throw new VdcBLLException(VdcBllErrors.VM_TEMPLATE_CANT_LOCATE_DISKS_IN_DB);
         }
         // only one (first) disk can be boot disk, make all other disks not boot
-        // LINQ 29456
-        // DiskImageBase defBootDisk = VmDisks.FirstOrDefault(a => a.boot);
-        // if (defBootDisk != null)
-        // {
-        // VmDisks.ForEach(disk =>
-        // {
-        // if (disk != defBootDisk)
-        // {
-        // disk.boot = false;
-        // }
-        // });
-        // }
-
         DiskImageBase defBootDisk = LinqUtils.firstOrNull(getVmDisks(), new Predicate<DiskImageBase>() {
             @Override
             public boolean eval(DiskImageBase diskImageBase) {

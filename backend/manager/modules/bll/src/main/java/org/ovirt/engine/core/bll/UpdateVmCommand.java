@@ -97,17 +97,6 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                     .getVmNetworkInterfaceDAO()
                     .getAllForVm(getParameters().getVmStaticData().getId());
             for (final VmNetworkInterface iface : interfaces) {
-                // LINQ 29456
-                // network net = networks.FirstOrDefault(n => iface.network_name
-                // == n.name);
-                // // if network not exists in cluster we remove the network to
-                // interface connection
-                // if (net == null)
-                // {
-                // iface.network_name = null;
-                // DbFacade.Instance.updateVmInterface(iface.InterfaceDynamic);
-                // }
-
                 network net = LinqUtils.firstOrNull(networks, new Predicate<network>() {
                     @Override
                     public boolean eval(network n) {
@@ -209,17 +198,6 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                             retValue = false;
                         }
                         if (vm.getnum_of_monitors() < vmStaticDataFromParams.getnum_of_monitors()) {
-                            // LINQ 29456
-                            // List<DiskImageBase> allDisks =
-                            // DbFacade.Instance.GetImagesByVmGuid(VmId).Select(a
-                            // =>
-                            // (DiskImageBase)a).ToList();
-                            // List<Interface> interfaces =
-                            // DbFacade.Instance.getIterfacesByVmId(VmId);
-                            // retValue =
-                            // CheckPCIAndIDELimit(VmManagementParameters.VmStaticData.num_of_monitors,
-                            // interfaces, allDisks);
-
                             List allDisks = DbFacade.getInstance().getDiskImageDAO().getAllForVm(getVmId());
                             List<VmNetworkInterface> interfaces = DbFacade.getInstance()
                                     .getVmNetworkInterfaceDAO().getAllForVm(getVmId());

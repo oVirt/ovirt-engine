@@ -42,8 +42,7 @@ public class RemoveNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
             for (VDSGroup cluster : groups) {
                 List<network> networks = DbFacade.getInstance().getNetworkDAO()
                         .getAllForCluster(cluster.getId());
-                // if (false) //LINQ networks.FirstOrDefault(n => n.name ==
-                // network.name) != null)
+
                 if (null != LinqUtils.firstOrNull(networks, new Predicate<network>() {
                     @Override
                     public boolean eval(network n) {

@@ -24,8 +24,6 @@ public class GetNonOperationalVdsQuery<P extends NetworkNonOperationalQueryParam
         for (VdsStatic vds : vdsList) {
             List<VdsNetworkInterface> interfaces = DbFacade.getInstance()
                     .getInterfaceDAO().getAllInterfacesForVds(vds.getId());
-            // if (true) //LINQ 31899 interfaces.FirstOrDefault(i =>
-            // i.network_name == NetworkParamaters.Network.name) == null)
             if (LinqUtils.firstOrNull(interfaces, new Predicate<VdsNetworkInterface>() {
                 @Override
                 public boolean eval(VdsNetworkInterface i) {

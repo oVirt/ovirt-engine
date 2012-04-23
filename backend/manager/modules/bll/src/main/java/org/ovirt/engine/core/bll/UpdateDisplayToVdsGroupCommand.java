@@ -27,8 +27,6 @@ public class UpdateDisplayToVdsGroupCommand<T extends DisplayNetworkToVdsGroupPa
 
     @Override
     protected void executeCommand() {
-        // network_cluster oldDisplay = null; //LINQ 31899
-        // _allNetworkCluster.FirstOrDefault(n => n.is_display);
         network_cluster oldDisplay = LinqUtils.firstOrNull(_allNetworkCluster,
                 new Predicate<network_cluster>() {
                     @Override
@@ -51,9 +49,6 @@ public class UpdateDisplayToVdsGroupCommand<T extends DisplayNetworkToVdsGroupPa
     protected boolean canDoAction() {
         _allNetworkCluster = DbFacade.getInstance().getNetworkClusterDAO().getAllForCluster(
                 getParameters().getVdsGroupId());
-        // _networkCluster = null; //LINQ 31899
-        // _allNetworkCluster.FirstOrDefault(x => x.network_id ==
-        // DisplayNetworkToVdsGroupParameter.Network.id);
         _networkCluster = LinqUtils.firstOrNull(_allNetworkCluster,
                 new Predicate<network_cluster>() {
                     @Override

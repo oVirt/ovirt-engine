@@ -29,15 +29,6 @@ public class VdsCpuVdsLoadBalancingAlgorithm extends VdsLoadBalancingAlgorithm {
     @Override
     protected void InitOverUtilizedList() {
         // get vds that overcommited for the time defined
-        // LINQ FIX 29456
-        // OverUtilizedServers = AllRelevantVdss.
-        // Where(p => p.usage_cpu_percent >= p.high_utilization &&
-        // p.cpu_over_commit_time_stamp.HasValue &&
-        // ((TimeSpan)(DateTime.Now - p.cpu_over_commit_time_stamp.Value)).
-        // TotalMinutes >= p.cpu_over_commit_duration_minutes).
-        // OrderByDescending(p => p.usage_cpu_percent * p.cpu_cores /
-        // p.vds_strength).
-        // ToDictionary(i => i.vds_id);
 
         List<VDS> relevantVdss = LinqUtils.filter(getAllRelevantVdss(), new Predicate<VDS>() {
             @Override
@@ -74,13 +65,6 @@ public class VdsCpuVdsLoadBalancingAlgorithm extends VdsLoadBalancingAlgorithm {
                         getVdsGroup().gethigh_utilization()
                                 - Config.<Integer> GetValue(ConfigValues.VcpuConsumptionPercentage));
 
-        // setReadyToMigrationServers(null); // LINQ AllRelevantVdss.Where(p =>
-        // (p.usage_cpu_percent + CalcSpmCpuConsumption(p)) < highVdsCount &&
-        // LINQ p.usage_cpu_percent > p.low_utilization).
-        // LINQ OrderBy(p => p.usage_cpu_percent * p.cpu_cores /
-        // p.vds_strength).
-        // LINQ ToDictionary(i => i.vds_id);
-
         final boolean isEvenlyDistribute = VdsSelectionAlgorithm.EvenlyDistribute == getVdsGroup().getselection_algorithm();
         List<VDS> relevantVdses = LinqUtils.filter(getAllRelevantVdss(), new Predicate<VDS>() {
             @Override
@@ -112,16 +96,6 @@ public class VdsCpuVdsLoadBalancingAlgorithm extends VdsLoadBalancingAlgorithm {
     protected void InitUnderUtilizedList() {
         // get vds that undercommited for the time defined, order first by
         // vm_count and then vds strength
-        // LINQ 29456
-        // UnderUtilizedServers = (from p in AllRelevantVdss
-        // where p.usage_cpu_percent < p.low_utilization &&
-        // p.cpu_over_commit_time_stamp.HasValue &&
-        // ((DateTime.Now - p.cpu_over_commit_time_stamp.Value)).
-        // TotalMinutes >= p.cpu_over_commit_duration_minutes
-        // orderby p.vm_count descending,
-        // (p.usage_cpu_percent * p.cpu_cores / p.vds_strength) descending
-        // select p).ToDictionary(i => i.vds_id);
-
         if (VdsSelectionAlgorithm.EvenlyDistribute != getVdsGroup().getselection_algorithm()) {
             List<VDS> vdses = LinqUtils.filter(getAllRelevantVdss(), new Predicate<VDS>() {
                 @Override

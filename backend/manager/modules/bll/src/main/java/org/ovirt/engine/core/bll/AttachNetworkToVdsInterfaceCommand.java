@@ -81,9 +81,6 @@ public class AttachNetworkToVdsInterfaceCommand<T extends AttachNetworkToVdsPara
                 .getAllInterfacesForVds(getParameters().getVdsId());
 
         // check that interface exists
-        // LINQ 31899
-        // Interface iface = null; // interfaces.FirstOrDefault(i => i.name ==
-        // AttachNetworkToVdsParameters.Interface.name);
         VdsNetworkInterface iface = LinqUtils.firstOrNull(interfaces, new Predicate<VdsNetworkInterface>() {
             @Override
             public boolean eval(VdsNetworkInterface i) {
@@ -114,8 +111,6 @@ public class AttachNetworkToVdsInterfaceCommand<T extends AttachNetworkToVdsPara
         }
 
         // check that the required not attached to other interface
-        // iface = null; //LINQ 31899 interfaces.FirstOrDefault(i =>
-        // i.network_name == AttachNetworkToVdsParameters.Network.name);
         iface = LinqUtils.firstOrNull(interfaces, new Predicate<VdsNetworkInterface>() {
             @Override
             public boolean eval(VdsNetworkInterface i) {
@@ -130,8 +125,6 @@ public class AttachNetworkToVdsInterfaceCommand<T extends AttachNetworkToVdsPara
         // check that the network exists in current cluster
         List<network> networks = DbFacade.getInstance().getNetworkDAO()
                 .getAllForCluster(getVds().getvds_group_id());
-        // if (true) //LINQ 31899 null == networks.FirstOrDefault(n => n.name ==
-        // AttachNetworkToVdsParameters.Network.name))
         if (null == LinqUtils.firstOrNull(networks, new Predicate<network>() {
             @Override
             public boolean eval(network network) {

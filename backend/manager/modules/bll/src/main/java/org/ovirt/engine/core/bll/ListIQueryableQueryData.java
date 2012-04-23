@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
-
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.errors.VdcFault;
 import org.ovirt.engine.core.common.queries.IRegisterQueryUpdatedData;
@@ -26,10 +25,6 @@ public class ListIQueryableQueryData extends QueryData {
     @Override
     public IRegisterQueryUpdatedData GetQueryUpdatedDataFromQueryReturnValue(VdcQueryReturnValue QueryReturnValue,
                                                                              RefObject<Boolean> changed) {
-        // LINQ FIX 29456
-        // Dictionary<object, IVdcQueryable> newData =
-        // (QueryReturnValue.ReturnValue as
-        // IList).Cast<IVdcQueryable>().ToDictionary(a => a.QueryableId);
         java.util.Map<Object, IVdcQueryable> newData;
         ListIVdcQueryableUpdatedData queryUpdatedData;
         if (QueryReturnValue.getSucceeded()) {
@@ -41,12 +36,8 @@ public class ListIQueryableQueryData extends QueryData {
                             return iVdcQueryable.getQueryableId();
                         }
                     });
-            // LINQ FIX 29456
 
-            // LINQ FIX 29456
-            // List<object> removed = _cache.Keys.Except(newData.Keys).ToList();
             Collection removed = CollectionUtils.subtract(_cache.keySet(), newData.keySet());
-            // LINQ FIX 29456
 
             java.util.Map<Object, IVdcQueryable> added = new java.util.LinkedHashMap<Object, IVdcQueryable>();
             java.util.Map<Object, IVdcQueryable> updated = new java.util.LinkedHashMap<Object, IVdcQueryable>();

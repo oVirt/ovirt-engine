@@ -156,13 +156,6 @@ public class VdsEventListener implements IVdsEventListener {
                                 vmToServerParametersList,
                                 executionContext);
 
-                        // LINQ 29456
-                        // Backend.getInstance().RunMultipleActions(VdcActionType.MigrateVmToServer,
-                        // vmsToMigrate.Select<VmStatic,
-                        // VdcActionParametersBase>(
-                        // a => new MigrateVmToServerParameters(a.vm_guid,
-                        // vdsId)).ToList());
-
                         // run dedicated vm logic
                         // not passing clientinfo will cause to launch on a VDS
                         // instead of power client. this is a possible use case

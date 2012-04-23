@@ -45,8 +45,6 @@ public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extend
         } else {
             all = DbFacade.getInstance().getNetworkDAO().getAll();
         }
-        // boolean exists = false; //LINQ (all.FirstOrDefault(net => net.name ==
-        // AddNetworkParameters.Network.name) != null);
         boolean exists = null != LinqUtils.firstOrNull(all, new Predicate<network>() {
             @Override
             public boolean eval(network net) {
@@ -64,9 +62,6 @@ public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extend
                 addCanDoActionMessage(VdcBllMessages.NETWROK_VLAN_OUT_OF_RANGE);
                 return false;
             }
-            // else if (false) //LINQ all.FirstOrDefault(n => n.vlan_id ==
-            // AddNetworkParameters.Network.vlan_id.Value && n.storage_pool_id
-            // == AddNetworkParameters.Network.storage_pool_id) != null)
             else if (null != LinqUtils.firstOrNull(all, new Predicate<network>() {
                 @Override
                 public boolean eval(network n) {

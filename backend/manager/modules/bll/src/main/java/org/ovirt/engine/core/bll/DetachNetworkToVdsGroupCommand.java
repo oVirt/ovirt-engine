@@ -64,9 +64,6 @@ public class DetachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
         for (VmTemplate tmpl : templates) {
             List<VmNetworkInterface> interfaces = DbFacade.getInstance()
                     .getVmNetworkInterfaceDAO().getAllForTemplate(tmpl.getId());
-            // if (true) //LINQ 31899 interfaces.FirstOrDefault(t =>
-            // t.network_name == AttachNetworkToClusterParameter.Network.name)
-            // != null)
             if (LinqUtils.firstOrNull(interfaces, new Predicate<VmNetworkInterface>() {
                 @Override
                 public boolean eval(VmNetworkInterface t) {
@@ -92,9 +89,6 @@ public class DetachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
                 VM vm = (VM) vm_helper;
                 List<VmNetworkInterface> interfaces = DbFacade.getInstance()
                         .getVmNetworkInterfaceDAO().getAllForVm(vm.getId());
-                // Interface iface = null; //LINQ interfaces.FirstOrDefault(i =>
-                // i.network_name ==
-                // AttachNetworkToClusterParameter.Network.name);
                 VmNetworkInterface iface = LinqUtils.firstOrNull(interfaces, new Predicate<VmNetworkInterface>() {
                     @Override
                     public boolean eval(VmNetworkInterface i) {

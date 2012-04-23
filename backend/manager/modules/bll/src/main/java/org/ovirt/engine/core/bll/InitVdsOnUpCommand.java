@@ -101,8 +101,6 @@ public class InitVdsOnUpCommand<T extends StoragePoolParametersBase> extends Sto
             _connectStorageSucceeded = true;
             _connectPoolSucceeded = true;
         } else {
-            // boolean suppressCheck = false; //LINQ
-            // AllRunningVdssInPool.Count() == 0;
             boolean suppressCheck = getAllRunningVdssInPool().size() == 0;
             StoragePoolParametersBase tempStorageBaseParams =
                     new StoragePoolParametersBase(getVds().getstorage_pool_id());

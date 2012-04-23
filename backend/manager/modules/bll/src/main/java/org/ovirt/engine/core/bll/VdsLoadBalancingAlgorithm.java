@@ -131,9 +131,6 @@ public abstract class VdsLoadBalancingAlgorithm {
     protected abstract void InitUnderUtilizedList();
 
     private void ProceedOverUtilizedServers() {
-        // LINQ 29456
-        // List<int> overUtilizedServersIds =
-        // OverUtilizedServers.Values.Select(i => i.vds_id).ToList();
         List<Guid> overUtilizedServersIds = LinqUtils.foreach(getOverUtilizedServers().values(),
                 new Function<VDS, Guid>() {
                     @Override
@@ -141,7 +138,6 @@ public abstract class VdsLoadBalancingAlgorithm {
                         return vds.getId();
                     }
                 });
-        // LINQ 29456
         for (Guid vdsId : overUtilizedServersIds) {
             VDS vds = getOverUtilizedServers().get(vdsId);
             log.infoFormat("VdsLoadBalancer: Server {0} decided as overutilized", vds.getvds_name());
@@ -203,9 +199,6 @@ public abstract class VdsLoadBalancingAlgorithm {
     }
 
     private void ProceedUnderUtilizedServers() {
-        // LINQ 29456
-        // List<int> underUtilizedServersIds =
-        // UnderUtilizedServers.Values.Select(i => i.vds_id).ToList();
         List<Guid> underUtilizedServersIds = LinqUtils.foreach(getUnderUtilizedServers().values(),
                 new Function<VDS, Guid>() {
                     @Override
@@ -236,10 +229,6 @@ public abstract class VdsLoadBalancingAlgorithm {
                          */
                         currentList = getUnderUtilizedServers();
                         final Guid vdsId1 = vdsId;
-                        // LINQ 29456
-                        // candidates = GetMigrationCandidates(currentList, vm).
-                        // Where(a => a.vds_id != vdsId1).
-                        // OrderByDescending(a => a.vm_count).ToList();
                         candidates = LinqUtils.filter(GetMigrationCandidates(currentList, vm), new Predicate<VDS>() {
                             @Override
                             public boolean eval(VDS a) {
@@ -302,10 +291,6 @@ public abstract class VdsLoadBalancingAlgorithm {
     }
 
     private List<VDS> GetMigrationCandidates(Map<Guid, VDS> list, final VM vm) {
-        // LINQ return list.Values.
-        // LINQ Where(p => p.vds_group_id == vm.vds_group_id
-        // LINQ && RunVmCommandBase.hasMemoryToRunVM(p, vm)).ToList();
-        // LINQ // && !RunVmCommandBase.isVdsVersionOld(p, vm)).ToList();
         return LinqUtils.filter(list.values(), new Predicate<VDS>() {
             @Override
             public boolean eval(VDS p) {

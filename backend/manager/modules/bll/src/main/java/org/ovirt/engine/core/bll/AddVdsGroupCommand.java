@@ -75,8 +75,7 @@ public class AddVdsGroupCommand<T extends VdsGroupOperationParameters> extends
                     .getAllForDataCenter(
                             getParameters().getVdsGroup().getstorage_pool_id()
                                     .getValue());
-            // network net = null; //LINQ 31899 networks.FirstOrDefault(n =>
-            // n.name == networkName);
+
             network net = LinqUtils.firstOrNull(networks, new Predicate<network>() {
                 @Override
                 public boolean eval(network network) {

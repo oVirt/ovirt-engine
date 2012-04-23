@@ -26,9 +26,6 @@ public class GetVgListQuery<P extends VdsIdParametersBase> extends QueriesComman
                                                     new VdsIdVDSCommandParametersBase(getParameters().getVdsId())))
                 .getReturnValue();
 
-        // LINQ DbFacade.Instance.GetAllFromStorageDomains().Where(a =>
-        // a.storage_type == StorageType.ISCSI || a.storage_type ==
-        // StorageType.FCP).ToList();
         List<storage_domains> vgsFromDb = LinqUtils.filter(DbFacade.getInstance().getStorageDomainDAO().getAll(),
                 new Predicate<storage_domains>() {
                     @Override

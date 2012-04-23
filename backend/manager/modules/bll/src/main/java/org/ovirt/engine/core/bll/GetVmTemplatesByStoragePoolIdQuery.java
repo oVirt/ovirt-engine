@@ -26,8 +26,6 @@ public class GetVmTemplatesByStoragePoolIdQuery<P extends GetVmTemplatesByStorag
         VdcQueryReturnValue returnValue = Backend.getInstance().runInternalQuery(VdcQueryType.Search, p);
 
         if (returnValue != null && returnValue.getSucceeded()) {
-            // java.util.ArrayList<VmTemplate> templateList = null; //LINQ
-            // ((IEnumerable)returnValue.ReturnValue).Cast<VmTemplate>().ToList();
             List<VmTemplate> templateList = (List) returnValue.getReturnValue();
             VmTemplate blank = DbFacade.getInstance().getVmTemplateDAO()
                     .get(VmTemplateHandler.BlankVmTemplateId);

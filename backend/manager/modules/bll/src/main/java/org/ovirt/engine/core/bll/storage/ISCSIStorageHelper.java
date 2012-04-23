@@ -72,9 +72,6 @@ public class ISCSIStorageHelper extends StorageHelperBase {
             List<storage_server_connections> connections, String vgId, final String lunId) {
         // if we have lun id then filter by this lun
         // else get vg's luns from db
-        // Iterable<String> lunsByVg = null; //LINQ lunId != string.Empty ?
-        // LINQ DbFacade.Instance.GetLunsByVGId(vgId).Select(a => a.LUN_id) :
-        // LINQ new List<string> { lunId };
         List<String> lunsByVg =
                 lunId.isEmpty() ? LinqUtils.foreach(DbFacade.getInstance().getLunDAO().getAllForVolumeGroup(vgId),
                         new Function<LUNs, String>() {
@@ -91,10 +88,6 @@ public class ISCSIStorageHelper extends StorageHelperBase {
         java.util.ArrayList<storage_server_connections> toRemove =
                 new java.util.ArrayList<storage_server_connections>();
         for (storage_server_connections connection : connections) {
-            // if (true) //LINQ 31899
-            // DbFacade.Instance.GetLunsByStorageServerConnection(connection.id).
-            // Select(a => a.LUN_id).Except(lunsByVg).Count() > 0)
-
             List<String> list = LinqUtils.foreach(
                     DbFacade.getInstance().getLunDAO().getAllForStorageServerConnection(connection.getid()),
                     new Function<LUNs, String>() {
@@ -108,7 +101,6 @@ public class ISCSIStorageHelper extends StorageHelperBase {
                 toRemove.add(connection);
             }
         }
-        // return null; //LINQ 31899 connections.Except(toRemove).ToList();
         return new ArrayList<storage_server_connections>(CollectionUtils.subtract(connections, toRemove));
     }
 
@@ -132,8 +124,6 @@ public class ISCSIStorageHelper extends StorageHelperBase {
     @Override
     public boolean IsConnectSucceeded(final java.util.HashMap<String, String> returnValue,
             List<storage_server_connections> connections) {
-        // java.util.ArrayList<String> failedConnectionsList = null; // LINQ
-        // returnValue.Where(a => a.Value == false).
         boolean result = true;
         List<String> failedConnectionsList = LinqUtils.filter(returnValue.keySet(), new Predicate<String>() {
             @Override
@@ -141,7 +131,6 @@ public class ISCSIStorageHelper extends StorageHelperBase {
                 return !"0".equals(returnValue.get(a));
             }
         });
-        // LINQ Select(a => a.Key).ToList();
         for (String failedConnection : failedConnectionsList) {
             List<LUNs> failedLuns = DbFacade.getInstance().getLunDAO()
                     .getAllForStorageServerConnection(failedConnection);

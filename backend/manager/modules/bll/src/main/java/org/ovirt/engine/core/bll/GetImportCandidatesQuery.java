@@ -1,13 +1,17 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.compat.*;
-import org.ovirt.engine.core.common.queries.*;
-import org.ovirt.engine.core.common.vdscommands.*;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
-import org.ovirt.engine.core.utils.linq.Function;
-
 import java.util.List;
 import java.util.Map;
+
+import org.ovirt.engine.core.common.queries.GetImportCandidatesQueryParameters;
+import org.ovirt.engine.core.common.queries.ImportCandidateInfoBase;
+import org.ovirt.engine.core.common.queries.ImportCandidateSourceEnum;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.vdscommands.GetImportCandidatesVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
+import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.utils.linq.Function;
+import org.ovirt.engine.core.utils.linq.LinqUtils;
 
 /**
  * Gets a list of all the names (in VmWare's case : the IDs) of all candidates.
@@ -33,11 +37,6 @@ public class GetImportCandidatesQuery<P extends GetImportCandidatesQueryParamete
             if (retFromIrs == null) {
                 getQueryReturnValue().setReturnValue(null);
             } else {
-                // LINQ 29456
-                // QueryReturnValue.ReturnValue = new List<string>
-                // (retFromIrs.Values.Select<ImportCandidateInfoBase,string>
-                // (a => a.CandidateDisplayName));
-
                 List<String> list = LinqUtils.foreach(retFromIrs.values(),
                         new Function<ImportCandidateInfoBase, String>() {
                             @Override

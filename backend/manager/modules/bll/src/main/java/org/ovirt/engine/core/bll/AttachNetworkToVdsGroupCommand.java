@@ -82,8 +82,6 @@ public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
                         .getInstance()
                         .runInternalQuery(VdcQueryType.GetVdsInterfacesByVdsId,
                                 new GetVdsByVdsIdParameters(vds.getId())).getReturnValue();
-                // Interface iface = null; //LINQ 31899 interfaces.FirstOrDefault(i
-                // => i.network_name == net.name);
                 VdsNetworkInterface iface = LinqUtils.firstOrNull(interfaces, new Predicate<VdsNetworkInterface>() {
                     @Override
                     public boolean eval(VdsNetworkInterface i) {

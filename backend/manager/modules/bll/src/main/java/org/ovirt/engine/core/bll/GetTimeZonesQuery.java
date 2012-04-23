@@ -26,11 +26,6 @@ public class GetTimeZonesQuery<P extends VdcQueryParametersBase> extends Queries
     @Override
     protected void executeQueryCommand() {
         // get all time zones that is supported by sysprep
-        // LINQ 29456
-        // QueryReturnValue.ReturnValue = TimeZoneInfo.GetSystemTimeZones()
-        // .Where(IsSupportedBySysprep)
-        // .OrderBy(a=>a.BaseUtcOffset)
-        // .ToDictionary(k => k.Id, v => v.DisplayName);
 
         // This is a bit of a hack since Java doesn't use the same timezone
         // standard as Windows
@@ -67,6 +62,7 @@ public class GetTimeZonesQuery<P extends VdcQueryParametersBase> extends Queries
             // we get a string like "(GMT-04:30) Afghanistan Standard Time"
             // we use regex to extract the time only and replace it to number
             // in this sample we get -430
+            @Override
             public int compare(Object o1, Object o2) {
                 int a = 0, b = 0;
                 Matcher match1 = regex.matcher(o1.toString());

@@ -33,9 +33,6 @@ public class DetachNetworkFromVdsInterfaceCommand<T extends AttachNetworkToVdsPa
         Integer vlanId = NetworkUtils.GetVlanId(getParameters().getInterface().getName());
 
         // vlan with bond
-        // boolean isBond =
-        // getParameters().getInterface().getname().startsWith("bond");
-        // //LINQ 31899 && NetworkParameters.Interface.name.Contains('.');
         boolean isBond = getParameters().getInterface().getName().startsWith("bond")
                 && getParameters().getInterface().getName().contains(".");
         // or just a bond...
@@ -82,8 +79,6 @@ public class DetachNetworkFromVdsInterfaceCommand<T extends AttachNetworkToVdsPa
     protected boolean canDoAction() {
         List<VdsNetworkInterface> interfaces = DbFacade.getInstance().getInterfaceDAO()
                 .getAllInterfacesForVds(getParameters().getVdsId());
-        // Interface iface = null; //LINQ 31899 interfaces.FirstOrDefault(i =>
-        // i.name == NetworkParameters.Interface.name);
         VdsNetworkInterface iface = LinqUtils.firstOrNull(interfaces, new Predicate<VdsNetworkInterface>() {
             @Override
             public boolean eval(VdsNetworkInterface i) {
@@ -131,8 +126,6 @@ public class DetachNetworkFromVdsInterfaceCommand<T extends AttachNetworkToVdsPa
                 && getParameters().getNetwork().getStatus() == NetworkStatus.Operational) {
             List<network> networks = DbFacade.getInstance().getNetworkDAO()
                     .getAllForCluster(vds.getvds_group_id());
-            // if (true) //LINQ 31899 null != networks.FirstOrDefault(n =>
-            // n.name == NetworkParameters.Network.name))
             if (null != LinqUtils.firstOrNull(networks, new Predicate<network>() {
                 @Override
                 public boolean eval(network network) {

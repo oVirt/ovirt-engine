@@ -79,8 +79,6 @@ public class AddBondCommand<T extends AddBondParameters> extends VdsBondCommand<
                 getParameters().getVdsId());
 
         // check that bond exists
-        // Interface bond = null; //LINQ 31899 interfaces.FirstOrDefault(i =>
-        // i.name == BondParameters.BondName);
         VdsNetworkInterface bond = LinqUtils.firstOrNull(interfaces, new Predicate<VdsNetworkInterface>() {
             @Override
             public boolean eval(VdsNetworkInterface anInterface) {
@@ -95,8 +93,6 @@ public class AddBondCommand<T extends AddBondParameters> extends VdsBondCommand<
 
         // check that each nic is valid
         for (final String nic : getParameters().getNics()) {
-            // Interface iface = null; //LINQ 31899 interfaces.FirstOrDefault(i
-            // => i.name == nic);
             VdsNetworkInterface iface = LinqUtils.firstOrNull(interfaces, new Predicate<VdsNetworkInterface>() {
                 @Override
                 public boolean eval(VdsNetworkInterface i) {
@@ -122,8 +118,6 @@ public class AddBondCommand<T extends AddBondParameters> extends VdsBondCommand<
         }
 
         // check that the network not in use
-        // Interface I = null; //LINQ 31899 interfaces.FirstOrDefault(n =>
-        // n.network_name == AddBondParameters.Network.name);
         VdsNetworkInterface I = LinqUtils.firstOrNull(interfaces, new Predicate<VdsNetworkInterface>() {
             @Override
             public boolean eval(VdsNetworkInterface i) {
@@ -142,8 +136,6 @@ public class AddBondCommand<T extends AddBondParameters> extends VdsBondCommand<
         // check that the network exists in current cluster
         List<network> networks = DbFacade.getInstance().getNetworkDAO()
                 .getAllForCluster(getVds().getvds_group_id());
-        // if (true) //LINQ 31899 null == networks.FirstOrDefault(n => n.name ==
-        // AddBondParameters.Network.name))
         if (null == LinqUtils.firstOrNull(networks, new Predicate<network>() {
             @Override
             public boolean eval(network network) {

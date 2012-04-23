@@ -36,12 +36,6 @@ public class GetVdsInterfacesByVdsIdQuery<P extends GetVdsByVdsIdParameters> ext
         // we return: eth0, eth1, eth2, eth3, bond0
         // we don't return bond1 because he is not connected to network and has
         // no child interfaces
-        // list = null; //LINQ list.Where(i =>
-        // LINQ(!i.is_bond.HasValue
-        // LINQ||
-        // LINQ(i.is_bond.HasValue && i.is_bond.Value) && list.Where(bond =>
-        // bond.bond_name == i.name).ToArray().Length > 0)
-        // LINQ).ToList();
 
         List<VdsNetworkInterface> interfaces = LinqUtils.filter(list, new Predicate<VdsNetworkInterface>() {
             @Override

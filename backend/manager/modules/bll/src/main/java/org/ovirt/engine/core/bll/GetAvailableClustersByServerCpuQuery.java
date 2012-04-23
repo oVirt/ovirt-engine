@@ -22,14 +22,6 @@ public class GetAvailableClustersByServerCpuQuery<P extends GetAvailableClusters
         // get all clusters
         List<VDSGroup> allClusters = DbFacade.getInstance().getVdsGroupDAO().getAll();
         // get all available cpu names
-        // LINQ 29456
-        // List<string> availableCpus =
-        // CpuFlagsManagerHandler.GetAllServerCpusBelowCpu(
-        // GetParameters.CpuName, GetParameters.Version)
-        // .Select(a => a.CpuName).ToList();
-
-        // QueryReturnValue.ReturnValue = allClusters.Where(a =>
-        // availableCpus.Contains(a.cpu_name)).ToList();
 
         String cpuName = getParameters().getCpuName();
         Version version = getParameters().getVersion();

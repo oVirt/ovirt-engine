@@ -18,12 +18,6 @@ public class GetDeviceListQuery<P extends GetDeviceListQueryParameters> extends 
 
     @Override
     protected void executeQueryCommand() {
-        // LINQ 32394 java.util.ArrayList<LUNs> lunsFromIrs =
-        // ((IEnumerable<LUNs>)Backend.getInstance().ResourceManager.RunVdsCommand(VDSCommandType.GetDeviceList,
-        // LINQ 32394 new GetDeviceListVDSCommandParameters
-        // LINQ 32394 (ParametersData.getVdsId(), ParametersData.StorageType)).
-        // LINQ 32394 ReturnValue).Where(a =>
-        // string.IsNullOrEmpty(a.volume_group_id)).ToList();
         List<LUNs> luns = (List<LUNs>) Backend
                 .getInstance()
                 .getResourceManager()

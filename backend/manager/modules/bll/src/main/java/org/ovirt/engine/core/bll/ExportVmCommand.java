@@ -370,8 +370,6 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
         if (qretVal.getSucceeded()) {
             if (!VmTemplateHandler.BlankVmTemplateId.equals(tmplId)) {
                 Map<VmTemplate, DiskImageList> templates = (Map) qretVal.getReturnValue();
-                // LINQ VAR var tmpl = templates.FirstOrDefault(t =>
-                // t.Key.vmt_guid == tmplId);
                 VmTemplate tmpl = LinqUtils.firstOrNull(templates.keySet(), new Predicate<VmTemplate>() {
                     @Override
                     public boolean eval(VmTemplate vmTemplate) {
@@ -379,7 +377,6 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
                     }
                 });
 
-                // retVal = false; //LINQ VAR (tmpl.Key != null);
                 retVal = tmpl != null;
             } else {
                 retVal = true;

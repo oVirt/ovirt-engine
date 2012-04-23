@@ -63,9 +63,6 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
         if (_storageDomainId.equals(Guid.Empty) && getVm() != null) {
             VmHandler.updateDisksFromDb(getVm());
             if (getVm().getDiskMap().size() > 0) {
-                // LINQ 29456
-                // _storageDomainId =
-                // Vm.DiskMap.Values.First().storage_id.Value;
                 _storageDomainId = LinqUtils.first(getVm().getDiskMap().values()).getstorage_ids().get(0);
             } else {
                 List<storage_domain_static> domainsInPool = DbFacade.getInstance()

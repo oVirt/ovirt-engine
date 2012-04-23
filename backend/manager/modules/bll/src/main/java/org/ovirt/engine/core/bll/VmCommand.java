@@ -132,13 +132,6 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         boolean result = true;
         // this adds: monitors + 2 * (interfaces with type rtl_pv) + (all other
         // interfaces) + (all disks that are not IDE)
-        // LINQ 29456
-        // int pciInUse = monitorsNumber + interfaces.Select(a =>
-        // (a.type.HasValue &&
-        // (VmInterfaceType)a.type.Value == VmInterfaceType.rtl8139_pv) ? 2 :
-        // 1).Sum() +
-        // disks.Where(a => a.disk_interface != DiskInterface.IDE).Count();
-
         int pciInUse = monitorsNumber;
 
         for (VmNetworkInterface a : interfaces) {
@@ -155,15 +148,10 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
             }
         }).size();
 
-        // LINQ 29456
-
         if (pciInUse > MAX_PCI_SLOTS) {
             result = false;
             messages.add(VdcBllMessages.ACTION_TYPE_FAILED_EXCEEDED_MAX_PCI_SLOTS.name());
         }
-        // LINQ 29456
-        // else if (disks.Where(a => a.disk_interface ==
-        // DiskInterface.IDE).Count() > MAX_IDE_SLOTS)
         else if (MAX_IDE_SLOTS < LinqUtils.filter(disks, new Predicate<DiskImageBase>() {
             @Override
             public boolean eval(DiskImageBase a) {
@@ -214,11 +202,6 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
             ovfManager.ExportVm(tempRefObject, vm, AllVmImages);
             vmMeta = tempRefObject.argvalue;
 
-            // LINQ 29456
-            // vmsAndMetaDictionary.Add(vm.vm_guid, new KeyValuePair<string,
-            // List<Guid>>
-            // (vmMeta, vm.DiskMap.Values.Select(a =>
-            // a.image_group_id.Value).ToList()));
             vmsAndMetaDictionary.put(
                     vm.getId(),
                     new KeyValuePairCompat<String, List<Guid>>(vmMeta, LinqUtils.foreach(vm.getDiskMap().values(),
@@ -326,9 +309,6 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
 
     protected boolean HandleHibernatedVm(VdcActionType parentCommand, boolean startPollingTasks) {
         // this is temp code until it will be implmented in SPM
-        // LINQ 29456
-        // Guid[] imagesList = Vm.hibernation_vol_handle.Split(',').Select(a =>
-        // new Guid(a)).ToArray();
         String[] strings = getVm().gethibernation_vol_handle().split(",");
         List<Guid> guids = new LinkedList<Guid>();
         for (String string : strings) {
@@ -338,9 +318,6 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         if (imagesList.length == 6) {
             // get all vm disks in order to check post zero - if one of the
             // disks is marked with wipe_after_delete
-            // boolean postZero = false; //LINQ
-            // DbFacade.Instance.GetImagesByVmGuid(Vm.vm_guid).Exists(a =>
-            // a.wipe_after_delete);
             boolean postZero =
                     LinqUtils.filter(DbFacade.getInstance().getDiskImageDAO().getAllForVm(getVm().getId()),
                             new Predicate<DiskImage>() {

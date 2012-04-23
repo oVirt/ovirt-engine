@@ -57,13 +57,6 @@ public class GetCandidateInfoQuery<P extends CandidateInfoParameters> extends Ge
                                             .getCandidateType())).getReturnValue();
 
             try {
-                // LINQ 29456
-                // Dictionary<string, ImportCandidateInfoBase> dictByName =
-                // retFromIrs.ToDictionary
-                // <KeyValuePair<string, ImportCandidateInfoBase>, string,
-                // ImportCandidateInfoBase>
-                // (a => a.Value.CandidateDisplayName, a => a.Value);
-
                 Map<String, ImportCandidateInfoBase> dictByName = LinqUtils.toMap(retFromIrs.keySet(),
                         new Mapper<String, String, ImportCandidateInfoBase>() {
                             @Override
