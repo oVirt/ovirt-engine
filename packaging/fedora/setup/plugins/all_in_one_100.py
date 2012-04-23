@@ -11,6 +11,7 @@ import urllib2
 import crypt
 import time
 import nfsutils
+import traceback
 import engine_validators as validate
 import basedefs
 import common_utils as utils
@@ -204,7 +205,7 @@ def initAPI():
                                         username=USERNAME,
                                         password=controller.CONF['AUTH_PASS'])
     except:
-        logging.debug(ERROR_CREATE_API_OBJECT)
+        logging.error(traceback.format_exc())
         raise Exception(ERROR_CREATE_API_OBJECT)
 
 def createDC():
@@ -215,7 +216,7 @@ def createDC():
                                                                            storage_type='localfs',
                                                                            version=params.Version(major=MAJOR, minor=MINOR)))
     except:
-        logging.error(ERROR_CREATE_LOCAL_DATACENTER)
+        logging.error(traceback.format_exc())
         raise Exception(ERROR_CREATE_LOCAL_DATACENTER)
 
 def createCluster():
@@ -228,7 +229,7 @@ def createCluster():
                                                                      data_center=controller.CONF["API_OBJECT"].datacenters.get(LOCAL_DATA_CENTER),
                                                                      version=params.Version(major=MAJOR, minor=MINOR)))
     except:
-        logging.error(ERROR_CREATE_LOCAL_CLUSTER)
+        logging.error(traceback.format_exc())
         raise Exception(ERROR_CREATE_LOCAL_CLUSTER)
 
 def createHost():
@@ -241,7 +242,7 @@ def createHost():
                                                                cluster=controller.CONF["API_OBJECT"].clusters.get(LOCAL_CLUSTER),
                                                                root_password=controller.CONF["SUPERUSER_PASS"]))
     except:
-        logging.error(ERROR_CREATE_LOCAL_HOST)
+        logging.error(traceback.format_exc())
         raise Exception(ERROR_CREATE_LOCAL_HOST)
 
 def waitForHostUp():
@@ -259,10 +260,8 @@ def waitForHostUp():
 
     # TODO: redo this section. Maybe status check should be inside the loop?
     if "failed" in hostStatus:
-        logging.error(ERROR_CREATE_HOST_FAILED)
         raise Exception(ERROR_CREATE_HOST_FAILED)
     else:
-        logging.error(ERROR_CREATE_HOST_TIMEOUT)
         raise Exception(ERROR_CREATE_HOST_TIMEOUT)
 
 def addStorageDomain():
@@ -287,7 +286,7 @@ def addStorageDomain():
         logging.info("Adding local storage domain")
         controller.CONF["API_OBJECT"].storagedomains.add(sdParams)
     except:
-        logging.debug(ERROR_ADD_LOCAL_DOMAIN)
+        logging.error(traceback.format_exc())
         raise Exception(ERROR_ADD_LOCAL_DOMAIN)
 
 def validateSuperUserPasswd(param, options=[]):
@@ -344,7 +343,7 @@ def makeStorageDir():
         nfsutils.setSELinuxContextForDir(controller.CONF["STORAGE_PATH"], nfsutils.SELINUX_RW_LABEL)
         os.chown(controller.CONF["STORAGE_PATH"], basedefs.CONST_VDSM_UID, basedefs.CONST_KVM_GID)
     except:
-        logging.debug(ERROR_CREATE_STORAGE_PATH)
+        logging.error(traceback.format_exc())
         raise Exception(ERROR_CREATE_STORAGE_PATH)
 
 def getSupportedCpus():
@@ -366,7 +365,7 @@ def getSupportedCpus():
         for item in controller.CONF['VDSM_SUPPORTED_MODELS']:
             logging.debug(item)
     except:
-        logging.debug(ERROR_CAPABILITIES)
+        logging.error(traceback.format_exc())
         raise Exception(ERROR_CAPABILITIES)
 
 def getCPUFamily():
@@ -416,7 +415,7 @@ def isHealthPageUp():
         logging.info("JBoss is up and running.")
         return True
     else:
-        logging.debug(ERROR_JBOSS_STATUS)
+        logging.error(ERROR_JBOSS_STATUS)
         raise Exception(ERROR_JBOSS_STATUS)
 
 def getUrlContent(url):
