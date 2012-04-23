@@ -42,6 +42,9 @@ public final class VdcEventNotificationUtils {
         AddEventNotificationEntry(EventNotificationEntity.GlusterVolume, AuditLogType.GLUSTER_VOLUME_START_FAILED);
         AddEventNotificationEntry(EventNotificationEntity.GlusterVolume, AuditLogType.GLUSTER_VOLUME_OPTIONS_RESET);
         AddEventNotificationEntry(EventNotificationEntity.GlusterVolume, AuditLogType.GLUSTER_VOLUME_OPTIONS_RESET_FAILED);
+        // DWH
+        AddEventNotificationEntry(EventNotificationEntity.DWH, AuditLogType.DWH_STOPPED);
+        AddEventNotificationEntry(EventNotificationEntity.DWH, AuditLogType.DWH_ERROR);
     }
 
     /**

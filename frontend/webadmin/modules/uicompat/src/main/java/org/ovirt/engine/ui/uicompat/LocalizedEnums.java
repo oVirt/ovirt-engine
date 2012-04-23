@@ -141,6 +141,8 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
 	String EventNotificationEntity___GlusterVolume();
 
+	String EventNotificationEntity___DWH();
+
 	String AuditLogType___VDS_FAILURE();
 
 	String AuditLogType___USER_VDS_MAINTENANCE();
@@ -496,4 +498,10 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 	String VdsSelectionAlgorithm___EvenlyDistribute();
 
 	String VdsSelectionAlgorithm___PowerSave();
+
+	String AuditLogType___DWH_STOPPED();
+
+	String AuditLogType___DWH_STARTED();
+
+	String AuditLogType___DWH_ERROR();
 }

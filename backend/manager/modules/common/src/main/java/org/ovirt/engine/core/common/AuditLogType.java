@@ -563,6 +563,11 @@ public enum AuditLogType {
     IMPORTEXPORT_IMPORT_VM_INTERFACES_ON_NON_VM_NETWORKS(9600, AuditLogTimeInterval.MINUTE.getValue()),
     VDS_SET_NON_OPERATIONAL_VM_NETWORK_IS_BRIDGELESS(9601, AuditLogTimeInterval.MINUTE.getValue()),
 
+    // DWH
+    DWH_STOPPED(9701),
+    DWH_STARTED(9700),
+    DWH_ERROR(9704),
+
     ;
 
     private int intValue;

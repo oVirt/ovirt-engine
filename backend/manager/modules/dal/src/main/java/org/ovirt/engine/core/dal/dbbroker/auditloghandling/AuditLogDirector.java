@@ -49,6 +49,7 @@ public final class AuditLogDirector {
         initStorageSeverities();
         initTaskSeverities();
         initGlusterVolumeSeverities();
+        initDwhSeverities();
         checkSeverities();
     }
 
@@ -597,6 +598,12 @@ public final class AuditLogDirector {
         mSeverities.put(AuditLogType.MAC_POOL_EMPTY, AuditLogSeverity.WARNING);
         mSeverities.put(AuditLogType.MAC_ADDRESS_IS_IN_USE, AuditLogSeverity.WARNING);
         mSeverities.put(AuditLogType.VDS_NETWORK_MTU_DIFFER_FROM_LOGICAL_NETWORK, AuditLogSeverity.WARNING);
+    }
+
+    private static void initDwhSeverities() {
+        mSeverities.put(AuditLogType.DWH_STOPPED, AuditLogSeverity.NORMAL);
+        mSeverities.put(AuditLogType.DWH_STARTED, AuditLogSeverity.NORMAL);
+        mSeverities.put(AuditLogType.DWH_ERROR, AuditLogSeverity.ERROR);
     }
 
     private static void initMessages() {
