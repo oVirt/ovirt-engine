@@ -12,7 +12,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -27,6 +26,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DiskImageDAO;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
+import org.ovirt.engine.core.utils.RandomUtils;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 
 /**
@@ -59,10 +59,10 @@ public class GetAllDisksByVmIdQueryTest extends AbstractUserQueryTest<GetAllDisk
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        vmID = new Guid(UUID.randomUUID());
-        pluggedDisk = createDiskImage(vmID, true);
-        unpluggedDisk = createDiskImage(vmID, true);
-        inactiveDisk = createDiskImage(vmID, false);
+        vmID = Guid.NewGuid();
+        pluggedDisk = createDiskImage(true);
+        unpluggedDisk = createDiskImage(true);
+        inactiveDisk = createDiskImage(false);
         setUpDAOMocks();
     }
 
@@ -94,9 +94,11 @@ public class GetAllDisksByVmIdQueryTest extends AbstractUserQueryTest<GetAllDisk
         // Image handler
         mockStatic(ImagesHandler.class);
         when(ImagesHandler.getAllImageSnapshots(pluggedDisk.getImageId(), pluggedDisk.getit_guid())).thenReturn
-                (new ArrayList<DiskImage>(Collections.nCopies(NUM_DISKS_OF_EACH_KIND, pluggedDisk)));
+                (new ArrayList<DiskImage>(Collections.nCopies(NUM_DISKS_OF_EACH_KIND,
+                        createDiskSnapshot(pluggedDisk.getId()))));
         when(ImagesHandler.getAllImageSnapshots(unpluggedDisk.getImageId(), unpluggedDisk.getit_guid())).thenReturn
-                (new ArrayList<DiskImage>(Collections.nCopies(NUM_DISKS_OF_EACH_KIND, unpluggedDisk)));
+                (new ArrayList<DiskImage>(Collections.nCopies(NUM_DISKS_OF_EACH_KIND,
+                        createDiskSnapshot(unpluggedDisk.getId()))));
     }
 
     private static VmDevice createVMDevice(Guid vmID, DiskImage disk) {
@@ -111,27 +113,45 @@ public class GetAllDisksByVmIdQueryTest extends AbstractUserQueryTest<GetAllDisk
                 true);
     }
 
-    private static DiskImage createDiskImage(Guid vmID, boolean isActive) {
+    private DiskImage createDiskImage(boolean isActive) {
         return new DiskImage(
                 isActive,
                 new Date(),
                 new Date(),
                 1L,
                 "1",
-                new Guid(UUID.randomUUID()),
+                Guid.NewGuid(),
                 "2",
-                new Guid(UUID.randomUUID()),
+                Guid.NewGuid(),
                 1L,
                 vmID,
-                new Guid(UUID.randomUUID()),
+                Guid.NewGuid(),
                 ImageStatus.OK,
                 new Date(),
-                "",VmEntityType.VM, null, null);
+                "", VmEntityType.VM, null, null);
+    }
+
+    private DiskImage createDiskSnapshot(Guid diskId) {
+        return new DiskImage(
+                RandomUtils.instance().nextBoolean(),
+                new Date(),
+                new Date(),
+                1L,
+                "1",
+                Guid.NewGuid(),
+                "2",
+                Guid.NewGuid(),
+                1L,
+                vmID,
+                diskId,
+                ImageStatus.OK,
+                new Date(),
+                "", VmEntityType.VM, null, null);
     }
 
     @Test
     public void testExecuteQueryCommand() {
-        GetAllDisksByVmIdParameters params = getQueryParameters();
+        params = getQueryParameters();
         when(params.getVmId()).thenReturn(vmID);
 
         GetAllDisksByVmIdQuery<GetAllDisksByVmIdParameters> query = getQuery();
@@ -156,7 +176,7 @@ public class GetAllDisksByVmIdQueryTest extends AbstractUserQueryTest<GetAllDisk
      */
     private static void assertCorrectSnapshots(DiskImage disk) {
         for (int i = 0; i < NUM_DISKS_OF_EACH_KIND; ++i) {
-            assertEquals("Wrong snapshot " + i + " for disk ", disk, disk.getSnapshots().get(i));
+            assertEquals("Wrong snapshot " + i + " for disk ", disk.getId(), disk.getSnapshots().get(i).getId());
         }
     }
 }
