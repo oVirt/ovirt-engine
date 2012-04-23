@@ -27,7 +27,10 @@ public class storage_server_connections implements Serializable {
             String port,
             String portal,
             String vfsType,
-            String mountOptions) {
+            String mountOptions,
+            Short nfsVersion,
+            Short nfsRetrans,
+            Short nfsTimeo) {
         this.connection = connection;
         this.id = id;
         this.iqn = iqn;
@@ -48,7 +51,7 @@ public class storage_server_connections implements Serializable {
             String userName,
             String port,
             String portal) {
-        this(connection, id, iqn, password, storageType, userName, port, portal, null, null);
+        this(connection, id, iqn, password, storageType, userName, port, portal, null, null, null, null, null);
     }
 
     @Column(name = "connection", length = 250, nullable = false)
@@ -162,6 +165,23 @@ public class storage_server_connections implements Serializable {
         return vfsType;
     }
 
+    @Column(name = "nfs_version")
+    private Short nfsVersion;
+
+    @Column(name = "nfs_timeo")
+    private Short nfsTimeo;
+
+    public Short getNfsTimeo() {
+        return nfsTimeo;
+    }
+
+    public void setNfsTimeo(Short nfsTimeo) {
+        this.nfsTimeo = nfsTimeo;
+    }
+
+    @Column(name = "nfs_retrans")
+    private Short nfsRetrans;
+
     private String spec;
 
     public void setSpec(String spec) {
@@ -191,8 +211,35 @@ public class storage_server_connections implements Serializable {
         // using the constructor since all fields do not need deep copy (string
         // is immutable,
         // and storage_type is an enum
-        return new storage_server_connections(ssc.connection, ssc.id, ssc.iqn, ssc.password,
-                ssc.storageType, ssc.username, ssc.port, ssc.portal, ssc.vfsType, ssc.mountOptions);
+        return new storage_server_connections(ssc.connection,
+                ssc.id,
+                ssc.iqn,
+                ssc.password,
+                ssc.storageType,
+                ssc.username,
+                ssc.port,
+                ssc.portal,
+                ssc.vfsType,
+                ssc.mountOptions,
+                ssc.nfsVersion,
+                ssc.nfsRetrans,
+                ssc.nfsTimeo);
+    }
+
+    public Short getNfsVersion() {
+        return nfsVersion;
+    }
+
+    public void setNfsVersion(Short nfsVersion) {
+        this.nfsVersion = nfsVersion;
+    }
+
+    public Short getNfsRetrans() {
+        return nfsRetrans;
+    }
+
+    public void setNfsRetrans(Short nfsRetrans) {
+        this.nfsRetrans = nfsRetrans;
     }
 
 }
