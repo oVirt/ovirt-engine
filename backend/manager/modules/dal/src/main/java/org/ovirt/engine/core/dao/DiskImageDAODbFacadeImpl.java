@@ -6,9 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
-import org.ovirt.engine.core.common.businessentities.PropagateErrors;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
@@ -215,7 +213,7 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
                 parameterSource);
     }
 
-    private static class DiskImageRowMapper implements
+    private static class DiskImageRowMapper extends AbstractDiskRowMapper<DiskImage> implements
             ParameterizedRowMapper<DiskImage> {
 
         public static DiskImageRowMapper instance = new DiskImageRowMapper();
@@ -225,7 +223,7 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
 
         @Override
         public DiskImage mapRow(ResultSet rs, int rowNum) throws SQLException {
-            DiskImage entity = new DiskImage();
+            DiskImage entity = super.mapRow(rs, rowNum);
             mapEntity(rs, entity);
             return entity;
         }
@@ -239,8 +237,6 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
             entity.setdescription(rs.getString("description"));
             entity.setImageId(Guid.createGuidFromString(rs
                     .getString("image_guid")));
-            entity.setinternal_drive_mapping(rs
-                    .getString("internal_drive_mapping"));
             entity.setit_guid(Guid.createGuidFromString(rs
                     .getString("it_guid")));
             entity.setsize(rs.getLong("size"));
@@ -264,22 +260,19 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
             entity.setstorage_path(StringUtils.splitStringList(rs.getString("storage_path")));
             entity.setstorage_pool_id(NGuid.createGuidFromString(rs
                     .getString("storage_pool_id")));
-            entity.setDiskInterface(DiskInterface.forValue(rs
-                    .getInt("disk_interface")));
             entity.setboot(rs.getBoolean("boot"));
-            entity.setWipeAfterDelete(rs.getBoolean("wipe_after_delete"));
-            entity.setPropagateErrors(PropagateErrors.forValue(rs
-                    .getInt("propagate_errors")));
             entity.setread_rate(rs.getInt("read_rate"));
             entity.setwrite_rate(rs.getInt("write_rate"));
             entity.setQuotaId(Guid.createGuidFromString(rs.getString("quota_id")));
             entity.setactive((Boolean) rs.getObject("active"));
             entity.setQuotaName(rs.getString("quota_name"));
-            entity.setDiskAlias(rs.getString("disk_alias"));
-            entity.setDiskDescription(rs.getString("disk_description"));
-            entity.setShareable(rs.getBoolean("shareable"));
             String entityType = rs.getString("entity_type");
             handleEntityType(entityType, entity);
+        }
+
+        @Override
+        protected DiskImage createDiskEntity() {
+            return new DiskImage();
         }
     }
 

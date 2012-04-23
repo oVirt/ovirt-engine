@@ -3,6 +3,7 @@ package org.ovirt.engine.core.dao;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.BaseDisk;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.PropagateErrors;
@@ -24,9 +25,17 @@ abstract class AbstractDiskRowMapper<T extends BaseDisk> implements Parameterize
         disk.setInternalDriveMapping(rs.getInt("internal_drive_mapping"));
         disk.setDiskAlias(rs.getString("disk_alias"));
         disk.setDiskDescription(rs.getString("disk_description"));
-        disk.setDiskInterface(DiskInterface.valueOf(rs.getString("disk_interface")));
+        String diskInterface = rs.getString("disk_interface");
+        if (!StringUtils.isEmpty(diskInterface)) {
+            disk.setDiskInterface(DiskInterface.valueOf(diskInterface));
+        }
+
         disk.setWipeAfterDelete(rs.getBoolean("wipe_after_delete"));
-        disk.setPropagateErrors(PropagateErrors.valueOf(rs.getString("propagate_errors")));
+        String propagateErrors = rs.getString("propagate_errors");
+        if (!StringUtils.isEmpty(propagateErrors)) {
+            disk.setPropagateErrors(PropagateErrors.valueOf(propagateErrors));
+        }
+
         disk.setShareable(rs.getBoolean("shareable"));
 
         return disk;
