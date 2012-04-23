@@ -177,7 +177,7 @@ public class BackendResource extends BaseBackendResource {
 
     private static final String VERSION_FORMAT = "{0}.{1}";
 
-    private String asString(Version version) {
+    static String asString(Version version) {
         return version == null ? null : MessageFormat.format(VERSION_FORMAT, version.getMajor(), version.getMinor());
     }
 }

@@ -14,6 +14,7 @@ import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
+@SuppressWarnings("serial")
 @InternalCommandAttribute
 public class AddStorageServerConnectionCommand<T extends StorageServerConnectionParametersBase> extends
         ConnectStorageToVdsCommand<T> {

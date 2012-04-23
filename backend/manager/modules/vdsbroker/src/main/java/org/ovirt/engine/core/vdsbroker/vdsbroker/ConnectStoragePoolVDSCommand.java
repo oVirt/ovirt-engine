@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
-import org.ovirt.engine.core.common.errors.*;
-import org.ovirt.engine.core.common.vdscommands.*;
+import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.vdscommands.ConnectStoragePoolVDSCommandParameters;
 
 public class ConnectStoragePoolVDSCommand<P extends ConnectStoragePoolVDSCommandParameters>
         extends VdsBrokerCommand<P> {
