@@ -61,13 +61,20 @@ public class UpdateStoragePoolCommandTest {
     }
 
     protected void spyCommand(StoragePoolManagementParameter params) {
-        cmd = spy(new UpdateStoragePoolCommand<StoragePoolManagementParameter>(params));
+        UpdateStoragePoolCommand<StoragePoolManagementParameter> realCommand =
+                new UpdateStoragePoolCommand<StoragePoolManagementParameter>(params);
+
+        StoragePoolValidator validator = spy(realCommand.createStoragePoolValidator());
+        doReturn(vdsDao).when(validator).getVdsGroupDao();
+
+        cmd = spy(realCommand);
         doReturn(10).when(cmd).getStoragePoolNameSizeLimit();
         doReturn(createVersionSet().contains(cmd.getStoragePool().getcompatibility_version())).when(cmd)
                 .isStoragePoolVersionSupported();
         doReturn(spDao).when(cmd).getStoragePoolDAO();
         doReturn(sdDao).when(cmd).getStorageDomainStaticDAO();
         doReturn(vdsDao).when(cmd).getVdsGroupDAO();
+        doReturn(validator).when(cmd).createStoragePoolValidator();
     }
 
     @Test

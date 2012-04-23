@@ -140,8 +140,7 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
             }
         }
 
-        StoragePoolValidator validator =
-                new StoragePoolValidator(getStoragePool(), getReturnValue().getCanDoActionMessages());
+        StoragePoolValidator validator = createStoragePoolValidator();
         if (returnValue) {
             returnValue = validator.isNotLocalfsWithDefaultCluster();
         }
@@ -152,9 +151,14 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
         return returnValue;
     }
 
+    protected StoragePoolValidator createStoragePoolValidator() {
+        return new StoragePoolValidator(getStoragePool(), getReturnValue().getCanDoActionMessages());
+    }
+
     protected boolean isStoragePoolVersionSupported() {
         return VersionSupport.checkVersionSupported(getStoragePool().getcompatibility_version());
     }
+
     /* Getters for external resources and handlers */
 
     protected VDSBrokerFrontend getResourceManager() {
