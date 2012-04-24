@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.adbroker.AdActionType;
@@ -17,13 +18,11 @@ import org.ovirt.engine.core.common.PermissionSubject;
 import org.ovirt.engine.core.common.action.LoginResult;
 import org.ovirt.engine.core.common.action.LoginUserParameters;
 import org.ovirt.engine.core.common.action.VdcLoginReturnValueBase;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.AdUser;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.IVdcUser;
 import org.ovirt.engine.core.common.users.VdcUser;
-import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -36,8 +35,13 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
     }
 
     @Override
-    protected VdcReturnValueBase CreateReturnValue() {
+    protected VdcLoginReturnValueBase CreateReturnValue() {
         return new VdcLoginReturnValueBase();
+    }
+
+    @Override
+    public VdcLoginReturnValueBase getReturnValue() {
+        return (VdcLoginReturnValueBase) super.getReturnValue();
     }
 
     private void HandleAuthenticationError(List<VdcBllMessages> errorMessages) {
@@ -47,7 +51,7 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
 
         if (adFactory == null) {
             addCanDoActionMessage(VdcBllMessages.USER_FAILED_TO_AUTHENTICATION_WRONG_AUTHENTICATION_METHOD);
-            ((VdcLoginReturnValueBase) getReturnValue()).setLoginResult(LoginResult.CantAuthenticate);
+            getReturnValue().setLoginResult(LoginResult.CantAuthenticate);
             log.errorFormat(getReturnValue().getCanDoActionMessages().get(0) + " : {0}", getParameters().getUserName());
             return;
         }
@@ -86,7 +90,7 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
         for (VdcBllMessages msg : errorMessages) {
             getReturnValue().getCanDoActionMessages().add(msg.name());
         }
-        ((VdcLoginReturnValueBase) getReturnValue()).setLoginResult(result);
+        getReturnValue().setLoginResult(result);
         log.errorFormat(getReturnValue().getCanDoActionMessages().get(0) + " : {0}", getParameters().getUserName());
     }
 
@@ -98,7 +102,7 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
      */
     protected void HandleUserSession(AdUser adUser) {
         if (!StringHelper.isNullOrEmpty(getParameters().getHttpSessionId())) {
-            user_sessions user_sessions = new user_sessions("", "", new java.util.Date(), "", getParameters()
+            user_sessions user_sessions = new user_sessions("", "", new Date(), "", getParameters()
                     .getHttpSessionId(), adUser.getUserId());
             DbFacade.getInstance().getDbUserDAO().saveSession(user_sessions);
         }
@@ -117,8 +121,7 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
         return getSucceeded() ? AuditLogType.USER_VDC_LOGIN : AuditLogType.USER_VDC_LOGIN_FAILED;
     }
 
-    protected abstract UserAuthenticationResult AuthenticateUser(RefObject<Boolean> isLocalBackend,
-            RefObject<Boolean> isAdmin);
+    protected abstract UserAuthenticationResult authenticateUser();
 
     protected AdUser _adUser;
 
@@ -128,7 +131,7 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
         // todo : insert correct values of all arguments, separate
         HandleUserSession(_adUser);
         setActionReturnValue(getCurrentUser());
-        ((VdcLoginReturnValueBase) getReturnValue()).setLoginResult(LoginResult.Autheticated);
+        getReturnValue().setLoginResult(LoginResult.Autheticated);
         // Permissions for this user might been changed since last login so
         // update his isAdmin flag accordingly
         updateUserData();
@@ -167,12 +170,8 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
                 addCanDoActionMessage(VdcBllMessages.USER_CANNOT_LOGIN_DOMAIN_NOT_SUPPORTED);
                 return false;
             }
-            boolean isLocalBackend = false;
-            boolean isAdmin = false;
 
-            RefObject<Boolean> tempRefObject2 = new RefObject<Boolean>(isLocalBackend);
-            RefObject<Boolean> tempRefObject3 = new RefObject<Boolean>(isAdmin);
-            UserAuthenticationResult result = AuthenticateUser(tempRefObject2, tempRefObject3);
+            UserAuthenticationResult result = authenticateUser();
             // If no result object is returned from authentication - create a result object with general authentication
             // error
             if (result == null) {
@@ -180,10 +179,8 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
             }
             _adUser = result.getUser();
             authenticated = result.isSuccessful();
-            isLocalBackend = tempRefObject2.argvalue;
-            isAdmin = tempRefObject3.argvalue;
 
-            if ((!authenticated || _adUser == null) && !isLocalBackend) {
+            if ((!authenticated || _adUser == null)) {
                 HandleAuthenticationError(result.getErrorMessages());
                 authenticated = false;
             }

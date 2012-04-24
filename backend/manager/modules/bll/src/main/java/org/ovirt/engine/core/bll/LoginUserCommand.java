@@ -8,7 +8,6 @@ import org.ovirt.engine.core.bll.adbroker.LdapReturnValueBase;
 import org.ovirt.engine.core.bll.adbroker.LdapUserPasswordBaseParameters;
 import org.ovirt.engine.core.bll.adbroker.UserAuthenticationResult;
 import org.ovirt.engine.core.common.action.LoginUserParameters;
-import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 
 public class LoginUserCommand<T extends LoginUserParameters> extends LoginBaseCommand<T> {
@@ -17,11 +16,7 @@ public class LoginUserCommand<T extends LoginUserParameters> extends LoginBaseCo
     }
 
     @Override
-    protected UserAuthenticationResult AuthenticateUser(RefObject<Boolean> isLocalBackend,
-            RefObject<Boolean> isAdmin) {
-        isLocalBackend.argvalue = false;
-        isAdmin.argvalue = false;
-
+    protected UserAuthenticationResult authenticateUser() {
         // We are using the getLoginDomain method in order to get the real domain, in case of logging in with a UPN
         // as in that case the domain we get is what chosen by the client, but the real domain is the one determined by
         // the UPN
