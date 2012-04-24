@@ -42,7 +42,7 @@ public class network_cluster implements Serializable {
      * A cluster network can be tagged as monitored. Monitored network have implications on automated actions taken on a
      * host during monitoring.
      */
-    private boolean required;
+    private boolean required = true;
 
     public network_cluster() {
     }
