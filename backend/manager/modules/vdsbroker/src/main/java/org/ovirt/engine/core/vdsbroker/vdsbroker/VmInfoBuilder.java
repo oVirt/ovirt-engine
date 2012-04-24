@@ -86,7 +86,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
     protected void buildVmCD() {
         XmlRpcStruct struct;
         // check first if CD was given as a parameter
-        if (!StringHelper.isNullOrEmpty(vm.getCdPath())) {
+        if (vm.isRunOnce() && !StringHelper.isNullOrEmpty(vm.getCdPath())) {
             VmDevice vmDevice =
                     new VmDevice(new VmDeviceId(Guid.NewGuid(), vm.getId()),
                             VmDeviceType.DISK.getName(),
@@ -132,7 +132,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
     @Override
     protected void buildVmFloppy() {
         // check first if Floppy was given as a parameter
-        if (!StringHelper.isNullOrEmpty(vm.getFloppyPath())) {
+        if (vm.isRunOnce() && !StringHelper.isNullOrEmpty(vm.getFloppyPath())) {
             VmDevice vmDevice =
                     new VmDevice(new VmDeviceId(Guid.NewGuid(), vm.getId()),
                             VmDeviceType.DISK.getName(),

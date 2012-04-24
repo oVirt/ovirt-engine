@@ -27,6 +27,7 @@ public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T>
 
     @Override
     protected CreateVmVDSCommandParameters initVdsCreateVmParams() {
+        getVm().setRunOnce(true);
         CreateVmVDSCommandParameters createVmParams = super.initVdsCreateVmParams();
         SysPrepParams sysPrepParams = new SysPrepParams();
         RunVmOnceParams runOnceParams = getParameters();

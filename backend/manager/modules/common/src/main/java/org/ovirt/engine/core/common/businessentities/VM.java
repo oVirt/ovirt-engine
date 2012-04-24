@@ -26,6 +26,7 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
     private VmStatistics mVmStatistics;
 
     private List<Snapshot> snapshots = new ArrayList<Snapshot>();
+    private boolean isRunOnce = false;
 
     public String getUserDefinedProperties() {
         return mVmStatic.getUserDefinedProperties();
@@ -1521,5 +1522,13 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
 
     public void setSnapshots(List<Snapshot> snapshots) {
         this.snapshots = snapshots;
+    }
+
+    public void setRunOnce(boolean value) {
+        isRunOnce = value;
+    }
+
+    public boolean isRunOnce() {
+        return isRunOnce;
     }
 }
