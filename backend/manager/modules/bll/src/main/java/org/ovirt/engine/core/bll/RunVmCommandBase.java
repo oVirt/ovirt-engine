@@ -2,14 +2,17 @@ package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext.ExecutionMethod;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
+import org.ovirt.engine.core.bll.storage.StorageHelperDirector;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.IVdsAsyncCommand;
+import org.ovirt.engine.core.common.businessentities.LunDisk;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -323,6 +326,21 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
     @Override
     public Guid getAutoStartVdsId() {
         return null;
+    }
+
+    protected boolean connectLunDisks(Guid hostId) {
+        if (getVm().getDiskMap().isEmpty()) {
+            VmHandler.updateDisksFromDb(getVm());
+        }
+        List<LunDisk> lunDisks = ImagesHandler.filterDiskBasedOnLuns(getVm().getDiskMap().values());
+        for (LunDisk lunDisk : lunDisks) {
+            if (!StorageHelperDirector.getInstance().getItem(lunDisk.getLun().getLunType())
+                        .ConnectStorageToLunByVdsId(null, hostId, lunDisk.getLun())) {
+                log.infoFormat("Failed to connect  a lun disk to vdsm {0} skiping it", hostId);
+                return false;
+            }
+        }
+        return true;
     }
 
     protected void DecreasePendingVms(Guid vdsId) {

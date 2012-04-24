@@ -98,9 +98,9 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperatinParameterBas
         return true;
     }
 
-    protected boolean isDiskExist(DiskImage disk) {
-        if (disk == null || !disk.getactive() || !getVmId().equals(disk.getvm_guid())) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_IMAGE_DOES_NOT_EXIST);
+    protected boolean isDiskExist(Disk disk) {
+        if (disk == null || !getVmId().equals(disk.getvm_guid())) {
+            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_NOT_EXIST);
             return false;
         }
         return true;

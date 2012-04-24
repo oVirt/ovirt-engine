@@ -12,7 +12,7 @@ public class GetAllAttachableDisksQuery<P extends GetAllAttachableDisks> extends
     @Override
     protected void executeQueryCommand() {
         setReturnValue(DbFacade.getInstance()
-                .getDiskImageDAO()
+                .getDiskDao()
                 .getAllAttachableDisksByPoolId(getParameters().getStoragePoolId(),
                         getUserID(),
                         getParameters().isFiltered()));

@@ -18,7 +18,7 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
-import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.FileTypeExtension;
@@ -202,12 +202,14 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
     protected void RunVm() {
         setActionReturnValue(VMStatus.Down);
         if (GetVdsToRunOn()) {
-            VMStatus status;
+            VMStatus status = null;
             try {
                 IncrementVdsPendingVmsCount();
                 AttachCd();
-                status = CreateVm();
-                ExecutionHandler.setAsyncJob(getExecutionContext(), true);
+                if (connectLunDisks(getVdsId())) {
+                    status = CreateVm();
+                    ExecutionHandler.setAsyncJob(getExecutionContext(), true);
+                }
             } finally {
                 DecrementVdsPendingVmsCount();
             }
@@ -634,9 +636,9 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
             // Block from running a VM with no HDD when its first boot device is
             // HD
             // and no other boot devices are configured
-            List<DiskImage> vmImages = getPluggedImages(vm);
-            if (boot_sequence == BootSequence.C && vmImages.size() == 0) {
-                String messageStr = !vmImages.isEmpty() ?
+            List<Disk> vmDisks = getPluggedDisks(vm);
+            if (boot_sequence == BootSequence.C && vmDisks.size() == 0) {
+                String messageStr = !vmDisks.isEmpty() ?
                         VdcBllMessages.VM_CANNOT_RUN_FROM_DISK_WITHOUT_PLUGGED_DISK.toString() :
                         VdcBllMessages.VM_CANNOT_RUN_FROM_DISK_WITHOUT_DISK.toString();
 
@@ -668,7 +670,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
                             && DbFacade.getInstance().getVmNetworkInterfaceDAO().getAllForVm(vm.getId()).size() == 0) {
                         message.add(VdcBllMessages.VM_CANNOT_RUN_FROM_NETWORK_WITHOUT_NETWORK.toString());
                         retValue = false;
-                    } else if (vmImages.size() > 0) {
+                    } else if (vmDisks.size() > 0) {
                         ValidationResult vmDuringSnapshotResult =
                                 snapshotsValidator.vmNotDuringSnapshot(vm.getId());
                         if (!vmDuringSnapshotResult.isValid()) {
@@ -682,7 +684,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
                                 true, false, false, false, false,
                                 !vm.getauto_startup() || !runParams.getIsInternal() && vm.getauto_startup(),
                                 !vm.getauto_startup() || !runParams.getIsInternal() && vm.getauto_startup(),
-                                vmImages)) {
+                                vmDisks)) {
                             retValue = false;
                         }
                         // Check if iso and floppy path exists
@@ -753,18 +755,18 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
      * @param vm
      * @return
      */
-    private static List<DiskImage> getPluggedImages(VM vm) {
-        List<DiskImage> diskImages = DbFacade.getInstance().getDiskImageDAO().getAllForVm(vm.getId());
+    private static List<Disk> getPluggedDisks(VM vm) {
+        List<Disk> diskImages = DbFacade.getInstance().getDiskDao().getAllForVm(vm.getId());
         List<VmDevice> diskVmDevices =
                 DbFacade.getInstance()
                         .getVmDeviceDAO()
                         .getVmDeviceByVmIdTypeAndDevice(vm.getId(),
                                 VmDeviceType.DISK.getName(),
                                 VmDeviceType.DISK.getName());
-        List<DiskImage> result = new ArrayList<DiskImage>();
-        for (DiskImage diskImage : diskImages) {
+        List<Disk> result = new ArrayList<Disk>();
+        for (Disk diskImage : diskImages) {
             for (VmDevice diskVmDevice : diskVmDevices) {
-                if (diskImage.getimage_group_id().equals(diskVmDevice.getDeviceId())) {
+                if (diskImage.getId().equals(diskVmDevice.getDeviceId())) {
                     if (diskVmDevice.getIsPlugged()) {
                         result.add(diskImage);
                     }
