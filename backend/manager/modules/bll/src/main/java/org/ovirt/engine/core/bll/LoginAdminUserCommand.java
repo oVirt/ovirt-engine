@@ -15,7 +15,7 @@ public class LoginAdminUserCommand<T extends LoginUserParameters> extends LoginU
 
         // only admin users can use LoginAdmin command
         if (autheticated) {
-            autheticated = MultiLevelAdministrationHandler.isAdminUser(getCurrentUser().getUserId());
+            autheticated = getCurrentUser().isAdmin();
 
             if (!autheticated) {
                 addCanDoActionMessage(VdcBllMessages.USER_NOT_AUTHORIZED_TO_PERFORM_ACTION);
