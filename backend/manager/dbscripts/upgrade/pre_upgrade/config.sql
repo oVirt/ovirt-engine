@@ -143,6 +143,7 @@ select fn_db_add_config_value('LDAPQueryTimeout','30','general');
 select fn_db_add_config_value('LDAPSecurityAuthentication','GSSAPI','general');
 select fn_db_add_config_value('LDAPServerPort','389','general');
 select fn_db_add_config_value('LdapServers','','general');
+select fn_db_add_config_value('LDAPProviderTypes','','general');
 select fn_db_add_config_value('LeaseRetries','3','general');
 select fn_db_add_config_value('LeaseTimeSec','60','general');
 select fn_db_add_config_value('LicenseCertificateFingerPrint','5f 38 41 89 b1 33 49 0c 24 13 6b b3 e5 ba 9e c7 fd 83 80 3b','general');
@@ -503,7 +504,9 @@ BEGIN
 
         FOR v_values in select regexp_split_to_table(v_domains, ',') as val
         LOOP
-        v_temp := v_temp || v_values.val || ':general,';
+            IF (length(v_values.val) > 0) THEN
+                v_temp := v_temp || v_values.val || ':general,';
+            END IF;
         END LOOP;
 
         v_temp = rtrim(v_temp,',');
@@ -517,4 +520,4 @@ LANGUAGE plpgsql;
 
 SELECT  __temp_update_ldap_provier_types();
 DROP FUNCTION __temp_update_ldap_provier_types();
---
+
