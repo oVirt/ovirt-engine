@@ -820,6 +820,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         model.setIsLinux_Unassign_UnknownOS(DataProvider.IsLinuxOsType(vm.getvm_os())
                 || vm.getvm_os() == VmOsType.Unassigned || vm.getvm_os() == VmOsType.Other);
 
+        model.getIsLinuxOptionsAvailable().setEntity(model.getIsLinux_Unassign_UnknownOS());
         model.setIsWindowsOS(DataProvider.IsWindowsOsType(vm.getvm_os()));
         model.getIsVmFirstRun().setEntity(!vm.getis_initialized());
         model.getSysPrepDomainName().setSelectedItem(vm.getvm_domain());
