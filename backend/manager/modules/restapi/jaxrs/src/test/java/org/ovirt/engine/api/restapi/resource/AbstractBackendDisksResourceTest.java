@@ -86,7 +86,7 @@ public class AbstractBackendDisksResourceTest<T extends AbstractBackendReadOnlyD
     }
 
     static DiskImage setUpEntityExpectations(DiskImage entity, int index) {
-        expect(entity.getImageId()).andReturn(GUIDS[index]).anyTimes();
+        expect(entity.getId()).andReturn(GUIDS[index]).anyTimes();
         expect(entity.getvm_snapshot_id()).andReturn(GUIDS[2]).anyTimes();
         expect(entity.getvm_guid()).andReturn(PARENT_ID).anyTimes();
         expect(entity.getvolume_format()).andReturn(VolumeFormat.RAW).anyTimes();

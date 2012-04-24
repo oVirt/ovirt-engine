@@ -43,6 +43,6 @@ public class BackendReadOnlyDisksResource
     }
 
     protected boolean matchEntity(DiskImage entity, Guid id) {
-        return id != null && id.equals(entity.getImageId());
+        return id != null && id.equals(entity.getId());
     }
 }

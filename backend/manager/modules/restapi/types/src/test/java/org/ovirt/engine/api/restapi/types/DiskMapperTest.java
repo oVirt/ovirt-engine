@@ -25,6 +25,7 @@ public class DiskMapperTest extends AbstractInvertibleMappingTest<Disk, DiskImag
     protected void verify(Disk model, Disk transform) {
         assertNotNull(transform);
         assertEquals(model.getId(), transform.getId());
+        assertEquals(model.getImageId(), transform.getImageId());
         assertEquals(model.getSize(), transform.getSize());
         assertEquals(model.getFormat(), transform.getFormat());
         assertEquals(model.getInterface(), transform.getInterface());

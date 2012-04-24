@@ -2006,6 +2006,7 @@
     <xs:complexContent>
       <xs:extension base="BaseDevice">
         <xs:sequence>
+          <xs:element name="image_id" type="xs:string" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="storage_domains" minOccurs="0" maxOccurs="1"/>
           <xs:element name="size" type="xs:long" minOccurs="0"/>
           <xs:element name="type" type="xs:string" minOccurs="0"/>

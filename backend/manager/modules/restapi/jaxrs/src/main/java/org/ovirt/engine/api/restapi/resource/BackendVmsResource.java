@@ -98,14 +98,14 @@ public class BackendVmsResource extends
             // The parameters to AddVmFromSnapshot hold an array list of Disks
             // and not List of Disks, as this is a GWT serialization limitation,
             // and this parameter class serves GWT clients as well.
-            HashMap<Guid, DiskImage> diskImagesById = getDiskImagesByIdMap(vmConfiguration.getDiskMap().values());
+            HashMap<Guid, DiskImage> diskImagesByImageId = getDiskImagesByIdMap(vmConfiguration.getDiskMap().values());
             if (vm.isSetDisks()) {
-                prepareImagesForCloneFromSnapshotParams(vm.getDisks(), diskImagesById);
+                prepareImagesForCloneFromSnapshotParams(vm.getDisks(), diskImagesByImageId);
             }
             response =
                         cloneVmFromSnapshot(vmConfiguration.getStaticData(),
                                 snapshotId,
-                                diskImagesById);
+                                diskImagesByImageId);
         } else if (vm.isSetDisks() && vm.getDisks().isSetClone() && vm.getDisks().isClone()) {
             response = cloneVmFromTemplate(staticVm, vm.getDisks(), templateId);
         } else if (Guid.Empty.equals(templateId)) {
@@ -129,7 +129,7 @@ public class BackendVmsResource extends
             Map<Guid, DiskImage> imagesFromConfiguration) {
         if (disks.getDisks() != null) {
             for (Disk disk : disks.getDisks()) {
-                DiskImage diskImageFromConfig = imagesFromConfiguration.get(asGuid(disk.getId()));
+                DiskImage diskImageFromConfig = imagesFromConfiguration.get(asGuid(disk.getImageId()));
                 DiskImage diskImage = getMapper(Disk.class, DiskImage.class).map(disk, diskImageFromConfig);
                 imagesFromConfiguration.put(diskImage.getImageId(), diskImage);
             }
@@ -178,7 +178,7 @@ public class BackendVmsResource extends
         if (disks != null && disks.isSetDisks() && disks.getDisks().size() > 0){
             HashMap<Guid, DiskImage> templatesDisksMap = getTemplateDisks(templateId);
             for (Disk disk : disks.getDisks()) {
-                DiskImage templateDisk = templatesDisksMap.get(Guid.createGuidFromString(disk.getId()));
+                DiskImage templateDisk = templatesDisksMap.get(asGuid(disk.getImageId()));
                 if( templateDisk != null ) {
                     disksMap.put(templateDisk.getImageId(), map(disk, templateDisk));
                 } else {
@@ -192,10 +192,10 @@ public class BackendVmsResource extends
     @SuppressWarnings("unchecked")
     private HashMap<Guid, DiskImage> getTemplateDisks(Guid templateId) {
         HashMap<Guid, DiskImage> templatesDisksMap = new HashMap<Guid, DiskImage>();
-        for(DiskImage di : (List<DiskImage>)getEntity(List.class,
+        for (DiskImage di : (List<DiskImage>) getEntity(List.class,
                                                       VdcQueryType.GetVmTemplatesDisks,
                                                       new GetVmTemplatesDisksParameters(templateId),
-                                                      "Disks")){
+                                                      "Disks")) {
             templatesDisksMap.put(di.getImageId(), di);
         }
         return templatesDisksMap;

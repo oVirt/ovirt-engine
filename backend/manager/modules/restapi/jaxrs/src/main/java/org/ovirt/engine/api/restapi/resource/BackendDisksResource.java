@@ -58,7 +58,7 @@ public class BackendDisksResource
 
     @Override
     protected boolean matchEntity(DiskImage entity, Guid id) {
-        return id != null && (id.equals(entity.getImageId()) || id.equals(entity.getvm_snapshot_id()));
+        return id != null && (id.equals(entity.getId()) || id.equals(entity.getvm_snapshot_id()));
     }
 
     @Override
@@ -98,7 +98,7 @@ public class BackendDisksResource
     protected class UpdateParametersProvider implements ParametersProvider<Disk, DiskImage> {
         @Override
         public VdcActionParametersBase getParameters(Disk incoming, DiskImage entity) {
-            return new UpdateVmDiskParameters(parentId, entity.getImageId(), map(incoming, entity));
+            return new UpdateVmDiskParameters(parentId, entity.getId(), map(incoming, entity));
         }
     }
 

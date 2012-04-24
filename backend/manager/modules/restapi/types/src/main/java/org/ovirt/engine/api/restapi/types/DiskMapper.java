@@ -27,7 +27,10 @@ public class DiskMapper {
             diskImage.setvm_guid(new Guid(disk.getVm().getId()));
         }
         if (disk.isSetId()) {
-            diskImage.setImageId(new Guid(disk.getId()));
+            diskImage.setId(new Guid(disk.getId()));
+        }
+        if (disk.isSetImageId()) {
+            diskImage.setImageId(new Guid(disk.getImageId()));
         }
         if (disk.isSetSize()) {
             diskImage.setsize(disk.getSize());
@@ -82,7 +85,12 @@ public class DiskMapper {
             model.setVm(new VM());
             model.getVm().setId(entity.getvm_guid().toString());
         }
-        model.setId(entity.getImageId().toString());
+        if (entity.getId() != null) {
+            model.setId(entity.getId().toString());
+        }
+        if (entity.getImageId() != null) {
+            model.setImageId(entity.getImageId().toString());
+        }
         model.setSize(entity.getsize());
         if (entity.getvolume_format() != null) {
             model.setFormat(map(entity.getvolume_format(), null));
