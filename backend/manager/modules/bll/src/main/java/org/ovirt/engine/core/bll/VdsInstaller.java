@@ -135,12 +135,14 @@ public class VdsInstaller implements IVdsInstallCallBack {
             supportVirt = true;
         }
 
-        if (supportVirt) {
-            _bootStrapInitialCommand = _bootStrapInitialCommand.replace("{virt-placeholder}", "-v");
+        // We pass -V option if no virt is required on this host
+        if (!supportVirt) {
+            _bootStrapInitialCommand = _bootStrapInitialCommand.replace("{virt-placeholder}", "-V");
         } else {
             _bootStrapInitialCommand = _bootStrapInitialCommand.replace("{virt-placeholder}", "");
         }
 
+        // We pass -g option if gluster is supported on this host
         if (supportGluster) {
             _bootStrapInitialCommand = _bootStrapInitialCommand.replace("{gluster-placeholder}", "-g");
         } else {
