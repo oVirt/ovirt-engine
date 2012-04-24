@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.common.action;
 
-import java.util.ArrayList;
-
 import org.hibernate.validator.constraints.NotEmpty;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
@@ -14,8 +12,6 @@ public class CreateAllSnapshotsFromVmParameters extends VmOperationParameterBase
     @NotEmpty(groups = { CreateEntity.class },
             message = "VALIDATION.DISK_IMAGE.DESCRIPTION.NOT_EMPTY")
     private String _description;
-
-    public java.util.ArrayList<String> _disksList = new java.util.ArrayList<String>();
 
     /**
      * Used to indicate the type of snapshot to take.
@@ -32,14 +28,6 @@ public class CreateAllSnapshotsFromVmParameters extends VmOperationParameterBase
 
     public String getDescription() {
         return _description;
-    }
-
-    public java.util.ArrayList<String> getDisksList() {
-        return _disksList == null ? new ArrayList<String>() : _disksList;
-    }
-
-    public void setDisksList(java.util.ArrayList<String> value) {
-        _disksList = value;
     }
 
     public SnapshotType getSnapshotType() {

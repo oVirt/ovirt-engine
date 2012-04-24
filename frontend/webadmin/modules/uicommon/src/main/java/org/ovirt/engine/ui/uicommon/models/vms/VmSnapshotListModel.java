@@ -1,23 +1,33 @@
 package org.ovirt.engine.ui.uicommon.models.vms;
 import java.util.Collections;
-import org.ovirt.engine.core.compat.*;
-import org.ovirt.engine.ui.uicompat.*;
-import org.ovirt.engine.core.common.businessentities.*;
-import org.ovirt.engine.core.common.vdscommands.*;
-import org.ovirt.engine.core.common.queries.*;
-import org.ovirt.engine.core.common.action.*;
-import org.ovirt.engine.ui.frontend.*;
-import org.ovirt.engine.ui.uicommon.*;
-import org.ovirt.engine.ui.uicommon.models.*;
-import org.ovirt.engine.core.common.*;
 
-import org.ovirt.engine.ui.uicommon.dataprovider.*;
-import org.ovirt.engine.ui.uicompat.*;
-import org.ovirt.engine.core.common.interfaces.*;
-import org.ovirt.engine.core.common.businessentities.*;
-
-import org.ovirt.engine.ui.uicommon.*;
-import org.ovirt.engine.ui.uicommon.models.*;
+import org.ovirt.engine.core.common.action.CreateAllSnapshotsFromVmParameters;
+import org.ovirt.engine.core.common.action.RemoveSnapshotParameters;
+import org.ovirt.engine.core.common.action.RestoreAllSnapshotsParameters;
+import org.ovirt.engine.core.common.action.TryBackToAllSnapshotsOfVmParameters;
+import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.vm_pools;
+import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.NGuid;
+import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
+import org.ovirt.engine.core.compat.StringFormat;
+import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.Frontend;
+import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.uicommon.Linq;
+import org.ovirt.engine.ui.uicommon.UICommand;
+import org.ovirt.engine.ui.uicommon.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommon.models.ConfirmationModel;
+import org.ovirt.engine.ui.uicommon.models.EntityModel;
+import org.ovirt.engine.ui.uicommon.models.ListModel;
+import org.ovirt.engine.ui.uicommon.models.Model;
+import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
+import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
 @SuppressWarnings("unused")
 public class VmSnapshotListModel extends ListModel
@@ -430,20 +440,9 @@ public class VmSnapshotListModel extends ListModel
 			return;
 		}
 
-		java.util.ArrayList<String> disks = new java.util.ArrayList<String>();
-		for (EntityModel a : model.getDisks())
-		{
-			if (a.getIsSelected())
-			{
-				disks.add(GetInternalDriveMapping((String)a.getEntity()));
-			}
-		}
-
-
 		model.StartProgress(null);
 
 		CreateAllSnapshotsFromVmParameters tempVar = new CreateAllSnapshotsFromVmParameters(vm.getId(), (String)model.getDescription().getEntity());
-		tempVar.setDisksList(disks);
 		Frontend.RunAction(VdcActionType.CreateAllSnapshotsFromVm, tempVar,
 		new IFrontendActionAsyncCallback() {
 			@Override

@@ -33,8 +33,6 @@ import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.SnapshotDao;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
-import org.ovirt.engine.core.utils.linq.Predicate;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -56,19 +54,8 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
     }
 
     private List<DiskImage> getDisksList() {
-        // // if no disk sent or found create snapshot for all vm disks
-        // return (selectedDisks.Count > 0) ? selectedDisks : allVmDisks;
-
         List<DiskImage> allVmDisks = DbFacade.getInstance().getDiskImageDAO().getAllForVm(getVmId());
-        List<DiskImage> selectedDisks = LinqUtils.filter(allVmDisks, new Predicate<DiskImage>() {
-            @Override
-            public boolean eval(DiskImage d) {
-                return getParameters().getDisksList().contains(d.getinternal_drive_mapping());
-            }
-        });
-
-        // if no disk sent or found create snapshot for all vm disks
-        return (selectedDisks.size() > 0) ? selectedDisks : allVmDisks;
+        return allVmDisks;
     }
 
     @Override
