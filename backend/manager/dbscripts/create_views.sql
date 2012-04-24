@@ -160,7 +160,8 @@ FROM
            null AS vendor_id,
            null AS product_id,
            null AS device_size
-    FROM vm_images_view viw
+    FROM images_storage_domain_view
+    WHERE active = TRUE
     UNION
     SELECT 'LUN' AS disk_storage_type,
            null AS storage_id, -- Storage domain fields

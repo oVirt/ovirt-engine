@@ -33,6 +33,7 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsGroupOperationParameters;
 import org.ovirt.engine.core.common.action.VdsGroupParametersBase;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
+import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
@@ -418,9 +419,16 @@ public class BasicTestSetup {
     }
 
     private void removeVM() {
-        DB_FACADE.getDiskImageDAO().removeAllForVmId(vm.getId());
+        DB_FACADE.getDiskDao().removeAllForVmId(vm.getId());
+        removeVmDisks();
         DB_FACADE.getVmDAO().remove(vm.getId());
         System.out.println("-- removed VM " + vm.getvm_name() + " and its images -- ");
 
+    }
+
+    private void removeVmDisks() {
+        for (Disk disk : DB_FACADE.getDiskDao().getAllForVm(vm.getId())) {
+            DB_FACADE.getBaseDiskDao().remove(disk.getId());
+        }
     }
 }

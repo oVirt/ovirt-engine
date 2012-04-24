@@ -19,7 +19,6 @@ public class DiskImageDAOTest extends BaseReadDaoTestCase<Guid, DiskImage, DiskI
     private static final Guid EXISTING_IMAGE_ID = new Guid("42058975-3d5e-484a-80c1-01c31207f578");
     private static final Guid EXISTING_IMAGE_DISK_TEMPLATE = new Guid("52058975-3d5e-484a-80c1-01c31207f578");
     private static final Guid ANCESTOR_IMAGE_ID = new Guid("c9a559d9-8666-40d1-9967-759502b19f0b");
-    private static final Guid EXISTING_VM_TEMPLATE = new Guid("1b85420c-b84c-4f29-997e-0eb674b40b79");
 
     private DiskImage existingTemplate;
 
@@ -51,7 +50,6 @@ public class DiskImageDAOTest extends BaseReadDaoTestCase<Guid, DiskImage, DiskI
         super.setUp();
 
         diskDao = prepareDAO(dbFacade.getBaseDiskDao());
-
         existingTemplate = dao.get(EXISTING_IMAGE_DISK_TEMPLATE);
     }
 
@@ -107,74 +105,15 @@ public class DiskImageDAOTest extends BaseReadDaoTestCase<Guid, DiskImage, DiskI
     }
 
     @Test
-    public void testGetAllAttachableDisksByPoolIdNull() {
-        List<DiskImage> result =
-                dao.getAllAttachableDisksByPoolId(null, null, false);
-
-        assertNotNull(result);
-        assertFalse(result.isEmpty());
-    }
-
-    @Test
-    public void testGetAllAttachableDisksByPoolId() {
-        List<DiskImage> result =
-                dao.getAllAttachableDisksByPoolId(Guid.createGuidFromString("6d849ebf-755f-4552-ad09-9a090cda105d"),
-                        null,
-                        false);
-
-        assertNotNull(result);
-        assertFalse(result.isEmpty());
-    }
-
-    @Test
-    public void testGetAllForVM() {
-        List<DiskImage> disks = dao.getAllForVm(FixturesTool.VM_RHEL5_POOL_57);
-        assertFullGetAllForVMResult(disks);
-    }
-
-    @Test
     public void testGetAllForQuotaId() {
         List<DiskImage> disks = dao.getAllForQuotaId(FixturesTool.QUOTA_GENERAL);
         assertEquals("VM should have five disks", 4, disks.size());
-    }
-
-    @Test
-    public void testGetAllForVMFilteredWithPermissions() {
-        // test user 3 - has permissions
-        List<DiskImage> disks = dao.getAllForVm(FixturesTool.VM_RHEL5_POOL_57, PRIVILEGED_USER_ID, true);
-        assertFullGetAllForVMResult(disks);
-    }
-
-    @Test
-    public void testGetAllForVMFilteredWithPermissionsNoPermissions() {
-        // test user 2 - hasn't got permissions
-        List<DiskImage> disks = dao.getAllForVm(FixturesTool.VM_RHEL5_POOL_57, UNPRIVILEGED_USER_ID, true);
-        assertTrue("VM should have no disks viewable to the user", disks.isEmpty());
-    }
-
-    @Test
-    public void testGetAllForVMFilteredWithPermissionsNoPermissionsAndNoFilter() {
-        // test user 2 - hasn't got permissions, but no filtering was requested
-        List<DiskImage> disks = dao.getAllForVm(FixturesTool.VM_RHEL5_POOL_57, UNPRIVILEGED_USER_ID, false);
-        assertFullGetAllForVMResult(disks);
     }
 
     public void testGetTemplate() {
         DiskImage result = dao.get(EXISTING_IMAGE_DISK_TEMPLATE);
         assertNotNull(result);
         assertEquals(existingTemplate, result);
-    }
-
-    @Test
-    public void testGetAllForVm() {
-        List<DiskImage> result = dao
-                .getAllForVm(EXISTING_VM_TEMPLATE);
-
-        assertNotNull(result);
-        assertFalse(result.isEmpty());
-        for (DiskImage template : result) {
-            assertEquals(EXISTING_IMAGE_DISK_TEMPLATE, template.getImageId());
-        }
     }
 
     @Test
@@ -185,7 +124,7 @@ public class DiskImageDAOTest extends BaseReadDaoTestCase<Guid, DiskImage, DiskI
         assertFalse(result.isEmpty());
 
         for (DiskImage image : result) {
-            assertFalse(diskDao.exists(image.getimage_group_id()));
+            assertFalse(diskDao.exists(image.getId()));
         }
     }
 
@@ -203,14 +142,5 @@ public class DiskImageDAOTest extends BaseReadDaoTestCase<Guid, DiskImage, DiskI
 
         assertNotNull(result);
         assertTrue(result.isEmpty());
-    }
-
-    /**
-     * Asserts the result of {@link DiskImageDAO#getAllForVm(Guid)} contains the correct disks.
-     * @param disks
-     *            The result to check
-     */
-    private static void assertFullGetAllForVMResult(List<DiskImage> disks) {
-        assertEquals("VM should have two disks", 2, disks.size());
     }
 }

@@ -2,6 +2,7 @@ package org.ovirt.engine.core.dao;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
@@ -16,6 +17,31 @@ public class DiskDaoDbFacadeImpl extends DefaultReadDaoDbFacade<Disk, Guid> impl
 
     public DiskDaoDbFacadeImpl() {
         super("Disk");
+    }
+
+    @Override
+    public List<Disk> getAllForVm(Guid id) {
+        return getAllForVm(id, null, false);
+    }
+
+    @Override
+    public List<Disk> getAllForVm(Guid id, Guid userID, boolean isFiltered) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("vm_guid", id).addValue("user_id", userID).addValue("is_filtered", isFiltered);
+        return getCallsHandler().executeReadList("GetDisksVmGuid", DiskRowMapper.instance, parameterSource);
+    }
+
+    @Override
+    public List<Disk> getAllAttachableDisksByPoolId(Guid poolId, Guid userId, boolean isFiltered) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("storage_pool_id", poolId)
+                .addValue("user_id", userId)
+                .addValue("is_filtered", isFiltered);
+
+        return getCallsHandler().executeReadList("GetAllAttachableDisksByPoolId",
+                DiskRowMapper.instance,
+                parameterSource);
+
     }
 
     @Override

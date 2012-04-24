@@ -22,30 +22,6 @@ public interface DiskImageDAO extends ReadDao<DiskImage, Guid>, SearchDAO<DiskIm
     DiskImage getSnapshotById(Guid id);
 
     /**
-     * Retrieves all disk images for the specified virtual machine id.
-     *
-     * @param id
-     *            the VM id
-     * @return the list of disk images
-     */
-    List<DiskImage> getAllForVm(Guid id);
-
-    /**
-     * Retrieves all disk images for the specified virtual machine id,
-     * with optional filtering
-     *
-     * @param id
-     *            the VM id
-     * @param userID
-     *            the ID of the user requesting the information
-     * @param isFiltered
-     *            Whether the results should be filtered according to the user's permissions
-
-     * @return the list of disk images
-     */
-    List<DiskImage> getAllForVm(Guid id, Guid userID, boolean isFiltered);
-
-    /**
      * Retrieves all snapshots with the given parent id.
      *
      * @param id
@@ -80,13 +56,6 @@ public interface DiskImageDAO extends ReadDao<DiskImage, Guid>, SearchDAO<DiskIm
      * @return the list of snapshots
      */
     List<DiskImage> getAllSnapshotsForImageGroup(Guid id);
-    /**
-     * Removes all disk images for the specified virtual machine id.
-     *
-     * @param id
-     *            the virtual machine id
-     */
-    void removeAllForVmId(Guid id);
 
     /**
      * Retrieves the ancestor of the given image (or the image itself, if it has no ancestors).
@@ -110,6 +79,4 @@ public interface DiskImageDAO extends ReadDao<DiskImage, Guid>, SearchDAO<DiskIm
     List<DiskImage> getAllForQuotaId(Guid quotaId);
 
     List<DiskImage> getImagesByStorageIdAndTemplateId(Guid storageId, Guid templateId);
-
-    List<DiskImage> getAllAttachableDisksByPoolId(Guid poolId, Guid userId, boolean isFiltered);
 }

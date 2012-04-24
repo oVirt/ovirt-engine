@@ -112,26 +112,6 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
-
-
-Create or replace FUNCTION GetImagesByVmGuid(v_vm_guid UUID, v_user_id UUID, v_is_filtered BOOLEAN)
-RETURNS SETOF vm_images_view
-   AS $procedure$
-BEGIN
-      RETURN QUERY SELECT *
-      FROM vm_images_view
-      WHERE
-      vm_guid = v_vm_guid
-      AND (NOT v_is_filtered OR EXISTS (SELECT 1
-                                        FROM   user_vm_permissions_view
-                                        WHERE  user_id = v_user_id AND entity_id = v_vm_guid));
-
-END; $procedure$
-LANGUAGE plpgsql;
-
-
-
-
 Create or replace FUNCTION GetSnapshotsByVmSnapshotId(v_vm_snapshot_id UUID)
 RETURNS SETOF images_storage_domain_view
    AS $procedure$
@@ -187,21 +167,3 @@ BEGIN
           WHERE  d.disk_id = i.image_group_id);
 END; $procedure$
 LANGUAGE plpgsql;
-
-Create or replace FUNCTION GetAllAttachableDisksByPoolId(v_storage_pool_id UUID, v_user_id UUID, v_is_filtered BOOLEAN)
-RETURNS SETOF images_storage_domain_view
-   AS $procedure$
-BEGIN
-	  IF v_storage_pool_id IS NULL then
-           RETURN QUERY SELECT images_storage_domain_view.*
-           FROM images_storage_domain_view 
-           WHERE images_storage_domain_view.vm_guid IS NULL;
-      ELSE
-           RETURN QUERY SELECT images_storage_domain_view.*
-           FROM images_storage_domain_view
-           WHERE images_storage_domain_view.storage_pool_id = v_storage_pool_id AND images_storage_domain_view.vm_guid IS NULL;
-      END IF;     
-END; $procedure$
-LANGUAGE plpgsql;
-
-

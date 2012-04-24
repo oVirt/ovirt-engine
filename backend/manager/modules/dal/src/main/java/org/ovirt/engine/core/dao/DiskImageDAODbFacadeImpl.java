@@ -2,7 +2,6 @@ package org.ovirt.engine.core.dao;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.NotImplementedException;
@@ -13,7 +12,6 @@ import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
 import org.ovirt.engine.core.utils.StringUtils;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -43,23 +41,11 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
     }
 
     @Override
-    public List<DiskImage> getAllForVm(Guid id) {
-        return getAllForVm(id, null, false);
-    }
-
-    @Override
     public List<DiskImage> getAllForQuotaId(Guid quotaId) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("quota_id", quotaId);
 
         return getCallsHandler().executeReadList("GetImagesByQuotaId", DiskImageRowMapper.instance, parameterSource);
-    }
-
-    @Override
-    public List<DiskImage> getAllForVm(Guid id, Guid userID, boolean isFiltered) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("vm_guid", id).addValue("user_id", userID).addValue("is_filtered", isFiltered);
-        return getCallsHandler().executeReadList("GetImagesByVmGuid", DiskImageRowMapper.instance, parameterSource);
     }
 
     @Override
@@ -107,20 +93,6 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
     }
 
     @Override
-    public void removeAllForVmId(Guid id) {
-        List<Guid> imagesList = new ArrayList<Guid>();
-        for (DiskImage image : getAllForVm(id)) {
-            imagesList.add(image.getImageId());
-
-            List<DiskImage> imagesForDisk =
-                    DbFacade.getInstance().getDiskImageDAO().getAllSnapshotsForImageGroup(image.getimage_group_id());
-            if (imagesForDisk == null || imagesForDisk.isEmpty()) {
-                DbFacade.getInstance().getBaseDiskDao().remove(image.getimage_group_id());
-            }
-        }
-    }
-
-    @Override
     public DiskImage getAncestor(Guid id) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("image_guid", id);
@@ -139,19 +111,6 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
         return getCallsHandler().executeReadList("GetImageByStorageIdAndTemplateId",
                 DiskImageRowMapper.instance,
                 parameterSource);
-    }
-
-    @Override
-    public List<DiskImage> getAllAttachableDisksByPoolId(Guid poolId, Guid userId, boolean isFiltered) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("storage_pool_id", poolId)
-                .addValue("user_id", userId)
-                .addValue("is_filtered", isFiltered);
-
-        return getCallsHandler().executeReadList("GetAllAttachableDisksByPoolId",
-                DiskImageRowMapper.instance,
-                parameterSource);
-
     }
 
     @Override
@@ -206,8 +165,7 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
                     .getInt("volume_type")));
             entity.setvolume_format(VolumeFormat.forValue(rs
                     .getInt("volume_format")));
-            entity.setimage_group_id(Guid.createGuidFromString(rs
-                    .getString("image_group_id")));
+            entity.setId(Guid.createGuidFromString(rs.getString("image_group_id")));
             entity.setstorage_path(StringUtils.splitStringList(rs.getString("storage_path")));
             entity.setstorage_pool_id(NGuid.createGuidFromString(rs
                     .getString("storage_pool_id")));
