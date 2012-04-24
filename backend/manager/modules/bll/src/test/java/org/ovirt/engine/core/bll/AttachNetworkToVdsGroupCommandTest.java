@@ -57,7 +57,7 @@ public class AttachNetworkToVdsGroupCommandTest {
     public void networkExists() {
         simulateNetworkAlreadyExists();
         simulateVdsGroupExists();
-        assertCanDoActionFailure(VdcBllMessages.NETWROK_ALREADY_ATTACHED_TO_CLUSTER.toString());
+        assertCanDoActionSucceeds();
     }
 
     @Test
@@ -89,7 +89,7 @@ public class AttachNetworkToVdsGroupCommandTest {
 
     public void createCommand() {
         AttachNetworkToVdsGroupParameter param = new AttachNetworkToVdsGroupParameter(getExistingVdsGroupId(), getNetwork());
-        command = new AttachNetworkToVdsGroupCommand(param);
+        command = new AttachNetworkToVdsGroupCommand<AttachNetworkToVdsGroupParameter>(param);
     }
 
     private void simulateNetworkAlreadyExists() {
