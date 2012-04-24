@@ -80,7 +80,7 @@ public class GetUserVmsByUserIdAndGroupsQueryTest
         Guid diskGuid = expectedDisk.getImageId();
         Guid itGuid = expectedDisk.getit_guid();
 
-        ArrayList<DiskImage> snapshots = mockSnapshots();
+        final ArrayList<DiskImage> snapshots = mockSnapshots();
         DiskImage expectedSnapshot = snapshots.get(0);
 
         // Mock the disks, if needed
@@ -88,7 +88,10 @@ public class GetUserVmsByUserIdAndGroupsQueryTest
             doAnswer(new Answer() {
                 @Override
                 public Object answer(InvocationOnMock invocation) throws Throwable {
-                    expectedVM.addDriveToImageMap(RandomUtils.instance().nextString(10), expectedDisk);
+                    expectedDisk.getSnapshots().addAll(snapshots);
+                    expectedVM.getDiskMap().put(expectedDisk.getinternal_drive_mapping(), expectedDisk);
+                    expectedVM.getDiskList().add(expectedDisk);
+
                     return null;
                 }
             }).when(VmHandler.class);
@@ -159,6 +162,7 @@ public class GetUserVmsByUserIdAndGroupsQueryTest
         final DiskImage expectedDisk = new DiskImage();
         expectedDisk.setImageId(diskGuid);
         expectedDisk.setit_guid(itGuid);
+        expectedDisk.setInternalDriveMapping(RandomUtils.instance().nextInt());
 
         return expectedDisk;
     }
