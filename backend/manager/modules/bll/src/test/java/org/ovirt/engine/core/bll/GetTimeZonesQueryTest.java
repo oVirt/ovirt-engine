@@ -17,7 +17,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ Config.class })
-public class GetTimeZonesQueryTest extends AbstractQueryTest<VdcQueryParametersBase, GetTimeZonesQuery<VdcQueryParametersBase>> {
+public class GetTimeZonesQueryTest extends AbstractUserQueryTest<VdcQueryParametersBase, GetTimeZonesQuery<VdcQueryParametersBase>> {
 
     @Test
     public void testExecuteQuery() {
