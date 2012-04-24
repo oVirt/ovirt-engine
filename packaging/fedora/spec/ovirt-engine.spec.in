@@ -62,7 +62,7 @@ Requires: %{name}-image-uploader
 Requires: %{name}-log-collector
 Requires: %{name}-dbscripts
 Requires: %{name}-webadmin-portal
-Requires: vdsm-bootstrap >= 4.9.6
+Requires: vdsm-bootstrap
 Requires: openssl
 Requires: yum-plugin-versionlock
 
