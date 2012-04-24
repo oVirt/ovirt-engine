@@ -10,6 +10,8 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.businessentities.Disk;
+import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
@@ -761,10 +763,10 @@ public class VdsBrokerObjectsBuilder {
     }
 
     private static void initDisks(XmlRpcStruct vmStruct, VmDynamic vm) {
-        java.util.Map disks =
-                (java.util.Map) vmStruct.getItem(VdsProperties.vm_disks);
+        Map disks =
+                (Map) vmStruct.getItem(VdsProperties.vm_disks);
         java.util.ArrayList<DiskImageDynamic> disksData = new java.util.ArrayList<DiskImageDynamic>();
-        List<DiskImage> vmDisksFromDb = DbFacade.getInstance().getDiskImageDAO().getAllForVm(vm.getId());
+        List<Disk> vmDisksFromDb = DbFacade.getInstance().getDiskDao().getAllForVm(vm.getId());
         for (Object diskAsObj : disks.values()) {
             XmlRpcStruct disk = new XmlRpcStruct((java.util.Map) diskAsObj);
             DiskImageDynamic diskData = new DiskImageDynamic();
@@ -772,10 +774,11 @@ public class VdsBrokerObjectsBuilder {
             if (!StringHelper.isNullOrEmpty(imageGroupIdString)) {
                 Guid imageGroupIdGuid = new Guid(imageGroupIdString);
                 DiskImage vmCurrentDisk = null;
-                for (DiskImage vmDisk : vmDisksFromDb) {
-                    if (vmDisk.getimage_group_id() != null
-                            && imageGroupIdGuid.equals(vmDisk.getimage_group_id().getValue())) {
-                        vmCurrentDisk = vmDisk;
+                for (Disk vmDisk : vmDisksFromDb) {
+                    if (vmDisk.getId() != null
+                            && imageGroupIdGuid.equals(vmDisk.getId().getValue())
+                            && vmDisk.getDiskStorageType() == DiskStorageType.IMAGE) {
+                        vmCurrentDisk = (DiskImage) vmDisk;
                         break;
                     }
                 }

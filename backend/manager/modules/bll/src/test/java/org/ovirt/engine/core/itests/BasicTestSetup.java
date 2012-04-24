@@ -419,7 +419,6 @@ public class BasicTestSetup {
     }
 
     private void removeVM() {
-        DB_FACADE.getDiskDao().removeAllForVmId(vm.getId());
         removeVmDisks();
         DB_FACADE.getVmDAO().remove(vm.getId());
         System.out.println("-- removed VM " + vm.getvm_name() + " and its images -- ");

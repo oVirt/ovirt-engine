@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 import java.util.ArrayList;
 
 import org.ovirt.engine.core.common.action.AddDiskParameters;
+import org.ovirt.engine.core.common.action.AttachDettachVmDiskParameters;
 import org.ovirt.engine.core.common.action.HotPlugDiskToVmParameters;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.UpdateVmDiskParameters;
@@ -10,6 +11,7 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmDiskOperatinParameterBase;
+import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
@@ -540,20 +542,18 @@ public class VmDiskListModel extends SearchableListModel
         model.getCommands().add(tempVar2);
     }
 
-    private void OnRemove()
-    {
+    private void OnRemove() {
         VM vm = (VM) getEntity();
         RemoveDiskModel model = (RemoveDiskModel) getWindow();
         boolean removeDisk = (Boolean) model.getLatch().getEntity();
         VdcActionType actionType = removeDisk ? VdcActionType.RemoveDisk : VdcActionType.DetachDiskFromVm;
         ArrayList<VdcActionParametersBase> paramerterList = new ArrayList<VdcActionParametersBase>();
 
-        for (Object item : getSelectedItems())
-        {
-            DiskImage disk = (DiskImage) item;
+        for (Object item : getSelectedItems()) {
+            Disk disk = (Disk) item;
             VdcActionParametersBase parameters = removeDisk ?
-                    new RemoveDiskParameters(disk.getImageId()) :
-                    new UpdateVmDiskParameters(vm.getId(), disk.getImageId(), disk);
+                    new RemoveDiskParameters(disk.getId()) :
+                    new AttachDettachVmDiskParameters(vm.getId(), disk.getId(), true);
 
             paramerterList.add(parameters);
         }
@@ -622,7 +622,7 @@ public class VmDiskListModel extends SearchableListModel
         }
         else
         {
-            parameters = new UpdateVmDiskParameters(vm.getId(), disk.getImageId(), disk);
+            parameters = new UpdateVmDiskParameters(vm.getId(), disk.getId(), disk);
             actionType = VdcActionType.UpdateVmDisk;
         }
 
@@ -649,7 +649,7 @@ public class VmDiskListModel extends SearchableListModel
             DiskModel disk = (DiskModel) item.getEntity();
             disk.getDiskImage().setPlugged((Boolean) model.getIsPlugged().getEntity());
             UpdateVmDiskParameters parameters =
-                    new UpdateVmDiskParameters(vm.getId(), disk.getDiskImage().getImageId(), disk.getDiskImage());
+                    new UpdateVmDiskParameters(vm.getId(), disk.getDiskImage().getId(), disk.getDiskImage());
             paramerterList.add(parameters);
         }
 
@@ -687,7 +687,7 @@ public class VmDiskListModel extends SearchableListModel
             DiskImage disk = (DiskImage) item;
             disk.setPlugged(plug);
 
-            paramerterList.add(new HotPlugDiskToVmParameters(vm.getId(), disk.getImageId()));
+            paramerterList.add(new HotPlugDiskToVmParameters(vm.getId(), disk.getId()));
         }
 
         VdcActionType plugAction = VdcActionType.HotPlugDiskToVm;

@@ -115,14 +115,17 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
         String dstVdsHost = String.format("%1$s:%2$s", getDestinationVds().gethost_name(), getDestinationVds()
                 .getport());
         // Starting migration at src VDS
-        setActionReturnValue(Backend
-                .getInstance()
-                .getResourceManager()
-                .RunAsyncVdsCommand(
-                        VDSCommandType.Migrate,
-                        new MigrateVDSCommandParameters(getVdsId(), getVmId(), srcVdsHost, _vdsDestinationId,
-                                dstVdsHost, MigrationMethod.ONLINE), this).getReturnValue());
-        if ((VMStatus) getActionReturnValue() != VMStatus.MigratingFrom) {
+        boolean connectToLunDiskSuccess = connectLunDisks(_vdsDestinationId);
+        if (connectToLunDiskSuccess) {
+            setActionReturnValue(Backend
+                    .getInstance()
+                    .getResourceManager()
+                    .RunAsyncVdsCommand(
+                            VDSCommandType.Migrate,
+                            new MigrateVDSCommandParameters(getVdsId(), getVmId(), srcVdsHost, _vdsDestinationId,
+                                    dstVdsHost, MigrationMethod.ONLINE), this).getReturnValue());
+        }
+        if (!connectToLunDiskSuccess || (VMStatus) getActionReturnValue() != VMStatus.MigratingFrom) {
             getVm().setMigreatingToPort(0);
             getVm().setMigreatingFromPort(0);
             getVm().setmigrating_to_vds(null);

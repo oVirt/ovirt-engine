@@ -3,19 +3,24 @@ package org.ovirt.engine.core.bll;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.core.bll.storage.StorageHelperDirector;
 import org.ovirt.engine.core.common.action.VmDiskOperatinParameterBase;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
+import org.ovirt.engine.core.common.businessentities.LunDisk;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
+import org.ovirt.engine.core.common.errors.VdcBLLException;
+import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.vdscommands.HotPlugDiskVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskImageDAO;
 import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.VmNetworkInterfaceDAO;
@@ -37,9 +42,16 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperatinParameterBas
 
     protected void performPlugCommnad(VDSCommandType commandType,
                 Disk disk, VmDevice vmDevice) {
+        if (disk.getDiskStorageType() == DiskStorageType.LUN) {
+            LunDisk lunDisk = (LunDisk) disk;
+            if (commandType == VDSCommandType.HotPlugDisk
+                    && !StorageHelperDirector.getInstance().getItem(lunDisk.getLun().getLunType())
+                            .ConnectStorageToLunByVdsId(null, getVm().getrun_on_vds().getValue(), lunDisk.getLun())) {
+                throw new VdcBLLException(VdcBllErrors.StorageServerConnectionError);
+            }
+        }
         runVdsCommand(commandType, new HotPlugDiskVDSParameters(getVm().getrun_on_vds().getValue(),
                                  getVm().getId(), disk, vmDevice));
-        setSucceeded(true);
     }
 
     protected boolean isDiskPassPCIAndIDELimit(Disk diskInfo) {
@@ -124,6 +136,10 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperatinParameterBas
 
     protected ImageDao getImageDao() {
         return DbFacade.getInstance().getImageDao();
+    }
+
+    protected DiskDao getDiskDao() {
+        return DbFacade.getInstance().getDiskDao();
     }
 
     protected DiskImageDAO getDiskImageDao() {

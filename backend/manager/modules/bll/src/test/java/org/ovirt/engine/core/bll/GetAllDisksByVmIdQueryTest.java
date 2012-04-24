@@ -8,7 +8,6 @@ import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -16,6 +15,7 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -25,7 +25,7 @@ import org.ovirt.engine.core.common.queries.GetAllDisksByVmIdParameters;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.DiskImageDAO;
+import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
 import org.ovirt.engine.core.utils.RandomUtils;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -41,7 +41,7 @@ public class GetAllDisksByVmIdQueryTest extends AbstractUserQueryTest<GetAllDisk
     private static final int NUM_DISKS_OF_EACH_KIND = 3;
 
     /** The {@link DiskImageDAO} mocked for the test */
-    private DiskImageDAO diskImageDAOMock;
+    private DiskDao diskDAOMock;
 
     /** The {@link VmDeviceDAO} mocked for the test */
     private VmDeviceDAO vmDeviceDAOMock;
@@ -77,12 +77,13 @@ public class GetAllDisksByVmIdQueryTest extends AbstractUserQueryTest<GetAllDisk
         DbFacade dbFacadeMock = getDbFacadeMockInstance();
 
         // Disk Image DAO
-        diskImageDAOMock = mock(DiskImageDAO.class);
-        when(dbFacadeMock.getDiskImageDAO()).thenReturn(diskImageDAOMock);
-        when(diskImageDAOMock.getAllForVm(vmID, getUser().getUserId(), getQueryParameters().isFiltered())).thenReturn
-                (Arrays.asList(pluggedDisk,
-                        unpluggedDisk,
-                        inactiveDisk));
+        List<Disk> returnArray = new ArrayList<Disk>();
+        returnArray.add(pluggedDisk);
+        returnArray.add(unpluggedDisk);
+        returnArray.add(inactiveDisk);
+        diskDAOMock = mock(DiskDao.class);
+        when(dbFacadeMock.getDiskDao()).thenReturn(diskDAOMock);
+        when(diskDAOMock.getAllForVm(vmID, getUser().getUserId(), getQueryParameters().isFiltered())).thenReturn(returnArray);
 
         // VM Device DAO
         vmDeviceDAOMock = mock(VmDeviceDAO.class);

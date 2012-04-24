@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -293,7 +294,7 @@ public class VdsSelector {
     }
 
     private Guid getVdsToRunOn(Iterable<VDS> vdss) {
-        java.util.ArrayList<VDS> readyToRun = new java.util.ArrayList<VDS>();
+        ArrayList<VDS> readyToRun = new ArrayList<VDS>();
         for (VDS curVds : vdss) {
             // vds must be in the correct group
             if (!curVds.getvds_group_id().equals(getVm().getvds_group_id()))
@@ -323,8 +324,8 @@ public class VdsSelector {
                 continue;
 
             readyToRun.add(curVds);
-
         }
+
         return readyToRun.isEmpty() ? Guid.Empty : getBestVdsToRun(readyToRun);
     }
 

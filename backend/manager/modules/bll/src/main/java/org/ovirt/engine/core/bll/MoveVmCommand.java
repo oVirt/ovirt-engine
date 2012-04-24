@@ -126,7 +126,10 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
         boolean retValue = CheckStorageDomain() && checkStorageDomainStatus(StorageDomainStatus.Active)
                 && checkIfDisksExist(diskImages);
         if (retValue && !VmTemplateHandler.BlankVmTemplateId.equals(getVm().getvmt_guid())) {
-            List<DiskImage> imageList = DbFacade.getInstance().getDiskImageDAO().getAllForVm(getVm().getvmt_guid());
+            List<DiskImage> imageList =
+                    ImagesHandler.filterDiskBasedOnImages(DbFacade.getInstance()
+                            .getDiskDao()
+                            .getAllForVm(getVm().getvmt_guid()));
             Map<Guid, DiskImage> templateImagesMap = new HashMap<Guid, DiskImage>();
             for (DiskImage image : imageList) {
                 templateImagesMap.put(image.getImageId(), image);

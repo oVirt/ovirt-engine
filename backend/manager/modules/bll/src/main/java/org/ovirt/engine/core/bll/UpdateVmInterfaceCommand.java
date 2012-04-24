@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AddVmInterfaceParameters;
+import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmInterfaceType;
@@ -105,7 +106,7 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
         allInterfaces.add(getParameters().getInterface());
         VmStatic vm = DbFacade.getInstance().getVmStaticDAO().get(getParameters().getVmId());
 
-        List allDisks = DbFacade.getInstance().getDiskImageDAO().getAllForVm(getParameters().getVmId());
+        List<Disk> allDisks = DbFacade.getInstance().getDiskDao().getAllForVm(getParameters().getVmId());
         if (!CheckPCIAndIDELimit(vm.getnum_of_monitors(), allInterfaces, allDisks, getReturnValue().getCanDoActionMessages())) {
             addCanDoActionMessage(VdcBllMessages.VAR__ACTION__UPDATE);
             addCanDoActionMessage(VdcBllMessages.VAR__TYPE__INTERFACE);
@@ -134,7 +135,6 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
         // check that the exists in current cluster
         List<network> networks = DbFacade.getInstance().getNetworkDAO()
                 .getAllForCluster(vm.getvds_group_id());
-
         if (null == LinqUtils.firstOrNull(networks, new Predicate<network>() {
             @Override
             public boolean eval(network n) {

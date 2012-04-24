@@ -81,7 +81,7 @@ public class HotPlugDiskToVmCommandTest {
     public void canDoActionFailedVMHasNotDisk() throws Exception {
         initializeCommand();
         mockVmStatusUp();
-        doReturn(diskImageDao).when(command).getDiskImageDao();
+        doReturn(diskImageDao).when(command).getDiskDao();
         when(diskImageDao.get(diskImageGuid)).thenReturn(null);
         assertFalse(command.canDoAction());
         assertTrue(command.getReturnValue()
@@ -185,7 +185,7 @@ public class HotPlugDiskToVmCommandTest {
         disk.setDiskInterface(DiskInterface.IDE);
         disk.setactive(true);
         disk.setvm_guid(vmId);
-        doReturn(diskImageDao).when(command).getDiskImageDao();
+        doReturn(diskImageDao).when(command).getDiskDao();
         when(diskImageDao.get(diskImageGuid)).thenReturn(disk);
         return disk;
     }
@@ -200,7 +200,7 @@ public class HotPlugDiskToVmCommandTest {
         disk.setDiskInterface(DiskInterface.VirtIO);
         disk.setactive(true);
         disk.setvm_guid(vmId);
-        doReturn(diskImageDao).when(command).getDiskImageDao();
+        doReturn(diskImageDao).when(command).getDiskDao();
         when(diskImageDao.get(diskImageGuid)).thenReturn(disk);
         mockVmDevice(false);
     }

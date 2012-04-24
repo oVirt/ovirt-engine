@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.action.RemoveAllVmImagesParameters;
 import org.ovirt.engine.core.common.action.RemoveVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -151,7 +152,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
                 message.add(vmDuringSnapshotResult.getMessage().name());
                 returnValue = false;
             } else {
-                List<DiskImage> vmImages = DbFacade.getInstance().getDiskImageDAO().getAllForVm(vmId);
+                List<Disk> vmImages = DbFacade.getInstance().getDiskDao().getAllForVm(vmId);
                 if (vmImages.size() > 0
                         && !ImagesHandler.PerformImagesChecks(vm, imagesMessages, vm.getstorage_pool_id(), Guid.Empty,
                                 false, !getParameters().getForce(), false, false,

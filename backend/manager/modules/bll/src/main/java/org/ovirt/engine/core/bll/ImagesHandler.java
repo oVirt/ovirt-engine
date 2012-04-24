@@ -19,6 +19,7 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
+import org.ovirt.engine.core.common.businessentities.LunDisk;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -431,7 +432,7 @@ public final class ImagesHandler {
             boolean checkVmInPreview,
             boolean checkVmIsDown,
             boolean checkStorageDomain,
-            boolean checkIsValid, Collection<DiskImage> diskImageList) {
+            boolean checkIsValid, Collection diskImageList) {
 
         boolean returnValue = true;
         boolean isValid = checkIsValid
@@ -447,7 +448,8 @@ public final class ImagesHandler {
             if (vm.getstatus() == VMStatus.ImageLocked) {
                 returnValue = false;
             } else if (diskImageList != null) {
-                for (Disk disk : diskImageList) {
+                for (Object object : diskImageList) {
+                    Disk disk = (Disk) object;
                     if (DiskStorageType.IMAGE == disk.getDiskStorageType()
                             && ((DiskImage) disk).getimageStatus() == ImageStatus.LOCKED) {
                         returnValue = false;
@@ -465,7 +467,7 @@ public final class ImagesHandler {
             returnValue = false;
             ListUtils.nullSafeAdd(messages, VdcBllMessages.ACTION_TYPE_FAILED_VM_IN_PREVIEW.toString());
         } else if (returnValue && isValid) {
-            final List<DiskImage> images = getImages(vm, diskImageList);
+            List<DiskImage> images = getImages(vm, diskImageList);
             if (images.size() > 0) {
                 returnValue = returnValue &&
                         checkDiskImages(messages,
@@ -485,11 +487,11 @@ public final class ImagesHandler {
         return returnValue;
     }
 
-    private static List<DiskImage> getImages(VM vm, Collection<DiskImage> diskImageList) {
+    private static List<DiskImage> getImages(VM vm, Collection diskImageList) {
         if (diskImageList == null) {
-            return DbFacade.getInstance().getDiskImageDAO().getAllForVm(vm.getId());
+            return filterDiskBasedOnImages(DbFacade.getInstance().getDiskDao().getAllForVm(vm.getId()));
         } else {
-            return (List<DiskImage>) diskImageList;
+            return filterDiskBasedOnImages(diskImageList);
         }
     }
 
@@ -585,6 +587,16 @@ public final class ImagesHandler {
         for (Disk disk : listOfDisks) {
             if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
                 diskImages.add((DiskImage) disk);
+            }
+        }
+        return diskImages;
+    }
+
+    public static List<LunDisk> filterDiskBasedOnLuns(Collection<Disk> listOfDisks) {
+        List<LunDisk> diskImages = new ArrayList<LunDisk>();
+        for (Disk disk : listOfDisks) {
+            if (disk.getDiskStorageType() == DiskStorageType.LUN) {
+                diskImages.add((LunDisk) disk);
             }
         }
         return diskImages;

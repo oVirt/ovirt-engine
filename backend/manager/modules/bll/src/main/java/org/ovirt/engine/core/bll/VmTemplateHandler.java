@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.context.CompensationContext;
+import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
@@ -34,20 +35,19 @@ public class VmTemplateHandler {
                 "initrd_url", "kernel_url", "kernel_params", "images", "interfaces", "quotaId", "quotaName" });
     }
 
-    public static List<DiskImage> UpdateDisksFromDb(VmTemplate vmt) {
+    public static void UpdateDisksFromDb(VmTemplate vmt) {
         vmt.getDiskMap().clear();
         vmt.getDiskImageMap().clear();
         vmt.getDiskList().clear();
-        List<DiskImage> diskList =
-                DbFacade.getInstance().getDiskImageDAO().getAllForVm(vmt.getId());
-        for (DiskImage dit : diskList) {
-            vmt.getDiskMap().put(dit.getinternal_drive_mapping(), dit);
+        List<Disk> diskList = DbFacade.getInstance().getDiskDao().getAllForVm(vmt.getId());
+        for (Disk dit : diskList) {
+            DiskImage diskImage = (DiskImage) dit;
+            vmt.getDiskMap().put(dit.getinternal_drive_mapping(), diskImage);
             // Translation from number of sectors to GB.
             vmt.setSizeGB(Double.valueOf(dit.getsize()) / Double.valueOf((1024 * 1024 * 1024)));
-            vmt.getDiskImageMap().put(dit.getinternal_drive_mapping(), dit);
-            vmt.getDiskList().add(dit);
+            vmt.getDiskImageMap().put(dit.getinternal_drive_mapping(), diskImage);
+            vmt.getDiskList().add(diskImage);
         }
-        return diskList;
     }
 
     /**

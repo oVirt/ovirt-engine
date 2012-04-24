@@ -245,12 +245,12 @@ public class VmHandler {
     }
 
     public static void updateDisksFromDb(VM vm) {
-        List<DiskImage> imageList = DbFacade.getInstance().getDiskImageDAO().getAllForVm(vm.getId());
+        List<Disk> imageList = DbFacade.getInstance().getDiskDao().getAllForVm(vm.getId());
         updateDisksForVm(vm, imageList);
     }
 
-    public static void updateDisksForVm(VM vm, List<? extends Disk> imageList) {
-        for (Disk disk : imageList) {
+    public static void updateDisksForVm(VM vm, List<? extends Disk> diskList) {
+        for (Disk disk : diskList) {
             if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
                 DiskImage image = (DiskImage) disk;
                 if (image.getactive() != null && image.getactive()) {

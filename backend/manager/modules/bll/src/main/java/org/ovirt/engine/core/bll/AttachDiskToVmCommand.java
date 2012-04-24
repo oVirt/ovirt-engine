@@ -30,7 +30,7 @@ public class AttachDiskToVmCommand<T extends UpdateVmDiskParameters> extends Abs
         if (getParameters().getDiskInfo().getPlugged() == null) {
             getParameters().getDiskInfo().setPlugged(false);
         }
-        disk = getDiskImageDao().get(getParameters().getImageId());
+        disk = getDiskDao().get(getParameters().getDiskId());
     }
 
     @Override

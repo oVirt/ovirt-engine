@@ -42,6 +42,9 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
     protected Map<Guid, Guid> imageToDestinationDomainMap;
     protected Map<Guid, DiskImage> imageFromSourceDomainMap;
     private  List<PermissionSubject> permissionCheckSubject;
+    private List<DiskImage> _templateDisks;
+    private storage_domains sourceDomain;
+    private Guid sourceDomainId = Guid.Empty;
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -60,9 +63,6 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
         imageFromSourceDomainMap = new HashMap<Guid, DiskImage>();
     }
 
-    private storage_domains sourceDomain;
-    private Guid sourceDomainId = Guid.Empty;
-
     protected storage_domains getSourceDomain() {
         if (sourceDomain == null && !Guid.Empty.equals(sourceDomainId)) {
             sourceDomain = getStorageDomainDAO().getForStoragePool(sourceDomainId, getStoragePool().getId());
@@ -80,14 +80,12 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
 
     protected ImageOperation getMoveOrCopyImageOperation() {
         return ImageOperation.Copy;
-
     }
-
-    private List<DiskImage> _templateDisks;
 
     protected List<DiskImage> getTemplateDisks() {
         if (_templateDisks == null && getVmTemplate() != null) {
-            _templateDisks = VmTemplateHandler.UpdateDisksFromDb(getVmTemplate());
+            VmTemplateHandler.UpdateDisksFromDb(getVmTemplate());
+            _templateDisks = getVmTemplate().getDiskList();
         }
         return _templateDisks;
     }
@@ -224,9 +222,7 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
                             .RunVdsCommand(
                                     VDSCommandType.GetImageDomainsList,
                                     new GetImageDomainsListVDSCommandParameters(getStoragePool().getId()
-                                            .getValue(), disk
-                                            .getimage_group_id().getValue()))
-                            .getReturnValue();
+                                            .getValue(), disk.getId())).getReturnValue();
             if (domains.contains(imageToDestinationDomainMap.get(disk.getImageId()))) {
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_ALREADY_CONTAINS_DISK);
                 return false;

@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.queries.GetAllVmSnapshotsByDriveParameters;
 import org.ovirt.engine.core.common.queries.GetAllVmSnapshotsByDriveQueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskImageDAO;
 import org.ovirt.engine.core.dao.SnapshotDao;
 
@@ -26,7 +27,7 @@ public class GetAllVmSnapshotsByDriveQuery<P extends GetAllVmSnapshotsByDrivePar
         DiskImage activeDisk = findImageForDrive(SnapshotType.ACTIVE);
         DiskImage inactiveDisk = findImageForDrive(SnapshotType.PREVIEW);
 
-        if (getDiskImageDao().getAllForVm(getParameters().getId(), getUserID(), getParameters().isFiltered()).isEmpty()
+        if (getDiskDao().getAllForVm(getParameters().getId(), getUserID(), getParameters().isFiltered()).isEmpty()
                 || activeDisk == null
                 || imageBeforePreviewIsMissing(activeDisk, inactiveDisk)) {
             log.warnFormat("Vm {0} images data incorrect", getParameters().getId());
@@ -58,6 +59,10 @@ public class GetAllVmSnapshotsByDriveQuery<P extends GetAllVmSnapshotsByDrivePar
 
     protected DiskImageDAO getDiskImageDao() {
         return getDbFacade().getDiskImageDAO();
+    }
+
+    protected DiskDao getDiskDao() {
+        return getDbFacade().getDiskDao();
     }
 
     /**

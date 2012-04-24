@@ -371,7 +371,8 @@ public class AddVmCommandTest {
         diskImage.setstorage_ids(new ArrayList<Guid>(Arrays.asList(STORAGE_DOMAIN_ID)));
         diskImageMap.put(Guid.NewGuid().toString(), diskImage);
         cmd.storageToDisksMap = new HashMap<Guid, List<DiskImage>>();
-        cmd.storageToDisksMap.put(STORAGE_DOMAIN_ID, new ArrayList<DiskImage>(diskImageMap.values()));
+        cmd.storageToDisksMap.put(STORAGE_DOMAIN_ID,
+                new ArrayList<DiskImage>(diskImageMap.values()));
     }
 
     private void setupAllMocks() {
@@ -440,7 +441,7 @@ public class AddVmCommandTest {
             vmTemplate = new VmTemplate();
             vmTemplate.setstorage_pool_id(STORAGE_POOL_ID);
             vmTemplate.addDiskImage(createDiskImageTemplate());
-            Map<String, DiskImage> diskImageMap = new HashMap<String, DiskImage>(1);
+            Map<String, DiskImage> diskImageMap = new HashMap<String, DiskImage>();
             diskImageMap.put("disk1", createDiskImage(REQUIRED_DISK_SIZE_GB));
             vmTemplate.setDiskImageMap(diskImageMap);
         }

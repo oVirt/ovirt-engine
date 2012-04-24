@@ -26,6 +26,7 @@ import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.BaseDiskDao;
+import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskImageDAO;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
@@ -148,7 +149,7 @@ public class SnapshotsManager {
         RefObject<String> tempRefObject = new RefObject<String>("");
         new OvfManager().ExportVm(tempRefObject,
                 vm,
-                new ArrayList<DiskImage>(getDiskImageDao().getAllForVm(vm.getId())));
+                new ArrayList<DiskImage>(ImagesHandler.filterDiskBasedOnImages(getDiskDao().getAllForVm(vm.getId()))));
         return tempRefObject.argvalue;
     }
 
@@ -369,6 +370,10 @@ public class SnapshotsManager {
 
     protected DiskImageDAO getDiskImageDao() {
         return DbFacade.getInstance().getDiskImageDAO();
+    }
+
+    protected DiskDao getDiskDao() {
+        return DbFacade.getInstance().getDiskDao();
     }
 
     protected VdsGroupDAO getVdsGroupDao() {

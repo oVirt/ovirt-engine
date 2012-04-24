@@ -323,11 +323,11 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
             // get all vm disks in order to check post zero - if one of the
             // disks is marked with wipe_after_delete
             boolean postZero =
-                    LinqUtils.filter(DbFacade.getInstance().getDiskImageDAO().getAllForVm(getVm().getId()),
-                            new Predicate<DiskImage>() {
+                    LinqUtils.filter(DbFacade.getInstance().getDiskDao().getAllForVm(getVm().getId()),
+                            new Predicate<Disk>() {
                                 @Override
-                                public boolean eval(DiskImage diskImage) {
-                                    return diskImage.isWipeAfterDelete();
+                                public boolean eval(Disk disk) {
+                                    return disk.isWipeAfterDelete();
                                 }
                             }).size() > 0;
 

@@ -73,50 +73,56 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         } else {
             // if user sent drive check that its not in use
             returnValue = returnValue && (vm == null || isDiskCanBeAddedToVm(getParameters().getDiskInfo()));
-            if (returnValue) {
-                StorageDomainValidator validator = new StorageDomainValidator(getStorageDomain());
-                returnValue = validator.isDomainExistAndActive(getReturnValue().getCanDoActionMessages());
-                if (returnValue && vm != null && getStoragePoolIsoMapDao().get(new StoragePoolIsoMapId(
-                            getStorageDomainId().getValue(), vm.getstorage_pool_id())) == null) {
-                    returnValue = false;
-                    addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_MATCH);
-                }
-                returnValue = returnValue && DiskStorageType.IMAGE == getParameters().getDiskInfo().getDiskStorageType()
-                              && ImagesHandler.CheckImageConfiguration(
-                                        getStorageDomain().getStorageStaticData(),
-                                        (DiskImage)getParameters().getDiskInfo(),
-                                        getReturnValue().getCanDoActionMessages())
-                                        && (vm == null || isDiskPassPCIAndIDELimit(getParameters().getDiskInfo()));
-            }
-            List<DiskImage> emptyList = Collections.emptyList();
-            returnValue =
-                    returnValue
-                            && (vm == null
-                            || ImagesHandler.PerformImagesChecks(vm,
-                                    getReturnValue().getCanDoActionMessages(),
-                                    vm.getstorage_pool_id(),
-                                    getStorageDomainId().getValue(),
-                                    false,
-                                    false,
-                                    false,
-                                    false,
-                                    true,
-                                    false,
-                                    false,
-                                    true,
-                                    emptyList));
-
-            if (returnValue && !hasFreeSpace(getStorageDomain())) {
-                returnValue = false;
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW);
+            if (returnValue && DiskStorageType.IMAGE == getParameters().getDiskInfo().getDiskStorageType()) {
+                returnValue = checkIfImageDiskCanBeAdded(vm);
             }
             ImagesHandler.setDiskAlias(getParameters().getDiskInfo(), getVm());
         }
+        return returnValue;
+    }
+
+    private boolean checkIfImageDiskCanBeAdded(VM vm) {
+        boolean returnValue;
+        StorageDomainValidator validator = new StorageDomainValidator(getStorageDomain());
+        returnValue = validator.isDomainExistAndActive(getReturnValue().getCanDoActionMessages());
+        if (returnValue && vm != null && getStoragePoolIsoMapDao().get(new StoragePoolIsoMapId(
+                    getStorageDomainId().getValue(), vm.getstorage_pool_id())) == null) {
+            returnValue = false;
+            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_MATCH);
+        }
+        returnValue = returnValue
+                      && ImagesHandler.CheckImageConfiguration(
+                                getStorageDomain().getStorageStaticData(),
+                                (DiskImage) getParameters().getDiskInfo(),
+                                getReturnValue().getCanDoActionMessages())
+                                && (vm == null || isDiskPassPCIAndIDELimit(getParameters().getDiskInfo()));
+        List<DiskImage> emptyList = Collections.emptyList();
+        returnValue =
+                returnValue
+                        && (vm == null
+                        || ImagesHandler.PerformImagesChecks(vm,
+                                getReturnValue().getCanDoActionMessages(),
+                                vm.getstorage_pool_id(),
+                                getStorageDomainId().getValue(),
+                                false,
+                                false,
+                                false,
+                                false,
+                                true,
+                                false,
+                                false,
+                                true,
+                                emptyList));
+
+        if (returnValue && !hasFreeSpace(getStorageDomain())) {
+            returnValue = false;
+            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW);
+        }
         if (returnValue && getRequestDiskSpace() > Config
-                    .<Integer> GetValue(ConfigValues.MaxDiskSize)) {
+                .<Integer> GetValue(ConfigValues.MaxDiskSize)) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_MAX_SIZE_EXCEEDED);
             getReturnValue().getCanDoActionMessages().add(
-                        String.format("$max_disk_size %1$s", Config.<Integer> GetValue(ConfigValues.MaxDiskSize)));
+                    String.format("$max_disk_size %1$s", Config.<Integer> GetValue(ConfigValues.MaxDiskSize)));
             returnValue = false;
         }
         return returnValue;

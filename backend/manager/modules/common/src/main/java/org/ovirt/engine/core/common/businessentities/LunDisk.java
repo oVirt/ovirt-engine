@@ -45,6 +45,11 @@ public class LunDisk extends Disk {
     }
 
     @Override
+    public long getsize() {
+        return lun.getDeviceSize();
+    }
+
+    @Override
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();

@@ -8,13 +8,14 @@ import java.util.Collections;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.queries.GetVmByVmIdParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.DiskImageDAO;
+import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.VmDAO;
 import org.ovirt.engine.core.dao.VmNetworkInterfaceDAO;
 import org.powermock.api.mockito.PowerMockito;
@@ -40,11 +41,11 @@ public class GetVmByVmIdQueryTest extends AbstractUserQueryTest<GetVmByVmIdParam
         VmDAO vmDAOMock = mock(VmDAO.class);
         when(vmDAOMock.get(vmID, getUser().getUserId(), paramsMock.isFiltered())).thenReturn(expectedResult);
 
-        DiskImage disk = new DiskImage();
+        Disk disk = new DiskImage();
         disk.setvm_guid(vmID);
-        disk.setactive(true);
-        DiskImageDAO diskImageDAO = mock(DiskImageDAO.class);
-        when(diskImageDAO.getAllForVm(vmID)).thenReturn(Collections.singletonList(disk));
+        ((DiskImage)disk).setactive(true);
+        DiskDao diskDao = mock(DiskDao.class);
+        when(diskDao.getAllForVm(vmID)).thenReturn(Collections.singletonList(disk));
 
         VmNetworkInterface netwrokInterface = new VmNetworkInterface();
         netwrokInterface.setVmId(vmID);
@@ -55,7 +56,7 @@ public class GetVmByVmIdQueryTest extends AbstractUserQueryTest<GetVmByVmIdParam
         PowerMockito.mockStatic(DbFacade.class);
         PowerMockito.when(DbFacade.getInstance()).thenReturn(dbFacadeMock);
         when(dbFacadeMock.getVmDAO()).thenReturn(vmDAOMock);
-        when(dbFacadeMock.getDiskImageDAO()).thenReturn(diskImageDAO);
+        when(dbFacadeMock.getDiskDao()).thenReturn(diskDao);
         when(dbFacadeMock.getVmNetworkInterfaceDAO()).thenReturn(vmNetworkInterfaceDAO);
 
         getQuery().executeQueryCommand();

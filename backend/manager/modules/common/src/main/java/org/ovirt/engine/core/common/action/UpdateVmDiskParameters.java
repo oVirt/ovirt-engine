@@ -5,21 +5,21 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class UpdateVmDiskParameters extends VmDiskOperatinParameterBase {
     private static final long serialVersionUID = -272509502118714937L;
-    private Guid imageId = Guid.Empty;
+    private Guid diskId = Guid.Empty;
 
     public UpdateVmDiskParameters() {
     }
 
-    public UpdateVmDiskParameters(Guid vmId, Guid imageId, DiskImageBase diskInfo) {
+    public UpdateVmDiskParameters(Guid vmId, Guid diskId, DiskImageBase diskInfo) {
         super(vmId, diskInfo);
-        setImageId(imageId);
+        setDiskId(diskId);
     }
 
-    public Guid getImageId() {
-        return imageId;
+    public Guid getDiskId() {
+        return diskId;
     }
 
-    public void setImageId(Guid value) {
-        imageId = value;
+    public void setDiskId(Guid value) {
+        diskId = value;
     }
 }

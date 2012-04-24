@@ -53,6 +53,7 @@ public class DiskImageBase extends Disk {
         getImage().setQuotaId(quotaId);
     }
 
+    @Override
     public long getsize() {
         return getImage().getSize();
     }

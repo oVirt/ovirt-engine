@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -173,7 +172,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
                                     false,
                                     true,
                                     true,
-                                    true, true, new ArrayList<DiskImage>(diskImages));
+                                    true, true, getVm().getDiskMap().values());
         }
         if (result && LinqUtils.foreach(diskImages, new Function<DiskImage, Guid>() {
             @Override

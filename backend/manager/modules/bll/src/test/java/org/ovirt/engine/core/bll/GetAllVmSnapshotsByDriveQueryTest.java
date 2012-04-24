@@ -5,7 +5,6 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -51,8 +50,8 @@ public class GetAllVmSnapshotsByDriveQueryTest extends
         parent.setImageId(parentID);
         parent.setParentId(Guid.Empty);
 
-        when(diskImageDAOMock.getAllForVm(vmID, getUser().getUserId(), getQueryParameters().isFiltered())).thenReturn(Arrays.asList(activeImage,
-                inactiveImage));
+        /*when(diskImageDAOMock.getAllForVm(vmID, getUser().getUserId(), getQueryParameters().isFiltered())).thenReturn(Arrays.asList(activeImage,
+                inactiveImage));*/
         when(diskImageDAOMock.getSnapshotById(inactiveImage.getImageId())).thenReturn(inactiveImage);
         when(diskImageDAOMock.getSnapshotById(parentID)).thenReturn(parent);
 

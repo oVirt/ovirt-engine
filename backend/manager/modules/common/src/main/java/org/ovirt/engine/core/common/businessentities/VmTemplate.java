@@ -17,10 +17,10 @@ import javax.validation.constraints.Size;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
+import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.mapping.GuidType;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.queries.ValueObjectMap;
 import org.ovirt.engine.core.common.validation.annotation.ValidName;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
@@ -241,8 +241,10 @@ public class VmTemplate extends VmBase {
 
     public double getActualDiskSize() {
         if (actualDiskSize == 0 && getDiskImageMap() != null) {
-            for (DiskImage disk : getDiskImageMap().values()) {
-                actualDiskSize += disk.getActualSize();
+            for (Disk disk : getDiskImageMap().values()) {
+                if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
+                    actualDiskSize += ((DiskImage) disk).getActualSize();
+                }
             }
         }
         return actualDiskSize;
@@ -261,15 +263,6 @@ public class VmTemplate extends VmBase {
 
     public void setDiskImageMap(Map<String, DiskImage> value) {
         diskMap = value;
-    }
-
-    @JsonIgnore
-    public ValueObjectMap getSerializedDiskImageMap() {
-        return new ValueObjectMap(diskMap, false);
-    }
-
-    public void setSerializedDiskImageMap(ValueObjectMap serializedDiskImageMap) {
-        diskMap = (serializedDiskImageMap == null) ? null : serializedDiskImageMap.asMap();
     }
 
     @Override

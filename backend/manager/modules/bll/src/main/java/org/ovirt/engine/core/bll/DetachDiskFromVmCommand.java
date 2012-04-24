@@ -1,25 +1,23 @@
 package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
-import org.ovirt.engine.core.common.action.UpdateVmDiskParameters;
-import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.action.AttachDettachVmDiskParameters;
+import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 
-public class DetachDiskFromVmCommand<T extends UpdateVmDiskParameters> extends AbstractDiskVmCommand<T> {
+public class DetachDiskFromVmCommand<T extends AttachDettachVmDiskParameters> extends AbstractDiskVmCommand<T> {
 
     private static final long serialVersionUID = -4424772106319982885L;
-    private DiskImage diskImage;
+    private Disk disk;
     private VmDevice vmDevice;
 
     public DetachDiskFromVmCommand(T parameters) {
         super(parameters);
-        if (getParameters().getDiskInfo().getPlugged() == null) {
-            getParameters().getDiskInfo().setPlugged(false);
-        }
     }
 
     @Override
@@ -31,23 +29,23 @@ public class DetachDiskFromVmCommand<T extends UpdateVmDiskParameters> extends A
         }
 
         if (retValue) {
-            diskImage = getDiskImageDao().get(getParameters().getImageId());
-            retValue = isDiskExist(diskImage);
+            disk = getDiskDao().get((Guid)getParameters().getEntityId());
+            retValue = isDiskExist(disk);
         }
         if (retValue) {
-            vmDevice = getVmDeviceDao().get(new VmDeviceId(diskImage.getId(), getVmId()));
+            vmDevice = getVmDeviceDao().get(new VmDeviceId(disk.getId(), getVmId()));
             if (vmDevice == null) {
                 retValue = false;
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_ALREADY_DETACHED);
             }
         }
-        if (retValue && Boolean.TRUE.equals(getParameters().getDiskInfo().getPlugged())
+        if (retValue && Boolean.TRUE.equals(getParameters().isPlugUnPlug())
                 && getVm().getstatus() != VMStatus.Down) {
             retValue = isHotPlugSupported() && isOSSupportingHotPlug()
-                            && isInterfaceSupportedForPlugUnPlug(diskImage);
+                            && isInterfaceSupportedForPlugUnPlug(disk);
         }
 
-        if (retValue && Boolean.FALSE.equals(getParameters().getDiskInfo().getPlugged())
+        if (retValue && Boolean.FALSE.equals(getParameters().isPlugUnPlug())
                 && getVm().getstatus() != VMStatus.Down) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
             retValue = false;
@@ -64,10 +62,9 @@ public class DetachDiskFromVmCommand<T extends UpdateVmDiskParameters> extends A
 
     @Override
     protected void ExecuteVmCommand() {
-        if (Boolean.TRUE.equals(getParameters().getDiskInfo().getPlugged()) && getVm().getstatus() != VMStatus.Down) {
-            performPlugCommnad(VDSCommandType.HotUnPlugDisk, diskImage, vmDevice);
+        if (Boolean.TRUE.equals(getParameters().isPlugUnPlug() && getVm().getstatus() != VMStatus.Down)) {
+            performPlugCommnad(VDSCommandType.HotUnPlugDisk, disk, vmDevice);
         }
-        getImageDao().update(diskImage.getImage());
         getVmDeviceDao().remove(vmDevice.getId());
         // update cached image
         VmHandler.updateDisksFromDb(getVm());

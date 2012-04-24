@@ -8,6 +8,7 @@ import org.ovirt.engine.core.common.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.action.VmPoolParametersBase;
+import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -191,7 +192,8 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
                 messages.add(vmDuringSnapshotResult.getMessage().name());
                 returnValue = false;
             } else {
-                List<DiskImage> vmImages = DbFacade.getInstance().getDiskImageDAO().getAllForVm(vmId);
+                List<Disk> disks = DbFacade.getInstance().getDiskDao().getAllForVm(vmId);
+                List<DiskImage> vmImages = ImagesHandler.filterDiskBasedOnImages(disks);
                 Guid storageDomainId = vmImages.size() > 0 ? vmImages.get(0).getstorage_ids().get(0) : Guid.Empty;
                 VM vm = DbFacade.getInstance().getVmDAO().get(vmId);
                 returnValue =
@@ -205,7 +207,7 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
                                 false,
                                 true,
                                 false,
-                                !Guid.Empty.equals(storageDomainId), true, vmImages);
+                                !Guid.Empty.equals(storageDomainId), true, disks);
             }
 
             if (!returnValue) {

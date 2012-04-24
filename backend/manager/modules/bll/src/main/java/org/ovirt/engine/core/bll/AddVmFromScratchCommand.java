@@ -25,8 +25,6 @@ import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class AddVmFromScratchCommand<T extends AddVmFromScratchParameters> extends AddVmCommand<T> {
     public AddVmFromScratchCommand(T parameters) {
@@ -63,7 +61,7 @@ public class AddVmFromScratchCommand<T extends AddVmFromScratchParameters> exten
 
     @Override
     protected boolean AddVmImages() {
-        List<DiskImage> disks = DbFacade.getInstance().getDiskImageDAO().getAllForVm(
+        List<Disk> disks = DbFacade.getInstance().getDiskDao().getAllForVm(
                 getParameters().getVmStaticData().getvmt_guid());
         if (disks.isEmpty() && !getParameters().getVmStaticData().getvmt_guid().equals(Guid.Empty)) {
             throw new VdcBLLException(VdcBllErrors.VM_TEMPLATE_CANT_LOCATE_DISKS_IN_DB);
@@ -83,7 +81,7 @@ public class AddVmFromScratchCommand<T extends AddVmFromScratchParameters> exten
                     disk.setboot(false);
             }
         }
-        return (!disks.isEmpty()) ? ConcreteAddVmImages(disks.get(0).getImageId()) : true;
+        return (!disks.isEmpty()) ? ConcreteAddVmImages(((DiskImage)disks.get(0)).getImageId()) : true;
     }
 
     protected boolean ConcreteAddVmImages(Guid itGuid) {
@@ -161,8 +159,6 @@ public class AddVmFromScratchCommand<T extends AddVmFromScratchParameters> exten
     protected VdcActionType getChildActionType() {
         return VdcActionType.AddImageFromScratch;
     }
-
-    private static Log log = LogFactory.getLog(AddVmFromScratchCommand.class);
 
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {

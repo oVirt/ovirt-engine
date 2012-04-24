@@ -29,6 +29,7 @@ import org.mockito.MockitoAnnotations;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.common.action.RunVmParams;
+import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.IVdsAsyncCommand;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -56,7 +57,7 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBaseMockUtils;
-import org.ovirt.engine.core.dao.DiskImageDAO;
+import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
 import org.ovirt.engine.core.dao.VmDAO;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
@@ -316,7 +317,7 @@ public class RunVmCommandTest {
 
     @Test
     public void canRunVmFailNodisk() {
-        initMocks(new ArrayList<DiskImage>(), new HashMap<VDSCommandType, Boolean>(), new ArrayList<VmDevice>());
+        initMocks(new ArrayList<Disk>(), new HashMap<VDSCommandType, Boolean>(), new ArrayList<VmDevice>());
 
         final VM vm = new VM();
         final ArrayList<String> messages = new ArrayList<String>();
@@ -330,7 +331,7 @@ public class RunVmCommandTest {
 
     @Test
     public void canRunVmFailVmRunning() {
-        final ArrayList<DiskImage> disks = new ArrayList<DiskImage>();
+        final ArrayList<Disk> disks = new ArrayList<Disk>();
         final DiskImage diskImage = createImage();
         disks.add(diskImage);
         final VmDevice vmDevice = createDiskVmDevice(diskImage);
@@ -348,7 +349,7 @@ public class RunVmCommandTest {
 
     @Test
     public void canRunVmFailVmDuringSnapshot() {
-        final ArrayList<DiskImage> disks = new ArrayList<DiskImage>();
+        final ArrayList<Disk> disks = new ArrayList<Disk>();
         final DiskImage diskImage = createImage();
         disks.add(diskImage);
         final VmDevice vmDevice = createDiskVmDevice(diskImage);
@@ -370,7 +371,7 @@ public class RunVmCommandTest {
             boolean isVmStateless,
             Boolean isStatelessParam,
             boolean shouldPass) {
-        final ArrayList<DiskImage> disks = new ArrayList<DiskImage>();
+        final ArrayList<Disk> disks = new ArrayList<Disk>();
         final DiskImage diskImage = createImage();
         disks.add(diskImage);
         final VmDevice vmDevice = createDiskVmDevice(diskImage);
@@ -456,7 +457,7 @@ public class RunVmCommandTest {
      *            the disks for the VM
      */
     @SuppressWarnings("unchecked")
-    private static void initMocks(final List<DiskImage> disks, final Map<VDSCommandType, Boolean> calls,
+    private static void initMocks(final List<Disk> disks, final Map<VDSCommandType, Boolean> calls,
             final List<VmDevice> vmDevices) {
         final Guid guid = new Guid("00000000-0000-0000-0000-000000000000");
         final IConfigUtilsInterface cfgUtils = Mockito.mock(IConfigUtilsInterface.class);
@@ -465,8 +466,8 @@ public class RunVmCommandTest {
         Mockito.when(cfgUtils.GetValue(ConfigValues.UserDefinedVMProperties, "3.0")).thenReturn("0");
         Config.setConfigUtils(cfgUtils);
 
-        final DiskImageDAO diskImageDao = Mockito.mock(DiskImageDAO.class);
-        Mockito.when(diskImageDao.getAllForVm(guid)).thenReturn(disks);
+        final DiskDao diskDao = Mockito.mock(DiskDao.class);
+        Mockito.when(diskDao.getAllForVm(guid)).thenReturn(disks);
 
         final StorageDomainDAO storageDomainDAO = Mockito.mock(StorageDomainDAO.class);
         Mockito.when(storageDomainDAO.getAllForStoragePool(guid))
@@ -479,8 +480,8 @@ public class RunVmCommandTest {
 
         final DbFacade facadeMock = new DbFacade() {
             @Override
-            public DiskImageDAO getDiskImageDAO() {
-                return diskImageDao;
+            public DiskDao getDiskDao() {
+                return diskDao;
             }
 
             @Override

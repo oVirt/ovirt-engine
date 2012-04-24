@@ -89,6 +89,8 @@ public abstract class Disk extends BaseDisk {
         }
     }
 
+    public abstract long getsize();
+
     @Override
     public int hashCode() {
         final int prime = 31;

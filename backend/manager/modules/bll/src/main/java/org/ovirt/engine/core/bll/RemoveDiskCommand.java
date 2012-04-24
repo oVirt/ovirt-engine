@@ -18,6 +18,8 @@ import org.ovirt.engine.core.common.action.RemoveImageParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
+import org.ovirt.engine.core.common.businessentities.Disk;
+import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -31,6 +33,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskImageDAO;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
 
@@ -38,14 +41,14 @@ import org.ovirt.engine.core.dao.VmDeviceDAO;
 public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBase<T> {
 
     private static final long serialVersionUID = -4520874214339816607L;
-    private DiskImage disk;
+    private Disk disk;
     private Map<String, Guid> sharedLockMap;
     private List<PermissionSubject> permsList = null;
 
     public RemoveDiskCommand(T parameters) {
         super(parameters);
         setStorageDomainId(getParameters().getStorageDomainId());
-        disk = getDiskImageDAO().getSnapshotById((Guid) getParameters().getEntityId());
+        disk = getDiskDao().get((Guid) getParameters().getEntityId());
     }
 
     @Override
@@ -68,19 +71,35 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
             retValue = acquireLockInternal();
         }
 
-        if (retValue && disk.getVmEntityType() == VmEntityType.TEMPLATE) {
+        retValue =
+                retValue
+                        && (disk.getDiskStorageType() != DiskStorageType.IMAGE || canRemoveDiskBasedOnImageStorageCheck());
+        if (retValue) {
+            if (disk.getVmEntityType() == VmEntityType.VM) {
+                retValue = canRemoveVmDisk();
+            } else if (disk.getVmEntityType() == VmEntityType.TEMPLATE) {
+                retValue = canRemoveTemplateDisk();
+            }
+        }
+
+        return retValue;
+    }
+
+    private boolean canRemoveDiskBasedOnImageStorageCheck() {
+        boolean retValue = true;
+        DiskImage diskImage = (DiskImage) disk;
+        if (diskImage.getVmEntityType() == VmEntityType.TEMPLATE) {
             // Temporary fix until re factoring vm_images_view and image_storage_domain_view
-            disk.setstorage_ids(getDiskImageDAO().get(disk.getImageId()).getstorage_ids());
+            diskImage.setstorage_ids(getDiskImageDAO().get(diskImage.getImageId()).getstorage_ids());
         }
 
-        if (retValue
-                && disk.getVmEntityType() == VmEntityType.VM
+        if (diskImage.getVmEntityType() == VmEntityType.VM
                 && (getParameters().getStorageDomainId() == null || Guid.Empty.equals(getParameters().getStorageDomainId()))) {
-            getParameters().setStorageDomainId(disk.getstorage_ids().get(0));
-            setStorageDomainId(disk.getstorage_ids().get(0));
+            getParameters().setStorageDomainId(diskImage.getstorage_ids().get(0));
+            setStorageDomainId(diskImage.getstorage_ids().get(0));
         }
 
-        if (retValue && !disk.getstorage_ids().contains(getParameters().getStorageDomainId())) {
+        if (retValue && !diskImage.getstorage_ids().contains(getParameters().getStorageDomainId())) {
             retValue = false;
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STOARGE_DOMAIN_IS_WRONG);
         }
@@ -90,18 +109,10 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
                 retValue && validator.isDomainExistAndActive(getReturnValue().getCanDoActionMessages())
                         && validator.domainIsValidDestination(getReturnValue().getCanDoActionMessages());
 
-        if (retValue && disk.getimageStatus() == ImageStatus.LOCKED) {
+        if (retValue && diskImage.getimageStatus() == ImageStatus.LOCKED) {
             retValue = false;
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED);
         }
-        if (retValue) {
-            if (disk.getVmEntityType() == VmEntityType.VM) {
-                retValue = canRemoveVmDisk();
-            } else if (disk.getVmEntityType() == VmEntityType.TEMPLATE) {
-                retValue = canRemoveTemplateDisk();
-            }
-        }
-
         return retValue;
     }
 
@@ -115,12 +126,13 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
 
     private boolean canRemoveTemplateDisk() {
         boolean retValue = true;
-        setVmTemplateId(disk.getvm_guid());
+        DiskImage diskImage = (DiskImage) disk;
+        setVmTemplateId(diskImage.getvm_guid());
         if (getVmTemplate().getstatus() == VmTemplateStatus.Locked) {
             retValue = false;
             addCanDoActionMessage(VdcBllMessages.VM_TEMPLATE_IMAGE_IS_LOCKED);
         }
-        if (retValue && disk.getstorage_ids().size() == 1) {
+        if (retValue && diskImage.getstorage_ids().size() == 1) {
             retValue = false;
             addCanDoActionMessage(VdcBllMessages.VM_TEMPLATE_IMAGE_LAST_DOMAIN);
         }
@@ -128,14 +140,17 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
             List<String> problematicVmNames = new ArrayList<String>();
             List<VM> vms = DbFacade.getInstance().getVmDAO().getAllWithTemplate(getVmTemplateId());
             for (VM vm : vms) {
-                List<DiskImage> vmDisks = DbFacade.getInstance().getDiskImageDAO().getAllForVm(vm.getId());
-                for (DiskImage vmDisk : vmDisks) {
-                    if (vmDisk.getit_guid().equals(disk.getImageId())) {
-                        if (vmDisk.getstorage_ids().contains(getParameters().getStorageDomainId())) {
-                            retValue = false;
-                            problematicVmNames.add(vm.getvm_name());
+                List<Disk> vmDisks = DbFacade.getInstance().getDiskDao().getAllForVm(vm.getId());
+                for (Disk vmDisk : vmDisks) {
+                    if (vmDisk.getDiskStorageType() == DiskStorageType.IMAGE) {
+                        DiskImage vmDiskImage = (DiskImage) vmDisk;
+                        if (vmDiskImage.getit_guid().equals(diskImage.getImageId())) {
+                            if (vmDiskImage.getstorage_ids().contains(getParameters().getStorageDomainId())) {
+                                retValue = false;
+                                problematicVmNames.add(vm.getvm_name());
+                            }
+                            break;
                         }
-                        break;
                     }
                 }
             }
@@ -149,7 +164,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
 
     private boolean canRemoveVmDisk() {
         setVmId(disk.getvm_guid());
-        VmDevice vmDevice = getVmDeviceDAO().get(new VmDeviceId(disk.getimage_group_id(), disk.getvm_guid()));
+        VmDevice vmDevice = getVmDeviceDAO().get(new VmDeviceId(disk.getId(), disk.getvm_guid()));
         return validate(new SnapshotsValidator().vmNotDuringSnapshot(getVmId()))
                         && ImagesHandler.PerformImagesChecks(getVm(),
                                 getReturnValue().getCanDoActionMessages(),
@@ -175,29 +190,38 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
         return DbFacade.getInstance().getDiskImageDAO();
     }
 
+    protected DiskDao getDiskDao() {
+        return DbFacade.getInstance().getDiskDao();
+    }
+
     @Override
     protected void executeCommand() {
-        RemoveImageParameters p = new RemoveImageParameters(disk.getImageId(), getVmId());
-        p.setTransactionScopeOption(TransactionScopeOption.Suppress);
-        p.setDiskImage(disk);
-        p.setParentCommand(VdcActionType.RemoveDisk);
-        p.setEntityId(getParameters().getEntityId());
-        p.setParentParemeters(getParameters());
-        p.setStorageDomainId(getParameters().getStorageDomainId());
-        p.setForceDelete(getParameters().getForceDelete());
-        if (disk.getstorage_ids().size() == 1) {
-            p.setRemoveFromDB(true);
-        }
-        VdcReturnValueBase vdcReturnValue =
+        if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
+            DiskImage diskImage = (DiskImage) disk;
+            RemoveImageParameters p = new RemoveImageParameters(diskImage.getImageId(), getVmId());
+            p.setTransactionScopeOption(TransactionScopeOption.Suppress);
+            p.setDiskImage(diskImage);
+            p.setParentCommand(VdcActionType.RemoveDisk);
+            p.setEntityId(getParameters().getEntityId());
+            p.setParentParemeters(getParameters());
+            p.setStorageDomainId(getParameters().getStorageDomainId());
+            p.setForceDelete(getParameters().getForceDelete());
+            if (diskImage.getstorage_ids().size() == 1) {
+                p.setRemoveFromDB(true);
+            }
+            VdcReturnValueBase vdcReturnValue =
                             Backend.getInstance().runInternalAction(VdcActionType.RemoveImage,
                                     p,
                                     ExecutionHandler.createDefaultContexForTasks(getExecutionContext(), getLock()));
-        // Setting lock to null because the lock is released in the child command (RemoveImage)
-        setLock(null);
-        if (vdcReturnValue.getSucceeded()) {
-            getParameters().getImagesParameters().add(p);
-            getReturnValue().getTaskIdList().addAll(vdcReturnValue.getInternalTaskIdList());
-            setSucceeded(vdcReturnValue.getSucceeded());
+            // Setting lock to null because the lock is released in the child command (RemoveImage)
+            setLock(null);
+            if (vdcReturnValue.getSucceeded()) {
+                getParameters().getImagesParameters().add(p);
+                getReturnValue().getTaskIdList().addAll(vdcReturnValue.getInternalTaskIdList());
+                setSucceeded(vdcReturnValue.getSucceeded());
+            }
+        } else {
+            setSucceeded(true);
         }
     }
 
@@ -237,7 +261,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
     public List<PermissionSubject> getPermissionCheckSubjects() {
         if (permsList == null && disk != null) {
             permsList = new ArrayList<PermissionSubject>();
-            permsList.add(new PermissionSubject(disk.getimage_group_id(),
+            permsList.add(new PermissionSubject(disk.getId(),
                     VdcObjectType.Disk,
                     ActionGroup.DELETE_DISK));
         }

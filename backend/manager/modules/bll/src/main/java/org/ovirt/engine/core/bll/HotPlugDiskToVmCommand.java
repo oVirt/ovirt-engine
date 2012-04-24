@@ -3,7 +3,7 @@ package org.ovirt.engine.core.bll;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.HotPlugDiskToVmParameters;
-import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
@@ -17,7 +17,7 @@ public class HotPlugDiskToVmCommand<T extends HotPlugDiskToVmParameters> extends
 
     private static final long serialVersionUID = 2022232044279588022L;
 
-    protected DiskImage diskImage;
+    protected Disk disk;
     private VmDevice oldVmDevice;
 
     public HotPlugDiskToVmCommand(T parameters) {
@@ -32,8 +32,8 @@ public class HotPlugDiskToVmCommand<T extends HotPlugDiskToVmParameters> extends
 
     @Override
     protected boolean canDoAction() {
-        diskImage = getDiskImageDao().get(getParameters().getDiskId());
-        return isVmExist() && isVmUpOrDown() && isDiskExist(diskImage) && checkCanPerformPlugUnPlugDisk();
+        disk = getDiskDao().get(getParameters().getDiskId());
+        return isVmExist() && isVmUpOrDown() && isDiskExist(disk) && checkCanPerformPlugUnPlugDisk();
     }
 
     private boolean checkCanPerformPlugUnPlugDisk() {
@@ -42,11 +42,11 @@ public class HotPlugDiskToVmCommand<T extends HotPlugDiskToVmParameters> extends
             setVdsId(getVm().getrun_on_vds().getValue());
             returnValue =
                     isHotPlugSupported() && isOSSupportingHotPlug()
-                            && isInterfaceSupportedForPlugUnPlug(diskImage);
+                            && isInterfaceSupportedForPlugUnPlug(disk);
         }
         if (returnValue) {
             oldVmDevice =
-                    getVmDeviceDao().get(new VmDeviceId(diskImage.getId(), getVmId()));
+                    getVmDeviceDao().get(new VmDeviceId(disk.getId(), getVmId()));
             if (getPlugAction() == VDSCommandType.HotPlugDisk && oldVmDevice.getIsPlugged()) {
                 returnValue = false;
                 addCanDoActionMessage(VdcBllMessages.HOT_PLUG_DISK_IS_NOT_UNPLUGGED);
@@ -66,7 +66,7 @@ public class HotPlugDiskToVmCommand<T extends HotPlugDiskToVmParameters> extends
     @Override
     protected void ExecuteVmCommand() {
         if (getVm().getstatus() == VMStatus.Up) {
-            performPlugCommnad(getPlugAction(), diskImage, oldVmDevice);
+            performPlugCommnad(getPlugAction(), disk, oldVmDevice);
         }
         oldVmDevice.setIsPlugged(!oldVmDevice.getIsPlugged());
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {

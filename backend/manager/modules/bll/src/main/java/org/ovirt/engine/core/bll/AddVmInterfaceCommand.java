@@ -6,8 +6,7 @@ import java.util.List;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AddVmInterfaceParameters;
-import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.DiskImageBase;
+import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
@@ -31,7 +30,6 @@ import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogField;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;
-import org.ovirt.engine.core.utils.linq.Function;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 
@@ -140,14 +138,7 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends V
         List<VmNetworkInterface> allInterfaces = new ArrayList<VmNetworkInterface>(interfaces);
         allInterfaces.add(getParameters().getInterface());
 
-        List<DiskImageBase> allDisks = LinqUtils.foreach(
-                DbFacade.getInstance().getDiskImageDAO().getAllForVm(getParameters().getVmId()),
-                new Function<DiskImage, DiskImageBase>() {
-                    @Override
-                    public DiskImageBase eval(DiskImage diskImage) {
-                        return diskImage;
-                    }
-                });
+        List<Disk> allDisks = DbFacade.getInstance().getDiskDao().getAllForVm(getParameters().getVmId());
         if (!CheckPCIAndIDELimit(vm.getnum_of_monitors(), allInterfaces, allDisks, getReturnValue().getCanDoActionMessages())) {
             return false;
         }

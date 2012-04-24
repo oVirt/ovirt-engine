@@ -24,7 +24,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBaseMockUtils;
-import org.ovirt.engine.core.dao.DiskImageDAO;
+import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.dao.VmDAO;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -42,7 +42,7 @@ public class UpdateVmDiskCommandTest {
     @Mock
     private VdsDAO vdsDao;
     @Mock
-    private DiskImageDAO diskImageDao;
+    private DiskDao diskDao;
 
     /**
      * The command under test.
@@ -84,8 +84,8 @@ public class UpdateVmDiskCommandTest {
             private static final long serialVersionUID = 1L;
 
             @Override
-            protected DiskImageDAO getDiskImageDao() {
-                return diskImageDao;
+            protected DiskDao getDiskDao() {
+                return diskDao;
             }
         });
         mockVds();
@@ -132,8 +132,8 @@ public class UpdateVmDiskCommandTest {
      * The following method will simulate a situation when disk was not found in DB
      */
     private void createNullDisk() {
-        doReturn(diskImageDao).when(command).getDiskImageDao();
-        when(diskImageDao.get(diskImageGuid)).thenReturn(null);
+        doReturn(diskDao).when(command).getDiskDao();
+        when(diskDao.get(diskImageGuid)).thenReturn(null);
     }
 
     /**
@@ -147,9 +147,9 @@ public class UpdateVmDiskCommandTest {
         disk.setPlugged(false);
         disk.setactive(true);
         disk.setvm_guid(vmId);
-        disk.setimage_group_id(diskImageGuid);
-        doReturn(diskImageDao).when(command).getDiskImageDao();
-        when(diskImageDao.get(diskImageGuid)).thenReturn(disk);
+        disk.setId(diskImageGuid);
+        doReturn(diskDao).when(command).getDiskDao();
+        when(diskDao.get(diskImageGuid)).thenReturn(disk);
         return disk;
     }
 }

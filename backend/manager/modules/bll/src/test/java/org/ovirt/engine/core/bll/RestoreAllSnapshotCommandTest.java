@@ -20,6 +20,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.action.RestoreAllSnapshotsParameters;
+import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
@@ -39,7 +40,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBaseMockUtils;
-import org.ovirt.engine.core.dao.DiskImageDAO;
+import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
 import org.ovirt.engine.core.dao.VmDAO;
@@ -64,7 +65,7 @@ public class RestoreAllSnapshotCommandTest {
     private BackendInternal backend;
 
     @Mock
-    private DiskImageDAO diskImageDAO;
+    private DiskDao diskDao;
 
     @Mock
     private StorageDomainDAO storageDomainDAO;
@@ -182,12 +183,12 @@ public class RestoreAllSnapshotCommandTest {
      * Mock disk image Dao.
      */
     private void mockDiskImageDao() {
-        List<DiskImage> diskImageList = new ArrayList<DiskImage>();
+        List<Disk> diskImageList = new ArrayList<Disk>();
         DiskImage diskImage = new DiskImage();
         diskImage.setstorage_ids(new ArrayList<Guid>(Arrays.asList(Guid.NewGuid())));
         diskImageList.add(diskImage);
-        when(dbFacade.getDiskImageDAO()).thenReturn(diskImageDAO);
-        when(diskImageDAO.getAllForVm(vmId)).thenReturn(diskImageList);
+        when(dbFacade.getDiskDao()).thenReturn(diskDao);
+        when(diskDao.getAllForVm(vmId)).thenReturn(diskImageList);
     }
 
     private void mockStorageDomainDao() {

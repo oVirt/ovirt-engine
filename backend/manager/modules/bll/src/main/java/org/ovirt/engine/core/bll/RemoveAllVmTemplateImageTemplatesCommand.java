@@ -31,8 +31,8 @@ public class RemoveAllVmTemplateImageTemplatesCommand<T extends VmTemplateParame
     @SuppressWarnings("unchecked")
     @Override
     protected void executeCommand() {
-        List<DiskImage> imageTemplates = DbFacade.getInstance().getDiskImageDAO().getAllForVm(
-                getVmTemplateId());
+        List<DiskImage> imageTemplates = ImagesHandler.filterDiskBasedOnImages(DbFacade.getInstance().getDiskDao().getAllForVm(
+                getVmTemplateId()));
         boolean noImagesRemovedYet = true;
         for (DiskImage template : imageTemplates) {
             // get disk
@@ -42,7 +42,7 @@ public class RemoveAllVmTemplateImageTemplatesCommand<T extends VmTemplateParame
                         template.getinternal_drive_mapping(), getVmTemplateId());
                 tempVar.setStorageDomainId(domain);
                 tempVar.setStoragePoolId(template.getstorage_pool_id().getValue());
-                tempVar.setImageGroupID(template.getimage_group_id().getValue());
+                tempVar.setImageGroupID(template.getId());
                 tempVar.setEntityId(getParameters().getEntityId());
                 tempVar.setWipeAfterDelete(template.isWipeAfterDelete());
                 tempVar.setTransactionScopeOption(TransactionScopeOption.RequiresNew);
@@ -74,7 +74,7 @@ public class RemoveAllVmTemplateImageTemplatesCommand<T extends VmTemplateParame
             if (getParameters().isRemoveTemplateFromDb()) {
                 DiskImage diskImage = DbFacade.getInstance().getDiskImageDAO().get(template.getImageId());
                 if (diskImage != null) {
-                    DbFacade.getInstance().getBaseDiskDao().remove(diskImage.getimage_group_id());
+                    DbFacade.getInstance().getBaseDiskDao().remove(diskImage.getId());
                     DbFacade.getInstance()
                             .getVmDeviceDAO()
                             .remove(new VmDeviceId(diskImage.getImageId(), diskImage.getvm_guid()));

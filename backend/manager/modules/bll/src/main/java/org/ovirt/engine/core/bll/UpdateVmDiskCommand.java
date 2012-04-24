@@ -13,7 +13,6 @@ import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
@@ -29,12 +28,12 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
 
     private static final long serialVersionUID = 5915267156998835363L;
     private List<PermissionSubject> listPermissionSubjects;
-    private DiskImage _oldDisk;
+    private Disk _oldDisk;
     private boolean shouldUpdateQuotaForDisk;
 
     public UpdateVmDiskCommand(T parameters) {
         super(parameters);
-        _oldDisk = getDiskImageDao().get(getParameters().getImageId());
+        _oldDisk = getDiskDao().get(getParameters().getDiskId());
     }
 
 
@@ -64,12 +63,12 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
     protected boolean validateQuota() {
         boolean quotaValid = true;
         if (DiskStorageType.IMAGE == _oldDisk.getDiskStorageType()) {
-            shouldUpdateQuotaForDisk = !_oldDisk.getQuotaId().equals(getQuotaId());
+            shouldUpdateQuotaForDisk = !((DiskImage)_oldDisk).getQuotaId().equals(getQuotaId());
             if (shouldUpdateQuotaForDisk) {
                 // Set default quota id if storage pool enforcement is disabled.
                 getParameters().setQuotaId(QuotaHelper.getInstance().getQuotaIdToConsume(getQuotaId(),
                         getStoragePool()));
-                setStorageDomainId(_oldDisk.getstorage_ids().get(0).getValue());
+                setStorageDomainId(((DiskImage)_oldDisk).getstorage_ids().get(0).getValue());
                 quotaValid = (QuotaManager.validateStorageQuota(getStorageDomainId().getValue(),
                         getParameters().getQuotaId(),
                         getStoragePool().getQuotaEnforcementType(),
@@ -90,10 +89,10 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
             List<VmNetworkInterface> allVmInterfaces = DbFacade.getInstance()
                     .getVmNetworkInterfaceDAO().getAllForVm(getVmId());
 
-            List allVmDisks = getDiskImageDao().getAllForVm(getVmId());
-            allVmDisks.removeAll(LinqUtils.filter(allVmDisks, new Predicate<DiskImageBase>() {
+            List<Disk> allVmDisks = getDiskDao().getAllForVm(getVmId());
+            allVmDisks.removeAll(LinqUtils.filter(allVmDisks, new Predicate<Disk>() {
                 @Override
-                public boolean eval(DiskImageBase o) {
+                public boolean eval(Disk o) {
                     return o.getinternal_drive_mapping().equals(
                             _oldDisk.getinternal_drive_mapping());
                 }
@@ -157,12 +156,15 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
                 _oldDisk.setDiskInterface(getParameters().getDiskInfo().getDiskInterface());
                 _oldDisk.setPropagateErrors(getParameters().getDiskInfo().getPropagateErrors());
                 _oldDisk.setWipeAfterDelete(getParameters().getDiskInfo().isWipeAfterDelete());
-                _oldDisk.setQuotaId(getQuotaId());
                 _oldDisk.setDiskAlias(getParameters().getDiskInfo().getDiskAlias());
                 _oldDisk.setDiskDescription(getParameters().getDiskInfo().getDiskDescription());
                 _oldDisk.setShareable(getParameters().getDiskInfo().isShareable());
                 DbFacade.getInstance().getBaseDiskDao().update(_oldDisk);
-                getImageDao().update(_oldDisk.getImage());
+                if (_oldDisk.getDiskStorageType() == DiskStorageType.IMAGE) {
+                    DiskImage diskImage = (DiskImage) _oldDisk;
+                    diskImage.setQuotaId(getQuotaId());
+                    getImageDao().update(diskImage.getImage());
+                }
                 // update cached image
                 VmHandler.updateDisksFromDb(getVm());
                 // update vm device boot order

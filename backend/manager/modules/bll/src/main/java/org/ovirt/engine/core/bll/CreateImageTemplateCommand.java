@@ -23,7 +23,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 /**
- * This command responcible to create new Image Template from image.
+ * This command responsible to create new Image Template from image.
  */
 @InternalCommandAttribute
 public class CreateImageTemplateCommand<T extends CreateImageTemplateParameters> extends BaseImagesCommand<T> {
@@ -43,7 +43,7 @@ public class CreateImageTemplateCommand<T extends CreateImageTemplateParameters>
         super.executeCommand();
         Guid storagePoolId = getDiskImage().getstorage_pool_id() != null ? getDiskImage().getstorage_pool_id()
                 .getValue() : Guid.Empty;
-        Guid imageGroupId = getDiskImage().getimage_group_id() != null ? getDiskImage().getimage_group_id().getValue()
+        Guid imageGroupId = getDiskImage().getId() != null ? getDiskImage().getId()
                 : Guid.Empty;
         Guid snapshotId = getDiskImage().getImageId();
         // Create new image group id and image id:
@@ -72,7 +72,7 @@ public class CreateImageTemplateCommand<T extends CreateImageTemplateParameters>
         getReturnValue().getInternalTaskIdList().add(
                 CreateTask(vdsReturnValue.getCreationInfo(), VdcActionType.AddVmTemplate));
 
-        newImage.setimage_group_id(destinationImageGroupID);
+        newImage.setId(destinationImageGroupID);
         newImage.setvm_snapshot_id(getParameters().getVmSnapshotId());
         newImage.setQuotaId(getParameters().getQuotaId());
         newImage.setParentId(ImagesHandler.BlankImageTemplateId);
@@ -130,7 +130,7 @@ public class CreateImageTemplateCommand<T extends CreateImageTemplateParameters>
         setVmTemplate(DbFacade.getInstance().getVmTemplateDAO()
                 .get(getVmTemplateId()));
         if (getDestinationDiskImage() != null) {
-            getBaseDiskDao().remove(getDestinationDiskImage().getimage_group_id());
+            getBaseDiskDao().remove(getDestinationDiskImage().getId());
             if (DbFacade.getInstance().getDiskImageDynamicDAO().get(getDestinationDiskImage().getImageId()) != null) {
                 DbFacade.getInstance().getDiskImageDynamicDAO().remove(getDestinationDiskImage().getImageId());
             }

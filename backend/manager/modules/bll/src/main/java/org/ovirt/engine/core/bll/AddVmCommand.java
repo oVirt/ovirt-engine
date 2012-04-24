@@ -129,7 +129,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         if (_vmDisks == null) {
             _vmDisks =
                     DbFacade.getInstance()
-                            .getDiskImageDAO()
+                            .getDiskDao()
                             .getAllForVm(getVmTemplateId());
         }
 
@@ -699,7 +699,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
             permsArray[i] =
                     new permissions(getCurrentUser().getUserId(),
                             PredefinedRoles.DISK_OPERATOR.getId(),
-                            newDiskImages.get(i).getimage_group_id(),
+                            newDiskImages.get(i).getId(),
                             VdcObjectType.Disk);
         }
         MultiLevelAdministrationHandler.addPermission(permsArray);

@@ -85,7 +85,10 @@ public abstract class VmTemplateCommand<T extends VmTemplateParametersBase> exte
         }
         if (returnValue && checkImagesExists) {
             if (vmtImages == null) {
-                vmtImages = DbFacade.getInstance().getDiskImageDAO().getAllForVm(vmTemplate.getId());
+                vmtImages =
+                        ImagesHandler.filterDiskBasedOnImages(DbFacade.getInstance()
+                                .getDiskDao()
+                                .getAllForVm(vmTemplate.getId()));
             }
             if (vmtImages.size() > 0
                     && !ImagesHandler.isImagesExists(vmtImages, vmtImages.get(0).getstorage_pool_id().getValue(),

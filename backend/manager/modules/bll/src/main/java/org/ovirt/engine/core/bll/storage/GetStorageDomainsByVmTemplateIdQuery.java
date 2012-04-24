@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.ovirt.engine.core.bll.GetVmTemplatesDisksQuery;
+import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
@@ -31,13 +32,13 @@ public class GetStorageDomainsByVmTemplateIdQuery<P extends GetStorageDomainsByV
         ArrayList<storage_domains> result = new ArrayList<storage_domains>();
 
         if (vmTemplate != null && vmTemplate.getstorage_pool_id() != null) {
-            List<DiskImage> templateDisks = getTemplateDisks();
+            List<Disk> templateDisks = getTemplateDisks();
 
             if (templateDisks.size() > 0) {
 
                 Set<Guid> domains = new HashSet<Guid>();
-                for (DiskImage templateDisk : templateDisks) {
-                    domains.addAll(templateDisk.getstorage_ids());
+                for (Disk templateDisk : templateDisks) {
+                    domains.addAll(((DiskImage)templateDisk).getstorage_ids());
                 }
 
                 for (Guid domainId : domains) {

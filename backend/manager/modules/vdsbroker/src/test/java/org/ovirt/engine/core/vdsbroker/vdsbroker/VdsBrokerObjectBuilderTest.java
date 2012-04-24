@@ -16,13 +16,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.DiskImageDAO;
+import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.utils.serialization.json.JsonObjectDeserializer;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStruct;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -41,7 +42,7 @@ public class VdsBrokerObjectBuilderTest {
     private final String DEFAULT_VALUE = "0.00";
 
     @Mock
-    private DiskImageDAO diskImageDAO;
+    private DiskDao diskDao;
 
     @Mock
     private DbFacade dbFacade;
@@ -273,18 +274,18 @@ public class VdsBrokerObjectBuilderTest {
     }
 
     private void mockDiskImageDao() {
-        List<DiskImage> diskImageList = setVmDiskImagesList();
+        List<Disk> diskImageList = setVmDiskImagesList();
         when(DbFacade.getInstance()).thenReturn(dbFacade);
-        when(dbFacade.getDiskImageDAO()).thenReturn(diskImageDAO);
-        when(diskImageDAO.getAllForVm(vmId))
+        when(dbFacade.getDiskDao()).thenReturn(diskDao);
+        when(diskDao.getAllForVm(vmId))
                 .thenReturn(diskImageList);
     }
 
-    private List<DiskImage> setVmDiskImagesList() {
-        List<DiskImage> diskImageList = new ArrayList<DiskImage>();
+    private List<Disk> setVmDiskImagesList() {
+        List<Disk> diskImageList = new ArrayList<Disk>();
         DiskImage diskImage = new DiskImage();
         diskImage.setImageId(imageId);
-        diskImage.setimage_group_id(imageId);
+        diskImage.setId(imageId);
         diskImageList.add(diskImage);
         return diskImageList;
     }

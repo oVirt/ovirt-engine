@@ -7,6 +7,7 @@ import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.PermissionSubject;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
+import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -202,7 +203,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                             retValue = false;
                         }
                         if (vm.getnum_of_monitors() < vmStaticDataFromParams.getnum_of_monitors()) {
-                            List allDisks = DbFacade.getInstance().getDiskImageDAO().getAllForVm(getVmId());
+                            List<Disk> allDisks = DbFacade.getInstance().getDiskDao().getAllForVm(getVmId());
                             List<VmNetworkInterface> interfaces = DbFacade.getInstance()
                                     .getVmNetworkInterfaceDAO().getAllForVm(getVmId());
                             retValue =

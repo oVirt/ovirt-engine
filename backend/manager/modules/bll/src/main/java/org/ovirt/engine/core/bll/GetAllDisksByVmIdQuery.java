@@ -1,16 +1,17 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.ovirt.engine.core.common.businessentities.Disk;
+import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.queries.GetAllDisksByVmIdParameters;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
-import org.ovirt.engine.core.utils.linq.Predicate;
 
 public class GetAllDisksByVmIdQuery<P extends GetAllDisksByVmIdParameters> extends QueriesCommandBase<P> {
     public GetAllDisksByVmIdQuery(P parameters) {
@@ -19,20 +20,21 @@ public class GetAllDisksByVmIdQuery<P extends GetAllDisksByVmIdParameters> exten
 
     @Override
     protected void executeQueryCommand() {
-        List<DiskImage> disks =
-                LinqUtils.filter(getDbFacade().getDiskImageDAO().getAllForVm
-                        (getParameters().getVmId(), getUserID(), getParameters().isFiltered()),
-                        new Predicate<DiskImage>() {
-                            @Override
-                            public boolean eval(DiskImage diskImage) {
-                                return (diskImage.getactive());
-                            }
-                        });
+        List<Disk> allDisks =
+                getDbFacade().getDiskDao().getAllForVm
+                                (getParameters().getVmId(), getUserID(), getParameters().isFiltered());
         Set<Guid> pluggedDiskIds = getPluggedDiskIds();
-        for (DiskImage diskImage : disks) {
-            diskImage.getSnapshots().addAll(
-                    ImagesHandler.getAllImageSnapshots(diskImage.getImageId(), diskImage.getit_guid()));
-            diskImage.setPlugged(pluggedDiskIds.contains(diskImage.getId()));
+        List<Disk> disks = new ArrayList<Disk>();
+        for (Disk disk : allDisks) {
+            disk.setPlugged(pluggedDiskIds.contains(disk.getId()));
+            if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
+                DiskImage diskImage = (DiskImage) disk;
+                diskImage.getSnapshots().addAll(
+                            ImagesHandler.getAllImageSnapshots(diskImage.getImageId(), diskImage.getit_guid()));
+                disks.add(disk);
+            } else {
+                disks.add(disk);
+            }
         }
         getQueryReturnValue().setReturnValue(disks);
     }
