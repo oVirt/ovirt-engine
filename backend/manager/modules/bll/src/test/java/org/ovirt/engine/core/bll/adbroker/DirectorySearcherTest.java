@@ -29,10 +29,12 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.config.IConfigUtilsInterface;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.when;
+import static org.powermock.api.mockito.PowerMockito.mock;
 
 /**
  * Tests GetRootDSE functionality In this test it is checked how GetRootDSE handles a various scenarios *
@@ -58,6 +60,8 @@ public class DirectorySearcherTest extends AbstractLdapTest {
         super.setup();
         mockStatic(Config.class);
         when(Config.GetValue(ConfigValues.LDAPQueryTimeout)).thenReturn(30);
+        when(Config.GetValue(ConfigValues.LDAPProviderTypes)).thenReturn("example.com:general");
+        when(Config.getConfigUtils()).thenReturn(mock(IConfigUtilsInterface.class));
         MockitoAnnotations.initMocks(this);
         dirContext = mockDirContext();
     }

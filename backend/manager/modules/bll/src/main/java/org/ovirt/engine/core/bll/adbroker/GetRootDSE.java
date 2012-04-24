@@ -12,6 +12,7 @@ import javax.naming.directory.InitialDirContext;
 import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.utils.log.Log;
@@ -123,7 +124,19 @@ public class GetRootDSE {
             }
         }
         log.infoFormat("Provider type is {0}", retVal.name());
+        updateProviderTypeInConfig(domain, retVal.name());
         return retVal;
+    }
+
+    private void updateProviderTypeInConfig(String domain, String type) {
+        String[] types = Config.<String> GetValue(ConfigValues.LDAPProviderTypes).split(",");
+        for (int x = 0; x < types.length; x++) {
+            if (types[x].startsWith(domain)) {
+                types[x] = domain + ":" + type;
+                break;
+            }
+        }
+        Config.getConfigUtils().SetStringValue(ConfigValues.LDAPProviderTypes.name(), StringUtils.join(types, ","));
     }
 
     public Attributes getDomainAttributes(LdapProviderType general, String domain) {
