@@ -136,7 +136,8 @@ public abstract class QueriesCommandBase<P extends VdcQueryParametersBase> exten
 
         // In any other event, we have admin execution, which should only be allowed according to the user's
         // permissions.
-        return MultiLevelAdministrationHandler.isAdminUser(getUserID());
+        // Note that is cached per session
+        return getUser().isAdmin();
     }
 
     /**

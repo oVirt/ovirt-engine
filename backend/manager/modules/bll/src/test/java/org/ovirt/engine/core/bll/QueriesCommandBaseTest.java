@@ -14,20 +14,14 @@ import org.apache.commons.logging.LogFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.ovirt.engine.core.bll.session.SessionDataContainer;
 import org.ovirt.engine.core.common.interfaces.IVdcUser;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.ThreadLocalParamsContainer;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 /** A test case for the {@link QueriesCommandBase} class. */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(MultiLevelAdministrationHandler.class)
 public class QueriesCommandBaseTest {
     private static final Log log = LogFactory.getLog(QueriesCommandBaseTest.class);
 
@@ -130,12 +124,10 @@ public class QueriesCommandBaseTest {
 
                         Guid guid = mock(Guid.class);
 
-                        PowerMockito.mockStatic(MultiLevelAdministrationHandler.class);
-                        when(MultiLevelAdministrationHandler.isAdminUser(guid)).thenReturn(isUserAdmin);
-
                         // Set up the user id env.
                         IVdcUser user = mock(IVdcUser.class);
                         when(user.getUserId()).thenReturn(guid);
+                        when(user.isAdmin()).thenReturn(isUserAdmin);
                         ThreadLocalParamsContainer.setHttpSessionId(sessionId);
                         ThreadLocalParamsContainer.setVdcUser(user);
 
