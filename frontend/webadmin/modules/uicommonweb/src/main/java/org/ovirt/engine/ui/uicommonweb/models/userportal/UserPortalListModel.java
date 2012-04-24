@@ -1058,18 +1058,18 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         VM vm = (VM) selectedItem.getEntity();
 
         UnitVmModel model = new UnitVmModel(new UserPortalExistingVmModelBehavior(vm));
-        setVmModel(model);
-        getVmModel().setTitle(ConstantsManager.getInstance()
+
+        model.setTitle(ConstantsManager.getInstance()
                 .getMessages()
                 .editVmTitle(vm.getvm_type() == VmType.Server ? ConstantsManager.getInstance()
                         .getConstants()
                         .serverVmType()
                         : ConstantsManager.getInstance().getConstants().desktopVmType()));
-        vmModel.setHashName(getVmModel().getTitle().toLowerCase().replace(' ', '_'));
-        getVmModel().setVmType(vm.getvm_type());
-        getVmModel().setCustomPropertiesKeysList(CustomPropertiesKeysList);
+        model.setHashName(model.getTitle().toLowerCase().replace(' ', '_'));
+        model.setVmType(vm.getvm_type());
+        model.setCustomPropertiesKeysList(CustomPropertiesKeysList);
 
-        getVmModel().Initialize(null);
+        model.Initialize(null);
 
         UICommand tempVar = new UICommand("OnSave", this); //$NON-NLS-1$
         tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
@@ -1079,6 +1079,8 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         tempVar2.setIsCancel(true);
         model.getCommands().add(tempVar2);
+
+        setVmModel(model);
     }
 
     private void remove()
