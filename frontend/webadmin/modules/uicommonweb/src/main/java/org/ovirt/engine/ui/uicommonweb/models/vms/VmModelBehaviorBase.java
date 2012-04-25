@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -565,48 +566,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
         if (template != null && !template.getId().equals(NGuid.Empty))
         {
-            storage_pool dataCenter = (storage_pool) getModel().getDataCenter().getSelectedItem();
-
-            AsyncDataProvider.GetStorageDomainList(new AsyncQuery(this, new INewAsyncCallback() {
-                @Override
-                public void OnSuccess(Object target, Object returnValue) {
-                    VmModelBehaviorBase behavior = (VmModelBehaviorBase) target;
-                    ArrayList<storage_domains> storageDomains = (ArrayList<storage_domains>) returnValue;
-                    ArrayList<storage_domains> activeStorageDomains = FilterStorageDomains(storageDomains);
-                    DisksAllocationModel disksAllocationModel = getModel().getDisksAllocationModel();
-
-                    boolean provisioning = (Boolean) behavior.getModel().getProvisioning().getEntity();
-                    ArrayList<DiskModel> disks = (ArrayList<DiskModel>) behavior.getModel().getDisks();
-                    Linq.Sort(activeStorageDomains, new Linq.StorageDomainByNameComparer());
-                    disksAllocationModel.setActiveStorageDomains(activeStorageDomains);
-
-                    for (DiskModel diskModel : disks) {
-                        ArrayList<storage_domains> availableDiskStorageDomains;
-                        diskModel.getQuota().setItems(behavior.getModel().getQuota().getItems());
-                        if (provisioning) {
-                            availableDiskStorageDomains = activeStorageDomains;
-                        }
-                        else
-                        {
-                            ArrayList<Guid> storageIds = diskModel.getDiskImage().getstorage_ids();
-                            availableDiskStorageDomains =
-                                    Linq.getStorageDomainsByIds(storageIds, activeStorageDomains);
-                        }
-                        Linq.Sort(availableDiskStorageDomains, new Linq.StorageDomainByNameComparer());
-                        diskModel.getStorageDomain().setItems(availableDiskStorageDomains);
-                    }
-
-                    ArrayList<storage_domains> storageDomainsDisjoint =
-                            Linq.getStorageDomainsDisjoint(disks, activeStorageDomains);
-
-                    Linq.Sort(storageDomainsDisjoint, new Linq.StorageDomainByNameComparer());
-
-                    ArrayList<storage_domains> singleDestDomains =
-                            provisioning ? activeStorageDomains : storageDomainsDisjoint;
-                    getModel().getStorageDomain().setItems(singleDestDomains);
-                    getModel().getStorageDomain().setSelectedItem(Linq.FirstOrDefault(singleDestDomains));
-                }
-            }, getModel().getHash()), dataCenter.getId());
+            PostInitStorageDomains();
         }
         else
         {
@@ -614,6 +574,54 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             getModel().getStorageDomain().setSelectedItem(null);
             getModel().getStorageDomain().setIsChangable(false);
         }
+    }
+
+    protected void PostInitStorageDomains() {
+        if (getModel().getDisks() == null) {
+            return;
+        }
+
+        storage_pool dataCenter = (storage_pool) getModel().getDataCenter().getSelectedItem();
+        AsyncDataProvider.GetPermittedStorageDomainsByStoragePoolId(new AsyncQuery(this, new INewAsyncCallback() {
+            @Override
+            public void OnSuccess(Object target, Object returnValue) {
+                IVmModelBehavior behavior = (IVmModelBehavior) target;
+                ArrayList<storage_domains> storageDomains = (ArrayList<storage_domains>) returnValue;
+                ArrayList<storage_domains> activeStorageDomains = FilterStorageDomains(storageDomains);
+                DisksAllocationModel disksAllocationModel = getModel().getDisksAllocationModel();
+
+                boolean provisioning = (Boolean) behavior.getModel().getProvisioning().getEntity();
+                ArrayList<DiskModel> disks = (ArrayList<DiskModel>) behavior.getModel().getDisks();
+                Linq.Sort(activeStorageDomains, new Linq.StorageDomainByNameComparer());
+                disksAllocationModel.setActiveStorageDomains(activeStorageDomains);
+
+                for (DiskModel diskModel : disks) {
+                    ArrayList<storage_domains> availableDiskStorageDomains;
+                    diskModel.getQuota().setItems(behavior.getModel().getQuota().getItems());
+                    if (provisioning) {
+                        availableDiskStorageDomains = activeStorageDomains;
+                    }
+                    else
+                    {
+                        ArrayList<Guid> storageIds = diskModel.getDiskImage().getstorage_ids();
+                        availableDiskStorageDomains =
+                                Linq.getStorageDomainsByIds(storageIds, activeStorageDomains);
+                    }
+                    Linq.Sort(availableDiskStorageDomains, new Linq.StorageDomainByNameComparer());
+                    diskModel.getStorageDomain().setItems(availableDiskStorageDomains);
+                }
+
+                ArrayList<storage_domains> storageDomainsDisjoint =
+                        Linq.getStorageDomainsDisjoint(disks, activeStorageDomains);
+
+                Linq.Sort(storageDomainsDisjoint, new Linq.StorageDomainByNameComparer());
+
+                ArrayList<storage_domains> singleDestDomains =
+                        provisioning ? activeStorageDomains : storageDomainsDisjoint;
+                getModel().getStorageDomain().setItems(singleDestDomains);
+                getModel().getStorageDomain().setSelectedItem(Linq.FirstOrDefault(singleDestDomains));
+            }
+        }, getModel().getHash()), dataCenter.getId(), ActionGroup.CREATE_VM);
     }
 
     public ArrayList<storage_domains> FilterStorageDomains(ArrayList<storage_domains> storageDomains)

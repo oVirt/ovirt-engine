@@ -917,7 +917,8 @@ public class UnitVmModel extends Model {
                 VdcQueryType.GetStorageDomainById, VdcQueryType.GetDataCentersWithPermittedActionOnClusters,
                 VdcQueryType.GetClustersWithPermittedAction, VdcQueryType.GetVmTemplatesWithPermittedAction,
                 VdcQueryType.GetVdsGroupById, VdcQueryType.GetStoragePoolById, VdcQueryType.GetAllDisksByVmId,
-                VdcQueryType.GetVmTemplate, VdcQueryType.GetVmConfigurationBySnapshot, VdcQueryType.Search });
+                VdcQueryType.GetVmTemplate, VdcQueryType.GetVmConfigurationBySnapshot,
+                VdcQueryType.GetPermittedStorageDomainsByStoragePoolId, VdcQueryType.Search });
 
         this.behavior = behavior;
         this.behavior.setModel(this);

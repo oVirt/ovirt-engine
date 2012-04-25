@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 
+import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
@@ -257,7 +258,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase
 
     public void PostInitStorageDomains(storage_pool dataCenter, storage_domains storage)
     {
-        AsyncDataProvider.GetStorageDomainList(new AsyncQuery(new Object[] { this, storage },
+        AsyncDataProvider.GetPermittedStorageDomainsByStoragePoolId(new AsyncQuery(new Object[] { this, storage },
                 new INewAsyncCallback() {
                     @Override
                     public void OnSuccess(Object target, Object returnValue) {
@@ -312,6 +313,8 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase
 
                         ArrayList<DiskModel> disks =
                                 (ArrayList<DiskModel>) behavior.getModel().getDisksAllocationModel().getDisks();
+
+                        Linq.Sort(activeStorageDomainList, new Linq.StorageDomainByNameComparer());
                         if (disks != null) {
                             for (DiskModel diskModel : disks) {
                                 diskModel.getStorageDomain().setItems(activeStorageDomainList);
@@ -321,7 +324,8 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase
                     }
                 },
                 getModel().getHash()),
-                dataCenter.getId());
+                dataCenter.getId(),
+                ActionGroup.CREATE_VM);
     }
 
     private void DisableNewTemplateModel(String errMessage)

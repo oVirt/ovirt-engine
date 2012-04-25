@@ -52,6 +52,7 @@ import org.ovirt.engine.core.common.queries.GetDomainListParameters;
 import org.ovirt.engine.core.common.queries.GetEntitiesWithPermittedActionParameters;
 import org.ovirt.engine.core.common.queries.GetExistingStorageDomainListParameters;
 import org.ovirt.engine.core.common.queries.GetLunsByVgIdParameters;
+import org.ovirt.engine.core.common.queries.GetPermittedStorageDomainsByStoragePoolIdParameters;
 import org.ovirt.engine.core.common.queries.GetStorageDomainsByConnectionParameters;
 import org.ovirt.engine.core.common.queries.GetStorageDomainsByVmTemplateIdQueryParameters;
 import org.ovirt.engine.core.common.queries.GetTagsByUserGroupIdParameters;
@@ -1864,6 +1865,29 @@ public final class AsyncDataProvider {
         };
 
         Frontend.RunQuery(VdcQueryType.GetAllAttachableDisks, new GetAllAttachableDisks(storagePoolId), aQuery);
+    }
+
+    public static void GetPermittedStorageDomainsByStoragePoolId(AsyncQuery aQuery,
+            Guid dataCenterId,
+            ActionGroup actionGroup) {
+        aQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object Convert(Object source, AsyncQuery _asyncQuery)
+            {
+                if (source == null)
+                {
+                    return new java.util.ArrayList<storage_domains>();
+                }
+                return source;
+            }
+        };
+        GetPermittedStorageDomainsByStoragePoolIdParameters params =
+                new GetPermittedStorageDomainsByStoragePoolIdParameters();
+
+        params.setStoragePoolId(dataCenterId);
+        params.setActionGroup(actionGroup);
+
+        Frontend.RunQuery(VdcQueryType.GetPermittedStorageDomainsByStoragePoolId, params, aQuery);
     }
 
     public static void GetRedirectServletReportsPage(AsyncQuery aQuery) {

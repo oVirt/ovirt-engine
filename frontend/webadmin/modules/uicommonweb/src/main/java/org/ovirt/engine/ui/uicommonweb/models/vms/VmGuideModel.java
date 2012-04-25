@@ -70,12 +70,6 @@ public class VmGuideModel extends GuideModel
     private VDSGroup cluster;
     private QuotaEnforcementTypeEnum quotaEnforcementType = null;
 
-    @Override
-    public VM getEntity()
-    {
-        return (VM) super.getEntity();
-    }
-
     public void setEntity(VM value)
     {
         super.setEntity(value);
@@ -330,6 +324,7 @@ public class VmGuideModel extends GuideModel
                         VmGuideModel vmGuideModel = (VmGuideModel) target;
                         ArrayList<storage_domains> storageDomains =
                                 (ArrayList<storage_domains>) returnValue;
+                        Linq.Sort(storageDomains, new Linq.StorageDomainByNameComparer());
                         vmGuideModel.attachedStorageDomains = storageDomains;
                         vmGuideModel.AddDiskPostData();
                     }
