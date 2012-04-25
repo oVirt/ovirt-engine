@@ -9,6 +9,7 @@ import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.UiCommandButton;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.EntityModelLabelEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
@@ -63,12 +64,12 @@ public class VolumePopupView extends AbstractModelBoundPopupView<VolumeModel> im
     @UiField
     @Path(value = "replicaCount.entity")
     @WithElementId
-    EntityModelTextBoxEditor replicaCountEditor;
+    EntityModelLabelEditor replicaCountEditor;
 
     @UiField
     @Path(value = "stripeCount.entity")
     @WithElementId
-    EntityModelTextBoxEditor stripeCountEditor;
+    EntityModelLabelEditor stripeCountEditor;
 
     @UiField(provided = true)
     @Path(value = "tcpTransportType.entity")

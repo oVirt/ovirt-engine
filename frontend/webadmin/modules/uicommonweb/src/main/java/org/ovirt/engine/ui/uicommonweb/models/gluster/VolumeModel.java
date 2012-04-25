@@ -18,6 +18,7 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
+import org.ovirt.engine.ui.uicommonweb.models.volumes.VolumeListModel;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IntegerValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -92,28 +93,16 @@ public class VolumeModel extends Model {
         });
 
         setTypeList(new ListModel());
-        ArrayList<GlusterVolumeType> list =
-                new ArrayList<GlusterVolumeType>(Arrays.asList(GlusterVolumeType.values()));
+        ArrayList<GlusterVolumeType> list = new ArrayList<GlusterVolumeType>(Arrays.asList(GlusterVolumeType.values()));
         getTypeList().setItems(list);
 
-        getTypeList().getSelectedItemChangedEvent().addListener(new IEventListener() {
-
-            @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                if(getTypeList().getSelectedItem() == GlusterVolumeType.REPLICATE)
-                    getReplicaCount().setIsAvailable(true);
-                else
-                    getReplicaCount().setIsAvailable(false);
-
-                if(getTypeList().getSelectedItem() == GlusterVolumeType.STRIPE)
-                    getStripeCount().setIsAvailable(true);
-                else
-                    getStripeCount().setIsAvailable(false);
-
-            }
-        });
         setReplicaCount(new EntityModel());
+        getReplicaCount().setEntity(VolumeListModel.REPLICATE_COUNT_DEFAULT);
+        getReplicaCount().setIsChangable(false);
+
         setStripeCount(new EntityModel());
+        getStripeCount().setEntity(VolumeListModel.STRIPE_COUNT_DEFAULT);
+        getStripeCount().setIsChangable(false);
 
         setTcpTransportType(new EntityModel());
         getTcpTransportType().setEntity(true);
@@ -122,6 +111,28 @@ public class VolumeModel extends Model {
         getRdmaTransportType().setEntity(false);
 
         getTypeList().setSelectedItem(GlusterVolumeType.DISTRIBUTE);
+        getReplicaCount().setIsAvailable(false);
+        getStripeCount().setIsAvailable(false);
+
+        getTypeList().getSelectedItemChangedEvent().addListener(new IEventListener() {
+
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                if (getTypeList().getSelectedItem() == GlusterVolumeType.REPLICATE
+                        || getTypeList().getSelectedItem() == GlusterVolumeType.DISTRIBUTED_REPLICATE)
+                    getReplicaCount().setIsAvailable(true);
+                else
+                    getReplicaCount().setIsAvailable(false);
+
+                if (getTypeList().getSelectedItem() == GlusterVolumeType.STRIPE
+                        || getTypeList().getSelectedItem() == GlusterVolumeType.DISTRIBUTED_STRIPE)
+                    getStripeCount().setIsAvailable(true);
+                else
+                    getStripeCount().setIsAvailable(false);
+
+                getAddBricksCommand().Execute();
+            }
+        });
 
         setBricks(new ListModel());
 
@@ -159,12 +170,20 @@ public class VolumeModel extends Model {
         return replicaCount;
     }
 
+    public Integer getReplicaCountValue() {
+        return Integer.parseInt((String) replicaCount.getEntity());
+    }
+
     public void setReplicaCount(EntityModel replicaCount) {
         this.replicaCount = replicaCount;
     }
 
     public EntityModel getStripeCount() {
         return stripeCount;
+    }
+
+    public Integer getStripeCountValue() {
+        return Integer.parseInt((String) stripeCount.getEntity());
     }
 
     public void setStripeCount(EntityModel stripeCount) {
@@ -232,30 +251,44 @@ public class VolumeModel extends Model {
         {
             return;
         }
-        ListModel listModel = new ListModel();
-        setWindow(listModel);
-        listModel.setTitle(ConstantsManager.getInstance().getConstants().addBricksVolume());
-        listModel.setHashName("add_bricks"); //$NON-NLS-1$
+        VolumeBrickModel volumeBrickModel = new VolumeBrickModel();
 
-        // TODO: fetch the data to display
-        listModel.setItems(new ArrayList<EntityModel>());
+        volumeBrickModel.getReplicaCount().setEntity(getReplicaCount().getEntity());
+        volumeBrickModel.getReplicaCount().setIsChangable(true);
+        volumeBrickModel.getReplicaCount().setIsAvailable(getReplicaCount().getIsAvailable());
+
+        volumeBrickModel.getStripeCount().setEntity(getStripeCount().getEntity());
+        volumeBrickModel.getStripeCount().setIsChangable(true);
+        volumeBrickModel.getStripeCount().setIsAvailable(getStripeCount().getIsAvailable());
+
+        setWindow(volumeBrickModel);
+        volumeBrickModel.setTitle(ConstantsManager.getInstance().getConstants().addBricksVolume());
+        volumeBrickModel.setHashName("add_bricks"); //$NON-NLS-1$
+
+        // TODO: fetch the mount points to display
+        volumeBrickModel.getBricks().setItems(new ArrayList<EntityModel>());
 
         UICommand command = new UICommand("Ok", this); //$NON-NLS-1$
         command.setTitle(ConstantsManager.getInstance().getConstants().ok());
         command.setIsDefault(true);
-        listModel.getCommands().add(command);
+        volumeBrickModel.getCommands().add(command);
 
         command = new UICommand("Cancel", this); //$NON-NLS-1$
         command.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         command.setIsDefault(true);
-        listModel.getCommands().add(command);
+        volumeBrickModel.getCommands().add(command);
 
     }
 
     private void onAddBricks() {
-        ListModel listModel = (ListModel) getWindow();
+        VolumeBrickModel volumeBrickModel = (VolumeBrickModel) getWindow();
+        if (!volumeBrickModel.validateAddBricks((GlusterVolumeType) getTypeList().getSelectedItem()))
+        {
+            return;
+        }
+
         ArrayList<GlusterBrickEntity> brickList = new ArrayList<GlusterBrickEntity>();
-        for (Object object : listModel.getSelectedItems()) {
+        for (Object object : volumeBrickModel.getBricks().getSelectedItems()) {
             EntityModel entityModel = (EntityModel) object;
             brickList.add((GlusterBrickEntity) entityModel.getEntity());
         }

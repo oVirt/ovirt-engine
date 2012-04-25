@@ -34,11 +34,15 @@ import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeEventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeParameterListModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
-import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public class VolumeListModel extends ListWithDetailsModel implements ISupportSystemTreeContext {
+
+    public static Integer REPLICATE_COUNT_DEFAULT = 2;
+    public static Integer STRIPE_COUNT_DEFAULT = 4;
+
     private UICommand createVolumeCommand;
 
     public UICommand getCreateVolumeCommand()
@@ -281,10 +285,10 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
         volume.setName((String) model.getName().getEntity());
         GlusterVolumeType type = (GlusterVolumeType) model.getTypeList().getSelectedItem();
 
-        if (type == GlusterVolumeType.STRIPE) {
-            volume.setStripeCount(4);
-        } else if (type == GlusterVolumeType.REPLICATE) {
-            volume.setReplicaCount(2);
+        if (type == GlusterVolumeType.STRIPE || type == GlusterVolumeType.DISTRIBUTED_STRIPE) {
+            volume.setStripeCount(model.getStripeCountValue());
+        } else if (type == GlusterVolumeType.REPLICATE || type == GlusterVolumeType.DISTRIBUTED_REPLICATE) {
+            volume.setReplicaCount(model.getReplicaCountValue());
         }
         volume.setVolumeType(type);
 

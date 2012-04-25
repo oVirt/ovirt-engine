@@ -55,8 +55,8 @@
 				</g:FlowPanel>
 				<e:EntityModelTextBoxEditor ui:field="nameEditor" />
 				<e:ListModelListBoxEditor ui:field="typeListEditor" />
-				<e:EntityModelTextBoxEditor ui:field="replicaCountEditor" />
-				<e:EntityModelTextBoxEditor ui:field="stripeCountEditor" />
+				<e:EntityModelLabelEditor ui:field="replicaCountEditor" />
+				<e:EntityModelLabelEditor ui:field="stripeCountEditor" />
 				
 				<g:HorizontalPanel>
 					<g:Label addStyleNames="{style.transTypeLabel}">Transport Types</g:Label>
