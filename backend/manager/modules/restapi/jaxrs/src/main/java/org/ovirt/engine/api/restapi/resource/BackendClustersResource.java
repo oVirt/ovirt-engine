@@ -23,7 +23,7 @@ import static org.ovirt.engine.api.restapi.resource.BackendDataCenterResource.ge
 public class BackendClustersResource extends AbstractBackendCollectionResource<Cluster, VDSGroup>
         implements ClustersResource {
 
-    static final String[] SUB_COLLECTIONS = { "networks", "permissions" };
+    static final String[] SUB_COLLECTIONS = { "networks", "permissions", "glustervolumes" };
 
     public BackendClustersResource() {
         super(Cluster.class, VDSGroup.class, SUB_COLLECTIONS);
