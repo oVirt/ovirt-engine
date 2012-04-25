@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.searchbackend;
 
-import org.ovirt.engine.core.compat.*;
-import org.ovirt.engine.core.common.businessentities.*;
-import org.ovirt.engine.core.common.*;
+import org.ovirt.engine.core.common.AuditLogSeverity;
+import org.ovirt.engine.core.common.businessentities.DateEnumForSearch;
+import org.ovirt.engine.core.compat.StringHelper;
 
 public class AuditLogConditionFieldAutoCompleter extends BaseConditionFieldAutoCompleter {
     public AuditLogConditionFieldAutoCompleter() {
@@ -18,6 +18,7 @@ public class AuditLogConditionFieldAutoCompleter extends BaseConditionFieldAutoC
         mVerbs.put("EVENT_TEMPLATE", "EVENT_TEMPLATE");
         mVerbs.put("EVENT_STORAGE", "EVENT_STORAGE");
         mVerbs.put("EVENT_DATACENTER", "EVENT_DATACENTER");
+        mVerbs.put("EVENT_VOLUME", "EVENT_VOLUME");
         buildCompletions();
         // These search options remain hidden from the autocompletion
         // but still available for the user interface
@@ -47,6 +48,8 @@ public class AuditLogConditionFieldAutoCompleter extends BaseConditionFieldAutoC
         getTypeDictionary().put("_EVENT_STORAGE_ID", String.class);
         getTypeDictionary().put("_EVENT_DATACENTER_ID", String.class);
         getTypeDictionary().put("_EVENT_QUOTA_ID", String.class);
+        getTypeDictionary().put("EVENT_VOLUME", String.class);
+        getTypeDictionary().put("_EVENT_VOLUME_ID", String.class);
 
         // building the ColumnName Dict
         mColumnNameDict.put("TYPE", "log_type");
@@ -66,6 +69,8 @@ public class AuditLogConditionFieldAutoCompleter extends BaseConditionFieldAutoC
         mColumnNameDict.put("EVENT_DATACENTER", "storage_pool_name");
         mColumnNameDict.put("_EVENT_DATACENTER_ID", "storage_pool_id::varchar");
         mColumnNameDict.put("_EVENT_QUOTA_ID", "quota_id::varchar");
+        mColumnNameDict.put("EVENT_VOLUME", "gluster_volume_name");
+        mColumnNameDict.put("_EVENT_VOLUME_ID", "gluster_volume_id::varchar");
         // Building the validation dict
         buildBasicValidationTable();
     }
@@ -85,7 +90,8 @@ public class AuditLogConditionFieldAutoCompleter extends BaseConditionFieldAutoC
                 || StringHelper.EqOp(fieldName, "EVENT_TEMPLATE") || StringHelper.EqOp(fieldName, "_EVENT_TEMPLATE_ID")
                 || StringHelper.EqOp(fieldName, "EVENT_STORAGE") || StringHelper.EqOp(fieldName, "EVENT_DATACENTER")
                 || StringHelper.EqOp(fieldName, "_EVENT_DATACENTER_ID")
-                || StringHelper.EqOp(fieldName, "_EVENT_QUOTA_ID")) {
+                || StringHelper.EqOp(fieldName, "_EVENT_QUOTA_ID")
+                || StringHelper.EqOp(fieldName, "EVENT_VOLUME") || StringHelper.EqOp(fieldName, "_EVENT_VOLUME_ID")) {
             return StringConditionRelationAutoCompleter.INSTANCE;
         } else {
             return null;
