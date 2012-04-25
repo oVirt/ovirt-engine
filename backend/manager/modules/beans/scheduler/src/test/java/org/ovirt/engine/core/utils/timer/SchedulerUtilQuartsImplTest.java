@@ -1,11 +1,13 @@
 package org.ovirt.engine.core.utils.timer;
 
 import static org.junit.Assert.assertEquals;
+import static org.quartz.impl.matchers.GroupMatcher.jobGroupEquals;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -14,6 +16,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.quartz.JobKey;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 
@@ -76,12 +79,13 @@ public class SchedulerUtilQuartsImplTest {
                         1,
                         3,
                         TimeUnit.MILLISECONDS);
-        String[] jobs = scheduler.getRawScheduler().getJobNames(Scheduler.DEFAULT_GROUP);
-        assertEquals("Number of scheduled jobs", 1, jobs.length);
+        Set<JobKey> jobKeys = scheduler.getRawScheduler().getJobKeys(jobGroupEquals(Scheduler.DEFAULT_GROUP));
+
+        assertEquals("Number of scheduled jobs", 1, jobKeys.size());
         // delete a valid job
         scheduler.deleteJob(jobId);
-        jobs = scheduler.getRawScheduler().getJobNames(Scheduler.DEFAULT_GROUP);
-        assertEquals("Number of scheduled jobs", 0, jobs.length);
+        jobKeys = scheduler.getRawScheduler().getJobKeys(jobGroupEquals(Scheduler.DEFAULT_GROUP));
+        assertEquals("Number of scheduled jobs", 0, jobKeys.size());
 
         // delete invalid job
         scheduler.deleteJob("nojob");

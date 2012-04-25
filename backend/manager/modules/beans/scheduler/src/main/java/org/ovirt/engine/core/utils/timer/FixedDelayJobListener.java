@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.utils.timer;
 
+import static org.quartz.TriggerBuilder.newTrigger;
+
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
@@ -8,8 +10,8 @@ import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.JobListener;
-import org.quartz.SimpleTrigger;
 import org.quartz.Trigger;
+import org.quartz.TriggerKey;
 
 /**
  * The FixedDelayJobListener is a JobListener implementation to turn a job into
@@ -50,24 +52,31 @@ public class FixedDelayJobListener implements JobListener {
      */
     @Override
     public void jobWasExecuted(JobExecutionContext context, JobExecutionException exception) {
-
-        // generate the new trigger time
+        // Get the details of the job:
         JobDetail jobdetail = context.getJobDetail();
         JobDataMap data = jobdetail.getJobDataMap();
+
+        // This is being called for all our jobs, so first check if this is a fixed delay
+        // job and if not just exit:
+        if (!data.containsKey(SchedulerUtilQuartzImpl.FIXED_DELAY_VALUE)) {
+            return;
+        }
+
+        // generate the new trigger time
         long delay = data.getLongValue(SchedulerUtilQuartzImpl.FIXED_DELAY_VALUE);
         TimeUnit delayUnit = (TimeUnit) data.getWrappedMap().get(SchedulerUtilQuartzImpl.FIXED_DELAY_TIME_UNIT);
         Date runTime = SchedulerUtilQuartzImpl.getFutureDate(delay, delayUnit);
 
         // generate the new trigger
         Trigger oldTrigger = context.getTrigger();
-        String oldTriggerName = oldTrigger.getName();
-        String oldTriggerGroup = oldTrigger.getGroup();
-        SimpleTrigger newTrigger = new SimpleTrigger(oldTriggerName, oldTriggerGroup, runTime);
-        newTrigger.setJobGroup(jobdetail.getGroup());
-        newTrigger.setJobName(jobdetail.getName());
+        TriggerKey oldTriggerKey = oldTrigger.getKey();
+        Trigger newTrigger = newTrigger()
+            .withIdentity(oldTriggerKey)
+            .startAt(runTime)
+            .build();
 
         // schedule the new trigger
-        sched.rescheduleAJob(oldTriggerName, oldTriggerGroup, newTrigger);
+        sched.rescheduleAJob(oldTriggerKey.getName(), oldTriggerKey.getGroup(), newTrigger);
         // SchedulerUtilQuartzImpl.getInstance().rescheduleAJob(oldTriggerName,
         // oldTriggerGroup, newTrigger);
 

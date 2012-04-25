@@ -25,7 +25,7 @@
     <junit.version>4.7</junit.version>
     <commons-codec.version>1.4</commons-codec.version>
     <commons-lang.version>2.4</commons-lang.version>
-    <quartz.version>1.8.3</quartz.version>
+    <quartz.version>2.1.2</quartz.version>
     <postgres.jdbc.version>8.4-702.jdbc4</postgres.jdbc.version>
     <commons-collections>3.1</commons-collections>
     <javax.transaction>1.1</javax.transaction>

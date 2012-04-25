@@ -1,5 +1,12 @@
 package org.ovirt.engine.core.utils.timer;
 
+import static org.quartz.CronScheduleBuilder.cronSchedule;
+import static org.quartz.JobBuilder.newJob;
+import static org.quartz.JobKey.jobKey;
+import static org.quartz.TriggerBuilder.newTrigger;
+import static org.quartz.TriggerKey.triggerKey;
+import static org.quartz.impl.matchers.GroupMatcher.jobGroupEquals;
+
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
@@ -18,13 +25,11 @@ import org.apache.commons.logging.LogFactory;
 import org.ovirt.engine.core.utils.ejb.BeanProxyType;
 import org.ovirt.engine.core.utils.ejb.BeanType;
 import org.ovirt.engine.core.utils.ejb.EjbUtils;
-import org.quartz.CronTrigger;
 import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.SchedulerFactory;
-import org.quartz.SimpleTrigger;
 import org.quartz.Trigger;
 import org.quartz.impl.StdSchedulerFactory;
 
@@ -55,7 +60,6 @@ public class SchedulerUtilQuartzImpl implements SchedulerUtil {
 
     private final AtomicLong sequenceNumber = new AtomicLong(Long.MIN_VALUE);
 
-
     /**
      * This method is called upon the bean creation as part
      * of the management Service bean lifecycle.
@@ -73,7 +77,7 @@ public class SchedulerUtilQuartzImpl implements SchedulerUtil {
             SchedulerFactory sf = new StdSchedulerFactory();
             sched = sf.getScheduler();
             sched.start();
-            sched.addJobListener(new FixedDelayJobListener(this));
+            sched.getListenerManager().addJobListener(new FixedDelayJobListener(this), jobGroupEquals(Scheduler.DEFAULT_GROUP));
         } catch (SchedulerException se) {
             log.error("there is a problem with the underlying Scheduler.", se);
         }
@@ -127,17 +131,16 @@ public class SchedulerUtilQuartzImpl implements SchedulerUtil {
             long taskDelay,
             TimeUnit timeUnit) {
         JobDetail job = createJobWithBasicMapValues(instance, methodName, inputTypes, inputParams);
-        job.addJobListener(FixedDelayJobListener.FIXED_JOB_LISTENER_NAME);
         JobDataMap data = job.getJobDataMap();
         data.put(FIXED_DELAY_VALUE, taskDelay);
         data.put(FIXED_DELAY_TIME_UNIT, timeUnit);
-        SimpleTrigger trigger = createSimpleTrigger(initialDelay, timeUnit, instance);
+        Trigger trigger = createSimpleTrigger(initialDelay, timeUnit, instance);
         try {
             sched.scheduleJob(job, trigger);
         } catch (SchedulerException se) {
             log.error("failed to schedule job", se);
         }
-        return job.getName();
+        return job.getKey().getName();
     }
 
     private JobDetail createJobWithBasicMapValues(Object instance,
@@ -145,15 +148,22 @@ public class SchedulerUtilQuartzImpl implements SchedulerUtil {
             Class<?>[] inputTypes,
             Object[] inputParams) {
         String jobName = generateUniqueNameForInstance(instance, methodName);
-        JobDetail job = new JobDetail(jobName, Scheduler.DEFAULT_GROUP, JobWrapper.class);
+        JobDetail job = newJob()
+            .withIdentity(jobName, Scheduler.DEFAULT_GROUP)
+            .ofType(JobWrapper.class)
+            .build();
         setBasicMapValues(job.getJobDataMap(), instance, methodName, inputTypes, inputParams);
         return job;
     }
 
-    private SimpleTrigger createSimpleTrigger(long initialDelay, TimeUnit timeUnit, Object instance) {
+    private Trigger createSimpleTrigger(long initialDelay, TimeUnit timeUnit, Object instance) {
         Date runTime = getFutureDate(initialDelay, timeUnit);
         String triggerName = generateUniqueNameForInstance(instance, TRIGGER_PREFIX);
-        return new SimpleTrigger(triggerName, Scheduler.DEFAULT_GROUP, runTime);
+        Trigger trigger = newTrigger()
+            .withIdentity(triggerName, Scheduler.DEFAULT_GROUP)
+            .startAt(runTime)
+            .build();
+        return trigger;
     }
 
     /**
@@ -181,13 +191,13 @@ public class SchedulerUtilQuartzImpl implements SchedulerUtil {
             long initialDelay,
             TimeUnit timeUnit) {
         JobDetail job = createJobWithBasicMapValues(instance, methodName, inputTypes, inputParams);
-        SimpleTrigger trigger = createSimpleTrigger(initialDelay, timeUnit, instance);
+        Trigger trigger = createSimpleTrigger(initialDelay, timeUnit, instance);
         try {
             sched.scheduleJob(job, trigger);
         } catch (SchedulerException se) {
             log.error("failed to schedule job", se);
         }
-        return job.getName();
+        return job.getKey().getName();
     }
 
     /**
@@ -214,13 +224,16 @@ public class SchedulerUtilQuartzImpl implements SchedulerUtil {
         JobDetail job = createJobWithBasicMapValues(instance, methodName, inputTypes, inputParams);
         try {
             String triggerName = generateUniqueNameForInstance(instance, TRIGGER_PREFIX);
-            Trigger trigger = new CronTrigger(triggerName, Scheduler.DEFAULT_GROUP, cronExpression);
+            Trigger trigger = newTrigger()
+                .withIdentity(triggerName, Scheduler.DEFAULT_GROUP)
+                .withSchedule(cronSchedule(cronExpression))
+                .build();
             sched.scheduleJob(job, trigger);
         } catch (Exception se) {
             log.error("failed to schedule job", se);
         }
 
-        return job.getName();
+        return job.getKey().getName();
     }
 
     private void setBasicMapValues(JobDataMap data,
@@ -247,7 +260,7 @@ public class SchedulerUtilQuartzImpl implements SchedulerUtil {
      */
     public void rescheduleAJob(String oldTriggerName, String oldTriggerGroup, Trigger newTrigger) {
         try {
-            sched.rescheduleJob(oldTriggerName, oldTriggerGroup, newTrigger);
+            sched.rescheduleJob(triggerKey(oldTriggerName, oldTriggerGroup), newTrigger);
         } catch (SchedulerException se) {
             log.error("failed to reschedule the job", se);
         }
@@ -262,7 +275,7 @@ public class SchedulerUtilQuartzImpl implements SchedulerUtil {
     @Override
     public void pauseJob(String jobId) {
         try {
-            sched.pauseJob(jobId, Scheduler.DEFAULT_GROUP);
+            sched.pauseJob(jobKey(jobId, Scheduler.DEFAULT_GROUP));
         } catch (SchedulerException se) {
             log.error("failed to pause a job with id=" + jobId, se);
         }
@@ -278,7 +291,7 @@ public class SchedulerUtilQuartzImpl implements SchedulerUtil {
     @Override
     public void deleteJob(String jobId) {
         try {
-            sched.deleteJob(jobId, Scheduler.DEFAULT_GROUP);
+            sched.deleteJob(jobKey(jobId, Scheduler.DEFAULT_GROUP));
         } catch (SchedulerException se) {
             log.error("failed to delete a job with id=" + jobId, se);
         }
@@ -294,7 +307,7 @@ public class SchedulerUtilQuartzImpl implements SchedulerUtil {
     @Override
     public void resumeJob(String jobId) {
         try {
-            sched.resumeJob(jobId, Scheduler.DEFAULT_GROUP);
+            sched.resumeJob(jobKey(jobId, Scheduler.DEFAULT_GROUP));
         } catch (SchedulerException se) {
             log.error("failed to pause a job with id=" + jobId, se);
         }
