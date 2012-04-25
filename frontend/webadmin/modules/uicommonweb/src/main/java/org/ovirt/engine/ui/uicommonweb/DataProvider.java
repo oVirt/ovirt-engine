@@ -2783,7 +2783,7 @@ public final class DataProvider
         }
         else if (entity instanceof DiskImage)
         {
-            return ((DiskImage) entity).getImageId();
+            return ((DiskImage) entity).getId();
         }
         else if (entity instanceof GlusterVolumeEntity)
         {

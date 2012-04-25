@@ -35,6 +35,7 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
+import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.CopyDiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.MoveDiskModel;
@@ -165,6 +166,7 @@ public class DiskListModel extends ListWithDetailsModel
         list.add(new DiskGeneralModel());
         list.add(diskVmListModel);
         list.add(diskTemplateListModel);
+        list.add(new PermissionListModel());
         setDetailModels(list);
     }
 

@@ -19,7 +19,7 @@
 
 		.searchItemsPanel {
 			width: 100%;
-			height: 77%;
+			height: 74%;
 			border-bottom: 1px solid #BBBBBB;
 			border-top: 1px solid #BBBBBB;
 		}

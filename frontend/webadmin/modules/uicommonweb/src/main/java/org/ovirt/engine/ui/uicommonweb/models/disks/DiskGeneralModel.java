@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.disks;
 
+import org.ovirt.engine.core.common.businessentities.Disk;
+import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
@@ -132,12 +134,16 @@ public class DiskGeneralModel extends EntityModel
 
     private void UpdateProperties()
     {
-        DiskImage disk = (DiskImage) getEntity();
+        Disk disk = (Disk) getEntity();
 
         setAlias(disk.getDiskAlias());
         setDescription(disk.getDiskDescription());
-        setVolumeFormat(disk.getvolume_format());
-        setDiskId(disk.getImageId().toString());
-        setQuotaName(disk.getQuotaName());
+        setDiskId(disk.getId().toString());
+
+        if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
+            DiskImage diskImage = (DiskImage) disk;
+            setVolumeFormat(diskImage.getvolume_format());
+            setQuotaName(diskImage.getQuotaName());
+        }
     }
 }

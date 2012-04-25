@@ -5,6 +5,7 @@ import org.ovirt.engine.core.common.action.PermissionsOperationsParametes;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.DbUser;
+import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -391,6 +392,9 @@ public class PermissionListModel extends SearchableListModel
         }
         if (getEntity() instanceof GlusterVolumeEntity) {
             return VdcObjectType.GlusterVolume;
+        }
+        if (getEntity() instanceof DiskImage) {
+            return VdcObjectType.Disk;
         }
         return VdcObjectType.Unknown;
     }

@@ -70,6 +70,12 @@ public class VmGuideModel extends GuideModel
     private VDSGroup cluster;
     private QuotaEnforcementTypeEnum quotaEnforcementType = null;
 
+    @Override
+    public VM getEntity()
+    {
+        return (VM) super.getEntity();
+    }
+
     public void setEntity(VM value)
     {
         super.setEntity(value);

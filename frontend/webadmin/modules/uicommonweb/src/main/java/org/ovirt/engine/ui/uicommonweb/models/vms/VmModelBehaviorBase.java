@@ -585,7 +585,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         AsyncDataProvider.GetPermittedStorageDomainsByStoragePoolId(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void OnSuccess(Object target, Object returnValue) {
-                IVmModelBehavior behavior = (IVmModelBehavior) target;
+                VmModelBehaviorBase behavior = (VmModelBehaviorBase) target;
                 ArrayList<storage_domains> storageDomains = (ArrayList<storage_domains>) returnValue;
                 ArrayList<storage_domains> activeStorageDomains = FilterStorageDomains(storageDomains);
                 DisksAllocationModel disksAllocationModel = getModel().getDisksAllocationModel();

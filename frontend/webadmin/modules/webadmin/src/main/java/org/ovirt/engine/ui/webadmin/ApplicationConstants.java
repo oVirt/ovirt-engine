@@ -807,6 +807,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Virtual Machines")
     String diskVmSubTabLabel();
 
+    @DefaultStringValue("Permissions")
+    String diskPermissionSubTabLabel();
+
     @DefaultStringValue("Templates")
     String diskTemplateSubTabLabel();
 

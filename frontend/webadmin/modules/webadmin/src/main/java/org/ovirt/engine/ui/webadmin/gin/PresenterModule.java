@@ -96,6 +96,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTab
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTabDataCenterStoragePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.disk.DiskSubTabPanelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.disk.SubTabDiskGeneralPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.disk.SubTabDiskPermissionPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.disk.SubTabDiskTemplatePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.disk.SubTabDiskVmPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.SubTabVolumeBrickPresenter;
@@ -247,6 +248,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.tab.datacenter.SubTabDataC
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.datacenter.SubTabDataCenterStorageView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.disk.DiskSubTabPanelView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.disk.SubTabDiskGeneralView;
+import org.ovirt.engine.ui.webadmin.section.main.view.tab.disk.SubTabDiskPermissionView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.disk.SubTabDiskTemplateView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.disk.SubTabDiskVmView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.gluster.SubTabVolumeBrickView;
@@ -713,6 +715,10 @@ public class PresenterModule extends BasePresenterModule {
                 SubTabDiskTemplatePresenter.ViewDef.class,
                 SubTabDiskTemplateView.class,
                 SubTabDiskTemplatePresenter.ProxyDef.class);
+        bindPresenter(SubTabDiskPermissionPresenter.class,
+                SubTabDiskPermissionPresenter.ViewDef.class,
+                SubTabDiskPermissionView.class,
+                SubTabDiskPermissionPresenter.ProxyDef.class);
 
         // Main section: popups
 
