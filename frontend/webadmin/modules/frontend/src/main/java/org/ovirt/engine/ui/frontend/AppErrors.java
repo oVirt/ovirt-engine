@@ -663,6 +663,12 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("$action log off")
     String VAR__ACTION__LOGOFF();
 
+    @DefaultStringValue("$type Gluster Volume")
+    String VAR__TYPE__GLUSTER_VOLUME();
+
+    @DefaultStringValue("$type Gluster Volume Option")
+    String VAR__TYPE__GLUSTER_VOLUME_OPTION();
+
     @DefaultStringValue("Cannot ${action} ${type}. The chosen disk drive letter is already in use, please select a free one.")
     String ACTION_TYPE_FAILED_DISK_LETTER_ALREADY_IN_USE();
 
@@ -1793,4 +1799,50 @@ public interface AppErrors extends ConstantsWithLookup {
     String VMPAYLOAD_CDROM_EXCEEDED();
 
     String VMPAYLOAD_FLOPPY_EXCEEDED();
+
+    // Gluster Messages
+    @DefaultStringValue("Cannot ${action} ${type}. Cluster ID is not valid.")
+    String ACTION_TYPE_FAILED_CLUSTER_IS_NOT_VALID();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Cluster does not support Gluster service.")
+    String ACTION_TYPE_FAILED_CLUSTER_DOES_NOT_SUPPORT_GLUSTER();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Gluster Volume is not valid.")
+    String ACTION_TYPE_FAILED_GLUSTER_VOLUME_INVALID();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Bricks are required.")
+    String ACTION_TYPE_FAILED_BRICKS_REQUIRED();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Replica count must be > 2 for a REPLICATE volume.")
+    String ACTION_TYPE_FAILED_REPLICA_COUNT_MIN_2();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Replica count must be > 4 for a DISTRIBUTED REPLICATE volume.")
+    String ACTION_TYPE_FAILED_REPLICA_COUNT_MIN_4();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Number of bricks must be equal to the replica count for a REPLICATE volume.")
+    String ACTION_TYPE_FAILED_INVALID_BRICK_COUNT_FOR_REPLICATE();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Number of bricks must be a multiple of replica count for a DISTRIBUTED REPLICATE volume.")
+    String ACTION_TYPE_FAILED_INVALID_BRICK_COUNT_FOR_DISTRIBUTED_REPLICATE();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Stripe count must be > 4 for a STRIPE volume.")
+    String ACTION_TYPE_FAILED_STRIPE_COUNT_MIN_4();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Stripe count must be > 8 for a DISTRIBUTED STRIPE volume.")
+    String ACTION_TYPE_FAILED_STRIPE_COUNT_MIN_8();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Number of bricks must be equal to stripe count for a STRIPE volume.")
+    String ACTION_TYPE_FAILED_INVALID_BRICK_COUNT_FOR_STRIPE();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Number of bricks must be a multiple of stripe count for a DISTRIBUTED STRIPE volume.")
+    String ACTION_TYPE_FAILED_INVALID_BRICK_COUNT_FOR_DISTRIBUTED_STRIPE();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Invalid host id in brick.")
+    String ACTION_TYPE_FAILED_INVALID_BRICK_SERVER_ID();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Gluster Volume already started.")
+    String ACTION_TYPE_FAILED_GLUSTER_VOLUME_ALREADY_STARTED();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Gluster Volume already stopped.")
+    String ACTION_TYPE_FAILED_GLUSTER_VOLUME_ALREADY_STOPPED();
 }
