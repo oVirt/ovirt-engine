@@ -9,6 +9,7 @@ import org.ovirt.engine.ui.uicommonweb.models.events.EventListModel;
 public class VolumeEventListModel extends EventListModel
 {
 
+    @Override
     public GlusterVolumeEntity getEntity()
     {
         return (GlusterVolumeEntity) ((super.getEntity() instanceof GlusterVolumeEntity) ? super.getEntity() : null);
@@ -39,7 +40,7 @@ public class VolumeEventListModel extends EventListModel
     {
         if (getEntity() != null)
         {
-            setSearchString(StringFormat.format("Events: event_volume=%1$s", getEntity().getName())); //$NON-NLS-1$
+            setSearchString(StringFormat.format("Events: volume.name=%1$s", getEntity().getName())); //$NON-NLS-1$
             super.Search();
         }
     }
@@ -49,7 +50,7 @@ public class VolumeEventListModel extends EventListModel
     {
         super.EntityPropertyChanged(sender, e);
 
-        if (e.PropertyName.equals("name")) //$NON-NLS-1$
+        if (e.PropertyName.equals("gluster_volume_name")) //$NON-NLS-1$
         {
             getSearchCommand().Execute();
         }
