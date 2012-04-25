@@ -530,7 +530,8 @@ public class CommonModel extends ListModel
                 || model.getType() == SystemTreeItemType.Storage || model.getType() == SystemTreeItemType.System);
 
         hostList.setIsAvailable(model.getType() == SystemTreeItemType.DataCenter
-                || model.getType() == SystemTreeItemType.Cluster || model.getType() == SystemTreeItemType.Hosts
+                || model.getType() == SystemTreeItemType.Cluster
+                || model.getType() == SystemTreeItemType.Cluster_Gluster || model.getType() == SystemTreeItemType.Hosts
                 || model.getType() == SystemTreeItemType.Host || model.getType() == SystemTreeItemType.Storage
                 || model.getType() == SystemTreeItemType.System);
 
@@ -542,7 +543,8 @@ public class CommonModel extends ListModel
         }
 
         storageList.setIsAvailable(model.getType() == SystemTreeItemType.DataCenter
-                || model.getType() == SystemTreeItemType.Cluster || model.getType() == SystemTreeItemType.Host
+                || model.getType() == SystemTreeItemType.Cluster
+                || model.getType() == SystemTreeItemType.Cluster_Gluster || model.getType() == SystemTreeItemType.Host
                 || model.getType() == SystemTreeItemType.Storages || model.getType() == SystemTreeItemType.Storage
                 || model.getType() == SystemTreeItemType.System);
 
@@ -562,7 +564,8 @@ public class CommonModel extends ListModel
                 || isDataStorage || model.getType() == SystemTreeItemType.System);
 
         vmList.setIsAvailable(model.getType() == SystemTreeItemType.DataCenter
-                || model.getType() == SystemTreeItemType.Cluster || model.getType() == SystemTreeItemType.Host
+                || model.getType() == SystemTreeItemType.Cluster
+                || model.getType() == SystemTreeItemType.Cluster_Gluster || model.getType() == SystemTreeItemType.Host
                 || isDataStorage || model.getType() == SystemTreeItemType.VMs
                 || model.getType() == SystemTreeItemType.System);
 
@@ -572,7 +575,8 @@ public class CommonModel extends ListModel
         }
 
         templateList.setIsAvailable(model.getType() == SystemTreeItemType.DataCenter
-                || model.getType() == SystemTreeItemType.Cluster || model.getType() == SystemTreeItemType.Host
+                || model.getType() == SystemTreeItemType.Cluster
+                || model.getType() == SystemTreeItemType.Cluster_Gluster || model.getType() == SystemTreeItemType.Host
                 || isDataStorage || model.getType() == SystemTreeItemType.Templates
                 || model.getType() == SystemTreeItemType.System);
 
@@ -581,7 +585,8 @@ public class CommonModel extends ListModel
          * --- JUICOMMENT_BEGIN monitor.setIsAvailable(model.getType() == SystemTreeItemType.System); JUICOMMENT_END ---
          */
         eventList.setIsAvailable(model.getType() == SystemTreeItemType.DataCenter
-                || model.getType() == SystemTreeItemType.Cluster || model.getType() == SystemTreeItemType.Host
+                || model.getType() == SystemTreeItemType.Cluster
+                || model.getType() == SystemTreeItemType.Cluster_Gluster || model.getType() == SystemTreeItemType.Host
                 || model.getType() == SystemTreeItemType.Storage || model.getType() == SystemTreeItemType.System);
 
         reportsList.setIsAvailable(ReportInit.getInstance().isReportsEnabled()
@@ -600,6 +605,7 @@ public class CommonModel extends ListModel
                 break;
             case Clusters:
             case Cluster:
+            case Cluster_Gluster:
                 setSelectedItem(clusterList);
                 break;
             case Hosts:
