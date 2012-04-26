@@ -4,17 +4,15 @@ import java.text.DateFormat;
 import java.util.Date;
 
 import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.NGuid;
-import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.backendcompat.XmlDocument;
 import org.ovirt.engine.core.compat.backendcompat.XmlNamespaceManager;
 import org.ovirt.engine.core.compat.backendcompat.XmlNode;
 import org.ovirt.engine.core.compat.backendcompat.XmlNodeList;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class OvfParser {
 
@@ -95,25 +93,21 @@ public class OvfParser {
      * Method return false if the format is not yyyy/mm/dd hh:mm:ss
      *
      * @param str
-     * @param date
-     * @return
+     * @return the date or null if parse failed
      */
-    public static boolean UtcDateStringToLocaDate(String str, RefObject<java.util.Date> date) {
-        date.argvalue = DateTime.getMinValue();
+    public static Date UtcDateStringToLocaDate(String str) {
         if (StringHelper.isNullOrEmpty(str)) {
-            return false;
+            return null;
         }
 
         try {
-            date.argvalue = getDateFormat(utcDateFormatStr).parse(str);
-            return true;
+            return getDateFormat(utcDateFormatStr).parse(str);
         } catch (java.text.ParseException e1) {
             try {
-                date.argvalue = getDateFormat(utcFallbackDateFormatStr).parse(str);
-                return true;
+                return getDateFormat(utcFallbackDateFormatStr).parse(str);
             } catch (java.text.ParseException e) {
                 log.error("OVF DateTime format Error, Expected: yyyy/M/dd hh:mm:ss", e);
-                return false;
+                return null;
             }
         }
     }

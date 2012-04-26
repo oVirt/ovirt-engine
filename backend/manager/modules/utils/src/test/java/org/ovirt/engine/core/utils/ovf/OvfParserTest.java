@@ -4,15 +4,14 @@ import java.util.Date;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.ovirt.engine.core.compat.RefObject;
 
 public class OvfParserTest {
 
     @Test
-    public void UtcDateStringToLocaDate() {
-        RefObject<Date> ref = new RefObject<Date>(null);
-        OvfParser.UtcDateStringToLocaDate("1984/06/19 14:25:11", ref);
-        Assert.assertEquals(456503111000l, ref.argvalue.getTime());
+    public void UtcDateStringToLocaDate_nodep() {
+        Date date =
+                OvfParser.UtcDateStringToLocaDate("1984/06/19 14:25:11");
+        Assert.assertEquals(456503111000l, date.getTime());
     }
 
     static class Checker implements Runnable {
@@ -32,10 +31,9 @@ public class OvfParserTest {
 
         @Override
         public void run() {
-            RefObject<Date> ref = new RefObject<Date>(null);
             for (long l = 0; l < count; l++) {
-                OvfParser.UtcDateStringToLocaDate(dateStr, ref);
-                if (dateVal != ref.argvalue.getTime()) {
+                final Date date = OvfParser.UtcDateStringToLocaDate(dateStr);
+                if (dateVal != date.getTime()) {
                     errors++;
                 }
             }

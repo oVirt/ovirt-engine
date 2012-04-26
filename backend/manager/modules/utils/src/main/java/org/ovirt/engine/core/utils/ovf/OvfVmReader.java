@@ -22,7 +22,6 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.backendcompat.XmlDocument;
 import org.ovirt.engine.core.compat.backendcompat.XmlNode;
@@ -81,7 +80,7 @@ public class OvfVmReader extends OvfReader {
                 if (drive.startsWith("Drive ")) {
                     image.setinternal_drive_mapping(drive.substring(6));
                 }
-                image.setimage_group_id(OvfParser.GetImageGrupIdFromImageFile(node.SelectSingleNode(
+                image.setId(OvfParser.GetImageGrupIdFromImageFile(node.SelectSingleNode(
                         "rasd:HostResource", _xmlNS).InnerText));
                 if (!StringHelper.isNullOrEmpty(node.SelectSingleNode("rasd:Parent", _xmlNS).InnerText)) {
                     image.setParentId(new Guid(node.SelectSingleNode("rasd:Parent", _xmlNS).InnerText));
@@ -96,31 +95,22 @@ public class OvfVmReader extends OvfReader {
                 if (!StringHelper.isNullOrEmpty(node.SelectSingleNode("rasd:StoragePoolId", _xmlNS).InnerText)) {
                     image.setstorage_pool_id(new Guid(node.SelectSingleNode("rasd:StoragePoolId", _xmlNS).InnerText));
                 }
-                java.util.Date creationDate = new java.util.Date(0);
-                RefObject<java.util.Date> tempRefObject = new RefObject<java.util.Date>(creationDate);
-                boolean tempVar = OvfParser.UtcDateStringToLocaDate(
-                        node.SelectSingleNode("rasd:CreationDate", _xmlNS).InnerText, tempRefObject);
-                creationDate = tempRefObject.argvalue;
-                if (tempVar) {
+                final Date creationDate = OvfParser.UtcDateStringToLocaDate(
+                        node.SelectSingleNode("rasd:CreationDate", _xmlNS).InnerText);
+                if (creationDate == null) {
                     image.setcreation_date(creationDate);
                 }
-                java.util.Date lastModified = new java.util.Date(0);
-                RefObject<java.util.Date> tempRefObject2 = new RefObject<java.util.Date>(lastModified);
-                boolean tempVar2 = OvfParser.UtcDateStringToLocaDate(
-                        node.SelectSingleNode("rasd:LastModified", _xmlNS).InnerText, tempRefObject2);
-                lastModified = tempRefObject2.argvalue;
-                if (tempVar2) {
+                final Date lastModified = OvfParser.UtcDateStringToLocaDate(
+                        node.SelectSingleNode("rasd:LastModified", _xmlNS).InnerText);
+                if (lastModified != null) {
                     image.setlastModified(lastModified);
                 }
-                java.util.Date last_modified_date = new java.util.Date(0);
-                RefObject<java.util.Date> tempRefObject3 = new RefObject<java.util.Date>(last_modified_date);
-                boolean tempVar3 = OvfParser.UtcDateStringToLocaDate(
-                        node.SelectSingleNode("rasd:last_modified_date", _xmlNS).InnerText, tempRefObject3);
-                last_modified_date = tempRefObject3.argvalue;
-                if (tempVar3) {
+                final Date last_modified_date = OvfParser.UtcDateStringToLocaDate(
+                        node.SelectSingleNode("rasd:last_modified_date", _xmlNS).InnerText);
+                if (last_modified_date != null) {
                     image.setlast_modified_date(last_modified_date);
                 }
-                readVmDevice(node, _vm.getStaticData(), image.getimage_group_id(), Boolean.TRUE);
+                readVmDevice(node, _vm.getStaticData(), image.getId(), Boolean.TRUE);
             } else if (StringHelper.EqOp(resourceType, OvfHardware.Network)) {
                 VmNetworkInterface iface = getNetwotkInterface(node);
                 updateSingleNic(node, iface);
@@ -183,19 +173,13 @@ public class OvfVmReader extends OvfReader {
             _vm.getStaticData().setdomain(node.InnerText);
         }
         node = content.SelectSingleNode("CreationDate");
-        java.util.Date creationDate = new java.util.Date(0);
-        RefObject<java.util.Date> tempRefObject = new RefObject<java.util.Date>(creationDate);
-        boolean tempVar = node != null && OvfParser.UtcDateStringToLocaDate(node.InnerText, tempRefObject);
-        creationDate = tempRefObject.argvalue;
-        if (tempVar) {
+        final Date creationDate = OvfParser.UtcDateStringToLocaDate(node.InnerText);
+        if (creationDate != null) {
             _vm.getStaticData().setcreation_date(creationDate);
         }
         node = content.SelectSingleNode("ExportDate");
-        java.util.Date exportDate = new java.util.Date(0);
-        tempRefObject = new RefObject<java.util.Date>(exportDate);
-        tempVar = node != null && OvfParser.UtcDateStringToLocaDate(node.InnerText, tempRefObject);
-        exportDate = tempRefObject.argvalue;
-        if (tempVar) {
+        final Date exportDate = OvfParser.UtcDateStringToLocaDate(node.InnerText);
+        if (exportDate != null) {
             _vm.getStaticData().setExportDate(exportDate);
         }
         node = content.SelectSingleNode("IsInitilized");
@@ -364,10 +348,9 @@ public class OvfVmReader extends OvfReader {
             snapshot.setStatus(SnapshotStatus.OK);
             snapshot.setDescription(node.SelectSingleNode("Description", _xmlNS).InnerText);
 
-            RefObject<Date> creationDateRef = new RefObject<Date>(new Date());
-            if (OvfParser.UtcDateStringToLocaDate(node.SelectSingleNode("CreationDate", _xmlNS).InnerText,
-                    creationDateRef)) {
-                snapshot.setCreationDate(creationDateRef.argvalue);
+            final Date creationDate = OvfParser.UtcDateStringToLocaDate(node.SelectSingleNode("CreationDate", _xmlNS).InnerText);
+            if (creationDate != null) {
+                snapshot.setCreationDate(creationDate);
             }
 
             snapshot.setVmConfiguration(vmConfiguration == null

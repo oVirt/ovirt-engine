@@ -2,6 +2,7 @@ package org.ovirt.engine.core.utils.ovf;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -13,7 +14,6 @@ import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.backendcompat.XmlDocument;
 import org.ovirt.engine.core.compat.backendcompat.XmlNode;
@@ -88,28 +88,23 @@ public class OvfTemplateReader extends OvfReader {
                 }
                 image.setappList(node.SelectSingleNode("rasd:ApplicationList", _xmlNS).InnerText);
                 if (!StringHelper.isNullOrEmpty(node.SelectSingleNode("rasd:StorageId", _xmlNS).InnerText)) {
-                    image.setstorage_ids(new ArrayList<Guid>(Arrays.asList(new Guid(node.SelectSingleNode("rasd:StorageId", _xmlNS).InnerText))));
+                    image.setstorage_ids(new ArrayList<Guid>(Arrays.asList(new Guid(node.SelectSingleNode("rasd:StorageId",
+                            _xmlNS).InnerText))));
                 }
                 if (!StringHelper.isNullOrEmpty(node.SelectSingleNode("rasd:StoragePoolId", _xmlNS).InnerText)) {
                     image.setstorage_pool_id(new Guid(node.SelectSingleNode("rasd:StoragePoolId", _xmlNS).InnerText));
                 }
-                java.util.Date creationDate = new java.util.Date(0);
-                RefObject<java.util.Date> tempRefObject = new RefObject<java.util.Date>(creationDate);
-                boolean tempVar = OvfParser.UtcDateStringToLocaDate(
-                        node.SelectSingleNode("rasd:CreationDate", _xmlNS).InnerText, tempRefObject);
-                creationDate = tempRefObject.argvalue;
-                if (tempVar) {
+                final Date creationDate = OvfParser.UtcDateStringToLocaDate(
+                        node.SelectSingleNode("rasd:CreationDate", _xmlNS).InnerText);
+                if (creationDate != null) {
                     image.setcreation_date(creationDate);
                 }
-                java.util.Date lastModified = new java.util.Date(0);
-                RefObject<java.util.Date> tempRefObject2 = new RefObject<java.util.Date>(lastModified);
-                boolean tempVar2 = OvfParser.UtcDateStringToLocaDate(
-                        node.SelectSingleNode("rasd:LastModified", _xmlNS).InnerText, tempRefObject2);
-                lastModified = tempRefObject2.argvalue;
-                if (tempVar2) {
+                final Date lastModified = OvfParser.UtcDateStringToLocaDate(
+                        node.SelectSingleNode("rasd:LastModified", _xmlNS).InnerText);
+                if (lastModified != null) {
                     image.setlastModified(lastModified);
                 }
-                readVmDevice(node, _vmTemplate, image.getimage_group_id(), Boolean.TRUE);
+                readVmDevice(node, _vmTemplate, image.getId(), Boolean.TRUE);
                 break;
 
             // Network
@@ -175,20 +170,19 @@ public class OvfTemplateReader extends OvfReader {
             _vmTemplate.setdomain(node.InnerText);
         }
         node = content.SelectSingleNode("CreationDate");
-        java.util.Date creationDate = new java.util.Date(0);
-        RefObject<java.util.Date> tempRefObject = new RefObject<java.util.Date>(creationDate);
-        boolean tempVar = node != null && OvfParser.UtcDateStringToLocaDate(node.InnerText, tempRefObject);
-        creationDate = tempRefObject.argvalue;
-        if (tempVar) {
-            _vmTemplate.setcreation_date(creationDate);
+
+        if (node != null) {
+            Date creationDate = OvfParser.UtcDateStringToLocaDate(node.InnerText);
+            if (creationDate != null) {
+                _vmTemplate.setcreation_date(creationDate);
+            }
         }
         node = content.SelectSingleNode("ExportDate");
-        java.util.Date exportDate = new java.util.Date(0);
-        tempRefObject = new RefObject<java.util.Date>(exportDate);
-        tempVar = node != null && OvfParser.UtcDateStringToLocaDate(node.InnerText, tempRefObject);
-        exportDate = tempRefObject.argvalue;
-        if (tempVar) {
-            _vmTemplate.setExportDate(exportDate);
+        if (node != null) {
+            Date exportDate = OvfParser.UtcDateStringToLocaDate(node.InnerText);
+            if (exportDate != null) {
+                _vmTemplate.setExportDate(exportDate);
+            }
         }
         node = content.SelectSingleNode("IsAutoSuspend");
         if (node != null) {
