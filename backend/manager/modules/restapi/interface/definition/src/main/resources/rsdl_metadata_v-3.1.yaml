@@ -2048,4 +2048,104 @@ actions:
         optionalArguments: {}
     urlparams: {}
     headers: {Content-Type: application/xml|json}
+- name: /api/clusters/{cluster:id}/glustervolumes|rel=get
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      search: {context: query, type: 'xs:string', value: query, required: false}
+      case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
+    headers: {}
+- name: /api/clusters/{cluster:id}/glustervolumes|rel=add
+  request:
+    body:
+      parameterType: GlusterVolume
+      signatures:
+      - mandatoryArguments:
+          gluster_volume.name: 'xs:string'
+          gluster_volume.volume_type: 'xs:string'
+          gluster_volume.bricks--COLLECTION: {brick.server_id: 'xs:string', brick.brick_dir: 'xs:string'}
+        optionalArguments:
+          gluster_volume.transport_types--COLLECTION: {transport_type: 'xs:string'}
+          gluster_volume.replica_count: 'xs:unsignedShort'
+          gluster_volume.stripe_count: 'xs:unsignedShort'
+          gluster_volume.access_protocols--COLLECTION: {access_protocol: 'xs:string'}
+          gluster_volume.access_control_list--COLLECTION: {ip: 'xs:string'}
+          gluster_volume.options--COLLECTION: {option.name: 'xs:string', option.value: 'xs:string'}
+    urlparams: {}
+    headers: {Content-Type: application/xml|json, Expect: 201-created}
+- name: /api/clusters/{cluster:id}/glustervolumes/{glustervolume:id}/start|rel=start
+  request:
+    body:
+      parameterType: Action
+      signatures:
+      - mandatoryArguments: {}
+        optionalArguments: {action.force: 'xs:boolean'}
+    urlparams: {}
+    headers: {Content-Type: application/xml|json}
+- name: /api/clusters/{cluster:id}/glustervolumes/{glustervolume:id}/stop|rel=stop
+  request:
+    body:
+      parameterType: Action
+      signatures:
+      - mandatoryArguments: {}
+        optionalArguments: {action.force: 'xs:boolean'}
+    urlparams: {}
+    headers: {Content-Type: application/xml|json}
+- name: /api/clusters/{cluster:id}/glustervolumes/{glustervolume:id}/rebalance|rel=rebalance
+  request:
+    body:
+      parameterType: Action
+      signatures:
+      - mandatoryArguments: {}
+        optionalArguments: {action.fix_layout: 'xs:boolean', action.force: 'xs:boolean'}
+    urlparams: {}
+    headers: {Content-Type: application/xml|json}
+- name: /api/clusters/{cluster:id}/glustervolumes/{glustervolume:id}/setOption|rel=setOption
+  request:
+    body:
+      parameterType: Action
+      signatures:
+      - mandatoryArguments: {action.name: 'xs:string'}
+        optionalArguments: {}
+    urlparams: {}
+    headers: {Content-Type: application/xml|json}
+- name: /api/clusters/{cluster:id}/glustervolumes/{glustervolume:id}/resetOption|rel=resetOption
+  request:
+    body:
+      parameterType: Action
+      signatures:
+      - mandatoryArguments: {action.name: 'xs:string'}
+        optionalArguments: {}
+    urlparams: {}
+    headers: {Content-Type: application/xml|json}
+- name: /api/clusters/{cluster:id}/glustervolumes/{glustervolume:id}/resetAllOptions|rel=resetAllOptions
+  request:
+    body:
+      parameterType: Action
+      signatures:
+      - mandatoryArguments: {}
+        optionalArguments: {}
+    urlparams: {}
+    headers: {Content-Type: application/xml|json}
+- name: /api/clusters/{cluster:id}/glustervolumes/{glustervolume:id}/bricks|rel=add
+  request:
+    body:
+      parameterType: Bricks
+      signatures:
+      - mandatoryArguments:
+          bricks--COLLECTION: {brick.server_id: 'xs:string', brick.brick_dir: 'xs:string'}
+        optionalArguments: {}
+    urlparams: {}
+    headers: {Content-Type: application/xml|json, Expect: 201-created}
+- name: /api/clusters/{cluster:id}/glustervolumes/{glustervolume:id}/bricks/{brick:id}/replace|rel=replace
+  request:
+    body:
+      parameterType: Action
+      signatures:
+      - mandatoryArguments: {action.new_brick.host_id: 'xs:string', action.new_brick.brick_dir: 'xs:string'}
+        optionalArguments: {action.force: 'xs:boolean'}
+    urlparams: {}
+    headers: {Content-Type: application/xml|json}
     
