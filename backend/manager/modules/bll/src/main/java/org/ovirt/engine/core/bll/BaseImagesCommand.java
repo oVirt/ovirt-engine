@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -21,7 +22,6 @@ import org.ovirt.engine.core.common.vdscommands.GetImageInfoVDSCommandParameters
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.BaseDiskDao;
 import org.ovirt.engine.core.dao.DiskImageDAO;
@@ -30,6 +30,7 @@ import org.ovirt.engine.core.dao.ImageDao;
 /**
  * Base class for all image handling commands
  */
+@SuppressWarnings("serial")
 public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> extends StorageDomainCommandBase<T> {
     private DiskImage _destinationImage;
     private DiskImage mImage;
@@ -147,7 +148,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
 
     protected Guid getImageGroupId() {
         if (_imageGroupId.equals(Guid.Empty)) {
-            _imageGroupId = getDiskImage().getimage_group_id() != null ? getDiskImage().getimage_group_id().getValue()
+            _imageGroupId = getDiskImage().getId() != null ? getDiskImage().getId().getValue()
                     : Guid.Empty;
         }
         return _imageGroupId;
@@ -195,7 +196,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
                             : diskImage.getstorage_ids() != null && diskImage.getstorage_ids().size() > 0 ? diskImage.getstorage_ids()
                                     .get(0)
                                     : Guid.Empty;
-            Guid imageGroupId = diskImage.getimage_group_id() != null ? diskImage.getimage_group_id().getValue()
+            Guid imageGroupId = diskImage.getId() != null ? diskImage.getId().getValue()
                     : Guid.Empty;
 
             DiskImage image = (DiskImage) Backend
@@ -265,7 +266,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
         List<DiskImage> imagesFromSanpshot =
                 DbFacade.getInstance().getDiskImageDAO().getAllSnapshotsForVmSnapshot(snapshotId);
         for (DiskImage diskImage : imagesFromSanpshot) {
-            if (getDiskImage().getimage_group_id().equals(diskImage.getimage_group_id())) {
+            if (getDiskImage().getId().equals(diskImage.getId())) {
                 return diskImage.getImageId();
             }
         }
@@ -298,7 +299,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
         retDiskImage.setParentId(getDiskImage().getImageId());
         retDiskImage.setvm_snapshot_id(getParameters().getVmSnapshotId());
         retDiskImage.setvm_guid(getImageContainerId());
-        retDiskImage.setimage_group_id(getImageGroupId());
+        retDiskImage.setId(getImageGroupId());
         retDiskImage.setlast_modified_date(new Date());
         retDiskImage.setQuotaId(getParameters().getQuotaId());
         return retDiskImage;
@@ -433,8 +434,8 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
             Guid storagePoolId = getDestinationDiskImage().getstorage_pool_id() != null ? getDestinationDiskImage()
                     .getstorage_pool_id().getValue() : Guid.Empty;
 
-            Guid newImageGroupId = getDestinationDiskImage().getimage_group_id() != null ? getDestinationDiskImage()
-                    .getimage_group_id().getValue() : Guid.Empty;
+            Guid newImageGroupId = getDestinationDiskImage().getId() != null ? getDestinationDiskImage()
+                    .getId().getValue() : Guid.Empty;
             Guid newImageId = getDestinationDiskImage().getImageId();
             Guid newStorageDomainID = getDestinationDiskImage().getstorage_ids().get(0);
 
@@ -498,29 +499,26 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
         DbFacade.getInstance().getImageStorageDomainMapDao().remove(snapshot.getImageId());
         getImageDao().remove(snapshot.getImageId());
         List<DiskImage> imagesForDisk =
-                getDiskImageDao().getAllSnapshotsForImageGroup(snapshot.getimage_group_id());
+                getDiskImageDao().getAllSnapshotsForImageGroup(snapshot.getId());
         if (imagesForDisk == null || imagesForDisk.isEmpty()) {
-            getBaseDiskDao().remove(snapshot.getimage_group_id());
+            getBaseDiskDao().remove(snapshot.getId());
         }
     }
 
-    public static void GetImageChildren(Guid snapshot, RefObject<java.util.ArrayList<Guid>> children) {
-        java.util.ArrayList<Guid> list = new java.util.ArrayList<Guid>();
+    public static void GetImageChildren(Guid snapshot, List<Guid> children) {
+        List<Guid> list = new ArrayList<Guid>();
         for (DiskImage image : DbFacade.getInstance().getDiskImageDAO().getAllSnapshotsForParent(snapshot)) {
             list.add(image.getImageId());
         }
-        children.argvalue.addAll(list);
+        children.addAll(list);
         for (Guid snapshotId : list) {
             GetImageChildren(snapshotId, children);
         }
     }
 
     protected void RemoveChildren(Guid snapshot) {
-        java.util.ArrayList<Guid> children = new java.util.ArrayList<Guid>();
-        RefObject<java.util.ArrayList<Guid>> tempRefObject = new RefObject<java.util.ArrayList<Guid>>(children);
-        GetImageChildren(snapshot, tempRefObject);
-        children = tempRefObject.argvalue;
-        // children.Reverse();
+        List<Guid> children = new ArrayList<Guid>();
+        GetImageChildren(snapshot, children);
         Collections.reverse(children);
         for (Guid child : children) {
             RemoveSnapshot(getDiskImageDao().getSnapshotById(child));
