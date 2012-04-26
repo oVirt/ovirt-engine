@@ -199,7 +199,7 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
                 return getMainModel().getEditCommand();
             }
         });
-        getTable().addActionButton(new WebAdminButtonDefinition<VDS>(constants.restartHost()) {
+        getTable().addActionButton(new WebAdminButtonDefinition<VDS>(constants.removeHost()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getRemoveCommand();
