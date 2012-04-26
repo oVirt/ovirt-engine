@@ -14,4 +14,9 @@ public class UserportalDynamicHostingServlet extends GwtDynamicHostPageServlet {
         return "userportal.nocache.js"; //$NON-NLS-1$
     }
 
+    @Override
+    protected boolean filterQueries() {
+        return true;
+    }
+
 }

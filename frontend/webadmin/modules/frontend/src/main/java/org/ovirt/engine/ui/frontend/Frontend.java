@@ -109,7 +109,7 @@ public class Frontend {
     }
 
     private static void failureEventHandler(String description, String errorMessage) {
-        if (errorMessage.equals(canDoActionErrorsTranslator.translateErrorTextSingle("USER_IS_NOT_LOGGED_IN", false))) { //$NON-NLS-1$
+        if (errorMessage != null && errorMessage.equals(canDoActionErrorsTranslator.translateErrorTextSingle("USER_IS_NOT_LOGGED_IN", false))) { //$NON-NLS-1$
             frontendNotLoggedInEvent.raise(Frontend.class, EventArgs.Empty);
         }
         frontendFailureEvent.raise(Frontend.class, new FrontendFailureEventArgs(new Message(description, errorMessage)));
@@ -236,7 +236,6 @@ public class Frontend {
     public static void RunPublicQuery(final VdcQueryType queryType,
             final VdcQueryParametersBase parameters,
             final IFrontendQueryAsyncCallback callback) {
-        initQueryParamsFilter(parameters);
         dumpQueryDetails(queryType, parameters);
         logger.finer("Frontend: Invoking async runPublicQuery."); //$NON-NLS-1$
 
@@ -277,7 +276,6 @@ public class Frontend {
     public static void RunPublicQuery(final VdcQueryType queryType,
             final VdcQueryParametersBase parameters,
             final AsyncQuery callback) {
-        initQueryParamsFilter(parameters);
         dumpQueryDetails(queryType, parameters);
         logger.finer("Frontend: Invoking async runQuery."); //$NON-NLS-1$
 

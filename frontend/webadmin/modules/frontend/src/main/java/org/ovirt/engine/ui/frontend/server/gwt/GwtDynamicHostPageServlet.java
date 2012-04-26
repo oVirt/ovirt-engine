@@ -64,7 +64,7 @@ public abstract class GwtDynamicHostPageServlet extends HttpServlet {
     }
 
     protected void writeAdditionalJsData(HttpServletRequest request, PrintWriter writer) {
-        VdcUser loggedUser = getLoggedInUser(request.getSession().getId());
+        VdcUser loggedUser = getLoggedInUser(request);
 
         if (loggedUser != null) {
             writer.append(" var userInfo = { "); //$NON-NLS-1$
@@ -80,24 +80,27 @@ public abstract class GwtDynamicHostPageServlet extends HttpServlet {
      */
     protected abstract String getSelectorScriptName();
 
-    private VdcUser getLoggedInUser(String sessionId) {
+    private VdcUser getLoggedInUser(HttpServletRequest request) {
+        VdcQueryReturnValue returnValue = backend.RunQuery(VdcQueryType.GetUserBySessionId,
+                createQueryParams(request.getSession().getId(), filterQueries()));
+
+        if (returnValue.getSucceeded()) {
+            return (VdcUser) returnValue.getReturnValue();
+        } else {
+            return null;
+        }
+    }
+
+    protected VdcQueryParametersBase createQueryParams(String sessionId, boolean isFiltered) {
         VdcQueryParametersBase queryParams = new VdcQueryParametersBase();
         queryParams.setSessionId(sessionId);
         queryParams.setHttpSessionId(sessionId);
+        queryParams.setFiltered(isFiltered);
+        return queryParams;
+    }
 
-        VdcQueryReturnValue vqrv = backend.RunQuery(
-                VdcQueryType.GetUserBySessionId, queryParams);
-
-        if (!vqrv.getSucceeded()) {
-            return null;
-        } else if (vqrv.getSucceeded()) {
-            if (vqrv.getReturnValue() == null)
-                return null;
-            return (VdcUser) vqrv.getReturnValue();
-        } else {
-            // For unknown reason the result was failed be returned.
-            return null;
-        }
+    protected boolean filterQueries() {
+        return false;
     }
 
 }

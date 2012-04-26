@@ -55,8 +55,8 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Logou
 
         // Initialize UiCommon infrastructure
         initUiCommon();
-        initLoginModel();
         initFrontend();
+        initLoginModel();
 
         // Check if the user should be logged in automatically
         handleAutoLogin();
