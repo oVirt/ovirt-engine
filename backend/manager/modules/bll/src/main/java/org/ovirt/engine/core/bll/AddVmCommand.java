@@ -472,7 +472,10 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
     }
 
     protected void copyVmDevices() {
-        VmDeviceUtils.copyVmDevices(getVmTemplateId(), getVmId(), newDiskImages);
+        VmDeviceUtils.copyVmDevices(getVmTemplateId(),
+                getVmId(),
+                newDiskImages,
+                _vmInterfaces);
     }
 
     protected static boolean IsLegalClusterId(Guid clusterId, java.util.ArrayList<String> reasons) {

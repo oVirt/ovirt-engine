@@ -745,7 +745,7 @@ CREATE OR REPLACE VIEW vm_interface_view AS
   FROM vm_interface_statistics
   RIGHT JOIN vm_interface ON vm_interface_statistics.id = vm_interface.id
   JOIN vm_static AS vm_templates ON vm_interface.vmt_guid = vm_templates.vm_guid
-  JOIN vm_device ON vm_interface.vm_guid = vm_device.vm_id AND vm_interface.id = vm_device.device_id;
+  JOIN vm_device ON vm_interface.vmt_guid = vm_device.vm_id AND vm_interface.id = vm_device.device_id;
 ----------------------------------------------
 -- Event Notification Views
 ----------------------------------------------

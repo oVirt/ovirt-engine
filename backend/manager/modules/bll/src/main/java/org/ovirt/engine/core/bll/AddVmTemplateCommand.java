@@ -129,8 +129,8 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             public Void runInTransaction() {
                 addPermission();
                 AddVmTemplateImages();
-                AddVmInterfaces();
-                VmDeviceUtils.copyVmDevices(getVmId(), getVmTemplateId(), newDiskImages);
+                List<VmNetworkInterface> vmInterfaces = addVmInterfaces();
+                VmDeviceUtils.copyVmDevices(getVmId(), getVmTemplateId(), newDiskImages, vmInterfaces);
                 setSucceeded(true);
                 return null;
             }
@@ -331,7 +331,8 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         setActionReturnValue(getVmTemplate().getId());
     }
 
-    protected void AddVmInterfaces() {
+    protected List<VmNetworkInterface> addVmInterfaces() {
+        List<VmNetworkInterface> templateInterfaces = new ArrayList<VmNetworkInterface>();
         List<VmNetworkInterface> interfaces = DbFacade
                 .getInstance()
                 .getVmNetworkInterfaceDAO()
@@ -345,9 +346,10 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             iDynamic.setNetworkName(iface.getNetworkName());
             iDynamic.setSpeed(VmInterfaceType.forValue(iface.getType()).getSpeed());
             iDynamic.setType(iface.getType());
-
+            templateInterfaces.add(iDynamic);
             DbFacade.getInstance().getVmNetworkInterfaceDAO().save(iDynamic);
         }
+        return templateInterfaces;
     }
 
     protected void AddVmTemplateImages() {

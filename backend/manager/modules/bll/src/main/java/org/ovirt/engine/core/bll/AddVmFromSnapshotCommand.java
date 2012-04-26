@@ -216,7 +216,10 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
 
     @Override
     protected void copyVmDevices() {
-        VmDeviceUtils.copyVmDevices(getVmIdFromSnapshot(), getVmId(), newDiskImages);
+        VmDeviceUtils.copyVmDevices(getVmIdFromSnapshot(),
+                getVmId(),
+                newDiskImages,
+                _vmInterfaces);
     }
 
     @Override

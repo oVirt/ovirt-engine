@@ -64,25 +64,21 @@ public class VmDeviceUtils {
     }
 
     /**
-     * Copies relevamt entries on Vm from Template or Tempalte from VM creation.
+     * Copies relevant entries on "Vm from Template" or "Template from VM" creation.
      *
      * @param srcId
      * @param dstId
      * @param disks
      *            The disks which were saved for the destination VM.
      */
-    public static void copyVmDevices(Guid srcId, Guid dstId, List<DiskImage> disks) {
+    public static void copyVmDevices(Guid srcId, Guid dstId, List<DiskImage> disks, List<VmNetworkInterface> ifaces) {
         Guid id;
         VmBase vmBase = DbFacade.getInstance().getVmStaticDAO().get(dstId);
-        List<VmNetworkInterface> ifaces;
         int diskCount = 0;
         int ifaceCount = 0;
         boolean isVm = (vmBase != null);
-        if (isVm) {
-            ifaces = DbFacade.getInstance().getVmNetworkInterfaceDAO().getAllForVm(dstId);
-        } else {
+        if (!isVm) {
             vmBase = DbFacade.getInstance().getVmTemplateDAO().get(dstId);
-            ifaces = DbFacade.getInstance().getVmNetworkInterfaceDAO().getAllForTemplate(dstId);
         }
         List<VmDevice> devices = dao.getVmDeviceByVmId(srcId);
         String isoPath=vmBase.getiso_path();
