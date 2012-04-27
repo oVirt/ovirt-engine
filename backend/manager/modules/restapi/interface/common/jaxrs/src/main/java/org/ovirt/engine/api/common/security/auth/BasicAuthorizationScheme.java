@@ -27,7 +27,7 @@ import org.apache.commons.codec.binary.Base64;
 public class BasicAuthorizationScheme implements Scheme {
 
     private static final String SCHEME = "Basic";
-    private static final String CHALLANGE_TEMPLATE = SCHEME + " realm = \"{0}\"";
+    private static final String CHALLENGE_TEMPLATE = SCHEME + " realm=\"{0}\"";
 
     private static String USER_PASS_SEPARATOR = ":";
     private static char UPN_USER_DOMAIN_SEPARATOR = '@';
@@ -40,7 +40,7 @@ public class BasicAuthorizationScheme implements Scheme {
 
     @Override
     public String getChallenge(String realm) {
-        return MessageFormat.format(CHALLANGE_TEMPLATE, realm);
+        return MessageFormat.format(CHALLENGE_TEMPLATE, realm);
     }
 
     @Override
