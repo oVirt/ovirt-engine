@@ -74,4 +74,10 @@ public class ListUtils {
         }
     }
 
+    public static <T> void nullSafeElemAdd(List<T> list, T elem) {
+        if (elem != null) {
+            nullSafeAdd(list, elem);
+        }
+    }
+
 }

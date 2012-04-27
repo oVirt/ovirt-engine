@@ -420,11 +420,8 @@ public class ConfigureLocalStorageModel extends Model
 			{
 				temp = "0";
 			}
-			int tempInt = 0;
-			RefObject<Integer> tempRef_tempInt = new RefObject<Integer>(tempInt);
-			boolean tempVar = IntegerCompat.TryParse(temp, tempRef_tempInt);
-				tempInt = tempRef_tempInt.argvalue;
-			if (tempVar)
+			Integer tempInt = IntegerCompat.tryParse(temp);
+			if (tempInt != null)
 			{
 				notAvialbleNumberList.add(tempInt);
 			}

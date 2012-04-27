@@ -2,16 +2,18 @@ package org.ovirt.engine.core.compat;
 
 public class IntegerCompat {
 
-    public static boolean TryParse(String value, RefObject<Integer> intRef) {
-        boolean returnValue = false;
+    /**
+     * Try parse an integer, return null if failed.
+     * @param value     the string format of the number
+     * @return          Integer or null
+     */
+    public static Integer tryParse(final String value) {
         try {
-            intRef.argvalue = Integer.parseInt(value);
-            returnValue = true;
+            return Integer.valueOf(value);
         } catch (NumberFormatException e) {
-            // eat it, return false
+            // eat it, return null
+            return null;
         }
-
-        return returnValue;
     }
 
     public static boolean TryParse(String value, NumberStyles integer, CultureInfo currentCulture,

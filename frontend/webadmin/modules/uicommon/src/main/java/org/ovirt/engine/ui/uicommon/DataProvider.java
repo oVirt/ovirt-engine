@@ -2249,18 +2249,13 @@ public final class DataProvider
 		{
 			for (VmNetworkInterface iface : existingInterfaces)
 			{
-				int ifaceNumber = 0;
-				// name of Interface is "eth<n>" (<n>: integer).
-				RefObject<Integer> tempRef_ifaceNumber = new RefObject<Integer>(ifaceNumber);
-				boolean tempVar = iface.getName().length() > 3 && IntegerCompat.TryParse(iface.getName().substring(3), tempRef_ifaceNumber);
-					ifaceNumber = tempRef_ifaceNumber.argvalue;
-				if (tempVar)
-				{
-					if (ifaceNumber > maxIfaceNumber)
-					{
-						maxIfaceNumber = ifaceNumber;
-					}
-				}
+			    if(iface.getName().length() > 3) {
+	                Integer tempVar = IntegerCompat.tryParse(iface.getName().substring(3));
+	                if (tempVar != null && tempVar > maxIfaceNumber)
+	                {
+	                        maxIfaceNumber = tempVar;
+	                }
+			    }
 			}
 		}
 

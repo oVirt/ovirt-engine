@@ -12,7 +12,6 @@ import org.ovirt.engine.core.common.businessentities.network;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.IntegerCompat;
-import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.StringHelper;
 
 public final class NetworkUtils {
@@ -23,6 +22,7 @@ public final class NetworkUtils {
     public static String getEngineNetwork() {
         return Config.<String> GetValue(ConfigValues.ManagementNetwork);
     }
+
     // method return interface name without vlan:
     // input: eth0.5 output eth0
     // input" eth0 output eth0
@@ -61,11 +61,8 @@ public final class NetworkUtils {
     public static Integer GetVlanId(String ifaceName) {
         String[] tokens = ifaceName.split("[.]", -1);
         if (tokens.length > 1) {
-            int vlan = 0;
-            RefObject<Integer> tempRefObject = new RefObject<Integer>(vlan);
-            boolean tempVar = IntegerCompat.TryParse(tokens[tokens.length - 1], tempRefObject);
-            vlan = tempRefObject.argvalue;
-            if (tempVar) {
+            Integer vlan = IntegerCompat.tryParse(tokens[tokens.length - 1]);
+            if (vlan != null) {
                 return vlan;
             }
         }
@@ -89,7 +86,7 @@ public final class NetworkUtils {
     }
 
     public static boolean interfaceHasVlan(VdsNetworkInterface iface, List<VdsNetworkInterface> allIfaces) {
-        for(VdsNetworkInterface i: allIfaces) {
+        for (VdsNetworkInterface i : allIfaces) {
             if (i.getVlanId() != null && NetworkUtils.StripVlan(i.getName()).equals(iface.getName())) {
                 return true;
             }

@@ -194,7 +194,7 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
 
     public final static ValueValidationFunction validInteger = new ValueValidationFunction() {
         public boolean isValid(String field, String value) {
-            return IntegerCompat.TryParse(value, new RefObject<Integer>());
+            return IntegerCompat.tryParse(value) != null;
         }
     };
 
@@ -310,11 +310,8 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
     // private static final String DATE_FORMAT = "MMM dd,yyyy";
     private static DateTime DealWithDateEnum(String value) {
         DateTime formatedValue = new DateTime();
-        Integer result = new Integer(0);
-        RefObject<Integer> tempRefObject = new RefObject<Integer>(result);
-        boolean tempVar = IntegerCompat.TryParse(StringHelper.trim(value, '\''), tempRefObject);
-        result = tempRefObject.argvalue;
-        if (tempVar) {
+        final Integer result = IntegerCompat.tryParse(StringHelper.trim(value, '\''));
+        if (result != null) {
             DateEnumForSearch dateEnumVal = DateEnumForSearch.forValue(result);
             switch (dateEnumVal) {
             case Today:

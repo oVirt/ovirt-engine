@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.validation;
 
 import org.ovirt.engine.core.compat.IntegerCompat;
-import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
@@ -49,14 +48,11 @@ public class IntegerValidation implements IValidation
 
         if (value != null && value instanceof String && !((String) value).equals("")) //$NON-NLS-1$
         {
-            int intValue = 0;
-            RefObject<Integer> tempRef_intValue = new RefObject<Integer>(intValue);
-            boolean tempVar = !IntegerCompat.TryParse((String) value, tempRef_intValue);
-            intValue = tempRef_intValue.argvalue;
+            Integer intValue = IntegerCompat.tryParse((String) value);
             String msg = ""; //$NON-NLS-1$
             String prefixMsg =
                     ConstantsManager.getInstance().getConstants().thisFieldMustContainIntegerNumberInvalidReason();
-            if (tempVar)
+            if (intValue == null)
             {
                 result.setSuccess(false);
                 msg =

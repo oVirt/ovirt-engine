@@ -511,11 +511,8 @@ public class SyntaxChecker implements ISyntaxChecker {
                 }
                 break;
             case PAGE:
-                Integer pageNumber = new Integer(0);
-                RefObject<Integer> tempRefObject5 = new RefObject<Integer>(pageNumber);
-                boolean tempVar = !IntegerCompat.TryParse(nextObject, tempRefObject5);
-                pageNumber = tempRefObject5.argvalue;
-                if (tempVar) {
+                Integer pageNumber  = IntegerCompat.tryParse(nextObject);
+                if (pageNumber == null) {
                     syntaxContainer.setErr(SyntaxError.INVALID_CHARECTER, curStartPos, idx + 1);
                     return syntaxContainer;
                 } else {
@@ -889,11 +886,8 @@ public class SyntaxChecker implements ISyntaxChecker {
 
     private String getPagePhrase(SyntaxContainer syntax, String pageNumber) {
         String result = "";
-        Integer page = new Integer(0);
-        RefObject<Integer> tempRefObject = new RefObject<Integer>(page);
-        boolean tempVar = !IntegerCompat.TryParse(pageNumber, tempRefObject);
-        page = tempRefObject.argvalue;
-        if (tempVar) {
+        Integer page = IntegerCompat.tryParse(pageNumber);
+        if (page == null) {
             page = 1;
         }
         String pagingTypeStr = Config.<String> GetValue(ConfigValues.DBPagingType);

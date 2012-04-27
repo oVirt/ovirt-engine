@@ -158,11 +158,8 @@ public abstract class SearchableListModel extends ListModel
             match = Regex.Match(pageString, pageNumberRegex);
             if (match.Success())
             {
-                int retValue = 0;
-                RefObject<Integer> tempRef_retValue = new RefObject<Integer>(retValue);
-                boolean tempVar = IntegerCompat.TryParse(match.getValue(), tempRef_retValue);
-                retValue = tempRef_retValue.argvalue;
-                if (tempVar)
+                Integer retValue = IntegerCompat.tryParse(match.getValue());
+                if (retValue != null)
                 {
                     return retValue;
                 }

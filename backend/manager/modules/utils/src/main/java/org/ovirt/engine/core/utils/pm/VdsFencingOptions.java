@@ -11,11 +11,11 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.ValueObjectMap;
 import org.ovirt.engine.core.compat.DoubleCompat;
 import org.ovirt.engine.core.compat.IntegerCompat;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.LongCompat;
 import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class VdsFencingOptions implements Serializable {
 
@@ -506,12 +506,9 @@ public class VdsFencingOptions implements Serializable {
                         result = Boolean.parseBoolean(fencingAgentInstanceOptions.get(key));
                     }
                     else if (type.equalsIgnoreCase(INT)) {
-                        int intVal = 0;
-                        RefObject<Integer> tempRefObject = new RefObject<Integer>(intVal);
-                        boolean tempVar = IntegerCompat.TryParse(fencingAgentInstanceOptions
-                                .get(key), tempRefObject);
-                        intVal = tempRefObject.argvalue;
-                        if (tempVar) {
+                        Integer intVal = IntegerCompat.tryParse(fencingAgentInstanceOptions
+                                .get(key));
+                        if (intVal != null) {
                             result = intVal;
                         }
                     }

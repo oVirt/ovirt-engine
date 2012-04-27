@@ -21,7 +21,6 @@ import org.ovirt.engine.core.compat.Match;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.NotifyCollectionChangedEventArgs;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
-import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.Regex;
 import org.ovirt.engine.core.compat.RegexOptions;
 import org.ovirt.engine.core.compat.StringFormat;
@@ -244,11 +243,8 @@ public abstract class SearchableListModel extends ListModel implements GridContr
             match = Regex.Match(pageString, pageNumberRegex);
             if (match.Success())
             {
-                int retValue = 0;
-                RefObject<Integer> tempRef_retValue = new RefObject<Integer>(retValue);
-                boolean tempVar = IntegerCompat.TryParse(match.getValue(), tempRef_retValue);
-                retValue = tempRef_retValue.argvalue;
-                if (tempVar)
+                final Integer retValue = IntegerCompat.tryParse(match.getValue());
+                if (retValue != null)
                 {
                     return retValue;
                 }

@@ -14,11 +14,11 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.utils.ListUtils;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IntegerCompat;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
-import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
@@ -775,14 +775,7 @@ public class ConfigureLocalStorageModel extends Model {
                 temp = "0"; //$NON-NLS-1$
             }
 
-            int tempInt = 0;
-
-            RefObject<Integer> tempRef_tempInt = new RefObject<Integer>(tempInt);
-            boolean tempVar = IntegerCompat.TryParse(temp, tempRef_tempInt);
-            tempInt = tempRef_tempInt.argvalue;
-            if (tempVar) {
-                notAvailableNumberList.add(tempInt);
-            }
+            ListUtils.nullSafeElemAdd(notAvailableNumberList, IntegerCompat.tryParse(temp));
         }
 
         Collections.sort(notAvailableNumberList);
