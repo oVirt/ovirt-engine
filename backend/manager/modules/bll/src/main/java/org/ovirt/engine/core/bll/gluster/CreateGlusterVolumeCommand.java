@@ -95,11 +95,19 @@ public class CreateGlusterVolumeCommand extends GlusterCommandBase<CreateGluster
 
         // GLUSTER access protocol is enabled by default
         volume.addAccessProtocol(AccessProtocol.GLUSTER);
+        if (!volume.getAccessProtocols().contains(AccessProtocol.NFS)) {
+            volume.disableNFS();
+        }
 
         VDSReturnValue returnValue = runVdsCommand(
                 VDSCommandType.CreateGlusterVolume,
                 new CreateGlusterVolumeVDSParameters(getUpServer().getId(), volume));
         setSucceeded(returnValue.getSucceeded());
+
+        if(!getSucceeded()) {
+            getReturnValue().getExecuteFailedMessages().add(returnValue.getVdsError().getMessage());
+            return;
+        }
 
         // Volume created successfully. Insert it to database.
         GlusterVolumeEntity createdVolume = (GlusterVolumeEntity) returnValue.getReturnValue();
@@ -107,6 +115,8 @@ public class CreateGlusterVolumeCommand extends GlusterCommandBase<CreateGluster
 
         // set all options of the volume
         setVolumeOptions(createdVolume);
+
+        getReturnValue().setActionReturnValue(createdVolume.getId());
     }
 
     /**

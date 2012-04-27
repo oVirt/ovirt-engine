@@ -3,20 +3,17 @@ package org.ovirt.engine.core.vdsbroker.gluster;
 import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
-import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeOptionEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
-import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
 import org.ovirt.engine.core.common.vdscommands.gluster.CreateGlusterVolumeVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.vdsbroker.irsbroker.OneUuidReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsBrokerCommand;
 
 /**
  * VDS command to create a gluster volume
  */
-public class CreateGlusterVolumeVDSCommand<P extends CreateGlusterVolumeVDSParameters> extends VdsBrokerCommand<P> {
-    private StatusForXmlRpc status;
+public class CreateGlusterVolumeVDSCommand<P extends CreateGlusterVolumeVDSParameters> extends AbstractGlusterBrokerCommand<P> {
+    private OneUuidReturnForXmlRpc uuidReturn;
 
     public CreateGlusterVolumeVDSCommand(P parameters) {
         super(parameters);
@@ -24,39 +21,27 @@ public class CreateGlusterVolumeVDSCommand<P extends CreateGlusterVolumeVDSParam
 
     @Override
     protected StatusForXmlRpc getReturnStatus() {
-        return status;
+        return uuidReturn.mStatus;
     }
 
     @Override
     protected void ExecuteVdsBrokerCommand() {
         GlusterVolumeEntity volume = getParameters().getVolume();
 
-        OneUuidReturnForXmlRpc uuidReturn =
-                getBroker().glusterVolumeCreate(volume.getName(),
-                        volume.getBrickDirectories().toArray(new String[0]),
-                        volume.getReplicaCount(),
-                        volume.getStripeCount(),
-                        getTransportTypeArr(volume));
-        status = uuidReturn.mStatus;
-        volume.setId(Guid.createGuidFromString(uuidReturn.mUuid));
+        uuidReturn = getBroker().glusterVolumeCreate(volume.getName(),
+                volume.getBrickDirectories().toArray(new String[0]),
+                volume.getReplicaCount(),
+                volume.getStripeCount(),
+                getTransportTypeArr(volume));
 
-        // Proceed only if there were no errors in the VDS command
+        // Handle errors if any
         ProceedProxyReturnValue();
 
-        // volume creation succeeded. Proceed with other work.
-
-        if(!volume.isNfsEnabled()) {
-            status = getBroker().glusterVolumeSet(volume.getName(), GlusterConstants.OPTION_NFS_DISABLE, "on").mStatus;
-            ProceedProxyReturnValue();
+        if(getVDSReturnValue().getSucceeded()) {
+            // set the volume updated with id as the return value
+            volume.setId(Guid.createGuidFromString(uuidReturn.mUuid));
+            setReturnValue(volume);
         }
-
-        for(GlusterVolumeOptionEntity option : volume.getOptions()) {
-            status = getBroker().glusterVolumeSet(volume.getName(), option.getKey(), option.getValue()).mStatus;
-            ProceedProxyReturnValue();
-        }
-
-        // set the volume updated with id as the return value
-        setReturnValue(volume);
     }
 
     private String[] getTransportTypeArr(GlusterVolumeEntity volume) {
