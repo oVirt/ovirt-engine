@@ -267,6 +267,9 @@ public enum VdcQueryType implements Serializable {
     // Disks
     GetNextAvailableDiskAliasNameByVMId,
 
+    // Gluster
+    GetGlusterVolumeById,
+
     // Default type instead of having to null check
     Unknown(VdcQueryAuthType.User);
 
