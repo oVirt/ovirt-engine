@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.common.queries.*;
-import org.ovirt.engine.core.dal.dbbroker.*;
+import org.ovirt.engine.core.common.queries.GetDedicatedVmParameters;
 
 public class GetDedicatedVmQuery<P extends GetDedicatedVmParameters> extends QueriesCommandBase<P> {
     public GetDedicatedVmQuery(P parameters) {
@@ -11,6 +10,6 @@ public class GetDedicatedVmQuery<P extends GetDedicatedVmParameters> extends Que
     @Override
     protected void executeQueryCommand() {
         getQueryReturnValue().setReturnValue(
-                DbFacade.getInstance().getVmDAO().getAllForDedicatedPowerClientByVds(getParameters().getId()));
+                getDbFacade().getVmDAO().getAllForDedicatedPowerClientByVds(getParameters().getId()));
     }
 }
