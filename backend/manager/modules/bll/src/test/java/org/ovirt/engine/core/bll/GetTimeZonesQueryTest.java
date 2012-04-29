@@ -20,4 +20,5 @@ public class GetTimeZonesQueryTest extends AbstractSysprepQueryTest<VdcQueryPara
         assertEquals("Wrong number of time zones", SysprepHandler.timeZoneIndex.size(), result.size());
 
     }
+
 }
