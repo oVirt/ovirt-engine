@@ -299,10 +299,12 @@ FROM       vm_interface_statistics;
 
 CREATE OR REPLACE VIEW dwh_vm_disk_configuration_history_view
 AS
-SELECT i.image_guid AS vm_disk_id,
+SELECT d.disk_id AS vm_disk_id,
+       d.disk_alias as vm_disk_name,
+       d.disk_description as vm_disk_description,
+       i.image_guid AS image_id,
        image_storage_domain_map.storage_domain_id as storage_domain_id,
        cast(d.internal_drive_mapping as smallint) as vm_internal_drive_mapping,
-       d.disk_description as vm_disk_description,
        cast(i.size / 1048576 as int) as vm_disk_size_mb,
        cast(i.volume_type as smallint) AS vm_disk_type,
        cast(i.volume_format as smallint) AS vm_disk_format,
@@ -311,19 +313,18 @@ SELECT i.image_guid AS vm_disk_id,
            WHEN d.disk_interface = 'SCSI' THEN cast(1 as smallint)
            WHEN d.disk_interface = 'VirtIO' THEN cast(2 as smallint)
        END AS vm_disk_interface,
+       d.shareable as is_shared,
        i._create_date AS create_date,
        i._update_date AS update_date
 FROM   images as i
            INNER JOIN
                base_disks as d ON i.image_group_id = d.disk_id
            INNER JOIN
-               vm_device as vd ON d.disk_id = vd.device_id
-		              INNER JOIN
-		                  vm_static ON vm_static.vm_guid = vd.vm_id
-           INNER JOIN
                image_storage_domain_map ON image_storage_domain_map.image_id = i.image_guid
+           LEFT OUTER JOIN vm_device ON vm_device.device_id = i.image_group_id
+                               LEFT OUTER JOIN vm_static ON vm_static.vm_guid = vm_device.vm_id
 WHERE     i.active = true AND
-                 vm_static.entity_type = 'VM' AND
+          (vm_static.entity_type = 'VM' OR vm_static.entity_type IS NULL) AND
           (i._create_date >
                           (SELECT     var_datetime
                            FROM         dwh_history_timekeeping
@@ -344,8 +345,8 @@ WHERE images.active = true;
 
 CREATE OR REPLACE VIEW dwh_vm_disks_history_view
 AS
-SELECT
-	images.image_guid as vm_disk_id,
+SELECT  d.disk_id as vm_disk_id,
+	images.image_guid as image_id,
 	cast(images.imageStatus as smallint) as vm_disk_status,
 	cast(disk_image_dynamic.actual_size / 1048576 as int) as vm_disk_actual_size_mb,
 	disk_image_dynamic.read_rate as read_rate_bytes_per_second,
@@ -354,14 +355,14 @@ SELECT
 	disk_image_dynamic.write_latency_seconds as write_latency_seconds,
 	disk_image_dynamic.flush_latency_seconds as flush_latency_seconds
 FROM    images
-			INNER JOIN
-				disk_image_dynamic ON images.image_guid = disk_image_dynamic.image_id
-           INNER JOIN
-               vm_device as vd ON images.image_group_id = vd.device_id
-                              INNER JOIN
-                                  vm_static ON vm_static.vm_guid = vd.vm_id
-WHERE images.active = true
-             AND  vm_static.entity_type = 'VM';
+            INNER JOIN
+                 disk_image_dynamic ON images.image_guid = disk_image_dynamic.image_id
+            INNER JOIN
+                 base_disks as d ON images.image_group_id = d.disk_id
+            LEFT OUTER JOIN vm_device ON vm_device.device_id = images.image_group_id
+                                LEFT OUTER JOIN vm_static ON vm_static.vm_guid = vm_device.vm_id
+WHERE images.active = true AND
+      (vm_static.entity_type = 'VM' OR vm_static.entity_type IS NULL);
 
 CREATE OR REPLACE VIEW dwh_remove_tags_relations_history_view AS
 SELECT    tag_id as entity_id,
