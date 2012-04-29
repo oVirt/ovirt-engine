@@ -77,7 +77,6 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
     protected boolean canDoAction() {
         boolean retValue = false;
         String event;
-        String runningPmOp;
         if (getVds() == null) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_HOST_NOT_EXIST);
             return false;
@@ -85,11 +84,9 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
         // get the event to look for , if we requested to start Host then we should look when we stopped it and vice versa.
         if (getParameters().getAction() == FenceActionType.Start) {
             event = AuditLogType.USER_VDS_STOP.name();
-            runningPmOp=FenceActionType.Stop.name();
         }
         else {
             event = AuditLogType.USER_VDS_START.name();
-            runningPmOp=FenceActionType.Start.name();
         }
         if (getVds().getpm_enabled()
                 && IsPowerManagementLegal(getVds().getStaticData(), getVdsGroup().getcompatibility_version().toString())) {
@@ -119,7 +116,6 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
                     }
                 } else {
                     addCanDoActionMessage(VdcBllMessages.VDS_FENCE_DISABLED_AT_QUIET_TIME);
-                    addCanDoActionMessage(String.format("$operation %1$s", runningPmOp));
                     addCanDoActionMessage(String.format("$seconds %1$s", secondsLeftToNextPmOp));
                 }
             } else {
