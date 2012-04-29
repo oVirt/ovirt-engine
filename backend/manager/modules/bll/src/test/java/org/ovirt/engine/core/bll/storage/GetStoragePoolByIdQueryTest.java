@@ -4,8 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.util.UUID;
-
 import org.junit.Test;
 import org.ovirt.engine.core.bll.AbstractUserQueryTest;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
@@ -22,7 +20,7 @@ public class GetStoragePoolByIdQueryTest extends AbstractUserQueryTest<StoragePo
 
     @Test
     public void testExecuteQuery() {
-        Guid storagePoolID = new Guid(UUID.randomUUID());
+        Guid storagePoolID = Guid.NewGuid();
         storage_pool expectedResult = mock(storage_pool.class);
 
         StoragePoolQueryParametersBase paramsMock = getQueryParameters();
