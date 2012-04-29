@@ -10,7 +10,6 @@ import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.queries.GetAllVmSnapshotsByDriveParameters;
 import org.ovirt.engine.core.common.queries.GetAllVmSnapshotsByDriveQueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DiskImageDAO;
 import org.ovirt.engine.core.dao.SnapshotDao;
 
@@ -54,11 +53,11 @@ public class GetAllVmSnapshotsByDriveQuery<P extends GetAllVmSnapshotsByDrivePar
     }
 
     protected SnapshotDao getSnapshotDao() {
-        return DbFacade.getInstance().getSnapshotDao();
+        return getDbFacade().getSnapshotDao();
     }
 
     protected DiskImageDAO getDiskImageDao() {
-        return DbFacade.getInstance().getDiskImageDAO();
+        return getDbFacade().getDiskImageDAO();
     }
 
     /**
