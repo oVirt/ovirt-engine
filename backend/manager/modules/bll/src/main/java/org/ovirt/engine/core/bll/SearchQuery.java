@@ -37,7 +37,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.TimeSpan;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.SearchDAO;
 import org.ovirt.engine.core.searchbackend.ISyntaxChecker;
 import org.ovirt.engine.core.searchbackend.SearchObjects;
@@ -141,7 +140,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
             returnValue = new ArrayList<VM>();
             getQueryReturnValue().setExceptionString(getSearchReturnValue().getExceptionString());
         } else {
-            returnValue = DbFacade.getInstance().getVmDAO().getAllUsingQuery(data.getQuery());
+            returnValue = getDbFacade().getVmDAO().getAllUsingQuery(data.getQuery());
             for (VM vm : returnValue) {
                 VmHandler.UpdateVmGuestAgentVersion(vm);
             }
@@ -150,7 +149,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
     }
 
     private List<VDS> searchVDSsByDb() {
-        return genericSearch(DbFacade.getInstance().getVdsDAO(), true, new Filter<VDS>() {
+        return genericSearch(getDbFacade().getVdsDAO(), true, new Filter<VDS>() {
             @Override
             public List<VDS> filter(List<VDS> data) {
                 for (VDS vds : data) {
@@ -183,7 +182,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
     }
 
     private List<DbUser> searchDbUsers() {
-        return genericSearch(DbFacade.getInstance().getDbUserDAO(), true, null);
+        return genericSearch(getDbFacade().getDbUserDAO(), true, null);
     }
 
     private ArrayList<ad_groups> searchAdGroups() {
@@ -208,7 +207,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
     }
 
     private List<VmTemplate> searchVMTemplates() {
-        return genericSearch(DbFacade.getInstance().getVmTemplateDAO(), true, new Filter<VmTemplate>() {
+        return genericSearch(getDbFacade().getVmTemplateDAO(), true, new Filter<VmTemplate>() {
             @Override
             public List<VmTemplate> filter(final List<VmTemplate> data) {
                 for (IVdcQueryable vmt_helper : data) {
@@ -232,35 +231,35 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
     }
 
     private List<AuditLog> searchAuditLogEvents() {
-        return genericSearch(DbFacade.getInstance().getAuditLogDAO(), false, null);
+        return genericSearch(getDbFacade().getAuditLogDAO(), false, null);
     }
 
     private List<vm_pools> searchVmPools() {
-        return genericSearch(DbFacade.getInstance().getVmPoolDAO(), true, null);
+        return genericSearch(getDbFacade().getVmPoolDAO(), true, null);
     }
 
     private List<VDSGroup> searchClusters() {
-        return genericSearch(DbFacade.getInstance().getVdsGroupDAO(), true, null);
+        return genericSearch(getDbFacade().getVdsGroupDAO(), true, null);
     }
 
     private List<storage_pool> searchStoragePool() {
-        return genericSearch(DbFacade.getInstance().getStoragePoolDAO(), true, null);
+        return genericSearch(getDbFacade().getStoragePoolDAO(), true, null);
     }
 
     private List<storage_domains> searchStorageDomain() {
-        return genericSearch(DbFacade.getInstance().getStorageDomainDAO(), true, null);
+        return genericSearch(getDbFacade().getStorageDomainDAO(), true, null);
     }
 
     private List<Quota> searchQuota() {
-        return genericSearch(DbFacade.getInstance().getQuotaDAO(), true, null);
+        return genericSearch(getDbFacade().getQuotaDAO(), true, null);
     }
 
     private List<DiskImage> searchDiskImage() {
-        return genericSearch(DbFacade.getInstance().getDiskImageDAO(), true, null);
+        return genericSearch(getDbFacade().getDiskImageDAO(), true, null);
     }
 
     private List<GlusterVolumeEntity> searchGlusterVolumes() {
-        return genericSearch(DbFacade.getInstance().getGlusterVolumeDao(), true, null);
+        return genericSearch(getDbFacade().getGlusterVolumeDao(), true, null);
     }
 
     private QueryData2 InitQueryData(boolean useCache) {
@@ -292,7 +291,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
             if (!isExistsValue || IsFromYesterday) {
                 log.debugFormat("ResourceManager::searchBusinessObjects(''{0}'') - entered", searchText);
                 data = new QueryData2();
-                data.setPreQueryCommand(DbFacade.getInstance().getDbEngineDialect().getPreSearchQueryCommand());
+                data.setPreQueryCommand(getDbFacade().getDbEngineDialect().getPreSearchQueryCommand());
                 ISyntaxChecker curSyntaxChecker;
                 String[] splitted = searchText.split("[:@ ]");
                 if ((StringHelper.EqOp(splitted[0].toUpperCase(), SearchObjects.AD_USER_OBJ_NAME))
