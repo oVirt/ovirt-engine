@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.common.queries.GetVmsByImageGuidParameters;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 /**
  * A query to retrieve all the VMs connected to a given image.
@@ -14,7 +13,7 @@ public class GetVmsByImageGuidQuery<P extends GetVmsByImageGuidParameters> exten
 
     @Override
     protected void executeQueryCommand() {
-        getQueryReturnValue().setReturnValue(DbFacade.getInstance()
+        getQueryReturnValue().setReturnValue(getDbFacade()
                 .getVmDAO()
                 .getForImage(getParameters().getImageGuid()));
     }
