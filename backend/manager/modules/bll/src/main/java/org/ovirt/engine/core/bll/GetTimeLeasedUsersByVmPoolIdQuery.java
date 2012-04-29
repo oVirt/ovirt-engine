@@ -1,8 +1,6 @@
 package org.ovirt.engine.core.bll;
 
-
 import org.ovirt.engine.core.common.queries.GetTimeLeasedUsersByVmPoolIdParameters;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class GetTimeLeasedUsersByVmPoolIdQuery<P extends GetTimeLeasedUsersByVmPoolIdParameters>
         extends QueriesCommandBase<P> {
@@ -13,6 +11,6 @@ public class GetTimeLeasedUsersByVmPoolIdQuery<P extends GetTimeLeasedUsersByVmP
     @Override
     protected void executeQueryCommand() {
         getQueryReturnValue().setReturnValue(
-                DbFacade.getInstance().getDbUserDAO().getAllTimeLeasedUsersForVm(getParameters().getId()));
+                getDbFacade().getDbUserDAO().getAllTimeLeasedUsersForVm(getParameters().getId()));
     }
 }
