@@ -149,7 +149,7 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
         getParameters().setOldLastModifiedValue(getDiskImage().getlastModified());
         getDiskImage().setlastModified(new Date());
         getDiskImage().setactive(false);
-        DbFacade.getInstance().getImageDao().update(getDiskImage().getImage());
+        getImageDao().update(getDiskImage().getImage());
     }
 
     @Override
@@ -162,7 +162,7 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
             // Empty Guid, means new disk rather than snapshot, so no need to add a map to the db for new disk.
             if (!getDestinationDiskImage().getParentId().equals(Guid.Empty)) {
                 if (!getDestinationDiskImage().getParentId().equals(getDestinationDiskImage().getit_guid())) {
-                    DiskImage previousSnapshot = DbFacade.getInstance().getDiskImageDAO().getSnapshotById(
+                    DiskImage previousSnapshot = getDiskImageDao().getSnapshotById(
                             getDestinationDiskImage().getParentId());
                     previousSnapshot.setactive(true);
 
@@ -171,7 +171,7 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
                         previousSnapshot.setlastModified(getParameters().getOldLastModifiedValue());
                     }
 
-                    DbFacade.getInstance().getImageDao().update(previousSnapshot.getImage());
+                    getImageDao().update(previousSnapshot.getImage());
                 }
             }
         }

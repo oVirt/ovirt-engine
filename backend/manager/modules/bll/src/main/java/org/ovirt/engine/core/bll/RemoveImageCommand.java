@@ -98,7 +98,7 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
                                 RemoveChildren(currentGuid);
 
                                 // DiskImage image = IrsBroker.getImageInfo(currentGuid);
-                                DiskImage image = DbFacade.getInstance().getDiskImageDAO().getSnapshotById(currentGuid);
+                                DiskImage image = getDiskImageDao().getSnapshotById(currentGuid);
                                 if (image != null) {
                                     RemoveSnapshot(image);
                                     currentGuid = image.getParentId();

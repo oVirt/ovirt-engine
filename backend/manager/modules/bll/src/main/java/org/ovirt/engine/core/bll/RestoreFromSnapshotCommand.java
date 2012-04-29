@@ -17,7 +17,6 @@ import org.ovirt.engine.core.common.vdscommands.DestroyImageVDSCommandParameters
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 /**
  * This command responcible to make snapshot of some Vm mapped to some drive be
@@ -41,7 +40,7 @@ public class RestoreFromSnapshotCommand<T extends RestoreFromSnapshotParameters>
         if (RemoveImages()) {
             if (getParameters().getSnapshot().getType() != SnapshotType.REGULAR) {
                 getImage().setactive(true);
-                DbFacade.getInstance().getImageDao().update(getImage().getImage());
+                getImageDao().update(getImage().getImage());
             }
 
             setSucceeded(true);
@@ -58,7 +57,7 @@ public class RestoreFromSnapshotCommand<T extends RestoreFromSnapshotParameters>
         case PREVIEW:
         case STATELESS:
             if (imageToRemoveId != null) {
-                RemoveSnapshot(DbFacade.getInstance().getDiskImageDAO().get(imageToRemoveId));
+                RemoveSnapshot(getDiskImageDao().get(imageToRemoveId));
             }
 
             break;
@@ -88,7 +87,7 @@ public class RestoreFromSnapshotCommand<T extends RestoreFromSnapshotParameters>
     }
 
     private void RemoveOtherImageAndParents(Guid imageId, Guid lastParent) {
-        DiskImage image = DbFacade.getInstance().getDiskImageDAO().getSnapshotById(imageId);
+        DiskImage image = getDiskImageDao().getSnapshotById(imageId);
         // store other mapped image's parent Id
         Guid currentParent = image.getParentId();
         // Remove other mapped image from Irs and db
@@ -97,7 +96,7 @@ public class RestoreFromSnapshotCommand<T extends RestoreFromSnapshotParameters>
          */
         RemoveSnapshot(image);
         while (!lastParent.equals(currentParent)) {
-            image = DbFacade.getInstance().getDiskImageDAO().getSnapshotById(currentParent);
+            image = getDiskImageDao().getSnapshotById(currentParent);
             // store current image's parent Id
             currentParent = image.getParentId();
             /**

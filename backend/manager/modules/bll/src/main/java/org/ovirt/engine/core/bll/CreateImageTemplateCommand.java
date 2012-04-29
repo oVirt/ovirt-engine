@@ -81,7 +81,7 @@ public class CreateImageTemplateCommand<T extends CreateImageTemplateParameters>
         newImage.setactive(true);
         saveImage(newImage);
         newImage.setDiskAlias(ImagesHandler.getSuggestedDiskAlias(newImage, getVmTemplateName()));
-        DbFacade.getInstance().getBaseDiskDao().save(newImage);
+        getBaseDiskDao().save(newImage);
 
         DiskImageDynamic diskDynamic = new DiskImageDynamic();
         diskDynamic.setId(newImage.getImageId());
@@ -102,7 +102,7 @@ public class CreateImageTemplateCommand<T extends CreateImageTemplateParameters>
      *            The disk to fill the volume details in.
      */
     private void fillVolumeInformation(DiskImage disk) {
-        DiskImage ancestor = DbFacade.getInstance().getDiskImageDAO().getAncestor(getDiskImage().getImageId());
+        DiskImage ancestor = getDiskImageDao().getAncestor(getDiskImage().getImageId());
         if (ancestor == null) {
             log.warnFormat("Can't find ancestor of Disk with ID {0}, using original disk for volume info.",
                     getDiskImage().getImageId());
@@ -130,11 +130,11 @@ public class CreateImageTemplateCommand<T extends CreateImageTemplateParameters>
         setVmTemplate(DbFacade.getInstance().getVmTemplateDAO()
                 .get(getVmTemplateId()));
         if (getDestinationDiskImage() != null) {
-            DbFacade.getInstance().getBaseDiskDao().remove(getDestinationDiskImage().getimage_group_id());
+            getBaseDiskDao().remove(getDestinationDiskImage().getimage_group_id());
             if (DbFacade.getInstance().getDiskImageDynamicDAO().get(getDestinationDiskImage().getImageId()) != null) {
                 DbFacade.getInstance().getDiskImageDynamicDAO().remove(getDestinationDiskImage().getImageId());
             }
-            DbFacade.getInstance().getImageDao().remove(getDestinationImageId());
+            getImageDao().remove(getDestinationImageId());
         }
         setSucceeded(true);
     }

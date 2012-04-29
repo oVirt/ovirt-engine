@@ -13,7 +13,6 @@ import org.ovirt.engine.core.common.vdscommands.MergeSnapshotsVDSCommandParamete
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 @InternalCommandAttribute
 public class RemoveSnapshotSingleDiskCommand<T extends ImagesContainterParametersBase> extends BaseImagesCommand<T> {
@@ -71,14 +70,14 @@ public class RemoveSnapshotSingleDiskCommand<T extends ImagesContainterParameter
         if (getDestinationDiskImage() != null) {
             DiskImage curr = getDestinationDiskImage();
             while (!curr.getParentId().equals(getDiskImage().getParentId())) {
-                curr = DbFacade.getInstance().getDiskImageDAO().getSnapshotById(curr.getParentId());
-                DbFacade.getInstance().getImageDao().remove(curr.getImageId());
+                curr = getDiskImageDao().getSnapshotById(curr.getParentId());
+                getImageDao().remove(curr.getImageId());
             }
             getDestinationDiskImage().setvolume_format(curr.getvolume_format());
             getDestinationDiskImage().setvolume_type(curr.getvolume_type());
             getDestinationDiskImage().setParentId(getDiskImage().getParentId());
-            DbFacade.getInstance().getBaseDiskDao().update(curr);
-            DbFacade.getInstance().getImageDao().update(getDestinationDiskImage().getImage());
+            getBaseDiskDao().update(curr);
+            getImageDao().update(getDestinationDiskImage().getImage());
         }
 
         setSucceeded(true);

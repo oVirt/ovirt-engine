@@ -4,7 +4,6 @@ import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 /**
  * This command responsible to creating new snapshot from non leaf snapshot. Its
@@ -52,9 +51,9 @@ public class TryBackToSnapshotCommand<T extends ImagesContainterParametersBase> 
             return;
         }
 
-        DiskImage oldImage = DbFacade.getInstance().getDiskImageDAO().getSnapshotById(oldImageId);
+        DiskImage oldImage = getDiskImageDao().getSnapshotById(oldImageId);
         oldImage.setactive(active);
-        DbFacade.getInstance().getImageDao().update(oldImage.getImage());
+        getImageDao().update(oldImage.getImage());
     }
 
     @Override
