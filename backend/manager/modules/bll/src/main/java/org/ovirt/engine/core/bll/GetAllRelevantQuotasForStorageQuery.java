@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.common.queries.GetAllRelevantQuotasForStorageParameters;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class GetAllRelevantQuotasForStorageQuery<P extends GetAllRelevantQuotasForStorageParameters> extends QueriesCommandBase<P> {
     public GetAllRelevantQuotasForStorageQuery(P parameters) {
@@ -10,7 +9,7 @@ public class GetAllRelevantQuotasForStorageQuery<P extends GetAllRelevantQuotasF
 
     @Override
     protected void executeQueryCommand() {
-        getQueryReturnValue().setReturnValue(DbFacade.getInstance()
+        getQueryReturnValue().setReturnValue(getDbFacade()
                 .getQuotaDAO()
                 .getAllRelevantQuotasForStorage(getParameters().getStorageId()));
     }
