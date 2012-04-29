@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.common.queries.*;
-import org.ovirt.engine.core.dal.dbbroker.*;
+import org.ovirt.engine.core.common.queries.GetImageByImageIdParameters;
 
 public class GetImageByImageIdQuery<P extends GetImageByImageIdParameters>
         extends QueriesCommandBase<P> {
@@ -11,8 +10,6 @@ public class GetImageByImageIdQuery<P extends GetImageByImageIdParameters>
 
     @Override
     protected void executeQueryCommand() {
-        getQueryReturnValue().setReturnValue(
-                DbFacade.getInstance().getDiskImageDAO()
-                        .get(getParameters().getImageId()));
+        getQueryReturnValue().setReturnValue(getDbFacade().getDiskImageDAO().get(getParameters().getImageId()));
     }
 }
