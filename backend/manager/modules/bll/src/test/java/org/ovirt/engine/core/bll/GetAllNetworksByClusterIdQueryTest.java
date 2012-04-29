@@ -6,7 +6,6 @@ import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.network;
@@ -20,7 +19,7 @@ public class GetAllNetworksByClusterIdQueryTest extends AbstractUserQueryTest<Vd
     /** Tests that {@link GetAllNetworksByClusterIdQuery#executeQueryCommand()} delegated to the correct DAOs, using mock objects */
     @Test
     public void testExecuteQueryCommand() {
-        Guid clusterID = new Guid(UUID.randomUUID());
+        Guid clusterID = Guid.NewGuid();
 
         network networkMock = mock(network.class);
 
