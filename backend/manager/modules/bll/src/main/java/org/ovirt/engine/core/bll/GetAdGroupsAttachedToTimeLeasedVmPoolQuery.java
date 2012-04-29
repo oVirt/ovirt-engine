@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.common.queries.*;
-import org.ovirt.engine.core.dal.dbbroker.*;
+import org.ovirt.engine.core.common.queries.GetAdGroupsAttachedToTimeLeasedVmPoolParameters;
 
 public class GetAdGroupsAttachedToTimeLeasedVmPoolQuery<P extends GetAdGroupsAttachedToTimeLeasedVmPoolParameters>
         extends QueriesCommandBase<P> {
@@ -12,6 +11,6 @@ public class GetAdGroupsAttachedToTimeLeasedVmPoolQuery<P extends GetAdGroupsAtt
     @Override
     protected void executeQueryCommand() {
         getQueryReturnValue().setReturnValue(
-                DbFacade.getInstance().getAdGroupDAO().getAllTimeLeasedForPool(getParameters().getId()));
+                getDbFacade().getAdGroupDAO().getAllTimeLeasedForPool(getParameters().getId()));
     }
 }
