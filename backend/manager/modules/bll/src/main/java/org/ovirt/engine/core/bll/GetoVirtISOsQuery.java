@@ -19,14 +19,11 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.VdsIdParametersBase;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 /**
- * The {@code GetoVirtISOsQuery} responsible to detect all available oVirt images installed on engine server. It detects
+ * The {@code GetoVirtISOsQuery} is responsible to detect all available oVirt images installed on engine server. It detects
  * the available ISOs files by there associated version files, read the iSOs' version from within the version files,
  * verifies image files exist, and returns list of ISOs sorted by their version.
  */
@@ -36,7 +33,6 @@ public class GetoVirtISOsQuery<P extends VdsIdParametersBase> extends QueriesCom
     private static Pattern isoPattern = Pattern.compile(OVIRT_ISO_PATTERN);
     private static final String OVIRT_ISO_VERSION_PATTERN = "version-.*.txt";
     private static Pattern isoVersionPattern = Pattern.compile(OVIRT_ISO_VERSION_PATTERN);
-    private static Log log = LogFactory.getLog(GetoVirtISOsQuery.class);
 
     public GetoVirtISOsQuery(P parameters) {
         super(parameters);
@@ -137,7 +133,7 @@ public class GetoVirtISOsQuery<P extends VdsIdParametersBase> extends QueriesCom
         return isoVersion;
     }
 
-    private String getIsoFileNameByVersion(List<String> listOfIsoFiles, String majorVersionStr, String releaseStr) {
+    private static String getIsoFileNameByVersion(List<String> listOfIsoFiles, String majorVersionStr, String releaseStr) {
         Pattern pattern = Pattern.compile(majorVersionStr + ".*" + releaseStr);
         for (String fileName : listOfIsoFiles) {
             if (pattern.matcher(fileName).find()) {
@@ -147,7 +143,7 @@ public class GetoVirtISOsQuery<P extends VdsIdParametersBase> extends QueriesCom
         return null;
     }
 
-    private List<String> getListOfIsoFiles(File directory) {
+    private static List<String> getListOfIsoFiles(File directory) {
         List<String> isoFileList = new ArrayList<String>();
         File[] filterOvirtFiles = filterOvirtFiles(directory, isoPattern);
         for (File file : filterOvirtFiles) {
@@ -174,14 +170,15 @@ public class GetoVirtISOsQuery<P extends VdsIdParametersBase> extends QueriesCom
             if (input != null) {
                 try {
                     input.close();
-                } catch (IOException e) {
+                } catch (IOException ignored) {
+                    // Ignore exception on closing a file
                 }
             }
         }
         return isoVersionText;
     }
 
-    private File[] filterOvirtFiles(File directory, final Pattern pattern) {
+    private static File[] filterOvirtFiles(File directory, final Pattern pattern) {
         return directory.listFiles(new FilenameFilter() {
             @Override
             public boolean accept(File dir, String name) {
@@ -190,8 +187,8 @@ public class GetoVirtISOsQuery<P extends VdsIdParametersBase> extends QueriesCom
         });
     }
 
-    private boolean isIsoVersionSupported(Version isoVersion){
-        Version supported = new Version(Config.<String>GetValue(ConfigValues.OvirtInitialSupportedIsoVersion));
+    private static boolean isIsoVersionSupported(Version isoVersion) {
+        Version supported = new Version(Config.<String> GetValue(ConfigValues.OvirtInitialSupportedIsoVersion));
         return isoVersion.compareTo(supported) >= 0;
     }
 
@@ -199,7 +196,7 @@ public class GetoVirtISOsQuery<P extends VdsIdParametersBase> extends QueriesCom
         VDS vds = null;
 
         if (vdsId != null) {
-            vds = DbFacade.getInstance().getVdsDAO().get(vdsId);
+            vds = getDbFacade().getVdsDAO().get(vdsId);
         }
         return vds;
     }
