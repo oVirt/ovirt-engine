@@ -48,6 +48,13 @@ public class VmDeviceCommonUtils {
             BootSequence bootSequence,
             boolean isOldCluster) {
         int bootOrder = 0;
+        // reset current boot order of all relevant devices before recomputing it.
+        for (VmDevice device : devices) {
+            if (isBootable(device)) {
+                // a boot order of 0 prevents it from being sent to VDSM
+                device.setBootOrder(0);
+            }
+        }
         switch (bootSequence) {
         case C:
             bootOrder = setDiskBootOrder(vmBase, devices, bootOrder, isOldCluster);
@@ -242,6 +249,11 @@ public class VmDeviceCommonUtils {
         String expr = getDeviceTypeSearchExpr(type, device);
         String whiteList = Config.GetValue(ConfigValues.ManagedDevicesWhiteList);
         return (whiteList.indexOf(expr) >= 0);
+    }
+
+    private static boolean isBootable(VmDevice device) {
+        return (VmDeviceType.DISK.getName().equals(device.getType()) || VmDeviceType.INTERFACE.getName()
+                .equals(device.getType()));
     }
 
     private static String getDeviceTypeSearchExpr(String type, String device) {

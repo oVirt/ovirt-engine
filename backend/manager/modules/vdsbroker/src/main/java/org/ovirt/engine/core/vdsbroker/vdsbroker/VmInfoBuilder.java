@@ -350,9 +350,12 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
             for (VmDevice vmDevice : managedDevices) {
                 for (XmlRpcStruct struct : devices) {
                     String deviceId = (String) struct.getItem(VdsProperties.DeviceId);
-                    if (vmDevice.getBootOrder() > 0
-                            && deviceId != null && deviceId.equals(vmDevice.getDeviceId().toString())) {
-                        struct.add(VdsProperties.BootOrder, String.valueOf(vmDevice.getBootOrder()));
+                    if (deviceId != null && deviceId.equals(vmDevice.getDeviceId().toString())) {
+                        if (vmDevice.getBootOrder() > 0) {
+                            struct.add(VdsProperties.BootOrder, String.valueOf(vmDevice.getBootOrder()));
+                        } else {
+                            struct.getKeys().remove(VdsProperties.BootOrder);
+                        }
                         break;
                     } else {
                         log.errorFormat("No value for device-Id for VM {0} : {1}", vm.getvm_name());
