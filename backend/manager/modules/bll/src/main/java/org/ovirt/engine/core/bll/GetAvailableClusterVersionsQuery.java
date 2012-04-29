@@ -1,6 +1,8 @@
 package org.ovirt.engine.core.bll;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.HashSet;
 
 import org.ovirt.engine.core.bll.storage.StorageHandlingCommandBase;
 import org.ovirt.engine.core.bll.utils.VersionSupport;
@@ -14,7 +16,6 @@ import org.ovirt.engine.core.common.queries.GetAvailableClusterVersionsParameter
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class GetAvailableClusterVersionsQuery<P extends GetAvailableClusterVersionsParameters>
         extends QueriesCommandBase<P> {
@@ -25,18 +26,19 @@ public class GetAvailableClusterVersionsQuery<P extends GetAvailableClusterVersi
     @Override
     protected void executeQueryCommand() {
         if (getParameters().getVdsGroupId() != null) {
-            java.util.ArrayList<Version> result = new java.util.ArrayList<Version>();
-            VDSGroup cluster = DbFacade.getInstance().getVdsGroupDAO().get(getParameters().getVdsGroupId());
+            ArrayList<Version> result = new ArrayList<Version>();
+            VDSGroup cluster = getDbFacade().getVdsGroupDAO().get(getParameters().getVdsGroupId());
             if (cluster != null) {
                 SearchParameters p = new SearchParameters(MessageFormat.format(
                         StorageHandlingCommandBase.UpVdssInCluster, cluster.getname()), SearchType.VDS);
                 p.setMaxCount(Integer.MAX_VALUE);
 
+                @SuppressWarnings("unchecked")
                 Iterable<IVdcQueryable> clusterUpVdss = (Iterable<IVdcQueryable>) Backend.getInstance()
                         .runInternalQuery(VdcQueryType.Search, p).getReturnValue();
 
                 for (Version supportedVer : Config
-                        .<java.util.HashSet<Version>> GetValue(ConfigValues.SupportedClusterLevels)) {
+                        .<HashSet<Version>> GetValue(ConfigValues.SupportedClusterLevels)) {
                     // if version lower than current skip because cannot
                     // decrease version
                     if (supportedVer.compareTo(cluster.getcompatibility_version()) < 0) {
@@ -44,7 +46,7 @@ public class GetAvailableClusterVersionsQuery<P extends GetAvailableClusterVersi
                     }
 
                     boolean versionOk = true;
-                    // check all vdss support this ver
+                    // check all vdss support this version
                     for (IVdcQueryable vds : clusterUpVdss) {
                         if (!VersionSupport.checkClusterVersionSupported(cluster.getcompatibility_version(),
                                 (VDS) vds)) {
@@ -60,8 +62,7 @@ public class GetAvailableClusterVersionsQuery<P extends GetAvailableClusterVersi
             getQueryReturnValue().setReturnValue(result);
         } else {
             getQueryReturnValue().setReturnValue(
-                    new java.util.ArrayList<Version>(Config
-                            .<java.util.HashSet<Version>> GetValue(ConfigValues.SupportedClusterLevels)));
+                    new ArrayList<Version>(Config.<HashSet<Version>> GetValue(ConfigValues.SupportedClusterLevels)));
         }
     }
 }
