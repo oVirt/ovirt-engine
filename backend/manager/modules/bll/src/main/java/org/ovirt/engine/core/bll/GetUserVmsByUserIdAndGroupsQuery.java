@@ -6,7 +6,6 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.ImagesComparerByName;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.queries.GetUserVmsByUserIdAndGroupsParameters;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class GetUserVmsByUserIdAndGroupsQuery<P extends GetUserVmsByUserIdAndGroupsParameters> extends GetDataByUserIDQueriesBase<P> {
     public GetUserVmsByUserIdAndGroupsQuery(P parameters) {
@@ -15,8 +14,7 @@ public class GetUserVmsByUserIdAndGroupsQuery<P extends GetUserVmsByUserIdAndGro
 
     @Override
     protected List<VM> getPrivilegedQueryReturnValue() {
-        List<VM> vmList =
-                DbFacade.getInstance().getVmDAO().getAllForUserWithGroupsAndUserRoles(getParameters().getUserId());
+        List<VM> vmList = getDbFacade().getVmDAO().getAllForUserWithGroupsAndUserRoles(getParameters().getUserId());
         for (VM vm : vmList) {
             VmHandler.UpdateVmGuestAgentVersion(vm);
             if (getParameters().getIncludeDiskData()) {
