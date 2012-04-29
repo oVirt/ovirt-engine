@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.vm_pools;
 import org.ovirt.engine.core.common.queries.GetAllVmPoolsAttachedToUserParameters;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class GetAllVmPoolsAttachedToUserQuery<P extends GetAllVmPoolsAttachedToUserParameters> extends GetDataByUserIDQueriesBase<P> {
     public GetAllVmPoolsAttachedToUserQuery(P parameters) {
@@ -13,8 +12,7 @@ public class GetAllVmPoolsAttachedToUserQuery<P extends GetAllVmPoolsAttachedToU
 
     @Override
     protected List<vm_pools> getPrivilegedQueryReturnValue() {
-        List<vm_pools> returnValue = DbFacade.getInstance().getVmPoolDAO()
-                .getAllForUser(getParameters().getUserId());
+        List<vm_pools> returnValue = getDbFacade().getVmPoolDAO().getAllForUser(getParameters().getUserId());
         return returnValue;
     }
 }
