@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.common.queries.GetEntitiesRelatedToQuotaIdParameters;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class GetPermissionsToConsumeQuotaByQuotaIdQuery<P extends GetEntitiesRelatedToQuotaIdParameters>
         extends QueriesCommandBase<P> {
@@ -11,7 +10,7 @@ public class GetPermissionsToConsumeQuotaByQuotaIdQuery<P extends GetEntitiesRel
 
     @Override
     protected void executeQueryCommand() {
-        getQueryReturnValue().setReturnValue(DbFacade.getInstance()
+        getQueryReturnValue().setReturnValue(getDbFacade()
                 .getPermissionDAO()
                 .getConsumedPermissionsForQuotaId(getParameters().getQuotaId()));
     }
