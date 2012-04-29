@@ -1,8 +1,7 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.compat.*;
-import org.ovirt.engine.core.dal.dbbroker.*;
-import org.ovirt.engine.core.common.queries.*;
+import org.ovirt.engine.core.common.queries.GetAllNetworkQueryParamenters;
+import org.ovirt.engine.core.compat.Guid;
 
 public class GetAllNetworksQuery<P extends GetAllNetworkQueryParamenters> extends QueriesCommandBase<P> {
     public GetAllNetworksQuery(P parameters) {
@@ -13,11 +12,10 @@ public class GetAllNetworksQuery<P extends GetAllNetworkQueryParamenters> extend
     protected void executeQueryCommand() {
         if (getParameters().getStoragePoolId() == null
                 || getParameters().getStoragePoolId().equals(Guid.Empty)) {
-            getQueryReturnValue().setReturnValue(DbFacade.getInstance().getNetworkDAO().getAll());
+            getQueryReturnValue().setReturnValue(getDbFacade().getNetworkDAO().getAll());
         } else {
             getQueryReturnValue().setReturnValue(
-                    DbFacade.getInstance().getNetworkDAO().getAllForDataCenter(
-                            getParameters().getStoragePoolId()));
+                    getDbFacade().getNetworkDAO().getAllForDataCenter(getParameters().getStoragePoolId()));
         }
     }
 }
