@@ -43,6 +43,20 @@ public class VmInterfaceListModelTable extends BaseInterfaceListModelTable<VmInt
                 return getModel().getRemoveCommand();
             }
         });
+
+        getTable().addActionButton(new UiCommandButtonDefinition<VmNetworkInterface>(getEventBus(), constants.activateInterface()) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getModel().getActivateCommand();
+            }
+        });
+
+        getTable().addActionButton(new UiCommandButtonDefinition<VmNetworkInterface>(getEventBus(), constants.deactivateInterface()) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getModel().getDeactivateCommand();
+            }
+        });
     }
 
 }

@@ -1,5 +1,9 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
+import java.util.ArrayList;
+
+import org.ovirt.engine.core.common.HotPlugUnplugVmNicParameters;
+import org.ovirt.engine.core.common.PlugAction;
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.AddVmInterfaceParameters;
 import org.ovirt.engine.core.common.action.RemoveVmInterfaceParameters;
@@ -71,6 +75,31 @@ public class VmInterfaceListModel extends SearchableListModel
         privateRemoveCommand = value;
     }
 
+    private UICommand privateActivateCommand;
+
+    public UICommand getActivateCommand()
+    {
+        return privateActivateCommand;
+    }
+
+    private void setActivateCommand(UICommand value)
+    {
+        privateActivateCommand = value;
+    }
+
+    private UICommand privateDactivateCommand;
+
+    public UICommand getDeactivateCommand()
+    {
+        return privateDactivateCommand;
+    }
+
+    private void setDeactivateCommand(UICommand value)
+    {
+        privateDactivateCommand = value;
+    }
+
+
     public VmInterfaceListModel()
     {
         setTitle(ConstantsManager.getInstance().getConstants().networkInterfacesTitle());
@@ -79,6 +108,8 @@ public class VmInterfaceListModel extends SearchableListModel
         setNewCommand(new UICommand("New", this)); //$NON-NLS-1$
         setEditCommand(new UICommand("Edit", this)); //$NON-NLS-1$
         setRemoveCommand(new UICommand("Remove", this)); //$NON-NLS-1$
+        setActivateCommand(new UICommand("Activate", this)); //$NON-NLS-1$
+        setDeactivateCommand(new UICommand("Deactivate", this)); //$NON-NLS-1$
 
         UpdateActionAvailability();
     }
@@ -140,6 +171,7 @@ public class VmInterfaceListModel extends SearchableListModel
         model.getNicType().setSelectedItem(DataProvider.GetDefaultNicType(vm.getvm_os()));
         model.getName().setEntity(newNicName);
         model.getMAC().setIsChangable(false);
+        model.getActive().setEntity(true);
 
         final UICommand okCommand = new UICommand("OnSave", this); //$NON-NLS-1$
         okCommand.setTitle(ConstantsManager.getInstance().getConstants().ok());
@@ -228,6 +260,7 @@ public class VmInterfaceListModel extends SearchableListModel
         model.getName().setEntity(nic.getName());
         model.getMAC().setIsChangable(false);
         model.getMAC().setEntity(nic.getMacAddress());
+        model.getActive().setIsAvailable(false);
 
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);
@@ -312,6 +345,11 @@ public class VmInterfaceListModel extends SearchableListModel
         }
         nic.setMacAddress(model.getMAC().getIsChangable() ? (model.getMAC().getEntity() == null ? null
                 : ((String) (model.getMAC().getEntity())).toLowerCase()) : model.getIsNew() ? "" : nic.getMacAddress()); //$NON-NLS-1$
+
+        if (model.getIsNew())
+        {
+            nic.setActive((Boolean) model.getActive().getEntity());
+        }
 
         model.StartProgress(null);
 
@@ -406,6 +444,28 @@ public class VmInterfaceListModel extends SearchableListModel
                 }, model);
     }
 
+    private void activate(boolean activate){
+        VM vm = (VM) getEntity();
+
+        ArrayList<VdcActionParametersBase> paramerterList = new ArrayList<VdcActionParametersBase>();
+        for (Object item : getSelectedItems()) {
+            VmNetworkInterface nic = (VmNetworkInterface)item;
+            nic.setActive(activate);
+
+            HotPlugUnplugVmNicParameters params = new HotPlugUnplugVmNicParameters(nic.getId(), activate?PlugAction.PLUG:PlugAction.UNPLUG);
+            params.setVmId(vm.getId());
+            paramerterList.add(params);
+        }
+
+        Frontend.RunMultipleAction(VdcActionType.HotPlugUnplugVmNic, paramerterList,
+                new IFrontendMultipleActionAsyncCallback() {
+                    @Override
+                    public void Executed(FrontendMultipleActionAsyncResult result) {
+                    }
+                },
+                this);
+    }
+
     private void Cancel()
     {
         setWindow(null);
@@ -447,6 +507,25 @@ public class VmInterfaceListModel extends SearchableListModel
         getRemoveCommand().setIsExecutionAllowed(vm != null
                 && VdcActionUtils.CanExecute(items, VM.class, VdcActionType.RemoveVmInterface)
                 && (getSelectedItems() != null && getSelectedItems().size() > 0));
+        getActivateCommand().setIsExecutionAllowed(vm != null
+                && (getSelectedItems() != null && getSelectedItems().size() > 0) && isActivateCommandAvailable(true));
+        getDeactivateCommand().setIsExecutionAllowed(vm != null
+                && (getSelectedItems() != null && getSelectedItems().size() > 0) && isActivateCommandAvailable(false));
+    }
+
+    private boolean isActivateCommandAvailable(boolean active) {
+        ArrayList<VmNetworkInterface> nics =
+                getSelectedItems() != null ? Linq.<VmNetworkInterface> Cast(getSelectedItems()) : new ArrayList<VmNetworkInterface>();
+
+        for (VmNetworkInterface nic : nics)
+        {
+            if (nic.isActive() == active)
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     @Override
@@ -465,6 +544,14 @@ public class VmInterfaceListModel extends SearchableListModel
         else if (command == getRemoveCommand())
         {
             remove();
+        }
+        else if (command == getActivateCommand())
+        {
+            activate(true);
+        }
+        else if (command == getDeactivateCommand())
+        {
+            activate(false);
         }
         else if (StringHelper.stringsEqual(command.getName(), "OnSave")) //$NON-NLS-1$
         {

@@ -417,6 +417,12 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Remove")
     String removeInterface();
 
+    @DefaultStringValue("Activate")
+    String activateInterface();
+
+    @DefaultStringValue("Deactivate")
+    String deactivateInterface();
+
     @DefaultStringValue("Name")
     String nameInterface();
 
@@ -630,6 +636,9 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("Specify custom MAC address")
     String specipyCustMacNetworkIntefacePopup();
+
+    @DefaultStringValue("Activate")
+    String activateNetworkIntefacePopup();
 
     // Pool popup
     @DefaultStringValue("Do not migrate VM")

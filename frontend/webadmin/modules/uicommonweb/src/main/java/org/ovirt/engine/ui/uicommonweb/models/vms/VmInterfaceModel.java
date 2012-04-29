@@ -76,6 +76,18 @@ public class VmInterfaceModel extends Model
         privateMAC = value;
     }
 
+    private EntityModel privateActive;
+
+    public EntityModel getActive()
+    {
+        return privateActive;
+    }
+
+    private void setActive(EntityModel value)
+    {
+        privateActive = value;
+    }
+
     public VmInterfaceModel()
     {
         setName(new EntityModel());
@@ -83,6 +95,7 @@ public class VmInterfaceModel extends Model
         setNicType(new ListModel());
         setMAC(new EntityModel());
         getMAC().getPropertyChangedEvent().addListener(this);
+        setActive(new EntityModel());
     }
 
     @Override

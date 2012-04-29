@@ -7,6 +7,7 @@ import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
+import org.ovirt.engine.ui.common.widget.table.column.NicActivateStatusColumn;
 import org.ovirt.engine.ui.common.widget.table.column.RxTxRateColumn;
 import org.ovirt.engine.ui.common.widget.table.column.SumUpColumn;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
@@ -17,7 +18,7 @@ import com.google.gwt.event.shared.EventBus;
 
 public class BaseInterfaceListModelTable<T extends SearchableListModel> extends AbstractModelBoundTableWidget<VmNetworkInterface, T> {
 
-    private CommonApplicationTemplates templates;
+    private final CommonApplicationTemplates templates;
 
     public BaseInterfaceListModelTable(
             SearchableTableModelProvider<VmNetworkInterface, T> modelProvider,
@@ -28,6 +29,8 @@ public class BaseInterfaceListModelTable<T extends SearchableListModel> extends 
 
     @Override
     public void initTable(CommonApplicationConstants constants) {
+        getTable().addColumn(new NicActivateStatusColumn(), constants.empty(), "30px"); //$NON-NLS-1$
+
         TextColumnWithTooltip<VmNetworkInterface> nameColumn = new TextColumnWithTooltip<VmNetworkInterface>() {
             @Override
             public String getValue(VmNetworkInterface object) {

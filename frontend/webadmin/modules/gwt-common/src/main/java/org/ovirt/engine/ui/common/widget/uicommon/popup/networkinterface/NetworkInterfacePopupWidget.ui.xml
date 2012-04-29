@@ -25,5 +25,6 @@
 		</g:HorizontalPanel>
 		<e:EntityModelTextBoxEditor ui:field="MACEditor" />
 		<g:Label ui:field="macExample" addStyleNames="{style.macExample}" text="{constants.exampleInterfacePopup} 00:14:4a:23:67:55" />
+		<e:EntityModelCheckBoxEditor ui:field="activateCheckBox"/>
 	</g:FlowPanel>
 </ui:UiBinder>

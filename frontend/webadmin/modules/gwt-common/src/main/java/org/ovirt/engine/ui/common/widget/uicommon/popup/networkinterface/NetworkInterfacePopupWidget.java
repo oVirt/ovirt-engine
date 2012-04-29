@@ -2,6 +2,8 @@ package org.ovirt.engine.ui.common.widget.uicommon.popup.networkinterface;
 
 import org.ovirt.engine.core.common.businessentities.network;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.widget.Align;
+import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
@@ -58,6 +60,10 @@ public class NetworkInterfacePopupWidget extends AbstractModelBoundPopupWidget<V
     @Ignore
     Label macExample;
 
+    @UiField(provided=true)
+    @Path("Active.entity")
+    protected EntityModelCheckBoxEditor activateCheckBox;
+
     public NetworkInterfacePopupWidget(EventBus eventBus, CommonApplicationConstants constants) {
         initManualWidgets();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
@@ -70,6 +76,7 @@ public class NetworkInterfacePopupWidget extends AbstractModelBoundPopupWidget<V
         networkEditor.setLabel(constants.networkNetworkIntefacePopup());
         nicTypeEditor.setLabel(constants.typeNetworkIntefacePopup());
         enableManualMacCheckboxLabel.setText(constants.specipyCustMacNetworkIntefacePopup());
+        activateCheckBox.setLabel(constants.activateNetworkIntefacePopup());
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -82,6 +89,8 @@ public class NetworkInterfacePopupWidget extends AbstractModelBoundPopupWidget<V
         });
 
         nicTypeEditor = new ListModelListBoxEditor<Object>(new EnumRenderer());
+
+        activateCheckBox = new EntityModelCheckBoxEditor(Align.RIGHT);
     }
 
     @Override

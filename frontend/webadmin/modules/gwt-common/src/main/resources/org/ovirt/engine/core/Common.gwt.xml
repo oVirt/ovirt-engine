@@ -240,6 +240,10 @@
 		<include name="common/errors/SearchEngineIllegalCharacterException.java" />
 		<include name="common/businessentities/VdsMovedToNonOperationalType.java" />
 
+		<include name="common/HotPlugUnplugVmNicParameters.java" />
+		<include name="common/PlugAction.java" />
+		<include name="common/vdscommands/VDSCommandType.java" />
+
 		<!--required by action/VdcActionParametersBase.java -->
 		<include name="common/asynctasks/EndedTaskInfo.java" />
 		<include name="common/asynctasks/IEndedTaskVisitor.java" />
