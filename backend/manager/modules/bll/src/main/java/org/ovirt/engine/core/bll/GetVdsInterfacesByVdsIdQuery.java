@@ -5,7 +5,6 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
 import org.ovirt.engine.core.common.queries.GetVdsByVdsIdParameters;
 import org.ovirt.engine.core.compat.StringHelper;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 
@@ -16,7 +15,7 @@ public class GetVdsInterfacesByVdsIdQuery<P extends GetVdsByVdsIdParameters> ext
 
     @Override
     protected void executeQueryCommand() {
-        final List<VdsNetworkInterface> list = DbFacade.getInstance().getInterfaceDAO()
+        final List<VdsNetworkInterface> list = getDbFacade().getInterfaceDAO()
                 .getAllInterfacesForVds(getParameters().getVdsId(), getUserID(), getParameters().isFiltered());
 
         // 1. here we return all interfaces (eth0, eth1, eth2) - the first
