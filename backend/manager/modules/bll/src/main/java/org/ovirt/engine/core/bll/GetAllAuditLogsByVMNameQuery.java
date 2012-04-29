@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.common.queries.GetAllAuditLogsByVMNameParameters;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 /** A query to return all the Audit Logs according to a given VM name */
 public class GetAllAuditLogsByVMNameQuery<P extends GetAllAuditLogsByVMNameParameters> extends QueriesCommandBase<P> {
@@ -14,7 +13,7 @@ public class GetAllAuditLogsByVMNameQuery<P extends GetAllAuditLogsByVMNameParam
     @Override
     protected void executeQueryCommand() {
         getQueryReturnValue().setReturnValue(
-                DbFacade.getInstance().getAuditLogDAO()
+                getDbFacade().getAuditLogDAO()
                         .getAllByVMName(getParameters().getVmName(), getUserID(), getParameters().isFiltered()));
     }
 }
