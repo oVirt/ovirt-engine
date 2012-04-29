@@ -7,6 +7,7 @@ import static org.mockito.Mockito.when;
 import java.util.Collections;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
@@ -16,11 +17,16 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DiskImageDAO;
 import org.ovirt.engine.core.dao.VmDAO;
 import org.ovirt.engine.core.dao.VmNetworkInterfaceDAO;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 /**
  * A test case for {@link GetVmByVmIdQuery}.
  * It does not test database implementation, but rather tests that the right delegations to the DAO occur.
  */
+@RunWith(PowerMockRunner.class)
+@PrepareForTest(DbFacade.class)
 public class GetVmByVmIdQueryTest extends AbstractUserQueryTest<GetVmByVmIdParameters, GetVmByVmIdQuery<GetVmByVmIdParameters>> {
     @Test
     public void testExecuteQuery() {
@@ -46,6 +52,8 @@ public class GetVmByVmIdQueryTest extends AbstractUserQueryTest<GetVmByVmIdParam
         when(vmNetworkInterfaceDAO.getAllForVm(vmID)).thenReturn(Collections.singletonList(netwrokInterface));
 
         DbFacade dbFacadeMock = getDbFacadeMockInstance();
+        PowerMockito.mockStatic(DbFacade.class);
+        PowerMockito.when(DbFacade.getInstance()).thenReturn(dbFacadeMock);
         when(dbFacadeMock.getVmDAO()).thenReturn(vmDAOMock);
         when(dbFacadeMock.getDiskImageDAO()).thenReturn(diskImageDAO);
         when(dbFacadeMock.getVmNetworkInterfaceDAO()).thenReturn(vmNetworkInterfaceDAO);

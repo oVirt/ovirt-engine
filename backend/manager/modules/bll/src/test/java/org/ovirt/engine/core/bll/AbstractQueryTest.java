@@ -1,22 +1,16 @@
 package org.ovirt.engine.core.bll;
 
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.when;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.ParameterizedType;
 
 import org.junit.Before;
-import org.junit.runner.RunWith;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(DbFacade.class)
 public abstract class AbstractQueryTest<P extends VdcQueryParametersBase, Q extends QueriesCommandBase<? extends P>> {
 
     protected P params;
@@ -42,6 +36,8 @@ public abstract class AbstractQueryTest<P extends VdcQueryParametersBase, Q exte
     protected Q setUpSpyQuery(P parameters) throws Exception {
         Constructor<? extends Q> con = getQueryType().getConstructor(getParameterType());
         query = spy(con.newInstance(parameters));
+        DbFacade dbFacadeMock = mock(DbFacade.class);
+        doReturn(dbFacadeMock).when(query).getDbFacade();
         return query;
     }
 
@@ -64,10 +60,7 @@ public abstract class AbstractQueryTest<P extends VdcQueryParametersBase, Q exte
 
     /** Power-Mocks {@link DbFacade#getInstance()} and returns a mock for it */
     protected DbFacade getDbFacadeMockInstance() {
-        DbFacade dbFacadeMock = mock(DbFacade.class);
-        mockStatic(DbFacade.class);
-        when(DbFacade.getInstance()).thenReturn(dbFacadeMock);
-        return dbFacadeMock;
+        return getQuery().getDbFacade();
     }
 
     /** @return The spied query to use in the test */

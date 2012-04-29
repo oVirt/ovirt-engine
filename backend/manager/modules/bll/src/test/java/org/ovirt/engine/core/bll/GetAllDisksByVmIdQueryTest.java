@@ -15,6 +15,7 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -28,11 +29,13 @@ import org.ovirt.engine.core.dao.DiskImageDAO;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
 import org.ovirt.engine.core.utils.RandomUtils;
 import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 /**
  * A test case for {@GetAllDisksByVmIdQuery}.
  * This test mocks away all the DAOs, and just tests the flow of the query itself.
  */
+@RunWith(PowerMockRunner.class)
 @PrepareForTest(ImagesHandler.class)
 public class GetAllDisksByVmIdQueryTest extends AbstractUserQueryTest<GetAllDisksByVmIdParameters, GetAllDisksByVmIdQuery<GetAllDisksByVmIdParameters>> {
     private static final int NUM_DISKS_OF_EACH_KIND = 3;

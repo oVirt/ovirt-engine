@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.doNothing;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.spy;
 
 import java.util.HashMap;
@@ -20,17 +19,13 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.queries.GetAllDisksByVmIdParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VmDAO;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ DbFacade.class, VmHandler.class })
+@PrepareForTest({ VmHandler.class })
 public class GetNextAvailableDiskAliasNameByVMIdQueryTest extends AbstractQueryTest<GetAllDisksByVmIdParameters, GetNextAvailableDiskAliasNameByVMIdQuery<GetAllDisksByVmIdParameters>> {
-    @Mock
-    private DbFacade db;
-
     @Mock
     private VmDAO vmDAO;
 
@@ -105,11 +100,9 @@ public class GetNextAvailableDiskAliasNameByVMIdQueryTest extends AbstractQueryT
      */
     private void mockDAOForQuery() throws Exception {
         MockitoAnnotations.initMocks(this);
-        mockStatic(DbFacade.class);
         spy(VmHandler.class);
-        when(DbFacade.getInstance()).thenReturn(db);
         doNothing().when(VmHandler.class, "updateDisksFromDb", any(VM.class));
-        when(db.getVmDAO()).thenReturn(vmDAO);
+        when(getDbFacadeMockInstance().getVmDAO()).thenReturn(vmDAO);
         when(getQueryParameters().getVmId()).thenReturn(vmId);
     }
 
