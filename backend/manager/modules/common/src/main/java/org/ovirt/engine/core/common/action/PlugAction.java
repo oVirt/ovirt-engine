@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.common;
+package org.ovirt.engine.core.common.action;
 
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 

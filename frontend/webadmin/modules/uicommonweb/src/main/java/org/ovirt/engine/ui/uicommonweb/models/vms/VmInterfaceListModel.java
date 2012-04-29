@@ -2,10 +2,10 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
 
-import org.ovirt.engine.core.common.HotPlugUnplugVmNicParameters;
-import org.ovirt.engine.core.common.PlugAction;
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.AddVmInterfaceParameters;
+import org.ovirt.engine.core.common.action.HotPlugUnplugVmNicParameters;
+import org.ovirt.engine.core.common.action.PlugAction;
 import org.ovirt.engine.core.common.action.RemoveVmInterfaceParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;

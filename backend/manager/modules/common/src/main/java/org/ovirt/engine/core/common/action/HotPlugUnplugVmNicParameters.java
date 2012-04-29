@@ -1,6 +1,5 @@
-package org.ovirt.engine.core.common;
+package org.ovirt.engine.core.common.action;
 
-import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.compat.Guid;
 
 public class HotPlugUnplugVmNicParameters extends VmOperationParameterBase {

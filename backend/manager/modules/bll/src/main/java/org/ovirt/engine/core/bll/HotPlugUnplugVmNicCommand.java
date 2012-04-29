@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.common.HotPlugUnplugVmNicParameters;
-import org.ovirt.engine.core.common.PlugAction;
+import org.ovirt.engine.core.common.action.HotPlugUnplugVmNicParameters;
+import org.ovirt.engine.core.common.action.PlugAction;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
