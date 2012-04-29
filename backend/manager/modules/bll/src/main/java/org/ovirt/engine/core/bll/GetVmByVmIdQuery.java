@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.queries.GetVmByVmIdParameters;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class GetVmByVmIdQuery<P extends GetVmByVmIdParameters> extends QueriesCommandBase<P> {
     public GetVmByVmIdQuery(P parameters) {
@@ -11,9 +10,7 @@ public class GetVmByVmIdQuery<P extends GetVmByVmIdParameters> extends QueriesCo
 
     @Override
     protected void executeQueryCommand() {
-        VM vm = DbFacade.getInstance()
-                .getVmDAO()
-                .get(getParameters().getId(), getUserID(), getParameters().isFiltered());
+        VM vm = getDbFacade().getVmDAO().get(getParameters().getId(), getUserID(), getParameters().isFiltered());
         if (vm != null) {
             // Note that retrieving the VM is already filtered, and if there are no permissions for it, null will be
             // returned.
