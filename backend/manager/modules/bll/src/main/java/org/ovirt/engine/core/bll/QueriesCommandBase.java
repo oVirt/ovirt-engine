@@ -192,9 +192,12 @@ public abstract class QueriesCommandBase<P extends VdcQueryParametersBase> exten
         return user.getUserId();
     }
 
+    protected DbFacade getDbFacade() {
+        return DbFacade.getInstance();
+    }
+
     protected ActionGroupDAO getActionGroupDao() {
-        return DbFacade.getInstance()
-                .getActionGroupDAO();
+        return getDbFacade().getActionGroupDAO();
     }
 
 }
