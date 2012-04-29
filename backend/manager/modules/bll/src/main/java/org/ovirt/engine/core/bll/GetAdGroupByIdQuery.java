@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.common.queries.*;
-import org.ovirt.engine.core.dal.dbbroker.*;
+import org.ovirt.engine.core.common.queries.GetAdGroupByIdParameters;
 
 public class GetAdGroupByIdQuery<P extends GetAdGroupByIdParameters> extends QueriesCommandBase<P> {
     public GetAdGroupByIdQuery(P parameters) {
@@ -10,6 +9,6 @@ public class GetAdGroupByIdQuery<P extends GetAdGroupByIdParameters> extends Que
 
     @Override
     protected void executeQueryCommand() {
-        getQueryReturnValue().setReturnValue(DbFacade.getInstance().getAdGroupDAO().get(getParameters().getId()));
+        getQueryReturnValue().setReturnValue(getDbFacade().getAdGroupDAO().get(getParameters().getId()));
     }
 }
