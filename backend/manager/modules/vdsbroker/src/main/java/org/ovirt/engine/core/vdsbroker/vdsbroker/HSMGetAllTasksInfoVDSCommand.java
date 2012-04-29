@@ -45,12 +45,7 @@ public class HSMGetAllTasksInfoVDSCommand<P extends VdsIdVDSCommandParametersBas
 
     protected AsyncTaskCreationInfo ParseTaskInfo(Map<String, String> taskInfo, Guid taskID) {
         try {
-            // LINQ 29456
-            // DictionaryEntry deTaskType =
-            // taskInfo.Cast<DictionaryEntry>().FirstOrDefault(a =>
-            // a.Key.toString() == VERB_KEY);
             String deTaskType = taskInfo.get(VERB_KEY);
-            // LINQ 29456
             AsyncTaskType taskType;
             try {
                 taskType = AsyncTaskType.valueOf(deTaskType);

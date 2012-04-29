@@ -32,9 +32,6 @@ public class UpdateVMVDSCommand<P extends UpdateVMVDSCommandParameters> extends 
             Map vmToSend = new HashMap();
             vmToSend.put("vm", data.getKey().toString());
             vmToSend.put("ovf", data.getValue().getKey());
-            // LINQ 29456
-            // string[] imageList = data.Value.Value.Select(a =>
-            // a.toString()).ToArray();
             java.util.List<Guid> imagesGuidList = data.getValue().getValue();
             String[] imageList = new String[imagesGuidList.size()];
             for (int i = 0; i < imagesGuidList.size(); i++) {

@@ -457,9 +457,6 @@ public class VdsBrokerObjectsBuilder {
         if (interfaces != null) {
             int networkUsage = 0;
             for (String name : interfaces.keySet()) {
-                // LINQ 29456
-                // Interface iface = vds.Interfaces.FirstOrDefault(x => x.name
-                // == name);
                 VdsNetworkInterface iface = null;
                 for (VdsNetworkInterface tempInterface : vds.getInterfaces()) {
                     if (tempInterface.getName().equals(name)) {
@@ -467,7 +464,6 @@ public class VdsBrokerObjectsBuilder {
                         break;
                     }
                 }
-                // LINQ 29456
                 if (iface != null) {
                     iface.setVdsId(vds.getId());
                     java.util.Map<String, Object> dictTemp =
@@ -1193,8 +1189,6 @@ public class VdsBrokerObjectsBuilder {
         vds.getInterfaces().add(iface);
         if (interfaces != null) {
             for (Object name : interfaces) {
-                // LINQ 29456
-                // Interface nic = vds.Interfaces.Single(n => n.name == name);
                 VdsNetworkInterface nic = null;
                 for (VdsNetworkInterface tempInterface : vds.getInterfaces()) {
                     if (tempInterface.getName().equals(name.toString())) {
@@ -1203,7 +1197,6 @@ public class VdsBrokerObjectsBuilder {
                     }
                 }
 
-                // LINQ 29456
                 if (nic != null) {
                     nic.setBondName(iface.getName());
                 }

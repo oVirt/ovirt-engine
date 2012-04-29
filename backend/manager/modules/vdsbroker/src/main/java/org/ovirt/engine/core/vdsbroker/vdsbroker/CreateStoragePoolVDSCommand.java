@@ -1,10 +1,11 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
-import org.ovirt.engine.core.compat.*;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.errors.*;
-import org.ovirt.engine.core.common.vdscommands.*;
+import org.ovirt.engine.core.common.errors.VDSError;
+import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.vdscommands.CreateStoragePoolVDSCommandParameters;
+import org.ovirt.engine.core.compat.Guid;
 
 public class CreateStoragePoolVDSCommand<P extends CreateStoragePoolVDSCommandParameters> extends VdsBrokerCommand<P> {
     public CreateStoragePoolVDSCommand(P parameters) {
@@ -13,9 +14,6 @@ public class CreateStoragePoolVDSCommand<P extends CreateStoragePoolVDSCommandPa
 
     @Override
     protected void ExecuteVdsBrokerCommand() {
-        // LINQ SP140
-        // string[] ids = CreateParameters.DomainsIdList.ConvertAll<string>(a =>
-        // a.toString()).ToArray();
         Guid[] guids = getParameters().getDomainsIdList().toArray(new Guid[0]);
         String[] ids = new String[guids.length];
         for (int i = 0; i < guids.length; i++) {

@@ -268,10 +268,6 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                                         .getInstance()
                                         .runVdsCommand(VDSCommandType.HSMGetAllTasksStatuses,
                                                 new VdsIdVDSCommandParametersBase(mCurrentVdsId)).getReturnValue();
-                        // LINQ 29456
-                        // if (tasksList == null || !(tasksList.Where(a =>
-                        // a.Value.Status !=
-                        // AsyncTaskStatusEnum.finished).Count() > 0))
                         boolean allTasksFinished = true;
                         if (tasksList != null) {
                             for (AsyncTaskStatus taskStatus : tasksList.values()) {
@@ -834,9 +830,6 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                     if (selectedVds.argvalue.getvds_spm_id() == spmId) {
                         spmVdsId = selectedVds.argvalue.getId();
                     } else {
-                        // LINQ 29456
-                        // spmVds = vdsByPool.Where(vds => vds.vds_spm_id ==
-                        // spmId).FirstOrDefault();
                         for (VDS tempVds : vdsByPool) {
                             if (tempVds.getvds_spm_id() == spmId) {
                                 log.infoFormat("Found spm host {0}, host name: {1}, according to spmId: {2}.",
@@ -1587,10 +1580,6 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                 if (getCurrentIrsProxyData().getHasVdssForSpmSelection()) {
                     failover();
                 } else {
-                    // LINQ 31899
-                    // DbFacade.Instance.GetStorageDomainsByStoragePool(IrsBaseVDSCommandParametersValue.StoragePoolId).Where(a
-                    // => a.storage_domain_type ==
-                    // StorageDomainType.Master).FirstOrDefault();
                     storage_domain_static masterDomain = null;
                     List<storage_domain_static> storageDomainStaticList = DbFacade.getInstance()
                             .getStorageDomainStaticDAO().getAllForStoragePool(getParameters().getStoragePoolId());

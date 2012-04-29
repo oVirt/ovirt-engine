@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.vdsbroker.irsbroker;
 
-import org.ovirt.engine.core.compat.*;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.*;
-import org.ovirt.engine.core.common.vdscommands.*;
+import org.ovirt.engine.core.common.vdscommands.GetImageDomainsListVDSCommandParameters;
+import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusForXmlRpc;
 
 public class GetImageDomainsListVDSCommand<P extends GetImageDomainsListVDSCommandParameters>
         extends IrsBrokerCommand<P> {
@@ -17,9 +17,6 @@ public class GetImageDomainsListVDSCommand<P extends GetImageDomainsListVDSComma
         _result = getIrsProxy().getImageDomainsList(getParameters().getStoragePoolId().toString(),
                 getParameters().getImageGroupId().toString());
         ProceedProxyReturnValue();
-        // LINQ 29456
-        // ReturnValue = _result.mStorageDomainGuidList.Select(a => new
-        // Guid(a)).ToList();
         java.util.ArrayList<Guid> tempRetValue = new java.util.ArrayList<Guid>(_result.mStorageDomainGuidList.length);
         for (int i = 0; i < _result.mStorageDomainGuidList.length; i++) {
             tempRetValue.add(new Guid(_result.mStorageDomainGuidList[i]));

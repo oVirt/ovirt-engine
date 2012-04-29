@@ -1,8 +1,9 @@
 package org.ovirt.engine.core.vdsbroker.irsbroker;
 
-import org.ovirt.engine.core.compat.*;
-import org.ovirt.engine.core.common.asynctasks.*;
-import org.ovirt.engine.core.common.vdscommands.*;
+import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
+import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
+import org.ovirt.engine.core.common.vdscommands.DestroyImageVDSCommandParameters;
+import org.ovirt.engine.core.compat.Guid;
 
 public class DestroyImageVDSCommand<P extends DestroyImageVDSCommandParameters> extends IrsCreateCommand<P> {
 
@@ -12,13 +13,6 @@ public class DestroyImageVDSCommand<P extends DestroyImageVDSCommandParameters> 
 
     @Override
     protected void ExecuteIrsBrokerCommand() {
-        // LINQ 29456
-        // uuidReturn =
-        // IrsProxy.deleteVolume(DestroyParameters.StorageDomainId.toString(),
-        // DestroyParameters.StoragePoolId.ToString(),
-        // DestroyParameters.ImageGroupId.toString(),
-        // DestroyParameters.ImageList.Select(a=>a.ToString()).ToArray(),
-        // DestroyParameters.PostZero.ToString().ToLower());
 
         DestroyImageVDSCommandParameters params = getParameters();
         int imageListSize = params.getImageList().size();
@@ -35,7 +29,6 @@ public class DestroyImageVDSCommand<P extends DestroyImageVDSCommandParameters> 
                                                 String.valueOf(params.getPostZero()),
                                                 String.valueOf(params.getForce()));
 
-        // LINQ 29456
         ProceedProxyReturnValue();
 
         Guid taskID = new Guid(uuidReturn.mUuid);

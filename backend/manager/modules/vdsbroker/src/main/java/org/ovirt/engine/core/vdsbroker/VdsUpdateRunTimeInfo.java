@@ -1043,7 +1043,6 @@ public class VdsUpdateRunTimeInfo {
     private java.util.List<VM> checkVmsStatusChanged() {
         java.util.List<VM> running = new java.util.ArrayList<VM>();
         if (!_vdsManager.getRefreshStatistics()) {
-            // LINQ new List<VmDynamic>(_runningVms.Values.Select(a => a.Key));
             java.util.ArrayList<VmDynamic> tempRunningList = new java.util.ArrayList<VmDynamic>();
             for (java.util.Map.Entry<VmDynamic, VmStatistics> runningVm : _runningVms.values()) {
                 tempRunningList.add(runningVm.getKey());
@@ -1079,9 +1078,6 @@ public class VdsUpdateRunTimeInfo {
      * Delete all vms with status Down
      */
     private void proceedDownVms() {
-        // LINQ
-        // foreach (VmDynamic vm in _runningVms.Values.Select(a =>
-        // a.Key).Where(a => a.status == VMStatus.Down))
         for (java.util.Map.Entry<VmDynamic, VmStatistics> vm_helper : _runningVms.values()) {
             VmDynamic vm = vm_helper.getKey();
             if (vm.getstatus() != VMStatus.Down) {
@@ -1223,9 +1219,6 @@ public class VdsUpdateRunTimeInfo {
     }
 
     private void updateRepository(java.util.List<VM> running) {
-        // LINQ
-        // foreach (VmDynamic runningVm in _runningVms.Values.Select(a =>
-        // a.Key))
         for (java.util.Map.Entry<VmDynamic, VmStatistics> vm_helper : _runningVms.values()) {
             VmDynamic runningVm = vm_helper.getKey();
             VM vmToUpdate = null;
@@ -1332,13 +1325,11 @@ public class VdsUpdateRunTimeInfo {
 
     // del from cache all vms that not in vdsm
     private void removeVmsFromCache(java.util.List<VM> running) {
-        // LINQ 29456 - fixed
-        // foreach (VM vmToRemove in _vmDict.Values.Except(running).ToList())
         Guid vmGuid;
         for (VM vmToRemove : _vmDict.values()) {
-            if (running.contains(vmToRemove)) // LINQ 29456 fix
+            if (running.contains(vmToRemove))
             {
-                continue; // LINQ 29456 fix
+                continue;
             }
             proceedVmBeforeDeletion(vmToRemove, null);
             boolean isInMigration = false;
@@ -1548,9 +1539,6 @@ public class VdsUpdateRunTimeInfo {
 
         for (VmNetworkInterface ifStats : statistics.getInterfaceStatistics()) {
             boolean firstTime = !macs.contains(ifStats.getMacAddress());
-            // LINQ 29456
-            // Interface vmIface = vm.Interfaces.FirstOrDefault(i => i.mac_addr
-            // == ifStats.mac_addr);
 
             VmNetworkInterface vmIface = null;
             for (VmNetworkInterface tempIf : vm.getInterfaces()) {
@@ -1559,7 +1547,6 @@ public class VdsUpdateRunTimeInfo {
                     break;
                 }
             }
-            // LINQ 29456
             if (vmIface == null) {
                 continue;
             }
