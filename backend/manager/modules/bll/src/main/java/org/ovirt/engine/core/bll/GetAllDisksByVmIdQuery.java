@@ -9,7 +9,6 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.queries.GetAllDisksByVmIdParameters;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 
@@ -21,9 +20,8 @@ public class GetAllDisksByVmIdQuery<P extends GetAllDisksByVmIdParameters> exten
     @Override
     protected void executeQueryCommand() {
         List<DiskImage> disks =
-                LinqUtils.filter(
-                        DbFacade.getInstance().getDiskImageDAO().getAllForVm
-                                (getParameters().getVmId(), getUserID(), getParameters().isFiltered()),
+                LinqUtils.filter(getDbFacade().getDiskImageDAO().getAllForVm
+                        (getParameters().getVmId(), getUserID(), getParameters().isFiltered()),
                         new Predicate<DiskImage>() {
                             @Override
                             public boolean eval(DiskImage diskImage) {
@@ -41,8 +39,7 @@ public class GetAllDisksByVmIdQuery<P extends GetAllDisksByVmIdParameters> exten
 
     private Set<Guid> getPluggedDiskIds() {
         List<VmDevice> disksVmDevices =
-                DbFacade.getInstance()
-                        .getVmDeviceDAO()
+                getDbFacade().getVmDeviceDAO()
                         .getVmDeviceByVmIdTypeAndDevice(getParameters().getVmId(),
                                 VmDeviceType.DISK.getName(),
                                 VmDeviceType.DISK.getName(),
