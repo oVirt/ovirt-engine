@@ -15,7 +15,7 @@
 prog=engine-notifier
 RETVAL=0
 PID_FOLDER=/var/run/ovirt-engine/notifier
-ENGINE_USER="engine"
+ENGINE_USER="ovirt"
 
 [ -r /etc/java/java.conf ] && . /etc/java/java.conf
 export JAVA_HOME
