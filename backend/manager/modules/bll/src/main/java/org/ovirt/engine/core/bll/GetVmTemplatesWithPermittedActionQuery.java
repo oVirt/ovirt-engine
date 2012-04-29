@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.common.queries.GetEntitiesWithPermittedActionParameters;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class GetVmTemplatesWithPermittedActionQuery<P extends GetEntitiesWithPermittedActionParameters>
         extends QueriesCommandBase<P> {
@@ -13,7 +12,7 @@ public class GetVmTemplatesWithPermittedActionQuery<P extends GetEntitiesWithPer
     @Override
     protected void executeQueryCommand() {
         P params = getParameters();
-        setReturnValue(DbFacade.getInstance().getVmTemplateDAO().
+        setReturnValue(getDbFacade().getVmTemplateDAO().
                 getTemplatesWithPermittedAction(getUserID(), params.getActionGroup()));
     }
 }
