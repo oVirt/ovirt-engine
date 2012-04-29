@@ -37,7 +37,6 @@ Create or replace FUNCTION GetRepo_files_by_storage_domain_and_storage_pool(v_st
 RETURNS SETOF storage_domain_file_repos
    AS $procedure$
 BEGIN
--- SET TRANSACTION ISOLATION LEVEL READ COMMITTED
    RETURN QUERY SELECT storage_domain_file_repos.*
    FROM storage_domain_file_repos
    WHERE storage_domain_id = v_storage_domain_id
@@ -52,7 +51,6 @@ Create or replace FUNCTION GetRepo_files_by_storage_domain(v_storage_domain_id U
 RETURNS SETOF repo_file_meta_data
    AS $procedure$
 BEGIN
--- SET TRANSACTION ISOLATION LEVEL READ COMMITTED
    RETURN QUERY SELECT repo_file_meta_data.*
    FROM repo_file_meta_data
    WHERE repo_domain_id = v_storage_domain_id
@@ -69,7 +67,6 @@ Create or replace FUNCTION GetRepo_files_in_all_storage_pools(v_storage_domain_t
 RETURNS SETOF GetRepo_files_in_all_storage_pools_rs
    AS $procedure$
 BEGIN
--- SET TRANSACTION ISOLATION LEVEL READ COMMITTED
  RETURN QUERY SELECT distinct b.storage_domain_id,c.last_refreshed,b.file_type
    FROM storage_domain_file_repos b  
    LEFT OUTER JOIN 
