@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.common.queries.GetVmTemplatesByImageGuidParameters;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 /**
  * A query to retrieve all the VM templates connected to a given image.
@@ -14,7 +13,7 @@ public class GetVmTemplatesByImageGuidQuery<P extends GetVmTemplatesByImageGuidP
 
     @Override
     protected void executeQueryCommand() {
-        getQueryReturnValue().setReturnValue(DbFacade.getInstance()
+        getQueryReturnValue().setReturnValue(getDbFacade()
                 .getVmTemplateDAO()
                 .getAllForImage(getParameters().getImageGuid()));
     }
