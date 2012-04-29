@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.common.queries.GetVdsGroupByIdParameters;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class GetVdsGroupByIdQuery<P extends GetVdsGroupByIdParameters> extends QueriesCommandBase<P> {
     public GetVdsGroupByIdQuery(P parameters) {
@@ -11,7 +10,7 @@ public class GetVdsGroupByIdQuery<P extends GetVdsGroupByIdParameters> extends Q
     @Override
     protected void executeQueryCommand() {
         getQueryReturnValue().setReturnValue(
-                DbFacade.getInstance()
+                getDbFacade()
                         .getVdsGroupDAO()
                         .get(getParameters().getVdsId(), getUserID(), getParameters().isFiltered()));
     }
