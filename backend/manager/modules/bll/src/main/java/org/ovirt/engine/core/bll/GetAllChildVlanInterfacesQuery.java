@@ -5,7 +5,6 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
 import org.ovirt.engine.core.common.queries.GetAllChildVlanInterfacesQueryParameters;
 import org.ovirt.engine.core.compat.StringHelper;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.NetworkUtils;
 
 /**
@@ -22,8 +21,8 @@ public class GetAllChildVlanInterfacesQuery<P extends GetAllChildVlanInterfacesQ
     protected void executeQueryCommand() {
         java.util.ArrayList<VdsNetworkInterface> retVal = new java.util.ArrayList<VdsNetworkInterface>();
         if (((VdsNetworkInterface) getParameters().getInterface()).getVlanId() == null) {
-            List<VdsNetworkInterface> vdsInterfaces = DbFacade.getInstance()
-                    .getInterfaceDAO().getAllInterfacesForVds(getParameters().getVdsId());
+            List<VdsNetworkInterface> vdsInterfaces =
+                    getDbFacade().getInterfaceDAO().getAllInterfacesForVds(getParameters().getVdsId());
             for (int i = 0; i < vdsInterfaces.size(); i++) {
                 if (vdsInterfaces.get(i).getVlanId() != null) {
                     if (StringHelper.EqOp(getParameters().getInterface().getName(),
