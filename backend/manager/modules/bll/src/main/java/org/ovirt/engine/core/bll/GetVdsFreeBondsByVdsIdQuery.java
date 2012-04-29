@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
 import org.ovirt.engine.core.common.queries.GetVdsByVdsIdParameters;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 
@@ -15,8 +14,8 @@ public class GetVdsFreeBondsByVdsIdQuery<P extends GetVdsByVdsIdParameters> exte
 
     @Override
     protected void executeQueryCommand() {
-        final List<VdsNetworkInterface> list = DbFacade.getInstance().getInterfaceDAO()
-                .getAllInterfacesForVds(getParameters().getVdsId());
+        final List<VdsNetworkInterface> list =
+                getDbFacade().getInterfaceDAO().getAllInterfacesForVds(getParameters().getVdsId());
 
         // we return only bonds that are not active (that have no interfaces
         // related to them)
