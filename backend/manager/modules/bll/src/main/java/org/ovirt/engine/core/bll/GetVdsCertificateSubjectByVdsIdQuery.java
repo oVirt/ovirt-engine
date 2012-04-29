@@ -4,7 +4,6 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.GetVdsByVdsIdParameters;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class GetVdsCertificateSubjectByVdsIdQuery<P extends GetVdsByVdsIdParameters> extends QueriesCommandBase<P> {
     public GetVdsCertificateSubjectByVdsIdQuery(P parameters) {
@@ -14,7 +13,7 @@ public class GetVdsCertificateSubjectByVdsIdQuery<P extends GetVdsByVdsIdParamet
     @Override
     protected void executeQueryCommand() {
         getQueryReturnValue().setSucceeded(false);
-        VDS vds = DbFacade.getInstance()
+        VDS vds = getDbFacade()
                 .getVdsDAO()
                 .get(getParameters().getVdsId(), getUserID(), getParameters().isFiltered());
         if (vds != null) {
