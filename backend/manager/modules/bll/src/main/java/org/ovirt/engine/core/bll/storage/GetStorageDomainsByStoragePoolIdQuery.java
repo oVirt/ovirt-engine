@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll.storage;
 
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.common.queries.StoragePoolQueryParametersBase;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class GetStorageDomainsByStoragePoolIdQuery<P extends StoragePoolQueryParametersBase>
         extends QueriesCommandBase<P> {
@@ -12,7 +11,7 @@ public class GetStorageDomainsByStoragePoolIdQuery<P extends StoragePoolQueryPar
 
     @Override
     protected void executeQueryCommand() {
-        getQueryReturnValue().setReturnValue(DbFacade.getInstance().
+        getQueryReturnValue().setReturnValue(getDbFacade().
                 getStorageDomainDAO().getAllForStoragePool(getParameters().getStoragePoolId(),
                         getUserID(),
                         getParameters().isFiltered()));
