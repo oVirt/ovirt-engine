@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.queries.GetAllDisksByVmIdParameters;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class GetNextAvailableDiskAliasNameByVMIdQuery<P extends GetAllDisksByVmIdParameters> extends QueriesCommandBase<P> {
 
@@ -16,7 +15,7 @@ public class GetNextAvailableDiskAliasNameByVMIdQuery<P extends GetAllDisksByVmI
         if (getParameters().getVmId() == null) {
             getQueryReturnValue().setReturnValue(suggestedDiskName);
         } else {
-            VM vm = DbFacade.getInstance().getVmDAO().get(getParameters().getVmId());
+            VM vm = getDbFacade().getVmDAO().get(getParameters().getVmId());
             if (vm != null) {
                 VmHandler.updateDisksFromDb(vm);
                 suggestedDiskName =
