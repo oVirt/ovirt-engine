@@ -1796,6 +1796,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
         }
         tempVar.setvm_os((VmOsType) model.getOSType().getSelectedItem());
         tempVar.setnum_of_monitors((Integer) model.getNumOfMonitors().getSelectedItem());
+        tempVar.setAllowConsoleReconnect((Boolean) model.getAllowConsoleReconnect().getEntity());
         tempVar.setvm_domain(model.getDomain().getIsAvailable() ? (String) model.getDomain().getSelectedItem() : ""); //$NON-NLS-1$
         tempVar.setvm_mem_size_mb((Integer) model.getMemSize().getEntity());
         tempVar.setMinAllocatedMem((Integer) model.getMinAllocatedMemory().getEntity());
@@ -2365,6 +2366,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
         }
         getcurrentVm().setvm_os((VmOsType) model.getOSType().getSelectedItem());
         getcurrentVm().setnum_of_monitors((Integer) model.getNumOfMonitors().getSelectedItem());
+        getcurrentVm().setAllowConsoleReconnect((Boolean) model.getAllowConsoleReconnect().getEntity());
         getcurrentVm().setvm_description((String) model.getDescription().getEntity());
         getcurrentVm().setvm_domain(model.getDomain().getIsAvailable() ? (String) model.getDomain().getSelectedItem()
                 : ""); //$NON-NLS-1$

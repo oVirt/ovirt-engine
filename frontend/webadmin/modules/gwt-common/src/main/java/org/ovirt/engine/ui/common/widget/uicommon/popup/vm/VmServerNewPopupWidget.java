@@ -44,6 +44,7 @@ public class VmServerNewPopupWidget extends AbstractVmPopupWidget {
         // only avail for desktop mode
         isStatelessEditor.setVisible(false);
         numOfMonitorsEditor.setVisible(false);
+        allowConsoleReconnectEditor.setVisible(false);
     }
 
 }

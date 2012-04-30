@@ -183,6 +183,10 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
     @Path(value = "isStateless.entity")
     protected EntityModelCheckBoxEditor isStatelessEditor;
 
+    @UiField(provided = true)
+    @Path(value = "allowConsoleReconnect.entity")
+    protected EntityModelCheckBoxEditor allowConsoleReconnectEditor;
+
     // ==Host Tab==
     @UiField
     protected DialogTab hostTab;
@@ -326,6 +330,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
         isHighlyAvailableEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         isStatelessEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         cdAttachedEditor = new EntityModelCheckBoxEditor(Align.LEFT);
+        allowConsoleReconnectEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
 
         priorityEditor = new EntityModelCellTable<ListModel>(
                 (Resources) GWT.create(ButtonCellTableResources.class));
@@ -498,6 +503,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
         displayProtocolEditor.setLabel(constants.protocolVmPopup());
         usbPolicyEditor.setLabel(constants.usbPolicyVmPopup());
         numOfMonitorsEditor.setLabel(constants.monitorsVmPopup());
+        allowConsoleReconnectEditor.setLabel(constants.allowConsoleReconnect());
 
         // Host Tab
         hostTab.setLabel(constants.hostVmPopup());
@@ -527,6 +533,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
     private void applyStyles() {
         runVMOnSpecificHostEditor.addContentWidgetStyleName(style.longCheckboxContent());
         dontMigrateVMEditor.addContentWidgetStyleName(style.longCheckboxContent());
+        allowConsoleReconnectEditor.addContentWidgetStyleName(style.longCheckboxContent());
         provisioningEditor.addContentWidgetStyleName(style.provisioningEditorContent());
         provisioningThinEditor.addContentWidgetStyleName(style.provisioningRadioContent());
         provisioningCloneEditor.addContentWidgetStyleName(style.provisioningRadioContent());
@@ -700,6 +707,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
         // only avail for desktop mode
         isStatelessEditor.setVisible(vm.getVmType().equals(VmType.Desktop));
         numOfMonitorsEditor.setVisible(vm.getVmType().equals(VmType.Desktop));
+        allowConsoleReconnectEditor.setVisible(vm.getVmType().equals(VmType.Desktop));
 
 
         defaultHostEditor.setEnabled(false);

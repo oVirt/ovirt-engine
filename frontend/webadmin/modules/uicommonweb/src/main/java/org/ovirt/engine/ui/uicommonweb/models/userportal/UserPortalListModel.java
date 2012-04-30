@@ -685,6 +685,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         tempVar.setvm_type(model.getVmType());
         tempVar.setvm_os((VmOsType) model.getOSType().getSelectedItem());
         tempVar.setnum_of_monitors((Integer) model.getNumOfMonitors().getSelectedItem());
+        tempVar.setAllowConsoleReconnect((Boolean) model.getAllowConsoleReconnect().getEntity());
         tempVar.setvm_domain(model.getDomain().getIsAvailable() ? (String) model.getDomain().getSelectedItem() : ""); //$NON-NLS-1$
         tempVar.setvm_mem_size_mb((Integer) model.getMemSize().getEntity());
         tempVar.setMinAllocatedMem((Integer) model.getMinAllocatedMemory().getEntity());
@@ -1300,6 +1301,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         gettempVm().setvm_name(name);
         gettempVm().setvm_os((VmOsType) getVmModel().getOSType().getSelectedItem());
         gettempVm().setnum_of_monitors((Integer) getVmModel().getNumOfMonitors().getSelectedItem());
+        gettempVm().setAllowConsoleReconnect((Boolean) getVmModel().getAllowConsoleReconnect().getEntity());
         gettempVm().setvm_description((String) getVmModel().getDescription().getEntity());
         gettempVm().setvm_domain(getVmModel().getDomain().getIsAvailable() ? (String) getVmModel().getDomain()
                 .getSelectedItem() : ""); //$NON-NLS-1$

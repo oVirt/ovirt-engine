@@ -352,6 +352,18 @@ public class UnitVmModel extends Model {
         privateNumOfMonitors = value;
     }
 
+    private EntityModel privateAllowConsoleReconnect;
+
+    public EntityModel getAllowConsoleReconnect()
+    {
+        return privateAllowConsoleReconnect;
+    }
+
+    private void setAllowConsoleReconnect(EntityModel value)
+    {
+        privateAllowConsoleReconnect = value;
+    }
+
     private EntityModel privateDescription;
 
     public EntityModel getDescription()
@@ -913,6 +925,7 @@ public class UnitVmModel extends Model {
         setStorageDomain(new ListModel());
         setName(new EntityModel());
         setNumOfMonitors(new ListModel());
+        setAllowConsoleReconnect(new EntityModel());
         setDescription(new EntityModel());
         setDomain(new ListModel());
         setMinAllocatedMemory(new EntityModel());
@@ -1048,6 +1061,7 @@ public class UnitVmModel extends Model {
         InitDisplayProtocol();
         InitFirstBootDevice();
         InitNumOfMonitors();
+        InitAllowConsoleReconnect();
         InitMinimalVmMemSize();
         InitMaximalVmMemSize32OS();
 
@@ -1196,6 +1210,11 @@ public class UnitVmModel extends Model {
             getNumOfMonitors().setItems(new ArrayList<Integer>(Arrays.asList(new Integer[] {1})));
             getNumOfMonitors().setSelectedItem(1);
         }
+    }
+
+    protected void InitAllowConsoleReconnect()
+    {
+        getAllowConsoleReconnect().setEntity(getVmType() == VmType.Server);
     }
 
     private void InitOSType()

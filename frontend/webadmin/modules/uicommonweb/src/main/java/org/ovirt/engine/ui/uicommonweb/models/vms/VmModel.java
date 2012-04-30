@@ -335,6 +335,18 @@ public class VmModel extends Model
         privateNumOfMonitors = value;
     }
 
+    private EntityModel privateAllowConsoleReconnect;
+
+    public EntityModel getAllowConsoleReconnect()
+    {
+        return privateAllowConsoleReconnect;
+    }
+
+    private void setAllowConsoleReconnect(EntityModel value)
+    {
+        privateAllowConsoleReconnect = value;
+    }
+
     private EntityModel privateDescription;
 
     public EntityModel getDescription()
@@ -1176,6 +1188,7 @@ public class VmModel extends Model
         getTotalCPUCores().setEntity(template.getnum_of_cpus());
 
         getNumOfMonitors().setSelectedItem(template.getnum_of_monitors());
+        getAllowConsoleReconnect().setEntity(template.getAllowConsoleReconnect());
         getDomain().setSelectedItem(template.getdomain());
         getMemSize().setEntity(template.getmem_size_mb());
         getUsbPolicy().setSelectedItem(template.getusb_policy());

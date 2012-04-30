@@ -126,6 +126,7 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase
         getModel().getDomain().setSelectedItem(this.template.getdomain());
         getModel().getUsbPolicy().setSelectedItem(this.template.getusb_policy());
         getModel().getNumOfMonitors().setSelectedItem(this.template.getnum_of_monitors());
+        getModel().getAllowConsoleReconnect().setEntity(this.template.getAllowConsoleReconnect());
         getModel().setBootSequence(this.template.getdefault_boot_sequence());
         getModel().getIsHighlyAvailable().setEntity(this.template.getauto_startup());
         getModel().getNumOfSockets().setEntity(this.template.getnum_of_sockets());

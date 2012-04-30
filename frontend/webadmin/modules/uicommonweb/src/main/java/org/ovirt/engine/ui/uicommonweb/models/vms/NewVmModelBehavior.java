@@ -98,6 +98,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase
 
             if (getModel().getVmType() == VmType.Desktop) {
                 getModel().getIsStateless().setEntity(template.getis_stateless());
+                getModel().getAllowConsoleReconnect().setEntity(template.getAllowConsoleReconnect());
             }
 
             boolean hasCd = !StringHelper.isNullOrEmpty(template.getiso_path());

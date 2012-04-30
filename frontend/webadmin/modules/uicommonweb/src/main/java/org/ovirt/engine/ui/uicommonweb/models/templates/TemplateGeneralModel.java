@@ -280,6 +280,22 @@ public class TemplateGeneralModel extends EntityModel
         }
     }
 
+    private boolean allowConsoleReconnect;
+
+    public boolean getAllowConsoleReconnect()
+    {
+        return allowConsoleReconnect;
+    }
+
+    public void setAllowConsoleReconnect(boolean value)
+    {
+        if (allowConsoleReconnect != value)
+        {
+            allowConsoleReconnect = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("AllowConsoleReconnect")); //$NON-NLS-1$
+        }
+    }
+
     private boolean hasDomain;
 
     public boolean getHasDomain()
@@ -429,6 +445,7 @@ public class TemplateGeneralModel extends EntityModel
         setIsHighlyAvailable(template.getauto_startup());
         setPriority(PriorityToString(template.getpriority()));
         setMonitorCount(template.getnum_of_monitors());
+        setAllowConsoleReconnect(template.getAllowConsoleReconnect());
         setCpuInfo(StringFormat.format("%1$s (%2$s Socket(s), %3$s Core(s) per Socket)", //$NON-NLS-1$
                 template.getnum_of_cpus(),
                 template.getnum_of_sockets(),

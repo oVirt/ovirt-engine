@@ -607,6 +607,7 @@ public class TemplateListModel extends ListWithDetailsModel implements ISupportS
         template.setname(name);
         template.setos((VmOsType) model.getOSType().getSelectedItem());
         template.setnum_of_monitors((Integer) model.getNumOfMonitors().getSelectedItem());
+        template.setAllowConsoleReconnect((Boolean) model.getAllowConsoleReconnect().getEntity());
         template.setdescription((String) model.getDescription().getEntity());
         template.setdomain(model.getDomain().getIsAvailable() ? (String) model.getDomain().getSelectedItem() : ""); //$NON-NLS-1$
         template.setmem_size_mb((Integer) model.getMemSize().getEntity());

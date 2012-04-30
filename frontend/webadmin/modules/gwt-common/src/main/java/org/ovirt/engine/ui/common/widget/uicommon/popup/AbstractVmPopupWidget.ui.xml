@@ -191,6 +191,7 @@
 						<e:ListModelListBoxEditor ui:field="displayProtocolEditor" />
 						<e:ListModelListBoxEditor ui:field="usbPolicyEditor" />
 						<e:ListModelListBoxEditor ui:field="numOfMonitorsEditor" />
+						<e:EntityModelCheckBoxEditor ui:field="allowConsoleReconnectEditor" addStyleNames="{style.checkboxWithLongLabel}" />
 					</g:FlowPanel>
 				</t:content>
 			</t:DialogTab>

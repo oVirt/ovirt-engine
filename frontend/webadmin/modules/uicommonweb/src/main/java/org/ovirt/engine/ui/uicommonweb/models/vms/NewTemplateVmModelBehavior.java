@@ -193,6 +193,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase
         getModel().getDomain().setSelectedItem(this.vm.getvm_domain());
         getModel().getUsbPolicy().setSelectedItem(this.vm.getusb_policy());
         getModel().getNumOfMonitors().setSelectedItem(this.vm.getnum_of_monitors());
+        getModel().getAllowConsoleReconnect().setEntity(this.vm.getAllowConsoleReconnect());
         getModel().setBootSequence(this.vm.getdefault_boot_sequence());
         getModel().getNumOfSockets().setEntity(this.vm.getnum_of_sockets());
         getModel().getTotalCPUCores().setEntity(this.vm.getnum_of_cpus());
