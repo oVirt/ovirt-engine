@@ -3,17 +3,9 @@ package org.ovirt.engine.core.common.queries;
 import org.ovirt.engine.core.compat.*;
 import org.ovirt.engine.core.common.businessentities.*;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
-
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "RegisterVdsParameters")
 public class RegisterVdsParameters extends VdcQueryParametersBase implements Serializable {
     private static final long serialVersionUID = 4661626618754048420L;
 
-    @XmlElement
     private Guid privateVdsId;
 
     public Guid getVdsId() {
@@ -24,7 +16,6 @@ public class RegisterVdsParameters extends VdcQueryParametersBase implements Ser
         privateVdsId = value;
     }
 
-    @XmlElement
     private String privateVdsHostName;
 
     public String getVdsHostName() {
@@ -35,7 +26,6 @@ public class RegisterVdsParameters extends VdcQueryParametersBase implements Ser
         privateVdsHostName = value;
     }
 
-    @XmlElement
     private String privateVdsName;
 
     public String getVdsName() {
@@ -46,7 +36,6 @@ public class RegisterVdsParameters extends VdcQueryParametersBase implements Ser
         privateVdsName = value;
     }
 
-    @XmlElement
     private String privateVdsUniqueId;
 
     public String getVdsUniqueId() {
@@ -58,7 +47,6 @@ public class RegisterVdsParameters extends VdcQueryParametersBase implements Ser
     }
 
     @Deprecated
-    @XmlElement
     private String privateNetMask;
 
     public String getNetMask() {
@@ -70,7 +58,6 @@ public class RegisterVdsParameters extends VdcQueryParametersBase implements Ser
         privateNetMask = value;
     }
 
-    @XmlElement
     private int privatePort;
 
     public int getPort() {
@@ -81,7 +68,6 @@ public class RegisterVdsParameters extends VdcQueryParametersBase implements Ser
         privatePort = value;
     }
 
-    @XmlElement
     private Guid privateVdsGroupId;
 
     public Guid getVdsGroupId() {
@@ -92,7 +78,6 @@ public class RegisterVdsParameters extends VdcQueryParametersBase implements Ser
         privateVdsGroupId = value;
     }
 
-    @XmlElement
     private VDSType privateVdsType = VDSType.forValue(0);
 
     public VDSType getVdsType() {

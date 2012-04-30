@@ -1,20 +1,12 @@
 package org.ovirt.engine.core.common.queries;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
-
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.compat.Guid;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "GetExistingStorageDomainListParameters")
 public class GetExistingStorageDomainListParameters extends VdsIdParametersBase {
     private static final long serialVersionUID = 7478078947370484916L;
-    @XmlElement(name = "StorageType")
     private StorageType privateStorageType = StorageType.forValue(0);
 
     public StorageType getStorageType() {
@@ -25,7 +17,6 @@ public class GetExistingStorageDomainListParameters extends VdsIdParametersBase 
         privateStorageType = value;
     }
 
-    @XmlElement(name = "StorageDomainType")
     private StorageDomainType privateStorageDomainType = StorageDomainType.forValue(0);
 
     public StorageDomainType getStorageDomainType() {
@@ -36,7 +27,6 @@ public class GetExistingStorageDomainListParameters extends VdsIdParametersBase 
         privateStorageDomainType = value;
     }
 
-    @XmlElement(name = "Path")
     private String privatePath;
 
     public String getPath() {
@@ -47,7 +37,6 @@ public class GetExistingStorageDomainListParameters extends VdsIdParametersBase 
         privatePath = value;
     }
 
-    @XmlElement(name = "StorageFormatType")
     private StorageFormatType storageFormatType;
 
     public StorageFormatType getStorageFormatType() {

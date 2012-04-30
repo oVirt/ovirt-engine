@@ -1,14 +1,7 @@
 package org.ovirt.engine.core.common.queries;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
-
 import org.ovirt.engine.core.compat.Guid;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "StorageDomainQueryTopSizeVmsParameters")
 public class StorageDomainQueryTopSizeVmsParameters extends StorageDomainQueryParametersBase {
 
     private static final long serialVersionUID = 6625219123430227225L;
@@ -28,7 +21,6 @@ public class StorageDomainQueryTopSizeVmsParameters extends StorageDomainQueryPa
      * otherwise: use the limitation we got in the parameter.
     */
 
-    @XmlElement(name = "MaxVmsToReturn")
     private int privateMaxVmsToReturn = 0;
 
     public int getMaxVmsToReturn() {

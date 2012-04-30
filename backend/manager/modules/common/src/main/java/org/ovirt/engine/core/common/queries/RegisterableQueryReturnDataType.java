@@ -2,12 +2,6 @@ package org.ovirt.engine.core.common.queries;
 
 import java.io.Serializable;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlType;
-
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "RegisterableQueryReturnDataType")
 public enum RegisterableQueryReturnDataType implements Serializable {
     UNDEFINED,
     IQUERYABLE,

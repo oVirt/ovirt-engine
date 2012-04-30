@@ -1,15 +1,7 @@
 package org.ovirt.engine.core.common.queries;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlType;
-
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "GetAllImportCandidatesQueryParameters")
 public class GetAllImportCandidatesQueryParameters extends VdcQueryParametersBase {
     private static final long serialVersionUID = 5576238956288782372L;
-    @XmlElement(name = "Path")
     private String privatePath;
 
     public String getPath() {
@@ -20,7 +12,6 @@ public class GetAllImportCandidatesQueryParameters extends VdcQueryParametersBas
         privatePath = value;
     }
 
-    @XmlElement(name = "CandidateType")
     private ImportCandidateTypeEnum privateCandidateType = ImportCandidateTypeEnum.forValue(0);
 
     public ImportCandidateTypeEnum getCandidateType() {

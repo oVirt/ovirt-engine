@@ -2,13 +2,6 @@ package org.ovirt.engine.core.common.interfaces;
 
 import java.io.Serializable;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlType;
-
-
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "SearchType", namespace = "http://service.engine.ovirt.org")
 public enum SearchType implements Serializable {
     VM,
     VDS,

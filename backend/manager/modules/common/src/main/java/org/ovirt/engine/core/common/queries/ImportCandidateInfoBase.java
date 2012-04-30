@@ -1,17 +1,10 @@
 package org.ovirt.engine.core.common.queries;
 
 import org.ovirt.engine.core.common.businessentities.*;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlType;
 import java.util.List;
 import java.util.Map;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "ImportCandidateInfoBase")
 public abstract class ImportCandidateInfoBase {
-    @XmlElement(name = "CandidateSource")
     private ImportCandidateSourceEnum privateCandidateSource = ImportCandidateSourceEnum.forValue(0);
 
     public ImportCandidateSourceEnum getCandidateSource() {
@@ -22,7 +15,6 @@ public abstract class ImportCandidateInfoBase {
         privateCandidateSource = value;
     }
 
-    // @XmlElement
     private java.util.HashMap<String, List<DiskImage>> privateImagesData;
 
     public Map<String, List<DiskImage>> getImagesData() {

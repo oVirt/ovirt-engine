@@ -2,16 +2,9 @@ package org.ovirt.engine.core.common.queries;
 
 import java.util.ArrayList;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
-
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
 
-@XmlType(namespace = "http://service.engine.ovirt.org")
-@XmlAccessorType(XmlAccessType.NONE)
 public class AsyncQueryResults {
     private ArrayList<Guid> queryIDs;
     private ArrayList<ListIVdcQueryableUpdatedDataValues> queryData;
@@ -28,7 +21,6 @@ public class AsyncQueryResults {
         }
     }
 
-    @XmlElement(name = "QueryIDsGuidArray")
     public ArrayList<Guid> getQueryIDs() {
         return queryIDs;
     }
@@ -37,7 +29,6 @@ public class AsyncQueryResults {
         this.queryIDs = queryIDs;
     }
 
-    @XmlElement
     public ArrayList<ListIVdcQueryableUpdatedDataValues> getQueryData() {
         return queryData;
     }

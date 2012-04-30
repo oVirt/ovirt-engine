@@ -1,10 +1,5 @@
 package org.ovirt.engine.core.common.queries;
 
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlElement;
-
 import java.io.Serializable;
 import java.util.Iterator;
 import java.util.Map;
@@ -12,8 +7,6 @@ import java.util.HashMap;
 import java.util.Set;
 import java.util.ArrayList;
 
-@XmlType(namespace = "http://service.engine.ovirt.org")
-@XmlAccessorType(XmlAccessType.NONE)
 public class ValueObjectMap extends ValueObject implements Serializable {
     private static final long serialVersionUID = -8970215546874151379L;
 
@@ -78,7 +71,6 @@ public class ValueObjectMap extends ValueObject implements Serializable {
         return true;
     }
 
-    @XmlElement
     public ArrayList<ValueObjectPair> getValuePairs() {
         return valuePairs;
     }

@@ -1,21 +1,12 @@
 package org.ovirt.engine.core.common.queries;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
-
 import org.ovirt.engine.core.compat.Guid;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "GetStorageDomainsByConnectionParameters")
 public class GetStorageDomainsByConnectionParameters extends VdcQueryParametersBase {
     private static final long serialVersionUID = -5734691653801921062L;
 
-    @XmlElement(name = "StoragePoolId")
     private Guid storagePoolId;
 
-    @XmlElement(name = "Connection")
     private String connection;
 
     public GetStorageDomainsByConnectionParameters() {

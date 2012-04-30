@@ -1,17 +1,10 @@
 package org.ovirt.engine.core.common.queries;
 
 import org.ovirt.engine.core.compat.*;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlType;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "StorageDomainQueryParametersBase")
 public class StorageDomainQueryParametersBase extends VdcQueryParametersBase {
     private static final long serialVersionUID = -1267869804833489615L;
 
-    @XmlElement(name = "StorageDomainId")
     private Guid privateStorageDomainId = new Guid();
 
     public Guid getStorageDomainId() {

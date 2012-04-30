@@ -1,15 +1,7 @@
 package org.ovirt.engine.core.common.queries;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlType;
-
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "CandidateInfoParameters")
 public class CandidateInfoParameters extends GetImportCandidatesQueryParameters {
     private static final long serialVersionUID = 2908006384750137275L;
-    @XmlElement(name = "CandidateIdOrName")
     private String privateCandidateIdOrName;
 
     public String getCandidateIdOrName() {
@@ -20,7 +12,6 @@ public class CandidateInfoParameters extends GetImportCandidatesQueryParameters 
         privateCandidateIdOrName = value;
     }
 
-    @XmlElement(name = "IsName")
     private boolean privateIsName;
 
     public boolean getIsName() {

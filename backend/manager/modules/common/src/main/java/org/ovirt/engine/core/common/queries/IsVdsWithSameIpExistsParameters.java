@@ -1,12 +1,5 @@
 package org.ovirt.engine.core.common.queries;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlType;
-
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "IsVdsWithSameIpExistsParameters")
 public class IsVdsWithSameIpExistsParameters extends VdcQueryParametersBase {
     private static final long serialVersionUID = 3967554280743440995L;
 
@@ -14,7 +7,6 @@ public class IsVdsWithSameIpExistsParameters extends VdcQueryParametersBase {
         _ipAddress = ipAddress;
     }
 
-    @XmlElement(name = "IpAddress")
     private String _ipAddress;
 
     public String getIpAddress() {

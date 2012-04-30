@@ -1,14 +1,7 @@
 package org.ovirt.engine.core.common.queries;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
-
 import org.ovirt.engine.core.compat.Guid;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "GetNewVdsFenceStatusParameters")
 public class GetNewVdsFenceStatusParameters extends VdcQueryParametersBase {
     private static final long serialVersionUID = -3663389765505476776L;
 
@@ -27,7 +20,6 @@ public class GetNewVdsFenceStatusParameters extends VdcQueryParametersBase {
         _password = password;
     }
 
-    @XmlElement(name = "VdsId", nillable = true)
     private Guid _vds_id;
 
     public Guid getVdsId() {
@@ -38,7 +30,6 @@ public class GetNewVdsFenceStatusParameters extends VdcQueryParametersBase {
         _vds_id = value;
     }
 
-    @XmlElement(name = "StoragePoolId")
     private Guid _storagePoolId = new Guid();
 
     public Guid getStoragePoolId() {
@@ -49,7 +40,6 @@ public class GetNewVdsFenceStatusParameters extends VdcQueryParametersBase {
         _storagePoolId = value;
     }
 
-    @XmlElement(name = "ManagementIp")
     private String _managementIp;
 
     public String getManagementIp() {
@@ -60,7 +50,6 @@ public class GetNewVdsFenceStatusParameters extends VdcQueryParametersBase {
         _managementIp = value;
     }
 
-    @XmlElement(name = "FencingOptions", nillable = true)
     private ValueObjectMap _fencingOptions;
 
     public ValueObjectMap getFencingOptions() {
@@ -71,7 +60,6 @@ public class GetNewVdsFenceStatusParameters extends VdcQueryParametersBase {
         _fencingOptions = value;
     }
 
-    @XmlElement(name = "PmType")
     private String _pmType;
 
     public String getPmType() {
@@ -82,7 +70,6 @@ public class GetNewVdsFenceStatusParameters extends VdcQueryParametersBase {
         _pmType = value;
     }
 
-    @XmlElement(name = "User")
     private String _user;
 
     public String getUser() {
@@ -93,7 +80,6 @@ public class GetNewVdsFenceStatusParameters extends VdcQueryParametersBase {
         _user = value;
     }
 
-    @XmlElement(name = "Password")
     private String _password;
 
     public String getPassword() {
@@ -104,7 +90,6 @@ public class GetNewVdsFenceStatusParameters extends VdcQueryParametersBase {
         _password = value;
     }
 
-    @XmlElement(name = "IsNewHost")
     private boolean _isNewHost;
 
     public boolean getIsNewHost() {

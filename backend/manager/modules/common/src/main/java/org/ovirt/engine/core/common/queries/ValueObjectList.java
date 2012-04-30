@@ -1,15 +1,8 @@
 package org.ovirt.engine.core.common.queries;
 
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAccessType;
-
 import java.io.Serializable;
 import java.util.List;
 
-@XmlType(namespace = "http://service.engine.ovirt.org")
-@XmlAccessorType(XmlAccessType.NONE)
 public class ValueObjectList extends ValueObject implements Serializable {
     private static final long serialVersionUID = -5301189842358791641L;
 
@@ -27,7 +20,6 @@ public class ValueObjectList extends ValueObject implements Serializable {
         return list;
     }
 
-    @XmlElement
     public List getList() {
         return list;
     }

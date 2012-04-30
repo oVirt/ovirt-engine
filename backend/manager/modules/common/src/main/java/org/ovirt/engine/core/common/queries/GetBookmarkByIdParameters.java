@@ -1,15 +1,9 @@
 package org.ovirt.engine.core.common.queries;
 
 import javax.validation.constraints.NotNull;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
 
 import org.ovirt.engine.core.compat.Guid;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "GetBookmarkByIdParameters")
 public class GetBookmarkByIdParameters extends VdcQueryParametersBase {
     private static final long serialVersionUID = -4325163572694059964L;
 
@@ -18,7 +12,6 @@ public class GetBookmarkByIdParameters extends VdcQueryParametersBase {
     }
 
     @NotNull(message = "VALIDATION.BOOKMARKS.ID.NOT_NULL")
-    @XmlElement(name = "BookmarkId")
     private Guid _bookmarkId;
 
     public Guid getBookmarkId() {

@@ -1,16 +1,9 @@
 package org.ovirt.engine.core.common.queries;
 
 import org.ovirt.engine.core.compat.*;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlType;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "GetAllFromExportDomainQueryParamenters")
 public class GetAllFromExportDomainQueryParamenters extends VdcQueryParametersBase {
     private static final long serialVersionUID = 5436719744430725750L;
-    @XmlElement(name = "StoragePoolId")
     private Guid privateStoragePoolId = new Guid();
 
     public Guid getStoragePoolId() {
@@ -21,7 +14,6 @@ public class GetAllFromExportDomainQueryParamenters extends VdcQueryParametersBa
         privateStoragePoolId = value;
     }
 
-    @XmlElement(name = "StorageDomainId")
     private Guid privateStorageDomainId = new Guid();
 
     public Guid getStorageDomainId() {
@@ -32,7 +24,6 @@ public class GetAllFromExportDomainQueryParamenters extends VdcQueryParametersBa
         privateStorageDomainId = value;
     }
 
-    @XmlElement(name = "IdsGuidArray")
     private java.util.ArrayList<Guid> privateIds;
 
     public java.util.ArrayList<Guid> getIds() {
@@ -43,7 +34,6 @@ public class GetAllFromExportDomainQueryParamenters extends VdcQueryParametersBa
         privateIds = value;
     }
 
-    @XmlElement(name = "GetAll")
     private boolean privateGetAll;
 
     public boolean getGetAll() {

@@ -2,13 +2,6 @@ package org.ovirt.engine.core.common.queries;
 
 import java.io.Serializable;
 
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlElement;
-
-@XmlType(namespace = "http://service.engine.ovirt.org")
-@XmlAccessorType(XmlAccessType.NONE)
 public class ValueObjectPair implements Serializable {
     @Override
     public int hashCode() {
@@ -54,7 +47,6 @@ public class ValueObjectPair implements Serializable {
         this.value = value;
     }
 
-    @XmlElement
     public Object getKey() {
         return key;
     }
@@ -63,7 +55,6 @@ public class ValueObjectPair implements Serializable {
         this.key = key;
     }
 
-    @XmlElement
     public Object getValue() {
         return value;
     }

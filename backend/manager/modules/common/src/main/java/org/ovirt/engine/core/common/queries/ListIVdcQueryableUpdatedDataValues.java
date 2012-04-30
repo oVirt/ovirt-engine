@@ -1,14 +1,7 @@
 package org.ovirt.engine.core.common.queries;
 
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAccessType;
-
 import java.util.ArrayList;
 
-@XmlType(namespace = "http://service.engine.ovirt.org")
-@XmlAccessorType(XmlAccessType.NONE)
 public class ListIVdcQueryableUpdatedDataValues {
     private ArrayList<ListIVdcQueryableUpdatedData> value;
     private String csharpworkaround; // without this, C# wsdl processing will
@@ -22,7 +15,6 @@ public class ListIVdcQueryableUpdatedDataValues {
         this.value = value;
     }
 
-    @XmlElement
     public ArrayList<ListIVdcQueryableUpdatedData> getValue() {
         return value;
     }
@@ -31,7 +23,6 @@ public class ListIVdcQueryableUpdatedDataValues {
         this.value = value;
     }
 
-    @XmlElement
     public String getCsharpworkaround() {
         return csharpworkaround;
     }

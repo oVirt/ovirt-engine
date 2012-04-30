@@ -2,7 +2,6 @@ package org.ovirt.engine.core.common.queries;
 
 import org.ovirt.engine.core.common.businessentities.*;
 
-import javax.xml.bind.annotation.*;
 import java.util.Collection;
 
 /**
@@ -10,12 +9,9 @@ import java.util.Collection;
  * List of IVdcQueryable (for example: Search, GetAllDisksByVmID).
  */
 
-// @XmlAccessorType(XmlAccessType.NONE)
-@XmlType(namespace = "http://service.engine.ovirt.org", name = "ListIVdcQueryableUpdatedData")
 public class ListIVdcQueryableUpdatedData extends IRegisterQueryUpdatedData {
     private static final long serialVersionUID = -2939208206199375205L;
 
-    // @XmlElement(name="Added")
     private java.util.Map<Object, IVdcQueryable> privateAdded;
 
     public java.util.Map<Object, IVdcQueryable> getAdded() {
@@ -26,7 +22,6 @@ public class ListIVdcQueryableUpdatedData extends IRegisterQueryUpdatedData {
         privateAdded = value;
     }
 
-    // @XmlElement(name="Removed")
     private Collection<Object> privateRemoved;
 
     public Collection<Object> getRemoved() {
@@ -37,7 +32,6 @@ public class ListIVdcQueryableUpdatedData extends IRegisterQueryUpdatedData {
         privateRemoved = value;
     }
 
-    // @XmlElement(name="Updated")
     private java.util.Map<Object, IVdcQueryable> privateUpdated;
 
     public java.util.Map<Object, IVdcQueryable> getUpdated() {
@@ -61,7 +55,6 @@ public class ListIVdcQueryableUpdatedData extends IRegisterQueryUpdatedData {
         setUpdated(updated);
     }
 
-    // @XmlElement(name="Faulted")
     private ValueObjectPair privateFaulted;
 
     public ValueObjectPair getFaulted() {
