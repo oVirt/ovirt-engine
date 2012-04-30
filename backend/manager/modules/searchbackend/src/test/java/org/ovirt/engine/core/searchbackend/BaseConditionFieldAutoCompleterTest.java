@@ -30,9 +30,9 @@ public class BaseConditionFieldAutoCompleterTest {
         Assert.assertFalse(BaseConditionFieldAutoCompleter.validDecimal.isValid(null, "$%@^%"));
         Assert.assertFalse(BaseConditionFieldAutoCompleter.validDecimal.isValid(null, "1$"));
         Assert.assertTrue(BaseConditionFieldAutoCompleter.validDecimal.isValid(null, "1.1"));
-        Assert.assertTrue(BaseConditionFieldAutoCompleter.validInteger.isValid(null, "1"));
-        Assert.assertTrue(BaseConditionFieldAutoCompleter.validInteger.isValid(null, "-1"));
-        Assert.assertTrue(BaseConditionFieldAutoCompleter.validInteger.isValid(null, "-1.1"));
+        Assert.assertTrue(BaseConditionFieldAutoCompleter.validDecimal.isValid(null, "1"));
+        Assert.assertTrue(BaseConditionFieldAutoCompleter.validDecimal.isValid(null, "-1"));
+        Assert.assertTrue(BaseConditionFieldAutoCompleter.validDecimal.isValid(null, "-1.1"));
     }
 
 }
