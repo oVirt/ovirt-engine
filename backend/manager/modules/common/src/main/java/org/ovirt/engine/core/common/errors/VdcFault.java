@@ -1,16 +1,9 @@
 package org.ovirt.engine.core.common.errors;
 
 import org.ovirt.engine.core.common.businessentities.*;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlType;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "VdcFault")
 public class VdcFault extends IVdcQueryable {
     private static final long serialVersionUID = -8004317251171749327L;
-    @XmlElement(name = "SessionID")
     private String privateSessionID;
 
     public String getSessionID() {
@@ -21,7 +14,6 @@ public class VdcFault extends IVdcQueryable {
         privateSessionID = value;
     }
 
-    @XmlElement(name = "Details")
     private java.util.ArrayList<String> privateDetails;
 
     public java.util.ArrayList<String> getDetails() {
@@ -34,7 +26,6 @@ public class VdcFault extends IVdcQueryable {
 
     private VdcBllErrors _Error;
 
-    @XmlElement(name = "Error")
     public VdcBllErrors getError() {
         return _Error;
     }
@@ -43,7 +34,6 @@ public class VdcFault extends IVdcQueryable {
         _Error = value;
     }
 
-    @XmlElement(name = "ErrorCode")
     public int getErrorCode() {
         return _Error.getValue();
     }
@@ -70,7 +60,6 @@ public class VdcFault extends IVdcQueryable {
         _Error = VdcBllErrors.unexpected;
     }
 
-    @XmlElement(name = "Message")
     private String privateMessage;
 
     public String getMessage() {

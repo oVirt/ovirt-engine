@@ -2,16 +2,10 @@ package org.ovirt.engine.core.common.errors;
 
 import java.util.HashMap;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlType;
-
 /**
  * The purpose of this enumaration is to contain all the errors exposed by the VdcBLL. The error codes are not
  * sequential in order to be able to add error codes as development evolves.
  */
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "VdcBllErrors")
 public enum VdcBllErrors {
     Done(0),
     noVM(1),

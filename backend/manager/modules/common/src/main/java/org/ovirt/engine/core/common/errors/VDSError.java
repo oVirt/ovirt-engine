@@ -1,12 +1,5 @@
 package org.ovirt.engine.core.common.errors;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlType;
-
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "VDSError")
 public class VDSError {
 
     public VDSError(VdcBllErrors code, String message) {
@@ -14,7 +7,6 @@ public class VDSError {
         this.privateMessage = message;
     }
 
-    @XmlElement(name = "Message")
     private String privateMessage;
 
     public String getMessage() {
@@ -25,7 +17,6 @@ public class VDSError {
         privateMessage = value;
     }
 
-    @XmlElement(name = "Code")
     private VdcBllErrors privateCode = VdcBllErrors.forValue(0);
 
     public VdcBllErrors getCode() {
@@ -36,7 +27,6 @@ public class VDSError {
         privateCode = value;
     }
 
-    @XmlElement(name = "Args")
     private java.util.ArrayList<Object> privateArgs;
 
     public java.util.ArrayList<Object> getArgs() {
