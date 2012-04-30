@@ -1,15 +1,8 @@
 package org.ovirt.engine.core.common.vdscommands;
 
 import org.ovirt.engine.core.compat.*;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlType;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "ExportCandidateVDSCommandParameters")
 public class ExportCandidateVDSCommandParameters extends StorageDomainIdParametersBase {
-    @XmlElement(name = "VmGUID")
     private Guid privateVmGUID = new Guid();
 
     public Guid getVmGUID() {
@@ -20,7 +13,6 @@ public class ExportCandidateVDSCommandParameters extends StorageDomainIdParamete
         privateVmGUID = value;
     }
 
-    @XmlElement
     private java.util.HashMap<String, java.util.ArrayList<Guid>> privateListOfImages;
 
     public java.util.HashMap<String, java.util.ArrayList<Guid>> getListOfImages() {
@@ -31,7 +23,6 @@ public class ExportCandidateVDSCommandParameters extends StorageDomainIdParamete
         privateListOfImages = value;
     }
 
-    @XmlElement(name = "VmMeta")
     private String privateVmMeta;
 
     public String getVmMeta() {
@@ -42,7 +33,6 @@ public class ExportCandidateVDSCommandParameters extends StorageDomainIdParamete
         privateVmMeta = value;
     }
 
-    @XmlElement(name = "VmTemplateGUID")
     private Guid privateVmTemplateGUID = new Guid();
 
     public Guid getVmTemplateGUID() {
@@ -53,7 +43,6 @@ public class ExportCandidateVDSCommandParameters extends StorageDomainIdParamete
         privateVmTemplateGUID = value;
     }
 
-    @XmlElement
     private java.util.HashMap<String, Guid> privateVmTemplateImageGUIDs;
 
     public java.util.HashMap<String, Guid> getVmTemplateImageGUIDs() {
@@ -64,7 +53,6 @@ public class ExportCandidateVDSCommandParameters extends StorageDomainIdParamete
         privateVmTemplateImageGUIDs = value;
     }
 
-    @XmlElement(name = "VmTemplateMeta")
     private String privateVmTemplateMeta;
 
     public String getVmTemplateMeta() {
@@ -75,7 +63,6 @@ public class ExportCandidateVDSCommandParameters extends StorageDomainIdParamete
         privateVmTemplateMeta = value;
     }
 
-    @XmlElement(name = "Path")
     private String privatePath;
 
     public String getPath() {
@@ -86,7 +73,6 @@ public class ExportCandidateVDSCommandParameters extends StorageDomainIdParamete
         privatePath = value;
     }
 
-    @XmlElement(name = "Collapse")
     private boolean privateCollapse;
 
     public boolean getCollapse() {
@@ -97,7 +83,6 @@ public class ExportCandidateVDSCommandParameters extends StorageDomainIdParamete
         privateCollapse = value;
     }
 
-    @XmlElement(name = "Force")
     private boolean privateForce;
 
     public boolean getForce() {

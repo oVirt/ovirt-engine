@@ -1,14 +1,8 @@
 package org.ovirt.engine.core.common.vdscommands;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlType;
-
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.compat.Guid;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "VdsIdAndVdsVDSCommandParametersBase")
 public class VdsIdAndVdsVDSCommandParametersBase extends VdsIdVDSCommandParametersBase {
     private VDS privateVds;
 

@@ -1,13 +1,7 @@
 package org.ovirt.engine.core.common.vdscommands;
 
 import org.ovirt.engine.core.compat.*;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlType;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "ResetIrsVDSCommandParameters")
 public class ResetIrsVDSCommandParameters extends IrsBaseVDSCommandParameters {
     public ResetIrsVDSCommandParameters(Guid storagePoolId, String hostName, Guid vdsId) {
         super(storagePoolId);
@@ -15,10 +9,8 @@ public class ResetIrsVDSCommandParameters extends IrsBaseVDSCommandParameters {
         _hostName = hostName;
     }
 
-    @XmlElement
     private String _hostName;
 
-    @XmlElement
     private Guid privateVdsId;
 
     public Guid getVdsId() {
@@ -33,7 +25,6 @@ public class ResetIrsVDSCommandParameters extends IrsBaseVDSCommandParameters {
         return _hostName;
     }
 
-    @XmlElement(name = "IgnoreStopFailed")
     private boolean privateIgnoreStopFailed;
 
     public boolean getIgnoreStopFailed() {

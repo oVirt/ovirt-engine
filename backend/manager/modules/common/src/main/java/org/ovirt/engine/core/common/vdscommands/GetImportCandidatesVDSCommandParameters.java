@@ -1,17 +1,10 @@
 package org.ovirt.engine.core.common.vdscommands;
 
 import org.ovirt.engine.core.compat.*;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlType;
 
 import org.ovirt.engine.core.common.queries.*;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "GetImportCandidatesVDSCommandParameters")
 public class GetImportCandidatesVDSCommandParameters extends IrsBaseVDSCommandParameters {
-    @XmlElement(name = "Path")
     private String privatePath;
 
     public String getPath() {
@@ -22,7 +15,6 @@ public class GetImportCandidatesVDSCommandParameters extends IrsBaseVDSCommandPa
         privatePath = value;
     }
 
-    @XmlElement(name = "CandidateSource")
     private ImportCandidateSourceEnum privateCandidateSource = ImportCandidateSourceEnum.forValue(0);
 
     public ImportCandidateSourceEnum getCandidateSource() {
@@ -33,7 +25,6 @@ public class GetImportCandidatesVDSCommandParameters extends IrsBaseVDSCommandPa
         privateCandidateSource = value;
     }
 
-    @XmlElement(name = "CandidateType")
     private ImportCandidateTypeEnum privateCandidateType = ImportCandidateTypeEnum.forValue(0);
 
     public ImportCandidateTypeEnum getCandidateType() {

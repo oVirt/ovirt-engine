@@ -3,17 +3,9 @@ package org.ovirt.engine.core.common.vdscommands;
 import org.ovirt.engine.core.compat.*;
 import org.ovirt.engine.core.common.businessentities.*;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlType;
-
 import java.util.List;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "ConnectStorageServerVDSCommandParameters")
 public class ConnectStorageServerVDSCommandParameters extends GetStorageConnectionsListVDSCommandParameters {
-    @XmlElement(name = "StorageType")
     private StorageType privateStorageType = StorageType.forValue(0);
 
     public StorageType getStorageType() {
@@ -24,7 +16,6 @@ public class ConnectStorageServerVDSCommandParameters extends GetStorageConnecti
         privateStorageType = value;
     }
 
-    @XmlElement(name = "ConnectionList")
     private List<storage_server_connections> privateConnectionList;
 
     public List<storage_server_connections> getConnectionList() {

@@ -1,13 +1,7 @@
 package org.ovirt.engine.core.common.vdscommands;
 
 import org.ovirt.engine.core.compat.*;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlType;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "DestroyImageVDSCommandParameters")
 public class DestroyImageVDSCommandParameters extends AllStorageAndImageIdVDSCommandParametersBase {
     public DestroyImageVDSCommandParameters(Guid storagePoolId, Guid storageDomainId, Guid imageGroupId,
             java.util.ArrayList<Guid> imageList, boolean postZero, boolean force, String compatibilityVersion) {
@@ -18,7 +12,6 @@ public class DestroyImageVDSCommandParameters extends AllStorageAndImageIdVDSCom
         setCompatibilityVersion(compatibilityVersion);
     }
 
-    @XmlElement(name = "ImageList")
     private java.util.ArrayList<Guid> privateImageList;
 
     public java.util.ArrayList<Guid> getImageList() {
@@ -29,7 +22,6 @@ public class DestroyImageVDSCommandParameters extends AllStorageAndImageIdVDSCom
         privateImageList = value;
     }
 
-    @XmlElement(name = "PostZero")
     private boolean privatePostZero;
 
     public boolean getPostZero() {
@@ -40,7 +32,6 @@ public class DestroyImageVDSCommandParameters extends AllStorageAndImageIdVDSCom
         privatePostZero = value;
     }
 
-    @XmlElement(name = "Force")
     private boolean privateForce;
 
     public boolean getForce() {

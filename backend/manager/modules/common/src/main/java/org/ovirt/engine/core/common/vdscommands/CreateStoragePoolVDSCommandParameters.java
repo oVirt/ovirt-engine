@@ -1,17 +1,9 @@
 package org.ovirt.engine.core.common.vdscommands;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
-
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.compat.Guid;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "CreateStoragePoolVDSCommandParameters")
 public class CreateStoragePoolVDSCommandParameters extends VdsIdVDSCommandParametersBase {
-    @XmlElement(name = "StoragePoolId")
     private Guid privateStoragePoolId = new Guid();
 
     public Guid getStoragePoolId() {
@@ -22,7 +14,6 @@ public class CreateStoragePoolVDSCommandParameters extends VdsIdVDSCommandParame
         privateStoragePoolId = value;
     }
 
-    @XmlElement(name = "StorageType")
     private StorageType privateStorageType = StorageType.forValue(0);
 
     public StorageType getStorageType() {
@@ -33,7 +24,6 @@ public class CreateStoragePoolVDSCommandParameters extends VdsIdVDSCommandParame
         privateStorageType = value;
     }
 
-    @XmlElement(name = "StoragePoolName")
     private String privateStoragePoolName;
 
     public String getStoragePoolName() {
@@ -44,7 +34,6 @@ public class CreateStoragePoolVDSCommandParameters extends VdsIdVDSCommandParame
         privateStoragePoolName = value;
     }
 
-    @XmlElement(name = "MasterDomainId")
     private Guid privateMasterDomainId = new Guid();
 
     public Guid getMasterDomainId() {
@@ -55,7 +44,6 @@ public class CreateStoragePoolVDSCommandParameters extends VdsIdVDSCommandParame
         privateMasterDomainId = value;
     }
 
-    @XmlElement(name = "DomainsIdList")
     private java.util.ArrayList<Guid> privateDomainsIdList;
 
     public java.util.ArrayList<Guid> getDomainsIdList() {
@@ -66,7 +54,6 @@ public class CreateStoragePoolVDSCommandParameters extends VdsIdVDSCommandParame
         privateDomainsIdList = value;
     }
 
-    @XmlElement(name = "MasterVersion")
     private int privateMasterVersion;
 
     public int getMasterVersion() {

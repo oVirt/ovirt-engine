@@ -1,13 +1,7 @@
 package org.ovirt.engine.core.common.vdscommands;
 
 import org.ovirt.engine.core.compat.*;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlType;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "RemoveVMVDSCommandParameters")
 public class RemoveVMVDSCommandParameters extends StorageDomainIdParametersBase {
     public RemoveVMVDSCommandParameters(Guid storagePoolId, Guid vmGuid) {
         this(storagePoolId, vmGuid, Guid.Empty);
@@ -19,7 +13,6 @@ public class RemoveVMVDSCommandParameters extends StorageDomainIdParametersBase 
         setStorageDomainId(storageDomainId);
     }
 
-    @XmlElement(name = "VmGuid")
     private Guid privateVmGuid = new Guid();
 
     public Guid getVmGuid() {

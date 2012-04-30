@@ -1,20 +1,10 @@
 package org.ovirt.engine.core.common.vdscommands;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
-
 import org.ovirt.engine.core.compat.Guid;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "StartSpiceVDSCommandParameters")
 public class StartSpiceVDSCommandParameters extends VdsIdVDSCommandParametersBase {
-    @XmlElement
     private String _vdsIp;
-    @XmlElement
     private String _ticket;
-    @XmlElement
     private int _guestPort;
 
     public StartSpiceVDSCommandParameters(Guid vdsId, String vdsIp, int guestPort, String ticket) {

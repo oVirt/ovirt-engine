@@ -2,13 +2,7 @@ package org.ovirt.engine.core.common.vdscommands;
 
 import org.ovirt.engine.core.compat.*;
 import org.ovirt.engine.core.common.businessentities.*;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlType;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "CopyImageVDSCommandParameters")
 public class CopyImageVDSCommandParameters extends AllStorageAndImageIdVDSCommandParametersBase {
     public CopyImageVDSCommandParameters(Guid storagePoolId, Guid storageDomainId, Guid vmId, Guid imageGroupId,
             Guid srcImageId, Guid dstImageGroupId, Guid dstVolUUID, String description, Guid dstStorageDomainId,
@@ -28,7 +22,6 @@ public class CopyImageVDSCommandParameters extends AllStorageAndImageIdVDSComman
         setCompatibilityVersion(compatibilityVersion);
     }
 
-    @XmlElement(name = "dstImageGroupId")
     private Guid privatedstImageGroupId = new Guid();
 
     public Guid getdstImageGroupId() {
@@ -39,7 +32,6 @@ public class CopyImageVDSCommandParameters extends AllStorageAndImageIdVDSComman
         privatedstImageGroupId = value;
     }
 
-    @XmlElement(name = "VmId")
     private Guid privateVmId = new Guid();
 
     public Guid getVmId() {
@@ -50,7 +42,6 @@ public class CopyImageVDSCommandParameters extends AllStorageAndImageIdVDSComman
         privateVmId = value;
     }
 
-    @XmlElement(name = "DstImageId")
     private Guid privateDstImageId = new Guid();
 
     public Guid getDstImageId() {
@@ -61,7 +52,6 @@ public class CopyImageVDSCommandParameters extends AllStorageAndImageIdVDSComman
         privateDstImageId = value;
     }
 
-    @XmlElement(name = "ImageDescription")
     private String privateImageDescription;
 
     public String getImageDescription() {
@@ -72,7 +62,6 @@ public class CopyImageVDSCommandParameters extends AllStorageAndImageIdVDSComman
         privateImageDescription = value;
     }
 
-    @XmlElement
     private Guid privateDstStorageDomainId = new Guid();
 
     public Guid getDstStorageDomainId() {
@@ -83,7 +72,6 @@ public class CopyImageVDSCommandParameters extends AllStorageAndImageIdVDSComman
         privateDstStorageDomainId = value;
     }
 
-    @XmlElement
     private CopyVolumeType privateCopyVolumeType = CopyVolumeType.forValue(0);
 
     public CopyVolumeType getCopyVolumeType() {
@@ -94,7 +82,6 @@ public class CopyImageVDSCommandParameters extends AllStorageAndImageIdVDSComman
         privateCopyVolumeType = value;
     }
 
-    @XmlElement
     private VolumeFormat privateVolumeFormat = VolumeFormat.forValue(0);
 
     public VolumeFormat getVolumeFormat() {
@@ -105,7 +92,6 @@ public class CopyImageVDSCommandParameters extends AllStorageAndImageIdVDSComman
         privateVolumeFormat = value;
     }
 
-    @XmlElement
     private VolumeType privatePreallocate = VolumeType.forValue(0);
 
     public VolumeType getPreallocate() {
@@ -116,7 +102,6 @@ public class CopyImageVDSCommandParameters extends AllStorageAndImageIdVDSComman
         privatePreallocate = value;
     }
 
-    @XmlElement
     private boolean privatePostZero;
 
     public boolean getPostZero() {
@@ -127,7 +112,6 @@ public class CopyImageVDSCommandParameters extends AllStorageAndImageIdVDSComman
         privatePostZero = value;
     }
 
-    @XmlElement
     private boolean privateForce;
 
     public boolean getForce() {

@@ -1,16 +1,8 @@
 package org.ovirt.engine.core.common.vdscommands;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
-
 import org.ovirt.engine.core.compat.Guid;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "VdsAndVmIDVDSParametersBase")
 public class VdsAndVmIDVDSParametersBase extends VdsIdVDSCommandParametersBase {
-    @XmlElement
     private Guid _vmId = new Guid();
 
     public VdsAndVmIDVDSParametersBase(Guid vdsId, Guid vmId) {

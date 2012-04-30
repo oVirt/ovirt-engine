@@ -1,15 +1,8 @@
 package org.ovirt.engine.core.common.vdscommands;
 
 import org.ovirt.engine.core.compat.*;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlType;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "DeactivateStorageDomainVDSCommandParameters")
 public class DeactivateStorageDomainVDSCommandParameters extends ActivateStorageDomainVDSCommandParameters {
-    @XmlElement(name = "MasterStorageDomainId")
     private Guid privateMasterStorageDomainId = new Guid();
 
     public Guid getMasterStorageDomainId() {
@@ -20,7 +13,6 @@ public class DeactivateStorageDomainVDSCommandParameters extends ActivateStorage
         privateMasterStorageDomainId = value;
     }
 
-    @XmlElement(name = "MasterVersion")
     private int privateMasterVersion;
 
     public int getMasterVersion() {

@@ -1,16 +1,9 @@
 package org.ovirt.engine.core.common.vdscommands;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
-
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.compat.Guid;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "HSMGetStorageDomainsListVDSCommandParameters")
 public class HSMGetStorageDomainsListVDSCommandParameters extends VdsIdVDSCommandParametersBase {
     public HSMGetStorageDomainsListVDSCommandParameters(Guid vdsId, Guid storagePoolId, StorageType storageType,
             StorageDomainType storageDomainType, String path) {
@@ -21,7 +14,6 @@ public class HSMGetStorageDomainsListVDSCommandParameters extends VdsIdVDSComman
         setPath(path);
     }
 
-    @XmlElement
     private Guid privateStoragePoolId = new Guid();
 
     public Guid getStoragePoolId() {
@@ -32,7 +24,6 @@ public class HSMGetStorageDomainsListVDSCommandParameters extends VdsIdVDSComman
         privateStoragePoolId = value;
     }
 
-    @XmlElement
     private StorageType privateStorageType = StorageType.forValue(0);
 
     public StorageType getStorageType() {
@@ -43,7 +34,6 @@ public class HSMGetStorageDomainsListVDSCommandParameters extends VdsIdVDSComman
         privateStorageType = value;
     }
 
-    @XmlElement
     private StorageDomainType privateStorageDomainType = StorageDomainType.forValue(0);
 
     public StorageDomainType getStorageDomainType() {
@@ -54,7 +44,6 @@ public class HSMGetStorageDomainsListVDSCommandParameters extends VdsIdVDSComman
         privateStorageDomainType = value;
     }
 
-    @XmlElement
     private String privatePath;
 
     public String getPath() {

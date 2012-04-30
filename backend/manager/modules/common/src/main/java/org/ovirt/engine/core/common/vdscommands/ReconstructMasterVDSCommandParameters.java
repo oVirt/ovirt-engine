@@ -2,17 +2,10 @@ package org.ovirt.engine.core.common.vdscommands;
 
 import org.ovirt.engine.core.compat.*;
 import org.ovirt.engine.core.common.businessentities.*;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlType;
 
 import java.util.List;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "ReconstructMasterVDSCommandParameters")
 public class ReconstructMasterVDSCommandParameters extends VdsIdVDSCommandParametersBase {
-    @XmlElement(name = "StoragePoolId")
     private Guid privateStoragePoolId = new Guid();
 
     public Guid getStoragePoolId() {
@@ -23,7 +16,6 @@ public class ReconstructMasterVDSCommandParameters extends VdsIdVDSCommandParame
         privateStoragePoolId = value;
     }
 
-    @XmlElement(name = "StoragePoolName")
     private String privateStoragePoolName;
 
     public String getStoragePoolName() {
@@ -34,7 +26,6 @@ public class ReconstructMasterVDSCommandParameters extends VdsIdVDSCommandParame
         privateStoragePoolName = value;
     }
 
-    @XmlElement(name = "MasterDomainId")
     private Guid privateMasterDomainId = new Guid();
 
     public Guid getMasterDomainId() {
@@ -45,7 +36,6 @@ public class ReconstructMasterVDSCommandParameters extends VdsIdVDSCommandParame
         privateMasterDomainId = value;
     }
 
-    @XmlElement(name = "DomainsList")
     private List<storage_pool_iso_map> privateDomainsList;
 
     public List<storage_pool_iso_map> getDomainsList() {
@@ -56,7 +46,6 @@ public class ReconstructMasterVDSCommandParameters extends VdsIdVDSCommandParame
         privateDomainsList = value;
     }
 
-    @XmlElement(name = "MasterVersion")
     private int privateMasterVersion;
 
     public int getMasterVersion() {

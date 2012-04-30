@@ -1,14 +1,7 @@
 package org.ovirt.engine.core.common.vdscommands;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
-
 import org.ovirt.engine.core.compat.Guid;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "RemoveVGVDSCommandParameters")
 @Deprecated
 public class RemoveVGVDSCommandParameters extends VdsIdVDSCommandParametersBase {
     public RemoveVGVDSCommandParameters(Guid vdsId, String vgId) {
@@ -16,7 +9,6 @@ public class RemoveVGVDSCommandParameters extends VdsIdVDSCommandParametersBase 
         setVGID(vgId);
     }
 
-    @XmlElement(name = "VGID")
     private String privateVGID;
 
     public String getVGID() {

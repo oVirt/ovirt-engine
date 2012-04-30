@@ -1,13 +1,7 @@
 package org.ovirt.engine.core.common.vdscommands;
 
 import org.ovirt.engine.core.compat.*;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlType;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "DeleteImageGroupVDSCommandParameters")
 public class DeleteImageGroupVDSCommandParameters extends StoragePoolDomainAndGroupIdBaseVDSCommandParameters {
     public DeleteImageGroupVDSCommandParameters(Guid storagePoolId, Guid storageDomainId, Guid imageGroupId,
             boolean postZeros, boolean force, String competabilityVersion) {
@@ -17,7 +11,6 @@ public class DeleteImageGroupVDSCommandParameters extends StoragePoolDomainAndGr
         setCompatibilityVersion(competabilityVersion);
     }
 
-    @XmlElement(name = "PostZeros")
     private boolean privatePostZeros;
 
     public boolean getPostZeros() {
@@ -28,7 +21,6 @@ public class DeleteImageGroupVDSCommandParameters extends StoragePoolDomainAndGr
         privatePostZeros = value;
     }
 
-    @XmlElement
     private boolean privateForceDelete;
 
     public boolean getForceDelete() {

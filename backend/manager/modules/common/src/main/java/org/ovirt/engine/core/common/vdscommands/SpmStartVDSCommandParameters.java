@@ -1,16 +1,9 @@
 package org.ovirt.engine.core.common.vdscommands;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
-
 import org.ovirt.engine.core.common.businessentities.RecoveryMode;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.compat.Guid;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "SpmStartVDSCommandParameters")
 public class SpmStartVDSCommandParameters extends FenceSpmStorageVDSCommandParameters {
     public SpmStartVDSCommandParameters(Guid vdsId, Guid storagePoolId, int prevID, String prevLVER,
             RecoveryMode recoveryMode, boolean SCSIfencing, StorageFormatType storagePoolFormatType) {
@@ -30,7 +23,6 @@ public class SpmStartVDSCommandParameters extends FenceSpmStorageVDSCommandParam
         this.storagePoolFormatType = storagePoolFormatType;
     }
 
-    @XmlElement(name = "RecoveryMode")
     private RecoveryMode privateRecoveryMode = RecoveryMode.forValue(0);
 
     public RecoveryMode getRecoveryMode() {
@@ -41,7 +33,6 @@ public class SpmStartVDSCommandParameters extends FenceSpmStorageVDSCommandParam
         privateRecoveryMode = value;
     }
 
-    @XmlElement(name = "SCSIFencing")
     private boolean privateSCSIFencing;
 
     public boolean getSCSIFencing() {

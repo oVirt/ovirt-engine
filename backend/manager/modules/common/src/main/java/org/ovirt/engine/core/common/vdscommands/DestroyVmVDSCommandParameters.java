@@ -1,14 +1,7 @@
 package org.ovirt.engine.core.common.vdscommands;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
-
 import org.ovirt.engine.core.compat.Guid;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "DestroyVmVDSCommandParameters")
 public class DestroyVmVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
     public DestroyVmVDSCommandParameters(Guid vdsId, Guid vmId, boolean force, boolean gracefully, int secondsToWait) {
         super(vdsId, vmId);
@@ -17,11 +10,8 @@ public class DestroyVmVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
         _secondsToWait = secondsToWait;
     }
 
-    @XmlElement
     private boolean _force;
-    @XmlElement
     private boolean _gracefully;
-    @XmlElement
     private int _secondsToWait;
 
     public boolean getForce() {

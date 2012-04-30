@@ -1,23 +1,12 @@
 package org.ovirt.engine.core.common.vdscommands;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
-
 import org.ovirt.engine.core.common.businessentities.MigrationMethod;
 import org.ovirt.engine.core.compat.Guid;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "MigrateVDSCommandParameters")
 public class MigrateVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
-    @XmlElement
     private String _srcHost;
-    @XmlElement
     private Guid _dstVdsId;
-    @XmlElement
     private String _dstHost;
-    @XmlElement
     private MigrationMethod _migrationMethod = MigrationMethod.forValue(0);
 
     public MigrateVDSCommandParameters(Guid vdsId, Guid vmId, String srcHost, Guid dstVdsId, String dstHost,

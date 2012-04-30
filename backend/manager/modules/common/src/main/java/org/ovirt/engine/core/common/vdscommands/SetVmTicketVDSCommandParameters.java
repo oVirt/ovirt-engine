@@ -1,22 +1,11 @@
 package org.ovirt.engine.core.common.vdscommands;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
-
 import org.ovirt.engine.core.compat.Guid;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "SetVmTicketVDSCommandParameters")
 public class SetVmTicketVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
-    @XmlElement
     private String ticket;
-    @XmlElement
     private int validTime;
-    @XmlElement
     private String userName;
-    @XmlElement
     private Guid userId;
 
     public SetVmTicketVDSCommandParameters(Guid vdsId, Guid vmId, String ticket, int validTime, String userName, Guid userId) {

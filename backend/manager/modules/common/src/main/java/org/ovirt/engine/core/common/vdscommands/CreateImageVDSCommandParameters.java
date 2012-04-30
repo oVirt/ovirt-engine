@@ -2,13 +2,7 @@ package org.ovirt.engine.core.common.vdscommands;
 
 import org.ovirt.engine.core.compat.*;
 import org.ovirt.engine.core.common.businessentities.*;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlType;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "CreateImageVDSCommandParameters")
 public class CreateImageVDSCommandParameters extends StoragePoolDomainAndGroupIdBaseVDSCommandParameters {
     public CreateImageVDSCommandParameters(Guid storagePoolId, Guid storageDomainId, Guid imageGroupId,
             long imageSizeInBytes, VolumeType imageType, VolumeFormat volFormat, Guid newImageId,
@@ -22,9 +16,7 @@ public class CreateImageVDSCommandParameters extends StoragePoolDomainAndGroupId
         setCompatibilityVersion(competabilityVersion);
     }
 
-    @XmlElement
     private long _imageSizeInBytes;
-    @XmlElement
     private VolumeType _imageType = VolumeType.forValue(0);
 
     public long getImageSizeInBytes() {

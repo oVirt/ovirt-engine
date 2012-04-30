@@ -1,14 +1,7 @@
 package org.ovirt.engine.core.common.vdscommands;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
-
 import org.ovirt.engine.core.compat.Guid;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "FenceSpmStorageVDSCommandParameters")
 public class FenceSpmStorageVDSCommandParameters extends GetStorageConnectionsListVDSCommandParameters {
     public FenceSpmStorageVDSCommandParameters(Guid vdsId, Guid storagePoolId, int prevID, String prevLVER) {
         super(vdsId, storagePoolId);
@@ -16,7 +9,6 @@ public class FenceSpmStorageVDSCommandParameters extends GetStorageConnectionsLi
         setPrevLVER((prevLVER != null) ? prevLVER : "-1");
     }
 
-    @XmlElement(name = "PrevId")
     private int privatePrevId;
 
     public int getPrevId() {
@@ -27,7 +19,6 @@ public class FenceSpmStorageVDSCommandParameters extends GetStorageConnectionsLi
         privatePrevId = value;
     }
 
-    @XmlElement(name = "PrevLVER")
     private String privatePrevLVER;
 
     public String getPrevLVER() {

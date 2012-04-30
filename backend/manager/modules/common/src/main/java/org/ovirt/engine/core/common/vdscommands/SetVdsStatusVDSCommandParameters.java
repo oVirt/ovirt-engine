@@ -1,18 +1,10 @@
 package org.ovirt.engine.core.common.vdscommands;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
-
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.compat.Guid;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "SetVdsStatusVDSCommandParameters")
 public class SetVdsStatusVDSCommandParameters extends VdsIdVDSCommandParametersBase {
-    @XmlElement
     private VDSStatus _status = VDSStatus.forValue(0);
     private NonOperationalReason nonOperationalReason = NonOperationalReason.NONE;
 

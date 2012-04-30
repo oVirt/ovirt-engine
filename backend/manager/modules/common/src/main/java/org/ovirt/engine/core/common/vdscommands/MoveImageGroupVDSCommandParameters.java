@@ -2,15 +2,8 @@ package org.ovirt.engine.core.common.vdscommands;
 
 import org.ovirt.engine.core.compat.*;
 import org.ovirt.engine.core.common.businessentities.*;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlType;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "MoveImageGroupVDSCommandParameters")
 public class MoveImageGroupVDSCommandParameters extends StoragePoolDomainAndGroupIdBaseVDSCommandParameters {
-    @XmlElement(name = "DstDomainId")
     private Guid privateDstDomainId = new Guid();
 
     public Guid getDstDomainId() {
@@ -21,7 +14,6 @@ public class MoveImageGroupVDSCommandParameters extends StoragePoolDomainAndGrou
         privateDstDomainId = value;
     }
 
-    @XmlElement(name = "VmId")
     private Guid privateVmId = new Guid();
 
     public Guid getVmId() {
@@ -32,7 +24,6 @@ public class MoveImageGroupVDSCommandParameters extends StoragePoolDomainAndGrou
         privateVmId = value;
     }
 
-    @XmlElement(name = "Op")
     private ImageOperation privateOp = ImageOperation.forValue(0);
 
     public ImageOperation getOp() {
@@ -55,7 +46,6 @@ public class MoveImageGroupVDSCommandParameters extends StoragePoolDomainAndGrou
         setCompatibilityVersion(compatibilityVersion);
     }
 
-    @XmlElement
     private boolean privatePostZero;
 
     public boolean getPostZero() {
@@ -66,7 +56,6 @@ public class MoveImageGroupVDSCommandParameters extends StoragePoolDomainAndGrou
         privatePostZero = value;
     }
 
-    @XmlElement
     private boolean privateForce;
 
     public boolean getForce() {

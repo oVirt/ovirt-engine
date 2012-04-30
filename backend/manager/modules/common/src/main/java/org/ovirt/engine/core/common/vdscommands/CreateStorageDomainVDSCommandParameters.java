@@ -1,17 +1,9 @@
 package org.ovirt.engine.core.common.vdscommands;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
-
 import org.ovirt.engine.core.common.businessentities.storage_domain_static;
 import org.ovirt.engine.core.compat.Guid;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "CreateStorageDomainVDSCommandParameters")
 public class CreateStorageDomainVDSCommandParameters extends VdsIdVDSCommandParametersBase {
-    @XmlElement(name = "StorageDomain")
     private storage_domain_static privateStorageDomain;
 
     public storage_domain_static getStorageDomain() {
@@ -22,7 +14,6 @@ public class CreateStorageDomainVDSCommandParameters extends VdsIdVDSCommandPara
         privateStorageDomain = value;
     }
 
-    @XmlElement(name = "Args")
     private String privateArgs;
 
     public String getArgs() {

@@ -1,14 +1,7 @@
 package org.ovirt.engine.core.common.vdscommands;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
-
 import org.ovirt.engine.core.compat.Guid;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "RefreshStoragePoolVDSCommandParameters")
 public class RefreshStoragePoolVDSCommandParameters extends GetStorageConnectionsListVDSCommandParameters {
     public RefreshStoragePoolVDSCommandParameters(Guid vdsId, Guid storagePoolId, Guid masterStorageDomainId,
             int masterVersion) {
@@ -17,7 +10,6 @@ public class RefreshStoragePoolVDSCommandParameters extends GetStorageConnection
         setMasterVersion(masterVersion);
     }
 
-    @XmlElement(name = "MasterStorageDomainId")
     private Guid privateMasterStorageDomainId = new Guid();
 
     public Guid getMasterStorageDomainId() {
@@ -28,7 +20,6 @@ public class RefreshStoragePoolVDSCommandParameters extends GetStorageConnection
         privateMasterStorageDomainId = value;
     }
 
-    @XmlElement(name = "MasterVersion")
     private int privateMasterVersion;
 
     public int getMasterVersion() {

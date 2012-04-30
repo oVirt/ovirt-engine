@@ -2,18 +2,10 @@ package org.ovirt.engine.core.common.vdscommands;
 
 import java.util.Arrays;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
-
 import org.ovirt.engine.core.common.businessentities.NetworkBootProtocol;
 import org.ovirt.engine.core.compat.Guid;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "NetworkVdsmVDSCommandParameters")
 public class NetworkVdsmVDSCommandParameters extends VdsIdVDSCommandParametersBase {
-    @XmlElement(name = "NetworkName")
     private String privateNetworkName;
 
     public String getNetworkName() {
@@ -24,7 +16,6 @@ public class NetworkVdsmVDSCommandParameters extends VdsIdVDSCommandParametersBa
         privateNetworkName = value;
     }
 
-    @XmlElement(name = "OldNetworkName")
     private String privateOldNetworkName;
 
     public String getOldNetworkName() {
@@ -35,7 +26,6 @@ public class NetworkVdsmVDSCommandParameters extends VdsIdVDSCommandParametersBa
         privateOldNetworkName = value;
     }
 
-    @XmlElement(name = "HostAddr")
     private String privateHostAddr;
 
     public String getHostAddr() {
@@ -46,7 +36,6 @@ public class NetworkVdsmVDSCommandParameters extends VdsIdVDSCommandParametersBa
         privateHostAddr = value;
     }
 
-    @XmlElement(name = "CheckConnectivity")
     private boolean privateCheckConnectivity;
 
     public boolean getCheckConnectivity() {
@@ -57,7 +46,6 @@ public class NetworkVdsmVDSCommandParameters extends VdsIdVDSCommandParametersBa
         privateCheckConnectivity = value;
     }
 
-    @XmlElement(name = "ConnectionTimeout")
     private int privateConnectionTimeout;
 
     public int getConnectionTimeout() {
@@ -68,7 +56,6 @@ public class NetworkVdsmVDSCommandParameters extends VdsIdVDSCommandParametersBa
         privateConnectionTimeout = value;
     }
 
-    @XmlElement(name = "VlanId")
     private Integer privateVlanId;
 
     public Integer getVlanId() {
@@ -79,7 +66,6 @@ public class NetworkVdsmVDSCommandParameters extends VdsIdVDSCommandParametersBa
         privateVlanId = value;
     }
 
-    @XmlElement(name = "BondName")
     private String privateBondName;
 
     public String getBondName() {
@@ -90,7 +76,6 @@ public class NetworkVdsmVDSCommandParameters extends VdsIdVDSCommandParametersBa
         privateBondName = value;
     }
 
-    @XmlElement(name = "Nics")
     private String[] privateNics;
 
     public String[] getNics() {
@@ -101,7 +86,6 @@ public class NetworkVdsmVDSCommandParameters extends VdsIdVDSCommandParametersBa
         privateNics = value;
     }
 
-    @XmlElement(name = "InetAddr")
     private String privateInetAddr;
 
     public String getInetAddr() {
@@ -112,7 +96,6 @@ public class NetworkVdsmVDSCommandParameters extends VdsIdVDSCommandParametersBa
         privateInetAddr = value;
     }
 
-    @XmlElement(name = "NetworkMask")
     private String privateNetworkMask;
 
     public String getNetworkMask() {
@@ -123,7 +106,6 @@ public class NetworkVdsmVDSCommandParameters extends VdsIdVDSCommandParametersBa
         privateNetworkMask = value;
     }
 
-    @XmlElement(name = "Gateway")
     private String privateGateway;
 
     public String getGateway() {
@@ -134,7 +116,6 @@ public class NetworkVdsmVDSCommandParameters extends VdsIdVDSCommandParametersBa
         privateGateway = value;
     }
 
-    @XmlElement(name = "Stp")
     private boolean privateStp;
 
     public boolean getStp() {
@@ -145,7 +126,6 @@ public class NetworkVdsmVDSCommandParameters extends VdsIdVDSCommandParametersBa
         privateStp = value;
     }
 
-    @XmlElement(name = "BondingOptions")
     private String privateBondingOptions;
 
     public String getBondingOptions() {
@@ -156,7 +136,6 @@ public class NetworkVdsmVDSCommandParameters extends VdsIdVDSCommandParametersBa
         privateBondingOptions = value;
     }
 
-    @XmlElement(name = "BootProtocol")
     private NetworkBootProtocol privateBootProtocol = NetworkBootProtocol.forValue(0);
 
     public NetworkBootProtocol getBootProtocol() {

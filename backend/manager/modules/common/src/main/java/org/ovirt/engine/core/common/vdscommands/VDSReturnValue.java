@@ -3,31 +3,12 @@ package org.ovirt.engine.core.common.vdscommands;
 import org.ovirt.engine.core.common.asynctasks.*;
 import org.ovirt.engine.core.common.errors.*;
 
-//@XmlSeeAlso({
-//    DiskImage.class,
-//    VMStatus.class,
-//    Guid[].class,
-//    //java.util.ArrayList<String>.class,
-//    IrsStatus.class,
-//    VmStatic.class,
-//    //java.util.ArrayList<storage_server_connections>.class,
-//    storage_domain_static.class,
-//    storage_domain_dynamic.class,
-//    storage_domains.class,
-//    storage_pool.class,
-//    //java.util.HashMap<storage_pool, java.util.ArrayList<storage_domain_static>>.class,
-//    VDSError.class,
-//    VdcBllErrors.class})
-
-//    @XmlAccessorType(XmlAccessType.NONE)
-//    @XmlType(name="VDSReturnValue")
 public class VDSReturnValue {
     private boolean _succeeded;
     private String _exceptionString;
     private Object _returnValue;
     private RuntimeException _exceptionObject;
 
-    // @XmlElement
     public Object getReturnValue() {
         return _returnValue;
     }
@@ -36,7 +17,6 @@ public class VDSReturnValue {
         _returnValue = value;
     }
 
-    // @XmlElement
     public String getExceptionString() {
         return _exceptionString;
     }
@@ -45,7 +25,6 @@ public class VDSReturnValue {
         _exceptionString = value;
     }
 
-    // @XmlElement
     public boolean getSucceeded() {
         return _succeeded;
     }
@@ -62,7 +41,6 @@ public class VDSReturnValue {
         _exceptionObject = value;
     }
 
-    // @XmlElement(name="CreationInfo")
     private AsyncTaskCreationInfo privateCreationInfo;
 
     public AsyncTaskCreationInfo getCreationInfo() {
@@ -73,7 +51,6 @@ public class VDSReturnValue {
         privateCreationInfo = value;
     }
 
-    // @XmlElement(name="VdsError")
     private VDSError privateVdsError;
 
     public VDSError getVdsError() {

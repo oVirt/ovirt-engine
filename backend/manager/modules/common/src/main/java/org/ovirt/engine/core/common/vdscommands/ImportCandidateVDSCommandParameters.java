@@ -1,19 +1,12 @@
 package org.ovirt.engine.core.common.vdscommands;
 
 import org.ovirt.engine.core.compat.*;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlType;
 
 import org.ovirt.engine.core.common.queries.*;
 
 import java.util.Map;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "ImportCandidateVDSCommandParameters")
 public class ImportCandidateVDSCommandParameters extends StoragePoolDomainAndGroupIdBaseVDSCommandParameters {
-    @XmlElement(name = "CandidateID")
     private String privateCandidateID;
 
     public String getCandidateID() {
@@ -24,7 +17,6 @@ public class ImportCandidateVDSCommandParameters extends StoragePoolDomainAndGro
         privateCandidateID = value;
     }
 
-    @XmlElement(name = "BaseID")
     private Guid privateBaseID = new Guid();
 
     public Guid getBaseID() {
@@ -35,7 +27,6 @@ public class ImportCandidateVDSCommandParameters extends StoragePoolDomainAndGro
         privateBaseID = value;
     }
 
-    @XmlElement
     private java.util.HashMap<String, Guid> privateBaseImageIDs;
 
     public Map<String, Guid> getBaseImageIDs() {
@@ -46,7 +37,6 @@ public class ImportCandidateVDSCommandParameters extends StoragePoolDomainAndGro
         privateBaseImageIDs = value;
     }
 
-    @XmlElement(name = "CandidateSource")
     private ImportCandidateSourceEnum privateCandidateSource = ImportCandidateSourceEnum.forValue(0);
 
     public ImportCandidateSourceEnum getCandidateSource() {
@@ -57,7 +47,6 @@ public class ImportCandidateVDSCommandParameters extends StoragePoolDomainAndGro
         privateCandidateSource = value;
     }
 
-    @XmlElement(name = "ImportPath")
     private String privateImportPath;
 
     public String getImportPath() {
@@ -68,7 +57,6 @@ public class ImportCandidateVDSCommandParameters extends StoragePoolDomainAndGro
         privateImportPath = value;
     }
 
-    @XmlElement(name = "Force")
     private boolean privateForce;
 
     public boolean getForce() {

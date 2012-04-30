@@ -1,17 +1,9 @@
 package org.ovirt.engine.core.common.vdscommands;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
-
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.compat.Guid;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "UpdateVmDynamicDataVDSCommandParameters")
 public class UpdateVmDynamicDataVDSCommandParameters extends VdsIdVDSCommandParametersBase {
-    @XmlElement(name = "VmDynamic")
     private VmDynamic privateVmDynamic;
 
     public VmDynamic getVmDynamic() {
