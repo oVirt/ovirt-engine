@@ -78,7 +78,6 @@
 				<g:Label addStyleNames="{style.sectionLabel}">Access Protocols</g:Label>
 				<e:EntityModelCheckBoxEditor ui:field="gluster_accecssProtocolEditor"/>
 				<e:EntityModelCheckBoxEditor ui:field="nfs_accecssProtocolEditor"/>
-				<e:EntityModelCheckBoxEditor ui:field="cifs_accecssProtocolEditor"/>
 				<e:EntityModelTextBoxEditor ui:field="allowAccessEditor" />
 				<g:Label>(Comma separated list of IP addresses/hostnames)</g:Label>
 			</g:VerticalPanel>

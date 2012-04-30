@@ -306,11 +306,6 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
         else
             volume.disableNFS();
 
-        if ((Boolean) model.getCifs_accecssProtocol().getEntity())
-            volume.enableCifs();
-        else
-            volume.disableCifs();
-
         volume.setAccessControlList((String) model.getAllowAccess().getEntity());
 
         CreateGlusterVolumeParameters parameter = new CreateGlusterVolumeParameters(volume);
