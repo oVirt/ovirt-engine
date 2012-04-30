@@ -9,10 +9,6 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
 
 import org.hibernate.annotations.TypeDef;
 
@@ -20,8 +16,6 @@ import org.ovirt.engine.core.common.businessentities.mapping.GuidType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "storage_pool_iso_map")
 @Entity
 @Table(name = "storage_pool_iso_map", uniqueConstraints = { @UniqueConstraint(columnNames = { "storage_id",
         "storage_pool_id" }) })
@@ -63,7 +57,6 @@ public class storage_pool_iso_map implements BusinessEntity<StoragePoolIsoMapId>
         this.id = id;
     }
 
-    @XmlElement(name = "storage_id")
     public Guid getstorage_id() {
         return id.getStorageId();
     }
@@ -72,7 +65,6 @@ public class storage_pool_iso_map implements BusinessEntity<StoragePoolIsoMapId>
         id.setStorageId(value);
     }
 
-    @XmlElement(name = "storage_pool_id", nillable = true)
     public NGuid getstorage_pool_id() {
         return this.id.getStoragePoolId();
     }
@@ -84,7 +76,6 @@ public class storage_pool_iso_map implements BusinessEntity<StoragePoolIsoMapId>
     @Column(name = "status", nullable = true)
     private Integer persistentStorageDomainStatus = null;
 
-    @XmlElement(nillable = true, name = "status")
     public StorageDomainStatus getstatus() {
         if (persistentStorageDomainStatus == null) {
             return null;
@@ -103,7 +94,6 @@ public class storage_pool_iso_map implements BusinessEntity<StoragePoolIsoMapId>
     @Column(name = "owner", nullable = true)
     private Integer persistentOwner = StorageDomainOwnerType.Unknown.getValue();
 
-    @XmlElement(nillable = true, name = "ownerField")
     public StorageDomainOwnerType getowner() {
         if (persistentOwner == null) {
             return null;

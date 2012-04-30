@@ -17,10 +17,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
@@ -35,8 +31,6 @@ import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "storage_pool", namespace = "http://service.engine.ovirt.org")
 @Entity
 @Table(name = "storage_pool")
 @TypeDef(name = "guid", typeClass = GuidType.class)
@@ -57,7 +51,6 @@ public class storage_pool extends IVdcQueryable implements INotifyPropertyChange
 
     private static final long serialVersionUID = 8455998477522459262L;
 
-    @XmlElement(name = "Id")
     @Id
     @GeneratedValue(generator = "system-uuid")
     @GenericGenerator(name = "system-uuid", strategy = "org.ovirt.engine.core.dao.GuidGenerator")
@@ -66,12 +59,10 @@ public class storage_pool extends IVdcQueryable implements INotifyPropertyChange
     private Guid id = new Guid();
 
     @ValidName(message = "VALIDATION.DATA_CENTER.NAME.INVALID", groups = { CreateEntity.class, UpdateEntity.class })
-    @XmlElement(name = "name")
     @Size(min = 1, max = BusinessEntitiesDefinitions.DATACENTER_NAME_SIZE)
     @Column(name = "name")
     private String name = ""; // GREGM prevents NPE
 
-    @XmlElement(name = "description")
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
     @Column(name = "description")
     private String description;
@@ -79,18 +70,14 @@ public class storage_pool extends IVdcQueryable implements INotifyPropertyChange
     @Column(name = "storage_pool_type")
     private int storagePoolType = StorageType.UNKNOWN.getValue();
 
-    @XmlElement(name = "StoragePoolFormatType", nillable = true)
     @Column(name = "storage_pool_format_type")
     private StorageFormatType storagePoolFormatType = null;
 
-    @XmlElement(name = "status")
     @Column(name = "status")
     private StoragePoolStatus status = StoragePoolStatus.Uninitialized;
-    @XmlElement(name = "master_domain_version")
     @Column(name = "master_domain_version")
     private int masterDomainVersion;
 
-    @XmlElement(name = "spm_vds_id")
     @Column(name = "spm_vds_id")
     @Type(type = "guid")
     private NGuid spmVdsId = new NGuid();
@@ -99,11 +86,9 @@ public class storage_pool extends IVdcQueryable implements INotifyPropertyChange
     @Column(name = "compatibility_version")
     private String compatibilityVersion;
 
-    @XmlElement(name = "LVER")
     @Transient
     private String LVER;
 
-    @XmlElement(name = "recovery_mode")
     @Transient
     private RecoveryMode recovery_mode = RecoveryMode.forValue(0);
 
@@ -167,7 +152,6 @@ public class storage_pool extends IVdcQueryable implements INotifyPropertyChange
         }
     }
 
-    @XmlElement(name = "storage_pool_type")
     public StorageType getstorage_pool_type() {
         return StorageType.forValue(storagePoolType);
 
@@ -201,7 +185,6 @@ public class storage_pool extends IVdcQueryable implements INotifyPropertyChange
         this.masterDomainVersion = value;
     }
 
-    @XmlElement(name = "compatibility_version")
     public Version getcompatibility_version() {
         if (version == null) {
             version = new Version(compatibilityVersion);

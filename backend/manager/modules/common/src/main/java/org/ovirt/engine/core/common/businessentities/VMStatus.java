@@ -2,12 +2,6 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.util.HashMap;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlType;
-
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "VMStatus")
 public enum VMStatus {
     Unassigned(-1),
     Down(0),

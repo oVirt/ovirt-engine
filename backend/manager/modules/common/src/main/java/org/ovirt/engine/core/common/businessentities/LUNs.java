@@ -10,13 +10,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "LUNs")
 @Entity
 @Table(name = "luns")
 @NamedQueries({ @NamedQuery(
@@ -119,7 +113,6 @@ public class LUNs implements Serializable {
         return true;
     }
 
-    @XmlElement(name = "LUN_id")
     @Id
     @Size(min = 1, max = BusinessEntitiesDefinitions.LUN_ID)
     @Column(name = "lun_id", length = BusinessEntitiesDefinitions.LUN_ID)
@@ -133,8 +126,6 @@ public class LUNs implements Serializable {
         this.id = value;
     }
 
-    @XmlElement(name = "phisical_volume_id")
-    // TODO rename the column
     @Size(max = BusinessEntitiesDefinitions.LUN_PHISICAL_VOLUME_ID)
     @Column(name = "phisical_volume_id", length = BusinessEntitiesDefinitions.LUN_PHISICAL_VOLUME_ID)
     private String physicalVolumeId;
@@ -147,7 +138,6 @@ public class LUNs implements Serializable {
         this.physicalVolumeId = value;
     }
 
-    @XmlElement(name = "volume_group_id")
     @Size(max = BusinessEntitiesDefinitions.LUN_VOLUME_GROUP_ID)
     @Column(name = "volume_group_id", length = BusinessEntitiesDefinitions.LUN_VOLUME_GROUP_ID)
     private String volumeGroupId;
@@ -160,7 +150,6 @@ public class LUNs implements Serializable {
         this.volumeGroupId = value;
     }
 
-    @XmlElement(name = "Serial")
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
     @Column(name = "serial", length = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
     private String serial;
@@ -173,7 +162,6 @@ public class LUNs implements Serializable {
         this.serial = value;
     }
 
-    @XmlElement(name = "LunMapping")
     @Column(name = "lun_mapping")
     private Integer lunMapping;
 
@@ -185,7 +173,6 @@ public class LUNs implements Serializable {
         this.lunMapping = value;
     }
 
-    @XmlElement(name = "VendorId")
     @Size(max = BusinessEntitiesDefinitions.LUN_VENDOR_ID)
     @Column(name = "vendor_id", length = BusinessEntitiesDefinitions.LUN_VENDOR_ID)
     private String vendorId;
@@ -198,7 +185,6 @@ public class LUNs implements Serializable {
         this.vendorId = value;
     }
 
-    @XmlElement(name = "ProductId")
     @Size(max = BusinessEntitiesDefinitions.LUN_PRODUCT_ID)
     @Column(name = "product_id", length = BusinessEntitiesDefinitions.LUN_PRODUCT_ID)
     private String productId;
@@ -211,7 +197,6 @@ public class LUNs implements Serializable {
         this.productId = value;
     }
 
-    @XmlElement(name = "LunConnections")
     @Transient
     private java.util.ArrayList<storage_server_connections> _lunConnections;
 
@@ -223,7 +208,6 @@ public class LUNs implements Serializable {
         _lunConnections = value;
     }
 
-    @XmlElement(name = "DeviceSize")
     @Column(name = "device_size")
     private int deviceSize;
 
@@ -235,7 +219,6 @@ public class LUNs implements Serializable {
         deviceSize = value;
     }
 
-    @XmlElement(name = "VendorName")
     @Transient
     private String vendorName;
 
@@ -257,12 +240,10 @@ public class LUNs implements Serializable {
     /**
      * @return Count of how many paths this LUN has.
      */
-    @XmlElement(name = "PathCount")
     public int getPathCount() {
         return (getPathsDictionary() == null ? 0 : getPathsDictionary().size());
     }
 
-    // @XmlElement(name="PathsDictionary")
     @Transient
     private java.util.HashMap<String, Boolean> pathsDictionary;
 
@@ -274,7 +255,6 @@ public class LUNs implements Serializable {
         pathsDictionary = value;
     }
 
-    @XmlElement(name = "LunType")
     @Transient
     private StorageType lunType = StorageType.forValue(0);
 
@@ -289,7 +269,6 @@ public class LUNs implements Serializable {
     /**
      * @return Whether the LUN is accessible from at least one of the paths.
      */
-    @XmlElement(name = "Accessible")
     public boolean getAccessible() {
         return getPathsDictionary() != null && getPathsDictionary().values().contains(true);
     }

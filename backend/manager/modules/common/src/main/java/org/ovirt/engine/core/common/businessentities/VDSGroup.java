@@ -12,10 +12,6 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
@@ -29,8 +25,6 @@ import org.ovirt.engine.core.compat.INotifyPropertyChanged;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.Version;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "VDSGroup", namespace = "http://service.engine.ovirt.org")
 @Entity
 @Table(name = "vds_groups")
 @TypeDef(name = "guid", typeClass = GuidType.class)
@@ -70,33 +64,26 @@ public class VDSGroup extends IVdcQueryable implements INotifyPropertyChanged, S
     @Column(name = "cpu_name")
     private String cpu_name;
 
-    @XmlElement(name = "selection_algorithm")
     @Column(name = "selection_algorithm")
     private VdsSelectionAlgorithm selection_algorithm = VdsSelectionAlgorithm.None;
 
-    @XmlElement(name = "high_utilization")
     @Column(name = "high_utilization")
     private int high_utilization = 0;
 
-    @XmlElement(name = "low_utilization")
     @Column(name = "low_utilization")
     private int low_utilization = 0;
 
-    @XmlElement(name = "cpu_over_commit_duration_minutes")
     @Column(name = "cpu_over_commit_duration_minutes")
     private int cpu_over_commit_duration_minutes = 0;
 
-    @XmlElement(name = "hypervisor_type")
     @Column(name = "hypervisor_type")
     private HypervisorType hypervisor_type = HypervisorType.KVM;
 
-    @XmlElement(name = "storage_pool_id")
     @Column(name = "storage_pool_id")
     @Type(type = "guid")
     private NGuid storagePool;
 
 
-    @XmlElement(name = "max_vds_memory_over_commit")
     @Column(name = "max_vds_memory_over_commit")
     private int max_vds_memory_over_commit = 0;
 
@@ -107,12 +94,10 @@ public class VDSGroup extends IVdcQueryable implements INotifyPropertyChanged, S
     @Transient
     private Version compatVersion;
 
-    @XmlElement(name = "TransparentHugepages")
     @Column(name = "transparent_hugepages")
     private boolean transparentHugepages;
 
     @NotNull(message = "VALIDATION.VDS_GROUP.MigrateOnError.NOT_NULL")
-    @XmlElement(name = "MigrateOnError")
     @Column(name = "migrate_on_error")
     private MigrateOnErrorOptions migrateOnError;
 
@@ -138,7 +123,6 @@ public class VDSGroup extends IVdcQueryable implements INotifyPropertyChanged, S
         this.cpu_name = cpu_name;
     }
 
-    @XmlElement
     @Override
     public Guid getId() {
         return id;
@@ -153,7 +137,6 @@ public class VDSGroup extends IVdcQueryable implements INotifyPropertyChanged, S
         setId(value);
     }
 
-    @XmlElement
     public String getname() {
         return name;
     }
@@ -162,7 +145,6 @@ public class VDSGroup extends IVdcQueryable implements INotifyPropertyChanged, S
         name = value;
     }
 
-    @XmlElement
     public String getdescription() {
         return description;
     }
@@ -171,7 +153,6 @@ public class VDSGroup extends IVdcQueryable implements INotifyPropertyChanged, S
         description = value;
     }
 
-    @XmlElement
     public String getcpu_name() {
         return this.cpu_name;
     }
@@ -239,7 +220,6 @@ public class VDSGroup extends IVdcQueryable implements INotifyPropertyChanged, S
         this.max_vds_memory_over_commit = value;
     }
 
-    @XmlElement(name = "compatibility_version")
     public Version getcompatibility_version() {
         return compatVersion;
     }

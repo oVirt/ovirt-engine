@@ -2,9 +2,6 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.util.HashMap;
 
-import javax.xml.bind.annotation.XmlType;
-
-@XmlType(name = "VDSType")
 public enum VDSType {
     VDS(0),
     PowerClient(1),

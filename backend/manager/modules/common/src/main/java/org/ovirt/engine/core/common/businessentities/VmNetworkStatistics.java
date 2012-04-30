@@ -1,10 +1,5 @@
 package org.ovirt.engine.core.common.businessentities;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
-
 import org.ovirt.engine.core.compat.NGuid;
 
 /**
@@ -12,12 +7,9 @@ import org.ovirt.engine.core.compat.NGuid;
  * {@link VmNetworkInterface}.
  *
  */
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "VmNetworkStatistics")
 public class VmNetworkStatistics extends NetworkStatistics {
     private static final long serialVersionUID = -423834938475712247L;
 
-    @XmlElement(name = "VmId")
     private NGuid vmId;
 
     /**

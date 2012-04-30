@@ -2,12 +2,6 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.util.HashMap;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlType;
-
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "VmTemplateStatus")
 public enum VmTemplateStatus {
     OK(0),
     Locked(1),

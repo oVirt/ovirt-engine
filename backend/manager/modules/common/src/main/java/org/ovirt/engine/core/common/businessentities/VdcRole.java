@@ -2,11 +2,8 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.util.HashMap;
 
-import javax.xml.bind.annotation.XmlType;
-
 //using VdcDAL.AdBroker;
 
-@XmlType(name = "VdcRole")
 public enum VdcRole {
     None(-1),
     User(0),

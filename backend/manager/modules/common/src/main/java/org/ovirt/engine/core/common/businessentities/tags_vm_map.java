@@ -9,14 +9,12 @@ import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Table;
-import javax.xml.bind.annotation.XmlType;
 
 import org.hibernate.annotations.TypeDef;
 
 import org.ovirt.engine.core.common.businessentities.mapping.GuidType;
 import org.ovirt.engine.core.compat.Guid;
 
-@XmlType(name = "tags_vm_map")
 @Entity
 @Table(name = "tags_vm_map")
 @TypeDef(name = "guid", typeClass = GuidType.class)

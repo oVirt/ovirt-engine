@@ -1,8 +1,5 @@
 package org.ovirt.engine.core.common.businessentities;
 
-import javax.xml.bind.annotation.XmlType;
-
-@XmlType(name = "FenceActionType")
 public enum FenceActionType {
     Restart,
     Start,

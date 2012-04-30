@@ -6,16 +6,10 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
 
 import org.ovirt.engine.core.common.EventNotificationMethods;
 import org.ovirt.engine.core.common.utils.EnumUtils;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "event_notification_methods")
 @Entity
 @Table(name = "event_notification_methods")
 public class event_notification_methods implements Serializable {
@@ -33,7 +27,6 @@ public class event_notification_methods implements Serializable {
     @Column(name = "method_id")
     private int methodId;
 
-    @XmlElement
     public int getmethod_id() {
         return this.methodId;
     }
@@ -45,7 +38,6 @@ public class event_notification_methods implements Serializable {
     @Column(name = "method_type", length = 10, nullable = false)
     private String methodType;
 
-    @XmlElement
     public EventNotificationMethods getmethod_type() {
         return EnumUtils.valueOf(EventNotificationMethods.class, methodType, true);
     }

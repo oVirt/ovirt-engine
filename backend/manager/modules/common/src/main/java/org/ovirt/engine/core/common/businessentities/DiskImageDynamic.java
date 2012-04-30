@@ -5,10 +5,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
@@ -18,8 +14,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.INotifyPropertyChanged;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "DiskImageDynamic")
 @Entity
 @Table(name = "disk_image_dynamic")
 @TypeDef(name = "guid", typeClass = GuidType.class)
@@ -49,7 +43,6 @@ public class DiskImageDynamic implements INotifyPropertyChanged,BusinessEntity<G
     public DiskImageDynamic() {
     }
 
-    @XmlElement
     public Integer getread_rate() {
         return readRate;
     }
@@ -58,7 +51,6 @@ public class DiskImageDynamic implements INotifyPropertyChanged,BusinessEntity<G
         readRate = rate;
     }
 
-    @XmlElement
     public Integer getwrite_rate() {
         return writeRate;
     }
@@ -67,7 +59,6 @@ public class DiskImageDynamic implements INotifyPropertyChanged,BusinessEntity<G
         writeRate = rate;
     }
 
-    @XmlElement(name="ReadLatency")
     public Double getReadLatency() {
         return readLatency;
     }
@@ -76,7 +67,6 @@ public class DiskImageDynamic implements INotifyPropertyChanged,BusinessEntity<G
         this.readLatency = readLatency;
     }
 
-    @XmlElement(name="WriteLatency")
     public Double getWriteLatency() {
         return writeLatency;
     }
@@ -85,7 +75,6 @@ public class DiskImageDynamic implements INotifyPropertyChanged,BusinessEntity<G
         this.writeLatency = writeLatency;
     }
 
-    @XmlElement(name="FlushLatency")
     public Double getFlushLatency() {
         return flushLatency;
     }
@@ -94,7 +83,6 @@ public class DiskImageDynamic implements INotifyPropertyChanged,BusinessEntity<G
         this.flushLatency = flushLatency;
     }
 
-    @XmlElement
     public long getactual_size() {
         return this.actualSize;
     }
@@ -166,7 +154,6 @@ public class DiskImageDynamic implements INotifyPropertyChanged,BusinessEntity<G
     }
 
     @Override
-    @XmlElement(name = "Id")
     @Id
     @GeneratedValue(generator = "system-uuid")
     @GenericGenerator(name = "system-uuid", strategy = "org.ovirt.engine.core.dao.GuidGenerator")

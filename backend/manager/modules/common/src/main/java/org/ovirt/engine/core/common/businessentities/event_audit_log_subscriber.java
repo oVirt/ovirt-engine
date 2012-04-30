@@ -2,16 +2,9 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
-
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "event_audit_log_subscriber")
 public class event_audit_log_subscriber implements Serializable {
     private static final long serialVersionUID = 2766057261065080144L;
 
@@ -45,7 +38,6 @@ public class event_audit_log_subscriber implements Serializable {
 
     private int event_typeField;
 
-    @XmlElement
     public int getevent_type() {
         return this.event_typeField;
     }
@@ -56,7 +48,6 @@ public class event_audit_log_subscriber implements Serializable {
 
     private Guid subscriber_idField = new Guid();
 
-    @XmlElement
     public Guid getsubscriber_id() {
         return this.subscriber_idField;
     }
@@ -67,7 +58,6 @@ public class event_audit_log_subscriber implements Serializable {
 
     private String event_up_nameField;
 
-    @XmlElement
     public String getevent_up_name() {
         return this.event_up_nameField;
     }
@@ -78,7 +68,6 @@ public class event_audit_log_subscriber implements Serializable {
 
     private int method_idField;
 
-    @XmlElement
     public int getmethod_id() {
         return this.method_idField;
     }
@@ -89,7 +78,6 @@ public class event_audit_log_subscriber implements Serializable {
 
     private String method_addressField;
 
-    @XmlElement
     public String getmethod_address() {
         return this.method_addressField;
     }
@@ -100,7 +88,6 @@ public class event_audit_log_subscriber implements Serializable {
 
     private String tag_nameField;
 
-    @XmlElement
     public String gettag_name() {
         return this.tag_nameField;
     }
@@ -111,7 +98,6 @@ public class event_audit_log_subscriber implements Serializable {
 
     private long audit_log_idField;
 
-    @XmlElement
     public long getaudit_log_id() {
         return this.audit_log_idField;
     }
@@ -122,7 +108,6 @@ public class event_audit_log_subscriber implements Serializable {
 
     private NGuid user_idField;
 
-    @XmlElement
     public NGuid getuser_id() {
         return this.user_idField;
     }
@@ -133,7 +118,6 @@ public class event_audit_log_subscriber implements Serializable {
 
     private String user_nameField;
 
-    @XmlElement
     public String getuser_name() {
         return this.user_nameField;
     }
@@ -144,7 +128,6 @@ public class event_audit_log_subscriber implements Serializable {
 
     private NGuid vm_idField;
 
-    @XmlElement
     public NGuid getvm_id() {
         return this.vm_idField;
     }
@@ -155,7 +138,6 @@ public class event_audit_log_subscriber implements Serializable {
 
     private String vm_nameField;
 
-    @XmlElement
     public String getvm_name() {
         return this.vm_nameField;
     }
@@ -166,7 +148,6 @@ public class event_audit_log_subscriber implements Serializable {
 
     private NGuid vm_template_idField;
 
-    @XmlElement
     public NGuid getvm_template_id() {
         return this.vm_template_idField;
     }
@@ -177,7 +158,6 @@ public class event_audit_log_subscriber implements Serializable {
 
     private String vm_template_nameField;
 
-    @XmlElement
     public String getvm_template_name() {
         return this.vm_template_nameField;
     }
@@ -188,7 +168,6 @@ public class event_audit_log_subscriber implements Serializable {
 
     private NGuid vds_idField;
 
-    @XmlElement
     public NGuid getvds_id() {
         return this.vds_idField;
     }
@@ -199,7 +178,6 @@ public class event_audit_log_subscriber implements Serializable {
 
     private String vds_nameField;
 
-    @XmlElement
     public String getvds_name() {
         return this.vds_nameField;
     }
@@ -210,7 +188,6 @@ public class event_audit_log_subscriber implements Serializable {
 
     private Guid storage_pool_idField = new Guid();
 
-    @XmlElement
     public Guid getstorage_pool_id() {
         return this.storage_pool_idField;
     }
@@ -221,7 +198,6 @@ public class event_audit_log_subscriber implements Serializable {
 
     private String storage_pool_nameField;
 
-    @XmlElement
     public String getstorage_pool_name() {
         return this.storage_pool_nameField;
     }
@@ -232,7 +208,6 @@ public class event_audit_log_subscriber implements Serializable {
 
     private Guid storage_domain_idField = new Guid();
 
-    @XmlElement
     public Guid getstorage_domain_id() {
         return this.storage_domain_idField;
     }
@@ -243,7 +218,6 @@ public class event_audit_log_subscriber implements Serializable {
 
     private String storage_domain_nameField;
 
-    @XmlElement
     public String getstorage_domain_name() {
         return this.storage_domain_nameField;
     }
@@ -254,7 +228,6 @@ public class event_audit_log_subscriber implements Serializable {
 
     private java.util.Date log_timeField = new java.util.Date(0);
 
-    @XmlElement
     public java.util.Date getlog_time() {
         return this.log_timeField;
     }
@@ -265,7 +238,6 @@ public class event_audit_log_subscriber implements Serializable {
 
     private int severityField;
 
-    @XmlElement
     public int getseverity() {
         return this.severityField;
     }
@@ -276,7 +248,6 @@ public class event_audit_log_subscriber implements Serializable {
 
     private String messageField;
 
-    @XmlElement
     public String getmessage() {
         return this.messageField;
     }

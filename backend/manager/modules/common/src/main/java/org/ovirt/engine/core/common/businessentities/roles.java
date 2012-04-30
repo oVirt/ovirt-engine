@@ -10,10 +10,6 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
@@ -26,8 +22,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.INotifyPropertyChanged;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "roles")
 @Entity
 @Table(name = "roles")
 @TypeDef(name = "guid", typeClass = GuidType.class)
@@ -120,17 +114,14 @@ public class roles extends IVdcQueryable implements INotifyPropertyChanged, Busi
         return _event_subscriberProperties;
     }
 
-    @XmlElement
     public String getdescription() {
         return this.description;
     }
 
-    @XmlElement
     public boolean getis_readonly() {
         return this.readOnly;
     }
 
-    @XmlElement
     public String getname() {
         return this.name;
     }
@@ -159,7 +150,6 @@ public class roles extends IVdcQueryable implements INotifyPropertyChanged, Busi
         this.type = type;
     }
 
-    @XmlElement(name = "Type")
     public RoleType getType() {
         return type;
     }
@@ -175,7 +165,6 @@ public class roles extends IVdcQueryable implements INotifyPropertyChanged, Busi
     }
 
     @Override
-    @XmlElement(name = "Id")
     public Guid getId() {
         return id;
     }

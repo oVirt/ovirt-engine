@@ -8,10 +8,6 @@ import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Table;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
 
 import org.hibernate.annotations.TypeDef;
 import org.hibernate.validator.constraints.Email;
@@ -22,8 +18,6 @@ import org.ovirt.engine.core.compat.INotifyPropertyChanged;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.core.compat.StringFormat;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "event_subscriber")
 @Entity
 @Table(name = "event_subscriber")
 @TypeDef(name = "guid", typeClass = GuidType.class)
@@ -114,7 +108,6 @@ public class event_subscriber extends IVdcQueryable implements INotifyPropertyCh
         this.id.tagName = tagName;
     }
 
-    @XmlElement
     public String getevent_up_name() {
         return this.id.eventUpName;
     }
@@ -124,7 +117,6 @@ public class event_subscriber extends IVdcQueryable implements INotifyPropertyCh
         OnPropertyChanged(new PropertyChangedEventArgs("event_up_name"));
     }
 
-    @XmlElement
     public int getmethod_id() {
         return this.id.methodId;
     }
@@ -138,7 +130,6 @@ public class event_subscriber extends IVdcQueryable implements INotifyPropertyCh
     @Email(message = "VALIDATION.EVENTS.EMAIL_FORMAT")
     private String methodAddress;
 
-    @XmlElement
     public String getmethod_address() {
         return this.methodAddress;
     }
@@ -148,7 +139,6 @@ public class event_subscriber extends IVdcQueryable implements INotifyPropertyCh
         OnPropertyChanged(new PropertyChangedEventArgs("method_address"));
     }
 
-    @XmlElement
     public Guid getsubscriber_id() {
         return this.id.subscriberId;
     }
@@ -158,7 +148,6 @@ public class event_subscriber extends IVdcQueryable implements INotifyPropertyCh
         OnPropertyChanged(new PropertyChangedEventArgs("subscriber_id"));
     }
 
-    @XmlElement
     public String gettag_name() {
         return this.id.tagName;
     }

@@ -3,9 +3,6 @@ package org.ovirt.engine.core.common.businessentities;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.xml.bind.annotation.XmlType;
-
-@XmlType(name = "NetworkStatus")
 public enum NetworkStatus {
     NonOperational(0),
     Operational(1);

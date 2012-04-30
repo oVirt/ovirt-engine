@@ -10,18 +10,12 @@ import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
 
 import org.hibernate.annotations.TypeDef;
 
 import org.ovirt.engine.core.common.businessentities.mapping.GuidType;
 import org.ovirt.engine.core.compat.Guid;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "time_lease_vm_pool_map")
 @Entity
 @Table(name = "time_lease_vm_pool_map")
 @TypeDef(name = "guid", typeClass = GuidType.class)
@@ -48,7 +42,6 @@ public class time_lease_vm_pool_map implements Serializable {
     @Column(name = "end_time", nullable = false)
     private Date endTime = new Date();
 
-    @XmlElement
     public Date getend_time() {
         return this.endTime;
     }
@@ -57,7 +50,6 @@ public class time_lease_vm_pool_map implements Serializable {
         this.endTime = value;
     }
 
-    @XmlElement
     public Guid getid() {
         return this.id.id;
     }
@@ -69,7 +61,6 @@ public class time_lease_vm_pool_map implements Serializable {
     @Column(name = "start_time", nullable = false)
     private Date startTime = new Date();
 
-    @XmlElement
     public Date getstart_time() {
         return this.startTime;
     }
@@ -81,7 +72,6 @@ public class time_lease_vm_pool_map implements Serializable {
     @Column(name = "type", nullable = false)
     private Integer type = 0;
 
-    @XmlElement
     public int gettype() {
         return this.type;
     }
@@ -90,7 +80,6 @@ public class time_lease_vm_pool_map implements Serializable {
         this.type = value;
     }
 
-    @XmlElement
     public Guid getvm_pool_id() {
         return this.id.vmPoolId;
     }

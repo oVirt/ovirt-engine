@@ -2,12 +2,6 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.util.HashMap;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlType;
-
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "VolumeFormat")
 public enum VolumeFormat {
     // Added in order to keep the ordinal and array element values consistent
     UNUSED0(0), UNUSED1(1), UNUSED2(2),

@@ -6,8 +6,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
@@ -16,7 +14,6 @@ import org.ovirt.engine.core.common.businessentities.mapping.GuidType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 
-@XmlType(name = "VmDynamic")
 @Entity
 @Table(name = "vm_dynamic")
 @TypeDef(name = "guid", typeClass = GuidType.class)
@@ -391,7 +388,6 @@ public class VmDynamic implements BusinessEntity<Guid> {
         return true;
     }
 
-    @XmlElement(name = "ExitMessage")
     public String getExitMessage() {
         return mExitMessage;
     }
@@ -400,7 +396,6 @@ public class VmDynamic implements BusinessEntity<Guid> {
         mExitMessage = value;
     }
 
-    @XmlElement(name = "ExitStatus")
     public VmExitStatus getExitStatus() {
         return this.mExitStatus;
     }
@@ -424,7 +419,6 @@ public class VmDynamic implements BusinessEntity<Guid> {
     public void setHash(String hash) {
         this.hash = hash;
     }
-    @XmlElement(name = "Win2kHackEnable")
     public boolean getWin2kHackEnable() {
         return mWin2kHackEnable;
     }
@@ -481,7 +475,6 @@ public class VmDynamic implements BusinessEntity<Guid> {
         this.setguest_requested_memory(guest_requested_memory);
     }
 
-    @XmlElement
     public String getapp_list() {
         return this.appList;
     }
@@ -490,7 +483,6 @@ public class VmDynamic implements BusinessEntity<Guid> {
         this.appList = value;
     }
 
-    @XmlElement
     public NGuid getguest_cur_user_id() {
         return this.guest_cur_user_id;
     }
@@ -499,7 +491,6 @@ public class VmDynamic implements BusinessEntity<Guid> {
         this.guest_cur_user_id = value;
     }
 
-    @XmlElement
     public String getguest_cur_user_name() {
         return this.guest_cur_user_name;
     }
@@ -508,7 +499,6 @@ public class VmDynamic implements BusinessEntity<Guid> {
         this.guest_cur_user_name = value;
     }
 
-    @XmlElement
     public String getguest_os() {
         return this.guest_os;
     }
@@ -517,7 +507,6 @@ public class VmDynamic implements BusinessEntity<Guid> {
         this.guest_os = value;
     }
 
-    @XmlElement(nillable = true)
     public java.util.Date getguest_last_login_time() {
         return this.guest_last_login_time;
     }
@@ -526,7 +515,6 @@ public class VmDynamic implements BusinessEntity<Guid> {
         this.guest_last_login_time = value;
     }
 
-    @XmlElement(nillable = true)
     public java.util.Date getguest_last_logout_time() {
         return this.guest_last_logout_time;
     }
@@ -535,7 +523,6 @@ public class VmDynamic implements BusinessEntity<Guid> {
         this.guest_last_logout_time = value;
     }
 
-    @XmlElement(nillable = true)
     public NGuid getmigrating_to_vds() {
         return this.migrating_to_vds;
     }
@@ -544,7 +531,6 @@ public class VmDynamic implements BusinessEntity<Guid> {
         this.migrating_to_vds = value;
     }
 
-    @XmlElement(nillable = true)
     public NGuid getrun_on_vds() {
         return this.run_on_vds;
     }
@@ -553,7 +539,6 @@ public class VmDynamic implements BusinessEntity<Guid> {
         this.run_on_vds = value;
     }
 
-    @XmlElement
     public VMStatus getstatus() {
         return this.status;
     }
@@ -562,7 +547,6 @@ public class VmDynamic implements BusinessEntity<Guid> {
         this.status = value;
     }
 
-    @XmlElement
     public Guid getId() {
         return this.id;
     }
@@ -571,7 +555,6 @@ public class VmDynamic implements BusinessEntity<Guid> {
         this.id = value;
     }
 
-    @XmlElement
     public String getvm_host() {
         return this.vm_host;
     }
@@ -580,7 +563,6 @@ public class VmDynamic implements BusinessEntity<Guid> {
         this.vm_host = value;
     }
 
-    @XmlElement
     public String getvm_ip() {
         return this.vm_ip;
     }
@@ -589,7 +571,6 @@ public class VmDynamic implements BusinessEntity<Guid> {
         this.vm_ip = value;
     }
 
-    @XmlElement(nillable = true)
     public java.util.Date getvm_last_boot_time() {
         return this.vm_last_boot_time;
     }
@@ -598,7 +579,6 @@ public class VmDynamic implements BusinessEntity<Guid> {
         this.vm_last_boot_time = value;
     }
 
-    @XmlElement(nillable = true)
     public java.util.Date getvm_last_up_time() {
         return this.vm_last_up_time;
     }
@@ -607,7 +587,6 @@ public class VmDynamic implements BusinessEntity<Guid> {
         this.vm_last_up_time = value;
     }
 
-    @XmlElement(nillable = true)
     public Integer getvm_pid() {
         return this.vm_pid;
     }
@@ -616,7 +595,6 @@ public class VmDynamic implements BusinessEntity<Guid> {
         this.vm_pid = value;
     }
 
-    @XmlElement(nillable = true)
     public Integer getdisplay() {
         return this.display;
     }
@@ -625,7 +603,6 @@ public class VmDynamic implements BusinessEntity<Guid> {
         this.display = value;
     }
 
-    @XmlElement(nillable = true)
     public Boolean getacpi_enable() {
         return this.acpi_enable;
     }
@@ -634,7 +611,6 @@ public class VmDynamic implements BusinessEntity<Guid> {
         this.acpi_enable = value;
     }
 
-    @XmlElement
     public String getdisplay_ip() {
         return this.display_ip;
     }
@@ -643,7 +619,6 @@ public class VmDynamic implements BusinessEntity<Guid> {
         this.display_ip = value;
     }
 
-    @XmlElement
     public DisplayType getdisplay_type() {
         return display_type;
     }
@@ -652,7 +627,6 @@ public class VmDynamic implements BusinessEntity<Guid> {
         this.display_type = value;
     }
 
-    @XmlElement(nillable = true)
     public Boolean getkvm_enable() {
         return this.kvm_enable;
     }
@@ -661,7 +635,6 @@ public class VmDynamic implements BusinessEntity<Guid> {
         this.kvm_enable = value;
     }
 
-    @XmlElement
     public SessionState getsession() {
         return this.session;
     }
@@ -670,7 +643,6 @@ public class VmDynamic implements BusinessEntity<Guid> {
         this.session = value;
     }
 
-    @XmlElement
     public BootSequence getboot_sequence() {
         return this.boot_sequence;
     }
@@ -679,7 +651,6 @@ public class VmDynamic implements BusinessEntity<Guid> {
         this.boot_sequence = value;
     }
 
-    @XmlElement(nillable = true)
     public Integer getdisplay_secure_port() {
         return this.display_secure_port;
     }
@@ -688,7 +659,6 @@ public class VmDynamic implements BusinessEntity<Guid> {
         this.display_secure_port = value;
     }
 
-    @XmlElement(nillable = true)
     public Integer getutc_diff() {
         return this.utc_diff;
     }
@@ -697,7 +667,6 @@ public class VmDynamic implements BusinessEntity<Guid> {
         this.utc_diff = value;
     }
 
-    @XmlElement(nillable = true)
     public NGuid getlast_vds_run_on() {
         return this.last_vds_run_on;
     }
@@ -706,7 +675,6 @@ public class VmDynamic implements BusinessEntity<Guid> {
         this.last_vds_run_on = value;
     }
 
-    @XmlElement
     public String getclient_ip() {
         return this.client_ip;
     }
@@ -715,7 +683,6 @@ public class VmDynamic implements BusinessEntity<Guid> {
         this.client_ip = value;
     }
 
-    @XmlElement(nillable = true)
     public Integer getguest_requested_memory() {
         return this.guest_requested_memory;
     }
@@ -724,7 +691,6 @@ public class VmDynamic implements BusinessEntity<Guid> {
         this.guest_requested_memory = value;
     }
 
-    @XmlElement
     public String gethibernation_vol_handle() {
         return this.hibernation_vol_handle;
     }
@@ -738,7 +704,6 @@ public class VmDynamic implements BusinessEntity<Guid> {
 
     }
 
-    @XmlElement(name = "PauseStatus")
     public VmPauseStatus getPauseStatus() {
         return this.pauseStatus;
     }

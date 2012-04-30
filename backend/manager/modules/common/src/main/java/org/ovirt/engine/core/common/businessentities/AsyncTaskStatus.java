@@ -1,14 +1,8 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import org.ovirt.engine.core.compat.*;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "AsyncTaskStatus")
 public class AsyncTaskStatus implements Serializable {
     private static final long serialVersionUID = -7569773307084259828L;
 
@@ -19,7 +13,6 @@ public class AsyncTaskStatus implements Serializable {
         setStatus(status);
     }
 
-    @XmlElement(name = "Status")
     private AsyncTaskStatusEnum privateStatus = AsyncTaskStatusEnum.forValue(0);
 
     public AsyncTaskStatusEnum getStatus() {
@@ -30,7 +23,6 @@ public class AsyncTaskStatus implements Serializable {
         privateStatus = value;
     }
 
-    @XmlElement(name = "Result")
     private AsyncTaskResultEnum privateResult = AsyncTaskResultEnum.forValue(0);
 
     public AsyncTaskResultEnum getResult() {
@@ -41,7 +33,6 @@ public class AsyncTaskStatus implements Serializable {
         privateResult = value;
     }
 
-    // @XmlElement
     private RuntimeException privateException;
 
     public RuntimeException getException() {
@@ -52,7 +43,6 @@ public class AsyncTaskStatus implements Serializable {
         privateException = value;
     }
 
-    @XmlElement(name = "Message")
     private String _message = "";
 
     public String getMessage() {

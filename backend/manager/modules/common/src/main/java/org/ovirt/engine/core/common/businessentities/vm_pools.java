@@ -10,8 +10,6 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
@@ -25,7 +23,6 @@ import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.TimeSpan;
 
-@XmlType(name = "vm_pools")
 @Entity
 @Table(name = "vm_pools")
 @TypeDef(name = "guid", typeClass = GuidType.class)
@@ -186,7 +183,6 @@ public class vm_pools extends IVdcQueryable implements INotifyPropertyChanged, S
         }
     }
 
-    // @XmlElement - don't serizlize parameters since it has logic in it
     public String getparameters() {
         switch (getvm_pool_type()) {
         case TimeLease: {
@@ -214,7 +210,6 @@ public class vm_pools extends IVdcQueryable implements INotifyPropertyChanged, S
 
     }
 
-    @XmlElement(name = "DefaultTimeInDays")
     public int getDefaultTimeInDays() {
         return defaultTimeInDays;
     }
@@ -223,7 +218,6 @@ public class vm_pools extends IVdcQueryable implements INotifyPropertyChanged, S
         defaultTimeInDays = value;
     }
 
-    @XmlElement(name = "DefaultStartTime")
     public TimeSpan getDefaultStartTime() {
         return defaultStartTime;
     }
@@ -232,7 +226,6 @@ public class vm_pools extends IVdcQueryable implements INotifyPropertyChanged, S
         defaultStartTime = value;
     }
 
-    @XmlElement(name = "DefaultEndTime")
     public TimeSpan getDefaultEndTime() {
         return defaultEndTime;
     }
@@ -262,7 +255,6 @@ public class vm_pools extends IVdcQueryable implements INotifyPropertyChanged, S
         this.prestartedVms = prestartedVms;
     }
 
-    @XmlElement
     public String getvm_pool_description() {
         return this.description;
     }
@@ -271,7 +263,6 @@ public class vm_pools extends IVdcQueryable implements INotifyPropertyChanged, S
         this.description = value;
     }
 
-    @XmlElement
     public Guid getvm_pool_id() {
         return this.id;
     }
@@ -280,7 +271,6 @@ public class vm_pools extends IVdcQueryable implements INotifyPropertyChanged, S
         this.id = value;
     }
 
-    @XmlElement
     public String getvm_pool_name() {
         return this.name;
     }
@@ -291,7 +281,6 @@ public class vm_pools extends IVdcQueryable implements INotifyPropertyChanged, S
         }
     }
 
-    @XmlElement
     public int getvm_assigned_count() {
         return vmPoolAssignedCount;
     }
@@ -300,7 +289,6 @@ public class vm_pools extends IVdcQueryable implements INotifyPropertyChanged, S
         vmPoolAssignedCount = value;
     }
 
-    @XmlElement
     public int getvm_running_count() {
         return vmPoolRunningCount;
     }
@@ -309,7 +297,6 @@ public class vm_pools extends IVdcQueryable implements INotifyPropertyChanged, S
         vmPoolRunningCount = value;
     }
 
-    @XmlElement
     public VmPoolType getvm_pool_type() {
         return type;
     }
@@ -318,7 +305,6 @@ public class vm_pools extends IVdcQueryable implements INotifyPropertyChanged, S
         this.type = value;
     }
 
-    @XmlElement
     public Guid getvds_group_id() {
         return this.vdsGroupId;
     }
@@ -327,7 +313,6 @@ public class vm_pools extends IVdcQueryable implements INotifyPropertyChanged, S
         this.vdsGroupId = value;
     }
 
-    @XmlElement
     public String getvds_group_name() {
         return this.vdsGroupName;
     }

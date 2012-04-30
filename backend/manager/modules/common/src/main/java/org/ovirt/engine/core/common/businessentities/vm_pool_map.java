@@ -6,10 +6,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
 
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
@@ -18,8 +14,6 @@ import org.ovirt.engine.core.common.businessentities.mapping.GuidType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 
-@XmlType(name = "vm_pool_map")
-@XmlAccessorType(XmlAccessType.NONE)
 @Entity
 @Table(name = "vm_pool_map")
 @TypeDef(name = "guid", typeClass = GuidType.class)
@@ -39,7 +33,6 @@ public class vm_pool_map implements Serializable {
     @Type(type = "guid")
     private Guid vmId = new Guid();
 
-    @XmlElement
     public Guid getvm_guid() {
         return this.vmId;
     }
@@ -52,7 +45,6 @@ public class vm_pool_map implements Serializable {
     @Type(type = "guid")
     private NGuid vmPoolId;
 
-    @XmlElement
     public NGuid getvm_pool_id() {
         return this.vmPoolId;
     }

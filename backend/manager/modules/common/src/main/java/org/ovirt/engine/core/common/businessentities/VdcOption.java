@@ -8,9 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.xml.bind.annotation.XmlType;
 
-@XmlType(name = "VdcOption")
 @Entity
 @Table(name = "vdc_options")
 public class VdcOption implements Serializable {

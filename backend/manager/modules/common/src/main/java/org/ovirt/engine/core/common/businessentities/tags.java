@@ -14,10 +14,6 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
 
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
@@ -30,8 +26,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.StringFormat;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "tags")
 @Entity
 @Table(name = "tags")
 @TypeDef(name = "guid", typeClass = GuidType.class)
@@ -178,7 +172,6 @@ public class tags implements Serializable {
         return true;
     }
 
-    @XmlElement(name = "description")
     public String getdescription() {
         return this.description;
     }
@@ -187,7 +180,6 @@ public class tags implements Serializable {
         this.description = description;
     }
 
-    @XmlElement(nillable = true)
     public NGuid getparent_id() {
         return this.parent;
     }
@@ -196,7 +188,6 @@ public class tags implements Serializable {
         this.parent = parent;
     }
 
-    @XmlElement(nillable = true, name = "IsReadonly")
     public Boolean getIsReadonly() {
         return this.readonly;
     }
@@ -205,7 +196,6 @@ public class tags implements Serializable {
         this.readonly = readOnly;
     }
 
-    @XmlElement
     public Guid gettag_id() {
         return this.id;
     }
@@ -214,7 +204,6 @@ public class tags implements Serializable {
         this.id = id;
     }
 
-    @XmlElement
     public String gettag_name() {
         return this.name;
     }
@@ -223,7 +212,6 @@ public class tags implements Serializable {
         this.name = name;
     }
 
-    @XmlElement
     public TagsType gettype() {
         return this.type;
     }
@@ -232,7 +220,6 @@ public class tags implements Serializable {
         this.type = type;
     }
 
-    @XmlElement(name = "ChildrenArray")
     public List<tags> getChildren() {
         return _children;
     }

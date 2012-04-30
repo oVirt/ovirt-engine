@@ -4,12 +4,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Map;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.XmlType;
-
 import org.ovirt.engine.core.common.queries.ValueObjectMap;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.INotifyPropertyChanged;
@@ -17,22 +11,17 @@ import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "VDS")
 public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serializable, BusinessEntity<Guid>, HasStoragePool<Guid> {
     private static final long serialVersionUID = -7893976203379789926L;
     private VdsStatic mVdsStatic;
     private VdsDynamic mVdsDynamic;
     private VdsStatistics mVdsStatistics;
-    @XmlElement(name = "InterfaceList")
     private ArrayList<VdsNetworkInterface> mInterfaceList;
-    @XmlElement(name = "NetworkList")
     private java.util.ArrayList<network> mNetworkList;
 
     /**
      * This map holds the disk usage reported by the host. The mapping is path to usage (in MB).
      */
-    @XmlTransient
     private Map<String, Long> localDisksUsage;
 
     public VDS() {
@@ -262,12 +251,10 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
 
     private Version vds_group_compatibility_versionField;
 
-    @XmlElement
     public Version getvds_group_compatibility_version() {
         return this.vds_group_compatibility_versionField;
     }
 
-    @XmlElement(name = "ContainingHooks")
     public boolean getContainingHooks() {
         // As VDSM reports the hooks in XMLRPCStruct that represents map of maps, we can assume that the string form of
         // the map begins with
@@ -295,7 +282,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
         }
     }
 
-    @XmlElement(name = "vds_group_id")
     public Guid getvds_group_id() {
         return this.mVdsStatic.getvds_group_id();
     }
@@ -307,7 +293,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
 
     private String vds_group_nameField;
 
-    @XmlElement
     public String getvds_group_name() {
         return this.vds_group_nameField;
     }
@@ -319,7 +304,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
 
     private String vds_group_descriptionField;
 
-    @XmlElement
     public String getvds_group_description() {
         return this.vds_group_descriptionField;
     }
@@ -330,7 +314,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
 
     private String vds_group_cpu_nameField;
 
-    @XmlElement
     public String getvds_group_cpu_name() {
         return this.vds_group_cpu_nameField;
     }
@@ -339,7 +322,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
         this.vds_group_cpu_nameField = value;
     }
 
-    @XmlElement(name = "vds_id")
     @Override
     public Guid getId() {
         return this.mVdsStatic.getId();
@@ -352,7 +334,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
         this.mVdsStatistics.setId(value);
     }
 
-    @XmlElement(name = "vds_name")
     public String getvds_name() {
         return this.mVdsStatic.getvds_name();
     }
@@ -364,7 +345,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
         }
     }
 
-    @XmlElement(name = "ManagmentIp")
     public String getManagmentIp() {
         return this.mVdsStatic.getManagmentIp();
     }
@@ -373,7 +353,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
         this.mVdsStatic.setManagmentIp(value);
     }
 
-    @XmlElement(name = "UniqueId")
     public String getUniqueId() {
         return mVdsStatic.getUniqueID();
     }
@@ -382,7 +361,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
         mVdsStatic.setUniqueID(value);
     }
 
-    @XmlElement(name = "host_name")
     public String gethost_name() {
         return this.mVdsStatic.gethost_name();
     }
@@ -392,7 +370,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
         OnPropertyChanged(new PropertyChangedEventArgs("host_name"));
     }
 
-    @XmlElement(name = "port")
     public int getport() {
         return this.mVdsStatic.getport();
     }
@@ -401,7 +378,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
         this.mVdsStatic.setport(value);
     }
 
-    @XmlElement(name = "server_SSL_enabled")
     public boolean getserver_SSL_enabled() {
         return this.mVdsStatic.getserver_SSL_enabled();
     }
@@ -410,7 +386,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
         this.mVdsStatic.setserver_SSL_enabled(value);
     }
 
-    @XmlElement(name = "vds_type")
     public VDSType getvds_type() {
         return this.mVdsStatic.getvds_type();
     }
@@ -420,7 +395,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
         OnPropertyChanged(new PropertyChangedEventArgs("vds_type"));
     }
 
-    @XmlElement(name = "status")
     public VDSStatus getstatus() {
         return this.mVdsDynamic.getstatus();
     }
@@ -461,7 +435,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
         }
     }
 
-    @XmlElement(name = "cpu_cores")
     public Integer getcpu_cores() {
         return this.mVdsDynamic.getcpu_cores();
     }
@@ -470,7 +443,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
         this.mVdsDynamic.setcpu_cores(value);
     }
 
-    @XmlElement(name = "cpu_sockets")
     public Integer getcpu_sockets() {
         return this.mVdsDynamic.getcpu_sockets();
     }
@@ -479,7 +451,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
         this.mVdsDynamic.setcpu_sockets(value);
     }
 
-    @XmlElement(name = "cpu_model")
     public String getcpu_model() {
         return this.mVdsDynamic.getcpu_model();
     }
@@ -488,7 +459,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
         this.mVdsDynamic.setcpu_model(value);
     }
 
-    @XmlElement(name = "cpu_speed_mh")
     public Double getcpu_speed_mh() {
         return this.mVdsDynamic.getcpu_speed_mh();
     }
@@ -497,7 +467,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
         this.mVdsDynamic.setcpu_speed_mh(value);
     }
 
-    @XmlElement(name = "if_total_speed")
     public String getif_total_speed() {
         return this.mVdsDynamic.getif_total_speed();
     }
@@ -506,7 +475,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
         this.mVdsDynamic.setif_total_speed(value);
     }
 
-    @XmlElement(name = "kvm_enabled")
     public Boolean getkvm_enabled() {
         return this.mVdsDynamic.getkvm_enabled();
     }
@@ -515,7 +483,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
         this.mVdsDynamic.setkvm_enabled(value);
     }
 
-    @XmlElement(name = "physical_mem_mb", nillable = true)
     public Integer getphysical_mem_mb() {
         return this.mVdsDynamic.getphysical_mem_mb();
     }
@@ -524,7 +491,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
         this.mVdsDynamic.setphysical_mem_mb(value);
     }
 
-    @XmlElement(name = "supported_cluster_levels")
     public String getsupported_cluster_levels() {
         return this.mVdsDynamic.getsupported_cluster_levels();
     }
@@ -537,7 +503,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
         return this.mVdsDynamic.getSupportedClusterVersionsSet();
     }
 
-    @XmlElement(name = "supported_engines")
     public String getsupported_engines() {
         return this.mVdsDynamic.getsupported_engines();
     }
@@ -550,7 +515,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
         return this.mVdsDynamic.getSupportedENGINESVersionsSet();
     }
 
-    @XmlElement(name = "cpu_idle")
     public Double getcpu_idle() {
         return this.mVdsStatistics.getcpu_idle();
     }
@@ -559,7 +523,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
         this.mVdsStatistics.setcpu_idle(value);
     }
 
-    @XmlElement(name = "cpu_load")
     public Double getcpu_load() {
         return this.mVdsStatistics.getcpu_load();
     }
@@ -568,7 +531,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
         this.mVdsStatistics.setcpu_load(value);
     }
 
-    @XmlElement(name = "cpu_sys")
     public Double getcpu_sys() {
         return this.mVdsStatistics.getcpu_sys();
     }
@@ -577,7 +539,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
         this.mVdsStatistics.setcpu_sys(value);
     }
 
-    @XmlElement(name = "cpu_user")
     public Double getcpu_user() {
         return this.mVdsStatistics.getcpu_user();
     }
@@ -586,7 +547,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
         this.mVdsStatistics.setcpu_user(value);
     }
 
-    @XmlElement(name = "mem_commited")
     public Integer getmem_commited() {
         return this.mVdsDynamic.getmem_commited();
     }
@@ -597,7 +557,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
         OnPropertyChanged(new PropertyChangedEventArgs("mem_commited_percent"));
     }
 
-    @XmlElement(name = "vm_active", nillable = true)
     public Integer getvm_active() {
         return this.mVdsDynamic.getvm_active();
     }
@@ -607,7 +566,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
         OnPropertyChanged(new PropertyChangedEventArgs("vm_active"));
     }
 
-    @XmlElement(name = "vm_count")
     public int getvm_count() {
         return this.mVdsDynamic.getvm_count();
     }
@@ -617,7 +575,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
         OnPropertyChanged(new PropertyChangedEventArgs("vm_count"));
     }
 
-    @XmlElement(name = "vms_cores_count")
     public Integer getvms_cores_count() {
         return this.mVdsDynamic.getvms_cores_count();
     }
@@ -627,7 +584,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
         OnPropertyChanged(new PropertyChangedEventArgs("vms_cores_count"));
     }
 
-    @XmlElement(name = "vm_migrating")
     public Integer getvm_migrating() {
         return this.mVdsDynamic.getvm_migrating();
     }
@@ -636,7 +592,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
         this.mVdsDynamic.setvm_migrating(value);
     }
 
-    @XmlElement(name = "usage_mem_percent", nillable = true)
     public Integer getusage_mem_percent() {
         return this.mVdsStatistics.getusage_mem_percent();
     }
@@ -646,7 +601,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
         OnPropertyChanged(new PropertyChangedEventArgs("usage_mem_percent"));
     }
 
-    @XmlElement(name = "usage_cpu_percent", nillable = true)
     public Integer getusage_cpu_percent() {
         return this.mVdsStatistics.getusage_cpu_percent();
     }
@@ -656,7 +610,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
         OnPropertyChanged(new PropertyChangedEventArgs("usage_cpu_percent"));
     }
 
-    @XmlElement(name = "usage_network_percent", nillable = true)
     public Integer getusage_network_percent() {
         return this.mVdsStatistics.getusage_network_percent();
     }
@@ -666,7 +619,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
         OnPropertyChanged(new PropertyChangedEventArgs("usage_network_percent"));
     }
 
-    @XmlElement(name = "guest_overhead", nillable = true)
     public Integer getguest_overhead() {
         return this.mVdsDynamic.getguest_overhead();
     }
@@ -675,7 +627,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
         this.mVdsDynamic.setguest_overhead(value);
     }
 
-    @XmlElement(name = "reserved_mem", nillable = true)
     public Integer getreserved_mem() {
         return this.mVdsDynamic.getreserved_mem();
     }
@@ -684,7 +635,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
         this.mVdsDynamic.setreserved_mem(value);
     }
 
-    @XmlElement(name = "previous_status")
     public VDSStatus getprevious_status() {
         return this.mVdsDynamic.getprevious_status();
     }
@@ -693,7 +643,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
         this.mVdsDynamic.setprevious_status(value);
     }
 
-    @XmlElement(name = "mem_available", nillable = true)
     public Long getmem_available() {
         return this.mVdsStatistics.getmem_available();
     }
@@ -702,7 +651,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
         this.mVdsStatistics.setmem_available(value);
     }
 
-    @XmlElement(name = "mem_shared", nillable = true)
     public Long getmem_shared() {
         return this.mVdsStatistics.getmem_shared();
     }
@@ -713,7 +661,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
         OnPropertyChanged(new PropertyChangedEventArgs("mem_shared_percent"));
     }
 
-    @XmlElement(name = "mem_commited_percent", nillable = true)
     public Integer getmem_commited_percent() {
         Integer commited = mVdsDynamic.getmem_commited();
         Integer physical = mVdsDynamic.getphysical_mem_mb();
@@ -736,7 +683,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
 
     }
 
-    @XmlElement(name = "mem_shared_percent", nillable = true)
     public Integer getmem_shared_percent() {
         Long shared = mVdsStatistics.getmem_shared();
         Integer physical = mVdsDynamic.getphysical_mem_mb();
@@ -759,7 +705,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
 
     }
 
-    @XmlElement(name = "swap_free", nillable = true)
     public Long getswap_free() {
         return this.mVdsStatistics.getswap_free();
     }
@@ -768,7 +713,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
         this.mVdsStatistics.setswap_free(value);
     }
 
-    @XmlElement(name = "swap_total", nillable = true)
     public Long getswap_total() {
         return this.mVdsStatistics.getswap_total();
     }
@@ -777,7 +721,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
         this.mVdsStatistics.setswap_total(value);
     }
 
-    @XmlElement(name = "ksm_cpu_percent", nillable = true)
     public Integer getksm_cpu_percent() {
         return this.mVdsStatistics.getksm_cpu_percent();
     }
@@ -786,7 +729,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
         this.mVdsStatistics.setksm_cpu_percent(value);
     }
 
-    @XmlElement(name = "ksm_pages", nillable = true)
     public Long getksm_pages() {
         return this.mVdsStatistics.getksm_pages();
     }
@@ -795,7 +737,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
         this.mVdsStatistics.setksm_pages(value);
     }
 
-    @XmlElement(name = "ksm_state")
     public Boolean getksm_state() {
         return this.mVdsStatistics.getksm_state();
     }
@@ -805,7 +746,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
         OnPropertyChanged(new PropertyChangedEventArgs("ksm_state"));
     }
 
-    @XmlElement(name = "software_version")
     public String getsoftware_version() {
         return this.mVdsDynamic.getsoftware_version();
     }
@@ -814,7 +754,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
         this.mVdsDynamic.setsoftware_version(value);
     }
 
-    @XmlElement(name = "version_name")
     public String getversion_name() {
         return this.mVdsDynamic.getversion_name();
     }
@@ -823,7 +762,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
         this.mVdsDynamic.setversion_name(value);
     }
 
-    @XmlElement(name = "build_name")
     public String getbuild_name() {
         return this.mVdsDynamic.getbuild_name();
     }
@@ -832,7 +770,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
         this.mVdsDynamic.setbuild_name(value);
     }
 
-    @XmlElement(name = "cpu_flags")
     public String getcpu_flags() {
         return mVdsDynamic.getcpu_flags();
     }
@@ -841,7 +778,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
         mVdsDynamic.setcpu_flags(value);
     }
 
-    @XmlElement(name = "cpu_over_commit_time_stamp")
     public java.util.Date getcpu_over_commit_time_stamp() {
         return mVdsDynamic.getcpu_over_commit_time_stamp();
     }
@@ -858,7 +794,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
         mVdsDynamic.sethypervisor_type(value);
     }
 
-    @XmlElement(name = "vds_strength")
     public int getvds_strength() {
         return this.mVdsStatic.getvds_strength();
     }
@@ -869,7 +804,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
 
     private int high_utilizationField;
 
-    @XmlElement
     public int gethigh_utilization() {
         return this.high_utilizationField;
     }
@@ -880,7 +814,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
 
     private int low_utilizationField;
 
-    @XmlElement
     public int getlow_utilization() {
         return this.low_utilizationField;
     }
@@ -891,7 +824,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
 
     private int cpu_over_commit_duration_minutesField;
 
-    @XmlElement
     public int getcpu_over_commit_duration_minutes() {
         return this.cpu_over_commit_duration_minutesField;
     }
@@ -903,7 +835,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
     private Guid storage_pool_idField = new Guid();
 
     @Override
-    @XmlElement
     public Guid getstorage_pool_id() {
         return this.storage_pool_idField;
     }
@@ -915,7 +846,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
 
     private String storage_pool_nameField;
 
-    @XmlElement
     public String getstorage_pool_name() {
         return this.storage_pool_nameField;
     }
@@ -926,7 +856,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
 
     private VdsSelectionAlgorithm selection_algorithmField = VdsSelectionAlgorithm.forValue(0);
 
-    @XmlElement
     public VdsSelectionAlgorithm getselection_algorithm() {
         return this.selection_algorithmField;
     }
@@ -935,7 +864,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
         this.selection_algorithmField = value;
     }
 
-    @XmlElement(name = "max_vds_memory_over_commit")
     private int max_vds_memory_over_commitField;
 
     public int getmax_vds_memory_over_commit() {
@@ -946,7 +874,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
         this.max_vds_memory_over_commitField = value;
     }
 
-    @XmlElement
     public Integer getpending_vcpus_count() {
         return mVdsDynamic.getpending_vcpus_count();
     }
@@ -955,7 +882,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
         mVdsDynamic.setpending_vcpus_count(value);
     }
 
-    @XmlElement
     public int getpending_vmem_size() {
         return mVdsDynamic.getpending_vmem_size();
     }
@@ -964,7 +890,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
         mVdsDynamic.setpending_vmem_size(value);
     }
 
-    @XmlElement(nillable = true)
     public Boolean getnet_config_dirty() {
         return mVdsDynamic.getnet_config_dirty();
     }
@@ -974,7 +899,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
         OnPropertyChanged(new PropertyChangedEventArgs("net_config_dirty"));
     }
 
-    @XmlElement
     public String getpm_type() {
         return mVdsStatic.getpm_type();
     }
@@ -984,7 +908,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
         OnPropertyChanged(new PropertyChangedEventArgs("pm_type"));
     }
 
-    @XmlElement
     public String getpm_user() {
         return mVdsStatic.getpm_user();
     }
@@ -994,7 +917,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
         OnPropertyChanged(new PropertyChangedEventArgs("pm_user"));
     }
 
-    @XmlElement
     public String getpm_password() {
         return mVdsStatic.getpm_password();
     }
@@ -1004,7 +926,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
         OnPropertyChanged(new PropertyChangedEventArgs("pm_password"));
     }
 
-    @XmlElement(nillable = true)
     public Integer getpm_port() {
         return mVdsStatic.getpm_port();
     }
@@ -1022,7 +943,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
         mVdsStatic.setpm_options(value);
     }
 
-    @XmlElement(name = "PmOptionsMap")
     public ValueObjectMap getPmOptionsMap() {
         return mVdsStatic.getPmOptionsMap();
     }
@@ -1032,7 +952,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
         OnPropertyChanged(new PropertyChangedEventArgs("PmOptionsMap"));
     }
 
-    @XmlElement
     public boolean getpm_enabled() {
         return mVdsStatic.getpm_enabled();
     }
@@ -1042,7 +961,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
         OnPropertyChanged(new PropertyChangedEventArgs("pm_enabled"));
     }
 
-    @XmlElement
     public String gethost_os() {
         return this.mVdsDynamic.gethost_os();
     }
@@ -1051,7 +969,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
         this.mVdsDynamic.sethost_os(value);
     }
 
-    @XmlElement
     public String getkvm_version() {
         return this.mVdsDynamic.getkvm_version();
     }
@@ -1060,7 +977,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
         this.mVdsDynamic.setkvm_version(value);
     }
 
-    @XmlElement
     public String getspice_version() {
         return this.mVdsDynamic.getspice_version();
     }
@@ -1069,7 +985,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
         this.mVdsDynamic.setspice_version(value);
     }
 
-    @XmlElement
     public String getkernel_version() {
         return this.mVdsDynamic.getkernel_version();
     }
@@ -1078,7 +993,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
         this.mVdsDynamic.setkernel_version(value);
     }
 
-    @XmlElement(name = "IScsiInitiatorName")
     public void setIScsiInitiatorName(String value) {
         this.mVdsDynamic.setIScsiInitiatorName(value);
     }
@@ -1091,7 +1005,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
         this.mVdsDynamic.setTransparentHugePagesState(value);
     }
 
-    @XmlElement(name = "TransparentHugePagesState")
     public VdsTransparentHugePagesState getTransparentHugePagesState() {
         return this.mVdsDynamic.getTransparentHugePagesState();
     }
@@ -1160,7 +1073,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
         mImagesLastCheck = value;
     }
 
-    @XmlElement
     public Double getImagesLastDelay() {
         return mImagesLastDelay;
     }
@@ -1169,7 +1081,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
         mImagesLastDelay = value;
     }
 
-    @XmlElement(name = "Version")
     public void setVersion(VdsVersion value) {
         mVdsDynamic.setVersion(value);
         OnPropertyChanged(new PropertyChangedEventArgs("Version"));
@@ -1181,7 +1092,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
 
     private ServerCpu _cpuName;
 
-    @XmlElement(name = "CpuName")
     public ServerCpu getCpuName() {
         return _cpuName;
     }
@@ -1191,7 +1101,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
         OnPropertyChanged(new PropertyChangedEventArgs("CpuName"));
     }
 
-    @XmlElement(name = "vds_spm_id")
     private Integer privatevds_spm_id;
 
     public Integer getvds_spm_id() {
@@ -1239,7 +1148,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
 
     private VdsSpmStatus _spm_status = VdsSpmStatus.forValue(0);
 
-    @XmlElement
     public VdsSpmStatus getspm_status() {
         return _spm_status;
     }
@@ -1249,7 +1157,6 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
         OnPropertyChanged(new PropertyChangedEventArgs("spm_status"));
     }
 
-    @XmlElement(name = "NonOperationalReason")
     public NonOperationalReason getNonOperationalReason() {
         return this.mVdsDynamic.getNonOperationalReason();
     }

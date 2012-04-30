@@ -2,9 +2,6 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.util.HashMap;
 
-import javax.xml.bind.annotation.XmlType;
-
-@XmlType(name = "AdRefStatus")
 public enum AdRefStatus {
     Inactive(0),
     Active(1);

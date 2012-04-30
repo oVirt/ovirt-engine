@@ -2,17 +2,11 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.util.HashMap;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlType;
-
 /**
  * An enum for defining the migration support of the VM
  *
  *
  */
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "MigrationSupport")
 public enum MigrationSupport {
     MIGRATABLE(0), // can migrate with no restrictions
     IMPLICITLY_NON_MIGRATABLE(1), // user can cause migration using UI, the VM

@@ -2,15 +2,8 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
-
 import org.ovirt.engine.core.compat.StringHelper;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "FenceStatusReturnValue")
 public class FenceStatusReturnValue implements Serializable {
     private static final long serialVersionUID = 8070963676213797507L;
     // indicates that operation was skipped because Host is already in requested state.
@@ -20,14 +13,12 @@ public class FenceStatusReturnValue implements Serializable {
         _message = message;
     }
 
-    @XmlElement(name = "Status")
     private String _status;
 
     public String getStatus() {
         return _status;
     }
 
-    @XmlElement(name = "Message")
     private String _message;
 
     public String getMessage() {

@@ -2,15 +2,8 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
-
 import org.ovirt.engine.core.compat.Guid;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "vds_spm_id_map")
 public class vds_spm_id_map implements Serializable, BusinessEntity<Guid> {
     private static final long serialVersionUID = 308472653338744675L;
 
@@ -23,7 +16,6 @@ public class vds_spm_id_map implements Serializable, BusinessEntity<Guid> {
         this.vds_spm_idField = vds_spm_id;
     }
 
-    @XmlElement(name = "storage_pool_id")
     private Guid storage_pool_idField = new Guid();
 
     public Guid getstorage_pool_id() {
@@ -34,7 +26,6 @@ public class vds_spm_id_map implements Serializable, BusinessEntity<Guid> {
         this.storage_pool_idField = value;
     }
 
-    @XmlElement(name = "vds_id")
     private Guid vds_idField;
 
     @Override
@@ -47,7 +38,6 @@ public class vds_spm_id_map implements Serializable, BusinessEntity<Guid> {
         this.vds_idField = value;
     }
 
-    @XmlElement(name = "vds_spm_id")
     private int vds_spm_idField;
 
     public int getvds_spm_id() {

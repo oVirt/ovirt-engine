@@ -8,18 +8,12 @@ import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Table;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
 
 import org.hibernate.annotations.TypeDef;
 
 import org.ovirt.engine.core.common.businessentities.mapping.GuidType;
 import org.ovirt.engine.core.compat.Guid;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "RoleGroupMap")
 @Entity
 @Table(name = "roles_groups")
 @TypeDef(name = "guid", typeClass = GuidType.class)
@@ -44,7 +38,6 @@ public class RoleGroupMap implements Serializable {
         this.id.actionGroup = actionGroup.getId();
     }
 
-    @XmlElement(name = "ActionGroup")
     public ActionGroup getActionGroup() {
         return ActionGroup.forValue(id.actionGroup);
     }
@@ -53,7 +46,6 @@ public class RoleGroupMap implements Serializable {
         this.id.roleId = roleId;
     }
 
-    @XmlElement(name = "RoleId")
     public Guid getRoleId() {
         return id.roleId;
     }

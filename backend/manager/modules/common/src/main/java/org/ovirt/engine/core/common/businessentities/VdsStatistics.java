@@ -6,10 +6,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
 
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
@@ -17,8 +13,6 @@ import org.hibernate.annotations.TypeDef;
 import org.ovirt.engine.core.common.businessentities.mapping.GuidType;
 import org.ovirt.engine.core.compat.Guid;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "VdsStatistics")
 @Entity
 @Table(name = "vds_statistics")
 @TypeDef(name = "guid", typeClass = GuidType.class)
@@ -214,7 +208,6 @@ public class VdsStatistics implements BusinessEntity<Guid> {
         return true;
     }
 
-    @XmlElement(nillable = true)
     public Double getcpu_idle() {
         return this.cpu_idle.doubleValue();
     }
@@ -223,7 +216,6 @@ public class VdsStatistics implements BusinessEntity<Guid> {
         this.cpu_idle = BigDecimal.valueOf(cpuIdle);
     }
 
-    @XmlElement(nillable = true)
     public Double getcpu_load() {
         return this.cpu_load.doubleValue();
     }
@@ -232,7 +224,6 @@ public class VdsStatistics implements BusinessEntity<Guid> {
         this.cpu_load = BigDecimal.valueOf(cpuLoad);
     }
 
-    @XmlElement(nillable = true)
     public Double getcpu_sys() {
         return this.cpu_sys.doubleValue();
     }
@@ -241,7 +232,6 @@ public class VdsStatistics implements BusinessEntity<Guid> {
         this.cpu_sys = BigDecimal.valueOf(cpuSys);
     }
 
-    @XmlElement(nillable = true)
     public Double getcpu_user() {
         return this.cpu_user.doubleValue();
     }
@@ -250,7 +240,6 @@ public class VdsStatistics implements BusinessEntity<Guid> {
         this.cpu_user = BigDecimal.valueOf(cpuUser);
     }
 
-    @XmlElement(nillable = true)
     public Long getmem_available() {
         return this.mem_available;
     }
@@ -259,7 +248,6 @@ public class VdsStatistics implements BusinessEntity<Guid> {
         this.mem_available = value;
     }
 
-    @XmlElement(nillable = true)
     public Long getmem_shared() {
         return this.mem_shared;
     }
@@ -268,7 +256,6 @@ public class VdsStatistics implements BusinessEntity<Guid> {
         this.mem_shared = value;
     }
 
-    @XmlElement(nillable = true)
     public Integer getusage_cpu_percent() {
         return this.usage_cpu_percent;
     }
@@ -277,7 +264,6 @@ public class VdsStatistics implements BusinessEntity<Guid> {
         this.usage_cpu_percent = value;
     }
 
-    @XmlElement(nillable = true)
     public Integer getusage_mem_percent() {
         return this.usage_mem_percent;
     }
@@ -286,7 +272,6 @@ public class VdsStatistics implements BusinessEntity<Guid> {
         this.usage_mem_percent = value;
     }
 
-    @XmlElement(nillable = true)
     public Integer getusage_network_percent() {
         return this.usage_network_percent;
     }
@@ -296,7 +281,6 @@ public class VdsStatistics implements BusinessEntity<Guid> {
     }
 
     @Override
-    @XmlElement(name = "Id")
     public Guid getId() {
         return this.id;
     }
@@ -306,7 +290,6 @@ public class VdsStatistics implements BusinessEntity<Guid> {
         this.id = id;
     }
 
-    @XmlElement
     public Long getswap_free() {
         return this.swap_free;
     }
@@ -315,7 +298,6 @@ public class VdsStatistics implements BusinessEntity<Guid> {
         this.swap_free = value;
     }
 
-    @XmlElement
     public Long getswap_total() {
         return this.swap_total;
     }
@@ -324,7 +306,6 @@ public class VdsStatistics implements BusinessEntity<Guid> {
         this.swap_total = value;
     }
 
-    @XmlElement
     public Integer getksm_cpu_percent() {
         return this.ksm_cpu_percent;
     }
@@ -333,7 +314,6 @@ public class VdsStatistics implements BusinessEntity<Guid> {
         this.ksm_cpu_percent = value;
     }
 
-    @XmlElement
     public Long getksm_pages() {
         return this.ksm_pages;
     }
@@ -342,7 +322,6 @@ public class VdsStatistics implements BusinessEntity<Guid> {
         this.ksm_pages = value;
     }
 
-    @XmlElement(nillable = true)
     public Boolean getksm_state() {
         return this.ksm_state;
     }

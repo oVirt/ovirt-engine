@@ -15,10 +15,6 @@ import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Max;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
@@ -32,8 +28,6 @@ import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.INotifyPropertyChanged;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "VdsStatic")
 @Entity
 @Table(name = "vds_static")
 @TypeDef(name = "guid", typeClass = GuidType.class)
@@ -94,35 +88,28 @@ public class VdsStatic implements INotifyPropertyChanged, BusinessEntity<Guid> {
     @Column(name = "vds_strength")
     private Integer vdsStrength;
 
-    @XmlElement(name = "pm_type")
     @Size(max = BusinessEntitiesDefinitions.HOST_PM_TYPE_SIZE)
     @Column(name = "pm_type")
     private String pmType;
 
-    @XmlElement(name = "pm_user")
     @Size(max = BusinessEntitiesDefinitions.HOST_PM_USER_SIZE)
     @Column(name = "pm_user")
     private String pmUser;
 
-    @XmlElement(name = "pm_password")
     @Size(max = BusinessEntitiesDefinitions.HOST_PM_PASSWD_SIZE)
     @Column(name = "pm_password")
     private String pmPassword;
 
-    @XmlElement(name = "pm_port", nillable = true)
     @Column(name = "pm_port")
     private Integer pmPort;
 
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
-    @XmlElement(name = "pm_options", nillable = true)
     @Column(name = "pm_options", length = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
     private String pmOptions;
 
-    @XmlElement(name = "pm_enabled")
     @Column(name = "pm_enabled")
     private boolean pmEnabled;
 
-    @XmlElement(name = "PmOptionsMap")
     @Transient
     private ValueObjectMap pmOptionsMap;
 
@@ -168,7 +155,6 @@ public class VdsStatic implements INotifyPropertyChanged, BusinessEntity<Guid> {
         this.vdsSpmPriority = HOST_DEFAULT_SPM_PRIORITY;
     }
 
-    @XmlElement
     public boolean getserver_SSL_enabled() {
         return serverSslEnabled;
     }
@@ -177,7 +163,6 @@ public class VdsStatic implements INotifyPropertyChanged, BusinessEntity<Guid> {
         serverSslEnabled = value;
     }
 
-    @XmlElement
     public String gethost_name() {
         return this.hostname;
     }
@@ -186,7 +171,6 @@ public class VdsStatic implements INotifyPropertyChanged, BusinessEntity<Guid> {
         this.hostname = value;
     }
 
-    @XmlElement(name = "ManagmentIp")
     public String getManagmentIp() {
         return this.ip;
     }
@@ -195,7 +179,6 @@ public class VdsStatic implements INotifyPropertyChanged, BusinessEntity<Guid> {
         this.ip = value;
     }
 
-    @XmlElement(name = "UniqueID")
     public String getUniqueID() {
         return uniqueId;
     }
@@ -204,7 +187,6 @@ public class VdsStatic implements INotifyPropertyChanged, BusinessEntity<Guid> {
         uniqueId = value;
     }
 
-    @XmlElement
     public int getport() {
         return this.port;
     }
@@ -213,7 +195,6 @@ public class VdsStatic implements INotifyPropertyChanged, BusinessEntity<Guid> {
         this.port = value;
     }
 
-    @XmlElement
     public Guid getvds_group_id() {
         return this.vdsGroupId;
     }
@@ -223,7 +204,6 @@ public class VdsStatic implements INotifyPropertyChanged, BusinessEntity<Guid> {
     }
 
     @Override
-    @XmlElement(name = "Id")
     public Guid getId() {
         return this.id;
     }
@@ -233,7 +213,6 @@ public class VdsStatic implements INotifyPropertyChanged, BusinessEntity<Guid> {
         this.id = id;
     }
 
-    @XmlElement
     public String getvds_name() {
         return this.name;
     }
@@ -242,7 +221,6 @@ public class VdsStatic implements INotifyPropertyChanged, BusinessEntity<Guid> {
         this.name = value;
     }
 
-    @XmlElement
     public VDSType getvds_type() {
         return this.vdsType;
     }
@@ -251,7 +229,6 @@ public class VdsStatic implements INotifyPropertyChanged, BusinessEntity<Guid> {
         this.vdsType = value;
     }
 
-    @XmlElement
     public int getvds_strength() {
         return this.vdsStrength;
     }

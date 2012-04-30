@@ -2,13 +2,6 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlType;
-
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "license_usage")
 public class license_usage implements Serializable {
     private static final long serialVersionUID = 5363822236535990225L;
 
@@ -26,7 +19,6 @@ public class license_usage implements Serializable {
 
     private java.util.Date date = new java.util.Date(0);
 
-    @XmlElement
     public java.util.Date getDate() {
         return this.date;
     }
@@ -37,7 +29,6 @@ public class license_usage implements Serializable {
 
     private int license_desktops;
 
-    @XmlElement
     public int getLicenseDesktops() {
         return this.license_desktops;
     }
@@ -48,7 +39,6 @@ public class license_usage implements Serializable {
 
     private int used_desktops;
 
-    @XmlElement
     public int getUsedDesktops() {
         return this.used_desktops;
     }
@@ -57,7 +47,6 @@ public class license_usage implements Serializable {
         this.used_desktops = value;
     }
 
-    @XmlElement
     private int license_sockets;
 
     public int getLicenseSockets() {
@@ -68,7 +57,6 @@ public class license_usage implements Serializable {
         this.license_sockets = value;
     }
 
-    @XmlElement
     private int used_sockets;
 
     public int getUsedSockets() {

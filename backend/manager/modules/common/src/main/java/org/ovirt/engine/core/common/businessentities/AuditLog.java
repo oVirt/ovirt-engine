@@ -7,10 +7,6 @@ import javax.persistence.Entity;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
 
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
@@ -24,8 +20,6 @@ import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "AuditLog")
 @Entity
 @Table(name = "audit_log")
 @TypeDef(name = "guid", typeClass = GuidType.class)
@@ -70,7 +64,6 @@ public class AuditLog extends IVdcQueryable implements INotifyPropertyChanged, S
     @Column(name = "audit_log_id")
     private long auditLogId;
 
-    @XmlElement
     public long getaudit_log_id() {
         return this.auditLogId;
     }
@@ -82,7 +75,6 @@ public class AuditLog extends IVdcQueryable implements INotifyPropertyChanged, S
     @Column(name = "log_time", nullable = false)
     private java.util.Date logTime = new java.util.Date(0);
 
-    @XmlElement
     public java.util.Date getlog_time() {
         return this.logTime;
     }
@@ -94,7 +86,6 @@ public class AuditLog extends IVdcQueryable implements INotifyPropertyChanged, S
     @Column(name = "message", nullable = false)
     private String message;
 
-    @XmlElement
     public String getmessage() {
         return this.message;
     }
@@ -115,7 +106,6 @@ public class AuditLog extends IVdcQueryable implements INotifyPropertyChanged, S
     @Type(type = "guid")
     private NGuid userId;
 
-    @XmlElement
     public NGuid getuser_id() {
         return this.userId;
     }
@@ -127,7 +117,6 @@ public class AuditLog extends IVdcQueryable implements INotifyPropertyChanged, S
     @Column(name = "user_name", length = 255)
     private String userName;
 
-    @XmlElement
     public String getuser_name() {
         return this.userName;
     }
@@ -160,7 +149,6 @@ public class AuditLog extends IVdcQueryable implements INotifyPropertyChanged, S
     @Type(type = "guid")
     private NGuid vdsId;
 
-    @XmlElement(nillable = true)
     public NGuid getvds_id() {
         return this.vdsId;
     }
@@ -172,7 +160,6 @@ public class AuditLog extends IVdcQueryable implements INotifyPropertyChanged, S
     @Column(name = "vds_name", length = 255)
     private String vdsName;
 
-    @XmlElement
     public String getvds_name() {
         return this.vdsName;
     }
@@ -185,7 +172,6 @@ public class AuditLog extends IVdcQueryable implements INotifyPropertyChanged, S
     @Type(type = "guid")
     private NGuid vmTemplateId;
 
-    @XmlElement
     public NGuid getvm_template_id() {
         return this.vmTemplateId;
     }
@@ -197,7 +183,6 @@ public class AuditLog extends IVdcQueryable implements INotifyPropertyChanged, S
     @Column(name = "vm_template_name", length = 40)
     private String vmTemplateName;
 
-    @XmlElement
     public String getvm_template_name() {
         return this.vmTemplateName;
     }
@@ -210,7 +195,6 @@ public class AuditLog extends IVdcQueryable implements INotifyPropertyChanged, S
     @Type(type = "guid")
     private NGuid vmId;
 
-    @XmlElement
     public NGuid getvm_id() {
         return this.vmId;
     }
@@ -222,7 +206,6 @@ public class AuditLog extends IVdcQueryable implements INotifyPropertyChanged, S
     @Column(name = "vm_name", length = 255)
     private String vmName;
 
-    @XmlElement
     public String getvm_name() {
         return this.vmName;
     }
@@ -231,7 +214,6 @@ public class AuditLog extends IVdcQueryable implements INotifyPropertyChanged, S
         this.vmName = value;
     }
 
-    @XmlElement(name = "storage_pool_id")
     @Column(name = "storage_pool_id")
     @Type(type = "guid")
     private NGuid storagePoolId;
@@ -244,7 +226,6 @@ public class AuditLog extends IVdcQueryable implements INotifyPropertyChanged, S
         storagePoolId = value;
     }
 
-    @XmlElement(name = "storage_pool_name")
     @Column(name = "storage_pool_name", length = 40)
     private String storagePoolName;
 
@@ -256,7 +237,6 @@ public class AuditLog extends IVdcQueryable implements INotifyPropertyChanged, S
         storagePoolName = value;
     }
 
-    @XmlElement(name = "storage_domain_id")
     @Column(name = "storage_domain_id")
     @Type(type = "guid")
     private NGuid storageDomainId;
@@ -269,7 +249,6 @@ public class AuditLog extends IVdcQueryable implements INotifyPropertyChanged, S
         storageDomainId = value;
     }
 
-    @XmlElement(name = "storage_domain_name")
     @Column(name = "storage_domain_name", length = 250)
     private String storageDomainName;
 
@@ -281,7 +260,6 @@ public class AuditLog extends IVdcQueryable implements INotifyPropertyChanged, S
         storageDomainName = value;
     }
 
-    @XmlElement(name = "vds_group_id")
     @Column(name = "vds_group_id")
     @Type(type = "guid")
     private NGuid vdsGroupId;
@@ -294,7 +272,6 @@ public class AuditLog extends IVdcQueryable implements INotifyPropertyChanged, S
         vdsGroupId = value;
     }
 
-    @XmlElement(name = "vds_group_name")
     @Column(name = "vds_group_name", length = 255)
     private String vdsGroupName;
 
@@ -337,7 +314,6 @@ public class AuditLog extends IVdcQueryable implements INotifyPropertyChanged, S
     @Enumerated
     private int logType = AuditLogType.UNASSIGNED.getValue();
 
-    @XmlElement
     public AuditLogType getlog_type() {
         return AuditLogType.forValue(logType);
     }
@@ -350,7 +326,6 @@ public class AuditLog extends IVdcQueryable implements INotifyPropertyChanged, S
     // We dont have the AuditLogType enumeration synchronized,
     // WSDL formatter set the enumeration value according to its string value
     // (enums are strings in WSDL)
-    @XmlElement
     public int getlog_typeValue() {
         return getlog_type().getValue();
     }
@@ -366,7 +341,6 @@ public class AuditLog extends IVdcQueryable implements INotifyPropertyChanged, S
     @Column(name = "severity", nullable = false)
     private int severity = AuditLogSeverity.NORMAL.getValue();
 
-    @XmlElement
     public AuditLogSeverity getseverity() {
         return AuditLogSeverity.forValue(severity);
     }

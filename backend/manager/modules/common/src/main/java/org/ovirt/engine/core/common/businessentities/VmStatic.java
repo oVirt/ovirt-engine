@@ -7,8 +7,6 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
 
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
@@ -22,7 +20,6 @@ import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 
-@XmlType(name = "VmStatic")
 @Entity
 @Table(name = "vm_static")
 @TypeDef(name = "guid", typeClass = GuidType.class)
@@ -46,7 +43,6 @@ public class VmStatic extends VmBase {
     @Type(type = "guid")
     private NGuid dedicated_vm_for_vds;
 
-    @XmlElement(name = "default_display_type")
     @Column(name = "default_display_type")
     private DisplayType default_display_type = DisplayType.qxl;
 
@@ -73,7 +69,6 @@ public class VmStatic extends VmBase {
     @Transient
     private int m_nDiskSize;
 
-    @XmlElement(name = "MinAllocatedMem")
     @Transient
     private int minAllocatedMemField;
 
@@ -180,7 +175,6 @@ public class VmStatic extends VmBase {
         this.setMinAllocatedMem(minAllocatedMem);
     }
 
-    @XmlElement(name = "CustomProperties")
     public String getCustomProperties() {
         return customProperties;
     }
@@ -205,7 +199,6 @@ public class VmStatic extends VmBase {
         this.userDefinedProperties = userDefinedProperties;
     }
 
-    @XmlElement(name = "DiskSize")
     public int getDiskSize() {
         return m_nDiskSize;
     }
@@ -218,7 +211,6 @@ public class VmStatic extends VmBase {
         return !getis_initialized();
     }
 
-    @XmlElement(name = "MigrationSupport")
     public MigrationSupport getMigrationSupport() {
         return migrationSupport;
     }
@@ -227,7 +219,6 @@ public class VmStatic extends VmBase {
         this.migrationSupport = migrationSupport;
     }
 
-    @XmlElement
     public String getvm_name() {
         return this.name;
     }
@@ -236,7 +227,6 @@ public class VmStatic extends VmBase {
         this.name = value;
     }
 
-    @XmlElement
     public Guid getvmt_guid() {
         return this.vmt_guid;
     }
@@ -245,7 +235,6 @@ public class VmStatic extends VmBase {
         this.vmt_guid = value;
     }
 
-    @XmlElement
     public boolean getis_initialized() {
         return is_initialized;
     }
@@ -254,12 +243,10 @@ public class VmStatic extends VmBase {
         is_initialized = value;
     }
 
-    @XmlElement
     public int getnum_of_cpus() {
         return getcpu_per_socket() * getnum_of_sockets();
     }
 
-    @XmlElement(nillable = true)
     public NGuid getdedicated_vm_for_vds() {
         return dedicated_vm_for_vds;
     }

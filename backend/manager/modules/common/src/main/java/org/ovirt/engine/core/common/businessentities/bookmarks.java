@@ -9,10 +9,6 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
@@ -22,15 +18,12 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.INotifyPropertyChanged;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "bookmarks", namespace = "http://service.engine.ovirt.org")
 @Entity
 @Table(name = "bookmarks")
 @TypeDef(name = "guid", typeClass = GuidType.class)
 public class bookmarks extends IVdcQueryable implements INotifyPropertyChanged, Serializable {
     private static final long serialVersionUID = 8177640907822845847L;
 
-    @XmlElement(name = "bookmark_id")
     @Id
     @GeneratedValue(generator = "system-uuid")
     @GenericGenerator(name = "system-uuid", strategy = "org.ovirt.engine.core.dao.GuidGenerator")
@@ -47,13 +40,11 @@ public class bookmarks extends IVdcQueryable implements INotifyPropertyChanged, 
     private String value;
 
 
-    @XmlElement(name = "bookmark_name")
     @Transient
     public String getbookmark_name() {
         return name;
     }
 
-    @XmlElement(name = "bookmark_value")
     @Transient
     public String getbookmark_value() {
         return value;

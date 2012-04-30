@@ -3,9 +3,6 @@ package org.ovirt.engine.core.common.businessentities;
 import java.util.EnumSet;
 import java.util.HashMap;
 
-import javax.xml.bind.annotation.XmlType;
-
-@XmlType(name = "VdsTransparentHugePages")
 public enum VdsTransparentHugePagesState {
 
     Never(0),

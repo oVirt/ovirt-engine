@@ -3,12 +3,6 @@ package org.ovirt.engine.core.common.businessentities;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlType;
-
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "OriginType")
 public enum OriginType {
     RHEV(0),
     VMWARE(1),

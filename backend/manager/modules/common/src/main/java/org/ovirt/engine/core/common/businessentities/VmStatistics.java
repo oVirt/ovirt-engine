@@ -2,15 +2,8 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.util.ArrayList;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
-
 import org.ovirt.engine.core.compat.Guid;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "VmStatistics")
 public class VmStatistics implements BusinessEntity<Guid> {
     private static final long serialVersionUID = -7480866662740734452L;
 
@@ -137,7 +130,6 @@ public class VmStatistics implements BusinessEntity<Guid> {
         return true;
     }
 
-    @XmlElement(nillable = true)
     public Double getcpu_sys() {
         return this.cpu_sysField;
     }
@@ -148,7 +140,6 @@ public class VmStatistics implements BusinessEntity<Guid> {
 
     private Double cpu_userField = 0.0;
 
-    @XmlElement(nillable = true)
     public Double getcpu_user() {
         return this.cpu_userField;
     }
@@ -159,7 +150,6 @@ public class VmStatistics implements BusinessEntity<Guid> {
 
     private Double elapsed_timeField = 0.0;
 
-    @XmlElement(nillable = true)
     public Double getelapsed_time() {
         return this.elapsed_timeField;
     }
@@ -171,7 +161,6 @@ public class VmStatistics implements BusinessEntity<Guid> {
 
     private Double roundedElapsedTimeField = 0.0;
 
-    @XmlElement(name = "RoundedElapsedTime", nillable = true)
     public Double getRoundedElapsedTime() {
         return this.roundedElapsedTimeField;
     }
@@ -200,7 +189,6 @@ public class VmStatistics implements BusinessEntity<Guid> {
 
     private Integer usage_cpu_percentField;
 
-    @XmlElement(nillable = true)
     public Integer getusage_cpu_percent() {
         return this.usage_cpu_percentField;
     }
@@ -211,7 +199,6 @@ public class VmStatistics implements BusinessEntity<Guid> {
 
     private Integer usage_mem_percentField;
 
-    @XmlElement(nillable = true)
     public Integer getusage_mem_percent() {
         return this.usage_mem_percentField;
     }
@@ -235,7 +222,6 @@ public class VmStatistics implements BusinessEntity<Guid> {
 
     private Integer usage_network_percentField ;
 
-    @XmlElement(nillable = true)
     public Integer getusage_network_percent() {
         return this.usage_network_percentField;
     }
@@ -246,7 +232,6 @@ public class VmStatistics implements BusinessEntity<Guid> {
 
     private Guid vm_guidField = new Guid();
 
-    @XmlElement(name = "interfaceStatistics")
     private ArrayList<VmNetworkInterface> interfaceStatisticsField;
 
     public java.util.ArrayList<VmNetworkInterface> getInterfaceStatistics() {
@@ -258,7 +243,6 @@ public class VmStatistics implements BusinessEntity<Guid> {
     }
 
     @Override
-    @XmlElement(name = "Id")
     public Guid getId() {
         return vm_guidField;
     }

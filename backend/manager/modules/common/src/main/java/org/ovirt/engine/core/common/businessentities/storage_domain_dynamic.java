@@ -4,10 +4,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
 
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
@@ -15,8 +11,6 @@ import org.hibernate.annotations.TypeDef;
 import org.ovirt.engine.core.common.businessentities.mapping.GuidType;
 import org.ovirt.engine.core.compat.Guid;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "storage_domain_dynamic")
 @Entity
 @Table(name = "storage_domain_dynamic")
 @TypeDef(name = "guid", typeClass = GuidType.class)
@@ -32,7 +26,6 @@ public class storage_domain_dynamic implements BusinessEntity<Guid> {
         this.usedDiskSize = used_disk_size;
     }
 
-    @XmlElement(name = "available_disk_size", nillable = true)
     @Column(name = "available_disk_size")
     private Integer availableDiskSize = 0;
 
@@ -44,7 +37,6 @@ public class storage_domain_dynamic implements BusinessEntity<Guid> {
         this.availableDiskSize = value;
     }
 
-    @XmlElement(name = "Id")
     @Id
     @Type(type = "guid")
     @Column(name = "id")
@@ -61,7 +53,6 @@ public class storage_domain_dynamic implements BusinessEntity<Guid> {
     }
 
 
-    @XmlElement(name = "used_disk_size", nillable = true)
     @Column(name = "used_disk_size")
     private Integer usedDiskSize = 0;
 

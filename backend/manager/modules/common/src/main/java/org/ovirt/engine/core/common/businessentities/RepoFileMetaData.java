@@ -3,19 +3,12 @@ package org.ovirt.engine.core.common.businessentities;
 import java.io.Serializable;
 import java.util.Date;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
-
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.INotifyPropertyChanged;
 
 /**
  * An entity class for repository files meta data. Using for caching VDSM list fetching results.
  */
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "RepoFileMetaData")
 public class RepoFileMetaData extends IVdcQueryable implements INotifyPropertyChanged, Serializable {
     private static final long serialVersionUID = 566928138057530047L;
     private Guid storagePoolId = new Guid();
@@ -46,7 +39,6 @@ public class RepoFileMetaData extends IVdcQueryable implements INotifyPropertyCh
     /**
      * @return the storagePoolId
      */
-    @XmlElement(name = "StoragePoolId")
     public Guid getStoragePoolId() {
         return storagePoolId;
     }
@@ -62,7 +54,6 @@ public class RepoFileMetaData extends IVdcQueryable implements INotifyPropertyCh
     /**
      * @return the storagePoolStatus
      */
-    @XmlElement(name = "StoragePoolStatus")
     public StoragePoolStatus getStoragePoolStatus() {
         return storagePoolStatus;
     }
@@ -78,7 +69,6 @@ public class RepoFileMetaData extends IVdcQueryable implements INotifyPropertyCh
     /**
      * @return the vds status.
      */
-    @XmlElement(name = "VdsStatus")
     public VDSStatus getVdsStatus() {
         return vdsStatus;
     }
@@ -94,7 +84,6 @@ public class RepoFileMetaData extends IVdcQueryable implements INotifyPropertyCh
     /**
      * @return the repository domain Id.
      */
-    @XmlElement(name = "RepoDomainId")
     public Guid getRepoDomainId() {
         return repoDomainId;
     }
@@ -110,7 +99,6 @@ public class RepoFileMetaData extends IVdcQueryable implements INotifyPropertyCh
     /**
      * @return the storage domain status.
      */
-    @XmlElement(name = "StorageDomainStatus")
     public StorageDomainStatus getStorageDomainStatus() {
         return storageDomainStatus;
     }
@@ -126,7 +114,6 @@ public class RepoFileMetaData extends IVdcQueryable implements INotifyPropertyCh
     /**
      * @return the repository file name.
      */
-    @XmlElement(name = "RepoFileName")
     public String getRepoFileName() {
         return repoFileName;
     }
@@ -142,7 +129,6 @@ public class RepoFileMetaData extends IVdcQueryable implements INotifyPropertyCh
     /**
      * @return the size For future use.
      */
-    @XmlElement(name = "Size")
     public long getSize() {
         return size;
     }
@@ -158,7 +144,6 @@ public class RepoFileMetaData extends IVdcQueryable implements INotifyPropertyCh
     /**
      * @return the dateCreated For future use.
      */
-    @XmlElement(name = "DateCreated")
     public Date getDateCreated() {
         return dateCreated;
     }
@@ -174,7 +159,6 @@ public class RepoFileMetaData extends IVdcQueryable implements INotifyPropertyCh
     /**
      * @return The last refreshed time of the file repository.
      */
-    @XmlElement(name = "lastRefreshed")
     public long getLastRefreshed() {
         return lastRefreshed;
     }
@@ -190,7 +174,6 @@ public class RepoFileMetaData extends IVdcQueryable implements INotifyPropertyCh
     /**
      * @return the file type.
      */
-    @XmlElement(name = "fileType")
     public FileTypeExtension getFileType() {
         return fileType;
     }

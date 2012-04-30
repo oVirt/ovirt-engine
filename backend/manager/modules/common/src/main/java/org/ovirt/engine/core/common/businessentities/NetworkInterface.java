@@ -1,10 +1,6 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
 
 import org.ovirt.engine.core.compat.Guid;
 
@@ -12,34 +8,25 @@ import org.ovirt.engine.core.compat.Guid;
  * <code>NetworkInterface</code> represents a network interface device.
  *
  */
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "NetworkInterface")
 public abstract class NetworkInterface<T extends NetworkStatistics> extends IVdcQueryable
         implements BusinessEntity<Guid>, Nameable {
     private static final long serialVersionUID = -4926026587466645571L;
 
-    @XmlElement(name = "Id")
     protected Guid id;
 
     @Size(min = 1, max = BusinessEntitiesDefinitions.NETWORK_NAME_SIZE)
-    @XmlElement(name = "Name")
     private String name;
 
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAC_ADDR_SIZE)
-    @XmlElement(name = "MacAddress")
     private String macAddress;
 
     @Size(max = BusinessEntitiesDefinitions.NETWORK_NAME_SIZE)
-    @XmlElement(name = "NetworkName")
     private String networkName;
 
-    @XmlElement(name = "Type", nillable = true)
     private Integer type;
 
-    @XmlElement(name = "Speed", nillable = true)
     private Integer speed;
 
-    @XmlElement(name = "Statistics")
     protected T statistics;
 
     public NetworkInterface() {

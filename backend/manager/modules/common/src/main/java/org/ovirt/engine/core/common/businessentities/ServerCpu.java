@@ -1,13 +1,7 @@
 package org.ovirt.engine.core.common.businessentities;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "ServerCpu")
 public class ServerCpu implements Serializable {
     private static final long serialVersionUID = -267863982363067020L;
 
@@ -18,7 +12,6 @@ public class ServerCpu implements Serializable {
         setVdsVerbData(verbData);
     }
 
-    @XmlElement(name = "CpuName")
     private String privateCpuName;
 
     public String getCpuName() {
@@ -29,7 +22,6 @@ public class ServerCpu implements Serializable {
         privateCpuName = value;
     }
 
-    @XmlElement(name = "Level")
     private int privateLevel;
 
     public int getLevel() {
@@ -40,7 +32,6 @@ public class ServerCpu implements Serializable {
         privateLevel = value;
     }
 
-    @XmlElement(name = "Flags")
     private java.util.HashSet<String> privateFlags;
 
     public java.util.HashSet<String> getFlags() {
@@ -51,7 +42,6 @@ public class ServerCpu implements Serializable {
         privateFlags = value;
     }
 
-    @XmlElement(name = "VdsVerbData")
     private String privateVdsVerbData;
 
     public String getVdsVerbData() {

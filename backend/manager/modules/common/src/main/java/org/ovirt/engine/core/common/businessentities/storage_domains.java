@@ -4,10 +4,6 @@ import java.io.Serializable;
 import java.util.Set;
 
 import javax.persistence.Transient;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
 
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.compat.Guid;
@@ -16,8 +12,6 @@ import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.core.compat.StringHelper;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "storage_domains")
 public class storage_domains extends IVdcQueryable implements INotifyPropertyChanged, Serializable, BusinessEntity<Guid> {
     private static final long serialVersionUID = -6162192446628804305L;
 
@@ -65,7 +59,6 @@ public class storage_domains extends IVdcQueryable implements INotifyPropertyCha
         this.alerts = alerts;
     }
 
-    @XmlElement(name = "StoragePoolIsoMapData")
     private storage_pool_iso_map privateStoragePoolIsoMapData;
 
     public storage_pool_iso_map getStoragePoolIsoMapData() {
@@ -76,7 +69,6 @@ public class storage_domains extends IVdcQueryable implements INotifyPropertyCha
         privateStoragePoolIsoMapData = value;
     }
 
-    @XmlElement(name = "StorageStaticData")
     private storage_domain_static _staticData;
 
     public storage_domain_static getStorageStaticData() {
@@ -87,7 +79,6 @@ public class storage_domains extends IVdcQueryable implements INotifyPropertyCha
         _staticData = value;
     }
 
-    @XmlElement(name = "StorageDynamicData")
     private storage_domain_dynamic _dynamicData;
 
     public storage_domain_dynamic getStorageDynamicData() {
@@ -167,7 +158,6 @@ public class storage_domains extends IVdcQueryable implements INotifyPropertyCha
 
     private int _committedDiskSize;
 
-    @XmlElement
     public int getcommitted_disk_size() {
         return _committedDiskSize;
     }
@@ -234,7 +224,6 @@ public class storage_domains extends IVdcQueryable implements INotifyPropertyCha
         getStoragePoolIsoMapData().setowner(value);
     }
 
-    @XmlElement(name = "storage_pool_name")
     private String storage_pool_nameField;
 
     public String getstorage_pool_name() {
@@ -246,7 +235,6 @@ public class storage_domains extends IVdcQueryable implements INotifyPropertyCha
         OnPropertyChanged(new PropertyChangedEventArgs("storage_name"));
     }
 
-    @XmlElement
     public StorageType getstorage_type() {
         return getStorageStaticData().getstorage_type();
     }
@@ -257,7 +245,6 @@ public class storage_domains extends IVdcQueryable implements INotifyPropertyCha
 
     private StorageDomainSharedStatus _storageDomainSharedStatus = StorageDomainSharedStatus.forValue(0);
 
-    @XmlElement
     public StorageDomainSharedStatus getstorage_domain_shared_status() {
         return _storageDomainSharedStatus;
     }

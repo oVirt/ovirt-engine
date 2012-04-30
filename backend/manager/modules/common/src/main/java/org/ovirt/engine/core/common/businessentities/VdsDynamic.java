@@ -9,10 +9,6 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
 
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
@@ -22,8 +18,6 @@ import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "VdsDynamic")
 @Entity
 @Table(name = "vds_dynamic")
 @TypeDef(name = "guid", typeClass = GuidType.class)
@@ -109,11 +103,9 @@ public class VdsDynamic implements BusinessEntity<Guid> {
     @Column(name = "net_config_dirty")
     private Boolean net_config_dirty;
 
-    @XmlElement(name = "supported_cluster_levels")
     @Column(name = "supported_cluster_levels")
     private String supported_cluster_levels;
 
-    @XmlElement(name = "supported_engines")
     @Column(name = "supported_engines")
     private String supported_engines;
 
@@ -140,7 +132,6 @@ public class VdsDynamic implements BusinessEntity<Guid> {
     @Column(name = "hooks")
     private String hooksStr;
 
-    @XmlElement(name = "NonOperationalReason")
     @Column(name = "non_operational_reason")
     private NonOperationalReason nonOperationalReason = NonOperationalReason.NONE;
 
@@ -156,7 +147,6 @@ public class VdsDynamic implements BusinessEntity<Guid> {
     @Transient
     private java.util.HashSet<Version> _supportedENGINESVersionsSet;
 
-    @XmlElement(name = "Version")
     public void setVersion(VdsVersion value) {
         mVdsVersion = value;
     }
@@ -207,7 +197,6 @@ public class VdsDynamic implements BusinessEntity<Guid> {
         this.transparentHugePagesState = VdsTransparentHugePagesState.Never;
     }
 
-    @XmlElement(nillable = true)
     public Integer getcpu_cores() {
         return this.cpu_cores;
     }
@@ -216,7 +205,6 @@ public class VdsDynamic implements BusinessEntity<Guid> {
         this.cpu_cores = value;
     }
 
-    @XmlElement(nillable = true)
     public Integer getcpu_sockets() {
         return this.cpu_sockets;
     }
@@ -225,7 +213,6 @@ public class VdsDynamic implements BusinessEntity<Guid> {
         this.cpu_sockets = value;
     }
 
-    @XmlElement
     public String getcpu_model() {
         return this.cpu_model;
     }
@@ -234,7 +221,6 @@ public class VdsDynamic implements BusinessEntity<Guid> {
         this.cpu_model = value;
     }
 
-    @XmlElement(nillable = true)
     public Double getcpu_speed_mh() {
         return this.cpu_speed_mh.doubleValue();
     }
@@ -243,7 +229,6 @@ public class VdsDynamic implements BusinessEntity<Guid> {
         this.cpu_speed_mh = BigDecimal.valueOf(value);
     }
 
-    @XmlElement
     public String getif_total_speed() {
         return this.if_total_speed;
     }
@@ -252,7 +237,6 @@ public class VdsDynamic implements BusinessEntity<Guid> {
         this.if_total_speed = value;
     }
 
-    @XmlElement(nillable = true)
     public Boolean getkvm_enabled() {
         return this.kvm_enabled;
     }
@@ -261,7 +245,6 @@ public class VdsDynamic implements BusinessEntity<Guid> {
         this.kvm_enabled = value;
     }
 
-    @XmlElement(nillable = true)
     public Integer getmem_commited() {
         return this.mem_commited;
     }
@@ -270,7 +253,6 @@ public class VdsDynamic implements BusinessEntity<Guid> {
         this.mem_commited = value;
     }
 
-    @XmlElement(nillable = true)
     public Integer getphysical_mem_mb() {
         return this.physical_mem_mb;
     }
@@ -279,7 +261,6 @@ public class VdsDynamic implements BusinessEntity<Guid> {
         this.physical_mem_mb = value;
     }
 
-    @XmlElement
     public VDSStatus getstatus() {
         return status;
     }
@@ -289,7 +270,6 @@ public class VdsDynamic implements BusinessEntity<Guid> {
     }
 
     @Override
-    @XmlElement(name = "Id")
     public Guid getId() {
         return this.id;
     }
@@ -299,7 +279,6 @@ public class VdsDynamic implements BusinessEntity<Guid> {
         this.id = id;
     }
 
-    @XmlElement(nillable = true)
     public Integer getvm_active() {
         return this.vm_active;
     }
@@ -308,7 +287,6 @@ public class VdsDynamic implements BusinessEntity<Guid> {
         this.vm_active = value;
     }
 
-    @XmlElement
     public int getvm_count() {
         return this.vm_count;
     }
@@ -317,7 +295,6 @@ public class VdsDynamic implements BusinessEntity<Guid> {
         this.vm_count = value;
     }
 
-    @XmlElement(nillable = true)
     public Integer getvms_cores_count() {
         return this.vms_cores_count;
     }
@@ -326,7 +303,6 @@ public class VdsDynamic implements BusinessEntity<Guid> {
         this.vms_cores_count = value;
     }
 
-    @XmlElement(nillable = true)
     public Integer getvm_migrating() {
         return this.vm_migrating;
     }
@@ -335,7 +311,6 @@ public class VdsDynamic implements BusinessEntity<Guid> {
         this.vm_migrating = value;
     }
 
-    @XmlElement(nillable = true)
     public Integer getreserved_mem() {
         return this.reserved_mem;
     }
@@ -344,7 +319,6 @@ public class VdsDynamic implements BusinessEntity<Guid> {
         this.reserved_mem = value;
     }
 
-    @XmlElement(nillable = true)
     public Integer getguest_overhead() {
         return this.guest_overhead;
     }
@@ -353,7 +327,6 @@ public class VdsDynamic implements BusinessEntity<Guid> {
         this.guest_overhead = value;
     }
 
-    @XmlElement
     public VDSStatus getprevious_status() {
         return this.previous_status;
     }
@@ -362,7 +335,6 @@ public class VdsDynamic implements BusinessEntity<Guid> {
         this.previous_status = value;
     }
 
-    @XmlElement
     public String getsoftware_version() {
         if (this.getVersion().getFullVersion() == null) {
             return null;
@@ -385,7 +357,6 @@ public class VdsDynamic implements BusinessEntity<Guid> {
         }
     }
 
-    @XmlElement
     public String getversion_name() {
         return this.getVersion().getVersionName();
     }
@@ -395,7 +366,6 @@ public class VdsDynamic implements BusinessEntity<Guid> {
         this.getVersion().setVersionName(value);
     }
 
-    @XmlElement
     public String getbuild_name() {
         return this.getVersion().getBuildName();
     }
@@ -405,7 +375,6 @@ public class VdsDynamic implements BusinessEntity<Guid> {
         this.getVersion().setBuildName(value);
     }
 
-    @XmlElement
     public String getcpu_flags() {
         return this.cpu_flags;
     }
@@ -414,7 +383,6 @@ public class VdsDynamic implements BusinessEntity<Guid> {
         this.cpu_flags = value;
     }
 
-    @XmlElement(nillable = true)
     public Date getcpu_over_commit_time_stamp() {
         return this.cpu_over_commit_time_stamp;
     }
@@ -423,7 +391,6 @@ public class VdsDynamic implements BusinessEntity<Guid> {
         this.cpu_over_commit_time_stamp = value;
     }
 
-    @XmlElement(nillable = true)
     public HypervisorType gethypervisor_type() {
         return this.hypervisor_type;
     }
@@ -432,7 +399,6 @@ public class VdsDynamic implements BusinessEntity<Guid> {
         this.hypervisor_type = value;
     }
 
-    @XmlElement(nillable = true)
     public Integer getpending_vcpus_count() {
         return this.pending_vcpus_count;
     }
@@ -441,7 +407,6 @@ public class VdsDynamic implements BusinessEntity<Guid> {
         this.pending_vcpus_count = value;
     }
 
-    @XmlElement
     public int getpending_vmem_size() {
         return this.pending_vmem_size;
     }
@@ -450,7 +415,6 @@ public class VdsDynamic implements BusinessEntity<Guid> {
         this.pending_vmem_size = value;
     }
 
-    @XmlElement(nillable = true)
     public Boolean getnet_config_dirty() {
         return this.net_config_dirty;
     }
@@ -515,7 +479,6 @@ public class VdsDynamic implements BusinessEntity<Guid> {
         return parsedVersions;
     }
 
-    @XmlElement
     public String gethost_os() {
         return this.host_os;
     }
@@ -524,7 +487,6 @@ public class VdsDynamic implements BusinessEntity<Guid> {
         this.host_os = value;
     }
 
-    @XmlElement
     public String getkvm_version() {
         return this.kvm_version;
     }
@@ -533,7 +495,6 @@ public class VdsDynamic implements BusinessEntity<Guid> {
         this.kvm_version = value;
     }
 
-    @XmlElement
     public String getspice_version() {
         return this.spice_version;
     }
@@ -542,7 +503,6 @@ public class VdsDynamic implements BusinessEntity<Guid> {
         this.spice_version = value;
     }
 
-    @XmlElement
     public String getkernel_version() {
         return this.kernel_version;
     }
@@ -551,7 +511,6 @@ public class VdsDynamic implements BusinessEntity<Guid> {
         this.kernel_version = value;
     }
 
-    @XmlElement(name = "IScsiInitiatorName")
     public String getIScsiInitiatorName() {
         return this.iScsiInitiatorName;
     }
@@ -560,7 +519,6 @@ public class VdsDynamic implements BusinessEntity<Guid> {
         this.iScsiInitiatorName = value;
     }
 
-    @XmlElement(name = "TransparentHugePagesState")
     public VdsTransparentHugePagesState getTransparentHugePagesState() {
         return this.transparentHugePagesState;
     }
@@ -569,7 +527,6 @@ public class VdsDynamic implements BusinessEntity<Guid> {
         this.transparentHugePagesState = value;
     }
 
-    @XmlElement(name = "AnonymousHugePages")
     public int getAnonymousHugePages() {
         return this.anonymousHugePages;
     }

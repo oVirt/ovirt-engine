@@ -1,8 +1,5 @@
 package org.ovirt.engine.core.common.businessentities;
 
-import javax.xml.bind.annotation.XmlType;
-
-@XmlType(name = "VmPoolType")
 public enum VmPoolType {
     Automatic,
     Manual,

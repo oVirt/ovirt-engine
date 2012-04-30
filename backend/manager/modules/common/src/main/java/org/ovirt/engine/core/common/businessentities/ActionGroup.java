@@ -4,11 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.xml.bind.annotation.XmlType;
-
 import org.ovirt.engine.core.common.VdcObjectType;
 
-@XmlType(name = "ActionGroup")
 public enum ActionGroup {
     // vm actions groups
     CREATE_VM(1, RoleType.USER, VdcObjectType.VM),

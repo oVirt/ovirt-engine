@@ -9,10 +9,6 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
@@ -23,8 +19,6 @@ import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "storage_domain_static")
 @Entity
 @Table(name = "storage_domain_static")
 @TypeDef(name = "guid", typeClass = GuidType.class)
@@ -47,7 +41,6 @@ import org.ovirt.engine.core.compat.Guid;
 public class storage_domain_static implements BusinessEntity<Guid> {
     private static final long serialVersionUID = 8635263021145935458L;
 
-    @XmlElement(name = "Id")
     @Id
     @GeneratedValue(generator = "system-uuid")
     @GenericGenerator(name = "system-uuid", strategy = "org.ovirt.engine.core.dao.GuidGenerator")
@@ -55,31 +48,25 @@ public class storage_domain_static implements BusinessEntity<Guid> {
     @Type(type = "guid")
     private Guid id = new Guid();
 
-    @XmlElement(name = "storage")
     @Size(min = 1, max = BusinessEntitiesDefinitions.STORAGE_SIZE)
     @Column(name = "storage")
     private String storage;
 
     // TODO storage name needs to be made unique
     @ValidName(message = "VALIDATION.STORAGE_DOMAIN.NAME.INVALID", groups = { CreateEntity.class, UpdateEntity.class })
-    @XmlElement(name = "storage_name")
     @Size(min = 1, max = BusinessEntitiesDefinitions.STORAGE_NAME_SIZE)
     @Column(name = "storage_name")
     private String name = "";
 
-    @XmlElement(name = "storage_domain_type")
     @Column(name = "storage_domain_type")
     private StorageDomainType storageType = StorageDomainType.Master;
 
-    @XmlElement(name = "storage_type")
     @Column(name = "storage_type")
     private StorageType storagePoolType = StorageType.UNKNOWN;
 
-    @XmlElement(name = "Connection")
     @Transient
     private storage_server_connections connection;
 
-    @XmlElement(name = "StorageFormat")
     @Column(name = "storage_domain_format_type")
     private StorageFormatType storageFormat = StorageFormatType.V1;
 
