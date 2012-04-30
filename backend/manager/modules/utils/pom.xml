@@ -114,11 +114,6 @@
        <groupId>org.codehaus.jackson</groupId>
        <artifactId>jackson-mapper-asl</artifactId>
     </dependency>
-    <dependency>
-      <groupId>com.sun.jna</groupId>
-      <artifactId>jna</artifactId>
-      <version>3.0.9</version>
-    </dependency>
 
     <dependency>
       <groupId>org.springframework.ldap</groupId>
