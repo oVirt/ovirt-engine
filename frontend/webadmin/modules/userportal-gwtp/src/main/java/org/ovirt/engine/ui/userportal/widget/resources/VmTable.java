@@ -218,11 +218,11 @@ public class VmTable extends Composite implements HasEditorDriver<ResourcesModel
             }
         };
 
-        table.addColumn(diskWithMappingColumn, "diskWithMappingColumn", "39%"); //$NON-NLS-1$
-        table.addColumn(paddingColumn, "paddingColumn", "10%"); //$NON-NLS-1$
-        table.addColumn(virtualSizeColumn, "virtualSizeColumn", "10%"); //$NON-NLS-1$
-        table.addColumn(actualSizeColumn, "actualSizeColumn", "10%"); //$NON-NLS-1$
-        table.addColumn(snapshotsColumn, "snapshotsColumn", "31%"); //$NON-NLS-1$
+        table.addColumn(diskWithMappingColumn, "", "39%"); //$NON-NLS-1$ //$NON-NLS-2$
+        table.addColumn(paddingColumn, "", "10%"); //$NON-NLS-1$ //$NON-NLS-2$
+        table.addColumn(virtualSizeColumn, "", "10%"); //$NON-NLS-1$ //$NON-NLS-2$
+        table.addColumn(actualSizeColumn, "", "10%"); //$NON-NLS-1$ //$NON-NLS-2$
+        table.addColumn(snapshotsColumn, "", "31%"); //$NON-NLS-1$ //$NON-NLS-2$
         EntityModel entityModel = new EntityModel();
         entityModel.setEntity(disk);
 
@@ -275,11 +275,11 @@ public class VmTable extends Composite implements HasEditorDriver<ResourcesModel
             }
         };
 
-        table.addColumn(vmImageWithNameColumn, "vmImageWithNameColumn", "39%"); //$NON-NLS-1$
-        table.addColumn(diskSizeColumn, "diskSizeColumn", "10%"); //$NON-NLS-1$
-        table.addColumn(virtualSizeColumn, "virtualSizeColumn", "10%"); //$NON-NLS-1$
-        table.addColumn(actualSizeColumn, "actualSizeColumn", "10%"); //$NON-NLS-1$
-        table.addColumn(snapshotsColumn, "snapshotsColumn", "31%"); //$NON-NLS-1$
+        table.addColumn(vmImageWithNameColumn, "", "39%"); //$NON-NLS-1$ //$NON-NLS-2$
+        table.addColumn(diskSizeColumn, "", "10%"); //$NON-NLS-1$ //$NON-NLS-2$
+        table.addColumn(virtualSizeColumn, "", "10%"); //$NON-NLS-1$ //$NON-NLS-2$
+        table.addColumn(actualSizeColumn, "", "10%"); //$NON-NLS-1$ //$NON-NLS-2$
+        table.addColumn(snapshotsColumn, "", "31%"); //$NON-NLS-1$ //$NON-NLS-2$
         table.setSelectionModel(vmSelectionModel);
 
         EntityModel entityModel = new EntityModel();
@@ -453,8 +453,8 @@ class StyledCompositeCell<T> extends CompositeCell<T> {
     public void render(Context context, T value, SafeHtmlBuilder sb) {
         for (HasCell<T, ?> hasCell : hasCells) {
             String style =
-                    styleProvider.styleStringOf(hasCell) == null ? "" : "style=\""
-                            + styleProvider.styleStringOf(hasCell) + "\""; //$NON-NLS-1$ //$NON-NLS-2$
+                    styleProvider.styleStringOf(hasCell) == null ? "" : "style=\"" //$NON-NLS-1$ //$NON-NLS-2$
+                            + styleProvider.styleStringOf(hasCell) + "\""; //$NON-NLS-1$
             sb.appendHtmlConstant("<div " + style + ">"); //$NON-NLS-1$ //$NON-NLS-2$
             render(context, value, sb, hasCell);
             sb.appendHtmlConstant("</div>"); //$NON-NLS-1$

@@ -211,40 +211,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Snapshots")
     String snapshotsVm();
 
-    @DefaultStringValue("vmImageColumn")
-    String vmImageColumnVm();
-
-    @DefaultStringValue("nameColumn")
-    String nameColumnVm();
-
-    @DefaultStringValue("diskSizeColumn")
-    String diskSizeColumnVm();
-
-    @DefaultStringValue("virtualSizeColumn")
-    String virtualSizeColumnVm();
-
-    @DefaultStringValue("actualSizeColumn")
-    String actualSizeColumnVm();
-
-    @DefaultStringValue("snapshotsColumn")
-    String snapshotsColumnVm();
-
-    // Disk
-    @DefaultStringValue("diskImageColumn")
-    String diskImageColumnDisk();
-
-    @DefaultStringValue("driveMappingColumn")
-    String drivaeMappingColumnDisk();
-
-    @DefaultStringValue("virtualSizeColumn")
-    String virtualSizeColumnDisk();
-
-    @DefaultStringValue("actualSizeColumn")
-    String actualSizeColumnDisk();
-
-    @DefaultStringValue("snapshotsColumn")
-    String snapshotsColumnDisk();
-
     @DefaultStringValue("VNC console access is not supported from the user portal.<br/>" +
                     "Please ask the administrator to configure this " +
                     "virtual machine to use SPICE for console access.")

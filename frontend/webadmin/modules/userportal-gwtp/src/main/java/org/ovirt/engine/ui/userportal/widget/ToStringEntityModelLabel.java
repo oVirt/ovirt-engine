@@ -19,7 +19,7 @@ public class ToStringEntityModelLabel extends ValueLabel<Object> {
         });
 
         // by default, there is a space
-        DOM.setInnerHTML(getElement(), "&nbsp;");
+        DOM.setInnerHTML(getElement(), "&nbsp;"); //$NON-NLS-1$
     }
 
 }
