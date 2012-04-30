@@ -1994,4 +1994,29 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Brick Directory")
     String brickDirectoryBricks();
+
+    @DefaultStringValue("Available Bricks")
+    String availableBricksHeaderLabel();
+
+    @DefaultStringValue("Selected Bricks")
+    String selectedBricksHeaderLabel();
+
+    @DefaultStringValue("Add")
+    String addBricksButtonLabel();
+
+    @DefaultStringValue("Remove")
+    String removeBricksButtonLabel();
+
+    @DefaultStringValue("Add All")
+    String addAllBricksButtonLabel();
+
+    @DefaultStringValue("Remove All")
+    String removeAllBricksButtonLabel();
+
+    @DefaultStringValue("Move Up")
+    String moveBricksUpButtonLabel();
+
+    @DefaultStringValue("Move Down")
+    String moveBricksDownButtonLabel();
+
 }

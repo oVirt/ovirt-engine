@@ -109,4 +109,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 
     @DefaultMessage("Error in retrieving the relevant Storage Domain.")
     String errorRetrievingStorageDomains();
+
+    @DefaultMessage("({0} bricks selected)")
+    String noOfBricksSelected(int brickCount);
 }

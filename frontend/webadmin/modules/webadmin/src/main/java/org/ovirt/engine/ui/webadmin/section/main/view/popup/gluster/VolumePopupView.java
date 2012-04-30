@@ -2,6 +2,10 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster;
 
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.compat.Event;
+import org.ovirt.engine.core.compat.EventArgs;
+import org.ovirt.engine.core.compat.IEventListener;
+import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
@@ -14,6 +18,7 @@ import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.VolumePopupPresenterWidget;
@@ -25,6 +30,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.Label;
 import com.google.inject.Inject;
 
 public class VolumePopupView extends AbstractModelBoundPopupView<VolumeModel> implements VolumePopupPresenterWidget.ViewDef {
@@ -86,6 +92,11 @@ public class VolumePopupView extends AbstractModelBoundPopupView<VolumeModel> im
     UiCommandButton addBricksButton;
 
     @UiField
+    @Ignore
+    @WithElementId
+    Label bricksCountEditor;
+
+    @UiField
     @Path(value = "gluster_accecssProtocol.entity")
     @WithElementId
     EntityModelCheckBoxEditor gluster_accecssProtocolEditor;
@@ -109,22 +120,18 @@ public class VolumePopupView extends AbstractModelBoundPopupView<VolumeModel> im
     public VolumePopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
         super(eventBus, resources);
         initListBoxEditors();
-        initRadioButtonEditors();
         initCheckboxEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
         localize(constants);
         initAddBricksButton();
+        initBricksCountLabele();
         Driver.driver.initialize(this);
     }
 
     private void initCheckboxEditors() {
         tcpTransportTypeEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         rdmaTransportTypeEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
-    }
-
-    private void initRadioButtonEditors() {
-
     }
 
     private void initListBoxEditors() {
@@ -153,6 +160,10 @@ public class VolumePopupView extends AbstractModelBoundPopupView<VolumeModel> im
         });
     }
 
+    private void initBricksCountLabele() {
+        bricksCountEditor.setText(ConstantsManager.getInstance().getMessages().noOfBricksSelected(0));
+    }
+
     private void localize(ApplicationConstants constants) {
         dataCenterEditor.setLabel(constants.dataCenterVolume());
         clusterEditor.setLabel(constants.volumeClusterVolume());
@@ -179,6 +190,19 @@ public class VolumePopupView extends AbstractModelBoundPopupView<VolumeModel> im
     public void edit(final VolumeModel object) {
         Driver.driver.edit(object);
         addBricksButton.setCommand(object.getAddBricksCommand());
+
+        object.getPropertyChangedEvent().addListener(new IEventListener() {
+
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                VolumeModel model = (VolumeModel) sender;
+                if ("Bricks".equals(((PropertyChangedEventArgs) args).PropertyName)) { //$NON-NLS-1$
+                    bricksCountEditor.setText(ConstantsManager.getInstance()
+                            .getMessages()
+                            .noOfBricksSelected(model.getBricks().getSelectedItems().size()));
+                }
+            }
+        });
     }
 
     @Override

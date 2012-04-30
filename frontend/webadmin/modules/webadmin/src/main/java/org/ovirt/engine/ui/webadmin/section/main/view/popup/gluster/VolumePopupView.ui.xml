@@ -36,6 +36,12 @@
 			padding-right: 106px;
 		}
 		
+		.bricksCountLabel {
+			font-size: 13px;
+			padding-left:5px;
+			color: #0000FF;
+		}
+		
 		.transTypeLabel {
 			font-size: 13px;
 			padding: 0 5px;
@@ -67,6 +73,7 @@
 				<g:HorizontalPanel>
 					<g:Label addStyleNames="{style.bricksLabel}">Bricks</g:Label>
 					<w:UiCommandButton ui:field="addBricksButton"/>
+					<g:Label ui:field="bricksCountEditor" addStyleNames="{style.bricksCountLabel}"/>
 				</g:HorizontalPanel>
 				<g:Label addStyleNames="{style.sectionLabel}">Access Protocols</g:Label>
 				<e:EntityModelCheckBoxEditor ui:field="gluster_accecssProtocolEditor"/>

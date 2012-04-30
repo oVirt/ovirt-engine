@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
+import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
@@ -130,7 +131,8 @@ public class VolumeModel extends Model {
                 else
                     getStripeCount().setIsAvailable(false);
 
-                getAddBricksCommand().Execute();
+                if (!validateBrickCount())
+                    getAddBricksCommand().Execute();
             }
         });
 
@@ -171,7 +173,14 @@ public class VolumeModel extends Model {
     }
 
     public Integer getReplicaCountValue() {
-        return Integer.parseInt((String) replicaCount.getEntity());
+        if (replicaCount.getEntity() instanceof String)
+        {
+            return Integer.parseInt((String) replicaCount.getEntity());
+        }
+        else
+        {
+            return (Integer) replicaCount.getEntity();
+        }
     }
 
     public void setReplicaCount(EntityModel replicaCount) {
@@ -183,7 +192,14 @@ public class VolumeModel extends Model {
     }
 
     public Integer getStripeCountValue() {
-        return Integer.parseInt((String) stripeCount.getEntity());
+        if (stripeCount.getEntity() instanceof String)
+        {
+            return Integer.parseInt((String) stripeCount.getEntity());
+        }
+        else
+        {
+            return (Integer) stripeCount.getEntity();
+        }
     }
 
     public void setStripeCount(EntityModel stripeCount) {
@@ -211,7 +227,9 @@ public class VolumeModel extends Model {
     }
 
     public void setBricks(ListModel bricks) {
+
         this.bricks = bricks;
+        OnPropertyChanged(new PropertyChangedEventArgs("Bricks")); //$NON-NLS-1$
     }
 
     public EntityModel getGluster_accecssProtocol() {
@@ -266,7 +284,8 @@ public class VolumeModel extends Model {
         volumeBrickModel.setHashName("add_bricks"); //$NON-NLS-1$
 
         // TODO: fetch the mount points to display
-        volumeBrickModel.getBricks().setItems(new ArrayList<EntityModel>());
+        volumeBrickModel.getAvailableBricks().setItems(new ArrayList<EntityModel>());
+        volumeBrickModel.getSelectedBricks().setItems(new ArrayList<EntityModel>());
 
         UICommand command = new UICommand("Ok", this); //$NON-NLS-1$
         command.setTitle(ConstantsManager.getInstance().getConstants().ok());
@@ -282,30 +301,103 @@ public class VolumeModel extends Model {
 
     private void onAddBricks() {
         VolumeBrickModel volumeBrickModel = (VolumeBrickModel) getWindow();
+
         if (!volumeBrickModel.validateAddBricks((GlusterVolumeType) getTypeList().getSelectedItem()))
         {
             return;
         }
 
+        GlusterVolumeType selectedVolumeType = (GlusterVolumeType) getTypeList().getSelectedItem();
+        if (selectedVolumeType == GlusterVolumeType.REPLICATE
+                || selectedVolumeType == GlusterVolumeType.DISTRIBUTED_REPLICATE)
+        {
+            getReplicaCount().setEntity(volumeBrickModel.getReplicaCount().getEntity());
+        }
+        else if (selectedVolumeType == GlusterVolumeType.STRIPE
+                || selectedVolumeType == GlusterVolumeType.DISTRIBUTED_STRIPE)
+        {
+            getStripeCount().setEntity(volumeBrickModel.getStripeCount().getEntity());
+        }
+
         ArrayList<GlusterBrickEntity> brickList = new ArrayList<GlusterBrickEntity>();
-        for (Object object : volumeBrickModel.getBricks().getSelectedItems()) {
+        for (Object object : volumeBrickModel.getSelectedBricks().getItems()) {
             EntityModel entityModel = (EntityModel) object;
             brickList.add((GlusterBrickEntity) entityModel.getEntity());
         }
         ListModel brickListModel = new ListModel();
         brickListModel.setItems(brickList);
+        brickListModel.setSelectedItems(brickList);
 
         setBricks(brickListModel);
         setWindow(null);
     }
 
+    public boolean validateBrickCount() {
+
+        boolean valid = true;
+        int brickCount = 0;
+
+        if(getBricks().getSelectedItems() != null)
+        {
+            brickCount = getBricks().getSelectedItems().size();
+        }
+
+        if(brickCount < 1)
+        {
+            return false;
+        }
+
+        GlusterVolumeType selectedVolumeType = (GlusterVolumeType) getTypeList().getSelectedItem();
+
+        switch(selectedVolumeType)
+        {
+
+        case DISTRIBUTE:
+            if(brickCount < 1)
+            {
+                valid = false;
+            }
+            break;
+
+        case REPLICATE:
+            if(brickCount != getReplicaCountValue())
+            {
+                valid = false;
+            }
+            break;
+
+        case STRIPE:
+            if(brickCount != getStripeCountValue())
+            {
+                valid = false;
+            }
+            break;
+
+        case DISTRIBUTED_REPLICATE:
+            if ((brickCount % getReplicaCountValue()) != 0)
+            {
+                valid = false;
+            }
+            break;
+
+        case DISTRIBUTED_STRIPE:
+            if ((brickCount % getStripeCountValue()) != 0)
+            {
+                valid = false;
+            }
+            break;
+        }
+
+        return valid;
+    }
+
     public boolean Validate() {
-        if(getTypeList().getSelectedItem() == GlusterVolumeType.REPLICATE)
+        if (getTypeList().getSelectedItem() == GlusterVolumeType.REPLICATE)
         {
             IntegerValidation replicaCountValidation = new IntegerValidation();
             replicaCountValidation.setMinimum(2);
             replicaCountValidation.setMaximum(65535);
-            getReplicaCount().ValidateEntity(new IValidation[]{replicaCountValidation});
+            getReplicaCount().ValidateEntity(new IValidation[] { replicaCountValidation });
         }
         return getReplicaCount().getIsValid();
     }
@@ -360,7 +452,7 @@ public class VolumeModel extends Model {
     }
 
     @Override
-    public void ExecuteCommand(UICommand command){
+    public void ExecuteCommand(UICommand command) {
         super.ExecuteCommand(command);
 
         if (command == getAddBricksCommand())
