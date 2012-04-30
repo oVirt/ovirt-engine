@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.junit.Test;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.time_lease_vm_pool_map;
 import org.ovirt.engine.core.common.businessentities.vm_pool_map;
@@ -297,5 +298,37 @@ public class VmPoolDAOTest extends BaseDAOTestCase {
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
+    }
+
+    /**
+     * Ensures that a VM from a vm pool is returned for a privileged user with filtering enabled.
+     */
+    @Test
+    public void getVmDataFromPoolByPoolGuidWithPermissionsForPriviligedUser() {
+        VM result = dao.getVmDataFromPoolByPoolGuid(EXISTING_VM_POOL_ID, PRIVILEGED_USER_ID, true);
+        assertCorrectGetVmDataResult(result);
+    }
+
+    /**
+     * Ensures a VM from a vm pool by is returned for a non privileged user with filtering disabled.
+     */
+    @Test
+    public void getVmDataFromPoolByPoolGuidWithoutPermissionsForNonPriviligedUser() {
+        VM result = dao.getVmDataFromPoolByPoolGuid(EXISTING_VM_POOL_ID, UNPRIVILEGED_USER_ID, false);
+        assertCorrectGetVmDataResult(result);
+    }
+
+    /**
+     * Ensures that no VM is returned for a non privileged user with filtering enabled.
+     */
+    @Test
+    public void getVmDataFromPoolByPoolGuidWithPermissionsForNonPriviligedUser() {
+        VM result = dao.getVmDataFromPoolByPoolGuid(EXISTING_VM_POOL_ID, UNPRIVILEGED_USER_ID, true);
+        assertNull(result);
+    }
+
+    private void assertCorrectGetVmDataResult(VM result) {
+        assertNotNull(result);
+        assertEquals(result.getVmPoolId(), EXISTING_VM_POOL_ID);
     }
 }

@@ -414,3 +414,16 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
+CREATE OR REPLACE FUNCTION GetVmDataFromPoolByPoolId(v_pool_id uuid, v_user_id uuid, v_is_filtered boolean)
+  RETURNS SETOF vms AS $procedure$
+BEGIN
+     RETURN QUERY SELECT vms.*
+     FROM vms WHERE vm_pool_id = v_pool_id
+     AND (NOT v_is_filtered OR EXISTS (SELECT 1
+                                       FROM   user_vm_pool_permissions_view
+                                       WHERE  user_id = v_user_id AND entity_id = v_pool_id))
+     -- Limiting results to 1 since we only need a single VM from the pool to retrieve the pool data
+     LIMIT 1;
+END; $procedure$
+LANGUAGE plpgsql;
+

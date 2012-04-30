@@ -219,7 +219,7 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
                 .addValue("vm_guid", id));
     }
 
-    private static final class VMRowMapper implements ParameterizedRowMapper<VM> {
+    static final class VMRowMapper implements ParameterizedRowMapper<VM> {
         public static final VMRowMapper instance = new VMRowMapper();
 
         @Override

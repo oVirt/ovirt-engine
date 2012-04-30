@@ -10,6 +10,7 @@ import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.ovirt.engine.core.common.businessentities.DbUser;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.ad_groups;
 import org.ovirt.engine.core.common.businessentities.time_lease_vm_pool_map;
@@ -18,6 +19,7 @@ import org.ovirt.engine.core.common.businessentities.vm_pool_map;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
+import org.ovirt.engine.core.compat.NotImplementedException;
 import org.ovirt.engine.core.dao.vmpools.TimeLeaseVmPoolMapDAOHibernateImpl;
 import org.ovirt.engine.core.dao.vmpools.VmPoolMapDAOHibernateImpl;
 
@@ -155,5 +157,10 @@ public class VmPoolDAOHibernateImpl extends BaseDAOHibernateImpl<vm_pools, NGuid
     public List<vm_pool_map> getVmMapsInVmPoolByVmPoolIdAndStatus(NGuid vmPoolId, VMStatus vmStatus) {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    @Override
+    public VM getVmDataFromPoolByPoolGuid(Guid vmPoolId, Guid userID, boolean isFiltered) {
+        throw new NotImplementedException("This method is not implemented for Hibernate yet");
     }
 }

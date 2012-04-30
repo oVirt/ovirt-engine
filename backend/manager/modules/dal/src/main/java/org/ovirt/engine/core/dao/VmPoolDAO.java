@@ -2,6 +2,7 @@ package org.ovirt.engine.core.dao;
 
 import java.util.List;
 
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.time_lease_vm_pool_map;
 import org.ovirt.engine.core.common.businessentities.vm_pool_map;
@@ -117,4 +118,17 @@ public interface VmPoolDAO extends DAO, SearchDAO<vm_pools> {
      * @return
      */
     List<vm_pool_map> getVmMapsInVmPoolByVmPoolIdAndStatus(NGuid vmPoolId, VMStatus vmStatus);
+
+    /**
+     * Returns a single VM from the vm pool with the specified id, with optional filtering.
+     *
+     * @param id
+     *            the vm pool id
+     * @param userID
+     *            the ID of the user requesting the information
+     * @param isFiltered
+     *            Whether the results should be filtered according to the user's permissions
+     * @return a single VM from the pool
+     */
+    VM getVmDataFromPoolByPoolGuid(Guid vmPoolId, Guid userID, boolean isFiltered);
 }
