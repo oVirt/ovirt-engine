@@ -152,25 +152,25 @@ INFO_CONF_PARAMS_DB_SECURE_CONNECTION_PROMPT="Configure secure connection?"
 
 
 #Auth domain
-INFO_VAL_PATH_NAME_INVALID="ERROR: mount point is not a valid path"
-INFO_VAL_PATH_NAME_IN_EXPORTS="ERROR: mount point already exists in %s" % (basedefs.FILE_ETC_EXPORTS)
-INFO_VAL_PATH_NOT_WRITEABLE="ERROR: mount point is not writeable"
-INFO_VAR_PATH_NOT_EMPTY="ERROR: directory %s is not empty"
-INFO_VAL_PATH_SPACE="ERROR: mount point contains only %s megabytes of available space while a minimum of %s megabytes is required"
-INFO_VAL_NOT_INTEGER="ERROR: value is not an integer"
-INFO_VAL_PORT_NOT_RANGE="ERROR: port is outside the range of %i - 65535"
+INFO_VAL_PATH_NAME_INVALID="Error: mount point is not a valid path"
+INFO_VAL_PATH_NAME_IN_EXPORTS="Error: mount point already exists in %s" % (basedefs.FILE_ETC_EXPORTS)
+INFO_VAL_PATH_NOT_WRITEABLE="Error: mount point is not writeable"
+INFO_VAR_PATH_NOT_EMPTY="Error: directory %s is not empty"
+INFO_VAL_PATH_SPACE="Error: mount point contains only %s megabytes of available space while a minimum of %s megabytes is required"
+INFO_VAL_NOT_INTEGER="Error: value is not an integer"
+INFO_VAL_PORT_NOT_RANGE="Error: port is outside the range of %i - 65535"
 INFO_VAL_FAILED_ADD_PORT_TO_HTTP_POLICY="Failed adding port %d to " + basedefs.HTTP_PORT_POLICY
-INFO_VAL_STRING_EMPTY="ERROR: can't accept an empty answer for param"
-INFO_VAL_NOT_IN_OPTIONS="ERROR: response is not part of the following accepted answers: %s"
-INFO_VAL_NOT_DOMAIN="ERROR: domain is not a valid domain name"
-INFO_VAL_NOT_USER="ERROR: user name contains illegal characters"
-INFO_VAL_PORT_OCCUPIED="ERROR: TCP Port %s is already open by %s (pid: %s)"
-INFO_VAL_PORT_OCCUPIED_BY_JBOSS="ERROR: TCP Port %s is used by JBoss"
-INFO_VAL_PASSWORD_DONT_MATCH="ERROR: passwords don't match"
-INFO_VAL_ISO_DOMAIN_TOO_LONG="ERROR: ISO domain name length is limited to %s characters"%(basedefs.CONST_STORAGE_DOMAIN_NAME_SIZE_LIMIT)
-INFO_VAL_ISO_DOMAIN_ILLEGAL_CHARS="ERROR: ISO domain name can contain only 'A-Z', 'a-z', '0-9', '_' or '-' characters"
-INFO_VAL_ORG_NAME_TOO_LONG="ERROR: organization name length is limited to %s characters"%(basedefs.CONST_ORG_NAME_SIZE_LIMIT)
-INFO_VAL_ORG_NAME_ILLEGAL_CHARS="ERROR: organization name can't contain ',', '%', '$', '@', '&', '!', '*', '#', '+' characters"
+INFO_VAL_STRING_EMPTY="Error: can't accept an empty answer for param"
+INFO_VAL_NOT_IN_OPTIONS="Error: response is not part of the following accepted answers: %s"
+INFO_VAL_NOT_DOMAIN="Error: domain is not a valid domain name"
+INFO_VAL_NOT_USER="Error: user name contains illegal characters"
+INFO_VAL_PORT_OCCUPIED="Error: TCP Port %s is already open by %s (pid: %s)"
+INFO_VAL_PORT_OCCUPIED_BY_JBOSS="Error: TCP Port %s is used by JBoss"
+INFO_VAL_PASSWORD_DONT_MATCH="Error: passwords don't match"
+INFO_VAL_ISO_DOMAIN_TOO_LONG="Error: ISO domain name length is limited to %s characters"%(basedefs.CONST_STORAGE_DOMAIN_NAME_SIZE_LIMIT)
+INFO_VAL_ISO_DOMAIN_ILLEGAL_CHARS="Error: ISO domain name can contain only 'A-Z', 'a-z', '0-9', '_' or '-' characters"
+INFO_VAL_ORG_NAME_TOO_LONG="Error: organization name length is limited to %s characters"%(basedefs.CONST_ORG_NAME_SIZE_LIMIT)
+INFO_VAL_ORG_NAME_ILLEGAL_CHARS="Error: organization name can't contain ',', '%', '$', '@', '&', '!', '*', '#', '+' characters"
 
 #iso domain warning
 WARN_ISO_DOMAIN_SECURITY="A default ISO share has been created on this host.\n\
@@ -189,10 +189,10 @@ INFO_STRING_CONTAINS_ILLEGAL_CHARS="String contains illegal characters"
 #####################
 
 # Ping failed
-ERR_PING = "ERROR: the provided hostname is unreachable"
+ERR_PING = "Error: the provided hostname is unreachable"
 
 # Error creating temp pgpass file
-ERR_BACKUP_PGPASS = "ERROR: Failed to backup pgpass to temp file %s. Check file permissions."
+ERR_BACKUP_PGPASS = "Error: Failed to backup pgpass to temp file %s. Check file permissions."
 
 #runFunction
 ERR_EXP_RUN_FUNCTION="Internal error, Please report this issue"

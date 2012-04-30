@@ -14,24 +14,37 @@ import tempfile
 import cracklib
 from setup_controller import Controller
 
-def validateMountPoint(param, options=[]):
-    logging.info("validating %s as a valid mount point" % (param))
-    if not utils.verifyStringFormat(param, "^\/[\w\_\-\s]+(\/[\w\_\-\s]+)*\/?$"):
+def validateNFSMountPoint(param, options=[]):
+    """ Validates the correct mount point for NFS local storage """
+
+    if validateDir(param):
+        if validateDirSize(param, basedefs.CONST_MINIMUM_SPACE_ISODOMAIN):
+            return True
+        else:
+            print output_messages.INFO_VAL_PATH_SPACE % (str(utils.getAvailableSpace(_getBasePath(param))),
+                                                         str(basedefs.CONST_MINIMUM_SPACE_ISODOMAIN))
+
+    return False
+
+def validateDir(path):
+    logging.info("validating %s as a valid mount point" % (path))
+    if not utils.verifyStringFormat(path, "^\/[\w\_\-\s]+(\/[\w\_\-\s]+)*\/?$"):
         print output_messages.INFO_VAL_PATH_NAME_INVALID
         return False
-    if _isPathInExportFs(param):
+    if _isPathInExportFs(path):
         print output_messages.INFO_VAL_PATH_NAME_IN_EXPORTS
         return False
-    if os.path.exists(param) and len(os.listdir(param)):
-        print output_messages.INFO_VAR_PATH_NOT_EMPTY % param
+    if os.path.exists(path) and len(os.listdir(path)):
+        print output_messages.INFO_VAR_PATH_NOT_EMPTY % path
         return False
-    basePath = _getBasePath(param)
-    if not _isPathWriteable(basePath):
+    if not _isPathWriteable(_getBasePath(path)):
         print output_messages.INFO_VAL_PATH_NOT_WRITEABLE
         return False
-    availableSpace = utils.getAvailableSpace(basePath)
-    if availableSpace < basedefs.CONST_MINIMUM_SPACE_ISODOMAIN:
-        print output_messages.INFO_VAL_PATH_SPACE % (str(availableSpace), str(basedefs.CONST_MINIMUM_SPACE_ISODOMAIN))
+
+    return True
+
+def validateDirSize(path, size):
+    if utils.getAvailableSpace(_getBasePath(path)) < size:
         return False
     return True
 
@@ -517,13 +530,8 @@ def _isPathInExportFs(path):
 def _getBasePath(path):
     if os.path.exists(path):
         return path
-    dirList = path.split("/")
-    dirList.pop()
-    if len(dirList) > 1:
-        path = "/".join(dirList)
-    else:
-        path = "/"
-    return _getBasePath(path)
+
+    return os.path.dirname(path.rstrip("/"))
 
 def _isPathWriteable(path):
     try:

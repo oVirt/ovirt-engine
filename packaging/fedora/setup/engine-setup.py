@@ -397,7 +397,7 @@ def initConfig():
                 "USAGE"           :output_messages.INFO_CONF_PARAMS_NFS_MP_USAGE,
                 "PROMPT"          :output_messages.INFO_CONF_PARAMS_NFS_MP_PROMPT,
                 "OPTION_LIST"     :[],
-                "VALIDATION_FUNC" :validate.validateMountPoint,
+                "VALIDATION_FUNC" :validate.validateNFSMountPoint,
                 "DEFAULT_VALUE"   :"",
                 "MASK_INPUT"      : False,
                 "LOOSE_VALIDATION": False,

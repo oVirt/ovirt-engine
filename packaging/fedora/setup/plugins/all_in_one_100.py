@@ -55,8 +55,8 @@ starting it manually and rerun the setup."
 ERROR_LIBVIRT_STATUS = "Error: Could not get status of the libvirt service"
 ERROR_JBOSS_STATUS = "Error: There's a problem with JBoss service.\
 Check that it's up and rerun setup."
-ERROR_NOT_ENOUGH_SPACE = "\nThere's only %s free available in the folder %s. \
-It is recommended to have at least %sG of free available space.\n"
+ERROR_NOT_ENOUGH_SPACE = "Error: There's only %s free available in the folder %s. \
+It is recommended to have at least %sG of free available space for storage domain."
 
 # PARAMS
 PAUSE = 10
@@ -312,23 +312,15 @@ def validateStoragePath(param, options = []):
     Validate that a given path is a valid mount point and has at least LOCAL_STORAGE_MIN_SIZE GB.
     """
     logging.info("Validating provided storage path")
-    if validate.validateMountPoint(param, options):
-
-        # create path if it doesn't exist. Needed for
-        # free space check
-        if not os.path.exists(param):
-            makeStorageDir()
-
-        # calculate the size in Gb
-        s = os.statvfs(param)
-        free_size = s.f_bsize * s.f_bavail / 1024**3
-        if free_size  > LOCAL_STORAGE_MIN_SIZE:
+    if validate.validateDir(param):
+        if validate.validateDirSize(param, LOCAL_STORAGE_MIN_SIZE * 1024):
             return True
         else:
-            if free_size:
-                free_size = GB % free_size
+            free_size = utils.getAvailableSpace(validate._getBasePath(param))
+            if free_size > 1024:
+                free_size = GB % ( free_size / 1024 )
             else:
-                free_size = MB % (s.f_bsize * s.f_bavail / 1024**2)
+                free_size = MB % free_size
             print ERROR_NOT_ENOUGH_SPACE % (free_size, param, LOCAL_STORAGE_MIN_SIZE)
 
     return False
@@ -343,6 +335,7 @@ def makeStorageDir():
         logging.debug("Setting selinux context")
         nfsutils.setSELinuxContextForDir(controller.CONF["STORAGE_PATH"], nfsutils.SELINUX_RW_LABEL)
         os.chown(controller.CONF["STORAGE_PATH"], basedefs.CONST_VDSM_UID, basedefs.CONST_KVM_GID)
+        os.chmod(controller.CONF["STORAGE_PATH"], 0755)
     except:
         logging.error(traceback.format_exc())
         raise Exception(ERROR_CREATE_STORAGE_PATH)
