@@ -238,6 +238,7 @@ public class Frontend {
     public static void RunPublicQuery(final VdcQueryType queryType,
             final VdcQueryParametersBase parameters,
             final IFrontendQueryAsyncCallback callback) {
+        initQueryParamsFilter(parameters);
         dumpQueryDetails(queryType, parameters);
         logger.finer("Frontend: Invoking async runPublicQuery."); //$NON-NLS-1$
 
@@ -278,6 +279,7 @@ public class Frontend {
     public static void RunPublicQuery(final VdcQueryType queryType,
             final VdcQueryParametersBase parameters,
             final AsyncQuery callback) {
+        initQueryParamsFilter(parameters);
         dumpQueryDetails(queryType, parameters);
         logger.finer("Frontend: Invoking async runQuery."); //$NON-NLS-1$
 
