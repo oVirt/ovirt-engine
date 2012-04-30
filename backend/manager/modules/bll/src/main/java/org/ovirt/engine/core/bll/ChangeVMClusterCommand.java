@@ -115,6 +115,10 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
                     return false;
                 }
 
+                // Check that the USB policy is legal
+                if (!VmHandler.isUsbPolicyLegal(vm.getusb_policy(), vm.getos(), targetCluster, getReturnValue().getCanDoActionMessages())) {
+                    return false;
+                }
             } else {
                 addCanDoActionMessage(VdcBllMessages.VM_STATUS_NOT_VALID_FOR_UPDATE);
                 return false;

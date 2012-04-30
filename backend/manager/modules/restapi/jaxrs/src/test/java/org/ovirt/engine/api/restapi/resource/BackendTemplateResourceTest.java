@@ -18,9 +18,11 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.interfaces.SearchType;
+import org.ovirt.engine.core.common.queries.GetVdsGroupByVdsGroupIdParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -85,6 +87,11 @@ public class BackendTemplateResourceTest
     @Test
     public void testUpdate() throws Exception {
         setUpGetEntityExpectations(2);
+        setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
+                GetVdsGroupByVdsGroupIdParameters.class,
+                new String[] { "VdsGroupId" },
+                new Object[] { GUIDS[2] },
+                getVdsGroupEntity());
 
         setUriInfo(setUpActionExpectations(VdcActionType.UpdateVmTemplate,
                                            UpdateVmTemplateParameters.class,
@@ -94,6 +101,10 @@ public class BackendTemplateResourceTest
                                            true));
 
         verifyModel(resource.update(getModel(0)), 0);
+    }
+
+    protected org.ovirt.engine.core.common.businessentities.VDSGroup getVdsGroupEntity() {
+        return new VDSGroup();
     }
 
     @Test
@@ -108,6 +119,11 @@ public class BackendTemplateResourceTest
 
     private void doTestBadUpdate(boolean canDo, boolean success, String detail) throws Exception {
         setUpGetEntityExpectations(1);
+        setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
+                GetVdsGroupByVdsGroupIdParameters.class,
+                new String[] { "VdsGroupId" },
+                new Object[] { GUIDS[2] },
+                getVdsGroupEntity());
 
         setUriInfo(setUpActionExpectations(VdcActionType.UpdateVmTemplate,
                                            UpdateVmTemplateParameters.class,

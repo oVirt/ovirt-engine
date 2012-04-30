@@ -118,7 +118,7 @@ public class OvfVmReader extends OvfReader {
                 readVmDevice(node, _vm.getStaticData(), iface.getId(), Boolean.TRUE);
             } else if (StringHelper.EqOp(resourceType, OvfHardware.USB)) {
                 _vm.getStaticData().setusb_policy(
-                        UsbPolicy.valueOf(node.SelectSingleNode("rasd:UsbPolicy", _xmlNS).InnerText));
+                        UsbPolicy.forStringValue(node.SelectSingleNode("rasd:UsbPolicy", _xmlNS).InnerText));
             } else if (StringHelper.EqOp(resourceType, OvfHardware.Monitor)) {
                 _vm.getStaticData().setnum_of_monitors(
                         Integer.parseInt(node.SelectSingleNode("rasd:VirtualQuantity", _xmlNS).InnerText));

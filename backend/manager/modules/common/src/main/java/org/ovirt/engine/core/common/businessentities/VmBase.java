@@ -83,7 +83,7 @@ public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, Bus
 
     @Column(name = "usb_policy")
     @Enumerated
-    private UsbPolicy usbPolicy = UsbPolicy.Enabled;
+    private UsbPolicy usbPolicy = UsbPolicy.ENABLED_LEGACY;
 
     @Column(name = "fail_back", nullable = false)
     private boolean fail_back;

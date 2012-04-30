@@ -16,8 +16,10 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmTemplateParametersBase;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.interfaces.SearchType;
+import org.ovirt.engine.core.common.queries.GetVdsGroupByVdsGroupIdParameters;
 import org.ovirt.engine.core.common.queries.GetVmByVmIdParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -74,6 +76,10 @@ public class BackendTemplatesResourceTest
         doTestBadRemove(false, true, CANT_DO);
     }
 
+    protected org.ovirt.engine.core.common.businessentities.VDSGroup getVdsGroupEntity() {
+        return new VDSGroup();
+    }
+
     @Test
     public void testRemoveFailed() throws Exception {
         doTestBadRemove(true, false, FAILURE);
@@ -112,6 +118,11 @@ public class BackendTemplatesResourceTest
 
     private void doTestAddAsync(AsyncTaskStatusEnum asyncStatus, CreationStatus creationStatus) throws Exception {
         setUriInfo(setUpBasicUriExpectations());
+        setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
+                GetVdsGroupByVdsGroupIdParameters.class,
+                new String[] { "VdsGroupId" },
+                new Object[] { GUIDS[2] },
+                getVdsGroupEntity());
 
         setUpGetEntityExpectations(VdcQueryType.GetVmByVmId,
                                    GetVmByVmIdParameters.class,
@@ -154,6 +165,11 @@ public class BackendTemplatesResourceTest
                                    new Object[] { GUIDS[1] },
                                    setUpVm(GUIDS[1]));
         setUpGetEntityExpectations();
+        setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
+                GetVdsGroupByVdsGroupIdParameters.class,
+                new String[] { "VdsGroupId" },
+                new Object[] { GUIDS[2] },
+                getVdsGroupEntity());
 
         setUpCreationExpectations(VdcActionType.AddVmTemplate,
                                   AddVmTemplateParameters.class,
@@ -180,6 +196,12 @@ public class BackendTemplatesResourceTest
     @Test
     public void testAddNamedVm() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
+        setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
+                GetVdsGroupByVdsGroupIdParameters.class,
+                new String[] { "VdsGroupId" },
+                new Object[] { GUIDS[2] },
+                getVdsGroupEntity());
+
         setUpHttpHeaderExpectations("Expect", "201-created");
 
         setUpGetEntityExpectations("VM: name=" + NAMES[1],
@@ -217,6 +239,11 @@ public class BackendTemplatesResourceTest
     public void testAddWithCluster() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpHttpHeaderExpectations("Expect", "201-created");
+        setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
+                GetVdsGroupByVdsGroupIdParameters.class,
+                new String[] { "VdsGroupId" },
+                new Object[] { GUIDS[2] },
+                getVdsGroupEntity());
 
         setUpGetEntityExpectations(VdcQueryType.GetVmByVmId,
                                    GetVmByVmIdParameters.class,
@@ -255,6 +282,11 @@ public class BackendTemplatesResourceTest
     public void testAddWithClusterName() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpHttpHeaderExpectations("Expect", "201-created");
+        setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
+                GetVdsGroupByVdsGroupIdParameters.class,
+                new String[] { "VdsGroupId" },
+                new Object[] { GUIDS[2] },
+                getVdsGroupEntity());
 
         setUpGetEntityExpectations(VdcQueryType.GetVmByVmId,
                                    GetVmByVmIdParameters.class,
@@ -304,6 +336,12 @@ public class BackendTemplatesResourceTest
     }
 
     private void doTestBadAdd(boolean canDo, boolean success, String detail) throws Exception {
+        setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
+                GetVdsGroupByVdsGroupIdParameters.class,
+                new String[] { "VdsGroupId" },
+                new Object[] { GUIDS[2] },
+                getVdsGroupEntity());
+
         setUpGetEntityExpectations(VdcQueryType.GetVmByVmId,
                                    GetVmByVmIdParameters.class,
                                    new String[] { "Id" },
@@ -366,6 +404,8 @@ public class BackendTemplatesResourceTest
         model.setDescription(DESCRIPTIONS[index]);
         model.setVm(new VM());
         model.getVm().setId(GUIDS[1].toString());
+        model.setCluster(new Cluster());
+        model.getCluster().setId(GUIDS[2].toString());
         return model;
     }
 

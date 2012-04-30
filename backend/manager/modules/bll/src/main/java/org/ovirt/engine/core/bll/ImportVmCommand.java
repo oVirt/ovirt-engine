@@ -331,6 +331,11 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
             }
         }
 
+        // Check that the USB policy is legal
+        if (retVal) {
+            retVal = VmHandler.isUsbPolicyLegal(getParameters().getVm().getusb_policy(), getParameters().getVm().getos(), getVdsGroup(), getReturnValue().getCanDoActionMessages());
+        }
+
         if (!retVal) {
             addCanDoActionMessage(VdcBllMessages.VAR__ACTION__IMPORT);
             addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM);

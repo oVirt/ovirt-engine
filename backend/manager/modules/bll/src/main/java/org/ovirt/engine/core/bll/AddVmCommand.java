@@ -324,6 +324,11 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
             }
         }
 
+        // Check that the USB policy is legal
+        if (!VmHandler.isUsbPolicyLegal(getParameters().getVm().getusb_policy(), getParameters().getVm().getos(), getVdsGroup(), getReturnValue().getCanDoActionMessages())) {
+                returnValue = false;
+        }
+
         return returnValue && checkCpuSockets();
     }
 

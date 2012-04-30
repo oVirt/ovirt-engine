@@ -1368,7 +1368,7 @@ public class UserVmModel extends Model
 
 		if (type == DisplayType.vnc)
 		{
-			getUsbPolicy().setSelectedItem(org.ovirt.engine.core.common.businessentities.UsbPolicy.Disabled);
+			getUsbPolicy().setSelectedItem(org.ovirt.engine.core.common.businessentities.UsbPolicy.DISABLED);
 			getNumOfMonitors().setSelectedItem(1);
 		}
 
@@ -1465,7 +1465,7 @@ public class UserVmModel extends Model
 												userVmModel.getNumOfMonitors().setSelectedItem(Linq.FirstOrDefault(numOfMonitors));
 											}};
 			AsyncDataProvider.GetNumOfMonitorList(_asyncQuery);
-			getUsbPolicy().setSelectedItem(org.ovirt.engine.core.common.businessentities.UsbPolicy.Enabled);
+			getUsbPolicy().setSelectedItem(org.ovirt.engine.core.common.businessentities.UsbPolicy.ENABLED_LEGACY);
 		}
 		else
 		{

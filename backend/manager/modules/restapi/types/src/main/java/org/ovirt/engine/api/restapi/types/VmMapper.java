@@ -29,6 +29,7 @@ import org.ovirt.engine.api.model.Payload;
 import org.ovirt.engine.api.model.Quota;
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.Usb;
+import org.ovirt.engine.api.model.UsbType;
 import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.api.model.VmAffinity;
 import org.ovirt.engine.api.model.PayloadFile;
@@ -52,6 +53,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.api.restapi.utils.CustomPropertiesParser;
+import org.ovirt.engine.api.restapi.utils.UsbMapperUtils;
 
 import static org.ovirt.engine.core.compat.NGuid.createGuidFromString;
 
@@ -205,7 +207,7 @@ public class VmMapper {
             staticVm.setCustomProperties(CustomPropertiesParser.parse(vm.getCustomProperties().getCustomProperty()));
         }
         if (vm.isSetUsb() && vm.getUsb().isSetEnabled()) {
-            staticVm.setusb_policy(vm.getUsb().isEnabled() ? UsbPolicy.Enabled : UsbPolicy.Disabled);
+            staticVm.setusb_policy(vm.getUsb().isEnabled() ? UsbPolicy.ENABLED_LEGACY : UsbPolicy.DISABLED);
         }
         if (vm.isSetQuota() && vm.getQuota().isSetId()) {
             staticVm.setQuotaId(new Guid(vm.getQuota().getId()));
@@ -370,7 +372,11 @@ public class VmMapper {
         }
         if (entity.getusb_policy()!=null) {
             Usb usb = new Usb();
-            usb.setEnabled(entity.getusb_policy()==UsbPolicy.Enabled ? true : false);
+            usb.setEnabled(UsbMapperUtils.getIsUsbEnabled(entity.getusb_policy()));
+            UsbType usbType = UsbMapperUtils.getUsbType(entity.getusb_policy());
+            if (usbType != null) {
+                usb.setType(usbType.value());
+            }
             model.setUsb(usb);
         }
         if (entity.getQuotaId()!=null) {

@@ -1,12 +1,16 @@
 package org.ovirt.engine.core.bll;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import junit.framework.Assert;
@@ -20,6 +24,8 @@ import org.mockito.MockitoAnnotations;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.UsbPolicy;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
@@ -28,6 +34,7 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VmDynamicDAO;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -130,6 +137,59 @@ public class VmHandlerTest {
         VmHandler.UpdateVmGuestAgentVersion(vm);
         Assert.assertNotNull(vm.getGuestAgentVersion());
         Assert.assertNotNull(vm.getSpiceDriverVersion());
+    }
+
+    public void BaseUsbPolicyTest(UsbPolicy usbPolicy, Version version, VmOsType osType, boolean result) {
+        VDSGroup vdsGroup = new VDSGroup();
+        vdsGroup.setcompatibility_version(version);
+        List<String> messages = new ArrayList<String>();
+        if (result) {
+            assertTrue(VmHandler.isUsbPolicyLegal(usbPolicy, osType, vdsGroup, messages));
+            assertTrue(messages.isEmpty());
+        } else {
+            assertFalse(VmHandler.isUsbPolicyLegal(usbPolicy, osType, vdsGroup, messages));
+            assertFalse(messages.isEmpty());
+        }
+    }
+
+    @Test
+    public void TestUsbPolicyLegalNative31() {
+        BaseUsbPolicyTest(UsbPolicy.ENABLED_NATIVE, Version.v3_1, VmOsType.Windows2003, true);
+    }
+
+    @Test
+    public void TestUsbPolicyNotLegalNative30() {
+        BaseUsbPolicyTest(UsbPolicy.ENABLED_NATIVE, Version.v3_0, VmOsType.Windows2003, false);
+    }
+
+    @Test
+    public void TestUsbPolicyLegalLegacy30() {
+        BaseUsbPolicyTest(UsbPolicy.ENABLED_LEGACY, Version.v3_0, VmOsType.Windows2003, true);
+    }
+
+    @Test
+    public void TestUsbPolicyLegalLegacy31() {
+        BaseUsbPolicyTest(UsbPolicy.ENABLED_LEGACY, Version.v3_1, VmOsType.Windows2003, true);
+    }
+
+    @Test
+    public void TestUsbPolicyLegalDisabled30() {
+        BaseUsbPolicyTest(UsbPolicy.DISABLED, Version.v3_0, VmOsType.Windows2003, true);
+    }
+
+    @Test
+    public void TestUsbPolicyLegalDisabled31() {
+        BaseUsbPolicyTest(UsbPolicy.DISABLED, Version.v3_1, VmOsType.Windows2003, true);
+    }
+
+    @Test
+    public void TestUsbPolicyNotLegalLegacy31Linux() {
+        BaseUsbPolicyTest(UsbPolicy.ENABLED_LEGACY, Version.v3_1, VmOsType.OtherLinux, false);
+    }
+
+    @Test
+    public void TestUsbPolicyLegalNative31Linux() {
+        BaseUsbPolicyTest(UsbPolicy.ENABLED_NATIVE, Version.v3_1, VmOsType.OtherLinux, true);
     }
 
 }

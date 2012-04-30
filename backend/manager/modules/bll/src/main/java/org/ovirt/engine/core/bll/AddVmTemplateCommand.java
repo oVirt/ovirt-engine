@@ -215,6 +215,11 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             return false;
         }
 
+        // Check that the USB policy is legal
+        if (!VmHandler.isUsbPolicyLegal(getParameters().getVm().getusb_policy(), getParameters().getVm().getos(), getVdsGroup(), getReturnValue().getCanDoActionMessages())) {
+            return false;
+        }
+
         Map<Guid, List<DiskImage>> sourceImageDomainsImageMap = new HashMap<Guid, List<DiskImage>>();
         for (DiskImage image : mImages) {
             MultiValueMapUtils.addToMap(image.getstorage_ids().get(0), image, sourceImageDomainsImageMap);

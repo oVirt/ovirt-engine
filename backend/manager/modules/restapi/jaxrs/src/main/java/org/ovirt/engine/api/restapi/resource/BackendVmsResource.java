@@ -23,6 +23,7 @@ import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.api.model.VMs;
 import org.ovirt.engine.api.resource.VmResource;
 import org.ovirt.engine.api.resource.VmsResource;
+import org.ovirt.engine.api.resource.utils.UsbResourceUtils;
 import org.ovirt.engine.api.restapi.types.DiskMapper;
 import org.ovirt.engine.api.model.Payload;
 import org.ovirt.engine.api.model.Payloads;
@@ -34,6 +35,7 @@ import org.ovirt.engine.core.common.action.RemoveVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
@@ -41,6 +43,7 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetAllDisksByVmIdParameters;
+import org.ovirt.engine.core.common.queries.GetVdsGroupByVdsGroupIdParameters;
 import org.ovirt.engine.core.common.queries.GetVmByVmIdParameters;
 import org.ovirt.engine.core.common.queries.GetVmConfigurationBySnapshotQueryParams;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
@@ -80,6 +83,11 @@ public class BackendVmsResource extends
 
         if (namedCluster(vm)) {
             staticVm.setvds_group_id(getClusterId(vm));
+        }
+
+        UsbPolicy usbPolicy = UsbResourceUtils.getUsbPolicy(vm.getUsb(), lookupCluster(staticVm.getvds_group_id()));
+        if (usbPolicy != null) {
+            staticVm.setusb_policy(usbPolicy);
         }
 
         //if the user set the host-name within placement-policy, rather than the host-id (legal) -
@@ -355,6 +363,10 @@ public class BackendVmsResource extends
 
     public VmTemplate lookupTemplate(Guid id) {
         return getEntity(VmTemplate.class, VdcQueryType.GetVmTemplate, new GetVmTemplateParameters(id), "GetVmTemplate");
+    }
+
+    private VDSGroup lookupCluster(Guid id) {
+        return getEntity(VDSGroup.class, VdcQueryType.GetVdsGroupByVdsGroupId, new GetVdsGroupByVdsGroupIdParameters(id), "GetVdsGroupByVdsGroupId");
     }
 
     protected boolean namedCluster(VM vm) {

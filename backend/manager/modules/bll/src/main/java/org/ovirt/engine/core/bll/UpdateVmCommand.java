@@ -280,6 +280,11 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                                 getParameters().getVmPayload().getContent().getBytes()));
                     }
                 }
+
+                // Check that the USB policy is legal
+                if (retValue) {
+                    retValue = VmHandler.isUsbPolicyLegal(getParameters().getVm().getusb_policy(), getParameters().getVm().getos(), getVdsGroup(), getReturnValue().getCanDoActionMessages());
+                }
             }
         }
         return retValue;

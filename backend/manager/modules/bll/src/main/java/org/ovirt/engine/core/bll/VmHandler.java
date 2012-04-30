@@ -12,6 +12,8 @@ import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
+import org.ovirt.engine.core.common.businessentities.UsbPolicy;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
@@ -421,6 +423,30 @@ public class VmHandler {
         return max;
     }
 
+    /**
+     * Checks that the USB policy is legal for the VM. If it is ENABLED_NATIVE then it is legal only
+     * in case the cluster level is >= 3.1. If it is ENABLED_LEGACY then it is not legal on Linux VMs.
+     * @param vm
+     *     The VM object
+     * @param messages
+     *     Messages for CanDoAction().
+     * @return
+     */
+    public static boolean isUsbPolicyLegal(UsbPolicy usbPolicy, VmOsType osType, VDSGroup vdsGroup, List<String> messages) {
+        boolean retVal = true;
+        if (UsbPolicy.ENABLED_NATIVE.equals(usbPolicy)) {
+            if (vdsGroup.getcompatibility_version().compareTo(Version.v3_1) < 0) {
+                messages.add(VdcBllMessages.USB_NATIVE_SUPPORT_ONLY_AVAILABLE_ON_CLUSTER_LEVEL.toString());
+                retVal = false;
+            }
+        } else if (UsbPolicy.ENABLED_LEGACY.equals(usbPolicy)) {
+            if (osType.isLinux()) {
+                messages.add(VdcBllMessages.USB_LEGACY_NOT_SUPPORTED_ON_LINUX_VMS.toString());
+                retVal = false;
+            }
+        }
+        return retVal;
+    }
     private static final Log log = LogFactory.getLog(VmHandler.class);
 
 }

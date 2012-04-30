@@ -127,7 +127,7 @@ public class OvfTemplateReader extends OvfReader {
                 break;
             // USB
             case 23:
-                _vmTemplate.setusb_policy(UsbPolicy.valueOf(node.SelectSingleNode("rasd:UsbPolicy", _xmlNS).InnerText));
+                _vmTemplate.setusb_policy(UsbPolicy.forStringValue(node.SelectSingleNode("rasd:UsbPolicy", _xmlNS).InnerText));
                 break;
 
             // Monitor

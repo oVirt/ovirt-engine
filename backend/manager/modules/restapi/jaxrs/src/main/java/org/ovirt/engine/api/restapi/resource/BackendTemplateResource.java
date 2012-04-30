@@ -14,15 +14,19 @@ import org.ovirt.engine.api.resource.CreationResource;
 import org.ovirt.engine.api.resource.ReadOnlyDevicesResource;
 import org.ovirt.engine.api.resource.TemplateDisksResource;
 import org.ovirt.engine.api.resource.TemplateResource;
+import org.ovirt.engine.api.resource.utils.UsbResourceUtils;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.MoveVmParameters;
 import org.ovirt.engine.core.common.action.UpdateVmTemplateParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.UsbPolicy;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
+import org.ovirt.engine.core.common.queries.GetVdsGroupByVdsGroupIdParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplatesDisksParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -120,7 +124,17 @@ public class BackendTemplateResource
         @Override
         public VdcActionParametersBase getParameters(Template incoming, VmTemplate entity) {
             VmTemplate updated = getMapper(modelType, VmTemplate.class).map(incoming, entity);
+            UsbPolicy usbPolicy = UsbResourceUtils.getUsbPolicy(incoming.getUsb(), lookupCluster(updated.getvds_group_id()));
+            if (usbPolicy != null) {
+                updated.setusb_policy(usbPolicy);
+            }
+
             return new UpdateVmTemplateParameters(updated);
         }
     }
+
+    private VDSGroup lookupCluster(Guid id) {
+        return getEntity(VDSGroup.class, VdcQueryType.GetVdsGroupByVdsGroupId, new GetVdsGroupByVdsGroupIdParameters(id), "GetVdsGroupByVdsGroupId");
+    }
+
 }

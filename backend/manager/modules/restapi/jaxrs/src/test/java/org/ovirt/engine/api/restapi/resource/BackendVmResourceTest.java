@@ -46,6 +46,7 @@ import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
@@ -53,6 +54,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetVdsByNameParameters;
+import org.ovirt.engine.core.common.queries.GetVdsGroupByVdsGroupIdParameters;
 import org.ovirt.engine.core.common.queries.GetVmByVmIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -146,8 +148,16 @@ public class BackendVmResourceTest
 
     @Test
     public void testUpdate() throws Exception {
-        setUpGetEntityExpectations(2);
+        setUpGetEntityExpectations(3);
+        setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
+                GetVdsGroupByVdsGroupIdParameters.class,
+                new String[] { "VdsGroupId" },
+                new Object[] { GUIDS[2] },
+                getVdsGroupEntity());
+
         setUpGetPayloadExpectations(0);
+        setUpGetPayloadExpectations(0);
+
         setUriInfo(setUpActionExpectations(VdcActionType.UpdateVm,
                                            VmManagementParametersBase.class,
                                            new String[] {},
@@ -158,9 +168,20 @@ public class BackendVmResourceTest
         verifyModel(resource.update(getModel(0)), 0);
     }
 
+    protected org.ovirt.engine.core.common.businessentities.VDSGroup getVdsGroupEntity() {
+        return new VDSGroup();
+    }
+
     @Test
     public void testUpdateVmPolicy() throws Exception {
-        setUpGetEntityExpectations(2);
+        setUpGetEntityExpectations(3);
+        setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
+                GetVdsGroupByVdsGroupIdParameters.class,
+                new String[] { "VdsGroupId" },
+                new Object[] { GUIDS[2] },
+                getVdsGroupEntity());
+
+        setUpGetPayloadExpectations(0);
         setUpGetPayloadExpectations(0);
         setUpGetEntityExpectations("Hosts: name=" + NAMES[1],
                 SearchType.VDS,
@@ -188,6 +209,12 @@ public class BackendVmResourceTest
     @Test
     public void testUpdateMovingCluster() throws Exception {
         setUpGetEntityExpectations(3);
+        setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
+                GetVdsGroupByVdsGroupIdParameters.class,
+                new String[] { "VdsGroupId" },
+                new Object[] { GUIDS[1] },
+                getVdsGroupEntity());
+
         setUpGetPayloadExpectations(0);
         setUpGetPayloadExpectations(0);
         setUriInfo(setUpActionExpectations(VdcActionType.ChangeVMCluster,
@@ -223,7 +250,14 @@ public class BackendVmResourceTest
     }
 
     private void doTestBadUpdate(boolean canDo, boolean success, String detail) throws Exception {
-        setUpGetEntityExpectations(1);
+        setUpGetEntityExpectations(2);
+        setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
+                GetVdsGroupByVdsGroupIdParameters.class,
+                new String[] { "VdsGroupId" },
+                new Object[] { GUIDS[2] },
+                getVdsGroupEntity());
+
+        setUpGetPayloadExpectations(0);
 
         setUriInfo(setUpActionExpectations(VdcActionType.UpdateVm,
                                            VmManagementParametersBase.class,
@@ -242,7 +276,10 @@ public class BackendVmResourceTest
 
     @Test
     public void testConflictedUpdate() throws Exception {
-        setUpGetEntityExpectations(1);
+        setUpGetEntityExpectations(2);
+
+        setUpGetPayloadExpectations(0);
+
         setUriInfo(setUpBasicUriExpectations());
         control.replay();
 

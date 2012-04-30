@@ -40,6 +40,7 @@ actions:
           vm.custom_properties.custom_property--COLLECTION: {name: 'xs:string', value: 'xs:string'}
           vm.os.type: xs:string
           vm.usb.enabled: xs:boolean
+          vm.usb.type: xs:string
           vm.type: xs:string
           vm.os.initRd: xs:string
           vm.display.monitors: xs:int
@@ -74,6 +75,7 @@ actions:
           vm.custom_properties.custom_property--COLLECTION: {custom_property.name: 'xs:string', custom_property.value: 'xs:string'}
           vm.os.type: xs:string
           vm.usb.enabled: xs:boolean
+          vm.usb.type: xs:string
           vm.type: xs:string
           vm.os.initRd: xs:string
           vm.display.monitors: xs:int
@@ -1666,6 +1668,7 @@ actions:
           template.display.allow_reconnect: xs:boolean
           template.os.initRd: xs:string
           template.usb.enabled: xs:boolean
+          template.usb.type: xs:string
     urlparams: {}
     headers: {Content-Type: application/xml|json}
 - name: /api/templates|rel=add
@@ -1697,6 +1700,7 @@ actions:
           template.display.allow_reconnect: xs:boolean
           template.os.initRd: xs:string
           template.usb.enabled: xs:boolean
+          template.usb.type: xs:string
           template.vm.disks.disk--COLLECTION: {id: 'xs:string', storage_domains.storage_domain--COLLECTION: {id: 'xs:string'}}
     urlparams: {}
     headers: {Content-Type: application/xml|json}

@@ -368,7 +368,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
 		getspice().setAdminConsole(getConfigurator().getSpiceAdminConsole() ? true : getEntity().getSpiceDriverVersion() != null ? false : true);
 
 		// Update 'UsbListenPort' value
-		getspice().setUsbListenPort(getConfigurator().getIsUsbEnabled() && getEntity().getusb_policy() == UsbPolicy.Enabled ? getConfigurator().getSpiceDefaultUsbPort() : getConfigurator().getSpiceDisableUsbListenPort());
+		getspice().setUsbListenPort(getConfigurator().getIsUsbEnabled() && getEntity().getusb_policy() == UsbPolicy.ENABLED_LEGACY ? getConfigurator().getSpiceDefaultUsbPort() : getConfigurator().getSpiceDisableUsbListenPort());
 
 		//At lease one of the hot-keys is not empty -> send it to SPICE:
 		if (!StringHelper.isNullOrEmpty(releaseCursorKeys) || !StringHelper.isNullOrEmpty(toggleFullScreenKeys))

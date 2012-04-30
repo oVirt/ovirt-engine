@@ -753,6 +753,12 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("User does not have a valid e-mail address.")
     String USER_DOES_NOT_HAVE_A_VALID_EMAIL();
 
+    @DefaultStringValue("Native USB support is only available on cluster level 3.1 or higher.")
+    String USB_NATIVE_SUPPORT_ONLY_AVAILABLE_ON_CLUSTER_LEVEL();
+
+    @DefaultStringValue("Legacy USB support is not available on Linux VMs.")
+    String USB_LEGACY_NOT_SUPPORTED_ON_LINUX_VMS();
+
     @DefaultStringValue("Cannot ${action} VM-Pool. VM-Pool with the same name already exists. ")
     String VM_POOL_CANNOT_CREATE_DUPLICATE_NAME();
 

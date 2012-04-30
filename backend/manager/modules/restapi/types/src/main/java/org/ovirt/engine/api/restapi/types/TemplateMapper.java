@@ -15,7 +15,9 @@ import org.ovirt.engine.api.model.OsType;
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.TemplateStatus;
 import org.ovirt.engine.api.model.Usb;
+import org.ovirt.engine.api.model.UsbType;
 import org.ovirt.engine.api.model.VmType;
+import org.ovirt.engine.api.restapi.utils.UsbMapperUtils;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
@@ -113,8 +115,8 @@ public class TemplateMapper {
         if (model.isSetTimezone()) {
             entity.settime_zone(TimeZoneMapping.getWindows(model.getTimezone()));
         }
-        if (model.isSetUsb()) {
-            entity.setusb_policy(model.getUsb().isEnabled() ? UsbPolicy.Enabled : UsbPolicy.Disabled);
+        if (model.isSetUsb() && model.getUsb().isSetEnabled()) {
+            entity.setusb_policy(model.getUsb().isEnabled() ? UsbPolicy.ENABLED_LEGACY : UsbPolicy.DISABLED);
         }
         return entity;
     }
@@ -205,9 +207,6 @@ public class TemplateMapper {
         if (model.isSetTimezone()) {
             staticVm.settime_zone(TimeZoneMapping.getWindows(model.getTimezone()));
         }
-        if (model.isSetUsb()) {
-            staticVm.setusb_policy(model.getUsb().isEnabled() ? UsbPolicy.Enabled : UsbPolicy.Disabled);
-        }
         return staticVm;
     }
 
@@ -279,7 +278,11 @@ public class TemplateMapper {
         }
         if (entity.getusb_policy()!=null) {
             Usb usb = new Usb();
-            usb.setEnabled(entity.getusb_policy()==UsbPolicy.Enabled ? true : false);
+            usb.setEnabled(UsbMapperUtils.getIsUsbEnabled(entity.getusb_policy()));
+            UsbType usbType = UsbMapperUtils.getUsbType(entity.getusb_policy());
+            if (usbType != null) {
+                usb.setType(usbType.value());
+            }
             model.setUsb(usb);
         }
         model.setTimezone(TimeZoneMapping.getJava(entity.gettime_zone()));

@@ -1113,7 +1113,7 @@ public class UnitVmModel extends Model
 
 		if (type == DisplayType.vnc)
 		{
-			getUsbPolicy().setSelectedItem(org.ovirt.engine.core.common.businessentities.UsbPolicy.Disabled);
+			getUsbPolicy().setSelectedItem(org.ovirt.engine.core.common.businessentities.UsbPolicy.DISABLED);
 		}
 
 		getUsbPolicy().setIsChangable(type == DisplayType.qxl);

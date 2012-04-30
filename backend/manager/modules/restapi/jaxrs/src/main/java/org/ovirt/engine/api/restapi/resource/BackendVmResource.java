@@ -30,6 +30,7 @@ import org.ovirt.engine.api.resource.SnapshotsResource;
 import org.ovirt.engine.api.resource.StatisticsResource;
 import org.ovirt.engine.api.resource.VmNicsResource;
 import org.ovirt.engine.api.resource.VmResource;
+import org.ovirt.engine.api.resource.utils.UsbResourceUtils;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ChangeVMClusterParameters;
 import org.ovirt.engine.core.common.action.HibernateVmParameters;
@@ -46,6 +47,7 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
+import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
@@ -53,6 +55,7 @@ import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetAllDisksByVmIdParameters;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
+import org.ovirt.engine.core.common.queries.GetVdsGroupByVdsGroupIdParameters;
 import org.ovirt.engine.core.common.queries.GetVmByVmIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -343,13 +346,24 @@ public class BackendVmResource extends
                 org.ovirt.engine.core.common.businessentities.VM entity) {
             VmStatic updated = getMapper(modelType, VmStatic.class).map(incoming,
                     entity.getStaticData());
+
+            UsbPolicy usbPolicy = UsbResourceUtils.getUsbPolicy(incoming.getUsb(), lookupCluster(updated.getvds_group_id()));
+            if (usbPolicy != null) {
+                updated.setusb_policy(usbPolicy);
+            }
+
             VmManagementParametersBase params = new VmManagementParametersBase(updated);
 
             if (incoming.isSetPayloads()) {
                 params.setVmPayload(parent.getPayload(incoming));
             }
+
             return params;
         }
+    }
+
+    private VDSGroup lookupCluster(Guid id) {
+        return getEntity(VDSGroup.class, VdcQueryType.GetVdsGroupByVdsGroupId, new GetVdsGroupByVdsGroupIdParameters(id), "GetVdsGroupByVdsGroupId");
     }
 
     @Override

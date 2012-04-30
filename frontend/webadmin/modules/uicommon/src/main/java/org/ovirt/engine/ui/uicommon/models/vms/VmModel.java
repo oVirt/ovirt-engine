@@ -1250,7 +1250,7 @@ public class VmModel extends Model
 
 		if (type == DisplayType.vnc)
 		{
-			getUsbPolicy().setSelectedItem(org.ovirt.engine.core.common.businessentities.UsbPolicy.Disabled);
+			getUsbPolicy().setSelectedItem(org.ovirt.engine.core.common.businessentities.UsbPolicy.DISABLED);
 			getNumOfMonitors().setSelectedItem(1);
 		}
 
@@ -1338,7 +1338,7 @@ public class VmModel extends Model
 		{
 			numOfMonitors = DataProvider.GetNumOfMonitorList();
 			//numOfCPUs = DataProvider.GetNumOfCPUList().Where(a => a <= 4);
-			getUsbPolicy().setSelectedItem(org.ovirt.engine.core.common.businessentities.UsbPolicy.Enabled);
+			getUsbPolicy().setSelectedItem(org.ovirt.engine.core.common.businessentities.UsbPolicy.ENABLED_LEGACY);
 		}
 		else
 		{

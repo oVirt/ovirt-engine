@@ -398,7 +398,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
 
         // Update 'UsbListenPort' value
         getspice().setUsbListenPort(getConfigurator().getIsUsbEnabled()
-                && getEntity().getusb_policy() == UsbPolicy.Enabled ? getConfigurator().getSpiceDefaultUsbPort()
+                && getEntity().getusb_policy() == UsbPolicy.ENABLED_LEGACY ? getConfigurator().getSpiceDefaultUsbPort()
                 : getConfigurator().getSpiceDisableUsbListenPort());
 
         // At lease one of the hot-keys is not empty -> send it to SPICE:

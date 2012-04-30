@@ -57,6 +57,12 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
                 }
             }
         }
+
+        // Check that the USB policy is legal
+        if (returnValue) {
+            returnValue = VmHandler.isUsbPolicyLegal(getParameters().getVmTemplateData().getusb_policy(), getParameters().getVmTemplateData().getos(), getVdsGroup(), getReturnValue().getCanDoActionMessages());
+        }
+
         if (returnValue) {
             returnValue = AddVmCommand.CheckCpuSockets(getParameters().getVmTemplateData().getnum_of_sockets(),
                     getParameters().getVmTemplateData().getcpu_per_socket(), getVdsGroup().getcompatibility_version()
