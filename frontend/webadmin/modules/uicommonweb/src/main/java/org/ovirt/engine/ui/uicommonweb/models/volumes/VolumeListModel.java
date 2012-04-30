@@ -4,10 +4,12 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.gluster.CreateGlusterVolumeParameters;
+import org.ovirt.engine.core.common.action.gluster.GlusterVolumeActionParameters;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
 import org.ovirt.engine.core.common.interfaces.SearchType;
@@ -210,8 +212,9 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
     }
 
     private void updateActionAvailability() {
+        GlusterVolumeEntity volume = (GlusterVolumeEntity) getSelectedItem();
         getRemoveVolumeCommand().setIsExecutionAllowed(getSelectedItem() != null);
-        getStartCommand().setIsExecutionAllowed(getSelectedItem() != null);
+        getStartCommand().setIsExecutionAllowed(volume != null && volume.getStatus() != GlusterVolumeStatus.UP);
         getStopCommand().setIsExecutionAllowed(getSelectedItem() != null);
         getRebalanceCommand().setIsExecutionAllowed(getSelectedItem() != null);
     }
@@ -267,8 +270,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
             return;
         }
         GlusterVolumeEntity volume = (GlusterVolumeEntity) getSelectedItem();
-        // Frontend.RunAction(VdcActionType.StartGlusterVolume, new GlusterVolumeParameters(clusterId,
-        // volume.getName()));
+        Frontend.RunAction(VdcActionType.StartGlusterVolume, new GlusterVolumeActionParameters(volume.getId(),false));
     }
 
     private void onCreateVolume() {
