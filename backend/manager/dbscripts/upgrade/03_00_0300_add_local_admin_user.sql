@@ -1,5 +1,5 @@
 -- insert local admin user to users table and assign superuser permissions
-CREATE OR REPLACE FUNCTION add_admin_user()
+CREATE OR REPLACE FUNCTION __temp_add_admin_user()
   RETURNS void AS
 $BODY$
    DECLARE
@@ -22,6 +22,6 @@ END; $BODY$
 
 LANGUAGE plpgsql;
 
-select add_admin_user();
-drop function add_admin_user();
+select __temp_add_admin_user();
+drop function __temp_add_admin_user();
 

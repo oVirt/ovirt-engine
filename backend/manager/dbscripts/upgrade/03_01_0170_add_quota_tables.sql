@@ -1,4 +1,4 @@
-Create or replace FUNCTION fn_db_add_quota_tables_03_01_0170() returns void
+Create or replace FUNCTION __temp_fn_db_add_quota_tables() returns void
 AS $procedure$
 begin
 -- Add quota table which reflects the meta data of the quota table.
@@ -59,5 +59,5 @@ if (not exists (select 1 from INFORMATION_SCHEMA.TABLES where table_name='quota_
  END; $procedure$
  LANGUAGE plpgsql;
 
-select fn_db_add_quota_tables_03_01_0170();
-drop function fn_db_add_quota_tables_03_01_0170();
+select __temp_fn_db_add_quota_tables();
+drop function __temp_fn_db_add_quota_tables();

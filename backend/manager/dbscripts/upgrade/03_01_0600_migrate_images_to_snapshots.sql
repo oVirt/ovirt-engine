@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION Upgrade_MigrateSnapshotsFromImages_03_01_0600()
+CREATE OR REPLACE FUNCTION __temp_Upgrade_MigrateSnapshotsFromImages()
 RETURNS void
 AS $function$
 DECLARE
@@ -149,7 +149,7 @@ END; $function$
 LANGUAGE plpgsql;
 
 
-SELECT * FROM Upgrade_MigrateSnapshotsFromImages_03_01_0600();
+SELECT * FROM __temp_Upgrade_MigrateSnapshotsFromImages();
 
-DROP FUNCTION Upgrade_MigrateSnapshotsFromImages_03_01_0600();
+DROP FUNCTION __temp_Upgrade_MigrateSnapshotsFromImages();
 

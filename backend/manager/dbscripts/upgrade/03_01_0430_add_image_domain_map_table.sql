@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION Upgrade_ImageDomainMapTable_03_01_0430()
+CREATE OR REPLACE FUNCTION __temp_Upgrade_ImageDomainMapTable()
 RETURNS void
 AS $function$
 BEGIN
@@ -37,7 +37,7 @@ END; $function$
 LANGUAGE plpgsql;
 
 
-SELECT * FROM Upgrade_ImageDomainMapTable_03_01_0430();
+SELECT * FROM __temp_Upgrade_ImageDomainMapTable();
 
-DROP FUNCTION Upgrade_ImageDomainMapTable_03_01_0430();
+DROP FUNCTION __temp_Upgrade_ImageDomainMapTable();
 

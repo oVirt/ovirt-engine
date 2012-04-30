@@ -1,4 +1,4 @@
-Create or replace FUNCTION insert_predefined_gluster_roles()
+Create or replace FUNCTION __temp_insert_predefined_gluster_roles()
 RETURNS VOID
    AS $procedure$
    DECLARE
@@ -48,6 +48,6 @@ RETURN;
 END; $procedure$
 LANGUAGE plpgsql;
 
-select insert_predefined_gluster_roles();
-drop function insert_predefined_gluster_roles();
+select __temp_insert_predefined_gluster_roles();
+drop function __temp_insert_predefined_gluster_roles();
 

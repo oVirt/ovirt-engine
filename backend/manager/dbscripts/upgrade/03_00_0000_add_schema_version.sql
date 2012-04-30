@@ -1,4 +1,4 @@
-create or replace function fn_create_schema_version ()
+create or replace function __temp_fn_create_schema_version ()
 returns void
 AS $procedure$
 begin
@@ -25,5 +25,5 @@ end if;
 END; $procedure$
 LANGUAGE plpgsql;
 
-select fn_create_schema_version();
-DROP FUNCTION fn_create_schema_version();
+select __temp_fn_create_schema_version();
+DROP FUNCTION __temp_fn_create_schema_version();

@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION QuotaUpgradeScript_03_01_0480()
+CREATE OR REPLACE FUNCTION __temp_QuotaUpgradeScript_()
    RETURNS void
    AS $function$
    DECLARE
@@ -94,5 +94,5 @@ CREATE OR REPLACE FUNCTION QuotaUpgradeScript_03_01_0480()
 END; $function$
 LANGUAGE plpgsql;
 
-SELECT * FROM QuotaUpgradeScript_03_01_0480();
-drop function QuotaUpgradeScript_03_01_0480();
+SELECT * FROM __temp_QuotaUpgradeScript_();
+drop function __temp_QuotaUpgradeScript_();

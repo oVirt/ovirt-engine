@@ -1,4 +1,4 @@
-Create or replace FUNCTION insert_storage_permissions_03_01_0760()
+Create or replace FUNCTION __temp_insert_storage_permissions()
 RETURNS VOID
    AS $procedure$
 DECLARE
@@ -111,8 +111,8 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
-SELECT insert_storage_permissions_03_01_0760();
-DROP function insert_storage_permissions_03_01_0760();
+SELECT __temp_insert_storage_permissions();
+DROP function __temp_insert_storage_permissions();
 
 
 

@@ -1,4 +1,4 @@
-Create or replace FUNCTION fn_db_add_gluster_tables_03_01_0690() returns void
+Create or replace FUNCTION __temp_fn_db_add_gluster_tables() returns void
 AS $procedure$
 BEGIN
 
@@ -83,5 +83,5 @@ end if;
 END; $procedure$
 LANGUAGE plpgsql;
 
-select fn_db_add_gluster_tables_03_01_0690();
-drop function fn_db_add_gluster_tables_03_01_0690();
+select __temp_fn_db_add_gluster_tables();
+drop function __temp_fn_db_add_gluster_tables();

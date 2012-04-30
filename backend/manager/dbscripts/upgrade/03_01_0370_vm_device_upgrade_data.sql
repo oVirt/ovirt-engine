@@ -2,7 +2,7 @@
 -- VM Device helper functions
 ----------------------------------
 
-Create or replace FUNCTION update_vm_video_cards_03_01_0370(v_vm_id UUID, v_old_num_of_monitors int,
+Create or replace FUNCTION __temp_update_vm_video_cards(v_vm_id UUID, v_old_num_of_monitors int,
                                                             v_new_num_of_monitors int, v_default_display_type int)
 RETURNS void
 AS $function$
@@ -42,7 +42,7 @@ END; $function$
 LANGUAGE plpgsql;
 
 -- sets a device boot order , if multiple devices found all are taking in account
-CREATE OR REPLACE FUNCTION set_vm_device_boot_order_03_01_0370(v_vm_id UUID, v_type varchar(30), v_device varchar(30))
+CREATE OR REPLACE FUNCTION __temp_set_vm_device_boot_order(v_vm_id UUID, v_type varchar(30), v_device varchar(30))
 RETURNS void
 AS $function$
 DECLARE
@@ -74,7 +74,7 @@ END; $function$
 LANGUAGE plpgsql;
 
 
-CREATE OR REPLACE FUNCTION set_vm_devices_boot_order_03_01_0370(v_vm_id UUID)
+CREATE OR REPLACE FUNCTION __temp_set_vm_devices_boot_order(v_vm_id UUID)
 RETURNS void
 AS $function$
 DECLARE
@@ -85,58 +85,58 @@ BEGIN
     update vm_device set boot_order = null where vm_id = v_vm_id;
     case v_old_boot_order
         when 0 then  -- C
-            perform set_vm_device_boot_order_03_01_0370(v_vm_id, 'disk', 'disk');
+            perform __temp_set_vm_device_boot_order(v_vm_id, 'disk', 'disk');
         when 1 then  -- DC
-            perform set_vm_device_boot_order_03_01_0370(v_vm_id, 'disk', 'cdrom');
-            perform set_vm_device_boot_order_03_01_0370(v_vm_id, 'disk', 'disk');
+            perform __temp_set_vm_device_boot_order(v_vm_id, 'disk', 'cdrom');
+            perform __temp_set_vm_device_boot_order(v_vm_id, 'disk', 'disk');
         when 2 then  -- N
-            perform set_vm_device_boot_order_03_01_0370(v_vm_id, 'interface', 'bridge');
+            perform __temp_set_vm_device_boot_order(v_vm_id, 'interface', 'bridge');
         when 3 then  -- CDN
-            perform set_vm_device_boot_order_03_01_0370(v_vm_id, 'disk', 'disk');
-            perform set_vm_device_boot_order_03_01_0370(v_vm_id, 'disk', 'cdrom');
-            perform set_vm_device_boot_order_03_01_0370(v_vm_id, 'interface', 'bridge');
+            perform __temp_set_vm_device_boot_order(v_vm_id, 'disk', 'disk');
+            perform __temp_set_vm_device_boot_order(v_vm_id, 'disk', 'cdrom');
+            perform __temp_set_vm_device_boot_order(v_vm_id, 'interface', 'bridge');
         when 4 then  -- CND
-            perform set_vm_device_boot_order_03_01_0370(v_vm_id, 'disk', 'disk');
-            perform set_vm_device_boot_order_03_01_0370(v_vm_id, 'interface', 'bridge');
-            perform set_vm_device_boot_order_03_01_0370(v_vm_id, 'disk', 'cdrom');
+            perform __temp_set_vm_device_boot_order(v_vm_id, 'disk', 'disk');
+            perform __temp_set_vm_device_boot_order(v_vm_id, 'interface', 'bridge');
+            perform __temp_set_vm_device_boot_order(v_vm_id, 'disk', 'cdrom');
         when 5 then  -- DCN
-            perform set_vm_device_boot_order_03_01_0370(v_vm_id, 'disk', 'cdrom');
-            perform set_vm_device_boot_order_03_01_0370(v_vm_id, 'interface', 'bridge');
-            perform set_vm_device_boot_order_03_01_0370(v_vm_id, 'disk', 'disk');
+            perform __temp_set_vm_device_boot_order(v_vm_id, 'disk', 'cdrom');
+            perform __temp_set_vm_device_boot_order(v_vm_id, 'interface', 'bridge');
+            perform __temp_set_vm_device_boot_order(v_vm_id, 'disk', 'disk');
         when 6 then  -- DNC
-            perform set_vm_device_boot_order_03_01_0370(v_vm_id, 'interface', 'bridge');
-            perform set_vm_device_boot_order_03_01_0370(v_vm_id, 'disk', 'disk');
-            perform set_vm_device_boot_order_03_01_0370(v_vm_id, 'disk', 'cdrom');
+            perform __temp_set_vm_device_boot_order(v_vm_id, 'interface', 'bridge');
+            perform __temp_set_vm_device_boot_order(v_vm_id, 'disk', 'disk');
+            perform __temp_set_vm_device_boot_order(v_vm_id, 'disk', 'cdrom');
         when 7 then  -- NCD
-            perform set_vm_device_boot_order_03_01_0370(v_vm_id, 'interface', 'bridge');
-            perform set_vm_device_boot_order_03_01_0370(v_vm_id, 'disk', 'cdrom');
-            perform set_vm_device_boot_order_03_01_0370(v_vm_id, 'disk', 'disk');
+            perform __temp_set_vm_device_boot_order(v_vm_id, 'interface', 'bridge');
+            perform __temp_set_vm_device_boot_order(v_vm_id, 'disk', 'cdrom');
+            perform __temp_set_vm_device_boot_order(v_vm_id, 'disk', 'disk');
         when 8 then  -- NDC
-            perform set_vm_device_boot_order_03_01_0370(v_vm_id, 'interface', 'bridge');
-            perform set_vm_device_boot_order_03_01_0370(v_vm_id, 'disk', 'cdrom');
-            perform set_vm_device_boot_order_03_01_0370(v_vm_id, 'disk', 'disk');
+            perform __temp_set_vm_device_boot_order(v_vm_id, 'interface', 'bridge');
+            perform __temp_set_vm_device_boot_order(v_vm_id, 'disk', 'cdrom');
+            perform __temp_set_vm_device_boot_order(v_vm_id, 'disk', 'disk');
        when 9 then  -- CD
-            perform set_vm_device_boot_order_03_01_0370(v_vm_id, 'disk', 'disk');
-            perform set_vm_device_boot_order_03_01_0370(v_vm_id, 'disk', 'cdrom');
+            perform __temp_set_vm_device_boot_order(v_vm_id, 'disk', 'disk');
+            perform __temp_set_vm_device_boot_order(v_vm_id, 'disk', 'cdrom');
         when 10 then -- D
-            perform set_vm_device_boot_order_03_01_0370(v_vm_id, 'disk', 'cdrom');
+            perform __temp_set_vm_device_boot_order(v_vm_id, 'disk', 'cdrom');
         when 11 then -- CN
-            perform set_vm_device_boot_order_03_01_0370(v_vm_id, 'disk', 'disk');
-            perform set_vm_device_boot_order_03_01_0370(v_vm_id, 'interface', 'bridge');
+            perform __temp_set_vm_device_boot_order(v_vm_id, 'disk', 'disk');
+            perform __temp_set_vm_device_boot_order(v_vm_id, 'interface', 'bridge');
         when 12 then -- DN
-            perform set_vm_device_boot_order_03_01_0370(v_vm_id, 'disk', 'cdrom');
-            perform set_vm_device_boot_order_03_01_0370(v_vm_id, 'interface', 'bridge');
+            perform __temp_set_vm_device_boot_order(v_vm_id, 'disk', 'cdrom');
+            perform __temp_set_vm_device_boot_order(v_vm_id, 'interface', 'bridge');
         when 13 then -- NC
-            perform set_vm_device_boot_order_03_01_0370(v_vm_id, 'interface', 'bridge');
-            perform set_vm_device_boot_order_03_01_0370(v_vm_id, 'disk', 'disk');
+            perform __temp_set_vm_device_boot_order(v_vm_id, 'interface', 'bridge');
+            perform __temp_set_vm_device_boot_order(v_vm_id, 'disk', 'disk');
         when 14 then -- ND
-            perform set_vm_device_boot_order_03_01_0370(v_vm_id, 'interface', 'bridge');
-            perform set_vm_device_boot_order_03_01_0370(v_vm_id, 'disk', 'cdrom');
+            perform __temp_set_vm_device_boot_order(v_vm_id, 'interface', 'bridge');
+            perform __temp_set_vm_device_boot_order(v_vm_id, 'disk', 'cdrom');
       end case;
 END; $function$
 LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION vm_device_upgrade_data_03_01_0370()
+CREATE OR REPLACE FUNCTION __temp_vm_device_upgrade_data()
 RETURNS void
 AS $function$
 DECLARE
@@ -175,9 +175,9 @@ BEGIN
            FETCH v_cur INTO v_record;
            EXIT WHEN NOT FOUND;
            -- insert Video Cards to vm_device (according to number of monitors)
-           perform  update_vm_video_cards_03_01_0370(v_record.vm_guid, 0, v_record.num_of_monitors, v_record.default_display_type);
+           perform __temp_update_vm_video_cards(v_record.vm_guid, 0, v_record.num_of_monitors, v_record.default_display_type);
            -- set boot order
-           perform set_vm_devices_boot_order_03_01_0370(v_record.vm_guid);
+           perform __temp_set_vm_devices_boot_order(v_record.vm_guid);
        END LOOP;
        CLOSE v_cur;
        -- update device id in spec_params
@@ -190,12 +190,12 @@ END; $function$
 LANGUAGE plpgsql;
 
 --This script has a fix , therfor call is commented
---SELECT * FROM vm_device_upgrade_data_03_01_0370();
+--SELECT * FROM vm_device_upgrade_data();
 
 
-DROP FUNCTION vm_device_upgrade_data_03_01_0370();
-DROP FUNCTION update_vm_video_cards_03_01_0370(v_vm_id UUID, v_old_num_of_monitors int, v_new_num_of_monitors int, v_default_display_type int);
-DROP FUNCTION set_vm_device_boot_order_03_01_0370(v_vm_id UUID, v_type varchar(30), v_device varchar(30));
-DROP FUNCTION set_vm_devices_boot_order_03_01_0370(v_vm_id UUID);
+DROP FUNCTION __temp_vm_device_upgrade_data();
+DROP FUNCTION __temp_update_vm_video_cards(v_vm_id UUID, v_old_num_of_monitors int, v_new_num_of_monitors int, v_default_display_type int);
+DROP FUNCTION __temp_set_vm_device_boot_order(v_vm_id UUID, v_type varchar(30), v_device varchar(30));
+DROP FUNCTION __temp_set_vm_devices_boot_order(v_vm_id UUID);
 
 

@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION Upgrade_03_01_0260_add_job_table()
+CREATE OR REPLACE FUNCTION __temp_Upgrade_add_job_table()
 RETURNS void
 AS $function$
 BEGIN
@@ -26,7 +26,7 @@ END; $function$
 LANGUAGE plpgsql;
 
 
-SELECT * FROM Upgrade_03_01_0260_add_job_table();
+SELECT * FROM __temp_Upgrade_add_job_table();
 
-DROP FUNCTION Upgrade_03_01_0260_add_job_table();
+DROP FUNCTION __temp_Upgrade_add_job_table();
 

@@ -1,4 +1,4 @@
-Create or replace FUNCTION insert_predefined_roles_03_01_0820()
+Create or replace FUNCTION __temp_insert_predefined_roles()
 RETURNS VOID
    AS $procedure$
    DECLARE
@@ -164,8 +164,8 @@ INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DISK_CREATOR_USER_ID,
 END; $procedure$
 LANGUAGE plpgsql;
 
-SELECT insert_predefined_roles_03_01_0820();
-DROP function insert_predefined_roles_03_01_0820();
+SELECT __temp_insert_predefined_roles();
+DROP function __temp_insert_predefined_roles();
 
 
 

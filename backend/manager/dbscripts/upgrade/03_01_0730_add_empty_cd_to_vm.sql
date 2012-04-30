@@ -1,7 +1,7 @@
 -- This upgrade script adds an empty CD for each VM that has an empty string in its iso_path
 -- we currently have either a real CD (with valid iso_path) or an empty CD for a VM
 
-CREATE OR REPLACE FUNCTION add_empty_cd_to_vm_0730()
+CREATE OR REPLACE FUNCTION __temp_add_empty_cd_to_vm()
 RETURNS void
 AS $function$
 DECLARE
@@ -26,6 +26,6 @@ BEGIN
 END; $function$
 LANGUAGE plpgsql;
 
-select add_empty_cd_to_vm_0730();
-drop function add_empty_cd_to_vm_0730();
+select __temp_add_empty_cd_to_vm();
+drop function __temp_add_empty_cd_to_vm();
 

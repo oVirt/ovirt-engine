@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION Upgrade_MergeTemplatesToVmStatic_03_01_0100()
+CREATE OR REPLACE FUNCTION __temp_Upgrade_MergeTemplatesToVmStatic()
 RETURNS void
 AS $function$
 DECLARE
@@ -117,7 +117,7 @@ END; $function$
 LANGUAGE plpgsql;
 
 
-SELECT * FROM Upgrade_MergeTemplatesToVmStatic_03_01_0100();
+SELECT * FROM __temp_Upgrade_MergeTemplatesToVmStatic();
 
-DROP FUNCTION Upgrade_MergeTemplatesToVmStatic_03_01_0100();
+DROP FUNCTION __temp_Upgrade_MergeTemplatesToVmStatic();
 

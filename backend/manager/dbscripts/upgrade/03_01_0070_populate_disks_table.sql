@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION Upgrade_PopulateDisksTable_03_01_0060()
+CREATE OR REPLACE FUNCTION __temp_Upgrade_PopulateDisksTable()
 RETURNS void
 AS $function$
 DECLARE
@@ -104,7 +104,7 @@ END; $function$
 LANGUAGE plpgsql;
 
 
-SELECT * FROM Upgrade_PopulateDisksTable_03_01_0060();
+SELECT * FROM __temp_Upgrade_PopulateDisksTable();
 
-DROP FUNCTION Upgrade_PopulateDisksTable_03_01_0060();
+DROP FUNCTION __temp_Upgrade_PopulateDisksTable();
 

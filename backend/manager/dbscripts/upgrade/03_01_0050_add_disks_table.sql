@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION Upgrade_AddDisksTable()
+CREATE OR REPLACE FUNCTION __temp_Upgrade_AddDisksTable()
 RETURNS void
 AS $function$
 BEGIN
@@ -25,7 +25,7 @@ END; $function$
 LANGUAGE plpgsql;
 
 
-SELECT * FROM Upgrade_AddDisksTable();
+SELECT * FROM __temp_Upgrade_AddDisksTable();
 
-DROP FUNCTION Upgrade_AddDisksTable();
+DROP FUNCTION __temp_Upgrade_AddDisksTable();
 

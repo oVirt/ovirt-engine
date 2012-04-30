@@ -1,4 +1,4 @@
-create or replace function convert_record_to_json_03_01_0930(v_spec_param text)
+create or replace function __temp_convert_record_to_json(v_spec_param text)
 returns text
 AS $procedure$
 declare
@@ -30,7 +30,7 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 update vm_device
-set spec_params = convert_record_to_json_03_01_0930(rtrim(ltrim(trim(both spec_params), '{'),'}'));
+set spec_params = __temp_convert_record_to_json(rtrim(ltrim(trim(both spec_params), '{'),'}'));
 
-DROP FUNCTION convert_record_to_json_03_01_0930(text);
+DROP FUNCTION __temp_convert_record_to_json(text);
 
