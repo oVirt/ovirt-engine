@@ -5,29 +5,19 @@ import java.util.List;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
 
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
 
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "SetupNetworksParameters")
 public class SetupNetworksParameters extends VdsActionParameters {
 
-    @XmlElement(name = "Interfaces")
     @Valid
     private List<VdsNetworkInterface> interfaces;
 
-    @XmlElement(name = "Force")
     private boolean force;
 
-    @XmlElement(name = "CheckConnectivity")
     private boolean checkConnectivity;
 
-    @XmlElement(name = "ConnectivityTimeout")
     @Min(value = 0, message = "NETWORK_CONNECTIVITY_TIMEOUT_NEGATIVE")
     private int conectivityTimeout;
 

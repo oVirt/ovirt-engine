@@ -2,16 +2,9 @@ package org.ovirt.engine.core.common.action;
 
 import org.ovirt.engine.core.compat.*;
 import org.ovirt.engine.core.common.businessentities.*;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlType;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "AddBondParameters")
 public class AddBondParameters extends RemoveBondParameters {
     private static final long serialVersionUID = 761203751697100144L;
-    @XmlElement(name = "Nics")
     private String[] privateNics;
 
     public String[] getNics() {
@@ -22,7 +15,6 @@ public class AddBondParameters extends RemoveBondParameters {
         privateNics = value;
     }
 
-    @XmlElement(name = "VlanTag")
     private Integer privateVlanTag;
 
     public Integer getVlanTag() {
@@ -33,7 +25,6 @@ public class AddBondParameters extends RemoveBondParameters {
         privateVlanTag = value;
     }
 
-    @XmlElement(name = "Network")
     private network privateNetwork;
 
     public network getNetwork() {
@@ -44,7 +35,6 @@ public class AddBondParameters extends RemoveBondParameters {
         privateNetwork = value;
     }
 
-    @XmlElement(name = "Address")
     private String privateAddress;
 
     public String getAddress() {
@@ -55,7 +45,6 @@ public class AddBondParameters extends RemoveBondParameters {
         privateAddress = value;
     }
 
-    @XmlElement(name = "Subnet")
     private String privateSubnet;
 
     public String getSubnet() {
@@ -66,7 +55,6 @@ public class AddBondParameters extends RemoveBondParameters {
         privateSubnet = value;
     }
 
-    @XmlElement(name = "Gateway")
     private String privateGateway;
 
     public String getGateway() {
@@ -77,7 +65,6 @@ public class AddBondParameters extends RemoveBondParameters {
         privateGateway = value;
     }
 
-    @XmlElement(name = "VlanId")
     private Integer privateVlanId;
 
     public Integer getVlanId() {
@@ -88,7 +75,6 @@ public class AddBondParameters extends RemoveBondParameters {
         privateVlanId = value;
     }
 
-    @XmlElement(name = "BondingOptions")
     private String privateBondingOptions;
 
     public String getBondingOptions() {
@@ -99,7 +85,6 @@ public class AddBondParameters extends RemoveBondParameters {
         privateBondingOptions = value;
     }
 
-    @XmlElement(name = "BootProtocol")
     private NetworkBootProtocol privateBootProtocol = NetworkBootProtocol.forValue(0);
 
     public NetworkBootProtocol getBootProtocol() {

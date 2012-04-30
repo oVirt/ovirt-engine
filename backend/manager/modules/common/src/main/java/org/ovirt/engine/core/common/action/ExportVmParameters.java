@@ -1,13 +1,7 @@
 package org.ovirt.engine.core.common.action;
 
 import org.ovirt.engine.core.compat.*;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlType;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "ExportVmParameters")
 public class ExportVmParameters extends VmOperationParameterBase {
     private static final long serialVersionUID = -1727551658690191009L;
 
@@ -23,7 +17,6 @@ public class ExportVmParameters extends VmOperationParameterBase {
         this(vmId, false, true, false, path);
     }
 
-    @XmlElement(name = "Collapse")
     private boolean privateCollapse;
 
     public boolean getCollapse() {
@@ -34,7 +27,6 @@ public class ExportVmParameters extends VmOperationParameterBase {
         privateCollapse = value;
     }
 
-    @XmlElement(name = "IncludeTemplate")
     private boolean privateIncludeTemplate;
 
     public boolean getIncludeTemplate() {
@@ -45,7 +37,6 @@ public class ExportVmParameters extends VmOperationParameterBase {
         privateIncludeTemplate = value;
     }
 
-    @XmlElement(name = "Force")
     private boolean privateForce;
 
     public boolean getForce() {
@@ -56,7 +47,6 @@ public class ExportVmParameters extends VmOperationParameterBase {
         privateForce = value;
     }
 
-    @XmlElement(name = "Path")
     private String privatePath;
 
     public String getPath() {

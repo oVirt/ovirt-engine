@@ -1,20 +1,12 @@
 package org.ovirt.engine.core.common.action;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
-
 import org.ovirt.engine.core.common.businessentities.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network;
 import org.ovirt.engine.core.compat.Guid;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "AttachNetworkToVdsParameters")
 public class AttachNetworkToVdsParameters extends VdsActionParameters {
     private static final long serialVersionUID = 5446434263733512827L;
-    @XmlElement(name = "CheckConnectivity")
     private boolean privateCheckConnectivity;
 
     public boolean getCheckConnectivity() {
@@ -25,7 +17,6 @@ public class AttachNetworkToVdsParameters extends VdsActionParameters {
         privateCheckConnectivity = value;
     }
 
-    @XmlElement(name = "Network")
     private network privateNetwork;
 
     public network getNetwork() {
@@ -36,7 +27,6 @@ public class AttachNetworkToVdsParameters extends VdsActionParameters {
         privateNetwork = value;
     }
 
-    @XmlElement(name = "OldNetworkName")
     private String privateOldNetworkName;
 
     public String getOldNetworkName() {
@@ -47,7 +37,6 @@ public class AttachNetworkToVdsParameters extends VdsActionParameters {
         privateOldNetworkName = value;
     }
 
-    @XmlElement(name = "Interface")
     private VdsNetworkInterface privateInterface;
 
     public VdsNetworkInterface getInterface() {
@@ -58,7 +47,6 @@ public class AttachNetworkToVdsParameters extends VdsActionParameters {
         privateInterface = value;
     }
 
-    @XmlElement(name = "Address")
     private String privateAddress;
 
     public String getAddress() {
@@ -69,7 +57,6 @@ public class AttachNetworkToVdsParameters extends VdsActionParameters {
         privateAddress = value;
     }
 
-    @XmlElement(name = "Subnet")
     private String privateSubnet;
 
     public String getSubnet() {
@@ -80,7 +67,6 @@ public class AttachNetworkToVdsParameters extends VdsActionParameters {
         privateSubnet = value;
     }
 
-    @XmlElement(name = "Gateway")
     private String privateGateway;
 
     public String getGateway() {
@@ -91,7 +77,6 @@ public class AttachNetworkToVdsParameters extends VdsActionParameters {
         privateGateway = value;
     }
 
-    @XmlElement(name = "BondingOptions")
     private String privateBondingOptions;
 
     public String getBondingOptions() {
@@ -102,7 +87,6 @@ public class AttachNetworkToVdsParameters extends VdsActionParameters {
         privateBondingOptions = value;
     }
 
-    @XmlElement(name = "BootProtocol")
     private NetworkBootProtocol privateBootProtocol = NetworkBootProtocol.forValue(0);
 
     public NetworkBootProtocol getBootProtocol() {

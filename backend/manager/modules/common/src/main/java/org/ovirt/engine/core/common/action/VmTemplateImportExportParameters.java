@@ -2,21 +2,14 @@ package org.ovirt.engine.core.common.action;
 
 import org.ovirt.engine.core.compat.*;
 import org.ovirt.engine.core.common.businessentities.*;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlType;
 
 import org.ovirt.engine.core.common.queries.*;
 
 import java.util.List;
 import java.util.LinkedList;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "VmTemplateImportExportParameters")
 public class VmTemplateImportExportParameters extends VmTemplateParametersBase implements java.io.Serializable {
     private static final long serialVersionUID = -3811237640112907464L;
-    @XmlElement(name = "StorageDomainId")
     private Guid privateStorageDomainId = new Guid();
 
     public Guid getStorageDomainId() {
@@ -27,7 +20,6 @@ public class VmTemplateImportExportParameters extends VmTemplateParametersBase i
         privateStorageDomainId = value;
     }
 
-    @XmlElement(name = "StoragePoolId")
     private Guid privateStoragePoolId = new Guid();
 
     public Guid getStoragePoolId() {
@@ -38,7 +30,6 @@ public class VmTemplateImportExportParameters extends VmTemplateParametersBase i
         privateStoragePoolId = value;
     }
 
-    @XmlElement(name = "Images")
     private List<DiskImage> privateImages;
 
     public List<DiskImage> getImages() {

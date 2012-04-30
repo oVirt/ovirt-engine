@@ -2,22 +2,13 @@ package org.ovirt.engine.core.common.action;
 
 import java.util.List;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
-
 import org.ovirt.engine.core.compat.Guid;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "VmTemplateParametersBase")
 public class VmTemplateParametersBase extends VdcActionParametersBase implements java.io.Serializable {
     private static final long serialVersionUID = -8930994274659598061L;
     private boolean removeTemplateFromDb;
-    @XmlElement
     private Guid _vmTemplateId = new Guid();
     private Guid quotaId;
-    @XmlElement(name = "CheckDisksExists")
     private boolean privateCheckDisksExists;
 
     public boolean getCheckDisksExists() {
@@ -36,7 +27,6 @@ public class VmTemplateParametersBase extends VdcActionParametersBase implements
         return _vmTemplateId;
     }
 
-    @XmlElement(name = "StorageDomainsListGuidArray")
     private List<Guid> privateStorageDomainsList;
 
     public List<Guid> getStorageDomainsList() {

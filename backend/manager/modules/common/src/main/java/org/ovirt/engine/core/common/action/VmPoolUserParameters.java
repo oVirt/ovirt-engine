@@ -1,15 +1,9 @@
 package org.ovirt.engine.core.common.action;
 
 import org.ovirt.engine.core.compat.*;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlType;
 
 import org.ovirt.engine.core.common.users.*;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "VmPoolUserParameters")
 public class VmPoolUserParameters extends VmPoolSimpleUserParameters implements java.io.Serializable {
     private static final long serialVersionUID = -5672324868972973061L;
 
@@ -19,7 +13,6 @@ public class VmPoolUserParameters extends VmPoolSimpleUserParameters implements 
         setIsInternal(isInternal);
     }
 
-    @XmlElement(name = "VdcUserData")
     private VdcUser privateVdcUserData;
 
     public VdcUser getVdcUserData() {
@@ -30,7 +23,6 @@ public class VmPoolUserParameters extends VmPoolSimpleUserParameters implements 
         privateVdcUserData = value;
     }
 
-    @XmlElement(name = "IsInternal")
     private boolean privateIsInternal;
 
     public boolean getIsInternal() {
@@ -41,7 +33,6 @@ public class VmPoolUserParameters extends VmPoolSimpleUserParameters implements 
         privateIsInternal = value;
     }
 
-    @XmlElement(name = "VmId")
     private Guid privateVmId = new Guid();
 
     public Guid getVmId() {

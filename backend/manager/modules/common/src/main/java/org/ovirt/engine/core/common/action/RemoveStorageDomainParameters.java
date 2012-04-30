@@ -1,14 +1,7 @@
 package org.ovirt.engine.core.common.action;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
-
 import org.ovirt.engine.core.compat.Guid;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "RemoveStorageDomainParameters")
 public class RemoveStorageDomainParameters extends StorageDomainParametersBase {
     private static final long serialVersionUID = -4687251701380479912L;
 
@@ -18,7 +11,6 @@ public class RemoveStorageDomainParameters extends StorageDomainParametersBase {
         super(storageDomainId);
     }
 
-    @XmlElement(name = "DoFormat")
     private boolean privateDoFormat;
 
     public boolean getDoFormat() {

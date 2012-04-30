@@ -1,19 +1,12 @@
 package org.ovirt.engine.core.common.action;
 
 import javax.validation.Valid;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
 
 import org.ovirt.engine.core.common.businessentities.roles;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "RolesOperationsParameters")
 public class RolesOperationsParameters extends RolesParameterBase {
     private static final long serialVersionUID = -1785886308686587013L;
     @Valid
-    @XmlElement(name = "Role")
     private roles privateRole;
 
     public roles getRole() {

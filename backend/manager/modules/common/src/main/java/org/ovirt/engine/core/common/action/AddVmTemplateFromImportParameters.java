@@ -1,22 +1,14 @@
 package org.ovirt.engine.core.common.action;
 
 import org.ovirt.engine.core.common.businessentities.*;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlType;
 
 import org.ovirt.engine.core.common.queries.*;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "AddVmTemplateFromImportParameters")
 public class AddVmTemplateFromImportParameters extends AddVmTemplateParameters {
     private static final long serialVersionUID = 3675626310536138446L;
 
-    @XmlElement(name = "CandidateInfoParameters")
     private CandidateInfoParameters _candidateInfoParameters;
 
-    @XmlElement(name = "Force")
     private boolean privateForce;
 
     public boolean getForce() {
@@ -27,7 +19,6 @@ public class AddVmTemplateFromImportParameters extends AddVmTemplateParameters {
         privateForce = value;
     }
 
-    @XmlElement(name = "VmTemplateNewName")
     private String _vmTemplateNewName;
 
     /**

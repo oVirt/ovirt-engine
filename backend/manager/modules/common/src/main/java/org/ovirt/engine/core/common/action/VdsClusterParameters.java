@@ -2,19 +2,11 @@ package org.ovirt.engine.core.common.action;
 
 import java.util.ArrayList;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
-
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "VdsClusterParameters")
 public class VdsClusterParameters extends VdsActionParameters {
     private static final long serialVersionUID = 2865188379201582824L;
-    @XmlElement(name = "VdsGroupId")
     private Guid privateVdsGroupId;
 
     public Guid getVdsGroupId() {
@@ -25,7 +17,6 @@ public class VdsClusterParameters extends VdsActionParameters {
         privateVdsGroupId = value;
     }
 
-    @XmlElement(name = "Interfaces")
     private java.util.ArrayList<VdsNetworkInterface> privateInterfaces;
 
     public java.util.ArrayList<VdsNetworkInterface> getInterfaces() {

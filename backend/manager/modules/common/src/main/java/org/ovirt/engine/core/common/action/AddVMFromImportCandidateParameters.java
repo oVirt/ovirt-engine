@@ -6,22 +6,14 @@ import java.util.Arrays;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.compat.*;
 import org.ovirt.engine.core.common.businessentities.*;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlType;
 
 import org.ovirt.engine.core.common.queries.*;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "AddVMFromImportCandidateParameters")
 public class AddVMFromImportCandidateParameters extends AddVmFromScratchParameters {
     private static final long serialVersionUID = -3570212254700154211L;
 
-    @XmlElement
     private CandidateInfoParameters _candidateInfoParameters;
 
-    @XmlElement(name = "Force")
     private boolean privateForce;
 
     public boolean getForce() {
@@ -32,7 +24,6 @@ public class AddVMFromImportCandidateParameters extends AddVmFromScratchParamete
         privateForce = value;
     }
 
-    @XmlElement
     private String _vmNewName;
 
     /**

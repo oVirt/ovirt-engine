@@ -3,13 +3,7 @@ package org.ovirt.engine.core.common.action;
 import org.ovirt.engine.core.common.businessentities.*;
 
 import javax.validation.Valid;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlType;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "EventSubscriptionParametesBase")
 public class EventSubscriptionParametesBase extends VdcActionParametersBase {
     private static final long serialVersionUID = -6988075041053848616L;
 
@@ -19,7 +13,6 @@ public class EventSubscriptionParametesBase extends VdcActionParametersBase {
     }
 
     @Valid
-    @XmlElement(name = "EventSubscriber")
     private event_subscriber privateEventSubscriber;
 
     public event_subscriber getEventSubscriber() {
@@ -30,7 +23,6 @@ public class EventSubscriptionParametesBase extends VdcActionParametersBase {
         privateEventSubscriber = value;
     }
 
-    @XmlElement(name = "Domain")
     private String privateDomain;
 
     public String getDomain() {
