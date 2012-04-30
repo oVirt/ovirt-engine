@@ -81,6 +81,8 @@ public class GlusterVolumeOptionEntity implements Serializable {
         }
 
         GlusterVolumeOptionEntity option = (GlusterVolumeOptionEntity) obj;
-        return (option.getVolumeId().equals(volumeId) && option.getKey().equals(key) && option.getValue().equals(value));
+        return ((volumeId != null && volumeId.equals(option.getVolumeId()))
+                && key.equals(option.getKey())
+                && value.equals(option.getValue()));
     }
 }
