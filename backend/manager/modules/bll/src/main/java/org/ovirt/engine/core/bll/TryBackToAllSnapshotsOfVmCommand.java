@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.action.TryBackToAllSnapshotsOfVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -157,7 +158,10 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
         DiskImage vmDisk = LinqUtils.first(diskImages);
         boolean result = true;
 
-        result = result && validate(new SnapshotsValidator().vmNotDuringSnapshot(getVmId()));
+        Snapshot snapshot = getSnapshotDao().get(getParameters().getDstSnapshotId());
+        SnapshotsValidator snapshotsValidator = new SnapshotsValidator();
+        result = result && validate(new SnapshotsValidator().vmNotDuringSnapshot(getVmId()))
+                && validate(snapshotsValidator.snapshotNotBroken(snapshot));
 
         if (vmDisk != null) {
             result =

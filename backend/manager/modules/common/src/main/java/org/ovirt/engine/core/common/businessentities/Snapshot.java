@@ -241,7 +241,10 @@ public class Snapshot extends IVdcQueryable implements BusinessEntity<Guid> {
     public enum SnapshotStatus {
         OK,
         LOCKED,
-        IN_PREVIEW
+        IN_PREVIEW,
+
+        /** The snapshot is broken, and can only be deleted. */
+        BROKEN
     }
 
     public enum SnapshotType {

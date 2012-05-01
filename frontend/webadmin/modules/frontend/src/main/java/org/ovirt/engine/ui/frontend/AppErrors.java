@@ -35,6 +35,8 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String ACTION_TYPE_FAILED_VM_SNAPSHOT_HAS_NO_CONFIGURATION();
 
+    String ACTION_TYPE_FAILED_VM_SNAPSHOT_IS_BROKEN();
+
     String IMAGE_REPOSITORY_NOT_FOUND();
 
     String VM_TEMPLATE_IMAGE_IS_LOCKED();

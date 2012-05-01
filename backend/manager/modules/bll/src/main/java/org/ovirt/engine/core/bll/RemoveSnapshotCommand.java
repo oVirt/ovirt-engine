@@ -105,6 +105,8 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
     protected void EndVmCommand() {
         if (getParameters().getTaskGroupSuccess()) {
             getSnapshotDao().remove(getParameters().getSnapshotId());
+        } else {
+            getSnapshotDao().updateStatus(getParameters().getSnapshotId(), SnapshotStatus.BROKEN);
         }
 
         super.EndVmCommand();

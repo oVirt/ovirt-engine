@@ -251,9 +251,10 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
 
     @Override
     protected boolean canDoAction() {
-        // If snapshot does not exist, there is not point in checking any of the VM related checks
-        if (getSnapshot() == null) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_SNAPSHOT_DOES_NOT_EXIST);
+        SnapshotsValidator snapshotsValidator = new SnapshotsValidator();
+        // If snapshot does not exist or is broken, there is not point in checking any of the VM related checks
+        if (getSnapshot() == null
+                || !validate(snapshotsValidator.snapshotNotBroken(getSnapshot()))) {
             return false;
         }
 
