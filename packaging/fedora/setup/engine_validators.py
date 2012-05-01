@@ -257,16 +257,17 @@ def validateRemoteDB(param={}, options=[]):
         return False
 
     finally:
-        # restore the original pgpass file in all cases
-        if os.path.exists(backupFile):
-            os.rename(backupFile, basedefs.DB_PASS_FILE)
-
         # if the test DB was created, drop it
         sqlQuery = "DROP DATABASE IF EXISTS ovirt_engine_test;"
         utils.execRemoteSqlCommand(param["DB_ADMIN"],
                                    param["DB_HOST"],
                                    param["DB_PORT"],
                                    basedefs.DB_POSTGRES, sqlQuery, False)
+
+        # restore the original pgpass file in all cases
+        if os.path.exists(backupFile):
+            os.rename(backupFile, basedefs.DB_PASS_FILE)
+
 
 def validateFQDN(param, options=[]):
     logging.info("Validating %s as a FQDN"%(param))
@@ -425,12 +426,10 @@ def _checkUUIDExtension(dbAdminUser, dbHost, dbPort):
     logging.info("Checking that uuid extension is loaded by default on the remote server")
     out, rc = utils.execRemoteSqlCommand(dbAdminUser, dbHost, dbPort,
                                          "ovirt_engine_test",
-                                         "SELECT extname \
-                                          FROM pg_extension \
-                                          WHERE extname='uuid-ossp';")
+                                         "SELECT uuid_generate_v1();")
 
     # Extension was found
-    if not rc and out and "uuid-ossp" in out:
+    if not rc and out and "1 row" in out:
         logging.info("Successfully passed UUID check")
     else:
         logging.error(output_messages.ERR_DB_UUID)

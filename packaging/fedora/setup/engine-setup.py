@@ -1154,7 +1154,7 @@ def _upgradeDB():
     logging.debug("backing up %s db to file %s"%(basedefs.DB_NAME, dbBackupFile))
 
     # Run db backup
-    utils.backupDB(basedefs.DB_NAME, getDbAdminUser(), dbBackupFile, getDbHostName(), getDbPort())
+    utils.backupDB(basedefs.DB_NAME, getDbUser(), dbBackupFile, getDbHostName(), getDbPort())
 
     # Rename DB first. If it fails - stop with "active connections" error.
     # if upgrade passes fine, rename the DB back.
@@ -1163,7 +1163,7 @@ def _upgradeDB():
 
     # if we're here, DB was renamed.
     logging.debug("upgrading db schema")
-    dbScriptArgs = "-u %s -d %s -s %s -p %s" %(getDbAdminUser(), DB_NAME_TEMP, getDbHostName(), getDbPort())
+    dbScriptArgs = "-u %s -d %s -s %s -p %s" %(getDbUser(), DB_NAME_TEMP, getDbHostName(), getDbPort())
     cmd = os.path.join("/bin/sh ", basedefs.DIR_DB_SCRIPTS, basedefs.FILE_DB_UPGRADE_SCRIPT + " " + dbScriptArgs)
 
     # Upgrade script must run from dbscripts dir
@@ -1190,12 +1190,12 @@ def _upgradeDB():
     except:
         # Upgrade failed! we need to restore the old db
         logging.debug("DB upgrade failed, restoring it to a previous state. DB was backed up to %s", dbBackupFile)
-        utils.restoreDB(getDbAdminUser(), getDbHostName(), getDbPort(), dbBackupFile)
+        utils.restoreDB(getDbUser(), getDbHostName(), getDbPort(), dbBackupFile)
 
         # Delete the original DB.
         # TODO: handle the case of failure - it should not stop the flow, but should write to the log
         sqlQuery="DROP DATABASE %s" % DB_NAME_TEMP
-        utils.execRemoteSqlCommand(getDbAdminUser(), \
+        utils.execRemoteSqlCommand(getDbUser(), \
                                    getDbHostName(), \
                                    getDbPort(), \
                                    basedefs.DB_POSTGRES, \
@@ -1208,7 +1208,7 @@ def _updateDefaultDCType():
     logging.debug("updating default data center storage type")
     newDcTypeNum = controller.CONF["DC_TYPE_ENUM"].parse(str.upper(controller.CONF["DC_TYPE"]))
     sqlQuery = "select inst_update_default_storage_pool_type (%s)" % newDcTypeNum
-    utils.execRemoteSqlCommand(getDbAdminUser(), getDbHostName(), getDbPort(), basedefs.DB_NAME, sqlQuery, True, output_messages.ERR_EXP_UPD_DC_TYPE%(basedefs.DB_NAME))
+    utils.execRemoteSqlCommand(getDbUser(), getDbHostName(), getDbPort(), basedefs.DB_NAME, sqlQuery, True, output_messages.ERR_EXP_UPD_DC_TYPE%(basedefs.DB_NAME))
 
 def _updateVDCOptions():
     logging.debug("updating vdc options..")
@@ -1782,7 +1782,7 @@ def setMaxSharedMemory():
 def _addIsoDomaintoDB(uuid, description):
     logging.debug("Adding iso domain into DB")
     sqlQuery = "select inst_add_iso_storage_domain ('%s', '%s', '%s:%s', %s, %s)" % (uuid, description, controller.CONF["HOST_FQDN"], controller.CONF["NFS_MP"], 0, 0)
-    utils.execRemoteSqlCommand(getDbAdminUser(), getDbHostName(), getDbPort(), basedefs.DB_NAME, sqlQuery, True, output_messages.ERR_FAILED_INSERT_ISO_DOMAIN%(basedefs.DB_NAME))
+    utils.execRemoteSqlCommand(getDbUser(), getDbHostName(), getDbPort(), basedefs.DB_NAME, sqlQuery, True, output_messages.ERR_FAILED_INSERT_ISO_DOMAIN%(basedefs.DB_NAME))
 
 def _startNfsServices():
     logging.debug("Enabling the rpcbind & nfs services")

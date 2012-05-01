@@ -36,6 +36,7 @@ DB_HOST=localhost
 DB_PORT="5432"
 DB_USER=engine
 DB_NAME=engine
+TEMPLATE=template1
 LOCAL_DB_SET=1
 TABLE_NAME=vdc_options
 
@@ -349,27 +350,37 @@ updateDBUsers()
 	echo "[$SCRIPT_NAME] updating db admin credentials" >> $LOGFILE
 
 	# update admin user password
-	$PSQL -U $DB_ADMIN -d $DB_NAME -c "ALTER ROLE $DB_ADMIN WITH ENCRYPTED PASSWORD '$DB_PASS'" >> /dev/null  2>&1
+	$PSQL -U $DB_ADMIN -d $TEMPLATE -c "ALTER ROLE $DB_ADMIN WITH ENCRYPTED PASSWORD '$DB_PASS'" >> /dev/null  2>&1
 	_verifyRC $? "failed updating user $DB_ADMIN password"
 
-    # if running on a local machine, add application user 'engine'
     if [[ $LOCAL_DB_SET -eq 1 ]]
     then
-	    # drop engine ROLE if exists
-        $PSQL -U $DB_ADMIN -d $DB_NAME -c "DROP ROLE IF EXISTS $DB_USER" >> $LOGFILE 2>&1
+        # Drop engine ROLE if exists
+        $PSQL -U $DB_ADMIN -c "DROP ROLE IF EXISTS $DB_USER" >> $LOGFILE 2>&1
         _verifyRC $? "failed dropping user $DB_USER"
 
-        # create user engine + password
-        $PSQL -U $DB_ADMIN -d $DB_NAME -c "CREATE ROLE $DB_USER WITH LOGIN ENCRYPTED PASSWORD '$DB_PASS'" >> /dev/null 2>&1
-        _verifyRC $? "failed updating user $DB_USER password"
+        # Create user $DB_USER + password
+        $PSQL -U $DB_ADMIN -c "CREATE ROLE $DB_USER WITH CREATEDB LOGIN ENCRYPTED PASSWORD '$DB_PASS'" >> $LOGFILE 2>&1
+        _verifyRC $? "failed creating user $DB_USER with encrypted password"
+        
+        # Handle UUID extensions
+        pushd $ENGINE_DB_SCRIPTS_DIR >> $LOGFILE
+        source ./dbfunctions.sh
+        source ./dbcustomfunctions.sh
+        if [ $(pg_version | egrep "^9.1") ]; then
+            echo "Creating uuid-ossp extension..."
+            USERNAME=$DB_ADMIN
+            DATABASE=$TEMPLATE
+            VERBOSE=false
+            check_and_install_uuid_osspa_pg9
+        else
+            echo "adding uuid-ossp.sql from contrib..."
+            $PSQL -U $DB_ADMIN -d $TEMPLATE -f $UUID_SQL >> $LOGFILE 2>&1
+        fi
+        popd >> $LOGFILE
 
-        # grant all permissions to user engine to db engine
-        $PSQL -U $DB_ADMIN -d $DB_NAME -c "GRANT ALL PRIVILEGES ON DATABASE $DB_NAME to $DB_USER " >> $LOGFILE 2>&1
-        $PSQL -U $DB_ADMIN -d $DB_NAME -c "GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO $DB_USER" >> $LOGFILE 2>&1
-        $PSQL -U $DB_ADMIN -d $DB_NAME -c "GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO $DB_USER" >> $LOGFILE 2>&1
-        _verifyRC $? "failed updating user $DB_USER privileges"
+        DB_ADMIN=$DB_USER
     fi
-
 }
 
 turnPgsqlOnStartup()
@@ -408,9 +419,10 @@ checkIfDBExists
 DB_EXISTS=$?
 if [[ $DB_EXISTS -eq 0 ]]
 then
+
+	updateDBUsers
 	createDB
 	escapeDBPassword
-	updateDBUsers
 
 	# if we run locally,
 	# change auth to md5, now that we have users with passwords

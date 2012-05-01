@@ -112,7 +112,7 @@ install_common_func() {
 }
 
 delete_async_tasks_and_compensation_data() {
-  execute_file "delete_async_tasks_and_compensation_data.sql" ${DATABASE} > /dev/null
+    execute_file "delete_async_tasks_and_compensation_data.sql" ${DATABASE} ${SERVERNAME} ${PORT}> /dev/null
 }
 
 run_pre_upgrade() {
