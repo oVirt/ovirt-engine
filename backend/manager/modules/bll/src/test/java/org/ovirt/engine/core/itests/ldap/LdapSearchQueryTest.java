@@ -4,7 +4,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import org.junit.Test;
-
 import org.ovirt.engine.core.bll.SearchQuery;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -25,6 +24,7 @@ public class LdapSearchQueryTest {
 
         SearchParameters parameters = new SearchParameters("AdUser: gandalf", SearchType.AdUser);
         SearchQuery<SearchParameters> searchCmd = new SearchQuery<SearchParameters>(parameters);
+        searchCmd.setInternalExecution(true);
         searchCmd.Execute();
     }
 }
