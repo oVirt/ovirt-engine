@@ -103,6 +103,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
 
     @Override
     protected void EndVmCommand() {
+        initializeObjectState();
         if (getParameters().getTaskGroupSuccess()) {
             getSnapshotDao().remove(getParameters().getSnapshotId());
         } else {
