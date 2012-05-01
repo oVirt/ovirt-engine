@@ -224,8 +224,8 @@ def runInstaller(remote_nfs, orgName, systime, vds_config_str, url_rpm, vds_serv
     try:
         if os.path.exists(script):
             execfn = [script]
-            if installVirtualizationService:
-                execfn += ["-v"]
+            if not installVirtualizationService:
+                execfn += ["-V"]
             if installGlusterService:
                 execfn += ["-g"]
             if not vds_complete:
@@ -328,13 +328,14 @@ def handle_ssh_key(host, port):
     return ssh_result
 
 def main():
-    """Usage: vds_installer.py  [-c vds_config_str] [-m remote_nfs] [-r rev_num] [-O organizationName] [-t YYYY-MM-DDTHH:mm:SS_system_time] [-p engine_port] [-v] [-g] <url_bs> <url_rpm> <vds_server> <random_num> <vds_complete>
+    """Usage: vds_installer.py  [-c vds_config_str] [-m remote_nfs] [-r rev_num] [-O organizationName] [-t YYYY-MM-DDTHH:mm:SS_system_time] [-p engine_port] [-V] [-g] <url_bs> <url_rpm> <vds_server> <random_num> <vds_complete>
                     url_bs - components url
                     url_rpm - rpm download url
                     random_num - random number for temp. file names generation
                     vds_server - vds server for CSR usage
                     vds_complete - to run first vds_bootstrap script = false
                                    to run second vds_bootstrap_complete script = true
+                    -V - don't install virutalization components on the host
     """
     try:
         remote_nfs = None
@@ -345,9 +346,9 @@ def main():
         engine_port = None
         firewall_rules_file = None
         rebootAfterInstallation = False
-        installVirtualizationService = False
+        installVirtualizationService = True
         installGlusterService = False
-        opts, args = getopt.getopt(sys.argv[1:], "c:m:r:O:t:p:bf:gv")
+        opts, args = getopt.getopt(sys.argv[1:], "c:m:r:O:t:p:bf:gV")
         for o,v in opts:
             if o == "-c":
                 vds_config_str = v
@@ -365,8 +366,8 @@ def main():
                 firewall_rules_file = v
             if o == "-b":
                 rebootAfterInstallation = True
-            if o == "-v":
-                installVirtualizationService = True
+            if o == "-V":
+                installVirtualizationService = False
             if o == "-g":
                 installGlusterService = True
 
