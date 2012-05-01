@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.AccessProtocol;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeOptionEntity;
+import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.gluster.CreateReplicatedVolume;
 import org.ovirt.engine.core.common.validation.group.gluster.CreateStripedVolume;
@@ -92,6 +93,10 @@ public class CreateGlusterVolumeCommand extends GlusterCommandBase<CreateGluster
     protected void executeCommand() {
         // set the gluster volume name for audit purpose
         setGlusterVolumeName(volume.getName());
+
+        if(volume.getTransportTypes() == null || volume.getTransportTypes().isEmpty()) {
+            volume.addTransportType(TransportType.TCP);
+        }
 
         // GLUSTER access protocol is enabled by default
         volume.addAccessProtocol(AccessProtocol.GLUSTER);
