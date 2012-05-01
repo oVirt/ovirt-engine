@@ -160,7 +160,8 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
 
         Snapshot snapshot = getSnapshotDao().get(getParameters().getDstSnapshotId());
         SnapshotsValidator snapshotsValidator = new SnapshotsValidator();
-        result = result && validate(new SnapshotsValidator().vmNotDuringSnapshot(getVmId()))
+        result = result && validate(snapshotsValidator.vmNotDuringSnapshot(getVmId()))
+                && validate(snapshotsValidator.snapshotExists(snapshot))
                 && validate(snapshotsValidator.snapshotNotBroken(snapshot));
 
         if (vmDisk != null) {

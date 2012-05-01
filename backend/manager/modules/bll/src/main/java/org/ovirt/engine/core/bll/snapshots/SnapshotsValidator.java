@@ -40,6 +40,43 @@ public class SnapshotsValidator {
                 new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VM_SNAPSHOT_IS_BROKEN) : new ValidationResult();
     }
 
+    /**
+     * Check if the given snapshot id exists for the given VM in the DB.
+     *
+     * @param vmId
+     *            ID of VM to check for.
+     * @param snapshotId
+     *            Snapshot ID to check.
+     * @return Snapshot exists or not.
+     */
+    public ValidationResult snapshotExists(Guid vmId, Guid snapshotId) {
+        return createSnapshotExistsResult(getSnapshotDao().exists(vmId, snapshotId));
+    }
+
+    /**
+     * Check if the given snapshot is null, then it means it doesn't exist.
+     *
+     * @param snapshot
+     *            Snapshot to check.
+     * @return Snapshot exists (not null) or not.
+     */
+    public ValidationResult snapshotExists(Snapshot snapshot) {
+        return createSnapshotExistsResult(snapshot != null);
+    }
+
+    /**
+     * Create result that indicates if snapshot exists or not.
+     *
+     * @param snapshotExists
+     *            Does the snapshot exist?
+     * @return Result that either contains the suitable error or not.
+     */
+    private ValidationResult createSnapshotExistsResult(boolean snapshotExists) {
+        return snapshotExists
+                ? new ValidationResult()
+                : new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VM_SNAPSHOT_DOES_NOT_EXIST);
+    }
+
     protected SnapshotDao getSnapshotDao() {
         return DbFacade.getInstance().getSnapshotDao();
     }

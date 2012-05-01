@@ -10,6 +10,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.ovirt.engine.core.bll.ValidationResult;
+import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
@@ -39,7 +40,8 @@ public class SnapshotsValidatorTest {
 
         when(snapshotDao.exists(vmId, SnapshotStatus.LOCKED)).thenReturn(true);
 
-        validateVmNotDuringSnapshot(vmId, false, VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_DURING_SNAPSHOT);
+        validateInvalidResult(validator.vmNotDuringSnapshot(vmId),
+                VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_DURING_SNAPSHOT);
     }
 
     @Test
@@ -48,18 +50,74 @@ public class SnapshotsValidatorTest {
 
         when(snapshotDao.exists(vmId, SnapshotStatus.LOCKED)).thenReturn(false);
 
-        validateVmNotDuringSnapshot(vmId, true, null);
+        validateValidResult(validator.vmNotDuringSnapshot(vmId));
+    }
+
+    @Test
+    public void snapshotExistsByGuidReturnsInvalidResultWhenNoSnapshot() throws Exception {
+        Guid vmId = Guid.NewGuid();
+        Guid snapshotId = Guid.NewGuid();
+
+        when(snapshotDao.exists(vmId, snapshotId)).thenReturn(false);
+
+        validateInvalidResult(validator.snapshotExists(vmId, snapshotId),
+                VdcBllMessages.ACTION_TYPE_FAILED_VM_SNAPSHOT_DOES_NOT_EXIST);
+    }
+
+    @Test
+    public void snapshotExistsByGuidReturnsValidResultWhenSnapshotExists() throws Exception {
+        Guid vmId = Guid.NewGuid();
+        Guid snapshotId = Guid.NewGuid();
+
+        when(snapshotDao.exists(vmId, snapshotId)).thenReturn(true);
+
+        validateValidResult(validator.snapshotExists(vmId, snapshotId));
+    }
+
+    @Test
+    public void snapshotExistsBySnapshotReturnsInvalidResultWhenNoSnapshot() throws Exception {
+        validateInvalidResult(validator.snapshotExists(null),
+                VdcBllMessages.ACTION_TYPE_FAILED_VM_SNAPSHOT_DOES_NOT_EXIST);
+    }
+
+    @Test
+    public void snapshotExistsBySnapshotReturnsValidResultWhenSnapshotExists() throws Exception {
+        validateValidResult(validator.snapshotExists(new Snapshot()));
     }
 
     /**
-     * Run the method and validate that the result is as expected.
+     * Validate that the given result is valid.
      *
-     * @param vmId
-     * @param isValid
-     * @param message
+     * @param validationResult
+     *            The result.
      */
-    private void validateVmNotDuringSnapshot(Guid vmId, boolean isValid, VdcBllMessages message) {
-        ValidationResult validationResult = validator.vmNotDuringSnapshot(vmId);
+    private void validateValidResult(ValidationResult validationResult) {
+        validateResult(validationResult, true, null);
+    }
+
+    /**
+     * Validate that the given result is invalid and contains the given message.
+     *
+     * @param validationResult
+     *            The result.
+     * @param message
+     *            The error to expect.
+     */
+    private void validateInvalidResult(ValidationResult validationResult, VdcBllMessages message) {
+        validateResult(validationResult, false, message);
+    }
+
+    /**
+     * Validate that the result is as expected.
+     *
+     * @param validationResult
+     *            The result.
+     * @param isValid
+     *            Should be valid or not?
+     * @param message
+     *            The error to expect.
+     */
+    private void validateResult(ValidationResult validationResult, boolean isValid, VdcBllMessages message) {
         assertEquals(isValid, validationResult.isValid());
         assertEquals(message, validationResult.getMessage());
     }

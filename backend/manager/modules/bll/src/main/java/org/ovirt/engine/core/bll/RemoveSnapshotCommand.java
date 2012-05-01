@@ -118,7 +118,12 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
         // Since 'VmId' is overriden, 'Vm' should be retrieved manually.
         setVm(DbFacade.getInstance().getVmDAO().get(getVmId()));
 
-        getReturnValue().setCanDoAction(validate(new SnapshotsValidator().vmNotDuringSnapshot(getVmId())));
+        SnapshotsValidator snapshotsValidator = new SnapshotsValidator();
+        getReturnValue().setCanDoAction(validate(snapshotsValidator.vmNotDuringSnapshot(getVmId())));
+
+        if (!validate(snapshotsValidator.snapshotExists(getVmId(), getParameters().getSnapshotId()))) {
+            getReturnValue().setCanDoAction(false);
+        }
 
         if (!ImagesHandler.PerformImagesChecks(getVm(), getReturnValue().getCanDoActionMessages(),
                 getVm().getstorage_pool_id(), Guid.Empty, true, true,
