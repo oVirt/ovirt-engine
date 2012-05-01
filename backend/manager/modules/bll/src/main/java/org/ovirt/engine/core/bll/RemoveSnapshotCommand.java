@@ -21,6 +21,7 @@ import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -35,9 +36,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
     }
 
     private void initializeObjectState() {
-        Snapshot snapshot = DbFacade
-                .getInstance()
-                .getSnapshotDao().get(getParameters().getSnapshotId());
+        Snapshot snapshot = getSnapshotDao().get(getParameters().getSnapshotId());
         if (snapshot != null) {
             setSnapshotName(snapshot.getDescription());
         }
@@ -65,9 +64,9 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
 
             @Override
             public Void runInTransaction() {
-                Snapshot snapshot = DbFacade.getInstance().getSnapshotDao().get(getParameters().getSnapshotId());
+                Snapshot snapshot = getSnapshotDao().get(getParameters().getSnapshotId());
                 getCompensationContext().snapshotEntityStatus(snapshot, snapshot.getStatus());
-                DbFacade.getInstance().getSnapshotDao().updateStatus(
+                getSnapshotDao().updateStatus(
                         getParameters().getSnapshotId(), SnapshotStatus.LOCKED);
                 getCompensationContext().stateChanged();
                 return null;
@@ -105,7 +104,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
     @Override
     protected void EndVmCommand() {
         if (getParameters().getTaskGroupSuccess()) {
-            DbFacade.getInstance().getSnapshotDao().remove(getParameters().getSnapshotId());
+            getSnapshotDao().remove(getParameters().getSnapshotId());
         }
 
         super.EndVmCommand();
@@ -168,5 +167,9 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
     @Override
     protected Map<String, Guid> getExclusiveLocks() {
         return Collections.singletonMap(LockingGroup.VM.name(), (Guid) getVmId());
+    }
+
+    private SnapshotDao getSnapshotDao() {
+        return DbFacade.getInstance().getSnapshotDao();
     }
 }
