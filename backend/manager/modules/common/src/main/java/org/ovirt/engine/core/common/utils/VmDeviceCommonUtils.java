@@ -2,8 +2,10 @@ package org.ovirt.engine.core.common.utils;
 
 import java.util.List;
 
+import org.ovirt.engine.core.common.businessentities.BaseDisk;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
-import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.Disk;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.config.Config;
@@ -43,11 +45,11 @@ public class VmDeviceCommonUtils {
      * @param bootSequence
      * @param isOldCluster
      */
-    public static void updateVmDevicesBootOrder(VmBase vmBase,
+    public static void updateVmDevicesBootOrder(VM vm,
             List<VmDevice> devices,
-            BootSequence bootSequence,
             boolean isOldCluster) {
         int bootOrder = 0;
+        VmBase vmBase = vm.getStaticData();
         // reset current boot order of all relevant devices before recomputing it.
         for (VmDevice device : devices) {
             if (isBootable(device)) {
@@ -55,25 +57,25 @@ public class VmDeviceCommonUtils {
                 device.setBootOrder(0);
             }
         }
-        switch (bootSequence) {
+        switch (vmBase.getdefault_boot_sequence()) {
         case C:
-            bootOrder = setDiskBootOrder(vmBase, devices, bootOrder, isOldCluster);
+            bootOrder = setDiskBootOrder(vm, devices, bootOrder, isOldCluster);
             break;
         case CD:
-            bootOrder = setDiskBootOrder(vmBase, devices, bootOrder, isOldCluster);
+            bootOrder = setDiskBootOrder(vm, devices, bootOrder, isOldCluster);
             bootOrder = setCDBootOrder(devices, bootOrder);
             break;
         case CDN:
-            bootOrder = setDiskBootOrder(vmBase, devices, bootOrder, isOldCluster);
+            bootOrder = setDiskBootOrder(vm, devices, bootOrder, isOldCluster);
             bootOrder = setCDBootOrder(devices, bootOrder);
             bootOrder = setNetworkBootOrder(devices, bootOrder);
             break;
         case CN:
-            bootOrder = setDiskBootOrder(vmBase, devices, bootOrder, isOldCluster);
+            bootOrder = setDiskBootOrder(vm, devices, bootOrder, isOldCluster);
             bootOrder = setNetworkBootOrder(devices, bootOrder);
             break;
         case CND:
-            bootOrder = setDiskBootOrder(vmBase, devices, bootOrder, isOldCluster);
+            bootOrder = setDiskBootOrder(vm, devices, bootOrder, isOldCluster);
             bootOrder = setNetworkBootOrder(devices, bootOrder);
             bootOrder = setCDBootOrder(devices, bootOrder);
             break;
@@ -82,11 +84,11 @@ public class VmDeviceCommonUtils {
             break;
         case DC:
             bootOrder = setCDBootOrder(devices, bootOrder);
-            bootOrder = setDiskBootOrder(vmBase, devices, bootOrder, isOldCluster);
+            bootOrder = setDiskBootOrder(vm, devices, bootOrder, isOldCluster);
             break;
         case DCN:
             bootOrder = setCDBootOrder(devices, bootOrder);
-            bootOrder = setDiskBootOrder(vmBase, devices, bootOrder, isOldCluster);
+            bootOrder = setDiskBootOrder(vm, devices, bootOrder, isOldCluster);
             bootOrder = setNetworkBootOrder(devices, bootOrder);
             break;
         case DN:
@@ -96,18 +98,18 @@ public class VmDeviceCommonUtils {
         case DNC:
             bootOrder = setCDBootOrder(devices, bootOrder);
             bootOrder = setNetworkBootOrder(devices, bootOrder);
-            bootOrder = setDiskBootOrder(vmBase, devices, bootOrder, isOldCluster);
+            bootOrder = setDiskBootOrder(vm, devices, bootOrder, isOldCluster);
             break;
         case N:
             bootOrder = setNetworkBootOrder(devices, bootOrder);
             break;
         case NC:
             bootOrder = setNetworkBootOrder(devices, bootOrder);
-            bootOrder = setDiskBootOrder(vmBase, devices, bootOrder, isOldCluster);
+            bootOrder = setDiskBootOrder(vm, devices, bootOrder, isOldCluster);
             break;
         case NCD:
             bootOrder = setNetworkBootOrder(devices, bootOrder);
-            bootOrder = setDiskBootOrder(vmBase, devices, bootOrder, isOldCluster);
+            bootOrder = setDiskBootOrder(vm, devices, bootOrder, isOldCluster);
             bootOrder = setCDBootOrder(devices, bootOrder);
             break;
         case ND:
@@ -117,7 +119,7 @@ public class VmDeviceCommonUtils {
         case NDC:
             bootOrder = setNetworkBootOrder(devices, bootOrder);
             bootOrder = setCDBootOrder(devices, bootOrder);
-            bootOrder = setDiskBootOrder(vmBase, devices, bootOrder, isOldCluster);
+            bootOrder = setDiskBootOrder(vm, devices, bootOrder, isOldCluster);
             break;
         }
     }
@@ -174,7 +176,10 @@ public class VmDeviceCommonUtils {
      * @param isOldCluster
      * @return
      */
-    private static int setDiskBootOrder(VmBase vmBase, List<VmDevice> devices, int bootOrder, boolean isOldCluster) {
+    private static int setDiskBootOrder(VM vm,
+            List<VmDevice> devices,
+            int bootOrder,
+            boolean isOldCluster) {
         for (VmDevice device : devices) {
             if (device.getType()
                     .equals(VmDeviceType.DISK.getName())
@@ -182,27 +187,27 @@ public class VmDeviceCommonUtils {
                             VmDeviceType.DISK.getName())) {
                 Guid id = device.getDeviceId();
                 if (id != null && !id.equals(Guid.Empty)) {
-                    if (isOldCluster) { // Only one system disk can be bootable in
-                                        // old version.
-                        DiskImage diskImage = null;
-                        // gets the image disk
-                        for (DiskImage image : vmBase.getDiskList()) {
-                            if (image.getimage_group_id().equals(id)) {
-                                diskImage = image;
-                                break;
-                            }
-                        }
-                        if (diskImage != null && diskImage.isBoot()) {
-                            device.setBootOrder(++bootOrder);
+                    // gets the image disk
+                    BaseDisk disk = getDisk(vm, id);
+                    if (disk != null && disk.isBoot()) {
+                        device.setBootOrder(++bootOrder);
+                        if (isOldCluster) { // Only one system disk can be bootable in old version.
                             break;
                         }
-                    } else { // supporting more than 1 bootable disk in 3.1 and up.
-                        device.setBootOrder(++bootOrder);
                     }
                 }
             }
         }
         return bootOrder;
+    }
+
+    private static Disk getDisk(VM vm, Guid id) {
+        for (Disk disk : vm.getDiskMap().values()) {
+            if (disk.getId().equals(id)) {
+                return disk;
+            }
+        }
+        return null;
     }
 
     /**

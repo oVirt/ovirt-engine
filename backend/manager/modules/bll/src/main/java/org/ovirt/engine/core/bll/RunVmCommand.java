@@ -115,6 +115,8 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
             setVdsSelector(new VdsSelector(getVm(), destVdsId, true));
 
             refreshBootParameters(runVmParameters);
+            // set vm disks
+            VmHandler.updateDisksForVm(getVm(), DbFacade.getInstance().getDiskDao().getAllForVm(getVm().getId()));
         }
     }
 

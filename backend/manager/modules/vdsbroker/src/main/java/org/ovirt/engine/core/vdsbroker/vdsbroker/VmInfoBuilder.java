@@ -16,8 +16,8 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
+import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
@@ -392,9 +392,8 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         //Check if boot sequence in parameters is diffrent from default boot sequence
         if (managedDevices != null) {
             // recalculate boot order from source devices and set it to target devices
-            VmDeviceCommonUtils.updateVmDevicesBootOrder(vm.getStaticData(),
+            VmDeviceCommonUtils.updateVmDevicesBootOrder(vm,
                     managedDevices,
-                    vm.getboot_sequence(),
                     VmDeviceCommonUtils.isOldClusterVersion(vm.getvds_group_compatibility_version()));
             for (VmDevice vmDevice : managedDevices) {
                 for (XmlRpcStruct struct : devices) {

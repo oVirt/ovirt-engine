@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.common.businessentities.BaseDisk;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -234,8 +235,9 @@ public class VmDeviceUtils {
                 device.setBootOrder(0);
             }
             VM vm = DbFacade.getInstance().getVmDAO().get(vmBase.getId());
+            VmHandler.updateDisksForVm(vm, DbFacade.getInstance().getDiskDao().getAllForVm(vm.getId()));
             boolean isOldCluster = VmDeviceCommonUtils.isOldClusterVersion(vm.getvds_group_compatibility_version());
-            VmDeviceCommonUtils.updateVmDevicesBootOrder(vmBase, devices, vmBase.getdefault_boot_sequence(), isOldCluster);
+            VmDeviceCommonUtils.updateVmDevicesBootOrder(vm, devices, isOldCluster);
             // update boot order in vm device
             for (VmDevice device : devices) {
                 dao.update(device);
