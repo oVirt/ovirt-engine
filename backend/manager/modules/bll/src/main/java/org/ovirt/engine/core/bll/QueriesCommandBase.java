@@ -10,7 +10,6 @@ import org.ovirt.engine.core.bll.session.SessionDataContainer;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.interfaces.IVdcUser;
 import org.ovirt.engine.core.common.queries.GetAllVmSnapshotsByDriveQueryReturnValue;
-import org.ovirt.engine.core.common.queries.LicenseReturnValue;
 import org.ovirt.engine.core.common.queries.SearchReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -39,9 +38,6 @@ public abstract class QueriesCommandBase<P extends VdcQueryParametersBase> exten
         }
         else if (getClass().getName().endsWith("SearchQuery")) {
             return new SearchReturnValue();
-        }
-        else if (getClass().getName().endsWith("IsLicenseValidQuery")) {
-            return new LicenseReturnValue();
         } else {
             return new VdcQueryReturnValue();
         }

@@ -1428,22 +1428,6 @@ public final class DataProvider
 
 	public static boolean IsLicenseValid(RefObject<java.util.List<String>> reasons)
 	{
-		//LicenseReturnValue returnValue = null;
-		//try
-		//{
-		//    returnValue = (LicenseReturnValue)Frontend.RunPublicQuery(VdcQueryType.IsLicenseValid,
-		//         new VdcQueryParametersBase());
-		//}
-		//catch
-		//{
-		//}
-
-		//if (returnValue != null && returnValue.Succeeded && returnValue.Messages.Count == 0)
-		//{
-		//    reasons = new List<string>();
-		//    return true;
-		//}
-
 		reasons.argvalue = null; // returnValue.Messages;
 		return true;
 	}

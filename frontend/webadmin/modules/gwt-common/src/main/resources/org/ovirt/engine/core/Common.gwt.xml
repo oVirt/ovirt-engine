@@ -197,7 +197,6 @@
 			name="common/queries/VdcQueryReturnValue_CustomFieldSerializer.java" />
 		<include name="common/queries/SearchParameters.java" />
 		<include name="common/queries/SearchReturnValue.java" />
-		<include name="common/queries/LicenseReturnValue.java" />
 		<include name="common/interfaces/SearchType.java" />
 		<include
 			name="common/queries/GetAllVmSnapshotsByDriveQueryReturnValue.java" />
