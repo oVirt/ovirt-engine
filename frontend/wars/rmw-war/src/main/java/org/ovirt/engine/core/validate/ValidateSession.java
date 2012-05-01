@@ -73,7 +73,7 @@ public class ValidateSession extends HttpServlet {
                 VdcUser vdcUser = (VdcUser) queryReturnValue.getReturnValue();
 
                 // We get the user name only in case the validation succeeded, and the user is an administrator
-                if (isAdminUser(vdcUser)) {
+                if (vdcUser.isAdmin()) {
                     log.debug("Getting user name");
                     printUPNToResponse(response, getUPN(vdcUser));
                 } else {
@@ -103,10 +103,5 @@ public class ValidateSession extends HttpServlet {
             retVal = retVal + "@" + vdcUser.getDomainControler();
         }
         return retVal;
-    }
-
-    private boolean isAdminUser(VdcUser vdcUser) {
-        // In the meantime we use MLA to acquire this information, until this data will be available on the VdcUser object (or other similar object)
-        return MultiLevelAdministrationHandler.isAdminUser(vdcUser.getUserId());
     }
 }
