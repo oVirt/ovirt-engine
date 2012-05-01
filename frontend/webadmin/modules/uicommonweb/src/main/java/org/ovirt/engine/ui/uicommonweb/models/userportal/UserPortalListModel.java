@@ -366,7 +366,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                     {
                         userPortalListModel.CustomPropertiesKeysList.put(keyValuePair.getKey(),
                                 new java.util.ArrayList<String>());
-                        for (String s : keyValuePair.getValue().split("[;]", -1))
+                        for (String s : keyValuePair.getValue().split("[;]", -1)) //$NON-NLS-1$
                         {
                             userPortalListModel.CustomPropertiesKeysList.get(keyValuePair.getKey()).add(s);
                         }

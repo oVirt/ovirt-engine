@@ -232,7 +232,7 @@ public class VmSnapshotListModel extends SearchableListModel
                                 {
                                     model.getCustomPropertiesKeysList().put(keyValuePair.getKey(),
                                             new java.util.ArrayList<String>());
-                                    for (String s : keyValuePair.getValue().split("[;]", -1))
+                                    for (String s : keyValuePair.getValue().split("[;]", -1)) //$NON-NLS-1$
                                     {
                                         model.getCustomPropertiesKeysList().get(keyValuePair.getKey()).add(s);
                                     }
