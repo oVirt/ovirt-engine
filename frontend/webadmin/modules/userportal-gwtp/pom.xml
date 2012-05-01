@@ -255,6 +255,9 @@
 				</configuration> </plugin> -->
 			<plugin>
 				<artifactId>maven-checkstyle-plugin</artifactId>
+				<configuration>
+         		 	<propertyExpansion>runNlsCheck=true</propertyExpansion>
+        		</configuration>
 			</plugin>
 		</plugins>
 	</build>

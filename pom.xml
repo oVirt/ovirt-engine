@@ -9,7 +9,7 @@
   <name>oVirt Engine Root Project</name>
 
   <modules>
-    <module>build-tools</module>
+    <module>build-tools-root</module>
     <module>backend</module>
     <module>frontend</module>
     <module>ear</module>
@@ -406,14 +406,20 @@
           <dependencies>
             <dependency>
               <groupId>org.ovirt.engine</groupId>
-              <artifactId>build-tools</artifactId>
-              <version>3.1.0-0001</version>
+              <artifactId>checkstyles</artifactId>
+              <version>${engine.version}</version>
             </dependency>
+            <dependency>
+              <groupId>org.ovirt.engine</groupId>
+              <artifactId>ovirt-checkstyle-extension</artifactId>
+               <version>${engine.version}</version>
+             </dependency>
           </dependencies>
           <configuration>
             <consoleOutput>true</consoleOutput>
             <includeTestSourceDirectory>true</includeTestSourceDirectory>
             <configLocation>checkstyle.xml</configLocation>
+            <propertyExpansion>runNlsCheck=false</propertyExpansion>
           </configuration>
           <executions>
             <execution>
