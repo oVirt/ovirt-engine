@@ -1,379 +1,347 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-
-	<parent>
-		<artifactId>webadmin-modules</artifactId>
-		<groupId>org.ovirt.engine.ui</groupId>
-		<version>3.1.0-0001</version>
-	</parent>
-
-	<artifactId>webadmin</artifactId>
-	<packaging>war</packaging>
-	<name>WebAdmin</name>
-	<description>oVirt Web based Administration GUI</description>
-
-	<properties>
-		<!--TODO: Will be inherited from top module -->
-		<gwt.version>2.3.0</gwt.version>
-		<gwt-maven-plugin.version>2.3.0-1</gwt-maven-plugin.version>
-
-		<!-- Activate load time weaving of the aspects -->
-		<aspectj.agent>-javaagent:${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar</aspectj.agent>
-
-		<!-- Regular expression that matches the types that the GWT compiler shouldn't prune -->
-		<gwt.dontPrune>-Dgwt.dontPrune=org\.ovirt\.engine\.core\.(common|compat)\..*</gwt.dontPrune>
-
-		<!-- This can be overidded by setting this property in your personal settings.xml -->
-		<gwt-plugin.extraJvmArgs>${aspectj.agent} -Xms1024M -Xmx2048M -XX:PermSize=256M -XX:MaxPermSize=256M ${gwt.dontPrune}</gwt-plugin.extraJvmArgs>
-
-		<!-- Set gwt.userAgent property via the resource plugin during the resource phase,
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <artifactId>webadmin-modules</artifactId>
+    <groupId>org.ovirt.engine.ui</groupId>
+    <version>3.1.0-0001</version>
+  </parent>
+  <artifactId>webadmin</artifactId>
+  <packaging>war</packaging>
+  <name>WebAdmin</name>
+  <description>oVirt Web based Administration GUI</description>
+  <properties>
+    <!--TODO: Will be inherited from top module -->
+    <gwt.version>2.3.0</gwt.version>
+    <gwt-maven-plugin.version>2.3.0-1</gwt-maven-plugin.version>
+    <!-- Activate load time weaving of the aspects -->
+    <aspectj.agent>-javaagent:${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar</aspectj.agent>
+    <!-- Regular expression that matches the types that the GWT compiler shouldn't prune -->
+    <gwt.dontPrune>-Dgwt.dontPrune=org\.ovirt\.engine\.core\.(common|compat)\..*</gwt.dontPrune>
+    <!-- This can be overidded by setting this property in your personal settings.xml -->
+    <gwt-plugin.extraJvmArgs>${aspectj.agent} -Xms1024M -Xmx2048M -XX:PermSize=256M -XX:MaxPermSize=256M ${gwt.dontPrune}</gwt-plugin.extraJvmArgs>
+    <!-- Set gwt.userAgent property via the resource plugin during the resource phase,
 			By default, all browsers are supported, see [gwt-user.jar:com/google/gwt/user/UserAgent.gwt.xml] for a complete list -->
-		<gwt.userAgent>ie6,ie8,ie9,gecko1_8,safari,opera</gwt.userAgent>
-	</properties>
-
-	<!-- TODO: Define SCM -->
-	<dependencies>
-		<!-- Google Web Toolkit dependencies -->
-		<dependency>
-			<groupId>com.google.gwt</groupId>
-			<artifactId>gwt-user</artifactId>
-			<version>${gwt.version}</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>com.google.gwt</groupId>
-			<artifactId>gwt-dev</artifactId>
-			<version>${gwt.version}</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>com.google.gwt</groupId>
-			<artifactId>gwt-servlet</artifactId>
-			<version>${gwt.version}</version>
-			<scope>runtime</scope>
-		</dependency>
-
-		<!-- GWTP MVP component -->
-		<dependency>
-			<groupId>com.gwtplatform</groupId>
-			<artifactId>gwtp-mvp-client</artifactId>
-			<version>${gwtp.version}</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>com.gwtplatform</groupId>
-			<artifactId>gwtp-processors</artifactId>
-			<version>${gwtp.version}</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<!-- Guice and GIN -->
-		<dependency>
-			<groupId>com.google.inject</groupId>
-			<artifactId>guice</artifactId>
-			<version>${guice.version}</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>com.google.inject.extensions</groupId>
-			<artifactId>guice-assistedinject</artifactId>
-			<version>${guice.version}</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>com.google.gwt.inject</groupId>
-			<artifactId>gin</artifactId>
-			<version>${gin.version}</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<!-- Unit testing -->
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>${junit.version}</version>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-core</artifactId>
-			<version>${mockito.version}</version>
-			<scope>test</scope>
-		</dependency>
-
-		<!-- oVirt dependencies -->
-		<dependency>
-			<groupId>${engine.groupId}</groupId>
-			<artifactId>uicommonweb</artifactId>
-			<version>${engine.version}</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>${engine.groupId}</groupId>
-			<artifactId>gwt-common</artifactId>
-			<version>${engine.version}</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>${engine.groupId}</groupId>
-			<artifactId>genericapi</artifactId>
-			<version>${engine.version}</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>${engine.groupId}</groupId>
-			<artifactId>frontend</artifactId>
-			<version>${engine.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>${engine.groupId}</groupId>
-			<artifactId>gwt-extension</artifactId>
-			<version>${engine.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>javax.xml.bind</groupId>
-			<artifactId>jaxb-api</artifactId>
-			<version>2.1</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.jboss.spec.javax.ejb</groupId>
-			<artifactId>jboss-ejb-api_3.1_spec</artifactId>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.aspectj</groupId>
-			<artifactId>aspectjweaver</artifactId>
-			<scope>provided</scope>
-			<version>${aspectj.version}</version>
-		</dependency>
-	</dependencies>
-
-	<build>
-		<outputDirectory>${project.build.directory}/${project.build.finalName}/WEB-INF/classes
+    <gwt.userAgent>ie6,ie8,ie9,gecko1_8,safari,opera</gwt.userAgent>
+  </properties>
+  <!-- TODO: Define SCM -->
+  <dependencies>
+    <!-- Google Web Toolkit dependencies -->
+    <dependency>
+      <groupId>com.google.gwt</groupId>
+      <artifactId>gwt-user</artifactId>
+      <version>${gwt.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.google.gwt</groupId>
+      <artifactId>gwt-dev</artifactId>
+      <version>${gwt.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.google.gwt</groupId>
+      <artifactId>gwt-servlet</artifactId>
+      <version>${gwt.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+    <!-- GWTP MVP component -->
+    <dependency>
+      <groupId>com.gwtplatform</groupId>
+      <artifactId>gwtp-mvp-client</artifactId>
+      <version>${gwtp.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.gwtplatform</groupId>
+      <artifactId>gwtp-processors</artifactId>
+      <version>${gwtp.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <!-- Guice and GIN -->
+    <dependency>
+      <groupId>com.google.inject</groupId>
+      <artifactId>guice</artifactId>
+      <version>${guice.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.google.inject.extensions</groupId>
+      <artifactId>guice-assistedinject</artifactId>
+      <version>${guice.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.google.gwt.inject</groupId>
+      <artifactId>gin</artifactId>
+      <version>${gin.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <!-- Unit testing -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>${junit.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <version>${mockito.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <!-- oVirt dependencies -->
+    <dependency>
+      <groupId>${engine.groupId}</groupId>
+      <artifactId>uicommonweb</artifactId>
+      <version>${engine.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>${engine.groupId}</groupId>
+      <artifactId>gwt-common</artifactId>
+      <version>${engine.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>${engine.groupId}</groupId>
+      <artifactId>genericapi</artifactId>
+      <version>${engine.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>${engine.groupId}</groupId>
+      <artifactId>frontend</artifactId>
+      <version>${engine.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${engine.groupId}</groupId>
+      <artifactId>gwt-extension</artifactId>
+      <version>${engine.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>javax.xml.bind</groupId>
+      <artifactId>jaxb-api</artifactId>
+      <version>2.1</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.spec.javax.ejb</groupId>
+      <artifactId>jboss-ejb-api_3.1_spec</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.aspectj</groupId>
+      <artifactId>aspectjweaver</artifactId>
+      <scope>provided</scope>
+      <version>${aspectj.version}</version>
+    </dependency>
+  </dependencies>
+  <build>
+    <outputDirectory>${project.build.directory}/${project.build.finalName}/WEB-INF/classes
 		</outputDirectory>
-
-		<!-- Currently maven resource sttructure contains all static content. -->
-		<resources>
-			<resource>
-				<targetPath>${project.build.directory}/generated-sources/gwt</targetPath>
-				<directory>src/main/resources</directory>
-				<filtering>true</filtering>
-			</resource>
-			<resource>
-				<directory>src/main/java</directory>
-				<includes>
-					<include>**/*.java</include>
-				</includes>
-			</resource>
-		</resources>
-
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-war-plugin</artifactId>
-				<version>${maven-war-plugin.version}</version>
-				<configuration>
-					<packagingExcludes>WEB-INF/deploy/**,WEB-INF/classes/**</packagingExcludes>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>${maven-compiler-plugin.version}</version>
-			</plugin>
-			<plugin>
-				<groupId>org.bsc.maven</groupId>
-				<artifactId>maven-processor-plugin</artifactId>
-				<version>${maven-processor-plugin.version}</version>
-				<executions>
-					<execution>
-						<id>process</id>
-						<goals>
-							<goal>process</goal>
-						</goals>
-						<phase>generate-sources</phase>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-resources-plugin</artifactId>
-				<version>${maven-resources-plugin.version}</version>
-			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>build-helper-maven-plugin</artifactId>
-				<version>${build-helper-maven-plugin.version}</version>
-				<executions>
-					<execution>
-						<id>add-apt-sources</id>
-						<phase>generate-sources</phase>
-						<goals>
-							<goal>add-source</goal>
-						</goals>
-						<configuration>
-							<sources>
-								<source>${project.build.directory}/${generatedSourcesDirectory}</source>
-								<source>${project.build.directory}/generated-sources/gwt</source>
-							</sources>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<!-- <plugin> <groupId>org.codehaus.mojo</groupId> <artifactId>gwt-maven-plugin</artifactId>
+    <!-- Currently maven resource sttructure contains all static content. -->
+    <resources>
+      <resource>
+        <targetPath>${project.build.directory}/generated-sources/gwt</targetPath>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+      </resource>
+      <resource>
+        <directory>src/main/java</directory>
+        <includes>
+          <include>**/*.java</include>
+        </includes>
+      </resource>
+    </resources>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>${maven-war-plugin.version}</version>
+        <configuration>
+          <packagingExcludes>WEB-INF/deploy/**,WEB-INF/classes/**</packagingExcludes>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>${maven-compiler-plugin.version}</version>
+      </plugin>
+      <plugin>
+        <groupId>org.bsc.maven</groupId>
+        <artifactId>maven-processor-plugin</artifactId>
+        <version>${maven-processor-plugin.version}</version>
+        <executions>
+          <execution>
+            <id>process</id>
+            <goals>
+              <goal>process</goal>
+            </goals>
+            <phase>generate-sources</phase>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>${maven-resources-plugin.version}</version>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <version>${build-helper-maven-plugin.version}</version>
+        <executions>
+          <execution>
+            <id>add-apt-sources</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>add-source</goal>
+            </goals>
+            <configuration>
+              <sources>
+                <source>${project.build.directory}/${generatedSourcesDirectory}</source>
+                <source>${project.build.directory}/generated-sources/gwt</source>
+              </sources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <!-- <plugin> <groupId>org.codehaus.mojo</groupId> <artifactId>gwt-maven-plugin</artifactId>
 				<executions> <execution> <goals> <goal>compile</goal> <goal>test</goal> </goals>
 				</execution> </executions> <configuration> <runTarget>webadmin/Application.html</runTarget>
 				<extraJvmArgs>${gwt-plugin.extraJvmArgs}</extraJvmArgs> <debugSuspend>false</debugSuspend>
 				</configuration> </plugin> -->
-
-			<!-- ====================================================================== -->
-			<!-- It's possible to use the target/web.xml file mergewebxml produces,
+      <!-- ====================================================================== -->
+      <!-- It's possible to use the target/web.xml file mergewebxml produces,
 				by -->
-			<!-- making the war plugin to use it. It's possible to exclude what -->
-			<!-- neccessary from the final artifact here. -->
-			<!-- ====================================================================== -->
-			<!-- <plugin> <artifactId>maven-war-plugin</artifactId> <configuration>
+      <!-- making the war plugin to use it. It's possible to exclude what -->
+      <!-- neccessary from the final artifact here. -->
+      <!-- ====================================================================== -->
+      <!-- <plugin> <artifactId>maven-war-plugin</artifactId> <configuration>
 				<webXml>target/web.xml</webXml> <warSourceExcludes>.gwt-tmp/**</warSourceExcludes>
 				</configuration> </plugin> <plugin> <artifactId>maven-compiler-plugin</artifactId>
 				<configuration> <source>${maven.compiler.source}</source> <target>${maven.compiler.target}</target>
 				</configuration> </plugin> -->
-			<plugin>
-				<artifactId>maven-checkstyle-plugin</artifactId>
-				<configuration>
-         		 	<propertyExpansion>runNlsCheck=true</propertyExpansion>
-        		</configuration>
-			</plugin>
-		</plugins>
-	</build>
-
-	<profiles>
-		<profile>
-			<id>gwt-admin</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>gwt-maven-plugin</artifactId>
-						<version>${gwt-maven-plugin.version}</version>
-						<dependencies>
-							<dependency>
-								<groupId>com.google.gwt</groupId>
-								<artifactId>gwt-user</artifactId>
-								<version>${gwt.version}</version>
-							</dependency>
-							<dependency>
-								<groupId>com.google.gwt</groupId>
-								<artifactId>gwt-dev</artifactId>
-								<version>${gwt.version}</version>
-							</dependency>
-							<dependency>
-								<groupId>com.google.gwt</groupId>
-								<artifactId>gwt-servlet</artifactId>
-								<version>${gwt.version}</version>
-							</dependency>
-							<!-- Add gwt-extension aspjects to the GWT compiler classpath -->
-							<dependency>
-								<groupId>${engine.groupId}</groupId>
-								<artifactId>gwt-extension</artifactId>
-								<version>${engine.version}</version>
-							</dependency>
-						</dependencies>
-						<configuration>
-							<logLevel>INFO</logLevel>
-							<style>OBF</style>
-							<runTarget>/webadmin/webadmin/WebAdmin.html</runTarget>
-							<port>8080</port>
-							<noServer>true</noServer>
-							<bindAddress>0.0.0.0</bindAddress>
-							<gen>gen</gen>
-							<extraJvmArgs>${gwt-plugin.extraJvmArgs}</extraJvmArgs>
-							<copyWebapp>true</copyWebapp>
-							<compileSourcesArtifacts>
-								<compileSourcesArtifact>${engine.groupId}:gwt-extension</compileSourcesArtifact>
-								<compileSourcesArtifact>${engine.groupId}:uicommonweb</compileSourcesArtifact>
-							</compileSourcesArtifacts>
-							<!--Why asm is excluded? -->
-							<runClasspathExcludes>
-								<runClasspathExclude>asm-3.3.jar</runClasspathExclude>
-							</runClasspathExcludes>
-						</configuration>
-						<executions>
-							<execution>
-								<id>gwtcompile</id>
-								<phase>prepare-package</phase>
-								<goals>
-									<goal>compile</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-		<profile>
-			<id>gwtdev</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>build-helper-maven-plugin</artifactId>
-						<version>${build-helper-maven-plugin.version}</version>
-						<executions>
-							<execution>
-								<id>add-source</id>
-								<phase>generate-sources</phase>
-								<goals>
-									<goal>add-source</goal>
-								</goals>
-								<configuration>
-									<sources>
-										<source>../uicommonweb/src/main/java</source>
-										<source>../gwt-extension/src/main/java</source>
-										<source>../frontend/src/main/java</source>
-										<source>../gwt-common/src/main/java</source>
-										<source>../gwt-common/target/${generatedSourcesDirectory}</source>
-									</sources>
-								</configuration>
-							</execution>
-							<execution>
-								<id>add-resource</id>
-								<phase>generate-sources</phase>
-								<goals>
-									<goal>add-resource</goal>
-								</goals>
-								<configuration>
-									<resources>
-										<resource>
-											<directory>../uicommonweb/src/main/resources</directory>
-											<directory>../gwt-extension/src/main/resources</directory>
-											<directory>../frontend/src/main/resources</directory>
-											<directory>../gwt-common/src/main/resources</directory>
-											<targetPath>resources</targetPath>
-										</resource>
-									</resources>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
-
+      <plugin>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <configuration>
+          <propertyExpansion>runNlsCheck=true</propertyExpansion>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  <profiles>
+    <profile>
+      <id>gwt-admin</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>gwt-maven-plugin</artifactId>
+            <version>${gwt-maven-plugin.version}</version>
+            <dependencies>
+              <dependency>
+                <groupId>com.google.gwt</groupId>
+                <artifactId>gwt-user</artifactId>
+                <version>${gwt.version}</version>
+              </dependency>
+              <dependency>
+                <groupId>com.google.gwt</groupId>
+                <artifactId>gwt-dev</artifactId>
+                <version>${gwt.version}</version>
+              </dependency>
+              <dependency>
+                <groupId>com.google.gwt</groupId>
+                <artifactId>gwt-servlet</artifactId>
+                <version>${gwt.version}</version>
+              </dependency>
+              <!-- Add gwt-extension aspjects to the GWT compiler classpath -->
+              <dependency>
+                <groupId>${engine.groupId}</groupId>
+                <artifactId>gwt-extension</artifactId>
+                <version>${engine.version}</version>
+              </dependency>
+            </dependencies>
+            <configuration>
+              <logLevel>INFO</logLevel>
+              <style>OBF</style>
+              <runTarget>/webadmin/webadmin/WebAdmin.html</runTarget>
+              <port>8080</port>
+              <noServer>true</noServer>
+              <bindAddress>0.0.0.0</bindAddress>
+              <gen>gen</gen>
+              <extraJvmArgs>${gwt-plugin.extraJvmArgs}</extraJvmArgs>
+              <copyWebapp>true</copyWebapp>
+              <compileSourcesArtifacts>
+                <compileSourcesArtifact>${engine.groupId}:gwt-extension</compileSourcesArtifact>
+                <compileSourcesArtifact>${engine.groupId}:uicommonweb</compileSourcesArtifact>
+              </compileSourcesArtifacts>
+              <!--Why asm is excluded? -->
+              <runClasspathExcludes>
+                <runClasspathExclude>asm-3.3.jar</runClasspathExclude>
+              </runClasspathExcludes>
+            </configuration>
+            <executions>
+              <execution>
+                <id>gwtcompile</id>
+                <phase>prepare-package</phase>
+                <goals>
+                  <goal>compile</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>gwtdev</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>build-helper-maven-plugin</artifactId>
+            <version>${build-helper-maven-plugin.version}</version>
+            <executions>
+              <execution>
+                <id>add-source</id>
+                <phase>generate-sources</phase>
+                <goals>
+                  <goal>add-source</goal>
+                </goals>
+                <configuration>
+                  <sources>
+                    <source>../uicommonweb/src/main/java</source>
+                    <source>../gwt-extension/src/main/java</source>
+                    <source>../frontend/src/main/java</source>
+                    <source>../gwt-common/src/main/java</source>
+                    <source>../gwt-common/target/${generatedSourcesDirectory}</source>
+                  </sources>
+                </configuration>
+              </execution>
+              <execution>
+                <id>add-resource</id>
+                <phase>generate-sources</phase>
+                <goals>
+                  <goal>add-resource</goal>
+                </goals>
+                <configuration>
+                  <resources>
+                    <resource>
+                      <directory>../uicommonweb/src/main/resources</directory>
+                      <directory>../gwt-extension/src/main/resources</directory>
+                      <directory>../frontend/src/main/resources</directory>
+                      <directory>../gwt-common/src/main/resources</directory>
+                      <targetPath>resources</targetPath>
+                    </resource>
+                  </resources>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>

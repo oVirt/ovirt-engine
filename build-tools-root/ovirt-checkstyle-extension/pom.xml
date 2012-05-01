@@ -8,7 +8,7 @@
   </parent>
   <artifactId>ovirt-checkstyle-extension</artifactId>
   <name>oVirt Checkstyle Checks</name>
-   <description>Extending the built-in validations of checkstyle with oVirt validations.</description>
+  <description>Extending the built-in validations of checkstyle with oVirt validations.</description>
   <dependencies>
     <dependency>
       <groupId>checkstyle</groupId>

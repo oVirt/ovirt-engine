@@ -1,90 +1,80 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-
-	<parent>
-		<groupId>org.ovirt.engine.ui</groupId>
-		<artifactId>webadmin-modules</artifactId>
-		<version>3.1.0-0001</version>
-	</parent>
-
-	<artifactId>gwt-extension</artifactId>
-	<packaging>jar</packaging>
-	<name>Extensions for GWT</name>
-
-	<properties>
-		<sourceDir>${project.basedir}/src/main/java</sourceDir>
-		<gwt-plugin.extraJvmArgs>-Xms1024M -Xmx1024M -XX:PermSize=256M -XX:MaxPermSize=256M</gwt-plugin.extraJvmArgs>
-		<!-- Versions need to be inherited -->
-		<gwt.version>2.3.0</gwt.version>
-	</properties>
-
-	<dependencies>
-		<dependency>
-			<groupId>com.google.gwt</groupId>
-			<artifactId>gwt-user</artifactId>
-			<version>${gwt.version}</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>com.google.gwt</groupId>
-			<artifactId>gwt-dev</artifactId>
-			<version>${gwt.version}</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>${engine.groupId}</groupId>
-			<artifactId>genericapi</artifactId>
-			<version>${engine.version}</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.aspectj</groupId>
-			<artifactId>aspectjrt</artifactId>
-			<version>${aspectj.version}</version>
-			<scope>provided</scope>
-		</dependency>
-	</dependencies>
-
-	<build>
-		<plugins>
-			<plugin>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<configuration>
-					<excludes>
-						<exclude>**/uioverrides/**/*</exclude>
-					</excludes>
-				</configuration>
-			</plugin>
-
-			<plugin>
-				<artifactId>maven-source-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>attach-sources</id>
-						<phase>verify</phase>
-						<goals>
-							<goal>jar-no-fork</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>aspectj-maven-plugin</artifactId>
-				<version>${aspectj-maven-plugin.version}</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>compile</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
-
+<?xml version="1.0"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.ovirt.engine.ui</groupId>
+    <artifactId>webadmin-modules</artifactId>
+    <version>3.1.0-0001</version>
+  </parent>
+  <artifactId>gwt-extension</artifactId>
+  <packaging>jar</packaging>
+  <name>Extensions for GWT</name>
+  <properties>
+    <sourceDir>${project.basedir}/src/main/java</sourceDir>
+    <gwt-plugin.extraJvmArgs>-Xms1024M -Xmx1024M -XX:PermSize=256M -XX:MaxPermSize=256M</gwt-plugin.extraJvmArgs>
+    <!-- Versions need to be inherited -->
+    <gwt.version>2.3.0</gwt.version>
+  </properties>
+  <dependencies>
+    <dependency>
+      <groupId>com.google.gwt</groupId>
+      <artifactId>gwt-user</artifactId>
+      <version>${gwt.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.google.gwt</groupId>
+      <artifactId>gwt-dev</artifactId>
+      <version>${gwt.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>${engine.groupId}</groupId>
+      <artifactId>genericapi</artifactId>
+      <version>${engine.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.aspectj</groupId>
+      <artifactId>aspectjrt</artifactId>
+      <version>${aspectj.version}</version>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <excludes>
+            <exclude>**/uioverrides/**/*</exclude>
+          </excludes>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-source-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>jar-no-fork</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>aspectj-maven-plugin</artifactId>
+        <version>${aspectj-maven-plugin.version}</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>compile</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 </project>

@@ -1,163 +1,147 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-
-	<parent>
-		<groupId>org.ovirt.engine.ui</groupId>
-		<artifactId>webadmin-modules</artifactId>
-		<version>3.1.0-0001</version>
-	</parent>
-
-	<artifactId>gwt-common</artifactId>
-	<packaging>jar</packaging>
-	<name>oVirt GWT UI common infrastructure</name>
-
-	<properties>
-		<!--TODO: Will be inherited from top module -->
-		<gwt.version>2.3.0</gwt.version>
-	</properties>
-
-	<dependencies>
-		<!-- Google Web Toolkit dependencies -->
-		<dependency>
-			<groupId>com.google.gwt</groupId>
-			<artifactId>gwt-user</artifactId>
-			<version>${gwt.version}</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>com.google.gwt</groupId>
-			<artifactId>gwt-dev</artifactId>
-			<version>${gwt.version}</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<!-- GWTP MVP component -->
-		<dependency>
-			<groupId>com.gwtplatform</groupId>
-			<artifactId>gwtp-mvp-client</artifactId>
-			<version>${gwtp.version}</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>com.gwtplatform</groupId>
-			<artifactId>gwtp-processors</artifactId>
-			<version>${gwtp.version}</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<!-- Guice and GIN -->
-		<dependency>
-			<groupId>com.google.inject</groupId>
-			<artifactId>guice</artifactId>
-			<version>${guice.version}</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>com.google.inject.extensions</groupId>
-			<artifactId>guice-assistedinject</artifactId>
-			<version>${guice.version}</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>com.google.gwt.inject</groupId>
-			<artifactId>gin</artifactId>
-			<version>${gin.version}</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<!-- oVirt dependencies -->
-		<dependency>
-			<groupId>${engine.groupId}</groupId>
-			<artifactId>uicommonweb</artifactId>
-			<version>${engine.version}</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>${engine.groupId}</groupId>
-			<artifactId>frontend</artifactId>
-			<version>${engine.version}</version>
-			<scope>provided</scope>
-		</dependency>
-	</dependencies>
-
-	<build>
-		<resources>
-			<resource>
-				<directory>src/main/java</directory>
-				<includes>
-					<include>**/*.ui.xml</include>
-				</includes>
-			</resource>
-			<resource>
-				<directory>src/main/resources</directory>
-			</resource>
-		</resources>
-
-		<plugins>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>gwt-maven-plugin</artifactId>
-				<executions>
-					<!-- GWT version should be detected from dependencyManagement -->
-					<execution>
-						<goals>
-							<goal>resources</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<extraJvmArgs>${gwt-plugin.extraJvmArgs}</extraJvmArgs>
-					<debugSuspend>false</debugSuspend>
-				</configuration>
-			</plugin>
-
-			<plugin>
-				<groupId>org.bsc.maven</groupId>
-				<artifactId>maven-processor-plugin</artifactId>
-				<version>${maven-processor-plugin.version}</version>
-				<executions>
-					<execution>
-						<id>process</id>
-						<goals>
-							<goal>process</goal>
-						</goals>
-						<phase>generate-sources</phase>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>build-helper-maven-plugin</artifactId>
-				<version>${build-helper-maven-plugin.version}</version>
-				<executions>
-					<execution>
-						<id>add-apt-sources</id>
-						<phase>generate-sources</phase>
-						<goals>
-							<goal>add-source</goal>
-						</goals>
-						<configuration>
-							<sources>
-								<source>${project.build.directory}/${generatedSourcesDirectory}</source>
-								<source>${project.build.directory}/generated-sources/gwt</source>
-							</sources>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<artifactId>maven-checkstyle-plugin</artifactId>
-				<configuration>
-         		 	<propertyExpansion>runNlsCheck=true</propertyExpansion>
-        		</configuration>
-			</plugin>
-		</plugins>
-	</build>
-
+<?xml version="1.0"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.ovirt.engine.ui</groupId>
+    <artifactId>webadmin-modules</artifactId>
+    <version>3.1.0-0001</version>
+  </parent>
+  <artifactId>gwt-common</artifactId>
+  <packaging>jar</packaging>
+  <name>oVirt GWT UI common infrastructure</name>
+  <properties>
+    <!--TODO: Will be inherited from top module -->
+    <gwt.version>2.3.0</gwt.version>
+  </properties>
+  <dependencies>
+    <!-- Google Web Toolkit dependencies -->
+    <dependency>
+      <groupId>com.google.gwt</groupId>
+      <artifactId>gwt-user</artifactId>
+      <version>${gwt.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.google.gwt</groupId>
+      <artifactId>gwt-dev</artifactId>
+      <version>${gwt.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <!-- GWTP MVP component -->
+    <dependency>
+      <groupId>com.gwtplatform</groupId>
+      <artifactId>gwtp-mvp-client</artifactId>
+      <version>${gwtp.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.gwtplatform</groupId>
+      <artifactId>gwtp-processors</artifactId>
+      <version>${gwtp.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <!-- Guice and GIN -->
+    <dependency>
+      <groupId>com.google.inject</groupId>
+      <artifactId>guice</artifactId>
+      <version>${guice.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.google.inject.extensions</groupId>
+      <artifactId>guice-assistedinject</artifactId>
+      <version>${guice.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.google.gwt.inject</groupId>
+      <artifactId>gin</artifactId>
+      <version>${gin.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <!-- oVirt dependencies -->
+    <dependency>
+      <groupId>${engine.groupId}</groupId>
+      <artifactId>uicommonweb</artifactId>
+      <version>${engine.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>${engine.groupId}</groupId>
+      <artifactId>frontend</artifactId>
+      <version>${engine.version}</version>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
+  <build>
+    <resources>
+      <resource>
+        <directory>src/main/java</directory>
+        <includes>
+          <include>**/*.ui.xml</include>
+        </includes>
+      </resource>
+      <resource>
+        <directory>src/main/resources</directory>
+      </resource>
+    </resources>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>gwt-maven-plugin</artifactId>
+        <executions>
+          <!-- GWT version should be detected from dependencyManagement -->
+          <execution>
+            <goals>
+              <goal>resources</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <extraJvmArgs>${gwt-plugin.extraJvmArgs}</extraJvmArgs>
+          <debugSuspend>false</debugSuspend>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.bsc.maven</groupId>
+        <artifactId>maven-processor-plugin</artifactId>
+        <version>${maven-processor-plugin.version}</version>
+        <executions>
+          <execution>
+            <id>process</id>
+            <goals>
+              <goal>process</goal>
+            </goals>
+            <phase>generate-sources</phase>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <version>${build-helper-maven-plugin.version}</version>
+        <executions>
+          <execution>
+            <id>add-apt-sources</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>add-source</goal>
+            </goals>
+            <configuration>
+              <sources>
+                <source>${project.build.directory}/${generatedSourcesDirectory}</source>
+                <source>${project.build.directory}/generated-sources/gwt</source>
+              </sources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <configuration>
+          <propertyExpansion>runNlsCheck=true</propertyExpansion>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>

@@ -1,17 +1,14 @@
+<?xml version="1.0"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-
   <parent>
     <groupId>org.ovirt.engine.ui</groupId>
     <artifactId>webadmin-modules</artifactId>
     <version>3.1.0-0001</version>
   </parent>
-
   <artifactId>frontend</artifactId>
   <packaging>jar</packaging>
-
   <name>Frontend for GWT UI Projects</name>
-
   <dependencies>
     <dependency>
       <groupId>${engine.groupId}</groupId>
@@ -19,33 +16,28 @@
       <version>${engine.version}</version>
       <scope>provided</scope>
     </dependency>
-
     <dependency>
       <groupId>${engine.groupId}</groupId>
       <artifactId>genericapi</artifactId>
       <version>${engine.version}</version>
       <scope>provided</scope>
     </dependency>
-
     <dependency>
       <groupId>com.google.gwt</groupId>
       <artifactId>gwt-servlet</artifactId>
       <version>${gwt.version}</version>
     </dependency>
-
     <dependency>
       <groupId>com.google.gwt</groupId>
       <artifactId>gwt-user</artifactId>
       <version>${gwt.version}</version>
     </dependency>
-
     <dependency>
       <groupId>org.jboss.spec.javax.ejb</groupId>
       <artifactId>jboss-ejb-api_3.1_spec</artifactId>
       <scope>provided</scope>
     </dependency>
   </dependencies>
-
   <build>
     <resources>
       <resource>
@@ -55,7 +47,6 @@
           <include>**/*.gwt.xml</include>
         </includes>
       </resource>
-
       <resource>
         <directory>src/main/resources</directory>
         <includes>
@@ -63,7 +54,6 @@
         </includes>
       </resource>
     </resources>
-
     <plugins>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
@@ -80,7 +70,6 @@
           </execution>
         </executions>
       </plugin>
-
       <plugin>
         <artifactId>maven-eclipse-plugin</artifactId>
         <executions>
@@ -92,14 +81,12 @@
           </execution>
         </executions>
       </plugin>
-
       <plugin>
-      	<artifactId>maven-checkstyle-plugin</artifactId>
-      	<configuration>
-         		 	<propertyExpansion>runNlsCheck=true</propertyExpansion>
-        		</configuration>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <configuration>
+          <propertyExpansion>runNlsCheck=true</propertyExpansion>
+        </configuration>
       </plugin>
     </plugins>
   </build>
-
 </project>

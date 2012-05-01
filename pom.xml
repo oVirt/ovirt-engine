@@ -1,31 +1,25 @@
+<?xml version="1.0"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-
   <groupId>org.ovirt.engine</groupId>
   <artifactId>root</artifactId>
   <version>3.1.0-0001</version>
   <packaging>pom</packaging>
-
   <name>oVirt Engine Root Project</name>
-
   <modules>
     <module>build-tools-root</module>
     <module>backend</module>
     <module>frontend</module>
     <module>ear</module>
   </modules>
-
   <properties>
-   <!--  Version Info -->
+    <!--  Version Info -->
     <engine.version>3.1.0-0001</engine.version>
     <engine.groupId>org.ovirt.engine</engine.groupId>
-
     <!-- project file encoding -->
-     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <!--  <jbossHome>${env.JBOSS_HOME}</jbossHome> -->
     <jbossServer>${jbossHome}/standalone</jbossServer>
-
     <!-- dependency versions -->
     <commons-logging.version>1.1</commons-logging.version>
     <junit.version>4.7</junit.version>
@@ -72,7 +66,6 @@
     <jbosssx-bare.version>2.0.4</jbosssx-bare.version>
     <log4j.version>1.2.16</log4j.version>
   </properties>
-
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -96,119 +89,100 @@
         <version>${javax.transaction}</version>
         <scope>provided</scope>
       </dependency>
-
       <dependency>
         <groupId>org.apache.xmlrpc</groupId>
         <artifactId>xmlrpc-client</artifactId>
         <version>${xmlrpc-client.version}</version>
       </dependency>
-
       <dependency>
         <groupId>commons-httpclient</groupId>
         <artifactId>commons-httpclient</artifactId>
         <version>${httpclient.version}</version>
       </dependency>
-
       <dependency>
         <groupId>org.springframework.ldap</groupId>
         <artifactId>spring-ldap-core</artifactId>
         <version>${spring.ldap.version}</version>
       </dependency>
-
       <dependency>
-       <groupId>org.springframework</groupId>
-       <artifactId>spring-test</artifactId>
-       <version>${spring.test.version}</version>
-       <scope>test</scope>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-test</artifactId>
+        <version>${spring.test.version}</version>
+        <scope>test</scope>
       </dependency>
-
       <dependency>
         <groupId>commons-codec</groupId>
         <artifactId>commons-codec</artifactId>
         <version>${commons-codec.version}</version>
       </dependency>
-
       <dependency>
         <groupId>org.jboss.ejb3</groupId>
         <artifactId>jboss-ejb3-ext-api</artifactId>
         <version>${jboss.ejb3.ext.api.version}</version>
         <scope>provided</scope>
       </dependency>
-
       <dependency>
         <groupId>org.jboss.spec.javax.ejb</groupId>
         <artifactId>jboss-ejb-api_3.1_spec</artifactId>
         <version>${javax.ejb.api.version}</version>
         <scope>provided</scope>
       </dependency>
-
       <dependency>
         <groupId>javax.servlet</groupId>
         <artifactId>servlet-api</artifactId>
         <version>${javax.servlet.api.version}</version>
         <scope>provided</scope>
       </dependency>
-
       <dependency>
         <groupId>com.jcraft</groupId>
         <artifactId>jsch</artifactId>
         <version>${jcraft.jsch.version}</version>
       </dependency>
-
       <dependency>
         <groupId>org.springframework</groupId>
         <artifactId>spring-jdbc</artifactId>
         <version>${spring.jdbc.version}</version>
       </dependency>
-
       <dependency>
         <groupId>postgresql</groupId>
         <artifactId>postgresql</artifactId>
         <version>${postgresql.version}</version>
       </dependency>
-
       <dependency>
         <groupId>commons-lang</groupId>
         <artifactId>commons-lang</artifactId>
         <version>${commons-lang.version}</version>
       </dependency>
-
       <dependency>
         <groupId>org.apache.mina</groupId>
         <artifactId>mina-core</artifactId>
         <version>${mina-core.version}</version>
       </dependency>
-
       <dependency>
         <groupId>org.apache.sshd</groupId>
         <artifactId>sshd-core</artifactId>
         <version>${sshd-core.version}</version>
       </dependency>
-
       <dependency>
         <groupId>javassist</groupId>
         <artifactId>javassist</artifactId>
         <version>${javassist.version}</version>
       </dependency>
-
       <dependency>
         <groupId>javax.mail</groupId>
         <artifactId>mail</artifactId>
         <version>${javax.mail.version}</version>
       </dependency>
-
       <dependency>
         <groupId>org.hibernate</groupId>
         <artifactId>hibernate-core</artifactId>
         <version>${hibernate-core.version}</version>
       </dependency>
-
       <dependency>
         <groupId>org.hibernate</groupId>
         <artifactId>hibernate-validator</artifactId>
         <version>${hibernate-validator.version}</version>
       </dependency>
-
       <dependency>
         <groupId>org.hibernate</groupId>
         <artifactId>hibernate-annotations</artifactId>
@@ -220,19 +194,16 @@
           </exclusion>
         </exclusions>
       </dependency>
-
       <dependency>
         <groupId>org.codehaus.jackson</groupId>
         <artifactId>jackson-core-asl</artifactId>
         <version>${jackson-core-asl.version}</version>
       </dependency>
-
       <dependency>
         <groupId>org.codehaus.jackson</groupId>
         <artifactId>jackson-mapper-asl</artifactId>
         <version>${jackson-mapper-asl.version}</version>
       </dependency>
-
       <dependency>
         <groupId>log4j</groupId>
         <artifactId>log4j</artifactId>
@@ -241,7 +212,6 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
-
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
@@ -249,37 +219,31 @@
       <version>${junit.version}</version>
       <scope>test</scope>
     </dependency>
-
     <dependency>
       <groupId>org.powermock</groupId>
       <artifactId>powermock-module-junit4</artifactId>
       <version>${powermock.version}</version>
       <scope>test</scope>
     </dependency>
-
     <dependency>
       <groupId>org.powermock</groupId>
       <artifactId>powermock-api-mockito</artifactId>
       <version>${powermock-api-mockito.version}</version>
       <scope>test</scope>
     </dependency>
-
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-all</artifactId>
       <version>${mockito.version}</version>
       <scope>test</scope>
     </dependency>
-
     <dependency>
       <groupId>commons-logging</groupId>
       <artifactId>commons-logging</artifactId>
       <version>${commons-logging.version}</version>
       <scope>provided</scope>
     </dependency>
-
   </dependencies>
-
   <repositories>
     <repository>
       <id>maven.repo1</id>
@@ -290,7 +254,6 @@
         <enabled>false</enabled>
       </snapshots>
     </repository>
-
     <repository>
       <id>maven.search.repo</id>
       <name>maven search repo</name>
@@ -300,7 +263,6 @@
         <enabled>false</enabled>
       </snapshots>
     </repository>
-
     <repository>
       <id>jboss-public-repository-group</id>
       <name>JBoss Public Maven Repository Group</name>
@@ -313,7 +275,6 @@
         <enabled>false</enabled>
       </snapshots>
     </repository>
-
     <repository>
       <id>java.net</id>
       <name>Java.net repo</name>
@@ -323,13 +284,11 @@
         <enabled>false</enabled>
       </snapshots>
     </repository>
-
     <repository>
       <id>powermock-repo</id>
       <url>http://powermock.googlecode.com/svn/repo/</url>
     </repository>
-
-   <repository>
+    <repository>
       <id>atlassian.public.repo</id>
       <name>The Atlassian public repo</name>
       <url>https://maven.atlassian.com/content/groups/public</url>
@@ -339,8 +298,7 @@
       <releases>
         <enabled>true</enabled>
       </releases>
-   </repository>
-
+    </repository>
     <repository>
       <id>smartgwt</id>
       <name>SmartGWT Releases</name>
@@ -349,7 +307,6 @@
         <enabled>false</enabled>
       </snapshots>
     </repository>
-
     <repository>
       <id>codehaus</id>
       <name>Codehaus Releases</name>
@@ -358,7 +315,6 @@
         <enabled>false</enabled>
       </snapshots>
     </repository>
-
     <repository>
       <id>gwt-crypto repo</id>
       <url>http://gwt-crypto.googlecode.com/svn/trunk/repo/</url>
@@ -366,9 +322,7 @@
         <enabled>false</enabled>
       </snapshots>
     </repository>
-
   </repositories>
-
   <pluginRepositories>
     <pluginRepository>
       <id>central</id>
@@ -383,7 +337,6 @@
       </releases>
     </pluginRepository>
   </pluginRepositories>
-
   <build>
     <pluginManagement>
       <plugins>
@@ -399,7 +352,6 @@
             </includes>
           </configuration>
         </plugin>
-
         <plugin>
           <artifactId>maven-checkstyle-plugin</artifactId>
           <version>2.6</version>
@@ -412,8 +364,8 @@
             <dependency>
               <groupId>org.ovirt.engine</groupId>
               <artifactId>ovirt-checkstyle-extension</artifactId>
-               <version>${engine.version}</version>
-             </dependency>
+              <version>${engine.version}</version>
+            </dependency>
           </dependencies>
           <configuration>
             <consoleOutput>true</consoleOutput>
@@ -430,12 +382,10 @@
             </execution>
           </executions>
         </plugin>
-
         <plugin>
           <artifactId>maven-source-plugin</artifactId>
           <version>2.1.2</version>
         </plugin>
-
         <plugin>
           <artifactId>maven-ejb-plugin</artifactId>
           <configuration>
@@ -451,26 +401,22 @@
             </archive>
           </configuration>
         </plugin>
-
         <plugin>
           <artifactId>maven-eclipse-plugin</artifactId>
           <configuration>
             <useProjectReferences>true</useProjectReferences>
           </configuration>
         </plugin>
-
-       <plugin>
+        <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>taglist-maven-plugin</artifactId>
           <version>2.4</version>
         </plugin>
-
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>build-helper-maven-plugin</artifactId>
           <version>1.4</version>
         </plugin>
-
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>gwt-maven-plugin</artifactId>
@@ -478,7 +424,6 @@
         </plugin>
       </plugins>
     </pluginManagement>
-
     <resources>
       <resource>
         <directory>src/main/java</directory>
@@ -486,38 +431,33 @@
           <exclude>**/*.java</exclude>
         </excludes>
       </resource>
-
       <resource>
         <directory>src/main/resources</directory>
       </resource>
     </resources>
   </build>
-
   <profiles>
-
-   <profile>
-     <id>reporting</id>
-   <reporting>
-    <plugins>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>cobertura-maven-plugin</artifactId>
-      </plugin>
-
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>findbugs-maven-plugin</artifactId>
-        <version>${findbugs.version}</version>
-        <configuration>
-          <xmlOutput>true</xmlOutput>
-          <!-- Optional derectory to put findbugs xdoc xml report -->
-          <xmlOutputDirectory>target/site</xmlOutputDirectory>
-        </configuration>
-      </plugin>
-    </plugins>
-  </reporting>
-   </profile>
-
+    <profile>
+      <id>reporting</id>
+      <reporting>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>cobertura-maven-plugin</artifactId>
+          </plugin>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>findbugs-maven-plugin</artifactId>
+            <version>${findbugs.version}</version>
+            <configuration>
+              <xmlOutput>true</xmlOutput>
+              <!-- Optional derectory to put findbugs xdoc xml report -->
+              <xmlOutputDirectory>target/site</xmlOutputDirectory>
+            </configuration>
+          </plugin>
+        </plugins>
+      </reporting>
+    </profile>
     <profile>
       <id>test-all</id>
       <build>
@@ -528,7 +468,6 @@
         </plugins>
       </build>
     </profile>
-
     <profile>
       <id>test-fail-ignore</id>
       <build>
@@ -542,7 +481,6 @@
         </plugins>
       </build>
     </profile>
-
     <profile>
       <id>hudson</id>
       <activation>
@@ -595,7 +533,6 @@
       </build>
     </profile>
   </profiles>
-
   <!-- ====================================================================== -->
   <!-- Needed for MEAD, which runs 'mvn deploy -DaltDeploymentRepository=..'  -->
   <!-- and gets an error if there is no distributionManagement section        -->
@@ -608,5 +545,4 @@
       <layout>default</layout>
     </repository>
   </distributionManagement>
-
 </project>
