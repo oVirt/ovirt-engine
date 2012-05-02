@@ -47,7 +47,7 @@ public class VdcActionParametersBase implements java.io.Serializable {
 
     private ArrayList<VdcActionParametersBase> imagesParameters;
 
-    private boolean taskGroupSuccess;
+    private boolean taskGroupSuccess = true;
 
     private long taskStartTime;
 
@@ -181,7 +181,16 @@ public class VdcActionParametersBase implements java.io.Serializable {
     }
 
     public boolean getTaskGroupSuccess() {
-        return taskGroupSuccess;
+        boolean childrenTasksSuccess = taskGroupSuccess;
+        for (VdcActionParametersBase childParameters : getImagesParameters()) {
+            childrenTasksSuccess &= childParameters.getTaskGroupSuccess();
+
+            if (!childrenTasksSuccess) {
+                break;
+            }
+        }
+
+        return childrenTasksSuccess;
     }
 
     public void setTaskGroupSuccess(boolean value) {
@@ -248,7 +257,6 @@ public class VdcActionParametersBase implements java.io.Serializable {
         result =
                 prime * result + ((parametersCurrentUser == null) ? 0 : parametersCurrentUser.hashCode());
         result = prime * result + ((parentCommand == null) ? 0 : parentCommand.hashCode());
-        result = prime * result + (taskGroupSuccess ? 1231 : 1237);
         result = prime * result + ((taskIds == null) ? 0 : taskIds.hashCode());
         result = prime * result + ((correlationId == null) ? 0 : correlationId.hashCode());
         return result;
@@ -292,8 +300,6 @@ public class VdcActionParametersBase implements java.io.Serializable {
         } else if (!parametersCurrentUser.equals(other.parametersCurrentUser))
             return false;
         if (parentCommand != other.parentCommand)
-            return false;
-        if (taskGroupSuccess != other.taskGroupSuccess)
             return false;
         if (taskIds == null) {
             if (other.taskIds != null)

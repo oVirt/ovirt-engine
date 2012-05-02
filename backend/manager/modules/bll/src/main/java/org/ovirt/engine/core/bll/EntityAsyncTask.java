@@ -112,19 +112,10 @@ public class EntityAsyncTask extends SPMAsyncTask {
         VdcReturnValueBase vdcReturnValue = null;
         ExecutionContext context = null;
 
-        boolean success = true;
-        for (EndedTaskInfo taskInfo : entityInfo.getEndedTasksInfo().getTasksInfo()) {
-            success = taskInfo.getTaskStatus().getTaskEndedSuccessfully();
-            if (!success) {
-                break;
-            }
-        }
-
-        // set all task to success/fail
         async_tasks dbAsyncTask = getParameters().getDbAsyncTask();
         for (EndedTaskInfo taskInfo : entityInfo.getEndedTasksInfo().getTasksInfo()) {
             dbAsyncTask.getaction_parameters()
-                    .Accept(taskInfo, new SetTaskGroupStatusVisitor(success));
+                    .Accept(taskInfo, new SetTaskGroupStatusVisitor());
         }
 
         try {
