@@ -95,7 +95,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     private VdcActionType actionType;
     private final List<Class<?>> validationGroups =
             new ArrayList<Class<?>>(Arrays.asList(new Class<?>[] { Default.class }));
-    private Guid commandId = Guid.NewGuid();
+    private final Guid commandId;
 
     protected Log log = LogFactory.getLog(getClass());
 
@@ -114,6 +114,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     }
 
     protected CommandBase() {
+        commandId = Guid.NewGuid();
     }
 
     protected CommandBase(T parameters) {
@@ -124,6 +125,14 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             ThreadLocalParamsContainer.setCorrelationId(parameters.getCorrelationId());
         }
         setCorrelationId(parameters.getCorrelationId());
+
+        Guid commandIdFromParameters = parameters.getCommandId();
+        if (commandIdFromParameters == null) {
+            commandIdFromParameters = Guid.NewGuid();
+            getParameters().setCommandId(commandIdFromParameters);
+        }
+
+        commandId = commandIdFromParameters;
     }
 
     /**

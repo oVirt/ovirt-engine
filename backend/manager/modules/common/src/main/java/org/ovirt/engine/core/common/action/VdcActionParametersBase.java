@@ -18,6 +18,7 @@ import org.ovirt.engine.core.compat.TransactionScopeOption;
 public class VdcActionParametersBase implements java.io.Serializable {
     private static final long serialVersionUID = 4872560145516614773L;
 
+    private Guid commandId;
     private transient String sessionid;
     private boolean shouldbelogged;
     private String httpSessionId;
@@ -66,6 +67,14 @@ public class VdcActionParametersBase implements java.io.Serializable {
         setTaskGroupSuccess(true);
         taskStartTime = System.currentTimeMillis();
         setParentCommand(VdcActionType.Unknown);
+    }
+
+    public Guid getCommandId() {
+        return commandId;
+    }
+
+    public void setCommandId(Guid commandId) {
+        this.commandId = commandId;
     }
 
     public String getSessionId() {
