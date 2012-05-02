@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.pools;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.AddVmPoolWithVmsParameters;
@@ -33,6 +34,7 @@ import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.ObservableCollection;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -90,6 +92,16 @@ public class PoolListModel extends ListWithDetailsModel
         privateRemoveCommand = value;
     }
 
+    private java.util.HashMap<Version, java.util.ArrayList<String>> privateCustomPropertiesKeysList;
+
+    private java.util.HashMap<Version, java.util.ArrayList<String>> getCustomPropertiesKeysList() {
+        return privateCustomPropertiesKeysList;
+    }
+
+    private void setCustomPropertiesKeysList(java.util.HashMap<Version, java.util.ArrayList<String>> value) {
+        privateCustomPropertiesKeysList = value;
+    }
+
     protected Object[] getSelectedKeys()
     {
         // return SelectedItems == null ? new object[0] : SelectedItems.Cast<vm_pools>().Select(a =>
@@ -124,6 +136,30 @@ public class PoolListModel extends ListWithDetailsModel
 
         getSearchNextPageCommand().setIsAvailable(true);
         getSearchPreviousPageCommand().setIsAvailable(true);
+        if (getCustomPropertiesKeysList() == null) {
+            AsyncDataProvider.GetCustomPropertiesList(new AsyncQuery(this,
+                    new INewAsyncCallback() {
+                        @Override
+                        public void OnSuccess(Object target, Object returnValue) {
+
+                            PoolListModel model = (PoolListModel) target;
+                            if (returnValue != null)
+                            {
+                                model.setCustomPropertiesKeysList(new java.util.HashMap<Version, java.util.ArrayList<String>>());
+                                java.util.HashMap<Version, String> dictionary = (HashMap<Version, String>) returnValue;
+                                for (java.util.Map.Entry<Version, String> keyValuePair : dictionary.entrySet())
+                                {
+                                    model.getCustomPropertiesKeysList().put(keyValuePair.getKey(),
+                                            new java.util.ArrayList<String>());
+                                    for (String s : keyValuePair.getValue().split("[;]", -1)) //$NON-NLS-1$
+                                    {
+                                        model.getCustomPropertiesKeysList().get(keyValuePair.getKey()).add(s);
+                                    }
+                                }
+                            }
+                        }
+                    }));
+        }
     }
 
     @Override
@@ -176,6 +212,7 @@ public class PoolListModel extends ListWithDetailsModel
 
         PoolModel model = new PoolModel(new NewPoolModelBehavior());
         model.setIsNew(true);
+        model.setCustomPropertiesKeysList(getCustomPropertiesKeysList());
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().newPoolTitle());
         model.setHashName("new_pool"); //$NON-NLS-1$
@@ -464,6 +501,7 @@ public class PoolListModel extends ListWithDetailsModel
                 });
 
                 PoolModel model = new PoolModel(behavior);
+                model.setCustomPropertiesKeysList(getCustomPropertiesKeysList());
                 setWindow(model);
                 model.setTitle(ConstantsManager.getInstance().getConstants().editPoolTitle());
                 model.setHashName("edit_pool"); //$NON-NLS-1$

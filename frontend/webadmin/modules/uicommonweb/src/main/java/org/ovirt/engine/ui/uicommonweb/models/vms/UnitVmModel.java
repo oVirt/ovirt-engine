@@ -1777,7 +1777,7 @@ public class UnitVmModel extends Model
             getKernel_path().getInvalidityReasons().add(msg);
         }
 
-        if (getCluster().getSelectedItem() != null)
+        if (getCluster().getSelectedItem() != null && getCustomProperties().getEntity() != null)
         {
             getCustomProperties().ValidateEntity(new IValidation[] { new CustomPropertyValidation(getCustomPropertiesKeysList().get(((VDSGroup) getCluster().getSelectedItem()).getcompatibility_version())) });
         }
