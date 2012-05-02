@@ -133,7 +133,7 @@ public abstract class OvfReader implements IOvfBuilder {
             }
             if (node.Attributes.get("ovf:boot") != null) {
                 if (!StringHelper.isNullOrEmpty(node.Attributes.get("ovf:boot").getValue())) {
-                    image.setboot(Boolean.parseBoolean(node.Attributes.get("ovf:boot").getValue()));
+                    image.setBoot(Boolean.parseBoolean(node.Attributes.get("ovf:boot").getValue()));
                 }
             }
             if (node.Attributes.get("ovf:wipe-after-delete") != null) {

@@ -54,7 +54,7 @@ public class DiskMapper {
             diskImage.setvolume_type(disk.isSparse() ? VolumeType.Sparse : VolumeType.Preallocated);
         }
         if (disk.isSetBootable()) {
-            diskImage.setboot(disk.isBootable());
+            diskImage.setBoot(disk.isBootable());
         }
         if (disk.isSetPropagateErrors()) {
             diskImage.setPropagateErrors(disk.isPropagateErrors() ? PropagateErrors.On
@@ -103,7 +103,7 @@ public class DiskMapper {
             model.setStatus(StatusUtils.create(status==null ? null : status.value()));
         }
         model.setSparse(VolumeType.Sparse == entity.getvolume_type());
-        model.setBootable(entity.getboot());
+        model.setBootable(entity.isBoot());
         model.setPropagateErrors(PropagateErrors.On == entity.getPropagateErrors());
         model.setWipeAfterDelete(entity.isWipeAfterDelete());
         if(entity.getstorage_ids()!=null && entity.getstorage_ids().size() > 0){

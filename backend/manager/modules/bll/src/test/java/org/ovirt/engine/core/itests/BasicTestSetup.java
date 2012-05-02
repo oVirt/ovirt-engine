@@ -205,7 +205,7 @@ public class BasicTestSetup {
         disk.setsize(100);
         disk.setinternal_drive_mapping(Long.toString(AbstractBackendTest.testSequenceNumber));
         disk.setDiskInterface(DiskInterface.IDE);
-        disk.setboot(false);
+        disk.setBoot(false);
         disk.setWipeAfterDelete(false);
         disk.setPropagateErrors(PropagateErrors.Off);
 

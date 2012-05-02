@@ -75,6 +75,8 @@ public class BaseDisk extends IVdcQueryable implements BusinessEntity<Guid> {
      */
     private PropagateErrors propagateErrors = PropagateErrors.Off;
 
+    private boolean boot;
+
     public BaseDisk() {
     }
 
@@ -85,7 +87,8 @@ public class BaseDisk extends IVdcQueryable implements BusinessEntity<Guid> {
             PropagateErrors propagateErrors,
             String diskAlias,
             String diskDescription,
-            boolean shareable) {
+            boolean shareable,
+            boolean boot) {
         super();
         this.id = id;
         this.internalDriveMapping = internalDriveMapping;
@@ -95,6 +98,7 @@ public class BaseDisk extends IVdcQueryable implements BusinessEntity<Guid> {
         this.diskAlias = diskAlias;
         this.diskDescription = diskDescription;
         this.shareable = shareable;
+        this.boot = boot;
     }
 
     @Override
@@ -174,6 +178,14 @@ public class BaseDisk extends IVdcQueryable implements BusinessEntity<Guid> {
         this.shareable = shareable;
     }
 
+    public boolean isBoot() {
+        return boot;
+    }
+
+    public void setBoot(boolean value) {
+        boot = value;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -186,6 +198,7 @@ public class BaseDisk extends IVdcQueryable implements BusinessEntity<Guid> {
         result = prime * result + ((propagateErrors == null) ? 0 : propagateErrors.hashCode());
         result = prime * result + (shareable ? 1231 : 1237);
         result = prime * result + (wipeAfterDelete ? 1231 : 1237);
+        result = prime * result + (boot ? 1231 : 1237);
         return result;
     }
 
@@ -222,6 +235,8 @@ public class BaseDisk extends IVdcQueryable implements BusinessEntity<Guid> {
         if (shareable != other.shareable)
             return false;
         if (wipeAfterDelete != other.wipeAfterDelete)
+            return false;
+        if (boot != other.boot)
             return false;
         return true;
     }

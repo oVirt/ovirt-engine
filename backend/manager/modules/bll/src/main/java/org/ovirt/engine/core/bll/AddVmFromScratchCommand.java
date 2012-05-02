@@ -69,7 +69,7 @@ public class AddVmFromScratchCommand<T extends AddVmFromScratchParameters> exten
 
         Disk defBootDisk = null;
         for(Disk disk : getVmDisks()) {
-            if(disk.getboot()) {
+            if(disk.isBoot()) {
                 defBootDisk = disk;
                 break;
             }
@@ -78,7 +78,7 @@ public class AddVmFromScratchCommand<T extends AddVmFromScratchParameters> exten
         if (defBootDisk != null) {
             for (Disk disk : getVmDisks()) {
                 if (!disk.equals(defBootDisk))
-                    disk.setboot(false);
+                    disk.setBoot(false);
             }
         }
         return (!disks.isEmpty()) ? ConcreteAddVmImages(((DiskImage)disks.get(0)).getImageId()) : true;

@@ -1743,7 +1743,7 @@ public final class DataProvider
             ArrayList<DiskImageBase> list = new java.util.ArrayList<DiskImageBase>();
             for (DiskImageBase disk : (ArrayList<DiskImageBase>) returnValue.getReturnValue())
             {
-                disk.setvolume_type(disk.getboot() && vmType == VmType.Desktop ?
+                disk.setvolume_type(disk.isBoot() && vmType == VmType.Desktop ?
                         VolumeType.Sparse : VolumeType.Preallocated);
                 disk.setvolume_format(GetDiskVolumeFormat(disk.getvolume_type(), storageType));
 

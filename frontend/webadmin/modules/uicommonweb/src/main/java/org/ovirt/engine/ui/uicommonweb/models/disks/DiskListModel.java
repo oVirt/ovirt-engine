@@ -265,7 +265,7 @@ public class DiskListModel extends ListWithDetailsModel
         disk.setvolume_type((VolumeType) model.getVolumeType().getSelectedItem());
         disk.setvolume_format(model.getVolumeFormat());
         disk.setWipeAfterDelete((Boolean) model.getWipeAfterDelete().getEntity());
-        disk.setboot((Boolean) model.getIsBootable().getEntity());
+        disk.setBoot((Boolean) model.getIsBootable().getEntity());
         disk.setPlugged((Boolean) model.getIsPlugged().getEntity());
         disk.setPropagateErrors(PropagateErrors.Off);
         if (model.getQuota().getIsAvailable()) {

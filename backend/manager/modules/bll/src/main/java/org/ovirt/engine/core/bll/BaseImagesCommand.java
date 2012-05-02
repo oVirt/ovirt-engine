@@ -363,7 +363,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
     }
 
     protected static void CompleteAdvancedDiskData(DiskImage from, DiskImage to) {
-        to.setboot(from.getboot());
+        to.setBoot(from.isBoot());
         to.setDiskInterface(from.getDiskInterface());
         to.setPropagateErrors(from.getPropagateErrors());
         to.setWipeAfterDelete(from.isWipeAfterDelete());

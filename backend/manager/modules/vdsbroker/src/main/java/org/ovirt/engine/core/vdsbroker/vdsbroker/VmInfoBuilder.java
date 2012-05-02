@@ -206,7 +206,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                     break;
                 }
                 // Insure that boot disk is created first.
-                if (disk.getboot()) {
+                if (disk.isBoot()) {
                     struct.add(VdsProperties.Index, 0);
                 }
                 addAddress(vmDevice, struct);

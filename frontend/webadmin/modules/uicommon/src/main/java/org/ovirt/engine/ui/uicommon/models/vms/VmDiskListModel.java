@@ -237,7 +237,7 @@ public class VmDiskListModel extends SearchableListModel
 															DiskImage bootableDisk = null;
 															for (DiskImage a : disks)
 															{
-																if (a.getboot())
+																if (a.isBoot())
 																{
 																	bootableDisk = a;
 																	break;
@@ -248,7 +248,7 @@ public class VmDiskListModel extends SearchableListModel
 																vmModel2.getIsBootable().setIsChangable(false);
 																vmModel2.getIsBootable().getChangeProhibitionReasons().add("There can be only one bootable disk defined.");
 															}
-															vmModel2.getIsBootable().setEntity(disk2.getboot());
+															vmModel2.getIsBootable().setEntity(disk2.isBoot());
 
 
 															UICommand tempVar = new UICommand("OnSave", vmDiskListModel2);
@@ -353,7 +353,7 @@ public class VmDiskListModel extends SearchableListModel
 		disk.setvolume_type((VolumeType)model.getVolumeType().getSelectedItem());
 		disk.setvolume_format(model.getVolumeFormat());
 		disk.setWipeAfterDelete((Boolean)model.getWipeAfterDelete().getEntity());
-		disk.setboot((Boolean)model.getIsBootable().getEntity());
+		disk.setBoot((Boolean)model.getIsBootable().getEntity());
 
 		//NOTE: Since we doesn't support partial snapshots in GUI, propagate errors flag always must be set false.
 		//disk.propagate_errors = model.PropagateErrors.ValueAsBoolean() ? PropagateErrors.On : PropagateErrors.Off;
@@ -507,7 +507,7 @@ public class VmDiskListModel extends SearchableListModel
 											
 							                for (DiskImageBase a : presets)
 							                {
-							                    if ((hasDisks && !a.getboot()) || (!hasDisks && a.getboot()))
+							                    if ((hasDisks && !a.isBoot()) || (!hasDisks && a.isBoot()))
 							                    {
 							                        vmModel.getPreset().setSelectedItem(a);
 							                        break;
@@ -521,7 +521,7 @@ public class VmDiskListModel extends SearchableListModel
 											boolean hasBootableDisk = false;
 											for (DiskImage a : disks)
 											{
-												if (a.getboot())
+												if (a.isBoot())
 												{
 													hasBootableDisk = true;
 													break;

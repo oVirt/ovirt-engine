@@ -93,7 +93,7 @@ public class AbstractBackendDisksResourceTest<T extends AbstractBackendReadOnlyD
         expect(entity.getDiskInterface()).andReturn(DiskInterface.VirtIO).anyTimes();
         expect(entity.getimageStatus()).andReturn(ImageStatus.OK).anyTimes();
         expect(entity.getvolume_type()).andReturn(VolumeType.Sparse).anyTimes();
-        expect(entity.getboot()).andReturn(false).anyTimes();
+        expect(entity.isBoot()).andReturn(false).anyTimes();
         expect(entity.getPropagateErrors()).andReturn(PropagateErrors.On).anyTimes();
         return setUpStatisticalEntityExpectations(entity);
     }

@@ -56,7 +56,7 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<DiskIma
         getTable().addColumn(new ImageResourceColumn<DiskImage>() {
             @Override
             public ImageResource getValue(DiskImage object) {
-                return object.getboot() ? resources.bootableDiskIcon() : null;
+                return object.isBoot() ? resources.bootableDiskIcon() : null;
             }
         }, constants.bootableDisk(), "60px"); //$NON-NLS-1$
 

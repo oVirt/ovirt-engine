@@ -105,10 +105,10 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
                 retValue = false;
             }
         }
-        if (retValue && getParameters().getDiskInfo().getboot()) {
+        if (retValue && getParameters().getDiskInfo().isBoot()) {
             VmHandler.updateDisksFromDb(getVm());
             for (Disk disk : getVm().getDiskMap().values()) {
-                if (disk.getboot() && !disk.getId().equals(_oldDisk.getId())) {
+                if (disk.isBoot() && !disk.getId().equals(_oldDisk.getId())) {
                     retValue = false;
                     addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_BOOT_IN_USE);
                     getReturnValue().getCanDoActionMessages().add(
@@ -152,7 +152,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Object>() {
             @Override
             public Object runInTransaction() {
-                _oldDisk.setboot(getParameters().getDiskInfo().getboot());
+                _oldDisk.setBoot(getParameters().getDiskInfo().isBoot());
                 _oldDisk.setDiskInterface(getParameters().getDiskInfo().getDiskInterface());
                 _oldDisk.setPropagateErrors(getParameters().getDiskInfo().getPropagateErrors());
                 _oldDisk.setWipeAfterDelete(getParameters().getDiskInfo().isWipeAfterDelete());

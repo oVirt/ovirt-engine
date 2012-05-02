@@ -19,7 +19,6 @@ public abstract class Disk extends BaseDisk {
      * The VM Type is indicated by this field, or <code>null</code> if it is detached.
      */
     private VmEntityType vmEntityType;
-    private boolean boot;
     private Boolean plugged;
     // TODO comes from image_vm_map
     private Guid vm_guidField = Guid.Empty;
@@ -35,8 +34,9 @@ public abstract class Disk extends BaseDisk {
             VmEntityType vmEntityType,
             String diskAlias,
             String diskDescription,
-            boolean shareable) {
-        super(id, internalDriveMapping, diskInterface, wipeAfterDelete, propagateErrors, diskAlias, diskDescription, shareable);
+            boolean shareable,
+            boolean boot) {
+        super(id, internalDriveMapping, diskInterface, wipeAfterDelete, propagateErrors, diskAlias, diskDescription, shareable, boot);
         this.vmEntityType = vmEntityType;
     }
 
@@ -51,14 +51,6 @@ public abstract class Disk extends BaseDisk {
 
     public void setVmEntityType(VmEntityType vmEntityType) {
         this.vmEntityType = vmEntityType;
-    }
-
-    public boolean getboot() {
-        return boot;
-    }
-
-    public void setboot(boolean value) {
-        boot = value;
     }
 
     public Boolean getPlugged() {
@@ -95,7 +87,6 @@ public abstract class Disk extends BaseDisk {
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();
-        result = prime * result + (boot ? 1231 : 1237);
         result = prime * result + ((plugged == null) ? 0 : plugged.hashCode());
         result = prime * result + ((vmEntityType == null) ? 0 : vmEntityType.hashCode());
         result = prime * result + ((vm_guidField == null) ? 0 : vm_guidField.hashCode());
@@ -111,8 +102,6 @@ public abstract class Disk extends BaseDisk {
         if (getClass() != obj.getClass())
             return false;
         Disk other = (Disk) obj;
-        if (boot != other.boot)
-            return false;
         if (plugged == null) {
             if (other.plugged != null)
                 return false;

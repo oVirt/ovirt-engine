@@ -16,8 +16,6 @@ public class Image implements BusinessEntity<Guid> {
 
     private boolean active;
 
-    private boolean boot;
-
     private Date creationDate = new Date();
 
     private Date lastModified = new Date(0);
@@ -64,7 +62,6 @@ public class Image implements BusinessEntity<Guid> {
             Guid quotaId) {
         this.id = id;
         this.active = active;
-        this.boot = boot;
         this.creationDate = creationDate;
         this.lastModified = lastModified;
         this.parentId = parentId;
@@ -94,14 +91,6 @@ public class Image implements BusinessEntity<Guid> {
 
     public void setActive(boolean active) {
         this.active = active;
-    }
-
-    public boolean isBoot() {
-        return boot;
-    }
-
-    public void setBoot(boolean boot) {
-        this.boot = boot;
     }
 
     public Date getCreationDate() {

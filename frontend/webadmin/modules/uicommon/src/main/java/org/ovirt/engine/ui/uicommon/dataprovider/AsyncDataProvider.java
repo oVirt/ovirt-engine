@@ -575,11 +575,11 @@ public final class AsyncDataProvider
                 for (DiskImageBase disk : (ArrayList<DiskImageBase>) source)
                 {
                     if (!hasBootDisk) {
-                        disk.setboot(true);
+                        disk.setBoot(true);
                         hasBootDisk = true;
                     }
                     
-                    disk.setvolume_type(disk.getboot() && (VmType) _asyncQuery.Data[0] == VmType.Desktop ?
+                    disk.setvolume_type(disk.isBoot() && (VmType) _asyncQuery.Data[0] == VmType.Desktop ?
                             VolumeType.Sparse : VolumeType.Preallocated);
                     disk.setvolume_format(DataProvider.GetDiskVolumeFormat(disk.getvolume_type(),
                             (StorageType) _asyncQuery.Data[1]));

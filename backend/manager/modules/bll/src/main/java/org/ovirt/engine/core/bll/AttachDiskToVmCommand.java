@@ -69,7 +69,7 @@ public class AttachDiskToVmCommand<T extends UpdateVmDiskParameters> extends Abs
                         Boolean.TRUE.equals(getParameters().getDiskInfo().getPlugged()),
                         false);
         disk.setInternalDriveMapping(getParameters().getDiskInfo().getInternalDriveMapping());
-        disk.setboot(getParameters().getDiskInfo().getboot());
+        disk.setBoot(getParameters().getDiskInfo().isBoot());
         disk.setDiskInterface(getParameters().getDiskInfo().getDiskInterface());
         if (DiskStorageType.IMAGE.equals(disk.getDiskStorageType())) {
             getImageDao().update(((DiskImage) disk).getImage());

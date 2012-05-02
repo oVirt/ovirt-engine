@@ -8,8 +8,8 @@ public class DiskImageByBootComparator implements Comparator<Disk> {
 
     @Override
     public int compare(Disk o1, Disk o2) {
-        Boolean boot1 = o1.getboot();
-        Boolean boot2 = o2.getboot();
+        Boolean boot1 = o1.isBoot();
+        Boolean boot2 = o2.isBoot();
         return boot1.compareTo(boot2);
     }
 }

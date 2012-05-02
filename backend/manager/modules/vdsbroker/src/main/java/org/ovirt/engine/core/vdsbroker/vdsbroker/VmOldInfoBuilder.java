@@ -86,7 +86,7 @@ public class VmOldInfoBuilder extends VmInfoBuilderBase {
                 case VirtIO:
                     drive.put("if", "virtio");
                     drive.put("index", String.valueOf(pciCount));
-                    drive.put("boot", String.valueOf(disk.getboot()).toLowerCase());
+                    drive.put("boot", String.valueOf(disk.isBoot()).toLowerCase());
                     pciCount++;
                     break;
                 default:

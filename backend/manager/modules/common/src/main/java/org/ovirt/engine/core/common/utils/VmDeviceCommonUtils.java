@@ -192,7 +192,7 @@ public class VmDeviceCommonUtils {
                                 break;
                             }
                         }
-                        if (diskImage != null && diskImage.getboot()) {
+                        if (diskImage != null && diskImage.isBoot()) {
                             device.setBootOrder(++bootOrder);
                             break;
                         }

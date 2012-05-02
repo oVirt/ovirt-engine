@@ -50,7 +50,7 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
         setsize(diskImageBase.getsize());
         setInternalDriveMapping(diskImageBase.getInternalDriveMapping());
         setDiskInterface(diskImageBase.getDiskInterface());
-        setboot(diskImageBase.getboot());
+        setBoot(diskImageBase.isBoot());
         setWipeAfterDelete(diskImageBase.isWipeAfterDelete());
         setPropagateErrors(diskImageBase.getPropagateErrors());
         setQuotaId(diskImageBase.getQuotaId());

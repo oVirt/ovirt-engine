@@ -353,7 +353,7 @@ public class VmDiskListModel extends SearchableListModel
         diskModel.getPreset().setItems(presets);
         for (DiskImageBase a : presets)
         {
-            if ((hasDisks && !a.getboot()) || (!hasDisks && a.getboot()))
+            if ((hasDisks && !a.isBoot()) || (!hasDisks && a.isBoot()))
             {
                 diskModel.getPreset().setSelectedItem(a);
                 break;
@@ -363,7 +363,7 @@ public class VmDiskListModel extends SearchableListModel
         boolean hasBootableDisk = false;
         for (DiskImage a : disks)
         {
-            if (a.getboot())
+            if (a.isBoot())
             {
                 hasBootableDisk = true;
                 break;
@@ -460,7 +460,7 @@ public class VmDiskListModel extends SearchableListModel
                 DiskImage bootableDisk = null;
                 for (DiskImage a : disks)
                 {
-                    if (a.getboot())
+                    if (a.isBoot())
                     {
                         bootableDisk = a;
                         break;
@@ -473,7 +473,7 @@ public class VmDiskListModel extends SearchableListModel
                             .getChangeProhibitionReasons()
                             .add("There can be only one bootable disk defined."); //$NON-NLS-1$
                 }
-                diskModel.getIsBootable().setEntity(disk.getboot());
+                diskModel.getIsBootable().setEntity(disk.isBoot());
 
                 diskModel.getAlias().setEntity(disk.getDiskAlias());
                 diskModel.getDescription().setEntity(disk.getDiskDescription());
@@ -599,7 +599,7 @@ public class VmDiskListModel extends SearchableListModel
         disk.setvolume_type((VolumeType) model.getVolumeType().getSelectedItem());
         disk.setvolume_format(model.getVolumeFormat());
         disk.setWipeAfterDelete((Boolean) model.getWipeAfterDelete().getEntity());
-        disk.setboot((Boolean) model.getIsBootable().getEntity());
+        disk.setBoot((Boolean) model.getIsBootable().getEntity());
         disk.setPlugged((Boolean) model.getIsPlugged().getEntity());
         if (model.getQuota().getIsAvailable()) {
             disk.setQuotaId(((Quota) model.getQuota().getSelectedItem()).getId());

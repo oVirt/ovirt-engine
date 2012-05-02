@@ -80,9 +80,9 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperatinParameterBas
             }
         }
 
-        if (returnValue && diskInfo.getboot()) {
+        if (returnValue && diskInfo.isBoot()) {
             for (Disk disk : getVm().getDiskMap().values()) {
-                if (disk.getboot()) {
+                if (disk.isBoot()) {
                     returnValue = false;
                     addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_BOOT_IN_USE);
                     getReturnValue().getCanDoActionMessages().add(

@@ -283,7 +283,7 @@ public class VmGuideModel extends GuideModel
 			boolean hasBootableDisk = false;
 			for (DiskImage a : disks)
 			{
-				if (a.getboot())
+				if (a.isBoot())
 				{
 					hasBootableDisk = true;
 					break;
@@ -357,7 +357,7 @@ public class VmGuideModel extends GuideModel
 			tempVar.setvolume_type((VolumeType)model.getVolumeType().getSelectedItem());
 			tempVar.setvolume_format(model.getVolumeFormat());
 			tempVar.setWipeAfterDelete((Boolean)model.getWipeAfterDelete().getEntity());
-			tempVar.setboot((Boolean)model.getIsBootable().getEntity());
+			tempVar.setBoot((Boolean)model.getIsBootable().getEntity());
 			tempVar.setPropagateErrors(PropagateErrors.Off);
 			DiskImage disk = tempVar;
 
