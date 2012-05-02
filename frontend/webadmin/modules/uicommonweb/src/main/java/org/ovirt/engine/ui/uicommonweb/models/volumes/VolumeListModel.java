@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.gluster.CreateGlusterVolumeParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeActionParameters;
@@ -26,6 +27,7 @@ import org.ovirt.engine.ui.uicommonweb.Configurator.GlusterModeEnum;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
@@ -38,7 +40,9 @@ import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeParameterListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
+import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
+import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
 public class VolumeListModel extends ListWithDetailsModel implements ISupportSystemTreeContext {
 
@@ -218,10 +222,37 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
     }
 
     private void updateActionAvailability() {
-        GlusterVolumeEntity volume = (GlusterVolumeEntity) getSelectedItem();
+        if (getSelectedItems() == null)
+        {
+            return;
+        }
+        if (getSelectedItems().size() < 0)
+        {
+            return;
+        }
+        getStopCommand().setIsExecutionAllowed(true);
+        getStartCommand().setIsExecutionAllowed(true);
+
+        for (GlusterVolumeEntity volume : Linq.<GlusterVolumeEntity> Cast(getSelectedItems()))
+        {
+
+            if (volume.getStatus() == GlusterVolumeStatus.DOWN)
+            {
+                getStopCommand().setIsExecutionAllowed(false);
+                break;
+            }
+        }
+        for (GlusterVolumeEntity volume : Linq.<GlusterVolumeEntity> Cast(getSelectedItems()))
+        {
+
+            if (volume.getStatus() == GlusterVolumeStatus.UP)
+            {
+                getStartCommand().setIsExecutionAllowed(false);
+                break;
+            }
+        }
+
         getRemoveVolumeCommand().setIsExecutionAllowed(getSelectedItem() != null);
-        getStartCommand().setIsExecutionAllowed(volume != null && volume.getStatus() != GlusterVolumeStatus.UP);
-        getStopCommand().setIsExecutionAllowed(getSelectedItem() != null);
         getRebalanceCommand().setIsExecutionAllowed(getSelectedItem() != null);
     }
 
@@ -248,7 +279,10 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
             stop();
         } else if (command.equals(getRebalanceCommand())) {
             rebalance();
+        } else if (command.getName().equals("onStop")) {//$NON-NLS-1$
+            onStop();
         }
+
     }
 
     private void rebalance() {
@@ -262,13 +296,74 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
     }
 
     private void stop() {
-        if (getSelectedItem() == null) {
+        if (getWindow() != null)
+        {
             return;
         }
-        GlusterVolumeEntity volume = (GlusterVolumeEntity) getSelectedItem();
-        // Frontend.RunAction(VdcActionType.StopGlusterVolume, new GlusterVolumeParameters(clusterId,
-        // volume.getName()));
+        ConfirmationModel model = new ConfirmationModel();
+        setWindow(model);
+        model.setTitle(ConstantsManager.getInstance().getConstants().confirmStopVolume());
+        model.setHashName("volume_stop"); //$NON-NLS-1$
+        model.setMessage(ConstantsManager.getInstance().getConstants().stopVolumeMessage());
 
+        if (getSelectedItems() == null) {
+            return;
+        }
+
+        java.util.ArrayList<String> list = new java.util.ArrayList<String>();
+        for (GlusterVolumeEntity item : Linq.<GlusterVolumeEntity> Cast(getSelectedItems()))
+        {
+            list.add(item.getName());
+        }
+        model.setItems(list);
+
+        UICommand tempVar = new UICommand("onStop", this); //$NON-NLS-1$
+        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
+        tempVar.setIsDefault(true);
+        model.getCommands().add(tempVar);
+        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
+        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
+        tempVar2.setIsCancel(true);
+        model.getCommands().add(tempVar2);
+    }
+
+    public void onStop()
+    {
+        if (getWindow() == null)
+        {
+            return;
+        }
+        ConfirmationModel model = (ConfirmationModel) getWindow();
+
+        if (model.getProgress() != null)
+        {
+            return;
+        }
+
+        if (getSelectedItems() == null) {
+            return;
+        }
+
+        ArrayList<VdcActionParametersBase> list = new java.util.ArrayList<VdcActionParametersBase>();
+        for (Object item : getSelectedItems())
+        {
+            GlusterVolumeEntity volume = (GlusterVolumeEntity) item;
+            list.add(new GlusterVolumeActionParameters(volume.getId(), false));
+        }
+
+        model.StartProgress(null);
+
+        Frontend.RunMultipleAction(VdcActionType.StopGlusterVolume, list,
+                new IFrontendMultipleActionAsyncCallback() {
+
+                    @Override
+                    public void Executed(FrontendMultipleActionAsyncResult result) {
+                        ConfirmationModel localModel = (ConfirmationModel) result.getState();
+                        localModel.StopProgress();
+                        cancel();
+                    }
+
+                }, model);
     }
 
     private void start() {

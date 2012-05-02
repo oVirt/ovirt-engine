@@ -1261,4 +1261,10 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Are you sure want to reset all the options?")
     String resetAllOptionsMsg();
+
+    @DefaultStringValue("Stop Volume")
+    String confirmStopVolume();
+
+    @DefaultStringValue("Are you sure you want to stop the following volumes?")
+    String stopVolumeMessage();
 }
