@@ -3,66 +3,38 @@ package org.ovirt.engine.ui.uicommonweb.models.pools;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmPoolType;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
-import org.ovirt.engine.ui.uicommonweb.models.ListModel;
-import org.ovirt.engine.ui.uicommonweb.models.vms.IVmModelBehavior;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.VmModelBehaviorBase;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
-import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 
 import java.util.ArrayList;
 
-public class PoolModel extends UnitVmModel
-{
-    @Override
-    public boolean getCanDefineVM()
-    {
-        return getIsNew() || (Integer) getNumOfDesktops().getEntity() == 0;
-    }
+public class PoolModel extends UnitVmModel {
 
-    @Override
-    public boolean getIsNew()
-    {
-        return super.getIsNew();
-    }
-
-    @Override
-    public void setIsNew(boolean value)
-    {
-        setIsAddVMMode(value);
-        super.setIsNew(value);
-    }
-
-    public PoolModel(IVmModelBehavior behavior)
-    {
+    public PoolModel(VmModelBehaviorBase behavior) {
         super(behavior);
-        ArrayList<EntityModel> poolTypeItems = new ArrayList<EntityModel>();
-        EntityModel tempVar = new EntityModel();
-        tempVar.setTitle(ConstantsManager.getInstance().getConstants().automaticTitle());
-        tempVar.setEntity(VmPoolType.Automatic);
-        EntityModel automaticOption = tempVar;
-        poolTypeItems.add(automaticOption);
-        EntityModel tempVar2 = new EntityModel();
-        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().manualTitle());
-        tempVar2.setEntity(VmPoolType.Manual);
-        poolTypeItems.add(tempVar2);
 
-        setPoolType(new ListModel());
+        ArrayList<EntityModel> poolTypeItems = new ArrayList<EntityModel>();
+
+        EntityModel automaticOption = new EntityModel();
+        automaticOption.setTitle(ConstantsManager.getInstance().getConstants().automaticTitle());
+        automaticOption.setEntity(VmPoolType.Automatic);
+        poolTypeItems.add(automaticOption);
+
+        EntityModel manualOption = new EntityModel();
+        manualOption.setTitle(ConstantsManager.getInstance().getConstants().manualTitle());
+        manualOption.setEntity(VmPoolType.Manual);
+        poolTypeItems.add(manualOption);
+
         getPoolType().setItems(poolTypeItems);
 
-        EntityModel tempVar3 = new EntityModel();
-        tempVar3.setEntity(1);
-        setNumOfDesktops(tempVar3);
+        getAssignedVms().setIsAvailable(true);
+        getNumOfDesktops().setIsAvailable(true);
+        getPrestartedVms().setIsAvailable(true);
 
         setIsPoolTabValid(true);
 
         getPoolType().setSelectedItem(automaticOption);
         getOSType().setSelectedItem(VmOsType.Unassigned);
     }
-
-    @Override
-    protected void setupDescriptionValidation() {
-        getDescription().ValidateEntity(new IValidation[] { new LengthValidation(255) });
-    }
-
 }

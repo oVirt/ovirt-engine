@@ -8,9 +8,6 @@ import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractVmPopupWidget;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-
 public class PoolNewPopupWidget extends AbstractVmPopupWidget {
 
     private CommonApplicationConstants constants;
@@ -22,6 +19,7 @@ public class PoolNewPopupWidget extends AbstractVmPopupWidget {
     @Override
     protected void localize(CommonApplicationConstants constants) {
         super.localize(constants);
+
         dontMigrateVMEditor.setLabel(constants.dontMigrageVmPoolPopup());
     }
 
@@ -31,23 +29,17 @@ public class PoolNewPopupWidget extends AbstractVmPopupWidget {
         initTabAvailabilityListeners(object);
         isStatelessEditor.setVisible(false);
 
+        numOfVmsLabel.setVisible(true);
+
         if (object.getIsNew()) {
-            addVmsButton.setVisible(false);
-            object.getAssignedVms().setIsAvailable(false);
-            numOfDesktopsEditor.setLabel(constants.numOfVmsPoolPopup());
-        } else {
-            object.getAssignedVms().setIsAvailable(true);
-            numOfDesktopsEditor.setVisible(false);
-            numOfDesktopsEditor.setLabel(constants.numOfVmsToAddPoolPopup());
-            addVmsButton.setText(constants.addVmsPoolPopup());
-            addVmsButton.addClickHandler(new ClickHandler() {
-                @Override
-                public void onClick(ClickEvent event) {
-                    addVmsButton.setVisible(false);
-                    numOfDesktopsEditor.setVisible(true);
-                    object.setIsAddVMMode(true);
-                }
-            });
+            object.getNumOfDesktops().setEntity("1");   //$NON-NLS-1$
+            assignedVmsEditor.setVisible(false);
+            numOfDesktopsEditor.setLabel("");   //$NON-NLS-1$
+            prestartedVmsEditor.setVisible(false);
+            prestartedVmsHintLabel.setVisible(false);
+        }
+        else {
+            assignedVmsEditor.addLabelStyleName(style.assignedVmsLabel());
         }
     }
 
@@ -65,5 +57,4 @@ public class PoolNewPopupWidget extends AbstractVmPopupWidget {
 
         poolTab.setVisible(true);
     }
-
 }

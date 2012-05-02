@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
-	xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog" xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
-	xmlns:t="urn:import:org.ovirt.engine.ui.common.widget.dialog.tab" xmlns:s="urn:import:org.ovirt.engine.ui.common.widget.uicommon.storage">
+             xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
+             xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+             xmlns:t="urn:import:org.ovirt.engine.ui.common.widget.dialog.tab"
+             xmlns:s="urn:import:org.ovirt.engine.ui.common.widget.uicommon.storage">
 
-	<ui:with field='constants' type='org.ovirt.engine.ui.common.CommonApplicationConstants' />
+    <ui:with field='constants' type='org.ovirt.engine.ui.common.CommonApplicationConstants'/>
 
-	<ui:style type="org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractVmPopupWidget.Style">
+    <ui:style type="org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractVmPopupWidget.Style">
 		.generalTabTopDecorator {
 			background-color: #D3D3D3;
 			margin-top: 4px;
@@ -71,6 +73,26 @@
 			padding-bottom: 10px;
 		}
 
+        .textBox {
+            width: 30px;
+            float: right;
+        }
+
+        .numOfVmsLabel {
+            margin-left: 5px;
+            color: #333333;
+        }
+
+        .assignedVmsLabel {
+            margin-left: 8px;
+        }
+
+        .prestartedHintLabel {
+            font-size: 7pt;
+            color: gray;
+            text-align: right;
+        }
+
 		.radioButton {
 
 		}
@@ -87,16 +109,12 @@
 			width: 100%;
 		}
 
-	        .cdAttachedLabelWidth {
-	            width: 30px;
-	        }
+        .cdAttachedLabelWidth {
+            width: 30px;
+        }
 
 		.hostRunMigrationOptions {
 			margin-left: 6px;
-		}
-
-		label {
-
 		}
 
 		.warningMessageLabel {
@@ -104,6 +122,7 @@
 			position: absolute;
 			bottom: 10px;
 		}
+
 	</ui:style>
 
 	<t:DialogTabPanel width="100%" height="100%">
@@ -119,14 +138,22 @@
 						<g:FlowPanel addStyleNames="{style.sectionPanel}">
 							<e:EntityModelTextBoxEditor ui:field="nameEditor" />
 							<e:EntityModelTextBoxEditor ui:field="descriptionEditor" />
-							<e:EntityModelLabelEditor ui:field="assignedVmsEditor" />
-							<d:SimpleDialogButton ui:field="addVmsButton" />
-							<e:EntityModelTextBoxEditor ui:field="numOfDesktopsEditor" />
-							<e:ListModelListBoxEditor ui:field="templateEditor" />
-						</g:FlowPanel>
-						<g:FlowPanel addStyleNames="{style.sectionPanel}">
-							<e:EntityModelTextBoxEditor ui:field="memSizeEditor" />
-							<e:EntityModelSliderWithTextBoxEditor ui:field="totalCPUCoresEditor" />
+                            <g:HorizontalPanel>
+                                <g:Cell width="246px" verticalAlignment="ALIGN_MIDDLE">
+                                    <g:Label ui:field="numOfVmsLabel" addStyleNames="{style.numOfVmsLabel}" />
+                                </g:Cell>
+                                <e:EntityModelTextBoxEditor ui:field="assignedVmsEditor" contentWidgetStyleName="{style.textBox}"/>
+                                <e:EntityModelTextBoxEditor ui:field="numOfDesktopsEditor" contentWidgetStyleName="{style.textBox}"/>
+                                <g:VerticalPanel>
+                                    <e:EntityModelTextBoxEditor ui:field="prestartedVmsEditor" contentWidgetStyleName="{style.textBox}"/>
+                                    <g:Label ui:field="prestartedVmsHintLabel" addStyleNames="{style.prestartedHintLabel}" />
+                                </g:VerticalPanel>
+                            </g:HorizontalPanel>
+                            <e:ListModelListBoxEditor ui:field="templateEditor"/>
+                        </g:FlowPanel>
+                        <g:FlowPanel addStyleNames="{style.sectionPanel}">
+                            <e:EntityModelTextBoxEditor ui:field="memSizeEditor"/>
+                            <e:EntityModelSliderWithTextBoxEditor ui:field="totalCPUCoresEditor" />
 							<e:EntityModelSliderWithTextBoxEditor ui:field="numOfSocketsEditor" />
 						</g:FlowPanel>
 						<g:FlowPanel addStyleNames="{style.sectionPanel}">
@@ -223,7 +250,7 @@
 								<e:EntityModelRadioButtonEditor ui:field="provisioningCloneEditor"/>
 							</g:HorizontalPanel>
 							<g:FlowPanel ui:field="disksAllocationPanel">
-							<g:Label ui:field="disksAllocationLabel" text="{constants.disksAllocation}"  addStyleNames="{style.disksAllocation}" visible="false" />									
+							<g:Label ui:field="disksAllocationLabel" text="{constants.disksAllocation}"  addStyleNames="{style.disksAllocation}" visible="false" />
 								<g:VerticalPanel>
 									<s:DisksAllocationView ui:field="disksAllocationView" listHeight="170px" listWidth="490px" showVolumeType="true" addStyleNames="{style.disksAllocationPanel}" />
 								</g:VerticalPanel>

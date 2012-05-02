@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 @SuppressWarnings("unused")
-public class ExistingVmModelBehavior extends IVmModelBehavior
+public class ExistingVmModelBehavior extends VmModelBehaviorBase
 {
     protected VM vm;
 

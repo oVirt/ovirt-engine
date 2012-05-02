@@ -23,7 +23,7 @@ import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import java.util.ArrayList;
 
 @SuppressWarnings("unused")
-public class NewVmModelBehavior extends IVmModelBehavior
+public class NewVmModelBehavior extends VmModelBehaviorBase
 {
     @Override
     public void Initialize(SystemTreeItemModel systemTreeSelectedItem)

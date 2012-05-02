@@ -5,7 +5,6 @@ import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.compat.Event;
@@ -20,6 +19,7 @@ import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
+import org.ovirt.engine.ui.uicommonweb.models.pools.PoolModel;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IntegerValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
@@ -28,7 +28,7 @@ import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import java.util.ArrayList;
 
 @SuppressWarnings("unused")
-public class NewPoolModelBehavior extends IVmModelBehavior
+public class NewPoolModelBehavior extends VmModelBehaviorBase<PoolModel>
 {
     private Event poolModelBehaviorInitializedEvent = new Event("PoolModelBehaviorInitializedEvent", //$NON-NLS-1$
             NewPoolModelBehavior.class);
@@ -50,26 +50,23 @@ public class NewPoolModelBehavior extends IVmModelBehavior
 
         getModel().getDisksAllocationModel().setIsVolumeFormatAvailable(false);
 
-        AsyncDataProvider.GetDataCenterList(new AsyncQuery(getModel(),
-                new INewAsyncCallback() {
-                    @Override
-                    public void OnSuccess(Object target, Object returnValue) {
+        AsyncDataProvider.GetDataCenterList(new AsyncQuery(getModel(), new INewAsyncCallback() {
+            @Override
+            public void OnSuccess(Object target, Object returnValue) {
 
-                        UnitVmModel model = (UnitVmModel) target;
-                        ArrayList<storage_pool> list = new ArrayList<storage_pool>();
-                        for (storage_pool a : (ArrayList<storage_pool>) returnValue)
-                        {
-                            if (a.getstatus() == StoragePoolStatus.Up)
-                            {
-                                list.add(a);
-                            }
-                        }
-                        model.SetDataCenter(model, list);
-
-                        getPoolModelBehaviorInitializedEvent().raise(this, EventArgs.Empty);
-
+                UnitVmModel model = (UnitVmModel) target;
+                ArrayList<storage_pool> list = new ArrayList<storage_pool>();
+                for (storage_pool a : (ArrayList<storage_pool>) returnValue) {
+                    if (a.getstatus() == StoragePoolStatus.Up) {
+                        list.add(a);
                     }
-                }, getModel().getHash()));
+                }
+                model.SetDataCenter(model, list);
+
+                getPoolModelBehaviorInitializedEvent().raise(this, EventArgs.Empty);
+
+            }
+        }, getModel().getHash()));
     }
 
     @Override
@@ -82,21 +79,20 @@ public class NewPoolModelBehavior extends IVmModelBehavior
 
         getModel().setIsHostAvailable(dataCenter.getstorage_pool_type() != StorageType.LOCALFS);
 
-        AsyncDataProvider.GetClusterList(new AsyncQuery(new Object[] { this, getModel() },
-                new INewAsyncCallback() {
-                    @Override
-                    public void OnSuccess(Object target, Object returnValue) {
+        AsyncDataProvider.GetClusterList(new AsyncQuery(new Object[] {this, getModel()}, new INewAsyncCallback() {
+            @Override
+            public void OnSuccess(Object target, Object returnValue) {
 
-                        Object[] array = (Object[]) target;
-                        NewPoolModelBehavior behavior = (NewPoolModelBehavior) array[0];
-                        UnitVmModel model = (UnitVmModel) array[1];
-                        ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) returnValue;
-                        model.SetClusters(model, clusters, null);
-                        behavior.InitTemplate();
-                        behavior.InitCdImage();
+                Object[] array = (Object[]) target;
+                NewPoolModelBehavior behavior = (NewPoolModelBehavior) array[0];
+                UnitVmModel model = (UnitVmModel) array[1];
+                ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) returnValue;
+                model.SetClusters(model, clusters, null);
+                behavior.InitTemplate();
+                behavior.InitCdImage();
 
-                    }
-                }, getModel().getHash()), dataCenter.getId());
+            }
+        }, getModel().getHash()), dataCenter.getId());
 
         if (dataCenter.getQuotaEnforcementType() != QuotaEnforcementTypeEnum.DISABLED) {
             getModel().getQuota().setIsAvailable(true);
@@ -248,26 +244,23 @@ public class NewPoolModelBehavior extends IVmModelBehavior
     {
         storage_pool dataCenter = (storage_pool) getModel().getDataCenter().getSelectedItem();
 
-        AsyncDataProvider.GetTemplateListByDataCenter(new AsyncQuery(this,
-                new INewAsyncCallback() {
-                    @Override
-                    public void OnSuccess(Object target1, Object returnValue1) {
-                        ArrayList<VmTemplate> loadedTemplates =
-                                (ArrayList<VmTemplate>) returnValue1;
+        AsyncDataProvider.GetTemplateListByDataCenter(new AsyncQuery(this, new INewAsyncCallback() {
+            @Override
+            public void OnSuccess(Object target1, Object returnValue1) {
 
-                        ArrayList<VmTemplate> templates = new ArrayList<VmTemplate>();
-                        for (VmTemplate template : loadedTemplates)
-                        {
-                            if (!template.getId().equals(Guid.Empty))
-                            {
-                                templates.add(template);
-                            }
-                        }
-                        getModel().getTemplate().setItems(templates);
-                        // Template.Value = templates.FirstOrDefault();
-                        getModel().getTemplate().setSelectedItem(Linq.FirstOrDefault(templates));
+                ArrayList<VmTemplate> loadedTemplates = (ArrayList<VmTemplate>) returnValue1;
+
+                ArrayList<VmTemplate> templates = new ArrayList<VmTemplate>();
+                for (VmTemplate template : loadedTemplates) {
+                    if (!template.getId().equals(Guid.Empty)) {
+                        templates.add(template);
                     }
-                }), dataCenter.getId());
+                }
+                getModel().getTemplate().setItems(templates);
+                // Template.Value = templates.FirstOrDefault();
+                getModel().getTemplate().setSelectedItem(Linq.FirstOrDefault(templates));
+            }
+        }), dataCenter.getId());
 
         /*
          * //Filter according to system tree selection. if (getSystemTreeSelectedItem() != null &&
@@ -329,28 +322,40 @@ public class NewPoolModelBehavior extends IVmModelBehavior
 
     @Override
     public boolean Validate() {
-        // VALIDATE POOLS
-        getModel().setIsPoolTabValid(true);
+
         // Revalidate name field.
         // TODO: Make maximum characters value depend on number of desktops in pool.
-        VmOsType os = (VmOsType) getModel().getOSType().getSelectedItem();
+        // VmOsType os = (VmOsType) getModel().getOSType().getSelectedItem();
 
-        int maxAlowedVms = DataProvider.GetMaxVmsInPool();
+        boolean isNew = getModel().getIsNew();
+        int maxAllowedVms = DataProvider.GetMaxVmsInPool(); // TODO: Make async call to get that value.
+        int assignedVms = getModel().getAssignedVms().AsConvertible().Integer();
 
-        LengthValidation tempVar4 = new LengthValidation();
-        tempVar4.setMaxLength(4);
-        IntegerValidation tempVar5 = new IntegerValidation();
-        tempVar5.setMinimum(1);
-        tempVar5.setMaximum(getModel().getIsNew() ? maxAlowedVms : maxAlowedVms
-                - (Integer) getModel().getAssignedVms().getEntity());
-        getModel().getNumOfDesktops()
-                .ValidateEntity(new IValidation[] {new NotEmptyValidation(), tempVar4, tempVar5});
+        getModel().getNumOfDesktops().ValidateEntity(
+            new IValidation[]
+                {
+                    new NotEmptyValidation(),
+                    new LengthValidation(4),
+                    new IntegerValidation(isNew ? 1 : 0, isNew ? maxAllowedVms : maxAllowedVms - assignedVms)
+                });
 
-        getModel().setIsGeneralTabValid(getModel().getIsGeneralTabValid() && getModel().getName().getIsValid()
-                && getModel().getNumOfDesktops().getIsValid());
+        getModel().getPrestartedVms().ValidateEntity(
+            new IValidation[]
+                {
+                    new NotEmptyValidation(),
+                    new IntegerValidation(0, assignedVms)
+                });
+
+        getModel().setIsGeneralTabValid(getModel().getIsGeneralTabValid()
+            && getModel().getName().getIsValid()
+            && getModel().getNumOfDesktops().getIsValid()
+            && getModel().getPrestartedVms().getIsValid());
 
         getModel().setIsPoolTabValid(true);
 
-        return super.Validate() && getModel().getName().getIsValid() && getModel().getNumOfDesktops().getIsValid();
+        return super.Validate()
+            && getModel().getName().getIsValid()
+            && getModel().getNumOfDesktops().getIsValid()
+            && getModel().getPrestartedVms().getIsValid();
     }
 }

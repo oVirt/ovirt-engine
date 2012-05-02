@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 @SuppressWarnings("unused")
-public class TemplateVmModelBehavior extends IVmModelBehavior
+public class TemplateVmModelBehavior extends VmModelBehaviorBase
 {
     private final VmTemplate template;
 

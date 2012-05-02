@@ -1,43 +1,5 @@
 package org.ovirt.engine.ui.common.widget.uicommon.popup;
 
-import java.util.ArrayList;
-import java.util.Map.Entry;
-
-import org.ovirt.engine.core.common.businessentities.ImageStatus;
-import org.ovirt.engine.core.common.businessentities.Quota;
-import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.VmType;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
-import org.ovirt.engine.core.compat.Event;
-import org.ovirt.engine.core.compat.EventArgs;
-import org.ovirt.engine.core.compat.IEventListener;
-import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
-import org.ovirt.engine.ui.common.CommonApplicationConstants;
-import org.ovirt.engine.ui.common.widget.Align;
-import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogButton;
-import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
-import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTabPanel;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelLabelEditor;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelRadioButtonEditor;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelSliderWithTextBoxEditor;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
-import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
-import org.ovirt.engine.ui.common.widget.parser.MemorySizeParser;
-import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
-import org.ovirt.engine.ui.common.widget.renderer.MemorySizeRenderer;
-import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
-import org.ovirt.engine.ui.common.widget.table.column.EntityModelTextColumn;
-import org.ovirt.engine.ui.common.widget.uicommon.storage.DisksAllocationView;
-import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
-import org.ovirt.engine.ui.uicommonweb.models.ListModel;
-import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
-import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -53,6 +15,41 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RadioButton;
+import org.ovirt.engine.core.common.businessentities.ImageStatus;
+import org.ovirt.engine.core.common.businessentities.Quota;
+import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.common.businessentities.VmType;
+import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.compat.Event;
+import org.ovirt.engine.core.compat.EventArgs;
+import org.ovirt.engine.core.compat.IEventListener;
+import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
+import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.widget.Align;
+import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
+import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTabPanel;
+import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
+import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.EntityModelRadioButtonEditor;
+import org.ovirt.engine.ui.common.widget.editor.EntityModelSliderWithTextBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
+import org.ovirt.engine.ui.common.widget.parser.MemorySizeParser;
+import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
+import org.ovirt.engine.ui.common.widget.renderer.MemorySizeRenderer;
+import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
+import org.ovirt.engine.ui.common.widget.table.column.EntityModelTextColumn;
+import org.ovirt.engine.ui.common.widget.uicommon.storage.DisksAllocationView;
+import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.ListModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
+
+import java.util.ArrayList;
+import java.util.Map.Entry;
 
 public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidget<UnitVmModel> {
 
@@ -64,7 +61,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 
-    interface Style extends CssResource {
+    protected interface Style extends CssResource {
         String longCheckboxContent();
 
         String provisioningEditorContent();
@@ -72,10 +69,12 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
         String provisioningRadioContent();
 
         String cdAttachedLabelWidth();
+
+        String assignedVmsLabel();
     }
 
     @UiField
-    Style style;
+    protected Style style;
 
     // ==General Tab==
     @UiField
@@ -134,14 +133,23 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
 
     @UiField
     @Path(value = "assignedVms.entity")
-    protected EntityModelLabelEditor assignedVmsEditor;
+    protected EntityModelTextBoxEditor assignedVmsEditor;
 
     @UiField
-    protected SimpleDialogButton addVmsButton;
+    @Ignore
+    protected Label numOfVmsLabel;
 
     @UiField
     @Path(value = "numOfDesktops.entity")
     protected EntityModelTextBoxEditor numOfDesktopsEditor;
+
+    @UiField
+    @Path(value = "prestartedVms.entity")
+    protected EntityModelTextBoxEditor prestartedVmsEditor;
+
+    @UiField
+    @Ignore
+    protected Label prestartedVmsHintLabel;
 
     // ==Windows Prep Tab==
     @UiField
@@ -475,7 +483,10 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
         // Pools Tab
         poolTab.setLabel(constants.poolVmPopup());
         poolTypeEditor.setLabel(constants.poolTypeVmPopup());
-        assignedVmsEditor.setLabel(constants.assignedVmsVmPopup());
+        numOfVmsLabel.setText(constants.numOfVmsPoolPopup());
+        assignedVmsEditor.setLabel(constants.totalPoolPopup());
+        numOfDesktopsEditor.setLabel("+");  //$NON-NLS-1$
+        prestartedVmsEditor.setLabel(constants.prestartedPoolPopup());
 
         // Windows Sysprep Tab
         windowsSysPrepTab.setLabel(constants.windowsSysprepVmPopup());
@@ -529,10 +540,12 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
         Driver.driver.edit(object);
         initSliders(object);
         initTabAvailabilityListeners(object);
-        initListerners(object);
+        initListeners(object);
+
+        numOfVmsLabel.setVisible(false);
     }
 
-    private void initListerners(final UnitVmModel object) {
+    private void initListeners(final UnitVmModel object) {
         object.getStorageDomain().getItemsChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
@@ -554,6 +567,18 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
                 disksAllocationPanel.setVisible(isDisksAvailable);
 
                 storageAllocationPanel.setVisible(isProvisioningAvailable || isDisksAvailable);
+            }
+        });
+
+        object.getPropertyChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+
+                PropertyChangedEventArgs e = (PropertyChangedEventArgs) args;
+
+                if (e.PropertyName == "PrestartedVmsHint") {    //$NON-NLS-1$
+                    prestartedVmsHintLabel.setText(object.getPrestartedVmsHint());
+                }
             }
         });
     }

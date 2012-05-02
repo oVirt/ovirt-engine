@@ -1,11 +1,5 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -37,18 +31,23 @@ import org.ovirt.engine.ui.uicommonweb.models.RangeEntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.models.storage.DisksAllocationModel;
-import org.ovirt.engine.ui.uicommonweb.validation.AsciiNameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.AsciiOrNoneValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.ByteSizeValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.CustomPropertyValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.RegexValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+
 @SuppressWarnings("unused")
-public class UnitVmModel extends Model
-{
+public class UnitVmModel extends Model {
 
     public static final int WINDOWS_VM_NAME_MAX_LIMIT = 15;
     public static final int NON_WINDOWS_VM_NAME_MAX_LIMIT = 64;
@@ -848,17 +847,14 @@ public class UnitVmModel extends Model
         }
     }
 
-    public IVmModelBehavior getBehavior()
-    {
+    private final VmModelBehaviorBase behavior;
+
+    public VmModelBehaviorBase getBehavior() {
         return behavior;
     }
 
-    private void setBehavior(IVmModelBehavior value)
-    {
-
+    private void setBehavior(VmModelBehaviorBase value) {
     }
-
-    private final IVmModelBehavior behavior;
 
     private int _minMemSize = 1;
 
@@ -896,7 +892,7 @@ public class UnitVmModel extends Model
         _maxMemSize64 = value;
     }
 
-    public UnitVmModel(IVmModelBehavior behavior)
+    public UnitVmModel(VmModelBehaviorBase behavior)
     {
         Frontend.getQueryStartedEvent().addListener(this);
         Frontend.getQueryCompleteEvent().addListener(this);
@@ -1002,11 +998,21 @@ public class UnitVmModel extends Model
         // NOTE: This is because currently the auto generated view code tries to register events of pooltype for
         // VM/Template views as this model is shared across VM/Template/Pool models
         setPoolType(new ListModel());
-        setNumOfDesktops(new EntityModel());
-        setAssignedVms(new EntityModel());
 
+        setNumOfDesktops(new EntityModel());
+        getNumOfDesktops().setEntity(0);
         getNumOfDesktops().setIsAvailable(false);
+
+        setAssignedVms(new EntityModel());
+        getAssignedVms().setEntity(0);
         getAssignedVms().setIsAvailable(false);
+        // Assigned VMs count is always read-only.
+        getAssignedVms().setIsChangable(false);
+
+        setPrestartedVms(new EntityModel());
+        getPrestartedVms().setEntity(0);
+        getPrestartedVms().setIsAvailable(false);
+
 
         setDisksAllocationModel(new DisksAllocationModel());
 
@@ -1206,29 +1212,29 @@ public class UnitVmModel extends Model
     private void InitMinimalVmMemSize()
     {
         AsyncDataProvider.GetMinimalVmMemSize(new AsyncQuery(this,
-                new INewAsyncCallback() {
-                    @Override
-                    public void OnSuccess(Object target, Object returnValue) {
+            new INewAsyncCallback() {
+                @Override
+                public void OnSuccess(Object target, Object returnValue) {
 
-                        UnitVmModel vmModel = (UnitVmModel) target;
-                        vmModel.set_MinMemSize((Integer) returnValue);
+                    UnitVmModel vmModel = (UnitVmModel) target;
+                    vmModel.set_MinMemSize((Integer) returnValue);
 
-                    }
-                }, getHash()));
+                }
+            }, getHash()));
     }
 
     private void InitMaximalVmMemSize32OS()
     {
         AsyncDataProvider.GetMaximalVmMemSize32OS(new AsyncQuery(this,
-                new INewAsyncCallback() {
-                    @Override
-                    public void OnSuccess(Object target, Object returnValue) {
+            new INewAsyncCallback() {
+                @Override
+                public void OnSuccess(Object target, Object returnValue) {
 
-                        UnitVmModel vmModel = (UnitVmModel) target;
-                        vmModel.set_MaxMemSize32((Integer) returnValue);
+                    UnitVmModel vmModel = (UnitVmModel) target;
+                    vmModel.set_MaxMemSize32((Integer) returnValue);
 
-                    }
-                }, getHash()));
+                }
+            }, getHash()));
     }
 
     private void UpdateMaximalVmMemSize()
@@ -1238,15 +1244,15 @@ public class UnitVmModel extends Model
         if (cluster != null)
         {
             AsyncDataProvider.GetMaximalVmMemSize64OS(new AsyncQuery(this,
-                    new INewAsyncCallback() {
-                        @Override
-                        public void OnSuccess(Object target, Object returnValue) {
+                new INewAsyncCallback() {
+                    @Override
+                    public void OnSuccess(Object target, Object returnValue) {
 
-                            UnitVmModel vmModel = (UnitVmModel) target;
-                            vmModel.set_MaxMemSize64((Integer) returnValue);
+                        UnitVmModel vmModel = (UnitVmModel) target;
+                        vmModel.set_MaxMemSize64((Integer) returnValue);
 
-                        }
-                    }, getHash()), cluster.getcompatibility_version().toString());
+                    }
+                }, getHash()), cluster.getcompatibility_version().toString());
         }
     }
 
@@ -1325,7 +1331,7 @@ public class UnitVmModel extends Model
 
         setIsWindowsOS(DataProvider.IsWindowsOsType(osType));
         setIsLinux_Unassign_UnknownOS(DataProvider.IsLinuxOsType(osType) || osType == VmOsType.Unassigned
-                || osType == VmOsType.Other);
+            || osType == VmOsType.Other);
 
         getInitrd_path().setIsChangable(getIsLinux_Unassign_UnknownOS());
         getInitrd_path().setIsAvailable(getIsLinux_Unassign_UnknownOS());
@@ -1520,10 +1526,8 @@ public class UnitVmModel extends Model
             switch (model.getBehavior().getSystemTreeSelectedItem().getType())
             {
             case DataCenter:
-                storage_pool selectDataCenter =
-                        (storage_pool) model.getBehavior().getSystemTreeSelectedItem().getEntity();
-                model.getDataCenter()
-                        .setItems(new ArrayList<storage_pool>(Arrays.asList(new storage_pool[] { selectDataCenter })));
+                storage_pool selectDataCenter = (storage_pool) model.getBehavior().getSystemTreeSelectedItem().getEntity();
+                model.getDataCenter().setItems(new ArrayList<storage_pool>(Arrays.asList(new storage_pool[] {selectDataCenter})));
                 model.getDataCenter().setSelectedItem(selectDataCenter);
                 model.getDataCenter().setIsChangable(false);
                 model.getDataCenter().setInfo("Cannot choose Data Center in tree context"); //$NON-NLS-1$
@@ -1535,8 +1539,7 @@ public class UnitVmModel extends Model
                 {
                     if (dc.getId().equals(cluster.getstorage_pool_id()))
                     {
-                        model.getDataCenter()
-                                .setItems(new ArrayList<storage_pool>(Arrays.asList(new storage_pool[] { dc })));
+                        model.getDataCenter().setItems(new ArrayList<storage_pool>(Arrays.asList(new storage_pool[] {dc})));
                         model.getDataCenter().setSelectedItem(dc);
                         break;
                     }
@@ -1550,8 +1553,7 @@ public class UnitVmModel extends Model
                 {
                     if (dc.getId().equals(host.getstorage_pool_id()))
                     {
-                        model.getDataCenter()
-                                .setItems(new ArrayList<storage_pool>(Arrays.asList(new storage_pool[] { dc })));
+                        model.getDataCenter().setItems(new ArrayList<storage_pool>(Arrays.asList(new storage_pool[] {dc})));
                         model.getDataCenter().setSelectedItem(dc);
                         model.getDataCenter().setIsChangable(false);
                         model.getDataCenter().setInfo("Cannot choose Data Center in tree context"); //$NON-NLS-1$
@@ -1565,8 +1567,7 @@ public class UnitVmModel extends Model
                 {
                     if (dc.getId().equals(storage.getstorage_pool_id()))
                     {
-                        model.getDataCenter()
-                                .setItems(new ArrayList<storage_pool>(Arrays.asList(new storage_pool[] { dc })));
+                        model.getDataCenter().setItems(new ArrayList<storage_pool>(Arrays.asList(new storage_pool[] {dc})));
                         model.getDataCenter().setSelectedItem(dc);
                         model.getDataCenter().setIsChangable(false);
                         model.getDataCenter().setInfo("Cannot choose Data Center in tree context"); //$NON-NLS-1$
@@ -1587,7 +1588,7 @@ public class UnitVmModel extends Model
 
     public void SetClusters(UnitVmModel model, ArrayList<VDSGroup> clusters, NGuid clusterGuid)
     {
-        IVmModelBehavior behavior = model.getBehavior();
+        VmModelBehaviorBase behavior = model.getBehavior();
         if (behavior.getSystemTreeSelectedItem() != null
                 && behavior.getSystemTreeSelectedItem().getType() != SystemTreeItemType.System)
         {
@@ -1596,8 +1597,7 @@ public class UnitVmModel extends Model
             case Cluster:
             case VMs:
                 VDSGroup cluster = (VDSGroup) behavior.getSystemTreeSelectedItem().getEntity();
-                model.getCluster()
-                        .setItems(new ArrayList<VDSGroup>(Arrays.asList(new VDSGroup[] {cluster})));
+                model.getCluster().setItems(new ArrayList<VDSGroup>(Arrays.asList(new VDSGroup[] {cluster})));
                 model.getCluster().setSelectedItem(cluster);
                 model.getCluster().setIsChangable(false);
                 model.getCluster().setInfo("Cannot choose Cluster in tree context"); //$NON-NLS-1$
@@ -1608,8 +1608,7 @@ public class UnitVmModel extends Model
                 {
                     if (iterCluster.getId().equals(host.getvds_group_id()))
                     {
-                        model.getCluster()
-                                .setItems(new ArrayList<VDSGroup>(Arrays.asList(new VDSGroup[] { iterCluster })));
+                        model.getCluster().setItems(new ArrayList<VDSGroup>(Arrays.asList(new VDSGroup[] {iterCluster})));
                         model.getCluster().setSelectedItem(iterCluster);
                         model.getCluster().setIsChangable(false);
                         model.getCluster().setInfo("Cannot choose Cluster in tree context"); //$NON-NLS-1$
@@ -1666,16 +1665,41 @@ public class UnitVmModel extends Model
         getMinAllocatedMemory().ValidateEntity(new IValidation[] { new ByteSizeValidation() });
         getOSType().ValidateSelectedItem(new NotEmptyValidation[] { new NotEmptyValidation() });
 
+        getDescription().ValidateEntity(new IValidation[] { new AsciiOrNoneValidation() });
         if (getOSType().getIsValid())
         {
             VmOsType osType = (VmOsType) getOSType().getSelectedItem();
 
-            getName().ValidateEntity(new IValidation[] {
-                    new NotEmptyValidation(),
-                    new AsciiNameValidation(),
-                    createNameLengthValidation(osType) });
+            String nameExpr;
+            String nameMsg;
+            if (DataProvider.IsWindowsOsType(osType))
+            {
+                nameExpr = "^[0-9a-zA-Z-_]{1," + WINDOWS_VM_NAME_MAX_LIMIT + "}$"; //$NON-NLS-1$ //$NON-NLS-2$
+                nameMsg =
+                        ConstantsManager.getInstance()
+                                .getMessages()
+                                .nameMustConataionOnlyAlphanumericChars(WINDOWS_VM_NAME_MAX_LIMIT);
+            }
+            else
+            {
+                nameExpr = "^[-\\w]{1," + NON_WINDOWS_VM_NAME_MAX_LIMIT + "}$"; //$NON-NLS-1$ //$NON-NLS-2$
+                nameMsg =
+                        ConstantsManager.getInstance()
+                                .getMessages()
+                                .nameCannotContainBlankOrSpecialChars(NON_WINDOWS_VM_NAME_MAX_LIMIT);
+            }
 
-            setupDescriptionValidation();
+            getName().ValidateEntity(
+                new IValidation[] {
+                    new NotEmptyValidation(),
+                    new LengthValidation(this.getBehavior() instanceof TemplateVmModelBehavior ? 40 : 64),
+                    new RegexValidation(nameExpr, nameMsg)
+                });
+
+            getDescription().ValidateEntity(
+                new IValidation[] {
+                    new LengthValidation(255)
+                });
 
             boolean is64OsType =
                     (osType == VmOsType.Other || osType == VmOsType.OtherLinux || DataProvider.Is64bitOsType(osType));
@@ -1772,7 +1796,7 @@ public class UnitVmModel extends Model
 
         if (getCluster().getSelectedItem() != null && getCustomProperties().getEntity() != null)
         {
-            getCustomProperties().ValidateEntity(new IValidation[] { new CustomPropertyValidation(getCustomPropertiesKeysList().get(((VDSGroup) getCluster().getSelectedItem()).getcompatibility_version())) });
+            getCustomProperties().ValidateEntity(new IValidation[] {new CustomPropertyValidation(getCustomPropertiesKeysList().get(((VDSGroup) getCluster().getSelectedItem()).getcompatibility_version()))});
         }
 
         setIsBootSequenceTabValid(true);
@@ -1800,31 +1824,27 @@ public class UnitVmModel extends Model
                 && getKernel_path().getIsValid() && getCustomProperties().getIsValid() && behavior.Validate();
     }
 
-    protected void setupDescriptionValidation() {
-        getDescription().ValidateEntity(new IValidation[] {new LengthValidation(255), new AsciiOrNoneValidation()});
-    }
-
-    private void ValidateMemorySize(EntityModel memorySizeEntityModel, int maxMemSize, int minMemSize)
+    private void ValidateMemorySize(EntityModel model, int maxMemSize, int minMemSize)
     {
         boolean isValid = false;
 
-        int memSize = (Integer) memorySizeEntityModel.getEntity();
+        int memSize = (Integer) model.getEntity();
 
         if (memSize == 0)
         {
-            memorySizeEntityModel.getInvalidityReasons().add(ConstantsManager.getInstance()
+            model.getInvalidityReasons().add(ConstantsManager.getInstance()
                     .getMessages()
                     .memSizeBetween(minMemSize, maxMemSize));
         }
         else if (memSize > maxMemSize)
         {
-            memorySizeEntityModel.getInvalidityReasons().add(ConstantsManager.getInstance()
+            model.getInvalidityReasons().add(ConstantsManager.getInstance()
                     .getMessages()
                     .maxMemSizeIs(maxMemSize));
         }
         else if (memSize < minMemSize)
         {
-            memorySizeEntityModel.getInvalidityReasons().add(ConstantsManager.getInstance()
+            model.getInvalidityReasons().add(ConstantsManager.getInstance()
                     .getMessages()
                     .minMemSizeIs(minMemSize));
         }
@@ -1833,36 +1853,31 @@ public class UnitVmModel extends Model
             isValid = true;
         }
 
-        memorySizeEntityModel.setIsValid(isValid);
+        model.setIsValid(isValid);
     }
 
-    private ListModel privatePoolType;
+    private ListModel poolType;
 
     public ListModel getPoolType()
     {
-        return privatePoolType;
+        return poolType;
     }
 
     protected void setPoolType(ListModel value)
     {
-        privatePoolType = value;
+        poolType = value;
     }
 
-    private EntityModel privateNumOfDesktops;
+    private EntityModel numOfDesktops;
 
     public EntityModel getNumOfDesktops()
     {
-        return privateNumOfDesktops;
+        return numOfDesktops;
     }
 
     protected void setNumOfDesktops(EntityModel value)
     {
-        privateNumOfDesktops = value;
-    }
-
-    public boolean getCanDefineVM()
-    {
-        return getIsNew() || (Integer) getNumOfDesktops().getEntity() == 0;
+        numOfDesktops = value;
     }
 
     private EntityModel assignedVms;
@@ -1893,19 +1908,26 @@ public class UnitVmModel extends Model
         }
     }
 
-    private boolean isAddVMMode;
+    private EntityModel prestartedVms;
 
-    public boolean getIsAddVMMode()
-    {
-        return isAddVMMode;
+    public EntityModel getPrestartedVms() {
+        return prestartedVms;
     }
 
-    public void setIsAddVMMode(boolean value)
-    {
-        if (isAddVMMode != value)
-        {
-            isAddVMMode = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsAddVMMode")); //$NON-NLS-1$
+    protected void setPrestartedVms(EntityModel value) {
+        prestartedVms = value;
+    }
+
+    private String prestartedVmsHint;
+
+    public String getPrestartedVmsHint() {
+        return prestartedVmsHint;
+    }
+
+    public void setPrestartedVmsHint(String value) {
+        if (prestartedVmsHint != value) {
+            prestartedVmsHint = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("PrestartedVmsHint")); //$NON-NLS-1$
         }
     }
 }

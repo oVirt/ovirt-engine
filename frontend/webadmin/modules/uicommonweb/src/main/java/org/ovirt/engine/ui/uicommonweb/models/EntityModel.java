@@ -6,6 +6,7 @@ import org.ovirt.engine.core.compat.EventDefinition;
 import org.ovirt.engine.core.compat.IProvidePropertyChangedEvent;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.core.compat.ProvidePropertyChangedEvent;
+import org.ovirt.engine.ui.uicommonweb.Convertible;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.ValidationResult;
 
@@ -143,5 +144,9 @@ public class EntityModel extends Model
                 break;
             }
         }
+    }
+
+    public Convertible AsConvertible() {
+        return new Convertible(this);
     }
 }

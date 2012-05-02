@@ -33,7 +33,7 @@ import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
-public class NewTemplateVmModelBehavior extends IVmModelBehavior
+public class NewTemplateVmModelBehavior extends VmModelBehaviorBase
 {
     private final VM vm;
 

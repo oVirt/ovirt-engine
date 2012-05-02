@@ -298,6 +298,7 @@ public final class Cloner
         obj.setvm_assigned_count(instance.getvm_assigned_count());
         obj.setvm_pool_description(instance.getvm_pool_description());
         obj.setvm_running_count(instance.getvm_running_count());
+        obj.setPrestartedVms(instance.getPrestartedVms());
 
         return obj;
     }

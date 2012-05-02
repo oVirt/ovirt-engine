@@ -292,9 +292,6 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Pool Type")
     String poolTypeVmPopup();
 
-    @DefaultStringValue("Assigned VMs")
-    String assignedVmsVmPopup();
-
     @DefaultStringValue("Windows Sysprep")
     String windowsSysprepVmPopup();
 
@@ -653,11 +650,11 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Number of VMs")
     String numOfVmsPoolPopup();
 
-    @DefaultStringValue("Number of VMs to add")
-    String numOfVmsToAddPoolPopup();
+    @DefaultStringValue("Total")
+    String totalPoolPopup();
 
-    @DefaultStringValue("Add VMs")
-    String addVmsPoolPopup();
+    @DefaultStringValue("Prestarted")
+    String prestartedPoolPopup();
 
     // VM disk
     @DefaultStringValue("Size(GB)")

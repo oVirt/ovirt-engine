@@ -59,6 +59,14 @@ public class RegexValidation implements IValidation
 
     // public bool IgnoreCase { get; set; }
 
+    public RegexValidation() {
+    }
+
+    public RegexValidation(String expression, String message) {
+        setExpression(expression);
+        setMessage(message);
+    }
+
     @Override
     public ValidationResult Validate(Object value)
     {

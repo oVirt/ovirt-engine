@@ -35,17 +35,15 @@ import org.ovirt.engine.ui.uicommonweb.models.storage.DisksAllocationModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
-public abstract class IVmModelBehavior
-{
-    private UnitVmModel privateModel;
+public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
-    public UnitVmModel getModel()
-    {
+    private TModel privateModel;
+
+    public TModel getModel() {
         return privateModel;
     }
 
-    public void setModel(UnitVmModel value)
-    {
+    public void setModel(TModel value) {
         privateModel = value;
     }
 
@@ -96,7 +94,7 @@ public abstract class IVmModelBehavior
                     @Override
                     public void OnSuccess(Object target, Object returnValue) {
 
-                        IVmModelBehavior behavior = (IVmModelBehavior) target;
+                        VmModelBehaviorBase behavior = (VmModelBehaviorBase) target;
                         storage_domains storageDomain = (storage_domains) returnValue;
                         if (storageDomain != null)
                         {
@@ -142,7 +140,7 @@ public abstract class IVmModelBehavior
                         @Override
                         public void OnSuccess(Object target, Object returnValue) {
 
-                            IVmModelBehavior behavior = (IVmModelBehavior) target;
+                            VmModelBehaviorBase behavior = (VmModelBehaviorBase) target;
                             cachedTimeZones = ((HashMap<String, String>) returnValue).entrySet();
                             behavior.PostUpdateTimeZone();
 
@@ -184,7 +182,7 @@ public abstract class IVmModelBehavior
                         @Override
                         public void OnSuccess(Object target, Object returnValue) {
 
-                            IVmModelBehavior behavior = (IVmModelBehavior) target;
+                            VmModelBehaviorBase behavior = (VmModelBehaviorBase) target;
                             cachedDefaultTimeZoneKey = (String) returnValue;
                             behavior.PostUpdateDefaultTimeZone();
 
@@ -212,7 +210,7 @@ public abstract class IVmModelBehavior
                     @Override
                     public void OnSuccess(Object target, Object returnValue) {
 
-                        IVmModelBehavior behavior = (IVmModelBehavior) target;
+                        VmModelBehaviorBase behavior = (VmModelBehaviorBase) target;
                         List<String> domains = (List<String>) returnValue;
                         String oldDomain = (String) behavior.getModel().getDomain().getSelectedItem();
                         if (oldDomain != null && !oldDomain.equals("") && !domains.contains(oldDomain)) //$NON-NLS-1$
@@ -258,7 +256,7 @@ public abstract class IVmModelBehavior
                         @Override
                         public void OnSuccess(Object target, Object returnValue) {
 
-                            IVmModelBehavior behavior = (IVmModelBehavior) target;
+                            VmModelBehaviorBase behavior = (VmModelBehaviorBase) target;
                             cachedMaxPrority = (Integer) returnValue;
                             behavior.PostUpdatePriority();
 
@@ -421,7 +419,7 @@ public abstract class IVmModelBehavior
                     public void OnSuccess(Object target, Object returnValue) {
 
                         Object[] array = (Object[]) target;
-                        IVmModelBehavior behavior = (IVmModelBehavior) array[0];
+                        VmModelBehaviorBase behavior = (VmModelBehaviorBase) array[0];
                         UnitVmModel model = (UnitVmModel) array[1];
                         model.getNumOfSockets().setMax((Integer) returnValue);
                         model.getNumOfSockets().setMin(1);
@@ -447,7 +445,7 @@ public abstract class IVmModelBehavior
                     @Override
                     public void OnSuccess(Object target, Object returnValue) {
 
-                        IVmModelBehavior behavior = (IVmModelBehavior) target;
+                        VmModelBehaviorBase behavior = (VmModelBehaviorBase) target;
                         behavior.maxCpus = (Integer) returnValue;
                         behavior.PostUpdateNumOfSockets2();
 
@@ -465,7 +463,7 @@ public abstract class IVmModelBehavior
                     @Override
                     public void OnSuccess(Object target, Object returnValue) {
 
-                        IVmModelBehavior behavior = (IVmModelBehavior) target;
+                        VmModelBehaviorBase behavior = (VmModelBehaviorBase) target;
                         behavior.maxCpusPerSocket = (Integer) returnValue;
                         behavior.UpdateTotalCpus();
 
@@ -572,7 +570,7 @@ public abstract class IVmModelBehavior
             AsyncDataProvider.GetStorageDomainList(new AsyncQuery(this, new INewAsyncCallback() {
                 @Override
                 public void OnSuccess(Object target, Object returnValue) {
-                    IVmModelBehavior behavior = (IVmModelBehavior) target;
+                    VmModelBehaviorBase behavior = (VmModelBehaviorBase) target;
                     ArrayList<storage_domains> storageDomains = (ArrayList<storage_domains>) returnValue;
                     ArrayList<storage_domains> activeStorageDomains = FilterStorageDomains(storageDomains);
                     DisksAllocationModel disksAllocationModel = getModel().getDisksAllocationModel();
