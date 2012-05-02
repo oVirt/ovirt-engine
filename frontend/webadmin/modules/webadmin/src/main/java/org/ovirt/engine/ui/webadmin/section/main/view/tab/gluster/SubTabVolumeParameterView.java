@@ -54,6 +54,13 @@ public class SubTabVolumeParameterView extends AbstractSubTabTableView<GlusterVo
             }
         });
 
+        getTable().addActionButton(new WebAdminButtonDefinition<GlusterVolumeOptionEntity>(constants.resetVolumeParameter()) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getDetailModel().getResetParameterCommand();
+            }
+        });
+
         getTable().addActionButton(new WebAdminButtonDefinition<GlusterVolumeOptionEntity>(constants.resetAllVolumeParameter()) {
             @Override
             protected UICommand resolveCommand() {

@@ -1976,6 +1976,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Edit")
     String editVolumeParameter();
 
+    @DefaultStringValue("Reset")
+    String resetVolumeParameter();
+
     @DefaultStringValue("Reset All")
     String resetAllVolumeParameter();
 

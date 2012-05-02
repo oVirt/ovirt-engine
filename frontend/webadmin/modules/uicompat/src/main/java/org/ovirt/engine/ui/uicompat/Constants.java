@@ -1235,6 +1235,9 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 	@DefaultStringValue("Edit")
 	String editVolume();
 
+    @DefaultStringValue("Reset")
+    String resetVolume();
+
 	@DefaultStringValue("Reset All")
 	String resetAllVolume();
 
@@ -1246,6 +1249,12 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
 	@DefaultStringValue("Configure Local Storage")
     String configuringLocalStorage();
+
+    @DefaultStringValue("Reset Option")
+    String resetOptionVolumeTitle();
+
+    @DefaultStringValue("Are you sure want to reset the following option?")
+    String resetOptionVolumeMsg();
 
     @DefaultStringValue("Reset All Options")
     String resetAllOptionsTitle();

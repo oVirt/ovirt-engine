@@ -20,6 +20,7 @@ public class VolumeParameterListModel extends SearchableListModel {
 
     private UICommand addParameterCommand;
     private UICommand editParameterCommand;
+    private UICommand resetParameterCommand;
     private UICommand resetAllParameterCommand;
 
     public UICommand getAddParameterCommand() {
@@ -36,6 +37,14 @@ public class VolumeParameterListModel extends SearchableListModel {
 
     public void setEditParameterCommand(UICommand command) {
         this.editParameterCommand = command;
+    }
+
+    public void setResetParameterCommand(UICommand command) {
+        this.resetParameterCommand = command;
+    }
+
+    public UICommand getResetParameterCommand() {
+        return resetParameterCommand;
     }
 
     public void setResetAllParameterCommand(UICommand command) {
@@ -58,6 +67,7 @@ public class VolumeParameterListModel extends SearchableListModel {
         setHashName("parameters"); //$NON-NLS-1$
         setAddParameterCommand(new UICommand(ConstantsManager.getInstance().getConstants().AddVolume(), this));
         setEditParameterCommand(new UICommand(ConstantsManager.getInstance().getConstants().editVolume(), this));
+        setResetParameterCommand(new UICommand(ConstantsManager.getInstance().getConstants().resetVolume(), this));
         setResetAllParameterCommand(new UICommand(ConstantsManager.getInstance().getConstants().resetAllVolume(), this));
     }
 
@@ -77,7 +87,8 @@ public class VolumeParameterListModel extends SearchableListModel {
 
     private void updateActionAvailability()
     {
-        editParameterCommand.setIsExecutionAllowed(getSelectedItems() != null && getSelectedItems().size() == 1);
+        getEditParameterCommand().setIsExecutionAllowed(getSelectedItems() != null && getSelectedItems().size() == 1);
+        getResetParameterCommand().setIsExecutionAllowed(getSelectedItems() != null && getSelectedItems().size() == 1);
     }
 
     private void addParameter() {
@@ -171,6 +182,70 @@ public class VolumeParameterListModel extends SearchableListModel {
         volumeParameterModel.getCommands().add(command);
     }
 
+    private void resetParameter() {
+        if (getWindow() != null)
+        {
+            return;
+        }
+
+        if (getSelectedItem() == null)
+        {
+            return;
+        }
+        GlusterVolumeOptionEntity selectedOption = (GlusterVolumeOptionEntity) getSelectedItem();
+
+        ConfirmationModel model = new ConfirmationModel();
+        setWindow(model);
+        model.setTitle(ConstantsManager.getInstance().getConstants().resetOptionVolumeTitle());
+        model.setHashName("reset_option"); //$NON-NLS-1$
+        model.setMessage(ConstantsManager.getInstance().getConstants().resetOptionVolumeMsg());
+
+        ArrayList<String> list = new ArrayList<String>();
+        list.add(selectedOption.getKey());
+        model.setItems(list);
+
+        UICommand okCommand = new UICommand("OnResetParameter", this); //$NON-NLS-1$
+        okCommand.setTitle(ConstantsManager.getInstance().getConstants().ok());
+        okCommand.setIsDefault(true);
+        model.getCommands().add(okCommand);
+        UICommand cancelCommand = new UICommand("OnCancel", this); //$NON-NLS-1$
+        cancelCommand.setTitle(ConstantsManager.getInstance().getConstants().cancel());
+        cancelCommand.setIsCancel(true);
+        model.getCommands().add(cancelCommand);
+    }
+
+    private void onResetParameter() {
+        ConfirmationModel model = (ConfirmationModel) getWindow();
+
+        if (model.getProgress() != null)
+        {
+            return;
+        }
+
+        if (getSelectedItem() == null)
+        {
+            return;
+        }
+        GlusterVolumeOptionEntity selectedOption = (GlusterVolumeOptionEntity) getSelectedItem();
+
+        ResetGlusterVolumeOptionsParameters parameters =
+                new ResetGlusterVolumeOptionsParameters(selectedOption.getVolumeId(), selectedOption.getKey(), false);
+
+        model.StartProgress(null);
+
+        Frontend.RunAction(VdcActionType.ResetGlusterVolumeOptions,
+                parameters,
+                new IFrontendActionAsyncCallback() {
+
+                    @Override
+                    public void Executed(FrontendActionAsyncResult result) {
+                        ConfirmationModel localModel = (ConfirmationModel) result.getState();
+                        localModel.StopProgress();
+                        cancel();
+                    }
+                }, model);
+    }
+
     private void resetAllParameters() {
         if (getWindow() != null)
         {
@@ -253,6 +328,12 @@ public class VolumeParameterListModel extends SearchableListModel {
         }
         else if (command.equals(getEditParameterCommand())) {
             editParameter();
+        }
+        else if (command.equals(getResetParameterCommand())) {
+            resetParameter();
+        }
+        else if (command.getName().equals("OnResetParameter")) { //$NON-NLS-1$
+            onResetParameter();
         }
         else if (command.equals(getResetAllParameterCommand())) {
             resetAllParameters();
