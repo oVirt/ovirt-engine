@@ -267,15 +267,17 @@ Create or replace FUNCTION Updatestorage_domain_static(v_id UUID,
 	v_storage VARCHAR(250),
 	v_storage_name VARCHAR(250),
 	v_storage_type INTEGER,
-	v_storage_domain_type INTEGER)
+	v_storage_domain_type INTEGER,
+	v_storage_domain_format_type INTEGER)
 RETURNS VOID
 
 	--The [storage_domain_static] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
    AS $procedure$
 BEGIN
       UPDATE storage_domain_static
-      SET storage = v_storage,storage_name = v_storage_name,storage_type = v_storage_type, 
-      storage_domain_type = v_storage_domain_type,_update_date = LOCALTIMESTAMP
+      SET storage = v_storage, storage_name = v_storage_name, storage_type = v_storage_type,
+      storage_domain_type = v_storage_domain_type, _update_date = LOCALTIMESTAMP,
+      storage_domain_format_type = v_storage_domain_format_type
       WHERE id = v_id;
 END; $procedure$
 LANGUAGE plpgsql;
