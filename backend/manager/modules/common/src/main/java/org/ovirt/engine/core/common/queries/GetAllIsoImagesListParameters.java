@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.common.queries;
 
-import org.ovirt.engine.core.compat.*;
+import org.ovirt.engine.core.compat.Guid;
 
 public class GetAllIsoImagesListParameters extends VdcQueryParametersBase {
     private static final long serialVersionUID = 6098440434536241071L;
