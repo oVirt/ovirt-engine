@@ -10,12 +10,12 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.vdscommands.CreateVmVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.TransactionScopeOption;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.ThreadUtils;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
@@ -121,13 +121,12 @@ public class CreateVmVDSCommand<P extends CreateVmVDSCommandParameters> extends 
 
         Guid guid = getParameters().getVm().getId();
         String vmName = getParameters().getVm().getvm_name();
-
+        VmDynamic vmDynamicFromDb = DbFacade.getInstance().getVmDynamicDAO().get(guid);
         if (ResourceManager.getInstance().IsVmDuringInitiating(getParameters().getVm().getId())) {
             log.infoFormat("Vm Running failed - vm {0}:{1} already running", guid, vmName);
-            getVDSReturnValue().setReturnValue(VMStatus.Up);
+            getVDSReturnValue().setReturnValue(vmDynamicFromDb.getstatus());
             return false;
         } else {
-            VmDynamic vmDynamicFromDb = DbFacade.getInstance().getVmDynamicDAO().get(guid);
             VMStatus vmStatus = vmDynamicFromDb.getstatus();
 
             if (vmStatus == VMStatus.ImageLocked) {
