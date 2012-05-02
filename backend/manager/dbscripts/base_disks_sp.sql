@@ -15,7 +15,8 @@ Create or replace FUNCTION InsertBaseDisk(
     v_propagate_errors VARCHAR(32),
     v_disk_alias VARCHAR(50),
     v_disk_description VARCHAR(500),
-    v_shareable BOOLEAN)
+    v_shareable BOOLEAN,
+    v_boot BOOLEAN)
 RETURNS VOID
 AS $procedure$
 BEGIN
@@ -27,7 +28,8 @@ BEGIN
         propagate_errors,
         disk_alias,
         disk_description,
-        shareable)
+        shareable,
+        boot)
     VALUES(
         v_disk_id,
         v_internal_drive_mapping,
@@ -36,7 +38,8 @@ BEGIN
         v_propagate_errors,
         v_disk_alias,
         v_disk_description,
-        v_shareable);
+        v_shareable,
+        v_boot);
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -52,7 +55,8 @@ Create or replace FUNCTION UpdateBaseDisk(
     v_propagate_errors VARCHAR(32),
     v_disk_alias VARCHAR(50),
     v_disk_description VARCHAR(500),
-    v_shareable BOOLEAN)
+    v_shareable BOOLEAN,
+    v_boot BOOLEAN)
 RETURNS VOID
 AS $procedure$
 BEGIN
@@ -63,7 +67,8 @@ BEGIN
            propagate_errors = v_propagate_errors,
            disk_alias = v_disk_alias,
            disk_description = v_disk_description,
-           shareable = v_shareable
+           shareable = v_shareable,
+           boot = v_boot
     WHERE  disk_id = v_disk_id;
 END; $procedure$
 LANGUAGE plpgsql;

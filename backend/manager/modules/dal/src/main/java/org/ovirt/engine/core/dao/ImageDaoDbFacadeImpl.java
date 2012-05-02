@@ -40,7 +40,6 @@ public class ImageDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Image, Guid>
                 .addValue("volume_format", entity.getVolumeFormat())
                 .addValue("image_group_id", entity.getDiskId())
                 .addValue("active", entity.isActive())
-                .addValue("boot", entity.isBoot())
                 .addValue("quota_id", entity.getQuotaId());
     }
 
@@ -75,7 +74,6 @@ public class ImageDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Image, Guid>
             entity.setVolumeType(VolumeType.forValue(rs.getInt("volume_type")));
             entity.setVolumeFormat(VolumeFormat.forValue(rs.getInt("volume_format")));
             entity.setDiskId(Guid.createGuidFromString(rs.getString("image_group_id")));
-            entity.setBoot(rs.getBoolean("boot"));
             entity.setQuotaId(Guid.createGuidFromString(rs.getString("quota_id")));
             entity.setActive((Boolean) rs.getObject("active"));
             return entity;

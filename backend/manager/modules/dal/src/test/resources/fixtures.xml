@@ -1675,7 +1675,6 @@
         <column>volume_type</column>
         <column>volume_format</column>
         <column>image_group_id</column>
-        <column>boot</column>
         <column>_create_date</column>
         <column>_update_date</column>
         <column>quota_id</column>
@@ -1693,7 +1692,6 @@
             <value>2</value>
             <value>4</value>
             <null />
-            <value>0</value>
             <value>2010-11-18 11:11:35</value>
             <value>2010-12-01 14:13:07</value>
             <value>88296e00-0cad-4e5a-9291-008a7b7f4399</value>
@@ -1711,7 +1709,6 @@
             <value>2</value>
             <value>4</value>
             <value>1b26a52b-b60f-44cb-9f46-3ef333b04a34</value>
-            <value>0</value>
             <value>2010-11-18 11:11:35</value>
             <value>2010-12-01 14:13:07</value>
             <value>88296e00-0cad-4e5a-9291-008a7b7f4399</value>
@@ -1729,7 +1726,6 @@
             <value>2</value>
             <value>4</value>
             <value>1b26a52b-b60f-44cb-9f46-3ef333b04a34</value>
-            <value>0</value>
             <value>2010-11-18 11:11:35</value>
             <value>2010-12-01 14:13:07</value>
             <value>88296e00-0cad-4e5a-9291-008a7b7f4399</value>
@@ -1748,7 +1744,6 @@
             <value>2</value>
             <value>4</value>
             <value>1b26a52b-b60f-44cb-9f46-3ef333b04a36</value>
-            <value>0</value>
             <value>2010-11-18 11:11:35</value>
             <value>2010-12-01 14:13:07</value>
             <null/>
@@ -1766,7 +1761,6 @@
             <value>2</value>
             <value>4</value>
             <value>1b26a52b-b60f-44cb-9f46-3ef333b04a35</value>
-            <value>0</value>
             <value>2010-11-18 11:11:35</value>
             <value>2010-12-01 14:13:07</value>
             <value>88296e00-0cad-4e5a-9291-008a7b7f4399</value>
@@ -1784,7 +1778,6 @@
             <value>2</value>
             <value>4</value>
             <value>1b26a52b-b60f-44cb-9f46-3ef333b04a35</value>
-            <value>0</value>
             <value>2010-11-18 11:11:35</value>
             <value>2010-12-01 14:13:07</value>
             <value>88296e00-0cad-4e5a-9291-008a7b7f4399</value>
@@ -1802,7 +1795,6 @@
             <value>2</value>
             <value>4</value>
             <value>1b26a52b-b60f-44cb-9f46-3ef333b04a35</value>
-            <value>0</value>
             <value>2010-11-18 11:11:35</value>
             <value>2010-12-01 14:13:07</value>
             <value>88296e00-0cad-4e5a-9291-008a7b7f4401</value>
@@ -1820,7 +1812,6 @@
             <value>2</value>
             <value>4</value>
             <value>fb26a52b-b60f-44cb-9f46-3ef333b04a3f</value>
-            <value>0</value>
             <value>2010-11-18 11:11:35</value>
             <value>2010-12-01 14:13:07</value>
             <value>88296e00-0cad-4e5a-9291-008a7b7f4401</value>
@@ -1837,6 +1828,7 @@
         <column>disk_alias</column>
         <column>disk_description</column>
         <column>shareable</column>
+        <column>boot</column>
         <row>
             <value>1b26a52b-b60f-44cb-9f46-3ef333b04a34</value>
             <value>2</value>
@@ -1846,6 +1838,7 @@
             <value>New Disk Alias Name</value>
             <value>New Description</value>
             <value>false</value>
+            <value>true</value>
         </row>
         <row>
             <value>1b26a52b-b60f-44cb-9f46-3ef333b04a35</value>
@@ -1853,6 +1846,7 @@
             <value>VirtIO</value>
             <value>1</value>
             <value>Off</value>
+            <value>false</value>
         </row>
     </table>
 

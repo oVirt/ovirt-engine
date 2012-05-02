@@ -169,7 +169,7 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
             entity.setstorage_path(StringUtils.splitStringList(rs.getString("storage_path")));
             entity.setstorage_pool_id(NGuid.createGuidFromString(rs
                     .getString("storage_pool_id")));
-            entity.setboot(rs.getBoolean("boot"));
+            entity.setBoot(rs.getBoolean("boot"));
             entity.setread_rate(rs.getInt("read_rate"));
             entity.setwrite_rate(rs.getInt("write_rate"));
             entity.setQuotaId(Guid.createGuidFromString(rs.getString("quota_id")));

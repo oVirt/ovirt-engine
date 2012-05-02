@@ -20,7 +20,6 @@ Create or replace FUNCTION InsertImage(
     v_volume_format INTEGER,
     v_image_group_id UUID ,
     v_active BOOLEAN,
-    v_boot BOOLEAN,
     v_quota_id UUID)
 RETURNS VOID
 AS $procedure$
@@ -38,7 +37,6 @@ BEGIN
         image_group_id,
         volume_format,
         active,
-        boot,
         quota_id)
     VALUES(
         v_creation_date,
@@ -53,7 +51,6 @@ BEGIN
         v_image_group_id,
         v_volume_format,
         v_active,
-        v_boot,
         v_quota_id);
 END; $procedure$
 LANGUAGE plpgsql;
@@ -89,7 +86,6 @@ Create or replace FUNCTION UpdateImage(
     v_volume_format INTEGER,
     v_image_group_id UUID ,
     v_active BOOLEAN,
-    v_boot BOOLEAN,
     v_quota_id UUID)
 RETURNS VOID
 AS $procedure$
@@ -106,7 +102,6 @@ BEGIN
            image_group_id = v_image_group_id,
            volume_format = v_volume_format,
            active = v_active,
-           boot = v_boot,
            quota_id = v_quota_id,
            _update_date = LOCALTIMESTAMP
     WHERE  image_guid = v_image_guid;

@@ -37,6 +37,7 @@ abstract class AbstractDiskRowMapper<T extends BaseDisk> implements Parameterize
         }
 
         disk.setShareable(rs.getBoolean("shareable"));
+        disk.setBoot(rs.getBoolean("boot"));
 
         return disk;
     }
