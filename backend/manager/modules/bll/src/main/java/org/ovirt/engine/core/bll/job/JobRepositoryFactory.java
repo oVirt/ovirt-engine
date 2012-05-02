@@ -1,8 +1,6 @@
 package org.ovirt.engine.core.bll.job;
 
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dal.job.JobRepository;
-import org.ovirt.engine.core.dal.job.JobRepositoryImpl;
 
 /**
  * Factory responsible for instantiating the {@JobRepository}

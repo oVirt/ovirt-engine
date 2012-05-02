@@ -5,7 +5,7 @@
  <!-- Log levels:DEBUG,INFO,WARN,ERROR,FATAL -->
    <appender name="FILE" class="org.jboss.logging.appender.RollingFileAppender">
      <errorHandler class="org.jboss.logging.util.OnlyOnceErrorHandler"/>
-     <param name="File" value="${jboss.server.log.dir}/server.log"/>
+     <param name="File" value="target/server.log"/>
      <param name="Append" value="true"/>
      <param name="MaxFileSize" value="10000KB"/>
      <param name="MaxBackupIndex" value="5"/>
@@ -36,7 +36,7 @@
 
    <appender name="ENGINE_LOG" class="org.jboss.logging.appender.RollingFileAppender">
       <errorHandler class="org.jboss.logging.util.OnlyOnceErrorHandler"/>
-      <param name="File" value="${jboss.server.log.dir}/engine.log"/>
+      <param name="File" value="target/engine.log"/>
       <param name="Append" value="true"/>
       <param name="MaxFileSize" value="10000KB"/>
       <param name="MaxBackupIndex" value="9"/>
@@ -52,7 +52,7 @@
 
    <appender name="PUBLICAPI_LOG" class="org.jboss.logging.appender.RollingFileAppender">
       <errorHandler class="org.jboss.logging.util.OnlyOnceErrorHandler"/>
-      <param name="File" value="${jboss.server.log.dir}/soap-api.log"/>
+      <param name="File" value="target/soap-api.log"/>
       <param name="Append" value="true"/>
       <param name="MaxFileSize" value="10000KB"/>
       <param name="MaxBackupIndex" value="9"/>

@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.dal.job;
+package org.ovirt.engine.core.bll.job;
 
 import java.util.Date;
 import java.util.List;
