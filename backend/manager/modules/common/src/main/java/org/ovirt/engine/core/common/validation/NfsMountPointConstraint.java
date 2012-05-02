@@ -5,18 +5,18 @@ import java.util.regex.Pattern;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-import org.ovirt.engine.core.common.validation.annotation.ValidLinuxMountPoint;
+import org.ovirt.engine.core.common.validation.annotation.ValidNFSMountPoint;
 
 /**
  * Validates, that the given string is a linux mount point in the following form:
  * <IP or FQDN>:/<linux/path/only/from/ASCII>
  */
-public class LinuxMountPointConstraint implements ConstraintValidator<ValidLinuxMountPoint, String> {
+public class NfsMountPointConstraint implements ConstraintValidator<ValidNFSMountPoint, String> {
 
     private static final String IP =
             "((?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)|";
 
-    private static final String FQDN = "(([A-Za-z0-9]([A-Za-z0-9\\-]{0,61}[A-Za-z0-9])?\\.)+[A-Za-z]{2,}))";
+    private static final String FQDN = "(([A-Za-z0-9]([A-Za-z0-9\\-\\.]{0,61}[A-Za-z0-9])?)*[A-Za-z]))";
 
     private static final String PATH = "\\:/(.*?/|.*?\\\\)?([^\\./|^\\.\\\\]+)(?:\\.([^\\\\]*)|)";
 
@@ -25,7 +25,7 @@ public class LinuxMountPointConstraint implements ConstraintValidator<ValidLinux
     private static final String ASCII = "[\\p{ASCII}]*";
 
     @Override
-    public void initialize(ValidLinuxMountPoint constraintAnnotation) {
+    public void initialize(ValidNFSMountPoint constraintAnnotation) {
     }
 
     @Override

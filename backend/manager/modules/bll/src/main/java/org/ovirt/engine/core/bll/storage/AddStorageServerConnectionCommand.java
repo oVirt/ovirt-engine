@@ -9,7 +9,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.storage_server_connections;
-import org.ovirt.engine.core.common.validation.LinuxMountPointConstraint;
+import org.ovirt.engine.core.common.validation.NfsMountPointConstraint;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -56,7 +56,7 @@ public class AddStorageServerConnectionCommand<T extends StorageServerConnection
         storage_server_connections paramConnection = getParameters().getStorageServerConnection();
         storage_server_connections currConnection = getConnection();
         if (returnValue && paramConnection.getstorage_type() == StorageType.NFS
-                && !new LinuxMountPointConstraint().isValid(paramConnection.getconnection(), null)) {
+                && !new NfsMountPointConstraint().isValid(paramConnection.getconnection(), null)) {
             returnValue = false;
             addCanDoActionMessage("VALIDATION.STORAGE.CONNECTION.INVALID");
         }

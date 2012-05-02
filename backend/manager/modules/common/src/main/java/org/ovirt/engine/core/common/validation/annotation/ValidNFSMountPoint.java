@@ -13,12 +13,12 @@ import java.lang.annotation.Target;
 import javax.validation.Constraint;
 import javax.validation.Payload;
 
-import org.ovirt.engine.core.common.validation.LinuxMountPointConstraint;
+import org.ovirt.engine.core.common.validation.NfsMountPointConstraint;
 
 @Target({ ANNOTATION_TYPE, METHOD, FIELD, CONSTRUCTOR, PARAMETER })
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = LinuxMountPointConstraint.class)
-public @interface ValidLinuxMountPoint {
+@Constraint(validatedBy = NfsMountPointConstraint.class)
+public @interface ValidNFSMountPoint {
     String message() default "VALIDATION_FIELD_IS_NOT_VALID_LINUX_MOUNT_POINT";
 
     Class<?>[] groups() default {};
