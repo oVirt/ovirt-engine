@@ -4,15 +4,17 @@ import java.util.ArrayList;
 
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeOptionParameters;
+import org.ovirt.engine.core.common.action.gluster.ResetGlusterVolumeOptionsParameters;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeOptionEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeOptionInfo;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
-import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public class VolumeParameterListModel extends SearchableListModel {
 
@@ -93,7 +95,7 @@ public class VolumeParameterListModel extends SearchableListModel {
         command.setTitle(ConstantsManager.getInstance().getConstants().ok());
         command.setIsDefault(true);
         volumeParameterModel.getCommands().add(command);
-        command = new UICommand("OnAddParameterCancel", this); //$NON-NLS-1$
+        command = new UICommand("OnCancel", this); //$NON-NLS-1$
         command.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         command.setIsDefault(true);
         volumeParameterModel.getCommands().add(command);
@@ -130,7 +132,7 @@ public class VolumeParameterListModel extends SearchableListModel {
         setWindow(null);
     }
 
-    private void onAddParameterCancel() {
+    private void cancel() {
         setWindow(null);
     }
 
@@ -163,15 +165,64 @@ public class VolumeParameterListModel extends SearchableListModel {
         command.setTitle(ConstantsManager.getInstance().getConstants().ok());
         command.setIsDefault(true);
         volumeParameterModel.getCommands().add(command);
-        command = new UICommand("OnAddParameterCancel", this); //$NON-NLS-1$
+        command = new UICommand("OnCancel", this); //$NON-NLS-1$
         command.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         command.setIsDefault(true);
         volumeParameterModel.getCommands().add(command);
     }
 
-    private void resetAllParameter() {
-        // TODO Auto-generated method stub
+    private void resetAllParameters() {
+        if (getWindow() != null)
+        {
+            return;
+        }
 
+        ConfirmationModel model = new ConfirmationModel();
+        setWindow(model);
+        model.setTitle(ConstantsManager.getInstance().getConstants().resetAllOptionsTitle());
+        model.setHashName("reset_all_options"); //$NON-NLS-1$
+        model.setMessage(ConstantsManager.getInstance().getConstants().resetAllOptionsMsg());
+
+        UICommand okCommand = new UICommand("OnResetAllParameters", this); //$NON-NLS-1$
+        okCommand.setTitle(ConstantsManager.getInstance().getConstants().ok());
+        okCommand.setIsDefault(true);
+        model.getCommands().add(okCommand);
+        UICommand cancelCommand = new UICommand("OnCancel", this); //$NON-NLS-1$
+        cancelCommand.setTitle(ConstantsManager.getInstance().getConstants().cancel());
+        cancelCommand.setIsCancel(true);
+        model.getCommands().add(cancelCommand);
+    }
+
+    private void onResetAllParameters() {
+        ConfirmationModel model = (ConfirmationModel) getWindow();
+
+        if (model.getProgress() != null)
+        {
+            return;
+        }
+
+        if (getEntity() == null)
+        {
+            return;
+        }
+        GlusterVolumeEntity volume = (GlusterVolumeEntity) getEntity();
+
+        ResetGlusterVolumeOptionsParameters parameters =
+                new ResetGlusterVolumeOptionsParameters(volume.getId(), null, false);
+
+        model.StartProgress(null);
+
+        Frontend.RunAction(VdcActionType.ResetGlusterVolumeOptions,
+                parameters,
+                new IFrontendActionAsyncCallback() {
+
+                    @Override
+                    public void Executed(FrontendActionAsyncResult result) {
+                        ConfirmationModel localModel = (ConfirmationModel) result.getState();
+                        localModel.StopProgress();
+                        cancel();
+                    }
+                }, model);
     }
 
     @Override
@@ -197,14 +248,17 @@ public class VolumeParameterListModel extends SearchableListModel {
         else if (command.getName().equals("OnAddParameter")) { //$NON-NLS-1$
             onAddParameter();
         }
-        else if (command.getName().equals("OnAddParameterCancel")) { //$NON-NLS-1$
-            onAddParameterCancel();
+        else if (command.getName().equals("OnCancel")) { //$NON-NLS-1$
+            cancel();
         }
         else if (command.equals(getEditParameterCommand())) {
             editParameter();
         }
         else if (command.equals(getResetAllParameterCommand())) {
-            resetAllParameter();
+            resetAllParameters();
+        }
+        else if (command.getName().equals("OnResetAllParameters")) { //$NON-NLS-1$
+            onResetAllParameters();
         }
     }
 }
