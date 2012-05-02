@@ -7,6 +7,9 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 @SuppressWarnings("unused")
 public abstract class IUserPortalListModel extends ListWithDetailsModel
 {
@@ -29,7 +32,7 @@ public abstract class IUserPortalListModel extends ListWithDetailsModel
 
     public abstract void OnVmAndPoolLoad();
 
-    protected java.util.HashMap<Guid, vm_pools> poolMap;
+    protected HashMap<Guid, vm_pools> poolMap;
 
     public vm_pools ResolveVmPoolById(Guid id)
     {
@@ -37,20 +40,20 @@ public abstract class IUserPortalListModel extends ListWithDetailsModel
     }
 
     // Return a list of VMs with status 'UP'
-    public java.util.ArrayList<UserPortalItemModel> GetStatusUpVms(Iterable items)
+    public ArrayList<UserPortalItemModel> GetStatusUpVms(Iterable items)
     {
         return GetUpVms(items, true);
     }
 
     // Return a list of up VMs
-    public java.util.ArrayList<UserPortalItemModel> GetUpVms(Iterable items)
+    public ArrayList<UserPortalItemModel> GetUpVms(Iterable items)
     {
         return GetUpVms(items, false);
     }
 
-    private java.util.ArrayList<UserPortalItemModel> GetUpVms(Iterable items, boolean onlyVmStatusUp)
+    private ArrayList<UserPortalItemModel> GetUpVms(Iterable items, boolean onlyVmStatusUp)
     {
-        java.util.ArrayList<UserPortalItemModel> upVms = new java.util.ArrayList<UserPortalItemModel>();
+        ArrayList<UserPortalItemModel> upVms = new ArrayList<UserPortalItemModel>();
         if (items != null)
         {
             for (Object item : items)

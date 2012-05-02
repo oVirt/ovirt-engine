@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.storage;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Map.Entry;
+import java.util.Map;
 
 import org.ovirt.engine.core.common.action.ImprotVmTemplateParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -41,7 +41,7 @@ import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 public class TemplateBackupModel extends ManageBackupModel
 {
 
-    private ArrayList<Entry<VmTemplate, DiskImageList>> extendedItems;
+    private ArrayList<Map.Entry<VmTemplate, DiskImageList>> extendedItems;
 
     public TemplateBackupModel()
     {
@@ -64,7 +64,7 @@ public class TemplateBackupModel extends ManageBackupModel
         model.setTitle(ConstantsManager.getInstance().getConstants().removeBackedUpTemplatesTitle());
         model.setHashName("remove_backed_up_template"); //$NON-NLS-1$
         model.setMessage(ConstantsManager.getInstance().getConstants().templatesMsg());
-        java.util.ArrayList<String> items = new java.util.ArrayList<String>();
+        ArrayList<String> items = new ArrayList<String>();
         for (Object a : getSelectedItems())
         {
             VmTemplate template = (VmTemplate) a;
@@ -94,8 +94,8 @@ public class TemplateBackupModel extends ManageBackupModel
                 ArrayList<storage_pool> pools = (ArrayList<storage_pool>) returnValue;
                 if (pools != null && pools.size() > 0) {
                     storage_pool pool = pools.get(0);
-                    java.util.ArrayList<VdcActionParametersBase> prms =
-                            new java.util.ArrayList<VdcActionParametersBase>();
+                    ArrayList<VdcActionParametersBase> prms =
+                            new ArrayList<VdcActionParametersBase>();
                     for (Object a : templateBackupModel.getSelectedItems())
                     {
                         VmTemplate template = (VmTemplate) a;
@@ -133,7 +133,7 @@ public class TemplateBackupModel extends ManageBackupModel
             @Override
             public void OnSuccess(Object returnModel, Object returnValue) {
                 TemplateBackupModel templateBackupModel = (TemplateBackupModel) returnModel;
-                java.util.ArrayList<VDSGroup> clusters = (java.util.ArrayList<VDSGroup>) returnValue;
+                ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) returnValue;
 
                 ImportTemplateModel iTemplateModel = (ImportTemplateModel) templateBackupModel.getWindow();
                 iTemplateModel.getCluster().setItems(clusters);
@@ -165,8 +165,8 @@ public class TemplateBackupModel extends ManageBackupModel
                                 TemplateBackupModel tempalteBackupModel2 = (TemplateBackupModel) returnModel2;
                                 ImportTemplateModel iTemplateModel2 =
                                         (ImportTemplateModel) tempalteBackupModel2.getWindow();
-                                java.util.ArrayList<storage_domains> destStorages =
-                                        new java.util.ArrayList<storage_domains>();
+                                ArrayList<storage_domains> destStorages =
+                                        new ArrayList<storage_domains>();
                                 ArrayList<storage_domains> list = (ArrayList<storage_domains>) returnValue2;
                                 for (storage_domains domain : list)
                                 {
@@ -242,7 +242,7 @@ public class TemplateBackupModel extends ManageBackupModel
         {
             return;
         }
-        java.util.ArrayList<VdcActionParametersBase> prms = new java.util.ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> prms = new ArrayList<VdcActionParametersBase>();
         for (Object object : getSelectedItems())
         {
             VmTemplate template = (VmTemplate) object;
@@ -275,8 +275,8 @@ public class TemplateBackupModel extends ManageBackupModel
                         TemplateBackupModel templateBackupModel = (TemplateBackupModel) result.getState();
                         templateBackupModel.getWindow().StopProgress();
                         templateBackupModel.Cancel();
-                        java.util.ArrayList<VdcReturnValueBase> retVals =
-                                (java.util.ArrayList<VdcReturnValueBase>) result.getReturnValue();
+                        ArrayList<VdcReturnValueBase> retVals =
+                                (ArrayList<VdcReturnValueBase>) result.getReturnValue();
                         if (retVals != null && templateBackupModel.getSelectedItems().size() == retVals.size())
                         {
                             ConfirmationModel confirmModel = new ConfirmationModel();
@@ -339,7 +339,7 @@ public class TemplateBackupModel extends ManageBackupModel
                 public void OnSuccess(Object model, Object ReturnValue)
                 {
                     TemplateBackupModel backupModel = (TemplateBackupModel) model;
-                    java.util.ArrayList<storage_pool> list = (java.util.ArrayList<storage_pool>) ReturnValue;
+                    ArrayList<storage_pool> list = (ArrayList<storage_pool>) ReturnValue;
                     if (list != null && list.size() > 0)
                     {
                         storage_pool dataCenter = list.get(0);
@@ -350,13 +350,13 @@ public class TemplateBackupModel extends ManageBackupModel
                             public void OnSuccess(Object model1, Object ReturnValue1)
                             {
                                 TemplateBackupModel backupModel1 = (TemplateBackupModel) model1;
-                                java.util.ArrayList<java.util.Map.Entry<VmTemplate, DiskImageList>> items =
-                                        new java.util.ArrayList<java.util.Map.Entry<VmTemplate, DiskImageList>>();
-                                java.util.HashMap<VmTemplate, DiskImageList> dictionary =
-                                        (java.util.HashMap<VmTemplate, DiskImageList>) ((VdcQueryReturnValue) ReturnValue1).getReturnValue();
+                                ArrayList<Map.Entry<VmTemplate, DiskImageList>> items =
+                                        new ArrayList<Map.Entry<VmTemplate, DiskImageList>>();
+                                HashMap<VmTemplate, DiskImageList> dictionary =
+                                        (HashMap<VmTemplate, DiskImageList>) ((VdcQueryReturnValue) ReturnValue1).getReturnValue();
 
                                 ArrayList<VmTemplate> list = new ArrayList<VmTemplate>();
-                                for (java.util.Map.Entry<VmTemplate, DiskImageList> item : dictionary.entrySet())
+                                for (Map.Entry<VmTemplate, DiskImageList> item : dictionary.entrySet())
                                 {
                                     items.add(item);
                                     VmTemplate template = item.getKey();
@@ -382,11 +382,11 @@ public class TemplateBackupModel extends ManageBackupModel
         }
     }
 
-    protected void setExtendedItems(ArrayList<Entry<VmTemplate, DiskImageList>> items) {
+    protected void setExtendedItems(ArrayList<Map.Entry<VmTemplate, DiskImageList>> items) {
         this.extendedItems = items;
     }
 
-    public ArrayList<Entry<VmTemplate, DiskImageList>> getExtendedItems() {
+    public ArrayList<Map.Entry<VmTemplate, DiskImageList>> getExtendedItems() {
         return extendedItems;
     }
 

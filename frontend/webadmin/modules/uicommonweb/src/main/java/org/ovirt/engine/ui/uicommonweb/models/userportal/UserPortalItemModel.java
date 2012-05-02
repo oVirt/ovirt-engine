@@ -15,6 +15,10 @@ import org.ovirt.engine.ui.uicommonweb.models.configure.ChangeCDModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 @SuppressWarnings("unused")
 public class UserPortalItemModel extends EntityModel
 {
@@ -289,14 +293,14 @@ public class UserPortalItemModel extends EntityModel
         }
     }
 
-    private java.util.List<ChangeCDModel> cdImages;
+    private List<ChangeCDModel> cdImages;
 
-    public java.util.List<ChangeCDModel> getCdImages()
+    public List<ChangeCDModel> getCdImages()
     {
         return cdImages;
     }
 
-    public void setCdImages(java.util.List<ChangeCDModel> value)
+    public void setCdImages(List<ChangeCDModel> value)
     {
         if (cdImages != value)
         {
@@ -342,7 +346,7 @@ public class UserPortalItemModel extends EntityModel
 
         ChangeCDModel tempVar = new ChangeCDModel();
         tempVar.setTitle(ConstantsManager.getInstance().getConstants().retrievingCDsTitle());
-        setCdImages(new java.util.ArrayList<ChangeCDModel>(java.util.Arrays.asList(new ChangeCDModel[] { tempVar })));
+        setCdImages(new ArrayList<ChangeCDModel>(Arrays.asList(new ChangeCDModel[] {tempVar})));
     }
 
     @Override

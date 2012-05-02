@@ -33,6 +33,9 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @SuppressWarnings("unused")
 public class StorageDataCenterListModel extends SearchableListModel
 {
@@ -111,50 +114,50 @@ public class StorageDataCenterListModel extends SearchableListModel
         privateAttachMultiple = value;
     }
 
-    private java.util.ArrayList<VdcActionParametersBase> privatedetachPrms;
+    private ArrayList<VdcActionParametersBase> privatedetachPrms;
 
-    public java.util.ArrayList<VdcActionParametersBase> getdetachPrms()
+    public ArrayList<VdcActionParametersBase> getdetachPrms()
     {
         return privatedetachPrms;
     }
 
-    public void setdetachPrms(java.util.ArrayList<VdcActionParametersBase> value)
+    public void setdetachPrms(ArrayList<VdcActionParametersBase> value)
     {
         privatedetachPrms = value;
     }
 
-    private java.util.ArrayList<VdcActionParametersBase> privateremovePrms;
+    private ArrayList<VdcActionParametersBase> privateremovePrms;
 
-    public java.util.ArrayList<VdcActionParametersBase> getremovePrms()
+    public ArrayList<VdcActionParametersBase> getremovePrms()
     {
         return privateremovePrms;
     }
 
-    public void setremovePrms(java.util.ArrayList<VdcActionParametersBase> value)
+    public void setremovePrms(ArrayList<VdcActionParametersBase> value)
     {
         privateremovePrms = value;
     }
 
-    private java.util.ArrayList<EntityModel> privateattachCandidateDatacenters;
+    private ArrayList<EntityModel> privateattachCandidateDatacenters;
 
-    public java.util.ArrayList<EntityModel> getattachCandidateDatacenters()
+    public ArrayList<EntityModel> getattachCandidateDatacenters()
     {
         return privateattachCandidateDatacenters;
     }
 
-    public void setattachCandidateDatacenters(java.util.ArrayList<EntityModel> value)
+    public void setattachCandidateDatacenters(ArrayList<EntityModel> value)
     {
         privateattachCandidateDatacenters = value;
     }
 
-    private java.util.ArrayList<storage_pool> privateavailableDatacenters;
+    private ArrayList<storage_pool> privateavailableDatacenters;
 
-    public java.util.ArrayList<storage_pool> getavailableDatacenters()
+    public ArrayList<storage_pool> getavailableDatacenters()
     {
         return privateavailableDatacenters;
     }
 
-    public void setavailableDatacenters(java.util.ArrayList<storage_pool> value)
+    public void setavailableDatacenters(ArrayList<storage_pool> value)
     {
         privateavailableDatacenters = value;
     }
@@ -207,8 +210,8 @@ public class StorageDataCenterListModel extends SearchableListModel
             public void OnSuccess(Object model, Object ReturnValue)
             {
                 SearchableListModel searchableListModel = (SearchableListModel) model;
-                java.util.ArrayList<storage_domains> domains =
-                        (java.util.ArrayList<storage_domains>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
+                ArrayList<storage_domains> domains =
+                        (ArrayList<storage_domains>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
                 for (storage_domains domain : domains) {
                     String guid =
                             domain.getstorage_pool_id() != null ? domain.getstorage_pool_id().getValue().toString()
@@ -216,7 +219,7 @@ public class StorageDataCenterListModel extends SearchableListModel
                     domain.setQueryableId(domain.getId() + "_" + guid); //$NON-NLS-1$
                 }
                 searchableListModel.setItems(domains);
-                setIsEmpty(((java.util.List) searchableListModel.getItems()).size() == 0);
+                setIsEmpty(((List) searchableListModel.getItems()).size() == 0);
             }
         };
 
@@ -242,7 +245,7 @@ public class StorageDataCenterListModel extends SearchableListModel
             return;
         }
 
-        setattachCandidateDatacenters(new java.util.ArrayList<EntityModel>());
+        setattachCandidateDatacenters(new ArrayList<EntityModel>());
         setAttachMultiple(getEntity().getstorage_domain_type() == StorageDomainType.ISO);
 
         AsyncDataProvider.GetDataCenterList(new AsyncQuery(this,
@@ -251,7 +254,7 @@ public class StorageDataCenterListModel extends SearchableListModel
                     public void OnSuccess(Object target, Object returnValue) {
 
                         StorageDataCenterListModel listModel = (StorageDataCenterListModel) target;
-                        listModel.setavailableDatacenters((java.util.ArrayList<storage_pool>) returnValue);
+                        listModel.setavailableDatacenters((ArrayList<storage_pool>) returnValue);
                         for (storage_pool dataCenter : listModel.getavailableDatacenters())
                         {
                             switch (getEntity().getstorage_domain_type())
@@ -329,7 +332,7 @@ public class StorageDataCenterListModel extends SearchableListModel
         }
 
         // Filter datacenters list
-        java.util.ArrayList<EntityModel> datacenters = new java.util.ArrayList<EntityModel>();
+        ArrayList<EntityModel> datacenters = new ArrayList<EntityModel>();
         for (EntityModel datacenter : getattachCandidateDatacenters())
         {
             if (datacenter.getEntity() != null)
@@ -341,7 +344,7 @@ public class StorageDataCenterListModel extends SearchableListModel
         PostAttachInit(datacenters);
     }
 
-    public void PostAttachInit(java.util.ArrayList<EntityModel> datacenters)
+    public void PostAttachInit(ArrayList<EntityModel> datacenters)
     {
         ListModel model = new ListModel();
         setWindow(model);
@@ -388,7 +391,7 @@ public class StorageDataCenterListModel extends SearchableListModel
             return;
         }
 
-        java.util.ArrayList<storage_pool> items = new java.util.ArrayList<storage_pool>();
+        ArrayList<storage_pool> items = new ArrayList<storage_pool>();
         for (EntityModel a : Linq.<EntityModel> Cast(model.getItems()))
         {
             if (a.getIsSelected())
@@ -401,8 +404,8 @@ public class StorageDataCenterListModel extends SearchableListModel
         {
             model.StartProgress(null);
 
-            java.util.ArrayList<VdcActionParametersBase> parameters =
-                    new java.util.ArrayList<VdcActionParametersBase>();
+            ArrayList<VdcActionParametersBase> parameters =
+                    new ArrayList<VdcActionParametersBase>();
             for (storage_pool dataCenter : items)
             {
                 parameters.add(new StorageDomainPoolParametersBase(getEntity().getId(), dataCenter.getId()));
@@ -439,7 +442,7 @@ public class StorageDataCenterListModel extends SearchableListModel
         model.setHashName("detach_storage"); //$NON-NLS-1$
         model.setMessage(ConstantsManager.getInstance().getConstants().areYouSureYouWantDetachStorageFromDcsMsg());
 
-        java.util.ArrayList<String> items = new java.util.ArrayList<String>();
+        ArrayList<String> items = new ArrayList<String>();
         for (Object item : getSelectedItems())
         {
             storage_domains a = (storage_domains) item;
@@ -499,8 +502,8 @@ public class StorageDataCenterListModel extends SearchableListModel
             return;
         }
 
-        setdetachPrms(new java.util.ArrayList<VdcActionParametersBase>());
-        setremovePrms(new java.util.ArrayList<VdcActionParametersBase>());
+        setdetachPrms(new ArrayList<VdcActionParametersBase>());
+        setremovePrms(new ArrayList<VdcActionParametersBase>());
 
         for (Object item : getSelectedItems())
         {
@@ -556,7 +559,7 @@ public class StorageDataCenterListModel extends SearchableListModel
 
     private void Maintenance()
     {
-        java.util.ArrayList<VdcActionParametersBase> list = new java.util.ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
         for (Object item : getSelectedItems())
         {
             storage_domains a = (storage_domains) item;
@@ -582,7 +585,7 @@ public class StorageDataCenterListModel extends SearchableListModel
 
     private void Activate()
     {
-        java.util.ArrayList<VdcActionParametersBase> list = new java.util.ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
         for (Object item : getSelectedItems())
         {
             storage_domains a = (storage_domains) item;
@@ -638,9 +641,9 @@ public class StorageDataCenterListModel extends SearchableListModel
 
     private void UpdateActionAvailability()
     {
-        java.util.ArrayList<storage_domains> items =
+        ArrayList<storage_domains> items =
                 getSelectedItems() != null ? Linq.<storage_domains> Cast(getSelectedItems())
-                        : new java.util.ArrayList<storage_domains>();
+                        : new ArrayList<storage_domains>();
 
         getActivateCommand().setIsExecutionAllowed(items.size() == 1
                 && VdcActionUtils.CanExecute(items, storage_domains.class, VdcActionType.ActivateStorageDomain));

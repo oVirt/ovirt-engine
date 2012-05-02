@@ -159,7 +159,7 @@ public class VmInterfaceListModel extends SearchableListModel
             return;
         }
 
-        java.util.ArrayList<VmNetworkInterface> interfaces = Linq.<VmNetworkInterface> Cast(getItems());
+        ArrayList<VmNetworkInterface> interfaces = Linq.<VmNetworkInterface> Cast(getItems());
         String newNicName = DataProvider.GetNewNicName(interfaces);
 
         VmInterfaceModel model = new VmInterfaceModel();
@@ -193,8 +193,8 @@ public class VmInterfaceListModel extends SearchableListModel
                 VmInterfaceListModel vmInterfaceListModel = (VmInterfaceListModel) model1;
                 VmInterfaceModel vmInterfaceModel = (VmInterfaceModel) vmInterfaceListModel.getWindow();
 
-                java.util.ArrayList<network> networks = new java.util.ArrayList<network>();
-                for (network a : (java.util.ArrayList<network>) result1)
+                ArrayList<network> networks = new ArrayList<network>();
+                for (network a : (ArrayList<network>) result1)
                 {
                     if (a.getStatus() == NetworkStatus.Operational)
                     {
@@ -245,7 +245,7 @@ public class VmInterfaceListModel extends SearchableListModel
         model.setHashName("edit_network_interface_vms"); //$NON-NLS-1$
 
         Integer selectedNicType = nic.getType();
-        java.util.ArrayList<VmInterfaceType> nicTypes =
+        ArrayList<VmInterfaceType> nicTypes =
                 DataProvider.GetNicTypeList(vm.getvm_os(),
                         VmInterfaceType.forValue(selectedNicType) == VmInterfaceType.rtl8139_pv);
         model.getNicType().setItems(nicTypes);
@@ -271,8 +271,8 @@ public class VmInterfaceListModel extends SearchableListModel
                 VmInterfaceListModel vmInterfaceListModel = (VmInterfaceListModel) model1;
                 VmInterfaceModel vmInterfaceModel = (VmInterfaceModel) vmInterfaceListModel.getWindow();
 
-                java.util.ArrayList<network> networks = new java.util.ArrayList<network>();
-                for (network a : (java.util.ArrayList<network>) result1)
+                ArrayList<network> networks = new ArrayList<network>();
+                for (network a : (ArrayList<network>) result1)
                 {
                     if (a.getStatus() == NetworkStatus.Operational)
                     {
@@ -392,7 +392,7 @@ public class VmInterfaceListModel extends SearchableListModel
         model.setHashName("remove_network_interface_vms"); //$NON-NLS-1$
         model.setMessage(ConstantsManager.getInstance().getConstants().networkInterfacesMsg());
 
-        java.util.ArrayList<String> items = new java.util.ArrayList<String>();
+        ArrayList<String> items = new ArrayList<String>();
         for (Object item : getSelectedItems())
         {
             VmNetworkInterface a = (VmNetworkInterface) item;
@@ -420,7 +420,7 @@ public class VmInterfaceListModel extends SearchableListModel
             return;
         }
 
-        java.util.ArrayList<VdcActionParametersBase> list = new java.util.ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
         for (Object item : getSelectedItems())
         {
             VmNetworkInterface a = (VmNetworkInterface) item;
@@ -493,7 +493,7 @@ public class VmInterfaceListModel extends SearchableListModel
     {
         VM vm = (VM) getEntity();
 
-        java.util.ArrayList<VM> items = new java.util.ArrayList<VM>();
+        ArrayList<VM> items = new ArrayList<VM>();
         if (vm != null)
         {
             items.add(vm);

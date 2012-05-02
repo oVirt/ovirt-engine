@@ -27,6 +27,9 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 @SuppressWarnings("unused")
 public class TemplateInterfaceListModel extends SearchableListModel
 {
@@ -146,18 +149,18 @@ public class TemplateInterfaceListModel extends SearchableListModel
                     public void OnSuccess(Object target, Object returnValue) {
 
                         TemplateInterfaceListModel vmInterfaceListModel = (TemplateInterfaceListModel) target;
-                        java.util.ArrayList<network> network_list =
-                                returnValue != null ? (java.util.ArrayList<network>) returnValue
-                                        : new java.util.ArrayList<network>();
+                        ArrayList<network> network_list =
+                                returnValue != null ? (ArrayList<network>) returnValue
+                                        : new ArrayList<network>();
                         vmInterfaceListModel.PostGetClusterNetworkList_New(network_list);
 
                     }
                 }), getEntityStronglyTyped().getvds_group_id());
     }
 
-    public void PostGetClusterNetworkList_New(java.util.ArrayList<network> network_list)
+    public void PostGetClusterNetworkList_New(ArrayList<network> network_list)
     {
-        java.util.ArrayList<network> networks = new java.util.ArrayList<network>();
+        ArrayList<network> networks = new ArrayList<network>();
         for (network a : network_list)
         {
             if (a.getStatus() == NetworkStatus.Operational)
@@ -166,7 +169,7 @@ public class TemplateInterfaceListModel extends SearchableListModel
             }
         }
 
-        java.util.ArrayList<VmNetworkInterface> nics = Linq.<VmNetworkInterface> Cast(getItems());
+        ArrayList<VmNetworkInterface> nics = Linq.<VmNetworkInterface> Cast(getItems());
         int nicCount = nics.size();
         String newNicName = DataProvider.GetNewNicName(nics);
 
@@ -206,20 +209,20 @@ public class TemplateInterfaceListModel extends SearchableListModel
                     public void OnSuccess(Object target, Object returnValue) {
 
                         TemplateInterfaceListModel vmInterfaceListModel = (TemplateInterfaceListModel) target;
-                        java.util.ArrayList<network> network_list =
-                                returnValue != null ? (java.util.ArrayList<network>) returnValue
-                                        : new java.util.ArrayList<network>();
+                        ArrayList<network> network_list =
+                                returnValue != null ? (ArrayList<network>) returnValue
+                                        : new ArrayList<network>();
                         vmInterfaceListModel.PostGetClusterNetworkList_Edit(network_list);
 
                     }
                 }), getEntityStronglyTyped().getvds_group_id());
     }
 
-    public void PostGetClusterNetworkList_Edit(java.util.ArrayList<network> network_list)
+    public void PostGetClusterNetworkList_Edit(ArrayList<network> network_list)
     {
         VmNetworkInterface nic = (VmNetworkInterface) getSelectedItem();
         int nicCount = Linq.<VmNetworkInterface> Cast(getItems()).size();
-        java.util.ArrayList<network> networks = new java.util.ArrayList<network>();
+        ArrayList<network> networks = new ArrayList<network>();
         for (network a : network_list)
         {
             if (a.getStatus() == NetworkStatus.Operational)
@@ -242,7 +245,7 @@ public class TemplateInterfaceListModel extends SearchableListModel
         model.getNetwork().setSelectedItem(network);
 
         Integer selectedNicType = nic.getType();
-        java.util.ArrayList<VmInterfaceType> nicTypes =
+        ArrayList<VmInterfaceType> nicTypes =
                 DataProvider.GetNicTypeList(getEntityStronglyTyped().getos(),
                         VmInterfaceType.forValue(selectedNicType) == VmInterfaceType.rtl8139_pv);
         model.getNicType().setItems(nicTypes);
@@ -295,8 +298,8 @@ public class TemplateInterfaceListModel extends SearchableListModel
         if (model.getIsNew())
         {
             Frontend.RunMultipleAction(VdcActionType.AddVmTemplateInterface,
-                    new java.util.ArrayList<VdcActionParametersBase>(java.util.Arrays.asList(new VdcActionParametersBase[] { new AddVmTemplateInterfaceParameters(getEntityStronglyTyped().getId(),
-                            nic) })),
+                    new ArrayList<VdcActionParametersBase>(Arrays.asList(new VdcActionParametersBase[] {new AddVmTemplateInterfaceParameters(getEntityStronglyTyped().getId(),
+                        nic)})),
                     new IFrontendMultipleActionAsyncCallback() {
                         @Override
                         public void Executed(FrontendMultipleActionAsyncResult result) {
@@ -310,7 +313,7 @@ public class TemplateInterfaceListModel extends SearchableListModel
         else
         {
             Frontend.RunMultipleAction(VdcActionType.UpdateVmTemplateInterface,
-                    new java.util.ArrayList<VdcActionParametersBase>(java.util.Arrays.asList(new VdcActionParametersBase[] { new AddVmTemplateInterfaceParameters(getEntityStronglyTyped().getId(),
+                    new ArrayList<VdcActionParametersBase>(Arrays.asList(new VdcActionParametersBase[] { new AddVmTemplateInterfaceParameters(getEntityStronglyTyped().getId(),
                             nic) })),
                     new IFrontendMultipleActionAsyncCallback() {
                         @Override
@@ -337,7 +340,7 @@ public class TemplateInterfaceListModel extends SearchableListModel
         model.setHashName("remove_network_interface_tmps"); //$NON-NLS-1$
         model.setMessage(ConstantsManager.getInstance().getConstants().networkInterfacesMsg());
 
-        java.util.ArrayList<String> items = new java.util.ArrayList<String>();
+        ArrayList<String> items = new ArrayList<String>();
         for (Object item : getSelectedItems())
         {
             VmNetworkInterface a = (VmNetworkInterface) item;
@@ -364,7 +367,7 @@ public class TemplateInterfaceListModel extends SearchableListModel
             return;
         }
 
-        java.util.ArrayList<VdcActionParametersBase> list = new java.util.ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
         for (Object item : getSelectedItems())
         {
             VmNetworkInterface a = (VmNetworkInterface) item;

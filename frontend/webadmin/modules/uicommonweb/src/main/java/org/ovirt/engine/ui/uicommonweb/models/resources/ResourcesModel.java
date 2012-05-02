@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.resources;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
@@ -202,8 +203,8 @@ public class ResourcesModel extends SearchableListModel
             public void OnSuccess(Object model, Object ReturnValue)
             {
                 ResourcesModel resourcesModel = (ResourcesModel) model;
-                java.util.ArrayList<VM> list =
-                        (java.util.ArrayList<VM>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
+                ArrayList<VM> list =
+                        (ArrayList<VM>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
                 // TODO: Insert dummy data regarding disks and snapshots.
                 for (VM vm : list)
                 {

@@ -9,6 +9,8 @@ import org.ovirt.engine.ui.uicommonweb.validation.EmailValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 
+import java.util.ArrayList;
+
 @SuppressWarnings("unused")
 public class EventNotificationModel extends Model
 {
@@ -73,14 +75,14 @@ public class EventNotificationModel extends Model
         privateOldEmail = value;
     }
 
-    private java.util.ArrayList<SelectionTreeNodeModel> eventGroupModels;
+    private ArrayList<SelectionTreeNodeModel> eventGroupModels;
 
-    public java.util.ArrayList<SelectionTreeNodeModel> getEventGroupModels()
+    public ArrayList<SelectionTreeNodeModel> getEventGroupModels()
     {
         return eventGroupModels;
     }
 
-    public void setEventGroupModels(java.util.ArrayList<SelectionTreeNodeModel> value)
+    public void setEventGroupModels(ArrayList<SelectionTreeNodeModel> value)
     {
         if ((eventGroupModels == null && value != null)
                 || (eventGroupModels != null && !eventGroupModels.equals(value)))

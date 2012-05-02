@@ -16,6 +16,8 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.common.ProgressModel;
 import org.ovirt.engine.ui.uicompat.PropertyChangeNotifier;
 
+import java.util.List;
+
 @SuppressWarnings("unused")
 public class Model extends PropertyChangeNotifier implements IEventListener, ICommandTarget, IProvidePropertyChangedEvent
 {
@@ -200,14 +202,14 @@ public class Model extends PropertyChangeNotifier implements IEventListener, ICo
         }
     }
 
-    private java.util.List<String> privateInvalidityReasons;
+    private List<String> privateInvalidityReasons;
 
-    public java.util.List<String> getInvalidityReasons()
+    public List<String> getInvalidityReasons()
     {
         return privateInvalidityReasons;
     }
 
-    public void setInvalidityReasons(java.util.List<String> value)
+    public void setInvalidityReasons(List<String> value)
     {
         privateInvalidityReasons = value;
     }
@@ -250,14 +252,14 @@ public class Model extends PropertyChangeNotifier implements IEventListener, ICo
         }
     }
 
-    private java.util.List<String> privateChangeProhibitionReasons;
+    private List<String> privateChangeProhibitionReasons;
 
-    public java.util.List<String> getChangeProhibitionReasons()
+    public List<String> getChangeProhibitionReasons()
     {
         return privateChangeProhibitionReasons;
     }
 
-    private void setChangeProhibitionReasons(java.util.List<String> value)
+    private void setChangeProhibitionReasons(List<String> value)
     {
         privateChangeProhibitionReasons = value;
     }
@@ -294,20 +296,20 @@ public class Model extends PropertyChangeNotifier implements IEventListener, ICo
         }
     }
 
-    private java.util.List<UICommand> privateCommands;
+    private List<UICommand> privateCommands;
 
-    public java.util.List<UICommand> getCommands()
+    public List<UICommand> getCommands()
     {
         return privateCommands;
     }
 
-    public void setCommands(java.util.List<UICommand> value)
+    public void setCommands(List<UICommand> value)
     {
         privateCommands = value;
     }
 
     public UICommand getDefaultCommand() {
-        java.util.List<UICommand> commands = getCommands();
+        List<UICommand> commands = getCommands();
         if (commands != null) {
             for (UICommand c : commands) {
                 if (c.getIsDefault()) {
@@ -319,7 +321,7 @@ public class Model extends PropertyChangeNotifier implements IEventListener, ICo
     }
 
     public UICommand getCancelCommand() {
-        java.util.List<UICommand> commands = getCommands();
+        List<UICommand> commands = getCommands();
         if (commands != null) {
             for (UICommand c : commands) {
                 if (c.getIsCancel()) {

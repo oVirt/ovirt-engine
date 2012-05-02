@@ -1,5 +1,8 @@
 package org.ovirt.engine.ui.uicommonweb.validation;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @SuppressWarnings("unused")
 public final class ValidationResult
 {
@@ -15,14 +18,14 @@ public final class ValidationResult
         privateSuccess = value;
     }
 
-    private java.util.List<String> privateReasons;
+    private List<String> privateReasons;
 
-    public java.util.List<String> getReasons()
+    public List<String> getReasons()
     {
         return privateReasons;
     }
 
-    public void setReasons(java.util.List<String> value)
+    public void setReasons(List<String> value)
     {
         privateReasons = value;
     }
@@ -30,6 +33,6 @@ public final class ValidationResult
     public ValidationResult()
     {
         setSuccess(true);
-        setReasons(new java.util.ArrayList<String>());
+        setReasons(new ArrayList<String>());
     }
 }

@@ -2,7 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.templates;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map.Entry;
+import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -175,7 +175,7 @@ public class ImportTemplateModel extends ListWithDetailsModel
         return "ImportTemplateModel"; //$NON-NLS-1$
     }
 
-    public void setExtendedItems(ArrayList<Entry<VmTemplate, DiskImageList>> arrayList) {
+    public void setExtendedItems(ArrayList<Map.Entry<VmTemplate, DiskImageList>> arrayList) {
         templateImportDiskListModel.setExtendedItems(arrayList);
     }
 

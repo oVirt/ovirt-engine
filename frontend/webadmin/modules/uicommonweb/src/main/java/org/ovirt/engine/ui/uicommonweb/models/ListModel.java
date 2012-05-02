@@ -12,6 +12,8 @@ import org.ovirt.engine.core.compat.ProvidePropertyChangedEvent;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.ValidationResult;
 
+import java.util.List;
+
 @SuppressWarnings("unused")
 public class ListModel extends EntityModel
 {
@@ -55,14 +57,14 @@ public class ListModel extends EntityModel
         privateItemsChangedEvent = value;
     }
 
-    protected java.util.List selectedItems;
+    protected List selectedItems;
 
-    public java.util.List getSelectedItems()
+    public List getSelectedItems()
     {
         return selectedItems;
     }
 
-    public void setSelectedItems(java.util.List value)
+    public void setSelectedItems(List value)
     {
         if (selectedItems != value)
         {
@@ -168,7 +170,7 @@ public class ListModel extends EntityModel
     {
     }
 
-    protected void SelectedItemsChanging(java.util.List newValue, java.util.List oldValue)
+    protected void SelectedItemsChanging(List newValue, List oldValue)
     {
         // Skip this method when notifying on property change for any
         // item but not only for selected ones is requested.

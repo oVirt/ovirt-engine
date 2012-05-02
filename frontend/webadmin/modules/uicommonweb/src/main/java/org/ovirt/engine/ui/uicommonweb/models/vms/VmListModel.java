@@ -1,8 +1,11 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.AddVmFromScratchParameters;
@@ -425,15 +428,15 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
         privatecurrentVm = value;
     }
 
-    private final java.util.HashMap<Guid, java.util.ArrayList<ConsoleModel>> cachedConsoleModels;
+    private final HashMap<Guid, ArrayList<ConsoleModel>> cachedConsoleModels;
 
-    private java.util.HashMap<Version, java.util.ArrayList<String>> privateCustomPropertiesKeysList;
+    private HashMap<Version, ArrayList<String>> privateCustomPropertiesKeysList;
 
-    private java.util.HashMap<Version, java.util.ArrayList<String>> getCustomPropertiesKeysList() {
+    private HashMap<Version, ArrayList<String>> getCustomPropertiesKeysList() {
         return privateCustomPropertiesKeysList;
     }
 
-    private void setCustomPropertiesKeysList(java.util.HashMap<Version, java.util.ArrayList<String>> value) {
+    private void setCustomPropertiesKeysList(HashMap<Version, ArrayList<String>> value) {
         privateCustomPropertiesKeysList = value;
     }
 
@@ -445,7 +448,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
         setDefaultSearchString("Vms:"); //$NON-NLS-1$
         setSearchString(getDefaultSearchString());
 
-        cachedConsoleModels = new java.util.HashMap<Guid, java.util.ArrayList<ConsoleModel>>();
+        cachedConsoleModels = new HashMap<Guid, ArrayList<ConsoleModel>>();
 
         setNewServerCommand(new UICommand("NewServer", this)); //$NON-NLS-1$
         setNewDesktopCommand(new UICommand("NewDesktop", this)); //$NON-NLS-1$
@@ -484,12 +487,12 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
                             VmListModel model = (VmListModel) target;
                             if (returnValue != null)
                             {
-                                model.setCustomPropertiesKeysList(new java.util.HashMap<Version, java.util.ArrayList<String>>());
-                                java.util.HashMap<Version, String> dictionary = (HashMap<Version, String>) returnValue;
-                                for (java.util.Map.Entry<Version, String> keyValuePair : dictionary.entrySet())
+                                model.setCustomPropertiesKeysList(new HashMap<Version, ArrayList<String>>());
+                                HashMap<Version, String> dictionary = (HashMap<Version, String>) returnValue;
+                                for (Map.Entry<Version, String> keyValuePair : dictionary.entrySet())
                                 {
                                     model.getCustomPropertiesKeysList().put(keyValuePair.getKey(),
-                                            new java.util.ArrayList<String>());
+                                            new ArrayList<String>());
                                     for (String s : keyValuePair.getValue().split("[;]", -1)) //$NON-NLS-1$
                                     {
                                         model.getCustomPropertiesKeysList().get(keyValuePair.getKey()).add(s);
@@ -533,21 +536,21 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
         model.getCommands().add(tempVar2);
     }
 
-    public java.util.Map<Guid, Boolean> attachedTagsToEntities;
-    public java.util.ArrayList<org.ovirt.engine.core.common.businessentities.tags> allAttachedTags;
+    public Map<Guid, Boolean> attachedTagsToEntities;
+    public ArrayList<org.ovirt.engine.core.common.businessentities.tags> allAttachedTags;
     public int selectedItemsCounter;
 
     private void GetAttachedTagsToSelectedVMs(TagListModel model)
     {
-        java.util.ArrayList<Guid> vmIds = new java.util.ArrayList<Guid>();
+        ArrayList<Guid> vmIds = new ArrayList<Guid>();
         for (Object item : getSelectedItems())
         {
             VM vm = (VM) item;
             vmIds.add(vm.getId());
         }
 
-        attachedTagsToEntities = new java.util.HashMap<Guid, Boolean>();
-        allAttachedTags = new java.util.ArrayList<org.ovirt.engine.core.common.businessentities.tags>();
+        attachedTagsToEntities = new HashMap<Guid, Boolean>();
+        allAttachedTags = new ArrayList<org.ovirt.engine.core.common.businessentities.tags>();
         selectedItemsCounter = 0;
 
         for (Guid id : vmIds)
@@ -560,7 +563,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
                             Object[] array = (Object[]) target;
                             VmListModel vmListModel = (VmListModel) array[0];
                             TagListModel tagListModel = (TagListModel) array[1];
-                            vmListModel.allAttachedTags.addAll((java.util.ArrayList<org.ovirt.engine.core.common.businessentities.tags>) returnValue);
+                            vmListModel.allAttachedTags.addAll((ArrayList<org.ovirt.engine.core.common.businessentities.tags>) returnValue);
                             vmListModel.selectedItemsCounter++;
                             if (vmListModel.selectedItemsCounter == vmListModel.getSelectedItems().size())
                             {
@@ -577,7 +580,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
     {
         if (vmListModel.getLastExecutedCommand() == getAssignTagsCommand())
         {
-            java.util.ArrayList<org.ovirt.engine.core.common.businessentities.tags> attachedTags =
+            ArrayList<org.ovirt.engine.core.common.businessentities.tags> attachedTags =
                     Linq.Distinct(vmListModel.allAttachedTags, new TagsEqualityComparer());
             for (org.ovirt.engine.core.common.businessentities.tags tag : attachedTags)
             {
@@ -606,10 +609,10 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
         GetAttachedTagsToSelectedVMs(model);
     }
 
-    public void PostOnAssignTags(java.util.Map<Guid, Boolean> attachedTags)
+    public void PostOnAssignTags(Map<Guid, Boolean> attachedTags)
     {
         TagListModel model = (TagListModel) getWindow();
-        java.util.ArrayList<Guid> vmIds = new java.util.ArrayList<Guid>();
+        ArrayList<Guid> vmIds = new ArrayList<Guid>();
 
         for (Object item : getSelectedItems())
         {
@@ -618,24 +621,24 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
         }
 
         // prepare attach/detach lists
-        java.util.ArrayList<Guid> tagsToAttach = new java.util.ArrayList<Guid>();
-        java.util.ArrayList<Guid> tagsToDetach = new java.util.ArrayList<Guid>();
+        ArrayList<Guid> tagsToAttach = new ArrayList<Guid>();
+        ArrayList<Guid> tagsToDetach = new ArrayList<Guid>();
 
-        if (model.getItems() != null && ((java.util.ArrayList<TagModel>) model.getItems()).size() > 0)
+        if (model.getItems() != null && ((ArrayList<TagModel>) model.getItems()).size() > 0)
         {
-            java.util.ArrayList<TagModel> tags = (java.util.ArrayList<TagModel>) model.getItems();
+            ArrayList<TagModel> tags = (ArrayList<TagModel>) model.getItems();
             TagModel rootTag = tags.get(0);
             TagModel.RecursiveEditAttachDetachLists(rootTag, attachedTags, tagsToAttach, tagsToDetach);
         }
 
-        java.util.ArrayList<VdcActionParametersBase> parameters = new java.util.ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
         for (Guid a : tagsToAttach)
         {
             parameters.add(new AttachEntityToTagParameters(a, vmIds));
         }
         Frontend.RunMultipleAction(VdcActionType.AttachVmsToTag, parameters);
 
-        parameters = new java.util.ArrayList<VdcActionParametersBase>();
+        parameters = new ArrayList<VdcActionParametersBase>();
         for (Guid a : tagsToDetach)
         {
             parameters.add(new AttachEntityToTagParameters(a, vmIds));
@@ -715,8 +718,8 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 
     private void UpdateConsoleModels()
     {
-        java.util.List tempVar = getSelectedItems();
-        java.util.List selectedItems = (tempVar != null) ? tempVar : new java.util.ArrayList();
+        List tempVar = getSelectedItems();
+        List selectedItems = (tempVar != null) ? tempVar : new ArrayList();
         Object tempVar2 = getSelectedItem();
         VM vm = (VM) ((tempVar2 instanceof VM) ? tempVar2 : null);
 
@@ -736,11 +739,11 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
                 RdpConsoleModel rdpConsoleModel = new RdpConsoleModel();
 
                 cachedConsoleModels.put(vm.getId(),
-                        new java.util.ArrayList<ConsoleModel>(java.util.Arrays.asList(new ConsoleModel[] {
-                                spiceConsoleModel, vncConsoleModel, rdpConsoleModel })));
+                        new ArrayList<ConsoleModel>(Arrays.asList(new ConsoleModel[] {
+                            spiceConsoleModel, vncConsoleModel, rdpConsoleModel})));
             }
 
-            java.util.ArrayList<ConsoleModel> cachedModels = cachedConsoleModels.get(vm.getId());
+            ArrayList<ConsoleModel> cachedModels = cachedConsoleModels.get(vm.getId());
             for (ConsoleModel a : cachedModels)
             {
                 a.setEntity(null);
@@ -769,7 +772,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
         }
     }
 
-    public java.util.ArrayList<ConsoleModel> GetConsoleModelsByVmGuid(Guid vmGuid)
+    public ArrayList<ConsoleModel> GetConsoleModelsByVmGuid(Guid vmGuid)
     {
         if (cachedConsoleModels != null && cachedConsoleModels.containsKey(vmGuid))
         {
@@ -888,7 +891,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
         model.setMessage(ConstantsManager.getInstance().getConstants().virtualMachinesMsg());
 
         // model.Items = SelectedItems.Cast<VM>().Select(a => a.vm_name);
-        java.util.ArrayList<String> list = new java.util.ArrayList<String>();
+        ArrayList<String> list = new ArrayList<String>();
         for (Object selectedItem : getSelectedItems())
         {
             VM a = (VM) selectedItem;
@@ -964,11 +967,11 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
                     @Override
                     public void OnSuccess(Object target, Object returnValue) {
                         VmListModel vmListModel = (VmListModel) target;
-                        java.util.ArrayList<storage_domains> storageDomains =
-                                (java.util.ArrayList<storage_domains>) returnValue;
+                        ArrayList<storage_domains> storageDomains =
+                                (ArrayList<storage_domains>) returnValue;
 
-                        java.util.ArrayList<storage_domains> filteredStorageDomains =
-                                new java.util.ArrayList<storage_domains>();
+                        ArrayList<storage_domains> filteredStorageDomains =
+                                new ArrayList<storage_domains>();
                         for (storage_domains a : storageDomains)
                         {
                             if (a.getstorage_domain_type() == StorageDomainType.ImportExport)
@@ -982,7 +985,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
                 }), vm.getstorage_pool_id());
     }
 
-    private void PostExportGetStorageDomainList(java.util.ArrayList<storage_domains> storageDomains)
+    private void PostExportGetStorageDomainList(ArrayList<storage_domains> storageDomains)
     {
         ExportVmModel model = (ExportVmModel) getWindow();
         model.getStorage().setItems(storageDomains);
@@ -1069,15 +1072,15 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
                         Object[] array = (Object[]) target;
                         VmListModel vmListModel = (VmListModel) array[0];
                         ExportVmModel exportVmModel = (ExportVmModel) array[1];
-                        java.util.ArrayList<storage_pool> storagePools =
-                                (java.util.ArrayList<storage_pool>) returnValue;
+                        ArrayList<storage_pool> storagePools =
+                                (ArrayList<storage_pool>) returnValue;
 
                         vmListModel.PostShowWarningOnExistingVms(exportVmModel, storagePools);
                     }
                 }), storageDomainId);
     }
 
-    private void PostShowWarningOnExistingVms(ExportVmModel exportModel, java.util.List<storage_pool> storagePools)
+    private void PostShowWarningOnExistingVms(ExportVmModel exportModel, List<storage_pool> storagePools)
     {
         storage_pool storagePool = storagePools.size() > 0 ? storagePools.get(0) : null;
 
@@ -1102,7 +1105,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
                             VM foundVm = null;
 
                             VdcQueryReturnValue returnValue = (VdcQueryReturnValue) ReturnValue;
-                            for (VM a : (java.util.ArrayList<VM>) returnValue.getReturnValue())
+                            for (VM a : (ArrayList<VM>) returnValue.getReturnValue())
                             {
                                 if (a.getId().equals(vm.getId()))
                                 {
@@ -1136,22 +1139,22 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 
     private boolean SelectedVmsOnDifferentDataCenters()
     {
-        java.util.ArrayList<VM> vms = new java.util.ArrayList<VM>();
+        ArrayList<VM> vms = new ArrayList<VM>();
         for (Object selectedItem : getSelectedItems())
         {
             VM a = (VM) selectedItem;
             vms.add(a);
         }
 
-        java.util.Map<NGuid, java.util.ArrayList<VM>> t = new java.util.HashMap<NGuid, java.util.ArrayList<VM>>();
+        Map<NGuid, ArrayList<VM>> t = new HashMap<NGuid, ArrayList<VM>>();
         for (VM a : vms)
         {
             if (!t.containsKey(a.getstorage_pool_id()))
             {
-                t.put(a.getstorage_pool_id(), new java.util.ArrayList<VM>());
+                t.put(a.getstorage_pool_id(), new ArrayList<VM>());
             }
 
-            java.util.ArrayList<VM> list = t.get(a.getstorage_pool_id());
+            ArrayList<VM> list = t.get(a.getstorage_pool_id());
             list.add(a);
         }
 
@@ -1168,8 +1171,8 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
                     @Override
                     public void OnSuccess(Object target, Object returnValue) {
                         VmListModel vmListModel = (VmListModel) target;
-                        java.util.ArrayList<storage_pool> storagePools =
-                                (java.util.ArrayList<storage_pool>) returnValue;
+                        ArrayList<storage_pool> storagePools =
+                                (ArrayList<storage_pool>) returnValue;
                         storage_pool storagePool = storagePools.size() > 0 ? storagePools.get(0) : null;
 
                         vmListModel.PostGetTemplatesNotPresentOnExportDomain(storagePool);
@@ -1189,10 +1192,10 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
                         @Override
                         public void OnSuccess(Object target, Object returnValue) {
                             VmListModel vmListModel = (VmListModel) target;
-                            java.util.HashMap<VmTemplate, java.util.ArrayList<DiskImage>> templatesDiskSet =
-                                    (java.util.HashMap<VmTemplate, java.util.ArrayList<DiskImage>>) returnValue;
-                            java.util.HashMap<String, java.util.ArrayList<String>> templateDic =
-                                    new java.util.HashMap<String, java.util.ArrayList<String>>();
+                            HashMap<VmTemplate, ArrayList<DiskImage>> templatesDiskSet =
+                                    (HashMap<VmTemplate, ArrayList<DiskImage>>) returnValue;
+                            HashMap<String, ArrayList<String>> templateDic =
+                                    new HashMap<String, ArrayList<String>>();
 
                             // check if relevant templates are already there
                             for (Object selectedItem : vmListModel.getSelectedItems())
@@ -1212,16 +1215,16 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
                                 {
                                     if (!templateDic.containsKey(vm.getvmt_name()))
                                     {
-                                        templateDic.put(vm.getvmt_name(), new java.util.ArrayList<String>());
+                                        templateDic.put(vm.getvmt_name(), new ArrayList<String>());
                                     }
                                     templateDic.get(vm.getvmt_name()).add(vm.getvm_name());
                                 }
                             }
 
                             String tempStr;
-                            java.util.ArrayList<String> tempList;
-                            java.util.ArrayList<String> missingTemplates = new java.util.ArrayList<String>();
-                            for (java.util.Map.Entry<String, java.util.ArrayList<String>> keyValuePair : templateDic.entrySet())
+                            ArrayList<String> tempList;
+                            ArrayList<String> missingTemplates = new ArrayList<String>();
+                            for (Map.Entry<String, ArrayList<String>> keyValuePair : templateDic.entrySet())
                             {
                                 tempList = keyValuePair.getValue();
                                 tempStr = "Template " + keyValuePair.getKey() + " (for "; //$NON-NLS-1$ //$NON-NLS-2$
@@ -1242,11 +1245,11 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
         }
     }
 
-    private void PostExportGetMissingTemplates(java.util.ArrayList<String> missingTemplatesFromVms)
+    private void PostExportGetMissingTemplates(ArrayList<String> missingTemplatesFromVms)
     {
         ExportVmModel model = (ExportVmModel) getWindow();
         Guid storageDomainId = ((storage_domains) model.getStorage().getSelectedItem()).getId();
-        java.util.ArrayList<VdcActionParametersBase> parameters = new java.util.ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
 
         model.StopProgress();
 
@@ -1360,7 +1363,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
             return;
         }
 
-        java.util.ArrayList<VdcActionParametersBase> list = new java.util.ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
         for (Object item : getSelectedItems())
         {
             VM a = (VM) item;
@@ -1418,7 +1421,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
         model.getSysPrepDomainName().setSelectedItem(vm.getvm_domain());
 
         RunOnceUpdateDisplayProtocols(vm);
-        RunOnceUpdateFloppy(vm, new java.util.ArrayList<String>());
+        RunOnceUpdateFloppy(vm, new ArrayList<String>());
         RunOnceUpdateImages(vm);
         RunOnceUpdateDomains();
         RunOnceUpdateBootSequence(vm);
@@ -1451,7 +1454,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
         model.getDisplayConsole_Vnc_IsSelected().setEntity(isVncSelected);
         model.getDisplayConsole_Spice_IsSelected().setEntity(!isVncSelected);
 
-        java.util.ArrayList<EntityModel> items = new java.util.ArrayList<EntityModel>();
+        ArrayList<EntityModel> items = new ArrayList<EntityModel>();
         items.add(vncProtocol);
         items.add(qxlProtocol);
         model.getDisplayProtocol().setItems(items);
@@ -1470,7 +1473,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
                 VmListModel vmListModel = (VmListModel) model;
                 RunOnceModel runOnceModel = (RunOnceModel) vmListModel.getWindow();
                 boolean hasNics =
-                        ((java.util.ArrayList<VmNetworkInterface>) ((VdcQueryReturnValue) ReturnValue).getReturnValue()).size() > 0;
+                        ((ArrayList<VmNetworkInterface>) ((VdcQueryReturnValue) ReturnValue).getReturnValue()).size() > 0;
 
                 if (!hasNics)
                 {
@@ -1497,7 +1500,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
                     public void OnSuccess(Object target, Object returnValue) {
 
                         RunOnceModel runOnceModel = (RunOnceModel) target;
-                        java.util.List<String> domains = (java.util.List<String>) returnValue;
+                        List<String> domains = (List<String>) returnValue;
                         String oldDomain = (String) runOnceModel.getSysPrepDomainName().getSelectedItem();
                         if (oldDomain != null && !oldDomain.equals("") && !domains.contains(oldDomain)) //$NON-NLS-1$
                         {
@@ -1514,7 +1517,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
                 }), true);
     }
 
-    public void RunOnceUpdateFloppy(VM vm, java.util.ArrayList<String> images)
+    public void RunOnceUpdateFloppy(VM vm, ArrayList<String> images)
     {
         RunOnceModel model = (RunOnceModel) getWindow();
 
@@ -1563,7 +1566,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
                         {
                             VmListModel vmListModel1 = (VmListModel) model1;
                             RunOnceModel runOnceModel = (RunOnceModel) vmListModel1.getWindow();
-                            java.util.ArrayList<String> images = (java.util.ArrayList<String>) result;
+                            ArrayList<String> images = (ArrayList<String>) result;
 
                             runOnceModel.getIsoImage().setItems(images);
                             if (runOnceModel.getIsoImage().getIsChangable()
@@ -1584,7 +1587,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
                         {
                             VmListModel vmListModel2 = (VmListModel) model2;
                             VM selectedVM = (VM) vmListModel2.getSelectedItem();
-                            java.util.ArrayList<String> images = (java.util.ArrayList<String>) result;
+                            ArrayList<String> images = (ArrayList<String>) result;
 
                             vmListModel2.RunOnceUpdateFloppy(selectedVM, images);
                         }
@@ -1797,7 +1800,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
         tempVar.setvm_mem_size_mb((Integer) model.getMemSize().getEntity());
         tempVar.setMinAllocatedMem((Integer) model.getMinAllocatedMemory().getEntity());
         tempVar.setvds_group_id(((VDSGroup) model.getCluster().getSelectedItem()).getId());
-        tempVar.settime_zone(model.getTimeZone().getIsAvailable() && model.getTimeZone().getSelectedItem() != null ? ((java.util.Map.Entry<String, String>) model.getTimeZone()
+        tempVar.settime_zone(model.getTimeZone().getIsAvailable() && model.getTimeZone().getSelectedItem() != null ? ((Map.Entry<String, String>) model.getTimeZone()
                 .getSelectedItem()).getKey()
                 : ""); //$NON-NLS-1$
         tempVar.setnum_of_sockets((Integer) model.getNumOfSockets().getEntity());
@@ -1877,14 +1880,14 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
                     @Override
                     public void OnSuccess(Object target, Object returnValue) {
                         VmListModel vmListModel = (VmListModel) target;
-                        vmListModel.PostMigrateGetUpHosts((java.util.ArrayList<VDS>) returnValue);
+                        vmListModel.PostMigrateGetUpHosts((ArrayList<VDS>) returnValue);
                     }
                 }), vm.getvds_group_name());
     }
 
     private void CancelMigration()
     {
-        java.util.ArrayList<VdcActionParametersBase> list = new java.util.ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
         for (Object item : getSelectedItems()) {
             VM a = (VM) item;
             list.add(new VmOperationParameterBase(a.getId()));
@@ -1899,7 +1902,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
                 }, null);
     }
 
-    private void PostMigrateGetUpHosts(java.util.ArrayList<VDS> hosts)
+    private void PostMigrateGetUpHosts(ArrayList<VDS> hosts)
     {
         MigrateModel model = (MigrateModel) getWindow();
         NGuid run_on_vds = null;
@@ -1980,7 +1983,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 
         if (model.getIsAutoSelect())
         {
-            java.util.ArrayList<VdcActionParametersBase> list = new java.util.ArrayList<VdcActionParametersBase>();
+            ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
             for (Object item : getSelectedItems())
             {
                 VM a = (VM) item;
@@ -2001,7 +2004,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
         }
         else
         {
-            java.util.ArrayList<VdcActionParametersBase> list = new java.util.ArrayList<VdcActionParametersBase>();
+            ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
             for (Object item : getSelectedItems())
             {
                 VM a = (VM) item;
@@ -2039,7 +2042,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
                 .getConstants()
                 .areYouSureYouWantToShutDownTheFollowingVirtualMachinesMsg());
         // model.Items = SelectedItems.Cast<VM>().Select(a => a.vm_name);
-        java.util.ArrayList<String> items = new java.util.ArrayList<String>();
+        ArrayList<String> items = new ArrayList<String>();
         for (Object item : getSelectedItems())
         {
             VM a = (VM) item;
@@ -2066,7 +2069,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
             return;
         }
 
-        java.util.ArrayList<VdcActionParametersBase> list = new java.util.ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
         for (Object item : getSelectedItems())
         {
             VM a = (VM) item;
@@ -2098,7 +2101,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
                 .getConstants()
                 .areYouSureYouWantToStopTheFollowingVirtualMachinesMsg());
         // model.Items = SelectedItems.Cast<VM>().Select(a => a.vm_name);
-        java.util.ArrayList<String> items = new java.util.ArrayList<String>();
+        ArrayList<String> items = new ArrayList<String>();
         for (Object item : getSelectedItems())
         {
             VM a = (VM) item;
@@ -2125,7 +2128,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
             return;
         }
 
-        java.util.ArrayList<VdcActionParametersBase> list = new java.util.ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
         for (Object item : getSelectedItems())
         {
             VM a = (VM) item;
@@ -2149,7 +2152,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 
     private void Pause()
     {
-        java.util.ArrayList<VdcActionParametersBase> list = new java.util.ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
         for (Object item : getSelectedItems())
         {
             VM a = (VM) item;
@@ -2167,7 +2170,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 
     private void Run()
     {
-        java.util.ArrayList<VdcActionParametersBase> list = new java.util.ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
         for (Object item : getSelectedItems())
         {
             VM a = (VM) item;
@@ -2196,7 +2199,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
             return;
         }
 
-        java.util.ArrayList<VdcActionParametersBase> list = new java.util.ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
         for (Object item : getSelectedItems())
         {
             VM a = (VM) item;
@@ -2240,8 +2243,8 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
             {
                 VmListModel vmListModel1 = (VmListModel) model1;
                 AttachCdModel attachCdModel = (AttachCdModel) vmListModel1.getWindow();
-                java.util.ArrayList<String> images1 =
-                        new java.util.ArrayList<String>(java.util.Arrays.asList(new String[] { "No CDs" })); //$NON-NLS-1$
+                ArrayList<String> images1 =
+                        new ArrayList<String>(Arrays.asList(new String[] { "No CDs" })); //$NON-NLS-1$
                 attachCdModel.getIsoImage().setItems(images1);
                 attachCdModel.getIsoImage().setSelectedItem(Linq.FirstOrDefault(images1));
 
@@ -2258,7 +2261,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
                         {
                             VmListModel vmListModel2 = (VmListModel) model2;
                             AttachCdModel _attachCdModel = (AttachCdModel) vmListModel2.getWindow();
-                            java.util.ArrayList<String> images2 = (java.util.ArrayList<String>) result2;
+                            ArrayList<String> images2 = (ArrayList<String>) result2;
                             if (images2.size() > 0)
                             {
                                 images2.add(0, ConsoleModel.EjectLabel);
@@ -2369,7 +2372,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
         getcurrentVm().setMinAllocatedMem((Integer) model.getMinAllocatedMemory().getEntity());
         Guid newClusterID = ((VDSGroup) model.getCluster().getSelectedItem()).getId();
         getcurrentVm().setvds_group_id(newClusterID);
-        getcurrentVm().settime_zone((model.getTimeZone().getIsAvailable() && model.getTimeZone().getSelectedItem() != null) ? ((java.util.Map.Entry<String, String>) model.getTimeZone()
+        getcurrentVm().settime_zone((model.getTimeZone().getIsAvailable() && model.getTimeZone().getSelectedItem() != null) ? ((Map.Entry<String, String>) model.getTimeZone()
                 .getSelectedItem()).getKey()
                 : ""); //$NON-NLS-1$
         getcurrentVm().setnum_of_sockets((Integer) model.getNumOfSockets().getEntity());
@@ -2427,7 +2430,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
                 model.StartProgress(null);
 
                 Frontend.RunAction(VdcActionType.AddVmFromScratch, new AddVmFromScratchParameters(getcurrentVm(),
-                        new java.util.ArrayList<DiskImage>(),
+                        new ArrayList<DiskImage>(),
                         NGuid.Empty),
                         new IFrontendActionAsyncCallback() {
                             @Override
@@ -2674,7 +2677,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
         ejectModel.getExecutedEvent().addListener(this);
         getIsoImages().add(ejectModel);
 
-        java.util.ArrayList<String> list = DataProvider.GetIrsImageList(storagePoolId, false);
+        ArrayList<String> list = DataProvider.GetIrsImageList(storagePoolId, false);
         if (list.size() > 0)
         {
             for (String iso : list)
@@ -2716,7 +2719,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
         }
 
         Frontend.RunMultipleAction(VdcActionType.ChangeDisk,
-                new java.util.ArrayList<VdcActionParametersBase>(java.util.Arrays.asList(new VdcActionParametersBase[] { new ChangeDiskCommandParameters(vm.getId(),
+                new ArrayList<VdcActionParametersBase>(Arrays.asList(new VdcActionParametersBase[] { new ChangeDiskCommandParameters(vm.getId(),
                         StringHelper.stringsEqual(isoName, ConsoleModel.EjectLabel) ? "" : isoName) })), //$NON-NLS-1$
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
@@ -2785,9 +2788,9 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 
     private void UpdateActionAvailability()
     {
-        java.util.List items =
+        List items =
                 getSelectedItems() != null && getSelectedItem() != null ? getSelectedItems()
-                        : new java.util.ArrayList();
+                        : new ArrayList();
 
         getEditCommand().setIsExecutionAllowed(items.size() == 1);
         getRemoveCommand().setIsExecutionAllowed(items.size() > 0

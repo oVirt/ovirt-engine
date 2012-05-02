@@ -11,6 +11,9 @@ import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @SuppressWarnings("unused")
 public class StorageTemplateListModel extends SearchableListModel
 {
@@ -78,8 +81,8 @@ public class StorageTemplateListModel extends SearchableListModel
             public void OnSuccess(Object model, Object ReturnValue)
             {
                 StorageTemplateListModel templateModel = (StorageTemplateListModel) model;
-                templateModel.setItems((java.util.ArrayList<VmTemplate>) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
-                templateModel.setIsEmpty(((java.util.List) templateModel.getItems()).size() == 0);
+                templateModel.setItems((ArrayList<VmTemplate>) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
+                templateModel.setIsEmpty(((List) templateModel.getItems()).size() == 0);
             }
         };
 

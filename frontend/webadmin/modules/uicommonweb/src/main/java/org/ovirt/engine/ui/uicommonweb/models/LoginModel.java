@@ -19,6 +19,8 @@ import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
+import java.util.List;
+
 @SuppressWarnings("unused")
 public class LoginModel extends Model
 {
@@ -202,7 +204,7 @@ public class LoginModel extends Model
                         loginModel1.getPassword().setIsChangable(true);
                         loginModel1.getDomain().setIsChangable(true);
 
-                        java.util.List<String> domains = (java.util.List<String>) ReturnValue1;
+                        List<String> domains = (List<String>) ReturnValue1;
                         loginModel1.getDomain().setItems(domains);
                         loginModel1.getDomain().setSelectedItem(Linq.FirstOrDefault(domains));
                     }

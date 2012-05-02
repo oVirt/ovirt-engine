@@ -12,6 +12,9 @@ import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.I18NNameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 
+import java.util.ArrayList;
+import java.util.Map;
+
 @SuppressWarnings("unused")
 public class TagModel extends Model
 {
@@ -30,9 +33,9 @@ public class TagModel extends Model
     }
 
     public static void RecursiveEditAttachDetachLists(TagModel tagModel,
-            java.util.Map<Guid, Boolean> attachedEntities,
-            java.util.ArrayList<Guid> tagsToAttach,
-            java.util.ArrayList<Guid> tagsToDetach)
+            Map<Guid, Boolean> attachedEntities,
+            ArrayList<Guid> tagsToAttach,
+            ArrayList<Guid> tagsToDetach)
     {
         if (tagModel.getSelection() != null && tagModel.getSelection().equals(true)
                 && (!attachedEntities.containsKey(tagModel.getId()) || attachedEntities.get(tagModel.getId()) == false))
@@ -89,14 +92,14 @@ public class TagModel extends Model
         privateParentId = value;
     }
 
-    private java.util.ArrayList<TagModel> privateChildren;
+    private ArrayList<TagModel> privateChildren;
 
-    public java.util.ArrayList<TagModel> getChildren()
+    public ArrayList<TagModel> getChildren()
     {
         return privateChildren;
     }
 
-    public void setChildren(java.util.ArrayList<TagModel> value)
+    public void setChildren(ArrayList<TagModel> value)
     {
         privateChildren = value;
     }

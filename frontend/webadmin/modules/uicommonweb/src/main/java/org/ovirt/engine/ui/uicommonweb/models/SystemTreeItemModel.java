@@ -3,6 +3,8 @@ package org.ovirt.engine.ui.uicommonweb.models;
 import org.ovirt.engine.core.compat.ObservableCollection;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 
+import java.util.List;
+
 @SuppressWarnings("unused")
 public class SystemTreeItemModel extends EntityModel
 {
@@ -22,14 +24,14 @@ public class SystemTreeItemModel extends EntityModel
         }
     }
 
-    private java.util.List<SystemTreeItemModel> privateChildren;
+    private List<SystemTreeItemModel> privateChildren;
 
-    public java.util.List<SystemTreeItemModel> getChildren()
+    public List<SystemTreeItemModel> getChildren()
     {
         return privateChildren;
     }
 
-    public void setChildren(java.util.List<SystemTreeItemModel> value)
+    public void setChildren(List<SystemTreeItemModel> value)
     {
         privateChildren = value;
     }

@@ -25,6 +25,10 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Map;
+
 @SuppressWarnings("unused")
 public class TagListModel extends SearchableListModel
 {
@@ -120,14 +124,14 @@ public class TagListModel extends SearchableListModel
         }
     }
 
-    private java.util.ArrayList<SelectionTreeNodeModel> selectionNodeList;
+    private ArrayList<SelectionTreeNodeModel> selectionNodeList;
 
-    public java.util.ArrayList<SelectionTreeNodeModel> getSelectionNodeList()
+    public ArrayList<SelectionTreeNodeModel> getSelectionNodeList()
     {
         return selectionNodeList;
     }
 
-    public void setSelectionNodeList(java.util.ArrayList<SelectionTreeNodeModel> value)
+    public void setSelectionNodeList(ArrayList<SelectionTreeNodeModel> value)
     {
         if (selectionNodeList != value)
         {
@@ -136,14 +140,14 @@ public class TagListModel extends SearchableListModel
         }
     }
 
-    private java.util.Map<Guid, Boolean> attachedTagsToEntities;
+    private Map<Guid, Boolean> attachedTagsToEntities;
 
-    public java.util.Map<Guid, Boolean> getAttachedTagsToEntities()
+    public Map<Guid, Boolean> getAttachedTagsToEntities()
     {
         return attachedTagsToEntities;
     }
 
-    public void setAttachedTagsToEntities(java.util.Map<Guid, Boolean> value)
+    public void setAttachedTagsToEntities(Map<Guid, Boolean> value)
     {
         if (attachedTagsToEntities != value)
         {
@@ -174,9 +178,9 @@ public class TagListModel extends SearchableListModel
         UpdateActionAvailability();
 
         // Initialize SelectedItems property with empty collection.
-        setSelectedItems(new java.util.ArrayList<TagModel>());
+        setSelectedItems(new ArrayList<TagModel>());
 
-        setSelectionNodeList(new java.util.ArrayList<SelectionTreeNodeModel>());
+        setSelectionNodeList(new ArrayList<SelectionTreeNodeModel>());
     }
 
     @Override
@@ -195,7 +199,7 @@ public class TagListModel extends SearchableListModel
                         rootTag.getName().setEntity(ConstantsManager.getInstance().getConstants().rootTag());
                         rootTag.setType(TagModelType.Root);
                         rootTag.setIsChangable(false);
-                        tagListModel.setItems(new java.util.ArrayList<TagModel>(java.util.Arrays.asList(new TagModel[] { rootTag })));
+                        tagListModel.setItems(new ArrayList<TagModel>(Arrays.asList(new TagModel[] {rootTag})));
 
                     }
                 }));
@@ -214,7 +218,7 @@ public class TagListModel extends SearchableListModel
 
     protected void AttachedTagsToEntitiesChanged()
     {
-        java.util.ArrayList<TagModel> tags = (java.util.ArrayList<TagModel>) getItems();
+        ArrayList<TagModel> tags = (ArrayList<TagModel>) getItems();
 
         if (tags != null)
         {
@@ -227,12 +231,12 @@ public class TagListModel extends SearchableListModel
 
             if (getSelectionNodeList().isEmpty())
             {
-                setSelectionNodeList(new java.util.ArrayList<SelectionTreeNodeModel>(java.util.Arrays.asList(new SelectionTreeNodeModel[] { CreateTree(root) })));
+                setSelectionNodeList(new ArrayList<SelectionTreeNodeModel>(Arrays.asList(new SelectionTreeNodeModel[] { CreateTree(root) })));
             }
         }
     }
 
-    public void RecursiveSetSelection(TagModel tagModel, java.util.Map<Guid, Boolean> attachedEntities)
+    public void RecursiveSetSelection(TagModel tagModel, Map<Guid, Boolean> attachedEntities)
     {
         if (attachedEntities.containsKey(tagModel.getId()) && attachedEntities.get(tagModel.getId()))
         {
@@ -279,7 +283,7 @@ public class TagListModel extends SearchableListModel
 
     public TagModel CloneTagModel(TagModel tag)
     {
-        java.util.ArrayList<TagModel> children = new java.util.ArrayList<TagModel>();
+        ArrayList<TagModel> children = new ArrayList<TagModel>();
         for (TagModel child : tag.getChildren())
         {
             children.add(CloneTagModel(child));
@@ -307,7 +311,7 @@ public class TagListModel extends SearchableListModel
         tempVar2.setEntity(tag.getdescription());
         EntityModel description = tempVar2;
 
-        java.util.ArrayList<TagModel> children = new java.util.ArrayList<TagModel>();
+        ArrayList<TagModel> children = new ArrayList<TagModel>();
         for (org.ovirt.engine.core.common.businessentities.tags a : tag.getChildren())
         {
             children.add(TagToModel(a));
@@ -357,7 +361,7 @@ public class TagListModel extends SearchableListModel
     {
         TagModel model = (TagModel) sender;
 
-        java.util.ArrayList<TagModel> list = new java.util.ArrayList<TagModel>();
+        ArrayList<TagModel> list = new ArrayList<TagModel>();
         if (getSelectedItems() != null)
         {
             for (Object item : getSelectedItems())
@@ -387,7 +391,7 @@ public class TagListModel extends SearchableListModel
 
     private void Reset()
     {
-        setSelectedItems(new java.util.ArrayList<TagModel>());
+        setSelectedItems(new ArrayList<TagModel>());
 
         if (getItems() != null)
         {
@@ -425,7 +429,7 @@ public class TagListModel extends SearchableListModel
         model.setHashName("remove_tag"); //$NON-NLS-1$
         model.setMessage(ConstantsManager.getInstance().getConstants().tagsMsg());
 
-        java.util.ArrayList<Object> items = new java.util.ArrayList<Object>();
+        ArrayList<Object> items = new ArrayList<Object>();
         items.add(getSelectedItem().getName().getEntity());
         model.setItems(items);
 

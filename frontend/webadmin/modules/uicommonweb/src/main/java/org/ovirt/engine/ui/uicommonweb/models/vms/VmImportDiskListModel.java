@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -82,7 +83,7 @@ public class VmImportDiskListModel extends VmDiskListModel
         VM vm = (VM) getEntity();
         if (vm != null && vm.getDiskMap() != null)
         {
-            java.util.ArrayList<DiskImage> list = new java.util.ArrayList<DiskImage>();
+            ArrayList<DiskImage> list = new ArrayList<DiskImage>();
             for (Disk img : vm.getDiskMap().values())
             {
                 list.add((DiskImage)img);
@@ -137,7 +138,7 @@ public class VmImportDiskListModel extends VmDiskListModel
         {
             for (Object item : getItems())
             {
-                for (java.util.Map.Entry<String, Disk> kvp : vm.getDiskMap().entrySet())
+                for (Map.Entry<String, Disk> kvp : vm.getDiskMap().entrySet())
                 {
                     DiskImage innerDisk = (DiskImage)kvp.getValue();
                     if (StringHelper.stringsEqual(innerDisk.getinternal_drive_mapping(),
@@ -153,7 +154,7 @@ public class VmImportDiskListModel extends VmDiskListModel
 
     private void SetDisksVolumeTypeAvailability()
     {
-        java.util.ArrayList<DiskModel> list = (java.util.ArrayList<DiskModel>) getItems();
+        ArrayList<DiskModel> list = (ArrayList<DiskModel>) getItems();
         if (list != null && list.size() > 0)
         {
             if (getSelectedVMsCount() == 1)

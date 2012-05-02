@@ -144,7 +144,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         }
         else
         {
-            java.util.ArrayList<Object> objL = new java.util.ArrayList<Object>();
+            ArrayList<Object> objL = new ArrayList<Object>();
             for (storage_pool a : Linq.<storage_pool> Cast(getSelectedItems()))
             {
                 objL.add(a.getId());
@@ -340,7 +340,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         model.setHashName("remove_data_center"); //$NON-NLS-1$
         model.setMessage(ConstantsManager.getInstance().getConstants().dataCentersMsg());
 
-        java.util.ArrayList<String> list = new java.util.ArrayList<String>();
+        ArrayList<String> list = new ArrayList<String>();
         for (storage_pool a : Linq.<storage_pool> Cast(getSelectedItems()))
         {
             list.add(a.getname());
@@ -367,7 +367,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         model.getLatch().setIsAvailable(true);
         model.getLatch().setIsChangable(true);
 
-        java.util.ArrayList<String> list = new java.util.ArrayList<String>();
+        ArrayList<String> list = new ArrayList<String>();
         for (storage_pool a : Linq.<storage_pool> Cast(getSelectedItems()))
         {
             list.add(a.getname());
@@ -534,7 +534,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
             return;
         }
 
-        java.util.ArrayList<VdcActionParametersBase> parameters = new java.util.ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
         for (storage_pool a : Linq.<storage_pool> Cast(getSelectedItems()))
         {
             parameters.add(new StoragePoolParametersBase(a.getId()));
@@ -723,9 +723,9 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
 
     private void UpdateActionAvailability()
     {
-        java.util.ArrayList<storage_pool> items =
-                getSelectedItems() != null ? new java.util.ArrayList<storage_pool>(Linq.<storage_pool> Cast(getSelectedItems()))
-                        : new java.util.ArrayList<storage_pool>();
+        ArrayList<storage_pool> items =
+                getSelectedItems() != null ? new ArrayList<storage_pool>(Linq.<storage_pool> Cast(getSelectedItems()))
+                        : new ArrayList<storage_pool>();
 
         boolean isAllDown = true;
         for (storage_pool item : items)

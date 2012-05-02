@@ -4,6 +4,8 @@ import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 
+import java.util.ArrayList;
+
 @SuppressWarnings("unused")
 public class SelectionTreeNodeModel extends EntityModel
 {
@@ -93,14 +95,14 @@ public class SelectionTreeNodeModel extends EntityModel
         }
     }
 
-    private java.util.ArrayList<SelectionTreeNodeModel> children;
+    private ArrayList<SelectionTreeNodeModel> children;
 
-    public java.util.ArrayList<SelectionTreeNodeModel> getChildren()
+    public ArrayList<SelectionTreeNodeModel> getChildren()
     {
         return children;
     }
 
-    public void setChildren(java.util.ArrayList<SelectionTreeNodeModel> value)
+    public void setChildren(ArrayList<SelectionTreeNodeModel> value)
     {
         if ((children == null && value != null) || (children != null && !children.equals(value)))
         {
@@ -127,7 +129,7 @@ public class SelectionTreeNodeModel extends EntityModel
 
     public SelectionTreeNodeModel()
     {
-        setChildren(new java.util.ArrayList<SelectionTreeNodeModel>());
+        setChildren(new ArrayList<SelectionTreeNodeModel>());
     }
 
     public void IsSelectedChanged()

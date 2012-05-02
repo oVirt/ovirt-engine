@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.clusters;
 
+import java.util.ArrayList;
 import java.util.Collections;
 
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
@@ -127,7 +128,7 @@ public class ClusterNetworkListModel extends SearchableListModel
             public void OnSuccess(Object model, Object ReturnValue)
             {
                 SearchableListModel searchableListModel = (SearchableListModel) model;
-                searchableListModel.setItems((java.util.ArrayList<network>) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
+                searchableListModel.setItems((ArrayList<network>) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
             }
         };
 
@@ -172,7 +173,7 @@ public class ClusterNetworkListModel extends SearchableListModel
             public void OnSuccess(Object model, Object result)
             {
                 ClusterNetworkListModel clusterNetworkListModel = (ClusterNetworkListModel) model;
-                java.util.ArrayList<network> networkList = (java.util.ArrayList<network>) result;
+                ArrayList<network> networkList = (ArrayList<network>) result;
                 ListModel listModel = new ListModel();
                 clusterNetworkListModel.setWindow(listModel);
                 listModel.setTitle(ConstantsManager.getInstance().getConstants().assignDetachNetworksTitle());
@@ -183,11 +184,11 @@ public class ClusterNetworkListModel extends SearchableListModel
         AsyncDataProvider.GetNetworkList(_asyncQuery, storagePoolId);
     }
 
-    public void PostManage(java.util.ArrayList<network> networkList, ListModel model)
+    public void PostManage(ArrayList<network> networkList, ListModel model)
     {
         Collections.sort(networkList, new Linq.NetworkByNameComparer());
 
-        java.util.ArrayList<EntityModel> items = new java.util.ArrayList<EntityModel>();
+        ArrayList<EntityModel> items = new ArrayList<EntityModel>();
         for (network a : networkList)
         {
             if (!a.getname().equals("engine")) //$NON-NLS-1$
@@ -202,8 +203,8 @@ public class ClusterNetworkListModel extends SearchableListModel
 
         boolean noItems = items.isEmpty();
 
-        java.util.ArrayList<network> networks = Linq.<network> Cast(getItems());
-        java.util.ArrayList<EntityModel> selectedItems = new java.util.ArrayList<EntityModel>();
+        ArrayList<network> networks = Linq.<network> Cast(getItems());
+        ArrayList<EntityModel> selectedItems = new ArrayList<EntityModel>();
         for (EntityModel item : items)
         {
             network net = (network) item.getEntity();
@@ -243,8 +244,8 @@ public class ClusterNetworkListModel extends SearchableListModel
     {
         ListModel model = (ListModel) getWindow();
 
-        java.util.ArrayList<EntityModel> items = Linq.<EntityModel> Cast(model.getItems());
-        java.util.ArrayList<network> networks = Linq.<network> Cast(getItems());
+        ArrayList<EntityModel> items = Linq.<EntityModel> Cast(model.getItems());
+        ArrayList<network> networks = Linq.<network> Cast(getItems());
 
         if (getEntity() == null)
         {
@@ -252,7 +253,7 @@ public class ClusterNetworkListModel extends SearchableListModel
             return;
         }
 
-        java.util.ArrayList<VdcActionParametersBase> prms1 = new java.util.ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> prms1 = new ArrayList<VdcActionParametersBase>();
         for (EntityModel a : items)
         {
             boolean value = false;
@@ -276,7 +277,7 @@ public class ClusterNetworkListModel extends SearchableListModel
             Frontend.RunMultipleAction(VdcActionType.AttachNetworkToVdsGroup, prms1);
         }
 
-        java.util.ArrayList<VdcActionParametersBase> prms2 = new java.util.ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> prms2 = new ArrayList<VdcActionParametersBase>();
         for (EntityModel a : items)
         {
             boolean value = true;

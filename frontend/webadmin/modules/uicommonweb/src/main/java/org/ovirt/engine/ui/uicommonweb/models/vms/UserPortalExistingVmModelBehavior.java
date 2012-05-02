@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
+import java.util.ArrayList;
 import java.util.Collections;
 
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
@@ -37,7 +38,7 @@ public class UserPortalExistingVmModelBehavior extends ExistingVmModelBehavior
                         Object[] array = (Object[]) target;
                         ExistingVmModelBehavior behavior = (ExistingVmModelBehavior) array[0];
                         UnitVmModel model = (UnitVmModel) array[1];
-                        java.util.ArrayList<VDSGroup> clusters = (java.util.ArrayList<VDSGroup>) returnValue;
+                        ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) returnValue;
                         InitClusters(clusters, model);
                         behavior.InitTemplate();
                         behavior.InitCdImage();
@@ -46,10 +47,10 @@ public class UserPortalExistingVmModelBehavior extends ExistingVmModelBehavior
                 }, getModel().getHash()), EDIT_VM_PROPERTIES);
     }
 
-    private void InitClusters(java.util.ArrayList<VDSGroup> clusters, UnitVmModel model)
+    private void InitClusters(ArrayList<VDSGroup> clusters, UnitVmModel model)
     {
         // Filter clusters list (include only clusters that belong to the selected datacenter)
-        java.util.ArrayList<VDSGroup> filteredList = new java.util.ArrayList<VDSGroup>();
+        ArrayList<VDSGroup> filteredList = new ArrayList<VDSGroup>();
         storage_pool selectedDataCenter = (storage_pool) getModel().getDataCenter().getSelectedItem();
         boolean listContainsVmCluster = false;
 
@@ -78,7 +79,7 @@ public class UserPortalExistingVmModelBehavior extends ExistingVmModelBehavior
         }
     }
 
-    private void AddVmCluster(java.util.ArrayList<VDSGroup> clusters)
+    private void AddVmCluster(ArrayList<VDSGroup> clusters)
     {
         AsyncDataProvider.GetClusterById(new AsyncQuery(new Object[] { getModel(), clusters },
                 new INewAsyncCallback() {
@@ -87,7 +88,7 @@ public class UserPortalExistingVmModelBehavior extends ExistingVmModelBehavior
 
                         Object[] array = (Object[]) target;
                         UnitVmModel model = (UnitVmModel) array[0];
-                        java.util.ArrayList<VDSGroup> clusterList = (java.util.ArrayList<VDSGroup>) array[1];
+                        ArrayList<VDSGroup> clusterList = (ArrayList<VDSGroup>) array[1];
                         VDSGroup cluster = (VDSGroup) returnValue;
                         if (cluster != null)
                         {

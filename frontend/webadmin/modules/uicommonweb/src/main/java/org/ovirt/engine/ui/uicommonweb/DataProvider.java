@@ -1,7 +1,13 @@
 package org.ovirt.engine.ui.uicommonweb;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.EventNotificationEntity;
@@ -155,10 +161,10 @@ public final class DataProvider
         return "^((?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)|(([a-zA-Z0-9]([a-zA-Z0-9\\-]{0,61}[a-zA-Z0-9])?\\.)+[a-zA-Z]{2,}))\\:/(.*?/|.*?\\\\)?([^\\./|^\\.\\\\]+)(?:\\.([^\\\\]*)|)$"; //$NON-NLS-1$
     }
 
-    public static java.util.ArrayList<UserPermissionModel> GetUserPermissionMatrix(Guid userId)
+    public static ArrayList<UserPermissionModel> GetUserPermissionMatrix(Guid userId)
     {
         // var roles = GetRoleList().ToDictionary(a => a.id);
-        java.util.HashMap<Guid, roles> roles = new java.util.HashMap<Guid, roles>();
+        HashMap<Guid, roles> roles = new HashMap<Guid, roles>();
         for (roles role : GetRoleList())
         {
             roles.put(role.getId(), role);
@@ -172,9 +178,9 @@ public final class DataProvider
         {
             return null;
         }
-        java.util.ArrayList<permissions> permissions = (java.util.ArrayList<permissions>) returnValue.getReturnValue();
+        ArrayList<permissions> permissions = (ArrayList<permissions>) returnValue.getReturnValue();
 
-        java.util.ArrayList<UserPermissionModel> userPermissions = new java.util.ArrayList<UserPermissionModel>();
+        ArrayList<UserPermissionModel> userPermissions = new ArrayList<UserPermissionModel>();
 
         for (permissions permission : permissions)
         {
@@ -183,7 +189,7 @@ public final class DataProvider
             ListModel tempVar = new ListModel();
             tempVar.setSelectedItem(roles.get(permission.getrole_id()).getname());
             userPermission.setRole(tempVar);
-            java.util.ArrayList<TagModel> tags = new java.util.ArrayList<TagModel>();
+            ArrayList<TagModel> tags = new ArrayList<TagModel>();
             for (tags tag : permission.getTags())
             {
                 TagModel tagModel = new TagModel();
@@ -208,56 +214,56 @@ public final class DataProvider
         return userPermissions;
     }
 
-    public static java.util.ArrayList<event_subscriber> GetEventNotificationList(Guid userId)
+    public static ArrayList<event_subscriber> GetEventNotificationList(Guid userId)
     {
         VdcQueryReturnValue returnValue =
                 Frontend.RunQuery(VdcQueryType.GetEventSubscribersBySubscriberId,
                         new GetEventSubscribersBySubscriberIdParameters(userId));
         if (returnValue == null || !returnValue.getSucceeded())
         {
-            return new java.util.ArrayList<event_subscriber>();
+            return new ArrayList<event_subscriber>();
         }
 
-        return (java.util.ArrayList<event_subscriber>) returnValue.getReturnValue();
+        return (ArrayList<event_subscriber>) returnValue.getReturnValue();
     }
 
-    public static java.util.ArrayList<network> GetNetworkList(Guid storagePoolId)
+    public static ArrayList<network> GetNetworkList(Guid storagePoolId)
     {
         VdcQueryReturnValue returnValue =
                 Frontend.RunQuery(VdcQueryType.GetAllNetworks, new GetAllNetworkQueryParamenters(storagePoolId));
 
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
         {
-            return (java.util.ArrayList<network>) returnValue.getReturnValue();
+            return (ArrayList<network>) returnValue.getReturnValue();
         }
 
-        return new java.util.ArrayList<network>();
+        return new ArrayList<network>();
     }
 
-    public static java.util.ArrayList<network> GetClusterNetworkList(Guid clusterId)
+    public static ArrayList<network> GetClusterNetworkList(Guid clusterId)
     {
         VdcQueryReturnValue returnValue =
                 Frontend.RunQuery(VdcQueryType.GetAllNetworksByClusterId, new VdsGroupQueryParamenters(clusterId));
 
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
         {
-            return (java.util.ArrayList<network>) returnValue.getReturnValue();
+            return (ArrayList<network>) returnValue.getReturnValue();
         }
 
-        return new java.util.ArrayList<network>();
+        return new ArrayList<network>();
     }
 
-    public static java.util.ArrayList<roles> GetRoleList()
+    public static ArrayList<roles> GetRoleList()
     {
         VdcQueryReturnValue returnValue =
                 Frontend.RunQuery(VdcQueryType.GetAllRoles, new MultilevelAdministrationsQueriesParameters());
 
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
         {
-            return (java.util.ArrayList<roles>) returnValue.getReturnValue();
+            return (ArrayList<roles>) returnValue.getReturnValue();
         }
 
-        return new java.util.ArrayList<roles>();
+        return new ArrayList<roles>();
     }
 
     private static String cachedDefaultTimeZone;
@@ -271,7 +277,7 @@ public final class DataProvider
 
             if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
             {
-                cachedDefaultTimeZone = ((java.util.Map.Entry<String, String>) returnValue.getReturnValue()).getKey();
+                cachedDefaultTimeZone = ((Map.Entry<String, String>) returnValue.getReturnValue()).getKey();
             }
             else
             {
@@ -282,9 +288,9 @@ public final class DataProvider
         return cachedDefaultTimeZone;
     }
 
-    private static java.util.HashMap<String, String> cachedTimeZones;
+    private static HashMap<String, String> cachedTimeZones;
 
-    public static java.util.HashMap<String, String> GetTimeZoneList()
+    public static HashMap<String, String> GetTimeZoneList()
     {
         if (cachedTimeZones == null)
         {
@@ -293,23 +299,23 @@ public final class DataProvider
 
             if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
             {
-                cachedTimeZones = (java.util.HashMap<String, String>) returnValue.getReturnValue();
+                cachedTimeZones = (HashMap<String, String>) returnValue.getReturnValue();
             }
             else
             {
-                cachedTimeZones = new java.util.HashMap<String, String>();
+                cachedTimeZones = new HashMap<String, String>();
             }
         }
 
         return cachedTimeZones;
     }
 
-    public static java.util.ArrayList<VDSGroup> GetClusterList()
+    public static ArrayList<VDSGroup> GetClusterList()
     {
         VdcQueryReturnValue returnValue = Frontend.RunQuery(VdcQueryType.GetAllVdsGroups, new VdcQueryParametersBase());
         if (returnValue != null && returnValue.getSucceeded())
         {
-            java.util.ArrayList<VDSGroup> list = (java.util.ArrayList<VDSGroup>) returnValue.getReturnValue();
+            ArrayList<VDSGroup> list = (ArrayList<VDSGroup>) returnValue.getReturnValue();
             if (list != null)
             {
                 // return Linq.OrderBy<VDSGroup>( groups.OrderBy(a => a.name).ToList();
@@ -318,10 +324,10 @@ public final class DataProvider
             }
         }
 
-        return new java.util.ArrayList<VDSGroup>();
+        return new ArrayList<VDSGroup>();
     }
 
-    public static java.util.ArrayList<VDSGroup> GetClusterList(Guid storagePoolID)
+    public static ArrayList<VDSGroup> GetClusterList(Guid storagePoolID)
     {
         VdcQueryReturnValue returnValue =
                 Frontend.RunQuery(VdcQueryType.GetVdsGroupsByStoragePoolId,
@@ -329,7 +335,7 @@ public final class DataProvider
 
         if (returnValue != null && returnValue.getSucceeded())
         {
-            java.util.ArrayList<VDSGroup> list = (java.util.ArrayList<VDSGroup>) returnValue.getReturnValue();
+            ArrayList<VDSGroup> list = (ArrayList<VDSGroup>) returnValue.getReturnValue();
             if (list != null)
             {
                 // return groups.OrderBy(a => a.name).ToList();
@@ -338,10 +344,10 @@ public final class DataProvider
             }
         }
 
-        return new java.util.ArrayList<VDSGroup>();
+        return new ArrayList<VDSGroup>();
     }
 
-    public static java.util.ArrayList<String> GetDomainList(boolean filterInternalDomain)
+    public static ArrayList<String> GetDomainList(boolean filterInternalDomain)
     {
         GetDomainListParameters tempVar = new GetDomainListParameters();
         tempVar.setFilterInternalDomain(filterInternalDomain);
@@ -349,10 +355,10 @@ public final class DataProvider
 
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
         {
-            return (java.util.ArrayList<String>) returnValue.getReturnValue();
+            return (ArrayList<String>) returnValue.getReturnValue();
         }
 
-        return new java.util.ArrayList<String>();
+        return new ArrayList<String>();
     }
 
     // NOTE: Moved to AsyncDataProvider.
@@ -414,7 +420,7 @@ public final class DataProvider
         return 262144;
     }
 
-    public static java.util.ArrayList<VmTemplate> GetTemplateList(Guid storagePoolId)
+    public static ArrayList<VmTemplate> GetTemplateList(Guid storagePoolId)
     {
         VdcQueryReturnValue returnValue =
                 Frontend.RunQuery(VdcQueryType.GetVmTemplatesByStoragePoolId,
@@ -426,8 +432,8 @@ public final class DataProvider
             // .OrderBy(a => a.name)
             // .ToList();
             VmTemplate blankTemplate = new VmTemplate();
-            java.util.ArrayList<VmTemplate> list = new java.util.ArrayList<VmTemplate>();
-            for (VmTemplate template : (java.util.ArrayList<VmTemplate>) returnValue.getReturnValue())
+            ArrayList<VmTemplate> list = new ArrayList<VmTemplate>();
+            for (VmTemplate template : (ArrayList<VmTemplate>) returnValue.getReturnValue())
             {
                 if (template.getId().equals(NGuid.Empty))
                 {
@@ -448,7 +454,7 @@ public final class DataProvider
             return list;
         }
 
-        return new java.util.ArrayList<VmTemplate>();
+        return new ArrayList<VmTemplate>();
     }
 
     public static VmTemplate GetTemplateByID(Guid templateGUID)
@@ -464,7 +470,7 @@ public final class DataProvider
         return null;
     }
 
-    public static java.util.ArrayList<storage_domains> GetStorageDomainListByTemplate(Guid templateId)
+    public static ArrayList<storage_domains> GetStorageDomainListByTemplate(Guid templateId)
     {
         VdcQueryReturnValue returnValue =
                 Frontend.RunQuery(VdcQueryType.GetStorageDomainsByVmTemplateId,
@@ -472,10 +478,10 @@ public final class DataProvider
 
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
         {
-            return (java.util.ArrayList<storage_domains>) returnValue.getReturnValue();
+            return (ArrayList<storage_domains>) returnValue.getReturnValue();
         }
 
-        return new java.util.ArrayList<storage_domains>();
+        return new ArrayList<storage_domains>();
     }
 
     public static storage_domains GetIsoDomainByDataCenterId(Guid dataCenterId)
@@ -486,8 +492,8 @@ public final class DataProvider
 
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
         {
-            java.util.ArrayList<storage_domains> storageDomains =
-                    (java.util.ArrayList<storage_domains>) returnValue.getReturnValue();
+            ArrayList<storage_domains> storageDomains =
+                    (ArrayList<storage_domains>) returnValue.getReturnValue();
 
             for (storage_domains domain : storageDomains)
             {
@@ -509,8 +515,8 @@ public final class DataProvider
 
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
         {
-            java.util.ArrayList<storage_domains> storageDomains =
-                    (java.util.ArrayList<storage_domains>) returnValue.getReturnValue();
+            ArrayList<storage_domains> storageDomains =
+                    (ArrayList<storage_domains>) returnValue.getReturnValue();
             for (storage_domains domain : storageDomains)
             {
                 if (domain.getstorage_domain_type() == StorageDomainType.ImportExport)
@@ -523,7 +529,7 @@ public final class DataProvider
         return null;
     }
 
-    public static java.util.ArrayList<String> GetIrsImageList(Guid dataCenterId, boolean forceRefresh)
+    public static ArrayList<String> GetIrsImageList(Guid dataCenterId, boolean forceRefresh)
     {
         storage_domains isoDomain = GetIsoDomainByDataCenterId(dataCenterId);
         if (isoDomain != null)
@@ -531,10 +537,10 @@ public final class DataProvider
             return GetIsoListByIsoDomainId(isoDomain.getId(), forceRefresh);
         }
 
-        return new java.util.ArrayList<String>();
+        return new ArrayList<String>();
     }
 
-    public static java.util.ArrayList<String> GetIsoListByIsoDomainId(Guid isoDomainId, boolean forceRefresh)
+    public static ArrayList<String> GetIsoListByIsoDomainId(Guid isoDomainId, boolean forceRefresh)
     {
         GetAllIsoImagesListParameters param = new GetAllIsoImagesListParameters();
         param.setStorageDomainId(isoDomainId);
@@ -543,9 +549,9 @@ public final class DataProvider
         VdcQueryReturnValue returnValue = Frontend.RunQuery(VdcQueryType.GetAllIsoImagesList, param);
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
         {
-            java.util.ArrayList<RepoFileMetaData> listRepoFileList =
-                    (java.util.ArrayList<RepoFileMetaData>) returnValue.getReturnValue();
-            java.util.ArrayList<String> fileNameList = new java.util.ArrayList<String>();
+            ArrayList<RepoFileMetaData> listRepoFileList =
+                    (ArrayList<RepoFileMetaData>) returnValue.getReturnValue();
+            ArrayList<String> fileNameList = new ArrayList<String>();
             for (RepoFileMetaData RepoFileMetaData : listRepoFileList)
             {
                 fileNameList.add(RepoFileMetaData.getRepoFileName());
@@ -555,7 +561,7 @@ public final class DataProvider
             return fileNameList;
         }
 
-        return new java.util.ArrayList<String>();
+        return new ArrayList<String>();
     }
 
     public static String GetDefaultExportPath()
@@ -584,16 +590,16 @@ public final class DataProvider
         return ""; //$NON-NLS-1$
     }
 
-    public static java.util.ArrayList<tags> GetAllTagsList()
+    public static ArrayList<tags> GetAllTagsList()
     {
         VdcQueryReturnValue returnValue = Frontend.RunQuery(VdcQueryType.GetAllTags, new VdcQueryParametersBase());
 
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
         {
-            return ((java.util.ArrayList<tags>) returnValue.getReturnValue());
+            return ((ArrayList<tags>) returnValue.getReturnValue());
         }
 
-        return new java.util.ArrayList<tags>();
+        return new ArrayList<tags>();
     }
 
     public static tags GetRootTag()
@@ -620,9 +626,9 @@ public final class DataProvider
         return new tags();
     }
 
-    public static void fillTagsRecursive(tags tagToFill, java.util.List<tags> children)
+    public static void fillTagsRecursive(tags tagToFill, List<tags> children)
     {
-        java.util.ArrayList<tags> list = new java.util.ArrayList<tags>();
+        ArrayList<tags> list = new ArrayList<tags>();
 
         for (tags tag : children)
         {
@@ -641,7 +647,7 @@ public final class DataProvider
         tagToFill.setChildren(list);
     }
 
-    public static java.util.ArrayList<tags> GetAttachedTagsToVm(Guid id)
+    public static ArrayList<tags> GetAttachedTagsToVm(Guid id)
     {
         VdcQueryReturnValue returnValue =
                 Frontend.RunQuery(VdcQueryType.GetTagsByVmId, new GetTagsByVmIdParameters(id.toString()));
@@ -651,8 +657,8 @@ public final class DataProvider
             // return ((List<tags>)returnValue.ReturnValue)
             // .Where(a => a.type == TagsType.GeneralTag)
             // .ToList();
-            java.util.ArrayList<tags> ret = new java.util.ArrayList<tags>();
-            for (tags tags : (java.util.ArrayList<tags>) returnValue.getReturnValue())
+            ArrayList<tags> ret = new ArrayList<tags>();
+            for (tags tags : (ArrayList<tags>) returnValue.getReturnValue())
             {
                 if (tags.gettype() == TagsType.GeneralTag)
                 {
@@ -662,10 +668,10 @@ public final class DataProvider
             return ret;
         }
 
-        return new java.util.ArrayList<tags>();
+        return new ArrayList<tags>();
     }
 
-    public static java.util.ArrayList<tags> GetAttachedTagsToHost(Guid id)
+    public static ArrayList<tags> GetAttachedTagsToHost(Guid id)
     {
         VdcQueryReturnValue returnValue =
                 Frontend.RunQuery(VdcQueryType.GetTagsByVdsId, new GetTagsByVdsIdParameters(String.valueOf(id)));
@@ -675,8 +681,8 @@ public final class DataProvider
             // return ((List<tags>)returnValue.ReturnValue)
             // .Where(a => a.type == TagsType.GeneralTag)
             // .ToList();
-            java.util.ArrayList<tags> ret = new java.util.ArrayList<tags>();
-            for (tags tags : (java.util.ArrayList<tags>) returnValue.getReturnValue())
+            ArrayList<tags> ret = new ArrayList<tags>();
+            for (tags tags : (ArrayList<tags>) returnValue.getReturnValue())
             {
                 if (tags.gettype() == TagsType.GeneralTag)
                 {
@@ -686,10 +692,10 @@ public final class DataProvider
             return ret;
         }
 
-        return new java.util.ArrayList<tags>();
+        return new ArrayList<tags>();
     }
 
-    public static java.util.ArrayList<tags> GetAttachedTagsToUser(Guid id)
+    public static ArrayList<tags> GetAttachedTagsToUser(Guid id)
     {
         VdcQueryReturnValue returnValue =
                 Frontend.RunQuery(VdcQueryType.GetTagsByUserId, new GetTagsByUserIdParameters(id.toString()));
@@ -699,8 +705,8 @@ public final class DataProvider
             // return ((List<tags>)returnValue.ReturnValue)
             // .Where(a => a.type == TagsType.GeneralTag)
             // .ToList();
-            java.util.ArrayList<tags> ret = new java.util.ArrayList<tags>();
-            for (tags tags : (java.util.ArrayList<tags>) returnValue.getReturnValue())
+            ArrayList<tags> ret = new ArrayList<tags>();
+            for (tags tags : (ArrayList<tags>) returnValue.getReturnValue())
             {
                 if (tags.gettype() == TagsType.GeneralTag)
                 {
@@ -710,10 +716,10 @@ public final class DataProvider
             return ret;
         }
 
-        return new java.util.ArrayList<tags>();
+        return new ArrayList<tags>();
     }
 
-    public static java.util.ArrayList<tags> GetAttachedTagsToUserGroup(Guid id)
+    public static ArrayList<tags> GetAttachedTagsToUserGroup(Guid id)
     {
         VdcQueryReturnValue returnValue =
                 Frontend.RunQuery(VdcQueryType.GetTagsByUserGroupId, new GetTagsByUserGroupIdParameters(id.toString()));
@@ -723,8 +729,8 @@ public final class DataProvider
             // return ((List<tags>)returnValue.ReturnValue)
             // .Where(a => a.type == TagsType.GeneralTag)
             // .ToList();
-            java.util.ArrayList<tags> ret = new java.util.ArrayList<tags>();
-            for (tags tags : (java.util.ArrayList<tags>) returnValue.getReturnValue())
+            ArrayList<tags> ret = new ArrayList<tags>();
+            for (tags tags : (ArrayList<tags>) returnValue.getReturnValue())
             {
                 if (tags.gettype() == TagsType.GeneralTag)
                 {
@@ -734,15 +740,15 @@ public final class DataProvider
             return ret;
         }
 
-        return new java.util.ArrayList<tags>();
+        return new ArrayList<tags>();
     }
 
-    public static java.util.ArrayList<tags> GetAttachedTagsBySubscriberId(Guid id, String event_name)
+    public static ArrayList<tags> GetAttachedTagsBySubscriberId(Guid id, String event_name)
     {
         // return ((List<event_subscriber>)GetEventNotificationList(id)).Where(a => a.event_up_name == event_name &&
         // !string.IsNullOrEmpty(a.tag_name)).Select(b => new tags(b.event_up_name, null, false, i++,
         // b.tag_name)).ToList();
-        java.util.ArrayList<tags> tags = new java.util.ArrayList<tags>();
+        ArrayList<tags> tags = new ArrayList<tags>();
         for (event_subscriber event_subscriber : GetEventNotificationList(id))
         {
             if (StringHelper.stringsEqual(event_subscriber.getevent_up_name(), event_name)
@@ -758,10 +764,10 @@ public final class DataProvider
         return tags;
     }
 
-    public static java.util.ArrayList<String> GetHostTypeList(boolean showPowerclient)
+    public static ArrayList<String> GetHostTypeList(boolean showPowerclient)
     {
         // TODO: We can translate it here too
-        java.util.ArrayList<String> ret = new java.util.ArrayList<String>();
+        ArrayList<String> ret = new ArrayList<String>();
         for (String s : EnumCompat.GetNames(VDSType.class))
         {
             if (StringHelper.stringsEqual(s, VDSType.PowerClient.toString()))
@@ -779,9 +785,9 @@ public final class DataProvider
         return ret;
     }
 
-    public static java.util.ArrayList<EventNotificationEntity> GetEventNotificationTypeList()
+    public static ArrayList<EventNotificationEntity> GetEventNotificationTypeList()
     {
-        java.util.ArrayList<EventNotificationEntity> ret = new java.util.ArrayList<EventNotificationEntity>();
+        ArrayList<EventNotificationEntity> ret = new ArrayList<EventNotificationEntity>();
         // TODO: We can translate it here too
         for (EventNotificationEntity entity : EnumCompat.GetValues(EventNotificationEntity.class))
         {
@@ -793,26 +799,26 @@ public final class DataProvider
         return ret;
     }
 
-    public static java.util.Map<EventNotificationEntity, java.util.HashSet<AuditLogType>> GetAvailableNotificationEvents()
+    public static Map<EventNotificationEntity, HashSet<AuditLogType>> GetAvailableNotificationEvents()
     {
         return VdcEventNotificationUtils.GetNotificationEvents();
     }
 
-    public static java.util.ArrayList<bookmarks> GetBookmarkList()
+    public static ArrayList<bookmarks> GetBookmarkList()
     {
         VdcQueryReturnValue returnValue = Frontend.RunQuery(VdcQueryType.GetAllBookmarks, new VdcQueryParametersBase());
 
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
         {
-            return (java.util.ArrayList<bookmarks>) returnValue.getReturnValue();
+            return (ArrayList<bookmarks>) returnValue.getReturnValue();
         }
 
-        return new java.util.ArrayList<bookmarks>();
+        return new ArrayList<bookmarks>();
     }
 
-    public static java.util.ArrayList<VmInterfaceType> GetNicTypeList(VmOsType osType, boolean hasDualmode)
+    public static ArrayList<VmInterfaceType> GetNicTypeList(VmOsType osType, boolean hasDualmode)
     {
-        java.util.ArrayList<VmInterfaceType> list = new java.util.ArrayList<VmInterfaceType>();
+        ArrayList<VmInterfaceType> list = new ArrayList<VmInterfaceType>();
         for (VmInterfaceType item : EnumCompat.GetValues(VmInterfaceType.class))
         {
             list.add(item);
@@ -837,9 +843,9 @@ public final class DataProvider
         return VmInterfaceType.pv;
     }
 
-    private static java.util.ArrayList<Integer> cachedNumOfMonitors;
+    private static ArrayList<Integer> cachedNumOfMonitors;
 
-    public static java.util.ArrayList<Integer> GetNumOfMonitorList()
+    public static ArrayList<Integer> GetNumOfMonitorList()
     {
         if (cachedNumOfMonitors == null)
         {
@@ -850,8 +856,8 @@ public final class DataProvider
             {
                 // cachedNumOfMonitors = ((List<string>)returnValue.ReturnValue).Select(a =>
                 // Convert.ToInt32(a)).ToList();
-                java.util.ArrayList<Integer> nums = new java.util.ArrayList<Integer>();
-                for (String num : (java.util.ArrayList<String>) returnValue.getReturnValue())
+                ArrayList<Integer> nums = new ArrayList<Integer>();
+                for (String num : (ArrayList<String>) returnValue.getReturnValue())
                 {
                     nums.add(Integer.parseInt(num));
                 }
@@ -859,7 +865,7 @@ public final class DataProvider
             }
             else
             {
-                cachedNumOfMonitors = new java.util.ArrayList<Integer>();
+                cachedNumOfMonitors = new ArrayList<Integer>();
             }
         }
 
@@ -939,9 +945,9 @@ public final class DataProvider
         return 1;
     }
 
-    private static java.util.HashMap<Version, java.util.ArrayList<ServerCpu>> cachedCPUs;
+    private static HashMap<Version, ArrayList<ServerCpu>> cachedCPUs;
 
-    public static java.util.ArrayList<ServerCpu> GetCPUList(Version Version)
+    public static ArrayList<ServerCpu> GetCPUList(Version Version)
     {
         if (Version != null
                 && (cachedCPUs == null ? InitCachedCPUsDict() : true)
@@ -952,18 +958,18 @@ public final class DataProvider
 
             if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
             {
-                cachedCPUs.put(Version, (java.util.ArrayList<ServerCpu>) returnValue.getReturnValue());
+                cachedCPUs.put(Version, (ArrayList<ServerCpu>) returnValue.getReturnValue());
             }
         }
 
         return Version != null && cachedCPUs.containsKey(Version) ? ((cachedCPUs.get(Version)) != null) ? cachedCPUs.get(Version)
-                : new java.util.ArrayList<ServerCpu>()
-                : new java.util.ArrayList<ServerCpu>();
+                : new ArrayList<ServerCpu>()
+                : new ArrayList<ServerCpu>();
     }
 
     private static boolean InitCachedCPUsDict()
     {
-        cachedCPUs = new java.util.HashMap<Version, java.util.ArrayList<ServerCpu>>();
+        cachedCPUs = new HashMap<Version, ArrayList<ServerCpu>>();
         return cachedCPUs != null;
     }
 
@@ -999,9 +1005,9 @@ public final class DataProvider
         return new String[] {};
     }
 
-    public static java.util.ArrayList<StorageType> GetStoragePoolTypeList()
+    public static ArrayList<StorageType> GetStoragePoolTypeList()
     {
-        return new java.util.ArrayList<StorageType>(java.util.Arrays.asList(new StorageType[] { StorageType.NFS,
+        return new ArrayList<StorageType>(Arrays.asList(new StorageType[] { StorageType.NFS,
                 StorageType.ISCSI, StorageType.FCP, StorageType.LOCALFS }));
     }
 
@@ -1030,7 +1036,7 @@ public final class DataProvider
      * @param vdsGroupId
      * @return
      */
-    public static java.util.ArrayList<Version> GetClusterVersions(Guid vdsGroupId)
+    public static ArrayList<Version> GetClusterVersions(Guid vdsGroupId)
     {
         GetAvailableClusterVersionsParameters tempVar = new GetAvailableClusterVersionsParameters();
         tempVar.setVdsGroupId(vdsGroupId);
@@ -1038,11 +1044,11 @@ public final class DataProvider
 
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
         {
-            return (java.util.ArrayList<Version>) returnValue.getReturnValue();
+            return (ArrayList<Version>) returnValue.getReturnValue();
         }
         else
         {
-            return new java.util.ArrayList<Version>();
+            return new ArrayList<Version>();
         }
     }
 
@@ -1052,7 +1058,7 @@ public final class DataProvider
      * @param storagePoolId
      * @return
      */
-    public static java.util.ArrayList<Version> GetDataCenterClusterVersions(NGuid storagePoolId)
+    public static ArrayList<Version> GetDataCenterClusterVersions(NGuid storagePoolId)
     {
         GetAvailableClusterVersionsByStoragePoolParameters tempVar =
                 new GetAvailableClusterVersionsByStoragePoolParameters();
@@ -1062,15 +1068,15 @@ public final class DataProvider
 
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
         {
-            java.util.ArrayList<Version> list = (java.util.ArrayList<Version>) returnValue.getReturnValue();
+            ArrayList<Version> list = (ArrayList<Version>) returnValue.getReturnValue();
             Collections.sort(list);
             return list;
         }
 
-        return new java.util.ArrayList<Version>();
+        return new ArrayList<Version>();
     }
 
-    public static java.util.ArrayList<Version> GetDataCenterVersions(NGuid storagePoolId)
+    public static ArrayList<Version> GetDataCenterVersions(NGuid storagePoolId)
     {
         GetAvailableStoragePoolVersionsParameters tempVar = new GetAvailableStoragePoolVersionsParameters();
         tempVar.setStoragePoolId(storagePoolId);
@@ -1078,10 +1084,10 @@ public final class DataProvider
 
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
         {
-            return Linq.OrderByDescending((java.util.ArrayList<Version>) returnValue.getReturnValue());
+            return Linq.OrderByDescending((ArrayList<Version>) returnValue.getReturnValue());
         }
 
-        return new java.util.ArrayList<Version>();
+        return new ArrayList<Version>();
     }
 
     public static int GetClusterServerMemoryOverCommit()
@@ -1115,7 +1121,7 @@ public final class DataProvider
         return 100;
     }
 
-    public static java.util.ArrayList<storage_pool> GetDataCenterList()
+    public static ArrayList<storage_pool> GetDataCenterList()
     {
         SearchParameters tempVar = new SearchParameters("DataCenter: sortby name", SearchType.StoragePool); //$NON-NLS-1$
         tempVar.setMaxCount(SearchLimit);
@@ -1123,22 +1129,22 @@ public final class DataProvider
 
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
         {
-            return Linq.<storage_pool> Cast((java.util.ArrayList<IVdcQueryable>) returnValue.getReturnValue());
+            return Linq.<storage_pool> Cast((ArrayList<IVdcQueryable>) returnValue.getReturnValue());
             // return ((List<IVdcQueryable>)returnValue.ReturnValue)
             // .Cast<storage_pool>()
             // .ToList();
         }
 
-        return new java.util.ArrayList<storage_pool>();
+        return new ArrayList<storage_pool>();
     }
 
-    public static java.util.ArrayList<VmOsType> GetOSList()
+    public static ArrayList<VmOsType> GetOSList()
     {
-        return new java.util.ArrayList<VmOsType>(java.util.Arrays.asList(new VmOsType[] { VmOsType.Unassigned,
-                VmOsType.RHEL6, VmOsType.RHEL6x64, VmOsType.RHEL5, VmOsType.RHEL5x64, VmOsType.RHEL4,
-                VmOsType.RHEL4x64, VmOsType.RHEL3, VmOsType.RHEL3x64, VmOsType.OtherLinux, VmOsType.WindowsXP,
-                VmOsType.Windows2003, VmOsType.Windows2003x64, VmOsType.Windows7, VmOsType.Windows7x64,
-                VmOsType.Windows2008, VmOsType.Windows2008x64, VmOsType.Windows2008R2x64, VmOsType.Other }));
+        return new ArrayList<VmOsType>(Arrays.asList(new VmOsType[] {VmOsType.Unassigned,
+            VmOsType.RHEL6, VmOsType.RHEL6x64, VmOsType.RHEL5, VmOsType.RHEL5x64, VmOsType.RHEL4,
+            VmOsType.RHEL4x64, VmOsType.RHEL3, VmOsType.RHEL3x64, VmOsType.OtherLinux, VmOsType.WindowsXP,
+            VmOsType.Windows2003, VmOsType.Windows2003x64, VmOsType.Windows7, VmOsType.Windows7x64,
+            VmOsType.Windows2008, VmOsType.Windows2008x64, VmOsType.Windows2008R2x64, VmOsType.Other}));
     }
 
     public static Iterable GetUsbPolicyList()
@@ -1146,7 +1152,7 @@ public final class DataProvider
         return EnumCompat.GetValues(UsbPolicy.class);
     }
 
-    public static java.util.ArrayList<VDS> GetUpHostList()
+    public static ArrayList<VDS> GetUpHostList()
     {
         VdcQueryReturnValue returnValue =
                 Frontend.RunQuery(VdcQueryType.Search, new SearchParameters("Host: status=up", SearchType.VDS)); //$NON-NLS-1$
@@ -1154,15 +1160,15 @@ public final class DataProvider
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
         {
             // return ((List<IVdcQueryable>)returnValue.ReturnValue).Cast<VDS>().ToList();
-            return Linq.<VDS> Cast((java.util.ArrayList<IVdcQueryable>) returnValue.getReturnValue());
+            return Linq.<VDS> Cast((ArrayList<IVdcQueryable>) returnValue.getReturnValue());
         }
 
-        return new java.util.ArrayList<VDS>();
+        return new ArrayList<VDS>();
     }
 
-    public static java.util.ArrayList<VDS> GetUpSpmsByStorage(Guid storageDomainId)
+    public static ArrayList<VDS> GetUpSpmsByStorage(Guid storageDomainId)
     {
-        java.util.ArrayList<storage_domains> storageDomainWithPools = null;
+        ArrayList<storage_domains> storageDomainWithPools = null;
 
         // get the storage domain instance - each one with a different storage pool:
         VdcQueryReturnValue returnValue =
@@ -1171,7 +1177,7 @@ public final class DataProvider
 
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
         {
-            storageDomainWithPools = (java.util.ArrayList<storage_domains>) returnValue.getReturnValue();
+            storageDomainWithPools = (ArrayList<storage_domains>) returnValue.getReturnValue();
         }
 
         // filter only the storage domain instances that are active:
@@ -1182,7 +1188,7 @@ public final class DataProvider
         // StorageDomainStatus.Active).ToList();
         if (storageDomainWithPools != null)
         {
-            java.util.ArrayList<storage_domains> list = new java.util.ArrayList<storage_domains>();
+            ArrayList<storage_domains> list = new ArrayList<storage_domains>();
 
             for (storage_domains domain : storageDomainWithPools)
             {
@@ -1215,8 +1221,8 @@ public final class DataProvider
 
                 // return ((List<IVdcQueryable>)returnValue.ReturnValue).Cast<VDS>().Where(a => a.spm_status ==
                 // VdsSpmStatus.SPM).ToList();
-                java.util.ArrayList<VDS> list = new java.util.ArrayList<VDS>();
-                for (IVdcQueryable a : (java.util.ArrayList<IVdcQueryable>) returnValue.getReturnValue())
+                ArrayList<VDS> list = new ArrayList<VDS>();
+                for (IVdcQueryable a : (ArrayList<IVdcQueryable>) returnValue.getReturnValue())
                 {
                     VDS vds = (VDS) a;
                     if (vds.getspm_status() == VdsSpmStatus.SPM)
@@ -1228,10 +1234,10 @@ public final class DataProvider
             }
         }
 
-        return new java.util.ArrayList<VDS>();
+        return new ArrayList<VDS>();
     }
 
-    public static java.util.ArrayList<VDS> GetUpHostListByCluster(String cluster)
+    public static ArrayList<VDS> GetUpHostListByCluster(String cluster)
     {
         VdcQueryReturnValue returnValue =
                 Frontend.RunQuery(VdcQueryType.Search, new SearchParameters("Host: cluster = " + cluster //$NON-NLS-1$
@@ -1239,13 +1245,13 @@ public final class DataProvider
 
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
         {
-            return Linq.<VDS> Cast((java.util.ArrayList<IVdcQueryable>) returnValue.getReturnValue());
+            return Linq.<VDS> Cast((ArrayList<IVdcQueryable>) returnValue.getReturnValue());
         }
 
-        return new java.util.ArrayList<VDS>();
+        return new ArrayList<VDS>();
     }
 
-    public static java.util.ArrayList<VDS> GetHostListByDataCenter(String dataCenterName)
+    public static ArrayList<VDS> GetHostListByDataCenter(String dataCenterName)
     {
         VdcQueryReturnValue returnValue =
                 Frontend.RunQuery(VdcQueryType.Search, new SearchParameters("Host: datacenter = " + dataCenterName //$NON-NLS-1$
@@ -1253,13 +1259,13 @@ public final class DataProvider
 
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
         {
-            return Linq.<VDS> Cast((java.util.ArrayList<IVdcQueryable>) returnValue.getReturnValue());
+            return Linq.<VDS> Cast((ArrayList<IVdcQueryable>) returnValue.getReturnValue());
         }
 
-        return new java.util.ArrayList<VDS>();
+        return new ArrayList<VDS>();
     }
 
-    public static java.util.ArrayList<VDS> GetHostListByCluster(String cluster)
+    public static ArrayList<VDS> GetHostListByCluster(String cluster)
     {
         VdcQueryReturnValue returnValue =
                 Frontend.RunQuery(VdcQueryType.Search, new SearchParameters("Host: cluster = " + cluster //$NON-NLS-1$
@@ -1270,12 +1276,12 @@ public final class DataProvider
             // var list = ((List<IVdcQueryable>)returnValue.ReturnValue)
             // .Cast<VDS>()
             // .ToList();
-            java.util.ArrayList<VDS> list =
-                    Linq.<VDS> Cast((java.util.ArrayList<IVdcQueryable>) returnValue.getReturnValue());
+            ArrayList<VDS> list =
+                    Linq.<VDS> Cast((ArrayList<IVdcQueryable>) returnValue.getReturnValue());
             return list;
         }
 
-        return new java.util.ArrayList<VDS>();
+        return new ArrayList<VDS>();
     }
 
     public static VDS GetHostById(Guid hostId)
@@ -1291,7 +1297,7 @@ public final class DataProvider
         return null;
     }
 
-    public static java.util.ArrayList<VDS> GetHostList()
+    public static ArrayList<VDS> GetHostList()
     {
         SearchParameters tempVar = new SearchParameters("Host:", SearchType.VDS); //$NON-NLS-1$
         tempVar.setMaxCount(SearchLimit);
@@ -1300,13 +1306,13 @@ public final class DataProvider
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
         {
             // return ((List<IVdcQueryable>)returnValue.ReturnValue).Cast<VDS>().ToList();
-            return Linq.<VDS> Cast((java.util.ArrayList<IVdcQueryable>) returnValue.getReturnValue());
+            return Linq.<VDS> Cast((ArrayList<IVdcQueryable>) returnValue.getReturnValue());
         }
 
-        return new java.util.ArrayList<VDS>();
+        return new ArrayList<VDS>();
     }
 
-    public static java.util.ArrayList<VM> GetServerList()
+    public static ArrayList<VM> GetServerList()
     {
         VdcQueryReturnValue returnValue =
                 Frontend.RunQuery(VdcQueryType.Search, new SearchParameters("Vms: status=up sortby cpu_usage desc", //$NON-NLS-1$
@@ -1315,14 +1321,14 @@ public final class DataProvider
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
         {
             // return ((List<IVdcQueryable>)returnValue.ReturnValue).Cast<VM>().ToList();
-            return Linq.<VM> Cast((java.util.ArrayList<IVdcQueryable>) returnValue.getReturnValue());
+            return Linq.<VM> Cast((ArrayList<IVdcQueryable>) returnValue.getReturnValue());
         }
 
-        return new java.util.ArrayList<VM>();
+        return new ArrayList<VM>();
     }
 
     // Assumption that we have only 1 data/export storage domain per pool otherwise review the code
-    public static java.util.ArrayList<storage_domains> GetStorageDomainList(Guid storagePoolId)
+    public static ArrayList<storage_domains> GetStorageDomainList(Guid storagePoolId)
     {
         VdcQueryReturnValue returnValue =
                 Frontend.RunQuery(VdcQueryType.GetStorageDomainsByStoragePoolId,
@@ -1330,40 +1336,40 @@ public final class DataProvider
 
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
         {
-            return (java.util.ArrayList<storage_domains>) returnValue.getReturnValue();
+            return (ArrayList<storage_domains>) returnValue.getReturnValue();
         }
 
-        return new java.util.ArrayList<storage_domains>();
+        return new ArrayList<storage_domains>();
     }
 
-    public static java.util.ArrayList<storage_pool> GetDataCentersByStorageDomain(Guid storageDomainId)
+    public static ArrayList<storage_pool> GetDataCentersByStorageDomain(Guid storageDomainId)
     {
         VdcQueryReturnValue returnValue =
                 Frontend.RunQuery(VdcQueryType.GetStoragePoolsByStorageDomainId,
                         new StorageDomainQueryParametersBase(storageDomainId));
 
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null
-                && ((java.util.ArrayList<storage_pool>) returnValue.getReturnValue()).size() > 0)
+                && ((ArrayList<storage_pool>) returnValue.getReturnValue()).size() > 0)
         {
-            return (java.util.ArrayList<storage_pool>) (returnValue.getReturnValue());
+            return (ArrayList<storage_pool>) (returnValue.getReturnValue());
         }
 
-        return new java.util.ArrayList<storage_pool>();
+        return new ArrayList<storage_pool>();
     }
 
     public static storage_pool GetFirstStoragePoolByStorageDomain(Guid storageDomainId)
     {
-        java.util.ArrayList<storage_pool> storagePools = GetDataCentersByStorageDomain(storageDomainId);
+        ArrayList<storage_pool> storagePools = GetDataCentersByStorageDomain(storageDomainId);
         return storagePools.size() > 0 ? storagePools.get(0) : null;
     }
 
-    public static java.util.ArrayList<storage_domains> GetDataDomainsListByDomain(Guid storageDomainId)
+    public static ArrayList<storage_domains> GetDataDomainsListByDomain(Guid storageDomainId)
     {
         storage_pool pool = GetFirstStoragePoolByStorageDomain(storageDomainId);
         if (pool != null)
         {
             // return GetStorageDomainList(pool.id).Where(a => a.id != storageDomainId).ToList();
-            java.util.ArrayList<storage_domains> list = new java.util.ArrayList<storage_domains>();
+            ArrayList<storage_domains> list = new ArrayList<storage_domains>();
             for (storage_domains domain : GetStorageDomainList(pool.getId()))
             {
                 if (!domain.getId().equals(storageDomainId))
@@ -1374,10 +1380,10 @@ public final class DataProvider
             return list;
         }
 
-        return new java.util.ArrayList<storage_domains>();
+        return new ArrayList<storage_domains>();
     }
 
-    public static java.util.ArrayList<VDSGroup> GetClusterListByStorageDomain(Guid storage_domain_id)
+    public static ArrayList<VDSGroup> GetClusterListByStorageDomain(Guid storage_domain_id)
     {
 
         storage_pool pool = GetFirstStoragePoolByStorageDomain(storage_domain_id);
@@ -1386,7 +1392,7 @@ public final class DataProvider
             return GetClusterList(pool.getId());
         }
 
-        return new java.util.ArrayList<VDSGroup>();
+        return new ArrayList<VDSGroup>();
     }
 
     public static storage_domains GetStorageDomainById(Guid storageDomainId)
@@ -1405,8 +1411,8 @@ public final class DataProvider
 
     public static storage_domains GetStorageDomainByDiskList(Iterable disksList)
     {
-        java.util.ArrayList<DiskImage> diskImageList =
-                disksList == null ? new java.util.ArrayList<DiskImage>() : Linq.<DiskImage> Cast(disksList);
+        ArrayList<DiskImage> diskImageList =
+                disksList == null ? new ArrayList<DiskImage>() : Linq.<DiskImage> Cast(disksList);
 
         if (diskImageList.size() > 0)
         {
@@ -1438,7 +1444,7 @@ public final class DataProvider
         return null;
     }
 
-    public static java.util.ArrayList<storage_domains> GetStorageDomainList()
+    public static ArrayList<storage_domains> GetStorageDomainList()
     {
         SearchParameters searchParameters = new SearchParameters("Storage:", SearchType.StorageDomain); //$NON-NLS-1$
         searchParameters.setMaxCount(SearchLimit);
@@ -1447,13 +1453,13 @@ public final class DataProvider
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
         {
             // return ((List<IVdcQueryable>)returnValue.ReturnValue).Cast<storage_domains>().ToList();
-            return Linq.<storage_domains> Cast((java.util.ArrayList<IVdcQueryable>) returnValue.getReturnValue());
+            return Linq.<storage_domains> Cast((ArrayList<IVdcQueryable>) returnValue.getReturnValue());
         }
 
-        return new java.util.ArrayList<storage_domains>();
+        return new ArrayList<storage_domains>();
     }
 
-    public static java.util.ArrayList<storage_domains> GetISOStorageDomainList()
+    public static ArrayList<storage_domains> GetISOStorageDomainList()
     {
         SearchParameters searchParams = new SearchParameters("Storage:", SearchType.StorageDomain); //$NON-NLS-1$
         searchParams.setMaxCount(9999);
@@ -1463,9 +1469,9 @@ public final class DataProvider
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
         {
             // filter only the ISO storage domains into the return value:
-            java.util.ArrayList<storage_domains> allStorageDomains =
-                    (java.util.ArrayList<storage_domains>) returnValue.getReturnValue();
-            java.util.ArrayList<storage_domains> isoStorageDomains = new java.util.ArrayList<storage_domains>();
+            ArrayList<storage_domains> allStorageDomains =
+                    (ArrayList<storage_domains>) returnValue.getReturnValue();
+            ArrayList<storage_domains> isoStorageDomains = new ArrayList<storage_domains>();
             for (storage_domains storageDomain : allStorageDomains)
             {
                 if (storageDomain.getstorage_domain_type() == StorageDomainType.ISO)
@@ -1477,7 +1483,7 @@ public final class DataProvider
             return isoStorageDomains;
         }
 
-        return new java.util.ArrayList<storage_domains>();
+        return new ArrayList<storage_domains>();
     }
 
     public static boolean IsSSLEnabled()
@@ -1597,7 +1603,7 @@ public final class DataProvider
         return "shift+f12"; //$NON-NLS-1$
     }
 
-    public static java.util.ArrayList<ActionGroup> GetRoleActionGroupsByRoleId(Guid roleId)
+    public static ArrayList<ActionGroup> GetRoleActionGroupsByRoleId(Guid roleId)
     {
         // TODO getRoleActionGroupsByRoleId instead
         VdcQueryReturnValue returnValue =
@@ -1606,12 +1612,12 @@ public final class DataProvider
 
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
         {
-            return (java.util.ArrayList<ActionGroup>) returnValue.getReturnValue();
+            return (ArrayList<ActionGroup>) returnValue.getReturnValue();
         }
-        return new java.util.ArrayList<ActionGroup>();
+        return new ArrayList<ActionGroup>();
     }
 
-    public static boolean IsLicenseValid(RefObject<java.util.List<String>> reasons)
+    public static boolean IsLicenseValid(RefObject<List<String>> reasons)
     {
         // LicenseReturnValue returnValue = null;
         // try
@@ -1731,7 +1737,7 @@ public final class DataProvider
         return 10;
     }
 
-    public static java.util.ArrayList<DiskImageBase> GetDiskPresetList(VmType vmType, StorageType storageType)
+    public static ArrayList<DiskImageBase> GetDiskPresetList(VmType vmType, StorageType storageType)
     {
         // Get basic preset list from backend:
         VdcQueryReturnValue returnValue =
@@ -1739,7 +1745,7 @@ public final class DataProvider
 
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
         {
-            ArrayList<DiskImageBase> list = new java.util.ArrayList<DiskImageBase>();
+            ArrayList<DiskImageBase> list = new ArrayList<DiskImageBase>();
             for (DiskImageBase disk : (ArrayList<DiskImageBase>) returnValue.getReturnValue())
             {
                 disk.setvolume_type(disk.isBoot() && vmType == VmType.Desktop ?
@@ -1751,7 +1757,7 @@ public final class DataProvider
             return list;
         }
 
-        return new java.util.ArrayList<DiskImageBase>();
+        return new ArrayList<DiskImageBase>();
     }
 
     public static VolumeFormat GetDiskVolumeFormat(VolumeType volumeType, StorageType storageType)
@@ -1783,20 +1789,22 @@ public final class DataProvider
         }
     }
 
-    public static java.util.ArrayList<VolumeType> GetVolumeTypeList()
+    public static ArrayList<VolumeType> GetVolumeTypeList()
     {
-        return new java.util.ArrayList<VolumeType>(java.util.Arrays.asList(new VolumeType[] { VolumeType.Preallocated,
-                VolumeType.Sparse }));
+        return new ArrayList<VolumeType>(Arrays.asList(new VolumeType[] {
+            VolumeType.Preallocated,
+            VolumeType.Sparse
+        }));
     }
 
-    public static java.util.ArrayList<DiskInterface> GetDiskInterfaceList(VmOsType osType, Version Version)
+    public static ArrayList<DiskInterface> GetDiskInterfaceList(VmOsType osType, Version Version)
     {
-        return osType == VmOsType.WindowsXP && (Version == null || Version.compareTo(new Version("2.2")) < 0) ? new java.util.ArrayList<DiskInterface>(java.util.Arrays.asList(new DiskInterface[] { DiskInterface.IDE })) //$NON-NLS-1$
-                : new java.util.ArrayList<DiskInterface>(java.util.Arrays.asList(new DiskInterface[] {
+        return osType == VmOsType.WindowsXP && (Version == null || Version.compareTo(new Version("2.2")) < 0) ? new ArrayList<DiskInterface>(Arrays.asList(new DiskInterface[] { DiskInterface.IDE })) //$NON-NLS-1$
+                : new ArrayList<DiskInterface>(Arrays.asList(new DiskInterface[] {
                         DiskInterface.IDE, DiskInterface.VirtIO }));
     }
 
-    public static DiskInterface GetDefaultDiskInterface(VmOsType osType, java.util.List<DiskImage> disks)
+    public static DiskInterface GetDefaultDiskInterface(VmOsType osType, List<DiskImage> disks)
     {
         return osType == VmOsType.WindowsXP ? DiskInterface.IDE : disks != null && disks.size() > 0 ? disks.get(0)
                 .getDiskInterface() : DiskInterface.VirtIO;
@@ -1807,29 +1815,29 @@ public final class DataProvider
         return new VolumeFormat[] { VolumeFormat.COW, VolumeFormat.RAW };
     }
 
-    public static java.util.ArrayList<VdsNetworkInterface> GetFreeBondList(Guid hostId)
+    public static ArrayList<VdsNetworkInterface> GetFreeBondList(Guid hostId)
     {
         VdcQueryReturnValue returnValue =
                 Frontend.RunQuery(VdcQueryType.GetVdsFreeBondsByVdsId, new GetVdsByVdsIdParameters(hostId));
 
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
         {
-            return (java.util.ArrayList<VdsNetworkInterface>) returnValue.getReturnValue();
+            return (ArrayList<VdsNetworkInterface>) returnValue.getReturnValue();
         }
 
-        return new java.util.ArrayList<VdsNetworkInterface>();
+        return new ArrayList<VdsNetworkInterface>();
     }
 
-    public static java.util.ArrayList<String> GetoVirtISOsList()
+    public static ArrayList<String> GetoVirtISOsList()
     {
         VdcQueryReturnValue returnValue = Frontend.RunQuery(VdcQueryType.GetoVirtISOs, new VdcQueryParametersBase());
 
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
         {
-            return (java.util.ArrayList<String>) returnValue.getReturnValue();
+            return (ArrayList<String>) returnValue.getReturnValue();
         }
 
-        return new java.util.ArrayList<String>();
+        return new ArrayList<String>();
     }
 
     public static boolean IsDataCenterNameUnique(String name)
@@ -1854,8 +1862,8 @@ public final class DataProvider
 
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
         {
-            java.util.ArrayList<storage_domains> list =
-                    (java.util.ArrayList<storage_domains>) returnValue.getReturnValue();
+            ArrayList<storage_domains> list =
+                    (ArrayList<storage_domains>) returnValue.getReturnValue();
             return list.isEmpty();
         }
         return true;
@@ -1938,7 +1946,7 @@ public final class DataProvider
         {
             // return ((List<roles>)returnValue.ReturnValue).FirstOrDefault(a => String.Compare(a.name, name, true) ==
             // 0) == null;
-            for (roles role : (java.util.ArrayList<roles>) returnValue.getReturnValue())
+            for (roles role : (ArrayList<roles>) returnValue.getReturnValue())
             {
                 if (role.getname().compareToIgnoreCase(name) == 0)
                 {
@@ -1951,9 +1959,9 @@ public final class DataProvider
         return false;
     }
 
-    public static java.util.ArrayList<String> GetPmTypeList(Version ClusterVersion)
+    public static ArrayList<String> GetPmTypeList(Version ClusterVersion)
     {
-        java.util.ArrayList<String> list = new java.util.ArrayList<String>();
+        ArrayList<String> list = new ArrayList<String>();
 
         GetConfigurationValueParameters tempVar = new GetConfigurationValueParameters(ConfigurationValues.VdsFenceType);
         tempVar.setVersion(ClusterVersion != null ? ClusterVersion.toString() : null);
@@ -1971,9 +1979,9 @@ public final class DataProvider
         return list;
     }
 
-    private static java.util.HashMap<String, java.util.ArrayList<String>> cachedPmMap;
+    private static HashMap<String, ArrayList<String>> cachedPmMap;
 
-    public static java.util.ArrayList<String> GetPmOptions(String pmType)
+    public static ArrayList<String> GetPmOptions(String pmType)
     {
         if (cachedPmMap == null)
         {
@@ -1982,14 +1990,14 @@ public final class DataProvider
 
             if (returnValue != null && returnValue.getSucceeded())
             {
-                cachedPmMap = new java.util.HashMap<String, java.util.ArrayList<String>>();
+                cachedPmMap = new HashMap<String, ArrayList<String>>();
 
-                java.util.HashMap<String, java.util.HashMap<String, Object>> dict =
-                        (java.util.HashMap<String, java.util.HashMap<String, Object>>) returnValue.getReturnValue();
-                for (java.util.Map.Entry<String, java.util.HashMap<String, Object>> pair : dict.entrySet())
+                HashMap<String, HashMap<String, Object>> dict =
+                        (HashMap<String, HashMap<String, Object>>) returnValue.getReturnValue();
+                for (Map.Entry<String, HashMap<String, Object>> pair : dict.entrySet())
                 {
-                    java.util.ArrayList<String> list = new java.util.ArrayList<String>();
-                    for (java.util.Map.Entry<String, Object> p : pair.getValue().entrySet())
+                    ArrayList<String> list = new ArrayList<String>();
+                    for (Map.Entry<String, Object> p : pair.getValue().entrySet())
                     {
                         list.add(p.getKey());
                     }
@@ -2002,46 +2010,46 @@ public final class DataProvider
         return cachedPmMap.get(pmType);
     }
 
-    public static java.util.ArrayList<DiskImage> GetVmDiskList(Guid id)
+    public static ArrayList<DiskImage> GetVmDiskList(Guid id)
     {
         VdcQueryReturnValue returnValue =
                 Frontend.RunQuery(VdcQueryType.GetAllDisksByVmId, new GetAllDisksByVmIdParameters(id));
 
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
         {
-            return (java.util.ArrayList<DiskImage>) returnValue.getReturnValue();
+            return (ArrayList<DiskImage>) returnValue.getReturnValue();
         }
 
-        return new java.util.ArrayList<DiskImage>();
+        return new ArrayList<DiskImage>();
     }
 
-    public static java.util.ArrayList<DiskImage> GetTemplateDiskList(Guid templateId)
+    public static ArrayList<DiskImage> GetTemplateDiskList(Guid templateId)
     {
         VdcQueryReturnValue returnValue =
                 Frontend.RunQuery(VdcQueryType.GetVmTemplatesDisks, new GetVmTemplatesDisksParameters(templateId));
 
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
         {
-            return (java.util.ArrayList<DiskImage>) returnValue.getReturnValue();
+            return (ArrayList<DiskImage>) returnValue.getReturnValue();
         }
 
-        return new java.util.ArrayList<DiskImage>();
+        return new ArrayList<DiskImage>();
     }
 
-    public static java.util.ArrayList<VmNetworkInterface> GetVmNicList(Guid id)
+    public static ArrayList<VmNetworkInterface> GetVmNicList(Guid id)
     {
         VdcQueryReturnValue returnValue =
                 Frontend.RunQuery(VdcQueryType.GetVmInterfacesByVmId, new GetVmByVmIdParameters(id));
 
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
         {
-            return (java.util.ArrayList<VmNetworkInterface>) returnValue.getReturnValue();
+            return (ArrayList<VmNetworkInterface>) returnValue.getReturnValue();
         }
 
-        return new java.util.ArrayList<VmNetworkInterface>();
+        return new ArrayList<VmNetworkInterface>();
     }
 
-    public static java.util.ArrayList<DiskImage> GetSnapshotList(Guid id,
+    public static ArrayList<DiskImage> GetSnapshotList(Guid id,
             String drive,
             RefObject<Guid> previewingImageId)
     {
@@ -2058,14 +2066,14 @@ public final class DataProvider
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
         {
             previewingImageId.argvalue = returnValue.getTryingImage();
-            return (java.util.ArrayList<DiskImage>) returnValue.getReturnValue();
+            return (ArrayList<DiskImage>) returnValue.getReturnValue();
         }
 
         previewingImageId.argvalue = NGuid.Empty;
-        return new java.util.ArrayList<DiskImage>();
+        return new ArrayList<DiskImage>();
     }
 
-    public static java.util.ArrayList<String> GetFloppyImageList(Guid dataCenterId, boolean forceRefresh)
+    public static ArrayList<String> GetFloppyImageList(Guid dataCenterId, boolean forceRefresh)
     {
         storage_domains isoDomain = GetIsoDomainByDataCenterId(dataCenterId);
 
@@ -2079,9 +2087,9 @@ public final class DataProvider
 
             if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
             {
-                java.util.ArrayList<RepoFileMetaData> listRepoFileList =
-                        (java.util.ArrayList<RepoFileMetaData>) returnValue.getReturnValue();
-                java.util.ArrayList<String> fileNameList = new java.util.ArrayList<String>();
+                ArrayList<RepoFileMetaData> listRepoFileList =
+                        (ArrayList<RepoFileMetaData>) returnValue.getReturnValue();
+                ArrayList<String> fileNameList = new ArrayList<String>();
                 for (RepoFileMetaData RepoFileMetaData : listRepoFileList)
                 {
                     fileNameList.add(RepoFileMetaData.getRepoFileName());
@@ -2092,7 +2100,7 @@ public final class DataProvider
             }
         }
 
-        return new java.util.ArrayList<String>();
+        return new ArrayList<String>();
     }
 
     public static storage_server_connections GetStorageConnectionById(String id)
@@ -2122,44 +2130,43 @@ public final class DataProvider
         return 0;
     }
 
-    public static java.util.Date GetDefaultPoolLeaseStartTime()
+    public static Date GetDefaultPoolLeaseStartTime()
     {
         VdcQueryReturnValue returnValue =
                 GetConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.VmPoolLeaseStartTime));
 
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
         {
-            return new java.util.Date(java.util.Date.parse((String) returnValue.getReturnValue()));
+            return new Date(Date.parse((String) returnValue.getReturnValue()));
         }
 
-        return new java.util.Date();
+        return new Date();
     }
 
-    public static java.util.Date GetDefaultPoolLeaseEndTime()
+    public static Date GetDefaultPoolLeaseEndTime()
     {
         VdcQueryReturnValue returnValue =
                 GetConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.VmPoolLeaseEndTime));
 
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
         {
-            return new java.util.Date(java.util.Date.parse((String) returnValue.getReturnValue()));
+            return new Date(Date.parse((String) returnValue.getReturnValue()));
         }
 
-        return new java.util.Date();
+        return new Date();
     }
 
-    public static java.util.ArrayList<DbUser> GetUserList()
+    public static ArrayList<DbUser> GetUserList()
     {
         VdcQueryReturnValue returnValue =
                 Frontend.RunQuery(VdcQueryType.Search, new SearchParameters("User:", SearchType.DBUser)); //$NON-NLS-1$
 
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
         {
-            // return ((List<IVdcQueryable>)returnValue.ReturnValue).Cast<DbUser>().ToList();
-            return Linq.<DbUser> Cast((java.util.ArrayList<IVdcQueryable>) returnValue.getReturnValue());
+            return Linq.<DbUser> Cast((ArrayList<IVdcQueryable>) returnValue.getReturnValue());
         }
 
-        return new java.util.ArrayList<DbUser>();
+        return new ArrayList<DbUser>();
     }
 
     public static VM GetVmById(Guid id)
@@ -2209,7 +2216,7 @@ public final class DataProvider
 
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
         {
-            return Linq.FirstOrDefault(Linq.<VDSGroup> Cast((java.util.ArrayList<IVdcQueryable>) returnValue.getReturnValue()));
+            return Linq.FirstOrDefault(Linq.<VDSGroup> Cast((ArrayList<IVdcQueryable>) returnValue.getReturnValue()));
         }
 
         return null;
@@ -2236,13 +2243,13 @@ public final class DataProvider
 
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
         {
-            return Linq.FirstOrDefault(Linq.<storage_pool> Cast((java.util.ArrayList<IVdcQueryable>) returnValue.getReturnValue()));
+            return Linq.FirstOrDefault(Linq.<storage_pool> Cast((ArrayList<IVdcQueryable>) returnValue.getReturnValue()));
         }
 
         return null;
     }
 
-    public static java.util.ArrayList<VM> GetVmList(String poolName)
+    public static ArrayList<VM> GetVmList(String poolName)
     {
         VdcQueryReturnValue returnValue =
                 Frontend.RunQuery(VdcQueryType.Search, new SearchParameters("Vms: pool=" + poolName, SearchType.VM)); //$NON-NLS-1$
@@ -2250,15 +2257,15 @@ public final class DataProvider
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
         {
             // return ((List<IVdcQueryable>)returnValue.ReturnValue).Cast<VM>().ToList();
-            return Linq.<VM> Cast((java.util.ArrayList<IVdcQueryable>) returnValue.getReturnValue());
+            return Linq.<VM> Cast((ArrayList<IVdcQueryable>) returnValue.getReturnValue());
         }
 
-        return new java.util.ArrayList<VM>();
+        return new ArrayList<VM>();
     }
 
     public static VM GetAnyVm(String poolName)
     {
-        java.util.ArrayList<VM> vms = GetVmList(poolName);
+        ArrayList<VM> vms = GetVmList(poolName);
         return vms.size() > 0 ? vms.get(0) : null;
     }
 
@@ -2284,13 +2291,13 @@ public final class DataProvider
         return _cachedSearchResultsLimit;
     }
 
-    public static java.util.ArrayList<VdsNetworkInterface> GetInterfaceOptionsForEditNetwork(java.util.ArrayList<VdsNetworkInterface> interfaceList,
+    public static ArrayList<VdsNetworkInterface> GetInterfaceOptionsForEditNetwork(ArrayList<VdsNetworkInterface> interfaceList,
             VdsNetworkInterface originalInterface,
             network networkToEdit,
             Guid vdsID,
             RefObject<String> defaultInterfaceName)
     {
-        java.util.ArrayList<VdsNetworkInterface> ifacesOptions = new java.util.ArrayList<VdsNetworkInterface>();
+        ArrayList<VdsNetworkInterface> ifacesOptions = new ArrayList<VdsNetworkInterface>();
         for (VdsNetworkInterface i : interfaceList)
         {
             if (StringHelper.isNullOrEmpty(i.getNetworkName()) && StringHelper.isNullOrEmpty(i.getBondName()))
@@ -2318,7 +2325,7 @@ public final class DataProvider
             // {
             // return InterfaceHasChildVlanInterfaces(vdsID, i);
             // });
-            java.util.ArrayList<VdsNetworkInterface> ifacesOptionsTemp = new java.util.ArrayList<VdsNetworkInterface>();
+            ArrayList<VdsNetworkInterface> ifacesOptionsTemp = new ArrayList<VdsNetworkInterface>();
             for (VdsNetworkInterface i : ifacesOptions)
             {
                 if (!InterfaceHasChildVlanInterfaces(vdsID, i))
@@ -2386,16 +2393,16 @@ public final class DataProvider
         return ifacesOptions;
     }
 
-    private static java.util.ArrayList<VdsNetworkInterface> GetAllHostInterfaces(Guid vdsID)
+    private static ArrayList<VdsNetworkInterface> GetAllHostInterfaces(Guid vdsID)
     {
-        java.util.ArrayList<VdsNetworkInterface> interfaceList = new java.util.ArrayList<VdsNetworkInterface>();
+        ArrayList<VdsNetworkInterface> interfaceList = new ArrayList<VdsNetworkInterface>();
 
         VdcQueryReturnValue retValue =
                 Frontend.RunQuery(VdcQueryType.GetVdsInterfacesByVdsId, new GetVdsByVdsIdParameters(vdsID));
 
         if (retValue != null && retValue.getSucceeded())
         {
-            interfaceList = (java.util.ArrayList<VdsNetworkInterface>) retValue.getReturnValue();
+            interfaceList = (ArrayList<VdsNetworkInterface>) retValue.getReturnValue();
         }
 
         return interfaceList;
@@ -2417,14 +2424,14 @@ public final class DataProvider
 
     private static boolean InterfaceHasChildVlanInterfaces(Guid vdsID, VdsNetworkInterface iface)
     {
-        java.util.ArrayList<VdsNetworkInterface> childVlanInterfaces = new java.util.ArrayList<VdsNetworkInterface>();
+        ArrayList<VdsNetworkInterface> childVlanInterfaces = new ArrayList<VdsNetworkInterface>();
         VdcQueryReturnValue returnValue =
                 Frontend.RunQuery(VdcQueryType.GetAllChildVlanInterfaces,
                         new GetAllChildVlanInterfacesQueryParameters(vdsID, iface));
 
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
         {
-            childVlanInterfaces = (java.util.ArrayList<VdsNetworkInterface>) (returnValue.getReturnValue());
+            childVlanInterfaces = (ArrayList<VdsNetworkInterface>) (returnValue.getReturnValue());
         }
 
         if (childVlanInterfaces.size() > 0)
@@ -2437,14 +2444,14 @@ public final class DataProvider
 
     private static boolean InterfaceHasSiblingVlanInterfaces(Guid vdsID, VdsNetworkInterface iface)
     {
-        java.util.ArrayList<VdsNetworkInterface> siblingVlanInterfaces = new java.util.ArrayList<VdsNetworkInterface>();
+        ArrayList<VdsNetworkInterface> siblingVlanInterfaces = new ArrayList<VdsNetworkInterface>();
         VdcQueryReturnValue returnValue =
                 Frontend.RunQuery(VdcQueryType.GetAllSiblingVlanInterfaces,
                         new GetAllChildVlanInterfacesQueryParameters(vdsID, iface));
 
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
         {
-            siblingVlanInterfaces = (java.util.ArrayList<VdsNetworkInterface>) returnValue.getReturnValue();
+            siblingVlanInterfaces = (ArrayList<VdsNetworkInterface>) returnValue.getReturnValue();
         }
 
         if (siblingVlanInterfaces.size() > 0)
@@ -2455,17 +2462,17 @@ public final class DataProvider
         return false;
     }
 
-    public static java.util.HashMap<String, Integer> GetSystemStatistics()
+    public static HashMap<String, Integer> GetSystemStatistics()
     {
         VdcQueryReturnValue returnValue =
                 Frontend.RunQuery(VdcQueryType.GetSystemStatistics, new GetSystemStatisticsQueryParameters(-1));
 
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
         {
-            return (java.util.HashMap<String, Integer>) returnValue.getReturnValue();
+            return (HashMap<String, Integer>) returnValue.getReturnValue();
         }
 
-        return new java.util.HashMap<String, Integer>();
+        return new HashMap<String, Integer>();
     }
 
     public static int GetDiskMaxSize()
@@ -2494,7 +2501,7 @@ public final class DataProvider
         return 1000;
     }
 
-    public static java.util.ArrayList<VM> GetUserVmList(Guid userId, String groupNames)
+    public static ArrayList<VM> GetUserVmList(Guid userId, String groupNames)
     {
         VdcQueryReturnValue returnValue =
                 Frontend.RunQuery(VdcQueryType.GetUserVmsByUserIdAndGroups, new GetUserVmsByUserIdAndGroupsParameters()); // user.UserId,
@@ -2502,13 +2509,13 @@ public final class DataProvider
 
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
         {
-            return (java.util.ArrayList<VM>) returnValue.getReturnValue();
+            return (ArrayList<VM>) returnValue.getReturnValue();
         }
 
-        return new java.util.ArrayList<VM>();
+        return new ArrayList<VM>();
     }
 
-    public static String GetNewNicName(java.util.ArrayList<VmNetworkInterface> existingInterfaces)
+    public static String GetNewNicName(ArrayList<VmNetworkInterface> existingInterfaces)
     {
         int maxIfaceNumber = 0;
         if (existingInterfaces != null)
@@ -2535,8 +2542,8 @@ public final class DataProvider
         return "nic" + (maxIfaceNumber + 1); //$NON-NLS-1$
     }
 
-    private static java.util.HashMap<String, ResourceManager> _resourcesCache =
-            new java.util.HashMap<String, ResourceManager>();
+    private static HashMap<String, ResourceManager> _resourcesCache =
+            new HashMap<String, ResourceManager>();
 
     public static String GetValueFromResource(String resourcePath, String key)
     {
@@ -2584,7 +2591,7 @@ public final class DataProvider
         {
             return ""; //$NON-NLS-1$
         }
-        java.util.ArrayList<String> values = new java.util.ArrayList<String>();
+        ArrayList<String> values = new ArrayList<String>();
 
         for (String s : complexValue.split("[+]", -1)) //$NON-NLS-1$
         {
@@ -2676,8 +2683,8 @@ public final class DataProvider
     }
 
     // dictionary to hold cache of all config values (per version) queried by client, if the request for them succeeded.
-    private static java.util.HashMap<java.util.Map.Entry<ConfigurationValues, String>, VdcQueryReturnValue> CachedConfigValues =
-            new java.util.HashMap<java.util.Map.Entry<ConfigurationValues, String>, VdcQueryReturnValue>();
+    private static HashMap<Map.Entry<ConfigurationValues, String>, VdcQueryReturnValue> CachedConfigValues =
+            new HashMap<Map.Entry<ConfigurationValues, String>, VdcQueryReturnValue>();
 
     // helper method to clear the config cache (currently used on each login)
     public static void ClearConfigCache()
@@ -2698,7 +2705,7 @@ public final class DataProvider
     // method to get an item from config while caching it (config is not supposed to change during a session)
     public static VdcQueryReturnValue GetConfigFromCache(GetConfigurationValueParameters parameters)
     {
-        java.util.Map.Entry<ConfigurationValues, String> config_key =
+        Map.Entry<ConfigurationValues, String> config_key =
                 new KeyValuePairCompat<ConfigurationValues, String>(parameters.getConfigValue(),
                         parameters.getVersion());
 
@@ -2785,9 +2792,9 @@ public final class DataProvider
         return new Guid();
     }
 
-    private static java.util.ArrayList<ActionGroup> userActionGroups = null;
+    private static ArrayList<ActionGroup> userActionGroups = null;
 
-    public static java.util.ArrayList<ActionGroup> GetUserActionGroups()
+    public static ArrayList<ActionGroup> GetUserActionGroups()
     {
         if (userActionGroups != null)
         {
@@ -2796,14 +2803,14 @@ public final class DataProvider
         UIQueryReturnValue ret = Frontend.RunUIQuery(UIQueryType.GetUserActionGroups, new UIQueryParametersBase());
         if (ret.getSucceeded() && ret.getReturnValue() != null)
         {
-            userActionGroups = (java.util.ArrayList<ActionGroup>) ret.getReturnValue();
+            userActionGroups = (ArrayList<ActionGroup>) ret.getReturnValue();
             return userActionGroups;
         }
 
-        return new java.util.ArrayList<ActionGroup>();
+        return new ArrayList<ActionGroup>();
     }
 
-    //    private static java.util.HashMap<String, String> cacheCustomProperties;
+    //    private static HashMap<String, String> cacheCustomProperties;
     //
     //    /**
     //     * Gets a dictionary in which the keys are the valid custom property keys allowed and the values are the valid
@@ -2811,7 +2818,7 @@ public final class DataProvider
     //     *
     //     * @return dictionary of valid keys and valid values' RegExps.
     //     */
-    //    public static java.util.HashMap<String, String> GetCustomPropertiesList()
+    //    public static HashMap<String, String> GetCustomPropertiesList()
     //    {
     //        if (cacheCustomProperties != null)
     //        {
@@ -2824,7 +2831,7 @@ public final class DataProvider
     //        {
     //            String temp = (String) returnValue.getReturnValue();
     //            String[] tempArray = temp.split("[;]", -1);
-    //            cacheCustomProperties = new java.util.HashMap<String, String>();
+    //            cacheCustomProperties = new HashMap<String, String>();
     //            for (String keyRegexpPair : tempArray)
     //            {
     //                String[] keyAndRegexp = keyRegexpPair.split("[=]", -1);
@@ -2845,14 +2852,14 @@ public final class DataProvider
     //            return cacheCustomProperties;
     //        }
     //
-    //        return new java.util.HashMap<String, String>();
+    //        return new HashMap<String, String>();
     //    }
 
-    private static java.util.ArrayList<VmOsType> windowsOsTypes;
-    private static java.util.ArrayList<VmOsType> linuxOsTypes;
-    private static java.util.ArrayList<VmOsType> x64OsTypes;
+    private static ArrayList<VmOsType> windowsOsTypes;
+    private static ArrayList<VmOsType> linuxOsTypes;
+    private static ArrayList<VmOsType> x64OsTypes;
 
-    public static java.util.ArrayList<VmOsType> GetWindowsOsTypes()
+    public static ArrayList<VmOsType> GetWindowsOsTypes()
     {
         if (windowsOsTypes != null)
         {
@@ -2872,9 +2879,16 @@ public final class DataProvider
 
         /***** TODO: remove once the gwt is using generic api instead of backend! *****/
         windowsOsTypes =
-                new java.util.ArrayList<VmOsType>(java.util.Arrays.asList(new VmOsType[] { VmOsType.Windows2003,
-                        VmOsType.Windows2003x64, VmOsType.Windows2008, VmOsType.Windows2008R2x64,
-                        VmOsType.Windows2008x64, VmOsType.Windows7, VmOsType.Windows7x64, VmOsType.WindowsXP }));
+            new ArrayList<VmOsType>(Arrays.asList(new VmOsType[] {
+                VmOsType.Windows2003,
+                VmOsType.Windows2003x64,
+                VmOsType.Windows2008,
+                VmOsType.Windows2008R2x64,
+                VmOsType.Windows2008x64,
+                VmOsType.Windows7,
+                VmOsType.Windows7x64,
+                VmOsType.WindowsXP
+            }));
 
         return windowsOsTypes;
         /*******************************************************************************/
@@ -2890,7 +2904,7 @@ public final class DataProvider
         return false;
     }
 
-    public static java.util.ArrayList<VmOsType> GetLinuxOsTypes()
+    public static ArrayList<VmOsType> GetLinuxOsTypes()
     {
         if (linuxOsTypes != null)
         {
@@ -2910,9 +2924,17 @@ public final class DataProvider
 
         /***** TODO: remove once the gwt is using generic api instead of backend! *****/
         linuxOsTypes =
-                new java.util.ArrayList<VmOsType>(java.util.Arrays.asList(new VmOsType[] { VmOsType.OtherLinux,
-                        VmOsType.RHEL3, VmOsType.RHEL3x64, VmOsType.RHEL4, VmOsType.RHEL4x64, VmOsType.RHEL5,
-                        VmOsType.RHEL5x64, VmOsType.RHEL6, VmOsType.RHEL6x64 }));
+            new ArrayList<VmOsType>(Arrays.asList(new VmOsType[] {
+                VmOsType.OtherLinux,
+                VmOsType.RHEL3,
+                VmOsType.RHEL3x64,
+                VmOsType.RHEL4,
+                VmOsType.RHEL4x64,
+                VmOsType.RHEL5,
+                VmOsType.RHEL5x64,
+                VmOsType.RHEL6,
+                VmOsType.RHEL6x64
+            }));
 
         return linuxOsTypes;
         /*******************************************************************************/
@@ -2928,7 +2950,7 @@ public final class DataProvider
         return false;
     }
 
-    public static java.util.ArrayList<VmOsType> Get64bitOsTypes()
+    public static ArrayList<VmOsType> Get64bitOsTypes()
     {
         if (x64OsTypes != null)
         {
@@ -2948,9 +2970,16 @@ public final class DataProvider
 
         /***** TODO: remove once the gwt is using generic api instead of backend! *****/
         x64OsTypes =
-                new java.util.ArrayList<VmOsType>(java.util.Arrays.asList(new VmOsType[] { VmOsType.RHEL3x64,
-                        VmOsType.RHEL4x64, VmOsType.RHEL5x64, VmOsType.RHEL6x64, VmOsType.Windows2003x64,
-                        VmOsType.Windows2008R2x64, VmOsType.Windows2008x64, VmOsType.Windows7x64 }));
+            new ArrayList<VmOsType>(Arrays.asList(new VmOsType[] {
+                VmOsType.RHEL3x64,
+                VmOsType.RHEL4x64,
+                VmOsType.RHEL5x64,
+                VmOsType.RHEL6x64,
+                VmOsType.Windows2003x64,
+                VmOsType.Windows2008R2x64,
+                VmOsType.Windows2008x64,
+                VmOsType.Windows7x64
+            }));
 
         return x64OsTypes;
         /*******************************************************************************/
@@ -2986,8 +3015,8 @@ public final class DataProvider
                 hasAdminSystemPermission = false;
                 return false;
             }
-            java.util.ArrayList<permissions> permissions =
-                    (java.util.ArrayList<permissions>) returnValue.getReturnValue();
+            ArrayList<permissions> permissions =
+                    (ArrayList<permissions>) returnValue.getReturnValue();
 
             for (permissions permission : permissions)
             {
@@ -3013,7 +3042,7 @@ public final class DataProvider
         VdcQueryReturnValue result = Frontend.RunQuery(VdcQueryType.Search, sp);
         if ((result != null) && result.getSucceeded() && (result.getReturnValue() != null))
         {
-            for (IVdcQueryable res : (java.util.ArrayList<IVdcQueryable>) (result.getReturnValue()))
+            for (IVdcQueryable res : (ArrayList<IVdcQueryable>) (result.getReturnValue()))
             {
                 return (VDS) res;
             }
@@ -3021,10 +3050,10 @@ public final class DataProvider
         return null;
     }
 
-    public static java.util.ArrayList<java.util.Map.Entry<String, EntityModel>> GetBondingOptionList(RefObject<java.util.Map.Entry<String, EntityModel>> defaultItem)
+    public static ArrayList<Map.Entry<String, EntityModel>> GetBondingOptionList(RefObject<Map.Entry<String, EntityModel>> defaultItem)
     {
-        java.util.ArrayList<java.util.Map.Entry<String, EntityModel>> list =
-                new java.util.ArrayList<java.util.Map.Entry<String, EntityModel>>();
+        ArrayList<Map.Entry<String, EntityModel>> list =
+                new ArrayList<Map.Entry<String, EntityModel>>();
         EntityModel entityModel = new EntityModel();
         entityModel.setEntity("(Mode 1) Active-Backup"); //$NON-NLS-1$
         list.add(new KeyValuePairCompat<String, EntityModel>("mode=1 miimon=100", entityModel)); //$NON-NLS-1$
@@ -3062,8 +3091,8 @@ public final class DataProvider
 
         if (returnValue != null && returnValue.getSucceeded())
         {
-            java.util.List<storage_domains> storages =
-                    (java.util.ArrayList<storage_domains>) returnValue.getReturnValue();
+            List<storage_domains> storages =
+                    (ArrayList<storage_domains>) returnValue.getReturnValue();
             if (storages.size() > 0)
             {
                 storageName.argvalue = storages.get(0).getstorage_name();

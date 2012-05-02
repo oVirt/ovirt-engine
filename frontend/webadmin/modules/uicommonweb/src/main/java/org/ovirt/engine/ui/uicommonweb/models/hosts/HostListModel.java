@@ -1,6 +1,9 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -322,15 +325,15 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         model.getCommands().add(tempVar2);
     }
 
-    public java.util.Map<Guid, Boolean> attachedTagsToEntities;
-    public java.util.ArrayList<org.ovirt.engine.core.common.businessentities.tags> allAttachedTags;
+    public Map<Guid, Boolean> attachedTagsToEntities;
+    public ArrayList<org.ovirt.engine.core.common.businessentities.tags> allAttachedTags;
     public int selectedItemsCounter;
 
     private void GetAttachedTagsToSelectedHosts(TagListModel model)
     {
-        java.util.HashMap<Guid, Boolean> tags = new java.util.HashMap<Guid, Boolean>();
+        HashMap<Guid, Boolean> tags = new HashMap<Guid, Boolean>();
 
-        java.util.ArrayList<Guid> hostIds = new java.util.ArrayList<Guid>();
+        ArrayList<Guid> hostIds = new ArrayList<Guid>();
 
         for (Object item : getSelectedItems())
         {
@@ -338,8 +341,8 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
             hostIds.add(vds.getId());
         }
 
-        attachedTagsToEntities = new java.util.HashMap<Guid, Boolean>();
-        allAttachedTags = new java.util.ArrayList<org.ovirt.engine.core.common.businessentities.tags>();
+        attachedTagsToEntities = new HashMap<Guid, Boolean>();
+        allAttachedTags = new ArrayList<org.ovirt.engine.core.common.businessentities.tags>();
         selectedItemsCounter = 0;
 
         for (Guid hostId : hostIds)
@@ -352,7 +355,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
                             Object[] array = (Object[]) target;
                             HostListModel hostListModel = (HostListModel) array[0];
                             TagListModel tagListModel = (TagListModel) array[1];
-                            hostListModel.allAttachedTags.addAll((java.util.ArrayList<org.ovirt.engine.core.common.businessentities.tags>) returnValue);
+                            hostListModel.allAttachedTags.addAll((ArrayList<org.ovirt.engine.core.common.businessentities.tags>) returnValue);
                             hostListModel.selectedItemsCounter++;
                             if (hostListModel.selectedItemsCounter == hostListModel.getSelectedItems().size())
                             {
@@ -369,7 +372,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
     {
         if (hostListModel.getLastExecutedCommand() == getAssignTagsCommand())
         {
-            java.util.ArrayList<org.ovirt.engine.core.common.businessentities.tags> attachedTags =
+            ArrayList<org.ovirt.engine.core.common.businessentities.tags> attachedTags =
                     Linq.Distinct(hostListModel.allAttachedTags, new TagsEqualityComparer());
             for (org.ovirt.engine.core.common.businessentities.tags tag : attachedTags)
             {
@@ -399,10 +402,10 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         GetAttachedTagsToSelectedHosts(model);
     }
 
-    public void PostOnAssignTags(java.util.Map<Guid, Boolean> attachedTags)
+    public void PostOnAssignTags(Map<Guid, Boolean> attachedTags)
     {
         TagListModel model = (TagListModel) getWindow();
-        java.util.ArrayList<Guid> hostIds = new java.util.ArrayList<Guid>();
+        ArrayList<Guid> hostIds = new ArrayList<Guid>();
 
         for (Object item : getSelectedItems())
         {
@@ -411,24 +414,24 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         }
 
         // prepare attach/detach lists
-        java.util.ArrayList<Guid> tagsToAttach = new java.util.ArrayList<Guid>();
-        java.util.ArrayList<Guid> tagsToDetach = new java.util.ArrayList<Guid>();
+        ArrayList<Guid> tagsToAttach = new ArrayList<Guid>();
+        ArrayList<Guid> tagsToDetach = new ArrayList<Guid>();
 
-        if (model.getItems() != null && ((java.util.ArrayList<TagModel>) model.getItems()).size() > 0)
+        if (model.getItems() != null && ((ArrayList<TagModel>) model.getItems()).size() > 0)
         {
-            java.util.ArrayList<TagModel> tags = (java.util.ArrayList<TagModel>) model.getItems();
+            ArrayList<TagModel> tags = (ArrayList<TagModel>) model.getItems();
             TagModel rootTag = tags.get(0);
             TagModel.RecursiveEditAttachDetachLists(rootTag, attachedTags, tagsToAttach, tagsToDetach);
         }
 
-        java.util.ArrayList<VdcActionParametersBase> prmsToAttach = new java.util.ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> prmsToAttach = new ArrayList<VdcActionParametersBase>();
         for (Guid tag_id : tagsToAttach)
         {
             prmsToAttach.add(new AttachVdsToTagParameters(tag_id, hostIds));
         }
         Frontend.RunMultipleAction(VdcActionType.AttachVdsToTag, prmsToAttach);
 
-        java.util.ArrayList<VdcActionParametersBase> prmsToDetach = new java.util.ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> prmsToDetach = new ArrayList<VdcActionParametersBase>();
         for (Guid tag_id : tagsToDetach)
         {
             prmsToDetach.add(new AttachVdsToTagParameters(tag_id, hostIds));
@@ -444,7 +447,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().areYouSureTitle());
         model.setHashName("manual_fence_are_you_sure"); //$NON-NLS-1$
-        java.util.ArrayList<VDS> items = new java.util.ArrayList<VDS>();
+        ArrayList<VDS> items = new ArrayList<VDS>();
         items.add((VDS) getSelectedItem());
         model.setItems(items);
 
@@ -475,7 +478,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
             return;
         }
 
-        java.util.ArrayList<VdcActionParametersBase> list = new java.util.ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
         for (Object item : getSelectedItems())
         {
             VDS vds = (VDS) item;
@@ -561,7 +564,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
             {
                 HostListModel hostListModel = (HostListModel) model;
                 HostModel innerHostModel = (HostModel) hostListModel.getWindow();
-                java.util.ArrayList<storage_pool> dataCenters = (java.util.ArrayList<storage_pool>) result;
+                ArrayList<storage_pool> dataCenters = (ArrayList<storage_pool>) result;
 
                 innerHostModel.getDataCenter().setItems(dataCenters);
                 innerHostModel.getDataCenter().setSelectedItem(Linq.FirstOrDefault(dataCenters));
@@ -577,13 +580,13 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
                     case Hosts:
                     case Cluster:
                         VDSGroup cluster = (VDSGroup) hostListModel.getSystemTreeSelectedItem().getEntity();
-                        for (storage_pool dc : (java.util.ArrayList<storage_pool>) innerHostModel.getDataCenter()
+                        for (storage_pool dc : (ArrayList<storage_pool>) innerHostModel.getDataCenter()
                                 .getItems())
                         {
                             if (dc.getId().equals(cluster.getstorage_pool_id()))
                             {
                                 innerHostModel.getDataCenter()
-                                        .setItems(new java.util.ArrayList<storage_pool>(java.util.Arrays.asList(new storage_pool[] { dc })));
+                                        .setItems(new ArrayList<storage_pool>(Arrays.asList(new storage_pool[] {dc})));
                                 innerHostModel.getDataCenter().setSelectedItem(dc);
                                 break;
                             }
@@ -597,7 +600,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
                         storage_pool selectDataCenter =
                                 (storage_pool) hostListModel.getSystemTreeSelectedItem().getEntity();
                         innerHostModel.getDataCenter()
-                                .setItems(new java.util.ArrayList<storage_pool>(java.util.Arrays.asList(new storage_pool[] { selectDataCenter })));
+                                .setItems(new ArrayList<storage_pool>(Arrays.asList(new storage_pool[] { selectDataCenter })));
                         innerHostModel.getDataCenter().setSelectedItem(selectDataCenter);
                         innerHostModel.getDataCenter().setIsChangable(false);
                         innerHostModel.getDataCenter().setInfo("Cannot choose Host's Data Center in tree context"); //$NON-NLS-1$
@@ -639,7 +642,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
             public void OnSuccess(Object model, Object result)
             {
                 HostListModel hostListModel = (HostListModel) model;
-                java.util.ArrayList<storage_pool> dataCenters = (java.util.ArrayList<storage_pool>) result;
+                ArrayList<storage_pool> dataCenters = (ArrayList<storage_pool>) result;
                 HostModel hostModel = new HostModel();
                 hostListModel.setWindow(hostModel);
                 VDS host = (VDS) hostListModel.getSelectedItem();
@@ -847,7 +850,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         VDS vds = (VDS) getSelectedItem();
 
         Frontend.RunMultipleAction(VdcActionType.ApproveVds,
-                new java.util.ArrayList<VdcActionParametersBase>(java.util.Arrays.asList(new VdcActionParametersBase[] { new ApproveVdsParameters(vds.getId()) })),
+                new ArrayList<VdcActionParametersBase>(Arrays.asList(new VdcActionParametersBase[] { new ApproveVdsParameters(vds.getId()) })),
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void Executed(FrontendMultipleActionAsyncResult result) {
@@ -870,7 +873,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         model.setHashName("remove_host"); //$NON-NLS-1$
         model.setMessage(ConstantsManager.getInstance().getConstants().hostsMsg());
 
-        java.util.ArrayList<String> list = new java.util.ArrayList<String>();
+        ArrayList<String> list = new ArrayList<String>();
         for (VDS item : Linq.<VDS> Cast(getSelectedItems()))
         {
             list.add(item.getvds_name());
@@ -896,7 +899,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
             return;
         }
 
-        java.util.ArrayList<VdcActionParametersBase> list = new java.util.ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
         for (Object item : getSelectedItems())
         {
             VDS vds = (VDS) item;
@@ -920,7 +923,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
 
     public void Activate()
     {
-        java.util.ArrayList<VdcActionParametersBase> list = new java.util.ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
         for (Object item : getSelectedItems())
         {
             VDS vds = (VDS) item;
@@ -951,7 +954,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
                 .getConstants()
                 .areYouSureYouWantToPlaceFollowingHostsIntoMaintenanceModeMsg());
         // model.Items = SelectedItems.Cast<VDS>().Select(a => a.vds_name);
-        java.util.ArrayList<String> vdss = new java.util.ArrayList<String>();
+        ArrayList<String> vdss = new ArrayList<String>();
         for (Object item : getSelectedItems())
         {
             VDS vds = (VDS) item;
@@ -978,8 +981,8 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
             return;
         }
 
-        java.util.ArrayList<VdcActionParametersBase> list = new java.util.ArrayList<VdcActionParametersBase>();
-        java.util.ArrayList<Guid> vdss = new java.util.ArrayList<Guid>();
+        ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
+        ArrayList<Guid> vdss = new ArrayList<Guid>();
 
         for (Object item : getSelectedItems())
         {
@@ -1016,7 +1019,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
             {
                 HostListModel hostListModel = (HostListModel) model;
                 HostModel innerHostModel = (HostModel) hostListModel.getWindow();
-                java.util.ArrayList<storage_pool> dataCenters = (java.util.ArrayList<storage_pool>) result;
+                ArrayList<storage_pool> dataCenters = (ArrayList<storage_pool>) result;
                 VDS host = (VDS) hostListModel.getSelectedItem();
                 hostListModel.PrepareModelForApproveEdit(host, innerHostModel, dataCenters, false);
                 innerHostModel.setTitle(ConstantsManager.getInstance().getConstants().editAndApproveHostTitle());
@@ -1037,7 +1040,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
 
     private void PrepareModelForApproveEdit(VDS vds,
             HostModel model,
-            java.util.ArrayList<storage_pool> dataCenters,
+            ArrayList<storage_pool> dataCenters,
             boolean isEditWithPMemphasis)
     {
         model.setHostId(vds.getId());
@@ -1071,7 +1074,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
             }
         }
 
-        java.util.ArrayList<VDSGroup> clusters;
+        ArrayList<VDSGroup> clusters;
         if (model.getCluster().getItems() == null)
         {
             VDSGroup tempVar = new VDSGroup();
@@ -1079,9 +1082,9 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
             tempVar.setId(vds.getvds_group_id());
             tempVar.setcompatibility_version(vds.getvds_group_compatibility_version());
             model.getCluster()
-                    .setItems(new java.util.ArrayList<VDSGroup>(java.util.Arrays.asList(new VDSGroup[] { tempVar })));
+                    .setItems(new ArrayList<VDSGroup>(Arrays.asList(new VDSGroup[] { tempVar })));
         }
-        clusters = (java.util.ArrayList<VDSGroup>) model.getCluster().getItems();
+        clusters = (ArrayList<VDSGroup>) model.getCluster().getItems();
         model.getCluster().setSelectedItem(Linq.FirstOrDefault(clusters,
                 new Linq.ClusterPredicate(vds.getvds_group_id())));
         if (model.getCluster().getSelectedItem() == null)
@@ -1117,7 +1120,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
             case DataCenter:
                 storage_pool selectDataCenter = (storage_pool) getSystemTreeSelectedItem().getEntity();
                 model.getDataCenter()
-                        .setItems(new java.util.ArrayList<storage_pool>(java.util.Arrays.asList(new storage_pool[] { selectDataCenter })));
+                        .setItems(new ArrayList<storage_pool>(Arrays.asList(new storage_pool[] { selectDataCenter })));
                 model.getDataCenter().setSelectedItem(selectDataCenter);
                 model.getDataCenter().setIsChangable(false);
                 break;
@@ -1140,7 +1143,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         model.setHashName("restart_host"); //$NON-NLS-1$
         model.setMessage(ConstantsManager.getInstance().getConstants().areYouSureYouWantToRestartTheFollowingHostsMsg());
         // model.Items = SelectedItems.Cast<VDS>().Select(a => a.vds_name);
-        java.util.ArrayList<String> items = new java.util.ArrayList<String>();
+        ArrayList<String> items = new ArrayList<String>();
         for (Object item : getSelectedItems())
         {
             VDS vds = (VDS) item;
@@ -1167,7 +1170,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
             return;
         }
 
-        java.util.ArrayList<VdcActionParametersBase> list = new java.util.ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
         for (Object item : getSelectedItems())
         {
             VDS vds = (VDS) item;
@@ -1191,7 +1194,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
 
     public void start()
     {
-        java.util.ArrayList<VdcActionParametersBase> list = new java.util.ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
         for (Object item : getSelectedItems())
         {
             VDS vds = (VDS) item;
@@ -1215,7 +1218,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         model.setHashName("stop_host"); //$NON-NLS-1$
         model.setMessage(ConstantsManager.getInstance().getConstants().areYouSureYouWantToStopTheFollowingHostsMsg());
         // model.Items = SelectedItems.Cast<VDS>().Select(a => a.vds_name);
-        java.util.ArrayList<String> items = new java.util.ArrayList<String>();
+        ArrayList<String> items = new ArrayList<String>();
         for (Object item : getSelectedItems())
         {
             VDS vds = (VDS) item;
@@ -1242,7 +1245,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
             return;
         }
 
-        java.util.ArrayList<VdcActionParametersBase> list = new java.util.ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
         for (Object item : getSelectedItems())
         {
             VDS vds = (VDS) item;
@@ -1500,8 +1503,8 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
 
     private void UpdateActionAvailability()
     {
-        java.util.ArrayList<VDS> items =
-                getSelectedItems() != null ? Linq.<VDS> Cast(getSelectedItems()) : new java.util.ArrayList<VDS>();
+        ArrayList<VDS> items =
+                getSelectedItems() != null ? Linq.<VDS> Cast(getSelectedItems()) : new ArrayList<VDS>();
 
         boolean isAllPMEnabled = Linq.FindAllVDSByPmEnabled(items).size() == items.size();
 

@@ -12,6 +12,9 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+
 @SuppressWarnings("unused")
 public class FindDesktopModel extends SearchableListModel
 {
@@ -38,7 +41,7 @@ public class FindDesktopModel extends SearchableListModel
     {
         // List<VM> exclude = ExcludeItems != null ? Linq.Cast<VM>(ExcludeItems) : new List<VM>();
 
-        java.util.HashSet<Guid> exludeGuids = new java.util.HashSet<Guid>();
+        HashSet<Guid> exludeGuids = new HashSet<Guid>();
         if (getExcludeItems() != null)
         {
             for (Object item : getExcludeItems())
@@ -59,8 +62,8 @@ public class FindDesktopModel extends SearchableListModel
             // .Where(a => !exclude.Any(b => b.vm_guid == a.vm_guid))
             // .Select(a => new EntityModel() { Entity = a })
             // .ToList();
-            java.util.ArrayList<EntityModel> items = new java.util.ArrayList<EntityModel>();
-            for (IVdcQueryable item : (java.util.ArrayList<IVdcQueryable>) returnValue.getReturnValue())
+            ArrayList<EntityModel> items = new ArrayList<EntityModel>();
+            for (IVdcQueryable item : (ArrayList<IVdcQueryable>) returnValue.getReturnValue())
             {
                 VM vm = (VM) item;
                 if (!exludeGuids.contains(vm.getId()))

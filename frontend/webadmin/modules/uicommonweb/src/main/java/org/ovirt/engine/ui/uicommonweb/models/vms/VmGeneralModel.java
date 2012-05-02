@@ -30,6 +30,9 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
 import org.ovirt.engine.ui.uicompat.Translator;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+
 @SuppressWarnings("unused")
 public class VmGeneralModel extends EntityModel
 {
@@ -643,8 +646,8 @@ public class VmGeneralModel extends EntityModel
                             {
                                 return;
                             }
-                            java.util.ArrayList<VDS> hosts =
-                                    (java.util.ArrayList<VDS>) ((VdcQueryReturnValue) returnValue).getReturnValue();
+                            ArrayList<VDS> hosts =
+                                    (ArrayList<VDS>) ((VdcQueryReturnValue) returnValue).getReturnValue();
                             for (VDS host : hosts)
                             {
                                 if (localVm.getdedicated_vm_for_vds() != null
@@ -674,7 +677,7 @@ public class VmGeneralModel extends EntityModel
             {
                 VmGeneralModel vmGeneralModel = (VmGeneralModel) model;
                 Iterable disks = (Iterable) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
-                java.util.Iterator disksIterator = disks.iterator();
+                Iterator disksIterator = disks.iterator();
                 if (disksIterator.hasNext())
                 {
                     vmGeneralModel.setHasStorageDomain(true);

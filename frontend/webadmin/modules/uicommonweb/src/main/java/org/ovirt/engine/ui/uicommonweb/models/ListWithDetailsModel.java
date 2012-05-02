@@ -4,18 +4,20 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceListModel;
 
+import java.util.List;
+
 @SuppressWarnings("unused")
 public abstract class ListWithDetailsModel extends SearchableListModel
 {
 
-    private java.util.List<EntityModel> detailModels;
+    private List<EntityModel> detailModels;
 
-    public java.util.List<EntityModel> getDetailModels()
+    public List<EntityModel> getDetailModels()
     {
         return detailModels;
     }
 
-    public void setDetailModels(java.util.List<EntityModel> value)
+    public void setDetailModels(List<EntityModel> value)
     {
         if (detailModels != value)
         {

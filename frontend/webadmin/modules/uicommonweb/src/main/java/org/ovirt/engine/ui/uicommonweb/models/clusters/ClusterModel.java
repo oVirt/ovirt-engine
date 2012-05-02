@@ -25,6 +25,8 @@ import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.I18NNameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 
+import java.util.ArrayList;
+
 @SuppressWarnings("unused")
 public class ClusterModel extends Model
 {
@@ -593,7 +595,7 @@ public class ClusterModel extends Model
             public void OnSuccess(Object model, Object result)
             {
                 ClusterModel clusterModel = (ClusterModel) model;
-                java.util.ArrayList<storage_pool> dataCenters = (java.util.ArrayList<storage_pool>) result;
+                ArrayList<storage_pool> dataCenters = (ArrayList<storage_pool>) result;
 
                 clusterModel.getDataCenter().setItems(dataCenters);
 
@@ -698,7 +700,7 @@ public class ClusterModel extends Model
             public void OnSuccess(Object model, Object result)
             {
                 ClusterModel clusterModel = (ClusterModel) model;
-                java.util.ArrayList<ServerCpu> cpus = (java.util.ArrayList<ServerCpu>) result;
+                ArrayList<ServerCpu> cpus = (ArrayList<ServerCpu>) result;
 
                 ServerCpu oldSelectedCpu = (ServerCpu) clusterModel.getCPU().getSelectedItem();
                 clusterModel.getCPU().setItems(cpus);
@@ -726,7 +728,7 @@ public class ClusterModel extends Model
         {
             isCPUinitialized = true;
             getCPU().setSelectedItem(null);
-            for (ServerCpu a : (java.util.ArrayList<ServerCpu>) getCPU().getItems())
+            for (ServerCpu a : (ArrayList<ServerCpu>) getCPU().getItems())
             {
                 if (StringHelper.stringsEqual(a.getCpuName(), getEntity().getcpu_name()))
                 {
@@ -763,7 +765,7 @@ public class ClusterModel extends Model
             public void OnSuccess(Object model, Object result)
             {
                 ClusterModel clusterModel = (ClusterModel) model;
-                java.util.ArrayList<Version> versions = (java.util.ArrayList<Version>) result;
+                ArrayList<Version> versions = (ArrayList<Version>) result;
                 clusterModel.getVersion().setItems(versions);
                 if (!versions.contains(clusterModel.getVersion().getSelectedItem()))
                 {

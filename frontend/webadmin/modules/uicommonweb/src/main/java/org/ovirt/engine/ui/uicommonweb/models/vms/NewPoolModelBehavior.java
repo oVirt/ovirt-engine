@@ -25,6 +25,8 @@ import org.ovirt.engine.ui.uicommonweb.validation.IntegerValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 
+import java.util.ArrayList;
+
 @SuppressWarnings("unused")
 public class NewPoolModelBehavior extends IVmModelBehavior
 {
@@ -54,8 +56,8 @@ public class NewPoolModelBehavior extends IVmModelBehavior
                     public void OnSuccess(Object target, Object returnValue) {
 
                         UnitVmModel model = (UnitVmModel) target;
-                        java.util.ArrayList<storage_pool> list = new java.util.ArrayList<storage_pool>();
-                        for (storage_pool a : (java.util.ArrayList<storage_pool>) returnValue)
+                        ArrayList<storage_pool> list = new ArrayList<storage_pool>();
+                        for (storage_pool a : (ArrayList<storage_pool>) returnValue)
                         {
                             if (a.getstatus() == StoragePoolStatus.Up)
                             {
@@ -88,7 +90,7 @@ public class NewPoolModelBehavior extends IVmModelBehavior
                         Object[] array = (Object[]) target;
                         NewPoolModelBehavior behavior = (NewPoolModelBehavior) array[0];
                         UnitVmModel model = (UnitVmModel) array[1];
-                        java.util.ArrayList<VDSGroup> clusters = (java.util.ArrayList<VDSGroup>) returnValue;
+                        ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) returnValue;
                         model.SetClusters(model, clusters, null);
                         behavior.InitTemplate();
                         behavior.InitCdImage();
@@ -146,7 +148,7 @@ public class NewPoolModelBehavior extends IVmModelBehavior
             // Update domain list
             UpdateDomain();
 
-            java.util.ArrayList<VDSGroup> clusters = (java.util.ArrayList<VDSGroup>) getModel().getCluster().getItems();
+            ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) getModel().getCluster().getItems();
             VDSGroup selectCluster =
                     Linq.FirstOrDefault(clusters, new Linq.ClusterPredicate(template.getvds_group_id()));
 
@@ -250,10 +252,10 @@ public class NewPoolModelBehavior extends IVmModelBehavior
                 new INewAsyncCallback() {
                     @Override
                     public void OnSuccess(Object target1, Object returnValue1) {
-                        java.util.ArrayList<VmTemplate> loadedTemplates =
-                                (java.util.ArrayList<VmTemplate>) returnValue1;
+                        ArrayList<VmTemplate> loadedTemplates =
+                                (ArrayList<VmTemplate>) returnValue1;
 
-                        java.util.ArrayList<VmTemplate> templates = new java.util.ArrayList<VmTemplate>();
+                        ArrayList<VmTemplate> templates = new ArrayList<VmTemplate>();
                         for (VmTemplate template : loadedTemplates)
                         {
                             if (!template.getId().equals(Guid.Empty))
@@ -282,12 +284,12 @@ public class NewPoolModelBehavior extends IVmModelBehavior
          * AsyncQuery(new Object[] { behavior1, returnValue1 }, new INewAsyncCallback() {
          *
          * @Override public void OnSuccess(Object target2, Object returnValue2) { Object[] array2 = (Object[])target2;
-         * NewPoolModelBehavior behavior2 = (NewPoolModelBehavior)array2[0]; java.util.ArrayList<VmTemplate>
-         * templatesByDataCenter = (java.util.ArrayList<VmTemplate>)array2[1]; java.util.ArrayList<VmTemplate>
-         * templatesByStorage = (java.util.ArrayList<VmTemplate>)returnValue2; VmTemplate blankTemplate =
+         * NewPoolModelBehavior behavior2 = (NewPoolModelBehavior)array2[0]; ArrayList<VmTemplate>
+         * templatesByDataCenter = (ArrayList<VmTemplate>)array2[1]; ArrayList<VmTemplate>
+         * templatesByStorage = (ArrayList<VmTemplate>)returnValue2; VmTemplate blankTemplate =
          * Linq.FirstOrDefault(templatesByDataCenter, new Linq.TemplatePredicate(Guid.Empty)); if (blankTemplate !=
          * null) { templatesByStorage.add(0, blankTemplate); }
-         * behavior2.PostInitTemplate((java.util.ArrayList<VmTemplate>)returnValue2);
+         * behavior2.PostInitTemplate((ArrayList<VmTemplate>)returnValue2);
          *
          * } }), storage1.getid());
          *
@@ -297,13 +299,13 @@ public class NewPoolModelBehavior extends IVmModelBehavior
          * @Override public void OnSuccess(Object target, Object returnValue) {
          *
          * NewPoolModelBehavior behavior = (NewPoolModelBehavior)target;
-         * behavior.PostInitTemplate((java.util.ArrayList<VmTemplate>)returnValue);
+         * behavior.PostInitTemplate((ArrayList<VmTemplate>)returnValue);
          *
          * } }, getModel().getHash()), dataCenter.getId()); }
          */
     }
 
-    private void PostInitTemplate(java.util.ArrayList<VmTemplate> templates)
+    private void PostInitTemplate(ArrayList<VmTemplate> templates)
     {
         // If there was some template selected before, try select it again.
         VmTemplate oldTemplate = (VmTemplate) getModel().getTemplate().getSelectedItem();
@@ -342,7 +344,7 @@ public class NewPoolModelBehavior extends IVmModelBehavior
         tempVar5.setMaximum(getModel().getIsNew() ? maxAlowedVms : maxAlowedVms
                 - (Integer) getModel().getAssignedVms().getEntity());
         getModel().getNumOfDesktops()
-                .ValidateEntity(new IValidation[] { new NotEmptyValidation(), tempVar4, tempVar5 });
+                .ValidateEntity(new IValidation[] {new NotEmptyValidation(), tempVar4, tempVar5});
 
         getModel().setIsGeneralTabValid(getModel().getIsGeneralTabValid() && getModel().getName().getIsValid()
                 && getModel().getNumOfDesktops().getIsValid());

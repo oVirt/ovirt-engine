@@ -88,7 +88,7 @@ public class VmAppListModel extends SearchableListModel
         setItems(null);
         if (vm != null && vm.getapp_list() != null)
         {
-            java.util.ArrayList<String> list = new java.util.ArrayList<String>();
+            ArrayList<String> list = new ArrayList<String>();
 
             String[] array = vm.getapp_list().split("[,]", -1); //$NON-NLS-1$
             for (String item : array)

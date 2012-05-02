@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.volumes;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -139,7 +141,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
             {
                 VolumeListModel volumeListModel = (VolumeListModel) model;
                 VolumeModel innerVolumeModel = (VolumeModel) volumeListModel.getWindow();
-                java.util.ArrayList<storage_pool> dataCenters = (java.util.ArrayList<storage_pool>) result;
+                ArrayList<storage_pool> dataCenters = (ArrayList<storage_pool>) result;
 
                 innerVolumeModel.getDataCenter().setItems(dataCenters);
                 innerVolumeModel.getDataCenter().setSelectedItem(Linq.FirstOrDefault(dataCenters));
@@ -152,13 +154,13 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
                     case Cluster:
                     case Cluster_Gluster:
                         VDSGroup cluster = (VDSGroup) volumeListModel.getSystemTreeSelectedItem().getEntity();
-                        for (storage_pool dc : (java.util.ArrayList<storage_pool>) innerVolumeModel.getDataCenter()
+                        for (storage_pool dc : (ArrayList<storage_pool>) innerVolumeModel.getDataCenter()
                                 .getItems())
                         {
                             if (dc.getId().equals(cluster.getstorage_pool_id()))
                             {
                                 innerVolumeModel.getDataCenter()
-                                        .setItems(new java.util.ArrayList<storage_pool>(java.util.Arrays.asList(new storage_pool[] { dc })));
+                                        .setItems(new ArrayList<storage_pool>(Arrays.asList(new storage_pool[] {dc})));
                                 innerVolumeModel.getDataCenter().setSelectedItem(dc);
                                 break;
                             }
@@ -173,7 +175,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
                         storage_pool selectDataCenter =
                                 (storage_pool) volumeListModel.getSystemTreeSelectedItem().getEntity();
                         innerVolumeModel.getDataCenter()
-                                .setItems(new java.util.ArrayList<storage_pool>(java.util.Arrays.asList(new storage_pool[] { selectDataCenter })));
+                                .setItems(new ArrayList<storage_pool>(Arrays.asList(new storage_pool[] { selectDataCenter })));
                         innerVolumeModel.getDataCenter().setSelectedItem(selectDataCenter);
                         innerVolumeModel.getDataCenter().setIsChangable(false);
                         innerVolumeModel.getDataCenter().setInfo("Cannot choose Volume's Data Center in tree context"); //$NON-NLS-1$

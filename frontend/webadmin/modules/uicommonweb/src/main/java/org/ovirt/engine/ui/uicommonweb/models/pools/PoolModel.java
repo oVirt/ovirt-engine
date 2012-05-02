@@ -10,6 +10,8 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 
+import java.util.ArrayList;
+
 public class PoolModel extends UnitVmModel
 {
     @Override
@@ -34,7 +36,7 @@ public class PoolModel extends UnitVmModel
     public PoolModel(IVmModelBehavior behavior)
     {
         super(behavior);
-        java.util.ArrayList<EntityModel> poolTypeItems = new java.util.ArrayList<EntityModel>();
+        ArrayList<EntityModel> poolTypeItems = new ArrayList<EntityModel>();
         EntityModel tempVar = new EntityModel();
         tempVar.setTitle(ConstantsManager.getInstance().getConstants().automaticTitle());
         tempVar.setEntity(VmPoolType.Automatic);

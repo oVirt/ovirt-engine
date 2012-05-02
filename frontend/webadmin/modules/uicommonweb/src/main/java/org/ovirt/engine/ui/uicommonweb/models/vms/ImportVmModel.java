@@ -158,13 +158,13 @@ public class ImportVmModel extends ListWithDetailsModel {
         }
     }
 
-    private java.util.List<VM> problematicItems;
+    private List<VM> problematicItems;
 
-    public java.util.List<VM> getProblematicItems() {
+    public List<VM> getProblematicItems() {
         return problematicItems;
     }
 
-    public void setProblematicItems(java.util.List<VM> value) {
+    public void setProblematicItems(List<VM> value) {
         if (problematicItems != value) {
             problematicItems = value;
             OnPropertyChanged(new PropertyChangedEventArgs("ProblematicItems")); //$NON-NLS-1$
@@ -247,9 +247,9 @@ public class ImportVmModel extends ListWithDetailsModel {
     }
 
     public void initStorageDomains() {
-        templateGuidUniqueStorageDomainDic = new java.util.HashMap<Guid, ArrayList<Guid>>();
-        templateGuidAllStorageDomainDic = new java.util.HashMap<Guid, ArrayList<Guid>>();
-        templateGuidDiskImagesDic = new java.util.HashMap<Guid, ArrayList<DiskImage>>();
+        templateGuidUniqueStorageDomainDic = new HashMap<Guid, ArrayList<Guid>>();
+        templateGuidAllStorageDomainDic = new HashMap<Guid, ArrayList<Guid>>();
+        templateGuidDiskImagesDic = new HashMap<Guid, ArrayList<DiskImage>>();
 
         uniqueDomains = 0;
         for (Object item : getItems()) {
@@ -547,7 +547,7 @@ public class ImportVmModel extends ListWithDetailsModel {
             VM vm = (VM) item;
 
             if (vm.getDiskMap() != null) {
-                for (java.util.Map.Entry<String, Disk> pair : vm
+                for (Map.Entry<String, Disk> pair : vm
                         .getDiskMap().entrySet()) {
                     DiskImage disk = (DiskImage)pair.getValue();
 
@@ -590,9 +590,9 @@ public class ImportVmModel extends ListWithDetailsModel {
             VolumeType tempVolumeType) {
         for (Object item : getItems()) {
             VM vm = (VM) item;
-            java.util.HashMap<String, DiskImageBase> diskDictionary = new java.util.HashMap<String, DiskImageBase>();
+            HashMap<String, DiskImageBase> diskDictionary = new HashMap<String, DiskImageBase>();
 
-            for (java.util.Map.Entry<String, Disk> a : vm.getDiskMap()
+            for (Map.Entry<String, Disk> a : vm.getDiskMap()
                     .entrySet()) {
                 if (a.getValue().getQueryableId().equals(disk.getQueryableId())) {
                     ((DiskImage)a.getValue()).setvolume_type(tempVolumeType);

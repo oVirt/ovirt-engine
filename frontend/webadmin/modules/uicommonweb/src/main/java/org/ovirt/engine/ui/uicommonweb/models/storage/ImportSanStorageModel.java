@@ -16,18 +16,21 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @SuppressWarnings("unused")
 public abstract class ImportSanStorageModel extends SanStorageModelBase
 {
 
-    private java.util.List<storage_domains> candidates;
+    private List<storage_domains> candidates;
 
-    public java.util.List<storage_domains> getCandidates()
+    public List<storage_domains> getCandidates()
     {
         return candidates;
     }
 
-    public void setCandidates(java.util.List<storage_domains> value)
+    public void setCandidates(List<storage_domains> value)
     {
         if (candidates != value)
         {
@@ -78,7 +81,7 @@ public abstract class ImportSanStorageModel extends SanStorageModelBase
     }
 
     @Override
-    protected void PostDiscoverTargets(java.util.ArrayList<SanTargetModel> newItems)
+    protected void PostDiscoverTargets(ArrayList<SanTargetModel> newItems)
     {
         super.PostDiscoverTargets(newItems);
 
@@ -125,7 +128,7 @@ public abstract class ImportSanStorageModel extends SanStorageModelBase
                                 Object result = ((VdcQueryReturnValue) returnValue).getReturnValue();
                                 if (result != null)
                                 {
-                                    model.setCandidates((java.util.ArrayList<storage_domains>) result);
+                                    model.setCandidates((ArrayList<storage_domains>) result);
                                 }
                                 else
                                 {
@@ -140,7 +143,7 @@ public abstract class ImportSanStorageModel extends SanStorageModelBase
                         true));
     }
 
-    private void InitializeItems(java.util.List<SanTargetModel> newItems)
+    private void InitializeItems(List<SanTargetModel> newItems)
     {
         if (getItems() == null)
         {
@@ -148,8 +151,8 @@ public abstract class ImportSanStorageModel extends SanStorageModelBase
         }
         else
         {
-            java.util.ArrayList<SanTargetModel> items = new java.util.ArrayList<SanTargetModel>();
-            items.addAll((java.util.List<SanTargetModel>) getItems());
+            ArrayList<SanTargetModel> items = new ArrayList<SanTargetModel>();
+            items.addAll((List<SanTargetModel>) getItems());
 
             // Add new targets.
             if (newItems != null)
@@ -184,9 +187,9 @@ public abstract class ImportSanStorageModel extends SanStorageModelBase
         return super.Validate() && getIsValid();
     }
 
-    private Iterable ToEntityModelList(java.util.List<storage_domains> list)
+    private Iterable ToEntityModelList(List<storage_domains> list)
     {
-        java.util.ArrayList<EntityModel> entityModelList = new java.util.ArrayList<EntityModel>();
+        ArrayList<EntityModel> entityModelList = new ArrayList<EntityModel>();
         for (Object storage : list)
         {
             EntityModel model = new EntityModel();

@@ -1,6 +1,9 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -596,14 +599,14 @@ public class VmModel extends Model
         privateCustomProperties = value;
     }
 
-    private java.util.ArrayList<String> privateCustomPropertiesKeysList;
+    private ArrayList<String> privateCustomPropertiesKeysList;
 
-    public java.util.ArrayList<String> getCustomPropertiesKeysList()
+    public ArrayList<String> getCustomPropertiesKeysList()
     {
         return privateCustomPropertiesKeysList;
     }
 
-    public void setCustomPropertiesKeysList(java.util.ArrayList<String> value)
+    public void setCustomPropertiesKeysList(ArrayList<String> value)
     {
         privateCustomPropertiesKeysList = value;
     }
@@ -656,14 +659,14 @@ public class VmModel extends Model
         privateIsTemplatePublic = value;
     }
 
-    private java.util.List<DiskModel> disks;
+    private List<DiskModel> disks;
 
-    public java.util.List<DiskModel> getDisks()
+    public List<DiskModel> getDisks()
     {
         return disks;
     }
 
-    public void setDisks(java.util.List<DiskModel> value)
+    public void setDisks(List<DiskModel> value)
     {
         if (disks != value)
         {
@@ -819,7 +822,7 @@ public class VmModel extends Model
         // Display protocols.
         setDisplayProtocol(new ListModel());
 
-        java.util.ArrayList<EntityModel> displayProtocolOptions = new java.util.ArrayList<EntityModel>();
+        ArrayList<EntityModel> displayProtocolOptions = new ArrayList<EntityModel>();
 
         EntityModel spiceProtocol = new EntityModel();
         spiceProtocol.setTitle(ConstantsManager.getInstance().getConstants().spiceTitle());
@@ -852,7 +855,7 @@ public class VmModel extends Model
 
         setSecondBootDevice(new ListModel());
 
-        java.util.ArrayList<EntityModel> firstBootDeviceItems = new java.util.ArrayList<EntityModel>();
+        ArrayList<EntityModel> firstBootDeviceItems = new ArrayList<EntityModel>();
         firstBootDeviceItems.add(hardDiskOption);
         EntityModel tempVar12 = new EntityModel();
         tempVar12.setTitle(ConstantsManager.getInstance().getConstants().cdromTitle());
@@ -866,7 +869,7 @@ public class VmModel extends Model
         getFirstBootDevice().setSelectedItem(hardDiskOption);
 
         // Provisioning
-        java.util.ArrayList<EntityModel> provisioningItems = new java.util.ArrayList<EntityModel>();
+        ArrayList<EntityModel> provisioningItems = new ArrayList<EntityModel>();
         EntityModel tempVar14 = new EntityModel();
         tempVar14.setTitle(ConstantsManager.getInstance().getConstants().thinTitle());
         tempVar14.setEntity(false);
@@ -897,7 +900,7 @@ public class VmModel extends Model
         tempVar17.setEntity(1);
         EntityModel lowOption = tempVar17;
 
-        java.util.ArrayList<EntityModel> priorityItems = new java.util.ArrayList<EntityModel>();
+        ArrayList<EntityModel> priorityItems = new ArrayList<EntityModel>();
         priorityItems.add(lowOption);
         EntityModel tempVar18 = new EntityModel();
         tempVar18.setTitle(ConstantsManager.getInstance().getConstants().mediumTitle());
@@ -915,7 +918,7 @@ public class VmModel extends Model
 
         // Populate a list of data centers.
         // DataCenter.Options = DataProvider.GetStoragePoolList().Where(a => a.status == StoragePoolStatus.Up);
-        java.util.ArrayList<storage_pool> list = new java.util.ArrayList<storage_pool>();
+        ArrayList<storage_pool> list = new ArrayList<storage_pool>();
         for (storage_pool a : DataProvider.GetDataCenterList())
         {
             if (a.getstatus() == StoragePoolStatus.Up)
@@ -1027,7 +1030,7 @@ public class VmModel extends Model
                     public void OnSuccess(Object target, Object returnValue) {
 
                         VmModel vmModel = (VmModel) target;
-                        java.util.List<String> domains = (java.util.List<String>) returnValue;
+                        List<String> domains = (List<String>) returnValue;
                         String oldDomain = (String) vmModel.getDomain().getSelectedItem();
                         if (oldDomain != null && !oldDomain.equals("") && !domains.contains(oldDomain)) //$NON-NLS-1$
                         {
@@ -1126,7 +1129,7 @@ public class VmModel extends Model
         Object tempVar = getDataCenter().getSelectedItem();
         storage_pool dataCenter = (storage_pool) ((tempVar instanceof storage_pool) ? tempVar : null);
 
-        java.util.ArrayList<VDSGroup> clusters =
+        ArrayList<VDSGroup> clusters =
                 dataCenter != null ? DataProvider.GetClusterList(dataCenter.getId()) : DataProvider.GetClusterList();
 
         getCluster().setItems(clusters);
@@ -1144,7 +1147,7 @@ public class VmModel extends Model
         if (template == null)
         {
             setIsBlankTemplate(true);
-            java.util.ArrayList<VmTemplate> listTemplates = (java.util.ArrayList<VmTemplate>) getTemplate().getItems();
+            ArrayList<VmTemplate> listTemplates = (ArrayList<VmTemplate>) getTemplate().getItems();
             if (listTemplates.size() > 0)
             {
                 getTemplate().setSelectedItem(listTemplates.get(0));
@@ -1197,7 +1200,7 @@ public class VmModel extends Model
         {
             return;
         }
-        java.util.ArrayList<VDSGroup> clusters = Linq.<VDSGroup> Cast(getCluster().getItems());
+        ArrayList<VDSGroup> clusters = Linq.<VDSGroup> Cast(getCluster().getItems());
         // VDSGroup clusterToSelect = clusters.FirstOrDefault(a => a.ID == template.vds_group_id);
         VDSGroup clusterToSelect = null;
         for (VDSGroup a : clusters)
@@ -1272,10 +1275,10 @@ public class VmModel extends Model
                 // )
                 // .ToList();
 
-                java.util.ArrayList<DiskImage> diskList = DataProvider.GetTemplateDiskList(template.getId());
+                ArrayList<DiskImage> diskList = DataProvider.GetTemplateDiskList(template.getId());
                 Collections.sort(diskList, new Linq.DiskByInternalDriveMappingComparer());
 
-                java.util.ArrayList<DiskModel> list = new java.util.ArrayList<DiskModel>();
+                ArrayList<DiskModel> list = new ArrayList<DiskModel>();
                 for (DiskImage a : diskList)
                 {
                     DiskModel model = new DiskModel();
@@ -1326,8 +1329,8 @@ public class VmModel extends Model
     {
         VDSGroup cluster = (VDSGroup) getCluster().getSelectedItem();
 
-        java.util.ArrayList<VDS> hosts =
-                cluster != null ? DataProvider.GetHostListByCluster(cluster.getname()) : new java.util.ArrayList<VDS>();
+        ArrayList<VDS> hosts =
+                cluster != null ? DataProvider.GetHostListByCluster(cluster.getname()) : new ArrayList<VDS>();
         getDefaultHost().setItems(hosts);
         getDefaultHost().setSelectedItem(Linq.FirstOrDefault(hosts));
 
@@ -1400,7 +1403,7 @@ public class VmModel extends Model
         // .Cast<EntityModel>()
         // .Where(a => (BootSequence)a.Entity != firstDevice)
         // .ToList();
-        java.util.ArrayList<EntityModel> list = new java.util.ArrayList<EntityModel>();
+        ArrayList<EntityModel> list = new ArrayList<EntityModel>();
         for (Object item : getFirstBootDevice().getItems())
         {
             EntityModel a = (EntityModel) item;
@@ -1445,7 +1448,7 @@ public class VmModel extends Model
 
     protected void FillTemplateList(Guid DataCenterId)
     {
-        java.util.ArrayList<VmTemplate> templates = DataProvider.GetTemplateList(DataCenterId);
+        ArrayList<VmTemplate> templates = DataProvider.GetTemplateList(DataCenterId);
 
         VmTemplate oldTemplate = (VmTemplate) getTemplate().getSelectedItem();
         getTemplate().setItems(templates);
@@ -1493,7 +1496,7 @@ public class VmModel extends Model
         }
         else
         {
-            numOfMonitors = new java.util.ArrayList<Integer>(java.util.Arrays.asList(new Integer[] { 1 }));
+            numOfMonitors = new ArrayList<Integer>(Arrays.asList(new Integer[] {1}));
         }
 
         getNumOfMonitors().setItems(numOfMonitors);
@@ -1526,7 +1529,7 @@ public class VmModel extends Model
                 vds_id = vds_id.equals(NGuid.Empty) ? null : vds_id;
             }
 
-            java.util.ArrayList<String> images = DataProvider.GetIrsImageList(dataCenter.getId(), false);
+            ArrayList<String> images = DataProvider.GetIrsImageList(dataCenter.getId(), false);
             getCdImage().setItems(images);
 
             if (getCdImage().getIsChangable() && getCdImage().getSelectedItem() == null)
@@ -1550,14 +1553,14 @@ public class VmModel extends Model
             // : DataProvider.GetStorageDomainList(dataCenter.id)
             // .Where(a => a.storage_domain_type == StorageDomainType.Data || a.storage_domain_type ==
             // StorageDomainType.Master);
-            java.util.ArrayList<storage_domains> storageDomains;
+            ArrayList<storage_domains> storageDomains;
             if ((Boolean) getProvisioning().getSelectedItem() == false)
             {
                 storageDomains = DataProvider.GetStorageDomainListByTemplate(template.getId());
             }
             else
             {
-                storageDomains = new java.util.ArrayList<storage_domains>();
+                storageDomains = new ArrayList<storage_domains>();
                 for (storage_domains a : DataProvider.GetStorageDomainList(dataCenter.getId()))
                 {
                     if (a.getstorage_domain_type() == StorageDomainType.Data
@@ -1571,7 +1574,7 @@ public class VmModel extends Model
             // filter only the Active storage domains (Active regarding the relevant storage pool).
             // storageDomains = storageDomains.Where(a => a.status.HasValue && a.status.Value ==
             // StorageDomainStatus.Active);
-            java.util.ArrayList<storage_domains> list = new java.util.ArrayList<storage_domains>();
+            ArrayList<storage_domains> list = new ArrayList<storage_domains>();
             for (storage_domains a : storageDomains)
             {
                 if (a.getstatus() != null && a.getstatus() == StorageDomainStatus.Active)
@@ -1586,7 +1589,7 @@ public class VmModel extends Model
         }
         else
         {
-            getStorageDomain().setItems(new java.util.ArrayList<storage_domains>());
+            getStorageDomain().setItems(new ArrayList<storage_domains>());
             getStorageDomain().setSelectedItem(null);
             getStorageDomain().setIsChangable(false);
         }
@@ -1793,7 +1796,7 @@ public class VmModel extends Model
     public void setBootSequence(BootSequence value)
     {
         // var items = value.ToString().Select(a => (BootSequence)Enum.Parse(typeof(BootSequence), a.ToString()));
-        java.util.ArrayList<BootSequence> items = new java.util.ArrayList<BootSequence>();
+        ArrayList<BootSequence> items = new ArrayList<BootSequence>();
         for (char a : value.toString().toCharArray())
         {
             items.add(BootSequence.valueOf((new Character(a)).toString()));
@@ -1817,7 +1820,7 @@ public class VmModel extends Model
         // .Cast<EntityModel>()
         // .ToList();
 
-        java.util.ArrayList<EntityModel> secondDeviceOptions =
+        ArrayList<EntityModel> secondDeviceOptions =
                 Linq.<EntityModel> Cast(getSecondBootDevice().getItems());
 
         // SecondBootDevice.SelectedItem = items.Count() > 1

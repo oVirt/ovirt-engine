@@ -32,6 +32,8 @@ import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
+import java.util.ArrayList;
+
 @SuppressWarnings("unused")
 public class ClusterGuideModel extends GuideModel
 {
@@ -62,9 +64,9 @@ public class ClusterGuideModel extends GuideModel
         UpdateOptions();
     }
 
-    private java.util.ArrayList<VDS> hosts;
-    private java.util.ArrayList<VDS> allHosts;
-    private java.util.ArrayList<VDSGroup> clusters;
+    private ArrayList<VDS> hosts;
+    private ArrayList<VDS> allHosts;
+    private ArrayList<VDSGroup> clusters;
     private VDS localStorageHost;
     private storage_pool dataCenter;
 
@@ -74,7 +76,7 @@ public class ClusterGuideModel extends GuideModel
                     @Override
                     public void OnSuccess(Object target, Object returnValue) {
                         ClusterGuideModel clusterGuideModel = (ClusterGuideModel) target;
-                        java.util.ArrayList<VDS> hosts = (java.util.ArrayList<VDS>) returnValue;
+                        ArrayList<VDS> hosts = (ArrayList<VDS>) returnValue;
                         ;
                         clusterGuideModel.hosts = hosts;
                         clusterGuideModel.UpdateOptionsNonLocalFS();
@@ -86,7 +88,7 @@ public class ClusterGuideModel extends GuideModel
                     @Override
                     public void OnSuccess(Object target, Object returnValue) {
                         ClusterGuideModel clusterGuideModel = (ClusterGuideModel) target;
-                        java.util.ArrayList<VDSGroup> clusters = (java.util.ArrayList<VDSGroup>) returnValue;
+                        ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) returnValue;
                         ;
                         clusterGuideModel.clusters = clusters;
                         clusterGuideModel.UpdateOptionsNonLocalFS();
@@ -98,7 +100,7 @@ public class ClusterGuideModel extends GuideModel
                     @Override
                     public void OnSuccess(Object target, Object returnValue) {
                         ClusterGuideModel clusterGuideModel = (ClusterGuideModel) target;
-                        java.util.ArrayList<VDS> hosts = (java.util.ArrayList<VDS>) returnValue;
+                        ArrayList<VDS> hosts = (ArrayList<VDS>) returnValue;
                         ;
                         clusterGuideModel.allHosts = hosts;
                         clusterGuideModel.UpdateOptionsNonLocalFS();
@@ -153,7 +155,7 @@ public class ClusterGuideModel extends GuideModel
         }
 
         Version minimalClusterVersion = Linq.GetMinVersionByClusters(clusters);
-        java.util.ArrayList<VDS> availableHosts = new java.util.ArrayList<VDS>();
+        ArrayList<VDS> availableHosts = new ArrayList<VDS>();
         for (VDS vds : allHosts)
         {
             if ((!Linq.IsHostBelongsToAnyOfClusters(clusters, vds))
@@ -250,7 +252,7 @@ public class ClusterGuideModel extends GuideModel
 
     public void SelectHost()
     {
-        java.util.ArrayList<VDSGroup> clusters = new java.util.ArrayList<VDSGroup>();
+        ArrayList<VDSGroup> clusters = new ArrayList<VDSGroup>();
         clusters.add(getEntity());
 
         MoveHost model = new MoveHost();
@@ -285,7 +287,7 @@ public class ClusterGuideModel extends GuideModel
             return;
         }
 
-        model.setSelectedHosts(new java.util.ArrayList<VDS>());
+        model.setSelectedHosts(new ArrayList<VDS>());
         for (EntityModel a : Linq.<EntityModel> Cast(model.getItems()))
         {
             if (a.getIsSelected())
@@ -296,8 +298,8 @@ public class ClusterGuideModel extends GuideModel
 
         VDSGroup cluster = (VDSGroup) model.getCluster().getSelectedItem();
 
-        java.util.ArrayList<VdcActionParametersBase> paramerterList =
-                new java.util.ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> paramerterList =
+                new ArrayList<VdcActionParametersBase>();
         for (VDS host : model.getSelectedHosts())
         {
             // Try to change host's cluster as neccessary.
@@ -314,9 +316,9 @@ public class ClusterGuideModel extends GuideModel
                     public void Executed(FrontendMultipleActionAsyncResult result) {
 
                         ClusterGuideModel clusterGuideModel = (ClusterGuideModel) result.getState();
-                        java.util.ArrayList<VDS> hosts = ((MoveHost) clusterGuideModel.getWindow()).getSelectedHosts();
-                        java.util.ArrayList<VdcReturnValueBase> retVals =
-                                (java.util.ArrayList<VdcReturnValueBase>) result.getReturnValue();
+                        ArrayList<VDS> hosts = ((MoveHost) clusterGuideModel.getWindow()).getSelectedHosts();
+                        ArrayList<VdcReturnValueBase> retVals =
+                                (ArrayList<VdcReturnValueBase>) result.getReturnValue();
                         if (retVals != null && hosts.size() == retVals.size())
                         {
                             int i = 0;
@@ -360,7 +362,7 @@ public class ClusterGuideModel extends GuideModel
                         ClusterGuideModel clusterGuideModel = (ClusterGuideModel) target;
                         HostModel model = (HostModel) clusterGuideModel.getWindow();
 
-                        java.util.ArrayList<storage_pool> dataCenters = (java.util.ArrayList<storage_pool>) returnValue;
+                        ArrayList<storage_pool> dataCenters = (ArrayList<storage_pool>) returnValue;
                         ;
                         model.getDataCenter().setItems(dataCenters);
                         if (getEntity().getstorage_pool_id() != null)

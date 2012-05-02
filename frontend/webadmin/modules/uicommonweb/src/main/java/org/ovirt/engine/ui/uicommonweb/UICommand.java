@@ -5,6 +5,8 @@ import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicompat.ICommand;
 
+import java.util.List;
+
 /**
  * Represents a command adapted to use in model-viewmodel pattern + binding.
  */
@@ -36,14 +38,14 @@ public class UICommand extends Model implements ICommand
         }
     }
 
-    private java.util.List<String> privateExecuteProhibitionReasons;
+    private List<String> privateExecuteProhibitionReasons;
 
-    public java.util.List<String> getExecuteProhibitionReasons()
+    public List<String> getExecuteProhibitionReasons()
     {
         return privateExecuteProhibitionReasons;
     }
 
-    public void setExecuteProhibitionReasons(java.util.List<String> value)
+    public void setExecuteProhibitionReasons(List<String> value)
     {
         privateExecuteProhibitionReasons = value;
     }

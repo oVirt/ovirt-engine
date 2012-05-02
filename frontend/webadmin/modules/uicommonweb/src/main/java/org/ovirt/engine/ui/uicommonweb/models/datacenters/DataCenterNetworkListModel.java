@@ -33,6 +33,9 @@ import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @SuppressWarnings("unused")
 public class DataCenterNetworkListModel extends SearchableListModel implements IFrontendMultipleQueryAsyncCallback
 {
@@ -85,26 +88,26 @@ public class DataCenterNetworkListModel extends SearchableListModel implements I
         super.setEntity(value);
     }
 
-    private java.util.ArrayList<VDSGroup> privateClusterList;
+    private ArrayList<VDSGroup> privateClusterList;
 
-    public java.util.ArrayList<VDSGroup> getClusterList()
+    public ArrayList<VDSGroup> getClusterList()
     {
         return privateClusterList;
     }
 
-    public void setClusterList(java.util.ArrayList<VDSGroup> value)
+    public void setClusterList(ArrayList<VDSGroup> value)
     {
         privateClusterList = value;
     }
 
-    private java.util.ArrayList<SelectionTreeNodeModel> privateSelectionNodeList;
+    private ArrayList<SelectionTreeNodeModel> privateSelectionNodeList;
 
-    public java.util.ArrayList<SelectionTreeNodeModel> getSelectionNodeList()
+    public ArrayList<SelectionTreeNodeModel> getSelectionNodeList()
     {
         return privateSelectionNodeList;
     }
 
-    public void setSelectionNodeList(java.util.ArrayList<SelectionTreeNodeModel> value)
+    public void setSelectionNodeList(ArrayList<SelectionTreeNodeModel> value)
     {
         privateSelectionNodeList = value;
     }
@@ -163,7 +166,7 @@ public class DataCenterNetworkListModel extends SearchableListModel implements I
             public void OnSuccess(Object model, Object ReturnValue)
             {
                 SearchableListModel searchableListModel = (SearchableListModel) model;
-                searchableListModel.setItems((java.util.ArrayList<network>) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
+                searchableListModel.setItems((ArrayList<network>) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
             }
         };
 
@@ -195,7 +198,7 @@ public class DataCenterNetworkListModel extends SearchableListModel implements I
         model.setHashName("remove_logical_network"); //$NON-NLS-1$
         model.setMessage(ConstantsManager.getInstance().getConstants().logicalNetworksMsg());
 
-        java.util.ArrayList<String> list = new java.util.ArrayList<String>();
+        ArrayList<String> list = new ArrayList<String>();
         for (network a : Linq.<network> Cast(getSelectedItems()))
         {
             list.add(a.getname());
@@ -214,7 +217,7 @@ public class DataCenterNetworkListModel extends SearchableListModel implements I
 
     public void OnRemove()
     {
-        java.util.ArrayList<VdcActionParametersBase> pb = new java.util.ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> pb = new ArrayList<VdcActionParametersBase>();
         for (network a : Linq.<network> Cast(getSelectedItems()))
         {
             pb.add(new AddNetworkStoragePoolParameters(getEntity().getId(), a));
@@ -254,11 +257,11 @@ public class DataCenterNetworkListModel extends SearchableListModel implements I
             public void OnSuccess(Object model, Object ReturnValue)
             {
                 DataCenterNetworkListModel dcNetworkModel = (DataCenterNetworkListModel) model;
-                dcNetworkModel.setClusterList((java.util.ArrayList<VDSGroup>) ReturnValue);
-                dcNetworkModel.setSelectionNodeList(new java.util.ArrayList<SelectionTreeNodeModel>());
-                java.util.ArrayList<VdcQueryParametersBase> parametersList =
-                        new java.util.ArrayList<VdcQueryParametersBase>();
-                java.util.ArrayList<VdcQueryType> queryTypeList = new java.util.ArrayList<VdcQueryType>();
+                dcNetworkModel.setClusterList((ArrayList<VDSGroup>) ReturnValue);
+                dcNetworkModel.setSelectionNodeList(new ArrayList<SelectionTreeNodeModel>());
+                ArrayList<VdcQueryParametersBase> parametersList =
+                        new ArrayList<VdcQueryParametersBase>();
+                ArrayList<VdcQueryType> queryTypeList = new ArrayList<VdcQueryType>();
                 for (VDSGroup vdsGroup : dcNetworkModel.getClusterList())
                 {
                     queryTypeList.add(VdcQueryType.GetAllNetworksByClusterId);
@@ -312,10 +315,10 @@ public class DataCenterNetworkListModel extends SearchableListModel implements I
                 DataCenterNetworkListModel networkListModel = (DataCenterNetworkListModel) model;
                 DataCenterNetworkModel networkModel1 = (DataCenterNetworkModel) networkListModel.getWindow();
                 // networkModel1.ClusterTreeNodes
-                java.util.ArrayList<VDSGroup> clusterList = (java.util.ArrayList<VDSGroup>) ReturnValue;
+                ArrayList<VDSGroup> clusterList = (ArrayList<VDSGroup>) ReturnValue;
                 SelectionTreeNodeModel nodeModel;
-                java.util.ArrayList<SelectionTreeNodeModel> clusterTreeNodes =
-                        new java.util.ArrayList<SelectionTreeNodeModel>();
+                ArrayList<SelectionTreeNodeModel> clusterTreeNodes =
+                        new ArrayList<SelectionTreeNodeModel>();
                 for (VDSGroup selectionTreeNodeModel : clusterList)
                 {
                     nodeModel = new SelectionTreeNodeModel();
@@ -377,7 +380,7 @@ public class DataCenterNetworkListModel extends SearchableListModel implements I
             model.getcurrentNetwork().setvlan_id(Integer.parseInt(model.getVLanTag().getEntity().toString()));
         }
 
-        model.setnewClusters(new java.util.ArrayList<VDSGroup>());
+        model.setnewClusters(new ArrayList<VDSGroup>());
 
         for (SelectionTreeNodeModel selectionTreeNodeModel : model.getClusterTreeNodes())
         {
@@ -387,10 +390,10 @@ public class DataCenterNetworkListModel extends SearchableListModel implements I
                 model.getnewClusters().add((VDSGroup) selectionTreeNodeModel.getEntity());
             }
         }
-        java.util.ArrayList<VDSGroup> detachNetworkFromClusters =
+        ArrayList<VDSGroup> detachNetworkFromClusters =
                 Linq.Except(model.getOriginalClusters(), model.getnewClusters());
-        java.util.ArrayList<VdcActionParametersBase> actionParameters =
-                new java.util.ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> actionParameters =
+                new ArrayList<VdcActionParametersBase>();
 
         for (VDSGroup detachNetworkFromCluster : detachNetworkFromClusters)
         {
@@ -478,10 +481,10 @@ public class DataCenterNetworkListModel extends SearchableListModel implements I
         networkModel.StopProgress();
         network network = networkModel.getcurrentNetwork();
         Guid networkId = networkModel.getIsNew() ? networkGuid : network.getId();
-        java.util.ArrayList<VDSGroup> attachNetworkToClusters =
+        ArrayList<VDSGroup> attachNetworkToClusters =
                 Linq.Except(networkModel.getnewClusters(), networkModel.getOriginalClusters());
-        java.util.ArrayList<VdcActionParametersBase> actionParameters1 =
-                new java.util.ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> actionParameters1 =
+                new ArrayList<VdcActionParametersBase>();
 
         for (VDSGroup attachNetworkToCluster : attachNetworkToClusters)
         {
@@ -530,8 +533,8 @@ public class DataCenterNetworkListModel extends SearchableListModel implements I
         DataCenterNetworkModel model = (DataCenterNetworkModel) getWindow();
         network network = (network) getSelectedItem();
 
-        java.util.ArrayList<VdcActionParametersBase> actionParameters =
-                new java.util.ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> actionParameters =
+                new ArrayList<VdcActionParametersBase>();
 
         for (SelectionTreeNodeModel selectionTreeNodeModel : model.getClusterTreeNodes())
         {
@@ -554,7 +557,7 @@ public class DataCenterNetworkListModel extends SearchableListModel implements I
                         networkListModel.CancelConfirmation();
                         if (isSucceded)
                         {
-                            networkModel.setOriginalClusters(new java.util.ArrayList<VDSGroup>());
+                            networkModel.setOriginalClusters(new ArrayList<VDSGroup>());
                             networkModel.getIsEnabled().setEntity(true);
                             networkModel.getDetachAllAvailable().setEntity(!(Boolean) networkModel.getIsEnabled()
                                     .getEntity());
@@ -590,9 +593,9 @@ public class DataCenterNetworkListModel extends SearchableListModel implements I
 
     private void UpdateActionAvailability()
     {
-        java.util.List tempVar = getSelectedItems();
-        java.util.ArrayList selectedItems =
-                (java.util.ArrayList) ((tempVar != null) ? tempVar : new java.util.ArrayList());
+        List tempVar = getSelectedItems();
+        ArrayList selectedItems =
+                (ArrayList) ((tempVar != null) ? tempVar : new ArrayList());
 
         boolean anyEngine = false;
         for (Object item : selectedItems)
@@ -657,16 +660,16 @@ public class DataCenterNetworkListModel extends SearchableListModel implements I
     public void Executed(FrontendMultipleQueryAsyncResult result)
     {
         network network = (network) getSelectedItem();
-        java.util.List<VdcQueryReturnValue> returnValueList = result.getReturnValues();
+        List<VdcQueryReturnValue> returnValueList = result.getReturnValues();
         DataCenterNetworkModel model = (DataCenterNetworkModel) getWindow();
-        java.util.ArrayList<network> clusterNetworkList = null;
+        ArrayList<network> clusterNetworkList = null;
         boolean networkHasAttachedClusters = false;
         for (int i = 0; i < returnValueList.size(); i++)
         {
             VdcQueryReturnValue returnValue = returnValueList.get(i);
             if (returnValue.getSucceeded() && returnValue.getReturnValue() != null)
             {
-                clusterNetworkList = (java.util.ArrayList<network>) returnValue.getReturnValue();
+                clusterNetworkList = (ArrayList<network>) returnValue.getReturnValue();
                 for (network clusterNetwork : clusterNetworkList)
                 {
                     if (clusterNetwork.getId().equals(network.getId()))

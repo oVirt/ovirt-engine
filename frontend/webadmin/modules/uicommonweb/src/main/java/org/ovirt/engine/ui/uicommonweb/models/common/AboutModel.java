@@ -13,18 +13,21 @@ import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicompat.Clipboard;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @SuppressWarnings("unused")
 public class AboutModel extends Model
 {
 
-    private java.util.List<HostInfo> hosts;
+    private List<HostInfo> hosts;
 
-    public java.util.List<HostInfo> getHosts()
+    public List<HostInfo> getHosts()
     {
         return hosts;
     }
 
-    public void setHosts(java.util.List<HostInfo> value)
+    public void setHosts(List<HostInfo> value)
     {
         if (hosts != value)
         {
@@ -215,8 +218,8 @@ public class AboutModel extends Model
                 public void OnSuccess(Object model, Object result)
                 {
                     AboutModel aboutModel = (AboutModel) model;
-                    java.util.ArrayList<HostInfo> list = new java.util.ArrayList<HostInfo>();
-                    for (VDS a : (java.util.List<VDS>) result)
+                    ArrayList<HostInfo> list = new ArrayList<HostInfo>();
+                    for (VDS a : (List<VDS>) result)
                     {
                         HostInfo tempVar = new HostInfo();
                         tempVar.setHostName(a.getvds_name() + ":"); //$NON-NLS-1$

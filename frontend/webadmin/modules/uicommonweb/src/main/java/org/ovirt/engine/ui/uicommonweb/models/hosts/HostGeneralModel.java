@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.UpdateVdsActionParameters;
@@ -641,7 +642,7 @@ public class HostGeneralModel extends EntityModel
     public void SaveNICsConfig()
     {
         Frontend.RunMultipleAction(VdcActionType.CommitNetworkChanges,
-                new java.util.ArrayList<VdcActionParametersBase>(java.util.Arrays.asList(new VdcActionParametersBase[] { new VdsActionParameters(getEntity().getId()) })),
+                new ArrayList<VdcActionParametersBase>(Arrays.asList(new VdcActionParametersBase[] {new VdsActionParameters(getEntity().getId())})),
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void Executed(FrontendMultipleActionAsyncResult result) {
@@ -879,7 +880,7 @@ public class HostGeneralModel extends EntityModel
         setHasReinstallAlertMaintenance(false);
         setHasNICsAlert(false);
         getInstallCommand().setIsExecutionAllowed(true);
-        getEditHostCommand().setIsExecutionAllowed(VdcActionUtils.CanExecute(new java.util.ArrayList<VDS>(java.util.Arrays.asList(new VDS[] { getEntity() })),
+        getEditHostCommand().setIsExecutionAllowed(VdcActionUtils.CanExecute(new ArrayList<VDS>(Arrays.asList(new VDS[] { getEntity() })),
                 VDS.class,
                 VdcActionType.UpdateVds));
         // Check the network alert presense.

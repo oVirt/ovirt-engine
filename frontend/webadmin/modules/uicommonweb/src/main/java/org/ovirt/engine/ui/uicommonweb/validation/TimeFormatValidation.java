@@ -6,6 +6,8 @@ import org.ovirt.engine.core.compat.DateTimeStyles;
 import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
+import java.util.Date;
+
 @SuppressWarnings("unused")
 public class TimeFormatValidation implements IValidation
 {
@@ -17,9 +19,9 @@ public class TimeFormatValidation implements IValidation
         if (value != null && value instanceof String && !((String) value).equals("")) //$NON-NLS-1$
         {
             CultureInfo ci = CultureInfo.CurrentCulture;
-            java.util.Date dtValue = new java.util.Date(0);
+            Date dtValue = new Date(0);
 
-            RefObject<java.util.Date> tempRef_dtValue = new RefObject<java.util.Date>(dtValue);
+            RefObject<Date> tempRef_dtValue = new RefObject<Date>(dtValue);
             boolean tempVar =
                     !DateTime.TryParseExact((String) value, "t", //$NON-NLS-1$
                             ci.DateTimeFormat,

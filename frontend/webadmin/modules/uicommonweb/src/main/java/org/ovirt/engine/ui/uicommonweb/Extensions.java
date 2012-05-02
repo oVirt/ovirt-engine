@@ -2,6 +2,8 @@ package org.ovirt.engine.ui.uicommonweb;
 
 import org.ovirt.engine.core.compat.Version;
 
+import java.util.ArrayList;
+
 /**
  * Contains extension methods for some common operation.
  */
@@ -28,7 +30,7 @@ public final class Extensions
      */
     public static Iterable<RuntimeException> Flatten(RuntimeException source)
     {
-        java.util.ArrayList<RuntimeException> result = new java.util.ArrayList<RuntimeException>();
+        ArrayList<RuntimeException> result = new ArrayList<RuntimeException>();
         RuntimeException ex = source;
 
         // TODO: Can't convert to Java.

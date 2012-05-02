@@ -1,6 +1,8 @@
 package org.ovirt.engine.ui.uicommonweb.models.configure.roles_ui;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 import org.ovirt.engine.core.common.action.ActionGroupsToRoleParameter;
 import org.ovirt.engine.core.common.action.RoleWithActionGroupsParameters;
@@ -146,9 +148,9 @@ public class RoleListModel extends ListWithDetailsModel
     }
 
     private CommandType commandType = CommandType.values()[0];
-    public java.util.ArrayList<ActionGroup> publicAttachedActions;
-    public java.util.ArrayList<ActionGroup> detachActionGroup;
-    public java.util.ArrayList<ActionGroup> attachActionGroup;
+    public ArrayList<ActionGroup> publicAttachedActions;
+    public ArrayList<ActionGroup> detachActionGroup;
+    public ArrayList<ActionGroup> attachActionGroup;
     public roles role;
     private RoleType privateItemsFilter;
 
@@ -202,8 +204,8 @@ public class RoleListModel extends ListWithDetailsModel
             public void OnSuccess(Object model, Object ReturnValue)
             {
                 RoleListModel roleListModel = (RoleListModel) model;
-                java.util.ArrayList<roles> filteredList = new java.util.ArrayList<roles>();
-                for (roles item : (java.util.ArrayList<roles>) ((VdcQueryReturnValue) ReturnValue).getReturnValue())
+                ArrayList<roles> filteredList = new ArrayList<roles>();
+                for (roles item : (ArrayList<roles>) ((VdcQueryReturnValue) ReturnValue).getReturnValue())
                 {
                     if (roleListModel.getItemsFilter() == null || roleListModel.getItemsFilter() == item.getType())
                     {
@@ -230,8 +232,8 @@ public class RoleListModel extends ListWithDetailsModel
             public void OnSuccess(Object model, Object ReturnValue)
             {
                 RoleListModel roleListModel = (RoleListModel) model;
-                java.util.ArrayList<roles> filteredList = new java.util.ArrayList<roles>();
-                for (roles item : (java.util.ArrayList<roles>) ((VdcQueryReturnValue) ReturnValue).getReturnValue())
+                ArrayList<roles> filteredList = new ArrayList<roles>();
+                for (roles item : (ArrayList<roles>) ((VdcQueryReturnValue) ReturnValue).getReturnValue())
                 {
                     // ignore CONSUME_QUOTA_ROLE in UI
                     if (item.getId().equals(QuotaPermissionListModel.CONSUME_QUOTA_ROLE_ID)) {
@@ -283,7 +285,7 @@ public class RoleListModel extends ListWithDetailsModel
         model.setHashName("remove_role"); //$NON-NLS-1$
         model.setMessage(ConstantsManager.getInstance().getConstants().rolesMsg());
 
-        java.util.ArrayList<String> list = new java.util.ArrayList<String>();
+        ArrayList<String> list = new ArrayList<String>();
         for (roles role : Linq.<roles> Cast(getSelectedItems()))
         {
             list.add(role.getname());
@@ -343,7 +345,7 @@ public class RoleListModel extends ListWithDetailsModel
         if (getWindow() != null
                 && sender == ((RoleModel) getWindow()).getIsAdminRole()) {
             if (commandType == CommandType.New) {
-                setAttachedActionGroups(new java.util.ArrayList<ActionGroup>());
+                setAttachedActionGroups(new ArrayList<ActionGroup>());
             } else {
 
                 AsyncQuery _asyncQuery = new AsyncQuery();
@@ -474,8 +476,8 @@ public class RoleListModel extends ListWithDetailsModel
     {
         RoleModel model = (RoleModel) getWindow();
 
-        java.util.ArrayList<ActionGroup> attachedActions =
-                commandType == CommandType.New ? new java.util.ArrayList<ActionGroup>() : publicAttachedActions;
+        ArrayList<ActionGroup> attachedActions =
+                commandType == CommandType.New ? new ArrayList<ActionGroup>() : publicAttachedActions;
 
         for (SelectionTreeNodeModel sm : model.getPermissionGroupModels())
         {
@@ -519,9 +521,9 @@ public class RoleListModel extends ListWithDetailsModel
         role.setname((String) model.getName().getEntity());
         role.setdescription((String) model.getDescription().getEntity());
 
-        java.util.ArrayList<ActionGroup> actions = new java.util.ArrayList<ActionGroup>();
-        java.util.HashMap<ActionGroup, ActionGroup> actionDistinctSet =
-                new java.util.HashMap<ActionGroup, ActionGroup>();
+        ArrayList<ActionGroup> actions = new ArrayList<ActionGroup>();
+        HashMap<ActionGroup, ActionGroup> actionDistinctSet =
+                new HashMap<ActionGroup, ActionGroup>();
         for (SelectionTreeNodeModel sm : model.getPermissionGroupModels())
         {
             for (SelectionTreeNodeModel smChild : sm.getChildren())
@@ -650,7 +652,7 @@ public class RoleListModel extends ListWithDetailsModel
                 && !IsAnyRoleReadOnly(getSelectedItems()));
     }
 
-    private boolean IsAnyRoleReadOnly(java.util.List roles)
+    private boolean IsAnyRoleReadOnly(List roles)
     {
         for (Object item : roles)
         {

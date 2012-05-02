@@ -46,6 +46,9 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
 import org.ovirt.engine.ui.uicommonweb.models.volumes.VolumeListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @SuppressWarnings("unused")
 public class CommonModel extends ListModel
 {
@@ -124,12 +127,12 @@ public class CommonModel extends ListModel
     }
 
     @Override
-    public java.util.List<SearchableListModel> getItems()
+    public List<SearchableListModel> getItems()
     {
-        return (java.util.List<SearchableListModel>) super.getItems();
+        return (List<SearchableListModel>) super.getItems();
     }
 
-    public void setItems(java.util.List<SearchableListModel> value)
+    public void setItems(List<SearchableListModel> value)
     {
         super.setItems(value);
     }
@@ -298,14 +301,14 @@ public class CommonModel extends ListModel
         }
     }
 
-    private java.util.List<AuditLog> privateEvents;
+    private List<AuditLog> privateEvents;
 
-    public java.util.List<AuditLog> getEvents()
+    public List<AuditLog> getEvents()
     {
         return privateEvents;
     }
 
-    public void setEvents(java.util.List<AuditLog> value)
+    public void setEvents(List<AuditLog> value)
     {
         privateEvents = value;
     }
@@ -414,9 +417,9 @@ public class CommonModel extends ListModel
 
     private void UpdateHasSelectedTags()
     {
-        java.util.ArrayList<TagModel> selectedTags =
+        ArrayList<TagModel> selectedTags =
                 getTagList().getSelectedItems() != null ? Linq.<TagModel> Cast(getTagList().getSelectedItems())
-                        : new java.util.ArrayList<TagModel>();
+                        : new ArrayList<TagModel>();
 
         setHasSelectedTags(getSelectedItem() != null && selectedTags.size() > 0);
     }
@@ -979,7 +982,7 @@ public class CommonModel extends ListModel
      */
     private void SplitSearchString(String source, RefObject<String> prefix, RefObject<String> search)
     {
-        java.util.ArrayList<TagModel> tags = (java.util.ArrayList<TagModel>) getTagList().getSelectedItems();
+        ArrayList<TagModel> tags = (ArrayList<TagModel>) getTagList().getSelectedItems();
         SystemTreeItemModel model = (SystemTreeItemModel) getSystemTree().getSelectedItem();
 
         prefix.argvalue = ""; //$NON-NLS-1$

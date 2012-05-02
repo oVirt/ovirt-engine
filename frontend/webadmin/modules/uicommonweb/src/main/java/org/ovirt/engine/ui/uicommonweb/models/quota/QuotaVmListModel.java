@@ -11,6 +11,9 @@ import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class QuotaVmListModel extends SearchableListModel {
 
     public QuotaVmListModel() {
@@ -35,8 +38,8 @@ public class QuotaVmListModel extends SearchableListModel {
             public void OnSuccess(Object model, Object ReturnValue)
             {
                 QuotaVmListModel vmModel = (QuotaVmListModel) model;
-                vmModel.setItems((java.util.ArrayList<VM>) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
-                vmModel.setIsEmpty(((java.util.List) vmModel.getItems()).size() == 0);
+                vmModel.setItems((ArrayList<VM>) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
+                vmModel.setIsEmpty(((List) vmModel.getItems()).size() == 0);
             }
         };
 

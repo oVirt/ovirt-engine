@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.storage;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -262,7 +263,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
             return;
         }
 
-        java.util.ArrayList<VdcActionType> actionTypes = new java.util.ArrayList<VdcActionType>();
+        ArrayList<VdcActionType> actionTypes = new ArrayList<VdcActionType>();
         ArrayList<VdcActionParametersBase> paramerters = new ArrayList<VdcActionParametersBase>();
         ArrayList<IFrontendActionAsyncCallback> callbacks = new ArrayList<IFrontendActionAsyncCallback>();
 
@@ -307,7 +308,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
     {
         // Cast to list of SanTargetModel because we get call
         // to this method only from target/LUNs mode.
-        java.util.List<SanTargetModel> items = (java.util.List<SanTargetModel>) getItems();
+        List<SanTargetModel> items = (List<SanTargetModel>) getItems();
         targetsToConnect = new ArrayList<SanTargetModel>();
 
         for (SanTargetModel item : items)
@@ -355,17 +356,17 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
 
                         SanStorageModelBase model = (SanStorageModelBase) target;
                         Object result = ((VdcQueryReturnValue) returnValue).getReturnValue();
-                        model.PostDiscoverTargetsInternal(result != null ? (java.util.ArrayList<storage_server_connections>) result
-                                : new java.util.ArrayList<storage_server_connections>());
+                        model.PostDiscoverTargetsInternal(result != null ? (ArrayList<storage_server_connections>) result
+                                : new ArrayList<storage_server_connections>());
 
                     }
                 },
                 true));
     }
 
-    private void PostDiscoverTargetsInternal(java.util.ArrayList<storage_server_connections> items)
+    private void PostDiscoverTargetsInternal(ArrayList<storage_server_connections> items)
     {
-        java.util.ArrayList<SanTargetModel> newItems = new java.util.ArrayList<SanTargetModel>();
+        ArrayList<SanTargetModel> newItems = new ArrayList<SanTargetModel>();
 
         for (storage_server_connections a : items)
         {
@@ -388,7 +389,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
         PostDiscoverTargets(newItems);
     }
 
-    protected void PostDiscoverTargets(java.util.ArrayList<SanTargetModel> newItems)
+    protected void PostDiscoverTargets(ArrayList<SanTargetModel> newItems)
     {
     }
 
@@ -464,7 +465,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
 
     protected void UpdateLoginAllAvailability()
     {
-        java.util.List<SanTargetModel> items = (java.util.List<SanTargetModel>) getItems();
+        List<SanTargetModel> items = (List<SanTargetModel>) getItems();
 
         // Allow login all command when there at least one target that may be logged in.
         boolean allow = false;

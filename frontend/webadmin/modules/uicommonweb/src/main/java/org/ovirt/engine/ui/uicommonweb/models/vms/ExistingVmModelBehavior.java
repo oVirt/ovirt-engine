@@ -17,6 +17,9 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 @SuppressWarnings("unused")
 public class ExistingVmModelBehavior extends IVmModelBehavior
 {
@@ -48,8 +51,8 @@ public class ExistingVmModelBehavior extends IVmModelBehavior
                         if (returnValue != null)
                         {
                             storage_pool dataCenter = (storage_pool) returnValue;
-                            java.util.ArrayList<storage_pool> list =
-                                    new java.util.ArrayList<storage_pool>(java.util.Arrays.asList(new storage_pool[] { dataCenter }));
+                            ArrayList<storage_pool> list =
+                                    new ArrayList<storage_pool>(Arrays.asList(new storage_pool[] { dataCenter }));
                             model.SetDataCenter(model, list);
                             model.getDataCenter().setIsChangable(false);
                         }
@@ -64,7 +67,7 @@ public class ExistingVmModelBehavior extends IVmModelBehavior
                             tempVar.setstorage_pool_id(currentVm.getstorage_pool_id());
                             VDSGroup cluster = tempVar;
                             model.getCluster()
-                                    .setItems(new java.util.ArrayList<VDSGroup>(java.util.Arrays.asList(new VDSGroup[] { cluster })));
+                                    .setItems(new ArrayList<VDSGroup>(Arrays.asList(new VDSGroup[] {cluster})));
                             model.getCluster().setSelectedItem(cluster);
                             behavior.InitTemplate();
                             behavior.InitCdImage();
@@ -92,7 +95,7 @@ public class ExistingVmModelBehavior extends IVmModelBehavior
                         ExistingVmModelBehavior behavior = (ExistingVmModelBehavior) array[0];
                         UnitVmModel model = (UnitVmModel) array[1];
                         VM vm = ((ExistingVmModelBehavior) array[0]).vm;
-                        java.util.ArrayList<VDSGroup> clusters = (java.util.ArrayList<VDSGroup>) returnValue;
+                        ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) returnValue;
                         model.SetClusters(model, clusters, vm.getvds_group_id().getValue());
                         behavior.InitTemplate();
                         behavior.InitCdImage();
@@ -255,8 +258,7 @@ public class ExistingVmModelBehavior extends IVmModelBehavior
 
                         UnitVmModel model = (UnitVmModel) target;
                         VmTemplate template = (VmTemplate) returnValue;
-                        model.getTemplate()
-                                .setItems(new java.util.ArrayList<VmTemplate>(java.util.Arrays.asList(new VmTemplate[] { template })));
+                        model.getTemplate().setItems(new ArrayList<VmTemplate>(Arrays.asList(new VmTemplate[] { template })));
                         model.getTemplate().setSelectedItem(template);
                         model.getTemplate().setIsChangable(false);
 

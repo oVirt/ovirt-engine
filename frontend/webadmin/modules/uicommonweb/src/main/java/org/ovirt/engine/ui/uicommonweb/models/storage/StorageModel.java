@@ -32,6 +32,11 @@ import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+
 @SuppressWarnings("unused")
 public class StorageModel extends ListModel implements ISupportSystemTreeContext
 {
@@ -66,7 +71,7 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
         privateStorage = value;
     }
 
-    public java.util.ArrayList<IStorageModel> UpdatedStorageModels = new java.util.ArrayList<IStorageModel>();
+    public ArrayList<IStorageModel> UpdatedStorageModels = new ArrayList<IStorageModel>();
     private String privateOriginalName;
 
     public String getOriginalName()
@@ -185,7 +190,7 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
     {
         super.Initialize();
 
-        setHash(getHashName() + new java.util.Date());
+        setHash(getHashName() + new Date());
 
         InitDataCenter();
     }
@@ -351,7 +356,7 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
                         SystemTreeItemModel.FindAncestor(SystemTreeItemType.DataCenter, getSystemTreeSelectedItem());
                 storage_pool dc = (storage_pool) dataCenterItem.getEntity();
 
-                getDataCenter().setItems(new java.util.ArrayList<storage_pool>(java.util.Arrays.asList(new storage_pool[] { dc })));
+                getDataCenter().setItems(new ArrayList<storage_pool>(Arrays.asList(new storage_pool[] {dc})));
                 getDataCenter().setSelectedItem(dc);
                 getDataCenter().setIsChangable(false);
                 getDataCenter().setInfo("Cannot choose Storage's Data Center in tree context"); //$NON-NLS-1$
@@ -369,7 +374,7 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
                         SystemTreeItemModel.FindAncestor(SystemTreeItemType.DataCenter, getSystemTreeSelectedItem());
                 storage_pool dc = (storage_pool) dataCenterItem.getEntity();
 
-                getDataCenter().setItems(new java.util.ArrayList<storage_pool>(java.util.Arrays.asList(new storage_pool[] { dc })));
+                getDataCenter().setItems(new ArrayList<storage_pool>(Arrays.asList(new storage_pool[] { dc })));
                 getDataCenter().setSelectedItem(dc);
                 getDataCenter().setIsChangable(false);
                 getDataCenter().setInfo("Cannot choose Storage's Data Center in tree context"); //$NON-NLS-1$
@@ -393,8 +398,8 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
                                 Object[] array = (Object[]) target;
                                 StorageModel storageModel = (StorageModel) array[0];
                                 StorageModelBehavior storageModelBehavior = (StorageModelBehavior) array[1];
-                                java.util.List<storage_pool> dataCenters =
-                                        (java.util.ArrayList<storage_pool>) returnValue;
+                                List<storage_pool> dataCenters =
+                                        (ArrayList<storage_pool>) returnValue;
                                 dataCenters = storageModelBehavior.FilterDataCenter(dataCenters);
                                 StorageModel.AddEmptyDataCenterToList(dataCenters);
                                 storage_pool oldSelectedItem =
@@ -425,9 +430,9 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
                             public void OnSuccess(Object target, Object returnValue) {
 
                                 StorageModel storageModel = (StorageModel) target;
-                                java.util.List<storage_pool> dataCenters = new java.util.ArrayList<storage_pool>();
-                                java.util.List<storage_pool> dataCentersWithStorage =
-                                        (java.util.ArrayList<storage_pool>) returnValue;
+                                List<storage_pool> dataCenters = new ArrayList<storage_pool>();
+                                List<storage_pool> dataCentersWithStorage =
+                                        (ArrayList<storage_pool>) returnValue;
                                 if (dataCentersWithStorage.size() < 1 || dataCentersWithStorage.get(0) == null)
                                 {
                                     StorageModel.AddEmptyDataCenterToList(dataCenters);
@@ -435,7 +440,7 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
                                 else
                                 {
                                     dataCenters =
-                                            new java.util.ArrayList<storage_pool>(java.util.Arrays.asList(new storage_pool[] { dataCentersWithStorage.get(0) }));
+                                            new ArrayList<storage_pool>(Arrays.asList(new storage_pool[] { dataCentersWithStorage.get(0) }));
                                 }
                                 storageModel.getDataCenter().setItems(dataCenters);
                                 storageModel.getDataCenter().setSelectedItem(Linq.FirstOrDefault(dataCenters));
@@ -448,7 +453,7 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
         }
     }
 
-    private static void AddEmptyDataCenterToList(java.util.List<storage_pool> dataCenters)
+    private static void AddEmptyDataCenterToList(List<storage_pool> dataCenters)
     {
         storage_pool tempVar = new storage_pool();
         tempVar.setId(UnassignedDataCenterId);
@@ -468,9 +473,9 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
         if (getSelectedItem() instanceof LocalStorageModel
                 && (dataCenter == null || dataCenter.getId().equals(UnassignedDataCenterId)))
         {
-            java.util.ArrayList<storage_pool> dataCenterList =
-                    (java.util.ArrayList<storage_pool>) getDataCenter().getItems();
-            java.util.ArrayList<storage_pool> localDCList = new java.util.ArrayList<storage_pool>();
+            ArrayList<storage_pool> dataCenterList =
+                    (ArrayList<storage_pool>) getDataCenter().getItems();
+            ArrayList<storage_pool> localDCList = new ArrayList<storage_pool>();
             String dataCenterQueryLine = ""; //$NON-NLS-1$
 
             for (storage_pool storagePool : dataCenterList)
@@ -499,7 +504,7 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
                     {
                         StorageModel storageModel = (StorageModel) model;
                         Iterable<VDS> hosts =
-                                (java.util.ArrayList<VDS>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
+                                (ArrayList<VDS>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
                         storageModel.PostUpdateHost(hosts);
                     }
                 };
@@ -545,7 +550,7 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
         hosts = Linq.Where(hosts, new Linq.HostStatusPredicate(VDSStatus.Up));
 
         // Allow only hosts with version above 2.2 for export storage.
-        java.util.ArrayList<VDS> list = new java.util.ArrayList<VDS>();
+        ArrayList<VDS> list = new ArrayList<VDS>();
         if (getSelectedItem() != null && getSelectedItem().getRole() == StorageDomainType.ImportExport)
         {
             for (VDS host : hosts)
@@ -599,7 +604,7 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
 
         StorageFormatType selectItem = StorageFormatType.V1;
 
-        java.util.ArrayList<StorageFormatType> formats = new java.util.ArrayList<StorageFormatType>();
+        ArrayList<StorageFormatType> formats = new ArrayList<StorageFormatType>();
 
         if (dataCenter != null && getSelectedItem() != null)
         {

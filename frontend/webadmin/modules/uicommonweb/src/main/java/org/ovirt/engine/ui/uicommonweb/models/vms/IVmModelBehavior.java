@@ -3,6 +3,9 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Quota;
@@ -101,7 +104,7 @@ public abstract class IVmModelBehavior
                         }
                         else
                         {
-                            behavior.getModel().getCdImage().setItems(new java.util.ArrayList<String>());
+                            behavior.getModel().getCdImage().setItems(new ArrayList<String>());
                         }
 
                     }
@@ -116,7 +119,7 @@ public abstract class IVmModelBehavior
                     public void OnSuccess(Object target, Object returnValue) {
 
                         UnitVmModel model = (UnitVmModel) target;
-                        java.util.ArrayList<String> images = (java.util.ArrayList<String>) returnValue;
+                        ArrayList<String> images = (ArrayList<String>) returnValue;
                         String oldCdImage = (String) model.getCdImage().getSelectedItem();
                         model.getCdImage().setItems(images);
                         model.getCdImage().setSelectedItem((oldCdImage != null) ? oldCdImage
@@ -128,7 +131,7 @@ public abstract class IVmModelBehavior
                 false);
     }
 
-    private Iterable<java.util.Map.Entry<String, String>> cachedTimeZones;
+    private Iterable<Map.Entry<String, String>> cachedTimeZones;
 
     protected void UpdateTimeZone()
     {
@@ -140,7 +143,7 @@ public abstract class IVmModelBehavior
                         public void OnSuccess(Object target, Object returnValue) {
 
                             IVmModelBehavior behavior = (IVmModelBehavior) target;
-                            cachedTimeZones = ((java.util.HashMap<String, String>) returnValue).entrySet();
+                            cachedTimeZones = ((HashMap<String, String>) returnValue).entrySet();
                             behavior.PostUpdateTimeZone();
 
                         }
@@ -156,7 +159,7 @@ public abstract class IVmModelBehavior
     {
         // If there was some time zone selected before, try select it again.
         String oldTimeZoneKey =
-                ((java.util.Map.Entry<String, String>) getModel().getTimeZone().getSelectedItem()).getKey();
+                ((Map.Entry<String, String>) getModel().getTimeZone().getSelectedItem()).getKey();
 
         getModel().getTimeZone().setItems(cachedTimeZones);
         if (oldTimeZoneKey != null)
@@ -210,7 +213,7 @@ public abstract class IVmModelBehavior
                     public void OnSuccess(Object target, Object returnValue) {
 
                         IVmModelBehavior behavior = (IVmModelBehavior) target;
-                        java.util.List<String> domains = (java.util.List<String>) returnValue;
+                        List<String> domains = (List<String>) returnValue;
                         String oldDomain = (String) behavior.getModel().getDomain().getSelectedItem();
                         if (oldDomain != null && !oldDomain.equals("") && !domains.contains(oldDomain)) //$NON-NLS-1$
                         {
@@ -270,7 +273,7 @@ public abstract class IVmModelBehavior
 
     private void PostUpdatePriority()
     {
-        java.util.ArrayList<EntityModel> items = new java.util.ArrayList<EntityModel>();
+        ArrayList<EntityModel> items = new ArrayList<EntityModel>();
         EntityModel tempVar = new EntityModel();
         tempVar.setTitle(ConstantsManager.getInstance().getConstants().lowTitle());
         tempVar.setEntity(1);
@@ -319,7 +322,7 @@ public abstract class IVmModelBehavior
 
         if (cluster == null)
         {
-            getModel().getDefaultHost().setItems(new java.util.ArrayList<VDS>());
+            getModel().getDefaultHost().setItems(new ArrayList<VDS>());
             getModel().getDefaultHost().setSelectedItem(null);
 
             return;
@@ -331,9 +334,9 @@ public abstract class IVmModelBehavior
                     public void OnSuccess(Object target, Object returnValue) {
 
                         UnitVmModel model = (UnitVmModel) target;
-                        java.util.ArrayList<VDS> hosts = null;
+                        ArrayList<VDS> hosts = null;
                         if (returnValue instanceof ArrayList) {
-                            hosts = (java.util.ArrayList<VDS>) returnValue;
+                            hosts = (ArrayList<VDS>) returnValue;
                         } else if (returnValue instanceof VdcQueryReturnValue
                                 && ((VdcQueryReturnValue) returnValue).getReturnValue() instanceof ArrayList) {
                             hosts = (ArrayList<VDS>) ((VdcQueryReturnValue) returnValue).getReturnValue();
@@ -350,8 +353,7 @@ public abstract class IVmModelBehavior
                             {
                                 if (host.getId().equals(vds.getId()))
                                 {
-                                    model.getDefaultHost()
-                                            .setItems(new java.util.ArrayList<VDS>(java.util.Arrays.asList(new VDS[] { vds })));
+                                    model.getDefaultHost().setItems(new ArrayList<VDS>(Arrays.asList(new VDS[] { vds })));
                                     model.getDefaultHost().setSelectedItem(vds);
                                     model.getDefaultHost().setIsChangable(false);
                                     model.getDefaultHost().setInfo("Cannot choose other Host in tree context"); //$NON-NLS-1$
@@ -522,9 +524,9 @@ public abstract class IVmModelBehavior
                     public void OnSuccess(Object target, Object returnValue) {
 
                         UnitVmModel model = (UnitVmModel) target;
-                        java.util.ArrayList<DiskImage> disks = (java.util.ArrayList<DiskImage>) returnValue;
+                        ArrayList<DiskImage> disks = (ArrayList<DiskImage>) returnValue;
                         Collections.sort(disks, new Linq.DiskByInternalDriveMappingComparer());
-                        java.util.ArrayList<DiskModel> list = new java.util.ArrayList<DiskModel>();
+                        ArrayList<DiskModel> list = new ArrayList<DiskModel>();
                         for (DiskImage a : disks)
                         {
                             DiskModel diskModel = new DiskModel();
@@ -534,7 +536,7 @@ public abstract class IVmModelBehavior
                             tempVar.setEntity(a.getSizeInGigabytes());
                             diskModel.setSize(tempVar);
                             ListModel tempVar2 = new ListModel();
-                            tempVar2.setItems((a.getvolume_type() == VolumeType.Preallocated ? new java.util.ArrayList<VolumeType>(java.util.Arrays.asList(new VolumeType[] { VolumeType.Preallocated }))
+                            tempVar2.setItems((a.getvolume_type() == VolumeType.Preallocated ? new ArrayList<VolumeType>(Arrays.asList(new VolumeType[] { VolumeType.Preallocated }))
                                     : DataProvider.GetVolumeTypeList()));
                             tempVar2.setSelectedItem(a.getvolume_type());
                             diskModel.setVolumeType(tempVar2);
@@ -610,7 +612,7 @@ public abstract class IVmModelBehavior
         }
         else
         {
-            getModel().getStorageDomain().setItems(new java.util.ArrayList<storage_domains>());
+            getModel().getStorageDomain().setItems(new ArrayList<storage_domains>());
             getModel().getStorageDomain().setSelectedItem(null);
             getModel().getStorageDomain().setIsChangable(false);
         }

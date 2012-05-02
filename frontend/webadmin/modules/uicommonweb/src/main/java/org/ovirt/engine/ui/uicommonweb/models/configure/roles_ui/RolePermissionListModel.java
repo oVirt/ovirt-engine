@@ -19,6 +19,8 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
+import java.util.ArrayList;
+
 @SuppressWarnings("unused")
 public class RolePermissionListModel extends SearchableListModel
 {
@@ -140,7 +142,7 @@ public class RolePermissionListModel extends SearchableListModel
         model.setHashName("remove_permission"); //$NON-NLS-1$
         model.setMessage(ConstantsManager.getInstance().getConstants().permissionMsg());
 
-        java.util.ArrayList<String> items = new java.util.ArrayList<String>();
+        ArrayList<String> items = new ArrayList<String>();
         for (Object a : getSelectedItems())
         {
             items.add("Role " + ((permissions) a).getRoleName() + " on User " + ((permissions) a).getOwnerName()); //$NON-NLS-1$ //$NON-NLS-2$
@@ -168,7 +170,7 @@ public class RolePermissionListModel extends SearchableListModel
                 return;
             }
 
-            java.util.ArrayList<VdcActionParametersBase> list = new java.util.ArrayList<VdcActionParametersBase>();
+            ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
             for (Object perm : getSelectedItems())
             {
                 PermissionsOperationsParametes tempVar = new PermissionsOperationsParametes();

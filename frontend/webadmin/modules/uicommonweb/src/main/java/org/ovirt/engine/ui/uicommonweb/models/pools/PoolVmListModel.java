@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.pools;
 
+import java.util.ArrayList;
 import java.util.Collections;
 
 import org.ovirt.engine.core.common.action.RemoveVmFromPoolParameters;
@@ -97,7 +98,7 @@ public class PoolVmListModel extends VmListModel
         model.setTitle(ConstantsManager.getInstance().getConstants().detachVirtualMachinesTitle());
         model.setHashName("detach_virtual_machine"); //$NON-NLS-1$
 
-        java.util.ArrayList<String> list = new java.util.ArrayList<String>();
+        ArrayList<String> list = new ArrayList<String>();
         for (Object item : getSelectedItems())
         {
             VM a = (VM) item;
@@ -129,7 +130,7 @@ public class PoolVmListModel extends VmListModel
             return;
         }
 
-        java.util.ArrayList<VdcActionParametersBase> list = new java.util.ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
         for (Object item : getSelectedItems())
         {
             VM vm = (VM) item;
@@ -179,8 +180,8 @@ public class PoolVmListModel extends VmListModel
     private void UpdateActionAvailability()
     {
         // var items = SelectedItems != null ? SelectedItems.Cast<VM>().ToList() : new List<VM>();
-        java.util.ArrayList<VM> items =
-                getSelectedItems() != null ? Linq.<VM> Cast(getSelectedItems()) : new java.util.ArrayList<VM>();
+        ArrayList<VM> items =
+                getSelectedItems() != null ? Linq.<VM> Cast(getSelectedItems()) : new ArrayList<VM>();
 
         // DetachCommand.IsExecutionAllowed = items.Count > 0 && items.All(a => a.status == VMStatus.Down);
         boolean value = true;

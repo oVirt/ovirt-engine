@@ -433,7 +433,7 @@ public class VmDiskListModel extends SearchableListModel
 
                 diskModel.setVolumeFormat(disk.getvolume_format());
 
-                java.util.ArrayList<DiskInterface> interfaces =
+                ArrayList<DiskInterface> interfaces =
                         DataProvider.GetDiskInterfaceList(vm.getvm_os(), vm.getvds_group_compatibility_version());
                 if (!interfaces.contains(disk.getDiskInterface()))
                 {
@@ -453,9 +453,9 @@ public class VmDiskListModel extends SearchableListModel
                             false);
                 }
 
-                java.util.ArrayList<DiskImage> disks =
+                ArrayList<DiskImage> disks =
                         vmDiskListModel.getItems() != null ? Linq.<DiskImage> Cast(vmDiskListModel.getItems())
-                                : new java.util.ArrayList<DiskImage>();
+                                : new ArrayList<DiskImage>();
 
                 DiskImage bootableDisk = null;
                 for (DiskImage a : disks)
@@ -524,7 +524,7 @@ public class VmDiskListModel extends SearchableListModel
 
         model.getLatch().setEntity(true);
 
-        java.util.ArrayList<String> items = new java.util.ArrayList<String>();
+        ArrayList<String> items = new ArrayList<String>();
         for (Object item : getSelectedItems())
         {
             DiskImage a = (DiskImage) item;

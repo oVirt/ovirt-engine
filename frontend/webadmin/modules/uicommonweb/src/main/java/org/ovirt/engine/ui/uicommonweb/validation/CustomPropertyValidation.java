@@ -3,24 +3,26 @@ package org.ovirt.engine.ui.uicommonweb.validation;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
+import java.util.ArrayList;
+
 @SuppressWarnings("unused")
 public class CustomPropertyValidation implements IValidation
 {
-    private java.util.ArrayList<String> privateCustomPropertiesKeysList;
+    private ArrayList<String> privateCustomPropertiesKeysList;
 
-    private java.util.ArrayList<String> getCustomPropertiesKeysList()
+    private ArrayList<String> getCustomPropertiesKeysList()
     {
         return privateCustomPropertiesKeysList;
     }
 
-    private void setCustomPropertiesKeysList(java.util.ArrayList<String> value)
+    private void setCustomPropertiesKeysList(ArrayList<String> value)
     {
         privateCustomPropertiesKeysList = value;
     }
 
-    public CustomPropertyValidation(java.util.ArrayList<String> customPropertiesKeysList)
+    public CustomPropertyValidation(ArrayList<String> customPropertiesKeysList)
     {
-        setCustomPropertiesKeysList(new java.util.ArrayList<String>());
+        setCustomPropertiesKeysList(new ArrayList<String>());
 
         if (customPropertiesKeysList != null && customPropertiesKeysList.size() > 0)
         {
@@ -100,7 +102,7 @@ public class CustomPropertyValidation implements IValidation
                                 .getMessages()
                                 .customPropertyOneOfTheParamsIsntSupported(parameters);
 
-                java.util.ArrayList<String> reason = new java.util.ArrayList<String>();
+                ArrayList<String> reason = new ArrayList<String>();
                 reason.add(reasonStr);
                 ValidationResult tempVar2 = new ValidationResult();
                 tempVar2.setSuccess(false);
@@ -132,7 +134,7 @@ public class CustomPropertyValidation implements IValidation
         }
         if (falseProperty != null)
         {
-            java.util.ArrayList<String> reason = new java.util.ArrayList<String>();
+            ArrayList<String> reason = new ArrayList<String>();
             reason.add(ConstantsManager.getInstance()
                     .getMessages()
                     .customPropertyValueShouldBeInFormatReason(falseProperty.substring(0, falseProperty.indexOf('=')),

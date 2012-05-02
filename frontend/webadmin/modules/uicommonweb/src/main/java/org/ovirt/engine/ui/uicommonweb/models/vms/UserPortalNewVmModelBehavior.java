@@ -1,6 +1,9 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
@@ -40,8 +43,8 @@ public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements 
                     public void OnSuccess(Object target, Object returnValue) {
 
                         UnitVmModel model = (UnitVmModel) target;
-                        java.util.ArrayList<storage_pool> list = new java.util.ArrayList<storage_pool>();
-                        for (storage_pool a : (java.util.ArrayList<storage_pool>) returnValue)
+                        ArrayList<storage_pool> list = new ArrayList<storage_pool>();
+                        for (storage_pool a : (ArrayList<storage_pool>) returnValue)
                         {
                             if (a.getstatus() == StoragePoolStatus.Up)
                             {
@@ -61,7 +64,7 @@ public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements 
         storage_pool dataCenter = (storage_pool) getModel().getDataCenter().getSelectedItem();
         getModel().setIsHostAvailable(dataCenter.getstorage_pool_type() != StorageType.LOCALFS);
 
-        java.util.ArrayList<VdcQueryType> queryTypeList = new java.util.ArrayList<VdcQueryType>();
+        ArrayList<VdcQueryType> queryTypeList = new ArrayList<VdcQueryType>();
         queryTypeList.add(VdcQueryType.GetClustersWithPermittedAction);
         queryTypeList.add(VdcQueryType.GetVmTemplatesWithPermittedAction);
 
@@ -69,9 +72,9 @@ public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements 
         tempVar.setActionGroup(CREATE_VM);
         GetEntitiesWithPermittedActionParameters getEntitiesWithPermittedActionParameters = tempVar;
 
-        java.util.ArrayList<VdcQueryParametersBase> parametersList =
-                new java.util.ArrayList<VdcQueryParametersBase>(java.util.Arrays.asList(new VdcQueryParametersBase[] {
-                        getEntitiesWithPermittedActionParameters, getEntitiesWithPermittedActionParameters }));
+        ArrayList<VdcQueryParametersBase> parametersList =
+                new ArrayList<VdcQueryParametersBase>(Arrays.asList(new VdcQueryParametersBase[] {
+                    getEntitiesWithPermittedActionParameters, getEntitiesWithPermittedActionParameters}));
 
         // Get clusters and templates
         Frontend.RunMultipleQueries(queryTypeList, parametersList, this, getModel().getHash());
@@ -80,21 +83,21 @@ public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements 
     @Override
     public void Executed(FrontendMultipleQueryAsyncResult result)
     {
-        java.util.List<VdcQueryReturnValue> returnValueList = result.getReturnValues();
-        java.util.ArrayList<VDSGroup> clusters =
-                (java.util.ArrayList<VDSGroup>) returnValueList.get(0).getReturnValue();
-        java.util.ArrayList<VmTemplate> templates =
-                (java.util.ArrayList<VmTemplate>) returnValueList.get(1).getReturnValue();
+        List<VdcQueryReturnValue> returnValueList = result.getReturnValues();
+        ArrayList<VDSGroup> clusters =
+                (ArrayList<VDSGroup>) returnValueList.get(0).getReturnValue();
+        ArrayList<VmTemplate> templates =
+                (ArrayList<VmTemplate>) returnValueList.get(1).getReturnValue();
 
         InitClusters(clusters);
         InitTemplates(templates);
         InitCdImage();
     }
 
-    private void InitClusters(java.util.ArrayList<VDSGroup> clusters)
+    private void InitClusters(ArrayList<VDSGroup> clusters)
     {
         // Filter clusters list (include only clusters that belong to the selected datacenter)
-        java.util.ArrayList<VDSGroup> filteredList = new java.util.ArrayList<VDSGroup>();
+        ArrayList<VDSGroup> filteredList = new ArrayList<VDSGroup>();
         storage_pool selectedDataCenter = (storage_pool) getModel().getDataCenter().getSelectedItem();
 
         for (VDSGroup cluster : clusters)
@@ -109,10 +112,10 @@ public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements 
         getModel().SetClusters(getModel(), filteredList, null);
     }
 
-    private void InitTemplates(java.util.ArrayList<VmTemplate> templates)
+    private void InitTemplates(ArrayList<VmTemplate> templates)
     {
         // Filter templates list (include only templates that belong to the selected datacenter)
-        java.util.ArrayList<VmTemplate> templatesList = new java.util.ArrayList<VmTemplate>();
+        ArrayList<VmTemplate> templatesList = new ArrayList<VmTemplate>();
         VmTemplate blankTemplate = new VmTemplate();
         storage_pool selectedDataCenter = (storage_pool) getModel().getDataCenter().getSelectedItem();
         Guid selectedDataCenterId = selectedDataCenter.getId().getValue();

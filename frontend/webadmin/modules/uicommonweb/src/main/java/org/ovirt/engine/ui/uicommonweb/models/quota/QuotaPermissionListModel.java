@@ -39,7 +39,7 @@ public class QuotaPermissionListModel extends PermissionListModel {
             {
                 SearchableListModel searchableListModel = (SearchableListModel) model;
                 ArrayList<permissions> list =
-                        (java.util.ArrayList<permissions>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
+                        (ArrayList<permissions>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
                 ArrayList<permissions> newList = new ArrayList<permissions>();
                 for (permissions permission : list) {
                     if (!permission.getrole_id().equals(CONSUME_QUOTA_ROLE_ID)) {

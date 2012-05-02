@@ -24,6 +24,8 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
+import java.util.ArrayList;
+
 @SuppressWarnings("unused")
 public class SystemPermissionListModel extends SearchableListModel
 {
@@ -153,7 +155,7 @@ public class SystemPermissionListModel extends SearchableListModel
             return;
         }
 
-        java.util.ArrayList<DbUser> items = new java.util.ArrayList<DbUser>();
+        ArrayList<DbUser> items = new ArrayList<DbUser>();
         for (Object item : model.getItems())
         {
             EntityModel entityModel = (EntityModel) item;
@@ -165,7 +167,7 @@ public class SystemPermissionListModel extends SearchableListModel
 
         roles role = (roles) model.getRole().getSelectedItem();
 
-        java.util.ArrayList<VdcActionParametersBase> list = new java.util.ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
         for (DbUser user : items)
         {
             permissions tempVar = new permissions();
@@ -226,7 +228,7 @@ public class SystemPermissionListModel extends SearchableListModel
         model.setHashName("remove_system_permission"); //$NON-NLS-1$
         model.setMessage(ConstantsManager.getInstance().getConstants().systemPermissionsMsg());
 
-        java.util.ArrayList<String> list = new java.util.ArrayList<String>();
+        ArrayList<String> list = new ArrayList<String>();
         for (Object item : getSelectedItems())
         {
             permissions permission = (permissions) item;
@@ -255,7 +257,7 @@ public class SystemPermissionListModel extends SearchableListModel
                 return;
             }
 
-            java.util.ArrayList<VdcActionParametersBase> list = new java.util.ArrayList<VdcActionParametersBase>();
+            ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
             for (Object perm : getSelectedItems())
             {
                 PermissionsOperationsParametes tempVar = new PermissionsOperationsParametes();

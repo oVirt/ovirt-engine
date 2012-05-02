@@ -2,24 +2,27 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import org.ovirt.engine.core.compat.StringFormat;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @SuppressWarnings("unused")
 public class SpiceMenu
 {
-    private java.util.List<SpiceMenuItem> items;
+    private List<SpiceMenuItem> items;
 
-    public java.util.List<SpiceMenuItem> getItems()
+    public List<SpiceMenuItem> getItems()
     {
         if (items == null)
         {
-            items = new java.util.ArrayList<SpiceMenuItem>();
+            items = new ArrayList<SpiceMenuItem>();
         }
 
         return items;
     }
 
-    public java.util.List<SpiceMenuItem> Descendants()
+    public List<SpiceMenuItem> Descendants()
     {
-        java.util.ArrayList<SpiceMenuItem> list = new java.util.ArrayList<SpiceMenuItem>();
+        ArrayList<SpiceMenuItem> list = new ArrayList<SpiceMenuItem>();
         for (SpiceMenuItem item : items)
         {
             DescendantsInternal(list, item);
@@ -28,7 +31,7 @@ public class SpiceMenu
         return list;
     }
 
-    private void DescendantsInternal(java.util.List<SpiceMenuItem> list, SpiceMenuItem root)
+    private void DescendantsInternal(List<SpiceMenuItem> list, SpiceMenuItem root)
     {
         list.add(root);
         if (root instanceof SpiceMenuContainerItem)

@@ -4,6 +4,8 @@ import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
+import java.util.ArrayList;
+
 @SuppressWarnings("unused")
 public class UserGroupListModel extends SearchableListModel
 {
@@ -32,7 +34,7 @@ public class UserGroupListModel extends SearchableListModel
 
         if (getEntity() != null)
         {
-            java.util.ArrayList<UserGroup> items = new java.util.ArrayList<UserGroup>();
+            ArrayList<UserGroup> items = new ArrayList<UserGroup>();
             for (String groupFullName : getEntity().getgroups().split("[,]", -1)) //$NON-NLS-1$
             {
                 items.add(CreateUserGroup(groupFullName));

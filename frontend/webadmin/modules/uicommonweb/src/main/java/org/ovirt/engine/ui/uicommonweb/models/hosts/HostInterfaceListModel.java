@@ -1,7 +1,12 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.core.common.action.AddBondParameters;
 import org.ovirt.engine.core.common.action.AttachNetworkToVdsParameters;
@@ -122,14 +127,14 @@ public class HostInterfaceListModel extends SearchableListModel
         privateSetupNetworksCommand = value;
     }
 
-    private java.util.ArrayList<VdsNetworkInterface> privateOriginalItems;
+    private ArrayList<VdsNetworkInterface> privateOriginalItems;
 
-    public java.util.ArrayList<VdsNetworkInterface> getOriginalItems()
+    public ArrayList<VdsNetworkInterface> getOriginalItems()
     {
         return privateOriginalItems;
     }
 
-    public void setOriginalItems(java.util.ArrayList<VdsNetworkInterface> value)
+    public void setOriginalItems(ArrayList<VdsNetworkInterface> value)
     {
         privateOriginalItems = value;
     }
@@ -178,9 +183,9 @@ public class HostInterfaceListModel extends SearchableListModel
         super.setEntity(value);
     }
 
-    private java.util.ArrayList<VdsNetworkInterface> GetSelectedItems(boolean withVlans)
+    private ArrayList<VdsNetworkInterface> GetSelectedItems(boolean withVlans)
     {
-        java.util.ArrayList<VdsNetworkInterface> list = new java.util.ArrayList<VdsNetworkInterface>();
+        ArrayList<VdsNetworkInterface> list = new ArrayList<VdsNetworkInterface>();
         if (getItems() != null)
         {
             boolean isModelSelected;
@@ -222,19 +227,19 @@ public class HostInterfaceListModel extends SearchableListModel
     }
 
     @Override
-    public java.util.ArrayList<VdsNetworkInterface> getSelectedItems()
+    public ArrayList<VdsNetworkInterface> getSelectedItems()
     {
         return GetSelectedItems(false);
     }
 
-    public java.util.ArrayList<VdsNetworkInterface> getSelectedItemsWithVlans()
+    public ArrayList<VdsNetworkInterface> getSelectedItemsWithVlans()
     {
         return GetSelectedItems(true);
     }
 
-    private java.util.ArrayList<VdsNetworkInterface> getInterfaceItems()
+    private ArrayList<VdsNetworkInterface> getInterfaceItems()
     {
-        java.util.ArrayList<VdsNetworkInterface> list = new java.util.ArrayList<VdsNetworkInterface>();
+        ArrayList<VdsNetworkInterface> list = new ArrayList<VdsNetworkInterface>();
         if (getItems() != null)
         {
             for (Object item : getItems())
@@ -250,9 +255,9 @@ public class HostInterfaceListModel extends SearchableListModel
         return list;
     }
 
-    private java.util.ArrayList<VdsNetworkInterface> getAllItems()
+    private ArrayList<VdsNetworkInterface> getAllItems()
     {
-        java.util.ArrayList<VdsNetworkInterface> list = new java.util.ArrayList<VdsNetworkInterface>();
+        ArrayList<VdsNetworkInterface> list = new ArrayList<VdsNetworkInterface>();
         for (Object a : getItems())
         {
             HostInterfaceLineModel item = (HostInterfaceLineModel) a;
@@ -388,9 +393,9 @@ public class HostInterfaceListModel extends SearchableListModel
             {
                 HostInterfaceListModel interfaceModel = (HostInterfaceListModel) model;
                 Iterable iVdcQueryableItems = (Iterable) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
-                java.util.ArrayList<VdsNetworkInterface> items = new java.util.ArrayList<VdsNetworkInterface>();
+                ArrayList<VdsNetworkInterface> items = new ArrayList<VdsNetworkInterface>();
 
-                java.util.Iterator networkInterfacesIterator = iVdcQueryableItems.iterator();
+                Iterator networkInterfacesIterator = iVdcQueryableItems.iterator();
                 while (networkInterfacesIterator.hasNext())
                 {
                     items.add((VdsNetworkInterface) networkInterfacesIterator.next());
@@ -433,17 +438,17 @@ public class HostInterfaceListModel extends SearchableListModel
 
     private void UpdateItems(Iterable<VdsNetworkInterface> source)
     {
-        java.util.ArrayList<HostInterfaceLineModel> items = new java.util.ArrayList<HostInterfaceLineModel>();
-        setOriginalItems((java.util.ArrayList<VdsNetworkInterface>) source);
+        ArrayList<HostInterfaceLineModel> items = new ArrayList<HostInterfaceLineModel>();
+        setOriginalItems((ArrayList<VdsNetworkInterface>) source);
         // Add bonded interfaces.
         for (VdsNetworkInterface nic : source)
         {
             if ((nic.getBonded() == null ? false : nic.getBonded()))
             {
                 HostInterfaceLineModel model = new HostInterfaceLineModel();
-                model.setInterfaces(new java.util.ArrayList<HostInterface>());
+                model.setInterfaces(new ArrayList<HostInterface>());
                 model.setInterface(nic);
-                model.setVLans(new java.util.ArrayList<HostVLan>());
+                model.setVLans(new ArrayList<HostVLan>());
                 model.setIsBonded(true);
                 model.setBondName(nic.getName());
                 model.setAddress(nic.getAddress());
@@ -489,8 +494,8 @@ public class HostInterfaceListModel extends SearchableListModel
                     && nic.getVlanId() == null)
             {
                 HostInterfaceLineModel model = new HostInterfaceLineModel();
-                model.setInterfaces(new java.util.ArrayList<HostInterface>());
-                model.setVLans(new java.util.ArrayList<HostVLan>());
+                model.setInterfaces(new ArrayList<HostInterface>());
+                model.setVLans(new ArrayList<HostVLan>());
                 model.setNetworkName(nic.getNetworkName());
                 model.setIsManagement(nic.getIsManagement());
 
@@ -535,7 +540,7 @@ public class HostInterfaceListModel extends SearchableListModel
                 }
             }
 
-            java.util.ArrayList<HostVLan> list = model.getVLans();
+            ArrayList<HostVLan> list = model.getVLans();
             Collections.sort(list, new HostVLanByNameComparer());
         }
 
@@ -720,11 +725,11 @@ public class HostInterfaceListModel extends SearchableListModel
         UpdateActionAvailability();
     }
 
-    private java.util.ArrayList<String> GetSelectedNicsNetworks(RefObject<Boolean> isVlanSelected,
+    private ArrayList<String> GetSelectedNicsNetworks(RefObject<Boolean> isVlanSelected,
             RefObject<Boolean> isManagementSelected)
     {
-        java.util.ArrayList<VdsNetworkInterface> selectedItems = getSelectedItemsWithVlans();
-        java.util.ArrayList<String> list = new java.util.ArrayList<String>();
+        ArrayList<VdsNetworkInterface> selectedItems = getSelectedItemsWithVlans();
+        ArrayList<String> list = new ArrayList<String>();
         isVlanSelected.argvalue = false;
         isManagementSelected.argvalue = false;
         for (VdsNetworkInterface nic : selectedItems)
@@ -760,9 +765,9 @@ public class HostInterfaceListModel extends SearchableListModel
             public void OnSuccess(Object model, Object ReturnValue)
             {
                 HostInterfaceListModel hostInterfaceListModel = (HostInterfaceListModel) model;
-                java.util.ArrayList<network> networksByCluster = (java.util.ArrayList<network>) ReturnValue;
+                ArrayList<network> networksByCluster = (ArrayList<network>) ReturnValue;
                 VdsNetworkInterface item = (VdsNetworkInterface) hostInterfaceListModel.getSelectedItem();
-                java.util.ArrayList<network> networksToAdd = new java.util.ArrayList<network>();
+                ArrayList<network> networksToAdd = new ArrayList<network>();
                 network selectedNetwork = null;
                 if (item.getVlanId() != null)
                 {
@@ -781,13 +786,13 @@ public class HostInterfaceListModel extends SearchableListModel
                 else
                 {
                     // creating dictionary of networks by name
-                    java.util.HashMap<String, network> networkDictionary = new java.util.HashMap<String, network>();
+                    HashMap<String, network> networkDictionary = new HashMap<String, network>();
                     for (network network : networksByCluster)
                     {
                         networkDictionary.put(network.getname(), network);
                     }
                     // creating list of attached networks.
-                    java.util.ArrayList<network> attachedNetworks = new java.util.ArrayList<network>();
+                    ArrayList<network> attachedNetworks = new ArrayList<network>();
                     for (VdsNetworkInterface nic : hostInterfaceListModel.getAllItems())
                     {
                         if (nic.getNetworkName() != null && networkDictionary.containsKey(nic.getNetworkName()))
@@ -796,15 +801,15 @@ public class HostInterfaceListModel extends SearchableListModel
                         }
                     }
 
-                    java.util.ArrayList<network> unAttachedNetworks = Linq.Except(networksByCluster, attachedNetworks);
+                    ArrayList<network> unAttachedNetworks = Linq.Except(networksByCluster, attachedNetworks);
 
                     // adding selected network names to list.
                     boolean isVlanSelected = false;
                     boolean isManagementSelected = false;
 
-                    java.util.ArrayList<VdsNetworkInterface> selectedItems =
+                    ArrayList<VdsNetworkInterface> selectedItems =
                             hostInterfaceListModel.getSelectedItemsWithVlans();
-                    java.util.ArrayList<String> selectedNicsNetworks = new java.util.ArrayList<String>();
+                    ArrayList<String> selectedNicsNetworks = new ArrayList<String>();
                     for (VdsNetworkInterface nic : selectedItems)
                     {
                         if (!StringHelper.isNullOrEmpty(nic.getNetworkName()))
@@ -888,13 +893,13 @@ public class HostInterfaceListModel extends SearchableListModel
                 if (item.getBonded() != null && item.getBonded().equals(true))
                 {
                     hostInterfaceModel.getBondingOptions().setIsAvailable(true);
-                    java.util.Map.Entry<String, EntityModel> defaultItem = null;
-                    RefObject<java.util.Map.Entry<String, EntityModel>> tempRef_defaultItem =
-                            new RefObject<java.util.Map.Entry<String, EntityModel>>(defaultItem);
-                    java.util.ArrayList<java.util.Map.Entry<String, EntityModel>> list =
+                    Map.Entry<String, EntityModel> defaultItem = null;
+                    RefObject<Map.Entry<String, EntityModel>> tempRef_defaultItem =
+                            new RefObject<Map.Entry<String, EntityModel>>(defaultItem);
+                    ArrayList<Map.Entry<String, EntityModel>> list =
                             DataProvider.GetBondingOptionList(tempRef_defaultItem);
                     defaultItem = tempRef_defaultItem.argvalue;
-                    java.util.Map.Entry<String, EntityModel> selectBondingOpt =
+                    Map.Entry<String, EntityModel> selectBondingOpt =
                             new KeyValuePairCompat<String, EntityModel>();
                     boolean containsSelectBondingOpt = false;
                     hostInterfaceModel.getBondingOptions().setItems(list);
@@ -982,7 +987,7 @@ public class HostInterfaceListModel extends SearchableListModel
             public void OnSuccess(Object model, Object ReturnValue)
             {
                 HostInterfaceListModel hostInterfaceListModel = (HostInterfaceListModel) model;
-                java.util.ArrayList<network> clusterNetworks = (java.util.ArrayList<network>) ReturnValue;
+                ArrayList<network> clusterNetworks = (ArrayList<network>) ReturnValue;
                 VdsNetworkInterface item = (VdsNetworkInterface) hostInterfaceListModel.getSelectedItem();
                 HostManagementNetworkModel managementModel =
                         (HostManagementNetworkModel) hostInterfaceListModel.getWindow();
@@ -1001,7 +1006,7 @@ public class HostInterfaceListModel extends SearchableListModel
 
                 String defaultInterfaceName = null;
                 RefObject<String> tempRef_defaultInterfaceName = new RefObject<String>(defaultInterfaceName);
-                java.util.ArrayList<VdsNetworkInterface> interfaces =
+                ArrayList<VdsNetworkInterface> interfaces =
                         DataProvider.GetInterfaceOptionsForEditNetwork(getOriginalItems(),
                                 item,
                                 networkToEdit,
@@ -1028,13 +1033,13 @@ public class HostInterfaceListModel extends SearchableListModel
                 if (item.getBonded() != null && item.getBonded().equals(true))
                 {
                     managementModel.getBondingOptions().setIsAvailable(true);
-                    java.util.Map.Entry<String, EntityModel> defaultItem = null;
-                    RefObject<java.util.Map.Entry<String, EntityModel>> tempRef_defaultItem =
-                            new RefObject<java.util.Map.Entry<String, EntityModel>>(defaultItem);
-                    java.util.ArrayList<java.util.Map.Entry<String, EntityModel>> list =
+                    Map.Entry<String, EntityModel> defaultItem = null;
+                    RefObject<Map.Entry<String, EntityModel>> tempRef_defaultItem =
+                            new RefObject<Map.Entry<String, EntityModel>>(defaultItem);
+                    ArrayList<Map.Entry<String, EntityModel>> list =
                             DataProvider.GetBondingOptionList(tempRef_defaultItem);
                     defaultItem = tempRef_defaultItem.argvalue;
-                    java.util.Map.Entry<String, EntityModel> selectBondingOpt =
+                    Map.Entry<String, EntityModel> selectBondingOpt =
                             new KeyValuePairCompat<String, EntityModel>();
                     boolean containsSelectBondingOpt = false;
                     managementModel.getBondingOptions().setItems(list);
@@ -1159,12 +1164,12 @@ public class HostInterfaceListModel extends SearchableListModel
         UpdateNetworkToVdsParameters parameters =
                 new UpdateNetworkToVdsParameters(getEntity().getId(),
                         network,
-                        new java.util.ArrayList<VdsNetworkInterface>(java.util.Arrays.asList(new VdsNetworkInterface[] { nic })));
+                        new ArrayList<VdsNetworkInterface>(Arrays.asList(new VdsNetworkInterface[] {nic})));
 
-        java.util.Map.Entry<String, EntityModel> bondingOption;
+        Map.Entry<String, EntityModel> bondingOption;
         if (model.getBondingOptions().getSelectedItem() != null)
         {
-            bondingOption = (java.util.Map.Entry<String, EntityModel>) model.getBondingOptions().getSelectedItem();
+            bondingOption = (Map.Entry<String, EntityModel>) model.getBondingOptions().getSelectedItem();
 
             if (!bondingOption.getKey().equals("custom")) //$NON-NLS-1$
             {
@@ -1237,20 +1242,20 @@ public class HostInterfaceListModel extends SearchableListModel
         CancelConfirm();
     }
 
-    private java.util.ArrayList<network> GetNetworksList(RefObject<network> selectedNetwork)
+    private ArrayList<network> GetNetworksList(RefObject<network> selectedNetwork)
     {
         selectedNetwork.argvalue = null;
-        java.util.ArrayList<network> networksByCluster =
+        ArrayList<network> networksByCluster =
                 DataProvider.GetClusterNetworkList(getEntity().getvds_group_id());
-        java.util.ArrayList<network> networksToAdd = new java.util.ArrayList<network>();
+        ArrayList<network> networksToAdd = new ArrayList<network>();
         // creating dictionary of networks by name
-        java.util.HashMap<String, network> networkDictionary = new java.util.HashMap<String, network>();
+        HashMap<String, network> networkDictionary = new HashMap<String, network>();
         for (network network : networksByCluster)
         {
             networkDictionary.put(network.getname(), network);
         }
         // creating list of attached networks.
-        java.util.ArrayList<network> attachedNetworks = new java.util.ArrayList<network>();
+        ArrayList<network> attachedNetworks = new ArrayList<network>();
         for (VdsNetworkInterface nic : getAllItems())
         {
             if (nic.getNetworkName() != null && networkDictionary.containsKey(nic.getNetworkName()))
@@ -1259,14 +1264,14 @@ public class HostInterfaceListModel extends SearchableListModel
             }
         }
 
-        java.util.ArrayList<network> unAttachedNetworks = Linq.Except(networksByCluster, attachedNetworks);
+        ArrayList<network> unAttachedNetworks = Linq.Except(networksByCluster, attachedNetworks);
 
         // adding selected network names to list.
         boolean isVlanSelected = false;
         boolean isManagement = false;
         RefObject<Boolean> tempRef_isVlanSelected = new RefObject<Boolean>(isVlanSelected);
         RefObject<Boolean> tempRef_isManagement = new RefObject<Boolean>(isManagement);
-        java.util.ArrayList<String> selectedNicsNetworks =
+        ArrayList<String> selectedNicsNetworks =
                 GetSelectedNicsNetworks(tempRef_isVlanSelected, tempRef_isManagement);
         isVlanSelected = tempRef_isVlanSelected.argvalue;
         isManagement = tempRef_isManagement.argvalue;
@@ -1325,7 +1330,7 @@ public class HostInterfaceListModel extends SearchableListModel
             public void OnSuccess(Object model, Object ReturnValue)
             {
                 HostInterfaceListModel hostInterfaceListModel = (HostInterfaceListModel) model;
-                java.util.ArrayList<network> networksByCluster = (java.util.ArrayList<network>) ReturnValue;
+                ArrayList<network> networksByCluster = (ArrayList<network>) ReturnValue;
                 VdsNetworkInterface item = (VdsNetworkInterface) hostInterfaceListModel.getSelectedItem();
                 HostBondInterfaceModel innerBondModel = (HostBondInterfaceModel) hostInterfaceListModel.getWindow();
                 network selectedNetwork = null;
@@ -1342,15 +1347,15 @@ public class HostInterfaceListModel extends SearchableListModel
                     }
                 }
 
-                java.util.ArrayList<network> networksToAdd = new java.util.ArrayList<network>();
+                ArrayList<network> networksToAdd = new ArrayList<network>();
                 // creating dictionary of networks by name
-                java.util.HashMap<String, network> networkDictionary = new java.util.HashMap<String, network>();
+                HashMap<String, network> networkDictionary = new HashMap<String, network>();
                 for (network network : networksByCluster)
                 {
                     networkDictionary.put(network.getname(), network);
                 }
                 // creating list of attached networks.
-                java.util.ArrayList<network> attachedNetworks = new java.util.ArrayList<network>();
+                ArrayList<network> attachedNetworks = new ArrayList<network>();
                 for (VdsNetworkInterface nic : hostInterfaceListModel.getAllItems())
                 {
                     if (nic.getNetworkName() != null && networkDictionary.containsKey(nic.getNetworkName()))
@@ -1359,14 +1364,14 @@ public class HostInterfaceListModel extends SearchableListModel
                     }
                 }
 
-                java.util.ArrayList<network> unAttachedNetworks = Linq.Except(networksByCluster, attachedNetworks);
+                ArrayList<network> unAttachedNetworks = Linq.Except(networksByCluster, attachedNetworks);
 
                 // adding selected network names to list.
                 boolean isVlanSelected = false;
                 boolean isManagement = false;
                 RefObject<Boolean> tempRef_isVlanSelected = new RefObject<Boolean>(isVlanSelected);
                 RefObject<Boolean> tempRef_isManagement = new RefObject<Boolean>(isManagement);
-                java.util.ArrayList<String> selectedNicsNetworks =
+                ArrayList<String> selectedNicsNetworks =
                         hostInterfaceListModel.GetSelectedNicsNetworks(tempRef_isVlanSelected, tempRef_isManagement);
                 isVlanSelected = tempRef_isVlanSelected.argvalue;
                 isManagement = tempRef_isManagement.argvalue;
@@ -1419,7 +1424,7 @@ public class HostInterfaceListModel extends SearchableListModel
                 // allocate a new bond name, edit the existing one:
                 {
                     innerBondModel.getBond()
-                            .setItems(new java.util.ArrayList<VdsNetworkInterface>(java.util.Arrays.asList(new VdsNetworkInterface[] { bond })));
+                            .setItems(new ArrayList<VdsNetworkInterface>(Arrays.asList(new VdsNetworkInterface[] { bond })));
                     innerBondModel.getBond().setSelectedItem(bond);
                     innerBondModel.getBond().setIsChangable(false);
                     hostInterfaceListModel.PostBond(hostInterfaceListModel,
@@ -1455,9 +1460,9 @@ public class HostInterfaceListModel extends SearchableListModel
                             }
                             innerHostInterfaceListModel.PostBond(innerHostInterfaceListModel,
                                     bModel,
-                                    bModel.getNetwork().getItems() != null ? (java.util.ArrayList<network>) bModel.getNetwork()
+                                    bModel.getNetwork().getItems() != null ? (ArrayList<network>) bModel.getNetwork()
                                             .getItems()
-                                            : new java.util.ArrayList<network>(),
+                                            : new ArrayList<network>(),
                                     hasManagement);
 
                         }
@@ -1473,10 +1478,10 @@ public class HostInterfaceListModel extends SearchableListModel
 
     public void PostBond(HostInterfaceListModel hostInterfaceListModel,
             HostBondInterfaceModel innerBondModel,
-            java.util.ArrayList<network> networksToAdd,
+            ArrayList<network> networksToAdd,
             boolean isAnyManagement)
     {
-        java.util.ArrayList<NetworkInterface> baseSelectedItems =
+        ArrayList<NetworkInterface> baseSelectedItems =
                 Linq.VdsNetworkInterfaceListToBase(getSelectedItems());
         VdsNetworkInterface interfaceWithNetwork =
                 (VdsNetworkInterface) Linq.FindInterfaceNetworkNameNotEmpty(baseSelectedItems);
@@ -1569,7 +1574,7 @@ public class HostInterfaceListModel extends SearchableListModel
         }
 
         VDS host = getEntity();
-        java.util.ArrayList<VdsNetworkInterface> selectedItems = getSelectedItems();
+        ArrayList<VdsNetworkInterface> selectedItems = getSelectedItems();
         network net = (network) model.getNetwork().getSelectedItem();
 
         // Interface interfaceWithNetwork = items.FirstOrDefault(a => !string.IsNullOrEmpty(a.network_name));
@@ -1577,8 +1582,8 @@ public class HostInterfaceListModel extends SearchableListModel
                 (VdsNetworkInterface) Linq.FindInterfaceNetworkNameNotEmpty(Linq.VdsNetworkInterfaceListToBase(selectedItems));
 
         // look for lines with vlans
-        java.util.ArrayList<HostInterfaceLineModel> itemList =
-                (java.util.ArrayList<HostInterfaceLineModel>) getItems();
+        ArrayList<HostInterfaceLineModel> itemList =
+                (ArrayList<HostInterfaceLineModel>) getItems();
         for (HostInterfaceLineModel lineModel : itemList)
         {
             if (lineModel.getIsSelected() && lineModel.getVlanSize() == 1)
@@ -1596,10 +1601,10 @@ public class HostInterfaceListModel extends SearchableListModel
             parameters.setCheckConnectivity((Boolean) model.getCheckConnectivity().getEntity());
             parameters.setOldNetworkName(interfaceWithNetwork.getNetworkName());
 
-            java.util.Map.Entry<String, EntityModel> bondingOption;
+            Map.Entry<String, EntityModel> bondingOption;
             if (model.getBondingOptions().getSelectedItem() != null)
             {
-                bondingOption = (java.util.Map.Entry<String, EntityModel>) model.getBondingOptions().getSelectedItem();
+                bondingOption = (Map.Entry<String, EntityModel>) model.getBondingOptions().getSelectedItem();
 
                 if (!bondingOption.getKey().equals("custom")) //$NON-NLS-1$
                 {
@@ -1685,10 +1690,10 @@ public class HostInterfaceListModel extends SearchableListModel
                             ((VdsNetworkInterface) model.getBond().getSelectedItem()).getName(),
                             net,
                             nics);
-            java.util.Map.Entry<String, EntityModel> bondingOption;
+            Map.Entry<String, EntityModel> bondingOption;
             if (model.getBondingOptions().getSelectedItem() != null)
             {
-                bondingOption = (java.util.Map.Entry<String, EntityModel>) model.getBondingOptions().getSelectedItem();
+                bondingOption = (Map.Entry<String, EntityModel>) model.getBondingOptions().getSelectedItem();
 
                 if (!bondingOption.getKey().equals("custom")) //$NON-NLS-1$
                 {
@@ -1785,7 +1790,7 @@ public class HostInterfaceListModel extends SearchableListModel
         }
 
         VdsNetworkInterface nic = (VdsNetworkInterface) getSelectedItem();
-        java.util.ArrayList<network> networks = DataProvider.GetClusterNetworkList(getEntity().getvds_group_id());
+        ArrayList<network> networks = DataProvider.GetClusterNetworkList(getEntity().getvds_group_id());
 
         network defaultNetwork = new network(null);
         defaultNetwork.setname(nic.getNetworkName());
@@ -1884,7 +1889,7 @@ public class HostInterfaceListModel extends SearchableListModel
                     return;
                 }
 
-                java.util.ArrayList<network> networks =
+                ArrayList<network> networks =
                         DataProvider.GetClusterNetworkList(getEntity().getvds_group_id());
                 network defaultNetwork = new network(null);
                 defaultNetwork.setname(nic.getNetworkName());
@@ -1943,7 +1948,7 @@ public class HostInterfaceListModel extends SearchableListModel
             boolean isUpdateVlan = false;
             if (nic.getBonded() != null && nic.getBonded())
             {
-                for (HostInterfaceLineModel item : (java.util.ArrayList<HostInterfaceLineModel>) getItems())
+                for (HostInterfaceLineModel item : (ArrayList<HostInterfaceLineModel>) getItems())
                 {
                     if (item.getInterface() != null && item.getInterface().getId().getValue().equals(nic.getId()))
                     {
@@ -1988,16 +1993,16 @@ public class HostInterfaceListModel extends SearchableListModel
                 parameters =
                         new UpdateNetworkToVdsParameters(getEntity().getId(),
                                 network,
-                                new java.util.ArrayList<VdsNetworkInterface>(java.util.Arrays.asList(new VdsNetworkInterface[] { nic })));
+                                new ArrayList<VdsNetworkInterface>(Arrays.asList(new VdsNetworkInterface[] { nic })));
                 parameters.setOldNetworkName((nic.getNetworkName() != null ? nic.getNetworkName() : network.getname()));
                 parameters.setCheckConnectivity((Boolean) model.getCheckConnectivity().getEntity());
 
                 actionType = VdcActionType.UpdateNetworkToVdsInterface;
             }
-            java.util.Map.Entry<String, EntityModel> bondingOption;
+            Map.Entry<String, EntityModel> bondingOption;
             if (model.getBondingOptions().getSelectedItem() != null)
             {
-                bondingOption = (java.util.Map.Entry<String, EntityModel>) model.getBondingOptions().getSelectedItem();
+                bondingOption = (Map.Entry<String, EntityModel>) model.getBondingOptions().getSelectedItem();
 
                 if (!bondingOption.getKey().equals("custom")) //$NON-NLS-1$
                 {
@@ -2095,7 +2100,7 @@ public class HostInterfaceListModel extends SearchableListModel
         VdsNetworkInterface nic =
                 (VdsNetworkInterface) Linq.FindInterfaceByName(Linq.<NetworkInterface> Cast(getInterfaceItems()),
                         nicName);
-        java.util.ArrayList<network> networks = DataProvider.GetClusterNetworkList(getEntity().getvds_group_id());
+        ArrayList<network> networks = DataProvider.GetClusterNetworkList(getEntity().getvds_group_id());
 
         network defaultNetwork = new network(null);
         defaultNetwork.setname(nic.getNetworkName());
@@ -2207,7 +2212,7 @@ public class HostInterfaceListModel extends SearchableListModel
     {
         VDS host = getEntity();
         VdsNetworkInterface selectedItem = (VdsNetworkInterface) getSelectedItem();
-        java.util.ArrayList<VdsNetworkInterface> selectedItems = getSelectedItems();
+        ArrayList<VdsNetworkInterface> selectedItems = getSelectedItems();
 
         getEditCommand().setIsExecutionAllowed(host != null
                 && host.getstatus() != VDSStatus.NonResponsive && selectedItem != null
@@ -2225,8 +2230,8 @@ public class HostInterfaceListModel extends SearchableListModel
         // to bond, selected lines must not have more that 1 networks (vlan or not)
         if (getItems() != null)
         {
-            java.util.ArrayList<HostInterfaceLineModel> itemList =
-                    (java.util.ArrayList<HostInterfaceLineModel>) getItems();
+            ArrayList<HostInterfaceLineModel> itemList =
+                    (ArrayList<HostInterfaceLineModel>) getItems();
             // total network count cannot be more than 1
             int totalNetworkCount = 0;
             for (HostInterfaceLineModel lineModel : itemList)

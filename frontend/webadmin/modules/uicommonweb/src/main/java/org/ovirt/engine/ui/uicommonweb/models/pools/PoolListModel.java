@@ -1,7 +1,10 @@
 package org.ovirt.engine.ui.uicommonweb.models.pools;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
 
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.AddVmPoolWithVmsParameters;
@@ -92,13 +95,13 @@ public class PoolListModel extends ListWithDetailsModel
         privateRemoveCommand = value;
     }
 
-    private java.util.HashMap<Version, java.util.ArrayList<String>> privateCustomPropertiesKeysList;
+    private java.util.HashMap<Version, ArrayList<String>> privateCustomPropertiesKeysList;
 
-    private java.util.HashMap<Version, java.util.ArrayList<String>> getCustomPropertiesKeysList() {
+    private java.util.HashMap<Version, ArrayList<String>> getCustomPropertiesKeysList() {
         return privateCustomPropertiesKeysList;
     }
 
-    private void setCustomPropertiesKeysList(java.util.HashMap<Version, java.util.ArrayList<String>> value) {
+    private void setCustomPropertiesKeysList(HashMap<Version, ArrayList<String>> value) {
         privateCustomPropertiesKeysList = value;
     }
 
@@ -145,12 +148,12 @@ public class PoolListModel extends ListWithDetailsModel
                             PoolListModel model = (PoolListModel) target;
                             if (returnValue != null)
                             {
-                                model.setCustomPropertiesKeysList(new java.util.HashMap<Version, java.util.ArrayList<String>>());
-                                java.util.HashMap<Version, String> dictionary = (HashMap<Version, String>) returnValue;
-                                for (java.util.Map.Entry<Version, String> keyValuePair : dictionary.entrySet())
+                                model.setCustomPropertiesKeysList(new HashMap<Version, ArrayList<String>>());
+                                HashMap<Version, String> dictionary = (HashMap<Version, String>) returnValue;
+                                for (Map.Entry<Version, String> keyValuePair : dictionary.entrySet())
                                 {
                                     model.getCustomPropertiesKeysList().put(keyValuePair.getKey(),
-                                            new java.util.ArrayList<String>());
+                                            new ArrayList<String>());
                                     for (String s : keyValuePair.getValue().split("[;]", -1)) //$NON-NLS-1$
                                     {
                                         model.getCustomPropertiesKeysList().get(keyValuePair.getKey()).add(s);
@@ -243,7 +246,7 @@ public class PoolListModel extends ListWithDetailsModel
         AsyncDataProvider.GetVmList(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void OnSuccess(Object modell, Object returnValue) {
-                final VM vm = Linq.FirstOrDefault((java.util.ArrayList<VM>) returnValue);
+                final VM vm = Linq.FirstOrDefault((ArrayList<VM>) returnValue);
 
                 final NewPoolModelBehavior behavior = new NewPoolModelBehavior();
                 behavior.getPoolModelBehaviorInitializedEvent().addListener(new IEventListener() {
@@ -292,13 +295,13 @@ public class PoolListModel extends ListWithDetailsModel
                                         new INewAsyncCallback() {
                                             @Override
                                             public void OnSuccess(Object target, Object returnValue) {
-                                                java.util.ArrayList<storage_pool> list =
-                                                        (java.util.ArrayList<storage_pool>) returnValue;
+                                                ArrayList<storage_pool> list =
+                                                        (ArrayList<storage_pool>) returnValue;
                                                 model.getDataCenter().setItems(list);
                                                 model.getDataCenter().setSelectedItem(list.get(0));
 
-                                                java.util.ArrayList<VmTemplate> templates =
-                                                        new java.util.ArrayList<VmTemplate>();
+                                                ArrayList<VmTemplate> templates =
+                                                        new ArrayList<VmTemplate>();
                                                 // TODO: need to be async
                                                 VmTemplate basedOnTemplate =
                                                         DataProvider.GetTemplateByID(vm.getvmt_guid());
@@ -395,8 +398,7 @@ public class PoolListModel extends ListWithDetailsModel
                                                             @Override
                                                             public void OnSuccess(Object modell, Object returnValue) {
 
-                                                                java.util.LinkedList<DiskImage> disks =
-                                                                        (java.util.LinkedList<DiskImage>) returnValue;
+                                                                LinkedList<DiskImage> disks = (LinkedList<DiskImage>) returnValue;
                                                                 // feature for filling storage domain in case of
                                                                 // datacenter list empty
                                                                 if (disks.size() > 0)
@@ -417,7 +419,7 @@ public class PoolListModel extends ListWithDetailsModel
                                                                                         storage_domains storageDomain =
                                                                                                 (storage_domains) returnValue;
                                                                                         model.getStorageDomain()
-                                                                                                .setItems(new java.util.ArrayList<storage_domains>(java.util.Arrays.asList(new storage_domains[] { storageDomain })));
+                                                                                                .setItems(new ArrayList<storage_domains>(Arrays.asList(new storage_domains[] {storageDomain})));
                                                                                         model.getStorageDomain()
                                                                                                 .setSelectedItem(storageDomain);
 
@@ -446,12 +448,12 @@ public class PoolListModel extends ListWithDetailsModel
                         {
                             // model.DataCenter.Value = model.DataCenter.Options.Cast<storage_pool>().FirstOrDefault();
                             model.getDataCenter()
-                                    .setSelectedItem(Linq.FirstOrDefault(Linq.<storage_pool> Cast(model.getDataCenter()
-                                            .getItems())));
+                                    .setSelectedItem(Linq.FirstOrDefault(Linq.<storage_pool>Cast(model.getDataCenter()
+                                        .getItems())));
                         }
 
                         // make sure that Clusters list won't be null:
-                        java.util.ArrayList<VDSGroup> clusters = new java.util.ArrayList<VDSGroup>();
+                        ArrayList<VDSGroup> clusters = new ArrayList<VDSGroup>();
                         if (model.getCluster().getItems() == null)
                         {
                             VDSGroup poolCluster = DataProvider.GetClusterById(pool.getvds_group_id());
@@ -528,7 +530,7 @@ public class PoolListModel extends ListWithDetailsModel
         model.setHashName("remove_pool"); //$NON-NLS-1$
         model.setMessage(ConstantsManager.getInstance().getConstants().poolsMsg());
 
-        java.util.ArrayList<String> list = new java.util.ArrayList<String>();
+        ArrayList<String> list = new ArrayList<String>();
         for (vm_pools item : Linq.<vm_pools> Cast(getSelectedItems()))
         {
             list.add(item.getvm_pool_name());
@@ -554,7 +556,7 @@ public class PoolListModel extends ListWithDetailsModel
             return;
         }
 
-        java.util.ArrayList<VdcActionParametersBase> list = new java.util.ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
         for (Object item : getSelectedItems())
         {
             vm_pools pool = (vm_pools) item;
@@ -652,23 +654,23 @@ public class PoolListModel extends ListWithDetailsModel
                         tempVar.setvm_os((VmOsType) model.getOSType().getSelectedItem());
                         tempVar.setnum_of_monitors((Integer) model.getNumOfMonitors().getSelectedItem());
                         tempVar.setvm_domain(model.getDomain().getIsAvailable() ? (String) model.getDomain()
-                                .getSelectedItem() : ""); //$NON-NLS-1$
+                            .getSelectedItem() : ""); //$NON-NLS-1$
                         tempVar.setvm_mem_size_mb((Integer) model.getMemSize().getEntity());
                         tempVar.setMinAllocatedMem((Integer) model.getMinAllocatedMemory().getEntity());
                         tempVar.setvds_group_id(((VDSGroup) model.getCluster().getSelectedItem()).getId());
                         tempVar.settime_zone((model.getTimeZone().getIsAvailable() && model.getTimeZone()
-                                .getSelectedItem() != null) ? ((java.util.Map.Entry<String, String>) model.getTimeZone()
-                                .getSelectedItem()).getKey()
-                                : ""); //$NON-NLS-1$
+                            .getSelectedItem() != null) ? ((Map.Entry<String, String>) model.getTimeZone()
+                            .getSelectedItem()).getKey()
+                            : ""); //$NON-NLS-1$
                         tempVar.setnum_of_sockets((Integer) model.getNumOfSockets().getEntity());
                         tempVar.setcpu_per_socket((Integer) model.getTotalCPUCores().getEntity()
-                                / (Integer) model.getNumOfSockets().getEntity());
+                            / (Integer) model.getNumOfSockets().getEntity());
                         tempVar.setusb_policy((UsbPolicy) model.getUsbPolicy().getSelectedItem());
                         tempVar.setis_auto_suspend(false);
                         tempVar.setis_stateless(false);
                         tempVar.setdefault_boot_sequence(model.getBootSequence());
                         tempVar.setiso_path(model.getCdImage().getIsChangable() ? (String) model.getCdImage()
-                                .getSelectedItem() : ""); //$NON-NLS-1$
+                            .getSelectedItem() : ""); //$NON-NLS-1$
                         tempVar.setdedicated_vm_for_vds(default_host);
                         tempVar.setkernel_url((String) model.getKernel_path().getEntity());
                         tempVar.setkernel_params((String) model.getKernel_parameters().getEntity());
@@ -700,7 +702,7 @@ public class PoolListModel extends ListWithDetailsModel
                         if (model.getIsNew())
                         {
                             Frontend.RunMultipleAction(VdcActionType.AddVmPoolWithVms,
-                                    new java.util.ArrayList<VdcActionParametersBase>(java.util.Arrays.asList(new VdcActionParametersBase[] { param })),
+                                    new ArrayList<VdcActionParametersBase>(Arrays.asList(new VdcActionParametersBase[] { param })),
                                     new IFrontendMultipleActionAsyncCallback() {
                                         @Override
                                         public void Executed(FrontendMultipleActionAsyncResult result) {
@@ -713,7 +715,7 @@ public class PoolListModel extends ListWithDetailsModel
                         else
                         {
                             Frontend.RunMultipleAction(VdcActionType.UpdateVmPoolWithVms,
-                                    new java.util.ArrayList<VdcActionParametersBase>(java.util.Arrays.asList(new VdcActionParametersBase[] { param })),
+                                    new ArrayList<VdcActionParametersBase>(Arrays.asList(new VdcActionParametersBase[] { param })),
                                     new IFrontendMultipleActionAsyncCallback() {
                                         @Override
                                         public void Executed(FrontendMultipleActionAsyncResult result) {

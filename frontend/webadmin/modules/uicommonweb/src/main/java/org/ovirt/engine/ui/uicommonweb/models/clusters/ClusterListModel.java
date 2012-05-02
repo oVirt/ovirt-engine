@@ -37,6 +37,8 @@ import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
+import java.util.ArrayList;
+
 @SuppressWarnings("unused")
 public class ClusterListModel extends ListWithDetailsModel implements ISupportSystemTreeContext
 {
@@ -99,7 +101,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         }
         else
         {
-            java.util.ArrayList<Object> items = new java.util.ArrayList<Object>();
+            ArrayList<Object> items = new ArrayList<Object>();
             for (Object i : getSelectedItems())
             {
                 items.add(((VDSGroup) i).getId());
@@ -227,7 +229,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
             {
                 ClusterListModel clModel = (ClusterListModel) model;
                 ClusterModel cModel = (ClusterModel) clModel.getWindow();
-                java.util.ArrayList<storage_pool> dataCenters = (java.util.ArrayList<storage_pool>) result;
+                ArrayList<storage_pool> dataCenters = (ArrayList<storage_pool>) result;
 
                 cModel.getDataCenter().setItems(dataCenters);
 
@@ -286,8 +288,8 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
             public void OnSuccess(Object model1, Object result)
             {
                 ClusterModel clusterModel = (ClusterModel) model1;
-                java.util.ArrayList<GlusterVolumeEntity> volumes =
-                        (java.util.ArrayList<GlusterVolumeEntity>) result;
+                ArrayList<GlusterVolumeEntity> volumes =
+                        (ArrayList<GlusterVolumeEntity>) result;
                 if (volumes.size() != 0)
                 {
                     if (cluster.supportsGlusterService()) {
@@ -325,7 +327,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         model.setHashName("remove_cluster"); //$NON-NLS-1$
         model.setMessage(ConstantsManager.getInstance().getConstants().clustersMsg());
 
-        java.util.ArrayList<String> list = new java.util.ArrayList<String>();
+        ArrayList<String> list = new ArrayList<String>();
         for (VDSGroup a : Linq.<VDSGroup> Cast(getSelectedItems()))
         {
             list.add(a.getname());
@@ -351,7 +353,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
             return;
         }
 
-        java.util.ArrayList<VdcActionParametersBase> prms = new java.util.ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> prms = new ArrayList<VdcActionParametersBase>();
         for (Object a : getSelectedItems())
         {
             prms.add(new VdsGroupParametersBase(((VDSGroup) a).getId()));

@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.users;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import org.ovirt.engine.core.common.businessentities.AdUser;
 import org.ovirt.engine.core.common.businessentities.DbUser;
@@ -163,7 +164,7 @@ public class AdElementListModel extends SearchableListModel
             public void OnSuccess(Object model, Object result)
             {
                 AdElementListModel adElementListModel = (AdElementListModel) model;
-                java.util.ArrayList<String> domains = (java.util.ArrayList<String>) result;
+                ArrayList<String> domains = (ArrayList<String>) result;
                 adElementListModel.getDomain().setItems(domains);
                 adElementListModel.getDomain().setSelectedItem(Linq.FirstOrDefault(domains));
                 AsyncQuery _asyncQuery1 = new AsyncQuery();
@@ -175,8 +176,8 @@ public class AdElementListModel extends SearchableListModel
                         AdElementListModel adElementListModel1 = (AdElementListModel) model1;
                         roles roleValue = null;
                         boolean first = true;
-                        java.util.ArrayList<roles> roles = (java.util.ArrayList<roles>) result1;
-                        java.util.ArrayList<roles> newRoles = new ArrayList<roles>();
+                        ArrayList<roles> roles = (ArrayList<roles>) result1;
+                        ArrayList<roles> newRoles = new ArrayList<roles>();
                         for (roles r : roles) {
                             // ignore CONSUME_QUOTA_ROLE in UI
                             if (!r.getId().equals(QuotaPermissionListModel.CONSUME_QUOTA_ROLE_ID)) {
@@ -223,7 +224,7 @@ public class AdElementListModel extends SearchableListModel
             public void OnSuccess(Object model, Object ReturnValue)
             {
                 AdElementListModel adElementListModel = (AdElementListModel) model;
-                java.util.HashSet<Guid> excludeUsers = new java.util.HashSet<Guid>();
+                HashSet<Guid> excludeUsers = new HashSet<Guid>();
                 if (getExcludeItems() != null)
                 {
                     for (Object item : getExcludeItems())
@@ -233,8 +234,8 @@ public class AdElementListModel extends SearchableListModel
                         excludeUsers.add(a.getuser_id());
                     }
                 }
-                setusers(new java.util.ArrayList<EntityModel>());
-                for (IVdcQueryable item : (java.util.ArrayList<IVdcQueryable>) ((VdcQueryReturnValue) ReturnValue).getReturnValue())
+                setusers(new ArrayList<EntityModel>());
+                for (IVdcQueryable item : (ArrayList<IVdcQueryable>) ((VdcQueryReturnValue) ReturnValue).getReturnValue())
                 {
                     AdUser a = (AdUser) item;
                     if (!excludeUsers.contains(a.getUserId()))
@@ -267,7 +268,7 @@ public class AdElementListModel extends SearchableListModel
             public void OnSuccess(Object model, Object ReturnValue)
             {
                 AdElementListModel adElementListModel = (AdElementListModel) model;
-                java.util.HashSet<Guid> excludeUsers = new java.util.HashSet<Guid>();
+                HashSet<Guid> excludeUsers = new HashSet<Guid>();
                 if (adElementListModel.getExcludeItems() != null)
                 {
                     for (Object item : adElementListModel.getExcludeItems())
@@ -277,8 +278,8 @@ public class AdElementListModel extends SearchableListModel
                         excludeUsers.add(a.getuser_id());
                     }
                 }
-                adElementListModel.setgroups(new java.util.ArrayList<EntityModel>());
-                for (IVdcQueryable item : (java.util.ArrayList<IVdcQueryable>) ((VdcQueryReturnValue) ReturnValue).getReturnValue())
+                adElementListModel.setgroups(new ArrayList<EntityModel>());
+                for (IVdcQueryable item : (ArrayList<IVdcQueryable>) ((VdcQueryReturnValue) ReturnValue).getReturnValue())
                 {
                     ad_groups a = (ad_groups) item;
                     if (!excludeUsers.contains(a.getid()))
@@ -312,7 +313,7 @@ public class AdElementListModel extends SearchableListModel
     {
         if (adElementListModel.getusers() != null && adElementListModel.getgroups() != null)
         {
-            java.util.ArrayList<EntityModel> items = new java.util.ArrayList<EntityModel>();
+            ArrayList<EntityModel> items = new ArrayList<EntityModel>();
             items.addAll(getusers());
             items.addAll(getgroups());
             adElementListModel.getSelectAll().setEntity(false);
@@ -331,26 +332,26 @@ public class AdElementListModel extends SearchableListModel
         SyncSearch();
     }
 
-    private java.util.ArrayList<EntityModel> privateusers;
+    private ArrayList<EntityModel> privateusers;
 
-    public java.util.ArrayList<EntityModel> getusers()
+    public ArrayList<EntityModel> getusers()
     {
         return privateusers;
     }
 
-    public void setusers(java.util.ArrayList<EntityModel> value)
+    public void setusers(ArrayList<EntityModel> value)
     {
         privateusers = value;
     }
 
-    private java.util.ArrayList<EntityModel> privategroups;
+    private ArrayList<EntityModel> privategroups;
 
-    public java.util.ArrayList<EntityModel> getgroups()
+    public ArrayList<EntityModel> getgroups()
     {
         return privategroups;
     }
 
-    public void setgroups(java.util.ArrayList<EntityModel> value)
+    public void setgroups(ArrayList<EntityModel> value)
     {
         privategroups = value;
     }

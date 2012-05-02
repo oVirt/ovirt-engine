@@ -195,10 +195,10 @@ public class DataCenterModel extends Model
             public void OnSuccess(Object model, Object result)
             {
                 DataCenterModel dataCenterModel = (DataCenterModel) model;
-                java.util.ArrayList<Version> versions = (java.util.ArrayList<Version>) result;
+                ArrayList<Version> versions = (ArrayList<Version>) result;
 
                 // Rebuild version items.
-                java.util.ArrayList<Version> list = new java.util.ArrayList<Version>();
+                ArrayList<Version> list = new ArrayList<Version>();
                 StorageType type = (StorageType) dataCenterModel.getStorageTypeList().getSelectedItem();
 
                 for (Version item : versions)
@@ -211,7 +211,7 @@ public class DataCenterModel extends Model
 
                 if (type == StorageType.LOCALFS)
                 {
-                    java.util.ArrayList<Version> tempList = new java.util.ArrayList<Version>();
+                    ArrayList<Version> tempList = new ArrayList<Version>();
                     for (Version version : list)
                     {
                         Version version3_0 = new Version(3, 0);

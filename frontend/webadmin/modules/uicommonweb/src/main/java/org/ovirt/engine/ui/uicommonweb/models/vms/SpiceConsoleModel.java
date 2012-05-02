@@ -1,6 +1,10 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 
 import org.ovirt.engine.core.common.action.ChangeDiskCommandParameters;
 import org.ovirt.engine.core.common.action.HibernateVmParameters;
@@ -159,26 +163,26 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
                     tempVar.setRunAsStateless(getEntity().getis_stateless());
                     tempVar.setReinitialize(reinitialize);
                     Frontend.RunMultipleAction(VdcActionType.RunVm,
-                            new java.util.ArrayList<VdcActionParametersBase>(java.util.Arrays.asList(new VdcActionParametersBase[] { tempVar })));
+                            new ArrayList<VdcActionParametersBase>(Arrays.asList(new VdcActionParametersBase[] {tempVar})));
 
                 }
                 else if (StringHelper.stringsEqual(item.getCommandName(), CommandSuspend))
                 {
                     Frontend.RunMultipleAction(VdcActionType.HibernateVm,
-                            new java.util.ArrayList<VdcActionParametersBase>(java.util.Arrays.asList(new VdcActionParametersBase[] { new HibernateVmParameters(getEntity().getId()) })));
+                            new ArrayList<VdcActionParametersBase>(Arrays.asList(new VdcActionParametersBase[] { new HibernateVmParameters(getEntity().getId()) })));
 
                 }
                 else if (StringHelper.stringsEqual(item.getCommandName(), CommandStop))
                 {
                     Frontend.RunMultipleAction(VdcActionType.ShutdownVm,
-                            new java.util.ArrayList<VdcActionParametersBase>(java.util.Arrays.asList(new VdcActionParametersBase[] { new ShutdownVmParameters(getEntity().getId(),
+                            new ArrayList<VdcActionParametersBase>(Arrays.asList(new VdcActionParametersBase[] { new ShutdownVmParameters(getEntity().getId(),
                                     true) })));
 
                 }
                 else if (StringHelper.stringsEqual(item.getCommandName(), CommandChangeCD))
                 {
                     Frontend.RunMultipleAction(VdcActionType.ChangeDisk,
-                            new java.util.ArrayList<VdcActionParametersBase>(java.util.Arrays.asList(new VdcActionParametersBase[] { new ChangeDiskCommandParameters(getEntity().getId(),
+                            new ArrayList<VdcActionParametersBase>(Arrays.asList(new VdcActionParametersBase[] { new ChangeDiskCommandParameters(getEntity().getId(),
                                     StringHelper.stringsEqual(item.getText(), EjectLabel) ? "" : item.getText()) }))); //$NON-NLS-1$
                 }
             }
@@ -249,7 +253,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
                     isoDomain = (storage_domains) result0;
                 }
 
-                java.util.ArrayList<VdcQueryType> queryTypeList = new java.util.ArrayList<VdcQueryType>();
+                ArrayList<VdcQueryType> queryTypeList = new ArrayList<VdcQueryType>();
                 queryTypeList.add(VdcQueryType.GetVdsByVdsId);
                 queryTypeList.add(VdcQueryType.GetConfigurationValue);
                 queryTypeList.add(VdcQueryType.GetConfigurationValue);
@@ -260,8 +264,8 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
                 queryTypeList.add(VdcQueryType.GetConfigurationValue);
                 queryTypeList.add(VdcQueryType.GetConfigurationValue);
 
-                java.util.ArrayList<VdcQueryParametersBase> parametersList =
-                        new java.util.ArrayList<VdcQueryParametersBase>();
+                ArrayList<VdcQueryParametersBase> parametersList =
+                        new ArrayList<VdcQueryParametersBase>();
                 parametersList.add(new GetVdsByVdsIdParameters(thisVm.getrun_on_vds().getValue()));
                 parametersList.add(new GetConfigurationValueParameters(ConfigurationValues.SSLEnabled));
                 parametersList.add(new GetConfigurationValueParameters(ConfigurationValues.CipherSuite));
@@ -294,7 +298,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
     @Override
     public void Executed(FrontendMultipleQueryAsyncResult result)
     {
-        java.util.List<VdcQueryReturnValue> returnValues = result.getReturnValues();
+        List<VdcQueryReturnValue> returnValues = result.getReturnValues();
 
         boolean success = true;
         for (VdcQueryReturnValue returnValue : returnValues)
@@ -439,12 +443,12 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
         SpiceMenuContainerItem changeCDItem = new SpiceMenuContainerItem(id, "Change CD"); //$NON-NLS-1$
         id++;
 
-        java.util.ArrayList<String> isos = new java.util.ArrayList<String>();
+        ArrayList<String> isos = new ArrayList<String>();
 
         if (returnValues.size() > 9)
         {
-            java.util.ArrayList<RepoFileMetaData> repoList =
-                    (java.util.ArrayList<RepoFileMetaData>) returnValues.get(9).getReturnValue();
+            ArrayList<RepoFileMetaData> repoList =
+                    (ArrayList<RepoFileMetaData>) returnValues.get(9).getReturnValue();
             for (RepoFileMetaData RepoFileMetaData : repoList)
             {
                 isos.add(RepoFileMetaData.getRepoFileName());
@@ -453,7 +457,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
 
         isos =
                 isos.size() > 0 ? isos
-                        : new java.util.ArrayList<String>(java.util.Arrays.asList(new String[] { "No CDs" })); //$NON-NLS-1$
+                        : new ArrayList<String>(Arrays.asList(new String[] { "No CDs" })); //$NON-NLS-1$
 
         Collections.sort(isos);
 
@@ -505,7 +509,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
                 {
                     SpiceConsoleModel spiceConsoleModel = (SpiceConsoleModel) model;
                     Iterable networkInterfaces = (Iterable) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
-                    java.util.Iterator networkInterfacesIterator = networkInterfaces.iterator();
+                    Iterator networkInterfacesIterator = networkInterfaces.iterator();
                     while (networkInterfacesIterator.hasNext())
                     {
                         VdsNetworkInterface currentNetworkInterface =

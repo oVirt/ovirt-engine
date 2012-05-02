@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
@@ -45,7 +47,7 @@ import org.ovirt.engine.ui.uicompat.IEqualityComparer;
 @SuppressWarnings("unused")
 public final class Linq
 {
-    public static class AuditLogComparer implements java.util.Comparator<AuditLog>
+    public static class AuditLogComparer implements Comparator<AuditLog>
     {
         @Override
         public int compare(AuditLog x, AuditLog y)
@@ -57,7 +59,7 @@ public final class Linq
         }
     }
 
-    public static class VmAndPoolByNameComparer implements java.util.Comparator
+    public static class VmAndPoolByNameComparer implements Comparator
     {
         @Override
         public int compare(Object x, Object y)
@@ -87,7 +89,7 @@ public final class Linq
      * @param host
      * @return
      */
-    public static class VdsGroupByNameComparer implements java.util.Comparator<VDSGroup>
+    public static class VdsGroupByNameComparer implements Comparator<VDSGroup>
     {
 
         @Override
@@ -98,7 +100,7 @@ public final class Linq
 
     }
 
-    public static class VmTemplateByNameComparer implements java.util.Comparator<VmTemplate>
+    public static class VmTemplateByNameComparer implements Comparator<VmTemplate>
     {
 
         @Override
@@ -109,7 +111,7 @@ public final class Linq
 
     }
 
-    public static class DiskImageByLastModifiedComparer implements java.util.Comparator<DiskImage>
+    public static class DiskImageByLastModifiedComparer implements Comparator<DiskImage>
     {
 
         @Override
@@ -130,7 +132,7 @@ public final class Linq
 
     }
 
-    public static class DiskImageByLastModifiedTimeOfDayComparer implements java.util.Comparator<DiskImage>
+    public static class DiskImageByLastModifiedTimeOfDayComparer implements Comparator<DiskImage>
     {
 
         @Override
@@ -142,7 +144,7 @@ public final class Linq
 
     }
 
-    public static class StorageDomainByNameComparer implements java.util.Comparator<storage_domains>
+    public static class StorageDomainByNameComparer implements Comparator<storage_domains>
     {
 
         @Override
@@ -153,7 +155,7 @@ public final class Linq
 
     }
 
-    public static class StorageDomainModelByNameComparer implements java.util.Comparator<StorageDomainModel>
+    public static class StorageDomainModelByNameComparer implements Comparator<StorageDomainModel>
     {
 
         @Override
@@ -164,7 +166,7 @@ public final class Linq
 
     }
 
-    public static class DiskByInternalDriveMappingComparer implements java.util.Comparator<DiskImage>
+    public static class DiskByInternalDriveMappingComparer implements Comparator<DiskImage>
     {
 
         @Override
@@ -175,7 +177,7 @@ public final class Linq
 
     }
 
-    public static class DiskModelByNameComparer implements java.util.Comparator<DiskModel>
+    public static class DiskModelByNameComparer implements Comparator<DiskModel>
     {
         @Override
         public int compare(DiskModel x, DiskModel y)
@@ -184,7 +186,7 @@ public final class Linq
         }
     }
 
-    public static class DiskModelByAliasComparer implements java.util.Comparator<DiskModel>
+    public static class DiskModelByAliasComparer implements Comparator<DiskModel>
     {
         @Override
         public int compare(DiskModel x, DiskModel y)
@@ -206,7 +208,7 @@ public final class Linq
         }
     }
 
-    public static class NetworkByNameComparer implements java.util.Comparator<network>
+    public static class NetworkByNameComparer implements Comparator<network>
     {
         @Override
         public int compare(network x, network y)
@@ -215,7 +217,7 @@ public final class Linq
         }
     }
 
-    public static class DiskByNameComparer implements java.util.Comparator<DiskImage>
+    public static class DiskByNameComparer implements Comparator<DiskImage>
     {
         @Override
         public int compare(DiskImage x, DiskImage y)
@@ -224,7 +226,7 @@ public final class Linq
         }
     }
 
-    public static class SanTargetModelComparer implements java.util.Comparator<SanTargetModel>
+    public static class SanTargetModelComparer implements Comparator<SanTargetModel>
     {
         @Override
         public int compare(SanTargetModel x, SanTargetModel y)
@@ -233,7 +235,7 @@ public final class Linq
         }
     }
 
-    public static class CaseInsensitiveComparer implements java.util.Comparator<String>
+    public static class CaseInsensitiveComparer implements Comparator<String>
     {
 
         @Override
@@ -244,7 +246,7 @@ public final class Linq
 
     }
 
-    public static class DiskImageByCreationDateComparer implements java.util.Comparator<DiskImage>
+    public static class DiskImageByCreationDateComparer implements Comparator<DiskImage>
     {
 
         @Override
@@ -273,7 +275,7 @@ public final class Linq
         }
     }
 
-    public static class SnapshotByCreationDateCommparer implements java.util.Comparator<Snapshot>
+    public static class SnapshotByCreationDateCommparer implements Comparator<Snapshot>
     {
 
         @Override
@@ -284,7 +286,7 @@ public final class Linq
 
     }
 
-    public static boolean IsHostBelongsToAnyOfClusters(java.util.ArrayList<VDSGroup> clusters, VDS host)
+    public static boolean IsHostBelongsToAnyOfClusters(ArrayList<VDSGroup> clusters, VDS host)
     {
         for (VDSGroup cluster : clusters)
         {
@@ -303,7 +305,7 @@ public final class Linq
      * @param sdl
      * @return
      */
-    public static boolean IsAnyStorageDomainIsMatserAndActive(java.util.List<storage_domains> sdl)
+    public static boolean IsAnyStorageDomainIsMatserAndActive(List<storage_domains> sdl)
     {
         for (storage_domains a : sdl)
         {
@@ -341,7 +343,7 @@ public final class Linq
      *            IList to look in
      * @return Version MinVersion
      */
-    public static Version GetMinVersionByClusters(java.util.List<VDSGroup> source)
+    public static Version GetMinVersionByClusters(List<VDSGroup> source)
     {
         Version minVersion = source != null && source.size() > 0 ? source.get(0).getcompatibility_version() : null;
 
@@ -365,7 +367,7 @@ public final class Linq
      * @param id
      * @return
      */
-    public static boolean IsSDItemExistInList(java.util.ArrayList<storage_domains> items, Guid id)
+    public static boolean IsSDItemExistInList(ArrayList<storage_domains> items, Guid id)
     {
         for (storage_domains b : items)
         {
@@ -384,7 +386,7 @@ public final class Linq
      * @param id
      * @return
      */
-    public static boolean IsClusterItemExistInList(java.util.List<VDSGroup> items, Guid id)
+    public static boolean IsClusterItemExistInList(List<VDSGroup> items, Guid id)
     {
         for (VDSGroup a : items)
         {
@@ -396,7 +398,7 @@ public final class Linq
         return false;
     }
 
-    public static NetworkInterface FindInterfaceByName(java.util.ArrayList<NetworkInterface> items, String name)
+    public static NetworkInterface FindInterfaceByName(ArrayList<NetworkInterface> items, String name)
     {
         for (NetworkInterface i : items)
         {
@@ -408,9 +410,9 @@ public final class Linq
         return null;
     }
 
-    public static java.util.ArrayList<NetworkInterface> VdsNetworkInterfaceListToBase(java.util.ArrayList<VdsNetworkInterface> items)
+    public static ArrayList<NetworkInterface> VdsNetworkInterfaceListToBase(ArrayList<VdsNetworkInterface> items)
     {
-        java.util.ArrayList<NetworkInterface> networkInterfaces = new java.util.ArrayList<NetworkInterface>();
+        ArrayList<NetworkInterface> networkInterfaces = new ArrayList<NetworkInterface>();
         for (VdsNetworkInterface item : items)
         {
             networkInterfaces.add(item);
@@ -419,9 +421,9 @@ public final class Linq
         return networkInterfaces;
     }
 
-    public static java.util.ArrayList<NetworkInterface> VmNetworkInterfaceListToBase(java.util.ArrayList<VmNetworkInterface> items)
+    public static ArrayList<NetworkInterface> VmNetworkInterfaceListToBase(ArrayList<VmNetworkInterface> items)
     {
-        java.util.ArrayList<NetworkInterface> networkInterfaces = new java.util.ArrayList<NetworkInterface>();
+        ArrayList<NetworkInterface> networkInterfaces = new ArrayList<NetworkInterface>();
         for (VmNetworkInterface item : items)
         {
             networkInterfaces.add(item);
@@ -430,7 +432,7 @@ public final class Linq
         return networkInterfaces;
     }
 
-    public static NetworkInterface FindInterfaceByNetworkName(java.util.ArrayList<NetworkInterface> items, String name)
+    public static NetworkInterface FindInterfaceByNetworkName(ArrayList<NetworkInterface> items, String name)
     {
         for (NetworkInterface i : items)
         {
@@ -442,7 +444,7 @@ public final class Linq
         return null;
     }
 
-    public static VdsNetworkInterface FindInterfaceByIsBond(java.util.ArrayList<VdsNetworkInterface> items)
+    public static VdsNetworkInterface FindInterfaceByIsBond(ArrayList<VdsNetworkInterface> items)
     {
         for (VdsNetworkInterface i : items)
         {
@@ -454,7 +456,7 @@ public final class Linq
         return null;
     }
 
-    public static NetworkInterface FindInterfaceNetworkNameNotEmpty(java.util.ArrayList<NetworkInterface> items)
+    public static NetworkInterface FindInterfaceNetworkNameNotEmpty(ArrayList<NetworkInterface> items)
     {
         for (NetworkInterface i : items)
         {
@@ -466,9 +468,9 @@ public final class Linq
         return null;
     }
 
-    public static java.util.ArrayList<NetworkInterface> FindAllInterfaceNetworkNameNotEmpty(java.util.ArrayList<NetworkInterface> items)
+    public static ArrayList<NetworkInterface> FindAllInterfaceNetworkNameNotEmpty(ArrayList<NetworkInterface> items)
     {
-        java.util.ArrayList<NetworkInterface> ret = new java.util.ArrayList<NetworkInterface>();
+        ArrayList<NetworkInterface> ret = new ArrayList<NetworkInterface>();
         for (NetworkInterface i : items)
         {
             if (!StringHelper.isNullOrEmpty(i.getNetworkName()))
@@ -479,9 +481,9 @@ public final class Linq
         return ret;
     }
 
-    public static java.util.ArrayList<VdsNetworkInterface> FindAllInterfaceBondNameIsEmpty(java.util.ArrayList<VdsNetworkInterface> items)
+    public static ArrayList<VdsNetworkInterface> FindAllInterfaceBondNameIsEmpty(ArrayList<VdsNetworkInterface> items)
     {
-        java.util.ArrayList<VdsNetworkInterface> ret = new java.util.ArrayList<VdsNetworkInterface>();
+        ArrayList<VdsNetworkInterface> ret = new ArrayList<VdsNetworkInterface>();
         for (VdsNetworkInterface i : items)
         {
             if (StringHelper.isNullOrEmpty(i.getBondName()))
@@ -492,9 +494,9 @@ public final class Linq
         return ret;
     }
 
-    public static java.util.ArrayList<VdsNetworkInterface> FindAllInterfaceVlanIdIsEmpty(java.util.ArrayList<VdsNetworkInterface> items)
+    public static ArrayList<VdsNetworkInterface> FindAllInterfaceVlanIdIsEmpty(ArrayList<VdsNetworkInterface> items)
     {
-        java.util.ArrayList<VdsNetworkInterface> ret = new java.util.ArrayList<VdsNetworkInterface>();
+        ArrayList<VdsNetworkInterface> ret = new ArrayList<VdsNetworkInterface>();
         for (VdsNetworkInterface i : items)
         {
             if (i.getVlanId() == null)
@@ -505,7 +507,7 @@ public final class Linq
         return ret;
     }
 
-    public static network FindNetworkByName(java.util.ArrayList<network> items, String name)
+    public static network FindNetworkByName(ArrayList<network> items, String name)
     {
         for (network n : items)
         {
@@ -517,9 +519,9 @@ public final class Linq
         return null;
     }
 
-    public static java.util.ArrayList<VDS> FindAllVDSByPmEnabled(java.util.ArrayList<VDS> items)
+    public static ArrayList<VDS> FindAllVDSByPmEnabled(ArrayList<VDS> items)
     {
-        java.util.ArrayList<VDS> ret = new java.util.ArrayList<VDS>();
+        ArrayList<VDS> ret = new ArrayList<VDS>();
         for (VDS i : items)
         {
             if (i.getpm_enabled())
@@ -530,7 +532,7 @@ public final class Linq
         return ret;
     }
 
-    public static SanTargetModel FindSanTargetByNotIsConnected(java.util.ArrayList<SanTargetModel> items)
+    public static SanTargetModel FindSanTargetByNotIsConnected(ArrayList<SanTargetModel> items)
     {
         for (SanTargetModel i : items)
         {
@@ -542,10 +544,10 @@ public final class Linq
         return null;
     }
 
-    public static java.util.ArrayList<storage_domains> FindAllStorageDomainsBySharedStatus(java.util.ArrayList<storage_domains> items,
+    public static ArrayList<storage_domains> FindAllStorageDomainsBySharedStatus(ArrayList<storage_domains> items,
             StorageDomainSharedStatus status)
     {
-        java.util.ArrayList<storage_domains> ret = new java.util.ArrayList<storage_domains>();
+        ArrayList<storage_domains> ret = new ArrayList<storage_domains>();
         for (storage_domains i : items)
         {
             if (i.getstorage_domain_shared_status() == status)
@@ -556,7 +558,7 @@ public final class Linq
         return ret;
     }
 
-    public static VdcReturnValueBase FindVdcReturnValueByDescription(java.util.ArrayList<VdcReturnValueBase> items,
+    public static VdcReturnValueBase FindVdcReturnValueByDescription(ArrayList<VdcReturnValueBase> items,
             String description)
     {
         for (VdcReturnValueBase i : items)
@@ -632,10 +634,10 @@ public final class Linq
      *            cause those elements to be removed from the returned sequence.
      * @return A sequence that contains the set difference of the elements of two sequences.
      */
-    public static <TSource> java.util.ArrayList<TSource> Except(java.util.ArrayList<TSource> first,
-            java.util.ArrayList<TSource> second)
+    public static <TSource> ArrayList<TSource> Except(ArrayList<TSource> first,
+            ArrayList<TSource> second)
     {
-        java.util.ArrayList<TSource> newIEnumerable = new java.util.ArrayList<TSource>();
+        ArrayList<TSource> newIEnumerable = new ArrayList<TSource>();
 
         if (first != null && second != null)
         {
@@ -699,7 +701,7 @@ public final class Linq
 
     public static <TSource> Iterable<TSource> Where(Iterable<TSource> source, IPredicate<TSource> predicate)
     {
-        java.util.ArrayList<TSource> list = new java.util.ArrayList<TSource>();
+        ArrayList<TSource> list = new ArrayList<TSource>();
 
         for (TSource item : source)
         {
@@ -712,7 +714,7 @@ public final class Linq
         return list;
     }
 
-    public static Version SelectHighestVersion(java.util.ArrayList<Version> versions)
+    public static Version SelectHighestVersion(ArrayList<Version> versions)
     {
         Version retVersion = FirstOrDefault(versions);
         for (Version version : versions)
@@ -741,9 +743,9 @@ public final class Linq
     /**
      * Returns a new instance of list containing all items of the provided source.
      */
-    public static <TSource> java.util.ArrayList<TSource> ToList(Iterable<TSource> source)
+    public static <TSource> ArrayList<TSource> ToList(Iterable<TSource> source)
     {
-        java.util.ArrayList<TSource> list = new java.util.ArrayList<TSource>();
+        ArrayList<TSource> list = new ArrayList<TSource>();
         for (TSource item : source)
         {
             list.add(item);
@@ -778,10 +780,10 @@ public final class Linq
     // return false;
     // }
 
-    public static <TSource> java.util.ArrayList<TSource> Distinct(java.util.ArrayList<TSource> source,
+    public static <TSource> ArrayList<TSource> Distinct(ArrayList<TSource> source,
             IEqualityComparer<TSource> comparer)
     {
-        java.util.ArrayList<TSource> list = new java.util.ArrayList<TSource>();
+        ArrayList<TSource> list = new ArrayList<TSource>();
         for (TSource a : source)
         {
             boolean found = false;
@@ -822,9 +824,9 @@ public final class Linq
     // return bag;
     // }
 
-    public static <TResult> java.util.ArrayList<TResult> Cast(Iterable source)
+    public static <TResult> ArrayList<TResult> Cast(Iterable source)
     {
-        java.util.ArrayList<TResult> list = new java.util.ArrayList<TResult>();
+        ArrayList<TResult> list = new ArrayList<TResult>();
         for (Object a : source)
         {
             TResult item = (TResult) a;
@@ -834,11 +836,11 @@ public final class Linq
         return list;
     }
 
-    public static <T extends Comparable<T>> java.util.ArrayList<T> OrderByDescending(java.util.List<T> source)
+    public static <T extends Comparable<T>> ArrayList<T> OrderByDescending(List<T> source)
     {
-        java.util.ArrayList<T> list = new java.util.ArrayList<T>();
+        ArrayList<T> list = new ArrayList<T>();
 
-        java.util.ArrayList<T> sorted = new java.util.ArrayList<T>(source);
+        ArrayList<T> sorted = new ArrayList<T>(source);
         Collections.sort(sorted);
 
         for (int i = sorted.size(); i > 0; i--)
@@ -849,12 +851,11 @@ public final class Linq
         return list;
     }
 
-    public static <T> java.util.ArrayList<T> OrderByDescending(java.util.List<T> source,
-            java.util.Comparator<T> comparer)
+    public static <T> ArrayList<T> OrderByDescending(List<T> source, Comparator<T> comparer)
     {
-        java.util.ArrayList<T> list = new java.util.ArrayList<T>();
+        ArrayList<T> list = new ArrayList<T>();
 
-        java.util.ArrayList<T> sorted = new java.util.ArrayList<T>(source);
+        ArrayList<T> sorted = new ArrayList<T>(source);
         Collections.sort(sorted, comparer);
 
         for (int i = sorted.size(); i > 0; i--)
@@ -868,7 +869,7 @@ public final class Linq
     /**
      * Sorts a not typed list. Allows to do a sort on a list containing elements of different types.
      */
-    public static void Sort(java.util.List source, java.util.Comparator comparer)
+    public static void Sort(List source, Comparator comparer)
     {
         int pos = 0;
         while (pos < source.size())
@@ -887,10 +888,10 @@ public final class Linq
         }
     }
 
-    public static java.util.List Concat(java.util.List... lists)
+    public static List Concat(List... lists)
     {
-        java.util.List result = new java.util.ArrayList<Object>();
-        for (java.util.List list : lists)
+        List result = new ArrayList<Object>();
+        for (List list : lists)
         {
             for (Object item : list)
             {
@@ -999,7 +1000,7 @@ public final class Linq
         return diskModel;
     }
 
-    public final static class TimeZonePredicate implements IPredicate<java.util.Map.Entry<String, String>>
+    public final static class TimeZonePredicate implements IPredicate<Map.Entry<String, String>>
     {
         private final String timeZone;
 
@@ -1009,7 +1010,7 @@ public final class Linq
         }
 
         @Override
-        public boolean Match(java.util.Map.Entry<String, String> source)
+        public boolean Match(Map.Entry<String, String> source)
         {
             return StringHelper.stringsEqual(source.getKey(), timeZone);
         }

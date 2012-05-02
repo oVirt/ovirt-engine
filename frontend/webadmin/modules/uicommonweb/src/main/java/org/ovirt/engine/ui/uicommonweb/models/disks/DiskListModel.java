@@ -393,7 +393,7 @@ public class DiskListModel extends ListWithDetailsModel
 
         model.getLatch().setIsAvailable(false);
 
-        java.util.ArrayList<String> items = new java.util.ArrayList<String>();
+        ArrayList<String> items = new ArrayList<String>();
         for (Object item : getSelectedItems())
         {
             DiskImage disk = (DiskImage) item;

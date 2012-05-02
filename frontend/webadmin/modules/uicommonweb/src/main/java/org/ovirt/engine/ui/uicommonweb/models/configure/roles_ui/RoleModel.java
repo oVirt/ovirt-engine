@@ -11,6 +11,8 @@ import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.RegexValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
+import java.util.ArrayList;
+
 @SuppressWarnings("unused")
 public class RoleModel extends Model
 {
@@ -87,14 +89,14 @@ public class RoleModel extends Model
         privateDescription = value;
     }
 
-    private java.util.ArrayList<SelectionTreeNodeModel> permissionGroupModels;
+    private ArrayList<SelectionTreeNodeModel> permissionGroupModels;
 
-    public java.util.ArrayList<SelectionTreeNodeModel> getPermissionGroupModels()
+    public ArrayList<SelectionTreeNodeModel> getPermissionGroupModels()
     {
         return permissionGroupModels;
     }
 
-    public void setPermissionGroupModels(java.util.ArrayList<SelectionTreeNodeModel> value)
+    public void setPermissionGroupModels(ArrayList<SelectionTreeNodeModel> value)
     {
         if (permissionGroupModels != value)
         {

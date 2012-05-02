@@ -15,6 +15,9 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 @SuppressWarnings("unused")
 public class TemplateVmModelBehavior extends IVmModelBehavior
 {
@@ -43,7 +46,7 @@ public class TemplateVmModelBehavior extends IVmModelBehavior
                             UnitVmModel model = (UnitVmModel) target;
                             storage_pool dataCenter = (storage_pool) returnValue;
                             model.SetDataCenter(model,
-                                    new java.util.ArrayList<storage_pool>(java.util.Arrays.asList(new storage_pool[] { dataCenter })));
+                                    new ArrayList<storage_pool>(Arrays.asList(new storage_pool[] {dataCenter})));
                             model.getDataCenter().setIsChangable(false);
 
                         }
@@ -69,7 +72,7 @@ public class TemplateVmModelBehavior extends IVmModelBehavior
                         TemplateVmModelBehavior behavior = (TemplateVmModelBehavior) array[0];
                         UnitVmModel model = (UnitVmModel) array[1];
                         VmTemplate vmTemplate = ((TemplateVmModelBehavior) (array[0])).template;
-                        java.util.ArrayList<VDSGroup> clusters = (java.util.ArrayList<VDSGroup>) returnValue;
+                        ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) returnValue;
                         model.SetClusters(model, clusters, vmTemplate.getvds_group_id().getValue());
                         behavior.InitTemplate();
                         behavior.InitCdImage();

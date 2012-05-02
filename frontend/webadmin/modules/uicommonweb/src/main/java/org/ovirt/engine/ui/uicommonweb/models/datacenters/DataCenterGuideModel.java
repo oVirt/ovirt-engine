@@ -70,6 +70,10 @@ import org.ovirt.engine.ui.uicompat.ITaskTarget;
 import org.ovirt.engine.ui.uicompat.Task;
 import org.ovirt.engine.ui.uicompat.TaskContext;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 @SuppressWarnings("unused")
 public class DataCenterGuideModel extends GuideModel implements ITaskTarget
 {
@@ -120,11 +124,11 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
     private String path;
     private StorageDomainType domainType = StorageDomainType.values()[0];
     private boolean removeConnection;
-    private java.util.ArrayList<VDSGroup> clusters;
-    private java.util.ArrayList<storage_domains> allStorageDomains;
-    private java.util.ArrayList<storage_domains> attachedStorageDomains;
-    private java.util.ArrayList<storage_domains> isoStorageDomains;
-    private java.util.ArrayList<VDS> allHosts;
+    private ArrayList<VDSGroup> clusters;
+    private ArrayList<storage_domains> allStorageDomains;
+    private ArrayList<storage_domains> attachedStorageDomains;
+    private ArrayList<storage_domains> isoStorageDomains;
+    private ArrayList<VDS> allHosts;
     private VDS localStorageHost;
     private GlusterModeEnum glusterModeEnum;
 
@@ -156,7 +160,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                     @Override
                     public void OnSuccess(Object target, Object returnValue) {
                         DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) target;
-                        java.util.ArrayList<VDSGroup> clusters = (java.util.ArrayList<VDSGroup>) returnValue;
+                        ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) returnValue;
                         dataCenterGuideModel.clusters = clusters;
                         dataCenterGuideModel.UpdateOptionsNonLocalFS();
                     }
@@ -167,8 +171,8 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                     @Override
                     public void OnSuccess(Object target, Object returnValue) {
                         DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) target;
-                        java.util.ArrayList<storage_domains> storageDomains =
-                                (java.util.ArrayList<storage_domains>) returnValue;
+                        ArrayList<storage_domains> storageDomains =
+                                (ArrayList<storage_domains>) returnValue;
                         dataCenterGuideModel.allStorageDomains = storageDomains;
                         dataCenterGuideModel.UpdateOptionsNonLocalFS();
                     }
@@ -179,8 +183,8 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                     @Override
                     public void OnSuccess(Object target, Object returnValue) {
                         DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) target;
-                        java.util.ArrayList<storage_domains> storageDomains =
-                                (java.util.ArrayList<storage_domains>) returnValue;
+                        ArrayList<storage_domains> storageDomains =
+                                (ArrayList<storage_domains>) returnValue;
                         dataCenterGuideModel.attachedStorageDomains = storageDomains;
                         dataCenterGuideModel.UpdateOptionsNonLocalFS();
                     }
@@ -191,8 +195,8 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                     @Override
                     public void OnSuccess(Object target, Object returnValue) {
                         DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) target;
-                        java.util.ArrayList<storage_domains> storageDomains =
-                                (java.util.ArrayList<storage_domains>) returnValue;
+                        ArrayList<storage_domains> storageDomains =
+                                (ArrayList<storage_domains>) returnValue;
                         dataCenterGuideModel.isoStorageDomains = storageDomains;
                         dataCenterGuideModel.UpdateOptionsNonLocalFS();
                     }
@@ -203,7 +207,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                     @Override
                     public void OnSuccess(Object target, Object returnValue) {
                         DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) target;
-                        java.util.ArrayList<VDS> hosts = (java.util.ArrayList<VDS>) returnValue;
+                        ArrayList<VDS> hosts = (ArrayList<VDS>) returnValue;
                         dataCenterGuideModel.allHosts = hosts;
                         dataCenterGuideModel.UpdateOptionsNonLocalFS();
                     }
@@ -216,7 +220,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                     @Override
                     public void OnSuccess(Object target, Object returnValue) {
                         DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) target;
-                        java.util.ArrayList<VDSGroup> clusters = (java.util.ArrayList<VDSGroup>) returnValue;
+                        ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) returnValue;
                         dataCenterGuideModel.clusters = clusters;
                         dataCenterGuideModel.UpdateOptionsLocalFS();
                     }
@@ -228,10 +232,10 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                     @Override
                     public void OnSuccess(Object target, Object returnValue) {
                         DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) target;
-                        java.util.ArrayList<VDS> hosts =
-                                (java.util.ArrayList<VDS>) ((VdcQueryReturnValue) returnValue).getReturnValue();
+                        ArrayList<VDS> hosts =
+                                (ArrayList<VDS>) ((VdcQueryReturnValue) returnValue).getReturnValue();
                         if (hosts == null) {
-                            hosts = new java.util.ArrayList<VDS>();
+                            hosts = new ArrayList<VDS>();
                         }
                         dataCenterGuideModel.allHosts = hosts;
 
@@ -277,9 +281,9 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
             minimalClusterVersion = new Version();
         }
 
-        java.util.ArrayList<VDS> hosts = new java.util.ArrayList<VDS>();
-        java.util.ArrayList<VDS> availableHosts = new java.util.ArrayList<VDS>();
-        java.util.ArrayList<VDS> upHosts = new java.util.ArrayList<VDS>();
+        ArrayList<VDS> hosts = new ArrayList<VDS>();
+        ArrayList<VDS> availableHosts = new ArrayList<VDS>();
+        ArrayList<VDS> upHosts = new ArrayList<VDS>();
         for (VDS vds : allHosts)
         {
             if (Linq.IsClusterItemExistInList(clusters, vds.getvds_group_id())
@@ -328,7 +332,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
             }
         }
 
-        java.util.ArrayList<storage_domains> unattachedStorage = new java.util.ArrayList<storage_domains>();
+        ArrayList<storage_domains> unattachedStorage = new ArrayList<storage_domains>();
         boolean addToList;
         Version version3_0 = new Version(3, 0);
         for (storage_domains item : allStorageDomains)
@@ -360,7 +364,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
             }
         }
 
-        java.util.ArrayList<storage_domains> attachedDataStorages = new java.util.ArrayList<storage_domains>();
+        ArrayList<storage_domains> attachedDataStorages = new ArrayList<storage_domains>();
         for (storage_domains a : attachedStorageDomains)
         {
             if (a.getstorage_domain_type() == StorageDomainType.Data
@@ -420,7 +424,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         // Allow to attach ISO domain only when there are Data storages attached
         // and there ISO storages to attach and ther are no ISO storages actually
         // attached.
-        java.util.ArrayList<storage_domains> attachedIsoStorages = new java.util.ArrayList<storage_domains>();
+        ArrayList<storage_domains> attachedIsoStorages = new ArrayList<storage_domains>();
         for (storage_domains sd : attachedStorageDomains)
         {
             if (sd.getstorage_domain_type() == StorageDomainType.ISO)
@@ -577,7 +581,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         LocalStorageModel localStorageModel = new LocalStorageModel();
         localStorageModel.setRole(StorageDomainType.Data);
 
-        java.util.ArrayList<IStorageModel> list = new java.util.ArrayList<IStorageModel>();
+        ArrayList<IStorageModel> list = new ArrayList<IStorageModel>();
         list.add(localStorageModel);
         model.setItems(list);
         model.setSelectedItem(list.get(0));
@@ -592,10 +596,10 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                         VDS localHost = (VDS) returnValue;
 
                         model.getHost()
-                                .setItems(new java.util.ArrayList<VDS>(java.util.Arrays.asList(new VDS[] { localHost })));
+                                .setItems(new ArrayList<VDS>(Arrays.asList(new VDS[] {localHost})));
                         model.getHost().setSelectedItem(localHost);
                         model.getDataCenter()
-                                .setItems(new java.util.ArrayList<storage_pool>(java.util.Arrays.asList(new storage_pool[] { getEntity() })));
+                                .setItems(new ArrayList<storage_pool>(Arrays.asList(new storage_pool[] { getEntity() })));
                         model.getDataCenter().setSelectedItem(getEntity());
                         UICommand tempVar = new UICommand("OnAddStorage", listModel); //$NON-NLS-1$
                         tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
@@ -629,7 +633,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         model.getDataCenter().setSelectedItem(getEntity());
         model.getDataCenter().setIsChangable(false);
 
-        java.util.ArrayList<IStorageModel> items = new java.util.ArrayList<IStorageModel>();
+        ArrayList<IStorageModel> items = new ArrayList<IStorageModel>();
 
         if (type == StorageDomainType.Data)
         {
@@ -748,7 +752,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
 
         getWindow().StartProgress(null);
 
-        Task.Create(this, new java.util.ArrayList<Object>(java.util.Arrays.asList(new Object[] { "SaveLocal" }))).Run(); //$NON-NLS-1$
+        Task.Create(this, new ArrayList<Object>(Arrays.asList(new Object[] { "SaveLocal" }))).Run(); //$NON-NLS-1$
     }
 
     private void SaveLocalStorage(TaskContext context)
@@ -772,8 +776,8 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                     public void OnSuccess(Object target, Object returnValue) {
 
                         DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) target;
-                        java.util.ArrayList<storage_domains> storages =
-                                (java.util.ArrayList<storage_domains>) returnValue;
+                        ArrayList<storage_domains> storages =
+                                (ArrayList<storage_domains>) returnValue;
                         if (storages != null && storages.size() > 0)
                         {
                             String storageName = storages.get(0).getstorage_name();
@@ -808,8 +812,8 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         tempVar.setstorage_type(localModel.getType());
         connection = tempVar;
 
-        java.util.ArrayList<VdcActionType> actionTypes = new java.util.ArrayList<VdcActionType>();
-        java.util.ArrayList<VdcActionParametersBase> parameters = new java.util.ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionType> actionTypes = new ArrayList<VdcActionType>();
+        ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
 
         actionTypes.add(VdcActionType.AddStorageServerConnection);
         actionTypes.add(VdcActionType.AddLocalStorageDomain);
@@ -860,7 +864,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         };
         Frontend.RunMultipleActions(actionTypes,
                 parameters,
-                new java.util.ArrayList<IFrontendActionAsyncCallback>(java.util.Arrays.asList(new IFrontendActionAsyncCallback[] {
+                new ArrayList<IFrontendActionAsyncCallback>(Arrays.asList(new IFrontendActionAsyncCallback[] {
                         callback1, callback2 })),
                 failureCallback,
                 this);
@@ -887,7 +891,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
     public void OnFinish(TaskContext context, boolean isSucceeded, IStorageModel model, String message)
     {
         context.InvokeUIThread(this,
-                new java.util.ArrayList<Object>(java.util.Arrays.asList(new Object[] { "Finish", isSucceeded, model, //$NON-NLS-1$
+                new ArrayList<Object>(Arrays.asList(new Object[] { "Finish", isSucceeded, model, //$NON-NLS-1$
                         message })));
     }
 
@@ -900,7 +904,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
 
         getWindow().StartProgress(null);
 
-        Task.Create(this, new java.util.ArrayList<Object>(java.util.Arrays.asList(new Object[] { "SaveNfs" }))).Run(); //$NON-NLS-1$
+        Task.Create(this, new ArrayList<Object>(Arrays.asList(new Object[] { "SaveNfs" }))).Run(); //$NON-NLS-1$
     }
 
     private void SaveNfsStorage(TaskContext context)
@@ -924,8 +928,8 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                     public void OnSuccess(Object target, Object returnValue) {
 
                         DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) target;
-                        java.util.ArrayList<storage_domains> storages =
-                                (java.util.ArrayList<storage_domains>) returnValue;
+                        ArrayList<storage_domains> storages =
+                                (ArrayList<storage_domains>) returnValue;
                         if (storages != null && storages.size() > 0)
                         {
                             String storageName = storages.get(0).getstorage_name();
@@ -960,8 +964,8 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         tempVar.setstorage_type(nfsModel.getType());
         connection = tempVar;
 
-        java.util.ArrayList<VdcActionType> actionTypes = new java.util.ArrayList<VdcActionType>();
-        java.util.ArrayList<VdcActionParametersBase> parameters = new java.util.ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionType> actionTypes = new ArrayList<VdcActionType>();
+        ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
 
         actionTypes.add(VdcActionType.AddStorageServerConnection);
         actionTypes.add(VdcActionType.AddNFSStorageDomain);
@@ -1024,7 +1028,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         };
         Frontend.RunMultipleActions(actionTypes,
                 parameters,
-                new java.util.ArrayList<IFrontendActionAsyncCallback>(java.util.Arrays.asList(new IFrontendActionAsyncCallback[] {
+                new ArrayList<IFrontendActionAsyncCallback>(Arrays.asList(new IFrontendActionAsyncCallback[] {
                         callback1, callback2, callback3 })),
                 failureCallback,
                 this);
@@ -1039,7 +1043,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
 
         getWindow().StartProgress(null);
 
-        Task.Create(this, new java.util.ArrayList<Object>(java.util.Arrays.asList(new Object[] { "SaveSan" }))).Run(); //$NON-NLS-1$
+        Task.Create(this, new ArrayList<Object>(Arrays.asList(new Object[] { "SaveSan" }))).Run(); //$NON-NLS-1$
     }
 
     private void SaveSanStorage(TaskContext context)
@@ -1061,8 +1065,8 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                     public void OnSuccess(Object target, Object returnValue) {
 
                         DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) target;
-                        java.util.ArrayList<storage_domains> storages =
-                                (java.util.ArrayList<storage_domains>) returnValue;
+                        ArrayList<storage_domains> storages =
+                                (ArrayList<storage_domains>) returnValue;
                         if (storages != null && storages.size() > 0)
                         {
                             String storageName = storages.get(0).getstorage_name();
@@ -1090,7 +1094,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         SanStorageModel sanModel = (SanStorageModel) model.getSelectedItem();
         VDS host = (VDS) model.getHost().getSelectedItem();
 
-        java.util.ArrayList<String> lunIds = new java.util.ArrayList<String>();
+        ArrayList<String> lunIds = new ArrayList<String>();
         for (LunModel lun : sanModel.getAddedLuns())
         {
             lunIds.add(lun.getLunId());
@@ -1121,13 +1125,13 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                 }, this);
     }
 
-    private void AttachStorageInternal(java.util.List<storage_domains> storages, String title)
+    private void AttachStorageInternal(List<storage_domains> storages, String title)
     {
         ListModel model = new ListModel();
         model.setTitle(title);
         setWindow(model);
 
-        java.util.ArrayList<EntityModel> items = new java.util.ArrayList<EntityModel>();
+        ArrayList<EntityModel> items = new ArrayList<EntityModel>();
         for (storage_domains sd : storages)
         {
             EntityModel tempVar = new EntityModel();
@@ -1162,7 +1166,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
     {
         ListModel model = (ListModel) getWindow();
 
-        java.util.ArrayList<storage_domains> items = new java.util.ArrayList<storage_domains>();
+        ArrayList<storage_domains> items = new ArrayList<storage_domains>();
         for (EntityModel a : Linq.<EntityModel> Cast(model.getItems()))
         {
             if (a.getIsSelected())
@@ -1190,8 +1194,8 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                     @Override
                     public void OnSuccess(Object target, Object returnValue) {
                         DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) target;
-                        java.util.ArrayList<storage_domains> attachedStorage =
-                                new java.util.ArrayList<storage_domains>();
+                        ArrayList<storage_domains> attachedStorage =
+                                new ArrayList<storage_domains>();
 
                         AsyncDataProvider.GetISOStorageDomainList(new AsyncQuery(new Object[] { dataCenterGuideModel,
                                 attachedStorage },
@@ -1200,12 +1204,12 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                                     public void OnSuccess(Object target, Object returnValue) {
                                         Object[] array = (Object[]) target;
                                         DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) array[0];
-                                        java.util.ArrayList<storage_domains> attachedStorage =
-                                                (java.util.ArrayList<storage_domains>) array[1];
-                                        java.util.ArrayList<storage_domains> isoStorageDomains =
-                                                (java.util.ArrayList<storage_domains>) returnValue;
-                                        java.util.ArrayList<storage_domains> sdl =
-                                                new java.util.ArrayList<storage_domains>();
+                                        ArrayList<storage_domains> attachedStorage =
+                                                (ArrayList<storage_domains>) array[1];
+                                        ArrayList<storage_domains> isoStorageDomains =
+                                                (ArrayList<storage_domains>) returnValue;
+                                        ArrayList<storage_domains> sdl =
+                                                new ArrayList<storage_domains>();
 
                                         for (storage_domains a : isoStorageDomains)
                                         {
@@ -1240,11 +1244,11 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                     @Override
                     public void OnSuccess(Object target, Object returnValue) {
                         DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) target;
-                        java.util.ArrayList<storage_domains> storageDomains =
-                                (java.util.ArrayList<storage_domains>) returnValue;
+                        ArrayList<storage_domains> storageDomains =
+                                (ArrayList<storage_domains>) returnValue;
 
-                        java.util.ArrayList<storage_domains> unattachedStorage =
-                                new java.util.ArrayList<storage_domains>();
+                        ArrayList<storage_domains> unattachedStorage =
+                                new ArrayList<storage_domains>();
                         boolean addToList;
                         Version version3_0 = new Version(3, 0);
                         for (storage_domains item : storageDomains)
@@ -1295,7 +1299,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         model.setHashName("new_cluster"); //$NON-NLS-1$
         model.setIsNew(true);
 
-        java.util.ArrayList<storage_pool> dataCenters = new java.util.ArrayList<storage_pool>();
+        ArrayList<storage_pool> dataCenters = new ArrayList<storage_pool>();
         dataCenters.add(getEntity());
         model.getDataCenter().setItems(dataCenters);
         model.getDataCenter().setSelectedItem(getEntity());
@@ -1379,7 +1383,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                         Object[] array = (Object[]) target;
                         DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) array[0];
                         MoveHost moveHostModel = (MoveHost) array[1];
-                        java.util.ArrayList<VDSGroup> clusters = (java.util.ArrayList<VDSGroup>) returnValue;
+                        ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) returnValue;
 
                         moveHostModel.getCluster().setItems(clusters);
                         moveHostModel.getCluster().setSelectedItem(Linq.FirstOrDefault(clusters));
@@ -1410,7 +1414,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
             return;
         }
 
-        model.setSelectedHosts(new java.util.ArrayList<VDS>());
+        model.setSelectedHosts(new ArrayList<VDS>());
         for (EntityModel a : Linq.<EntityModel> Cast(model.getItems()))
         {
             if (a.getIsSelected())
@@ -1420,8 +1424,8 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         }
 
         VDSGroup cluster = (VDSGroup) model.getCluster().getSelectedItem();
-        java.util.ArrayList<VdcActionParametersBase> paramerterList =
-                new java.util.ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> paramerterList =
+                new ArrayList<VdcActionParametersBase>();
         for (VDS host : model.getSelectedHosts())
         {
             // Try to change host's cluster as neccessary.
@@ -1440,10 +1444,10 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                     public void Executed(FrontendMultipleActionAsyncResult result) {
 
                         DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) result.getState();
-                        java.util.ArrayList<VDS> hosts =
+                        ArrayList<VDS> hosts =
                                 ((MoveHost) dataCenterGuideModel.getWindow()).getSelectedHosts();
-                        java.util.ArrayList<VdcReturnValueBase> retVals =
-                                (java.util.ArrayList<VdcReturnValueBase>) result.getReturnValue();
+                        ArrayList<VdcReturnValueBase> retVals =
+                                (ArrayList<VdcReturnValueBase>) result.getReturnValue();
                         if (retVals != null && hosts.size() == retVals.size())
                         {
                             int i = 0;
@@ -1484,7 +1488,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         model.setSpmPriorityValue(null);
 
         model.getDataCenter()
-                .setItems(new java.util.ArrayList<storage_pool>(java.util.Arrays.asList(new storage_pool[] { getEntity() })));
+                .setItems(new ArrayList<storage_pool>(Arrays.asList(new storage_pool[] { getEntity() })));
         model.getDataCenter().setSelectedItem(getEntity());
         model.getDataCenter().setIsChangable(false);
 
@@ -1698,7 +1702,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
     @Override
     public void run(TaskContext context)
     {
-        java.util.ArrayList<Object> data = (java.util.ArrayList<Object>) context.getState();
+        ArrayList<Object> data = (ArrayList<Object>) context.getState();
         String key = (String) data.get(0);
 
         if (StringHelper.stringsEqual(key, "SaveNfs")) //$NON-NLS-1$

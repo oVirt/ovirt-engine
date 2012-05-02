@@ -35,6 +35,8 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
+import java.util.ArrayList;
+
 @SuppressWarnings("unused")
 public class PermissionListModel extends SearchableListModel
 {
@@ -168,7 +170,7 @@ public class PermissionListModel extends SearchableListModel
         model.setTitle(ConstantsManager.getInstance().getConstants().removePermissionTitle());
         model.setHashName("remove_permission"); //$NON-NLS-1$
         model.setMessage(ConstantsManager.getInstance().getConstants().permissionMsg());
-        java.util.ArrayList<String> items = new java.util.ArrayList<String>();
+        ArrayList<String> items = new ArrayList<String>();
         for (Object a : getSelectedItems())
         {
             items.add("Role " + ((permissions) a).getRoleName() + " on User " + ((permissions) a).getOwnerName()); //$NON-NLS-1$ //$NON-NLS-2$
@@ -196,7 +198,7 @@ public class PermissionListModel extends SearchableListModel
                 return;
             }
 
-            java.util.ArrayList<VdcActionParametersBase> list = new java.util.ArrayList<VdcActionParametersBase>();
+            ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
             for (Object perm : getSelectedItems())
             {
                 PermissionsOperationsParametes tempVar = new PermissionsOperationsParametes();
@@ -237,7 +239,7 @@ public class PermissionListModel extends SearchableListModel
             return;
         }
 
-        java.util.ArrayList<DbUser> items = new java.util.ArrayList<DbUser>();
+        ArrayList<DbUser> items = new ArrayList<DbUser>();
         if (model.getIsEveryoneSelected())
         {
             DbUser tempVar = new DbUser();
@@ -259,7 +261,7 @@ public class PermissionListModel extends SearchableListModel
         roles role = (roles) model.getRole().getSelectedItem();
         // adGroup/user
 
-        java.util.ArrayList<VdcActionParametersBase> list = new java.util.ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
         for (DbUser user : items)
         {
             permissions tempVar2 = new permissions();

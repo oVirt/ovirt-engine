@@ -8,6 +8,8 @@ import org.ovirt.engine.ui.uicommonweb.models.tags.TagModel;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 
+import java.util.List;
+
 @SuppressWarnings("unused")
 public class UserPermissionModel extends Model
 {
@@ -36,14 +38,14 @@ public class UserPermissionModel extends Model
         privateRole = value;
     }
 
-    private java.util.List<TagModel> tags;
+    private List<TagModel> tags;
 
-    public java.util.List<TagModel> getTags()
+    public List<TagModel> getTags()
     {
         return tags;
     }
 
-    public void setTags(java.util.List<TagModel> value)
+    public void setTags(List<TagModel> value)
     {
         if (tags != value)
         {

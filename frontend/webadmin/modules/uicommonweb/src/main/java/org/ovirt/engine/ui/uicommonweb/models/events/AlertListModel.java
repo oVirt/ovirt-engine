@@ -23,6 +23,9 @@ import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @SuppressWarnings("unused")
 public class AlertListModel extends SearchableListModel
 {
@@ -44,12 +47,12 @@ public class AlertListModel extends SearchableListModel
     }
 
     @Override
-    public java.util.List getItems()
+    public List getItems()
     {
-        return (java.util.List) super.getItems();
+        return (List) super.getItems();
     }
 
-    public void setItems(java.util.List value)
+    public void setItems(List value)
     {
         super.setItems(value);
     }
@@ -133,8 +136,8 @@ public class AlertListModel extends SearchableListModel
             public void OnSuccess(Object model, Object ReturnValue)
             {
                 AlertListModel alertListModel = (AlertListModel) model;
-                java.util.ArrayList<AuditLog> list =
-                        (java.util.ArrayList<AuditLog>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
+                ArrayList<AuditLog> list =
+                        (ArrayList<AuditLog>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
                 alertListModel.setItems(list);
             }
         };
@@ -180,14 +183,14 @@ public class AlertListModel extends SearchableListModel
 
         if (e.Action == NotifyCollectionChangedAction.Remove)
         {
-            java.util.ArrayList<AuditLog> items = Linq.<AuditLog> Cast(getItems());
+            ArrayList<AuditLog> items = Linq.<AuditLog> Cast(getItems());
 
             // var itemsToRemove =
             // e.OldItems
             // .Cast<AuditLog>()
             // .Select(a => items.FirstOrDefault(b => b.audit_log_id == a.audit_log_id))
             // .ToList();
-            java.util.ArrayList<AuditLog> itemsToRemove = new java.util.ArrayList<AuditLog>();
+            ArrayList<AuditLog> itemsToRemove = new ArrayList<AuditLog>();
             for (Object item : e.OldItems)
             {
                 AuditLog a = (AuditLog) item;

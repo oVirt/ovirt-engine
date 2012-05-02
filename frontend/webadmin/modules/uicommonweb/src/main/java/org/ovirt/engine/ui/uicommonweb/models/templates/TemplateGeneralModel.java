@@ -15,6 +15,9 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
 import org.ovirt.engine.ui.uicompat.Translator;
 
+import java.util.ArrayList;
+import java.util.Map;
+
 @SuppressWarnings("unused")
 public class TemplateGeneralModel extends EntityModel
 {
@@ -32,8 +35,8 @@ public class TemplateGeneralModel extends EntityModel
         }
         else
         {
-            java.util.Map.Entry<VmTemplate, java.util.ArrayList<DiskImage>> pair =
-                    (java.util.Map.Entry<VmTemplate, java.util.ArrayList<DiskImage>>) super.getEntity();
+            Map.Entry<VmTemplate, ArrayList<DiskImage>> pair =
+                    (Map.Entry<VmTemplate, ArrayList<DiskImage>>) super.getEntity();
             return pair.getKey();
         }
     }

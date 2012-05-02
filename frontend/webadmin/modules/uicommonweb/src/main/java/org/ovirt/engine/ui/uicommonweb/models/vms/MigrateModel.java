@@ -9,6 +9,8 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 
+import java.util.ArrayList;
+
 @SuppressWarnings("unused")
 public class MigrateModel extends Model
 {
@@ -25,14 +27,14 @@ public class MigrateModel extends Model
         privateHosts = value;
     }
 
-    private java.util.ArrayList<VM> privateVmList;
+    private ArrayList<VM> privateVmList;
 
-    public java.util.ArrayList<VM> getVmList()
+    public ArrayList<VM> getVmList()
     {
         return privateVmList;
     }
 
-    public void setVmList(java.util.ArrayList<VM> value)
+    public void setVmList(ArrayList<VM> value)
     {
         privateVmList = value;
     }

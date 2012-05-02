@@ -14,12 +14,15 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleQueryAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @SuppressWarnings("unused")
 public class GetAllVmSnapshotsExecutor implements IFrontendMultipleQueryAsyncCallback
 {
     private Guid vmId = new Guid();
     private AsyncQuery query;
-    private java.util.List<DiskImage> disks;
+    private List<DiskImage> disks;
     private boolean isRefresh;
 
     public GetAllVmSnapshotsExecutor(Guid vmId, AsyncQuery query, boolean isRefresh)
@@ -47,8 +50,8 @@ public class GetAllVmSnapshotsExecutor implements IFrontendMultipleQueryAsyncCal
     {
         disks = Linq.<DiskImage> Cast((Iterable) returnValue);
 
-        java.util.ArrayList<VdcQueryType> queryTypes = new java.util.ArrayList<VdcQueryType>();
-        java.util.ArrayList<VdcQueryParametersBase> parameters = new java.util.ArrayList<VdcQueryParametersBase>();
+        ArrayList<VdcQueryType> queryTypes = new ArrayList<VdcQueryType>();
+        ArrayList<VdcQueryParametersBase> parameters = new ArrayList<VdcQueryParametersBase>();
 
         for (DiskImage disk : disks)
         {
@@ -62,8 +65,8 @@ public class GetAllVmSnapshotsExecutor implements IFrontendMultipleQueryAsyncCal
     @Override
     public void Executed(FrontendMultipleQueryAsyncResult result)
     {
-        java.util.ArrayList<AsyncDataProvider.GetSnapshotListQueryResult> list =
-                new java.util.ArrayList<AsyncDataProvider.GetSnapshotListQueryResult>();
+        ArrayList<AsyncDataProvider.GetSnapshotListQueryResult> list =
+                new ArrayList<AsyncDataProvider.GetSnapshotListQueryResult>();
 
         for (int i = 0; i < result.getReturnValues().size(); i++)
         {

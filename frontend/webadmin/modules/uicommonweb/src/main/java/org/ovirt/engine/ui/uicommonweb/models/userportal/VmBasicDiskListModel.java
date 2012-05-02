@@ -1,6 +1,8 @@
 package org.ovirt.engine.ui.uicommonweb.models.userportal;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -45,9 +47,9 @@ public class VmBasicDiskListModel extends SearchableListModel
                 @Override
                 public void OnSuccess(Object model, Object ReturnValue)
                 {
-                    java.util.List<DiskImage> disks =
-                            (java.util.List<DiskImage>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
-                    java.util.ArrayList<DiskImage> diskList = new java.util.ArrayList<DiskImage>();
+                    List<DiskImage> disks =
+                            (List<DiskImage>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
+                    ArrayList<DiskImage> diskList = new ArrayList<DiskImage>();
                     diskList.addAll(disks);
                     Collections.sort(diskList, new Linq.DiskByInternalDriveMappingComparer());
 
@@ -79,9 +81,9 @@ public class VmBasicDiskListModel extends SearchableListModel
                             @Override
                             public void OnSuccess(Object model1, Object ReturnValue)
                             {
-                                java.util.List<DiskImage> disks =
-                                        (java.util.List<DiskImage>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
-                                java.util.ArrayList<DiskImage> diskList = new java.util.ArrayList<DiskImage>();
+                                List<DiskImage> disks =
+                                        (List<DiskImage>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
+                                ArrayList<DiskImage> diskList = new ArrayList<DiskImage>();
                                 diskList.addAll(disks);
                                 Collections.sort(diskList, new Linq.DiskByInternalDriveMappingComparer());
 

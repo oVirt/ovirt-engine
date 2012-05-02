@@ -11,6 +11,8 @@ import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
+import java.util.ArrayList;
+
 @SuppressWarnings("unused")
 public class RunOnceModel extends Model
 {
@@ -345,14 +347,14 @@ public class RunOnceModel extends Model
         }
     }
 
-    private java.util.ArrayList<String> privateCustomPropertiesKeysList;
+    private ArrayList<String> privateCustomPropertiesKeysList;
 
-    public java.util.ArrayList<String> getCustomPropertiesKeysList()
+    public ArrayList<String> getCustomPropertiesKeysList()
     {
         return privateCustomPropertiesKeysList;
     }
 
-    public void setCustomPropertiesKeysList(java.util.ArrayList<String> value)
+    public void setCustomPropertiesKeysList(ArrayList<String> value)
     {
         privateCustomPropertiesKeysList = value;
     }

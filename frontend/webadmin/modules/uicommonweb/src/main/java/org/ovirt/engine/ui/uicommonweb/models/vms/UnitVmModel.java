@@ -1,7 +1,10 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
@@ -744,14 +747,14 @@ public class UnitVmModel extends Model
         privateIsFirstRun = value;
     }
 
-    private java.util.List<DiskModel> disks;
+    private List<DiskModel> disks;
 
-    public java.util.List<DiskModel> getDisks()
+    public List<DiskModel> getDisks()
     {
         return disks;
     }
 
-    public void setDisks(java.util.List<DiskModel> value)
+    public void setDisks(List<DiskModel> value)
     {
         if (disks != value)
         {
@@ -1018,7 +1021,7 @@ public class UnitVmModel extends Model
     {
         super.Initialize();
 
-        setHash(getHashName() + new java.util.Date());
+        setHash(getHashName() + new Date());
 
         getMemSize().setEntity(256);
         getMinAllocatedMemory().setEntity(256);
@@ -1172,7 +1175,7 @@ public class UnitVmModel extends Model
                             {
                                 oldNumOfMonitors = (Integer) model.getNumOfMonitors().getSelectedItem();
                             }
-                            java.util.ArrayList<Integer> numOfMonitors = (java.util.ArrayList<Integer>) returnValue;
+                            ArrayList<Integer> numOfMonitors = (ArrayList<Integer>) returnValue;
                             model.getNumOfMonitors().setItems(numOfMonitors);
                             if (oldNumOfMonitors != null)
                             {
@@ -1184,7 +1187,7 @@ public class UnitVmModel extends Model
         }
         else
         {
-            getNumOfMonitors().setItems(new java.util.ArrayList<Integer>(java.util.Arrays.asList(new Integer[] { 1 })));
+            getNumOfMonitors().setItems(new ArrayList<Integer>(Arrays.asList(new Integer[] {1})));
             getNumOfMonitors().setSelectedItem(1);
         }
     }
@@ -1249,7 +1252,7 @@ public class UnitVmModel extends Model
 
     private void InitDisplayProtocol()
     {
-        java.util.ArrayList<EntityModel> displayProtocolOptions = new java.util.ArrayList<EntityModel>();
+        ArrayList<EntityModel> displayProtocolOptions = new ArrayList<EntityModel>();
 
         EntityModel spiceProtocol = new EntityModel();
         spiceProtocol.setTitle(ConstantsManager.getInstance().getConstants().spiceTitle());
@@ -1273,7 +1276,7 @@ public class UnitVmModel extends Model
         tempVar.setEntity(BootSequence.C);
         EntityModel hardDiskOption = tempVar;
 
-        java.util.ArrayList<EntityModel> firstBootDeviceItems = new java.util.ArrayList<EntityModel>();
+        ArrayList<EntityModel> firstBootDeviceItems = new ArrayList<EntityModel>();
         firstBootDeviceItems.add(hardDiskOption);
         EntityModel tempVar2 = new EntityModel();
         tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cdromTitle());
@@ -1347,7 +1350,7 @@ public class UnitVmModel extends Model
         EntityModel entityModel = (EntityModel) getFirstBootDevice().getSelectedItem();
         BootSequence firstDevice = (BootSequence) entityModel.getEntity();
 
-        java.util.ArrayList<EntityModel> list = new java.util.ArrayList<EntityModel>();
+        ArrayList<EntityModel> list = new ArrayList<EntityModel>();
         for (Object item : getFirstBootDevice().getItems())
         {
             EntityModel a = (EntityModel) item;
@@ -1472,7 +1475,7 @@ public class UnitVmModel extends Model
 
     public void setBootSequence(BootSequence value)
     {
-        java.util.ArrayList<BootSequence> items = new java.util.ArrayList<BootSequence>();
+        ArrayList<BootSequence> items = new ArrayList<BootSequence>();
         for (char a : value.toString().toCharArray())
         {
             items.add(BootSequence.valueOf((new Character(a)).toString()));
@@ -1489,7 +1492,7 @@ public class UnitVmModel extends Model
         }
         getFirstBootDevice().setSelectedItem(firstBootDevice);
 
-        java.util.ArrayList<EntityModel> secondDeviceOptions =
+        ArrayList<EntityModel> secondDeviceOptions =
                 Linq.<EntityModel> Cast(getSecondBootDevice().getItems());
 
         if (items.size() > 1)
@@ -1517,7 +1520,7 @@ public class UnitVmModel extends Model
         }
     }
 
-    public void SetDataCenter(UnitVmModel model, java.util.ArrayList<storage_pool> list)
+    public void SetDataCenter(UnitVmModel model, ArrayList<storage_pool> list)
     {
         if (model.getBehavior().getSystemTreeSelectedItem() != null
                 && model.getBehavior().getSystemTreeSelectedItem().getType() != SystemTreeItemType.System)
@@ -1528,7 +1531,7 @@ public class UnitVmModel extends Model
                 storage_pool selectDataCenter =
                         (storage_pool) model.getBehavior().getSystemTreeSelectedItem().getEntity();
                 model.getDataCenter()
-                        .setItems(new java.util.ArrayList<storage_pool>(java.util.Arrays.asList(new storage_pool[] { selectDataCenter })));
+                        .setItems(new ArrayList<storage_pool>(Arrays.asList(new storage_pool[] { selectDataCenter })));
                 model.getDataCenter().setSelectedItem(selectDataCenter);
                 model.getDataCenter().setIsChangable(false);
                 model.getDataCenter().setInfo("Cannot choose Data Center in tree context"); //$NON-NLS-1$
@@ -1541,7 +1544,7 @@ public class UnitVmModel extends Model
                     if (dc.getId().equals(cluster.getstorage_pool_id()))
                     {
                         model.getDataCenter()
-                                .setItems(new java.util.ArrayList<storage_pool>(java.util.Arrays.asList(new storage_pool[] { dc })));
+                                .setItems(new ArrayList<storage_pool>(Arrays.asList(new storage_pool[] { dc })));
                         model.getDataCenter().setSelectedItem(dc);
                         break;
                     }
@@ -1556,7 +1559,7 @@ public class UnitVmModel extends Model
                     if (dc.getId().equals(host.getstorage_pool_id()))
                     {
                         model.getDataCenter()
-                                .setItems(new java.util.ArrayList<storage_pool>(java.util.Arrays.asList(new storage_pool[] { dc })));
+                                .setItems(new ArrayList<storage_pool>(Arrays.asList(new storage_pool[] { dc })));
                         model.getDataCenter().setSelectedItem(dc);
                         model.getDataCenter().setIsChangable(false);
                         model.getDataCenter().setInfo("Cannot choose Data Center in tree context"); //$NON-NLS-1$
@@ -1571,7 +1574,7 @@ public class UnitVmModel extends Model
                     if (dc.getId().equals(storage.getstorage_pool_id()))
                     {
                         model.getDataCenter()
-                                .setItems(new java.util.ArrayList<storage_pool>(java.util.Arrays.asList(new storage_pool[] { dc })));
+                                .setItems(new ArrayList<storage_pool>(Arrays.asList(new storage_pool[] { dc })));
                         model.getDataCenter().setSelectedItem(dc);
                         model.getDataCenter().setIsChangable(false);
                         model.getDataCenter().setInfo("Cannot choose Data Center in tree context"); //$NON-NLS-1$
@@ -1590,7 +1593,7 @@ public class UnitVmModel extends Model
         }
     }
 
-    public void SetClusters(UnitVmModel model, java.util.ArrayList<VDSGroup> clusters, NGuid clusterGuid)
+    public void SetClusters(UnitVmModel model, ArrayList<VDSGroup> clusters, NGuid clusterGuid)
     {
         IVmModelBehavior behavior = model.getBehavior();
         if (behavior.getSystemTreeSelectedItem() != null
@@ -1602,7 +1605,7 @@ public class UnitVmModel extends Model
             case VMs:
                 VDSGroup cluster = (VDSGroup) behavior.getSystemTreeSelectedItem().getEntity();
                 model.getCluster()
-                        .setItems(new java.util.ArrayList<VDSGroup>(java.util.Arrays.asList(new VDSGroup[] { cluster })));
+                        .setItems(new ArrayList<VDSGroup>(Arrays.asList(new VDSGroup[] {cluster})));
                 model.getCluster().setSelectedItem(cluster);
                 model.getCluster().setIsChangable(false);
                 model.getCluster().setInfo("Cannot choose Cluster in tree context"); //$NON-NLS-1$
@@ -1614,7 +1617,7 @@ public class UnitVmModel extends Model
                     if (iterCluster.getId().equals(host.getvds_group_id()))
                     {
                         model.getCluster()
-                                .setItems(new java.util.ArrayList<VDSGroup>(java.util.Arrays.asList(new VDSGroup[] { iterCluster })));
+                                .setItems(new ArrayList<VDSGroup>(Arrays.asList(new VDSGroup[] { iterCluster })));
                         model.getCluster().setSelectedItem(iterCluster);
                         model.getCluster().setIsChangable(false);
                         model.getCluster().setInfo("Cannot choose Cluster in tree context"); //$NON-NLS-1$
@@ -1806,7 +1809,7 @@ public class UnitVmModel extends Model
     }
 
     protected void setupDescriptionValidation() {
-        getDescription().ValidateEntity(new IValidation[] { new LengthValidation(255), new AsciiOrNoneValidation() });
+        getDescription().ValidateEntity(new IValidation[] {new LengthValidation(255), new AsciiOrNoneValidation()});
     }
 
     private void ValidateMemorySize(EntityModel memorySizeEntityModel, int maxMemSize, int minMemSize)

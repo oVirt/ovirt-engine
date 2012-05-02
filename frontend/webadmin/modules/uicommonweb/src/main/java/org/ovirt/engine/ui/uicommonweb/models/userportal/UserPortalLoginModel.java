@@ -25,6 +25,8 @@ import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
+import java.util.ArrayList;
+
 @SuppressWarnings("unused")
 public class UserPortalLoginModel extends LoginModel
 {
@@ -124,26 +126,26 @@ public class UserPortalLoginModel extends LoginModel
         privateIsENGINEUser = value;
     }
 
-    private java.util.ArrayList<ActionGroup> privateLoggedUserActionGroupList;
+    private ArrayList<ActionGroup> privateLoggedUserActionGroupList;
 
-    public java.util.ArrayList<ActionGroup> getLoggedUserActionGroupList()
+    public ArrayList<ActionGroup> getLoggedUserActionGroupList()
     {
         return privateLoggedUserActionGroupList;
     }
 
-    public void setLoggedUserActionGroupList(java.util.ArrayList<ActionGroup> value)
+    public void setLoggedUserActionGroupList(ArrayList<ActionGroup> value)
     {
         privateLoggedUserActionGroupList = value;
     }
 
-    private java.util.ArrayList<ActionGroup> privateENGINEUserActionGroupList;
+    private ArrayList<ActionGroup> privateENGINEUserActionGroupList;
 
-    public java.util.ArrayList<ActionGroup> getENGINEUserActionGroupList()
+    public ArrayList<ActionGroup> getENGINEUserActionGroupList()
     {
         return privateENGINEUserActionGroupList;
     }
 
-    public void setENGINEUserActionGroupList(java.util.ArrayList<ActionGroup> value)
+    public void setENGINEUserActionGroupList(ArrayList<ActionGroup> value)
     {
         privateENGINEUserActionGroupList = value;
     }
@@ -283,7 +285,7 @@ public class UserPortalLoginModel extends LoginModel
     // Get 'ENGINEUser' role's ActionGroups (and proceed to Step2).
     public void UpdateIsENGINEUser(VdcUser LoggedUser)
     {
-        setENGINEUserActionGroupList(new java.util.ArrayList<ActionGroup>());
+        setENGINEUserActionGroupList(new ArrayList<ActionGroup>());
         this.setLoggedUser(LoggedUser);
 
         AsyncDataProvider.GetRoleActionGroupsByRoleId(new AsyncQuery(this,
@@ -292,7 +294,7 @@ public class UserPortalLoginModel extends LoginModel
                     public void OnSuccess(Object target, Object returnValue) {
 
                         UserPortalLoginModel loginModel = (UserPortalLoginModel) target;
-                        loginModel.setENGINEUserActionGroupList((java.util.ArrayList<ActionGroup>) returnValue);
+                        loginModel.setENGINEUserActionGroupList((ArrayList<ActionGroup>) returnValue);
                         loginModel.GetUserRoles(loginModel);
 
                     }
@@ -309,8 +311,8 @@ public class UserPortalLoginModel extends LoginModel
                     @Override
                     public void OnSuccess(Object target, Object returnValue) {
 
-                        java.util.ArrayList<permissions> permissions = (java.util.ArrayList<permissions>) returnValue;
-                        java.util.ArrayList<Guid> roleIdList = new java.util.ArrayList<Guid>();
+                        ArrayList<permissions> permissions = (ArrayList<permissions>) returnValue;
+                        ArrayList<Guid> roleIdList = new ArrayList<Guid>();
                         boolean everyoneBlankPermission = false;
                         for (permissions permission : permissions)
                         {
@@ -332,7 +334,7 @@ public class UserPortalLoginModel extends LoginModel
                             }
                         }
                         UserPortalLoginModel loginModel1 = (UserPortalLoginModel) target;
-                        loginModel1.setLoggedUserActionGroupList(new java.util.ArrayList<ActionGroup>());
+                        loginModel1.setLoggedUserActionGroupList(new ArrayList<ActionGroup>());
                         if (roleIdList.size() > 0)
                         {
                             loginModel1.setRolesCounter(roleIdList.size());
@@ -350,7 +352,7 @@ public class UserPortalLoginModel extends LoginModel
     // Create a list of ActionGroups associated with the user by retrieving each role's ActionGroups (and proceed to
     // Step4).
     // Use only as 'Step3' of 'UpdateIsENGINEUser'
-    public void UpdateUserActionGroups(Object targetObject, java.util.ArrayList<Guid> roleIdList)
+    public void UpdateUserActionGroups(Object targetObject, ArrayList<Guid> roleIdList)
     {
         for (Guid roleID : roleIdList)
         {
@@ -360,8 +362,8 @@ public class UserPortalLoginModel extends LoginModel
                         public void OnSuccess(Object target, Object returnValue) {
 
                             UserPortalLoginModel loginModel = (UserPortalLoginModel) target;
-                            java.util.ArrayList<ActionGroup> roleActionGroupList =
-                                    (java.util.ArrayList<ActionGroup>) returnValue;
+                            ArrayList<ActionGroup> roleActionGroupList =
+                                    (ArrayList<ActionGroup>) returnValue;
                             for (ActionGroup actionGroup : roleActionGroupList)
                             {
                                 if (!loginModel.getLoggedUserActionGroupList().contains(actionGroup))

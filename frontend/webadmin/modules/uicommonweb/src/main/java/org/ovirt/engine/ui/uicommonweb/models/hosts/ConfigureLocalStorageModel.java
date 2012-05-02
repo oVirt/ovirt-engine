@@ -580,11 +580,11 @@ public class ConfigureLocalStorageModel extends Model {
         // SearchParameters(StringFormat.format("DataCenter: name=%1$s", getCommonName() + "*"),
         // SearchType.StoragePool));
         //
-        // java.util.ArrayList<storage_pool> dataCenterList = new java.util.ArrayList<storage_pool>();
-        // java.util.ArrayList<VDSGroup> clusterList = null;
+        // ArrayList<storage_pool> dataCenterList = new ArrayList<storage_pool>();
+        // ArrayList<VDSGroup> clusterList = null;
         // if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
         // {
-        // dataCenterList = Linq.<storage_pool>Cast((java.util.ArrayList<IVdcQueryable>)returnValue.getReturnValue());
+        // dataCenterList = Linq.<storage_pool>Cast((ArrayList<IVdcQueryable>)returnValue.getReturnValue());
         // }
         // //Check if current settings suitable for local setup (in case just SD creation failed - re-using the same
         // setup)
@@ -621,7 +621,7 @@ public class ConfigureLocalStorageModel extends Model {
         // }
         // }
         // }
-        // java.util.ArrayList<String> listNames = new java.util.ArrayList<String>();
+        // ArrayList<String> listNames = new ArrayList<String>();
         // //In case we found a suitable candidate for re-use:
         // if(candidate != null)
         // {
@@ -656,8 +656,8 @@ public class ConfigureLocalStorageModel extends Model {
         // //No clusters available - pick up new name.
         // if(clusterList.isEmpty())
         // {
-        // java.util.ArrayList<VDSGroup> listClusters = DataProvider.GetClusterList();
-        // listNames = new java.util.ArrayList<String>();
+        // ArrayList<VDSGroup> listClusters = DataProvider.GetClusterList();
+        // listNames = new ArrayList<String>();
         // for (VDSGroup cluster : listClusters)
         // {
         // listNames.add(cluster.getname());
@@ -688,7 +688,7 @@ public class ConfigureLocalStorageModel extends Model {
         // else
         // {
         // //Didn't found DC to re-use, so we select new names:
-        // listNames = new java.util.ArrayList<String>();
+        // listNames = new ArrayList<String>();
         // for (storage_pool storagePool : dataCenterList)
         // {
         // listNames.add(storagePool.getname());
@@ -705,7 +705,7 @@ public class ConfigureLocalStorageModel extends Model {
         // for (int i = 0; i < array.length; i++)
         // {
         // Version vdsVersion = new Version(array[i]);
-        // for (Version version : (java.util.List<Version>)getDataCenter().getVersion().getItems())
+        // for (Version version : (List<Version>)getDataCenter().getVersion().getItems())
         // {
         // if (version.equals(vdsVersion) && version.compareTo(maxVersion) > 0)
         // {
@@ -720,7 +720,7 @@ public class ConfigureLocalStorageModel extends Model {
         // }
         // }
         //
-        // listNames = new java.util.ArrayList<String>();
+        // listNames = new ArrayList<String>();
         // if (clusterList == null)
         // {
         // clusterList = DataProvider.GetClusterList();
@@ -736,13 +736,13 @@ public class ConfigureLocalStorageModel extends Model {
         // //Choose default CPU name to match host.
         // if (host.getCpuName() != null && getCluster().getCPU().getSelectedItem() != null)
         // {
-        // getCluster().getCPU().setSelectedItem(Linq.FirstOrDefault((java.util.List<ServerCpu>)getCluster().getCPU().getItems(),
+        // getCluster().getCPU().setSelectedItem(Linq.FirstOrDefault((List<ServerCpu>)getCluster().getCPU().getItems(),
         // new Linq.ServerCpuPredicate(host.getCpuName().getCpuName())));
         // }
         //
         // //Always choose a available storage name.
-        // java.util.ArrayList<storage_domains> listStorageDomains = DataProvider.GetStorageDomainList();
-        // listNames = new java.util.ArrayList<String>();
+        // ArrayList<storage_domains> listStorageDomains = DataProvider.GetStorageDomainList();
+        // listNames = new ArrayList<String>();
         // for (storage_domains storageDomain : listStorageDomains)
         // {
         // listNames.add(storageDomain.getstorage_name());

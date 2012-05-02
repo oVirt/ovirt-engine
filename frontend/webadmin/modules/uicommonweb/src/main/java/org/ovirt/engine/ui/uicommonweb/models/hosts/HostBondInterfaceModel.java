@@ -15,6 +15,9 @@ import org.ovirt.engine.ui.uicommonweb.validation.IpAddressValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.SubnetMaskValidation;
 
+import java.util.ArrayList;
+import java.util.Map;
+
 @SuppressWarnings("unused")
 public class HostBondInterfaceModel extends Model
 {
@@ -195,10 +198,10 @@ public class HostBondInterfaceModel extends Model
         setNetwork(new ListModel());
         setBootProtocolAvailable(true);
         setBondingOptions(new ListModel());
-        java.util.Map.Entry<String, EntityModel> defaultItem = null;
-        RefObject<java.util.Map.Entry<String, EntityModel>> tempRef_defaultItem =
-                new RefObject<java.util.Map.Entry<String, EntityModel>>(defaultItem);
-        java.util.ArrayList<java.util.Map.Entry<String, EntityModel>> list =
+        Map.Entry<String, EntityModel> defaultItem = null;
+        RefObject<Map.Entry<String, EntityModel>> tempRef_defaultItem =
+                new RefObject<Map.Entry<String, EntityModel>>(defaultItem);
+        ArrayList<Map.Entry<String, EntityModel>> list =
                 DataProvider.GetBondingOptionList(tempRef_defaultItem);
         defaultItem = tempRef_defaultItem.argvalue;
         getBondingOptions().setItems(list);

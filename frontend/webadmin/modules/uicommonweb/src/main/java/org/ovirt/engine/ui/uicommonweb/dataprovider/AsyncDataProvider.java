@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
@@ -96,16 +98,16 @@ import org.ovirt.engine.ui.uicommonweb.Linq;
 public final class AsyncDataProvider {
 
     // dictionary to hold cache of all config values (per version) queried by client, if the request for them succeeded.
-    private static java.util.HashMap<java.util.Map.Entry<ConfigurationValues, String>, Object> cachedConfigValues =
-            new java.util.HashMap<java.util.Map.Entry<ConfigurationValues, String>, Object>();
+    private static HashMap<Map.Entry<ConfigurationValues, String>, Object> cachedConfigValues =
+            new HashMap<Map.Entry<ConfigurationValues, String>, Object>();
 
     public static void GetDomainListViaPublic(AsyncQuery aQuery, boolean filterInternalDomain) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
             {
-                return source != null ? new java.util.ArrayList<String>((java.util.ArrayList<String>) source)
-                        : new java.util.ArrayList<String>();
+                return source != null ? new ArrayList<String>((ArrayList<String>) source)
+                        : new ArrayList<String>();
             }
         };
         GetDomainListParameters tempVar = new GetDomainListParameters();
@@ -147,7 +149,7 @@ public final class AsyncDataProvider {
             {
                 if (source != null)
                 {
-                    java.util.ArrayList<storage_domains> storageDomains = (java.util.ArrayList<storage_domains>) source;
+                    ArrayList<storage_domains> storageDomains = (ArrayList<storage_domains>) source;
                     for (storage_domains domain : storageDomains)
                     {
                         if (domain.getstorage_domain_type() == StorageDomainType.ISO)
@@ -170,7 +172,7 @@ public final class AsyncDataProvider {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
             {
-                java.util.ArrayList<storage_domains> storageDomains = (java.util.ArrayList<storage_domains>) source;
+                ArrayList<storage_domains> storageDomains = (ArrayList<storage_domains>) source;
                 for (storage_domains domain : storageDomains)
                 {
                     if (domain.getstorage_domain_type() == StorageDomainType.ImportExport)
@@ -194,8 +196,8 @@ public final class AsyncDataProvider {
             {
                 if (source != null)
                 {
-                    java.util.ArrayList<RepoFileMetaData> repoList = (java.util.ArrayList<RepoFileMetaData>) source;
-                    java.util.ArrayList<String> fileNameList = new java.util.ArrayList<String>();
+                    ArrayList<RepoFileMetaData> repoList = (ArrayList<RepoFileMetaData>) source;
+                    ArrayList<String> fileNameList = new ArrayList<String>();
                     for (RepoFileMetaData RepoFileMetaData : repoList)
                     {
                         fileNameList.add(RepoFileMetaData.getRepoFileName());
@@ -204,7 +206,7 @@ public final class AsyncDataProvider {
                     Collections.sort(fileNameList, new Linq.CaseInsensitiveComparer());
                     return fileNameList;
                 }
-                return new java.util.ArrayList<String>();
+                return new ArrayList<String>();
             }
         };
 
@@ -221,8 +223,8 @@ public final class AsyncDataProvider {
             {
                 if (source != null)
                 {
-                    java.util.ArrayList<RepoFileMetaData> repoList = (java.util.ArrayList<RepoFileMetaData>) source;
-                    java.util.ArrayList<String> fileNameList = new java.util.ArrayList<String>();
+                    ArrayList<RepoFileMetaData> repoList = (ArrayList<RepoFileMetaData>) source;
+                    ArrayList<String> fileNameList = new ArrayList<String>();
                     for (RepoFileMetaData RepoFileMetaData : repoList)
                     {
                         fileNameList.add(RepoFileMetaData.getRepoFileName());
@@ -231,7 +233,7 @@ public final class AsyncDataProvider {
                     Collections.sort(fileNameList, new Linq.CaseInsensitiveComparer());
                     return fileNameList;
                 }
-                return new java.util.ArrayList<String>();
+                return new ArrayList<String>();
             }
         };
 
@@ -296,7 +298,7 @@ public final class AsyncDataProvider {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
             {
-                java.util.ArrayList<VM> vms = Linq.<VM> Cast((java.util.ArrayList<IVdcQueryable>) source);
+                ArrayList<VM> vms = Linq.<VM> Cast((ArrayList<IVdcQueryable>) source);
                 return vms.size() > 0 ? vms.get(0) : null;
             }
         };
@@ -310,7 +312,7 @@ public final class AsyncDataProvider {
             {
                 if (source == null)
                 {
-                    return new java.util.HashMap<String, String>();
+                    return new HashMap<String, String>();
                 }
                 return source;
             }
@@ -325,7 +327,7 @@ public final class AsyncDataProvider {
             {
                 if (source == null)
                 {
-                    return new java.util.ArrayList<storage_pool>();
+                    return new ArrayList<storage_pool>();
                 }
                 return source;
             }
@@ -441,11 +443,11 @@ public final class AsyncDataProvider {
             {
                 if (source != null)
                 {
-                    java.util.ArrayList<VDSGroup> list = (java.util.ArrayList<VDSGroup>) source;
+                    ArrayList<VDSGroup> list = (ArrayList<VDSGroup>) source;
                     Collections.sort(list, new Linq.VdsGroupByNameComparer());
                     return list;
                 }
-                return new java.util.ArrayList<VDSGroup>();
+                return new ArrayList<VDSGroup>();
             }
         };
         Frontend.RunQuery(VdcQueryType.GetVdsGroupsByStoragePoolId,
@@ -460,11 +462,11 @@ public final class AsyncDataProvider {
             {
                 if (source != null)
                 {
-                    java.util.ArrayList<VDSGroup> list = (java.util.ArrayList<VDSGroup>) source;
+                    ArrayList<VDSGroup> list = (ArrayList<VDSGroup>) source;
                     Collections.sort(list, new Linq.VdsGroupByNameComparer());
                     return list;
                 }
-                return new java.util.ArrayList<VDSGroup>();
+                return new ArrayList<VDSGroup>();
             }
         };
         Frontend.RunQuery(VdcQueryType.GetAllVdsGroups, new VdcQueryParametersBase(), aQuery);
@@ -477,7 +479,7 @@ public final class AsyncDataProvider {
             {
                 if (source == null)
                 {
-                    return new java.util.ArrayList<DiskImage>();
+                    return new ArrayList<DiskImage>();
                 }
                 return source;
             }
@@ -522,11 +524,11 @@ public final class AsyncDataProvider {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
             {
-                java.util.ArrayList<VmTemplate> list = new java.util.ArrayList<VmTemplate>();
+                ArrayList<VmTemplate> list = new ArrayList<VmTemplate>();
                 if (source != null)
                 {
                     VmTemplate blankTemplate = new VmTemplate();
-                    for (VmTemplate template : (java.util.ArrayList<VmTemplate>) source)
+                    for (VmTemplate template : (ArrayList<VmTemplate>) source)
                     {
                         if (template.getId().equals(Guid.Empty))
                         {
@@ -555,10 +557,10 @@ public final class AsyncDataProvider {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
             {
-                java.util.ArrayList<VmTemplate> list = new java.util.ArrayList<VmTemplate>();
+                ArrayList<VmTemplate> list = new ArrayList<VmTemplate>();
                 if (source != null)
                 {
-                    for (VmTemplate template : (java.util.ArrayList<VmTemplate>) source)
+                    for (VmTemplate template : (ArrayList<VmTemplate>) source)
                     {
                         if (template.getstatus() == VmTemplateStatus.OK)
                         {
@@ -582,11 +584,11 @@ public final class AsyncDataProvider {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
             {
-                java.util.ArrayList<Integer> nums = new java.util.ArrayList<Integer>();
+                ArrayList<Integer> nums = new ArrayList<Integer>();
                 if (source != null)
                 {
                     Iterable numEnumerable = (Iterable) source;
-                    java.util.Iterator numIterator = numEnumerable.iterator();
+                    Iterator numIterator = numEnumerable.iterator();
                     while (numIterator.hasNext())
                     {
                         nums.add(Integer.parseInt(numIterator.next().toString()));
@@ -607,7 +609,7 @@ public final class AsyncDataProvider {
             {
                 if (source == null)
                 {
-                    return new java.util.ArrayList<storage_domains>();
+                    return new ArrayList<storage_domains>();
                 }
                 return source;
             }
@@ -624,7 +626,7 @@ public final class AsyncDataProvider {
             {
                 if (source == null)
                 {
-                    return new java.util.ArrayList<storage_domains>();
+                    return new ArrayList<storage_domains>();
                 }
                 return source;
             }
@@ -658,7 +660,7 @@ public final class AsyncDataProvider {
             {
                 if (source != null)
                 {
-                    return ((java.util.Map.Entry<String, String>) source).getKey();
+                    return ((Map.Entry<String, String>) source).getKey();
                 }
                 return ""; //$NON-NLS-1$
             }
@@ -684,11 +686,11 @@ public final class AsyncDataProvider {
             {
                 if (source != null)
                 {
-                    java.util.ArrayList<VDS> list = Linq.<VDS> Cast((java.util.ArrayList<IVdcQueryable>) source);
+                    ArrayList<VDS> list = Linq.<VDS> Cast((ArrayList<IVdcQueryable>) source);
                     return list;
                 }
 
-                return new java.util.ArrayList<VDS>();
+                return new ArrayList<VDS>();
             }
         };
         Frontend.RunQuery(VdcQueryType.Search, new SearchParameters("Host: cluster = " + clusterName + " sortby name", //$NON-NLS-1$ //$NON-NLS-2$
@@ -702,11 +704,11 @@ public final class AsyncDataProvider {
             {
                 if (source != null)
                 {
-                    java.util.ArrayList<VDS> list = Linq.<VDS> Cast((java.util.ArrayList<IVdcQueryable>) source);
+                    ArrayList<VDS> list = Linq.<VDS> Cast((ArrayList<IVdcQueryable>) source);
                     return list;
                 }
 
-                return new java.util.ArrayList<VDS>();
+                return new ArrayList<VDS>();
             }
         };
         Frontend.RunQuery(VdcQueryType.Search, new SearchParameters("Host: datacenter = " + dataCenterName //$NON-NLS-1$
@@ -722,7 +724,7 @@ public final class AsyncDataProvider {
                 {
                     return source;
                 }
-                return new java.util.ArrayList<DiskImage>();
+                return new ArrayList<DiskImage>();
             }
         };
         GetAllDisksByVmIdParameters params = new GetAllDisksByVmIdParameters(vmId);
@@ -741,13 +743,13 @@ public final class AsyncDataProvider {
             privatePreviewingImage = value;
         }
 
-        private java.util.ArrayList<DiskImage> privateSnapshots;
+        private ArrayList<DiskImage> privateSnapshots;
 
-        public java.util.ArrayList<DiskImage> getSnapshots() {
+        public ArrayList<DiskImage> getSnapshots() {
             return privateSnapshots;
         }
 
-        private void setSnapshots(java.util.ArrayList<DiskImage> value) {
+        private void setSnapshots(ArrayList<DiskImage> value) {
             privateSnapshots = value;
         }
 
@@ -771,7 +773,7 @@ public final class AsyncDataProvider {
             privateVmId = value;
         }
 
-        public GetSnapshotListQueryResult(Guid previewingImage, java.util.ArrayList<DiskImage> snapshots, DiskImage disk) {
+        public GetSnapshotListQueryResult(Guid previewingImage, ArrayList<DiskImage> snapshots, DiskImage disk) {
             setPreviewingImage(previewingImage);
             setSnapshots(snapshots);
             setDisk(disk);
@@ -787,7 +789,7 @@ public final class AsyncDataProvider {
                 GetAllVmSnapshotsByDriveQueryReturnValue returnValue =
                         (GetAllVmSnapshotsByDriveQueryReturnValue) _asyncQuery.OriginalReturnValue;
                 return new GetSnapshotListQueryResult(returnValue.getTryingImage(),
-                        (java.util.ArrayList<DiskImage>) source,
+                        (ArrayList<DiskImage>) source,
                         (DiskImage) _asyncQuery.Data[0]);
             }
         };
@@ -819,8 +821,8 @@ public final class AsyncDataProvider {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
             {
-                return source != null ? new java.util.ArrayList<String>((java.util.ArrayList<String>) source)
-                        : new java.util.ArrayList<String>();
+                return source != null ? new ArrayList<String>((ArrayList<String>) source)
+                        : new ArrayList<String>();
             }
         };
         GetDomainListParameters tempVar = new GetDomainListParameters();
@@ -833,7 +835,7 @@ public final class AsyncDataProvider {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
             {
-                return source != null ? (java.util.ArrayList<roles>) source : new java.util.ArrayList<roles>();
+                return source != null ? (ArrayList<roles>) source : new ArrayList<roles>();
             }
         };
         Frontend.RunQuery(VdcQueryType.GetAllRoles, new MultilevelAdministrationsQueriesParameters(), aQuery);
@@ -863,7 +865,7 @@ public final class AsyncDataProvider {
                     return null;
                 }
 
-                ArrayList<DiskImageBase> list = new java.util.ArrayList<DiskImageBase>();
+                ArrayList<DiskImageBase> list = new ArrayList<DiskImageBase>();
                 boolean hasBootDisk = false;
                 for (DiskImageBase disk : (ArrayList<DiskImageBase>) source)
                 {
@@ -892,7 +894,7 @@ public final class AsyncDataProvider {
             {
                 if (source == null)
                 {
-                    return new java.util.ArrayList<network>();
+                    return new ArrayList<network>();
                 }
                 return source;
             }
@@ -929,11 +931,11 @@ public final class AsyncDataProvider {
             {
                 if (source != null)
                 {
-                    java.util.ArrayList<VDS> list = Linq.<VDS> Cast((Iterable) source);
+                    ArrayList<VDS> list = Linq.<VDS> Cast((Iterable) source);
                     return list;
                 }
 
-                return new java.util.ArrayList<VDS>();
+                return new ArrayList<VDS>();
             }
         };
         SearchParameters searchParameters = new SearchParameters("Host:", SearchType.VDS); //$NON-NLS-1$
@@ -949,12 +951,12 @@ public final class AsyncDataProvider {
             {
                 if (source != null)
                 {
-                    java.util.ArrayList<GlusterVolumeEntity> list =
-                            (java.util.ArrayList<GlusterVolumeEntity>) source;
+                    ArrayList<GlusterVolumeEntity> list =
+                            (ArrayList<GlusterVolumeEntity>) source;
                     return list;
                 }
 
-                return new java.util.ArrayList<GlusterVolumeEntity>();
+                return new ArrayList<GlusterVolumeEntity>();
             }
         };
         SearchParameters searchParameters;
@@ -1008,7 +1010,7 @@ public final class AsyncDataProvider {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
             {
-                return source != null ? (java.util.HashMap<Version, String>) source : null;
+                return source != null ? (HashMap<Version, String>) source : null;
             }
         };
         Frontend.RunQuery(VdcQueryType.GetVmCustomProperties, new VdcQueryParametersBase(), aQuery);
@@ -1019,8 +1021,8 @@ public final class AsyncDataProvider {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
             {
-                return source != null ? (java.util.ArrayList<permissions>) source
-                        : new java.util.ArrayList<permissions>();
+                return source != null ? (ArrayList<permissions>) source
+                        : new ArrayList<permissions>();
             }
         };
         Frontend.RunQuery(VdcQueryType.GetPermissionsByAdElementId,
@@ -1033,8 +1035,8 @@ public final class AsyncDataProvider {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
             {
-                return source != null ? (java.util.ArrayList<ActionGroup>) source
-                        : new java.util.ArrayList<ActionGroup>();
+                return source != null ? (ArrayList<ActionGroup>) source
+                        : new ArrayList<ActionGroup>();
             }
         };
         Frontend.RunQuery(VdcQueryType.GetRoleActionGroupsByRoleId,
@@ -1073,7 +1075,7 @@ public final class AsyncDataProvider {
             {
                 if (source == null)
                 {
-                    return new java.util.ArrayList<storage_pool>();
+                    return new ArrayList<storage_pool>();
                 }
                 return source;
             }
@@ -1094,11 +1096,11 @@ public final class AsyncDataProvider {
             {
                 if (source != null)
                 {
-                    java.util.ArrayList<VDSGroup> list = (java.util.ArrayList<VDSGroup>) source;
+                    ArrayList<VDSGroup> list = (ArrayList<VDSGroup>) source;
                     Collections.sort(list, new Linq.VdsGroupByNameComparer());
                     return list;
                 }
-                return new java.util.ArrayList<VDSGroup>();
+                return new ArrayList<VDSGroup>();
             }
         };
 
@@ -1113,11 +1115,11 @@ public final class AsyncDataProvider {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
             {
-                java.util.ArrayList<VmTemplate> list = new java.util.ArrayList<VmTemplate>();
+                ArrayList<VmTemplate> list = new ArrayList<VmTemplate>();
                 if (source != null)
                 {
                     VmTemplate blankTemplate = new VmTemplate();
-                    for (VmTemplate template : (java.util.ArrayList<VmTemplate>) source)
+                    for (VmTemplate template : (ArrayList<VmTemplate>) source)
                     {
                         if (template.getId().equals(Guid.Empty))
                         {
@@ -1176,7 +1178,7 @@ public final class AsyncDataProvider {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
             {
-                return source != null ? (java.util.ArrayList<storage_pool>) source : null;
+                return source != null ? (ArrayList<storage_pool>) source : null;
             }
         };
         Frontend.RunQuery(VdcQueryType.GetStoragePoolsByStorageDomainId,
@@ -1191,11 +1193,11 @@ public final class AsyncDataProvider {
             {
                 if (source == null)
                 {
-                    return new java.util.ArrayList<Version>();
+                    return new ArrayList<Version>();
                 }
                 else
                 {
-                    java.util.ArrayList<Version> list = (java.util.ArrayList<Version>) source;
+                    ArrayList<Version> list = (ArrayList<Version>) source;
                     Collections.sort(list);
                     return list;
                 }
@@ -1251,7 +1253,7 @@ public final class AsyncDataProvider {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
             {
-                return source != null ? (java.util.ArrayList<ServerCpu>) source : new java.util.ArrayList<ServerCpu>();
+                return source != null ? (ArrayList<ServerCpu>) source : new ArrayList<ServerCpu>();
             }
         };
         Frontend.RunQuery(VdcQueryType.GetAllServerCpuList, new GetAllServerCpuListParameters(version), aQuery);
@@ -1262,7 +1264,7 @@ public final class AsyncDataProvider {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
             {
-                java.util.ArrayList<String> list = new java.util.ArrayList<String>();
+                ArrayList<String> list = new ArrayList<String>();
                 if (source != null)
                 {
                     String[] array = ((String) source).split("[,]", -1); //$NON-NLS-1$
@@ -1285,14 +1287,14 @@ public final class AsyncDataProvider {
             public Object Convert(Object source, AsyncQuery _asyncQuery)
             {
                 String pmtype = (String) _asyncQuery.Data[0];
-                java.util.HashMap<String, java.util.ArrayList<String>> cachedPmMap =
-                        new java.util.HashMap<String, java.util.ArrayList<String>>();
-                java.util.HashMap<String, java.util.HashMap<String, Object>> dict =
-                        (java.util.HashMap<String, java.util.HashMap<String, Object>>) source;
-                for (java.util.Map.Entry<String, java.util.HashMap<String, Object>> pair : dict.entrySet())
+                HashMap<String, ArrayList<String>> cachedPmMap =
+                        new HashMap<String, ArrayList<String>>();
+                HashMap<String, HashMap<String, Object>> dict =
+                        (HashMap<String, HashMap<String, Object>>) source;
+                for (Map.Entry<String, HashMap<String, Object>> pair : dict.entrySet())
                 {
-                    java.util.ArrayList<String> list = new java.util.ArrayList<String>();
-                    for (java.util.Map.Entry<String, Object> p : pair.getValue().entrySet())
+                    ArrayList<String> list = new ArrayList<String>();
+                    for (Map.Entry<String, Object> p : pair.getValue().entrySet())
                     {
                         list.add(p.getKey());
                     }
@@ -1311,7 +1313,7 @@ public final class AsyncDataProvider {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
             {
-                return source != null ? (java.util.ArrayList<network>) source : new java.util.ArrayList<network>();
+                return source != null ? (ArrayList<network>) source : new ArrayList<network>();
             }
         };
 
@@ -1325,9 +1327,9 @@ public final class AsyncDataProvider {
             {
                 if (source != null)
                 {
-                    java.util.ArrayList<storage_domains> allStorageDomains =
-                            (java.util.ArrayList<storage_domains>) source;
-                    java.util.ArrayList<storage_domains> isoStorageDomains = new java.util.ArrayList<storage_domains>();
+                    ArrayList<storage_domains> allStorageDomains =
+                            (ArrayList<storage_domains>) source;
+                    ArrayList<storage_domains> isoStorageDomains = new ArrayList<storage_domains>();
                     for (storage_domains storageDomain : allStorageDomains)
                     {
                         if (storageDomain.getstorage_domain_type() == StorageDomainType.ISO)
@@ -1337,7 +1339,7 @@ public final class AsyncDataProvider {
                     }
                     return isoStorageDomains;
                 }
-                return new java.util.ArrayList<storage_domains>();
+                return new ArrayList<storage_domains>();
             }
         };
 
@@ -1352,8 +1354,8 @@ public final class AsyncDataProvider {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
             {
-                return source != null ? (java.util.ArrayList<storage_domains>) source
-                        : new java.util.ArrayList<storage_domains>();
+                return source != null ? (ArrayList<storage_domains>) source
+                        : new ArrayList<storage_domains>();
             }
         };
 
@@ -1370,7 +1372,7 @@ public final class AsyncDataProvider {
             {
                 if (source != null)
                 {
-                    for (IVdcQueryable item : (java.util.ArrayList<IVdcQueryable>) source)
+                    for (IVdcQueryable item : (ArrayList<IVdcQueryable>) source)
                     {
                         return item;
                     }
@@ -1388,7 +1390,7 @@ public final class AsyncDataProvider {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
             {
-                return source != null ? (java.util.ArrayList<storage_domains>) source : null;
+                return source != null ? (ArrayList<storage_domains>) source : null;
             }
         };
 
@@ -1409,7 +1411,7 @@ public final class AsyncDataProvider {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
             {
-                return source != null ? (java.util.ArrayList<storage_domains>) source : null;
+                return source != null ? (ArrayList<storage_domains>) source : null;
             }
         };
 
@@ -1452,7 +1454,7 @@ public final class AsyncDataProvider {
             {
                 if (source != null)
                 {
-                    java.util.ArrayList<storage_domains> storageDomains = (java.util.ArrayList<storage_domains>) source;
+                    ArrayList<storage_domains> storageDomains = (ArrayList<storage_domains>) source;
                     return storageDomains.isEmpty();
                 }
 
@@ -1568,8 +1570,8 @@ public final class AsyncDataProvider {
             {
                 if (source != null)
                 {
-                    java.util.ArrayList<tags> ret = new java.util.ArrayList<tags>();
-                    for (tags tags : (java.util.ArrayList<tags>) source)
+                    ArrayList<tags> ret = new ArrayList<tags>();
+                    for (tags tags : (ArrayList<tags>) source)
                     {
                         if (tags.gettype() == TagsType.GeneralTag)
                         {
@@ -1614,8 +1616,8 @@ public final class AsyncDataProvider {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
             {
-                return source != null ? new java.util.ArrayList<RpmVersion>((java.util.ArrayList<RpmVersion>) source)
-                        : new java.util.ArrayList<RpmVersion>();
+                return source != null ? new ArrayList<RpmVersion>((ArrayList<RpmVersion>) source)
+                        : new ArrayList<RpmVersion>();
             }
         };
         Frontend.RunQuery(VdcQueryType.GetoVirtISOs, new VdsIdParametersBase(id), aQuery);
@@ -1626,7 +1628,7 @@ public final class AsyncDataProvider {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
             {
-                return source != null ? (java.util.ArrayList<LUNs>) source : new java.util.ArrayList<LUNs>();
+                return source != null ? (ArrayList<LUNs>) source : new ArrayList<LUNs>();
             }
         };
         GetLunsByVgIdParameters tempVar = new GetLunsByVgIdParameters();
@@ -1639,7 +1641,7 @@ public final class AsyncDataProvider {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
             {
-                return source != null ? source : new java.util.HashMap<VmTemplate, java.util.ArrayList<DiskImage>>();
+                return source != null ? source : new HashMap<VmTemplate, ArrayList<DiskImage>>();
             }
         };
         GetAllFromExportDomainQueryParamenters getAllFromExportDomainQueryParamenters =
@@ -1655,11 +1657,11 @@ public final class AsyncDataProvider {
             {
                 if (source != null)
                 {
-                    java.util.ArrayList<VDS> list = Linq.<VDS> Cast((java.util.ArrayList<IVdcQueryable>) source);
+                    ArrayList<VDS> list = Linq.<VDS> Cast((ArrayList<IVdcQueryable>) source);
                     return list;
                 }
 
-                return new java.util.ArrayList<VDS>();
+                return new ArrayList<VDS>();
             }
         };
 
@@ -1722,8 +1724,8 @@ public final class AsyncDataProvider {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
             {
-                return source != null ? new java.util.ArrayList<VmNetworkInterface>((java.util.ArrayList<VmNetworkInterface>) source)
-                        : new java.util.ArrayList<VmNetworkInterface>();
+                return source != null ? new ArrayList<VmNetworkInterface>((ArrayList<VmNetworkInterface>) source)
+                        : new ArrayList<VmNetworkInterface>();
             }
         };
 
@@ -1735,11 +1737,11 @@ public final class AsyncDataProvider {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
             {
-                java.util.ArrayList<DiskImage> list = new java.util.ArrayList<DiskImage>();
+                ArrayList<DiskImage> list = new ArrayList<DiskImage>();
                 if (source != null)
                 {
                     Iterable listEnumerable = (Iterable) source;
-                    java.util.Iterator listIterator = listEnumerable.iterator();
+                    Iterator listIterator = listEnumerable.iterator();
                     while (listIterator.hasNext())
                     {
                         list.add((DiskImage) listIterator.next());
@@ -1757,7 +1759,7 @@ public final class AsyncDataProvider {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
             {
-                java.util.ArrayList<VM> vms = Linq.<VM> Cast((java.util.ArrayList<IVdcQueryable>) source);
+                ArrayList<VM> vms = Linq.<VM> Cast((ArrayList<IVdcQueryable>) source);
                 return vms;
             }
         };
@@ -1945,7 +1947,7 @@ public final class AsyncDataProvider {
     {
 
         // cache key
-        final java.util.Map.Entry<ConfigurationValues, String> config_key =
+        final Map.Entry<ConfigurationValues, String> config_key =
                 new KeyValuePairCompat<ConfigurationValues, String>(parameters.getConfigValue(),
                         parameters.getVersion());
 

@@ -94,7 +94,7 @@ public class UserPermissionListModel extends SearchableListModel
             {
                 SearchableListModel searchableListModel = (SearchableListModel) model;
                 ArrayList<permissions> list =
-                        (java.util.ArrayList<permissions>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
+                        (ArrayList<permissions>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
                 ArrayList<permissions> newList = new ArrayList<permissions>();
                 for (permissions permission : list) {
                     if (!permission.getrole_id().equals(QuotaPermissionListModel.CONSUME_QUOTA_ROLE_ID)) {
@@ -136,7 +136,7 @@ public class UserPermissionListModel extends SearchableListModel
         model.setHashName("remove_permission"); //$NON-NLS-1$
         model.setMessage(ConstantsManager.getInstance().getConstants().permissionMsg());
 
-        java.util.ArrayList<String> list = new java.util.ArrayList<String>();
+        ArrayList<String> list = new ArrayList<String>();
         for (permissions a : Linq.<permissions> Cast(getSelectedItems()))
         {
             list.add("Role " + a.getRoleName() + " on User " + a.getOwnerName()); //$NON-NLS-1$ //$NON-NLS-2$
@@ -164,7 +164,7 @@ public class UserPermissionListModel extends SearchableListModel
                 return;
             }
 
-            java.util.ArrayList<VdcActionParametersBase> list = new java.util.ArrayList<VdcActionParametersBase>();
+            ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
             for (Object perm : getSelectedItems())
             {
                 PermissionsOperationsParametes tempVar = new PermissionsOperationsParametes();

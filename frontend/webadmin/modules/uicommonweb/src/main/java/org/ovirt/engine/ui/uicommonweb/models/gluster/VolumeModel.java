@@ -414,7 +414,7 @@ public class VolumeModel extends Model {
                 public void OnSuccess(Object model, Object result)
                 {
                     VolumeModel volumeModel = (VolumeModel) model;
-                    java.util.ArrayList<VDSGroup> clusters = (java.util.ArrayList<VDSGroup>) result;
+                    ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) result;
                     VDSGroup oldCluster = (VDSGroup) volumeModel.getCluster().getSelectedItem();
                     storage_pool selectedDataCenter = (storage_pool) getDataCenter().getSelectedItem();
 

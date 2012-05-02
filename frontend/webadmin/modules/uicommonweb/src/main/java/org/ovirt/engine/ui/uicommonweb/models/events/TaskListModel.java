@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Random;
 
 import org.ovirt.engine.core.common.job.Job;
@@ -39,7 +38,7 @@ public class TaskListModel extends SearchableListModel {
             {
                 TaskListModel taskListModel = (TaskListModel) model;
                 ArrayList<Job> taskList =
-                        (java.util.ArrayList<Job>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
+                        (ArrayList<Job>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
                 if (taskList.size() == 0) {
                     detailedTaskMap.clear();
                 }
@@ -52,7 +51,7 @@ public class TaskListModel extends SearchableListModel {
                         if (!correlationTaskMap.containsKey(task.getCorrelationId())) {
                             Job rootTask = new Job();
                             rootTask.setCorrelationId(task.getCorrelationId());
-                            Entry<Job, ArrayList<Job>> entry = new TaskEntry(rootTask);
+                            Map.Entry<Job, ArrayList<Job>> entry = new TaskEntry(rootTask);
                             entry.setValue(new ArrayList<Job>());
                             correlationTaskMap.put(rootTask.getCorrelationId(), entry);
                             String[] taskDescreptionArray =
@@ -65,14 +64,14 @@ public class TaskListModel extends SearchableListModel {
                             rootTask.setDescription(taskDesc);
                             taskListWithCorrelationFilter.add(rootTask);
                         }
-                        Entry<Job, ArrayList<Job>> entry = correlationTaskMap.get(task.getCorrelationId());
+                        Map.Entry<Job, ArrayList<Job>> entry = correlationTaskMap.get(task.getCorrelationId());
                         entry.getValue().add(task);
                     } else {
                         taskListWithCorrelationFilter.add(task);
                     }
                 }
 
-                for (Entry<Job, ArrayList<Job>> entry : correlationTaskMap.values()) {
+                for (Map.Entry<Job, ArrayList<Job>> entry : correlationTaskMap.values()) {
                     entry.getKey().setStatus(JobExecutionStatus.UNKNOWN);
                     boolean hasFailedStatus = false;
                     boolean hasStartedStatus = false;

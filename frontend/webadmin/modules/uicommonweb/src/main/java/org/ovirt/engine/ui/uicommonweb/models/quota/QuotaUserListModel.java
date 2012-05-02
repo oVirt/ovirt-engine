@@ -83,7 +83,7 @@ public class QuotaUserListModel extends SearchableListModel {
             {
                 SearchableListModel searchableListModel = (SearchableListModel) model;
                 ArrayList<permissions> list =
-                        (java.util.ArrayList<permissions>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
+                        (ArrayList<permissions>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
                 Map<Guid, permissions> map = new HashMap<Guid, permissions>();
                 for (permissions permission : list) {
                     if (!map.containsKey(permission.getad_element_id())) {
@@ -188,7 +188,7 @@ public class QuotaUserListModel extends SearchableListModel {
         model.setHashName("remove_quota_assignment_from_user"); //$NON-NLS-1$
         model.setMessage(ConstantsManager.getInstance().getConstants().assignmentsMsg());
 
-        java.util.ArrayList<String> list = new java.util.ArrayList<String>();
+        ArrayList<String> list = new ArrayList<String>();
         for (permissions item : Linq.<permissions> Cast(getSelectedItems()))
         {
             list.add(item.getOwnerName());
@@ -223,7 +223,7 @@ public class QuotaUserListModel extends SearchableListModel {
             Cancel();
             return;
         }
-        java.util.ArrayList<DbUser> items = new java.util.ArrayList<DbUser>();
+        ArrayList<DbUser> items = new ArrayList<DbUser>();
         if (model.getIsEveryoneSelected())
         {
             DbUser tempVar = new DbUser();
@@ -243,7 +243,7 @@ public class QuotaUserListModel extends SearchableListModel {
 
         model.StartProgress(null);
 
-        java.util.ArrayList<VdcActionParametersBase> list = new java.util.ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
         PermissionsOperationsParametes permissionParams;
         for (DbUser user : items)
         {
@@ -292,7 +292,7 @@ public class QuotaUserListModel extends SearchableListModel {
                 return;
             }
 
-            java.util.ArrayList<VdcActionParametersBase> list = new java.util.ArrayList<VdcActionParametersBase>();
+            ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
             for (Object perm : getSelectedItems())
             {
                 PermissionsOperationsParametes tempVar = new PermissionsOperationsParametes();

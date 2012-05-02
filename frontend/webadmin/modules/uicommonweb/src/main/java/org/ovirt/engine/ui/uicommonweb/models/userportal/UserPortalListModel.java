@@ -1,7 +1,10 @@
 package org.ovirt.engine.ui.uicommonweb.models.userportal;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.AddVmFromScratchParameters;
@@ -269,26 +272,26 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
     private EntityModel poolGeneralModel;
     private ListModel poolDiskListModel;
     private ListModel poolInterfaceListModel;
-    private java.util.ArrayList<VM> privatevms;
+    private ArrayList<VM> privatevms;
 
-    public java.util.ArrayList<VM> getvms()
+    public ArrayList<VM> getvms()
     {
         return privatevms;
     }
 
-    public void setvms(java.util.ArrayList<VM> value)
+    public void setvms(ArrayList<VM> value)
     {
         privatevms = value;
     }
 
-    private java.util.ArrayList<vm_pools> privatepools;
+    private ArrayList<vm_pools> privatepools;
 
-    public java.util.ArrayList<vm_pools> getpools()
+    public ArrayList<vm_pools> getpools()
     {
         return privatepools;
     }
 
-    public void setpools(java.util.ArrayList<vm_pools> value)
+    public void setpools(ArrayList<vm_pools> value)
     {
         privatepools = value;
     }
@@ -327,7 +330,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         CustomPropertiesKeysList = customPropertiesKeysList;
     }
 
-    private final java.util.HashMap<Guid, java.util.ArrayList<ConsoleModel>> cachedConsoleModels;
+    private final HashMap<Guid, ArrayList<ConsoleModel>> cachedConsoleModels;
 
     static
     {
@@ -338,7 +341,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
     {
         setSearchCompletedEvent(new Event(SearchCompletedEventDefinition));
 
-        cachedConsoleModels = new java.util.HashMap<Guid, java.util.ArrayList<ConsoleModel>>();
+        cachedConsoleModels = new HashMap<Guid, ArrayList<ConsoleModel>>();
 
         setNewDesktopCommand(new UICommand("NewDesktop", this)); //$NON-NLS-1$
         setNewServerCommand(new UICommand("NewServer", this)); //$NON-NLS-1$
@@ -360,12 +363,12 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                 UserPortalListModel userPortalListModel = (UserPortalListModel) model;
                 if (result != null)
                 {
-                    userPortalListModel.setCustomPropertiesKeysList(new java.util.HashMap<Version, java.util.ArrayList<String>>());
-                    java.util.HashMap<Version, String> dictionary = (java.util.HashMap<Version, String>) result;
-                    for (java.util.Map.Entry<Version, String> keyValuePair : dictionary.entrySet())
+                    userPortalListModel.setCustomPropertiesKeysList(new HashMap<Version, ArrayList<String>>());
+                    HashMap<Version, String> dictionary = (HashMap<Version, String>) result;
+                    for (Map.Entry<Version, String> keyValuePair : dictionary.entrySet())
                     {
                         userPortalListModel.CustomPropertiesKeysList.put(keyValuePair.getKey(),
-                                new java.util.ArrayList<String>());
+                                new ArrayList<String>());
                         for (String s : keyValuePair.getValue().split("[;]", -1)) //$NON-NLS-1$
                         {
                             userPortalListModel.CustomPropertiesKeysList.get(keyValuePair.getKey()).add(s);
@@ -404,7 +407,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
             public void OnSuccess(Object model, Object ReturnValue)
             {
                 UserPortalListModel userPortalListModel = (UserPortalListModel) model;
-                userPortalListModel.setvms((java.util.ArrayList<VM>) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
+                userPortalListModel.setvms((ArrayList<VM>) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
                 userPortalListModel.OnVmAndPoolLoad();
             }
         };
@@ -420,7 +423,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
             public void OnSuccess(Object model, Object ReturnValue)
             {
                 UserPortalListModel userPortalListModel = (UserPortalListModel) model;
-                userPortalListModel.setpools((java.util.ArrayList<vm_pools>) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
+                userPortalListModel.setpools((ArrayList<vm_pools>) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
                 userPortalListModel.OnVmAndPoolLoad();
             }
         };
@@ -686,7 +689,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         tempVar.setvm_mem_size_mb((Integer) model.getMemSize().getEntity());
         tempVar.setMinAllocatedMem((Integer) model.getMinAllocatedMemory().getEntity());
         tempVar.setvds_group_id(((VDSGroup) model.getCluster().getSelectedItem()).getId());
-        tempVar.settime_zone(model.getTimeZone().getIsAvailable() && model.getTimeZone().getSelectedItem() != null ? ((java.util.Map.Entry<String, String>) model.getTimeZone()
+        tempVar.settime_zone(model.getTimeZone().getIsAvailable() && model.getTimeZone().getSelectedItem() != null ? ((Map.Entry<String, String>) model.getTimeZone()
                 .getSelectedItem()).getKey()
                 : ""); //$NON-NLS-1$
         tempVar.setnum_of_sockets((Integer) model.getNumOfSockets().getEntity());
@@ -774,7 +777,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                         {
                             UserPortalListModel userPortalListModel = (UserPortalListModel) model1;
                             RunOnceModel runOnceModel = userPortalListModel.getRunOnceModel();
-                            java.util.ArrayList<String> images = (java.util.ArrayList<String>) result;
+                            ArrayList<String> images = (ArrayList<String>) result;
                             runOnceModel.getIsoImage().setItems(images);
 
                             if (runOnceModel.getIsoImage().getIsChangable()
@@ -798,7 +801,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                                     (UserPortalItemModel) userPortalListModel.getSelectedItem();
                             RunOnceModel runOnceModel = userPortalListModel.getRunOnceModel();
                             VM selectedVM = (VM) userPortalItemModel.getEntity();
-                            java.util.ArrayList<String> images = (java.util.ArrayList<String>) result;
+                            ArrayList<String> images = (ArrayList<String>) result;
 
                             if (DataProvider.IsWindowsOsType(selectedVM.getvm_os()))
                             {
@@ -851,7 +854,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                     public void OnSuccess(Object target, Object returnValue1) {
 
                         RunOnceModel runOnceModel = (RunOnceModel) target;
-                        java.util.List<String> domains = (java.util.List<String>) returnValue1;
+                        List<String> domains = (List<String>) returnValue1;
                         String oldDomain = (String) runOnceModel.getSysPrepDomainName().getSelectedItem();
                         if (oldDomain != null && !oldDomain.equals("") && !domains.contains(oldDomain)) //$NON-NLS-1$
                         {
@@ -876,7 +879,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         tempVar2.setEntity(DisplayType.qxl);
         EntityModel qxlProtocol = tempVar2;
 
-        java.util.ArrayList<EntityModel> items = new java.util.ArrayList<EntityModel>();
+        ArrayList<EntityModel> items = new ArrayList<EntityModel>();
         items.add(vncProtocol);
         items.add(qxlProtocol);
         model.getDisplayProtocol().setItems(items);
@@ -896,7 +899,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
             {
                 UserPortalListModel userPortalListModel = (UserPortalListModel) model3;
                 boolean hasNics =
-                        ((java.util.ArrayList<VmNetworkInterface>) ((VdcQueryReturnValue) ReturnValue).getReturnValue()).size() > 0;
+                        ((ArrayList<VmNetworkInterface>) ((VdcQueryReturnValue) ReturnValue).getReturnValue()).size() > 0;
 
                 if (!hasNics)
                 {
@@ -1005,25 +1008,25 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
 
         getRemoveCommand().setIsExecutionAllowed(selectedItem != null
                 && !selectedItem.getIsPool()
-                && VdcActionUtils.CanExecute(new java.util.ArrayList<VM>(java.util.Arrays.asList(new VM[] { (VM) selectedItem.getEntity() })),
+                && VdcActionUtils.CanExecute(new ArrayList<VM>(Arrays.asList(new VM[] {(VM) selectedItem.getEntity()})),
                         VM.class,
                         VdcActionType.RemoveVm));
 
         getRunOnceCommand().setIsExecutionAllowed(selectedItem != null
                 && !selectedItem.getIsPool()
-                && VdcActionUtils.CanExecute(new java.util.ArrayList<VM>(java.util.Arrays.asList(new VM[] { (VM) selectedItem.getEntity() })),
+                && VdcActionUtils.CanExecute(new ArrayList<VM>(Arrays.asList(new VM[] { (VM) selectedItem.getEntity() })),
                         VM.class,
                         VdcActionType.RunVmOnce));
 
         getChangeCdCommand().setIsExecutionAllowed(selectedItem != null
                 && !selectedItem.getIsPool()
-                && VdcActionUtils.CanExecute(new java.util.ArrayList<VM>(java.util.Arrays.asList(new VM[] { (VM) selectedItem.getEntity() })),
+                && VdcActionUtils.CanExecute(new ArrayList<VM>(Arrays.asList(new VM[] { (VM) selectedItem.getEntity() })),
                         VM.class,
                         VdcActionType.ChangeDisk));
 
         getNewTemplateCommand().setIsExecutionAllowed(selectedItem != null
                 && !selectedItem.getIsPool()
-                && VdcActionUtils.CanExecute(new java.util.ArrayList<VM>(java.util.Arrays.asList(new VM[] { (VM) selectedItem.getEntity() })),
+                && VdcActionUtils.CanExecute(new ArrayList<VM>(Arrays.asList(new VM[] { (VM) selectedItem.getEntity() })),
                         VM.class,
                         VdcActionType.AddVmTemplate));
     }
@@ -1113,7 +1116,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         getConfirmationModel().setHashName("remove_virtual_machine"); //$NON-NLS-1$
         getConfirmationModel().setMessage(ConstantsManager.getInstance().getConstants().virtualMachineMsg());
 
-        java.util.ArrayList<String> list = new java.util.ArrayList<String>();
+        ArrayList<String> list = new ArrayList<String>();
         list.add(vm.getvm_name());
         getConfirmationModel().setItems(list);
 
@@ -1166,8 +1169,8 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
             public void OnSuccess(Object model0, Object result0)
             {
                 UserPortalListModel userPortalListModel0 = (UserPortalListModel) model0;
-                java.util.ArrayList<String> images0 =
-                        new java.util.ArrayList<String>(java.util.Arrays.asList(new String[] { "No CDs" })); //$NON-NLS-1$
+                ArrayList<String> images0 =
+                        new ArrayList<String>(Arrays.asList(new String[] { "No CDs" })); //$NON-NLS-1$
                 userPortalListModel0.getAttachCdModel().getIsoImage().setItems(images0);
                 userPortalListModel0.getAttachCdModel().getIsoImage().setSelectedItem(Linq.FirstOrDefault(images0));
 
@@ -1184,7 +1187,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                         {
                             UserPortalListModel userPortalListModel = (UserPortalListModel) model1;
                             AttachCdModel _attachCdModel = userPortalListModel.getAttachCdModel();
-                            java.util.ArrayList<String> images = (java.util.ArrayList<String>) result;
+                            ArrayList<String> images = (ArrayList<String>) result;
                             if (images.size() > 0)
                             {
                                 images.add(0, ConsoleModel.EjectLabel);
@@ -1305,7 +1308,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         Guid newClusterID = ((VDSGroup) getVmModel().getCluster().getSelectedItem()).getId();
         gettempVm().setvds_group_id(newClusterID);
         gettempVm().settime_zone((getVmModel().getTimeZone().getIsAvailable() && getVmModel().getTimeZone()
-                .getSelectedItem() != null) ? ((java.util.Map.Entry<String, String>) getVmModel().getTimeZone()
+                .getSelectedItem() != null) ? ((Map.Entry<String, String>) getVmModel().getTimeZone()
                 .getSelectedItem()).getKey() : ""); //$NON-NLS-1$
         gettempVm().setnum_of_sockets((Integer) getVmModel().getNumOfSockets().getEntity());
         gettempVm().setcpu_per_socket((Integer) getVmModel().getTotalCPUCores().getEntity()
@@ -1357,7 +1360,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
             {
                 AddVmFromScratchParameters parameters =
                         new AddVmFromScratchParameters(gettempVm(),
-                                new java.util.ArrayList<DiskImage>(),
+                                new ArrayList<DiskImage>(),
                                 NGuid.Empty);
                 parameters.setMakeCreatorExplicitOwner(true);
 
@@ -1382,7 +1385,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                         public void OnSuccess(Object model, Object result)
                         {
                             UserPortalListModel userPortalListModel1 = (UserPortalListModel) model;
-                            java.util.ArrayList<DiskImage> templateDisks = (java.util.ArrayList<DiskImage>) result;
+                            ArrayList<DiskImage> templateDisks = (ArrayList<DiskImage>) result;
                             for (DiskImage templateDisk : templateDisks)
                             {
                                 DiskModel disk = null;
@@ -1530,8 +1533,8 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                 public void OnSuccess(Object model, Object result)
                 {
                     UserPortalListModel userPortalListModel = (UserPortalListModel) model;
-                    java.util.ArrayList<storage_pool> list =
-                            new java.util.ArrayList<storage_pool>(java.util.Arrays.asList(new storage_pool[] { (storage_pool) result }));
+                    ArrayList<storage_pool> list =
+                            new ArrayList<storage_pool>(Arrays.asList(new storage_pool[] { (storage_pool) result }));
                     userPortalListModel.getVmModel().getDataCenter().setItems(list);
                     userPortalListModel.getVmModel().getDataCenter().setSelectedItem(Linq.FirstOrDefault(list));
 
@@ -1708,8 +1711,8 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
             // Complete search.
 
             // Remove pools that has provided VMs.
-            java.util.ArrayList<vm_pools> filteredPools = new java.util.ArrayList<vm_pools>();
-            poolMap = new java.util.HashMap<Guid, vm_pools>();
+            ArrayList<vm_pools> filteredPools = new ArrayList<vm_pools>();
+            poolMap = new HashMap<Guid, vm_pools>();
 
             for (vm_pools pool : getpools())
             {
@@ -1733,10 +1736,10 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
             }
 
             // Merge VMs and Pools, and create item models.
-            java.util.List all = Linq.Concat(getvms(), filteredPools);
+            List all = Linq.Concat(getvms(), filteredPools);
             Linq.Sort(all, new Linq.VmAndPoolByNameComparer());
 
-            java.util.ArrayList<Model> items = new java.util.ArrayList<Model>();
+            ArrayList<Model> items = new ArrayList<Model>();
             for (Object item : all)
             {
                 UserPortalItemModel model = new UserPortalItemModel(this);
@@ -1779,12 +1782,12 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                 RdpConsoleModel rdpConsoleModel = new RdpConsoleModel();
 
                 cachedConsoleModels.put(vm.getId(),
-                        new java.util.ArrayList<ConsoleModel>(java.util.Arrays.asList(new ConsoleModel[] {
+                        new ArrayList<ConsoleModel>(Arrays.asList(new ConsoleModel[] {
                                 spiceConsoleModel, vncConsoleModel, rdpConsoleModel })));
             }
 
             // Getting cached console model
-            java.util.ArrayList<ConsoleModel> cachedModels = cachedConsoleModels.get(vm.getId());
+            ArrayList<ConsoleModel> cachedModels = cachedConsoleModels.get(vm.getId());
             for (ConsoleModel cachedModel : cachedModels)
             {
                 cachedModel.setEntity(null);

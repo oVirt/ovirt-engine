@@ -9,11 +9,13 @@ import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 
+import java.util.List;
+
 @SuppressWarnings("unused")
 public class ImportStorageModelBehavior extends StorageModelBehavior
 {
     @Override
-    public java.util.List<storage_pool> FilterDataCenter(java.util.List<storage_pool> source)
+    public List<storage_pool> FilterDataCenter(List<storage_pool> source)
     {
         return Linq.ToList(Linq.Where(source, new Linq.DataCenterStatusPredicate(StoragePoolStatus.Up)));
     }

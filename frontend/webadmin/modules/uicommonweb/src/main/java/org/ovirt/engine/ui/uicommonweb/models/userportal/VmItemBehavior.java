@@ -32,6 +32,8 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
+import java.util.ArrayList;
+
 @SuppressWarnings("unused")
 public class VmItemBehavior extends ItemBehavior
 {
@@ -151,7 +153,7 @@ public class VmItemBehavior extends ItemBehavior
                         public void OnSuccess(Object model, Object result)
                         {
                             VmItemBehavior vmItemBehavior = (VmItemBehavior) model;
-                            java.util.ArrayList<String> list = (java.util.ArrayList<String>) result;
+                            ArrayList<String> list = (ArrayList<String>) result;
                             if (list.size() > 0)
                             {
                                 list.add(ConsoleModel.EjectLabel);
@@ -266,7 +268,7 @@ public class VmItemBehavior extends ItemBehavior
 
         getItem().getTakeVmCommand().setIsAvailable(false);
 
-        java.util.ArrayList<VM> entities = new java.util.ArrayList<VM>();
+        ArrayList<VM> entities = new ArrayList<VM>();
         entities.add(entity);
 
         getItem().getRunCommand().setIsExecutionAllowed(VdcActionUtils.CanExecute(entities,

@@ -15,6 +15,8 @@ import org.ovirt.engine.ui.uicommonweb.validation.IpAddressValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.SubnetMaskValidation;
 
+import java.util.ArrayList;
+
 @SuppressWarnings("unused")
 public class HostInterfaceModel extends EntityModel
 {
@@ -91,14 +93,14 @@ public class HostInterfaceModel extends EntityModel
         privateBondingOptions = value;
     }
 
-    private java.util.ArrayList<VdsNetworkInterface> privateNetworks;
+    private ArrayList<VdsNetworkInterface> privateNetworks;
 
-    public java.util.ArrayList<VdsNetworkInterface> getNetworks()
+    public ArrayList<VdsNetworkInterface> getNetworks()
     {
         return privateNetworks;
     }
 
-    public void setNetworks(java.util.ArrayList<VdsNetworkInterface> value)
+    public void setNetworks(ArrayList<VdsNetworkInterface> value)
     {
         privateNetworks = value;
     }

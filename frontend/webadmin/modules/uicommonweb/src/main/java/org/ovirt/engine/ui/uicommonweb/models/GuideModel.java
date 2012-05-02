@@ -4,18 +4,20 @@ import org.ovirt.engine.core.compat.ObservableCollection;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 
+import java.util.List;
+
 @SuppressWarnings("unused")
 public class GuideModel extends EntityModel
 {
 
-    private java.util.List<UICommand> compulsoryActions;
+    private List<UICommand> compulsoryActions;
 
-    public java.util.List<UICommand> getCompulsoryActions()
+    public List<UICommand> getCompulsoryActions()
     {
         return compulsoryActions;
     }
 
-    public void setCompulsoryActions(java.util.List<UICommand> value)
+    public void setCompulsoryActions(List<UICommand> value)
     {
         if (compulsoryActions != value)
         {
@@ -24,14 +26,14 @@ public class GuideModel extends EntityModel
         }
     }
 
-    private java.util.List<UICommand> optionalActions;
+    private List<UICommand> optionalActions;
 
-    public java.util.List<UICommand> getOptionalActions()
+    public List<UICommand> getOptionalActions()
     {
         return optionalActions;
     }
 
-    public void setOptionalActions(java.util.List<UICommand> value)
+    public void setOptionalActions(List<UICommand> value)
     {
         if (optionalActions != value)
         {

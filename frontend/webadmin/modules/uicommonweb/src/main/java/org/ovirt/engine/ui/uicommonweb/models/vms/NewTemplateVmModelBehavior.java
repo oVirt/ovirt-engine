@@ -1,7 +1,9 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Iterator;
 
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
@@ -63,7 +65,7 @@ public class NewTemplateVmModelBehavior extends IVmModelBehavior
                         {
                             behavior.getModel()
                                     .getDataCenter()
-                                    .setItems(new java.util.ArrayList<storage_pool>(java.util.Arrays.asList(new storage_pool[] { dataCenter })));
+                                    .setItems(new ArrayList<storage_pool>(Arrays.asList(new storage_pool[] {dataCenter})));
                             behavior.getModel().getDataCenter().setSelectedItem(dataCenter);
                             behavior.getModel().getDataCenter().setIsChangable(false);
                         }
@@ -89,7 +91,7 @@ public class NewTemplateVmModelBehavior extends IVmModelBehavior
                         Object[] array = (Object[]) target;
                         NewTemplateVmModelBehavior behavior = (NewTemplateVmModelBehavior) array[0];
                         UnitVmModel model = (UnitVmModel) array[1];
-                        java.util.ArrayList<VDSGroup> clusters = (java.util.ArrayList<VDSGroup>) returnValue;
+                        ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) returnValue;
                         model.SetClusters(model, clusters, vm.getvds_group_id().getValue());
                         behavior.InitTemplate();
 
@@ -103,9 +105,9 @@ public class NewTemplateVmModelBehavior extends IVmModelBehavior
                     public void OnSuccess(Object target, Object returnValue) {
 
                         NewTemplateVmModelBehavior behavior = (NewTemplateVmModelBehavior) target;
-                        java.util.ArrayList<DiskImage> disks = new java.util.ArrayList<DiskImage>();
+                        ArrayList<DiskImage> disks = new ArrayList<DiskImage>();
                         Iterable disksEnumerable = (Iterable) returnValue;
-                        java.util.Iterator disksIterator = disksEnumerable.iterator();
+                        Iterator disksIterator = disksEnumerable.iterator();
                         while (disksIterator.hasNext())
                         {
                             disks.add((DiskImage) disksIterator.next());
@@ -134,10 +136,10 @@ public class NewTemplateVmModelBehavior extends IVmModelBehavior
         }
     }
 
-    private void InitDisks(java.util.ArrayList<DiskImage> disks)
+    private void InitDisks(ArrayList<DiskImage> disks)
     {
         Collections.sort(disks, new Linq.DiskByInternalDriveMappingComparer());
-        java.util.ArrayList<DiskModel> list = new java.util.ArrayList<DiskModel>();
+        ArrayList<DiskModel> list = new ArrayList<DiskModel>();
         for (DiskImage a : disks)
         {
             DiskModel diskModel = new DiskModel();
@@ -147,7 +149,7 @@ public class NewTemplateVmModelBehavior extends IVmModelBehavior
             tempVar.setEntity(a.getSizeInGigabytes());
             diskModel.setSize(tempVar);
             ListModel tempVar2 = new ListModel();
-            tempVar2.setItems((a.getvolume_type() == VolumeType.Preallocated ? new java.util.ArrayList<VolumeType>(java.util.Arrays.asList(new VolumeType[] { VolumeType.Preallocated }))
+            tempVar2.setItems((a.getvolume_type() == VolumeType.Preallocated ? new ArrayList<VolumeType>(Arrays.asList(new VolumeType[] { VolumeType.Preallocated }))
                     : DataProvider.GetVolumeTypeList()));
             tempVar2.setSelectedItem(a.getvolume_type());
             diskModel.setVolumeType(tempVar2);
@@ -263,9 +265,9 @@ public class NewTemplateVmModelBehavior extends IVmModelBehavior
                         NewTemplateVmModelBehavior behavior = (NewTemplateVmModelBehavior) array[0];
                         storage_domains currentStorageDomain = (storage_domains) array[1];
                         storage_domains vmStorageDomain = null;
-                        java.util.ArrayList<storage_domains> activeStorageDomainList =
-                                new java.util.ArrayList<storage_domains>();
-                        for (storage_domains storageDomain : (java.util.ArrayList<storage_domains>) returnValue)
+                        ArrayList<storage_domains> activeStorageDomainList =
+                                new ArrayList<storage_domains>();
+                        for (storage_domains storageDomain : (ArrayList<storage_domains>) returnValue)
                         {
                             if (storageDomain.getstatus() == StorageDomainStatus.Active
                                     && (storageDomain.getstorage_domain_type() == StorageDomainType.Data || storageDomain.getstorage_domain_type() == StorageDomainType.Master))
@@ -287,8 +289,7 @@ public class NewTemplateVmModelBehavior extends IVmModelBehavior
                                 storage_domains s =
                                         Linq.FirstOrDefault(activeStorageDomainList,
                                                 new Linq.StoragePredicate(selectStorage.getId()));
-                                activeStorageDomainList =
-                                        new java.util.ArrayList<storage_domains>(java.util.Arrays.asList(new storage_domains[] { s }));
+                                activeStorageDomainList =new ArrayList<storage_domains>(Arrays.asList(new storage_domains[] { s }));
 
                                 behavior.getModel().getStorageDomain().setItems(activeStorageDomainList);
                                 behavior.getModel().getStorageDomain().setIsChangable(false);

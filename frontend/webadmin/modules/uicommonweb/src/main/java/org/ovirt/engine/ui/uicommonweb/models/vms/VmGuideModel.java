@@ -62,10 +62,10 @@ public class VmGuideModel extends GuideModel
             .getConstants()
             .vmAddAnotherVirtualDiskAction();
 
-    private java.util.ArrayList<VmNetworkInterface> nics;
-    private java.util.ArrayList<DiskImage> disks;
-    private java.util.ArrayList<network> networks;
-    private java.util.ArrayList<storage_domains> attachedStorageDomains;
+    private ArrayList<VmNetworkInterface> nics;
+    private ArrayList<DiskImage> disks;
+    private ArrayList<network> networks;
+    private ArrayList<storage_domains> attachedStorageDomains;
     private storage_domains storage;
     private VDSGroup cluster;
     private QuotaEnforcementTypeEnum quotaEnforcementType = null;
@@ -94,8 +94,8 @@ public class VmGuideModel extends GuideModel
                     @Override
                     public void OnSuccess(Object target, Object returnValue) {
                         VmGuideModel vmGuideModel = (VmGuideModel) target;
-                        java.util.ArrayList<VmNetworkInterface> nics =
-                                (java.util.ArrayList<VmNetworkInterface>) returnValue;
+                        ArrayList<VmNetworkInterface> nics =
+                                (ArrayList<VmNetworkInterface>) returnValue;
                         vmGuideModel.nics = nics;
                         vmGuideModel.UpdateOptionsPostData();
                     }
@@ -106,7 +106,7 @@ public class VmGuideModel extends GuideModel
                     @Override
                     public void OnSuccess(Object target, Object returnValue) {
                         VmGuideModel vmGuideModel = (VmGuideModel) target;
-                        java.util.ArrayList<DiskImage> disks = (java.util.ArrayList<DiskImage>) returnValue;
+                        ArrayList<DiskImage> disks = (ArrayList<DiskImage>) returnValue;
                         vmGuideModel.disks = disks;
                         vmGuideModel.UpdateOptionsPostData();
                     }
@@ -189,8 +189,8 @@ public class VmGuideModel extends GuideModel
                     @Override
                     public void OnSuccess(Object target, Object returnValue) {
                         VmGuideModel vmGuideModel = (VmGuideModel) target;
-                        java.util.ArrayList<VmNetworkInterface> nics =
-                                (java.util.ArrayList<VmNetworkInterface>) returnValue;
+                        ArrayList<VmNetworkInterface> nics =
+                                (ArrayList<VmNetworkInterface>) returnValue;
                         vmGuideModel.nics = nics;
                         vmGuideModel.AddNetworkPostData();
                     }
@@ -201,7 +201,7 @@ public class VmGuideModel extends GuideModel
                     @Override
                     public void OnSuccess(Object target, Object returnValue) {
                         VmGuideModel vmGuideModel = (VmGuideModel) target;
-                        java.util.ArrayList<network> networks = (java.util.ArrayList<network>) returnValue;
+                        ArrayList<network> networks = (ArrayList<network>) returnValue;
                         vmGuideModel.networks = networks;
                         vmGuideModel.AddNetworkPostData();
                     }
@@ -216,7 +216,7 @@ public class VmGuideModel extends GuideModel
         int nicCount = nics.size();
         String newNicName = DataProvider.GetNewNicName(nics);
 
-        java.util.ArrayList<network> operationalNetworks = new java.util.ArrayList<network>();
+        ArrayList<network> operationalNetworks = new ArrayList<network>();
         for (network a : networks)
         {
             if (a.getStatus() == NetworkStatus.Operational)
@@ -328,8 +328,8 @@ public class VmGuideModel extends GuideModel
                     @Override
                     public void OnSuccess(Object target, Object returnValue) {
                         VmGuideModel vmGuideModel = (VmGuideModel) target;
-                        java.util.ArrayList<storage_domains> storageDomains =
-                                (java.util.ArrayList<storage_domains>) returnValue;
+                        ArrayList<storage_domains> storageDomains =
+                                (ArrayList<storage_domains>) returnValue;
                         vmGuideModel.attachedStorageDomains = storageDomains;
                         vmGuideModel.AddDiskPostData();
                     }
@@ -363,7 +363,7 @@ public class VmGuideModel extends GuideModel
                     @Override
                     public void OnSuccess(Object target, Object returnValue) {
                         VmGuideModel vmGuideModel = (VmGuideModel) target;
-                        java.util.ArrayList<DiskImage> disks = (java.util.ArrayList<DiskImage>) returnValue;
+                        ArrayList<DiskImage> disks = (ArrayList<DiskImage>) returnValue;
                         vmGuideModel.disks = disks;
 
                         if (disks != null && !disks.isEmpty()) {
@@ -397,7 +397,7 @@ public class VmGuideModel extends GuideModel
         model.setHashName("new_virtual_disk"); //$NON-NLS-1$
         model.setIsNew(true);
 
-        java.util.ArrayList<storage_domains> storageDomains = new java.util.ArrayList<storage_domains>();
+        ArrayList<storage_domains> storageDomains = new ArrayList<storage_domains>();
         for (storage_domains a : attachedStorageDomains)
         {
             if (a.getstorage_domain_type() != StorageDomainType.ISO
@@ -438,7 +438,7 @@ public class VmGuideModel extends GuideModel
                     @Override
                     public void OnSuccess(Object target, Object returnValue) {
                         VmGuideModel vmGuideModel = (VmGuideModel) target;
-                        java.util.ArrayList<DiskImageBase> presets = (java.util.ArrayList<DiskImageBase>) returnValue;
+                        ArrayList<DiskImageBase> presets = (ArrayList<DiskImageBase>) returnValue;
                         vmGuideModel.AddDiskPostGetDiskPresets(presets);
                     }
                 }), vmType, storageType);
@@ -473,7 +473,7 @@ public class VmGuideModel extends GuideModel
                         }));
     }
 
-    private void AddDiskPostGetDiskPresets(java.util.ArrayList<DiskImageBase> presets) {
+    private void AddDiskPostGetDiskPresets(ArrayList<DiskImageBase> presets) {
         DiskModel model = (DiskModel) getWindow();
         boolean hasDisks = !disks.isEmpty();
 

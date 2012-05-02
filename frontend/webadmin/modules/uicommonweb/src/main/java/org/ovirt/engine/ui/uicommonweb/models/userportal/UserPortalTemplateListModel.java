@@ -14,6 +14,8 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateListModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.UserPortalTemplateEventListModel;
 
+import java.util.ArrayList;
+
 public class UserPortalTemplateListModel extends TemplateListModel
 {
     @Override
@@ -33,7 +35,7 @@ public class UserPortalTemplateListModel extends TemplateListModel
         VmTemplate item = (VmTemplate) getSelectedItem();
         if (item != null)
         {
-            java.util.ArrayList items = new java.util.ArrayList();
+            ArrayList items = new ArrayList();
             items.add(item);
             getEditCommand().setIsExecutionAllowed(item.getstatus() != VmTemplateStatus.Locked
                     && !item.getId().equals(NGuid.Empty));

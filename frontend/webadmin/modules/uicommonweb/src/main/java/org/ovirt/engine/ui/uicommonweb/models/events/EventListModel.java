@@ -1,6 +1,8 @@
 package org.ovirt.engine.ui.uicommonweb.models.events;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
@@ -136,8 +138,8 @@ public class EventListModel extends SearchableListModel
             public void OnSuccess(Object model, Object ReturnValue)
             {
                 EventListModel eventListModel = (EventListModel) model;
-                java.util.ArrayList<AuditLog> list =
-                        (java.util.ArrayList<AuditLog>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
+                ArrayList<AuditLog> list =
+                        (ArrayList<AuditLog>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
                 requestingData = false;
                 eventListModel.UpdateItems(list);
             }
@@ -172,14 +174,14 @@ public class EventListModel extends SearchableListModel
         timer.stop();
     }
 
-    private void UpdateItems(java.util.ArrayList<AuditLog> source)
+    private void UpdateItems(ArrayList<AuditLog> source)
     {
         if (getItems() == null)
         {
             return;
         }
 
-        java.util.List<AuditLog> list = (java.util.List<AuditLog>) getItems();
+        List<AuditLog> list = (List<AuditLog>) getItems();
 
         Collections.sort(source, new Linq.AuditLogComparer());
 

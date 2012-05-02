@@ -1,5 +1,8 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @SuppressWarnings("unused")
 public class SpiceMenuContainerItem extends SpiceMenuItem
 {
@@ -15,13 +18,13 @@ public class SpiceMenuContainerItem extends SpiceMenuItem
         privateText = value;
     }
 
-    private java.util.List<SpiceMenuItem> items;
+    private List<SpiceMenuItem> items;
 
-    public java.util.List<SpiceMenuItem> getItems()
+    public List<SpiceMenuItem> getItems()
     {
         if (items == null)
         {
-            items = new java.util.ArrayList<SpiceMenuItem>();
+            items = new ArrayList<SpiceMenuItem>();
         }
 
         return items;

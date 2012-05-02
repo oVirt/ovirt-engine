@@ -16,6 +16,8 @@ import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 
+import java.util.ArrayList;
+
 @SuppressWarnings("unused")
 public class MoveHost extends ListModel
 {
@@ -32,14 +34,14 @@ public class MoveHost extends ListModel
         privateCluster = value;
     }
 
-    private java.util.ArrayList<VDS> privateSelectedHosts;
+    private ArrayList<VDS> privateSelectedHosts;
 
-    public java.util.ArrayList<VDS> getSelectedHosts()
+    public ArrayList<VDS> getSelectedHosts()
     {
         return privateSelectedHosts;
     }
 
-    public void setSelectedHosts(java.util.ArrayList<VDS> value)
+    public void setSelectedHosts(ArrayList<VDS> value)
     {
         privateSelectedHosts = value;
     }
@@ -59,17 +61,17 @@ public class MoveHost extends ListModel
                         @Override
                         public void OnSuccess(Object target, Object returnValue) {
                             MoveHost moveHost = (MoveHost) target;
-                            java.util.ArrayList<VDS> hosts = (java.util.ArrayList<VDS>) returnValue;
+                            ArrayList<VDS> hosts = (ArrayList<VDS>) returnValue;
                             moveHost.PostGetHostList(hosts);
                         }
                     }));
         }
     }
 
-    private void PostGetHostList(java.util.ArrayList<VDS> hosts) {
+    private void PostGetHostList(ArrayList<VDS> hosts) {
         VDSGroup cluster = (VDSGroup) getCluster().getSelectedItem();
-        java.util.ArrayList<VDSGroup> clusters = (java.util.ArrayList<VDSGroup>) getCluster().getItems();
-        java.util.ArrayList<EntityModel> items = new java.util.ArrayList<EntityModel>();
+        ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) getCluster().getItems();
+        ArrayList<EntityModel> items = new ArrayList<EntityModel>();
 
         for (VDS vds : hosts)
         {
@@ -84,7 +86,7 @@ public class MoveHost extends ListModel
             }
         }
 
-        java.util.ArrayList<Guid> previouslySelectedHostIDs = new java.util.ArrayList<Guid>();
+        ArrayList<Guid> previouslySelectedHostIDs = new ArrayList<Guid>();
         if (getItems() != null)
         {
             for (Object item : getItems())

@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.storage;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.ovirt.engine.core.common.action.AddSANStorageDomainParameters;
@@ -135,7 +136,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         }
         else
         {
-            java.util.ArrayList<Object> items = new java.util.ArrayList<Object>();
+            ArrayList<Object> items = new ArrayList<Object>();
             for (Object item : getSelectedItems())
             {
                 storage_domains i = (storage_domains) item;
@@ -250,7 +251,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         model.setHashName("new_domain"); //$NON-NLS-1$
         model.setSystemTreeSelectedItem(getSystemTreeSelectedItem());
 
-        java.util.ArrayList<IStorageModel> items = new java.util.ArrayList<IStorageModel>();
+        ArrayList<IStorageModel> items = new ArrayList<IStorageModel>();
         // putting all Data domains at the beginning on purpose (so when choosing the
         // first selectable storage type/function, it will be a Data one, if relevant).
         NfsStorageModel tempVar = new NfsStorageModel();
@@ -337,7 +338,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
             break;
         }
 
-        model.setItems(new java.util.ArrayList<IStorageModel>(java.util.Arrays.asList(new IStorageModel[] { item })));
+        model.setItems(new ArrayList<IStorageModel>(Arrays.asList(new IStorageModel[] {item})));
         model.setSelectedItem(item);
 
         model.Initialize();
@@ -436,7 +437,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                     public void OnSuccess(Object target, Object returnValue) {
 
                         SanStorageModel sanStorageModel = (SanStorageModel) target;
-                        java.util.ArrayList<LUNs> lunList = (java.util.ArrayList<LUNs>) returnValue;
+                        ArrayList<LUNs> lunList = (ArrayList<LUNs>) returnValue;
                         sanStorageModel.ApplyData(lunList, true);
 
                     }
@@ -458,7 +459,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         model.getName().setIsAvailable(false);
         model.getFormat().setIsAvailable(false);
 
-        java.util.ArrayList<IStorageModel> items = new java.util.ArrayList<IStorageModel>();
+        ArrayList<IStorageModel> items = new ArrayList<IStorageModel>();
         NfsStorageModel tempVar = new NfsStorageModel();
         tempVar.setRole(StorageDomainType.ISO);
         items.add(tempVar);
@@ -513,13 +514,13 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
             nfsModel.setMessage(null);
 
             Task.Create(this,
-                    new java.util.ArrayList<Object>(java.util.Arrays.asList(new Object[] { "ImportNfs", //$NON-NLS-1$
+                    new ArrayList<Object>(Arrays.asList(new Object[] { "ImportNfs", //$NON-NLS-1$
                             host.getId(), nfsModel.getPath().getEntity(), nfsModel.getRole() }))).Run();
         }
         else
         {
             Task.Create(this,
-                    new java.util.ArrayList<Object>(java.util.Arrays.asList(new Object[] { "ImportSan", //$NON-NLS-1$
+                    new ArrayList<Object>(Arrays.asList(new Object[] { "ImportSan", //$NON-NLS-1$
                             host.getId() }))).Run();
         }
     }
@@ -619,7 +620,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                         StorageListModel storageListModel = (StorageListModel) array[0];
                         RemoveStorageModel removeStorageModel = (RemoveStorageModel) array[1];
                         storage_domains storage = (storage_domains) storageListModel.getSelectedItem();
-                        java.util.ArrayList<VDS> hosts = (java.util.ArrayList<VDS>) returnValue;
+                        ArrayList<VDS> hosts = (ArrayList<VDS>) returnValue;
                         removeStorageModel.getHostList().setItems(hosts);
                         removeStorageModel.getHostList().setSelectedItem(Linq.FirstOrDefault(hosts));
                         removeStorageModel.getFormat()
@@ -685,7 +686,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().destroyStorageDomainTitle());
         model.setHashName("destroy_storage_domain"); //$NON-NLS-1$
-        java.util.ArrayList<String> items = new java.util.ArrayList<String>();
+        ArrayList<String> items = new ArrayList<String>();
         items.add(((storage_domains) getSelectedItem()).getstorage_name());
         model.setItems(items);
 
@@ -721,7 +722,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         model.StartProgress(null);
 
         Frontend.RunMultipleAction(VdcActionType.ForceRemoveStorageDomain,
-                new java.util.ArrayList<VdcActionParametersBase>(java.util.Arrays.asList(new VdcActionParametersBase[] { new StorageDomainParametersBase(storageDomain.getId()) })),
+                new ArrayList<VdcActionParametersBase>(Arrays.asList(new VdcActionParametersBase[] { new StorageDomainParametersBase(storageDomain.getId()) })),
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void Executed(FrontendMultipleActionAsyncResult result) {
@@ -772,7 +773,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
         getWindow().StartProgress(null);
 
-        Task.Create(this, new java.util.ArrayList<Object>(java.util.Arrays.asList(new Object[] { "SaveLocal" }))).Run(); //$NON-NLS-1$
+        Task.Create(this, new ArrayList<Object>(Arrays.asList(new Object[] { "SaveLocal" }))).Run(); //$NON-NLS-1$
     }
 
     private void SaveNfsStorage()
@@ -784,7 +785,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
         getWindow().StartProgress(null);
 
-        Task.Create(this, new java.util.ArrayList<Object>(java.util.Arrays.asList(new Object[] { "SaveNfs" }))).Run(); //$NON-NLS-1$
+        Task.Create(this, new ArrayList<Object>(Arrays.asList(new Object[] { "SaveNfs" }))).Run(); //$NON-NLS-1$
     }
 
     private void SaveSanStorage()
@@ -796,7 +797,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
         getWindow().StartProgress(null);
 
-        Task.Create(this, new java.util.ArrayList<Object>(java.util.Arrays.asList(new Object[] { "SaveSan" }))).Run(); //$NON-NLS-1$
+        Task.Create(this, new ArrayList<Object>(Arrays.asList(new Object[] { "SaveSan" }))).Run(); //$NON-NLS-1$
     }
 
     private void Cancel()
@@ -868,9 +869,9 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
     private void UpdateActionAvailability()
     {
-        java.util.ArrayList<storage_domains> items =
+        ArrayList<storage_domains> items =
                 getSelectedItems() != null ? Linq.<storage_domains> Cast(getSelectedItems())
-                        : new java.util.ArrayList<storage_domains>();
+                        : new ArrayList<storage_domains>();
 
         storage_domains item = (storage_domains) getSelectedItem();
 
@@ -970,8 +971,8 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                         public void OnSuccess(Object target, Object returnValue) {
 
                             StorageListModel storageListModel = (StorageListModel) target;
-                            java.util.ArrayList<storage_domains> storages =
-                                    (java.util.ArrayList<storage_domains>) returnValue;
+                            ArrayList<storage_domains> storages =
+                                    (ArrayList<storage_domains>) returnValue;
                             if (storages != null && storages.size() > 0)
                             {
                                 String storageName = storages.get(0).getstorage_name();
@@ -1020,8 +1021,8 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         tempVar.setstorage_type(nfsModel.getType());
         connection = tempVar;
 
-        java.util.ArrayList<VdcActionType> actionTypes = new java.util.ArrayList<VdcActionType>();
-        java.util.ArrayList<VdcActionParametersBase> parameters = new java.util.ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionType> actionTypes = new ArrayList<VdcActionType>();
+        ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
 
         actionTypes.add(VdcActionType.AddStorageServerConnection);
         actionTypes.add(VdcActionType.AddNFSStorageDomain);
@@ -1083,7 +1084,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         };
         Frontend.RunMultipleActions(actionTypes,
                 parameters,
-                new java.util.ArrayList<IFrontendActionAsyncCallback>(java.util.Arrays.asList(new IFrontendActionAsyncCallback[] {
+                new ArrayList<IFrontendActionAsyncCallback>(Arrays.asList(new IFrontendActionAsyncCallback[] {
                         callback1, callback2, callback3 })),
                 failureCallback,
                 this);
@@ -1095,7 +1096,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         SanStorageModel sanModel = (SanStorageModel) model.getSelectedItem();
         VDS host = (VDS) model.getHost().getSelectedItem();
 
-        java.util.ArrayList<String> lunIds = new java.util.ArrayList<String>();
+        ArrayList<String> lunIds = new ArrayList<String>();
         for (LunModel lun : sanModel.getAddedLuns())
         {
             lunIds.add(lun.getLunId());
@@ -1154,8 +1155,8 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                         public void OnSuccess(Object target, Object returnValue) {
 
                             StorageListModel storageListModel = (StorageListModel) target;
-                            java.util.ArrayList<storage_domains> storages =
-                                    (java.util.ArrayList<storage_domains>) returnValue;
+                            ArrayList<storage_domains> storages =
+                                    (ArrayList<storage_domains>) returnValue;
                             if (storages != null && storages.size() > 0)
                             {
                                 String storageName = storages.get(0).getstorage_name();
@@ -1204,8 +1205,8 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         tempVar.setstorage_type(localModel.getType());
         connection = tempVar;
 
-        java.util.ArrayList<VdcActionType> actionTypes = new java.util.ArrayList<VdcActionType>();
-        java.util.ArrayList<VdcActionParametersBase> parameters = new java.util.ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionType> actionTypes = new ArrayList<VdcActionType>();
+        ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
 
         actionTypes.add(VdcActionType.AddStorageServerConnection);
         actionTypes.add(VdcActionType.AddLocalStorageDomain);
@@ -1256,7 +1257,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         };
         Frontend.RunMultipleActions(actionTypes,
                 parameters,
-                new java.util.ArrayList<IFrontendActionAsyncCallback>(java.util.Arrays.asList(new IFrontendActionAsyncCallback[] {
+                new ArrayList<IFrontendActionAsyncCallback>(Arrays.asList(new IFrontendActionAsyncCallback[] {
                         callback1, callback2 })),
                 failureCallback,
                 this);
@@ -1270,7 +1271,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
     public void OnFinish(TaskContext context, boolean isSucceeded, IStorageModel model, String message)
     {
         context.InvokeUIThread(this,
-                new java.util.ArrayList<Object>(java.util.Arrays.asList(new Object[] { "Finish", isSucceeded, model, //$NON-NLS-1$
+                new ArrayList<Object>(Arrays.asList(new Object[] { "Finish", isSucceeded, model, //$NON-NLS-1$
                         message })));
     }
 
@@ -1307,8 +1308,8 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                         public void OnSuccess(Object target, Object returnValue) {
 
                             StorageListModel storageListModel = (StorageListModel) target;
-                            java.util.ArrayList<storage_domains> storages =
-                                    (java.util.ArrayList<storage_domains>) returnValue;
+                            ArrayList<storage_domains> storages =
+                                    (ArrayList<storage_domains>) returnValue;
                             if (storages != null && storages.size() > 0)
                             {
                                 String storageName = storages.get(0).getstorage_name();
@@ -1340,7 +1341,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                             StorageModel storageModel = (StorageModel) getWindow();
                             SanStorageModel sanStorageModel = (SanStorageModel) storageModel.getSelectedItem();
                             storage_domains storageDomain1 = (storage_domains) storageListModel.getSelectedItem();
-                            java.util.ArrayList<String> lunIds = new java.util.ArrayList<String>();
+                            ArrayList<String> lunIds = new ArrayList<String>();
                             for (LunModel lun : sanStorageModel.getAddedLuns())
                             {
                                 lunIds.add(lun.getLunId());
@@ -1380,7 +1381,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
     {
         this.context = context;
 
-        java.util.ArrayList<Object> data = (java.util.ArrayList<Object>) context.getState();
+        ArrayList<Object> data = (ArrayList<Object>) context.getState();
         StorageModel model = (StorageModel) getWindow();
 
         storageModel = model.getSelectedItem();
@@ -1430,8 +1431,8 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                     public void OnSuccess(Object target, Object returnValue) {
 
                         StorageListModel storageListModel = (StorageListModel) target;
-                        java.util.ArrayList<storage_domains> storages =
-                                (java.util.ArrayList<storage_domains>) returnValue;
+                        ArrayList<storage_domains> storages =
+                                (ArrayList<storage_domains>) returnValue;
                         if (storages != null && storages.size() > 0)
                         {
                             String storageName = storages.get(0).getstorage_name();
@@ -1476,8 +1477,8 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                                         public void OnSuccess(Object target, Object returnValue) {
 
                                             StorageListModel storageListModel1 = (StorageListModel) target;
-                                            java.util.ArrayList<storage_domains> domains =
-                                                    (java.util.ArrayList<storage_domains>) returnValue;
+                                            ArrayList<storage_domains> domains =
+                                                    (ArrayList<storage_domains>) returnValue;
                                             if (domains != null)
                                             {
                                                 if (domains.isEmpty())
@@ -1525,7 +1526,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                 this);
     }
 
-    public void ImportNfsStorageAddDomain(java.util.ArrayList<storage_domains> domains)
+    public void ImportNfsStorageAddDomain(ArrayList<storage_domains> domains)
     {
         storage_domains sdToAdd = Linq.FirstOrDefault(domains);
         storage_domain_static sdsToAdd = sdToAdd == null ? null : sdToAdd.getStorageStaticData();
@@ -1590,7 +1591,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
     {
         this.context = context;
 
-        java.util.ArrayList<Object> data = (java.util.ArrayList<Object>) context.getState();
+        ArrayList<Object> data = (ArrayList<Object>) context.getState();
         StorageModel storageModel = (StorageModel) getWindow();
         ImportSanStorageModel sanStorageModel = (ImportSanStorageModel) storageModel.getSelectedItem();
         Guid hostId = (Guid) data.get(1);
@@ -1639,7 +1640,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
     @Override
     public void run(TaskContext context)
     {
-        java.util.ArrayList<Object> data = (java.util.ArrayList<Object>) context.getState();
+        ArrayList<Object> data = (ArrayList<Object>) context.getState();
         String key = (String) data.get(0);
 
         if (StringHelper.stringsEqual(key, "SaveNfs")) //$NON-NLS-1$
@@ -1739,9 +1740,9 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
     @Override
     protected void setReportModelResourceId(ReportModel reportModel, String idParamName, boolean isMultiple) {
-        java.util.ArrayList<storage_domains> items =
+        ArrayList<storage_domains> items =
                 getSelectedItems() != null ? Linq.<storage_domains> Cast(getSelectedItems())
-                        : new java.util.ArrayList<storage_domains>();
+                        : new ArrayList<storage_domains>();
 
         if (idParamName != null) {
             for (storage_domains item : items) {

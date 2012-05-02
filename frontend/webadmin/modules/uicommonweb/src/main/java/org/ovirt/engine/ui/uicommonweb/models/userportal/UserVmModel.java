@@ -1,6 +1,11 @@
 package org.ovirt.engine.ui.uicommonweb.models.userportal;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -595,14 +600,14 @@ public class UserVmModel extends Model
         privateCustomProperties = value;
     }
 
-    private java.util.ArrayList<String> privateCustomPropertiesKeysList;
+    private ArrayList<String> privateCustomPropertiesKeysList;
 
-    public java.util.ArrayList<String> getCustomPropertiesKeysList()
+    public ArrayList<String> getCustomPropertiesKeysList()
     {
         return privateCustomPropertiesKeysList;
     }
 
-    public void setCustomPropertiesKeysList(java.util.ArrayList<String> value)
+    public void setCustomPropertiesKeysList(ArrayList<String> value)
     {
         privateCustomPropertiesKeysList = value;
     }
@@ -679,14 +684,14 @@ public class UserVmModel extends Model
         privateIsFirstRun = value;
     }
 
-    private java.util.List<DiskModel> disks;
+    private List<DiskModel> disks;
 
-    public java.util.List<DiskModel> getDisks()
+    public List<DiskModel> getDisks()
     {
         return disks;
     }
 
-    public void setDisks(java.util.List<DiskModel> value)
+    public void setDisks(List<DiskModel> value)
     {
         if (disks != value)
         {
@@ -898,7 +903,7 @@ public class UserVmModel extends Model
         getOSType().setSelectedItem(VmOsType.Unassigned);
 
         // Display protocols.
-        java.util.ArrayList<EntityModel> displayProtocolOptions = new java.util.ArrayList<EntityModel>();
+        ArrayList<EntityModel> displayProtocolOptions = new ArrayList<EntityModel>();
 
         EntityModel spiceProtocol = new EntityModel();
         spiceProtocol.setTitle(ConstantsManager.getInstance().getConstants().spiceTitle());
@@ -924,7 +929,7 @@ public class UserVmModel extends Model
         tempVar.setEntity(BootSequence.C);
         EntityModel hardDiskOption = tempVar;
 
-        java.util.ArrayList<EntityModel> firstBootDeviceItems = new java.util.ArrayList<EntityModel>();
+        ArrayList<EntityModel> firstBootDeviceItems = new ArrayList<EntityModel>();
         firstBootDeviceItems.add(hardDiskOption);
         EntityModel tempVar2 = new EntityModel();
         tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cdromTitle());
@@ -938,7 +943,7 @@ public class UserVmModel extends Model
         getFirstBootDevice().setSelectedItem(hardDiskOption);
 
         // Provisioning
-        java.util.ArrayList<EntityModel> provisioningItems = new java.util.ArrayList<EntityModel>();
+        ArrayList<EntityModel> provisioningItems = new ArrayList<EntityModel>();
         EntityModel tempVar4 = new EntityModel();
         tempVar4.setTitle(ConstantsManager.getInstance().getConstants().thinTitle());
         tempVar4.setEntity(false);
@@ -964,7 +969,7 @@ public class UserVmModel extends Model
                 tempVar6.setEntity(1);
                 EntityModel lowOption = tempVar6;
 
-                java.util.ArrayList<EntityModel> priorityItems = new java.util.ArrayList<EntityModel>();
+                ArrayList<EntityModel> priorityItems = new ArrayList<EntityModel>();
                 priorityItems.add(lowOption);
                 EntityModel tempVar7 = new EntityModel();
                 tempVar7.setTitle(ConstantsManager.getInstance().getConstants().mediumTitle());
@@ -991,16 +996,16 @@ public class UserVmModel extends Model
                 if (userVmModel.getTimeZone().getSelectedItem() != null)
                 {
                     oldSelectedItem =
-                            ((java.util.Map.Entry<String, String>) userVmModel.getTimeZone().getSelectedItem()).getKey();
+                            ((Map.Entry<String, String>) userVmModel.getTimeZone().getSelectedItem()).getKey();
                 }
 
-                userVmModel.getTimeZone().setItems(((java.util.HashMap<String, String>) result).entrySet());
+                userVmModel.getTimeZone().setItems(((HashMap<String, String>) result).entrySet());
 
                 userVmModel.getTimeZone()
                         .setSelectedItem(!StringHelper.isNullOrEmpty(oldSelectedItem) ? Linq.FirstOrDefault(userVmModel.getTimeZone()
                                 .getItems(),
                                 new Linq.TimeZonePredicate(oldSelectedItem))
-                                : Linq.FirstOrDefault((Iterable<java.util.Map.Entry<String, String>>) userVmModel.getTimeZone()
+                                : Linq.FirstOrDefault((Iterable<Map.Entry<String, String>>) userVmModel.getTimeZone()
                                         .getItems()));
             }
         };
@@ -1012,8 +1017,8 @@ public class UserVmModel extends Model
             public void OnSuccess(Object model, Object result)
             {
                 UserVmModel userVmModel = (UserVmModel) model;
-                java.util.ArrayList<storage_pool> list = new java.util.ArrayList<storage_pool>();
-                for (storage_pool a : (java.util.ArrayList<storage_pool>) result)
+                ArrayList<storage_pool> list = new ArrayList<storage_pool>();
+                for (storage_pool a : (ArrayList<storage_pool>) result)
                 {
                     if (a.getstatus() == StoragePoolStatus.Up)
                     {
@@ -1272,7 +1277,7 @@ public class UserVmModel extends Model
             public void OnSuccess(Object model, Object result)
             {
                 UserVmModel userVmModel = (UserVmModel) model;
-                java.util.ArrayList<VDSGroup> clusters = (java.util.ArrayList<VDSGroup>) result;
+                ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) result;
                 userVmModel.getCluster().setItems(clusters);
                 Object tempVar = getCluster().getSelectedItem();
                 userVmModel.getCluster().setSelectedItem((tempVar != null) ? tempVar : Linq.FirstOrDefault(clusters));
@@ -1345,7 +1350,7 @@ public class UserVmModel extends Model
             {
                 return;
             }
-            java.util.ArrayList<VDSGroup> clusters = Linq.<VDSGroup> Cast(getCluster().getItems());
+            ArrayList<VDSGroup> clusters = Linq.<VDSGroup> Cast(getCluster().getItems());
             VDSGroup clusterToSelect = null;
             for (VDSGroup a : clusters)
             {
@@ -1408,10 +1413,10 @@ public class UserVmModel extends Model
                         public void OnSuccess(Object model, Object result)
                         {
                             UserVmModel userVmModel = (UserVmModel) model;
-                            java.util.ArrayList<DiskImage> diskList = (java.util.ArrayList<DiskImage>) result;
+                            ArrayList<DiskImage> diskList = (ArrayList<DiskImage>) result;
                             Collections.sort(diskList, new Linq.DiskByInternalDriveMappingComparer());
 
-                            java.util.ArrayList<DiskModel> list = new java.util.ArrayList<DiskModel>();
+                            ArrayList<DiskModel> list = new ArrayList<DiskModel>();
                             for (DiskImage a : diskList)
                             {
                                 DiskModel diskModel = new DiskModel();
@@ -1483,7 +1488,7 @@ public class UserVmModel extends Model
                 public void OnSuccess(Object model, Object result)
                 {
                     UserVmModel userVmModel = (UserVmModel) model;
-                    java.util.ArrayList<VDS> hosts = (java.util.ArrayList<VDS>) result;
+                    ArrayList<VDS> hosts = (ArrayList<VDS>) result;
                     userVmModel.getDefaultHost().setItems(hosts);
                     userVmModel.getDefaultHost().setSelectedItem(Linq.FirstOrDefault(hosts));
 
@@ -1521,7 +1526,7 @@ public class UserVmModel extends Model
         }
         else
         {
-            java.util.ArrayList<VDS> hosts = new java.util.ArrayList<VDS>();
+            ArrayList<VDS> hosts = new ArrayList<VDS>();
             getDefaultHost().setItems(hosts);
             getDefaultHost().setSelectedItem(Linq.FirstOrDefault(hosts));
 
@@ -1578,7 +1583,7 @@ public class UserVmModel extends Model
         EntityModel entityModel = (EntityModel) getFirstBootDevice().getSelectedItem();
         BootSequence firstDevice = (BootSequence) entityModel.getEntity();
 
-        java.util.ArrayList<EntityModel> list = new java.util.ArrayList<EntityModel>();
+        ArrayList<EntityModel> list = new ArrayList<EntityModel>();
         for (Object item : getFirstBootDevice().getItems())
         {
             EntityModel a = (EntityModel) item;
@@ -1631,7 +1636,7 @@ public class UserVmModel extends Model
             public void OnSuccess(Object model, Object result)
             {
                 UserVmModel userVmModel = (UserVmModel) model;
-                java.util.ArrayList<VmTemplate> templates = (java.util.ArrayList<VmTemplate>) result;
+                ArrayList<VmTemplate> templates = (ArrayList<VmTemplate>) result;
 
                 VmTemplate oldTemplate = (VmTemplate) userVmModel.getTemplate().getSelectedItem();
                 userVmModel.getTemplate().setItems(templates);
@@ -1681,7 +1686,7 @@ public class UserVmModel extends Model
                 public void OnSuccess(Object model, Object result)
                 {
                     UserVmModel userVmModel = (UserVmModel) model;
-                    java.util.ArrayList<Integer> numOfMonitors = (java.util.ArrayList<Integer>) result;
+                    ArrayList<Integer> numOfMonitors = (ArrayList<Integer>) result;
                     userVmModel.getNumOfMonitors().setItems(numOfMonitors);
                     userVmModel.getNumOfMonitors().setSelectedItem(Linq.FirstOrDefault(numOfMonitors));
                 }
@@ -1691,8 +1696,8 @@ public class UserVmModel extends Model
         }
         else
         {
-            java.util.ArrayList<Integer> numOfMonitors =
-                    new java.util.ArrayList<Integer>(java.util.Arrays.asList(new Integer[] { 1 }));
+            ArrayList<Integer> numOfMonitors =
+                    new ArrayList<Integer>(Arrays.asList(new Integer[] {1}));
             getNumOfMonitors().setItems(numOfMonitors);
             getNumOfMonitors().setSelectedItem(Linq.FirstOrDefault(numOfMonitors));
         }
@@ -1727,7 +1732,7 @@ public class UserVmModel extends Model
                 public void OnSuccess(Object model, Object result)
                 {
                     UserVmModel userVmModel = (UserVmModel) model;
-                    java.util.ArrayList<String> images = (java.util.ArrayList<String>) result;
+                    ArrayList<String> images = (ArrayList<String>) result;
                     userVmModel.getCdImage().setItems(images);
 
                     if (!userVmModel.getIsNew() && !StringHelper.isNullOrEmpty(userVmModel.getIsoPath()))
@@ -1764,8 +1769,8 @@ public class UserVmModel extends Model
                     public void OnSuccess(Object model, Object result)
                     {
                         UserVmModel userVmModel = (UserVmModel) model;
-                        java.util.ArrayList<storage_domains> storageDomains =
-                                (java.util.ArrayList<storage_domains>) result;
+                        ArrayList<storage_domains> storageDomains =
+                                (ArrayList<storage_domains>) result;
                         userVmModel.PostUpdateStorageDomains(storageDomains);
                     }
                 };
@@ -1780,10 +1785,10 @@ public class UserVmModel extends Model
                     public void OnSuccess(Object model, Object result)
                     {
                         UserVmModel userVmModel = (UserVmModel) model;
-                        java.util.ArrayList<storage_domains> list = (java.util.ArrayList<storage_domains>) result;
+                        ArrayList<storage_domains> list = (ArrayList<storage_domains>) result;
 
-                        java.util.ArrayList<storage_domains> storageDomains =
-                                new java.util.ArrayList<storage_domains>();
+                        ArrayList<storage_domains> storageDomains =
+                                new ArrayList<storage_domains>();
                         for (storage_domains a : list)
                         {
                             if (a.getstorage_domain_type() == StorageDomainType.Data
@@ -1801,18 +1806,18 @@ public class UserVmModel extends Model
         }
         else
         {
-            getStorageDomain().setItems(new java.util.ArrayList<storage_domains>());
+            getStorageDomain().setItems(new ArrayList<storage_domains>());
             getStorageDomain().setSelectedItem(null);
             getStorageDomain().setIsChangable(false);
         }
     }
 
-    public void PostUpdateStorageDomains(java.util.ArrayList<storage_domains> storageDomains)
+    public void PostUpdateStorageDomains(ArrayList<storage_domains> storageDomains)
     {
         // filter only the Active storage domains (Active regarding the relevant storage pool).
         // storageDomains = storageDomains.Where(a => a.status.HasValue && a.status.Value ==
         // StorageDomainStatus.Active);
-        java.util.ArrayList<storage_domains> list = new java.util.ArrayList<storage_domains>();
+        ArrayList<storage_domains> list = new ArrayList<storage_domains>();
         for (storage_domains a : storageDomains)
         {
             if (a.getstatus() != null && a.getstatus() == StorageDomainStatus.Active)
@@ -2023,7 +2028,7 @@ public class UserVmModel extends Model
 
     public void setBootSequence(BootSequence value)
     {
-        java.util.ArrayList<BootSequence> items = new java.util.ArrayList<BootSequence>();
+        ArrayList<BootSequence> items = new ArrayList<BootSequence>();
         for (char a : value.toString().toCharArray())
         {
             items.add(BootSequence.valueOf((new Character(a)).toString()));
@@ -2040,7 +2045,7 @@ public class UserVmModel extends Model
         }
         getFirstBootDevice().setSelectedItem(firstBootDevice);
 
-        java.util.ArrayList<EntityModel> secondDeviceOptions =
+        ArrayList<EntityModel> secondDeviceOptions =
                 Linq.<EntityModel> Cast(getSecondBootDevice().getItems());
 
         if (items.size() > 1)

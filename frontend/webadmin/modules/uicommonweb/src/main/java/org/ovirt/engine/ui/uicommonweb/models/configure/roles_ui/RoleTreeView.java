@@ -9,16 +9,16 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 @SuppressWarnings("unused")
 public class RoleTreeView
 {
-    public static java.util.ArrayList<SelectionTreeNodeModel> GetRoleTreeView(boolean isReadOnly, boolean isAdmin)
+    public static ArrayList<SelectionTreeNodeModel> GetRoleTreeView(boolean isReadOnly, boolean isAdmin)
     {
         RoleNode tree = initTreeView();
-        java.util.ArrayList<ActionGroup> userActionGroups = null;
+        ArrayList<ActionGroup> userActionGroups = null;
         if (isAdmin == false)
         {
             userActionGroups = GetUserActionGroups();
         }
 
-        java.util.ArrayList<SelectionTreeNodeModel> roleTreeView = new java.util.ArrayList<SelectionTreeNodeModel>();
+        ArrayList<SelectionTreeNodeModel> roleTreeView = new ArrayList<SelectionTreeNodeModel>();
 
         SelectionTreeNodeModel firstNode = null, secondNode = null, thirdNode = null;
         for (RoleNode first : tree.getLeafRoles())

@@ -1,6 +1,8 @@
 package org.ovirt.engine.ui.uicommonweb.models.templates;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.MoveOrCopyParameters;
@@ -116,7 +118,7 @@ public class TemplateListModel extends ListWithDetailsModel implements ISupportS
         }
         else
         {
-            java.util.ArrayList<Guid> items = new java.util.ArrayList<Guid>();
+            ArrayList<Guid> items = new ArrayList<Guid>();
             for (Object item : getSelectedItems())
             {
                 VmTemplate a = (VmTemplate) item;
@@ -213,10 +215,10 @@ public class TemplateListModel extends ListWithDetailsModel implements ISupportS
                     @Override
                     public void OnSuccess(Object target, Object returnValue) {
                         TemplateListModel templateListModel = (TemplateListModel) target;
-                        java.util.ArrayList<storage_domains> storageDomains =
-                                (java.util.ArrayList<storage_domains>) returnValue;
-                        java.util.ArrayList<storage_domains> filteredStorageDomains =
-                                new java.util.ArrayList<storage_domains>();
+                        ArrayList<storage_domains> storageDomains =
+                                (ArrayList<storage_domains>) returnValue;
+                        ArrayList<storage_domains> filteredStorageDomains =
+                                new ArrayList<storage_domains>();
 
                         for (storage_domains a : storageDomains) {
                             if (a.getstorage_domain_type() == StorageDomainType.ImportExport) {
@@ -230,7 +232,7 @@ public class TemplateListModel extends ListWithDetailsModel implements ISupportS
                 }), template.getstorage_pool_id().getValue());
     }
 
-    private void PostExportGetStorageDomainList(java.util.ArrayList<storage_domains> storageDomains)
+    private void PostExportGetStorageDomainList(ArrayList<storage_domains> storageDomains)
     {
         ExportVmModel model = (ExportVmModel) getWindow();
         model.getStorage().setItems(storageDomains);
@@ -299,21 +301,21 @@ public class TemplateListModel extends ListWithDetailsModel implements ISupportS
 
     private boolean SelectedTemplatesOnDifferentDataCenters()
     {
-        java.util.ArrayList<VmTemplate> templates = Linq.<VmTemplate> Cast(getSelectedItems());
+        ArrayList<VmTemplate> templates = Linq.<VmTemplate> Cast(getSelectedItems());
         // return templates.GroupBy(a => a.storage_pool_id).Count() > 1 ? true : false;
 
-        java.util.Map<NGuid, java.util.ArrayList<VmTemplate>> t =
-                new java.util.HashMap<NGuid, java.util.ArrayList<VmTemplate>>();
+        Map<NGuid, ArrayList<VmTemplate>> t =
+                new HashMap<NGuid, ArrayList<VmTemplate>>();
         for (VmTemplate a : templates)
         {
             if (!a.getId().equals(NGuid.Empty))
             {
                 if (!t.containsKey(a.getstorage_pool_id()))
                 {
-                    t.put(a.getstorage_pool_id(), new java.util.ArrayList<VmTemplate>());
+                    t.put(a.getstorage_pool_id(), new ArrayList<VmTemplate>());
                 }
 
-                java.util.ArrayList<VmTemplate> list = t.get(a.getstorage_pool_id());
+                ArrayList<VmTemplate> list = t.get(a.getstorage_pool_id());
                 list.add(a);
             }
         }
@@ -339,8 +341,8 @@ public class TemplateListModel extends ListWithDetailsModel implements ISupportS
                 for (VmTemplate template : Linq.<VmTemplate> Cast(getSelectedItems()))
                 {
                     boolean found = false;
-                    java.util.HashMap<VmTemplate, java.util.ArrayList<DiskImage>> items =
-                            (java.util.HashMap<VmTemplate, java.util.ArrayList<DiskImage>>) returnValue.getReturnValue();
+                    HashMap<VmTemplate, ArrayList<DiskImage>> items =
+                            (HashMap<VmTemplate, ArrayList<DiskImage>>) returnValue.getReturnValue();
 
                     for (VmTemplate a : items.keySet())
                     {
@@ -383,7 +385,7 @@ public class TemplateListModel extends ListWithDetailsModel implements ISupportS
             return;
         }
 
-        java.util.ArrayList<VdcActionParametersBase> list = new java.util.ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
         for (Object item : getSelectedItems())
         {
             VmTemplate a = (VmTemplate) item;
@@ -498,8 +500,8 @@ public class TemplateListModel extends ListWithDetailsModel implements ISupportS
         model.setHashName("remove_template"); //$NON-NLS-1$
         model.setMessage(ConstantsManager.getInstance().getConstants().templatesMsg());
 
-        java.util.ArrayList<String> items = new java.util.ArrayList<String>();
-        java.util.ArrayList<VmTemplate> templates = Linq.<VmTemplate> Cast(getSelectedItems());
+        ArrayList<String> items = new ArrayList<String>();
+        ArrayList<VmTemplate> templates = Linq.<VmTemplate> Cast(getSelectedItems());
         for (VmTemplate template : templates)
         {
             if (!template.getId().equals(NGuid.Empty))
@@ -529,7 +531,7 @@ public class TemplateListModel extends ListWithDetailsModel implements ISupportS
             return;
         }
 
-        java.util.ArrayList<VdcActionParametersBase> list = new java.util.ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
         for (Object item : getSelectedItems())
         {
             VmTemplate a = (VmTemplate) item;
@@ -609,7 +611,7 @@ public class TemplateListModel extends ListWithDetailsModel implements ISupportS
         template.setdomain(model.getDomain().getIsAvailable() ? (String) model.getDomain().getSelectedItem() : ""); //$NON-NLS-1$
         template.setmem_size_mb((Integer) model.getMemSize().getEntity());
         template.setvds_group_id(((VDSGroup) model.getCluster().getSelectedItem()).getId());
-        template.settime_zone((model.getTimeZone().getIsAvailable() && model.getTimeZone().getSelectedItem() != null) ? ((java.util.Map.Entry<String, String>) model.getTimeZone()
+        template.settime_zone((model.getTimeZone().getIsAvailable() && model.getTimeZone().getSelectedItem() != null) ? ((Map.Entry<String, String>) model.getTimeZone()
                 .getSelectedItem()).getKey()
                 : ""); //$NON-NLS-1$
         template.setnum_of_sockets((Integer) model.getNumOfSockets().getEntity());
@@ -697,7 +699,7 @@ public class TemplateListModel extends ListWithDetailsModel implements ISupportS
     {
         if (getSelectedItems() != null)
         {
-            java.util.ArrayList<VmTemplate> templates = Linq.<VmTemplate> Cast(getSelectedItems());
+            ArrayList<VmTemplate> templates = Linq.<VmTemplate> Cast(getSelectedItems());
             for (VmTemplate template : templates)
             {
                 if (template != null && template.getId().equals(NGuid.Empty))
@@ -713,9 +715,9 @@ public class TemplateListModel extends ListWithDetailsModel implements ISupportS
     protected void UpdateActionAvailability()
     {
         VmTemplate item = (VmTemplate) getSelectedItem();
-        java.util.ArrayList items =
-                (((java.util.ArrayList) getSelectedItems()) != null) ? (java.util.ArrayList) getSelectedItems()
-                        : new java.util.ArrayList();
+        ArrayList items =
+                (((ArrayList) getSelectedItems()) != null) ? (ArrayList) getSelectedItems()
+                        : new ArrayList();
 
         boolean blankSelected = getSelectedItem() != null && Guid.OpEquality(item.getId(), NGuid.Empty);
 

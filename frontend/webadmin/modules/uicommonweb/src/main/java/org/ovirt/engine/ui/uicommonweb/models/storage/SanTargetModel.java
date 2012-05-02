@@ -9,6 +9,8 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 
+import java.util.List;
+
 @SuppressWarnings("unused")
 public class SanTargetModel extends EntityModel
 {
@@ -102,14 +104,14 @@ public class SanTargetModel extends EntityModel
         }
     }
 
-    private java.util.List<LunModel> luns;
+    private List<LunModel> luns;
 
-    public java.util.List<LunModel> getLuns()
+    public List<LunModel> getLuns()
     {
         return luns;
     }
 
-    public void setLuns(java.util.List<LunModel> value)
+    public void setLuns(List<LunModel> value)
     {
         if (luns != value)
         {

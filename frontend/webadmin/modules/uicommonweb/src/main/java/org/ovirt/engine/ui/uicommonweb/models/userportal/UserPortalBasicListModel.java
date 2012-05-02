@@ -27,6 +27,11 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.RdpConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.SpiceConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VncConsoleModel;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+
 @SuppressWarnings("unused")
 public class UserPortalBasicListModel extends IUserPortalListModel implements IVmPoolResolutionService
 {
@@ -56,26 +61,26 @@ public class UserPortalBasicListModel extends IUserPortalListModel implements IV
         privatevmBasicDiskListModel = value;
     }
 
-    private java.util.ArrayList<VM> privatevms;
+    private ArrayList<VM> privatevms;
 
-    public java.util.ArrayList<VM> getvms()
+    public ArrayList<VM> getvms()
     {
         return privatevms;
     }
 
-    public void setvms(java.util.ArrayList<VM> value)
+    public void setvms(ArrayList<VM> value)
     {
         privatevms = value;
     }
 
-    private java.util.ArrayList<vm_pools> privatepools;
+    private ArrayList<vm_pools> privatepools;
 
-    public java.util.ArrayList<vm_pools> getpools()
+    public ArrayList<vm_pools> getpools()
     {
         return privatepools;
     }
 
-    public void setpools(java.util.ArrayList<vm_pools> value)
+    public void setpools(ArrayList<vm_pools> value)
     {
         privatepools = value;
     }
@@ -104,7 +109,7 @@ public class UserPortalBasicListModel extends IUserPortalListModel implements IV
         privateSelectedItemNumOfCpuCores = value;
     }
 
-    private java.util.HashMap<Guid, java.util.ArrayList<ConsoleModel>> cachedConsoleModels;
+    private HashMap<Guid, ArrayList<ConsoleModel>> cachedConsoleModels;
 
     static
     {
@@ -118,7 +123,7 @@ public class UserPortalBasicListModel extends IUserPortalListModel implements IV
         setSelectedItemDefinedMemory(new EntityModel());
         setSelectedItemNumOfCpuCores(new EntityModel());
 
-        cachedConsoleModels = new java.util.HashMap<Guid, java.util.ArrayList<ConsoleModel>>();
+        cachedConsoleModels = new HashMap<Guid, ArrayList<ConsoleModel>>();
     }
 
     @Override
@@ -133,7 +138,7 @@ public class UserPortalBasicListModel extends IUserPortalListModel implements IV
             public void OnSuccess(Object model, Object ReturnValue)
             {
                 UserPortalBasicListModel userPortalBasicListModel = (UserPortalBasicListModel) model;
-                userPortalBasicListModel.setvms((java.util.ArrayList<VM>) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
+                userPortalBasicListModel.setvms((ArrayList<VM>) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
                 userPortalBasicListModel.OnVmAndPoolLoad();
             }
         };
@@ -151,7 +156,7 @@ public class UserPortalBasicListModel extends IUserPortalListModel implements IV
                 if (ReturnValue != null)
                 {
                     UserPortalBasicListModel userPortalBasicListModel = (UserPortalBasicListModel) model;
-                    userPortalBasicListModel.setpools((java.util.ArrayList<vm_pools>) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
+                    userPortalBasicListModel.setpools((ArrayList<vm_pools>) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
                     userPortalBasicListModel.OnVmAndPoolLoad();
                 }
             }
@@ -289,8 +294,8 @@ public class UserPortalBasicListModel extends IUserPortalListModel implements IV
             // Complete search.
 
             // Remove pools that has provided VMs.
-            java.util.ArrayList<vm_pools> filteredPools = new java.util.ArrayList<vm_pools>();
-            poolMap = new java.util.HashMap<Guid, vm_pools>();
+            ArrayList<vm_pools> filteredPools = new ArrayList<vm_pools>();
+            poolMap = new HashMap<Guid, vm_pools>();
 
             for (vm_pools pool : getpools())
             {
@@ -314,10 +319,10 @@ public class UserPortalBasicListModel extends IUserPortalListModel implements IV
             }
 
             // Merge VMs and Pools, and create item models.
-            java.util.List all = Linq.Concat(getvms(), filteredPools);
+            List all = Linq.Concat(getvms(), filteredPools);
             Linq.Sort(all, new Linq.VmAndPoolByNameComparer());
 
-            java.util.ArrayList<Model> items = new java.util.ArrayList<Model>();
+            ArrayList<Model> items = new ArrayList<Model>();
             for (Object item : all)
             {
                 UserPortalItemModel model = new UserPortalItemModel(this);
@@ -361,12 +366,12 @@ public class UserPortalBasicListModel extends IUserPortalListModel implements IV
                 RdpConsoleModel rdpConsoleModel = new RdpConsoleModel();
 
                 cachedConsoleModels.put(vm.getId(),
-                        new java.util.ArrayList<ConsoleModel>(java.util.Arrays.asList(new ConsoleModel[] {
-                                spiceConsoleModel, vncConsoleModel, rdpConsoleModel })));
+                        new ArrayList<ConsoleModel>(Arrays.asList(new ConsoleModel[] {
+                            spiceConsoleModel, vncConsoleModel, rdpConsoleModel})));
             }
 
             // Getting cached console model
-            java.util.ArrayList<ConsoleModel> cachedModels = cachedConsoleModels.get(vm.getId());
+            ArrayList<ConsoleModel> cachedModels = cachedConsoleModels.get(vm.getId());
             for (ConsoleModel cachedModel : cachedModels)
             {
                 cachedModel.setEntity(vm);

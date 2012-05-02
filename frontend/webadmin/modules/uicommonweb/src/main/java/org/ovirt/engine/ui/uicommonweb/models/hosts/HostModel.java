@@ -1,7 +1,9 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.FenceStatusReturnValue;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -327,9 +329,9 @@ public class HostModel extends Model
         }
     }
 
-    public java.util.HashMap<String, String> getPmOptionsMap()
+    public HashMap<String, String> getPmOptionsMap()
     {
-        java.util.HashMap<String, String> dict = new java.util.HashMap<String, String>();
+        HashMap<String, String> dict = new HashMap<String, String>();
 
         // Add well known pm options.
         if (getPmPort().getIsAvailable())
@@ -367,11 +369,11 @@ public class HostModel extends Model
         return dict;
     }
 
-    public void setPmOptionsMap(java.util.HashMap<String, String> value)
+    public void setPmOptionsMap(HashMap<String, String> value)
     {
         String pmOptions = ""; //$NON-NLS-1$
 
-        for (java.util.Map.Entry<String, String> pair : value.entrySet())
+        for (Map.Entry<String, String> pair : value.entrySet())
         {
             String k = pair.getKey();
             String v = pair.getValue();
@@ -609,7 +611,7 @@ public class HostModel extends Model
                 public void OnSuccess(Object model, Object result)
                 {
                     HostModel hostModel = (HostModel) model;
-                    java.util.ArrayList<VDSGroup> clusters = (java.util.ArrayList<VDSGroup>) result;
+                    ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) result;
                     VDSGroup oldCluster = (VDSGroup) hostModel.getCluster().getSelectedItem();
                     storage_pool selectedDataCenter = (storage_pool) getDataCenter().getSelectedItem();
 
@@ -658,7 +660,7 @@ public class HostModel extends Model
                 public void OnSuccess(Object model, Object result)
                 {
                     HostModel hostModel = (HostModel) model;
-                    java.util.ArrayList<String> pmTypeList = (java.util.ArrayList<String>) result;
+                    ArrayList<String> pmTypeList = (ArrayList<String>) result;
                     String pmType = (String) hostModel.getPmType().getSelectedItem();
 
                     hostModel.getPmType().setItems(pmTypeList);
@@ -691,7 +693,7 @@ public class HostModel extends Model
             public void OnSuccess(Object model, Object result)
             {
                 HostModel hostModel = (HostModel) model;
-                hostModel.postGetPmOptions((java.util.ArrayList<String>) result);
+                hostModel.postGetPmOptions((ArrayList<String>) result);
 
             }
         };
@@ -701,11 +703,11 @@ public class HostModel extends Model
         }
         else
         {
-            postGetPmOptions(new java.util.ArrayList<String>());
+            postGetPmOptions(new ArrayList<String>());
         }
     }
 
-    public void postGetPmOptions(java.util.ArrayList<String> pmOptions)
+    public void postGetPmOptions(ArrayList<String> pmOptions)
     {
         getPmPort().setIsAvailable(pmOptions.contains(PmPortKey));
         getPmSlot().setIsAvailable(pmOptions.contains(PmSlotKey));

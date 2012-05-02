@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
@@ -103,14 +104,14 @@ public class DiskModel extends Model
         privateVolumeFormat = value;
     }
 
-    private java.util.Date privateCreationDate = new java.util.Date(0);
+    private Date privateCreationDate = new Date(0);
 
-    public java.util.Date getCreationDate()
+    public Date getCreationDate()
     {
         return privateCreationDate;
     }
 
-    public void setCreationDate(java.util.Date value)
+    public void setCreationDate(Date value)
     {
         privateCreationDate = value;
     }

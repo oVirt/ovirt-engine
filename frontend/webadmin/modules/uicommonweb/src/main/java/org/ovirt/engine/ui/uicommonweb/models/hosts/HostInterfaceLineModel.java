@@ -5,6 +5,8 @@ import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 
+import java.util.ArrayList;
+
 @SuppressWarnings("unused")
 public class HostInterfaceLineModel extends Model
 {
@@ -69,14 +71,14 @@ public class HostInterfaceLineModel extends Model
         }
     }
 
-    private java.util.ArrayList<HostInterface> interfaces;
+    private ArrayList<HostInterface> interfaces;
 
-    public java.util.ArrayList<HostInterface> getInterfaces()
+    public ArrayList<HostInterface> getInterfaces()
     {
         return interfaces;
     }
 
-    public void setInterfaces(java.util.ArrayList<HostInterface> value)
+    public void setInterfaces(ArrayList<HostInterface> value)
     {
         if (interfaces != value)
         {
@@ -85,14 +87,14 @@ public class HostInterfaceLineModel extends Model
         }
     }
 
-    private java.util.ArrayList<HostVLan> vLans;
+    private ArrayList<HostVLan> vLans;
 
-    public java.util.ArrayList<HostVLan> getVLans()
+    public ArrayList<HostVLan> getVLans()
     {
         return vLans;
     }
 
-    public void setVLans(java.util.ArrayList<HostVLan> value)
+    public void setVLans(ArrayList<HostVLan> value)
     {
         if (vLans != value)
         {

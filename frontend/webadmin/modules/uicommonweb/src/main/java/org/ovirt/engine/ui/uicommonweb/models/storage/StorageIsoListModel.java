@@ -16,6 +16,9 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleQueryAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 @SuppressWarnings("unused")
 public class StorageIsoListModel extends SearchableListModel implements IFrontendMultipleQueryAsyncCallback
 {
@@ -31,7 +34,7 @@ public class StorageIsoListModel extends SearchableListModel implements IFronten
         if (items != value)
         {
             EntityModel lastSelectedItem = (EntityModel) getSelectedItem();
-            java.util.ArrayList<EntityModel> lastSelectedItems = (java.util.ArrayList<EntityModel>) getSelectedItems();
+            ArrayList<EntityModel> lastSelectedItems = (ArrayList<EntityModel>) getSelectedItems();
 
             ItemsChanging(value, items);
             items = value;
@@ -47,7 +50,7 @@ public class StorageIsoListModel extends SearchableListModel implements IFronten
             if (lastSelectedItem != null)
             {
                 EntityModel newSelectedItem = null;
-                java.util.ArrayList<EntityModel> newItems = (java.util.ArrayList<EntityModel>) value;
+                ArrayList<EntityModel> newItems = (ArrayList<EntityModel>) value;
 
                 if (newItems != null)
                 {
@@ -148,9 +151,9 @@ public class StorageIsoListModel extends SearchableListModel implements IFronten
 
         StartProgress(null);
 
-        Frontend.RunMultipleQueries(new java.util.ArrayList<VdcQueryType>(java.util.Arrays.asList(new VdcQueryType[] {
-                VdcQueryType.GetAllIsoImagesList, VdcQueryType.GetAllFloppyImagesList })),
-                new java.util.ArrayList<VdcQueryParametersBase>(java.util.Arrays.asList(new VdcQueryParametersBase[] {
+        Frontend.RunMultipleQueries(new ArrayList<VdcQueryType>(Arrays.asList(new VdcQueryType[] {
+            VdcQueryType.GetAllIsoImagesList, VdcQueryType.GetAllFloppyImagesList})),
+                new ArrayList<VdcQueryParametersBase>(Arrays.asList(new VdcQueryParametersBase[] {
                         parameters, parameters })),
                 this);
     }
@@ -167,13 +170,13 @@ public class StorageIsoListModel extends SearchableListModel implements IFronten
     {
         StopProgress();
 
-        java.util.ArrayList<EntityModel> items = new java.util.ArrayList<EntityModel>();
+        ArrayList<EntityModel> items = new ArrayList<EntityModel>();
 
         VdcQueryReturnValue isoReturnValue = result.getReturnValues().get(0);
 
-        java.util.ArrayList<RepoFileMetaData> isoImages =
-                isoReturnValue.getSucceeded() ? (java.util.ArrayList<RepoFileMetaData>) isoReturnValue.getReturnValue()
-                        : new java.util.ArrayList<RepoFileMetaData>();
+        ArrayList<RepoFileMetaData> isoImages =
+                isoReturnValue.getSucceeded() ? (ArrayList<RepoFileMetaData>) isoReturnValue.getReturnValue()
+                        : new ArrayList<RepoFileMetaData>();
 
         for (RepoFileMetaData item : isoImages)
         {
@@ -186,9 +189,9 @@ public class StorageIsoListModel extends SearchableListModel implements IFronten
 
         VdcQueryReturnValue floppyReturnValue = result.getReturnValues().get(1);
 
-        java.util.ArrayList<RepoFileMetaData> floppyImages =
-                floppyReturnValue.getSucceeded() ? (java.util.ArrayList<RepoFileMetaData>) floppyReturnValue.getReturnValue()
-                        : new java.util.ArrayList<RepoFileMetaData>();
+        ArrayList<RepoFileMetaData> floppyImages =
+                floppyReturnValue.getSucceeded() ? (ArrayList<RepoFileMetaData>) floppyReturnValue.getReturnValue()
+                        : new ArrayList<RepoFileMetaData>();
 
         for (RepoFileMetaData item : floppyImages)
         {
@@ -203,13 +206,13 @@ public class StorageIsoListModel extends SearchableListModel implements IFronten
         setIsEmpty(items.isEmpty());
     }
 
-    private void UpdateIsoModels(java.util.ArrayList<EntityModel> items)
+    private void UpdateIsoModels(ArrayList<EntityModel> items)
     {
-        java.util.ArrayList<EntityModel> newItems = new java.util.ArrayList<EntityModel>();
+        ArrayList<EntityModel> newItems = new ArrayList<EntityModel>();
 
         if (getItems() != null)
         {
-            java.util.ArrayList<EntityModel> oldItems = Linq.ToList((Iterable<EntityModel>) getItems());
+            ArrayList<EntityModel> oldItems = Linq.ToList((Iterable<EntityModel>) getItems());
 
             for (EntityModel newItem : items)
             {

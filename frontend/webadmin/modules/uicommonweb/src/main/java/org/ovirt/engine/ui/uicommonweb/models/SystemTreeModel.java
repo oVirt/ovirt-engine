@@ -23,6 +23,10 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleQueryAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+
 @SuppressWarnings("unused")
 public class SystemTreeModel extends SearchableListModel implements IFrontendMultipleQueryAsyncCallback
 {
@@ -77,12 +81,12 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
     }
 
     @Override
-    public java.util.ArrayList<SystemTreeItemModel> getItems()
+    public ArrayList<SystemTreeItemModel> getItems()
     {
-        return (java.util.ArrayList<SystemTreeItemModel>) super.getItems();
+        return (ArrayList<SystemTreeItemModel>) super.getItems();
     }
 
-    public void setItems(java.util.ArrayList<SystemTreeItemModel> value)
+    public void setItems(ArrayList<SystemTreeItemModel> value)
     {
         if (items != value)
         {
@@ -94,49 +98,49 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
         }
     }
 
-    private java.util.ArrayList<storage_pool> privateDataCenters;
+    private ArrayList<storage_pool> privateDataCenters;
 
-    public java.util.ArrayList<storage_pool> getDataCenters()
+    public ArrayList<storage_pool> getDataCenters()
     {
         return privateDataCenters;
     }
 
-    public void setDataCenters(java.util.ArrayList<storage_pool> value)
+    public void setDataCenters(ArrayList<storage_pool> value)
     {
         privateDataCenters = value;
     }
 
-    private java.util.HashMap<Guid, java.util.ArrayList<VDSGroup>> privateClusterMap;
+    private HashMap<Guid, ArrayList<VDSGroup>> privateClusterMap;
 
-    public java.util.HashMap<Guid, java.util.ArrayList<VDSGroup>> getClusterMap()
+    public HashMap<Guid, ArrayList<VDSGroup>> getClusterMap()
     {
         return privateClusterMap;
     }
 
-    public void setClusterMap(java.util.HashMap<Guid, java.util.ArrayList<VDSGroup>> value)
+    public void setClusterMap(HashMap<Guid, ArrayList<VDSGroup>> value)
     {
         privateClusterMap = value;
     }
 
-    private java.util.HashMap<Guid, java.util.ArrayList<VDS>> privateHostMap;
+    private HashMap<Guid, ArrayList<VDS>> privateHostMap;
 
-    public java.util.HashMap<Guid, java.util.ArrayList<VDS>> getHostMap()
+    public HashMap<Guid, ArrayList<VDS>> getHostMap()
     {
         return privateHostMap;
     }
 
-    public void setHostMap(java.util.HashMap<Guid, java.util.ArrayList<VDS>> value)
+    public void setHostMap(HashMap<Guid, ArrayList<VDS>> value)
     {
         privateHostMap = value;
     }
 
-    private java.util.HashMap<Guid, java.util.ArrayList<GlusterVolumeEntity>> privateVolumeMap;
+    private HashMap<Guid, ArrayList<GlusterVolumeEntity>> privateVolumeMap;
 
-    public java.util.HashMap<Guid, java.util.ArrayList<GlusterVolumeEntity>> getVolumeMap() {
+    public HashMap<Guid, ArrayList<GlusterVolumeEntity>> getVolumeMap() {
         return privateVolumeMap;
     }
 
-    public void setVolumeMap(java.util.HashMap<Guid, java.util.ArrayList<GlusterVolumeEntity>> value) {
+    public void setVolumeMap(HashMap<Guid, ArrayList<GlusterVolumeEntity>> value) {
         privateVolumeMap = value;
     }
 
@@ -155,7 +159,7 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
 
         setIsTimerDisabled(true);
 
-        setItems(new java.util.ArrayList<SystemTreeItemModel>());
+        setItems(new ArrayList<SystemTreeItemModel>());
     }
 
     @Override
@@ -177,7 +181,7 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
             public void OnSuccess(Object model, Object result)
             {
                 SystemTreeModel systemTreeModel = (SystemTreeModel) model;
-                systemTreeModel.setDataCenters((java.util.ArrayList<storage_pool>) result);
+                systemTreeModel.setDataCenters((ArrayList<storage_pool>) result);
 
                 AsyncQuery _asyncQuery1 = new AsyncQuery();
                 _asyncQuery1.setModel(systemTreeModel);
@@ -186,9 +190,9 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
                     public void OnSuccess(Object model1, Object result1)
                     {
                         SystemTreeModel systemTreeModel1 = (SystemTreeModel) model1;
-                        java.util.ArrayList<VDSGroup> clusters = (java.util.ArrayList<VDSGroup>) result1;
+                        ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) result1;
 
-                        systemTreeModel1.setClusterMap(new java.util.HashMap<Guid, java.util.ArrayList<VDSGroup>>());
+                        systemTreeModel1.setClusterMap(new HashMap<Guid, ArrayList<VDSGroup>>());
                         for (VDSGroup cluster : clusters)
                         {
                             if (cluster.getstorage_pool_id() != null)
@@ -196,9 +200,9 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
                                 Guid key = cluster.getstorage_pool_id().getValue();
                                 if (!systemTreeModel1.getClusterMap().containsKey(key))
                                 {
-                                    systemTreeModel1.getClusterMap().put(key, new java.util.ArrayList<VDSGroup>());
+                                    systemTreeModel1.getClusterMap().put(key, new ArrayList<VDSGroup>());
                                 }
-                                java.util.ArrayList<VDSGroup> list1 = systemTreeModel1.getClusterMap().get(key);
+                                ArrayList<VDSGroup> list1 = systemTreeModel1.getClusterMap().get(key);
                                 list1.add(cluster);
                             }
                         }
@@ -209,16 +213,16 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
                             public void OnSuccess(Object model2, Object result2)
                             {
                                 SystemTreeModel systemTreeModel2 = (SystemTreeModel) model2;
-                                java.util.ArrayList<VDS> hosts = (java.util.ArrayList<VDS>) result2;
-                                systemTreeModel2.setHostMap(new java.util.HashMap<Guid, java.util.ArrayList<VDS>>());
+                                ArrayList<VDS> hosts = (ArrayList<VDS>) result2;
+                                systemTreeModel2.setHostMap(new HashMap<Guid, ArrayList<VDS>>());
                                 for (VDS host : hosts)
                                 {
                                     Guid key = host.getvds_group_id();
                                     if (!systemTreeModel2.getHostMap().containsKey(key))
                                     {
-                                        systemTreeModel2.getHostMap().put(key, new java.util.ArrayList<VDS>());
+                                        systemTreeModel2.getHostMap().put(key, new ArrayList<VDS>());
                                     }
-                                    java.util.ArrayList<VDS> list = systemTreeModel2.getHostMap().get(key);
+                                    ArrayList<VDS> list = systemTreeModel2.getHostMap().get(key);
                                     list.add(host);
                                 }
 
@@ -229,9 +233,9 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
                                     public void OnSuccess(Object model3, Object result3)
                                     {
                                         SystemTreeModel systemTreeModel3 = (SystemTreeModel) model3;
-                                        java.util.ArrayList<GlusterVolumeEntity> volumes =
-                                                (java.util.ArrayList<GlusterVolumeEntity>) result3;
-                                        systemTreeModel3.setVolumeMap(new java.util.HashMap<Guid, java.util.ArrayList<GlusterVolumeEntity>>());
+                                        ArrayList<GlusterVolumeEntity> volumes =
+                                                (ArrayList<GlusterVolumeEntity>) result3;
+                                        systemTreeModel3.setVolumeMap(new HashMap<Guid, ArrayList<GlusterVolumeEntity>>());
 
                                         for (GlusterVolumeEntity volume : volumes)
                                         {
@@ -239,17 +243,17 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
                                             if (!systemTreeModel3.getVolumeMap().containsKey(key))
                                             {
                                                 systemTreeModel3.getVolumeMap().put(key,
-                                                        new java.util.ArrayList<GlusterVolumeEntity>());
+                                                        new ArrayList<GlusterVolumeEntity>());
                                             }
-                                            java.util.ArrayList<GlusterVolumeEntity> list =
+                                            ArrayList<GlusterVolumeEntity> list =
                                                     systemTreeModel3.getVolumeMap().get(key);
                                             list.add(volume);
                                         }
 
-                                        java.util.ArrayList<VdcQueryType> queryTypeList =
-                                                new java.util.ArrayList<VdcQueryType>();
-                                        java.util.ArrayList<VdcQueryParametersBase> queryParamList =
-                                                new java.util.ArrayList<VdcQueryParametersBase>();
+                                        ArrayList<VdcQueryType> queryTypeList =
+                                                new ArrayList<VdcQueryType>();
+                                        ArrayList<VdcQueryParametersBase> queryParamList =
+                                                new ArrayList<VdcQueryParametersBase>();
 
                                         for (storage_pool dataCenter : systemTreeModel3.getDataCenters())
                                         {
@@ -318,7 +322,7 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
     @Override
     public void Executed(FrontendMultipleQueryAsyncResult result)
     {
-        java.util.ArrayList<storage_domains> storages;
+        ArrayList<storage_domains> storages;
         int count = -1;
 
         // Build tree items.
@@ -334,7 +338,7 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
             {
                 continue;
             }
-            storages = (java.util.ArrayList<storage_domains>) returnValue.getReturnValue();
+            storages = (ArrayList<storage_domains>) returnValue.getReturnValue();
 
             SystemTreeItemModel dataCenterItem = new SystemTreeItemModel();
             dataCenterItem.setType(SystemTreeItemType.DataCenter);
@@ -437,7 +441,7 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
                 }
             }
         }
-        setItems(new java.util.ArrayList<SystemTreeItemModel>(java.util.Arrays.asList(new SystemTreeItemModel[] { systemItem })));
+        setItems(new ArrayList<SystemTreeItemModel>(Arrays.asList(new SystemTreeItemModel[] {systemItem})));
     }
 
     @Override

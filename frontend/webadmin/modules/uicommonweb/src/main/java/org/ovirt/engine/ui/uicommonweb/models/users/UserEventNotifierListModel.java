@@ -1,5 +1,8 @@
 package org.ovirt.engine.ui.uicommonweb.models.users;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Map;
 import java.util.MissingResourceException;
 
 import org.ovirt.engine.core.common.AuditLogType;
@@ -106,17 +109,17 @@ public class UserEventNotifierListModel extends SearchableListModel
         model.setTitle(ConstantsManager.getInstance().getConstants().addEventNotificationTitle());
         model.setHashName("add_event_notification"); //$NON-NLS-1$
 
-        java.util.ArrayList<EventNotificationEntity> eventTypes = DataProvider.GetEventNotificationTypeList();
-        java.util.Map<EventNotificationEntity, java.util.HashSet<AuditLogType>> availableEvents =
+        ArrayList<EventNotificationEntity> eventTypes = DataProvider.GetEventNotificationTypeList();
+        Map<EventNotificationEntity, HashSet<AuditLogType>> availableEvents =
                 DataProvider.GetAvailableNotificationEvents();
 
         Translator eventNotificationEntityTranslator = EnumTranslator.Create(EventNotificationEntity.class);
         Translator auditLogTypeTranslator = EnumTranslator.Create(AuditLogType.class);
 
-        java.util.ArrayList<SelectionTreeNodeModel> list = new java.util.ArrayList<SelectionTreeNodeModel>();
+        ArrayList<SelectionTreeNodeModel> list = new ArrayList<SelectionTreeNodeModel>();
 
-        java.util.ArrayList<event_subscriber> items =
-                getItems() == null ? new java.util.ArrayList<event_subscriber>()
+        ArrayList<event_subscriber> items =
+                getItems() == null ? new ArrayList<event_subscriber>()
                         : Linq.<event_subscriber> Cast(getItems());
         for (EventNotificationEntity eventType : eventTypes)
         {
@@ -191,11 +194,11 @@ public class UserEventNotifierListModel extends SearchableListModel
             return;
         }
 
-        java.util.ArrayList<VdcActionParametersBase> toAddList = new java.util.ArrayList<VdcActionParametersBase>();
-        java.util.ArrayList<VdcActionParametersBase> toRemoveList = new java.util.ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> toAddList = new ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> toRemoveList = new ArrayList<VdcActionParametersBase>();
 
         // var selected = model.EventGroupModels.SelectMany(a => a.Children).Where(a => a.IsSelected == true);
-        java.util.ArrayList<SelectionTreeNodeModel> selected = new java.util.ArrayList<SelectionTreeNodeModel>();
+        ArrayList<SelectionTreeNodeModel> selected = new ArrayList<SelectionTreeNodeModel>();
         for (SelectionTreeNodeModel node : model.getEventGroupModels())
         {
             for (SelectionTreeNodeModel child : node.getChildren())
@@ -207,11 +210,11 @@ public class UserEventNotifierListModel extends SearchableListModel
             }
         }
 
-        java.util.ArrayList<event_subscriber> existing =
+        ArrayList<event_subscriber> existing =
                 getItems() != null ? Linq.<event_subscriber> Cast(getItems())
-                        : new java.util.ArrayList<event_subscriber>();
-        java.util.ArrayList<SelectionTreeNodeModel> added = new java.util.ArrayList<SelectionTreeNodeModel>();
-        java.util.ArrayList<event_subscriber> removed = new java.util.ArrayList<event_subscriber>();
+                        : new ArrayList<event_subscriber>();
+        ArrayList<SelectionTreeNodeModel> added = new ArrayList<SelectionTreeNodeModel>();
+        ArrayList<event_subscriber> removed = new ArrayList<event_subscriber>();
 
         // check what has been added:
         for (SelectionTreeNodeModel selectedEvent : selected)

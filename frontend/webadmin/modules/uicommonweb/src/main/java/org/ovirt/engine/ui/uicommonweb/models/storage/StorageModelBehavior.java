@@ -4,6 +4,9 @@ import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @SuppressWarnings("unused")
 public abstract class StorageModelBehavior
 {
@@ -19,7 +22,7 @@ public abstract class StorageModelBehavior
         privateModel = value;
     }
 
-    public java.util.List<storage_pool> FilterDataCenter(java.util.List<storage_pool> source)
+    public List<storage_pool> FilterDataCenter(List<storage_pool> source)
     {
         return source;
     }
@@ -31,8 +34,8 @@ public abstract class StorageModelBehavior
     public void FilterUnSelectableModels()
     {
         // Filter UnSelectable models from AvailableStorageItems list
-        java.util.ArrayList<Object> filterredItems = new java.util.ArrayList<Object>();
-        java.util.ArrayList<IStorageModel> items = Linq.<IStorageModel> Cast(getModel().getItems());
+        ArrayList<Object> filterredItems = new ArrayList<Object>();
+        ArrayList<IStorageModel> items = Linq.<IStorageModel> Cast(getModel().getItems());
         for (IStorageModel model : items)
         {
             if (((Model) model).getIsSelectable())

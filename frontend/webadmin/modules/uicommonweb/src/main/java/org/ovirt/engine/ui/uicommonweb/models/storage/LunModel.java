@@ -5,6 +5,8 @@ import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 
+import java.util.ArrayList;
+
 @SuppressWarnings("unused")
 public class LunModel extends EntityModel
 {
@@ -137,14 +139,14 @@ public class LunModel extends EntityModel
         }
     }
 
-    private java.util.ArrayList<SanTargetModel> targets;
+    private ArrayList<SanTargetModel> targets;
 
-    public java.util.ArrayList<SanTargetModel> getTargets()
+    public ArrayList<SanTargetModel> getTargets()
     {
         return targets;
     }
 
-    public void setTargets(java.util.ArrayList<SanTargetModel> value)
+    public void setTargets(ArrayList<SanTargetModel> value)
     {
         if (targets != value)
         {

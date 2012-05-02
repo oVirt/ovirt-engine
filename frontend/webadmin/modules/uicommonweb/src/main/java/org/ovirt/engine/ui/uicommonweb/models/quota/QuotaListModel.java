@@ -476,7 +476,7 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
             return;
         }
 
-        java.util.ArrayList<VdcActionParametersBase> prms = new java.util.ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> prms = new ArrayList<VdcActionParametersBase>();
         QuotaCRUDParameters crudParameters;
         for (Quota a : Linq.<Quota> Cast(getSelectedItems()))
         {
@@ -513,7 +513,7 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
         model.setHashName("remove_quota"); //$NON-NLS-1$
         model.setMessage(ConstantsManager.getInstance().getConstants().quotasMsg());
 
-        java.util.ArrayList<String> list = new java.util.ArrayList<String>();
+        ArrayList<String> list = new ArrayList<String>();
         for (Quota a : Linq.<Quota> Cast(getSelectedItems()))
         {
             list.add(a.getQuotaName());

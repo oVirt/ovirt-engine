@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.bookmarks;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -156,7 +157,7 @@ public class BookmarkListModel extends SearchableListModel
         model.setHashName("remove_bookmark"); //$NON-NLS-1$
         model.setMessage(ConstantsManager.getInstance().getConstants().bookmarsMsg());
 
-        java.util.ArrayList<String> list = new java.util.ArrayList<String>();
+        ArrayList<String> list = new ArrayList<String>();
         for (Object item : getSelectedItems())
         {
             org.ovirt.engine.core.common.businessentities.bookmarks i =

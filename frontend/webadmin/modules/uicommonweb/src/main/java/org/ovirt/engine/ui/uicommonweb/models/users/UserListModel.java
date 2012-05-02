@@ -9,6 +9,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.ad_groups;
+import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -32,6 +33,10 @@ import org.ovirt.engine.ui.uicommonweb.models.tags.TagModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 @SuppressWarnings("unused")
 public class UserListModel extends ListWithDetailsModel
@@ -84,7 +89,7 @@ public class UserListModel extends ListWithDetailsModel
         }
         else
         {
-            java.util.ArrayList<Object> items = new java.util.ArrayList<Object>();
+            ArrayList<Object> items = new ArrayList<Object>();
             for (Object i : getSelectedItems())
             {
                 items.add(((VDSGroup) i).getId());
@@ -134,19 +139,19 @@ public class UserListModel extends ListWithDetailsModel
         model.getCommands().add(tempVar2);
     }
 
-    public java.util.Map<Guid, Boolean> attachedTagsToEntities;
-    public java.util.ArrayList<org.ovirt.engine.core.common.businessentities.tags> allAttachedTags;
+    public Map<Guid, Boolean> attachedTagsToEntities;
+    public ArrayList<tags> allAttachedTags;
     public int selectedItemsCounter;
 
     private void GetAttachedTagsToSelectedUsers(TagListModel model)
     {
-        java.util.HashMap<Guid, Boolean> tags = new java.util.HashMap<Guid, Boolean>();
+        HashMap<Guid, Boolean> tags = new HashMap<Guid, Boolean>();
 
-        java.util.ArrayList<Guid> userIds = new java.util.ArrayList<Guid>();
-        java.util.ArrayList<Guid> grpIds = new java.util.ArrayList<Guid>();
+        ArrayList<Guid> userIds = new ArrayList<Guid>();
+        ArrayList<Guid> grpIds = new ArrayList<Guid>();
 
-        attachedTagsToEntities = new java.util.HashMap<Guid, Boolean>();
-        allAttachedTags = new java.util.ArrayList<org.ovirt.engine.core.common.businessentities.tags>();
+        attachedTagsToEntities = new HashMap<Guid, Boolean>();
+        allAttachedTags = new ArrayList<org.ovirt.engine.core.common.businessentities.tags>();
         selectedItemsCounter = 0;
 
         for (Object item : getSelectedItems())
@@ -172,7 +177,7 @@ public class UserListModel extends ListWithDetailsModel
                             Object[] array = (Object[]) target;
                             UserListModel userListModel = (UserListModel) array[0];
                             TagListModel tagListModel = (TagListModel) array[1];
-                            userListModel.allAttachedTags.addAll((java.util.ArrayList<org.ovirt.engine.core.common.businessentities.tags>) returnValue);
+                            userListModel.allAttachedTags.addAll((ArrayList<org.ovirt.engine.core.common.businessentities.tags>) returnValue);
                             userListModel.selectedItemsCounter++;
                             if (userListModel.selectedItemsCounter == userListModel.getSelectedItems().size())
                             {
@@ -193,7 +198,7 @@ public class UserListModel extends ListWithDetailsModel
                             Object[] array = (Object[]) target;
                             UserListModel userListModel = (UserListModel) array[0];
                             TagListModel tagListModel = (TagListModel) array[1];
-                            userListModel.allAttachedTags.addAll((java.util.ArrayList<org.ovirt.engine.core.common.businessentities.tags>) returnValue);
+                            userListModel.allAttachedTags.addAll((ArrayList<org.ovirt.engine.core.common.businessentities.tags>) returnValue);
                             userListModel.selectedItemsCounter++;
                             if (userListModel.selectedItemsCounter == userListModel.getSelectedItems().size())
                             {
@@ -210,7 +215,7 @@ public class UserListModel extends ListWithDetailsModel
     {
         if (userListModel.getLastExecutedCommand() == getAssignTagsCommand())
         {
-            java.util.ArrayList<org.ovirt.engine.core.common.businessentities.tags> attachedTags =
+            ArrayList<org.ovirt.engine.core.common.businessentities.tags> attachedTags =
                     Linq.Distinct(userListModel.allAttachedTags, new TagsEqualityComparer());
             for (org.ovirt.engine.core.common.businessentities.tags a : attachedTags)
             {
@@ -241,11 +246,11 @@ public class UserListModel extends ListWithDetailsModel
         GetAttachedTagsToSelectedUsers(model);
     }
 
-    public void PostOnAssignTags(java.util.Map<Guid, Boolean> attachedTags)
+    public void PostOnAssignTags(Map<Guid, Boolean> attachedTags)
     {
         TagListModel model = (TagListModel) getWindow();
-        java.util.ArrayList<Guid> userIds = new java.util.ArrayList<Guid>();
-        java.util.ArrayList<Guid> grpIds = new java.util.ArrayList<Guid>();
+        ArrayList<Guid> userIds = new ArrayList<Guid>();
+        ArrayList<Guid> grpIds = new ArrayList<Guid>();
 
         for (Object item : getSelectedItems())
         {
@@ -261,18 +266,18 @@ public class UserListModel extends ListWithDetailsModel
         }
 
         // prepare attach/detach lists
-        java.util.ArrayList<Guid> tagsToAttach = new java.util.ArrayList<Guid>();
-        java.util.ArrayList<Guid> tagsToDetach = new java.util.ArrayList<Guid>();
+        ArrayList<Guid> tagsToAttach = new ArrayList<Guid>();
+        ArrayList<Guid> tagsToDetach = new ArrayList<Guid>();
 
-        if (model.getItems() != null && ((java.util.ArrayList<TagModel>) model.getItems()).size() > 0)
+        if (model.getItems() != null && ((ArrayList<TagModel>) model.getItems()).size() > 0)
         {
-            java.util.ArrayList<TagModel> tags = (java.util.ArrayList<TagModel>) model.getItems();
+            ArrayList<TagModel> tags = (ArrayList<TagModel>) model.getItems();
             TagModel rootTag = tags.get(0);
             TagModel.RecursiveEditAttachDetachLists(rootTag, attachedTags, tagsToAttach, tagsToDetach);
         }
 
-        java.util.ArrayList<VdcActionParametersBase> usersToAttach = new java.util.ArrayList<VdcActionParametersBase>();
-        java.util.ArrayList<VdcActionParametersBase> grpsToAttach = new java.util.ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> usersToAttach = new ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> grpsToAttach = new ArrayList<VdcActionParametersBase>();
         for (Guid tag_id : tagsToAttach)
         {
             if (userIds.size() > 0)
@@ -293,8 +298,8 @@ public class UserListModel extends ListWithDetailsModel
             Frontend.RunMultipleAction(VdcActionType.AttachUserGroupToTag, grpsToAttach);
         }
 
-        java.util.ArrayList<VdcActionParametersBase> usersToDetach = new java.util.ArrayList<VdcActionParametersBase>();
-        java.util.ArrayList<VdcActionParametersBase> grpsToDetach = new java.util.ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> usersToDetach = new ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> grpsToDetach = new ArrayList<VdcActionParametersBase>();
         for (Guid tag_id : tagsToDetach)
         {
             if (userIds.size() > 0)
@@ -356,7 +361,7 @@ public class UserListModel extends ListWithDetailsModel
         model.setHashName("remove_user"); //$NON-NLS-1$
         model.setMessage(ConstantsManager.getInstance().getConstants().usersMsg());
 
-        java.util.ArrayList<String> list = new java.util.ArrayList<String>();
+        ArrayList<String> list = new ArrayList<String>();
         for (DbUser item : Linq.<DbUser> Cast(getSelectedItems()))
         {
             list.add(item.getname());
@@ -448,7 +453,7 @@ public class UserListModel extends ListWithDetailsModel
             return;
         }
 
-        java.util.ArrayList<DbUser> items = new java.util.ArrayList<DbUser>();
+        ArrayList<DbUser> items = new ArrayList<DbUser>();
         for (Object item : model.getItems())
         {
             EntityModel entityModel = (EntityModel) item;
@@ -458,7 +463,7 @@ public class UserListModel extends ListWithDetailsModel
             }
         }
 
-        java.util.ArrayList<VdcActionParametersBase> parameters = new java.util.ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
         for (DbUser item : items)
         {
             if (!item.getIsGroup())
@@ -492,10 +497,10 @@ public class UserListModel extends ListWithDetailsModel
 
     public void OnRemove()
     {
-        java.util.ArrayList<DbUser> items = Linq.<DbUser> Cast(getSelectedItems());
+        ArrayList<DbUser> items = Linq.<DbUser> Cast(getSelectedItems());
 
-        java.util.ArrayList<VdcActionParametersBase> userPrms = new java.util.ArrayList<VdcActionParametersBase>();
-        java.util.ArrayList<VdcActionParametersBase> groupPrms = new java.util.ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> userPrms = new ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> groupPrms = new ArrayList<VdcActionParametersBase>();
         for (DbUser item : items)
         {
             if (!item.getIsGroup())
@@ -615,9 +620,9 @@ public class UserListModel extends ListWithDetailsModel
 
     private void UpdateActionAvailability()
     {
-        java.util.ArrayList items =
-                (((java.util.ArrayList) getSelectedItems()) != null) ? (java.util.ArrayList) getSelectedItems()
-                        : new java.util.ArrayList();
+        ArrayList items =
+                (((ArrayList) getSelectedItems()) != null) ? (ArrayList) getSelectedItems()
+                        : new ArrayList();
 
         getRemoveCommand().setIsExecutionAllowed(items.size() > 0
                 && VdcActionUtils.CanExecute(items, DbUser.class, VdcActionType.RemoveUser));

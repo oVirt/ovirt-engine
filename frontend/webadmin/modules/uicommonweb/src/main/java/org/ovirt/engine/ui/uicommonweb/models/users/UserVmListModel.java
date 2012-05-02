@@ -20,6 +20,8 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
+import java.util.ArrayList;
+
 @SuppressWarnings("unused")
 public class UserVmListModel extends VmListModel
 {
@@ -106,7 +108,7 @@ public class UserVmListModel extends VmListModel
         // .Where(Selector.GetIsSelected)
         // .Select(a => (VM)a.Entity)
         // .ToList();
-        java.util.ArrayList<VM> items = new java.util.ArrayList<VM>();
+        ArrayList<VM> items = new ArrayList<VM>();
         for (Object item : model.getItems())
         {
             EntityModel a = (EntityModel) item;
@@ -116,7 +118,7 @@ public class UserVmListModel extends VmListModel
             }
         }
 
-        java.util.ArrayList<VdcActionParametersBase> prms = new java.util.ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> prms = new ArrayList<VdcActionParametersBase>();
 
         if (getEntity().getIsGroup())
         {
@@ -178,7 +180,7 @@ public class UserVmListModel extends VmListModel
         model.setHashName("detach_virtual_machine"); //$NON-NLS-1$
         model.setMessage(ConstantsManager.getInstance().getConstants().areYouSureYouWantDetachFromUserFollowingVmsMsg());
 
-        java.util.ArrayList<String> list = new java.util.ArrayList<String>();
+        ArrayList<String> list = new ArrayList<String>();
         for (Object item : getSelectedItems())
         {
             VM a = (VM) item;
@@ -198,9 +200,9 @@ public class UserVmListModel extends VmListModel
 
     public void OnDetach()
     {
-        java.util.ArrayList<VM> items = Linq.<VM> Cast(getSelectedItems());
+        ArrayList<VM> items = Linq.<VM> Cast(getSelectedItems());
 
-        java.util.ArrayList<VdcActionParametersBase> parameters = new java.util.ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
         //
         for (VM a : items)
         {
@@ -270,8 +272,8 @@ public class UserVmListModel extends VmListModel
 
     private void UpdateActionAvailability()
     {
-        java.util.ArrayList items =
-                getSelectedItems() != null && getSelectedItem() != null ? (java.util.ArrayList) getSelectedItems()
+        ArrayList items =
+                getSelectedItems() != null && getSelectedItem() != null ? (ArrayList) getSelectedItems()
                         : new java.util.ArrayList();
 
         getDetachCommand().setIsExecutionAllowed(items.size() > 0

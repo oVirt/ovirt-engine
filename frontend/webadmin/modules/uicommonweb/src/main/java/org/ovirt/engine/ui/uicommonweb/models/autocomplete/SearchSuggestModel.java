@@ -12,18 +12,22 @@ import org.ovirt.engine.ui.uicompat.ITaskTarget;
 import org.ovirt.engine.ui.uicompat.Task;
 import org.ovirt.engine.ui.uicompat.TaskContext;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 @SuppressWarnings("unused")
 public class SearchSuggestModel extends SearchableListModel implements ITaskTarget
 {
     private ISyntaxChecker syntaxChecker;
 
     @Override
-    public java.util.List getItems()
+    public List getItems()
     {
-        return (java.util.List) super.getItems();
+        return (List) super.getItems();
     }
 
-    public void setItems(java.util.List value)
+    public void setItems(List value)
     {
         super.setItems(value);
     }
@@ -137,8 +141,8 @@ public class SearchSuggestModel extends SearchableListModel implements ITaskTarg
                     SuggestItemPartModel tempVar2 = new SuggestItemPartModel();
                     tempVar2.setPartString(space + item.trim());
                     tempVar2.setPartType(SuggestItemPartType.New);
-                    java.util.ArrayList<SuggestItemPartModel> parts =
-                            new java.util.ArrayList<SuggestItemPartModel>(java.util.Arrays.asList(new SuggestItemPartModel[] {
+                    ArrayList<SuggestItemPartModel> parts =
+                            new ArrayList<SuggestItemPartModel>(Arrays.asList(new SuggestItemPartModel[] {
                                     tempVar, tempVar2 }));
 
                     getItems().add(parts);
@@ -153,9 +157,9 @@ public class SearchSuggestModel extends SearchableListModel implements ITaskTarg
             SuggestItemPartModel tempVar4 = new SuggestItemPartModel();
             tempVar4.setPartString(notHandled);
             tempVar4.setPartType(SuggestItemPartType.Erroneous);
-            java.util.ArrayList<SuggestItemPartModel> parts =
-                    new java.util.ArrayList<SuggestItemPartModel>(java.util.Arrays.asList(new SuggestItemPartModel[] {
-                            tempVar3, tempVar4 }));
+            ArrayList<SuggestItemPartModel> parts =
+                    new ArrayList<SuggestItemPartModel>(Arrays.asList(new SuggestItemPartModel[] {
+                        tempVar3, tempVar4}));
 
             getItems().add(parts);
         }
@@ -166,7 +170,7 @@ public class SearchSuggestModel extends SearchableListModel implements ITaskTarg
     {
         super.OnSelectedItemChanged();
 
-        java.util.List selectedItem = (java.util.List) getSelectedItem();
+        List selectedItem = (List) getSelectedItem();
         if (selectedItem != null)
         {
             // SearchString = String.Join(String.Empty,
@@ -175,7 +179,7 @@ public class SearchSuggestModel extends SearchableListModel implements ITaskTarg
             // .Select(a => a.PartString)
             // .ToArray()
             // );
-            java.util.ArrayList<String> items = new java.util.ArrayList<String>();
+            ArrayList<String> items = new ArrayList<String>();
             for (Object item : selectedItem)
             {
                 SuggestItemPartModel i = (SuggestItemPartModel) item;

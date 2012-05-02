@@ -36,6 +36,8 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
+import java.util.ArrayList;
+
 @SuppressWarnings("unused")
 public class DataCenterStorageListModel extends SearchableListModel
 {
@@ -136,27 +138,27 @@ public class DataCenterStorageListModel extends SearchableListModel
     }
 
     // A list of 'detach' action parameters
-    private java.util.ArrayList<VdcActionParametersBase> privatepb_detach;
+    private ArrayList<VdcActionParametersBase> privatepb_detach;
 
-    private java.util.ArrayList<VdcActionParametersBase> getpb_detach()
+    private ArrayList<VdcActionParametersBase> getpb_detach()
     {
         return privatepb_detach;
     }
 
-    private void setpb_detach(java.util.ArrayList<VdcActionParametersBase> value)
+    private void setpb_detach(ArrayList<VdcActionParametersBase> value)
     {
         privatepb_detach = value;
     }
 
     // A list of 'remove' action parameters
-    private java.util.ArrayList<VdcActionParametersBase> privatepb_remove;
+    private ArrayList<VdcActionParametersBase> privatepb_remove;
 
-    private java.util.ArrayList<VdcActionParametersBase> getpb_remove()
+    private ArrayList<VdcActionParametersBase> getpb_remove()
     {
         return privatepb_remove;
     }
 
-    private void setpb_remove(java.util.ArrayList<VdcActionParametersBase> value)
+    private void setpb_remove(ArrayList<VdcActionParametersBase> value)
     {
         privatepb_remove = value;
     }
@@ -204,7 +206,7 @@ public class DataCenterStorageListModel extends SearchableListModel
             public void OnSuccess(Object model, Object ReturnValue)
             {
                 SearchableListModel searchableListModel = (SearchableListModel) model;
-                searchableListModel.setItems((java.util.ArrayList<storage_domains>) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
+                searchableListModel.setItems((ArrayList<storage_domains>) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
             }
         };
 
@@ -230,7 +232,7 @@ public class DataCenterStorageListModel extends SearchableListModel
         // .Select(a => (VdcActionParametersBase)new StorageDomainPoolParametersBase(a.id, Entity.id))
         // .ToList()
         // );
-        java.util.ArrayList<VdcActionParametersBase> pb = new java.util.ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> pb = new ArrayList<VdcActionParametersBase>();
         for (storage_domains a : Linq.<storage_domains> Cast(getSelectedItems()))
         {
             pb.add(new StorageDomainPoolParametersBase(a.getId(), getEntity().getId()));
@@ -246,7 +248,7 @@ public class DataCenterStorageListModel extends SearchableListModel
         // .Select(a => (VdcActionParametersBase)new StorageDomainPoolParametersBase(a.id, Entity.id))
         // .ToList()
         // );
-        java.util.ArrayList<VdcActionParametersBase> pb = new java.util.ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> pb = new ArrayList<VdcActionParametersBase>();
         for (storage_domains a : Linq.<storage_domains> Cast(getSelectedItems()))
         {
             pb.add(new StorageDomainPoolParametersBase(a.getId(), getEntity().getId()));
@@ -297,13 +299,13 @@ public class DataCenterStorageListModel extends SearchableListModel
                 @Override
                 public void OnSuccess(Object model, Object result)
                 {
-                    java.util.ArrayList<storage_domains> list = (java.util.ArrayList<storage_domains>) result;
+                    ArrayList<storage_domains> list = (ArrayList<storage_domains>) result;
                     DataCenterStorageListModel dcStorageModel = (DataCenterStorageListModel) model;
-                    java.util.ArrayList<EntityModel> models;
-                    models = new java.util.ArrayList<EntityModel>();
-                    java.util.ArrayList<storage_domains> items =
-                            dcStorageModel.getItems() != null ? new java.util.ArrayList<storage_domains>(Linq.<storage_domains> Cast(dcStorageModel.getItems()))
-                                    : new java.util.ArrayList<storage_domains>();
+                    ArrayList<EntityModel> models;
+                    models = new ArrayList<EntityModel>();
+                    ArrayList<storage_domains> items =
+                            dcStorageModel.getItems() != null ? new ArrayList<storage_domains>(Linq.<storage_domains> Cast(dcStorageModel.getItems()))
+                                    : new ArrayList<storage_domains>();
                     for (storage_domains a : list)
                     {
                         // if (Linq.All<storage_domains>(items, delegate(storage_domains b) { return b.id != a.id; }))
@@ -330,13 +332,13 @@ public class DataCenterStorageListModel extends SearchableListModel
                 public void OnSuccess(Object model, Object result)
                 {
                     DataCenterStorageListModel dcStorageModel = (DataCenterStorageListModel) model;
-                    java.util.ArrayList<storage_domains> list = (java.util.ArrayList<storage_domains>) result;
-                    java.util.ArrayList<EntityModel> models = new java.util.ArrayList<EntityModel>();
+                    ArrayList<storage_domains> list = (ArrayList<storage_domains>) result;
+                    ArrayList<EntityModel> models = new ArrayList<EntityModel>();
                     boolean addToList;
                     Version version3_0 = new Version(3, 0);
-                    java.util.ArrayList<storage_domains> items =
-                            dcStorageModel.getItems() != null ? new java.util.ArrayList<storage_domains>(Linq.<storage_domains> Cast(dcStorageModel.getItems()))
-                                    : new java.util.ArrayList<storage_domains>();
+                    ArrayList<storage_domains> items =
+                            dcStorageModel.getItems() != null ? new ArrayList<storage_domains>(Linq.<storage_domains> Cast(dcStorageModel.getItems()))
+                                    : new ArrayList<storage_domains>();
                     for (storage_domains a : list)
                     {
                         addToList = false;
@@ -388,7 +390,7 @@ public class DataCenterStorageListModel extends SearchableListModel
 
     }
 
-    private void PostAttachInternal(java.util.ArrayList<EntityModel> models)
+    private void PostAttachInternal(ArrayList<EntityModel> models)
     {
         ListModel listModel = (ListModel) getWindow();
         listModel.setItems(models);
@@ -433,7 +435,7 @@ public class DataCenterStorageListModel extends SearchableListModel
         // .Where(Selector.GetIsSelected)
         // .Select(a => (storage_domains)a.Entity)
         // .ToList();
-        java.util.ArrayList<storage_domains> items = new java.util.ArrayList<storage_domains>();
+        ArrayList<storage_domains> items = new ArrayList<storage_domains>();
         for (EntityModel a : Linq.<EntityModel> Cast(model.getItems()))
         {
             if (a.getIsSelected())
@@ -449,7 +451,7 @@ public class DataCenterStorageListModel extends SearchableListModel
             // .Select(a => (VdcActionParametersBase)new StorageDomainPoolParametersBase(a.id, Entity.id))
             // .ToList()
             // );
-            java.util.ArrayList<VdcActionParametersBase> pb = new java.util.ArrayList<VdcActionParametersBase>();
+            ArrayList<VdcActionParametersBase> pb = new ArrayList<VdcActionParametersBase>();
             for (storage_domains a : items)
             {
                 pb.add(new StorageDomainPoolParametersBase(a.getId(), getEntity().getId()));
@@ -474,7 +476,7 @@ public class DataCenterStorageListModel extends SearchableListModel
         model.setHashName("detach_storage"); //$NON-NLS-1$
         model.setMessage(ConstantsManager.getInstance().getConstants().areYouSureYouWantDetachFollowingStoragesMsg());
 
-        java.util.ArrayList<String> list = new java.util.ArrayList<String>();
+        ArrayList<String> list = new ArrayList<String>();
         for (storage_domains item : Linq.<storage_domains> Cast(getSelectedItems()))
         {
             list.add(item.getstorage_name());
@@ -539,9 +541,9 @@ public class DataCenterStorageListModel extends SearchableListModel
         }
 
         // A list of 'detach' action parameters
-        setpb_detach(new java.util.ArrayList<VdcActionParametersBase>());
+        setpb_detach(new ArrayList<VdcActionParametersBase>());
         // A list of 'remove' action parameters
-        setpb_remove(new java.util.ArrayList<VdcActionParametersBase>());
+        setpb_remove(new ArrayList<VdcActionParametersBase>());
         String localStorgaeDC = null;
         for (storage_domains a : Linq.<storage_domains> Cast(getSelectedItems()))
         {
@@ -595,8 +597,8 @@ public class DataCenterStorageListModel extends SearchableListModel
 
                         Object[] array = (Object[]) result1.getState();
                         ConfirmationModel localModel1 = (ConfirmationModel) array[0];
-                        java.util.ArrayList<VdcActionParametersBase> parameters =
-                                (java.util.ArrayList<VdcActionParametersBase>) array[1];
+                        ArrayList<VdcActionParametersBase> parameters =
+                                (ArrayList<VdcActionParametersBase>) array[1];
                         Frontend.RunMultipleAction(VdcActionType.DetachStorageDomainFromPool, parameters,
                                 new IFrontendMultipleActionAsyncCallback() {
                                     @Override
@@ -676,12 +678,12 @@ public class DataCenterStorageListModel extends SearchableListModel
 
     private void UpdateActionAvailability()
     {
-        java.util.ArrayList<storage_domains> items =
+        ArrayList<storage_domains> items =
                 getItems() != null ? Linq.<storage_domains> Cast(getItems())
-                        : new java.util.ArrayList<storage_domains>();
-        java.util.ArrayList<storage_domains> selectedItems =
+                        : new ArrayList<storage_domains>();
+        ArrayList<storage_domains> selectedItems =
                 getSelectedItems() != null ? Linq.<storage_domains> Cast(getSelectedItems())
-                        : new java.util.ArrayList<storage_domains>();
+                        : new ArrayList<storage_domains>();
 
         if (getEntity() != null)
         {

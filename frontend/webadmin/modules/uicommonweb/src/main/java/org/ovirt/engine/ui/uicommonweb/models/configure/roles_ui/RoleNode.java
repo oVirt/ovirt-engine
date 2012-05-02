@@ -4,6 +4,8 @@ import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
 import org.ovirt.engine.ui.uicompat.Translator;
 
+import java.util.ArrayList;
+
 @SuppressWarnings("unused")
 public class RoleNode
 {
@@ -12,7 +14,7 @@ public class RoleNode
     public RoleNode(String name, RoleNode[] leafs)
     {
         this.setName(name);
-        this.setLeafRoles(new java.util.ArrayList<RoleNode>());
+        this.setLeafRoles(new ArrayList<RoleNode>());
         for (RoleNode roleNode : leafs)
         {
             this.getLeafRoles().add(roleNode);
@@ -28,7 +30,7 @@ public class RoleNode
     public RoleNode(String name, RoleNode leaf)
     {
         this.setName(name);
-        this.setLeafRoles(new java.util.ArrayList<RoleNode>());
+        this.setLeafRoles(new ArrayList<RoleNode>());
         this.getLeafRoles().add(leaf);
     }
 
@@ -81,14 +83,14 @@ public class RoleNode
         privateDesc = value;
     }
 
-    private java.util.ArrayList<RoleNode> privateLeafRoles;
+    private ArrayList<RoleNode> privateLeafRoles;
 
-    public java.util.ArrayList<RoleNode> getLeafRoles()
+    public ArrayList<RoleNode> getLeafRoles()
     {
         return privateLeafRoles;
     }
 
-    private void setLeafRoles(java.util.ArrayList<RoleNode> value)
+    private void setLeafRoles(ArrayList<RoleNode> value)
     {
         privateLeafRoles = value;
     }

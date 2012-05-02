@@ -225,13 +225,13 @@ public class VmSnapshotListModel extends SearchableListModel
                             VmSnapshotListModel model = (VmSnapshotListModel) target;
                             if (returnValue != null)
                             {
-                                model.setCustomPropertiesKeysList(new java.util.HashMap<Version, java.util.ArrayList<String>>());
-                                java.util.HashMap<Version, String> dictionary =
-                                        (java.util.HashMap<Version, String>) returnValue;
-                                for (java.util.Map.Entry<Version, String> keyValuePair : dictionary.entrySet())
+                                model.setCustomPropertiesKeysList(new HashMap<Version, ArrayList<String>>());
+                                HashMap<Version, String> dictionary =
+                                        (HashMap<Version, String>) returnValue;
+                                for (Map.Entry<Version, String> keyValuePair : dictionary.entrySet())
                                 {
                                     model.getCustomPropertiesKeysList().put(keyValuePair.getKey(),
-                                            new java.util.ArrayList<String>());
+                                            new ArrayList<String>());
                                     for (String s : keyValuePair.getValue().split("[;]", -1)) //$NON-NLS-1$
                                     {
                                         model.getCustomPropertiesKeysList().get(keyValuePair.getKey()).add(s);

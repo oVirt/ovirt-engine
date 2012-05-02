@@ -16,6 +16,9 @@ import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @SuppressWarnings("unused")
 public abstract class SanStorageModel extends SanStorageModelBase
 {
@@ -55,20 +58,20 @@ public abstract class SanStorageModel extends SanStorageModelBase
         }
     }
 
-    private final java.util.List<LunModel> includedLUNs;
-    private final java.util.ArrayList<SanTargetModel> lastDiscoveredTargets;
+    private final List<LunModel> includedLUNs;
+    private final ArrayList<SanTargetModel> lastDiscoveredTargets;
     private boolean isTargetModelList;
 
     protected SanStorageModel()
     {
-        includedLUNs = new java.util.ArrayList<LunModel>();
-        lastDiscoveredTargets = new java.util.ArrayList<SanTargetModel>();
+        includedLUNs = new ArrayList<LunModel>();
+        lastDiscoveredTargets = new ArrayList<SanTargetModel>();
 
         InitializeItems(null, null);
     }
 
     @Override
-    protected void PostDiscoverTargets(java.util.ArrayList<SanTargetModel> newItems)
+    protected void PostDiscoverTargets(ArrayList<SanTargetModel> newItems)
     {
         super.PostDiscoverTargets(newItems);
 
@@ -122,7 +125,7 @@ public abstract class SanStorageModel extends SanStorageModelBase
                                 VdcQueryReturnValue response = (VdcQueryReturnValue) returnValue;
                                 if (response.getSucceeded())
                                 {
-                                    model.ApplyData((java.util.ArrayList<LUNs>) response.getReturnValue(), false);
+                                    model.ApplyData((ArrayList<LUNs>) response.getReturnValue(), false);
                                     model.setGetLUNsFailure(""); //$NON-NLS-1$
                                 }
                                 else
@@ -146,7 +149,7 @@ public abstract class SanStorageModel extends SanStorageModelBase
 
         if (getIsGrouppedByTarget())
         {
-            java.util.List<SanTargetModel> items = (java.util.List<SanTargetModel>) getItems();
+            List<SanTargetModel> items = (List<SanTargetModel>) getItems();
 
             for (SanTargetModel target : Linq.ToList(items))
             {
@@ -179,7 +182,7 @@ public abstract class SanStorageModel extends SanStorageModelBase
         }
         else
         {
-            java.util.List<LunModel> items = (java.util.List<LunModel>) getItems();
+            List<LunModel> items = (List<LunModel>) getItems();
 
             // Ensure remove targets that are not contain already included LUNs.
             for (LunModel lun : Linq.ToList(items))
@@ -196,15 +199,15 @@ public abstract class SanStorageModel extends SanStorageModelBase
     /**
      * Creates model items from the provided list of business entities.
      */
-    public void ApplyData(java.util.List<LUNs> source, boolean isIncluded)
+    public void ApplyData(List<LUNs> source, boolean isIncluded)
     {
-        java.util.ArrayList<LunModel> newItems = new java.util.ArrayList<LunModel>();
+        ArrayList<LunModel> newItems = new ArrayList<LunModel>();
 
         for (LUNs a : source)
         {
             if (a.getLunType() == getType() || a.getLunType() == StorageType.UNKNOWN)
             {
-                java.util.ArrayList<SanTargetModel> targets = new java.util.ArrayList<SanTargetModel>();
+                ArrayList<SanTargetModel> targets = new ArrayList<SanTargetModel>();
 
                 if (a.getLunConnections() != null)
                 {
@@ -259,7 +262,7 @@ public abstract class SanStorageModel extends SanStorageModelBase
      * Organizes items according to the current groupping flag. When new items provided takes them in account and add to
      * the Items collection.
      */
-    private void InitializeItems(java.util.List<LunModel> newLuns, java.util.List<SanTargetModel> newTargets)
+    private void InitializeItems(List<LunModel> newLuns, List<SanTargetModel> newTargets)
     {
         if (getIsGrouppedByTarget())
         {
@@ -273,12 +276,12 @@ public abstract class SanStorageModel extends SanStorageModelBase
                 // Convert to list of another type as neccessary.
                 if (!isTargetModelList)
                 {
-                    setItems(ToTargetModelList((java.util.List<LunModel>) getItems()));
+                    setItems(ToTargetModelList((List<LunModel>) getItems()));
                 }
             }
 
-            java.util.ArrayList<SanTargetModel> items = new java.util.ArrayList<SanTargetModel>();
-            items.addAll((java.util.List<SanTargetModel>) getItems());
+            ArrayList<SanTargetModel> items = new ArrayList<SanTargetModel>();
+            items.addAll((List<SanTargetModel>) getItems());
 
             // Add new targets.
             if (newTargets != null)
@@ -314,12 +317,12 @@ public abstract class SanStorageModel extends SanStorageModelBase
                 // Convert to list of another type as neccessary.
                 if (isTargetModelList)
                 {
-                    setItems(ToLunModelList((java.util.List<SanTargetModel>) getItems()));
+                    setItems(ToLunModelList((List<SanTargetModel>) getItems()));
                 }
             }
 
-            java.util.ArrayList<LunModel> items = new java.util.ArrayList<LunModel>();
-            items.addAll((java.util.List<LunModel>) getItems());
+            ArrayList<LunModel> items = new ArrayList<LunModel>();
+            items.addAll((List<LunModel>) getItems());
 
             // Add new LUNs.
             if (newLuns != null)
@@ -337,7 +340,7 @@ public abstract class SanStorageModel extends SanStorageModelBase
         }
     }
 
-    private void MergeLunsToTargets(java.util.List<LunModel> newLuns, java.util.List<SanTargetModel> targets)
+    private void MergeLunsToTargets(List<LunModel> newLuns, List<SanTargetModel> targets)
     {
         for (LunModel lun : newLuns)
         {
@@ -358,7 +361,7 @@ public abstract class SanStorageModel extends SanStorageModelBase
         }
     }
 
-    private java.util.List<SanTargetModel> ToTargetModelList(java.util.List<LunModel> source)
+    private List<SanTargetModel> ToTargetModelList(List<LunModel> source)
     {
         ObservableCollection<SanTargetModel> list = new ObservableCollection<SanTargetModel>();
 
@@ -394,7 +397,7 @@ public abstract class SanStorageModel extends SanStorageModelBase
         return list;
     }
 
-    private java.util.List<LunModel> ToLunModelList(java.util.List<SanTargetModel> source)
+    private List<LunModel> ToLunModelList(List<SanTargetModel> source)
     {
         ObservableCollection<LunModel> list = new ObservableCollection<LunModel>();
 
@@ -434,7 +437,7 @@ public abstract class SanStorageModel extends SanStorageModelBase
     {
         if (!getIsGrouppedByTarget())
         {
-            java.util.List<LunModel> items = (java.util.List<LunModel>) getItems();
+            List<LunModel> items = (List<LunModel>) getItems();
             for (LunModel lun : items)
             {
                 if (!lun.getIsIncluded() && lun.getIsAccessible())
@@ -445,12 +448,12 @@ public abstract class SanStorageModel extends SanStorageModelBase
         }
     }
 
-    public java.util.ArrayList<LunModel> getAddedLuns()
+    public ArrayList<LunModel> getAddedLuns()
     {
-        java.util.ArrayList<LunModel> luns = new java.util.ArrayList<LunModel>();
+        ArrayList<LunModel> luns = new ArrayList<LunModel>();
         if (getIsGrouppedByTarget())
         {
-            java.util.List<SanTargetModel> items = (java.util.List<SanTargetModel>) getItems();
+            List<SanTargetModel> items = (List<SanTargetModel>) getItems();
             for (SanTargetModel item : items)
             {
                 for (LunModel lun : item.getLuns())
@@ -465,7 +468,7 @@ public abstract class SanStorageModel extends SanStorageModelBase
         }
         else
         {
-            java.util.List<LunModel> items = (java.util.List<LunModel>) getItems();
+            List<LunModel> items = (List<LunModel>) getItems();
             for (LunModel lun : items)
             {
                 if (lun.getIsSelected() && !lun.getIsIncluded()

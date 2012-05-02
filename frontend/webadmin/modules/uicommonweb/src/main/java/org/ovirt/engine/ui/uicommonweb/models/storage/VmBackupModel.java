@@ -93,7 +93,7 @@ public class VmBackupModel extends ManageBackupModel {
         model.setHashName("remove_backed_up_vm"); //$NON-NLS-1$
         model.setMessage(ConstantsManager.getInstance().getConstants().vmsMsg());
 
-        java.util.ArrayList<String> items = new java.util.ArrayList<String>();
+        ArrayList<String> items = new ArrayList<String>();
         for (Object item : getSelectedItems()) {
             VM vm = (VM) item;
             items.add(vm.getvm_name());
@@ -129,8 +129,8 @@ public class VmBackupModel extends ManageBackupModel {
                 if (pools != null && pools.size() > 0) {
                     storage_pool pool = pools.get(0);
                     VmBackupModel backupModel = (VmBackupModel) model;
-                    java.util.ArrayList<VdcActionParametersBase> list =
-                            new java.util.ArrayList<VdcActionParametersBase>();
+                    ArrayList<VdcActionParametersBase> list =
+                            new ArrayList<VdcActionParametersBase>();
                     for (Object item : backupModel.getSelectedItems()) {
                         VM vm = (VM) item;
                         list.add(new RemoveVmFromImportExportParamenters(vm,
@@ -188,7 +188,7 @@ public class VmBackupModel extends ManageBackupModel {
             @Override
             public void OnSuccess(Object returnModel, Object returnValue) {
                 VmBackupModel vmBackupModel = (VmBackupModel) returnModel;
-                java.util.ArrayList<VDSGroup> clusters = (java.util.ArrayList<VDSGroup>) returnValue;
+                ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) returnValue;
                 ImportVmModel iVmModel = (ImportVmModel) vmBackupModel.getWindow();
                 iVmModel.getCluster().setItems(clusters);
                 iVmModel.getCluster().setSelectedItem(Linq.FirstOrDefault(clusters));
@@ -211,7 +211,7 @@ public class VmBackupModel extends ManageBackupModel {
                         iVmModel1.setStoragePool(pool);
 
                         iVmModel1.setItems(vmBackupModel1.getSelectedItems());
-                        iVmModel1.setSelectedVMsCount(((java.util.List) vmBackupModel1.getItems()).size());
+                        iVmModel1.setSelectedVMsCount(((List) vmBackupModel1.getItems()).size());
                     }
 
                 };
@@ -233,7 +233,7 @@ public class VmBackupModel extends ManageBackupModel {
 
         iVmModel.getCommands().clear();
 
-        if (((java.util.List) iVmModel.getDestinationStorage().getItems()).size() == 0) {
+        if (((List) iVmModel.getDestinationStorage().getItems()).size() == 0) {
             iVmModel.getDestinationStorage().setIsChangable(false);
             iVmModel.getIsSingleDestStorage().setIsChangable(false);
             iVmModel.getIsSingleDestStorage().setEntity(false);
@@ -271,7 +271,7 @@ public class VmBackupModel extends ManageBackupModel {
             return;
         }
 
-        java.util.ArrayList<VdcActionParametersBase> prms = new java.util.ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> prms = new ArrayList<VdcActionParametersBase>();
 
         for (Object item : model.getItems()) {
             VM vm = (VM) item;
@@ -288,7 +288,7 @@ public class VmBackupModel extends ManageBackupModel {
             ImportVmParameters prm = tempVar;
 
             prm.setCopyCollapse((Boolean) model.getCollapseSnapshots().getEntity());
-            HashMap<String, DiskImageBase> diskDictionary = new java.util.HashMap<String, DiskImageBase>();
+            HashMap<String, DiskImageBase> diskDictionary = new HashMap<String, DiskImageBase>();
 
             for (Map.Entry<String, Disk> entry : vm.getDiskMap().entrySet()) {
                 String key = entry.getKey();
@@ -326,8 +326,8 @@ public class VmBackupModel extends ManageBackupModel {
                                 .getState();
                         vmBackupModel.getWindow().StopProgress();
                         vmBackupModel.Cancel();
-                        java.util.ArrayList<VdcReturnValueBase> retVals =
-                                (java.util.ArrayList<VdcReturnValueBase>) result
+                        ArrayList<VdcReturnValueBase> retVals =
+                                (ArrayList<VdcReturnValueBase>) result
                                         .getReturnValue();
                         if (retVals != null
                                 && vmBackupModel.getSelectedItems().size() == retVals
@@ -397,7 +397,7 @@ public class VmBackupModel extends ManageBackupModel {
                 @Override
                 public void OnSuccess(Object model, Object ReturnValue) {
                     VmBackupModel backupModel = (VmBackupModel) model;
-                    java.util.ArrayList<storage_pool> list = (java.util.ArrayList<storage_pool>) ReturnValue;
+                    ArrayList<storage_pool> list = (ArrayList<storage_pool>) ReturnValue;
                     if (list != null && list.size() > 0) {
                         storage_pool dataCenter = list.get(0);
                         AsyncQuery _asyncQuery1 = new AsyncQuery();
@@ -409,7 +409,7 @@ public class VmBackupModel extends ManageBackupModel {
                                 VmBackupModel backupModel1 = (VmBackupModel) model1;
 
                                 backupModel1
-                                        .setItems((java.util.ArrayList<VM>) ((VdcQueryReturnValue) ReturnValue1)
+                                        .setItems((ArrayList<VM>) ((VdcQueryReturnValue) ReturnValue1)
                                                 .getReturnValue());
                             }
                         };

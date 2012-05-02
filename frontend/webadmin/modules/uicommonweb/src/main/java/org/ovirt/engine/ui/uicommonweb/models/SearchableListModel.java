@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -533,7 +534,7 @@ public abstract class SearchableListModel extends ListModel implements GridContr
         // of type 'valueObjectEnumerableList', which is not IList).
         if (getItems() != null)
         {
-            java.util.Iterator enumerator = getItems().iterator();
+            Iterator enumerator = getItems().iterator();
             setIsEmpty(enumerator.hasNext() ? false : true);
         }
         else
@@ -549,7 +550,7 @@ public abstract class SearchableListModel extends ListModel implements GridContr
         // of type 'valueObjectEnumerableList', which is not IList).
         if (getItems() != null)
         {
-            java.util.Iterator enumerator = getItems().iterator();
+            Iterator enumerator = getItems().iterator();
             if (enumerator.hasNext())
             {
                 setIsEmpty(false);
@@ -654,7 +655,7 @@ public abstract class SearchableListModel extends ListModel implements GridContr
 
         if (pageSize > 0)
         {
-            java.util.Iterator e = getItems().iterator();
+            Iterator e = getItems().iterator();
             int itemsCountInCurrentPage = 0;
             while (IteratorUtils.moveNext(e))
             {
@@ -696,11 +697,11 @@ public abstract class SearchableListModel extends ListModel implements GridContr
         if (items != value)
         {
             IVdcQueryable lastSelectedItem = (IVdcQueryable) getSelectedItem();
-            java.util.ArrayList<IVdcQueryable> lastSelectedItems = new java.util.ArrayList<IVdcQueryable>();
+            ArrayList<IVdcQueryable> lastSelectedItems = new ArrayList<IVdcQueryable>();
 
             if (getSelectedItems() != null)
             {
-                if (getSelectedItems() instanceof java.util.ArrayList)
+                if (getSelectedItems() instanceof ArrayList)
                 {
                     for (Object item : getSelectedItems())
                     {
@@ -709,7 +710,7 @@ public abstract class SearchableListModel extends ListModel implements GridContr
                 }
                 else
                 {
-                    java.util.Iterator iterator = getSelectedItems().iterator();
+                    Iterator iterator = getSelectedItems().iterator();
                     while (iterator.hasNext())
                     {
                         lastSelectedItems.add((IVdcQueryable) iterator.next());
@@ -733,9 +734,9 @@ public abstract class SearchableListModel extends ListModel implements GridContr
             if (lastSelectedItem != null && value != null)
             {
                 IVdcQueryable newSelectedItem = null;
-                java.util.ArrayList<IVdcQueryable> newItems = new java.util.ArrayList<IVdcQueryable>();
+                ArrayList<IVdcQueryable> newItems = new ArrayList<IVdcQueryable>();
 
-                if (value instanceof java.util.ArrayList)
+                if (value instanceof ArrayList)
                 {
                     for (Object item : value)
                     {
@@ -744,7 +745,7 @@ public abstract class SearchableListModel extends ListModel implements GridContr
                 }
                 else
                 {
-                    java.util.Iterator iterator = value.iterator();
+                    Iterator iterator = value.iterator();
                     while (iterator.hasNext())
                     {
                         newItems.add((IVdcQueryable) iterator.next());
