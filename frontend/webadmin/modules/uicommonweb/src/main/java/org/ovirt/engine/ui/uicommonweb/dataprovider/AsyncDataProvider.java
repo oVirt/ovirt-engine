@@ -294,18 +294,6 @@ public final class AsyncDataProvider {
         Frontend.RunQuery(VdcQueryType.GetVmByVmId, new GetVmByVmIdParameters(vmId), aQuery);
     }
 
-    public static void GetAnyVm(AsyncQuery aQuery, String poolName) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery)
-            {
-                ArrayList<VM> vms = Linq.<VM> Cast((ArrayList<IVdcQueryable>) source);
-                return vms.size() > 0 ? vms.get(0) : null;
-            }
-        };
-        Frontend.RunQuery(VdcQueryType.Search, new SearchParameters("Vms: pool=" + poolName, SearchType.VM), aQuery); //$NON-NLS-1$
-    }
-
     public static void GetTimeZoneList(AsyncQuery aQuery) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override

@@ -8,13 +8,13 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
 import org.ovirt.engine.core.common.queries.GetAllDisksByVmIdParameters;
+import org.ovirt.engine.core.common.queries.GetVmdataByPoolIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
-import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 
@@ -70,9 +70,12 @@ public class VmBasicDiskListModel extends SearchableListModel
                 @Override
                 public void OnSuccess(Object model, Object result)
                 {
-                    VM vm = (VM) result;
-                    if (vm != null)
+                    if (result != null)
                     {
+                        VM vm = (VM) ((VdcQueryReturnValue) result).getReturnValue();
+                        if (vm == null) {
+                            return;
+                        }
                         VmBasicDiskListModel poolDiskListModel = (VmBasicDiskListModel) model;
 
                         AsyncQuery _asyncQuery1 = new AsyncQuery();
@@ -99,7 +102,9 @@ public class VmBasicDiskListModel extends SearchableListModel
             };
 
             vm_pools pool = (vm_pools) getEntity();
-            AsyncDataProvider.GetAnyVm(_asyncQuery, pool.getvm_pool_name());
+            Frontend.RunQuery(VdcQueryType.GetVmDataByPoolId,
+                    new GetVmdataByPoolIdParameters(pool.getvm_pool_id()),
+                    _asyncQuery);
         }
     }
 

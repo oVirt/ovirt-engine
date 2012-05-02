@@ -11,6 +11,7 @@ import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetAllDisksByVmIdParameters;
+import org.ovirt.engine.core.common.queries.GetVmdataByPoolIdParameters;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.StorageDomainQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -24,7 +25,6 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.DataProvider;
-import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
@@ -443,9 +443,11 @@ public class PoolGeneralModel extends EntityModel
             public void OnSuccess(Object model, Object result)
             {
                 // currently, only query that is being invoked asynchrounously in
-                // this context is GetAnyVmQuery. If more async queries will be needed,
+                // this context is GetVmDataByPoolIdQuery. If more async queries will be needed,
                 // refactor to "switch ... case...".
-                setvm((VM) result);
+                if (result != null) {
+                    setvm((VM) ((VdcQueryReturnValue) result).getReturnValue());
+                }
                 PoolGeneralModel poolGeneralModel = (PoolGeneralModel) model;
                 if (getvm() != null)
                 {
@@ -535,7 +537,9 @@ public class PoolGeneralModel extends EntityModel
                 }
             }
         };
-        AsyncDataProvider.GetAnyVm(_asyncQuery, pool.getvm_pool_name());
+        Frontend.RunQuery(VdcQueryType.GetVmDataByPoolId,
+                new GetVmdataByPoolIdParameters(pool.getvm_pool_id()),
+                _asyncQuery);
     }
 
     private void UpdateStorageDomain()

@@ -5,6 +5,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
 import org.ovirt.engine.core.common.queries.GetAllVmPoolsAttachedToUserParameters;
 import org.ovirt.engine.core.common.queries.GetUserVmsByUserIdAndGroupsParameters;
+import org.ovirt.engine.core.common.queries.GetVmdataByPoolIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Event;
@@ -18,7 +19,6 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.DataProvider;
 import org.ovirt.engine.ui.uicommonweb.Linq;
-import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
@@ -253,16 +253,20 @@ public class UserPortalBasicListModel extends IUserPortalListModel implements IV
                 public void OnSuccess(Object model, Object result)
                 {
                     UserPortalBasicListModel userPortalBasicListModel = (UserPortalBasicListModel) model;
-                    VM vm = (VM) result;
-                    if (vm != null)
+                    if (result != null)
                     {
-                        userPortalBasicListModel.UpdateDetails(vm);
+                        VM vm = (VM) ((VdcQueryReturnValue) result).getReturnValue();
+                        if (vm != null) {
+                            userPortalBasicListModel.UpdateDetails(vm);
+                        }
                     }
                 }
             };
 
             vm_pools pool = (vm_pools) entity;
-            AsyncDataProvider.GetAnyVm(_asyncQuery, pool.getvm_pool_name());
+            Frontend.RunQuery(VdcQueryType.GetVmDataByPoolId,
+                    new GetVmdataByPoolIdParameters(pool.getvm_pool_id()),
+                    _asyncQuery);
         }
     }
 

@@ -10,6 +10,9 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
+import org.ovirt.engine.core.common.queries.GetVmdataByPoolIdParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.Guid;
@@ -111,22 +114,27 @@ public class PoolItemBehavior extends ItemBehavior
             getItem().setOsType(poolToOsType.get(entity.getvm_pool_id()));
         }
 
-        AsyncDataProvider.GetAnyVm(new AsyncQuery(this,
-                new INewAsyncCallback() {
-                    @Override
-                    public void OnSuccess(Object target, Object returnValue) {
+        Frontend.RunQuery(VdcQueryType.GetVmDataByPoolId,
+                new GetVmdataByPoolIdParameters(entity.getvm_pool_id()),
+                new AsyncQuery(this,
+                        new INewAsyncCallback() {
+                            @Override
+                            public void OnSuccess(Object target, Object returnValue) {
 
-                        PoolItemBehavior behavior = (PoolItemBehavior) target;
-                        VM vm = (VM) returnValue;
-                        if (vm != null)
-                        {
-                            UserPortalItemModel model = behavior.getItem();
-                            model.setOsType(vm.getvm_os());
-                            poolToOsType.put(((vm_pools) model.getEntity()).getvm_pool_id(), vm.getvm_os());
-                        }
+                                PoolItemBehavior behavior = (PoolItemBehavior) target;
+                                if (returnValue != null)
+                                {
+                                    VM vm = (VM) ((VdcQueryReturnValue) returnValue).getReturnValue();
+                                    if (vm == null) {
+                                        return;
+                                    }
+                                    UserPortalItemModel model = behavior.getItem();
+                                    model.setOsType(vm.getvm_os());
+                                    poolToOsType.put(((vm_pools) model.getEntity()).getvm_pool_id(), vm.getvm_os());
+                                }
 
-                    }
-                }), entity.getvm_pool_name());
+                            }
+                        }));
     }
 
     private void UpdateActionAvailability()
