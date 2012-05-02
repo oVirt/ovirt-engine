@@ -32,6 +32,12 @@ public class FixturesTool {
     protected static final Guid STORAGE_DOAMIN_NFS_ISO = new Guid("17e7489d-d490-4681-a322-073ca19bd33d");
 
     /**
+     * Predefined shared iso storage domain for both the storgae pools
+     */
+    protected static final Guid SHARED_ISO_STORAGE_DOAMIN_FOR_SP2_AND_SP3 =
+            new Guid("d034f3b2-fb9c-414a-b1be-1e642cfe57ae");
+
+    /**
      * Predefined scale storage domain.
      */
     protected static final Guid STORAGE_DOAMIN_SCALE_SD5 = new Guid("72e3a666-89e1-4005-a7ca-f7548004a9ab");
@@ -49,7 +55,8 @@ public class FixturesTool {
     /**
      * Predefined vds group, with no specific quotas associated to it.
      */
-    protected static final Guid VDS_GROUP_RHEL6_NFS_NO_SPECIFIC_QUOTAS = new Guid("eba797fb-8e3b-4777-b63c-92e7a5957d7e");
+    protected static final Guid VDS_GROUP_RHEL6_NFS_NO_SPECIFIC_QUOTAS =
+            new Guid("eba797fb-8e3b-4777-b63c-92e7a5957d7e");
 
     /**
      * Predefined vds group with no running VMs
