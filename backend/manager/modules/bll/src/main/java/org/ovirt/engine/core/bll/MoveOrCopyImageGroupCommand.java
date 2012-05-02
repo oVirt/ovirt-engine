@@ -144,7 +144,7 @@ public class MoveOrCopyImageGroupCommand<T extends MoveOrCopyImageGroupParameter
         VdcActionParametersBase commandParams = getParametersForTask(parentCommand, getParameters());
         AsyncTaskParameters p = new AsyncTaskParameters(asyncTaskCreationInfo, new async_tasks(parentCommand,
                 AsyncTaskResultEnum.success, AsyncTaskStatusEnum.running, asyncTaskCreationInfo.getTaskID(),
-                commandParams, asyncTaskCreationInfo.getStepId()));
+                commandParams, asyncTaskCreationInfo.getStepId(), getCommandId()));
         p.setEntityId(getParameters().getEntityId());
         Guid ret = AsyncTaskManager.getInstance().CreateTask(AsyncTaskType.moveImage, p, false);
 

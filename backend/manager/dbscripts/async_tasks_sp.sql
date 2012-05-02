@@ -7,12 +7,13 @@ Create or replace FUNCTION Insertasync_tasks(v_action_type INTEGER,
 	v_task_id UUID,
 	v_action_parameters text,
 	v_action_params_class varchar(256),
-	v_step_id UUID)
+	v_step_id UUID,
+	v_command_id UUID)
 RETURNS VOID
    AS $procedure$
 BEGIN
-INSERT INTO async_tasks(action_type, result, status, task_id, action_parameters,action_params_class, step_id)
-	VALUES(v_action_type, v_result, v_status, v_task_id, v_action_parameters,v_action_params_class, v_step_id);
+INSERT INTO async_tasks(action_type, result, status, task_id, action_parameters,action_params_class, step_id, command_id)
+	VALUES(v_action_type, v_result, v_status, v_task_id, v_action_parameters,v_action_params_class, v_step_id, v_command_id);
 END; $procedure$
 LANGUAGE plpgsql;    
 
@@ -23,7 +24,8 @@ Create or replace FUNCTION Updateasync_tasks(v_action_type INTEGER,
 	v_task_id UUID,
 	v_action_parameters text,
 	v_action_params_class varchar(256),
-	v_step_id UUID)
+	v_step_id UUID,
+	v_command_id UUID)
 RETURNS VOID
 
 	--The [async_tasks] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -35,7 +37,8 @@ BEGIN
           status = v_status,
           action_parameters = v_action_parameters,
           action_params_class = v_action_params_class,
-          step_id = v_step_id
+          step_id = v_step_id,
+          command_id = v_command_id
       WHERE task_id = v_task_id;
 END; $procedure$
 LANGUAGE plpgsql;

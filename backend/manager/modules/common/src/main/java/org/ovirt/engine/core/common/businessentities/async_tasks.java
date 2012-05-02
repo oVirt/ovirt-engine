@@ -28,13 +28,14 @@ public class async_tasks implements Serializable {
     }
 
     public async_tasks(VdcActionType action_type, AsyncTaskResultEnum result, AsyncTaskStatusEnum status, Guid task_id,
-            VdcActionParametersBase action_parameters, NGuid stepId) {
+            VdcActionParametersBase action_parameters, NGuid stepId, Guid commandId) {
         this.actionType = action_type;
         this.result = result;
         this.status = status;
         this.taskId = task_id;
         this.setaction_parameters(action_parameters);
         this.stepId = stepId;
+        this.commandId = commandId;
     }
 
     @Column(name = "action_type", nullable = false)
@@ -110,6 +111,17 @@ public class async_tasks implements Serializable {
         this.stepId = stepId;
     }
 
+    @Column(name = "command_id")
+    private Guid commandId = Guid.Empty;
+
+    public Guid getCommandId() {
+        return commandId;
+    }
+
+    public void setCommandId(Guid commandId) {
+        this.commandId = commandId;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -120,6 +132,7 @@ public class async_tasks implements Serializable {
         results = prime * results + ((status == null) ? 0 : status.hashCode());
         results = prime * results + ((taskId == null) ? 0 : taskId.hashCode());
         results = prime * results + ((stepId == null) ? 0 : stepId.hashCode());
+        results = prime * results + ((commandId == null) ? 0 : commandId.hashCode());
         return results;
     }
 
@@ -153,6 +166,13 @@ public class async_tasks implements Serializable {
                 return false;
             }
         } else if (!stepId.equals(other.stepId)) {
+            return false;
+        }
+        if (commandId == null) {
+            if (other.commandId != null) {
+                return false;
+            }
+        } else if (!commandId.equals(other.commandId)) {
             return false;
         }
 

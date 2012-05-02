@@ -2479,12 +2479,14 @@
         <column>status</column>
         <column>result</column>
         <column>action_parameters</column>
+        <column>command_id</column>
         <row>
             <value>340FD52B-3400-4CDD-8D3F-C9D03704B0AA</value>
             <value>1</value> <!--  Add VM -->
             <value>2</value> <!--  Running -->
             <value>0</value> <!--  Success -->
             <null />
+            <value>340FD52B-3400-4CDD-8D3F-C9D03704B0AA</value>
         </row>
         <row>
             <value>340FD52B-3400-4CDD-8D3F-C9D03704B0AB</value>
@@ -2492,6 +2494,7 @@
             <value>2</value> <!--  Running -->
             <value>0</value> <!--  Success -->
             <null />
+            <value>340FD52B-3400-4CDD-8D3F-C9D03704B0AB</value>
         </row>
     </table>
     <table name="quota">

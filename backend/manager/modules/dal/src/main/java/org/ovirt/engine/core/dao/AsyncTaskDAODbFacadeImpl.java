@@ -44,6 +44,7 @@ public class AsyncTaskDAODbFacadeImpl extends BaseDAODbFacade implements AsyncTa
             entity.setaction_parameters(deserializeParameters(rs.getString("action_parameters"),rs.getString("action_params_class")));
             entity.setStepId(NGuid.createGuidFromString(rs
                     .getString("step_id")));
+            entity.setCommandId(Guid.createGuidFromString(rs.getString("command_id")));
             return entity;
         }
 
@@ -68,6 +69,7 @@ public class AsyncTaskDAODbFacadeImpl extends BaseDAODbFacade implements AsyncTa
             addValue("action_parameters", serializeParameters(task.getaction_parameters()));
             addValue("action_params_class",task.getaction_parameters().getClass().getName());
             addValue("step_id", task.getStepId());
+            addValue("command_id", task.getCommandId());
         }
 
         private String serializeParameters(VdcActionParametersBase params) {

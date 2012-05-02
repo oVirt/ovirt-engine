@@ -130,7 +130,8 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
                         AsyncTaskStatusEnum.running,
                         asyncTaskCreationInfo.getTaskID(),
                         parametersForTask,
-                        asyncTaskCreationInfo.getStepId()));
+                        asyncTaskCreationInfo.getStepId(),
+                        getCommandId()));
         p.setEntityId(getParameters().getEntityId());
         Guid ret = AsyncTaskManager.getInstance().CreateTask(AsyncTaskType.createVolume, p, false);
         //

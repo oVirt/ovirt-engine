@@ -1,12 +1,13 @@
 package org.ovirt.engine.core.dao;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
-
 import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -47,6 +48,7 @@ public class AsyncTaskDAOTest extends BaseDAOTestCase {
         newAsyncTask.setstatus(AsyncTaskStatusEnum.running);
         newAsyncTask.setresult(AsyncTaskResultEnum.success);
         newAsyncTask.setaction_parameters(params);
+        newAsyncTask.setCommandId(Guid.NewGuid());
 
         existingAsyncTask = dao.get(new Guid("340fd52b-3400-4cdd-8d3f-C9d03704b0aa"));
     }
