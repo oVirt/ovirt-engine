@@ -48,13 +48,14 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
  * cache procedure using VDSM to fetch the Iso files from all the Data Centers and update the DB cache table with the
  * appropriate file data.<BR/>
  */
+@SuppressWarnings("synthetic-access")
 public class IsoDomainListSyncronizer {
     private List<RepoFileMetaData> problematicRepoFileList = new ArrayList<RepoFileMetaData>();
-    private final int MIN_TO_MILLISECONDS = 60 * 1000;
-    private static final IsoDomainListSyncronizer isoDomainListSyncronizer = new IsoDomainListSyncronizer();;
+    private static final int MIN_TO_MILLISECONDS = 60 * 1000;
+    private static final IsoDomainListSyncronizer isoDomainListSyncronizer = new IsoDomainListSyncronizer();
+    private static final ConcurrentMap<Object, Lock> syncDomainForFileTypeMap = new ConcurrentHashMap<Object, Lock>();
     private int isoDomainRefreshRate;
     RepoFileMetaDataDAO repoStorageDom;
-    private static ConcurrentMap<Object,Lock> syncDomainForFileTypeMap = new ConcurrentHashMap<Object,Lock>();
 
     // Not kept as static member to enable reloading the config value
     public static String getGuestToolsSetupIsoPrefix() {
@@ -76,7 +77,7 @@ public class IsoDomainListSyncronizer {
         SchedulerUtilQuartzImpl.getInstance().scheduleAFixedDelayJob(this,
                 "fetchIsoDomains",
                 new Class[] {},
-                    new Object[] {},
+                new Object[] {},
                 300000,
                 isoDomainRefreshRate,
                 TimeUnit.MILLISECONDS);
@@ -97,11 +98,11 @@ public class IsoDomainListSyncronizer {
     public void fetchIsoDomains() {
         // Gets all the active Iso storage domains.
         List<RepoFileMetaData> repofileList = DbFacade.getInstance()
-                        .getRepoFileMetaDataDao()
-                        .getAllRepoFilesForAllStoragePools(StorageDomainType.ISO,
-                                StoragePoolStatus.Up,
-                                StorageDomainStatus.Active,
-                                VDSStatus.Up);
+                .getRepoFileMetaDataDao()
+                .getAllRepoFilesForAllStoragePools(StorageDomainType.ISO,
+                        StoragePoolStatus.Up,
+                        StorageDomainStatus.Active,
+                        VDSStatus.Up);
 
         // Set count down latch to size of map for multiple threaded.
         final CountDownLatch latch = new CountDownLatch(repofileList.size());
@@ -214,7 +215,8 @@ public class IsoDomainListSyncronizer {
                 .RunVdsCommand(VDSCommandType.IsValid,
                         new IrsBaseVDSCommandParameters(storagePoolId)).getReturnValue());
 
-        log.debugFormat("Validation of Storage pool id {0} returned {1}.", storagePoolId, isValid ? "valid" : "not valid");
+        log.debugFormat("Validation of Storage pool id {0} returned {1}.", storagePoolId, isValid ? "valid"
+                : "not valid");
         // Setting the indication to the indication whether the storage pool is valid.
         boolean updateFromVDSMSucceeded = isValid;
 
@@ -362,7 +364,8 @@ public class IsoDomainListSyncronizer {
      *            - The storage domain Id we want to get the file list from.
      * @return List of Iso files fetched from DB, if parameter is invalid returns an empty list.
      */
-    public List<RepoFileMetaData> getCachedIsoListByDomainId(Guid isoStorageDomainId,FileTypeExtension fileTypeExtension) {
+    public List<RepoFileMetaData> getCachedIsoListByDomainId(Guid isoStorageDomainId,
+            FileTypeExtension fileTypeExtension) {
         List<RepoFileMetaData> fileListMD = new ArrayList<RepoFileMetaData>();
         if (isoStorageDomainId != null) {
             fileListMD =
@@ -401,7 +404,7 @@ public class IsoDomainListSyncronizer {
      *            - The file type extension (ISO  or Floppy).
      * @see #handleErrorLog(List)
      */
-    private void handleErrorLog(Guid storagePoolId, Guid storageDomainId, FileTypeExtension fileTypeExt) {
+    private static void handleErrorLog(Guid storagePoolId, Guid storageDomainId, FileTypeExtension fileTypeExt) {
         List<RepoFileMetaData> tempProblematicRepoFileList = new ArrayList<RepoFileMetaData>();
 
         // set mock repo file meta data with storage domain id and storage pool id.
@@ -424,7 +427,7 @@ public class IsoDomainListSyncronizer {
      *            - List of repository file meta data, each one indicating a problematic repository domain.
      * @return true, if has problematic storage domains, false otherwise (List is empty).
      */
-    private boolean handleErrorLog(List<RepoFileMetaData> problematicFileListForHandleError) {
+    private static boolean handleErrorLog(List<RepoFileMetaData> problematicFileListForHandleError) {
         boolean hasProblematic = false;
         if (problematicFileListForHandleError != null && !problematicFileListForHandleError.isEmpty()) {
             StringBuilder problematicStorages = new StringBuilder();
@@ -454,7 +457,7 @@ public class IsoDomainListSyncronizer {
      * @param repoFileMetaData
      *            - The problematic storage domain.
      */
-    private StringBuilder buildDetailedProblematicMapMsg(RepoFileMetaData repoFileMetaData) {
+    private static StringBuilder buildDetailedProblematicMapMsg(RepoFileMetaData repoFileMetaData) {
         StringBuilder problematicStorageMsg = new StringBuilder();
         if (repoFileMetaData != null) {
             problematicStorageMsg.append(" (");
@@ -477,10 +480,11 @@ public class IsoDomainListSyncronizer {
      *                  - The problematic storage domain.
      * @return
      */
-    private String buildDetailedAuditLogMessage(RepoFileMetaData repoFileMetaData) {
+    private static String buildDetailedAuditLogMessage(RepoFileMetaData repoFileMetaData) {
         String storageDomainName = "Repository not found";
         if (repoFileMetaData != null && repoFileMetaData.getRepoDomainId() != null) {
-            storage_domains storageDomain = DbFacade.getInstance().getStorageDomainDAO().get(repoFileMetaData.getRepoDomainId());
+            storage_domains storageDomain =
+                    DbFacade.getInstance().getStorageDomainDAO().get(repoFileMetaData.getRepoDomainId());
             if (storageDomain != null) {
                 storageDomainName =
                         String.format("%s (%s file type)",
@@ -504,7 +508,10 @@ public class IsoDomainListSyncronizer {
         boolean isRefreshed = false;
         try {
             List<RepoFileMetaData> problematicRepoFileList = new ArrayList<RepoFileMetaData>();
-            isRefreshed = refreshIsoDomain(repoFileMetaData.getRepoDomainId(),problematicRepoFileList,repoFileMetaData.getFileType());
+            isRefreshed =
+                    refreshIsoDomain(repoFileMetaData.getRepoDomainId(),
+                            problematicRepoFileList,
+                            repoFileMetaData.getFileType());
             addRepoFileToProblematicList(problematicRepoFileList);
         } finally {
             // At any case count down the latch, and print log message.
@@ -680,7 +687,7 @@ public class IsoDomainListSyncronizer {
      */
     private static Lock getSyncObject(Guid domainId, FileTypeExtension fileTypeExt) {
         Pair<Guid, FileTypeExtension> domainPerFileType = new Pair<Guid, FileTypeExtension>(domainId, fileTypeExt);
-        syncDomainForFileTypeMap.putIfAbsent(domainPerFileType,new ReentrantLock());
+        syncDomainForFileTypeMap.putIfAbsent(domainPerFileType, new ReentrantLock());
         return syncDomainForFileTypeMap.get(domainPerFileType);
     }
 
@@ -690,7 +697,7 @@ public class IsoDomainListSyncronizer {
      * @param problematicRepoFilesList
      *            - List of Iso domain names, which encounter problem fetching from VDSM.
      */
-    private void addToAuditLogErrorMessage(String problematicRepoFilesList) {
+    private static void addToAuditLogErrorMessage(String problematicRepoFilesList) {
         AuditLogableBase logable = new AuditLogableBase();
 
         // Get translated error by error code ,if no translation found (should not happened) ,
@@ -702,11 +709,11 @@ public class IsoDomainListSyncronizer {
     /**
      * Add audit log message when fetch encounter problems.
      */
-    private void addToAuditLogSuccessMessage(String IsoDomain, String fileTypeExt) {
+    private static void addToAuditLogSuccessMessage(String IsoDomain, String fileTypeExt) {
         AuditLogableBase logable = new AuditLogableBase();
         logable.AddCustomValue("isoDomains", String.format("%s (%s file type)", IsoDomain, fileTypeExt));
         AuditLogDirector.log(logable, AuditLogType.REFRESH_REPOSITORY_FILE_LIST_SUCCEEDED);
     }
 
-    private static Log log = LogFactory.getLog(IsoDomainListSyncronizer.class);
+    private static final Log log = LogFactory.getLog(IsoDomainListSyncronizer.class);
 }
