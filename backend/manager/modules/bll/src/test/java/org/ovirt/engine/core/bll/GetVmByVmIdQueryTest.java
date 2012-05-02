@@ -44,6 +44,7 @@ public class GetVmByVmIdQueryTest extends AbstractUserQueryTest<GetVmByVmIdParam
         Disk disk = new DiskImage();
         disk.setvm_guid(vmID);
         ((DiskImage)disk).setactive(true);
+        ((DiskImage)disk).setAllowSnapshot(true);
         DiskDao diskDao = mock(DiskDao.class);
         when(diskDao.getAllForVm(vmID)).thenReturn(Collections.singletonList(disk));
 

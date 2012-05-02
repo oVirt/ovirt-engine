@@ -1842,6 +1842,7 @@
         <column>disk_description</column>
         <column>shareable</column>
         <column>boot</column>
+        <column>allow_snapshot</column>
         <row>
             <value>1b26a52b-b60f-44cb-9f46-3ef333b04a34</value>
             <value>2</value>
@@ -1850,6 +1851,7 @@
             <value>Off</value>
             <value>New Disk Alias Name</value>
             <value>New Description</value>
+            <value>false</value>
             <value>false</value>
             <value>true</value>
         </row>

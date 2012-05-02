@@ -381,6 +381,7 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
         di.setDiskAlias(diskImage.getDiskAlias());
         di.setDiskDescription(diskImage.getDiskDescription());
         di.setShareable(diskImage.isShareable());
+        di.setAllowSnapshot(diskImage.isAllowSnapshot());
         di.storage_pool_idField = new NGuid(diskImage.storage_pool_idField.getUuid());
         di.actualSize = diskImage.actualSize;
         di.mReadRateKbPerSec = diskImage.mReadRateKbPerSec;

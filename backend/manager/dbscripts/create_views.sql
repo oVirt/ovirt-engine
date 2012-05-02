@@ -47,6 +47,7 @@ SELECT images.image_guid as image_guid, vm_device.vm_id as vm_guid,
     base_disks.disk_alias as disk_alias,
     base_disks.disk_description as disk_description,
     base_disks.shareable as shareable,
+    base_disks.allow_snapshot as allow_snapshot,
     base_disks.internal_drive_mapping,
     base_disks.disk_interface,
     base_disks.wipe_after_delete as wipe_after_delete,
@@ -106,11 +107,11 @@ SELECT     array_to_string(array_agg(storage_id), ',') as storage_id, array_to_s
                       images_storage_domain_view.disk_interface as disk_interface, images_storage_domain_view.boot as boot, images_storage_domain_view.wipe_after_delete as wipe_after_delete, images_storage_domain_view.propagate_errors as propagate_errors,
                       images_storage_domain_view.entity_type as entity_type,
                       images_storage_domain_view.quota_id as quota_id, images_storage_domain_view.quota_name as quota_name, images_storage_domain_view.is_default_quota as is_default_quota, images_storage_domain_view.quota_enforcement_type,
-                      images_storage_domain_view.disk_id, images_storage_domain_view.disk_alias as disk_alias, images_storage_domain_view.disk_description as disk_description,images_storage_domain_view.shareable as shareable
+                      images_storage_domain_view.disk_id, images_storage_domain_view.disk_alias as disk_alias, images_storage_domain_view.disk_description as disk_description,images_storage_domain_view.shareable as shareable, images_storage_domain_view.allow_snapshot as allow_snapshot
 FROM         images_storage_domain_view
 INNER JOIN disk_image_dynamic ON images_storage_domain_view.image_guid = disk_image_dynamic.image_id
 WHERE images_storage_domain_view.active = TRUE
-GROUP BY storage_pool_id,image_guid,creation_date,disk_image_dynamic.actual_size,disk_image_dynamic.read_rate,disk_image_dynamic.write_rate,size,it_guid,internal_drive_mapping,description,ParentId,imageStatus,lastModified,app_list,vm_snapshot_id,volume_type,image_group_id,vm_guid,active,volume_format,disk_interface,boot,wipe_after_delete,propagate_errors,entity_type,quota_id,quota_name,is_default_quota,quota_enforcement_type,disk_id,disk_alias,disk_description,shareable;
+GROUP BY storage_pool_id,image_guid,creation_date,disk_image_dynamic.actual_size,disk_image_dynamic.read_rate,disk_image_dynamic.write_rate,size,it_guid,internal_drive_mapping,description,ParentId,imageStatus,lastModified,app_list,vm_snapshot_id,volume_type,image_group_id,vm_guid,active,volume_format,disk_interface,boot,wipe_after_delete,propagate_errors,entity_type,quota_id,quota_name,is_default_quota,quota_enforcement_type,disk_id,disk_alias,disk_description,shareable,allow_snapshot;
 
 
 
@@ -127,7 +128,8 @@ SELECT storage_impl.*,
        bd.propagate_errors,
        bd.disk_alias,
        bd.disk_description,
-       bd.shareable
+       bd.shareable,
+       bd.allow_snapshot
 FROM
 (
     SELECT 'IMAGE' AS disk_storage_type,

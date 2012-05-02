@@ -35,8 +35,18 @@ public abstract class Disk extends BaseDisk {
             String diskAlias,
             String diskDescription,
             boolean shareable,
-            boolean boot) {
-        super(id, internalDriveMapping, diskInterface, wipeAfterDelete, propagateErrors, diskAlias, diskDescription, shareable, boot);
+            boolean boot,
+            boolean allowSnapshot) {
+        super(id,
+                internalDriveMapping,
+                diskInterface,
+                wipeAfterDelete,
+                propagateErrors,
+                diskAlias,
+                diskDescription,
+                shareable,
+                boot,
+                allowSnapshot);
         this.vmEntityType = vmEntityType;
     }
 

@@ -28,7 +28,17 @@ public class LunDisk extends Disk {
             boolean shareable,
             boolean boot,
             LUNs lun) {
-        super(id, internalDriveMapping, diskInterface, wipeAfterDelete, propagateErrors, vmEntityType, diskAlias, diskDescription, shareable, boot);
+        super(id,
+                internalDriveMapping,
+                diskInterface,
+                wipeAfterDelete,
+                propagateErrors,
+                vmEntityType,
+                diskAlias,
+                diskDescription,
+                shareable,
+                boot,
+                false);
         this.lun = lun;
     }
 
