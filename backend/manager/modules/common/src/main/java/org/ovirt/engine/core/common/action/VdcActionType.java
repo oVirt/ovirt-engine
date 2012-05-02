@@ -168,9 +168,9 @@ public enum VdcActionType {
     UpdateTagsVmMapDefaultDisplayType(515),
 
     // Quota
-    AddQuota(601, ActionGroup.CONFIGURE_QUOTA),
-    UpdateQuota(602, ActionGroup.CONFIGURE_QUOTA),
-    RemoveQuota(603, ActionGroup.CONFIGURE_QUOTA),
+    AddQuota(601, ActionGroup.CONFIGURE_QUOTA, false),
+    UpdateQuota(602, ActionGroup.CONFIGURE_QUOTA, false),
+    RemoveQuota(603, ActionGroup.CONFIGURE_QUOTA, false),
 
     // bookmarks
     AddBookmark(701),
