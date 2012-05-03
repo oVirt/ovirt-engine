@@ -343,6 +343,29 @@ SELECT image_guid as vm_disk_id,
                images ON vm_device.device_id = images.image_group_id
 WHERE images.active = true;
 
+
+CREATE OR REPLACE VIEW dwh_vm_device_history_view
+AS
+SELECT device_id,
+       vm_id,
+       type,
+       address,
+       is_managed,
+       is_plugged,
+       is_readonly,
+       _create_date as create_date,
+       _update_date as update_date
+  FROM vm_device
+WHERE  ((type = 'disk' AND
+       device = 'disk') OR
+       (type = 'interface')) AND
+       (_create_date >  (SELECT     var_datetime
+                         FROM         dwh_history_timekeeping
+                         WHERE      (var_name = 'lastSync'))) OR
+       (_update_date >  (SELECT     var_datetime
+                         FROM         dwh_history_timekeeping AS history_timekeeping_1
+                         WHERE      (var_name = 'lastSync')));
+
 CREATE OR REPLACE VIEW dwh_vm_disks_history_view
 AS
 SELECT  d.disk_id as vm_disk_id,

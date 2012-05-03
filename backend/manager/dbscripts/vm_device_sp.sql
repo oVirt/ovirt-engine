@@ -63,7 +63,8 @@ BEGIN
            spec_params = v_spec_params,
            is_managed = v_is_managed,
            is_plugged = v_is_plugged,
-           is_readonly = v_is_readonly
+           is_readonly = v_is_readonly,
+           _update_date = current_timestamp
     WHERE  device_id = v_device_id and vm_id = v_vm_id;
 END; $procedure$
 LANGUAGE plpgsql;
@@ -78,55 +79,55 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
-Create or replace FUNCTION GetAllFromVmDevice() RETURNS SETOF vm_device
+Create or replace FUNCTION GetAllFromVmDevice() RETURNS SETOF vm_device_view
 AS $procedure$
 BEGIN
     RETURN QUERY
     SELECT *
-    FROM   vm_device;
+    FROM   vm_device_view;
 END; $procedure$
 LANGUAGE plpgsql;
 
 Create or replace FUNCTION GetVmDeviceByDeviceId(v_device_id UUID)
-RETURNS SETOF vm_device
+RETURNS SETOF vm_device_view
 AS $procedure$
 BEGIN
     RETURN QUERY
     SELECT *
-    FROM   vm_device
+    FROM   vm_device_view
     WHERE  device_id = v_device_id;
 END; $procedure$
 LANGUAGE plpgsql;
 
 Create or replace FUNCTION GetVmDeviceByVmId(v_vm_id UUID)
-RETURNS SETOF vm_device
+RETURNS SETOF vm_device_view
 AS $procedure$
 BEGIN
     RETURN QUERY
     SELECT *
-    FROM   vm_device
+    FROM   vm_device_view
     WHERE  vm_id = v_vm_id;
 END; $procedure$
 LANGUAGE plpgsql;
 
 Create or replace FUNCTION GetVmDeviceByVmIdAndType(v_vm_id UUID, v_type varchar(30))
-RETURNS SETOF vm_device
+RETURNS SETOF vm_device_view
 AS $procedure$
 BEGIN
     RETURN QUERY
     SELECT *
-    FROM   vm_device
+    FROM   vm_device_view
     WHERE  vm_id = v_vm_id and type = v_type ;
 END; $procedure$
 LANGUAGE plpgsql;
 
 Create or replace FUNCTION GetVmDeviceByVmIdTypeAndDevice(v_vm_id UUID, v_type varchar(30), v_device varchar(30), v_user_id UUID, v_is_filtered BOOLEAN)
-RETURNS SETOF vm_device
+RETURNS SETOF vm_device_view
 AS $procedure$
 BEGIN
     RETURN QUERY
     SELECT *
-    FROM   vm_device
+    FROM   vm_device_view
     WHERE  vm_id = v_vm_id and type = v_type and device = v_device
     AND (NOT v_is_filtered OR EXISTS (SELECT 1
                                       FROM   user_vm_permissions_view
@@ -136,11 +137,11 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 create or replace FUNCTION GetVmUnmanagedDevicesByVmId(v_vm_id UUID)
-RETURNS SETOF vm_device
+RETURNS SETOF vm_device_view
 AS $procedure$
 BEGIN
     RETURN QUERY
-    select vm_device.* from vm_device
+    select vm_device_view.* from vm_device_view
     where vm_id = v_vm_id and
           is_managed = false;
 END; $procedure$
