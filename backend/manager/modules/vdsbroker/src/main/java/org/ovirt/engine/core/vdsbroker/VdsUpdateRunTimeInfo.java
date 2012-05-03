@@ -1254,6 +1254,13 @@ public class VdsUpdateRunTimeInfo {
                         }
                     }
 
+                    // Generate an event for those machines that transition from "PoweringDown" to
+                    // "Up" as this means that the power down operation failed:
+                    if (vmToUpdate.getstatus() == VMStatus.PoweringDown && runningVm.getstatus() == VMStatus.Up) {
+                        AuditLogableBase logable = new AuditLogableBase(_vds.getId(), vmToUpdate.getId());
+                        AuditLogDirector.log(logable, AuditLogType.VM_POWER_DOWN_FAILED);
+                    }
+
                     if (vmToUpdate.getstatus() != VMStatus.Up && vmToUpdate.getstatus() != VMStatus.MigratingFrom
                             && runningVm.getstatus() == VMStatus.Up) {
                         // Vm moved to Up status - remove its record from Async

@@ -379,6 +379,7 @@ public final class AuditLogDirector {
         mSeverities.put(AuditLogType.VM_PAUSED_ERROR, AuditLogSeverity.ERROR);
         mSeverities.put(AuditLogType.VM_PAUSED_EIO, AuditLogSeverity.ERROR);
         mSeverities.put(AuditLogType.VM_PAUSED_EPERM, AuditLogSeverity.ERROR);
+        mSeverities.put(AuditLogType.VM_POWER_DOWN_FAILED, AuditLogSeverity.WARNING);
         mSeverities.put(AuditLogType.USER_RUN_VM, AuditLogSeverity.NORMAL);
         mSeverities.put(AuditLogType.USER_FAILED_RUN_VM, AuditLogSeverity.ERROR);
         mSeverities.put(AuditLogType.USER_RUN_VM_AS_STATELESS_FINISHED_FAILURE, AuditLogSeverity.ERROR);
