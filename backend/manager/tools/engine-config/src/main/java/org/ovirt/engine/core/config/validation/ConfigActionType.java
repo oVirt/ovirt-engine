@@ -2,6 +2,7 @@ package org.ovirt.engine.core.config.validation;
 
 import java.util.Arrays;
 import java.util.List;
+
 import org.ovirt.engine.core.config.EngineConfigMap;
 
 /**
@@ -13,7 +14,8 @@ public enum ConfigActionType {
     ACTION_ALL(Arrays.asList(new String[] { "-a", "--all" }), null),
     ACTION_LIST(Arrays.asList(new String[] { "-l", "--list" }), null),
     ACTION_GET(Arrays.asList(new String[] { "-g", "--get" }), new ValidatorType[] { ValidatorType.get }),
-    ACTION_SET(Arrays.asList(new String[] { "-s", "--set" }), new ValidatorType[] { ValidatorType.set });
+    ACTION_SET(Arrays.asList(new String[] { "-s", "--set" }), new ValidatorType[] { ValidatorType.set }),
+    ACTION_RELOAD(Arrays.asList(new String[] { "-r", "--reload" }), null);
 
     private List<String> optionalStrings;
     private ValidatorType[] validatorTypes;

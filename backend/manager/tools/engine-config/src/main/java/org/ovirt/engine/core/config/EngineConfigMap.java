@@ -13,6 +13,24 @@ public class EngineConfigMap {
     private String value;
     private String alternateConfigFile = null;
     private String alternatePropertiesFile = null;
+    private String user;
+    private String adminPassFile;
+
+    public String getUser() {
+        return user;
+    }
+
+    public void setUser(String user) {
+        this.user = user;
+    }
+
+    public String getAdminPassFile() {
+        return adminPassFile;
+    }
+
+    public void setAdminPassFile(String passwdFile) {
+        this.adminPassFile = passwdFile;
+    }
 
     public EngineConfigMap() {
     }

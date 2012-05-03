@@ -13,7 +13,6 @@ import org.ovirt.engine.core.config.validation.ConfigActionType;
 public class EngineConfigCLIParser {
 
     private static final Logger log = Logger.getLogger(EngineConfigCLIParser.class);
-
     private HashMap<String, String> argsMap = new HashMap<String, String>();
     private EngineConfigMap engineConfigMap = new EngineConfigMap();
 
@@ -22,6 +21,7 @@ public class EngineConfigCLIParser {
 
     /**
      * Parses the given arguments, identifies the desired action, and the different keys and values.
+     *
      * @param args
      *            The arguments that need to be parsed.
      * @throws IllegalArgumentException
@@ -47,16 +47,16 @@ public class EngineConfigCLIParser {
      * Parses the argument in the currentIndex of args, into a key and its value. Can also parse version, properties
      * file, config file. If the argument in the currentIndex does not have a value, assumes the value is in the
      * following argument. The argsMap helps to parse the arguments which are eventually set into the engineConfigMap.
+     *
      * @param args
      * @param currentIndex
      * @return whether or not the next argument is to be skipped
      */
-    private boolean parseKeyValue (String[] args, int currentIndex) {
+    private boolean parseKeyValue(String[] args, int currentIndex) {
         boolean fShouldSkip = false;
         int delimiterIndex = args[currentIndex].indexOf("=");
         String key = getStringBeforeEqualChar(args[currentIndex], delimiterIndex); // includes '-'
         String value = getStringAfterEqualChar(args[currentIndex], delimiterIndex);
-
         if (!key.isEmpty()) {
             if (!value.isEmpty()) {
                 argsMap.put(key, value);
@@ -107,6 +107,7 @@ public class EngineConfigCLIParser {
 
     /**
      * Parses second argument with a key and a value. Is only valid in the 'set' action.
+     *
      * @param arg
      */
     private void parseSecondArgWithKeyValue(String arg, String key, String value) {
@@ -123,6 +124,7 @@ public class EngineConfigCLIParser {
     /**
      * Parses all arguments except for the first argument which is assumed to be the action. The argsMap member helps to
      * parse the arguments which are eventually set into the engineConfigMap.
+     *
      * @param args
      *            The arguments that needs to be parsed.
      */
@@ -146,6 +148,7 @@ public class EngineConfigCLIParser {
 
     /**
      * Parses the action from the given arguments.
+     *
      * @param args
      * @throws IllegalArgumentException
      *             If the first argument is not a legal action
@@ -199,6 +202,7 @@ public class EngineConfigCLIParser {
 
     /**
      * Handles an action without a key.
+     *
      * @param action
      */
     private void handleActionWithoutKey(String action) {
@@ -213,6 +217,7 @@ public class EngineConfigCLIParser {
     /**
      * Handles an action with a key. The only valid action with a key in the first argument is the 'get' action, in the
      * format: "--get=key".
+     *
      * @param action
      * @param key
      */
@@ -229,6 +234,7 @@ public class EngineConfigCLIParser {
 
     /**
      * Makes sure the first argument starts with a '-', since all actions do.
+     *
      * @param arg
      */
     private void validateArgStartsWithDash(String arg) {
@@ -238,8 +244,8 @@ public class EngineConfigCLIParser {
         }
     }
 
-    private String parseAlternateConfigFile() {
-        for (String configKeyName : AlternateFileType.OPTION_CONFIG.getOptionalStrings()) {
+    private String parseOptionKey(OptionKey optionKey) {
+        for (String configKeyName : optionKey.getOptionalStrings()) {
             if (argsMap.containsKey(configKeyName)) {
                 return argsMap.get(configKeyName);
             }
@@ -247,23 +253,24 @@ public class EngineConfigCLIParser {
         return null;
     }
 
-    private String parseAlternatePropertiesFile() {
-        for (String propertyKeyName : AlternateFileType.OPTION_PROPERTIES.getOptionalStrings()) {
-            if (argsMap.containsKey(propertyKeyName)) {
-                return argsMap.get(propertyKeyName);
-            }
-        }
-        return null;
-    }
-
     private void fillEngineConfigMap() {
-        engineConfigMap.setVersion(argsMap.get("--cver"));
-        engineConfigMap.setAlternateConfigFile(parseAlternateConfigFile());
-        engineConfigMap.setAlternatePropertiesFile(parseAlternatePropertiesFile());
+        engineConfigMap.setVersion(parseOptionKey(OptionKey.OPTION_VERSION));
+        engineConfigMap.setAlternateConfigFile(parseOptionKey(OptionKey.OPTION_CONFIG));
+        engineConfigMap.setAlternatePropertiesFile(parseOptionKey(OptionKey.OPTION_PROPERTIES));
+        engineConfigMap.setUser(parseOptionKey(OptionKey.OPTION_USER));
+        engineConfigMap.setAdminPassFile(parseOptionKey(OptionKey.OPTION_ADMINPASSFILE));
     }
 
     public EngineConfigMap getEngineConfigMap() {
         return engineConfigMap;
+    }
+
+    public String getUser() {
+        return engineConfigMap.getUser();
+    }
+
+    public String getAdminPassFile() {
+        return engineConfigMap.getAdminPassFile();
     }
 
     public String getVersion() {

@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.config;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -83,5 +84,20 @@ public class EngineConfigCLIParserTest {
         assertEquals(ConfigActionType.ACTION_SET, parser.getConfigAction());
         assertEquals("keyToSet", parser.getKey());
         assertEquals("valueToSet", parser.getValue());
+    }
+
+    @Test
+    public void testParseReloadActionWithUser() throws Exception {
+        parser.parse(new String[] { "-r", "--user=username" });
+        assertEquals(ConfigActionType.ACTION_RELOAD, parser.getConfigAction());
+        assertEquals("username", parser.getUser());
+    }
+
+    @Test
+    public void testParseReloadActionWithUserPassFile() throws Exception {
+        parser.parse(new String[] { "--reload", "--user=username", "--admin-pass-file=filename" });
+        assertEquals(ConfigActionType.ACTION_RELOAD, parser.getConfigAction());
+        assertEquals("username", parser.getUser());
+        assertEquals("filename", parser.getAdminPassFile());
     }
 }

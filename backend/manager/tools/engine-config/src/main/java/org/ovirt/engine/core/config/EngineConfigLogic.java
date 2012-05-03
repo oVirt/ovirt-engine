@@ -2,6 +2,7 @@ package org.ovirt.engine.core.config;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.ConnectException;
@@ -27,7 +28,6 @@ import org.ovirt.engine.core.config.db.ConfigDaoImpl;
 import org.ovirt.engine.core.config.entity.ConfigKey;
 import org.ovirt.engine.core.config.entity.ConfigKeyFactory;
 import org.ovirt.engine.core.config.validation.ConfigActionType;
-
 
 /**
  * The <code>EngineConfigLogic</code> class is responsible for the logic of the EngineConfig tool.
@@ -106,22 +106,89 @@ public class EngineConfigLogic {
         log.debug("execute: beginning execution of action " + actionType + ".");
 
         switch (actionType) {
-            case ACTION_ALL:
-                printAllValues();
-                break;
-            case ACTION_LIST:
-                printAvailableKeys();
-                break;
-            case ACTION_GET:
-                printKey();
-                break;
-            case ACTION_SET:
-                persistValue();
-                break;
-            default: // Should have already been discovered before execute
-                log.debug("execute: unable to recognize action: " + actionType + ".");
-                throw new UnsupportedOperationException("Please tell me what to do: list? get? set? get-all?");
+        case ACTION_ALL:
+            printAllValues();
+            break;
+        case ACTION_LIST:
+            printAvailableKeys();
+            break;
+        case ACTION_GET:
+            printKey();
+            break;
+        case ACTION_SET:
+            persistValue();
+            break;
+        case ACTION_RELOAD:
+            reloadConfigurations();
+            break;
+        default: // Should have already been discovered before execute
+            log.debug("execute: unable to recognize action: " + actionType + ".");
+            throw new UnsupportedOperationException("Please tell me what to do: list? get? set? get-all? reload?");
         }
+    }
+
+    private void reloadConfigurations() throws IOException {
+        String user = parser.getUser();
+        String adminPassFile = parser.getAdminPassFile();
+        String pass = null;
+        // Both user and password file were not given
+        if (user == null) {
+            user = startUserDialog();
+            pass = startPasswordDialog(user);
+            // only user was given
+        } else if (adminPassFile == null) {
+            pass = startPasswordDialog(user);
+            // Both user and password file were given
+        } else {
+            pass = getPassFromFile(adminPassFile);
+        }
+        loginAndReload(user, pass);
+    }
+
+    private String getPassFromFile(String passFile) throws IOException {
+        FileReader input = new FileReader(passFile);
+        BufferedReader br = new BufferedReader(input);
+        String pass = br.readLine();
+        try {
+            input.close();
+            br.close();
+        } catch (Exception e) {
+            // Ignore
+        }
+        return pass;
+    }
+
+    private void loginAndReload(String user, String pass) {
+        // For now the reload action is undocumented in the help,
+        // will be implemented in the next phase
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Is called when user has not been given
+     *
+     * @return The user
+     * @throws IOException
+     */
+    private String startUserDialog() throws IOException {
+        log.debug("starting user dialog.");
+        String user = null;
+        while (StringUtils.isBlank(user)) {
+            System.out.println("Please enter user:");
+            user = System.console().readLine();
+        }
+        return user;
+    }
+
+    /**
+     * Is called when user has been given, and all is needed from the user is password
+     *
+     * @return The user's password
+     */
+    private String startPasswordDialog(String user) throws IOException {
+        log.debug("starting password dialog.");
+        System.out.printf("Please enter a password for %s: ", user);
+        return new String(System.console().readPassword());
     }
 
     /**
@@ -141,8 +208,7 @@ public class EngineConfigLogic {
             buffer.append(String.format("%s: %s version: %s\n",
                     key,
                     configKey.getDisplayValue(),
-                    configKey.getVersion())
-                    );
+                    configKey.getVersion()));
         }
         buffer.deleteCharAt(buffer.length() - 1);
         log.info(buffer);
@@ -182,6 +248,7 @@ public class EngineConfigLogic {
     /**
      * If a version has been given, prints the specific value for the key and version, otherwise prints all the values
      * for the key. Is the actual execution of the 'get' action ('-g', '--get')
+     *
      * @throws Exception
      */
     private void printKey() throws Exception {
@@ -297,7 +364,7 @@ public class EngineConfigLogic {
             message = (
                     "'" + value + "' is not a valid value for type " + configKey.getType() + ". " +
                     (configKey.getValidValues().isEmpty() ? "" : "Valid values are " + configKey.getValidValues())
-            );
+                    );
         } catch (Exception e) {
             message = "Error setting " + key + "'s value. " + e.getMessage();
             log.debug("Error details: ", e);
