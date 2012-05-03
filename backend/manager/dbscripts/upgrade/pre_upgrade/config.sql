@@ -198,6 +198,7 @@ select fn_db_add_config_value('MaxVmsInPool','1000','general');
 select fn_db_add_config_value('MinimalETLVersion','3.0.0','general');
 select fn_db_add_config_value('NicDHCPDelayGraceInMS','60','general');
 select fn_db_add_config_value('NumberOfFailedRunsOnVds','3','general');
+select fn_db_add_config_value('NumberOfUSBSlots','4','general');
 select fn_db_add_config_value('NumberOfVmsForTopSizeVms','10','general');
 select fn_db_add_config_value('NumberVmRefreshesBeforeSave','5','general');
 select fn_db_add_config_value('OrganizationName','Redhat','general');

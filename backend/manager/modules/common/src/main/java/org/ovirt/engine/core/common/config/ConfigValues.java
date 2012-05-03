@@ -1132,6 +1132,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("255")
     ApplicationMode(355),
 
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("4")
+    NumberOfUSBSlots(356),
+
     Invalid(65535);
 
     private int intValue;
