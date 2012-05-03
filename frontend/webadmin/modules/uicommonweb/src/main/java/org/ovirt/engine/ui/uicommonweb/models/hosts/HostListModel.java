@@ -369,7 +369,6 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
     {
         if (hostListModel.getLastExecutedCommand() == getAssignTagsCommand())
         {
-            // C# TO JAVA CONVERTER TODO TASK: There is no Java equivalent to LINQ queries:
             java.util.ArrayList<org.ovirt.engine.core.common.businessentities.tags> attachedTags =
                     Linq.Distinct(hostListModel.allAttachedTags, new TagsEqualityComparer());
             for (org.ovirt.engine.core.common.businessentities.tags tag : attachedTags)

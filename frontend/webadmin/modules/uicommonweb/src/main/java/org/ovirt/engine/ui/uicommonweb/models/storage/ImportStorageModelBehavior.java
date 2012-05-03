@@ -15,7 +15,6 @@ public class ImportStorageModelBehavior extends StorageModelBehavior
     @Override
     public java.util.List<storage_pool> FilterDataCenter(java.util.List<storage_pool> source)
     {
-        // C# TO JAVA CONVERTER TODO TASK: There is no Java equivalent to LINQ queries:
         return Linq.ToList(Linq.Where(source, new Linq.DataCenterStatusPredicate(StoragePoolStatus.Up)));
     }
 

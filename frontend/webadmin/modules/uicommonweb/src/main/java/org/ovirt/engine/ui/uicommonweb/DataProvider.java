@@ -1078,7 +1078,6 @@ public final class DataProvider
 
         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
         {
-            // C# TO JAVA CONVERTER TODO TASK: There is no Java equivalent to LINQ queries:
             return Linq.OrderByDescending((java.util.ArrayList<Version>) returnValue.getReturnValue());
         }
 

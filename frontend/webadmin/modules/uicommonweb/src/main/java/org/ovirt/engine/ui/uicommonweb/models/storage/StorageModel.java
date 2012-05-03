@@ -542,7 +542,6 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
     public void PostUpdateHost(Iterable<VDS> hosts)
     {
         // Filter hosts
-        // C# TO JAVA CONVERTER TODO TASK: There is no Java equivalent to LINQ queries:
         hosts = Linq.Where(hosts, new Linq.HostStatusPredicate(VDSStatus.Up));
 
         // Allow only hosts with version above 2.2 for export storage.
