@@ -11,16 +11,16 @@ import org.ovirt.engine.core.compat.Guid;
 
 public interface VDSBrokerFrontend {
 
-    public abstract VDSReturnValue RunVdsCommand(VDSCommandType commandType, VDSParametersBase parameters);
+    VDSReturnValue RunVdsCommand(VDSCommandType commandType, VDSParametersBase parameters);
 
-    public abstract VDSReturnValue RunAsyncVdsCommand(VDSCommandType commandType,
+    VDSReturnValue RunAsyncVdsCommand(VDSCommandType commandType,
             VdsAndVmIDVDSParametersBase parameters, IVdsAsyncCommand command);
 
-    public abstract IVdsAsyncCommand GetAsyncCommandForVm(Guid vmId);
+    IVdsAsyncCommand GetAsyncCommandForVm(Guid vmId);
 
-    public abstract IVdsAsyncCommand RemoveAsyncRunningCommand(Guid vmId);
+    IVdsAsyncCommand RemoveAsyncRunningCommand(Guid vmId);
 
-    public abstract FutureVDSCall<VDSReturnValue> runFutureVdsCommand(FutureVDSCommandType commandType,
+    FutureVDSCall<VDSReturnValue> runFutureVdsCommand(FutureVDSCommandType commandType,
             VdsIdVDSCommandParametersBase parameters);
 
 }

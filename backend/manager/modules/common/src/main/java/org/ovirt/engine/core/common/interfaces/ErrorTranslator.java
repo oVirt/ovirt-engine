@@ -17,7 +17,7 @@ public interface ErrorTranslator {
      *            unfound key as is.
      * @return
      */
-    public abstract List<String> TranslateErrorText(List<String> errorMsg, boolean changeIfNotFound);
+    List<String> TranslateErrorText(List<String> errorMsg, boolean changeIfNotFound);
 
     /**
      * Translates and resolves errors from error types. error messages contains errors and variables. Variable used in
@@ -28,7 +28,7 @@ public interface ErrorTranslator {
      *            messages to be translated
      * @return
      */
-    public abstract List<String> TranslateErrorText(List<String> errorMsg);
+    List<String> TranslateErrorText(List<String> errorMsg);
 
     /**
      * Translates and resolves errors from error types. error messages contains errors and variables. Variable used in
@@ -41,9 +41,9 @@ public interface ErrorTranslator {
      *            the locale to translate into
      * @return
      */
-    public abstract List<String> TranslateErrorText(List<String> errorMsg, Locale locale);
+    List<String> TranslateErrorText(List<String> errorMsg, Locale locale);
 
-    public abstract List<String> TranslateMessages(List<String> errorMsg, boolean changeIfNotFound);
+    List<String> TranslateMessages(List<String> errorMsg, boolean changeIfNotFound);
 
     /**
      * returns true if the specified strMessage is in the format: "$variable-name variable-value", false otherwise.
@@ -52,7 +52,7 @@ public interface ErrorTranslator {
      *            the string that may be a dynamic variable.
      * @return true if input is dynamic variable, false otherwise.
      */
-    public abstract boolean IsDynamicVariable(String strMessage);
+    boolean IsDynamicVariable(String strMessage);
 
     /**
      * Translates a single error message.
@@ -64,7 +64,7 @@ public interface ErrorTranslator {
      *            unfound key as is.
      * @return
      */
-    public abstract String TranslateErrorTextSingle(String errorMsg, boolean changeIfNotFound);
+    String TranslateErrorTextSingle(String errorMsg, boolean changeIfNotFound);
 
     /**
      * Translates a single error message. Note: if message key not found, a beautified message will return!
@@ -73,7 +73,7 @@ public interface ErrorTranslator {
      *            the message to translate
      * @return the translated message or a beautifed message key
      */
-    public abstract String TranslateErrorTextSingle(String errorMsg);
+    String TranslateErrorTextSingle(String errorMsg);
 
     /**
      * Translates a single error message. Note: if message key not found, a beautified message will return!
@@ -84,7 +84,7 @@ public interface ErrorTranslator {
      *            the locale to translate into
      * @return the translated message or a beautifed message key
      */
-    public abstract String TranslateErrorTextSingle(String errorMsg, Locale locale);
+    String TranslateErrorTextSingle(String errorMsg, Locale locale);
 
     /**
      * Replacing variables ('${...}') within translatedMessages with their values ('$key value') that are also within
@@ -93,6 +93,6 @@ public interface ErrorTranslator {
      * @param translatedMessages
      * @return
      */
-    public abstract List<String> ResolveMessages(List<String> translatedMessages);
+    List<String> ResolveMessages(List<String> translatedMessages);
 
 }
