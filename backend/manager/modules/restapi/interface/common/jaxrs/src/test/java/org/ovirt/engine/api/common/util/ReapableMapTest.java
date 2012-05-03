@@ -16,18 +16,16 @@
 
 package org.ovirt.engine.api.common.util;
 
+import static org.easymock.EasyMock.expect;
+
+import java.lang.ref.ReferenceQueue;
+
+import org.easymock.IExpectationSetters;
+import org.easymock.classextension.EasyMock;
+import org.easymock.classextension.IMocksControl;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.lang.ref.ReferenceQueue;
-import java.lang.ref.Reference;
-
-import org.easymock.classextension.EasyMock;
-import org.easymock.classextension.IMocksControl;
-import org.easymock.IExpectationSetters;
-
-import static org.easymock.classextension.EasyMock.expect;
 
 
 public class ReapableMapTest extends Assert {
@@ -142,7 +140,7 @@ public class ReapableMapTest extends Assert {
         control.verify();
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     private void setUpGCExpectations(int gcAfter) {
         ReferenceQueue<Integer> queue = (ReferenceQueue<Integer>)control.createMock(ReferenceQueue.class);
         map = new ReapedMap<String, Integer>(10000, false, queue);
@@ -154,8 +152,7 @@ public class ReapableMapTest extends Assert {
         ReapedMap.IdAwareReference<String, Integer> ref = control.createMock(ReapedMap.IdAwareReference.class);
         // awkward syntax required to work around compilation error
         // on Reference<capture#nnn ? extends Integer> mismatch
-        IExpectationSetters<? extends Reference<? extends Integer>> qSetter = expect(queue.poll());
-        ((IExpectationSetters<Reference<? extends Integer>>)qSetter).andReturn(ref);
+        ((IExpectationSetters) expect(queue.poll())).andReturn(ref);
         IExpectationSetters<? extends String> refSetter = expect(ref.getKey());
         ((IExpectationSetters<String>)refSetter).andReturn("three");
 
