@@ -6,7 +6,7 @@ import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidg
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalListModel;
-import org.ovirt.engine.ui.uicommonweb.models.vms.VmSnapshotListModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.UserPortalVmSnapshotListModel;
 import org.ovirt.engine.ui.userportal.gin.ClientGinjector;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmClonePopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmSnapshotCreatePopupPresenterWidget;
@@ -16,7 +16,7 @@ import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalSearchableDetailM
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
-public class VmSnapshotListModelProvider extends UserPortalSearchableDetailModelProvider<Snapshot, UserPortalListModel, VmSnapshotListModel> {
+public class VmSnapshotListModelProvider extends UserPortalSearchableDetailModelProvider<Snapshot, UserPortalListModel, UserPortalVmSnapshotListModel> {
 
     private final Provider<VmSnapshotCreatePopupPresenterWidget> createPopupProvider;
     private final Provider<VmClonePopupPresenterWidget> cloneVmPopupProvider;
@@ -28,18 +28,18 @@ public class VmSnapshotListModelProvider extends UserPortalSearchableDetailModel
             Provider<VmSnapshotCreatePopupPresenterWidget> createPopupProvider,
             Provider<VmClonePopupPresenterWidget> cloneVmPopupProvider,
             CurrentUser user) {
-        super(ginjector, parentModelProvider, VmSnapshotListModel.class, resolver, user);
+        super(ginjector, parentModelProvider, UserPortalVmSnapshotListModel.class, resolver, user);
         this.createPopupProvider = createPopupProvider;
         this.cloneVmPopupProvider = cloneVmPopupProvider;
     }
 
     @Override
-    protected VmSnapshotListModel createModel() {
-        return new VmSnapshotListModel();
+    protected UserPortalVmSnapshotListModel createModel() {
+        return new UserPortalVmSnapshotListModel();
     }
 
     @Override
-    public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(VmSnapshotListModel source,
+    public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(UserPortalVmSnapshotListModel source,
             UICommand lastExecutedCommand, Model windowModel) {
         if (lastExecutedCommand == getModel().getNewCommand()) {
             return createPopupProvider.get();

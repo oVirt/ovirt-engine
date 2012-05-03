@@ -18,7 +18,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 
-
 public class SubTabVirtualMachineSnapshotView extends AbstractSubTabTreeWidgetView<VM, Snapshot, VmListModel, VmSnapshotListModel> implements SubTabVirtualMachineSnapshotPresenter.ViewDef {
 
     interface ViewIdHandler extends ElementIdHandler<SubTabVirtualMachineSnapshotView> {
@@ -31,7 +30,11 @@ public class SubTabVirtualMachineSnapshotView extends AbstractSubTabTreeWidgetVi
             CommonApplicationResources resources,
             CommonApplicationConstants constants,
             CommonApplicationTemplates templates) {
-        super(new VmSnapshotListModelTree(modelProvider, eventBus, resources, constants, templates), eventBus);
+        super(new VmSnapshotListModelTree<VmListModel, VmSnapshotListModel>(modelProvider,
+                eventBus,
+                resources,
+                constants,
+                templates), eventBus);
         ViewIdHandler.idHandler.generateAndSetIds(this);
         getModelBoundTreeWidget().initTree(actionPanel, table);
     }

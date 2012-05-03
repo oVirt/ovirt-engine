@@ -473,7 +473,9 @@ public class VmSnapshotListModel extends SearchableListModel
 
         if (disks.isEmpty())
         {
-            model.setMessage(ConstantsManager.getInstance().getConstants().snapshotCannotBeCreatedSinceTheVMHasNoDisksMsg());
+            model.setMessage(ConstantsManager.getInstance()
+                    .getConstants()
+                    .snapshotCannotBeCreatedSinceTheVMHasNoDisksMsg());
 
             UICommand tempVar = new UICommand("Cancel", this); //$NON-NLS-1$
             tempVar.setTitle(ConstantsManager.getInstance().getConstants().close());
@@ -692,6 +694,7 @@ public class VmSnapshotListModel extends SearchableListModel
         AddVmFromSnapshotParameters parameters =
                 new AddVmFromSnapshotParameters(getcurrentVm().getStaticData(), snapshot.getId());
         parameters.setDiskInfoDestinationMap(imageToDestinationDomainMap);
+        setupAddVmFromSnapshotParameters(parameters);
 
         model.StartProgress(null);
 
@@ -710,6 +713,10 @@ public class VmSnapshotListModel extends SearchableListModel
                         }
                     }
                 }, this);
+    }
+
+    protected void setupAddVmFromSnapshotParameters(AddVmFromSnapshotParameters parameters) {
+        // do nothing - no additional setup needed
     }
 
     private ArrayList<DiskImage> CreateDiskInfoList()

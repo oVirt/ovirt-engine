@@ -73,12 +73,12 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UserPortalExistingVmModelBehavior;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UserPortalNewVmModelBehavior;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UserPortalVmEventListModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.UserPortalVmSnapshotListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmAppListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmDiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmInterfaceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmMonitorModel;
-import org.ovirt.engine.ui.uicommonweb.models.vms.VmSnapshotListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VncConsoleModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
@@ -449,7 +449,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         vmGeneralModel = new VmGeneralModel();
         vmGeneralModel.setIsAvailable(false);
 
-        vmSnapshotListModel = new VmSnapshotListModel();
+        vmSnapshotListModel = new UserPortalVmSnapshotListModel();
         vmSnapshotListModel.setIsAvailable(false);
 
         vmMonitorModel = new VmMonitorModel();

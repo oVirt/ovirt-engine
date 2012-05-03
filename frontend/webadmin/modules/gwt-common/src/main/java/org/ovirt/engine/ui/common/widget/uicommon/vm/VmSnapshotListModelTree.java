@@ -24,11 +24,11 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VmSnapshotListModel;
 
 import com.google.gwt.event.shared.EventBus;
 
-public class VmSnapshotListModelTree<L extends ListWithDetailsModel> extends AbstractModelBoundTreeWidget<VmSnapshotListModel, Snapshot, SnapshotDetailModel, VmListModel> {
+public class VmSnapshotListModelTree<L extends ListWithDetailsModel, S extends VmSnapshotListModel> extends AbstractModelBoundTreeWidget<S, Snapshot, SnapshotDetailModel, VmListModel> {
 
     private SubTabTreeActionPanel actionPanel;
     private EntityModelCellTable<ListModel> table;
-    private SearchableDetailModelProvider<Snapshot, L, VmSnapshotListModel> modelProvider;
+    private SearchableDetailModelProvider<Snapshot, L, S> modelProvider;
 
     public VmSnapshotListModelTree(SearchableDetailModelProvider modelProvider,
             EventBus eventBus,
@@ -41,7 +41,7 @@ public class VmSnapshotListModelTree<L extends ListWithDetailsModel> extends Abs
     }
 
     @Override
-    protected AbstractSubTabTree<VmSnapshotListModel, Snapshot, SnapshotDetailModel> createTree() {
+    protected AbstractSubTabTree<S, Snapshot, SnapshotDetailModel> createTree() {
         return new SnapshotsTree(modelProvider, getEventBus(), resources, constants, templates);
     }
 

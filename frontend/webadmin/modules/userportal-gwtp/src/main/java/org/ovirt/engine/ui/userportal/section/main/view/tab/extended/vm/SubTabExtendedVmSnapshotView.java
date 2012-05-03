@@ -11,7 +11,7 @@ import org.ovirt.engine.ui.common.widget.action.SubTabTreeActionPanel;
 import org.ovirt.engine.ui.common.widget.uicommon.vm.VmSnapshotListModelTree;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalListModel;
-import org.ovirt.engine.ui.uicommonweb.models.vms.VmSnapshotListModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.UserPortalVmSnapshotListModel;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.SubTabExtendedVmSnapshotPresenter;
 import org.ovirt.engine.ui.userportal.uicommon.model.vm.VmSnapshotListModelProvider;
 
@@ -19,7 +19,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 
-public class SubTabExtendedVmSnapshotView extends AbstractSubTabTreeWidgetView<UserPortalItemModel, Snapshot, UserPortalListModel, VmSnapshotListModel>
+public class SubTabExtendedVmSnapshotView extends AbstractSubTabTreeWidgetView<UserPortalItemModel, Snapshot, UserPortalListModel, UserPortalVmSnapshotListModel>
         implements SubTabExtendedVmSnapshotPresenter.ViewDef {
 
     interface ViewIdHandler extends ElementIdHandler<SubTabExtendedVmSnapshotView> {
@@ -32,7 +32,7 @@ public class SubTabExtendedVmSnapshotView extends AbstractSubTabTreeWidgetView<U
             CommonApplicationResources resources,
             CommonApplicationConstants constants,
             CommonApplicationTemplates templates) {
-        super(new VmSnapshotListModelTree(modelProvider, eventBus, resources, constants, templates), eventBus);
+        super(new VmSnapshotListModelTree<UserPortalListModel, UserPortalVmSnapshotListModel>(modelProvider, eventBus, resources, constants, templates), eventBus);
         ViewIdHandler.idHandler.generateAndSetIds(this);
         getModelBoundTreeWidget().initTree(actionPanel, table);
     }
