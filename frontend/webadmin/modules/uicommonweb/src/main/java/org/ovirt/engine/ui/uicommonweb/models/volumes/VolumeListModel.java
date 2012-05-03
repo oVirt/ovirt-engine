@@ -211,8 +211,75 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
     }
 
     private void removeVolume() {
-        // TODO Auto-generated method stub
+        if (getWindow() != null)
+        {
+            return;
+        }
 
+        ConfirmationModel model = new ConfirmationModel();
+        setWindow(model);
+        model.setTitle(ConstantsManager.getInstance().getConstants().removeVolumesTitle());
+        model.setHashName("remove_volume"); //$NON-NLS-1$
+        model.setMessage(ConstantsManager.getInstance().getConstants().removeVolumesMessage());
+
+        if (getSelectedItems() == null) {
+            return;
+        }
+
+        java.util.ArrayList<String> list = new java.util.ArrayList<String>();
+        for (GlusterVolumeEntity item : Linq.<GlusterVolumeEntity> Cast(getSelectedItems()))
+        {
+            list.add(item.getName());
+        }
+        model.setItems(list);
+
+        UICommand tempVar = new UICommand("OnRemove", this); //$NON-NLS-1$
+        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
+        tempVar.setIsDefault(true);
+        model.getCommands().add(tempVar);
+        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
+        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
+        tempVar2.setIsCancel(true);
+        model.getCommands().add(tempVar2);
+    }
+
+    private void onRemoveVolume() {
+        if (getWindow() == null)
+        {
+            return;
+        }
+
+        ConfirmationModel model = (ConfirmationModel) getWindow();
+
+        if (model.getProgress() != null)
+        {
+            return;
+        }
+
+        if (getSelectedItems() == null) {
+            return;
+        }
+
+        java.util.ArrayList<VdcActionParametersBase> list = new java.util.ArrayList<VdcActionParametersBase>();
+
+        for (Object item : getSelectedItems())
+        {
+            GlusterVolumeEntity volume = (GlusterVolumeEntity) item;
+            list.add(new GlusterVolumeActionParameters(volume.getId(), false));
+        }
+
+        model.StartProgress(null);
+
+        Frontend.RunMultipleAction(VdcActionType.DeleteGlusterVolume, list,
+                new IFrontendMultipleActionAsyncCallback() {
+                    @Override
+                    public void Executed(FrontendMultipleActionAsyncResult result) {
+
+                        ConfirmationModel localModel = (ConfirmationModel) result.getState();
+                        localModel.StopProgress();
+                        cancel();
+                    }
+                }, model);
     }
 
     @Override
@@ -246,6 +313,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
             if (volume.getStatus() == GlusterVolumeStatus.DOWN)
             {
                 getStopCommand().setIsExecutionAllowed(false);
+                getRemoveVolumeCommand().setIsExecutionAllowed(true);
                 break;
             }
         }
@@ -255,11 +323,11 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
             if (volume.getStatus() == GlusterVolumeStatus.UP)
             {
                 getStartCommand().setIsExecutionAllowed(false);
+                getRemoveVolumeCommand().setIsExecutionAllowed(false);
                 break;
             }
         }
 
-        getRemoveVolumeCommand().setIsExecutionAllowed(getSelectedItem() != null);
         getRebalanceCommand().setIsExecutionAllowed(getSelectedItem() != null);
     }
 
@@ -288,6 +356,8 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
             rebalance();
         } else if (command.getName().equals("onStop")) {//$NON-NLS-1$
             onStop();
+        } else if (command.getName().equals("OnRemove")) { //$NON-NLS-1$
+            onRemoveVolume();
         }
 
     }
