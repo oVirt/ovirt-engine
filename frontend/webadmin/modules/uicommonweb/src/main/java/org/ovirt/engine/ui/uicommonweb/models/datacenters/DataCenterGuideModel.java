@@ -1701,28 +1701,21 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         java.util.ArrayList<Object> data = (java.util.ArrayList<Object>) context.getState();
         String key = (String) data.get(0);
 
-        // C# TO JAVA CONVERTER NOTE: The following 'switch' operated on a string member and was converted to Java
-        // 'if-else' logic:
-        // switch (key)
-        // ORIGINAL LINE: case "SaveNfs":
         if (StringHelper.stringsEqual(key, "SaveNfs")) //$NON-NLS-1$
         {
             SaveNfsStorage(context);
 
         }
-        // ORIGINAL LINE: case "SaveLocal":
         else if (StringHelper.stringsEqual(key, "SaveLocal")) //$NON-NLS-1$
         {
             SaveLocalStorage(context);
 
         }
-        // ORIGINAL LINE: case "SaveSan":
         else if (StringHelper.stringsEqual(key, "SaveSan")) //$NON-NLS-1$
         {
             SaveSanStorage(context);
 
         }
-        // ORIGINAL LINE: case "Finish":
         else if (StringHelper.stringsEqual(key, "Finish")) //$NON-NLS-1$
         {
             getWindow().StopProgress();

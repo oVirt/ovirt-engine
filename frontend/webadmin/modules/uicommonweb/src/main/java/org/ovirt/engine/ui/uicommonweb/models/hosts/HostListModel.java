@@ -1061,11 +1061,6 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         model.getPmUserName().setEntity(vds.getpm_user());
         model.getPmPassword().setEntity(vds.getpm_password());
 
-        /*
-         * --- JUICOMMENT_BEGIN // * TODO: Need to find a solution for casting ValueObjectMap to Dictionary<string,
-         * string> // in Java, and conform the C# code to do that when a solution is found
-         * model.setPmOptionsMap(vds.getPmOptionsMap()); JUICOMMENT_END ---
-         */
         if (dataCenters != null)
         {
             model.getDataCenter().setItems(dataCenters);
@@ -1745,9 +1740,6 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
     // try
     // {
     // // override default timeout (60 sec) with 10 minutes
-    // // C# TO JAVA CONVERTER NOTE: The following 'using' block is replaced by its Java equivalent:
-    // // using (TransactionScope scope = new TransactionScope(TransactionScopeOption.Required, new TimeSpan(0,
-    // // 10, 0)))
     // TransactionScope scope = new TransactionScope(TransactionScopeOption.Required, new TimeSpan(0, 10, 0));
     // try
     // {

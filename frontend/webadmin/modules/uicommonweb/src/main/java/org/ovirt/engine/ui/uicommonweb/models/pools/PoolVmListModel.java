@@ -170,10 +170,6 @@ public class PoolVmListModel extends VmListModel
     {
         super.SelectedItemPropertyChanged(sender, e);
 
-        // C# TO JAVA CONVERTER NOTE: The following 'switch' operated on a string member and was converted to Java
-        // 'if-else' logic:
-        // switch (e.PropertyName)
-        // ORIGINAL LINE: case "status":
         if (e.PropertyName.equals("status")) //$NON-NLS-1$
         {
             UpdateActionAvailability();

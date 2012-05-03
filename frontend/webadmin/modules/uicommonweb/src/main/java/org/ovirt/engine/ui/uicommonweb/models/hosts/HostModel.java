@@ -376,23 +376,16 @@ public class HostModel extends Model
             String k = pair.getKey();
             String v = pair.getValue();
 
-            // C# TO JAVA CONVERTER NOTE: The following 'switch' operated on a string member and was converted to Java
-            // 'if-else' logic:
-            // switch (k)
-            // Handle well known pm options.
-            // ORIGINAL LINE: case PmPortKey:
             if (StringHelper.stringsEqual(k, PmPortKey))
             {
                 getPmPort().setEntity(StringHelper.isNullOrEmpty(value.get(k)) ? "" : value.get(k)); //$NON-NLS-1$
 
             }
-            // ORIGINAL LINE: case PmSlotKey:
             else if (StringHelper.stringsEqual(k, PmSlotKey))
             {
                 getPmSlot().setEntity(StringHelper.isNullOrEmpty(value.get(k)) ? "" : value.get(k)); //$NON-NLS-1$
 
             }
-            // ORIGINAL LINE: case PmSecureKey:
             else if (StringHelper.stringsEqual(k, PmSecureKey))
             {
                 getPmSecure().setEntity(Boolean.parseBoolean(value.get(k)));

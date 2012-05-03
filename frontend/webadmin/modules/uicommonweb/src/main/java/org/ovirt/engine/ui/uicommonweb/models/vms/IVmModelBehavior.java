@@ -278,8 +278,6 @@ public abstract class IVmModelBehavior
         EntityModel tempVar2 = new EntityModel();
         tempVar2.setTitle(ConstantsManager.getInstance().getConstants().mediumTitle());
         tempVar2.setEntity(cachedMaxPrority / 2);
-        // C# TO JAVA CONVERTER TODO TASK: Arithmetic operations involving nullable type instances are not converted to
-        // null-value logic:
         items.add(tempVar2);
         EntityModel tempVar3 = new EntityModel();
         tempVar3.setTitle(ConstantsManager.getInstance().getConstants().highTitle());

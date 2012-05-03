@@ -448,10 +448,6 @@ public class CommonModel extends ListModel
         eventList.setIsAvailable(!getHasSelectedTags());
         reportsList.setIsAvailable(ReportInit.getInstance().isReportsEnabled() && !getHasSelectedTags());
 
-        /*
-         * --- JUICOMMENT_BEGIN monitor.setIsAvailable(!getHasSelectedTags()); JUICOMMENT_END ---
-         */
-
         // Switch the selected item as neccessary.
         ListModel oldSelectedItem = getSelectedItem();
         if (getHasSelectedTags() && oldSelectedItem != hostList && oldSelectedItem != volumeList
@@ -581,9 +577,6 @@ public class CommonModel extends ListModel
                 || model.getType() == SystemTreeItemType.System);
 
         userList.setIsAvailable(model.getType() == SystemTreeItemType.System);
-        /*
-         * --- JUICOMMENT_BEGIN monitor.setIsAvailable(model.getType() == SystemTreeItemType.System); JUICOMMENT_END ---
-         */
         eventList.setIsAvailable(model.getType() == SystemTreeItemType.DataCenter
                 || model.getType() == SystemTreeItemType.Cluster
                 || model.getType() == SystemTreeItemType.Cluster_Gluster || model.getType() == SystemTreeItemType.Host
@@ -797,9 +790,6 @@ public class CommonModel extends ListModel
 
         templateList = new TemplateListModel();
         list.add(templateList);
-        /*
-         * --- JUICOMMENT_BEGIN monitor = new MonitorModel(); list.add(monitor); JUICOMMENT_END ---
-         */
         eventList = new EventListModel();
         list.add(eventList);
 

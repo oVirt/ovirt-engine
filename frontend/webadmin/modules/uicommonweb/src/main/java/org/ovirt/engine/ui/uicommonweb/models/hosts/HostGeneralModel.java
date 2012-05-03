@@ -240,8 +240,6 @@ public class HostGeneralModel extends EntityModel
         {
             return;
         }
-        // C# TO JAVA CONVERTER TODO TASK: Comparisons involving nullable type instances are not converted to null-value
-        // logic:
         if (activeVms == null || !activeVms.equals(value))
         {
             activeVms = value;
@@ -262,8 +260,6 @@ public class HostGeneralModel extends EntityModel
         {
             return;
         }
-        // C# TO JAVA CONVERTER TODO TASK: Comparisons involving nullable type instances are not converted to null-value
-        // logic:
         if (memoryPageSharing == null || !memoryPageSharing.equals(value))
         {
             memoryPageSharing = value;
@@ -300,8 +296,6 @@ public class HostGeneralModel extends EntityModel
         {
             return;
         }
-        // C# TO JAVA CONVERTER TODO TASK: Comparisons involving nullable type instances are not converted to null-value
-        // logic:
         if (numberOfCPUs == null || !numberOfCPUs.equals(value))
         {
             numberOfCPUs = value;
@@ -354,8 +348,6 @@ public class HostGeneralModel extends EntityModel
         {
             return;
         }
-        // C# TO JAVA CONVERTER TODO TASK: Comparisons involving nullable type instances are not converted to null-value
-        // logic:
         if (sharedMemory == null || !sharedMemory.equals(value))
         {
             sharedMemory = value;
@@ -376,8 +368,6 @@ public class HostGeneralModel extends EntityModel
         {
             return;
         }
-        // C# TO JAVA CONVERTER TODO TASK: Comparisons involving nullable type instances are not converted to null-value
-        // logic:
         if (physicalMemory == null || !physicalMemory.equals(value))
         {
             physicalMemory = value;
@@ -398,8 +388,6 @@ public class HostGeneralModel extends EntityModel
         {
             return;
         }
-        // C# TO JAVA CONVERTER TODO TASK: Comparisons involving nullable type instances are not converted to null-value
-        // logic:
         if (swapTotal == null || !swapTotal.equals(value))
         {
             swapTotal = value;
@@ -420,8 +408,6 @@ public class HostGeneralModel extends EntityModel
         {
             return;
         }
-        // C# TO JAVA CONVERTER TODO TASK: Comparisons involving nullable type instances are not converted to null-value
-        // logic:
         if (swapFree == null || !swapFree.equals(value))
         {
             swapFree = value;
@@ -442,8 +428,6 @@ public class HostGeneralModel extends EntityModel
         {
             return;
         }
-        // C# TO JAVA CONVERTER TODO TASK: Comparisons involving nullable type instances are not converted to null-value
-        // logic:
         if (freeMemory == null || !freeMemory.equals(value))
         {
             freeMemory = value;
@@ -464,8 +448,6 @@ public class HostGeneralModel extends EntityModel
         {
             return;
         }
-        // C# TO JAVA CONVERTER TODO TASK: Comparisons involving nullable type instances are not converted to null-value
-        // logic:
         if (usedMemory == null || !usedMemory.equals(value))
         {
             usedMemory = value;
@@ -486,8 +468,6 @@ public class HostGeneralModel extends EntityModel
         {
             return;
         }
-        // C# TO JAVA CONVERTER TODO TASK: Comparisons involving nullable type instances are not converted to null-value
-        // logic:
         if (usedSwap == null || !usedSwap.equals(value))
         {
             usedSwap = value;
@@ -987,12 +967,8 @@ public class HostGeneralModel extends EntityModel
         setUsedMemory(null);
         if (getEntity().getphysical_mem_mb() != null && getEntity().getusage_mem_percent() != null)
         {
-            // C# TO JAVA CONVERTER TODO TASK: Arithmetic operations involving nullable type instances are not converted
-            // to null-value logic:
             setFreeMemory(getEntity().getphysical_mem_mb()
                     - (getEntity().getphysical_mem_mb() / 100 * getEntity().getusage_mem_percent()));
-            // C# TO JAVA CONVERTER TODO TASK: Arithmetic operations involving nullable type instances are not converted
-            // to null-value logic:
             setUsedMemory(getEntity().getphysical_mem_mb() - getFreeMemory());
         }
     }
@@ -1002,8 +978,6 @@ public class HostGeneralModel extends EntityModel
         setUsedSwap(null);
         if (getEntity().getswap_total() != null && getEntity().getswap_free() != null)
         {
-            // C# TO JAVA CONVERTER TODO TASK: Arithmetic operations involving nullable type instances are not converted
-            // to null-value logic:
             setUsedSwap(getEntity().getswap_total() - getEntity().getswap_free());
         }
     }

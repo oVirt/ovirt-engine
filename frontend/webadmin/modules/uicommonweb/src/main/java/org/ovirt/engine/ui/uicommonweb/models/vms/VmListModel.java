@@ -2772,16 +2772,11 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
     {
         super.SelectedItemPropertyChanged(sender, e);
 
-        // C# TO JAVA CONVERTER NOTE: The following 'switch' operated on a string member and was converted to Java
-        // 'if-else' logic:
-        // switch (e.PropertyName)
-        // ORIGINAL LINE: case "status":
         if (e.PropertyName.equals("status")) //$NON-NLS-1$
         {
             UpdateActionAvailability();
 
         }
-        // ORIGINAL LINE: case "display_type":
         else if (e.PropertyName.equals("display_type")) //$NON-NLS-1$
         {
             UpdateConsoleModels();

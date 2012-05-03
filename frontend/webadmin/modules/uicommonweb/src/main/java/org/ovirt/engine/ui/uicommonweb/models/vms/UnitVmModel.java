@@ -838,8 +838,6 @@ public class UnitVmModel extends Model
         {
             return;
         }
-        // C# TO JAVA CONVERTER TODO TASK: Comparisons involving nullable type instances are not converted to null-value
-        // logic:
         if (isDatacenterAvailable == null || !isDatacenterAvailable.equals(value))
         {
             isDatacenterAvailable = value;

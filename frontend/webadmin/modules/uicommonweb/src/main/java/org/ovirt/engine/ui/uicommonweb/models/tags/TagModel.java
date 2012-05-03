@@ -34,15 +34,11 @@ public class TagModel extends Model
             java.util.ArrayList<Guid> tagsToAttach,
             java.util.ArrayList<Guid> tagsToDetach)
     {
-        // C# TO JAVA CONVERTER TODO TASK: Comparisons involving nullable type instances are not converted to null-value
-        // logic:
         if (tagModel.getSelection() != null && tagModel.getSelection().equals(true)
                 && (!attachedEntities.containsKey(tagModel.getId()) || attachedEntities.get(tagModel.getId()) == false))
         {
             tagsToAttach.add(tagModel.getId());
         }
-        // C# TO JAVA CONVERTER TODO TASK: Comparisons involving nullable type instances are not converted to null-value
-        // logic:
         else if (tagModel.getSelection() != null && tagModel.getSelection().equals(false)
                 && attachedEntities.containsKey(tagModel.getId()))
         {
@@ -142,8 +138,6 @@ public class TagModel extends Model
         {
             return;
         }
-        // C# TO JAVA CONVERTER TODO TASK: Comparisons involving nullable type instances are not converted to null-value
-        // logic:
         if (selection == null || !selection.equals(value))
         {
             selection = value;

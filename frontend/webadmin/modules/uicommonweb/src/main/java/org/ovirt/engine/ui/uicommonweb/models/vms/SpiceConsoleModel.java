@@ -150,10 +150,6 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
             }
             if (item != null)
             {
-                // C# TO JAVA CONVERTER NOTE: The following 'switch' operated on a string member and was converted to
-                // Java 'if-else' logic:
-                // switch (item.CommandName)
-                // ORIGINAL LINE: case CommandPlay:
                 if (StringHelper.stringsEqual(item.getCommandName(), CommandPlay))
                 {
                     // use sysprep iff the vm is not initialized and vm has Win OS
@@ -166,14 +162,12 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
                             new java.util.ArrayList<VdcActionParametersBase>(java.util.Arrays.asList(new VdcActionParametersBase[] { tempVar })));
 
                 }
-                // ORIGINAL LINE: case CommandSuspend:
                 else if (StringHelper.stringsEqual(item.getCommandName(), CommandSuspend))
                 {
                     Frontend.RunMultipleAction(VdcActionType.HibernateVm,
                             new java.util.ArrayList<VdcActionParametersBase>(java.util.Arrays.asList(new VdcActionParametersBase[] { new HibernateVmParameters(getEntity().getId()) })));
 
                 }
-                // ORIGINAL LINE: case CommandStop:
                 else if (StringHelper.stringsEqual(item.getCommandName(), CommandStop))
                 {
                     Frontend.RunMultipleAction(VdcActionType.ShutdownVm,
@@ -181,7 +175,6 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
                                     true) })));
 
                 }
-                // ORIGINAL LINE: case CommandChangeCD:
                 else if (StringHelper.stringsEqual(item.getCommandName(), CommandChangeCD))
                 {
                     Frontend.RunMultipleAction(VdcActionType.ChangeDisk,

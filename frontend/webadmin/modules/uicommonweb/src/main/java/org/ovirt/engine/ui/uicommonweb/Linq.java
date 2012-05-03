@@ -45,8 +45,6 @@ import org.ovirt.engine.ui.uicompat.IEqualityComparer;
 @SuppressWarnings("unused")
 public final class Linq
 {
-    // C# TO JAVA CONVERTER TODO TASK: The interface type was changed to the closest equivalent Java type, but the
-    // methods implemented will need adjustment:
     public static class AuditLogComparer implements java.util.Comparator<AuditLog>
     {
         @Override
@@ -59,8 +57,6 @@ public final class Linq
         }
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: The interface type was changed to the closest equivalent Java type, but the
-    // methods implemented will need adjustment:
     public static class VmAndPoolByNameComparer implements java.util.Comparator
     {
         @Override
@@ -91,8 +87,6 @@ public final class Linq
      * @param host
      * @return
      */
-    // C# TO JAVA CONVERTER TODO TASK: The interface type was changed to the closest equivalent Java type, but the
-    // methods implemented will need adjustment:
     public static class VdsGroupByNameComparer implements java.util.Comparator<VDSGroup>
     {
 
@@ -104,8 +98,6 @@ public final class Linq
 
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: The interface type was changed to the closest equivalent Java type, but the
-    // methods implemented will need adjustment:
     public static class VmTemplateByNameComparer implements java.util.Comparator<VmTemplate>
     {
 
@@ -117,8 +109,6 @@ public final class Linq
 
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: The interface type was changed to the closest equivalent Java type, but the
-    // methods implemented will need adjustment:
     public static class DiskImageByLastModifiedComparer implements java.util.Comparator<DiskImage>
     {
 
@@ -140,8 +130,6 @@ public final class Linq
 
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: The interface type was changed to the closest equivalent Java type, but the
-    // methods implemented will need adjustment:
     public static class DiskImageByLastModifiedTimeOfDayComparer implements java.util.Comparator<DiskImage>
     {
 
@@ -154,8 +142,6 @@ public final class Linq
 
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: The interface type was changed to the closest equivalent Java type, but the
-    // methods implemented will need adjustment:
     public static class StorageDomainByNameComparer implements java.util.Comparator<storage_domains>
     {
 
@@ -178,8 +164,6 @@ public final class Linq
 
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: The interface type was changed to the closest equivalent Java type, but the
-    // methods implemented will need adjustment:
     public static class DiskByInternalDriveMappingComparer implements java.util.Comparator<DiskImage>
     {
 
@@ -222,8 +206,6 @@ public final class Linq
         }
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: The interface type was changed to the closest equivalent Java type, but the
-    // methods implemented will need adjustment:
     public static class NetworkByNameComparer implements java.util.Comparator<network>
     {
         @Override
@@ -251,8 +233,6 @@ public final class Linq
         }
     }
 
-    // C# TO JAVA CONVERTER TODO TASK: The interface type was changed to the closest equivalent Java type, but the
-    // methods implemented will need adjustment:
     public static class CaseInsensitiveComparer implements java.util.Comparator<String>
     {
 

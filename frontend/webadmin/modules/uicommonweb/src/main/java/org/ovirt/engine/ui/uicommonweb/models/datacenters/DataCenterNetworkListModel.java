@@ -381,8 +381,6 @@ public class DataCenterNetworkListModel extends SearchableListModel implements I
 
         for (SelectionTreeNodeModel selectionTreeNodeModel : model.getClusterTreeNodes())
         {
-            // C# TO JAVA CONVERTER TODO TASK: Comparisons involving nullable type instances are not converted to
-            // null-value logic:
             if (selectionTreeNodeModel.getIsSelectedNullable() != null
                     && selectionTreeNodeModel.getIsSelectedNullable().equals(true))
             {
@@ -537,8 +535,6 @@ public class DataCenterNetworkListModel extends SearchableListModel implements I
 
         for (SelectionTreeNodeModel selectionTreeNodeModel : model.getClusterTreeNodes())
         {
-            // C# TO JAVA CONVERTER TODO TASK: Comparisons involving nullable type instances are not converted to
-            // null-value logic:
             if (selectionTreeNodeModel.getIsSelectedNullable() != null
                     && selectionTreeNodeModel.getIsSelectedNullable().equals(true))
             {

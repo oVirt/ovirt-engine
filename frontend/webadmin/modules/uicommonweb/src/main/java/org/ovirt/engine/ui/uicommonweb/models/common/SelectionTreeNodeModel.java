@@ -37,8 +37,6 @@ public class SelectionTreeNodeModel extends EntityModel
         {
             return;
         }
-        // C# TO JAVA CONVERTER TODO TASK: Comparisons involving nullable type instances are not converted to null-value
-        // logic:
         if (isSelectedNullable == null || !isSelectedNullable.equals(value))
         {
             isSelectedNullable = value;
@@ -165,8 +163,6 @@ public class SelectionTreeNodeModel extends EntityModel
         int selCount = 0, nullCount = 0;
         for (SelectionTreeNodeModel a : getParent().getChildren())
         {
-            // C# TO JAVA CONVERTER TODO TASK: Comparisons involving nullable type instances are not converted to
-            // null-value logic:
             if (a.getIsSelectedNullable() != null && a.getIsSelectedNullable().equals(true))
             {
                 selCount += 1;

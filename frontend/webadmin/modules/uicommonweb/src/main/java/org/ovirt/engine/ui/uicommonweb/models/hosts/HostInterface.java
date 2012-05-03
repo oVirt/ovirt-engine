@@ -99,8 +99,6 @@ public class HostInterface extends Model
         {
             return;
         }
-        // C# TO JAVA CONVERTER TODO TASK: Comparisons involving nullable type instances are not converted to null-value
-        // logic:
         if (speed == null || !speed.equals(value))
         {
             speed = value;
@@ -121,8 +119,6 @@ public class HostInterface extends Model
         {
             return;
         }
-        // C# TO JAVA CONVERTER TODO TASK: Comparisons involving nullable type instances are not converted to null-value
-        // logic:
         if (rxRate == null || !rxRate.equals(value))
         {
             rxRate = value;
@@ -143,8 +139,6 @@ public class HostInterface extends Model
         {
             return;
         }
-        // C# TO JAVA CONVERTER TODO TASK: Comparisons involving nullable type instances are not converted to null-value
-        // logic:
         if (rxDrop == null || !rxDrop.equals(value))
         {
             rxDrop = value;
@@ -165,8 +159,6 @@ public class HostInterface extends Model
         {
             return;
         }
-        // C# TO JAVA CONVERTER TODO TASK: Comparisons involving nullable type instances are not converted to null-value
-        // logic:
         if (txRate == null || !txRate.equals(value))
         {
             txRate = value;
@@ -187,8 +179,6 @@ public class HostInterface extends Model
         {
             return;
         }
-        // C# TO JAVA CONVERTER TODO TASK: Comparisons involving nullable type instances are not converted to null-value
-        // logic:
         if (txDrop == null || !txDrop.equals(value))
         {
             txDrop = value;

@@ -557,8 +557,6 @@ public class HostInterfaceListModel extends SearchableListModel
             HostManagementNetworkModel managementNetworkModel = ((HostManagementNetworkModel) getWindow());
             VdsNetworkInterface vdsNetworkInterface =
                     (VdsNetworkInterface) managementNetworkModel.getInterface().getSelectedItem();
-            // C# TO JAVA CONVERTER TODO TASK: Comparisons involving nullable type instances are not converted to
-            // null-value logic:
             if (vdsNetworkInterface.getBonded() != null && vdsNetworkInterface.getBonded().equals(true))
             {
                 managementNetworkModel.getBondingOptions().setIsChangable(true);
@@ -887,8 +885,6 @@ public class HostInterfaceListModel extends SearchableListModel
 
                 hostInterfaceModel.getBondingOptions().setIsAvailable(false);
 
-                // C# TO JAVA CONVERTER TODO TASK: Comparisons involving nullable type instances are not converted to
-                // null-value logic:
                 if (item.getBonded() != null && item.getBonded().equals(true))
                 {
                     hostInterfaceModel.getBondingOptions().setIsAvailable(true);
@@ -1016,8 +1012,6 @@ public class HostInterfaceListModel extends SearchableListModel
                 managementModel.getInterface()
                         .setSelectedItem(Linq.FindInterfaceByName(Linq.VdsNetworkInterfaceListToBase(interfaces),
                                 defaultInterfaceName));
-                // C# TO JAVA CONVERTER TODO TASK: Comparisons involving nullable type instances are not converted to
-                // null-value logic:
                 if (item.getBonded() != null && item.getBonded().equals(true))
                 {
                     managementModel.getInterface().setTitle(ConstantsManager.getInstance()
@@ -1031,8 +1025,6 @@ public class HostInterfaceListModel extends SearchableListModel
                                                                                           // true
 
                 managementModel.getBondingOptions().setIsAvailable(false);
-                // C# TO JAVA CONVERTER TODO TASK: Comparisons involving nullable type instances are not converted to
-                // null-value logic:
                 if (item.getBonded() != null && item.getBonded().equals(true))
                 {
                     managementModel.getBondingOptions().setIsAvailable(true);
