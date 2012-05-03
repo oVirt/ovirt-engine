@@ -1,8 +1,5 @@
 package org.ovirt.engine.core.common;
 
-import javax.xml.bind.annotation.XmlType;
-
-@XmlType(name = "AuditLogTimeInterval")
 public enum AuditLogTimeInterval {
     None(0),
     SECOND(1),

@@ -1,12 +1,5 @@
 package org.ovirt.engine.core.compat;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
-
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "KeyValuePairCompat")
 public class KeyValuePairCompat<K, V> implements java.util.Map.Entry<K, V>, Serializable {
 
     private static final long serialVersionUID = 3550666497489591122L;
@@ -22,7 +15,6 @@ public class KeyValuePairCompat<K, V> implements java.util.Map.Entry<K, V>, Seri
         this.value = value;
     }
 
-    @XmlElement
     @Override
     public K getKey() {
         return key;
@@ -32,7 +24,6 @@ public class KeyValuePairCompat<K, V> implements java.util.Map.Entry<K, V>, Seri
         this.key = key;
     }
 
-    @XmlElement
     @Override
     public V getValue() {
         return value;

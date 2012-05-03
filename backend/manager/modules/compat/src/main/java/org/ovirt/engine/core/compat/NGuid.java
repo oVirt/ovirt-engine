@@ -2,13 +2,6 @@ package org.ovirt.engine.core.compat;
 
 import java.util.UUID;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
-
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "nguid", namespace = "http://service.engine.ovirt.org")
 public class NGuid implements Serializable {
 
     protected static final String EMPTY_GUID_VALUE = "00000000-0000-0000-0000-000000000000";
@@ -29,7 +22,6 @@ public class NGuid implements Serializable {
         return new Guid(UUID.randomUUID());
     }
 
-    @XmlElement(required = true)
     protected UUID uuid;
     protected Guid guid;
 

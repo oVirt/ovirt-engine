@@ -3,13 +3,6 @@ package org.ovirt.engine.core.common;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
-
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "VdcObjectType")
 public enum VdcObjectType {
     Unknown(-1, "Unknown"),
     System(1, "System"),
@@ -51,7 +44,6 @@ public enum VdcObjectType {
         this(val,null);
     }
 
-    @XmlElement(name = "VdcObjectTranslation")
     public String getVdcObjectTranslation() {
         return vdcObjectTranslationVal;
     }

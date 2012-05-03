@@ -2,16 +2,6 @@ package org.ovirt.engine.core.compat;
 
 import java.io.Serializable;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlSeeAlso;
-import javax.xml.bind.annotation.XmlType;
-@XmlSeeAlso({
-        Version.class,
-        RpmVersion.class })
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "version")
 public class Version implements Comparable<Version>, Serializable {
     private static final long serialVersionUID = -3938214651005908651L;
 
@@ -54,7 +44,6 @@ public class Version implements Comparable<Version>, Serializable {
         this.revision = revision2;
     }
 
-    @XmlElement(name = "value")
     public String getValue() {
         String val = "";
 

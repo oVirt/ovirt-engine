@@ -2,9 +2,6 @@ package org.ovirt.engine.core.common;
 
 import java.util.HashMap;
 
-import javax.xml.bind.annotation.XmlType;
-
-@XmlType(name = "AuditLogSeverity")
 public enum AuditLogSeverity {
     NORMAL(0),
     WARNING(1),

@@ -3,9 +3,6 @@ package org.ovirt.engine.core.common;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.xml.bind.annotation.XmlType;
-
-@XmlType(name = "EventNotificationMethods")
 public enum EventNotificationMethods {
     EMAIL(0);
 

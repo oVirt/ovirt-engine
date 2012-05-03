@@ -1,9 +1,5 @@
 package org.ovirt.engine.core.bll;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlType;
-
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.PowerClientMigrateOnConnectCheckParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -18,8 +14,6 @@ import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "PowerClientMigrateOnConnectCheckParameters")
 public class PowerClientMigrateOnConnectCheckCommand<T extends PowerClientMigrateOnConnectCheckParameters> extends
         MigrateVmCommand<T> {
     public PowerClientMigrateOnConnectCheckCommand(T parameters) {

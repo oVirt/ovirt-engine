@@ -3,11 +3,6 @@ package org.ovirt.engine.core.compat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
-
 /**
  * Class used to extract and represent a version of RPM. It support several patterns:
  * <li> {@literal <name>-<version>-<release>.<architecture>.rpm} - version part is not allowed to contain "-".
@@ -15,8 +10,6 @@ import javax.xml.bind.annotation.XmlType;
  * <li> {@literal <prefix+name>[ -].*<[0-9].*\\.}{1,3}[0-9] {@literal><any text>} e.g:
  * <i>rhev-agent-2.3.7-1.el6</i> or <i>RHEV-Agent 2.3.395</i>. Supported by {@link RpmVersion#RpmVersion(String, String, boolean)}
  */
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(name = "RpmVersion")
 public class RpmVersion extends Version {
 
     private static final long serialVersionUID = 5938069430310131270L;
@@ -77,7 +70,6 @@ public class RpmVersion extends Version {
         }
     }
 
-    @XmlElement(name = "RpmName")
     public String getRpmName() {
         return this.rpmName;
     }

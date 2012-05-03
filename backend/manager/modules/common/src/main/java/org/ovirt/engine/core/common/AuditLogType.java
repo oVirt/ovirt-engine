@@ -2,9 +2,6 @@ package org.ovirt.engine.core.common;
 
 import java.util.HashMap;
 
-import javax.xml.bind.annotation.XmlType;
-
-@XmlType(name = "AuditLogType")
 public enum AuditLogType {
     UNASSIGNED(0),
     // -- VDC Log types --
