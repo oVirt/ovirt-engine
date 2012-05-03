@@ -25,7 +25,7 @@ public class ExtendSANStorageDomainCommand<T extends ExtendSANStorageDomainParam
     protected void executeCommand() {
         SetStorageDomainStatus(StorageDomainStatus.Locked);
         for (LUNs lun : getParameters().getLunsList()) {
-            ProceedLUNInDb(lun);
+            proceedLUNInDb(lun, getStorageDomain().getstorage_type());
         }
         if (Backend
                 .getInstance()

@@ -63,7 +63,7 @@ public class AddSANStorageDomainCommand<T extends AddSANStorageDomainParameters>
             @Override
             public Void runInTransaction() {
                 for (LUNs lun : luns) {
-                    ProceedLUNInDb(lun);
+                    proceedLUNInDb(lun, getStorageDomain().getstorage_type());
                 }
                 return null;
             }

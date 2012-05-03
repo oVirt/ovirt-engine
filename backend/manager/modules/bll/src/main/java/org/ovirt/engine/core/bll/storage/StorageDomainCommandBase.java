@@ -244,14 +244,16 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
         }
     }
 
-    protected void ProceedLUNInDb(final LUNs lun) {
-        DbFacade.getInstance().getLunDAO().save(lun);
+    public static void proceedLUNInDb(final LUNs lun, StorageType storageType) {
+        if (DbFacade.getInstance().getLunDAO().get(lun.getLUN_id()) == null) {
+            DbFacade.getInstance().getLunDAO().save(lun);
+        }
         for (storage_server_connections connection : lun.getLunConnections()) {
             List<storage_server_connections> connections = DbFacade.getInstance()
                             .getStorageServerConnectionDAO().getAllForConnection(connection);
             if (connections.isEmpty()) {
                 connection.setid(Guid.NewGuid().toString());
-                connection.setstorage_type(getStorageDomain().getstorage_type());
+                connection.setstorage_type(storageType);
                 DbFacade.getInstance().getStorageServerConnectionDAO().save(connection);
 
             } else {

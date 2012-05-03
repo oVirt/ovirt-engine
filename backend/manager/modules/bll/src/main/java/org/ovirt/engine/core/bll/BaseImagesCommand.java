@@ -399,7 +399,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
      *            The image to take the disk's details from.
      */
     protected void saveDiskIfNotExists(DiskImage image) {
-        if (!getBaseDiskDao().exists(image.getimage_group_id())) {
+        if (!getBaseDiskDao().exists(image.getId())) {
             getBaseDiskDao().save(image);
         }
     }

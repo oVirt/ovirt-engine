@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.storage.StorageDomainCommandBase;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -19,6 +20,9 @@ import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.DiskLunMap;
+import org.ovirt.engine.core.common.businessentities.LUNs;
+import org.ovirt.engine.core.common.businessentities.LunDisk;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -37,6 +41,8 @@ import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogField;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;
+import org.ovirt.engine.core.dao.BaseDiskDao;
+import org.ovirt.engine.core.dao.DiskLunMapDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
 import org.ovirt.engine.core.dao.StorageDomainStaticDAO;
@@ -173,6 +179,14 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         return DbFacade.getInstance().getSnapshotDao();
     }
 
+    protected BaseDiskDao getBaseDiskDao() {
+        return DbFacade.getInstance().getBaseDiskDao();
+    }
+
+    protected DiskLunMapDao getDiskLunMapDao() {
+        return DbFacade.getInstance().getDiskLunMapDao();
+    }
+
     /**
      * @return The ID of the storage domain where the VM's disks reside.
      */
@@ -241,9 +255,35 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
             VmHandler.checkStatusAndLockVm(getVm().getId(), getCompensationContext());
         }
 
+        if (DiskStorageType.IMAGE == getParameters().getDiskInfo().getDiskStorageType()) {
+            createDiskBasedOnImage();
+        } else {
+            createDiskBasedOnLun();
+        }
+    }
+
+    private void createDiskBasedOnLun() {
+        LUNs lun = ((LunDisk) getParameters().getDiskInfo()).getLun();
+        StorageDomainCommandBase.proceedLUNInDb(lun, lun.getLunType());
+        getBaseDiskDao().save(getParameters().getDiskInfo());
+        getDiskLunMapDao().save(new DiskLunMap(getParameters().getDiskInfo().getId(), lun.getLUN_id()));
+        if (getVm() != null) {
+            VmDeviceUtils.addManagedDevice(new VmDeviceId(getParameters().getDiskInfo().getId(), getVmId()),
+                    VmDeviceType.DISK,
+                    VmDeviceType.DISK,
+                    null,
+                    true,
+                    false);
+        }
+        setSucceeded(true);
+    }
+
+    private void createDiskBasedOnImage() {
         // create from blank template, create new vm snapshot id
         AddImageFromScratchParameters parameters =
-                new AddImageFromScratchParameters(Guid.Empty, getParameters().getVmId(), (DiskImage)getParameters().getDiskInfo());
+                new AddImageFromScratchParameters(Guid.Empty,
+                        getParameters().getVmId(),
+                        (DiskImage) getParameters().getDiskInfo());
         parameters.setQuotaId(getParameters().getQuotaId());
         parameters.setStorageDomainId(getStorageDomainId().getValue());
         parameters.setParentCommand(VdcActionType.AddDisk);
