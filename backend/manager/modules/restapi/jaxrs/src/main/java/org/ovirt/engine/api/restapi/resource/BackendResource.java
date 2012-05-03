@@ -24,6 +24,7 @@ import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 
 public class BackendResource extends BaseBackendResource {
+    private static final String CORRELATION_ID = "Correlation-Id";
     private static final String ASYNC_CONSTRAINT = "async";
     private static final String EXPECT_HEADER = "Expect";
     private static final String NON_BLOCKING_EXPECTATION = "202-accepted";
@@ -141,6 +142,7 @@ public class BackendResource extends BaseBackendResource {
 
     protected VdcReturnValueBase doAction(VdcActionType task,
                                           VdcActionParametersBase params) throws BackendFailureException {
+        setCorrelationId(params);
         VdcReturnValueBase result = backend.RunAction(task, sessionize(params));
         if (!result.getCanDoAction()) {
             throw new BackendFailureException(localize(result.getCanDoActionMessages()));
@@ -159,6 +161,7 @@ public class BackendResource extends BaseBackendResource {
 
             @Override
             public void run() {
+                setCorrelationId(params);
                 try {
                     backend.RunAction(task, sp);
                 } finally {
@@ -169,6 +172,13 @@ public class BackendResource extends BaseBackendResource {
                 }
             }
         });
+    }
+
+    private void setCorrelationId(VdcActionParametersBase params) {
+        List<String> correlationIds = httpHeaders.getRequestHeader(CORRELATION_ID);
+        if (correlationIds != null && correlationIds.size() > 0) {
+            params.setCorrelationId(correlationIds.get(0));
+        }
     }
 
     @SuppressWarnings("serial")
