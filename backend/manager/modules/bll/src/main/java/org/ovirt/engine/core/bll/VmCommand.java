@@ -291,10 +291,20 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
 
     protected void EndActionOnDisks() {
         for (VdcActionParametersBase p : getParameters().getImagesParameters()) {
-            p.setTaskGroupSuccess(getParameters().getTaskGroupSuccess());
+            if (overrideChildCommandSuccess()) {
+                p.setTaskGroupSuccess(getParameters().getTaskGroupSuccess());
+            }
+
             Backend.getInstance().EndAction(
                     p.getCommandType() == VdcActionType.Unknown ? getChildActionType() : p.getCommandType(), p);
         }
+    }
+
+    /**
+     * @return By default, <code>true</code> to override the child's success flag with the command's success flag.
+     */
+    protected boolean overrideChildCommandSuccess() {
+        return true;
     }
 
     @Override

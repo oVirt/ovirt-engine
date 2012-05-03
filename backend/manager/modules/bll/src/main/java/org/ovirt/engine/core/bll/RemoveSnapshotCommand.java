@@ -113,6 +113,15 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
         super.EndVmCommand();
     }
 
+    /**
+     * @return Don't override the child success, we want merged image chains to be so also in the DB, or else we will be
+     *         out of sync with the storage and this is not a good situation.
+     */
+    @Override
+    protected boolean overrideChildCommandSuccess() {
+        return false;
+    }
+
     @Override
     protected boolean canDoAction() {
         initializeObjectState();
