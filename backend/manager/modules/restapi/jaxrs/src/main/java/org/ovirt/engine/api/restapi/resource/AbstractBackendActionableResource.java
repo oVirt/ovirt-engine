@@ -30,6 +30,25 @@ public abstract class AbstractBackendActionableResource <R extends BaseResource,
         super(id, modelType, entityType, subCollections);
     }
 
+    protected Response doAction(final VdcActionType task, final VdcActionParametersBase params, final Action action, AbstractBackendResource.PollingType pollingType) {
+        awaitGrace(action);
+        try {
+            VdcReturnValueBase actionResult = doAction(task, params);
+            if (actionResult.getHasAsyncTasks()) {
+                if (expectBlocking(action)) {
+                    CreationStatus status = awaitCompletion(actionResult, pollingType);
+                    return actionStatus(status, action);
+                } else {
+                    return actionAsync(actionResult, action);
+                }
+            } else {
+                return actionSuccess(action);
+            }
+        } catch (Exception e) {
+            return handleError(e, action);
+        }
+    }
+
     /**
      * Perform an action, managing asynchrony and returning an appropriate
      * response.
@@ -41,22 +60,7 @@ public abstract class AbstractBackendActionableResource <R extends BaseResource,
      * @return
      */
     protected Response doAction(final VdcActionType task, final VdcActionParametersBase params, final Action action) {
-        awaitGrace(action);
-        try {
-            VdcReturnValueBase actionResult = doAction(task, params);
-            if (actionResult.getHasAsyncTasks()) {
-                if (expectBlocking(action)) {
-                    CreationStatus status = awaitCompletion(actionResult);
-                    return actionStatus(status, action);
-                } else {
-                    return actionAsync(actionResult, action);
-                }
-            } else {
-                return actionSuccess(action);
-            }
-        } catch (Exception e) {
-            return handleError(e, action);
-        }
+        return doAction(task, params, action, PollingType.VDSM_TASKS);
     }
 
     protected void awaitGrace(Action action) {

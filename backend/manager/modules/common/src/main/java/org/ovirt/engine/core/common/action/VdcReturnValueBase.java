@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcFault;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.NGuid;
 
 public class VdcReturnValueBase implements Serializable {
     private static final long serialVersionUID = 6063371142273092365L;
@@ -22,6 +23,7 @@ public class VdcReturnValueBase implements Serializable {
     private final ArrayList<String> _executeFailedMessages = new ArrayList<String>();
     private VdcFault _fault;
     private String correlationId;
+    private NGuid jobId;
 
     public VdcReturnValueBase() {
     }
@@ -121,5 +123,13 @@ public class VdcReturnValueBase implements Serializable {
 
     public String getCorrelationId() {
         return correlationId;
+    }
+
+    public NGuid getJobId(){
+        return jobId;
+    }
+
+    public void setJobId(NGuid jobId){
+        this.jobId = jobId;
     }
 }

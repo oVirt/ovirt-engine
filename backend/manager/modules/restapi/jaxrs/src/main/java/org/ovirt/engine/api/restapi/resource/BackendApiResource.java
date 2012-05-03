@@ -284,8 +284,8 @@ public class BackendApiResource
 
     private HashMap<String, Integer> getSystemStatistics() {
         try {
-            VdcQueryReturnValue result = backend.RunQuery(VdcQueryType.GetSystemStatistics,
-                                                          sessionize(new GetSystemStatisticsQueryParameters(-1)));
+            VdcQueryReturnValue result = runQuery(VdcQueryType.GetSystemStatistics,
+                    new GetSystemStatisticsQueryParameters(-1));
 
             if (!result.getSucceeded() || result.getReturnValue() == null) {
                 String failure;

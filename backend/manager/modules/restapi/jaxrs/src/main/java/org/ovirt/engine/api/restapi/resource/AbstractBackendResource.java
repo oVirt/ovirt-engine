@@ -14,11 +14,15 @@ import org.ovirt.engine.api.model.Link;
 import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
+import org.ovirt.engine.core.common.job.Job;
+import org.ovirt.engine.core.common.job.JobExecutionStatus;
+import org.ovirt.engine.core.common.queries.GetJobByJobIdQueryParameters;
 import org.ovirt.engine.core.common.queries.GetTasksStatusesByTasksIDsParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.api.restapi.types.Mapper;
 import org.ovirt.engine.api.restapi.types.MappingLocator;
 
@@ -34,6 +38,10 @@ public class AbstractBackendResource<R extends BaseResource, Q /* extends IVdcQu
     protected Class<R> modelType;
     protected Class<Q> entityType;
     protected String[] subCollections;
+
+    public static enum PollingType {
+        VDSM_TASKS, JOB;
+    }
 
     protected AbstractBackendResource(Class<R> modelType, Class<Q> entityType) {
         this.modelType = modelType;
@@ -85,18 +93,37 @@ public class AbstractBackendResource<R extends BaseResource, Q /* extends IVdcQu
     }
 
     protected CreationStatus awaitCompletion(VdcReturnValueBase result) {
+        return awaitCompletion(result, PollingType.VDSM_TASKS);
+    }
+
+    protected CreationStatus awaitCompletion(VdcReturnValueBase result, PollingType pollingType) {
         CreationStatus status = null;
-        while (incomplete(status = getAsynchronousStatus(result))) {
+        while (incomplete(status = getAsynchronousStatus(result, pollingType))) {
             delay(MONITOR_DELAY);
         }
         return status;
     }
 
     protected CreationStatus getAsynchronousStatus(VdcReturnValueBase result) {
+        return getVdsmTasksStatus(result);
+    }
+
+    protected CreationStatus getAsynchronousStatus(VdcReturnValueBase result, PollingType pollingType) {
+        CreationStatus asyncStatus = null;
+        if (pollingType==PollingType.JOB) {
+            asyncStatus = getJobIdStatus(result);
+        } else if (pollingType==PollingType.VDSM_TASKS){
+            asyncStatus = getVdsmTasksStatus(result);
+        } else {
+            throw new IllegalStateException("Unexpected Polling Status");
+        }
+        return asyncStatus;
+    }
+
+    private CreationStatus getVdsmTasksStatus(VdcReturnValueBase result) {
         CreationStatus asyncStatus = null;
         VdcQueryReturnValue monitorResult =
-            backend.RunQuery(VdcQueryType.GetTasksStatusesByTasksIDs,
-                             sessionize(new GetTasksStatusesByTasksIDsParameters(result.getTaskIdList())));
+            runQuery(VdcQueryType.GetTasksStatusesByTasksIDs, new GetTasksStatusesByTasksIDsParameters(result.getTaskIdList()));
         if (monitorResult != null
             && monitorResult.getSucceeded()
             && monitorResult.getReturnValue() != null) {
@@ -106,6 +133,24 @@ public class AbstractBackendResource<R extends BaseResource, Q /* extends IVdcQu
             }
         }
         return asyncStatus;
+    }
+
+    private CreationStatus getJobIdStatus(VdcReturnValueBase result) {
+        NGuid jobId = result.getJobId();
+        if (jobId ==null || jobId.getValue().equals(NGuid.Empty)) {
+            return CreationStatus.COMPLETE;
+        } else {
+            GetJobByJobIdQueryParameters params = new GetJobByJobIdQueryParameters();
+            params.setJobId(jobId.getValue());
+            VdcQueryReturnValue queryResult = runQuery(VdcQueryType.GetJobByJobId, params);
+            if (queryResult != null && queryResult.getSucceeded() && queryResult.getReturnValue() != null) {
+                Job job = (Job)queryResult.getReturnValue();
+                return job.getStatus()==JobExecutionStatus.STARTED ? CreationStatus.IN_PROGRESS : CreationStatus.COMPLETE;
+            } else {
+                //not supposed to happen
+                return CreationStatus.COMPLETE;
+            }
+        }
     }
 
     protected boolean incomplete(CreationStatus status) {

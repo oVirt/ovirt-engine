@@ -30,8 +30,8 @@ public class BackendResource extends BaseBackendResource {
 
     protected <T> T getEntity(Class<T> clz, SearchType searchType, String constraint) {
         try {
-            VdcQueryReturnValue result = backend.RunQuery(VdcQueryType.Search,
-                                                          sessionize(new SearchParameters(constraint, searchType)));
+            VdcQueryReturnValue result = runQuery(VdcQueryType.Search,
+                                                          new SearchParameters(constraint, searchType));
             if (!result.getSucceeded()) {
                 throw new BackendFailureException(localize(result.getExceptionString()));
             }
@@ -50,6 +50,10 @@ public class BackendResource extends BaseBackendResource {
         } catch (Exception e) {
             return handleError(clz, e, false);
         }
+    }
+
+    protected VdcQueryReturnValue runQuery(VdcQueryType queryType, VdcQueryParametersBase queryParams) {
+        return backend.RunQuery(queryType, sessionize(queryParams));
     }
 
     protected <T> T getEntity(Class<T> clz, VdcQueryType query, VdcQueryParametersBase queryParams, String identifier) {
@@ -72,7 +76,7 @@ public class BackendResource extends BaseBackendResource {
                                 VdcQueryType query,
                                 VdcQueryParametersBase queryParams,
                                 String identifier) throws BackendFailureException {
-        VdcQueryReturnValue result = backend.RunQuery(query, sessionize(queryParams));
+        VdcQueryReturnValue result = runQuery(query, queryParams);
         if (!result.getSucceeded() || result.getReturnValue() == null) {
             if (result.getExceptionString() != null) {
                 throw new BackendFailureException(localize(result.getExceptionString()));
@@ -85,7 +89,7 @@ public class BackendResource extends BaseBackendResource {
 
     protected <T> List<T> getBackendCollection(Class<T> clz, VdcQueryType query, VdcQueryParametersBase queryParams) {
         try {
-            VdcQueryReturnValue result = backend.RunQuery(query, sessionize(queryParams));
+            VdcQueryReturnValue result = runQuery(query, queryParams);
             if (!result.getSucceeded()) {
                 throw new BackendFailureException(localize(result.getExceptionString()));
             }

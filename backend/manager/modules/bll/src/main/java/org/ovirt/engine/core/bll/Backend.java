@@ -329,6 +329,7 @@ public class Backend implements BackendInternal, BackendRemote {
 
             returnValue = command.ExecuteAction();
             returnValue.setCorrelationId(parameters.getCorrelationId());
+            returnValue.setJobId(command.getJobId());
             return returnValue;
         }
 
