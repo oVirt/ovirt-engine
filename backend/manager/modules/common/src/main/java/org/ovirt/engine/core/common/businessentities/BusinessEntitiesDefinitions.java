@@ -53,7 +53,7 @@ public final class BusinessEntitiesDefinitions {
     public static final int ROLE_NAME_SIZE = 126;
 
     // Tags (tags)
-    public static final int TAG_NAME_SIZE = 40;
+    public static final int TAG_NAME_SIZE = 50;
 
     // Quota
     public static final int QUOTA_NAME_SIZE = 65;
