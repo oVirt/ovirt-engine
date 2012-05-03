@@ -29,7 +29,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBaseMockUtils;
-import org.ovirt.engine.core.dao.DiskImageDAO;
+import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.dao.VmDAO;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
@@ -48,7 +48,7 @@ public class HotPlugDiskToVmCommandTest {
     @Mock
     private VdsDAO vdsDao;
     @Mock
-    protected DiskImageDAO diskImageDao;
+    protected DiskDao diskDao;
     @Mock
     private VmDeviceDAO vmDeviceDAO;
 
@@ -81,12 +81,12 @@ public class HotPlugDiskToVmCommandTest {
     public void canDoActionFailedVMHasNotDisk() throws Exception {
         initializeCommand();
         mockVmStatusUp();
-        doReturn(diskImageDao).when(command).getDiskDao();
-        when(diskImageDao.get(diskImageGuid)).thenReturn(null);
+        doReturn(diskDao).when(command).getDiskDao();
+        when(diskDao.get(diskImageGuid)).thenReturn(null);
         assertFalse(command.canDoAction());
         assertTrue(command.getReturnValue()
                 .getCanDoActionMessages()
-                .contains(VdcBllMessages.ACTION_TYPE_FAILED_VM_IMAGE_DOES_NOT_EXIST.toString()));
+                .contains(VdcBllMessages.ACTION_TYPE_FAILED_DISK_NOT_EXIST.toString()));
     }
 
     @Test
@@ -185,8 +185,8 @@ public class HotPlugDiskToVmCommandTest {
         disk.setDiskInterface(DiskInterface.IDE);
         disk.setactive(true);
         disk.setvm_guid(vmId);
-        doReturn(diskImageDao).when(command).getDiskDao();
-        when(diskImageDao.get(diskImageGuid)).thenReturn(disk);
+        doReturn(diskDao).when(command).getDiskDao();
+        when(diskDao.get(diskImageGuid)).thenReturn(disk);
         return disk;
     }
 
@@ -200,8 +200,8 @@ public class HotPlugDiskToVmCommandTest {
         disk.setDiskInterface(DiskInterface.VirtIO);
         disk.setactive(true);
         disk.setvm_guid(vmId);
-        doReturn(diskImageDao).when(command).getDiskDao();
-        when(diskImageDao.get(diskImageGuid)).thenReturn(disk);
+        doReturn(diskDao).when(command).getDiskDao();
+        when(diskDao.get(diskImageGuid)).thenReturn(disk);
         mockVmDevice(false);
     }
 

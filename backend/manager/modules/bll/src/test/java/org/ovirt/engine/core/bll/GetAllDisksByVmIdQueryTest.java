@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -55,17 +54,13 @@ public class GetAllDisksByVmIdQueryTest extends AbstractUserQueryTest<GetAllDisk
     /** An unplugged disk for the test */
     private DiskImage unpluggedDisk;
 
-    /** An inactive disk for the test */
-    private DiskImage inactiveDisk;
-
     @Before
     @Override
     public void setUp() throws Exception {
         super.setUp();
         vmID = Guid.NewGuid();
-        pluggedDisk = createDiskImage(true);
-        unpluggedDisk = createDiskImage(true);
-        inactiveDisk = createDiskImage(false);
+        pluggedDisk = createDiskImage();
+        unpluggedDisk = createDiskImage();
         setUpDAOMocks();
     }
 
@@ -80,7 +75,6 @@ public class GetAllDisksByVmIdQueryTest extends AbstractUserQueryTest<GetAllDisk
         List<Disk> returnArray = new ArrayList<Disk>();
         returnArray.add(pluggedDisk);
         returnArray.add(unpluggedDisk);
-        returnArray.add(inactiveDisk);
         diskDAOMock = mock(DiskDao.class);
         when(dbFacadeMock.getDiskDao()).thenReturn(diskDAOMock);
         when(diskDAOMock.getAllForVm(vmID, getUser().getUserId(), getQueryParameters().isFiltered())).thenReturn(returnArray);
@@ -117,9 +111,9 @@ public class GetAllDisksByVmIdQueryTest extends AbstractUserQueryTest<GetAllDisk
                 true);
     }
 
-    private DiskImage createDiskImage(boolean isActive) {
+    private DiskImage createDiskImage() {
         return new DiskImage(
-                isActive,
+                true,
                 new Date(),
                 new Date(),
                 1L,
@@ -167,7 +161,6 @@ public class GetAllDisksByVmIdQueryTest extends AbstractUserQueryTest<GetAllDisk
         // Assert the correct disks are returned
         assertTrue("plugged disk should be in the return value", disks.contains(pluggedDisk));
         assertTrue("unplugged disk should be in the return value", disks.contains(unpluggedDisk));
-        assertFalse("inactive disk should not be in the return value", disks.contains(inactiveDisk));
 
         // Assert the disks have the correct snapshots
         assertCorrectSnapshots(pluggedDisk);
