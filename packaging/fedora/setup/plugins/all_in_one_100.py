@@ -55,8 +55,6 @@ starting it manually and rerun the setup."
 ERROR_LIBVIRT_STATUS = "Error: Could not get status of the libvirt service"
 ERROR_JBOSS_STATUS = "Error: There's a problem with JBoss service.\
 Check that it's up and rerun setup."
-ERROR_NOT_ENOUGH_SPACE = "Error: There's only %s free available in the folder %s. \
-It is recommended to have at least %sG of free available space for storage domain."
 
 # PARAMS
 PAUSE = 10
@@ -69,10 +67,6 @@ LOCAL_CLUSTER = "local_cluster"
 LOCAL_DATA_CENTER = "local_datacenter"
 LOCAL_HOST = "local_host"
 LOCAL_STORAGE = "local_storage"
-
-# Size units
-GB = "%sG"
-MB = "%sM"
 
 # PATH PARAMS
 VDSM_PATH = "/usr/share/vdsm"
@@ -312,16 +306,8 @@ def validateStoragePath(param, options = []):
     Validate that a given path is a valid mount point and has at least LOCAL_STORAGE_MIN_SIZE GB.
     """
     logging.info("Validating provided storage path")
-    if validate.validateDir(param):
-        if validate.validateDirSize(param, LOCAL_STORAGE_MIN_SIZE * 1024):
+    if validate.validateMountPoint(param) and validate.validateDirSize(param, LOCAL_STORAGE_MIN_SIZE * 1024):
             return True
-        else:
-            free_size = utils.getAvailableSpace(validate._getBasePath(param))
-            if free_size > 1024:
-                free_size = GB % ( free_size / 1024 )
-            else:
-                free_size = MB % free_size
-            print ERROR_NOT_ENOUGH_SPACE % (free_size, param, LOCAL_STORAGE_MIN_SIZE)
 
     return False
 

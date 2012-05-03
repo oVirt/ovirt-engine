@@ -469,6 +469,15 @@ def getAvailableSpace(path):
     logging.debug("Available space on %s is %s" % (path, availableSpace))
     return int(availableSpace)
 
+def transformUnits(size):
+    """ Transform the number of size param (received in MB)
+    into an appropriate units string (MB/GB)"""
+
+    if size > 1024:
+        return "%.02f" % (float(size) / 1024.0) + " Gb"
+    else:
+        return str(size) + " Mb"
+
 def compareStrIgnoreCase(str1, str2):
     ''' compare 2 strings and ignore case
         if one of the input is not str (bool for e.g) - return normal comapre

@@ -17,16 +17,12 @@ from setup_controller import Controller
 def validateNFSMountPoint(param, options=[]):
     """ Validates the correct mount point for NFS local storage """
 
-    if validateDir(param):
-        if validateDirSize(param, basedefs.CONST_MINIMUM_SPACE_ISODOMAIN):
+    if validateMountPoint(param) and validateDirSize(param, basedefs.CONST_MINIMUM_SPACE_ISODOMAIN):
             return True
-        else:
-            print output_messages.INFO_VAL_PATH_SPACE % (str(utils.getAvailableSpace(_getBasePath(param))),
-                                                         str(basedefs.CONST_MINIMUM_SPACE_ISODOMAIN))
 
     return False
 
-def validateDir(path):
+def validateMountPoint(path):
     logging.info("validating %s as a valid mount point" % (path))
     if not utils.verifyStringFormat(path, "^\/[\w\_\-\s]+(\/[\w\_\-\s]+)*\/?$"):
         print output_messages.INFO_VAL_PATH_NAME_INVALID
@@ -44,7 +40,11 @@ def validateDir(path):
     return True
 
 def validateDirSize(path, size):
-    if utils.getAvailableSpace(_getBasePath(path)) < size:
+    availableSpace = utils.getAvailableSpace(_getBasePath(path))
+    if availableSpace < size:
+        print output_messages.INFO_VAL_PATH_SPACE % (path,
+                                                     utils.transformUnits(availableSpace),
+                                                     utils.transformUnits(size))
         return False
     return True
 
@@ -531,7 +531,9 @@ def _getBasePath(path):
     if os.path.exists(path):
         return path
 
-    return os.path.dirname(path.rstrip("/"))
+    # Iterate up in the tree structure until we get an
+    # existing path
+    return _getBasePath(os.path.dirname(path.rstrip("/")))
 
 def _isPathWriteable(path):
     try:
