@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.login.presenter;
 
 import org.ovirt.engine.ui.common.presenter.AbstractLoginPopupPresenterWidget;
+import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.uicommonweb.models.LoginModel;
 import org.ovirt.engine.ui.webadmin.auth.SilentLoginData;
 
@@ -15,8 +16,9 @@ public class LoginPopupPresenterWidget extends AbstractLoginPopupPresenterWidget
     private SilentLoginData silentLoginData;
 
     @Inject
-    public LoginPopupPresenterWidget(EventBus eventBus, ViewDef view, LoginModel loginModel) {
-        super(eventBus, view, loginModel);
+    public LoginPopupPresenterWidget(EventBus eventBus, ViewDef view,
+            LoginModel loginModel, ClientStorage clientStorage) {
+        super(eventBus, view, loginModel, clientStorage);
     }
 
     public void setSilentLoginData(SilentLoginData silentLoginData) {
@@ -42,6 +44,11 @@ public class LoginPopupPresenterWidget extends AbstractLoginPopupPresenterWidget
 
         silentLoginData.setPassword(null);
         loginModel.Login();
+    }
+
+    @Override
+    protected String getSelectedDomainKey() {
+        return "Login_SelectedDomain_WebAdmin"; //$NON-NLS-1$
     }
 
 }

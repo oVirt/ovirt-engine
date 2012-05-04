@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.userportal.section.login.presenter;
 
 import org.ovirt.engine.ui.common.presenter.AbstractLoginPopupPresenterWidget;
+import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalLoginModel;
 
 import com.google.gwt.event.shared.EventBus;
@@ -16,8 +17,9 @@ public class LoginPopupPresenterWidget extends AbstractLoginPopupPresenterWidget
     @Inject
     public LoginPopupPresenterWidget(EventBus eventBus, ViewDef view,
             UserPortalLoginModel loginModel,
-            ConnectAutomaticallyProvider connectAutomaticallyProvider) {
-        super(eventBus, view, loginModel);
+            ConnectAutomaticallyProvider connectAutomaticallyProvider,
+            ClientStorage clientStorage) {
+        super(eventBus, view, loginModel, clientStorage);
         this.connectAutomaticallyProvider = connectAutomaticallyProvider;
     }
 
@@ -43,6 +45,11 @@ public class LoginPopupPresenterWidget extends AbstractLoginPopupPresenterWidget
     void initConnectAutomatically(UserPortalLoginModel loginModel) {
         boolean isAutoconnect = connectAutomaticallyProvider.readConnectAutomatically();
         loginModel.getIsAutoConnect().setEntity(isAutoconnect);
+    }
+
+    @Override
+    protected String getSelectedDomainKey() {
+        return "Login_SelectedDomain_UserPortal"; //$NON-NLS-1$
     }
 
 }

@@ -205,8 +205,8 @@ public class LoginModel extends Model
                         loginModel1.getDomain().setIsChangable(true);
 
                         List<String> domains = (List<String>) ReturnValue1;
-                        loginModel1.getDomain().setItems(domains);
                         loginModel1.getDomain().setSelectedItem(Linq.FirstOrDefault(domains));
+                        loginModel1.getDomain().setItems(domains);
                     }
                 };
                 AsyncDataProvider.GetDomainListViaPublic(_asyncQuery1, false);

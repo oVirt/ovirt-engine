@@ -5,6 +5,8 @@ import java.util.logging.Logger;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
+import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
+import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.DeferredModelCommandInvoker;
 import org.ovirt.engine.ui.common.widget.HasEditorDriver;
 import org.ovirt.engine.ui.common.widget.dialog.PopupNativeKeyPressHandler;
@@ -45,8 +47,11 @@ public abstract class AbstractLoginPopupPresenterWidget<T extends LoginModel, V 
 
     private static final Logger logger = Logger.getLogger(AbstractLoginPopupPresenterWidget.class.getName());
 
-    public AbstractLoginPopupPresenterWidget(EventBus eventBus, V view, T loginModel) {
+    private final ClientStorage clientStorage;
+
+    public AbstractLoginPopupPresenterWidget(EventBus eventBus, V view, T loginModel, ClientStorage clientStorage) {
         super(eventBus, view);
+        this.clientStorage = clientStorage;
         getView().edit(loginModel);
     }
 
@@ -87,10 +92,48 @@ public abstract class AbstractLoginPopupPresenterWidget<T extends LoginModel, V 
                 }
             }
         });
+
+        // Update selected domain after domain items have been set
+        loginModel.getDomain().getPropertyChangedEvent().addListener(new IEventListener() {
+            @SuppressWarnings("unchecked")
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                if (!"Items".equals(((PropertyChangedEventArgs) args).PropertyName)) {//$NON-NLS-1$
+                    return;
+                }
+
+                String previouslySelectedItem = clientStorage.getLocalItem(getSelectedDomainKey());
+                if (previouslySelectedItem == null || "".equals(previouslySelectedItem)) { //$NON-NLS-1$
+                    return;
+                }
+
+                for (String item : (Iterable<String>) loginModel.getDomain().getItems()) {
+                    if (previouslySelectedItem.equals(item)) {
+                        loginModel.getDomain().setSelectedItem(item);
+                        break;
+                    }
+                }
+            }
+        });
     }
+
+    /**
+     * Returns the key used to store and retrieve selected domain from {@link ClientStorage}.
+     */
+    protected abstract String getSelectedDomainKey();
 
     protected void onLoggedInEvent(T loginModel) {
         getView().clearErrorMessage();
+        saveSelectedDomain(loginModel);
+    }
+
+    void saveSelectedDomain(T loginModel) {
+        String selectedItem = (String) loginModel.getDomain().getSelectedItem();
+        if (selectedItem == null || "".equals(selectedItem)) { //$NON-NLS-1$
+            return;
+        }
+
+        clientStorage.setLocalItem(getSelectedDomainKey(), selectedItem);
     }
 
     @Override
