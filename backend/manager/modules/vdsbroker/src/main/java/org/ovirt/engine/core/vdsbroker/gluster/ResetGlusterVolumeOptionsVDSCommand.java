@@ -4,7 +4,7 @@ import org.ovirt.engine.core.common.vdscommands.gluster.ResetGlusterVolumeOption
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsBrokerCommand;
 
 /**
- * VDS command to set a gluster volume option
+ * VDS command to Reset gluster volume options
  */
 public class ResetGlusterVolumeOptionsVDSCommand<P extends ResetGlusterVolumeOptionsVDSParameters> extends VdsBrokerCommand<P> {
     public ResetGlusterVolumeOptionsVDSCommand(P parameters) {
@@ -14,8 +14,8 @@ public class ResetGlusterVolumeOptionsVDSCommand<P extends ResetGlusterVolumeOpt
     @Override
     protected void ExecuteVdsBrokerCommand() {
         status =
-                getBroker().glusterVolumeOptionsReset(getParameters().getVolumeName(),
-                        getParameters().getVolumeOption(),
+                getBroker().glusterVolumeReset(getParameters().getVolumeName(),
+                        (getParameters().getVolumeOption() == null) ? "" : getParameters().getVolumeOption(),
                         getParameters().isforceAction());
         ProceedProxyReturnValue();
     }

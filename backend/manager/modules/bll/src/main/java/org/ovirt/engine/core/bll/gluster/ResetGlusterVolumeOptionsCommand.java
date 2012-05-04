@@ -1,8 +1,5 @@
 package org.ovirt.engine.core.bll.gluster;
 
-import java.util.List;
-import java.util.ListIterator;
-
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.gluster.ResetGlusterVolumeOptionsParameters;
@@ -38,16 +35,15 @@ public class ResetGlusterVolumeOptionsCommand extends GlusterVolumeCommandBase<R
         setSucceeded(returnValue.getSucceeded());
 
         if (getSucceeded()) {
-            if (getParameters().getVolumeOption() == null || getParameters().getVolumeOption() == "") {
+
+            if (getParameters().getVolumeOption() != null && !getParameters().getVolumeOption().isEmpty()) {
                 GlusterVolumeOptionEntity option = new GlusterVolumeOptionEntity(getParameters().getVolumeId(),
                         getParameters().getVolumeOption(),
                         null);
                 removeOptionInDb(option);
             } else {
-                ListIterator<GlusterVolumeOptionEntity> optionIterator =
-                        ((List<GlusterVolumeOptionEntity>) getGlusterVolume().getOptions()).listIterator();
-                while (optionIterator.hasNext()) {
-                    removeOptionInDb(optionIterator.next());
+                for (GlusterVolumeOptionEntity option : getGlusterVolume().getOptions()) {
+                    removeOptionInDb(option);
                 }
             }
         }

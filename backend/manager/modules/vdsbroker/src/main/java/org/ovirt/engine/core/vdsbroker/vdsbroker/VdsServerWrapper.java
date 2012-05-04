@@ -1027,9 +1027,9 @@ public class VdsServerWrapper implements IVdsServer {
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc glusterVolumeOptionsReset(String volumeName, String volumeOption, Boolean force) {
+    public StatusOnlyReturnForXmlRpc glusterVolumeReset(String volumeName, String volumeOption, Boolean force) {
         try {
-            return new StatusOnlyReturnForXmlRpc(vdsServer.glusterVolumeOptionsReset(volumeName, volumeOption, force));
+            return new StatusOnlyReturnForXmlRpc(vdsServer.glusterVolumeReset(volumeName, volumeOption, force));
         } catch (UndeclaredThrowableException ute) {
             throw new XmlRpcRunTimeException(ute);
         }
