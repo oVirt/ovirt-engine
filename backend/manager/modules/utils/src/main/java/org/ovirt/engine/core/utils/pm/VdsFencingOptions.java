@@ -12,7 +12,6 @@ import org.ovirt.engine.core.common.queries.ValueObjectMap;
 import org.ovirt.engine.core.compat.DoubleCompat;
 import org.ovirt.engine.core.compat.IntegerCompat;
 import org.ovirt.engine.core.compat.LongCompat;
-import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
@@ -520,12 +519,9 @@ public class VdsFencingOptions implements Serializable {
                         }
                     }
                     else if (type.equalsIgnoreCase(DOUBLE)) {
-                        double doubleVal = 0;
-                        RefObject<Double> tempRefObject3 = new RefObject<Double>(doubleVal);
-                        boolean tempVar3 = DoubleCompat.TryParse2(fencingAgentInstanceOptions
-                                .get(key), tempRefObject3);
-                        doubleVal = tempRefObject3.argvalue;
-                        if (tempVar3) {
+                        final Double doubleVal = DoubleCompat.tryParseDouble(fencingAgentInstanceOptions
+                                .get(key));
+                        if (doubleVal != null) {
                             result = doubleVal;
                         }
                     } else // return as string

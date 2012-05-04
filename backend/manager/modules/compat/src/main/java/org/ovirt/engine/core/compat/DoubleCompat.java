@@ -4,31 +4,22 @@ import java.math.BigDecimal;
 
 public class DoubleCompat {
 
-    // public static boolean TryParse(String value, BigDecimal test) {
-    // throw new
-    // NotImplementedException("See the TryParse which takes a RefObject");
-    // }
-
-    public static boolean TryParse(String value, RefObject<BigDecimal> refDec) {
-        boolean returnValue = false;
+    public static BigDecimal tryParse(String value) {
         try {
-            refDec.argvalue = new BigDecimal(value);
-            returnValue = true;
+            return new BigDecimal(value);
         } catch (NumberFormatException e) {
-            // eat it and return
+            // eat it and return null
+            return null;
         }
-        return returnValue;
     }
 
-    public static boolean TryParse2(String value, RefObject<Double> refDec) {
-        boolean returnValue = false;
+    public static Double tryParseDouble(String value) {
         try {
-            refDec.argvalue = new Double(value);
-            returnValue = true;
+            return new Double(value);
         } catch (NumberFormatException e) {
-            // eat it and return
+            // eat it and return null
+            return null;
         }
-        return returnValue;
     }
 
 }

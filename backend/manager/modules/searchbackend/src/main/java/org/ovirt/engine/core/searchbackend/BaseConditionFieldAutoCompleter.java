@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.searchbackend;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -200,7 +199,7 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
 
     public final static ValueValidationFunction validDecimal = new ValueValidationFunction() {
         public boolean isValid(String field, String value) {
-            return DoubleCompat.TryParse(value, new RefObject<BigDecimal>());
+            return DoubleCompat.tryParse(value) != null;
         }
     };
 
