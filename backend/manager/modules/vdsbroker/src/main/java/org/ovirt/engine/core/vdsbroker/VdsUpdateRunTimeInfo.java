@@ -1124,14 +1124,19 @@ public class VdsUpdateRunTimeInfo {
     }
 
     private void HandleVmOnDown(VM cacheVm, VmDynamic vmDynamic, VmStatistics vmStatistics) {
-        AuditLogType type = vmDynamic.getExitStatus() == VmExitStatus.Normal ? AuditLogType.VM_DOWN
-                : AuditLogType.VM_DOWN_ERROR;
+        // Get the exit status and message:
+        VmExitStatus exitStatus = vmDynamic.getExitStatus();
+        String exitMessage = vmDynamic.getExitMessage();
+
+        // Generate an error or information event according to the exit status:
+        AuditLogType type = exitStatus == VmExitStatus.Normal? AuditLogType.VM_DOWN: AuditLogType.VM_DOWN_ERROR;
         AuditLogableBase logable = new AuditLogableBase(_vds.getId(), vmStatistics.getId());
-        if (vmDynamic.getExitStatus() != VmExitStatus.Normal) {
-            logable.AddCustomValue("ExitMessage", vmDynamic.getExitMessage());
-            AuditLogDirector.log(logable, type);
+        if (exitMessage != null) {
+            logable.AddCustomValue("ExitMessage", "Exit message: " + exitMessage);
         }
-        if (vmDynamic.getExitStatus() != VmExitStatus.Normal) {
+        AuditLogDirector.log(logable, type);
+
+        if (exitStatus != VmExitStatus.Normal) {
             /**
              * Vm failed to run - try to rerun it on other Vds
              */
