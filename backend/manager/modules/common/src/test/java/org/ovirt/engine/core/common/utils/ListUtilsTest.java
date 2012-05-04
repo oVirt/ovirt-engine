@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.utils.list;
+package org.ovirt.engine.core.common.utils;
 
 import java.util.ArrayList;
 import java.util.List;

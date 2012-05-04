@@ -173,6 +173,7 @@
 		<include name="common/users/VdcUser.java" />
 		<include name="common/utils/ObjectDescriptor.java" />
 		<include name="common/utils/EnumUtils.java" />
+		<include name="common/utils/ListUtils.java" />
 		<include name="common/utils/VmDeviceCommonUtils.java" />
 		<include name="common/utils/VmDeviceType.java" />
 		<include name="common/interfaces/IVdcUser.java" />

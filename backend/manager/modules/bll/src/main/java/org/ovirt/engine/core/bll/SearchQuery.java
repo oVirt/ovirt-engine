@@ -34,6 +34,8 @@ import org.ovirt.engine.core.common.errors.SqlInjectionException;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.SearchReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
+import org.ovirt.engine.core.common.utils.ListUtils;
+import org.ovirt.engine.core.common.utils.ListUtils.Filter;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.TimeSpan;
@@ -43,8 +45,6 @@ import org.ovirt.engine.core.searchbackend.SearchObjects;
 import org.ovirt.engine.core.searchbackend.SyntaxCheckerFactory;
 import org.ovirt.engine.core.searchbackend.SyntaxContainer;
 import org.ovirt.engine.core.searchbackend.SyntaxError;
-import org.ovirt.engine.core.utils.list.ListUtils;
-import org.ovirt.engine.core.utils.list.ListUtils.Filter;
 
 public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<P> {
     private static final HashMap<String, QueryData2> mQueriesCache = new HashMap<String, QueryData2>();

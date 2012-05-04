@@ -33,6 +33,7 @@ import org.ovirt.engine.core.common.businessentities.storage_domain_static;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.utils.ListUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.vdscommands.GetImageInfoVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
@@ -43,7 +44,6 @@ import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.backendcompat.Path;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.utils.list.ListUtils;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 
