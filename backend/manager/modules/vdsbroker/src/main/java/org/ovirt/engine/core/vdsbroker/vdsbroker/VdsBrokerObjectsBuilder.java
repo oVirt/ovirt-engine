@@ -691,11 +691,11 @@ public class VdsBrokerObjectsBuilder {
                                                             // need int.
                 stringValue = stringValue.split("[.]", -1)[0];
             }
-            RefObject<Long> refDec = new RefObject<Long>();
-            if (LongCompat.TryParse(stringValue, refDec)) {
-                return refDec.argvalue;
-            } else {
+            final Long dec = LongCompat.tryParse(stringValue);
+            if (dec == null) {
                 log.errorFormat("Failed to parse {0} value {1} to long", name, stringValue);
+            } else {
+                return dec;
             }
         }
         return null;

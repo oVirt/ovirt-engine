@@ -513,12 +513,9 @@ public class VdsFencingOptions implements Serializable {
                         }
                     }
                     else if (type.equalsIgnoreCase(LONG)) {
-                        long longVal = 0;
-                        RefObject<Long> tempRefObject2 = new RefObject<Long>(longVal);
-                        boolean tempVar2 = LongCompat.TryParse(fencingAgentInstanceOptions
-                                .get(key), tempRefObject2);
-                        longVal = tempRefObject2.argvalue;
-                        if (tempVar2) {
+                        final Long longVal = LongCompat.tryParse(fencingAgentInstanceOptions
+                                .get(key));
+                        if (longVal != null) {
                             result = longVal;
                         }
                     }

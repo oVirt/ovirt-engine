@@ -2,15 +2,13 @@ package org.ovirt.engine.core.compat;
 
 public class LongCompat {
 
-    public static boolean TryParse(String value, RefObject<Long> refDec) {
-        boolean returnValue = false;
+    public static Long tryParse(String value) {
         try {
-            refDec.argvalue = new Long(value);
-            returnValue = true;
+            return new Long(value);
         } catch (NumberFormatException e) {
-            // eat it and return
+            // eat it and return null
+            return null;
         }
-        return returnValue;
     }
 
     public static long parseLong(String parseRangePart, NumberStyles style) {
