@@ -212,6 +212,16 @@ public class VmBackupModel extends ManageBackupModel {
 
                         iVmModel1.setItems(vmBackupModel1.getSelectedItems());
                         iVmModel1.setSelectedVMsCount(((List) vmBackupModel1.getItems()).size());
+
+                        UICommand restoreCommand;
+                        restoreCommand = new UICommand("OnRestore", vmBackupModel1); //$NON-NLS-1$
+                        restoreCommand.setTitle(ConstantsManager.getInstance().getConstants().ok());
+                        restoreCommand.setIsDefault(true);
+                        iVmModel1.getCommands().add(restoreCommand);
+                        UICommand tempVar3 = new UICommand("Cancel", vmBackupModel1); //$NON-NLS-1$
+                        tempVar3.setTitle(ConstantsManager.getInstance().getConstants().cancel());
+                        tempVar3.setIsCancel(true);
+                        iVmModel1.getCommands().add(tempVar3);
                     }
 
                 };
@@ -231,8 +241,6 @@ public class VmBackupModel extends ManageBackupModel {
             return;
         }
 
-        iVmModel.getCommands().clear();
-
         if (((List) iVmModel.getDestinationStorage().getItems()).size() == 0) {
             iVmModel.getDestinationStorage().setIsChangable(false);
             iVmModel.getIsSingleDestStorage().setIsChangable(false);
@@ -240,23 +248,6 @@ public class VmBackupModel extends ManageBackupModel {
         }
         else {
             iVmModel.getIsSingleDestStorage().setIsChangable(true);
-        }
-
-        if (iVmModel.getIsMissingStorages()) {
-            UICommand tempVar = new UICommand("Cancel", this); //$NON-NLS-1$
-            tempVar.setTitle(ConstantsManager.getInstance().getConstants().close());
-            tempVar.setIsDefault(true);
-            tempVar.setIsCancel(true);
-            iVmModel.getCommands().add(tempVar);
-        } else {
-            UICommand tempVar2 = new UICommand("OnRestore", this); //$NON-NLS-1$
-            tempVar2.setTitle(ConstantsManager.getInstance().getConstants().ok());
-            tempVar2.setIsDefault(true);
-            iVmModel.getCommands().add(tempVar2);
-            UICommand tempVar3 = new UICommand("Cancel", this); //$NON-NLS-1$
-            tempVar3.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-            tempVar3.setIsCancel(true);
-            iVmModel.getCommands().add(tempVar3);
         }
     }
 
@@ -281,22 +272,21 @@ public class VmBackupModel extends ManageBackupModel {
             Guid destinationStorageId = destinationStorage != null && isSingleDestStorage ?
                     destinationStorage.getId() : Guid.Empty;
 
-            ImportVmParameters tempVar = new ImportVmParameters(vm, model.getSourceStorage().getId(),
+            ImportVmParameters prm = new ImportVmParameters(vm, model.getSourceStorage().getId(),
                     destinationStorageId, model.getStoragePool().getId(),
                     ((VDSGroup) model.getCluster().getSelectedItem()).getId());
-            tempVar.setForceOverride(true);
-            ImportVmParameters prm = tempVar;
+            prm.setForceOverride(true);
 
             prm.setCopyCollapse((Boolean) model.getCollapseSnapshots().getEntity());
             HashMap<String, DiskImageBase> diskDictionary = new HashMap<String, DiskImageBase>();
 
             for (Map.Entry<String, Disk> entry : vm.getDiskMap().entrySet()) {
                 String key = entry.getKey();
-                DiskImage disk = (DiskImage)entry.getValue();
+                DiskImage disk = (DiskImage) entry.getValue();
 
                 HashMap<Guid, Guid> map = model.getDiskStorageMap().get(vm.getId());
                 storage_domains domain = (Boolean) model.getIsSingleDestStorage().getEntity() ?
-                                (storage_domains) model.getDestinationStorage().getSelectedItem()
+                        (storage_domains) model.getDestinationStorage().getSelectedItem()
                         : model.getStorageById(map.get(disk.getImageId()));
                 disk.setvolume_format(DataProvider.GetDiskVolumeFormat(disk.getvolume_type(), domain.getstorage_type()));
 
@@ -308,6 +298,14 @@ public class VmBackupModel extends ManageBackupModel {
             if (!(Boolean) model.getIsSingleDestStorage().getEntity()) {
                 HashMap<Guid, Guid> map = model.getDiskStorageMap().get(vm.getId());
                 prm.setImageToDestinationDomainMap(map);
+            }
+
+            if ((Boolean) model.getCloneAllVMs().getEntity()
+                    || ((Boolean) model.getCloneOnlyDuplicateVMs().getEntity()
+                    && model.isObjectInSetup(vm))) {
+                prm.setImportAsNewEntity(true);
+                prm.setCopyCollapse(true);
+                prm.getVm().setvm_name(prm.getVm().getvm_name() + model.getCloneVMsSuffix().getEntity());
             }
 
             prms.add(prm);

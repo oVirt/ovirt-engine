@@ -22,6 +22,8 @@ import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.EntityModelLabelEditor;
+import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.IVdcQueryableCellTable;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
@@ -96,6 +98,26 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
     @UiField(provided = true)
     @Path(value = "isSingleDestStorage.entity")
     EntityModelCheckBoxEditor isSingleDestStorageEditor;
+
+    @UiField(provided = true)
+    @Path(value = "cloneAllVMs.entity")
+    EntityModelCheckBoxEditor cloneAllVMs;
+
+    @UiField(provided = true)
+    @Path(value = "cloneOnlyDuplicateVMs.entity")
+    EntityModelCheckBoxEditor cloneOnlyDuplicateVMs;
+
+    @UiField
+    @Path(value = "cloneVMsSuffix.entity")
+    EntityModelTextBoxEditor cloneVMsSuffix;
+
+    @UiField
+    @Path(value = "cloneAllVMs_message.entity")
+    EntityModelLabelEditor cloneAllVMs_message;
+
+    @UiField
+    @Path(value = "cloneOnlyDuplicateVMs_message.entity")
+    EntityModelLabelEditor cloneOnlyDuplicateVMs_message;
 
     @UiField
     SplitLayoutPanel splitLayoutPanel;
@@ -273,7 +295,7 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
         table.addColumn(diskColumn, constants.disksVm(), "50px"); //$NON-NLS-1$
 
         isObjectInSystemColumn = new IsObjectInSystemColumn<VM>();
-        table.addColumn(isObjectInSystemColumn, "VM in System", "60px");
+        table.addColumn(isObjectInSystemColumn, constants.vmInSetup(), "60px"); //$NON-NLS-1$
 
         ScrollPanel sp = new ScrollPanel();
         sp.add(table);
@@ -446,12 +468,17 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
     private void initCheckboxes() {
         collapseSnapshotEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         isSingleDestStorageEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+        cloneAllVMs = new EntityModelCheckBoxEditor(Align.RIGHT);
+        cloneOnlyDuplicateVMs = new EntityModelCheckBoxEditor(Align.RIGHT);
     }
 
     private void localize(ApplicationConstants constants) {
         destClusterEditor.setLabel(constants.importVm_destCluster());
         destStorageEditor.setLabel(constants.singleDestinationStorage());
         collapseSnapshotEditor.setLabel(constants.importVm_collapseSnapshots());
+        cloneAllVMs.setLabel(constants.importVm_cloneAllVMs());
+        cloneOnlyDuplicateVMs.setLabel(constants.importVm_cloneOnlyDuplicateVMs());
+        cloneVMsSuffix.setLabel(constants.importVm_cloneVMsSuffix());
     }
 
     @SuppressWarnings("unchecked")
@@ -484,21 +511,24 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
                     table.flush();
                     table.edit(object);
                 }
-                if (!numOfVmsGreaterThan1 && ((ArrayList<IVdcQueryable>) object.getItems()).size() > 1) {
-                    customSelectionCell.setEnabledWithToolTip(false, constants.importAllocationModifiedSingleVM());
-                    numOfVmsGreaterThan1 = true;
-                    diskTable.flush();
-                    diskTable.edit((VmImportDiskListModel) object.getDetailModels().get(2));
-                }
-                if (!numOfVmsGreaterThan1) {
-                    if ((Boolean) object.getCollapseSnapshots().getEntity()) {
-                        customSelectionCell.setEnabledWithToolTip(true, ""); //$NON-NLS-1$
+                if (object.getItems() != null) {
+                    if (!numOfVmsGreaterThan1 && ((ArrayList<IVdcQueryable>) object.getItems()).size() > 1) {
+                        customSelectionCell.setEnabledWithToolTip(false, constants.importAllocationModifiedSingleVM());
+                        numOfVmsGreaterThan1 = true;
                         diskTable.flush();
                         diskTable.edit((VmImportDiskListModel) object.getDetailModels().get(2));
-                    } else {
-                        customSelectionCell.setEnabledWithToolTip(false, constants.importAllocationModifiedCollapse());
-                        diskTable.flush();
-                        diskTable.edit((VmImportDiskListModel) object.getDetailModels().get(2));
+                    }
+                    if (!numOfVmsGreaterThan1) {
+                        if ((Boolean) object.getCollapseSnapshots().getEntity()) {
+                            customSelectionCell.setEnabledWithToolTip(true, ""); //$NON-NLS-1$
+                            diskTable.flush();
+                            diskTable.edit((VmImportDiskListModel) object.getDetailModels().get(2));
+                        } else {
+                            customSelectionCell.setEnabledWithToolTip(false,
+                                    constants.importAllocationModifiedCollapse());
+                            diskTable.flush();
+                            diskTable.edit((VmImportDiskListModel) object.getDetailModels().get(2));
+                        }
                     }
                 }
             }

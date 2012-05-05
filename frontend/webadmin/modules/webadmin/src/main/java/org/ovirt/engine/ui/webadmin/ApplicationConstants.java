@@ -2046,4 +2046,18 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue(" out of ")
     String outOfQuota();
 
+    @DefaultStringValue("Clone All VMs")
+    String importVm_cloneAllVMs();
+
+    @DefaultStringValue("Clone Only Duplicated VMs")
+    String importVm_cloneOnlyDuplicateVMs();
+
+    @DefaultStringValue("Suffix:")
+    String importVm_cloneVMsSuffix();
+
+    @DefaultStringValue("VM in System")
+    String vmInSetup();
+
+    @DefaultStringValue("Template in System")
+    String templateInSetup();
 }

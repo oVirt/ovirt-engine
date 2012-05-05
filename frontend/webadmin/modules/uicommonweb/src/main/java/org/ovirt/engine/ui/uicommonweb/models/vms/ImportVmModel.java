@@ -208,6 +208,52 @@ public class ImportVmModel extends ListWithDetailsModel implements IIsObjectInSe
         privateDiskStorageMap = value;
     }
 
+    private EntityModel cloneAllVMs;
+    private EntityModel cloneAllVMs_message;
+    private EntityModel cloneOnlyDuplicateVMs;
+    private EntityModel cloneOnlyDuplicateVMs_message;
+    private EntityModel cloneVMsSuffix;
+
+    public EntityModel getCloneAllVMs() {
+        return cloneAllVMs;
+    }
+
+    public void setCloneAllVMs(EntityModel cloneAllVMs) {
+        this.cloneAllVMs = cloneAllVMs;
+    }
+
+    public EntityModel getCloneOnlyDuplicateVMs() {
+        return cloneOnlyDuplicateVMs;
+    }
+
+    public void setCloneOnlyDuplicateVMs(EntityModel cloneOnlyDuplicateVMs) {
+        this.cloneOnlyDuplicateVMs = cloneOnlyDuplicateVMs;
+    }
+
+    public EntityModel getCloneAllVMs_message() {
+        return cloneAllVMs_message;
+    }
+
+    public void setCloneAllVMs_message(EntityModel cloneAllVMs_message) {
+        this.cloneAllVMs_message = cloneAllVMs_message;
+    }
+
+    public EntityModel getCloneOnlyDuplicateVMs_message() {
+        return cloneOnlyDuplicateVMs_message;
+    }
+
+    public void setCloneOnlyDuplicateVMs_message(EntityModel cloneOnlyDuplicateVMs_message) {
+        this.cloneOnlyDuplicateVMs_message = cloneOnlyDuplicateVMs_message;
+    }
+
+    public EntityModel getCloneVMsSuffix() {
+        return cloneVMsSuffix;
+    }
+
+    public void setCloneVMsSuffix(EntityModel cloneVMsSuffix) {
+        this.cloneVMsSuffix = cloneVMsSuffix;
+    }
+
     @Override
     public void setSelectedItem(Object value) {
         super.setSelectedItem(value);
@@ -246,6 +292,39 @@ public class ImportVmModel extends ListWithDetailsModel implements IIsObjectInSe
         setIsSingleDestStorage(new EntityModel());
         getIsSingleDestStorage().setEntity(true);
         setAllDestinationStorage(new ListModel());
+
+        setCloneAllVMs(new EntityModel());
+        getCloneAllVMs().setEntity(false);
+        getCloneAllVMs().getEntityChangedEvent().addListener(new IEventListener() {
+
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                if ((Boolean) getCloneAllVMs().getEntity()) {
+                    getCloneVMsSuffix().setIsAvailable(true);
+                    getCollapseSnapshots().setEntity(true);
+                    getCollapseSnapshots().setIsChangable(false);
+                } else {
+                    getCollapseSnapshots().setEntity(false);
+                    getCollapseSnapshots().setIsChangable(true);
+                    if (!getCloneOnlyDuplicateVMs().getIsAvailable()) {
+                        getCloneVMsSuffix().setIsAvailable(false);
+                    }
+                }
+
+            }
+        });
+        setCloneOnlyDuplicateVMs(new EntityModel());
+        getCloneOnlyDuplicateVMs().setEntity(false);
+        getCloneOnlyDuplicateVMs().setIsAvailable(false);
+        setCloneVMsSuffix(new EntityModel());
+        getCloneVMsSuffix().setEntity("_vm"); //$NON-NLS-1$
+        getCloneVMsSuffix().setIsAvailable(false);
+        setCloneAllVMs_message(new EntityModel());
+        setCloneOnlyDuplicateVMs_message(new EntityModel());
+        getCloneOnlyDuplicateVMs_message().setEntity(ConstantsManager.getInstance()
+                .getConstants()
+                .noteClone_CollapsedSnapshotMsg());
+        getCloneOnlyDuplicateVMs_message().setIsAvailable(false);
     }
 
     public void OnCollapseSnapshotsChanged(AsyncQuery _asyncQuery) {
@@ -325,14 +404,14 @@ public class ImportVmModel extends ListWithDetailsModel implements IIsObjectInSe
                 if (NGuid.Empty.equals(vm.getvmt_guid())) {
                     Guid storageId = !allDestStorages.isEmpty() ?
                             allDestStorages.get(0).getId() : new Guid();
-                    addToDiskStorageMap(vm.getId(), (DiskImage)disk, storageId);
+                    addToDiskStorageMap(vm.getId(), (DiskImage) disk, storageId);
                 }
                 else {
                     ArrayList<Guid> storageIds =
                             templateGuidUniqueStorageDomainDic.get(vm.getvmt_guid());
                     Guid storageId = storageIds != null ?
                             templateGuidUniqueStorageDomainDic.get(vm.getvmt_guid()).get(0) : new Guid();
-                    addToDiskStorageMap(vm.getId(), (DiskImage)disk, storageId);
+                    addToDiskStorageMap(vm.getId(), (DiskImage) disk, storageId);
                 }
             }
         }
@@ -454,8 +533,13 @@ public class ImportVmModel extends ListWithDetailsModel implements IIsObjectInSe
         getCluster().ValidateSelectedItem(
                 new IValidation[] { new NotEmptyValidation() });
 
+        getCloneVMsSuffix().setIsValid(true);
+        if (getCloneVMsSuffix().getIsAvailable()) {
+            getCloneVMsSuffix().ValidateEntity(new IValidation[] { new NotEmptyValidation() });
+        }
+
         return getDestinationStorage().getIsValid()
-                && getCluster().getIsValid();
+                && getCluster().getIsValid() && getCloneVMsSuffix().getIsValid();
     }
 
     @Override
@@ -477,12 +561,12 @@ public class ImportVmModel extends ListWithDetailsModel implements IIsObjectInSe
     @Override
     public void setItems(final Iterable value)
     {
-        String vm_guidKey = "_VM_ID =";
-        String orKey = " or ";
+        String vm_guidKey = "_VM_ID ="; //$NON-NLS-1$
+        String orKey = " or "; //$NON-NLS-1$
         StringBuilder searchPattern = new StringBuilder();
-        searchPattern.append("VM: ");
+        searchPattern.append("VM: "); //$NON-NLS-1$
 
-        List<VM> list = (List<VM>) value;
+        final List<VM> list = (List<VM>) value;
         for (int i = 0; i < list.size(); i++) {
             VM vm = list.get(i);
 
@@ -504,6 +588,30 @@ public class ImportVmModel extends ListWithDetailsModel implements IIsObjectInSe
                         alreadyInSystem = new HashMap<Guid, VM>();
                         for (VM vm : vmList) {
                             alreadyInSystem.put(vm.getId(), vm);
+                        }
+
+                        if (alreadyInSystem.size() > 0) {
+                            getCloneAllVMs_message().setEntity(alreadyInSystem.size()
+                                    + ConstantsManager.getInstance()
+                                            .getConstants()
+                                            .vmAlreadyExistsMsg());
+                            if (list.size() == alreadyInSystem.size()) {
+                                getCloneAllVMs().setEntity(true);
+                                getCloneAllVMs().setIsChangable(false);
+                                getCollapseSnapshots().setEntity(true);
+                                getCollapseSnapshots().setIsChangable(false);
+                                getCloneVMsSuffix().setIsAvailable(true);
+                            } else {
+                                getCloneOnlyDuplicateVMs().setIsAvailable(true);
+                                getCloneOnlyDuplicateVMs_message().setIsAvailable(true);
+                                getCloneOnlyDuplicateVMs().setEntity(true);
+                                getCloneOnlyDuplicateVMs().setIsChangable(false);
+                                getCloneVMsSuffix().setIsAvailable(true);
+                            }
+                        } else {
+                            getCloneAllVMs_message().setEntity(ConstantsManager.getInstance()
+                                    .getConstants()
+                                    .vmNoExistsMsg());
                         }
 
                         setSuperItems(value);
@@ -592,7 +700,7 @@ public class ImportVmModel extends ListWithDetailsModel implements IIsObjectInSe
             if (vm.getDiskMap() != null) {
                 for (Map.Entry<String, Disk> pair : vm
                         .getDiskMap().entrySet()) {
-                    DiskImage disk = (DiskImage)pair.getValue();
+                    DiskImage disk = (DiskImage) pair.getValue();
 
                     if (disk.getvolume_type() == VolumeType.Sparse
                             && disk.getvolume_format() == VolumeFormat.RAW
@@ -624,7 +732,9 @@ public class ImportVmModel extends ListWithDetailsModel implements IIsObjectInSe
             }
         } else {
             // No problematic items.
-            getCollapseSnapshots().setIsChangable(true);
+            if (!(Boolean) getCloneAllVMs().getEntity()) {
+                getCollapseSnapshots().setIsChangable(true);
+            }
             getCollapseSnapshots().setMessage(null);
         }
     }
@@ -638,7 +748,7 @@ public class ImportVmModel extends ListWithDetailsModel implements IIsObjectInSe
             for (Map.Entry<String, Disk> a : vm.getDiskMap()
                     .entrySet()) {
                 if (a.getValue().getQueryableId().equals(disk.getQueryableId())) {
-                    ((DiskImage)a.getValue()).setvolume_type(tempVolumeType);
+                    ((DiskImage) a.getValue()).setvolume_type(tempVolumeType);
                     break;
                 }
             }

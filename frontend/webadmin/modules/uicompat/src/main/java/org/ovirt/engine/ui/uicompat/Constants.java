@@ -1298,4 +1298,13 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Cannot choose Volume's Cluster in tree context")
     String cannotChooseVolumesClusterinTreeContect();
+
+    @DefaultStringValue("* note that Cloned VM will be 'Collapsed Snapshot'")
+	String noteClone_CollapsedSnapshotMsg();
+
+	@DefaultStringValue(" VMs already exists")
+	String vmAlreadyExistsMsg();
+
+	@DefaultStringValue("None VMs exists")
+	String vmNoExistsMsg();
 }

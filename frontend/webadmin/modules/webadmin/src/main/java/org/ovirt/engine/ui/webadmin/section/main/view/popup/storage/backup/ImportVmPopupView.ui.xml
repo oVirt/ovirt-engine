@@ -73,20 +73,33 @@
 			<g:VerticalPanel>
 				<g:SplitLayoutPanel ui:field="splitLayoutPanel"
 					height="400px" addStyleNames="{style.splitLayoutPanelStyle}" />
-				<g:VerticalPanel>
-					<g:VerticalPanel width="445px">
-						<e:ListModelListBoxEditor ui:field="destClusterEditor" />
-						<g:HorizontalPanel verticalAlignment="ALIGN_MIDDLE">
-							<e:EntityModelCheckBoxEditor ui:field="isSingleDestStorageEditor" />
-							<e:ListModelListBoxEditor ui:field="destStorageEditor" />
-						</g:HorizontalPanel>
-					</g:VerticalPanel>
 					<g:HorizontalPanel>
-						<e:EntityModelCheckBoxEditor ui:field="collapseSnapshotEditor" />
-						<g:Image ui:field="image" resource='{resources.alertImage}'	addStyleNames="{style.imageStyle}" />
-						<g:Label ui:field="message" addStyleNames="{style.labelStyle}" />
+						<g:VerticalPanel>
+							<g:VerticalPanel width="445px">
+								<e:ListModelListBoxEditor ui:field="destClusterEditor" />
+								<g:HorizontalPanel verticalAlignment="ALIGN_MIDDLE">
+									<e:EntityModelCheckBoxEditor ui:field="isSingleDestStorageEditor" />
+									<e:ListModelListBoxEditor ui:field="destStorageEditor" />
+								</g:HorizontalPanel>
+							</g:VerticalPanel>
+							<g:HorizontalPanel>
+								<e:EntityModelCheckBoxEditor ui:field="collapseSnapshotEditor" />
+								<g:Image ui:field="image" resource='{resources.alertImage}'	addStyleNames="{style.imageStyle}" />
+								<g:Label ui:field="message" addStyleNames="{style.labelStyle}" />
+							</g:HorizontalPanel>
+						</g:VerticalPanel>
+						<g:HorizontalPanel>
+								<g:VerticalPanel>
+									<e:EntityModelCheckBoxEditor ui:field="cloneAllVMs" />
+									<e:EntityModelLabelEditor ui:field="cloneAllVMs_message" />
+									<e:EntityModelCheckBoxEditor ui:field="cloneOnlyDuplicateVMs" />
+									<e:EntityModelLabelEditor ui:field="cloneOnlyDuplicateVMs_message" />
+								</g:VerticalPanel>
+								<g:VerticalPanel>
+									<e:EntityModelTextBoxEditor ui:field="cloneVMsSuffix" />
+								</g:VerticalPanel>
+						</g:HorizontalPanel>
 					</g:HorizontalPanel>
-				</g:VerticalPanel>
 			</g:VerticalPanel>
 		</d:content>
 	</d:SimpleDialogPanel>

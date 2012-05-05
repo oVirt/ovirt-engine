@@ -234,7 +234,7 @@ public class ImportTemplatePopupView extends AbstractModelBoundPopupView<ImportT
         table.addColumn(diskColumn, constants.disksTemplate(), "50px"); //$NON-NLS-1$
 
         isObjectInSystemColumn = new IsObjectInSystemColumn<VmTemplate>();
-        table.addColumn(isObjectInSystemColumn, "Template in System", "60px");
+        table.addColumn(isObjectInSystemColumn, constants.templateInSetup(), "60px"); //$NON-NLS-1$
 
         ScrollPanel sp = new ScrollPanel();
         sp.add(table);

@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.templates;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -155,10 +156,10 @@ public class ImportTemplateModel extends ListWithDetailsModel implements IIsObje
     @Override
     public void setItems(final Iterable value)
     {
-        String vmt_guidKey = "_VMT_ID =";
-        String orKey = " or ";
+        String vmt_guidKey = "_VMT_ID ="; //$NON-NLS-1$
+        String orKey = " or "; //$NON-NLS-1$
         StringBuilder searchPattern = new StringBuilder();
-        searchPattern.append("Template: ");
+        searchPattern.append("Template: "); //$NON-NLS-1$
 
         List<VmTemplate> list = (List<VmTemplate>) value;
         for (int i = 0; i < list.size(); i++) {
