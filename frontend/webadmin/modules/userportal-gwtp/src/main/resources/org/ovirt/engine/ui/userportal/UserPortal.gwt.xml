@@ -16,7 +16,7 @@
 	<set-property name="gwt.logging.popupHandler" value="DISABLED" />
 
 	<!-- Supported browsers (defined via maven property) -->
-	<set-property name="user.agent" value="${gwt.userAgent}" />
+	<set-property name="user.agent" value="gecko1_8" />
 
 	<!-- Tell GWTP proxy generator the location of our Ginjector -->
 	<define-configuration-property name="gin.ginjector" is-multi-valued="false" />

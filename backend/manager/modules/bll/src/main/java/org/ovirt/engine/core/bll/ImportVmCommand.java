@@ -55,6 +55,7 @@ import org.ovirt.engine.core.common.vdscommands.GetImageInfoVDSCommandParameters
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
@@ -78,13 +79,13 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
 
     private static VmStatic vmStaticForDefaultValues = new VmStatic();
     private List<DiskImage> imageList;
+    private List<Guid> diskGuidList = new ArrayList<Guid>();
+    private List<Guid> imageGuidList = new ArrayList<Guid>();
 
     public ImportVmCommand(ImportVmParameters parameters) {
         super(parameters);
         setVmId(parameters.getContainerId());
-        parameters.setEntityId(getVmId());
         setVm(parameters.getVm());
-        parameters.setEntityId(getVm().getId());
         setVdsGroupId(parameters.getVdsGroupId());
         if (parameters.getVm() != null && getVm().getDiskMap() != null) {
             imageList = new ArrayList<DiskImage>();
@@ -103,15 +104,45 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
 
     @Override
     protected boolean canDoAction() {
+        boolean retVal = true;
+        List<String> canDoActionMessages = getReturnValue().getCanDoActionMessages();
+        Map<Guid, storage_domains> domainsMap = new HashMap<Guid, storage_domains>();
+        retVal = canDoAction_beforeCloneVm(retVal, canDoActionMessages, domainsMap);
+
+        if (retVal && getParameters().isImportAsNewEntity()) {
+            initImportClonedVm();
+        }
+
+        return retVal && canDoAction_afterCloneVm(retVal, canDoActionMessages, domainsMap);
+    }
+
+
+    private void initImportClonedVm() {
+        Guid guid = Guid.NewGuid();
+        getVm().setId(guid);
+        setVmId(guid);
+        getVm().setvm_name(getParameters().getVm().getvm_name());
+        getVm().setstorage_pool_id(getParameters().getStoragePoolId());
+        getParameters().setVm(getVm());
+        for (VmNetworkInterface iface : getVm().getInterfaces()) {
+            iface.setId(Guid.NewGuid());
+            String mac = null;
+            RefObject<String> tempRefObject = new RefObject<String>(mac);
+            MacPoolManager.getInstance().allocateNewMac(tempRefObject);
+            mac = tempRefObject.argvalue;
+            iface.setMacAddress(mac);
+        }
+    }
+
+    private boolean canDoAction_beforeCloneVm(boolean retVal,
+            List<String> canDoActionMessages,
+            Map<Guid, storage_domains> domainsMap) {
         if (getVm() != null) {
             setDescription(getVmName());
         }
-        ArrayList<String> canDoActionMessages = getReturnValue().getCanDoActionMessages();
-        boolean retVal = checkStoragePool();
+        retVal = checkStoragePool();
 
-        Map<Guid, storage_domains> domainsMap = null;
         if (retVal) {
-            domainsMap = new HashMap<Guid, storage_domains>();
             Set<Guid> destGuids = new HashSet<Guid>(imageToDestinationDomainMap.values());
             for (Guid destGuid : destGuids) {
                 storage_domains storageDomain = getStorageDomain(destGuid);
@@ -124,6 +155,11 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
                     domainsMap.put(destGuid, storageDomain);
                 }
             }
+        }
+
+        if (retVal && getParameters().isImportAsNewEntity() && !getParameters().getCopyCollapse()) {
+            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_IMPORT_CLONE_NOT_COLLAPSED);
+            retVal = false;
         }
 
         if (retVal) {
@@ -209,9 +245,15 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
             }
         }
 
+        return retVal;
+    }
+
+    private boolean canDoAction_afterCloneVm(boolean retVal,
+            List<String> canDoActionMessages,
+            Map<Guid, storage_domains> domainsMap) {
         // check that the imported vm guid is not in engine
         if (retVal) {
-            VmStatic duplicateVm = getVmStaticDAO().get(getParameters().getVm().getId());
+            VmStatic duplicateVm = getVmStaticDAO().get(getVm().getId());
             if (duplicateVm != null) {
                 addCanDoActionMessage(VdcBllMessages.VM_CANNOT_IMPORT_VM_EXISTS);
                 addCanDoActionMessage(String.format("$VmName %1$s", duplicateVm.getvm_name()));
@@ -232,7 +274,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
         }
         if (retVal && getParameters().getCopyCollapse() && getParameters().getDiskInfoList() != null) {
             for (DiskImageBase imageBase : getParameters().getDiskInfoList().values()) {
-                DiskImage key = (DiskImage)getVm().getDiskMap()
+                DiskImage key = (DiskImage) getVm().getDiskMap()
                         .get(imageBase.getinternal_drive_mapping());
                 if (key != null) {
                     retVal =
@@ -345,7 +387,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
     }
 
     protected boolean CheckTemplateInStorageDomain() {
-        boolean retValue = checkIfDisksExist(imageList);
+        boolean retValue = getParameters().isImportAsNewEntity() || checkIfDisksExist(imageList);
         if (retValue && !VmTemplateHandler.BlankVmTemplateId.equals(getVm().getvmt_guid())
                 && !getParameters().getCopyCollapse()) {
             List<storage_domains> domains = (List<storage_domains>) Backend
@@ -381,7 +423,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
             Guid storagePoolId = image.getstorage_pool_id() != null ? image.getstorage_pool_id().getValue()
                     : Guid.Empty;
             Guid storageDomainId = getParameters().getSourceDomainId();
-            Guid imageGroupId = image.getimage_group_id() != null ? image.getimage_group_id().getValue() : Guid.Empty;
+            Guid imageGroupId = image.getId() != null ? image.getId() : Guid.Empty;
 
             VDSReturnValue retValue = Backend
                     .getInstance()
@@ -443,6 +485,10 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
                 MoveOrCopyAllImageGroups();
                 VmDeviceUtils.addImportedDevices(getVm().getStaticData());
                 VmHandler.LockVm(getVm().getId());
+                if (getParameters().isImportAsNewEntity()) {
+                    getParameters().setVm(getVm());
+                    setVmId(getVm().getId());
+                }
                 return null;
 
             }
@@ -456,17 +502,22 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
 
     @Override
     protected void MoveOrCopyAllImageGroups(Guid containerID, Iterable<DiskImage> disks) {
+        int i = 0;
         for (DiskImage disk : disks) {
-            Guid destinationDomain = imageToDestinationDomainMap.get(disk.getImageId());
-            MoveOrCopyImageGroupParameters p = new MoveOrCopyImageGroupParameters(containerID, disk
-                    .getId(), disk.getImageId(), destinationDomain,
-                    getMoveOrCopyImageOperation());
+            Guid destinationDomain = imageToDestinationDomainMap.get(imageGuidList.get(i));
+            MoveOrCopyImageGroupParameters p = new MoveOrCopyImageGroupParameters(containerID,
+                    diskGuidList.get(i),
+                    imageGuidList.get(i),
+                    disk.getId(),
+                    disk.getImageId(),
+                    destinationDomain, getMoveOrCopyImageOperation());
             p.setParentCommand(getActionType());
-            p.setEntityId(getParameters().getEntityId());
             p.setUseCopyCollapse(getParameters().getCopyCollapse());
             p.setCopyVolumeType(CopyVolumeType.LeafVol);
             p.setPostZero(disk.isWipeAfterDelete());
             p.setForceOverride(true);
+            p.setSourceDomainId(getParameters().getSourceDomainId());
+            p.setStoragePoolId(getParameters().getStoragePoolId());
             if (getParameters().getDiskInfoList() != null
                     && getParameters().getDiskInfoList().containsKey(disk.getinternal_drive_mapping())) {
                 p.setVolumeType(getParameters().getDiskInfoList().get(disk.getinternal_drive_mapping())
@@ -475,6 +526,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
                         .getvolume_format());
             }
             p.setParentParemeters(getParameters());
+            p.setAddImageDomainMapping(getParameters().isImportAsNewEntity());
             VdcReturnValueBase vdcRetValue = Backend.getInstance().runInternalAction(
                     VdcActionType.MoveOrCopyImageGroup,
                     p,
@@ -486,6 +538,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
             getParameters().getImagesParameters().add(p);
 
             getReturnValue().getTaskIdList().addAll(vdcRetValue.getInternalTaskIdList());
+            i++;
         }
     }
 
@@ -511,7 +564,14 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
                     disk.setvolume_type(getParameters().getDiskInfoList().get(disk.getinternal_drive_mapping())
                             .getvolume_type());
                 }
-
+                diskGuidList.add(disk.getId());
+                imageGuidList.add(disk.getImageId());
+                if (getParameters().isImportAsNewEntity()) {
+                    disk.setId(Guid.NewGuid());
+                    disk.setImageId(Guid.NewGuid());
+                }
+                disk.setvm_guid(getVmId());
+                disk.setcreation_date(new Date());
                 BaseImagesCommand.saveImage(disk);
                 ImagesHandler.setDiskAlias(disk, getVm());
                 DbFacade.getInstance().getBaseDiskDao().save(disk);
@@ -521,10 +581,14 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
                 DbFacade.getInstance().getDiskImageDynamicDAO().save(diskDynamic);
             }
 
-            new SnapshotsManager().addActiveSnapshot(snapshotId, getVm(), getCompensationContext());
+            Snapshot snapshot = new SnapshotsManager().addActiveSnapshot(snapshotId, getVm(), getCompensationContext());
+            getVm().getSnapshots().clear();
+            getVm().getSnapshots().add(snapshot);
         } else {
             Guid snapshotId = null;
             for (DiskImage disk : getVm().getImages()) {
+                diskGuidList.add(disk.getId());
+                imageGuidList.add(disk.getImageId());
                 disk.setactive(false);
                 BaseImagesCommand.saveImage(disk);
                 snapshotId = disk.getvm_snapshot_id().getValue();
@@ -729,7 +793,11 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
             iface.setVmId(getVm().getStaticData().getId());
             iface.setVmName(getVm().getvm_name());
 
-            macAdded = vmInterfaceManager.add(iface, getCompensationContext());
+            if (getParameters().isImportAsNewEntity()) {
+                macAdded = true;
+            } else {
+                macAdded = vmInterfaceManager.add(iface, getCompensationContext());
+            }
         }
     }
 
@@ -778,6 +846,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
             new SnapshotsManager().removeSnapshots(getVm().getId());
             DbFacade.getInstance().getVmDynamicDAO().remove(getVmId());
             DbFacade.getInstance().getVmStatisticsDAO().remove(getVmId());
+            new SnapshotsManager().removeSnapshots(getVmId());
             DbFacade.getInstance().getVmStaticDAO().remove(getVmId());
             setSucceeded(true);
         } else {
@@ -792,7 +861,9 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
     }
 
     protected void EndImportCommand() {
-        setVm(null);
+        if (!getParameters().isImportAsNewEntity()) {
+            setVm(null);
+        }
 
         EndActionOnAllImageGroups();
         if (getVm() != null) {

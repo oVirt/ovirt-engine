@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll;
 
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.RemoveImageParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -72,19 +71,19 @@ public class MoveOrCopyImageGroupCommand<T extends MoveOrCopyImageGroupParameter
                             .getResourceManager()
                             .RunVdsCommand(
                                     VDSCommandType.CopyImage,
-                                    new CopyImageVDSCommandParameters(getDiskImage().getstorage_pool_id().getValue(),
+                                    new CopyImageVDSCommandParameters(getStorageDomain().getstorage_pool_id()
+                                            .getValue(),
                                             getParameters().getSourceDomainId() != null ? getParameters().getSourceDomainId()
                                                     .getValue()
                                                     : getDiskImage().getstorage_ids().get(0),
                                             getParameters()
                                                     .getContainerId(),
                                             getParameters().getImageGroupID(),
-                                            getImage()
+                                            getParameters()
                                                     .getImageId(),
                                             getParameters().getDestImageGroupId(),
                                             getParameters().getDestinationImageId(),
-                                            StringUtils.defaultString(getImage()
-                                                    .getdescription()),
+                                            "",
                                             getParameters().getStorageDomainId(),
                                             getParameters()
                                                     .getCopyVolumeType(),
@@ -104,7 +103,7 @@ public class MoveOrCopyImageGroupCommand<T extends MoveOrCopyImageGroupParameter
                             new MoveImageGroupVDSCommandParameters(getDiskImage().getstorage_pool_id().getValue(),
                                     getParameters().getSourceDomainId() != null ? getParameters().getSourceDomainId()
                                             .getValue() : getDiskImage().getstorage_ids().get(0), getDiskImage()
-                                            .getimage_group_id().getValue(), getParameters().getStorageDomainId(),
+                                            .getId(), getParameters().getStorageDomainId(),
                                     getParameters().getContainerId(), getParameters().getOperation(), getParameters()
                                             .getPostZero(), getParameters().getForceOverride(), getStoragePool()
                                             .getcompatibility_version().toString()));
@@ -120,7 +119,7 @@ public class MoveOrCopyImageGroupCommand<T extends MoveOrCopyImageGroupParameter
                     || getParameters().getParentCommand() == VdcActionType.ImportVm
                     || getParameters().getParentCommand() == VdcActionType.ImportVmTemplate) {
                 List<DiskImage> snapshots = getDiskImageDao()
-                        .getAllSnapshotsForImageGroup(getParameters().getImageGroupID());
+                        .getAllSnapshotsForImageGroup(getParameters().getDestImageGroupId());
                 for (DiskImage snapshot : snapshots) {
                     DbFacade.getInstance()
                             .getImageStorageDomainMapDao()

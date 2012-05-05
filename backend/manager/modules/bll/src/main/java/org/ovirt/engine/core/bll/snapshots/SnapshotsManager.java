@@ -59,10 +59,16 @@ public class SnapshotsManager {
      * @param compensationContext
      *            Context for saving compensation details.
      */
-    public void addActiveSnapshot(Guid snapshotId,
+    public Snapshot addActiveSnapshot(Guid snapshotId,
             VM vm,
             final CompensationContext compensationContext) {
-        addSnapshot(snapshotId, "Active VM", SnapshotStatus.OK, SnapshotType.ACTIVE, vm, false, compensationContext);
+        return addSnapshot(snapshotId,
+                "Active VM",
+                SnapshotStatus.OK,
+                SnapshotType.ACTIVE,
+                vm,
+                false,
+                compensationContext);
     }
 
     /**
@@ -108,7 +114,7 @@ public class SnapshotsManager {
      * @param compensationContext
      *            In case compensation is needed.
      */
-    protected void addSnapshot(Guid snapshotId,
+    protected Snapshot addSnapshot(Guid snapshotId,
             String description,
             SnapshotStatus snapshotStatus,
             SnapshotType snapshotType,
@@ -126,6 +132,7 @@ public class SnapshotsManager {
 
         getSnapshotDao().save(snapshot);
         compensationContext.snapshotNewEntity(snapshot);
+        return snapshot;
     }
 
     /**

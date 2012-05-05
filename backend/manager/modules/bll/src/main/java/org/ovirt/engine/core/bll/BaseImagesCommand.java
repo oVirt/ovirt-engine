@@ -50,8 +50,10 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
             mImageContainerId = tempVar.getContainerId();
             mDrive = tempVar.getDrive();
             super.setVmId(mImageContainerId);
-            setStoragePoolId(getDiskImage() != null && getDiskImage().getstorage_pool_id() != null ? getDiskImage()
-                    .getstorage_pool_id().getValue() : Guid.Empty);
+            if (getDiskImage() != null && getDiskImage().getstorage_pool_id() != null) {
+                setStoragePoolId(getDiskImage()
+                        .getstorage_pool_id().getValue());
+            }
         }
     }
 
