@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.Entities;
+import org.ovirt.engine.core.common.businessentities.LunDisk;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
@@ -218,6 +219,9 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                     struct.add(VdsProperties.VolumeId, diskImage.getImageId().toString());
                     struct.add(VdsProperties.Format, diskImage.getvolume_format().toString()
                             .toLowerCase());
+                } else {
+                    LunDisk lunDisk = (LunDisk) disk;
+                    struct.add("GUID", lunDisk.getLun().getLUN_id());
                 }
 
                 addBootOrder(vmDevice, struct);

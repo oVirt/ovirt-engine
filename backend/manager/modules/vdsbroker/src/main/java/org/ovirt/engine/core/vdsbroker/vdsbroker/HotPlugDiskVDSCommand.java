@@ -3,6 +3,7 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.LunDisk;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.vdscommands.HotPlugDiskVDSParameters;
 import org.ovirt.engine.core.utils.StringUtils;
@@ -43,13 +44,17 @@ public class HotPlugDiskVDSCommand<P extends HotPlugDiskVDSParameters> extends V
         drive.add("readonly", String.valueOf(vmDevice.getIsReadOnly()));
 
         if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
-            DiskImage diskImage = (DiskImage)disk;
+            DiskImage diskImage = (DiskImage) disk;
             drive.add("format", diskImage.getvolume_format().toString().toLowerCase());
             drive.add("domainID", diskImage.getstorage_ids().get(0).toString());
             drive.add("poolID", diskImage.getstorage_pool_id().toString());
             drive.add("volumeID", diskImage.getImageId().toString());
             drive.add("imageID", diskImage.getId().toString());
+        } else {
+            LunDisk lunDisk = (LunDisk) disk;
+            drive.add("GUID", lunDisk.getLun().getLUN_id());
         }
+
         return drive;
     }
 
