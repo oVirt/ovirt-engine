@@ -10,7 +10,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 
 public class DiskLunMapDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<DiskLunMap, DiskLunMapId>
-implements DiskLunMapDao {
+        implements DiskLunMapDao {
 
     public DiskLunMapDaoDbFacadeImpl() {
         super("DiskLunMap");
@@ -45,5 +45,13 @@ implements DiskLunMapDao {
                 return diskLunMap;
             }
         };
+    }
+
+    @Override
+    public DiskLunMap getDiskIdByLunId(String lunId) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("lun_id", lunId);
+
+        return getCallsHandler().executeRead("GetDiskLunMapByLunId", createEntityRowMapper(), parameterSource);
     }
 }

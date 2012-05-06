@@ -70,3 +70,19 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
+
+
+
+
+Create or replace FUNCTION GetDiskLunMapByLunId(v_lun_id VARCHAR(50))
+RETURNS SETOF disk_lun_map
+AS $procedure$
+BEGIN
+	RETURN QUERY
+    SELECT *
+    FROM   disk_lun_map
+    WHERE  lun_id = v_lun_id;
+END; $procedure$
+LANGUAGE plpgsql;
+
+

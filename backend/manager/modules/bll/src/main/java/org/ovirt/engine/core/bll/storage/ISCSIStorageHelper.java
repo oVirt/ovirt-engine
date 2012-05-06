@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll.storage;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -74,7 +73,6 @@ public class ISCSIStorageHelper extends StorageHelperBase {
             List<storage_server_connections> connections, String vgId, final String lunId) {
         // if we have lun id then filter by this lun
         // else get vg's luns from db
-        @SuppressWarnings("serial")
         List<String> lunsByVg =
                 lunId.isEmpty() ? LinqUtils.foreach(DbFacade.getInstance().getLunDAO().getAllForVolumeGroup(vgId),
                         new Function<LUNs, String>() {
@@ -82,11 +80,19 @@ public class ISCSIStorageHelper extends StorageHelperBase {
                             public String eval(LUNs a) {
                                 return a.getLUN_id();
                             }
-                        }) : new LinkedList<String>() {
-                    {
-                        add(lunId);
-                    }
-                };
+                        }) : null;
+        // if a luns were retrieved by vgId, they can belongs not only to storage but also to disks
+        // at that case they should left at db
+        List<String> lunsByVgWithNoDisks = new ArrayList<String>();
+        if (lunId.isEmpty()) {
+            for (String lunIdByVg : lunsByVg) {
+                if (DbFacade.getInstance().getDiskLunMapDao().getDiskIdByLunId(lunIdByVg) == null) {
+                    lunsByVgWithNoDisks.add(lunIdByVg);
+                }
+            }
+        } else {
+            lunsByVgWithNoDisks.add(lunId);
+        }
 
         List<storage_server_connections> toRemove =
                 new ArrayList<storage_server_connections>();
@@ -100,7 +106,7 @@ public class ISCSIStorageHelper extends StorageHelperBase {
                         }
                     });
 
-            if (0 < CollectionUtils.subtract(list, lunsByVg).size()) {
+            if (0 < CollectionUtils.subtract(list, lunsByVgWithNoDisks).size()) {
                 toRemove.add(connection);
             }
         }
@@ -181,12 +187,14 @@ public class ISCSIStorageHelper extends StorageHelperBase {
         final List<storage_server_connections> list = DbFacade.getInstance()
                 .getStorageServerConnectionDAO().getAllForVolumeGroup(storageDomain.getstorage());
         final List<LUNs> lunsList = DbFacade.getInstance().getLunDAO().getAllForVolumeGroup(storageDomain.getstorage());
-        if (!lunsList.isEmpty()) {
-            for (LUNs lun : lunsList) {
+        int numOfRemovedLuns = 0;
+        for (LUNs lun : lunsList) {
+            if (DbFacade.getInstance().getDiskLunMapDao().getDiskIdByLunId(lun.getLUN_id()) == null) {
                 DbFacade.getInstance().getLunDAO().remove(lun.getLUN_id());
+                numOfRemovedLuns++;
             }
         }
-        if (!list.isEmpty()) {
+        if (numOfRemovedLuns > 0) {
             for (storage_server_connections connection : FilterConnectionsUsedByOthers(list, storageDomain.getstorage())) {
                 DbFacade.getInstance().getStorageServerConnectionDAO().remove(connection.getid());
             }

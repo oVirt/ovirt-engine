@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.dao;
 
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.DiskLunMap;
 import org.ovirt.engine.core.common.businessentities.DiskLunMapId;
@@ -49,5 +51,11 @@ public class DiskLunMapDaoTest extends BaseGenericDaoTestCase<DiskLunMapId, Disk
     @Test(expected = UnsupportedOperationException.class)
     public void testUpdate() {
         super.testUpdate();
+    }
+
+    @Test
+    public void testGetDiskIdByLunId() {
+        assertEquals(dao.getDiskIdByLunId(EXISTING_DISK_LUN_MAP_ID.getLunId()),
+                new DiskLunMap(EXISTING_DISK_LUN_MAP_ID.getDiskId(), EXISTING_DISK_LUN_MAP_ID.getLunId()));
     }
 }
