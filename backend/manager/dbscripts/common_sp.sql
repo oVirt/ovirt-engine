@@ -345,3 +345,39 @@ insert into permissions(id,role_id,ad_element_id,object_id,object_type_id) selec
 END; $BODY$
 
 LANGUAGE plpgsql;
+
+-- This function splits a config value: given a config value with one row for 'general', it creates new options
+-- with the old value, for each version, except the newest version, which gets the input value
+CREATE OR REPLACE FUNCTION fn_db_split_config_value(v_option_name character varying, v_new_option_value character varying)
+  RETURNS void AS
+$BODY$
+declare
+v_old_value varchar(4000);
+v_cur cursor for select distinct version from vdc_options where version <> 'general' order by version;
+v_version varchar(40);
+v_index integer;
+v_count integer;
+begin
+    v_old_value := option_value from vdc_options where option_name = v_option_name and version = 'general';
+    if (v_old_value IS NOT NULL) then
+        begin
+            v_count := count(distinct version) from vdc_options where version <> 'general';
+            v_index := 1;
+	    open v_cur;
+	    loop
+	        fetch v_cur into v_version;
+	        exit when not found;
+	        if (v_index = v_count) then
+	            insert into vdc_options (option_name, option_value, version) values (v_option_name, v_new_option_value, v_version);
+	        else
+                    insert into vdc_options (option_name, option_value, version) values (v_option_name, v_old_value, v_version);
+	        end if;
+	        v_index := v_index +1;
+	    end loop;
+	    close v_cur;
+            delete from vdc_options where option_name = v_option_name and version = 'general';
+        end;
+    end if;
+END; $BODY$
+
+LANGUAGE plpgsql
