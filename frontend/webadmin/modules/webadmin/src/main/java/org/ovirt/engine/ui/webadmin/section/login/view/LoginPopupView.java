@@ -101,7 +101,8 @@ public class LoginPopupView extends AbstractLoginPopupView implements LoginPopup
         }
     }
 
-    void localize(ApplicationConstants constants) {
+     private void localize(ApplicationConstants constants) {
+        super.localize(constants);
         userNameEditor.setLabel(constants.loginFormUserNameLabel());
         passwordEditor.setLabel(constants.loginFormPasswordLabel());
         domainEditor.setLabel(constants.loginFormDomainLabel());
