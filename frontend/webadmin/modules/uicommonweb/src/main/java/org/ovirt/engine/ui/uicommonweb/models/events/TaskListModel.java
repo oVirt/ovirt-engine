@@ -300,7 +300,7 @@ public class TaskListModel extends SearchableListModel {
     public static String createCorrelationId(String actionDescription) {
         actionDescription = actionDescription.replace(' ', '_');
         Random rand = new Random();
-        String hashStr = rand.nextInt(9000000) + 999999 + ""; //$NON-NLS-1$
+        String hashStr = rand.nextInt(9000000) + 9999999 + ""; //$NON-NLS-1$
 
         String correlationId = TaskListModel._WEBADMIN_ + hashStr + "_" + actionDescription; //$NON-NLS-1$
         return correlationId;

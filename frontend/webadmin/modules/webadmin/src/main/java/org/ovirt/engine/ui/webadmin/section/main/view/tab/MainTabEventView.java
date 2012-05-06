@@ -65,11 +65,18 @@ public class MainTabEventView extends AbstractMainTabTableView<AuditLog, EventLi
         getTable().ensureColumnPresent(AdvancedViewColumns.logTypeColumn, constants.eventIdEvent(), advancedViewEnabled);
         getTable().ensureColumnPresent(AdvancedViewColumns.userColumn, constants.userEvent(), advancedViewEnabled);
         getTable().ensureColumnPresent(AdvancedViewColumns.hostColumn, constants.hostEvent(), advancedViewEnabled);
-        getTable().ensureColumnPresent(AdvancedViewColumns.virtualMachineColumn, constants.vmEvent(), advancedViewEnabled);
-        getTable().ensureColumnPresent(AdvancedViewColumns.templateColumn, constants.templateEvent(), advancedViewEnabled);
+        getTable().ensureColumnPresent(AdvancedViewColumns.virtualMachineColumn,
+                constants.vmEvent(),
+                advancedViewEnabled);
+        getTable().ensureColumnPresent(AdvancedViewColumns.templateColumn,
+                constants.templateEvent(),
+                advancedViewEnabled);
         getTable().ensureColumnPresent(AdvancedViewColumns.dataCenterColumn, constants.dcEvent(), advancedViewEnabled);
         getTable().ensureColumnPresent(AdvancedViewColumns.storageColumn, constants.storageEvent(), advancedViewEnabled);
         getTable().ensureColumnPresent(AdvancedViewColumns.clusterColumn, constants.clusterEvent(), advancedViewEnabled);
+        getTable().ensureColumnPresent(AdvancedViewColumns.corrIdColumn,
+                constants.eventCorrelationId(),
+                advancedViewEnabled);
     }
 
     void initTable() {
@@ -149,6 +156,13 @@ class AdvancedViewColumns {
         @Override
         public String getValue(AuditLog object) {
             return object.getvds_group_name();
+        }
+    };
+
+    public static final TextColumnWithTooltip<AuditLog> corrIdColumn = new TextColumnWithTooltip<AuditLog>() {
+        @Override
+        public String getValue(AuditLog object) {
+            return object.getCorrelationId();
         }
     };
 

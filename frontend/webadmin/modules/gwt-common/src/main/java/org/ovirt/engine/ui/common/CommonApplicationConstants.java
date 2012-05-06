@@ -463,6 +463,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Message")
     String messageEvent();
 
+    @DefaultStringValue("Correlation Id")
+    String correltaionIdEvent();
+
     // Snapshot
     @DefaultStringValue("Date")
     String dateSnapshot();

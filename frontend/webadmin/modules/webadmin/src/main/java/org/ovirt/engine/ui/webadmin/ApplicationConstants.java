@@ -1568,6 +1568,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Cluster")
     String clusterEvent();
 
+    @DefaultStringValue("Correlation Id")
+    String eventCorrelationId();
+
     // Host configure local storage
     @DefaultStringValue("Data Center")
     String dcLocalStorage();

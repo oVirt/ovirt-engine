@@ -19,6 +19,7 @@ public class TextBoxLabel extends TextBox {
     private boolean handleEmptyValue = false;
     private String unAvailablePropertyLabel = ""; //$NON-NLS-1$
     private boolean hasFocus = false;
+    private String tooltipCaption = null;
 
     public TextBoxLabel() {
         setReadOnly(true);
@@ -78,6 +79,9 @@ public class TextBoxLabel extends TextBox {
         final int selectionLength = getSelectionLength();
 
         super.setText(renderedText);
+        if (getTooltipCaption() != null) {
+            renderedText = getTooltipCaption() + ": " + renderedText; //$NON-NLS-1$
+        }
         setTitle(renderedText);
 
         if (hasFocus) {
@@ -99,6 +103,14 @@ public class TextBoxLabel extends TextBox {
     private String unEscapeRenderedText(String renderedText) {
         renderedText = renderedText.replace("&lt;", "<"); //$NON-NLS-1$ //$NON-NLS-2$
         return renderedText;
+    }
+
+    public String getTooltipCaption() {
+        return tooltipCaption;
+    }
+
+    public void setTooltipCaption(String tooltipCaption) {
+        this.tooltipCaption = tooltipCaption;
     }
 
 }

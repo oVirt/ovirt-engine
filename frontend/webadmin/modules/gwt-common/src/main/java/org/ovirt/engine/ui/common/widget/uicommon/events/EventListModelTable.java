@@ -47,6 +47,14 @@ public class EventListModelTable<T extends EventListModel> extends AbstractModel
             }
         };
         getTable().addColumn(messageColumn, constants.messageEvent());
+
+        TextColumnWithTooltip<AuditLog> correlationIdColumn = new TextColumnWithTooltip<AuditLog>() {
+            @Override
+            public String getValue(AuditLog object) {
+                return object.getCorrelationId();
+            }
+        };
+        getTable().addColumn(correlationIdColumn, constants.correltaionIdEvent(), "100px"); //$NON-NLS-1$
     }
 
 }

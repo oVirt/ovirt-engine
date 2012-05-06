@@ -141,6 +141,14 @@ public class EventListModel extends SearchableListModel
                 ArrayList<AuditLog> list =
                         (ArrayList<AuditLog>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
                 requestingData = false;
+                for (AuditLog auditLog : list) {
+                    //in case the corr_id is created in client,
+                    //remove unnecessary data (leave only the corr_id).
+                    if (auditLog.getCorrelationId() != null
+                            && auditLog.getCorrelationId().startsWith(TaskListModel._WEBADMIN_)) {
+                        auditLog.setCorrelationId(auditLog.getCorrelationId().split("_")[2]); //$NON-NLS-1$
+                    }
+                }
                 eventListModel.UpdateItems(list);
             }
         };
