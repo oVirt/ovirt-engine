@@ -64,11 +64,13 @@ import org.ovirt.engine.core.dao.StorageDomainDynamicDAO;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
 import org.ovirt.engine.core.dao.VmDAO;
 import org.ovirt.engine.core.dao.VmTemplateDAO;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ DbFacade.class, Backend.class, VmHandler.class, Config.class, VmTemplateHandler.class })
+@PowerMockIgnore("org.apache.log4j.*")
 public class AddVmCommandTest {
 
     private final int REQUIRED_DISK_SIZE_GB = 10;

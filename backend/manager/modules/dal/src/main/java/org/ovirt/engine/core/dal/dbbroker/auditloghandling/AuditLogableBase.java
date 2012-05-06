@@ -40,7 +40,6 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 public class AuditLogableBase extends TimeoutBase {
     private static final long serialVersionUID = -4764813076922800727L;
-    protected DbFacade dbFacade = DbFacade.getInstance();
     private NGuid mVmId = Guid.Empty;
     private IVdcUser mVdcUser;
     private Guid mUserId = Guid.Empty;
@@ -528,69 +527,73 @@ public class AuditLogableBase extends TimeoutBase {
 
     protected GlusterVolumeEntity getGlusterVolume() {
         if (glusterVolume == null && glusterVolumeId != null) {
-            glusterVolume = DbFacade.getInstance().getGlusterVolumeDao().getById(glusterVolumeId.getValue());
+            glusterVolume = getDbFacade().getGlusterVolumeDao().getById(glusterVolumeId.getValue());
         }
         return glusterVolume;
     }
 
     public StorageDomainDAO getStorageDomainDAO() {
-        return DbFacade.getInstance().getStorageDomainDAO();
+        return getDbFacade().getStorageDomainDAO();
     }
 
     public StoragePoolDAO getStoragePoolDAO() {
-        return DbFacade.getInstance().getStoragePoolDAO();
+        return getDbFacade().getStoragePoolDAO();
     }
 
     public VdsDAO getVdsDAO() {
-        return DbFacade.getInstance().getVdsDAO();
+        return getDbFacade().getVdsDAO();
     }
 
     public QuotaDAO getQuotaDAO() {
-        return DbFacade.getInstance().getQuotaDAO();
+        return getDbFacade().getQuotaDAO();
     }
 
     public VmTemplateDAO getVmTemplateDAO() {
-        return DbFacade.getInstance().getVmTemplateDAO();
+        return getDbFacade().getVmTemplateDAO();
     }
 
     protected VmDAO getVmDAO() {
-        return DbFacade.getInstance().getVmDAO();
+        return getDbFacade().getVmDAO();
     }
 
     public VmStaticDAO getVmStaticDAO() {
-        return DbFacade.getInstance().getVmStaticDAO();
+        return getDbFacade().getVmStaticDAO();
     }
 
     protected VmStatisticsDAO getVmStatisticsDAO() {
-        return DbFacade.getInstance().getVmStatisticsDAO();
+        return getDbFacade().getVmStatisticsDAO();
     }
 
     protected VdsGroupDAO getVdsGroupDAO() {
-        return DbFacade.getInstance().getVdsGroupDAO();
+        return getDbFacade().getVdsGroupDAO();
     }
 
     public RoleDAO getRoleDao() {
-        return DbFacade.getInstance().getRoleDAO();
+        return getDbFacade().getRoleDAO();
     }
 
     public PermissionDAO getPermissionDAO() {
-        return DbFacade.getInstance().getPermissionDAO();
+        return getDbFacade().getPermissionDAO();
     }
 
     public DbUserDAO getDbUserDAO() {
-        return DbFacade.getInstance().getDbUserDAO();
+        return getDbFacade().getDbUserDAO();
     }
 
     public AdGroupDAO getAdGroupDAO() {
-        return DbFacade.getInstance().getAdGroupDAO();
+        return getDbFacade().getAdGroupDAO();
     }
 
     protected VmNetworkInterfaceDAO getVmNetworkInterfaceDAO() {
-        return DbFacade.getInstance().getVmNetworkInterfaceDAO();
+        return getDbFacade().getVmNetworkInterfaceDAO();
     }
 
     protected NetworkClusterDAO getNetworkClusterDAO() {
-        return dbFacade.getNetworkClusterDAO();
+        return getDbFacade().getNetworkClusterDAO();
+    }
+
+    protected DbFacade getDbFacade() {
+        return DbFacade.getInstance();
     }
 
     private static Log log = LogFactory.getLog(AuditLogableBase.class);
