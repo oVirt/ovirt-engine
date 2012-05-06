@@ -125,7 +125,10 @@ run_pre_upgrade() {
        echo "Running pre-upgrade script $file ..."
        execute_file $file ${DATABASE} ${SERVERNAME} ${PORT} > /dev/null
     done
-    delete_async_tasks_and_compensation_data
+    if [[ -n "${CLEAN_TASKS}" ]]; then
+       echo "Cleaning tasks metadata..."
+       delete_async_tasks_and_compensation_data
+    fi
 }
 
 run_post_upgrade() {

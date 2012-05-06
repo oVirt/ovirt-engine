@@ -33,7 +33,7 @@ fi
 set_defaults
 
 usage() {
-    printf "Usage: ${ME} [-h] [-s SERVERNAME] [-p PORT] [-d DATABASE] [-u USERNAME] [-f VERSION] [-v]\n"
+    printf "Usage: ${ME} [-h] [-s SERVERNAME] [-p PORT] [-d DATABASE] [-u USERNAME] [-f VERSION] [-c] [-v]\n"
     printf "\n"
     printf "\t-s SERVERNAME - The database servername for the database (def. ${SERVERNAME})\n"
     printf "\t-p PORT       - The database port for the database       (def. ${PORT})\n"
@@ -41,6 +41,7 @@ usage() {
     printf "\t-u USERNAME   - The username for the database.\n         (def. ${USERNAME})\n"
     printf "\t-l LOGFILE    - The logfile for capturing output         (def. ${LOGFILE}\n"
     printf "\t-f VERSION    - Force upgrading from specified version   (def. ${VERSION}\n"
+    printf "\t-c            - Force cleaning tasks and compensation info.\n"
     printf "\t-v            - Turn on verbosity (WARNING: lots of output)\n"
     printf "\t-h            - This help text.\n"
     printf "\n"
@@ -54,7 +55,7 @@ DEBUG () {
     fi
 }
 
-while getopts hs:d:u:p:l:f:v option; do
+while getopts hs:d:u:p:l:f:cv option; do
     case $option in
         s) SERVERNAME=$OPTARG;;
         p) PORT=$OPTARG;;
@@ -62,6 +63,7 @@ while getopts hs:d:u:p:l:f:v option; do
         u) USERNAME=$OPTARG;;
         l) LOGFILE=$OPTARG;;
         f) VERSION=$OPTARG;;
+        c) CLEAN_TASKS=true;;
         v) VERBOSE=true;;
         h) ret=0 && usage;;
        \?) ret=1 && usage;;
