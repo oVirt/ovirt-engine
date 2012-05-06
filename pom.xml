@@ -49,6 +49,7 @@
     <gwt.version>2.2.0</gwt.version>
     <gwt.plugin.version>1.3.2.google</gwt.plugin.version>
     <findbugs.version>2.3.3</findbugs.version>
+    <test-jar.plugin.version>2.2</test-jar.plugin.version>
     <easymock.version>3.0</easymock.version>
     <powermock.version>1.4.10</powermock.version>
     <powermock-api-mockito.version>1.4.10</powermock-api-mockito.version>
@@ -422,6 +423,19 @@
           <artifactId>gwt-maven-plugin</artifactId>
           <version>${gwt.plugin.version}</version>
         </plugin>
+        <!-- Create a test jar, so other modules can depend on the test utilities -->
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-jar-plugin</artifactId>
+          <version>${test-jar.plugin.version}</version>
+          <executions>
+            <execution>
+              <goals>
+                <goal>test-jar</goal>
+              </goals>
+            </execution>
+           </executions>
+        </plugin>
       </plugins>
     </pluginManagement>
     <resources>
@@ -454,8 +468,8 @@
               <!-- Optional derectory to put findbugs xdoc xml report -->
               <xmlOutputDirectory>target/site</xmlOutputDirectory>
             </configuration>
-          </plugin>
-        </plugins>
+         </plugin>
+       </plugins>
       </reporting>
     </profile>
     <profile>

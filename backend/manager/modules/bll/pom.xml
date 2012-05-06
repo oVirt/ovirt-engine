@@ -40,6 +40,14 @@
 
     <dependency>
       <groupId>${engine.groupId}</groupId>
+      <artifactId>utils</artifactId>
+      <version>${engine.version}</version>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>${engine.groupId}</groupId>
       <artifactId>dal</artifactId>
       <version>${engine.version}</version>
     </dependency>
