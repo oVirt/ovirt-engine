@@ -10,6 +10,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
+import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.CreateAllSnapshotsFromVmParameters;
@@ -239,6 +240,8 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
 
     @Override
     protected void ExecuteVmCommand() {
+        // Before running the VM we update its devices, as they may need to be changed due to configuration option change
+        VmDeviceUtils.updateVmDevices(getVm().getStaticData());
         setActionReturnValue(VMStatus.Down);
         if (InitVm()) {
             if (getVm().getstatus() == VMStatus.Paused) { // resume

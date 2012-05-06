@@ -211,4 +211,9 @@ public class VmOldInfoBuilder extends VmInfoBuilderBase {
     protected void buildUnmanagedDevices() {
         // Not supported in old code
     }
+
+    @Override
+    protected void buildVmUsbDevices() {
+        // Not supported in old code
+    }
 }

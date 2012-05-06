@@ -20,7 +20,7 @@ import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmType;
-import org.ovirt.engine.core.common.utils.VmDeviceType;
+import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.backendcompat.XmlDocument;
@@ -129,8 +129,9 @@ public class OvfVmReader extends OvfReader {
                 if (node.SelectSingleNode(OvfProperties.VMD_TYPE, _xmlNS) != null
                         && !StringHelper.isNullOrEmpty(node.SelectSingleNode(OvfProperties.VMD_TYPE, _xmlNS).InnerText)) {
                     String type = String.valueOf(node.SelectSingleNode(OvfProperties.VMD_TYPE, _xmlNS).InnerText);
-                    if (VmDeviceType.SOUND.getName().equals(type)) {
-                        // Sound cards are treated as managed devices but still have the OTHER OVF ResourceType
+                    String device = String.valueOf(node.SelectSingleNode(OvfProperties.VMD_DEVICE, _xmlNS).InnerText);
+                    // special devices are treated as managed devices but still have the OTHER OVF ResourceType
+                    if (VmDeviceCommonUtils.isSpecialDevice(device, type)) {
                         readVmDevice(node, _vm.getStaticData(), Guid.NewGuid(), Boolean.TRUE);
                     } else {
                         readVmDevice(node, _vm.getStaticData(), Guid.NewGuid(), Boolean.FALSE);

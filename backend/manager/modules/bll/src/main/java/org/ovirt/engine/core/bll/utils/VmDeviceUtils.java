@@ -11,9 +11,11 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.VmHandler;
+import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.businessentities.BaseDisk;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -22,6 +24,7 @@ import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
@@ -33,6 +36,12 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.VmInfoBuilderBase;
 public class VmDeviceUtils {
     private static VmDeviceDAO dao = DbFacade.getInstance().getVmDeviceDAO();
     private final static String VRAM = "vram";
+    private final static String EHCI_MODEL = "ich9-ehci";
+    private final static String UHCI_MODEL = "ich9-uhci";
+    private final static int SLOTS_PER_CONTROLLER = 6;
+    private final static int COMPANION_USB_CONTROLLERS = 3;
+
+
     /**
      * Update the vm devices according to changes made in vm static for existing VM
      */
@@ -48,6 +57,17 @@ public class VmDeviceUtils {
                     .getnum_of_monitors()) {
                 updateNumOfMonitorsInVmDevice(oldVmBase, newVmBase);
             }
+            updateUSBSlots(oldVmBase, newVmBase);
+        }
+    }
+
+    /**
+     * Update the vm devices according to changes made configuration
+     */
+    public static <T extends VmBase> void updateVmDevices(T entity) {
+        VmBase vmBase = getBaseObject(entity, entity.getId());
+        if (vmBase != null) {
+            updateUSBSlots(vmBase, vmBase);
         }
     }
 
@@ -61,6 +81,7 @@ public class VmDeviceUtils {
             updateCdInVmDevice(newVmBase);
             updateBootOrderInVmDevice(newVmBase);
             updateNumOfMonitorsInVmDevice(null, newVmBase);
+            updateUSBSlots(null, newVmBase);
         }
     }
 
@@ -99,6 +120,8 @@ public class VmDeviceUtils {
                     setCdPath(specParams, "", isoPath);
                     addManagedDevice(new VmDeviceId(Guid.NewGuid(),dstId) , VmDeviceType.DISK, VmDeviceType.CDROM, specParams, true, true);
                 }
+                // updating USB slots
+                updateUSBSlots(null, vmBase);
                 break; // skip other Blank template devices
             }
             if (VmDeviceType.DISK.getName().equals(device.getType())
@@ -317,6 +340,61 @@ public class VmDeviceUtils {
     }
 
     /**
+     * Updates new/existing VM USB slots in vm device
+     * Currently assuming the number of slots is between 0 and SLOTS_PER_CONTROLLER, i.e., no more than one controller
+     * @param oldVmBase
+     * @param newStatic
+     */
+    private static void updateUSBSlots(VmBase oldVm, VmBase newVm) {
+        UsbPolicy oldUsbPolicy = UsbPolicy.DISABLED;
+        UsbPolicy newUsbPolicy = newVm.getusb_policy();
+
+        if (oldVm != null) {
+            oldUsbPolicy = oldVm.getusb_policy();
+        }
+
+        final int usbSlots = Config.<Integer> GetValue(ConfigValues.NumberOfUSBSlots);
+
+        // We add USB slots in case support doesn't exist in the oldVm configuration, but exists in the new one
+        if (!oldUsbPolicy.equals(UsbPolicy.ENABLED_NATIVE) && newUsbPolicy.equals(UsbPolicy.ENABLED_NATIVE)) {
+            if (usbSlots > 0) {
+                addUsbControllers(newVm, getNeededNumberOfUsbControllers(usbSlots));
+                addUsbSlots(newVm, usbSlots);
+            }
+        }
+        // Remove USB slots and controllers
+        else if (oldUsbPolicy.equals(UsbPolicy.ENABLED_NATIVE) && !newUsbPolicy.equals(UsbPolicy.ENABLED_NATIVE)) {
+            removeUsbControllers(newVm);
+            removeUsbSlots(newVm);
+        } else if (newUsbPolicy.equals(UsbPolicy.ENABLED_NATIVE)) {
+            final int currentNumberOfSlots = getUsbRedirectDevices(oldVm).size();
+
+            if (currentNumberOfSlots < usbSlots) {
+                // Add slots
+                if (currentNumberOfSlots == 0) {
+                    addUsbControllers(newVm, getNeededNumberOfUsbControllers(usbSlots));
+                }
+                addUsbSlots(newVm, usbSlots - currentNumberOfSlots);
+            } else if (currentNumberOfSlots > usbSlots) {
+                // Remove slots
+                removeUsbSlots(newVm, currentNumberOfSlots - usbSlots);
+                // Remove controllers
+                if (usbSlots == 0) {
+                    removeUsbControllers(newVm);
+                }
+            }
+        }
+    }
+
+    private static int getNeededNumberOfUsbControllers(int numberOfSlots) {
+        int numOfcontrollers = numberOfSlots / SLOTS_PER_CONTROLLER;
+        // Need to add another controller in case mod result is not 0
+        if (numberOfSlots % SLOTS_PER_CONTROLLER != 0) {
+            numOfcontrollers++;
+        }
+        return numOfcontrollers;
+    }
+    /**
      * Returns a VmBase object for the given entity and passed id.
      * @param entity
      *            the entity, may be VmStatic or VmTemplate
@@ -443,6 +521,85 @@ public class VmDeviceUtils {
         return specParams;
     }
 
+    private static void addUsbSlots(VmBase vm, int numOfSlots) {
+        for (int index = 1; index <= numOfSlots; index++) {
+            VmDeviceUtils.addManagedDevice(new VmDeviceId(Guid.NewGuid(), vm.getId()),
+                    VmDeviceType.REDIR,
+                    VmDeviceType.SPICEVMC,
+                    getUsbSlotSpecParams(),
+                    true,
+                    false);
+        }
+    }
+
+    private static void addUsbControllers(VmBase vm, int numOfControllers) {
+        // For each controller we need to create one EHCI and companion UHCI controllers
+        for (int index = 0; index < numOfControllers; index++) {
+            VmDeviceUtils.addManagedDevice(new VmDeviceId(Guid.NewGuid(), vm.getId()),
+                    VmDeviceType.CONTROLLER,
+                    VmDeviceType.USB,
+                    getUsbControllerSpecParams(EHCI_MODEL, 1, index),
+                    true,
+                    false);
+            for (int companionIndex = 1; companionIndex <= COMPANION_USB_CONTROLLERS; companionIndex++) {
+                VmDeviceUtils.addManagedDevice(new VmDeviceId(Guid.NewGuid(), vm.getId()),
+                        VmDeviceType.CONTROLLER,
+                        VmDeviceType.USB,
+                        getUsbControllerSpecParams(UHCI_MODEL, companionIndex, index),
+                        true,
+                        false);
+            }
+        }
+    }
+
+    /**
+     * gets USB controller
+     *
+     * @return
+     */
+    private static Map<String, Object> getUsbControllerSpecParams(String model, int controllerNumber, int index) {
+        Map<String, Object> specParams = new HashMap<String, Object>();
+        specParams.put(VdsProperties.Model, model + controllerNumber);
+        specParams.put(VdsProperties.Index, Integer.toString(index));
+        return specParams;
+    }
+
+    /**
+     * gets USB slot specParams
+     *
+     * @return
+     */
+    private static Map<String, Object> getUsbSlotSpecParams() {
+        Map<String, Object> specParams = new HashMap<String, Object>();
+        return specParams;
+    }
+
+    private static List<VmDevice> getUsbRedirectDevices(VmBase vm) {
+        List<VmDevice> list = dao.getVmDeviceByVmIdTypeAndDevice(vm.getId(),VmDeviceType.REDIR.getName(), VmDeviceType.SPICEVMC.getName());
+
+        return list;
+    }
+    private static void removeUsbSlots(VmBase vm) {
+        List<VmDevice> list = getUsbRedirectDevices(vm);
+        for(VmDevice vmDevice : list) {
+            dao.remove(vmDevice.getId());
+        }
+    }
+
+    private static void removeUsbSlots(VmBase vm, int numberOfSlotsToRemove) {
+        List<VmDevice> list = getUsbRedirectDevices(vm);
+        for (int index = 0; index < numberOfSlotsToRemove; index++) {
+            dao.remove(list.get(index).getId());
+        }
+    }
+
+    private static void removeUsbControllers(VmBase vm) {
+        List<VmDevice> list = dao.getVmDeviceByVmIdTypeAndDevice(vm.getId(), VmDeviceType.CONTROLLER.getName(), VmDeviceType.USB.getName());
+        for(VmDevice vmDevice : list) {
+            dao.remove(vmDevice.getId());
+        }
+    }
+
     /**
      * adds an empty CD in the case that we have no CDROM inside the device
      * @param dstId
@@ -455,4 +612,6 @@ public class VmDeviceUtils {
                 true,
                 true);
     }
+
 }
+

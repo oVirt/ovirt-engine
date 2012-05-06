@@ -61,4 +61,7 @@ public class XmlNode {
         }
     }
 
+    public NodeList GetChildNodes() {
+        return node.getChildNodes();
+    }
 }

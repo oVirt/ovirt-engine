@@ -213,6 +213,10 @@ public final class VdsProperties {
     public static final String Path = "path";
     public static final String Ide = "ide";
     public static final String Fdc = "fdc";
+    // USB controller
+    public static final String Model = "model";
+    // USB slot
+    public static final String Bus = "bus";
 
     public static final String clientIp = "clientIp";
     public static final String hash = "hash";

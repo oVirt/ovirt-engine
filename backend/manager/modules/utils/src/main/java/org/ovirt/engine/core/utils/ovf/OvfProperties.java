@@ -13,4 +13,5 @@ public class OvfProperties {
     final static String VMD_BOOT_ORDER = "BootOrder";
     final static String VMD_IS_PLUGGED = "IsPlugged";
     final static String VMD_IS_READONLY = "IsReadOnly";
+    final static String VMD_SPEC_PARAMS = "SpecParams";
 }

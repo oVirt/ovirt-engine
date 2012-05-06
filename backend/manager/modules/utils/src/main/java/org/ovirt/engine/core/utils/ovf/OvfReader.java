@@ -1,6 +1,9 @@
 package org.ovirt.engine.core.utils.ovf;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -22,6 +25,8 @@ import org.ovirt.engine.core.compat.backendcompat.XmlNode;
 import org.ovirt.engine.core.compat.backendcompat.XmlNodeList;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 public abstract class OvfReader implements IOvfBuilder {
     protected java.util.ArrayList<DiskImage> _images;
@@ -177,6 +182,14 @@ public abstract class OvfReader implements IOvfBuilder {
             vmDevice.setAddress(String.valueOf(node.SelectSingleNode(OvfProperties.VMD_ADDRESS, _xmlNS).InnerText));
         } else {
             vmDevice.setAddress("");
+        }
+        XmlNode specParamsNode = node.SelectSingleNode(OvfProperties.VMD_SPEC_PARAMS, _xmlNS);
+        if (specParamsNode != null
+                && !StringHelper.isNullOrEmpty(specParamsNode.InnerText)) {
+            vmDevice.setSpecParams(getMapNode(specParamsNode));
+        } else {
+            // Empty map
+            vmDevice.setSpecParams(Collections.<String,Object>emptyMap());
         }
         if (node.SelectSingleNode(OvfProperties.VMD_TYPE, _xmlNS) != null
                 && !StringHelper.isNullOrEmpty(node.SelectSingleNode(OvfProperties.VMD_TYPE, _xmlNS).InnerText)) {
@@ -353,5 +366,30 @@ public abstract class OvfReader implements IOvfBuilder {
                 vmDevice.setDevice(VmDeviceType.getoVirtDevice(resourceType).getName());
             }
         }
+    }
+
+    private static Map<String,Object> getMapNode(XmlNode node) {
+        Map<String,Object> returnValue = new HashMap<String,Object>();
+
+        NodeList list = node.GetChildNodes();
+        for (int index = 0; index < list.getLength(); ++index) {
+            Node currNode = list.item(index);
+            short nodeType = currNode.getNodeType();
+            if (nodeType == Node.ELEMENT_NODE) {
+                NodeList childNodes = currNode.getChildNodes();
+                // If the element node has only one child, then it contains the value
+                if (childNodes.getLength() == 1) {
+                    Node valueNode = childNodes.item(0);
+                    if (valueNode.getNodeType() == Node.TEXT_NODE) {
+                        returnValue.put(currNode.getNodeName(), valueNode.getNodeValue());
+                    }
+                } else if (childNodes.getLength() > 1){
+                    // In this case, we have a nested map, so we parse it
+                    returnValue.put(currNode.getNodeName(), getMapNode(new XmlNode(currNode)));
+                }
+            }
+        }
+
+        return returnValue;
     }
 }

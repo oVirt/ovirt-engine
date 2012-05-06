@@ -12,6 +12,7 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Encoding;
 import org.ovirt.engine.core.compat.Formatting;
@@ -199,10 +200,10 @@ public abstract class OvfWriter implements IOvfBuilder {
 
     protected void writeOtherDevices(VmBase vmBase, XmlTextWriter write) {
         List<VmDevice> devices = vmBase.getUnmanagedDeviceList();
-        // sound cards are treated as managed devices but are exported using the OTHER OVF ResourceType
+
         Collection<VmDevice> managedDevices = vmBase.getManagedVmDeviceMap().values();
         for (VmDevice device : managedDevices) {
-            if (VmDeviceType.SOUND.getName().equals(device.getType())) {
+            if (VmDeviceCommonUtils.isSpecialDevice(device.getDevice(), device.getType())) {
                 devices.add(device);
             }
         }
@@ -311,5 +312,10 @@ public abstract class OvfWriter implements IOvfBuilder {
         _writer.WriteStartElement(OvfProperties.VMD_IS_READONLY);
         _writer.WriteRaw(String.valueOf(vmDevice.getIsReadOnly()));
         _writer.WriteEndElement();
+        if (vmDevice.getSpecParams() != null && vmDevice.getSpecParams().size() != 0) {
+            _writer.WriteStartElement(OvfProperties.VMD_SPEC_PARAMS);
+            _writer.WriteMap(vmDevice.getSpecParams());
+            _writer.WriteEndElement();
+        }
     }
 }

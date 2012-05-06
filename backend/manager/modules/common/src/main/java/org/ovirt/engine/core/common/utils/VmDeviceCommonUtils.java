@@ -272,4 +272,14 @@ public class VmDeviceCommonUtils {
         sb.append(" ");
         return sb.toString();
     }
+
+    /**
+     * is special device - device which is managed, but contains the general properties
+     */
+    public static boolean isSpecialDevice(String device, String type) {
+        return (VmDeviceType.SOUND.getName().equals(type) ||
+                VmDeviceType.USB.getName().equals(device) ||
+                (VmDeviceType.SPICEVMC.getName().equals(device) && VmDeviceType.REDIR.getName().equals(type)));
+    }
+
 }

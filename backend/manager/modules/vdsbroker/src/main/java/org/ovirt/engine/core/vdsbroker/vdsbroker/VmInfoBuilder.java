@@ -5,6 +5,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import org.apache.commons.codec.binary.Base64;
 import org.ovirt.engine.core.common.businessentities.Disk;
@@ -33,7 +35,10 @@ import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStruct;
 public class VmInfoBuilder extends VmInfoBuilderBase {
 
     private static final String SYSPREP_FILE_NAME = "sysprep.inf";
-    private final String DEVICES = "devices";
+    private static final String DEVICES = "devices";
+    private static final String USB_BUS = "usb";
+    private final static String FIRST_MASTER_MODEL = "ich9-ehci1";
+
     private final List<XmlRpcStruct> devices;
     private List<VmDevice> managedDevices = null;
     private boolean hasNonDefaultBootOrder;
@@ -494,6 +499,73 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         HashMap<String, Object> specParams = new HashMap<String, Object>();
         specParams.put("vram", VmDeviceCommonUtils.HIGH_VIDEO_MEM);
         return specParams;
+    }
+
+    private void buildVmUsbControllers() {
+        List<VmDevice> vmDevices =
+                DbFacade.getInstance()
+                        .getVmDeviceDAO()
+                        .getVmDeviceByVmIdTypeAndDevice(vm.getId(),VmDeviceType.CONTROLLER.getName(), VmDeviceType.USB.getName());
+        for (VmDevice vmDevice : vmDevices) {
+            XmlRpcStruct struct = new XmlRpcStruct();
+            struct.add(VdsProperties.Type, vmDevice.getType());
+            struct.add(VdsProperties.Device, vmDevice.getDevice());
+            setVdsPropertiesFromSpecParams(vmDevice.getSpecParams(), struct);
+            struct.add(VdsProperties.SpecParams, new HashMap<String,Object>());
+            struct.add(VdsProperties.DeviceId, String.valueOf(vmDevice.getId().getDeviceId()));
+            addAddress(vmDevice, struct);
+            String model = (String) struct.getItem(VdsProperties.Model);
+
+            // This is a workaround until libvirt will fix the requirement to order these controllers
+            if (isFirstMasterController(model)) {
+                devices.add(0, struct);
+            } else {
+                devices.add(struct);
+            }
+        }
+    }
+
+    private void buildVmUsbSlots() {
+        List<VmDevice> vmDevices =
+            DbFacade.getInstance()
+                    .getVmDeviceDAO()
+                    .getVmDeviceByVmIdTypeAndDevice(vm.getId(),VmDeviceType.REDIR.getName(), VmDeviceType.SPICEVMC.getName());
+        for (VmDevice vmDevice : vmDevices) {
+            XmlRpcStruct struct = new XmlRpcStruct();
+            struct.add(VdsProperties.Type, vmDevice.getType());
+            struct.add(VdsProperties.Device, vmDevice.getDevice());
+            struct.add(VdsProperties.Bus, USB_BUS);
+            struct.add(VdsProperties.SpecParams, vmDevice.getSpecParams());
+            struct.add(VdsProperties.DeviceId, String.valueOf(vmDevice.getId().getDeviceId()));
+            addAddress(vmDevice, struct);
+            devices.add(struct);
+        }
+    }
+
+    @Override
+    protected void buildVmUsbDevices() {
+        buildVmUsbControllers();
+        buildVmUsbSlots();
+    }
+
+    private void setVdsPropertiesFromSpecParams(Map<String,Object> specParams, XmlRpcStruct struct) {
+        Set<Entry<String, Object>> values = specParams.entrySet();
+        for (Entry<String, Object> currEntry : values) {
+            if (currEntry.getValue() instanceof String) {
+                struct.add(currEntry.getKey(), (String)currEntry.getValue());
+            } else if (currEntry.getValue() instanceof Map){
+                struct.add(currEntry.getKey(), (Map)currEntry.getValue());
+            }
+        }
+    }
+
+    /*
+     * This method returns true if it is the first master model
+     * It is used due to the requirement to send this device before the other controllers.
+     * There is an open bug on libvirt on that. Until then we make sure it is passed first.
+     */
+    private boolean isFirstMasterController(String model) {
+        return model.equalsIgnoreCase(FIRST_MASTER_MODEL);
     }
 
 }

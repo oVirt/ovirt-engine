@@ -1,6 +1,8 @@
 package org.ovirt.engine.core.compat.backendcompat;
 
 import java.io.FileOutputStream;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -50,6 +52,24 @@ public class XmlTextWriter {
             writer.writeEndElement();
         } catch (XMLStreamException e) {
             throw new RuntimeException("Failed to write end element", e);
+        }
+    }
+
+    public void WriteMap(Map<String,Object> map) {
+        if (map != null) {
+            for (Entry<String,Object> param : map.entrySet()) {
+                WriteStartElement(param.getKey());
+
+                Object value = param.getValue();
+
+                if (value instanceof String) {
+                    WriteRaw((String) value);
+                } else if (value instanceof Map) {
+                    WriteMap((Map<String,Object>) value);
+                }
+
+                WriteEndElement();
+            }
         }
     }
 
