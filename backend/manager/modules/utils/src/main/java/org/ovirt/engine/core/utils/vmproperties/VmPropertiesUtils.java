@@ -359,7 +359,8 @@ public class VmPropertiesUtils {
                     errorsSet.add(new ValidationError(ValidationFailureReason.DUPLICATE_KEY, key));
                     continue;
                 }
-                if (!predefinedProperties.get(version).containsKey(key) && !userdefinedProperties.containsKey(key)) {
+                if (!keyExistsInVersion(predefinedProperties, version, key)
+                        && !keyExistsInVersion(userdefinedProperties, version, key)) {
                     errorsSet.add(new ValidationError(ValidationFailureReason.KEY_DOES_NOT_EXIST, key));
                     continue;
                 }
@@ -373,6 +374,10 @@ public class VmPropertiesUtils {
         }
         results.addAll(errorsSet);
         return results;
+    }
+
+    protected boolean keyExistsInVersion(Map<Version, Map<String, Pattern>> propertiesMap, Version version, String key) {
+        return propertiesMap.get(version).containsKey(key);
     }
 
     private static String vmPropertiesToString(Map<String, String> propertiesMap) {
