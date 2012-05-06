@@ -77,21 +77,25 @@ public abstract class StopVmCommandBase<T extends VmOperationParameterBase> exte
                 || !StringHelper.isNullOrEmpty(getVm().gethibernation_vol_handle())) {
             setSuspendedVm(true);
             setSucceeded(StopSuspendedVm());
-            if (getSucceeded() && getVm().getis_stateless()) {
-                // remove all unmanaged devices of a stateless VM
-                List<VmDevice> vmDevices =
-                    DbFacade.getInstance()
-                            .getVmDeviceDAO()
-                            .getUnmanagedDevicesByVmId(getVm().getId());
-                for (VmDevice device : vmDevices) {
-                    // do not remoce device if appears in white list
-                    if (! VmDeviceCommonUtils.isInWhiteList(device.getType(), device.getDevice())) {
-                        DbFacade.getInstance().getVmDeviceDAO().remove(device.getId());
-                    }
-                }
-            }
         } else {
             super.ExecuteVmCommand();
+        }
+        removeStatelessVmUnmanagedDevices();
+    }
+
+    private void removeStatelessVmUnmanagedDevices() {
+        if (getSucceeded() && getVm().getis_stateless()) {
+            // remove all unmanaged devices of a stateless VM
+            List<VmDevice> vmDevices =
+                DbFacade.getInstance()
+                        .getVmDeviceDAO()
+                        .getUnmanagedDevicesByVmId(getVm().getId());
+            for (VmDevice device : vmDevices) {
+                // do not remove device if appears in white list
+                if (! VmDeviceCommonUtils.isInWhiteList(device.getType(), device.getDevice())) {
+                    DbFacade.getInstance().getVmDeviceDAO().remove(device.getId());
+                }
+            }
         }
     }
 
