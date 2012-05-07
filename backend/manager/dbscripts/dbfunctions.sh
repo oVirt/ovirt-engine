@@ -88,7 +88,6 @@ execute_file "common_sp.sql" ${DATABASE} ${SERVERNAME} ${PORT} > /dev/null
     execute_file "create_functions.sql" ${DATABASE} ${SERVERNAME} ${PORT} > /dev/null
 }
 
-
 #refreshes views
 refresh_views() {
     printf "Creating views...\n"
@@ -150,8 +149,14 @@ get_current_version() {
                     psql -U ${USERNAME} --pset=tuples_only=on ${DATABASE} -h ${SERVERNAME} -p ${PORT}
 }
 
+get_installed_version() {
+    local cheksum=${1}
+    echo "select version from schema_version where checksum = '${cheksum}' and state = 'INSTALLED';" |
+                    psql -U ${USERNAME} --pset=tuples_only=on ${DATABASE} -h ${SERVERNAME} -p ${PORT}
+}
+
 get_last_installed_id() {
-    echo "select max(id) from schema_version where state = 'INSTALLED'" | psql -U ${USERNAME} --pset=tuples_only=on ${DATABASE} -h ${SERVERNAME} -p ${PORT}
+    echo "select max(id) from schema_version where state in ('INSTALLED','SKIPPED')" | psql -U ${USERNAME} --pset=tuples_only=on ${DATABASE} -h ${SERVERNAME} -p ${PORT}
 }
 set_last_version() {
     id=$(get_last_installed_id)
@@ -196,6 +201,7 @@ run_upgrade_files() {
     res=$(find upgrade/ -name "*.sql" | wc -l)
     if [ $res -gt 0 ]; then
         state="FAILED"
+        comment=""
         updated=0
         validate_version_uniqueness
         is_view_or_sp_changed
@@ -229,20 +235,31 @@ run_upgrade_files() {
                     exit 1
                     fi
                 fi
-                echo "Running upgrade script $file "
-                execute_file $file ${DATABASE} ${SERVERNAME} ${PORT} 1 > /dev/null
-                code=$?
-                if [ $code -eq 0 ]; then
-                    state="INSTALLED"
+                # check if script was already installed with other version name.
+                installed_version=$(get_installed_version $checksum)
+                if [[ -n "${installed_version}" ]]; then
+                    echo "Skipping upgrade script $file, already installed by ${installed_version}"
+                    state="SKIPPED"
                     after=$(get_db_time)
                     last=$xver
+                    comment="Installed already by ${installed_version}"
                 else
-                    set_last_version
-                    exit $code
+                    echo "Running upgrade script $file "
+                    execute_file $file ${DATABASE} ${SERVERNAME} ${PORT} 1 > /dev/null
+                    code=$?
+                    if [ $code -eq 0 ]; then
+                        state="INSTALLED"
+                        after=$(get_db_time)
+                        last=$xver
+                        comment=""
+                    else
+                        set_last_version
+                        exit $code
+                    fi
                 fi
-                CMD="insert into schema_version(version,script,checksum,installed_by,started_at,ended_at,state,current)
+                CMD="insert into schema_version(version,script,checksum,installed_by,started_at,ended_at,state,current,comment)
                      values (trim('$ver'),'$file','$checksum','${USERNAME}',
-                     cast(trim('$before') as timestamp),cast(trim('$after') as timestamp),'$state',false);"
+                     cast(trim('$before') as timestamp),cast(trim('$after') as timestamp),'$state',false,'$comment');"
                 execute_command "${CMD}" ${DATABASE} ${SERVERNAME} ${PORT} > /dev/null
             fi
         done
