@@ -33,7 +33,6 @@ import org.ovirt.engine.core.common.errors.SearchEngineIllegalCharacterException
 import org.ovirt.engine.core.common.errors.SqlInjectionException;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.SearchReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.utils.ListUtils;
 import org.ovirt.engine.core.common.utils.ListUtils.Filter;
 import org.ovirt.engine.core.compat.DateTime;
@@ -51,6 +50,11 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
 
     public SearchQuery(P parameters) {
         super(parameters);
+    }
+
+    @Override
+    protected SearchReturnValue createReturnValue() {
+        return new SearchReturnValue();
     }
 
     private SearchReturnValue getSearchReturnValue() {

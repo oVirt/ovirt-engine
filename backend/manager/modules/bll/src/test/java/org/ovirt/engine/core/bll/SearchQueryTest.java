@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.bll;
 
-import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertTrue;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.spy;
 import static org.powermock.api.mockito.PowerMockito.when;
@@ -412,5 +412,4 @@ public class SearchQueryTest {
         searchQuery.executeQueryCommand();
         assertTrue(quotaResultList == searchQuery.getQueryReturnValue().getReturnValue());
     }
-
 }

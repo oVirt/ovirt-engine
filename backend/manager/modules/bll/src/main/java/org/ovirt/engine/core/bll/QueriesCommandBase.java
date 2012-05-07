@@ -9,8 +9,6 @@ import javax.validation.Validator;
 import org.ovirt.engine.core.bll.session.SessionDataContainer;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.interfaces.IVdcUser;
-import org.ovirt.engine.core.common.queries.GetAllVmSnapshotsByDriveQueryReturnValue;
-import org.ovirt.engine.core.common.queries.SearchReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -29,18 +27,9 @@ public abstract class QueriesCommandBase<P extends VdcQueryParametersBase> exten
 
     /**
      * Factory to determine the type of the ReturnValue field
-     *
-     * @return
      */
-    protected VdcQueryReturnValue CreateReturnValue() {
-        if (getClass().getName().endsWith("GetAllVmSnapshotsByDriveQuery")) {
-            return new GetAllVmSnapshotsByDriveQueryReturnValue();
-        }
-        else if (getClass().getName().endsWith("SearchQuery")) {
-            return new SearchReturnValue();
-        } else {
-            return new VdcQueryReturnValue();
-        }
+    protected VdcQueryReturnValue createReturnValue() {
+        return new VdcQueryReturnValue();
     }
 
     // get correct return value type
@@ -52,7 +41,7 @@ public abstract class QueriesCommandBase<P extends VdcQueryParametersBase> exten
 
     public QueriesCommandBase(P parameters) {
         this.parameters = parameters;
-        returnValue = CreateReturnValue();
+        returnValue = createReturnValue();
         queryType = initQueryType();
         user = initUser();
     }

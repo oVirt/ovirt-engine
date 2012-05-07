@@ -22,6 +22,11 @@ public class GetAllVmSnapshotsByDriveQuery<P extends GetAllVmSnapshotsByDrivePar
     }
 
     @Override
+    protected GetAllVmSnapshotsByDriveQueryReturnValue createReturnValue() {
+        return new GetAllVmSnapshotsByDriveQueryReturnValue();
+    }
+
+    @Override
     protected void executeQueryCommand() {
         Guid tryingImage = Guid.Empty;
         DiskImage activeDisk = findImageForDrive(SnapshotType.ACTIVE);
