@@ -19,7 +19,6 @@ import org.ovirt.engine.core.common.businessentities.network;
 import org.ovirt.engine.core.common.businessentities.network_cluster;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.validation.group.PowerManagementCheck;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters;
@@ -72,9 +71,6 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters> extends VdsCo
                     // check that VDS name is not too long
                 } else if (vdsName.length() > maxVdsNameLength) {
                     addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NAME_LENGTH_IS_TOO_LONG);
-                    returnValue = false;
-                } else if (!ValidationUtils.isVdsNameLegal(vdsName)) {
-                    addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_INVALID_VDS_NAME);
                     returnValue = false;
                 } else if (_oldVds.getstatus() != VDSStatus.InstallFailed && !_oldVds.gethost_name().equals(hostName)) {
                     addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_HOSNAME_CANNOT_CHANGE);

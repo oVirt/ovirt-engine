@@ -264,9 +264,6 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NAME_LENGTH_IS_TOO_LONG);
                 retrunValue = false;
                 // check that VDS hostname does not contain special characters.
-            } else if (!ValidationUtils.isVdsNameLegal(vdsName)) {
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_INVALID_VDS_NAME);
-                retrunValue = false;
             } else if (!ValidationUtils.validHostname(hostName)) {
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_INVALID_VDS_HOSTNAME);
                 retrunValue = false;

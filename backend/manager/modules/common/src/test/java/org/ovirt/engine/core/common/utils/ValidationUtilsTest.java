@@ -54,18 +54,4 @@ public class ValidationUtilsTest {
             assertTrue("Invalid host name: " + s, !ValidationUtils.validHostname(s));
         }
     }
-
-    @Test
-    public void testisVdsNameLegal() {
-        String[] validStrings = new String[] { "a", "aa", "abc", "á-", "áá_", "úőü.", "你好世界", "שלוםעולם" };
-        String[] invalidStrings = new String[] { "@", " ", "a a", "//" };
-        for (String s : validStrings) {
-            assertTrue("Valid vds name: " + s, ValidationUtils.isVdsNameLegal(s));
-        }
-
-        for (String s : invalidStrings) {
-            assertTrue("Invalid vds name: " + s, !ValidationUtils.isVdsNameLegal(s));
-        }
-    }
-
 }
