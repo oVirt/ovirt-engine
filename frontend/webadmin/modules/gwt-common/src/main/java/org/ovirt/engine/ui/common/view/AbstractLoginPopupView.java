@@ -51,18 +51,17 @@ public class AbstractLoginPopupView extends AbstractPopupView<DecoratedPopupPane
         // Add the option to change the locale
         final ListBox localeBox = localizationEditor.asListBox();
         String currentLocale = LocaleInfo.getCurrentLocale().getLocaleName();
-        if (currentLocale.equals("default")) { //$NON-NLS-1$
-          currentLocale = "en"; //$NON-NLS-1$
-        }
         String[] localeNames = LocaleInfo.getAvailableLocaleNames();
         for (String localeName : localeNames) {
-          if (!localeName.equals("default")) { //$NON-NLS-1$
-            String nativeName = LocaleInfo.getLocaleNativeDisplayName(localeName);
+          String nativeName = LocaleInfo.getLocaleNativeDisplayName(localeName);
+          if (localeName.equals("default")) { //$NON-NLS-1$
+              nativeName="English"; //$NON-NLS-1$
+          }
             localeBox.addItem(nativeName, localeName);
             if (localeName.equals(currentLocale)) {
               localeBox.setSelectedIndex(localeBox.getItemCount() - 1);
             }
-          }
+
         }
         localeBox.addChangeHandler(new ChangeHandler() {
           @Override

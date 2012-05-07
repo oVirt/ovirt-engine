@@ -35,8 +35,6 @@
 	<stylesheet src="UserPortal.css" />
 
 	<!-- Internationalization support. -->
-	<extend-property name="locale" values="en"/>
-	<set-property-fallback name="locale" value="en"/>
 	<set-configuration-property name="locale.useragent" value="Y"/>
 
 </module>
