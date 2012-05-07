@@ -15,8 +15,8 @@ import org.ovirt.engine.core.dao.images.DiskImageDynamicDAOHibernateImpl;
  *
  */
 public class DiskImageDAOWrapperImpl extends BaseDAOWrapperImpl implements DiskImageDAO {
-    private DiskImageDAOHibernateImpl imageDAO = new DiskImageDAOHibernateImpl();
-    private DiskImageDynamicDAOHibernateImpl dynamicDAO = new DiskImageDynamicDAOHibernateImpl();
+    private final DiskImageDAOHibernateImpl imageDAO = new DiskImageDAOHibernateImpl();
+    private final DiskImageDynamicDAOHibernateImpl dynamicDAO = new DiskImageDynamicDAOHibernateImpl();
 
     @Override
     public void setSession(Session session) {
