@@ -33,9 +33,11 @@ public class AbstractLoginPopupView extends AbstractPopupView<DecoratedPopupPane
         initLocalizationEditor();
     }
 
+    @Override
     protected void initWidget(DecoratedPopupPanel widget) {
         super.initWidget(widget);
 
+        localizationEditor.addLabelStyleName(style.localizationLabel());
         setAutoHideOnNavigationEventEnabled(true);
     }
 
@@ -45,7 +47,6 @@ public class AbstractLoginPopupView extends AbstractPopupView<DecoratedPopupPane
 
     private void initLocalizationEditor(){
         localizationEditor = new ListModelListBoxEditor<Object>();
-        localizationEditor.addLabelStyleName(style.localizationLabel());
 
         // Add the option to change the locale
         final ListBox localeBox = localizationEditor.asListBox();

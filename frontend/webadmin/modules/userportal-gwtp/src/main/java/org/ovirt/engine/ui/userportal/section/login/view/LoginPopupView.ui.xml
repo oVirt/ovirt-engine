@@ -72,7 +72,7 @@
 		}
 	</ui:style>
 
-	<d:SimplePopupPanel ui:field="popup" width="420px" height="280px">
+	<d:SimplePopupPanel ui:field="popup" width="420px" height="290px">
 		<d:header>
 			<g:HorizontalPanel styleName="{loginPopupStyle.loginPopupHeader}">
 				<g:Image resource='{resources.loginPopupHeaderLogoImage}' />
