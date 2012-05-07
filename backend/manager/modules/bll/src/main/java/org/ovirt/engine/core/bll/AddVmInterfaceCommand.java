@@ -23,7 +23,6 @@ import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.vdscommands.HotPlugUnplgNicVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.Regex;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.VdcBllMessages;
@@ -52,11 +51,7 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends V
                 (VmInterfaceType.forValue(getParameters().getInterface().getType()).getInterfaceTranslation()).toString());
         this.setVmName(DbFacade.getInstance().getVmStaticDAO().get(getParameters().getVmId()).getvm_name());
         if (StringHelper.isNullOrEmpty(getParameters().getInterface().getMacAddress())) {
-            String mac = null;
-            RefObject<String> tempRefObject = new RefObject<String>(mac);
-            MacPoolManager.getInstance().allocateNewMac(tempRefObject);
-            mac = tempRefObject.argvalue;
-            getParameters().getInterface().setMacAddress(mac);
+            getParameters().getInterface().setMacAddress(MacPoolManager.getInstance().allocateNewMac());
         }
 
         getParameters().getInterface().setSpeed(

@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.Iterator;
 import java.util.List;
 
 import org.ovirt.engine.core.common.AuditLogType;
@@ -9,15 +10,14 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.LongCompat;
 import org.ovirt.engine.core.compat.NumberStyles;
-import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class MacPoolManager {
 
@@ -130,7 +130,8 @@ public class MacPoolManager {
         return true;
     }
 
-    public void allocateNewMac(RefObject<String> mac) {
+    public String allocateNewMac() {
+        String mac = null;
         log.info("MacPoolManager::allocateNewMac entered");
         synchronized (mLocObj) {
             if (!mInitialized) {
@@ -139,12 +140,12 @@ public class MacPoolManager {
             if (mAvailableMacs.isEmpty()) {
                 throw new VdcBLLException(VdcBllErrors.MAC_POOL_NO_MACS_LEFT);
             }
-            java.util.Iterator<String> my = mAvailableMacs.iterator();
-            my.hasNext();
-            mac.argvalue = my.next();
-            CommitNewMac(mac.argvalue);
+            Iterator<String> my = mAvailableMacs.iterator();
+            mac = my.next();
+            CommitNewMac(mac);
         }
-        log.infoFormat("MacPoolManager::allocateNewMac allocated mac = '{0}", mac.argvalue);
+        log.infoFormat("MacPoolManager::allocateNewMac allocated mac = '{0}", mac);
+        return mac;
     }
 
     private boolean CommitNewMac(String mac) {

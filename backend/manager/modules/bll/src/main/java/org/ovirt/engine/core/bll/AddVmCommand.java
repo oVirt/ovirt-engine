@@ -45,7 +45,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VmDynamicDAO;
@@ -59,6 +58,7 @@ import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils;
 import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils.VMCustomProperties;
 import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils.ValidationError;
 
+@SuppressWarnings("serial")
 public class AddVmCommand<T extends VmManagementParametersBase> extends VmManagementCommandBase<T> {
 
     protected HashMap<Guid, DiskImage> diskInfoDestinationMap;
@@ -548,12 +548,8 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
     protected void AddVmNetwork() {
         // Add interfaces from template
         for (VmNetworkInterface iface : getVmInterfaces()) {
-            String mac = null;
-            RefObject<String> tempRefObject = new RefObject<String>(mac);
-            MacPoolManager.getInstance().allocateNewMac(tempRefObject);
-            mac = tempRefObject.argvalue;
             iface.setId(Guid.NewGuid());
-            iface.setMacAddress(mac);
+            iface.setMacAddress(MacPoolManager.getInstance().allocateNewMac());
             iface.setSpeed(VmInterfaceType.forValue(iface.getType()).getSpeed());
             iface.setVmTemplateId(null);
             iface.setVmId(getParameters().getVmStaticData().getId());
@@ -589,7 +585,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         getCompensationContext().snapshotNewEntity(vmStatic);
     }
 
-    private void AddVmDynamic() {
+    void AddVmDynamic() {
         VmDynamic tempVar = new VmDynamic();
         tempVar.setId(getVmId());
         tempVar.setstatus(VMStatus.Down);
@@ -601,7 +597,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         getCompensationContext().snapshotNewEntity(vmDynamic);
     }
 
-    private void AddVmStatistics() {
+    void AddVmStatistics() {
         VmStatistics stats = new VmStatistics();
         stats.setId(getVmId());
         DbFacade.getInstance().getVmStatisticsDAO().save(stats);

@@ -55,7 +55,6 @@ import org.ovirt.engine.core.common.vdscommands.GetImageInfoVDSCommandParameters
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
@@ -126,10 +125,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
         getParameters().setVm(getVm());
         for (VmNetworkInterface iface : getVm().getInterfaces()) {
             iface.setId(Guid.NewGuid());
-            String mac = null;
-            RefObject<String> tempRefObject = new RefObject<String>(mac);
-            MacPoolManager.getInstance().allocateNewMac(tempRefObject);
-            mac = tempRefObject.argvalue;
+            String mac = MacPoolManager.getInstance().allocateNewMac();
             iface.setMacAddress(mac);
         }
     }
