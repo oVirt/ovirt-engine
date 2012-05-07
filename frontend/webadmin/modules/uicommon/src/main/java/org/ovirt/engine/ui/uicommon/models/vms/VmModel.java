@@ -1231,8 +1231,6 @@ public class VmModel extends Model
 
 		getTimeZone().setIsChangable(getIsWindowsOS());
 		getTimeZone().setIsAvailable(getIsWindowsOS());
-
-		DefineNumOfMonitorsAvailabilityAccoringToSelectedOs();
 	}
 
 	private void DisplayProtocol_SelectedItemChanged()
@@ -1282,24 +1280,6 @@ public class VmModel extends Model
 	private void UpdateIsDisksAvailable()
 	{
 		setIsDisksAvailable(getIsNew() && (Boolean)getProvisioning().getSelectedItem() && (getDisks() != null));
-	}
-
-	private void DefineNumOfMonitorsAvailabilityAccoringToSelectedOs()
-	{
-		if (getVmType() == VmType.Desktop)
-		{
-			if (DataProvider.IsLinuxOsType((VmOsType)getOSType().getSelectedItem()))
-			{
-				getNumOfMonitors().setSelectedItem(1);
-				getNumOfMonitors().setIsAvailable(false);
-				getNumOfMonitors().setIsChangable(false);
-			}
-			else if (!getNumOfMonitors().getIsAvailable())
-			{
-				getNumOfMonitors().setIsAvailable(true);
-				getNumOfMonitors().setIsChangable(true);
-			}
-		}
 	}
 
 	protected void FillTemplateList(Guid DataCenterId)

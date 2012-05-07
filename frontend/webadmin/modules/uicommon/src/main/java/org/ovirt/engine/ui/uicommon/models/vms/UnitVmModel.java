@@ -1054,8 +1054,6 @@ public class UnitVmModel extends Model
 
 		getTimeZone().setIsChangable(getIsWindowsOS());
 		getTimeZone().setIsAvailable(getIsWindowsOS());
-
-		UpdateNumOfMonitors();
 	}
 
 	private void FirstBootDevice_SelectedItemChanged(Object sender, EventArgs args)
@@ -1145,14 +1143,7 @@ public class UnitVmModel extends Model
 
 	private void UpdateNumOfMonitors()
 	{
-		boolean isLinux = false;
 		boolean isVnc = false;
-
-		if (getOSType().getSelectedItem() != null)
-		{
-			VmOsType osType = (VmOsType)getOSType().getSelectedItem();
-			isLinux = DataProvider.IsLinuxOsType(osType);
-		}
 
 		if (getDisplayProtocol().getSelectedItem() != null)
 		{
@@ -1160,12 +1151,13 @@ public class UnitVmModel extends Model
 			isVnc = displayType == DisplayType.vnc;
 		}
 
-		if (isVnc)
-		{
-			getNumOfMonitors().setSelectedItem(1);
-		}
-
-		getNumOfMonitors().setIsChangable(!isLinux && !isVnc);
+        if (isVnc)
+        {
+            getNumOfMonitors().setSelectedItem(1);
+            getNumOfMonitors().setIsChangable(false);
+        } else {
+            getNumOfMonitors().setIsChangable(true);
+        }
 	}
 
 	public BootSequence getBootSequence()
