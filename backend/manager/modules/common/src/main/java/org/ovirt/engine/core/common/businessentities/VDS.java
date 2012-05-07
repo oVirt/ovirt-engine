@@ -169,7 +169,7 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
             String version_name, String build_name, Long mem_available, Long mem_shared, boolean server_SSL_enabled,
             String vds_group_cpu_name, String cpu_name, Boolean net_config_dirty, String pm_type, String pm_user,
             String pm_password, Integer pm_port, String pm_options, boolean pm_enabled) // Nullable<System.Int32>
-                                                                                    // mem_cached,
+    // mem_cached,
     {
         mVdsStatic = new VdsStatic();
         mVdsDynamic = new VdsDynamic();
@@ -230,14 +230,51 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
     }
 
     public VDS clone() {
-        VDS vds = new VDS( Guid.createGuidFromString(getvds_group_id().toString()), getvds_group_name(), getvds_group_description(),
-                           Guid.createGuidFromString(getId().toString()), getvds_name(), getManagmentIp(), gethost_name(), getport(), getstatus().getValue(),
-                           getcpu_cores(), getcpu_model(), getcpu_speed_mh(), getif_total_speed(), getkvm_enabled(), getphysical_mem_mb(), getcpu_idle(),
-                           getcpu_load(), getcpu_sys(), getcpu_user(), getmem_commited(), getvm_active(), getvm_count(), getvm_migrating(),
-                           getusage_mem_percent(), getusage_cpu_percent(), getusage_network_percent(), getreserved_mem(), getguest_overhead(),
-                           getprevious_status(), getsoftware_version(), getversion_name(), getbuild_name(), getmem_available(), getmem_shared(),
-                           getserver_SSL_enabled(), getvds_group_cpu_name(), "", getnet_config_dirty(), getpm_type(), getpm_user(), getpm_password(),
-                           getpm_port(), getpm_options(), getpm_enabled());
+        VDS vds =
+                new VDS(Guid.createGuidFromString(getvds_group_id().toString()),
+                        getvds_group_name(),
+                        getvds_group_description(),
+                        Guid.createGuidFromString(getId().toString()),
+                        getvds_name(),
+                        getManagmentIp(),
+                        gethost_name(),
+                        getport(),
+                        getstatus().getValue(),
+                        getcpu_cores(),
+                        getcpu_model(),
+                        getcpu_speed_mh(),
+                        getif_total_speed(),
+                        getkvm_enabled(),
+                        getphysical_mem_mb(),
+                        getcpu_idle(),
+                        getcpu_load(),
+                        getcpu_sys(),
+                        getcpu_user(),
+                        getmem_commited(),
+                        getvm_active(),
+                        getvm_count(),
+                        getvm_migrating(),
+                        getusage_mem_percent(),
+                        getusage_cpu_percent(),
+                        getusage_network_percent(),
+                        getreserved_mem(),
+                        getguest_overhead(),
+                        getprevious_status(),
+                        getsoftware_version(),
+                        getversion_name(),
+                        getbuild_name(),
+                        getmem_available(),
+                        getmem_shared(),
+                        getserver_SSL_enabled(),
+                        getvds_group_cpu_name(),
+                        "",
+                        getnet_config_dirty(),
+                        getpm_type(),
+                        getpm_user(),
+                        getpm_password(),
+                        getpm_port(),
+                        getpm_options(),
+                        getpm_enabled());
 
         vds.setcpu_flags(getcpu_flags());
         vds.setVdsSpmPriority(getVdsSpmPriority());
@@ -1132,14 +1169,22 @@ public class VDS extends IVdcQueryable implements INotifyPropertyChanged, Serial
         return getId();
     }
 
-    private static final java.util.ArrayList<String> _vdsProperties = new java.util.ArrayList<String>(
-            java.util.Arrays.asList(new String[] { "vds_name", "status", "usage_cpu_percent", "usage_mem_percent",
-                    "usage_network_percent", "mem_commited", "vm_count", "vm_active", "host_name", "vds_group_name",
-                    "vds_type", "CpuName", "vds_group_id", "net_config_dirty", "spm_status", "pm_enabled", "pm_user",
-                    "pm_password", "pm_type", "pm_port", "pm_options", "vms_cores_count", "ksm_state", "mem_shared",
-                    "Version", "vds_group_compatibility_version", "UniqueId", "TransparentHugePagesState", "swap_total",
-                    "PmOptionsMap", "swap_free", "mem_shared_percent", "ManagmentIp", "supported_cluster_levels", "ContainingHooks", "NonOperationalReason",
-                    "host_os", "kernel_version", "spice_version", "kvm_version", "storage_pool_id", "physical_mem_mb"}));
+    private static final java.util.ArrayList<String> _vdsProperties =
+            new java.util.ArrayList<String>(
+                    java.util.Arrays.asList(new String[] { "vds_name", "status", "usage_cpu_percent",
+                            "usage_mem_percent",
+                            "usage_network_percent", "mem_commited", "vm_count", "vm_active", "host_name",
+                            "vds_group_name",
+                            "vds_type", "CpuName", "vds_group_id", "net_config_dirty", "spm_status", "pm_enabled",
+                            "pm_user",
+                            "pm_password", "pm_type", "pm_port", "pm_options", "vms_cores_count", "ksm_state",
+                            "mem_shared",
+                            "Version", "vds_group_compatibility_version", "UniqueId", "TransparentHugePagesState",
+                            "swap_total",
+                            "PmOptionsMap", "swap_free", "mem_shared_percent", "ManagmentIp",
+                            "supported_cluster_levels", "ContainingHooks", "NonOperationalReason",
+                            "host_os", "kernel_version", "spice_version", "kvm_version", "storage_pool_id",
+                            "physical_mem_mb" }));
 
     @Override
     public java.util.ArrayList<String> getChangeablePropertiesList() {

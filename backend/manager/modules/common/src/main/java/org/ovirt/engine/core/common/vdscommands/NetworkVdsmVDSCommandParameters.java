@@ -3,6 +3,7 @@ package org.ovirt.engine.core.common.vdscommands;
 import java.util.Arrays;
 
 import org.ovirt.engine.core.common.businessentities.NetworkBootProtocol;
+import org.ovirt.engine.core.common.businessentities.network;
 import org.ovirt.engine.core.compat.Guid;
 
 public class NetworkVdsmVDSCommandParameters extends VdsIdVDSCommandParametersBase {
@@ -137,6 +138,8 @@ public class NetworkVdsmVDSCommandParameters extends VdsIdVDSCommandParametersBa
     }
 
     private NetworkBootProtocol privateBootProtocol = NetworkBootProtocol.forValue(0);
+    private boolean vmNetwork;
+    private network network;
 
     public NetworkBootProtocol getBootProtocol() {
         return privateBootProtocol;
@@ -162,6 +165,38 @@ public class NetworkVdsmVDSCommandParameters extends VdsIdVDSCommandParametersBa
         this.setBootProtocol(bootProtocol);
     }
 
+    /**
+     * use this constructor to pass a network object that holds other 'logical' properties such as mtu, vmNetwork and so
+     * on...
+     * @param vdsId
+     * @param net
+     * @param bondName
+     * @param nics
+     * @param address
+     * @param subnet
+     * @param gateway
+     * @param bondingOptions
+     * @param bootProtocol
+     */
+    public NetworkVdsmVDSCommandParameters(Guid vdsId,
+            network net,
+            String bondName,
+            String[] nics,
+            String address,
+            String subnet,
+            String gateway,
+            String bondingOptions,
+            NetworkBootProtocol bootProtocol) {
+        this(vdsId, net.getname(), net.getvlan_id(), bondName, nics, address,
+                subnet,
+                gateway,
+                net.getstp(),
+                bondingOptions,
+                bootProtocol);
+        this.setVmNetwork(net.isVmNetwork());
+        this.setNetwork(net);
+    }
+
     public NetworkVdsmVDSCommandParameters() {
     }
 
@@ -169,7 +204,7 @@ public class NetworkVdsmVDSCommandParameters extends VdsIdVDSCommandParametersBa
     public String toString() {
         return String.format("%s, networkName=%s, oldNetworkName=%s, hostAddr=%s, checkConnectivity=%s, " +
                 "connectionTimeout=%s, vlanId=%s, bondName=%s, nics=%s, inetAddr=%s, networkMask=%s, gateway=%s, " +
-                "stp=%s, bondingOptions=%s, bootProtocol=%s",
+                "stp=%s, bondingOptions=%s, bootProtocol=%s, vmNetwork=%s",
                 super.toString(),
                 getNetworkName(),
                 getOldNetworkName(),
@@ -184,6 +219,23 @@ public class NetworkVdsmVDSCommandParameters extends VdsIdVDSCommandParametersBa
                 getGateway(),
                 getStp(),
                 getBondingOptions(),
-                getBootProtocol());
+                getBootProtocol(),
+                isVmNetwork());
+    }
+
+    public boolean isVmNetwork() {
+        return vmNetwork;
+    }
+
+    public void setVmNetwork(boolean vmNetwork) {
+        this.vmNetwork = vmNetwork;
+    }
+
+    public network getNetwork() {
+        return network;
+    }
+
+    public void setNetwork(network network) {
+        this.network = network;
     }
 }

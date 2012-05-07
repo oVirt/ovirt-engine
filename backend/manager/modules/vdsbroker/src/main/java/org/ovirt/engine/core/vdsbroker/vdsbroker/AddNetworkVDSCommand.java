@@ -52,6 +52,12 @@ public class AddNetworkVDSCommand<P extends NetworkVdsmVDSCommandParameters> ext
         options.put(VdsProperties.stp, (getParameters().getStp()) ? "yes" : "no");
         // options[VdsProperties.force] = "true";
 
+        options.put("bridged", Boolean.toString(getParameters().isVmNetwork()));
+
+        if (getParameters().getNetwork().getMtu() != 0) {
+            options.put("mtu", String.valueOf(getParameters().getNetwork().getMtu()));
+        }
+
         status = getBroker().addNetwork(network, vlanId, bond, nics, options);
         ProceedProxyReturnValue();
     }

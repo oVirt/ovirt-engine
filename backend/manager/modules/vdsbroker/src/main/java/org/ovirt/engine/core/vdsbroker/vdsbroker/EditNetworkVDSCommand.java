@@ -46,6 +46,12 @@ public class EditNetworkVDSCommand<P extends NetworkVdsmVDSCommandParameters> ex
 
         options.put(VdsProperties.stp, (getParameters().getStp()) ? "yes" : "no");
 
+        options.put("bridged", Boolean.toString(getParameters().isVmNetwork()));
+
+        if (getParameters().getNetwork().getMtu() != 0) {
+            options.put("mtu", String.valueOf(getParameters().getNetwork().getMtu()));
+        }
+
         // options[VdsProperties.force] = "true";
         if (getParameters().getCheckConnectivity()) {
             options.put(VdsProperties.connectivityCheck, "true");

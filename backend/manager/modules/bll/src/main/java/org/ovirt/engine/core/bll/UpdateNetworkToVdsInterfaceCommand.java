@@ -61,6 +61,7 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
                         .getBondName(), interfaceNames.toArray(new String[] {}), address, subnet, gateway,
                 getParameters().getNetwork().getstp(), getParameters().getBondingOptions(), getParameters()
                         .getBootProtocol());
+        parameters.setVmNetwork(getParameters().getNetwork().isVmNetwork());
 
         parameters.setOldNetworkName(getParameters().getOldNetworkName());
         parameters.setConnectionTimeout(120);

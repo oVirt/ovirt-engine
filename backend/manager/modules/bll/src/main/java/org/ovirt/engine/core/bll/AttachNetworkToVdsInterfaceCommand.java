@@ -1,9 +1,12 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AttachNetworkToVdsParameters;
+import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network;
@@ -19,10 +22,10 @@ import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.NetworkUtils;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
-import org.ovirt.engine.core.utils.linq.Predicate;
 
 public class AttachNetworkToVdsInterfaceCommand<T extends AttachNetworkToVdsParameters> extends VdsNetworkCommand<T> {
+    private network logicalNetwork;
+
     public AttachNetworkToVdsInterfaceCommand(T parameters) {
         super(parameters);
     }
@@ -30,32 +33,38 @@ public class AttachNetworkToVdsInterfaceCommand<T extends AttachNetworkToVdsPara
     @Override
     protected void executeCommand() {
         String bond = null;
-        String address = getParameters().getAddress();
-        String subnet = StringHelper.isNullOrEmpty(getParameters().getSubnet()) ? getParameters().getNetwork()
-                .getsubnet() : getParameters().getSubnet();
-        String gateway = StringHelper.isNullOrEmpty(getParameters().getGateway()) ? "" : getParameters().getGateway();
+        T params = getParameters();
+        String address = params.getAddress();
+        String subnet = StringHelper.isNullOrEmpty(params.getSubnet()) ? params.getNetwork()
+                .getsubnet() : params.getSubnet();
+        String gateway = StringHelper.isNullOrEmpty(params.getGateway()) ? "" : params.getGateway();
         java.util.ArrayList<String> nics = new java.util.ArrayList<String>();
-        nics.add(getParameters().getInterface().getName());
+        nics.add(params.getInterface().getName());
 
         // check if bond...
-        if (getParameters().getInterface().getBonded() != null && getParameters().getInterface().getBonded()) {
+        if (params.getInterface().getBonded() != null && params.getInterface().getBonded()) {
             nics.clear();
-            bond = getParameters().getInterface().getName();
+            bond = params.getInterface().getName();
 
             List<VdsNetworkInterface> interfaces = DbFacade.getInstance().getInterfaceDAO().getAllInterfacesForVds(
-                    getParameters().getVdsId());
+                    params.getVdsId());
 
             for (VdsNetworkInterface i : interfaces) {
-                if (StringHelper.EqOp(i.getBondName(), getParameters().getInterface().getName())) {
+                if (StringHelper.EqOp(i.getBondName(), params.getInterface().getName())) {
                     nics.add(i.getName());
                 }
             }
         }
 
-        NetworkVdsmVDSCommandParameters parameters = new NetworkVdsmVDSCommandParameters(getParameters().getVdsId(),
-                getParameters().getNetwork().getname(), getParameters().getNetwork().getvlan_id(), bond,
-                nics.toArray(new String[] {}), address, subnet, gateway, getParameters().getNetwork().getstp(),
-                getParameters().getBondingOptions(), getParameters().getBootProtocol());
+        NetworkVdsmVDSCommandParameters parameters = new NetworkVdsmVDSCommandParameters(params.getVdsId(),
+                logicalNetwork,
+                bond,
+                nics.toArray(new String[] {}),
+                address,
+                subnet,
+                gateway,
+                params.getBondingOptions(),
+                params.getBootProtocol());
         VDSReturnValue retVal = Backend.getInstance().getResourceManager()
                 .RunVdsCommand(VDSCommandType.AddNetwork, parameters);
 
@@ -65,11 +74,11 @@ public class AttachNetworkToVdsInterfaceCommand<T extends AttachNetworkToVdsPara
                     .getInstance()
                     .getResourceManager()
                     .RunVdsCommand(VDSCommandType.CollectVdsNetworkData,
-                            new VdsIdAndVdsVDSCommandParametersBase(getParameters().getVdsId()));
+                            new VdsIdAndVdsVDSCommandParametersBase(params.getVdsId()));
 
             if (retVal.getSucceeded()) {
-                Guid groupId = DbFacade.getInstance().getVdsDAO().get(getParameters().getVdsId()).getvds_group_id();
-                AttachNetworkToVdsGroupCommand.SetNetworkStatus(groupId, getParameters().getNetwork());
+                Guid groupId = DbFacade.getInstance().getVdsDAO().get(params.getVdsId()).getvds_group_id();
+                AttachNetworkToVdsGroupCommand.SetNetworkStatus(groupId, params.getNetwork());
                 setSucceeded(true);
             }
         }
@@ -77,23 +86,19 @@ public class AttachNetworkToVdsInterfaceCommand<T extends AttachNetworkToVdsPara
 
     @Override
     protected boolean canDoAction() {
+        T params = getParameters();
         List<VdsNetworkInterface> interfaces = DbFacade.getInstance().getInterfaceDAO()
-                .getAllInterfacesForVds(getParameters().getVdsId());
+                .getAllInterfacesForVds(params.getVdsId());
 
         // check that interface exists
-        VdsNetworkInterface iface = LinqUtils.firstOrNull(interfaces, new Predicate<VdsNetworkInterface>() {
-            @Override
-            public boolean eval(VdsNetworkInterface i) {
-                return StringHelper.EqOp(i.getName(), getParameters().getInterface().getName());
-            }
-        });
+        VdsNetworkInterface iface = Entities.entitiesByName(interfaces).get(params.getInterface().getName());
         if (iface == null) {
             addCanDoActionMessage(VdcBllMessages.NETWORK_INTERFACE_NOT_EXISTS);
             return false;
         }
 
         // check if the parameters interface is part of a bond
-        if (!StringHelper.isNullOrEmpty(getParameters().getInterface().getBondName())) {
+        if (!StringHelper.isNullOrEmpty(params.getInterface().getBondName())) {
             addCanDoActionMessage(VdcBllMessages.NETWORK_INTERFACE_ALREADY_IN_BOND);
             return false;
         }
@@ -104,52 +109,47 @@ public class AttachNetworkToVdsInterfaceCommand<T extends AttachNetworkToVdsPara
             return false;
         }
 
-        if (!NetworkUtils.getEngineNetwork().equals(getParameters().getNetwork().getname())
-                && !StringHelper.isNullOrEmpty(getParameters().getGateway())) {
+        if (!NetworkUtils.getEngineNetwork().equals(params.getNetwork().getname())
+                && !StringHelper.isNullOrEmpty(params.getGateway())) {
             addCanDoActionMessage(VdcBllMessages.NETWORK_ATTACH_ILLEGAL_GATEWAY);
             return false;
         }
 
         // check that the required not attached to other interface
-        iface = LinqUtils.firstOrNull(interfaces, new Predicate<VdsNetworkInterface>() {
-            @Override
-            public boolean eval(VdsNetworkInterface i) {
-                return StringHelper.EqOp(i.getNetworkName(), getParameters().getNetwork().getname());
-            }
-        });
+        iface = Entities.interfacesByNetworkName(interfaces).get(params.getNetwork().getName());
         if (iface != null) {
             addCanDoActionMessage(VdcBllMessages.NETWROK_ALREADY_ATTACHED_TO_INTERFACE);
             return false;
         }
 
         // check that the network exists in current cluster
-        List<network> networks = DbFacade.getInstance().getNetworkDAO()
-                .getAllForCluster(getVds().getvds_group_id());
-        if (null == LinqUtils.firstOrNull(networks, new Predicate<network>() {
-            @Override
-            public boolean eval(network network) {
-                return StringHelper.EqOp(network.getname(), getParameters().getNetwork().getname());
-            }
-        })) {
+
+        Map<String, network> networksByName = Entities.entitiesByName(DbFacade.getInstance().getNetworkDAO()
+                .getAllForCluster(getVds().getvds_group_id()));
+
+        if (!networksByName.containsKey(params.getNetwork().getName())) {
             addCanDoActionMessage(VdcBllMessages.NETWROK_NOT_EXISTS_IN_CLUSTER);
             return false;
+        } else {
+            logicalNetwork = networksByName.get(params.getNetwork().getName());
         }
 
+
         // check address exists in static ip
-        if (getParameters().getBootProtocol() == NetworkBootProtocol.StaticIp) {
-            if (StringHelper.isNullOrEmpty(getParameters().getAddress())) {
+        if (params.getBootProtocol() == NetworkBootProtocol.StaticIp) {
+            if (StringHelper.isNullOrEmpty(params.getAddress())) {
                 addCanDoActionMessage(VdcBllMessages.NETWROK_ADDR_MANDATORY_IN_STATIC_IP);
                 return false;
             }
         }
 
         // check that nic have no vlans
-        if (getParameters().getNetwork().getvlan_id() == null) {
+        if (params.getNetwork().getvlan_id() == null) {
             VdcQueryReturnValue ret = Backend.getInstance().runInternalQuery(
                     VdcQueryType.GetAllChildVlanInterfaces,
-                    new GetAllChildVlanInterfacesQueryParameters(getParameters().getVdsId(), getParameters()
+                    new GetAllChildVlanInterfacesQueryParameters(params.getVdsId(), params
                             .getInterface()));
-            java.util.ArrayList<VdsNetworkInterface> vlanIfaces = (java.util.ArrayList<VdsNetworkInterface>) ret.getReturnValue();
+            ArrayList<VdsNetworkInterface> vlanIfaces = (ArrayList<VdsNetworkInterface>) ret.getReturnValue();
             if (vlanIfaces.size() > 0) {
                 addCanDoActionMessage(VdcBllMessages.NETWORK_INTERFACE_CONNECT_TO_VLAN);
                 return false;
