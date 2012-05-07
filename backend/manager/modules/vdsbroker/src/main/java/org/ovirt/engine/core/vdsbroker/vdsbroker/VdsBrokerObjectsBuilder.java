@@ -35,11 +35,9 @@ import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.businessentities.network;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.utils.EnumUtils;
-import org.ovirt.engine.core.compat.BooleanCompat;
 import org.ovirt.engine.core.compat.FormatException;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.LongCompat;
-import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
@@ -119,25 +117,13 @@ public class VdsBrokerObjectsBuilder {
             }
         }
         if (xmlRpcStruct.contains(VdsProperties.kvmEnable)) {
-            boolean enabled = false;
-            RefObject<Boolean> tempRefObject = new RefObject<Boolean>(enabled);
-            if (BooleanCompat.TryParse((String) xmlRpcStruct.getItem(VdsProperties.kvmEnable), tempRefObject)) {
-                vm.setkvm_enable(tempRefObject.argvalue);
-            }
+            vm.setkvm_enable(Boolean.parseBoolean((String) xmlRpcStruct.getItem(VdsProperties.kvmEnable)));
         }
         if (xmlRpcStruct.contains(VdsProperties.acpiEnable)) {
-            boolean enabled = false;
-            RefObject<Boolean> tempRefObject = new RefObject<Boolean>(enabled);
-            if (BooleanCompat.TryParse((String) xmlRpcStruct.getItem(VdsProperties.acpiEnable), tempRefObject)) {
-                vm.setacpi_enable(tempRefObject.argvalue);
-            }
+                vm.setacpi_enable(Boolean.parseBoolean((String) xmlRpcStruct.getItem(VdsProperties.acpiEnable)));
         }
         if (xmlRpcStruct.contains(VdsProperties.win2kHackEnable)) {
-            boolean enabled = false;
-            RefObject<Boolean> tempRefObject = new RefObject<Boolean>(enabled);
-            if (BooleanCompat.TryParse((String) xmlRpcStruct.getItem(VdsProperties.win2kHackEnable), tempRefObject)) {
-                vm.setWin2kHackEnable(tempRefObject.argvalue);
-            }
+                vm.setWin2kHackEnable(Boolean.parseBoolean((String) xmlRpcStruct.getItem(VdsProperties.win2kHackEnable)));
         }
         if (xmlRpcStruct.contains(VdsProperties.status)) {
             vm.setstatus(convertToVmStatus((String) xmlRpcStruct.getItem(VdsProperties.status)));
@@ -749,15 +735,7 @@ public class VdsBrokerObjectsBuilder {
             if (input.getItem(name) instanceof Boolean) {
                 return (Boolean) input.getItem(name);
             }
-            boolean result = false;
-            RefObject<Boolean> tempRefObject = new RefObject<Boolean>(result);
-            boolean tempVar = BooleanCompat.TryParse(input.getItem(name).toString(), tempRefObject);
-            result = tempRefObject.argvalue;
-            if (tempVar) {
-                return result;
-            } else {
-                log.errorFormat("Failed to parse {0} value {1} to bool", name, input.getItem(name).toString());
-            }
+            return Boolean.parseBoolean(input.getItem(name).toString());
         }
         return null;
     }
