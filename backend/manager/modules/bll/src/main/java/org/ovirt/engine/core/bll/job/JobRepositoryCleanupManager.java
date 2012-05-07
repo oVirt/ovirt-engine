@@ -33,12 +33,12 @@ public class JobRepositoryCleanupManager {
         failedJobTime = Config.<Integer> GetValue(ConfigValues.FailedJobCleanupTimeInMinutes).intValue();
 
         Integer cleanupFrequency = Config.<Integer> GetValue(ConfigValues.JobCleanupRateInMinutes);
-        SchedulerUtilQuartzImpl.getInstance().scheduleAFixedDelayJob(this,
+        SchedulerUtilQuartzImpl.getInstance().scheduleAConfigurableDelayJob(this,
                 "completed_jobs_cleanup",
                 new Class[] {},
                 new Object[] {},
                 cleanupFrequency,
-                cleanupFrequency,
+                ConfigValues.JobCleanupRateInMinutes.name(),
                 TimeUnit.MINUTES);
     }
 

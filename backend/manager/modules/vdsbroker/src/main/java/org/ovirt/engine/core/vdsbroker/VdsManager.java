@@ -64,8 +64,6 @@ public class VdsManager {
         return (_refreshIteration == _numberRefreshesBeforeSave);
     }
 
-    private static final int VDS_REFRESH_RATE = Config.<Integer> GetValue(ConfigValues.VdsRefreshRate) * 1000;
-
     private String onTimerJobId;
 
     private final int _numberRefreshesBeforeSave = Config.<Integer> GetValue(ConfigValues.NumberVmRefreshesBeforeSave);
@@ -96,8 +94,6 @@ public class VdsManager {
     private final AtomicInteger mFailedToRunVmAttempts;
     private final AtomicInteger mUnrespondedAttempts;
 
-    private static final int VDS_DURING_FAILURE_TIMEOUT_IN_MINUTES = Config
-            .<Integer> GetValue(ConfigValues.TimeToReduceFailedRunOnVdsInMinutes);
     private String duringFailureJobId;
     private boolean privateInitialized;
 
@@ -167,15 +163,19 @@ public class VdsManager {
 
     private void schedulJobs() {
         SchedulerUtil sched = SchedulerUtilQuartzImpl.getInstance();
-        duringFailureJobId = sched.scheduleAFixedDelayJob(this, "OnVdsDuringFailureTimer", new Class[0],
-                    new Object[0], VDS_DURING_FAILURE_TIMEOUT_IN_MINUTES, VDS_DURING_FAILURE_TIMEOUT_IN_MINUTES,
+        final int vdsDuringFailureTimeoutInMinutes = Config
+        .<Integer> GetValue(ConfigValues.TimeToReduceFailedRunOnVdsInMinutes);
+
+        duringFailureJobId = sched.scheduleAConfigurableDelayJob(this, "OnVdsDuringFailureTimer", new Class[0],
+                    new Object[0], vdsDuringFailureTimeoutInMinutes,ConfigValues.TimeToReduceFailedRunOnVdsInMinutes.name(),
                     TimeUnit.MINUTES);
         sched.pauseJob(duringFailureJobId);
         // start with refresh statistics
         _refreshIteration = _numberRefreshesBeforeSave - 1;
 
-        onTimerJobId = sched.scheduleAFixedDelayJob(this, "OnTimer", new Class[0], new Object[0], VDS_REFRESH_RATE,
-                VDS_REFRESH_RATE, TimeUnit.MILLISECONDS);
+        final int vdsRefreshRate = Config.<Integer> GetValue(ConfigValues.VdsRefreshRate) * 1000;
+        onTimerJobId = sched.scheduleAConfigurableDelayJob(this, "OnTimer", new Class[0], new Object[0], vdsRefreshRate,
+                ConfigValues.VdsRefreshRate.name(), TimeUnit.MILLISECONDS);
     }
 
     private void InitVdsBroker() {

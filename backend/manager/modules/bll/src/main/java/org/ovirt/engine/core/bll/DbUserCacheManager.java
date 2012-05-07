@@ -16,15 +16,14 @@ import org.ovirt.engine.core.common.businessentities.AdUser;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.ad_groups;
-import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 
@@ -64,9 +63,8 @@ public class DbUserCacheManager {
             // clean all user sessions in DB
             DbFacade.getInstance().getDbUserDAO().removeAllSessions();
 
-            int mRefreshRate = Config.<Integer> GetValue(ConfigValues.UserRefreshRate);
-            jobId = SchedulerUtilQuartzImpl.getInstance().scheduleAFixedDelayJob(this, "OnTimer", new Class[] {},
-                    new Object[] {}, 0, mRefreshRate, TimeUnit.SECONDS);
+            jobId = SchedulerUtilQuartzImpl.getInstance().scheduleAConfigurableDelayJob(this, "OnTimer", new Class[] {},
+                    new Object[] {}, 0, ConfigValues.UserRefreshRate.name(), TimeUnit.SECONDS);
             initialized = true;
 
         }

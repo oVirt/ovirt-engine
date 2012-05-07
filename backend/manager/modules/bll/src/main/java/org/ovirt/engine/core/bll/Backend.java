@@ -212,19 +212,19 @@ public class Backend implements BackendInternal, BackendRemote {
         Integer sessionTimoutInterval = Config.<Integer> GetValue(ConfigValues.UserSessionTimeOutInterval);
         // negative value means session should never expire, therefore no need to clean sessions.
         if (sessionTimoutInterval > 0) {
-            SchedulerUtilQuartzImpl.getInstance().scheduleAFixedDelayJob(SessionDataContainer.getInstance(),
+            SchedulerUtilQuartzImpl.getInstance().scheduleAConfigurableDelayJob(SessionDataContainer.getInstance(),
                     "cleanExpiredUsersSessions", new Class[] {}, new Object[] {},
                     sessionTimoutInterval,
-                    sessionTimoutInterval, TimeUnit.MINUTES);
+                    ConfigValues.UserSessionTimeOutInterval.name(), TimeUnit.MINUTES);
         }
         // Set start-up time
         _startedAt = DateTime.getNow();
 
         int vmPoolMonitorIntervalInMinutes = Config.<Integer> GetValue(ConfigValues.VmPoolMonitorIntervalInMinutes);
-        SchedulerUtilQuartzImpl.getInstance().scheduleAFixedDelayJob(new VmPoolMonitor(),
+        SchedulerUtilQuartzImpl.getInstance().scheduleAConfigurableDelayJob(new VmPoolMonitor(),
                 "managePrestartedVmsInAllVmPools", new Class[] {}, new Object[] {},
                 vmPoolMonitorIntervalInMinutes,
-                vmPoolMonitorIntervalInMinutes, TimeUnit.MINUTES);
+                ConfigValues.VmPoolMonitorIntervalInMinutes.name(), TimeUnit.MINUTES);
 
         try {
             File fLock = new File(Config.<String> GetValue(ConfigValues.SignLockFile));
