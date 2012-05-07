@@ -11,3 +11,9 @@ and exists(select 1 from schema_version where version = '03010250' and current =
 
 delete from schema_version
 where version = '03010250' and current = true;
+
+-- Add a supported_engines column to vds_dynamic reolving a 3.0 to 3.1 upgrade issue
+-- This column was probably added to the create_tables.sql and not to the upgrade so
+-- it exists on any 3.1 based DB but is missing from 3.0 based DB that is upgraded to 3.1
+
+select fn_db_add_column('vds_dynamic','supported_engines','varchar(40)');

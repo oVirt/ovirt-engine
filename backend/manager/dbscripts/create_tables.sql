@@ -457,7 +457,6 @@ CREATE TABLE vds_dynamic
    cpu_sockets INTEGER,
    net_config_dirty BOOLEAN,
    supported_cluster_levels VARCHAR(40),
-   supported_engines VARCHAR(40),
    host_os VARCHAR(4000),
    kvm_version VARCHAR(4000),
    spice_version VARCHAR(4000),
