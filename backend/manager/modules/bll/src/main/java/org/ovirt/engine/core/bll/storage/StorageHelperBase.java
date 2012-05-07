@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.storage;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -87,6 +88,23 @@ public abstract class StorageHelperBase implements IStorageHelper {
     @Override
     public boolean StorageDomainRemoved(storage_domain_static storageDomain) {
         return true;
+    }
+
+    @Override
+    public void removeLun(LUNs lun) {
+        List<LUNs> lunsList = DbFacade.getInstance().getLunDAO().getAllForVolumeGroup(lun.getvolume_group_id());
+        if (lunsList.size() == 1) {
+            for (storage_server_connections connection : filterConnectionsUsedByOthers(lun.getLunConnections(),
+                    "",
+                    lun.getLUN_id())) {
+                DbFacade.getInstance().getStorageServerConnectionDAO().remove(connection.getid());
+            }
+        }
+    }
+
+    protected List<storage_server_connections> filterConnectionsUsedByOthers(
+            List<storage_server_connections> connections, String vgId, final String lunId) {
+        return Collections.emptyList();
     }
 
     @Override

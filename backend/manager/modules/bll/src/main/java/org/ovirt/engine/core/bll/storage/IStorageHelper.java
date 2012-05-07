@@ -25,6 +25,8 @@ public interface IStorageHelper {
 
     boolean StorageDomainRemoved(storage_domain_static storageDomain);
 
+    void removeLun(LUNs lun);
+
     boolean ValidateStoragePoolConnectionsInHost(VDS vds, List<storage_server_connections> connections,
             Guid storagePoolId);
 

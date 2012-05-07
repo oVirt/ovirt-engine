@@ -9,6 +9,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
+import org.ovirt.engine.core.bll.storage.StorageHelperDirector;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.PermissionSubject;
@@ -21,7 +22,10 @@ import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.DiskLunMapId;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
+import org.ovirt.engine.core.common.businessentities.LUNs;
+import org.ovirt.engine.core.common.businessentities.LunDisk;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -36,6 +40,8 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskImageDAO;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
+import org.ovirt.engine.core.utils.transaction.TransactionMethod;
+import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute
 public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBase<T> {
@@ -221,8 +227,31 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
                 setSucceeded(vdcReturnValue.getSucceeded());
             }
         } else {
-            setSucceeded(true);
+            removeLunDisk();
         }
+    }
+
+    private void removeLunDisk() {
+        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
+            @Override
+            public Void runInTransaction() {
+                if (disk.getVmEntityType() == VmEntityType.VM) {
+                    DbFacade.getInstance()
+                            .getVmDeviceDAO()
+                            .remove(new VmDeviceId(disk.getId(),
+                                    disk.getvm_guid()));
+                }
+                LUNs lun = ((LunDisk) disk).getLun();
+                DbFacade.getInstance()
+                        .getDiskLunMapDao()
+                        .remove(new DiskLunMapId(disk.getId(), lun.getLUN_id()));
+                DbFacade.getInstance().getBaseDiskDao().remove(disk.getId());
+                StorageHelperDirector.getInstance().getItem(lun.getLunType())
+                        .removeLun(lun);
+                return null;
+            }
+        });
+        setSucceeded(true);
     }
 
     @Override

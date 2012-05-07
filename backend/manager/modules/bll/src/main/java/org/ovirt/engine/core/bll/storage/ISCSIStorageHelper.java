@@ -44,7 +44,7 @@ public class ISCSIStorageHelper extends StorageHelperBase {
 
         if (list.size() != 0) {
             if (VDSCommandType.forValue(type) == VDSCommandType.DisconnectStorageServer) {
-                list = FilterConnectionsUsedByOthers(list, storageDomain.getstorage(), lun != null ? lun.getLUN_id()
+                list = filterConnectionsUsedByOthers(list, storageDomain.getstorage(), lun != null ? lun.getLUN_id()
                         : "");
             }
             VDSReturnValue returnValue = Backend
@@ -65,11 +65,12 @@ public class ISCSIStorageHelper extends StorageHelperBase {
 
     private List<storage_server_connections> FilterConnectionsUsedByOthers(
             List<storage_server_connections> connections, String vgId) {
-        return FilterConnectionsUsedByOthers(connections, vgId, "");
+        return filterConnectionsUsedByOthers(connections, vgId, "");
     }
 
     @SuppressWarnings("unchecked")
-    private List<storage_server_connections> FilterConnectionsUsedByOthers(
+    @Override
+    protected List<storage_server_connections> filterConnectionsUsedByOthers(
             List<storage_server_connections> connections, String vgId, final String lunId) {
         // if we have lun id then filter by this lun
         // else get vg's luns from db
