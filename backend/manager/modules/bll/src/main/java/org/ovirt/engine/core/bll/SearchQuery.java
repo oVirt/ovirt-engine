@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.adbroker.AdActionType;
+import org.ovirt.engine.core.bll.adbroker.LdapBroker;
 import org.ovirt.engine.core.bll.adbroker.LdapBrokerUtils;
 import org.ovirt.engine.core.bll.adbroker.LdapFactory;
 import org.ovirt.engine.core.bll.adbroker.LdapQueryData;
@@ -175,8 +176,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
         ldapQueryData.setFilterParameters(new Object[] { data.getQueryForAdBroker() });
         ldapQueryData.setDomain(data.getDomain());
         @SuppressWarnings("unchecked")
-        List<AdUser> result = (List<AdUser>) LdapFactory
-                .getInstance(data.getDomain())
+        List<AdUser> result = (List<AdUser>) getLdapFactory(data.getDomain())
                 .RunAdAction(AdActionType.SearchUserByQuery,
                         new LdapSearchByQueryParameters(data.getDomain(), ldapQueryData))
                 .getReturnValue();
@@ -200,8 +200,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
         ldapQueryData.setFilterParameters(new Object[] { data.getQueryForAdBroker() });
 
         @SuppressWarnings("unchecked")
-        ArrayList<ad_groups> result = (ArrayList<ad_groups>) LdapFactory
-                .getInstance(data.getDomain())
+        ArrayList<ad_groups> result = (ArrayList<ad_groups>) getLdapFactory(data.getDomain())
                 .RunAdAction(AdActionType.SearchGroupsByQuery,
                         new LdapSearchByQueryParameters(data.getDomain(), ldapQueryData))
                 .getReturnValue();
@@ -305,7 +304,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
                         searchText = searchText.substring(0, searchText.indexOf('@'))
                                 + searchText.substring(searchText.indexOf(':'));
                     } else {
-                        String domain = LdapBrokerUtils.getDomainsList().get(0);
+                        String domain = getDefaultDomain();
                         data.setDomain(domain);
                     }
                     curSyntaxChecker = SyntaxCheckerFactory.CreateADSyntaxChecker(Config
@@ -373,6 +372,14 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
             getQueryReturnValue().setIsSearchValid(false);
         }
         return data;
+    }
+
+    public String getDefaultDomain() {
+        return LdapBrokerUtils.getDomainsList().get(0);
+    }
+
+    public LdapBroker getLdapFactory(String domain) {
+        return LdapFactory.getInstance(domain);
     }
 
     private static boolean containsStaticInValues(String query) {
