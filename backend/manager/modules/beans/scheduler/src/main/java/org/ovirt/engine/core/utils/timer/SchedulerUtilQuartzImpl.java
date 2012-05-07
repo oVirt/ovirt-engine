@@ -22,6 +22,8 @@ import javax.ejb.TransactionAttributeType;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.utils.ejb.BeanProxyType;
 import org.ovirt.engine.core.utils.ejb.BeanType;
 import org.ovirt.engine.core.utils.ejb.EjbUtils;
@@ -52,6 +54,7 @@ public class SchedulerUtilQuartzImpl implements SchedulerUtil {
     public static final String RUN_METHOD_PARAM = "method.param";
     public static final String FIXED_DELAY_VALUE = "fixedDelayValue";
     public static final String FIXED_DELAY_TIME_UNIT = "fixedDelayTimeUnit";
+    public static final String CONFIGURABLE_DELAY_KEY_NAME = "configDelayKeyName";
     private static final String TRIGGER_PREFIX = "trigger";
 
     // members
@@ -130,17 +133,83 @@ public class SchedulerUtilQuartzImpl implements SchedulerUtil {
             long initialDelay,
             long taskDelay,
             TimeUnit timeUnit) {
-        JobDetail job = createJobWithBasicMapValues(instance, methodName, inputTypes, inputParams);
-        JobDataMap data = job.getJobDataMap();
-        data.put(FIXED_DELAY_VALUE, taskDelay);
-        data.put(FIXED_DELAY_TIME_UNIT, timeUnit);
+        JobDetail job = createJobForDelayJob(instance, methodName, inputTypes, inputParams, taskDelay, timeUnit);
+        scheduleJobWithTrigger(initialDelay, timeUnit, instance, job);
+        return job.getKey().getName();
+    }
+
+    private void scheduleJobWithTrigger(long initialDelay, TimeUnit timeUnit, Object instance, JobDetail job) {
         Trigger trigger = createSimpleTrigger(initialDelay, timeUnit, instance);
         try {
             sched.scheduleJob(job, trigger);
         } catch (SchedulerException se) {
             log.error("failed to schedule job", se);
         }
+    }
+
+    private JobDetail createJobForDelayJob(Object instance,
+            String methodName,
+            Class<?>[] inputTypes,
+            Object[] inputParams, long taskDelay, TimeUnit timeUnit) {
+        JobDetail job = createJobWithBasicMapValues(instance, methodName, inputTypes, inputParams);
+        JobDataMap data = job.getJobDataMap();
+        setupDataMapForDelayJob(data, taskDelay, timeUnit);
+        return job;
+    }
+
+    /**
+     * schedules a job with a configurable delay.
+     *
+     * @param instance
+     *            - the instance to activate the method on timeout
+     * @param methodName
+     *            - the name of the method to activate on the instance
+     * @param inputTypes
+     *            - the method input types
+     * @param inputParams
+     *            - the method input parameters
+     * @param initialDelay
+     *            - the initial delay before the first activation
+     * @param taskDelay
+     *            - the name of the config value that sets the delay between jobs
+     * @param timeUnit
+     *            - the unit of time used for initialDelay and taskDelay.
+     * @return the scheduled job id
+     */
+    @Override
+    public String scheduleAConfigurableDelayJob(Object instance,
+            String methodName,
+            Class<?>[] inputTypes,
+            Object[] inputParams,
+            long initialDelay,
+            String configurableDelayKeyName,
+            TimeUnit timeUnit) {
+        long configurableDelay = getConfigurableDelay(configurableDelayKeyName);
+        JobDetail job = createJobForDelayJob(instance, methodName, inputTypes, inputParams, configurableDelay, timeUnit);
+        JobDataMap data = job.getJobDataMap();
+        data.put(CONFIGURABLE_DELAY_KEY_NAME, configurableDelayKeyName);
+        scheduleJobWithTrigger(initialDelay, timeUnit, instance, job);
         return job.getKey().getName();
+    }
+
+    /**
+     * get the configurable delay value from the DB according to given key
+     * @param configurableDelayKeyName
+     * @return
+     */
+    private long getConfigurableDelay(String configurableDelayKeyName) {
+        ConfigValues configDelay = ConfigValues.valueOf(configurableDelayKeyName);
+        return Config.<Integer> GetValue(configDelay).longValue();
+    }
+
+    /**
+     * setup the values in the data map that are relevant for jobs with delay
+     */
+    private void setupDataMapForDelayJob(JobDataMap data,
+            long taskDelay,
+            TimeUnit timeUnit) {
+        data.put(FIXED_DELAY_TIME_UNIT, timeUnit);
+        data.put(FIXED_DELAY_VALUE, taskDelay);
     }
 
     private JobDetail createJobWithBasicMapValues(Object instance,
@@ -191,12 +260,7 @@ public class SchedulerUtilQuartzImpl implements SchedulerUtil {
             long initialDelay,
             TimeUnit timeUnit) {
         JobDetail job = createJobWithBasicMapValues(instance, methodName, inputTypes, inputParams);
-        Trigger trigger = createSimpleTrigger(initialDelay, timeUnit, instance);
-        try {
-            sched.scheduleJob(job, trigger);
-        } catch (SchedulerException se) {
-            log.error("failed to schedule job", se);
-        }
+        scheduleJobWithTrigger(initialDelay, timeUnit, instance, job);
         return job.getKey().getName();
     }
 

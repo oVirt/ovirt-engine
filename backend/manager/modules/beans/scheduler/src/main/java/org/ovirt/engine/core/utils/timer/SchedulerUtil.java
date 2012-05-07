@@ -1,10 +1,11 @@
 package org.ovirt.engine.core.utils.timer;
 
-import org.quartz.Trigger;
-import org.quartz.Scheduler;
+import java.util.concurrent.TimeUnit;
 
 import javax.ejb.Local;
-import java.util.concurrent.TimeUnit;
+
+import org.quartz.Scheduler;
+import org.quartz.Trigger;
 
 @Local
 public interface SchedulerUtil {
@@ -134,5 +135,32 @@ public interface SchedulerUtil {
                             Class<?>[] inputTypes,
                             Object[] inputParams,
                             String cronExpression);
+
+    /**
+     * schedules a job with a configurable delay.
+     *
+     * @param instance
+     *            - the instance to activate the method on timeout
+     * @param methodName
+     *            - the name of the method to activate on the instance
+     * @param inputTypes
+     *            - the method input types
+     * @param inputParams
+     *            - the method input parameters
+     * @param initialDelay
+     *            - the initial delay before the first activation
+     * @param taskDelay
+     *            - the name of the config value that sets the delay between jobs
+     * @param timeUnit
+     *            - the unit of time used for initialDelay and taskDelay.
+     * @return the scheduled job id
+     */
+    String scheduleAConfigurableDelayJob(Object instance,
+            String methodName,
+            Class<?>[] inputTypes,
+            Object[] inputParams,
+            long initialDelay,
+            String configurableDelayKeyName,
+            TimeUnit timeUnit);
 
 }

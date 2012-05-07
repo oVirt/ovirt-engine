@@ -5,6 +5,9 @@ import static org.quartz.TriggerBuilder.newTrigger;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
@@ -63,7 +66,16 @@ public class FixedDelayJobListener implements JobListener {
         }
 
         // generate the new trigger time
-        long delay = data.getLongValue(SchedulerUtilQuartzImpl.FIXED_DELAY_VALUE);
+        String configValueName = data.getString(SchedulerUtilQuartzImpl.CONFIGURABLE_DELAY_KEY_NAME);
+        long delay;
+
+        if (StringUtils.isEmpty(configValueName)) {
+            delay = data.getLongValue(SchedulerUtilQuartzImpl.FIXED_DELAY_VALUE);
+        } else {
+            ConfigValues configDelay = ConfigValues.valueOf(configValueName);
+            delay = Config.<Integer> GetValue(configDelay).longValue();
+        }
+
         TimeUnit delayUnit = (TimeUnit) data.getWrappedMap().get(SchedulerUtilQuartzImpl.FIXED_DELAY_TIME_UNIT);
         Date runTime = SchedulerUtilQuartzImpl.getFutureDate(delay, delayUnit);
 
