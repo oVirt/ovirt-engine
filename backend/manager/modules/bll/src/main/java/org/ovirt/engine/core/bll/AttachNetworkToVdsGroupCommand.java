@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AttachNetworkToVdsGroupParameter;
+import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.NetworkStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -45,7 +46,10 @@ public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
     @Override
     protected void executeCommand() {
         if (networkExists()) {
-            getNetworkClusterDAO().update(getNetwork().getCluster());
+            network_cluster cluster = getNetwork().getCluster();
+            cluster.setcluster_id(getVdsGroupId());
+            cluster.setnetwork_id(getNetwork().getId());
+            getNetworkClusterDAO().update(cluster);
         } else {
             getNetworkClusterDAO().save(new network_cluster(getVdsGroupId(), getNetwork().getId(),
                     NetworkStatus.Operational.getValue(), false, getNetwork().isRequired()));
@@ -116,14 +120,8 @@ public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
     }
 
     private boolean networkExists() {
-        List<network> networks = DbFacade.getInstance().getNetworkDAO()
-                .getAllForCluster(getVdsGroupId());
-        return LinqUtils.firstOrNull(networks, new Predicate<network>() {
-            @Override
-            public boolean eval(network nw) {
-                return StringHelper.EqOp(nw.getname(), getNetworkName());
-            }
-        }) != null;
+        return Entities.entitiesByName(DbFacade.getInstance().getNetworkDAO()
+                .getAllForCluster(getVdsGroupId())).containsKey(getNetworkName());
     }
 
     private boolean VdsGroupExists() {
