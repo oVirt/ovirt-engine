@@ -57,14 +57,14 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
         return new SearchReturnValue();
     }
 
-    private SearchReturnValue getSearchReturnValue() {
-        VdcQueryReturnValue tempVar = getQueryReturnValue();
-        return (SearchReturnValue) ((tempVar instanceof SearchReturnValue) ? tempVar : null);
+    @Override
+    public SearchReturnValue getQueryReturnValue() {
+        return (SearchReturnValue) super.getQueryReturnValue();
     }
 
     @Override
     protected void ProceedOnFail() {
-        getSearchReturnValue().setIsSearchValid(false);
+        getQueryReturnValue().setIsSearchValid(false);
     }
 
     @Override
@@ -132,7 +132,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
             break;
         }
         }
-        getSearchReturnValue().setReturnValue(returnValue);
+        getQueryReturnValue().setReturnValue(returnValue);
     }
 
     private List<VM> searchVmsFromDb() {
@@ -140,7 +140,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
         QueryData2 data = InitQueryData(true);
         if (data == null) {
             returnValue = new ArrayList<VM>();
-            getQueryReturnValue().setExceptionString(getSearchReturnValue().getExceptionString());
+            getQueryReturnValue().setExceptionString(getQueryReturnValue().getExceptionString());
         } else {
             returnValue = getDbFacade().getVmDAO().getAllUsingQuery(data.getQuery());
             for (VM vm : returnValue) {
@@ -274,7 +274,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
             String searchText = getParameters().getSearchPattern();
             // find if this is a trivial search expression (like 'Vms:' etc).
             isSafe = SearchObjects.isSafeExpression(searchText);
-            getSearchReturnValue().setIsSearchValid(true);
+            getQueryReturnValue().setIsSearchValid(true);
             if (useCache) {
                 // first lets check the cache of queries.
                 searchKey = String.format("%1$s,%2$s", searchText, getParameters().getMaxCount());
@@ -312,7 +312,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
                             .<String> GetValue(ConfigValues.AuthenticationMethod));
                 } else {
                     curSyntaxChecker = SyntaxCheckerFactory
-                    .CreateBackendSyntaxChecker(Config.<String> GetValue(ConfigValues.AuthenticationMethod));
+                            .CreateBackendSyntaxChecker(Config.<String> GetValue(ConfigValues.AuthenticationMethod));
                 }
                 SyntaxContainer searchObj = curSyntaxChecker.analyzeSyntaxState(searchText, true);
                 // set the case-sensitive flag
@@ -323,7 +323,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
                 searchObj.setSearchFrom(getParameters().getSearchFrom());
 
                 if (searchObj.getError() != SyntaxError.NO_ERROR) {
-                    getSearchReturnValue().setIsSearchValid(false);
+                    getQueryReturnValue().setIsSearchValid(false);
                     log.warnFormat("ResourceManager::searchBusinessObjects - erroneous search text - ''{0}''",
                             searchText);
                     int startPos = searchObj.getErrorStartPos();
@@ -340,11 +340,11 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
                                             + searchText.substring(endPos + 1)
                                     :
                                     searchObj.getError().toString();
-                    getSearchReturnValue().setExceptionString(error);
+                    getQueryReturnValue().setExceptionString(error);
                     return null;
                 }
                 if (searchObj.getvalid() != true) {
-                    getSearchReturnValue().setIsSearchValid(false);
+                    getQueryReturnValue().setIsSearchValid(false);
                     log.warnFormat("ResourceManager::searchBusinessObjects - Invalid search text - ''{0}''", searchText);
                     return null;
                 }
@@ -362,15 +362,15 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
         } catch (SearchEngineIllegalCharacterException e) {
             log.error("Search expression can not end with ESCAPE character:" + getParameters().getSearchPattern());
             data = null;
-            getSearchReturnValue().setIsSearchValid(false);
+            getQueryReturnValue().setIsSearchValid(false);
         } catch (SqlInjectionException e) {
             log.error("Sql Injection in search: " + getParameters().getSearchPattern());
             data = null;
-            getSearchReturnValue().setIsSearchValid(false);
+            getQueryReturnValue().setIsSearchValid(false);
         } catch (RuntimeException ex) {
             log.warn("Illegal search: " + getParameters().getSearchPattern(), ex);
             data = null;
-            getSearchReturnValue().setIsSearchValid(false);
+            getQueryReturnValue().setIsSearchValid(false);
         }
         return data;
     }
