@@ -6,6 +6,7 @@ The following sections are available:
     Add Section
     Update section (w/o overriding current value)
     Delete section
+    Split config section
     Simple upgrades not available using a fn_db* function call
     Complex upgrades using temporary functions
 
@@ -438,6 +439,18 @@ select fn_db_delete_config_value('SysPrep3.0Path','general');
 select fn_db_delete_config_value('UseENGINERepositoryRPMs','general');
 select fn_db_delete_config_value('VdsErrorsFileName','general');
 select fn_db_delete_config_value('VM64BitMaxMemorySizeInMB','general');
+
+------------------------------------------------------------------------------------
+--                  Split config section
+-- The purpose of this section is to treat config option that was once
+-- general, and should now be version-specific.
+-- To ease this the fn_db_split_config_value can be used, input is the
+-- option_name and the new value. Result is creating one row for each old
+-- cluster level with the original value, and one row for the newest one, with
+-- the input value.
+------------------------------------------------------------------------------------
+select fn_db_split_config_value('SpiceSecureChannels','smain,sinputs,scursor,splayback,srecord,sdisplay');
+
 ------------------------------------------------------------------------------------
 --                  Simple direct updates section
 ------------------------------------------------------------------------------------

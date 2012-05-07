@@ -249,7 +249,9 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
 				parametersList.add(new GetVdsByVdsIdParameters(thisVm.getrun_on_vds().getValue()));
 				parametersList.add(new GetConfigurationValueParameters(ConfigurationValues.SSLEnabled));
 				parametersList.add(new GetConfigurationValueParameters(ConfigurationValues.CipherSuite));
-				parametersList.add(new GetConfigurationValueParameters(ConfigurationValues.SpiceSecureChannels));
+                GetConfigurationValueParameters spiceSecureChannelParams = new GetConfigurationValueParameters(ConfigurationValues.SpiceSecureChannels);
+                spiceSecureChannelParams.setVersion(thisVm.getvds_group_compatibility_version().toString());
+                parametersList.add(spiceSecureChannelParams);
 				parametersList.add(new GetConfigurationValueParameters(ConfigurationValues.EnableSpiceRootCertificateValidation));
 				parametersList.add(new GetVdsByVdsIdParameters(thisVm.getrun_on_vds().getValue()));
 				parametersList.add(new VdcQueryParametersBase());

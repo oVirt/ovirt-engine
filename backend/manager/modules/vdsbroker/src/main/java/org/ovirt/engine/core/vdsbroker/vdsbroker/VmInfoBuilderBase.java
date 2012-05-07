@@ -54,8 +54,8 @@ public abstract class VmInfoBuilderBase {
         if (Config.<Boolean> GetValue(ConfigValues.SSLEnabled)) {
             createInfo.add(VdsProperties.spiceSslCipherSuite,
                     Config.<String> GetValue(ConfigValues.CipherSuite));
-            createInfo.add(VdsProperties.SpiceSecureChannels,
-                    Config.<String> GetValue(ConfigValues.SpiceSecureChannels));
+            createInfo.add(VdsProperties.SpiceSecureChannels,Config.<String> GetValue(
+                    ConfigValues.SpiceSecureChannels, vm.getvds_group_compatibility_version().toString()));
         }
         createInfo.add(VdsProperties.kvmEnable, vm.getkvm_enable().toString()
                 .toLowerCase());

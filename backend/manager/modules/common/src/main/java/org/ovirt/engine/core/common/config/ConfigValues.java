@@ -342,7 +342,7 @@ public enum ConfigValues {
     @DefaultValueAttribute("3")
     SearchesRefreshRateInSeconds(116),
     @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("smain,sinputs")
+    @DefaultValueAttribute("smain,sinputs,scursor,splayback,srecord,sdisplay")
     SpiceSecureChannels(117),
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("30")
