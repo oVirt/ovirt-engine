@@ -221,7 +221,10 @@ public class SnapshotsManager {
             synchronizeNics(vm.getId(), vm.getInterfaces(), compensationContext);
 
             for (VmDevice vmDevice : getVmDeviceDao().getVmDeviceByVmId(vm.getId())) {
-                getVmDeviceDao().remove(vmDevice.getId());
+                if (vmDevice.getDevice().equals(VmDeviceType.DISK.getName())
+                        && getDiskDao().get(vmDevice.getDeviceId()).isAllowSnapshot()) {
+                    getVmDeviceDao().remove(vmDevice.getId());
+                }
             }
 
             VmDeviceUtils.addImportedDevices(vm.getStaticData());
@@ -328,7 +331,6 @@ public class SnapshotsManager {
                 diskImage.setDiskAlias(ImagesHandler.getSuggestedDiskAlias(diskImage, vmName));
                 getBaseDiskDao().update(diskImage);
             } else {
-
                 // If can't find the image, insert it as illegal so that it can't be used and make the device unplugged.
                 if (getDiskImageDao().getSnapshotById(diskImage.getImageId()) == null) {
                     diskImage.setimageStatus(ImageStatus.ILLEGAL);
@@ -342,13 +344,23 @@ public class SnapshotsManager {
                 ImagesHandler.addDiskToVm(diskImage, vmId);
             }
         }
+        removeDisksNotInSnapshot(vmId, diskIdsFromSnapshot);
+    }
 
-        // Remove all disks that didn't exist in the snapshot.
+    /**
+     * Remove all the disks which are allowed to be snapshot but not exist in the snapshot.
+     * @param vmId - The vm id which is being snapshot.
+     * @param diskIdsFromSnapshot - An image group id list for images which are part of the VM.
+     */
+    private void removeDisksNotInSnapshot(Guid vmId, List<Guid> diskIdsFromSnapshot) {
         for (VmDevice vmDevice : getVmDeviceDao().getVmDeviceByVmIdTypeAndDevice(
                 vmId, VmDeviceType.DISK.getName(), VmDeviceType.DISK.getName())) {
             if (!diskIdsFromSnapshot.contains(vmDevice.getDeviceId())) {
-                getBaseDiskDao().remove(vmDevice.getDeviceId());
-                getVmDeviceDao().remove(vmDevice.getId());
+                DiskImage diskImage = getDiskImageDao().getAllSnapshotsForImageGroup(vmDevice.getDeviceId()).get(0);
+                if (diskImage.isAllowSnapshot()) {
+                    getBaseDiskDao().remove(vmDevice.getDeviceId());
+                    getVmDeviceDao().remove(vmDevice.getId());
+                }
             }
         }
     }

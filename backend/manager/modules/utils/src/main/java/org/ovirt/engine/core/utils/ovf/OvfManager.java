@@ -72,6 +72,9 @@ public class OvfManager {
         // this is static data for all images:
         for (DiskImage image : images.argvalue) {
             image.setvm_guid(id);
+
+            // It can be assumed that each disk which was in the OVF is allowed to be snapshot.
+            image.setAllowSnapshot(true);
         }
         for (VmNetworkInterface iface : interfaces.argvalue) {
             iface.setVmId(id);
