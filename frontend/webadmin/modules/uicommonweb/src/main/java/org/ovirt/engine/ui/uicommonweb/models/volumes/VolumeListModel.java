@@ -367,12 +367,19 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
     }
 
     private void start() {
-        if (getSelectedItem() == null) {
+        if (getSelectedItems() == null) {
             return;
         }
-        GlusterVolumeEntity volume = (GlusterVolumeEntity) getSelectedItem();
-        Frontend.RunAction(VdcActionType.StartGlusterVolume, new GlusterVolumeActionParameters(volume.getId(),false));
+
+        ArrayList<VdcActionParametersBase> list = new java.util.ArrayList<VdcActionParametersBase>();
+        for (Object item : getSelectedItems())
+        {
+            GlusterVolumeEntity volume = (GlusterVolumeEntity) item;
+            list.add(new GlusterVolumeActionParameters(volume.getId(), false));
+        }
+        Frontend.RunMultipleAction(VdcActionType.StartGlusterVolume, list);
     }
+
 
     private void onCreateVolume() {
         VolumeModel model = (VolumeModel) getWindow();
