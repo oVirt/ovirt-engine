@@ -47,6 +47,7 @@ public class AddImageFromScratchCommand<T extends AddImageFromScratchParameters>
             mNewCreatedDiskImage.setDiskAlias(getParameters().getDiskInfo().getDiskAlias());
             mNewCreatedDiskImage.setDiskDescription(getParameters().getDiskInfo().getDiskDescription());
             mNewCreatedDiskImage.setShareable(getParameters().getDiskInfo().isShareable());
+            mNewCreatedDiskImage.setAllowSnapshot(getParameters().getDiskInfo().isAllowSnapshot());
             mNewCreatedDiskImage.setvm_guid(getParameters().getMasterVmId());
             mNewCreatedDiskImage.setId(getImageGroupId());
             mNewCreatedDiskImage.setstorage_pool_id(getParameters().getStoragePoolId());

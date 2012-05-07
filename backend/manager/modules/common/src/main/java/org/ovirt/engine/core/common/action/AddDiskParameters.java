@@ -5,7 +5,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class AddDiskParameters extends VmDiskOperatinParameterBase {
     private static final long serialVersionUID = -7832310521101821905L;
-    private Guid vmSnapshotId = Guid.Empty;
+    private Guid vmSnapshotId = null;
     private Guid storageDomainId = Guid.Empty;
 
     public AddDiskParameters() {

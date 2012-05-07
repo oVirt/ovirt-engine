@@ -12,7 +12,7 @@ public class ImagesActionsParametersBase extends StorageDomainParametersBase {
     private Guid destinationImageId = Guid.Empty;
     private String description;
     private Date oldLastModifiedValue;
-    private Guid vmSnapshotId = Guid.Empty;
+    private Guid vmSnapshotId;
     private Guid imageGroupID = Guid.Empty;
 
     public ImagesActionsParametersBase() {

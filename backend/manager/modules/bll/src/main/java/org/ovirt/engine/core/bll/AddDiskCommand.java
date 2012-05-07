@@ -85,7 +85,10 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
             if (returnValue && DiskStorageType.LUN == getParameters().getDiskInfo().getDiskStorageType()) {
                 returnValue = checkIfLunDiskCanBeAdded();
             }
-            ImagesHandler.setDiskAlias(getParameters().getDiskInfo(), getVm());
+            if (returnValue && getParameters().getDiskInfo().isShareable() && getParameters().getDiskInfo().isBoot()) {
+                returnValue = false;
+                addCanDoActionMessage(VdcBllMessages.SHAREABLE_DISK_IS_NOT_SUPPORTED_FOR_DISK);
+            }
         }
         return returnValue;
     }
@@ -144,6 +147,14 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
             returnValue = false;
         }
         return returnValue;
+    }
+
+    private void setAllowSnapshotForDisk() {
+        if (getParameters().getDiskInfo().isShareable()) {
+            getParameters().getDiskInfo().setAllowSnapshot(false);
+        } else {
+            getParameters().getDiskInfo().setAllowSnapshot(true);
+        }
     }
 
     private long getRequestDiskSpace() {
@@ -255,6 +266,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         return listPermissionSubjects;
     }
 
+    @Override
     protected void setActionMessageParameters() {
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__ADD);
         addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM_DISK);
@@ -266,8 +278,9 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         if (getVm() != null) {
             VmHandler.checkStatusAndLockVm(getVm().getId(), getCompensationContext());
         }
-
+        ImagesHandler.setDiskAlias(getParameters().getDiskInfo(), getVm());
         if (DiskStorageType.IMAGE == getParameters().getDiskInfo().getDiskStorageType()) {
+            setAllowSnapshotForDisk();
             createDiskBasedOnImage();
         } else {
             createDiskBasedOnLun();
@@ -304,7 +317,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         getParameters().getImagesParameters().add(parameters);
         parameters.setParentParemeters(getParameters());
         if (getVm() != null) {
-            parameters.setVmSnapshotId(getSnapshotDao().getId(getVmId(), SnapshotType.ACTIVE));
+            setVmSnapshotIdForDisk(parameters);
             VmDeviceUtils.addManagedDevice(new VmDeviceId(getParameters().getDiskInfo().getId(), getVmId()),
                     VmDeviceType.DISK,
                     VmDeviceType.DISK,
@@ -324,6 +337,16 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         }
         getReturnValue().setFault(tmpRetValue.getFault());
         setSucceeded(tmpRetValue.getSucceeded());
+    }
+
+    /**
+     * If disk is not allow to have snapshot no VM snapshot Id should be updated.
+     * @param parameters
+     */
+    private void setVmSnapshotIdForDisk(AddImageFromScratchParameters parameters) {
+        if (getParameters().getDiskInfo().isAllowSnapshot()) {
+            parameters.setVmSnapshotId(getSnapshotDao().getId(getVmId(), SnapshotType.ACTIVE));
+        }
     }
 
     private void addDiskPermissions(Disk disk) {
