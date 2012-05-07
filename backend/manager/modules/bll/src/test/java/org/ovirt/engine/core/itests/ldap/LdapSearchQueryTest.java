@@ -8,14 +8,20 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 import org.mockito.ArgumentMatcher;
 import org.ovirt.engine.core.bll.AbstractQueryTest;
+import org.ovirt.engine.core.bll.AdUsersSearchQuery;
 import org.ovirt.engine.core.bll.SearchQuery;
 import org.ovirt.engine.core.bll.adbroker.AdActionType;
 import org.ovirt.engine.core.bll.adbroker.LdapBroker;
@@ -26,24 +32,58 @@ import org.ovirt.engine.core.common.businessentities.AdUser;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.SearchType;
+import org.ovirt.engine.core.common.queries.AdUsersSearchParameters;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.PostgresDbEngineDialect;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.RandomUtils;
 
+@RunWith(Parameterized.class)
 public class LdapSearchQueryTest extends AbstractQueryTest<SearchParameters, SearchQuery<? extends SearchParameters>> {
 
     @Rule
     public static final MockConfigRule mcr = new MockConfigRule();
 
-    private String domain;
+    /** Constants */
+    public static final String DOMAIN = RandomUtils.instance().nextString(10);
+
+    private Class<? extends SearchQuery<? extends SearchParameters>> queryType;
+    private SearchParameters queryParameters;
+
+    @Parameters
+    public static Collection<Object[]> data() {
+        return Arrays.asList(new Object[][]
+        { { SearchQuery.class, new SearchParameters("AdUser: allnames=gandalf", SearchType.AdUser) },
+                { AdUsersSearchQuery.class, new AdUsersSearchParameters("allnames=gandalf") } });
+    }
+
+    public LdapSearchQueryTest(Class<? extends SearchQuery<? extends SearchParameters>> queryType,
+            SearchParameters queryParamters) {
+        this.queryType = queryType;
+        this.queryParameters = queryParamters;
+    }
+
+    @Override
+    protected Class<? extends SearchQuery<? extends SearchParameters>> getQueryType() {
+        return queryType;
+    }
+
+    @Override
+    protected SearchParameters getQueryParameters() {
+        return queryParameters;
+    }
+
+    @Override
+    protected Class<? extends SearchParameters> getParameterType() {
+        return queryParameters.getClass();
+    }
+
     private AdUser result;
 
     @Before
-    public void initDomain() {
-        domain = RandomUtils.instance().nextString(10);
-        result = new AdUser("gandalf", "melon!", Guid.NewGuid(), domain);
+    public void initResult() {
+        result = new AdUser("gandalf", "melon!", Guid.NewGuid(), DOMAIN);
     }
 
     public void initConfig() {
@@ -61,19 +101,18 @@ public class LdapSearchQueryTest extends AbstractQueryTest<SearchParameters, Sea
     public void testSearchQuery() {
         initConfig();
         when(getDbFacadeMockInstance().getDbEngineDialect()).thenReturn(new PostgresDbEngineDialect());
-        when(getQueryParameters().getSearchPattern()).thenReturn("AdUser: allnames=gandalf");
-        when(getQueryParameters().getSearchTypeValue()).thenReturn(SearchType.AdUser);
+
+        doReturn(DOMAIN).when(getQuery()).getDefaultDomain();
 
         LdapBroker ldapFactoryMock = mock(LdapBroker.class);
 
-        doReturn(ldapFactoryMock).when(getQuery()).getLdapFactory(domain);
+        doReturn(ldapFactoryMock).when(getQuery()).getLdapFactory(DOMAIN);
         LdapReturnValueBase ldapRerunValue = new LdapReturnValueBase();
         ldapRerunValue.setSucceeded(true);
         ldapRerunValue.setReturnValue(Collections.singletonList(result));
         when(ldapFactoryMock.RunAdAction(eq(AdActionType.SearchUserByQuery),
                 argThat(new LdapParametersMatcher("gandalf")))).
                 thenReturn(ldapRerunValue);
-        doReturn(domain).when(getQuery()).getDefaultDomain();
 
         getQuery().setInternalExecution(true);
         getQuery().Execute();
@@ -92,7 +131,6 @@ public class LdapSearchQueryTest extends AbstractQueryTest<SearchParameters, Sea
             this.name = name;
         }
 
-        @SuppressWarnings("synthetic-access")
         @Override
         public boolean matches(Object argument) {
             if (!(argument instanceof LdapSearchByQueryParameters)) {
@@ -102,7 +140,7 @@ public class LdapSearchQueryTest extends AbstractQueryTest<SearchParameters, Sea
             return ldapParams.getLdapQueryData().getFilterParameters().length == 1 &&
                     ((String) ldapParams.getLdapQueryData().getFilterParameters()[0]).contains(name) &&
                     ldapParams.getLdapQueryData().getLdapQueryType().equals(LdapQueryType.searchUsers) &&
-                    ldapParams.getDomain().equals(domain);
+                    ldapParams.getDomain().equals(DOMAIN);
 
         }
     }

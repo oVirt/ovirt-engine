@@ -50,7 +50,7 @@ public abstract class AbstractQueryTest<P extends VdcQueryParametersBase, Q exte
 
     /** Extract the {@link Class} object for the P generic parameter */
     @SuppressWarnings("unchecked")
-    private Class<? extends P> getParameterType() {
+    protected Class<? extends P> getParameterType() {
         ParameterizedType parameterizedType =
                 (ParameterizedType) getClass().getGenericSuperclass();
         return (Class<? extends P>) parameterizedType.getActualTypeArguments()[0];
