@@ -165,46 +165,41 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
     }
 
     private List<AdUser> searchAdUsers() {
+        return adSearch(LdapQueryType.searchUsers, AdActionType.SearchUserByQuery);
+    }
+
+    private List<ad_groups> searchAdGroups() {
+        return adSearch(LdapQueryType.searchGroups, AdActionType.SearchGroupsByQuery);
+    }
+
+    /**
+     * Performs an ldap query
+     * @param ldapQueryType The type of query to run
+     * @param adActionType The action to submit to the LdapBroker
+     * @return The result of the query
+     */
+    private <T extends IVdcQueryable> List<T> adSearch(LdapQueryType ldapQueryType, AdActionType adActionType) {
         QueryData2 data = InitQueryData(true);
 
         if (data == null) {
-            return new ArrayList<AdUser>();
+            return new ArrayList<T>();
         }
 
         LdapQueryData ldapQueryData = new LdapQueryDataImpl();
-        ldapQueryData.setLdapQueryType(LdapQueryType.searchUsers);
-        ldapQueryData.setFilterParameters(new Object[] { data.getQueryForAdBroker() });
+        ldapQueryData.setLdapQueryType(ldapQueryType);
         ldapQueryData.setDomain(data.getDomain());
+        ldapQueryData.setFilterParameters(new Object[] { data.getQueryForAdBroker() });
+
         @SuppressWarnings("unchecked")
-        List<AdUser> result = (List<AdUser>) getLdapFactory(data.getDomain())
-                .RunAdAction(AdActionType.SearchUserByQuery,
+        List<T> result = (List<T>) getLdapFactory(data.getDomain())
+                .RunAdAction(adActionType,
                         new LdapSearchByQueryParameters(data.getDomain(), ldapQueryData))
                 .getReturnValue();
-        return (result != null) ? result : new ArrayList<AdUser>();
+        return (result != null) ? result : new ArrayList<T>();
     }
 
     private List<DbUser> searchDbUsers() {
         return genericSearch(getDbFacade().getDbUserDAO(), true, null);
-    }
-
-    private ArrayList<ad_groups> searchAdGroups() {
-        QueryData2 data = InitQueryData(true);
-
-        if (data == null) {
-            return new ArrayList<ad_groups>();
-        }
-
-        LdapQueryData ldapQueryData = new LdapQueryDataImpl();
-        ldapQueryData.setLdapQueryType(LdapQueryType.searchGroups);
-        ldapQueryData.setDomain(data.getDomain());
-        ldapQueryData.setFilterParameters(new Object[] { data.getQueryForAdBroker() });
-
-        @SuppressWarnings("unchecked")
-        ArrayList<ad_groups> result = (ArrayList<ad_groups>) getLdapFactory(data.getDomain())
-                .RunAdAction(AdActionType.SearchGroupsByQuery,
-                        new LdapSearchByQueryParameters(data.getDomain(), ldapQueryData))
-                .getReturnValue();
-        return (result != null) ? result : new ArrayList<ad_groups>();
     }
 
     private List<VmTemplate> searchVMTemplates() {
