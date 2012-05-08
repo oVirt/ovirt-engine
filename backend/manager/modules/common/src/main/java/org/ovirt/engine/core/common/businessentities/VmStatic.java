@@ -60,9 +60,6 @@ public class VmStatic extends VmBase {
     @Column(name = "predefined_properties")
     private String predefinedProperties;
 
-    @Column(name = "quota_id")
-    private Guid quotaId;
-
     /**
      * Disk size in sectors of 512 bytes
      */
@@ -160,7 +157,7 @@ public class VmStatic extends VmBase {
                 auto_startup,
                 is_stateless,
                 null,
-                OriginType.valueOf(Config.<String>GetValue(ConfigValues.OriginType)),
+                OriginType.valueOf(Config.<String> GetValue(ConfigValues.OriginType)),
                 null,
                 null,
                 null,
@@ -266,9 +263,8 @@ public class VmStatic extends VmBase {
     public int getMinAllocatedMem() {
         if (minAllocatedMemField > 0) {
             return minAllocatedMemField;
-        } else {
-            return getmem_size_mb();
         }
+        return getmem_size_mb();
     }
 
     public void setMinAllocatedMem(int value) {

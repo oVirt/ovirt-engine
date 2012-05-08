@@ -144,6 +144,7 @@ public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, Bus
     public VmBase() {
     }
 
+    @Column(name = "quota_id")
     private Guid quotaId;
 
     /**
