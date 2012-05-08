@@ -23,26 +23,30 @@ public class SubTabQuotaClusterView extends AbstractSubTabTableView<Quota, Quota
     }
 
     @Inject
-    public SubTabQuotaClusterView(SearchableDetailModelProvider<QuotaVdsGroup, QuotaListModel, QuotaClusterListModel> modelProvider, ApplicationConstants constants) {
+    public SubTabQuotaClusterView(SearchableDetailModelProvider<QuotaVdsGroup, QuotaListModel, QuotaClusterListModel> modelProvider,
+            ApplicationConstants constants) {
         super(modelProvider);
         ViewIdHandler.idHandler.generateAndSetIds(this);
         initTable(constants);
         initWidget(getTable());
     }
 
-    private void initTable(ApplicationConstants constants) {
+    private void initTable(final ApplicationConstants constants) {
         getTable().addColumn(new TextColumnWithTooltip<QuotaVdsGroup>() {
             @Override
             public String getValue(QuotaVdsGroup object) {
-                return object.getVdsGroupName();
+                return object.getVdsGroupName() == null || object.getVdsGroupName() == "" ? constants.ultQuotaForAllClustersQuotaPopup()
+                        : object.getVdsGroupName();
             }
-        }, constants.nameCluster());
+        },
+                constants.nameCluster());
 
         getTable().addColumn(new TextColumnWithTooltip<QuotaVdsGroup>() {
             @Override
             public String getValue(QuotaVdsGroup object) {
-                return (object.getMemSizeMBUsage() == null ? "0" : object.getMemSizeMBUsage().toString()) + "/" //$NON-NLS-1$ //$NON-NLS-2$
-                        + (object.getMemSizeMB() == null ? "*" : object.getMemSizeMB().toString()) + " GB"; //$NON-NLS-1$ //$NON-NLS-2$
+                return (object.getMemSizeMBUsage() == null ? "0" : object.getMemSizeMBUsage().toString()) + constants.outOfQuota() //$NON-NLS-1$
+                        + (object.getMemSizeMB() == -1 ? constants.unlimitedQuota() : object.getMemSizeMB()
+                                .toString()) + " GB"; //$NON-NLS-1$
             }
         },
                 constants.usedMemoryTotalCluster());
@@ -50,8 +54,9 @@ public class SubTabQuotaClusterView extends AbstractSubTabTableView<Quota, Quota
         getTable().addColumn(new TextColumnWithTooltip<QuotaVdsGroup>() {
             @Override
             public String getValue(QuotaVdsGroup object) {
-                return (object.getVirtualCpuUsage() == null ? "0" : object.getVirtualCpuUsage().toString()) + "/" //$NON-NLS-1$ //$NON-NLS-2$
-                        + (object.getVirtualCpu() == null ? "*" : object.getVirtualCpu().toString()); //$NON-NLS-1$
+                return (object.getVirtualCpuUsage() == null ? "0" : object.getVirtualCpuUsage().toString()) + constants.outOfQuota() //$NON-NLS-1$
+                        + (object.getVirtualCpu() == -1 ? constants.unlimitedQuota() : object.getVirtualCpu()
+                                .toString());
             }
         },
                 constants.runningCpuTotalCluster());

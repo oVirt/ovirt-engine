@@ -777,7 +777,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Storage")
     String quotaStorageSubTabLabel();
 
-    @DefaultStringValue("Users")
+    @DefaultStringValue("Consumers")
     String quotaUserSubTabLabel();
 
     @DefaultStringValue("Permissions")
@@ -1376,10 +1376,10 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Cluster Name")
     String clusterNameQuota();
 
-    @DefaultStringValue("Quota of Mem")
+    @DefaultStringValue("Memory")
     String quotaOfMemQuota();
 
-    @DefaultStringValue("Quota of vCPU")
+    @DefaultStringValue("vCPU")
     String quotaOfVcpuQuota();
 
     @DefaultStringValue("Quota")
@@ -1504,10 +1504,10 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String inheretedFromPermission();
 
     // Quota popup
-    @DefaultStringValue("Unlimited Quota")
+    @DefaultStringValue("Unlimited")
     String ultQuotaPopup();
 
-    @DefaultStringValue("Use Quota")
+    @DefaultStringValue("limit to")
     String useQuotaPopup();
 
     @DefaultStringValue("Memory:")
@@ -1528,22 +1528,22 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Data Center")
     String dataCenterQuotaPopup();
 
-    @DefaultStringValue("Mem & CPU")
+    @DefaultStringValue("Memory & CPU")
     String memAndCpuQuotaPopup();
 
     @DefaultStringValue("Storage")
     String storageQuotaPopup();
 
-    @DefaultStringValue("Unlimited Quota for all Clusters")
+    @DefaultStringValue("All Clusters")
     String ultQuotaForAllClustersQuotaPopup();
 
-    @DefaultStringValue("Use Quota for specific Clusters")
+    @DefaultStringValue("Specific Clusters")
     String useQuotaSpecificClusterQuotaPopup();
 
-    @DefaultStringValue("Unlimited Quota for all Storages")
+    @DefaultStringValue("All Storage Domains")
     String utlQuotaAllStoragesQuotaPopup();
 
-    @DefaultStringValue("Use Quota for specific Storages")
+    @DefaultStringValue("Specific Storage Domains")
     String usedQuotaSpecStoragesQuotaPopup();
 
     // Event
@@ -2030,5 +2030,11 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Storage Grace")
     String quotaStorageGrace();
+
+    @DefaultStringValue("Unlimited")
+    String unlimitedQuota();
+
+    @DefaultStringValue(" out of ")
+    String outOfQuota();
 
 }

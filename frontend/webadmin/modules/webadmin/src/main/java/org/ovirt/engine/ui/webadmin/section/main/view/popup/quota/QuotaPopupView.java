@@ -205,7 +205,7 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
             @Override
             public String getValue(QuotaStorage object) {
                 if (object.getStorageName() == null || object.getStorageName().length() == 0) {
-                    return "Unlimited Storage"; //$NON-NLS-1$
+                    return constants.utlQuotaAllStoragesQuotaPopup(); //$NON-NLS-1$
                 }
                 return object.getStorageName();
             }
@@ -218,9 +218,9 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
                 if (object.getStorageSizeGB() == null) {
                     return ""; //$NON-NLS-1$
                 } else if (object.getStorageSizeGB() == -1) {
-                    str = "/*"; //$NON-NLS-1$
+                    str = constants.outOfQuota() + constants.unlimitedQuota();
                 } else {
-                    str = "/" + object.getStorageSizeGB(); //$NON-NLS-1$
+                    str = constants.outOfQuota() + object.getStorageSizeGB();
                 }
                 return object.getStorageSizeGBUsage() + str + " GB"; //$NON-NLS-1$
             }
@@ -283,7 +283,7 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
             @Override
             public String getValue(QuotaVdsGroup object) {
                 if (object.getVdsGroupName() == null || object.getVdsGroupName().length() == 0) {
-                    return "Unlimited Cluster"; //$NON-NLS-1$
+                    return constants.ultQuotaForAllClustersQuotaPopup();
                 }
                 return object.getVdsGroupName();
             }
@@ -296,9 +296,9 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
                 if (object.getMemSizeMB() == null) {
                     return ""; //$NON-NLS-1$
                 } else if (object.getMemSizeMB() == -1) {
-                    str = "/*"; //$NON-NLS-1$
+                    str = constants.outOfQuota() + constants.unlimitedQuota();
                 } else {
-                    str = "/" + object.getMemSizeMB(); //$NON-NLS-1$
+                    str = constants.outOfQuota() + object.getMemSizeMB();
                 }
                 return object.getMemSizeMBUsage() + str + " GB"; //$NON-NLS-1$
             }
@@ -311,9 +311,9 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
                 if (object.getVirtualCpu() == null) {
                     return ""; //$NON-NLS-1$
                 } else if (object.getVirtualCpu() == -1) {
-                    str = "/*"; //$NON-NLS-1$
+                    str = constants.outOfQuota() + constants.unlimitedQuota();
                 } else {
-                    str = "/" + object.getVirtualCpu(); //$NON-NLS-1$
+                    str = constants.outOfQuota() + object.getVirtualCpu();
                 }
                 return object.getVirtualCpuUsage() + str + " vCPUs"; //$NON-NLS-1$
             }

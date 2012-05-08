@@ -18,6 +18,10 @@
 			font-weight: bold;
 			padding-left: 5px;
 		}
+		.measureLabel {
+		 	line-height: 35px;
+			vertical-align: bottom;
+		}
 	</ui:style>
 
 	<d:SimpleDialogPanel width="450px" height="300px">
@@ -30,6 +34,7 @@
 				<e:EntityModelRadioButtonEditor
 					ui:field="specificStorageRadioButtonEditor" addStyleNames="{style.radioButtonWidth}" />
 				<e:EntityModelTextBoxEditor ui:field="storageValueEditor" addStyleNames="{style.textBoxWidth}" />
+				<g:Label addStyleNames="{style.measureLabel}">GB</g:Label>
 			</g:HorizontalPanel>
 		</g:VerticalPanel>
 	</d:content>

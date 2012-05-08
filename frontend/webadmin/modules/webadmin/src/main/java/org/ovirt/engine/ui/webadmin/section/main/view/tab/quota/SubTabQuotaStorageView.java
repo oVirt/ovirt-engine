@@ -23,26 +23,30 @@ public class SubTabQuotaStorageView extends AbstractSubTabTableView<Quota, Quota
     }
 
     @Inject
-    public SubTabQuotaStorageView(SearchableDetailModelProvider<QuotaStorage, QuotaListModel, QuotaStorageListModel> modelProvider, ApplicationConstants constants) {
+    public SubTabQuotaStorageView(SearchableDetailModelProvider<QuotaStorage, QuotaListModel, QuotaStorageListModel> modelProvider,
+            ApplicationConstants constants) {
         super(modelProvider);
         ViewIdHandler.idHandler.generateAndSetIds(this);
         initTable(constants);
         initWidget(getTable());
     }
 
-    private void initTable(ApplicationConstants constants) {
+    private void initTable(final ApplicationConstants constants) {
         getTable().addColumn(new TextColumnWithTooltip<QuotaStorage>() {
             @Override
             public String getValue(QuotaStorage object) {
-                return object.getStorageName();
+                return object.getStorageName() == null || object.getStorageName() == "" ? constants.utlQuotaAllStoragesQuotaPopup()
+                        : object.getStorageName();
             }
-        }, constants.nameQuotaStorage());
+        },
+                constants.nameQuotaStorage());
 
         getTable().addColumn(new TextColumnWithTooltip<QuotaStorage>() {
             @Override
             public String getValue(QuotaStorage object) {
-                return (object.getStorageSizeGBUsage() == null ? "0" : object.getStorageSizeGBUsage().toString()) + "/" //$NON-NLS-1$ //$NON-NLS-2$
-                        + (object.getStorageSizeGB() == null ? "*" : object.getStorageSizeGB().toString()) + " GB"; //$NON-NLS-1$ //$NON-NLS-2$
+                return (object.getStorageSizeGBUsage() == null ? "0" : object.getStorageSizeGBUsage().toString()) + constants.outOfQuota() //$NON-NLS-1$
+                        + (object.getStorageSizeGB() == -1 ? constants.unlimitedQuota() : object.getStorageSizeGB()
+                                .toString()) + " GB"; //$NON-NLS-1$
             }
         },
                 constants.usedStorageTotalQuotaStorage());

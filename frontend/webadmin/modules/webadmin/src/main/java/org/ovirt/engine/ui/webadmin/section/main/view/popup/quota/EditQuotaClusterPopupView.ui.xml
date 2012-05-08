@@ -18,6 +18,10 @@
 			font-weight: bold;
 			padding-left: 5px;
 		}
+		.measureLabel {
+		 	line-height: 35px;
+			vertical-align: bottom;
+		}
 	</ui:style>
 
 	<d:SimpleDialogPanel width="450px" height="300px">
@@ -30,6 +34,7 @@
 				<e:EntityModelRadioButtonEditor
 					ui:field="specificMemRadioButtonEditor" addStyleNames="{style.radioButtonWidth}"/>
 				<e:EntityModelTextBoxEditor ui:field="memValueEditor" addStyleNames="{style.textBoxWidth}" />
+				<g:Label addStyleNames="{style.measureLabel}">GB</g:Label>
 			</g:HorizontalPanel>
 			<g:Label ui:field="cpuLabel" addStyleNames="{style.labelStyle}"/>
 			<g:HorizontalPanel>
@@ -38,6 +43,7 @@
 				<e:EntityModelRadioButtonEditor
 					ui:field="specificCpuRadioButtonEditor" addStyleNames="{style.radioButtonWidth}"/>
 				<e:EntityModelTextBoxEditor ui:field="cpuValueEditor" addStyleNames="{style.textBoxWidth}" />
+				<g:Label addStyleNames="{style.measureLabel}">vCpus</g:Label>
 			</g:HorizontalPanel>
 		</g:VerticalPanel>
 	</d:content>

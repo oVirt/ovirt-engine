@@ -284,10 +284,10 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 	@DefaultStringValue("Remove Quota Assignment from User(s)")
 	String removeQuotaAssignmentFromUsersTitle();
 
-	@DefaultStringValue("Define Cluster Quota on Data Center")
+	@DefaultStringValue("Edit Quota")
 	String defineClusterQuotaOnDataCenterTitle();
 
-	@DefaultStringValue("Define Storage Quota on Data Center")
+	@DefaultStringValue("Edit Quota")
 	String defineStorageQuotaOnDataCenterTitle();
 
 	@DefaultStringValue("Host Hooks")
@@ -618,7 +618,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 	@DefaultStringValue("VM(s)")
 	String vmsMsg();
 
-	@DefaultStringValue("Quota(s)")
+	@DefaultStringValue("Quota")
 	String quotasMsg();
 
 	@DefaultStringValue("Assignment(s)")
