@@ -19,7 +19,7 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
-import org.ovirt.engine.ui.uicommonweb.Linq.DiskByInternalDriveMappingComparer;
+import org.ovirt.engine.ui.uicommonweb.Linq.DiskByAliasComparer;
 import org.ovirt.engine.ui.uicommonweb.Linq.StorageDomainModelByNameComparer;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -139,7 +139,7 @@ public class TemplateStorageListModel extends SearchableListModel
                                     }
                                 }
 
-                                Linq.Sort(disks, new DiskByInternalDriveMappingComparer());
+                                Linq.Sort(disks, new DiskByAliasComparer());
                                 storageDomainModel.setDisks(disks);
                                 storageDomainModels.add(storageDomainModel);
                             }

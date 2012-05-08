@@ -177,6 +177,30 @@ public final class Linq
 
     }
 
+    public static class DiskByAliasComparer implements Comparator<DiskImage>
+    {
+
+        @Override
+        public int compare(DiskImage x, DiskImage y)
+        {
+            String xAlias = x.getDiskAlias();
+            String yAlias = y.getDiskAlias();
+
+            if (xAlias == null)
+            {
+                return 1;
+            }
+
+            if (yAlias == null)
+            {
+                return -1;
+            }
+
+            return xAlias.compareTo(yAlias);
+        }
+
+    }
+
     public static class DiskModelByNameComparer implements Comparator<DiskModel>
     {
         @Override

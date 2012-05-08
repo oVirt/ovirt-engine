@@ -38,7 +38,7 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.DataProvider;
 import org.ovirt.engine.ui.uicommonweb.Linq;
-import org.ovirt.engine.ui.uicommonweb.Linq.DiskByInternalDriveMappingComparer;
+import org.ovirt.engine.ui.uicommonweb.Linq.DiskByAliasComparer;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -221,7 +221,7 @@ public class VmDiskListModel extends SearchableListModel
         ArrayList<DiskImage> disks =
                 value != null ? Linq.<DiskImage> Cast(value) : new ArrayList<DiskImage>();
 
-        Linq.Sort(disks, new DiskByInternalDriveMappingComparer());
+        Linq.Sort(disks, new DiskByAliasComparer());
         super.setItems(disks);
 
         UpdateActionAvailability();

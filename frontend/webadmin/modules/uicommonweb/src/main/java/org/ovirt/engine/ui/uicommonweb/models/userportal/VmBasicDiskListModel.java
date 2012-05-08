@@ -51,7 +51,7 @@ public class VmBasicDiskListModel extends SearchableListModel
                             (List<DiskImage>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
                     ArrayList<DiskImage> diskList = new ArrayList<DiskImage>();
                     diskList.addAll(disks);
-                    Collections.sort(diskList, new Linq.DiskByInternalDriveMappingComparer());
+                    Collections.sort(diskList, new Linq.DiskByAliasComparer());
 
                     SearchableListModel searchableListModel = (SearchableListModel) model;
                     searchableListModel.setItems(diskList);
@@ -85,7 +85,7 @@ public class VmBasicDiskListModel extends SearchableListModel
                                         (List<DiskImage>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
                                 ArrayList<DiskImage> diskList = new ArrayList<DiskImage>();
                                 diskList.addAll(disks);
-                                Collections.sort(diskList, new Linq.DiskByInternalDriveMappingComparer());
+                                Collections.sort(diskList, new Linq.DiskByAliasComparer());
 
                                 SearchableListModel searchableListModel = (SearchableListModel) model1;
                                 searchableListModel.setItems(diskList);

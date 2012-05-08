@@ -1289,7 +1289,7 @@ public class VmModel extends Model
                 // .ToList();
 
                 ArrayList<DiskImage> diskList = DataProvider.GetTemplateDiskList(template.getId());
-                Collections.sort(diskList, new Linq.DiskByInternalDriveMappingComparer());
+                Collections.sort(diskList, new Linq.DiskByAliasComparer());
 
                 ArrayList<DiskModel> list = new ArrayList<DiskModel>();
                 for (DiskImage a : diskList)

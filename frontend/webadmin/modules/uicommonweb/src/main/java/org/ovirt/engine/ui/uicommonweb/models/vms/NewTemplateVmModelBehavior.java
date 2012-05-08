@@ -139,7 +139,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase
 
     private void InitDisks(ArrayList<DiskImage> disks)
     {
-        Collections.sort(disks, new Linq.DiskByInternalDriveMappingComparer());
+        Collections.sort(disks, new Linq.DiskByAliasComparer());
         ArrayList<DiskModel> list = new ArrayList<DiskModel>();
         for (DiskImage a : disks)
         {

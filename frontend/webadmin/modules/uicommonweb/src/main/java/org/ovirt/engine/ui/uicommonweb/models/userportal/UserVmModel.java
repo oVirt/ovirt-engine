@@ -1427,7 +1427,7 @@ public class UserVmModel extends Model
                         {
                             UserVmModel userVmModel = (UserVmModel) model;
                             ArrayList<DiskImage> diskList = (ArrayList<DiskImage>) result;
-                            Collections.sort(diskList, new Linq.DiskByInternalDriveMappingComparer());
+                            Collections.sort(diskList, new Linq.DiskByAliasComparer());
 
                             ArrayList<DiskModel> list = new ArrayList<DiskModel>();
                             for (DiskImage a : diskList)
