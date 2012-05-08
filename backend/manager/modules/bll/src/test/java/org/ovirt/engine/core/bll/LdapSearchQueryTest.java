@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.itests.ldap;
+package org.ovirt.engine.core.bll;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -20,9 +20,6 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import org.mockito.ArgumentMatcher;
-import org.ovirt.engine.core.bll.AbstractQueryTest;
-import org.ovirt.engine.core.bll.AdUsersSearchQuery;
-import org.ovirt.engine.core.bll.SearchQuery;
 import org.ovirt.engine.core.bll.adbroker.AdActionType;
 import org.ovirt.engine.core.bll.adbroker.LdapBroker;
 import org.ovirt.engine.core.bll.adbroker.LdapQueryType;

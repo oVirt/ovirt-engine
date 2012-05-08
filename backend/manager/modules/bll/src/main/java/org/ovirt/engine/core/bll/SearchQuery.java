@@ -369,11 +369,11 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
         return data;
     }
 
-    public String getDefaultDomain() {
+    protected String getDefaultDomain() {
         return LdapBrokerUtils.getDomainsList().get(0);
     }
 
-    public LdapBroker getLdapFactory(String domain) {
+    protected LdapBroker getLdapFactory(String domain) {
         return LdapFactory.getInstance(domain);
     }
 
