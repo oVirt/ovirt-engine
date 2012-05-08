@@ -18,6 +18,7 @@ import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 
+@SuppressWarnings("unused")
 public class VM extends IVdcQueryable implements INotifyPropertyChanged, Serializable, BusinessEntity<Guid>, HasStoragePool<Guid> {
     private static final long serialVersionUID = -4078140531074414263L;
     @Valid
@@ -323,7 +324,7 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
      */
     @Deprecated
     public void setnum_of_cpus(int value) {
-
+        // Purposely empty
     }
 
     public int getnum_of_sockets() {
@@ -1065,6 +1066,7 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
     }
 
     protected void OnPropertyChanged(PropertyChangedEventArgs e) {
+        // Purposely empty
     }
 
     private Map<String, Disk> mDiskMap = new HashMap<String, Disk>();
@@ -1116,10 +1118,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
     }
 
     public static boolean isStatusQualifyToMigrate(VMStatus st) {
-        // return (st == VMStatus.Up ||
-        // st == VMStatus.PoweringUp ||
-        // st == VMStatus.Down ||
-        // st == VMStatus.Paused);
         return (st == VMStatus.Up || st == VMStatus.PoweringUp || st == VMStatus.Paused || st == VMStatus.RebootInProgress);
     }
 
@@ -1156,7 +1154,7 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
      */
     @Deprecated
     public void setActualDiskWithSnapshotsSize(double value) {
-
+        // Purposely empty
     }
 
     private double _diskSize;
@@ -1343,7 +1341,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         // updateSession(vm);
     }
 
-    // public string qemuAudioDrv;
     /**
      * update vm statistics data
      *
@@ -1552,7 +1549,7 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
     }
 
     public void setVmPayload(VmPayload vmPayload) {
-        vmPayload = vmPayload;
+        this.vmPayload = vmPayload;
     }
 
     public VmPayload getVmPayload() {
