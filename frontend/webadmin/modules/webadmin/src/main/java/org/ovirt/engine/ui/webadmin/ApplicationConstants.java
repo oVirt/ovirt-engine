@@ -1998,11 +1998,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Brick Directory")
     String brickDirectoryBricks();
 
-    @DefaultStringValue("Available Bricks")
-    String availableBricksHeaderLabel();
-
-    @DefaultStringValue("Selected Bricks")
-    String selectedBricksHeaderLabel();
+    @DefaultStringValue("Bricks")
+    String bricksHeaderLabel();
 
     @DefaultStringValue("Add")
     String addBricksButtonLabel();
@@ -2010,8 +2007,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Remove")
     String removeBricksButtonLabel();
 
-    @DefaultStringValue("Add All")
-    String addAllBricksButtonLabel();
+    @DefaultStringValue("Clear")
+    String clearBricksButtonLabel();
 
     @DefaultStringValue("Remove All")
     String removeAllBricksButtonLabel();

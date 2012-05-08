@@ -112,4 +112,5 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 
     @DefaultMessage("({0} bricks selected)")
     String noOfBricksSelected(int brickCount);
+
 }

@@ -76,8 +76,7 @@ public class VolumeBrickListModel extends SearchableListModel {
         volumeBrickModel.setHashName("add_bricks"); //$NON-NLS-1$
 
         // TODO: fetch the mount points to display
-        volumeBrickModel.getAvailableBricks().setItems(new ArrayList<EntityModel>());
-        volumeBrickModel.getSelectedBricks().setItems(new ArrayList<EntityModel>());
+        volumeBrickModel.getBricks().setItems(new ArrayList<EntityModel>());
 
         UICommand command = new UICommand("Ok", this); //$NON-NLS-1$
         command.setTitle(ConstantsManager.getInstance().getConstants().ok());

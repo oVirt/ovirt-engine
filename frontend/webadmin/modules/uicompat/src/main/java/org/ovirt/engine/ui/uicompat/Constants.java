@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.uicompat;
 
+
 public interface Constants extends com.google.gwt.i18n.client.Constants {
 
 	@DefaultStringValue("OK")
@@ -1267,4 +1268,28 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Are you sure you want to stop the following volumes?")
     String stopVolumeMessage();
+
+	@DefaultStringValue("Remove Volume")
+    String removeVolumesTitle();
+
+    @DefaultStringValue("Are you sure you want to remove the following Volumes")
+    String removeVolumesMessage();
+
+    @DefaultStringValue("Brick with the same details already exist")
+    String duplicateBrickMsg();
+
+    @DefaultStringValue("Atleast 1 brick should be present")
+    String distriputedVolumeAddBricksMsg();
+
+    @DefaultStringValue("Number of bricks should be equal to Replica Count")
+    String replicateVolumeAddBricksMsg();
+
+    @DefaultStringValue("Number of bricks should be a mutiple of Replica Count")
+    String distriputedReplicateVolumeAddBricksMsg();
+
+    @DefaultStringValue("Number of bricks should be equal to Stripe Count")
+    String stripeVolumeAddBricksMsg();
+
+    @DefaultStringValue("Number of bricks should be a mutiple of Stripe Count")
+    String distriputedStripeVolumeAddBricksMsg();
 }

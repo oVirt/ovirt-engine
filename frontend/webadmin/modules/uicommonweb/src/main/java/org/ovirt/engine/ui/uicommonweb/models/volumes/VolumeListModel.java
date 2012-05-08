@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.uicommonweb.models.volumes;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -382,33 +381,46 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
 
 
     private void onCreateVolume() {
-        VolumeModel model = (VolumeModel) getWindow();
-        Guid clusterId = ((VDSGroup) model.getCluster().getSelectedItem()).getId();
+        VolumeModel volumeModel = (VolumeModel) getWindow();
+
+        if (!volumeModel.validate())
+        {
+            return;
+        }
+
+        Guid clusterId = ((VDSGroup) volumeModel.getCluster().getSelectedItem()).getId();
         GlusterVolumeEntity volume = new GlusterVolumeEntity();
         volume.setClusterId(clusterId);
-        volume.setName((String) model.getName().getEntity());
-        GlusterVolumeType type = (GlusterVolumeType) model.getTypeList().getSelectedItem();
+        volume.setName((String) volumeModel.getName().getEntity());
+        GlusterVolumeType type = (GlusterVolumeType) volumeModel.getTypeList().getSelectedItem();
 
         if (type == GlusterVolumeType.STRIPE || type == GlusterVolumeType.DISTRIBUTED_STRIPE) {
-            volume.setStripeCount(model.getStripeCountValue());
+            volume.setStripeCount(volumeModel.getStripeCountValue());
         } else if (type == GlusterVolumeType.REPLICATE || type == GlusterVolumeType.DISTRIBUTED_REPLICATE) {
-            volume.setReplicaCount(model.getReplicaCountValue());
+            volume.setReplicaCount(volumeModel.getReplicaCountValue());
         }
         volume.setVolumeType(type);
 
-        if ((Boolean) model.getTcpTransportType().getEntity())
+        if ((Boolean) volumeModel.getTcpTransportType().getEntity())
             volume.getTransportTypes().add(TransportType.TCP);
-        if ((Boolean) model.getRdmaTransportType().getEntity())
+        if ((Boolean) volumeModel.getRdmaTransportType().getEntity())
             volume.getTransportTypes().add(TransportType.RDMA);
 
-        volume.setBricks((List<GlusterBrickEntity>) model.getBricks().getItems());
+        ArrayList<GlusterBrickEntity> brickList = new ArrayList<GlusterBrickEntity>();
 
-        if ((Boolean) model.getNfs_accecssProtocol().getEntity())
+        for (Object model : volumeModel.getBricks().getItems())
+        {
+            brickList.add((GlusterBrickEntity) ((EntityModel) model).getEntity());
+        }
+
+        volume.setBricks(brickList);
+
+        if ((Boolean) volumeModel.getNfs_accecssProtocol().getEntity())
             volume.enableNFS();
         else
             volume.disableNFS();
 
-        volume.setAccessControlList((String) model.getAllowAccess().getEntity());
+        volume.setAccessControlList((String) volumeModel.getAllowAccess().getEntity());
 
         CreateGlusterVolumeParameters parameter = new CreateGlusterVolumeParameters(volume);
 
@@ -416,7 +428,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
 
             @Override
             public void Executed(FrontendActionAsyncResult result) {
-
+                cancel();
             }
         });
     }

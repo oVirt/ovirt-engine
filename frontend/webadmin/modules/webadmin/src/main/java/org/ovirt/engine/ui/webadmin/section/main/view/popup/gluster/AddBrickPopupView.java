@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster;
 
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
@@ -7,7 +8,10 @@ import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.UiCommandButton;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
+import org.ovirt.engine.ui.common.widget.editor.EntityModelLabelEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
+import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.EntityModelTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -21,6 +25,7 @@ import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Label;
@@ -42,6 +47,14 @@ public class AddBrickPopupView extends AbstractModelBoundPopupView<VolumeBrickMo
     }
 
     @UiField
+    WidgetStyle style;
+
+    @UiField
+    @Path(value = "volumeType.entity")
+    @WithElementId
+    EntityModelLabelEditor volumeTypeEditor;
+
+    @UiField
     @Path(value = "replicaCount.entity")
     @WithElementId
     EntityModelTextBoxEditor replicaCountEditor;
@@ -51,37 +64,37 @@ public class AddBrickPopupView extends AbstractModelBoundPopupView<VolumeBrickMo
     @WithElementId
     EntityModelTextBoxEditor stripeCountEditor;
 
+    @UiField(provided = true)
+    @Path(value = "servers.selectedItem")
+    @WithElementId
+    ListModelListBoxEditor<Object> serverEditor;
+
+    @UiField
+    @Path(value = "brickDirectory.entity")
+    @WithElementId
+    EntityModelTextBoxEditor exportDirEditor;
+
+    @UiField
+    @WithElementId
+    UiCommandButton addBrickButton;
+
+    @UiField
+    @WithElementId
+    UiCommandButton clearButton;
+
     @UiField
     @Ignore
     @WithElementId
-    Label availableBricksHeader;
+    Label bricksHeader;
 
     @UiField(provided = true)
     @Ignore
     @WithElementId
-    EntityModelCellTable<ListModel> availableBricksTable;
-
-    @UiField
-    @Ignore
-    @WithElementId
-    Label selectedBricksHeader;
-
-    @UiField(provided = true)
-    @Ignore
-    @WithElementId
-    EntityModelCellTable<ListModel> selectedBricksTable;
-
-    @UiField
-    @WithElementId
-    UiCommandButton addBricksButton;
+    EntityModelCellTable<ListModel> bricksTable;
 
     @UiField
     @WithElementId
     UiCommandButton removeBricksButton;
-
-    @UiField
-    @WithElementId
-    UiCommandButton addAllBricksButton;
 
     @UiField
     @WithElementId
@@ -102,60 +115,72 @@ public class AddBrickPopupView extends AbstractModelBoundPopupView<VolumeBrickMo
     @Inject
     public AddBrickPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
         super(eventBus, resources);
-        availableBricksTable = new EntityModelCellTable<ListModel>(true);
-        selectedBricksTable = new EntityModelCellTable<ListModel>(true);
+        bricksTable = new EntityModelCellTable<ListModel>(true);
+        initListBoxEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
         localize(constants);
+        addStyles();
         initTableColumns(constants);
         initButtons();
         Driver.driver.initialize(this);
     }
 
+    private void initListBoxEditors() {
+        serverEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
+            @Override
+            public String renderNullSafe(Object object) {
+                return ((VDS) object).getvds_name();
+            }
+        });
+
+    }
+
+    protected void addStyles()
+    {
+        volumeTypeEditor.addContentWidgetStyleName(style.editorContentWidget());
+        replicaCountEditor.addContentWidgetStyleName(style.editorContentWidget());
+        stripeCountEditor.addContentWidgetStyleName(style.editorContentWidget());
+    }
+
     protected void initTableColumns(ApplicationConstants constants){
         // Table Entity Columns
-        availableBricksTable.addEntityModelColumn(new EntityModelTextColumn<EntityModel>() {
+        bricksTable.addEntityModelColumn(new EntityModelTextColumn<EntityModel>() {
             @Override
             public String getValue(EntityModel entityModel) {
                 return ((GlusterBrickEntity) (entityModel.getEntity())).getServerName();
             }
         }, constants.serverBricks());
 
-        availableBricksTable.addEntityModelColumn(new EntityModelTextColumn<EntityModel>() {
+        bricksTable.addEntityModelColumn(new EntityModelTextColumn<EntityModel>() {
 
             @Override
             public String getValue(EntityModel entityModel) {
                 return ((GlusterBrickEntity) (entityModel.getEntity())).getBrickDirectory();
             }
         }, constants.brickDirectoryBricks());
-
-        selectedBricksTable.addEntityModelColumn(new EntityModelTextColumn<EntityModel>() {
-            @Override
-            public String getValue(EntityModel entityModel) {
-                return ((GlusterBrickEntity) (entityModel.getEntity())).getServerName();
-            }
-        }, constants.serverBricks());
-
-        selectedBricksTable.addEntityModelColumn(new EntityModelTextColumn<EntityModel>() {
-
-            @Override
-            public String getValue(EntityModel entityModel) {
-                return ((GlusterBrickEntity) (entityModel.getEntity())).getBrickDirectory();
-            }
-        }, constants.brickDirectoryBricks());
-
     }
 
     private void initButtons()
     {
-        addBricksButton.addClickHandler(new ClickHandler() {
+        addBrickButton.addClickHandler(new ClickHandler() {
 
             @Override
             public void onClick(ClickEvent event) {
-                addBricksButton.getCommand().Execute();
+                addBrickButton.getCommand().Execute();
                 clearSelections();
             }
         });
+
+        clearButton.addClickHandler(new ClickHandler() {
+
+            @Override
+            public void onClick(ClickEvent event) {
+                clearButton.getCommand().Execute();
+                clearSelections();
+            }
+        });
+
 
         removeBricksButton.addClickHandler(new ClickHandler() {
 
@@ -166,14 +191,6 @@ public class AddBrickPopupView extends AbstractModelBoundPopupView<VolumeBrickMo
             }
         });
 
-        addAllBricksButton.addClickHandler(new ClickHandler() {
-
-            @Override
-            public void onClick(ClickEvent event) {
-                addAllBricksButton.getCommand().Execute();
-                clearSelections();
-            }
-        });
 
         removeAllBricksButton.addClickHandler(new ClickHandler() {
 
@@ -203,25 +220,22 @@ public class AddBrickPopupView extends AbstractModelBoundPopupView<VolumeBrickMo
 
     private void clearSelections()
     {
-        if (availableBricksTable.getSelectionModel() instanceof MultiSelectionModel)
+        if (bricksTable.getSelectionModel() instanceof MultiSelectionModel)
         {
-            ((MultiSelectionModel) availableBricksTable.getSelectionModel()).clear();
-        }
-
-        if (selectedBricksTable.getSelectionModel() instanceof MultiSelectionModel)
-        {
-            ((MultiSelectionModel) selectedBricksTable.getSelectionModel()).clear();
+            ((MultiSelectionModel) bricksTable.getSelectionModel()).clear();
         }
     }
 
     private void localize(ApplicationConstants constants) {
+        volumeTypeEditor.setLabel(constants.volumeTypeVolume());
         replicaCountEditor.setLabel(constants.replicaCountVolume());
         stripeCountEditor.setLabel(constants.stripeCountVolume());
-        availableBricksHeader.setText(constants.availableBricksHeaderLabel());
-        selectedBricksHeader.setText(constants.selectedBricksHeaderLabel());
-        addBricksButton.setLabel(constants.addBricksButtonLabel());
+        bricksHeader.setText(constants.bricksHeaderLabel());
+        serverEditor.setLabel(constants.serverBricks());
+        exportDirEditor.setLabel(constants.brickDirectoryBricks());
+        addBrickButton.setLabel(constants.addBricksButtonLabel());
+        clearButton.setLabel(constants.clearBricksButtonLabel());
         removeBricksButton.setLabel(constants.removeBricksButtonLabel());
-        addAllBricksButton.setLabel(constants.addAllBricksButtonLabel());
         removeAllBricksButton.setLabel(constants.removeAllBricksButtonLabel());
         moveBricksUpButton.setLabel(constants.moveBricksUpButtonLabel());
         moveBricksDownButton.setLabel(constants.moveBricksDownButtonLabel());
@@ -229,13 +243,12 @@ public class AddBrickPopupView extends AbstractModelBoundPopupView<VolumeBrickMo
 
     @Override
     public void edit(VolumeBrickModel object) {
-        availableBricksTable.edit(object.getAvailableBricks());
-        selectedBricksTable.edit(object.getSelectedBricks());
+        bricksTable.edit(object.getBricks());
         Driver.driver.edit(object);
 
-        addBricksButton.setCommand(object.getAddBricksCommand());
+        addBrickButton.setCommand(object.getAddBrickCommand());
+        clearButton.setCommand(object.getClearBrickDetailsCommand());
         removeBricksButton.setCommand(object.getRemoveBricksCommand());
-        addAllBricksButton.setCommand(object.getAddAllBricksCommand());
         removeAllBricksButton.setCommand(object.getRemoveAllBricksCommand());
 
         moveBricksUpButton.setCommand(object.getMoveBricksUpCommand());
@@ -250,8 +263,12 @@ public class AddBrickPopupView extends AbstractModelBoundPopupView<VolumeBrickMo
 
     @Override
     public VolumeBrickModel flush() {
-        selectedBricksTable.flush();
+        bricksTable.flush();
         return Driver.driver.flush();
+    }
+
+    interface WidgetStyle extends CssResource {
+        String editorContentWidget();
     }
 
 }
