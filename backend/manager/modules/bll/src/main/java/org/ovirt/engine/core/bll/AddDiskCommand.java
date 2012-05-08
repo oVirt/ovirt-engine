@@ -82,7 +82,19 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
             if (returnValue && DiskStorageType.IMAGE == getParameters().getDiskInfo().getDiskStorageType()) {
                 returnValue = checkIfImageDiskCanBeAdded(vm);
             }
+            if (returnValue && DiskStorageType.LUN == getParameters().getDiskInfo().getDiskStorageType()) {
+                returnValue = checkIfLunDiskCanBeAdded();
+            }
             ImagesHandler.setDiskAlias(getParameters().getDiskInfo(), getVm());
+        }
+        return returnValue;
+    }
+
+    private boolean checkIfLunDiskCanBeAdded() {
+        boolean returnValue = true;
+        if (getDiskLunMapDao().getDiskIdByLunId(((LunDisk) getParameters().getDiskInfo()).getLun().getLUN_id()) != null) {
+            returnValue = false;
+            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_LUN_IS_ALREADY_IN_USE);
         }
         return returnValue;
     }

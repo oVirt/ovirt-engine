@@ -405,6 +405,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. VM migration is in progress")
     String ACTION_TYPE_FAILED_MIGRATION_IN_PROGRESS();
 
+    @DefaultStringValue("Cannot ${action} ${type}. The provided lun is used by another disk.")
+    String ACTION_TYPE_FAILED_DISK_LUN_IS_ALREADY_IN_USE();
+
     @DefaultStringValue("Cannot ${action} ${type}. source and destination is the same.")
     String ACTION_TYPE_FAILED_MIGRATION_TO_SAME_HOST();
 
