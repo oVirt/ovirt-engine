@@ -31,6 +31,7 @@ import org.ovirt.engine.core.compat.StringHelper;
 @Entity
 @Table(name = "vm_templates")
 @TypeDef(name = "guid", typeClass = GuidType.class)
+@SuppressWarnings("unused")
 public class VmTemplate extends VmBase {
     private static final long serialVersionUID = -522552511046744989L;
 
@@ -162,6 +163,7 @@ public class VmTemplate extends VmBase {
      * empty setters to fix CXF issue
      */
     public void setnum_of_cpus(int val) {
+        // Purposely empty
     }
 
     public VmTemplateStatus getstatus() {
@@ -254,6 +256,7 @@ public class VmTemplate extends VmBase {
      * empty setters to fix CXF issue
      */
     public void setActualDiskSize(double actualDiskSize) {
+        // Purposely empty
     }
 
     @JsonIgnore
