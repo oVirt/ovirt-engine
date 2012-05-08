@@ -22,8 +22,7 @@ public class VmStaticDAODbFacadeImpl extends BaseDAODbFacade implements VmStatic
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("vm_guid", id);
 
-        ParameterizedRowMapper<VmStatic> mapper = new VMStaticRowMapper();
-        return getCallsHandler().executeRead("GetVmStaticByVmGuid", mapper, parameterSource);
+        return getCallsHandler().executeRead("GetVmStaticByVmGuid", VMStaticRowMapper.instance, parameterSource);
     }
 
     @Override
@@ -125,7 +124,6 @@ public class VmStaticDAODbFacadeImpl extends BaseDAODbFacade implements VmStatic
                 .addValue("quota_id", vm.getQuotaId())
                 .addValue("allow_console_reconnect", vm.getAllowConsoleReconnect());
 
-
         getCallsHandler().executeModification("UpdateVmStatic", parameterSource);
     }
 
@@ -142,8 +140,7 @@ public class VmStaticDAODbFacadeImpl extends BaseDAODbFacade implements VmStatic
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("vm_name", name);
 
-        ParameterizedRowMapper<VmStatic> mapper = new VMStaticRowMapper();
-        return getCallsHandler().executeReadList("GetVmStaticByName", mapper, parameterSource);
+        return getCallsHandler().executeReadList("GetVmStaticByName", VMStaticRowMapper.instance, parameterSource);
 
     }
 
@@ -152,9 +149,9 @@ public class VmStaticDAODbFacadeImpl extends BaseDAODbFacade implements VmStatic
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("sp_id", spId);
 
-        ParameterizedRowMapper<VmStatic> mapper = new VMStaticRowMapper();
-
-        return getCallsHandler().executeReadList("GetAllFromVmStaticByStoragePoolId", mapper, parameterSource);
+        return getCallsHandler().executeReadList("GetAllFromVmStaticByStoragePoolId",
+                VMStaticRowMapper.instance,
+                parameterSource);
     }
 
     @Override
@@ -162,8 +159,7 @@ public class VmStaticDAODbFacadeImpl extends BaseDAODbFacade implements VmStatic
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("vds_group_id", vdsGroup);
 
-        ParameterizedRowMapper<VmStatic> mapper = new VMStaticRowMapper();
-        return getCallsHandler().executeReadList("GetVmStaticByVdsGroup", mapper, parameterSource);
+        return getCallsHandler().executeReadList("GetVmStaticByVdsGroup", VMStaticRowMapper.instance, parameterSource);
     }
 
     @Override
@@ -171,8 +167,7 @@ public class VmStaticDAODbFacadeImpl extends BaseDAODbFacade implements VmStatic
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("vds_id", vds);
 
-        ParameterizedRowMapper<VmStatic> mapper = new VMStaticRowMapper();
-        return getCallsHandler().executeReadList("GetVmStaticWithFailbackByVdsId", mapper,
+        return getCallsHandler().executeReadList("GetVmStaticWithFailbackByVdsId", VMStaticRowMapper.instance,
                 parameterSource);
     }
 
@@ -181,9 +176,7 @@ public class VmStaticDAODbFacadeImpl extends BaseDAODbFacade implements VmStatic
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("groupId", group).addValue("networkName", name);
 
-        ParameterizedRowMapper<VmStatic> mapper = new VMStaticRowMapper();
-
-        return getCallsHandler().executeReadList("GetvmStaticByGroupIdAndNetwork", mapper,
+        return getCallsHandler().executeReadList("GetvmStaticByGroupIdAndNetwork", VMStaticRowMapper.instance,
                 parameterSource);
     }
 
@@ -207,7 +200,8 @@ public class VmStaticDAODbFacadeImpl extends BaseDAODbFacade implements VmStatic
     /**
      * JDBC row mapper for VM static
      */
-    static class VMStaticRowMapper extends AbstractVmRowMapper<VmStatic> {
+    private static class VMStaticRowMapper extends AbstractVmRowMapper<VmStatic> {
+        public static final VMStaticRowMapper instance = new VMStaticRowMapper();
 
         @Override
         public VmStatic mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -230,7 +224,8 @@ public class VmStaticDAODbFacadeImpl extends BaseDAODbFacade implements VmStatic
             String userDefinedProperties = rs.getString("userdefined_properties");
             entity.setPredefinedProperties(predefinedProperties);
             entity.setUserDefinedProperties(userDefinedProperties);
-            entity.setCustomProperties(VmPropertiesUtils.getInstance().customProperties(predefinedProperties, userDefinedProperties));
+            entity.setCustomProperties(VmPropertiesUtils.getInstance().customProperties(predefinedProperties,
+                    userDefinedProperties));
             entity.setMinAllocatedMem(rs.getInt("min_allocated_mem"));
             entity.setQuotaId(Guid.createGuidFromString(rs.getString("quota_id")));
 
