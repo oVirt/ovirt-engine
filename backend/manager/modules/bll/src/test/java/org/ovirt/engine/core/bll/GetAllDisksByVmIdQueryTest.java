@@ -17,6 +17,7 @@ import org.junit.runner.RunWith;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
+import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
@@ -31,7 +32,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 /**
- * A test case for {@GetAllDisksByVmIdQuery}.
+ * A test case for {@link GetAllDisksByVmIdQuery}.
  * This test mocks away all the DAOs, and just tests the flow of the query itself.
  */
 @RunWith(PowerMockRunner.class)
@@ -39,7 +40,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 public class GetAllDisksByVmIdQueryTest extends AbstractUserQueryTest<GetAllDisksByVmIdParameters, GetAllDisksByVmIdQuery<GetAllDisksByVmIdParameters>> {
     private static final int NUM_DISKS_OF_EACH_KIND = 3;
 
-    /** The {@link DiskImageDAO} mocked for the test */
+    /** The {@link DiskDAO} mocked for the test */
     private DiskDao diskDAOMock;
 
     /** The {@link VmDeviceDAO} mocked for the test */
@@ -126,7 +127,7 @@ public class GetAllDisksByVmIdQueryTest extends AbstractUserQueryTest<GetAllDisk
                 Guid.NewGuid(),
                 ImageStatus.OK,
                 new Date(),
-                "", VmEntityType.VM, null, null);
+                "", VmEntityType.VM, null, null, QuotaEnforcementTypeEnum.DISABLED, false);
     }
 
     private DiskImage createDiskSnapshot(Guid diskId) {
@@ -144,7 +145,7 @@ public class GetAllDisksByVmIdQueryTest extends AbstractUserQueryTest<GetAllDisk
                 diskId,
                 ImageStatus.OK,
                 new Date(),
-                "", VmEntityType.VM, null, null);
+                "", VmEntityType.VM, null, null, QuotaEnforcementTypeEnum.DISABLED, false);
     }
 
     @Test

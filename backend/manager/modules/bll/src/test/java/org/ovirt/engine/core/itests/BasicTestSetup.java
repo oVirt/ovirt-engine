@@ -40,6 +40,7 @@ import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.PropagateErrors;
+import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
@@ -199,7 +200,7 @@ public class BasicTestSetup {
                         ImageStatus.OK,
                         now,
                         "",
-                        VmEntityType.VM, null,null);
+                        VmEntityType.VM, null, null, QuotaEnforcementTypeEnum.DISABLED, false);
         disk.setvolume_type(VolumeType.Sparse);
         disk.setvolume_format(VolumeFormat.COW);
         disk.setsize(100);

@@ -11,10 +11,14 @@ public class DiskImageBase extends Disk {
     @Valid
     private Image image = new Image();
 
-    /**
-     * Transient field for GUI presentation purposes.
-     */
+    /** Transient field for GUI presentation purposes. */
     private String quotaName;
+
+    /** Transient field for GUI presentation purposes. */
+    private boolean isQuotaDefault;
+
+    /** Transient field for GUI presentation purposes. */
+    private QuotaEnforcementTypeEnum quotaEnforcementType;
 
     public DiskImageBase() {
         getImage().setSize(0);
@@ -79,6 +83,22 @@ public class DiskImageBase extends Disk {
 
     public void setQuotaName(String quotaName) {
         this.quotaName = quotaName;
+    }
+
+    public boolean isQuotaDefault() {
+        return isQuotaDefault;
+    }
+
+    public void setIsQuotaDefault(boolean isQuotaDefault) {
+        this.isQuotaDefault = isQuotaDefault;
+    }
+
+    public QuotaEnforcementTypeEnum getQuotaEnforcementType() {
+        return quotaEnforcementType;
+    }
+
+    public void setQuotaEnforcementType(QuotaEnforcementTypeEnum quotaEnforcementType) {
+        this.quotaEnforcementType = quotaEnforcementType;
     }
 
     @Override

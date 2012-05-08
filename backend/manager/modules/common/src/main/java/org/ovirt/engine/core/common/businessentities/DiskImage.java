@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 
 import org.ovirt.engine.core.compat.Guid;
@@ -11,8 +12,8 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
 
     private static final long serialVersionUID = 1533416252250153306L;
 
-    private static final java.util.ArrayList<String> _diskImageProperties = new ArrayList<String>(
-            java.util.Arrays.asList(new String[] { "active", "creation_date", "last_modified_date", "actual_size",
+    private static final ArrayList<String> _diskImageProperties = new ArrayList<String>(
+            Arrays.asList(new String[] { "active", "creation_date", "last_modified_date", "actual_size",
                     "description", "internal_drive_mapping", "appList", "it_guid", "vm_guid", "ParentId",
                     "imageStatus", "lastModified", "storage_id", "vm_snapshot_id", "storage_path", "image_group_id",
                     "storage_pool_id", "boot", "volume_type", "volume_format", "disk_interface", "wipe_after_delete",
@@ -55,6 +56,8 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
         setPropagateErrors(diskImageBase.getPropagateErrors());
         setQuotaId(diskImageBase.getQuotaId());
         setQuotaName(diskImageBase.getQuotaName());
+        setQuotaEnforcementType(diskImageBase.getQuotaEnforcementType());
+        setIsQuotaDefault(diskImageBase.isQuotaDefault());
     }
 
     public DiskImage(Boolean active,
@@ -73,7 +76,9 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
             String appList,
             VmEntityType vmEntityType,
             Guid quotaId,
-            String quotaName) {
+            String quotaName,
+            QuotaEnforcementTypeEnum quotaEnforcementType,
+            boolean isQuotaDefault) {
         setactive(active);
         setcreation_date(creation_date);
         this.setlast_modified_date(last_modified_date);
@@ -91,6 +96,8 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
         this.setVmEntityType(vmEntityType);
         this.setQuotaId(quotaId);
         this.setQuotaName(quotaName);
+        setQuotaEnforcementType(quotaEnforcementType);
+        setIsQuotaDefault(isQuotaDefault);
     }
 
     public Guid getImageId() {
@@ -103,10 +110,12 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
 
     private VmEntityType vmEntityType;
 
+    @Override
     public VmEntityType getVmEntityType() {
         return vmEntityType;
     }
 
+    @Override
     public void setVmEntityType(VmEntityType vmEntityType) {
         this.vmEntityType = vmEntityType;
     }
@@ -347,8 +356,8 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
 
         // set all private fields (imitate clone - deep copy)
         di.setactive(diskImage.getactive());
-        di.setcreation_date(new java.util.Date(diskImage.getcreation_date().getTime()));
-        di.setlast_modified_date(new java.util.Date(diskImage.getlast_modified_date().getTime()));
+        di.setcreation_date(new Date(diskImage.getcreation_date().getTime()));
+        di.setlast_modified_date(new Date(diskImage.getlast_modified_date().getTime()));
         di.actualSizeFromDiskImageDynamic = diskImage.actualSizeFromDiskImageDynamic;
         di.readRateFromDiskImageDynamic = diskImage.readRateFromDiskImageDynamic;
         di.writeRateFromDiskImageDynamic = diskImage.writeRateFromDiskImageDynamic;
