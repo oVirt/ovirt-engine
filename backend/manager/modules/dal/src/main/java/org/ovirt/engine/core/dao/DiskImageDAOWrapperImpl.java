@@ -82,12 +82,8 @@ public class DiskImageDAOWrapperImpl extends BaseDAOWrapperImpl implements DiskI
         throw new NotImplementedException();
     }
 
+    @Override
     public List<DiskImage> getAllWithQuery(String query) {
         throw new NotImplementedException();
-    }
-
-    public List<DiskImage> getAllAttachableDisksByPoolId(Guid poolId, Guid userId, boolean isFiltered) {
-        // TODO Auto-generated method stub
-        return null;
     }
 }

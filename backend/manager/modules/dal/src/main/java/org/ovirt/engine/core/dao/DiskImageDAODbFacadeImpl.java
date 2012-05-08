@@ -15,12 +15,11 @@ import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
 import org.ovirt.engine.core.utils.StringUtils;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 
 /**
  * <code>DiskImageDAODbFacadeImpl</code> provides an implementation of {@link DiskImageDAO} that uses previously
- * developed code from {@link DbFacade}.
+ * developed code from {@link org.ovirt.engine.core.dal.dbbroker.DbFacade}.
  */
 public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskImageDAO {
 
@@ -123,10 +122,9 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
                 parameterSource);
     }
 
-    protected static class DiskImageRowMapper extends AbstractDiskRowMapper<DiskImage> implements
-            ParameterizedRowMapper<DiskImage> {
+    protected static class DiskImageRowMapper extends AbstractDiskRowMapper<DiskImage> {
 
-        public static DiskImageRowMapper instance = new DiskImageRowMapper();
+        public static final DiskImageRowMapper instance = new DiskImageRowMapper();
 
         private DiskImageRowMapper() {
         }
@@ -179,16 +177,16 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
             handleEntityType(entityType, entity);
         }
 
+        private static void handleEntityType(String entityType, DiskImage entity) {
+            if (entityType != null && !entityType.isEmpty()) {
+                VmEntityType vmEntityType = VmEntityType.valueOf(entityType);
+                entity.setVmEntityType(vmEntityType);
+            }
+        }
+
         @Override
         protected DiskImage createDiskEntity() {
             return new DiskImage();
-        }
-    }
-
-    private static void handleEntityType(String entityType, DiskImage entity) {
-        if (entityType != null && !entityType.isEmpty()) {
-            VmEntityType vmEntityType = VmEntityType.valueOf(entityType);
-            entity.setVmEntityType(vmEntityType);
         }
     }
 

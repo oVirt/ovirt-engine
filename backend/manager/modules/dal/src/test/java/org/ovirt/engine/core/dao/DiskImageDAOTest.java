@@ -4,6 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.ovirt.engine.core.dao.FixturesTool.IMAGE_ID;
+import static org.ovirt.engine.core.dao.FixturesTool.TEMPLATE_IMAGE_ID;
 
 import java.util.List;
 
@@ -13,11 +15,9 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
- * <code.DiskImageDAOTest</code> provides unit tests to validate {@link DiskImageDAO}.
+ * <code>DiskImageDAOTest</code> provides unit tests to validate {@link DiskImageDAO}.
  */
 public class DiskImageDAOTest extends BaseReadDaoTestCase<Guid, DiskImage, DiskImageDAO> {
-    private static final Guid EXISTING_IMAGE_ID = new Guid("42058975-3d5e-484a-80c1-01c31207f578");
-    private static final Guid EXISTING_IMAGE_DISK_TEMPLATE = new Guid("52058975-3d5e-484a-80c1-01c31207f578");
     private static final Guid ANCESTOR_IMAGE_ID = new Guid("c9a559d9-8666-40d1-9967-759502b19f0b");
 
     private DiskImage existingTemplate;
@@ -42,7 +42,7 @@ public class DiskImageDAOTest extends BaseReadDaoTestCase<Guid, DiskImage, DiskI
 
     @Override
     protected Guid getExistingEntityId() {
-        return EXISTING_IMAGE_ID;
+        return IMAGE_ID;
     }
 
     @Override
@@ -50,7 +50,7 @@ public class DiskImageDAOTest extends BaseReadDaoTestCase<Guid, DiskImage, DiskI
         super.setUp();
 
         diskDao = prepareDAO(dbFacade.getBaseDiskDao());
-        existingTemplate = dao.get(EXISTING_IMAGE_DISK_TEMPLATE);
+        existingTemplate = dao.get(TEMPLATE_IMAGE_ID);
     }
 
     @Test
@@ -107,11 +107,12 @@ public class DiskImageDAOTest extends BaseReadDaoTestCase<Guid, DiskImage, DiskI
     @Test
     public void testGetAllForQuotaId() {
         List<DiskImage> disks = dao.getAllForQuotaId(FixturesTool.QUOTA_GENERAL);
-        assertEquals("VM should have five disks", 4, disks.size());
+        assertEquals("VM should have four disks", 4, disks.size());
     }
 
+    @Test
     public void testGetTemplate() {
-        DiskImage result = dao.get(EXISTING_IMAGE_DISK_TEMPLATE);
+        DiskImage result = dao.get(TEMPLATE_IMAGE_ID);
         assertNotNull(result);
         assertEquals(existingTemplate, result);
     }
