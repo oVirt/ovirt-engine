@@ -86,6 +86,11 @@ public class QuotaUserListModel extends SearchableListModel {
                         (ArrayList<permissions>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
                 Map<Guid, permissions> map = new HashMap<Guid, permissions>();
                 for (permissions permission : list) {
+                    //filter out sys-admin and dc admin from consumers sub-tab
+                    if (permission.getrole_id().equals(QuotaPermissionListModel.SUPER_USER)
+                            || permission.getrole_id().equals(QuotaPermissionListModel.DATA_CENTER_ADMIN)) {
+                        continue;
+                    }
                     if (!map.containsKey(permission.getad_element_id())) {
                         map.put(permission.getad_element_id(), permission);
                     } else {

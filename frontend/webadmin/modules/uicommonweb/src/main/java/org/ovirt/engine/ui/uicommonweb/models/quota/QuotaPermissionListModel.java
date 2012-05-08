@@ -17,6 +17,8 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 public class QuotaPermissionListModel extends PermissionListModel {
 
     public static final Guid CONSUME_QUOTA_ROLE_ID = new Guid("DEF0000a-0000-0000-0000-DEF00000000a"); //$NON-NLS-1$
+    public static final Guid SUPER_USER = new Guid("00000000-0000-0000-0000-000000000001"); //$NON-NLS-1$
+    public static final Guid DATA_CENTER_ADMIN = new Guid("DEF00002-0000-0000-0000-DEF000000002"); //$NON-NLS-1$
 
     public QuotaPermissionListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().permissionsTitle());
