@@ -1,5 +1,8 @@
 package org.ovirt.engine.ui.uicommonweb.models;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
@@ -45,9 +48,6 @@ import org.ovirt.engine.ui.uicommonweb.models.users.UserListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
 import org.ovirt.engine.ui.uicommonweb.models.volumes.VolumeListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @SuppressWarnings("unused")
 public class CommonModel extends ListModel
@@ -547,8 +547,7 @@ public class CommonModel extends ListModel
                 || model.getType() == SystemTreeItemType.Storages || model.getType() == SystemTreeItemType.Storage
                 || model.getType() == SystemTreeItemType.System);
 
-        quotaList.setIsAvailable(model.getType() == SystemTreeItemType.DataCenter
-                || model.getType() == SystemTreeItemType.System);
+        quotaList.setIsAvailable(model.getType() == SystemTreeItemType.DataCenter);
 
         boolean isDataStorage = false;
         if (model.getType() == SystemTreeItemType.Storage)
@@ -802,7 +801,6 @@ public class CommonModel extends ListModel
         volumeList = new VolumeListModel();
         list.add(volumeList);
 
-
         diskList = new DiskListModel();
         list.add(diskList);
 
@@ -1049,6 +1047,9 @@ public class CommonModel extends ListModel
                 else if (diskList.IsSearchStringMatch(source))
                 {
                     prefix.argvalue = StringFormat.format("Disk: datacenter.name = %1$s", model.getTitle()); //$NON-NLS-1$
+                }
+                else if (quotaList.IsSearchStringMatch(source)) {
+                    prefix.argvalue = StringFormat.format("Quota: storagepoolname = %1$s", model.getTitle()); //$NON-NLS-1$
                 }
             }
                 break;

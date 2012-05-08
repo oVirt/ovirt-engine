@@ -12,8 +12,9 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetQuotaByQuotaIdQueryParameters;
-import org.ovirt.engine.core.common.queries.GetQuotaByStoragePoolIdQueryParameters;
+import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Event;
@@ -32,7 +33,6 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
-import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
@@ -114,28 +114,9 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
 
     @Override
     protected void SyncSearch() {
-        super.SyncSearch();
-        AsyncQuery asyncQuery = new AsyncQuery();
-        asyncQuery.Model = this;
-        asyncQuery.asyncCallback = new INewAsyncCallback() {
-
-            @Override
-            public void OnSuccess(Object model, Object returnValue) {
-                QuotaListModel quotaListModel = (QuotaListModel) model;
-                quotaListModel.setItems((ArrayList<Quota>) ((VdcQueryReturnValue) returnValue).getReturnValue());
-
-            }
-        };
-        GetQuotaByStoragePoolIdQueryParameters parameters = new GetQuotaByStoragePoolIdQueryParameters();
-        if (getSystemTreeSelectedItem() != null
-                && getSystemTreeSelectedItem().getType().equals(SystemTreeItemType.DataCenter)) {
-            parameters.setStoragePoolId(((storage_pool) getSystemTreeSelectedItem().getEntity()).getId());
-        }
-
-        parameters.setRefresh(getIsQueryFirstTime());
-        Frontend.RunQuery(VdcQueryType.GetQuotaByStoragePoolId,
-                parameters,
-                asyncQuery);
+        SearchParameters tempVar = new SearchParameters(getSearchString(), SearchType.Quota);
+        tempVar.setMaxCount(getSearchPageSize());
+        super.SyncSearch(VdcQueryType.Search, tempVar);
     }
 
     private void updateActionAvailability() {
