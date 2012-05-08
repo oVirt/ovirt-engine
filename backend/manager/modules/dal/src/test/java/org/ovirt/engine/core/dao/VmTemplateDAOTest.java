@@ -230,12 +230,12 @@ public class VmTemplateDAOTest extends BaseDAOTestCase {
         assertGetResult(result);
     }
 
-    private void assertGetResult(VmTemplate result) {
+    private static void assertGetResult(VmTemplate result) {
         assertNotNull(result);
         assertEquals(EXISTING_TEMPLATE_ID, result.getId());
     }
 
-    private void assertGetAllResult(List<VmTemplate> result) {
+    private static void assertGetAllResult(List<VmTemplate> result) {
         assertNotNull(result);
         assertFalse(result.isEmpty());
     }
