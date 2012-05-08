@@ -10,22 +10,21 @@ import org.ovirt.engine.api.resource.DiskResource;
 import org.ovirt.engine.api.resource.StatisticsResource;
 import org.ovirt.engine.core.common.action.HotPlugDiskToVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
 
 import static org.ovirt.engine.api.restapi.resource.BackendNicsResource.SUB_COLLECTIONS;
 
 
-public class BackendDiskResource extends BackendDeviceResource<Disk, Disks, DiskImage> implements DiskResource {
+public class BackendDiskResource extends BackendDeviceResource<Disk, Disks, org.ovirt.engine.core.common.businessentities.Disk> implements DiskResource {
 
     protected BackendDiskResource(String id,
-                                  AbstractBackendReadOnlyDevicesResource<Disk, Disks, DiskImage> collection,
+                                  AbstractBackendReadOnlyDevicesResource<Disk, Disks, org.ovirt.engine.core.common.businessentities.Disk> collection,
                                   VdcActionType updateType,
-                                  ParametersProvider<Disk, DiskImage> updateParametersProvider,
+                                  ParametersProvider<Disk, org.ovirt.engine.core.common.businessentities.Disk> updateParametersProvider,
                                   String[] requiredUpdateFields,
                                   String... subCollections) {
         super(Disk.class,
-              DiskImage.class,
+              org.ovirt.engine.core.common.businessentities.Disk.class,
               collection.asGuidOr404(id),
               collection,
               updateType,
@@ -37,16 +36,16 @@ public class BackendDiskResource extends BackendDeviceResource<Disk, Disks, Disk
     @Override
     public StatisticsResource getStatisticsResource() {
         EntityIdResolver resolver = new EntityIdResolver() {
-            public DiskImage lookupEntity(Guid guid) throws BackendFailureException {
+            public org.ovirt.engine.core.common.businessentities.Disk lookupEntity(Guid guid) throws BackendFailureException {
                 return collection.lookupEntity(guid);
             }
         };
         DiskStatisticalQuery query = new DiskStatisticalQuery(resolver, newModel(id));
-        return inject(new BackendStatisticsResource<Disk, DiskImage>(entityType, guid, query));
+        return inject(new BackendStatisticsResource<Disk, org.ovirt.engine.core.common.businessentities.Disk>(entityType, guid, query));
     }
 
     @Override
-    protected Disk populate(Disk model, DiskImage entity) {
+    protected Disk populate(Disk model, org.ovirt.engine.core.common.businessentities.Disk entity) {
         return ((BackendDisksResource)collection).addStatistics(model, entity, uriInfo, httpHeaders);
     }
 

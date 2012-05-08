@@ -142,7 +142,7 @@ public class BackendVmsResource extends
         if (disks.getDisks() != null) {
             for (Disk disk : disks.getDisks()) {
                 DiskImage diskImageFromConfig = imagesFromConfiguration.get(asGuid(disk.getImageId()));
-                DiskImage diskImage = getMapper(Disk.class, DiskImage.class).map(disk, diskImageFromConfig);
+                DiskImage diskImage = (DiskImage)getMapper(Disk.class, org.ovirt.engine.core.common.businessentities.Disk.class).map(disk, diskImageFromConfig);
                 imagesFromConfiguration.put(diskImage.getImageId(), diskImage);
             }
         }
@@ -216,7 +216,7 @@ public class BackendVmsResource extends
     }
 
     private DiskImage map(Disk entity, DiskImage template) {
-        return getMapper(Disk.class, DiskImage.class).map(entity, template);
+        return (DiskImage)getMapper(Disk.class, org.ovirt.engine.core.common.businessentities.Disk.class).map(entity, template);
     }
 
     protected Response addVm(VmStatic staticVm, VM vm, Guid storageDomainId, Guid templateId) {
@@ -243,7 +243,7 @@ public class BackendVmsResource extends
         if (disks!=null && disks.isSetDisks()) {
             diskImages = new ArrayList<DiskImage>();
             for (Disk disk : disks.getDisks()) {
-                DiskImage diskImage = DiskMapper.map(disk, null);
+                DiskImage diskImage = (DiskImage)DiskMapper.map(disk, null);
                 diskImages.add(diskImage);
             }
         }

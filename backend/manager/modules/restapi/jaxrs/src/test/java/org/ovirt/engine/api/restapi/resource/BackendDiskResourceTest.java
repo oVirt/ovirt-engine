@@ -17,6 +17,7 @@ import org.ovirt.engine.core.common.action.HotPlugDiskToVmParameters;
 import org.ovirt.engine.core.common.action.UpdateVmDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.queries.GetAllDisksByVmIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -27,7 +28,7 @@ import static org.ovirt.engine.api.restapi.resource.AbstractBackendDisksResource
 import static org.easymock.EasyMock.expect;
 
 public class BackendDiskResourceTest
-        extends AbstractBackendSubResourceTest<Disk, DiskImage, BackendDeviceResource<Disk, Disks, DiskImage>> {
+        extends AbstractBackendSubResourceTest<Disk, org.ovirt.engine.core.common.businessentities.Disk, BackendDeviceResource<Disk, Disks, org.ovirt.engine.core.common.businessentities.Disk>> {
 
     protected static final Guid DISK_ID = GUIDS[1];
 
@@ -167,6 +168,7 @@ public class BackendDiskResourceTest
         expect(entity.getId()).andReturn(DISK_ID).anyTimes();
         expect(entity.getread_rate()).andReturn(10);
         expect(entity.getwrite_rate()).andReturn(20);
+        expect(entity.getDiskStorageType()).andReturn(DiskStorageType.IMAGE).anyTimes();
         List<DiskImage> ifaces = new ArrayList<DiskImage>();
         ifaces.add(entity);
         setUpGetEntityExpectations(1, entity);
@@ -195,12 +197,12 @@ public class BackendDiskResourceTest
     }
 
     @Override
-    protected DiskImage getEntity(int index) {
+    protected org.ovirt.engine.core.common.businessentities.Disk getEntity(int index) {
         return setUpEntityExpectations(control.createMock(DiskImage.class), index);
     }
 
-    protected List<DiskImage> getEntityList() {
-        List<DiskImage> entities = new ArrayList<DiskImage>();
+    protected List<org.ovirt.engine.core.common.businessentities.Disk> getEntityList() {
+        List<org.ovirt.engine.core.common.businessentities.Disk> entities = new ArrayList<org.ovirt.engine.core.common.businessentities.Disk>();
         for (int i = 0; i < NAMES.length; i++) {
             entities.add(getEntity(i));
         }
@@ -222,7 +224,7 @@ public class BackendDiskResourceTest
         setUpGetEntityExpectations(times, getEntity(1));
     }
 
-    protected void setUpGetEntityExpectations(int times, DiskImage entity) throws Exception {
+    protected void setUpGetEntityExpectations(int times, org.ovirt.engine.core.common.businessentities.Disk entity) throws Exception {
         while (times-- > 0) {
             setUpGetEntityExpectations(VdcQueryType.GetAllDisksByVmId,
                                        GetAllDisksByVmIdParameters.class,

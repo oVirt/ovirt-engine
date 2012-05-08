@@ -2090,6 +2090,7 @@
           <xs:element name="statistics" type="Statistics" minOccurs="0" maxOccurs="1"/>
           <xs:element name="active" type="xs:boolean" minOccurs="0"/>
           <xs:element ref="quota" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="lunStorage" type="Storage" minOccurs="0"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>

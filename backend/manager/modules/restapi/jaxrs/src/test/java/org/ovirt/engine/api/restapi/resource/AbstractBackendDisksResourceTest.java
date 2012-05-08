@@ -9,6 +9,7 @@ import org.junit.Test;
 
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.Disks;
+import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
@@ -22,8 +23,8 @@ import org.ovirt.engine.core.compat.Guid;
 import static org.easymock.classextension.EasyMock.expect;
 
 @Ignore
-public class AbstractBackendDisksResourceTest<T extends AbstractBackendReadOnlyDevicesResource<Disk, Disks, DiskImage>>
-        extends AbstractBackendCollectionResourceTest<Disk, DiskImage, T> {
+public class AbstractBackendDisksResourceTest<T extends AbstractBackendReadOnlyDevicesResource<Disk, Disks, org.ovirt.engine.core.common.businessentities.Disk>>
+        extends AbstractBackendCollectionResourceTest<Disk, org.ovirt.engine.core.common.businessentities.Disk, T> {
 
     protected final static Guid PARENT_ID = GUIDS[1];
 
@@ -73,19 +74,19 @@ public class AbstractBackendDisksResourceTest<T extends AbstractBackendReadOnlyD
         }
     }
 
-    protected List<DiskImage> getEntityList() {
-        List<DiskImage> entities = new ArrayList<DiskImage>();
+    protected List<org.ovirt.engine.core.common.businessentities.Disk> getEntityList() {
+        List<org.ovirt.engine.core.common.businessentities.Disk> entities = new ArrayList<org.ovirt.engine.core.common.businessentities.Disk>();
         for (int i = 0; i < NAMES.length; i++) {
             entities.add(getEntity(i));
         }
         return entities;
     }
 
-    protected DiskImage getEntity(int index) {
+    protected org.ovirt.engine.core.common.businessentities.Disk getEntity(int index) {
         return setUpEntityExpectations(control.createMock(DiskImage.class), index);
     }
 
-    static DiskImage setUpEntityExpectations(DiskImage entity, int index) {
+    static org.ovirt.engine.core.common.businessentities.Disk setUpEntityExpectations(DiskImage entity, int index) {
         expect(entity.getId()).andReturn(GUIDS[index]).anyTimes();
         expect(entity.getvm_snapshot_id()).andReturn(GUIDS[2]).anyTimes();
         expect(entity.getvm_guid()).andReturn(PARENT_ID).anyTimes();
@@ -97,10 +98,11 @@ public class AbstractBackendDisksResourceTest<T extends AbstractBackendReadOnlyD
         expect(entity.isAllowSnapshot()).andReturn(false).anyTimes();
         expect(entity.isShareable()).andReturn(false).anyTimes();
         expect(entity.getPropagateErrors()).andReturn(PropagateErrors.On).anyTimes();
+        expect(entity.getDiskStorageType()).andReturn(DiskStorageType.IMAGE).anyTimes();
         return setUpStatisticalEntityExpectations(entity);
     }
 
-    static DiskImage setUpStatisticalEntityExpectations(DiskImage entity) {
+    static org.ovirt.engine.core.common.businessentities.Disk setUpStatisticalEntityExpectations(DiskImage entity) {
         expect(entity.getread_rate()).andReturn(1).anyTimes();
         expect(entity.getwrite_rate()).andReturn(2).anyTimes();
         return entity;

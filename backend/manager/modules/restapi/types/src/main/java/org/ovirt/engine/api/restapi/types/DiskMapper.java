@@ -8,11 +8,14 @@ import org.ovirt.engine.api.model.DiskFormat;
 import org.ovirt.engine.api.model.DiskInterface;
 import org.ovirt.engine.api.model.DiskStatus;
 import org.ovirt.engine.api.model.Quota;
+import org.ovirt.engine.api.model.Storage;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.StorageDomains;
 import org.ovirt.engine.api.model.VM;
+import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
+import org.ovirt.engine.core.common.businessentities.LunDisk;
 import org.ovirt.engine.core.common.businessentities.PropagateErrors;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
@@ -21,15 +24,54 @@ import org.ovirt.engine.core.compat.StringHelper;
 
 public class DiskMapper {
 
-    @Mapping(from = Disk.class, to = DiskImage.class)
-    public static DiskImage map(Disk disk, DiskImage template) {
-        DiskImage diskImage = template != null ? template : new DiskImage();
+    @Mapping(from = Disk.class, to = org.ovirt.engine.core.common.businessentities.Disk.class)
+    public static org.ovirt.engine.core.common.businessentities.Disk map(Disk disk, org.ovirt.engine.core.common.businessentities.Disk template) {
+        org.ovirt.engine.core.common.businessentities.Disk engineDisk = template;
+        if (engineDisk == null) {
+            if (disk.isSetLunStorage()) {
+                engineDisk = new LunDisk();
+            } else {
+                engineDisk = new DiskImage();
+            }
+        }
         if (disk.isSetVm() && disk.getVm().isSetId()) {
-            diskImage.setvm_guid(new Guid(disk.getVm().getId()));
+            engineDisk.setvm_guid(new Guid(disk.getVm().getId()));
         }
         if (disk.isSetId()) {
-            diskImage.setId(new Guid(disk.getId()));
+            engineDisk.setId(new Guid(disk.getId()));
         }
+        if (disk.isSetBootable()) {
+            engineDisk.setBoot(disk.isBootable());
+        }
+        if (disk.isSetPropagateErrors()) {
+            engineDisk.setPropagateErrors(disk.isPropagateErrors() ? PropagateErrors.On
+                    : PropagateErrors.Off);
+        }
+        if (disk.isSetWipeAfterDelete()) {
+            engineDisk.setWipeAfterDelete(disk.isWipeAfterDelete());
+        }
+        if (disk.isSetActive()) {
+            engineDisk.setPlugged(disk.isActive());
+        }
+        if (disk.isSetInterface()) {
+            DiskInterface diskInterface = DiskInterface.fromValue(disk.getInterface());
+            if (diskInterface != null) {
+                engineDisk.setDiskInterface(map(diskInterface, null));
+            }
+        }
+        if (disk.isSetShareable()) {
+            engineDisk.setShareable(disk.isShareable());
+        }
+        if (disk.isSetLunStorage()) {
+            ((LunDisk)engineDisk).setLun(StorageLogicalUnitMapper.map(disk.getLunStorage(), null));
+        } else {
+            mapDiskToDiskImageProperties(disk, (DiskImage) engineDisk);
+        }
+        return engineDisk;
+    }
+
+    private static void mapDiskToDiskImageProperties(Disk disk,
+            DiskImage diskImage) {
         if (disk.isSetImageId()) {
             diskImage.setImageId(new Guid(disk.getImageId()));
         }
@@ -42,37 +84,14 @@ public class DiskMapper {
                 diskImage.setvolume_format(map(diskFormat, null));
             }
         }
-        if (disk.isSetInterface()) {
-            DiskInterface diskInterface = DiskInterface.fromValue(disk.getInterface());
-            if (diskInterface != null) {
-                diskImage.setDiskInterface(map(diskInterface, null));
-            }
-        }
         if (disk.isSetStatus()) {
             diskImage.setimageStatus(map(DiskStatus.fromValue(disk.getStatus().getState())));
         }
         if (disk.isSetSparse()) {
             diskImage.setvolume_type(disk.isSparse() ? VolumeType.Sparse : VolumeType.Preallocated);
         }
-        if (disk.isSetBootable()) {
-            diskImage.setBoot(disk.isBootable());
-        }
-        if (disk.isSetShareable()) {
-            diskImage.setShareable(disk.isShareable());
-        }
         if (disk.isSetAllowSnapshot()) {
             diskImage.setAllowSnapshot(disk.isAllowSnapshot());
-        }
-
-        if (disk.isSetPropagateErrors()) {
-            diskImage.setPropagateErrors(disk.isPropagateErrors() ? PropagateErrors.On
-                    : PropagateErrors.Off);
-        }
-        if (disk.isSetWipeAfterDelete()) {
-            diskImage.setWipeAfterDelete(disk.isWipeAfterDelete());
-        }
-        if (disk.isSetActive()) {
-            diskImage.setPlugged(disk.isActive());
         }
         if (disk.isSetStorageDomains() && disk.getStorageDomains().isSetStorageDomains()
                 && disk.getStorageDomains().getStorageDomains().get(0).isSetId()) {
@@ -83,11 +102,10 @@ public class DiskMapper {
         if (disk.isSetQuota() && disk.getQuota().isSetId()) {
             diskImage.setQuotaId(new Guid(disk.getQuota().getId()));
         }
-        return diskImage;
     }
 
-    @Mapping(from = DiskImage.class, to = Disk.class)
-    public static Disk map(DiskImage entity, Disk template) {
+    @Mapping(from = org.ovirt.engine.core.common.businessentities.Disk.class, to = Disk.class)
+    public static Disk map(org.ovirt.engine.core.common.businessentities.Disk entity, Disk template) {
         Disk model = template != null ? template : new Disk();
         if (!StringHelper.isNullOrEmpty(entity.getinternal_drive_mapping()) ) {
             model.setName("Disk " + entity.getinternal_drive_mapping());
@@ -99,6 +117,24 @@ public class DiskMapper {
         if (entity.getId() != null) {
             model.setId(entity.getId().toString());
         }
+        if (entity.getDiskInterface() != null) {
+            model.setInterface(map(entity.getDiskInterface(), null));
+        }
+        model.setBootable(entity.isBoot());
+        model.setPropagateErrors(PropagateErrors.On == entity.getPropagateErrors());
+        model.setWipeAfterDelete(entity.isWipeAfterDelete());
+        model.setActive(entity.getPlugged());
+        model.setShareable(entity.isShareable());
+        model.setAllowSnapshot(entity.isAllowSnapshot());
+        if (entity.getDiskStorageType() == DiskStorageType.IMAGE) {
+            mapDiskImageToDiskFields((DiskImage) entity, model);
+        } else {
+            model.setLunStorage(StorageLogicalUnitMapper.map(((LunDisk) entity).getLun(), new Storage()));
+        }
+        return model;
+    }
+
+    private static void mapDiskImageToDiskFields(DiskImage entity, Disk model) {
         if (entity.getImageId() != null) {
             model.setImageId(entity.getImageId().toString());
         }
@@ -106,20 +142,12 @@ public class DiskMapper {
         if (entity.getvolume_format() != null) {
             model.setFormat(map(entity.getvolume_format(), null));
         }
-        if (entity.getDiskInterface() != null) {
-            model.setInterface(map(entity.getDiskInterface(), null));
-        }
         if (entity.getimageStatus() != null) {
             DiskStatus status = map(entity.getimageStatus());
-            model.setStatus(StatusUtils.create(status==null ? null : status.value()));
+            model.setStatus(StatusUtils.create(status == null ? null : status.value()));
         }
         model.setSparse(VolumeType.Sparse == entity.getvolume_type());
-        model.setBootable(entity.isBoot());
-        model.setAllowSnapshot(entity.isAllowSnapshot());
-        model.setShareable(entity.isShareable());
-        model.setPropagateErrors(PropagateErrors.On == entity.getPropagateErrors());
-        model.setWipeAfterDelete(entity.isWipeAfterDelete());
-        if(entity.getstorage_ids()!=null && entity.getstorage_ids().size() > 0){
+        if (entity.getstorage_ids() != null && entity.getstorage_ids().size() > 0) {
             StorageDomain storageDomain = new StorageDomain();
             storageDomain.setId(entity.getstorage_ids().get(0).toString());
             if (!model.isSetStorageDomains()) {
@@ -127,13 +155,11 @@ public class DiskMapper {
             }
             model.getStorageDomains().getStorageDomains().add(storageDomain);
         }
-        model.setActive(entity.getPlugged());
         if (entity.getQuotaId()!=null) {
             Quota quota = new Quota();
             quota.setId(entity.getQuotaId().toString());
             model.setQuota(quota);
         }
-        return model;
     }
 
     @Mapping(from = DiskFormat.class, to = String.class)

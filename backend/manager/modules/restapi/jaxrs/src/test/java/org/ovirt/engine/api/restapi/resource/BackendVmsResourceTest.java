@@ -853,7 +853,7 @@ public class BackendVmsResourceTest
     }
 
     private Disk map(DiskImage entity, Disk template) {
-        return getMapper(DiskImage.class, Disk.class).map(entity, template);
+        return getMapper(org.ovirt.engine.core.common.businessentities.Disk.class, Disk.class).map(entity, template);
     }
 
     private Snapshot map(org.ovirt.engine.core.common.businessentities.Snapshot entity, Snapshot template) {
@@ -866,7 +866,7 @@ public class BackendVmsResourceTest
         if (disks!=null && disks.isSetDisks()) {
             diskImages = new ArrayList<DiskImageBase>();
             for (Disk disk : disks.getDisks()) {
-                DiskImage diskImage = DiskMapper.map(disk, null);
+                DiskImage diskImage = (DiskImage)DiskMapper.map(disk, null);
                 diskImages.add(diskImage);
             }
         }

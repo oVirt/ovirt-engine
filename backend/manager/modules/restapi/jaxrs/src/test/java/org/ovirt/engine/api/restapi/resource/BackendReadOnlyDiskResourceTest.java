@@ -17,11 +17,11 @@ import static org.ovirt.engine.api.restapi.resource.AbstractBackendDisksResource
 import static org.ovirt.engine.api.restapi.resource.AbstractBackendDisksResourceTest.PARENT_ID;
 
 public class BackendReadOnlyDiskResourceTest
-        extends AbstractBackendSubResourceTest<Disk, DiskImage, BackendReadOnlyDeviceResource<Disk, Disks, DiskImage>> {
+        extends AbstractBackendSubResourceTest<Disk, org.ovirt.engine.core.common.businessentities.Disk, BackendReadOnlyDeviceResource<Disk, Disks, org.ovirt.engine.core.common.businessentities.Disk>> {
 
     public BackendReadOnlyDiskResourceTest() {
-        super(new BackendReadOnlyDeviceResource<Disk, Disks, DiskImage>(Disk.class,
-                                                                        DiskImage.class,
+        super(new BackendReadOnlyDeviceResource<Disk, Disks, org.ovirt.engine.core.common.businessentities.Disk>(Disk.class,
+                                                                        org.ovirt.engine.core.common.businessentities.Disk.class,
                                                                         GUIDS[1],
                                                                         getcollection()));
     }
@@ -66,12 +66,12 @@ public class BackendReadOnlyDiskResourceTest
     }
 
     @Override
-    protected DiskImage getEntity(int index) {
+    protected org.ovirt.engine.core.common.businessentities.Disk getEntity(int index) {
         return setUpEntityExpectations(control.createMock(DiskImage.class), index);
     }
 
-    protected List<DiskImage> getEntityList() {
-        List<DiskImage> entities = new ArrayList<DiskImage>();
+    protected List<org.ovirt.engine.core.common.businessentities.Disk> getEntityList() {
+        List<org.ovirt.engine.core.common.businessentities.Disk> entities = new ArrayList<org.ovirt.engine.core.common.businessentities.Disk>();
         for (int i = 0; i < NAMES.length; i++) {
             entities.add(getEntity(i));
         }

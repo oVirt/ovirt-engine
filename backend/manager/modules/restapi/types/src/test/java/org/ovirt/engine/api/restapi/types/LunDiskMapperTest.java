@@ -11,13 +11,14 @@ import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.DiskFormat;
 import org.ovirt.engine.api.model.DiskInterface;
 import org.ovirt.engine.api.model.DiskStatus;
-import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.api.model.Storage;
+import org.ovirt.engine.core.common.businessentities.LunDisk;
 import org.ovirt.engine.core.common.config.Config;
 
-public class DiskMapperTest extends AbstractInvertibleMappingTest<Disk, DiskImage, DiskImage> {
+public class LunDiskMapperTest extends AbstractInvertibleMappingTest<Disk, LunDisk, LunDisk> {
 
-    protected DiskMapperTest() {
-        super(Disk.class, DiskImage.class, DiskImage.class);
+    protected LunDiskMapperTest() {
+        super(Disk.class, LunDisk.class, LunDisk.class);
     }
 
     @Override
@@ -25,7 +26,7 @@ public class DiskMapperTest extends AbstractInvertibleMappingTest<Disk, DiskImag
         model.setFormat(MappingTestHelper.shuffle(DiskFormat.class).value());
         model.setInterface(MappingTestHelper.shuffle(DiskInterface.class).value());
         model.setStatus(StatusUtils.create(MappingTestHelper.shuffle(DiskStatus.class)));
-        model.setLunStorage(null);
+        model.setLunStorage(new Storage());
         return model;
     }
 
@@ -33,18 +34,12 @@ public class DiskMapperTest extends AbstractInvertibleMappingTest<Disk, DiskImag
     protected void verify(Disk model, Disk transform) {
         assertNotNull(transform);
         assertEquals(model.getId(), transform.getId());
-        assertEquals(model.getImageId(), transform.getImageId());
-        assertEquals(model.getSize(), transform.getSize());
-        assertEquals(model.getFormat(), transform.getFormat());
         assertEquals(model.getInterface(), transform.getInterface());
         assertEquals(model.isActive(), transform.isActive());
-        assertEquals("unexpected status", model.getStatus().getState(), transform.getStatus().getState());
-        assertEquals("unexpected sparse", model.isSparse(), transform.isSparse());
         assertEquals("unexpected bootable", model.isBootable(), transform.isBootable());
         assertEquals("unexpected propagate errors", model.isPropagateErrors(), transform.isPropagateErrors());
         assertEquals("unexpected wipe after delete", model.isWipeAfterDelete(), transform.isWipeAfterDelete());
         assertEquals("unexpected shareable", model.isShareable(), transform.isShareable());
-        assertEquals("unexpected allow snapshot", model.isAllowSnapshot(), transform.isAllowSnapshot());
     }
 
     @Test
@@ -58,10 +53,11 @@ public class DiskMapperTest extends AbstractInvertibleMappingTest<Disk, DiskImag
         model = postPopulate(model);
         Mapper<Disk, org.ovirt.engine.core.common.businessentities.Disk> out = getMappingLocator().getMapper(Disk.class, org.ovirt.engine.core.common.businessentities.Disk.class);
         Mapper<org.ovirt.engine.core.common.businessentities.Disk, Disk> back = getMappingLocator().getMapper(org.ovirt.engine.core.common.businessentities.Disk.class, Disk.class);
-        DiskImage to = (DiskImage)out.map(model, null);
-        DiskImage inverse = getInverse(to);
+        LunDisk to = (LunDisk)out.map(model, null);
+        LunDisk inverse = getInverse(to);
         Disk transform = back.map(inverse, null);
         verify(model, transform);
         verifyAll();
     }
 }
+

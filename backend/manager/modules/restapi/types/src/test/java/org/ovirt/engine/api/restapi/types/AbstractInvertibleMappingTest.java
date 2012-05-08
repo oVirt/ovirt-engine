@@ -78,5 +78,9 @@ public abstract class AbstractInvertibleMappingTest<F, T, I> extends Assert {
         return inverseClass.cast(to);
     }
 
+    protected MappingLocator getMappingLocator() {
+        return mappingLocator;
+    }
+
     protected abstract void verify(F model, F transform);
 }

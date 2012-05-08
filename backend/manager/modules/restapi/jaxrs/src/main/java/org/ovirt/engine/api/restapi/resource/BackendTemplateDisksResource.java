@@ -9,7 +9,6 @@ import org.ovirt.engine.api.resource.ReadOnlyDeviceResource;
 import org.ovirt.engine.api.resource.TemplateDisksResource;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -45,7 +44,7 @@ public class BackendTemplateDisksResource
     @Override
     @SingleEntityResource
     public ReadOnlyDeviceResource<Disk> getDeviceSubResource(String id) {
-        return inject(new BackendReadOnlyDeviceResource<Disk, Disks, DiskImage>(modelType, entityType, asGuidOr404(id), this));
+        return inject(new BackendReadOnlyDeviceResource<Disk, Disks, org.ovirt.engine.core.common.businessentities.Disk>(modelType, entityType, asGuidOr404(id), this));
     }
 
 }
