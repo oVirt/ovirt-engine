@@ -224,4 +224,6 @@ public abstract class VmInfoBuilderBase {
     protected abstract void buildUnmanagedDevices();
 
     protected abstract void buildVmBootSequence();
+
+    protected abstract void buildSysprepVmPayload(String strSysPrepContent);
 }

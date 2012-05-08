@@ -1,9 +1,11 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.StringHelper;
 
@@ -43,6 +45,10 @@ public class VmPayload implements Serializable {
 
     public static boolean isPayload(Map<String, Object> specParams) {
         return specParams.containsKey(SpecParamsPayload);
+    }
+
+    public static boolean isPayloadSizeLegal(String payload) {
+        return payload.length() <= Config.<Integer> GetValue(ConfigValues.PayloadSize);
     }
 
     public VmDeviceType getType() {

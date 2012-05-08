@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.codec.binary.Base64;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -30,6 +31,7 @@ import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStruct;
 
 public class VmInfoBuilder extends VmInfoBuilderBase {
 
+    private static final String SYSPREP_FILE_NAME = "sysprep.inf";
     private final String DEVICES = "devices";
     private final List<XmlRpcStruct> devices;
     private List<VmDevice> managedDevices = null;
@@ -413,6 +415,31 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         }
     }
 
+    @Override
+    protected void buildSysprepVmPayload(String sysPrepContent) {
+
+        // We do not validate the size of the content being passed to the VM payload by VmPayload.isPayloadSizeLegal().
+        // The sysprep file size isn't being verified for 3.0 clusters and below, so we maintain the same behavior here.
+        VmPayload vmPayload = new VmPayload();
+        vmPayload.setType(VmDeviceType.FLOPPY);
+        vmPayload.setFileName(SYSPREP_FILE_NAME);
+        vmPayload.setContent(Base64.encodeBase64String(sysPrepContent.getBytes()));
+
+        VmDevice vmDevice =
+                new VmDevice(new VmDeviceId(Guid.NewGuid(), vm.getId()),
+                        VmDeviceType.DISK.getName(),
+                        VmDeviceType.FLOPPY.getName(),
+                        "",
+                        0,
+                        vmPayload.getSpecParams(),
+                        true,
+                        true,
+                        true);
+        XmlRpcStruct struct = new XmlRpcStruct();
+        addFloppyDetails(vmDevice, struct);
+        addDevice(struct, vmDevice, vm.getFloppyPath());
+    }
+
     private static void addBootOrder(VmDevice vmDevice, XmlRpcStruct struct) {
         String s = new Integer(vmDevice.getBootOrder()).toString();
         if (!org.apache.commons.lang.StringUtils.isEmpty(s) && !s.equals("0")) {
@@ -489,4 +516,5 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         specParams.put("vram", VmDeviceCommonUtils.HIGH_VIDEO_MEM);
         return specParams;
     }
+
 }

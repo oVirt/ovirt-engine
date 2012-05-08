@@ -33,12 +33,12 @@ import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.common.businessentities.tags_vm_map;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.vdscommands.DeleteImageGroupVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.RemoveVMVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.UpdateVMVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
-import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
 import org.ovirt.engine.core.compat.RefObject;
@@ -532,18 +532,17 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         if (payload.getType() != VmDeviceType.CDROM && payload.getType() != VmDeviceType.FLOPPY) {
             addCanDoActionMessage(VdcBllMessages.VMPAYLOAD_INVALID_PAYLOAD_TYPE);
             returnValue = false;
-        }
-        else if (payload.getContent().length() > Config.<Integer> GetValue(ConfigValues.PayloadSize)) {
+        } else if (!VmPayload.isPayloadSizeLegal(payload.getContent())) {
             Integer lengthInKb = 2 * Config.<Integer> GetValue(ConfigValues.PayloadSize) / Kb;
             addCanDoActionMessage(VdcBllMessages.VMPAYLOAD_SIZE_EXCEEDED);
             addCanDoActionMessage(String.format("$size %1$s", lengthInKb.toString()));
             returnValue = false;
-        }
-        else if (!StringHelper.isNullOrEmpty(isoPath) &&
+        } else if (!StringHelper.isNullOrEmpty(isoPath) &&
                 payload.getType() == VmDeviceType.CDROM) {
             addCanDoActionMessage(VdcBllMessages.VMPAYLOAD_CDROM_EXCEEDED);
             returnValue = false;
         }
         return returnValue;
     }
+
 }

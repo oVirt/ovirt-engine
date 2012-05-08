@@ -45,8 +45,7 @@ public class CreateVmVDSCommand<P extends CreateVmVDSCommandParameters> extends 
                                 ResourceManager.getInstance().getBackendCallback());
                     }
                     if (canExecute) {
-                        if (vm.useSysPrep() && vm.getvm_os().isWindows()
-                                && StringHelper.isNullOrEmpty(vm.getFloppyPath())) {
+                        if (isSysprepUsed(vm)) {
                             // use answer file to run after sysprep.
                             CreateVmFromSysPrepVDSCommandParameters createVmFromSysPrepParam =
                                     new CreateVmFromSysPrepVDSCommandParameters(
@@ -100,6 +99,15 @@ public class CreateVmVDSCommand<P extends CreateVmVDSCommandParameters> extends 
             }
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * @param vm
+     * @return
+     */
+    private boolean isSysprepUsed(final VM vm) {
+        return vm.useSysPrep() && vm.getvm_os().isWindows()
+                && StringHelper.isNullOrEmpty(vm.getFloppyPath());
     }
 
     private void HandleVdsInformation() {

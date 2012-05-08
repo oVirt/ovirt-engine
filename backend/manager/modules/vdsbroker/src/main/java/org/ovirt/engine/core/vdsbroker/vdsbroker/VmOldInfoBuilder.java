@@ -20,6 +20,7 @@ import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.utils.StringUtils;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStruct;
 
 public class VmOldInfoBuilder extends VmInfoBuilderBase {
@@ -102,6 +103,12 @@ public class VmOldInfoBuilder extends VmInfoBuilderBase {
         @SuppressWarnings("unchecked")
         Map<String, String>[] drivesArray = new Map[drives.size()];
         createInfo.add("drives", drives.toArray(drivesArray));
+    }
+
+    @Override
+    protected void buildSysprepVmPayload(String strSysPrepContent) {
+        byte[] binarySysPrep = StringUtils.charsetDecodeStringUTF8(strSysPrepContent);
+        createInfo.add(VdsProperties.sysprepInf, binarySysPrep);
     }
 
     /**

@@ -9,11 +9,14 @@ import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStruct;
 
 public class CreateVDSCommand<P extends CreateVmVDSCommandParameters> extends VmReturnVdsBrokerCommand<P> {
     protected VM vm;
-    protected XmlRpcStruct createInfo = new XmlRpcStruct();
+    protected XmlRpcStruct createInfo;
+    protected VmInfoBuilderBase builder;
 
     public CreateVDSCommand(P parameters) {
         super(parameters, parameters.getVm().getId());
         vm = parameters.getVm();
+        createInfo = new XmlRpcStruct();
+        builder = createBuilder();
     }
 
     @Override
@@ -54,7 +57,6 @@ public class CreateVDSCommand<P extends CreateVmVDSCommandParameters> extends Vm
     }
 
     private void buildVmData() {
-        VmInfoBuilderBase builder = createBuilder();
         builder.buildVmProperties();
         builder.buildVmVideoCards();
         builder.buildVmCD();
