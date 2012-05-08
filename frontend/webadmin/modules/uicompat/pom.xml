@@ -8,7 +8,7 @@
   </parent>
   <artifactId>uicompat</artifactId>
   <packaging>jar</packaging>
-  <name>CSharp Compatibility (For UICommon)</name>
+  <name>UI Utils Compatibility (for UICommon)</name>
   <dependencies>
     <dependency>
       <groupId>org.ovirt.engine.core</groupId>
