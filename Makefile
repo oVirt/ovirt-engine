@@ -67,8 +67,7 @@ install: build_mvn pre_copy create_dirs install_ear common_install
 
 install_without_maven: create_dirs install_brew_ear common_install
 
-common_install: install_quartz install_tools install_image_uploader\
-	install_config install_log_collector install_iso_uploader \
+common_install: install_quartz install_tools install_config \
 	install_sysprep install_notification_service install_db_scripts \
 	install_setup install_misc install_sec install_aio_plugin
 
@@ -110,14 +109,10 @@ rpm: $(SRPM)
 
 create_dirs:
 	@echo "*** Creating Directories"
-	@install -dm 755 $(PREFIX)/usr/share/ovirt-engine/{kerberos,scripts,3rd-party-lib,engine.ear,conf,dbscripts,resources,ovirt-isos,iso-uploader,log-collector,image_uploader,db-backups,engine.ear}
+	@install -dm 755 $(PREFIX)/usr/share/ovirt-engine/{kerberos,scripts,3rd-party-lib,engine.ear,conf,dbscripts,resources,ovirt-isos,db-backups,engine.ear}
 	@install -dm 755 $(PREFIX)/usr/share/ovirt-engine/engine-config/lib
 	@install -dm 755 $(PREFIX)/usr/share/ovirt-engine/notifier/lib
 	@install -dm 755 $(PREFIX)/usr/share/ovirt-engine/engine-manage-domains/lib
-	@install -dm 755 $(PREFIX)/usr/share/ovirt-engine/log-collector/schemas
-	@install -dm 755 $(PREFIX)/usr/share/ovirt-engine/iso-uploader/schemas
-	@install -dm 755 $(PREFIX)/usr/share/ovirt-engine/image-uploader/schemas
-	@install -dm 755 $(PREFIX)/usr/share/ovirt-engine/image-uploader/ovf
 	@install -dm 755 $(PREFIX)/usr/share/ovirt-engine/scripts/plugins
 	@install -dm 755 $(PREFIX)/usr/share/java
 	@install -dm 755 $(PREFIX)/usr/bin
@@ -260,65 +255,6 @@ install_config:
 	# Main program for the domain management tool:
 	install -m 750 backend/manager/conf/kerberos/engine-manage-domains $(PREFIX)/usr/share/ovirt-engine/engine-manage-domains/
 	ln -s /usr/share/ovirt-engine/engine-manage-domains/engine-manage-domains $(PREFIX)/usr/bin/engine-manage-domains
-
-install_log_collector:
-	@echo "*** Deploying log collector"
-
-	# Configuration files:
-	install -m 600 backend/manager/tools/engine-logcollector/src/rhev/logcollector.conf $(PREFIX)/etc/ovirt-engine/
-
-	# Python modules:
-	install -m 644 backend/manager/tools/engine-tools-common-lib/src/rhev/schemas/api.py $(PREFIX)/usr/share/ovirt-engine/log-collector/schemas
-	install -m 644 backend/manager/tools/engine-tools-common-lib/src/rhev/schemas/hypervisors.py $(PREFIX)/usr/share/ovirt-engine/log-collector/schemas
-	install -m 644 backend/manager/tools/engine-tools-common-lib/src/rhev/schemas/__init__.py $(PREFIX)/usr/share/ovirt-engine/log-collector/schemas
-
-	# SOS plugins:
-	# XXX: Do these really need execution permission?
-	install -m 755 backend/manager/tools/engine-logcollector/src/sos/plugins/jboss.py $(PREFIX)$(PY_SITE_PKGS)/sos/plugins
-	install -m 755 backend/manager/tools/engine-logcollector/src/sos/plugins/engine.py $(PREFIX)$(PY_SITE_PKGS)/sos/plugins
-	install -m 755 backend/manager/tools/engine-logcollector/src/sos/plugins/postgresql.py $(PREFIX)$(PY_SITE_PKGS)/sos/plugins
-
-	# Main program:
-	install -m 755 backend/manager/tools/engine-logcollector/src/rhev/logcollector.py $(PREFIX)/usr/share/ovirt-engine/log-collector/
-	ln -s /usr/share/ovirt-engine/log-collector/logcollector.py $(PREFIX)/usr/bin/engine-log-collector
-
-	# Manual page:
-	gzip -c backend/manager/tools/engine-logcollector/src/rhev/engine-log-collector.8 > $(PREFIX)/usr/share/man/man8/engine-log-collector.8.gz
-	chmod 644 $(PREFIX)/usr/share/man/man8/engine-log-collector.8.gz
-
-install_iso_uploader:
-	@echo "*** Deploying iso uploader"
-
-	# Configuration files:
-	install -m 600 backend/manager/tools/engine-iso-uploader/src/isouploader.conf $(PREFIX)/etc/ovirt-engine/
-
-	# Python modules:
-	install -m 644 backend/manager/tools/engine-tools-common-lib/src/rhev/schemas/api.py $(PREFIX)/usr/share/ovirt-engine/iso-uploader/schemas
-	install -m 644 backend/manager/tools/engine-tools-common-lib/src/rhev/schemas/__init__.py $(PREFIX)/usr/share/ovirt-engine/iso-uploader/schemas
-
-	# Main program:
-	install -m 755 backend/manager/tools/engine-iso-uploader/src/engine-iso-uploader.py $(PREFIX)/usr/share/ovirt-engine/iso-uploader/
-	ln -s /usr/share/ovirt-engine/iso-uploader/engine-iso-uploader.py $(PREFIX)/usr/bin/engine-iso-uploader
-
-	# Manual page:
-	gzip -c backend/manager/tools/engine-iso-uploader/src/engine-iso-uploader.8 > $(PREFIX)/usr/share/man/man8/engine-iso-uploader.8.gz
-	chmod 644 $(PREFIX)/usr/share/man/man8/engine-iso-uploader.8.gz
-
-install_image_uploader:
-	@echo "*** Deploying image uploader"
-
-	# Configuration files:
-	install -m 600 backend/manager/tools/engine-image-uploader/src/imageuploader.conf $(PREFIX)/etc/ovirt-engine/
-
-	# Python modules:
-	install -m 644 backend/manager/tools/engine-tools-common-lib/src/rhev/schemas/api.py $(PREFIX)/usr/share/ovirt-engine/image-uploader/schemas
-	install -m 644 backend/manager/tools/engine-tools-common-lib/src/rhev/schemas/__init__.py $(PREFIX)/usr/share/ovirt-engine/image-uploader/schemas
-	install -m 644 backend/manager/tools/engine-image-uploader/src/ovf/__init__.py $(PREFIX)/usr/share/ovirt-engine/image-uploader/ovf
-	install -m 644 backend/manager/tools/engine-image-uploader/src/ovf/ovfenvelope.py $(PREFIX)/usr/share/ovirt-engine/image-uploader/ovf
-
-	# Main program:
-	install -m 755 backend/manager/tools/engine-image-uploader/src/engine-image-uploader.py $(PREFIX)/usr/share/ovirt-engine/image-uploader/
-	ln -s /usr/share/ovirt-engine/image-uploader/engine-image-uploader.py $(PREFIX)/usr/bin/engine-image-uploader
 
 install_sysprep:
 	@echo "*** Deploying sysperp"

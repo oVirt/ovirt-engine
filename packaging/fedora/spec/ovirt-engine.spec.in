@@ -104,34 +104,6 @@ Requires: %{name} = %{version}-%{release}
 %description genericapi
 The generic API for oVirt Engine
 
-%package iso-uploader
-Summary: ISO Uploader tool for oVirt Engine
-Group: Virtualization/Management
-Requires: %{name}
-Requires: python-lxml
-
-%description iso-uploader
-ISO Uploader tool for oVirt Engine
-
-%package image-uploader
-Summary: Image Uploader tool for oVirt Engine
-Group: Virtualization/Management
-Requires: %{name}
-Requires: python-lxml
-
-%description image-uploader
-Image Uploader tool for oVirt Engine
-
-%package log-collector
-Summary: Log Collector tool for oVirt Engine
-Group: Virtualization/Management
-Requires: %{name}
-Requires: sos
-Requires: python-lxml
-
-%description log-collector
-Log Collector tool for oVirt Engine
-
 %package setup
 Summary: Setup and upgrade scripts for oVirt Engine
 Group: Virtualization/Management
@@ -378,26 +350,6 @@ cp -rpf %{_datadir}/vdsm-bootstrap/* %{_engineeardir}/components.war/vds/ &> /de
 %dir %{_engineeardir}
 %{_engineeardir}/webadmin.war
 
-%files iso-uploader
-%{_datadir}/%{name}/iso-uploader
-%{_bindir}/engine-iso-uploader
-%config(noreplace) %{_sysconfdir}/%{name}/isouploader.conf
-%doc  %{_mandir}/man8/engine-iso-uploader.8.gz
-
-%files image-uploader
-%{_datadir}/%{name}/image-uploader
-%{_bindir}/engine-image-uploader
-%config(noreplace) %{_sysconfdir}/%{name}/imageuploader.conf
-
-%files log-collector
-%attr (755,root,root) %{_datadir}/%{name}/log-collector
-%attr (755,root,root) %{py_site_pkgs}/sos/plugins/engine.py*
-%attr (755,root,root) %{py_site_pkgs}/sos/plugins/jboss.py*
-%attr (755,root,root) %{py_site_pkgs}/sos/plugins/postgresql.py*
-%{_bindir}/engine-log-collector
-%config(noreplace) %{_sysconfdir}/%{name}/logcollector.conf
-%doc  %{_mandir}/man8/engine-log-collector.8.gz
-
 %files tools-common
 %{_datadir}/java/engine-tools-common-3.1.0-0001.jar
 %{_datadir}/java/engine-tools-common.jar
@@ -420,6 +372,10 @@ cp -rpf %{_datadir}/vdsm-bootstrap/* %{_engineeardir}/components.war/vds/ &> /de
 %config(noreplace) %{_sysconfdir}/%{name}/notifier/notifier.conf
 
 %changelog
+* Mon May 07 2012 Keith Robertson <kroberts@redhat.com> - 3.1.0-3
+- Removed image uploader, iso uploader, and log collector from this
+  git repo.  The are now in their own respective ovirt.org git
+  repos. BZ#803240.
 * Wed Apr 04 2012 Stephen Gordon <sgordon@redhat.com> - 3.1.0-2
 - The ovirt-engine spec file did not previously contain a BuildRequires
   statement for the maven package. As a result in mock environments the
