@@ -10,6 +10,7 @@ import org.ovirt.engine.core.bll.adbroker.AdActionType;
 import org.ovirt.engine.core.bll.adbroker.LdapQueryType;
 import org.ovirt.engine.core.common.businessentities.ad_groups;
 import org.ovirt.engine.core.common.interfaces.SearchType;
+import org.ovirt.engine.core.common.queries.AdGroupsSearchParameters;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -24,7 +25,8 @@ public class LdapGroupSearchQueryTest extends LdapSearchQueryTestBase {
     @Parameters
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][]
-        { { SearchQuery.class, new SearchParameters("AdGroup: name=" + NAME_TO_SEARCH, SearchType.AdGroup) } });
+        { { SearchQuery.class, new SearchParameters("AdGroup: name=" + NAME_TO_SEARCH, SearchType.AdGroup) },
+                { AdGroupsSearchQuery.class, new AdGroupsSearchParameters(NAME_TO_SEARCH) } });
     }
 
     @Override
