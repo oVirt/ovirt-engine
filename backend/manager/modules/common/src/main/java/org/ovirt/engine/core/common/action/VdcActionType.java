@@ -262,6 +262,7 @@ public enum VdcActionType {
     StopGlusterVolume(1403, ActionGroup.MANIPULATE_GLUSTER_VOLUME),
     ResetGlusterVolumeOptions(1404, ActionGroup.MANIPULATE_GLUSTER_VOLUME),
     DeleteGlusterVolume(1405, ActionGroup.DELETE_GLUSTER_VOLUME),
+    GlusterVolumeRemoveBricks(1406, ActionGroup.MANIPULATE_GLUSTER_VOLUME),
     ;
 
 

@@ -133,6 +133,7 @@ public enum VDSCommandType {
     StopGlusterVolume("org.ovirt.engine.core.vdsbroker.gluster"),
     DeleteGlusterVolume("org.ovirt.engine.core.vdsbroker.gluster"),
     GetGlusterVolumeOptionsInfo("org.ovirt.engine.core.vdsbroker.gluster"),
+    GlusterVolumeRemoveBricks("org.ovirt.engine.core.vdsbroker.gluster"),
     ;
 
     String packageName;

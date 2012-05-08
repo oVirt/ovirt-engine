@@ -213,4 +213,7 @@ public interface IVdsServer {
     StatusOnlyReturnForXmlRpc glusterVolumeReset(String volumeName, String volumeOption, Boolean force);
 
     GlusterVolumeOptionsInfoReturnForXmlRpc glusterVolumeSetOptionsList();
+
+    StatusOnlyReturnForXmlRpc glusterVolumeRemoveBrickForce(String volumeName, String[] brickList);
+
 }

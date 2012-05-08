@@ -44,6 +44,8 @@ public final class VdcEventNotificationUtils {
         AddEventNotificationEntry(EventNotificationEntity.GlusterVolume, AuditLogType.GLUSTER_VOLUME_OPTIONS_RESET_FAILED);
         AddEventNotificationEntry(EventNotificationEntity.GlusterVolume, AuditLogType.GLUSTER_VOLUME_DELETE);
         AddEventNotificationEntry(EventNotificationEntity.GlusterVolume, AuditLogType.GLUSTER_VOLUME_DELETE_FAILED);
+        AddEventNotificationEntry(EventNotificationEntity.GlusterVolume, AuditLogType.GLUSTER_VOLUME_REMOVE_BRICKS);
+        AddEventNotificationEntry(EventNotificationEntity.GlusterVolume, AuditLogType.GLUSTER_VOLUME_REMOVE_BRICKS_FAILED);
         // DWH
         AddEventNotificationEntry(EventNotificationEntity.DWH, AuditLogType.DWH_STOPPED);
         AddEventNotificationEntry(EventNotificationEntity.DWH, AuditLogType.DWH_ERROR);

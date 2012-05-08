@@ -1055,4 +1055,12 @@ public class VdsServerWrapper implements IVdsServer {
         }
     }
 
+    @Override
+    public StatusOnlyReturnForXmlRpc glusterVolumeRemoveBrickForce(String volumeName, String[] brickDirectories) {
+        try {
+            return new StatusOnlyReturnForXmlRpc(vdsServer.glusterVolumeRemoveBrickForce(volumeName, brickDirectories));
+        } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
+    }
 }

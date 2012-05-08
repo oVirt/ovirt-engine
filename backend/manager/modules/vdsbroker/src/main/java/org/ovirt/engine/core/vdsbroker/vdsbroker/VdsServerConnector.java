@@ -205,4 +205,7 @@ public interface VdsServerConnector {
     public Map<String, Object> glusterVolumeReset(String volumeName, String volumeOption, Boolean force);
 
     public Map<String, Object> glusterVolumeSetOptionsList();
+
+    public Map<String, Object> glusterVolumeRemoveBrickForce(String volumeName, String[] brickDirectories);
+
 }

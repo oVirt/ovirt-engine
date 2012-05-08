@@ -669,4 +669,7 @@ public interface VdsmErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Gluster Volume Delete Failed.")
     String GlusterVolumeDeleteFailed();
+
+    @DefaultStringValue("Gluster Volume Remove Bricks Failed.")
+    String GlusterVolumeRemoveBricksFailed();
 }
