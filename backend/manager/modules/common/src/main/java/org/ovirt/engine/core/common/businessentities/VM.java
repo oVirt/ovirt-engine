@@ -284,6 +284,15 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         OnPropertyChanged(new PropertyChangedEventArgs("num_of_monitors"));
     }
 
+    public boolean getAllowConsoleReconnect() {
+        return this.mVmStatic.getAllowConsoleReconnect();
+    }
+
+    public void setAllowConsoleReconnect(boolean value) {
+        this.mVmStatic.setAllowConsoleReconnect(value);
+        OnPropertyChanged(new PropertyChangedEventArgs("allowConsoleReconnect"));
+    }
+
     public boolean getis_initialized() {
         return this.mVmStatic.getis_initialized();
     }
@@ -547,6 +556,14 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
 
     public void setguest_cur_user_id(NGuid value) {
         this.mVmDynamic.setguest_cur_user_id(value);
+    }
+
+    public NGuid getConsoleUserId() {
+        return this.mVmDynamic.getConsoleUserId();
+    }
+
+    public void setConsoleUserId(NGuid value) {
+        this.mVmDynamic.setConsoleUserId(value);
     }
 
     public Date getguest_last_logout_time() {

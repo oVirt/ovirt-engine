@@ -114,6 +114,7 @@ public class VmTemplateDAODbFacadeImpl extends BaseDAODbFacade implements VmTemp
                 .addValue("vds_group_id", template.getvds_group_id())
                 .addValue("domain", template.getdomain())
                 .addValue("num_of_monitors", template.getnum_of_monitors())
+                .addValue("allow_console_reconnect", template.getAllowConsoleReconnect())
                 .addValue("status", template.getstatus())
                 .addValue("usb_policy", template.getusb_policy())
                 .addValue("time_zone", template.gettime_zone())
@@ -180,6 +181,7 @@ public class VmTemplateDAODbFacadeImpl extends BaseDAODbFacade implements VmTemp
             entity.setvds_group_id(Guid.createGuidFromString(rs.getString("vds_group_id")));
             entity.setdomain(rs.getString("domain"));
             entity.setnum_of_monitors(rs.getInt("num_of_monitors"));
+            entity.setAllowConsoleReconnect(rs.getBoolean("allow_console_reconnect"));
             entity.setstatus(VmTemplateStatus.forValue(rs.getInt("status")));
             entity.setvds_group_name(rs.getString("vds_group_name"));
             entity.setstorage_pool_id(NGuid.createGuidFromString(rs.getString("storage_pool_id")));

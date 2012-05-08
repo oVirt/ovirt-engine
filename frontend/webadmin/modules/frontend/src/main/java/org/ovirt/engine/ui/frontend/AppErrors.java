@@ -233,6 +233,8 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String ACTION_TYPE_FAILED_VM_HAS_STATELESS_SNAPSHOT_LEFTOVER();
 
+    String ACTION_TYPE_FAILED_VM_IN_USE_BY_OTHER_USER();
+
     String ACTION_TYPE_FAILED_VM_NOT_FOUND();
 
     String ACTION_TYPE_FAILED_VM_IS_NON_MIGRTABLE_AND_IS_NOT_FORCED_BY_USER_TO_MIGRATE();
@@ -436,6 +438,10 @@ public interface AppErrors extends ConstantsWithLookup {
     String VAR__ACTION__HOT_PLUG();
 
     String VAR__ACTION__HOT_UNPLUG();
+
+    String VAR__ACTION__LOGON();
+
+    String VAR__ACTION__LOGOFF();
 
     String ACTION_TYPE_FAILED_DISK_LETTER_ALREADY_IN_USE();
 

@@ -3,6 +3,7 @@ package org.ovirt.engine.core.dao;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.NotImplementedException;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
@@ -46,6 +47,16 @@ public class VmDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<V
         getCallsHandler().executeModification("UpdateVmDynamicStatus", parameterSource);
     }
 
+    public boolean updateConsoleUserWithOptimisticLocking(VmDynamic vm) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("vm_guid", vm.getId())
+                .addValue("console_user_id", vm.getConsoleUserId());
+
+        Map<String, Object> results = getCallsHandler().executeModification("UpdateConsoleUserWithOptimisticLocking", parameterSource);
+
+        return (Boolean) results.get("updated");
+    }
+
     @Override
     public List<VmDynamic> getAll() {
         throw new NotImplementedException();
@@ -62,6 +73,7 @@ public class VmDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<V
                 .addValue("app_list", vm.getapp_list())
                 .addValue("guest_cur_user_id", vm.getguest_cur_user_id())
                 .addValue("guest_cur_user_name", vm.getguest_cur_user_name())
+                .addValue("console_user_id", vm.getConsoleUserId())
                 .addValue("guest_last_login_time",
                         vm.getguest_last_login_time())
                 .addValue("guest_last_logout_time",
@@ -108,6 +120,7 @@ public class VmDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<V
                         .getString("guest_cur_user_id")));
                 entity.setguest_cur_user_name(rs
                         .getString("guest_cur_user_name"));
+                entity.setConsoleUserId(NGuid.createGuidFromString(rs.getString("console_user_id")));
                 entity.setguest_last_login_time(DbFacadeUtils.fromDate(rs
                         .getTimestamp("guest_last_login_time")));
                 entity.setguest_last_logout_time(DbFacadeUtils.fromDate(rs

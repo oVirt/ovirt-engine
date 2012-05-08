@@ -306,6 +306,8 @@ public class ResourceManager implements IVdsEventListener {
         vm.setmigrating_to_vds(null);
         vm.setrun_on_vds_name("");
         vm.setguest_cur_user_name(null);
+        vm.setguest_cur_user_id(null);
+        vm.setConsoleUserId(null);
         vm.setguest_os(null);
         vm.setvm_ip(null);
         List<VmNetworkInterface> interfaces = vm.getInterfaces();

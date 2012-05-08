@@ -748,6 +748,7 @@
         <column>creation_date</column>
         <column>child_count</column>
         <column>num_of_monitors</column>
+        <column>allow_console_reconnect</column>
         <column>is_initialized</column>
         <column>is_auto_suspend</column>
         <column>num_of_sockets</column>
@@ -792,6 +793,7 @@
             <value>2010-11-21 16:39:27</value>
             <value>0</value>
             <value>1</value>
+            <value>false</value> <!-- allow_console_reconnect -->
             <null />
             <value>0</value>
             <value>1</value>
@@ -835,6 +837,7 @@
             <value>2010-11-21 16:39:27</value>
             <value>0</value>
             <value>1</value>
+            <value>false</value> <!-- allow_console_reconnect -->
             <null />
             <value>0</value>
             <value>1</value>
@@ -878,6 +881,7 @@
             <value>2010-11-21 16:39:27</value>
             <value>0</value>
             <value>1</value>
+            <value>false</value> <!-- allow_console_reconnect -->
             <null />
             <value>0</value>
             <value>1</value>
@@ -923,6 +927,7 @@
             <value>2010-11-18 11:13:24</value>
             <null />
             <value>1</value>
+            <value>false</value> <!-- allow_console_reconnect -->
             <value>1</value>
             <value>0</value>
             <value>1</value>
@@ -966,6 +971,7 @@
             <value>2010-11-18 11:13:24</value>
             <null />
             <value>1</value>
+            <value>false</value> <!-- allow_console_reconnect -->
             <value>1</value>
             <value>0</value>
             <value>1</value>
@@ -1009,6 +1015,7 @@
             <value>2010-11-18 11:13:24</value>
             <null />
             <value>1</value>
+            <value>false</value> <!-- allow_console_reconnect -->
             <value>1</value>
             <value>0</value>
             <value>1</value>
@@ -1052,6 +1059,7 @@
             <value>2010-11-18 11:13:24</value>
             <null />
             <value>1</value>
+            <value>false</value> <!-- allow_console_reconnect -->
             <value>1</value>
             <value>0</value>
             <value>1</value>
@@ -1095,6 +1103,7 @@
             <value>2010-11-18 11:13:24</value>
             <null />
             <value>1</value>
+            <value>false</value> <!-- allow_console_reconnect -->
             <value>1</value>
             <value>0</value>
             <value>1</value>
@@ -1309,6 +1318,7 @@
         <column>guest_cur_user_id</column>
         <column>guest_last_login_time</column>
         <column>guest_last_logout_time</column>
+        <column>console_user_id</column>
         <column>guest_os</column>
         <column>run_on_vds</column>
         <column>migrating_to_vds</column>
@@ -1341,6 +1351,7 @@
             <null />
             <null />
             <null />
+            <null /> <!-- console_user_id -->
             <null />
             <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
             <null />
@@ -1374,6 +1385,7 @@
             <null />
             <null />
             <null />
+            <value>9bf7c640-b620-456f-a550-0348f366544a</value> <!-- console_user_id -->
             <null />
             <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
             <null />
@@ -1407,6 +1419,7 @@
             <null />
             <null />
             <null />
+            <null /> <!-- console_user_id -->
             <null />
             <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
             <null />

@@ -30,7 +30,7 @@ public class VmTemplateHandler {
         BlankVmTemplateId = new Guid("00000000-0000-0000-0000-000000000000");
         mUpdateVmTemplate.AddPermittedFields(new String[] { "name", "description", "domain", "os", "osType",
                 "is_auto_suspend", "interfaces", "mem_size_mb", "num_of_sockets", "cpu_per_socket", "num_of_cpus",
-                "vds_group_id", "num_of_monitors", "usb_policy", "time_zone", "diskMap", "default_boot_sequence",
+                "vds_group_id", "num_of_monitors", "allowConsoleReconnect", "usb_policy", "time_zone", "diskMap", "default_boot_sequence",
                 "iso_path", "diskImageMap", "default_display_type", "priority", "auto_startup", "is_stateless",
                 "initrd_url", "kernel_url", "kernel_params", "images", "interfaces", "quotaId", "quotaName" });
     }

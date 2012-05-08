@@ -182,6 +182,7 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
                 .addValue("vm_name", vm.getvm_name())
                 .addValue("vmt_guid", vm.getvmt_guid())
                 .addValue("num_of_monitors", vm.getnum_of_monitors())
+                .addValue("allow_console_reconnect", vm.getAllowConsoleReconnect())
                 .addValue("is_initialized", vm.getis_initialized())
                 .addValue("is_auto_suspend", vm.getis_auto_suspend())
                 .addValue("num_of_sockets", vm.getnum_of_sockets())
@@ -258,6 +259,7 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
             entity.setguest_last_login_time(DbFacadeUtils.fromDate(rs.getTimestamp("guest_last_login_time")));
             entity.setguest_cur_user_id(NGuid.createGuidFromString(rs.getString("guest_cur_user_id")));
             entity.setguest_last_logout_time(DbFacadeUtils.fromDate(rs.getTimestamp("guest_last_logout_time")));
+            entity.setConsoleUserId(NGuid.createGuidFromString(rs.getString("console_user_id")));
             entity.setguest_os(rs.getString("guest_os"));
             entity.setcpu_user(rs.getDouble("cpu_user"));
             entity.setcpu_sys(rs.getDouble("cpu_sys"));
@@ -272,6 +274,7 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
             entity.setVmPoolName(rs.getString("vm_pool_name"));
             entity.setVmPoolId(NGuid.createGuidFromString(rs.getString("vm_pool_id")));
             entity.setnum_of_monitors(rs.getInt("num_of_monitors"));
+            entity.setAllowConsoleReconnect(rs.getBoolean("allow_console_reconnect"));
             entity.setis_initialized(rs.getBoolean("is_initialized"));
             entity.setis_auto_suspend(rs.getBoolean("is_auto_suspend"));
             entity.setnum_of_sockets(rs.getInt("num_of_sockets"));

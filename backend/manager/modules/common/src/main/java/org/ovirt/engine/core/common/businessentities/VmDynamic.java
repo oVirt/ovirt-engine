@@ -52,6 +52,10 @@ public class VmDynamic implements BusinessEntity<Guid> {
     @Type(type = "guid")
     private NGuid guest_cur_user_id;
 
+    @Column(name = "console_user_id")
+    @Type(type = "guid")
+    private NGuid consoleUserId;
+
     @Column(name = "guest_last_login_time")
     private java.util.Date guest_last_login_time;
 
@@ -163,6 +167,10 @@ public class VmDynamic implements BusinessEntity<Guid> {
                 * result
                 + ((guest_cur_user_name == null) ? 0
                         : guest_cur_user_name.hashCode());
+        result = prime
+                * result
+                + ((consoleUserId == null) ? 0
+                       : consoleUserId.hashCode());
         result = prime
                 * result
                 + ((guest_last_login_time == null) ? 0
@@ -280,6 +288,11 @@ public class VmDynamic implements BusinessEntity<Guid> {
                 return false;
         } else if (!guest_cur_user_name
                 .equals(other.guest_cur_user_name))
+            return false;
+        if (consoleUserId == null) {
+            if (other.consoleUserId != null)
+                return false;
+        } else if (!consoleUserId.equals(other.consoleUserId))
             return false;
         if (guest_last_login_time == null) {
             if (other.guest_last_login_time != null)
@@ -497,6 +510,14 @@ public class VmDynamic implements BusinessEntity<Guid> {
 
     public void setguest_cur_user_name(String value) {
         this.guest_cur_user_name = value;
+    }
+
+    public NGuid getConsoleUserId() {
+        return this.consoleUserId;
+    }
+
+    public void setConsoleUserId(NGuid value) {
+        this.consoleUserId = value;
     }
 
     public String getguest_os() {

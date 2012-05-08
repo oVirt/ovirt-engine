@@ -73,7 +73,8 @@ public class VmStaticDAODbFacadeImpl extends BaseDAODbFacade implements VmStatic
                 .addValue("userdefined_properties",
                         vm.getUserDefinedProperties())
                 .addValue("min_allocated_mem", vm.getMinAllocatedMem())
-                .addValue("quota_id", vm.getQuotaId());
+                .addValue("quota_id", vm.getQuotaId())
+                .addValue("allow_console_reconnect", vm.getAllowConsoleReconnect());
 
         getCallsHandler().executeModification("InsertVmStatic", parameterSource);
 
@@ -121,7 +122,9 @@ public class VmStaticDAODbFacadeImpl extends BaseDAODbFacade implements VmStatic
                 .addValue("userdefined_properties",
                         vm.getUserDefinedProperties())
                 .addValue("min_allocated_mem", vm.getMinAllocatedMem())
-                .addValue("quota_id", vm.getQuotaId());
+                .addValue("quota_id", vm.getQuotaId())
+                .addValue("allow_console_reconnect", vm.getAllowConsoleReconnect());
+
 
         getCallsHandler().executeModification("UpdateVmStatic", parameterSource);
     }

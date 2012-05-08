@@ -135,6 +135,9 @@ public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, Bus
     @Column(name = "initrd_url", length = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
     private String initrdUrl;
 
+    @Column(name = "allow_console_reconnect")
+    private boolean allowConsoleReconnect;
+
     // not persisted to db
     private Date exportDate;
 
@@ -471,6 +474,14 @@ public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, Bus
         initrdUrl = value;
     }
 
+    public boolean getAllowConsoleReconnect() {
+        return allowConsoleReconnect;
+    }
+
+    public void setAllowConsoleReconnect(boolean value) {
+        allowConsoleReconnect = value;
+    }
+
     public void setExportDate(Date value) {
         this.exportDate = value;
     }
@@ -511,6 +522,7 @@ public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, Bus
         result = prime * result + ((vds_group_id == null) ? 0 : vds_group_id.hashCode());
         result = prime * result + ((vmType == null) ? 0 : vmType.hashCode());
         result = prime * result + ((quotaId == null) ? 0 : quotaId.hashCode());
+        result = prime * result + (allowConsoleReconnect ? 1231 : 1237);
 
         return result;
     }
@@ -653,6 +665,9 @@ public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, Bus
                 return false;
         } else if (!quotaId.equals(other.quotaId))
             return false;
+        if (allowConsoleReconnect != other.allowConsoleReconnect) {
+            return false;
+        }
         return true;
     }
 

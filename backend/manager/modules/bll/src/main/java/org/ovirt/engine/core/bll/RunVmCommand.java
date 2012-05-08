@@ -464,6 +464,10 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
             getVm().setkvm_enable(getParameters().getKvmEnable());
             getVm().setRunAndPause(getParameters().getRunAndPause());
             getVm().setacpi_enable(getParameters().getAcpiEnable());
+
+            // Clear the first user:
+            getVm().setConsoleUserId(null);
+
             getParameters().setRunAsStateless(shouldVmRunAsStateless(getParameters(), getVm()));
             // if Use Vnc is null it means runVM was launch not from the run
             // once command

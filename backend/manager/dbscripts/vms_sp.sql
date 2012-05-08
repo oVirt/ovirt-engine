@@ -97,6 +97,7 @@ Create or replace FUNCTION InsertVmDynamic(v_app_list VARCHAR(4000) ,
 	v_guest_cur_user_name VARCHAR(255) ,
 	v_guest_last_login_time TIMESTAMP WITH TIME ZONE ,
 	v_guest_last_logout_time TIMESTAMP WITH TIME ZONE ,
+        v_console_user_id UUID,
 	v_guest_os VARCHAR(255) ,
 	v_migrating_to_vds UUID ,
 	v_run_on_vds UUID ,
@@ -126,8 +127,8 @@ Create or replace FUNCTION InsertVmDynamic(v_app_list VARCHAR(4000) ,
 RETURNS VOID
    AS $procedure$
 BEGIN
-INSERT INTO vm_dynamic(app_list,	guest_cur_user_id, guest_cur_user_name, guest_last_login_time, guest_last_logout_time, guest_os, migrating_to_vds, RUN_ON_VDS, status, vm_guid, vm_host, vm_ip, vm_last_boot_time, vm_last_up_time, vm_pid, display, acpi_enable, session, display_ip, display_type, kvm_enable, boot_sequence, display_secure_port, utc_diff, last_vds_run_on, client_ip, guest_requested_memory, hibernation_vol_handle,exit_status,pause_status,exit_message)
-	VALUES(v_app_list, v_guest_cur_user_id, v_guest_cur_user_name, v_guest_last_login_time, v_guest_last_logout_time, v_guest_os, v_migrating_to_vds, v_run_on_vds, v_status, v_vm_guid, v_vm_host, v_vm_ip, v_vm_last_boot_time, v_vm_last_up_time, v_vm_pid, v_display, v_acpi_enable, v_session, v_display_ip, v_display_type, v_kvm_enable, v_boot_sequence, v_display_secure_port, v_utc_diff, v_last_vds_run_on, v_client_ip, v_guest_requested_memory, v_hibernation_vol_handle, v_exit_status, v_pause_status, v_exit_message);
+INSERT INTO vm_dynamic(app_list,	guest_cur_user_id, guest_cur_user_name, guest_last_login_time, guest_last_logout_time, console_user_id, guest_os, migrating_to_vds, RUN_ON_VDS, status, vm_guid, vm_host, vm_ip, vm_last_boot_time, vm_last_up_time, vm_pid, display, acpi_enable, session, display_ip, display_type, kvm_enable, boot_sequence, display_secure_port, utc_diff, last_vds_run_on, client_ip, guest_requested_memory, hibernation_vol_handle,exit_status,pause_status,exit_message)
+	VALUES(v_app_list, v_guest_cur_user_id, v_guest_cur_user_name, v_guest_last_login_time, v_guest_last_logout_time, v_console_user_id, v_guest_os, v_migrating_to_vds, v_run_on_vds, v_status, v_vm_guid, v_vm_host, v_vm_ip, v_vm_last_boot_time, v_vm_last_up_time, v_vm_pid, v_display, v_acpi_enable, v_session, v_display_ip, v_display_type, v_kvm_enable, v_boot_sequence, v_display_secure_port, v_utc_diff, v_last_vds_run_on, v_client_ip, v_guest_requested_memory, v_hibernation_vol_handle, v_exit_status, v_pause_status, v_exit_message);
 END; $procedure$
 LANGUAGE plpgsql;    
 
@@ -140,6 +141,7 @@ Create or replace FUNCTION UpdateVmDynamic(v_app_list VARCHAR(4000) ,
 	v_guest_cur_user_name VARCHAR(255) ,
 	v_guest_last_login_time TIMESTAMP WITH TIME ZONE ,
 	v_guest_last_logout_time TIMESTAMP WITH TIME ZONE ,
+        v_console_user_id UUID,
 	v_guest_os VARCHAR(255) ,
 	v_migrating_to_vds UUID ,
 	v_run_on_vds UUID ,
@@ -176,6 +178,7 @@ BEGIN
       SET app_list = v_app_list,guest_cur_user_id = v_guest_cur_user_id,guest_cur_user_name = v_guest_cur_user_name, 
       guest_last_login_time = v_guest_last_login_time, 
       guest_last_logout_time = v_guest_last_logout_time, 
+      console_user_id = v_console_user_id,
       guest_os = v_guest_os,migrating_to_vds = v_migrating_to_vds,RUN_ON_VDS = v_run_on_vds, 
       status = v_status,vm_host = v_vm_host,vm_ip = v_vm_ip, 
       vm_last_boot_time = v_vm_last_boot_time,vm_last_up_time = v_vm_last_up_time, 
@@ -190,6 +193,23 @@ BEGIN
       WHERE vm_guid = v_vm_guid;
 END; $procedure$
 LANGUAGE plpgsql;
+
+
+Create or replace FUNCTION UpdateConsoleUserWithOptimisticLocking(
+    v_vm_guid UUID,
+    v_console_user_id UUID,
+    OUT v_updated BOOLEAN)
+    AS $procedure$
+BEGIN
+    UPDATE vm_dynamic SET
+        console_user_id = v_console_user_id
+    WHERE
+        vm_guid = v_vm_guid AND
+        (console_user_id = v_console_user_id OR console_user_id IS NULL);
+    v_updated := FOUND;
+END; $procedure$
+LANGUAGE plpgsql;
+
 
 
 Create or replace FUNCTION UpdateVmDynamicStatus(
@@ -259,6 +279,7 @@ Create or replace FUNCTION InsertVmStatic(v_description VARCHAR(4000) ,
  v_domain  VARCHAR(40),  
  v_creation_date TIMESTAMP WITH TIME ZONE,  
  v_num_of_monitors INTEGER,  
+ v_allow_console_reconnect BOOLEAN,
  v_is_initialized BOOLEAN,  
     v_is_auto_suspend BOOLEAN,  
     v_num_of_sockets INTEGER,  
@@ -289,8 +310,8 @@ Create or replace FUNCTION InsertVmStatic(v_description VARCHAR(4000) ,
 RETURNS VOID
    AS $procedure$
 BEGIN
-INSERT INTO vm_static(description, mem_size_mb, os, vds_group_id, vm_guid, VM_NAME, vmt_guid,domain,creation_date,num_of_monitors,is_initialized,is_auto_suspend,num_of_sockets,cpu_per_socket,usb_policy, time_zone,auto_startup,is_stateless,dedicated_vm_for_vds, fail_back, default_boot_sequence, vm_type, hypervisor_type, operation_mode, nice_level, default_display_type, priority,iso_path,origin,initrd_url,kernel_url,kernel_params,migration_support,predefined_properties,userdefined_properties,min_allocated_mem, entity_type, quota_id)
-	VALUES(v_description,  v_mem_size_mb, v_os, v_vds_group_id, v_vm_guid, v_vm_name, v_vmt_guid, v_domain, v_creation_date, v_num_of_monitors, v_is_initialized, v_is_auto_suspend, v_num_of_sockets, v_cpu_per_socket, v_usb_policy, v_time_zone, v_auto_startup,v_is_stateless,v_dedicated_vm_for_vds,v_fail_back, v_default_boot_sequence, v_vm_type, v_hypervisor_type, v_operation_mode, v_nice_level, v_default_display_type, v_priority,v_iso_path,v_origin,v_initrd_url,v_kernel_url,v_kernel_params,v_migration_support,v_predefined_properties,v_userdefined_properties,v_min_allocated_mem, 'VM', v_quota_id);
+INSERT INTO vm_static(description, mem_size_mb, os, vds_group_id, vm_guid, VM_NAME, vmt_guid,domain,creation_date,num_of_monitors,allow_console_reconnect,is_initialized,is_auto_suspend,num_of_sockets,cpu_per_socket,usb_policy, time_zone,auto_startup,is_stateless,dedicated_vm_for_vds, fail_back, default_boot_sequence, vm_type, hypervisor_type, operation_mode, nice_level, default_display_type, priority,iso_path,origin,initrd_url,kernel_url,kernel_params,migration_support,predefined_properties,userdefined_properties,min_allocated_mem, entity_type, quota_id)
+	VALUES(v_description,  v_mem_size_mb, v_os, v_vds_group_id, v_vm_guid, v_vm_name, v_vmt_guid, v_domain, v_creation_date, v_num_of_monitors, v_allow_console_reconnect, v_is_initialized, v_is_auto_suspend, v_num_of_sockets, v_cpu_per_socket, v_usb_policy, v_time_zone, v_auto_startup,v_is_stateless,v_dedicated_vm_for_vds,v_fail_back, v_default_boot_sequence, v_vm_type, v_hypervisor_type, v_operation_mode, v_nice_level, v_default_display_type, v_priority,v_iso_path,v_origin,v_initrd_url,v_kernel_url,v_kernel_params,v_migration_support,v_predefined_properties,v_userdefined_properties,v_min_allocated_mem, 'VM', v_quota_id);
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -308,6 +329,7 @@ Create or replace FUNCTION UpdateVmStatic(v_description VARCHAR(4000) ,
  v_domain  VARCHAR(40),  
  v_creation_date TIMESTAMP WITH TIME ZONE,  
  v_num_of_monitors INTEGER,  
+ v_allow_console_reconnect BOOLEAN,
  v_is_initialized BOOLEAN,  
  v_is_auto_suspend BOOLEAN,  
     v_num_of_sockets INTEGER,  
@@ -344,6 +366,7 @@ BEGIN
       SET description = v_description,mem_size_mb = v_mem_size_mb,os = v_os,vds_group_id = v_vds_group_id, 
       VM_NAME = v_vm_name,vmt_guid = v_vmt_guid, 
       domain = v_domain,creation_date = v_creation_date,num_of_monitors = v_num_of_monitors, 
+      allow_console_reconnect = v_allow_console_reconnect,
       is_initialized = v_is_initialized,is_auto_suspend = v_is_auto_suspend, 
       num_of_sockets = v_num_of_sockets,cpu_per_socket = v_cpu_per_socket, 
       usb_policy = v_usb_policy,time_zone = v_time_zone,auto_startup = v_auto_startup, 
@@ -616,6 +639,7 @@ Create or replace FUNCTION InsertVm(v_description VARCHAR(4000) ,
  v_vm_name VARCHAR(255),  
  v_vmt_guid UUID,  
  v_num_of_monitors INTEGER,  
+ v_allow_console_reconnect BOOLEAN,
  v_is_initialized   BOOLEAN,  
  v_is_auto_suspend   BOOLEAN,  
     v_num_of_sockets INTEGER,  
@@ -645,8 +669,8 @@ Create or replace FUNCTION InsertVm(v_description VARCHAR(4000) ,
 RETURNS VOID
    AS $procedure$
 BEGIN
-INSERT INTO vm_static(description, mem_size_mb, os, vds_group_id, vm_guid, VM_NAME, vmt_guid, num_of_monitors, is_initialized, is_auto_suspend, num_of_sockets, cpu_per_socket, usb_policy, time_zone,auto_startup,is_stateless,dedicated_vm_for_vds,fail_back,vm_type,hypervisor_type,operation_mode,nice_level,default_boot_sequence,default_display_type,priority,iso_path,origin,initrd_url,kernel_url,kernel_params,migration_support,predefined_properties,userdefined_properties,min_allocated_mem)
-	VALUES(v_description, v_mem_size_mb, v_os, v_vds_group_id, v_vm_guid, v_vm_name, v_vmt_guid, v_num_of_monitors, v_is_initialized, v_is_auto_suspend, v_num_of_sockets, v_cpu_per_socket, v_usb_policy, v_time_zone,v_auto_startup,v_is_stateless,v_dedicated_vm_for_vds,v_fail_back,v_vm_type,v_hypervisor_type,v_operation_mode,v_nice_level,v_default_boot_sequence,v_default_display_type,v_priority,v_iso_path,v_origin,v_initrd_url,v_kernel_url,v_kernel_params,v_migration_support,v_predefined_properties,v_userdefined_properties,v_min_allocated_mem);
+INSERT INTO vm_static(description, mem_size_mb, os, vds_group_id, vm_guid, VM_NAME, vmt_guid, num_of_monitors, allow_console_reconnect, is_initialized, is_auto_suspend, num_of_sockets, cpu_per_socket, usb_policy, time_zone,auto_startup,is_stateless,dedicated_vm_for_vds,fail_back,vm_type,hypervisor_type,operation_mode,nice_level,default_boot_sequence,default_display_type,priority,iso_path,origin,initrd_url,kernel_url,kernel_params,migration_support,predefined_properties,userdefined_properties,min_allocated_mem)
+	VALUES(v_description, v_mem_size_mb, v_os, v_vds_group_id, v_vm_guid, v_vm_name, v_vmt_guid, v_num_of_monitors, v_num_of_monitors, v_is_initialized, v_is_auto_suspend, v_num_of_sockets, v_cpu_per_socket, v_usb_policy, v_time_zone,v_auto_startup,v_is_stateless,v_dedicated_vm_for_vds,v_fail_back,v_vm_type,v_hypervisor_type,v_operation_mode,v_nice_level,v_default_boot_sequence,v_default_display_type,v_priority,v_iso_path,v_origin,v_initrd_url,v_kernel_url,v_kernel_params,v_migration_support,v_predefined_properties,v_userdefined_properties,v_min_allocated_mem);
 	
       INSERT INTO vm_dynamic(vm_guid, status) VALUES(v_vm_guid, 0);
 	
