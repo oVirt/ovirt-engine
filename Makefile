@@ -44,7 +44,7 @@ SRCRPMBUILD=$(shell bash -c "pwd -P")/srcrpmbuild
 OUTPUT_DIR=$(shell bash -c "pwd -P")/output
 TARBALL=ovirt-engine-$(RPM_VERSION).tar.gz
 SRPM=$(OUTPUT_DIR)/ovirt-engine-$(RPM_VERSION)*.src.rpm
-ARCH=$(shell uname -i)
+ARCH=noarch
 BUILD_FILE=$(shell bash -c "pwd -P")/build_mvn
 SOURCE_DIR=$(RPMBUILD)/SOURCES
 
@@ -198,11 +198,6 @@ install_aio_plugin:
 	install -m 755 packaging/fedora/setup/plugins/all_in_one_100.py $(PREFIX)/usr/share/ovirt-engine/scripts/plugins
 
 install_sec:
-	# Build and install the tool to convert public keys to SSH
-	# format:
-	cd backend/manager/3rdparty/pub2ssh/; chmod +x pubkey2ssh.sh; mkdir -p bin; ./pubkey2ssh.sh; cd -
-	install -m 755 backend/manager/3rdparty/pub2ssh/bin/pubkey2ssh $(PREFIX)/etc/pki/ovirt-engine
-
 	# Create the directories:
 	install -dm 755 $(PREFIX)/etc/pki/ovirt-engine
 	install -dm 755 $(PREFIX)/etc/pki/ovirt-engine/certs

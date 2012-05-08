@@ -780,11 +780,9 @@ public class MinaInstallWrapper implements IVdsInstallWrapper {
     }
 
     protected void callbackConnected() {
-        byte[] fp = hkvVerifier.getServerFingerprint();
-        String strFingerprint = "Unknown";
-        if (fp != null) {
-            strFingerprint = byteArrayToHexString(fp, true);
-        } else {
+        String fingerprint = hkvVerifier.getServerFingerprint();
+        if (fingerprint == null) {
+            fingerprint = "Unknown";
             log.error("Unable to get host fingerprint!");
         }
         if (haveCallback()) {
@@ -792,7 +790,7 @@ public class MinaInstallWrapper implements IVdsInstallWrapper {
                     String.format(
                             "<BSTRAP component='RHEV_INSTALL' status='OK' message='Connected to Host %s with SSH key fingerprint: %s'/>",
                             host,
-                            strFingerprint
+                            fingerprint
                             )
                     );
             callback.Connected();

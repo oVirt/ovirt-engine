@@ -7,6 +7,8 @@ usage () {
         printf "\tstore-utils {-enc|-dec|-pfx} {store} {pass} {alias} {string} {ear}\n"
         printf "Upgrade mode:\n"
         printf "\tstore-utils -jks {store} {pass} {alias} {PFX file} {CA PEM file}\n"
+        printf "Export SSH public key mode:\n"
+        printf "\tstore-utils -pubkey2ssh {store} {pass} {alias}\n"
         printf "Where:\n"
         printf "\tStore        = path to keystore file.\n"
         printf "\tPass         = keystore password.\n"
@@ -19,7 +21,7 @@ usage () {
         return 0
 }
 
-if [ ! "$#" -ge 5 ]; then
+if [ ! "$#" -ge 4 ]; then
         usage
         echo "Error: wrong argument number: $#.\n"
 	exit 1
@@ -101,4 +103,3 @@ else
 fi
 
 exit $?
-

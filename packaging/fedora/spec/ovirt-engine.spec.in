@@ -33,7 +33,7 @@ Group: Virtualization/Management
 URL: http://www.ovirt.org
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}
-BuildArch: x86_64
+BuildArch: noarch
 BuildRequires: unzip
 BuildRequires: openssl-devel
 BuildRequires: gcc-c++
@@ -289,7 +289,6 @@ cp -rpf %{_datadir}/vdsm-bootstrap/* %{_engineeardir}/components.war/vds/ &> /de
 %config(noreplace) %{_sysconfdir}/%{name}/sysprep/sysprep.w7x64
 %config(noreplace) %{_sysconfdir}/%{name}/sysprep/sysprep.xp
 %{_jbossdir}/modules/org/postgresql
-%attr (755,root,root) %{_sysconfdir}/pki/%{name}/pubkey2ssh
 
 %files backend
 %dir %{_engineeardir}

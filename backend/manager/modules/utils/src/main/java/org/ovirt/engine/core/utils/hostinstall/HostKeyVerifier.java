@@ -1,92 +1,52 @@
 package org.ovirt.engine.core.utils.hostinstall;
 
+import java.net.InetSocketAddress;
 import java.net.SocketAddress;
-import java.security.KeyFactory;
-import java.security.MessageDigest;
 import java.security.PublicKey;
-import java.security.spec.RSAPublicKeySpec;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.sshd.ClientSession;
+    import org.apache.sshd.ClientSession;
 import org.apache.sshd.client.ServerKeyVerifier;
-import org.apache.sshd.common.util.BufferUtils;
+import org.ovirt.engine.core.engineencryptutils.OpenSSHUtils;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
-/***
- *
- *
- */
 public class HostKeyVerifier implements ServerKeyVerifier {
+    // The log:
+    private static final Log log = LogFactory.getLog(HostKeyVerifier.class);
 
+    // This is a singleton:
     public static final ServerKeyVerifier INSTANCE = new HostKeyVerifier();
-    private static Log log = LogFactory.getLog(HostKeyVerifier.class);
-    private byte[] serverKeyFingerprint;
 
-    HostKeyVerifier() {
-        serverKeyFingerprint = null;
-    }
-
-    private static byte[] intToDWord(int i) {
-        byte[] dword = new byte[4];
-        dword[0] = (byte) ((i >> 24));
-        dword[1] = (byte) ((i >> 16));
-        dword[2] = (byte) ((i >> 8));
-        dword[3] = (byte) (i);
-        return dword;
-    }
-
-    private byte[] getKeyFingerprint(PublicKey serverKey) {
-        byte[] baFP = null;
-        MessageDigest md5;
-        KeyFactory kf = null;
-        RSAPublicKeySpec k = null;
-
-        try {
-            kf = KeyFactory.getInstance("RSA");
-            k = kf.getKeySpec(serverKey, RSAPublicKeySpec.class);
-
-            md5 = MessageDigest.getInstance("MD5");
-            md5.reset();
-
-            byte[] bData = "ssh-rsa".getBytes();
-            byte[] bLen = intToDWord(bData.length);
-            md5.update(bLen, 0, bLen.length);
-            md5.update(bData, 0, bData.length);
-
-            bData = k.getPublicExponent().toByteArray();
-            bLen = intToDWord(bData.length);
-            ;
-            md5.update(bLen, 0, bLen.length);
-            md5.update(bData, 0, bData.length);
-
-            bData = k.getModulus().toByteArray();
-            bLen = intToDWord(bData.length);
-            ;
-            md5.update(bLen, 0, bLen.length);
-            md5.update(bData, 0, bData.length);
-
-            baFP = md5.digest();
-            log.debug("Server fingerprint: " + BufferUtils.printHex(baFP));
-
-        } catch (Exception e) {
-            log.error("Unable to calculate fingerprint: " + e);
-        }
-
-        return baFP;
-    }
+    // Ge save the fingerprint for later use:
+    private String serverKeyFingerprint;
 
     @Override
     public boolean verifyServerKey(ClientSession sshClientSession, SocketAddress remoteAddress, PublicKey serverKey) {
-        boolean fReturn = true;
-        serverKeyFingerprint = getKeyFingerprint(serverKey);
-        if (serverKeyFingerprint == null) {
-            fReturn = false;
+        // We only support internet addresses (this is not an additional
+        // limitation, it is just convenient to use the internet address class
+        // to be able to display the host name and IP address in log messages):
+        InetSocketAddress inetAddress = null;
+        try {
+            inetAddress = (InetSocketAddress) remoteAddress;
+        }
+        catch (ClassCastException exception) {
+            log.error("Strange, the remote address is not an internet address.", exception);
+            return false;
         }
 
-        return fReturn;
+        // Check that we can calculate a fingerprint from the given key:
+        serverKeyFingerprint = OpenSSHUtils.getKeyFingerprintString(serverKey);
+        if (serverKeyFingerprint == null) {
+            log.error("SSH key fingerprint for host " + inetAddress.getHostName() + " (" + inetAddress.getAddress().getHostAddress() + ") can't be verified.");
+            return false;
+        }
+
+        // If we are here all the validations succeeded:
+        log.info("SSH key fingerprint " + serverKeyFingerprint + " for host " + inetAddress.getHostName() + " (" + inetAddress.getAddress().getHostAddress() + ") has been successfully verified.");
+        return true;
     }
 
-    public byte[] getServerFingerprint() {
+    public String getServerFingerprint() {
         return serverKeyFingerprint;
     }
 }

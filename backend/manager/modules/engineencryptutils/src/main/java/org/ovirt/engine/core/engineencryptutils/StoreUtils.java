@@ -1,12 +1,15 @@
 package org.ovirt.engine.core.engineencryptutils;
 
-import java.util.Vector;
-import java.util.HashMap;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.security.KeyStore;
 import java.security.Key;
+import java.security.KeyStore;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.security.cert.Certificate;
+import java.util.HashMap;
+import java.util.Vector;
 
 public class StoreUtils {
 
@@ -68,15 +71,48 @@ public class StoreUtils {
         return bReturn;
     }
 
+    private static String pubkey2ssh(String keystore, String password, String alias) {
+        String bReturn = null;
+        FileInputStream input = null;
+        try {
+            // Load the key store:
+            KeyStore ks = KeyStore.getInstance("jks");
+            input = new FileInputStream(keystore);
+            ks.load(input, password.toCharArray());
+
+            // Find the public key:
+            Key key = ks.getKey(alias, password.toCharArray());
+            if (key instanceof PrivateKey) {
+                Certificate cert = ks.getCertificate(alias);
+                key = cert.getPublicKey();
+            }
+
+            // Generate and return the SSH key string:
+            return OpenSSHUtils.getKeyString((PublicKey) key, alias);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (input != null) {
+                try {
+                    input.close();
+                } catch (IOException e) {
+                    //ignore
+                }
+            }
+        }
+        return bReturn;
+    }
+
     private static void printUsage() {
         System.out.println("Usage:");
-        System.out.println("EncryptionUtils -[enc|dec] -store=path/to/keystore-file -pass=keystore-pass -string='string to be enc/decrypted' [-alias='cert alias']");
+        System.out.println("StoreUtils -[enc|dec] -store=path/to/keystore-file -pass=keystore-pass -string='string to be enc/decrypted' [-alias='cert alias']");
+        System.out.println("StoreUtils -pubkey2ssh -store=path/to/keystore-file -pass=keystore-pass -alias='cert alias'");
     }
 
     private static boolean validate(CLIParse parser) {
         boolean fOK = true;
-        if ((!parser.hasArg("enc")) && (!parser.hasArg("dec")) && (!parser.hasArg("pvk"))) {
-            System.out.println("What do you wish me to do? -please specify -enc or -dec.");
+        if ((!parser.hasArg("enc")) && (!parser.hasArg("dec")) && (!parser.hasArg("pvk")) && (!parser.hasArg("pubkey2ssh"))) {
+            System.out.println("What do you wish me to do? -please specify -enc, -dec or -pubkey2ssh");
             fOK = false;
         }
 
@@ -141,6 +177,14 @@ public class StoreUtils {
             } else if (parser.hasArg("pvk")) {
                 System.out.write(
                         pvk(
+                                parser.getArg("store"),
+                                parser.getArg("pass"),
+                                alias
+                        )
+                        );
+            } else if (parser.hasArg("pubkey2ssh")) {
+                System.out.println(
+                        pubkey2ssh(
                                 parser.getArg("store"),
                                 parser.getArg("pass"),
                                 alias

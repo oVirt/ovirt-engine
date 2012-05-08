@@ -29,15 +29,6 @@ WORKDIR=$7
 CA_SUBJECT=$8
 [ -d "$7" ] || die "Directory $7 does not exists"
 
-# Define pubkey2ssh location
-if [ -s "$START_DIR/../../3rdparty/pub2ssh/bin/pubkey2ssh" ]; then
-	PUB_KEY=$START_DIR/../../3rdparty/pub2ssh/bin
-elif [ -s "$WORKDIR/pubkey2ssh" ]; then
-	PUB_KEY=$WORKDIR/
-else
-	die "Unable to find pubkey2ssh executable. Please make sure it's in path."
-fi
-
 echo " "
 echo "} Creating CA..."
 
@@ -96,9 +87,7 @@ echo "} Importing oVirt certificate..."
 # Export oVirt key as ssh key
 echo " "
 echo "} Exporting oVirt key as SSH..."
-./exportK2SSH.sh $WORKDIR/.keystore $ALIAS engine.pub $PASS
-$PUB_KEY/pubkey2ssh $WORKDIR/keys/engine.pub $ALIAS > $WORKDIR/keys/engine.ssh.key.txt
-rm -f $WORKDIR/keys/engine.pub
+./store-utils.sh -pubkey2ssh "$WORKDIR/.keystore" "$PASS" "$ALIAS" > $WORKDIR/keys/engine.ssh.key.txt
 
 exit 0
 
