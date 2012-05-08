@@ -169,9 +169,15 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
                             }
                         }
                         innerVolumeModel.getDataCenter().setIsChangable(false);
-                        innerVolumeModel.getDataCenter().setInfo("Cannot choose Volume's Data Center in tree context"); //$NON-NLS-1$
+                        innerVolumeModel.getDataCenter().setInfo(ConstantsManager.getInstance()
+                                .getConstants()
+                                .cannotChooseVolumesDataCenterinTreeContect());
+                        innerVolumeModel.getCluster().setItems(Arrays.asList(cluster));
+                        innerVolumeModel.getCluster().setSelectedItem(cluster);
                         innerVolumeModel.getCluster().setIsChangable(false);
-                        innerVolumeModel.getCluster().setInfo("Cannot choose Volume's Cluster in tree context"); //$NON-NLS-1$
+                        innerVolumeModel.getCluster().setInfo(ConstantsManager.getInstance()
+                                .getConstants()
+                                .cannotChooseVolumesClusterinTreeContect());
                         break;
                     case Clusters:
                     case DataCenter:
@@ -181,7 +187,9 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
                                 .setItems(new ArrayList<storage_pool>(Arrays.asList(new storage_pool[] { selectDataCenter })));
                         innerVolumeModel.getDataCenter().setSelectedItem(selectDataCenter);
                         innerVolumeModel.getDataCenter().setIsChangable(false);
-                        innerVolumeModel.getDataCenter().setInfo("Cannot choose Volume's Data Center in tree context"); //$NON-NLS-1$
+                        innerVolumeModel.getDataCenter().setInfo(ConstantsManager.getInstance()
+                                .getConstants()
+                                .cannotChooseVolumesDataCenterinTreeContect());
                         break;
                     default:
                         break;
