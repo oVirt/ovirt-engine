@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.Test;
+import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
@@ -188,6 +189,14 @@ public class VmDAOTest extends BaseDAOTestCase {
         List<VM> result = dao.getAllVmsRelatedToQuotaId(FixturesTool.QUOTA_GENERAL);
         assertNotNull(result);
         assertFalse(result.isEmpty());
+        for (VM vm : result) {
+            assertEquals("Wrong quota id", FixturesTool.QUOTA_GENERAL, vm.getQuotaId());
+            assertEquals("Wrong quota name", "Quota General", vm.getQuotaName());
+            assertFalse("Quota shouldn't be default", vm.isQuotaDefault());
+            assertEquals("Wrong quota enforcement type",
+                    QuotaEnforcementTypeEnum.DISABLED,
+                    vm.getQuotaEnforcementType());
+        }
     }
 
     /**

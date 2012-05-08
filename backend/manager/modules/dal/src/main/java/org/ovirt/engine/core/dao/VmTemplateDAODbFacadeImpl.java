@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
+import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
@@ -189,6 +190,8 @@ public class VmTemplateDAODbFacadeImpl extends BaseDAODbFacade implements VmTemp
             entity.setdefault_display_type(DisplayType.forValue(rs.getInt("default_display_type")));
             entity.setQuotaId(Guid.createGuidFromString(rs.getString("quota_id")));
             entity.setQuotaName(rs.getString("quota_name"));
+            entity.setIsQuotaDefault(rs.getBoolean("is_default_quota"));
+            entity.setQuotaEnforcementType(QuotaEnforcementTypeEnum.forValue(rs.getInt("quota_enforcement_type")));
             return entity;
         }
     }

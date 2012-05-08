@@ -147,10 +147,14 @@ public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, Bus
     @Column(name = "quota_id")
     private Guid quotaId;
 
-    /**
-     * Transient field for GUI presentation purposes.
-     */
+    /** Transient field for GUI presentation purposes. */
     private String quotaName;
+
+    /** Transient field for GUI presentation purposes. */
+    private boolean isQuotaDefault;
+
+    /** Transient field for GUI presentation purposes. */
+    private QuotaEnforcementTypeEnum quotaEnforcementType;
 
     public VmBase(Guid id,
             Guid vds_group_id,
@@ -686,5 +690,21 @@ public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, Bus
 
     public void setQuotaName(String quotaName) {
         this.quotaName = quotaName;
+    }
+
+    public boolean isQuotaDefault() {
+        return isQuotaDefault;
+    }
+
+    public void setIsQuotaDefault(boolean isQuotaDefault) {
+        this.isQuotaDefault = isQuotaDefault;
+    }
+
+    public QuotaEnforcementTypeEnum getQuotaEnforcementType() {
+        return quotaEnforcementType;
+    }
+
+    public void setQuotaEnforcementType(QuotaEnforcementTypeEnum quotaEnforcementType) {
+        this.quotaEnforcementType = quotaEnforcementType;
     }
 }

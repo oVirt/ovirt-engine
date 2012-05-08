@@ -12,6 +12,7 @@ import org.ovirt.engine.core.common.businessentities.HypervisorType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.OperationMode;
 import org.ovirt.engine.core.common.businessentities.OriginType;
+import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.SessionState;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -231,6 +232,8 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
             entity.setvm_name(rs.getString("vm_name"));
             entity.setQuotaId(Guid.createGuidFromString(rs.getString("quota_id")));
             entity.setQuotaName(rs.getString("quota_name"));
+            entity.setIsQuotaDefault(rs.getBoolean("is_default_quota"));
+            entity.setQuotaEnforcementType(QuotaEnforcementTypeEnum.forValue(rs.getInt("quota_enforcement_type")));
             entity.setvm_mem_size_mb(rs.getInt("vm_mem_size_mb"));
             entity.setvmt_guid(Guid.createGuidFromString(rs.getString("vmt_guid")));
             entity.setvm_os(VmOsType.forValue(rs.getInt("vm_os")));
@@ -324,7 +327,8 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
             String userDefinedProperties = rs.getString("userdefined_properties");
             entity.setPredefinedProperties(predefinedProperties);
             entity.setUserDefinedProperties(userDefinedProperties);
-            entity.setCustomProperties(VmPropertiesUtils.getInstance().customProperties(predefinedProperties, userDefinedProperties));
+            entity.setCustomProperties(VmPropertiesUtils.getInstance().customProperties(predefinedProperties,
+                    userDefinedProperties));
             entity.setMinAllocatedMem(rs.getInt("min_allocated_mem"));
             entity.setHash(rs.getString("hash"));
             return entity;

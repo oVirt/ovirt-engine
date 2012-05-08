@@ -263,6 +263,22 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         this.mVmStatic.setQuotaName(value);
     }
 
+    public boolean isQuotaDefault() {
+        return this.mVmStatic.isQuotaDefault();
+    }
+
+    public void setIsQuotaDefault(boolean isQuotaDefault) {
+        this.mVmStatic.setIsQuotaDefault(isQuotaDefault);
+    }
+
+    public QuotaEnforcementTypeEnum getQuotaEnforcementType() {
+        return this.mVmStatic.getQuotaEnforcementType();
+    }
+
+    public void setQuotaEnforcementType(QuotaEnforcementTypeEnum quotaEnforcementType) {
+        this.mVmStatic.setQuotaEnforcementType(quotaEnforcementType);
+    }
+
     public String getdescription() {
         return this.getvm_description();
     }
