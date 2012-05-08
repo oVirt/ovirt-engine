@@ -11,6 +11,7 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.IntegerValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -23,6 +24,11 @@ public class QuotaModel extends EntityModel {
     EntityModel name;
     EntityModel description;
     ListModel dataCenter;
+
+    EntityModel graceStorage;
+    EntityModel thresholdStorage;
+    EntityModel graceCluster;
+    EntityModel thresholdCluster;
 
     EntityModel specificClusterQuota;
     EntityModel globalClusterQuota;
@@ -143,6 +149,38 @@ public class QuotaModel extends EntityModel {
         this.dataCenter = dataCenter;
     }
 
+    public EntityModel getGraceStorage() {
+        return graceStorage;
+    }
+
+    public void setGraceStorage(EntityModel graceStorage) {
+        this.graceStorage = graceStorage;
+    }
+
+    public EntityModel getThresholdStorage() {
+        return thresholdStorage;
+    }
+
+    public void setThresholdStorage(EntityModel thresholdStorage) {
+        this.thresholdStorage = thresholdStorage;
+    }
+
+    public EntityModel getGraceCluster() {
+        return graceCluster;
+    }
+
+    public void setGraceCluster(EntityModel graceCluster) {
+        this.graceCluster = graceCluster;
+    }
+
+    public EntityModel getThresholdCluster() {
+        return thresholdCluster;
+    }
+
+    public void setThresholdCluster(EntityModel thresholdCluster) {
+        this.thresholdCluster = thresholdCluster;
+    }
+
     public QuotaModel() {
         setEditQuotaClusterCommand(new UICommand("EditQuotaCluster", this)); //$NON-NLS-1$
         setEditQuotaStorageCommand(new UICommand("EditQuotaStorage", this)); //$NON-NLS-1$
@@ -150,6 +188,11 @@ public class QuotaModel extends EntityModel {
         setName(new EntityModel());
         setDescription(new EntityModel());
         setDataCenter(new ListModel());
+
+        setGraceCluster(new EntityModel());
+        setThresholdCluster(new EntityModel());
+        setGraceStorage(new EntityModel());
+        setThresholdStorage(new EntityModel());
 
         setGlobalClusterQuota(new EntityModel());
         setSpecificClusterQuota(new EntityModel());
@@ -327,6 +370,51 @@ public class QuotaModel extends EntityModel {
         getName().setIsValid(true);
         getName().ValidateEntity(new IValidation[] { new NotEmptyValidation(), lenValidation });
 
-        return getName().getIsValid();
+        IValidation[] validationArr =
+                new IValidation[] { new NotEmptyValidation(), new IntegerValidation(0, Integer.MAX_VALUE) };
+
+        getGraceCluster().ValidateEntity(validationArr);
+        getGraceStorage().ValidateEntity(validationArr);
+        getThresholdCluster().ValidateEntity(validationArr);
+        getThresholdStorage().ValidateEntity(validationArr);
+
+        boolean graceThreshold = getGraceCluster().getIsValid() &
+                getGraceStorage().getIsValid() &
+                getThresholdCluster().getIsValid() &
+                getThresholdStorage().getIsValid();
+
+        return getName().getIsValid() & graceThreshold;
+    }
+
+    public Integer getGraceClusterAsInteger() {
+        return parseInt(getGraceCluster().getEntity());
+    }
+
+    public Integer getGraceStorageAsInteger() {
+        return parseInt(getGraceStorage().getEntity());
+    }
+
+    public Integer getThresholdClusterAsInteger() {
+        return parseInt(getThresholdCluster().getEntity());
+    }
+
+    public Integer getThresholdStorageAsInteger() {
+        return parseInt(getThresholdStorage().getEntity());
+    }
+
+    private Integer parseInt(Object entity) {
+        if (entity instanceof Integer) {
+            return (Integer) entity;
+        }
+        if (entity == null || !(entity instanceof String)) {
+            return null;
+        }
+        String text = (String) entity;
+
+        try {
+            return new Integer(text);
+        } catch (Exception e) {
+            return null;
+        }
     }
 }

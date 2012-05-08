@@ -2019,4 +2019,16 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Move Down")
     String moveBricksDownButtonLabel();
 
+    @DefaultStringValue("Cluster Threshold")
+    String quotaClusterThreshold();
+
+    @DefaultStringValue("Cluster Grace")
+    String quotaClusterGrace();
+
+    @DefaultStringValue("Storage Threshold")
+    String quotaStorageThreshold();
+
+    @DefaultStringValue("Storage Grace")
+    String quotaStorageGrace();
+
 }

@@ -150,7 +150,12 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
         final QuotaModel qModel = new QuotaModel();
         qModel.setTitle(ConstantsManager.getInstance().getConstants().newQuotaTitle());
         qModel.setHashName("new_quota"); //$NON-NLS-1$
-        qModel.setEntity(new Quota());
+        Quota newQuota = new Quota();
+        qModel.setEntity(newQuota);
+        qModel.getGraceCluster().setEntity(newQuota.getGraceVdsGroupPercentage());
+        qModel.getThresholdCluster().setEntity(newQuota.getThresholdVdsGroupPercentage());
+        qModel.getGraceStorage().setEntity(newQuota.getGraceStoragePercentage());
+        qModel.getThresholdStorage().setEntity(newQuota.getThresholdStoragePercentage());
         setWindow(qModel);
 
         AsyncDataProvider.GetDataCenterList(new AsyncQuery(this, new INewAsyncCallback() {
@@ -248,6 +253,12 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
         quota.setQuotaName((String) model.getName().getEntity());
         quota.setDescription((String) model.getDescription().getEntity());
         quota.setStoragePoolId(((storage_pool) model.getDataCenter().getSelectedItem()).getId());
+
+        quota.setGraceVdsGroupPercentage(model.getGraceClusterAsInteger());
+        quota.setGraceStoragePercentage(model.getGraceStorageAsInteger());
+        quota.setThresholdVdsGroupPercentage(model.getThresholdClusterAsInteger());
+        quota.setThresholdStoragePercentage(model.getThresholdStorageAsInteger());
+
         if ((Boolean) model.getGlobalClusterQuota().getEntity()) {
             QuotaVdsGroup quotaVdsGroup;
             for (QuotaVdsGroup iter : (ArrayList<QuotaVdsGroup>) model.getQuotaClusters().getItems()) {
@@ -308,6 +319,12 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
         Quota outer_quota = (Quota) getSelectedItem();
         QuotaModel qModel = new QuotaModel();
         qModel.getName().setEntity(outer_quota.getQuotaName());
+
+        qModel.getGraceCluster().setEntity(outer_quota.getGraceVdsGroupPercentage());
+        qModel.getThresholdCluster().setEntity(outer_quota.getThresholdVdsGroupPercentage());
+        qModel.getGraceStorage().setEntity(outer_quota.getGraceStoragePercentage());
+        qModel.getThresholdStorage().setEntity(outer_quota.getThresholdStoragePercentage());
+
         qModel.getDescription().setEntity(outer_quota.getDescription());
         qModel.setTitle(ConstantsManager.getInstance().getConstants().editQuotaTitle());
         qModel.setHashName("edit_quota"); //$NON-NLS-1$

@@ -32,6 +32,7 @@ import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.Column;
@@ -40,6 +41,9 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.inject.Inject;
 
 public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> implements QuotaPopupPresenterWidget.ViewDef {
+
+    @UiField
+    WidgetStyle style;
 
     @UiField
     @Path(value = "name.entity")
@@ -55,6 +59,26 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
     @Path(value = "dataCenter.selectedItem")
     @WithElementId
     ListModelListBoxEditor<Object> dataCenterEditor;
+
+    @UiField
+    @Path(value = "graceCluster.entity")
+    @WithElementId
+    EntityModelTextBoxEditor graceClusterEditor;
+
+    @UiField
+    @Path(value = "thresholdCluster.entity")
+    @WithElementId
+    EntityModelTextBoxEditor thresholdClusterEditor;
+
+    @UiField
+    @Path(value = "graceStorage.entity")
+    @WithElementId
+    EntityModelTextBoxEditor graceStorageEditor;
+
+    @UiField
+    @Path(value = "thresholdStorage.entity")
+    @WithElementId
+    EntityModelTextBoxEditor thresholdStorageEditor;
 
     @UiField
     @Ignore
@@ -128,8 +152,16 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
         localize(constants);
+        addStyles();
         Driver.driver.initialize(this);
         initTables(constants);
+    }
+
+    private void addStyles() {
+        graceClusterEditor.addContentWidgetStyleName(style.textBoxWidth());
+        graceStorageEditor.addContentWidgetStyleName(style.textBoxWidth());
+        thresholdClusterEditor.addContentWidgetStyleName(style.textBoxWidth());
+        thresholdStorageEditor.addContentWidgetStyleName(style.textBoxWidth());
     }
 
     private void initTables(ApplicationConstants constants) {
@@ -328,6 +360,10 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
         nameEditor.setLabel(constants.nameQuotaPopup());
         descriptionEditor.setLabel(constants.descriptionQuotaPopup());
         dataCenterEditor.setLabel(constants.dataCenterQuotaPopup());
+        thresholdClusterEditor.setLabel(constants.quotaClusterThreshold());
+        graceClusterEditor.setLabel(constants.quotaClusterGrace());
+        thresholdStorageEditor.setLabel(constants.quotaStorageThreshold());
+        graceStorageEditor.setLabel(constants.quotaStorageGrace());
         memAndCpuLabel.setText(constants.memAndCpuQuotaPopup());
         storageLabel.setText(constants.storageQuotaPopup());
         globalClusterQuotaRadioButtonEditor.setLabel(constants.ultQuotaForAllClustersQuotaPopup());
@@ -405,5 +441,9 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
         quotaClusterTable.flush();
         quotaStorageTable.flush();
         return Driver.driver.flush();
+    }
+
+    interface WidgetStyle extends CssResource {
+        String textBoxWidth();
     }
 }
