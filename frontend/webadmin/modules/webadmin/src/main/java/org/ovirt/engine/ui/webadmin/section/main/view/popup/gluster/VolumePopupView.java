@@ -16,6 +16,7 @@ import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelLabelEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
+import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -62,7 +63,7 @@ public class VolumePopupView extends AbstractModelBoundPopupView<VolumeModel> im
     @WithElementId("cluster")
     ListModelListBoxEditor<Object> clusterEditor;
 
-    @UiField
+    @UiField(provided = true)
     @Path(value = "typeList.selectedItem")
     @WithElementId
     ListModelListBoxEditor<Object> typeListEditor;
@@ -143,6 +144,8 @@ public class VolumePopupView extends AbstractModelBoundPopupView<VolumeModel> im
                 return ((VDSGroup) object).getname();
             }
         });
+
+        typeListEditor = new ListModelListBoxEditor<Object>(new EnumRenderer());
     }
 
     private void initAddBricksButton() {
