@@ -259,8 +259,8 @@ public class DiskListModel extends ListWithDetailsModel
 
         DiskImage disk = model.getIsNew() ? new DiskImage() : (DiskImage) getSelectedItem();
         disk.setSizeInGigabytes(Integer.parseInt(model.getSize().getEntity().toString()));
-        disk.setDiskAlias(model.getAlias().getEntity().toString());
-        disk.setDiskDescription(model.getDescription().getEntity().toString());
+        disk.setDiskAlias((String) model.getAlias().getEntity());
+        disk.setDiskDescription((String) model.getDescription().getEntity());
         disk.setDiskInterface((DiskInterface) model.getInterface().getSelectedItem());
         disk.setvolume_type((VolumeType) model.getVolumeType().getSelectedItem());
         disk.setvolume_format(model.getVolumeFormat());

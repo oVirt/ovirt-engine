@@ -527,6 +527,10 @@ public class DiskModel extends Model
                         ArrayList<DiskImageBase> presets = (ArrayList<DiskImageBase>) returnValue;
 
                         diskModel1.getPreset().setItems(presets);
+                        DiskImageBase preset = new DiskImage();
+                        preset.setvolume_type(VolumeType.Preallocated);
+                        preset.setvolume_format(VolumeFormat.RAW);
+                        diskModel1.getPreset().setSelectedItem(preset);
                     }
                 }), VmType.Server, storageType);
             }
@@ -632,10 +636,6 @@ public class DiskModel extends Model
             return true;
         }
 
-        if (!(Boolean) getIsInVm().getEntity()) {
-            getAlias().ValidateEntity(new IValidation[] { new NotEmptyValidation() });
-        }
-
         IntegerValidation tempVar = new IntegerValidation();
         tempVar.setMinimum(1);
         tempVar.setMaximum(maxDiskSize);
@@ -644,6 +644,10 @@ public class DiskModel extends Model
 
         getStorageDomain().ValidateSelectedItem(new IValidation[] { new NotEmptyValidation() });
         getAlias().ValidateEntity(new IValidation[] { new AsciiOrNoneValidation() });
+
+        if (!(Boolean) getIsInVm().getEntity()) {
+            getAlias().ValidateEntity(new IValidation[] { new NotEmptyValidation() });
+        }
 
         return getSize().getIsValid() && getStorageDomain().getIsValid() && getAlias().getIsValid();
     }
