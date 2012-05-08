@@ -545,6 +545,12 @@ public class DiskListModel extends ListWithDetailsModel
     }
 
     @Override
+    public boolean IsSearchStringMatch(String searchString)
+    {
+        return searchString.trim().toLowerCase().startsWith("disk"); //$NON-NLS-1$
+    }
+
+    @Override
     protected String getListName() {
         return "DiskListModel"; //$NON-NLS-1$
     }
