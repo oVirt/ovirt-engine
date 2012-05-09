@@ -864,13 +864,13 @@ public class VmMapper {
     @Mapping(from = Payload.class, to = VmPayload.class)
     public static VmPayload map(Payload model, VmPayload template) {
         VmPayload entity = template != null ? template : new VmPayload();
-        if (model.isSetType()) {
+        if (model.getType() != null) {
             org.ovirt.engine.api.model.VmDeviceType deviceType = org.ovirt.engine.api.model.VmDeviceType.fromValue(model.getType());
             if (deviceType!=null) {
                 entity.setType(map(deviceType, null));
             }
         }
-        if (model.isSetFile()) {
+        if (model.getFile() != null) {
             entity.setFileName(model.getFile().getName());
             entity.setContent(model.getFile().getContent());
         }

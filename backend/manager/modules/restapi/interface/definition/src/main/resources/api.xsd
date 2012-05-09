@@ -1764,7 +1764,13 @@
     <xs:sequence>
       <xs:element name="file" type="PayloadFile"/>
     </xs:sequence>
-    <xs:attribute name="type" type="xs:string"/>
+    <xs:attribute name="type" type="xs:string">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property generateIsSetMethod="false"/>
+          </xs:appinfo>
+        </xs:annotation>
+    </xs:attribute>
   </xs:complexType>
 
   <xs:element name="payload_file" type="PayloadFile"/>
@@ -1773,7 +1779,13 @@
     <xs:sequence>
       <xs:element name="content" type="xs:string" />
     </xs:sequence>
-    <xs:attribute name="name" type="xs:string"/>
+    <xs:attribute name="name" type="xs:string">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property generateIsSetMethod="false"/>
+          </xs:appinfo>
+        </xs:annotation>
+    </xs:attribute>
   </xs:complexType>
 
   <xs:element name="vm_device_types" type="VmDeviceTypes"/>
