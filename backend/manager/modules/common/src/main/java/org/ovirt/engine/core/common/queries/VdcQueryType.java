@@ -269,7 +269,7 @@ public enum VdcQueryType implements Serializable {
     GetCommandsCompatibilityVersions(VdcQueryAuthType.User),
 
     // Disks
-    GetNextAvailableDiskAliasNameByVMId,
+    GetNextAvailableDiskAliasNameByVMId(VdcQueryAuthType.User),
 
     // Gluster
     GetGlusterVolumeById,

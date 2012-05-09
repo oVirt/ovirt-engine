@@ -15,7 +15,7 @@ public class GetNextAvailableDiskAliasNameByVMIdQuery<P extends GetAllDisksByVmI
         if (getParameters().getVmId() == null) {
             getQueryReturnValue().setReturnValue(suggestedDiskName);
         } else {
-            VM vm = getDbFacade().getVmDAO().get(getParameters().getVmId());
+            VM vm = getDbFacade().getVmDAO().get(getParameters().getVmId(), getUserID(), getParameters().isFiltered());
             if (vm != null) {
                 updateDisksFromDb(vm);
                 suggestedDiskName =

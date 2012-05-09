@@ -20,7 +20,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmDAO;
 
 @RunWith(MockitoJUnitRunner.class)
-public class GetNextAvailableDiskAliasNameByVMIdQueryTest extends AbstractQueryTest<GetAllDisksByVmIdParameters, GetNextAvailableDiskAliasNameByVMIdQuery<GetAllDisksByVmIdParameters>> {
+public class GetNextAvailableDiskAliasNameByVMIdQueryTest extends AbstractUserQueryTest<GetAllDisksByVmIdParameters, GetNextAvailableDiskAliasNameByVMIdQuery<GetAllDisksByVmIdParameters>> {
     @Mock
     private VmDAO vmDAO;
 
@@ -46,7 +46,7 @@ public class GetNextAvailableDiskAliasNameByVMIdQueryTest extends AbstractQueryT
     }
 
     @Test
-    public void testExecuteQueryWithInValidVmId() throws Exception {
+    public void testExecuteQueryWithInValidVmIdOrMissingPermissions() throws Exception {
         mockDAOForQuery();
         vm = mockVm();
 
@@ -111,7 +111,7 @@ public class GetNextAvailableDiskAliasNameByVMIdQueryTest extends AbstractQueryT
 
     private VM mockVmAndReturnFromDAO() {
         vm = mockVm();
-        when(vmDAO.get(vmId)).thenReturn(vm);
+        when(vmDAO.get(vmId, getQuery().getUserID(), getQueryParameters().isFiltered())).thenReturn(vm);
         return vm;
     }
 }
