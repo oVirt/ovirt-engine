@@ -54,11 +54,15 @@ public class ResourceManager implements IVdsEventListener {
     private static Log log = LogFactory.getLog(ResourceManager.class);
     private static ResourceManager _Instance = new ResourceManager();
 
+    private ResourceManager() {
+
+    }
+
     public static ResourceManager getInstance() {
         return _Instance;
     }
 
-    private ResourceManager() {
+    public void init() {
         log.info("ResourceManager::ResourceManager::Entered");
         List<VDS> allVdsList = DbFacade.getInstance().getVdsDAO().getAll();
         HashSet<Guid> nonResponsiveVdss = new HashSet<Guid>();

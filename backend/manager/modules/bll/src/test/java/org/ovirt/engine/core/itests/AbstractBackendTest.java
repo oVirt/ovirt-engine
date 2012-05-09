@@ -38,7 +38,6 @@ import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
  *
  */
 public abstract class AbstractBackendTest {
-    private static String SESSION;
     protected static Bootstrap bootstrap;
     protected static BackendInternal backend;
     private static BasicTestSetup basicTestSetup;
@@ -65,9 +64,7 @@ public abstract class AbstractBackendTest {
                                                                 // construct is
                                                                 // not activated
                                                                 // upon lookup
-                // replace this resource manager with a test resource manager
                 // for we wont have real hosts while testing
-                bootstrap.deployResourceBase(VoidResourceManager.class);
                 // bootstrap.deployResourceBase(Backend.class);
 
                 backend = Backend.getInstance();

@@ -1,19 +1,16 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.bll.storage.StoragePoolStatusHandler;
-import org.ovirt.engine.core.common.backendinterfaces.IResourceManager;
-import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
-import org.ovirt.engine.core.utils.ejb.BeanProxyType;
-import org.ovirt.engine.core.utils.ejb.BeanType;
-import org.ovirt.engine.core.utils.ejb.EjbUtils;
-
 import javax.annotation.PostConstruct;
 import javax.ejb.DependsOn;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
+
+import org.ovirt.engine.core.bll.storage.StoragePoolStatusHandler;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
+import org.ovirt.engine.core.vdsbroker.ResourceManager;
 
 /**
  * The following bean is created in order to initialize and start all related vdsms schedulers
@@ -21,7 +18,7 @@ import javax.ejb.Startup;
  */
 @Singleton
 @Startup
-@DependsOn({ "Backend", "VdsBroker" })
+@DependsOn({ "Backend"})
 public class InitBackendServicesOnStartupBean implements InitBackendServicesOnStartup{
 
     private static Log log = LogFactory.getLog(InitBackendServicesOnStartupBean.class);
@@ -33,8 +30,7 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
     @PostConstruct
     public void create() {
         log.infoFormat("InitResourceManager: {0}", new java.util.Date());
-        IResourceManager manager = EjbUtils.findBean(BeanType.VDS_BROKER, BeanProxyType.LOCAL);
-        manager.setup();
+        ResourceManager.getInstance().init();
         AsyncTaskManager.getInstance().InitAsyncTaskManager();
         log.infoFormat("AsyncTaskManager: {0}", new java.util.Date());
 

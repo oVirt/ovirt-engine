@@ -51,7 +51,7 @@
               <addClasspath>false</addClasspath>
             </manifest>
             <manifestEntries>
-              <Dependencies>org.slf4j,deployment.engine.ear.engine-vdsbroker.jar</Dependencies>
+              <Dependencies>org.slf4j</Dependencies>
             </manifestEntries>
           </archive>
         </configuration>

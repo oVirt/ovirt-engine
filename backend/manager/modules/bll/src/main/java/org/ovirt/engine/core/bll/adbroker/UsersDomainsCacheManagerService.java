@@ -44,7 +44,7 @@ import org.ovirt.engine.core.utils.kerberos.KerberosUtils;
 // The @DependsOn annotation is in order to make sure it is started after the stated beans are initialized
 @Singleton
 @Startup
-@DependsOn({"Backend","Scheduler","KerberosManager","VdsBroker"})
+@DependsOn({"Backend","Scheduler","KerberosManager"})
 @Local(UsersDomainsCacheManager.class)
 @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 @ConcurrencyManagement(ConcurrencyManagementType.BEAN)

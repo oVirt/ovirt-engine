@@ -50,6 +50,13 @@
       <type>jar</type>
     </dependency>
 
+    <dependency>
+      <groupId>org.ovirt.engine.core</groupId>
+      <artifactId>vdsbroker</artifactId>
+      <version>${engine.version}</version>
+      <type>jar</type>
+    </dependency>
+
     <!-- WARS -->
     <dependency>
       <groupId>org.ovirt.engine.ui</groupId>
@@ -118,13 +125,6 @@
     <dependency>
       <groupId>org.ovirt.engine.core</groupId>
       <artifactId>scheduler</artifactId>
-      <version>${engine.version}</version>
-      <type>ejb</type>
-    </dependency>
-
-    <dependency>
-      <groupId>org.ovirt.engine.core</groupId>
-      <artifactId>vdsbrokerbean</artifactId>
       <version>${engine.version}</version>
       <type>ejb</type>
     </dependency>
@@ -219,6 +219,12 @@
               <bundleFileName>engine-encryptutils.jar</bundleFileName>
             </jarModule>
 
+            <jarModule>
+              <groupId>org.ovirt.engine.core</groupId>
+              <artifactId>vdsbroker</artifactId>
+              <bundleFileName>engine-vdsbroker.jar</bundleFileName>
+            </jarModule>
+
             <!-- ** WARs -->
             <webModule>
               <groupId>org.ovirt.engine.ui</groupId>
@@ -270,13 +276,6 @@
             </webModule>
 
             <!-- ** EJB-JARs -->
-            <ejbModule>
-              <groupId>org.ovirt.engine.core</groupId>
-              <artifactId>vdsbrokerbean</artifactId>
-              <bundleFileName>engine-vdsbroker.jar</bundleFileName>
-              <unpack>true</unpack>
-            </ejbModule>
-
             <ejbModule>
               <groupId>org.ovirt.engine.ui</groupId>
               <artifactId>genericapi</artifactId>

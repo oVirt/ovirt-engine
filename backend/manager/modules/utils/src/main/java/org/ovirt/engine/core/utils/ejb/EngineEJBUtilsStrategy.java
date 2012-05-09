@@ -16,7 +16,6 @@ public class EngineEJBUtilsStrategy extends EJBUtilsStrategy {
     protected void addJNDIBeans() {
         addBeanJNDIName(BeanType.BACKEND,
                         StringUtils.concat(ENGINE_CONTEXT_PREFIX, "engine-bll/Backend"));
-        addBeanJNDIName(BeanType.VDS_BROKER, StringUtils.concat(ENGINE_CONTEXT_PREFIX, "engine-vdsbroker/VdsBroker"));
         addBeanJNDIName(BeanType.SCHEDULER, StringUtils.concat(ENGINE_CONTEXT_PREFIX, "engine-scheduler/Scheduler"));
         addBeanJNDIName(BeanType.USERS_DOMAINS_CACHE,
                         StringUtils.concat(ENGINE_CONTEXT_PREFIX, "engine-bll/UsersDomainsCacheManagerService"));

@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.ovirt.engine.core.common.backendinterfaces.IResourceManager;
 import org.ovirt.engine.core.common.businessentities.IVdsAsyncCommand;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
@@ -17,9 +16,7 @@ import org.ovirt.engine.core.common.vdscommands.VdsAndVmIDVDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
-import org.ovirt.engine.core.utils.ejb.BeanProxyType;
-import org.ovirt.engine.core.utils.ejb.BeanType;
-import org.ovirt.engine.core.utils.ejb.EjbUtils;
+import org.ovirt.engine.core.vdsbroker.ResourceManager;
 
 public class VDSBrokerFrontendImpl implements VDSBrokerFrontend {
 
@@ -116,7 +113,7 @@ public class VDSBrokerFrontendImpl implements VDSBrokerFrontend {
         return getResourceManager().runFutureVdsCommand(commandType, parameters);
     }
 
-    private IResourceManager getResourceManager() {
-        return EjbUtils.findBean(BeanType.VDS_BROKER, BeanProxyType.LOCAL);
+    private ResourceManager getResourceManager() {
+        return ResourceManager.getInstance();
     }
 }
