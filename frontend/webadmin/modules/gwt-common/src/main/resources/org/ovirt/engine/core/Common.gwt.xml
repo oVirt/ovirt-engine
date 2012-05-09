@@ -282,6 +282,7 @@
 		<include name="common/businessentities/gluster/GlusterBrickStatus.java"/>
 		<include name="common/businessentities/gluster/AccessProtocol.java"/>
 		<include name="common/action/gluster/*.java"/>
+		<include name="common/queries/gluster/*.java"/>
 		<include name="common/constants/gluster/GlusterConstants.java"/>
 		<include name="common/utils/StringUtil.java"/>
 		<include name="common/utils/gluster/GlusterCoreUtil.java"/>

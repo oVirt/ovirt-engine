@@ -8,8 +8,11 @@ import org.ovirt.engine.core.common.action.gluster.ResetGlusterVolumeOptionsPara
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeOptionEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeOptionInfo;
+import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
+import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -96,23 +99,42 @@ public class VolumeParameterListModel extends SearchableListModel {
             return;
         }
 
+        GlusterVolumeEntity volume = (GlusterVolumeEntity) getEntity();
+        if (volume == null)
+        {
+            return;
+        }
+
         VolumeParameterModel volumeParameterModel = new VolumeParameterModel();
         volumeParameterModel.setTitle(ConstantsManager.getInstance().getConstants().addOptionVolume());
         setWindow(volumeParameterModel);
 
-        volumeParameterModel.getKeyList().setItems(new ArrayList<GlusterVolumeOptionInfo>());
+        AsyncQuery _asyncQuery = new AsyncQuery();
+        _asyncQuery.setModel(this);
+        _asyncQuery.asyncCallback = new INewAsyncCallback() {
+            @Override
+            public void OnSuccess(Object model, Object result)
+            {
+                VolumeParameterListModel volumeParameterListModel = (VolumeParameterListModel) model;
+                VolumeParameterModel innerParameterModel = (VolumeParameterModel) getWindow();
 
-        UICommand command = new UICommand("OnAddParameter", this); //$NON-NLS-1$
-        command.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        command.setIsDefault(true);
-        volumeParameterModel.getCommands().add(command);
-        command = new UICommand("OnCancel", this); //$NON-NLS-1$
-        command.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        command.setIsDefault(true);
-        volumeParameterModel.getCommands().add(command);
+                ArrayList<GlusterVolumeOptionInfo> optionInfoList = (ArrayList<GlusterVolumeOptionInfo>) result;
+                innerParameterModel.getKeyList().setItems(optionInfoList);
+
+                UICommand command = new UICommand("OnSetParameter", volumeParameterListModel); //$NON-NLS-1$
+                command.setTitle(ConstantsManager.getInstance().getConstants().ok());
+                command.setIsDefault(true);
+                innerParameterModel.getCommands().add(command);
+                command = new UICommand("OnCancel", volumeParameterListModel); //$NON-NLS-1$
+                command.setTitle(ConstantsManager.getInstance().getConstants().cancel());
+                command.setIsDefault(true);
+                innerParameterModel.getCommands().add(command);
+            }
+        };
+        AsyncDataProvider.GetGlusterVolumeOptionInfoList(_asyncQuery, volume.getClusterId());
     }
 
-    private void onAddParameter() {
+    private void onSetParameter() {
         if (getEntity() == null) {
             return;
         }
@@ -152,34 +174,53 @@ public class VolumeParameterListModel extends SearchableListModel {
             return;
         }
 
+        GlusterVolumeEntity volume = (GlusterVolumeEntity) getEntity();
+        if (volume == null)
+        {
+            return;
+        }
+
         VolumeParameterModel volumeParameterModel = new VolumeParameterModel();
         volumeParameterModel.setTitle(ConstantsManager.getInstance().getConstants().editOptionVolume());
         setWindow(volumeParameterModel);
 
-        ArrayList<GlusterVolumeOptionInfo> optionList = new ArrayList<GlusterVolumeOptionInfo>();
-        volumeParameterModel.getKeyList().setItems(optionList);
         volumeParameterModel.getKeyList().setIsChangable(false);
 
-        GlusterVolumeOptionEntity selectedOption = (GlusterVolumeOptionEntity) getSelectedItem();
-
-        for (GlusterVolumeOptionInfo option : optionList) {
-            if (option.getKey().equals(selectedOption.getKey()))
+        AsyncQuery _asyncQuery = new AsyncQuery();
+        _asyncQuery.setModel(this);
+        _asyncQuery.asyncCallback = new INewAsyncCallback() {
+            @Override
+            public void OnSuccess(Object model, Object result)
             {
-                volumeParameterModel.getKeyList().setSelectedItem(option);
-                break;
+                VolumeParameterListModel volumeParameterListModel = (VolumeParameterListModel) model;
+                VolumeParameterModel innerParameterModel = (VolumeParameterModel) getWindow();
+
+                ArrayList<GlusterVolumeOptionInfo> optionInfoList = (ArrayList<GlusterVolumeOptionInfo>) result;
+                innerParameterModel.getKeyList().setItems(optionInfoList);
+
+                GlusterVolumeOptionEntity selectedOption = (GlusterVolumeOptionEntity) getSelectedItem();
+
+                for (GlusterVolumeOptionInfo option : optionInfoList) {
+                    if (option.getKey().equals(selectedOption.getKey()))
+                    {
+                        innerParameterModel.getKeyList().setSelectedItem(option);
+                        break;
+                    }
+                }
+
+                innerParameterModel.getValue().setEntity(selectedOption.getValue());
+
+                UICommand command = new UICommand("OnSetParameter", volumeParameterListModel); //$NON-NLS-1$
+                command.setTitle(ConstantsManager.getInstance().getConstants().ok());
+                command.setIsDefault(true);
+                innerParameterModel.getCommands().add(command);
+                command = new UICommand("OnCancel", volumeParameterListModel); //$NON-NLS-1$
+                command.setTitle(ConstantsManager.getInstance().getConstants().cancel());
+                command.setIsDefault(true);
+                innerParameterModel.getCommands().add(command);
             }
-        }
-
-        volumeParameterModel.getValue().setEntity(selectedOption.getValue());
-
-        UICommand command = new UICommand("OnAddParameter", this); //$NON-NLS-1$
-        command.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        command.setIsDefault(true);
-        volumeParameterModel.getCommands().add(command);
-        command = new UICommand("OnCancel", this); //$NON-NLS-1$
-        command.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        command.setIsDefault(true);
-        volumeParameterModel.getCommands().add(command);
+        };
+        AsyncDataProvider.GetGlusterVolumeOptionInfoList(_asyncQuery, volume.getClusterId());
     }
 
     private void resetParameter() {
@@ -320,8 +361,8 @@ public class VolumeParameterListModel extends SearchableListModel {
         if (command.equals(getAddParameterCommand())) {
             addParameter();
         }
-        else if (command.getName().equals("OnAddParameter")) { //$NON-NLS-1$
-            onAddParameter();
+        else if (command.getName().equals("OnSetParameter")) { //$NON-NLS-1$
+            onSetParameter();
         }
         else if (command.getName().equals("OnCancel")) { //$NON-NLS-1$
             cancel();

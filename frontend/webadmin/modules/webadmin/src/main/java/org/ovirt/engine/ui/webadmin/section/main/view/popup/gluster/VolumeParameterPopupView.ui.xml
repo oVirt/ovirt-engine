@@ -6,11 +6,11 @@
 
 	<ui:style>
 		.description textarea{
-			height: 80px;
+			height: 130px;
 		}
 	</ui:style>
 	
-	<d:SimpleDialogPanel width="400px" height="220px">
+	<d:SimpleDialogPanel width="450px" height="300px">
 		<d:content>
 			<g:VerticalPanel>
 				<e:ListModelListBoxEditor ui:field="keyListEditor" />

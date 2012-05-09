@@ -61,7 +61,11 @@ public class VolumeParameterPopupView extends AbstractModelBoundPopupView<Volume
             @Override
             public String render(Object object) {
                 GlusterVolumeOptionInfo optionInfo = (GlusterVolumeOptionInfo) object;
-                return optionInfo.getKey();
+                if (optionInfo != null)
+                {
+                    return optionInfo.getKey();
+                }
+                return null;
             }
         });
     }

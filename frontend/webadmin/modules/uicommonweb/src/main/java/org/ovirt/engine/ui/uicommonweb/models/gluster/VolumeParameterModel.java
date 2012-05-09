@@ -55,6 +55,15 @@ public class VolumeParameterModel extends EntityModel {
 
     private void keySelectedItemChanged() {
         getDescription().setEntity(((GlusterVolumeOptionInfo) getKeyList().getSelectedItem()).getDescription());
+        String defaultValue = ((GlusterVolumeOptionInfo) getKeyList().getSelectedItem()).getDefaultValue();
+        if (defaultValue.equals("(null)")) //$NON-NLS-1$
+        {
+            getValue().setEntity(null);
+        }
+        else
+        {
+            getValue().setEntity(defaultValue);
+        }
     }
 
     public boolean Validate() {
