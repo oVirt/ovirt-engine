@@ -26,7 +26,7 @@ public class LdapGroupSearchQueryTest extends LdapSearchQueryTestBase {
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][]
         { { SearchQuery.class, new SearchParameters("AdGroup: name=" + NAME_TO_SEARCH, SearchType.AdGroup) },
-                { AdGroupsSearchQuery.class, new AdGroupsSearchParameters(NAME_TO_SEARCH) } });
+                { AdGroupsSearchQuery.class, new AdGroupsSearchParameters("name=" + NAME_TO_SEARCH) } });
     }
 
     @Override
