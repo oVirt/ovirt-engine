@@ -5,24 +5,24 @@
 
 	<ui:with field='resources' type='org.ovirt.engine.ui.userportal.ApplicationResources' />
 
-	<ui:style type="org.ovirt.engine.ui.common.view.AbstractLoginPopupView.Style">
+	<ui:style>
 		.loginForm {
-			padding-top: 20px;
+			padding-top: 40px;
 			background-color: #FFFFFF;
 			height: 100%;
 			text-align: center;
 		}
-		
+
 		.loginFormTable {
 			width: 88%;
 			margin: auto;
 		}
-		
+
 		.formTextBox {
 			color: #333333;
 			font-size: 11px;
 		}
-		
+
 		.localizationLabel {
 			font-size: 11px;
 		}
@@ -31,27 +31,58 @@
 			height: 40px;
 			color: #333333;
 		}
-		
+
 		.errorMessagePanel {
-			position: absolute;
+			position: relative;
 			height: 50px;
-			width: 90%;
+			width: 100%;
 		}
-		
+
 		.errorMessage {
 			color: red;
 			font-style: italic;
 			text-align: center;
 			vertical-align: middle;
 		}
-		
+
 		.buttonBar {
 			padding-top: 10px;
 		}
-		
+
 		.button {
 			float: right;
 			font-size: 12px;
+		}
+
+		.localeBox {
+			font-size: 11px;
+			border-width: 0;
+			color: gray;
+			background: none repeat scroll 0 0 transparent;
+			opacity:0;
+			position:fixed;
+			width: 60px;
+		}
+
+		.localeBox option{
+			text-align:right;
+		}
+
+		.localePanel {
+			float: right;
+			overflow: hidden;
+			background: url(images/triangle_down_gray.gif) no-repeat right white;
+			margin-right:25px;
+			margin-left:300px;
+			width:60px;
+			margin-top:10px;
+		}
+
+		.localeSelect {
+			padding-right: 15px;
+			text-align: right;
+			color:gray;
+			font-size: 11px;
 		}
 	</ui:style>
 
@@ -61,7 +92,7 @@
 			top: 5px;
 			right: 5px;
 		}
-		
+
 		.loginPopupHeaderCenter {
 			background: url(images/login_header_background_repetitive.png) repeat-x;
 			width: 190px;
@@ -72,7 +103,7 @@
 		}
 	</ui:style>
 
-	<d:SimplePopupPanel ui:field="popup" width="420px" height="290px">
+	<d:SimplePopupPanel ui:field="popup" width="420px">
 		<d:header>
 			<g:HorizontalPanel styleName="{loginPopupStyle.loginPopupHeader}">
 				<g:Image resource='{resources.loginPopupHeaderLogoImage}' />
@@ -102,11 +133,6 @@
 						</td>
 					</tr>
 					<tr class="formRow">
-						<td class="{style.formTextBox}">
-							<e:ListModelListBoxEditor ui:field="localizationEditor" />
-						</td>
-					</tr>
-					<tr class="formRow">
 						<td>
 							<e:EntityModelCheckBoxEditor ui:field="connectAutomatically" />
 						</td>
@@ -120,8 +146,14 @@
 						</td>
 					</tr>
 				</table>
-				<g:VerticalPanel verticalAlignment="middle" addStyleNames="{style.errorMessagePanel}">
-					<g:Label ui:field="errorMessage" addStyleNames="{style.errorMessage}" />
+				<g:VerticalPanel>
+					<g:VerticalPanel  ui:field="errorMessagePanel" verticalAlignment="middle" addStyleNames="{style.errorMessagePanel}">
+						<g:Label ui:field="errorMessage" addStyleNames="{style.errorMessage}" />
+					</g:VerticalPanel>
+					<g:HTMLPanel addStyleNames="{style.localePanel}">
+						<g:ListBox ui:field="localeBox" addStyleNames="{style.localeBox}"/>
+						<g:Label ui:field="selectedLocale" addStyleNames="{style.localeSelect}"></g:Label>
+					</g:HTMLPanel>
 				</g:VerticalPanel>
 			</g:HTMLPanel>
 		</d:content>

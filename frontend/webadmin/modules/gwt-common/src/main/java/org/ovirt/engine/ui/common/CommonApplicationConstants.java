@@ -16,9 +16,6 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("[N/A]")
     String unAvailablePropertyLabel();
 
-    @DefaultStringValue("Localization>>")
-    String loginFormLocalizationLabel();
-
     // Widgets
 
     @DefaultStringValue("Next >>")

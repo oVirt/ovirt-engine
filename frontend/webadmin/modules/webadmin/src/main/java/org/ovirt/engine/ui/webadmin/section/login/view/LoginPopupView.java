@@ -23,6 +23,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.DecoratedPopupPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.Panel;
 import com.google.inject.Inject;
 
 public class LoginPopupView extends AbstractLoginPopupView implements LoginPopupPresenterWidget.ViewDef {
@@ -69,6 +70,11 @@ public class LoginPopupView extends AbstractLoginPopupView implements LoginPopup
     @Ignore
     Label footerWarningMessage;
 
+    @UiField
+    @Ignore
+    Panel errorMessagePanel;
+
+
     @Inject
     public LoginPopupView(EventBus eventBus,
             ApplicationResources resources,
@@ -91,6 +97,7 @@ public class LoginPopupView extends AbstractLoginPopupView implements LoginPopup
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         asWidget().setGlassEnabled(false);
         localize(constants);
+        errorMessagePanel.setVisible(false);
         passwordEditor.setAutoComplete("off"); //$NON-NLS-1$
         Driver.driver.initialize(this);
         ViewIdHandler.idHandler.generateAndSetIds(this);
@@ -98,11 +105,11 @@ public class LoginPopupView extends AbstractLoginPopupView implements LoginPopup
         if (!intConf.isCurrentBrowserSupported()) {
             // Browser is not supported
             footerWarningMessage.setText(constants.browserNotSupported());
+            errorMessagePanel.setVisible(true);
         }
     }
 
      private void localize(ApplicationConstants constants) {
-        super.localize(constants);
         userNameEditor.setLabel(constants.loginFormUserNameLabel());
         passwordEditor.setLabel(constants.loginFormPasswordLabel());
         domainEditor.setLabel(constants.loginFormDomainLabel());
@@ -130,6 +137,9 @@ public class LoginPopupView extends AbstractLoginPopupView implements LoginPopup
     public void setErrorMessage(String text) {
         errorMessage.setText(text);
         errorMessage.setVisible(text != null);
+        if (errorMessage.isVisible()){
+            errorMessagePanel.setVisible(true);
+        }
     }
 
     @Override
@@ -146,5 +156,4 @@ public class LoginPopupView extends AbstractLoginPopupView implements LoginPopup
     public void setPopupKeyPressHandler(PopupNativeKeyPressHandler keyPressHandler) {
         popup.setKeyPressHandler(keyPressHandler);
     }
-
 }

@@ -25,6 +25,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.DecoratedPopupPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.Panel;
 import com.google.inject.Inject;
 
 public class LoginPopupView extends AbstractLoginPopupView implements LoginPopupPresenterWidget.ViewDef {
@@ -71,6 +72,10 @@ public class LoginPopupView extends AbstractLoginPopupView implements LoginPopup
     @Path("isAutoConnect.entity")
     EntityModelCheckBoxEditor connectAutomatically;
 
+    @UiField
+    @Ignore
+    Panel errorMessagePanel;
+
     @Inject
     public LoginPopupView(EventBus eventBus,
             ApplicationResources resources,
@@ -83,13 +88,13 @@ public class LoginPopupView extends AbstractLoginPopupView implements LoginPopup
         asWidget().setGlassEnabled(false);
         localize(constants);
 
+        errorMessagePanel.setVisible(false);
         passwordEditor.setAutoComplete("off"); //$NON-NLS-1$
         Driver.driver.initialize(this);
         ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
     void localize(ApplicationConstants constants) {
-        super.localize(constants);
         userNameEditor.setLabel(constants.loginFormUserNameLabel());
         passwordEditor.setLabel(constants.loginFormPasswordLabel());
         domainEditor.setLabel(constants.loginFormDomainLabel());
@@ -118,6 +123,10 @@ public class LoginPopupView extends AbstractLoginPopupView implements LoginPopup
     public void setErrorMessage(String text) {
         errorMessage.setText(text);
         errorMessage.setVisible(text != null);
+
+        if (errorMessage.isVisible()){
+            errorMessagePanel.setVisible(true);
+        }
     }
 
     @Override

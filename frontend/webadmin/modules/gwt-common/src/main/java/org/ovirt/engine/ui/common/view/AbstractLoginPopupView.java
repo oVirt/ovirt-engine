@@ -1,18 +1,16 @@
 package org.ovirt.engine.ui.common.view;
 
-import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
-import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 
 import com.google.gwt.editor.client.Editor.Ignore;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.i18n.client.LocaleInfo;
-import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.DecoratedPopupPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 
 /**
@@ -23,10 +21,11 @@ public class AbstractLoginPopupView extends AbstractPopupView<DecoratedPopupPane
 
     @UiField(provided=true)
     @Ignore
-    public ListModelListBoxEditor<Object> localizationEditor;
+    public ListBox localeBox;
 
-    @UiField
-    public Style style;
+    @UiField(provided=true)
+    @Ignore
+    public Label selectedLocale;
 
     public AbstractLoginPopupView(EventBus eventBus, CommonApplicationResources resources) {
         super(eventBus, resources);
@@ -37,37 +36,39 @@ public class AbstractLoginPopupView extends AbstractPopupView<DecoratedPopupPane
     protected void initWidget(DecoratedPopupPanel widget) {
         super.initWidget(widget);
 
-        localizationEditor.addLabelStyleName(style.localizationLabel());
         setAutoHideOnNavigationEventEnabled(true);
     }
 
-    protected void localize(CommonApplicationConstants constants) {
-        localizationEditor.setLabel(constants.loginFormLocalizationLabel());
-    }
-
     private void initLocalizationEditor(){
-        localizationEditor = new ListModelListBoxEditor<Object>();
+        localeBox = new ListBox();
+        selectedLocale= new Label();
 
         // Add the option to change the locale
-        final ListBox localeBox = localizationEditor.asListBox();
         String currentLocale = LocaleInfo.getCurrentLocale().getLocaleName();
         String[] localeNames = LocaleInfo.getAvailableLocaleNames();
         for (String localeName : localeNames) {
-          String nativeName = LocaleInfo.getLocaleNativeDisplayName(localeName);
-          if (localeName.equals("default")) { //$NON-NLS-1$
-              nativeName="English"; //$NON-NLS-1$
-          }
+            String nativeName = LocaleInfo.getLocaleNativeDisplayName(localeName);
+
+            if (localeName.equals("default")) { //$NON-NLS-1$
+                nativeName = "English"; //$NON-NLS-1$
+            }
+
             localeBox.addItem(nativeName, localeName);
             if (localeName.equals(currentLocale)) {
               localeBox.setSelectedIndex(localeBox.getItemCount() - 1);
+              selectedLocale.setText(localeBox.getItemText(localeBox.getSelectedIndex()));
             }
-
         }
         localeBox.addChangeHandler(new ChangeHandler() {
           @Override
         public void onChange(ChangeEvent event) {
             String localeName = localeBox.getValue(localeBox.getSelectedIndex());
-            Window.open(getHostPageLocation() + "?locale=" + localeName, "_self", //$NON-NLS-1$ //$NON-NLS-2$
+            String localeString = ""; //$NON-NLS-1$
+
+            if (!localeName.equals("default")){ //$NON-NLS-1$
+                localeString = "?locale=" + localeName; //$NON-NLS-1$
+            }
+            Window.open(getHostPageLocation() + localeString, "_self", //$NON-NLS-1$
                 ""); //$NON-NLS-1$
           }
         });
@@ -95,9 +96,4 @@ public class AbstractLoginPopupView extends AbstractPopupView<DecoratedPopupPane
       // Ensure a final slash if non-empty.
       return s;
     }-*/;
-
-    public interface Style extends CssResource {
-        String localizationLabel();
-    }
-
 }
