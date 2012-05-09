@@ -775,6 +775,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
                 }
             }
             RemoveVmNetwork();
+            new SnapshotsManager().removeSnapshots(getVm().getId());
             DbFacade.getInstance().getVmDynamicDAO().remove(getVmId());
             DbFacade.getInstance().getVmStatisticsDAO().remove(getVmId());
             DbFacade.getInstance().getVmStaticDAO().remove(getVmId());
