@@ -7,6 +7,7 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.Collections;
 import java.util.List;
@@ -20,9 +21,7 @@ import org.ovirt.engine.core.bll.adbroker.LdapBroker;
 import org.ovirt.engine.core.bll.adbroker.LdapQueryType;
 import org.ovirt.engine.core.bll.adbroker.LdapReturnValueBase;
 import org.ovirt.engine.core.bll.adbroker.LdapSearchByQueryParameters;
-import org.ovirt.engine.core.common.businessentities.AdUser;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
-import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.dal.dbbroker.PostgresDbEngineDialect;
@@ -34,7 +33,13 @@ public abstract class LdapSearchQueryTestBase extends AbstractQueryTest<SearchPa
     protected static final String NAME_TO_SEARCH = "gandalf";
 
     @Rule
-    public static final MockConfigRule mcr = new MockConfigRule();
+    public static final MockConfigRule mcr =
+            new MockConfigRule(
+                    mockConfig(ConfigValues.LDAPSecurityAuthentication, "SIMPLE"),
+                    mockConfig(ConfigValues.SearchResultsLimit, 100),
+                    mockConfig(ConfigValues.AuthenticationMethod, "LDAP"),
+                    mockConfig(ConfigValues.DBEngine, "postgres")
+            );
 
     /** Constants */
     public static final String DOMAIN = RandomUtils.instance().nextString(10);
@@ -72,20 +77,9 @@ public abstract class LdapSearchQueryTestBase extends AbstractQueryTest<SearchPa
 
     protected abstract IVdcQueryable getExpectedResult();
 
-    public void initConfig() {
-        mcr.<String> mockConfigValue(ConfigValues.LDAPSecurityAuthentication,
-                Config.DefaultConfigurationVersion, "SIMPLE");
-        mcr.<Integer> mockConfigValue(ConfigValues.SearchResultsLimit, Config.DefaultConfigurationVersion, 100);
-        mcr.<String> mockConfigValue(ConfigValues.AuthenticationMethod,
-                Config.DefaultConfigurationVersion, "LDAP");
-        mcr.<String> mockConfigValue(ConfigValues.DBEngine,
-                Config.DefaultConfigurationVersion, "postgres");
-    }
-
     @SuppressWarnings("unchecked")
     @Test
     public void testSearchQuery() {
-        initConfig();
         when(getDbFacadeMockInstance().getDbEngineDialect()).thenReturn(new PostgresDbEngineDialect());
 
         doReturn(DOMAIN).when(getQuery()).getDefaultDomain();
@@ -104,9 +98,9 @@ public abstract class LdapSearchQueryTestBase extends AbstractQueryTest<SearchPa
         getQuery().Execute();
         assertTrue("Query should succeed, but failed with: " + getQuery().getQueryReturnValue().getExceptionString(),
                 getQuery().getQueryReturnValue().getIsSearchValid());
-        assertEquals("Wrong user returned",
+        assertEquals("Wrong ldap result returned",
                 result,
-                ((List<AdUser>) getQuery().getQueryReturnValue().getReturnValue()).get(0));
+                ((List<IVdcQueryable>) getQuery().getQueryReturnValue().getReturnValue()).get(0));
     }
 
     protected abstract AdActionType getAdActionType();
