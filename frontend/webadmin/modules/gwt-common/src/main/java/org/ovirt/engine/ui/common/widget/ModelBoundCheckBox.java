@@ -17,10 +17,19 @@ public class ModelBoundCheckBox extends CheckBox {
     private final Model model;
 
     public ModelBoundCheckBox(Model model) {
+        this(model, false);
+    }
+
+    /**
+     * When the readOnly is true, the checkbox only reads the value from model, but does not modify the model itself.
+     */
+    public ModelBoundCheckBox(Model model, boolean readOnly) {
         super();
         this.model = model;
         registerModelPropertyChangeListener();
-        registerChangeHandler();
+        if (!readOnly) {
+            registerChangeHandler();
+        }
     }
 
     @Override

@@ -21,6 +21,7 @@ import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.Header;
 import com.google.gwt.user.cellview.client.LoadingStateChangeEvent.LoadingState;
+import com.google.gwt.view.client.CellPreviewEvent;
 import com.google.gwt.view.client.DefaultSelectionEventManager;
 import com.google.gwt.view.client.MultiSelectionModel;
 import com.google.gwt.view.client.SelectionChangeEvent;
@@ -138,7 +139,7 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
 
         if (!hideCheckbox) {
             // add selection columns
-            Column<EntityModel, Boolean> checkColumn;
+            final Column<EntityModel, Boolean> checkColumn;
             if (multiSelection) {
                 checkColumn = new Column<EntityModel, Boolean>(
                         new CheckboxCell(true, false)) {
@@ -158,6 +159,19 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
             }
             addColumn(checkColumn, SafeHtmlUtils.fromSafeConstant("<br/>")); //$NON-NLS-1$
             setColumnWidth(checkColumn, CHECK_COLUMN_WIDTH, Unit.PX);
+
+            addCellPreviewHandler(new CellPreviewEvent.Handler<EntityModel>() {
+                @Override
+                public void onCellPreview(CellPreviewEvent<EntityModel> event) {
+                    if ("click".equals(event.getNativeEvent().getType())) { //$NON-NLS-1$
+                        // let the checkbox/radio button deal with this
+                        if (event.getColumn() == 0) {
+                            return;
+                        }
+                        getSelectionModel().setSelected(event.getValue(), !getSelectionModel().isSelected(event.getValue()));
+                    }
+                }
+            });
         }
     }
 

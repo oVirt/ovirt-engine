@@ -1,9 +1,11 @@
 package org.ovirt.engine.ui.common.widget;
 
+import org.ovirt.engine.core.compat.Event;
+import org.ovirt.engine.core.compat.EventArgs;
+import org.ovirt.engine.core.compat.IEventListener;
+import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 
 /**
@@ -14,21 +16,26 @@ public class TogglePanel extends HorizontalPanel {
     private final ModelBoundCheckBox checkBox;
     private boolean checked;
 
-    public TogglePanel(Model model) {
+    public TogglePanel(final Model model) {
         super();
 
-        checkBox = new ModelBoundCheckBox(model);
-        checkBox.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
-            @Override
-            public void onValueChange(ValueChangeEvent<Boolean> event) {
-                setChecked(event.getValue());
-            }
-        });
+        // create a read-only checkbox - the update of the model is done by a click handler for the whole panel
+        checkBox = new ModelBoundCheckBox(model, true);
 
         setWidth("100%"); //$NON-NLS-1$
         setHeight("100%"); //$NON-NLS-1$
         setVerticalAlignment(ALIGN_MIDDLE);
         setChecked(false);
+
+        model.getPropertyChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                String propName = ((PropertyChangedEventArgs) args).PropertyName;
+                if ("IsSelected".equals(propName)) { //$NON-NLS-1$
+                    setChecked(model.getIsSelected());
+                }
+            }
+        });
     }
 
     public boolean isChecked() {

@@ -8,8 +8,11 @@ import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceLineModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceListModel;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class HostInterfaceForm extends Composite {
@@ -46,6 +49,7 @@ public class HostInterfaceForm extends Composite {
         panel.setWidth("100%"); //$NON-NLS-1$
         panel.setHeight("100%"); //$NON-NLS-1$
         panel.addInterfaces(lineModel.getInterfaces());
+        addClickHandlerToPanel(panel, lineModel);
         return panel;
     }
 
@@ -53,6 +57,7 @@ public class HostInterfaceForm extends Composite {
         BondPanel panel = new BondPanel(lineModel);
         panel.setWidth("100%"); //$NON-NLS-1$
         panel.setHeight("100%"); //$NON-NLS-1$
+        addClickHandlerToPanel(panel, lineModel);
         return panel;
     }
 
@@ -61,7 +66,17 @@ public class HostInterfaceForm extends Composite {
         panel.setWidth("100%"); //$NON-NLS-1$
         panel.setHeight("100%"); //$NON-NLS-1$
         panel.addVLans(lineModel);
+        addClickHandlerToPanel(panel, lineModel);
         return panel;
+    }
+
+    private void addClickHandlerToPanel(Panel panel, final HostInterfaceLineModel lineModel) {
+        panel.addDomHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                lineModel.setIsSelected(!lineModel.getIsSelected());
+            }
+        }, ClickEvent.getType());
     }
 
     void showModels(List<HostInterfaceLineModel> interfaceLineModels) {
