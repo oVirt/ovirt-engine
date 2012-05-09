@@ -1307,4 +1307,10 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
 	@DefaultStringValue("None VMs exists")
 	String vmNoExistsMsg();
+
+    @DefaultStringValue("DefaultQuota")
+    String defaultQuotaPrefix();
+
+    @DefaultStringValue("Quota name must be changed when it's not default")
+    String changeQuotaNameValidation();
 }

@@ -33,6 +33,9 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
+import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.ValidationResult;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
@@ -299,7 +302,24 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
     private void editQuota() {
         Quota outer_quota = (Quota) getSelectedItem();
         QuotaModel qModel = new QuotaModel();
-        qModel.getName().setEntity(outer_quota.getQuotaName());
+        if (outer_quota.getIsDefaultQuota()
+                && outer_quota.getQuotaName().startsWith(ConstantsManager.getInstance()
+                        .getConstants()
+                        .defaultQuotaPrefix())) {
+            qModel.getName().setEntity("");
+            NotEmptyValidation changeQuotaName = new NotEmptyValidation() {
+                @Override
+                public ValidationResult Validate(Object value) {
+                    ValidationResult result = super.Validate(value);
+                    result.getReasons().clear();
+                    result.getReasons().add(ConstantsManager.getInstance().getConstants().changeQuotaNameValidation());
+                    return result;
+                }
+            };
+            qModel.getName().ValidateEntity(new IValidation[] { changeQuotaName });
+        } else {
+            qModel.getName().setEntity(outer_quota.getQuotaName());
+        }
 
         qModel.getGraceCluster().setEntity(outer_quota.getGraceVdsGroupPercentage());
         qModel.getThresholdCluster().setEntity(outer_quota.getThresholdVdsGroupPercentage());
