@@ -157,6 +157,8 @@ FROM
            entity_type,
            quota_id, -- Quota fields
            quota_name,
+           quota_enforcement_type,
+           is_default_quota,
            null AS lun_id, -- LUN fields
            null AS phisical_volume_id,
            null AS volume_group_id,
@@ -195,6 +197,8 @@ FROM
            entity_type,
            null AS quota_id, -- Quota fields
            null AS quota_name,
+           null AS quota_enforcement_type,
+           null AS is_default_quota,
            l.lun_id, -- LUN fields
            l.phisical_volume_id,
            l.volume_group_id,
