@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.ArrayList;
 
 import org.apache.commons.codec.binary.Base64;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
@@ -13,18 +13,18 @@ import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.network;
-import org.ovirt.engine.core.common.businessentities.VmDevice;
-import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.queries.IsVmWithSameNameExistParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
-import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -100,7 +100,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         if (payload != null) {
             List<VmDevice> disks = dao.getVmDeviceByVmIdAndType(getVmId(), VmDeviceType.DISK.getName());
             VmDevice oldPayload = null;
-            for (VmDevice disk: disks) {
+            for (VmDevice disk : disks) {
                 if (VmPayload.isPayload(disk.getSpecParams())) {
                     oldPayload = disk;
                     break;
@@ -214,8 +214,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                     } else if (vm != null) {
                         setCustomDefinedProperties(vmStaticDataFromParams);
                         setCustomDefinedProperties(getVm().getStaticData());
-                        retValue = VmHandler.mUpdateVmsStatic.IsUpdateValid(getVm().getStaticData(),
-                                vmStaticDataFromParams, vm.getstatus());
+                        retValue = areUpdatedFieldsLegal();
                         if (!retValue) {
                             addCanDoActionMessage(VdcBllMessages.VM_CANNOT_UPDATE_ILLEGAL_FIELD);
                         } else if (!getVm().getStaticData().getvds_group_id()
@@ -274,16 +273,22 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                 // check for Vm Payload
                 if (retValue && getParameters().getVmPayload() != null) {
                     retValue = checkPayload(getParameters().getVmPayload(),
-                                vmStaticDataFromParams.getiso_path());
+                            vmStaticDataFromParams.getiso_path());
                     if (retValue) {
                         // we save the content in base64 string
                         getParameters().getVmPayload().setContent(Base64.encodeBase64String(
-                                    getParameters().getVmPayload().getContent().getBytes()));
+                                getParameters().getVmPayload().getContent().getBytes()));
                     }
                 }
             }
         }
         return retValue;
+    }
+
+    protected boolean areUpdatedFieldsLegal() {
+        return VmHandler.mUpdateVmsStatic.IsUpdateValid(getVm().getStaticData(),
+                getParameters().getVmStaticData(),
+                getVm().getstatus());
     }
 
     @Override

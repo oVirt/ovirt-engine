@@ -56,9 +56,11 @@ public class VmHandler {
                 Arrays.asList(new String[] { "VM", "VmStatic", "VmDynamic" }), VMStatus.class);
 
         mUpdateVmsStatic.AddPermittedFields(new String[] { "vm_name", "description", "domain", "os", "osType",
-                "creation_date", "num_of_monitors", "allowConsoleReconnect", "usb_policy", "is_auto_suspend", "auto_startup",
+                "creation_date", "num_of_monitors", "allowConsoleReconnect", "usb_policy", "is_auto_suspend",
+                "auto_startup",
                 "dedicated_vm_for_vds", "default_display_type", "priority", "default_boot_sequence", "initrd_url",
                 "kernel_url", "kernel_params", "migrationSupport", "minAllocatedMem", "quotaId", "quotaName",
+                "quotaEnforcementType",
                 "vmPayload" });
         mUpdateVmsStatic.AddFields(
                 Arrays.asList(new Enum[] { VMStatus.Down }),
