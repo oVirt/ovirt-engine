@@ -235,13 +235,18 @@ public class RsdlBuilder {
         //SortedSet<Link> results = new TreeSet<Link>();
         List<DetailedLink> results = new ArrayList<DetailedLink>();
         if (resource!=null) {
+            Map<String, Method> handledMethods = new HashMap<String, Method>();
             for (Method m : resource.getMethods()) {
-                handleMethod(prefix, results, m, resource, parametersMap);
+                if (handledMethods.containsKey(m.getName()) && !m.getName().equals("remove")) {
+                    //ignore
+                } else {
+                    handleMethod(prefix, results, m, resource, parametersMap);
+                    handledMethods.put(m.getName(), m);
+                }
             }
         }
         return results;
     }
-
     private void addToGenericParamsMap (Class<?> resource, Type[] paramTypes, Type[] genericParamTypes, Map<String, Type> parametersMap) {
         for (int i=0; i<genericParamTypes.length; i++) {
             if (paramTypes[i].toString().length() == 1) {
