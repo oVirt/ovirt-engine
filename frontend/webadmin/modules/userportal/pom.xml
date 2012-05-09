@@ -9,11 +9,11 @@
 		<version>3.1.0-0001</version>
 	</parent>
 
-	<artifactId>userportal</artifactId>
+	<artifactId>userportal-legacy</artifactId>
 	<packaging>war</packaging>
 
-	<name>UserPortal</name>
-	<description>oVirt Engine User Portal GUI</description>
+	<name>UserPortal (SmartGWT Legacy Version)</name>
+	<description>oVirt Engine User Portal GUI (SmartGWT Legacy Version)</description>
 
 	<properties>
 		<!-- Hack until module inheritance will be fixed -->
@@ -121,7 +121,7 @@
 
 	<profiles>
 		<profile>
-			<id>gwt-user</id>
+			<id>gwt-user-legacy</id>
 			<build>
 				<plugins>
 					<plugin>
@@ -139,7 +139,7 @@
 							<logLevel>INFO</logLevel>
 							<style>OBF</style>
 							<gwtVersion>${gwt.version}</gwtVersion>
-							<runTarget>userportal/UserPortal.html</runTarget>
+							<runTarget>/UserPortalLegacy/org.ovirt.engine.ui.userportal.UserPortal/UserPortal.html</runTarget>
 							<extraJvmArgs>${gwt-plugin.extraJvmArgs}</extraJvmArgs>
 							<copyWebapp>true</copyWebapp>
 							<compileSourcesArtifacts>

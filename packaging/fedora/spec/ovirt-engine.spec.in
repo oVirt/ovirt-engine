@@ -298,7 +298,6 @@ cp -rpf %{_datadir}/vdsm-bootstrap/* %{_engineeardir}/components.war/vds/ &> /de
 %{_engineeardir}/ovirtengineweb.war
 %{_engineeardir}/ovirtengine.war
 %{_engineeardir}/components.war
-%{_engineeardir}/userportal-gwtp.war
 %dir %{_engineeardir}/webadmin.war
 
 %files setup

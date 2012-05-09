@@ -6,10 +6,10 @@
     <groupId>org.ovirt.engine.ui</groupId>
     <version>3.1.0-0001</version>
   </parent>
-  <artifactId>userportal-gwtp</artifactId>
+  <artifactId>userportal</artifactId>
   <packaging>war</packaging>
-  <name>UserPortal (GWTP PoC)</name>
-  <description>oVirt Engine User Portal GUI (GWTP PoC)</description>
+  <name>UserPortal</name>
+  <description>oVirt Engine User Portal GUI</description>
   <properties>
     <!--TODO: Will be inherited from top module -->
     <gwt.version>2.3.0</gwt.version>
@@ -233,7 +233,7 @@
   </build>
   <profiles>
     <profile>
-      <id>gwt-user-gwtp</id>
+      <id>gwt-user</id>
       <build>
         <plugins>
           <plugin>
@@ -266,7 +266,7 @@
             <configuration>
               <logLevel>INFO</logLevel>
               <style>OBF</style>
-              <runTarget>/userportal-gwtp/userportal/UserPortal.html</runTarget>
+              <runTarget>/UserPortal/org.ovirt.engine.ui.userportal.UserPortal/UserPortal.html</runTarget>
               <port>8080</port>
               <noServer>true</noServer>
               <bindAddress>0.0.0.0</bindAddress>

@@ -31,7 +31,7 @@ public class WebAdminConfigurator extends Configurator implements IEventListener
     // Temporarily save the locations of webadmin and userportal.
     // TODO: create a new SPICE RPM for webadmin
     private static final String WEBADMIN_ROOT_FOLDER = "/webadmin/webadmin/"; //$NON-NLS-1$
-    private static final String USERPORTAL_ROOT_FOLDER = "/userportal-gwtp/userportal/"; //$NON-NLS-1$
+    private static final String USERPORTAL_ROOT_FOLDER = "/UserPortal/org.ovirt.engine.ui.userportal.UserPortal/"; //$NON-NLS-1$
 
     public static final String DOCUMENTATION_GUIDE_PATH = "Administration_Guide/index.html"; //$NON-NLS-1$
 

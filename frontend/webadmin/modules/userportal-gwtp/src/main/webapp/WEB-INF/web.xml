@@ -10,7 +10,7 @@
 
 	<servlet-mapping>
 		<servlet-name>org.ovirt.engine.ui.frontend.UserPortal GenericApiGWTService</servlet-name>
-		<url-pattern>/userportal/GenericApiGWTService</url-pattern>
+		<url-pattern>/org.ovirt.engine.ui.userportal.UserPortal/GenericApiGWTService</url-pattern>
 	</servlet-mapping>
 
 	<servlet>
@@ -20,7 +20,7 @@
 
 	<servlet-mapping>
 		<servlet-name>UserPortalDynamicHosting</servlet-name>
-		<url-pattern>/userportal/UserPortal.html</url-pattern>
+		<url-pattern>/org.ovirt.engine.ui.userportal.UserPortal/UserPortal.html</url-pattern>
 	</servlet-mapping>
 
 	<!-- Default page to serve -->

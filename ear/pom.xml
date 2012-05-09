@@ -92,6 +92,13 @@
       <type>war</type>
     </dependency>
 
+    <!--<dependency>
+      <groupId>org.ovirt.engine.ui</groupId>
+      <artifactId>userportal-legacy</artifactId>
+      <version>${engine.version}</version>
+      <type>war</type>
+    </dependency>-->
+
     <dependency>
       <groupId>org.ovirt.engine.ui</groupId>
       <artifactId>userportal</artifactId>
@@ -102,13 +109,6 @@
     <dependency>
       <groupId>org.ovirt.engine.ui</groupId>
       <artifactId>webadmin</artifactId>
-      <version>${engine.version}</version>
-      <type>war</type>
-    </dependency>
-
-    <dependency>
-      <groupId>org.ovirt.engine.ui</groupId>
-      <artifactId>userportal-gwtp</artifactId>
       <version>${engine.version}</version>
       <type>war</type>
     </dependency>
@@ -250,6 +250,13 @@
               <contextRoot>/api</contextRoot>
             </webModule>
 
+            <!--<webModule>
+              <groupId>org.ovirt.engine.ui</groupId>
+              <artifactId>userportal-legacy</artifactId>
+              <bundleFileName>userportal-legacy.war</bundleFileName>
+              <contextRoot>/UserPortalLegacy</contextRoot>
+            </webModule>-->
+
             <webModule>
               <groupId>org.ovirt.engine.ui</groupId>
               <artifactId>userportal</artifactId>
@@ -262,13 +269,6 @@
               <artifactId>webadmin</artifactId>
               <bundleFileName>webadmin.war</bundleFileName>
               <contextRoot>/webadmin</contextRoot>
-            </webModule>
-
-            <webModule>
-              <groupId>org.ovirt.engine.ui</groupId>
-              <artifactId>userportal-gwtp</artifactId>
-              <bundleFileName>userportal-gwtp.war</bundleFileName>
-              <contextRoot>/userportal-gwtp</contextRoot>
             </webModule>
 
             <!-- ** EJB-JARs -->

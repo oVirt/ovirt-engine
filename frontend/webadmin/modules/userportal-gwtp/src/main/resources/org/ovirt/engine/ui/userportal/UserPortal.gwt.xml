@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE module PUBLIC "-//Google Inc.//DTD Google Web Toolkit 2.3.0//EN"
 	"http://google-web-toolkit.googlecode.com/svn/tags/2.3.0/distro-source/core/src/gwt-module.dtd">
-<module rename-to="userportal">
+<module rename-to="org.ovirt.engine.ui.userportal.UserPortal">
 
 	<!-- Inherit oVirt common GWT module -->
 	<inherits name="org.ovirt.engine.ui.common.GwtCommon" />
