@@ -936,7 +936,7 @@ public final class AsyncDataProvider {
             }
         };
         SearchParameters searchParameters =
-                new SearchParameters("Host: " + (status == null ? "" : ("status=" + status.name())), SearchType.VDS); //$NON-NLS-1$
+                new SearchParameters("Host: " + (status == null ? "" : ("status=" + status.name())), SearchType.VDS); //$NON-NLS-1$ //$NON-NLS-2$
         searchParameters.setMaxCount(9999);
         Frontend.RunQuery(VdcQueryType.Search, searchParameters, aQuery);
     }

@@ -1006,10 +1006,15 @@ public final class DataProvider
         return new String[] {};
     }
 
-    public static ArrayList<StorageType> GetStoragePoolTypeList()
-    {
-        return new ArrayList<StorageType>(Arrays.asList(new StorageType[] { StorageType.NFS,
-                StorageType.ISCSI, StorageType.FCP, StorageType.LOCALFS, StorageType.POSIXFS }));
+    public static ArrayList<StorageType> GetStoragePoolTypeList() {
+
+        return new ArrayList<StorageType>(Arrays.asList(new StorageType[] {
+            StorageType.NFS,
+            StorageType.ISCSI,
+            StorageType.FCP,
+            StorageType.LOCALFS,
+            StorageType.POSIXFS
+        }));
     }
 
     public static boolean IsVersionMatchStorageType(Version version, StorageType type)

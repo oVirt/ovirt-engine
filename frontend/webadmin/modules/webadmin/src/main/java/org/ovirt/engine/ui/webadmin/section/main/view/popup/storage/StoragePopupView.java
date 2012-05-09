@@ -198,6 +198,8 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
                 storageView = new NfsStorageView();
             } else if (model.getType() == StorageType.LOCALFS) {
                 storageView = new LocalStorageView();
+            } else if (model.getType() == StorageType.POSIXFS) {
+                storageView = new PosixStorageView();
             } else if (model.getType() == StorageType.FCP) {
                 if (model.getRole() == StorageDomainType.ImportExport) {
                     storageView = new SanImportStorageView();
