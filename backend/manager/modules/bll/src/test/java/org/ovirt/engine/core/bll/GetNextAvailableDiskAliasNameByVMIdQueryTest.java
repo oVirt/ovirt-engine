@@ -2,9 +2,8 @@ package org.ovirt.engine.core.bll;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
-import static org.powermock.api.mockito.PowerMockito.doNothing;
-import static org.powermock.api.mockito.PowerMockito.spy;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,19 +11,15 @@ import java.util.Map;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.queries.GetAllDisksByVmIdParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmDAO;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ VmHandler.class })
+@RunWith(MockitoJUnitRunner.class)
 public class GetNextAvailableDiskAliasNameByVMIdQueryTest extends AbstractQueryTest<GetAllDisksByVmIdParameters, GetNextAvailableDiskAliasNameByVMIdQuery<GetAllDisksByVmIdParameters>> {
     @Mock
     private VmDAO vmDAO;
@@ -33,11 +28,16 @@ public class GetNextAvailableDiskAliasNameByVMIdQueryTest extends AbstractQueryT
     private final Guid vmId = new Guid();
     private final String VM_NAME = "VmTESTNaME";
 
+    @Override
+    protected void setUpSpyQuery() throws Exception {
+        super.setUpSpyQuery();
+        doNothing().when(getQuery()).updateDisksFromDb(any(VM.class));
+    }
+
     @Test
     public void testExecuteQuery() throws Exception {
         mockDAOForQuery();
-        vm = mockVm();
-        Mockito.when(vmDAO.get(vmId)).thenReturn(vm);
+        vm = mockVmAndReturnFromDAO();
         String diskAliasName = VM_NAME + "_Disk1";
 
         // Execute query.
@@ -58,13 +58,12 @@ public class GetNextAvailableDiskAliasNameByVMIdQueryTest extends AbstractQueryT
     @Test
     public void testExecuteQueryWithOneImage() throws Exception {
         mockDAOForQuery();
-        vm = mockVm();
+        vm = mockVmAndReturnFromDAO();
         Map<String, Disk> diskMap = vm.getDiskMap();
         DiskImage diskImage = new DiskImage();
         diskImage.setInternalDriveMapping(1);
         diskImage.setImageId(Guid.NewGuid());
         diskMap.put("1", diskImage);
-        Mockito.when(vmDAO.get(vmId)).thenReturn(vm);
         String diskAliasName = VM_NAME + "_Disk2";
 
         // Execute query.
@@ -75,7 +74,7 @@ public class GetNextAvailableDiskAliasNameByVMIdQueryTest extends AbstractQueryT
     @Test
     public void testExecuteQueryWithMissisngImage() throws Exception {
         mockDAOForQuery();
-        vm = mockVm();
+        vm = mockVmAndReturnFromDAO();
         Map<String, Disk> diskMap = vm.getDiskMap();
         DiskImage diskImage = new DiskImage();
         diskImage.setInternalDriveMapping(1);
@@ -85,7 +84,6 @@ public class GetNextAvailableDiskAliasNameByVMIdQueryTest extends AbstractQueryT
         diskImage.setInternalDriveMapping(4);
         diskImage.setImageId(Guid.NewGuid());
         diskMap.put("4", secondDiskImage);
-        Mockito.when(vmDAO.get(vmId)).thenReturn(vm);
         String diskAliasName = VM_NAME + "_Disk2";
 
         // Execute query.
@@ -99,9 +97,6 @@ public class GetNextAvailableDiskAliasNameByVMIdQueryTest extends AbstractQueryT
      * @throws Exception
      */
     private void mockDAOForQuery() throws Exception {
-        MockitoAnnotations.initMocks(this);
-        spy(VmHandler.class);
-        doNothing().when(VmHandler.class, "updateDisksFromDb", any(VM.class));
         when(getDbFacadeMockInstance().getVmDAO()).thenReturn(vmDAO);
         when(getQueryParameters().getVmId()).thenReturn(vmId);
     }
@@ -111,6 +106,12 @@ public class GetNextAvailableDiskAliasNameByVMIdQueryTest extends AbstractQueryT
         vm.setId(vmId);
         vm.setvm_name(VM_NAME);
         vm.setDiskMap(new HashMap<String, Disk>());
+        return vm;
+    }
+
+    private VM mockVmAndReturnFromDAO() {
+        vm = mockVm();
+        when(vmDAO.get(vmId)).thenReturn(vm);
         return vm;
     }
 }

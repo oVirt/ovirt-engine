@@ -17,11 +17,15 @@ public class GetNextAvailableDiskAliasNameByVMIdQuery<P extends GetAllDisksByVmI
         } else {
             VM vm = getDbFacade().getVmDAO().get(getParameters().getVmId());
             if (vm != null) {
-                VmHandler.updateDisksFromDb(vm);
+                updateDisksFromDb(vm);
                 suggestedDiskName =
                         ImagesHandler.getDefaultDiskAlias(vm.getvm_name(), VmHandler.getCorrectDriveForDisk(vm));
             }
             getQueryReturnValue().setReturnValue(suggestedDiskName);
         }
+    }
+
+    protected void updateDisksFromDb(VM vm) {
+        VmHandler.updateDisksFromDb(vm);
     }
 }
