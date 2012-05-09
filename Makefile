@@ -63,13 +63,28 @@ clean:
 test:
 	$(MVN) install $(BUILD_FLAGS)
 
-install: build_mvn pre_copy create_dirs install_ear common_install
+install: \
+	build_mvn \
+	pre_copy \
+	create_dirs \
+	install_ear \
+	common_install
 
-install_without_maven: create_dirs install_brew_ear common_install
+install_without_maven: \
+	create_dirs \
+	install_brew_ear \
+	common_install
 
-common_install: install_quartz install_tools install_config \
-	install_sysprep install_notification_service install_db_scripts \
-	install_setup install_misc install_sec install_aio_plugin
+common_install: \
+	install_tools \
+	install_config \
+	install_sysprep \
+	install_notification_service \
+	install_db_scripts \
+	install_setup \
+	install_misc \
+	install_sec \
+	install_aio_plugin
 
 # Brew compatibility hack
 # We want both env (local and brew) to work the same
@@ -138,10 +153,6 @@ install_brew_ear:
 	@echo "*** Deploying EAR to $(PREFIX)"
 	install -dm 755 $(PREFIX)$(EAR_DIR)
 	unzip $(SOURCE_DIR)/*.ear -d $(PREFIX)$(EAR_DIR)
-
-install_quartz:
-	@echo "*** Deploying quartz.jar to $(PREFIX)"
-#	cp -f ear/target/quartz/quartz*.jar $(PREFIX)$(JBOSS_HOME)/common/lib/
 
 install_tools:
 	@echo "*** Installing Common Tools"
