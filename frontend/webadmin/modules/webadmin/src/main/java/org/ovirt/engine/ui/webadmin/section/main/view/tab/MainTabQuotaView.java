@@ -51,30 +51,30 @@ public class MainTabQuotaView extends AbstractMainTabWithDetailsTableView<Quota,
                 return object.getStoragePoolName() == null ? "" : object.getStoragePoolName(); //$NON-NLS-1$
             }
         }, constants.dcQuota());
-//        getTable().addColumn(new TextColumnWithTooltip<Quota>() {
-//            @Override
-//            public String getValue(Quota object) {
-//                return (object.getMemSizeMBUsage() == null ? "0" : object.getMemSizeMBUsage().toString()) + "/" //$NON-NLS-1$ //$NON-NLS-2$
-//                        + (object.getMemSizeMB() == null ? "*" : object.getMemSizeMB().toString()) + " GB"; //$NON-NLS-1$ //$NON-NLS-2$
-//            }
-//        },
-//        constants.usedMemoryQuota());
-//        getTable().addColumn(new TextColumnWithTooltip<Quota>() {
-//            @Override
-//            public String getValue(Quota object) {
-//                return (object.getVirtualCpuUsage() == null ? "0" : object.getVirtualCpuUsage().toString()) + "/" //$NON-NLS-1$ //$NON-NLS-2$
-//                        + (object.getVirtualCpu() == null ? "*" : object.getVirtualCpu().toString()); //$NON-NLS-1$
-//            }
-//        },
-//        constants.runningCpuQuota());
-//        getTable().addColumn(new TextColumnWithTooltip<Quota>() {
-//            @Override
-//            public String getValue(Quota object) {
-//                return (object.getStorageSizeGBUsage() == null ? "0" : object.getStorageSizeGBUsage().toString()) + "/" //$NON-NLS-1$ //$NON-NLS-2$
-//                        + (object.getStorageSizeGB() == null ? "*" : object.getStorageSizeGB().toString()) + " GB"; //$NON-NLS-1$ //$NON-NLS-2$
-//            }
-//        },
-//        constants.usedStorageQuota());
+        //        getTable().addColumn(new TextColumnWithTooltip<Quota>() {
+        //            @Override
+        //            public String getValue(Quota object) {
+        //                return (object.getMemSizeMBUsage() == null ? "0" : object.getMemSizeMBUsage().toString()) + "/" //$NON-NLS-1$ //$NON-NLS-2$
+        //                        + (object.getMemSizeMB() == null ? "*" : object.getMemSizeMB().toString()) + " GB"; //$NON-NLS-1$ //$NON-NLS-2$
+        //            }
+        //        },
+        //        constants.usedMemoryQuota());
+        //        getTable().addColumn(new TextColumnWithTooltip<Quota>() {
+        //            @Override
+        //            public String getValue(Quota object) {
+        //                return (object.getVirtualCpuUsage() == null ? "0" : object.getVirtualCpuUsage().toString()) + "/" //$NON-NLS-1$ //$NON-NLS-2$
+        //                        + (object.getVirtualCpu() == null ? "*" : object.getVirtualCpu().toString()); //$NON-NLS-1$
+        //            }
+        //        },
+        //        constants.runningCpuQuota());
+        //        getTable().addColumn(new TextColumnWithTooltip<Quota>() {
+        //            @Override
+        //            public String getValue(Quota object) {
+        //                return (object.getStorageSizeGBUsage() == null ? "0" : object.getStorageSizeGBUsage().toString()) + "/" //$NON-NLS-1$ //$NON-NLS-2$
+        //                        + (object.getStorageSizeGB() == null ? "*" : object.getStorageSizeGB().toString()) + " GB"; //$NON-NLS-1$ //$NON-NLS-2$
+        //            }
+        //        },
+        //        constants.usedStorageQuota());
 
         getTable().addActionButton(new WebAdminButtonDefinition<Quota>(constants.addQuota()) {
             @Override
@@ -86,6 +86,12 @@ public class MainTabQuotaView extends AbstractMainTabWithDetailsTableView<Quota,
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getEditQuotaCommand();
+            }
+        });
+        getTable().addActionButton(new WebAdminButtonDefinition<Quota>(constants.copyQuota()) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getCloneQuotaCommand();
             }
         });
         getTable().addActionButton(new WebAdminButtonDefinition<Quota>(constants.removeQuota()) {

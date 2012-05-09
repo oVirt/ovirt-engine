@@ -1367,6 +1367,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Edit")
     String editQuota();
 
+    @DefaultStringValue("Copy")
+    String copyQuota();
+
     @DefaultStringValue("Remove")
     String removeQuota();
 

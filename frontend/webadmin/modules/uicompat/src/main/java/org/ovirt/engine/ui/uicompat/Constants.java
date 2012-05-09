@@ -274,6 +274,9 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
 	@DefaultStringValue("Edit Quota")
 	String editQuotaTitle();
+	
+	@DefaultStringValue("Copy Quota")
+    String cloneQuotaTitle();
 
 	@DefaultStringValue("Remove Quota(s)")
 	String removeQuotasTitle();

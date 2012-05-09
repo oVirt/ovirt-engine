@@ -45,9 +45,12 @@ import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
 public class QuotaListModel extends ListWithDetailsModel implements ISupportSystemTreeContext {
 
+    private static final String COPY_OF = "Copy_of_"; //$NON-NLS-1$
+
     private UICommand createQuotaCommand;
     private UICommand removeQuotaCommand;
     private UICommand editQuotaCommand;
+    private UICommand cloneQuotaCommand;
 
     public UICommand getCreateQuotaCommand() {
         return createQuotaCommand;
@@ -82,6 +85,7 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
         setCreateQuotaCommand(new UICommand("Create", this)); //$NON-NLS-1$
         setEditQuotaCommand(new UICommand("Edit", this)); //$NON-NLS-1$
         setRemoveQuotaCommand(new UICommand("Remove", this)); //$NON-NLS-1$
+        setCloneQuotaCommand(new UICommand("Clone", this)); //$NON-NLS-1$
 
         updateActionAvailability();
 
@@ -128,6 +132,7 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
                 (getSelectedItems() == null && getSelectedItem() != null)
                         || (getSelectedItems() != null && getSelectedItems().size() == 1);
         getEditQuotaCommand().setIsExecutionAllowed(isOnlyOneItemSelected);
+        getCloneQuotaCommand().setIsExecutionAllowed(isOnlyOneItemSelected);
         getRemoveQuotaCommand().setIsExecutionAllowed(isOnlyOneItemSelected);
     }
 
@@ -240,7 +245,7 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
         setConfirmWindow(null);
     }
 
-    private void onCreateQuota() {
+    private void onCreateQuota(boolean isClone) {
         QuotaModel model = (QuotaModel) getWindow();
         if (!model.Validate()) {
             return;
@@ -296,6 +301,13 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
             quota.setQuotaStorages(quotaStorageList);
         }
 
+        Guid guid = quota.getId();
+
+        if (isClone) {
+            quota.setId(Guid.Empty);
+            quota.setIsDefaultQuota(false);
+        }
+
         VdcActionType actionType = VdcActionType.AddQuota;
         if (!quota.getId().equals(Guid.Empty)) {
             actionType = VdcActionType.UpdateQuota;
@@ -309,9 +321,11 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
                         setWindow(null);
                     }
                 });
+
+        quota.setId(guid);
     }
 
-    private void editQuota() {
+    private void editQuota(boolean isClone) {
         Quota outer_quota = (Quota) getSelectedItem();
         QuotaModel qModel = new QuotaModel();
         if (outer_quota.getIsDefaultQuota()
@@ -339,9 +353,18 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
         qModel.getThresholdStorage().setEntity(outer_quota.getThresholdStoragePercentage());
 
         qModel.getDescription().setEntity(outer_quota.getDescription());
-        qModel.setTitle(ConstantsManager.getInstance().getConstants().editQuotaTitle());
-        qModel.setHashName("edit_quota"); //$NON-NLS-1$
-        UICommand command = new UICommand("OnCreateQuota", this); //$NON-NLS-1$
+        qModel.setTitle(isClone ? ConstantsManager.getInstance().getConstants().cloneQuotaTitle()
+                : ConstantsManager.getInstance().getConstants().editQuotaTitle());
+        qModel.setHashName(isClone ? "clone_quota" : "edit_quota"); //$NON-NLS-1$ //$NON-NLS-2$
+        UICommand command = null;
+
+        if (!isClone) {
+            command = new UICommand("OnCreateQuota", this); //$NON-NLS-1$
+        } else {
+            command = new UICommand("onCloneQuota", this); //$NON-NLS-1$
+            qModel.getName().setEntity(COPY_OF + outer_quota.getQuotaName());
+            qModel.getDescription().setEntity(""); //$NON-NLS-1$
+        }
         command.setTitle(ConstantsManager.getInstance().getConstants().ok());
         command.setIsDefault(true);
         qModel.getCommands().add(command);
@@ -578,10 +601,10 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
             createQuota();
         }
         else if (command.equals(getEditQuotaCommand())) {
-            editQuota();
+            editQuota(false);
         }
         else if (command.getName().equals("OnCreateQuota")) { //$NON-NLS-1$
-            onCreateQuota();
+            onCreateQuota(false);
         }
         else if (command.getName().equals("Cancel")) { //$NON-NLS-1$
             cancel();
@@ -592,6 +615,12 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
         else if (command.getName().equals("OnRemove")) { //$NON-NLS-1$
             onRemove();
         }
+        else if (command.equals(getCloneQuotaCommand())) {
+            editQuota(true);
+        } else if (command.getName().equals("onCloneQuota")) { //$NON-NLS-1$
+            onCreateQuota(true);
+        }
+
     }
 
     private SystemTreeItemModel systemTreeSelectedItem;
@@ -622,6 +651,14 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
     public boolean IsSearchStringMatch(String searchString)
     {
         return searchString.trim().toLowerCase().startsWith("quota"); //$NON-NLS-1$
+    }
+
+    public UICommand getCloneQuotaCommand() {
+        return cloneQuotaCommand;
+    }
+
+    public void setCloneQuotaCommand(UICommand cloneQuotaCommand) {
+        this.cloneQuotaCommand = cloneQuotaCommand;
     }
 
 }

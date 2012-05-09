@@ -47,7 +47,8 @@ public class QuotaModule extends AbstractGinModule {
             public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(QuotaListModel source,
                     UICommand lastExecutedCommand, Model windowModel) {
                 if (lastExecutedCommand.equals(getModel().getCreateQuotaCommand())
-                        || lastExecutedCommand.equals(getModel().getEditQuotaCommand())) {
+                        || lastExecutedCommand.equals(getModel().getEditQuotaCommand())
+                        || lastExecutedCommand.equals(getModel().getCloneQuotaCommand())) {
                     return quotaPopupProvider.get();
                 } else {
                     return super.getModelPopup(source, lastExecutedCommand, windowModel);
@@ -142,7 +143,8 @@ public class QuotaModule extends AbstractGinModule {
                 QuotaPermissionListModel.class) {
             @Override
             public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(QuotaPermissionListModel source,
-                    UICommand lastExecutedCommand, Model windowModel) {
+                    UICommand lastExecutedCommand,
+                    Model windowModel) {
                 if (lastExecutedCommand == getModel().getAddCommand()) {
                     return popupProvider.get();
                 } else {
