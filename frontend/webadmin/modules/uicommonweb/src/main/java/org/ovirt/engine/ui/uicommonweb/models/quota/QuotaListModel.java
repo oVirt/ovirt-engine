@@ -33,6 +33,7 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
+import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.ValidationResult;
@@ -154,6 +155,17 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
                 QuotaModel quotaModel = (QuotaModel) quotaListModel.getWindow();
                 quotaModel.getDataCenter().setItems(dataCenterList);
                 quotaModel.getDataCenter().setSelectedItem(dataCenterList.get(0));
+
+                if (quotaListModel.getSystemTreeSelectedItem() != null
+                        && quotaListModel.getSystemTreeSelectedItem().getType() == SystemTreeItemType.DataCenter)
+                {
+                    storage_pool selectDataCenter =
+                            (storage_pool) quotaListModel.getSystemTreeSelectedItem().getEntity();
+
+                    quotaModel.getDataCenter().setSelectedItem(Linq.FirstOrDefault(dataCenterList,
+                            new Linq.DataCenterPredicate(selectDataCenter.getId())));
+                    quotaModel.getDataCenter().setIsChangable(false);
+                }
             }
         }));
 
@@ -343,7 +355,7 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
 
             @Override
             public void OnSuccess(Object model, Object returnValue) {
-                QuotaListModel outer_quotaListModel = (QuotaListModel) model;
+                final QuotaListModel outer_quotaListModel = (QuotaListModel) model;
                 final QuotaModel quotaModel = (QuotaModel) outer_quotaListModel.getWindow();
                 final Quota quota = (Quota) ((VdcQueryReturnValue) returnValue).getReturnValue();
                 quotaModel.setEntity(quota);
@@ -385,6 +397,17 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
                                 quotaModel.getDataCenter().setSelectedItem(storage_pool);
                                 break;
                             }
+                        }
+
+                        if (outer_quotaListModel.getSystemTreeSelectedItem() != null
+                                && outer_quotaListModel.getSystemTreeSelectedItem().getType() == SystemTreeItemType.DataCenter)
+                        {
+                            storage_pool selectDataCenter =
+                                    (storage_pool) outer_quotaListModel.getSystemTreeSelectedItem().getEntity();
+
+                            quotaModel.getDataCenter().setSelectedItem(Linq.FirstOrDefault(dataCenterList,
+                                    new Linq.DataCenterPredicate(selectDataCenter.getId())));
+                            quotaModel.getDataCenter().setIsChangable(false);
                         }
                     }
                 }));
