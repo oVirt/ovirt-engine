@@ -23,7 +23,6 @@
   <properties>
     <earDirectory>${project.build.directory}/${project.build.finalName}</earDirectory>
     <backendConfFiles>${project.parent.basedir}/backend/manager/conf</backendConfFiles>
-    <thirdPartyConfFiles>${project.parent.basedir}/backend/manager/3rdparty</thirdPartyConfFiles>
   </properties>
 
   <dependencies>
@@ -136,9 +135,6 @@
       <type>ejb</type>
     </dependency>
 
-    <!-- ** WARs -->
-    <!-- 3rd Party Deps -->
-    <!-- ** WARs -->
     <!-- ** JARs -->
 	 <dependency>
 		<groupId>org.springframework</groupId>

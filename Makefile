@@ -109,7 +109,7 @@ rpm: $(SRPM)
 
 create_dirs:
 	@echo "*** Creating Directories"
-	@install -dm 755 $(PREFIX)/usr/share/ovirt-engine/{kerberos,scripts,3rd-party-lib,engine.ear,conf,dbscripts,resources,ovirt-isos,db-backups,engine.ear}
+	@install -dm 755 $(PREFIX)/usr/share/ovirt-engine/{kerberos,scripts,engine.ear,conf,dbscripts,resources,ovirt-isos,db-backups,engine.ear}
 	@install -dm 755 $(PREFIX)/usr/share/ovirt-engine/engine-config/lib
 	@install -dm 755 $(PREFIX)/usr/share/ovirt-engine/notifier/lib
 	@install -dm 755 $(PREFIX)/usr/share/ovirt-engine/engine-manage-domains/lib

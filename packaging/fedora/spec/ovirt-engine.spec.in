@@ -267,7 +267,6 @@ cp -rpf %{_datadir}/vdsm-bootstrap/* %{_engineeardir}/components.war/vds/ &> /de
 %dir %{_sysconfdir}/%{name}/sysprep
 %attr (755,root,root) %{_datadir}/%{name}/kerberos
 %{_datadir}/%{name}/conf
-%{_datadir}/%{name}/3rd-party-lib
 %attr (755,root,root) %{_datadir}/%{name}/scripts/vds_installer.py*
 %attr (755,root,root) %{_datadir}/%{name}/scripts/ovirtlogrot.sh
 %attr (755,root,root) %{_sysconfdir}/cron.daily/ovirt-cron
