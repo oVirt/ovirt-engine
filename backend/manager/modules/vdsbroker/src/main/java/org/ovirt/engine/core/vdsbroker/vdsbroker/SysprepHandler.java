@@ -284,7 +284,7 @@ public final class SysprepHandler {
         timeZoneIndex.put("(GMT+10:00) Tasmania Standard Time", 265);
         timeZoneIndex.put("(GMT+09:00) Tokyo Standard Time", 235);
         timeZoneIndex.put("(GMT+13:00) Tonga Standard Time", 300);
-        timeZoneIndex.put("(GMT+05:00) US Eastern Standard Time", 40);
+        timeZoneIndex.put("(GMT-05:00) US Eastern Standard Time", 40);
         timeZoneIndex.put("(GMT-07:00) US Mountain Standard Time", 15);
         timeZoneIndex.put("(GMT+10:00) Vladivostok Standard Time", 270);
         timeZoneIndex.put("(GMT+08:00) W. Australia Standard Time", 225);
