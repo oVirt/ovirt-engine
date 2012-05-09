@@ -109,14 +109,18 @@ public class Frontend {
     }
 
     private static void failureEventHandler(String description, String errorMessage) {
-        if (errorMessage != null && errorMessage.equals(canDoActionErrorsTranslator.translateErrorTextSingle("USER_IS_NOT_LOGGED_IN", false))) { //$NON-NLS-1$
-            frontendNotLoggedInEvent.raise(Frontend.class, EventArgs.Empty);
-        }
+        handleNotLoggedInEvent(errorMessage);
         frontendFailureEvent.raise(Frontend.class, new FrontendFailureEventArgs(new Message(description, errorMessage)));
     }
 
     private static void failureEventHandler(ArrayList<Message> messages) {
         frontendFailureEvent.raise(Frontend.class, new FrontendFailureEventArgs(messages));
+    }
+
+    private static void handleNotLoggedInEvent(String errorMessage) {
+        if (errorMessage != null && errorMessage.equals(canDoActionErrorsTranslator.translateErrorTextSingle("USER_IS_NOT_LOGGED_IN", false))) { //$NON-NLS-1$
+            frontendNotLoggedInEvent.raise(Frontend.class, EventArgs.Empty);
+        }
     }
 
     private static boolean filterQueries;
@@ -202,9 +206,7 @@ public class Frontend {
                         failedResult.add(result);
                         // getEventsHandler().runQueryFailed(failedResult);
                         String errorMessage = result.getExceptionString();
-                        if (errorMessage.equals(canDoActionErrorsTranslator.translateErrorTextSingle("USER_IS_NOT_LOGGED_IN", false))) { //$NON-NLS-1$
-                            frontendNotLoggedInEvent.raise(Frontend.class, EventArgs.Empty);
-                        }
+                        handleNotLoggedInEvent(errorMessage);
                         if (callback.isHandleFailure()) {
                             callback.getDel().OnSuccess(callback.getModel(), result);
                         }
