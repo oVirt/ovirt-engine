@@ -1750,11 +1750,15 @@
     </xs:sequence>
   </xs:complexType>
 
+  <xs:element name="payloads" type="Payloads"/>
+
   <xs:complexType name="Payloads">
     <xs:sequence>
       <xs:element name="payload" type="Payload" minOccurs="0" maxOccurs="unbounded"/>
     </xs:sequence>
   </xs:complexType>
+
+  <xs:element name="payload" type="Payload"/>
 
   <xs:complexType name="Payload">
     <xs:sequence>
@@ -1763,6 +1767,8 @@
     <xs:attribute name="type" type="xs:string"/>
   </xs:complexType>
 
+  <xs:element name="payload_file" type="PayloadFile"/>
+  
   <xs:complexType name="PayloadFile">
     <xs:sequence>
       <xs:element name="content" type="xs:string" />
