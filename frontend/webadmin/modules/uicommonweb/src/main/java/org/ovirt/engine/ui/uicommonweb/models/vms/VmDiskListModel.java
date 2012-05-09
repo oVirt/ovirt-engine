@@ -442,7 +442,8 @@ public class VmDiskListModel extends SearchableListModel
                 }
                 diskModel.getInterface().setItems(interfaces);
                 diskModel.getInterface().setSelectedItem(disk.getDiskInterface());
-                diskModel.getInterface().setIsChangable(false);
+                // Allow interface type to be edited only if the disk is not sharable
+                diskModel.getInterface().setIsChangable(!disk.isShareable());
 
                 storage_domains storage = (storage_domains) diskModel.getStorageDomain().getSelectedItem();
 
