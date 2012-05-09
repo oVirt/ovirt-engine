@@ -267,7 +267,13 @@ public class Backend implements BackendInternal, BackendRemote {
                     CommandsFactory.CreateCommand(commandSnapshot.getValue().toString(),
                             (Guid) commandSnapshot.getKey());
             if (cmd != null) {
-                cmd.compensate();
+                try {
+                    cmd.compensate();
+                } catch (RuntimeException e) {
+                    log.errorFormat(
+                            "Failed to run compensation on startup for Command {0}, Command Id : {1}, due to: {2}",
+                            commandSnapshot.getValue(), commandSnapshot.getKey(), ExceptionUtils.getMessage(e), e);
+                }
                 log.infoFormat("Running compensation on startup for Command : {0} , Command Id : {1}",
                         commandSnapshot.getValue(), commandSnapshot.getKey());
             } else {
