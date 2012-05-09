@@ -370,13 +370,16 @@ public class QuotaModel extends EntityModel {
         getName().setIsValid(true);
         getName().ValidateEntity(new IValidation[] { new NotEmptyValidation(), lenValidation });
 
-        IValidation[] validationArr =
+        IValidation[] graceValidationArr =
                 new IValidation[] { new NotEmptyValidation(), new IntegerValidation(0, Integer.MAX_VALUE) };
 
-        getGraceCluster().ValidateEntity(validationArr);
-        getGraceStorage().ValidateEntity(validationArr);
-        getThresholdCluster().ValidateEntity(validationArr);
-        getThresholdStorage().ValidateEntity(validationArr);
+        IValidation[] thresholdValidationArr =
+                new IValidation[] { new NotEmptyValidation(), new IntegerValidation(0, 100) };
+
+        getGraceCluster().ValidateEntity(graceValidationArr);
+        getGraceStorage().ValidateEntity(graceValidationArr);
+        getThresholdCluster().ValidateEntity(thresholdValidationArr);
+        getThresholdStorage().ValidateEntity(thresholdValidationArr);
 
         boolean graceThreshold = getGraceCluster().getIsValid() &
                 getGraceStorage().getIsValid() &
