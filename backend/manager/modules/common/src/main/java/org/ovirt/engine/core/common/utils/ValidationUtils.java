@@ -66,10 +66,10 @@ public class ValidationUtils {
 
     }
 
-    public static <T extends VdcActionParametersBase> ArrayList<String> validateInputs(List<Class<?>> validationGroupList,
+    public static <T extends VdcActionParametersBase> List<String> validateInputs(List<Class<?>> validationGroupList,
             T parameters) {
 
-        ArrayList<String> messages = null;
+        List<String> messages = null;
         Set<ConstraintViolation<T>> violations = ValidationUtils.getValidator().validate(parameters,
                 validationGroupList.toArray(new Class<?>[validationGroupList.size()]));
 

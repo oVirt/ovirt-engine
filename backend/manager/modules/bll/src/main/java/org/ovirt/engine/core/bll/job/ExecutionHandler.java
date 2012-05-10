@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll.job;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -632,7 +631,7 @@ public class ExecutionHandler {
             if (StringUtils.isEmpty(correlationId)) {
                 parameters.setCorrelationId(LoggedUtils.getObjectId(parameters));
             } else {
-                ArrayList<String> messages = ValidationUtils.validateInputs(validationGroups, parameters);
+                List<String> messages = ValidationUtils.validateInputs(validationGroups, parameters);
                 if (messages != null) {
                     VdcReturnValueBase returnErrorValue = new VdcReturnValueBase();
                     returnErrorValue.setCanDoAction(false);
