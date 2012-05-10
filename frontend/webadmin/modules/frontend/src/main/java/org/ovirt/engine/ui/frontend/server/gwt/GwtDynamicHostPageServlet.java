@@ -45,8 +45,7 @@ public abstract class GwtDynamicHostPageServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         PrintWriter writer = response.getWriter();
-        response.setContentType("text/html"); //$NON-NLS-1$
-        response.setCharacterEncoding("UTF-8"); //$NON-NLS-1$
+        response.setContentType("text/html; charset=UTF-8"); //$NON-NLS-1$
 
         writer.append("<!DOCTYPE html><html><head>"); //$NON-NLS-1$
         writer.append("<meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\">"); //$NON-NLS-1$
