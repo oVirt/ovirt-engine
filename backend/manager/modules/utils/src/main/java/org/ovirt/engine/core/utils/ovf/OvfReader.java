@@ -142,6 +142,18 @@ public abstract class OvfReader implements IOvfBuilder {
                             .getValue()));
                 }
             }
+            if (node.Attributes.get("ovf:disk-alias") != null) {
+                if (!StringHelper.isNullOrEmpty(node.Attributes.get("ovf:disk-alias").getValue())) {
+                    image.setDiskAlias(String.valueOf(node.Attributes.get("ovf:disk-alias")
+                            .getValue()));
+                }
+            }
+            if (node.Attributes.get("ovf:disk-description") != null) {
+                if (!StringHelper.isNullOrEmpty(node.Attributes.get("ovf:disk-description").getValue())) {
+                    image.setDiskDescription(String.valueOf(node.Attributes.get("ovf:disk-description")
+                            .getValue()));
+                }
+            }
         }
     }
 

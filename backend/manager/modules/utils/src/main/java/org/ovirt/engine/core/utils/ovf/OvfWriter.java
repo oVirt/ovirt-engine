@@ -146,6 +146,12 @@ public abstract class OvfWriter implements IOvfBuilder {
             _writer.WriteAttributeString("ovf", "volume-type", null, image.getvolume_type().toString());
             _writer.WriteAttributeString("ovf", "disk-interface", null, image.getDiskInterface().toString());
             _writer.WriteAttributeString("ovf", "boot", null, (new Boolean(image.isBoot())).toString());
+            if (image.getDiskAlias() != null) {
+                _writer.WriteAttributeString("ovf", "disk-alias", null, image.getDiskAlias());
+            }
+            if (image.getDiskDescription() != null) {
+                _writer.WriteAttributeString("ovf", "disk-description", null, image.getDiskDescription());
+            }
             _writer.WriteAttributeString("ovf", "wipe-after-delete", null,
                     (new Boolean(image.isWipeAfterDelete())).toString());
             _writer.WriteEndElement();
