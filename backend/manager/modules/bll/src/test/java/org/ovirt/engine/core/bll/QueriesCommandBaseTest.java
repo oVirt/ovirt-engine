@@ -13,7 +13,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.ovirt.engine.core.bll.session.SessionDataContainer;
 import org.ovirt.engine.core.common.interfaces.IVdcUser;
@@ -100,7 +99,6 @@ public class QueriesCommandBaseTest {
     }
 
     /** Tests Admin permission check */
-    @Ignore
     @Test
     public void testPermissionChecking() throws Exception {
         boolean[] booleans = { true, false };
