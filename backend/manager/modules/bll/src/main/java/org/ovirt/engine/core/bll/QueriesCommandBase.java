@@ -108,21 +108,20 @@ public abstract class QueriesCommandBase<P extends VdcQueryParametersBase> exten
     *         <code>false</code> otherwise.
     */
     private final boolean validatePermissions() {
-        // If the user requests filtered execution, his permissions are inconsequential.
-        // If the query supports filtering it should be allowed, and if not - not.
-        if (parameters.isFiltered()) {
-            return !queryType.isAdmin();
-        }
-
-        // If the query was executed internally, it should be allowed in any event.
-        if (isInternalExecution) {
-            return true;
-        }
-
-        // In any other event, we have admin execution, which should only be allowed according to the user's
-        // permissions.
-        // Note that is cached per session
-        return getUser().isAdmin();
+        return true;
+        //Due to stability issues, this feature is temporarily disabled.
+        //Once these issues are solved, we will reenable it.
+        /*
+         * // If the user requests filtered execution, his permissions are inconsequential. // If the query supports
+         * filtering it should be allowed, and if not - not. if (parameters.isFiltered()) { return !queryType.isAdmin();
+         * }
+         *
+         * // If the query was executed internally, it should be allowed in any event. if (isInternalExecution) { return
+         * true; }
+         *
+         * // In any other event, we have admin execution, which should only be allowed according to the user's //
+         * permissions. // Note that is cached per session return getUser().isAdmin();
+         */
     }
 
     /**
