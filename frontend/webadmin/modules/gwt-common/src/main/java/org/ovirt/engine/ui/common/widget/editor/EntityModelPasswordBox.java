@@ -17,7 +17,7 @@ public class EntityModelPasswordBox extends ValueBoxBase<Object> implements Edit
     @Override
     public ValueBoxEditor<Object> asEditor() {
         if (editor == null) {
-            editor = ObservableValueBoxEditor.of(this);
+            editor = new ObservableValueBoxEditor(this);
         }
         return editor;
     }

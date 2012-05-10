@@ -37,7 +37,7 @@ public class AbstractFindStoragePopupView extends AbstractModelBoundPopupView<Li
         // Table Entity Columns
         table.addEntityModelColumn(new EntityModelTextColumn<storage_domains>() {
             @Override
-            public String getValue(storage_domains storage) {
+            public String getText(storage_domains storage) {
                 return storage.getstorage_name();
             }
         }, constants.nameStorage());
@@ -45,7 +45,7 @@ public class AbstractFindStoragePopupView extends AbstractModelBoundPopupView<Li
         table.addEntityModelColumn(new EntityModelEnumColumn<storage_domains, StorageDomainType>() {
 
             @Override
-            protected StorageDomainType getRawValue(storage_domains storage) {
+            protected StorageDomainType getEnum(storage_domains storage) {
                 return storage.getstorage_domain_type();
             }
         }, constants.typeStorage());
@@ -53,7 +53,7 @@ public class AbstractFindStoragePopupView extends AbstractModelBoundPopupView<Li
         table.addEntityModelColumn(new EntityModelTextColumn<storage_domains>() {
 
             @Override
-            public String getValue(storage_domains storage) {
+            public String getText(storage_domains storage) {
                 if (storage.getavailable_disk_size() == null || storage.getavailable_disk_size() < 1) {
                     return "< 1 GB"; //$NON-NLS-1$
                 }

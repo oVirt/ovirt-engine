@@ -23,7 +23,7 @@ public class EntityModelTextBox extends ValueBox<Object> implements EditorWidget
     @Override
     public ValueBoxEditor<Object> asEditor() {
         if (editor == null) {
-            editor = ObservableValueBoxEditor.of(this);
+            editor = new ObservableValueBoxEditor(this);
         }
         return editor;
     }

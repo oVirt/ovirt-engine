@@ -127,36 +127,24 @@ public abstract class AbstractPermissionsPopupView<T extends AdElementListModel>
 
     private void initTable(CommonApplicationConstants constants) {
         // Table Entity Columns
-        searchItems.addEntityModelColumn(new EntityModelTextColumn<EntityModel>() {
+        searchItems.addEntityModelColumn(new EntityModelTextColumn<DbUser>() {
             @Override
-            public String getValue(EntityModel model) {
-                if (model.getEntity() instanceof DbUser)
-                    return ((DbUser) model.getEntity()).getname();
-                else {
-                    return model.getEntity().toString();
-                }
+            public String getText(DbUser user) {
+                return user.getname();
             }
         }, constants.firsNamePermissionsPopup());
 
-        searchItems.addEntityModelColumn(new EntityModelTextColumn<EntityModel>() {
+        searchItems.addEntityModelColumn(new EntityModelTextColumn<DbUser>() {
             @Override
-            public String getValue(EntityModel model) {
-                if (model.getEntity() instanceof DbUser)
-                    return ((DbUser) model.getEntity()).getsurname();
-                else {
-                    return ""; //$NON-NLS-1$
-                }
+            public String getText(DbUser user) {
+                return user.getsurname();
             }
         }, constants.lastNamePermissionsPopup());
 
-        searchItems.addEntityModelColumn(new EntityModelTextColumn<EntityModel>() {
+        searchItems.addEntityModelColumn(new EntityModelTextColumn<DbUser>() {
             @Override
-            public String getValue(EntityModel model) {
-                if (model.getEntity() instanceof DbUser)
-                    return ((DbUser) model.getEntity()).getusername();
-                else {
-                    return ""; //$NON-NLS-1$
-                }
+            public String getText(DbUser user) {
+                return user.getusername();
             }
         }, constants.userNamePermissionsPopup());
     }

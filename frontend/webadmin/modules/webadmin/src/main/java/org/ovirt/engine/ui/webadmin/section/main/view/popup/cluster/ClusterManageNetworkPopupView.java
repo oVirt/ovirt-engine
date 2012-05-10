@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.cluster;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
-import org.ovirt.engine.ui.common.widget.table.column.EntityModelTextColumn;
+import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterNetworkManageModel;
@@ -67,7 +67,7 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<L
             }
         }, constants.attachedNetwork(), "50px"); //$NON-NLS-1$
 
-        networks.addEntityModelColumn(new EntityModelTextColumn<EntityModel>() {
+        networks.addEntityModelColumn(new TextColumnWithTooltip<EntityModel>() {
             @Override
             public String getValue(EntityModel model) {
                 return ((ClusterNetworkManageModel) model).getName();

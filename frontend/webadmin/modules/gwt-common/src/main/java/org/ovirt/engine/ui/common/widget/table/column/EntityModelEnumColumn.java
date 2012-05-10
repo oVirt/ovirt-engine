@@ -3,27 +3,24 @@ package org.ovirt.engine.ui.common.widget.table.column;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 
 /**
- * An Enum Column for EntityModel Values
+ * Enum column based on {@link EntityModel}'s entity value.
  *
  * @param <T>
- *            Entity Type
+ *            Entity value type.
  * @param <E>
- *            Enum Type
+ *            Enum type.
  */
 public abstract class EntityModelEnumColumn<T, E extends Enum<E>> extends EnumColumn<EntityModel, E> {
 
     @SuppressWarnings("unchecked")
     @Override
     protected E getRawValue(EntityModel object) {
-        return object == null ? null : getRawValue((T) object.getEntity());
+        return object == null ? null : getEnum((T) object.getEntity());
     }
 
     /**
-     * Get the Raw Value from the Entity Value
-     *
-     * @param entity
-     * @return
+     * Get the enum wrapped inside the entity.
      */
-    protected abstract E getRawValue(T entity);
+    protected abstract E getEnum(T entity);
 
 }

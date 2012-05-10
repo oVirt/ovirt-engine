@@ -11,14 +11,9 @@ import com.google.gwt.user.client.ui.ValueBoxBase;
  * A {@link ValueBoxEditor} that adapts to {@link HasValueChangeHandlers} interface.
  */
 public class ObservableValueBoxEditor extends ValueBoxEditor<Object> implements HasValueChangeHandlers<Object> {
-
-    public static ObservableValueBoxEditor of(ValueBoxBase<Object> valueBox) {
-        return new ObservableValueBoxEditor(valueBox);
-    }
-
     private final ValueBoxBase<Object> peer;
 
-    protected ObservableValueBoxEditor(ValueBoxBase<Object> peer) {
+    public ObservableValueBoxEditor(ValueBoxBase<Object> peer) {
         super(peer);
         this.peer = peer;
     }

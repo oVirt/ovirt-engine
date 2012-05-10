@@ -35,7 +35,7 @@ public class SanImportStorageView extends AbstractSanStorageView {
 
         table.addColumn(new EntityModelTextColumn<storage_domains>() {
             @Override
-            public String getValue(storage_domains storage) {
+            public String getText(storage_domains storage) {
                 return storage.getstorage_name();
             }
         }, constants.nameSanImStorage());
@@ -43,7 +43,7 @@ public class SanImportStorageView extends AbstractSanStorageView {
         table.addColumn(new EntityModelEnumColumn<storage_domains, StorageFormatType>() {
 
             @Override
-            protected StorageFormatType getRawValue(storage_domains storage) {
+            protected StorageFormatType getEnum(storage_domains storage) {
                 return
                 storage.getStorageStaticData().getStorageFormat();
             }

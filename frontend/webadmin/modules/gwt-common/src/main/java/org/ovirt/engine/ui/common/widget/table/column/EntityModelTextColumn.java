@@ -3,25 +3,22 @@ package org.ovirt.engine.ui.common.widget.table.column;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 
 /**
- * A Text Column for EntityModel Values
+ * Text column based on {@link EntityModel}'s entity value.
  *
  * @param <T>
- *            Entity Type
+ *            Entity value type.
  */
 public abstract class EntityModelTextColumn<T> extends TextColumnWithTooltip<EntityModel> {
 
     @SuppressWarnings("unchecked")
     @Override
     public String getValue(EntityModel object) {
-        return object == null ? null : getValue((T) object.getEntity());
+        return object == null ? null : getText((T) object.getEntity());
     }
 
     /**
-     * Get the String Value from the Entity Value
-     *
-     * @param entity
-     * @return
+     * Get the text representation of the entity to be displayed in the column.
      */
-    protected abstract String getValue(T entity);
+    protected abstract String getText(T entity);
 
 }

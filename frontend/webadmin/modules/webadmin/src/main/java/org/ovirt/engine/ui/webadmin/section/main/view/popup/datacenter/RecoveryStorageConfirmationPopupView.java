@@ -131,32 +131,23 @@ public class RecoveryStorageConfirmationPopupView extends AbstractModelBoundPopu
     }
 
     private void initTable() {
-        EntityModelTextColumn<EntityModel> nameColumn = new EntityModelTextColumn<EntityModel>() {
+        EntityModelTextColumn<storage_domains> nameColumn = new EntityModelTextColumn<storage_domains>() {
             @Override
-            public String getValue(EntityModel model) {
-                if (model.getEntity() instanceof storage_domains) {
-                    return ((storage_domains) model.getEntity()).getstorage_name();
-                } else {
-                    return ""; //$NON-NLS-1$
-                }
+            public String getText(storage_domains storage) {
+                return storage.getstorage_name();
             }
         };
 
         storageDomainItems.setColumnWidth(nameColumn, "280px"); //$NON-NLS-1$
         storageDomainItems.addEntityModelColumn(nameColumn, applicationConstants.nameStorage());
 
-        EntityModelTextColumn<EntityModel> freeSpaceColumn = new EntityModelTextColumn<EntityModel>() {
+        EntityModelTextColumn<storage_domains> freeSpaceColumn = new EntityModelTextColumn<storage_domains>() {
             @Override
-            public String getValue(EntityModel model) {
-                if (model.getEntity() instanceof storage_domains) {
-                    storage_domains storage = (storage_domains) model.getEntity();
-                    if (storage.getavailable_disk_size() == null || storage.getavailable_disk_size() < 1) {
-                        return "< 1 GB"; //$NON-NLS-1$
-                    }
-                    return storage.getavailable_disk_size() + " GB"; //$NON-NLS-1$
-                } else {
-                    return ""; //$NON-NLS-1$
+            public String getText(storage_domains storage) {
+                if (storage.getavailable_disk_size() == null || storage.getavailable_disk_size() < 1) {
+                    return "< 1 GB"; //$NON-NLS-1$
                 }
+                return storage.getavailable_disk_size() + " GB"; //$NON-NLS-1$
             }
         };
 

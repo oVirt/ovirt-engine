@@ -29,7 +29,7 @@ import org.ovirt.engine.ui.common.widget.parser.MemorySizeParser;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.MemorySizeRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
-import org.ovirt.engine.ui.common.widget.table.column.EntityModelTextColumn;
+import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.common.widget.uicommon.storage.DisksAllocationView;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -335,7 +335,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
 
         priorityEditor = new EntityModelCellTable<ListModel>(
                 (Resources) GWT.create(ButtonCellTableResources.class));
-        priorityEditor.addEntityModelColumn(new EntityModelTextColumn<EntityModel>() {
+        priorityEditor.addEntityModelColumn(new TextColumnWithTooltip<EntityModel>() {
             @Override
             public String getValue(EntityModel model) {
                 return model.getTitle();

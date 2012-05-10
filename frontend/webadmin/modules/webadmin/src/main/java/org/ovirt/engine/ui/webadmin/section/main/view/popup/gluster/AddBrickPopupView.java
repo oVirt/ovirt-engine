@@ -13,7 +13,6 @@ import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.EntityModelTextColumn;
-import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeBrickModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -145,18 +144,17 @@ public class AddBrickPopupView extends AbstractModelBoundPopupView<VolumeBrickMo
 
     protected void initTableColumns(ApplicationConstants constants){
         // Table Entity Columns
-        bricksTable.addEntityModelColumn(new EntityModelTextColumn<EntityModel>() {
+        bricksTable.addEntityModelColumn(new EntityModelTextColumn<GlusterBrickEntity>() {
             @Override
-            public String getValue(EntityModel entityModel) {
-                return ((GlusterBrickEntity) (entityModel.getEntity())).getServerName();
+            public String getText(GlusterBrickEntity entity) {
+                return entity.getServerName();
             }
         }, constants.serverBricks());
 
-        bricksTable.addEntityModelColumn(new EntityModelTextColumn<EntityModel>() {
-
+        bricksTable.addEntityModelColumn(new EntityModelTextColumn<GlusterBrickEntity>() {
             @Override
-            public String getValue(EntityModel entityModel) {
-                return ((GlusterBrickEntity) (entityModel.getEntity())).getBrickDirectory();
+            public String getText(GlusterBrickEntity entity) {
+                return entity.getBrickDirectory();
             }
         }, constants.brickDirectoryBricks());
     }
