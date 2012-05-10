@@ -378,13 +378,10 @@ select fn_db_add_config_value('WaitForVdsInitInSec','60','general');
 select fn_db_update_config_value('DBEngine','Postgres','general');
 select fn_db_update_config_value('DebugSearchLogging','false','general');
 select fn_db_update_config_value('DefaultTimeZone','(GMT) GMT Standard Time','general');
-select fn_db_update_config_value('DisableFenceAtStartupInSec','300','general');
 select fn_db_update_config_value('ENGINEEARLib','%JBOSS_HOME%/standalone/deployments/engine.ear','general');
 select fn_db_update_config_value('FenceAgentDefaultParams','ilo3:lanplus,power_wait=4','general');
 select fn_db_update_config_value('IsMultilevelAdministrationOn','true','general');
-select fn_db_update_config_value('LogPhysicalMemoryThresholdInMB','1024','general');
 select fn_db_update_config_value('MinimalETLVersion','3.0.0','general');
-select fn_db_update_config_value('oVirtISOsRepositoryPath','/usr/share/rhev-hypervisor','general');
 select fn_db_update_config_value('PostgresPagingSyntax','OFFSET (%1$s -1) LIMIT %2$s','general');
 select fn_db_update_config_value('PostgresSearchTemplate','SELECT * FROM (%2$s) %1$s) as T1 %3$s','general');
 select fn_db_update_config_value('RhevhLocalFSPath','/data/images/rhev','general');
@@ -402,8 +399,6 @@ select fn_db_update_config_value('VdsFenceOptionMapping','alom:secure=secure,por
 select fn_db_update_config_value('VdsFenceOptionMapping','alom:secure=secure,port=ipport;apc:secure=secure,port=ipport,slot=port;bladecenter:secure=secure,port=ipport,slot=port;drac5:secure=secure,slot=port;eps:slot=port;ilo:secure=ssl,port=ipport;ipmilan:;rsa:secure=secure,port=ipport;rsb:;wti:secure=secure,port=ipport,slot=port;cisco_ucs:secure=ssl,slot=port;ilo3:','general');
 select fn_db_update_config_value('VdsFenceType','alom,apc,bladecenter,drac5,eps,ilo,ilo3,ipmilan,rsa,rsb,wti,cisco_ucs','3.0');
 select fn_db_update_config_value('VdsFenceType','alom,apc,bladecenter,drac5,eps,ilo,ipmilan,rsa,rsb,wti,cisco_ucs','2.2');
-select fn_db_update_config_value('VdsLocalDisksCriticallyLowFreeSpace','500','general');
-select fn_db_update_config_value('VdsLocalDisksLowFreeSpace','1000','general');
 
 ------------------------------------------------------------------------------------
 --   Update only if default not changed section
@@ -418,6 +413,9 @@ select fn_db_update_default_config_value('DomainName','example.com','','general'
 select fn_db_update_default_config_value('EmulatedMachine','rhel6.0.0', 'pc-0.14','3.0',false);
 select fn_db_update_default_config_value('LDAPSecurityAuthentication','GSSAPI','default:GSSAPI','general',false);
 select fn_db_update_default_config_value('LDAPSecurityAuthentication','SIMPLE','default:SIMPLE','general',false);
+select fn_db_update_default_config_value('oVirtISOsRepositoryPath','ovirt-isos', '/usr/share/rhev-hypervisor','general',false);
+select fn_db_update_default_config_value('VdsLocalDisksCriticallyLowFreeSpace','100','500','general',false);
+select fn_db_update_default_config_value('VdsLocalDisksLowFreeSpace','500', '1000','general',false);
 ------------------------------------------------------------------------------------
 --              Cleanup deprecated configuration values section
 ------------------------------------------------------------------------------------
