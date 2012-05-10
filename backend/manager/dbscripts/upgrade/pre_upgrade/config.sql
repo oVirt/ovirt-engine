@@ -28,6 +28,9 @@ select fn_db_add_config_value('AdminUser','admin','general');
 select fn_db_add_config_value('AdUserId','','general');
 select fn_db_add_config_value('AdUserName','','general');
 select fn_db_add_config_value('AdUserPassword','','general');
+select fn_db_add_config_value('AdvancedNFSOptionsEnabled','false','2.2');
+select fn_db_add_config_value('AdvancedNFSOptionsEnabled','false','3.0');
+select fn_db_add_config_value('AdvancedNFSOptionsEnabled','true','3.1');
 select fn_db_add_config_value('AgentAppName','RHEV-Agent','general');
 select fn_db_add_config_value('AllowDuplicateMacAddresses','false','general');
 select fn_db_add_config_value('AsyncPollingCyclesBeforeCallbackCleanup','120','general');
@@ -402,10 +405,6 @@ select fn_db_update_config_value('VdsFenceType','alom,apc,bladecenter,drac5,eps,
 select fn_db_update_config_value('VdsFenceType','alom,apc,bladecenter,drac5,eps,ilo,ipmilan,rsa,rsb,wti,cisco_ucs','2.2');
 select fn_db_update_config_value('VdsLocalDisksCriticallyLowFreeSpace','500','general');
 select fn_db_update_config_value('VdsLocalDisksLowFreeSpace','1000','general');
-
-select fn_db_add_config_value('AdvancedNFSOptionsEnabled','false','2.2');
-select fn_db_add_config_value('AdvancedNFSOptionsEnabled','false','3.0');
-select fn_db_add_config_value('AdvancedNFSOptionsEnabled','true','3.1');
 
 ------------------------------------------------------------------------------------
 --   Update only if default not changed section
