@@ -50,6 +50,7 @@ public final class AuditLogDirector {
         initTaskSeverities();
         initGlusterVolumeSeverities();
         initDwhSeverities();
+        initConfigSeverities();
         checkSeverities();
     }
 
@@ -608,6 +609,11 @@ public final class AuditLogDirector {
         mSeverities.put(AuditLogType.MAC_POOL_EMPTY, AuditLogSeverity.WARNING);
         mSeverities.put(AuditLogType.MAC_ADDRESS_IS_IN_USE, AuditLogSeverity.WARNING);
         mSeverities.put(AuditLogType.VDS_NETWORK_MTU_DIFFER_FROM_LOGICAL_NETWORK, AuditLogSeverity.WARNING);
+    }
+
+    private static void initConfigSeverities() {
+        mSeverities.put(AuditLogType. RELOAD_CONFIGURATIONS_SUCCESS, AuditLogSeverity.NORMAL);
+        mSeverities.put(AuditLogType. RELOAD_CONFIGURATIONS_FAILURE, AuditLogSeverity.ERROR);
     }
 
     private static void initDwhSeverities() {

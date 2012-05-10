@@ -254,6 +254,7 @@ public enum VdcActionType {
 
     // Config
     SetConfigurationValue(1300, ActionGroup.CONFIGURE_ENGINE),
+    ReloadConfigurations(1301, ActionGroup.CONFIGURE_ENGINE, false),
 
     // Gluster
     CreateGlusterVolume(1400, ActionGroup.CREATE_GLUSTER_VOLUME),

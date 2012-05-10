@@ -12,13 +12,15 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.config.DataType;
 import org.ovirt.engine.core.common.config.OptionBehaviourAttribute;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.ovirt.engine.core.common.config.Reloadable;
 import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.VdcOptionDAO;
 import org.ovirt.engine.core.engineencryptutils.EncryptionUtils;
 import org.ovirt.engine.core.utils.ConfigUtilsBase;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.serialization.json.JsonObjectDeserializer;
 
 public class DBConfigUtils extends ConfigUtilsBase {
@@ -31,14 +33,7 @@ public class DBConfigUtils extends ConfigUtilsBase {
         _vdcOptionCache.clear();
         List<VdcOption> list = db.getVdcOptionDAO().getAll();
         for (VdcOption option : list) {
-            Map<String, Object> values = null;
-            if ((values = _vdcOptionCache.get(option.getoption_name())) != null) {
-                values.put(option.getversion(), GetValue(option));
-            } else {
-                values = new HashMap<String, Object>();
-                values.put(option.getversion(), GetValue(option));
-                _vdcOptionCache.put(option.getoption_name(), values);
-            }
+            updateOption(option);
         }
     }
 
@@ -271,6 +266,40 @@ public class DBConfigUtils extends ConfigUtilsBase {
         }
 
         return returnValue;
+    }
+
+    /**
+     * Refreshes only the reloadable configurations in the VDC option cache.
+     */
+    public static void refreshReloadableConfigsInVdcOptionCache() {
+        List<VdcOption> list = getVdcOptionDAO().getAll();
+        for (VdcOption option : list) {
+            try {
+                if (isReloadable(option.getoption_name())) {
+                    updateOption(option);
+                }
+            } catch (NoSuchFieldException e) {
+                log.errorFormat("Not refreshing field {0}: does not exist in class {1}.", option.getoption_name(),
+                        ConfigValues.class.getSimpleName());
+            }
+        }
+    }
+
+    private static VdcOptionDAO getVdcOptionDAO() {
+        return DbFacade.getInstance().getVdcOptionDAO();
+    }
+
+    private static void updateOption(VdcOption option) {
+        Map<String, Object> values = _vdcOptionCache.get(option.getoption_name());
+        if (values == null) {
+            values = new HashMap<String, Object>();
+            _vdcOptionCache.put(option.getoption_name(), values);
+        }
+        values.put(option.getversion(), GetValue(option));
+    }
+
+    private static boolean isReloadable(String optionName) throws NoSuchFieldException {
+        return ConfigValues.class.getField(optionName).isAnnotationPresent(Reloadable.class);
     }
 
     private static Log log = LogFactory.getLog(DBConfigUtils.class);
