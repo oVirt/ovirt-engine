@@ -331,6 +331,7 @@ public enum VdcBllErrors {
     GlusterVolumeResetOptionsFailed(4155),
     GlusterVolumeDeleteFailed(4139),
     GlusterVolumeRemoveBricksFailed(4156),
+    AddBricksToGlusterVolumeFailed(4128),
 
     UnicodeArgumentException(4900),
 

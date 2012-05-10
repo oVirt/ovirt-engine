@@ -57,4 +57,8 @@ public interface GlusterVolumeDao extends DAO, SearchDAO<GlusterVolumeEntity> {
     public void addTransportType(Guid volumeId, TransportType transportType);
 
     public void removeTransportType(Guid volumeId, TransportType transportType);
+
+    public void updateReplicaCount(Guid volumeId, int replicaCount);
+
+    public void updateStripeCount(Guid volumeId, int stripeCount);
 }

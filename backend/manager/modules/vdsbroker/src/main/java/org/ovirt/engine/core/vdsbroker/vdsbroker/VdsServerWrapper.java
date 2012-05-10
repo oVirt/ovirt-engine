@@ -1063,4 +1063,19 @@ public class VdsServerWrapper implements IVdsServer {
             throw new XmlRpcRunTimeException(ute);
         }
     }
+
+    @Override
+    public StatusOnlyReturnForXmlRpc glusterVolumeBrickAdd(String volumeName,
+            String[] bricks,
+            int replicaCount,
+            int stripeCount) {
+        try {
+            Map<String, Object> xmlRpcReturnValue =
+                    vdsServer.glusterVolumeBrickAdd(volumeName, bricks, replicaCount, stripeCount);
+            StatusOnlyReturnForXmlRpc wrapper = new StatusOnlyReturnForXmlRpc(xmlRpcReturnValue);
+            return wrapper;
+        } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
+    }
 }

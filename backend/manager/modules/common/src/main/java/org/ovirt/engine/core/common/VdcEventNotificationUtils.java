@@ -49,6 +49,8 @@ public final class VdcEventNotificationUtils {
         // DWH
         AddEventNotificationEntry(EventNotificationEntity.DWH, AuditLogType.DWH_STOPPED);
         AddEventNotificationEntry(EventNotificationEntity.DWH, AuditLogType.DWH_ERROR);
+        AddEventNotificationEntry(EventNotificationEntity.GlusterVolume, AuditLogType.GLUSTER_VOLUME_ADD_BRICK);
+        AddEventNotificationEntry(EventNotificationEntity.GlusterVolume, AuditLogType.GLUSTER_VOLUME_ADD_BRICK_FAILED);
     }
 
     /**

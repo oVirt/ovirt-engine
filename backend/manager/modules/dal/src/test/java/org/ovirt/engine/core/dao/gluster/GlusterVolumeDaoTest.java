@@ -169,6 +169,42 @@ public class GlusterVolumeDaoTest extends BaseDAOTestCase {
     }
 
     @Test
+    public void testReplicateCount() {
+        GlusterVolumeEntity volume = dao.getById(EXISTING_VOL_REPL_ID);
+        int replicaCount = volume.getReplicaCount();
+
+        assertTrue(replicaCount != 0);
+        assertEquals(2, replicaCount);
+
+        dao.updateReplicaCount(EXISTING_VOL_REPL_ID, 3);
+
+        GlusterVolumeEntity volumeAfter = dao.getById(EXISTING_VOL_REPL_ID);
+        assertNotNull(volumeAfter);
+
+        replicaCount = volumeAfter.getReplicaCount();
+        assertTrue(replicaCount != 0);
+        assertEquals(3, replicaCount);
+    }
+
+    @Test
+    public void testStripeCount() {
+        GlusterVolumeEntity volume = dao.getById(EXISTING_VOL_REPL_ID);
+        int replicaCount = volume.getReplicaCount();
+
+        assertTrue(replicaCount != 0);
+        assertEquals(2, replicaCount);
+
+        dao.updateReplicaCount(EXISTING_VOL_REPL_ID, 4);
+
+        GlusterVolumeEntity volumeAfter = dao.getById(EXISTING_VOL_REPL_ID);
+        assertNotNull(volumeAfter);
+
+        replicaCount = volumeAfter.getReplicaCount();
+        assertTrue(replicaCount != 0);
+        assertEquals(4, replicaCount);
+    }
+
+    @Test
     public void testRemoveBrickFromVolume() {
         GlusterVolumeEntity volume = dao.getById(EXISTING_VOL_DIST_ID);
         List<GlusterBrickEntity> bricks = volume.getBricks();

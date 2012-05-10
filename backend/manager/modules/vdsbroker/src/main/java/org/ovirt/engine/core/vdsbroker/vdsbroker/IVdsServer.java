@@ -216,4 +216,8 @@ public interface IVdsServer {
 
     StatusOnlyReturnForXmlRpc glusterVolumeRemoveBrickForce(String volumeName, String[] brickList);
 
+    StatusOnlyReturnForXmlRpc glusterVolumeBrickAdd(String volumeName,
+            String[] bricks,
+            int replicaCount,
+            int stripeCount);
 }

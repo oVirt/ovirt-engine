@@ -134,6 +134,7 @@ public enum VDSCommandType {
     DeleteGlusterVolume("org.ovirt.engine.core.vdsbroker.gluster"),
     GetGlusterVolumeOptionsInfo("org.ovirt.engine.core.vdsbroker.gluster"),
     GlusterVolumeRemoveBricks("org.ovirt.engine.core.vdsbroker.gluster"),
+    AddBricksToGlusterVolume("org.ovirt.engine.core.vdsbroker.gluster"),
     ;
 
     String packageName;
