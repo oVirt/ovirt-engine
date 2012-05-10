@@ -12,7 +12,6 @@ import javax.ejb.TransactionRolledbackLocalException;
 import javax.transaction.Status;
 import javax.transaction.SystemException;
 import javax.transaction.Transaction;
-import javax.validation.groups.Default;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -94,8 +93,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     private final IBackendCallBackServer _backendCallBack = CallbackServer.Instance;
     private CommandActionState _actionState = CommandActionState.EXECUTE;
     private VdcActionType actionType;
-    private final List<Class<?>> validationGroups =
-            new ArrayList<Class<?>>(Arrays.asList(new Class<?>[] { Default.class }));
+    private final List<Class<?>> validationGroups = new ArrayList<Class<?>>();
     private final Guid commandId;
 
     protected Log log = LogFactory.getLog(getClass());

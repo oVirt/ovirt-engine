@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.common.validation.group;
 
-public interface CreateEntity {
+import javax.validation.groups.Default;
+
+public interface CreateEntity extends Default {
 
 }
