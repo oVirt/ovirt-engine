@@ -418,6 +418,48 @@ actions:
       signatures: []
     urlparams: {}
     headers: {Content-Type: application/xml|json}
+- name: /api/vms/{vm:id}/snapshots/{snapshot:id}/cdroms|rel=get
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers: {}
+- name: /api/vms/{vm:id}/snapshots/{snapshot:id}/cdroms/{cdrom:id}|rel=get
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers: {}
+- name: /api/vms/{vm:id}/snapshots/{snapshot:id}/disks|rel=get
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers: {}
+- name: /api/vms/{vm:id}/snapshots/{snapshot:id}/disks/{disk:id}|rel=get
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers: {}
+- name: /api/vms/{vm:id}/snapshots/{snapshot:id}/nics|rel=get
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers: {}
+- name: /api/vms/{vm:id}/snapshots/{snapshot:id}/nics/{nic:id}|rel=get
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers: {}
 - name: /api/vms/{vm:id}/tags|rel=get
   request:
     body:
