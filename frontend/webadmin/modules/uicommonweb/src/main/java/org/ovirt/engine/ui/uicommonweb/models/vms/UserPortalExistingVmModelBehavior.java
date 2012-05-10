@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
+import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
@@ -45,6 +46,12 @@ public class UserPortalExistingVmModelBehavior extends ExistingVmModelBehavior
 
                     }
                 }, getModel().getHash()), EDIT_VM_PROPERTIES);
+        storage_pool dataCenter = (storage_pool) getModel().getDataCenter().getSelectedItem();
+        if (dataCenter.getQuotaEnforcementType() != QuotaEnforcementTypeEnum.DISABLED) {
+            getModel().getQuota().setIsAvailable(true);
+        } else {
+            getModel().getQuota().setIsAvailable(false);
+        }
     }
 
     private void InitClusters(ArrayList<VDSGroup> clusters, UnitVmModel model)
@@ -107,6 +114,6 @@ public class UserPortalExistingVmModelBehavior extends ExistingVmModelBehavior
                 VdcQueryType.GetHostsByClusterId,
                 new GetHostsByClusterIdParameters(cluster.getId()),
                 query
-        );
+                );
     }
 }

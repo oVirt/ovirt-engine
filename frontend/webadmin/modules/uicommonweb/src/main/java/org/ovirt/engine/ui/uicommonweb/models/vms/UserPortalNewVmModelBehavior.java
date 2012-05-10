@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
+import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -74,10 +75,15 @@ public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements 
 
         ArrayList<VdcQueryParametersBase> parametersList =
                 new ArrayList<VdcQueryParametersBase>(Arrays.asList(new VdcQueryParametersBase[] {
-                    getEntitiesWithPermittedActionParameters, getEntitiesWithPermittedActionParameters}));
+                        getEntitiesWithPermittedActionParameters, getEntitiesWithPermittedActionParameters }));
 
         // Get clusters and templates
         Frontend.RunMultipleQueries(queryTypeList, parametersList, this, getModel().getHash());
+        if (dataCenter.getQuotaEnforcementType() != QuotaEnforcementTypeEnum.DISABLED) {
+            getModel().getQuota().setIsAvailable(true);
+        } else {
+            getModel().getQuota().setIsAvailable(false);
+        }
     }
 
     @Override
