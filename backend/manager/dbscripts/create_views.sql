@@ -160,7 +160,7 @@ FROM
            quota_enforcement_type,
            is_default_quota,
            null AS lun_id, -- LUN fields
-           null AS phisical_volume_id,
+           null AS physical_volume_id,
            null AS volume_group_id,
            null AS serial,
            null AS lun_mapping,
@@ -200,7 +200,7 @@ FROM
            null AS quota_enforcement_type,
            null AS is_default_quota,
            l.lun_id, -- LUN fields
-           l.phisical_volume_id,
+           l.physical_volume_id,
            l.volume_group_id,
            l.serial,
            l.lun_mapping,
