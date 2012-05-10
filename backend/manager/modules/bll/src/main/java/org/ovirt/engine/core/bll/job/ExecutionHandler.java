@@ -632,7 +632,7 @@ public class ExecutionHandler {
                 parameters.setCorrelationId(LoggedUtils.getObjectId(parameters));
             } else {
                 List<String> messages = ValidationUtils.validateInputs(validationGroups, parameters);
-                if (messages != null) {
+                if (!messages.isEmpty()) {
                     VdcReturnValueBase returnErrorValue = new VdcReturnValueBase();
                     returnErrorValue.setCanDoAction(false);
                     returnErrorValue.getCanDoActionMessages().addAll(messages);

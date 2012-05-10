@@ -521,7 +521,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      */
     protected boolean validateInputs() {
         List<String> messages = ValidationUtils.validateInputs(getValidationGroups(), getParameters());
-        if (messages != null) {
+        if (!messages.isEmpty()) {
             getReturnValue().getCanDoActionMessages().addAll(messages);
             return false;
         }

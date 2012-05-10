@@ -3,6 +3,7 @@ package org.ovirt.engine.core.common.utils;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -66,10 +67,13 @@ public class ValidationUtils {
 
     }
 
+    /**
+     * @return A list of error message keys representing the violations, or empty list if no violations occurred.
+     */
     public static <T extends VdcActionParametersBase> List<String> validateInputs(List<Class<?>> validationGroupList,
             T parameters) {
 
-        List<String> messages = null;
+        List<String> messages = Collections.emptyList();
         Set<ConstraintViolation<T>> violations = ValidationUtils.getValidator().validate(parameters,
                 validationGroupList.toArray(new Class<?>[validationGroupList.size()]));
 
