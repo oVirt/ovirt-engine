@@ -69,9 +69,9 @@ public final class AsyncTaskManager {
         _tasks = new HashMap<Guid, SPMAsyncTask>();
 
         SchedulerUtil scheduler = SchedulerUtilQuartzImpl.getInstance();
-        scheduler.scheduleAConfigurableDelayJob(this, "_timer_Elapsed", new Class[] {},
+        scheduler.scheduleAFixedDelayJob(this, "_timer_Elapsed", new Class[] {},
                 new Object[] {}, Config.<Integer> GetValue(ConfigValues.AsyncTaskPollingRate),
-                ConfigValues.AsyncTaskPollingRate.name(), TimeUnit.SECONDS);
+                Config.<Integer> GetValue(ConfigValues.AsyncTaskPollingRate), TimeUnit.SECONDS);
 
         scheduler.scheduleAFixedDelayJob(this, "_cacheTimer_Elapsed", new Class[] {},
                 new Object[] {}, Config.<Integer> GetValue(ConfigValues.AsyncTaskStatusCacheRefreshRateInSeconds),

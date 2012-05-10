@@ -7,9 +7,9 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VdsSelectionAlgorithm;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 
@@ -49,8 +49,8 @@ public final class VdsLoadBalancer {
     }
 
     public static void EnableLoadBalancer() {
-        SchedulerUtilQuartzImpl.getInstance().scheduleAConfigurableDelayJob(instance, "PerformLoadBalancing", new Class[] {},
+        SchedulerUtilQuartzImpl.getInstance().scheduleAFixedDelayJob(instance, "PerformLoadBalancing", new Class[] {},
                 new Object[] {}, Config.<Integer> GetValue(ConfigValues.VdsLoadBalancingeIntervalInMinutes),
-                ConfigValues.VdsLoadBalancingeIntervalInMinutes.name(), TimeUnit.MINUTES);
+                Config.<Integer> GetValue(ConfigValues.VdsLoadBalancingeIntervalInMinutes), TimeUnit.MINUTES);
     }
 }

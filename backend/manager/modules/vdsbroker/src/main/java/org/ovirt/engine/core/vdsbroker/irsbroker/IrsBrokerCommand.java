@@ -51,13 +51,13 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.log.Logged;
 import org.ovirt.engine.core.utils.log.Logged.LogLevel;
 import org.ovirt.engine.core.utils.log.LoggedUtils;
@@ -189,9 +189,9 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
         public IrsProxyData(Guid storagePoolId) {
             _storagePoolId = storagePoolId;
             int storagePoolRefreshTime = Config.<Integer> GetValue(ConfigValues.StoragePoolRefreshTimeInSeconds);
-            storagePoolRefreshJobId = SchedulerUtilQuartzImpl.getInstance().scheduleAConfigurableDelayJob(this,
+            storagePoolRefreshJobId = SchedulerUtilQuartzImpl.getInstance().scheduleAFixedDelayJob(this,
                     "_updatingTimer_Elapsed", new Class[0], new Object[0], storagePoolRefreshTime,
-                    ConfigValues.StoragePoolRefreshTimeInSeconds.name(), TimeUnit.SECONDS);
+                    storagePoolRefreshTime, TimeUnit.SECONDS);
         }
 
         @OnTimerMethodAnnotation("_updatingTimer_Elapsed")
