@@ -7,7 +7,7 @@ import org.ovirt.engine.ui.common.presenter.popup.RemoveConfirmationPopupPresent
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
-import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
+import org.ovirt.engine.ui.uicommonweb.models.configure.UserPortalPermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalListModel;
 import org.ovirt.engine.ui.userportal.gin.ClientGinjector;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.permissions.PermissionsPopupPresenterWidget;
@@ -18,7 +18,7 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 
 public class VmPermissionListModelProvider
-        extends UserPortalSearchableDetailModelProvider<permissions, UserPortalListModel, PermissionListModel> {
+        extends UserPortalSearchableDetailModelProvider<permissions, UserPortalListModel, UserPortalPermissionListModel> {
 
     private final Provider<PermissionsPopupPresenterWidget> permissionPopupProvider;
     private final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider;
@@ -30,18 +30,18 @@ public class VmPermissionListModelProvider
             Provider<PermissionsPopupPresenterWidget> permissionPopupProvider,
             Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider,
             CurrentUser user) {
-        super(ginjector, parentProvider, PermissionListModel.class, resolver, user);
+        super(ginjector, parentProvider, UserPortalPermissionListModel.class, resolver, user);
         this.permissionPopupProvider = permissionPopupProvider;
         this.removeConfirmPopupProvider = removeConfirmPopupProvider;
     }
 
     @Override
-    protected PermissionListModel createModel() {
-        return new PermissionListModel();
+    protected UserPortalPermissionListModel createModel() {
+        return new UserPortalPermissionListModel();
     }
 
     @Override
-    public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(PermissionListModel source,
+    public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(UserPortalPermissionListModel source,
             UICommand lastExecutedCommand, Model windowModel) {
         if (lastExecutedCommand == getModel().getAddCommand()) {
             return permissionPopupProvider.get();
@@ -51,7 +51,7 @@ public class VmPermissionListModelProvider
     }
 
     @Override
-    public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(PermissionListModel source,
+    public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(UserPortalPermissionListModel source,
             UICommand lastExecutedCommand) {
         if (lastExecutedCommand == getModel().getRemoveCommand()) {
             return removeConfirmPopupProvider.get();

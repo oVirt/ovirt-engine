@@ -26,10 +26,10 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.HasHandlers;
 import com.google.gwt.user.client.ui.HasValue;
 
-public abstract class AbstractPermissionsPopupPresenterWidget<V extends AbstractPermissionsPopupPresenterWidget.ViewDef>
-        extends AbstractModelBoundPopupPresenterWidget<AdElementListModel, V> {
+public abstract class AbstractPermissionsPopupPresenterWidget<V extends AbstractPermissionsPopupPresenterWidget.ViewDef<M>, M extends AdElementListModel>
+        extends AbstractModelBoundPopupPresenterWidget<M, V> {
 
-    public interface ViewDef extends AbstractModelBoundPopupPresenterWidget.ViewDef<AdElementListModel> {
+    public interface ViewDef<A extends AdElementListModel> extends AbstractModelBoundPopupPresenterWidget.ViewDef<A> {
 
         HasUiCommandClickHandlers getSearchButton();
 
@@ -58,7 +58,7 @@ public abstract class AbstractPermissionsPopupPresenterWidget<V extends Abstract
     }
 
     @Override
-    public void init(final AdElementListModel model) {
+    public void init(final M model) {
         // Let the parent do its work
         super.init(model);
 
@@ -125,11 +125,11 @@ public abstract class AbstractPermissionsPopupPresenterWidget<V extends Abstract
     class PermissionPopupNativeKeyPressHandler implements PopupNativeKeyPressHandler {
 
         private final PopupNativeKeyPressHandler decorated;
-        private final AdElementListModel model;
+        private final M model;
 
         private boolean hasFocus = false;
 
-        public PermissionPopupNativeKeyPressHandler(PopupNativeKeyPressHandler decorated, AdElementListModel model) {
+        public PermissionPopupNativeKeyPressHandler(PopupNativeKeyPressHandler decorated, M model) {
             this.decorated = decorated;
             this.model = model;
 

@@ -23,7 +23,6 @@ import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.users.AdElementListModel;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.dom.client.HasKeyPressHandlers;
 import com.google.gwt.event.shared.EventBus;
@@ -37,12 +36,9 @@ import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 
-public abstract class AbstractPermissionsPopupView extends AbstractModelBoundPopupView<AdElementListModel> implements AbstractPermissionsPopupPresenterWidget.ViewDef {
+public abstract class AbstractPermissionsPopupView<T extends AdElementListModel> extends AbstractModelBoundPopupView<T> implements AbstractPermissionsPopupPresenterWidget.ViewDef<T> {
 
-    interface Driver extends SimpleBeanEditorDriver<AdElementListModel, AbstractPermissionsPopupView> {
-        Driver driver = GWT.create(Driver.class);
-    }
-
+    @SuppressWarnings("rawtypes")
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, AbstractPermissionsPopupView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
@@ -58,11 +54,11 @@ public abstract class AbstractPermissionsPopupView extends AbstractModelBoundPop
 
     @UiField
     @Ignore
-    Label roleToAssignLabel;
+    public Label roleToAssignLabel;
 
     @UiField(provided = true)
     @Path("role.selectedItem")
-    ListModelListBoxEditor<Object> roleSelection;
+    public ListModelListBoxEditor<Object> roleSelection;
 
     @UiField(provided = true)
     @Ignore
@@ -71,11 +67,11 @@ public abstract class AbstractPermissionsPopupView extends AbstractModelBoundPop
 
     @UiField
     @Ignore
-    RadioButton everyoneRadio;
+    public RadioButton everyoneRadio;
 
     @UiField
     @Ignore
-    RadioButton specificUserOrGroupRadio;
+    public RadioButton specificUserOrGroupRadio;
 
     @UiField
     @Path("searchString")
@@ -83,13 +79,13 @@ public abstract class AbstractPermissionsPopupView extends AbstractModelBoundPop
     public TextBoxChanger searchStringEditor;
 
     @UiField
-    SimplePanel everyonePanel;
+    public SimplePanel everyonePanel;
 
     @UiField
-    HorizontalPanel roleSelectionPanel;
+    public HorizontalPanel roleSelectionPanel;
 
     @UiField
-    ScrollPanel searchItemsScrollPanel;
+    public ScrollPanel searchItemsScrollPanel;
 
     private PopupNativeKeyPressHandler nativeKeyPressHandler;
 
@@ -104,10 +100,14 @@ public abstract class AbstractPermissionsPopupView extends AbstractModelBoundPop
         specificUserOrGroupRadio.setValue(true);
         everyoneRadio.setValue(false);
         localize(constants);
-        Driver.driver.initialize(this);
+        initDriver();
     }
 
     protected abstract void generateIds();
+
+    protected abstract void initDriver();
+
+    protected abstract T doFlush();
 
     private void initListBoxEditors() {
         domainSelection = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
@@ -166,16 +166,15 @@ public abstract class AbstractPermissionsPopupView extends AbstractModelBoundPop
     }
 
     @Override
-    public void edit(final AdElementListModel object) {
+    public void edit(final T object) {
         searchItems.setRowData(new ArrayList<EntityModel>());
         searchItems.edit(object);
-        Driver.driver.edit(object);
     }
 
     @Override
-    public AdElementListModel flush() {
+    public T flush() {
         searchItems.flush();
-        return Driver.driver.flush();
+        return doFlush();
     }
 
     @Override

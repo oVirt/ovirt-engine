@@ -257,10 +257,11 @@ public class AdElementListModel extends SearchableListModel
                 OnUserAndAdGroupsLoaded(adElementListModel);
             }
         };
-        Frontend.RunQuery(VdcQueryType.Search,
-                new SearchParameters("ADUSER@" + domain + ": allnames=" //$NON-NLS-1$ //$NON-NLS-2$
-                        + (StringHelper.isNullOrEmpty(getSearchString()) ? "*" : getSearchString()), SearchType.AdUser), //$NON-NLS-1$
+
+        findUsers("allnames=" //$NON-NLS-1$
+                + (StringHelper.isNullOrEmpty(getSearchString()) ? "*" : getSearchString()), //$NON-NLS-1$
                 _asyncQuery);
+
         _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
@@ -303,10 +304,16 @@ public class AdElementListModel extends SearchableListModel
             }
         };
 
-        Frontend.RunQuery(VdcQueryType.Search,
-                new SearchParameters("ADGROUP@" + domain + ": name=" //$NON-NLS-1$ //$NON-NLS-2$
-                        + (StringHelper.isNullOrEmpty(getSearchString()) ? "*" : getSearchString()), SearchType.AdGroup), //$NON-NLS-1$
+        findGroups("name=" + (StringHelper.isNullOrEmpty(getSearchString()) ? "*" : getSearchString()), //$NON-NLS-1$ //$NON-NLS-2$
                 _asyncQuery);
+    }
+
+    protected void findGroups(String searchString, AsyncQuery query) {
+        Frontend.RunQuery(VdcQueryType.Search, new SearchParameters("ADGROUP@" + getDomain().getSelectedItem() + ": " + searchString, SearchType.AdGroup), query); //$NON-NLS-1$ //$NON-NLS-2$
+    }
+
+    protected void findUsers(String searchString, AsyncQuery query) {
+        Frontend.RunQuery(VdcQueryType.Search, new SearchParameters("ADUSER@" + getDomain().getSelectedItem() + ": " + searchString, SearchType.AdUser), query); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     private void OnUserAndAdGroupsLoaded(AdElementListModel adElementListModel)

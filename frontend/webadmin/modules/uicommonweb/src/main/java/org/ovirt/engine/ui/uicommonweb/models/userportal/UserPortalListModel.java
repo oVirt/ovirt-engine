@@ -60,7 +60,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
-import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
+import org.ovirt.engine.ui.uicommonweb.models.configure.UserPortalPermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolDiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolInterfaceListModel;
@@ -462,7 +462,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         vmInterfaceListModel = new VmInterfaceListModel();
         vmInterfaceListModel.setIsAvailable(false);
 
-        permissionListModel = new PermissionListModel();
+        permissionListModel = new UserPortalPermissionListModel();
         permissionListModel.setIsAvailable(false);
 
         vmEventListModel = new UserPortalVmEventListModel();

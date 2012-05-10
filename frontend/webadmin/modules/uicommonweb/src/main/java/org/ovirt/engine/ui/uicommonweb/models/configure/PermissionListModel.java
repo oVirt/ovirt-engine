@@ -38,7 +38,6 @@ import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
 import java.util.ArrayList;
 
-@SuppressWarnings("unused")
 public class PermissionListModel extends SearchableListModel
 {
 
@@ -144,7 +143,7 @@ public class PermissionListModel extends SearchableListModel
             return;
         }
 
-        AdElementListModel model = new AdElementListModel();
+        AdElementListModel model = createAdElementListModel();
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().addPermissionToUserTitle());
         model.setHashName("add_permission_to_user"); //$NON-NLS-1$
@@ -157,6 +156,10 @@ public class PermissionListModel extends SearchableListModel
         tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         tempVar2.setIsCancel(true);
         model.getCommands().add(tempVar2);
+    }
+
+    protected AdElementListModel createAdElementListModel() {
+        return new AdElementListModel();
     }
 
     private void remove()
