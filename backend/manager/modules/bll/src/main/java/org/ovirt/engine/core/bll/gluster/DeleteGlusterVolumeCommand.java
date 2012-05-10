@@ -43,13 +43,16 @@ public class DeleteGlusterVolumeCommand extends GlusterVolumeCommandBase<Gluster
     @Override
     protected void executeCommand() {
         VDSReturnValue returnValue =
-                                runVdsCommand(
-                                        VDSCommandType.DeleteGlusterVolume,
-                                        new GlusterVolumeVDSParameters(getUpServer().getId(),
-                                                getGlusterVolumeName()));
+                runVdsCommand(
+                        VDSCommandType.DeleteGlusterVolume,
+                        new GlusterVolumeVDSParameters(getUpServer().getId(),
+                                getGlusterVolumeName()));
         setSucceeded(returnValue.getSucceeded());
-        if(getSucceeded()) {
+        if (getSucceeded()) {
             updateVolumeStatusInDb(getParameters().getVolumeId());
+        } else {
+            getReturnValue().getExecuteFailedMessages().add(returnValue.getVdsError().getMessage());
+            return;
         }
     }
 

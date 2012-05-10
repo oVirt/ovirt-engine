@@ -1,10 +1,10 @@
 package org.ovirt.engine.core.vdsbroker.gluster;
 
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeActionVDSParameters;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsBrokerCommand;
 
-public class StartGlusterVolumeVDSCommand extends VdsBrokerCommand<GlusterVolumeActionVDSParameters> {
-    public StartGlusterVolumeVDSCommand(GlusterVolumeActionVDSParameters parameters) {
+public class StartGlusterVolumeVDSCommand<P extends GlusterVolumeActionVDSParameters> extends AbstractGlusterBrokerCommand<P> {
+
+    public StartGlusterVolumeVDSCommand(P parameters) {
         super(parameters);
     }
 

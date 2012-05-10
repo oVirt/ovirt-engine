@@ -46,6 +46,9 @@ public class ResetGlusterVolumeOptionsCommand extends GlusterVolumeCommandBase<R
                     removeOptionInDb(option);
                 }
             }
+        } else {
+            getReturnValue().getExecuteFailedMessages().add(returnValue.getVdsError().getMessage());
+            return;
         }
     }
 

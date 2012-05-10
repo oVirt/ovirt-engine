@@ -51,6 +51,9 @@ public class StartGlusterVolumeCommand extends GlusterVolumeCommandBase<GlusterV
         setSucceeded(returnValue.getSucceeded());
         if(getSucceeded()) {
             updateVolumeStatusInDb(getParameters().getVolumeId());
+        } else {
+            getReturnValue().getExecuteFailedMessages().add(returnValue.getVdsError().getMessage());
+            return;
         }
     }
 
