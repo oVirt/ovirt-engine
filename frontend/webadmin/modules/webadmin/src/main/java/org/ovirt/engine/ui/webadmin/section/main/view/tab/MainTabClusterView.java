@@ -83,7 +83,7 @@ public class MainTabClusterView extends AbstractMainTabWithDetailsTableView<VDSG
 
         if (ReportInit.getInstance().isReportsEnabled()) {
             List<ActionButtonDefinition<VDSGroup>> resourceSubActions =
-                    ReportActionsHelper.getInstance().getResourceSubActions("Cluster", getMainModel()); //$NON-NLS-1$
+                    ReportActionsHelper.getInstance().getResourceSubActions("Cluster", getModelProvider()); //$NON-NLS-1$
             if (resourceSubActions != null && resourceSubActions.size() > 0) {
                 getTable().addActionButton(new WebAdminMenuBarButtonDefinition<VDSGroup>(constants.showReportCluster(),
                         resourceSubActions));

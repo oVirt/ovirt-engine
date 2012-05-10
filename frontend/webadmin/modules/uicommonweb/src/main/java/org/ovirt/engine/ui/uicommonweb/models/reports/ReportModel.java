@@ -6,6 +6,7 @@ import java.util.Map;
 import org.ovirt.engine.ui.uicommonweb.HtmlParameters;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 
+import com.google.gwt.i18n.client.LocaleInfo;
 import com.google.gwt.user.client.Cookies;
 
 public class ReportModel extends EntityModel {
@@ -22,6 +23,9 @@ public class ReportModel extends EntityModel {
         paramsMap.setParameter("_flowId", "viewReportFlow"); //$NON-NLS-1$ //$NON-NLS-2$
         paramsMap.setParameter("active_hosts_select", //$NON-NLS-1$
                "AND+delete_date+IS+NULL"); //$NON-NLS-1$
+
+        String currentLocale = LocaleInfo.getCurrentLocale().getLocaleName();
+        paramsMap.setParameter("userLocale", (currentLocale.equals("default") ? "en-US" : currentLocale)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     }
 
     public Map<String, List<String>> getReportParams() {

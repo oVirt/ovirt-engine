@@ -19,6 +19,7 @@ import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicompat.ReportParser.Dashboard;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.i18n.client.LocaleInfo;
 import com.google.gwt.user.client.Cookies;
 
 public class ReportsListModel extends SearchableListModel {
@@ -26,7 +27,7 @@ public class ReportsListModel extends SearchableListModel {
     HtmlParameters htmlParams = new HtmlParameters();
     private String lastResourceId = ""; //$NON-NLS-1$
     private final String reportUrl;
-    private Event reportModelRefreshEvent = new Event(new EventDefinition("ReportModelRefreshed", //$NON-NLS-1$
+    private final Event reportModelRefreshEvent = new Event(new EventDefinition("ReportModelRefreshed", //$NON-NLS-1$
             ReportsListModel.class));
 
     public Event getReportModelRefreshEvent() {
@@ -39,6 +40,9 @@ public class ReportsListModel extends SearchableListModel {
         htmlParams.setParameter("sessionID", sessionID); //$NON-NLS-1$
 
         setFlowId();
+
+        String currentLocale = LocaleInfo.getCurrentLocale().getLocaleName();
+        htmlParams.setParameter("userLocale", (currentLocale.equals("default") ? "en-US" : currentLocale)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
         setDefaultSearchString("Reports:"); //$NON-NLS-1$
         setSearchString(getDefaultSearchString());

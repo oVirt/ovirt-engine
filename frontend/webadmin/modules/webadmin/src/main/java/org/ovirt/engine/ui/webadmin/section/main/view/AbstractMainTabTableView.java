@@ -57,4 +57,9 @@ public abstract class AbstractMainTabTableView<T, M extends SearchableListModel>
         return table;
     }
 
+    public MainModelProvider<T, M> getModelProvider() {
+        return modelProvider;
+    }
+
+
 }

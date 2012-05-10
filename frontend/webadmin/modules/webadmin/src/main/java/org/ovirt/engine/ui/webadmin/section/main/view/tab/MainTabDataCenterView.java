@@ -113,7 +113,7 @@ public class MainTabDataCenterView extends AbstractMainTabWithDetailsTableView<s
 
         if (ReportInit.getInstance().isReportsEnabled()) {
             List<ActionButtonDefinition<storage_pool>> resourceSubActions =
-                    ReportActionsHelper.getInstance().getResourceSubActions("DataCenter", getMainModel()); //$NON-NLS-1$
+                    ReportActionsHelper.getInstance().getResourceSubActions("DataCenter", getModelProvider()); //$NON-NLS-1$
             if (resourceSubActions != null && resourceSubActions.size() > 0) {
                 getTable().addActionButton(new WebAdminMenuBarButtonDefinition<storage_pool>(constants.showReportDC(),
                         resourceSubActions));

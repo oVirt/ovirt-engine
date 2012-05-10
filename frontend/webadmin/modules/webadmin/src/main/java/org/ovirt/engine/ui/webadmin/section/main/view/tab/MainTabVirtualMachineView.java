@@ -260,7 +260,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
 
         if (ReportInit.getInstance().isReportsEnabled()) {
             List<ActionButtonDefinition<VM>> resourceSubActions =
-                    ReportActionsHelper.getInstance().getResourceSubActions("VM", getMainModel()); //$NON-NLS-1$
+                    ReportActionsHelper.getInstance().getResourceSubActions("VM", getModelProvider()); //$NON-NLS-1$
             if (resourceSubActions != null && resourceSubActions.size() > 0) {
                 getTable().addActionButton(new WebAdminMenuBarButtonDefinition<VM>(constants.showReportVm(),
                         resourceSubActions));

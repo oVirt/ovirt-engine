@@ -128,7 +128,7 @@ public class MainTabStorageView extends AbstractMainTabWithDetailsTableView<stor
         });
         if (ReportInit.getInstance().isReportsEnabled()) {
             List<ActionButtonDefinition<storage_domains>> resourceSubActions =
-                    ReportActionsHelper.getInstance().getResourceSubActions("Storage", getMainModel()); //$NON-NLS-1$
+                    ReportActionsHelper.getInstance().getResourceSubActions("Storage", getModelProvider()); //$NON-NLS-1$
             if (resourceSubActions != null && resourceSubActions.size() > 0) {
                 getTable().addActionButton(new WebAdminMenuBarButtonDefinition<storage_domains>(constants.showReportStorage(),
                         resourceSubActions));

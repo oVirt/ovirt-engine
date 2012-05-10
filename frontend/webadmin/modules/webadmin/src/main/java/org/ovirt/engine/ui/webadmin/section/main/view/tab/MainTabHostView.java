@@ -275,7 +275,7 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
 
         if (ReportInit.getInstance().isReportsEnabled()) {
             List<ActionButtonDefinition<VDS>> resourceSubActions =
-                ReportActionsHelper.getInstance().getResourceSubActions("Host", getMainModel()); //$NON-NLS-1$
+                ReportActionsHelper.getInstance().getResourceSubActions("Host", getModelProvider()); //$NON-NLS-1$
             if (resourceSubActions != null && resourceSubActions.size() > 0) {
                 getTable().addActionButton(new WebAdminMenuBarButtonDefinition<VDS>(constants.showReportHost(), resourceSubActions));
             }

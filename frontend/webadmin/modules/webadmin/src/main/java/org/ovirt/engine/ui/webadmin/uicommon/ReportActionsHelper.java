@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.webadmin.uicommon;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
 import org.ovirt.engine.ui.uicommonweb.ReportInit;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -26,14 +27,14 @@ public class ReportActionsHelper {
     }
 
     public <T> List<ActionButtonDefinition<T>> getResourceSubActions(String resourceType,
-            final SearchableListModel model) {
+            MainModelProvider<?, ? extends SearchableListModel> modelProvider) {
         List<ActionButtonDefinition<T>> subActions = new LinkedList<ActionButtonDefinition<T>>();
 
         Resource resource = ReportInit.getInstance().getResource(resourceType);
         if (resource != null) {
             for (Category category : resource.getCatergoriesList()) {
                 List<ActionButtonDefinition<T>> categerySubActions =
-                        getCategorySubActions(category, model);
+                        getCategorySubActions(category, modelProvider);
                 subActions.add(new WebAdminMenuBarButtonDefinition<T>(category.getName(), categerySubActions, true) {
                     @Override
                     public boolean isVisible(List<T> selectedItems) {
@@ -54,7 +55,7 @@ public class ReportActionsHelper {
     }
 
     public <T> List<ActionButtonDefinition<T>> getCategorySubActions(final Category category,
-            final SearchableListModel model) {
+            final MainModelProvider<?, ? extends SearchableListModel> modelProvider) {
         List<ActionButtonDefinition<T>> subActions = new LinkedList<ActionButtonDefinition<T>>();
 
         for (final URI uri : category.getUriList()) {
@@ -68,7 +69,7 @@ public class ReportActionsHelper {
                 @Override
                 protected UICommand resolveCommand() {
 
-                    return model.addOpenReportCommand(uri.getId(), uri.isMultiple(), uri.getValue());
+                    return modelProvider.getModel().addOpenReportCommand(uri.getId(), uri.isMultiple(), uri.getValue());
                 }
             });
         }
