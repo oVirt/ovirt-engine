@@ -57,6 +57,13 @@ public class DiskMapper {
         if (disk.isSetBootable()) {
             diskImage.setBoot(disk.isBootable());
         }
+        if (disk.isSetShareable()) {
+            diskImage.setShareable(disk.isShareable());
+        }
+        if (disk.isSetAllowSnapshot()) {
+            diskImage.setAllowSnapshot(disk.isAllowSnapshot());
+        }
+
         if (disk.isSetPropagateErrors()) {
             diskImage.setPropagateErrors(disk.isPropagateErrors() ? PropagateErrors.On
                     : PropagateErrors.Off);
@@ -108,6 +115,8 @@ public class DiskMapper {
         }
         model.setSparse(VolumeType.Sparse == entity.getvolume_type());
         model.setBootable(entity.isBoot());
+        model.setAllowSnapshot(entity.isAllowSnapshot());
+        model.setShareable(entity.isShareable());
         model.setPropagateErrors(PropagateErrors.On == entity.getPropagateErrors());
         model.setWipeAfterDelete(entity.isWipeAfterDelete());
         if(entity.getstorage_ids()!=null && entity.getstorage_ids().size() > 0){

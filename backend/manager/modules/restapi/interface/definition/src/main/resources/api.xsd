@@ -2080,6 +2080,8 @@
           <xs:element name="format" type="xs:string" minOccurs="0"/>
           <xs:element name="sparse" type="xs:boolean" minOccurs="0"/>
           <xs:element name="bootable" type="xs:boolean" minOccurs="0"/>
+          <xs:element name="shareable" type="xs:boolean" minOccurs="0"/>
+          <xs:element name="allow_snapshot" type="xs:boolean" minOccurs="0"/>
           <xs:element name="wipe_after_delete" type="xs:boolean" minOccurs="0"/>
           <xs:element name="propagate_errors" type="xs:boolean" minOccurs="0"/>
           <xs:element name="statistics" type="Statistics" minOccurs="0" maxOccurs="1"/>

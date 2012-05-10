@@ -94,6 +94,8 @@ public class AbstractBackendDisksResourceTest<T extends AbstractBackendReadOnlyD
         expect(entity.getimageStatus()).andReturn(ImageStatus.OK).anyTimes();
         expect(entity.getvolume_type()).andReturn(VolumeType.Sparse).anyTimes();
         expect(entity.isBoot()).andReturn(false).anyTimes();
+        expect(entity.isAllowSnapshot()).andReturn(false).anyTimes();
+        expect(entity.isShareable()).andReturn(false).anyTimes();
         expect(entity.getPropagateErrors()).andReturn(PropagateErrors.On).anyTimes();
         return setUpStatisticalEntityExpectations(entity);
     }
@@ -112,6 +114,8 @@ public class AbstractBackendDisksResourceTest<T extends AbstractBackendReadOnlyD
         Disk model = new Disk();
         model.setSparse(true);
         model.setBootable(false);
+        model.setShareable(false);
+        model.setAllowSnapshot(false);
         model.setPropagateErrors(true);
         return model;
     }

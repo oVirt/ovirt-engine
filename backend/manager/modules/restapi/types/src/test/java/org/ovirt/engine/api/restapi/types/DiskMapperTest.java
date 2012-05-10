@@ -35,5 +35,7 @@ public class DiskMapperTest extends AbstractInvertibleMappingTest<Disk, DiskImag
         assertEquals("unexpected bootable", model.isBootable(), transform.isBootable());
         assertEquals("unexpected propagate errors", model.isPropagateErrors(), transform.isPropagateErrors());
         assertEquals("unexpected wipe after delete", model.isWipeAfterDelete(), transform.isWipeAfterDelete());
+        assertEquals("unexpected shareable", model.isShareable(), transform.isShareable());
+        assertEquals("unexpected allow snapshot", model.isAllowSnapshot(), transform.isAllowSnapshot());
     }
 }
