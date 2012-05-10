@@ -5,6 +5,7 @@ import java.util.Collections;
 
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
+import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
@@ -30,6 +31,9 @@ public class UserPortalExistingVmModelBehavior extends ExistingVmModelBehavior
     @Override
     public void DataCenter_SelectedItemChanged()
     {
+        storage_pool dataCenter = (storage_pool) getModel().getDataCenter().getSelectedItem();
+        getModel().setIsHostAvailable(dataCenter.getstorage_pool_type() != StorageType.LOCALFS);
+
         // Get clusters with permitted edit action
         AsyncDataProvider.GetClustersWithPermittedAction(new AsyncQuery(new Object[] { this, getModel() },
                 new INewAsyncCallback() {
@@ -46,7 +50,7 @@ public class UserPortalExistingVmModelBehavior extends ExistingVmModelBehavior
 
                     }
                 }, getModel().getHash()), EDIT_VM_PROPERTIES);
-        storage_pool dataCenter = (storage_pool) getModel().getDataCenter().getSelectedItem();
+
         if (dataCenter.getQuotaEnforcementType() != QuotaEnforcementTypeEnum.DISABLED) {
             getModel().getQuota().setIsAvailable(true);
         } else {

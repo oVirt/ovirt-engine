@@ -1,20 +1,8 @@
 package org.ovirt.engine.ui.common.widget.uicommon.popup;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.resources.client.CssResource;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.cellview.client.CellTable;
-import com.google.gwt.user.cellview.client.CellTable.Resources;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.RadioButton;
+import java.util.ArrayList;
+import java.util.Map.Entry;
+
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -48,8 +36,21 @@ import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 
-import java.util.ArrayList;
-import java.util.Map.Entry;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.editor.client.SimpleBeanEditorDriver;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.cellview.client.CellTable;
+import com.google.gwt.user.cellview.client.CellTable.Resources;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.RadioButton;
 
 public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidget<UnitVmModel> {
 
@@ -490,7 +491,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
         poolTypeEditor.setLabel(constants.poolTypeVmPopup());
         numOfVmsLabel.setText(constants.numOfVmsPoolPopup());
         assignedVmsEditor.setLabel(constants.totalPoolPopup());
-        numOfDesktopsEditor.setLabel("+");  //$NON-NLS-1$
+        numOfDesktopsEditor.setLabel("+"); //$NON-NLS-1$
         prestartedVmsEditor.setLabel(constants.prestartedPoolPopup());
 
         // Windows Sysprep Tab
@@ -553,6 +554,26 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
     }
 
     private void initListeners(final UnitVmModel object) {
+        // TODO should be handled by the core framework
+        object.getPropertyChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                String propName = ((PropertyChangedEventArgs) args).PropertyName;
+                if ("IsHostAvailable".equals(propName)) { //$NON-NLS-1$
+                    hostTab.setVisible(object.getIsHostAvailable());
+                } else if ("IsHostTabValid".equals(propName)) { //$NON-NLS-1$
+                    if (object.getIsHostTabValid()) {
+                        hostTab.markAsValid();
+                    } else {
+                        hostTab.markAsInvalid(null);
+                    }
+                }
+            }
+        });
+
+        // only for non local storage available
+        hostTab.setVisible(object.getIsHostAvailable());
+
         object.getStorageDomain().getItemsChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
@@ -583,7 +604,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
 
                 PropertyChangedEventArgs e = (PropertyChangedEventArgs) args;
 
-                if (e.PropertyName == "PrestartedVmsHint") {    //$NON-NLS-1$
+                if (e.PropertyName == "PrestartedVmsHint") { //$NON-NLS-1$
                     prestartedVmsHintLabel.setText(object.getPrestartedVmsHint());
                 }
             }
@@ -708,7 +729,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
         isStatelessEditor.setVisible(vm.getVmType().equals(VmType.Desktop));
         numOfMonitorsEditor.setVisible(vm.getVmType().equals(VmType.Desktop));
         allowConsoleReconnectEditor.setVisible(vm.getVmType().equals(VmType.Desktop));
-
 
         defaultHostEditor.setEnabled(false);
         specificHost.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
