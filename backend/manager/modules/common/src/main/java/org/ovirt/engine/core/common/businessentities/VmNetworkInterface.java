@@ -3,6 +3,10 @@ package org.ovirt.engine.core.common.businessentities;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import javax.validation.constraints.Pattern;
+
+import org.ovirt.engine.core.common.validation.group.CreateEntity;
+import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.NGuid;
 
 /**
@@ -11,6 +15,9 @@ import org.ovirt.engine.core.compat.NGuid;
  */
 public class VmNetworkInterface extends NetworkInterface<VmNetworkStatistics> {
     private static final long serialVersionUID = 7428150502868988886L;
+
+    protected static final String VALIDATION_MESSAGE_MAC_ADDRESS_INVALID = "VALIDATION.VM.NETWORK.MAC.ADDRESS.INVALID";
+
     private NGuid vmId;
     private String vmName;
     private NGuid vmTemplateId;
@@ -101,5 +108,13 @@ public class VmNetworkInterface extends NetworkInterface<VmNetworkStatistics> {
 
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    @Pattern(regexp = "(\\p{XDigit}{2}:){5}\\p{XDigit}{2}",
+            message = VmNetworkInterface.VALIDATION_MESSAGE_MAC_ADDRESS_INVALID, groups = { CreateEntity.class,
+                    UpdateEntity.class })
+    @Override
+    public String getMacAddress() {
+        return super.getMacAddress();
     }
 }

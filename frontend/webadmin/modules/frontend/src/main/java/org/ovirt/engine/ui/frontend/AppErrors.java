@@ -1452,6 +1452,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Quota name must be formed of \"a-z0-9A-Z\" and \"-_\"")
     String VALIDATION_QUOTA_NAME_INVALID();
 
+    @DefaultStringValue("MAC address must be in format \"HH:HH:HH:HH:HH:HH\" where H is a hexadecimal character (either a digit or A-F, case is insignificant).")
+    String VALIDATION_VM_NETWORK_MAC_ADDRESS_INVALID();
+
     @DefaultStringValue("Invalid ISO image path")
     String ERROR_CANNOT_FIND_ISO_IMAGE_PATH();
 

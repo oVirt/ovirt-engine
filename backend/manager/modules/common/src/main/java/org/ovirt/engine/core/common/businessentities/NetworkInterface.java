@@ -17,7 +17,6 @@ public abstract class NetworkInterface<T extends NetworkStatistics> extends IVdc
     @Size(min = 1, max = BusinessEntitiesDefinitions.NETWORK_NAME_SIZE)
     private String name;
 
-    @Size(max = BusinessEntitiesDefinitions.GENERAL_MAC_ADDR_SIZE)
     private String macAddress;
 
     @Size(max = BusinessEntitiesDefinitions.NETWORK_NAME_SIZE)

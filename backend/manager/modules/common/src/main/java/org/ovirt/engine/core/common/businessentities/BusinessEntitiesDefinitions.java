@@ -76,7 +76,6 @@ public final class BusinessEntitiesDefinitions {
     public static final int GENERAL_NETWORK_ADDR_SIZE = 50;
     public static final int GENERAL_SUBNET_SIZE = 20;
     public static final int GENERAL_GATEWAY_SIZE = 20;
-    public static final int GENERAL_MAC_ADDR_SIZE = 20;
     public static final int GENERAL_TIME_ZONE_SIZE = 40;
     public static final int GENERAL_DOMAIN_SIZE = 40;
     public static final int GENERAL_VERSION_SIZE = 40;
