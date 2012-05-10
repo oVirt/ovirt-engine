@@ -58,6 +58,7 @@ actions:
           vm.placement_policy.host.id|name: xs:string
           vm.origin: xs:string
           vm.os.kernel: xs:string
+          vm.payloads.payload--COLLECTION: {payload.type: 'xs:string', payload.file.name: 'xs:string', payload.file.content: 'xs:string'}
     urlparams: {}
     headers: {Content-Type: application/xml|json}
 - name: /api/vms|rel=add
@@ -92,6 +93,7 @@ actions:
           vm.origin: xs:string
           vm.os.kernel: xs:string
           vm.disks.clone: 'xs:boolean'
+          vm.payloads.payload--COLLECTION: {payload.type: 'xs:string', payload.file.name: 'xs:string', payload.file.content: 'xs:string'}
     urlparams: {}
     headers: {Content-Type: application/xml|json, Expect: 201-created}
 - name: /api/vms/{vm:id}/shutdown|rel=shutdown
