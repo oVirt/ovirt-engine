@@ -379,7 +379,6 @@ select fn_db_update_config_value('DBEngine','Postgres','general');
 select fn_db_update_config_value('DebugSearchLogging','false','general');
 select fn_db_update_config_value('DefaultTimeZone','(GMT) GMT Standard Time','general');
 select fn_db_update_config_value('DisableFenceAtStartupInSec','300','general');
-select fn_db_update_config_value('EmulatedMachine','pc-0.14','3.0');
 select fn_db_update_config_value('ENGINEEARLib','%JBOSS_HOME%/standalone/deployments/engine.ear','general');
 select fn_db_update_config_value('FenceAgentDefaultParams','ilo3:lanplus,power_wait=4','general');
 select fn_db_update_config_value('IsMultilevelAdministrationOn','true','general');
@@ -416,6 +415,7 @@ select fn_db_update_default_config_value('AdUserPassword','example.com:SamplePas
 -- Increase AsyncTaskZombieTaskLifeInMinutes to 50 hours if it's the default 5 hours.
 select fn_db_update_default_config_value('AsyncTaskZombieTaskLifeInMinutes','300','3000','general',false);
 select fn_db_update_default_config_value('DomainName','example.com','','general',false);
+select fn_db_update_default_config_value('EmulatedMachine','rhel6.0.0', 'pc-0.14','3.0',false);
 select fn_db_update_default_config_value('LDAPSecurityAuthentication','GSSAPI','default:GSSAPI','general',false);
 select fn_db_update_default_config_value('LDAPSecurityAuthentication','SIMPLE','default:SIMPLE','general',false);
 ------------------------------------------------------------------------------------
