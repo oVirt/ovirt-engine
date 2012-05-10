@@ -19,7 +19,6 @@ import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskResultEnum;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.Disk;
-import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -193,7 +192,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
                 vm.setInterfaces(DbFacade.getInstance().getVmNetworkInterfaceDAO().getAllForVm(vm.getId()));
             }
             for (Disk disk : vm.getDiskMap().values()) {
-                if (DiskStorageType.IMAGE == disk.getDiskStorageType()) {
+                if (disk.isAllowSnapshot()) {
                     DiskImage diskImage = (DiskImage)disk;
                     AllVmImages.addAll(ImagesHandler.getAllImageSnapshots(diskImage.getImageId(), diskImage.getit_guid()));
                 }

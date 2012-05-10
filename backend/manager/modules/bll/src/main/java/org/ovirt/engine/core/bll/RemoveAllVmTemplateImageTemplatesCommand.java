@@ -31,8 +31,8 @@ public class RemoveAllVmTemplateImageTemplatesCommand<T extends VmTemplateParame
     @SuppressWarnings("unchecked")
     @Override
     protected void executeCommand() {
-        List<DiskImage> imageTemplates = ImagesHandler.filterDiskBasedOnImages(DbFacade.getInstance().getDiskDao().getAllForVm(
-                getVmTemplateId()));
+        List<DiskImage> imageTemplates = ImagesHandler.filterImageDisks(DbFacade.getInstance().getDiskDao().getAllForVm(
+                getVmTemplateId()), false, false);
         boolean noImagesRemovedYet = true;
         for (DiskImage template : imageTemplates) {
             // get disk

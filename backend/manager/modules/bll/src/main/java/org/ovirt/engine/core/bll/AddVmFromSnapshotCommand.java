@@ -181,7 +181,10 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
 
     protected Collection<DiskImage> getDiskImagesFromConfiguration() {
         if (diskImagesFromConfiguration == null) {
-            diskImagesFromConfiguration = ImagesHandler.filterDiskBasedOnImages(vmFromConfiguration.getDiskMap().values());
+            diskImagesFromConfiguration =
+                    ImagesHandler.filterImageDisks(vmFromConfiguration.getDiskMap().values(),
+                            false,
+                            true);
         }
         return diskImagesFromConfiguration;
     }

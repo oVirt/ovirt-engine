@@ -271,7 +271,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
 
     private Collection<DiskImage> getDisksBasedOnImage() {
         if (disksImages == null) {
-            disksImages = ImagesHandler.filterDiskBasedOnImages(getVm().getDiskMap().values());
+            disksImages = ImagesHandler.filterImageDisks(getVm().getDiskMap().values(), true, false);
         }
         return disksImages;
     }

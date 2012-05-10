@@ -10,7 +10,6 @@ import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.common.businessentities.Disk;
-import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -254,7 +253,7 @@ public class VmHandler {
 
     public static void updateDisksForVm(VM vm, List<? extends Disk> diskList) {
         for (Disk disk : diskList) {
-            if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
+            if (disk.isAllowSnapshot()) {
                 DiskImage image = (DiskImage) disk;
                 if (image.getactive() != null && image.getactive()) {
                     vm.getDiskMap().put(image.getinternal_drive_mapping(), image);

@@ -71,7 +71,7 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
         // not checking storage domain, there is a check in
         // CheckTemplateInStorageDomain later
         VmHandler.updateDisksFromDb(getVm());
-        List<DiskImage> diskImages = ImagesHandler.filterDiskBasedOnImages(getVm().getDiskMap().values());
+        List<DiskImage> diskImages = ImagesHandler.filterImageDisks(getVm().getDiskMap().values(), false, false);
         retValue = retValue && ImagesHandler.PerformImagesChecks(getVm(),
                                 getReturnValue().getCanDoActionMessages(),
                                 getVm().getstorage_pool_id(),
@@ -127,9 +127,9 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
                 && checkIfDisksExist(diskImages);
         if (retValue && !VmTemplateHandler.BlankVmTemplateId.equals(getVm().getvmt_guid())) {
             List<DiskImage> imageList =
-                    ImagesHandler.filterDiskBasedOnImages(DbFacade.getInstance()
-                            .getDiskDao()
-                            .getAllForVm(getVm().getvmt_guid()));
+                    ImagesHandler.filterImageDisks(DbFacade.getInstance().getDiskDao().getAllForVm(getVm().getvmt_guid()),
+                            false,
+                            false);
             Map<Guid, DiskImage> templateImagesMap = new HashMap<Guid, DiskImage>();
             for (DiskImage image : imageList) {
                 templateImagesMap.put(image.getImageId(), image);

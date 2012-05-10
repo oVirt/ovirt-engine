@@ -156,7 +156,9 @@ public class SnapshotsManager {
         RefObject<String> tempRefObject = new RefObject<String>("");
         new OvfManager().ExportVm(tempRefObject,
                 vm,
-                new ArrayList<DiskImage>(ImagesHandler.filterDiskBasedOnImages(getDiskDao().getAllForVm(vm.getId()))));
+                new ArrayList<DiskImage>(ImagesHandler.filterImageDisks(getDiskDao().getAllForVm(vm.getId()),
+                        false,
+                        true)));
         return tempRefObject.argvalue;
     }
 

@@ -74,7 +74,10 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
             return false;
         }
 
-        imageTemplates = ImagesHandler.filterDiskBasedOnImages(DbFacade.getInstance().getDiskDao().getAllForVm(getVmTemplateId()));
+        imageTemplates =
+                ImagesHandler.filterImageDisks(DbFacade.getInstance().getDiskDao().getAllForVm(getVmTemplateId()),
+                        false,
+                        false);
         List<Guid> storageDomainsList = getParameters().getStorageDomainsList();
         Set<Guid> allDomainsList = getStorageDoaminsByDisks(imageTemplates, true);
 
@@ -126,7 +129,10 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
             if (getParameters().isRemoveTemplateFromDb()) {
                 problematicVmNames.add(vm.getvm_name());
             } else {
-                List<DiskImage> vmDIsks = ImagesHandler.filterDiskBasedOnImages(DbFacade.getInstance().getDiskDao().getAllForVm(vm.getId()));
+                List<DiskImage> vmDIsks =
+                        ImagesHandler.filterImageDisks(DbFacade.getInstance().getDiskDao().getAllForVm(vm.getId()),
+                                false,
+                                false);
                 Set<Guid> domainsIds = getStorageDoaminsByDisks(vmDIsks, false);
                 for (Guid domainId : domainsIds) {
                     if (!getParameters().getStorageDomainsList().contains(domainId)) {

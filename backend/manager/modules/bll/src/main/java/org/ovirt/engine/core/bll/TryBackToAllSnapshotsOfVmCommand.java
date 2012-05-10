@@ -33,7 +33,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
 
     private static final long serialVersionUID = 2636628918352438919L;
 
-    private SnapshotsManager snapshotsManager = new SnapshotsManager();
+    private final SnapshotsManager snapshotsManager = new SnapshotsManager();
 
     public TryBackToAllSnapshotsOfVmCommand(T parameters) {
         super(parameters);
@@ -154,7 +154,8 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
     @Override
     protected boolean canDoAction() {
         VmHandler.updateDisksFromDb(getVm());
-        Collection<DiskImage> diskImages = ImagesHandler.filterDiskBasedOnImages(getVm().getDiskMap().values());
+        Collection<DiskImage> diskImages =
+                ImagesHandler.filterImageDisks(getVm().getDiskMap().values(), false, true);
         DiskImage vmDisk = LinqUtils.first(diskImages);
         boolean result = true;
 
@@ -203,6 +204,6 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
 
     @Override
     protected Map<String, Guid> getExclusiveLocks() {
-        return Collections.singletonMap(LockingGroup.VM.name(), (Guid) getVmId());
+        return Collections.singletonMap(LockingGroup.VM.name(), getVmId());
     }
 }

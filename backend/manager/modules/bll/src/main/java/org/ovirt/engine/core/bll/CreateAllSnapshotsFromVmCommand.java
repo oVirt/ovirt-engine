@@ -54,7 +54,9 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
     }
 
     private List<DiskImage> getDisksList() {
-        return ImagesHandler.filterDiskBasedOnImages(DbFacade.getInstance().getDiskDao().getAllForVm(getVmId()));
+        return ImagesHandler.filterImageDisks(DbFacade.getInstance().getDiskDao().getAllForVm(getVmId()),
+                false,
+                true);
     }
 
     @Override
@@ -154,9 +156,9 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
                     runVdsCommand(VDSCommandType.Snapshot,
                             new SnapshotVDSCommandParameters(getVm().getrun_on_vds().getValue(),
                                     getVm().getId(),
-                                    ImagesHandler.filterDiskBasedOnImages(DbFacade.getInstance()
+                                    ImagesHandler.filterImageDisks(DbFacade.getInstance()
                                             .getDiskDao()
-                                            .getAllForVm(getVm().getId()))));
+                                            .getAllForVm(getVm().getId()), false, true)));
                     return null;
                 }
             });

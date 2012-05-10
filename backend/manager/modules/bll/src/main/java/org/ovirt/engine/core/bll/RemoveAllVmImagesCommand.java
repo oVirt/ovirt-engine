@@ -30,7 +30,10 @@ public class RemoveAllVmImagesCommand<T extends RemoveAllVmImagesParameters> ext
         java.util.ArrayList<Guid> mImagesToBeRemoved = new java.util.ArrayList<Guid>();
         List<DiskImage> images = getParameters().Images;
         if (images == null) {
-            images = ImagesHandler.filterDiskBasedOnImages(DbFacade.getInstance().getDiskDao().getAllForVm(getVmId()));
+            images =
+                    ImagesHandler.filterImageDisks(DbFacade.getInstance().getDiskDao().getAllForVm(getVmId()),
+                            true,
+                            false);
         }
         for (DiskImage image : images) {
             if (image.getactive() != null && image.getactive()) {

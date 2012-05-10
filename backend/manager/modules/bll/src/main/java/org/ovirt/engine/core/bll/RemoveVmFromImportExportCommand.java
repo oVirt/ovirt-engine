@@ -81,7 +81,8 @@ public class RemoveVmFromImportExportCommand<T extends RemoveVmFromImportExportP
     @Override
     protected void ExecuteVmCommand() {
         RemoveVmInSpm(getParameters().getStoragePoolId(), getVmId(), getParameters().getStorageDomainId());
-        List<DiskImage> images = ImagesHandler.filterDiskBasedOnImages(getVm().getDiskMap().values());
+        List<DiskImage> images =
+                ImagesHandler.filterImageDisks(getVm().getDiskMap().values(), true, false);
         for (DiskImage image : images) {
             image.setstorage_ids(new ArrayList<Guid>(Arrays.asList(getParameters().getStorageDomainId())));
             image.setstorage_pool_id(getParameters().getStoragePoolId());

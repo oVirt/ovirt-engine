@@ -497,7 +497,8 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
 
     @Override
     protected void MoveOrCopyAllImageGroups() {
-        MoveOrCopyAllImageGroups(getVm().getId(), ImagesHandler.filterDiskBasedOnImages(getVm().getDiskMap().values()));
+        MoveOrCopyAllImageGroups(getVm().getId(),
+                ImagesHandler.filterImageDisks(getVm().getDiskMap().values(), false, false));
     }
 
     @Override

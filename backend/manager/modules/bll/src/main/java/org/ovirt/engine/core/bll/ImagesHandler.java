@@ -489,9 +489,9 @@ public final class ImagesHandler {
 
     private static List<DiskImage> getImages(VM vm, Collection diskImageList) {
         if (diskImageList == null) {
-            return filterDiskBasedOnImages(DbFacade.getInstance().getDiskDao().getAllForVm(vm.getId()));
+            return filterImageDisks(DbFacade.getInstance().getDiskDao().getAllForVm(vm.getId()), true, false);
         } else {
-            return filterDiskBasedOnImages(diskImageList);
+            return filterImageDisks(diskImageList, true, false);
         }
     }
 
@@ -582,10 +582,21 @@ public final class ImagesHandler {
         }
     }
 
-    public static List<DiskImage> filterDiskBasedOnImages(Collection<Disk> listOfDisks) {
+    /**
+     * Filter image disks by attributes.
+     * @param listOfDisks - The list of disks to be filtered.
+     * @param filterNotShareableDisks - Indication whether to filter disks which are not shareable.
+     * @param filterAllowSnapshot - Indication whether to filter disks which are allowed to be snapshot.
+     * @return - List filtered of disk images.
+     */
+    public static List<DiskImage> filterImageDisks(Collection<Disk> listOfDisks,
+            boolean filterNotShareableDisks,
+            boolean filterAllowSnapshotDisks) {
         List<DiskImage> diskImages = new ArrayList<DiskImage>();
         for (Disk disk : listOfDisks) {
-            if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
+            if ((!filterNotShareableDisks || !disk.isShareable())
+                    && disk.getDiskStorageType() == DiskStorageType.IMAGE &&
+                    (!filterAllowSnapshotDisks || disk.isAllowSnapshot())) {
                 diskImages.add((DiskImage) disk);
             }
         }
