@@ -146,11 +146,14 @@ public class DataCenterNetworkPopupView extends AbstractModelBoundPopupView<Data
     }
 
     @Override
-    public void disableInputFields() {
-        nameEditor.setEnabled(false);
-        descriptionEditor.setEnabled(false);
-        vlanTagging.setEnabled(false);
-        vlanTag.setEnabled(false);
+    public void setInputFieldsEnabled(boolean enabled) {
+        nameEditor.setEnabled(enabled);
+        descriptionEditor.setEnabled(enabled);
+        isVmNetworkEditor.setEnabled(enabled);
+        vlanTagging.setEnabled(enabled);
+        vlanTag.setEnabled(enabled);
+        hasMtuEditor.setEnabled(enabled);
+        mtuEditor.setEnabled(enabled);
     }
 
     @Override

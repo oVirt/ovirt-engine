@@ -7,7 +7,6 @@ import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
-import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.common.SelectionTreeNodeModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterNetworkModel;
@@ -30,7 +29,7 @@ public class DataCenterNetworkPopupPresenterWidget extends AbstractNetworkPopupP
 
         void setMessageLabel(String label);
 
-        void disableInputFields();
+        void setInputFieldsEnabled(boolean enabled);
 
         void setDetachAllVisible(boolean visible);
 
@@ -44,7 +43,7 @@ public class DataCenterNetworkPopupPresenterWidget extends AbstractNetworkPopupP
     }
 
     @Override
-    public void init(DataCenterNetworkModel model) {
+    public void init(final DataCenterNetworkModel model) {
         // Let the parent do its work
         super.init(model);
 
@@ -78,9 +77,8 @@ public class DataCenterNetworkPopupPresenterWidget extends AbstractNetworkPopupP
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 EntityModel entity = (EntityModel) sender;
-                if (!(Boolean) entity.getEntity()) {
-                    getView().disableInputFields();
-                }
+                boolean inputFieldsEnabled = (Boolean) entity.getEntity();
+                getView().setInputFieldsEnabled(inputFieldsEnabled);
             }
         });
 
@@ -93,11 +91,10 @@ public class DataCenterNetworkPopupPresenterWidget extends AbstractNetworkPopupP
             }
         });
 
-        final UICommand detachAllCommand = model.getDetachAllCommand();
         registerHandler(getView().getDetachAll().addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                detachAllCommand.Execute();
+                model.getDetachAllCommand().Execute();
             }
         }));
     }
