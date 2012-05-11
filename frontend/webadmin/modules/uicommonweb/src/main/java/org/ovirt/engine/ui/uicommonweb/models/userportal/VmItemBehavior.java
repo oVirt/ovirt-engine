@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.userportal;
 
+import java.util.ArrayList;
+
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.ChangeDiskCommandParameters;
 import org.ovirt.engine.core.common.action.HibernateVmParameters;
@@ -11,7 +13,6 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmPoolType;
 import org.ovirt.engine.core.common.businessentities.VmType;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
@@ -28,13 +29,9 @@ import org.ovirt.engine.ui.uicommonweb.models.configure.ChangeCDModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.RdpConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.SpiceConsoleModel;
-import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
-import java.util.ArrayList;
-
-@SuppressWarnings("unused")
 public class VmItemBehavior extends ItemBehavior
 {
     public VmItemBehavior(UserPortalItemModel item)
@@ -77,10 +74,6 @@ public class VmItemBehavior extends ItemBehavior
         else if (command == getItem().getShutdownCommand())
         {
             Shutdown();
-        }
-        else if (command == getItem().getRetrieveCdImagesCommand())
-        {
-            RetrieveCdImages();
         }
         else if (command == getItem().getReturnVmCommand())
         {
@@ -125,64 +118,6 @@ public class VmItemBehavior extends ItemBehavior
 
                     }
                 }, null);
-    }
-
-    private void RetrieveCdImages()
-    {
-        VM entity = (VM) getItem().getEntity();
-
-        getItem().getCdImages().clear();
-
-        AsyncQuery _asyncQuery0 = new AsyncQuery();
-        _asyncQuery0.setModel(this);
-
-        _asyncQuery0.asyncCallback = new INewAsyncCallback() {
-            @Override
-            public void OnSuccess(Object model0, Object result0)
-            {
-                if (result0 != null)
-                {
-                    storage_domains isoDomain = (storage_domains) result0;
-                    VmItemBehavior thisVmItemBehavior = (VmItemBehavior) model0;
-
-                    AsyncQuery _asyncQuery = new AsyncQuery();
-                    _asyncQuery.setModel(thisVmItemBehavior);
-
-                    _asyncQuery.asyncCallback = new INewAsyncCallback() {
-                        @Override
-                        public void OnSuccess(Object model, Object result)
-                        {
-                            VmItemBehavior vmItemBehavior = (VmItemBehavior) model;
-                            ArrayList<String> list = (ArrayList<String>) result;
-                            if (list.size() > 0)
-                            {
-                                list.add(ConsoleModel.EjectLabel);
-                                for (String iso : list)
-                                {
-                                    ChangeCDModel tempVar = new ChangeCDModel();
-                                    tempVar.setTitle(iso);
-                                    ChangeCDModel changeCDModel = tempVar;
-                                    changeCDModel.getExecutedEvent().addListener(getItem());
-                                    UserPortalItemModel userPortalItemModel = vmItemBehavior.getItem();
-                                    userPortalItemModel.getCdImages().add(changeCDModel);
-                                }
-                            }
-                            else
-                            {
-                                UserPortalItemModel userPortalItemModel = vmItemBehavior.getItem();
-                                ChangeCDModel tempVar2 = new ChangeCDModel();
-                                tempVar2.setTitle(ConstantsManager.getInstance().getConstants().noCDsTitle());
-                                userPortalItemModel.getCdImages().add(tempVar2);
-                            }
-                        }
-                    };
-                    AsyncDataProvider.GetIrsImageList(_asyncQuery, isoDomain.getId(), false);
-
-                }
-            }
-        };
-
-        AsyncDataProvider.GetIsoDomainByDataCenterId(_asyncQuery0, entity.getstorage_pool_id());
     }
 
     private void Shutdown()

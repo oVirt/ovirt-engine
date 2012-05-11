@@ -1,5 +1,9 @@
 package org.ovirt.engine.ui.uicommonweb.models.userportal;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
@@ -14,10 +18,6 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.ChangeCDModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 @SuppressWarnings("unused")
 public class UserPortalItemModel extends EntityModel
@@ -77,20 +77,6 @@ public class UserPortalItemModel extends EntityModel
         getCommands().remove(shutdownCommand);
         getCommands().add(value);
         shutdownCommand = value;
-    }
-
-    private UICommand retrieveCdImagesCommand;
-
-    public UICommand getRetrieveCdImagesCommand()
-    {
-        return retrieveCdImagesCommand;
-    }
-
-    private void setRetrieveCdImagesCommand(UICommand value)
-    {
-        getCommands().remove(retrieveCdImagesCommand);
-        getCommands().add(value);
-        retrieveCdImagesCommand = value;
     }
 
     private UICommand takeVmCommand;
@@ -340,7 +326,6 @@ public class UserPortalItemModel extends EntityModel
         setPauseCommand(new UICommand("Pause", this)); //$NON-NLS-1$
         setStopCommand(new UICommand("Stop", this)); //$NON-NLS-1$
         setShutdownCommand(new UICommand("Shutdown", this)); //$NON-NLS-1$
-        setRetrieveCdImagesCommand(new UICommand("RetrieveCdImages", this)); //$NON-NLS-1$
         setTakeVmCommand(new UICommand("TakeVm", this)); //$NON-NLS-1$
         setReturnVmCommand(new UICommand("ReturnVm", this)); //$NON-NLS-1$
 

@@ -18,7 +18,6 @@ import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 
-@SuppressWarnings("unused")
 public class UserPortalExistingVmModelBehavior extends ExistingVmModelBehavior
 {
     private static final ActionGroup EDIT_VM_PROPERTIES = ActionGroup.EDIT_VM_PROPERTIES;
@@ -56,6 +55,11 @@ public class UserPortalExistingVmModelBehavior extends ExistingVmModelBehavior
         } else {
             getModel().getQuota().setIsAvailable(false);
         }
+    }
+
+    @Override
+    protected void UpdateCdImage() {
+        updateUserCdImage(getVm().getstorage_pool_id());
     }
 
     private void InitClusters(ArrayList<VDSGroup> clusters, UnitVmModel model)

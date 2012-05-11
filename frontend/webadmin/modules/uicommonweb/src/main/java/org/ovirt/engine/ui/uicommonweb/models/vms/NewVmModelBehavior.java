@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
+import java.util.ArrayList;
+
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
@@ -20,9 +22,6 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 
-import java.util.ArrayList;
-
-@SuppressWarnings("unused")
 public class NewVmModelBehavior extends VmModelBehaviorBase
 {
     @Override
@@ -300,7 +299,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase
 
     public void InitCdImage()
     {
-        UpdateCdImage();
+        updateUserCdImage(((storage_pool) getModel().getDataCenter().getSelectedItem()).getId());
     }
 
     @Override

@@ -18,7 +18,6 @@ import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-@SuppressWarnings("unused")
 public class TemplateVmModelBehavior extends VmModelBehaviorBase
 {
     private final VmTemplate template;

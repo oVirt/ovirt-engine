@@ -19,6 +19,7 @@ import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
+import org.ovirt.engine.core.common.businessentities.RepoFileMetaData;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -32,6 +33,7 @@ import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
+import org.ovirt.engine.core.common.queries.GetAllImagesListByStoragePoolIdParameters;
 import org.ovirt.engine.core.common.queries.GetAllVmPoolsAttachedToUserParameters;
 import org.ovirt.engine.core.common.queries.GetUserVmsByUserIdAndGroupsParameters;
 import org.ovirt.engine.core.common.queries.GetVmByVmIdParameters;
@@ -84,7 +86,6 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
-@SuppressWarnings("unused")
 public class UserPortalListModel extends IUserPortalListModel implements IVmPoolResolutionService
 {
 
@@ -757,81 +758,9 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         model.getRunAndPause().setEntity(false);
         model.setHwAcceleration(true);
 
-        AsyncQuery _asyncQuery0 = new AsyncQuery();
-        _asyncQuery0.setModel(this);
+        fillIsoList(vm);
 
-        _asyncQuery0.asyncCallback = new INewAsyncCallback() {
-            @Override
-            public void OnSuccess(Object model0, Object result0)
-            {
-                if (result0 != null)
-                {
-                    storage_domains isoDomain = (storage_domains) result0;
-                    UserPortalListModel thisUserPortalListModel = (UserPortalListModel) model0;
-
-                    AsyncQuery _asyncQuery01 = new AsyncQuery();
-                    _asyncQuery01.setModel(thisUserPortalListModel);
-
-                    _asyncQuery01.asyncCallback = new INewAsyncCallback() {
-                        @Override
-                        public void OnSuccess(Object model1, Object result)
-                        {
-                            UserPortalListModel userPortalListModel = (UserPortalListModel) model1;
-                            RunOnceModel runOnceModel = userPortalListModel.getRunOnceModel();
-                            ArrayList<String> images = (ArrayList<String>) result;
-                            runOnceModel.getIsoImage().setItems(images);
-
-                            if (runOnceModel.getIsoImage().getIsChangable()
-                                    && runOnceModel.getIsoImage().getSelectedItem() == null)
-                            {
-                                runOnceModel.getIsoImage().setSelectedItem(Linq.FirstOrDefault(images));
-                            }
-                        }
-                    };
-                    AsyncDataProvider.GetIrsImageList(_asyncQuery01, isoDomain.getId(), false);
-
-                    AsyncQuery _asyncQuery02 = new AsyncQuery();
-                    _asyncQuery02.setModel(thisUserPortalListModel);
-
-                    _asyncQuery02.asyncCallback = new INewAsyncCallback() {
-                        @Override
-                        public void OnSuccess(Object model2, Object result)
-                        {
-                            UserPortalListModel userPortalListModel = (UserPortalListModel) model2;
-                            UserPortalItemModel userPortalItemModel =
-                                    (UserPortalItemModel) userPortalListModel.getSelectedItem();
-                            RunOnceModel runOnceModel = userPortalListModel.getRunOnceModel();
-                            VM selectedVM = (VM) userPortalItemModel.getEntity();
-                            ArrayList<String> images = (ArrayList<String>) result;
-
-                            if (DataProvider.IsWindowsOsType(selectedVM.getvm_os()))
-                            {
-                                // Add a pseudo floppy disk image used for Windows' sysprep.
-                                if (!selectedVM.getis_initialized())
-                                {
-                                    images.add(0, "[sysprep]"); //$NON-NLS-1$
-                                    runOnceModel.getAttachFloppy().setEntity(true);
-                                }
-                                else
-                                {
-                                    images.add("[sysprep]"); //$NON-NLS-1$
-                                }
-                            }
-                            runOnceModel.getFloppyImage().setItems(images);
-
-                            if (runOnceModel.getFloppyImage().getIsChangable()
-                                    && runOnceModel.getFloppyImage().getSelectedItem() == null)
-                            {
-                                runOnceModel.getFloppyImage().setSelectedItem(Linq.FirstOrDefault(images));
-                            }
-                        }
-                    };
-                    AsyncDataProvider.GetFloppyImageList(_asyncQuery02, isoDomain.getId(), false);
-                }
-
-            }
-        };
-        AsyncDataProvider.GetIsoDomainByDataCenterId(_asyncQuery0, vm.getstorage_pool_id());
+        fillFloppyImages(vm);
 
         // passing Kernel parameters
         model.getKernel_parameters().setEntity(vm.getkernel_params());
@@ -925,6 +854,84 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         model.getCommands().add(tempVar4);
     }
 
+    protected void fillIsoList(VM vm) {
+        AsyncQuery getIsoImagesQuery = new AsyncQuery();
+        getIsoImagesQuery.setModel(this);
+
+        getIsoImagesQuery.asyncCallback = new INewAsyncCallback() {
+            @Override
+            public void OnSuccess(Object model1, Object result)
+            {
+                UserPortalListModel userPortalListModel = (UserPortalListModel) model1;
+                RunOnceModel runOnceModel = userPortalListModel.getRunOnceModel();
+                List<String> images =
+                        convertReposToStrings((List<RepoFileMetaData>) ((VdcQueryReturnValue) result).getReturnValue());
+                runOnceModel.getIsoImage().setItems(images);
+
+                if (runOnceModel.getIsoImage().getIsChangable()
+                        && runOnceModel.getIsoImage().getSelectedItem() == null)
+                {
+                    runOnceModel.getIsoImage().setSelectedItem(Linq.FirstOrDefault(images));
+                }
+            }
+        };
+
+        Frontend.RunQuery(VdcQueryType.GetAllIsoImagesListByStoragePoolId,
+                new GetAllImagesListByStoragePoolIdParameters(vm.getstorage_pool_id()),
+                getIsoImagesQuery);
+    }
+
+    protected void fillFloppyImages(VM vm) {
+        AsyncQuery getFloppyQuery = new AsyncQuery();
+        getFloppyQuery.setModel(this);
+
+        getFloppyQuery.asyncCallback = new INewAsyncCallback() {
+            @Override
+            public void OnSuccess(Object model2, Object result)
+            {
+                UserPortalListModel userPortalListModel = (UserPortalListModel) model2;
+                UserPortalItemModel userPortalItemModel =
+                        (UserPortalItemModel) userPortalListModel.getSelectedItem();
+                RunOnceModel runOnceModel = userPortalListModel.getRunOnceModel();
+                VM selectedVM = (VM) userPortalItemModel.getEntity();
+                List<String> images =
+                        convertReposToStrings((List<RepoFileMetaData>) ((VdcQueryReturnValue) result).getReturnValue());
+
+                if (DataProvider.IsWindowsOsType(selectedVM.getvm_os()))
+                {
+                    // Add a pseudo floppy disk image used for Windows' sysprep.
+                    if (!selectedVM.getis_initialized())
+                    {
+                        images.add(0, "[sysprep]"); //$NON-NLS-1$
+                        runOnceModel.getAttachFloppy().setEntity(true);
+                    }
+                    else
+                    {
+                        images.add("[sysprep]"); //$NON-NLS-1$
+                    }
+                }
+                runOnceModel.getFloppyImage().setItems(images);
+
+                if (runOnceModel.getFloppyImage().getIsChangable()
+                        && runOnceModel.getFloppyImage().getSelectedItem() == null)
+                {
+                    runOnceModel.getFloppyImage().setSelectedItem(Linq.FirstOrDefault(images));
+                }
+            }
+        };
+        Frontend.RunQuery(VdcQueryType.GetAllFloppyImagesListByStoragePoolId,
+                new GetAllImagesListByStoragePoolIdParameters(vm.getstorage_pool_id()),
+                getFloppyQuery);
+    }
+
+    private List<String> convertReposToStrings(List<RepoFileMetaData> repoList) {
+        List<String> reposAsStrings = new ArrayList<String>();
+        for (RepoFileMetaData repoFileMetaData : repoList) {
+            reposAsStrings.add(repoFileMetaData.getRepoFileName());
+        }
+        return reposAsStrings;
+    }
+
     private void OnRunOnce()
     {
         UserPortalItemModel selectedItem = (UserPortalItemModel) getSelectedItem();
@@ -1009,7 +1016,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
 
         getRemoveCommand().setIsExecutionAllowed(selectedItem != null
                 && !selectedItem.getIsPool()
-                && VdcActionUtils.CanExecute(new ArrayList<VM>(Arrays.asList(new VM[] {(VM) selectedItem.getEntity()})),
+                && VdcActionUtils.CanExecute(new ArrayList<VM>(Arrays.asList(new VM[] { (VM) selectedItem.getEntity() })),
                         VM.class,
                         VdcActionType.RemoveVm));
 
@@ -1162,50 +1169,35 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         model.setTitle(ConstantsManager.getInstance().getConstants().changeCDTitle());
         model.setHashName("change_cd"); //$NON-NLS-1$
 
-        AsyncQuery _asyncQuery0 = new AsyncQuery();
-        _asyncQuery0.setModel(this);
+        ArrayList<String> defaultImages =
+                new ArrayList<String>(Arrays.asList(new String[] { "No CDs" })); //$NON-NLS-1$
+        getAttachCdModel().getIsoImage().setItems(defaultImages);
+        getAttachCdModel().getIsoImage().setSelectedItem(Linq.FirstOrDefault(defaultImages));
 
-        _asyncQuery0.asyncCallback = new INewAsyncCallback() {
+        AsyncQuery getImagesQuery = new AsyncQuery();
+        getImagesQuery.setModel(this);
+
+        getImagesQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object model0, Object result0)
+            public void OnSuccess(Object model1, Object result)
             {
-                UserPortalListModel userPortalListModel0 = (UserPortalListModel) model0;
-                ArrayList<String> images0 =
-                        new ArrayList<String>(Arrays.asList(new String[] { "No CDs" })); //$NON-NLS-1$
-                userPortalListModel0.getAttachCdModel().getIsoImage().setItems(images0);
-                userPortalListModel0.getAttachCdModel().getIsoImage().setSelectedItem(Linq.FirstOrDefault(images0));
-
-                if (result0 != null)
+                UserPortalListModel userPortalListModel = (UserPortalListModel) model1;
+                AttachCdModel _attachCdModel = userPortalListModel.getAttachCdModel();
+                ArrayList<String> images = (ArrayList<String>) result;
+                if (images.size() > 0)
                 {
-                    storage_domains isoDomain = (storage_domains) result0;
-
-                    AsyncQuery _asyncQuery = new AsyncQuery();
-                    _asyncQuery.setModel(userPortalListModel0);
-
-                    _asyncQuery.asyncCallback = new INewAsyncCallback() {
-                        @Override
-                        public void OnSuccess(Object model1, Object result)
-                        {
-                            UserPortalListModel userPortalListModel = (UserPortalListModel) model1;
-                            AttachCdModel _attachCdModel = userPortalListModel.getAttachCdModel();
-                            ArrayList<String> images = (ArrayList<String>) result;
-                            if (images.size() > 0)
-                            {
-                                images.add(0, ConsoleModel.EjectLabel);
-                                _attachCdModel.getIsoImage().setItems(images);
-                            }
-                            if (_attachCdModel.getIsoImage().getIsChangable())
-                            {
-                                _attachCdModel.getIsoImage().setSelectedItem(Linq.FirstOrDefault(images));
-                            }
-                        }
-                    };
-                    AsyncDataProvider.GetIrsImageList(_asyncQuery, isoDomain.getId(), false);
+                    images.add(0, ConsoleModel.EjectLabel);
+                    _attachCdModel.getIsoImage().setItems(images);
+                }
+                if (_attachCdModel.getIsoImage().getIsChangable())
+                {
+                    _attachCdModel.getIsoImage().setSelectedItem(Linq.FirstOrDefault(images));
                 }
             }
         };
-
-        AsyncDataProvider.GetIsoDomainByDataCenterId(_asyncQuery0, vm.getstorage_pool_id());
+        Frontend.RunQuery(VdcQueryType.GetAllIsoImagesListByStoragePoolId,
+                new GetAllImagesListByStoragePoolIdParameters(vm.getstorage_pool_id()),
+                getImagesQuery);
 
         UICommand tempVar = new UICommand("OnChangeCD", this); //$NON-NLS-1$
         tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());

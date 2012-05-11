@@ -10,12 +10,14 @@ import java.util.Map;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Quota;
+import org.ovirt.engine.core.common.businessentities.RepoFileMetaData;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.queries.GetAllImagesListByStoragePoolIdParameters;
 import org.ovirt.engine.core.common.queries.GetAllRelevantQuotasForVdsGroupParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -35,7 +37,6 @@ import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.models.storage.DisksAllocationModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
-@SuppressWarnings("unused")
 public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
     private TModel privateModel;
@@ -82,6 +83,39 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         return true;
     }
 
+    protected void updateUserCdImage(Guid storagePoolId) {
+        Frontend.RunQuery(VdcQueryType.GetAllIsoImagesListByStoragePoolId,
+                new GetAllImagesListByStoragePoolIdParameters(storagePoolId),
+                new AsyncQuery(getModel(),
+                        new INewAsyncCallback() {
+                            @Override
+                            public void OnSuccess(Object target, Object returnValue) {
+                                UnitVmModel model = (UnitVmModel) target;
+                                List<String> images =
+                                        convertReposToStrings((List<RepoFileMetaData>) ((VdcQueryReturnValue) returnValue).getReturnValue());
+                                setImagesToModel(model, images);
+
+                            }
+
+                        },
+                        getModel().getHash()));
+    }
+
+    protected void setImagesToModel(UnitVmModel model, List<String> images) {
+        String oldCdImage = (String) model.getCdImage().getSelectedItem();
+        model.getCdImage().setItems(images);
+        model.getCdImage().setSelectedItem((oldCdImage != null) ? oldCdImage
+                : Linq.FirstOrDefault(images));
+    }
+
+    private List<String> convertReposToStrings(List<RepoFileMetaData> repoList) {
+        List<String> reposAsStrings = new ArrayList<String>();
+        for (RepoFileMetaData repoFileMetaData : repoList) {
+            reposAsStrings.add(repoFileMetaData.getRepoFileName());
+        }
+        return reposAsStrings;
+    }
+
     protected void UpdateCdImage()
     {
         storage_pool dataCenter = (storage_pool) getModel().getDataCenter().getSelectedItem();
@@ -119,10 +153,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
                         UnitVmModel model = (UnitVmModel) target;
                         ArrayList<String> images = (ArrayList<String>) returnValue;
-                        String oldCdImage = (String) model.getCdImage().getSelectedItem();
-                        model.getCdImage().setItems(images);
-                        model.getCdImage().setSelectedItem((oldCdImage != null) ? oldCdImage
-                                : Linq.FirstOrDefault(images));
+                        setImagesToModel(model, images);
 
                     }
                 }, getModel().getHash()),
@@ -352,7 +383,8 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                             {
                                 if (host.getId().equals(vds.getId()))
                                 {
-                                    model.getDefaultHost().setItems(new ArrayList<VDS>(Arrays.asList(new VDS[] { vds })));
+                                    model.getDefaultHost()
+                                            .setItems(new ArrayList<VDS>(Arrays.asList(new VDS[] { vds })));
                                     model.getDefaultHost().setSelectedItem(vds);
                                     model.getDefaultHost().setIsChangable(false);
                                     model.getDefaultHost().setInfo("Cannot choose other Host in tree context"); //$NON-NLS-1$
