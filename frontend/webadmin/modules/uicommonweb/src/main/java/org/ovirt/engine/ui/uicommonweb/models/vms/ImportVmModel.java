@@ -380,9 +380,10 @@ public class ImportVmModel extends ListWithDetailsModel implements IIsObjectInSe
     }
 
     protected void postInitStorageDomains() {
-        if (templateGuidUniqueStorageDomainDic.size() != uniqueDomains) {
-            return;
-        }
+        //        TODO: check why we have this condition, because of it we can't import more than once VM
+        //        if (templateGuidUniqueStorageDomainDic.size() != uniqueDomains) {
+        //            return;
+        //        }
 
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.Model = this;
