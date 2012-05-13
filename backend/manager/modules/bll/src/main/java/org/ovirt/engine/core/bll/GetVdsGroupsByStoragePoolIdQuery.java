@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.common.queries.*;
-import org.ovirt.engine.core.dal.dbbroker.*;
+import org.ovirt.engine.core.common.queries.StoragePoolQueryParametersBase;
 
 public class GetVdsGroupsByStoragePoolIdQuery<P extends StoragePoolQueryParametersBase>
         extends QueriesCommandBase<P> {
@@ -12,6 +11,6 @@ public class GetVdsGroupsByStoragePoolIdQuery<P extends StoragePoolQueryParamete
     @Override
     protected void executeQueryCommand() {
         getQueryReturnValue().setReturnValue(
-                DbFacade.getInstance().getVdsGroupDAO().getAllForStoragePool(getParameters().getStoragePoolId()));
+                getDbFacade().getVdsGroupDAO().getAllForStoragePool(getParameters().getStoragePoolId()));
     }
 }
