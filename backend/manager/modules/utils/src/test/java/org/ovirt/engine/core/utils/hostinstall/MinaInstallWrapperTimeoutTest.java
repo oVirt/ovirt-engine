@@ -1,15 +1,16 @@
 package org.ovirt.engine.core.utils.hostinstall;
 
 import static junit.framework.Assert.assertFalse;
-import static org.junit.Assert.fail;import static org.mockito.Matchers.anyInt;
+import static org.junit.Assert.fail;
+import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.when;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.sshd.ClientSession;
 import org.apache.sshd.SshClient;
 import org.apache.sshd.client.future.AuthFuture;
@@ -23,28 +24,24 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Config.class})
+@PrepareForTest({ Config.class })
 public class MinaInstallWrapperTimeoutTest {
-
-    private static Log log = LogFactory.getLog(MinaInstallWrapperTimeoutTest.class);
-
     public MinaInstallWrapperTimeoutTest() {
         mockStatic(Config.class);
     }
 
-
     @Before
     public void setupConfig() {
-        when(Config.<Integer>GetValue(ConfigValues.SSHInactivityTimoutSeconds)).thenReturn(0);
+        when(Config.<Integer> GetValue(ConfigValues.SSHInactivityTimoutSeconds)).thenReturn(0);
     }
 
-
+    @SuppressWarnings("null")
     @Test
     public void connectTimeout() throws Exception {
         SshClient client = null;
         try {
             client = spy(SshClient.setUpDefaultClient());
-         } catch (Throwable t) {
+        } catch (Throwable t) {
             fail("Unable to create SSH client. Please check mina jars");
         }
         ConnectFuture future = mock(ConnectFuture.class);
