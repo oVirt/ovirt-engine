@@ -23,10 +23,7 @@ import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
  * found in {@link org.ovirt.engine.core.dal.dbbroker.DbFacade}.
  *
  */
-@SuppressWarnings("synthetic-access")
 public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroupDAO {
-    private static final ParameterizedRowMapper<VDSGroup> vdsGroupRowMapper = new VdsGroupRowMapper();
-
     @Override
     public VDSGroup get(Guid id) {
         return get(id, null, false);
@@ -37,14 +34,14 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("vds_group_id", id).addValue("user_id", userID).addValue("is_filtered", isFiltered);
 
-        return getCallsHandler().executeRead("GetVdsGroupByVdsGroupId", vdsGroupRowMapper, parameterSource);
+        return getCallsHandler().executeRead("GetVdsGroupByVdsGroupId", VdsGroupRowMapper.instance, parameterSource);
     }
 
     @Override
     public VDSGroup getWithRunningVms(Guid id) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("vds_group_id", id);
-        return getCallsHandler().executeRead("GetVdsGroupWithRunningVms", vdsGroupRowMapper, parameterSource);
+        return getCallsHandler().executeRead("GetVdsGroupWithRunningVms", VdsGroupRowMapper.instance, parameterSource);
     }
 
     @Override
@@ -53,7 +50,9 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
                 .addValue("vds_group_name", name);
 
         return (VDSGroup) DbFacadeUtils.asSingleResult(
-                getCallsHandler().executeReadList("GetVdsGroupByVdsGroupName", vdsGroupRowMapper, parameterSource));
+                getCallsHandler().executeReadList("GetVdsGroupByVdsGroupName",
+                        VdsGroupRowMapper.instance,
+                        parameterSource));
     }
 
     @Override
@@ -61,23 +60,26 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("storage_pool_id", id);
 
-        return getCallsHandler().executeReadList("GetVdsGroupsByStoragePoolId", vdsGroupRowMapper, parameterSource);
+        return getCallsHandler().executeReadList("GetVdsGroupsByStoragePoolId",
+                VdsGroupRowMapper.instance,
+                parameterSource);
     }
 
     @Override
     public List<VDSGroup> getAllWithQuery(String query) {
-        return new SimpleJdbcTemplate(jdbcTemplate).query(query, vdsGroupRowMapper);
+        return new SimpleJdbcTemplate(jdbcTemplate).query(query, VdsGroupRowMapper.instance);
     }
 
     @Override
     public List<VDSGroup> getAll() {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource();
-        return getCallsHandler().executeReadList("GetAllFromVdsGroups", vdsGroupRowMapper, parameterSource);
+        return getCallsHandler().executeReadList("GetAllFromVdsGroups", VdsGroupRowMapper.instance, parameterSource);
     }
 
     @Override
     public void save(VDSGroup group) {
-        Map<String, Object> dbResults = getCallsHandler().executeModification("InsertVdsGroups", getVdsGroupParamSource(group));
+        Map<String, Object> dbResults =
+                getCallsHandler().executeModification("InsertVdsGroups", getVdsGroupParamSource(group));
 
         group.setvds_group_id(new Guid(dbResults.get("vds_group_id").toString()));
     }
@@ -101,36 +103,38 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
                 .addValue("user_id", userId).addValue("action_group_id", actionGroup.getId());
 
         return getCallsHandler().executeReadList("fn_perms_get_vds_groups_with_permitted_action",
-                vdsGroupRowMapper,
+                VdsGroupRowMapper.instance,
                 parameterSource);
     }
 
     private MapSqlParameterSource getVdsGroupParamSource(VDSGroup group) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-        .addValue("description", group.getdescription())
-        .addValue("name", group.getname())
-        .addValue("vds_group_id", group.getId())
-        .addValue("cpu_name", group.getcpu_name())
-        .addValue("selection_algorithm", group.getselection_algorithm())
-        .addValue("high_utilization", group.gethigh_utilization())
-        .addValue("low_utilization", group.getlow_utilization())
-        .addValue("cpu_over_commit_duration_minutes",
-                group.getcpu_over_commit_duration_minutes())
-        .addValue("hypervisor_type", group.gethypervisor_type())
-        .addValue("storage_pool_id", group.getstorage_pool_id())
-        .addValue("max_vds_memory_over_commit",
-                group.getmax_vds_memory_over_commit())
-        .addValue("transparent_hugepages",
-                group.getTransparentHugepages())
-        .addValue("compatibility_version",
-                group.getcompatibility_version())
-        .addValue("migrate_on_error", group.getMigrateOnError())
-        .addValue("virt_service", group.supportsVirtService())
-        .addValue("gluster_service", group.supportsGlusterService());
+                .addValue("description", group.getdescription())
+                .addValue("name", group.getname())
+                .addValue("vds_group_id", group.getId())
+                .addValue("cpu_name", group.getcpu_name())
+                .addValue("selection_algorithm", group.getselection_algorithm())
+                .addValue("high_utilization", group.gethigh_utilization())
+                .addValue("low_utilization", group.getlow_utilization())
+                .addValue("cpu_over_commit_duration_minutes",
+                        group.getcpu_over_commit_duration_minutes())
+                .addValue("hypervisor_type", group.gethypervisor_type())
+                .addValue("storage_pool_id", group.getstorage_pool_id())
+                .addValue("max_vds_memory_over_commit",
+                        group.getmax_vds_memory_over_commit())
+                .addValue("transparent_hugepages",
+                        group.getTransparentHugepages())
+                .addValue("compatibility_version",
+                        group.getcompatibility_version())
+                .addValue("migrate_on_error", group.getMigrateOnError())
+                .addValue("virt_service", group.supportsVirtService())
+                .addValue("gluster_service", group.supportsGlusterService());
         return parameterSource;
     }
 
     private final static class VdsGroupRowMapper implements ParameterizedRowMapper<VDSGroup> {
+        public static final ParameterizedRowMapper<VDSGroup> instance = new VdsGroupRowMapper();
+
         @Override
         public VDSGroup mapRow(ResultSet rs, int rowNum)
                 throws SQLException {
@@ -161,6 +165,5 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
             entity.setGlusterService(rs.getBoolean("gluster_service"));
             return entity;
         }
-    };
-
+    }
 }
