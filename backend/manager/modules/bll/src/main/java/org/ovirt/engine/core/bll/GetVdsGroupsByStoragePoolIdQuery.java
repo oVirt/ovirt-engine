@@ -11,6 +11,9 @@ public class GetVdsGroupsByStoragePoolIdQuery<P extends StoragePoolQueryParamete
     @Override
     protected void executeQueryCommand() {
         getQueryReturnValue().setReturnValue(
-                getDbFacade().getVdsGroupDAO().getAllForStoragePool(getParameters().getStoragePoolId()));
+                getDbFacade().getVdsGroupDAO().getAllForStoragePool(
+                        getParameters().getStoragePoolId(),
+                        getUserID(),
+                        getParameters().isFiltered()));
     }
 }
