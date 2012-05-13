@@ -8,10 +8,14 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 
 /** A test case for the {@link MultiValueMapUtils} class. */
 public class MultiValueMapUtilsTest {
+
+    @Rule
+    public RandomUtilsSeedingRule rusr = new RandomUtilsSeedingRule();
 
     /** The key used for testing */
     private Integer key;
