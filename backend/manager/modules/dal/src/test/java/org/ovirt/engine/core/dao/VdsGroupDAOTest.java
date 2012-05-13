@@ -154,9 +154,7 @@ public class VdsGroupDAOTest extends BaseDAOTestCase {
     @Test
     public void testGetAllForStoragePoolWithInvalidPool() {
         List<VDSGroup> result = dao.getAllForStoragePool(Guid.NewGuid());
-
-        assertNotNull(result);
-        assertTrue(result.isEmpty());
+        assertGetAllForStoragePoolInvalidResult(result);
     }
 
     /**
@@ -165,7 +163,50 @@ public class VdsGroupDAOTest extends BaseDAOTestCase {
     @Test
     public void testGetAllForStoragePool() {
         List<VDSGroup> result = dao.getAllForStoragePool(storagePool.getId());
+        assertGetAllForStoragePoolValidResult(result);
+    }
 
+    /**
+     * Ensures that no groups are returned if the issuing user does not have the right permissions.
+     */
+    @Test
+    public void testGetAllForStoragePoolFilteredWithNoPermissions() {
+        List<VDSGroup> result = dao.getAllForStoragePool(storagePool.getId(), UNPRIVILEGED_USER_ID, true);
+        assertGetAllForStoragePoolInvalidResult(result);
+    }
+
+    /**
+     * Ensures that the right group is returned if the filtering mechanism is disabled.
+     */
+    @Test
+    public void testGetAllForStoragePoolFilteredWithNoPermissionsAndNoFilter() {
+        List<VDSGroup> result = dao.getAllForStoragePool(storagePool.getId(), UNPRIVILEGED_USER_ID, false);
+        assertGetAllForStoragePoolValidResult(result);
+    }
+
+    /**
+     * Ensures that no groups are returned if the issuing user has the right permissions.
+     */
+    @Test
+    public void testGetAllForStoragePoolFilteredWithPermissions() {
+        List<VDSGroup> result = dao.getAllForStoragePool(storagePool.getId(), PRIVILEGED_USER_ID, true);
+        assertGetAllForStoragePoolValidResult(result);
+    }
+
+    /**
+     * Asserts the result of a invalid call to {@link VdsGroupDAO#getAllForStoragePool(Guid, Guid, boolean)}
+     * @param result
+     */
+    private static void assertGetAllForStoragePoolInvalidResult(List<VDSGroup> result) {
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
+
+    /**
+     * Asserts the result of a valid call to {@link VdsGroupDAO#getAllForStoragePool(Guid, Guid, boolean)}
+     * @param result
+     */
+    private void assertGetAllForStoragePoolValidResult(List<VDSGroup> result) {
         assertNotNull(result);
         assertFalse(result.isEmpty());
         for (VDSGroup group : result) {

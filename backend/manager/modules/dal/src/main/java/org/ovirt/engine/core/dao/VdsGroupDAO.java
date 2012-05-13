@@ -61,6 +61,19 @@ public interface VdsGroupDAO extends DAO, SearchDAO<VDSGroup> {
     List<VDSGroup> getAllForStoragePool(Guid id);
 
     /**
+     * Retrieves the list of groups associated with the given storage pool, with optional permission filtering.
+     *
+     * @param id
+     *            the storage pool
+     * @param userID
+     *            the ID of the user requesting the information
+     * @param isFiltered
+     *            Whether the results should be filtered according to the user's permissions
+     * @return the list of groups
+     */
+    List<VDSGroup> getAllForStoragePool(Guid id, Guid userID, boolean isFiltered);
+
+    /**
      * Retrieves all VDS groups.
      *
      * @return the list of groups

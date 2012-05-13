@@ -38,6 +38,11 @@ public class VdsGroupDAOHibernateImpl extends BaseDAOHibernateImpl<VDSGroup, Gui
     }
 
     @Override
+    public List<VDSGroup> getAllForStoragePool(Guid id, Guid userID, boolean isFiltered) {
+        throw new NotImplementedException();
+    }
+
+    @Override
     public List<VDSGroup> getAllWithQuery(String query) {
         return findAllWithSQL(query);
     }

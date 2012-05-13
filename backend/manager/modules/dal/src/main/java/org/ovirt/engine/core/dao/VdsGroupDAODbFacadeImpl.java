@@ -57,8 +57,13 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
 
     @Override
     public List<VDSGroup> getAllForStoragePool(Guid id) {
+        return getAllForStoragePool(id, null, false);
+    }
+
+    @Override
+    public List<VDSGroup> getAllForStoragePool(Guid id, Guid userID, boolean isFiltered) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("storage_pool_id", id);
+                .addValue("storage_pool_id", id).addValue("user_id", userID).addValue("is_filtered", isFiltered);
 
         return getCallsHandler().executeReadList("GetVdsGroupsByStoragePoolId",
                 VdsGroupRowMapper.instance,
