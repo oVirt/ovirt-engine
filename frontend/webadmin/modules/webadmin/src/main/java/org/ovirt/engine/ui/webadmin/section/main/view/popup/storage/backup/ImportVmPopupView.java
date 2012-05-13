@@ -116,8 +116,8 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
     EntityModelLabelEditor cloneAllVMs_message;
 
     @UiField
-    @Path(value = "cloneOnlyDuplicateVMs_message.entity")
-    EntityModelLabelEditor cloneOnlyDuplicateVMs_message;
+    @Ignore
+    Label duplicateVmMessage;
 
     @UiField
     SplitLayoutPanel splitLayoutPanel;
@@ -479,6 +479,7 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
         cloneAllVMs.setLabel(constants.importVm_cloneAllVMs());
         cloneOnlyDuplicateVMs.setLabel(constants.importVm_cloneOnlyDuplicateVMs());
         cloneVMsSuffix.setLabel(constants.importVm_cloneVMsSuffix());
+        duplicateVmMessage.setText(constants.noteClone_CollapsedSnapshotMsg());
     }
 
     @SuppressWarnings("unchecked")
@@ -571,6 +572,15 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
                 if ("DiskStorageMap".equals(((PropertyChangedEventArgs) args).PropertyName)) { //$NON-NLS-1$
                     UpdateStorageDomainCells();
                 }
+            }
+        });
+
+        duplicateVmMessage.setVisible(false);
+        object.getCloneOnlyDuplicateVMs_messageVisible().getEntityChangedEvent().addListener(new IEventListener() {
+
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                duplicateVmMessage.setVisible((Boolean) object.getCloneOnlyDuplicateVMs_messageVisible().getEntity());
             }
         });
 

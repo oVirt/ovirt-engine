@@ -2063,4 +2063,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Template in System")
     String templateInSetup();
+
+    @DefaultStringValue("* Note that cloned vm will be 'Collapsed Snapshot'")
+    String noteClone_CollapsedSnapshotMsg();
 }

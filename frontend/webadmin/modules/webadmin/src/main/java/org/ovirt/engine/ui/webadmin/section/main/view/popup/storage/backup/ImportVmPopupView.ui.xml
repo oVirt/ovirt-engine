@@ -67,6 +67,11 @@
 		.cellSelectBox {
 			width: 100%;
 		}
+		
+		.duplicateVmLabelStyle {
+			width: 100%;
+			margin-left: 15px;
+		}
 	</ui:style>
 	<d:SimpleDialogPanel height="650px" width="1000px">
 		<d:content>
@@ -88,17 +93,19 @@
 								<g:Label ui:field="message" addStyleNames="{style.labelStyle}" />
 							</g:HorizontalPanel>
 						</g:VerticalPanel>
-						<g:HorizontalPanel>
-								<g:VerticalPanel>
-									<e:EntityModelCheckBoxEditor ui:field="cloneAllVMs" />
-									<e:EntityModelLabelEditor ui:field="cloneAllVMs_message" />
-									<e:EntityModelCheckBoxEditor ui:field="cloneOnlyDuplicateVMs" />
-									<e:EntityModelLabelEditor ui:field="cloneOnlyDuplicateVMs_message" />
-								</g:VerticalPanel>
-								<g:VerticalPanel>
+						<g:VerticalPanel>
+								<g:HorizontalPanel>
+									<g:VerticalPanel>
+										<e:EntityModelCheckBoxEditor ui:field="cloneAllVMs" />
+										<e:EntityModelLabelEditor ui:field="cloneAllVMs_message" />
+										<e:EntityModelCheckBoxEditor ui:field="cloneOnlyDuplicateVMs" />
+									</g:VerticalPanel>
 									<e:EntityModelTextBoxEditor ui:field="cloneVMsSuffix" />
-								</g:VerticalPanel>
-						</g:HorizontalPanel>
+								</g:HorizontalPanel>
+								<g:HorizontalPanel>
+									<g:Label ui:field="duplicateVmMessage" addStyleNames="{style.duplicateVmLabelStyle}"/>
+								</g:HorizontalPanel>
+						</g:VerticalPanel>
 					</g:HorizontalPanel>
 			</g:VerticalPanel>
 		</d:content>

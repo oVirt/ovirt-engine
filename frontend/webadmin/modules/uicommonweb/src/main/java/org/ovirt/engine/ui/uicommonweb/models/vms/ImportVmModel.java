@@ -211,7 +211,7 @@ public class ImportVmModel extends ListWithDetailsModel implements IIsObjectInSe
     private EntityModel cloneAllVMs;
     private EntityModel cloneAllVMs_message;
     private EntityModel cloneOnlyDuplicateVMs;
-    private EntityModel cloneOnlyDuplicateVMs_message;
+    private EntityModel cloneOnlyDuplicateVMs_messageVisible;
     private EntityModel cloneVMsSuffix;
 
     public EntityModel getCloneAllVMs() {
@@ -238,12 +238,12 @@ public class ImportVmModel extends ListWithDetailsModel implements IIsObjectInSe
         this.cloneAllVMs_message = cloneAllVMs_message;
     }
 
-    public EntityModel getCloneOnlyDuplicateVMs_message() {
-        return cloneOnlyDuplicateVMs_message;
+    public EntityModel getCloneOnlyDuplicateVMs_messageVisible() {
+        return cloneOnlyDuplicateVMs_messageVisible;
     }
 
-    public void setCloneOnlyDuplicateVMs_message(EntityModel cloneOnlyDuplicateVMs_message) {
-        this.cloneOnlyDuplicateVMs_message = cloneOnlyDuplicateVMs_message;
+    public void setCloneOnlyDuplicateVMs_messageVisible(EntityModel cloneOnlyDuplicateVMs_message) {
+        this.cloneOnlyDuplicateVMs_messageVisible = cloneOnlyDuplicateVMs_message;
     }
 
     public EntityModel getCloneVMsSuffix() {
@@ -317,14 +317,11 @@ public class ImportVmModel extends ListWithDetailsModel implements IIsObjectInSe
         getCloneOnlyDuplicateVMs().setEntity(false);
         getCloneOnlyDuplicateVMs().setIsAvailable(false);
         setCloneVMsSuffix(new EntityModel());
-        getCloneVMsSuffix().setEntity("_vm"); //$NON-NLS-1$
+        getCloneVMsSuffix().setEntity("_Copy"); //$NON-NLS-1$
         getCloneVMsSuffix().setIsAvailable(false);
         setCloneAllVMs_message(new EntityModel());
-        setCloneOnlyDuplicateVMs_message(new EntityModel());
-        getCloneOnlyDuplicateVMs_message().setEntity(ConstantsManager.getInstance()
-                .getConstants()
-                .noteClone_CollapsedSnapshotMsg());
-        getCloneOnlyDuplicateVMs_message().setIsAvailable(false);
+        setCloneOnlyDuplicateVMs_messageVisible(new EntityModel());
+        getCloneOnlyDuplicateVMs_messageVisible().setEntity(false);
     }
 
     public void OnCollapseSnapshotsChanged(AsyncQuery _asyncQuery) {
@@ -593,9 +590,7 @@ public class ImportVmModel extends ListWithDetailsModel implements IIsObjectInSe
 
                         if (alreadyInSystem.size() > 0) {
                             getCloneAllVMs_message().setEntity(alreadyInSystem.size()
-                                    + ConstantsManager.getInstance()
-                                            .getConstants()
-                                            .vmAlreadyExistsMsg());
+                                    + " " + ConstantsManager.getInstance().getConstants().vmAlreadyExistsMsg()); //$NON-NLS-1$
                             if (list.size() == alreadyInSystem.size()) {
                                 getCloneAllVMs().setEntity(true);
                                 getCloneAllVMs().setIsChangable(false);
@@ -604,7 +599,7 @@ public class ImportVmModel extends ListWithDetailsModel implements IIsObjectInSe
                                 getCloneVMsSuffix().setIsAvailable(true);
                             } else {
                                 getCloneOnlyDuplicateVMs().setIsAvailable(true);
-                                getCloneOnlyDuplicateVMs_message().setIsAvailable(true);
+                                getCloneOnlyDuplicateVMs_messageVisible().setEntity(true);
                                 getCloneOnlyDuplicateVMs().setEntity(true);
                                 getCloneOnlyDuplicateVMs().setIsChangable(false);
                                 getCloneVMsSuffix().setIsAvailable(true);
