@@ -59,7 +59,7 @@ public class DetachUserFromVmFromPoolCommand<T extends VmPoolSimpleUserParameter
     }
 
     private void RestoreVmFromBaseSnapshot(VM vm) {
-        if (DbFacade.getInstance().getSnapshotDao().exists(getVm().getId(), SnapshotType.STATELESS)) {
+        if (DbFacade.getInstance().getSnapshotDao().exists(vm.getId(), SnapshotType.STATELESS)) {
             log.infoFormat("Deleting snapshots for stateless vm {0}", vm.getId());
             Backend.getInstance().runInternalAction(VdcActionType.RestoreStatelessVm,
                     new VmOperationParameterBase(vm.getId()),
