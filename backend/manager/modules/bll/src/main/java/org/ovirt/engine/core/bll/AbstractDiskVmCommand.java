@@ -82,24 +82,13 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperatinParameterBas
         boolean returnValue = true;
         // update disks from db
         VmHandler.updateDisksFromDb(getVm());
-        if (getVm().getDiskMap().containsKey(Integer.toString(diskInfo.getInternalDriveMapping()))) {
-            returnValue = false;
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_LETTER_ALREADY_IN_USE);
-        } else {
-            diskInfo.setinternal_drive_mapping(VmHandler.getCorrectDriveForDisk(getVm()));
-            if (diskInfo.getinternal_drive_mapping() == null) {
-                returnValue = false;
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_LIMITATION_EXCEEDED);
-            }
-        }
-
         if (returnValue && diskInfo.isBoot()) {
             for (Disk disk : getVm().getDiskMap().values()) {
                 if (disk.isBoot()) {
                     returnValue = false;
                     addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_BOOT_IN_USE);
                     getReturnValue().getCanDoActionMessages().add(
-                            String.format("$DiskName %1$s", disk.getinternal_drive_mapping()));
+                            String.format("$DiskName %1$s", disk.getDiskAlias()));
                     break;
                 }
             }

@@ -70,27 +70,7 @@ public class GetNextAvailableDiskAliasNameByVMIdQueryTest extends AbstractUserQu
         getQuery().executeQueryCommand();
         assertEquals(diskAliasName, getQuery().getQueryReturnValue().getReturnValue());
     }
-
-    @Test
-    public void testExecuteQueryWithMissisngImage() throws Exception {
-        mockDAOForQuery();
-        vm = mockVmAndReturnFromDAO();
-        Map<String, Disk> diskMap = vm.getDiskMap();
-        DiskImage diskImage = new DiskImage();
-        diskImage.setInternalDriveMapping(1);
-        diskImage.setImageId(Guid.NewGuid());
-        diskMap.put("1", diskImage);
-        DiskImage secondDiskImage = new DiskImage();
-        diskImage.setInternalDriveMapping(4);
-        diskImage.setImageId(Guid.NewGuid());
-        diskMap.put("4", secondDiskImage);
-        String diskAliasName = VM_NAME + "_Disk2";
-
-        // Execute query.
-        getQuery().executeQueryCommand();
-        assertEquals(diskAliasName, getQuery().getQueryReturnValue().getReturnValue());
-    }
-
+    
     /**
      * Initialize DAO to be used in query.
      *

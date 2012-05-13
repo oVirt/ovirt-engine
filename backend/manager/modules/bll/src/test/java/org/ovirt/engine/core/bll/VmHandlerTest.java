@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
@@ -11,7 +10,6 @@ import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import junit.framework.Assert;
 
@@ -22,8 +20,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.ovirt.engine.core.bll.context.CompensationContext;
-import org.ovirt.engine.core.common.businessentities.Disk;
-import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -76,13 +72,6 @@ public class VmHandlerTest {
         when(dbFacade.getVmDynamicDAO()).thenReturn(vmDynamicDAO);
     }
 
-    @Test
-    public void testGetDiskAliasForVM() {
-        String suggestedDiskAlias =
-                ImagesHandler.getDefaultDiskAlias(mockVm().getvm_name(), VmHandler.getCorrectDriveForDisk(mockVm()));
-        assertEquals(suggestedDiskAlias, "VM_TEST_NAME_Disk2");
-    }
-
     private void mockVmDynamicDAOWithLockedVm() {
         when(vmDynamicDAO.get(any(Guid.class))).thenReturn(createVmDynamic(VMStatus.ImageLocked));
     }
@@ -99,19 +88,6 @@ public class VmHandlerTest {
 
     private static void executeCheckAndLock() {
         VmHandler.checkStatusAndLockVm(Guid.NewGuid(), mock(CompensationContext.class));
-    }
-
-    /**
-     * Mock a VM.
-     */
-    private static VM mockVm() {
-        VM vm = new VM();
-        vm.setstatus(VMStatus.Down);
-        vm.setvm_name("VM_TEST_NAME");
-        Map<String, Disk> disks = new HashMap<String, Disk>();
-        disks.put("1", new DiskImage());
-        vm.setDiskMap(disks);
-        return vm;
     }
 
     @Test

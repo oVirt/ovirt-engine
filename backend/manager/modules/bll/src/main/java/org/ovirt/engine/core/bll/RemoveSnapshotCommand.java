@@ -84,7 +84,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
             DiskImage dest = DbFacade.getInstance().getDiskImageDAO().getAllSnapshotsForParent(source.getImageId()).get(0);
 
             ImagesContainterParametersBase tempVar = new ImagesContainterParametersBase(source.getImageId(),
-                    source.getinternal_drive_mapping(), getVmId());
+                    getVmId());
             tempVar.setDestinationImageId(dest.getImageId());
             tempVar.setEntityId(getParameters().getEntityId());
             ImagesContainterParametersBase p = tempVar;

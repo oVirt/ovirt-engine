@@ -33,13 +33,9 @@ import org.ovirt.engine.core.dao.ImageDao;
 public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> extends StorageDomainCommandBase<T> {
     private DiskImage _destinationImage;
     private DiskImage mImage;
-    private Guid mImageId = new Guid();
+    private Guid mImageId = Guid.Empty;
     private Guid mImageContainerId = Guid.Empty;
     VM vm;
-    /**
-     * Default mapping - drive 1
-     */
-    private String mDrive = ImagesHandler.DefaultDriveName;
 
     public BaseImagesCommand(T parameters) {
         super(parameters);
@@ -47,7 +43,6 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
         if (parameters instanceof ImagesContainterParametersBase) {
             ImagesContainterParametersBase tempVar = (ImagesContainterParametersBase) parameters;
             mImageContainerId = tempVar.getContainerId();
-            mDrive = tempVar.getDrive();
             super.setVmId(mImageContainerId);
             if (getDiskImage() != null && getDiskImage().getstorage_pool_id() != null) {
                 setStoragePoolId(getDiskImage()
@@ -111,10 +106,6 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
 
     protected void setDiskImage(DiskImage value) {
         _diskImage = value;
-    }
-
-    protected String getDrive() {
-        return mDrive;
     }
 
     private Guid _destinationImageId = Guid.Empty;

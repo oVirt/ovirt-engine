@@ -105,7 +105,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
             freeLock();
             for (DiskImage image : images) {
                 ImagesContainterParametersBase tempVar = new ImagesContainterParametersBase(image.getImageId(),
-                        image.getinternal_drive_mapping(), getVmId());
+                        getVmId());
                 tempVar.setParentCommand(VdcActionType.TryBackToAllSnapshotsOfVm);
                 tempVar.setVmSnapshotId(newActiveSnapshotId);
                 tempVar.setEntityId(getParameters().getEntityId());

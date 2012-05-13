@@ -15,11 +15,10 @@ public class RestoreFromSnapshotParameters extends ImagesContainterParametersBas
     }
 
     public RestoreFromSnapshotParameters(Guid imageId,
-            String drive,
             Guid containerId,
             Snapshot snapshot,
             Guid removedSnapshotId) {
-        super(imageId, drive, containerId);
+        super(imageId, containerId);
 
         this.snapshot = snapshot;
         this.removedSnapshotId = removedSnapshotId;

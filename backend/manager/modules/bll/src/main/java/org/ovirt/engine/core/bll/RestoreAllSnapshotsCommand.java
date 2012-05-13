@@ -89,7 +89,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
             for (DiskImage image : getImagesList()) {
                 if (image.getimageStatus() != ImageStatus.ILLEGAL) {
                     ImagesContainterParametersBase params = new RestoreFromSnapshotParameters(image.getImageId(),
-                            image.getinternal_drive_mapping(), getVmId(), targetSnapshot, removedSnapshotId);
+                            getVmId(), targetSnapshot, removedSnapshotId);
                     returnValue = runAsyncTask(VdcActionType.RestoreFromSnapshot, params);
                 }
             }

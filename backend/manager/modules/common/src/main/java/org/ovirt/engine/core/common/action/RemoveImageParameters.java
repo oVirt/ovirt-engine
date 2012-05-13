@@ -10,7 +10,7 @@ public class RemoveImageParameters extends ImagesContainterParametersBase implem
     private boolean removeFromDB;
 
     public RemoveImageParameters(Guid imageId, Guid containerID) {
-        super(imageId, "", containerID);
+        super(imageId, containerID);
         setForceDelete(false);
         removeFromDB = false;
     }
