@@ -5,7 +5,6 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.mockito.MockitoAnnotations.Mock;
 import static org.mockito.MockitoAnnotations.initMocks;
 import static org.powermock.api.mockito.PowerMockito.doThrow;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
@@ -26,31 +25,37 @@ import javax.transaction.TransactionManager;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InOrder;
+import org.mockito.Mock;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.utils.ejb.ContainerManagedResourceType;
 import org.ovirt.engine.core.utils.ejb.EjbUtils;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-@PrepareForTest({EjbUtils.class})
+@PrepareForTest({ EjbUtils.class })
 @RunWith(PowerMockRunner.class)
+@PowerMockIgnore("org.apache.log4j.*")
 public class TransactionSupportTest {
 
-    @Mock TransactionManager mgr = mock(TransactionManager.class);
-    @Mock Transaction transaction;
+    @Mock
+    TransactionManager mgr = mock(TransactionManager.class);
+    @Mock
+    Transaction transaction;
     TransactionMethod<Boolean> tm = new TransactionMethod<Boolean>() {
-            boolean succeeded = false;
-            @Override
-            public Boolean runInTransaction() {
-                succeeded = true;
-                return succeeded;
-            }
-        };
+        boolean succeeded = false;
+
+        @Override
+        public Boolean runInTransaction() {
+            succeeded = true;
+            return succeeded;
+        }
+    };
 
     public TransactionSupportTest() {
-       initMocks(this);
-       mockStatic(EjbUtils.class);
-       when(EjbUtils.findResource(ContainerManagedResourceType.TRANSACTION_MANAGER)).thenReturn(mgr);
+        initMocks(this);
+        mockStatic(EjbUtils.class);
+        when(EjbUtils.findResource(ContainerManagedResourceType.TRANSACTION_MANAGER)).thenReturn(mgr);
     }
 
     @Test(expected = RuntimeException.class)
@@ -251,7 +256,8 @@ public class TransactionSupportTest {
     }
 
     @Test(expected = RuntimeException.class)
-    public void executeSuppressedHandlesInvalidTransactionException() throws SystemException, InvalidTransactionException {
+    public void executeSuppressedHandlesInvalidTransactionException() throws SystemException,
+            InvalidTransactionException {
         transactionManagerReturnsTransaction();
         suspendReturnsTransaction();
         doThrow(new InvalidTransactionException()).when(mgr).resume(transaction);
