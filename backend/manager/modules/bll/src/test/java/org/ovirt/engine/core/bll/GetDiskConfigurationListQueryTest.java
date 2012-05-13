@@ -20,7 +20,7 @@ import org.ovirt.engine.core.utils.RandomUtils;
 
 /** A test case for the {@link GetDiskConfigurationListQuery} class. */
 @SuppressWarnings("unchecked")
-public class GetDiskConfigurationListQueryTest extends AbstractQueryTest<VdcQueryParametersBase, GetDiskConfigurationListQuery<VdcQueryParametersBase>> {
+public class GetDiskConfigurationListQueryTest extends AbstractUserQueryTest<VdcQueryParametersBase, GetDiskConfigurationListQuery<VdcQueryParametersBase>> {
 
     @Rule
     public MockConfigRule mcr = new MockConfigRule();
