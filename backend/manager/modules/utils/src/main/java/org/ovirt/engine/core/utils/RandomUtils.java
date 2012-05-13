@@ -4,6 +4,7 @@ import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Random;
 
 /**
  * <code>RandomUtils</code> is a singleton class with more powerful random generating methods.
@@ -19,7 +20,7 @@ import java.util.Iterator;
  * @see java.util.Random
  */
 @SuppressWarnings("serial")
-public final class RandomUtils extends java.util.Random {
+public final class RandomUtils extends Random {
 
     /* --- Class constants --- */
 
@@ -77,11 +78,12 @@ public final class RandomUtils extends java.util.Random {
     /* --- Seed-related Methods --- */
 
     /**
-     * The last seed is saved, so it is possible to {@link #getSeed()} it later. Since <code>java.util.Random</code>'s
+     * The last seed is saved, so it is possible to {@link #getSeed()} it later. Since {@link Random}'s
      * seed is private, I am obliged to save my own copy.
      *
-     * See {@link java.util.Random#setSeed(long)}.
+     * See {@link Random#setSeed(long)}.
      */
+    @Override
     public synchronized void setSeed(long seed) {
         super.setSeed(seed);
         this.seed = seed;
@@ -312,8 +314,8 @@ public final class RandomUtils extends java.util.Random {
 
             for (int i = 0; i < length; ++i) {
                 data[i] = (byte) nextInt(
-                            FIRST_PRINTABLE_CHAR,
-                            LAST_PRINTABLE_CHAR);
+                        FIRST_PRINTABLE_CHAR,
+                        LAST_PRINTABLE_CHAR);
             }
 
             return new String(data);
@@ -343,8 +345,8 @@ public final class RandomUtils extends java.util.Random {
         byte[] data = new byte[length];
         for (int i = 0; i < length; ++i) {
             data[i] = (byte) nextInt(
-                        FIRST_XML_PRINTABLE_CHAR,
-                        LAST_XML_PRINTABLE_CHAR);
+                    FIRST_XML_PRINTABLE_CHAR,
+                    LAST_XML_PRINTABLE_CHAR);
         }
 
         return new String(data);
