@@ -18,6 +18,7 @@ import org.mockito.Spy;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.utils.FileUtil;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
@@ -27,6 +28,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ Config.class, FileUtil.class })
+@PowerMockIgnore("org.apache.log4j.*")
 public class OpenSslCAWrapperTest {
     static final int defaultSignCertTimeoutInSeconds = 30;
     @Spy
