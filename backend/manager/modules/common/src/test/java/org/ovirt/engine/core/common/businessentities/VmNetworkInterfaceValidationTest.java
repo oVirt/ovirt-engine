@@ -16,9 +16,34 @@ import org.ovirt.engine.core.common.validation.group.CreateEntity;
 @SuppressWarnings("serial")
 public class VmNetworkInterfaceValidationTest {
 
+    private static final VmInterfaceType VALID_NIC_TYPE = VmInterfaceType.e1000;
+
+    private static final String VALID_NIC_NAME = "nic";
+
     private static final String VALID_MAC_ADDRESS = "01:23:45:67:89:ab";
 
     private Random random = new Random();
+
+    @Test
+    public void nameIsNull() throws Exception {
+        assertNicValidation(createNic(VALID_MAC_ADDRESS, null, VALID_NIC_TYPE),
+                true,
+                VmNetworkInterface.VALIDATION_MESSAGE_NAME_NOT_NULL);
+    }
+
+    @Test
+    public void nameIsNotNull() throws Exception {
+        assertNicValidation(createNic(VALID_MAC_ADDRESS, VALID_NIC_NAME, VALID_NIC_TYPE),
+                false,
+                VmNetworkInterface.VALIDATION_MESSAGE_NAME_NOT_NULL);
+    }
+
+    @Test
+    public void macAddressIsNull() throws Exception {
+        assertNicValidation(createNic(null, VALID_NIC_NAME, VALID_NIC_TYPE),
+                true,
+                VmNetworkInterface.VALIDATION_MESSAGE_MAC_ADDRESS_NOT_NULL);
+    }
 
     @Test
     public void macAddressFormatValid() throws Exception {
@@ -49,14 +74,37 @@ public class VmNetworkInterfaceValidationTest {
      *            Should the validation fail due to invalid format, or not.
      */
     private void assertMacAddressFormatValidation(String macAddress, boolean shouldValidationFail) {
-        NetworkInterface<?> nic = new VmNetworkInterface();
-        nic.setMacAddress(macAddress);
+        assertNicValidation(createNic(macAddress, VALID_NIC_NAME, VALID_NIC_TYPE),
+                shouldValidationFail,
+                VmNetworkInterface.VALIDATION_MESSAGE_MAC_ADDRESS_INVALID);
+    }
 
+    private NetworkInterface<?> createNic(String macAddress, String name, VmInterfaceType vmInterfaceType) {
+        NetworkInterface<?> nic = new VmNetworkInterface();
+        nic.setName(name);
+        nic.setMacAddress(macAddress);
+        nic.setType(vmInterfaceType == null ? null : vmInterfaceType.getValue());
+        return nic;
+    }
+
+    /**
+     * Assert that the given NIC is being validated.
+     *
+     * @param nic
+     *            The NIC to validate.
+     * @param shouldValidationFail
+     *            Should the validation fail due to invalid format, or not.
+     * @param possibleViolation
+     *            Violation that should or shounldn't occur (determined by previous parameter),
+     */
+    private void assertNicValidation(NetworkInterface<?> nic, boolean shouldValidationFail, String possibleViolation) {
         List<String> violations = ValidationUtils.validateInputs(
                 Arrays.asList(new Class<?>[] { CreateEntity.class }), new TestParams(nic));
 
-        assertEquals(shouldValidationFail,
-                violations.contains(VmNetworkInterface.VALIDATION_MESSAGE_MAC_ADDRESS_INVALID));
+        assertEquals("Validation should" + (shouldValidationFail ? "" : "'nt") + " fail due to violation: ["
+                + possibleViolation + "]; Actual violations were: " + violations,
+                shouldValidationFail,
+                violations.contains(possibleViolation));
     }
 
     private String createInvalidMacAddress() {

@@ -1455,6 +1455,12 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("MAC address must be in format \"HH:HH:HH:HH:HH:HH\" where H is a hexadecimal character (either a digit or A-F, case is insignificant).")
     String VALIDATION_VM_NETWORK_MAC_ADDRESS_INVALID();
 
+    @DefaultStringValue("MAC address is required.")
+    String VALIDATION_VM_NETWORK_MAC_ADDRESS_NOT_NULL();
+
+    @DefaultStringValue("Network name is required.")
+    String VALIDATION_VM_NETWORK_NAME_NOT_NULL();
+
     @DefaultStringValue("Invalid ISO image path")
     String ERROR_CANNOT_FIND_ISO_IMAGE_PATH();
 

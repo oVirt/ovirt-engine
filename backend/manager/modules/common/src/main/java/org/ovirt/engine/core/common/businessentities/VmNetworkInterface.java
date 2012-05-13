@@ -3,6 +3,7 @@ package org.ovirt.engine.core.common.businessentities;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
@@ -16,6 +17,9 @@ import org.ovirt.engine.core.compat.NGuid;
 public class VmNetworkInterface extends NetworkInterface<VmNetworkStatistics> {
     private static final long serialVersionUID = 7428150502868988886L;
 
+    protected static final String VALIDATION_MESSAGE_MAC_ADDRESS_NOT_NULL =
+            "VALIDATION.VM.NETWORK.MAC.ADDRESS.NOT_NULL";
+    protected static final String VALIDATION_MESSAGE_NAME_NOT_NULL = "VALIDATION.VM.NETWORK.NAME.NOT_NULL";
     protected static final String VALIDATION_MESSAGE_MAC_ADDRESS_INVALID = "VALIDATION.VM.NETWORK.MAC.ADDRESS.INVALID";
 
     private NGuid vmId;
@@ -110,6 +114,13 @@ public class VmNetworkInterface extends NetworkInterface<VmNetworkStatistics> {
         this.active = active;
     }
 
+    @NotNull(message = VmNetworkInterface.VALIDATION_MESSAGE_NAME_NOT_NULL)
+    @Override
+    public String getName() {
+        return super.getName();
+    }
+
+    @NotNull(message = VmNetworkInterface.VALIDATION_MESSAGE_MAC_ADDRESS_NOT_NULL)
     @Pattern(regexp = "(\\p{XDigit}{2}:){5}\\p{XDigit}{2}",
             message = VmNetworkInterface.VALIDATION_MESSAGE_MAC_ADDRESS_INVALID, groups = { CreateEntity.class,
                     UpdateEntity.class })
