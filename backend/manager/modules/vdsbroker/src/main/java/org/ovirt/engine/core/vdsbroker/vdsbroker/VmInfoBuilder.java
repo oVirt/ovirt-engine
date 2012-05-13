@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -139,15 +140,9 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                     continue;
                 }
                 struct = new XmlRpcStruct();
-                String file = (String) vmDevice.getSpecParams().get(VdsProperties.Path);
+                String file = vm.getCdPath();
                 addCdDetails(vmDevice, struct);
                 addAddress(vmDevice, struct);
-                if (!StringHelper.isNullOrEmpty(file)) {
-                    addCdOrFloppyFileDetails(file, struct);
-                }
-                else { // create an empty CD (path="")
-                    file = "";
-                }
                 addDevice(struct, vmDevice, file);
                 break; // currently only one is supported, may change in future releases
             }
@@ -206,14 +201,8 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                     continue;
                 }
                 XmlRpcStruct struct = new XmlRpcStruct();
-                String file = (String) vmDevice.getSpecParams().get(VdsProperties.Path);
+                String file = vm.getFloppyPath();
                 addFloppyDetails(vmDevice, struct);
-                if (!StringHelper.isNullOrEmpty(file)) {
-                    addCdOrFloppyFileDetails(file, struct);
-                }
-                else {
-                    file = "";
-                }
                 addDevice(struct, vmDevice, file);
             }
         }
@@ -408,8 +397,6 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                             struct.getKeys().remove(VdsProperties.BootOrder);
                         }
                         break;
-                    } else {
-                        log.errorFormat("No value for device-Id for VM {0} : {1}", vm.getvm_name());
                     }
                 }
             }
@@ -470,17 +457,6 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         struct.add(VdsProperties.nic_type, nicModel);
     }
 
-    private void addCdOrFloppyFileDetails(String file, XmlRpcStruct struct) {
-        struct.add(VdsProperties.PoolId, vm.getstorage_pool_id().toString());
-        struct.add(VdsProperties.DomainId,
-                DbFacade.getInstance()
-                        .getStorageDomainDAO()
-                        .getIsoStorageDomainIdForPool(vm.getstorage_pool_id())
-                        .toString());
-        struct.add(VdsProperties.ImageId, VmDeviceCommonUtils.CDROM_IMAGE_ID);
-        struct.add(VdsProperties.VolumeId, file.substring(file.lastIndexOf('/') + 1));
-    }
-
     private void addFloppyDetails(VmDevice vmDevice, XmlRpcStruct struct) {
         struct.add(VdsProperties.Type, vmDevice.getType());
         struct.add(VdsProperties.Device, vmDevice.getDevice());
@@ -498,8 +474,10 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
     }
 
     private void addDevice(XmlRpcStruct struct, VmDevice vmDevice, String path) {
+        Map<String, Object> specParams =
+                (vmDevice.getSpecParams() == null) ? Collections.<String, Object> emptyMap() : vmDevice.getSpecParams();
         struct.add(VdsProperties.Path, path);
-        struct.add(VdsProperties.SpecParams, vmDevice.getSpecParams());
+        struct.add(VdsProperties.SpecParams, specParams);
         struct.add(VdsProperties.DeviceId, String.valueOf(vmDevice.getId().getDeviceId()));
         addBootOrder(vmDevice, struct);
         devices.add(struct);

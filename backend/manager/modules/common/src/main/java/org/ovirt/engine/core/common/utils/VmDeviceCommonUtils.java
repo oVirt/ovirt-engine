@@ -57,7 +57,9 @@ public class VmDeviceCommonUtils {
                 device.setBootOrder(0);
             }
         }
-        switch (vmBase.getdefault_boot_sequence()) {
+        BootSequence bootSequence =
+                (vm.isRunOnce()) ? vm.getboot_sequence() : vm.getdefault_boot_sequence();
+        switch (bootSequence) {
         case C:
             bootOrder = setDiskBootOrder(vm, devices, bootOrder, isOldCluster);
             break;
