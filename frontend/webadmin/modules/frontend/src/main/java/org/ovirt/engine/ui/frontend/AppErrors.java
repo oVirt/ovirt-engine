@@ -1857,4 +1857,10 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. Cannot remove all the bricks from a Volume.")
     String ACTION_TYPE_FAILED_CAN_NOT_REMOVE_ALL_BRICKS_FROM_VOLUME();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Gluster Volume should be started.")
+    String ACTION_TYPE_FAILED_GLUSTER_VOLUME_SHOULD_BE_STARTED();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Gluster Volume is not distributed.")
+    String ACTION_TYPE_FAILED_GLUSTER_VOLUME_IS_NOT_DISTRIBUTED();
 }

@@ -212,4 +212,7 @@ public interface VdsServerConnector {
             String[] bricks,
             int replicaCount,
             int stripeCount);
+
+    public Map<String, Object> glusterVolumeRebalanceStart(String volumeName, Boolean fixLayoutOnly, Boolean force);
+
 }

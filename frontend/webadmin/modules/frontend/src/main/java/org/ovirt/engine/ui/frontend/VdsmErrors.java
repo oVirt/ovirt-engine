@@ -675,4 +675,7 @@ public interface VdsmErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Gluster Volume Add Brick Failed.")
     String AddBricksToGlusterVolumeFailed();
+
+    @DefaultStringValue("Gluster Volume Rebalance Start Failed.")
+    String GlusterVolumeRebalanceStartFailed();
 }

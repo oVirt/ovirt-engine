@@ -220,4 +220,6 @@ public interface IVdsServer {
             String[] bricks,
             int replicaCount,
             int stripeCount);
+
+    StatusOnlyReturnForXmlRpc glusterVolumeRebalanceStart(String volumeName, Boolean fixLayoutOnly, Boolean force);
 }

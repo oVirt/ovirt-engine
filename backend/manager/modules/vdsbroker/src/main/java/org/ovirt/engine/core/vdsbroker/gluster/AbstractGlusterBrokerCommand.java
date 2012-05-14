@@ -23,6 +23,7 @@ public abstract class AbstractGlusterBrokerCommand<P extends VdsIdVDSCommandPara
         case GlusterVolumeStopFailed:
         case GlusterVolumeSetOptionFailed:
         case GlusterVolumeResetOptionsFailed:
+        case GlusterVolumeRebalanceStartFailed:
         case GlusterVolumeDeleteFailed:
         case GlusterVolumeRemoveBricksFailed:
             // Capture error from gluster command and record failure
