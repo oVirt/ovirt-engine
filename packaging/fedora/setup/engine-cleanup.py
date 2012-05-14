@@ -327,8 +327,7 @@ def _printErrlMessages():
         print ('%s'%(msg))
 
 def unlinkEar():
-    links = [os.path.join(basedefs.DIR_JBOSS, "standalone", "deployments", "engine.ear"),
-             os.path.join(basedefs.DIR_JBOSS, "standalone", "deployments", "ROOT.war")]
+    links = [os.path.join(basedefs.DIR_JBOSS, "standalone", "deployments", "engine.ear")]
 
     for link in links:
         if os.path.exists(link):

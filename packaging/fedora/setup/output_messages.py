@@ -296,7 +296,7 @@ ERR_EXP_UPD_JBOSS_BEANS="Error while editing %s"
 ERR_EXP_UPD_XML_FILE="Error while editing %s"
 
 #edit root war
-ERR_EXP_UPD_ROOT_WAR="Error while updating jboss ROOT.war directory" #Give full path
+ERR_EXP_UPD_WEB_CONF="Error while updating web-conf.js file" #Give full path
 ERR_EXP_CANT_FIND_CA_FILE="Can't find file %s"
 ERR_EXP_CPY_FILE="Failed copying %s to %s"
 ERR_READ_RPM_VER="Error reading version number for package %s"
@@ -320,7 +320,6 @@ ERR_EXP_UPD_TRANS_TIMEOUT="Failed updating JBoss transaction timeout in %s"
 ERR_EXP_CPY_RHEVM_CFG="Failed to copy %s configuration files to %s"
 ERR_EXP_LINK_EXISTS="%s is already linked to %s"
 ERR_EXP_FAILED_CREATE_RHEVM_CONFIG_DIR="Failed to create %s directory"
-ERR_EXP_FAILED_ROOT_WAR="Could not copy ROOT.war configuration into Jboss profile"
 
 #input param
 ERR_EXP_READ_INPUT_PARAM="Error while trying to read parameter %s from user."

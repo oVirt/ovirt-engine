@@ -24,6 +24,7 @@
     <module>bll</module>
     <module>beans</module>
     <module>restapi</module>
+    <module>root</module>
   </modules>
 
   <dependencies>

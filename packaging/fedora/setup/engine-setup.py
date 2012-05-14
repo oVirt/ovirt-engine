@@ -100,7 +100,7 @@ def initSequences():
                                               { 'title'     : output_messages.INFO_CREATE_CA,
                                                 'functions' : [_createCA]},
                                               { 'title'     : output_messages.INFO_UPD_JBOSS_CONF,
-                                                'functions' : [configJbossXml, deployJbossModules, _editRootWar] },
+                                                'functions' : [configJbossXml, deployJbossModules, _editWebConf] },
                                               { 'title'     : output_messages.INFO_SET_DB_CONFIGURATION,
                                                 'functions' : [_updatePgPassFile]}]
                        },
@@ -650,99 +650,6 @@ def copyAndLinkConfig(config):
         # return new path
         return new_config_path
 
-def _editJbossasConf():
-    try:
-        jbossasHandler = utils.TextConfigFileHandler(basedefs.FILE_JBOSSAS_CONF)
-        jbossasHandler.open()
-
-        jbossasHandler.editParam("JBOSS_IP", "0.0.0.0")
-        jbossasHandler.editParam("JBOSSCONF", basedefs.JBOSS_PROFILE_NAME)
-
-        jbossasHandler.close()
-    except:
-        logging.error(traceback.format_exc())
-        raise Exception(output_messages.ERR_EXP_UPD_JBOSS_CONF%(basedefs.FILE_JBOSSAS_CONF))
-
-def _linkHttpParams():
-    #copy context.xml to ROOT.war/WEB-INF
-    try:
-        #create links for files in /usr/share/rhevm/reosurces/jboss
-        targetsList = [ basedefs.FILE_JBOSS_HTTP_PARAMS ]
-
-        for target in targetsList:
-            #first, remove existing destination
-            link = "%s/%s" % (basedefs.DIR_JBOSS_ROOT_WAR, os.path.basename(target))
-            if os.path.exists(link):
-                if os.path.islink(link):
-                    logging.debug("removing link %s" % link)
-                    os.unlink(link)
-                #logging.debug("Removing %s" % link)
-                elif os.path.isdir(link):
-                    #remove dir using shutil.rmtree
-                    logging.debug("removing directory %s" % link)
-                    shutil.rmtree(link)
-                else:
-                    logging.debug("removing file %s" % link)
-                    os.remove(link)
-
-            logging.debug("Linking %s to %s" % (target, link))
-            os.link(target, link)
-    except:
-        logging.error(traceback.format_exc())
-        raise Exception(output_messages.ERR_EXP_FAILED_ROOT_WAR)
-
-def _changeDefaultWelcomePage():
-    logging.debug("editing jboss conf file %s" % (basedefs.FILE_JBOSS_WEB_XML_SRC))
-    webXmlHandler = utils.XMLConfigFileHandler(basedefs.FILE_JBOSS_WEB_XML_SRC)
-    webXmlHandler.open()
-
-    #check if the node already exists
-    welcomeFileListNode = webXmlHandler.xpathEval("/web-app/welcome-file-list")
-    if len(welcomeFileListNode) == 0: #get the child to insert the node after
-        servletMapNode = utils.getXmlNode(webXmlHandler, "/web-app/mime-mapping")
-
-        #add new node - welcome-file-list
-        welcomeFileListNode = libxml2.newNode('welcome-file-list')
-
-        #add the new node as a next sibling to the servletMapNode
-        servletMapNode.addNextSibling(welcomeFileListNode)
-
-        #add child and set content to the new child node
-        welcomeFileNode = libxml2.newNode('welcome-file')
-        welcomeFileListNode.addChild(welcomeFileNode)
-    else:
-        logging.debug("jboss file %s already updated, updating tag content only" % (basedefs.FILE_JBOSS_WEB_XML_SRC))
-
-    logging.debug("setting value of default root.war html-file to %s" % (basedefs.FILE_JBOSS_ROOT_WAR_HTML))
-    utils.setXmlContent(webXmlHandler, "/web-app/welcome-file-list/welcome-file", basedefs.FILE_JBOSS_ROOT_WAR_HTML)
-    webXmlHandler.close()
-
-def _addMimeMapNode(webXmlHandler):
-    """
-    adds a new mime-mapping node after description
-    """
-    descMapNode = utils.getXmlNode(webXmlHandler, "/web-app/description")
-    mimeMapListNode = libxml2.newNode('mime-mapping')
-
-    #add the new node as a next sibling to the servletMapNode
-    descMapNode.addNextSibling(mimeMapListNode)
-
-    #add the extention node
-    extFileNode = libxml2.newNode('extension')
-    mimeMapListNode.addChild(extFileNode)
-
-    #add the mime-type node
-    typeFileNode = libxml2.newNode('mime-type')
-    mimeMapListNode.addChild(typeFileNode)
-
-    #set content to extension node
-    logging.debug("setting value of extention to crt")
-    utils.setXmlContent(webXmlHandler, "/web-app/mime-mapping/extension", "crt")
-
-    #set content to mime type node
-    logging.debug("setting value of mime-type to application/x-x509-ca-cert")
-    utils.setXmlContent(webXmlHandler, "/web-app/mime-mapping/mime-type", "application/x-x509-ca-cert")
-
 def _backupOldHttpdConfig():
     logging.debug("Backup old httpd configuration files")
     dateTimeSuffix = utils.getCurrentDateTime()
@@ -842,52 +749,8 @@ def _configureHttpdSslPort():
         logging.error(traceback.format_exc())
         raise Exception(output_messages.ERR_EXP_UPD_HTTPS_LISTEN_PORT%(basedefs.FILE_HTTPD_SSL_CONFIG))
 
-
-def _handleJbossCertFile():
-    """
-    copy ca.crt to ROOT.WAR dir
-    change permissions to jboss
-    update mime type to application/x-x509-ca-cert
-    """
-    destCaFile = os.path.join(basedefs.DIR_JBOSS_ROOT_WAR, "ca.crt")
-    logging.debug("copying %s to %s" % (basedefs.FILE_CA_CRT_SRC, destCaFile))
-    if os.path.exists(basedefs.FILE_CA_CRT_SRC):
-        utils.copyFile(basedefs.FILE_CA_CRT_SRC, destCaFile)
-    else:
-        raise Exception(output_messages.ERR_EXP_CANT_FIND_CA_FILE % (basedefs.FILE_CA_CRT_SRC))
-
-    # change ownership to jboss
-    utils.chownToJboss(destCaFile)
-
-    # update mime type in web.xml
-    logging.debug("editing jboss conf file %s" % (basedefs.FILE_JBOSS_WEB_XML_SRC))
-    webXmlHandler = utils.XMLConfigFileHandler(basedefs.FILE_JBOSS_WEB_XML_SRC)
-    webXmlHandler.open()
-
-    #check if the node already exists
-    mimeMapListNode = webXmlHandler.xpathEval("/web-app/mime-mapping")
-
-    #add new xml node in case we don't have one
-    if len(mimeMapListNode) == 0:
-        _addMimeMapNode(webXmlHandler)
-    else:
-        #if we already have a mapping node, check if it doesn't include the 'crt' map
-        mapNodes = webXmlHandler.xpathEval("/web-app/mime-mapping/extension")
-        nodeExists = False
-        for node in mapNodes:
-            if node.content == "crt":
-                nodeExists = True
-                break
-        if not nodeExists:
-            _addMimeMapNode(webXmlHandler)
-
-    webXmlHandler.close()
-
-def _editRootWar():
+def _editWebConf():
     try:
-        # Copy new files and images to rhevm-slimmed profile
-        _linkHttpParams()
-
         # Update rhevm_index.html file with consts
         logging.debug("update %s with http & ssl urls"%(basedefs.FILE_JBOSS_HTTP_PARAMS))
 
@@ -898,12 +761,9 @@ def _editRootWar():
         utils.findAndReplace(basedefs.FILE_JBOSS_HTTP_PARAMS, "var http_port.*", 'var http_port = "%s";'%(controller.CONF["HTTP_PORT"]))
         utils.findAndReplace(basedefs.FILE_JBOSS_HTTP_PARAMS, "var https_port.*", 'var https_port = "%s";'%(controller.CONF["HTTPS_PORT"]))
 
-        # Handle ca.crt
-        _handleJbossCertFile()
-
     except:
         logging.error(traceback.format_exc())
-        raise Exception(output_messages.ERR_EXP_UPD_ROOT_WAR)
+        raise Exception(output_messages.ERR_EXP_UPD_WEB_CONF)
 
 def _editExternalConfig():
     try:
@@ -975,9 +835,6 @@ def _createCA():
 
             out, rc = utils.execCmd(cmd, None, True, output_messages.ERR_RC_CODE, [basedefs.CONST_CA_PASS])
 
-            # Copy publich ssh key to ROOT site
-            utils.copyFile(basedefs.FILE_PUBLIC_SSH_KEY, basedefs.DIR_JBOSS_ROOT_WAR)
-
             # Extract CA fingerprint
             cmd = [basedefs.EXEC_OPENSSL, "x509", "-in", basedefs.FILE_CA_CRT_SRC, "-fingerprint", "-noout"]
 
@@ -997,9 +854,6 @@ def _createCA():
             msg = output_messages.INFO_CA_KEYSTORE_EXISTS
             logging.warn(msg)
             controller.MESSAGES.append(msg)
-
-        # Always Copy publich ssh key to ROOT site
-        utils.copyFile(basedefs.FILE_PUBLIC_SSH_KEY, basedefs.DIR_JBOSS_ROOT_WAR)
 
     except:
         logging.error(traceback.format_exc())
@@ -1094,10 +948,8 @@ def _createJbossProfile():
     logging.debug("creating jboss profile")
     try:
         dirs = [
-                   {'src'  : basedefs.DIR_ENGINE_EAR_SRC,
-                    'dest' : os.path.join(basedefs.DIR_JBOSS, "standalone", "deployments", "engine.ear")},
-                   {'src'  : basedefs.DIR_ROOT_WAR_SRC,
-                    'dest' : os.path.join(basedefs.DIR_JBOSS, "standalone", "deployments", "ROOT.war")}
+                   {'src'  : basedefs.DIR_ENGINE_EAR,
+                    'dest' : os.path.join(basedefs.DIR_JBOSS, "standalone", "deployments", "engine.ear")}
                    ]
 
         for item in dirs:
@@ -1106,9 +958,9 @@ def _createJbossProfile():
                     os.remove(item['dest'])
                 os.symlink(item['src'], item['dest'])
 
-                logging.debug("Successfully created jboss profile %s"%(basedefs.JBOSS_PROFILE_NAME))
+                logging.debug("Successfully created JBoss profile")
             else:
-                logging.debug("%s profile already exists, doing nothing"%(basedefs.JBOSS_PROFILE_NAME))
+                logging.debug("JBoss profile already exists, doing nothing")
 
             logging.debug("touching .dodeploy file for %s" % item['dest'])
             open("%s.dodeploy" % item['dest'], 'w').close()
@@ -2425,7 +2277,7 @@ def startRhevmDbRelatedServices():
 
 def isSecondRun():
     keystore = os.path.join(basedefs.DIR_OVIRT_PKI, ".keystore")
-    engineLink = os.path.join(basedefs.DIR_JBOSS, "server", basedefs.JBOSS_PROFILE_NAME,"deploy","engine.ear")
+    engineLink = os.path.join(basedefs.DIR_JBOSS, "standalone", "deployments", "engine.ear")
 
     if os.path.exists(keystore):
         logging.debug("%s exists, second run detected", keystore)

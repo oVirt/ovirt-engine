@@ -115,7 +115,7 @@ def _editRootWar():
         utils.findAndReplace(basedefs.FILE_JBOSS_HTTP_PARAMS, "var https_port.*", 'var https_port = "%s";'%(HTTPS_NEW_PORT))
     except:
         logging.error(traceback.format_exc())
-        raise Exception(output_messages.ERR_EXP_UPD_ROOT_WAR%(basedefs.FILE_JBOSS_HTTP_PARAMS))
+        raise Exception(output_messages.ERR_EXP_UPD_WEB_CONF%(basedefs.FILE_JBOSS_HTTP_PARAMS))
 
 def _redirectUrl():
     try:

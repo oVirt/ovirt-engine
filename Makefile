@@ -194,16 +194,11 @@ install_setup:
 	# Configuration file for the index page:
 	install -m 644 packaging/fedora/setup/resources/jboss/web-conf.js $(PREFIX)/etc/ovirt-engine
 
-	# Resources used to configure the application server:
-	cp -r packaging/fedora/setup/resources/jboss/* $(PREFIX)/usr/share/ovirt-engine/resources/jboss/
-	find $(PREFIX)/usr/share/ovirt-engine/resources/jboss -type d -exec chmod 755 {} \;
-	find $(PREFIX)/usr/share/ovirt-engine/resources/jboss -type f -exec chmod 644 {} \;
-
 	# JBoss modules:
 	cp -r deployment/modules/org/* $(PREFIX)/usr/share/ovirt-engine/resources/jboss/modules/org/
 	ln -s /usr/share/java/postgresql-jdbc.jar $(PREFIX)/usr/share/ovirt-engine/resources/jboss/modules/org/postgresql/main/
 	ln -s /usr/share/ovirt-engine/resources/jboss/modules/org/postgresql $(PREFIX)$(JBOSS_HOME)/modules/org/postgresql
-	sed -i "s/MYVERSION/$(RPM_VERSION)-$(RELEASE_VERSION)/" $(PREFIX)/usr/share/ovirt-engine/resources/jboss/ROOT.war/engineVersion.js
+	sed -i "s/MYVERSION/$(RPM_VERSION)-$(RELEASE_VERSION)/" $(PREFIX)$(EAR_DIR)/root.war/engineVersion.js
 
 install_aio_plugin:
 	install -m 755 packaging/fedora/setup/plugins/all_in_one_100.py $(PREFIX)/usr/share/ovirt-engine/scripts/plugins
