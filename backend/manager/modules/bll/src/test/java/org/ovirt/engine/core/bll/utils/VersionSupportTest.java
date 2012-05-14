@@ -2,38 +2,28 @@ package org.ovirt.engine.core.bll.utils;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
-import static org.powermock.api.mockito.PowerMockito.when;
+import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Collections;
 
-import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Version;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.ovirt.engine.core.utils.MockConfigRule;
 
-@PrepareForTest({Config.class})
-@RunWith(PowerMockRunner.class)
 public class VersionSupportTest {
 
-    private static final Version VALID_VERSION = new Version(1,0);
+    private static final Version VALID_VERSION = new Version(1, 0);
 
-    @Before
-    public void setUp() {
-        mockStatic(Config.class);
-        Set<Version> versions = new HashSet<Version>();
-        versions.add(VALID_VERSION);
-        when(Config.GetValue(ConfigValues.SupportedClusterLevels)).thenReturn(versions);
-    }
+    @Rule
+    public static final MockConfigRule mcr = new MockConfigRule(
+            mockConfig(ConfigValues.SupportedClusterLevels, Collections.singleton(VALID_VERSION))
+            );
 
     @Test
     public void nullVersion() {
-      assertFalse(VersionSupport.checkVersionSupported(null));
+        assertFalse(VersionSupport.checkVersionSupported(null));
     }
 
     @Test
@@ -45,7 +35,4 @@ public class VersionSupportTest {
     public void invalidVersion() {
         assertFalse(VersionSupport.checkVersionSupported(new Version(2, 0)));
     }
-
-
-
 }
