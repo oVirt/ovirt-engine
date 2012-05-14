@@ -528,7 +528,7 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Name")
     String nameDisk();
 
-    @DefaultStringValue("Size")
+    @DefaultStringValue("Actual Size")
     String sizeDisk();
 
     @DefaultStringValue("Storage Domain")
@@ -548,6 +548,9 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("Creation Date")
     String creationDateDisk();
+
+    @DefaultStringValue("Description")
+    String descriptionDisk();
 
     @DefaultStringValue("Format")
     String formatDisk();
@@ -696,6 +699,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Is bootable")
     String isBootableVmDiskPopup();
 
+    @DefaultStringValue("Is shareable")
+    String isShareableVmDiskPopup();
+
     @DefaultStringValue("Activate")
     String activateVmDiskPopup();
 
@@ -705,7 +711,7 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Provisioned Size")
     String provisionedSizeVmDiskTable();
 
-    @DefaultStringValue("Size")
+    @DefaultStringValue("Actual Size")
     String sizeVmDiskTable();
 
     @DefaultStringValue("Storage Domain")
@@ -798,4 +804,7 @@ public interface CommonApplicationConstants extends Constants {
     // Tasks Tree
     @DefaultStringValue("Loading...")
     String loadingTaskTree();
+
+    @DefaultStringValue("Shareable")
+    String shareable();
 }

@@ -45,7 +45,8 @@
 			<e:ListModelListBoxEditor ui:field="interfaceEditor" />
 			<e:ListModelListBoxEditor ui:field="volumeTypeEditor" />
 			<e:EntityModelCheckBoxEditor ui:field="wipeAfterDeleteEditor" />
-			<e:EntityModelCheckBoxEditor ui:field="isBootableEditor" />			
+			<e:EntityModelCheckBoxEditor ui:field="isBootableEditor" />
+			<e:EntityModelCheckBoxEditor ui:field="isShareableEditor" />
 			<g:Label ui:field="message" addStyleNames="{style.errorMessageLabel}" />
 		</g:VerticalPanel>
 		<g:VerticalPanel ui:field="attachDiskPanel" addStyleNames="{style.mainPanel}" visible="false">

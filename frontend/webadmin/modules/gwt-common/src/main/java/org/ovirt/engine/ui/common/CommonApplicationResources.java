@@ -169,4 +169,7 @@ public interface CommonApplicationResources extends ClientBundle {
     @Source("images/question_mark.png")
     ImageResource questionMarkImage();
 
+    @Source("images/disk_shareable.png")
+    ImageResource shareableDiskIcon();
+
 }

@@ -605,6 +605,7 @@ public class VmGuideModel extends GuideModel
             tempVar.setvolume_format(model.getVolumeFormat());
             tempVar.setWipeAfterDelete((Boolean) model.getWipeAfterDelete().getEntity());
             tempVar.setBoot((Boolean) model.getIsBootable().getEntity());
+            tempVar.setShareable((Boolean) model.getIsShareable().getEntity());
             tempVar.setPropagateErrors(PropagateErrors.Off);
             if (model.getQuota().getIsAvailable()) {
                 tempVar.setQuotaId(((Quota) model.getQuota().getSelectedItem()).getId());

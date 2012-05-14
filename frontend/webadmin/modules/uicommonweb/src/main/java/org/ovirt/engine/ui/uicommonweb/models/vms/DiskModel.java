@@ -224,6 +224,18 @@ public class DiskModel extends Model
         privateIsBootable = value;
     }
 
+    private EntityModel privateIsShareable;
+
+    public EntityModel getIsShareable()
+    {
+        return privateIsShareable;
+    }
+
+    public void setIsShareable(EntityModel value)
+    {
+        privateIsShareable = value;
+    }
+
     private EntityModel privateIsPlugged;
 
     public EntityModel getIsPlugged()
@@ -364,6 +376,9 @@ public class DiskModel extends Model
 
         setIsBootable(new EntityModel());
         getIsBootable().setEntity(false);
+
+        setIsShareable(new EntityModel());
+        getIsShareable().setEntity(false);
 
         setIsPlugged(new EntityModel());
         getIsPlugged().setEntity(true);

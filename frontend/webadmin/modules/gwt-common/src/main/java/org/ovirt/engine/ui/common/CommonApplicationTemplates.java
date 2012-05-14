@@ -13,6 +13,10 @@ public interface CommonApplicationTemplates extends SafeHtmlTemplates {
             "<span style='position: relative; margin-left: 3px; white-space: nowrap;'>{1}</span></span>")
     SafeHtml textImageButton(String text, SafeHtml image);
 
+    @Template("<span><span style='position: relative; height: 22px; vertical-align: bottom; display: table-cell;'>{0}</span>" +
+            "<span style='position: relative; padding-left: 3px; vertical-align: middle; display: table-cell;'>{1}</span></span>")
+    SafeHtml dualImage(SafeHtml image1, SafeHtml image2);
+
     @Template("<table cellspacing='0' cellpadding='0'><tr>" +
             "<td style='background: url({2});width:2px;'></td>" +
             "<td style='text-align:center;'>" +

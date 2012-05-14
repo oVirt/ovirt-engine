@@ -8,8 +8,8 @@ import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
-import org.ovirt.engine.ui.common.widget.table.column.DiskImagePlugStatusColumn;
 import org.ovirt.engine.ui.common.widget.table.column.DiskSizeColumn;
+import org.ovirt.engine.ui.common.widget.table.column.DiskStatusColumn;
 import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.FullDateTimeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
@@ -29,7 +29,7 @@ public class BaseVmDiskListModelTable<T extends SearchableListModel> extends Abs
 
     @Override
     public void initTable(CommonApplicationConstants constants) {
-        getTable().addColumn(new DiskImagePlugStatusColumn(), constants.empty(), "30px"); //$NON-NLS-1$
+        getTable().addColumn(new DiskStatusColumn(), constants.empty(), "50px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<DiskImage> nameColumn = new TextColumnWithTooltip<DiskImage>() {
             @Override
@@ -103,7 +103,7 @@ public class BaseVmDiskListModelTable<T extends SearchableListModel> extends Abs
                 return object.getDiskDescription();
             }
         };
-        getTable().addColumn(descriptionColumn, constants.deactivateDisk());
+        getTable().addColumn(descriptionColumn, constants.descriptionDisk());
     }
 
 }

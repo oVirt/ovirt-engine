@@ -7,6 +7,7 @@ import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
@@ -15,6 +16,7 @@ import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.DiskSizeColumn;
+import org.ovirt.engine.ui.common.widget.table.column.ImageResourceColumn;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -23,6 +25,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
+import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -81,6 +84,10 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> 
     EntityModelCheckBoxEditor isBootableEditor;
 
     @UiField(provided = true)
+    @Path("isShareable.entity")
+    EntityModelCheckBoxEditor isShareableEditor;
+
+    @UiField(provided = true)
     @Path("isPlugged.entity")
     EntityModelCheckBoxEditor isPluggedEditor;
 
@@ -104,11 +111,11 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> 
     @UiField
     Label message;
 
-    public VmDiskPopupWidget(CommonApplicationConstants constants) {
+    public VmDiskPopupWidget(CommonApplicationConstants constants, CommonApplicationResources resources) {
         initManualWidgets();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         localize(constants);
-        initDiskTable(constants);
+        initDiskTable(constants, resources);
         Driver.driver.initialize(this);
     }
 
@@ -124,6 +131,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> 
         volumeTypeEditor.setLabel(constants.formatVmDiskPopup());
         wipeAfterDeleteEditor.setLabel(constants.wipeAfterDeleteVmDiskPopup());
         isBootableEditor.setLabel(constants.isBootableVmDiskPopup());
+        isShareableEditor.setLabel(constants.isShareableVmDiskPopup());
         attachEditor.setLabel(constants.attachDiskVmDiskPopup());
         isPluggedEditor.setLabel(constants.activateVmDiskPopup());
     }
@@ -162,13 +170,14 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> 
 
         wipeAfterDeleteEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         isBootableEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+        isShareableEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         isPluggedEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         attachEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
 
         diskTable = new EntityModelCellTable<ListModel>(true);
     }
 
-    private void initDiskTable(CommonApplicationConstants constants) {
+    private void initDiskTable(final CommonApplicationConstants constants, final CommonApplicationResources resources) {
         TextColumnWithTooltip<EntityModel> aliasColumn = new TextColumnWithTooltip<EntityModel>() {
             @Override
             public String getValue(EntityModel object) {
@@ -183,7 +192,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> 
                 return ((DiskModel) (object.getEntity())).getDiskImage().getsize();
             }
         };
-        diskTable.addColumn(sizeColumn, constants.provisionedSizeVmDiskTable());
+        diskTable.addColumn(sizeColumn, constants.provisionedSizeVmDiskTable(), "105px"); //$NON-NLS-1$
 
         DiskSizeColumn<EntityModel> actualSizeColumn = new DiskSizeColumn<EntityModel>() {
             @Override
@@ -200,6 +209,14 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> 
             }
         };
         diskTable.addColumn(storageDomainColumn, constants.storageDomainVmDiskTable());
+
+        diskTable.addColumn(new ImageResourceColumn<EntityModel>() {
+            @Override
+            public ImageResource getValue(EntityModel object) {
+                return ((DiskModel) (object.getEntity())).getDiskImage().isShareable() ?
+                        resources.shareableDiskIcon() : null;
+            }
+        }, constants.shareable(), "70px"); //$NON-NLS-1$
 
         diskTable.setWidth("100%", true); //$NON-NLS-1$
         diskTable.setHeight("100%"); //$NON-NLS-1$

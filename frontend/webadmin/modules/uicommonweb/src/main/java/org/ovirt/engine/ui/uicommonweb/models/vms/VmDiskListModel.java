@@ -476,6 +476,7 @@ public class VmDiskListModel extends SearchableListModel
                             .add("There can be only one bootable disk defined."); //$NON-NLS-1$
                 }
                 diskModel.getIsBootable().setEntity(disk.isBoot());
+                diskModel.getIsShareable().setEntity(disk.isShareable());
 
                 diskModel.getAlias().setEntity(disk.getDiskAlias());
                 diskModel.getDescription().setEntity(disk.getDiskDescription());
@@ -602,6 +603,7 @@ public class VmDiskListModel extends SearchableListModel
         disk.setvolume_format(model.getVolumeFormat());
         disk.setWipeAfterDelete((Boolean) model.getWipeAfterDelete().getEntity());
         disk.setBoot((Boolean) model.getIsBootable().getEntity());
+        disk.setShareable((Boolean) model.getIsShareable().getEntity());
         disk.setPlugged((Boolean) model.getIsPlugged().getEntity());
         if (model.getQuota().getIsAvailable()) {
             disk.setQuotaId(((Quota) model.getQuota().getSelectedItem()).getId());

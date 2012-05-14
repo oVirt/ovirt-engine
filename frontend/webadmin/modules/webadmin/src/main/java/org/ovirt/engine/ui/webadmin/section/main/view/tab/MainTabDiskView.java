@@ -58,7 +58,14 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<DiskIma
             public ImageResource getValue(DiskImage object) {
                 return object.isBoot() ? resources.bootableDiskIcon() : null;
             }
-        }, constants.bootableDisk(), "60px"); //$NON-NLS-1$
+        }, constants.bootableDisk(), "65px"); //$NON-NLS-1$
+
+        getTable().addColumn(new ImageResourceColumn<DiskImage>() {
+            @Override
+            public ImageResource getValue(DiskImage object) {
+                return object.isShareable() ? resources.shareableDiskIcon() : null;
+            }
+        }, constants.shareable(), "65px"); //$NON-NLS-1$
 
         DiskSizeColumn<DiskImage> sizeColumn = new DiskSizeColumn<DiskImage>() {
             @Override
