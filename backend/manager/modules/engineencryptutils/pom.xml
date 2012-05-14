@@ -18,43 +18,6 @@
       <artifactId>compat</artifactId>
       <version>${engine.version}</version>
     </dependency>
-
-    <dependency>
-      <groupId>org.jboss.security</groupId>
-      <artifactId>jbosssx-bare</artifactId>
-      <version>${jbosssx-bare.version}</version>
-      <scope>provided</scope>
-      <!-- excluding artifacts that are explicitly loaded elsewhere -->
-      <exclusions>
-        <exclusion>
-          <groupId>org.hibernate</groupId>
-          <artifactId>hibernate</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.hibernate</groupId>
-          <artifactId>hibernate-annotations</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.hibernate</groupId>
-          <artifactId>hibernate-commons-annotations</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.hibernate</groupId>
-          <artifactId>hibernate-validator</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>sun-jaxb</groupId>
-          <artifactId>jaxb-impl</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-
-    <dependency>
-      <groupId>sun-jaxb</groupId>
-      <artifactId>jaxb-impl</artifactId>
-      <version>${jaxb-impl.version}</version>
-      <scope>provided</scope>
-    </dependency>
   </dependencies>
 
   <build>
@@ -66,17 +29,6 @@
             <additionalClasspathElement>${basedir}/src/test/java</additionalClasspathElement>
           </additionalClasspathElements>
         </configuration>
-      </plugin>
-      <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-jar-plugin</artifactId>
-          <configuration>
-        <archive>
-          <manifest>
-            <mainClass>org.ovirt.engine.core.login.EngineSecureIdentityLoginModule</mainClass>
-          </manifest>
-        </archive>
-          </configuration>
       </plugin>
     </plugins>
   </build>
