@@ -552,7 +552,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                 storage_pool storagePool = DbFacade.getInstance().getStoragePoolDAO().get(_storagePoolId);
                 // don't try to start spm on uninitialized pool
                 if (storagePool.getstatus() != StoragePoolStatus.Uninitialized) {
-                    String host = TransactionSupport.executeInNewTransaction(new TransactionMethod<String>() {
+                    String host = TransactionSupport.executeInScope(TransactionScopeOption.Suppress, new TransactionMethod<String>() {
                         @Override
                         public String runInTransaction() {
                             return gethostFromVds();
