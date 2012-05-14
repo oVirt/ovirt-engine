@@ -15,7 +15,10 @@ import org.ovirt.engine.core.common.queries.DiskImageList;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.compat.Event;
+import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.core.compat.ObservableCollection;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -28,6 +31,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.IIsObjectInSetup;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
 public class ImportTemplateModel extends ListWithDetailsModel implements IIsObjectInSetup
@@ -122,6 +126,43 @@ public class ImportTemplateModel extends ListWithDetailsModel implements IIsObje
 
     private HashMap<Guid, VmTemplate> alreadyInSystem;
 
+    private EntityModel cloneAllTemplates;
+    private EntityModel cloneAllTemplates_message;
+    private EntityModel cloneOnlyDuplicateTemplates;
+    private EntityModel cloneTemplatesSuffix;
+
+    public EntityModel getCloneAllTemplates() {
+        return cloneAllTemplates;
+    }
+
+    public void setCloneAllTemplates(EntityModel cloneAllTemplates) {
+        this.cloneAllTemplates = cloneAllTemplates;
+    }
+
+    public EntityModel getCloneAllTemplates_message() {
+        return cloneAllTemplates_message;
+    }
+
+    public void setCloneAllTemplates_message(EntityModel cloneAllTemplates_message) {
+        this.cloneAllTemplates_message = cloneAllTemplates_message;
+    }
+
+    public EntityModel getCloneOnlyDuplicateTemplates() {
+        return cloneOnlyDuplicateTemplates;
+    }
+
+    public void setCloneOnlyDuplicateTemplates(EntityModel cloneOnlyDuplicateTemplates) {
+        this.cloneOnlyDuplicateTemplates = cloneOnlyDuplicateTemplates;
+    }
+
+    public EntityModel getCloneTemplatesSuffix() {
+        return cloneTemplatesSuffix;
+    }
+
+    public void setCloneTemplatesSuffix(EntityModel cloneTemplatesSuffix) {
+        this.cloneTemplatesSuffix = cloneTemplatesSuffix;
+    }
+
     public ImportTemplateModel()
     {
         setDestinationStorage(new ListModel());
@@ -129,6 +170,27 @@ public class ImportTemplateModel extends ListWithDetailsModel implements IIsObje
         setDiskStorageMap(new HashMap<Guid, HashMap<Guid, Guid>>());
         setIsSingleDestStorage(new EntityModel());
         getIsSingleDestStorage().setEntity(true);
+
+        setCloneAllTemplates(new EntityModel());
+        getCloneAllTemplates().setEntity(false);
+        getCloneAllTemplates().getEntityChangedEvent().addListener(new IEventListener() {
+
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                if ((Boolean) getCloneAllTemplates().getEntity()) {
+                    getCloneTemplatesSuffix().setIsAvailable(true);
+                } else if (!(Boolean) getCloneOnlyDuplicateTemplates().getEntity()) {
+                    getCloneTemplatesSuffix().setIsAvailable(false);
+                }
+            }
+        });
+        setCloneOnlyDuplicateTemplates(new EntityModel());
+        getCloneOnlyDuplicateTemplates().setEntity(false);
+        getCloneOnlyDuplicateTemplates().setIsAvailable(false);
+        setCloneTemplatesSuffix(new EntityModel());
+        getCloneTemplatesSuffix().setEntity("_Copy"); //$NON-NLS-1$
+        getCloneTemplatesSuffix().setIsAvailable(false);
+        setCloneAllTemplates_message(new EntityModel());
     }
 
     @Override
@@ -150,7 +212,13 @@ public class ImportTemplateModel extends ListWithDetailsModel implements IIsObje
 
         getCluster().ValidateSelectedItem(new IValidation[] { new NotEmptyValidation() });
 
-        return getDestinationStorage().getIsValid() && getCluster().getIsValid();
+        getCloneTemplatesSuffix().setIsValid(true);
+        if (getCloneTemplatesSuffix().getIsAvailable()) {
+            getCloneTemplatesSuffix().ValidateEntity(new IValidation[] { new NotEmptyValidation() });
+        }
+
+        return getDestinationStorage().getIsValid() && getCluster().getIsValid()
+                & getCloneTemplatesSuffix().getIsValid();
     }
 
     @Override
@@ -161,7 +229,7 @@ public class ImportTemplateModel extends ListWithDetailsModel implements IIsObje
         StringBuilder searchPattern = new StringBuilder();
         searchPattern.append("Template: "); //$NON-NLS-1$
 
-        List<VmTemplate> list = (List<VmTemplate>) value;
+        final List<VmTemplate> list = (List<VmTemplate>) value;
         for (int i = 0; i < list.size(); i++) {
             VmTemplate vmTemplate = list.get(i);
 
@@ -183,6 +251,25 @@ public class ImportTemplateModel extends ListWithDetailsModel implements IIsObje
                         alreadyInSystem = new HashMap<Guid, VmTemplate>();
                         for (VmTemplate vmt : vmtList) {
                             alreadyInSystem.put(vmt.getId(), vmt);
+                        }
+
+                        if (alreadyInSystem.size() > 0) {
+                            getCloneAllTemplates_message().setEntity(alreadyInSystem.size() + " " //$NON-NLS-1$
+                                    + ConstantsManager.getInstance().getConstants().templateAlreadyExistsMsg());
+                            if (list.size() == alreadyInSystem.size()) {
+                                getCloneAllTemplates().setEntity(true);
+                                getCloneAllTemplates().setIsChangable(false);
+                                getCloneTemplatesSuffix().setIsAvailable(true);
+                            } else {
+                                getCloneOnlyDuplicateTemplates().setIsAvailable(true);
+                                getCloneOnlyDuplicateTemplates().setEntity(true);
+                                getCloneOnlyDuplicateTemplates().setIsChangable(false);
+                                getCloneTemplatesSuffix().setIsAvailable(true);
+                            }
+                        } else {
+                            getCloneAllTemplates_message().setEntity(ConstantsManager.getInstance()
+                                    .getConstants()
+                                    .templateNoExistsMsg());
                         }
 
                         setSuperItems(value);

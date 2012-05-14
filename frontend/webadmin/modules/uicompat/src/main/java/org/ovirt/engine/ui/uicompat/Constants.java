@@ -1314,8 +1314,14 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("VMs already exist")
     String vmAlreadyExistsMsg();
 
-    @DefaultStringValue("No VMs exist")
+    @DefaultStringValue("Templates already exist")
+    String templateAlreadyExistsMsg();
+
+	@DefaultStringValue("No VMs exist")
 	String vmNoExistsMsg();
+
+	@DefaultStringValue("No Templates exist")
+    String templateNoExistsMsg();
 
     @DefaultStringValue("DefaultQuota")
     String defaultQuotaPrefix();

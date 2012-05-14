@@ -43,7 +43,7 @@
 		}
 		
 		.checkboxEditor {
-			width: 25px;
+			width: 20px;
 			padding: 0px;
 		}
 		
@@ -56,15 +56,27 @@
 			<g:VerticalPanel>
 				<g:SplitLayoutPanel ui:field="splitLayoutPanel"
 					height="400px" addStyleNames="{style.splitLayoutPanelStyle}" />
-				<g:VerticalPanel width="450px">
-					<e:ListModelListBoxEditor ui:field="destClusterEditor" />
-					<g:HorizontalPanel verticalAlignment="ALIGN_MIDDLE">
-						<e:EntityModelCheckBoxEditor ui:field="isSingleDestStorageEditor" />
-						<e:ListModelListBoxEditor ui:field="destStorageEditor" />
-					</g:HorizontalPanel>	
+					<g:HorizontalPanel>
+						<g:VerticalPanel width="445px">
+							<e:ListModelListBoxEditor ui:field="destClusterEditor" />
+							<g:HorizontalPanel verticalAlignment="ALIGN_MIDDLE">
+								<e:EntityModelCheckBoxEditor ui:field="isSingleDestStorageEditor" />
+								<e:ListModelListBoxEditor ui:field="destStorageEditor" />
+							</g:HorizontalPanel>
+						</g:VerticalPanel>
+						<g:HorizontalPanel>
+							<g:VerticalPanel>
+								<e:EntityModelCheckBoxEditor ui:field="cloneAllTemplates" />
+								<e:EntityModelLabelEditor ui:field="cloneAllTemplates_message" />
+								<e:EntityModelCheckBoxEditor ui:field="cloneOnlyDuplicateTemplates" />
+							</g:VerticalPanel>
+							<g:VerticalPanel>
+								<e:EntityModelTextBoxEditor ui:field="cloneTemplatesSuffix" />
+							</g:VerticalPanel>
+						</g:HorizontalPanel>
+					</g:HorizontalPanel>
 					<g:Label ui:field="message" addStyleNames="{style.labelStyle}" />
 				</g:VerticalPanel>
-			</g:VerticalPanel>
 		</d:content>
 	</d:SimpleDialogPanel>
 </ui:UiBinder>

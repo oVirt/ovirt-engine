@@ -262,6 +262,13 @@ public class TemplateBackupModel extends ManageBackupModel
                 improtVmTemplateParameters.setImageToDestinationDomainMap(map);
             }
 
+            if ((Boolean) model.getCloneAllTemplates().getEntity()
+                    || ((Boolean) model.getCloneOnlyDuplicateTemplates().getEntity()
+                    && model.isObjectInSetup(template))) {
+                improtVmTemplateParameters.setImportAsNewEntity(true);
+                template.setname(template.getname() + model.getCloneTemplatesSuffix().getEntity());
+            }
+
             prms.add(improtVmTemplateParameters);
         }
 

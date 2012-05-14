@@ -478,7 +478,7 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
         collapseSnapshotEditor.setLabel(constants.importVm_collapseSnapshots());
         cloneAllVMs.setLabel(constants.importVm_cloneAllVMs());
         cloneOnlyDuplicateVMs.setLabel(constants.importVm_cloneOnlyDuplicateVMs());
-        cloneVMsSuffix.setLabel(constants.importVm_cloneVMsSuffix());
+        cloneVMsSuffix.setLabel(constants.import_cloneSuffix());
         duplicateVmMessage.setText(constants.noteClone_CollapsedSnapshotMsg());
     }
 

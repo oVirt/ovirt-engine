@@ -22,6 +22,8 @@ import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.EntityModelLabelEditor;
+import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.IVdcQueryableCellTable;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
@@ -87,6 +89,22 @@ public class ImportTemplatePopupView extends AbstractModelBoundPopupView<ImportT
     @UiField(provided = true)
     @Path(value = "isSingleDestStorage.entity")
     EntityModelCheckBoxEditor isSingleDestStorageEditor;
+
+    @UiField(provided = true)
+    @Path(value = "cloneAllTemplates.entity")
+    EntityModelCheckBoxEditor cloneAllTemplates;
+
+    @UiField(provided = true)
+    @Path(value = "cloneOnlyDuplicateTemplates.entity")
+    EntityModelCheckBoxEditor cloneOnlyDuplicateTemplates;
+
+    @UiField
+    @Path(value = "cloneTemplatesSuffix.entity")
+    EntityModelTextBoxEditor cloneTemplatesSuffix;
+
+    @UiField
+    @Path(value = "cloneAllTemplates_message.entity")
+    EntityModelLabelEditor cloneAllTemplates_message;
 
     @UiField
     SplitLayoutPanel splitLayoutPanel;
@@ -387,11 +405,16 @@ public class ImportTemplatePopupView extends AbstractModelBoundPopupView<ImportT
 
     private void initCheckboxes() {
         isSingleDestStorageEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+        cloneAllTemplates = new EntityModelCheckBoxEditor(Align.RIGHT);
+        cloneOnlyDuplicateTemplates = new EntityModelCheckBoxEditor(Align.RIGHT);
     }
 
     private void localize(ApplicationConstants constants) {
         destClusterEditor.setLabel(constants.importVm_destCluster());
         destStorageEditor.setLabel(constants.singleDestinationStorage());
+        cloneAllTemplates.setLabel(constants.importTemplate_cloneAllTemplates());
+        cloneOnlyDuplicateTemplates.setLabel(constants.importTemplate_cloneOnlyDuplicateTemplates());
+        cloneTemplatesSuffix.setLabel(constants.import_cloneSuffix());
     }
 
     @Override

@@ -2055,11 +2055,17 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Clone All VMs")
     String importVm_cloneAllVMs();
 
+    @DefaultStringValue("Clone All Templates")
+    String importTemplate_cloneAllTemplates();
+
     @DefaultStringValue("Clone Only Duplicated VMs")
     String importVm_cloneOnlyDuplicateVMs();
 
+    @DefaultStringValue("Clone Only Duplicated Templates")
+    String importTemplate_cloneOnlyDuplicateTemplates();
+
     @DefaultStringValue("Suffix:")
-    String importVm_cloneVMsSuffix();
+    String import_cloneSuffix();
 
     @DefaultStringValue("VM in System")
     String vmInSetup();
