@@ -119,17 +119,22 @@ public class ModelBoundPopupHandler<M extends Model> {
                 PropertyChangedEventArgs pcArgs = (PropertyChangedEventArgs) args;
 
                 if ("Progress".equals(pcArgs.PropertyName)) { //$NON-NLS-1$
-                    if (model.getProgress() != null) {
-                        popup.startProgress(model.getProgress().getCurrentOperation());
-                    } else {
-                        popup.stopProgress();
-                    }
+                    updatePopupProgress(model, popup);
                 }
             }
         });
+        updatePopupProgress(model, popup);
 
         // Reveal popup
         RevealRootPopupContentEvent.fire(eventBus, popup);
+    }
+
+    <T extends Model> void updatePopupProgress(T model, AbstractModelBoundPopupPresenterWidget<T, ?> popup) {
+        if (model.getProgress() != null) {
+            popup.startProgress(model.getProgress().getCurrentOperation());
+        } else {
+            popup.stopProgress();
+        }
     }
 
     /**

@@ -225,7 +225,6 @@ public class PermissionListModel extends SearchableListModel
                     }, model);
         }
 
-        Cancel();
     }
 
     private void OnAdd()

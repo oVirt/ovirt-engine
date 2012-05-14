@@ -54,50 +54,6 @@ public class UserPortalListProvider extends UserPortalDataBoundModelProvider<Use
     }
 
     @Override
-    public String[] getWindowPropertyNames() {
-        return new String[] { "VmModel", "RunOnceModel", "AttachCdModel" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    }
-
-    @Override
-    public Model getWindowModel(UserPortalListModel source, String propertyName) {
-        if ("VmModel".equals(propertyName)) { //$NON-NLS-1$
-            return source.getVmModel();
-        } else if ("RunOnceModel".equals(propertyName)) { //$NON-NLS-1$
-            return source.getRunOnceModel();
-        } else if ("AttachCdModel".equals(propertyName)) { //$NON-NLS-1$
-            return source.getAttachCdModel();
-        } else {
-            return null;
-        }
-    }
-
-    @Override
-    public void clearWindowModel(UserPortalListModel source, String propertyName) {
-        if ("VmModel".equals(propertyName)) { //$NON-NLS-1$
-            source.setVmModel(null);
-        } else if ("RunOnceModel".equals(propertyName)) { //$NON-NLS-1$
-            source.setRunOnceModel(null);
-        } else if ("AttachCdModel".equals(propertyName)) { //$NON-NLS-1$
-            source.setAttachCdModel(null);
-        }
-    }
-
-    @Override
-    public String[] getConfirmWindowPropertyNames() {
-        return new String[] { "ConfirmationModel" }; //$NON-NLS-1$
-    }
-
-    @Override
-    public Model getConfirmWindowModel(UserPortalListModel source, String propertyName) {
-        return source.getConfirmationModel();
-    }
-
-    @Override
-    public void clearConfirmWindowModel(UserPortalListModel source, String propertyName) {
-        source.setConfirmationModel(null);
-    }
-
-    @Override
     public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(UserPortalListModel source,
             UICommand lastExecutedCommand, Model windowModel) {
         if (lastExecutedCommand == getModel().getNewTemplateCommand()) {
@@ -111,7 +67,7 @@ public class UserPortalListProvider extends UserPortalDataBoundModelProvider<Use
         } else if (lastExecutedCommand == getModel().getNewServerCommand()) {
             return newServerVmPopupProvider.get();
         } else if (lastExecutedCommand == getModel().getEditCommand()) {
-            UnitVmModel vm = getModel().getVmModel();
+            UnitVmModel vm = (UnitVmModel) getModel().getWindow();
             if (vm.getVmType().equals(VmType.Desktop)) {
                 return newDesktopVmPopupProvider.get();
             } else {

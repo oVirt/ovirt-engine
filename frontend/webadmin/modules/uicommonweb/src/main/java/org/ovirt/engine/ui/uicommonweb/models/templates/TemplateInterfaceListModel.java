@@ -281,6 +281,7 @@ public class TemplateInterfaceListModel extends SearchableListModel
             return;
         }
 
+        getWindow().StartProgress(null);
         // Save changes.
         nic.setName((String) model.getName().getEntity());
         nic.setNetworkName(((network) model.getNetwork().getSelectedItem()).getname());
@@ -298,12 +299,12 @@ public class TemplateInterfaceListModel extends SearchableListModel
         if (model.getIsNew())
         {
             Frontend.RunMultipleAction(VdcActionType.AddVmTemplateInterface,
-                    new ArrayList<VdcActionParametersBase>(Arrays.asList(new VdcActionParametersBase[] {new AddVmTemplateInterfaceParameters(getEntityStronglyTyped().getId(),
-                        nic)})),
+                    new ArrayList<VdcActionParametersBase>(Arrays.asList(new VdcActionParametersBase[] { new AddVmTemplateInterfaceParameters(getEntityStronglyTyped().getId(),
+                            nic) })),
                     new IFrontendMultipleActionAsyncCallback() {
                         @Override
                         public void Executed(FrontendMultipleActionAsyncResult result) {
-
+                            getWindow().StopProgress();
                             Cancel();
 
                         }
