@@ -2,25 +2,18 @@ package org.ovirt.engine.core.bll.command.utils;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
-import static org.powermock.api.mockito.PowerMockito.when;
 
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.ovirt.engine.core.common.businessentities.storage_domain_dynamic;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
-import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.ovirt.engine.core.utils.MockConfigRule;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Config.class })
 public class StorageDomainSpaceCheckerTest {
 
-    public StorageDomainSpaceCheckerTest() {
-        mockStatic(Config.class);
-    }
+    @Rule
+    public static MockConfigRule mcr = new MockConfigRule();
 
     @Test
     public void enoughSpaceAndPct() {
@@ -131,9 +124,9 @@ public class StorageDomainSpaceCheckerTest {
         return domain;
     }
 
-    private void mockConfig(final int lowGB, final int lowPct) {
-        when(Config.<Integer> GetValue(ConfigValues.FreeSpaceCriticalLowInGB)).thenReturn(lowGB);
-        when(Config.<Integer> GetValue(ConfigValues.FreeSpaceLow)).thenReturn(lowPct);
+    private static void mockConfig(final int lowGB, final int lowPct) {
+        mcr.mockConfigValue(ConfigValues.FreeSpaceCriticalLowInGB, lowGB);
+        mcr.mockConfigValue(ConfigValues.FreeSpaceLow, lowPct);
     }
 
     final class SpaceTestSettings {
