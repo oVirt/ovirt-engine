@@ -198,6 +198,7 @@ public class WebAdminConfigurator extends Configurator implements IEventListener
         spice.setAdminConsole(getSpiceAdminConsole());
         spice.setFullScreen(getSpiceFullScreen());
         spice.setSpiceBaseURL(getSpiceBaseURL());
+        spice.setUsbFilter(getUsbFilter());
 
         if (!isInitialized) {
             updateIsUsbEnabled(spice);

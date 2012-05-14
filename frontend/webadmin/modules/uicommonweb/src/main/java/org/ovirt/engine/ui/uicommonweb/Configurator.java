@@ -27,6 +27,9 @@ public class Configurator
         return documentationLangPath;
     }
 
+    protected static final String DEFAULT_USB_FILTER = "-1,-1,-1,-1,0"; //$NON-NLS-1$
+    protected String usbFilter = DEFAULT_USB_FILTER;
+
     /**
      * Gets the value indincating whether the model state should be changed asynchronous in response on property change
      * or command execution.
@@ -209,6 +212,14 @@ public class Configurator
 
     public String getDocumentationLibURL() {
         return getDocumentationBaseURL() + DOCUMENTATION_LIB_PATH;
+    }
+
+    protected void setUsbFilter(String usbFilter) {
+        this.usbFilter = usbFilter;
+    }
+
+    public String getUsbFilter() {
+        return usbFilter;
     }
 
     public Configurator()

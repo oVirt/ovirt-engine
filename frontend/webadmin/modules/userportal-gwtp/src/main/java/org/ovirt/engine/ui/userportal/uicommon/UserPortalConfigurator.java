@@ -33,8 +33,11 @@ public class UserPortalConfigurator extends Configurator implements IEventListen
 
     public EventDefinition spiceVersionFileFetchedEvent_Definition =
             new EventDefinition("spiceVersionFileFetched", UserPortalConfigurator.class); //$NON-NLS-1$
-
     public Event spiceVersionFileFetchedEvent = new Event(spiceVersionFileFetchedEvent_Definition);
+
+    public EventDefinition usbFilterFileFetchedEvent_Definition =
+            new EventDefinition("usbFilterFileFetched", UserPortalConfigurator.class); //$NON-NLS-1$
+    public Event usbFilterFileFetchedEvent = new Event(usbFilterFileFetchedEvent_Definition);
 
     private boolean isInitialized;
     private final Provider<MainTabBasicPresenter> basicPresenter;
@@ -49,9 +52,13 @@ public class UserPortalConfigurator extends Configurator implements IEventListen
 
         // Add event listeners
         spiceVersionFileFetchedEvent.addListener(this);
+        usbFilterFileFetchedEvent.addListener(this);
 
         // Update Spice version if needed
         updateSpiceVersion();
+
+        // Update USB filters
+        updateUsbFilter();
     }
 
     private void updateSpiceVersion() {
@@ -73,6 +80,10 @@ public class UserPortalConfigurator extends Configurator implements IEventListen
 
     public void updateSpice64Version() {
         fetchFile("SpiceVersion_x64.txt", spiceVersionFileFetchedEvent); //$NON-NLS-1$
+    }
+
+    public void updateUsbFilter() {
+        fetchFile("consoles/spice/usbfilter.txt", usbFilterFileFetchedEvent); //$NON-NLS-1$
     }
 
     public void updateIsUsbEnabled(final ISpice spice) {
@@ -120,6 +131,11 @@ public class UserPortalConfigurator extends Configurator implements IEventListen
         if (ev.equals(spiceVersionFileFetchedEvent_Definition)) {
             Version spiceVersion = parseVersion(((FileFetchEventArgs) args).getFileContent());
             setSpiceVersion(spiceVersion);
+        }
+        else if (ev.equals(usbFilterFileFetchedEvent_Definition))
+        {
+            String usbFilter = ((FileFetchEventArgs) args).getFileContent();
+            setUsbFilter(usbFilter);
         }
     }
 
@@ -171,6 +187,7 @@ public class UserPortalConfigurator extends Configurator implements IEventListen
         spice.setAdminConsole(getSpiceAdminConsole());
         spice.setFullScreen(getSpiceFullScreen());
         spice.setSpiceBaseURL(UserPortalConfigurator.getSpiceBaseURL());
+        spice.setUsbFilter(getUsbFilter());
 
         if (!isInitialized) {
             updateIsUsbEnabled(spice);
