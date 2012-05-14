@@ -5,9 +5,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
-import static org.powermock.api.mockito.PowerMockito.mock;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
-import static org.powermock.api.mockito.PowerMockito.when;
+import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -25,23 +23,23 @@ import javax.naming.directory.DirContext;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.config.IConfigUtilsInterface;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.ovirt.engine.core.utils.MockConfigRule;
 
 /**
  * Tests GetRootDSE functionality In this test it is checked how GetRootDSE handles a various scenarios *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(Config.class)
 public class DirectorySearcherTest extends AbstractLdapTest {
+
+    @Rule
+    public static MockConfigRule mcr = new MockConfigRule(
+            mockConfig(ConfigValues.LDAPQueryTimeout, 30),
+            mockConfig(ConfigValues.LDAPProviderTypes, "example.com:general")
+            );
 
     private static final String BAD_URL = "ldap://badurl.com:389";
 
@@ -58,11 +56,6 @@ public class DirectorySearcherTest extends AbstractLdapTest {
     @Before
     public void setup() throws Exception {
         super.setup();
-        mockStatic(Config.class);
-        when(Config.GetValue(ConfigValues.LDAPQueryTimeout)).thenReturn(30);
-        when(Config.GetValue(ConfigValues.LDAPProviderTypes)).thenReturn("example.com:general");
-        when(Config.getConfigUtils()).thenReturn(mock(IConfigUtilsInterface.class));
-        MockitoAnnotations.initMocks(this);
         dirContext = mockDirContext();
     }
 
