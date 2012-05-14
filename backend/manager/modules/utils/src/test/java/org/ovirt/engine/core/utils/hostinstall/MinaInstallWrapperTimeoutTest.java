@@ -8,32 +8,22 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
-import static org.powermock.api.mockito.PowerMockito.when;
+import static org.mockito.Mockito.when;
+import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import org.apache.sshd.ClientSession;
 import org.apache.sshd.SshClient;
 import org.apache.sshd.client.future.AuthFuture;
 import org.apache.sshd.client.future.ConnectFuture;
-import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.ovirt.engine.core.utils.MockConfigRule;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Config.class })
 public class MinaInstallWrapperTimeoutTest {
-    public MinaInstallWrapperTimeoutTest() {
-        mockStatic(Config.class);
-    }
 
-    @Before
-    public void setupConfig() {
-        when(Config.<Integer> GetValue(ConfigValues.SSHInactivityTimoutSeconds)).thenReturn(0);
-    }
+    @Rule
+    public static final MockConfigRule mcr = new MockConfigRule(mockConfig(ConfigValues.SSHInactivityTimoutSeconds, 0));
 
     @SuppressWarnings("null")
     @Test
