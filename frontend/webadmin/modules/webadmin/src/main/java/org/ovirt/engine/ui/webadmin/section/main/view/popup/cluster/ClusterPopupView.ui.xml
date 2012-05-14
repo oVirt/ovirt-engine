@@ -29,7 +29,15 @@
 
 		.radioButtonsTabContent {
 			margin-top: 10px;
-		}		
+		}
+
+		.messageLabel {
+			color: #FF0000;
+			left: 10px;
+			padding-left: 5px;
+			padding-top: 10px;
+		}
+
 	</ui:style>
 
 	<d:SimpleDialogPanel width="600px" height="500px">
@@ -46,7 +54,9 @@
 								<e:EntityModelTextBoxEditor ui:field="descriptionEditor" />
 								<e:ListModelListBoxEditor ui:field="cPUEditor" />
 								<e:ListModelListBoxEditor ui:field="versionEditor" />
+								<e:EntityModelCheckBoxEditor ui:field="enableOvirtServiceEditor" />
 								<e:EntityModelCheckBoxEditor ui:field="enableGlusterServiceEditor" />
+								<g:Label ui:field="messageLabel" addStyleNames="{style.messageLabel}" />
 							</g:FlowPanel>
 						</t:content>
 					</t:DialogTab>

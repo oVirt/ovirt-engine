@@ -78,9 +78,18 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
     ListModelListBoxEditor<Object> versionEditor;
 
     @UiField
+    @Path(value = "enableOvirtService.entity")
+    @WithElementId("enableOvirtService")
+    EntityModelCheckBoxEditor enableOvirtServiceEditor;
+
+    @UiField
     @Path(value = "enableGlusterService.entity")
     @WithElementId("enableGlusterService")
     EntityModelCheckBoxEditor enableGlusterServiceEditor;
+
+    @UiField
+    @Ignore
+    Label messageLabel;
 
     @UiField
     @WithElementId
@@ -170,6 +179,7 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
         descriptionEditor.setLabel(constants.clusterPopupDescriptionLabel());
         cPUEditor.setLabel(constants.clusterPopupCPULabel());
         versionEditor.setLabel(constants.clusterPopupVersionLabel());
+        enableOvirtServiceEditor.setLabel(constants.clusterEnableOvirtServiceLabel());
         enableGlusterServiceEditor.setLabel(constants.clusterEnableGlusterServiceLabel());
 
         memoryOptimizationTab.setLabel(constants.clusterPopupMemoryOptimizationTabLabel());
@@ -267,6 +277,12 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
                 resiliencePolicyTab.setVisible(object.getisResiliencePolicyTabAvailable());
             }
         });
+    }
+
+    @Override
+    public void setMessage(String message) {
+        super.setMessage(message);
+        messageLabel.setText(message);
     }
 
     @Override

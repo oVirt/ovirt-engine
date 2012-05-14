@@ -1755,6 +1755,19 @@ public final class AsyncDataProvider {
         Frontend.RunQuery(VdcQueryType.Search, new SearchParameters("Vms: pool=" + poolName, SearchType.VM), aQuery); //$NON-NLS-1$
     }
 
+    public static void GetVmListByClusterName(AsyncQuery aQuery, String clusterName) {
+        aQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object Convert(Object source, AsyncQuery _asyncQuery)
+            {
+                ArrayList<VM> vms = Linq.<VM> Cast((ArrayList<IVdcQueryable>) source);
+                return vms;
+            }
+        };
+        Frontend.RunQuery(VdcQueryType.Search,
+                new SearchParameters("Vms: cluster=" + clusterName, SearchType.VM), aQuery); //$NON-NLS-1$
+    }
+
     public static void GetDiskList(AsyncQuery aQuery) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override

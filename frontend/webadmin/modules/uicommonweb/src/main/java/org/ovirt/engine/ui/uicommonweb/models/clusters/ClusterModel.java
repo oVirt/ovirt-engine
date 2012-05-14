@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.clusters;
 
+import java.util.ArrayList;
+
 import org.ovirt.engine.core.common.businessentities.MigrateOnErrorOptions;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.StorageType;
@@ -20,12 +22,11 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
+import org.ovirt.engine.ui.uicommonweb.validation.I18NNameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
-import org.ovirt.engine.ui.uicommonweb.validation.I18NNameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
-
-import java.util.ArrayList;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
 public class ClusterModel extends Model
@@ -189,15 +190,27 @@ public class ClusterModel extends Model
         privateVersion = value;
     }
 
+    private EntityModel privateEnableOvirtService;
+
+    public EntityModel getEnableOvirtService()
+    {
+        return privateEnableOvirtService;
+    }
+
+    public void setEnableOvirtService(EntityModel value)
+    {
+        this.privateEnableOvirtService = value;
+    }
+
     private EntityModel privateEnableGlusterService;
 
-        public EntityModel getEnableGlusterService() {
-            return privateEnableGlusterService;
-        }
+    public EntityModel getEnableGlusterService() {
+        return privateEnableGlusterService;
+    }
 
-        public void setEnableGlusterService(EntityModel value) {
-            this.privateEnableGlusterService = value;
-        }
+    public void setEnableGlusterService(EntityModel value) {
+        this.privateEnableGlusterService = value;
+    }
 
     private EntityModel privateOptimizationNone;
 
@@ -474,6 +487,8 @@ public class ClusterModel extends Model
         setIsEdit(isEdit);
         setName(new EntityModel());
         setDescription(new EntityModel());
+        setEnableOvirtService(new EntityModel());
+        getEnableOvirtService().setEntity(true);
         setEnableGlusterService(new EntityModel());
         getEnableGlusterService().setEntity(false);
         getEnableGlusterService().setIsAvailable(!glusterModeEnum.equals(GlusterModeEnum.ONLY_OVIRT));
@@ -814,11 +829,27 @@ public class ClusterModel extends Model
         // Name.InvalidityReasons.Add("Name must be unique.");
         // }
 
+        boolean validService = true;
+        if (getEnableOvirtService().getIsAvailable() && getEnableGlusterService().getIsAvailable())
+        {
+            validService = ((Boolean) getEnableOvirtService().getEntity())
+                            || ((Boolean) getEnableGlusterService().getEntity());
+        }
+
+        if (!validService)
+        {
+            setMessage(ConstantsManager.getInstance().getConstants().clusterServiceValidationMsg());
+        }
+        else
+        {
+            setMessage(null);
+        }
+
         setIsGeneralTabValid(getName().getIsValid() && getDataCenter().getIsValid() && getCPU().getIsValid()
-                && getVersion().getIsValid());
+                && getVersion().getIsValid() && validService);
 
         return getName().getIsValid() && getDataCenter().getIsValid() && getCPU().getIsValid()
-                && getVersion().getIsValid();
+                && getVersion().getIsValid() && validService;
     }
 
 }

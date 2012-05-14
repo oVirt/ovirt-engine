@@ -275,7 +275,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 	@DefaultStringValue("Edit Quota")
 	String editQuotaTitle();
 
-	@DefaultStringValue("Copy Quota")
+    @DefaultStringValue("Copy Quota")
     String cloneQuotaTitle();
 
 	@DefaultStringValue("Remove Quota(s)")
@@ -1328,4 +1328,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Quota name must be changed when it's not default")
     String changeQuotaNameValidation();
+
+    @DefaultStringValue("At least one service should be selected")
+    String clusterServiceValidationMsg();
 }

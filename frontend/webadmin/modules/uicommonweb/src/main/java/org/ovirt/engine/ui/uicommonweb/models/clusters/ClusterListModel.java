@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.clusters;
 
+import java.util.ArrayList;
+
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -7,6 +9,7 @@ import org.ovirt.engine.core.common.action.VdsGroupOperationParameters;
 import org.ovirt.engine.core.common.action.VdsGroupParametersBase;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.interfaces.SearchType;
@@ -36,8 +39,6 @@ import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
-
-import java.util.ArrayList;
 
 @SuppressWarnings("unused")
 public class ClusterListModel extends ListWithDetailsModel implements ISupportSystemTreeContext
@@ -279,7 +280,10 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         model.setHashName("edit_cluster"); //$NON-NLS-1$
         model.setOriginalName(cluster.getname());
         model.getName().setEntity(cluster.getname());
+        model.getEnableOvirtService().setEntity(cluster.supportsVirtService());
+        model.getEnableOvirtService().setIsChangable(false);
         model.getEnableGlusterService().setEntity(cluster.supportsGlusterService());
+        model.getEnableGlusterService().setIsChangable(false);
 
         AsyncQuery asyncQuery = new AsyncQuery();
         asyncQuery.setModel(model);
@@ -290,15 +294,38 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
                 ClusterModel clusterModel = (ClusterModel) model1;
                 ArrayList<GlusterVolumeEntity> volumes =
                         (ArrayList<GlusterVolumeEntity>) result;
-                if (volumes.size() != 0)
+                if (volumes.size() > 0)
                 {
-                    if (cluster.supportsGlusterService()) {
-                        clusterModel.getEnableGlusterService().setIsChangable(false);
-                    }
+                    clusterModel.getEnableGlusterService().setIsChangable(false);
+                }
+                else
+                {
+                    clusterModel.getEnableGlusterService().setIsChangable(true);
                 }
             }
         };
         AsyncDataProvider.GetVolumeList(asyncQuery, cluster.getname());
+
+        AsyncQuery asyncQuery1 = new AsyncQuery();
+        asyncQuery1.setModel(model);
+        asyncQuery1.asyncCallback = new INewAsyncCallback() {
+            @Override
+            public void OnSuccess(Object model1, Object result)
+            {
+                ClusterModel clusterModel = (ClusterModel) model1;
+                ArrayList<VM> vmList = (ArrayList<VM>) result;
+                if (vmList.size() > 0)
+                {
+                    clusterModel.getEnableOvirtService().setIsChangable(false);
+                }
+                else
+                {
+                    clusterModel.getEnableOvirtService().setIsChangable(true);
+                }
+            }
+        };
+        AsyncDataProvider.GetVmListByClusterName(asyncQuery1, cluster.getname());
+
         if (getSystemTreeSelectedItem() != null && getSystemTreeSelectedItem().getType() == SystemTreeItemType.Cluster) {
             model.getName().setIsChangable(false);
             model.getName().setInfo("Cannot edit Cluster's Name in tree context"); //$NON-NLS-1$
@@ -434,6 +461,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         cluster.setTransparentHugepages(version.compareTo(new Version("3.0")) >= 0); //$NON-NLS-1$
         cluster.setcompatibility_version(version);
         cluster.setMigrateOnError(model.getMigrateOnErrorOption());
+        cluster.setVirtService((Boolean) model.getEnableOvirtService().getEntity());
         cluster.setGlusterService((Boolean) model.getEnableGlusterService().getEntity());
 
         model.StartProgress(null);
