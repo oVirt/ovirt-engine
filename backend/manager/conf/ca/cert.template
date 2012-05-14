@@ -1,7 +1,7 @@
 RANDFILE = .rnd
 
 [ req ]
-default_bits = rsa:1024
+default_bits = rsa:2048
 default_keyfile = keys/cert.pem
 distinguished_name = req_distinguished_name
 attributes = req_attributes

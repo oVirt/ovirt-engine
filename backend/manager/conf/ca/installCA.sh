@@ -67,7 +67,7 @@ echo "} Creating client certificate for oVirt..."
 # Create certificate request
 echo " "
 echo "}} Creating certificate request..."
-./CreateReq.sh 1 $COUNTRY "$ORG" "$SUBJECT" engine $PASS $ALIAS
+./CreateReq.sh $COUNTRY "$ORG" "$SUBJECT" engine $PASS $ALIAS
 
 # Sign request
 echo " "

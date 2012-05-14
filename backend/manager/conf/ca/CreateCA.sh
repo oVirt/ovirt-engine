@@ -27,7 +27,7 @@ echo C = $1 >> cacert.conf
 echo O = $2 >> cacert.conf
 echo CN = $3 >> cacert.conf
 
-openssl genrsa -out private/ca.pem 1024 && openssl req -new -key private/ca.pem -config cacert.conf -out requests/ca.csr && openssl ca -selfsign -out ca.pem -in requests/ca.csr -keyfile private/ca.pem -days 3650 -startdate $4 -config openssl.conf -extfile cacert.conf -extensions v3_ca -batch
+openssl genrsa -out private/ca.pem 2048 && openssl req -new -key private/ca.pem -config cacert.conf -out requests/ca.csr && openssl ca -selfsign -out ca.pem -in requests/ca.csr -keyfile private/ca.pem -days 3650 -startdate $4 -config openssl.conf -extfile cacert.conf -extensions v3_ca -batch
 
 exit $?
 
