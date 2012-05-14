@@ -2,21 +2,23 @@ package org.ovirt.engine.core.bll;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
 
 import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.ovirt.engine.core.utils.MockConfigRule;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Config.class})
 public class ImportVmCommandTest {
+
+    @Rule
+    public static MockConfigRule mcr = new MockConfigRule();
 
     @Test
     @Ignore
@@ -39,10 +41,9 @@ public class ImportVmCommandTest {
     }
 
     private ImportVmCommand setupDiskSpaceTest(final int diskSpaceRequired, final int diskSpacePct) {
-        ConfigMocker cfgMocker = new ConfigMocker();
-        cfgMocker.mockConfigLowDiskSpace(diskSpaceRequired);
-        cfgMocker.mockConfigLowDiskPct(diskSpacePct);
-        cfgMocker.mockLimitNumberOfNetworkInterfaces(Boolean.TRUE);
+        mcr.mockConfigValue(ConfigValues.FreeSpaceCriticalLowInGB, diskSpaceRequired);
+        mcr.mockConfigValue(ConfigValues.FreeSpaceLow, diskSpacePct);
+        mcr.mockConfigValue(eq(ConfigValues.LimitNumberOfNetworkInterfaces), anyString(), Boolean.TRUE);
         return new TestHelperImportVmCommand(createParameters());
     }
 
