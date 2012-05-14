@@ -11,6 +11,7 @@ public class MoveOrCopyParameters extends StorageDomainParametersBase implements
     private static final long serialVersionUID = 1051590893103934441L;
 
     private Map<Guid, Guid> imageToDestinationDomainMap;
+    private boolean importAsNewEntity;
 
     public MoveOrCopyParameters(Guid containerId, Guid storageDomainId) {
         super(storageDomainId);
@@ -78,5 +79,13 @@ public class MoveOrCopyParameters extends StorageDomainParametersBase implements
 
     public Map<Guid, Guid> getImageToDestinationDomainMap() {
         return imageToDestinationDomainMap;
+    }
+
+    public boolean isImportAsNewEntity() {
+        return importAsNewEntity;
+    }
+
+    public void setImportAsNewEntity(boolean importAsNewEntity) {
+        this.importAsNewEntity = importAsNewEntity;
     }
 }

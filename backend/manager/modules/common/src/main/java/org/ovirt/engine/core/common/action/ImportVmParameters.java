@@ -12,7 +12,6 @@ public class ImportVmParameters extends MoveVmParameters implements Serializable
     private Guid _sourceDomainId = Guid.Empty;
     private Guid _destDomainId = Guid.Empty;
     private Guid _vdsGroupId;
-    private boolean importAsNewEntity;
 
     public ImportVmParameters() {
     }
@@ -50,14 +49,6 @@ public class ImportVmParameters extends MoveVmParameters implements Serializable
 
     public void setVdsGroupId(Guid value) {
         _vdsGroupId = value;
-    }
-
-    public boolean isImportAsNewEntity() {
-        return importAsNewEntity;
-    }
-
-    public void setImportAsNewEntity(boolean importAsNewEntity) {
-        this.importAsNewEntity = importAsNewEntity;
     }
 
 }

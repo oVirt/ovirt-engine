@@ -45,6 +45,9 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImprotVmTemplateParameters> {
 
+    private List<Guid> diskGuidList = new ArrayList<Guid>();
+    private List<Guid> imageGuidList = new ArrayList<Guid>();
+
     public ImportVmTemplateCommand(ImprotVmTemplateParameters parameters) {
         super(parameters);
         setVmTemplate(parameters.getVmTemplate());
@@ -126,6 +129,10 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImprotVmT
             }
         }
 
+        if (retVal && getParameters().isImportAsNewEntity()) {
+            initImportClonedTemplate();
+        }
+
         if (retVal) {
             VmTemplate duplicateTemplate = getVmTemplateDAO()
                     .get(getParameters().getVmTemplate().getId());
@@ -174,6 +181,25 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImprotVmT
         return retVal;
     }
 
+    private void initImportClonedTemplate() {
+        getParameters().getVmTemplate().setId(Guid.NewGuid());
+        for (VmNetworkInterface iface : getParameters().getVmTemplate().getInterfaces()) {
+            iface.setId(Guid.NewGuid());
+            iface.setMacAddress(MacPoolManager.getInstance().allocateNewMac());
+        }
+    }
+
+    private void initImportClonedTemplateDisks() {
+        for (DiskImage image : getParameters().getImages()) {
+            diskGuidList.add(image.getId());
+            imageGuidList.add(image.getImageId());
+            if (getParameters().isImportAsNewEntity()) {
+                image.setId(Guid.NewGuid());
+                image.setImageId(Guid.NewGuid());
+            }
+        }
+    }
+
     /**
      * Change the image format to {@link VolumeFormat#COW} in case the SD is a block device and the image format is
      * {@link VolumeFormat#RAW} and the type is {@link VolumeType#Sparse}.
@@ -216,13 +242,13 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImprotVmT
 
             @Override
             public Void runInTransaction() {
+                initImportClonedTemplateDisks();
                 AddVmTemplateToDb();
                 AddVmInterfaces();
                 getCompensationContext().stateChanged();
                 return null;
             }
         });
-
         MoveOrCopyAllImageGroups(getVmTemplateId(), getParameters().getImages());
         VmDeviceUtils.addImportedDevices(getVmTemplate());
         setSucceeded(true);
@@ -234,19 +260,26 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImprotVmT
 
             @Override
             public Void runInTransaction() {
+                int i = 0;
                 for (DiskImage disk : disks) {
-                    Guid targetId = (imageToDestinationDomainMap.get(disk.getImageId()) == null) ? getParameters().getStorageDomainId() :
-                            imageToDestinationDomainMap.get(disk.getImageId());
-                    MoveOrCopyImageGroupParameters tempVar = new MoveOrCopyImageGroupParameters(containerID, disk
-                            .getimage_group_id().getValue(), disk.getImageId(), targetId,
-                            getMoveOrCopyImageOperation());
+                    Guid destinationDomain = imageToDestinationDomainMap.get(imageGuidList.get(i));
+                    MoveOrCopyImageGroupParameters tempVar =
+                            new MoveOrCopyImageGroupParameters(containerID,
+                                    diskGuidList.get(i),
+                                    imageGuidList.get(i),
+                                    disk.getId(),
+                                    disk.getImageId(),
+                                    destinationDomain,
+                                    getMoveOrCopyImageOperation());
+
                     tempVar.setParentCommand(getActionType());
-                    tempVar.setEntityId(getParameters().getEntityId());
                     tempVar.setUseCopyCollapse(true);
                     tempVar.setVolumeType(disk.getvolume_type());
                     tempVar.setVolumeFormat(disk.getvolume_format());
                     tempVar.setCopyVolumeType(CopyVolumeType.SharedVol);
                     tempVar.setPostZero(disk.isWipeAfterDelete());
+                    tempVar.setSourceDomainId(getParameters().getSourceDomainId());
+                    tempVar.setStorageDomainId(getParameters().getStorageDomainId());
                     tempVar.setForceOverride(true);
                     MoveOrCopyImageGroupParameters p = tempVar;
                     p.setParentParemeters(getParameters());
@@ -262,6 +295,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImprotVmT
 
                     getParameters().getImagesParameters().add(p);
                     getReturnValue().getTaskIdList().addAll(vdcRetValue.getInternalTaskIdList());
+                    i++;
                 }
                 return null;
             }
@@ -275,10 +309,11 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImprotVmT
         DbFacade.getInstance().getVmTemplateDAO().save(getVmTemplate());
         getCompensationContext().snapshotNewEntity(getVmTemplate());
         for (DiskImage image : getParameters().getImages()) {
+            image.setvm_guid(getVmTemplateId());
             image.setactive(true);
             BaseImagesCommand.saveImage(image);
             getCompensationContext().snapshotNewEntity(image);
-            if (!DbFacade.getInstance().getBaseDiskDao().exists(image.getimage_group_id())) {
+            if (!DbFacade.getInstance().getBaseDiskDao().exists(image.getId())) {
                 image.setDiskAlias(ImagesHandler.getSuggestedDiskAlias(image, getVmTemplateName()));
                 DbFacade.getInstance().getBaseDiskDao().save(image);
                 getCompensationContext().snapshotNewEntity(image);
@@ -373,5 +408,23 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImprotVmT
                     : AuditLogType.IMPORTEXPORT_IMPORT_TEMPLATE_FAILED;
         }
         return super.getAuditLogTypeValue();
+    }
+
+    @Override
+    public Guid getVmTemplateId() {
+        if (getParameters().isImportAsNewEntity()) {
+            return getParameters().getVmTemplate().getId();
+        } else {
+            return super.getVmTemplateId();
+        }
+    }
+
+    @Override
+    public VmTemplate getVmTemplate() {
+        if (getParameters().isImportAsNewEntity()) {
+            return getParameters().getVmTemplate();
+        } else {
+            return super.getVmTemplate();
+        }
     }
 }
