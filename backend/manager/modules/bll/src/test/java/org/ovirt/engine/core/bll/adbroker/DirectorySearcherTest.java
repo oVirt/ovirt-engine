@@ -5,6 +5,9 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
+import static org.powermock.api.mockito.PowerMockito.mock;
+import static org.powermock.api.mockito.PowerMockito.mockStatic;
+import static org.powermock.api.mockito.PowerMockito.when;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -32,9 +35,6 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.config.IConfigUtilsInterface;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
-import static org.powermock.api.mockito.PowerMockito.when;
-import static org.powermock.api.mockito.PowerMockito.mock;
 
 /**
  * Tests GetRootDSE functionality In this test it is checked how GetRootDSE handles a various scenarios *
@@ -47,7 +47,7 @@ public class DirectorySearcherTest extends AbstractLdapTest {
 
     private DirContext dirContext;
 
-    private static final ExecutorService executerService = Executors.newSingleThreadExecutor();;
+    private static final ExecutorService executerService = Executors.newSingleThreadExecutor();
 
     @BeforeClass
     public static void beforeClass() {
@@ -75,8 +75,8 @@ public class DirectorySearcherTest extends AbstractLdapTest {
         GetRootDSETask task1 = mockRootDSETask(dirSearcher, "mydomain", urls.get(0));
         GetRootDSETask task2 = mockRootDSETask(dirSearcher, "mydomain", urls.get(1));
         try {
-        assertTrue(task1.call());
-        assertTrue(task2.call());
+            assertTrue(task1.call());
+            assertTrue(task2.call());
         } catch (Exception e) {
             Assert.fail("one of the servers was failed to return rootDSE record due to " + e.getMessage());
         }
@@ -88,7 +88,6 @@ public class DirectorySearcherTest extends AbstractLdapTest {
         doReturn(mockGetRootDSE(url)).when(task).createGetRootDSE(url);
         return task;
     }
-
 
     @Test
     public void testGetRootDSEFirstSeverUnreachable() throws Exception {
@@ -126,17 +125,13 @@ public class DirectorySearcherTest extends AbstractLdapTest {
         DirectorySearcher dirSearcher = mockDirectorySearcher(urls);
         try {
             execute(new GetRootDSETask(dirSearcher, "mydomain", urls.get(0)));
-        } catch (Exception e) {
-            // non reachable domain should timeout
-            if (e instanceof TimeoutException) {
-                return;
-            }
+        } catch (TimeoutException ok) {
+            return;
         }
         Assert.fail("Task ended with error which is not timout or no error at all");
     }
 
-    @SuppressWarnings("unchecked")
-    private DirectorySearcher mockDirectorySearcher(final List<URI> urls) throws NamingException {
+    private DirectorySearcher mockDirectorySearcher(final List<URI> urls) {
         DirectorySearcher dirSearcher = spy(new DirectorySearcher(new LdapCredentials("username", "password")));
         doAnswer(new Answer<Domain>() {
             @Override
@@ -156,7 +151,7 @@ public class DirectorySearcherTest extends AbstractLdapTest {
         return dirSearcher;
     }
 
-    private Domain mockDomainObject(List<URI> urls) {
+    protected Domain mockDomainObject(List<URI> urls) {
         final Domain domain = new Domain("");
         domain.setLdapServers(urls);
         domain.setLdapServers(urls);
@@ -165,24 +160,26 @@ public class DirectorySearcherTest extends AbstractLdapTest {
     }
 
     @SuppressWarnings("unchecked")
-    private GetRootDSE mockGetRootDSE(URI uri) {
+    protected GetRootDSE mockGetRootDSE(URI uri) {
         GetRootDSE getRootDSE = spy(new GetRootDSE(uri));
         try {
             doReturn(dirContext).when(getRootDSE).createContext(any(Hashtable.class));
-        } catch (NamingException e) {
+        } catch (NamingException ignored) {
+            // this exception is expected
         }
         doAnswer(new Answer<URI>() {
             @Override
             public URI answer(InvocationOnMock invocation) throws Throwable {
-                URI uri = (URI) invocation.callRealMethod();
-                setValidProvider(!uri.toString().equals(BAD_URL));
-                return uri;
+                URI realURIResult = (URI) invocation.callRealMethod();
+                setValidProvider(!realURIResult.toString().equals(BAD_URL));
+                return realURIResult;
             }
         }).when(getRootDSE).getLdapURI();
         return getRootDSE;
     }
 
-    private Boolean execute(GetRootDSETask task) throws InterruptedException, ExecutionException, TimeoutException {
+    private static Boolean execute(GetRootDSETask task) throws InterruptedException, ExecutionException,
+            TimeoutException {
         // Execution timeout after 20 seconds.
         // Why 20?
         // Currently GetRootDSE swallows NamingException that is
