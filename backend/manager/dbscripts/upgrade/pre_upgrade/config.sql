@@ -45,6 +45,7 @@ select fn_db_add_config_value('AsyncTaskStatusCachingTimeInMinutes','1','general
 select fn_db_add_config_value('AsyncTaskZombieTaskLifeInMinutes','300','general');
 select fn_db_add_config_value('AuditLogAgingThreashold','30','general');
 select fn_db_add_config_value('AuditLogCleanupTime','03:35:35','general');
+--Handling Authentication Method
 select fn_db_add_config_value('AuthenticationMethod','LDAP','general');
 select fn_db_add_config_value('AutoMode','PerServer','general');
 select fn_db_add_config_value('AutoRecoverySchedule','0 0/5 * * * ?','general');
@@ -52,21 +53,28 @@ select fn_db_add_config_value('AutoRepoDomainRefreshTime','60','general');
 select fn_db_add_config_value('AutoSuspendTimeInMinutes','30','general');
 select fn_db_add_config_value('BlockMigrationOnSwapUsagePercentage','0','general');
 select fn_db_add_config_value('BootstrapInstallerFileName','backend/manager/conf/vds_installer.py','general');
+--Handling CA Base Directory
 select fn_db_add_config_value('CABaseDirectory','ca','general');
+--Handling CA certificate path
 select fn_db_add_config_value('CACertificatePath','ca/certs.pem','general');
+--Handling PEM File Name
 select fn_db_add_config_value('CAEngineKey','engine.pem','general');
 select fn_db_add_config_value('CBCCertificateScriptName','/usr/share/vdsm-reg/vdsm-gen-cert','general');
 select fn_db_add_config_value('CbcCheckOnVdsChange','false','general');
 select fn_db_add_config_value('CBCCloseCertificateScriptName','/usr/share/vdsm-reg/vdsm-complete','general');
+--Handling Certificate alias
 select fn_db_add_config_value('CertAlias','engine','general');
+--Handling Certificate File Name
 select fn_db_add_config_value('CertificateFileName','vdc.pfx','general');
 select fn_db_add_config_value('CertificateFingerPrint','73 18 22 44 5d 98 b0 5d c0 f7 36 7d f8 1d 85 da e1 3c f1 c6','general');
 select fn_db_add_config_value('CertificatePassword','jlOTIS0q5avsg1GaRjf/6/tnEM1pXcCRvNoeJ5MCgHF1kCzcqqhZvzR8Pn/5iBxaKVC7Y4OdA0joXVMLGasVGLnUkxExzNCMT+6QwyFM1L9/0g+1OgGTuMbvYTfEi0jLOFv0xwWDl5MWunPUjZriGEhkiu5d6QJ5ZeEhD4rRooA=','general');
 select fn_db_add_config_value('CipherSuite','DEFAULT','general');
+--Handling Configuration directory for ENGINE
 select fn_db_add_config_value('ConfigDir','/etc/engine','general');
 select fn_db_add_config_value('ConnectToServerTimeoutInSeconds','20','general');
 select fn_db_add_config_value('CpuOverCommitDurationMinutes','2','general');
 select fn_db_add_config_value('CustomPublicConfig_AppsWebSite','http://marketplace.redhat.com/rhev?origin=engine-$EngineVersion','general');
+--Handling Data directory for ENGINE
 select fn_db_add_config_value('DataDir','/usr/share/engine','general');
 select fn_db_add_config_value('DBEngine','SQLServer','general');
 select fn_db_add_config_value('DebugSearchLogging','false','general');
@@ -74,27 +82,36 @@ select fn_db_add_config_value('DebugTimerLogging','true','general');
 select fn_db_add_config_value('DefaultMaxThreadPoolSize','500','general');
 select fn_db_add_config_value('DefaultMinThreadPoolSize','50','general');
 select fn_db_add_config_value('DefaultTimeZone','(GMT) GMT Standard Time','general');
+--Handling Default Workgroup
 select fn_db_add_config_value('DefaultWorkgroup','WORKGROUP','general');
 select fn_db_add_config_value('DesktopAudioDeviceType','default,ac97','2.2');
 select fn_db_add_config_value('DesktopAudioDeviceType','WindowsXP,ac97,RHEL4,ac97,RHEL3,ac97,Windows2003x64,ac97,RHEL4x64,ac97,RHEL3x64,ac97,OtherLinux,ac97,Other,ac97,default,ich6','3.0');
 select fn_db_add_config_value('DesktopAudioDeviceType','WindowsXP,ac97,RHEL4,ac97,RHEL3,ac97,Windows2003x64,ac97,RHEL4x64,ac97,RHEL3x64,ac97,OtherLinux,ac97,Other,ac97,default,ich6','3.1');
 select fn_db_add_config_value('DisableFenceAtStartupInSec','300','general');
 select fn_db_add_config_value('DiskConfigurationList','System,Sparse,COW,true;Data,Preallocated,RAW,false;Shared,Preallocated,RAW,false;Swap,Preallocated,RAW,false;Temp,Sparse,COW,false','general');
+<<<<<<< HEAD
 select fn_db_add_config_value('DirectLUNDiskEnabled','false','2.2');
 select fn_db_add_config_value('DirectLUNDiskEnabled','false','3.0');
 select fn_db_add_config_value('DirectLUNDiskEnabled','true','3.1');
-select fn_db_add_config_value('DocsURL','','general');--#####             03_01_0250_add_default_origin_type.sql            #####
+select fn_db_add_config_value('DocsURL','','general');
+--Handling NetBIOS Domain Name
 select fn_db_add_config_value('DomainName','example.com','general');
 select fn_db_add_config_value('EmulatedMachine','rhel5.5.0','2.2');
 select fn_db_add_config_value('EmulatedMachine','rhel6.0.0','3.0');
 select fn_db_add_config_value('EmulatedMachine','pc-0.14','3.1');
+--Handling Enable Spice Root Certification Validation
 select fn_db_add_config_value('EnableSpiceRootCertificateValidation','true','general');
 select fn_db_add_config_value('EnableSwapCheck','true','general');
+--Handling Enable USB devices attachment to the VM by default
 select fn_db_add_config_value('EnableUSBAsDefault','true','general');
+--Handling Enables Host Load Balancing system.
 select fn_db_add_config_value('EnableVdsLoadBalancing','true','general');
 select fn_db_add_config_value('ENGINEEARLib','%JBOSS_HOME%/server/engine-slimmed/deploy/engine.ear','general');
+--Handling Mail User Domain
 select fn_db_add_config_value('ENMailDomain','','general');
+--Handling Use HTML in message body
 select fn_db_add_config_value('ENMailIsBodyHtml','true','general');
+--Handling Use Default Credentials
 select fn_db_add_config_value('ENMailUseDefaultCredentials','false','general');
 select fn_db_add_config_value('FailedJobCleanupTimeInMinutes','60','general');
 select fn_db_add_config_value('FenceAgentDefaultParams','ilo3:lanplus,timeout=4','general');
@@ -109,6 +126,7 @@ select fn_db_add_config_value('FilteringLUNsEnabled','true','3.0');
 select fn_db_add_config_value('FilteringLUNsEnabled','false','3.1');
 select fn_db_add_config_value('FindFenceProxyDelayBetweenRetriesInSec','30','general');
 select fn_db_add_config_value('FindFenceProxyRetries','3','general');
+select fn_db_add_config_value('FreeSpaceCriticalLowInGB','5','general');
 select fn_db_add_config_value('FreeSpaceLow','10','general');
 select fn_db_add_config_value('GuestToolsSetupIsoPrefix','RHEV-toolsSetup_','general');
 select fn_db_add_config_value('HighUtilizationForEvenlyDistribute','75','general');
@@ -118,6 +136,7 @@ select fn_db_add_config_value('HotPlugEnabled','false','3.0');
 select fn_db_add_config_value('HotPlugEnabled','true','3.1');
 select fn_db_add_config_value('HotPlugSupportedOsList','Windows7,Windows7x64,Windows2008,Windows2008x64,Windows2008R2x64,RHEL5,RHEL5x64,RHEL6,RHEL6x64','general');
 select fn_db_add_config_value('InitStorageSparseSizeInGB','1','general');
+--Handling Install virtualization software on Add Host
 select fn_db_add_config_value('InstallVds','true','general');
 select fn_db_add_config_value('IoOpTimeoutSec','10','general');
 select fn_db_add_config_value('IPTablesConfig',
@@ -152,9 +171,11 @@ select fn_db_add_config_value('IsNeedSupportForOldVgAPI','false','3.0');
 select fn_db_add_config_value('JobCleanupRateInMinutes','10','general');
 select fn_db_add_config_value('JobPageSize','100','general');
 select fn_db_add_config_value('keystorePass','NoSoup4U','general');
+--Handling Keystore URL
 select fn_db_add_config_value('keystoreUrl','.keystore','general');
 select fn_db_add_config_value('LdapQueryPageSize','1000','general');
 select fn_db_add_config_value('LDAPQueryTimeout','30','general');
+--Handling LDAP Security Authentication Method
 select fn_db_add_config_value('LDAPSecurityAuthentication','GSSAPI','general');
 select fn_db_add_config_value('LDAPServerPort','389','general');
 select fn_db_add_config_value('LdapServers','','general');
@@ -172,10 +193,12 @@ select fn_db_add_config_value('LocalAdminPassword','123456','general');
 select fn_db_add_config_value('LocalStorageEnabled','false','2.2');
 select fn_db_add_config_value('LocalStorageEnabled','true','3.0');
 select fn_db_add_config_value('LocalStorageEnabled','true','3.1');
+--Handling Enable lock policy for Storage Pool Manager on activation
 select fn_db_add_config_value('LockPolicy','ON','general');
 select fn_db_add_config_value('LockRenewalIntervalSec','5','general');
 select fn_db_add_config_value('LogDBCommands','false','general');
 select fn_db_add_config_value('LogPhysicalMemoryThresholdInMB','1024','general');
+--Handling Log XML-RPC Data
 select fn_db_add_config_value('LogXmlRpcData','false','general');
 select fn_db_add_config_value('LowUtilizationForEvenlyDistribute','0','general');
 select fn_db_add_config_value('LowUtilizationForPowerSave','20','general');
@@ -214,11 +237,13 @@ select fn_db_add_config_value('NumberOfFailedRunsOnVds','3','general');
 select fn_db_add_config_value('NumberOfUSBSlots','4','general');
 select fn_db_add_config_value('NumberOfVmsForTopSizeVms','10','general');
 select fn_db_add_config_value('NumberVmRefreshesBeforeSave','5','general');
+--Handling Organization Name
 select fn_db_add_config_value('OrganizationName','Redhat','general');
 select fn_db_add_config_value('OriginType','OVIRT','general');
 select fn_db_add_config_value('OvfVirtualSystemType','ENGINE','general');
 select fn_db_add_config_value('OvirtInitialSupportedIsoVersion','5.8','general');
 select fn_db_add_config_value('OvirtIsoPrefix','rhevh','general');
+--Handling The RHEV-H installation files path
 select fn_db_add_config_value('oVirtISOsRepositoryPath','ovirt-isos','general');
 select fn_db_add_config_value('oVirtUpgradeScriptName','/usr/share/vdsm-reg/vdsm-upgrade','general');
 select fn_db_add_config_value('oVirtUploadPath','/data/updates/ovirt-node-image.iso','general');
@@ -231,26 +256,34 @@ select fn_db_add_config_value('PostgresLikeSyntax','ILIKE','general');
 select fn_db_add_config_value('PostgresPagingSyntax',E' OFFSET (%1$s -1) LIMIT %2$s','general');
 select fn_db_add_config_value('PostgresPagingType','Offset','general');
 select fn_db_add_config_value('PostgresSearchTemplate',E'SELECT * FROM (%2$s) %1$s) as T1 %3$s','general');
+--Handling Allow Running Guests Without Tools
 select fn_db_add_config_value('PowerClientAllowRunningGuestsWithoutTools','false','general');
 select fn_db_add_config_value('PowerClientAllowUsingAsIRS','false','general');
+--Handling Auto-AdjustMemory Base On Available Memory
 select fn_db_add_config_value('PowerClientAutoAdjustMemoryBaseOnAvailableMemory','false','general');
+--Handling Client Auto Adjust Memory
 select fn_db_add_config_value('PowerClientAutoAdjustMemory','false','general');
 select fn_db_add_config_value('PowerClientAutoAdjustMemoryGeneralReserve','768','general');
+--Handling Auto-Adjust Memory Log
 select fn_db_add_config_value('PowerClientAutoAdjustMemoryLog','false','general');
 select fn_db_add_config_value('PowerClientAutoAdjustMemoryMaxMemory','2048','general');
 select fn_db_add_config_value('PowerClientAutoAdjustMemoryModulus','64','general');
 select fn_db_add_config_value('PowerClientAutoAdjustMemorySpicePerMonitorReserve','0','general');
 select fn_db_add_config_value('PowerClientAutoAdjustMemorySpicePerSessionReserve','0','general');
+--Handling Auto Approve Patterns
 select fn_db_add_config_value('PowerClientAutoApprovePatterns','','general');
 select fn_db_add_config_value('PowerClientAutoInstallCertificateOnApprove','true','general');
 select fn_db_add_config_value('PowerClientAutoMigrateFromPowerClientToVdsWhenConnectingFromRegularClient','false','general');
+--Handling AutoMigrate To PowerClient On Connect
 select fn_db_add_config_value('PowerClientAutoMigrateToPowerClientOnConnect','false','general');
 select fn_db_add_config_value('PowerClientAutoRegistrationDefaultVdsGroupID','99408929-82CF-4DC7-A532-9D998063FA95','general');
 select fn_db_add_config_value('PowerClientDedicatedVmLaunchOnVdsWhilePowerClientStarts','false','general');
+--Handling Enable Power Client GUI
 select fn_db_add_config_value('PowerClientGUI','false','general');
 select fn_db_add_config_value('PowerClientLogDetection','false','general');
 select fn_db_add_config_value('PowerClientMaxNumberOfConcurrentVMs','1','general');
 select fn_db_add_config_value('PowerClientRunVmShouldVerifyPendingVMsAsWell','false','general');
+--Handling Spice Dynamic Compression Management
 select fn_db_add_config_value('PowerClientSpiceDynamicCompressionManagement','false','general');
 select fn_db_add_config_value('PredefinedVMProperties','','2.2');
 select fn_db_add_config_value('PredefinedVMProperties','sap_agent=^(true|false)$;sndbuf=^[0-9]+$;vhost=^(([a-zA-Z0-9_]*):(true|false))(,(([a-zA-Z0-9_]*):(true|false)))*$;viodiskcache=^(none|writeback|writethrough)$','3.0');
@@ -260,15 +293,17 @@ select fn_db_add_config_value('ProductKey2003x64','','general');
 select fn_db_add_config_value('ProductKey2008','','general');
 select fn_db_add_config_value('ProductKey2008R2','','general');
 select fn_db_add_config_value('ProductKey2008x64','','general');
+--Handling Product Key (for Windows XP)
 select fn_db_add_config_value('ProductKey','','general');
 select fn_db_add_config_value('ProductKeyWindow7','','general');
 select fn_db_add_config_value('ProductKeyWindow7x64','','general');
 select fn_db_add_config_value('ProductRPMVersion','3.0.0.0','general');
 select fn_db_add_config_value('PublicURLPort','8080','general');
-select fn_db_add_config_value('QuotaGraceStorage','20','general');--#####             03_01_0230_add_config_values_docs.sql            #####
+select fn_db_add_config_value('QuotaGraceStorage','20','general');
 select fn_db_add_config_value('QuotaGraceVdsGroup','20','general');
 select fn_db_add_config_value('QuotaThresholdStorage','80','general');
 select fn_db_add_config_value('QuotaThresholdVdsGroup','80','general');
+--Handling Connect to RDP console with Fully Qualified User-Name (user@domain)
 select fn_db_add_config_value('RDPLoginWithFQN','true','general');
 select fn_db_add_config_value('RedirectServletReportsPageError','Reports not installed, please contact your administrator','general');
 select fn_db_add_config_value('RedirectServletReportsPage','','general');
@@ -276,6 +311,7 @@ select fn_db_add_config_value('RenewGuestIpOnVdsSubnetChange','false','general')
 select fn_db_add_config_value('RenewGuestIpOnVdsSubnetChangeOnParseError','false','general');
 select fn_db_add_config_value('RhevhLocalFSPath','/data/images/','general');
 select fn_db_add_config_value('SANWipeAfterDelete','false','general');
+--Handling SASL QOP
 select fn_db_add_config_value('SASL_QOP','auth-conf','general');
 select fn_db_add_config_value('ScriptsPath','/usr/share/engine','general');
 select fn_db_add_config_value('SearchesRefreshRateInSeconds','1','general');
@@ -290,12 +326,18 @@ select fn_db_add_config_value('ServerCPUList','3:Intel Conroe Family:vmx,nx,mode
 select fn_db_add_config_value('ServerCPUList','3:Intel Conroe Family:vmx,nx,model_Conroe:Conroe; 4:Intel Penryn Family:vmx,nx,model_Penryn:Penryn; 5:Intel Nehalem Family:vmx,nx,model_Nehalem:Nehalem; 6:Intel Westmere Family:aes,vmx,nx,model_Westmere:Westmere; 2:AMD Opteron G1:svm,nx,model_Opteron_G1:Opteron_G1; 3:AMD Opteron G2:svm,nx,model_Opteron_G2:Opteron_G2; 4:AMD Opteron G3:svm,nx,model_Opteron_G3:Opteron_G3;','3.1');
 select fn_db_add_config_value('ServerRebootTimeout','300','general');
 select fn_db_add_config_value('SetupNetworksPollingTimeout','3','general');
+-- Add shareable disk property in vdc_options to support only 3.1 version.
+select fn_db_add_config_value('ShareableDiskEnabled','false','2.2');
+select fn_db_add_config_value('ShareableDiskEnabled','false','3.0');
+select fn_db_add_config_value('ShareableDiskEnabled','true','3.1');
 select fn_db_add_config_value('SignCertTimeoutInSeconds','30','general');
 select fn_db_add_config_value('SignLockFile','/var/lock/engine/.openssl.exclusivelock','general');
+--Handling Script name for signing
 select fn_db_add_config_value('SignScriptName','SignReq.sh','general');
 select fn_db_add_config_value('SpiceDriverNameInGuest','RHEV-Spice','general');
 select fn_db_add_config_value('SpiceReleaseCursorKeys','shift+f12','general');
 select fn_db_add_config_value('SpiceToggleFullScreenKeys','shift+f11','general');
+--Handling Enable USB devices sharing by default in SPICE
 select fn_db_add_config_value('SpiceUsbAutoShare','true','general');
 select fn_db_add_config_value('SpmCommandFailOverRetries','3','general');
 select fn_db_add_config_value('SPMFailOverAttempts','3','general');
@@ -306,6 +348,7 @@ select fn_db_add_config_value('SQLServerPagingSyntax',E' WHERE RowNum BETWEEN %1
 select fn_db_add_config_value('SQLServerPagingType','Range','general');
 select fn_db_add_config_value('SQLServerSearchTemplate',E'SELECT * FROM (SELECT *, ROW_NUMBER() OVER(%1$s) as RowNum FROM (%2$s)) as T1) as T2 %3$s','general');
 select fn_db_add_config_value('SSHInactivityTimoutSeconds','600','general');
+--Handling SPICE SSL Enabled
 select fn_db_add_config_value('SSLEnabled','true','general');
 select fn_db_add_config_value('StorageDomainFalureTimeoutInMinutes','5','general');
 select fn_db_add_config_value('StorageDomainNameSizeLimit','50','general');
@@ -335,10 +378,12 @@ select fn_db_add_config_value('SysPrepDefaultPassword','','general');
 select fn_db_add_config_value('SysPrepDefaultUser','','general');
 select fn_db_add_config_value('SysPrepWindows7Path','backend/manager/conf/sysprep/sysprep.w7','general');
 select fn_db_add_config_value('SysPrepWindows7x64Path','backend/manager/conf/sysprep/sysprep.w7x64','general');
+--Handling Path to an XP machine Sys-Prep file.
 select fn_db_add_config_value('SysPrepXPPath','backend/manager/conf/sysprep/sysprep.xp','general');
 select fn_db_add_config_value('TimeoutToResetVdsInSeconds','60','general');
 select fn_db_add_config_value('TimeToReduceFailedRunOnVdsInMinutes','30','general');
 select fn_db_add_config_value('TruststorePass','NoSoup4U','general');
+--Handling Truststore URL
 select fn_db_add_config_value('TruststoreUrl','.keystore','general');
 select fn_db_add_config_value('UknownTaskPrePollingLapse','60000','general');
 select fn_db_add_config_value('UserDefinedVMProperties','','2.2');
@@ -349,11 +394,13 @@ select fn_db_add_config_value('UserSessionTimeOutInterval','30','general');
 select fn_db_add_config_value('UseRtl8139_pv','true','2.2');
 select fn_db_add_config_value('UseRtl8139_pv','false','3.0');
 select fn_db_add_config_value('UseRtl8139_pv','false','3.1');
+--Handling Use Secure Connection with Hosts
 select fn_db_add_config_value('UseSecureConnectionWithServers','true','general');
 select fn_db_add_config_value('UseVdsBrokerInProc','true','general');
 select fn_db_add_config_value('UtilizationThresholdInPercent','80','general');
 select fn_db_add_config_value('ValidNumOfMonitors','1,2,4','general');
 select fn_db_add_config_value('VcpuConsumptionPercentage','10','general');
+--Handling Host Installation Bootstrap Script URL
 select fn_db_add_config_value('VdcBootStrapUrl','http://example.com/engine/vds_scripts','general');
 select fn_db_add_config_value('VdcVersion','3.0.0.0','general');
 select fn_db_add_config_value('VDSAttemptsToResetCount','2','general');
@@ -369,8 +416,10 @@ select fn_db_add_config_value('VdsLocalDisksCriticallyLowFreeSpace','100','gener
 select fn_db_add_config_value('VdsLocalDisksLowFreeSpace','500','general');
 select fn_db_add_config_value('VdsRecoveryTimeoutInMintues','3','general');
 select fn_db_add_config_value('VdsRefreshRate','2','general');
+--Handling Host Selection Algorithm default for cluster
 select fn_db_add_config_value('VdsSelectionAlgorithm','None','general');
 select fn_db_add_config_value('vdsTimeout','180','general');
+--Handling Virtual Machine Domain Name
 select fn_db_add_config_value('VirtualMachineDomainName','VirtualMachineDomainName','general');
 select fn_db_add_config_value('VM32BitMaxMemorySizeInMB','20480','general');
 select fn_db_add_config_value('VM64BitMaxMemorySizeInMB','262144','2.2');
@@ -383,12 +432,9 @@ select fn_db_add_config_value('VmPoolMonitorBatchSize','5','general');
 select fn_db_add_config_value('VmPoolMonitorIntervalInMinutes','5','general');
 select fn_db_add_config_value('VmPoolMonitorMaxAttempts','3','general');
 select fn_db_add_config_value('VmPriorityMaxValue','100','general');
+--Handling Keyboard Layout configuration for VNC
 select fn_db_add_config_value('VncKeyboardLayout','en-us','general');
 select fn_db_add_config_value('WaitForVdsInitInSec','60','general');
--- Add shareable disk property in vdc_options to support only 3.1 version.
-select fn_db_add_config_value('ShareableDiskEnabled','false','2.2');
-select fn_db_add_config_value('ShareableDiskEnabled','false','3.0');
-select fn_db_add_config_value('ShareableDiskEnabled','true','3.1');
 
 ------------------------------------------------------------------------------------
 --                  Update with override section
