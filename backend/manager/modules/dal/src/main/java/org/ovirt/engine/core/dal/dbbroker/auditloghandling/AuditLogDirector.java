@@ -259,6 +259,9 @@ public final class AuditLogDirector {
         mSeverities.put(AuditLogType.VDS_STORAGE_CONNECTION_FAILED_BUT_LAST_VDS, AuditLogSeverity.ERROR);
         mSeverities.put(AuditLogType.VDS_LOW_DISK_SPACE, AuditLogSeverity.WARNING);
         mSeverities.put(AuditLogType.VDS_LOW_DISK_SPACE_ERROR, AuditLogSeverity.ERROR);
+        mSeverities.put(AuditLogType.VDS_ACTIVATE_ASYNC, AuditLogSeverity.NORMAL);
+        mSeverities.put(AuditLogType.VDS_ACTIVATE_FAILED_ASYNC, AuditLogSeverity.NORMAL);
+        mSeverities.put(AuditLogType.VDS_SET_NON_OPERATIONAL_VM_NETWORK_IS_BRIDGELESS, AuditLogSeverity.NORMAL);
     }
 
     @SuppressWarnings("deprecation")
@@ -345,6 +348,10 @@ public final class AuditLogDirector {
         mSeverities.put(AuditLogType.REFRESH_REPOSITORY_FILE_LIST_FAILED, AuditLogSeverity.ERROR);
         mSeverities.put(AuditLogType.STORAGE_ALERT_VG_METADATA_CRITICALLY_FULL, AuditLogSeverity.ERROR);
         mSeverities.put(AuditLogType.STORAGE_ALERT_SMALL_VG_METADATA, AuditLogSeverity.WARNING);
+        mSeverities.put(AuditLogType.STORAGE_ACTIVATE_ASYNC, AuditLogSeverity.NORMAL);
+        mSeverities.put(AuditLogType.SYSTEM_CHANGE_STORAGE_POOL_STATUS_RESET_IRS, AuditLogSeverity.NORMAL);
+        mSeverities.put(AuditLogType.USER_ACTIVATED_STORAGE_DOMAIN_ASYNC, AuditLogSeverity.NORMAL);
+        mSeverities.put(AuditLogType.USER_ACTIVATE_STORAGE_DOMAIN_FAILED_ASYNC, AuditLogSeverity.NORMAL);
     }
 
     private static void initQuotaSeverities() {
@@ -386,6 +393,7 @@ public final class AuditLogDirector {
         mSeverities.put(AuditLogType.VM_IMPORT_FAILED, AuditLogSeverity.ERROR);
         mSeverities.put(AuditLogType.TEMPLATE_IMPORT, AuditLogSeverity.NORMAL);
         mSeverities.put(AuditLogType.TEMPLATE_IMPORT_FAILED, AuditLogSeverity.ERROR);
+        mSeverities.put(AuditLogType.VM_IMPORT_INFO, AuditLogSeverity.NORMAL);
         mSeverities.put(AuditLogType.VM_NOT_RESPONDING, AuditLogSeverity.WARNING);
         mSeverities.put(AuditLogType.VM_MIGRATION_TRYING_RERUN, AuditLogSeverity.WARNING);
         mSeverities.put(AuditLogType.VM_PAUSED_ENOSPC, AuditLogSeverity.ERROR);
@@ -449,6 +457,7 @@ public final class AuditLogDirector {
         mSeverities.put(AuditLogType.USER_FAILED_MOVE_VM, AuditLogSeverity.ERROR);
         mSeverities.put(AuditLogType.USER_ADD_VM_TEMPLATE_FINISHED_SUCCESS, AuditLogSeverity.NORMAL);
         mSeverities.put(AuditLogType.USER_ADD_VM_TEMPLATE_FINISHED_FAILURE, AuditLogSeverity.ERROR);
+        mSeverities.put(AuditLogType.USER_REMOVE_VM_TEMPLATE_FINISHED, AuditLogSeverity.NORMAL);
         mSeverities.put(AuditLogType.USER_FAILED_ADD_VM_TEMPLATE, AuditLogSeverity.ERROR);
         mSeverities.put(AuditLogType.USER_UPDATE_VM_TEMPLATE, AuditLogSeverity.NORMAL);
         mSeverities.put(AuditLogType.USER_FAILED_UPDATE_VM_TEMPLATE, AuditLogSeverity.ERROR);
@@ -512,6 +521,9 @@ public final class AuditLogDirector {
         mSeverities.put(AuditLogType.USER_UPDATE_VDS_GROUP_FAILED, AuditLogSeverity.ERROR);
         mSeverities.put(AuditLogType.USER_REMOVE_VDS_GROUP, AuditLogSeverity.NORMAL);
         mSeverities.put(AuditLogType.USER_REMOVE_VDS_GROUP_FAILED, AuditLogSeverity.ERROR);
+        mSeverities.put(AuditLogType.SYSTEM_UPDATE_VDS_GROUP, AuditLogSeverity.NORMAL);
+        mSeverities.put(AuditLogType.SYSTEM_UPDATE_VDS_GROUP_FAILED, AuditLogSeverity.NORMAL);
+        mSeverities.put(AuditLogType.USER_UPDATE_VM_CLUSTER_DEFAULT_HOST_CLEARED, AuditLogSeverity.NORMAL);
     }
 
     private static void initTagSeverities() {
@@ -568,6 +580,7 @@ public final class AuditLogDirector {
         mSeverities.put(AuditLogType.IMPORTEXPORT_STARTING_REMOVE_VM, AuditLogSeverity.NORMAL);
         mSeverities.put(AuditLogType.IMPORTEXPORT_FAILED_TO_IMPORT_VM, AuditLogSeverity.WARNING);
         mSeverities.put(AuditLogType.IMPORTEXPORT_FAILED_TO_IMPORT_TEMPLATE, AuditLogSeverity.WARNING);
+        mSeverities.put(AuditLogType.IMPORTEXPORT_IMPORT_VM_INTERFACES_ON_NON_VM_NETWORKS, AuditLogSeverity.NORMAL);
     }
 
     private static void initNetworkSeverities() {
