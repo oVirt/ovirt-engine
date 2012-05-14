@@ -90,7 +90,7 @@ public class VdsUpdateRunTimeInfoTest {
         Assert.assertTrue(mockAuditLogDao.getAll().size() == 1);
     }
 
-    private List<VdsNetworkInterface> getInterfaces() {
+    private static List<VdsNetworkInterface> getInterfaces() {
         List<VdsNetworkInterface> ifaces = new ArrayList<VdsNetworkInterface>();
         VdsNetworkInterface nic = new VdsNetworkInterface();
         nic.setMtu(1500);
@@ -99,7 +99,7 @@ public class VdsUpdateRunTimeInfoTest {
         return ifaces;
     }
 
-    private Map<String, network> getClustersMap() {
+    private static Map<String, network> getClustersMap() {
         Map<String, network> map = new HashMap<String, network>();
         network net = new network();
         net.setname("oz");
@@ -119,7 +119,7 @@ public class VdsUpdateRunTimeInfoTest {
         when(vmDAO.getAllRunningByVds(vds.getId())).thenReturn(emptyMap);
     }
 
-    private void initStaticMocks() {
+    private static void initStaticMocks() {
         mockStatic(DbFacade.class);
         mockStatic(Config.class);
         mockStatic(TransactionSupport.class);
@@ -133,7 +133,7 @@ public class VdsUpdateRunTimeInfoTest {
 
     }
 
-    private void mockConfigVals() {
+    private static void mockConfigVals() {
         when(Config.<Integer> GetValue(ConfigValues.VdsLocalDisksLowFreeSpace)).thenReturn(0);
         when(Config.<Integer> GetValue(ConfigValues.VdsLocalDisksCriticallyLowFreeSpace)).thenReturn(0);
         when(Config.<Integer> GetValue(ConfigValues.VdsRefreshRate)).thenReturn(3000);
