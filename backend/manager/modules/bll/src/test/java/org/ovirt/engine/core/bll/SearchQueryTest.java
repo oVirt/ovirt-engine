@@ -1,20 +1,18 @@
 package org.ovirt.engine.core.bll;
 
 import static org.junit.Assert.assertTrue;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
-import static org.powermock.api.mockito.PowerMockito.spy;
-import static org.powermock.api.mockito.PowerMockito.when;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
+import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Before;
 import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -22,7 +20,6 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
-import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
@@ -37,12 +34,16 @@ import org.ovirt.engine.core.dao.VmDAO;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 import org.ovirt.engine.core.searchbackend.SearchObjectAutoCompleter;
 import org.ovirt.engine.core.searchbackend.SearchObjects;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.ovirt.engine.core.utils.MockConfigRule;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ DbFacade.class, Config.class })
 public class SearchQueryTest {
+
+    @Rule
+    public static MockConfigRule mcr = new MockConfigRule(
+            mockConfig(ConfigValues.SearchResultsLimit, 100),
+            mockConfig(ConfigValues.DBSearchTemplate,
+                    "SELECT * FROM (SELECT *, ROW_NUMBER() OVER(%1$s) as RowNum FROM (%2$s)) as T1 ) as T2 %3$s")
+            );
 
     List<DiskImage> diskImageResultList = new ArrayList<DiskImage>();
     List<Quota> quotaResultList = new ArrayList<Quota>();
@@ -52,21 +53,7 @@ public class SearchQueryTest {
     List<storage_pool> storagePoolResultList = new ArrayList<storage_pool>();
     List<GlusterVolumeEntity> glusterVolumeList = new ArrayList<GlusterVolumeEntity>();
 
-    public SearchQueryTest() {
-        MockitoAnnotations.initMocks(this);
-        mockStatic(Config.class);
-        mockStatic(DbFacade.class);
-
-    }
-
-    @Before
-    public void setup() throws Exception {
-        mockDAO();
-        mockConfig();
-        MockitoAnnotations.initMocks(this);
-    }
-
-    private void mockDAO() {
+    private DbFacade mockDAO() {
         final DiskImageDAO diskImageDAO = Mockito.mock(DiskImageDAO.class);
         final QuotaDAO quotaDAO = Mockito.mock(QuotaDAO.class);
         final VmDAO vmDAO = Mockito.mock(VmDAO.class);
@@ -117,7 +104,6 @@ public class SearchQueryTest {
             }
         };
 
-        Mockito.when(DbFacade.getInstance()).thenReturn(facadeMock);
         Mockito.when(dbEngineDialect.getPreSearchQueryCommand()).thenReturn("");
 
         // mock DAOs
@@ -128,6 +114,8 @@ public class SearchQueryTest {
         mockVdsGroupDAO(vdsGroupDAO);
         mockStoragePoolDAO(storagePoolDAO);
         mockGlusterVolumeDao(glusterVolumeDao);
+
+        return facadeMock;
     }
 
     /**
@@ -151,7 +139,7 @@ public class SearchQueryTest {
                 .thenReturn(quotaResultList);
     }
 
-    private String getQuotaRegexString(SearchObjectAutoCompleter search) {
+    private static String getQuotaRegexString(SearchObjectAutoCompleter search) {
         return ".*" + search.getDefaultSort(SearchObjects.QUOTA_OBJ_NAME) + ".*"
                 + search.getRelatedTableNameWithOutTags(SearchObjects.QUOTA_OBJ_NAME) + ".* "
                 + search.getPrimeryKeyName(SearchObjects.QUOTA_OBJ_NAME) + ".*";
@@ -207,7 +195,7 @@ public class SearchQueryTest {
      *
      * @param search
      */
-    private String getDiskImageRegexString(SearchObjectAutoCompleter search) {
+    private static String getDiskImageRegexString(SearchObjectAutoCompleter search) {
         return ".*" + search.getDefaultSort(SearchObjects.DISK_OBJ_NAME) + ".*"
                 + search.getRelatedTableNameWithOutTags(SearchObjects.DISK_OBJ_NAME) + ".* "
                 + search.getPrimeryKeyName(SearchObjects.DISK_OBJ_NAME) + ".*";
@@ -248,7 +236,7 @@ public class SearchQueryTest {
      *
      * @param search
      */
-    private String getVMRegexString(SearchObjectAutoCompleter search) {
+    private static String getVMRegexString(SearchObjectAutoCompleter search) {
         return ".*" + search.getDefaultSort(SearchObjects.VM_OBJ_NAME) + ".*"
                 + search.getRelatedTableNameWithOutTags(SearchObjects.VM_OBJ_NAME) + ".* "
                 + search.getPrimeryKeyName(SearchObjects.VM_OBJ_NAME) + ".*";
@@ -259,7 +247,7 @@ public class SearchQueryTest {
      *
      * @param search
      */
-    private String getVdsRegexString(SearchObjectAutoCompleter search) {
+    private static String getVdsRegexString(SearchObjectAutoCompleter search) {
         return ".*" + search.getDefaultSort(SearchObjects.VDS_OBJ_NAME) + ".*"
                 + search.getRelatedTableNameWithOutTags(SearchObjects.VDS_OBJ_NAME) + ".* "
                 + search.getPrimeryKeyName(SearchObjects.VDS_OBJ_NAME) + ".*";
@@ -270,7 +258,7 @@ public class SearchQueryTest {
      *
      * @param search
      */
-    private String getVdsGroupRegexString(SearchObjectAutoCompleter search) {
+    private static String getVdsGroupRegexString(SearchObjectAutoCompleter search) {
         return ".*" + search.getDefaultSort(SearchObjects.VDC_CLUSTER_OBJ_NAME) + ".*"
                 + search.getRelatedTableNameWithOutTags(SearchObjects.VDC_CLUSTER_OBJ_NAME) + ".* "
                 + search.getPrimeryKeyName(SearchObjects.VDC_CLUSTER_OBJ_NAME) + ".*";
@@ -281,7 +269,7 @@ public class SearchQueryTest {
      *
      * @param search
      */
-    private String getStoragePoolRegexString(SearchObjectAutoCompleter search) {
+    private static String getStoragePoolRegexString(SearchObjectAutoCompleter search) {
         return ".*" + search.getDefaultSort(SearchObjects.VDC_STORAGE_POOL_OBJ_NAME) + ".*"
                 + search.getRelatedTableNameWithOutTags(SearchObjects.VDC_STORAGE_POOL_OBJ_NAME) + ".* "
                 + search.getPrimeryKeyName(SearchObjects.VDC_STORAGE_POOL_OBJ_NAME) + ".*";
@@ -292,24 +280,22 @@ public class SearchQueryTest {
      *
      * @param search
      */
-    private String getGlusterVolumeRegexString(SearchObjectAutoCompleter search) {
+    private static String getGlusterVolumeRegexString(SearchObjectAutoCompleter search) {
         return ".*" + search.getDefaultSort(SearchObjects.GLUSTER_VOLUME_OBJ_NAME) + ".*"
                 + search.getRelatedTableNameWithOutTags(SearchObjects.GLUSTER_VOLUME_OBJ_NAME) + ".* "
                 + search.getPrimeryKeyName(SearchObjects.GLUSTER_VOLUME_OBJ_NAME) + ".*";
     }
 
-    /**
-     * Mock the configuration values used in the search logic.
-     */
-    private void mockConfig() {
-        when(Config.<Object> GetValue(ConfigValues.SearchResultsLimit)).thenReturn(100);
-        when(Config.<Object> GetValue(ConfigValues.DBSearchTemplate)).thenReturn("SELECT * FROM (SELECT *, ROW_NUMBER() OVER(%1$s) as RowNum FROM (%2$s)) as T1 ) as T2 %3$s");
+    private SearchQuery<SearchParameters> spySearchQuery(SearchParameters searchParam) {
+        SearchQuery<SearchParameters> searchQuery = spy(new SearchQuery<SearchParameters>(searchParam));
+        doReturn(mockDAO()).when(searchQuery).getDbFacade();
+        return searchQuery;
     }
 
     @Test
     public void testGetAllMultiDiskImageSearch() throws Exception {
         SearchParameters searchParam = new SearchParameters("Disks:", SearchType.DiskImage);
-        SearchQuery<SearchParameters> searchQuery = spy(new SearchQuery<SearchParameters>(searchParam));
+        SearchQuery<SearchParameters> searchQuery = spySearchQuery(searchParam);
         searchQuery.executeQueryCommand();
         assertTrue(diskImageResultList == searchQuery.getQueryReturnValue().getReturnValue());
     }
@@ -320,7 +306,7 @@ public class SearchQueryTest {
         // FROM (SELECT * FROM vm_images_view WHERE ( image_guid IN (SELECT vm_images_view.image_guid FROM
         // vm_images_view ))) as T1 ) as T2"
         SearchParameters searchParam = new SearchParameters("Disk:", SearchType.DiskImage);
-        SearchQuery<SearchParameters> searchQuery = spy(new SearchQuery<SearchParameters>(searchParam));
+        SearchQuery<SearchParameters> searchQuery = spySearchQuery(searchParam);
         searchQuery.executeQueryCommand();
         assertTrue(diskImageResultList == searchQuery.getQueryReturnValue().getReturnValue());
     }
@@ -328,7 +314,7 @@ public class SearchQueryTest {
     @Test
     public void testGetAllVMSearch() throws Exception {
         SearchParameters searchParam = new SearchParameters("VM:", SearchType.VM);
-        SearchQuery<SearchParameters> searchQuery = spy(new SearchQuery<SearchParameters>(searchParam));
+        SearchQuery<SearchParameters> searchQuery = spySearchQuery(searchParam);
         searchQuery.executeQueryCommand();
         assertTrue(vmResultList == searchQuery.getQueryReturnValue().getReturnValue());
     }
@@ -336,7 +322,7 @@ public class SearchQueryTest {
     @Test
     public void testGetAllMultiVmSearch() throws Exception {
         SearchParameters searchParam = new SearchParameters("VMs:", SearchType.VM);
-        SearchQuery<SearchParameters> searchQuery = spy(new SearchQuery<SearchParameters>(searchParam));
+        SearchQuery<SearchParameters> searchQuery = spySearchQuery(searchParam);
         searchQuery.executeQueryCommand();
         assertTrue(vmResultList == searchQuery.getQueryReturnValue().getReturnValue());
     }
@@ -344,7 +330,7 @@ public class SearchQueryTest {
     @Test
     public void testGetAllVdsSearch() throws Exception {
         SearchParameters searchParam = new SearchParameters("Host:", SearchType.VDS);
-        SearchQuery<SearchParameters> searchQuery = spy(new SearchQuery<SearchParameters>(searchParam));
+        SearchQuery<SearchParameters> searchQuery = spySearchQuery(searchParam);
         searchQuery.executeQueryCommand();
         assertTrue(vdsResultList == searchQuery.getQueryReturnValue().getReturnValue());
     }
@@ -352,7 +338,7 @@ public class SearchQueryTest {
     @Test
     public void testGetAllMultiVdsSearch() throws Exception {
         SearchParameters searchParam = new SearchParameters("Hosts:", SearchType.VDS);
-        SearchQuery<SearchParameters> searchQuery = spy(new SearchQuery<SearchParameters>(searchParam));
+        SearchQuery<SearchParameters> searchQuery = spySearchQuery(searchParam);
         searchQuery.executeQueryCommand();
         assertTrue(vdsResultList == searchQuery.getQueryReturnValue().getReturnValue());
     }
@@ -363,7 +349,7 @@ public class SearchQueryTest {
         // (SELECT * FROM vds_groups WHERE ( vds_group_id IN (SELECT vds_groups_storage_domain.vds_group_id FROM
         // vds_groups_storage_domain ))) as T1 ) as T2
         SearchParameters searchParam = new SearchParameters("Cluster:", SearchType.Cluster);
-        SearchQuery<SearchParameters> searchQuery = spy(new SearchQuery<SearchParameters>(searchParam));
+        SearchQuery<SearchParameters> searchQuery = spySearchQuery(searchParam);
         searchQuery.executeQueryCommand();
         assertTrue(vdsGroupResultList == searchQuery.getQueryReturnValue().getReturnValue());
     }
@@ -374,7 +360,7 @@ public class SearchQueryTest {
         // (SELECT * FROM vds_groups WHERE ( vds_group_id IN (SELECT vds_groups_storage_domain.vds_group_id FROM
         // vds_groups_storage_domain ))) as T1 ) as T2
         SearchParameters searchParam = new SearchParameters("Clusters:", SearchType.Cluster);
-        SearchQuery<SearchParameters> searchQuery = spy(new SearchQuery<SearchParameters>(searchParam));
+        SearchQuery<SearchParameters> searchQuery = spySearchQuery(searchParam);
         searchQuery.executeQueryCommand();
         assertTrue(vdsGroupResultList == searchQuery.getQueryReturnValue().getReturnValue());
     }
@@ -382,7 +368,7 @@ public class SearchQueryTest {
     @Test
     public void testGetAllStoragePoolSearch() throws Exception {
         SearchParameters searchParam = new SearchParameters("Datacenter:", SearchType.StoragePool);
-        SearchQuery<SearchParameters> searchQuery = spy(new SearchQuery<SearchParameters>(searchParam));
+        SearchQuery<SearchParameters> searchQuery = spySearchQuery(searchParam);
         searchQuery.executeQueryCommand();
         assertTrue(storagePoolResultList == searchQuery.getQueryReturnValue().getReturnValue());
     }
@@ -392,7 +378,7 @@ public class SearchQueryTest {
     @Test
     public void testGetAllMultiStoragePoolSearch() throws Exception {
         SearchParameters searchParam = new SearchParameters("Datacenters:", SearchType.StoragePool);
-        SearchQuery<SearchParameters> searchQuery = spy(new SearchQuery<SearchParameters>(searchParam));
+        SearchQuery<SearchParameters> searchQuery = spySearchQuery(searchParam);
         searchQuery.executeQueryCommand();
         assertTrue(storagePoolResultList == searchQuery.getQueryReturnValue().getReturnValue());
     }
@@ -400,7 +386,7 @@ public class SearchQueryTest {
     @Test
     public void testGetAllGlusterVolumesSearch() throws Exception {
         SearchParameters searchParam = new SearchParameters("Volumes:", SearchType.GlusterVolume);
-        SearchQuery<SearchParameters> searchQuery = spy(new SearchQuery<SearchParameters>(searchParam));
+        SearchQuery<SearchParameters> searchQuery = spySearchQuery(searchParam);
         searchQuery.executeQueryCommand();
         assertTrue(glusterVolumeList == searchQuery.getQueryReturnValue().getReturnValue());
     }
@@ -408,7 +394,7 @@ public class SearchQueryTest {
     @Test
     public void testGetAllQuotaSearch() throws Exception {
         SearchParameters searchParam = new SearchParameters("Quota:", SearchType.Quota);
-        SearchQuery<SearchParameters> searchQuery = spy(new SearchQuery<SearchParameters>(searchParam));
+        SearchQuery<SearchParameters> searchQuery = spySearchQuery(searchParam);
         searchQuery.executeQueryCommand();
         assertTrue(quotaResultList == searchQuery.getQueryReturnValue().getReturnValue());
     }
