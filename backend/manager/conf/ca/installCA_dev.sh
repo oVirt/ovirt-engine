@@ -7,9 +7,9 @@ die () {
 
 usage () {
     echo "Usage:"
-    echo "  $0 [git CA dir path] [target working directory]"
+    echo "  $0 [git CA dir path] [target working directory] [jboss_ear_path] [ear_src_path]"
     echo "e.g.:"
-    echo "  $0 `pwd` /tmp"
+    echo "  $0 `pwd` /ca-dir /usr/share/jbossas/standalone/deployments/engine.ear /usr/share/ovirt-engine"
 
     exit 1
 }
@@ -27,9 +27,35 @@ COUNTRY=US
 ORG=oVirt.org
 WORKDIR=$2/ca
 CA_SUBJECT=$SUBJECT
-[ -d "$1" ] || die "Directory $1 does not exist"
-[ -d "$1/keys" ] || die "Directory $1 is not CA !"
-[ -d "$2" ] || die "Directory $2 does not exist"
+
+# verify optional params
+if [ "x" == "x$3" ];then
+    JBOSS_EAR_PATH="/usr/share/jbossas/standalone/deployments/engine.ear"
+else
+    JBOSS_EAR_PATH=$3
+fi
+
+if [ "x" == "x$4" ];then
+    EAR_SRC_PATH="/usr/share/ovirt-engine"
+else
+    EAR_SRC_PATH=$4
+fi
+
+[ -d "$1" ] || die "Src CA Directory $1 does not exist\n"
+[ -d "$1/keys" ] || die "Ca Src Directory $1 is not CA !\n"
+[ -d "$2" ] || die "Target CA Directory $2 does not exist!\n"
+[ -d "$3" ] || die "Jboss Home Directory $3 does not exist!\n"
+
+# we can't link if the jboss ear doesn't exist
+[ -e "$JBOSS_EAR_PATH" ] || die "Can't find ear folder under $JBOSS_EAR_PATH\n"
+
+# src dir might not exist in a devel env, create it
+if [ ! -d $EAR_SRC_PATH ];then
+    mkdir -p $EAR_SRC_PATH || die "Failed creating dir $EAR_SRC_PATH"
+fi
+
+# link engine.ear from jboss_home to src dir (installed by rpms)
+ln -sf $JBOSS_EAR_PATH $EAR_SRC_PATH || die "Failed linking $EAR_SRC_PATH to $JBOSS_EAR_PATH\n"
 
 # Copy files
 echo "# Generating CA in working directory..."
@@ -40,6 +66,12 @@ cd $WORKDIR
 
 # Run standard install CA script
 ./installCA.sh $SUBJECT $COUNTRY $ORG $ALIAS $PASS $DATE $WORKDIR $CA_SUBJECT
+
+#cleanup
+EAR_NAME=$(basename $JBOSS_EAR_PATH)
+if [ -L "$EAR_SRC_PATH/$EAR_NAME" ]; then
+    unlink "$EAR_SRC_PATH/$EAR_NAME" || die "Failed removing link $EAR_SRC_PATH/$EAR_NAME"
+fi
 
 export START_DIR=
 
