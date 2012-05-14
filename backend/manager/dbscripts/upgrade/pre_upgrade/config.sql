@@ -361,7 +361,7 @@ select fn_db_add_config_value('VM32BitMaxMemorySizeInMB','20480','general');
 select fn_db_add_config_value('VM64BitMaxMemorySizeInMB','262144','2.2');
 select fn_db_add_config_value('VM64BitMaxMemorySizeInMB','524288','3.0');
 select fn_db_add_config_value('VM64BitMaxMemorySizeInMB','524288','3.1');
-select fn_db_add_config_value('VmGracefulShutdownMessage','The oVirt Enterprise Virtualization Engine Manager is shutting down this Virtual Machine','general');
+select fn_db_add_config_value('VmGracefulShutdownMessage','The oVirt Engine is shutting down this Virtual Machine','general');
 select fn_db_add_config_value('VmGracefulShutdownTimeout','30','general');
 select fn_db_add_config_value('VMMinMemorySizeInMB','256','general');
 select fn_db_add_config_value('VmPoolMonitorBatchSize','5','general');
@@ -399,6 +399,7 @@ select fn_db_update_config_value('VdsFenceOptionMapping','alom:secure=secure,por
 select fn_db_update_config_value('VdsFenceOptionMapping','alom:secure=secure,port=ipport;apc:secure=secure,port=ipport,slot=port;bladecenter:secure=secure,port=ipport,slot=port;drac5:secure=secure,slot=port;eps:slot=port;ilo:secure=ssl,port=ipport;ipmilan:;rsa:secure=secure,port=ipport;rsb:;wti:secure=secure,port=ipport,slot=port;cisco_ucs:secure=ssl,slot=port;ilo3:','general');
 select fn_db_update_config_value('VdsFenceType','alom,apc,bladecenter,drac5,eps,ilo,ilo3,ipmilan,rsa,rsb,wti,cisco_ucs','3.0');
 select fn_db_update_config_value('VdsFenceType','alom,apc,bladecenter,drac5,eps,ilo,ipmilan,rsa,rsb,wti,cisco_ucs','2.2');
+select fn_db_update_config_value('VmGracefulShutdownMessage','The oVirt Engine is shutting down this Virtual Machine','general');
 
 ------------------------------------------------------------------------------------
 --   Update only if default not changed section
