@@ -15,6 +15,15 @@ public class EngineConfigMap {
     private String alternatePropertiesFile = null;
     private String user;
     private String adminPassFile;
+    private boolean onlyReloadable;
+
+    public boolean isOnlyReloadable() {
+        return onlyReloadable;
+    }
+
+    public void setOnlyReloadable(boolean onlyReloadable) {
+        this.onlyReloadable = onlyReloadable;
+    }
 
     public String getUser() {
         return user;
@@ -84,8 +93,7 @@ public class EngineConfigMap {
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         final String SEPARATOR = ", ";
 
         StringBuffer retValue = new StringBuffer();
@@ -99,5 +107,9 @@ public class EngineConfigMap {
                 .append("alternatePropertiesFile = ").append(this.alternatePropertiesFile).append(" )");
 
         return retValue.toString();
+    }
+
+    public void setOnlyReloadable(String parseOptionKey) {
+        onlyReloadable = Boolean.parseBoolean(parseOptionKey);
     }
 }

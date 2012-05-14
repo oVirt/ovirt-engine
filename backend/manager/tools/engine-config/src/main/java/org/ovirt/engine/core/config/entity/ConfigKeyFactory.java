@@ -55,12 +55,16 @@ public class ConfigKeyFactory {
         String[] validValues = configurationAt.getStringArray("validValues");
         String description = configurationAt.getString("description");
         String alternateKey = keysConfig.getString("/" + key + "/" + "alternateKey");
-        ConfigKey configKey = new ConfigKey(type, description, alternateKey, key, "", validValues, "", getHelperByType(type));
+
+        // If the isReloadable attribute isn't specified - assume it is false
+        boolean reloadable = configurationAt.getBoolean("isReloadable", false);
+        ConfigKey configKey = new ConfigKey(type, description, alternateKey, key, "", validValues,
+                "", getHelperByType(type), reloadable);
         return configKey;
     }
 
     public ConfigKey generateBlankConfigKey(String keyName,String keyType) {
-        return new ConfigKey(keyType, "", "", keyName, "", null, "", getHelperByType(keyType));
+        return new ConfigKey(keyType, "", "", keyName, "", null, "", getHelperByType(keyType), false);
     }
 
     private ValueHelper getHelperByType(String type) {
@@ -88,7 +92,8 @@ public class ConfigKeyFactory {
                              value,
                              key.getValidValues().toArray(new String[0]),
                              version,
-                             key.getValueHelper());
+                             key.getValueHelper(),
+                             key.isReloadable());
     }
 
     /**

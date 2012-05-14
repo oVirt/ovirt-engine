@@ -57,7 +57,9 @@ public class EngineConfigCLIParser {
         int delimiterIndex = args[currentIndex].indexOf("=");
         String key = getStringBeforeEqualChar(args[currentIndex], delimiterIndex); // includes '-'
         String value = getStringAfterEqualChar(args[currentIndex], delimiterIndex);
-        if (!key.isEmpty()) {
+        if (OptionKey.OPTION_ONLY_RELOADABLE.getOptionalStrings().contains(key)) {
+            setOnlyReloadableOption(key);
+        } else if (!key.isEmpty()) {
             if (!value.isEmpty()) {
                 argsMap.put(key, value);
             } else {
@@ -72,6 +74,10 @@ public class EngineConfigCLIParser {
             log.debug("parsing error: illegal argument " + args[currentIndex] + ", starts with '='. Skipping argument.");
         }
         return fShouldSkip;
+    }
+
+    private void setOnlyReloadableOption(String key) {
+        argsMap.put(key, Boolean.toString(true));
     }
 
     /**
@@ -259,6 +265,7 @@ public class EngineConfigCLIParser {
         engineConfigMap.setAlternatePropertiesFile(parseOptionKey(OptionKey.OPTION_PROPERTIES));
         engineConfigMap.setUser(parseOptionKey(OptionKey.OPTION_USER));
         engineConfigMap.setAdminPassFile(parseOptionKey(OptionKey.OPTION_ADMINPASSFILE));
+        engineConfigMap.setOnlyReloadable(parseOptionKey(OptionKey.OPTION_ONLY_RELOADABLE));
     }
 
     public EngineConfigMap getEngineConfigMap() {
@@ -299,5 +306,9 @@ public class EngineConfigCLIParser {
 
     public String engineConfigMapToString() {
         return engineConfigMap.toString();
+    }
+
+    public boolean isOnlyReloadable() {
+        return engineConfigMap.isOnlyReloadable();
     }
 }

@@ -110,7 +110,7 @@ public class EngineConfigLogic {
             printAllValues();
             break;
         case ACTION_LIST:
-            printAvailableKeys();
+            listKeys();
             break;
         case ACTION_GET:
             printKey();
@@ -124,6 +124,17 @@ public class EngineConfigLogic {
         default: // Should have already been discovered before execute
             log.debug("execute: unable to recognize action: " + actionType + ".");
             throw new UnsupportedOperationException("Please tell me what to do: list? get? set? get-all? reload?");
+        }
+    }
+
+    /**
+     * Is the actual execution of the 'list' action ('-l', '--list')
+     */
+    private void listKeys() {
+        if (parser.isOnlyReloadable()) {
+            printReloadableKeys();
+        } else {
+            printAvailableKeys();
         }
     }
 
@@ -232,17 +243,35 @@ public class EngineConfigLogic {
     }
 
     /**
-     * Prints all available configuration keys. Is the actual execution of the 'list' action ('-l', '--list')
+     * Prints all available configuration keys.
      */
     public void printAvailableKeys() {
         List<ConfigurationNode> configNodes = keysConfig.getRootNode().getChildren();
         for (ConfigurationNode node : configNodes) {
             ConfigKey key = configKeyFactory.generateByPropertiesKey(node.getName());
-            log.info(MessageFormat.format("{0}: {1} (Value Type: {2})",
-                    key.getKey(),
-                    key.getDescription(),
-                    key.getType()));
+            printKeyInFormat(key);
         }
+    }
+
+    /**
+     * Prints all reloadable configuration keys. Is the actual execution of the 'list' action ('-l', '--list') with the
+     * --only-reloadable flag
+     */
+    public void printReloadableKeys() {
+        List<ConfigurationNode> configNodes = keysConfig.getRootNode().getChildren();
+        for (ConfigurationNode node : configNodes) {
+            ConfigKey key = configKeyFactory.generateByPropertiesKey(node.getName());
+            if (key.isReloadable()) {
+                printKeyInFormat(key);
+            }
+        }
+    }
+
+    private void printKeyInFormat(ConfigKey key) {
+        log.info(MessageFormat.format("{0}: {1} (Value Type: {2})",
+                key.getKey(),
+                key.getDescription(),
+                key.getType()));
     }
 
     /**

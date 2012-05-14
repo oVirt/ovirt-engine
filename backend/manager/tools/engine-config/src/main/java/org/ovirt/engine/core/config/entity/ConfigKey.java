@@ -6,7 +6,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-
 import org.ovirt.engine.core.config.entity.helper.ValueHelper;
 
 public class ConfigKey {
@@ -15,6 +14,7 @@ public class ConfigKey {
     private String alternateKey;
     private String keyName;
     private String value;
+    private boolean reloadable;
     private List<String> validValues;
     private static final ArrayList<String> EMPTY_LIST = new ArrayList<String>(0);
     private final static Logger log = Logger.getLogger(ConfigKey.class);
@@ -28,7 +28,8 @@ public class ConfigKey {
             String value,
             String[] validValues,
             String version,
-            ValueHelper helper) {
+            ValueHelper helper,
+            boolean reloadable) {
         super();
         this.type = type;
         this.description = description;
@@ -38,6 +39,7 @@ public class ConfigKey {
         setVersion(version);
         this.validValues = validValues != null ? Arrays.asList(validValues) : EMPTY_LIST;
         this.valueHelper = helper;
+        this.reloadable = reloadable;
     }
 
     public void setVersion(String version) {
@@ -132,5 +134,9 @@ public class ConfigKey {
 
     public ValueHelper getValueHelper() {
         return valueHelper;
+    }
+
+    public boolean isReloadable() {
+        return reloadable;
     }
 }
