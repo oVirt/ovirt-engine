@@ -3,40 +3,37 @@ package org.ovirt.engine.core.bll.storage;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
-import static org.powermock.api.mockito.PowerMockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
-import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.StoragePoolDAO;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.ovirt.engine.core.utils.MockConfigRule;
 
-@PrepareForTest({DbFacade.class, Config.class})
-@RunWith(PowerMockRunner.class)
 public class StorageHandlingCommandBaseTest {
 
-    StorageHandlingCommandBase cmd;
+    @Rule
+    public static MockConfigRule mcr = new MockConfigRule();
+
+    StorageHandlingCommandBase<StoragePoolManagementParameter> cmd;
     StoragePoolDAO dao;
+    DbFacade facade;
 
     @Before
     public void setUp() {
-        mockStatic(DbFacade.class);
-        mockStatic(Config.class);
-
-        DbFacade facade = mock(DbFacade.class);
+        facade = mock(DbFacade.class);
 
         dao = mock(StoragePoolDAO.class);
         cmd = new TestStorageHandlingCommandBase(new StoragePoolManagementParameter(createStoragePool()));
 
-        when(DbFacade.getInstance()).thenReturn(facade);
         when(facade.getStoragePoolDAO()).thenReturn(dao);
     }
 
@@ -75,7 +72,7 @@ public class StorageHandlingCommandBaseTest {
         assertTrue(cmd.checkStoragePool());
     }
 
-    private storage_pool createStoragePool() {
+    private static storage_pool createStoragePool() {
         storage_pool pool = new storage_pool();
         pool.setname("DefaultStoragePool");
         pool.setId(Guid.NewGuid());
@@ -96,8 +93,8 @@ public class StorageHandlingCommandBaseTest {
         when(dao.get(any(Guid.class))).thenReturn(createStoragePool());
     }
 
-    private void setAcceptableNameLength(final int length) {
-        when(Config.GetValue(ConfigValues.StoragePoolNameSizeLimit)).thenReturn(length);
+    private static void setAcceptableNameLength(final int length) {
+        mcr.mockConfigValue(ConfigValues.StoragePoolNameSizeLimit, length);
     }
 
     private void checkStoragePoolNameLengthSucceeds() {
@@ -109,13 +106,20 @@ public class StorageHandlingCommandBaseTest {
     }
 
     private class TestStorageHandlingCommandBase extends StorageHandlingCommandBase<StoragePoolManagementParameter> {
+        private static final long serialVersionUID = 261663274282182312L;
 
         public TestStorageHandlingCommandBase(StoragePoolManagementParameter parameters) {
             super(parameters);
         }
 
         @Override
+        protected DbFacade getDbFacade() {
+            return facade;
+        }
+
+        @Override
         protected void executeCommand() {
+            // Intentionally empty - no behavior is requiered
         }
     }
 }
