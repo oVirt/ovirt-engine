@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.webadmin.widget.storage;
 
+import static org.ovirt.engine.ui.webadmin.widget.storage.AbstractSanStorageList.constants;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,8 +15,6 @@ import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.LunModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.SanStorageModelBase;
 import org.ovirt.engine.ui.uicommonweb.models.storage.SanTargetModel;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 import org.ovirt.engine.ui.webadmin.widget.table.column.LunSelectionColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.LunTextColumn;
 
@@ -31,8 +31,6 @@ import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SelectionChangeEvent.Handler;
 
 public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, ListModel> {
-
-    private ApplicationConstants constants = ClientGinjectorProvider.instance().getApplicationConstants();
 
     public SanStorageLunToTargetList(SanStorageModelBase model) {
         super(model);
