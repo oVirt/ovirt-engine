@@ -1128,6 +1128,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("8192")
     PayloadSize(354),
 
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("255")
+    ApplicationMode(355),
+
     Invalid(65535);
 
     private int intValue;

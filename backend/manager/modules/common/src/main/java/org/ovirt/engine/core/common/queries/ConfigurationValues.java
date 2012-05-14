@@ -70,7 +70,8 @@ public enum ConfigurationValues {
     CustomPublicConfig_AppsWebSite(ConfigAuthType.User),
     DocsURL(ConfigAuthType.User),
     HotPlugEnabled(ConfigAuthType.User),
-    ManagementNetwork;
+    ManagementNetwork,
+    ApplicationMode(ConfigAuthType.User);
 
     public static enum ConfigAuthType {
         Admin,
