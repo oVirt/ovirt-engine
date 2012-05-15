@@ -15,11 +15,9 @@ import org.ovirt.engine.core.common.businessentities.gluster.AccessProtocol;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
-import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeOptionEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
-import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.BaseDAOTestCase;
 
@@ -27,10 +25,6 @@ import org.ovirt.engine.core.dao.BaseDAOTestCase;
  * Tests for Gluster Volume DAO
  */
 public class GlusterVolumeDaoTest extends BaseDAOTestCase {
-    private static final String OPTION_AUTH_REJECT = "auth.reject";
-    private static final String OPTION_AUTH_REJECT_VALUE = "192.168.1.123";
-    private static final String OPTION_AUTH_ALLOW_VALUE_NEW = "192.168.1.321";
-    private static final String OPTION_AUTH_ALLOW_VALUE_ALL = "*";
     private static final Guid SERVER_ID = new Guid("afce7a39-8e8c-4819-ba9c-796d316592e6");
     private static final Guid CLUSTER_ID = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
     private static final Guid EXISTING_VOL_DIST_ID = new Guid("0c3f45f6-3fe9-4b35-a30c-be0d1a835ea8");
@@ -54,8 +48,11 @@ public class GlusterVolumeDaoTest extends BaseDAOTestCase {
 
     @Test
     public void testSaveAndGetById() {
+        GlusterVolumeEntity volume = dao.getByName(CLUSTER_ID, NEW_VOL_NAME);
+        assertNull(volume);
+
         newVolume = insertTestVolume();
-        GlusterVolumeEntity volume = dao.getById(newVolume.getId());
+        volume = dao.getById(newVolume.getId());
 
         assertNotNull(volume);
         assertEquals(newVolume, volume);
@@ -144,31 +141,6 @@ public class GlusterVolumeDaoTest extends BaseDAOTestCase {
     }
 
     @Test
-    public void testAddBrickToVolume() {
-        GlusterBrickEntity brickToAdd = getBrickToAdd();
-        GlusterVolumeEntity volume = dao.getById(EXISTING_VOL_DIST_ID);
-        List<GlusterBrickEntity> bricks = volume.getBricks();
-
-        assertTrue(bricks != null);
-        assertEquals(2, bricks.size());
-        assertFalse(bricks.contains(brickToAdd));
-
-        dao.addBrickToVolume(brickToAdd);
-
-        GlusterVolumeEntity volumeAfter = dao.getById(EXISTING_VOL_DIST_ID);
-        assertNotNull(volumeAfter);
-
-        bricks = volumeAfter.getBricks();
-        assertTrue(bricks != null);
-        assertEquals(3, bricks.size());
-        assertTrue(bricks.contains(brickToAdd));
-
-        assertFalse(volumeAfter.equals(volume));
-        volume.addBrick(brickToAdd);
-        assertEquals(volumeAfter, volume);
-    }
-
-    @Test
     public void testReplicateCount() {
         GlusterVolumeEntity volume = dao.getById(EXISTING_VOL_REPL_ID);
         int replicaCount = volume.getReplicaCount();
@@ -204,136 +176,6 @@ public class GlusterVolumeDaoTest extends BaseDAOTestCase {
         assertEquals(4, replicaCount);
     }
 
-    @Test
-    public void testRemoveBrickFromVolume() {
-        GlusterVolumeEntity volume = dao.getById(EXISTING_VOL_DIST_ID);
-        List<GlusterBrickEntity> bricks = volume.getBricks();
-
-        assertTrue(bricks != null);
-        assertEquals(2, bricks.size());
-
-        GlusterBrickEntity brickToRemove = bricks.get(0);
-        dao.removeBrickFromVolume(bricks.get(0));
-
-        GlusterVolumeEntity volumeAfter = dao.getById(EXISTING_VOL_DIST_ID);
-        assertNotNull(volumeAfter);
-
-        bricks = volumeAfter.getBricks();
-        assertTrue(bricks != null);
-        assertTrue(bricks.size() == 1);
-        assertFalse(bricks.contains(brickToRemove));
-
-        assertFalse(volumeAfter.equals(volume));
-        volume.removeBrick(brickToRemove);
-        assertEquals(volumeAfter, volume);
-    }
-
-    @Test
-    public void testReplaceVolumeBrick() {
-        GlusterVolumeEntity volume = dao.getById(EXISTING_VOL_DIST_ID);
-        List<GlusterBrickEntity> bricks = volume.getBricks();
-
-        assertTrue(bricks != null);
-        assertEquals(2, bricks.size());
-
-        GlusterBrickEntity firstBrick = bricks.get(0);
-        GlusterBrickEntity newBrick =
-                new GlusterBrickEntity(volume.getId(),
-                        server,
-                        "/export/test-vol-distribute-1/dir3",
-                        GlusterBrickStatus.UP);
-        assertFalse(newBrick.equals(firstBrick));
-
-        dao.replaceVolumeBrick(firstBrick, newBrick);
-
-        GlusterVolumeEntity volumeAfter = dao.getById(EXISTING_VOL_DIST_ID);
-        assertNotNull(volumeAfter);
-
-        bricks = volumeAfter.getBricks();
-        // verify that the number of bricks did not change, and the new brick has the same index as the replaced one (0)
-        assertEquals(2, bricks.size());
-        assertEquals(newBrick, bricks.get(0));
-
-        assertFalse(volumeAfter.equals(volume));
-        volume.replaceBrick(firstBrick, newBrick);
-        assertEquals(volumeAfter, volume);
-    }
-
-    @Test
-    public void testUpdateBrickStatus() {
-        GlusterVolumeEntity volume = dao.getById(EXISTING_VOL_DIST_ID);
-        List<GlusterBrickEntity> bricks = volume.getBricks();
-
-        assertTrue(bricks != null);
-        assertTrue(bricks.size() == 2);
-
-        GlusterBrickEntity firstBrick = bricks.get(0);
-        assertTrue(firstBrick.isOnline());
-
-        firstBrick.setStatus(GlusterBrickStatus.DOWN);
-        dao.updateBrickStatus(firstBrick);
-
-        GlusterVolumeEntity volumeAfter = dao.getById(EXISTING_VOL_DIST_ID);
-        assertNotNull(volumeAfter);
-
-        firstBrick = volumeAfter.getBricks().get(0);
-        assertFalse(firstBrick.isOnline());
-        assertTrue(volumeAfter.equals(volume));
-    }
-
-    @Test
-    public void testAddVolumeOption() {
-        assertNull(existingDistVol.getOptionValue(OPTION_AUTH_REJECT));
-
-        dao.addVolumeOption(new GlusterVolumeOptionEntity(EXISTING_VOL_DIST_ID, OPTION_AUTH_REJECT, OPTION_AUTH_REJECT_VALUE));
-
-        GlusterVolumeEntity volumeAfter = dao.getById(EXISTING_VOL_DIST_ID);
-
-        assertNotNull(volumeAfter);
-        assertEquals(OPTION_AUTH_REJECT_VALUE, volumeAfter.getOptionValue(OPTION_AUTH_REJECT));
-
-        assertFalse(volumeAfter.equals(existingDistVol));
-        existingDistVol.setOption(OPTION_AUTH_REJECT, OPTION_AUTH_REJECT_VALUE);
-        assertEquals(volumeAfter, existingDistVol);
-    }
-
-    @Test
-    public void testUpdateVolumeOption() {
-        assertEquals(OPTION_AUTH_ALLOW_VALUE_ALL, existingDistVol.getOptionValue(GlusterConstants.OPTION_AUTH_ALLOW));
-
-        dao.updateVolumeOption(new GlusterVolumeOptionEntity(EXISTING_VOL_DIST_ID,
-                GlusterConstants.OPTION_AUTH_ALLOW,
-                OPTION_AUTH_ALLOW_VALUE_NEW));
-
-        GlusterVolumeEntity volumeAfter = dao.getById(EXISTING_VOL_DIST_ID);
-
-        assertNotNull(volumeAfter);
-        assertEquals(OPTION_AUTH_ALLOW_VALUE_NEW, volumeAfter.getOptionValue(GlusterConstants.OPTION_AUTH_ALLOW));
-
-        assertFalse(volumeAfter.equals(existingDistVol));
-        existingDistVol.setOption(GlusterConstants.OPTION_AUTH_ALLOW, OPTION_AUTH_ALLOW_VALUE_NEW);
-        assertEquals(volumeAfter, existingDistVol);
-    }
-
-    @Test
-    public void testRemoveVolumeOption() {
-        assertEquals(OPTION_AUTH_ALLOW_VALUE_ALL, existingDistVol.getOptionValue(GlusterConstants.OPTION_AUTH_ALLOW));
-
-        dao.removeVolumeOption(new GlusterVolumeOptionEntity(EXISTING_VOL_DIST_ID,
-                GlusterConstants.OPTION_AUTH_ALLOW,
-                OPTION_AUTH_ALLOW_VALUE_NEW));
-
-        GlusterVolumeEntity volumeAfter = dao.getById(EXISTING_VOL_DIST_ID);
-
-        assertNotNull(volumeAfter);
-        assertNull(volumeAfter.getOptionValue(GlusterConstants.OPTION_AUTH_ALLOW));
-
-        assertFalse(volumeAfter.equals(existingDistVol));
-        existingDistVol.removeOption(GlusterConstants.OPTION_AUTH_ALLOW);
-        assertEquals(volumeAfter, existingDistVol);
-    }
-
-    @Test
     public void testAddAccessProtocol() {
         Set<AccessProtocol> protocols = existingDistVol.getAccessProtocols();
         assertEquals(1, protocols.size());
@@ -411,15 +253,6 @@ public class GlusterVolumeDaoTest extends BaseDAOTestCase {
         assertFalse(volumeAfter.equals(existingReplVol));
         existingReplVol.removeTransportType(TransportType.RDMA);
         assertEquals(volumeAfter, existingReplVol);
-    }
-
-    private GlusterBrickEntity getBrickToAdd() {
-        GlusterBrickEntity brickToAdd =
-                new GlusterBrickEntity(EXISTING_VOL_DIST_ID,
-                        server,
-                        "/export/test-vol-distribute-1/dir3",
-                        GlusterBrickStatus.UP);
-        return brickToAdd;
     }
 
     private GlusterVolumeEntity insertTestVolume() {

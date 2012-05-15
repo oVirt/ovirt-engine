@@ -50,10 +50,11 @@ public class SetGlusterVolumeOptionCommand extends GlusterVolumeCommandBase<Glus
      */
     private void updateOptionInDb(final GlusterVolumeOptionEntity option) {
         // update the option value if it exists, else add it
-        if (getGlusterVolume().getOptionValue(option.getKey()) != null) {
-            getGlusterVolumeDao().updateVolumeOption(option);
+        GlusterVolumeOptionEntity existingOption = getGlusterVolume().getOption(option.getKey());
+        if (existingOption != null) {
+            getGlusterOptionDao().updateVolumeOption(existingOption.getId(), option.getValue());
         } else {
-            getGlusterVolumeDao().addVolumeOption(option);
+            getGlusterOptionDao().save(option);
         }
     }
 

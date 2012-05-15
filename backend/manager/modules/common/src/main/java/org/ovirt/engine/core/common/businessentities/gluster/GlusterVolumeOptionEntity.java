@@ -1,9 +1,9 @@
 package org.ovirt.engine.core.common.businessentities.gluster;
 
-import java.io.Serializable;
-
 import javax.validation.constraints.NotNull;
 
+import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
+import org.ovirt.engine.core.common.validation.group.RemoveEntity;
 import org.ovirt.engine.core.common.validation.group.gluster.SetVolumeOption;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -14,16 +14,19 @@ import org.ovirt.engine.core.compat.Guid;
  *
  * @see GlusterVolumeEntity
  */
-public class GlusterVolumeOptionEntity implements Serializable {
+public class GlusterVolumeOptionEntity extends IVdcQueryable {
     private static final long serialVersionUID = 5770623263518245638L;
+
+    @NotNull(message = "VALIDATION.GLUSTER.OPTION.ID.NOT_NULL", groups = { RemoveEntity.class })
+    private Guid id;
 
     @NotNull(message = "VALIDATION.GLUSTER.VOLUME.ID.NOT_NULL", groups = { SetVolumeOption.class })
     private Guid volumeId;
 
-    @NotNull(message = "VALIDATION.GLUSTER.VOLUME.OPTION.KEY.NOT_NULL")
+    @NotNull(message = "VALIDATION.GLUSTER.VOLUME.OPTION.KEY.NOT_NULL", groups = { SetVolumeOption.class })
     private String key;
 
-    @NotNull(message = "VALIDATION.GLUSTER.VOLUME.OPTION.VALUE.NOT_NULL")
+    @NotNull(message = "VALIDATION.GLUSTER.VOLUME.OPTION.VALUE.NOT_NULL", groups = { SetVolumeOption.class })
     private String value;
 
     public GlusterVolumeOptionEntity() {
@@ -63,6 +66,7 @@ public class GlusterVolumeOptionEntity implements Serializable {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
+        result = prime * result + getId().hashCode();
         result = prime * result + ((volumeId == null) ? 0 : volumeId.hashCode());
         result = prime * result + ((key == null) ? 0 : key.hashCode());
         result = prime * result + ((value == null) ? 0 : value.hashCode());
@@ -81,8 +85,30 @@ public class GlusterVolumeOptionEntity implements Serializable {
         }
 
         GlusterVolumeOptionEntity option = (GlusterVolumeOptionEntity) obj;
-        return ((volumeId != null && volumeId.equals(option.getVolumeId()))
+        return (getId().equals(option.getId())
+                && (volumeId != null && volumeId.equals(option.getVolumeId()))
                 && key.equals(option.getKey())
                 && value.equals(option.getValue()));
+    }
+
+    /**
+     * Generates the id if not present. Volume option doesn't have an id in
+     * GlusterFS, and hence is generated on the backend side.
+     * @return id of the option
+     */
+    public Guid getId() {
+        if(id == null) {
+            id = Guid.NewGuid();
+        }
+        return id;
+    }
+
+    public void setId(Guid id) {
+        this.id = id;
+    }
+
+    @Override
+    public Object getQueryableId() {
+        return getId();
     }
 }

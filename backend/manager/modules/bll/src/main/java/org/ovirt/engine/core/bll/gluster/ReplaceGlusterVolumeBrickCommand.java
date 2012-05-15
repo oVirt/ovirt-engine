@@ -87,7 +87,7 @@ public class ReplaceGlusterVolumeBrickCommand extends GlusterVolumeCommandBase<G
 
     private boolean isValidVolumeBrick(GlusterBrickEntity volumeBrick) {
         for (GlusterBrickEntity brick : getGlusterVolume().getBricks()) {
-            if (brick.equals(volumeBrick)) {
+            if (brick.getQualifiedName().equals(volumeBrick.getQualifiedName())) {
                 return true;
             }
         }
@@ -95,7 +95,6 @@ public class ReplaceGlusterVolumeBrickCommand extends GlusterVolumeCommandBase<G
     }
 
     private void replaceVolumeBrickInDb(GlusterBrickEntity existingBrick, GlusterBrickEntity newBrick) {
-        getGlusterVolumeDao().removeBrickFromVolume(existingBrick);
-        getGlusterVolumeDao().addBrickToVolume(newBrick);
+        getGlusterBrickDao().replaceBrick(existingBrick, newBrick);
     }
 }

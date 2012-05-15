@@ -73,7 +73,7 @@ public class GlusterVolumeRemoveBricksCommand extends GlusterVolumeCommandBase<G
 
     private void removeBricksFromVolumeInDb(GlusterVolumeEntity volume, List<GlusterBrickEntity> brickList) {
         for (GlusterBrickEntity brick : brickList) {
-            getGlusterVolumeDao().removeBrickFromVolume(brick);
+            getGlusterBrickDao().removeBrick(brick.getId());
         }
     }
 }

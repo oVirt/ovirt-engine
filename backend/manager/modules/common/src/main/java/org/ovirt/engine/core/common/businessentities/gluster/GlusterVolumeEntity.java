@@ -17,7 +17,8 @@ import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
 import org.ovirt.engine.core.common.utils.gluster.GlusterCoreUtil;
-import org.ovirt.engine.core.common.validation.group.UpdateEntity;
+import org.ovirt.engine.core.common.validation.group.CreateEntity;
+import org.ovirt.engine.core.common.validation.group.RemoveEntity;
 import org.ovirt.engine.core.common.validation.group.gluster.CreateReplicatedVolume;
 import org.ovirt.engine.core.common.validation.group.gluster.CreateStripedVolume;
 import org.ovirt.engine.core.compat.Guid;
@@ -38,28 +39,28 @@ import org.ovirt.engine.core.compat.StringHelper;
 public class GlusterVolumeEntity extends IVdcQueryable implements BusinessEntity<Guid> {
     private static final long serialVersionUID = 2355384696827317277L;
 
-    @NotNull(message = "VALIDATION.GLUSTER.VOLUME.ID.NOT_NULL", groups = { UpdateEntity.class })
+    @NotNull(message = "VALIDATION.GLUSTER.VOLUME.ID.NOT_NULL", groups = { RemoveEntity.class })
     private Guid id;
 
-    @NotNull(message = "VALIDATION.GLUSTER.VOLUME.CLUSTER_ID.NOT_NULL")
+    @NotNull(message = "VALIDATION.GLUSTER.VOLUME.CLUSTER_ID.NOT_NULL", groups = {CreateEntity.class, CreateReplicatedVolume.class, CreateStripedVolume.class})
     private Guid clusterId;
 
-    @NotNull(message = "VALIDATION.GLUSTER.VOLUME.NAME.NOT_NULL")
+    @NotNull(message = "VALIDATION.GLUSTER.VOLUME.NAME.NOT_NULL", groups = {CreateEntity.class, CreateReplicatedVolume.class, CreateStripedVolume.class})
     private String name;
 
-    @NotNull(message = "VALIDATION.GLUSTER.VOLUME.TYPE.NOT_NULL")
+    @NotNull(message = "VALIDATION.GLUSTER.VOLUME.TYPE.NOT_NULL", groups = {CreateEntity.class, CreateReplicatedVolume.class, CreateStripedVolume.class})
     private GlusterVolumeType volumeType = GlusterVolumeType.DISTRIBUTE;
 
     @NotNull(message = "VALIDATION.GLUSTER.VOLUME.REPLICA_COUNT.NOT_NULL", groups = { CreateReplicatedVolume.class })
-    private int replicaCount;
+    private Integer replicaCount;
 
     @NotNull(message = "VALIDATION.GLUSTER.VOLUME.STRIPE_COUNT.NOT_NULL", groups = { CreateStripedVolume.class })
-    private int stripeCount;
+    private Integer stripeCount;
 
     @Valid
     private Map<String, GlusterVolumeOptionEntity> options = new LinkedHashMap<String, GlusterVolumeOptionEntity>();
 
-    @NotNull(message = "VALIDATION.GLUSTER.VOLUME.BRICKS.NOT_NULL")
+    @NotNull(message = "VALIDATION.GLUSTER.VOLUME.BRICKS.NOT_NULL", groups = {CreateEntity.class, CreateReplicatedVolume.class, CreateStripedVolume.class})
     @Valid
     private List<GlusterBrickEntity> bricks = new ArrayList<GlusterBrickEntity>();
 
@@ -141,19 +142,19 @@ public class GlusterVolumeEntity extends IVdcQueryable implements BusinessEntity
         return this.status == GlusterVolumeStatus.UP;
     }
 
-    public int getReplicaCount() {
+    public Integer getReplicaCount() {
         return replicaCount;
     }
 
-    public void setReplicaCount(int replicaCount) {
+    public void setReplicaCount(Integer replicaCount) {
         this.replicaCount = replicaCount;
     }
 
-    public int getStripeCount() {
+    public Integer getStripeCount() {
         return stripeCount;
     }
 
-    public void setStripeCount(int stripeCount) {
+    public void setStripeCount(Integer stripeCount) {
         this.stripeCount = stripeCount;
     }
 
@@ -203,6 +204,10 @@ public class GlusterVolumeEntity extends IVdcQueryable implements BusinessEntity
         return options.values();
     }
 
+    public GlusterVolumeOptionEntity getOption(String optionKey) {
+        return options.get(optionKey);
+    }
+
     /**
      * Returns value of given option key as set on the volume. <br>
      * In case the option is not set, <code>null</code> will be returned.
@@ -215,7 +220,7 @@ public class GlusterVolumeEntity extends IVdcQueryable implements BusinessEntity
         return option.getValue();
     }
 
-    private void setOption(GlusterVolumeOptionEntity option) {
+    public void setOption(GlusterVolumeOptionEntity option) {
         options.put(option.getKey(), option);
     }
 

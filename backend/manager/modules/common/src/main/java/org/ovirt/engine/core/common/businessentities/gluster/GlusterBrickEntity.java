@@ -4,7 +4,9 @@ import javax.validation.constraints.NotNull;
 
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
-import org.ovirt.engine.core.common.validation.group.UpdateEntity;
+import org.ovirt.engine.core.common.validation.group.CreateEntity;
+import org.ovirt.engine.core.common.validation.group.RemoveEntity;
+import org.ovirt.engine.core.common.validation.group.gluster.AddBrick;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -19,15 +21,18 @@ import org.ovirt.engine.core.compat.Guid;
 public class GlusterBrickEntity extends IVdcQueryable {
     private static final long serialVersionUID = 7119439284741452278L;
 
-    @NotNull(message = "VALIDATION.GLUSTER.VOLUME.ID.NOT_NULL", groups = { UpdateEntity.class })
+    @NotNull(message = "VALIDATION.GLUSTER.BRICK.ID.NOT_NULL", groups = { RemoveEntity.class })
+    private Guid id;
+
+    @NotNull(message = "VALIDATION.GLUSTER.VOLUME.ID.NOT_NULL", groups = { AddBrick.class })
     private Guid volumeId;
 
-    @NotNull(message = "VALIDATION.GLUSTER.VOLUME.BRICK.SERVER_ID.NOT_NULL")
+    @NotNull(message = "VALIDATION.GLUSTER.VOLUME.BRICK.SERVER_ID.NOT_NULL", groups = { CreateEntity.class })
     private Guid serverId;
 
     private String serverName;
 
-    @NotNull(message = "VALIDATION.GLUSTER.VOLUME.BRICK.BRICK_DIR.NOT_NULL")
+    @NotNull(message = "VALIDATION.GLUSTER.VOLUME.BRICK.BRICK_DIR.NOT_NULL", groups = { CreateEntity.class })
     private String brickDirectory;
 
     private GlusterBrickStatus status = GlusterBrickStatus.DOWN;
@@ -100,6 +105,7 @@ public class GlusterBrickEntity extends IVdcQueryable {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
+        result = prime * result + getId().hashCode();
         result = prime * result + ((volumeId == null) ? 0 : volumeId.hashCode());
         result = prime * result + ((serverId == null) ? 0 : serverId.hashCode());
         result = prime * result + ((serverName == null) ? 0 : serverName.hashCode());
@@ -115,7 +121,8 @@ public class GlusterBrickEntity extends IVdcQueryable {
         }
 
         GlusterBrickEntity brick = (GlusterBrickEntity) obj;
-        return ((volumeId != null && volumeId.equals(brick.getVolumeId()))
+        return (getId().equals(brick.getId())
+                && (volumeId != null && volumeId.equals(brick.getVolumeId()))
                 && serverId.equals(brick.getServerId())
                 && serverName.equals(brick.getServerName())
                 && brickDirectory.equals(brick.getBrickDirectory())
@@ -123,10 +130,32 @@ public class GlusterBrickEntity extends IVdcQueryable {
     }
 
     public void copyFrom(GlusterBrickEntity brick) {
+        setId(brick.getId());
         setVolumeId(brick.getVolumeId());
         setServerId(brick.getServerId());
         setServerName(brick.getServerName());
         setBrickDirectory(brick.getBrickDirectory());
         setStatus(brick.getStatus());
+    }
+
+    /**
+     * Generates the id if not present. Volume brick doesn't have an id in
+     * GlusterFS, and hence is generated on the backend side.
+     * @return id of the brick
+     */
+    public Guid getId() {
+        if(id == null) {
+            id = Guid.NewGuid();
+        }
+        return id;
+    }
+
+    public void setId(Guid id) {
+        this.id = id;
+    }
+
+    @Override
+    public Object getQueryableId() {
+        return getId();
     }
 }

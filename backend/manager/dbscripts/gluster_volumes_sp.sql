@@ -25,27 +25,27 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
-Create or replace FUNCTION InsertGlusterVolumeBrick(v_volume_id UUID,
+Create or replace FUNCTION InsertGlusterVolumeBrick(v_id UUID, v_volume_id UUID,
                                                     v_server_id UUID,
                                                     v_brick_dir VARCHAR(4096),
                                                     v_status VARCHAR(32))
     RETURNS VOID
     AS $procedure$
 BEGIN
-    INSERT INTO gluster_volume_bricks (volume_id, server_id, brick_dir, status)
-    VALUES (v_volume_id, v_server_id, v_brick_dir, v_status);
+    INSERT INTO gluster_volume_bricks (id, volume_id, server_id, brick_dir, status)
+    VALUES (v_id, v_volume_id, v_server_id, v_brick_dir, v_status);
 END; $procedure$
 LANGUAGE plpgsql;
 
 
-Create or replace FUNCTION InsertGlusterVolumeOption(v_volume_id UUID,
+Create or replace FUNCTION InsertGlusterVolumeOption(v_id UUID, v_volume_id UUID,
                                                     v_option_key VARCHAR(8192),
                                                     v_option_val VARCHAR(8192))
     RETURNS VOID
     AS $procedure$
 BEGIN
-    INSERT INTO gluster_volume_options (volume_id, option_key, option_val)
-    VALUES (v_volume_id, v_option_key, v_option_val);
+    INSERT INTO gluster_volume_options (id, volume_id, option_key, option_val)
+    VALUES (v_id, v_volume_id, v_option_key, v_option_val);
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -106,6 +106,17 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
+Create or replace FUNCTION GetGlusterBrickById(v_id UUID)
+    RETURNS SETOF gluster_volume_bricks
+    AS $procedure$
+BEGIN
+    RETURN QUERY SELECT *
+    FROM gluster_volume_bricks
+    WHERE id = v_id;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
 Create or replace FUNCTION GetBricksByGlusterVolumeGuid(v_volume_id UUID)
     RETURNS SETOF gluster_volume_bricks
     AS $procedure$
@@ -114,6 +125,17 @@ BEGIN
     FROM  gluster_volume_bricks
     WHERE volume_id = v_volume_id
     ORDER BY _create_date;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+Create or replace FUNCTION GetGlusterOptionById(v_id UUID)
+    RETURNS SETOF gluster_volume_options
+    AS $procedure$
+BEGIN
+    RETURN QUERY SELECT *
+    FROM gluster_volume_options
+    WHERE id = v_id;
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -172,28 +194,22 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
-Create or replace FUNCTION DeleteGlusterVolumeBrick(v_volume_id UUID,
-                                                    v_server_id UUID,
-                                                    v_brick_dir VARCHAR(4096))
+Create or replace FUNCTION DeleteGlusterVolumeBrick(v_id UUID)
     RETURNS VOID
     AS $procedure$
 BEGIN
     DELETE FROM gluster_volume_bricks
-    WHERE volume_id = v_volume_id
-    AND   server_id = v_server_id
-    AND   brick_dir = v_brick_dir;
+    WHERE id = v_id;
 END; $procedure$
 LANGUAGE plpgsql;
 
 
-Create or replace FUNCTION DeleteGlusterVolumeOption(v_volume_id UUID,
-                                                    v_option_key VARCHAR(8192))
+Create or replace FUNCTION DeleteGlusterVolumeOption(v_id UUID)
     RETURNS VOID
     AS $procedure$
 BEGIN
     DELETE FROM gluster_volume_options
-    WHERE volume_id = v_volume_id
-    AND   option_key = v_option_key;
+    WHERE id = v_id;
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -245,9 +261,8 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
-Create or replace FUNCTION UpdateGlusterVolumeBrick(v_volume_id UUID,
-                                                    v_old_server_id UUID,
-                                                    v_old_brick_dir VARCHAR(4096),
+Create or replace FUNCTION UpdateGlusterVolumeBrick(v_id UUID,
+                                                    v_new_id UUID,
                                                     v_new_server_id UUID,
                                                     v_new_brick_dir VARCHAR(4096),
                                                     v_new_status VARCHAR(32))
@@ -255,20 +270,17 @@ Create or replace FUNCTION UpdateGlusterVolumeBrick(v_volume_id UUID,
     AS $procedure$
 BEGIN
     UPDATE gluster_volume_bricks
-    SET       server_id = v_new_server_id,
+    SET    id = v_new_id,
+           server_id = v_new_server_id,
            brick_dir = v_new_brick_dir,
            status = v_new_status,
            _update_date = LOCALTIMESTAMP
-    WHERE  volume_id = v_volume_id
-    AND    server_id = v_old_server_id
-    AND    brick_dir = v_old_brick_dir;
+    WHERE  id = v_id;
 END; $procedure$
 LANGUAGE plpgsql;
 
 
-Create or replace FUNCTION UpdateGlusterVolumeBrickStatus(v_volume_id UUID,
-                                                        v_server_id UUID,
-                                                        v_brick_dir VARCHAR(4096),
+Create or replace FUNCTION UpdateGlusterVolumeBrickStatus(v_id UUID,
                                                         v_status VARCHAR(32))
     RETURNS VOID
     AS $procedure$
@@ -276,9 +288,7 @@ BEGIN
     UPDATE  gluster_volume_bricks
     SET     status = v_status,
             _update_date = LOCALTIMESTAMP
-    WHERE   volume_id = v_volume_id
-    AND     server_id = v_server_id
-    AND     brick_dir = v_brick_dir;
+    WHERE   id = v_id;
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -313,16 +323,13 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
-Create or replace FUNCTION UpdateGlusterVolumeOption(v_volume_id UUID,
-                                                    v_option_key VARCHAR(8192),
-                                                    v_option_val VARCHAR(8192))
+Create or replace FUNCTION UpdateGlusterVolumeOption(v_id UUID, v_option_val VARCHAR(8192))
     RETURNS VOID
     AS $procedure$
 BEGIN
     UPDATE gluster_volume_options
     SET option_val = v_option_val
-    WHERE volume_id = v_volume_id
-    AND   option_key = v_option_key;
+    WHERE id = v_id;
 END; $procedure$
 LANGUAGE plpgsql;
 

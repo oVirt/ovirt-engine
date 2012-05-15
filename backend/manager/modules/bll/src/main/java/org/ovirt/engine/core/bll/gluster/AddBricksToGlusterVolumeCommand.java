@@ -62,7 +62,7 @@ public class AddBricksToGlusterVolumeCommand extends GlusterVolumeCommandBase<Gl
 
     private void addGlusterVolumeBricksInDb(List<GlusterBrickEntity> bricks, int replicaCount, int stripeCount) {
         for (GlusterBrickEntity brick : bricks) {
-            getGlusterVolumeDao().addBrickToVolume(brick);
+            getGlusterBrickDao().save(brick);
         }
         if (replicaCount != 0) {
             getGlusterVolumeDao().updateReplicaCount(bricks.get(0).getVolumeId(), replicaCount);

@@ -3,9 +3,7 @@ package org.ovirt.engine.core.dao.gluster;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.gluster.AccessProtocol;
-import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
-import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeOptionEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
 import org.ovirt.engine.core.compat.Guid;
@@ -35,20 +33,6 @@ public interface GlusterVolumeDao extends DAO, SearchDAO<GlusterVolumeEntity> {
     public void updateVolumeStatus(Guid volumeId, GlusterVolumeStatus status);
 
     public void updateVolumeStatusByName(Guid clusterId, String volumeName, GlusterVolumeStatus status);
-
-    public void addBrickToVolume(GlusterBrickEntity brick);
-
-    public void removeBrickFromVolume(GlusterBrickEntity brick);
-
-    public void replaceVolumeBrick(GlusterBrickEntity oldBrick, GlusterBrickEntity newBrick);
-
-    public void updateBrickStatus(GlusterBrickEntity brick);
-
-    public void addVolumeOption(GlusterVolumeOptionEntity option);
-
-    public void updateVolumeOption(GlusterVolumeOptionEntity option);
-
-    public void removeVolumeOption(GlusterVolumeOptionEntity option);
 
     public void addAccessProtocol(Guid volumeId, AccessProtocol protocol);
 

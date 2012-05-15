@@ -37,10 +37,7 @@ public class ResetGlusterVolumeOptionsCommand extends GlusterVolumeCommandBase<R
         if (getSucceeded()) {
 
             if (getParameters().getVolumeOption() != null && !getParameters().getVolumeOption().isEmpty()) {
-                GlusterVolumeOptionEntity option = new GlusterVolumeOptionEntity(getParameters().getVolumeId(),
-                        getParameters().getVolumeOption(),
-                        null);
-                removeOptionInDb(option);
+                removeOptionInDb(getGlusterVolume().getOption(getParameters().getVolumeOption()));
             } else {
                 for (GlusterVolumeOptionEntity option : getGlusterVolume().getOptions()) {
                     removeOptionInDb(option);
@@ -60,9 +57,7 @@ public class ResetGlusterVolumeOptionsCommand extends GlusterVolumeCommandBase<R
      * @param option
      */
     private void removeOptionInDb(GlusterVolumeOptionEntity option) {
-        if (getGlusterVolume().getOptionValue(option.getKey()) != null) {
-            getGlusterVolumeDao().removeVolumeOption(option);
-        }
+        getGlusterOptionDao().removeVolumeOption(option.getId());
     }
 
 

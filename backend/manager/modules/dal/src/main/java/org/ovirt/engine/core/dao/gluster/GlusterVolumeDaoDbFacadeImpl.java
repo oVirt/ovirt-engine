@@ -8,7 +8,6 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.gluster.AccessProtocol;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
-import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeOptionEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeStatus;
@@ -28,12 +27,8 @@ public class GlusterVolumeDaoDbFacadeImpl extends BaseDAODbFacade implements
         GlusterVolumeDao {
 
     private static final ParameterizedRowMapper<GlusterVolumeEntity> volumeRowMapper = new GlusterVolumeRowMapper();
-    private static final ParameterizedRowMapper<GlusterVolumeOptionEntity> optionRowMapper = new VolumeOptionRowMapper();
     private static final ParameterizedRowMapper<AccessProtocol> accessProtocolRowMapper = new AccessProtocolRowMapper();
     private static final ParameterizedRowMapper<TransportType> transportTypeRowMapper = new TransportTypeRowMapper();
-    // The brick row mapper can't be static as its' type (GlusterBrickRowMapper) is a non-static inner class
-    // There will still be a single instance of it, as the DAO itself will be instantiated only once
-    private final ParameterizedRowMapper<GlusterBrickEntity> brickRowMapper = new GlusterBrickRowMapper();
 
     @Override
     public void save(GlusterVolumeEntity volume) {
@@ -58,7 +53,7 @@ public class GlusterVolumeDaoDbFacadeImpl extends BaseDAODbFacade implements
         GlusterVolumeEntity volume = getCallsHandler().executeRead(
                 "GetGlusterVolumeByName", volumeRowMapper,
                 getCustomMapSqlParameterSource()
-                        .addValue("cluster_id", clusterId.getUuid())
+                        .addValue("cluster_id", clusterId)
                         .addValue("vol_name", volName));
 
         fetchRelatedEntities(volume);
@@ -70,7 +65,7 @@ public class GlusterVolumeDaoDbFacadeImpl extends BaseDAODbFacade implements
         List<GlusterVolumeEntity> volumes =
                 getCallsHandler().executeReadList("GetGlusterVolumesByClusterGuid",
                         volumeRowMapper,
-                        getCustomMapSqlParameterSource().addValue("cluster_id", clusterId.getUuid()));
+                        getCustomMapSqlParameterSource().addValue("cluster_id", clusterId));
         fetchRelatedEntities(volumes);
         return volumes;
     }
@@ -92,7 +87,7 @@ public class GlusterVolumeDaoDbFacadeImpl extends BaseDAODbFacade implements
     public void removeByName(Guid clusterId, String volName) {
         getCallsHandler().executeModification("DeleteGlusterVolumeByName",
                 getCustomMapSqlParameterSource()
-                        .addValue("cluster_id", clusterId.getUuid())
+                        .addValue("cluster_id", clusterId)
                         .addValue("vol_name", volName));
     }
 
@@ -106,53 +101,9 @@ public class GlusterVolumeDaoDbFacadeImpl extends BaseDAODbFacade implements
     public void updateVolumeStatusByName(Guid clusterId, String volumeName, GlusterVolumeStatus status) {
         getCallsHandler().executeModification("UpdateGlusterVolumeStatusByName",
                 getCustomMapSqlParameterSource()
-                        .addValue("cluster_id", clusterId.getUuid())
+                        .addValue("cluster_id", clusterId)
                         .addValue("vol_name", volumeName)
                         .addValue("status", EnumUtils.nameOrNull(status)));
-    }
-
-    @Override
-    public void addBrickToVolume(GlusterBrickEntity brick) {
-        getCallsHandler().executeModification("InsertGlusterVolumeBrick", createBrickParams(brick));
-    }
-
-    @Override
-    public void removeBrickFromVolume(GlusterBrickEntity brick) {
-        getCallsHandler().executeModification("DeleteGlusterVolumeBrick",
-                createVolumeIdParams(brick.getVolumeId())
-                        .addValue("server_id", brick.getServerId().getUuid())
-                        .addValue("brick_dir", brick.getBrickDirectory()));
-    }
-
-    @Override
-    public void replaceVolumeBrick(GlusterBrickEntity oldBrick, GlusterBrickEntity newBrick) {
-        getCallsHandler().executeModification("UpdateGlusterVolumeBrick",
-                createVolumeIdParams(oldBrick.getVolumeId()).addValue("old_server_id", oldBrick.getServerId().getUuid())
-                        .addValue("old_brick_dir", oldBrick.getBrickDirectory())
-                        .addValue("new_server_id", newBrick.getServerId().getUuid())
-                        .addValue("new_brick_dir", newBrick.getBrickDirectory())
-                        .addValue("new_status", EnumUtils.nameOrNull(newBrick.getStatus())));
-    }
-
-    @Override
-    public void updateBrickStatus(GlusterBrickEntity brick) {
-        getCallsHandler().executeModification("UpdateGlusterVolumeBrickStatus", createBrickParams(brick));
-    }
-
-    @Override
-    public void addVolumeOption(GlusterVolumeOptionEntity option) {
-        getCallsHandler().executeModification("InsertGlusterVolumeOption", createVolumeOptionParams(option));
-    }
-
-    @Override
-    public void updateVolumeOption(GlusterVolumeOptionEntity option) {
-        getCallsHandler().executeModification("UpdateGlusterVolumeOption", createVolumeOptionParams(option));
-    }
-
-    @Override
-    public void removeVolumeOption(GlusterVolumeOptionEntity option) {
-        getCallsHandler().executeModification("DeleteGlusterVolumeOption",
-                createVolumeIdParams(option.getVolumeId()).addValue("option_key", option.getKey()));
     }
 
     @Override
@@ -179,27 +130,6 @@ public class GlusterVolumeDaoDbFacadeImpl extends BaseDAODbFacade implements
                 createTransportTypeParams(volumeId, transportType));
     }
 
-    private List<GlusterBrickEntity> getBricksOfVolume(Guid volumeId) {
-        List<GlusterBrickEntity> bricks = getCallsHandler().executeReadList(
-                "GetBricksByGlusterVolumeGuid", brickRowMapper,
-                createVolumeIdParams(volumeId));
-
-        /**
-         * Update the server name on each brick
-         */
-        for (GlusterBrickEntity brick : bricks) {
-            brick.setServerName(getHostNameOfServer(brick.getServerId()));
-        }
-
-        return bricks;
-    }
-
-    private List<GlusterVolumeOptionEntity> getOptionsOfVolume(Guid volumeId) {
-        return getCallsHandler().executeReadList(
-                "GetOptionsByGlusterVolumeGuid", optionRowMapper,
-                createVolumeIdParams(volumeId));
-    }
-
     private List<AccessProtocol> getAccessProtocolsOfVolume(Guid volumeId) {
         return getCallsHandler().executeReadList(
                 "GetAccessProtocolsByGlusterVolumeGuid",
@@ -215,20 +145,7 @@ public class GlusterVolumeDaoDbFacadeImpl extends BaseDAODbFacade implements
     }
 
     private MapSqlParameterSource createVolumeIdParams(Guid id) {
-        return getCustomMapSqlParameterSource().addValue("volume_id", id.getUuid());
-    }
-
-    private MapSqlParameterSource createBrickParams(GlusterBrickEntity brick) {
-        return createVolumeIdParams(brick.getVolumeId())
-                .addValue("server_id", brick.getServerId().getUuid())
-                .addValue("brick_dir", brick.getBrickDirectory())
-                .addValue("status", EnumUtils.nameOrNull(brick.getStatus()));
-    }
-
-    private MapSqlParameterSource createVolumeOptionParams(GlusterVolumeOptionEntity option) {
-        return createVolumeIdParams(option.getVolumeId())
-                .addValue("option_key", option.getKey())
-                .addValue("option_val", option.getValue());
+        return getCustomMapSqlParameterSource().addValue("volume_id", id);
     }
 
     private MapSqlParameterSource createAccessProtocolParams(Guid volumeId, AccessProtocol protocol) {
@@ -243,8 +160,8 @@ public class GlusterVolumeDaoDbFacadeImpl extends BaseDAODbFacade implements
         getCallsHandler().executeModification(
                 "InsertGlusterVolume",
                 getCustomMapSqlParameterSource()
-                        .addValue("id", volume.getId().getUuid())
-                        .addValue("cluster_id", volume.getClusterId().getUuid())
+                        .addValue("id", volume.getId())
+                        .addValue("cluster_id", volume.getClusterId())
                         .addValue("vol_name", volume.getName())
                         .addValue("vol_type", EnumUtils.nameOrNull(volume.getVolumeType()))
                         .addValue("status", EnumUtils.nameOrNull(volume.getStatus()))
@@ -258,7 +175,7 @@ public class GlusterVolumeDaoDbFacadeImpl extends BaseDAODbFacade implements
             if (brick.getVolumeId() == null) {
                 brick.setVolumeId(volume.getId());
             }
-            addBrickToVolume(brick);
+            dbFacade.getGlusterBrickDao().save(brick);
         }
     }
 
@@ -268,7 +185,7 @@ public class GlusterVolumeDaoDbFacadeImpl extends BaseDAODbFacade implements
             if (option.getVolumeId() == null) {
                 option.setVolumeId(volume.getId());
             }
-            addVolumeOption(option);
+            dbFacade.getGlusterOptionDao().save(option);
         }
     }
 
@@ -302,17 +219,11 @@ public class GlusterVolumeDaoDbFacadeImpl extends BaseDAODbFacade implements
      */
     private void fetchRelatedEntities(GlusterVolumeEntity volume) {
         if (volume != null) {
-            volume.setBricks(getBricksOfVolume(volume.getId()));
-            volume.setOptions(getOptionsOfVolume(volume.getId()));
+            volume.setBricks(dbFacade.getGlusterBrickDao().getBricksOfVolume(volume.getId()));
+            volume.setOptions(dbFacade.getGlusterOptionDao().getOptionsOfVolume(volume.getId()));
             volume.setAccessProtocols(new HashSet<AccessProtocol>(getAccessProtocolsOfVolume(volume.getId())));
             volume.setTransportTypes(new HashSet<TransportType>(getTransportTypesOfVolume(volume.getId())));
         }
-    }
-
-    private String getHostNameOfServer(Guid serverId) {
-        return new SimpleJdbcTemplate(jdbcTemplate).queryForObject("select host_name from vds_static where vds_id = ?",
-                String.class,
-                serverId.getUuid());
     }
 
     private static final class GlusterVolumeRowMapper implements ParameterizedRowMapper<GlusterVolumeEntity> {
@@ -329,40 +240,6 @@ public class GlusterVolumeDaoDbFacadeImpl extends BaseDAODbFacade implements
             entity.setReplicaCount(rs.getInt("replica_count"));
             entity.setStripeCount(rs.getInt("stripe_count"));
             return entity;
-        }
-    }
-
-    /**
-     * This is not a static class since it invokes a non-static method (getHostNameOfServer) of the parent class.
-     */
-    private final class GlusterBrickRowMapper implements ParameterizedRowMapper<GlusterBrickEntity> {
-        @Override
-        public GlusterBrickEntity mapRow(ResultSet rs, int rowNum)
-                throws SQLException {
-            GlusterBrickEntity brick = new GlusterBrickEntity();
-            brick.setVolumeId(Guid.createGuidFromString(rs.getString("volume_id")));
-
-            Guid serverId = Guid.createGuidFromString(rs.getString("server_id"));
-            brick.setServerId(serverId);
-            // Update the brick with server name. This is useful as the brick is typically represented in the form
-            // serverName:brickDirectory though the database table (gluster_volume_bricks) stores just the server id
-            brick.setServerName(getHostNameOfServer(serverId));
-
-            brick.setBrickDirectory(rs.getString("brick_dir"));
-            brick.setStatus(GlusterBrickStatus.valueOf(rs.getString("status")));
-            return brick;
-        }
-    }
-
-    private static final class VolumeOptionRowMapper implements ParameterizedRowMapper<GlusterVolumeOptionEntity> {
-        @Override
-        public GlusterVolumeOptionEntity mapRow(ResultSet rs, int rowNum)
-                throws SQLException {
-            GlusterVolumeOptionEntity option = new GlusterVolumeOptionEntity();
-            option.setVolumeId(Guid.createGuidFromString(rs.getString("volume_id")));
-            option.setKey(rs.getString("option_key"));
-            option.setValue(rs.getString("option_val"));
-            return option;
         }
     }
 

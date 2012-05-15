@@ -3393,6 +3393,7 @@
     </table>
 
     <table name="gluster_volume_bricks">
+        <column>id</column>
         <column>volume_id</column>
         <column>server_id</column>
         <column>brick_dir</column>
@@ -3402,6 +3403,7 @@
 
         <!-- Bricks for volume 0c3f45f6-3fe9-4b35-a30c-be0d1a835ea8 -->
         <row>
+            <value>6ccdc294-d77b-4929-809d-8afe7634b47d</value>
             <value>0c3f45f6-3fe9-4b35-a30c-be0d1a835ea8</value>
             <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
             <value>/export/test-vol-distribute-1/dir1</value>
@@ -3410,6 +3412,7 @@
             <value>2010-11-29 15:57:10</value>
         </row>
         <row>
+            <value>61c94fc7-26b0-43e3-9d26-fc9d8cd6a754</value>
             <value>0c3f45f6-3fe9-4b35-a30c-be0d1a835ea8</value>
             <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
             <value>/export/test-vol-distribute-1/dir2</value>
@@ -3420,6 +3423,7 @@
 
         <!-- Bricks for volume b2cb2f73-fab3-4a42-93f0-d5e4c069a43e -->
         <row>
+            <value>65d327f8-5864-4330-be04-fe27e1ffb553</value>
             <value>b2cb2f73-fab3-4a42-93f0-d5e4c069a43e</value>
             <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
             <value>/export/test-vol-replicate-1/r1dir1</value>
@@ -3428,6 +3432,7 @@
             <value>2010-11-29 15:57:10</value>
         </row>
         <row>
+            <value>2ab384da-6190-4668-aa2e-37bc5c5ff014</value>
             <value>b2cb2f73-fab3-4a42-93f0-d5e4c069a43e</value>
             <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
             <value>/export/test-vol-replicate-1/r1dir2</value>
@@ -3436,6 +3441,7 @@
             <value>2010-11-29 15:57:10</value>
         </row>
         <row>
+            <value>2702bb49-3037-405c-81c5-14a38793164e</value>
             <value>b2cb2f73-fab3-4a42-93f0-d5e4c069a43e</value>
             <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
             <value>/export/test-vol-replicate-1/r2dir1</value>
@@ -3444,6 +3450,7 @@
             <value>2010-11-29 15:57:10</value>
         </row>
         <row>
+            <value>41eb430f-c2ed-435c-b4eb-e1e19173754e</value>
             <value>b2cb2f73-fab3-4a42-93f0-d5e4c069a43e</value>
             <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
             <value>/export/test-vol-replicate-1/r2dir2</value>
@@ -3454,17 +3461,20 @@
     </table>
 
     <table name="gluster_volume_options">
+        <column>id</column>
         <column>volume_id</column>
         <column>option_key</column>
         <column>option_val</column>
 
         <!-- Options for volume 0c3f45f6-3fe9-4b35-a30c-be0d1a835ea8 -->
         <row>
+            <value>9e6a606e-9a7a-4398-9b13-3ad4777abfba</value>
             <value>0c3f45f6-3fe9-4b35-a30c-be0d1a835ea8</value>
             <value>auth.allow</value>
             <value>*</value>
         </row>
         <row>
+            <value>14a15905-9de4-44ab-8868-f89b714f7008</value>
             <value>0c3f45f6-3fe9-4b35-a30c-be0d1a835ea8</value>
             <value>nfs.disable</value>
             <value>on</value>
@@ -3472,11 +3482,13 @@
 
         <!-- Options for volume b2cb2f73-fab3-4a42-93f0-d5e4c069a43e -->
         <row>
+            <value>89936695-60a8-40c7-94ec-410123b3176e</value>
             <value>b2cb2f73-fab3-4a42-93f0-d5e4c069a43e</value>
             <value>auth.allow</value>
             <value>*</value>
         </row>
         <row>
+            <value>9a9e2f09-2835-4530-9bf5-576c52b11941</value>
             <value>b2cb2f73-fab3-4a42-93f0-d5e4c069a43e</value>
             <value>nfs.disable</value>
             <value>off</value>
