@@ -1254,6 +1254,48 @@ SELECT       DISTINCT entity_id, user_id
 FROM         user_vm_permissions_view_base
 NATURAL JOIN user_flat_groups;
 
+-- Permissions on disk
+-- The user has permissions on the disk directly
+CREATE OR REPLACE VIEW user_disk_permissions_view_base (entity_id, granted_id)
+AS
+SELECT     object_id, ad_element_id
+FROM       user_permissions_view
+WHERE      object_type_id = 19
+-- Or the user has permissions on the VM or template the disk is attached to
+UNION ALL
+SELECT     device_id, ad_element_id
+FROM       vm_device
+INNER JOIN user_permissions_view ON object_id = vm_id AND object_type_id IN (2, 4)
+-- Or the user has permission on the data center containing the vm/template
+UNION ALL
+SELECT     device_id, ad_element_id
+FROM       vm_device
+INNER JOIN vm_static ON vm_device.vm_id = vm_static.vm_guid
+INNER JOIN vds_groups on vds_groups.vds_group_id = vm_static.vds_group_id
+INNER JOIN user_permissions_view ON object_id = storage_pool_id AND object_type_id = 14
+-- Or the user has permissions on the storage domain containing the disk
+UNION ALL
+SELECT     image_id, ad_element_id
+FROM       image_storage_domain_map
+INNER JOIN user_permissions_view ON object_id = storage_domain_id AND object_type_id = 11
+-- Or the user has permissions on the data center containing the storage pool constaining the disk
+UNION ALL
+SELECT     image_id, ad_element_id
+FROM       image_storage_domain_map
+INNER JOIN storage_pool_iso_map ON image_storage_domain_map.storage_domain_id = storage_pool_iso_map.storage_id
+INNER JOIN user_permissions_view ON object_id = storage_id AND object_type_id = 11
+-- Or the user has permissions on system
+UNION ALL
+SELECT     device_id, ad_element_id
+FROM       user_permissions_view
+CROSS JOIN vm_device
+WHERE      object_type_id = 1;
+
+CREATE OR REPLACE VIEW user_disk_permissions_view (entity_id, user_id)
+AS
+SELECT       DISTINCT entity_id, user_id
+FROM         user_disk_permissions_view_base
+NATURAL JOIN user_flat_groups;
 
 -- Permissions on permissions
 CREATE OR REPLACE VIEW user_permissions_permissions_view (entity_id, user_id)
