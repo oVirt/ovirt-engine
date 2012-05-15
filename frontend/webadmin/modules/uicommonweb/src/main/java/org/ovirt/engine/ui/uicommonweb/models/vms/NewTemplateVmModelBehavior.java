@@ -33,8 +33,7 @@ import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
-@SuppressWarnings("unused")
-public class NewTemplateVmModelBehavior extends VmModelBehaviorBase
+public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
 {
     private final VM vm;
 
@@ -66,7 +65,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase
                         {
                             behavior.getModel()
                                     .getDataCenter()
-                                    .setItems(new ArrayList<storage_pool>(Arrays.asList(new storage_pool[] {dataCenter})));
+                                    .setItems(new ArrayList<storage_pool>(Arrays.asList(new storage_pool[] { dataCenter })));
                             behavior.getModel().getDataCenter().setSelectedItem(dataCenter);
                             behavior.getModel().getDataCenter().setIsChangable(false);
                         }
@@ -291,7 +290,8 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase
                                 storage_domains s =
                                         Linq.FirstOrDefault(activeStorageDomainList,
                                                 new Linq.StoragePredicate(selectStorage.getId()));
-                                activeStorageDomainList =new ArrayList<storage_domains>(Arrays.asList(new storage_domains[] { s }));
+                                activeStorageDomainList =
+                                        new ArrayList<storage_domains>(Arrays.asList(new storage_domains[] { s }));
 
                                 behavior.getModel().getStorageDomain().setItems(activeStorageDomainList);
                                 behavior.getModel().getStorageDomain().setIsChangable(false);
@@ -338,6 +338,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase
         getModel().getStorageDomain().setIsChangable(false);
         getModel().getIsTemplatePublic().setIsChangable(false);
         getModel().getIsTemplatePrivate().setIsChangable(false);
+        getModel().getDefaultCommand().setIsAvailable(false);
     }
 
     @Override
