@@ -528,7 +528,8 @@ public class Backend implements BackendInternal, BackendRemote {
         case GetConfigurationValue: {
             GetConfigurationValueParameters configParameters = (GetConfigurationValueParameters) parameters;
             if (configParameters.getConfigValue() == ConfigurationValues.VdcVersion ||
-                    configParameters.getConfigValue() == ConfigurationValues.ProductRPMVersion) {
+                    configParameters.getConfigValue() == ConfigurationValues.ProductRPMVersion ||
+                    configParameters.getConfigValue() == ConfigurationValues.ApplicationMode) {
                 return runQueryImpl(actionType, parameters, false);
             }
 

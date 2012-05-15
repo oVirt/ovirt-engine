@@ -13,6 +13,8 @@ import org.ovirt.engine.ui.uicommonweb.ReportInit;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.LoginModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.uimode.UiMode;
+import org.ovirt.engine.ui.webadmin.uimode.UiModeData;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.Window;
@@ -31,6 +33,8 @@ public class ApplicationInit extends BaseApplicationInit<LoginModel> {
             ApplicationConstants constants) {
         super(typeResolver, frontendEventsHandler, frontendFailureEventListener, user, loginModelProvider, eventBus);
         Window.setTitle(constants.applicationTitle());
+
+        handleUiMode();
     }
 
     @Override
@@ -62,6 +66,15 @@ public class ApplicationInit extends BaseApplicationInit<LoginModel> {
                 performLogin(loginModel);
             }
         });
+    }
+
+    void handleUiMode() {
+        UiModeData uiModeData = UiModeData.instance();
+
+        if (uiModeData != null) {
+            UiMode uiMode = uiModeData.getUiMode();
+            // TODO adapt UI according to UiMode
+        }
     }
 
 }

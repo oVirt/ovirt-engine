@@ -1,5 +1,9 @@
 package org.ovirt.engine.ui.frontend.server.gwt;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
+
 /**
  * A landing servlet for UserPortal project.
  *
@@ -15,8 +19,11 @@ public class UserportalDynamicHostingServlet extends GwtDynamicHostPageServlet {
     }
 
     @Override
-    protected boolean filterQueries() {
-        return true;
+    protected void initQueryParams(VdcQueryParametersBase queryParams, HttpServletRequest request) {
+        super.initQueryParams(queryParams, request);
+
+        // All UserPortal queries are filtered according to user permissions
+        queryParams.setFiltered(true);
     }
 
 }

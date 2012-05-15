@@ -3,6 +3,9 @@ package org.ovirt.engine.ui.frontend.server.gwt;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.ejb.EJB;
 import javax.servlet.ServletException;
@@ -33,7 +36,8 @@ public abstract class GwtDynamicHostPageServlet extends HttpServlet {
 
     private BackendLocal backend;
 
-    @EJB(beanInterface = BackendLocal.class, mappedName = "java:global/engine/engine-bll/Backend!org.ovirt.engine.core.common.interfaces.BackendLocal")
+    @EJB(beanInterface = BackendLocal.class,
+            mappedName = "java:global/engine/engine-bll/Backend!org.ovirt.engine.core.common.interfaces.BackendLocal")
     public void setBackend(BackendLocal backend) {
         this.backend = backend;
     }
@@ -63,15 +67,18 @@ public abstract class GwtDynamicHostPageServlet extends HttpServlet {
         doGet(req, resp);
     }
 
+    /**
+     * Writes additional data (JavaScript objects) into the host page.
+     */
     protected void writeAdditionalJsData(HttpServletRequest request, PrintWriter writer) {
         VdcUser loggedUser = getLoggedInUser(request);
 
         if (loggedUser != null) {
-            writer.append(" var userInfo = { "); //$NON-NLS-1$
-            writer.append(" \"id\" : \"" + loggedUser.getUserId().toString() + "\","); //$NON-NLS-1$ //$NON-NLS-2$
-            writer.append(" \"userName\" : \"" + loggedUser.getUserName() + "\","); //$NON-NLS-1$ //$NON-NLS-2$
-            writer.append(" \"domain\" : \"" + loggedUser.getDomainControler() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
-            writer.append(" };"); //$NON-NLS-1$
+            Map<String, String> userInfoData = new HashMap<String, String>();
+            userInfoData.put("id", loggedUser.getUserId().toString()); //$NON-NLS-1$
+            userInfoData.put("userName", loggedUser.getUserName()); //$NON-NLS-1$
+            userInfoData.put("domain", loggedUser.getDomainControler()); //$NON-NLS-1$
+            writeJsObject(writer, "userInfo", userInfoData); //$NON-NLS-1$
         }
     }
 
@@ -80,27 +87,71 @@ public abstract class GwtDynamicHostPageServlet extends HttpServlet {
      */
     protected abstract String getSelectorScriptName();
 
-    private VdcUser getLoggedInUser(HttpServletRequest request) {
-        VdcQueryReturnValue returnValue = backend.RunQuery(VdcQueryType.GetUserBySessionId,
-                createQueryParams(request.getSession().getId(), filterQueries()));
+    /**
+     * Writes a string representing JavaScript object literal containing given attributes.
+     */
+    protected void writeJsObject(PrintWriter writer, String objectName, Map<String, String> attributes) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(" var ").append(objectName).append(" = { "); //$NON-NLS-1$ //$NON-NLS-2$
 
-        if (returnValue.getSucceeded()) {
-            return (VdcUser) returnValue.getReturnValue();
+        int countdown = attributes.size();
+        for (Entry<String, String> e : attributes.entrySet()) {
+            sb.append(e.getKey()).append(": "); //$NON-NLS-1$
+            sb.append("\"").append(e.getValue()).append("\""); //$NON-NLS-1$ //$NON-NLS-2$
+
+            if (--countdown > 0) {
+                sb.append(", "); //$NON-NLS-1$
+            }
+        }
+
+        sb.append(" }; "); //$NON-NLS-1$
+
+        writer.append(sb.toString());
+    }
+
+    protected void initQueryParams(VdcQueryParametersBase queryParams, HttpServletRequest request) {
+        String sessionId = request.getSession().getId();
+        queryParams.setSessionId(sessionId);
+        queryParams.setHttpSessionId(sessionId);
+        queryParams.setFiltered(false);
+    }
+
+    /**
+     * Executes a backend {@linkplain BackendLocal#RunQuery query} and returns its result value if successful.
+     * <p>
+     * Returns {@code null} otherwise.
+     */
+    protected Object runQuery(VdcQueryType queryType, VdcQueryParametersBase queryParams, HttpServletRequest request) {
+        initQueryParams(queryParams, request);
+        VdcQueryReturnValue result = backend.RunQuery(queryType, queryParams);
+
+        if (result.getSucceeded()) {
+            return result.getReturnValue();
         } else {
             return null;
         }
     }
 
-    protected VdcQueryParametersBase createQueryParams(String sessionId, boolean isFiltered) {
-        VdcQueryParametersBase queryParams = new VdcQueryParametersBase();
-        queryParams.setSessionId(sessionId);
-        queryParams.setHttpSessionId(sessionId);
-        queryParams.setFiltered(isFiltered);
-        return queryParams;
+    /**
+     * Executes a backend {@linkplain BackendLocal#RunPublicQuery public query} and returns its result value if
+     * successful.
+     * <p>
+     * Returns {@code null} otherwise.
+     */
+    protected Object runPublicQuery(VdcQueryType queryType, VdcQueryParametersBase queryParams,
+            HttpServletRequest request) {
+        initQueryParams(queryParams, request);
+        VdcQueryReturnValue result = backend.RunPublicQuery(queryType, queryParams);
+
+        if (result.getSucceeded()) {
+            return result.getReturnValue();
+        } else {
+            return null;
+        }
     }
 
-    protected boolean filterQueries() {
-        return false;
+    private VdcUser getLoggedInUser(HttpServletRequest request) {
+        return (VdcUser) runQuery(VdcQueryType.GetUserBySessionId, new VdcQueryParametersBase(), request);
     }
 
 }
