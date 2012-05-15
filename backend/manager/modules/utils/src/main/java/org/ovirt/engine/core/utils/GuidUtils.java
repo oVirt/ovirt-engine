@@ -5,26 +5,8 @@ import java.util.UUID;
 
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
-import org.ovirt.engine.core.compat.RefObject;
-import org.ovirt.engine.core.compat.RegexOptions;
 
 public class GuidUtils {
-    private static org.ovirt.engine.core.compat.Regex isGuidExp =
-            new org.ovirt.engine.core.compat.Regex(
-                    "^(\\{){0,1}[0-9a-fA-F]{8}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{12}(\\}){0,1}$",
-                    RegexOptions.Compiled);
-
-    public static boolean isGuid(String candidate, RefObject<org.ovirt.engine.core.compat.Guid> output) {
-        boolean isValid = false;
-        output.argvalue = org.ovirt.engine.core.compat.Guid.Empty;
-        if (candidate != null) {
-            if (isGuidExp.IsMatch(candidate)) {
-                output.argvalue = new org.ovirt.engine.core.compat.Guid(candidate);
-                isValid = true;
-            }
-        }
-        return isValid;
-    }
 
     public static byte[] ToByteArray(UUID uuid) {
         String guidStr = uuid.toString();
