@@ -7,6 +7,7 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.gluster.CreateGlusterVolumeParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeActionParameters;
+import org.ovirt.engine.core.common.action.gluster.GlusterVolumeRebalanceParameters;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
@@ -306,6 +307,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
         }
         getStopCommand().setIsExecutionAllowed(true);
         getStartCommand().setIsExecutionAllowed(true);
+        getRebalanceCommand().setIsExecutionAllowed(true);
 
         for (GlusterVolumeEntity volume : Linq.<GlusterVolumeEntity> Cast(getSelectedItems()))
         {
@@ -314,9 +316,11 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
             {
                 getStopCommand().setIsExecutionAllowed(false);
                 getRemoveVolumeCommand().setIsExecutionAllowed(true);
+                getRebalanceCommand().setIsExecutionAllowed(false);
                 break;
             }
         }
+
         for (GlusterVolumeEntity volume : Linq.<GlusterVolumeEntity> Cast(getSelectedItems()))
         {
 
@@ -328,7 +332,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
             }
         }
 
-        getRebalanceCommand().setIsExecutionAllowed(getSelectedItem() != null);
+
     }
 
     private void cancel() {
@@ -363,13 +367,17 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
     }
 
     private void rebalance() {
-        if (getSelectedItem() == null) {
+        if (getSelectedItems() == null) {
             return;
         }
-        GlusterVolumeEntity volume = (GlusterVolumeEntity) getSelectedItem();
-        // Frontend.RunAction(VdcActionType.RebalanceGlusterVolumeStart,
-        // new GlusterVolumeParameters(clusterId, volume.getName()));
 
+        ArrayList<VdcActionParametersBase> list = new java.util.ArrayList<VdcActionParametersBase>();
+        for (Object item : getSelectedItems())
+        {
+            GlusterVolumeEntity volume = (GlusterVolumeEntity) item;
+            list.add(new GlusterVolumeRebalanceParameters(volume.getClusterId(), volume.getId(), false, false));
+        }
+        Frontend.RunMultipleAction(VdcActionType.StartRebalanceGlusterVolume, list);
     }
 
     private void stop() {
