@@ -763,7 +763,8 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
             }
         }
 
-        getRecoveryStorageCommand().setIsExecutionAllowed(items != null && items.size() == 1);
+        getRecoveryStorageCommand().setIsExecutionAllowed(items != null && items.size() == 1
+                && !items.iterator().next().getstorage_pool_type().equals(StorageType.LOCALFS));
 
         // System tree dependent actions.
         boolean isAvailable =
