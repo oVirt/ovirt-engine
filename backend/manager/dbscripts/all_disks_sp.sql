@@ -49,20 +49,15 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
-
+-- Returns all the attachable disks in the storage pool.
+-- If storage pool is ommited, all the attachable disks are retrurned.
 Create or replace FUNCTION GetAllAttachableDisksByPoolId(v_storage_pool_id UUID, v_user_id UUID, v_is_filtered BOOLEAN)
 RETURNS SETOF all_disks
    AS $procedure$
 BEGIN
-	  IF v_storage_pool_id IS NULL then
-           RETURN QUERY SELECT all_disks.*
-           FROM all_disks 
-           WHERE all_disks.vm_guid IS NULL;
-      ELSE
-           RETURN QUERY SELECT all_disks.*
-           FROM all_disks
-           WHERE all_disks.storage_pool_id = v_storage_pool_id AND all_disks.vm_guid IS NULL;
-      END IF;     
+    RETURN QUERY SELECT all_disks.*
+    FROM all_disks
+    WHERE (v_storage_pool_id IS NULL OR all_disks.storage_pool_id = v_storage_pool_id) AND all_disks.vm_guid IS NULL;
 END; $procedure$
 LANGUAGE plpgsql;
 
