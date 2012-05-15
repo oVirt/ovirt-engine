@@ -124,6 +124,14 @@ public class FixturesTool {
     protected static final Guid VM_RHEL5_POOL_57 = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4355");
 
     /**
+     * Predefined template for testing with the following properties :
+     * <ul>
+     * <li>Vds group: rhel6.iscsi (b399944a-81ab-4ec5-8266-e19ba7c3c9d1)</li>
+     * </ul>
+     */
+    protected static final Guid VM_TEMPLATE_RHEL5 = new Guid("1b85420c-b84c-4f29-997e-0eb674b40b79");
+
+    /**
      * Predefined user for testing with the following properties :
      * <ul>
      * <li>Ad group id : 9bf7c640-b620-456f-a550-0348f366544b</li>
@@ -139,6 +147,11 @@ public class FixturesTool {
      * Predefined image for testing.
      */
     protected static final Guid IMAGE_ID = new Guid("42058975-3d5e-484a-80c1-01c31207f578");
+
+    /**
+     * Predefined disk for testing.
+     */
+    protected static final Guid DISK_ID = new Guid("1b26a52b-b60f-44cb-9f46-3ef333b04a34");
 
     /**
      * Predefined image on a VM template for testing.

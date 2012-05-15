@@ -14,11 +14,10 @@ import org.ovirt.engine.core.compat.Guid;
 public class DiskDaoTest extends BaseReadDaoTestCase<Guid, Disk, DiskDao> {
 
     private static final int TOTAL_DISK_IMAGES = 3;
-    private static final Guid EXISTING_VM_TEMPLATE = new Guid("1b85420c-b84c-4f29-997e-0eb674b40b79");
 
     @Override
     protected Guid getExistingEntityId() {
-        return new Guid("1b26a52b-b60f-44cb-9f46-3ef333b04a34");
+        return FixturesTool.DISK_ID;
     }
 
     @Override
@@ -38,7 +37,7 @@ public class DiskDaoTest extends BaseReadDaoTestCase<Guid, Disk, DiskDao> {
 
     @Test
     public void testGetAllForVm() {
-        List<Disk> result = dao.getAllForVm(EXISTING_VM_TEMPLATE);
+        List<Disk> result = dao.getAllForVm(FixturesTool.VM_TEMPLATE_RHEL5);
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
@@ -72,19 +71,19 @@ public class DiskDaoTest extends BaseReadDaoTestCase<Guid, Disk, DiskDao> {
     }
 
     @Test
-    public void testGetAllAttachableDisksByPoolIdNull() {
+    public void testGetAllAttachableDisksByPoolIdNoDisks() {
         List<Disk> result =
-                dao.getAllAttachableDisksByPoolId(null, null, false);
+                dao.getAllAttachableDisksByPoolId(FixturesTool.STORAGE_POOL_RHEL6_ISCSI_OTHER,
+                        null,
+                        false);
 
         assertTrue(result.isEmpty());
     }
 
     @Test
-    public void testGetAllAttachableDisksByPoolId() {
+    public void testGetAllAttachableDisksByPoolIdNull() {
         List<Disk> result =
-                dao.getAllAttachableDisksByPoolId(Guid.createGuidFromString("6d849ebf-755f-4552-ad09-9a090cda105d"),
-                        null,
-                        false);
+                dao.getAllAttachableDisksByPoolId(null, null, false);
 
         assertTrue(result.isEmpty());
     }

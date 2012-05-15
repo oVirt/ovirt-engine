@@ -88,7 +88,7 @@ public class DiskDaoDbFacadeImpl extends DefaultReadDaoDbFacade<Disk, Guid> impl
             return disk;
         }
 
-        private void throwUnsupportedDiskStorageTypeException(String diskStorageTypeString) {
+        private static void throwUnsupportedDiskStorageTypeException(String diskStorageTypeString) {
             throw new IllegalStateException(String.format("Unsupported %s: %s",
                     DiskStorageType.class.getSimpleName(),
                     diskStorageTypeString));
