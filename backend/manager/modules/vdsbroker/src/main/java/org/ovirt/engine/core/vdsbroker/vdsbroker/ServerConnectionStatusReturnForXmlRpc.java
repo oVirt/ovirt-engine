@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.ovirt.engine.core.vdsbroker.irsbroker.*;
@@ -37,4 +38,13 @@ public final class ServerConnectionStatusReturnForXmlRpc extends StatusReturnFor
         }
     }
 
+    public Map<String, String> convertToStatusList() {
+        HashMap<String, String> result = new HashMap<String, String>();
+        for (XmlRpcStruct st : this.mStatusList) {
+            String status = st.getItem("status").toString();
+            String id = st.getItem("id").toString();
+            result.put(id, status);
+        }
+        return result;
+    }
 }

@@ -13,6 +13,6 @@ public class ValidateStorageServerConnectionVDSCommand<P extends ConnectStorageS
         _result = getBroker().validateStorageServerConnection(getParameters().getStorageType().getValue(),
                 getParameters().getStoragePoolId().toString(), BuildStructFromConnectionListObject());
         ProceedProxyReturnValue();
-        setReturnValue(GetStatusListFromResult());
+        setReturnValue(_result.convertToStatusList());
     }
 }

@@ -15,7 +15,6 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
-import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStruct;
 
 public class ConnectStorageServerVDSCommand<P extends ConnectStorageServerVDSCommandParameters>
         extends VdsBrokerCommand<P> {
@@ -30,7 +29,7 @@ public class ConnectStorageServerVDSCommand<P extends ConnectStorageServerVDSCom
         _result = getBroker().connectStorageServer(getParameters().getStorageType().getValue(),
                 getParameters().getStoragePoolId().toString(), BuildStructFromConnectionListObject());
         ProceedProxyReturnValue();
-        setReturnValue(GetStatusListFromResult());
+        setReturnValue(_result.convertToStatusList());
     }
 
     @Override
@@ -101,16 +100,6 @@ public class ConnectStorageServerVDSCommand<P extends ConnectStorageServerVDSCom
     @Override
     protected StatusForXmlRpc getReturnStatus() {
         return _result.mStatus;
-    }
-
-    protected Map<String, String> GetStatusListFromResult() {
-        HashMap<String, String> result = new HashMap<String, String>();
-        for (XmlRpcStruct st : _result.mStatusList) {
-            String status = st.getItem("status").toString();
-            String id = st.getItem("id").toString();
-            result.put(id, status);
-        }
-        return result;
     }
 
     @Override
