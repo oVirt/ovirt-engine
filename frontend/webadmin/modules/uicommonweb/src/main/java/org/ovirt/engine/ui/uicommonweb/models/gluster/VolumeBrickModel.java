@@ -467,7 +467,7 @@ public class VolumeBrickModel extends Model {
         return valid;
     }
 
-    public String getValidationFailedMsg(GlusterVolumeType selectedVolumeType)
+    public static String getValidationFailedMsg(GlusterVolumeType selectedVolumeType)
     {
         String validationMsg = null;
 

@@ -1296,6 +1296,9 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Number of bricks should be a mutiple of Stripe Count")
     String distriputedStripeVolumeAddBricksMsg();
 
+    @DefaultStringValue("Bricks cannot be empty")
+    String emptyAddBricksMsg();
+
     @DefaultStringValue("Cannot choose Volume's Data Center in tree context")
     String cannotChooseVolumesDataCenterinTreeContect();
 

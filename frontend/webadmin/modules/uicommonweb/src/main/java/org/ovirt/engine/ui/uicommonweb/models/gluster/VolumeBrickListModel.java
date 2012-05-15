@@ -2,12 +2,23 @@ package org.ovirt.engine.ui.uicommonweb.models.gluster;
 
 import java.util.ArrayList;
 
+import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.gluster.GlusterVolumeBricksActionParameters;
+import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
+import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.Frontend;
+import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
+import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
+import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
 public class VolumeBrickListModel extends SearchableListModel {
 
@@ -59,6 +70,11 @@ public class VolumeBrickListModel extends SearchableListModel {
 
         GlusterVolumeEntity volumeEntity = (GlusterVolumeEntity) getEntity();
 
+        if (volumeEntity == null)
+        {
+            return;
+        }
+
         VolumeBrickModel volumeBrickModel = new VolumeBrickModel();
 
         volumeBrickModel.getReplicaCount().setEntity(volumeEntity.getReplicaCount());
@@ -74,6 +90,31 @@ public class VolumeBrickListModel extends SearchableListModel {
         setWindow(volumeBrickModel);
         volumeBrickModel.setTitle(ConstantsManager.getInstance().getConstants().addBricksVolume());
         volumeBrickModel.setHashName("add_bricks"); //$NON-NLS-1$
+        volumeBrickModel.getVolumeType().setEntity(volumeEntity.getVolumeType().name());
+
+        AsyncQuery _asyncQuery = new AsyncQuery();
+        _asyncQuery.setModel(volumeBrickModel);
+        _asyncQuery.asyncCallback = new INewAsyncCallback() {
+            @Override
+            public void OnSuccess(Object model, Object result)
+            {
+                VDSGroup cluster = (VDSGroup) result;
+
+                AsyncQuery _asyncQueryInner = new AsyncQuery();
+                _asyncQueryInner.setModel(model);
+                _asyncQueryInner.asyncCallback = new INewAsyncCallback() {
+                    @Override
+                    public void OnSuccess(Object model, Object result)
+                    {
+                        VolumeBrickModel volumeBrickModel = (VolumeBrickModel) model;
+                        ArrayList<VDS> hostList = (ArrayList<VDS>) result;
+                        volumeBrickModel.getServers().setItems(hostList);
+                    }
+                };
+                AsyncDataProvider.GetHostListByCluster(_asyncQueryInner, cluster.getname());
+            }
+        };
+        AsyncDataProvider.GetClusterById(_asyncQuery, volumeEntity.getClusterId());
 
         // TODO: fetch the mount points to display
         volumeBrickModel.getBricks().setItems(new ArrayList<EntityModel>());
@@ -91,8 +132,60 @@ public class VolumeBrickListModel extends SearchableListModel {
 
     private void onAddBricks() {
         VolumeBrickModel volumeBrickModel = (VolumeBrickModel) getWindow();
-        // TODO: add the code to do the action (which is currently not available)
-        setWindow(null);
+        if (volumeBrickModel == null)
+        {
+            return;
+        }
+
+        if (!volumeBrickModel.validate())
+        {
+            return;
+        }
+
+        GlusterVolumeEntity volumeEntity = (GlusterVolumeEntity) getEntity();
+        if (volumeEntity == null)
+        {
+            return;
+        }
+
+        ArrayList<GlusterBrickEntity> brickList = new ArrayList<GlusterBrickEntity>();
+        for (Object model : volumeBrickModel.getBricks().getItems())
+        {
+            GlusterBrickEntity brickEntity = (GlusterBrickEntity) ((EntityModel) model).getEntity();
+            brickEntity.setVolumeId(volumeEntity.getId());
+            brickList.add(brickEntity);
+        }
+
+        volumeBrickModel.setMessage(null);
+
+        if (brickList.size() == 0)
+        {
+            volumeBrickModel.setMessage(ConstantsManager.getInstance().getConstants().emptyAddBricksMsg());
+            return;
+        }
+
+        if (!VolumeBrickModel.validateBrickCount(volumeEntity.getVolumeType(), volumeEntity.getBricks().size()
+                + brickList.size(),
+                volumeBrickModel.getReplicaCountValue(), volumeBrickModel.getStripeCountValue()))
+        {
+            volumeBrickModel.setMessage(VolumeBrickModel.getValidationFailedMsg(volumeEntity.getVolumeType()));
+            return;
+        }
+
+        volumeBrickModel.StartProgress(null);
+
+        GlusterVolumeBricksActionParameters parameter = new GlusterVolumeBricksActionParameters(volumeEntity.getId(),
+                brickList, volumeBrickModel.getReplicaCountValue(), volumeBrickModel.getStripeCountValue());
+
+        Frontend.RunAction(VdcActionType.AddBricksToGlusterVolume, parameter, new IFrontendActionAsyncCallback() {
+
+            @Override
+            public void Executed(FrontendActionAsyncResult result) {
+                VolumeBrickModel localModel = (VolumeBrickModel) result.getState();
+                localModel.StopProgress();
+                setWindow(null);
+            }
+        }, volumeBrickModel);
     }
 
     @Override
