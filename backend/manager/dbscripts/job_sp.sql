@@ -61,7 +61,8 @@ RETURNS SETOF job
 AS $procedure$
 BEGIN
     RETURN QUERY SELECT job.*
-    FROM JOB;
+    FROM JOB
+    where status != 'UNKNOWN';
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -80,7 +81,7 @@ BEGIN
     UNION ALL
     (SELECT job.*
     FROM JOB
-    WHERE status != 'STARTED'
+    WHERE status not in ('STARTED','UNKNOWN')
     ORDER BY last_update_time desc)
     OFFSET v_position LIMIT v_page_size;
 END; $procedure$
