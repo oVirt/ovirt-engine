@@ -75,8 +75,10 @@ public class StorageDomainMapper {
                     }
                     break;
                 case POSIXFS:
-                    if (storage.isSetPath()) {
+                    if (storage.isSetAddress() && storage.isSetPath()) {
                         entity.setconnection(storage.getAddress() + ":" + storage.getPath());
+                    } else if (storage.isSetPath()) {
+                        entity.setconnection(storage.getPath());
                     }
                     if (storage.isSetMountOptions()) {
                         entity.setMountOptions(storage.getMountOptions());

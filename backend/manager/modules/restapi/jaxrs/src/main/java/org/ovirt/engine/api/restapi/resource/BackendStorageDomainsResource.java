@@ -175,7 +175,7 @@ public class BackendStorageDomainsResource
             resp = addNfsOrLocalOrPosix(VdcActionType.AddLocalStorageDomain, storageDomain, entity, hostId);
             break;
         case POSIXFS:
-            validateParameters(storageDomain.getStorage(), "address", "path", "vfsType");
+            validateParameters(storageDomain.getStorage(), "path", "vfsType");
             resp = addNfsOrLocalOrPosix(VdcActionType.AddPosixFsStorageDomain, storageDomain, entity, hostId);
             break;
 
