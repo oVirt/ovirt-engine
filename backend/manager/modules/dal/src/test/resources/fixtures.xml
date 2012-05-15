@@ -1830,6 +1830,23 @@
             <value>88296e00-0cad-4e5a-9291-008a7b7f4401</value>
             <value>0</value>
         </row>
+        <row>
+            <value>f9a559d9-8666-40d1-9967-759502b19f10</value>
+            <value>2010-11-18 11:03:50</value>
+            <value>2147483648</value>
+            <value>00000000-0000-0000-0000-000000000000</value>
+            <value>00000000-0000-0000-0000-000000000000</value>
+            <value>1</value>
+            <value>2010-11-18 11:03:50</value>
+            <value>a7bb24df-9fdf-4bd6-b7a9-f5ce52da0f89</value>
+            <value>2</value>
+            <value>4</value>
+            <value>1b26a52b-b60f-44cb-9f46-3ef333b04a36</value>
+            <value>2010-11-18 11:11:35</value>
+            <value>2010-12-01 14:13:07</value>
+            <value>88296e00-0cad-4e5a-9291-008a7b7f4401</value>
+            <value>0</value>
+        </row>
     </table>
 
     <table name="base_disks">
@@ -1857,6 +1874,14 @@
         </row>
         <row>
             <value>1b26a52b-b60f-44cb-9f46-3ef333b04a35</value>
+            <value>2</value>
+            <value>VirtIO</value>
+            <value>1</value>
+            <value>Off</value>
+            <value>false</value>
+        </row>
+        <row>
+            <value>1b26a52b-b60f-44cb-9f46-3ef333b04a36</value>
             <value>2</value>
             <value>VirtIO</value>
             <value>1</value>
@@ -3029,7 +3054,6 @@
             <value>false</value>
             <value>false</value>
         </row>
-
      </table>
 
     <table name="job">

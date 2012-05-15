@@ -13,7 +13,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class DiskDaoTest extends BaseReadDaoTestCase<Guid, Disk, DiskDao> {
 
-    private static final int TOTAL_DISK_IMAGES = 3;
+    private static final int TOTAL_DISK_IMAGES = 4;
 
     @Override
     protected Guid getExistingEntityId() {
@@ -73,7 +73,7 @@ public class DiskDaoTest extends BaseReadDaoTestCase<Guid, Disk, DiskDao> {
     @Test
     public void testGetAllAttachableDisksByPoolIdNoDisks() {
         List<Disk> result =
-                dao.getAllAttachableDisksByPoolId(FixturesTool.STORAGE_POOL_RHEL6_ISCSI_OTHER,
+                dao.getAllAttachableDisksByPoolId(FixturesTool.STORAGE_POOL_NFS,
                         null,
                         false);
 
@@ -85,7 +85,7 @@ public class DiskDaoTest extends BaseReadDaoTestCase<Guid, Disk, DiskDao> {
         List<Disk> result =
                 dao.getAllAttachableDisksByPoolId(null, null, false);
 
-        assertTrue(result.isEmpty());
+        assertFullGetAllAttachableDisksByPoolId(result);
     }
 
     /**
@@ -95,6 +95,16 @@ public class DiskDaoTest extends BaseReadDaoTestCase<Guid, Disk, DiskDao> {
      */
     private static void assertFullGetAllForVMResult(List<Disk> disks) {
         assertEquals("VM should have three disks", 3, disks.size());
+    }
+
+    /**
+     * Asserts the result of {@link DiskDAO#getAllAttachableDisksByPoolId} contains the floating disk.
+     * @param disks
+     *            The result to check
+     */
+    private static void assertFullGetAllAttachableDisksByPoolId(List<Disk> disks) {
+        assertEquals("There should be only one floating disk", 1, disks.size());
+        assertEquals("Wrong floating disk", FixturesTool.FLOATING_DISK_ID, disks.get(0).getId());
     }
 
 }

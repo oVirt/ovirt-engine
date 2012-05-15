@@ -162,4 +162,9 @@ public class FixturesTool {
      * Predefined image group for testing.
      */
     protected static final Guid IMAGE_GROUP_ID = new Guid("1b26a52b-b60f-44cb-9f46-3ef333b04a35");
+
+    /**
+     * Predefined floating disk for testing.
+     */
+    protected static final Guid FLOATING_DISK_ID = new Guid("1b26a52b-b60f-44cb-9f46-3ef333b04a36");
 }
