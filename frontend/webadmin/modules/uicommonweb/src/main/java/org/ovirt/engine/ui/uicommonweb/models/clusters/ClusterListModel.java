@@ -216,7 +216,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         }
 
         ClusterModel clusterModel = new ClusterModel();
-        clusterModel.Init(false, getGlusterModeEnum());
+        clusterModel.Init(false);
         setWindow(clusterModel);
         clusterModel.setTitle(ConstantsManager.getInstance().getConstants().newClusterTitle());
         clusterModel.setHashName("new_cluster"); //$NON-NLS-1$
@@ -274,7 +274,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
 
         ClusterModel model = new ClusterModel();
         model.setEntity(cluster);
-        model.Init(true, getGlusterModeEnum());
+        model.Init(true);
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().editClusterTitle());
         model.setHashName("edit_cluster"); //$NON-NLS-1$

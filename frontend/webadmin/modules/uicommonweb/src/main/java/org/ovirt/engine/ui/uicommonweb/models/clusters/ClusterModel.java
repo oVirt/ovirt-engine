@@ -15,13 +15,14 @@ import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
-import org.ovirt.engine.ui.uicommonweb.Configurator.GlusterModeEnum;
 import org.ovirt.engine.ui.uicommonweb.DataProvider;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
+import org.ovirt.engine.ui.uicommonweb.uimode.UiMode;
 import org.ovirt.engine.ui.uicommonweb.validation.I18NNameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
@@ -482,7 +483,7 @@ public class ClusterModel extends Model
     {
     }
 
-    public void Init(boolean isEdit, GlusterModeEnum glusterModeEnum)
+    public void Init(boolean isEdit)
     {
         setIsEdit(isEdit);
         setName(new EntityModel());
@@ -491,7 +492,8 @@ public class ClusterModel extends Model
         getEnableOvirtService().setEntity(true);
         setEnableGlusterService(new EntityModel());
         getEnableGlusterService().setEntity(false);
-        getEnableGlusterService().setIsAvailable(!glusterModeEnum.equals(GlusterModeEnum.ONLY_OVIRT));
+        getEnableGlusterService().setIsAvailable(ApplicationModeHelper.getUiMode() == UiMode.VirtGluster
+                || ApplicationModeHelper.getUiMode() == UiMode.AllModes);
         setOptimizationNone(new EntityModel());
         setOptimizationForServer(new EntityModel());
         setOptimizationForDesktop(new EntityModel());

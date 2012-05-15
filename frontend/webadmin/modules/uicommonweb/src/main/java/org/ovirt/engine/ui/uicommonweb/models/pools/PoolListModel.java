@@ -52,6 +52,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ExistingPoolModelBehavior;
 import org.ovirt.engine.ui.uicommonweb.models.vms.NewPoolModelBehavior;
+import org.ovirt.engine.ui.uicommonweb.uimode.UiMode;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
@@ -131,6 +132,7 @@ public class PoolListModel extends ListWithDetailsModel
 
         setDefaultSearchString("Pools:"); //$NON-NLS-1$
         setSearchString(getDefaultSearchString());
+        setAvailableInModes(UiMode.VirtOnly);
 
         setNewCommand(new UICommand("New", this)); //$NON-NLS-1$
         setEditCommand(new UICommand("Edit", this)); //$NON-NLS-1$

@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.webadmin.uimode;
 
+import org.ovirt.engine.ui.uicommonweb.uimode.UiMode;
+
 import com.google.gwt.core.client.JavaScriptObject;
 
 /**
@@ -19,7 +21,7 @@ public final class UiModeData extends JavaScriptObject {
     }-*/;
 
     public UiMode getUiMode() {
-        return UiMode.from(getValue());
+        return UiMode.from(Integer.parseInt(getValue()));
     }
 
 }

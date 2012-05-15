@@ -11,9 +11,10 @@ import org.ovirt.engine.ui.common.uicommon.model.CommonModelManager;
 import org.ovirt.engine.ui.uicommonweb.ITypeResolver;
 import org.ovirt.engine.ui.uicommonweb.ReportInit;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.LoginModel;
+import org.ovirt.engine.ui.uicommonweb.uimode.UiMode;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.uimode.UiMode;
 import org.ovirt.engine.ui.webadmin.uimode.UiModeData;
 
 import com.google.gwt.event.shared.EventBus;
@@ -73,7 +74,7 @@ public class ApplicationInit extends BaseApplicationInit<LoginModel> {
 
         if (uiModeData != null) {
             UiMode uiMode = uiModeData.getUiMode();
-            // TODO adapt UI according to UiMode
+            ApplicationModeHelper.setUiMode(uiMode);
         }
     }
 

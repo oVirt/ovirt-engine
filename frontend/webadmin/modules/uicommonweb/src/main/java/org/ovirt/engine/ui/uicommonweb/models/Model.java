@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models;
 
+import java.util.List;
+
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
@@ -14,9 +16,8 @@ import org.ovirt.engine.ui.uicommonweb.ILogger;
 import org.ovirt.engine.ui.uicommonweb.TypeResolver;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.common.ProgressModel;
+import org.ovirt.engine.ui.uicommonweb.uimode.UiMode;
 import org.ovirt.engine.ui.uicompat.PropertyChangeNotifier;
-
-import java.util.List;
 
 @SuppressWarnings("unused")
 public class Model extends PropertyChangeNotifier implements IEventListener, ICommandTarget, IProvidePropertyChangedEvent
@@ -214,11 +215,33 @@ public class Model extends PropertyChangeNotifier implements IEventListener, ICo
         privateInvalidityReasons = value;
     }
 
+    private int availableInModes;
+
+    public int getAvailableInModes()
+    {
+        return availableInModes;
+    }
+
+    public void setAvailableInModes(int value)
+    {
+        if (availableInModes != value)
+        {
+            availableInModes = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("AvailableInModes")); //$NON-NLS-1$
+        }
+    }
+
+    public void setAvailableInModes(UiMode uiMode)
+    {
+        int value = uiMode.getValue();
+        setAvailableInModes(value);
+    }
+
     private boolean isAvailable;
 
     public boolean getIsAvailable()
     {
-        return isAvailable;
+        return isAvailable && ApplicationModeHelper.isAvailableInMode(getAvailableInModes());
     }
 
     public void setIsAvailable(boolean value)
@@ -396,6 +419,7 @@ public class Model extends PropertyChangeNotifier implements IEventListener, ICo
 
         setChangeProhibitionReasons(new ObservableCollection<String>());
         setIsChangable(true);
+        setAvailableInModes(UiMode.AllModes);
         setIsAvailable(true);
 
         setIsSelectable(true);

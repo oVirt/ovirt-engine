@@ -50,6 +50,7 @@ import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.reports.ReportModel;
+import org.ovirt.engine.ui.uicommonweb.uimode.UiMode;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.RegexValidation;
@@ -152,6 +153,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
         setDefaultSearchString("Storage:"); //$NON-NLS-1$
         setSearchString(getDefaultSearchString());
+        setAvailableInModes(UiMode.VirtOnly);
 
         setNewDomainCommand(new UICommand("NewDomain", this)); //$NON-NLS-1$
         setImportDomainCommand(new UICommand("ImportDomain", this)); //$NON-NLS-1$

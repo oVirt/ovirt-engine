@@ -40,6 +40,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
+import org.ovirt.engine.ui.uicommonweb.uimode.UiMode;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
@@ -171,6 +172,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
 
         setDefaultSearchString("DataCenter:"); //$NON-NLS-1$
         setSearchString(getDefaultSearchString());
+        setAvailableInModes(UiMode.VirtOnly);
 
         setNewCommand(new UICommand("New", this)); //$NON-NLS-1$
         setEditCommand(new UICommand("Edit", this)); //$NON-NLS-1$
@@ -190,7 +192,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
 
     public void Guide()
     {
-        DataCenterGuideModel model = new DataCenterGuideModel(getGlusterModeEnum());
+        DataCenterGuideModel model = new DataCenterGuideModel();
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().newDataCenterGuideMeTitle());
         model.setHashName("new_data_center_-_guide_me"); //$NON-NLS-1$

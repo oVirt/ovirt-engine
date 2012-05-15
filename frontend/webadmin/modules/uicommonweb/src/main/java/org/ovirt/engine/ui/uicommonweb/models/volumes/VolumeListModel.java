@@ -23,7 +23,6 @@ import org.ovirt.engine.core.compat.ObservableCollection;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
-import org.ovirt.engine.ui.uicommonweb.Configurator.GlusterModeEnum;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -38,6 +37,7 @@ import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeEventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeParameterListModel;
+import org.ovirt.engine.ui.uicommonweb.uimode.UiMode;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
@@ -106,6 +106,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
 
         setDefaultSearchString("Volumes:"); //$NON-NLS-1$
         setSearchString(getDefaultSearchString());
+        setAvailableInModes(UiMode.GlusterOnly);
 
         setCreateVolumeCommand(new UICommand("Create Volume", this)); //$NON-NLS-1$
         setRemoveVolumeCommand(new UICommand("Remove", this)); //$NON-NLS-1$
@@ -550,10 +551,5 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
     @Override
     public boolean IsSearchStringMatch(String searchString) {
         return searchString.trim().toLowerCase().startsWith("volume"); //$NON-NLS-1$
-    }
-
-    @Override
-    public void setIsAvailable(boolean value) {
-        super.setIsAvailable(getGlusterModeEnum() != GlusterModeEnum.ONLY_OVIRT && value);
     }
 }

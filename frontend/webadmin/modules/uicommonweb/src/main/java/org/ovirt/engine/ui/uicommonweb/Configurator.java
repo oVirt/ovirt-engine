@@ -14,10 +14,6 @@ import com.google.gwt.i18n.client.LocaleInfo;
 @SuppressWarnings("unused")
 public class Configurator
 {
-    public enum GlusterModeEnum {
-        ONLY_OVIRT,
-        OVIRT_GLUSTER
-    }
 
     private static final String DOCUMENTATION_LIB_PATH = "html/"; //$NON-NLS-1$
 
@@ -244,7 +240,6 @@ public class Configurator
     public void Configure(SearchableListModel searchableListModel)
     {
         searchableListModel.setIsAsync(getIsAsync());
-        searchableListModel.setGlusterModeEnum(GlusterModeEnum.OVIRT_GLUSTER);
     }
 
     public void Configure(ISpice spice)

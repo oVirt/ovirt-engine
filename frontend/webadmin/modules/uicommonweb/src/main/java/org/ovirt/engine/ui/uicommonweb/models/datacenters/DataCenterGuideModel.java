@@ -40,7 +40,6 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
-import org.ovirt.engine.ui.uicommonweb.Configurator.GlusterModeEnum;
 import org.ovirt.engine.ui.uicommonweb.Extensions;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -130,10 +129,8 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
     private ArrayList<storage_domains> isoStorageDomains;
     private ArrayList<VDS> allHosts;
     private VDS localStorageHost;
-    private GlusterModeEnum glusterModeEnum;
 
-    public DataCenterGuideModel(GlusterModeEnum glusterModeEnum) {
-        this.glusterModeEnum = glusterModeEnum;
+    public DataCenterGuideModel() {
     }
 
     @Override
@@ -1293,7 +1290,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
     public void AddCluster()
     {
         ClusterModel model = new ClusterModel();
-        model.Init(false, glusterModeEnum);
+        model.Init(false);
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().newClusterTitle());
         model.setHashName("new_cluster"); //$NON-NLS-1$
