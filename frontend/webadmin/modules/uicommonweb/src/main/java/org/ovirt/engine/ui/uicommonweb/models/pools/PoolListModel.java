@@ -1,5 +1,11 @@
 package org.ovirt.engine.ui.uicommonweb.models.pools;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
+
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.AddVmPoolWithVmsParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -44,16 +50,11 @@ import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.ExistingPoolModelBehavior;
 import org.ovirt.engine.ui.uicommonweb.models.vms.NewPoolModelBehavior;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
 
 @SuppressWarnings("unused")
 public class PoolListModel extends ListWithDetailsModel
@@ -249,7 +250,7 @@ public class PoolListModel extends ListWithDetailsModel
             public void OnSuccess(Object modell, Object returnValue) {
                 final VM vm = Linq.FirstOrDefault((ArrayList<VM>) returnValue);
 
-                final NewPoolModelBehavior behavior = new NewPoolModelBehavior();
+                final ExistingPoolModelBehavior behavior = new ExistingPoolModelBehavior(vm);
                 behavior.getPoolModelBehaviorInitializedEvent().addListener(new IEventListener() {
                     @Override
                     public void eventRaised(Event ev, Object sender, EventArgs args) {

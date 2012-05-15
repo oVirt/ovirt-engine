@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.RepoFileMetaData;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
@@ -703,6 +704,24 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                                 }
                             }));
         }
+    }
+
+    protected void setupTemplate(VM vm, ListModel model) {
+        AsyncDataProvider.GetTemplateById(new AsyncQuery(getModel(),
+                new INewAsyncCallback() {
+                    @Override
+                    public void OnSuccess(Object target, Object returnValue) {
+
+                        UnitVmModel model = (UnitVmModel) target;
+                        VmTemplate template = (VmTemplate) returnValue;
+                        model.getTemplate().setItems(new ArrayList<VmTemplate>(Arrays.asList(new VmTemplate[] { template })));
+                        model.getTemplate().setSelectedItem(template);
+                        model.getTemplate().setIsChangable(false);
+
+                    }
+                },
+                getModel().getHash()),
+                vm.getvmt_guid());
     }
 
 }

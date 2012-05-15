@@ -5,7 +5,6 @@ import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
@@ -252,21 +251,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
 
     public void InitTemplate()
     {
-        AsyncDataProvider.GetTemplateById(new AsyncQuery(getModel(),
-                new INewAsyncCallback() {
-                    @Override
-                    public void OnSuccess(Object target, Object returnValue) {
-
-                        UnitVmModel model = (UnitVmModel) target;
-                        VmTemplate template = (VmTemplate) returnValue;
-                        model.getTemplate().setItems(new ArrayList<VmTemplate>(Arrays.asList(new VmTemplate[] { template })));
-                        model.getTemplate().setSelectedItem(template);
-                        model.getTemplate().setIsChangable(false);
-
-                    }
-                },
-                getModel().getHash()),
-                vm.getvmt_guid());
+        setupTemplate(vm, ((UnitVmModel) getModel()).getTemplate());
     }
 
     public void InitCdImage()
