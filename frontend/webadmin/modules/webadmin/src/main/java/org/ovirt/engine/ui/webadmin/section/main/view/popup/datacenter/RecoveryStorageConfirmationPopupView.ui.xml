@@ -34,7 +34,7 @@
 
 	</ui:style>
 
-	<d:SimpleDialogPanel width="450px" height="350px">
+	<d:SimpleDialogPanel width="530px" height="350px">
 		<d:content>
 			<g:FlowPanel addStyleNames="{style.content}">
 				<g:FlowPanel addStyleNames="{style.messages}">

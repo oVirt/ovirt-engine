@@ -109,7 +109,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("This operation is destructive and unrecoverable!")
     String dataCenterRecoveryStoragePopupWarningLabel();
 
-    @DefaultStringValue("Storage Domain for this Data Center is going to be initialized. <br> All existing objects will be removed.")
+    @DefaultStringValue("This operation will replace the current master domain with the selected domain.<br/> After the operation is finished you will be able to remove the replaced domain if desired.")
     String dataCenterRecoveryStoragePopupMessageLabel();
 
     @DefaultStringValue("Select new Data Storage Domain(Master):")
