@@ -70,4 +70,9 @@ public class BackendDiskResource extends BackendDeviceResource<Disk, Disks, Disk
                         guid);
         return performAction(VdcActionType.HotUnPlugDiskFromVm, params);
     }
+
+    @Override
+    public Disk get() {
+        return super.get();//explicit call solves REST-Easy confusion
+    }
 }

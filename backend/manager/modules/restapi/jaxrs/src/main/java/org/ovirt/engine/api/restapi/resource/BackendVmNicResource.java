@@ -54,4 +54,9 @@ public class BackendVmNicResource extends BackendNicResource implements VmNicRes
         params.setVmId(((BackendNicsResource) collection).parentId);
         return performAction(VdcActionType.HotPlugUnplugVmNic, params);
     }
+
+    @Override
+    public NIC get() {
+        return super.get();//explicit call solves REST-Easy confusion
+    }
 }
