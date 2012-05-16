@@ -20,7 +20,7 @@ public class RoleDAODbFacadeImpl extends BaseDAODbFacade implements RoleDAO {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("id", id);
 
-        return getCallsHandler().executeRead("GetRolsByid", new RolesRowMapper(), parameterSource);
+        return getCallsHandler().executeRead("GetRolsByid", RolesRowMapper.instance, parameterSource);
     }
 
     @Override
@@ -28,14 +28,14 @@ public class RoleDAODbFacadeImpl extends BaseDAODbFacade implements RoleDAO {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("name", name);
 
-        return getCallsHandler().executeRead("GetRoleByName", new RolesRowMapper(), parameterSource);
+        return getCallsHandler().executeRead("GetRoleByName", RolesRowMapper.instance, parameterSource);
     }
 
     @Override
     public List<roles> getAll() {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource();
 
-        return getCallsHandler().executeReadList("GetAllFromRole", new RolesRowMapper(), parameterSource);
+        return getCallsHandler().executeReadList("GetAllFromRole", RolesRowMapper.instance, parameterSource);
     }
 
     @Override
@@ -43,7 +43,7 @@ public class RoleDAODbFacadeImpl extends BaseDAODbFacade implements RoleDAO {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("ad_element_id", id);
 
-        return getCallsHandler().executeReadList("GetAllRolesByAdElementId", new RolesRowMapper(), parameterSource);
+        return getCallsHandler().executeReadList("GetAllRolesByAdElementId", RolesRowMapper.instance, parameterSource);
     }
 
     @Override
@@ -51,7 +51,7 @@ public class RoleDAODbFacadeImpl extends BaseDAODbFacade implements RoleDAO {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("ad_element_id", id);
 
-        return getCallsHandler().executeReadList("GetRolesByAdElementId", new RolesRowMapper(), parameterSource);
+        return getCallsHandler().executeReadList("GetRolesByAdElementId", RolesRowMapper.instance, parameterSource);
     }
 
     @Override
