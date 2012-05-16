@@ -5,7 +5,8 @@ import java.util.HashMap;
 public enum StorageFormatType {
 
     V1("0"),
-    V2("2");
+    V2("2"),
+    V3("3");
 
     private String intValue;
     private static java.util.HashMap<String, StorageFormatType> mappings = new HashMap<String, StorageFormatType>();

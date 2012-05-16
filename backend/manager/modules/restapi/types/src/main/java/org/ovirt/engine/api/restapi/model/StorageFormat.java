@@ -1,7 +1,7 @@
 package org.ovirt.engine.api.restapi.model;
 
 public enum StorageFormat {
-    V1, V2;
+    V1, V2, V3;
 
     public String value() {
         return name().toLowerCase();

@@ -147,14 +147,22 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
     }
 
     private boolean correctStorageDomainFormat() {
-        Set<StorageFormatType> supportedStorageFormats =
+        final Set<StorageFormatType> supportedStorageFormats =
                 getSupportedStorageFormatSet(getVds().getvds_group_compatibility_version());
-        if (!supportedStorageFormats.contains(getStorageDomain().getStorageFormat())
-                || (getStorageDomain().getStorageFormat() != StorageFormatType.V1 &&
-                (getStorageDomain().getstorage_type() == StorageType.NFS
-                        || getStorageDomain().getstorage_type() == StorageType.LOCALFS || getStorageDomain().getstorage_domain_type() == StorageDomainType.ImportExport))) {
+        final StorageFormatType storageFormat = getStorageDomain().getStorageFormat();
+
+        if (!supportedStorageFormats.contains(storageFormat)) {
             return false;
         }
+
+        if (storageFormat == StorageFormatType.V2) {
+            final StorageType storageType = getStorageDomain().getstorage_type();
+
+            if (storageType != StorageType.ISCSI && storageType != StorageType.FCP) {
+                return false;
+            }
+        }
+
         return true;
     }
 

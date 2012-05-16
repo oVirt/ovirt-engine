@@ -631,26 +631,33 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
                 // the next "else if..." condition; however, just in case we will support non-NFS ISO/Export in the
                 // future
                 // and in order to make the code more explicit, it is here. ***)
-                else if (getSelectedItem().getRole() == StorageDomainType.ISO
+                else if ((getSelectedItem().getRole() == StorageDomainType.ISO
                         || getSelectedItem().getRole() == StorageDomainType.ImportExport)
+                        && (dataCenter.getcompatibility_version().compareTo(Version.v3_1) < 0))
                 {
                     formats.add(StorageFormatType.V1);
                 }
-                else if (getSelectedItem().getType() == StorageType.NFS
+                else if ((getSelectedItem().getType() == StorageType.NFS
                         || getSelectedItem().getType() == StorageType.LOCALFS)
+                        && (dataCenter.getcompatibility_version().compareTo(Version.v3_1) < 0))
                 {
                     formats.add(StorageFormatType.V1);
                 }
                 else if ((getSelectedItem().getType() == StorageType.ISCSI || getSelectedItem().getType() == StorageType.FCP)
-                        && dataCenter.getcompatibility_version().compareTo(new Version("3.0")) < 0) //$NON-NLS-1$
+                        && dataCenter.getcompatibility_version().compareTo(Version.v3_0) < 0) //$NON-NLS-1$
                 {
                     formats.add(StorageFormatType.V1);
                 }
                 else if ((getSelectedItem().getType() == StorageType.ISCSI || getSelectedItem().getType() == StorageType.FCP)
-                        && dataCenter.getcompatibility_version().compareTo(new Version("3.0")) >= 0) //$NON-NLS-1$
+                        && dataCenter.getcompatibility_version().compareTo(Version.v3_0) == 0) //$NON-NLS-1$
                 {
                     formats.add(StorageFormatType.V2);
                     selectItem = StorageFormatType.V2;
+                }
+                else if (dataCenter.getcompatibility_version().compareTo(Version.v3_1) >= 0) //$NON-NLS-1$
+                {
+                    formats.add(StorageFormatType.V3);
+                    selectItem = StorageFormatType.V3;
                 }
             }
             else // Unassigned DC:

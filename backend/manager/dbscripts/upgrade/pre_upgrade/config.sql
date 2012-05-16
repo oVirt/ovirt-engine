@@ -367,7 +367,7 @@ select fn_db_add_config_value('SupportCustomProperties','true','3.1');
 select fn_db_add_config_value('SupportedClusterLevels','2.2,3.0','general');
 select fn_db_add_config_value('SupportedStorageFormats','0','2.2');
 select fn_db_add_config_value('SupportedStorageFormats','0,2','3.0');
-select fn_db_add_config_value('SupportedStorageFormats','0,2','3.1');
+select fn_db_add_config_value('SupportedStorageFormats','0,3','3.1');
 select fn_db_add_config_value('SupportedVDSMVersions','4.5,4.9','general');
 select fn_db_add_config_value('SupportGetDevicesVisibility','false','2.2');
 select fn_db_add_config_value('SupportGetDevicesVisibility','true','3.0');
