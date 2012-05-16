@@ -158,6 +158,8 @@
       <xs:element name="exclusive" type="xs:boolean" minOccurs="0"/>
       <!-- For VM start -->
       <xs:element ref="vm" minOccurs="0" maxOccurs="1"/>
+      <!-- For import template -->
+      <xs:element ref="template" minOccurs="0" maxOccurs="1"/>
       <!-- For Setup Networks -->
       <xs:element ref="host_nics" minOccurs="0" maxOccurs="1"/>
       <xs:element name="check_connectivity" type="xs:boolean" minOccurs="0"/>

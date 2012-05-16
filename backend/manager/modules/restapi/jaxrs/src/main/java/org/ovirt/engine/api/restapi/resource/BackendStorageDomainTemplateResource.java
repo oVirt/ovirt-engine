@@ -39,6 +39,13 @@ public class BackendStorageDomainTemplateResource
                                                                            getEntity());
         params.setImageToDestinationDomainMap(getDiskToDestinationMap(action));
 
+        if (action.isSetClone()){
+            params.setImportAsNewEntity(action.isClone());
+            if(action.isSetTemplate() && action.getTemplate().isSetName()) {
+                params.getVmTemplate().setname(action.getTemplate().getName());
+            }
+        }
+
         return doAction(VdcActionType.ImportVmTemplate, params, action);
     }
 
