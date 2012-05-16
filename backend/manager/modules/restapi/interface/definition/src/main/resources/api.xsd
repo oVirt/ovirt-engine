@@ -1517,6 +1517,9 @@
       <xs:element name="path" type="xs:string" minOccurs="0"/>
       <xs:element name="mount_options" type="xs:string" minOccurs="0"/>
       <xs:element name="vfs_type" type="xs:string" minOccurs="0"/>
+      <xs:element name="nfs_version" type="xs:unsignedShort" minOccurs="0"/>
+      <xs:element name="nfs_timeo" type="xs:unsignedShort" minOccurs="0"/>
+      <xs:element name="nfs_retrans" type="xs:unsignedShort" minOccurs="0"/>
     </xs:sequence>
   </xs:group>
 

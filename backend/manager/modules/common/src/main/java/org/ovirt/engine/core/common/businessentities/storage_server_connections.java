@@ -41,6 +41,9 @@ public class storage_server_connections implements Serializable {
         this.portal = portal;
         this.vfsType = vfsType;
         this.mountOptions = mountOptions;
+        this.nfsVersion = nfsVersion;
+        this.nfsRetrans = nfsRetrans;
+        this.nfsTimeo = nfsTimeo;
     }
 
     public storage_server_connections(String connection,

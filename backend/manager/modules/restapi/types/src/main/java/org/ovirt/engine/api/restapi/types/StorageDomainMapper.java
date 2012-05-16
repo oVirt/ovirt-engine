@@ -68,6 +68,15 @@ public class StorageDomainMapper {
                     if (storage.isSetAddress() && storage.isSetPath()) {
                         entity.setconnection(storage.getAddress() + ":" + storage.getPath());
                     }
+                    if(storage.getNfsRetrans() != null) {
+                        entity.setNfsRetrans(storage.getNfsRetrans().shortValue());
+                    }
+                    if(storage.getNfsTimeo() != null) {
+                        entity.setNfsTimeo(storage.getNfsTimeo().shortValue());
+                    }
+                    if(storage.getNfsVersion() != null) {
+                        entity.setNfsVersion(storage.getNfsVersion().shortValue());
+                    }
                     break;
                 case LOCALFS:
                     if (storage.isSetPath()) {
