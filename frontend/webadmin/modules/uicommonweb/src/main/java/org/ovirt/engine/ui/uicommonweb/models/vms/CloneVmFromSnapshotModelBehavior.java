@@ -76,7 +76,7 @@ public class CloneVmFromSnapshotModelBehavior extends ExistingVmModelBehavior
     public void InitDisks() {
         ArrayList<DiskModel> disks = new ArrayList<DiskModel>();
         for (DiskImage diskImage : vm.getDiskList()) {
-            disks.add(Linq.DiskImageToModel(diskImage));
+            disks.add(Linq.DiskToModel(diskImage));
         }
         getModel().setDisks(disks);
         getModel().getDisksAllocationModel().setIsVolumeFormatAvailable(true);

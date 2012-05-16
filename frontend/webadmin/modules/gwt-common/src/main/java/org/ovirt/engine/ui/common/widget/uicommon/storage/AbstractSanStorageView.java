@@ -1,4 +1,4 @@
-package org.ovirt.engine.ui.webadmin.section.main.view.popup.storage;
+package org.ovirt.engine.ui.common.widget.uicommon.storage;
 
 import java.util.List;
 
@@ -6,11 +6,10 @@ import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
+import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.widget.HasValidation;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.SanStorageModelBase;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
@@ -49,18 +48,25 @@ public abstract class AbstractSanStorageView extends AbstractStorageView<SanStor
     @Ignore
     Label listLabel;
 
+    protected static final CommonApplicationConstants constants = GWT.create(CommonApplicationConstants.class);
+
     @Inject
     public AbstractSanStorageView() {
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        localize(ClientGinjectorProvider.instance().getApplicationConstants());
+        localize(constants);
         addStyles();
         Driver.driver.initialize(this);
+    }
+
+    public AbstractSanStorageView(boolean multiSelection) {
+        this();
+        this.multiSelection = multiSelection;
     }
 
     void addStyles() {
     }
 
-    void localize(ApplicationConstants constants) {
+    void localize(CommonApplicationConstants constants) {
     }
 
     protected abstract void initLists(SanStorageModelBase object);

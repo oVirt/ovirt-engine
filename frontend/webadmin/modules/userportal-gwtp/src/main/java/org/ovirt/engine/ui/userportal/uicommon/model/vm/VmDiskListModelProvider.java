@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.userportal.uicommon.model.vm;
 
-import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.ui.common.auth.CurrentUser;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -17,7 +17,7 @@ import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalSearchableDetailM
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
-public class VmDiskListModelProvider extends UserPortalSearchableDetailModelProvider<DiskImage, UserPortalListModel, VmDiskListModel> {
+public class VmDiskListModelProvider extends UserPortalSearchableDetailModelProvider<Disk, UserPortalListModel, VmDiskListModel> {
 
     private final Provider<VmDiskPopupPresenterWidget> diskPopupProvider;
     private final Provider<VmDiskRemovePopupPresenterWidget> removeConfirmPopupProvider;

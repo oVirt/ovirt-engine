@@ -3,6 +3,8 @@ package org.ovirt.engine.ui.uicommonweb.models.templates;
 import java.util.ArrayList;
 
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
+import org.ovirt.engine.core.common.businessentities.Disk;
+import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageOperation;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
@@ -33,9 +35,9 @@ public class CopyDiskModel extends MoveOrCopyDiskModel
             @Override
             public void OnSuccess(Object target, Object returnValue) {
                 CopyDiskModel copyDiskModel = (CopyDiskModel) target;
-                ArrayList<DiskImage> diskImages = (ArrayList<DiskImage>) returnValue;
+                ArrayList<Disk> disks = (ArrayList<Disk>) returnValue;
 
-                copyDiskModel.onInitAllDisks(diskImages);
+                copyDiskModel.onInitAllDisks(disks);
                 copyDiskModel.onInitDisks();
             }
         }));
@@ -43,6 +45,11 @@ public class CopyDiskModel extends MoveOrCopyDiskModel
 
     @Override
     protected void initStorageDomains() {
+        Disk disk = getDisks().get(0).getDisk();
+        if (disk.getDiskStorageType() != DiskStorageType.IMAGE) {
+            return;
+        }
+
         AsyncDataProvider.GetStorageDomainList(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void OnSuccess(Object target, Object returnValue) {
@@ -51,7 +58,7 @@ public class CopyDiskModel extends MoveOrCopyDiskModel
 
                 copyDiskModel.onInitStorageDomains(storageDomains);
             }
-        }), getDisks().get(0).getDiskImage().getstorage_pool_id().getValue());
+        }), ((DiskImage) disk).getstorage_pool_id().getValue());
     }
 
     @Override
@@ -106,7 +113,7 @@ public class CopyDiskModel extends MoveOrCopyDiskModel
             addMoveOrCopyParameters(parameters,
                     Guid.Empty,
                     storageDomain.getId(),
-                    diskModel.getDiskImage(),
+                    (DiskImage) diskModel.getDisk(),
                     ImageOperation.Copy);
         }
     }

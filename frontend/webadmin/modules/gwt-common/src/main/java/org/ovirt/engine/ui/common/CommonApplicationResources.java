@@ -37,6 +37,12 @@ public interface CommonApplicationResources extends ClientBundle {
     @Source("css/SliderBar.css")
     CssResource sliderBarCss();
 
+    @Source("images/expander.png")
+    ImageResource expanderImage();
+
+    @Source("images/button_down.png")
+    ImageResource expanderDownImage();
+
     // Dialogs
 
     @Source("css/DialogBox.css")
@@ -116,6 +122,9 @@ public interface CommonApplicationResources extends ClientBundle {
     @Source("images/log_error.gif")
     ImageResource logErrorImage();
 
+    @Source("images/ok_small.gif")
+    ImageResource okSmallImage();
+
     @Source("images/icon_alert_configure.png")
     ImageResource alertConfigureImage();
 
@@ -171,5 +180,8 @@ public interface CommonApplicationResources extends ClientBundle {
 
     @Source("images/disk_shareable.png")
     ImageResource shareableDiskIcon();
+
+    @Source("images/disk_lun.png")
+    ImageResource externalDiskIcon();
 
 }

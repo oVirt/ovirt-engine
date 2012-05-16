@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab.virtualMachine;
 
-import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.system.ClientStorage;
@@ -17,7 +17,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 
-public class SubTabVirtualMachineVirtualDiskView extends AbstractSubTabTableWidgetView<VM, DiskImage, VmListModel, VmDiskListModel> implements SubTabVirtualMachineVirtualDiskPresenter.ViewDef {
+public class SubTabVirtualMachineVirtualDiskView extends AbstractSubTabTableWidgetView<VM, Disk, VmListModel, VmDiskListModel> implements SubTabVirtualMachineVirtualDiskPresenter.ViewDef {
 
     interface ViewIdHandler extends ElementIdHandler<SubTabVirtualMachineVirtualDiskView> {
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
@@ -25,7 +25,7 @@ public class SubTabVirtualMachineVirtualDiskView extends AbstractSubTabTableWidg
 
     @Inject
     public SubTabVirtualMachineVirtualDiskView(
-            SearchableDetailModelProvider<DiskImage, VmListModel, VmDiskListModel> modelProvider,
+            SearchableDetailModelProvider<Disk, VmListModel, VmDiskListModel> modelProvider,
             EventBus eventBus, ClientStorage clientStorage, ApplicationResources resources,
             ApplicationConstants constants) {
         super(new VmDiskListModelTable(modelProvider, eventBus, clientStorage, resources, true));

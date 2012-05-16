@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.common.widget.table.column;
 
-import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.Disk;
+import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 
@@ -12,13 +13,13 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
-public class DiskStatusCell extends AbstractCell<DiskImage> {
+public class DiskStatusCell extends AbstractCell<Disk> {
 
     private static final CommonApplicationResources commonResources = GWT.create(CommonApplicationResources.class);
     private static final CommonApplicationTemplates commonTemplates = GWT.create(CommonApplicationTemplates.class);
 
     @Override
-    public void render(Context context, DiskImage disk, SafeHtmlBuilder sb) {
+    public void render(Context context, Disk disk, SafeHtmlBuilder sb) {
         // Nothing to render if no host is provided:
         if (disk == null) {
             return;
@@ -27,16 +28,23 @@ public class DiskStatusCell extends AbstractCell<DiskImage> {
         ImageResource plugStatus = (disk.getPlugged() != null && disk.getPlugged().booleanValue()) ?
                 commonResources.upImage() : commonResources.downImage();
 
-        ImageResource shraeableStatus = (disk.isShareable()) ?
+        ImageResource shraeable = (disk.isShareable()) ?
                 commonResources.shareableDiskIcon() : null;
+
+        ImageResource externalDisk = (disk.getDiskStorageType() == DiskStorageType.LUN) ?
+                commonResources.externalDiskIcon() : null;
 
         SafeHtml plugStatusImageHtml =
                 SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(plugStatus).getHTML());
 
-        SafeHtml shraeableStatusImageHtml = shraeableStatus != null ?
-                        SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(shraeableStatus).getHTML())
+        SafeHtml shraeableImageHtml = shraeable != null ?
+                SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(shraeable).getHTML())
                 : new SafeHtmlBuilder().toSafeHtml();
 
-        sb.append(commonTemplates.dualImage(plugStatusImageHtml, shraeableStatusImageHtml));
+        SafeHtml externalDiskImageHtml = externalDisk != null ?
+                SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(externalDisk).getHTML())
+                : new SafeHtmlBuilder().toSafeHtml();
+
+        sb.append(commonTemplates.tripleImage(plugStatusImageHtml, shraeableImageHtml, externalDiskImageHtml));
     }
 }

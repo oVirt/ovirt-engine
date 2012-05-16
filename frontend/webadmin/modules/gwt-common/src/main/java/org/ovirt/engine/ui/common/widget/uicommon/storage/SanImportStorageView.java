@@ -1,4 +1,4 @@
-package org.ovirt.engine.ui.webadmin.section.main.view.popup.storage;
+package org.ovirt.engine.ui.common.widget.uicommon.storage;
 
 import java.util.ArrayList;
 
@@ -11,8 +11,6 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.ImportSanStorageModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.SanStorageModelBase;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiField;
@@ -27,7 +25,6 @@ public class SanImportStorageView extends AbstractSanStorageView {
     Label errorMessage;
 
     EntityModelCellTable<ListModel> table;
-    private ApplicationConstants constants = ClientGinjectorProvider.instance().getApplicationConstants();
 
     @Override
     protected void initLists(SanStorageModelBase object) {
@@ -67,7 +64,7 @@ public class SanImportStorageView extends AbstractSanStorageView {
         }
 
         @Override
-        @Source({ CellTable.Style.DEFAULT_CSS, "org/ovirt/engine/ui/webadmin/css/SanStorageListHeader.css" })
+        @Source({ CellTable.Style.DEFAULT_CSS, "org/ovirt/engine/ui/common/css/SanStorageListHeader.css" })
         TableStyle cellTableStyle();
     }
 }

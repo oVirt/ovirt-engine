@@ -6,6 +6,8 @@ import java.util.Collections;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.Disk;
+import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageOperation;
 import org.ovirt.engine.core.common.businessentities.Quota;
@@ -99,17 +101,19 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
         ArrayList<DiskModel> disks = new ArrayList<DiskModel>();
         for (DiskImage disk : getDiskImages())
         {
-            disks.add(Linq.DiskImageToModel(disk));
+            disks.add(Linq.DiskToModel(disk));
         }
         setDisks(disks);
 
         initStorageDomains();
     }
 
-    protected void onInitAllDisks(ArrayList<DiskImage> diskImages) {
-        for (DiskImage disk : diskImages)
+    protected void onInitAllDisks(ArrayList<Disk> disks) {
+        for (Disk disk : disks)
         {
-            allDisks.add(Linq.DiskImageToModel(disk));
+            if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
+                allDisks.add(Linq.DiskToModel(disk));
+            }
         }
     }
 
@@ -146,8 +150,10 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
         ArrayList<storage_domains> missingStorageDomains = new ArrayList<storage_domains>();
 
         for (DiskModel disk : getDisks()) {
+            DiskImage diskImage = ((DiskImage) disk.getDisk());
+
             // Source storages
-            ArrayList<Guid> diskStorageIds = disk.getDiskImage().getstorage_ids();
+            ArrayList<Guid> diskStorageIds = diskImage.getstorage_ids();
             ArrayList<storage_domains> diskStorages = Linq.getStorageDomainsByIds(diskStorageIds, activeStorageDomains);
             disk.getSourceStorageDomain().setItems(diskStorages);
             allSourceStorages.add(diskStorages);
@@ -157,7 +163,7 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
             ArrayList<storage_domains> diskMissingStorageDomains = new ArrayList<storage_domains>();
 
             // Filter storages with missing template disk
-            if (!disk.getDiskImage().getParentId().equals(NGuid.Empty)) {
+            if (!diskImage.getParentId().equals(NGuid.Empty)) {
                 diskMissingStorageDomains = getMissingStorages(destStorageDomains, disk);
             }
             missingStorageDomains.addAll(diskMissingStorageDomains);
@@ -205,7 +211,7 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
 
         if (templateDisk != null) {
             for (storage_domains storageDomain : storageDomains) {
-                if (!templateDisk.getDiskImage().getstorage_ids().contains(storageDomain.getId())) {
+                if (!((DiskImage) templateDisk.getDisk()).getstorage_ids().contains(storageDomain.getId())) {
                     missingStorageDomains.add(storageDomain);
                 }
             }
@@ -216,7 +222,7 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
 
     protected DiskModel getTemplateDiskByVmDisk(DiskModel vmdisk) {
         for (DiskModel disk : getAllDisks()) {
-            if (disk.getDiskImage().getImageId().equals(vmdisk.getDiskImage().getParentId())) {
+            if (((DiskImage) disk.getDisk()).getImageId().equals(((DiskImage) vmdisk.getDisk()).getParentId())) {
                 return disk;
             }
         }
@@ -251,7 +257,7 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
                     (storage_domains) diskModel.getSourceStorageDomain().getSelectedItem();
 
             Guid sourceStorageDomainGuid = sourceStorageDomain != null ? sourceStorageDomain.getId() : Guid.Empty;
-            DiskImage disk = diskModel.getDiskImage();
+            DiskImage disk = (DiskImage) diskModel.getDisk();
             if (diskModel.getQuota().getSelectedItem() != null) {
                 if (iSingleStorageDomain) {
                     disk.setQuotaId(((Quota) getQuota().getSelectedItem()).getId());
@@ -265,7 +271,7 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
             }
             else {
                 if (destStorageDomain == null
-                        || diskModel.getDiskImage().getstorage_ids().contains(destStorageDomain.getId())) {
+                        || ((DiskImage) diskModel.getDisk()).getstorage_ids().contains(destStorageDomain.getId())) {
                     continue;
                 }
 

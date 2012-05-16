@@ -98,4 +98,8 @@ public class DialogTab extends AbstractValidatedWidget implements HasClickHandle
         tabContainer.getElement().setId(elementId);
     }
 
+    public InlineLabel getTabLabel() {
+        return tabLabel;
+    }
+
 }

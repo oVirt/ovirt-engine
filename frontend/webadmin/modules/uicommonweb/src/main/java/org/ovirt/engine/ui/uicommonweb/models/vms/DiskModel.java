@@ -3,6 +3,8 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 import java.util.ArrayList;
 import java.util.Date;
 
+import org.ovirt.engine.core.common.businessentities.Disk;
+import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.Quota;
@@ -10,6 +12,7 @@ import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageType;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
@@ -32,6 +35,7 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
+import org.ovirt.engine.ui.uicommonweb.models.storage.SanStorageModel;
 import org.ovirt.engine.ui.uicommonweb.validation.AsciiOrNoneValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IntegerValidation;
@@ -164,6 +168,18 @@ public class DiskModel extends Model
         privateVolumeType = value;
     }
 
+    private ListModel storageType;
+
+    public ListModel getStorageType()
+    {
+        return storageType;
+    }
+
+    public void setStorageType(ListModel value)
+    {
+        storageType = value;
+    }
+
     private ListModel privateInterface;
 
     public ListModel getInterface()
@@ -198,6 +214,18 @@ public class DiskModel extends Model
     public void setStorageDomain(ListModel value)
     {
         privateStorageDomain = value;
+    }
+
+    private ListModel privateHost;
+
+    public ListModel getHost()
+    {
+        return privateHost;
+    }
+
+    private void setHost(ListModel value)
+    {
+        privateHost = value;
     }
 
     private EntityModel privateWipeAfterDelete;
@@ -248,16 +276,16 @@ public class DiskModel extends Model
         privateIsPlugged = value;
     }
 
-    private DiskImage privateDiskImage;
+    private Disk privateDisk;
 
-    public DiskImage getDiskImage()
+    public Disk getDisk()
     {
-        return privateDiskImage;
+        return privateDisk;
     }
 
-    public void setDiskImage(DiskImage value)
+    public void setDisk(Disk value)
     {
-        privateDiskImage = value;
+        privateDisk = value;
     }
 
     private EntityModel sourceStorageDomainName;
@@ -320,6 +348,30 @@ public class DiskModel extends Model
         attachableDisks = value;
     }
 
+    private ListModel internalAttachableDisks;
+
+    public ListModel getInternalAttachableDisks()
+    {
+        return internalAttachableDisks;
+    }
+
+    public void setInternalAttachableDisks(ListModel value)
+    {
+        internalAttachableDisks = value;
+    }
+
+    private ListModel externalAttachableDisks;
+
+    public ListModel getExternalAttachableDisks()
+    {
+        return externalAttachableDisks;
+    }
+
+    public void setExternalAttachableDisks(ListModel value)
+    {
+        externalAttachableDisks = value;
+    }
+
     private Guid datacenterId;
 
     public Guid getDatacenterId()
@@ -344,6 +396,33 @@ public class DiskModel extends Model
         isInVm = value;
     }
 
+    private EntityModel isInternal;
+
+    public EntityModel getIsInternal()
+    {
+        return isInternal;
+    }
+
+    public void setIsInternal(EntityModel value)
+    {
+        isInternal = value;
+    }
+
+    private SanStorageModel sanStorageModel;
+
+    public SanStorageModel getSanStorageModel()
+    {
+        return sanStorageModel;
+    }
+
+    public void setSanStorageModel(SanStorageModel value)
+    {
+        sanStorageModel = value;
+    }
+
+    private boolean isWipeAfterDeleteChangable;
+    private boolean isQuotaAvailable;
+
     public DiskModel()
     {
         setSize(new EntityModel());
@@ -352,6 +431,9 @@ public class DiskModel extends Model
         setInterface(new ListModel());
         setStorageDomain(new ListModel());
         setQuota(new ListModel());
+
+        setHost(new ListModel());
+        getHost().setIsAvailable(false);
 
         setSourceStorageDomain(new ListModel());
         getSourceStorageDomain().setIsAvailable(false);
@@ -369,6 +451,11 @@ public class DiskModel extends Model
         setVolumeType(new ListModel());
         getVolumeType().setItems(DataProvider.GetVolumeTypeList());
         getVolumeType().getSelectedItemChangedEvent().addListener(this);
+
+        setStorageType(new ListModel());
+        getStorageType().setIsAvailable(false);
+        getStorageType().setItems(DataProvider.GetStorageTypeList());
+        getStorageType().getSelectedItemChangedEvent().addListener(this);
 
         setWipeAfterDelete(new EntityModel());
         getWipeAfterDelete().setEntity(false);
@@ -393,10 +480,17 @@ public class DiskModel extends Model
         setAlias(new EntityModel());
         setDescription(new EntityModel());
         setAttachableDisks(new ListModel());
+        setInternalAttachableDisks(new ListModel());
+        setExternalAttachableDisks(new ListModel());
 
         setIsInVm(new EntityModel());
-        getIsInVm().setEntity(true);
         getIsInVm().getEntityChangedEvent().addListener(this);
+
+        setIsInternal(new EntityModel());
+        getIsInternal().setEntity(true);
+        getIsInternal().getEntityChangedEvent().addListener(this);
+
+        setIsNew(true);
 
         AsyncDataProvider.GetDiskMaxSize(new AsyncQuery(this,
                 new INewAsyncCallback() {
@@ -469,6 +563,10 @@ public class DiskModel extends Model
         {
             IsInVm_EntityChanged();
         }
+        else if (ev.equals(ListModel.EntityChangedEventDefinition) && sender == getIsInternal())
+        {
+            IsInternal_EntityChanged();
+        }
         else if (ev.equals(ListModel.SelectedItemChangedEventDefinition) && sender == getPreset())
         {
             Preset_SelectedItemChanged();
@@ -491,7 +589,8 @@ public class DiskModel extends Model
             return;
         }
 
-        if (datacenter.getQuotaEnforcementType().equals(QuotaEnforcementTypeEnum.DISABLED)) {
+        if (datacenter.getQuotaEnforcementType().equals(QuotaEnforcementTypeEnum.DISABLED)
+                || !(Boolean) getIsInternal().getEntity()) {
             getQuota().setIsAvailable(false);
         } else {
             getQuota().setIsAvailable(true);
@@ -549,8 +648,17 @@ public class DiskModel extends Model
                     }
                 }), VmType.Server, storageType);
             }
-        }),
-                datacenter.getId());
+        }), datacenter.getId());
+
+        AsyncDataProvider.GetHostListByDataCenter(new AsyncQuery(this, new INewAsyncCallback() {
+            @Override
+            public void OnSuccess(Object target, Object returnValue) {
+
+                DiskModel diskModel = (DiskModel) target;
+                Iterable<VDS> hosts = (Iterable<VDS>) returnValue;
+                diskModel.getHost().setItems(hosts);
+            }
+        }), datacenter.getId());
     }
 
     private void UpdateWipeAfterDelete(StorageType storageType, EntityModel wipeAfterDeleteModel)
@@ -571,10 +679,6 @@ public class DiskModel extends Model
     }
 
     private void IsInVm_EntityChanged() {
-        if ((Boolean) getIsInVm().getEntity()) {
-            return;
-        }
-
         AsyncDataProvider.GetDataCenterList(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void OnSuccess(Object target, Object returnValue) {
@@ -582,9 +686,27 @@ public class DiskModel extends Model
                 ArrayList<storage_pool> dataCenters = (ArrayList<storage_pool>) returnValue;
 
                 diskModel.getDataCenter().setItems(dataCenters);
-                diskModel.getDataCenter().setIsAvailable(true);
+                diskModel.getDataCenter().setIsAvailable(!((Boolean) getIsInVm().getEntity()) && true);
             }
         }));
+    }
+
+    private void IsInternal_EntityChanged() {
+        Boolean isInternal = (Boolean) getIsInternal().getEntity();
+
+        getSize().setIsAvailable(isInternal);
+        getStorageDomain().setIsAvailable(isInternal);
+        getVolumeType().setIsAvailable(isInternal);
+        getHost().setIsAvailable(!isInternal);
+        getStorageType().setIsAvailable(!isInternal);
+        getDataCenter().setIsAvailable(!isInternal);
+
+        if (!isInternal) {
+            isWipeAfterDeleteChangable = getWipeAfterDelete().getIsChangable();
+            isQuotaAvailable = getQuota().getIsAvailable();
+        }
+        getWipeAfterDelete().setIsChangable(isInternal ? isWipeAfterDeleteChangable : true);
+        getQuota().setIsAvailable(isInternal ? isQuotaAvailable : false);
     }
 
     private void Preset_SelectedItemChanged()
@@ -630,16 +752,20 @@ public class DiskModel extends Model
                 @Override
                 public void OnSuccess(Object target, Object returnValue) {
                     DiskModel model = (DiskModel) target;
-                    ArrayList<DiskImage> diskImages = (ArrayList<DiskImage>) returnValue;
+                    ArrayList<Disk> disks = (ArrayList<Disk>) returnValue;
                     ArrayList<DiskModel> diskModels = new ArrayList<DiskModel>();
 
-                    for (DiskImage disk : diskImages) {
+                    for (Disk disk : disks) {
                         DiskModel diskModel = new DiskModel();
-                        diskModel.setDiskImage(disk);
+                        diskModel.setDisk(disk);
                         diskModels.add(diskModel);
                     }
 
                     model.getAttachableDisks().setItems(Linq.ToEntityModelList(diskModels));
+                    model.getInternalAttachableDisks().setItems(Linq.ToEntityModelList(
+                            Linq.FilterDisksByType(diskModels, DiskStorageType.IMAGE)));
+                    model.getExternalAttachableDisks().setItems(Linq.ToEntityModelList(
+                            Linq.FilterDisksByType(diskModels, DiskStorageType.LUN)));
                 }
             }), getDatacenterId());
         }

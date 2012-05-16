@@ -1,15 +1,14 @@
-package org.ovirt.engine.ui.webadmin.widget.storage;
+package org.ovirt.engine.ui.common.widget.uicommon.storage;
 
 import java.util.List;
 
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
+import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.SanStorageModelBase;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
@@ -42,8 +41,9 @@ public abstract class AbstractSanStorageList<M extends EntityModel, L extends Li
     Tree tree;
 
     boolean hideLeaf;
+    boolean multiSelection;
 
-    protected static ApplicationConstants constants = ClientGinjectorProvider.instance().getApplicationConstants();
+    protected static final CommonApplicationConstants constants = GWT.create(CommonApplicationConstants.class);
 
     public AbstractSanStorageList(SanStorageModelBase model) {
         this(model, false);
@@ -120,6 +120,10 @@ public abstract class AbstractSanStorageList<M extends EntityModel, L extends Li
         treeContainer.getElement().getStyle().setHeight(height, Unit.PX);
     }
 
+    public ScrollPanel getTreeContainer() {
+        return treeContainer;
+    }
+
     protected abstract void createHeaderWidget();
 
     protected abstract L getLeafModel(M rootModel);
@@ -133,7 +137,7 @@ public abstract class AbstractSanStorageList<M extends EntityModel, L extends Li
         }
 
         @Override
-        @Source({ CellTable.Style.DEFAULT_CSS, "org/ovirt/engine/ui/webadmin/css/SanStorageListHeader.css" })
+        @Source({ CellTable.Style.DEFAULT_CSS, "org/ovirt/engine/ui/common/css/SanStorageListHeader.css" })
         TableStyle cellTableStyle();
     }
 
@@ -142,7 +146,7 @@ public abstract class AbstractSanStorageList<M extends EntityModel, L extends Li
         }
 
         @Override
-        @Source({ CellTable.Style.DEFAULT_CSS, "org/ovirt/engine/ui/webadmin/css/SanStorageListTargetRoot.css" })
+        @Source({ CellTable.Style.DEFAULT_CSS, "org/ovirt/engine/ui/common/css/SanStorageListTargetRoot.css" })
         TableStyle cellTableStyle();
     }
 
@@ -151,7 +155,7 @@ public abstract class AbstractSanStorageList<M extends EntityModel, L extends Li
         }
 
         @Override
-        @Source({ CellTable.Style.DEFAULT_CSS, "org/ovirt/engine/ui/webadmin/css/SanStorageListLunTable.css" })
+        @Source({ CellTable.Style.DEFAULT_CSS, "org/ovirt/engine/ui/common/css/SanStorageListLunTable.css" })
         TableStyle cellTableStyle();
     }
 
@@ -160,7 +164,7 @@ public abstract class AbstractSanStorageList<M extends EntityModel, L extends Li
         }
 
         @Override
-        @Source({ CellTable.Style.DEFAULT_CSS, "org/ovirt/engine/ui/webadmin/css/SanStorageListLunRoot.css" })
+        @Source({ CellTable.Style.DEFAULT_CSS, "org/ovirt/engine/ui/common/css/SanStorageListLunRoot.css" })
         TableStyle cellTableStyle();
     }
 
@@ -169,7 +173,7 @@ public abstract class AbstractSanStorageList<M extends EntityModel, L extends Li
         }
 
         @Override
-        @Source({ CellTable.Style.DEFAULT_CSS, "org/ovirt/engine/ui/webadmin/css/SanStorageListTargetTable.css" })
+        @Source({ CellTable.Style.DEFAULT_CSS, "org/ovirt/engine/ui/common/css/SanStorageListTargetTable.css" })
         TableStyle cellTableStyle();
     }
 

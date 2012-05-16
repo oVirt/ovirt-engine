@@ -2,7 +2,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab.disk;
 
 import javax.inject.Inject;
 
-import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
@@ -22,7 +22,7 @@ import org.ovirt.engine.ui.webadmin.widget.table.column.VmTypeColumn;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ImageResource;
 
-public class SubTabDiskVmView extends AbstractSubTabTableView<DiskImage, VM, DiskListModel, DiskVmListModel>
+public class SubTabDiskVmView extends AbstractSubTabTableView<Disk, VM, DiskListModel, DiskVmListModel>
         implements SubTabDiskVmPresenter.ViewDef {
 
     interface ViewIdHandler extends ElementIdHandler<SubTabDiskVmView> {

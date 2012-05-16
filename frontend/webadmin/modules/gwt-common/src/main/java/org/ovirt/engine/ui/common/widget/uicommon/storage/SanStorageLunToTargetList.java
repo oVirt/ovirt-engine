@@ -1,6 +1,4 @@
-package org.ovirt.engine.ui.webadmin.widget.storage;
-
-import static org.ovirt.engine.ui.webadmin.widget.storage.AbstractSanStorageList.constants;
+package org.ovirt.engine.ui.common.widget.uicommon.storage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,13 +8,13 @@ import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
+import org.ovirt.engine.ui.common.widget.table.column.LunSelectionColumn;
+import org.ovirt.engine.ui.common.widget.table.column.LunTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.LunModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.SanStorageModelBase;
 import org.ovirt.engine.ui.uicommonweb.models.storage.SanTargetModel;
-import org.ovirt.engine.ui.webadmin.widget.table.column.LunSelectionColumn;
-import org.ovirt.engine.ui.webadmin.widget.table.column.LunTextColumn;
 
 import com.google.gwt.cell.client.CheckboxCell;
 import com.google.gwt.cell.client.ValueUpdater;
@@ -38,6 +36,12 @@ public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, 
 
     public SanStorageLunToTargetList(SanStorageModelBase model, boolean hideLeaf) {
         super(model, hideLeaf);
+    }
+
+    public SanStorageLunToTargetList(SanStorageModelBase model, boolean hideLeaf, boolean multiSelection) {
+        super(model, hideLeaf);
+
+        this.multiSelection = multiSelection;
     }
 
     @Override
@@ -102,20 +106,20 @@ public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, 
             public String getValue(LunModel model) {
                 return ""; //$NON-NLS-1$
             }
-        }, selectAllHeader, "27px"); //$NON-NLS-1$
+        }, multiSelection ? selectAllHeader : null, "27px"); //$NON-NLS-1$
     }
 
     @Override
     protected TreeItem createRootNode(LunModel rootModel) {
         final EntityModelCellTable<ListModel> table =
-                new EntityModelCellTable<ListModel>(true,
+                new EntityModelCellTable<ListModel>(multiSelection,
                         (Resources) GWT.create(SanStorageListLunRootResources.class));
 
         // Create table
         initRootNodeTable(table);
 
         // Set custom selection column
-        LunSelectionColumn lunSelectionColumn = new LunSelectionColumn() {
+        LunSelectionColumn lunSelectionColumn = new LunSelectionColumn(multiSelection) {
             @Override
             public LunModel getValue(LunModel object) {
                 return object;
@@ -147,7 +151,24 @@ public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, 
             @Override
             public void onSelectionChange(SelectionChangeEvent event) {
                 LunModel lunModel = (LunModel) table.getVisibleItem(0);
-                lunModel.setIsSelected(table.getSelectionModel().isSelected(lunModel));
+                boolean isSelected = table.getSelectionModel().isSelected(lunModel);
+
+                if (!multiSelection) {
+                    if (!isSelected) {
+                        return;
+                    }
+
+                    // Clear current selection
+                    for (LunModel item : (List<LunModel>) model.getItems()) {
+                        if (!item.equals(lunModel) && item.getIsSelected()) {
+                            item.setIsSelected(false);
+                        }
+                    }
+                    lunModel.setIsSelected(true);
+                }
+                else {
+                    lunModel.setIsSelected(isSelected);
+                }
             }
         });
 
@@ -253,5 +274,4 @@ public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, 
         TreeItem item = new TreeItem(panel);
         return item;
     }
-
 }

@@ -1,8 +1,7 @@
-package org.ovirt.engine.ui.webadmin.section.main.view.popup.storage;
+package org.ovirt.engine.ui.common.widget.uicommon.storage;
 
 import org.ovirt.engine.ui.common.widget.HasEditorDriver;
 import org.ovirt.engine.ui.uicommonweb.models.storage.SanStorageModelBase;
-import org.ovirt.engine.ui.webadmin.widget.storage.SanStorageLunToTargetList;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
@@ -27,7 +26,12 @@ public class IscsiLunToTargetView extends Composite implements HasEditorDriver<S
 
     SanStorageLunToTargetList sanStorageLunToTargetList;
 
-    public IscsiLunToTargetView() {
+    double treeHeight;
+    boolean multiSelection;
+
+    public IscsiLunToTargetView(double treeHeight, boolean multiSelection) {
+        this.treeHeight = treeHeight;
+        this.multiSelection = multiSelection;
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         Driver.driver.initialize(this);
@@ -40,7 +44,8 @@ public class IscsiLunToTargetView extends Composite implements HasEditorDriver<S
     }
 
     void initLists(SanStorageModelBase object) {
-        sanStorageLunToTargetList = new SanStorageLunToTargetList(object);
+        sanStorageLunToTargetList = new SanStorageLunToTargetList(object, false, multiSelection);
+        sanStorageLunToTargetList.setTreeContainerHeight(treeHeight);
         lunsListPanel.add(sanStorageLunToTargetList);
     }
 

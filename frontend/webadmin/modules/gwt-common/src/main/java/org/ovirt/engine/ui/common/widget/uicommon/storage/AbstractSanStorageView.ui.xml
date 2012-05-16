@@ -3,11 +3,10 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
 	xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog" xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor">
 
-	<ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.AbstractSanStorageView.WidgetStyle">		
+	<ui:style type="org.ovirt.engine.ui.common.widget.uicommon.storage.AbstractSanStorageView.WidgetStyle">		
 		.contentPanel {
 			padding: 2px;
 			margin: 4px;
-			height: 365px;
 		}
 		
 		.validContentPanel {
@@ -19,11 +18,11 @@
 		}
 		
 		.listPanel {
-			height: 365px;
+			height: 100%;
 		}
 		
 		.treePanel {
-			height: 342px;
+			height: 100%;
 			overflow: auto;
 		}
 		

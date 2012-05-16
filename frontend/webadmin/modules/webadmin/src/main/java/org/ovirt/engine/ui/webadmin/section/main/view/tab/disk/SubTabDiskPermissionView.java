@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab.disk;
 
-import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.system.ClientStorage;
@@ -15,7 +15,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 
-public class SubTabDiskPermissionView extends AbstractSubTabPermissionsView<DiskImage, DiskListModel>
+public class SubTabDiskPermissionView extends AbstractSubTabPermissionsView<Disk, DiskListModel>
         implements SubTabDiskPermissionPresenter.ViewDef {
 
     interface ViewIdHandler extends ElementIdHandler<SubTabDiskPermissionView> {

@@ -574,42 +574,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("")
     String copyRightNotice();
 
-    @DefaultStringValue("LUNs > Targets")
-    String storageIscsiPopupLunToTargetsTabLabel();
-
-    @DefaultStringValue("Targets > LUNs")
-    String storageIscsiPopupTargetsToLunTabLabel();
-
-    @DefaultStringValue("Address")
-    String storageIscsiPopupAddressLabel();
-
-    @DefaultStringValue("Port")
-    String storageIscsiPopupPortLabel();
-
-    @DefaultStringValue("User Authentication:")
-    String storageIscsiPopupUserAuthLabel();
-
-    @DefaultStringValue("CHAP username")
-    String storageIscsiPopupChapUserLabel();
-
-    @DefaultStringValue("CHAP password")
-    String storageIscsiPopupChapPassLabel();
-
-    @DefaultStringValue("Discover")
-    String storageIscsiPopupDiscoverButtonLabel();
-
-    @DefaultStringValue("Discover Targets")
-    String storageIscsiDiscoverTargetsLabel();
-
-    @DefaultStringValue("Login All")
-    String storageIscsiPopupLoginAllButtonLabel();
-
-    @DefaultStringValue("Login")
-    String storageIscsiPopupLoginButtonLabel();
-
-    @DefaultStringValue("Select Storage Domain")
-    String storageIscsiSelectStorageLabel();
-
     @DefaultStringValue("Configure")
     String configurePopupTitle();
 
@@ -1781,41 +1745,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Creation Date")
     String creationDateStorageTree();
-
-    // San Storage
-    @DefaultStringValue("Target Name")
-    String targetNameSanStorage();
-
-    @DefaultStringValue("Address")
-    String addressSanStorage();
-
-    @DefaultStringValue("Port")
-    String portSanStorage();
-
-    @DefaultStringValue("LUN ID")
-    String lunIdSanStorage();
-
-    @DefaultStringValue("Dev. Size")
-    String devSizeSanStorage();
-
-    @DefaultStringValue("#path")
-    String pathSanStorage();
-
-    @DefaultStringValue("Vendor ID")
-    String vendorIdSanStorage();
-
-    @DefaultStringValue("Product ID")
-    String productIdSanStorage();
-
-    @DefaultStringValue("Serial")
-    String serialSanStorage();
-
-    // San import storage
-    @DefaultStringValue("Name")
-    String nameSanImStorage();
-
-    @DefaultStringValue("Format")
-    String formatSanImStorage();
 
     // Import template
     @DefaultStringValue("General")

@@ -4,7 +4,7 @@ import java.util.Date;
 
 import javax.inject.Inject;
 
-import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
@@ -18,7 +18,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 
 import com.google.gwt.core.client.GWT;
 
-public class SubTabDiskTemplateView extends AbstractSubTabTableView<DiskImage, VmTemplate, DiskListModel, DiskTemplateListModel>
+public class SubTabDiskTemplateView extends AbstractSubTabTableView<Disk, VmTemplate, DiskListModel, DiskTemplateListModel>
         implements SubTabDiskTemplatePresenter.ViewDef {
 
     interface ViewIdHandler extends ElementIdHandler<SubTabDiskTemplateView> {

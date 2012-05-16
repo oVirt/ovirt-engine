@@ -1,5 +1,10 @@
 package org.ovirt.engine.ui.uicommonweb.models.storage;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
@@ -31,11 +36,6 @@ import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
 
 @SuppressWarnings("unused")
 public class StorageModel extends ListModel implements ISupportSystemTreeContext
@@ -115,7 +115,7 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
         return privateHost;
     }
 
-    private void setHost(ListModel value)
+    public void setHost(ListModel value)
     {
         privateHost = value;
     }
@@ -539,7 +539,7 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
                                 storageModel.PostUpdateHost(hosts);
 
                             }
-                        }, getHash()), dataCenter.getname());
+                        }, getHash()), dataCenter.getId());
             }
         }
     }

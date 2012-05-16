@@ -2,7 +2,7 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.tab;
 
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.disks.DiskListModel;
@@ -22,12 +22,12 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
-public class MainTabDiskPresenter extends AbstractMainTabWithDetailsPresenter<DiskImage, DiskListModel, MainTabDiskPresenter.ViewDef, MainTabDiskPresenter.ProxyDef> {
+public class MainTabDiskPresenter extends AbstractMainTabWithDetailsPresenter<Disk, DiskListModel, MainTabDiskPresenter.ViewDef, MainTabDiskPresenter.ProxyDef> {
 
     @GenEvent
     public static class DiskSelectionChange {
 
-        List<DiskImage> selectedItems;
+        List<Disk> selectedItems;
 
     }
 
@@ -36,7 +36,7 @@ public class MainTabDiskPresenter extends AbstractMainTabWithDetailsPresenter<Di
     public interface ProxyDef extends TabContentProxyPlace<MainTabDiskPresenter> {
     }
 
-    public interface ViewDef extends AbstractMainTabWithDetailsPresenter.ViewDef<DiskImage> {
+    public interface ViewDef extends AbstractMainTabWithDetailsPresenter.ViewDef<Disk> {
     }
 
     @TabInfo(container = MainTabPanelPresenter.class)
@@ -47,7 +47,7 @@ public class MainTabDiskPresenter extends AbstractMainTabWithDetailsPresenter<Di
 
     @Inject
     public MainTabDiskPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, MainModelProvider<DiskImage, DiskListModel> modelProvider) {
+            PlaceManager placeManager, MainModelProvider<Disk, DiskListModel> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider);
     }
 

@@ -1,21 +1,22 @@
-package org.ovirt.engine.ui.webadmin.widget.storage;
-
-import static org.ovirt.engine.ui.webadmin.widget.storage.AbstractSanStorageList.constants;
+package org.ovirt.engine.ui.common.widget.uicommon.storage;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.core.compat.Event;
+import org.ovirt.engine.core.compat.EventArgs;
+import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.ui.common.widget.UiCommandButton;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
+import org.ovirt.engine.ui.common.widget.table.column.LunSelectionColumn;
+import org.ovirt.engine.ui.common.widget.table.column.LunTextColumn;
+import org.ovirt.engine.ui.common.widget.table.column.ScrollableTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.LunModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.SanStorageModelBase;
 import org.ovirt.engine.ui.uicommonweb.models.storage.SanTargetModel;
-import org.ovirt.engine.ui.webadmin.widget.table.column.LunSelectionColumn;
-import org.ovirt.engine.ui.webadmin.widget.table.column.LunTextColumn;
-import org.ovirt.engine.ui.webadmin.widget.table.column.ScrollableTextColumn;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
@@ -40,6 +41,12 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
 
     public SanStorageTargetToLunList(SanStorageModelBase model, boolean hideLeaf) {
         super(model, hideLeaf);
+    }
+
+    public SanStorageTargetToLunList(SanStorageModelBase model, boolean hideLeaf, boolean multiSelection) {
+        super(model, hideLeaf);
+
+        this.multiSelection = multiSelection;
     }
 
     @Override
@@ -154,7 +161,7 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
 
     @SuppressWarnings("unchecked")
     @Override
-    protected TreeItem createLeafNode(ListModel leafModel) {
+    protected TreeItem createLeafNode(final ListModel leafModel) {
         TreeItem item = new TreeItem();
         List<LunModel> items = (List<LunModel>) leafModel.getItems();
 
@@ -163,11 +170,27 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
             return item;
         }
 
+        if (!multiSelection) {
+            leafModel.getSelectedItemChangedEvent().addListener(new IEventListener() {
+                @Override
+                public void eventRaised(Event ev, Object sender, EventArgs args) {
+                    if (leafModel.getSelectedItem() != null) {
+                        // Clear current selection
+                        for (SanTargetModel item : (List<SanTargetModel>) model.getItems()) {
+                            if (item.getLunsList() != leafModel) {
+                                item.getLunsList().setSelectedItem(null);
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
         EntityModelCellTable<ListModel> table =
-                new EntityModelCellTable<ListModel>(true,
+                new EntityModelCellTable<ListModel>(multiSelection,
                         (Resources) GWT.create(SanStorageListLunTableResources.class));
 
-        LunSelectionColumn lunSelectionColumn = new LunSelectionColumn() {
+        LunSelectionColumn lunSelectionColumn = new LunSelectionColumn(multiSelection) {
             @Override
             public LunModel getValue(LunModel object) {
                 return object;

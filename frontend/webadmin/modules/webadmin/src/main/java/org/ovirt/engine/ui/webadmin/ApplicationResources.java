@@ -52,12 +52,6 @@ public interface ApplicationResources extends CommonApplicationResources {
     @Source("images/events.png")
     ImageResource eventsImage();
 
-    @Source("images/expander.png")
-    ImageResource expanderImage();
-
-    @Source("images/button_down.png")
-    ImageResource expanderDownImage();
-
     @Source("images/btn_guide_hover.png")
     ImageResource guideHoverMediumImage();
 
@@ -124,9 +118,6 @@ public interface ApplicationResources extends CommonApplicationResources {
 
     @Source("images/nonoperational.png")
     ImageResource nonOperationalImage();
-
-    @Source("images/ok_small.gif")
-    ImageResource okSmallImage();
 
     @Source("images/pause.gif")
     ImageResource pauseImage();

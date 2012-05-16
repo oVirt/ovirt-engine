@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.webadmin.gin.uicommon;
 
 import org.ovirt.engine.core.common.businessentities.AuditLog;
-import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
@@ -176,11 +176,11 @@ public class VirtualMachineModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<DiskImage, VmListModel, VmDiskListModel> getVmDiskListProvider(ClientGinjector ginjector,
+    public SearchableDetailModelProvider<Disk, VmListModel, VmDiskListModel> getVmDiskListProvider(ClientGinjector ginjector,
             final Provider<VmDiskPopupPresenterWidget> popupProvider,
             final Provider<VmDiskRemovePopupPresenterWidget> removeConfirmPopupProvider,
             final Provider<DisksAllocationPopupPresenterWidget> movePopupProvider) {
-        return new SearchableDetailTabModelProvider<DiskImage, VmListModel, VmDiskListModel>(ginjector,
+        return new SearchableDetailTabModelProvider<Disk, VmListModel, VmDiskListModel>(ginjector,
                 VmListModel.class,
                 VmDiskListModel.class) {
             @Override

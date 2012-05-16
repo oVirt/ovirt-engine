@@ -1296,7 +1296,7 @@ public class VmModel extends Model
                 {
                     DiskModel model = new DiskModel();
                     model.setIsNew(true);
-                    model.setName(a.getinternal_drive_mapping());
+                    model.getAlias().setEntity(a.getDiskAlias());
                     EntityModel tempVar2 = new EntityModel();
                     tempVar2.setEntity(a.getSizeInGigabytes());
                     model.setSize(tempVar2);

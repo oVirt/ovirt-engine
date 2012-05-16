@@ -1,4 +1,4 @@
-package org.ovirt.engine.ui.webadmin.section.main.view.popup.storage;
+package org.ovirt.engine.ui.common.widget.uicommon.storage;
 
 import java.util.List;
 
@@ -6,15 +6,15 @@ import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
+import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.widget.HasValidation;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTabPanel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.IscsiStorageModel;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -25,7 +25,6 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.inject.Inject;
 
 public class IscsiStorageView extends AbstractStorageView<IscsiStorageModel> implements HasValidation {
 
@@ -71,12 +70,34 @@ public class IscsiStorageView extends AbstractStorageView<IscsiStorageModel> imp
     @Ignore
     IscsiLunToTargetView iscsiLunToTargetView;
 
-    @Inject
-    public IscsiStorageView() {
+    double treeCollapsedHeight = 208, treeExpandedHeight = 306, lunsTreeHeight = 344;
+    double tabPanelHeight = 368, tabContentHeight = 340, tabHeight = 175;
+    double textTop = 75, textLeft = -43, textWidth = 100;
+
+    protected static final CommonApplicationConstants constants = GWT.create(CommonApplicationConstants.class);
+
+    public IscsiStorageView(boolean multiSelection) {
+        this.multiSelection = multiSelection;
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        localize(ClientGinjectorProvider.instance().getApplicationConstants());
+        localize(constants);
         addStyles();
         Driver.driver.initialize(this);
+    }
+
+    public IscsiStorageView(boolean multiSelection,
+            double treeCollapsedHeight, double treeExpandedHeight, double lunsTreeHeight,
+            double tabPanelHeight, double tabContentHeight, double tabHeight,
+            double textTop, double textLeft) {
+        this(multiSelection);
+
+        this.treeCollapsedHeight = treeCollapsedHeight;
+        this.treeExpandedHeight = treeExpandedHeight;
+        this.lunsTreeHeight = lunsTreeHeight;
+        this.tabPanelHeight = tabPanelHeight;
+        this.tabContentHeight = tabContentHeight;
+        this.tabHeight = tabHeight;
+        this.textTop = textTop;
+        this.textLeft = textLeft;
     }
 
     void addStyles() {
@@ -85,7 +106,7 @@ public class IscsiStorageView extends AbstractStorageView<IscsiStorageModel> imp
         targetsToLunTab.setTabLabelStyle(style.dialogTab());
     }
 
-    void localize(ApplicationConstants constants) {
+    void localize(CommonApplicationConstants constants) {
         lunToTargetsTab.setLabel(constants.storageIscsiPopupLunToTargetsTabLabel());
         targetsToLunTab.setLabel(constants.storageIscsiPopupTargetsToLunTabLabel());
     }
@@ -141,8 +162,21 @@ public class IscsiStorageView extends AbstractStorageView<IscsiStorageModel> imp
 
     void initLists(IscsiStorageModel object) {
         // Create discover panel and storage lists
-        iscsiTargetToLunView = new IscsiTargetToLunView(208, 306);
-        iscsiLunToTargetView = new IscsiLunToTargetView();
+        iscsiTargetToLunView = new IscsiTargetToLunView(treeCollapsedHeight, treeExpandedHeight, false, multiSelection);
+        iscsiLunToTargetView = new IscsiLunToTargetView(lunsTreeHeight, multiSelection);
+
+        targetsToLunsTabContentPanel.getElement().getStyle().setHeight(tabPanelHeight, Unit.PX);
+        lunsToTargetsTabContentPanel.getElement().getStyle().setHeight(tabPanelHeight, Unit.PX);
+        dialogTabPanel.getElement().getStyle().setHeight(tabContentHeight, Unit.PX);
+        targetsToLunTab.getElement().getStyle().setHeight(tabHeight, Unit.PX);
+        lunToTargetsTab.getElement().getStyle().setHeight(tabHeight, Unit.PX);
+
+        targetsToLunTab.getTabLabel().getElement().getStyle().setTop(textTop, Unit.PX);
+        targetsToLunTab.getTabLabel().getElement().getStyle().setLeft(textLeft, Unit.PX);
+        targetsToLunTab.getTabLabel().getElement().getStyle().setWidth(tabHeight, Unit.PX);
+        lunToTargetsTab.getTabLabel().getElement().getStyle().setTop(textTop, Unit.PX);
+        lunToTargetsTab.getTabLabel().getElement().getStyle().setLeft(textLeft, Unit.PX);
+        lunToTargetsTab.getTabLabel().getElement().getStyle().setWidth(tabHeight, Unit.PX);
 
         // Add view widgets to panel
         lunsListPanel.add(iscsiLunToTargetView);

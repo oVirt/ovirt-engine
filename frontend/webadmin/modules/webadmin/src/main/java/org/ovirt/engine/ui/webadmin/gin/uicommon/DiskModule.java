@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.webadmin.gin.uicommon;
 
-import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.permissions;
@@ -37,11 +37,11 @@ public class DiskModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public MainModelProvider<DiskImage, DiskListModel> getDiskListProvider(ClientGinjector ginjector,
+    public MainModelProvider<Disk, DiskListModel> getDiskListProvider(ClientGinjector ginjector,
             final Provider<VmDiskPopupPresenterWidget> newPopupProvider,
             final Provider<VmDiskRemovePopupPresenterWidget> removeConfirmPopupProvider,
             final Provider<DisksAllocationPopupPresenterWidget> moveOrCopyPopupProvider) {
-        return new MainTabModelProvider<DiskImage, DiskListModel>(ginjector, DiskListModel.class) {
+        return new MainTabModelProvider<Disk, DiskListModel>(ginjector, DiskListModel.class) {
 
             @Override
             public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(DiskListModel source,

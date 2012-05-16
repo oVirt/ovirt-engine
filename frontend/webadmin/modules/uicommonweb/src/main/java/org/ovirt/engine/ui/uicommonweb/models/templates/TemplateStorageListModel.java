@@ -173,7 +173,7 @@ public class TemplateStorageListModel extends SearchableListModel
         for (DiskModel diskModel : disks)
         {
             items.add(StringFormat.format("%1$s (from Stroage Domain %2$s)", //$NON-NLS-1$
-                    diskModel.getDiskImage().getDiskAlias(),
+                    diskModel.getDisk().getDiskAlias(),
                     ((storage_domains) diskModel.getStorageDomain().getSelectedItem()).getstorage_name()));
         }
         model.setItems(items);
@@ -198,7 +198,7 @@ public class TemplateStorageListModel extends SearchableListModel
         for (DiskModel diskModel : disks)
         {
             RemoveDiskParameters params =
-                    new RemoveDiskParameters(diskModel.getDiskImage().getId(),
+                    new RemoveDiskParameters(diskModel.getDisk().getId(),
                             ((storage_domains) diskModel.getStorageDomain().getSelectedItem()).getId());
             parameters.add(params);
         }
@@ -262,8 +262,8 @@ public class TemplateStorageListModel extends SearchableListModel
 
         for (DiskModel disk : disks)
         {
-            if (disk.getDiskImage().getimageStatus() == ImageStatus.LOCKED
-                    || disk.getDiskImage().getstorage_ids().size() == 1)
+            if (((DiskImage) disk.getDisk()).getimageStatus() == ImageStatus.LOCKED
+                    || ((DiskImage) disk.getDisk()).getstorage_ids().size() == 1)
             {
                 return false;
             }

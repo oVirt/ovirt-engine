@@ -3,27 +3,17 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
 	xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog" xmlns:t="urn:import:org.ovirt.engine.ui.common.widget.dialog.tab">
 
-	<ui:with field='resources' type='org.ovirt.engine.ui.webadmin.ApplicationResources' />
-
-	<ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.IscsiStorageView.WidgetStyle">
+	<ui:style type="org.ovirt.engine.ui.common.widget.uicommon.storage.IscsiStorageView.WidgetStyle">
 		.bar {
 			width: 20px;
-			height: 342px;
 		}
 		
 		.dialogTab {
-			position: absolute;
-			width: 100px;
-			margin-top: 75px;
-			left: -40px;
+			position: relative;
 			white-space: nowrap;
 			-webkit-transform: rotate(-90deg);
 			-moz-transform: rotate(-90deg);
 			-ms-transform: rotate(-90deg);
-		}
-		
-		.tab {
-			height: 175px;
 		}
 		
 		.tabPanel {
@@ -33,7 +23,6 @@
 		.tabContentPanel {
 			padding: 2px;
 			margin-right: 2px;
-			height: 368px;
 		}
 		
 		.validTabContentPanel {
@@ -46,10 +35,6 @@
 		
 		.targetsListPanel {
 			margin-top: 35px;
-		}
-		
-		.expandedlunsListPanel {
-			height: 344px;
 		}
 			
 		.expandedlunsListPanel {
@@ -69,7 +54,7 @@
 		<g:Label ui:field="message" addStyleNames="{style.errorMessageLabel}" />	
 		<t:DialogTabPanel ui:field="dialogTabPanel" height="340px" width="100%" addStyleNames="{style.tabPanel}">
 			<t:tab>
-				<t:DialogTab ui:field="targetsToLunTab" addStyleNames="{style.tab}">
+				<t:DialogTab ui:field="targetsToLunTab">
 					<t:content height="100%">
 						<g:FlowPanel ui:field="targetsToLunsTabContentPanel" addStyleNames="{style.tabContentPanel} {style.validTabContentPanel}">
 							<g:SimplePanel ui:field="targetsToLunsPanel" />
@@ -78,7 +63,7 @@
 				</t:DialogTab>
 			</t:tab>
 			<t:tab>
-				<t:DialogTab ui:field="lunToTargetsTab" addStyleNames="{style.tab}">
+				<t:DialogTab ui:field="lunToTargetsTab">
 					<t:content height="100%">
 						<g:FlowPanel ui:field="lunsToTargetsTabContentPanel" addStyleNames="{style.tabContentPanel} {style.validTabContentPanel}">							
 							<g:SimplePanel ui:field="lunsListPanel" />

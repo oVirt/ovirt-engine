@@ -10,6 +10,8 @@ import java.util.Map;
 
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
+import org.ovirt.engine.core.common.businessentities.Disk;
+import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.NetworkInterface;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
@@ -177,11 +179,11 @@ public final class Linq
 
     }
 
-    public static class DiskByAliasComparer implements Comparator<DiskImage>
+    public static class DiskByAliasComparer implements Comparator<Disk>
     {
 
         @Override
-        public int compare(DiskImage x, DiskImage y)
+        public int compare(Disk x, Disk y)
         {
             String xAlias = x.getDiskAlias();
             String yAlias = y.getDiskAlias();
@@ -215,8 +217,10 @@ public final class Linq
         @Override
         public int compare(DiskModel x, DiskModel y)
         {
-            String xAlias = x.getDiskImage().getDiskAlias();
-            String yAlias = y.getDiskImage().getDiskAlias();
+            String xAlias = x.getDisk() != null ?
+                    x.getDisk().getDiskAlias() : x.getDisk().getDiskAlias();
+            String yAlias = y.getDisk() != null ?
+                    y.getDisk().getDiskAlias() : y.getDisk().getDiskAlias();
 
             if (xAlias == null)
             {
@@ -979,7 +983,7 @@ public final class Linq
         ArrayList<ArrayList<storage_domains>> storageDomainslists = new ArrayList<ArrayList<storage_domains>>();
         for (DiskModel diskModel : disks) {
             ArrayList<storage_domains> list =
-                    getStorageDomainsByIds(diskModel.getDiskImage().getstorage_ids(), storageDomains);
+                    getStorageDomainsByIds(((DiskImage) diskModel.getDisk()).getstorage_ids(), storageDomains);
 
             storageDomainslists.add(list);
         }
@@ -1003,23 +1007,41 @@ public final class Linq
         return entityModelList;
     }
 
-    public static DiskModel DiskImageToModel(DiskImage disk) {
+    public static ArrayList<DiskModel> FilterDisksByType(ArrayList<DiskModel> diskModels, DiskStorageType type)
+    {
+        ArrayList<DiskModel> filteredList = new ArrayList<DiskModel>();
+
+        if (diskModels != null) {
+            for (DiskModel item : diskModels)
+            {
+                if (item.getDisk().getDiskStorageType() == type) {
+                    filteredList.add(item);
+                }
+            }
+        }
+
+        return filteredList;
+    }
+
+    public static DiskModel DiskToModel(Disk disk) {
         DiskModel diskModel = new DiskModel();
         diskModel.setIsNew(true);
-        diskModel.setName(disk.getinternal_drive_mapping());
+        diskModel.getAlias().setEntity(disk.getDiskAlias());
 
-        EntityModel sizeEntity = new EntityModel();
-        sizeEntity.setEntity(disk.getSizeInGigabytes());
-        diskModel.setSize(sizeEntity);
+        if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
+            DiskImage diskImage = (DiskImage) disk;
+            EntityModel sizeEntity = new EntityModel();
+            sizeEntity.setEntity(diskImage.getSizeInGigabytes());
+            diskModel.setSize(sizeEntity);
+            ListModel volumeList = new ListModel();
+            volumeList.setItems((diskImage.getvolume_type() == VolumeType.Preallocated ?
+                    new ArrayList<VolumeType>(Arrays.asList(new VolumeType[] { VolumeType.Preallocated }))
+                    : DataProvider.GetVolumeTypeList()));
+            volumeList.setSelectedItem(diskImage.getvolume_type());
+            diskModel.setVolumeType(volumeList);
+        }
 
-        ListModel volumeList = new ListModel();
-        volumeList.setItems((disk.getvolume_type() == VolumeType.Preallocated ?
-                new ArrayList<VolumeType>(Arrays.asList(new VolumeType[] { VolumeType.Preallocated }))
-                : DataProvider.GetVolumeTypeList()));
-        volumeList.setSelectedItem(disk.getvolume_type());
-        diskModel.setVolumeType(volumeList);
-
-        diskModel.setDiskImage(disk);
+        diskModel.setDisk(disk);
 
         return diskModel;
     }

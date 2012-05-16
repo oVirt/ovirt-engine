@@ -14,7 +14,7 @@ public class VmDiskPopupView extends AbstractModelBoundWidgetPopupView<DiskModel
 
     @Inject
     public VmDiskPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
-        super(eventBus, resources, new VmDiskPopupWidget(constants, resources), "510px", "450px"); //$NON-NLS-1$ //$NON-NLS-2$
+        super(eventBus, resources, new VmDiskPopupWidget(constants, resources), "725px", "635px"); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
 }

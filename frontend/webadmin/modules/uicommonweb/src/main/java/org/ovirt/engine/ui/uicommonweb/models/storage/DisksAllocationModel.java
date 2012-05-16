@@ -307,7 +307,7 @@ public class DisksAllocationModel extends EntityModel
         }
 
         for (DiskModel diskModel : disks) {
-            Guid diskId = diskModel.getDiskImage().getImageId();
+            Guid diskId = ((DiskImage) diskModel.getDisk()).getImageId();
             Guid storageId = null;
             if (!isSingle) {
                 storageId = ((storage_domains) diskModel.getStorageDomain().getSelectedItem()).getId();
@@ -315,7 +315,7 @@ public class DisksAllocationModel extends EntityModel
             else {
                 storageId = ((storage_domains) getStorageDomain().getSelectedItem()).getId();
             }
-            DiskImage diskImage = diskModel.getDiskImage();
+            DiskImage diskImage = (DiskImage) diskModel.getDisk();
             ArrayList<Guid> storageIdList = new ArrayList<Guid>();
             storageIdList.add(storageId);
             diskImage.setstorage_ids(storageIdList);
@@ -364,6 +364,7 @@ public class DisksAllocationModel extends EntityModel
         if (getDisks() == null) {
             return;
         }
+
         for (DiskModel diskModel : getDisks()) {
             if (!diskModel.getStorageDomain().getItems().iterator().hasNext()) {
                 diskModel.getStorageDomain().getInvalidityReasons().add(

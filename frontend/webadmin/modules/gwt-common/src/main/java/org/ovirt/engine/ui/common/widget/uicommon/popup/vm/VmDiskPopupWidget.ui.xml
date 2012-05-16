@@ -3,6 +3,8 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
 	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor">
 
+	<ui:with field='constants' type='org.ovirt.engine.ui.common.CommonApplicationConstants' />
+	
 	<ui:style>
 		.macExample {
 			color: gray;
@@ -11,7 +13,6 @@
 
 		.errorMessageLabel {
 			color: #CD2127;
-			margin-top: 30px;
 			width: 100%;
 			text-align: center;
 		}
@@ -29,29 +30,63 @@
 			position: absolute;
 			bottom: 10px;
 		}
+		
+		.diskTypePanel {
+			padding-top: 10px;
+			padding-bottom: 10px;
+		}
+		
+		.boxEditor {
+			width: 400px;
+		}
+		
+		.checkBoxEditor {
+			padding-left: 50px;
+		}
+		
+		.externalDiskPanel {			
+			width: 100%;
+			margin-top: 10px;	
+		}
 	</ui:style>
 
 	<g:FlowPanel>
 		<g:HorizontalPanel ui:field="topPanel" addStyleNames="{style.topPanel}">
 			<e:EntityModelCheckBoxEditor ui:field="attachEditor" />
 		</g:HorizontalPanel>
+		<g:HorizontalPanel ui:field="diskTypePanel" addStyleNames="{style.diskTypePanel}">
+			<g:RadioButton ui:field="internalDiskRadioButton" ui:name="disktype" ui:text="{constants.internalDisk}" ></g:RadioButton>
+			<g:RadioButton ui:field="externalDiskRadioButton" ui:name="disktype" ui:text="{constants.externalDisk}" ></g:RadioButton>
+		</g:HorizontalPanel>
 		<g:VerticalPanel ui:field="createDiskPanel" addStyleNames="{style.mainPanel}">
-			<e:EntityModelTextBoxEditor ui:field="sizeEditor" />
-			<e:EntityModelTextBoxEditor ui:field="aliasEditor" />
-			<e:EntityModelTextBoxEditor ui:field="descriptionEditor" />
-			<e:ListModelListBoxEditor ui:field="datacenterEditor" />
-			<e:ListModelListBoxEditor ui:field="storageDomainEditor" />
-			<e:ListModelListBoxEditor ui:field="quotaEditor" />
-			<e:ListModelListBoxEditor ui:field="interfaceEditor" />
-			<e:ListModelListBoxEditor ui:field="volumeTypeEditor" />
-			<e:EntityModelCheckBoxEditor ui:field="wipeAfterDeleteEditor" />
-			<e:EntityModelCheckBoxEditor ui:field="isBootableEditor" />
-			<e:EntityModelCheckBoxEditor ui:field="isShareableEditor" />
+			<g:HorizontalPanel>
+				<g:VerticalPanel>
+					<e:EntityModelTextBoxEditor ui:field="sizeEditor" addStyleNames="{style.boxEditor}"/>
+					<e:EntityModelTextBoxEditor ui:field="aliasEditor" addStyleNames="{style.boxEditor}"/>
+					<e:EntityModelTextBoxEditor ui:field="descriptionEditor" addStyleNames="{style.boxEditor}"/>
+					<e:ListModelListBoxEditor ui:field="interfaceEditor" addStyleNames="{style.boxEditor}"/>
+					<e:ListModelListBoxEditor ui:field="volumeTypeEditor" addStyleNames="{style.boxEditor}"/>
+					<e:ListModelListBoxEditor ui:field="datacenterEditor" addStyleNames="{style.boxEditor}"/>					
+					<e:ListModelListBoxEditor ui:field="storageDomainEditor" addStyleNames="{style.boxEditor}"/>
+					<e:ListModelListBoxEditor ui:field="quotaEditor" addStyleNames="{style.boxEditor}"/>
+					<e:ListModelListBoxEditor ui:field="hostListEditor" addStyleNames="{style.boxEditor}"/>
+					<e:ListModelListBoxEditor ui:field="storageTypeEditor" addStyleNames="{style.boxEditor}"/>
+				</g:VerticalPanel>
+				<g:VerticalPanel>
+					<e:EntityModelCheckBoxEditor ui:field="wipeAfterDeleteEditor" addStyleNames="{style.checkBoxEditor}"/>
+					<e:EntityModelCheckBoxEditor ui:field="isBootableEditor" addStyleNames="{style.checkBoxEditor}" />
+					<e:EntityModelCheckBoxEditor ui:field="isShareableEditor" addStyleNames="{style.checkBoxEditor}"/>
+				</g:VerticalPanel>			
+			</g:HorizontalPanel>
 			<g:Label ui:field="message" addStyleNames="{style.errorMessageLabel}" />
+			<g:FlowPanel ui:field="externalDiskPanel" addStyleNames="{style.externalDiskPanel}"/>
 		</g:VerticalPanel>
 		<g:VerticalPanel ui:field="attachDiskPanel" addStyleNames="{style.mainPanel}" visible="false">
 			<g:ScrollPanel height="300px">			
-				<e:EntityModelCellTable ui:field="diskTable" />			
+				<g:VerticalPanel>
+					<e:EntityModelCellTable ui:field="internalDiskTable" />
+					<e:EntityModelCellTable ui:field="externalDiskTable" />
+				</g:VerticalPanel>				
 			</g:ScrollPanel>
 			<e:EntityModelCheckBoxEditor ui:field="isPluggedEditor" addStyleNames="{style.isPluggedEditor}" />
 		</g:VerticalPanel>

@@ -9,9 +9,13 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmDiskOperatinParameterBase;
+import org.ovirt.engine.core.common.businessentities.Disk;
+import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
+import org.ovirt.engine.core.common.businessentities.LUNs;
+import org.ovirt.engine.core.common.businessentities.LunDisk;
 import org.ovirt.engine.core.common.businessentities.PropagateErrors;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -147,7 +151,7 @@ public class DiskListModel extends ListWithDetailsModel
             return;
         }
 
-        ArrayList<DiskImage> disks = Linq.<DiskImage> Cast(value);
+        ArrayList<Disk> disks = Linq.<Disk> Cast(value);
         super.setItems(disks);
     }
 
@@ -175,9 +179,11 @@ public class DiskListModel extends ListWithDetailsModel
     {
         if (getSelectedItem() != null)
         {
-            DiskImage disk = (DiskImage) getSelectedItem();
+            Disk disk = (Disk) getSelectedItem();
 
-            diskVmListModel.setIsAvailable(disk.getVmEntityType() != VmEntityType.TEMPLATE);
+            // TODO: remove (disk.getDiskStorageType() == DiskStorageType.IMAGE) condition
+            diskVmListModel.setIsAvailable(disk.getVmEntityType() != VmEntityType.TEMPLATE
+                    && disk.getDiskStorageType() == DiskStorageType.IMAGE);
             diskTemplateListModel.setIsAvailable(disk.getVmEntityType() == VmEntityType.TEMPLATE);
         }
     }
@@ -259,21 +265,33 @@ public class DiskListModel extends ListWithDetailsModel
         // Save changes.
         storage_domains storageDomain = (storage_domains) model.getStorageDomain().getSelectedItem();
 
-        DiskImage disk = model.getIsNew() ? new DiskImage() : (DiskImage) getSelectedItem();
-        disk.setSizeInGigabytes(Integer.parseInt(model.getSize().getEntity().toString()));
+        Disk disk;
+        if ((Boolean) model.getIsInternal().getEntity()) {
+            DiskImage diskImage = model.getIsNew() ? new DiskImage() : (DiskImage) getSelectedItem();
+            diskImage.setSizeInGigabytes(Integer.parseInt(model.getSize().getEntity().toString()));
+            diskImage.setvolume_type((VolumeType) model.getVolumeType().getSelectedItem());
+            diskImage.setvolume_format(model.getVolumeFormat());
+            if (model.getQuota().getIsAvailable()) {
+                diskImage.setQuotaId(((Quota) model.getQuota().getSelectedItem()).getId());
+            }
+
+            disk = diskImage;
+        }
+        else {
+            LunDisk lunDisk = model.getIsNew() ? new LunDisk() : (LunDisk) getSelectedItem();
+            lunDisk.setLun((LUNs) model.getSanStorageModel().getAddedLuns().get(0).getEntity());
+
+            disk = lunDisk;
+        }
+
         disk.setDiskAlias((String) model.getAlias().getEntity());
         disk.setDiskDescription((String) model.getDescription().getEntity());
         disk.setDiskInterface((DiskInterface) model.getInterface().getSelectedItem());
-        disk.setvolume_type((VolumeType) model.getVolumeType().getSelectedItem());
-        disk.setvolume_format(model.getVolumeFormat());
         disk.setWipeAfterDelete((Boolean) model.getWipeAfterDelete().getEntity());
         disk.setBoot((Boolean) model.getIsBootable().getEntity());
         disk.setShareable((Boolean) model.getIsShareable().getEntity());
         disk.setPlugged((Boolean) model.getIsPlugged().getEntity());
         disk.setPropagateErrors(PropagateErrors.Off);
-        if (model.getQuota().getIsAvailable()) {
-            disk.setQuotaId(((Quota) model.getQuota().getSelectedItem()).getId());
-        }
 
         VdcActionType actionType;
         VmDiskOperatinParameterBase parameters;
@@ -285,7 +303,7 @@ public class DiskListModel extends ListWithDetailsModel
         }
         else
         {
-            parameters = new UpdateVmDiskParameters(Guid.Empty, disk.getId(), disk);
+            parameters = new UpdateVmDiskParameters(Guid.Empty, disk.getId(), (DiskImage) disk);
             actionType = VdcActionType.UpdateVmDisk;
         }
 
@@ -306,13 +324,20 @@ public class DiskListModel extends ListWithDetailsModel
         DiskModel model = (DiskModel) getWindow();
         ArrayList<VdcActionParametersBase> paramerterList = new ArrayList<VdcActionParametersBase>();
 
-        for (EntityModel item : (ArrayList<EntityModel>) model.getAttachableDisks().getSelectedItems())
+        ArrayList<EntityModel> disksToAttach = (Boolean) model.getIsInternal().getEntity() ?
+                (ArrayList<EntityModel>) model.getInternalAttachableDisks().getSelectedItems() :
+                (ArrayList<EntityModel>) model.getExternalAttachableDisks().getSelectedItems();
+
+        for (EntityModel item : disksToAttach)
         {
             DiskModel disk = (DiskModel) item.getEntity();
-            disk.getDiskImage().setPlugged((Boolean) model.getIsPlugged().getEntity());
-            UpdateVmDiskParameters parameters =
-                    new UpdateVmDiskParameters(vm.getId(), disk.getDiskImage().getId(), disk.getDiskImage());
-            paramerterList.add(parameters);
+            if (disk.getDisk().getDiskStorageType() == DiskStorageType.IMAGE) {
+                DiskImage diskImage = (DiskImage) disk.getDisk();
+                diskImage.setPlugged((Boolean) model.getIsPlugged().getEntity());
+                UpdateVmDiskParameters parameters =
+                        new UpdateVmDiskParameters(vm.getId(), diskImage.getId(), diskImage);
+                paramerterList.add(parameters);
+            }
         }
 
         model.StartProgress(null);
@@ -443,9 +468,10 @@ public class DiskListModel extends ListWithDetailsModel
     private void UpdateActionAvailability()
     {
         VM vm = (VM) getEntity();
-        DiskImage disk = (DiskImage) getSelectedItem();
-        ArrayList<DiskImage> disks = getSelectedItems() != null ? (ArrayList<DiskImage>) getSelectedItems() : null;
-        boolean isDiskLocked = disk != null && disk.getimageStatus() == ImageStatus.LOCKED;
+        Disk disk = (Disk) getSelectedItem();
+        ArrayList<Disk> disks = getSelectedItems() != null ? (ArrayList<Disk>) getSelectedItems() : null;
+        boolean isDiskLocked = disk != null && disk.getDiskStorageType() == DiskStorageType.IMAGE &&
+                ((DiskImage) disk).getimageStatus() == ImageStatus.LOCKED;
 
         getNewCommand().setIsExecutionAllowed(true);
         getEditCommand().setIsExecutionAllowed(disk != null && disks != null && disks.size() == 1 && !isDiskLocked);
@@ -455,15 +481,27 @@ public class DiskListModel extends ListWithDetailsModel
     }
 
     private boolean isMoveCommandAvailable() {
-        ArrayList<DiskImage> disks =
-                getSelectedItems() != null ? Linq.<DiskImage> Cast(getSelectedItems()) : new ArrayList<DiskImage>();
+        ArrayList<Disk> disks =
+                getSelectedItems() != null ? Linq.<Disk> Cast(getSelectedItems()) : new ArrayList<Disk>();
 
-        NGuid datacenterId = disks.get(0).getstorage_pool_id();
+        Disk firstDisk = disks.get(0);
+        if (firstDisk.getDiskStorageType() != DiskStorageType.IMAGE) {
+            return false;
+        }
 
-        for (DiskImage disk : disks)
+        NGuid datacenterId = ((DiskImage) firstDisk).getstorage_pool_id();
+
+        for (Disk disk : disks)
         {
-            if (disk.getimageStatus() != ImageStatus.OK || disk.getVmEntityType() == VmEntityType.TEMPLATE ||
-                    !datacenterId.equals(disk.getstorage_pool_id()))
+            if (disk.getDiskStorageType() != DiskStorageType.IMAGE) {
+                return false;
+            }
+
+            DiskImage diskImage = (DiskImage) disk;
+            if (disk.getDiskStorageType() != DiskStorageType.IMAGE ||
+                    diskImage.getimageStatus() != ImageStatus.OK ||
+                    disk.getVmEntityType() == VmEntityType.TEMPLATE ||
+                    !datacenterId.equals(diskImage.getstorage_pool_id()))
             {
                 return false;
             }
@@ -473,15 +511,21 @@ public class DiskListModel extends ListWithDetailsModel
     }
 
     private boolean isCopyCommandAvailable() {
-        ArrayList<DiskImage> disks =
-                getSelectedItems() != null ? Linq.<DiskImage> Cast(getSelectedItems()) : new ArrayList<DiskImage>();
+        ArrayList<Disk> disks =
+                getSelectedItems() != null ? Linq.<Disk> Cast(getSelectedItems()) : new ArrayList<Disk>();
 
-        NGuid datacenterId = disks.get(0).getstorage_pool_id();
+        Disk firstDisk = disks.get(0);
+        if (firstDisk.getDiskStorageType() != DiskStorageType.IMAGE) {
+            return false;
+        }
 
-        for (DiskImage disk : disks)
+        NGuid datacenterId = ((DiskImage) firstDisk).getstorage_pool_id();
+
+        for (Disk disk : disks)
         {
-            if (disk.getimageStatus() != ImageStatus.OK || disk.getVmEntityType() != VmEntityType.TEMPLATE ||
-                    !datacenterId.equals(disk.getstorage_pool_id()))
+            DiskImage diskImage = (DiskImage) disk;
+            if (diskImage.getimageStatus() != ImageStatus.OK || disk.getVmEntityType() != VmEntityType.TEMPLATE ||
+                    !datacenterId.equals(diskImage.getstorage_pool_id()))
             {
                 return false;
             }
@@ -491,12 +535,13 @@ public class DiskListModel extends ListWithDetailsModel
     }
 
     private boolean isRemoveCommandAvailable() {
-        ArrayList<DiskImage> disks =
-                getSelectedItems() != null ? Linq.<DiskImage> Cast(getSelectedItems()) : new ArrayList<DiskImage>();
+        ArrayList<Disk> disks =
+                getSelectedItems() != null ? Linq.<Disk> Cast(getSelectedItems()) : new ArrayList<Disk>();
 
-        for (DiskImage disk : disks)
+        for (Disk disk : disks)
         {
-            if (disk.getimageStatus() == ImageStatus.LOCKED)
+            if (disk.getDiskStorageType() == DiskStorageType.IMAGE
+                    && ((DiskImage) disk).getimageStatus() == ImageStatus.LOCKED)
             {
                 return false;
             }

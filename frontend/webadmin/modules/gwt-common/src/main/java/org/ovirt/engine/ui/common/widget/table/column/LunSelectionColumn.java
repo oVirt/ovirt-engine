@@ -1,4 +1,4 @@
-package org.ovirt.engine.ui.webadmin.widget.table.column;
+package org.ovirt.engine.ui.common.widget.table.column;
 
 import org.ovirt.engine.ui.uicommonweb.models.storage.LunModel;
 
@@ -8,5 +8,9 @@ public abstract class LunSelectionColumn extends Column<LunModel, LunModel> {
 
     public LunSelectionColumn() {
         super(new LunSelectionCell());
+    }
+
+    public LunSelectionColumn(boolean multiSelection) {
+        super(new LunSelectionCell(multiSelection));
     }
 }

@@ -4,7 +4,7 @@ import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.DbUser;
-import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;
 import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
@@ -290,7 +290,7 @@ public interface ManagedComponents {
 
     AsyncProvider<MainTabDiskPresenter> getMainTabDiskPresenter();
 
-    MainModelProvider<DiskImage, DiskListModel> getMainTabDiskModelProvider();
+    MainModelProvider<Disk, DiskListModel> getMainTabDiskModelProvider();
 
     // Presenters & model providers: Main section: sub tabs
 
@@ -400,7 +400,7 @@ public interface ManagedComponents {
 
     AsyncProvider<SubTabVirtualMachineVirtualDiskPresenter> getSubTabVirtualMachineVirtualDiskPresenter();
 
-    SearchableDetailModelProvider<DiskImage, VmListModel, VmDiskListModel> getSubTabVirtualMachineVirtualDiskModelProvider();
+    SearchableDetailModelProvider<Disk, VmListModel, VmDiskListModel> getSubTabVirtualMachineVirtualDiskModelProvider();
 
     AsyncProvider<SubTabVirtualMachineSnapshotPresenter> getSubTabVirtualMachineSnapshotPresenter();
 

@@ -1,9 +1,9 @@
-package org.ovirt.engine.ui.webadmin.section.main.view.popup.storage;
+package org.ovirt.engine.ui.common.widget.uicommon.storage;
 
+import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.SanStorageModelBase;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.BorderStyle;
@@ -24,12 +24,12 @@ public class IscsiImportStorageView extends SanImportStorageView {
     protected void initLists(SanStorageModelBase object) {
         super.initLists(object);
 
-        iscsiTargetToLunView = new IscsiTargetToLunView(74, 173, true);
+        iscsiTargetToLunView = new IscsiTargetToLunView(74, 173, true, true);
         extraContentPanel.add(iscsiTargetToLunView);
     }
 
     @Override
-    void localize(ApplicationConstants constants) {
+    void localize(CommonApplicationConstants constants) {
         listLabel.setText(constants.storageIscsiSelectStorageLabel());
     }
 

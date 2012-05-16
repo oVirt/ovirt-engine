@@ -1,11 +1,13 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.storage;
 
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
+import org.ovirt.engine.ui.common.widget.uicommon.storage.AbstractStorageView;
 import org.ovirt.engine.ui.uicommonweb.models.storage.NfsStorageModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.editor.client.Editor.Path;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;

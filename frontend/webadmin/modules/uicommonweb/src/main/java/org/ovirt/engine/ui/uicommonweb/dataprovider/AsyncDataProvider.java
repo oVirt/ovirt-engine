@@ -44,6 +44,7 @@ import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParamente
 import org.ovirt.engine.core.common.queries.GetAllIsoImagesListParameters;
 import org.ovirt.engine.core.common.queries.GetAllNetworkQueryParamenters;
 import org.ovirt.engine.core.common.queries.GetAllServerCpuListParameters;
+import org.ovirt.engine.core.common.queries.GetAllVdsByStoragePoolParameters;
 import org.ovirt.engine.core.common.queries.GetAllVmSnapshotsByDriveParameters;
 import org.ovirt.engine.core.common.queries.GetAllVmSnapshotsByDriveQueryReturnValue;
 import org.ovirt.engine.core.common.queries.GetAvailableClusterVersionsByStoragePoolParameters;
@@ -686,7 +687,7 @@ public final class AsyncDataProvider {
                 SearchType.VDS), aQuery);
     }
 
-    public static void GetHostListByDataCenter(AsyncQuery aQuery, String dataCenterName) {
+    public static void GetHostListByDataCenter(AsyncQuery aQuery, Guid spId) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -700,8 +701,7 @@ public final class AsyncDataProvider {
                 return new ArrayList<VDS>();
             }
         };
-        Frontend.RunQuery(VdcQueryType.Search, new SearchParameters("Host: datacenter = " + dataCenterName //$NON-NLS-1$
-                + " sortby name", SearchType.VDS), aQuery); //$NON-NLS-1$
+        Frontend.RunQuery(VdcQueryType.GetAllVdsByStoragePool, new GetAllVdsByStoragePoolParameters(spId), aQuery);
     }
 
     public static void GetVmDiskList(AsyncQuery aQuery, Guid vmId, boolean isRefresh) {

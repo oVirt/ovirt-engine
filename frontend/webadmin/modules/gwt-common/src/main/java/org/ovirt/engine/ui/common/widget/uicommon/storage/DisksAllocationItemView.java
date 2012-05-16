@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.common.widget.uicommon.storage;
 
+import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
@@ -119,11 +120,11 @@ public class DisksAllocationItemView extends Composite implements HasEditorDrive
     public void edit(final DiskModel object) {
         Driver.driver.edit(object);
 
-        diskNameLabel.asValueBox().setValue(constants.diskNamePrefix() + object.getName());
+        diskNameLabel.asValueBox().setValue((String) object.getAlias().getEntity());
         diskSizeLabel.asValueBox().setValue((new DiskSizeRenderer<Long>(DiskSizeUnit.GIGABYTE).render(
                 (Long) object.getSize().getEntity())));
 
-        object.getVolumeType().setSelectedItem(object.getDiskImage().getvolume_type());
+        object.getVolumeType().setSelectedItem(((DiskImage) object.getDisk()).getvolume_type());
 
         sourceStorageLabel.getElement().getElementsByTagName("input").getItem(0). //$NON-NLS-1$
                 getStyle().setBorderColor("transparent"); //$NON-NLS-1$

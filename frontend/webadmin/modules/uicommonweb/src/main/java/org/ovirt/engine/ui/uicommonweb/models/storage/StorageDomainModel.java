@@ -50,7 +50,7 @@ public class StorageDomainModel extends EntityModel
 
         for (DiskImage diskImage : getDisks()) {
             DiskModel diskModel = new DiskModel();
-            diskModel.setDiskImage(diskImage);
+            diskModel.setDisk(diskImage);
 
             ListModel storageDomain = new ListModel();
             storageDomain.setSelectedItem(getStorageDomain());

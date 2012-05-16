@@ -1,4 +1,4 @@
-package org.ovirt.engine.ui.webadmin.section.main.view.popup.storage;
+package org.ovirt.engine.ui.common.widget.uicommon.storage;
 
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
@@ -6,8 +6,6 @@ import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.common.widget.HasEditorDriver;
 import org.ovirt.engine.ui.uicommonweb.models.storage.SanStorageModelBase;
-import org.ovirt.engine.ui.webadmin.widget.storage.IscsiDiscoverTargetsView;
-import org.ovirt.engine.ui.webadmin.widget.storage.SanStorageTargetToLunList;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
@@ -41,15 +39,18 @@ public class IscsiTargetToLunView extends Composite implements HasEditorDriver<S
     double treeCollapsedHeight;
     double treeExpandedHeight;
     boolean hideLeaf;
+    boolean multiSelection;
 
     public IscsiTargetToLunView(double treeCollapsedHeight, double treeExpandedHeight) {
-        this(treeCollapsedHeight, treeExpandedHeight, false);
+        this(treeCollapsedHeight, treeExpandedHeight, false, false);
     }
 
-    public IscsiTargetToLunView(double treeCollapsedHeight, double treeExpandedHeight, boolean hideLeaf) {
+    public IscsiTargetToLunView(double treeCollapsedHeight, double treeExpandedHeight,
+            boolean hideLeaf, boolean multiSelection) {
         this.treeCollapsedHeight = treeCollapsedHeight;
         this.treeExpandedHeight = treeExpandedHeight;
         this.hideLeaf = hideLeaf;
+        this.multiSelection = multiSelection;
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         Driver.driver.initialize(this);
@@ -93,7 +94,7 @@ public class IscsiTargetToLunView extends Composite implements HasEditorDriver<S
     void initLists(SanStorageModelBase object) {
         // Create discover panel and storage lists
         iscsiDiscoverTargetsView = new IscsiDiscoverTargetsView();
-        sanStorageTargetToLunList = new SanStorageTargetToLunList(object, hideLeaf);
+        sanStorageTargetToLunList = new SanStorageTargetToLunList(object, hideLeaf, multiSelection);
 
         // Add view widgets to panel
         targetsToLunsDiscoverPanel.add(iscsiDiscoverTargetsView);

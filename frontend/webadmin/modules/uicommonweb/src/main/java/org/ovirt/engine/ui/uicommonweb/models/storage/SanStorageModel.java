@@ -1,5 +1,8 @@
 package org.ovirt.engine.ui.uicommonweb.models.storage;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -15,9 +18,6 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @SuppressWarnings("unused")
 public abstract class SanStorageModel extends SanStorageModelBase
@@ -238,6 +238,7 @@ public abstract class SanStorageModel extends SanStorageModelBase
                 tempVar2.setIsAccessible(a.getAccessible());
                 tempVar2.setIsIncluded(isIncluded);
                 tempVar2.setIsSelected(isIncluded);
+                tempVar2.setEntity(a);
                 LunModel lun = tempVar2;
                 newItems.add(lun);
 

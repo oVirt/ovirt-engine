@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.common.widget.uicommon.vm;
 
-import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
@@ -23,11 +23,11 @@ public class VmDiskListModelTable extends BaseVmDiskListModelTable<VmDiskListMod
 
     private final boolean showMoveButton;
 
-    private ImageUiCommandButtonDefinition<DiskImage> plugButtonDefinition;
-    private ImageUiCommandButtonDefinition<DiskImage> unPlugButtonDefinition;
+    private ImageUiCommandButtonDefinition<Disk> plugButtonDefinition;
+    private ImageUiCommandButtonDefinition<Disk> unPlugButtonDefinition;
 
     public VmDiskListModelTable(
-            SearchableTableModelProvider<DiskImage, VmDiskListModel> modelProvider,
+            SearchableTableModelProvider<Disk, VmDiskListModel> modelProvider,
             EventBus eventBus, ClientStorage clientStorage,
             CommonApplicationResources resources,
             boolean showMoveButton) {
@@ -40,28 +40,28 @@ public class VmDiskListModelTable extends BaseVmDiskListModelTable<VmDiskListMod
     public void initTable(final CommonApplicationConstants constants) {
         super.initTable(constants);
 
-        getTable().addActionButton(new UiCommandButtonDefinition<DiskImage>(getEventBus(), constants.addDisk()) {
+        getTable().addActionButton(new UiCommandButtonDefinition<Disk>(getEventBus(), constants.addDisk()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getNewCommand();
             }
         });
 
-        getTable().addActionButton(new UiCommandButtonDefinition<DiskImage>(getEventBus(), constants.editDisk()) {
+        getTable().addActionButton(new UiCommandButtonDefinition<Disk>(getEventBus(), constants.editDisk()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getEditCommand();
             }
         });
 
-        getTable().addActionButton(new UiCommandButtonDefinition<DiskImage>(getEventBus(), constants.removeDisk()) {
+        getTable().addActionButton(new UiCommandButtonDefinition<Disk>(getEventBus(), constants.removeDisk()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getRemoveCommand();
             }
         });
 
-        plugButtonDefinition = new ImageUiCommandButtonDefinition<DiskImage>(getEventBus(), constants.activateDisk(),
+        plugButtonDefinition = new ImageUiCommandButtonDefinition<Disk>(getEventBus(), constants.activateDisk(),
                 resources.upImage(), resources.upDisabledImage(), true, false) {
             @Override
             protected UICommand resolveCommand() {
@@ -81,7 +81,7 @@ public class VmDiskListModelTable extends BaseVmDiskListModelTable<VmDiskListMod
         };
         getTable().addActionButton(plugButtonDefinition);
 
-        unPlugButtonDefinition = new ImageUiCommandButtonDefinition<DiskImage>(getEventBus(), constants.deactivateDisk(),
+        unPlugButtonDefinition = new ImageUiCommandButtonDefinition<Disk>(getEventBus(), constants.deactivateDisk(),
                 resources.downImage(), resources.downDisabledImage(), true, false) {
             @Override
             protected UICommand resolveCommand() {
@@ -104,7 +104,7 @@ public class VmDiskListModelTable extends BaseVmDiskListModelTable<VmDiskListMod
         attachActivationListenersForModel();
 
         if (showMoveButton) {
-            getTable().addActionButton(new UiCommandButtonDefinition<DiskImage>(getEventBus(), constants.moveDisk()) {
+            getTable().addActionButton(new UiCommandButtonDefinition<Disk>(getEventBus(), constants.moveDisk()) {
                 @Override
                 protected UICommand resolveCommand() {
                     return getModel().getMoveCommand();

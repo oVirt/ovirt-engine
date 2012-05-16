@@ -70,7 +70,7 @@ public class StoragesTree extends AbstractSubTabTree<TemplateStorageListModel, S
         panel.setSpacing(1);
         panel.setWidth("100%"); //$NON-NLS-1$
 
-        DiskImage disk = diskModel.getDiskImage();
+        DiskImage disk = (DiskImage) diskModel.getDisk();
 
         addItemToPanel(panel, new Image(resources.diskImage()), "25px"); //$NON-NLS-1$
         addTextBoxToPanel(panel, new TextBoxLabel(), disk.getDiskAlias(), ""); //$NON-NLS-1$
@@ -112,7 +112,7 @@ public class StoragesTree extends AbstractSubTabTree<TemplateStorageListModel, S
     protected Object getEntityId(Object entity) {
         DiskModel diskModel = (DiskModel) entity;
         storage_domains storageDomain = (storage_domains) diskModel.getStorageDomain().getSelectedItem();
-        return diskModel.getDiskImage().getImageId().toString() + storageDomain.getId().toString();
+        return ((DiskImage) diskModel.getDisk()).getImageId().toString() + storageDomain.getId().toString();
     }
 
     protected ArrayList<Object> getSelectedEntities() {

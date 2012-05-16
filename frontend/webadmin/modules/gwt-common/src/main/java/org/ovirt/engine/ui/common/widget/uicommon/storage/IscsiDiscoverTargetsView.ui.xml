@@ -4,9 +4,7 @@
 	xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog" xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
 	xmlns:t="urn:import:org.ovirt.engine.ui.common.widget.dialog.tab" xmlns:w="urn:import:org.ovirt.engine.ui.common.widget">
 
-	<ui:with field='resources' type='org.ovirt.engine.ui.webadmin.ApplicationResources' />
-
-	<ui:style type="org.ovirt.engine.ui.webadmin.widget.storage.IscsiDiscoverTargetsView.WidgetStyle">
+	<ui:style type="org.ovirt.engine.ui.common.widget.uicommon.storage.IscsiDiscoverTargetsView.WidgetStyle">
 		.content {
 			margin-top: 15px;
 		}

@@ -2,7 +2,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab.disk;
 
 import javax.inject.Inject;
 
-import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.view.AbstractSubTabFormView;
@@ -24,7 +24,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Widget;
 
-public class SubTabDiskGeneralView extends AbstractSubTabFormView<DiskImage, DiskListModel, DiskGeneralModel> implements SubTabDiskGeneralPresenter.ViewDef, Editor<DiskGeneralModel> {
+public class SubTabDiskGeneralView extends AbstractSubTabFormView<Disk, DiskListModel, DiskGeneralModel> implements SubTabDiskGeneralPresenter.ViewDef, Editor<DiskGeneralModel> {
 
     interface ViewUiBinder extends UiBinder<Widget, SubTabDiskGeneralView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
@@ -69,7 +69,7 @@ public class SubTabDiskGeneralView extends AbstractSubTabFormView<DiskImage, Dis
     }
 
     @Override
-    public void setMainTabSelectedItem(DiskImage selectedItem) {
+    public void setMainTabSelectedItem(Disk selectedItem) {
         Driver.driver.edit(getDetailModel());
         formBuilder.showForm(getDetailModel());
     }

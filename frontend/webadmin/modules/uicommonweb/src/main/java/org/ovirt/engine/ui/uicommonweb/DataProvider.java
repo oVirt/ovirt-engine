@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.VdcEventNotificationUtils;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.DbUser;
+import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
@@ -1798,6 +1799,14 @@ public final class DataProvider
         }));
     }
 
+    public static ArrayList<StorageType> GetStorageTypeList()
+    {
+        return new ArrayList<StorageType>(Arrays.asList(new StorageType[] {
+                StorageType.ISCSI,
+                StorageType.FCP
+        }));
+    }
+
     public static ArrayList<DiskInterface> GetDiskInterfaceList(VmOsType osType, Version Version)
     {
         return osType == VmOsType.WindowsXP && (Version == null || Version.compareTo(new Version("2.2")) < 0) ? new ArrayList<DiskInterface>(Arrays.asList(new DiskInterface[] { DiskInterface.IDE })) //$NON-NLS-1$
@@ -1805,7 +1814,7 @@ public final class DataProvider
                         DiskInterface.IDE, DiskInterface.VirtIO }));
     }
 
-    public static DiskInterface GetDefaultDiskInterface(VmOsType osType, List<DiskImage> disks)
+    public static DiskInterface GetDefaultDiskInterface(VmOsType osType, List<Disk> disks)
     {
         return osType == VmOsType.WindowsXP ? DiskInterface.IDE : disks != null && disks.size() > 0 ? disks.get(0)
                 .getDiskInterface() : DiskInterface.VirtIO;

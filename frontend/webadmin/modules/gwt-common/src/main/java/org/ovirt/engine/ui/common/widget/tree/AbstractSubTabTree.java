@@ -263,7 +263,7 @@ public abstract class AbstractSubTabTree<M extends SearchableListModel, R, N> ex
         }
 
         @Override
-        @Source({ CellTable.Style.DEFAULT_CSS, "org/ovirt/engine/ui/webadmin/css/TreeHeaderlessTable.css" })
+        @Source({ CellTable.Style.DEFAULT_CSS, "org/ovirt/engine/ui/common/css/TreeHeaderlessTable.css" })
         TableStyle cellTableStyle();
     }
 

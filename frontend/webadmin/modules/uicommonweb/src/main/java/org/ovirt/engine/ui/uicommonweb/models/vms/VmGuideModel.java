@@ -6,9 +6,12 @@ import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.action.AddVmInterfaceParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
+import org.ovirt.engine.core.common.businessentities.LUNs;
+import org.ovirt.engine.core.common.businessentities.LunDisk;
 import org.ovirt.engine.core.common.businessentities.NetworkStatus;
 import org.ovirt.engine.core.common.businessentities.PropagateErrors;
 import org.ovirt.engine.core.common.businessentities.Quota;
@@ -63,7 +66,7 @@ public class VmGuideModel extends GuideModel
             .vmAddAnotherVirtualDiskAction();
 
     private ArrayList<VmNetworkInterface> nics;
-    private ArrayList<DiskImage> disks;
+    private ArrayList<Disk> disks;
     private ArrayList<network> networks;
     private ArrayList<storage_domains> attachedStorageDomains;
     private storage_domains storage;
@@ -106,7 +109,7 @@ public class VmGuideModel extends GuideModel
                     @Override
                     public void OnSuccess(Object target, Object returnValue) {
                         VmGuideModel vmGuideModel = (VmGuideModel) target;
-                        ArrayList<DiskImage> disks = (ArrayList<DiskImage>) returnValue;
+                        ArrayList<Disk> disks = (ArrayList<Disk>) returnValue;
                         vmGuideModel.disks = disks;
                         vmGuideModel.UpdateOptionsPostData();
                     }
@@ -143,7 +146,7 @@ public class VmGuideModel extends GuideModel
         else
         {
             int ideDiskCount = 0;
-            for (DiskImage a : disks)
+            for (Disk a : disks)
             {
                 if (a.getDiskInterface() == DiskInterface.IDE)
                 {
@@ -364,11 +367,11 @@ public class VmGuideModel extends GuideModel
                     @Override
                     public void OnSuccess(Object target, Object returnValue) {
                         VmGuideModel vmGuideModel = (VmGuideModel) target;
-                        ArrayList<DiskImage> disks = (ArrayList<DiskImage>) returnValue;
+                        ArrayList<Disk> disks = (ArrayList<Disk>) returnValue;
                         vmGuideModel.disks = disks;
 
                         if (disks != null && !disks.isEmpty()) {
-                            AsyncDataProvider.GetStorageDomainById(new AsyncQuery(vmGuideModel,
+                            AsyncDataProvider.GetStorageDomainList(new AsyncQuery(vmGuideModel,
                                     new INewAsyncCallback() {
                                         @Override
                                         public void OnSuccess(Object target, Object returnValue) {
@@ -376,7 +379,7 @@ public class VmGuideModel extends GuideModel
                                             vmGuideModel1.storage = (storage_domains) returnValue;
                                             vmGuideModel1.AddDiskPostData();
                                         }
-                                    }), disks.get(0).getstorage_ids().get(0));
+                                    }), getEntity().getstorage_pool_id());
                         }
                         else
                         {
@@ -493,7 +496,7 @@ public class VmGuideModel extends GuideModel
         model.getInterface().setSelectedItem(DataProvider.GetDefaultDiskInterface(getEntity().getvm_os(), disks));
 
         boolean hasBootableDisk = false;
-        for (DiskImage a : disks)
+        for (Disk a : disks)
         {
             if (a.isBoot())
             {
@@ -596,21 +599,33 @@ public class VmGuideModel extends GuideModel
             // Save changes.
             storage_domains storageDomain = (storage_domains) model.getStorageDomain().getSelectedItem();
 
-            DiskImage tempVar = new DiskImage();
-            tempVar.setSizeInGigabytes(Integer.parseInt(model.getSize().getEntity().toString()));
-            tempVar.setDiskAlias((String) model.getAlias().getEntity());
-            tempVar.setDiskDescription((String) model.getDescription().getEntity());
-            tempVar.setDiskInterface((DiskInterface) model.getInterface().getSelectedItem());
-            tempVar.setvolume_type((VolumeType) model.getVolumeType().getSelectedItem());
-            tempVar.setvolume_format(model.getVolumeFormat());
-            tempVar.setWipeAfterDelete((Boolean) model.getWipeAfterDelete().getEntity());
-            tempVar.setBoot((Boolean) model.getIsBootable().getEntity());
-            tempVar.setShareable((Boolean) model.getIsShareable().getEntity());
-            tempVar.setPropagateErrors(PropagateErrors.Off);
-            if (model.getQuota().getIsAvailable()) {
-                tempVar.setQuotaId(((Quota) model.getQuota().getSelectedItem()).getId());
+            Disk disk;
+            if ((Boolean) model.getIsInternal().getEntity()) {
+                DiskImage diskImage = new DiskImage();
+                diskImage.setSizeInGigabytes(Integer.parseInt(model.getSize().getEntity().toString()));
+                diskImage.setvolume_type((VolumeType) model.getVolumeType().getSelectedItem());
+                diskImage.setvolume_format(model.getVolumeFormat());
+                if (model.getQuota().getIsAvailable()) {
+                    diskImage.setQuotaId(((Quota) model.getQuota().getSelectedItem()).getId());
+                }
+
+                disk = diskImage;
             }
-            DiskImage disk = tempVar;
+            else {
+                LunDisk lunDisk = new LunDisk();
+                lunDisk.setLun((LUNs) model.getSanStorageModel().getAddedLuns().get(0).getEntity());
+
+                disk = lunDisk;
+            }
+
+            disk.setDiskAlias((String) model.getAlias().getEntity());
+            disk.setDiskDescription((String) model.getDescription().getEntity());
+            disk.setDiskInterface((DiskInterface) model.getInterface().getSelectedItem());
+            disk.setWipeAfterDelete((Boolean) model.getWipeAfterDelete().getEntity());
+            disk.setBoot((Boolean) model.getIsBootable().getEntity());
+            disk.setShareable((Boolean) model.getIsShareable().getEntity());
+            disk.setPlugged((Boolean) model.getIsPlugged().getEntity());
+            disk.setPropagateErrors(PropagateErrors.Off);
 
             model.StartProgress(null);
 

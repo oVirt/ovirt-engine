@@ -41,8 +41,11 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     @DefaultMessage("Field content must not exceed {0} characters.")
     String lenValidationFieldMusnotExceed(int maxLength);
 
-    @DefaultMessage("VM''s Storage Domain (''{0}'') is not accessible.")
-    String vmStorageDomainIsNotAccessible(String storageName);
+    @DefaultMessage("Disks'' Storage Domains are not accessible.")
+    String vmStorageDomainIsNotAccessible();
+
+    @DefaultMessage("No Storage Domain is active.")
+    String noActiveStorageDomain();
 
     @DefaultMessage("When {0} {1} {2} is used, kernel path must be non-empty")
     String invalidPath(String kernel, String or, String inetd);

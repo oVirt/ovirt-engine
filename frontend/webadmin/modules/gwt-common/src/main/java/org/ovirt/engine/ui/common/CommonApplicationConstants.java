@@ -672,6 +672,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Storage Domain")
     String storageDomainVmDiskPopup();
 
+    @DefaultStringValue("Use Host")
+    String hostVmDiskPopup();
+
     @DefaultStringValue("Alias")
     String aliasVmDiskPopup();
 
@@ -692,6 +695,9 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("Format")
     String formatVmDiskPopup();
+
+    @DefaultStringValue("Storage Type")
+    String storageTypeVmDiskPopup();
 
     @DefaultStringValue("Wipe after delete")
     String wipeAfterDeleteVmDiskPopup();
@@ -807,4 +813,83 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("Shareable")
     String shareable();
+
+    @DefaultStringValue("Internal")
+    String internalDisk();
+
+    @DefaultStringValue("External (Direct Lun)")
+    String externalDisk();
+
+    @DefaultStringValue("LUNs > Targets")
+    String storageIscsiPopupLunToTargetsTabLabel();
+
+    @DefaultStringValue("Targets > LUNs")
+    String storageIscsiPopupTargetsToLunTabLabel();
+
+    @DefaultStringValue("Address")
+    String storageIscsiPopupAddressLabel();
+
+    @DefaultStringValue("Port")
+    String storageIscsiPopupPortLabel();
+
+    @DefaultStringValue("User Authentication:")
+    String storageIscsiPopupUserAuthLabel();
+
+    @DefaultStringValue("CHAP username")
+    String storageIscsiPopupChapUserLabel();
+
+    @DefaultStringValue("CHAP password")
+    String storageIscsiPopupChapPassLabel();
+
+    @DefaultStringValue("Discover")
+    String storageIscsiPopupDiscoverButtonLabel();
+
+    @DefaultStringValue("Discover Targets")
+    String storageIscsiDiscoverTargetsLabel();
+
+    @DefaultStringValue("Login All")
+    String storageIscsiPopupLoginAllButtonLabel();
+
+    @DefaultStringValue("Login")
+    String storageIscsiPopupLoginButtonLabel();
+
+    @DefaultStringValue("Select Storage Domain")
+    String storageIscsiSelectStorageLabel();
+
+    // San Storage
+    @DefaultStringValue("Target Name")
+    String targetNameSanStorage();
+
+    @DefaultStringValue("Address")
+    String addressSanStorage();
+
+    @DefaultStringValue("Port")
+    String portSanStorage();
+
+    @DefaultStringValue("LUN ID")
+    String lunIdSanStorage();
+
+    @DefaultStringValue("Dev. Size")
+    String devSizeSanStorage();
+
+    @DefaultStringValue("#path")
+    String pathSanStorage();
+
+    @DefaultStringValue("Vendor ID")
+    String vendorIdSanStorage();
+
+    @DefaultStringValue("Product ID")
+    String productIdSanStorage();
+
+    @DefaultStringValue("Serial")
+    String serialSanStorage();
+
+    @DefaultStringValue("Name")
+    String nameSanImStorage();
+
+    @DefaultStringValue("Format")
+    String formatSanImStorage();
+
+    @DefaultStringValue("N/A")
+    String notAvailableLabel();
 }

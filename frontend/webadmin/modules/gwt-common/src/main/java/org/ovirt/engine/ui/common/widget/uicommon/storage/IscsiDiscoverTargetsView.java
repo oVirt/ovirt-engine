@@ -1,9 +1,12 @@
-package org.ovirt.engine.ui.webadmin.widget.storage;
+package org.ovirt.engine.ui.common.widget.uicommon.storage;
 
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
+import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.CommonApplicationResources;
+import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.FocusComposite;
 import org.ovirt.engine.ui.common.widget.HasEditorDriver;
@@ -11,10 +14,6 @@ import org.ovirt.engine.ui.common.widget.UiCommandButton;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
 import org.ovirt.engine.ui.uicommonweb.models.storage.SanStorageModelBase;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
-import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
@@ -91,14 +90,16 @@ public class IscsiDiscoverTargetsView extends FocusComposite implements HasEdito
     @Ignore
     Label messageLabel;
 
+    protected static CommonApplicationConstants constants = GWT.create(CommonApplicationConstants.class);
+    protected static CommonApplicationResources resources = GWT.create(CommonApplicationResources.class);
+    protected static CommonApplicationTemplates templates = GWT.create(CommonApplicationTemplates.class);
+
     @Inject
     public IscsiDiscoverTargetsView() {
         initCheckBoxEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        localize(ClientGinjectorProvider.instance().getApplicationConstants());
-        addStyles(ClientGinjectorProvider.instance().getApplicationTemplates(),
-                ClientGinjectorProvider.instance().getApplicationConstants(),
-                ClientGinjectorProvider.instance().getApplicationResources());
+        localize(constants);
+        addStyles(templates, constants, resources);
         Driver.driver.initialize(this);
 
         addFocusWidget(addressEditor.asValueBox());
@@ -112,8 +113,8 @@ public class IscsiDiscoverTargetsView extends FocusComposite implements HasEdito
         useUserAuthEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
     }
 
-    void addStyles(ApplicationTemplates templates,
-            ApplicationConstants constants, ApplicationResources resources) {
+    void addStyles(CommonApplicationTemplates templates,
+            CommonApplicationConstants constants, CommonApplicationResources resources) {
         useUserAuthEditor.addLabelStyleName(style.userAuthLabel());
         addressEditor.addContentWidgetStyleName(style.textBox());
         portEditor.addContentWidgetStyleName(style.textBox());
@@ -139,7 +140,7 @@ public class IscsiDiscoverTargetsView extends FocusComposite implements HasEdito
                         constants.storageIscsiDiscoverTargetsLabel()));
     }
 
-    void localize(ApplicationConstants constants) {
+    void localize(CommonApplicationConstants constants) {
         addressEditor.setLabel(constants.storageIscsiPopupAddressLabel());
         portEditor.setLabel(constants.storageIscsiPopupPortLabel());
         useUserAuthEditor.setLabel(constants.storageIscsiPopupUserAuthLabel());

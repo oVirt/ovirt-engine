@@ -15,6 +15,11 @@ import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
+import org.ovirt.engine.ui.common.widget.uicommon.storage.AbstractStorageView;
+import org.ovirt.engine.ui.common.widget.uicommon.storage.FcpStorageView;
+import org.ovirt.engine.ui.common.widget.uicommon.storage.IscsiImportStorageView;
+import org.ovirt.engine.ui.common.widget.uicommon.storage.IscsiStorageView;
+import org.ovirt.engine.ui.common.widget.uicommon.storage.SanImportStorageView;
 import org.ovirt.engine.ui.uicommonweb.models.storage.IStorageModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -194,13 +199,13 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
             if (model.getRole() == StorageDomainType.ImportExport) {
                 storageView = new SanImportStorageView();
             } else {
-                storageView = new FcpStorageView();
+                storageView = new FcpStorageView(true);
             }
         } else if (model.getType() == StorageType.ISCSI) {
             if (model.getRole() == StorageDomainType.ImportExport) {
                 storageView = new IscsiImportStorageView();
             } else {
-                storageView = new IscsiStorageView();
+                storageView = new IscsiStorageView(true);
             }
         }
 

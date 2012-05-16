@@ -3,6 +3,8 @@ package org.ovirt.engine.ui.common.widget.uicommon.popup;
 import java.util.ArrayList;
 import java.util.Map.Entry;
 
+import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
+import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -712,7 +714,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
 
                     if (vm.getDisks() != null) {
                         for (DiskModel diskModel : vm.getDisks()) {
-                            if (diskModel.getDiskImage().getimageStatus() == ImageStatus.ILLEGAL) {
+                            if (diskModel.getDisk().getDiskStorageType() == DiskStorageType.IMAGE &&
+                                ((DiskImage) diskModel.getDisk()).getimageStatus() == ImageStatus.ILLEGAL) {
                                 generalWarningMessage.setText(constants.illegalDisksInVm());
                                 return;
                             }

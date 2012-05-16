@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
+import org.ovirt.engine.core.common.businessentities.Disk;
+import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.RepoFileMetaData;
@@ -568,23 +570,31 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                         ArrayList<DiskImage> disks = (ArrayList<DiskImage>) returnValue;
                         Collections.sort(disks, new Linq.DiskByAliasComparer());
                         ArrayList<DiskModel> list = new ArrayList<DiskModel>();
-                        for (DiskImage a : disks)
+
+                        for (Disk disk : disks)
                         {
                             DiskModel diskModel = new DiskModel();
                             diskModel.setIsNew(true);
-                            diskModel.setName(a.getinternal_drive_mapping());
-                            EntityModel tempVar = new EntityModel();
-                            tempVar.setEntity(a.getSizeInGigabytes());
-                            diskModel.setSize(tempVar);
-                            ListModel tempVar2 = new ListModel();
-                            tempVar2.setItems((a.getvolume_type() == VolumeType.Preallocated ? new ArrayList<VolumeType>(Arrays.asList(new VolumeType[] { VolumeType.Preallocated }))
-                                    : DataProvider.GetVolumeTypeList()));
-                            tempVar2.setSelectedItem(a.getvolume_type());
-                            diskModel.setVolumeType(tempVar2);
-                            diskModel.setDiskImage(a);
-                            diskModel.getVolumeType().setIsAvailable(false);
+                            diskModel.getAlias().setEntity(disk.getDiskAlias());
+
+                            if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
+                                DiskImage diskImage = (DiskImage) disk;
+
+                                EntityModel tempVar = new EntityModel();
+                                tempVar.setEntity(diskImage.getSizeInGigabytes());
+                                diskModel.setSize(tempVar);
+                                ListModel tempVar2 = new ListModel();
+                                tempVar2.setItems((diskImage.getvolume_type() == VolumeType.Preallocated ? new ArrayList<VolumeType>(Arrays.asList(new VolumeType[] { VolumeType.Preallocated }))
+                                        : DataProvider.GetVolumeTypeList()));
+                                tempVar2.setSelectedItem(diskImage.getvolume_type());
+                                diskModel.setVolumeType(tempVar2);
+                                diskModel.getVolumeType().setIsAvailable(false);
+                            }
+
+                            diskModel.setDisk(disk);
                             list.add(diskModel);
                         }
+
                         model.setDisks(list);
                         UpdateIsDisksAvailable();
                         InitStorageDomains();
@@ -640,7 +650,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                 for (DiskModel diskModel : disks) {
                     ArrayList<storage_domains> availableDiskStorageDomains = new ArrayList<storage_domains>();
                     diskModel.getQuota().setItems(behavior.getModel().getQuota().getItems());
-                    ArrayList<Guid> storageIds = diskModel.getDiskImage().getstorage_ids();
+                    ArrayList<Guid> storageIds = ((DiskImage) diskModel.getDisk()).getstorage_ids();
 
                     // Active storage domains that the disk resides on
                     ArrayList<storage_domains> activeDiskStorageDomains =
