@@ -2,6 +2,8 @@ package org.ovirt.engine.ui.userportal;
 
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 
+import com.google.gwt.i18n.client.Constants.DefaultStringValue;
+
 public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("oVirt Enterprise Virtualization Engine User Portal")
@@ -212,8 +214,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String snapshotsVm();
 
     @DefaultStringValue("VNC console access is not supported from the user portal.<br/>" +
-                    "Please ask the administrator to configure this " +
-                    "virtual machine to use SPICE for console access.")
+            "Please ask the administrator to configure this " +
+            "virtual machine to use SPICE for console access.")
     String vncNotSupportedMsg();
 
     @DefaultStringValue("Your browser/platform does not support console opening")
@@ -281,4 +283,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     // Header
     @DefaultStringValue("Logged in user")
     String loggedInUser();
+
+    @DefaultStringValue("UserPortal Documentation")
+    String userPortalDoc();
 }

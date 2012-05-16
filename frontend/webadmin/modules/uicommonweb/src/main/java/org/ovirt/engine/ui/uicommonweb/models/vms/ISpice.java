@@ -8,7 +8,6 @@ import org.ovirt.engine.core.compat.Version;
  * case of WPF there will be direct Spice ActiveX instantiation, while Web implementor of Spice will generate
  * corresponding HTML.
  */
-@SuppressWarnings("unused")
 public interface ISpice
 {
     // event EventHandler<ErrorCodeEventArgs> Disconnected;
@@ -119,4 +118,8 @@ public interface ISpice
     void Connect();
 
     void Install();
+
+    void setCurrentVersion(Version currentVersion);
+
+    void setSpiceBaseURL(String spiceBaseURL);
 }

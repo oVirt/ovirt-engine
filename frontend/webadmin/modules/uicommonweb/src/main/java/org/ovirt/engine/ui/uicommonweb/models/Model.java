@@ -19,7 +19,6 @@ import org.ovirt.engine.ui.uicommonweb.models.common.ProgressModel;
 import org.ovirt.engine.ui.uicommonweb.uimode.UiMode;
 import org.ovirt.engine.ui.uicompat.PropertyChangeNotifier;
 
-@SuppressWarnings("unused")
 public class Model extends PropertyChangeNotifier implements IEventListener, ICommandTarget, IProvidePropertyChangedEvent
 {
 

@@ -3,8 +3,6 @@ package org.ovirt.engine.ui.webadmin.section.main.view;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.AbstractSingleSlotView;
-import org.ovirt.engine.ui.uicommonweb.Configurator;
-import org.ovirt.engine.ui.uicommonweb.TypeResolver;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.HeaderPresenterWidget;
 
@@ -12,8 +10,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Cursor;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.HasClickHandlers;
-import com.google.gwt.event.dom.client.MouseOverEvent;
-import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Window;
@@ -72,15 +68,6 @@ public class HeaderView extends AbstractSingleSlotView implements HeaderPresente
         ViewIdHandler.idHandler.generateAndSetIds(this);
         mainTabBarPanel.getElement().getStyle().setZIndex(1);
 
-        enableGuideLink(false);
-        guideLink.addMouseOverHandler(new MouseOverHandler() {
-            @Override
-            public void onMouseOver(MouseOverEvent event) {
-                Configurator configurator = (Configurator) TypeResolver.getInstance().Resolve(Configurator.class);
-                enableGuideLink(configurator.isDocumentationAvailable());
-            }
-        });
-
         // Ensure proper main tab bar position
         setMainTabBarOffset(mainTabBarInitialOffset);
     }
@@ -136,8 +123,9 @@ public class HeaderView extends AbstractSingleSlotView implements HeaderPresente
         return configureLink;
     }
 
-    private void enableGuideLink(boolean enable) {
-        guideLink.getElement().getStyle().setCursor(enable ? Cursor.POINTER : Cursor.DEFAULT);
+    @Override
+    public void setGuideLinkEnabled(boolean enabled) {
+        guideLink.getElement().getStyle().setCursor(enabled ? Cursor.POINTER : Cursor.DEFAULT);
     }
 
 }

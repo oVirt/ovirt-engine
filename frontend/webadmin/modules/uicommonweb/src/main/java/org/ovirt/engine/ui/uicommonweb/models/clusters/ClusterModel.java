@@ -29,7 +29,6 @@ import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
-@SuppressWarnings("unused")
 public class ClusterModel extends Model
 {
 

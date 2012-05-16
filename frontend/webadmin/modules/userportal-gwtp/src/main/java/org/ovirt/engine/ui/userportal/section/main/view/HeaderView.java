@@ -1,15 +1,15 @@
 package org.ovirt.engine.ui.userportal.section.main.view;
 
 import org.ovirt.engine.ui.common.view.AbstractView;
-import org.ovirt.engine.ui.uicommonweb.Configurator;
 import org.ovirt.engine.ui.userportal.ApplicationConstants;
 import org.ovirt.engine.ui.userportal.section.main.presenter.HeaderPresenterWidget;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Cursor;
 import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.event.shared.HasHandlers;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.Window.Location;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -45,12 +45,6 @@ public class HeaderView extends AbstractView implements HeaderPresenterWidget.Vi
     public HeaderView(ApplicationConstants constants) {
         this.logoutLink = new Anchor(constants.logoutLinkLabel());
         this.guideLink = new Anchor(constants.guideLinkLabel());
-        String href = Location.getProtocol()
-                + "//" //$NON-NLS-1$
-                + Location.getHost()
-                + "/rhev-docs" + Configurator.getDocumentationLangPath() + "html/User_Portal_Guide/index.html"; //$NON-NLS-1$ //$NON-NLS-2$
-        this.guideLink.setHref(href);
-        this.guideLink.setTarget("_blank"); //$NON-NLS-1$
         this.aboutLink = new Anchor(constants.aboutLinkLabel());
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         mainTabBarPanel.getElement().getStyle().setZIndex(1);
@@ -84,6 +78,16 @@ public class HeaderView extends AbstractView implements HeaderPresenterWidget.Vi
     @Override
     public void setMainTabPanelVisible(boolean visible) {
         mainTabBarPanel.setVisible(visible);
+    }
+
+    @Override
+    public HasHandlers getGuideLink() {
+        return guideLink;
+    }
+
+    @Override
+    public void setGuideLinkEnabled(boolean enabled) {
+        guideLink.getElement().getStyle().setCursor(enabled ? Cursor.POINTER : Cursor.DEFAULT);
     }
 
 }
