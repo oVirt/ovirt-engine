@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.api.model.AccessControlList;
 import org.ovirt.engine.api.model.AccessProtocols;
 import org.ovirt.engine.api.model.GlusterVolume;
 import org.ovirt.engine.api.model.Option;
@@ -105,6 +106,7 @@ public class GlusterVolumeMapper {
         }
 
         if(fromVolume.getAccessControlList() != null) {
+            volume.setAccessControlList(new AccessControlList());
             volume.getAccessControlList()
                     .getAccessControlList()
                     .addAll(Arrays.asList(fromVolume.getAccessControlList().split(",")));

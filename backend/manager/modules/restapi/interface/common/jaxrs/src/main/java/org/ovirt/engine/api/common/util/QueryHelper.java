@@ -26,6 +26,7 @@ import javax.ws.rs.core.UriInfo;
 
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.DataCenter;
+import org.ovirt.engine.api.model.GlusterVolume;
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.Template;
@@ -66,6 +67,7 @@ public class QueryHelper {
         RETURN_TYPES.put(User.class, "Users" + RETURN_TYPE_SEPARTOR);
         RETURN_TYPES.put(VmPool.class, "Pools" + RETURN_TYPE_SEPARTOR);
         RETURN_TYPES.put(Event.class, "Events" + RETURN_TYPE_SEPARTOR);
+        RETURN_TYPES.put(GlusterVolume.class, "Volumes" + RETURN_TYPE_SEPARTOR);
     }
 
     /**

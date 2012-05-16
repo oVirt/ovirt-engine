@@ -34,6 +34,8 @@ public class GlusterVolumeMapperTest extends AbstractInvertibleMappingTest<Glust
         accessProtocols.add(AccessProtocol.GLUSTER.name());
         accessProtocols.add(AccessProtocol.NFS.name());
 
+        model.getAccessControlList().getAccessControlList().add("*");
+
         return model;
     }
 
