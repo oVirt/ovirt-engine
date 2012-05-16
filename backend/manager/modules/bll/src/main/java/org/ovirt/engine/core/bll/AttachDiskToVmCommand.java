@@ -44,10 +44,15 @@ public class AttachDiskToVmCommand<T extends UpdateVmDiskParameters> extends Abs
         retValue =
                 retValue && isDiskCanBeAddedToVm(getParameters().getDiskInfo())
                         && isDiskPassPCIAndIDELimit(getParameters().getDiskInfo());
-        if (retValue && getVmDeviceDao().exists(new VmDeviceId(disk.getId(), getVmId()))) {
+        if (retValue && (getVmDeviceDao().exists(new VmDeviceId(disk.getId(), getVmId())) && !disk.isShareable())) {
             retValue = false;
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_ALREADY_ATTACHED);
         }
+        if (disk.isShareable() && !isVersionSupportedForShareable()) {
+            retValue = false;
+            addCanDoActionMessage(VdcBllMessages.ACTION_NOT_SUPPORTED_FOR_CLUSTER_POOL_LEVEL);
+        }
+
         if (retValue && disk.getDiskStorageType() == DiskStorageType.IMAGE
                 && getStoragePoolIsoMapDao().get(new StoragePoolIsoMapId(
                         ((DiskImage) disk).getstorage_ids().get(0), getVm().getstorage_pool_id())) == null) {

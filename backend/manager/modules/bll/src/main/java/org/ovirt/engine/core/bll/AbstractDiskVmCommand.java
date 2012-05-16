@@ -6,6 +6,7 @@ import java.util.List;
 import org.ovirt.engine.core.bll.storage.StorageHelperDirector;
 import org.ovirt.engine.core.common.action.VmDiskOperatinParameterBase;
 import org.ovirt.engine.core.common.businessentities.Disk;
+import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.LUNs;
@@ -15,7 +16,8 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage_server_connections;
-import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.vdscommands.HotPlugDiskVDSParameters;
@@ -105,6 +107,15 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperatinParameterBas
             }
         }
         return returnValue;
+    }
+
+    protected boolean isVersionSupportedForShareable() {
+        if (getParameters().getDiskInfo().getDiskStorageType() == DiskStorageType.IMAGE) {
+            return Config.<Boolean> GetValue(ConfigValues.ShareableDiskEnabled,
+                    getStoragePool().getcompatibility_version()
+                            .getValue());
+        }
+        return true;
     }
 
     protected boolean isVmUpOrDown() {

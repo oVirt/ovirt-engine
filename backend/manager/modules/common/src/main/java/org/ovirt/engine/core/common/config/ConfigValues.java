@@ -1140,6 +1140,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     NativeUSBEnabled(357),
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("false")
+    ShareableDiskEnabled(358),
+
     Invalid(65535);
 
     private int intValue;

@@ -376,6 +376,10 @@ select fn_db_add_config_value('VmPoolMonitorMaxAttempts','3','general');
 select fn_db_add_config_value('VmPriorityMaxValue','100','general');
 select fn_db_add_config_value('VncKeyboardLayout','en-us','general');
 select fn_db_add_config_value('WaitForVdsInitInSec','60','general');
+-- Add shareable disk property in vdc_options to support only 3.1 version.
+select fn_db_add_config_value('ShareableDiskEnabled','false','2.2');
+select fn_db_add_config_value('ShareableDiskEnabled','false','3.0');
+select fn_db_add_config_value('ShareableDiskEnabled','true','3.1');
 
 ------------------------------------------------------------------------------------
 --                  Update with override section

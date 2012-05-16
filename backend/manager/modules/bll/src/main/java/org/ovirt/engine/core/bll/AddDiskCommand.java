@@ -84,9 +84,14 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
             if (returnValue && DiskStorageType.LUN == getParameters().getDiskInfo().getDiskStorageType()) {
                 returnValue = checkIfLunDiskCanBeAdded();
             }
-            if (returnValue && getParameters().getDiskInfo().isShareable() && getParameters().getDiskInfo().isBoot()) {
+            if (returnValue && getParameters().getDiskInfo().isShareable()
+                    && (getParameters().getDiskInfo().isBoot())) {
                 returnValue = false;
                 addCanDoActionMessage(VdcBllMessages.SHAREABLE_DISK_IS_NOT_SUPPORTED_FOR_DISK);
+            }
+            if (!isVersionSupportedForShareable()) {
+                returnValue = false;
+                addCanDoActionMessage(VdcBllMessages.ACTION_NOT_SUPPORTED_FOR_CLUSTER_POOL_LEVEL);
             }
         }
         return returnValue;
