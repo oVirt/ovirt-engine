@@ -4,9 +4,10 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.RolesParameterBase;
 import org.ovirt.engine.core.common.businessentities.roles;
 import org.ovirt.engine.core.dal.VdcBllMessages;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class RemoveRoleCommand<T extends RolesParameterBase> extends RolesCommandBase<T> {
+    private static final long serialVersionUID = 429561242493669350L;
+
     public RemoveRoleCommand(T parameters) {
         super(parameters);
 
@@ -15,17 +16,17 @@ public class RemoveRoleCommand<T extends RolesParameterBase> extends RolesComman
     @Override
     protected boolean canDoAction() {
         boolean returnValue = true;
-        roles roles = DbFacade.getInstance().getRoleDAO().get(getParameters().getRoleId());
+        roles roles = getRoleDao().get(getParameters().getRoleId());
         if (roles == null) {
             returnValue = false;
             addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_REMOVE_ROLE_INVALID_ROLE_ID);
         } else {
-            if (CheckIfRoleIsReadOnly(getReturnValue().getCanDoActionMessages())) {
+            if (checkIfRoleIsReadOnly(getReturnValue().getCanDoActionMessages())) {
                 returnValue = false;
                 addCanDoActionMessage(VdcBllMessages.VAR__TYPE__ROLE);
                 addCanDoActionMessage(VdcBllMessages.VAR__ACTION__REMOVE);
             } else {
-                if (DbFacade.getInstance().getPermissionDAO().getAllForRole(getParameters().getRoleId()).size() != 0) {
+                if (getPermissionDAO().getAllForRole(getParameters().getRoleId()).size() != 0) {
                     returnValue = false;
                     addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_REMOVE_ROLE_ATTACHED_TO_PERMISSION);
 
@@ -43,7 +44,7 @@ public class RemoveRoleCommand<T extends RolesParameterBase> extends RolesComman
     @Override
     protected void executeCommand() {
         // cache role for logging
-        DbFacade.getInstance().getRoleDAO().remove(getRole().getId());
+        getRoleDao().remove(getRole().getId());
         setSucceeded(true);
     }
 }

@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -14,9 +13,9 @@ import org.ovirt.engine.core.common.businessentities.RoleType;
 import org.ovirt.engine.core.common.businessentities.roles;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class AttachActionGroupsToRoleCommand<T extends ActionGroupsToRoleParameter> extends RolesCommandBase<T> {
+    private static final long serialVersionUID = -8023416661994574621L;
 
     public AttachActionGroupsToRoleCommand(T params) {
         super(params);
@@ -24,19 +23,19 @@ public class AttachActionGroupsToRoleCommand<T extends ActionGroupsToRoleParamet
 
     @Override
     protected boolean canDoAction() {
-        ArrayList<ActionGroup> attachGroups = getParameters().getActionGroups();
+        List<ActionGroup> attachGroups = getParameters().getActionGroups();
         Guid roleId = getParameters().getRoleId();
-        roles role = DbFacade.getInstance().getRoleDAO().get(roleId);
+        roles role = getRoleDao().get(roleId);
 
-        ArrayList<String> canDoMessages = getReturnValue().getCanDoActionMessages();
-        if (CheckIfRoleIsReadOnly(canDoMessages)) {
+        List<String> canDoMessages = getReturnValue().getCanDoActionMessages();
+        if (checkIfRoleIsReadOnly(canDoMessages)) {
             canDoMessages.add(VdcBllMessages.VAR__TYPE__ROLE.toString());
             canDoMessages.add(VdcBllMessages.VAR__ACTION__ATTACH_ACTION_TO.toString());
             return false;
         }
 
         // Get all groups by ID and check if they already exist
-        ArrayList<ActionGroup> allGroups = getActionGroupsByRoleId(roleId);
+        List<ActionGroup> allGroups = getActionGroupsByRoleId(roleId);
         for (ActionGroup group : attachGroups) {
             if (allGroups.contains(group)) {
                 // group already exist
@@ -56,9 +55,9 @@ public class AttachActionGroupsToRoleCommand<T extends ActionGroupsToRoleParamet
 
     @Override
     protected void executeCommand() {
-        ArrayList<ActionGroup> groups = getParameters().getActionGroups();
+        List<ActionGroup> groups = getParameters().getActionGroups();
         for (ActionGroup group : groups) {
-            DbFacade.getInstance().getRoleGroupMapDAO().save(new RoleGroupMap(group, getParameters().getRoleId()));
+            getRoleGroupMapDAO().save(new RoleGroupMap(group, getParameters().getRoleId()));
             AppendCustomValue("ActionGroup", group.toString(), ", ");
         }
 
@@ -73,7 +72,8 @@ public class AttachActionGroupsToRoleCommand<T extends ActionGroupsToRoleParamet
 
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
-        return Collections.singletonList(new PermissionSubject(MultiLevelAdministrationHandler.SYSTEM_OBJECT_ID, VdcObjectType.System,
+        return Collections.singletonList(new PermissionSubject(MultiLevelAdministrationHandler.SYSTEM_OBJECT_ID,
+                VdcObjectType.System,
                 getActionType().getActionGroup()));
     }
 }

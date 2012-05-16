@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -15,13 +14,13 @@ import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.RoleType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
-@NonTransactiveCommandAttribute(forceCompensation=true)
+@NonTransactiveCommandAttribute(forceCompensation = true)
 public class AddRoleWithActionGroupsCommand<T extends RoleWithActionGroupsParameters> extends
         RolesOperationCommandBase<T> {
+    private static final long serialVersionUID = -114509092576083690L;
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -42,7 +41,7 @@ public class AddRoleWithActionGroupsCommand<T extends RoleWithActionGroupsParame
             addCanDoActionMessage(VdcBllMessages.ACTION_LIST_CANNOT_BE_EMPTY);
             return false;
         }
-        if (DbFacade.getInstance().getRoleDAO().getByName(getRole().getname()) != null) {
+        if (getRoleDao().getByName(getRole().getname()) != null) {
             addCanDoActionMessage(VdcBllMessages.VAR__ACTION__ADD);
             addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_UPDATE_ROLE_NAME);
             return false;
@@ -53,7 +52,7 @@ public class AddRoleWithActionGroupsCommand<T extends RoleWithActionGroupsParame
             return false;
         }
         if (roleType != RoleType.ADMIN) {
-            ArrayList<ActionGroup> actionGroups = getParameters().getActionGroups();
+            List<ActionGroup> actionGroups = getParameters().getActionGroups();
             for (ActionGroup group : actionGroups) {
                 if (group.getRoleType() == RoleType.ADMIN) {
                     addCanDoActionMessage(VdcBllMessages.CANNOT_ADD_ACTION_GROUPS_TO_ROLE_TYPE);
@@ -70,7 +69,7 @@ public class AddRoleWithActionGroupsCommand<T extends RoleWithActionGroupsParame
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
             @Override
             public Void runInTransaction() {
-                DbFacade.getInstance().getRoleDAO().save(getRole());
+                getRoleDao().save(getRole());
                 getCompensationContext().snapshotNewEntity(getRole());
                 getCompensationContext().stateChanged();
                 return null;
@@ -81,7 +80,7 @@ public class AddRoleWithActionGroupsCommand<T extends RoleWithActionGroupsParame
                 VdcActionType.AttachActionGroupsToRole,
                 new ActionGroupsToRoleParameter(getRole().getId(), getParameters().getActionGroups()));
         if (!attachAction.getCanDoAction() || !attachAction.getSucceeded()) {
-            ArrayList<String> failedMsgs = getReturnValue().getExecuteFailedMessages();
+            List<String> failedMsgs = getReturnValue().getExecuteFailedMessages();
             for (String msg : attachAction.getCanDoActionMessages()) {
                 failedMsgs.add(msg);
             }

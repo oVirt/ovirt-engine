@@ -9,9 +9,10 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.RolesOperationsParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class AddRoleCommand<T extends RolesOperationsParameters> extends RolesOperationCommandBase<T> {
+    private static final long serialVersionUID = 2431768094305319479L;
+
     public AddRoleCommand(T parameters) {
         super(parameters);
     }
@@ -19,7 +20,7 @@ public class AddRoleCommand<T extends RolesOperationsParameters> extends RolesOp
     @Override
     protected boolean canDoAction() {
         boolean returnValue = true;
-        if (DbFacade.getInstance().getRoleDAO().getByName(getRole().getname()) != null) {
+        if (getRoleDao().getByName(getRole().getname()) != null) {
             addCanDoActionMessage(VdcBllMessages.VAR__ACTION__ADD);
             addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_UPDATE_ROLE_NAME);
             returnValue = false;
@@ -36,7 +37,7 @@ public class AddRoleCommand<T extends RolesOperationsParameters> extends RolesOp
     @Override
     protected void executeCommand() {
         getRole().setId(Guid.NewGuid());
-        DbFacade.getInstance().getRoleDAO().save(getRole());
+        getRoleDao().save(getRole());
         getReturnValue().setActionReturnValue(getRole().getId());
         setSucceeded(true);
     }

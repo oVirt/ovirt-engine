@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.bll;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ActionGroupsToRoleParameter;
@@ -8,9 +8,9 @@ import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.roles;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class DetachActionGroupsFromRoleCommand<T extends ActionGroupsToRoleParameter> extends RolesCommandBase<T> {
+    private static final long serialVersionUID = -6769273368646220254L;
 
     public DetachActionGroupsFromRoleCommand(T params) {
         super(params);
@@ -19,21 +19,21 @@ public class DetachActionGroupsFromRoleCommand<T extends ActionGroupsToRoleParam
     @Override
     protected boolean canDoAction() {
         Guid roleId = getParameters().getRoleId();
-        roles role = DbFacade.getInstance().getRoleDAO().get(roleId);
+        roles role = getRoleDao().get(roleId);
         if (role == null) {
             addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_ATTACH_ACTION_GROUP_TO_ROLE_ATTACHED);
             return false;
         }
 
-        ArrayList<String> canDoMessages = getReturnValue().getCanDoActionMessages();
-        if (CheckIfRoleIsReadOnly(canDoMessages)) {
+        List<String> canDoMessages = getReturnValue().getCanDoActionMessages();
+        if (checkIfRoleIsReadOnly(canDoMessages)) {
             canDoMessages.add(VdcBllMessages.VAR__TYPE__ROLE.toString());
             canDoMessages.add(VdcBllMessages.VAR__ACTION__DETACH_ACTION_TO.toString());
             return false;
         }
 
-        ArrayList<ActionGroup> groupsToDetach = getParameters().getActionGroups();
-        ArrayList<ActionGroup> allGroups = getActionGroupsByRoleId(roleId);
+        List<ActionGroup> groupsToDetach = getParameters().getActionGroups();
+        List<ActionGroup> allGroups = getActionGroupsByRoleId(roleId);
 
         // Check that target action group exists for this role
         for (ActionGroup group : groupsToDetach) {
@@ -48,9 +48,9 @@ public class DetachActionGroupsFromRoleCommand<T extends ActionGroupsToRoleParam
 
     @Override
     protected void executeCommand() {
-        ArrayList<ActionGroup> groupsToDetach = getParameters().getActionGroups();
+        List<ActionGroup> groupsToDetach = getParameters().getActionGroups();
         for (ActionGroup group : groupsToDetach) {
-            DbFacade.getInstance().getRoleGroupMapDAO().remove(group, getParameters().getRoleId());
+            getRoleGroupMapDAO().remove(group, getParameters().getRoleId());
             AppendCustomValue("ActionGroup", group.toString(), ", ");
         }
         setSucceeded(true);

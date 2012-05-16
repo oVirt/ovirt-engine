@@ -5,9 +5,10 @@ import org.ovirt.engine.core.common.action.RolesOperationsParameters;
 import org.ovirt.engine.core.common.businessentities.roles;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.VdcBllMessages;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class UpdateRoleCommand<T extends RolesOperationsParameters> extends RolesOperationCommandBase<T> {
+    private static final long serialVersionUID = -803075031377664047L;
+
     public UpdateRoleCommand(T parameters) {
         super(parameters);
     }
@@ -20,16 +21,16 @@ public class UpdateRoleCommand<T extends RolesOperationsParameters> extends Role
     @Override
     protected boolean canDoAction() {
         boolean returnValue = true;
-        roles oldRole = DbFacade.getInstance().getRoleDAO().get(getRole().getId());
+        roles oldRole = getRoleDao().get(getRole().getId());
         if (oldRole == null) {
             addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_UPDATE_ROLE_ID);
             returnValue = false;
         } else {
-            if (CheckIfRoleIsReadOnly(getReturnValue().getCanDoActionMessages())) {
+            if (checkIfRoleIsReadOnly(getReturnValue().getCanDoActionMessages())) {
                 returnValue = false;
                 addCanDoActionMessage(VdcBllMessages.VAR__ACTION__UPDATE);
             } else if (!StringHelper.EqOp(getRole().getname(), oldRole.getname())
-                    && DbFacade.getInstance().getRoleDAO().getByName(getRole().getname()) != null) {
+                    && getRoleDao().getByName(getRole().getname()) != null) {
                 addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_UPDATE_ROLE_NAME);
                 returnValue = false;
             } // changing role type isn't allowed
@@ -48,7 +49,7 @@ public class UpdateRoleCommand<T extends RolesOperationsParameters> extends Role
 
     @Override
     protected void executeCommand() {
-        DbFacade.getInstance().getRoleDAO().update(getRole());
+        getRoleDao().update(getRole());
         setSucceeded(true);
     }
 }
