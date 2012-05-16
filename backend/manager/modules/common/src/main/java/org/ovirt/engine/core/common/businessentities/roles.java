@@ -157,11 +157,8 @@ public class roles extends IVdcQueryable implements INotifyPropertyChanged, Busi
     // TODO -This method and its reference code are being tested with the GWT
     // UI.
     // Remove this only when its surely not needed by them.
-    protected void OnPropertyChanged(PropertyChangedEventArgs e) {
-        /* if (PropertyChanged != null) */
-        {
-            /* PropertyChanged(this, e); */
-        }
+    protected void OnPropertyChanged(@SuppressWarnings("unused") PropertyChangedEventArgs e) {
+        // purposely empty
     }
 
     @Override
@@ -173,5 +170,4 @@ public class roles extends IVdcQueryable implements INotifyPropertyChanged, Busi
     public void setId(Guid id) {
         this.id = id;
     }
-
 }
