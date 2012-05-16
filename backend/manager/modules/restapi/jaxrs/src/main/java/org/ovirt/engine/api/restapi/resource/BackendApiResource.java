@@ -276,8 +276,8 @@ public class BackendApiResource
 
     private API addSystemVersion(API api) {
         api.setProductInfo(new ProductInfo());
-        api.getProductInfo().setName("oVirt Enterprise Virtualization Engine");
-        api.getProductInfo().setVendor("Red Hat");
+        api.getProductInfo().setName("oVirt Engine");
+        api.getProductInfo().setVendor("ovirt.org");
         api.getProductInfo().setVersion(VersionHelper.parseVersion(getConfigurationValue(String.class, ConfigurationValues.VdcVersion, null)));
         return api;
     }
