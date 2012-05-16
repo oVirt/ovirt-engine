@@ -7,7 +7,7 @@ import org.ovirt.engine.core.common.businessentities.RoleGroupMap;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
- * <code>RoleGroupMapDOA</code> defines a type for performing CRUD operations on instances of {@link RoleGroup Map}.
+ * <code>RoleGroupMapDOA</code> defines a type for performing CRUD operations on instances of {@link RoleGroupMap}.
  *
  *
  */
