@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.dao;
 
-
 import org.ovirt.engine.core.common.businessentities.BaseDisk;
 import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.compat.Guid;
@@ -42,7 +41,7 @@ public class BaseDiskDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<BaseDisk,
         return get(id) != null;
     }
 
-    private static class BaseDiskRowMapper extends AbstractDiskRowMapper<BaseDisk> {
+    private static class BaseDiskRowMapper extends AbstractBaseDiskRowMapper<BaseDisk> {
         public static BaseDiskRowMapper instance = new BaseDiskRowMapper();
 
         private BaseDiskRowMapper() {

@@ -3,47 +3,31 @@ package org.ovirt.engine.core.dao;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.common.businessentities.BaseDisk;
-import org.ovirt.engine.core.common.businessentities.DiskInterface;
-import org.ovirt.engine.core.common.businessentities.PropagateErrors;
-import org.ovirt.engine.core.compat.Guid;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
+import org.ovirt.engine.core.common.businessentities.Disk;
+import org.ovirt.engine.core.common.businessentities.VmEntityType;
 
 /**
- * Abstract row mapper that maps the fields of {@link BaseDisk}.
+ * Abstract row mapper that maps the fields of {@link Disk}.
  *
  * @param <T> The type of disk to map for.
  */
-abstract class AbstractDiskRowMapper<T extends BaseDisk> implements ParameterizedRowMapper<T> {
+abstract class AbstractDiskRowMapper<T extends Disk> extends AbstractBaseDiskRowMapper<T> {
 
     @Override
     public T mapRow(ResultSet rs, int rowNum) throws SQLException {
-        T disk = createDiskEntity();
+        T entity = super.mapRow(rs, rowNum);
 
-        disk.setId(Guid.createGuidFromString(rs.getString("disk_id")));
-        disk.setInternalDriveMapping(rs.getInt("internal_drive_mapping"));
-        disk.setDiskAlias(rs.getString("disk_alias"));
-        disk.setDiskDescription(rs.getString("disk_description"));
-        String diskInterface = rs.getString("disk_interface");
-        if (!StringUtils.isEmpty(diskInterface)) {
-            disk.setDiskInterface(DiskInterface.valueOf(diskInterface));
-        }
+        String entityType = rs.getString("entity_type");
+        handleEntityType(entityType, entity);
 
-        disk.setWipeAfterDelete(rs.getBoolean("wipe_after_delete"));
-        String propagateErrors = rs.getString("propagate_errors");
-        if (!StringUtils.isEmpty(propagateErrors)) {
-            disk.setPropagateErrors(PropagateErrors.valueOf(propagateErrors));
-        }
-
-        disk.setShareable(rs.getBoolean("shareable"));
-        disk.setBoot(rs.getBoolean("boot"));
-        disk.setAllowSnapshot(rs.getBoolean("allow_snapshot"));
-        return disk;
+        return entity;
     }
 
-    /**
-     * @return The disk entity that is being initialized.
-     */
-    protected abstract T createDiskEntity();
+    private static void handleEntityType(String entityType, Disk entity) {
+        if (entityType != null && !entityType.isEmpty()) {
+            VmEntityType vmEntityType = VmEntityType.valueOf(entityType);
+            entity.setVmEntityType(vmEntityType);
+        }
+    }
+
 }

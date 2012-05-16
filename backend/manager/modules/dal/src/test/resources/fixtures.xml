@@ -192,6 +192,15 @@
             <value>IET</value>
             <value>VIRTUAL-DISK</value>
         </row>
+        <row>
+            <value></value>
+            <value>1IET_00180003</value>
+            <value>fDMzhE-wx3s-zo3q-Qcxd-T0li-yoYU-QvVePk</value>
+            <value>DETACHED-LUN-1</value>
+            <value>1</value>
+            <value>IET</value>
+            <value>VIRTUAL-DISK</value>
+        </row>
     </table>
 
     <table name="LUN_storage_server_connection_map">
@@ -1888,6 +1897,14 @@
             <value>Off</value>
             <value>false</value>
         </row>
+        <row>
+            <value>1b26a52b-b60f-44cb-9f46-3ef333b04a37</value>
+            <value>2</value>
+            <value>VirtIO</value>
+            <value>1</value>
+            <value>Off</value>
+            <value>false</value>
+        </row>
     </table>
 
     <table name="disk_lun_map">
@@ -1896,6 +1913,10 @@
       <row>
             <value>1b26a52b-b60f-44cb-9f46-3ef333b04a35</value>
             <value>1IET_00180002</value>
+      </row>
+      <row>
+            <value>1b26a52b-b60f-44cb-9f46-3ef333b04a37</value>
+            <value>1IET_00180003</value>
       </row>
     </table>
 
@@ -2146,6 +2167,13 @@
             <value>119caae6-5c1b-4a82-9858-dd9e5d2e1401</value>
             <value>9bf7c640-b620-456f-a550-0348f366544b</value>
             <value>1b26a52b-b60f-44cb-9f46-3ef333b04a36</value>
+            <value>19</value>
+        </row>
+        <row>
+            <value>2d2f2522-afd2-4964-a3b1-001cca295e45</value>
+            <value>119caae6-5c1b-4a82-9858-dd9e5d2e1401</value>
+            <value>9bf7c640-b620-456f-a550-0348f366544b</value>
+            <value>1b26a52b-b60f-44cb-9f46-3ef333b04a37</value>
             <value>19</value>
         </row>
     </table>

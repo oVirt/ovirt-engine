@@ -167,4 +167,9 @@ public class FixturesTool {
      * Predefined floating disk for testing.
      */
     protected static final Guid FLOATING_DISK_ID = new Guid("1b26a52b-b60f-44cb-9f46-3ef333b04a36");
+
+    /**
+     * Predefined floating lun for testing.
+     */
+    protected static final Guid FLOATING_LUN_ID = new Guid("1b26a52b-b60f-44cb-9f46-3ef333b04a37");
 }

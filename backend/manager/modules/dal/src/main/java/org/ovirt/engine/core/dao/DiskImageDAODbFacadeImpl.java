@@ -8,7 +8,6 @@ import org.apache.commons.lang.NotImplementedException;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
-import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.compat.Guid;
@@ -175,15 +174,6 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
             entity.setQuotaName(rs.getString("quota_name"));
             entity.setIsQuotaDefault(rs.getBoolean("is_default_quota"));
             entity.setQuotaEnforcementType(QuotaEnforcementTypeEnum.forValue(rs.getInt("quota_enforcement_type")));
-            String entityType = rs.getString("entity_type");
-            handleEntityType(entityType, entity);
-        }
-
-        private static void handleEntityType(String entityType, DiskImage entity) {
-            if (entityType != null && !entityType.isEmpty()) {
-                VmEntityType vmEntityType = VmEntityType.valueOf(entityType);
-                entity.setVmEntityType(vmEntityType);
-            }
         }
 
         @Override

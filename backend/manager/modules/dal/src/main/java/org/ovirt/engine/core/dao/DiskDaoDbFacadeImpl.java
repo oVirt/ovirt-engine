@@ -7,7 +7,6 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.LunDisk;
-import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskImageDAODbFacadeImpl.DiskImageRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -96,7 +95,6 @@ public class DiskDaoDbFacadeImpl extends DefaultReadDaoDbFacade<Disk, Guid> impl
         @Override
         public LunDisk mapRow(ResultSet rs, int rowNum) throws SQLException {
             LunDisk disk = super.mapRow(rs, rowNum);
-            disk.setVmEntityType(VmEntityType.valueOf(rs.getString("entity_type")));
             disk.setLun(LunDAODbFacadeImpl.MAPPER.mapRow(rs, rowNum));
             return disk;
         }

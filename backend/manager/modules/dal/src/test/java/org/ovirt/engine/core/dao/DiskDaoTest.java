@@ -5,7 +5,10 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.Disk;
@@ -127,8 +130,14 @@ public class DiskDaoTest extends BaseReadDaoTestCase<Guid, Disk, DiskDao> {
      *            The result to check
      */
     private static void assertFullGetAllAttachableDisksByPoolId(List<Disk> disks) {
-        assertEquals("There should be only one floating disk", 1, disks.size());
-        assertEquals("Wrong floating disk", FixturesTool.FLOATING_DISK_ID, disks.get(0).getId());
+        assertEquals("There should be only two attachable disks", 2, disks.size());
+        Set<Guid> expectedFloatingDiskIds =
+                new HashSet<Guid>(Arrays.asList(FixturesTool.FLOATING_DISK_ID, FixturesTool.FLOATING_LUN_ID));
+        Set<Guid> actualFloatingDiskIds = new HashSet<Guid>();
+        for (Disk disk : disks) {
+            actualFloatingDiskIds.add(disk.getId());
+        }
+        assertEquals("Wrong attachable disks", expectedFloatingDiskIds, actualFloatingDiskIds);
     }
 
 }
