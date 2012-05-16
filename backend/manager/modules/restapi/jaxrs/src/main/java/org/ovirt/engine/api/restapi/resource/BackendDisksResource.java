@@ -58,7 +58,7 @@ public class BackendDisksResource
 
     @Override
     protected boolean matchEntity(DiskImage entity, Guid id) {
-        return id != null && (id.equals(entity.getId()) || id.equals(entity.getvm_snapshot_id()));
+        return id != null && (id.equals(entity.getId()));
     }
 
     @Override

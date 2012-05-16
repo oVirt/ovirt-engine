@@ -116,7 +116,7 @@ public class BackendDisksResourceTest
                                   new Object[] { PARENT_ID },
                                   true,
                                   true,
-                                  GUIDS[2], // VM snapshot ID
+                                  GUIDS[0],
                                   asList(GUIDS[3]),
                                   asList(new AsyncTaskStatus(asyncStatus)),
                                   VdcQueryType.GetAllDisksByVmId,
@@ -151,7 +151,7 @@ public class BackendDisksResourceTest
                                   new Object[] { PARENT_ID },
                                   true,
                                   true,
-                                  GUIDS[2], // VM snapshot ID
+                                  GUIDS[0],
                                   asList(GUIDS[3]),
                                   asList(new AsyncTaskStatus(AsyncTaskStatusEnum.finished)),
                                   VdcQueryType.GetAllDisksByVmId,
@@ -184,7 +184,7 @@ public class BackendDisksResourceTest
                                   new Object[] { PARENT_ID, GUIDS[3] },
                                   true,
                                   true,
-                                  GUIDS[2], // VM snapshot ID
+                                  GUIDS[0],
                                   asList(GUIDS[3]),
                                   asList(new AsyncTaskStatus(AsyncTaskStatusEnum.finished)),
                                   VdcQueryType.GetAllDisksByVmId,
