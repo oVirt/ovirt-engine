@@ -187,7 +187,7 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
 
     public final static ValueValidationFunction validTimeSpan = new ValueValidationFunction() {
         public boolean isValid(String field, String value) {
-            return TimeSpan.TryParse(value, new RefObject<TimeSpan>());
+            return TimeSpan.tryParse(value) != null;
         }
     };
 

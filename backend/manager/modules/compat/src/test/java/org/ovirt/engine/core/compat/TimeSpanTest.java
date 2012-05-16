@@ -69,12 +69,10 @@ public class TimeSpanTest extends TestCase {
     }
 
     public void testTryParse() {
-        RefObject<TimeSpan> ref = new RefObject<TimeSpan>();
-        TimeSpan.TryParse("-1.02:03:04.05", ref);
-        assertNotNull("A TimeSpan should be returned", ref.argvalue);
-        assertEquals("days", -1, ref.argvalue.Days);
-        ref = new RefObject<TimeSpan>();
-        TimeSpan.TryParse("A Long Time", ref);
-        assertNull("A TimeSpan should not be returned", ref.argvalue);
+        TimeSpan ref = TimeSpan.tryParse("-1.02:03:04.05");
+        assertNotNull("A TimeSpan should be returned", ref);
+        assertEquals("days", -1, ref.Days);
+        ref = TimeSpan.tryParse("A Long Time");
+        assertNull("A TimeSpan should not be returned", ref);
     }
 }

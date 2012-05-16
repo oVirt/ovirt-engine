@@ -175,16 +175,13 @@ public class TimeSpan implements Comparable<TimeSpan>, Serializable {
         return StringFormat.format("%s%d.%02d:%02d:%02d.%03d", prefix, Days, Hours, Minutes, Seconds, Milliseconds);
     }
 
-    public static boolean TryParse(String string, RefObject<TimeSpan> ref) {
-        boolean returnValue = false;
+    public static TimeSpan tryParse(String string) {
         try {
-            TimeSpan result = TimeSpan.Parse(string);
-            returnValue = true;
-            ref.argvalue = result;
+            return TimeSpan.Parse(string);
         } catch (CompatException e) {
-            // eat it, return false
+            // eat it, return null
+            return null;
         }
-        return returnValue;
     }
 
     @Override
