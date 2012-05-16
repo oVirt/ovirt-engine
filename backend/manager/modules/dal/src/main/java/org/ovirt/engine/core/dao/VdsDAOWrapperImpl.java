@@ -149,6 +149,18 @@ public class VdsDAOWrapperImpl extends BaseDAOWrapperImpl implements VdsDAO {
     }
 
     @Override
+    public List<VDS> getAllForStoragePool(Guid storagePool) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public List<VDS> getAllForStoragePool(Guid storagePool, Guid userID, boolean isFiltered) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
     public List<VDS> getListForSpmSelection(Guid storagePoolId) {
         // TODO Auto-generated method stub
         return null;

@@ -769,6 +769,22 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
+Create or replace FUNCTION GetVdsByStoragePoolId(v_storage_pool_id UUID, v_user_id UUID, v_is_filtered boolean) RETURNS SETOF vds
+   AS $procedure$
+BEGIN
+   BEGIN
+      RETURN QUERY SELECT DISTINCT vds.*
+      FROM   vds
+      WHERE  storage_pool_id = v_storage_pool_id
+      AND    (NOT v_is_filtered OR EXISTS (SELECT 1
+                                           FROM   user_vds_permissions_view
+                                           WHERE  user_id = v_user_id AND entity_id = vds_id));
+   END;
+   RETURN;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
 -- Returns all VDS for a given cluster and having given status
 CREATE OR REPLACE FUNCTION getVdsForVdsGroupWithStatus(v_vds_group_id UUID, v_status integer) RETURNS SETOF vds
     AS $procedure$

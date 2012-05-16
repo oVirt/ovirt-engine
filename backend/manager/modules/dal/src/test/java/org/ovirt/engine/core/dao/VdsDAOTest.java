@@ -296,4 +296,61 @@ public class VdsDAOTest extends BaseDAOTestCase {
             assertEquals(vds.getvds_group_id(), existingVds.getvds_group_id());
         }
     }
+
+    /**
+     * Asserts that the right collection of hosts is returned for a storage pool with hosts
+     */
+    @Test
+    public void testGetAllForStoragePool() {
+        List<VDS> result = dao.getAllForStoragePool(existingVds.getstorage_pool_id());
+        assertGetAllForStoragePoolCorrectResult(result);
+    }
+
+    /**
+     * Asserts that an empty collection of hosts is returned for a storage pool with no hosts
+     */
+    @Test
+    public void testGetAllForStoragePoolNoVds() {
+        List<VDS> result = dao.getAllForStoragePool(Guid.NewGuid());
+        assertIncorrectGetResult(result);
+    }
+
+    /**
+     * Asserts that the right collection of hosts is returned for a storage pool with hosts,
+     * with a privileged user
+     */
+    @Test
+    public void testGetAllForStoragePoolWithPermissions() {
+        List<VDS> result = dao.getAllForStoragePool(existingVds.getstorage_pool_id(), PRIVILEGED_USER_ID, true);
+        assertGetAllForStoragePoolCorrectResult(result);
+    }
+
+    /**
+     * Asserts that the right collection of hosts is returned for a storage pool with hosts,
+     * with an unprivileged user, but with the permissions mechanism disabled
+     */
+    @Test
+    public void testGetAllForStoragePoolWithNoPermissionsFilteringDisabled() {
+        List<VDS> result = dao.getAllForStoragePool(existingVds.getstorage_pool_id(), UNPRIVILEGED_USER_ID, false);
+        assertGetAllForStoragePoolCorrectResult(result);
+    }
+
+    /**
+     * Asserts that an empty collection of hosts is returned for a storage pool with hosts,
+     * with an unprivileged user
+     */
+    @Test
+    public void testGetAllForStoragePoolWithNoPermissions() {
+        List<VDS> result = dao.getAllForStoragePool(existingVds.getstorage_pool_id(), UNPRIVILEGED_USER_ID, true);
+        assertIncorrectGetResult(result);
+    }
+
+    private void assertGetAllForStoragePoolCorrectResult(List<VDS> result) {
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
+
+        for (VDS vds : result) {
+            assertEquals("Wrong storage pool for VDS", existingVds.getstorage_pool_id(), vds.getstorage_pool_id());
+        }
+    }
 }

@@ -126,6 +126,21 @@ public class VdsDAODbFacadeImpl extends BaseDAODbFacade implements VdsDAO {
     }
 
     @Override
+    public List<VDS> getAllForStoragePool(Guid storagePool) {
+        return getAllForStoragePool(storagePool, null, false);
+    }
+
+    @Override
+    public List<VDS> getAllForStoragePool(Guid storagePool, Guid userID, boolean isFiltered) {
+        return getCallsHandler().executeReadList("GetVdsByStoragePoolId",
+                VdsRowMapper.instance,
+                getCustomMapSqlParameterSource()
+                        .addValue("storage_pool_id", storagePool)
+                        .addValue("user_id", userID)
+                        .addValue("is_filtered", isFiltered));
+    }
+
+    @Override
     public List<VDS> getAllForVdsGroupWithStatus(Guid vdsGroupId, VDSStatus status) {
         return getCallsHandler().executeReadList("getVdsForVdsGroupWithStatus",
                 new VdsRowMapper(),
@@ -147,8 +162,9 @@ public class VdsDAODbFacadeImpl extends BaseDAODbFacade implements VdsDAO {
     }
 
     static final class VdsRowMapper implements ParameterizedRowMapper<VDS> {
-        //single instance
+        // single instance
         public final static VdsRowMapper instance = new VdsRowMapper();
+
         @Override
         public VDS mapRow(final ResultSet rs, final int rowNum) throws SQLException {
             final VDS entity = new VDS();
