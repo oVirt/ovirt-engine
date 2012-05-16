@@ -11,9 +11,9 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class RemovePermissionCommand<T extends PermissionsOperationsParametes> extends PermissionsCommandBase<T> {
+    private static final long serialVersionUID = 1096724401612648520L;
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -30,16 +30,17 @@ public class RemovePermissionCommand<T extends PermissionsOperationsParametes> e
 
     @Override
     protected boolean canDoAction() {
-        boolean returnValue=true;
-        permissions p = DbFacade.getInstance().getPermissionDAO().get(getParameters().getPermission().getId());
+        boolean returnValue = true;
+        permissions p = getPermissionDAO().get(getParameters().getPermission().getId());
         if (p.getad_element_id().equals(PredefinedUsers.ADMIN_USER.getId()) &&
-           (p.getrole_id().equals(PredefinedRoles.SUPER_USER.getId()))) {
+                (p.getrole_id().equals(PredefinedRoles.SUPER_USER.getId()))) {
             addCanDoActionMessage(VdcBllMessages.USER_CANNOT_REMOVE_ADMIN_USER);
             returnValue = false;
         }
-        if(MultiLevelAdministrationHandler.isLastSuperUserPermission(p.getrole_id())) {
-           getReturnValue().getCanDoActionMessages().add(VdcBllMessages.ERROR_CANNOT_REMOVE_LAST_SUPER_USER_ROLE.toString());;
-           returnValue=false;
+        if (MultiLevelAdministrationHandler.isLastSuperUserPermission(p.getrole_id())) {
+            getReturnValue().getCanDoActionMessages()
+                    .add(VdcBllMessages.ERROR_CANNOT_REMOVE_LAST_SUPER_USER_ROLE.toString());
+            returnValue = false;
         }
         if (returnValue && p.getRoleType().equals(RoleType.ADMIN) && !isSystemSuperUser()) {
             addCanDoActionMessage(VdcBllMessages.PERMISSION_REMOVE_FAILED_ONLY_SYSTEM_SUPER_USER_CAN_REMOVE_ADMIN_ROLES);
@@ -57,7 +58,7 @@ public class RemovePermissionCommand<T extends PermissionsOperationsParametes> e
         // check if vm is from pool and detach it
         if (perms.getObjectType().equals(VdcObjectType.VM)
                 && perms.getrole_id().equals(PredefinedRoles.ENGINE_USER.getId())) {
-            VM vm = DbFacade.getInstance().getVmDAO().get(perms.getObjectId());
+            VM vm = getVmDAO().get(perms.getObjectId());
             if (vm != null && vm.getVmPoolId() != null) {
                 Backend.getInstance().runInternalAction(VdcActionType.DetachUserFromVmFromPool,
                         new VmPoolSimpleUserParameters(vm.getVmPoolId(), userId),
@@ -65,8 +66,8 @@ public class RemovePermissionCommand<T extends PermissionsOperationsParametes> e
             }
         }
 
-        DbFacade.getInstance().getPermissionDAO().remove(perms.getId());
-        DbFacade.getInstance().updateLastAdminCheckStatus(userId);
+        getPermissionDAO().remove(perms.getId());
+        getDbFacade().updateLastAdminCheckStatus(userId);
         setSucceeded(true);
     }
 

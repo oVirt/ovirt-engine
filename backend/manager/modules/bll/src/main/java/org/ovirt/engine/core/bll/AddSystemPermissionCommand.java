@@ -4,6 +4,7 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.PermissionsOperationsParametes;
 
 public class AddSystemPermissionCommand<T extends PermissionsOperationsParametes> extends AddPermissionCommand<T> {
+    private static final long serialVersionUID = 3325072271509716045L;
 
     public AddSystemPermissionCommand(T parameters) {
         super(parameters);

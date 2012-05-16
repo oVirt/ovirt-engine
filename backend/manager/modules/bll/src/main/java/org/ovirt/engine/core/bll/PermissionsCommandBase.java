@@ -10,12 +10,13 @@ import org.ovirt.engine.core.common.businessentities.ad_groups;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.businessentities.roles;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogField;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;
 
-@CustomLogFields({ @CustomLogField("RoleName"), @CustomLogField("VdcObjectType"), @CustomLogField("VdcObjectName"), @CustomLogField("SubjectName")})
+@CustomLogFields({ @CustomLogField("RoleName"), @CustomLogField("VdcObjectType"), @CustomLogField("VdcObjectName"),
+        @CustomLogField("SubjectName") })
 public abstract class PermissionsCommandBase<T extends PermissionsOperationsParametes> extends CommandBase<T> {
+    private static final long serialVersionUID = -2515073672998232982L;
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -50,11 +51,11 @@ public abstract class PermissionsCommandBase<T extends PermissionsOperationsPara
      */
     public String getVdcObjectName() {
         permissions perms = getParameters().getPermission();
-        return DbFacade.getInstance().getEntityNameByIdAndType(perms.getObjectId(), perms.getObjectType());
+        return getDbFacade().getEntityNameByIdAndType(perms.getObjectId(), perms.getObjectType());
     }
 
     public String getRoleName() {
-        roles role = DbFacade.getInstance().getRoleDAO().get(getParameters().getPermission().getrole_id());
+        roles role = getRoleDao().get(getParameters().getPermission().getrole_id());
         return role == null ? null : role.getname();
     }
 
@@ -68,22 +69,20 @@ public abstract class PermissionsCommandBase<T extends PermissionsOperationsPara
 
     public void initUserAndGroupData() {
         if (_dbUser == null) {
-            _dbUser = DbFacade.getInstance().getDbUserDAO().get(getParameters().getPermission().getad_element_id());
+            _dbUser = getDbUserDAO().get(getParameters().getPermission().getad_element_id());
         }
         if (_adGroup == null) {
-            _adGroup =
-                        DbFacade.getInstance().getAdGroupDAO().get(getParameters().getPermission().getad_element_id());
+            _adGroup = getAdGroupDAO().get(getParameters().getPermission().getad_element_id());
         }
     }
 
     protected boolean isSystemSuperUser() {
-        permissions superUserPermission = DbFacade
-                .getInstance()
-                .getPermissionDAO()
-                .getForRoleAndAdElementAndObjectWithGroupCheck(
-                        PredefinedRoles.SUPER_USER.getId(),
-                        getCurrentUser().getUserId(),
-                        MultiLevelAdministrationHandler.SYSTEM_OBJECT_ID);
+        permissions superUserPermission =
+                getPermissionDAO()
+                        .getForRoleAndAdElementAndObjectWithGroupCheck(
+                                PredefinedRoles.SUPER_USER.getId(),
+                                getCurrentUser().getUserId(),
+                                MultiLevelAdministrationHandler.SYSTEM_OBJECT_ID);
         return superUserPermission != null;
     }
 

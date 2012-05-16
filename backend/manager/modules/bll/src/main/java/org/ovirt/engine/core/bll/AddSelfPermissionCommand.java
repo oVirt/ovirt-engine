@@ -5,6 +5,8 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class AddSelfPermissionCommand<T extends PermissionsOperationsParametes> extends AddPermissionCommand<T> {
+    private static final long serialVersionUID = 3521308383376252911L;
+
     public AddSelfPermissionCommand(T parameters) {
         super(parameters);
     }

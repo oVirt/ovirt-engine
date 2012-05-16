@@ -13,7 +13,6 @@ import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.businessentities.roles;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -53,7 +52,8 @@ public class AddPermissionCommand<T extends PermissionsOperationsParametes> exte
         // check if no ad_element_id in permission or id doesn't equal to sent
         // user or group
         if ((adElementId == null)
-                || (getParameters().getVdcUser() != null && !getParameters().getVdcUser().getUserId()
+                || (getParameters().getVdcUser() != null && !getParameters().getVdcUser()
+                        .getUserId()
                         .equals(adElementId))
                 || (getParameters().getAdGroup() != null && !getParameters().getAdGroup().getid().equals(adElementId))) {
             addCanDoActionMessage(VdcBllMessages.PERMISSION_ADD_FAILED_USER_ID_MISMATCH);
@@ -78,7 +78,7 @@ public class AddPermissionCommand<T extends PermissionsOperationsParametes> exte
 
         // don't allow adding permissions to vms from pool externally
         if (!isInternalExecution() && perm.getObjectType() == VdcObjectType.VM) {
-            VM vm = DbFacade.getInstance().getVmDAO().get(perm.getObjectId());
+            VM vm = getVmDAO().get(perm.getObjectId());
             if (vm != null && vm.getVmPoolId() != null) {
                 addCanDoActionMessage(VdcBllMessages.PERMISSION_ADD_FAILED_VM_IN_POOL);
                 return false;
