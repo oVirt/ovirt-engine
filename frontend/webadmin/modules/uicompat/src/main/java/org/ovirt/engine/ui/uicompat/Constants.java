@@ -750,7 +750,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 	@DefaultStringValue("VDSM Version -")
 	String VDSMVersionAbout();
 
-	@DefaultStringValue("oVirt Enterprise Virtualization Engine Hypervisor Hosts:")
+	@DefaultStringValue("oVirt Engine Hypervisor Hosts:")
 	String oVirtEnterpriseVirtualizationEngineHypervisorHostsAbout();
 
 	@DefaultStringValue("[No Hosts]")

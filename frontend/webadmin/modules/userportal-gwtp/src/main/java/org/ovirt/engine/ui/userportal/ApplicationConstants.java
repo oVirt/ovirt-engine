@@ -6,7 +6,7 @@ import com.google.gwt.i18n.client.Constants.DefaultStringValue;
 
 public interface ApplicationConstants extends CommonApplicationConstants {
 
-    @DefaultStringValue("oVirt Enterprise Virtualization Engine User Portal")
+    @DefaultStringValue("oVirt Engine User Portal")
     String applicationTitle();
 
     @DefaultStringValue("About")

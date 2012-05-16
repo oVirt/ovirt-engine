@@ -242,7 +242,7 @@ public class AboutModel extends Model
 		if (getShowOnlyVersion() == false)
 		{
 			sb.append("\n");
-			sb.append("oVirt Enterprise Virtualization Engine Hypervisor Hosts:");
+			sb.append("oVirt Engine Hypervisor Hosts:");
 
 			if (getHosts() != null && getHosts().size() > 0)
 			{

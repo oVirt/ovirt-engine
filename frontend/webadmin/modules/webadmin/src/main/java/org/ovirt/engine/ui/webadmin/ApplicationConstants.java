@@ -4,7 +4,7 @@ import org.ovirt.engine.ui.common.CommonApplicationConstants;
 
 public interface ApplicationConstants extends CommonApplicationConstants {
 
-    @DefaultStringValue("oVirt Enterprise Virtualization Engine Web Administration")
+    @DefaultStringValue("oVirt Engine Web Administration")
     String applicationTitle();
 
     @DefaultStringValue("About")
@@ -13,7 +13,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("This Browser version isn't optimal for displaying the application graphics (refer to Documentation for details)")
     String browserNotSupported();
 
-    @DefaultStringValue("oVirt Enterprise Virtualization Engine Manager Version:")
+    @DefaultStringValue("oVirt Engine Version:")
     String ovirtVersionAbout();
 
     // Widgets
@@ -1669,7 +1669,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("VDSM Version -")
     String vdsmVerAbout();
 
-    @DefaultStringValue("oVirt Enterprise Virtualization Engine Hypervisor Hosts:")
+    @DefaultStringValue("oVirt Engine Hypervisor Hosts:")
     String ovirtHypHostAbout();
 
     @DefaultStringValue("[No Hosts]")
