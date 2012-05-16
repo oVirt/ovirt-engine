@@ -274,7 +274,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
 	@DefaultStringValue("Edit Quota")
 	String editQuotaTitle();
-	
+
 	@DefaultStringValue("Copy Quota")
     String cloneQuotaTitle();
 
@@ -1277,6 +1277,12 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Are you sure you want to remove the following Volumes")
     String removeVolumesMessage();
+
+    @DefaultStringValue("Remove Bricks")
+    String removeBricksTitle();
+
+    @DefaultStringValue("Are you sure you want to remove the following Brick(s)?")
+    String removeBricksMessage();
 
     @DefaultStringValue("Brick with the same details already exist")
     String duplicateBrickMsg();
