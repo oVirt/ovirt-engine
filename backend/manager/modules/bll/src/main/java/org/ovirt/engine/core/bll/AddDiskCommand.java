@@ -300,6 +300,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
                     true,
                     false);
         }
+        VmHandler.unlockVm(getVm().getDynamicData(), getCompensationContext());
         setSucceeded(true);
     }
 
