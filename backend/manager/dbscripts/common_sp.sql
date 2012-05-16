@@ -318,7 +318,6 @@ begin
         end;
     end if;
 END; $BODY$
-
 LANGUAGE plpgsql;
 
 -- Function: fn_db_grant_action_group_to_all_roles(integer)
@@ -335,4 +334,63 @@ begin
     from roles_groups rg
     where not ARRAY [role_id] <@ v_role_id_to_filter and not exists (select 1 from roles_groups where role_id = rg.role_id and action_group_id = v_action_group_id);
 END; $BODY$
+LANGUAGE plpgsql;
+
+-- The following function accepts a table or view object
+-- Values of columns not matching the ones stored for this object in object_column_white_list table
+-- will be masked with an empty value.
+CREATE OR REPLACE FUNCTION fn_db_mask_object(v_object regclass) RETURNS setof record as
+$BODY$
+DECLARE
+    v_sql TEXT;
+    v_table record;
+    v_table_name TEXT;
+    temprec record;
+BEGIN
+    -- get full table/view name from v_object (i.e <namespace>.<name>)
+    select c.relname, n.nspname INTO v_table
+        FROM pg_class c join pg_namespace n on c.relnamespace = n.oid WHERE c.oid = v_object;
+    -- try to get filtered query syntax from previous execution
+    if exists (select 1 from object_column_white_list_sql where object_name = v_table.relname) then
+	select sql into v_sql from object_column_white_list_sql where object_name = v_table.relname;
+    else
+        v_table_name := quote_ident( v_table.nspname ) || '.' || quote_ident( v_table.relname );
+        -- compose sql statement while skipping values for columns not defined in object_column_white_list for this table.
+        for temprec in select a.attname, t.typname
+                       FROM pg_attribute a join pg_type t on a.atttypid = t.oid
+                       WHERE a.attrelid = v_object AND a.attnum > 0 AND NOT a.attisdropped ORDER BY a.attnum
+        loop
+            v_sql := coalesce( v_sql || ', ', 'SELECT ' );
+            if exists(select 1 from object_column_white_list
+               where object_name = v_table.relname and column_name = temprec.attname) then
+               v_sql := v_sql || quote_ident( temprec.attname );
+            ELSE
+               v_sql := v_sql || 'NULL::' || quote_ident( temprec.typname ) || ' as ' || quote_ident( temprec.attname );
+            END IF;
+        END LOOP;
+        v_sql := v_sql || ' FROM ' || v_table_name;
+        v_sql := 'SELECT x::' || v_table_name || ' as rec FROM (' || v_sql || ') as x';
+        -- save generated query for further use
+        insert into object_column_white_list_sql(object_name,sql) values (v_table.relname, v_sql);
+    end if;
+    RETURN QUERY EXECUTE v_sql;
+END; $BODY$
+LANGUAGE plpgsql;
+
+-- Adds a table/view new added column to the white list
+create or replace FUNCTION fn_db_add_column_to_object_white_list(v_object_name varchar(128), v_column_name varchar(128))
+returns void
+AS $procedure$
+begin
+    if (not exists (select 1 from object_column_white_list
+                    where object_name = v_object_name and column_name = v_column_name)) then
+        begin
+            -- verify that there is such object in db
+            if exists (select 1 from information_schema.columns
+                       where table_name = v_object_name and column_name = v_column_name) then
+                insert into object_column_white_list (object_name, column_name) values (v_object_name, v_column_name);
+            end if;
+        end;
+    end if;
+END; $procedure$
 LANGUAGE plpgsql;
