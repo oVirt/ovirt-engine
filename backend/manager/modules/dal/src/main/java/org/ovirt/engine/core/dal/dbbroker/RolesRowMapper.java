@@ -20,6 +20,7 @@ public class RolesRowMapper implements ParameterizedRowMapper<roles> {
         entity.setname(rs.getString("name"));
         entity.setis_readonly(rs.getBoolean("is_readonly"));
         entity.setType(RoleType.getById(rs.getInt("role_type")));
+        entity.setInheritable(rs.getBoolean("is_inheritable"));
         return entity;
     }
 

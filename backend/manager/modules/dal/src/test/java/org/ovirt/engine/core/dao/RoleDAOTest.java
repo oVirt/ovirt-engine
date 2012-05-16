@@ -33,6 +33,7 @@ public class RoleDAOTest extends BaseDAOTestCase {
         newRole.setname("new role");
         newRole.setdescription("This is a new role.");
         newRole.setType(RoleType.USER);
+        newRole.setInheritable(false);
     }
 
     /**

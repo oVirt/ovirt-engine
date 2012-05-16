@@ -55,6 +55,8 @@ public class roles extends IVdcQueryable implements INotifyPropertyChanged, Busi
     @Column(name = "role_type", nullable = false)
     private RoleType type;
 
+    private boolean isInheritable = false;
+
     public roles() {
     }
 
@@ -169,5 +171,13 @@ public class roles extends IVdcQueryable implements INotifyPropertyChanged, Busi
     @Override
     public void setId(Guid id) {
         this.id = id;
+    }
+
+    public boolean isInheritable() {
+        return isInheritable;
+    }
+
+    public void setInheritable(boolean isInheritable) {
+        this.isInheritable = isInheritable;
     }
 }

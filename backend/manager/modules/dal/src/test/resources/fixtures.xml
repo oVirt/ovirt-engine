@@ -2047,12 +2047,14 @@
         <column>description</column>
         <column>is_readonly</column>
         <column>role_type</column>
+        <column>is_inheritable</column>
         <row>
             <value>119caae6-5c1b-4a82-9858-dd9e5d2e1400</value>
             <value>role1</value>
             <null />
             <value>0</value>
             <value>2</value>
+            <value>true</value>
         </row>
         <row>
             <value>119caae6-5c1b-4a82-9858-dd9e5d2e1401</value>
@@ -2060,6 +2062,7 @@
             <null />
             <value>0</value>
             <value>2</value>
+            <value>true</value>
         </row>
         <row>
             <value>f5972bfa-7102-4d33-ad22-9dd421bfba78</value>
@@ -2067,6 +2070,7 @@
             <value>role for tests</value>
             <value>0</value>
             <value>1</value>
+            <value>true</value>
         </row>
     </table>
 
