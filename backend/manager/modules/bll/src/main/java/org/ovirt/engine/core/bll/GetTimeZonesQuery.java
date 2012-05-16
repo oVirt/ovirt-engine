@@ -8,16 +8,25 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
+import org.ovirt.engine.core.common.queries.TimeZoneQueryParams;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.SysprepHandler;
 
-public class GetTimeZonesQuery<P extends VdcQueryParametersBase> extends QueriesCommandBase<P> {
-    private static Map<String, String> timezones;
+public class GetTimeZonesQuery<P extends TimeZoneQueryParams> extends QueriesCommandBase<P> {
+    private static Map<String, String> windowsTimezones = new HashMap<String, String>();
+    private static Map<String, String> javaTimezones =
+            new LinkedHashMap<String, String>(TimeZone.getAvailableIDs().length);
 
     static {
+        initWindowsTimeZones();
+        initJavaTimeZones();
+    }
+
+    private static void initWindowsTimeZones() {
         // get all time zones that is supported by sysprep
 
         // This is a bit of a hack since Java doesn't use the same timezone
@@ -27,18 +36,44 @@ public class GetTimeZonesQuery<P extends VdcQueryParametersBase> extends Queries
         // Since this is only used to present to user the list windows timezones
         // We can safely return the list of timezones that are supported by
         // sysprep handler and be done with it
-            if (timezones == null) {
-                timezones = new HashMap<String, String>();
-                for (String value : SysprepHandler.timeZoneIndex.keySet()) {
-                    // we use:
-                    // key = "Afghanistan Standard Time"
-                    // value = "(GMT+04:30) Afghanistan Standard Time"
-                    String key = SysprepHandler.getTimezoneKey(value);
-                    timezones.put(key, value);
-                }
-                timezones = sortMapByValue(timezones);
-            }
+        for (String value : SysprepHandler.timeZoneIndex.keySet()) {
+            // we use:
+            // key = "Afghanistan Standard Time"
+            // value = "(GMT+04:30) Afghanistan Standard Time"
+            String key = SysprepHandler.getTimezoneKey(value);
+            windowsTimezones.put(key, value);
+        }
+        windowsTimezones = sortMapByValue(windowsTimezones);
+    }
 
+    private static void initJavaTimeZones() {
+        for (String id : TimeZone.getAvailableIDs()) {
+            TimeZone timeZone = TimeZone.getTimeZone(id);
+            String displayName = beautifyTZDisplayName(timeZone);
+            if (!javaTimezones.containsValue(displayName)) {
+                javaTimezones.put(timeZone.getID(), displayName);
+            }
+        }
+    }
+
+    /**
+     *
+     * @param timeZone
+     * @return the offset in <code> [hh:mm] DISPLAY_NAME </code> style. e.g. <blockquote> [02:00] Eastern European Time
+     *         <blockquote>
+     */
+    private static String beautifyTZDisplayName(TimeZone timeZone) {
+        StringBuilder sb = new StringBuilder();
+        long offsetInMinutes = TimeUnit.MILLISECONDS.toMinutes(timeZone.getRawOffset());
+        sb.append(" (GMT");
+        sb.append(offsetInMinutes >= 0 ? "+" : "-");
+        sb.append(String.format("%02d", Math.abs(offsetInMinutes) / 60));
+        sb.append(":");
+        sb.append(String.format("%02d", Math.abs(offsetInMinutes) % 60));
+        sb.append(") ");
+        sb.append(timeZone.getDisplayName());
+
+        return sb.toString();
     }
 
     public GetTimeZonesQuery(P parameters) {
@@ -47,7 +82,7 @@ public class GetTimeZonesQuery<P extends VdcQueryParametersBase> extends Queries
 
     @Override
     protected void executeQueryCommand() {
-        getQueryReturnValue().setReturnValue(timezones);
+        getQueryReturnValue().setReturnValue(getParameters().isWindowsOS() ? windowsTimezones : javaTimezones);
     }
 
     private static Map<String, String> sortMapByValue(Map<String, String> map) {

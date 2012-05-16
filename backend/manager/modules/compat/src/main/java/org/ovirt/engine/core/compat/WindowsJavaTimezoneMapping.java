@@ -3,10 +3,6 @@ package org.ovirt.engine.core.compat;
 import java.util.Map;
 import java.util.HashMap;
 
-/**
- * Created by IntelliJ IDEA. User: gmostizk Date: Nov 25, 2009 Time: 2:37:05 PM To change this template use File |
- * Settings | File Templates.
- */
 public class WindowsJavaTimezoneMapping {
 
     // first is windows, second is java
@@ -62,7 +58,7 @@ public class WindowsJavaTimezoneMapping {
     public final static Map<String, String> windowsToJava = new HashMap<String, String>();
     public final static Map<String, String> javaToWindows = new HashMap<String, String>();
 
-    {
+    static {
         for (String[] zone : zones) {
             String win = zone[0];
             String java = zone[1];
