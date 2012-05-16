@@ -477,11 +477,9 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
 	String VdcActionType___DeleteGlusterVolume();
 
-<<<<<<< HEAD
 	String VdcActionType___GlusterVolumeRemoveBricks();
-=======
+
 	String VdcActionType___AddBricksToGlusterVolume();
->>>>>>> engine: Gluster Volume Add Brick command
 
 	String VdcObjectType___AdElements();
 
