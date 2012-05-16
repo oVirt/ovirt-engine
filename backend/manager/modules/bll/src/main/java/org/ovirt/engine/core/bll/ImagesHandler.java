@@ -39,7 +39,6 @@ import org.ovirt.engine.core.common.vdscommands.GetImageInfoVDSCommandParameters
 import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.backendcompat.Path;
 import org.ovirt.engine.core.dal.VdcBllMessages;
@@ -346,12 +345,11 @@ public final class ImagesHandler {
     }
 
     public static boolean isImagesExists(Iterable<DiskImage> images, Guid storagePoolId, Guid storageDomainId) {
-        return isImagesExists(images, storagePoolId, storageDomainId, new RefObject<ArrayList<DiskImage>>());
+        return isImagesExists(images, storagePoolId, storageDomainId, new ArrayList<DiskImage>());
     }
 
     private static boolean isImagesExists(Iterable<DiskImage> images, Guid storagePoolId, Guid domainId,
-            RefObject<ArrayList<DiskImage>> irsImages) {
-        irsImages.argvalue = new ArrayList<DiskImage>();
+            ArrayList<DiskImage> irsImages) {
         boolean returnValue = true;
 
         for (DiskImage image : images) {
@@ -361,7 +359,7 @@ public final class ImagesHandler {
                 returnValue = false;
                 break;
             } else {
-                irsImages.argvalue.add(fromIrs);
+                irsImages.add(fromIrs);
             }
         }
         return returnValue;
@@ -487,7 +485,7 @@ public final class ImagesHandler {
         return returnValue;
     }
 
-    private static List<DiskImage> getImages(VM vm, Collection diskImageList) {
+    private static List<DiskImage> getImages(VM vm, Collection<Disk> diskImageList) {
         if (diskImageList == null) {
             return filterImageDisks(DbFacade.getInstance().getDiskDao().getAllForVm(vm.getId()), true, false);
         } else {
@@ -505,13 +503,10 @@ public final class ImagesHandler {
             VM vm,
             List<DiskImage> images) {
         boolean returnValue = true;
-        ArrayList<DiskImage> irsImages = null;
+        ArrayList<DiskImage> irsImages = new ArrayList<DiskImage>();
 
         if (checkImagesExist) {
-            RefObject<ArrayList<DiskImage>> tempRefObject =
-                    new RefObject<ArrayList<DiskImage>>();
-            boolean isImagesExist = isImagesExists(images, storagePoolId, storageDomainId, tempRefObject);
-            irsImages = tempRefObject.argvalue;
+            boolean isImagesExist = isImagesExists(images, storagePoolId, storageDomainId, irsImages);
             if (!isImagesExist) {
                 returnValue = false;
                 ListUtils.nullSafeAdd(messages, VdcBllMessages.ACTION_TYPE_FAILED_VM_IMAGE_DOES_NOT_EXIST.toString());
