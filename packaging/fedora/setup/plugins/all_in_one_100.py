@@ -37,6 +37,7 @@ INFO_CONF_PARAMS_ALL_IN_ONE_USAGE = "Configure all in one"
 INFO_CONF_PARAMS_ALL_IN_ONE_PROMPT = "Configure VDSM on this host?"
 INFO_CONF_PARAMS_LOCAL_STORAGE = "Local storage domain path"
 INFO_LIBVIRT_START = "libvirt service is started"
+INFO_CREATE_HOST_WAITING_UP = "Waiting for the host to start"
 
 # ERROR MESSAGES
 SYSTEM_ERROR = "System Error"
@@ -161,16 +162,22 @@ def initSequences(controller):
 
 def startLibvirt():
     """ Start service libvirt """
-    cmd = ["service", "libvirtd", "start"]
-    output, rc = utils.execCmd(cmd, None, True, ERROR_LIBVIRT_START, [])
+    libvirtService = utils.Service("libvirtd")
+
+    # Check status and return if up
+    output, rc = libvirtService.status()
+    if rc == 0:
+        logging.info(INFO_LIBVIRT_START)
+        return
+
+    # Otherwise, start the service
+    output, rc = libvirtService.start(True)
     cycle = 1
     while cycle <= MAX_CYCLES:
-        cmd = ["service", "libvirtd", "status"]
-        output, rc = utils.execCmd(cmd, None, True, ERROR_LIBVIRT_STATUS, [])
-        for status in ("active", "started"):
-            if status in output:
-                logging.info(INFO_LIBVIRT_START)
-                return
+        output, rc = libvirtService.status()
+        if rc == 0:
+            logging.info(INFO_LIBVIRT_START)
+            return
         cycle += 1
         time.sleep(PAUSE)
 
@@ -183,11 +190,7 @@ def waitForJbossUp():
     """
     Wait for Jboss to start
     """
-    utils.retry(isHealthPageUp, tries=5, timeout=15, sleep=3)
-
-def sleepItOff():
-    # Sleep for SLEEP_PERIOD seconds. let jboss boot up nicely
-    time.sleep(SLEEP_PERIOD)
+    utils.retry(isHealthPageUp, tries=25, timeout=15, sleep=5)
 
 def initAPI():
     global controller
@@ -241,22 +244,24 @@ def createHost():
         raise Exception(ERROR_CREATE_LOCAL_HOST)
 
 def waitForHostUp():
+    utils.retry(isHostUp, tries=20, timeout=150, sleep=5)
+
+def isHostUp():
     logging.debug("Waiting for host to become operational")
-    cycle = 1
-    while cycle <= MAX_CYCLES:
+    try:
         hostStatus = controller.CONF['API_OBJECT'].hosts.get(LOCAL_HOST).status.state
         logging.debug("current host status is: %s", hostStatus)
         if hostStatus == "up":
             logging.debug("The host is up.")
             return
-        cycle += 1
-        logging.debug("Sleeping for %s seconds", PAUSE)
-        time.sleep(PAUSE)
 
-    # TODO: redo this section. Maybe status check should be inside the loop?
-    if "failed" in hostStatus:
-        raise Exception(ERROR_CREATE_HOST_FAILED)
-    else:
+        if "failed" in hostStatus:
+            raise Exception(ERROR_CREATE_HOST_FAILED)
+
+        raise Exception(INFO_CREATE_HOST_WAITING_UP)
+
+    except:
+        logging.debug(traceback.format_exc())
         raise Exception(ERROR_CREATE_HOST_TIMEOUT)
 
 def addStorageDomain():
@@ -403,7 +408,6 @@ def getUrlContent(url):
         urlObj = urllib2.urlopen(url)
         urlContent = urlObj.read()
     except:
-        print "error getting url %s" % url
         return None
 
     return urlContent
