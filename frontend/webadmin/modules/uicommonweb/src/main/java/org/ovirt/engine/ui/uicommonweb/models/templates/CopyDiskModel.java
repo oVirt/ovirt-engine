@@ -20,6 +20,9 @@ public class CopyDiskModel extends MoveOrCopyDiskModel
 {
     public CopyDiskModel() {
         super();
+
+        setIsSourceStorageDomainAvailable(true);
+        setIsSourceStorageDomainChangable(true);
     }
 
     @Override

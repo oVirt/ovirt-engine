@@ -375,7 +375,6 @@ public class DiskListModel extends ListWithDetailsModel
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().copyDisksTitle());
         model.setHashName("copy_disks"); //$NON-NLS-1$
-        model.setIsSourceStorageDomainNameAvailable(true);
         model.setEntity(this);
         model.init(disks);
         model.StartProgress(null);

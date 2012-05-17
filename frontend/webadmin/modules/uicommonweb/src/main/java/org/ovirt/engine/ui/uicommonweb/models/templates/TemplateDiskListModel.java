@@ -222,9 +222,6 @@ public class TemplateDiskListModel extends SearchableListModel
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().copyDisksTitle());
         model.setHashName("copy_disk"); //$NON-NLS-1$
-        model.setIsVolumeFormatAvailable(false);
-        model.setIsSourceStorageDomainAvailable(true);
-        model.setIsSourceStorageDomainChangable(true);
         model.setEntity(this);
         model.init(disks);
         model.StartProgress(null);
