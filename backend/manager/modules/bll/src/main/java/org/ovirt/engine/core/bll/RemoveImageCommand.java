@@ -116,8 +116,7 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
                             getBaseDiskDao().remove(diskImage.getimage_group_id());
                             DbFacade.getInstance()
                                     .getVmDeviceDAO()
-                                    .remove(new VmDeviceId(diskImage.getimage_group_id(),
-                                            getParameters().getContainerId()));
+                                    .remove(new VmDeviceId(diskImage.getId(), null));
                         } else {
                             log.warn("RemoveImageCommand::RemoveImageFromDB: DiskImage is null, nothing to remove.");
                         }

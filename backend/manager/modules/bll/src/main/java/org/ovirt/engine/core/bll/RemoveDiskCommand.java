@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -27,7 +28,6 @@ import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.LunDisk;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
@@ -53,6 +53,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
     private final Disk disk;
     private Map<Guid, String> sharedLockMap;
     private List<PermissionSubject> permsList = null;
+    private List<VM> listVms;
 
     public RemoveDiskCommand(T parameters) {
         super(parameters);
@@ -127,10 +128,27 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
 
     private void buildSharedLockMap() {
         if (disk.getVmEntityType() == VmEntityType.VM) {
-            sharedLockMap = Collections.singletonMap(disk.getvm_guid(), LockingGroup.VM.name());
+            List<VM> listVms = getVmsForDiskId();
+            if (!listVms.isEmpty()) {
+                sharedLockMap = new HashMap<Guid, String>();
+                for (VM vm : listVms) {
+                    sharedLockMap.put(vm.getId(), LockingGroup.VM.name());
+                }
+            }
         } else if (disk.getVmEntityType() == VmEntityType.TEMPLATE) {
             sharedLockMap = Collections.singletonMap(disk.getvm_guid(), LockingGroup.TEMPLATE.name());
         }
+    }
+
+    /**
+     * Cache method to retrieve all the VMs related to image
+     * @return List of Vms.
+     */
+    private List<VM> getVmsForDiskId() {
+        if (listVms == null) {
+            listVms = getVmDAO().getVmsListForDisk(disk.getId());
+        }
+        return listVms;
     }
 
     private boolean canRemoveTemplateDisk() {
@@ -173,21 +191,28 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
 
     private boolean canRemoveVmImageDisk() {
         setVmId(disk.getvm_guid());
-        VmDevice vmDevice = getVmDeviceDAO().get(new VmDeviceId(disk.getId(), disk.getvm_guid()));
-        return validate(new SnapshotsValidator().vmNotDuringSnapshot(getVmId()))
-                        && ImagesHandler.PerformImagesChecks(getVm(),
-                                getReturnValue().getCanDoActionMessages(),
-                                getVm().getstorage_pool_id(),
-                                getParameters().getStorageDomainId(),
-                                false,
-                                true,
-                                false,
-                                false,
-                                vmDevice.getIsPlugged(),
-                                vmDevice.getIsPlugged(),
-                                false,
-                                true,
-                                Arrays.asList(disk));
+        boolean validDisktoDelete = true;
+        int vmCount = 0;
+        while (getVmsForDiskId().size() > vmCount && validDisktoDelete) {
+            VM vm = listVms.get(vmCount++);
+            VmDevice vmDevice = getVmDeviceDAO().get(new VmDeviceId(disk.getId(), vm.getId()));
+            validDisktoDelete = validate(new SnapshotsValidator().vmNotDuringSnapshot(vm.getId()));
+            // Validate image only in the first image of the iteration since we check the same image every time.
+            validDisktoDelete = validDisktoDelete && ImagesHandler.PerformImagesChecks(vm,
+                    getReturnValue().getCanDoActionMessages(),
+                    vm.getstorage_pool_id(),
+                    getParameters().getStorageDomainId(),
+                    false,
+                    vmCount == 1,
+                    false,
+                    false,
+                    vmDevice.getIsPlugged() && disk.isAllowSnapshot(),
+                    vmDevice.getIsPlugged(),
+                    false,
+                    true,
+                    Arrays.asList(disk));
+        }
+        return validDisktoDelete;
     }
 
     protected VmDeviceDAO getVmDeviceDAO() {
@@ -207,7 +232,9 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
     protected void executeCommand() {
         if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
             DiskImage diskImage = (DiskImage) disk;
-            RemoveImageParameters p = new RemoveImageParameters(diskImage.getImageId(), diskImage.getvm_guid());
+
+            // TODO: Cleanup getVmId(), after refactor to remove container id and image id from image.
+            RemoveImageParameters p = new RemoveImageParameters(diskImage.getImageId(), null);
             p.setTransactionScopeOption(TransactionScopeOption.Suppress);
             p.setDiskImage(diskImage);
             p.setParentCommand(VdcActionType.RemoveDisk);
@@ -268,12 +295,9 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
     }
 
     private void endCommand() {
+        List<VM> listVms = getVmsForDiskId();
         Backend.getInstance().EndAction(VdcActionType.RemoveImage, getParameters().getImagesParameters().get(0));
-        setVmId(((RemoveImageParameters) getParameters().getImagesParameters().get(0)).getContainerId());
-        if (getVm() != null && getVm().getstatus() == VMStatus.Down) {
-            VmCommand.UpdateVmInSpm(getVm().getstorage_pool_id(),
-                    Arrays.asList(getVm()));
-        }
+        VmCommand.UpdateVmInSpm(getStoragePoolId().getValue(), listVms);
         setSucceeded(true);
     }
 

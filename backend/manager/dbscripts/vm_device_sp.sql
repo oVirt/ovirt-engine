@@ -69,13 +69,14 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
-Create or replace FUNCTION DeleteVmDevice(v_device_id UUID)
+Create or replace FUNCTION DeleteVmDevice(v_device_id UUID, v_vm_id UUID)
 RETURNS VOID
 AS $procedure$
 BEGIN
     DELETE
     FROM   vm_device
-    WHERE  device_id = v_device_id;
+    WHERE  device_id = v_device_id
+    AND (v_vm_id IS NULL or vm_id = v_vm_id);
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -88,14 +89,15 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
-Create or replace FUNCTION GetVmDeviceByDeviceId(v_device_id UUID)
+Create or replace FUNCTION GetVmDeviceByDeviceId(v_device_id UUID, v_vm_id UUID)
 RETURNS SETOF vm_device_view
 AS $procedure$
 BEGIN
     RETURN QUERY
     SELECT *
     FROM   vm_device_view
-    WHERE  device_id = v_device_id;
+    WHERE  device_id = v_device_id
+    AND (v_vm_id IS NULL OR vm_id = v_vm_id);
 END; $procedure$
 LANGUAGE plpgsql;
 
