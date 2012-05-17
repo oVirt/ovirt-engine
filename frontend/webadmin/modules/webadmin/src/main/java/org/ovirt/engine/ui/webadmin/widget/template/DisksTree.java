@@ -55,7 +55,7 @@ public class DisksTree extends AbstractSubTabTree<TemplateDiskListModel, DiskIma
         addValueLabelToPanel(panel, new EnumLabel<DiskInterface>(), disk.getDiskInterface(), "120px"); //$NON-NLS-1$
         addValueLabelToPanel(panel, new DateLabel(), disk.getcreation_date(), "90px"); //$NON-NLS-1$
         TreeItem treeItem = new TreeItem(panel);
-        treeItem.setUserObject(disk.getImageId());
+        treeItem.setUserObject(disk.getId());
         return treeItem;
     }
 
