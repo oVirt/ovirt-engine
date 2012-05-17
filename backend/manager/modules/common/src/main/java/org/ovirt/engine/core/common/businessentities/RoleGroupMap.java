@@ -10,7 +10,6 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.TypeDef;
-
 import org.ovirt.engine.core.common.businessentities.mapping.GuidType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -22,12 +21,12 @@ public class RoleGroupMap implements Serializable {
 
     @EmbeddedId
     @AttributeOverrides({
-        @AttributeOverride(name = "actionGroup", column = @Column(name = "action_group_id")),
-        @AttributeOverride(name = "roleId", column = @Column(name = "role_id")) })
+            @AttributeOverride(name = "actionGroup", column = @Column(name = "action_group_id")),
+            @AttributeOverride(name = "roleId", column = @Column(name = "role_id")) })
     private RoleGroupMapId id = new RoleGroupMapId();
 
     public RoleGroupMap() {
-    };
+    }
 
     public RoleGroupMap(ActionGroup actionGroup, Guid roleId) {
         this.id.actionGroup = actionGroup.getId();
