@@ -40,7 +40,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
-import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -54,6 +53,7 @@ import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils;
 import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils.ValidationError;
 import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils.ValidationFailureReason;
 
+@SuppressWarnings("serial")
 public abstract class VmCommand<T extends VmOperationParameterBase> extends CommandBase<T> {
 
     private static int Kb = 1024;
@@ -201,12 +201,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
                 VmTemplate t = DbFacade.getInstance().getVmTemplateDAO().get(vm.getvmt_guid());
                 vm.setvmt_name(t.getname());
             }
-            String vmMeta = "";
-
-            // OVF Uncomment next line when OVF support is added
-            RefObject<String> tempRefObject = new RefObject<String>(vmMeta);
-            ovfManager.ExportVm(tempRefObject, vm, AllVmImages);
-            vmMeta = tempRefObject.argvalue;
+            String vmMeta = ovfManager.ExportVm(vm, AllVmImages);
 
             vmsAndMetaDictionary.put(
                     vm.getId(),

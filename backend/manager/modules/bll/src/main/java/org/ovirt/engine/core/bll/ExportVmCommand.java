@@ -41,7 +41,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
-import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -51,6 +50,7 @@ import org.ovirt.engine.core.utils.ovf.OvfManager;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
+@SuppressWarnings("serial")
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplateCommand<T> {
 
@@ -247,10 +247,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
             vm.setvmt_name(t.getname());
         }
         getVm().setvmt_guid(VmTemplateHandler.BlankVmTemplateId);
-        String vmMeta = null;
-        RefObject<String> tempRefObject = new RefObject<String>(vmMeta);
-        ovfManager.ExportVm(tempRefObject, vm, AllVmImages);
-        vmMeta = tempRefObject.argvalue;
+        String vmMeta = ovfManager.ExportVm(vm, AllVmImages);
         List<Guid> imageGroupIds = new ArrayList<Guid>();
         for(Disk disk : vm.getDiskMap().values()) {
             if(disk.getDiskStorageType() == DiskStorageType.IMAGE) {

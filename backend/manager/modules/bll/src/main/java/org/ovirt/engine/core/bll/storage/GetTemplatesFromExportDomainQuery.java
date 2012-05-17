@@ -13,7 +13,6 @@ import org.ovirt.engine.core.common.queries.DiskImageList;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParamenters;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
@@ -43,7 +42,7 @@ public class GetTemplatesFromExportDomainQuery<P extends GetAllFromExportDomainQ
     @Override
     protected void BuildOvfReturnValue(Object obj) {
         boolean shouldAdd = true;
-        java.util.ArrayList<String> ovfList = (java.util.ArrayList<String>) obj;
+        ArrayList<String> ovfList = (ArrayList<String>) obj;
         OvfManager ovfManager = new OvfManager();
         java.util.HashMap<VmTemplate, DiskImageList> templates = new java.util.HashMap<VmTemplate, DiskImageList>();
         List<VmTemplate> existsTemplates = DbFacade.getInstance().getVmTemplateDAO().getAll();
@@ -56,19 +55,10 @@ public class GetTemplatesFromExportDomainQuery<P extends GetAllFromExportDomainQ
             for (String ovf : ovfList) {
                 try {
                     if (ovfManager.IsOvfTemplate(ovf)) {
-                        java.util.ArrayList<DiskImage> diskImages = null;
-                        java.util.ArrayList<VmNetworkInterface> interfaces = null;
-                        RefObject<VmTemplate> tempRefObject = new RefObject<VmTemplate>(template);
-                        RefObject<java.util.ArrayList<DiskImage>> tempRefObject2 =
-                                new RefObject<java.util.ArrayList<DiskImage>>(
-                                        diskImages);
-                        RefObject<ArrayList<VmNetworkInterface>> interfacesRefObject =
-                            new RefObject<ArrayList<VmNetworkInterface>>(
-                                    interfaces);
-                        ovfManager.ImportTemplate(ovf, tempRefObject, tempRefObject2, interfacesRefObject);
-                        template = tempRefObject.argvalue;
-                        diskImages = tempRefObject2.argvalue;
-                        interfaces = interfacesRefObject.argvalue;
+                        ArrayList<DiskImage> diskImages = new ArrayList<DiskImage>();
+                        ArrayList<VmNetworkInterface> interfaces = new ArrayList<VmNetworkInterface>();
+                        template = new VmTemplate();
+                        ovfManager.ImportTemplate(ovf, template, diskImages, interfaces);
                         shouldAdd = getParameters().getGetAll() ? shouldAdd :
                                 (!existsVmDictionary.containsKey(template.getId()) && diskImages != null);
                         if (shouldAdd) {

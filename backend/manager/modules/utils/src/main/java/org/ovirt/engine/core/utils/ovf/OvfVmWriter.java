@@ -13,7 +13,6 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Match;
-import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.Regex;
 import org.ovirt.engine.core.compat.RegexOptions;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -22,7 +21,7 @@ import org.ovirt.engine.core.compat.backendcompat.XmlDocument;
 public class OvfVmWriter extends OvfWriter {
     private static final String EXPORT_ONLY_PREFIX = "exportonly_";
 
-    public OvfVmWriter(RefObject<XmlDocument> document, VM vm, List<DiskImage> images) {
+    public OvfVmWriter(XmlDocument document, VM vm, List<DiskImage> images) {
         super(document, vm.getStaticData(), images);
         _vm = vm;
     }

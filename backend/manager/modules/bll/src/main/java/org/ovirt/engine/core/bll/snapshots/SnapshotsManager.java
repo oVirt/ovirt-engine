@@ -22,7 +22,6 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.image_storage_domain_map;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.BaseDiskDao;
@@ -46,7 +45,7 @@ import org.ovirt.engine.core.utils.ovf.VMStaticOvfLogHandler;
  * The {@link Snapshot} manager is used to easily add/update/remove snapshots.
  */
 public class SnapshotsManager {
-    private Log log = LogFactory.getLog(getClass());
+    private final static Log log = LogFactory.getLog(SnapshotsManager.class);
 
     /**
      * Save an active snapshot for the VM, without saving the configuration.<br>
@@ -153,13 +152,11 @@ public class SnapshotsManager {
         }
 
         VmDeviceUtils.setVmDevices(vm.getStaticData());
-        RefObject<String> tempRefObject = new RefObject<String>("");
-        new OvfManager().ExportVm(tempRefObject,
+        return new OvfManager().ExportVm(
                 vm,
                 new ArrayList<DiskImage>(ImagesHandler.filterImageDisks(getDiskDao().getAllForVm(vm.getId()),
                         false,
                         true)));
-        return tempRefObject.argvalue;
     }
 
     /**
@@ -245,15 +242,15 @@ public class SnapshotsManager {
 
         try {
             VmStatic oldVmStatic = vm.getStaticData();
-            RefObject<VM> vmRef = new RefObject<VM>();
-            RefObject<ArrayList<DiskImage>> imagesRef = new RefObject<ArrayList<DiskImage>>();
-            RefObject<ArrayList<VmNetworkInterface>> interfacesRef = new RefObject<ArrayList<VmNetworkInterface>>();
-            new OvfManager().ImportVm(configuration, vmRef, imagesRef, interfacesRef);
-            new VMStaticOvfLogHandler(vmRef.argvalue.getStaticData()).resetDefaults(oldVmStatic);
+            VM tempVM = new VM();
+            ArrayList<DiskImage> images = new ArrayList<DiskImage>();
+            ArrayList<VmNetworkInterface> interfaces = new ArrayList<VmNetworkInterface>();
+            new OvfManager().ImportVm(configuration, tempVM, images, interfaces);
+            new VMStaticOvfLogHandler(tempVM.getStaticData()).resetDefaults(oldVmStatic);
 
-            vm.setStaticData(vmRef.argvalue.getStaticData());
-            vm.setImages(imagesRef.argvalue);
-            vm.setInterfaces(interfacesRef.argvalue);
+            vm.setStaticData(tempVM.getStaticData());
+            vm.setImages(images);
+            vm.setInterfaces(interfaces);
 
             // These fields are not saved in the OVF, so get them from the current VM.
             vm.setdedicated_vm_for_vds(oldVmStatic.getdedicated_vm_for_vds());

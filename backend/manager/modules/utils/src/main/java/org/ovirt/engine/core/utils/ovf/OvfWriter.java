@@ -17,7 +17,6 @@ import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Encoding;
 import org.ovirt.engine.core.compat.Formatting;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.backendcompat.Path;
 import org.ovirt.engine.core.compat.backendcompat.XmlDocument;
 import org.ovirt.engine.core.compat.backendcompat.XmlTextWriter;
@@ -31,10 +30,9 @@ public abstract class OvfWriter implements IOvfBuilder {
     protected VM _vm;
     protected VmBase vmBase;
 
-    public OvfWriter(RefObject<XmlDocument> document, VmBase vmBase, List<DiskImage> images) {
+    public OvfWriter(XmlDocument document, VmBase vmBase, List<DiskImage> images) {
         _fileName = Path.GetTempFileName();
-        document.argvalue = new XmlDocument();
-        _document = document.argvalue;
+        _document = document;
         _images = images;
         _writer = new XmlTextWriter(_fileName, Encoding.UTF8);
         this.vmBase = vmBase;

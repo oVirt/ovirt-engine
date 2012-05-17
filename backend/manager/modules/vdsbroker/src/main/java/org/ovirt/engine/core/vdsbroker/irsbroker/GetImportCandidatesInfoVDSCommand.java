@@ -17,7 +17,6 @@ import org.ovirt.engine.core.common.queries.TemplateCandidateInfo;
 import org.ovirt.engine.core.common.queries.VmCandidateInfo;
 import org.ovirt.engine.core.common.vdscommands.GetImportCandidatesVDSCommandParameters;
 import org.ovirt.engine.core.compat.Encoding;
-import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
@@ -121,48 +120,30 @@ public class GetImportCandidatesInfoVDSCommand<P extends GetImportCandidatesVDSC
                 ArrayList<VmNetworkInterface> candidateInterfacesData = null;
                 OvfManager ovfm = new OvfManager();
                 if (ovfm.IsOvfTemplate(ovfData)) {
-                    VmTemplate candidateData = null;
-                    RefObject<VmTemplate> tempRefObject = new RefObject<VmTemplate>(candidateData);
-                    RefObject<java.util.ArrayList<DiskImage>> tempRefObject2 =
-                            new RefObject<java.util.ArrayList<DiskImage>>(
-                                    candidateImagesData);
-                    RefObject<ArrayList<VmNetworkInterface>> interfacesRefObject =
-                            new RefObject<ArrayList<VmNetworkInterface>>(
-                                    candidateInterfacesData);
+                    VmTemplate candidateData = new VmTemplate();
                     try {
-                        ovfm.ImportTemplate(ovfData, tempRefObject, tempRefObject2, interfacesRefObject);
+                        ovfm.ImportTemplate(ovfData, candidateData, candidateImagesData, candidateInterfacesData);
                     } catch (OvfReaderException ex) {
                         AuditLogableBase logable = new AuditLogableBase();
                         logable.AddCustomValue("Template", ex.getName());
                         AuditLogDirector.log(logable, AuditLogType.IMPORTEXPORT_FAILED_TO_IMPORT_TEMPLATE);
                     }
-                    candidateData = tempRefObject.argvalue;
-                    candidateImagesData = tempRefObject2.argvalue;
-                    candidateInterfacesData = interfacesRefObject.argvalue;
                     retValue = new TemplateCandidateInfo(candidateData, ImportCandidateSourceEnum.KVM,
                             GetListOfImageListsByDrive(candidateImagesData));
                 }
 
                 else // VM
                 {
-                    VM candidateData = null;
-                    RefObject<VM> tempRefObject3 = new RefObject<VM>(candidateData);
-                    RefObject<java.util.ArrayList<DiskImage>> tempRefObject4 =
-                            new RefObject<java.util.ArrayList<DiskImage>>(
-                                    candidateImagesData);
-                    RefObject<ArrayList<VmNetworkInterface>> interfacesRefObject =
-                            new RefObject<ArrayList<VmNetworkInterface>>(
-                                    candidateInterfacesData);
+                    VM candidateData = new VM();
+                    candidateImagesData = new ArrayList<DiskImage>();
+                    candidateInterfacesData = new ArrayList<VmNetworkInterface>();
                     try {
-                        ovfm.ImportVm(ovfData, tempRefObject3, tempRefObject4, interfacesRefObject);
+                        ovfm.ImportVm(ovfData, candidateData, candidateImagesData, candidateInterfacesData);
                     } catch (OvfReaderException ex) {
                         AuditLogableBase logable = new AuditLogableBase();
                         logable.AddCustomValue("VmName", ex.getName());
                         AuditLogDirector.log(logable, AuditLogType.IMPORTEXPORT_FAILED_TO_IMPORT_VM);
                     }
-                    candidateData = tempRefObject3.argvalue;
-                    candidateImagesData = tempRefObject4.argvalue;
-                    candidateInterfacesData = interfacesRefObject.argvalue;
                     retValue = new VmCandidateInfo(candidateData.getStaticData(), ImportCandidateSourceEnum.KVM,
                             GetListOfImageListsByDrive(candidateImagesData));
                 }

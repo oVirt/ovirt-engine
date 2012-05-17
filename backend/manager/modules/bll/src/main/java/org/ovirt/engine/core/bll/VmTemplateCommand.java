@@ -26,7 +26,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
 import org.ovirt.engine.core.compat.NotImplementedException;
-import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -34,6 +33,7 @@ import org.ovirt.engine.core.utils.linq.Function;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.ovf.OvfManager;
 
+@SuppressWarnings("serial")
 public abstract class VmTemplateCommand<T extends VmTemplateParametersBase> extends CommandBase<T> {
 
     /**
@@ -209,10 +209,7 @@ public abstract class VmTemplateCommand<T extends VmTemplateParametersBase> exte
                 template.getInterfaces().add(iface);
             }
 
-            String templateMeta = null;
-            RefObject<String> tempRefObject = new RefObject<String>(templateMeta);
-            ovfManager.ExportTemplate(tempRefObject, template, allTemplateImages);
-            templateMeta = tempRefObject.argvalue;
+            String templateMeta = ovfManager.ExportTemplate(template, allTemplateImages);
             templatesAndMetaDictionary.put(template.getId(), new KeyValuePairCompat<String, List<Guid>>(
                     templateMeta, LinqUtils.foreach(allTemplateImages, new Function<DiskImage, Guid>() {
                         @Override

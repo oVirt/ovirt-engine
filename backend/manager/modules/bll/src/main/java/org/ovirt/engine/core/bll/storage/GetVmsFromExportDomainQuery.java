@@ -19,7 +19,6 @@ import org.ovirt.engine.core.common.vdscommands.GetVmsInfoVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
@@ -66,9 +65,9 @@ public class GetVmsFromExportDomainQuery<P extends GetAllFromExportDomainQueryPa
 
     protected void BuildOvfReturnValue(Object obj) {
         boolean shouldAdd = true;
-        java.util.ArrayList<String> ovfList = (java.util.ArrayList<String>) obj;
+        ArrayList<String> ovfList = (ArrayList<String>) obj;
         OvfManager ovfManager = new OvfManager();
-        java.util.ArrayList<VM> vms = new java.util.ArrayList<VM>();
+        ArrayList<VM> vms = new ArrayList<VM>();
         List<VM> existsVms = DbFacade.getInstance().getVmDAO().getAll();
         java.util.HashMap<Guid, VM> existsVmDictionary = new java.util.HashMap<Guid, VM>();
         for (VM vm : existsVms) {
@@ -80,20 +79,11 @@ public class GetVmsFromExportDomainQuery<P extends GetAllFromExportDomainQueryPa
             for (String ovf : ovfList) {
                 try {
                     if (!ovfManager.IsOvfTemplate(ovf)) {
-                        ArrayList<DiskImage> diskImages = null;
-                        ArrayList<VmNetworkInterface> interfaces  = null;
-                        RefObject<VM> tempRefObject = new RefObject<VM>(vm);
-                        RefObject<ArrayList<DiskImage>> tempRefObject2 =
-                                new RefObject<ArrayList<DiskImage>>(
-                                        diskImages);
-                        RefObject<ArrayList<VmNetworkInterface>> interfacesRefObject =
-                            new RefObject<ArrayList<VmNetworkInterface>>(
-                                    interfaces);
-                        ovfManager.ImportVm(ovf, tempRefObject, tempRefObject2, interfacesRefObject);
+                        vm = new VM();
+                        ArrayList<DiskImage> diskImages = new ArrayList<DiskImage>();
+                        ArrayList<VmNetworkInterface> interfaces  = new ArrayList<VmNetworkInterface>();
+                        ovfManager.ImportVm(ovf, vm, diskImages, interfaces);
 
-                        vm = tempRefObject.argvalue;
-                        diskImages = tempRefObject2.argvalue;
-                        interfaces = interfacesRefObject.argvalue;
                         shouldAdd = getParameters().getGetAll() ? shouldAdd : !existsVmDictionary
                                 .containsKey(vm.getId());
 

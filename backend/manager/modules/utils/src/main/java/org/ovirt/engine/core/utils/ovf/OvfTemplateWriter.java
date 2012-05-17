@@ -8,14 +8,13 @@ import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.backendcompat.XmlDocument;
 
 public class OvfTemplateWriter extends OvfWriter {
     protected VmTemplate _vmTemplate;
 
-    public OvfTemplateWriter(RefObject<XmlDocument> document, VmTemplate vmTemplate, List<DiskImage> images) {
+    public OvfTemplateWriter(XmlDocument document, VmTemplate vmTemplate, List<DiskImage> images) {
         super(document, vmTemplate, images);
         _vmTemplate = vmTemplate;
     }
