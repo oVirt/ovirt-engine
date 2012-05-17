@@ -128,6 +128,16 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
+Create or replace FUNCTION GetGlusterVolumeBricksByServerGuid(v_server_id UUID)
+RETURNS SETOF gluster_volume_bricks
+AS $procedure$
+BEGIN
+RETURN QUERY SELECT *
+FROM  gluster_volume_bricks
+WHERE server_id = v_server_id
+ORDER BY _create_date;
+END; $procedure$
+LANGUAGE plpgsql;
 
 Create or replace FUNCTION GetGlusterOptionById(v_id UUID)
     RETURNS SETOF gluster_volume_options

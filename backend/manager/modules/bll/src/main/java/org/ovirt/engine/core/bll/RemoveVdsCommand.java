@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.StorageType;
@@ -12,12 +13,17 @@ import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.vdscommands.RemoveVdsVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
+import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
+import org.ovirt.engine.core.common.vdscommands.gluster.GlusterHostRemoveVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VdsDynamicDAO;
+import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
 
 public class RemoveVdsCommand<T extends VdsActionParameters> extends VdsCommand<T> {
+
+    private AuditLogType errorType = AuditLogType.USER_FAILED_REMOVE_VDS;
 
     public RemoveVdsCommand(T parameters) {
         super(parameters);
@@ -27,6 +33,7 @@ public class RemoveVdsCommand<T extends VdsActionParameters> extends VdsCommand<
     protected void executeCommand() {
         if (getVdsIdRef() != null && CanBeRemoved(getVdsId())) {
             Guid vdsGroupId = getVds().getvds_group_id();
+            glusterHostRemove();
             RemoveVdsStatisticsFromDb();
             RemoveVdsDynamicFromDb();
             RemoveVdsStaticFromDb();
@@ -46,6 +53,12 @@ public class RemoveVdsCommand<T extends VdsActionParameters> extends VdsCommand<
                 returnValue = false;
             }
         }
+
+        if (isGlusterEnabled() && hasVolumeOnServer()) {
+            addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_REMOVE_HOST_HAVING_GLUSTER_VOLUME);
+            returnValue = false;
+        }
+
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__REMOVE);
         addCanDoActionMessage(VdcBllMessages.VAR__TYPE__HOST);
         return returnValue;
@@ -53,7 +66,7 @@ public class RemoveVdsCommand<T extends VdsActionParameters> extends VdsCommand<
 
     @Override
     public AuditLogType getAuditLogTypeValue() {
-        return getSucceeded() ? AuditLogType.USER_REMOVE_VDS : AuditLogType.USER_FAILED_REMOVE_VDS;
+        return getSucceeded() ? AuditLogType.USER_REMOVE_VDS : errorType;
     }
 
     private boolean HasRunningVms(Guid vdsId) {
@@ -125,5 +138,39 @@ public class RemoveVdsCommand<T extends VdsActionParameters> extends VdsCommand<
             }
         }
         return returnValue;
+    }
+
+    private boolean isGlusterEnabled() {
+        return (getVdsGroup().supportsGlusterService());
+    }
+
+    protected GlusterBrickDao getGlusterBrickDao() {
+        return getDbFacade().getGlusterBrickDao();
+    }
+
+    private boolean hasVolumeOnServer() {
+        if (getGlusterBrickDao().getGlusterVolumeBricksByServerId(getVdsId()).size() > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private void glusterHostRemove() {
+        // UI will implement forceAction later
+        // Now assume that the force option is false
+        boolean forceAction = false;
+        if (isGlusterEnabled() && getVdsDAO().getAll().size() > 1 && !hasVolumeOnServer()) {
+            VDSReturnValue returnValue =
+                    runVdsCommand(
+                            VDSCommandType.GlusterHostRemove,
+                            new GlusterHostRemoveVDSParameters((ClusterUtils.getInstance().getUpServer(getVdsGroupId())).getId(),
+                                    getVdsName(),
+                                    forceAction));
+            setSucceeded(returnValue.getSucceeded());
+            if (!returnValue.getSucceeded()) {
+                errorType = AuditLogType.GLUSTER_HOST_REMOVE_FAILED;
+            }
+        }
     }
 }

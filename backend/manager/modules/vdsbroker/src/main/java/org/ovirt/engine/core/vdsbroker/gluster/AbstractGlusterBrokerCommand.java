@@ -27,6 +27,7 @@ public abstract class AbstractGlusterBrokerCommand<P extends VdsIdVDSCommandPara
         case GlusterVolumeDeleteFailed:
         case GlusterVolumeRemoveBricksFailed:
         case GlusterVolumeReplaceBrickStartFailed:
+        case GlusterHostRemoveFailed:
             // Capture error from gluster command and record failure
             getVDSReturnValue().setVdsError(new VDSError(returnStatus, getReturnStatus().mMessage));
             getVDSReturnValue().setSucceeded(false);

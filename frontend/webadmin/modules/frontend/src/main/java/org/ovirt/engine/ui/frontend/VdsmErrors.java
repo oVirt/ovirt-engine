@@ -681,4 +681,7 @@ public interface VdsmErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Gluster Volume Replace Brick Start Failed.")
     String GlusterVolumeReplaceBrickStartFailed();
+
+    @DefaultStringValue("Gluster Host Remove Failed.")
+    String GlusterHostRemoveFailed();
 }

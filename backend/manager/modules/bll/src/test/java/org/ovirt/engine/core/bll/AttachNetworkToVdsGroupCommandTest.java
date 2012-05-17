@@ -96,7 +96,7 @@ public class AttachNetworkToVdsGroupCommandTest {
             // Instead, will override them manually.
 
             @Override
-            protected VdsGroupDAO getVdsGroupDAO() {
+            public VdsGroupDAO getVdsGroupDAO() {
                 return vdsGroupDAO;
             }
 

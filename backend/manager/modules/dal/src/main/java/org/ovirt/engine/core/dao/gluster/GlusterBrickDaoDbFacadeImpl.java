@@ -98,4 +98,11 @@ public class GlusterBrickDaoDbFacadeImpl extends BaseDAODbFacade implements Glus
                     serverId.getUuid());
         }
     }
+
+    @Override
+    public List<GlusterBrickEntity> getGlusterVolumeBricksByServerId(Guid serverId) {
+        return getCallsHandler().executeReadList(
+                "GetGlusterVolumeBricksByServerGuid", brickRowMapper,
+                getCustomMapSqlParameterSource().addValue("server_id", serverId));
+    }
 }

@@ -81,7 +81,7 @@ public class TestHelperImportVmCommand extends ImportVmCommand {
     }
 
     @Override
-    protected VdsGroupDAO getVdsGroupDAO() {
+    public VdsGroupDAO getVdsGroupDAO() {
         VdsGroupDAO d = mock(VdsGroupDAO.class);
         List<VDSGroup> list = new ArrayList<VDSGroup>();
         VDSGroup g = new VDSGroup();

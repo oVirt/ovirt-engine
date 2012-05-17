@@ -565,7 +565,7 @@ public class AuditLogableBase extends TimeoutBase {
         return getDbFacade().getVmStatisticsDAO();
     }
 
-    protected VdsGroupDAO getVdsGroupDAO() {
+    public VdsGroupDAO getVdsGroupDAO() {
         return getDbFacade().getVdsGroupDAO();
     }
 

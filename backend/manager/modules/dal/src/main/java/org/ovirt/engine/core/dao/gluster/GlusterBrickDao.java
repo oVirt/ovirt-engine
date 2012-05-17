@@ -22,4 +22,6 @@ public interface GlusterBrickDao extends DAO {
     public void replaceBrick(GlusterBrickEntity oldBrick, GlusterBrickEntity newBrick);
 
     public void updateBrickStatus(Guid brickId, GlusterBrickStatus status);
+
+    public List<GlusterBrickEntity> getGlusterVolumeBricksByServerId(Guid serverId);
 }

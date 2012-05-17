@@ -1106,7 +1106,7 @@ public class AuditLogableBaseTest {
         }
 
         @Override
-        protected VdsGroupDAO getVdsGroupDAO() {
+        public VdsGroupDAO getVdsGroupDAO() {
             final VdsGroupDAO v = mock(VdsGroupDAO.class);
             final VDSGroup g = new VDSGroup();
             g.setvds_group_id(GUID);

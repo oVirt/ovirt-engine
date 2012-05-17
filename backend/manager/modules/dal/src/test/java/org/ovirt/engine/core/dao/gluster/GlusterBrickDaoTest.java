@@ -4,6 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
+import java.util.List;
+
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
@@ -38,6 +40,12 @@ public class GlusterBrickDaoTest extends BaseDAOTestCase {
         GlusterBrickEntity retrievedBrick = dao.getById(brickToAdd.getId());
         assertNotNull(retrievedBrick);
         assertEquals(brickToAdd, retrievedBrick);
+    }
+
+    @Test
+    public void testGlusterVolumeBricksByServerId() {
+        List<GlusterBrickEntity> bricks = dao.getGlusterVolumeBricksByServerId(SERVER_ID);
+        assertNotNull(bricks);
     }
 
     @Test

@@ -226,4 +226,6 @@ public interface IVdsServer {
     StatusOnlyReturnForXmlRpc replaceGlusterVolumeBrickStart(String volumeName,
             String existingBrickDir,
             String newBrickDir);
+
+    StatusOnlyReturnForXmlRpc glusterHostRemove(String hostName, Boolean force);
 }

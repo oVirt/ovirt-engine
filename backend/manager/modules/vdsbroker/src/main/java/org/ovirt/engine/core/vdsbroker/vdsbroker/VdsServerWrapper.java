@@ -1088,6 +1088,14 @@ public class VdsServerWrapper implements IVdsServer {
         }
     }
 
+    @Override
+    public StatusOnlyReturnForXmlRpc glusterHostRemove(String hostName, Boolean force) {
+        try {
+            return new StatusOnlyReturnForXmlRpc(vdsServer.glusterHostRemove(hostName, force));
+        } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
+    }
 
     @Override
     public StatusOnlyReturnForXmlRpc replaceGlusterVolumeBrickStart(String volumeName, String existingBrickDir,

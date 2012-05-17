@@ -15,17 +15,22 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dao.StoragePoolDAO;
 import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.dao.VdsDynamicDAO;
+import org.ovirt.engine.core.dao.VdsGroupDAO;
 import org.ovirt.engine.core.dao.VmStaticDAO;
+import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 @RunWith(PowerMockRunner.class)
@@ -41,6 +46,15 @@ public class RemoveVdsCommandTest {
 
     @Mock
     private VdsDAO vdsDAO;
+
+    @Mock
+    private VDSGroup vdsGroup;
+
+    @Mock
+    private GlusterBrickDao glusterBrickDao;
+
+    @Mock
+    private VdsGroupDAO vdsGroupDao;
 
     /**
      * The command under test.
@@ -58,6 +72,9 @@ public class RemoveVdsCommandTest {
         doReturn(vmStaticDAO).when(command).getVmStaticDAO();
         doReturn(storagePoolDAO).when(command).getStoragePoolDAO();
         doReturn(vdsDynamicDAO).when(command).getVdsDynamicDAO();
+        doReturn(glusterBrickDao).when(command).getGlusterBrickDao();
+        doReturn(vdsGroupDao).when(command).getVdsGroupDAO();
+        doReturn(vdsGroup).when(vdsGroupDao).get(Mockito.any(Guid.class));
     }
 
     @Test
@@ -66,13 +83,33 @@ public class RemoveVdsCommandTest {
         mockVdsDynamic();
         mockVmsPinnedToHost(Collections.<String> emptyList());
 
+        mockIsGlusterEnabled(false);
+        mockHasVolumeOnServer(false);
         runAndAssertCanDoActionSuccess();
+    }
+
+    @Test
+    public void canDoActionFailsWhenGlusterHostHasVolumes() throws Exception {
+        mockVdsWithStatus(VDSStatus.Maintenance);
+        mockVdsDynamic();
+        mockVmsPinnedToHost(Collections.<String> emptyList());
+
+        mockIsGlusterEnabled(true);
+        mockHasVolumeOnServer(true);
+
+        boolean canDoAction = command.canDoAction();
+        System.out.println(command.getReturnValue().getCanDoActionMessages());
+        assertFalse(canDoAction);
     }
 
     @Test
     public void canDoActionFailsWhenVMsPinnedToHost() throws Exception {
         mockVdsWithStatus(VDSStatus.Maintenance);
         mockVdsDynamic();
+
+        mockIsGlusterEnabled(true);
+        mockHasVolumeOnServer(true);
+
         String vmName = "abc";
         mockVmsPinnedToHost(Arrays.asList(vmName));
 
@@ -134,6 +171,33 @@ public class RemoveVdsCommandTest {
         VDS vds = new VDS();
         vds.setstatus(status);
         when(vdsDAO.get(command.getParameters().getVdsId())).thenReturn(vds);
+    }
+
+    /**
+     * Mock that {@link VDSGroup} with the given glusterservice status is returned
+     *
+     * @param glusterService
+     *              The VDSGroup with the given glusterservice status
+     */
+    private void mockIsGlusterEnabled(boolean glusterService) {
+        when(vdsGroup.supportsGlusterService()).thenReturn(glusterService);
+    }
+
+    /**
+     * Mock that whether the VDS configured with gluster volume. This will return the given volume count
+     *
+     * @param volumeCount
+     *              The volume count on the VDS
+     */
+    private void mockHasVolumeOnServer(boolean isBricksRequired) {
+        List<GlusterBrickEntity> bricks = new ArrayList<GlusterBrickEntity>();
+        if (isBricksRequired) {
+            GlusterBrickEntity brick = new GlusterBrickEntity();
+            brick.setVolumeId(new Guid());
+            brick.setServerId(command.getVdsId());
+            bricks.add(brick);
+        }
+        when(glusterBrickDao.getGlusterVolumeBricksByServerId(command.getVdsId())).thenReturn(bricks);
     }
 
     /**

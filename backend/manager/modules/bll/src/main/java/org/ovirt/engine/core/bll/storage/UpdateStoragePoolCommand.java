@@ -22,7 +22,6 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.StorageDomainStaticDAO;
-import org.ovirt.engine.core.dao.VdsGroupDAO;
 import org.ovirt.engine.core.utils.Pair;
 
 public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> extends
@@ -171,14 +170,5 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
 
     protected StorageDomainStaticDAO getStorageDomainStaticDAO() {
         return DbFacade.getInstance().getStorageDomainStaticDAO();
-    }
-
-    /**
-      * Overriding in order to make the method visible to tests in the current package.
-      * @see org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase#getVdsGroupDAO()
-      */
-    @Override
-    protected VdsGroupDAO getVdsGroupDAO() {
-        return super.getVdsGroupDAO();
     }
 }
