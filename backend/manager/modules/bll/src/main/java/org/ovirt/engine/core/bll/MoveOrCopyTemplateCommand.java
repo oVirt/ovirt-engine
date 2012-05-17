@@ -29,8 +29,10 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.vdscommands.GetImageDomainsListVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
+import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -216,15 +218,20 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
 
     protected boolean checkIfDisksExist(Iterable<DiskImage> disksList) {
         for (DiskImage disk : disksList) {
-            ArrayList<Guid> domains =
-                    (ArrayList<Guid>) getBackend()
-                            .getResourceManager()
-                            .RunVdsCommand(
-                                    VDSCommandType.GetImageDomainsList,
-                                    new GetImageDomainsListVDSCommandParameters(getStoragePool().getId()
-                                            .getValue(), disk.getId())).getReturnValue();
-            if (domains.contains(imageToDestinationDomainMap.get(disk.getImageId()))) {
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_ALREADY_CONTAINS_DISK);
+            VDSReturnValue runVdsCommand = getBackend()
+                    .getResourceManager()
+                    .RunVdsCommand(
+                            VDSCommandType.GetImageDomainsList,
+                            new GetImageDomainsListVDSCommandParameters(getStoragePool().getId()
+                                    .getValue(), disk.getId()));
+            if (runVdsCommand.getSucceeded()) {
+                ArrayList<Guid> domains = (ArrayList<Guid>) runVdsCommand.getReturnValue();
+                if (domains.contains(imageToDestinationDomainMap.get(disk.getImageId()))) {
+                    addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_ALREADY_CONTAINS_DISK);
+                    return false;
+                }
+            } else if (runVdsCommand.getVdsError().getCode() == VdcBllErrors.GetStorageDomainListError) {
+                addCanDoActionMessage(VdcBllMessages.ERROR_GET_STORAGE_DOMAIN_LIST);
                 return false;
             }
         }

@@ -1005,6 +1005,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot import Storage Domain. Not all LUNs connected to Storage Domain.")
     String ERROR_CANNOT_ADD_EXISTING_STORAGE_DOMAIN_LUNS_PROBLEM();
 
+    @DefaultStringValue("Cannot get Storage Domains list.")
+    String ERROR_GET_STORAGE_DOMAIN_LIST();
+
     @DefaultStringValue("Mac Address is already in use.")
     String NETWORK_MAC_ADDRESS_IN_USE();
 

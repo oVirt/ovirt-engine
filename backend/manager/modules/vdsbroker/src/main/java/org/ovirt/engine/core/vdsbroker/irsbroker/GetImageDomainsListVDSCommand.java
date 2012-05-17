@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.vdsbroker.irsbroker;
 
+import org.ovirt.engine.core.common.errors.VDSError;
+import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.vdscommands.GetImageDomainsListVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusForXmlRpc;
@@ -32,5 +34,19 @@ public class GetImageDomainsListVDSCommand<P extends GetImageDomainsListVDSComma
     @Override
     protected Object getReturnValueFromBroker() {
         return _result;
+    }
+
+    @Override
+    protected void ProceedProxyReturnValue() {
+        VdcBllErrors returnStatus = GetReturnValueFromStatus(getReturnStatus());
+        switch (returnStatus) {
+        case GetStorageDomainListError:
+            getVDSReturnValue().setVdsError(new VDSError(returnStatus, getReturnStatus().mMessage));
+            getVDSReturnValue().setSucceeded(false);
+            break;
+        default:
+            super.ProceedProxyReturnValue();
+            break;
+        }
     }
 }

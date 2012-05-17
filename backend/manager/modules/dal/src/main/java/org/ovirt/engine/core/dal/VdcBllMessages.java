@@ -598,6 +598,9 @@ public enum VdcBllMessages {
     VM_INTERFACE_NOT_EXIST,
     ACTION_TYPE_FAILED_CANNOT_REMOVE_ACTIVE_DEVICE,
     ACTION_TYPE_FAILED_IMPORT_CLONE_NOT_COLLAPSED,
+
+    /* VDSM Error that propagates up to the client. See VdcBLLErrors */
+    ERROR_GET_STORAGE_DOMAIN_LIST // VdcBllErrors.GetStorageDomainListError
     ;
 
     public int getValue() {

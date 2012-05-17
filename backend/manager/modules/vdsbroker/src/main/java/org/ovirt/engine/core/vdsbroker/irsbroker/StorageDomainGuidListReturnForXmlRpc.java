@@ -9,17 +9,18 @@ public final class StorageDomainGuidListReturnForXmlRpc extends StatusReturnForX
     // We are ignoring missing fields after the status, because on failure it is
     // not sent.
     // [XmlRpcMissingMapping(MappingAction.Ignore), XmlRpcMember("domainslist")]
-    public String[] mStorageDomainGuidList;
+    public String[] mStorageDomainGuidList = new String[0];
 
     @SuppressWarnings("unchecked")
     public StorageDomainGuidListReturnForXmlRpc(Map<String, Object> innerMap) {
         super(innerMap);
-        Object[] objects = (Object[]) innerMap.get(DOMAINS_LIST);
-        List<String> list = new LinkedList<String>();
-        for (Object object : objects) {
-            list.add((String) object);
+        if (innerMap.containsKey(DOMAINS_LIST)) {
+            List<String> list = new LinkedList<String>();
+            for (Object object : (Object[])innerMap.get(DOMAINS_LIST)) {
+                list.add((String) object);
+            }
+            mStorageDomainGuidList = list.toArray(new String[0]);
         }
-        mStorageDomainGuidList = list.toArray(new String[0]);
     }
 
 }
