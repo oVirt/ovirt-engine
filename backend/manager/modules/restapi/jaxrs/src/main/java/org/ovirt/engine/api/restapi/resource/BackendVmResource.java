@@ -25,9 +25,9 @@ import org.ovirt.engine.api.resource.AssignedPermissionsResource;
 import org.ovirt.engine.api.resource.AssignedTagsResource;
 import org.ovirt.engine.api.resource.CreationResource;
 import org.ovirt.engine.api.resource.DevicesResource;
-import org.ovirt.engine.api.resource.DisksResource;
 import org.ovirt.engine.api.resource.SnapshotsResource;
 import org.ovirt.engine.api.resource.StatisticsResource;
+import org.ovirt.engine.api.resource.VmDisksResource;
 import org.ovirt.engine.api.resource.VmNicsResource;
 import org.ovirt.engine.api.resource.VmResource;
 import org.ovirt.engine.api.resource.utils.UsbResourceUtils;
@@ -119,8 +119,8 @@ public class BackendVmResource extends
     }
 
     @Override
-    public DisksResource getDisksResource() {
-        return inject(new BackendDisksResource(guid,
+    public VmDisksResource getDisksResource() {
+        return inject(new BackendVmDisksResource(guid,
                                                VdcQueryType.GetAllDisksByVmId,
                                                new GetAllDisksByVmIdParameters(guid)));
     }

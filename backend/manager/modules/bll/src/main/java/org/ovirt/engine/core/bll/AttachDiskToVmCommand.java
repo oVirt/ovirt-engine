@@ -6,7 +6,7 @@ import java.util.List;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.action.UpdateVmDiskParameters;
+import org.ovirt.engine.core.common.action.AttachDettachVmDiskParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
@@ -20,7 +20,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 
-public class AttachDiskToVmCommand<T extends UpdateVmDiskParameters> extends AbstractDiskVmCommand<T> {
+public class AttachDiskToVmCommand<T extends AttachDettachVmDiskParameters> extends AbstractDiskVmCommand<T> {
 
     private static final long serialVersionUID = -1686587389737849288L;
     private List<PermissionSubject> permsList = null;
@@ -28,10 +28,7 @@ public class AttachDiskToVmCommand<T extends UpdateVmDiskParameters> extends Abs
 
     public AttachDiskToVmCommand(T parameters) {
         super(parameters);
-        if (getParameters().getDiskInfo().getPlugged() == null) {
-            getParameters().getDiskInfo().setPlugged(false);
-        }
-        disk = getDiskDao().get(getParameters().getDiskId());
+        disk = getDiskDao().get((Guid)getParameters().getEntityId());
     }
 
     @Override
@@ -42,8 +39,8 @@ public class AttachDiskToVmCommand<T extends UpdateVmDiskParameters> extends Abs
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_IMAGE_DOES_NOT_EXIST);
         }
         retValue =
-                retValue && isDiskCanBeAddedToVm(getParameters().getDiskInfo())
-                        && isDiskPassPCIAndIDELimit(getParameters().getDiskInfo());
+                retValue && isDiskCanBeAddedToVm(disk)
+                        && isDiskPassPCIAndIDELimit(disk);
         if (retValue && (getVmDeviceDao().exists(new VmDeviceId(disk.getId(), getVmId())) && !disk.isShareable())) {
             retValue = false;
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_ALREADY_ATTACHED);
@@ -59,12 +56,12 @@ public class AttachDiskToVmCommand<T extends UpdateVmDiskParameters> extends Abs
             retValue = false;
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_MATCH);
         }
-        if (retValue && Boolean.TRUE.equals(getParameters().getDiskInfo().getPlugged())
+        if (retValue && getParameters().isPlugUnPlug()
+
                 && getVm().getstatus() != VMStatus.Down) {
             retValue = isOSSupportingHotPlug() && isHotPlugSupported()
-                            && isInterfaceSupportedForPlugUnPlug(getParameters().getDiskInfo());
+                            && isInterfaceSupportedForPlugUnPlug(disk);
         }
-
         return retValue;
     }
 
@@ -78,14 +75,8 @@ public class AttachDiskToVmCommand<T extends UpdateVmDiskParameters> extends Abs
                         0,
                         null,
                         true,
-                        Boolean.TRUE.equals(getParameters().getDiskInfo().getPlugged()),
+                        getParameters().isPlugUnPlug(),
                         false);
-        disk.setInternalDriveMapping(getParameters().getDiskInfo().getInternalDriveMapping());
-        disk.setBoot(getParameters().getDiskInfo().isBoot());
-        disk.setDiskInterface(getParameters().getDiskInfo().getDiskInterface());
-        if (DiskStorageType.IMAGE.equals(disk.getDiskStorageType())) {
-            getImageDao().update(((DiskImage) disk).getImage());
-        }
         getVmDeviceDao().save(vmDevice);
         // update cached image
         List<Disk> imageList = new ArrayList<Disk>();
@@ -93,7 +84,7 @@ public class AttachDiskToVmCommand<T extends UpdateVmDiskParameters> extends Abs
         VmHandler.updateDisksForVm(getVm(), imageList);
         // update vm device boot order
         VmDeviceUtils.updateBootOrderInVmDevice(getVm().getStaticData());
-        if (Boolean.TRUE.equals(getParameters().getDiskInfo().getPlugged()) && getVm().getstatus() != VMStatus.Down) {
+        if (getParameters().isPlugUnPlug() && getVm().getstatus() != VMStatus.Down) {
             performPlugCommnad(VDSCommandType.HotPlugDisk, disk, vmDevice);
         }
         setSucceeded(true);

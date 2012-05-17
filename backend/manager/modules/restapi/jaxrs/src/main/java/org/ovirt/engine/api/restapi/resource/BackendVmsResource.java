@@ -292,7 +292,7 @@ public class BackendVmsResource extends
     }
 
     private void addInlineDisks(VM vm) {
-        BackendDisksResource disksResource = inject(new BackendDisksResource(Guid.createGuidFromString(vm.getId()),
+        BackendVmDisksResource disksResource = inject(new BackendVmDisksResource(Guid.createGuidFromString(vm.getId()),
                 VdcQueryType.GetAllDisksByVmId,
                 new GetAllDisksByVmIdParameters(Guid.createGuidFromString(vm.getId()))));
         Disks disks = disksResource.list();

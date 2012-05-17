@@ -74,9 +74,10 @@ import org.ovirt.engine.api.resource.DataCenterResource;
 import org.ovirt.engine.api.resource.DataCentersResource;
 import org.ovirt.engine.api.resource.DeviceResource;
 import org.ovirt.engine.api.resource.DevicesResource;
+import org.ovirt.engine.api.resource.DiskResource;
+import org.ovirt.engine.api.resource.DisksResource;
 import org.ovirt.engine.api.resource.DomainsResource;
 import org.ovirt.engine.api.resource.DomainResource;
-import org.ovirt.engine.api.resource.DiskResource;
 import org.ovirt.engine.api.resource.EventResource;
 import org.ovirt.engine.api.resource.EventsResource;
 import org.ovirt.engine.api.resource.QuotaResource;
@@ -117,6 +118,8 @@ import org.ovirt.engine.api.resource.TemplateResource;
 import org.ovirt.engine.api.resource.TemplatesResource;
 import org.ovirt.engine.api.resource.UserResource;
 import org.ovirt.engine.api.resource.UsersResource;
+import org.ovirt.engine.api.resource.VmDiskResource;
+import org.ovirt.engine.api.resource.VmDisksResource;
 import org.ovirt.engine.api.resource.VmPoolResource;
 import org.ovirt.engine.api.resource.VmPoolsResource;
 import org.ovirt.engine.api.resource.VmResource;
@@ -188,10 +191,8 @@ public class LinkHelper {
         map = new ParentToCollectionMap(ReadOnlyDeviceResource.class, ReadOnlyDevicesResource.class, Template.class);
         TYPES.put(Disk.class, map);
 
-        map = new ParentToCollectionMap(DeviceResource.class, DevicesResource.class, VM.class);
-        TYPES.put(Disk.class, map);
-
-        map = new ParentToCollectionMap(DiskResource.class, DevicesResource.class, VM.class);
+        map = new ParentToCollectionMap(DiskResource.class, DisksResource.class);
+        map.add(VmDiskResource.class, VmDisksResource.class, VM.class);
         TYPES.put(Disk.class, map);
 
         map = new ParentToCollectionMap(HostResource.class, HostsResource.class);

@@ -95,6 +95,7 @@ public class BackendApiResource
         links.add(createLink("domains"));
         links.add(createLink("vmpools", LinkFlags.SEARCHABLE));
         links.add(createLink("vms", LinkFlags.SEARCHABLE));
+        links.add(createLink("disks"));
         return links;
     }
 

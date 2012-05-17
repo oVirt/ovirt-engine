@@ -170,6 +170,8 @@
       <xs:element name="option" type="Option" minOccurs="0"/>
 	  <!-- In gluster volume rebalance action, should only fix-layout be performed -->
       <xs:element name="fix_layout" type="xs:boolean" minOccurs="0"/>
+      <!-- detach Disk from VM (as opposed to deleting it) -->
+      <xs:element name="detach" type="xs:boolean" minOccurs="0"/>
       <!-- ... etc., explicitly enumerate all the parameter types -->
     </xs:sequence>
   </xs:group>

@@ -111,7 +111,7 @@ public interface VmResource extends UpdatableResource<VM>, AsynchronouslyCreated
     public DevicesResource<CdRom, CdRoms> getCdRomsResource();
 
     @Path("disks")
-    public DisksResource getDisksResource();
+    public VmDisksResource getDisksResource();
 
     @Path("nics")
     public VmNicsResource getNicsResource();

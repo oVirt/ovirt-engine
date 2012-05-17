@@ -53,6 +53,10 @@
         lazy-init="true"
         class="org.ovirt.engine.api.restapi.resource.BackendVmPoolsResource"/>
 
+  <bean id="backendDisksResource"
+        lazy-init="true"
+        class="org.ovirt.engine.api.restapi.resource.BackendDisksResource"/>
+
   <bean id="backendTagsResource"
         lazy-init="true"
         class="org.ovirt.engine.api.restapi.resource.BackendTagsResource"/>

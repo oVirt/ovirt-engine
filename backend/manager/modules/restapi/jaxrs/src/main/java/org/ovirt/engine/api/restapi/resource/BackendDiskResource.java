@@ -1,77 +1,40 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import javax.ws.rs.core.Response;
-
-import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Disk;
-import org.ovirt.engine.api.model.Disks;
-import org.ovirt.engine.api.resource.ActionResource;
+import org.ovirt.engine.api.resource.CreationResource;
 import org.ovirt.engine.api.resource.DiskResource;
 import org.ovirt.engine.api.resource.StatisticsResource;
-import org.ovirt.engine.core.common.action.HotPlugDiskToVmParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.common.queries.GetDiskByDiskIdParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.compat.NotImplementedException;
 
-import static org.ovirt.engine.api.restapi.resource.BackendNicsResource.SUB_COLLECTIONS;
+public class BackendDiskResource extends AbstractBackendSubResource<Disk, org.ovirt.engine.core.common.businessentities.Disk> implements DiskResource {
 
+    protected BackendDiskResource(String id) {
+        super(id, Disk.class, org.ovirt.engine.core.common.businessentities.Disk.class);
+    }
 
-public class BackendDiskResource extends BackendDeviceResource<Disk, Disks, org.ovirt.engine.core.common.businessentities.Disk> implements DiskResource {
-
-    protected BackendDiskResource(String id,
-                                  AbstractBackendReadOnlyDevicesResource<Disk, Disks, org.ovirt.engine.core.common.businessentities.Disk> collection,
-                                  VdcActionType updateType,
-                                  ParametersProvider<Disk, org.ovirt.engine.core.common.businessentities.Disk> updateParametersProvider,
-                                  String[] requiredUpdateFields,
-                                  String... subCollections) {
-        super(Disk.class,
-              org.ovirt.engine.core.common.businessentities.Disk.class,
-              collection.asGuidOr404(id),
-              collection,
-              updateType,
-              updateParametersProvider,
-              requiredUpdateFields,
-              SUB_COLLECTIONS);
+    @Override
+    public CreationResource getCreationSubresource(String ids) {
+        return inject(new BackendCreationResource(ids));
     }
 
     @Override
     public StatisticsResource getStatisticsResource() {
-        EntityIdResolver resolver = new EntityIdResolver() {
-            public org.ovirt.engine.core.common.businessentities.Disk lookupEntity(Guid guid) throws BackendFailureException {
-                return collection.lookupEntity(guid);
-            }
-        };
+        QueryIdResolver resolver = new QueryIdResolver(VdcQueryType.GetDiskByDiskId, GetDiskByDiskIdParameters.class);
         DiskStatisticalQuery query = new DiskStatisticalQuery(resolver, newModel(id));
         return inject(new BackendStatisticsResource<Disk, org.ovirt.engine.core.common.businessentities.Disk>(entityType, guid, query));
     }
 
     @Override
-    protected Disk populate(Disk model, org.ovirt.engine.core.common.businessentities.Disk entity) {
-        return ((BackendDisksResource)collection).addStatistics(model, entity, uriInfo, httpHeaders);
-    }
-
-    @Override
-    public ActionResource getActionSubresource(String action, String oid) {
-        return inject(new BackendActionResource(action, oid));
-    }
-
-    @Override
-    public Response activate(Action action) {
-        HotPlugDiskToVmParameters params =
-                new HotPlugDiskToVmParameters(((BackendDisksResource) collection).parentId,
-                        guid);
-        return performAction(VdcActionType.HotPlugDiskToVm, params);
-    }
-
-    @Override
-    public Response deactivate(Action action) {
-        HotPlugDiskToVmParameters params =
-                new HotPlugDiskToVmParameters(((BackendDisksResource) collection).parentId,
-                        guid);
-        return performAction(VdcActionType.HotUnPlugDiskFromVm, params);
+    public Disk update(Disk disk) {
+          //TODO: implmenet when Backend is ready. Implementation stub:
+//      return performUpdate(this, new QueryIdResolver(VdcQueryType.GetDiskByDiskId, GetDiskByDiskIdParameters.class), ?, ?);
+        throw new NotImplementedException("Pending Backend support");
     }
 
     @Override
     public Disk get() {
-        return super.get();//explicit call solves REST-Easy confusion
+        return performGet(VdcQueryType.GetDiskByDiskId, new GetDiskByDiskIdParameters(guid));
     }
 }

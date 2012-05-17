@@ -40,8 +40,10 @@ public class DiskStatisticalQuery extends AbstractStatisticalQuery<Disk, org.ovi
     private Disk clone(Disk parent) {
         Disk disk = new Disk();
         disk.setId(parent.getId());
-        disk.setVm(new VM());
-        disk.getVm().setId(parent.getVm().getId());
+        if (parent.isSetVm()) {
+            disk.setVm(new VM());
+            disk.getVm().setId(parent.getVm().getId());
+        }
         return disk;
     }
 }

@@ -708,10 +708,8 @@ public class VmDiskListModel extends SearchableListModel
         {
             DiskModel disk = (DiskModel) item.getEntity();
             if (disk.getDisk().getDiskStorageType() == DiskStorageType.IMAGE) {
-                DiskImage diskImage = (DiskImage) disk.getDisk();
-                diskImage.setPlugged((Boolean) model.getIsPlugged().getEntity());
-                UpdateVmDiskParameters parameters =
-                        new UpdateVmDiskParameters(vm.getId(), diskImage.getId(), diskImage);
+                AttachDettachVmDiskParameters parameters =
+                    new AttachDettachVmDiskParameters(vm.getId(), disk.getDisk().getId(), (Boolean) model.getIsPlugged().getEntity());
                 paramerterList.add(parameters);
             }
         }

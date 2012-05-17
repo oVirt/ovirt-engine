@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.disks;
 import java.util.ArrayList;
 
 import org.ovirt.engine.core.common.action.AddDiskParameters;
+import org.ovirt.engine.core.common.action.AttachDettachVmDiskParameters;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.UpdateVmDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -332,10 +333,8 @@ public class DiskListModel extends ListWithDetailsModel
         {
             DiskModel disk = (DiskModel) item.getEntity();
             if (disk.getDisk().getDiskStorageType() == DiskStorageType.IMAGE) {
-                DiskImage diskImage = (DiskImage) disk.getDisk();
-                diskImage.setPlugged((Boolean) model.getIsPlugged().getEntity());
-                UpdateVmDiskParameters parameters =
-                        new UpdateVmDiskParameters(vm.getId(), diskImage.getId(), diskImage);
+                AttachDettachVmDiskParameters parameters =
+                    new AttachDettachVmDiskParameters(vm.getId(), disk.getDisk().getId(), (Boolean) model.getIsPlugged().getEntity());
                 paramerterList.add(parameters);
             }
         }

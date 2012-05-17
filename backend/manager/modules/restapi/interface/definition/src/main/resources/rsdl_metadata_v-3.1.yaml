@@ -234,8 +234,12 @@ actions:
 - name: /api/vms/{vm:id}/disks/{disk:id}|rel=delete
   request:
     body:
-      parameterType: null
-      signatures: []
+      parameterType: Action
+      signatures:
+      - mandatoryArguments: {}
+        optionalArguments: {}
+      - mandatoryArguments: {action.detach: 'xs:boolean'}
+        optionalArguments: {}
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers: {}
@@ -272,6 +276,8 @@ actions:
           disk.propagate_errors: xs:boolean
           disk.wipe_after_delete: xs:boolean
           disk.storage_domains--COLLECTION: {storage_domain.id|name: 'xs:string'}
+      - mandatoryArguments: {disk.id: 'xs:string'}
+        optionalArguments: {disk.active: 'xs:boolean'}
     urlparams: {}
     headers: {Content-Type: application/xml|json, Expect: 201-created}
 - name: /api/vms/{vm:id}/disks/{disk:id}|rel=activate
@@ -496,6 +502,63 @@ actions:
       parameterType: Tag
       signatures:
       - mandatoryArguments: {tag.id|name: 'xs:string'}
+    urlparams: {}
+    headers: {Content-Type: application/xml|json, Expect: 201-created}
+- name: /api/disks|rel=get
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers: {}
+- name: /api/disks/{disk:id}|rel=get
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers: {}
+- name: /api/disks/{disk:id}|rel=delete
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
+    headers: {}
+- name: /api/disks/{disk:id}|rel=update
+  request:
+    body:
+      parameterType: Disk
+      signatures:
+      - mandatoryArguments: {}
+        optionalArguments:
+          size: xs:int
+          disk.type: xs:string
+          disk.interface: xs:string
+          disk.format: xs:string
+          disk.sparse: xs:boolean
+          disk.bootable: xs:boolean
+          disk.shareable: xs:boolean
+          disk.allow_snapshot: xs:boolean
+          disk.propagate_errors: xs:boolean
+          disk.wipe_after_delete: xs:boolean
+    urlparams: {}
+    headers: {Content-Type: application/xml|json}
+- name: /api/disks|rel=add
+  request:
+    body:
+      parameterType: Disk
+      signatures:
+      - mandatoryArguments: {size: 'xs:int', disk.type: 'xs:string', disk.interface: 'xs:string', disk.format: 'xs:string'}
+        optionalArguments:
+          disk.sparse: xs:boolean
+          disk.bootable: xs:boolean
+          disk.shareable: xs:boolean
+          disk.allow_snapshot: xs:boolean
+          disk.propagate_errors: xs:boolean
+          disk.wipe_after_delete: xs:boolean
+          disk.storage_domains--COLLECTION: {storage_domain.id|name: 'xs:string'}
     urlparams: {}
     headers: {Content-Type: application/xml|json, Expect: 201-created}
 - name: /api/capabilities|rel=get

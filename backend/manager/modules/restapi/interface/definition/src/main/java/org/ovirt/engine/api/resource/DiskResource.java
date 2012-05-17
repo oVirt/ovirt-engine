@@ -13,43 +13,16 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-
 package org.ovirt.engine.api.resource;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Response;
 
 import org.jboss.resteasy.annotations.providers.jaxb.Formatted;
-import org.ovirt.engine.api.model.Action;
-import org.ovirt.engine.api.model.Actionable;
 import org.ovirt.engine.api.model.Disk;
 
-
-@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_X_YAML})
 public interface DiskResource extends DeviceResource<Disk>, MeasurableResource {
-
-    @Path("{action: (activate|deactivate)}/{oid}")
-    public ActionResource getActionSubresource(@PathParam("action") String action, @PathParam("oid") String oid);
-
-    @POST
-    @Formatted
-    @Actionable
-    @Path("activate")
-    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_X_YAML})
-    public Response activate(Action action);
-
-    @POST
-    @Formatted
-    @Actionable
-    @Path("deactivate")
-    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_X_YAML})
-    public Response deactivate(Action action);
 
     @PUT
     @Formatted
