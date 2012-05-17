@@ -2190,12 +2190,14 @@
     <xs:complexContent>
       <xs:extension base="BaseResources">
         <xs:sequence>
-          <xs:annotation>
-            <xs:appinfo>
+          <xs:element ref="snapshot" minOccurs="0" maxOccurs="unbounded">
+            <xs:annotation>
+              <xs:appinfo>
                 <jaxb:property name="Snapshots"/>
-            </xs:appinfo>
-          </xs:annotation>
-          <xs:element ref="snapshot" minOccurs="0" maxOccurs="unbounded"/>
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="collapse_snapshots" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>

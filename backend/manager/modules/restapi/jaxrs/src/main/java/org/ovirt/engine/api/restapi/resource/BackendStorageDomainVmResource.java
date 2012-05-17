@@ -39,6 +39,11 @@ public class BackendStorageDomainVmResource
                                                            getClusterId(action));
         params.setImageToDestinationDomainMap(getDiskToDestinationMap(action));
 
+        if (action.isSetVm() && action.getVm().isSetSnapshots()
+                && action.getVm().getSnapshots().isSetCollapseSnapshots()) {
+            params.setCopyCollapse(action.getVm().getSnapshots().isCollapseSnapshots());
+        }
+
         return doAction(VdcActionType.ImportVm, params, action);
     }
 
