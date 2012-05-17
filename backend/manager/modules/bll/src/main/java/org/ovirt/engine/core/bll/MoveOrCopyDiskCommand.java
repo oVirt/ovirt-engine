@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -39,9 +40,9 @@ import org.ovirt.engine.core.dao.VmDeviceDAO;
 public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> extends MoveOrCopyImageGroupCommand<T> {
 
     private static final long serialVersionUID = -7219975636530710384L;
-    private boolean isVmFound = false;
     private Map<Guid, String> sharedLockMap;
     private List<PermissionSubject> permsList = null;
+    private List<VM> listVms;
 
     public MoveOrCopyDiskCommand(T parameters) {
         super(parameters);
@@ -205,16 +206,32 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
      * @return
      */
     protected boolean checkCanBeMoveInVm() {
-        boolean retValue = true;
-        if (isVmFound && VMStatus.Down != getVm().getstatus()) {
-            VmDevice vmDevice =
-                    getVmDeviceDAO().get(new VmDeviceId(getImage().getImageId(), getVm().getId()));
-            if (vmDevice.getIsPlugged()) {
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
-                retValue = false;
+        List<VM> listVms = getVmsForDiskId();
+        int vmCount = 0;
+        boolean canMoveDisk = true;
+        while (listVms.size() > vmCount && canMoveDisk) {
+            VM vm = listVms.get(vmCount++);
+            if (VMStatus.Down != vm.getstatus()) {
+                VmDevice vmDevice =
+                        getVmDeviceDAO().get(new VmDeviceId(getImage().getId(), vm.getId()));
+                if (vmDevice.getIsPlugged()) {
+                    addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
+                    canMoveDisk = false;
+                }
             }
         }
-        return retValue;
+        return canMoveDisk;
+    }
+
+    /**
+     * Cache method to retrieve all the VMs related to image
+     * @return List of Vms.
+     */
+    private List<VM> getVmsForDiskId() {
+        if (listVms == null) {
+            listVms = getVmDAO().getVmsListForDisk(getImage().getId());
+        }
+        return listVms;
     }
 
     /**
@@ -339,11 +356,14 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
                 setVmTemplate(template);
                 sharedLockMap = Collections.singletonMap(getImage().getvm_guid(), LockingGroup.TEMPLATE.name());
             }
-        } else if (!Guid.Empty.equals(getImage().getvm_guid())) {
-            VM vm = getVmDAO().get(getImage().getvm_guid());
-            isVmFound = true;
-            sharedLockMap = Collections.singletonMap(getImage().getvm_guid(), LockingGroup.VM.name());
-            setVm(vm);
+        } else {
+            List<VM> listVms = getVmsForDiskId();
+            if (!listVms.isEmpty()) {
+                sharedLockMap = new HashMap<Guid, String>();
+                for (VM vm : listVms) {
+                    sharedLockMap.put(vm.getId(), LockingGroup.VM.name());
+                }
+            }
         }
         return retValue;
     }

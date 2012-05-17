@@ -10,6 +10,7 @@ import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.when;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -45,9 +46,9 @@ import org.powermock.modules.junit4.PowerMockRunner;
 @PrepareForTest({StorageDomainSpaceChecker.class, ImagesHandler.class, ImagesHandler.class})
 public class MoveOrCopyDiskCommandTest {
 
-    private Guid diskImageGuid = Guid.NewGuid();
+    private final Guid diskImageGuid = Guid.NewGuid();
     private Guid destStorageId = Guid.NewGuid();
-    private Guid srcStorageId = Guid.NewGuid();
+    private final Guid srcStorageId = Guid.NewGuid();
 
     @Mock
     private DiskImageDAO diskImageDao;
@@ -153,6 +154,18 @@ public class MoveOrCopyDiskCommandTest {
         vm.setstatus(VMStatus.PoweredDown);
         AuditLogableBaseMockUtils.mockVmDao(command, vmDao);
         when(vmDao.get(any(Guid.class))).thenReturn(vm);
+        mockGetVmsListForDisk();
+    }
+
+    private void mockGetVmsListForDisk() {
+        List<VM> vmList = new ArrayList<VM>();
+        VM vm1 = new VM();
+        vm1.setstatus(VMStatus.PoweredDown);
+        VM vm2 = new VM();
+        vm2.setstatus(VMStatus.Down);
+        vmList.add(vm1);
+        vmList.add(vm2);
+        when(vmDao.getVmsListForDisk(any(Guid.class))).thenReturn(vmList);
     }
 
     private void initSrcStorageDomain() {

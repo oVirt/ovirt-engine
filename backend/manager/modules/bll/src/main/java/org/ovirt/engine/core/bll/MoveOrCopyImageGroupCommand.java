@@ -120,6 +120,7 @@ public class MoveOrCopyImageGroupCommand<T extends MoveOrCopyImageGroupParameter
                     || getParameters().getParentCommand() == VdcActionType.ImportVmTemplate) {
                 List<DiskImage> snapshots = getDiskImageDao()
                         .getAllSnapshotsForImageGroup(getParameters().getDestImageGroupId());
+                setSnapshotForShareableDisk(snapshots);
                 for (DiskImage snapshot : snapshots) {
                     DbFacade.getInstance()
                             .getImageStorageDomainMapDao()
@@ -135,6 +136,20 @@ public class MoveOrCopyImageGroupCommand<T extends MoveOrCopyImageGroupParameter
             }
 
             setSucceeded(true);
+        }
+    }
+
+    /**
+     * Shareable disk which shared between more then one VM, will be returned more then once when fetching the images by image group
+     * since it has multiple VM devices (one for each VM it is attached to) and not because he has snapshots,
+     * so the shareable disk needs to be distinct when updating the storage domain.
+     * @param snapshots - All the images which related to the image group id
+     */
+    private void setSnapshotForShareableDisk(List<DiskImage> snapshots) {
+        if (!snapshots.isEmpty() && snapshots.get(0).isShareable()) {
+            DiskImage sharedDisk = snapshots.get(0);
+            snapshots.clear();
+            snapshots.add(sharedDisk);
         }
     }
 
