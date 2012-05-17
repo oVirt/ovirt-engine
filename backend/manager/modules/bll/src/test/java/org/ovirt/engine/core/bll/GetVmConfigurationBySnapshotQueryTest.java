@@ -121,7 +121,7 @@ public class GetVmConfigurationBySnapshotQueryTest extends AbstractUserQueryTest
     public void testIllegalImageReturnedByQuery() throws Exception {
         GetVmConfigurationBySnapshotQuery<GetVmConfigurationBySnapshotQueryParams> query =
                 setupQueryBySnapshotId(existingSnapshotId);
-        existingVm.getDiskMap().put(existingDiskImage.getinternal_drive_mapping(), existingDiskImage);
+        existingVm.getDiskMap().put(existingDiskImage.getId(), existingDiskImage);
         existingVm.getImages().add(existingDiskImage);
         doReturn(existingVm).when(query).getVmFromConfiguration(anyString());
         query.Execute();

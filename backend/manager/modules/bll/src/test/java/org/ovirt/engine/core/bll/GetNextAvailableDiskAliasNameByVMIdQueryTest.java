@@ -59,19 +59,19 @@ public class GetNextAvailableDiskAliasNameByVMIdQueryTest extends AbstractUserQu
     public void testExecuteQueryWithOneImage() throws Exception {
         mockDAOForQuery();
         vm = mockVmAndReturnFromDAO();
-        Map<String, Disk> diskMap = vm.getDiskMap();
+        Map<Guid, Disk> diskMap = vm.getDiskMap();
         DiskImage diskImage = new DiskImage();
         diskImage.setInternalDriveMapping(1);
         diskImage.setImageId(Guid.NewGuid());
-        diskMap.put("1", diskImage);
+        diskMap.put(diskImage.getId(), diskImage);
         String diskAliasName = VM_NAME + "_Disk2";
 
         // Execute query.
         getQuery().executeQueryCommand();
         assertEquals(diskAliasName, getQuery().getQueryReturnValue().getReturnValue());
     }
-    
-    /**
+
+   /**
      * Initialize DAO to be used in query.
      *
      * @throws Exception
@@ -85,7 +85,7 @@ public class GetNextAvailableDiskAliasNameByVMIdQueryTest extends AbstractUserQu
         vm = new VM();
         vm.setId(vmId);
         vm.setvm_name(VM_NAME);
-        vm.setDiskMap(new HashMap<String, Disk>());
+        vm.setDiskMap(new HashMap<Guid, Disk>());
         return vm;
     }
 

@@ -472,8 +472,8 @@ public class BackendVmsResourceTest
                 getTemplateEntity(0));
 
         org.ovirt.engine.core.common.businessentities.VM vmConfiguration = getEntity(0);
-        Map<String, org.ovirt.engine.core.common.businessentities.Disk> diskImageMap = new HashMap<String, org.ovirt.engine.core.common.businessentities.Disk>();
-        diskImageMap.put("1", new DiskImage());
+        Map<Guid, org.ovirt.engine.core.common.businessentities.Disk> diskImageMap = new HashMap<Guid, org.ovirt.engine.core.common.businessentities.Disk>();
+        diskImageMap.put(Guid.NewGuid(), new DiskImage());
         expect(vmConfiguration.getDiskMap()).andReturn(diskImageMap).anyTimes();
         VmStatic vmStatic = new VmStatic();
         vmStatic.setId(GUIDS[0]);

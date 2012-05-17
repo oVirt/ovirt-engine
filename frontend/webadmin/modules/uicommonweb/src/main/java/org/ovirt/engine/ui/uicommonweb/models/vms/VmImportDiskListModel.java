@@ -13,7 +13,6 @@ import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -138,11 +137,10 @@ public class VmImportDiskListModel extends VmDiskListModel
         {
             for (Object item : getItems())
             {
-                for (Map.Entry<String, Disk> kvp : vm.getDiskMap().entrySet())
+                for (Map.Entry<Guid, Disk> kvp : vm.getDiskMap().entrySet())
                 {
                     DiskImage innerDisk = (DiskImage)kvp.getValue();
-                    if (StringHelper.stringsEqual(innerDisk.getinternal_drive_mapping(),
-                            disk.getinternal_drive_mapping()))
+                    if (innerDisk.getId().equals(disk.getId()))
                     {
                         innerDisk.setvolume_type(selectedVolumeType);
                         break;

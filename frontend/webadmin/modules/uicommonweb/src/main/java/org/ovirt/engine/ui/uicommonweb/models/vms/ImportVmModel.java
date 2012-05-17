@@ -694,7 +694,7 @@ public class ImportVmModel extends ListWithDetailsModel implements IIsObjectInSe
             VM vm = (VM) item;
 
             if (vm.getDiskMap() != null) {
-                for (Map.Entry<String, Disk> pair : vm
+                for (Map.Entry<Guid, Disk> pair : vm
                         .getDiskMap().entrySet()) {
                     DiskImage disk = (DiskImage) pair.getValue();
 
@@ -741,7 +741,7 @@ public class ImportVmModel extends ListWithDetailsModel implements IIsObjectInSe
             VM vm = (VM) item;
             HashMap<String, DiskImageBase> diskDictionary = new HashMap<String, DiskImageBase>();
 
-            for (Map.Entry<String, Disk> a : vm.getDiskMap()
+            for (Map.Entry<Guid, Disk> a : vm.getDiskMap()
                     .entrySet()) {
                 if (a.getValue().getQueryableId().equals(disk.getQueryableId())) {
                     ((DiskImage) a.getValue()).setvolume_type(tempVolumeType);

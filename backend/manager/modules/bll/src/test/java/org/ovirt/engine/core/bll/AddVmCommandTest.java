@@ -267,21 +267,6 @@ public class AddVmCommandTest {
         doReturn(null).when(cmd).getVmFromConfiguration();
     }
 
-    private VmTemplate setupSelectStorageDomainTests(final int domainSpaceGB,
-            final int sizeRequired,
-            final int pctRequired) {
-        mockDiskImageDAOGetSnapshotById();
-        mockStorageDomainDAOGetForStoragePool(domainSpaceGB);
-        mockGetImageDomainsListVdsCommand();
-        mockConfig();
-        mockConfigSizeRequirements(sizeRequired, pctRequired);
-        VmTemplate template = new VmTemplate();
-        template.setstorage_pool_id(Guid.NewGuid());
-        DiskImage image = new DiskImage();
-        template.addDiskImage(image);
-        return template;
-    }
-
     private AddVmFromTemplateCommand<AddVmFromTemplateParameters> createVmFromTemplateCommand(VM vm) {
         AddVmFromTemplateParameters param = new AddVmFromTemplateParameters();
         param.setVm(vm);
@@ -442,7 +427,8 @@ public class AddVmCommandTest {
         if (vmTemplate == null) {
             vmTemplate = new VmTemplate();
             vmTemplate.setstorage_pool_id(STORAGE_POOL_ID);
-            vmTemplate.addDiskImage(createDiskImageTemplate());
+            DiskImage image = createDiskImageTemplate();
+            vmTemplate.getDiskMap().put("0", image);
             Map<String, DiskImage> diskImageMap = new HashMap<String, DiskImage>();
             diskImageMap.put("disk1", createDiskImage(REQUIRED_DISK_SIZE_GB));
             vmTemplate.setDiskImageMap(diskImageMap);
@@ -467,7 +453,7 @@ public class AddVmCommandTest {
         DiskImage img = new DiskImage();
         img.setSizeInGigabytes(size);
         img.setActualSize(size);
-        img.setimage_group_id(Guid.NewGuid());
+        img.setId(Guid.NewGuid());
         img.setstorage_ids(new ArrayList<Guid>(Arrays.asList(STORAGE_DOMAIN_ID)));
         return img;
     }

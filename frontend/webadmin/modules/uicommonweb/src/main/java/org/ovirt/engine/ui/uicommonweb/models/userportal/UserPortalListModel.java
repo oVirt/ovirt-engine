@@ -1349,7 +1349,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                                 DiskModel disk = null;
                                 for (DiskModel a : ((UnitVmModel) userPortalListModel1.getWindow()).getDisks())
                                 {
-                                    if (StringHelper.stringsEqual(a.getName(), templateDisk.getinternal_drive_mapping()))
+                                    if (templateDisk.getId().equals(a.getDiskImage().getId()))
                                     {
                                         disk = a;
                                         break;

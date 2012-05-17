@@ -40,13 +40,13 @@ public class MoveOrCopyParameters extends StorageDomainParametersBase implements
         privateCopyCollapse = value;
     }
 
-    private HashMap<String, DiskImageBase> privateDiskInfoList;
+    private HashMap<Guid, DiskImageBase> privateDiskInfoList;
 
-    public HashMap<String, DiskImageBase> getDiskInfoList() {
+    public HashMap<Guid, DiskImageBase> getDiskInfoList() {
         return privateDiskInfoList;
     }
 
-    public void setDiskInfoList(HashMap<String, DiskImageBase> value) {
+    public void setDiskInfoList(HashMap<Guid, DiskImageBase> value) {
         privateDiskInfoList = value;
     }
 

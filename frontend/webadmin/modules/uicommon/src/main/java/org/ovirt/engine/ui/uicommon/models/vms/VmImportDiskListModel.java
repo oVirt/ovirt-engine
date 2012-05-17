@@ -108,7 +108,7 @@ public class VmImportDiskListModel extends VmDiskListModel
 			{
 				DiskModel model = (DiskModel)item;
 
-				for (java.util.Map.Entry<String, Disk> kvp : vm.getDiskMap().entrySet())
+				for (java.util.Map.Entry<Guid, Disk> kvp : vm.getDiskMap().entrySet())
 				{
 					DiskImage disk = (DiskImage)kvp.getValue();
 					ListModel volumeType = model.getVolumeType();

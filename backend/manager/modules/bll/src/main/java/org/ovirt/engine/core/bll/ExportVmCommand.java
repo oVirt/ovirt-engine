@@ -123,7 +123,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
         }
 
         if (retVal) {
-            Map<String, ? extends Disk> images = getParameters().getDiskInfoList();
+            Map<Guid, ? extends Disk> images = getParameters().getDiskInfoList();
             if (images == null) {
                 images = getVm().getDiskMap();
             }
@@ -134,10 +134,10 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
 
             if (retVal && getParameters().getCopyCollapse()) {
                 for (DiskImage img : getDisksBasedOnImage()) {
-                    if (images.containsKey(img.getinternal_drive_mapping())) {
+                    if (images.containsKey(img.getId())) {
                         // check that no RAW format exists (we are in collapse
                         // mode)
-                        if (((DiskImage) images.get(img.getinternal_drive_mapping())).getvolume_format() == VolumeFormat.RAW
+                        if (((DiskImage) images.get(img.getId())).getvolume_format() == VolumeFormat.RAW
                                 && img.getvolume_format() != VolumeFormat.RAW) {
                             addCanDoActionMessage(VdcBllMessages.VM_CANNOT_EXPORT_RAW_FORMAT);
                             retVal = false;

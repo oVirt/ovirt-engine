@@ -229,10 +229,10 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
                         }
                     }
                     if (retVal) {
-                        Map<String, List<DiskImage>> images = GetImagesLeaf(getVm().getImages());
-                        for (String drive : images.keySet()) {
-                            List<DiskImage> list = images.get(drive);
-                            getVm().addDriveToImageMap(drive, list.get(list.size() - 1));
+                        Map<Guid, List<DiskImage>> images = GetImagesLeaf(getVm().getImages());
+                        for (Guid id : images.keySet()) {
+                            List<DiskImage> list = images.get(id);
+                            getVm().getDiskMap().put(id, list.get(list.size() - 1));
                         }
                     }
                 } else {
@@ -271,7 +271,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
         if (retVal && getParameters().getCopyCollapse() && getParameters().getDiskInfoList() != null) {
             for (DiskImageBase imageBase : getParameters().getDiskInfoList().values()) {
                 DiskImage key = (DiskImage) getVm().getDiskMap()
-                        .get(imageBase.getinternal_drive_mapping());
+                        .get(imageBase.getId());
                 if (key != null) {
                     retVal =
                             ImagesHandler.CheckImageConfiguration(domainsMap.get(imageToDestinationDomainMap.get(key.getImageId()))
@@ -521,10 +521,10 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
             p.setSourceDomainId(getParameters().getSourceDomainId());
             p.setStoragePoolId(getParameters().getStoragePoolId());
             if (getParameters().getDiskInfoList() != null
-                    && getParameters().getDiskInfoList().containsKey(disk.getinternal_drive_mapping())) {
-                p.setVolumeType(getParameters().getDiskInfoList().get(disk.getinternal_drive_mapping())
+                    && getParameters().getDiskInfoList().containsKey(disk.getId())) {
+                p.setVolumeType(getParameters().getDiskInfoList().get(disk.getId())
                         .getvolume_type());
-                p.setVolumeFormat(getParameters().getDiskInfoList().get(disk.getinternal_drive_mapping())
+                p.setVolumeFormat(getParameters().getDiskInfoList().get(disk.getId())
                         .getvolume_format());
             }
             p.setParentParemeters(getParameters());
@@ -545,12 +545,12 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
     }
 
     private void addVmImagesAndSnapshots() {
-        Map<String, List<DiskImage>> images = GetImagesLeaf(getVm().getImages());
+        Map<Guid, List<DiskImage>> images = GetImagesLeaf(getVm().getImages());
 
         if (getParameters().getCopyCollapse()) {
             Guid snapshotId = Guid.NewGuid();
-            for (String drive : images.keySet()) {
-                List<DiskImage> list = images.get(drive);
+            for (Guid id : images.keySet()) {
+                List<DiskImage> list = images.get(id);
                 DiskImage disk = list.get(list.size() - 1);
 
                 disk.setParentId(VmTemplateHandler.BlankVmTemplateId);
@@ -559,11 +559,11 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
                 disk.setactive(true);
 
                 if (getParameters().getDiskInfoList() != null
-                        && getParameters().getDiskInfoList().containsKey(disk.getinternal_drive_mapping())) {
+                        && getParameters().getDiskInfoList().containsKey(disk.getId())) {
                     disk.setvolume_format(getParameters().getDiskInfoList()
-                            .get(disk.getinternal_drive_mapping())
+                            .get(disk.getId())
                             .getvolume_format());
-                    disk.setvolume_type(getParameters().getDiskInfoList().get(disk.getinternal_drive_mapping())
+                    disk.setvolume_type(getParameters().getDiskInfoList().get(disk.getId())
                             .getvolume_type());
                 }
                 diskGuidList.add(disk.getId());
@@ -612,8 +612,8 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
                 DbFacade.getInstance().getDiskImageDynamicDAO().save(diskDynamic);
             }
 
-            for (String drive : images.keySet()) {
-                List<DiskImage> list = images.get(drive);
+            for (Guid id : images.keySet()) {
+                List<DiskImage> list = images.get(id);
                 DiskImage disk = list.get(list.size() - 1);
                 snapshotId = disk.getvm_snapshot_id().getValue();
                 disk.setactive(true);
@@ -655,13 +655,13 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
     }
 
     // the last image in each list is the leaf
-    public static Map<String, List<DiskImage>> GetImagesLeaf(List<DiskImage> images) {
-        Map<String, List<DiskImage>> retVal = new HashMap<String, List<DiskImage>>();
+    public static Map<Guid, List<DiskImage>> GetImagesLeaf(List<DiskImage> images) {
+        Map<Guid, List<DiskImage>> retVal = new HashMap<Guid, List<DiskImage>>();
         for (DiskImage image : images) {
-            MultiValueMapUtils.addToMap(image.getinternal_drive_mapping(), image, retVal);
+            MultiValueMapUtils.addToMap(image.getId(), image, retVal);
         }
 
-        for (String key : retVal.keySet()) {
+        for (Guid key : retVal.keySet()) {
             SortImageList(retVal.get(key));
         }
         return retVal;

@@ -193,7 +193,7 @@ public class ImportVmModel extends ListWithDetailsModel
 
 			if (vm.getDiskMap() != null)
 			{
-				for (java.util.Map.Entry<String, Disk> pair : vm.getDiskMap().entrySet())
+				for (java.util.Map.Entry<Guid, Disk> pair : vm.getDiskMap().entrySet())
 				{
 					DiskImage disk = (DiskImage)pair.getValue();
 

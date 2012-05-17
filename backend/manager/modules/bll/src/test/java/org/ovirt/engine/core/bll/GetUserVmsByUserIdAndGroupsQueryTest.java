@@ -89,7 +89,7 @@ public class GetUserVmsByUserIdAndGroupsQueryTest
                 @Override
                 public Object answer(InvocationOnMock invocation) throws Throwable {
                     expectedDisk.getSnapshots().addAll(snapshots);
-                    expectedVM.getDiskMap().put(expectedDisk.getinternal_drive_mapping(), expectedDisk);
+                    expectedVM.getDiskMap().put(expectedDisk.getId(), expectedDisk);
                     expectedVM.getDiskList().add(expectedDisk);
 
                     return null;

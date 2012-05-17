@@ -278,10 +278,10 @@ public class VmBackupModel extends ManageBackupModel {
             prm.setForceOverride(true);
 
             prm.setCopyCollapse((Boolean) model.getCollapseSnapshots().getEntity());
-            HashMap<String, DiskImageBase> diskDictionary = new HashMap<String, DiskImageBase>();
+            HashMap<Guid, DiskImageBase> diskDictionary = new HashMap<Guid, DiskImageBase>();
 
-            for (Map.Entry<String, Disk> entry : vm.getDiskMap().entrySet()) {
-                String key = entry.getKey();
+            for (Map.Entry<Guid, Disk> entry : vm.getDiskMap().entrySet()) {
+                Guid key = entry.getKey();
                 DiskImage disk = (DiskImage) entry.getValue();
 
                 HashMap<Guid, Guid> map = model.getDiskStorageMap().get(vm.getId());

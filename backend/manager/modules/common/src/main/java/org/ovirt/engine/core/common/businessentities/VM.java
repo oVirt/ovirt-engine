@@ -18,7 +18,6 @@ import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 
-@SuppressWarnings("unused")
 public class VM extends IVdcQueryable implements INotifyPropertyChanged, Serializable, BusinessEntity<Guid>, HasStoragePool<Guid> {
     private static final long serialVersionUID = -4078140531074414263L;
     @Valid
@@ -62,7 +61,7 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         mVmStatistics = new VmStatistics();
         setImages(new ArrayList<DiskImage>());
         setInterfaces(new ArrayList<VmNetworkInterface>());
-        mDiskMap = new HashMap<String, Disk>();
+        mDiskMap = new HashMap<Guid, Disk>();
         mCdPath = "";
         mFloppyPath = "";
         mRunAndPause = false;
@@ -70,7 +69,7 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
     }
 
     public VM(VmStatic vmStatic, VmDynamic vmDynamic, VmStatistics vmStatistics) {
-        mDiskMap = new HashMap<String, Disk>();
+        mDiskMap = new HashMap<Guid, Disk>();
         mCdPath = "";
         mFloppyPath = "";
         mRunAndPause = false;
@@ -107,7 +106,7 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         mVmStatistics = new VmStatistics();
         setImages(new ArrayList<DiskImage>());
         setInterfaces(new ArrayList<VmNetworkInterface>());
-        mDiskMap = new HashMap<String, Disk>();
+        mDiskMap = new HashMap<Guid, Disk>();
         mCdPath = "";
         mFloppyPath = "";
         mRunAndPause = false;
@@ -1086,7 +1085,7 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         // Purposely empty
     }
 
-    private Map<String, Disk> mDiskMap = new HashMap<String, Disk>();
+    private Map<Guid, Disk> mDiskMap = new HashMap<Guid, Disk>();
 
     // even this field has no setter, it can not have the final modifier because the GWT serialization mechanizm
     // ignores the final fields
@@ -1250,19 +1249,11 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         OnPropertyChanged(new PropertyChangedEventArgs("run_on_vds_name"));
     }
 
-    public Disk getDriveToImageMap(String drive) {
-        Disk image = null;
-        if (mDiskMap.containsKey(drive)) {
-            image = mDiskMap.get(drive);
-        }
-        return image;
-    }
-
-    public Map<String, Disk> getDiskMap() {
+    public Map<Guid, Disk> getDiskMap() {
         return mDiskMap;
     }
 
-    public void setDiskMap(Map<String, Disk> diskMap) {
+    public void setDiskMap(Map<Guid, Disk> diskMap) {
         mDiskMap = diskMap;
     }
 
@@ -1276,16 +1267,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
 
     public void setMinAllocatedMem(int value) {
         mVmStatic.setMinAllocatedMem(value);
-    }
-
-    // This function is left only to leave the option of creating a VM without
-    // having all the data in the DB
-    // Currently it is used mainly by tests and VdcClient (for direct access to
-    // the VDS)
-    // TO CONSIDER removing this function
-    public void addDriveToImageMap(String drive, DiskImage image) {
-        mDiskMap.put(drive, image);
-        getDiskList().add(image);
     }
 
     public String getCdPath() {

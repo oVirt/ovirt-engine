@@ -236,11 +236,11 @@ public class VmHandler {
             if (disk.isAllowSnapshot()) {
                 DiskImage image = (DiskImage) disk;
                 if (image.getactive() != null && image.getactive()) {
-                    vm.getDiskMap().put(image.getinternal_drive_mapping(), image);
+                    vm.getDiskMap().put(image.getId(), image);
                     vm.getDiskList().add(image);
                 }
             } else {
-                vm.getDiskMap().put(disk.getinternal_drive_mapping(), disk);
+                vm.getDiskMap().put(disk.getId(), disk);
             }
         }
     }

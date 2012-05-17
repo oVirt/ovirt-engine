@@ -44,7 +44,6 @@ import org.ovirt.engine.core.dao.StorageDomainStaticDAO;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDAO;
 import org.ovirt.engine.core.dao.VmDAO;
 import org.ovirt.engine.core.dao.VmNetworkInterfaceDAO;
-import org.ovirt.engine.core.utils.RandomUtils;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -338,7 +337,7 @@ public class AddDiskToVmCommandTest {
     private void mockVmWithDisk(Guid storageId) {
         DiskImage image = new DiskImage();
         image.setstorage_ids(new ArrayList<Guid>(Arrays.asList(storageId)));
-        mockVm().addDriveToImageMap(RandomUtils.instance().nextNumericString(1), image);
+        mockVm().getDiskMap().put(image.getId(), image);
     }
 
     /**

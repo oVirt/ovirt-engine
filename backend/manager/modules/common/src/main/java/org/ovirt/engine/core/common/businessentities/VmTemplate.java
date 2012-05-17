@@ -278,15 +278,6 @@ public class VmTemplate extends VmBase {
         diskList = disks;
     }
 
-    public boolean addDiskImage(DiskImage di) {
-        boolean retval = false;
-        if (!getDiskMap().containsKey(di.getinternal_drive_mapping())) {
-            getDiskMap().put(di.getinternal_drive_mapping(), di);
-            retval = true;
-        }
-        return retval;
-    }
-
     @Override
     public boolean equals(Object obj) {
         boolean returnValue = super.equals(obj);
