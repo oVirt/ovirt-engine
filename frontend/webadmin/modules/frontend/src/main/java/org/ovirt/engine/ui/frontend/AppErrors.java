@@ -1891,4 +1891,6 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Host having Gluster volume.")
     String VDS_CANNOT_REMOVE_HOST_HAVING_GLUSTER_VOLUME();
 
+    @DefaultStringValue("Cannot ${action} ${type}. There is no available host in the cluster to probe the new host.")
+    String ACTION_TYPE_FAILED_NO_GLUSTER_HOST_TO_PEER_PROBE();
 }

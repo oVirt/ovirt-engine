@@ -335,6 +335,8 @@ public enum VdcBllErrors {
     GlusterVolumeRebalanceStartFailed(4135),
     GlusterVolumeReplaceBrickStartFailed(4142),
     GlusterHostRemoveFailed(4406),
+    GlusterAddHostFailed(4404),
+
 
     UnicodeArgumentException(4900),
 

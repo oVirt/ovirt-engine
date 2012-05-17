@@ -497,6 +497,8 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
 	String VdcActionType___ReplaceGlusterVolumeBrick();
 
+	String VdcActionType___GlusterHostAdd();
+
 	String VdcObjectType___AdElements();
 
 	String VdcObjectType___System();

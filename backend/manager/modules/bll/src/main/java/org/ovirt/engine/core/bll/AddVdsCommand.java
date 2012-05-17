@@ -12,6 +12,7 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -37,6 +38,9 @@ import org.ovirt.engine.core.common.job.StepEnum;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.PowerManagementCheck;
+import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
+import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
+import org.ovirt.engine.core.common.vdscommands.gluster.GlusterHostAddVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.VdcBllMessages;
@@ -154,6 +158,20 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
                 }
             });
             ExecutionHandler.setAsyncJob(getExecutionContext(), true);
+        } else {
+            // If cluster supports gluster service do gluster peer probe
+            // only on non vds installation mode.
+            if (getVdsGroup().supportsGlusterService() && getAllVds(getVdsGroupId()).size() > 1) {
+                String hostName =
+                        (getParameters().getvds().gethost_name().isEmpty()) ? getParameters().getvds().getManagmentIp()
+                                : getParameters().getvds().gethost_name();
+                VDSReturnValue returnValue =
+                        runVdsCommand(
+                                VDSCommandType.GlusterHostAdd,
+                                new GlusterHostAddVDSParameters(getUpServer().getId(),
+                                        hostName));
+                setSucceeded(returnValue.getSucceeded());
+            }
         }
     }
 
@@ -243,13 +261,13 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
 
     @Override
     protected boolean canDoAction() {
-        boolean retrunValue = true;
+        boolean returnValue = true;
         setVdsGroupId(getParameters().getVdsStaticData().getvds_group_id());
         getParameters().setVdsForUniqueId(null);
         // Check if this is a valid cluster
         if (getVdsGroup() == null) {
             addCanDoActionMessage(VdcBllMessages.VDS_CLUSTER_IS_NOT_VALID);
-            retrunValue = false;
+            returnValue = false;
         } else {
             VDS vds = getParameters().getvds();
             String vdsName = vds.getvds_name();
@@ -258,45 +276,52 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
             // check that vds name is not null or empty
             if (vdsName == null || vdsName.isEmpty()) {
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NAME_MAY_NOT_BE_EMPTY);
-                retrunValue = false;
+                returnValue = false;
                 // check that VDS name is not too long
             } else if (vdsName.length() > maxVdsNameLength) {
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NAME_LENGTH_IS_TOO_LONG);
-                retrunValue = false;
+                returnValue = false;
                 // check that VDS hostname does not contain special characters.
             } else if (!ValidationUtils.validHostname(hostName)) {
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_INVALID_VDS_HOSTNAME);
-                retrunValue = false;
+                returnValue = false;
             } else {
-                retrunValue = retrunValue && validateSingleHostAttachedToLocalStorage();
+                returnValue = returnValue && validateSingleHostAttachedToLocalStorage();
 
                 if (Config.<Boolean> GetValue(ConfigValues.UseSecureConnectionWithServers)
                         && !FileUtil.fileExists(Config.resolveCertificatePath())) {
                     addCanDoActionMessage(VdcBllMessages.VDS_TRY_CREATE_SECURE_CERTIFICATE_NOT_FOUND);
-                    retrunValue = false;
+                    returnValue = false;
                 } else if (!getParameters().getAddPending()
                         && StringHelper.isNullOrEmpty(getParameters().getRootPassword())) {
                     // We block vds installations if it's not a RHEV-H and password is empty
                     // Note that this may override local host SSH policy. See BZ#688718.
                     addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_INSTALL_EMPTY_PASSWORD);
-                    retrunValue = false;
+                    returnValue = false;
                 } else if (!IsPowerManagementLegal(getParameters().getVdsStaticData(), getVdsGroup()
                             .getcompatibility_version().toString())) {
-                    retrunValue = false;
+                    returnValue = false;
                 } else if (getParameters().getVdsStaticData().getport() < 1
                             || getParameters().getVdsStaticData().getport() > 65536) {
                     addCanDoActionMessage(VdcBllMessages.VDS_PORT_IS_NOT_LEGAL);
-                    retrunValue = false;
+                    returnValue = false;
                 } else {
-                    retrunValue = retrunValue && validateHostUniqueness(vds);
+                    returnValue = returnValue && validateHostUniqueness(vds);
                 }
             }
         }
-        if (!retrunValue) {
+        if (getVdsGroup().supportsGlusterService()) {
+            if (getAllVds(getVdsGroupId()).size() > 0 && getUpServer() == null) {
+                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NO_GLUSTER_HOST_TO_PEER_PROBE);
+                returnValue = false;
+            }
+        }
+
+        if (!returnValue) {
             addCanDoActionMessage(VdcBllMessages.VAR__ACTION__ADD);
             addCanDoActionMessage(VdcBllMessages.VAR__TYPE__HOST);
         }
-        return retrunValue;
+        return returnValue;
     }
 
     public VdsInstallHelper getVdsInstallHelper() {
@@ -438,4 +463,22 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         return jobProperties;
     }
 
+    /**
+     * This method will return the list of all vds from the cluster
+     *
+     * @param clusterId
+     * @return List of Vds
+     */
+    private List<VDS> getAllVds(Guid clusterId) {
+        return getVdsDAO().getAllForVdsGroup(clusterId);
+    }
+
+    /**
+     * This server is chosen randomly from all the Up servers.
+     *
+     * @return One of the servers in up status
+     */
+    protected VDS getUpServer() {
+        return ClusterUtils.getInstance().getUpServer(getVdsGroupId());
+    }
 }

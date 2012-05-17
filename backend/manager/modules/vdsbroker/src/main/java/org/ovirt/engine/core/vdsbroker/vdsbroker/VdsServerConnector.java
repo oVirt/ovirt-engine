@@ -218,6 +218,8 @@ public interface VdsServerConnector {
 
     public Map<String, Object> glusterVolumeReplaceBrickStart(String volumeName, String existingBrickDir, String newBrickDir);
 
+    public Map<String, Object> glusterHostAdd(String hostName);
+
     public Map<String, Object> ping();
 
     @FutureCall(delegeteTo = "ping")

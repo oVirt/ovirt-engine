@@ -228,4 +228,7 @@ public interface IVdsServer {
             String newBrickDir);
 
     StatusOnlyReturnForXmlRpc glusterHostRemove(String hostName, Boolean force);
+
+    StatusOnlyReturnForXmlRpc glusterHostAdd(String hostName);
+
 }
