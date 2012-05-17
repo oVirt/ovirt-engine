@@ -29,11 +29,13 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 
+import org.ovirt.engine.api.common.util.FileUtils;
 import org.ovirt.engine.api.common.util.JAXBHelper;
 import org.ovirt.engine.api.common.util.LinkHelper;
 import org.ovirt.engine.api.common.util.LinkHelper.LinkFlags;
 import org.ovirt.engine.api.common.util.QueryHelper;
 import org.ovirt.engine.api.model.API;
+import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.ApiSummary;
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.DetailedLink;
@@ -50,17 +52,19 @@ import org.ovirt.engine.api.model.StorageDomains;
 import org.ovirt.engine.api.model.Users;
 import org.ovirt.engine.api.model.VMs;
 import org.ovirt.engine.api.resource.ApiResource;
-import org.ovirt.engine.api.common.util.FileUtils;
+import org.ovirt.engine.api.restapi.rsdl.RsdlBuilder;
+import org.ovirt.engine.api.restapi.rsdl.SchemaBuilder;
 import org.ovirt.engine.api.restapi.util.VersionHelper;
+import org.ovirt.engine.core.common.action.VdcActionParametersBase;
+import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetSystemStatisticsQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.api.restapi.rsdl.RsdlBuilder;
-import org.ovirt.engine.api.restapi.rsdl.SchemaBuilder;
+import org.ovirt.engine.core.compat.Guid;
 
 public class BackendApiResource
-    extends BackendResource
+    extends AbstractBackendActionableResource<API, Object>
     implements ApiResource {
 
     private static final String SYSTEM_STATS_ERROR = "Unknown error querying system statistics";
@@ -77,6 +81,10 @@ public class BackendApiResource
     private static RSDL rsdl = null;
     private static final String QUERY_PARAMETER = "?";
     protected final ObjectFactory OBJECT_FACTORY = new ObjectFactory();
+
+    public BackendApiResource() {
+        super(Guid.Empty.toString(), API.class, Object.class);
+    }
 
     private Collection<DetailedLink> getLinks() {
         Collection<DetailedLink> links = new LinkedList<DetailedLink>();
@@ -341,5 +349,12 @@ public class BackendApiResource
 
     private String relative(Link link) {
         return link.getHref().substring(link.getHref().indexOf(link.getRel().split("/")[0]), link.getHref().length());
+    }
+
+    @Override
+    public Response reloadConfigurations(Action action) {
+        return doAction(VdcActionType.ReloadConfigurations,
+                        new VdcActionParametersBase(),
+                        action);
     }
 }

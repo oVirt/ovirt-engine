@@ -16,12 +16,17 @@
 
 package org.ovirt.engine.api.resource;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.HEAD;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
+
 import org.jboss.resteasy.annotations.providers.jaxb.Formatted;
+import org.ovirt.engine.api.model.Action;
+import org.ovirt.engine.api.model.Actionable;
 
 
 @Path("/")
@@ -34,4 +39,12 @@ public interface ApiResource {
     @GET
     @Formatted
     public Response get();
+
+    @POST
+    @Formatted
+    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_X_YAML})
+    @Actionable
+    @Path("reloadconfigurations")
+    public Response reloadConfigurations(Action action);
+
 }
