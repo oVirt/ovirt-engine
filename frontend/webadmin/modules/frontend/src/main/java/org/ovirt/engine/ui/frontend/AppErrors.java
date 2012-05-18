@@ -672,6 +672,12 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("$type Gluster Volume Option")
     String VAR__TYPE__GLUSTER_VOLUME_OPTION();
 
+    @DefaultStringValue("$type Gluster Volume Rebalance")
+    String VAR__TYPE__GLUSTER_VOLUME_REBALANCE();
+
+    @DefaultStringValue("$type Gluster Volume Brick")
+    String VAR__TYPE__GLUSTER_VOLUME_BRICK();
+
     @DefaultStringValue("Cannot ${action} ${type}. The chosen disk drive letter is already in use, please select a free one.")
     String ACTION_TYPE_FAILED_DISK_LETTER_ALREADY_IN_USE();
 
@@ -1855,6 +1861,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Gluster Volume is up.")
     String ACTION_TYPE_FAILED_GLUSTER_VOLUME_IS_UP();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Gluster Volume is down.")
+    String ACTION_TYPE_FAILED_GLUSTER_VOLUME_IS_DOWN();
+
     @DefaultStringValue("Cannot ${action} ${type}. Cannot remove all the bricks from a Volume.")
     String ACTION_TYPE_FAILED_CAN_NOT_REMOVE_ALL_BRICKS_FROM_VOLUME();
 
@@ -1863,4 +1872,8 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. Gluster Volume is not distributed.")
     String ACTION_TYPE_FAILED_GLUSTER_VOLUME_IS_NOT_DISTRIBUTED();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Replacing brick is not a Gluster volume brick.")
+    String ACTION_TYPE_FAILED_NOT_A_GLUSTER_VOLUME_BRICK();
+
 }

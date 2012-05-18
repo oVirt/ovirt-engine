@@ -72,6 +72,7 @@ public final class AuditLogDirector {
         mSeverities.put(AuditLogType.GLUSTER_VOLUME_REBALANCE_START_FAILED, AuditLogSeverity.ERROR);
         mSeverities.put(AuditLogType.GLUSTER_VOLUME_ADD_BRICK, AuditLogSeverity.NORMAL);
         mSeverities.put(AuditLogType.GLUSTER_VOLUME_ADD_BRICK_FAILED, AuditLogSeverity.ERROR);
+
     }
 
     private static void initDefaultSeverities() {

@@ -1087,4 +1087,16 @@ public class VdsServerWrapper implements IVdsServer {
             throw new XmlRpcRunTimeException(ute);
         }
     }
+
+
+    @Override
+    public StatusOnlyReturnForXmlRpc replaceGlusterVolumeBrickStart(String volumeName, String existingBrickDir,
+            String newBrickDir) {
+        try {
+            return new StatusOnlyReturnForXmlRpc(vdsServer.replaceGlusterVolumeBrickStart(volumeName, existingBrickDir,
+                    newBrickDir));
+        } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
+    }
 }
