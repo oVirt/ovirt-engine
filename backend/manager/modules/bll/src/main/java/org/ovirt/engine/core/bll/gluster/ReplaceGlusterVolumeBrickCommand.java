@@ -66,9 +66,6 @@ public class ReplaceGlusterVolumeBrickCommand extends GlusterVolumeCommandBase<G
                                 getParameters().getNewBrick().getQualifiedName(),
                                 getParameters().isForceAction()));
         setSucceeded(returnValue.getSucceeded());
-        if (returnValue.getSucceeded()) {
-            replaceVolumeBrickInDb(getParameters().getExistingBrick(), getParameters().getNewBrick());
-        }
     }
 
     @Override
@@ -94,7 +91,4 @@ public class ReplaceGlusterVolumeBrickCommand extends GlusterVolumeCommandBase<G
         return false;
     }
 
-    private void replaceVolumeBrickInDb(GlusterBrickEntity existingBrick, GlusterBrickEntity newBrick) {
-        getGlusterBrickDao().replaceBrick(existingBrick, newBrick);
-    }
 }

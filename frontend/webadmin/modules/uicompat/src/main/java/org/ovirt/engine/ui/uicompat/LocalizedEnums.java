@@ -495,7 +495,7 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
 	String VdcActionType___StartRebalanceGlusterVolume();
 
-	String VdcActionType___ReplaceGlusterVolumeBrickStart();
+	String VdcActionType___ReplaceGlusterVolumeBrick();
 
 	String VdcObjectType___AdElements();
 

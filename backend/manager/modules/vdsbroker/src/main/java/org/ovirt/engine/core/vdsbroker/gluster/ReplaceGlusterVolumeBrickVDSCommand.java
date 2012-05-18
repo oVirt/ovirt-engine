@@ -12,7 +12,7 @@ public class ReplaceGlusterVolumeBrickVDSCommand<P extends ReplaceGlusterVolumeB
         switch (getParameters().getAction()) {
         case START:
             status =
-                    getBroker().replaceGlusterVolumeBrickStart(getParameters().getVolumeName(),
+                    getBroker().glusterVolumeReplaceBrickStart(getParameters().getVolumeName(),
                             getParameters().getExistingBrickDir(),
                             getParameters().getNewBrickDir());
             break;
