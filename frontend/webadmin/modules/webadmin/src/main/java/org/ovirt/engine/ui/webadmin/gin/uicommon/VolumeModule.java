@@ -25,6 +25,7 @@ import org.ovirt.engine.ui.uicommonweb.models.volumes.VolumeListModel;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.PermissionsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.AddBrickPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.ReplaceBrickPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.VolumeParameterPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.VolumePopupPresenterWidget;
 
@@ -76,7 +77,8 @@ public class VolumeModule extends AbstractGinModule {
     @Provides
     @Singleton
     public SearchableDetailModelProvider<GlusterBrickEntity, VolumeListModel, VolumeBrickListModel> getVolumeBrickListProvider(ClientGinjector ginjector,
-            final Provider<AddBrickPopupPresenterWidget> addBrickPopupProvider) {
+            final Provider<AddBrickPopupPresenterWidget> addBrickPopupProvider,
+            final Provider<ReplaceBrickPopupPresenterWidget> replaceBrickPopupProvider) {
         return new SearchableDetailTabModelProvider<GlusterBrickEntity, VolumeListModel, VolumeBrickListModel>(ginjector,
                 VolumeListModel.class,
                 VolumeBrickListModel.class) {
@@ -86,6 +88,8 @@ public class VolumeModule extends AbstractGinModule {
                     Model windowModel) {
                 if (lastExecutedCommand == getModel().getAddBricksCommand()) {
                     return addBrickPopupProvider.get();
+                } else if (lastExecutedCommand == getModel().getReplaceBrickCommand()) {
+                    return replaceBrickPopupProvider.get();
                 } else {
                     return super.getModelPopup(source, lastExecutedCommand, windowModel);
                 }

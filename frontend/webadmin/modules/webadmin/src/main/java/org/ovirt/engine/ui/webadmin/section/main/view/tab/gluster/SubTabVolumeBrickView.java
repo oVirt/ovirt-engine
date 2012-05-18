@@ -65,5 +65,12 @@ public class SubTabVolumeBrickView extends AbstractSubTabTableView<GlusterVolume
                 return getDetailModel().getRemoveBricksCommand();
             }
         });
+
+        getTable().addActionButton(new WebAdminButtonDefinition<GlusterBrickEntity>(constants.replaceBrickBrick()) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getDetailModel().getReplaceBrickCommand();
+            }
+        });
     }
 }

@@ -1963,6 +1963,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Remove Bricks")
     String removeBricksBrick();
 
+    @DefaultStringValue("Replace Brick")
+    String replaceBrickBrick();
+
     @DefaultStringValue("Server")
     String serverBricks();
 

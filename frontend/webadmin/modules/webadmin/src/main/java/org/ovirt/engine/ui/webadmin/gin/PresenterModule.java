@@ -28,6 +28,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.Find
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.FindSingleStoragePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.RecoveryStoragePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.AddBrickPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.ReplaceBrickPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.VolumeParameterPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.VolumePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.guide.GuidePopupPresenterWidget;
@@ -181,6 +182,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.datacenter.FindMulti
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.datacenter.FindSingleStoragePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.datacenter.RecoveryStorageConfirmationPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.AddBrickPopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.ReplaceBrickPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.VolumeParameterPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.VolumePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.guide.GuidePopupView;
@@ -974,6 +976,10 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(AddBrickPopupPresenterWidget.class,
                 AddBrickPopupPresenterWidget.ViewDef.class,
                 AddBrickPopupView.class);
+
+        bindPresenterWidget(ReplaceBrickPopupPresenterWidget.class,
+                ReplaceBrickPopupPresenterWidget.ViewDef.class,
+                ReplaceBrickPopupView.class);
 
         bindPresenterWidget(VolumeParameterPopupPresenterWidget.class,
                 VolumeParameterPopupPresenterWidget.ViewDef.class,

@@ -1281,6 +1281,9 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Remove Bricks")
     String removeBricksTitle();
 
+    @DefaultStringValue("Replace Brick")
+    String replaceBrickTitle();
+
     @DefaultStringValue("Are you sure you want to remove the following Brick(s)?")
     String removeBricksMessage();
 
