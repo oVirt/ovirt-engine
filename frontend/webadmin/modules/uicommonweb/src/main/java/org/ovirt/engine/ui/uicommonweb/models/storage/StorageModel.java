@@ -37,7 +37,6 @@ import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 
-@SuppressWarnings("unused")
 public class StorageModel extends ListModel implements ISupportSystemTreeContext
 {
     public static final Guid UnassignedDataCenterId = Guid.Empty;
@@ -304,8 +303,6 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
     private void DataCenter_SelectedItemChanged()
     {
         UpdateItemsAvailability();
-        UpdateFormat();
-        UpdateHost();
     }
 
     private void Host_SelectedItemChanged()
@@ -356,7 +353,7 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
                         SystemTreeItemModel.FindAncestor(SystemTreeItemType.DataCenter, getSystemTreeSelectedItem());
                 storage_pool dc = (storage_pool) dataCenterItem.getEntity();
 
-                getDataCenter().setItems(new ArrayList<storage_pool>(Arrays.asList(new storage_pool[] {dc})));
+                getDataCenter().setItems(new ArrayList<storage_pool>(Arrays.asList(new storage_pool[] { dc })));
                 getDataCenter().setSelectedItem(dc);
                 getDataCenter().setIsChangable(false);
                 getDataCenter().setInfo("Cannot choose Storage's Data Center in tree context"); //$NON-NLS-1$
@@ -461,9 +458,14 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
         dataCenters.add(tempVar);
     }
 
-    private void UpdateHost()
+    void UpdateHost()
     {
         if (getDataCenter().getItems() == null)
+        {
+            return;
+        }
+
+        if (getSelectedItem() == null)
         {
             return;
         }
@@ -598,7 +600,7 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
         getSelectedItem().getUpdateCommand().Execute();
     }
 
-    private void UpdateFormat()
+    void UpdateFormat()
     {
         storage_pool dataCenter = (storage_pool) getDataCenter().getSelectedItem();
 
@@ -677,6 +679,9 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
 
     public void ChooseFirstItem()
     {
+        // first init to null
+        setSelectedItem(null);
+
         boolean chooseFirst = false;
         if (getSelectedItem() != null)
         {

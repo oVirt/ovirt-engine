@@ -191,21 +191,25 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
     @SuppressWarnings("unchecked")
     private void revealStorageView(StorageModel object) {
         IStorageModel model = object.getSelectedItem();
-        if (model.getType() == StorageType.NFS) {
-            storageView = new NfsStorageView();
-        } else if (model.getType() == StorageType.LOCALFS) {
-            storageView = new LocalStorageView();
-        } else if (model.getType() == StorageType.FCP) {
-            if (model.getRole() == StorageDomainType.ImportExport) {
-                storageView = new SanImportStorageView();
-            } else {
-                storageView = new FcpStorageView(true);
-            }
-        } else if (model.getType() == StorageType.ISCSI) {
-            if (model.getRole() == StorageDomainType.ImportExport) {
-                storageView = new IscsiImportStorageView();
-            } else {
-                storageView = new IscsiStorageView(true);
+
+        if (model != null) {
+
+            if (model.getType() == StorageType.NFS) {
+                storageView = new NfsStorageView();
+            } else if (model.getType() == StorageType.LOCALFS) {
+                storageView = new LocalStorageView();
+            } else if (model.getType() == StorageType.FCP) {
+                if (model.getRole() == StorageDomainType.ImportExport) {
+                    storageView = new SanImportStorageView();
+                } else {
+                    storageView = new FcpStorageView(true);
+                }
+            } else if (model.getType() == StorageType.ISCSI) {
+                if (model.getRole() == StorageDomainType.ImportExport) {
+                    storageView = new IscsiImportStorageView();
+                } else {
+                    storageView = new IscsiStorageView(true);
+                }
             }
         }
 
@@ -216,7 +220,7 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
         specificStorageTypePanel.clear();
 
         // Add the new storage view and call focus on it if needed
-        if (storageView != null) {
+        if (storageView != null && model != null) {
             storageView.edit(model);
             specificStorageTypePanel.add(storageView);
 

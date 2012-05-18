@@ -3,11 +3,11 @@ package org.ovirt.engine.ui.uicommonweb.models.storage;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
+import org.ovirt.engine.ui.uicommonweb.models.hosts.HostModel;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@SuppressWarnings("unused")
 public abstract class StorageModelBehavior
 {
     private StorageModel privateModel;
@@ -55,9 +55,17 @@ public abstract class StorageModelBehavior
         // Filter UnSelectable model from AvailableStorageItems list
         if (getModel().UpdatedStorageModels.size() == Linq.<IStorageModel> Cast(getModel().getItems()).size())
         {
+            getModel().getHost().setItems(new ArrayList<HostModel>());
+            getModel().getHost().setSelectedItem(null);
+
             FilterUnSelectableModels();
             getModel().UpdatedStorageModels.clear();
             getModel().ChooseFirstItem();
+
+            if (getModel().getSelectedItem() != null) {
+                getModel().UpdateFormat();
+                getModel().UpdateHost();
+            }
         }
     }
 }
