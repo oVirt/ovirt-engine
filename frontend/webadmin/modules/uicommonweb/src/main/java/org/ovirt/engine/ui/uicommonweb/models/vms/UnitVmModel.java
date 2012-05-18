@@ -1,5 +1,11 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -39,12 +45,6 @@ import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.RegexValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
 
 @SuppressWarnings("unused")
 public class UnitVmModel extends Model {
@@ -1746,16 +1746,7 @@ public class UnitVmModel extends Model {
         storage_domains storageDomain = (storage_domains) getStorageDomain().getSelectedItem();
 
         getTemplate().ValidateSelectedItem(new IValidation[] { new NotEmptyValidation() });
-
-        getStorageDomain().setIsValid(true);
-        if (template != null && !template.getId().equals(Guid.Empty) && storageDomain == null
-                && getStorageDomain().getIsChangable())
-        {
-            getStorageDomain().setIsValid(false);
-            getStorageDomain().getInvalidityReasons().add(ConstantsManager.getInstance()
-                    .getConstants()
-                    .storageDomainMustBeSpecifiedInvalidReason());
-        }
+        getDisksAllocationModel().ValidateEntity(new IValidation[] {});
 
         getCdImage().setIsValid(true);
         if (getCdImage().getIsChangable())
@@ -1832,12 +1823,12 @@ public class UnitVmModel extends Model {
         setIsFirstRunTabValid(getDomain().getIsValid() && getTimeZone().getIsValid());
         setIsDisplayTabValid(getUsbPolicy().getIsValid() && getNumOfMonitors().getIsValid());
         setIsHostTabValid(getDefaultHost().getIsValid());
-        setIsAllocationTabValid(getStorageDomain().getIsValid() && getMinAllocatedMemory().getIsValid());
+        setIsAllocationTabValid(getDisksAllocationModel().getIsValid() && getMinAllocatedMemory().getIsValid());
         setIsBootSequenceTabValid(getCdImage().getIsValid() && getKernel_path().getIsValid());
         setIsCustomPropertiesTabValid(getCustomProperties().getIsValid());
 
         return getName().getIsValid() && getDescription().getIsValid() && getDataCenter().getIsValid()
-                && getStorageDomain().getIsValid() && getTemplate().getIsValid() && getCluster().getIsValid()
+                && getDisksAllocationModel().getIsValid() && getTemplate().getIsValid() && getCluster().getIsValid()
                 && getDefaultHost().getIsValid() && getMemSize().getIsValid() && getMinAllocatedMemory().getIsValid()
                 && getNumOfMonitors().getIsValid() && getDomain().getIsValid() && getUsbPolicy().getIsValid()
                 && getTimeZone().getIsValid() && getOSType().getIsValid() && getCdImage().getIsValid()

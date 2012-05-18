@@ -613,7 +613,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
 
     private void addDiskAllocation(UnitVmModel model) {
         ArrayList<storage_domains> storageDomains = (ArrayList<storage_domains>) model.getStorageDomain().getItems();
-        if (!model.getIsDisksAvailable() || !storageDomains.iterator().hasNext()) {
+        if (!model.getIsDisksAvailable()) {
             return;
         }
         disksAllocationView.edit(model.getDisksAllocationModel());

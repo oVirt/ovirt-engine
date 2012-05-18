@@ -629,16 +629,21 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                 disksAllocationModel.setActiveStorageDomains(activeStorageDomains);
 
                 for (DiskModel diskModel : disks) {
-                    ArrayList<storage_domains> availableDiskStorageDomains;
+                    ArrayList<storage_domains> availableDiskStorageDomains = new ArrayList<storage_domains>();
                     diskModel.getQuota().setItems(behavior.getModel().getQuota().getItems());
+                    ArrayList<Guid> storageIds = diskModel.getDiskImage().getstorage_ids();
+
+                    // Active storage domains that the disk resides on
+                    ArrayList<storage_domains> activeDiskStorageDomains =
+                            Linq.getStorageDomainsByIds(storageIds, activeStorageDomains);
+
                     if (provisioning) {
-                        availableDiskStorageDomains = activeStorageDomains;
+                        if (activeDiskStorageDomains.size() > 0) {
+                            availableDiskStorageDomains = activeStorageDomains;
+                        }
                     }
-                    else
-                    {
-                        ArrayList<Guid> storageIds = diskModel.getDiskImage().getstorage_ids();
-                        availableDiskStorageDomains =
-                                Linq.getStorageDomainsByIds(storageIds, activeStorageDomains);
+                    else {
+                        availableDiskStorageDomains = activeDiskStorageDomains;
                     }
                     Linq.Sort(availableDiskStorageDomains, new Linq.StorageDomainByNameComparer());
                     diskModel.getStorageDomain().setItems(availableDiskStorageDomains);

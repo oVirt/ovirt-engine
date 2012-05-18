@@ -24,6 +24,8 @@ import org.ovirt.engine.ui.uicommonweb.Linq.DiskModelByAliasComparer;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
+import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public class DisksAllocationModel extends EntityModel
 {
@@ -350,6 +352,20 @@ public class DisksAllocationModel extends EntityModel
                         break;
                     }
                 }
+            }
+        }
+    }
+
+    public void ValidateEntity(IValidation[] validations)
+    {
+        super.ValidateEntity(validations);
+
+        for (DiskModel diskModel : getDisks()) {
+            if (!diskModel.getStorageDomain().getItems().iterator().hasNext()) {
+                diskModel.getStorageDomain().getInvalidityReasons().add(
+                        ConstantsManager.getInstance().getConstants().storageDomainMustBeSpecifiedInvalidReason());
+                diskModel.getStorageDomain().setIsValid(false);
+                setIsValid(false);
             }
         }
     }
