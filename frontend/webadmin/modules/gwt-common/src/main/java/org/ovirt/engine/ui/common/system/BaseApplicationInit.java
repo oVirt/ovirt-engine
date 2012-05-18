@@ -102,14 +102,7 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Logou
     }
 
     void clearPassword(T loginModel) {
-        String password = (String) loginModel.getPassword().getEntity();
-
-        if (password != null) {
-            // Replace all password characters with whitespace
-            password = password.replaceAll(".", " "); //$NON-NLS-1$ //$NON-NLS-2$
-        }
-
-        loginModel.getPassword().setEntity(password);
+        loginModel.getPassword().setEntity(null);
     }
 
     /**

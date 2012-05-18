@@ -21,7 +21,6 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 import java.util.List;
 
-@SuppressWarnings("unused")
 public class LoginModel extends Model
 {
 
@@ -132,6 +131,9 @@ public class LoginModel extends Model
 
     private VdcUser privateLoggedUser;
 
+    // If true, indicates that the model is in the process of logging in automatically
+    private boolean loggingInAutomatically = false;
+
     public VdcUser getLoggedUser()
     {
         return privateLoggedUser;
@@ -198,15 +200,21 @@ public class LoginModel extends Model
                     {
                         LoginModel loginModel1 = (LoginModel) model1;
 
-                        loginModel1.getLoginCommand().setIsExecutionAllowed(true);
-                        loginModel1.getAboutCommand().setIsExecutionAllowed(true);
-                        loginModel1.getUserName().setIsChangable(true);
-                        loginModel1.getPassword().setIsChangable(true);
-                        loginModel1.getDomain().setIsChangable(true);
+                        if (!loggingInAutomatically) {
+                            // Don't enable the screen when we are in the process of logging in automatically.
+                            // If this happens to be executed before the AutoLogin() is executed,
+                            // it is not a problem, as the AutoLogin() will disable the screen by itself.
+                            loginModel1.getLoginCommand().setIsExecutionAllowed(true);
+                            loginModel1.getAboutCommand().setIsExecutionAllowed(true);
+                            loginModel1.getUserName().setIsChangable(true);
+                            loginModel1.getPassword().setIsChangable(true);
+                            loginModel1.getDomain().setIsChangable(true);
+                        }
 
                         List<String> domains = (List<String>) ReturnValue1;
                         loginModel1.getDomain().setSelectedItem(Linq.FirstOrDefault(domains));
                         loginModel1.getDomain().setItems(domains);
+
                     }
                 };
                 AsyncDataProvider.GetDomainListViaPublic(_asyncQuery1, false);
@@ -260,10 +268,7 @@ public class LoginModel extends Model
             return;
         }
 
-        getUserName().setIsChangable(false);
-        getPassword().setIsChangable(false);
-        getDomain().setIsChangable(false);
-        getLoginCommand().setIsExecutionAllowed(false);
+        disableLoginScreen();
 
         // Clear config cache on login (to make sure we don't use old config in a new session)
         DataProvider.ClearConfigCache();
@@ -315,8 +320,19 @@ public class LoginModel extends Model
 
     public void AutoLogin(VdcUser user)
     {
+        loggingInAutomatically = true;
+        getUserName().setEntity(user.getUserName());
+        getDomain().setSelectedItem(user.getDomainControler());
+        disableLoginScreen();
         setLoggedUser(user);
         getLoggedInEvent().raise(this, EventArgs.Empty);
+    }
+
+    protected void disableLoginScreen() {
+        getUserName().setIsChangable(false);
+        getPassword().setIsChangable(false);
+        getDomain().setIsChangable(false);
+        getLoginCommand().setIsExecutionAllowed(false);
     }
 
     protected boolean Validate()
@@ -374,6 +390,7 @@ public class LoginModel extends Model
         getUserName().setIsChangable(true);
         getDomain().setIsChangable(true);
         getLoginCommand().setIsExecutionAllowed(true);
+        loggingInAutomatically = false;
     }
 
 }
