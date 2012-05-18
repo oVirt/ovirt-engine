@@ -60,6 +60,7 @@ actions:
           vm.origin: xs:string
           vm.os.kernel: xs:string
           vm.payloads.payload--COLLECTION: {payload.type: 'xs:string', payload.file.name: 'xs:string', payload.file.content: 'xs:string'}
+          vm.cpu.cpu_tune.vcpu_pin--COLLECTION: {vcpu_pin.vcpu: 'xs:int', vcpu_pin.cpu_set: 'xs:string'}
     urlparams: {}
     headers: {Content-Type: application/xml|json}
 - name: /api/vms|rel=add

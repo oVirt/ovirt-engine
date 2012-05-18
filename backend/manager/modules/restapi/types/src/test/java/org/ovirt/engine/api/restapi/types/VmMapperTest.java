@@ -1,10 +1,14 @@
 package org.ovirt.engine.api.restapi.types;
 
+import junit.framework.Assert;
+
 import org.junit.Test;
 
 import org.ovirt.engine.api.model.Boot;
 import org.ovirt.engine.api.model.BootDevice;
+import org.ovirt.engine.api.model.CpuTune;
 import org.ovirt.engine.api.model.DisplayType;
+import org.ovirt.engine.api.model.VCpuPin;
 import org.ovirt.engine.api.model.VmDeviceType;
 import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.api.model.VmType;
@@ -42,9 +46,9 @@ public class VmMapperTest extends
         VmDynamic dynamic = new VmDynamic();
         dynamic.setdisplay_type(to.getdefault_display_type());
         org.ovirt.engine.core.common.businessentities.VM ret =
-            new org.ovirt.engine.core.common.businessentities.VM(to,
-                                                            dynamic,
-                                                            statistics);
+                new org.ovirt.engine.core.common.businessentities.VM(to,
+                        dynamic,
+                        statistics);
         ret.setusage_mem_percent(Integer.valueOf(50));
         return ret;
     }
@@ -83,10 +87,9 @@ public class VmMapperTest extends
         assertNotNull(transform.getCpu());
         assertNotNull(transform.getCpu().getTopology());
         assertTrue(Math.abs(model.getCpu().getTopology().getCores() -
-                    transform.getCpu().getTopology().getCores()) <
-               model.getCpu().getTopology().getSockets());
+                transform.getCpu().getTopology().getCores()) < model.getCpu().getTopology().getSockets());
         assertEquals(model.getCpu().getTopology().getSockets(),
-                 transform.getCpu().getTopology().getSockets());
+                transform.getCpu().getTopology().getSockets());
         assertNotNull(transform.getOs());
         assertTrue(transform.getOs().isSetBoot());
         assertEquals(model.getOs().getBoot().size(), transform.getOs().getBoot().size());
@@ -137,12 +140,13 @@ public class VmMapperTest extends
 
     @Test
     public void testDisplayPort() {
-        org.ovirt.engine.core.common.businessentities.VM entity = new org.ovirt.engine.core.common.businessentities.VM();
+        org.ovirt.engine.core.common.businessentities.VM entity =
+                new org.ovirt.engine.core.common.businessentities.VM();
         entity.setdisplay(5900);
         entity.setdisplay_secure_port(9999);
         VM model = VmMapper.map(entity, null);
-        assertTrue(model.getDisplay().getPort()==5900);
-        assertTrue(model.getDisplay().getSecurePort()==9999);
+        assertTrue(model.getDisplay().getPort() == 5900);
+        assertTrue(model.getDisplay().getSecurePort() == 9999);
         entity.setdisplay(-1);
         entity.setdisplay_secure_port(-1);
         model = VmMapper.map(entity, null);
@@ -168,10 +172,53 @@ public class VmMapperTest extends
 
     @Test
     public void testMapHostId() {
-        org.ovirt.engine.core.common.businessentities.VM entity = new org.ovirt.engine.core.common.businessentities.VM();
+        org.ovirt.engine.core.common.businessentities.VM entity =
+                new org.ovirt.engine.core.common.businessentities.VM();
         Guid guid = NGuid.NewGuid();
         entity.setrun_on_vds(guid);
         VM model = VmMapper.map(entity, null);
         assertEquals(guid.toString(), model.getHost().getId());
     }
+
+    @Test
+    public void stringToCpuTune() {
+        CpuTune cpuTune = VmMapper.stringToCpuTune("0#0");
+        assertNotNull(cpuTune);
+        assertNotNull(cpuTune.getVcpuPin());
+        assertEquals(1, cpuTune.getVcpuPin().size());
+        assertEquals(0, cpuTune.getVcpuPin().get(0).getVcpu());
+        assertEquals("0", cpuTune.getVcpuPin().get(0).getCpuSet());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void stringToVCpupinBadCpuNumber() {
+        VmMapper.stringToVCpupin("XXX#1-4");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void stringToVCpupinWrongFormat() {
+        VmMapper.stringToVCpupin("X#X#X");
+    }
+
+    @Test()
+    public void stringToVCpupinIntervalsList() {
+        VCpuPin pin = VmMapper.stringToVCpupin("1#1-4,6");
+        assertEquals(1, pin.getVcpu());
+        assertEquals("1-4,6", pin.getCpuSet());
+    }
+
+    @Test()
+    public void stringToVCpupinSimple() {
+        VCpuPin pin = VmMapper.stringToVCpupin("1#1");
+        assertEquals(1, pin.getVcpu());
+        assertEquals("1", pin.getCpuSet());
+    }
+
+    @Test
+    public void cpuTuneToString() {
+        for (String sample : new String[] { "0#0", "0#0_1#1", "0#0_1#1,2,3,6" }) {
+            Assert.assertEquals(sample, VmMapper.cpuTuneToString(VmMapper.stringToCpuTune(sample)));
+        }
+    }
+
 }

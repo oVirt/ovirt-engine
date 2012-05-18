@@ -13,6 +13,7 @@ import org.ovirt.engine.api.model.BootDevice;
 import org.ovirt.engine.api.model.CPU;
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.CpuTopology;
+import org.ovirt.engine.api.model.CpuTune;
 import org.ovirt.engine.api.model.CustomProperties;
 import org.ovirt.engine.api.model.CustomProperty;
 import org.ovirt.engine.api.model.Display;
@@ -30,6 +31,7 @@ import org.ovirt.engine.api.model.Quota;
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.Usb;
 import org.ovirt.engine.api.model.UsbType;
+import org.ovirt.engine.api.model.VCpuPin;
 import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.api.model.VmAffinity;
 import org.ovirt.engine.api.model.PayloadFile;
@@ -59,8 +61,6 @@ import static org.ovirt.engine.core.compat.NGuid.createGuidFromString;
 
 public class VmMapper {
 
-    private static final String RHEV = "rhev";
-    private static final String ENGINE = "engine";
     private static final int BYTES_PER_MB = 1024 * 1024;
     // REVISIT retrieve from configuration
     private static final int DEFAULT_MEMORY_SIZE = 10 * 1024;
@@ -212,6 +212,9 @@ public class VmMapper {
         if (vm.isSetQuota() && vm.getQuota().isSetId()) {
             staticVm.setQuotaId(new Guid(vm.getQuota().getId()));
         }
+        if(vm.isSetCpu() && vm.getCpu().isSetCpuTune()) {
+            staticVm.setCpuPinning(cpuTuneToString(vm.getCpu().getCpuTune()));
+        }
         return staticVm;
     }
 
@@ -296,8 +299,10 @@ public class VmMapper {
         CpuTopology topology = new CpuTopology();
         topology.setSockets(entity.getnum_of_sockets());
         topology.setCores(entity.getnum_of_cpus() / entity.getnum_of_sockets());
-        model.setCpu(new CPU());
-        model.getCpu().setTopology(topology);
+        final CPU cpu = new CPU();
+        model.setCpu(cpu);
+        cpu.setCpuTune(stringToCpuTune(entity.getCpuPinning()));
+        cpu.setTopology(topology);
         if (entity.getVmPoolId() != null) {
             VmPool pool = new VmPool();
             pool.setId(entity.getVmPoolId().toString());
@@ -882,4 +887,56 @@ public class VmMapper {
         }
         return entity;
     }
+
+    static String cpuTuneToString(final CpuTune tune) {
+        final StringBuilder builder = new StringBuilder();
+        boolean first = true;
+        for(final VCpuPin pin : tune.getVcpuPin()) {
+            if(first) {
+                first = false;
+            } else {
+                builder.append("_");
+            }
+            builder.append(pin.getVcpu()).append('#').append(pin.getCpuSet());
+        }
+        return builder.toString();
+    }
+
+    /**
+     * Maps the stringified CPU-pinning to the API format.
+     * @param string
+     * @return
+     */
+    static CpuTune stringToCpuTune(String cpuPinning) {
+        if(cpuPinning == null) {
+            return null;
+        }
+        final CpuTune cpuTune = new CpuTune();
+        for(String strCpu : cpuPinning.split("_")) {
+            VCpuPin pin = stringToVCpupin(strCpu);
+            cpuTune.getVcpuPin().add(pin);
+        }
+
+        return cpuTune;
+    }
+
+    static VCpuPin stringToVCpupin(final String strCpu) {
+        final String[] strPin = strCpu.split("#");
+        if (strPin.length != 2) {
+            throw new IllegalArgumentException("Bad format: " + strCpu);
+        }
+        final VCpuPin pin = new VCpuPin();
+        try {
+            pin.setVcpu(Integer.parseInt(strPin[0]));
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Bad format: " + strCpu, e);
+        }
+        if (strPin[1].matches("\\^?(\\d(\\-\\d)?)(,\\^?((\\d(\\-\\d)?)))*")) {
+            pin.setCpuSet(strPin[1]);
+        } else {
+            throw new IllegalArgumentException("Bad format: " + strPin[1]);
+        }
+        return pin;
+    }
+
 }
