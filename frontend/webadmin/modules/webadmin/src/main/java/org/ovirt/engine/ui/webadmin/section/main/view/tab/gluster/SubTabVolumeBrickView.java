@@ -42,22 +42,6 @@ public class SubTabVolumeBrickView extends AbstractSubTabTableView<GlusterVolume
         };
         getTable().addColumn(directoryColumn, constants.brickDirectoryVolumeBrick());
 
-        TextColumnWithTooltip<GlusterBrickEntity> freeSpaceColumn = new TextColumnWithTooltip<GlusterBrickEntity>() {
-            @Override
-            public String getValue(GlusterBrickEntity brick) {
-                return "???"; //$NON-NLS-1$
-            }
-        };
-        getTable().addColumn(freeSpaceColumn, constants.freeSpaceGBVolumeBrick());
-
-        TextColumnWithTooltip<GlusterBrickEntity> totalSpaceColumn = new TextColumnWithTooltip<GlusterBrickEntity>() {
-            @Override
-            public String getValue(GlusterBrickEntity brick) {
-                return "???"; //$NON-NLS-1$
-            }
-        };
-        getTable().addColumn(totalSpaceColumn, constants.totalSpaceGBVolumeBrick());
-
         TextColumnWithTooltip<GlusterBrickEntity> statusColumn =
                 new EnumColumn<GlusterBrickEntity, GlusterBrickStatus>() {
 
