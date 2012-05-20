@@ -1,13 +1,5 @@
 package org.ovirt.engine.core.bll;
 
-import static org.apache.commons.lang.StringUtils.isBlank;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.ovirt.engine.core.dal.VdcBllMessages.NETWORK_BOND_PARAMETERS_INVALID;
-import static org.ovirt.engine.core.dal.VdcBllMessages.NETWORK_INTERFACE_NAME_ALREADY_IN_USE;
-import static org.ovirt.engine.core.dal.VdcBllMessages.NETWORK_INTERFACE_NOT_EXISTS;
-import static org.ovirt.engine.core.dal.VdcBllMessages.NETWROK_ALREADY_ATTACHED_TO_INTERFACE;
-import static org.ovirt.engine.core.dal.VdcBllMessages.NETWROK_NOT_EXISTS;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -17,6 +9,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.action.SetupNetworksParameters;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
@@ -25,8 +18,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.NetworkUtils;
-
-
 
 public class SetupNetworksHelper {
     private SetupNetworksParameters params;
@@ -68,7 +59,6 @@ public class SetupNetworksHelper {
         // key = network name, vale = interface
         Map<String, network> networks = new HashMap<String, network>();
 
-
         for (VdsNetworkInterface iface : params.getInterfaces()) {
             String name = iface.getName();
             String networkName = iface.getNetworkName();
@@ -76,7 +66,7 @@ public class SetupNetworksHelper {
             boolean bonded = isBond(iface);
 
             if (ifaceNames.contains(name)) {
-                violations.add(NETWORK_INTERFACE_NAME_ALREADY_IN_USE);
+                violations.add(VdcBllMessages.NETWORK_INTERFACE_NAME_ALREADY_IN_USE);
                 continue;
             } else {
                 ifaceNames.add(name);
@@ -86,17 +76,17 @@ public class SetupNetworksHelper {
             if (bonded) {
                 extractBond(bonds, iface, name);
             } else {
-                if (isNotBlank(bondName)) {
+                if (StringUtils.isNotBlank(bondName)) {
                     extractBondSlave(bondSlaves, iface, bondName);
                 }
                 // validate the nic exists on host
                 if (!getExistingIfaces().containsKey(NetworkUtils.StripVlan(name))) {
-                    violations.add(NETWORK_INTERFACE_NOT_EXISTS);
+                    violations.add(VdcBllMessages.NETWORK_INTERFACE_NOT_EXISTS);
                 }
             }
 
             // validate and extract to network map
-            if (isNotBlank(networkName)) {
+            if (StringUtils.isNotBlank(networkName)) {
                 extractNetwork(networks, iface, networkName);
             }
         }
@@ -138,7 +128,7 @@ public class SetupNetworksHelper {
     private List<String> getExisitingHostNetworkNames() {
         List<String> list = new ArrayList<String>(getExistingIfaces().size());
         for (VdsNetworkInterface iface : getExistingIfaces().values()) {
-            if (isNotBlank(iface.getNetworkName())) {
+            if (StringUtils.isNotBlank(iface.getNetworkName())) {
                 list.add(iface.getNetworkName());
             }
         }
@@ -165,7 +155,7 @@ public class SetupNetworksHelper {
         if (getExistingClusterNetworks().containsKey(networkName)) {
             // prevent attaching 2 interfaces to 1 network
             if (networks.containsKey(networkName) && networksOverBond.contains(networkName) && isBond(iface)) {
-                violations.add(NETWROK_ALREADY_ATTACHED_TO_INTERFACE);
+                violations.add(VdcBllMessages.NETWROK_ALREADY_ATTACHED_TO_INTERFACE);
             } else {
                 networks.put(networkName, getExistingClusterNetworks().get(networkName));
                 if (isBond(iface)) {
@@ -184,6 +174,7 @@ public class SetupNetworksHelper {
     /**
      * build mapping of the bond name - > list of slaves. slaves are interfaces with a pointer to the master bond by
      * bondName.
+     *
      * @param bondSlaves
      * @param iface
      * @param bondName
@@ -200,8 +191,8 @@ public class SetupNetworksHelper {
     }
 
     public void extractBond(Map<String, VdsNetworkInterface> bonds, VdsNetworkInterface iface, String name) {
-        if (isBlank(iface.getNetworkName())) {
-            violations.add(NETWROK_NOT_EXISTS);
+        if (StringUtils.isBlank(iface.getNetworkName())) {
+            violations.add(VdcBllMessages.NETWROK_NOT_EXISTS);
         } else {
             if (bonds.containsKey(name)) {
                 violations.add(VdcBllMessages.NETWORK_BOND_NAME_EXISTS);
@@ -230,7 +221,7 @@ public class SetupNetworksHelper {
             if (bondSlaves.containsKey(bondName)) {
                 if (bondSlaves.get(bondName).size() < 2) {
                     returnValue = false;
-                    violations.add(NETWORK_BOND_PARAMETERS_INVALID);
+                    violations.add(VdcBllMessages.NETWORK_BOND_PARAMETERS_INVALID);
                 }
             }
         }
@@ -265,6 +256,7 @@ public class SetupNetworksHelper {
     public List<network> getRemoveNetworks() {
         return removeNetworks;
     }
+
     public List<VdsNetworkInterface> getBonds() {
         return bonds;
     }
