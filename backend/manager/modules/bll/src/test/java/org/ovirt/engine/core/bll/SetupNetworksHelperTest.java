@@ -1,16 +1,12 @@
 package org.ovirt.engine.core.bll;
 
-import static java.util.Arrays.asList;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
-import static org.ovirt.engine.core.dal.VdcBllMessages.NETWORK_BOND_PARAMETERS_INVALID;
-import static org.ovirt.engine.core.dal.VdcBllMessages.NETWORK_INTERFACE_NAME_ALREADY_IN_USE;
-import static org.ovirt.engine.core.dal.VdcBllMessages.NETWORK_NOT_EXISTS_IN_CURRENT_CLUSTER;
-import static org.powermock.api.mockito.PowerMockito.spy;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -64,15 +60,14 @@ public class SetupNetworksHelperTest {
         bonds.add(bond0);
         slaves.add(slave);
         bondsMap.put("bond0", bond0);
-        slavesMap.put("bond0", asList(slave));
+        slavesMap.put("bond0", Arrays.asList(slave));
 
         SetupNetworksHelper validator = createHelper(mock(SetupNetworksParameters.class));
         initDaoMocks(bonds, null, validator);
 
         assertFalse(validator.validateBonds(bondsMap, slavesMap));
-        assertTrue(validator.getViolations().contains(NETWORK_BOND_PARAMETERS_INVALID));
+        assertTrue(validator.getViolations().contains(VdcBllMessages.NETWORK_BOND_PARAMETERS_INVALID));
     }
-
 
     @Test
     public void validateAddingNonExistingNetwork() {
@@ -105,17 +100,17 @@ public class SetupNetworksHelperTest {
 
         SetupNetworksHelper validator = createHelper(params);
         initDaoMocks(vdsNics, clusterNetworks, validator);
-        assertTrue(validator.validate().contains(NETWORK_NOT_EXISTS_IN_CURRENT_CLUSTER));
+        assertTrue(validator.validate().contains(VdcBllMessages.NETWORK_NOT_EXISTS_IN_CURRENT_CLUSTER));
     }
 
-    @Test
     /**
-     * test setup: existing vds nics: 2 slaves for bond0 and 1 master to network vmnet
-     * cluster networks are "vmnet" and "ovirtmgmt"
-     * new interfaces list; 2 bonds names bond0 with no slaves
+     * test setup: existing vds nics: 2 slaves for bond0 and 1 master to network vmnet<br>
+     * cluster networks are "vmnet" and "ovirtmgmt"<br>
+     * new interfaces list; 2 bonds names bond0 with no slaves<br>
      * expected: failure with message saying the interface name is already in use
      */
-    public void validateUsingUniqeBondName() {
+    @Test
+    public void validateUsingUniqueBondName() {
         List<VdsNetworkInterface> vdsNics = new ArrayList<VdsNetworkInterface>();
         VdsNetworkInterface nic1 = new VdsNetworkInterface();
         nic1.setNetworkName("vmnet");
@@ -153,21 +148,21 @@ public class SetupNetworksHelperTest {
         SetupNetworksHelper helper = createHelper(params);
         initDaoMocks(vdsNics, clusterNetworks, helper);
         List<VdcBllMessages> validate = helper.validate();
-        assertTrue(validate.contains(NETWORK_INTERFACE_NAME_ALREADY_IN_USE));
+        assertTrue(validate.contains(VdcBllMessages.NETWORK_INTERFACE_NAME_ALREADY_IN_USE));
     }
 
-    @Test
     /**
-     * test setup: 2 networks:  ovirtmgmt on eth0 and vmnet on eth1
-     *
-     * first test case: try to bond eth0 on ovirtmgmt network.
-     * expected: failure on attempting to bond with 1 interface.
-     *
-     * second test case: add the missing interface with bonded to bond 0 and to ovirtmgmt
+     * test setup: 2 networks: ovirtmgmt on eth0 and vmnet on eth1<br>
+     * <br>
+     * first test case: try to bond eth0 on ovirtmgmt network.<br>
+     * expected: failure on attempting to bond with 1 interface.<br>
+     * <br>
+     * second test case: add the missing interface with bonded to bond 0 and to ovirtmgmt<br>
      * expected result: successful validation and removed network vmnet
      *
      */
-    public void validateAttachigBondToNetwork() {
+    @Test
+    public void validateAttachingBondToNetwork() {
         List<VdsNetworkInterface> vdsNics = new ArrayList<VdsNetworkInterface>();
         VdsNetworkInterface nic1 = new VdsNetworkInterface();
         nic1.setNetworkName("ovirtmgmt");
@@ -204,7 +199,7 @@ public class SetupNetworksHelperTest {
         SetupNetworksHelper helper = createHelper(params);
         initDaoMocks(vdsNics, clusterNetworks, helper);
         List<VdcBllMessages> validate = helper.validate();
-        assertTrue(validate.contains(NETWORK_BOND_PARAMETERS_INVALID));
+        assertTrue(validate.contains(VdcBllMessages.NETWORK_BOND_PARAMETERS_INVALID));
 
         VdsNetworkInterface slave2 = new VdsNetworkInterface();
         slave2.setBondName("bond0");
@@ -220,12 +215,12 @@ public class SetupNetworksHelperTest {
 
     }
 
-    @Test
     /**
-     * test setup: 2 existing cluster networks, red and blue, only blue is currently attached to the host
-     * test case: sending "red" as the network to add
+     * test setup: 2 existing cluster networks, red and blue, only blue is currently attached to the host<br>
+     * test case: sending "red" as the network to add<br>
      * expected: network blue should return from the function
      */
+    @Test
     public void extractRemovedNetwork() {
         SetupNetworksHelper helper = createHelper(new SetupNetworksParameters());
         String[] networkNames = { "red" };
@@ -235,23 +230,23 @@ public class SetupNetworksHelperTest {
         initDaoMocks(null, clusterNetworks, helper);
 
         List<network> removeNetworks =
-                helper.extractRemoveNetworks(new HashSet<String>(asList(networkNames)),
+                helper.extractRemoveNetworks(new HashSet<String>(Arrays.asList(networkNames)),
                         Arrays.asList("blue"));
         assertTrue(removeNetworks.get(0).getname().equals("blue"));
     }
 
-    @Test
     /**
-     * test setup: 1 bond with no network name and empty bond list
-     * test case 1 : try to add the current bond to the bonds map
-     * expected: bond is not added because it doesn't have a networkName
-     *
-     * test case 2: try to add a bond with network "pink"
-     * expected: bonds added to map
-     *
-     * test case 3: try to add a bond with the same name
+     * test setup: 1 bond with no network name and empty bond list<br>
+     * test case 1 : try to add the current bond to the bonds map<br>
+     * expected: bond is not added because it doesn't have a networkName<br>
+     * <br>
+     * test case 2: try to add a bond with network "pink"<br>
+     * expected: bonds added to map<br>
+     * <br>
+     * test case 3: try to add a bond with the same name<br>
      * expected: bond is not added to map
      */
+    @Test
     public void extractBond() {
         SetupNetworksHelper helper = createHelper(new SetupNetworksParameters());
         initDaoMocks(null, null, helper);
@@ -272,14 +267,14 @@ public class SetupNetworksHelperTest {
         assertTrue(bonds.size() == 1);
     }
 
-    @Test
     /**
-     * test case 1: try to add slave of bond7 to the map
-     * expected: slaves map size is now 2
-     *
-     * test case2: try to add another slave of bond2
+     * test case 1: try to add slave of bond7 to the map<br>
+     * expected: slaves map size is now 2<br>
+     * <br>
+     * test case2: try to add another slave of bond2<br>
      * expected: the size of list of nics under bond2 key is now 2
      */
+    @Test
     public void extractBondSlave() {
         SetupNetworksHelper helper = createHelper(new SetupNetworksParameters());
         initDaoMocks(null, null, helper);
@@ -287,7 +282,7 @@ public class SetupNetworksHelperTest {
         VdsNetworkInterface iface = new VdsNetworkInterface();
         iface.setBondName("bond7");
         Map<String, List<VdsNetworkInterface>> bondSlaves = new HashMap<String, List<VdsNetworkInterface>>();
-        bondSlaves.put("bond2", asList(new VdsNetworkInterface()));
+        bondSlaves.put("bond2", Arrays.asList(new VdsNetworkInterface()));
 
         helper.extractBondSlave(bondSlaves, iface, "bond7");
         assertTrue(bondSlaves.size() == 2);
@@ -297,13 +292,12 @@ public class SetupNetworksHelperTest {
         assertTrue(bondSlaves.get("bond2").size() == 2);
     }
 
-
-    @Test
     /**
-     * test setup: 2 existing bonds, "bond3" and "bond4"
-     * test case: send bond "bond3"
+     * test setup: 2 existing bonds, "bond3" and "bond4"<br>
+     * test case: send bond "bond3"<br>
      * expected: bond4 is extracted to the removeBonds list
      */
+    @Test
     public void extractRemovedBonds() {
         SetupNetworksHelper helper = createHelper(new SetupNetworksParameters());
 
@@ -323,7 +317,6 @@ public class SetupNetworksHelperTest {
         assertTrue(removedBonds.get(0).getName().equals("bond4"));
     }
 
-
     private VdsNetworkInterface newBond(String name) {
         VdsNetworkInterface bond = new VdsNetworkInterface();
         bond.setBonded(Boolean.TRUE);
@@ -331,7 +324,6 @@ public class SetupNetworksHelperTest {
         bond.setName(name);
         return bond;
     }
-
 
     private SetupNetworksHelper createHelper(SetupNetworksParameters params) {
         SetupNetworksHelper validator = new SetupNetworksHelper(params, Guid.Empty);
