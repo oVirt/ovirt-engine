@@ -356,10 +356,14 @@ public class DisksAllocationModel extends EntityModel
         }
     }
 
+    @Override
     public void ValidateEntity(IValidation[] validations)
     {
         super.ValidateEntity(validations);
 
+        if (getDisks() == null) {
+            return;
+        }
         for (DiskModel diskModel : getDisks()) {
             if (!diskModel.getStorageDomain().getItems().iterator().hasNext()) {
                 diskModel.getStorageDomain().getInvalidityReasons().add(
