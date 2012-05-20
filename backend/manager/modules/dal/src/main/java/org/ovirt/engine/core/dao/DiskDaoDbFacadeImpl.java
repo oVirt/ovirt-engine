@@ -12,6 +12,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskImageDAODbFacadeImpl.DiskImageRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
+import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 
 public class DiskDaoDbFacadeImpl extends DefaultReadDaoDbFacade<Disk, Guid> implements DiskDao {
 
@@ -45,6 +46,11 @@ public class DiskDaoDbFacadeImpl extends DefaultReadDaoDbFacade<Disk, Guid> impl
     }
 
     @Override
+    public List<Disk> getAllWithQuery(String query) {
+        return new SimpleJdbcTemplate(jdbcTemplate).query(query, DiskRowMapper.instance);
+    }
+
+    @Override
     protected MapSqlParameterSource createIdParameterMapper(Guid id) {
         return getCustomMapSqlParameterSource().addValue("disk_id", id);
     }
@@ -64,12 +70,7 @@ public class DiskDaoDbFacadeImpl extends DefaultReadDaoDbFacade<Disk, Guid> impl
         @Override
         public Disk mapRow(ResultSet rs, int rowNum) throws SQLException {
             Disk disk = null;
-            String diskStorageTypeString = rs.getString("disk_storage_type");
-            DiskStorageType diskStorageType = Disk.DiskStorageType.valueOf(diskStorageTypeString);
-
-            if (diskStorageType == null) {
-                throwUnsupportedDiskStorageTypeException(diskStorageTypeString);
-            }
+            DiskStorageType diskStorageType = Disk.DiskStorageType.forValue(rs.getInt("disk_storage_type"));
 
             switch (diskStorageType) {
             case IMAGE:
@@ -79,21 +80,10 @@ public class DiskDaoDbFacadeImpl extends DefaultReadDaoDbFacade<Disk, Guid> impl
             case LUN:
                 disk = LunDiskRowMapper.instance.mapRow(rs, rowNum);
                 break;
-
-            default:
-                throwUnsupportedDiskStorageTypeException(diskStorageTypeString);
-                break;
             }
 
             return disk;
         }
-
-        private static void throwUnsupportedDiskStorageTypeException(String diskStorageTypeString) {
-            throw new IllegalStateException(String.format("Unsupported %s: %s",
-                    DiskStorageType.class.getSimpleName(),
-                    diskStorageTypeString));
-        }
-
     }
 
     private static class LunDiskRowMapper extends AbstractDiskRowMapper<LunDisk> {

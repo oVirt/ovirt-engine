@@ -16,7 +16,7 @@ import org.ovirt.engine.core.bll.adbroker.LdapSearchByQueryParameters;
 import org.ovirt.engine.core.common.businessentities.AdUser;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.DbUser;
-import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -120,8 +120,8 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
             returnValue = searchQuota();
             break;
         }
-        case DiskImage: {
-            returnValue = searchDiskImage();
+        case Disk: {
+            returnValue = searchDisk();
             break;
         }
         case GlusterVolume: {
@@ -250,8 +250,8 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
         return genericSearch(getDbFacade().getQuotaDAO(), true, null);
     }
 
-    private List<DiskImage> searchDiskImage() {
-        return genericSearch(getDbFacade().getDiskImageDAO(), true, null);
+    private List<Disk> searchDisk() {
+        return genericSearch(getDbFacade().getDiskDao(), true, null);
     }
 
     private List<GlusterVolumeEntity> searchGlusterVolumes() {

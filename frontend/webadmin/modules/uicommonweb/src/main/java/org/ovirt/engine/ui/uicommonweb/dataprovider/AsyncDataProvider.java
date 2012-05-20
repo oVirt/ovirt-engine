@@ -1777,7 +1777,7 @@ public final class AsyncDataProvider {
             }
         };
 
-        SearchParameters searchParams = new SearchParameters("Disks:", SearchType.DiskImage); //$NON-NLS-1$
+        SearchParameters searchParams = new SearchParameters("Disks:", SearchType.Disk); //$NON-NLS-1$
         searchParams.setMaxCount(9999);
 
         Frontend.RunQuery(VdcQueryType.Search, searchParams, aQuery);

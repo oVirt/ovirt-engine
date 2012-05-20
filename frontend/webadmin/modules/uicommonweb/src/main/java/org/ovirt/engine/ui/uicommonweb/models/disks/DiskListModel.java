@@ -134,7 +134,7 @@ public class DiskListModel extends ListWithDetailsModel
     @Override
     protected void SyncSearch()
     {
-        SearchParameters tempVar = new SearchParameters(getSearchString(), SearchType.DiskImage);
+        SearchParameters tempVar = new SearchParameters(getSearchString(), SearchType.Disk);
         tempVar.setMaxCount(getSearchPageSize());
         super.SyncSearch(VdcQueryType.Search, tempVar);
     }

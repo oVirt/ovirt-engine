@@ -5,7 +5,7 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.compat.Guid;
 
-public interface DiskDao extends ReadDao<Disk, Guid> {
+public interface DiskDao extends ReadDao<Disk, Guid>, SearchDAO<Disk> {
 
     /**
      * Retrieves all disks for the specified virtual machine id.

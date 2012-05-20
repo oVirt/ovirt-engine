@@ -136,7 +136,7 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
         }
         else if (StringHelper.EqOp(obj, SearchObjects.DISK_OBJ_NAME)
                 || StringHelper.EqOp(obj, SearchObjects.DISK_PLU_OBJ_NAME)) {
-            return new DiskImageCrossRefAutoCompleter();
+            return new DiskCrossRefAutoCompleter();
         }
         else if (StringHelper.EqOp(obj, SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME)) {
             return new StorageDomainCrossRefAutoCompleter();
@@ -204,7 +204,7 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
         }
         else if (StringHelper.EqOp(obj, SearchObjects.DISK_OBJ_NAME)
                 || StringHelper.EqOp(obj, SearchObjects.DISK_PLU_OBJ_NAME)) {
-            retval = new DiskImageConditionFieldAutoCompleter();
+            retval = new DiskConditionFieldAutoCompleter();
         }
         else if (StringHelper.EqOp(obj, SearchObjects.QUOTA_OBJ_NAME)
                 || StringHelper.EqOp(obj, SearchObjects.QUOTA_PLU_OBJ_NAME)) {
@@ -247,7 +247,7 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
         }
         else if (StringHelper.EqOp(obj, SearchObjects.DISK_OBJ_NAME)
                 || StringHelper.EqOp(obj, SearchObjects.DISK_PLU_OBJ_NAME)) {
-            retval = "vm_images_view";
+            retval = "all_disks";
         }
         else if (StringHelper.EqOp(obj, SearchObjects.TEMPLATE_OBJ_NAME)
                 || StringHelper.EqOp(obj, SearchObjects.TEMPLATE_PLU_OBJ_NAME)) {
@@ -305,7 +305,7 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
         }
         else if (StringHelper.EqOp(obj, SearchObjects.DISK_OBJ_NAME)
                 || StringHelper.EqOp(obj, SearchObjects.DISK_PLU_OBJ_NAME)) {
-            retval = "vm_images_view";
+            retval = "all_disks";
         }
         else if (StringHelper.EqOp(obj, SearchObjects.VDC_USER_OBJ_NAME)
                 || StringHelper.EqOp(obj, SearchObjects.VDC_USER_PLU_OBJ_NAME)) {
@@ -352,7 +352,7 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
         }
         else if (StringHelper.EqOp(obj, SearchObjects.DISK_OBJ_NAME)
                 || StringHelper.EqOp(obj, SearchObjects.DISK_PLU_OBJ_NAME)) {
-            retval = "image_guid";
+            retval = "disk_id";
         }
         else if (StringHelper.EqOp(obj, SearchObjects.TEMPLATE_OBJ_NAME)
                 || StringHelper.EqOp(obj, SearchObjects.TEMPLATE_PLU_OBJ_NAME)) {

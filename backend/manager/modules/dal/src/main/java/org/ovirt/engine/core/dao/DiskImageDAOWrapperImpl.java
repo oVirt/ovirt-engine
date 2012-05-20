@@ -81,9 +81,4 @@ public class DiskImageDAOWrapperImpl extends BaseDAOWrapperImpl implements DiskI
     public List<DiskImage> getImagesWithNoDisk(Guid vmId) {
         throw new NotImplementedException();
     }
-
-    @Override
-    public List<DiskImage> getAllWithQuery(String query) {
-        throw new NotImplementedException();
-    }
 }

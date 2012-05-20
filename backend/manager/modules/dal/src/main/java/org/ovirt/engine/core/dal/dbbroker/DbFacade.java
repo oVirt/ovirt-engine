@@ -13,7 +13,6 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.BaseDisk;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
-import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.Image;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
@@ -131,7 +130,6 @@ public class DbFacade {
             put(VmStatic.class, VmStaticDAO.class);
             put(VmStatistics.class, VmStatisticsDAO.class);
             put(BaseDisk.class, BaseDiskDao.class);
-            put(DiskImage.class, DiskImageDAO.class);
             put(DiskImageDynamic.class, DiskImageDynamicDAO.class);
             put(VmNetworkInterface.class, VmNetworkInterfaceDAO.class);
             put(VmNetworkStatistics.class, VmNetworkStatisticsDAO.class);

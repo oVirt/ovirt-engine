@@ -132,7 +132,7 @@ SELECT storage_impl.*,
        bd.allow_snapshot
 FROM
 (
-    SELECT 'IMAGE' AS disk_storage_type,
+    SELECT 0 AS disk_storage_type,
            storage_id, -- Storage domain fields
            storage_path,
            storage_name,
@@ -172,7 +172,7 @@ FROM
     FROM images_storage_domain_view
     WHERE active = TRUE
     UNION
-    SELECT 'LUN' AS disk_storage_type,
+    SELECT 1 AS disk_storage_type,
            null AS storage_id, -- Storage domain fields
            null AS storage_path,
            null AS storage_name,

@@ -16,7 +16,6 @@ import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
 import org.ovirt.engine.core.utils.StringUtils;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 
 /**
  * <code>DiskImageDAODbFacadeImpl</code> provides an implementation of {@link DiskImageDAO} that uses previously
@@ -191,10 +190,5 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
         protected DiskImage createDiskEntity() {
             return new DiskImage();
         }
-    }
-
-    @Override
-    public List<DiskImage> getAllWithQuery(String query) {
-        return new SimpleJdbcTemplate(jdbcTemplate).query(query, DiskImageRowMapper.instance);
     }
 }

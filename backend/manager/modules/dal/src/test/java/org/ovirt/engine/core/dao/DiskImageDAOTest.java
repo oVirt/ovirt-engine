@@ -137,14 +137,6 @@ public class DiskImageDAOTest extends BaseReadDaoTestCase<Guid, DiskImage, DiskI
     }
 
     @Test
-    public void testGetAllImagesWithQuery() {
-        List<DiskImage> result =
-                dao.getAllWithQuery("SELECT * FROM (SELECT * FROM vm_images_view WHERE ( image_guid IN (SELECT vm_images_view.image_guid FROM  vm_images_view  ))  ORDER BY disk_alias ASC ) as T1 OFFSET (1 -1) LIMIT 100");
-        assertNotNull(result);
-        assertFalse(result.isEmpty());
-    }
-
-    @Test
     public void testGetImagesWithNoDiskReturnsEmptyList() {
         List<DiskImage> result = dao.getImagesWithNoDisk(Guid.NewGuid());
 

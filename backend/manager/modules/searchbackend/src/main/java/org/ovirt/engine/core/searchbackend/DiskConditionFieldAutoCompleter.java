@@ -2,16 +2,15 @@ package org.ovirt.engine.core.searchbackend;
 
 import java.util.Date;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.core.compat.StringHelper;
 
-public class DiskImageConditionFieldAutoCompleter extends BaseConditionFieldAutoCompleter {
-    public DiskImageConditionFieldAutoCompleter() {
+public class DiskConditionFieldAutoCompleter extends BaseConditionFieldAutoCompleter {
+    public DiskConditionFieldAutoCompleter() {
         // Building the basic verbs dict.
         mVerbs.put("ALIAS", "ALIAS");
         mVerbs.put("DESCRIPTION", "DESCRIPTION");
@@ -24,6 +23,7 @@ public class DiskImageConditionFieldAutoCompleter extends BaseConditionFieldAuto
         mVerbs.put("ALLOW_SNAPSHOT", "ALLOW_SNAPSHOT");
         mVerbs.put("FORMAT", "FORMAT");
         mVerbs.put("STATUS", "STATUS");
+        mVerbs.put("DISK_TYPE", "DISK_TYPE");
 
         // Building the autoCompletion dict.
         buildCompletions();
@@ -40,6 +40,7 @@ public class DiskImageConditionFieldAutoCompleter extends BaseConditionFieldAuto
         getTypeDictionary().put("ALLOW_SNAPSHOT", Boolean.class);
         getTypeDictionary().put("FORMAT", VolumeFormat.class);
         getTypeDictionary().put("STATUS", ImageStatus.class);
+        getTypeDictionary().put("DISK_TYPE", DiskStorageType.class);
 
         // building the ColumnName dict.
         mColumnNameDict.put("ALIAS", "disk_alias");
@@ -53,6 +54,7 @@ public class DiskImageConditionFieldAutoCompleter extends BaseConditionFieldAuto
         mColumnNameDict.put("ALLOW_SNAPSHOT", "allow_snapshot");
         mColumnNameDict.put("FORMAT", "volume_format");
         mColumnNameDict.put("STATUS", "imageStatus");
+        mColumnNameDict.put("DISK_TYPE", "disk_storage_type");
 
         // Building the validation dict.
         buildBasicValidationTable();
@@ -61,7 +63,8 @@ public class DiskImageConditionFieldAutoCompleter extends BaseConditionFieldAuto
     @Override
     public IAutoCompleter getFieldRelationshipAutoCompleter(String fieldName) {
         IAutoCompleter retval;
-        if (StringHelper.EqOp(fieldName, "CREATIONDATE") || StringHelper.EqOp(fieldName, "SIZE") || StringHelper.EqOp(fieldName, "ACTUAL_SIZE")
+        if (StringHelper.EqOp(fieldName, "CREATIONDATE") || StringHelper.EqOp(fieldName, "SIZE")
+                || StringHelper.EqOp(fieldName, "ACTUAL_SIZE")
                 || StringHelper.EqOp(fieldName, "PROVISIONED_SIZE")) {
             retval = BiggerOrSmallerRelationAutoCompleter.INTSANCE;
         } else {
@@ -77,6 +80,8 @@ public class DiskImageConditionFieldAutoCompleter extends BaseConditionFieldAuto
             retval = new EnumValueAutoCompleter(VolumeFormat.class);
         } else if (StringHelper.EqOp(fieldName, "STATUS")) {
             retval = new EnumValueAutoCompleter(ImageStatus.class);
+        } else if (StringHelper.EqOp(fieldName, "DISK_TYPE")) {
+            retval = new EnumValueAutoCompleter(DiskStorageType.class);
         }
         return retval;
     }
@@ -93,6 +98,4 @@ public class DiskImageConditionFieldAutoCompleter extends BaseConditionFieldAuto
             super.formatValue(fieldName, relations, value, caseSensitive);
         }
     }
-
-    private final Log log = LogFactory.getLog(getClass());
 }

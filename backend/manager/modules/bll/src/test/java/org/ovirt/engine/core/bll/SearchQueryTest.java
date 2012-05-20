@@ -13,7 +13,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
-import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -25,7 +25,7 @@ import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.dal.dbbroker.DbEngineDialect;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.DiskImageDAO;
+import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.QuotaDAO;
 import org.ovirt.engine.core.dao.StoragePoolDAO;
 import org.ovirt.engine.core.dao.VdsDAO;
@@ -45,7 +45,7 @@ public class SearchQueryTest {
                     "SELECT * FROM (SELECT *, ROW_NUMBER() OVER(%1$s) as RowNum FROM (%2$s)) as T1 ) as T2 %3$s")
             );
 
-    List<DiskImage> diskImageResultList = new ArrayList<DiskImage>();
+    List<Disk> diskImageResultList = new ArrayList<Disk>();
     List<Quota> quotaResultList = new ArrayList<Quota>();
     List<VM> vmResultList = new ArrayList<VM>();
     List<VDS> vdsResultList = new ArrayList<VDS>();
@@ -54,7 +54,7 @@ public class SearchQueryTest {
     List<GlusterVolumeEntity> glusterVolumeList = new ArrayList<GlusterVolumeEntity>();
 
     private DbFacade mockDAO() {
-        final DiskImageDAO diskImageDAO = Mockito.mock(DiskImageDAO.class);
+        final DiskDao diskDao = Mockito.mock(DiskDao.class);
         final QuotaDAO quotaDAO = Mockito.mock(QuotaDAO.class);
         final VmDAO vmDAO = Mockito.mock(VmDAO.class);
         final VdsDAO vdsDAO = Mockito.mock(VdsDAO.class);
@@ -64,8 +64,8 @@ public class SearchQueryTest {
         final DbEngineDialect dbEngineDialect = Mockito.mock(DbEngineDialect.class);
         final DbFacade facadeMock = new DbFacade() {
             @Override
-            public DiskImageDAO getDiskImageDAO() {
-                return diskImageDAO;
+            public DiskDao getDiskDao() {
+                return diskDao;
             }
 
             @Override
@@ -107,7 +107,7 @@ public class SearchQueryTest {
         Mockito.when(dbEngineDialect.getPreSearchQueryCommand()).thenReturn("");
 
         // mock DAOs
-        mockDiskImageDAO(diskImageDAO);
+        mockDiskSao(diskDao);
         mockQuotaDAO(quotaDAO);
         mockVMDAO(vmDAO);
         mockVdsDAO(vdsDAO);
@@ -119,17 +119,17 @@ public class SearchQueryTest {
     }
 
     /**
-     * Mock disk image DAO so that when getAllWithQuery will be called with the appropriate query string, a unique list will
+     * Mock disk DAO so that when getAllWithQuery will be called with the appropriate query string, a unique list will
      * be returned. <BR/>
      * This returned list will indicate, if the correct string has been passed as an argument to the getAllWithQuery
      * API.
      *
-     * @param diskImageDao
+     * @param diskDao
      *            - The dao to be used
      */
-    private void mockDiskImageDAO(final DiskImageDAO diskImageDAO) {
+    private void mockDiskSao(final DiskDao diskDAO) {
         SearchObjectAutoCompleter search = new SearchObjectAutoCompleter(false);
-        Mockito.when(diskImageDAO.getAllWithQuery(Matchers.matches(getDiskImageRegexString(search))))
+        Mockito.when(diskDAO.getAllWithQuery(Matchers.matches(getDiskImageRegexString(search))))
                 .thenReturn(diskImageResultList);
     }
 
@@ -294,7 +294,7 @@ public class SearchQueryTest {
 
     @Test
     public void testGetAllMultiDiskImageSearch() throws Exception {
-        SearchParameters searchParam = new SearchParameters("Disks:", SearchType.DiskImage);
+        SearchParameters searchParam = new SearchParameters("Disks:", SearchType.Disk);
         SearchQuery<SearchParameters> searchQuery = spySearchQuery(searchParam);
         searchQuery.executeQueryCommand();
         assertTrue(diskImageResultList == searchQuery.getQueryReturnValue().getReturnValue());
@@ -305,7 +305,7 @@ public class SearchQueryTest {
         // The query Should be used is : "SELECT * FROM (SELECT *, ROW_NUMBER() OVER( ORDER BY disk_name ASC ) as RowNum
         // FROM (SELECT * FROM vm_images_view WHERE ( image_guid IN (SELECT vm_images_view.image_guid FROM
         // vm_images_view ))) as T1 ) as T2"
-        SearchParameters searchParam = new SearchParameters("Disk:", SearchType.DiskImage);
+        SearchParameters searchParam = new SearchParameters("Disk:", SearchType.Disk);
         SearchQuery<SearchParameters> searchQuery = spySearchQuery(searchParam);
         searchQuery.executeQueryCommand();
         assertTrue(diskImageResultList == searchQuery.getQueryReturnValue().getReturnValue());

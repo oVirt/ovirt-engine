@@ -133,6 +133,14 @@ public abstract class Disk extends BaseDisk {
      */
     public enum DiskStorageType {
         IMAGE,
-        LUN
+        LUN;
+
+        public int getValue() {
+            return this.ordinal();
+        }
+
+        public static DiskStorageType forValue(int value) {
+            return values()[value];
+        }
     }
 }

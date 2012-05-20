@@ -15,7 +15,7 @@ public enum SearchType implements Serializable {
     StoragePool,
     StorageDomain,
     Quota,
-    DiskImage,
+    Disk,
     GlusterVolume;
 
     public int getValue() {

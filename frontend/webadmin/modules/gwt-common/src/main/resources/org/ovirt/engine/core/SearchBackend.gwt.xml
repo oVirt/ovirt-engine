@@ -15,7 +15,7 @@
 		<include name="searchbackend/SyntaxChecker.java" />
 		<include name="searchbackend/ADSyntaxChecker.java" />
 		<include name="searchbackend/AdSearchObjecAutoCompleter.java" />
-		<include name="searchbackend/DiskImageConditionFieldAutoCompleter.java" />
+		<include name="searchbackend/DiskConditionFieldAutoCompleter.java" />
 		<include name="searchbackend/BaseAutoCompleter.java" />
 		<include name="searchbackend/IConditionFieldAutoCompleter.java" />
 		<include name="searchbackend/AdUserConditionFieldAutoCompleter.java" />
@@ -35,7 +35,7 @@
 		<include name="searchbackend/VmCrossRefAutoCompleter.java" />
 		<include name="searchbackend/ClusterCrossRefAutoCompleter.java" />
 		<include name="searchbackend/StoragePoolCrossRefAutoCompleter.java" />
-		<include name="searchbackend/DiskImageCrossRefAutoCompleter.java" />
+		<include name="searchbackend/DiskCrossRefAutoCompleter.java" />
 		<include name="searchbackend/VdsConditionFieldAutoCompleter.java" />
 		<include name="searchbackend/VmConditionFieldAutoCompleter.java" />
 		<include name="searchbackend/VmTemplateConditionFieldAutoCompleter.java" />
