@@ -80,14 +80,6 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
         retValue =
                 retValue
                         && (disk.getDiskStorageType() != DiskStorageType.IMAGE || canRemoveDiskBasedOnImageStorageCheck());
-        if (retValue) {
-            if (disk.getVmEntityType() == VmEntityType.VM) {
-                retValue = canRemoveVmDisk();
-            } else if (disk.getVmEntityType() == VmEntityType.TEMPLATE) {
-                retValue = canRemoveTemplateDisk();
-            }
-        }
-
         return retValue;
     }
 
@@ -119,6 +111,14 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
             retValue = false;
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED);
         }
+        if (retValue) {
+            if (disk.getVmEntityType() == VmEntityType.VM) {
+                retValue = canRemoveVmImageDisk();
+            } else if (disk.getVmEntityType() == VmEntityType.TEMPLATE) {
+                retValue = canRemoveTemplateDisk();
+            }
+        }
+
         return retValue;
     }
 
@@ -168,7 +168,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
         return retValue;
     }
 
-    private boolean canRemoveVmDisk() {
+    private boolean canRemoveVmImageDisk() {
         setVmId(disk.getvm_guid());
         VmDevice vmDevice = getVmDeviceDAO().get(new VmDeviceId(disk.getId(), disk.getvm_guid()));
         return validate(new SnapshotsValidator().vmNotDuringSnapshot(getVmId()))
@@ -204,7 +204,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
     protected void executeCommand() {
         if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
             DiskImage diskImage = (DiskImage) disk;
-            RemoveImageParameters p = new RemoveImageParameters(diskImage.getImageId(), getVmId());
+            RemoveImageParameters p = new RemoveImageParameters(diskImage.getImageId(), diskImage.getvm_guid());
             p.setTransactionScopeOption(TransactionScopeOption.Suppress);
             p.setDiskImage(diskImage);
             p.setParentCommand(VdcActionType.RemoveDisk);
