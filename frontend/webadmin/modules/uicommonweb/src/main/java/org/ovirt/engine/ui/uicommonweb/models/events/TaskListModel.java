@@ -60,7 +60,7 @@ public class TaskListModel extends SearchableListModel {
                             for (int i = 1; i < taskDescreptionArray.length; i++) {
                                 taskDesc += taskDescreptionArray[i] + " "; //$NON-NLS-1$
                             }
-                            rootTask.setId(Guid.NewGuid());
+                            rootTask.setId(task.getId());
                             rootTask.setDescription(taskDesc);
                             taskListWithCorrelationFilter.add(rootTask);
                         }
@@ -208,8 +208,8 @@ public class TaskListModel extends SearchableListModel {
                                         task.setStartTime(job.getStartTime());
                                     }
 
-                                    if (task.getEndTime() == null
-                                            || task.getEndTime().before(job.getEndTime())) {
+                                    if (task.getEndTime() != null && (task.getEndTime() == null
+                                            || task.getEndTime().before(job.getEndTime()))) {
                                         task.setEndTime(job.getEndTime());
                                     }
                                     task.addStep(step);
