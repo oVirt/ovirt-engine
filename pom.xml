@@ -247,7 +247,7 @@
   </dependencies>
   <repositories>
     <repository>
-      <id>maven.repo1</id>
+      <id>central</id>
       <name>maven repo1</name>
       <layout>default</layout>
       <url>http://repo1.maven.org/maven2</url>
