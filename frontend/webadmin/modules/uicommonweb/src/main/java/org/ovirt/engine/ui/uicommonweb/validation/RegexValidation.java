@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.uicommonweb.validation;
 
 import org.ovirt.engine.core.compat.Regex;
 import org.ovirt.engine.core.compat.RegexOptions;
-import org.ovirt.engine.core.compat.StringHelper;
 
 @SuppressWarnings("unused")
 public class RegexValidation implements IValidation
@@ -76,10 +75,12 @@ public class RegexValidation implements IValidation
         // {
         // options = RegexOptions.IgnoreCase;
         // }
+        if (value == null) {
+            value = ""; //$NON-NLS-1$
+        }
 
         if (value != null
                 && value instanceof String
-                && !StringHelper.isNullOrEmpty((String) value)
                 && (getIsNegate() ? Regex.IsMatch(value.toString(), getExpression(), RegexOptions.None)
                         : !Regex.IsMatch(value.toString(), getExpression(), RegexOptions.None)))
         {
