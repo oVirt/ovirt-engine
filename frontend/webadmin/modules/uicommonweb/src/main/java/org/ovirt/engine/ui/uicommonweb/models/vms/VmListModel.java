@@ -740,7 +740,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 
                 cachedConsoleModels.put(vm.getId(),
                         new ArrayList<ConsoleModel>(Arrays.asList(new ConsoleModel[] {
-                            spiceConsoleModel, vncConsoleModel, rdpConsoleModel})));
+                                spiceConsoleModel, vncConsoleModel, rdpConsoleModel })));
             }
 
             ArrayList<ConsoleModel> cachedModels = cachedConsoleModels.get(vm.getId());
@@ -1409,7 +1409,10 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
         model.getInitrd_path().setEntity(vm.getinitrd_url());
 
         // Custom Properties
-        model.getCustomProperties().setEntity(vm.getCustomProperties());
+        model.getCustomPropertySheet()
+                .setKeyValueString(this.getCustomPropertiesKeysList()
+                        .get(vm.getvds_group_compatibility_version()));
+        model.getCustomPropertySheet().setEntity(vm.getCustomProperties());
         model.setCustomPropertiesKeysList(this.getCustomPropertiesKeysList()
                 .get(vm.getvds_group_compatibility_version()));
 
@@ -1629,7 +1632,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
         tempVar.setAcpiEnable(true);
         tempVar.setRunAsStateless((Boolean) model.getRunAsStateless().getEntity());
         tempVar.setReinitialize(model.getReinitialize());
-        tempVar.setCustomProperties((String) model.getCustomProperties().getEntity());
+        tempVar.setCustomProperties(model.getCustomPropertySheet().getEntity());
         RunVmOnceParams param = tempVar;
 
         // kernel params
@@ -2392,7 +2395,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
         getcurrentVm().setkernel_url((String) model.getKernel_path().getEntity());
         getcurrentVm().setkernel_params((String) model.getKernel_parameters().getEntity());
 
-        getcurrentVm().setCustomProperties((String) model.getCustomProperties().getEntity());
+        getcurrentVm().setCustomProperties(model.getCustomPropertySheet().getEntity());
 
         EntityModel displayProtocolSelectedItem = (EntityModel) model.getDisplayProtocol().getSelectedItem();
         getcurrentVm().setdefault_display_type((DisplayType) displayProtocolSelectedItem.getEntity());
@@ -2503,11 +2506,13 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
                                                         .get(0), activeStorageDomains);
 
                                 if (disk != null) {
-                                    dict.get(templateDisk.getImageId()).setvolume_type((VolumeType) disk.getVolumeType()
-                                            .getSelectedItem());
-                                    dict.get(templateDisk.getImageId()).setvolume_format(DataProvider.GetDiskVolumeFormat(
-                                            (VolumeType) disk.getVolumeType().getSelectedItem(),
-                                            storageDomain.getstorage_type()));
+                                    dict.get(templateDisk.getImageId())
+                                            .setvolume_type((VolumeType) disk.getVolumeType()
+                                                    .getSelectedItem());
+                                    dict.get(templateDisk.getImageId())
+                                            .setvolume_format(DataProvider.GetDiskVolumeFormat(
+                                                    (VolumeType) disk.getVolumeType().getSelectedItem(),
+                                                    storageDomain.getstorage_type()));
                                 }
                             }
 

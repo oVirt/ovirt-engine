@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
-	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor" xmlns:w="urn:import:org.ovirt.engine.ui.common.widget">
+	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor" 
+	xmlns:w="urn:import:org.ovirt.engine.ui.common.widget"
+	xmlns:k="urn:import:org.ovirt.engine.ui.common.widget.form.key_value">
 
 	<ui:with field='resources' type='org.ovirt.engine.ui.common.CommonApplicationResources' />
 
@@ -17,7 +19,7 @@
 			border-bottom: 1px #C0C0C0 solid;
 			margin-top: 5px;
 			margin-bottom: 10px;
-			height: 30px;
+			height: 60px;
 			width: 98%;
 		}
 		
@@ -149,9 +151,9 @@
 
 		</g:VerticalPanel>
 
-		<g:VerticalPanel addStyleNames="{style.customPropertiesPanel}">
-			<e:EntityModelTextBoxEditor ui:field="customPropertiesEditor" />
-		</g:VerticalPanel>
+		<g:ScrollPanel addStyleNames="{style.customPropertiesPanel}">
+			<k:KeyValueWidget ui:field="customPropertiesSheetEditor"/>
+		</g:ScrollPanel>
 
 		<g:VerticalPanel>
 			<g:Label ui:field="displayProtocolLabel" addStyleNames="{style.title}" />

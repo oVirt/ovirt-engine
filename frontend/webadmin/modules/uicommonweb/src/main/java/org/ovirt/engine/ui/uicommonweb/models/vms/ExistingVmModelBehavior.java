@@ -1,5 +1,8 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StorageType;
@@ -15,9 +18,6 @@ import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
-
-import java.util.ArrayList;
-import java.util.Arrays;
 
 @SuppressWarnings("unused")
 public class ExistingVmModelBehavior extends VmModelBehaviorBase
@@ -66,7 +66,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
                             tempVar.setstorage_pool_id(currentVm.getstorage_pool_id());
                             VDSGroup cluster = tempVar;
                             model.getCluster()
-                                    .setItems(new ArrayList<VDSGroup>(Arrays.asList(new VDSGroup[] {cluster})));
+                                    .setItems(new ArrayList<VDSGroup>(Arrays.asList(new VDSGroup[] { cluster })));
                             model.getCluster().setSelectedItem(cluster);
                             behavior.InitTemplate();
                             behavior.InitCdImage();
@@ -140,6 +140,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
         getModel().getInitrd_path().setEntity(vm.getinitrd_url());
 
         getModel().getCustomProperties().setEntity(vm.getCustomProperties());
+        getModel().getCustomPropertySheet().setEntity(vm.getCustomProperties());
 
         if (vm.getis_initialized())
         {
@@ -190,9 +191,16 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
     public void Cluster_SelectedItemChanged()
     {
         UpdateDefaultHost();
-        UpdateIsCustomPropertiesAvailable();
+        UpdateCustomProperties();
         UpdateNumOfSockets();
         updateQuotaByCluster(vm.getQuotaId());
+    }
+
+    @Override
+    protected void UpdateCustomProperties() {
+        super.UpdateCustomProperties();
+
+        updateCustomPropertySheet();
     }
 
     @Override
@@ -251,7 +259,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
 
     public void InitTemplate()
     {
-        setupTemplate(vm, ((UnitVmModel) getModel()).getTemplate());
+        setupTemplate(vm, getModel().getTemplate());
     }
 
     public void InitCdImage()

@@ -1,17 +1,17 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
+import java.util.ArrayList;
+
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
-import org.ovirt.engine.ui.uicommonweb.validation.CustomPropertyValidation;
+import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueModel;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-
-import java.util.ArrayList;
 
 @SuppressWarnings("unused")
 public class RunOnceModel extends Model
@@ -209,6 +209,16 @@ public class RunOnceModel extends Model
         privateIsLinuxOptionsAvailable = value;
     }
 
+    private KeyValueModel customPropertySheet;
+
+    public KeyValueModel getCustomPropertySheet() {
+        return customPropertySheet;
+    }
+
+    public void setCustomPropertySheet(KeyValueModel customPropertySheet) {
+        this.customPropertySheet = customPropertySheet;
+    }
+
     private EntityModel privateCustomProperties;
 
     public EntityModel getCustomProperties()
@@ -397,6 +407,7 @@ public class RunOnceModel extends Model
         getUseAlternateCredentials().getEntityChangedEvent().addListener(this);
 
         setCustomProperties(new EntityModel());
+        setCustomPropertySheet(new KeyValueModel());
 
         EntityModel tempVar5 = new EntityModel();
         tempVar5.setEntity(false);
@@ -537,7 +548,8 @@ public class RunOnceModel extends Model
             getInitrd_path().setEntity(""); //$NON-NLS-1$
         }
 
-        getCustomProperties().ValidateEntity(new IValidation[] { new CustomPropertyValidation(this.getCustomPropertiesKeysList()) });
+        //getCustomProperties().ValidateEntity(new IValidation[] { new CustomPropertyValidation(this.getCustomPropertiesKeysList()) });
+        boolean customPropertyValidation = getCustomPropertySheet().validate();
 
         if (getIsLinux_Unassign_UnknownOS()
                 && ((((String) getKernel_parameters().getEntity()).length() > 0 || ((String) getInitrd_path().getEntity()).length() > 0) && ((String) getKernel_path().getEntity()).length() == 0))
@@ -574,6 +586,6 @@ public class RunOnceModel extends Model
         }
 
         return getIsoImage().getIsValid() && getFloppyImage().getIsValid() && getKernel_path().getIsValid()
-                && getCustomProperties().getIsValid();
+                && customPropertyValidation;
     }
 }

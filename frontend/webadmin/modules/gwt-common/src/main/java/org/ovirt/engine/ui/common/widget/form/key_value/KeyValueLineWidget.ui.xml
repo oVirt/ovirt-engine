@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" 
+    xmlns:g="urn:import:com.google.gwt.user.client.ui"
+    xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+    xmlns:w="urn:import:org.ovirt.engine.ui.common.widget">
+
+	<ui:style type="org.ovirt.engine.ui.common.widget.form.key_value.KeyValueLineWidget.WidgetStyle">
+		.fieldWidth {
+				width: 150px;
+	 		}
+	 	.buttonStyle {
+	 		float: right;
+	 		margin-right: 5px;
+	 	}
+	</ui:style>
+
+	<g:HorizontalPanel height="30px" width="400px">
+		<g:HorizontalPanel width="350px">
+			<e:ListModelListBoxEditor ui:field="keyField" addStyleNames="{style.fieldWidth}"/>
+			<e:EntityModelTextBoxEditor ui:field="valueField" addStyleNames="{style.fieldWidth}"/>
+		</g:HorizontalPanel>
+		<w:UiCommandButton ui:field="plusButton" addStyleNames="{style.buttonStyle}"/>
+		<w:UiCommandButton ui:field="minusButton" addStyleNames="{style.buttonStyle}"/>
+	</g:HorizontalPanel>
+
+</ui:UiBinder>

@@ -25,6 +25,7 @@ import org.ovirt.engine.ui.common.widget.editor.EntityModelRadioButtonEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelSliderWithTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
+import org.ovirt.engine.ui.common.widget.form.key_value.KeyValueWidget;
 import org.ovirt.engine.ui.common.widget.parser.MemorySizeParser;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.MemorySizeRenderer;
@@ -99,6 +100,10 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
     @UiField
     @Path(value = "description.entity")
     EntityModelTextBoxEditor descriptionEditor;
+
+    @UiField
+    @Ignore
+    KeyValueWidget customPropertiesSheetEditor;
 
     @UiField(provided = true)
     @Path(value = "template.selectedItem")
@@ -304,10 +309,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
     // ==Custom Properties Tab==
     @UiField
     protected DialogTab customPropertiesTab;
-
-    @UiField
-    @Path(value = "customProperties.entity")
-    EntityModelTextBoxEditor customPropertiesEditor;
 
     CommonApplicationConstants constants;
 
@@ -528,7 +529,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
         kernel_pathEditor.setLabel(constants.kernelPathVmPopup());
         initrd_pathEditor.setLabel(constants.initrdPathVmPopup());
         kernel_parametersEditor.setLabel(constants.kernelParamsVmPopup());
-        customPropertiesEditor.setLabel(constants.customPropsVmPopup());
     }
 
     private void applyStyles() {
@@ -549,8 +549,19 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
         initSliders(object);
         initTabAvailabilityListeners(object);
         initListeners(object);
+        initCustomPropertySheet(object);
 
         numOfVmsLabel.setVisible(false);
+    }
+
+    private void initCustomPropertySheet(final UnitVmModel object) {
+        object.getCustomPropertySheet().getKeyValueLines().getItemsChangedEvent().addListener(new IEventListener() {
+
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                customPropertiesSheetEditor.edit(object.getCustomPropertySheet());
+            }
+        });
     }
 
     private void initListeners(final UnitVmModel object) {

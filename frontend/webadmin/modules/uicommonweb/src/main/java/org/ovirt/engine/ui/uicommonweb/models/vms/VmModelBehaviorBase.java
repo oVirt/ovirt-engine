@@ -415,7 +415,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         AsyncDataProvider.GetHostListByCluster(query, cluster.getname());
     }
 
-    protected void UpdateIsCustomPropertiesAvailable()
+    protected void UpdateCustomProperties()
     {
         VDSGroup cluster = (VDSGroup) getModel().getCluster().getSelectedItem();
 
@@ -432,6 +432,15 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                         }
                     }, getModel().getHash()), cluster.getcompatibility_version().toString());
         }
+    }
+
+    protected void updateCustomPropertySheet() {
+        if (getModel().getCluster().getSelectedItem() == null) {
+            return;
+        }
+        VDSGroup cluster = (VDSGroup) getModel().getCluster().getSelectedItem();
+        getModel().getCustomPropertySheet().setKeyValueString(getModel().getCustomPropertiesKeysList()
+                .get(cluster.getcompatibility_version()));
     }
 
     public int maxCpus = 0;
@@ -719,7 +728,8 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
                         UnitVmModel model = (UnitVmModel) target;
                         VmTemplate template = (VmTemplate) returnValue;
-                        model.getTemplate().setItems(new ArrayList<VmTemplate>(Arrays.asList(new VmTemplate[] { template })));
+                        model.getTemplate()
+                                .setItems(new ArrayList<VmTemplate>(Arrays.asList(new VmTemplate[] { template })));
                         model.getTemplate().setSelectedItem(template);
                         model.getTemplate().setIsChangable(false);
 

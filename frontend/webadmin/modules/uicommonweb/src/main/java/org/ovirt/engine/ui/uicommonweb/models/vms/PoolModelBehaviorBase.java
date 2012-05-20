@@ -80,7 +80,7 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
 
         getModel().setIsHostAvailable(dataCenter.getstorage_pool_type() != StorageType.LOCALFS);
 
-        AsyncDataProvider.GetClusterList(new AsyncQuery(new Object[] {this, getModel()}, new INewAsyncCallback() {
+        AsyncDataProvider.GetClusterList(new AsyncQuery(new Object[] { this, getModel() }, new INewAsyncCallback() {
             @Override
             public void OnSuccess(Object target, Object returnValue) {
 
@@ -208,12 +208,18 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
     public void Cluster_SelectedItemChanged()
     {
         UpdateDefaultHost();
-        UpdateIsCustomPropertiesAvailable();
+        UpdateCustomProperties();
         UpdateMinAllocatedMemory();
         UpdateNumOfSockets();
         if ((VmTemplate) getModel().getTemplate().getSelectedItem() != null) {
             updateQuotaByCluster(((VmTemplate) getModel().getTemplate().getSelectedItem()).getQuotaId());
         }
+    }
+
+    @Override
+    protected void UpdateCustomProperties() {
+        super.UpdateCustomProperties();
+        updateCustomPropertySheet();
     }
 
     @Override
@@ -301,31 +307,31 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
         int assignedVms = getModel().getAssignedVms().AsConvertible().Integer();
 
         getModel().getNumOfDesktops().ValidateEntity(
-            new IValidation[]
+                new IValidation[]
                 {
-                    new NotEmptyValidation(),
-                    new LengthValidation(4),
-                    new IntegerValidation(isNew ? 1 : 0, isNew ? maxAllowedVms : maxAllowedVms - assignedVms)
+                        new NotEmptyValidation(),
+                        new LengthValidation(4),
+                        new IntegerValidation(isNew ? 1 : 0, isNew ? maxAllowedVms : maxAllowedVms - assignedVms)
                 });
 
         getModel().getPrestartedVms().ValidateEntity(
-            new IValidation[]
+                new IValidation[]
                 {
-                    new NotEmptyValidation(),
-                    new IntegerValidation(0, assignedVms)
+                        new NotEmptyValidation(),
+                        new IntegerValidation(0, assignedVms)
                 });
 
         getModel().setIsGeneralTabValid(getModel().getIsGeneralTabValid()
-            && getModel().getName().getIsValid()
-            && getModel().getNumOfDesktops().getIsValid()
-            && getModel().getPrestartedVms().getIsValid());
+                && getModel().getName().getIsValid()
+                && getModel().getNumOfDesktops().getIsValid()
+                && getModel().getPrestartedVms().getIsValid());
 
         getModel().setIsPoolTabValid(true);
 
         return super.Validate()
-            && getModel().getName().getIsValid()
-            && getModel().getNumOfDesktops().getIsValid()
-            && getModel().getPrestartedVms().getIsValid();
+                && getModel().getName().getIsValid()
+                && getModel().getNumOfDesktops().getIsValid()
+                && getModel().getPrestartedVms().getIsValid();
     }
 
 }

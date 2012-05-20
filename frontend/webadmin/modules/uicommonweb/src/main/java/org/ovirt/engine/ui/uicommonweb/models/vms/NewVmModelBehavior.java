@@ -184,10 +184,17 @@ public class NewVmModelBehavior extends VmModelBehaviorBase
     public void Cluster_SelectedItemChanged()
     {
         UpdateDefaultHost();
-        UpdateIsCustomPropertiesAvailable();
+        UpdateCustomProperties();
         UpdateMinAllocatedMemory();
         UpdateNumOfSockets();
         updateQuotaByCluster(null);
+    }
+
+    @Override
+    protected void UpdateCustomProperties() {
+        super.UpdateCustomProperties();
+
+        updateCustomPropertySheet();
     }
 
     @Override

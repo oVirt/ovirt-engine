@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelRadioButtonEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
+import org.ovirt.engine.ui.common.widget.form.key_value.KeyValueWidget;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.BootSequenceModel;
@@ -79,6 +80,10 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
     ListModelListBoxEditor<Object> floppyImageEditor;
 
     @UiField
+    @Ignore
+    KeyValueWidget customPropertiesSheetEditor;
+
+    @UiField
     @Path(value = "isoImage.selectedItem")
     ListModelListBoxEditor<Object> isoImageEditor;
 
@@ -131,10 +136,6 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
     @Path(value = "sysPrepPassword.entity")
     EntityModelTextBoxEditor sysPrepPasswordEditor;
 
-    @UiField
-    @Path(value = "customProperties.entity")
-    EntityModelTextBoxEditor customPropertiesEditor;
-
     @UiField(provided = true)
     @Path(value = "displayConsole_Vnc_IsSelected.entity")
     EntityModelRadioButtonEditor displayConsoleVncEditor;
@@ -180,7 +181,6 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
         runAndPauseEditor.setLabel(constants.runOncePopupRunAndPauseLabel());
         attachFloppyEditor.setLabel(constants.runOncePopupAttachFloppyLabel());
         attachIsoEditor.setLabel(constants.runOncePopupAttachIsoLabel());
-        customPropertiesEditor.setLabel(constants.runOncePopupCustomPropertiesLabel());
         bootSequenceLabel.setText(constants.runOncePopupBootSequenceLabel());
 
         // Linux Boot Options
@@ -243,8 +243,16 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
     }
 
     @Override
-    public void edit(RunOnceModel object) {
+    public void edit(final RunOnceModel object) {
         Driver.driver.edit(object);
+
+        object.getCustomPropertySheet().getKeyValueLines().getItemsChangedEvent().addListener(new IEventListener() {
+
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                customPropertiesSheetEditor.edit(object.getCustomPropertySheet());
+            }
+        });
 
         // Update Linux options panel
         final EntityModel isLinuxOptionsAvailable = object.getIsLinuxOptionsAvailable();

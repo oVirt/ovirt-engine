@@ -1331,4 +1331,10 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("At least one service should be selected")
     String clusterServiceValidationMsg();
+
+    @DefaultStringValue("Please select a key...")
+    String pleaseSelectKey();
+
+    @DefaultStringValue("No available keys")
+    String noKeyAvailable();
 }
