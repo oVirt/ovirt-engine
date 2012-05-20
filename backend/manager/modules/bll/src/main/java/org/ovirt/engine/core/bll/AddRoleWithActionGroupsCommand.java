@@ -41,7 +41,7 @@ public class AddRoleWithActionGroupsCommand<T extends RoleWithActionGroupsParame
             addCanDoActionMessage(VdcBllMessages.ACTION_LIST_CANNOT_BE_EMPTY);
             return false;
         }
-        if (getRoleDao().getByName(getRole().getname()) != null) {
+        if (getRoleDao().getByName(getRoleName()) != null) {
             addCanDoActionMessage(VdcBllMessages.VAR__ACTION__ADD);
             addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_UPDATE_ROLE_NAME);
             return false;

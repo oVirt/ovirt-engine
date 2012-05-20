@@ -23,16 +23,24 @@ public class AttachActionGroupsToRoleCommand<T extends ActionGroupsToRoleParamet
 
     @Override
     protected boolean canDoAction() {
-        List<ActionGroup> attachGroups = getParameters().getActionGroups();
-        Guid roleId = getParameters().getRoleId();
-        roles role = getRoleDao().get(roleId);
-
         List<String> canDoMessages = getReturnValue().getCanDoActionMessages();
         if (checkIfRoleIsReadOnly(canDoMessages)) {
             canDoMessages.add(VdcBllMessages.VAR__TYPE__ROLE.toString());
             canDoMessages.add(VdcBllMessages.VAR__ACTION__ATTACH_ACTION_TO.toString());
             return false;
         }
+
+        if (checkIfGroupsCanBeAttached(canDoMessages)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    protected boolean checkIfGroupsCanBeAttached(List<String> canDoMessages) {
+        List<ActionGroup> attachGroups = getParameters().getActionGroups();
+        Guid roleId = getParameters().getRoleId();
+        roles role = getRole();
 
         // Get all groups by ID and check if they already exist
         List<ActionGroup> allGroups = getActionGroupsByRoleId(roleId);
@@ -41,16 +49,15 @@ public class AttachActionGroupsToRoleCommand<T extends ActionGroupsToRoleParamet
                 // group already exist
                 canDoMessages.add(
                         VdcBllMessages.ERROR_CANNOT_ATTACH_ACTION_GROUP_TO_ROLE_ATTACHED.toString());
-                return false;
+                return true;
             } else if (role.getType() != RoleType.ADMIN && group.getRoleType() == RoleType.ADMIN) {
                 canDoMessages.add(
                         VdcBllMessages.CANNOT_ADD_ACTION_GROUPS_TO_ROLE_TYPE.toString());
-                return false;
+                return true;
             }
-
         }
 
-        return true;
+        return false;
     }
 
     @Override

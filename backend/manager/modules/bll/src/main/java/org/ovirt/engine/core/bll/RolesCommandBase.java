@@ -45,7 +45,7 @@ public abstract class RolesCommandBase<T extends RolesParameterBase> extends Com
 
     protected boolean checkIfRoleIsReadOnly(List<String> CanDoActionMessages) {
         boolean result = false;
-        if (getRoleDao().get(getParameters().getRoleId()).getis_readonly()) {
+        if (getRole().getis_readonly()) {
             result = true;
             CanDoActionMessages.add(VdcBllMessages.ACTION_TYPE_FAILED_ROLE_IS_READ_ONLY.toString());
         }

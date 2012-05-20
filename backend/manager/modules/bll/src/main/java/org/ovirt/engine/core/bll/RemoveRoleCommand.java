@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.RolesParameterBase;
-import org.ovirt.engine.core.common.businessentities.roles;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 
 public class RemoveRoleCommand<T extends RolesParameterBase> extends RolesCommandBase<T> {
@@ -16,8 +15,7 @@ public class RemoveRoleCommand<T extends RolesParameterBase> extends RolesComman
     @Override
     protected boolean canDoAction() {
         boolean returnValue = true;
-        roles roles = getRoleDao().get(getParameters().getRoleId());
-        if (roles == null) {
+        if (getRole() == null) {
             returnValue = false;
             addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_REMOVE_ROLE_INVALID_ROLE_ID);
         } else {

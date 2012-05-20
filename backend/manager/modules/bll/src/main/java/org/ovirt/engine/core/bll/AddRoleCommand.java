@@ -20,7 +20,7 @@ public class AddRoleCommand<T extends RolesOperationsParameters> extends RolesOp
     @Override
     protected boolean canDoAction() {
         boolean returnValue = true;
-        if (getRoleDao().getByName(getRole().getname()) != null) {
+        if (getRoleDao().getByName(getRoleName()) != null) {
             addCanDoActionMessage(VdcBllMessages.VAR__ACTION__ADD);
             addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_UPDATE_ROLE_NAME);
             returnValue = false;

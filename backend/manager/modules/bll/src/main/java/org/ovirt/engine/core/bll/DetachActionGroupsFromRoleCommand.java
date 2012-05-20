@@ -5,7 +5,6 @@ import java.util.List;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ActionGroupsToRoleParameter;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
-import org.ovirt.engine.core.common.businessentities.roles;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 
@@ -18,9 +17,7 @@ public class DetachActionGroupsFromRoleCommand<T extends ActionGroupsToRoleParam
 
     @Override
     protected boolean canDoAction() {
-        Guid roleId = getParameters().getRoleId();
-        roles role = getRoleDao().get(roleId);
-        if (role == null) {
+        if (getRole() == null) {
             addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_ATTACH_ACTION_GROUP_TO_ROLE_ATTACHED);
             return false;
         }
@@ -32,8 +29,9 @@ public class DetachActionGroupsFromRoleCommand<T extends ActionGroupsToRoleParam
             return false;
         }
 
-        List<ActionGroup> groupsToDetach = getParameters().getActionGroups();
+        Guid roleId = getParameters().getRoleId();
         List<ActionGroup> allGroups = getActionGroupsByRoleId(roleId);
+        List<ActionGroup> groupsToDetach = getParameters().getActionGroups();
 
         // Check that target action group exists for this role
         for (ActionGroup group : groupsToDetach) {
