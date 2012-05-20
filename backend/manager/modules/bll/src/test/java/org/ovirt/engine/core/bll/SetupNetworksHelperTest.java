@@ -4,12 +4,12 @@ import static java.util.Arrays.asList;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.dal.VdcBllMessages.NETWORK_BOND_PARAMETERS_INVALID;
 import static org.ovirt.engine.core.dal.VdcBllMessages.NETWORK_INTERFACE_NAME_ALREADY_IN_USE;
 import static org.ovirt.engine.core.dal.VdcBllMessages.NETWORK_NOT_EXISTS_IN_CURRENT_CLUSTER;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.spy;
 
 import java.util.ArrayList;
@@ -19,48 +19,35 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-import org.ovirt.engine.core.bll.interfaces.BackendInternal;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.action.SetupNetworksParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network;
-import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.InterfaceDAO;
 import org.ovirt.engine.core.dao.NetworkDAO;
 import org.ovirt.engine.core.dao.VdsDAO;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ DbFacade.class, Backend.class, Config.class })
+@RunWith(MockitoJUnitRunner.class)
 public class SetupNetworksHelperTest {
 
     @Mock
-    BackendInternal backend;
+    private VdsDAO vdsDAO;
 
-    @Before
-    public void testBackendSetup() {
-        when(Backend.getInstance()).thenReturn(backend);
-    }
+    @Mock
+    private NetworkDAO networkDAO;
 
-    public SetupNetworksHelperTest() {
-        MockitoAnnotations.initMocks(this);
-        mockStatic(DbFacade.class);
-        mockStatic(Backend.class);
-        mockStatic(Config.class);
-    }
+    @Mock
+    private InterfaceDAO interfaceDAO;
 
+    @Mock
+    private DbFacade facadeMock;
 
     @Test
     public void validateBonds() {
@@ -78,9 +65,9 @@ public class SetupNetworksHelperTest {
         slaves.add(slave);
         bondsMap.put("bond0", bond0);
         slavesMap.put("bond0", asList(slave));
-        initMocks(bonds, null);
 
         SetupNetworksHelper validator = createHelper(mock(SetupNetworksParameters.class));
+        initDaoMocks(bonds, null, validator);
 
         assertFalse(validator.validateBonds(bondsMap, slavesMap));
         assertTrue(validator.getViolations().contains(NETWORK_BOND_PARAMETERS_INVALID));
@@ -113,11 +100,11 @@ public class SetupNetworksHelperTest {
         nicWithUnknownNetwork.setName("nic3");
         nics.add(nicWithUnknownNetwork);
 
-        initMocks(vdsNics, clusterNetworks);
         SetupNetworksParameters params = new SetupNetworksParameters();
         params.setInterfaces(nics);
 
         SetupNetworksHelper validator = createHelper(params);
+        initDaoMocks(vdsNics, clusterNetworks, validator);
         assertTrue(validator.validate().contains(NETWORK_NOT_EXISTS_IN_CURRENT_CLUSTER));
     }
 
@@ -160,11 +147,11 @@ public class SetupNetworksHelperTest {
         bond1.setNetworkName("vmnet");
         nics.add(bond1);
 
-        initMocks(vdsNics, clusterNetworks);
         SetupNetworksParameters params = new SetupNetworksParameters();
         params.setInterfaces(nics);
 
         SetupNetworksHelper helper = createHelper(params);
+        initDaoMocks(vdsNics, clusterNetworks, helper);
         List<VdcBllMessages> validate = helper.validate();
         assertTrue(validate.contains(NETWORK_INTERFACE_NAME_ALREADY_IN_USE));
     }
@@ -211,11 +198,11 @@ public class SetupNetworksHelperTest {
         slave1.setNetworkName("ovirtmgmt");
         nics.add(slave1);
 
-        initMocks(vdsNics, clusterNetworks);
         SetupNetworksParameters params = new SetupNetworksParameters();
         params.setInterfaces(nics);
 
         SetupNetworksHelper helper = createHelper(params);
+        initDaoMocks(vdsNics, clusterNetworks, helper);
         List<VdcBllMessages> validate = helper.validate();
         assertTrue(validate.contains(NETWORK_BOND_PARAMETERS_INVALID));
 
@@ -226,6 +213,7 @@ public class SetupNetworksHelperTest {
 
         nics.add(slave2);
         helper = createHelper(params);
+        initDaoMocks(vdsNics, clusterNetworks, helper);
         validate = helper.validate();
         assertTrue(validate.isEmpty());
         assertTrue(helper.getRemoveNetworks().get(0).getname().equals("vmnet"));
@@ -239,8 +227,8 @@ public class SetupNetworksHelperTest {
      * expected: network blue should return from the function
      */
     public void extractRemovedNetwork() {
-        initMocks(null, null);
         SetupNetworksHelper helper = createHelper(new SetupNetworksParameters());
+        initDaoMocks(null, null, helper);
         String[] networkNames = { "red" };
         Map<String, network> clusterNetworksMap = new HashMap<String, network>();
         clusterNetworksMap.put("red", new network(null, null, null, "red", null, null, 1, 100, false, 1500, true));
@@ -266,8 +254,8 @@ public class SetupNetworksHelperTest {
      * expected: bond is not added to map
      */
     public void extractBond() {
-        initMocks(null, null);
         SetupNetworksHelper helper = createHelper(new SetupNetworksParameters());
+        initDaoMocks(null, null, helper);
 
         Map<String, VdsNetworkInterface> bonds = new HashMap<String, VdsNetworkInterface>();
         String name = "bond5";
@@ -294,8 +282,8 @@ public class SetupNetworksHelperTest {
      * expected: the size of list of nics under bond2 key is now 2
      */
     public void extractBondSlave() {
-        initMocks(null, null);
         SetupNetworksHelper helper = createHelper(new SetupNetworksParameters());
+        initDaoMocks(null, null, helper);
 
         VdsNetworkInterface iface = new VdsNetworkInterface();
         iface.setBondName("bond7");
@@ -318,8 +306,8 @@ public class SetupNetworksHelperTest {
      * expected: bond4 is extracted to the removeBonds list
      */
     public void extractRemovedBonds() {
-        initMocks(null, null);
         SetupNetworksHelper helper = createHelper(new SetupNetworksParameters());
+        initDaoMocks(null, null, helper);
 
         Map<String, VdsNetworkInterface> bonds = new HashMap<String, VdsNetworkInterface>();
         Map<String, VdsNetworkInterface> existingIfaces = new HashMap<String, VdsNetworkInterface>();
@@ -351,47 +339,18 @@ public class SetupNetworksHelperTest {
         return spy(validator);
     }
 
-    private void initMocks(final List<VdsNetworkInterface> nics, final List<network> networks) {
-        final Backend backendMock = new Backend() {
-            @Override
-            public VDSBrokerFrontend getResourceManager() {
-                return null;
-            }
-        };
+    private void initDaoMocks(final List<VdsNetworkInterface> nics,
+            final List<network> networks,
+            final SetupNetworksHelper helper) {
+        when(facadeMock.getVdsDAO()).thenReturn(vdsDAO);
+        when(vdsDAO.get(any(Guid.class))).thenReturn(new VDS());
 
-        final DbFacade facadeMock = new DbFacade() {
+        when(facadeMock.getNetworkDAO()).thenReturn(networkDAO);
+        when(networkDAO.getAllForCluster(any(Guid.class))).thenReturn(networks);
 
-            private final VDS vds = new VDS();
+        when(facadeMock.getInterfaceDAO()).thenReturn(interfaceDAO);
+        when(interfaceDAO.getAllInterfacesForVds(any(Guid.class))).thenReturn(nics);
 
-            @Override
-            public VdsDAO getVdsDAO() {
-
-                final VdsDAO vdsDao = Mockito.mock(VdsDAO.class);
-                Mockito.when(vdsDao.get(any(Guid.class))).thenReturn(vds);
-                return vdsDao;
-            }
-
-            @Override
-            public NetworkDAO getNetworkDAO() {
-
-                final NetworkDAO networkDao = Mockito.mock(NetworkDAO.class);
-                Mockito.when(networkDao.getAllForCluster(any(Guid.class))).thenReturn(networks);
-                return networkDao;
-            }
-
-            @Override
-            public InterfaceDAO getInterfaceDAO() {
-                final InterfaceDAO interfaceDao = Mockito.mock(InterfaceDAO.class);
-                Mockito.when(interfaceDao.getAllInterfacesForVds(any(Guid.class))).thenReturn(nics);
-                return interfaceDao;
-            }
-
-        };
-
-        PowerMockito.mockStatic(Backend.class);
-        Mockito.when(Backend.getInstance()).thenReturn(backendMock);
-
-        PowerMockito.mockStatic(DbFacade.class);
-        Mockito.when(DbFacade.getInstance()).thenReturn(facadeMock);
+        doReturn(facadeMock).when(helper).getDbFacade();
     }
 }

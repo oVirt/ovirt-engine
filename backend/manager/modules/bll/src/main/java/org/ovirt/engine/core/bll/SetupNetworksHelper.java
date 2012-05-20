@@ -30,6 +30,7 @@ import org.ovirt.engine.core.utils.NetworkUtils;
 
 public class SetupNetworksHelper {
     private SetupNetworksParameters params;
+    private Guid vdsGroupId;
     private List<network> clusterNetworks;
     private List<VdcBllMessages> violations = new ArrayList<VdcBllMessages>();
     private List<VdsNetworkInterface> vdsInterfaces;
@@ -41,8 +42,7 @@ public class SetupNetworksHelper {
 
     public SetupNetworksHelper(SetupNetworksParameters parameters, Guid vdsGroupId) {
         params = parameters;
-        clusterNetworks = DbFacade.getInstance().getNetworkDAO().getAllForCluster(vdsGroupId);
-        vdsInterfaces = DbFacade.getInstance().getInterfaceDAO().getAllInterfacesForVds(params.getVdsId());
+        this.vdsGroupId = vdsGroupId;
     }
 
     /**
@@ -60,6 +60,8 @@ public class SetupNetworksHelper {
      * @return
      */
     public List<VdcBllMessages> validate() {
+        lazilyInitializeExistingData();
+
         Set<String> ifaceNames = new HashSet<String>();
         Map<String, VdsNetworkInterface> existingIfaces = Entities.entitiesByName(vdsInterfaces);
         Map<String, network> clusterNetworksMap = Entities.entitiesByName(clusterNetworks);
@@ -114,6 +116,20 @@ public class SetupNetworksHelper {
         this.removedBonds = extractRemovedBonds(bonds, existingIfaces);
 
         return violations;
+    }
+
+    private void lazilyInitializeExistingData() {
+        if (clusterNetworks == null) {
+            clusterNetworks = getDbFacade().getNetworkDAO().getAllForCluster(vdsGroupId);
+        }
+
+        if (vdsInterfaces == null) {
+            vdsInterfaces = getDbFacade().getInterfaceDAO().getAllInterfacesForVds(params.getVdsId());
+        }
+    }
+
+    protected DbFacade getDbFacade() {
+        return DbFacade.getInstance();
     }
 
     private List<String> getExisitingHostNetworkNames(Map<String, VdsNetworkInterface> existingIfaces) {
