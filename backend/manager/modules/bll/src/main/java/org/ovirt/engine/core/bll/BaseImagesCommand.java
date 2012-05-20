@@ -10,7 +10,6 @@ import org.ovirt.engine.core.bll.storage.StorageDomainCommandBase;
 import org.ovirt.engine.core.common.action.ImagesActionsParametersBase;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
@@ -182,14 +181,6 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
     protected void CheckImageValidity() {
         try {
             DiskImage diskImage = getImage();
-
-            /**
-             * Prevent operating image with illegal status TODO: insert it in new CanDoAction mechanism
-             */
-            if (diskImage == null) {
-                diskImage = getDiskImageDao().getSnapshotById(getImage().getImageId());
-            }
-
             Guid storagePoolId = diskImage.getstorage_pool_id() != null ? diskImage.getstorage_pool_id().getValue()
                     : Guid.Empty;
             Guid storageDomainId =
@@ -235,7 +226,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
      */
     // TODO: Should be moved to another class in the hierarchy
     protected boolean CanCreateSnapshot() {
-        if (ImagesHandler.isVmInPreview(getImageContainerId())) {
+        if (ImagesHandler.isVmInPreview(getVmId())) {
             log.error("Cannot create snapshot. Vm is in preview status");
             return false;
         }
@@ -251,8 +242,9 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
      * @return The ID of the image for the same drive, or null if none found.
      */
     protected Guid findImageForSameDrive(SnapshotType snapshotType) {
-        return findImageForSameDrive(
-                DbFacade.getInstance().getSnapshotDao().getId(getImageContainerId(), snapshotType));
+        return findImageForSameDrive(DbFacade.getInstance()
+                .getSnapshotDao()
+                .getId(getVmDAO().getVmsListForDisk(getImage().getId()).get(0).getId(), snapshotType));
     }
 
     /**
@@ -300,53 +292,13 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
         retDiskImage.setImageId(newImageGuid);
         retDiskImage.setParentId(getDiskImage().getImageId());
         retDiskImage.setvm_snapshot_id(getParameters().getVmSnapshotId());
-        retDiskImage.setvm_guid(getImageContainerId());
         retDiskImage.setId(getImageGroupId());
         retDiskImage.setlast_modified_date(new Date());
         retDiskImage.setQuotaId(getParameters().getQuotaId());
         return retDiskImage;
     }
 
-    /**
-     * Creates a copy of the source disk image and updates it with fields from diskImageBase object. Currently we're
-     * interested only at volume type and format
-     *
-     * @param newImageGuid
-     *            the image id of the cloned disk image.
-     * @param srcDiskImage
-     *            the source to copy from
-     * @param diskImageBase
-     *            the disk image base to update fields from
-     * @return the cloned disk image. Note that the cloned image's status is 'Locked'.
-     */
-    protected DiskImage cloneImageAndUpdateFromDiskImageBase(Guid newImageGuid,
-            DiskImage srcDiskImage,
-            DiskImageBase diskImageBase) {
-        DiskImage retDiskImage = cloneDiskImage(newImageGuid, srcDiskImage);
-        if (diskImageBase != null) {
-            retDiskImage.setvolume_type(diskImageBase.getvolume_type());
-            retDiskImage.setvolume_format(diskImageBase.getvolume_format());
-        }
-        return retDiskImage;
-    }
-
-    /**
-     * Creates a copy of the source disk image and updates it with fields from diskImageBase object. Currently we're
-     * interested only at volume type and format
-     *
-     * @param newImageGuid
-     *            the image id of the cloned disk image.
-     * @param srcDiskImage
-     *            the source to copy from
-     * @param diskImageBase
-     *            the disk image base to update fields from
-     * @return the cloned disk image. Note that the cloned image's status is 'Locked'.
-     */
-    protected DiskImage cloneImageAndUpdateFromDiskImageBase(Guid newImageGuid, DiskImageBase diskImageBase) {
-        return cloneImageAndUpdateFromDiskImageBase(newImageGuid, getDiskImage(), diskImageBase);
-    }
-
-    /**
+   /**
      * Overrides the relevant fields of the destination disk image ('DestinationDiskImage') with some values of the IRS
      * disk image.
      * @param fromIRS
