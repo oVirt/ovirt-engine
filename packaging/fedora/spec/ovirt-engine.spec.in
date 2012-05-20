@@ -57,14 +57,14 @@ Requires: %{name}-genericapi
 Requires: %{name}-userportal
 Requires: %{name}-config
 Requires: %{name}-notification-service
-Requires: %{name}-iso-uploader
-Requires: %{name}-image-uploader
-Requires: %{name}-log-collector
 Requires: %{name}-dbscripts
 Requires: %{name}-webadmin-portal
 Requires: vdsm-bootstrap
 Requires: openssl
 Requires: yum-plugin-versionlock
+Requires: ovirt-iso-uploader
+Requires: ovirt-image-uploader
+Requires: ovirt-log-collector
 
 %description
 oVirt Engine is a feature-rich
