@@ -236,9 +236,15 @@ public class BackendStorageDomainsResource
         }
         storage.setMountOptions(cnx.getMountOptions());
         storage.setVfsType(cnx.getVfsType());
-        storage.setNfsRetrans(cnx.getNfsRetrans().intValue());
-        storage.setNfsTimeo(cnx.getNfsTimeo().intValue());
-        storage.setNfsVersion(cnx.getNfsVersion().intValue());
+        if (cnx.getNfsRetrans()!=null) {
+            storage.setNfsRetrans(cnx.getNfsRetrans().intValue());
+        }
+        if (cnx.getNfsTimeo()!=null) {
+            storage.setNfsTimeo(cnx.getNfsTimeo().intValue());
+        }
+        if (cnx.getNfsVersion()!=null) {
+            storage.setNfsVersion(cnx.getNfsVersion().intValue());
+        }
     }
 
     protected void mapVolumeGroupIscsi(StorageDomain model, storage_domains entity) {
