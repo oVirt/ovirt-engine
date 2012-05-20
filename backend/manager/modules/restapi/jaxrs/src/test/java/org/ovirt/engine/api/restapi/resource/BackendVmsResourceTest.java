@@ -717,7 +717,7 @@ public class BackendVmsResourceTest
     @SuppressWarnings("serial")
     private List<DiskImage> createDiskList() {
         return new ArrayList<DiskImage>(){{
-                                            add(new DiskImage(){{setImageId(GUIDS[0]);
+                                            add(new DiskImage(){{setId(GUIDS[0]);
                                                                  setinternal_drive_mapping("1");}});
                                          }};
     }

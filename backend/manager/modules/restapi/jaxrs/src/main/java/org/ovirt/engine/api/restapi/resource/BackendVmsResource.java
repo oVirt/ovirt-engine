@@ -192,7 +192,7 @@ public class BackendVmsResource extends
         if (disks != null && disks.isSetDisks() && disks.getDisks().size() > 0){
             HashMap<Guid, DiskImage> templatesDisksMap = getTemplateDisks(templateId);
             for (Disk disk : disks.getDisks()) {
-                DiskImage templateDisk = templatesDisksMap.get(asGuid(disk.getImageId()));
+                DiskImage templateDisk = templatesDisksMap.get(asGuid(disk.getId()));
                 if( templateDisk != null ) {
                     disksMap.put(templateDisk.getImageId(), map(disk, templateDisk));
                 } else {
@@ -210,7 +210,7 @@ public class BackendVmsResource extends
                                                       VdcQueryType.GetVmTemplatesDisks,
                                                       new GetVmTemplatesDisksParameters(templateId),
                                                       "Disks")) {
-            templatesDisksMap.put(di.getImageId(), di);
+            templatesDisksMap.put(di.getId(), di);
         }
         return templatesDisksMap;
     }
