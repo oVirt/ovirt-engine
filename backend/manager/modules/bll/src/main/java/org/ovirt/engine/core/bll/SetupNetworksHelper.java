@@ -10,6 +10,7 @@ import static org.ovirt.engine.core.dal.VdcBllMessages.NETWROK_NOT_EXISTS;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -59,9 +60,8 @@ public class SetupNetworksHelper {
      * @return
      */
     public List<VdcBllMessages> validate() {
-
-        Map<String, VdsNetworkInterface> ifaces = interfacesToMap(params.getInterfaces());
-        Map<String, VdsNetworkInterface> existingIfaces = extractExistingInterfaceNames();
+        Set<String> ifaceNames = new HashSet<String>();
+        Map<String, VdsNetworkInterface> existingIfaces = Entities.entitiesByName(vdsInterfaces);
         Map<String, network> clusterNetworksMap = Entities.entitiesByName(clusterNetworks);
         // key = bond name, value = interface
         Map<String, VdsNetworkInterface> bonds = new HashMap<String, VdsNetworkInterface>();
@@ -71,11 +71,18 @@ public class SetupNetworksHelper {
         Map<String, network> networks = new HashMap<String, network>();
 
 
-        for (VdsNetworkInterface iface : ifaces.values()) {
+        for (VdsNetworkInterface iface : params.getInterfaces()) {
             String name = iface.getName();
             String networkName = iface.getNetworkName();
             String bondName = iface.getBondName();
             boolean bonded = isBond(iface);
+
+            if (ifaceNames.contains(name)) {
+                violations.add(NETWORK_INTERFACE_NAME_ALREADY_IN_USE);
+                continue;
+            } else {
+                ifaceNames.add(name);
+            }
 
             // if its a bond extract to bonds map
             if (bonded) {
@@ -110,37 +117,13 @@ public class SetupNetworksHelper {
     }
 
     private List<String> getExisitingHostNetworkNames(Map<String, VdsNetworkInterface> existingIfaces) {
-        ArrayList<String> list = new ArrayList<String>(existingIfaces.size());
+        List<String> list = new ArrayList<String>(existingIfaces.size());
         for (VdsNetworkInterface iface : existingIfaces.values()) {
             if (isNotBlank(iface.getNetworkName())) {
                 list.add(iface.getNetworkName());
             }
         }
         return list;
-    }
-
-    private Map<String, VdsNetworkInterface> interfacesToMap(List<VdsNetworkInterface> interfaces) {
-        Map<String, VdsNetworkInterface> map = new HashMap<String, VdsNetworkInterface>();
-        for (VdsNetworkInterface iface : interfaces) {
-            if (map.containsKey(iface.getName())) {
-                violations.add(NETWORK_INTERFACE_NAME_ALREADY_IN_USE);
-            } else {
-                map.put(iface.getName(), iface);
-            }
-        }
-        return map;
-    }
-
-    /**
-     * build a map of interface name -> interface to quickly and efficiently trace items.
-     * @return map of the db stored interface name -> interface
-     */
-    private Map<String, VdsNetworkInterface> extractExistingInterfaceNames() {
-        Map<String, VdsNetworkInterface> map = new HashMap<String, VdsNetworkInterface>();
-        for (VdsNetworkInterface iface : vdsInterfaces) {
-            map.put(iface.getName(), iface);
-        }
-        return map;
     }
 
     /**
@@ -179,7 +162,7 @@ public class SetupNetworksHelper {
     }
 
     private boolean isBond(VdsNetworkInterface iface) {
-        return iface.getBonded() != null && iface.getBonded();
+        return Boolean.TRUE.equals(iface.getBonded());
     }
 
     /**
@@ -216,7 +199,7 @@ public class SetupNetworksHelper {
             Map<String, VdsNetworkInterface> existingIfaces) {
         List<VdsNetworkInterface> removedBonds = new ArrayList<VdsNetworkInterface>();
         for (Entry<String, VdsNetworkInterface> e : existingIfaces.entrySet()) {
-            if (e.getValue().getBonded()!= null && e.getValue().getBonded()) {
+            if (isBond(e.getValue())) {
                 if (!bonds.containsKey(e.getKey())) {
                     removedBonds.add(e.getValue());
                 }
