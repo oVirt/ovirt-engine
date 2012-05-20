@@ -28,8 +28,6 @@ import org.ovirt.engine.api.model.Actionable;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.CdRom;
 import org.ovirt.engine.api.model.CdRoms;
-import org.ovirt.engine.api.model.Disk;
-import org.ovirt.engine.api.model.Disks;
 import org.ovirt.engine.api.model.NIC;
 import org.ovirt.engine.api.model.Nics;
 import org.ovirt.engine.api.model.Template;
@@ -51,7 +49,7 @@ public interface TemplateResource extends UpdatableResource<Template>, Asynchron
     public ReadOnlyDevicesResource<CdRom, CdRoms> getCdRomsResource();
 
     @Path("disks")
-    public ReadOnlyDevicesResource<Disk, Disks> getDisksResource();
+    public TemplateDisksResource getDisksResource();
 
     @Path("nics")
     public ReadOnlyDevicesResource<NIC, Nics> getNicsResource();

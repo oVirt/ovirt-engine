@@ -1738,6 +1738,20 @@ actions:
       signatures: []
     urlparams: {}
     headers: {}
+- name: /api/templates/{template:id}/disks/{disk:id}|rel=delete
+  request:
+    body:
+      parameterType: Action
+      signatures:
+      - mandatoryArguments: {}
+        optionalArguments: {action.storage_domain.id: 'xs:string', action.force: 'xs:boolean'}
+      - mandatoryArguments: {}
+        optionalArguments: {action.force: 'xs:boolean'}
+      - mandatoryArguments: {}
+        optionalArguments: {}
+    urlparams:
+      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
+    headers: {Content-Type: application/xml|json}
 - name: /api/templates/{template:id}/nics|rel=get
   request:
     body:

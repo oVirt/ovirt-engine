@@ -5,8 +5,6 @@ import javax.ws.rs.core.Response;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.CdRom;
 import org.ovirt.engine.api.model.CdRoms;
-import org.ovirt.engine.api.model.Disk;
-import org.ovirt.engine.api.model.Disks;
 import org.ovirt.engine.api.model.NIC;
 import org.ovirt.engine.api.model.Nics;
 import org.ovirt.engine.api.model.Template;
@@ -14,6 +12,7 @@ import org.ovirt.engine.api.resource.ActionResource;
 import org.ovirt.engine.api.resource.AssignedPermissionsResource;
 import org.ovirt.engine.api.resource.CreationResource;
 import org.ovirt.engine.api.resource.ReadOnlyDevicesResource;
+import org.ovirt.engine.api.resource.TemplateDisksResource;
 import org.ovirt.engine.api.resource.TemplateResource;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.MoveVmParameters;
@@ -87,8 +86,8 @@ public class BackendTemplateResource
     }
 
     @Override
-    public ReadOnlyDevicesResource<Disk, Disks> getDisksResource() {
-        return inject(new BackendReadOnlyDisksResource(guid,
+    public TemplateDisksResource getDisksResource() {
+        return inject(new BackendTemplateDisksResource(guid,
                                                        VdcQueryType.GetVmTemplatesDisks,
                                                        new GetVmTemplatesDisksParameters(guid)));
     }

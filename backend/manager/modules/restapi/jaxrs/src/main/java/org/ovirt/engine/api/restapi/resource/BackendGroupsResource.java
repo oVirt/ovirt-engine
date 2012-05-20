@@ -6,7 +6,6 @@ import org.ovirt.engine.api.model.Group;
 import org.ovirt.engine.api.model.Groups;
 import org.ovirt.engine.api.resource.GroupResource;
 import org.ovirt.engine.api.resource.GroupsResource;
-import org.ovirt.engine.api.restapi.resource.BackendGroupsResourceBase.GroupIdResolver;
 import org.ovirt.engine.core.common.action.AddUserParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.ad_groups;
