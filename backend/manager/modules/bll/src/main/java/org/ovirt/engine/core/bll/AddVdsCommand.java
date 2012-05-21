@@ -431,11 +431,9 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         if (jobProperties == null) {
             jobProperties = super.getJobMessageProperties();
             VDS vds = getParameters().getvds();
-            if (vds != null && vds.getvds_name() != null) {
-                jobProperties.put(VdcObjectType.VDS.name().toLowerCase(), vds.getvds_name());
-            } else {
-                jobProperties.put(VdcObjectType.VDS.name(), "");
-            }
+
+            String vdsName = (vds != null && vds.getvds_name() != null) ? vds.getvds_name() : "";
+            jobProperties.put(VdcObjectType.VDS.name().toLowerCase(), vdsName);
         }
         return jobProperties;
     }
