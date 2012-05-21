@@ -228,15 +228,14 @@ public class SetupNetworksHelperTest {
      */
     public void extractRemovedNetwork() {
         SetupNetworksHelper helper = createHelper(new SetupNetworksParameters());
-        initDaoMocks(null, null, helper);
         String[] networkNames = { "red" };
-        Map<String, network> clusterNetworksMap = new HashMap<String, network>();
-        clusterNetworksMap.put("red", new network(null, null, null, "red", null, null, 1, 100, false, 1500, true));
-        clusterNetworksMap.put("blue", new network(null, null, null, "blue", null, null, 1, 100, false, 1500, true));
+        List<network> clusterNetworks = new ArrayList<network>();
+        clusterNetworks.add(new network(null, null, null, "red", null, null, 1, 100, false, 1500, true));
+        clusterNetworks.add(new network(null, null, null, "blue", null, null, 1, 100, false, 1500, true));
+        initDaoMocks(null, clusterNetworks, helper);
 
         List<network> removeNetworks =
                 helper.extractRemoveNetworks(new HashSet<String>(asList(networkNames)),
-                        clusterNetworksMap,
                         Arrays.asList("blue"));
         assertTrue(removeNetworks.get(0).getname().equals("blue"));
     }
@@ -307,20 +306,20 @@ public class SetupNetworksHelperTest {
      */
     public void extractRemovedBonds() {
         SetupNetworksHelper helper = createHelper(new SetupNetworksParameters());
-        initDaoMocks(null, null, helper);
 
         Map<String, VdsNetworkInterface> bonds = new HashMap<String, VdsNetworkInterface>();
-        Map<String, VdsNetworkInterface> existingIfaces = new HashMap<String, VdsNetworkInterface>();
+        List<VdsNetworkInterface> existingIfaces = new ArrayList<VdsNetworkInterface>();
 
         VdsNetworkInterface bond3 = newBond("bond3");
         bonds.put(bond3.getName(), bond3);
 
         VdsNetworkInterface existingBond1 = newBond("bond3");
         VdsNetworkInterface existingBond2 = newBond("bond4");
-        existingIfaces.put(existingBond1.getName(), existingBond1);
-        existingIfaces.put(existingBond2.getName(), existingBond2);
+        existingIfaces.add(existingBond1);
+        existingIfaces.add(existingBond2);
+        initDaoMocks(existingIfaces, null, helper);
 
-        List<VdsNetworkInterface> removedBonds = helper.extractRemovedBonds(bonds, existingIfaces);
+        List<VdsNetworkInterface> removedBonds = helper.extractRemovedBonds(bonds);
         assertTrue(removedBonds.get(0).getName().equals("bond4"));
     }
 
