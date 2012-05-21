@@ -49,7 +49,7 @@ public class AutoRecoveryManager {
      */
     @OnTimerMethodAnnotation("onTimer")
     public void onTimer() {
-        DbFacade dbFacade = DbFacade.getInstance();
+        DbFacade dbFacade = getDbFacade();
         check(dbFacade.getVdsDAO(),
                 VdcActionType.ActivateVds,
                 new DoWithClosure<VDS, VdcActionParametersBase>() {
@@ -81,19 +81,27 @@ public class AutoRecoveryManager {
      * @param logMsg            a user-readable name for the failing resource type
      * @param counters          counters for the failing resources to avoid too frequent auditlog
      */
-    static <T extends BusinessEntity<Guid>> void check(final AutoRecoverDAO<T> dao,
+    <T extends BusinessEntity<Guid>> void check(final AutoRecoverDAO<T> dao,
             final VdcActionType actionType,
             final DoWithClosure<T, VdcActionParametersBase> paramsCallback,
             final String logMsg) {
         log.info("Checking autorecoverable " + logMsg);
         final List<T> fails = dao.listFailedAutorecoverables();
-        final BackendInternal backend = Backend.getInstance();
+        final BackendInternal backend = getBackend();
         for (final T fail : fails) {
             final VdcActionParametersBase actionParams = paramsCallback.doWith(fail);
             actionParams.setShouldBeLogged(true);
             backend.runInternalAction(actionType, actionParams);
         }
         log.info("Checking autorecoverable " + logMsg + " done");
+    }
+
+    protected DbFacade getDbFacade() {
+        return DbFacade.getInstance();
+    }
+
+    protected BackendInternal getBackend() {
+        return Backend.getInstance();
     }
 
     private interface DoWithClosure<T, R> {
