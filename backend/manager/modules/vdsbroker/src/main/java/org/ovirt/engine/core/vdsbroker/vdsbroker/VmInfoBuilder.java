@@ -517,7 +517,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
             String model = (String) struct.getItem(VdsProperties.Model);
 
             // This is a workaround until libvirt will fix the requirement to order these controllers
-            if (isFirstMasterController(model)) {
+            if (model != null && isFirstMasterController(model)) {
                 devices.add(0, struct);
             } else {
                 devices.add(struct);
