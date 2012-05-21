@@ -458,13 +458,16 @@ public final class ImagesHandler {
             if (!returnValue) {
                 ListUtils.nullSafeAdd(messages, VdcBllMessages.ACTION_TYPE_FAILED_VM_IMAGE_IS_LOCKED.toString());
             }
-        } else if (returnValue && checkVmIsDown && vm.getstatus() != VMStatus.Down) {
+        }
+        if (returnValue && checkVmIsDown && vm.getstatus() != VMStatus.Down) {
             returnValue = false;
             ListUtils.nullSafeAdd(messages, VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN.toString());
-        } else if (returnValue && checkVmInPreview && isVmInPreview(vm.getId())) {
+        }
+        if (returnValue && checkVmInPreview && isVmInPreview(vm.getId())) {
             returnValue = false;
             ListUtils.nullSafeAdd(messages, VdcBllMessages.ACTION_TYPE_FAILED_VM_IN_PREVIEW.toString());
-        } else if (returnValue && isValid) {
+        }
+        if (returnValue && isValid) {
             List<DiskImage> images = getImages(vm, diskImageList);
             if (images.size() > 0) {
                 returnValue = returnValue &&
