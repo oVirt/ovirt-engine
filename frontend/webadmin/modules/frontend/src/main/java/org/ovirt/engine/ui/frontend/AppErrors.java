@@ -333,7 +333,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. VM is not up.")
     String ACTION_TYPE_FAILED_VM_IS_NOT_UP();
 
-    @DefaultStringValue("Cannot ${action} ${type}. VM is not down.")
+    @DefaultStringValue("Cannot ${action} ${type}. At least one of the VMs is not down.")
     String ACTION_TYPE_FAILED_VM_IS_NOT_DOWN();
 
     @DefaultStringValue("Cannot ${action} ${type}. VM is in saving/restoring state.\n-Please wait until the VM's status has changed.")
