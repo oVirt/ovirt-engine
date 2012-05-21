@@ -14,6 +14,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 
 import com.google.gwt.event.shared.EventBus;
+import com.google.inject.Provider;
 import com.gwtplatform.mvp.client.proxy.RevealRootPopupContentEvent;
 
 /**
@@ -34,6 +35,8 @@ public class ModelBoundPopupHandler<M extends Model> {
 
     private AbstractModelBoundPopupPresenterWidget<?, ?> windowPopup;
     private AbstractModelBoundPopupPresenterWidget<?, ?> confirmWindowPopup;
+
+    private Provider<? extends AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?>> defaultConfirmPopupProvider;
 
     public ModelBoundPopupHandler(ModelBoundPopupResolver<M> popupResolver, EventBus eventBus) {
         this.popupResolver = popupResolver;
@@ -61,6 +64,11 @@ public class ModelBoundPopupHandler<M extends Model> {
         });
     }
 
+    public void setDefaultConfirmPopupProvider(
+            Provider<? extends AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?>> defaultConfirmPopupProvider) {
+        this.defaultConfirmPopupProvider = defaultConfirmPopupProvider;
+    }
+
     @SuppressWarnings("unchecked")
     void handleWindowModelChange(M source, AbstractModelBoundPopupPresenterWidget<?, ?> popup,
             boolean isConfirm, String propertyName) {
@@ -76,6 +84,11 @@ public class ModelBoundPopupHandler<M extends Model> {
             if (windowModel instanceof ConfirmationModel) {
                 // Resolve confirmation popup
                 newPopup = popupResolver.getConfirmModelPopup(source, lastExecutedCommand);
+
+                if (newPopup == null && defaultConfirmPopupProvider != null) {
+                    // Fall back to basic confirmation popup if possible
+                    newPopup = defaultConfirmPopupProvider.get();
+                }
             } else {
                 // Resolve main popup
                 newPopup = popupResolver.getModelPopup(source, lastExecutedCommand, windowModel);

@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.popup.guide;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
-import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.GuideModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ClusterPopupPresenterWidget;
@@ -31,10 +30,10 @@ public class GuidePopupPresenterWidget extends AbstractModelBoundPopupPresenterW
     private final Provider<MoveHostPopupPresenterWidget> moveHostPopupProvider;
     private final Provider<FindSingleStoragePopupPresenterWidget> singleStoragePopupProvider;
     private final Provider<FindMultiStoragePopupPresenterWidget> multiStoragePopupProvider;
-    private final Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider;
 
     @Inject
     public GuidePopupPresenterWidget(EventBus eventBus, ViewDef view,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             Provider<ClusterPopupPresenterWidget> clusterPopupProvider,
             Provider<HostPopupPresenterWidget> hostPopupProvider,
             Provider<StoragePopupPresenterWidget> storagePopupProvider,
@@ -42,10 +41,8 @@ public class GuidePopupPresenterWidget extends AbstractModelBoundPopupPresenterW
             Provider<VmDiskPopupPresenterWidget> vmDiskPopupPopupProvider,
             Provider<MoveHostPopupPresenterWidget> moveHostPopupProvider,
             Provider<FindSingleStoragePopupPresenterWidget> singleStoragePopupProvider,
-            Provider<FindMultiStoragePopupPresenterWidget> multiStoragePopupProvider,
-            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider) {
-        super(eventBus, view);
-
+            Provider<FindMultiStoragePopupPresenterWidget> multiStoragePopupProvider) {
+        super(eventBus, view, defaultConfirmPopupProvider);
         this.clusterPopupProvider = clusterPopupProvider;
         this.hostPopupProvider = hostPopupProvider;
         this.storagePopupProvider = storagePopupProvider;
@@ -54,7 +51,6 @@ public class GuidePopupPresenterWidget extends AbstractModelBoundPopupPresenterW
         this.moveHostPopupProvider = moveHostPopupProvider;
         this.singleStoragePopupProvider = singleStoragePopupProvider;
         this.multiStoragePopupProvider = multiStoragePopupProvider;
-        this.defaultConfirmPopupProvider = defaultConfirmPopupProvider;
     }
 
     @Override
@@ -85,12 +81,6 @@ public class GuidePopupPresenterWidget extends AbstractModelBoundPopupPresenterW
         } else {
             return super.getModelPopup(source, lastExecutedCommand, windowModel);
         }
-    }
-
-    @Override
-    public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(GuideModel source,
-            UICommand lastExecutedCommand) {
-        return defaultConfirmPopupProvider.get();
     }
 
 }

@@ -9,17 +9,11 @@ import com.google.inject.Inject;
 public class HostInstallPopupPresenterWidget extends AbstractModelBoundPopupPresenterWidget<InstallModel, HostInstallPopupPresenterWidget.ViewDef> {
 
     public interface ViewDef extends AbstractModelBoundPopupPresenterWidget.ViewDef<InstallModel> {
-        // Nothing.
     }
 
     @Inject
     public HostInstallPopupPresenterWidget(EventBus eventBus, ViewDef view) {
         super(eventBus, view);
-    }
-
-    @Override
-    public void init(InstallModel model) {
-        super.init(model);
     }
 
 }

@@ -5,6 +5,7 @@ import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.core.compat.ObservableCollection;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
+import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.DocumentationPathTranslator;
 import org.ovirt.engine.ui.common.uicommon.model.DeferredModelCommandInvoker;
 import org.ovirt.engine.ui.common.uicommon.model.ModelBoundPopupHandler;
@@ -23,6 +24,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.shared.EventBus;
+import com.google.inject.Provider;
 import com.gwtplatform.mvp.client.PopupView;
 import com.gwtplatform.mvp.client.PresenterWidget;
 
@@ -69,6 +71,12 @@ public abstract class AbstractModelBoundPopupPresenterWidget<T extends Model, V 
     public AbstractModelBoundPopupPresenterWidget(EventBus eventBus, V view) {
         super(eventBus, view);
         this.popupHandler = new ModelBoundPopupHandler<T>(this, eventBus);
+    }
+
+    public AbstractModelBoundPopupPresenterWidget(EventBus eventBus, V view,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider) {
+        this(eventBus, view);
+        this.popupHandler.setDefaultConfirmPopupProvider(defaultConfirmPopupProvider);
     }
 
     @Override

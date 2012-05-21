@@ -7,7 +7,6 @@ import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.common.gin.BaseClientGinjector;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.ModelBoundPresenterWidget;
-import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.UiCommonInitEvent.UiCommonInitHandler;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.CommonModel;
@@ -17,7 +16,6 @@ import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 
 import com.google.gwt.event.shared.EventBus;
-import com.google.inject.Provider;
 
 /**
  * Basic {@link ModelProvider} implementation that uses {@link CommonModelManager} for accessing the CommonModel
@@ -29,13 +27,12 @@ import com.google.inject.Provider;
 public abstract class TabModelProvider<M extends EntityModel> implements ModelProvider<M>, ModelBoundPopupResolver<M> {
 
     private final EventBus eventBus;
-    private final Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider;
     private final ModelBoundPopupHandler<M> popupHandler;
 
     public TabModelProvider(BaseClientGinjector ginjector) {
         this.eventBus = ginjector.getEventBus();
-        this.defaultConfirmPopupProvider = ginjector.getDefaultConfirmationPopupProvider();
 
+        // Configure UiCommon dialog handler
         this.popupHandler = new ModelBoundPopupHandler<M>(this, eventBus) {
             @Override
             protected void hideAndClearPopup(AbstractModelBoundPopupPresenterWidget<?, ?> popup, boolean isConfirm) {
@@ -43,6 +40,7 @@ public abstract class TabModelProvider<M extends EntityModel> implements ModelPr
                 TabModelProvider.this.forceRefresh(getModel());
             }
         };
+        this.popupHandler.setDefaultConfirmPopupProvider(ginjector.getDefaultConfirmationPopupProvider());
 
         // Add handler to be notified when UiCommon models are (re)initialized
         eventBus.addHandler(UiCommonInitEvent.getType(), new UiCommonInitHandler() {
@@ -130,8 +128,8 @@ public abstract class TabModelProvider<M extends EntityModel> implements ModelPr
     @Override
     public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(M source,
             UICommand lastExecutedCommand) {
-        // Reveal basic confirmation popup by default
-        return defaultConfirmPopupProvider.get();
+        // No-op, override as necessary
+        return null;
     }
 
     protected ModelBoundPresenterWidget<? extends Model> getModelBoundWidget(UICommand lastExecutedCommand) {

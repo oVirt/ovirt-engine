@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster;
 
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
-import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeModel;
 
@@ -15,28 +14,23 @@ public class VolumePopupPresenterWidget extends AbstractModelBoundPopupPresenter
     public interface ViewDef extends AbstractModelBoundPopupPresenterWidget.ViewDef<VolumeModel> {
     }
 
-    private AbstractModelBoundPopupPresenterWidget<ListModel, ?> popup = null;
-    private Provider<AddBrickPopupPresenterWidget> popupProvider = null;
-    private final EventBus eventBus;
+    private Provider<AddBrickPopupPresenterWidget> popupProvider;
 
     @Inject
-    public VolumePopupPresenterWidget(EventBus eventBus,
-            ViewDef view,
-            final Provider<AddBrickPopupPresenterWidget> popupProvider) {
+    public VolumePopupPresenterWidget(EventBus eventBus, ViewDef view,
+            Provider<AddBrickPopupPresenterWidget> popupProvider) {
         super(eventBus, view);
-        this.eventBus = eventBus;
         this.popupProvider = popupProvider;
-
     }
 
     @Override
     public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(VolumeModel source,
-            UICommand lastExecutedCommand,
-            Model windowModel) {
+            UICommand lastExecutedCommand, Model windowModel) {
         if (lastExecutedCommand.equals(source.getAddBricksCommand())) {
             return popupProvider.get();
+        } else {
+            return super.getModelPopup(source, lastExecutedCommand, windowModel);
         }
-        return super.getModelPopup(source, lastExecutedCommand, windowModel);
     }
 
 }
