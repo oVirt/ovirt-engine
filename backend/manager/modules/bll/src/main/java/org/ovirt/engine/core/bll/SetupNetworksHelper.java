@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -237,22 +236,24 @@ public class SetupNetworksHelper {
         return returnValue;
     }
 
+    /**
+     * Calculate the networks that should be removed - If the network was attached to a NIC and is no longer attached to
+     * it, then it will be removed.
+     *
+     * @param networkNames
+     *            The names of managed networks which are still attached to a NIC.
+     * @param exisitingHostNetworksNames
+     *            The names of networks that were attached to NICs before the changes.
+     */
     protected void extractRemoveNetworks(Set<String> networkNames,
             List<String> exisitingHostNetworksNames) {
-        Set<String> removedNetworks = new HashSet<String>(getExistingClusterNetworks().keySet());
-        for (String name : networkNames) {
-            removedNetworks.remove(name);
-        }
+        removeNetworks = new ArrayList<String>();
 
-        // exclude networks which already the host anyway doesn't have
-        for (Iterator<String> iterator = removedNetworks.iterator(); iterator.hasNext();) {
-            String entry = iterator.next();
-            if (!exisitingHostNetworksNames.contains(entry)) {
-                iterator.remove();
+        for (String net : exisitingHostNetworksNames) {
+            if (!networkNames.contains(net) && !unmanagedNetworks.contains(net)) {
+                removeNetworks.add(net);
             }
         }
-
-        removeNetworks = new ArrayList<String>(removedNetworks);
     }
 
     public List<VdcBllMessages> getViolations() {
