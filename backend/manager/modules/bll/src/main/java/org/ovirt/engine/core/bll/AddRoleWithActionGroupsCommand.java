@@ -12,6 +12,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.RoleType;
+import org.ovirt.engine.core.common.businessentities.roles;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
@@ -65,7 +66,7 @@ public class AddRoleWithActionGroupsCommand<T extends RoleWithActionGroupsParame
 
     @Override
     protected void executeCommand() {
-        getRole().setId(Guid.NewGuid());
+        prepareRoleForCommand();
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
             @Override
             public Void runInTransaction() {
@@ -89,6 +90,23 @@ public class AddRoleWithActionGroupsCommand<T extends RoleWithActionGroupsParame
         }
         setSucceeded(true);
         getReturnValue().setActionReturnValue(getRole().getId());
+    }
+
+    /**
+     *
+     */
+    protected void prepareRoleForCommand() {
+        // Note that the role is take from the parameters
+        roles role = getRole();
+        role.setId(Guid.NewGuid());
+        role.setAllowsViewingChildren(false);
+
+        for (ActionGroup group : getParameters().getActionGroups()) {
+            if (group.allowsViewingChildren()) {
+                role.setAllowsViewingChildren(true);
+                break;
+            }
+        }
     }
 
     @Override

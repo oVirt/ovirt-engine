@@ -32,6 +32,7 @@ public abstract class AbstractRolesCommandTestBase {
         params = generateParameters();
         command = spy(generateCommand());
         role = new roles();
+        role.setId(params.getRoleId());
 
         doReturn(roleDAOMock).when(command).getRoleDao();
         when(roleDAOMock.get(params.getRoleId())).thenReturn(role);

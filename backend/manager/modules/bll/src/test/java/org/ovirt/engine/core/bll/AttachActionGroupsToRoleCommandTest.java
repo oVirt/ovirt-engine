@@ -3,9 +3,12 @@ package org.ovirt.engine.core.bll;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -23,7 +26,7 @@ public class AttachActionGroupsToRoleCommandTest extends AbstractRolesCommandTes
     protected ActionGroupsToRoleParameter generateParameters() {
         Guid roleId = Guid.NewGuid();
         ArrayList<ActionGroup> groups =
-                new ArrayList<ActionGroup>(Collections.singletonList(ActionGroup.DELETE_HOST));
+                new ArrayList<ActionGroup>(Arrays.asList(ActionGroup.DELETE_HOST, ActionGroup.CONFIGURE_ENGINE));
         return new ActionGroupsToRoleParameter(roleId, groups);
     }
 
@@ -42,6 +45,8 @@ public class AttachActionGroupsToRoleCommandTest extends AbstractRolesCommandTes
     protected ActionGroupsToRoleParameter getParams() {
         return (ActionGroupsToRoleParameter) super.getParams();
     }
+
+    /* canDoAction related tests */
 
     @Test
     public void testCheckGroupsCanBeAttachedAlreadyExists() {
@@ -81,5 +86,43 @@ public class AttachActionGroupsToRoleCommandTest extends AbstractRolesCommandTes
 
     private void mockGetAllForRole(List<RoleGroupMap> groups) {
         when(getRoleGroupMapDAOMock().getAllForRole(getParams().getRoleId())).thenReturn(groups);
+    }
+
+    /* execute related tests */
+
+    /** A flow test that makes sure all the action groups are set correctly if the role is not updated */
+    @Test
+    public void testExecuteCommandNoUpdate() {
+        getRole().setAllowsViewingChildren(true);
+        getCommand().executeCommand();
+        verifyRoleSaving(false);
+    }
+
+    /** A flow test that makes sure all the action groups are set correctly if the role is updated*/
+    @Test
+    public void testExecuteCommandWithUpdate() {
+        getRole().setAllowsViewingChildren(false);
+        getCommand().executeCommand();
+        verifyRoleSaving(true);
+    }
+
+    /** A flow test that makes sure all the action groups are set correctly if the role isn't updated because the added permission doesn't allow viewing children */
+    @Test
+    public void testExecuteCommandNoUpdateNonInheritableRole() {
+        getRole().setAllowsViewingChildren(false);
+        getParams().setActionGroups(new ArrayList<ActionGroup>(Collections.singletonList(ActionGroup.CREATE_VM)));
+        getCommand().executeCommand();
+        verifyRoleSaving(false);
+    }
+
+    private void verifyRoleSaving(boolean roleStatusChanged) {
+        for (ActionGroup group : getParams().getActionGroups()) {
+            verify(getRoleGroupMapDAOMock()).save(new RoleGroupMap(group, getParams().getRoleId()));
+        }
+
+        if (roleStatusChanged) {
+            verify(getRoleDAOMock()).update(getRole());
+        }
+        verifyNoMoreInteractions(getRoleGroupMapDAOMock());
     }
 }

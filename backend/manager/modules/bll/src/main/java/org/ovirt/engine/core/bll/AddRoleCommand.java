@@ -37,6 +37,7 @@ public class AddRoleCommand<T extends RolesOperationsParameters> extends RolesOp
     @Override
     protected void executeCommand() {
         getRole().setId(Guid.NewGuid());
+        getRole().setAllowsViewingChildren(false);
         getRoleDao().save(getRole());
         getReturnValue().setActionReturnValue(getRole().getId());
         setSucceeded(true);
