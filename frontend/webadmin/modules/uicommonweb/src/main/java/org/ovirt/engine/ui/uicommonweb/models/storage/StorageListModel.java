@@ -531,6 +531,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
     {
         StorageModel model = (StorageModel) getWindow();
         String name = (String) model.getName().getEntity();
+        model.getName().setIsValid(true);
 
         AsyncDataProvider.IsStorageDomainNameUnique(new AsyncQuery(this,
                 new INewAsyncCallback() {
