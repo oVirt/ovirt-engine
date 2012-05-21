@@ -211,7 +211,7 @@ public class SetupNetworksHelperTest {
         initDaoMocks(vdsNics, clusterNetworks, helper);
         validate = helper.validate();
         assertTrue(validate.isEmpty());
-        assertTrue(helper.getRemoveNetworks().get(0).getname().equals("vmnet"));
+        assertTrue(helper.getRemoveNetworks().get(0).equals("vmnet"));
 
     }
 
@@ -229,10 +229,10 @@ public class SetupNetworksHelperTest {
         clusterNetworks.add(new network(null, null, null, "blue", null, null, 1, 100, false, 1500, true));
         initDaoMocks(null, clusterNetworks, helper);
 
-        List<network> removeNetworks =
+        List<String> removeNetworks =
                 helper.extractRemoveNetworks(new HashSet<String>(Arrays.asList(networkNames)),
                         Arrays.asList("blue"));
-        assertTrue(removeNetworks.get(0).getname().equals("blue"));
+        assertTrue(removeNetworks.get(0).equals("blue"));
     }
 
     /**

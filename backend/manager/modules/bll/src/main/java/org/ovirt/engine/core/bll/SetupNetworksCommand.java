@@ -107,7 +107,7 @@ public class SetupNetworksCommand<T extends SetupNetworksParameters> extends Vds
         return helper.getBonds();
     }
 
-    private List<network> getRemovedNetworks() {
+    private List<String> getRemovedNetworks() {
         return helper.getRemoveNetworks();
     }
 

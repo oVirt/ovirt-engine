@@ -9,7 +9,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class SetupNetworksVdsCommandParameters extends VdsIdVDSCommandParametersBase {
     private List<network> networks;
-    private List<network> removedNetworks;
+    private List<String> removedNetworks;
     private List<VdsNetworkInterface> bonds;
     private List<VdsNetworkInterface> removedBonds;
     private List<VdsNetworkInterface> interfaces;
@@ -32,13 +32,13 @@ public class SetupNetworksVdsCommandParameters extends VdsIdVDSCommandParameters
      */
     public SetupNetworksVdsCommandParameters(Guid vdsId,
             List<network> networks,
-            List<network> removedNetworks,
+            List<String> removedNetworks,
             List<VdsNetworkInterface> bonds,
             List<VdsNetworkInterface> removedBonds,
             List<VdsNetworkInterface> interfaces) {
         super(vdsId);
         this.networks = (networks == null) ? new ArrayList<network>() : networks;
-        this.removedNetworks = (removedNetworks == null) ? new ArrayList<network>() : removedNetworks;
+        this.removedNetworks = (removedNetworks == null) ? new ArrayList<String>() : removedNetworks;
         this.bonds = (bonds == null) ? new ArrayList<VdsNetworkInterface>() : bonds;
         this.removedBonds = (removedBonds == null) ? new ArrayList<VdsNetworkInterface>() : removedBonds;
         this.interfaces = (interfaces == null) ? new ArrayList<VdsNetworkInterface>() : interfaces;
@@ -92,11 +92,11 @@ public class SetupNetworksVdsCommandParameters extends VdsIdVDSCommandParameters
         this.conectivityTimeout = conectivityTimeout;
     }
 
-    public List<network> getRemovedNetworks() {
+    public List<String> getRemovedNetworks() {
         return removedNetworks;
     }
 
-    public void setRemovedNetworks(List<network> removedNetworks) {
+    public void setRemovedNetworks(List<String> removedNetworks) {
         this.removedNetworks = removedNetworks;
     }
 

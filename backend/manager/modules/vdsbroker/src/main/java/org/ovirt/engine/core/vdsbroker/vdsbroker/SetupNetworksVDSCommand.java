@@ -63,8 +63,8 @@ public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters
         }
 
         // Removed Networks
-        for (network net : getParameters().getRemovedNetworks()) {
-            networks.add(net.getname(), removeObj);
+        for (String net : getParameters().getRemovedNetworks()) {
+            networks.add(net, removeObj);
         }
 
         // Bonds

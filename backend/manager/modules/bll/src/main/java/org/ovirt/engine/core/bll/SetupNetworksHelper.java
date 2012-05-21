@@ -27,7 +27,7 @@ public class SetupNetworksHelper {
     private Map<String, network> existingClusterNetworks;
 
     private List<network> networks;
-    private List<network> removeNetworks;
+    private List<String> removeNetworks;
     private List<VdsNetworkInterface> bonds;
     private List<VdsNetworkInterface> removedBonds;
 
@@ -232,22 +232,22 @@ public class SetupNetworksHelper {
         return returnValue;
     }
 
-    protected List<network> extractRemoveNetworks(Set<String> networkNames,
+    protected List<String> extractRemoveNetworks(Set<String> networkNames,
             List<String> exisitingHostNetworksNames) {
-        Map<String, network> removedNetworks = new HashMap<String, network>(getExistingClusterNetworks());
+        Set<String> removedNetworks = new HashSet<String>(getExistingClusterNetworks().keySet());
         for (String name : networkNames) {
             removedNetworks.remove(name);
         }
 
         // exclude networks which already the host anyway doesn't have
-        for (Iterator<Entry<String, network>> iterator = removedNetworks.entrySet().iterator(); iterator.hasNext();) {
-            Entry<String, network> entry = iterator.next();
-            if (!exisitingHostNetworksNames.contains(entry.getKey())) {
+        for (Iterator<String> iterator = removedNetworks.iterator(); iterator.hasNext();) {
+            String entry = iterator.next();
+            if (!exisitingHostNetworksNames.contains(entry)) {
                 iterator.remove();
             }
         }
 
-        return new ArrayList<network>(removedNetworks.values());
+        return new ArrayList<String>(removedNetworks);
     }
 
     public List<VdcBllMessages> getViolations() {
@@ -258,7 +258,7 @@ public class SetupNetworksHelper {
         return networks;
     }
 
-    public List<network> getRemoveNetworks() {
+    public List<String> getRemoveNetworks() {
         return removeNetworks;
     }
 
