@@ -23,6 +23,7 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
     private static final long serialVersionUID = -4078140531074414263L;
     @Valid
     private VmStatic mVmStatic;
+
     private VmDynamic mVmDynamic;
     private VmStatistics mVmStatistics;
     private VmPayload vmPayload;
@@ -1571,4 +1572,13 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
     public VmPayload getVmPayload() {
         return vmPayload;
     }
+
+    public String getCpuPinning() {
+        return mVmStatic.getCpuPinning();
+    }
+
+    public void setCpuPinning(String cpuPinning) {
+        mVmStatic.setCpuPinning(cpuPinning);
+    }
+
 }

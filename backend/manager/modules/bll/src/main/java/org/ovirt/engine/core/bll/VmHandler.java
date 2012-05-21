@@ -61,7 +61,7 @@ public class VmHandler {
                 "auto_startup",
                 "dedicated_vm_for_vds", "default_display_type", "priority", "default_boot_sequence", "initrd_url",
                 "kernel_url", "kernel_params", "migrationSupport", "minAllocatedMem", "quotaId", "quotaName",
-                "quotaEnforcementType",
+                "quotaEnforcementType", "cpuPinning",
                 "vmPayload" });
         mUpdateVmsStatic.AddFields(
                 Arrays.asList(new Enum[] { VMStatus.Down }),

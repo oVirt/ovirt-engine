@@ -72,6 +72,11 @@ public class VmStatic extends VmBase {
     @Transient
     private String customProperties;
 
+    @OvfExportOnlyField(exportOption = ExportOption.EXPORT_NON_IGNORED_VALUES)
+    @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
+    @Column(name = "cpu_pinning")
+    private String cpuPinning;
+
     public VmStatic() {
         setnum_of_monitors(1);
         is_initialized = false;
@@ -280,6 +285,14 @@ public class VmStatic extends VmBase {
     public ArrayList<String> getChangeablePropertiesList() {
         // Actual implementation is TBD
         return null;
+    }
+
+    public String getCpuPinning() {
+        return cpuPinning;
+    }
+
+    public void setCpuPinning(String cpuPinning) {
+        this.cpuPinning = cpuPinning;
     }
 
     @Override
