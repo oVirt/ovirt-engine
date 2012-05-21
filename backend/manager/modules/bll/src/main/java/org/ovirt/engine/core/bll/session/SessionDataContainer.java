@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.DbUserDAO;
 import org.ovirt.engine.core.utils.ThreadLocalParamsContainer;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 
@@ -181,9 +182,13 @@ public class SessionDataContainer {
                 }
             }
             if (!userSessionMap.isEmpty()) {
-                DbFacade.getInstance().getDbUserDAO().removeUserSessions(userSessionMap);
+                getDbUserDAO().removeUserSessions(userSessionMap);
             }
         }
+    }
+
+    protected DbUserDAO getDbUserDAO() {
+        return DbFacade.getInstance().getDbUserDAO();
     }
 
     /**
