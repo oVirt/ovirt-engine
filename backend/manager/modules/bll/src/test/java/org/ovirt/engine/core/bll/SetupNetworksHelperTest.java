@@ -229,10 +229,8 @@ public class SetupNetworksHelperTest {
         clusterNetworks.add(new network(null, null, null, "blue", null, null, 1, 100, false, 1500, true));
         initDaoMocks(null, clusterNetworks, helper);
 
-        List<String> removeNetworks =
-                helper.extractRemoveNetworks(new HashSet<String>(Arrays.asList(networkNames)),
-                        Arrays.asList("blue"));
-        assertTrue(removeNetworks.get(0).equals("blue"));
+        helper.extractRemoveNetworks(new HashSet<String>(Arrays.asList(networkNames)), Arrays.asList("blue"));
+        assertTrue(helper.getRemoveNetworks().get(0).equals("blue"));
     }
 
     /**

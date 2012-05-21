@@ -98,7 +98,7 @@ public class SetupNetworksHelper {
         validateBonds(bonds, bondSlaves);
 
         this.networks = new ArrayList<network>(networks.values());
-        this.removeNetworks = extractRemoveNetworks(networks.keySet(), getExisitingHostNetworkNames());
+        extractRemoveNetworks(networks.keySet(), getExisitingHostNetworkNames());
         this.bonds = new ArrayList<VdsNetworkInterface>(bonds.values());
         this.removedBonds = extractRemovedBonds(bonds);
 
@@ -232,7 +232,7 @@ public class SetupNetworksHelper {
         return returnValue;
     }
 
-    protected List<String> extractRemoveNetworks(Set<String> networkNames,
+    protected void extractRemoveNetworks(Set<String> networkNames,
             List<String> exisitingHostNetworksNames) {
         Set<String> removedNetworks = new HashSet<String>(getExistingClusterNetworks().keySet());
         for (String name : networkNames) {
@@ -247,7 +247,7 @@ public class SetupNetworksHelper {
             }
         }
 
-        return new ArrayList<String>(removedNetworks);
+        removeNetworks = new ArrayList<String>(removedNetworks);
     }
 
     public List<VdcBllMessages> getViolations() {
