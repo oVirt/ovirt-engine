@@ -4,6 +4,7 @@ public enum LdapProviderType {
     activeDirectory("Microsoft Active Directory"),
     ipa("389 Project"),
     rhds("Red Hat"),
+    itds("IBM Tivoli Directory Server"),
     general("Deprecated - for auto-detection usages"); // for rootDSE purpose
 
     private String vendorName;

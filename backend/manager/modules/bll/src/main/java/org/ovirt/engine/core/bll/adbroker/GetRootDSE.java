@@ -121,6 +121,8 @@ public class GetRootDSE {
                     retVal = LdapProviderType.ipa;
                 } else if (vendorName.equals(LdapProviderType.rhds.getLdapVendorName())) {
                     retVal = LdapProviderType.rhds;
+                } else if (vendorName.equals(LdapVendorNameEnum.ITDSVendorName.getName())) {
+                    retVal = LdapProviderType.itds;
                 }
             }
         }

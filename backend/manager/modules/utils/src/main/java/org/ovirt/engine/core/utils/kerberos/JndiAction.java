@@ -28,9 +28,9 @@ import org.ovirt.engine.core.utils.ipa.RHDSUserContextMapper;
 public class JndiAction implements PrivilegedAction {
 
     private String userName;
-    private String domainName;
+    private final String domainName;
     private LdapProviderType ldapProviderType = LdapProviderType.activeDirectory;
-    private StringBuffer userGuid;
+    private final StringBuffer userGuid;
     private final static Logger log = Logger.getLogger(JndiAction.class);
 
     public JndiAction(String userName, String domainName, StringBuffer userGuid, LdapProviderType ldapProviderType) {
@@ -88,7 +88,7 @@ public class JndiAction implements PrivilegedAction {
                     SearchControls controls = new SearchControls();
                     controls.setSearchScope(SearchControls.SUBTREE_SCOPE);
                     // Adding all the three attributes possible, as RHDS doesn't return the nsUniqueId by default
-                    controls.setReturningAttributes(new String[]{"nsUniqueId", "ipaUniqueId","objectGuid"});
+                    controls.setReturningAttributes(new String[]{"nsUniqueId", "ipaUniqueId","objectGuid","uniqueIdentifier"});
                     // Added this in order to prevent a warning saying: "the returning obj flag wasn't set, setting it to true"
                     controls.setReturningObjFlag(true);
                     currentLdapServer = ldapQueryPath.toString();
@@ -152,6 +152,9 @@ public class JndiAction implements PrivilegedAction {
         } else if (ldapProviderType.equals(LdapProviderType.rhds)) {
             String nsUniqueId = (String) sr.getAttributes().get("nsUniqueId").get();
             guidString += RHDSUserContextMapper.getGuidFromNsUniqueId(nsUniqueId);
+        } else if (ldapProviderType.equals(LdapProviderType.itds)) {
+            String uniqueId = (String) sr.getAttributes().get("uniqueIdentifier").get();
+            guidString += uniqueId;
         } else {
             Object objectGuid = sr.getAttributes().get("objectGUID").get();
             byte[] guid = (byte[]) objectGuid;
@@ -166,6 +169,9 @@ public class JndiAction implements PrivilegedAction {
             userName = userName.split("@")[0];
             query = "(&(objectClass=posixAccount)(objectClass=krbPrincipalAux)(uid=" + userName + "))";
         } else if (ldapProviderType.equals(LdapProviderType.rhds)) {
+            userName = userName.split("@")[0];
+            query = "(&(objectClass=person)(uid=" + userName + "))";
+        } else if (ldapProviderType.equals(LdapProviderType.itds)) {
             userName = userName.split("@")[0];
             query = "(&(objectClass=person)(uid=" + userName + "))";
         }

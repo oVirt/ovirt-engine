@@ -39,6 +39,7 @@ public class SimpleAuthenticationCheck {
     private String getLdapUrl(String ldapServer) {
         return "ldap://" + ldapServer;
     }
+
     private boolean validate(CLIParser parser) {
         Arguments[] argsToValidate =
                 { Arguments.domain, Arguments.user, Arguments.password };
@@ -76,14 +77,13 @@ public class SimpleAuthenticationCheck {
         System.exit(status.ordinal());
     }
 
-
     public ReturnStatus printUserGuid(String domain,
             String username,
             String password,
             String ldapServerUrl,
             StringBuffer userGuid, LdapProviderType ldapProviderType) {
 
-        LdapContextSource contextSource = getContextSource(domain, username, password, ldapServerUrl);
+        LdapContextSource contextSource = getContextSource(domain, ldapProviderType, username, password, ldapServerUrl);
         try {
             contextSource.afterPropertiesSet();
         } catch (Exception e) {
@@ -91,39 +91,43 @@ public class SimpleAuthenticationCheck {
             return ReturnStatus.LDAP_CONTEXT_FAILURE;
         }
 
-            LdapTemplate ldapTemplate = new LdapTemplate(contextSource);
-            String query = "";
-            ContextMapper contextMapper;
+        LdapTemplate ldapTemplate = new LdapTemplate(contextSource);
+        String query = "";
+        ContextMapper contextMapper;
 
-            if (ldapProviderType.equals(LdapProviderType.ipa)) {
-                query = "(&(objectClass=posixAccount)(objectClass=krbPrincipalAux)(uid=" + username + "))";
-                contextMapper = new IPAUserContextMapper();
+        if (ldapProviderType.equals(LdapProviderType.ipa)) {
+            query = "(&(objectClass=posixAccount)(objectClass=krbPrincipalAux)(uid=" + username + "))";
+            contextMapper = new IPAUserContextMapper();
             // AD
-            } else if (ldapProviderType.equals(LdapProviderType.activeDirectory)) {
-                contextMapper = new ADUserContextMapper();
+        } else if (ldapProviderType.equals(LdapProviderType.activeDirectory)) {
+            contextMapper = new ADUserContextMapper();
+            // ITDS
+        } else if (ldapProviderType.equals(LdapProviderType.itds)) {
+            query = "(&(objectClass=person)(uid=" + username + "))";
+            contextMapper = new ITDSUserContextMapper();
             // RHDS
-            } else {
-                query = "(&(objectClass=person)(uid=" + username + "))";
-                contextMapper = new RHDSUserContextMapper();
-            }
+        } else {
+            query = "(&(objectClass=person)(uid=" + username + "))";
+            contextMapper = new RHDSUserContextMapper();
+        }
 
-            try {
-                List searchResult =
-                            ldapTemplate.search("", query, contextMapper);
-                if (searchResult == null) {
-                    System.err.println(ERROR_PREFIX + "Cannot query user " + username + " from domain " + domain);
-                    return ReturnStatus.CANNOT_QUERY_USER;
-                } else {
-                    userGuid.append((String) searchResult.get(0));
-                    System.out.println("User guid is: " + userGuid.toString());
-                }
-            } catch (org.springframework.ldap.AuthenticationException authEx) {
-                return authenticationReturnStatus(authEx, username, domain);
-            } catch (Exception ex) {
-                System.err.println(ERROR_PREFIX + "Cannot query user " + username + " from domain " + domain
-                        + ", details: " + ex.getMessage());
+        try {
+            List searchResult =
+                    ldapTemplate.search("", query, contextMapper);
+            if (searchResult == null) {
+                System.err.println(ERROR_PREFIX + "Cannot query user " + username + " from domain " + domain);
                 return ReturnStatus.CANNOT_QUERY_USER;
+            } else {
+                userGuid.append((String) searchResult.get(0));
+                System.out.println("User guid is: " + userGuid.toString());
             }
+        } catch (org.springframework.ldap.AuthenticationException authEx) {
+            return authenticationReturnStatus(authEx, username, domain);
+        } catch (Exception ex) {
+            System.err.println(ERROR_PREFIX + "Cannot query user " + username + " from domain " + domain
+                    + ", details: " + ex.getMessage());
+            return ReturnStatus.CANNOT_QUERY_USER;
+        }
 
         return ReturnStatus.OK;
     }
@@ -131,6 +135,7 @@ public class SimpleAuthenticationCheck {
     /***
      * Returns the ReturnStatus according to the given AuthenticationException. Either INVALID_CREDENTIALS if this is
      * the case, or the general CANNOT_AUTHENTICATE_USER otherwise.
+     *
      * @param authEx
      */
     private ReturnStatus authenticationReturnStatus(AuthenticationException authEx, String userName, String domain) {
@@ -157,6 +162,7 @@ public class SimpleAuthenticationCheck {
     }
 
     private LdapContextSource getContextSource(String domain,
+            LdapProviderType ldapProviderType,
             String username,
             String password,
             String ldapServer) {
@@ -165,11 +171,12 @@ public class SimpleAuthenticationCheck {
         String ldapBaseDn = domainToDN(domain);
         StringBuilder ldapUserDn = new StringBuilder();
 
-
         if (ldapProviderType.equals(LdapProviderType.ipa)) {
             ldapUserDn.append("uid=").append(username).append(",cn=Users").append(",cn=Accounts,");
         } else if (ldapProviderType.equals(LdapProviderType.rhds)) {
             ldapUserDn.append("uid=").append(username).append(",ou=People");
+        } else if (ldapProviderType.equals(LdapProviderType.itds)) {
+            ldapUserDn.append("uid=").append(username);
         } else {
             ldapUserDn.append("CN=").append(username).append(",CN=Users,");
         }
@@ -177,7 +184,11 @@ public class SimpleAuthenticationCheck {
         ldapUserDn.append(ldapBaseDn);
 
         context.setUrl(getLdapUrl(ldapServer));
-        context.setBase(ldapBaseDn);
+        if (!ldapProviderType.equals(LdapProviderType.itds)) {
+            context.setBase(ldapBaseDn);
+        } else {
+            context.setAnonymousReadOnly(true);
+        }
         context.setUserDn(ldapUserDn.toString());
         context.setPassword(password);
         context.setReferral("follow");
@@ -203,4 +214,3 @@ public class SimpleAuthenticationCheck {
     }
 
 }
-
