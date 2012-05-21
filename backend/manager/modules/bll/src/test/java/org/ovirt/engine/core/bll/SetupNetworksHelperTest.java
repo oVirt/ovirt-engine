@@ -80,6 +80,9 @@ public class SetupNetworksHelperTest {
         nic2.setNetworkName("mgmtnet");
         nic2.setName("nic2");
         vdsNics.add(nic2);
+        VdsNetworkInterface nic3 = new VdsNetworkInterface();
+        nic3.setName("nic3");
+        vdsNics.add(nic3);
 
         List<network> clusterNetworks = new ArrayList<network>();
         network net1 = new network();

@@ -27,6 +27,7 @@ public class SetupNetworksHelper {
     private Map<String, network> existingClusterNetworks;
 
     private List<network> networks;
+    private List<String> unmanagedNetworks = new ArrayList<String>();
     private List<String> removeNetworks;
     private List<VdsNetworkInterface> bonds;
     private List<VdsNetworkInterface> removedBonds;
@@ -90,7 +91,7 @@ public class SetupNetworksHelper {
             }
 
             // validate and extract to network map
-            if (StringUtils.isNotBlank(networkName)) {
+            if (violations.isEmpty() && StringUtils.isNotBlank(networkName)) {
                 extractNetwork(networks, iface, networkName);
             }
         }
@@ -167,6 +168,10 @@ public class SetupNetworksHelper {
                     networksOverBond.add(networkName);
                 }
             }
+
+            // Interface must exist, it was checked before and we can't reach here if it does'nt exist already.
+        } else if (networkName.equals(getExistingIfaces().get(iface.getName()).getNetworkName())) {
+            unmanagedNetworks.add(networkName);
         } else {
             violations.add(VdcBllMessages.NETWORK_NOT_EXISTS_IN_CURRENT_CLUSTER);
         }
