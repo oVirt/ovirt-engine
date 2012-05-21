@@ -136,8 +136,6 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
         }
 
         protected void mapEntity(ResultSet rs, DiskImage entity) throws SQLException {
-            entity.setvm_guid(Guid.createGuidFromString(rs
-                    .getString("vm_guid")));
             entity.setcreation_date(DbFacadeUtils.fromDate(rs
                     .getTimestamp("creation_date")));
             entity.setactual_size(rs.getLong("actual_size"));

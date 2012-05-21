@@ -5,6 +5,7 @@ import java.sql.SQLException;
 
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
+import org.ovirt.engine.core.compat.Guid;
 
 /**
  * Abstract row mapper that maps the fields of {@link Disk}.
@@ -17,6 +18,7 @@ abstract class AbstractDiskRowMapper<T extends Disk> extends AbstractBaseDiskRow
     public T mapRow(ResultSet rs, int rowNum) throws SQLException {
         T entity = super.mapRow(rs, rowNum);
 
+        entity.setvm_guid(Guid.createGuidFromString(rs.getString("vm_guid")));
         String entityType = rs.getString("entity_type");
         handleEntityType(entityType, entity);
 
