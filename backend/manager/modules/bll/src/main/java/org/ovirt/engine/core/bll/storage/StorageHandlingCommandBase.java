@@ -85,7 +85,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
         TransactionSupport.executeInScope(TransactionScopeOption.Suppress, new TransactionMethod<Object>() {
             @Override
             public Object runInTransaction() {
-                DbFacade.getInstance().getStoragePoolDAO().update(getStoragePool());
+                getStoragePoolDAO().update(getStoragePool());
                 return null;
             }
         });
@@ -135,7 +135,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
     protected boolean CheckStoragePoolStatus(StoragePoolStatus status) {
         boolean returnValue = false;
         if (getStoragePool() != null) {
-            storage_pool storagePool = DbFacade.getInstance().getStoragePoolDAO().get(getStoragePool().getId());
+            storage_pool storagePool = getStoragePoolDAO().get(getStoragePool().getId());
             returnValue = (storagePool.getstatus() == status);
             if (!returnValue
                     && !getReturnValue().getCanDoActionMessages().contains(
@@ -149,7 +149,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
     protected boolean CheckStoragePoolStatusNotEqual(StoragePoolStatus status, VdcBllMessages onFailMessage) {
         boolean returnValue = false;
         if (getStoragePool() != null) {
-            storage_pool storagePool = DbFacade.getInstance().getStoragePoolDAO().get(getStoragePool().getId());
+            storage_pool storagePool = getStoragePoolDAO().get(getStoragePool().getId());
             returnValue = (storagePool.getstatus() != status);
             if (!returnValue
                     && !getReturnValue().getCanDoActionMessages().contains(onFailMessage.name())) {
@@ -208,7 +208,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
         // Get the number of storage domains of the given type currently attached
         // to the pool:
         int count = LinqUtils.filter(
-                DbFacade.getInstance().getStorageDomainDAO().getAllForStoragePool(getStoragePool().getId()),
+                getStorageDomainDAO().getAllForStoragePool(getStoragePool().getId()),
                 new Predicate<storage_domains>() {
                     @Override
                     public boolean eval(storage_domains a) {
@@ -252,8 +252,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
     }
 
     protected void CalcStoragePoolStatusByDomainsStatus() {
-        List<storage_domains> domains = DbFacade.getInstance().getStorageDomainDAO().getAllForStoragePool(
-                getStoragePool().getId());
+        List<storage_domains> domains = getStorageDomainDAO().getAllForStoragePool(getStoragePool().getId());
 
         // set masterDomain to the first element of domains with type=master, or null if non have this type.
         storage_domains masterDomain = LinqUtils.firstOrNull(domains, new Predicate<storage_domains>() {
@@ -273,7 +272,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
         if (newStatus != getStoragePool().getstatus()) {
             getCompensationContext().snapshotEntity(getStoragePool());
             getStoragePool().setstatus(newStatus);
-            storage_pool poolFromDb = DbFacade.getInstance().getStoragePoolDAO().get(getStoragePool().getId());
+            storage_pool poolFromDb = getStoragePoolDAO().get(getStoragePool().getId());
             if ((getStoragePool().getspm_vds_id() == null && poolFromDb.getspm_vds_id() != null)
                     || (getStoragePool().getspm_vds_id() != null && !getStoragePool().getspm_vds_id().equals(
                             poolFromDb.getspm_vds_id()))) {
@@ -286,7 +285,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
             TransactionSupport.executeInScope(TransactionScopeOption.Required, new TransactionMethod<storage_pool>() {
                 @Override
                 public storage_pool runInTransaction() {
-                    DbFacade.getInstance().getStoragePoolDAO().update(getStoragePool());
+                    getStoragePoolDAO().update(getStoragePool());
                     return null;
                 }
             });
