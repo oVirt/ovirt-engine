@@ -27,7 +27,7 @@ public class AddQuotaCommand<T extends QuotaCRUDParameters> extends CommandBase<
 
     @Override
     protected boolean canDoAction() {
-        return (QuotaHelper.getInstance().checkQuotaValidationForAdd(getParameters().getQuota(),
+        return (getQuotaHelper().checkQuotaValidationForAdd(getParameters().getQuota(),
                 getReturnValue().getCanDoActionMessages()));
     }
 
@@ -81,5 +81,9 @@ public class AddQuotaCommand<T extends QuotaCRUDParameters> extends CommandBase<
     @Override
     public AuditLogType getAuditLogTypeValue() {
         return getSucceeded() ? AuditLogType.USER_ADD_QUOTA : AuditLogType.USER_FAILED_ADD_QUOTA;
+    }
+
+    protected QuotaHelper getQuotaHelper() {
+        return QuotaHelper.getInstance();
     }
 }

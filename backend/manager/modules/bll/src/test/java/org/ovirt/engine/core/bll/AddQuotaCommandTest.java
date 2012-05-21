@@ -1,9 +1,9 @@
 package org.ovirt.engine.core.bll;
 
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
-import static org.powermock.api.mockito.PowerMockito.spy;
 
 import java.util.ArrayList;
 
@@ -12,8 +12,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.action.QuotaCRUDParameters;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;
@@ -21,17 +20,10 @@ import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.QuotaDAO;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ DbFacade.class, QuotaHelper.class })
+@RunWith(MockitoJUnitRunner.class)
 public class AddQuotaCommandTest {
-    @Mock
-    private DbFacade db;
-
     @Mock
     private QuotaHelper quotaHelper;
 
@@ -48,29 +40,18 @@ public class AddQuotaCommandTest {
     storage_domains firstStorageDomains = new storage_domains();
     storage_domains secondStorageDomains = new storage_domains();
 
-    public AddQuotaCommandTest() {
-        MockitoAnnotations.initMocks(this);
-        mockStatic(DbFacade.class);
-        mockStatic(QuotaHelper.class);
-    }
-
     @Before
     public void testSetup() {
-        mockDbFacade();
+        mockQuotaDAO();
         mockQuotaHelper();
     }
 
     @SuppressWarnings("unchecked")
     private void mockQuotaHelper() {
-        mockStatic(QuotaHelper.class);
-        Mockito.when(QuotaHelper.getInstance()).thenReturn(quotaHelper);
         when(quotaHelper.checkQuotaValidationForAdd(Matchers.any(Quota.class), Matchers.any(ArrayList.class))).thenReturn(true);
     }
 
-    private void mockDbFacade() {
-        mockStatic(DbFacade.class);
-        Mockito.when(DbFacade.getInstance()).thenReturn(db);
-        when(db.getQuotaDAO()).thenReturn(quotaDAO);
+    private void mockQuotaDAO() {
         when(quotaDAO.getById(any(Guid.class))).thenReturn(mockGeneralStorageQuota());
     }
 
@@ -88,8 +69,11 @@ public class AddQuotaCommandTest {
 
     private AddQuotaCommand<QuotaCRUDParameters> createCommand() {
         QuotaCRUDParameters param = new QuotaCRUDParameters(mockGeneralStorageQuota());
-        command = new AddQuotaCommand<QuotaCRUDParameters>(param);
-        return spy(command);
+        command = spy(new AddQuotaCommand<QuotaCRUDParameters>(param));
+        doReturn(quotaDAO).when(command).getQuotaDAO();
+        doReturn(quotaHelper).when(command).getQuotaHelper();
+
+        return command;
     }
 
     private Quota mockGeneralStorageQuota() {
