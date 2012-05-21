@@ -2409,6 +2409,7 @@ def initCmdLineParser():
     parser.add_option("--gen-answer-file", help="Generate a template of an answer file, using this option excludes all other option")
     parser.add_option("--answer-file", help="Runs the configuration in none-interactive mode, extracting all information from the \
                                             configuration file. using this option excludes all other option")
+    parser.add_option("--no-mem-check", help="Disable minimum memory check", action="store_true", default=False)
 
     # For each group, create a group option
     for group in controller.getAllGroups():
@@ -2516,9 +2517,6 @@ def initMain():
 
     initPluginsConfig()
 
-    # Validate host has enough memory
-    _checkAvailableMemory()
-
 if __name__ == "__main__":
     try:
         initMain()
@@ -2551,6 +2549,10 @@ if __name__ == "__main__":
                         param = group.getParams("CMD_OPTION", key.replace("_","-"))
                         if len(param) > 0 and value:
                             commandLineValues[param[0].getKey("CONF_NAME")] = value
+
+            # Validate host has enough memory
+            if not options.no_mem_check:
+                _checkAvailableMemory()
 
             main(confFile)
 

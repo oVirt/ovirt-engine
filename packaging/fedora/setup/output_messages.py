@@ -367,7 +367,7 @@ ERR_EXP_UNKWN_ERROR="Unknown error occurred during validation"
 
 #error running free
 ERR_EXP_FREE_MEM="Internal error occurred when trying to determine the amount of available memory.\nPlease make that there is at least %s GB of memory on the Host" % basedefs.CONST_MIN_MEMORY_GB
-ERR_EXP_NOT_EMOUGH_MEMORY="Error, Not enough available memory on the Host\n(the minimum requirement is %s GB and the recommended is %s GB)." % (basedefs.CONST_MIN_MEMORY_GB, basedefs.CONST_WARN_MEMORY_GB)
+ERR_EXP_NOT_EMOUGH_MEMORY="Error: Not enough available memory on the Host\n(the minimum requirement is %s GB and the recommended is %s GB)." % (basedefs.CONST_MIN_MEMORY_GB, basedefs.CONST_WARN_MEMORY_GB)
 
 #import iso files
 ERR_FAILED_TO_COPY_FILE_TO_ISO_DOMAIN="Failed to copy files to iso domain"
