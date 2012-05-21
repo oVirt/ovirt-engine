@@ -10,12 +10,9 @@ import static org.mockito.Mockito.spy;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.powermock.modules.junit4.PowerMockRunner;
 
-@RunWith(PowerMockRunner.class)
 public class MultipleServicesMonitoringStrategyTest {
     VirtMonitoringStrategy virtStrategy;
     GlusterMonitoringStrategy glusterStrategy;
