@@ -16,3 +16,11 @@ set_defaults() {
     VERBOSE=false
     LOGFILE="$ME.log"
 }
+
+#refreshes views
+refresh_views() {
+    printf "Creating views...\n"
+    execute_file "create_views.sql" ${DATABASE} ${SERVERNAME} ${PORT} > /dev/null
+    execute_file "create_dwh_views.sql" ${DATABASE} ${SERVERNAME} ${PORT} > /dev/null
+}
+
