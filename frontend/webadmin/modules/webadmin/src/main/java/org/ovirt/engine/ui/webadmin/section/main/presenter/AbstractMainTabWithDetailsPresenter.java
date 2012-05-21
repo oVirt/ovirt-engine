@@ -12,7 +12,7 @@ import com.google.gwt.view.client.SelectionChangeEvent;
 import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
-import com.gwtplatform.mvp.client.proxy.Proxy;
+import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 
 /**
  * Base class for main tab presenters that work with {@link ListWithDetailsModel}.
@@ -26,7 +26,7 @@ import com.gwtplatform.mvp.client.proxy.Proxy;
  * @param <P>
  *            Proxy type.
  */
-public abstract class AbstractMainTabWithDetailsPresenter<T, M extends ListWithDetailsModel, V extends AbstractMainTabWithDetailsPresenter.ViewDef<T>, P extends Proxy<?>>
+public abstract class AbstractMainTabWithDetailsPresenter<T, M extends ListWithDetailsModel, V extends AbstractMainTabWithDetailsPresenter.ViewDef<T>, P extends ProxyPlace<?>>
         extends AbstractMainTabPresenter<T, M, V, P> {
 
     public interface ViewDef<T> extends View {
