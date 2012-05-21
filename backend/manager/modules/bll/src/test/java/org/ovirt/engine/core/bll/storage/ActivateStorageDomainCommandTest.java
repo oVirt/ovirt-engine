@@ -3,14 +3,14 @@ package org.ovirt.engine.core.bll.storage;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
-import static org.mockito.MockitoAnnotations.initMocks;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
-import static org.powermock.api.mockito.PowerMockito.when;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
@@ -18,30 +18,17 @@ import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
 import org.ovirt.engine.core.dao.StoragePoolDAO;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
-@PrepareForTest({DbFacade.class})
-@RunWith(PowerMockRunner.class)
+@RunWith(MockitoJUnitRunner.class)
 public class ActivateStorageDomainCommandTest {
+    @Mock
+    StorageDomainDAO storageDomainDAO;
+    @Mock
+    StoragePoolDAO storagePoolDAO;
 
-    @Mock DbFacade dbFacade;
-    @Mock StorageDomainDAO storageDomainDAO;
-    @Mock StoragePoolDAO storagePoolDAO;
-
-    private ActivateStorageDomainCommand cmd;
-
-    @Before
-    public void setUp() {
-        initMocks(this);
-        mockStatic(DbFacade.class);
-        when(DbFacade.getInstance()).thenReturn(dbFacade);
-        when(dbFacade.getStorageDomainDAO()).thenReturn(storageDomainDAO);
-        when(dbFacade.getStoragePoolDAO()).thenReturn(storagePoolDAO);
-    }
+    private ActivateStorageDomainCommand<StorageDomainPoolParametersBase> cmd;
 
     @Test
     public void internalLockedAllowed() {
@@ -113,7 +100,6 @@ public class ActivateStorageDomainCommandTest {
         noIllegalStatusMessage();
     }
 
-
     private void testInternalExecution(StorageDomainStatus status) {
         testExecution(status);
         setIsInternal();
@@ -126,7 +112,7 @@ public class ActivateStorageDomainCommandTest {
     }
 
     private void createStorageDomain(StorageDomainStatus status) {
-       storage_domains domain = new storage_domains();
+        storage_domains domain = new storage_domains();
         domain.setstatus(status);
         domain.setId(Guid.NewGuid());
         when(storageDomainDAO.get(any(Guid.class))).thenReturn(domain);
@@ -144,7 +130,9 @@ public class ActivateStorageDomainCommandTest {
         StorageDomainPoolParametersBase params = new StorageDomainPoolParametersBase();
         params.setStorageDomainId(Guid.NewGuid());
         params.setStoragePoolId(Guid.NewGuid());
-        cmd = new ActivateStorageDomainCommand(params);
+        cmd = spy(new ActivateStorageDomainCommand<StorageDomainPoolParametersBase>(params));
+        doReturn(storageDomainDAO).when(cmd).getStorageDomainDAO();
+        doReturn(storagePoolDAO).when(cmd).getStoragePoolDAO();
     }
 
     private void canDoActionSucceeds() {
