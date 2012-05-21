@@ -19,7 +19,7 @@ public class StorageHelperDirector {
     private void InitializeHelpers() {
         try {
             for (String helperName : EnumCompat.GetNames(StorageType.class)) {
-                java.lang.Class actionType = null;
+                java.lang.Class<?> actionType = null;
                 try {
                     actionType = java.lang.Class.forName(String.format("%1$s.%2$s%3$s", "org.ovirt.engine.core.bll.storage",
                             helperName, "StorageHelper"));
@@ -30,7 +30,7 @@ public class StorageHelperDirector {
                  * if action type not exist - operation valid
                  */
                 if (actionType != null) {
-                    java.lang.reflect.Constructor info = actionType.getConstructors()[0];
+                    java.lang.reflect.Constructor<?> info = actionType.getConstructors()[0];
                     Object tempVar = info.newInstance(null);
                     IStorageHelper currentHelper = (IStorageHelper) ((tempVar instanceof IStorageHelper) ? tempVar
                             : null);
