@@ -88,7 +88,7 @@ public class VmGeneralModelForm extends AbstractModelBoundFormWidget<VmGeneralMo
 
             @Override
             public boolean isVisible() {
-                return getModel().getQuotaName() != null;
+                return getModel().isQuotaAvailable();
             }
         });
         formBuilder.addFormItem(new FormItem(constants.domainVm(), domain, 5, 2) {

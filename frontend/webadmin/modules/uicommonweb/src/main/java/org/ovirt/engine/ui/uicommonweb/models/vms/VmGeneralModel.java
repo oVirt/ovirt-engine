@@ -1,8 +1,12 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.OriginType;
+import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -29,9 +33,6 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
 import org.ovirt.engine.ui.uicompat.Translator;
-
-import java.util.ArrayList;
-import java.util.Iterator;
 
 @SuppressWarnings("unused")
 public class VmGeneralModel extends EntityModel
@@ -186,6 +187,16 @@ public class VmGeneralModel extends EntityModel
 
     public void setQuotaName(String quotaName) {
         this.quotaName = quotaName;
+    }
+
+    private boolean quotaAvailable;
+
+    public boolean isQuotaAvailable() {
+        return quotaAvailable;
+    }
+
+    public void setQuotaAvailable(boolean quotaAvailable) {
+        this.quotaAvailable = quotaAvailable;
     }
 
     private int monitorCount;
@@ -579,6 +590,7 @@ public class VmGeneralModel extends EntityModel
         setName(vm.getvm_name());
         setDescription(vm.getvm_description());
         setQuotaName(vm.getQuotaName() != null ? vm.getQuotaName() : ""); //$NON-NLS-1$
+        setQuotaAvailable(!vm.getQuotaEnforcementType().equals(QuotaEnforcementTypeEnum.DISABLED));
         setTemplate(vm.getvmt_name());
         setDefinedMemory(vm.getvm_mem_size_mb() + " MB"); //$NON-NLS-1$
         setMinAllocatedMemory(vm.getMinAllocatedMem() + " MB"); //$NON-NLS-1$

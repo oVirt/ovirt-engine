@@ -65,7 +65,13 @@ public class SubTabDiskGeneralView extends AbstractSubTabFormView<Disk, DiskList
         formBuilder.addFormItem(new FormItem(constants.descriptionDisk(), description, 1, 0));
         formBuilder.addFormItem(new FormItem(constants.idDisk(), diskId, 2, 0));
         formBuilder.addFormItem(new FormItem(constants.volumeFormatDisk(), volumeFormat, 3, 0));
-        formBuilder.addFormItem(new FormItem(constants.quota(), quotaName, 4, 0));
+        formBuilder.addFormItem(new FormItem(constants.quota(), quotaName, 4, 0) {
+            @Override
+            public boolean isVisible() {
+                return getDetailModel().isQuotaAvailable();
+            }
+        });
+
     }
 
     @Override

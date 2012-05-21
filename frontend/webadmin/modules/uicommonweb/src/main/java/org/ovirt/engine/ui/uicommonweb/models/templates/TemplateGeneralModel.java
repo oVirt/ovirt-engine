@@ -1,8 +1,12 @@
 package org.ovirt.engine.ui.uicommonweb.models.templates;
 
+import java.util.ArrayList;
+import java.util.Map;
+
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.OriginType;
+import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -14,9 +18,6 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
 import org.ovirt.engine.ui.uicompat.Translator;
-
-import java.util.ArrayList;
-import java.util.Map;
 
 @SuppressWarnings("unused")
 public class TemplateGeneralModel extends EntityModel
@@ -86,6 +87,16 @@ public class TemplateGeneralModel extends EntityModel
 
     public void setQuotaName(String quotaName) {
         this.quotaName = quotaName;
+    }
+
+    private boolean quotaAvailable;
+
+    public boolean isQuotaAvailable() {
+        return quotaAvailable;
+    }
+
+    public void setQuotaAvailable(boolean quotaAvailable) {
+        this.quotaAvailable = quotaAvailable;
     }
 
     private String hostCluster;
@@ -440,6 +451,7 @@ public class TemplateGeneralModel extends EntityModel
         setName(template.getname());
         setDescription(template.getdescription());
         setQuotaName(template.getQuotaName() != null ? template.getQuotaName() : ""); //$NON-NLS-1$
+        setQuotaAvailable(!template.getQuotaEnforcementType().equals(QuotaEnforcementTypeEnum.DISABLED));
         setHostCluster(template.getvds_group_name());
         setDefinedMemory(template.getmem_size_mb() + " MB"); //$NON-NLS-1$
         setIsHighlyAvailable(template.getauto_startup());

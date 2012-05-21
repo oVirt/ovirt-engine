@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.disks;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -107,6 +108,16 @@ public class DiskGeneralModel extends EntityModel
         }
     }
 
+    private boolean quotaAvailable;
+
+    public boolean isQuotaAvailable() {
+        return quotaAvailable;
+    }
+
+    public void setQuotaAvailable(boolean quotaAvailable) {
+        this.quotaAvailable = quotaAvailable;
+    }
+
     public DiskGeneralModel()
     {
         setTitle(ConstantsManager.getInstance().getConstants().generalTitle());
@@ -144,6 +155,7 @@ public class DiskGeneralModel extends EntityModel
             DiskImage diskImage = (DiskImage) disk;
             setVolumeFormat(diskImage.getvolume_format());
             setQuotaName(diskImage.getQuotaName());
+            setQuotaAvailable(!diskImage.getQuotaEnforcementType().equals(QuotaEnforcementTypeEnum.DISABLED));
         }
     }
 }
