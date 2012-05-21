@@ -11,6 +11,7 @@ import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
@@ -46,6 +47,12 @@ public class AttachDiskToVmCommand<T extends UpdateVmDiskParameters> extends Abs
         if (retValue && getVmDeviceDao().exists(new VmDeviceId(disk.getId(), getVmId()))) {
             retValue = false;
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_ALREADY_ATTACHED);
+        }
+        if (retValue && disk.getDiskStorageType() == DiskStorageType.IMAGE
+                && getStoragePoolIsoMapDao().get(new StoragePoolIsoMapId(
+                        ((DiskImage) disk).getstorage_ids().get(0), getVm().getstorage_pool_id())) == null) {
+            retValue = false;
+            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_MATCH);
         }
         if (retValue && Boolean.TRUE.equals(getParameters().getDiskInfo().getPlugged())
                 && getVm().getstatus() != VMStatus.Down) {

@@ -23,6 +23,7 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskImageDAO;
 import org.ovirt.engine.core.dao.ImageDao;
+import org.ovirt.engine.core.dao.StoragePoolIsoMapDAO;
 import org.ovirt.engine.core.dao.VmNetworkInterfaceDAO;
 
 public abstract class AbstractDiskVmCommand<T extends VmDiskOperatinParameterBase> extends VmCommand<T> {
@@ -144,6 +145,13 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperatinParameterBas
 
     protected DiskImageDAO getDiskImageDao() {
         return DbFacade.getInstance().getDiskImageDAO();
+    }
+
+    /**
+     * @return The StoragePoolIsoMapDAO
+     */
+    protected StoragePoolIsoMapDAO getStoragePoolIsoMapDao() {
+        return DbFacade.getInstance().getStoragePoolIsoMapDAO();
     }
 
 }

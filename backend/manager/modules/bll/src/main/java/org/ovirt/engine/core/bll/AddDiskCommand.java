@@ -46,7 +46,6 @@ import org.ovirt.engine.core.dao.DiskLunMapDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
 import org.ovirt.engine.core.dao.StorageDomainStaticDAO;
-import org.ovirt.engine.core.dao.StoragePoolIsoMapDAO;
 
 @CustomLogFields({ @CustomLogField("DiskName") })
 @NonTransactiveCommandAttribute(forceCompensation = true)
@@ -182,13 +181,6 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
      */
     protected StorageDomainStaticDAO getStorageDomainStaticDao() {
         return DbFacade.getInstance().getStorageDomainStaticDAO();
-    }
-
-    /**
-     * @return The StoragePoolIsoMapDAO
-     */
-    protected StoragePoolIsoMapDAO getStoragePoolIsoMapDao() {
-        return DbFacade.getInstance().getStoragePoolIsoMapDAO();
     }
 
     /**
