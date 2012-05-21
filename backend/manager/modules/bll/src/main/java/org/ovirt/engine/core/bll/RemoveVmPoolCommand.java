@@ -1,6 +1,9 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.Map;
+
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VmPoolParametersBase;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
@@ -9,6 +12,10 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 public class RemoveVmPoolCommand<T extends VmPoolParametersBase> extends VmPoolCommandBase<T> {
     public RemoveVmPoolCommand(T parameters) {
         super(parameters);
+        // set group id for logging and job
+        if (getVmPool() != null) {
+            setVdsGroupId(getVmPool().getvds_group_id());
+        }
     }
 
     @Override
@@ -41,5 +48,14 @@ public class RemoveVmPoolCommand<T extends VmPoolParametersBase> extends VmPoolC
             reasons.add(VdcBllMessages.VM_POOL_CANNOT_REMOVE_VM_POOL_WITH_VMS.toString());
         }
         return returnValue;
+    }
+
+    @Override
+    public Map<String, String> getJobMessageProperties() {
+        if (jobProperties == null) {
+            jobProperties = super.getJobMessageProperties();
+            jobProperties.put(VdcObjectType.VdsGroups.name().toLowerCase(), getVdsGroupName());
+        }
+        return jobProperties;
     }
 }
