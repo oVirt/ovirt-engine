@@ -46,20 +46,11 @@ public interface VmDAO extends DAO {
     /**
      * Retrieves the VMs with the specified image id.
      *
-     * @param image
-     *            the image id
+     * @param disk
+     *            the disk id
      * @return A {@link Map} from the image's plug status to a {@link List} of the VMs associated with it.
      */
-    Map<Boolean, List<VM>> getForImage(Guid image);
-
-    /**
-     * Retrieves the VM for the specified image group.
-     *
-     * @param imageGroup
-     *            the image group id
-     * @return the VM
-     */
-    VM getForImageGroup(Guid imageGroup);
+    Map<Boolean, List<VM>> getForDisk(Guid disk);
 
     /**
      * Finds all VMs for the specified user.

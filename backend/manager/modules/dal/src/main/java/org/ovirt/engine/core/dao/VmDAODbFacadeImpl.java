@@ -57,25 +57,17 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
     }
 
     @Override
-    public Map<Boolean, List<VM>> getForImage(Guid id) {
+    public Map<Boolean, List<VM>> getForDisk(Guid id) {
         Map<Boolean, List<VM>> result = new HashMap<Boolean, List<VM>>();
         List<VMWithPlugInfo> vms =
                 getCallsHandler().executeReadList
-                        ("GetVmsByImageId",
+                        ("GetVmsByDiskId",
                                 VMWithPlugInfoRowMapper.instance,
-                                getCustomMapSqlParameterSource().addValue("image_guid", id));
+                                getCustomMapSqlParameterSource().addValue("disk_guid", id));
         for (VMWithPlugInfo vm : vms) {
             MultiValueMapUtils.addToMap(vm.isPlugged(), vm.getVM(), result);
         }
         return result;
-    }
-
-    @Override
-    public VM getForImageGroup(Guid id) {
-        return getCallsHandler().executeRead("GetVmByImageGroupId",
-                VMRowMapper.instance,
-                getCustomMapSqlParameterSource()
-                        .addValue("image_group_id", id));
     }
 
     @Override

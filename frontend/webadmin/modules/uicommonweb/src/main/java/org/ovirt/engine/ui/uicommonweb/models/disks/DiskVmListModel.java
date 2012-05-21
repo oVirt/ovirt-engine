@@ -3,9 +3,10 @@ package org.ovirt.engine.ui.uicommonweb.models.disks;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.queries.GetVmsByImageGuidParameters;
+import org.ovirt.engine.core.common.queries.GetVmsByDiskGuidParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -39,8 +40,8 @@ public class DiskVmListModel extends SearchableListModel
     @Override
     protected void SyncSearch()
     {
-        DiskImage diskImage = (DiskImage) getEntity();
-        if (diskImage == null)
+        Disk disk = (Disk) getEntity();
+        if (disk == null)
         {
             return;
         }
@@ -67,10 +68,10 @@ public class DiskVmListModel extends SearchableListModel
             }
         };
 
-        GetVmsByImageGuidParameters getVmsByImageGuidParameters = new GetVmsByImageGuidParameters(diskImage.getImageId());
-        getVmsByImageGuidParameters.setRefresh(getIsQueryFirstTime());
+        GetVmsByDiskGuidParameters getVmsByDiskGuidParameters = new GetVmsByDiskGuidParameters(disk.getId());
+        getVmsByDiskGuidParameters.setRefresh(getIsQueryFirstTime());
 
-        Frontend.RunQuery(VdcQueryType.GetVmsByImageGuid, getVmsByImageGuidParameters, _asyncQuery);
+        Frontend.RunQuery(VdcQueryType.GetVmsByDiskGuid, getVmsByDiskGuidParameters, _asyncQuery);
 
         setIsQueryFirstTime(false);
     }

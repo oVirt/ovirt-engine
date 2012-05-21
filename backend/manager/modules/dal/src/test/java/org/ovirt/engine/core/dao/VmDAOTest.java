@@ -127,28 +127,11 @@ public class VmDAOTest extends BaseDAOTestCase {
      * Gets the VM associated with the specified image.
      */
     @Test
-    public void testGetForImage() {
-        Map<Boolean, List<VM>> result = dao.getForImage(FixturesTool.IMAGE_ID);
+    public void testGetForDisk() {
+        Map<Boolean, List<VM>> result = dao.getForDisk(FixturesTool.IMAGE_GROUP_ID);
 
         assertNotNull(result);
         assertEquals("wrong number of VMs with unplugged image", 1, result.get(false).size());
-    }
-
-    /**
-     * Ensures that null is returned.
-     */
-    @Test
-    public void testGetForImageGroupWithInvalidGroup() {
-        VM result = dao.getForImageGroup(Guid.NewGuid());
-
-        assertNull(result);
-    }
-
-    @Test
-    public void testGetForImageGroup() {
-        VM result = dao.getForImageGroup(FixturesTool.IMAGE_GROUP_ID.getValue());
-
-        assertNotNull(result);
     }
 
     /**
