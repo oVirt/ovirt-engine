@@ -8,7 +8,6 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdsGroupParametersBase;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.dal.VdcBllMessages;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogField;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;
 
@@ -23,12 +22,12 @@ public abstract class VdsGroupCommandBase<T extends VdsGroupParametersBase> exte
     @Override
     protected VDSGroup getVdsGroup() {
         if (_vdsGroup == null) {
-            _vdsGroup = DbFacade.getInstance().getVdsGroupDAO().get(
-                    getParameters().getVdsGroupId());
+            _vdsGroup = getVdsGroupDAO().get(getParameters().getVdsGroupId());
         }
         return _vdsGroup;
     }
 
+    @Override
     public String getVdsGroupName() {
         if (getVdsGroup() != null) {
             return getVdsGroup().getname();

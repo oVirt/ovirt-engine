@@ -4,10 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
-import static org.powermock.api.mockito.PowerMockito.doThrow;
-import static org.powermock.api.mockito.PowerMockito.mock;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
-import static org.powermock.api.mockito.PowerMockito.when;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +14,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AttachNetworkToVdsGroupParameter;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -24,33 +24,31 @@ import org.ovirt.engine.core.common.businessentities.network_cluster;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.VdcBllMessages;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.NetworkClusterDAO;
 import org.ovirt.engine.core.dao.NetworkDAO;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 import org.springframework.dao.DataIntegrityViolationException;
 
-@PrepareForTest({DbFacade.class})
-@RunWith(PowerMockRunner.class)
+@RunWith(MockitoJUnitRunner.class)
 public class AttachNetworkToVdsGroupCommandTest {
 
     private VDSGroup existingGroup = new VDSGroup();
     private network network = createNetwork();
-    private DbFacade dbFacade = mock(DbFacade.class);
     private AttachNetworkToVdsGroupCommand<AttachNetworkToVdsGroupParameter> command;
 
+    @Mock
+    NetworkClusterDAO networkClusterDAO;
 
-    public AttachNetworkToVdsGroupCommandTest() {
-        mockStatic(DbFacade.class);
-    }
+    @Mock
+    NetworkDAO networkDAO;
+
+    @Mock
+    VdsGroupDAO vdsGroupDAO;
 
     @Before
     public void setup() {
         existingGroup.setcompatibility_version(Version.v3_1);
         createCommand();
-        when(DbFacade.getInstance()).thenReturn(getDbFacadeMock());
     }
 
     @Test
@@ -87,9 +85,31 @@ public class AttachNetworkToVdsGroupCommandTest {
         return network;
     }
 
+    @SuppressWarnings("serial")
     public void createCommand() {
-        AttachNetworkToVdsGroupParameter param = new AttachNetworkToVdsGroupParameter(getExistingVdsGroupId(), getNetwork());
-        command = new AttachNetworkToVdsGroupCommand<AttachNetworkToVdsGroupParameter>(param);
+        AttachNetworkToVdsGroupParameter param =
+                new AttachNetworkToVdsGroupParameter(getExistingVdsGroupId(), getNetwork());
+
+        command = new AttachNetworkToVdsGroupCommand<AttachNetworkToVdsGroupParameter>(param) {
+            // Since the command isn't in the same package as AuditLogableBase which defines the DAO accessors they
+            // cannot be spied from here.
+            // Instead, will override them manually.
+
+            @Override
+            protected VdsGroupDAO getVdsGroupDAO() {
+                return vdsGroupDAO;
+            }
+
+            @Override
+            protected NetworkClusterDAO getNetworkClusterDAO() {
+                return networkClusterDAO;
+            }
+
+            @Override
+            protected NetworkDAO getNetworkDAO() {
+                return networkDAO;
+            }
+        };
     }
 
     private void simulateNetworkAlreadyExists() {
@@ -113,37 +133,24 @@ public class AttachNetworkToVdsGroupCommandTest {
     }
 
     private void dbFacadeReturnNoVdsGroup() {
-        VdsGroupDAO dao = mock(VdsGroupDAO.class);
-        when(getDbFacadeMock().getVdsGroupDAO()).thenReturn(dao);
-        when(dao.get(any(Guid.class))).thenReturn(null);
+        when(vdsGroupDAO.get(any(Guid.class))).thenReturn(null);
     }
 
     private void dbFacadeReturnNetworkListFromDb() {
-        NetworkDAO dao = mock(NetworkDAO.class);
-        when(getDbFacadeMock().getNetworkDAO()).thenReturn(dao);
-        when(dao.getAllForCluster(any(Guid.class))).thenReturn(getNetworkList());
+        when(networkDAO.getAllForCluster(any(Guid.class))).thenReturn(getNetworkList());
     }
 
     private void dbFacadeReturnEmptyNetworkList() {
-        NetworkDAO dao = mock(NetworkDAO.class);
-        when(getDbFacadeMock().getNetworkDAO()).thenReturn(dao);
-        when(dao.getAllForCluster(any(Guid.class))).thenReturn(new ArrayList<network>());
+        when(networkDAO.getAllForCluster(any(Guid.class))).thenReturn(new ArrayList<network>());
     }
 
     private void dbFacadeReturnVdsGroup() {
-        VdsGroupDAO dao = mock(VdsGroupDAO.class);
-        when(getDbFacadeMock().getVdsGroupDAO()).thenReturn(dao);
-        when(dao.get(any(Guid.class))).thenReturn(existingGroup);
+        when(vdsGroupDAO.get(any(Guid.class))).thenReturn(existingGroup);
     }
 
     private void dbFacadeThrowOnNetworkClusterSave() {
-        NetworkClusterDAO dao = mock(NetworkClusterDAO.class);
-        when(getDbFacadeMock().getNetworkClusterDAO()).thenReturn(dao);
-        doThrow(new DataIntegrityViolationException("test violations")).when(dao).save(Matchers.<network_cluster>any(network_cluster.class));
-    }
-
-    private DbFacade getDbFacadeMock() {
-        return dbFacade;
+        doThrow(new DataIntegrityViolationException("test violations")).when(networkClusterDAO)
+                .save(Matchers.<network_cluster> any(network_cluster.class));
     }
 
     private network getNetwork() {
@@ -172,9 +179,10 @@ public class AttachNetworkToVdsGroupCommandTest {
     private void assertExecuteActionFailure() {
         try {
             command.executeCommand();
-        } catch (Exception e) {
-
+        } catch (Exception expected) {
+            // An exception is expected here
         }
+
         assertFalse(command.getReturnValue().getSucceeded());
         assertEquals(AuditLogType.NETWORK_ATTACH_NETWORK_TO_VDS_GROUP_FAILED, command.getAuditLogTypeValue());
     }

@@ -23,6 +23,7 @@ import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogField;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;
+import org.ovirt.engine.core.dao.NetworkDAO;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 
@@ -109,7 +110,6 @@ public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
         return super.canDoAction() && VdsGroupExists() && changesAreClusterCompatible();
     }
 
-
     private boolean changesAreClusterCompatible() {
         if (getParameters().getNetwork().isVmNetwork() == false
                 && getVdsGroup().getcompatibility_version().compareTo(Version.v3_1) < 0) {
@@ -120,12 +120,15 @@ public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
     }
 
     private boolean networkExists() {
-        return Entities.entitiesByName(DbFacade.getInstance().getNetworkDAO()
-                .getAllForCluster(getVdsGroupId())).containsKey(getNetworkName());
+        return Entities.entitiesByName(getNetworkDAO().getAllForCluster(getVdsGroupId())).containsKey(getNetworkName());
+    }
+
+    protected NetworkDAO getNetworkDAO() {
+        return getDbFacade().getNetworkDAO();
     }
 
     private boolean VdsGroupExists() {
-        if(!vdsGroupInDb()) {
+        if (!vdsGroupInDb()) {
             addCanDoActionMessage(VdcBllMessages.VDS_CLUSTER_IS_NOT_VALID);
             return false;
         }
@@ -133,9 +136,8 @@ public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
     }
 
     private boolean vdsGroupInDb() {
-       return getVdsGroup() != null;
+        return getVdsGroup() != null;
     }
-
 
     @Override
     public AuditLogType getAuditLogTypeValue() {
