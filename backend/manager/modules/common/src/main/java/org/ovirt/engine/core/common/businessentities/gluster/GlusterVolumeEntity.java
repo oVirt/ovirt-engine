@@ -401,7 +401,7 @@ public class GlusterVolumeEntity extends IVdcQueryable implements BusinessEntity
 
     private boolean equalIntegers(Integer int1, Integer int2) {
         if(int1 == null) {
-            return int1 == int2;
+            return int2 == null;
         } else {
             return int1.equals(int2);
         }
