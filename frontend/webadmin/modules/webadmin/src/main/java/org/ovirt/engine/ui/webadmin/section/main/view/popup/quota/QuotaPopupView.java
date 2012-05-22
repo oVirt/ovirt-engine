@@ -300,7 +300,7 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
                 } else {
                     str = constants.outOfQuota() + object.getMemSizeMB();
                 }
-                return object.getMemSizeMBUsage() + str + " GB"; //$NON-NLS-1$
+                return object.getMemSizeMBUsage() + str + " MB"; //$NON-NLS-1$
             }
         }, constants.quotaOfMemQuota());
 

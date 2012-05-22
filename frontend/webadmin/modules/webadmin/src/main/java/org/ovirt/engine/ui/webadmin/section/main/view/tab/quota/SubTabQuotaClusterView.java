@@ -46,7 +46,7 @@ public class SubTabQuotaClusterView extends AbstractSubTabTableView<Quota, Quota
             public String getValue(QuotaVdsGroup object) {
                 return (object.getMemSizeMBUsage() == null ? "0" : object.getMemSizeMBUsage().toString()) + constants.outOfQuota() //$NON-NLS-1$
                         + (object.getMemSizeMB() == -1 ? constants.unlimitedQuota() : object.getMemSizeMB()
-                                .toString()) + " GB"; //$NON-NLS-1$
+                                .toString()) + " MB"; //$NON-NLS-1$
             }
         },
                 constants.usedMemoryTotalCluster());

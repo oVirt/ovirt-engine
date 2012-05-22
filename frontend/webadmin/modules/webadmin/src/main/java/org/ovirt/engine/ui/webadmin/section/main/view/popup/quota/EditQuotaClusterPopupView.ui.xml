@@ -34,7 +34,7 @@
 				<e:EntityModelRadioButtonEditor
 					ui:field="specificMemRadioButtonEditor" addStyleNames="{style.radioButtonWidth}"/>
 				<e:EntityModelTextBoxEditor ui:field="memValueEditor" addStyleNames="{style.textBoxWidth}" />
-				<g:Label addStyleNames="{style.measureLabel}">GB</g:Label>
+				<g:Label addStyleNames="{style.measureLabel}">MB</g:Label>
 			</g:HorizontalPanel>
 			<g:Label ui:field="cpuLabel" addStyleNames="{style.labelStyle}"/>
 			<g:HorizontalPanel>
