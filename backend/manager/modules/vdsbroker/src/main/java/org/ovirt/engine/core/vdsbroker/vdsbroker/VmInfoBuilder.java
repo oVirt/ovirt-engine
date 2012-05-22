@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.LunDisk;
+import org.ovirt.engine.core.common.businessentities.PropagateErrors;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
@@ -22,6 +23,7 @@ import org.ovirt.engine.core.common.businessentities.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmType;
+import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
@@ -260,15 +262,18 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                     struct.add(VdsProperties.VolumeId, diskImage.getImageId().toString());
                     struct.add(VdsProperties.Format, diskImage.getvolume_format().toString()
                             .toLowerCase());
+                    struct.add(VdsProperties.PropagateErrors, disk.getPropagateErrors().toString()
+                            .toLowerCase());
                 } else {
                     LunDisk lunDisk = (LunDisk) disk;
                     struct.add("GUID", lunDisk.getLun().getLUN_id());
+                    struct.add(VdsProperties.Format, VolumeFormat.RAW.toString().toLowerCase());
+                    struct.add(VdsProperties.PropagateErrors, PropagateErrors.Off.toString()
+                            .toLowerCase());
                 }
 
                 addBootOrder(vmDevice, struct);
                 struct.add(VdsProperties.Shareable, String.valueOf(disk.isShareable()));
-                struct.add(VdsProperties.PropagateErrors, disk.getPropagateErrors().toString()
-                        .toLowerCase());
                 struct.add(VdsProperties.Optional, Boolean.FALSE.toString());
                 struct.add(VdsProperties.ReadOnly, String.valueOf(vmDevice.getIsReadOnly()));
                 struct.add(VdsProperties.SpecParams, vmDevice.getSpecParams());
