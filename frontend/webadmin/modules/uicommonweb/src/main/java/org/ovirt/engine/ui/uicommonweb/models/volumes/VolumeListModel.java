@@ -378,7 +378,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
         for (Object item : getSelectedItems())
         {
             GlusterVolumeEntity volume = (GlusterVolumeEntity) item;
-            list.add(new GlusterVolumeRebalanceParameters(volume.getClusterId(), volume.getId(), false, false));
+            list.add(new GlusterVolumeRebalanceParameters(volume.getId(), false, false));
         }
         Frontend.RunMultipleAction(VdcActionType.StartRebalanceGlusterVolume, list);
     }

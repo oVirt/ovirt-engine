@@ -99,8 +99,7 @@ public class StartRebalanceGlusterVolumeCommandTest {
     }
 
     private StartRebalanceGlusterVolumeCommand createTestCommand(Guid volumeId) {
-        return new StartRebalanceGlusterVolumeCommand(new GlusterVolumeRebalanceParameters(new Guid(),
-                volumeId,
+        return new StartRebalanceGlusterVolumeCommand(new GlusterVolumeRebalanceParameters(volumeId,
                 false,
                 false));
     }

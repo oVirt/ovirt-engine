@@ -12,7 +12,7 @@ public class GlusterVolumeRebalanceParameters extends GlusterVolumeParameters {
     private boolean fixLayoutOnly;
     private boolean forceAction;
 
-    public GlusterVolumeRebalanceParameters(Guid clusterId, Guid volumeId, Boolean fixLayoutOnly, Boolean forceAction) {
+    public GlusterVolumeRebalanceParameters(Guid volumeId, boolean fixLayoutOnly, boolean forceAction) {
         super(volumeId);
 
         setFixLayoutOnly(fixLayoutOnly);
@@ -34,5 +34,4 @@ public class GlusterVolumeRebalanceParameters extends GlusterVolumeParameters {
     public boolean isForceAction() {
         return forceAction;
     }
-
 }
