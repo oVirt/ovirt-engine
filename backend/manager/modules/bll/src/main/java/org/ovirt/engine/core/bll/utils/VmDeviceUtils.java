@@ -11,7 +11,6 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.VmHandler;
-import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.businessentities.BaseDisk;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -24,6 +23,7 @@ import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
+import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
@@ -184,6 +184,20 @@ public class VmDeviceUtils {
             specParams.put(VdsProperties.Path, srcCdPath);
         }
     }
+
+    /**
+     * Add a NIC device for the VM.
+     *
+     * @param id
+     *            The NIC id (must correspond with the ID of the NIC in the VM).
+     * @param plugged
+     *            Is the NIC plugged to the VM or not.
+     * @return The device that was added.
+     */
+    public static VmDevice addNetworkInterfaceDevice(VmDeviceId id, boolean plugged) {
+        return addManagedDevice(id, VmDeviceType.INTERFACE, VmDeviceType.BRIDGE, null, plugged, false);
+    }
+
 
     /**
      * adds managed device to vm_device

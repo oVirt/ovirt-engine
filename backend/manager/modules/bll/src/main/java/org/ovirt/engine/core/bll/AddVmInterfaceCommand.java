@@ -18,7 +18,6 @@ import org.ovirt.engine.core.common.businessentities.network;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
-import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.vdscommands.HotPlugUnplgNicVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -68,14 +67,9 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends V
                 .getVmNetworkStatisticsDAO()
                 .save(getParameters().getInterface().getStatistics());
 
-        VmDevice vmDevice =
-                VmDeviceUtils.addManagedDevice(new VmDeviceId(getParameters().getInterface().getId(),
-                        getParameters().getVmId()),
-                        VmDeviceType.INTERFACE,
-                        VmDeviceType.BRIDGE,
-                        null,
-                        getParameters().getInterface().isActive(),
-                        false);
+        VmDevice vmDevice = VmDeviceUtils.addNetworkInterfaceDevice(
+                new VmDeviceId(getParameters().getInterface().getId(), getParameters().getVmId()),
+                getParameters().getInterface().isActive());
 
         boolean succeded = true;
         VmDynamic vmDynamic = getVm().getDynamicData();
