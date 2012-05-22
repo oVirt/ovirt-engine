@@ -20,6 +20,8 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.volumes.VolumeListModel;
+import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public class VolumeModel extends Model {
@@ -360,10 +362,22 @@ public class VolumeModel extends Model {
     public boolean validate() {
         if (!validateBrickCount())
         {
+            setMessage(VolumeBrickModel.getValidationFailedMsg((GlusterVolumeType) getTypeList().getSelectedItem()));
             return false;
         }
 
-        return true;
+        getName().ValidateEntity(new IValidation[] { new NotEmptyValidation() });
+
+        setMessage(null);
+        boolean validTransportTypes = true;
+        if (((Boolean) getTcpTransportType().getEntity()) == false
+                && ((Boolean) getRdmaTransportType().getEntity()) == false)
+        {
+            validTransportTypes = false;
+            setMessage(ConstantsManager.getInstance().getConstants().volumeTransportTypesValidationMsg());
+        }
+
+        return getName().getIsValid() && validTransportTypes;
     }
 
     private void dataCenter_SelectedItemChanged()

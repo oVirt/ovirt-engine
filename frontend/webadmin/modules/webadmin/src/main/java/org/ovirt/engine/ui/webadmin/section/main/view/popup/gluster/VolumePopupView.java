@@ -112,6 +112,10 @@ public class VolumePopupView extends AbstractModelBoundPopupView<VolumeModel> im
     @WithElementId
     EntityModelTextBoxEditor allowAccessEditor;
 
+    @UiField
+    @Ignore
+    Label messageLabel;
+
     @Inject
     public VolumePopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
         super(eventBus, resources);
@@ -205,5 +209,11 @@ public class VolumePopupView extends AbstractModelBoundPopupView<VolumeModel> im
     @Override
     public VolumeModel flush() {
         return Driver.driver.flush();
+    }
+
+    @Override
+    public void setMessage(String message) {
+        super.setMessage(message);
+        messageLabel.setText(message);
     }
 }

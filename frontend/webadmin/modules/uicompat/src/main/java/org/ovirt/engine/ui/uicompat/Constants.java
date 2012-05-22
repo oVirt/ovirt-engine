@@ -1287,7 +1287,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Brick with the same details already exist")
     String duplicateBrickMsg();
 
-    @DefaultStringValue("Atleast 1 brick should be present")
+    @DefaultStringValue("At least 1 brick should be present")
     String distriputedVolumeAddBricksMsg();
 
     @DefaultStringValue("Number of bricks should be equal to Replica Count")
@@ -1337,4 +1337,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("No available keys")
     String noKeyAvailable();
+
+    @DefaultStringValue("At least one transport type should be selected.")
+    String volumeTransportTypesValidationMsg();
 }
