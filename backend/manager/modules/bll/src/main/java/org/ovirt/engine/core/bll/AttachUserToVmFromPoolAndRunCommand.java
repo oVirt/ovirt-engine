@@ -235,7 +235,7 @@ VmPoolUserCommandBase<T> {
     }
 
     @Override
-    protected Map<String, Guid> getExclusiveLocks() {
-        return Collections.singletonMap(getClass().getName(), getAdUserId());
+    protected Map<Guid, String> getExclusiveLocks() {
+        return Collections.singletonMap(getAdUserId(), getClass().getName());
     }
 }

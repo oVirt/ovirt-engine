@@ -49,7 +49,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
 
     private static final long serialVersionUID = -461387501474222174L;
 
-    private List<Guid> snapshotsToRemove = new ArrayList<Guid>();
+    private final List<Guid> snapshotsToRemove = new ArrayList<Guid>();
 
     /**
      * The snapshot being restored to.
@@ -318,8 +318,8 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
     }
 
     @Override
-    protected Map<String, Guid> getExclusiveLocks() {
-        return Collections.singletonMap(LockingGroup.VM.name(), (Guid) getVmId());
+    protected Map<Guid, String> getExclusiveLocks() {
+        return Collections.singletonMap(getVmId(), LockingGroup.VM.name());
     }
 
     private static Log log = LogFactory.getLog(RemoveAllVmImagesCommand.class);

@@ -314,8 +314,8 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
     }
 
     @Override
-    protected Map<String, Guid> getExclusiveLocks() {
-        return Collections.singletonMap(LockingGroup.VM.name(), getVmId());
+    protected Map<Guid, String> getExclusiveLocks() {
+        return Collections.singletonMap(getVmId(), LockingGroup.VM.name());
     }
 
 }

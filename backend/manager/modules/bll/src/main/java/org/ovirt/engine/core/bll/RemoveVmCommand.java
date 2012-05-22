@@ -206,8 +206,8 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
     }
 
     @Override
-    protected Map<String, Guid> getExclusiveLocks() {
-        return Collections.singletonMap(getClass().getName(), getVmId());
+    protected Map<Guid, String> getExclusiveLocks() {
+        return Collections.singletonMap(getVmId(), getClass().getName());
     }
 
     protected void RemoveVmFromDb() {

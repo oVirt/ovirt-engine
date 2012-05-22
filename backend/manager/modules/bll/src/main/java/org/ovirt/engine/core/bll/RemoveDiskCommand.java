@@ -50,8 +50,8 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBase<T> {
 
     private static final long serialVersionUID = -4520874214339816607L;
-    private Disk disk;
-    private Map<String, Guid> sharedLockMap;
+    private final Disk disk;
+    private Map<Guid, String> sharedLockMap;
     private List<PermissionSubject> permsList = null;
 
     public RemoveDiskCommand(T parameters) {
@@ -127,9 +127,9 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
 
     private void buildSharedLockMap() {
         if (disk.getVmEntityType() == VmEntityType.VM) {
-            sharedLockMap = Collections.singletonMap(LockingGroup.VM.name(), disk.getvm_guid());
+            sharedLockMap = Collections.singletonMap(disk.getvm_guid(), LockingGroup.VM.name());
         } else if (disk.getVmEntityType() == VmEntityType.TEMPLATE) {
-            sharedLockMap = Collections.singletonMap(LockingGroup.TEMPLATE.name(), disk.getvm_guid());
+            sharedLockMap = Collections.singletonMap(disk.getvm_guid(), LockingGroup.TEMPLATE.name());
         }
     }
 
@@ -301,12 +301,12 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
     }
 
     @Override
-    protected Map<String, Guid> getExclusiveLocks() {
-        return Collections.singletonMap(LockingGroup.DISK.name(), (Guid) getParameters().getEntityId());
+    protected Map<Guid, String> getExclusiveLocks() {
+        return Collections.singletonMap((Guid) getParameters().getEntityId(), LockingGroup.DISK.name());
     }
 
     @Override
-    protected Map<String, Guid> getSharedLocks() {
+    protected Map<Guid, String> getSharedLocks() {
         return sharedLockMap;
     }
 

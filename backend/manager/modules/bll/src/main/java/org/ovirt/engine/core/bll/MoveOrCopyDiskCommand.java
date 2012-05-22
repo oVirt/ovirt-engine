@@ -40,7 +40,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
 
     private static final long serialVersionUID = -7219975636530710384L;
     private boolean isVmFound = false;
-    private Map<String, Guid> sharedLockMap;
+    private Map<Guid, String> sharedLockMap;
     private List<PermissionSubject> permsList = null;
 
     public MoveOrCopyDiskCommand(T parameters) {
@@ -337,24 +337,24 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
                 retValue = false;
             } else {
                 setVmTemplate(template);
-                sharedLockMap = Collections.singletonMap(LockingGroup.TEMPLATE.name(), getImage().getvm_guid());
+                sharedLockMap = Collections.singletonMap(getImage().getvm_guid(), LockingGroup.TEMPLATE.name());
             }
         } else if (!Guid.Empty.equals(getImage().getvm_guid())) {
             VM vm = getVmDAO().get(getImage().getvm_guid());
             isVmFound = true;
-            sharedLockMap = Collections.singletonMap(LockingGroup.VM.name(), getImage().getvm_guid());
+            sharedLockMap = Collections.singletonMap(getImage().getvm_guid(), LockingGroup.VM.name());
             setVm(vm);
         }
         return retValue;
     }
 
     @Override
-    protected Map<String, Guid> getExclusiveLocks() {
-        return Collections.singletonMap(LockingGroup.DISK.name(), getParameters().getImageId());
+    protected Map<Guid, String> getExclusiveLocks() {
+        return Collections.singletonMap(getParameters().getImageId(), LockingGroup.DISK.name());
     }
 
     @Override
-    protected Map<String, Guid> getSharedLocks() {
+    protected Map<Guid, String> getSharedLocks() {
         return sharedLockMap;
     }
 

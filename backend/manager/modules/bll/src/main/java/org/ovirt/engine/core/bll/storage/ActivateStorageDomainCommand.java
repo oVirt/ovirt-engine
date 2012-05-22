@@ -112,8 +112,8 @@ public class ActivateStorageDomainCommand<T extends StorageDomainPoolParametersB
     }
 
     @Override
-    protected Map<String, Guid> getExclusiveLocks() {
-        return Collections.singletonMap(getClass().getName(), getStorageDomainId().getValue());
+    protected Map<Guid, String> getExclusiveLocks() {
+        return Collections.singletonMap(getStorageDomainId().getValue(), getClass().getName());
     }
 
     private boolean storageDomainStatusIsValid() {

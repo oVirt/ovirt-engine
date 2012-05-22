@@ -278,8 +278,8 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
     }
 
     @Override
-    protected Map<String, Guid> getExclusiveLocks() {
-        return Collections.singletonMap(getClass().getName(), getStoragePoolId().getValue());
+    protected Map<Guid, String> getExclusiveLocks() {
+        return Collections.singletonMap(getStoragePoolId().getValue(), getClass().getName());
     }
 
     @Override

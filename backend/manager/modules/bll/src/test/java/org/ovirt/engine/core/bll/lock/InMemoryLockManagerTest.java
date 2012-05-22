@@ -35,14 +35,14 @@ public class InMemoryLockManagerTest {
         mockLockManager();
         updateGuid = Guid.NewGuid();
         lockGuid = Guid.NewGuid();
-        Map<String, Guid> updateRegionsMap = new HashMap<String, Guid>();
-        updateRegionsMap.put("1", updateGuid);
+        Map<Guid, String> updateRegionsMap = new HashMap<Guid, String>();
+        updateRegionsMap.put(updateGuid, "1");
         updateLock1 = new EngineLock();
         updateLock1.setSharedLocks(updateRegionsMap);
         lockLock1 = new EngineLock();
         lockLock1.setExclusiveLocks(updateRegionsMap);
-        Map<String, Guid> lockedRegionsMap = new HashMap<String, Guid>();
-        lockedRegionsMap.put("2", lockGuid);
+        Map<Guid, String> lockedRegionsMap = new HashMap<Guid, String>();
+        lockedRegionsMap.put(lockGuid, "2");
         lockLock2 = new EngineLock();
         lockLock2.setExclusiveLocks(lockedRegionsMap);
         updateLock2 = new EngineLock();
@@ -71,7 +71,7 @@ public class InMemoryLockManagerTest {
         assertTrue(LockManagerFactory.getLockManager().acquireLock(updateAndLockLock));
         LockManagerFactory.getLockManager().releaseLock(updateAndLockLock);
         assertTrue(LockManagerFactory.getLockManager().acquireLock(updateLock1));
-        assertTrue(lockMager.releaseLock("1" + updateGuid));
+        assertTrue(lockMager.releaseLock(updateGuid + "1"));
         assertTrue(lockMager.showAllLocks().isEmpty());
     }
 

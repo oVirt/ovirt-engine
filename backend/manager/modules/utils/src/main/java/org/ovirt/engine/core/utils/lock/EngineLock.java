@@ -9,31 +9,31 @@ import org.ovirt.engine.core.compat.Guid;
  */
 public class EngineLock {
 
-    private Map<String, Guid> exclusiveLocks;
-    private Map<String, Guid> sharedLocks;
+    private Map<Guid, String> exclusiveLocks;
+    private Map<Guid, String> sharedLocks;
 
     public EngineLock() {
 
     }
 
-    public EngineLock(Map<String, Guid> exclusiveLocks, Map<String, Guid> sharedLocks) {
+    public EngineLock(Map<Guid, String> exclusiveLocks, Map<Guid, String> sharedLocks) {
         setExclusiveLocks(exclusiveLocks);
         setSharedLocks(sharedLocks);
     }
 
-    public Map<String, Guid> getExclusiveLocks() {
+    public Map<Guid, String> getExclusiveLocks() {
         return exclusiveLocks;
     }
 
-    public void setExclusiveLocks(Map<String, Guid> exclusiveLocks) {
+    public void setExclusiveLocks(Map<Guid, String> exclusiveLocks) {
         this.exclusiveLocks = exclusiveLocks;
     }
 
-    public Map<String, Guid> getSharedLocks() {
+    public Map<Guid, String> getSharedLocks() {
         return sharedLocks;
     }
 
-    public void setSharedLocks(Map<String, Guid> sharedLocks) {
+    public void setSharedLocks(Map<Guid, String> sharedLocks) {
         this.sharedLocks = sharedLocks;
     }
 
@@ -47,9 +47,9 @@ public class EngineLock {
         return message.toString();
     }
 
-    private void buildEntryStrings(Map<String, Guid> locks, StringBuilder message) {
+    private void buildEntryStrings(Map<Guid, String> locks, StringBuilder message) {
         if (locks != null) {
-            for (Map.Entry<String, Guid> entry : locks.entrySet()) {
+            for (Map.Entry<Guid, String> entry : locks.entrySet()) {
                 message.append("key: ").append(entry.getKey()).append(" value: ").append(entry.getValue()).append('\n');
             }
         }

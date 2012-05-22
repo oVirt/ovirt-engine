@@ -102,7 +102,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     /**
      * The context defines how to monitor the command and handle its compensation
      */
-    private CommandContext context = new CommandContext();
+    private final CommandContext context = new CommandContext();
 
     /**
      * A map contains the properties for describing the job
@@ -1142,11 +1142,11 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         }
     }
 
-    protected Map<String, Guid> getExclusiveLocks() {
+    protected Map<Guid, String> getExclusiveLocks() {
         return null;
     }
 
-    protected Map<String, Guid> getSharedLocks() {
+    protected Map<Guid, String> getSharedLocks() {
         return null;
     }
 

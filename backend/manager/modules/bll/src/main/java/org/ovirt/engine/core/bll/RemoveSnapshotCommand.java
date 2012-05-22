@@ -182,8 +182,8 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
     }
 
     @Override
-    protected Map<String, Guid> getExclusiveLocks() {
-        return Collections.singletonMap(LockingGroup.VM.name(), (Guid) getVmId());
+    protected Map<Guid, String> getExclusiveLocks() {
+        return Collections.singletonMap(getVmId(), LockingGroup.VM.name());
     }
 
     private SnapshotDao getSnapshotDao() {
