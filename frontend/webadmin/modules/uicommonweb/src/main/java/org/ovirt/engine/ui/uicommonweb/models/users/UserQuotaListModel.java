@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.Quota;
+import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.GetQuotasByAdElementIdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -11,7 +12,6 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
-import org.ovirt.engine.ui.uicommonweb.uimode.UiMode;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
@@ -20,7 +20,7 @@ public class UserQuotaListModel extends SearchableListModel
     public UserQuotaListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().quotaTitle());
         setHashName("quota"); // $//$NON-NLS-1$
-        setAvailableInModes(UiMode.VirtOnly);
+        setAvailableInModes(ApplicationMode.VirtOnly);
     }
 
     @Override

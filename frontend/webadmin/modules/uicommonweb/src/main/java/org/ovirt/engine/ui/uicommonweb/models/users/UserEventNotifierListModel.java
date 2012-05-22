@@ -20,6 +20,7 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.DataProvider;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.common.SelectionTreeNodeModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -109,7 +110,8 @@ public class UserEventNotifierListModel extends SearchableListModel
         model.setTitle(ConstantsManager.getInstance().getConstants().addEventNotificationTitle());
         model.setHashName("add_event_notification"); //$NON-NLS-1$
 
-        ArrayList<EventNotificationEntity> eventTypes = DataProvider.GetEventNotificationTypeList();
+        ArrayList<EventNotificationEntity> eventTypes =
+                ApplicationModeHelper.getModeSpecificEventNotificationTypeList();
         Map<EventNotificationEntity, HashSet<AuditLogType>> availableEvents =
                 DataProvider.GetAvailableNotificationEvents();
 

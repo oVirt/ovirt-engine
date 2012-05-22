@@ -7,6 +7,7 @@ import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.NGuid;
@@ -22,7 +23,6 @@ import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
-import org.ovirt.engine.ui.uicommonweb.uimode.UiMode;
 import org.ovirt.engine.ui.uicommonweb.validation.I18NNameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
@@ -491,8 +491,7 @@ public class ClusterModel extends Model
         getEnableOvirtService().setEntity(true);
         setEnableGlusterService(new EntityModel());
         getEnableGlusterService().setEntity(false);
-        getEnableGlusterService().setIsAvailable(ApplicationModeHelper.getUiMode() == UiMode.VirtGluster
-                || ApplicationModeHelper.getUiMode() == UiMode.AllModes);
+        getEnableGlusterService().setIsAvailable(ApplicationModeHelper.getUiMode() == ApplicationMode.AllModes);
         setOptimizationNone(new EntityModel());
         setOptimizationForServer(new EntityModel());
         setOptimizationForDesktop(new EntityModel());

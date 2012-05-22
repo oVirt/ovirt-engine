@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models;
 
 import java.util.List;
 
+import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
@@ -16,7 +17,6 @@ import org.ovirt.engine.ui.uicommonweb.ILogger;
 import org.ovirt.engine.ui.uicommonweb.TypeResolver;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.common.ProgressModel;
-import org.ovirt.engine.ui.uicommonweb.uimode.UiMode;
 import org.ovirt.engine.ui.uicompat.PropertyChangeNotifier;
 
 public class Model extends PropertyChangeNotifier implements IEventListener, ICommandTarget, IProvidePropertyChangedEvent
@@ -230,7 +230,7 @@ public class Model extends PropertyChangeNotifier implements IEventListener, ICo
         }
     }
 
-    public void setAvailableInModes(UiMode uiMode)
+    public void setAvailableInModes(ApplicationMode uiMode)
     {
         int value = uiMode.getValue();
         setAvailableInModes(value);
@@ -418,7 +418,7 @@ public class Model extends PropertyChangeNotifier implements IEventListener, ICo
 
         setChangeProhibitionReasons(new ObservableCollection<String>());
         setIsChangable(true);
-        setAvailableInModes(UiMode.AllModes);
+        setAvailableInModes(ApplicationMode.AllModes);
         setIsAvailable(true);
 
         setIsSelectable(true);

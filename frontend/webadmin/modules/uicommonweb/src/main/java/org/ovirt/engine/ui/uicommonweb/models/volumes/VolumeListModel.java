@@ -16,6 +16,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeStatus
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
 import org.ovirt.engine.core.common.interfaces.SearchType;
+import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -37,7 +38,6 @@ import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeEventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeParameterListModel;
-import org.ovirt.engine.ui.uicommonweb.uimode.UiMode;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
@@ -106,7 +106,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
 
         setDefaultSearchString("Volumes:"); //$NON-NLS-1$
         setSearchString(getDefaultSearchString());
-        setAvailableInModes(UiMode.GlusterOnly);
+        setAvailableInModes(ApplicationMode.GlusterOnly);
 
         setCreateVolumeCommand(new UICommand("Create Volume", this)); //$NON-NLS-1$
         setRemoveVolumeCommand(new UICommand("Remove", this)); //$NON-NLS-1$

@@ -255,6 +255,7 @@
 		<!-- SearchBackend -->
 		<include name="common/VdcEventNotificationUtils.java" />
 		<include name="common/EventNotificationEntity.java" />
+		<include name="common/mode/ApplicationMode.java" />
 		<include name="common/interfaces/ITagsHandler.java" />
 		<!-- UiCommon -->
 		<include name="common/VdcActionUtils.java" />

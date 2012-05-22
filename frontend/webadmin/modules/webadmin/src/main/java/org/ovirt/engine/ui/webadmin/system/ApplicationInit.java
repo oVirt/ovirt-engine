@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.system;
 
+import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
@@ -13,7 +14,6 @@ import org.ovirt.engine.ui.uicommonweb.ReportInit;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.LoginModel;
-import org.ovirt.engine.ui.uicommonweb.uimode.UiMode;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.uimode.UiModeData;
 
@@ -73,7 +73,7 @@ public class ApplicationInit extends BaseApplicationInit<LoginModel> {
         UiModeData uiModeData = UiModeData.instance();
 
         if (uiModeData != null) {
-            UiMode uiMode = uiModeData.getUiMode();
+            ApplicationMode uiMode = uiModeData.getUiMode();
             ApplicationModeHelper.setUiMode(uiMode);
         }
     }
