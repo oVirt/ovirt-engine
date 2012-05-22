@@ -19,6 +19,8 @@ public interface ISpice
 
     Event getMenuItemSelectedEvent();
 
+    Event getUsbAutoShareChangedEvent();
+
     Version getCurrentVersion();
 
     boolean getIsInstalled();

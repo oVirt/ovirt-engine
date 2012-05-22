@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.common.uicommon;
 import java.util.logging.Logger;
 
 import org.ovirt.engine.core.compat.Event;
+import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ISpice;
 import org.ovirt.engine.ui.uicommonweb.models.vms.SpiceConsoleModel;
@@ -19,6 +20,9 @@ public class SpiceInterfaceImpl implements ISpice {
             SpiceConsoleModel.SpiceConnectedEventDefinition);
     private Event menuItemSelectedEvent = new Event(
             SpiceConsoleModel.SpiceMenuItemSelectedEventDefinition);
+    private Event usbAutoShareChangedEvent = new Event(
+            SpiceConsoleModel.UsbAutoShareChangedEventDefinition);
+
     private Version currentVersion = new Version(4, 4);
     private Version desiredVersion = new Version(4, 4);
     private int port;
@@ -75,6 +79,15 @@ public class SpiceInterfaceImpl implements ISpice {
 
     public void setMenuItemSelectedEvent(Event menuItemSelectedEvent) {
         this.menuItemSelectedEvent = menuItemSelectedEvent;
+    }
+
+    public void setUsbAutoShareChangedEvent(Event usbAutoShareChangedEvent) {
+        this.usbAutoShareChangedEvent = usbAutoShareChangedEvent;
+    }
+
+    @Override
+    public Event getUsbAutoShareChangedEvent() {
+        return usbAutoShareChangedEvent;
     }
 
     @Override
@@ -317,6 +330,7 @@ public class SpiceInterfaceImpl implements ISpice {
     @Override
     public void setUsbAutoShare(boolean usbAutoShare) {
         this.usbAutoShare = usbAutoShare;
+        getUsbAutoShareChangedEvent().raise(this, EventArgs.Empty);
     }
 
     @Override

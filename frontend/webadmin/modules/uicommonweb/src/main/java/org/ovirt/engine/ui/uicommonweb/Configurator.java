@@ -253,17 +253,6 @@ public abstract class Configurator {
                 }));
     }
 
-    public void updateIsUsbEnabled(final ISpice spice) {
-        // Get 'EnableUSBAsDefault' value from database
-        AsyncDataProvider.IsUSBEnabledByDefault(new AsyncQuery(this, new INewAsyncCallback() {
-            @Override
-            public void OnSuccess(Object target, Object returnValue) {
-                // Update IsUsbEnabled value
-                setIsUsbEnabled((Boolean) returnValue);
-            }
-        }));
-    }
-
     // Fetch file from a specified path
     public void fetchFile(String filePath, final Event onFetched) {
 
@@ -311,11 +300,33 @@ public abstract class Configurator {
         spice.setFullScreen(getSpiceFullScreen());
         spice.setSpiceBaseURL(getSpiceBaseURL());
         spice.setUsbFilter(getUsbFilter());
+        updateSpiceUsbAutoShare(spice);
 
         if (!isInitialized) {
-            updateIsUsbEnabled(spice);
+            updateIsUsbEnabled();
             isInitialized = true;
         }
+    }
+
+    private void updateIsUsbEnabled() {
+        // Get 'EnableUSBAsDefault' value from database
+        AsyncDataProvider.IsUSBEnabledByDefault(new AsyncQuery(this, new INewAsyncCallback() {
+            @Override
+            public void OnSuccess(Object target, Object returnValue) {
+                // Update IsUsbEnabled value
+                setIsUsbEnabled((Boolean) returnValue);
+            }
+        }));
+    }
+
+    private void updateSpiceUsbAutoShare(final ISpice spice) {
+        AsyncDataProvider.GetSpiceUsbAutoShare(new AsyncQuery(this,
+                new INewAsyncCallback() {
+                    @Override
+                    public void OnSuccess(Object target, Object returnValue) {
+                        spice.setUsbAutoShare((Boolean) returnValue);
+                    }
+                }));
     }
 
     public void updateSpice32Version() {

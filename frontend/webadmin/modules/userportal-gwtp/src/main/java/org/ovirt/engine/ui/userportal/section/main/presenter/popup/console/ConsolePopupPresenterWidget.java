@@ -1,8 +1,12 @@
 package org.ovirt.engine.ui.userportal.section.main.presenter.popup.console;
 
+import org.ovirt.engine.core.compat.Event;
+import org.ovirt.engine.core.compat.EventArgs;
+import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.IUserPortalListModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.ISpice;
 import org.ovirt.engine.ui.uicommonweb.models.vms.SpiceConsoleModel;
 import org.ovirt.engine.ui.userportal.ApplicationConstants;
 import org.ovirt.engine.ui.userportal.widget.basic.ConsoleUtils;
@@ -46,7 +50,7 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
 
         void setAdditionalConsoleAvailable(boolean hasAdditionalConsole);
 
-        void setSpiceConsoleAvailable(boolean b);
+        void setSpiceConsoleAvailable(boolean available);
 
     }
 
@@ -86,8 +90,23 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
         getView().setTitle(constants.consoleOptions());
 
         initView(model);
+        initListeners(model);
 
         super.init(model);
+    }
+
+    private void initListeners(final IUserPortalListModel model) {
+        UserPortalItemModel currentItem = (UserPortalItemModel) model.getSelectedItem();
+        if (!(currentItem.getDefaultConsole() instanceof SpiceConsoleModel)) {
+            return;
+        }
+        final ISpice spice = ((SpiceConsoleModel) currentItem.getDefaultConsole()).getspice();
+        spice.getUsbAutoShareChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                getView().edit(model);
+            }
+        });
     }
 
     private void initView(IUserPortalListModel model) {

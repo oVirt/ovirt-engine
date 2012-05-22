@@ -100,7 +100,6 @@ import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.DataProvider;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 
-@SuppressWarnings("unused")
 public final class AsyncDataProvider {
 
     // dictionary to hold cache of all config values (per version) queried by client, if the request for them succeeded.
@@ -358,6 +357,19 @@ public final class AsyncDataProvider {
         };
         GetConfigFromCache(
                 new GetConfigurationValueParameters(ConfigurationValues.VMMinMemorySizeInMB),
+                aQuery);
+    }
+
+    public static void GetSpiceUsbAutoShare(AsyncQuery aQuery) {
+        aQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object Convert(Object source, AsyncQuery _asyncQuery)
+            {
+                return source != null ? ((Boolean) source).booleanValue() : true;
+            }
+        };
+        GetConfigFromCache(
+                new GetConfigurationValueParameters(ConfigurationValues.SpiceUsbAutoShare),
                 aQuery);
     }
 
@@ -1530,9 +1542,9 @@ public final class AsyncDataProvider {
             }
         };
 
-        //        GetConfigFromCache(
-        //            new GetConfigurationValueParameters(ConfigurationValues.HighUtilizationForPowerSave),
-        //            aQuery);
+        // GetConfigFromCache(
+        // new GetConfigurationValueParameters(ConfigurationValues.HighUtilizationForPowerSave),
+        // aQuery);
 
         aQuery.asyncCallback.OnSuccess(aQuery.getModel(), 10);
     }
@@ -1545,9 +1557,9 @@ public final class AsyncDataProvider {
             }
         };
 
-        //        GetConfigFromCache(
-        //            new GetConfigurationValueParameters(ConfigurationValues.HighUtilizationForPowerSave),
-        //            aQuery);
+        // GetConfigFromCache(
+        // new GetConfigurationValueParameters(ConfigurationValues.HighUtilizationForPowerSave),
+        // aQuery);
 
         aQuery.asyncCallback.OnSuccess(aQuery.getModel(), 5);
     }
@@ -1981,7 +1993,6 @@ public final class AsyncDataProvider {
 
     /**
      * Get the Management Network Name
-     *
      * @param aQuery
      *            result callback
      */
@@ -1991,7 +2002,6 @@ public final class AsyncDataProvider {
 
     /**
      * method to get an item from config while caching it (config is not supposed to change during a session)
-     *
      * @param aQuery
      *            an async query
      * @param parameters
@@ -2040,7 +2050,6 @@ public final class AsyncDataProvider {
 
     /**
      * method to get an item from config while caching it (config is not supposed to change during a session)
-     *
      * @param aQuery
      *            an async query
      * @param configValue

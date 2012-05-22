@@ -54,6 +54,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
     public static EventDefinition SpiceDisconnectedEventDefinition;
     public static EventDefinition SpiceConnectedEventDefinition;
     public static EventDefinition SpiceMenuItemSelectedEventDefinition;
+    public static EventDefinition UsbAutoShareChangedEventDefinition;
 
     private SpiceMenu menu;
     private ISpice privatespice;
@@ -73,6 +74,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
         SpiceDisconnectedEventDefinition = new EventDefinition("SpiceDisconnected", SpiceConsoleModel.class); //$NON-NLS-1$
         SpiceConnectedEventDefinition = new EventDefinition("SpiceConnected", SpiceConsoleModel.class); //$NON-NLS-1$
         SpiceMenuItemSelectedEventDefinition = new EventDefinition("SpiceMenuItemSelected", SpiceConsoleModel.class); //$NON-NLS-1$
+        UsbAutoShareChangedEventDefinition = new EventDefinition("UsbAutoShareChanged", SpiceConsoleModel.class); //$NON-NLS-1$
     }
 
     public SpiceConsoleModel()
@@ -163,7 +165,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
                     tempVar.setRunAsStateless(getEntity().getis_stateless());
                     tempVar.setReinitialize(reinitialize);
                     Frontend.RunMultipleAction(VdcActionType.RunVm,
-                            new ArrayList<VdcActionParametersBase>(Arrays.asList(new VdcActionParametersBase[] {tempVar})));
+                            new ArrayList<VdcActionParametersBase>(Arrays.asList(new VdcActionParametersBase[] { tempVar })));
 
                 }
                 else if (StringHelper.stringsEqual(item.getCommandName(), CommandSuspend))
@@ -269,7 +271,8 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
                 parametersList.add(new GetVdsByVdsIdParameters(thisVm.getrun_on_vds().getValue()));
                 parametersList.add(new GetConfigurationValueParameters(ConfigurationValues.SSLEnabled));
                 parametersList.add(new GetConfigurationValueParameters(ConfigurationValues.CipherSuite));
-                GetConfigurationValueParameters spiceSecureChannelParams = new GetConfigurationValueParameters(ConfigurationValues.SpiceSecureChannels);
+                GetConfigurationValueParameters spiceSecureChannelParams =
+                        new GetConfigurationValueParameters(ConfigurationValues.SpiceSecureChannels);
                 spiceSecureChannelParams.setVersion(thisVm.getvds_group_compatibility_version().toString());
                 parametersList.add(spiceSecureChannelParams);
                 parametersList.add(new GetConfigurationValueParameters(ConfigurationValues.EnableSpiceRootCertificateValidation));

@@ -78,6 +78,10 @@ public class MainTabBasicDetailsPresenterWidget extends PresenterWidget<MainTabB
 
             @Override
             public void onConsoleModelChanged(ConsoleModelChangedEvent event) {
+                if (modelProvider.getModel().getSelectedItem() == null) {
+                    return;
+                }
+
                 setupConsole(modelProvider);
             }
 

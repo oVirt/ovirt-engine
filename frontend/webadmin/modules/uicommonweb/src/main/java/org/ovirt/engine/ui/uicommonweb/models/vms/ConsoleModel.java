@@ -8,7 +8,6 @@ import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 
-@SuppressWarnings("unused")
 public abstract class ConsoleModel extends EntityModel
 {
     public static final String EjectLabel = "[Eject]"; //$NON-NLS-1$
