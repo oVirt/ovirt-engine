@@ -479,8 +479,8 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     }
 
     private boolean InternalCanDoAction() {
+        boolean returnValue = false;
         try {
-            boolean returnValue;
             Transaction transaction = TransactionSupport.suspend();
             try {
                 returnValue =
@@ -493,17 +493,18 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             } finally {
                 TransactionSupport.resume(transaction);
             }
-            return returnValue;
         } catch (DataAccessException dataAccessEx) {
             log.error("Data access error during CanDoActionFailure.", dataAccessEx);
             addCanDoActionMessage(VdcBllMessages.CAN_DO_ACTION_DATABASE_CONNECTION_FAILURE);
-            return false;
         } catch (RuntimeException ex) {
             log.error("Error during CanDoActionFailure.", ex);
             addCanDoActionMessage(VdcBllMessages.CAN_DO_ACTION_GENERAL_FAILURE);
-            return false;
+        } finally {
+            if (!returnValue) {
+                freeLock();
+            }
         }
-
+        return returnValue;
     }
 
     protected void removeQuotaCommandLeftOver() {
