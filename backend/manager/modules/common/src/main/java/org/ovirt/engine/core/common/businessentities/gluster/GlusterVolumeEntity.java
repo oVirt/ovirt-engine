@@ -352,8 +352,8 @@ public class GlusterVolumeEntity extends IVdcQueryable implements BusinessEntity
         result = prime * result + ((volumeType == null) ? 0 : volumeType.hashCode());
         result = prime * result + ((transportTypes == null) ? 0 : transportTypes.hashCode());
         result = prime * result + ((status == null) ? 0 : status.hashCode());
-        result = prime * result + replicaCount;
-        result = prime * result + stripeCount;
+        result = prime * result + ((replicaCount == null) ? 0 : replicaCount.hashCode());
+        result = prime * result + ((stripeCount == null) ? 0 : stripeCount.hashCode());
         result = prime * result + ((options == null) ? 0 : options.hashCode());
         result = prime * result + ((accessProtocols == null) ? 0 : accessProtocols.hashCode());
         result = prime * result + ((bricks == null) ? 0 : bricks.hashCode());
@@ -375,8 +375,8 @@ public class GlusterVolumeEntity extends IVdcQueryable implements BusinessEntity
         if (!(name.equals(volume.getName())
                 && volumeType == volume.getVolumeType()
                 && status == volume.getStatus()
-                && replicaCount == volume.getReplicaCount()
-                && stripeCount == volume.getStripeCount())) {
+                && equalIntegers(replicaCount, volume.getReplicaCount())
+                && equalIntegers(stripeCount, volume.getStripeCount()))) {
             return false;
         }
 
@@ -397,6 +397,14 @@ public class GlusterVolumeEntity extends IVdcQueryable implements BusinessEntity
         }
 
         return true;
+    }
+
+    private boolean equalIntegers(Integer int1, Integer int2) {
+        if(int1 == null) {
+            return int1 == int2;
+        } else {
+            return int1.equals(int2);
+        }
     }
 
     @Override
