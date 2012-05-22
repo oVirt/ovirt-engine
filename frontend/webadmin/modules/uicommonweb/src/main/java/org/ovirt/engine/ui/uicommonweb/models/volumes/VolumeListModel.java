@@ -114,6 +114,11 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
         setStopCommand(new UICommand("Stop", this)); //$NON-NLS-1$
         setRebalanceCommand(new UICommand("Rebalance", this)); //$NON-NLS-1$
 
+        getRemoveVolumeCommand().setIsExecutionAllowed(false);
+        getStartCommand().setIsExecutionAllowed(false);
+        getStopCommand().setIsExecutionAllowed(false);
+        getRebalanceCommand().setIsExecutionAllowed(false);
+
         getSearchNextPageCommand().setIsAvailable(true);
         getSearchPreviousPageCommand().setIsAvailable(true);
     }
@@ -297,43 +302,40 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
         updateActionAvailability();
     }
 
+    @Override
+    protected void SelectedItemsChanged() {
+        super.OnSelectedItemChanged();
+        updateActionAvailability();
+    }
+
     private void updateActionAvailability() {
-        if (getSelectedItems() == null)
+        if (getSelectedItems() == null || getSelectedItems().size() == 0)
         {
+            getRemoveVolumeCommand().setIsExecutionAllowed(false);
+            getStopCommand().setIsExecutionAllowed(false);
+            getStartCommand().setIsExecutionAllowed(false);
+            getRebalanceCommand().setIsExecutionAllowed(false);
             return;
         }
-        if (getSelectedItems().size() < 0)
-        {
-            return;
-        }
+
+        getRemoveVolumeCommand().setIsExecutionAllowed(true);
         getStopCommand().setIsExecutionAllowed(true);
         getStartCommand().setIsExecutionAllowed(true);
         getRebalanceCommand().setIsExecutionAllowed(true);
 
         for (GlusterVolumeEntity volume : Linq.<GlusterVolumeEntity> Cast(getSelectedItems()))
         {
-
-            if (volume.getStatus() == GlusterVolumeStatus.DOWN)
-            {
-                getStopCommand().setIsExecutionAllowed(false);
-                getRemoveVolumeCommand().setIsExecutionAllowed(true);
-                getRebalanceCommand().setIsExecutionAllowed(false);
-                break;
-            }
-        }
-
-        for (GlusterVolumeEntity volume : Linq.<GlusterVolumeEntity> Cast(getSelectedItems()))
-        {
-
             if (volume.getStatus() == GlusterVolumeStatus.UP)
             {
-                getStartCommand().setIsExecutionAllowed(false);
                 getRemoveVolumeCommand().setIsExecutionAllowed(false);
-                break;
+                getStartCommand().setIsExecutionAllowed(false);
+            }
+            else if (volume.getStatus() == GlusterVolumeStatus.DOWN)
+            {
+                getStopCommand().setIsExecutionAllowed(false);
+                getRebalanceCommand().setIsExecutionAllowed(false);
             }
         }
-
-
     }
 
     private void cancel() {
