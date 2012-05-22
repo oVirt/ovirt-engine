@@ -8,6 +8,7 @@ import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
+import org.ovirt.engine.ui.common.widget.table.column.DiskSizeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.FullDateTimeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.models.disks.DiskListModel;
@@ -50,12 +51,13 @@ public class SubTabDiskTemplateView extends AbstractSubTabTableView<Disk, VmTemp
         };
         getTable().addColumn(disksColumn, constants.disksTemplate());
 
-        TextColumnWithTooltip<VmTemplate> sizeColumn = new TextColumnWithTooltip<VmTemplate>() {
+        DiskSizeColumn<VmTemplate> sizeColumn = new DiskSizeColumn<VmTemplate>() {
             @Override
-            public String getValue(VmTemplate object) {
-                return String.valueOf(object.getActualDiskSize());
+            protected Long getRawValue(VmTemplate object) {
+                return Double.valueOf(object.getActualDiskSize()).longValue();
             }
         };
+
         getTable().addColumn(sizeColumn, constants.actualSizeTemplate());
 
         FullDateTimeColumn<VmTemplate> dateColumn = new FullDateTimeColumn<VmTemplate>() {

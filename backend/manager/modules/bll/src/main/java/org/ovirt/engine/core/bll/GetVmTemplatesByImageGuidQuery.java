@@ -1,5 +1,9 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.List;
+import java.util.Map;
+
+import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.queries.GetVmTemplatesByImageGuidParameters;
 
 /**
@@ -13,8 +17,15 @@ public class GetVmTemplatesByImageGuidQuery<P extends GetVmTemplatesByImageGuidP
 
     @Override
     protected void executeQueryCommand() {
-        getQueryReturnValue().setReturnValue(getDbFacade()
-                .getVmTemplateDAO()
-                .getAllForImage(getParameters().getImageGuid()));
+        Map<Boolean, List<VmTemplate>> allTemplates =
+                getDbFacade().getVmTemplateDAO().getAllForImage(getParameters().getImageGuid());
+
+        for (List<VmTemplate> templates : allTemplates.values()) {
+            for (VmTemplate t : templates) {
+                VmTemplateHandler.UpdateDisksFromDb(t);
+            }
+        }
+
+        getQueryReturnValue().setReturnValue(allTemplates);
     }
 }
