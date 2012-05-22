@@ -166,6 +166,10 @@
       <xs:element name="pause" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
       <!-- should migration be forced if VM is pinned to host? -->
       <xs:element name="force" type="xs:boolean" minOccurs="0"/>
+	  <!-- For gluster volume set/reset option action -->
+      <xs:element name="option" type="Option" minOccurs="0"/>
+	  <!-- In gluster volume rebalance action, should only fix-layout be performed -->
+      <xs:element name="fix_layout" type="xs:boolean" minOccurs="0"/>
       <!-- ... etc., explicitly enumerate all the parameter types -->
     </xs:sequence>
   </xs:group>

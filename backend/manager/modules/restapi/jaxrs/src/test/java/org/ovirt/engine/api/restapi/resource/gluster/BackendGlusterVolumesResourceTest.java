@@ -210,7 +210,7 @@ public class BackendGlusterVolumesResourceTest extends AbstractBackendCollection
         return brick;
     }
 
-    private GlusterVolumeEntity setUpEntityExpectations(
+    static GlusterVolumeEntity setUpEntityExpectations(
             GlusterVolumeEntity entity, int index) {
         expect(entity.getId()).andReturn(GUIDS[index]).anyTimes();
         expect(entity.getName()).andReturn(NAMES[index]).anyTimes();

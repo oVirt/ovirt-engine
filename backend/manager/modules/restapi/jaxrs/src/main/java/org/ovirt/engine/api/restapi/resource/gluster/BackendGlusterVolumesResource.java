@@ -41,6 +41,10 @@ public class BackendGlusterVolumesResource
         setParent(parent);
     }
 
+    public ClusterResource getParent() {
+        return parent;
+    }
+
     public void setParent(ClusterResource parent) {
         this.parent = parent;
     }
@@ -95,6 +99,6 @@ public class BackendGlusterVolumesResource
 
     @Override
     public GlusterVolumeResource getGlusterVolumeSubResource(String id) {
-        return inject(new BackendGlusterVolumeResource(id));
+        return inject(new BackendGlusterVolumeResource(id, this));
     }
 }

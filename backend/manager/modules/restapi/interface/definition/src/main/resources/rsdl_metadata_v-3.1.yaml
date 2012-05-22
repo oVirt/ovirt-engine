@@ -2107,7 +2107,7 @@ actions:
     body:
       parameterType: Action
       signatures:
-      - mandatoryArguments: {action.name: 'xs:string'}
+      - mandatoryArguments: {action.option.name: 'xs:string', action.option.value: 'xs:string'}
         optionalArguments: {}
     urlparams: {}
     headers: {Content-Type: application/xml|json}
@@ -2116,7 +2116,7 @@ actions:
     body:
       parameterType: Action
       signatures:
-      - mandatoryArguments: {action.name: 'xs:string'}
+      - mandatoryArguments: {action.option.name: 'xs:string', action.force: 'xs:boolean'}
         optionalArguments: {}
     urlparams: {}
     headers: {Content-Type: application/xml|json}
