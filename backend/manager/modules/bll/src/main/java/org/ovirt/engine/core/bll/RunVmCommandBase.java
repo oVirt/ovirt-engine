@@ -12,12 +12,14 @@ import org.ovirt.engine.core.bll.storage.StorageHelperDirector;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.IVdsAsyncCommand;
+import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.LunDisk;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
+import org.ovirt.engine.core.common.businessentities.storage_server_connections;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.vdscommands.FailedToRunVmVDSCommandParameters;
@@ -335,8 +337,12 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
         }
         List<LunDisk> lunDisks = ImagesHandler.filterDiskBasedOnLuns(getVm().getDiskMap().values());
         for (LunDisk lunDisk : lunDisks) {
-            if (!StorageHelperDirector.getInstance().getItem(lunDisk.getLun().getLunType())
-                        .ConnectStorageToLunByVdsId(null, hostId, lunDisk.getLun())) {
+            LUNs lun = lunDisk.getLun();
+            lun.setLunConnections(new ArrayList<storage_server_connections>(DbFacade.getInstance()
+                                            .getStorageServerConnectionDAO()
+                                            .getAllForLun(lun.getLUN_id())));
+            if (!StorageHelperDirector.getInstance().getItem(lun.getLunConnections().get(0).getstorage_type())
+                        .ConnectStorageToLunByVdsId(null, hostId, lun, getVm().getstorage_pool_id())) {
                 log.infoFormat("Failed to connect  a lun disk to vdsm {0} skiping it", hostId);
                 return false;
             }

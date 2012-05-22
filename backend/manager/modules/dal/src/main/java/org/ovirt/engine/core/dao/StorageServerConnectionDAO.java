@@ -65,6 +65,15 @@ public interface StorageServerConnectionDAO extends DAO {
     List<storage_server_connections> getAllForStorage(String storage);
 
     /**
+     * Retrieves all connections for the specified Lun.
+     *
+     * @param lunId
+     *            the lun
+     * @return the list of connections
+     */
+    List<storage_server_connections> getAllForLun(String lunId);
+
+    /**
      * Retrieves all connections for the specified connection.
      *
      * @param connection

@@ -8,10 +8,12 @@ import org.ovirt.engine.core.common.action.VmDiskOperatinParameterBase;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
+import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.LunDisk;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.storage_server_connections;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
@@ -45,10 +47,19 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperatinParameterBas
                 Disk disk, VmDevice vmDevice) {
         if (disk.getDiskStorageType() == DiskStorageType.LUN) {
             LunDisk lunDisk = (LunDisk) disk;
-            if (commandType == VDSCommandType.HotPlugDisk
-                    && !StorageHelperDirector.getInstance().getItem(lunDisk.getLun().getLunType())
-                            .ConnectStorageToLunByVdsId(null, getVm().getrun_on_vds().getValue(), lunDisk.getLun())) {
-                throw new VdcBLLException(VdcBllErrors.StorageServerConnectionError);
+            if (commandType == VDSCommandType.HotPlugDisk) {
+                LUNs lun = lunDisk.getLun();
+                lun.setLunConnections(new ArrayList<storage_server_connections>(DbFacade.getInstance()
+                                                .getStorageServerConnectionDAO()
+                                                .getAllForLun(lun.getLUN_id())));
+                if (!StorageHelperDirector.getInstance()
+                        .getItem(lun.getLunConnections().get(0).getstorage_type())
+                            .ConnectStorageToLunByVdsId(null,
+                                    getVm().getrun_on_vds().getValue(),
+                                    lun,
+                                    getVm().getstorage_pool_id())) {
+                    throw new VdcBLLException(VdcBllErrors.StorageServerConnectionError);
+                }
             }
         }
         runVdsCommand(commandType, new HotPlugDiskVDSParameters(getVm().getrun_on_vds().getValue(),

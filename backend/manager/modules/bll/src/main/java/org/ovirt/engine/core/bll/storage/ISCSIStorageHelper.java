@@ -30,12 +30,12 @@ public class ISCSIStorageHelper extends StorageHelperBase {
 
     @Override
     protected boolean RunConnectionStorageToDomain(storage_domains storageDomain, Guid vdsId, int type) {
-        return RunConnectionStorageToDomain(storageDomain, vdsId, type, null);
+        return RunConnectionStorageToDomain(storageDomain, vdsId, type, null, Guid.Empty);
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    protected boolean RunConnectionStorageToDomain(storage_domains storageDomain, Guid vdsId, int type, LUNs lun) {
+    protected boolean RunConnectionStorageToDomain(storage_domains storageDomain, Guid vdsId, int type, LUNs lun, Guid storagePoolId) {
         boolean isSuccess = true;
         List<storage_server_connections> list =
                 (lun == null) ? DbFacade.getInstance()
@@ -47,14 +47,17 @@ public class ISCSIStorageHelper extends StorageHelperBase {
                 list = filterConnectionsUsedByOthers(list, storageDomain.getstorage(), lun != null ? lun.getLUN_id()
                         : "");
             }
+            Guid poolId = storagePoolId;
+            if (storageDomain != null && storageDomain.getstorage_pool_id() != null) {
+                poolId = storageDomain.getstorage_pool_id().getValue();
+            }
             VDSReturnValue returnValue = Backend
                     .getInstance()
                     .getResourceManager()
                     .RunVdsCommand(
                             VDSCommandType.forValue(type),
                             new ConnectStorageServerVDSCommandParameters(vdsId,
-                                    ((storageDomain.getstorage_pool_id()) != null) ? storageDomain.getstorage_pool_id()
-                                            .getValue() : Guid.Empty, StorageType.ISCSI, list));
+                                    poolId, StorageType.ISCSI, list));
             isSuccess = returnValue.getSucceeded();
             if (isSuccess && VDSCommandType.forValue(type) == VDSCommandType.ConnectStorageServer) {
                 isSuccess = IsConnectSucceeded((Map<String, String>) returnValue.getReturnValue(), list);
@@ -226,14 +229,14 @@ public class ISCSIStorageHelper extends StorageHelperBase {
     }
 
     @Override
-    public boolean ConnectStorageToLunByVdsId(storage_domains storageDomain, Guid vdsId, LUNs lun) {
-        return RunConnectionStorageToDomain(storageDomain, vdsId, VDSCommandType.ConnectStorageServer.getValue(), lun);
+    public boolean ConnectStorageToLunByVdsId(storage_domains storageDomain, Guid vdsId, LUNs lun, Guid storagePoolId) {
+        return RunConnectionStorageToDomain(storageDomain, vdsId, VDSCommandType.ConnectStorageServer.getValue(), lun, storagePoolId);
     }
 
     @Override
     public boolean DisconnectStorageFromLunByVdsId(storage_domains storageDomain, Guid vdsId, LUNs lun) {
         return RunConnectionStorageToDomain(storageDomain, vdsId, VDSCommandType.DisconnectStorageServer.getValue(),
-                lun);
+                lun, Guid.Empty);
     }
 
     @Override

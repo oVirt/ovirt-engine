@@ -94,4 +94,10 @@ public class StorageServerConnectionDAOHibernateImpl extends BaseDAOHibernateImp
         return mapDAO.getAllLUNStorageMapsForLun(lunId);
     }
     */
+
+    @Override
+    public List<storage_server_connections> getAllForLun(String lunId) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

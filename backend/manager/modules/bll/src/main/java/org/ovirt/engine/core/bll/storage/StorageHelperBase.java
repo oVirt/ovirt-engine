@@ -59,7 +59,7 @@ public abstract class StorageHelperBase implements IStorageHelper {
 
     protected abstract boolean RunConnectionStorageToDomain(storage_domains storageDomain, Guid vdsId, int type);
 
-    protected boolean RunConnectionStorageToDomain(storage_domains storageDomain, Guid vdsId, int type, LUNs lun) {
+    protected boolean RunConnectionStorageToDomain(storage_domains storageDomain, Guid vdsId, int type, LUNs lun, Guid storagePoolId) {
         return true;
     }
 
@@ -75,14 +75,14 @@ public abstract class StorageHelperBase implements IStorageHelper {
     }
 
     @Override
-    public boolean ConnectStorageToLunByVdsId(storage_domains storageDomain, Guid vdsId, LUNs lun) {
-        return RunConnectionStorageToDomain(storageDomain, vdsId, VdcActionType.ConnectStorageToVds.getValue(), lun);
+    public boolean ConnectStorageToLunByVdsId(storage_domains storageDomain, Guid vdsId, LUNs lun, Guid storagePoolId) {
+        return RunConnectionStorageToDomain(storageDomain, vdsId, VdcActionType.ConnectStorageToVds.getValue(), lun, storagePoolId);
     }
 
     @Override
     public boolean DisconnectStorageFromLunByVdsId(storage_domains storageDomain, Guid vdsId, LUNs lun) {
         return RunConnectionStorageToDomain(storageDomain, vdsId,
-                VdcActionType.RemoveStorageServerConnection.getValue(), lun);
+                VdcActionType.RemoveStorageServerConnection.getValue(), lun, Guid.Empty);
     }
 
     @Override

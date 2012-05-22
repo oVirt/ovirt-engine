@@ -61,6 +61,13 @@ public class StorageServerConnectionDAODbFacadeImpl extends BaseDAODbFacade impl
     }
 
     @Override
+    public List<storage_server_connections> getAllForLun(String lunId) {
+        return getCallsHandler().executeReadList("Getstorage_server_connectionsByLunId", mapper,
+                getCustomMapSqlParameterSource()
+                        .addValue("lunId", lunId));
+    }
+
+    @Override
     public List<storage_server_connections> getAllForConnection(
             storage_server_connections connection) {
         return getCallsHandler().executeReadList("Getstorage_server_connectionsByKey",
@@ -149,5 +156,4 @@ public class StorageServerConnectionDAODbFacadeImpl extends BaseDAODbFacade impl
         }
         return ret;
     }
-
 }

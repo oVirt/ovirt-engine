@@ -552,6 +552,18 @@ RETURN QUERY SELECT distinct storage_server_connections.*
 END; $procedure$
 LANGUAGE plpgsql;
 
+Create or replace FUNCTION Getstorage_server_connectionsByLunId(v_lunId VARCHAR(50))
+RETURNS SETOF storage_server_connections
+   AS $procedure$
+BEGIN
+RETURN QUERY SELECT storage_server_connections.*
+   FROM  storage_server_connections storage_server_connections
+   INNER JOIN lun_storage_server_connection_map ON
+   lun_storage_server_connection_map.storage_server_connection = storage_server_connections.id
+   WHERE     (lun_storage_server_connection_map.lun_id = v_lunId);
+END; $procedure$
+LANGUAGE plpgsql;
+
 --The GetByFK stored procedure cannot be created because the [storage_server_connections] table doesn't have at least one foreign key column or the foreign keys are also primary keys.
 
 
