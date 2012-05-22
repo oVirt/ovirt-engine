@@ -46,6 +46,10 @@ public class OvfTemplateWriter extends OvfWriter {
         _writer.WriteStartElement("TimeZone");
         _writer.WriteRaw(_vmTemplate.gettime_zone());
         _writer.WriteEndElement();
+        _writer.WriteStartElement("Origin");
+        _writer.WriteRaw(_vmTemplate.getorigin() == null ? "" : Integer.valueOf(_vmTemplate.getorigin().getValue())
+                .toString());
+        _writer.WriteEndElement();
         _writer.WriteStartElement("VmType");
         _writer.WriteRaw((new Integer(_vmTemplate.getvm_type().getValue())).toString());
         _writer.WriteEndElement();

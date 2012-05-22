@@ -7,6 +7,7 @@ import java.util.Date;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
+import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
@@ -220,6 +221,13 @@ public class OvfTemplateReader extends OvfReader {
         if (node != null) {
             if (!StringHelper.isNullOrEmpty(node.InnerText)) {
                 _vmTemplate.setkernel_params((node.InnerText));
+            }
+        }
+
+        node = content.SelectSingleNode("Origin");
+        if (node != null) {
+            if (!StringHelper.isNullOrEmpty(node.InnerText)) {
+                _vmTemplate.setorigin(OriginType.forValue(Integer.parseInt(node.InnerText)));
             }
         }
 
