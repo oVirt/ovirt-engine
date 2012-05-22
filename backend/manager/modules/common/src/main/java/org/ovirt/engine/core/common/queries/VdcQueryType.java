@@ -275,6 +275,7 @@ public enum VdcQueryType implements Serializable {
     // Gluster
     GetGlusterVolumeById,
     GetGlusterVolumeOptionsInfo,
+    GetGlusterVolumeBricks,
 
     // Default type instead of having to null check
     Unknown(VdcQueryAuthType.User);

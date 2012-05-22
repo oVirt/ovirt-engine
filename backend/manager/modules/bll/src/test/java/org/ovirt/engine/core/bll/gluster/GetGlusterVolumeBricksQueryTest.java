@@ -1,0 +1,66 @@
+package org.ovirt.engine.core.bll.gluster;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.ovirt.engine.core.bll.AbstractQueryTest;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickStatus;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
+import org.ovirt.engine.core.common.queries.gluster.GetGlusterVolumeByIdQueryParameters;
+import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
+
+public class GetGlusterVolumeBricksQueryTest extends
+AbstractQueryTest<GetGlusterVolumeByIdQueryParameters, GetGlusterVolumeBricksQuery<GetGlusterVolumeByIdQueryParameters>> {
+
+    GlusterVolumeEntity expected;
+    GlusterBrickDao glusterBrickDaoMock;
+    GlusterBrickEntity brickEntity;
+    List<GlusterBrickEntity> bricks = new ArrayList<GlusterBrickEntity>();
+
+    @Before
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
+        setupExpectedVolume();
+        setupMock();
+    }
+
+    private void setupExpectedVolume() {
+        expected = new GlusterVolumeEntity();
+        expected.setId(Guid.NewGuid());
+        brickEntity = new GlusterBrickEntity();
+        brickEntity.setId(Guid.NewGuid());
+        brickEntity.setServerId(Guid.NewGuid());
+        brickEntity.setBrickDirectory("/tmp/b1");
+        brickEntity.setStatus(GlusterBrickStatus.DOWN);
+        bricks.add(brickEntity);
+        expected.setBricks(bricks);
+    }
+
+    private void setupMock() {
+        // Mock the query's parameters
+        when(getQueryParameters().getVolumeId()).thenReturn(expected.getId());
+
+        // Mock the DAO
+        glusterBrickDaoMock = mock(GlusterBrickDao.class);
+        when(glusterBrickDaoMock.getBricksOfVolume(expected.getId())).thenReturn(bricks);
+        doReturn(glusterBrickDaoMock).when(getQuery()).getGlusterBrickDao();
+    }
+
+    @Test
+    public void testExecuteQueryCommnad() {
+        getQuery().executeQueryCommand();
+        List<GlusterBrickEntity> actual =  (List<GlusterBrickEntity>) getQuery().getQueryReturnValue().getReturnValue();
+
+        assertEquals("wrong Gluster Volume", expected.getBricks(), actual);
+    }
+}
