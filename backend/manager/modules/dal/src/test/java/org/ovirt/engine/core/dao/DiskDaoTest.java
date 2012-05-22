@@ -16,7 +16,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class DiskDaoTest extends BaseReadDaoTestCase<Guid, Disk, DiskDao> {
 
-    private static final int TOTAL_DISK_IMAGES = 4;
+    private static final int TOTAL_DISK_IMAGES = 5;
 
     @Override
     protected Guid getExistingEntityId() {
@@ -130,7 +130,7 @@ public class DiskDaoTest extends BaseReadDaoTestCase<Guid, Disk, DiskDao> {
      *            The result to check
      */
     private static void assertFullGetAllAttachableDisksByPoolId(List<Disk> disks) {
-        assertEquals("There should be only two attachable disks", 2, disks.size());
+        assertEquals("There should be only two attachable disks", 3, disks.size());
         Set<Guid> expectedFloatingDiskIds =
                 new HashSet<Guid>(Arrays.asList(FixturesTool.FLOATING_DISK_ID, FixturesTool.FLOATING_LUN_ID));
         Set<Guid> actualFloatingDiskIds = new HashSet<Guid>();
@@ -139,5 +139,4 @@ public class DiskDaoTest extends BaseReadDaoTestCase<Guid, Disk, DiskDao> {
         }
         assertEquals("Wrong attachable disks", expectedFloatingDiskIds, actualFloatingDiskIds);
     }
-
 }

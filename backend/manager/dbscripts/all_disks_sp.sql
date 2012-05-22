@@ -58,11 +58,10 @@ BEGIN
     RETURN QUERY SELECT all_disks.*
     FROM all_disks
     WHERE (v_storage_pool_id IS NULL OR all_disks.storage_pool_id = v_storage_pool_id)
-    AND   all_disks.vm_guid IS NULL
+    AND (all_disks.vm_guid IS NULL OR all_disks.shareable)
     AND   (NOT v_is_filtered OR EXISTS (SELECT 1
                                         FROM   user_disk_permissions_view
                                         WHERE  user_id = v_user_id AND entity_id = disk_id));
-
 END; $procedure$
 LANGUAGE plpgsql;
 

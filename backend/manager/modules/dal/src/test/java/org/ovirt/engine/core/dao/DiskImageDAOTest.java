@@ -108,7 +108,7 @@ public class DiskImageDAOTest extends BaseReadDaoTestCase<Guid, DiskImage, DiskI
     @Test
     public void testGetAllForQuotaId() {
         List<DiskImage> disks = dao.getAllForQuotaId(FixturesTool.QUOTA_GENERAL);
-        assertEquals("VM should have four disks", 4, disks.size());
+        assertEquals("VM should have five disks", 5, disks.size());
         for (DiskImage disk : disks) {
             assertEquals("Wrong quota enforcement type",
                     QuotaEnforcementTypeEnum.DISABLED,
