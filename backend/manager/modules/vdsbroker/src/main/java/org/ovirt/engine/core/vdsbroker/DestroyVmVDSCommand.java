@@ -59,14 +59,6 @@ public class DestroyVmVDSCommand<P extends DestroyVmVDSCommandParameters> extend
                                     DbFacade.getInstance().getVmNetworkStatisticsDAO().update(stats);
                                 }
                             }
-
-                            // if using stop then call to ProcessOnVmStop because
-                            // will not be called from UpdateRunTimeInfo
-                            if (!parameters.getGracefully()) {
-                                ResourceManager.getInstance()
-                                        .getEventListener()
-                                        .processOnVmStop(curVm.getId());
-                            }
                         } catch (RepositoryException ex) {
                             log.errorFormat(
                                     "VDS::destroy Failed to update vds status in database,  vds = {1} : {2}, error = {3}",
@@ -84,6 +76,12 @@ public class DestroyVmVDSCommand<P extends DestroyVmVDSCommandParameters> extend
                         return null;
                     }
                 });
+
+                // if using stop then call to ProcessOnVmStop because
+                // will not be called from UpdateRunTimeInfo
+                if (!parameters.getGracefully()) {
+                    onVmStop(curVm);
+                }
 
                 getVDSReturnValue().setReturnValue(curVm.getstatus());
             } else if (vdsBrokerCommand.getVDSReturnValue().getExceptionObject() != null) {
@@ -103,6 +101,25 @@ public class DestroyVmVDSCommand<P extends DestroyVmVDSCommandParameters> extend
         } else {
             getVDSReturnValue().setSucceeded(false);
         }
+    }
+
+    /**
+     * signal the event listener that this VM is down. Because we don't care for failures, to prevent a side effect of
+     * aborting the current TX this method is being invoked in a new TX of its own.
+     * @param curVm
+     *            current VM
+     */
+    private void onVmStop(final VM curVm) {
+        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
+
+            @Override
+            public Void runInTransaction() {
+                ResourceManager.getInstance()
+                        .getEventListener()
+                        .processOnVmStop(curVm.getId());
+                return null;
+            }
+        });
     }
 
     private static Log log = LogFactory.getLog(DestroyVmVDSCommand.class);
