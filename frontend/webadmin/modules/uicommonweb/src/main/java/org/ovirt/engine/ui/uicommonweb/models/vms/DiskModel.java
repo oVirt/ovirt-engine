@@ -678,20 +678,47 @@ public class DiskModel extends Model
         }
     }
 
-    private void IsInVm_EntityChanged() {
-        AsyncDataProvider.GetDataCenterList(new AsyncQuery(this, new INewAsyncCallback() {
-            @Override
-            public void OnSuccess(Object target, Object returnValue) {
-                DiskModel diskModel = (DiskModel) target;
-                ArrayList<storage_pool> dataCenters = (ArrayList<storage_pool>) returnValue;
+    private void UpdateDatacenters() {
+        Boolean isInVm = (Boolean) getIsInVm().getEntity();
+        Boolean isInternal = (Boolean) getIsInternal().getEntity();
 
-                diskModel.getDataCenter().setItems(dataCenters);
-                diskModel.getDataCenter().setIsAvailable(!((Boolean) getIsInVm().getEntity()) && true);
-            }
-        }));
+        getDataCenter().setIsAvailable(!isInVm || !isInternal);
+
+        if (isInternal) {
+            AsyncDataProvider.GetDataCenterById((new AsyncQuery(this, new INewAsyncCallback() {
+                @Override
+                public void OnSuccess(Object target, Object returnValue) {
+                    DiskModel diskModel = (DiskModel) target;
+                    storage_pool dataCenter = (storage_pool) returnValue;
+
+                    ArrayList<storage_pool> dataCenters = new ArrayList<storage_pool>();
+                    dataCenters.add(dataCenter);
+
+                    diskModel.getDataCenter().setItems(dataCenters);
+                }
+            })), getDatacenterId());
+        }
+        else {
+            AsyncDataProvider.GetDataCenterList(new AsyncQuery(this, new INewAsyncCallback() {
+                @Override
+                public void OnSuccess(Object target, Object returnValue) {
+                    DiskModel diskModel = (DiskModel) target;
+                    ArrayList<storage_pool> dataCenters = (ArrayList<storage_pool>) returnValue;
+                    diskModel.getDataCenter().setItems(dataCenters);
+                }
+            }));
+        }
+    }
+
+    private void IsInVm_EntityChanged() {
+        Boolean isInVm = (Boolean) getIsInVm().getEntity();
+        if (!isInVm) {
+            UpdateDatacenters();
+        }
     }
 
     private void IsInternal_EntityChanged() {
+        Boolean isInVm = (Boolean) getIsInVm().getEntity();
         Boolean isInternal = (Boolean) getIsInternal().getEntity();
 
         getSize().setIsAvailable(isInternal);
@@ -699,11 +726,12 @@ public class DiskModel extends Model
         getVolumeType().setIsAvailable(isInternal);
         getHost().setIsAvailable(!isInternal);
         getStorageType().setIsAvailable(!isInternal);
-        getDataCenter().setIsAvailable(!isInternal);
+        getDataCenter().setIsAvailable(!isInVm || !isInternal);
 
         if (!isInternal) {
             isWipeAfterDeleteChangable = getWipeAfterDelete().getIsChangable();
             isQuotaAvailable = getQuota().getIsAvailable();
+            UpdateDatacenters();
         }
         getWipeAfterDelete().setIsChangable(isInternal ? isWipeAfterDeleteChangable : true);
         getQuota().setIsAvailable(isInternal ? isQuotaAvailable : false);

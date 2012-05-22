@@ -376,7 +376,9 @@ public class VmGuideModel extends GuideModel
                                         @Override
                                         public void OnSuccess(Object target, Object returnValue) {
                                             VmGuideModel vmGuideModel1 = (VmGuideModel) target;
-                                            vmGuideModel1.storage = (storage_domains) returnValue;
+                                            ArrayList<storage_domains> storages =
+                                                    (ArrayList<storage_domains>) returnValue;
+                                            vmGuideModel1.storage = !storages.isEmpty() ? storages.get(0) : null;
                                             vmGuideModel1.AddDiskPostData();
                                         }
                                     }), getEntity().getstorage_pool_id());
@@ -400,6 +402,7 @@ public class VmGuideModel extends GuideModel
         model.setTitle(ConstantsManager.getInstance().getConstants().newVirtualDiskTitle());
         model.setHashName("new_virtual_disk"); //$NON-NLS-1$
         model.setIsNew(true);
+        model.getIsInVm().setEntity(true);
 
         ArrayList<storage_domains> storageDomains = new ArrayList<storage_domains>();
         for (storage_domains a : attachedStorageDomains)

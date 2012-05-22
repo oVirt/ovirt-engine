@@ -183,9 +183,7 @@ public class DiskListModel extends ListWithDetailsModel
         {
             Disk disk = (Disk) getSelectedItem();
 
-            // TODO: remove (disk.getDiskStorageType() == DiskStorageType.IMAGE) condition
-            diskVmListModel.setIsAvailable(disk.getVmEntityType() != VmEntityType.TEMPLATE
-                    && disk.getDiskStorageType() == DiskStorageType.IMAGE);
+            diskVmListModel.setIsAvailable(disk.getVmEntityType() != VmEntityType.TEMPLATE);
             diskTemplateListModel.setIsAvailable(disk.getVmEntityType() == VmEntityType.TEMPLATE);
         }
     }
