@@ -67,7 +67,6 @@ public class VolumeModel extends Model {
     public VolumeModel() {
 
         setAddBricksCommand(new UICommand("AddBricks", this)); //$NON-NLS-1$
-        getAddBricksCommand().setIsExecutionAllowed(false);
 
         setDataCenter(new ListModel());
         getDataCenter().getSelectedItemChangedEvent().addListener(new IEventListener() {
@@ -79,17 +78,6 @@ public class VolumeModel extends Model {
         });
         setCluster(new ListModel());
         setName(new EntityModel());
-
-        getName().getEntityChangedEvent().addListener(new IEventListener() {
-
-            @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                if (getName().getEntity() != null && ((String) getName().getEntity()).trim().length() > 0)
-                    getAddBricksCommand().setIsExecutionAllowed(true);
-                else
-                    getAddBricksCommand().setIsExecutionAllowed(false);
-            }
-        });
 
         setTypeList(new ListModel());
         ArrayList<GlusterVolumeType> list = new ArrayList<GlusterVolumeType>(Arrays.asList(GlusterVolumeType.values()));
