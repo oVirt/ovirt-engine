@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.action.VmTemplateParametersBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
+import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
@@ -244,6 +245,7 @@ public abstract class VmTemplateCommand<T extends VmTemplateParametersBase> exte
         List<VmNetworkInterface> list = DbFacade.getInstance().getVmNetworkInterfaceDAO()
                 .getAllForTemplate(getVmTemplateId());
         for (VmNetworkInterface iface : list) {
+            DbFacade.getInstance().getVmDeviceDAO().remove(new VmDeviceId(iface.getId(), getVmTemplateId()));
             DbFacade.getInstance().getVmNetworkInterfaceDAO().remove(iface.getId());
             // \\DbFacade.Instance.RemoveInterfaceStatistics(iface.id);
         }

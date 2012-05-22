@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.RemoveVmTemplateInterfaceParameters;
+import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmInterfaceType;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
@@ -15,6 +16,8 @@ public class RemoveVmTemplateInterfaceCommand<T extends RemoveVmTemplateInterfac
     protected void executeCommand() {
         AddCustomValue("InterfaceName", ((getParameters().getInterface().getName())));
         AddCustomValue("InterfaceType", (VmInterfaceType.forValue(getParameters().getInterface().getType()).getInterfaceTranslation()).toString());
+        DbFacade.getInstance().getVmDeviceDAO().remove(
+                new VmDeviceId(getParameters().getInterface().getId(), getParameters().getVmTemplateId()));
         DbFacade.getInstance().getVmNetworkInterfaceDAO().remove(getParameters().getInterface().getId());
         setSucceeded(true);
     }

@@ -3,9 +3,11 @@ package org.ovirt.engine.core.bll;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AddVmTemplateInterfaceParameters;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
+import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network;
@@ -41,6 +43,10 @@ public class AddVmTemplateInterfaceCommand<T extends AddVmTemplateInterfaceParam
                 .getVmNetworkInterfaceDAO()
                 .save(getParameters().getInterface());
         // \\DbFacade.Instance.addInterfaceStatistics(AddVmTemplateInterfaceParameters.Interface.InterfaceStatistics);
+
+        VmDeviceUtils.addNetworkInterfaceDevice(
+                new VmDeviceId(getParameters().getInterface().getId(), getParameters().getVmTemplateId()),
+                getParameters().getInterface().isActive());
 
         setSucceeded(true);
     }
