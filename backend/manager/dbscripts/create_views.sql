@@ -133,9 +133,9 @@ SELECT storage_impl.*,
 FROM
 (
     SELECT 0 AS disk_storage_type,
-           storage_id, -- Storage domain fields
-           storage_path,
-           storage_name,
+           array_to_string(array_agg(storage_id), ',') as storage_id, -- Storage fields
+           array_to_string(array_agg(storage_path), ',') as storage_path,
+           array_to_string(array_agg(storage_name), ',') as storage_name,
            storage_pool_id,
            image_guid, -- Image fields
            creation_date,
@@ -171,6 +171,7 @@ FROM
            null AS device_size
     FROM images_storage_domain_view
     WHERE active = TRUE
+    GROUP BY storage_pool_id,image_guid,creation_date,actual_size,read_rate,write_rate,size,it_guid,imageStatus,lastModified,volume_type,volume_format,image_group_id,boot,description,ParentId,app_list,vm_snapshot_id,active,vm_guid,entity_type,quota_id,quota_name,quota_enforcement_type,is_default_quota
     UNION
     SELECT 1 AS disk_storage_type,
            null AS storage_id, -- Storage domain fields
