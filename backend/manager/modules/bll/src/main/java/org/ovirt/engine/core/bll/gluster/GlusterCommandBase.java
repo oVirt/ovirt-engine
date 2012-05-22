@@ -3,9 +3,12 @@ package org.ovirt.engine.core.bll.gluster;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.SystemUtils;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -18,6 +21,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
  */
 public abstract class GlusterCommandBase<T extends VdcActionParametersBase> extends CommandBase<T> {
     private static final long serialVersionUID = -7394070330293300587L;
+    protected AuditLogType errorType;
 
     public GlusterCommandBase(T params) {
         super(params);
@@ -57,5 +61,17 @@ public abstract class GlusterCommandBase<T extends VdcActionParametersBase> exte
         VdcReturnValueBase returnValue = Backend.getInstance().runInternalAction(actionType, params);
         setSucceeded(returnValue.getSucceeded());
         return returnValue;
+    }
+
+    protected void handleVdsErrors(AuditLogType errType, List<String> errors) {
+        errorType = errType;
+        getReturnValue().getExecuteFailedMessages().addAll(errors);
+        getReturnValue().getFault().setMessage(StringUtils.join(errors, SystemUtils.LINE_SEPARATOR));
+    }
+
+    protected void handleVdsError(AuditLogType errType, String error) {
+        errorType = errType;
+        getReturnValue().getExecuteFailedMessages().add(error);
+        getReturnValue().getFault().setMessage(error);
     }
 }

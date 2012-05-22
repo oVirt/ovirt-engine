@@ -33,7 +33,6 @@ public class CreateGlusterVolumeCommand extends GlusterCommandBase<CreateGluster
 
     private static final long serialVersionUID = 7432566785114684972L;
     private GlusterVolumeEntity volume;
-    private AuditLogType errorType;
 
     public CreateGlusterVolumeCommand(CreateGlusterVolumeParameters params) {
         super(params);
@@ -110,7 +109,7 @@ public class CreateGlusterVolumeCommand extends GlusterCommandBase<CreateGluster
         setSucceeded(returnValue.getSucceeded());
 
         if(!getSucceeded()) {
-            getReturnValue().getExecuteFailedMessages().add(returnValue.getVdsError().getMessage());
+            handleVdsError(AuditLogType.GLUSTER_VOLUME_CREATE_FAILED, returnValue.getVdsError().getMessage());
             return;
         }
 
@@ -146,8 +145,7 @@ public class CreateGlusterVolumeCommand extends GlusterCommandBase<CreateGluster
         }
 
         if (!errors.isEmpty()) {
-            errorType = AuditLogType.GLUSTER_VOLUME_OPTION_SET_FAILED;
-            getReturnValue().getExecuteFailedMessages().addAll(errors);
+            handleVdsErrors(AuditLogType.GLUSTER_VOLUME_OPTION_SET_FAILED, errors);
         }
     }
 
@@ -225,8 +223,8 @@ public class CreateGlusterVolumeCommand extends GlusterCommandBase<CreateGluster
     }
 
     private void addVolumeToDb(final GlusterVolumeEntity createdVolume) {
-        // volume fetched from VDSM doesn't contain cluster id GlusterFS
-        // is not aware of multiple clusters
+        // volume fetched from VDSM doesn't contain cluster id as
+        // GlusterFS is not aware of multiple clusters
         createdVolume.setClusterId(getVdsGroupId());
         DbFacade.getInstance().getGlusterVolumeDao().save(createdVolume);
     }
@@ -236,7 +234,7 @@ public class CreateGlusterVolumeCommand extends GlusterCommandBase<CreateGluster
         if (getSucceeded()) {
             return AuditLogType.GLUSTER_VOLUME_CREATE;
         } else {
-            return errorType;
+            return errorType == null ? AuditLogType.GLUSTER_VOLUME_CREATE_FAILED : errorType;
         }
     }
 }
