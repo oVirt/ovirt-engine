@@ -1136,6 +1136,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("4")
     NumberOfUSBSlots(356),
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    NativeUSBEnabled(357),
+
     Invalid(65535);
 
     private int intValue;

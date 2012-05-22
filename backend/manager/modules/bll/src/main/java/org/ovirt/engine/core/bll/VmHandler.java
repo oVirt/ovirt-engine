@@ -435,7 +435,7 @@ public class VmHandler {
     public static boolean isUsbPolicyLegal(UsbPolicy usbPolicy, VmOsType osType, VDSGroup vdsGroup, List<String> messages) {
         boolean retVal = true;
         if (UsbPolicy.ENABLED_NATIVE.equals(usbPolicy)) {
-            if (vdsGroup.getcompatibility_version().compareTo(Version.v3_1) < 0) {
+            if(!Config.<Boolean> GetValue(ConfigValues.NativeUSBEnabled, vdsGroup.getcompatibility_version().getValue())) {
                 messages.add(VdcBllMessages.USB_NATIVE_SUPPORT_ONLY_AVAILABLE_ON_CLUSTER_LEVEL.toString());
                 retVal = false;
             }
