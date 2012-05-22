@@ -12,7 +12,6 @@ import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Quota;
-import org.ovirt.engine.core.common.businessentities.RepoFileMetaData;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -20,7 +19,6 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
-import org.ovirt.engine.core.common.queries.GetAllImagesListByStoragePoolIdParameters;
 import org.ovirt.engine.core.common.queries.GetAllRelevantQuotasForVdsGroupParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -87,21 +85,16 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     }
 
     protected void updateUserCdImage(Guid storagePoolId) {
-        Frontend.RunQuery(VdcQueryType.GetAllIsoImagesListByStoragePoolId,
-                new GetAllImagesListByStoragePoolIdParameters(storagePoolId),
-                new AsyncQuery(getModel(),
-                        new INewAsyncCallback() {
-                            @Override
-                            public void OnSuccess(Object target, Object returnValue) {
-                                UnitVmModel model = (UnitVmModel) target;
-                                List<String> images =
-                                        convertReposToStrings((List<RepoFileMetaData>) ((VdcQueryReturnValue) returnValue).getReturnValue());
-                                setImagesToModel(model, images);
+        AsyncDataProvider.GetIrsImageList(new AsyncQuery(getModel(), new INewAsyncCallback() {
+            @Override
+            public void OnSuccess(Object target, Object returnValue) {
+                UnitVmModel model = (UnitVmModel) target;
+                List<String> images = ((List<String>) ((VdcQueryReturnValue) returnValue).getReturnValue());
+                setImagesToModel(model, images);
+            }
 
-                            }
-
-                        },
-                        getModel().getHash()));
+        }),
+                storagePoolId);
     }
 
     protected void setImagesToModel(UnitVmModel model, List<String> images) {
@@ -109,14 +102,6 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         model.getCdImage().setItems(images);
         model.getCdImage().setSelectedItem((oldCdImage != null) ? oldCdImage
                 : Linq.FirstOrDefault(images));
-    }
-
-    private List<String> convertReposToStrings(List<RepoFileMetaData> repoList) {
-        List<String> reposAsStrings = new ArrayList<String>();
-        for (RepoFileMetaData repoFileMetaData : repoList) {
-            reposAsStrings.add(repoFileMetaData.getRepoFileName());
-        }
-        return reposAsStrings;
     }
 
     protected void UpdateCdImage()
@@ -127,41 +112,18 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             return;
         }
 
-        AsyncDataProvider.GetIsoDomainByDataCenterId(new AsyncQuery(this,
-                new INewAsyncCallback() {
-                    @Override
-                    public void OnSuccess(Object target, Object returnValue) {
-
-                        VmModelBehaviorBase behavior = (VmModelBehaviorBase) target;
-                        storage_domains storageDomain = (storage_domains) returnValue;
-                        if (storageDomain != null)
-                        {
-                            behavior.PostUpdateCdImage(storageDomain.getId());
-                        }
-                        else
-                        {
-                            behavior.getModel().getCdImage().setItems(new ArrayList<String>());
-                        }
-
-                    }
-                }, getModel().getHash()), dataCenter.getId());
-    }
-
-    public void PostUpdateCdImage(Guid storageDomainId)
-    {
         AsyncDataProvider.GetIrsImageList(new AsyncQuery(getModel(),
                 new INewAsyncCallback() {
                     @Override
                     public void OnSuccess(Object target, Object returnValue) {
-
                         UnitVmModel model = (UnitVmModel) target;
                         ArrayList<String> images = (ArrayList<String>) returnValue;
                         setImagesToModel(model, images);
 
                     }
                 }, getModel().getHash()),
-                storageDomainId,
-                false);
+                dataCenter.getId());
+
     }
 
     private Iterable<Map.Entry<String, String>> cachedTimeZones;

@@ -8,16 +8,16 @@ import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 
 public class ExistingPoolModelBehavior extends PoolModelBehaviorBase {
 
-    private final VM vm;
+    private final VM pool;
 
     public ExistingPoolModelBehavior(VM pool) {
-        this.vm = pool;
+        this.pool = pool;
 
     }
 
     @Override
     protected void setupSelectedTemplate(ListModel model, List<VmTemplate> templates) {
-        setupTemplate(vm, model);
+        setupTemplate(pool, model);
     }
 
 }

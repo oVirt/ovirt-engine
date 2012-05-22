@@ -24,7 +24,7 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
-import org.ovirt.engine.core.common.queries.GetAllIsoImagesListParameters;
+import org.ovirt.engine.core.common.queries.GetAllImagesListByStoragePoolIdParameters;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
 import org.ovirt.engine.core.common.queries.GetVdsByVdsIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
@@ -47,7 +47,6 @@ import org.ovirt.engine.ui.uicompat.FrontendMultipleQueryAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
 
-@SuppressWarnings("unused")
 public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultipleQueryAsyncCallback
 {
 
@@ -237,7 +236,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
                 && IsVmConnectReady());
     }
 
-    private void ExecuteQuery(VM vm)
+    private void ExecuteQuery(final VM vm)
     {
         AsyncQuery _asyncQuery0 = new AsyncQuery();
         _asyncQuery0.setModel(this);
@@ -283,11 +282,9 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
 
                 if (isoDomain != null)
                 {
-                    queryTypeList.add(VdcQueryType.GetAllIsoImagesList);
+                    queryTypeList.add(VdcQueryType.GetAllIsoImagesListByStoragePoolId);
 
-                    GetAllIsoImagesListParameters getIsoPamams = new GetAllIsoImagesListParameters();
-                    getIsoPamams.setStorageDomainId(isoDomain.getId());
-                    getIsoPamams.setForceRefresh(false);
+                    GetAllImagesListByStoragePoolIdParameters getIsoPamams = new GetAllImagesListByStoragePoolIdParameters(vm.getstorage_pool_id());
                     parametersList.add(getIsoPamams);
                 }
 

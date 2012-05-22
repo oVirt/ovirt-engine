@@ -44,7 +44,7 @@ import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetAllAttachableDisks;
 import org.ovirt.engine.core.common.queries.GetAllDisksByVmIdParameters;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParamenters;
-import org.ovirt.engine.core.common.queries.GetAllIsoImagesListParameters;
+import org.ovirt.engine.core.common.queries.GetAllImagesListByStoragePoolIdParameters;
 import org.ovirt.engine.core.common.queries.GetAllNetworkQueryParamenters;
 import org.ovirt.engine.core.common.queries.GetAllServerCpuListParameters;
 import org.ovirt.engine.core.common.queries.GetAllVdsByStoragePoolParameters;
@@ -194,7 +194,7 @@ public final class AsyncDataProvider {
         Frontend.RunQuery(VdcQueryType.GetStorageDomainsByStoragePoolId, getExportParams, aQuery);
     }
 
-    public static void GetIrsImageList(AsyncQuery aQuery, Guid isoDomainId, boolean forceRefresh) {
+    public static void GetIrsImageList(AsyncQuery aQuery, Guid storagePoolId) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -215,13 +215,12 @@ public final class AsyncDataProvider {
             }
         };
 
-        GetAllIsoImagesListParameters parameters = new GetAllIsoImagesListParameters();
-        parameters.setStorageDomainId(isoDomainId);
-        parameters.setForceRefresh(forceRefresh);
-        Frontend.RunQuery(VdcQueryType.GetAllIsoImagesList, parameters, aQuery);
+        GetAllImagesListByStoragePoolIdParameters parameters =
+            new GetAllImagesListByStoragePoolIdParameters(storagePoolId);
+        Frontend.RunQuery(VdcQueryType.GetAllIsoImagesListByStoragePoolId, parameters, aQuery);
     }
 
-    public static void GetFloppyImageList(AsyncQuery aQuery, Guid isoDomainId, boolean forceRefresh) {
+    public static void GetFloppyImageList(AsyncQuery aQuery, Guid storagePoolId) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -242,10 +241,9 @@ public final class AsyncDataProvider {
             }
         };
 
-        GetAllIsoImagesListParameters parameters = new GetAllIsoImagesListParameters();
-        parameters.setStorageDomainId(isoDomainId);
-        parameters.setForceRefresh(forceRefresh);
-        Frontend.RunQuery(VdcQueryType.GetAllFloppyImagesList, parameters, aQuery);
+        Frontend.RunQuery(VdcQueryType.GetAllFloppyImagesListByStoragePoolId,
+                new GetAllImagesListByStoragePoolIdParameters(storagePoolId),
+                aQuery);
     }
 
     public static void GetClusterById(AsyncQuery aQuery, Guid id) {
@@ -1640,8 +1638,7 @@ public final class AsyncDataProvider {
         Frontend.RunQuery(VdcQueryType.GetTagsByVdsId, new GetTagsByVdsIdParameters(id.toString()), aQuery);
     }
 
-    public static void GetoVirtISOsList(AsyncQuery aQuery, Guid id)
-    {
+    public static void GetoVirtISOsList(AsyncQuery aQuery, Guid id) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -1960,8 +1957,7 @@ public final class AsyncDataProvider {
 
         if (cachedCommandsCompatibilityVersions != null) {
             aQuery.asyncCallback.OnSuccess(aQuery.getModel(), IsCommandCompatible(vdcActionType, cluster, dc));
-        }
-        else {
+        } else {
             Frontend.RunQuery(VdcQueryType.GetCommandsCompatibilityVersions, new VdcQueryParametersBase(), aQuery);
         }
     }
@@ -1993,6 +1989,7 @@ public final class AsyncDataProvider {
 
     /**
      * Get the Management Network Name
+     *
      * @param aQuery
      *            result callback
      */
@@ -2002,13 +1999,13 @@ public final class AsyncDataProvider {
 
     /**
      * method to get an item from config while caching it (config is not supposed to change during a session)
+     *
      * @param aQuery
      *            an async query
      * @param parameters
      *            a converter for the async query
      */
-    public static void GetConfigFromCache(GetConfigurationValueParameters parameters, AsyncQuery aQuery)
-    {
+    public static void GetConfigFromCache(GetConfigurationValueParameters parameters, AsyncQuery aQuery) {
 
         // cache key
         final Map.Entry<ConfigurationValues, String> config_key =
@@ -2050,13 +2047,13 @@ public final class AsyncDataProvider {
 
     /**
      * method to get an item from config while caching it (config is not supposed to change during a session)
+     *
      * @param aQuery
      *            an async query
      * @param configValue
      *            the config value to query
      */
-    public static void GetConfigFromCache(ConfigurationValues configValue, AsyncQuery aQuery)
-    {
+    public static void GetConfigFromCache(ConfigurationValues configValue, AsyncQuery aQuery) {
         GetConfigFromCache(new GetConfigurationValueParameters(configValue), aQuery);
     }
 

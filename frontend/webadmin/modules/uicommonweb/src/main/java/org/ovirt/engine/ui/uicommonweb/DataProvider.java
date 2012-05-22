@@ -21,7 +21,6 @@ import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.Quota;
-import org.ovirt.engine.core.common.businessentities.RepoFileMetaData;
 import org.ovirt.engine.core.common.businessentities.RoleType;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
@@ -59,7 +58,6 @@ import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetAllChildVlanInterfacesQueryParameters;
 import org.ovirt.engine.core.common.queries.GetAllDisksByVmIdParameters;
-import org.ovirt.engine.core.common.queries.GetAllIsoImagesListParameters;
 import org.ovirt.engine.core.common.queries.GetAllNetworkQueryParamenters;
 import org.ovirt.engine.core.common.queries.GetAllServerCpuListParameters;
 import org.ovirt.engine.core.common.queries.GetAllVmSnapshotsByDriveParameters;
@@ -528,41 +526,6 @@ public final class DataProvider
         }
 
         return null;
-    }
-
-    public static ArrayList<String> GetIrsImageList(Guid dataCenterId, boolean forceRefresh)
-    {
-        storage_domains isoDomain = GetIsoDomainByDataCenterId(dataCenterId);
-        if (isoDomain != null)
-        {
-            return GetIsoListByIsoDomainId(isoDomain.getId(), forceRefresh);
-        }
-
-        return new ArrayList<String>();
-    }
-
-    public static ArrayList<String> GetIsoListByIsoDomainId(Guid isoDomainId, boolean forceRefresh)
-    {
-        GetAllIsoImagesListParameters param = new GetAllIsoImagesListParameters();
-        param.setStorageDomainId(isoDomainId);
-        param.setForceRefresh(forceRefresh);
-
-        VdcQueryReturnValue returnValue = Frontend.RunQuery(VdcQueryType.GetAllIsoImagesList, param);
-        if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
-        {
-            ArrayList<RepoFileMetaData> listRepoFileList =
-                    (ArrayList<RepoFileMetaData>) returnValue.getReturnValue();
-            ArrayList<String> fileNameList = new ArrayList<String>();
-            for (RepoFileMetaData RepoFileMetaData : listRepoFileList)
-            {
-                fileNameList.add(RepoFileMetaData.getRepoFileName());
-            }
-
-            Collections.sort(fileNameList);
-            return fileNameList;
-        }
-
-        return new ArrayList<String>();
     }
 
     public static String GetDefaultExportPath()
@@ -2086,36 +2049,6 @@ public final class DataProvider
 
         previewingImageId.argvalue = NGuid.Empty;
         return new ArrayList<DiskImage>();
-    }
-
-    public static ArrayList<String> GetFloppyImageList(Guid dataCenterId, boolean forceRefresh)
-    {
-        storage_domains isoDomain = GetIsoDomainByDataCenterId(dataCenterId);
-
-        if (isoDomain != null)
-        {
-            GetAllIsoImagesListParameters parameters = new GetAllIsoImagesListParameters();
-            parameters.setStorageDomainId(isoDomain.getId());
-            parameters.setForceRefresh(forceRefresh);
-
-            VdcQueryReturnValue returnValue = Frontend.RunQuery(VdcQueryType.GetAllFloppyImagesList, parameters);
-
-            if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
-            {
-                ArrayList<RepoFileMetaData> listRepoFileList =
-                        (ArrayList<RepoFileMetaData>) returnValue.getReturnValue();
-                ArrayList<String> fileNameList = new ArrayList<String>();
-                for (RepoFileMetaData RepoFileMetaData : listRepoFileList)
-                {
-                    fileNameList.add(RepoFileMetaData.getRepoFileName());
-                }
-
-                Collections.sort(fileNameList);
-                return fileNameList;
-            }
-        }
-
-        return new ArrayList<String>();
     }
 
     public static storage_server_connections GetStorageConnectionById(String id)

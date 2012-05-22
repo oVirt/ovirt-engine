@@ -43,7 +43,6 @@ import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.RegexValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
-@SuppressWarnings("unused")
 public class VmModel extends Model
 {
 
@@ -1522,7 +1521,7 @@ public class VmModel extends Model
                 vds_id = vds_id.equals(NGuid.Empty) ? null : vds_id;
             }
 
-            ArrayList<String> images = DataProvider.GetIrsImageList(dataCenter.getId(), false);
+            ArrayList<String> images = new ArrayList<String>();
             getCdImage().setItems(images);
 
             if (getCdImage().getIsChangable() && getCdImage().getSelectedItem() == null)

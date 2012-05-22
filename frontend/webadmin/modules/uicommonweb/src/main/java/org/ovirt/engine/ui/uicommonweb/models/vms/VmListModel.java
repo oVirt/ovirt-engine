@@ -89,7 +89,6 @@ import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.ResourceManager;
 
-@SuppressWarnings("unused")
 public class VmListModel extends ListWithDetailsModel implements ISupportSystemTreeContext
 {
 
@@ -1548,61 +1547,45 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
         }
     }
 
-    private void RunOnceUpdateImages(VM vm)
-    {
-        AsyncQuery _asyncQuery0 = new AsyncQuery();
-        _asyncQuery0.setModel(this);
+    private void RunOnceUpdateImages(VM vm) {
 
-        _asyncQuery0.asyncCallback = new INewAsyncCallback() {
+        AsyncQuery _asyncQuery2 = new AsyncQuery();
+        _asyncQuery2.setModel(this);
+
+        _asyncQuery2.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object model0, Object result0)
+            public void OnSuccess(Object model2, Object result)
             {
-                if (result0 != null)
-                {
-                    storage_domains isoDomain = (storage_domains) result0;
-                    VmListModel vmListModel = (VmListModel) model0;
+                VmListModel vmListModel2 = (VmListModel) model2;
+                VM selectedVM = (VM) vmListModel2.getSelectedItem();
+                ArrayList<String> images = (ArrayList<String>) result;
 
-                    AsyncQuery _asyncQuery1 = new AsyncQuery();
-                    _asyncQuery1.setModel(vmListModel);
-
-                    _asyncQuery1.asyncCallback = new INewAsyncCallback() {
-                        @Override
-                        public void OnSuccess(Object model1, Object result)
-                        {
-                            VmListModel vmListModel1 = (VmListModel) model1;
-                            RunOnceModel runOnceModel = (RunOnceModel) vmListModel1.getWindow();
-                            ArrayList<String> images = (ArrayList<String>) result;
-
-                            runOnceModel.getIsoImage().setItems(images);
-                            if (runOnceModel.getIsoImage().getIsChangable()
-                                    && runOnceModel.getIsoImage().getSelectedItem() == null)
-                            {
-                                runOnceModel.getIsoImage().setSelectedItem(Linq.FirstOrDefault(images));
-                            }
-                        }
-                    };
-                    AsyncDataProvider.GetIrsImageList(_asyncQuery1, isoDomain.getId(), false);
-
-                    AsyncQuery _asyncQuery2 = new AsyncQuery();
-                    _asyncQuery2.setModel(vmListModel);
-
-                    _asyncQuery2.asyncCallback = new INewAsyncCallback() {
-                        @Override
-                        public void OnSuccess(Object model2, Object result)
-                        {
-                            VmListModel vmListModel2 = (VmListModel) model2;
-                            VM selectedVM = (VM) vmListModel2.getSelectedItem();
-                            ArrayList<String> images = (ArrayList<String>) result;
-
-                            vmListModel2.RunOnceUpdateFloppy(selectedVM, images);
-                        }
-                    };
-                    AsyncDataProvider.GetFloppyImageList(_asyncQuery2, isoDomain.getId(), false);
-                }
-
+                vmListModel2.RunOnceUpdateFloppy(selectedVM, images);
             }
         };
-        AsyncDataProvider.GetIsoDomainByDataCenterId(_asyncQuery0, vm.getstorage_pool_id());
+        AsyncDataProvider.GetFloppyImageList(_asyncQuery2, vm.getstorage_pool_id());
+
+        AsyncQuery getImageListQuery = new AsyncQuery();
+        getImageListQuery.setModel(this);
+
+        getImageListQuery.asyncCallback = new INewAsyncCallback() {
+            @Override
+            public void OnSuccess(Object model1, Object result)
+            {
+                VmListModel vmListModel1 = (VmListModel) model1;
+                RunOnceModel runOnceModel = (RunOnceModel) vmListModel1.getWindow();
+                ArrayList<String> images = (ArrayList<String>) result;
+
+                runOnceModel.getIsoImage().setItems(images);
+                if (runOnceModel.getIsoImage().getIsChangable()
+                        && runOnceModel.getIsoImage().getSelectedItem() == null)
+                {
+                    runOnceModel.getIsoImage().setSelectedItem(Linq.FirstOrDefault(images));
+                }
+            }
+        };
+        AsyncDataProvider.GetIrsImageList(getImageListQuery, vm.getstorage_pool_id());
+
     }
 
     private void OnRunOnce()
@@ -2240,51 +2223,34 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
         model.setTitle(ConstantsManager.getInstance().getConstants().changeCDTitle());
         model.setHashName("change_cd"); //$NON-NLS-1$
 
-        AsyncQuery _asyncQuery1 = new AsyncQuery();
-        _asyncQuery1.setModel(this);
+        AttachCdModel attachCdModel = (AttachCdModel) getWindow();
+        ArrayList<String> images1 =
+                new ArrayList<String>(Arrays.asList(new String[] { "No CDs" })); //$NON-NLS-1$
+        attachCdModel.getIsoImage().setItems(images1);
+        attachCdModel.getIsoImage().setSelectedItem(Linq.FirstOrDefault(images1));
 
-        _asyncQuery1.asyncCallback = new INewAsyncCallback() {
+        AsyncQuery getIrsImageListCallback = new AsyncQuery();
+        getIrsImageListCallback.setModel(this);
+
+        getIrsImageListCallback.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object model1, Object result1)
+            public void OnSuccess(Object model, Object result)
             {
-                VmListModel vmListModel1 = (VmListModel) model1;
-                AttachCdModel attachCdModel = (AttachCdModel) vmListModel1.getWindow();
-                ArrayList<String> images1 =
-                        new ArrayList<String>(Arrays.asList(new String[] { "No CDs" })); //$NON-NLS-1$
-                attachCdModel.getIsoImage().setItems(images1);
-                attachCdModel.getIsoImage().setSelectedItem(Linq.FirstOrDefault(images1));
-
-                if (result1 != null)
+                VmListModel vmListModel2 = (VmListModel) model;
+                AttachCdModel _attachCdModel = (AttachCdModel) vmListModel2.getWindow();
+                ArrayList<String> images = (ArrayList<String>) result;
+                if (images.size() > 0)
                 {
-                    storage_domains isoDomain = (storage_domains) result1;
-
-                    AsyncQuery _asyncQuery2 = new AsyncQuery();
-                    _asyncQuery2.setModel(vmListModel1);
-
-                    _asyncQuery2.asyncCallback = new INewAsyncCallback() {
-                        @Override
-                        public void OnSuccess(Object model2, Object result2)
-                        {
-                            VmListModel vmListModel2 = (VmListModel) model2;
-                            AttachCdModel _attachCdModel = (AttachCdModel) vmListModel2.getWindow();
-                            ArrayList<String> images2 = (ArrayList<String>) result2;
-                            if (images2.size() > 0)
-                            {
-                                images2.add(0, ConsoleModel.EjectLabel);
-                                _attachCdModel.getIsoImage().setItems(images2);
-                            }
-                            if (_attachCdModel.getIsoImage().getIsChangable())
-                            {
-                                _attachCdModel.getIsoImage().setSelectedItem(Linq.FirstOrDefault(images2));
-                            }
-                        }
-                    };
-                    AsyncDataProvider.GetIrsImageList(_asyncQuery2, isoDomain.getId(), false);
+                    images.add(0, ConsoleModel.EjectLabel);
+                    _attachCdModel.getIsoImage().setItems(images);
+                }
+                if (_attachCdModel.getIsoImage().getIsChangable())
+                {
+                    _attachCdModel.getIsoImage().setSelectedItem(Linq.FirstOrDefault(images));
                 }
             }
         };
-
-        AsyncDataProvider.GetIsoDomainByDataCenterId(_asyncQuery1, vm.getstorage_pool_id());
+        AsyncDataProvider.GetIrsImageList(getIrsImageListCallback, vm.getstorage_pool_id());
 
         UICommand tempVar = new UICommand("OnChangeCD", this); //$NON-NLS-1$
         tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
@@ -2686,27 +2652,10 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
         ejectModel.getExecutedEvent().addListener(this);
         getIsoImages().add(ejectModel);
 
-        ArrayList<String> list = DataProvider.GetIrsImageList(storagePoolId, false);
-        if (list.size() > 0)
-        {
-            for (String iso : list)
-            {
-                ChangeCDModel tempVar3 = new ChangeCDModel();
-                tempVar3.setTitle(iso);
-                ChangeCDModel model = tempVar3;
-                // model.Executed += changeCD;
-                model.getExecutedEvent().addListener(this);
-                getIsoImages().add(model);
-            }
-
-        }
-        else
-        {
-            ChangeCDModel tempVar4 = new ChangeCDModel();
-            tempVar4.setTitle(ConstantsManager.getInstance().getConstants().noCDsTitle());
-            getIsoImages().add(tempVar4);
-        }
-
+        ArrayList<String> list = new ArrayList<String>();
+        ChangeCDModel tempVar4 = new ChangeCDModel();
+        tempVar4.setTitle(ConstantsManager.getInstance().getConstants().noCDsTitle());
+        getIsoImages().add(tempVar4);
     }
 
     private void changeCD(Object sender, EventArgs e)

@@ -19,7 +19,6 @@ import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
-import org.ovirt.engine.core.common.businessentities.RepoFileMetaData;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -33,7 +32,6 @@ import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
-import org.ovirt.engine.core.common.queries.GetAllImagesListByStoragePoolIdParameters;
 import org.ovirt.engine.core.common.queries.GetAllVmPoolsAttachedToUserParameters;
 import org.ovirt.engine.core.common.queries.GetUserVmsByUserIdAndGroupsParameters;
 import org.ovirt.engine.core.common.queries.GetVmByVmIdParameters;
@@ -805,8 +803,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
             {
                 UserPortalListModel userPortalListModel = (UserPortalListModel) model1;
                 RunOnceModel runOnceModel = (RunOnceModel) userPortalListModel.getWindow();
-                List<String> images =
-                        convertReposToStrings((List<RepoFileMetaData>) ((VdcQueryReturnValue) result).getReturnValue());
+                List<String> images = (List<String>) ((VdcQueryReturnValue) result).getReturnValue();
                 runOnceModel.getIsoImage().setItems(images);
 
                 if (runOnceModel.getIsoImage().getIsChangable()
@@ -817,9 +814,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
             }
         };
 
-        Frontend.RunQuery(VdcQueryType.GetAllIsoImagesListByStoragePoolId,
-                new GetAllImagesListByStoragePoolIdParameters(vm.getstorage_pool_id()),
-                getIsoImagesQuery);
+        AsyncDataProvider.GetIrsImageList(getIsoImagesQuery, vm.getstorage_pool_id());
     }
 
     protected void fillFloppyImages(VM vm) {
@@ -835,8 +830,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                         (UserPortalItemModel) userPortalListModel.getSelectedItem();
                 RunOnceModel runOnceModel = (RunOnceModel) userPortalListModel.getWindow();
                 VM selectedVM = (VM) userPortalItemModel.getEntity();
-                List<String> images =
-                        convertReposToStrings((List<RepoFileMetaData>) ((VdcQueryReturnValue) result).getReturnValue());
+                List<String> images = (List<String>) ((VdcQueryReturnValue) result).getReturnValue();
 
                 if (DataProvider.IsWindowsOsType(selectedVM.getvm_os()))
                 {
@@ -860,17 +854,8 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                 }
             }
         };
-        Frontend.RunQuery(VdcQueryType.GetAllFloppyImagesListByStoragePoolId,
-                new GetAllImagesListByStoragePoolIdParameters(vm.getstorage_pool_id()),
-                getFloppyQuery);
-    }
 
-    private List<String> convertReposToStrings(List<RepoFileMetaData> repoList) {
-        List<String> reposAsStrings = new ArrayList<String>();
-        for (RepoFileMetaData repoFileMetaData : repoList) {
-            reposAsStrings.add(repoFileMetaData.getRepoFileName());
-        }
-        return reposAsStrings;
+        AsyncDataProvider.GetFloppyImageList(getFloppyQuery, vm.getstorage_pool_id());
     }
 
     private void OnRunOnce()
@@ -1142,8 +1127,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
             {
                 UserPortalListModel userPortalListModel = (UserPortalListModel) model1;
                 AttachCdModel _attachCdModel = (AttachCdModel) userPortalListModel.getWindow();
-                List<String> images =
-                        convertReposToStrings((List<RepoFileMetaData>) ((VdcQueryReturnValue) result).getReturnValue());
+                List<String> images = (List<String>) ((VdcQueryReturnValue) result).getReturnValue();
                 if (images.size() > 0)
                 {
                     images.add(0, ConsoleModel.EjectLabel);
@@ -1155,9 +1139,8 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                 }
             }
         };
-        Frontend.RunQuery(VdcQueryType.GetAllIsoImagesListByStoragePoolId,
-                new GetAllImagesListByStoragePoolIdParameters(vm.getstorage_pool_id()),
-                getImagesQuery);
+
+        AsyncDataProvider.GetIrsImageList(getImagesQuery, vm.getstorage_pool_id());
 
         UICommand tempVar = new UICommand("OnChangeCD", this); //$NON-NLS-1$
         tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
