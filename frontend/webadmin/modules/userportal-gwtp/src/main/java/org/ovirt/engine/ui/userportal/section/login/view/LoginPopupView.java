@@ -70,6 +70,7 @@ public class LoginPopupView extends AbstractLoginPopupView implements LoginPopup
 
     @UiField(provided = true)
     @Path("isAutoConnect.entity")
+    @WithElementId
     EntityModelCheckBoxEditor connectAutomatically;
 
     @UiField
@@ -124,7 +125,7 @@ public class LoginPopupView extends AbstractLoginPopupView implements LoginPopup
         errorMessage.setText(text);
         errorMessage.setVisible(text != null);
 
-        if (errorMessage.isVisible()){
+        if (errorMessage.isVisible()) {
             errorMessagePanel.setVisible(true);
         }
     }

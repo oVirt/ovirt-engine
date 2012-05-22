@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
+import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.action.SubTabTreeActionPanel;
@@ -58,7 +59,9 @@ public class AbstractSubTabTreeWidgetView<I, T, M extends ListWithDetailsModel, 
 
     private final EventBus eventBus;
 
-    protected final SubTabTreeActionPanel actionPanel;
+    @WithElementId
+    public final SubTabTreeActionPanel actionPanel;
+
     protected final EntityModelCellTable<ListModel> table;
     protected final AbstractSubTabTree tree;
     protected final AbstractModelBoundTreeWidget modelBoundTreeWidget;

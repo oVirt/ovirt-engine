@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.userportal.section.main.view;
 
+import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
 import org.ovirt.engine.ui.common.view.AbstractView;
 import org.ovirt.engine.ui.common.widget.table.OrderedMultiSelectionModel;
@@ -15,7 +16,9 @@ import com.google.gwt.user.client.ui.Widget;
 public abstract class AbstractSideTabWithDetailsView<T, M extends SearchableListModel> extends AbstractView implements AbstractSideTabWithDetailsPresenter.ViewDef<T> {
 
     protected final SearchableTableModelProvider<T, M> modelProvider;
-    private final SimpleActionTable<T> table;
+
+    @WithElementId
+    public final SimpleActionTable<T> table;
 
     private static final int subTabPanelHeight = 300;
 

@@ -216,7 +216,7 @@
 						<g:FlowPanel addStyleNames="{style.detailsRow}">
 							<g:Image resource='{resources.basicConsoleIcon}' addStyleNames="{style.rowIcon}" />
 							<g:Label text="{constants.consoleBasicDetails} : " addStyleNames="{style.rowLabel}" />
-							<g:Anchor ui:field="editProtocol" text="({constants.editBasicDetails})" addStyleNames="{style.basicInfoDetailsLinkDisabled}"/>
+							<g:Anchor ui:field="editProtocolLink" text="({constants.editBasicDetails})" addStyleNames="{style.basicInfoDetailsLinkDisabled}"/>
 							<g:Label ui:field="protocolMessage" />
 						</g:FlowPanel>
 					</g:FlowPanel>

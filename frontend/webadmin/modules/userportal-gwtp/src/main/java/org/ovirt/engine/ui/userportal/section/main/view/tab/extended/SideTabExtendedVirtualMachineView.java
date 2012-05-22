@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.VmOsType;
+import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.system.ErrorPopupManager;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
 import org.ovirt.engine.ui.common.widget.table.column.SafeHtmlColumn;
@@ -52,6 +53,10 @@ import com.gwtplatform.mvp.client.proxy.RevealRootPopupContentEvent;
 public class SideTabExtendedVirtualMachineView extends AbstractSideTabWithDetailsView<UserPortalItemModel, UserPortalListModel>
         implements SideTabExtendedVirtualMachinePresenter.ViewDef {
 
+    interface ViewIdHandler extends ElementIdHandler<SideTabExtendedVirtualMachineView> {
+        ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
+    }
+
     private final ApplicationResources applicationResources;
     private final ConsoleManager consoleManager;
     private final ErrorPopupManager errorPopupManager;
@@ -82,6 +87,7 @@ public class SideTabExtendedVirtualMachineView extends AbstractSideTabWithDetail
         this.statusTranslator = translator;
         this.constants = constants;
         applicationResources.sideTabExtendedVmStyle().ensureInjected();
+        ViewIdHandler.idHandler.generateAndSetIds(this);
         initTable(templates, consoleUtils);
     }
 

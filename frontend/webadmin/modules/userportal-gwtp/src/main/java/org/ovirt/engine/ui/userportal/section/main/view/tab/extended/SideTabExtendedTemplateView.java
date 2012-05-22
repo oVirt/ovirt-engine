@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.userportal.section.main.view.tab.extended;
 
 import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
 import org.ovirt.engine.ui.common.widget.table.column.SafeHtmlColumn;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -25,11 +26,16 @@ import com.google.inject.Inject;
 public class SideTabExtendedTemplateView extends AbstractSideTabWithDetailsView<VmTemplate, UserPortalTemplateListModel>
         implements SideTabExtendedTemplatePresenter.ViewDef {
 
+    interface ViewIdHandler extends ElementIdHandler<SideTabExtendedTemplateView> {
+        ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
+    }
+
     private static final TemplateTableResources templateTableResources = GWT.create(TemplateTableResources.class);
 
     @Inject
     public SideTabExtendedTemplateView(UserPortalTemplateListProvider provider, ApplicationTemplates templates, ApplicationConstants constants) {
         super(provider);
+        ViewIdHandler.idHandler.generateAndSetIds(this);
         initTable(templates, constants);
     }
 

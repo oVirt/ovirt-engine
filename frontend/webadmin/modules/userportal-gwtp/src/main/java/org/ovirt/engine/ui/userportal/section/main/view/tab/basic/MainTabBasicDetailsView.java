@@ -2,6 +2,8 @@ package org.ovirt.engine.ui.userportal.section.main.view.tab.basic;
 
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
+import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.AbstractView;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalBasicListModel;
 import org.ovirt.engine.ui.userportal.ApplicationResources;
@@ -26,48 +28,17 @@ import com.google.inject.Inject;
 
 public class MainTabBasicDetailsView extends AbstractView implements MainTabBasicDetailsPresenterWidget.ViewDef {
 
-    @UiField
-    @Path("SelectedItem.OsType")
-    OsTypeImage osImage;
+    interface ViewUiBinder extends UiBinder<Widget, MainTabBasicDetailsView> {
+        ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
+    }
 
-    @UiField
-    @Path("SelectedItem")
-    VmTypeImage vmImage;
+    interface Driver extends SimpleBeanEditorDriver<UserPortalBasicListModel, MainTabBasicDetailsView> {
+        Driver driver = GWT.create(Driver.class);
+    }
 
-    @UiField
-    @Path("SelectedItem.Name")
-    Label vmName;
-
-    @UiField
-    @Path("SelectedItem.Description")
-    Label vmDescription;
-
-    @UiField(provided = true)
-    @Path("SelectedItem.OsType")
-    ValueLabel<VmOsType> operatingSystem;
-
-    @UiField
-    @Path("SelectedItemDefinedMemory.Entity")
-    ToStringEntityModelLabel memory;
-
-    @UiField
-    @Path("SelectedItemNumOfCpuCores.Entity")
-    ToStringEntityModelLabel numberOfCores;
-
-    @UiField
-    @Ignore
-    DisksImageWidget disks;
-
-    @UiField
-    @Ignore
-    Label protocolMessage;
-
-    @UiField
-    @Ignore
-    Anchor editProtocol;
-
-    @UiField
-    Style style;
+    interface ViewIdHandler extends ElementIdHandler<MainTabBasicDetailsView> {
+        ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
+    }
 
     public interface Style extends CssResource {
         String protocolWarning();
@@ -79,13 +50,56 @@ public class MainTabBasicDetailsView extends AbstractView implements MainTabBasi
         String basicInfoDetailsLink();
     }
 
-    interface ViewUiBinder extends UiBinder<Widget, MainTabBasicDetailsView> {
-        ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
-    }
+    @UiField
+    @Path("SelectedItem.OsType")
+    OsTypeImage osImage;
 
-    interface Driver extends SimpleBeanEditorDriver<UserPortalBasicListModel, MainTabBasicDetailsView> {
-        Driver driver = GWT.create(Driver.class);
-    }
+    @UiField
+    @Path("SelectedItem")
+    VmTypeImage vmImage;
+
+    @UiField
+    @Path("SelectedItem.Name")
+    @WithElementId("name")
+    Label vmName;
+
+    @UiField
+    @Path("SelectedItem.Description")
+    @WithElementId("description")
+    Label vmDescription;
+
+    @UiField(provided = true)
+    @Path("SelectedItem.OsType")
+    @WithElementId("os")
+    ValueLabel<VmOsType> operatingSystem;
+
+    @UiField
+    @Path("SelectedItemDefinedMemory.Entity")
+    @WithElementId
+    ToStringEntityModelLabel memory;
+
+    @UiField
+    @Path("SelectedItemNumOfCpuCores.Entity")
+    @WithElementId
+    ToStringEntityModelLabel numberOfCores;
+
+    @UiField
+    @Ignore
+    @WithElementId
+    DisksImageWidget disks;
+
+    @UiField
+    @Ignore
+    @WithElementId("protocol")
+    Label protocolMessage;
+
+    @UiField
+    @Ignore
+    @WithElementId
+    Anchor editProtocolLink;
+
+    @UiField
+    Style style;
 
     @Inject
     public MainTabBasicDetailsView(ApplicationResources resources) {
@@ -97,9 +111,8 @@ public class MainTabBasicDetailsView extends AbstractView implements MainTabBasi
         });
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-
         Driver.driver.initialize(this);
-
+        ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
     @Override
@@ -132,15 +145,15 @@ public class MainTabBasicDetailsView extends AbstractView implements MainTabBasi
     @Override
     public void setEditConsoleEnabled(boolean enabled) {
         if (enabled) {
-            editProtocol.setStyleName(style.basicInfoDetailsLink());
+            editProtocolLink.setStyleName(style.basicInfoDetailsLink());
         } else {
-            editProtocol.setStyleName(style.basicInfoDetailsLinkDisabled());
+            editProtocolLink.setStyleName(style.basicInfoDetailsLinkDisabled());
         }
     }
 
     @Override
     public HasClickHandlers getEditButton() {
-        return editProtocol;
+        return editProtocolLink;
     }
 
 }

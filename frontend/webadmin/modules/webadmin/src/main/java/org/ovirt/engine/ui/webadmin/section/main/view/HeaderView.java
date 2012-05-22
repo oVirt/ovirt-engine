@@ -36,7 +36,7 @@ public class HeaderView extends AbstractSingleSlotView implements HeaderPresente
     private static final int mainTabBarInitialOffset = 240;
 
     @UiField
-    @WithElementId
+    @WithElementId("userName")
     InlineLabel userNameLabel;
 
     @UiField
@@ -44,15 +44,19 @@ public class HeaderView extends AbstractSingleSlotView implements HeaderPresente
     Label headerLabel;
 
     @UiField(provided = true)
+    @WithElementId
     final Anchor logoutLink;
 
     @UiField(provided = true)
+    @WithElementId
     final Anchor configureLink;
 
     @UiField(provided = true)
+    @WithElementId
     final Anchor aboutLink;
 
     @UiField(provided = true)
+    @WithElementId
     final Anchor guideLink;
 
     @UiField

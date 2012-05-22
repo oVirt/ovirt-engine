@@ -2,6 +2,8 @@ package org.ovirt.engine.ui.common.widget.refresh;
 
 import java.util.Set;
 
+import org.ovirt.engine.ui.common.idhandler.HasElementId;
+import org.ovirt.engine.ui.common.utils.ElementIdUtils;
 import org.ovirt.engine.ui.common.widget.renderer.MilisecondRenderer;
 
 import com.google.gwt.dom.client.Style;
@@ -40,7 +42,7 @@ import com.google.gwt.user.client.ui.ToggleButton;
  * A panel that shows a refresh button, with popup menu to select the refresh rate.<BR>
  * Works with an {@link AbstractRefreshManager}.
  */
-public abstract class BaseRefreshPanel extends FocusPanel implements HasClickHandlers {
+public abstract class BaseRefreshPanel extends FocusPanel implements HasClickHandlers, HasElementId {
 
     public interface BaseResources extends ClientBundle {
 
@@ -53,106 +55,6 @@ public abstract class BaseRefreshPanel extends FocusPanel implements HasClickHan
         ImageResource separator();
 
         ImageResource triangle_down();
-    }
-
-    private static BaseResources RESOURCES;
-
-    private final DecoratedPopupPanel menuPopup;
-
-    private PushButton refreshButton;
-
-    private final AbstractRefreshManager<?> refreshManager;
-
-    private ToggleButton refreshMenuButton;
-
-    private final RefreshRateOptionsMenu refreshOptionsMenu;
-
-    private final Label statusLabel;
-
-    private final BaseRefreshPanelCss style;
-
-    /**
-     * Create a Panel managed by the specified {@link RefreshManager}<BR>
-     * used only by the Refresh Manager
-     *
-     */
-    protected BaseRefreshPanel(AbstractRefreshManager<?> refreshManager) {
-        RESOURCES = createResources();
-        this.refreshManager = refreshManager;
-        style = RESOURCES.refreshPanelCss();
-        style.ensureInjected();
-
-        // Set panel's attributes
-        // setWidth("32px");
-        // setHeight("18px");
-
-        // Create menu popup
-        menuPopup = new DecoratedPopupPanel(true, false);
-        menuPopup.setStylePrimaryName(style.refreshRateMenuPopup());
-
-        // Add mouse hover events
-        addMouseOverHandler(new MouseOverHandler() {
-
-            @Override
-            public void onMouseOver(MouseOverEvent event) {
-                // border: 1px solid #96B7D6;
-                Style border = getElement().getStyle();
-                border.setBorderWidth(1, Unit.PX);
-                border.setBorderStyle(BorderStyle.SOLID);
-                border.setBorderColor("#96B7D6"); //$NON-NLS-1$
-            }
-
-        });
-
-        addMouseOutHandler(new MouseOutHandler() {
-
-            @Override
-            public void onMouseOut(MouseOutEvent event) {
-                // border: 1px solid transparent;
-                Style border = getElement().getStyle();
-                border.setBorderWidth(1, Unit.PX);
-                border.setBorderStyle(BorderStyle.SOLID);
-                border.setBorderColor("transparent"); //$NON-NLS-1$
-            }
-        });
-
-        // Create refresh and refresh menu buttons
-        createRefreshButton();
-        createRefreshMenuButton();
-
-        // Create refresh options menu
-        refreshOptionsMenu = getRefreshOptionsMenu();
-
-        // Add menu to the popup
-        menuPopup.add(refreshOptionsMenu);
-        menuPopup.addAutoHidePartner(refreshMenuButton.getElement());
-        menuPopup.addCloseHandler(new CloseHandler<PopupPanel>() {
-            @Override
-            public void onClose(CloseEvent<PopupPanel> event) {
-                refreshMenuButton.setDown(false);
-            }
-        });
-
-        // Hide popup on window resize
-        Window.addResizeHandler(new ResizeHandler() {
-            @Override
-            public void onResize(ResizeEvent event)
-            {
-                menuPopup.hide();
-            }
-        });
-
-        // Create panel separator
-        ImageResource separatorImg = RESOURCES.separator();
-
-        // Add refresh button and refresh options menu button
-        HorizontalPanel panel = new HorizontalPanel();
-        statusLabel = new Label();
-        panel.add(statusLabel);
-        panel.add(refreshButton);
-        panel.add(new Image(separatorImg));
-        panel.add(refreshMenuButton);
-        setWidget(panel);
     }
 
     private class RefreshRateOptionCommand implements Command {
@@ -259,6 +161,113 @@ public abstract class BaseRefreshPanel extends FocusPanel implements HasClickHan
             menuItem.select();
         }
 
+    }
+
+    private static BaseResources RESOURCES;
+
+    private final DecoratedPopupPanel menuPopup;
+
+    private PushButton refreshButton;
+
+    private final AbstractRefreshManager<?> refreshManager;
+
+    private ToggleButton refreshMenuButton;
+
+    private final RefreshRateOptionsMenu refreshOptionsMenu;
+
+    private final Label statusLabel;
+
+    private final BaseRefreshPanelCss style;
+
+    /**
+     * Create a Panel managed by the specified {@link RefreshManager}<BR>
+     * used only by the Refresh Manager
+     *
+     */
+    protected BaseRefreshPanel(AbstractRefreshManager<?> refreshManager) {
+        RESOURCES = createResources();
+        this.refreshManager = refreshManager;
+        style = RESOURCES.refreshPanelCss();
+        style.ensureInjected();
+
+        // Set panel's attributes
+        // setWidth("32px");
+        // setHeight("18px");
+
+        // Create menu popup
+        menuPopup = new DecoratedPopupPanel(true, false);
+        menuPopup.setStylePrimaryName(style.refreshRateMenuPopup());
+
+        // Add mouse hover events
+        addMouseOverHandler(new MouseOverHandler() {
+
+            @Override
+            public void onMouseOver(MouseOverEvent event) {
+                // border: 1px solid #96B7D6;
+                Style border = getElement().getStyle();
+                border.setBorderWidth(1, Unit.PX);
+                border.setBorderStyle(BorderStyle.SOLID);
+                border.setBorderColor("#96B7D6"); //$NON-NLS-1$
+            }
+
+        });
+
+        addMouseOutHandler(new MouseOutHandler() {
+
+            @Override
+            public void onMouseOut(MouseOutEvent event) {
+                // border: 1px solid transparent;
+                Style border = getElement().getStyle();
+                border.setBorderWidth(1, Unit.PX);
+                border.setBorderStyle(BorderStyle.SOLID);
+                border.setBorderColor("transparent"); //$NON-NLS-1$
+            }
+        });
+
+        // Create refresh and refresh menu buttons
+        createRefreshButton();
+        createRefreshMenuButton();
+
+        // Create refresh options menu
+        refreshOptionsMenu = getRefreshOptionsMenu();
+
+        // Add menu to the popup
+        menuPopup.add(refreshOptionsMenu);
+        menuPopup.addAutoHidePartner(refreshMenuButton.getElement());
+        menuPopup.addCloseHandler(new CloseHandler<PopupPanel>() {
+            @Override
+            public void onClose(CloseEvent<PopupPanel> event) {
+                refreshMenuButton.setDown(false);
+            }
+        });
+
+        // Hide popup on window resize
+        Window.addResizeHandler(new ResizeHandler() {
+            @Override
+            public void onResize(ResizeEvent event)
+            {
+                menuPopup.hide();
+            }
+        });
+
+        // Create panel separator
+        ImageResource separatorImg = RESOURCES.separator();
+
+        // Add refresh button and refresh options menu button
+        HorizontalPanel panel = new HorizontalPanel();
+        statusLabel = new Label();
+        panel.add(statusLabel);
+        panel.add(refreshButton);
+        panel.add(new Image(separatorImg));
+        panel.add(refreshMenuButton);
+        setWidget(panel);
+    }
+
+    @Override
+    public void setElementId(String elementId) {
+        // Set refresh button element ID
+        refreshButton.getElement().setId(
+                ElementIdUtils.createElementId(elementId, "refreshButton")); //$NON-NLS-1$
     }
 
     @Override

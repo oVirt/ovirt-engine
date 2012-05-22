@@ -1,6 +1,8 @@
 package org.ovirt.engine.ui.userportal.section.main.view.tab.extended;
 
 import org.ovirt.engine.ui.common.SubTableResources;
+import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.view.AbstractView;
 import org.ovirt.engine.ui.uicommonweb.models.resources.ResourcesModel;
@@ -22,58 +24,6 @@ import com.google.inject.Inject;
 
 public class SideTabExtendedResourceView extends AbstractView implements SideTabExtendedResourcePresenter.ViewDef {
 
-    @UiField
-    @Path("DefinedVMs.Entity")
-    ToStringEntityModelLabel definedVms;
-
-    @UiField
-    @Path("RunningVMs.Entity")
-    ToStringEntityModelLabel runningVms;
-
-    @UiField
-    @Path("RunningVMsPercentage.Entity")
-    PercentageProgressBar vmsProgressBar;
-
-    @UiField
-    @Path("DefinedCPUs.Entity")
-    ToStringEntityModelLabel definedCpus;
-
-    @UiField
-    @Path("UsedCPUs.Entity")
-    ToStringEntityModelLabel usedCpus;
-
-    @UiField
-    @Path("UsedCPUsPercentage.Entity")
-    PercentageProgressBar cpusProgressBar;
-
-    @UiField
-    @Path("DefinedMemory.Entity")
-    ToStringEntityModelLabel definedMemory;
-
-    @UiField
-    @Path("UsedMemory.Entity")
-    ToStringEntityModelLabel memoryUsage;
-
-    @UiField
-    @Path("UsedMemoryPercentage.Entity")
-    PercentageProgressBar memoryProgressBar;
-
-    @UiField
-    @Path("TotalDisksSize.Entity")
-    ToStringEntityModelLabel totalSize;
-
-    @UiField
-    @Path("NumOfSnapshots.Entity")
-    ToStringEntityModelLabel numOfSnapshots;
-
-    @UiField
-    @Path("TotalSnapshotsSize.Entity")
-    ToStringEntityModelLabel totalSizeOfSnapshots;
-
-    @UiField(provided = true)
-    @Ignore
-    VmTable vmTable;
-
     interface ViewUiBinder extends UiBinder<Widget, SideTabExtendedResourceView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
@@ -82,14 +32,80 @@ public class SideTabExtendedResourceView extends AbstractView implements SideTab
         Driver driver = GWT.create(Driver.class);
     }
 
+    interface ViewIdHandler extends ElementIdHandler<SideTabExtendedResourceView> {
+        ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
+    }
+
+    @UiField
+    @Path("DefinedVMs.Entity")
+    @WithElementId
+    ToStringEntityModelLabel definedVms;
+
+    @UiField
+    @Path("RunningVMs.Entity")
+    @WithElementId
+    ToStringEntityModelLabel runningVms;
+
+    @UiField
+    @Path("RunningVMsPercentage.Entity")
+    PercentageProgressBar vmsProgressBar;
+
+    @UiField
+    @Path("DefinedCPUs.Entity")
+    @WithElementId
+    ToStringEntityModelLabel definedCpus;
+
+    @UiField
+    @Path("UsedCPUs.Entity")
+    @WithElementId
+    ToStringEntityModelLabel usedCpus;
+
+    @UiField
+    @Path("UsedCPUsPercentage.Entity")
+    PercentageProgressBar cpusProgressBar;
+
+    @UiField
+    @Path("DefinedMemory.Entity")
+    @WithElementId
+    ToStringEntityModelLabel definedMemory;
+
+    @UiField
+    @Path("UsedMemory.Entity")
+    @WithElementId
+    ToStringEntityModelLabel memoryUsage;
+
+    @UiField
+    @Path("UsedMemoryPercentage.Entity")
+    PercentageProgressBar memoryProgressBar;
+
+    @UiField
+    @Path("TotalDisksSize.Entity")
+    @WithElementId
+    ToStringEntityModelLabel totalSize;
+
+    @UiField
+    @Path("NumOfSnapshots.Entity")
+    @WithElementId
+    ToStringEntityModelLabel numOfSnapshots;
+
+    @UiField
+    @Path("TotalSnapshotsSize.Entity")
+    @WithElementId
+    ToStringEntityModelLabel totalSizeOfSnapshots;
+
+    @UiField(provided = true)
+    @Ignore
+    @WithElementId
+    VmTable vmTable;
+
     @Inject
     public SideTabExtendedResourceView(ResourcesModelProvider modelProvider,
             EventBus eventBus, ClientStorage clientStorage,
             SubTableResources headerResources, ApplicationResources resources, ApplicationConstants constans) {
-
         vmTable = new VmTable(modelProvider, headerResources, resources, constans);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         Driver.driver.initialize(this);
+        ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
     @Override

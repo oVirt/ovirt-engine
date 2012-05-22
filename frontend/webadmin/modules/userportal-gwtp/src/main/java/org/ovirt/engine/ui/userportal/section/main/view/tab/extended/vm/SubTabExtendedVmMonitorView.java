@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.userportal.section.main.view.tab.extended.vm;
 
+import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.AbstractSubTabFormView;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalListModel;
@@ -23,28 +25,36 @@ public class SubTabExtendedVmMonitorView extends AbstractSubTabFormView<UserPort
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 
+    interface ViewIdHandler extends ElementIdHandler<SubTabExtendedVmMonitorView> {
+        ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
+    }
+
     @UiField
     Label cpuUsageLabel;
 
     @UiField
+    @WithElementId("cpuUsage")
     PercentageProgressBar cpuUsageProgressBar;
 
     @UiField
     Label memoryUsageLabel;
 
     @UiField
+    @WithElementId("memoryUsage")
     PercentageProgressBar memoryUsageProgressBar;
 
     @UiField
     Label networkUsageLabel;
 
     @UiField
+    @WithElementId("networkUsage")
     PercentageProgressBar networkUsageProgressBar;
 
     @Inject
     public SubTabExtendedVmMonitorView(VmMonitorModelProvider modelProvider, ApplicationConstants constants) {
         super(modelProvider);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
+        ViewIdHandler.idHandler.generateAndSetIds(this);
         localize(constants);
     }
 

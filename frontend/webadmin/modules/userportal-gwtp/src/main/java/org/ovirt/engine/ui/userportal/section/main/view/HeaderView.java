@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.userportal.section.main.view;
 
+import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.AbstractView;
 import org.ovirt.engine.ui.userportal.ApplicationConstants;
 import org.ovirt.engine.ui.userportal.section.main.presenter.HeaderPresenterWidget;
@@ -23,16 +25,24 @@ public class HeaderView extends AbstractView implements HeaderPresenterWidget.Vi
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 
+    interface ViewIdHandler extends ElementIdHandler<HeaderView> {
+        ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
+    }
+
     @UiField
+    @WithElementId("userName")
     InlineLabel userNameLabel;
 
     @UiField(provided = true)
+    @WithElementId
     final Anchor logoutLink;
 
     @UiField(provided = true)
+    @WithElementId
     final Anchor guideLink;
 
     @UiField(provided = true)
+    @WithElementId
     final Anchor aboutLink;
 
     @UiField
@@ -47,6 +57,7 @@ public class HeaderView extends AbstractView implements HeaderPresenterWidget.Vi
         this.guideLink = new Anchor(constants.guideLinkLabel());
         this.aboutLink = new Anchor(constants.aboutLinkLabel());
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
+        ViewIdHandler.idHandler.generateAndSetIds(this);
         mainTabBarPanel.getElement().getStyle().setZIndex(1);
     }
 

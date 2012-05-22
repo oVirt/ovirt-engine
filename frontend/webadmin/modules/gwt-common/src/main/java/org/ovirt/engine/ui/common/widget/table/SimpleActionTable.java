@@ -33,10 +33,11 @@ public class SimpleActionTable<T> extends AbstractActionTable<T> {
     HTMLPanel barPanel;
 
     @UiField(provided = true)
-    RefreshPanel refreshPanel;
+    @WithElementId
+    public RefreshPanel refreshPanel;
 
     @UiField
-    @WithElementId
+    @WithElementId("itemsCount")
     public Label itemsCountLabel;
 
     private final SimpleRefreshManager refreshManager;
