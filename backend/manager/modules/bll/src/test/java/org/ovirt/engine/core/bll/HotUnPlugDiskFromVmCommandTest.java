@@ -15,6 +15,7 @@ import org.ovirt.engine.core.dal.VdcBllMessages;
 
 public class HotUnPlugDiskFromVmCommandTest extends HotPlugDiskToVmCommandTest {
 
+    @Override
     @Test
     public void canDoActionFailedWrongPlugStatus() throws Exception {
         initializeCommand();
@@ -33,6 +34,7 @@ public class HotUnPlugDiskFromVmCommandTest extends HotPlugDiskToVmCommandTest {
         when(command.getActionType()).thenReturn(VdcActionType.HotUnPlugDiskFromVm);
     }
 
+    @Override
     protected void cretaeVirtIODisk() {
         DiskImage disk = new DiskImage();
         disk.setImageId(diskImageGuid);

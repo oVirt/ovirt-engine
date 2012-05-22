@@ -2,10 +2,14 @@ package org.ovirt.engine.core.bll;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.when;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -154,8 +158,20 @@ public class HotPlugDiskToVmCommandTest {
         vm.setId(vmId);
         vm.setrun_on_vds(Guid.NewGuid());
         AuditLogableBaseMockUtils.mockVmDao(command, vmDAO);
-        when(vmDAO.get(command.getParameters().getVmId())).thenReturn(vm);
+        mockVMDAO(vm);
         return vm;
+    }
+
+    private void mockVMDAO(VM vm) {
+        when(vmDAO.get(command.getParameters().getVmId())).thenReturn(vm);
+        List<VM> vmList = new ArrayList<VM>();
+        VM vm1 = new VM();
+        vm1.setId(command.getParameters().getVmId());
+        VM vm2 = new VM();
+        vm2.setId(Guid.NewGuid());
+        vmList.add(vm1);
+        vmList.add(vm2);
+        when(vmDAO.getVmsListForDisk(any(Guid.class))).thenReturn(vmList);
     }
 
     /**

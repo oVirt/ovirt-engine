@@ -2,6 +2,7 @@ package org.ovirt.engine.core.dao;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,15 +60,28 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
     @Override
     public Map<Boolean, List<VM>> getForDisk(Guid id) {
         Map<Boolean, List<VM>> result = new HashMap<Boolean, List<VM>>();
-        List<VMWithPlugInfo> vms =
-                getCallsHandler().executeReadList
-                        ("GetVmsByDiskId",
-                                VMWithPlugInfoRowMapper.instance,
-                                getCustomMapSqlParameterSource().addValue("disk_guid", id));
+        List<VMWithPlugInfo> vms = getVmsWithPlugInfo(id);
         for (VMWithPlugInfo vm : vms) {
             MultiValueMapUtils.addToMap(vm.isPlugged(), vm.getVM(), result);
         }
         return result;
+    }
+
+    @Override
+    public List<VM> getVmsListForDisk(Guid id) {
+        List<VM> result = new ArrayList<VM>();
+        List<VMWithPlugInfo> vms = getVmsWithPlugInfo(id);
+        for (VMWithPlugInfo vm : vms) {
+            result.add(vm.getVM());
+        }
+        return result;
+    }
+
+    private List<VMWithPlugInfo> getVmsWithPlugInfo(Guid id) {
+        return getCallsHandler().executeReadList
+                ("GetVmsByDiskId",
+                        VMWithPlugInfoRowMapper.instance,
+                        getCustomMapSqlParameterSource().addValue("disk_guid", id));
     }
 
     @Override

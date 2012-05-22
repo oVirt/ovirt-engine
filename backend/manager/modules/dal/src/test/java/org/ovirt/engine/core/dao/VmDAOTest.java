@@ -135,6 +135,17 @@ public class VmDAOTest extends BaseDAOTestCase {
     }
 
     /**
+     * Gets list of VMs which associated with the specified disk id.
+     */
+    @Test
+    public void testGetVmsListForDisk() {
+        List<VM> result = dao.getVmsListForDisk(FixturesTool.IMAGE_GROUP_ID);
+
+        assertNotNull(result);
+        assertEquals("wrong number of VMs", 1, result.size());
+    }
+
+    /**
      * Ensures that getting all VMs works as expected.
      */
     @Test

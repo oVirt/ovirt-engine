@@ -67,6 +67,7 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
                 : Guid.Empty;
     }
 
+    @Override
     protected VDSReturnValue performImageVdsmOperation() {
         setDestinationImageId(Guid.NewGuid());
         mNewCreatedDiskImage = CloneDiskImage(getDestinationImageId());
@@ -158,8 +159,7 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
         RevertTasks();
 
         if (getDestinationDiskImage() != null
-                && DbFacade.getInstance().getVmStaticDAO().get(getDestinationDiskImage().getcontainer_guid()) != null) {
-
+                && !DbFacade.getInstance().getVmDAO().getVmsListForDisk(getDestinationDiskImage().getId()).isEmpty()) {
             // Empty Guid, means new disk rather than snapshot, so no need to add a map to the db for new disk.
             if (!getDestinationDiskImage().getParentId().equals(Guid.Empty)) {
                 if (!getDestinationDiskImage().getParentId().equals(getDestinationDiskImage().getit_guid())) {

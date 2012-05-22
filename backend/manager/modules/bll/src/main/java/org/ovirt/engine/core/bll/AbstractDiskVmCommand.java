@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.LunDisk;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
@@ -123,13 +124,12 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperatinParameterBas
     }
 
     protected boolean isDiskExist(Disk disk) {
-        if (disk == null || !getVmId().equals(disk.getvm_guid())) {
+        if (disk == null || !isDiskExistInVm(disk)) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_NOT_EXIST);
             return false;
         }
         return true;
     }
-
 
     protected boolean isInterfaceSupportedForPlugUnPlug(Disk disk) {
         if (!DiskInterface.VirtIO.equals(disk.getDiskInterface())) {
@@ -137,6 +137,16 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperatinParameterBas
             return false;
         }
         return true;
+    }
+
+    private boolean isDiskExistInVm(Disk disk) {
+        List<VM> listVms = getVmDAO().getVmsListForDisk(disk.getId());
+        for (VM vm : listVms) {
+            if (vm.getId().equals(getVmId())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

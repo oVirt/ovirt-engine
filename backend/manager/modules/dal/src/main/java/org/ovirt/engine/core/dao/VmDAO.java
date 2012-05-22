@@ -53,6 +53,15 @@ public interface VmDAO extends DAO {
     Map<Boolean, List<VM>> getForDisk(Guid disk);
 
     /**
+     * Retrieves a list of VMs fir the specified disk id.
+     *
+     * @param disk
+     *            the disk id
+     * @return A {@link List} of the VMs associated with the disk.
+     */
+    List<VM> getVmsListForDisk(Guid id);
+
+    /**
      * Finds all VMs for the specified user.
      *
      * @param user
