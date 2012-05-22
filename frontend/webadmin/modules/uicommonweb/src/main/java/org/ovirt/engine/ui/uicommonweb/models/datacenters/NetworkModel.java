@@ -4,11 +4,9 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IntegerValidation;
-import org.ovirt.engine.ui.uicommonweb.validation.IpAddressValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.RegexValidation;
-import org.ovirt.engine.ui.uicommonweb.validation.SubnetMaskValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
@@ -37,42 +35,6 @@ public class NetworkModel extends Model
     private void setName(EntityModel value)
     {
         privateName = value;
-    }
-
-    private EntityModel privateAddress;
-
-    public EntityModel getAddress()
-    {
-        return privateAddress;
-    }
-
-    private void setAddress(EntityModel value)
-    {
-        privateAddress = value;
-    }
-
-    private EntityModel privateSubnet;
-
-    public EntityModel getSubnet()
-    {
-        return privateSubnet;
-    }
-
-    private void setSubnet(EntityModel value)
-    {
-        privateSubnet = value;
-    }
-
-    private EntityModel privateGateway;
-
-    public EntityModel getGateway()
-    {
-        return privateGateway;
-    }
-
-    private void setGateway(EntityModel value)
-    {
-        privateGateway = value;
     }
 
     private EntityModel privateDescription;
@@ -162,9 +124,6 @@ public class NetworkModel extends Model
     public NetworkModel()
     {
         setName(new EntityModel());
-        setAddress(new EntityModel());
-        setSubnet(new EntityModel());
-        setGateway(new EntityModel());
         setDescription(new EntityModel());
         setVLanTag(new EntityModel());
         EntityModel tempVar = new EntityModel();
@@ -193,12 +152,6 @@ public class NetworkModel extends Model
         tempVar2.setMessage(ConstantsManager.getInstance().getConstants().networkNameStartMsg());
         getName().ValidateEntity(new IValidation[] { new NotEmptyValidation(), tempVar, tempVar2 });
 
-        getAddress().ValidateEntity(new IValidation[] { new IpAddressValidation() });
-
-        getSubnet().ValidateEntity(new IValidation[] { new SubnetMaskValidation() });
-
-        getGateway().ValidateEntity(new IValidation[] { new IpAddressValidation() });
-
         LengthValidation tempVar3 = new LengthValidation();
         tempVar3.setMaxLength(40);
         getDescription().ValidateEntity(new IValidation[] { tempVar3 });
@@ -221,8 +174,8 @@ public class NetworkModel extends Model
             getMtu().ValidateEntity(new IValidation[] { new NotEmptyValidation(), tempVar5 });
         }
 
-        return getName().getIsValid() && getAddress().getIsValid() && getSubnet().getIsValid()
-                && getGateway().getIsValid() && getVLanTag().getIsValid() && getDescription().getIsValid() && getMtu().getIsValid();
+        return getName().getIsValid() && getVLanTag().getIsValid() && getDescription().getIsValid()
+                && getMtu().getIsValid();
     }
 
 }
