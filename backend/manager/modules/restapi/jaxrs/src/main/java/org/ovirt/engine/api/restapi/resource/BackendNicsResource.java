@@ -8,8 +8,6 @@ import javax.ws.rs.core.Response;
 import org.ovirt.engine.api.model.NIC;
 import org.ovirt.engine.api.model.Nics;
 import org.ovirt.engine.api.resource.DevicesResource;
-
-import org.ovirt.engine.api.restapi.resource.BaseBackendResource.WebFaultException;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network;
@@ -97,6 +95,14 @@ public abstract class BackendNicsResource
     }
 
     protected network lookupClusterNetwork(Guid clusterId, Guid id, String name) {
+        network net = getClusterNetwork(clusterId, id, name);
+        if (net != null) {
+            return net;
+        }
+        throw new WebFaultException(null, "Network not found in cluster", Response.Status.BAD_REQUEST);
+    }
+
+    protected network getClusterNetwork(Guid clusterId, Guid id, String name) {
         for (network entity : getBackendCollection(network.class,
                                                    VdcQueryType.GetAllNetworksByClusterId,
                                                    new VdsGroupQueryParamenters(clusterId))) {
@@ -105,7 +111,7 @@ public abstract class BackendNicsResource
                 return entity;
             }
         }
-        throw new WebFaultException(null, "Network not found in cluster", Response.Status.BAD_REQUEST);
+        return null;
     }
 
     @Override

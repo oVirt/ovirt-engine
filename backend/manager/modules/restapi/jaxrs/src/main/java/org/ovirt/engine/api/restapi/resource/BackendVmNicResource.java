@@ -29,8 +29,8 @@ public class BackendVmNicResource extends BackendNicResource implements VmNicRes
     protected NIC populate(NIC model, VmNetworkInterface entity) {
         BackendVmNicsResource parent = (BackendVmNicsResource)collection;
         Guid clusterId = parent.getClusterId();
-        network network = parent.lookupClusterNetwork(clusterId, null, model.getNetwork().getName());
-        model.getNetwork().setId(network.getId().toString());
+        network network = parent.getClusterNetwork(clusterId, null, model.getNetwork().getName());
+        model.getNetwork().setId(network == null ? null : network.getId().toString());
         model.getNetwork().setName(null);
         return parent.addStatistics(model, entity, uriInfo, httpHeaders);
     }

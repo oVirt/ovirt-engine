@@ -1,25 +1,24 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static org.easymock.EasyMock.expect;
 import static org.ovirt.engine.api.restapi.resource.AbstractBackendNicsResourceTest.PARENT_ID;
 import static org.ovirt.engine.api.restapi.resource.AbstractBackendNicsResourceTest.setUpEntityExpectations;
 import static org.ovirt.engine.api.restapi.resource.AbstractBackendNicsResourceTest.verifyModelSpecific;
-import static org.easymock.EasyMock.expect;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.ws.rs.WebApplicationException;
 
 import org.junit.Test;
-
 import org.ovirt.engine.api.model.MAC;
 import org.ovirt.engine.api.model.NIC;
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.Nics;
 import org.ovirt.engine.api.model.Statistic;
 import org.ovirt.engine.api.resource.NicResource;
-
 import org.ovirt.engine.api.restapi.resource.BaseBackendResource.WebFaultException;
 import org.ovirt.engine.core.common.action.AddVmInterfaceParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -80,6 +79,21 @@ public class BackendVmNicResourceTest
 
         NIC nic = resource.get();
         verifyModelSpecific(nic, 1);
+        verifyLinks(nic);
+    }
+
+    @Test
+    public void testGetNoNetwork() throws Exception {
+        setUriInfo(setUpBasicUriExpectations());
+        setUpEntityQueryExpectations(1);
+        setGetVmQueryExpectations(1);
+        setGetNetworksQueryExpectations(1, Collections.<network> emptyList());
+        control.replay();
+
+        NIC nic = resource.get();
+        assertNotNull(nic);
+        assertNull(nic.getNetwork().getName());
+        assertNull(nic.getNetwork().getId());
         verifyLinks(nic);
     }
 
@@ -173,31 +187,35 @@ public class BackendVmNicResourceTest
     }
 
     protected void setGetVmQueryExpectations(int times) throws Exception {
-            while (times-- > 0) {
-                VM vm = new VM();
-                vm.setvds_group_id(GUIDS[0]);
-                setUpEntityQueryExpectations(VdcQueryType.GetVmByVmId,
-                                             GetVmByVmIdParameters.class,
-                                             new String[] { "Id" },
-                                             new Object[] { PARENT_ID },
-                                             vm);
-            }
+        while (times-- > 0) {
+            VM vm = new VM();
+            vm.setvds_group_id(GUIDS[0]);
+            setUpEntityQueryExpectations(VdcQueryType.GetVmByVmId,
+                    GetVmByVmIdParameters.class,
+                    new String[] { "Id" },
+                    new Object[] { PARENT_ID },
+                    vm);
         }
+    }
 
-        protected void setGetNetworksQueryExpectations(int times) throws Exception {
-            while (times-- > 0) {
-                ArrayList<network> networks = new ArrayList<network>();
-                network network = new network();
-                network.setId(GUIDS[0]);
-                network.setname("orcus");
-                networks.add(network);
-                setUpEntityQueryExpectations(VdcQueryType.GetAllNetworksByClusterId,
-                                             VdsGroupQueryParamenters.class,
-                                             new String[] { "VdsGroupId" },
-                                             new Object[] { GUIDS[0] },
-                                             networks);
-            }
+    protected void setGetNetworksQueryExpectations(int times) throws Exception {
+        ArrayList<network> networks = new ArrayList<network>();
+        network network = new network();
+        network.setId(GUIDS[0]);
+        network.setname("orcus");
+        networks.add(network);
+        setGetNetworksQueryExpectations(times, networks);
+    }
+
+    protected void setGetNetworksQueryExpectations(int times, List<network> networks) throws Exception {
+        while (times-- > 0) {
+            setUpEntityQueryExpectations(VdcQueryType.GetAllNetworksByClusterId,
+                    VdsGroupQueryParamenters.class,
+                    new String[] { "VdsGroupId" },
+                    new Object[] { GUIDS[0] },
+                    networks);
         }
+    }
 
     protected VmNetworkInterface setUpStatisticalExpectations() throws Exception {
         VmNetworkStatistics stats = control.createMock(VmNetworkStatistics.class);
