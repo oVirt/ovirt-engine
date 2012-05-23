@@ -1701,22 +1701,6 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
         model.getCommands().add(tempVar2);
     }
 
-    private void DisableNewTemplateModel(VmModel model, String errMessage)
-    {
-        model.setMessage(errMessage);
-
-        model.getName().setIsChangable(false);
-        model.getDescription().setIsChangable(false);
-        model.getCluster().setIsChangable(false);
-        model.getStorageDomain().setIsChangable(false);
-        model.getIsTemplatePublic().setIsChangable(false);
-
-        UICommand tempVar = new UICommand("Cancel", this); //$NON-NLS-1$
-        tempVar.setTitle(ConstantsManager.getInstance().getConstants().close());
-        tempVar.setIsCancel(true);
-        model.getCommands().add(tempVar);
-    }
-
     private void OnNewTemplate()
     {
         UnitVmModel model = (UnitVmModel) getWindow();
