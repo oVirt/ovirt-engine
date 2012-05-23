@@ -31,7 +31,7 @@ import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 
 public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> extends VdsCommand<T> {
-    private final int SLEEP_BEFORE_FIRST_ATTEMPT=5000;
+    private final int SLEEP_BEFORE_FIRST_ATTEMPT = 5000;
     private static Log log = LogFactory.getLog(FenceVdsBaseCommand.class);
     protected FencingExecutor _executor;
     protected List<VM> mVmList = null;
@@ -48,7 +48,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
 
     public FenceVdsBaseCommand(T parameters) {
         super(parameters);
-        mVmList = DbFacade.getInstance().getVmDAO().getAllRunningForVds(getVdsId());
+        mVmList = getVmDAO().getAllRunningForVds(getVdsId());
     }
 
     /**
@@ -81,7 +81,8 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_HOST_NOT_EXIST);
             return false;
         }
-        // get the event to look for , if we requested to start Host then we should look when we stopped it and vice versa.
+        // get the event to look for , if we requested to start Host then we should look when we stopped it and vice
+        // versa.
         if (getParameters().getAction() == FenceActionType.Start) {
             event = AuditLogType.USER_VDS_STOP.name();
         }
@@ -163,7 +164,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
                                 .name()
                                 .toLowerCase());
                         throw new VdcBLLException(VdcBllErrors.VDS_FENCING_OPERATION_FAILED);
-                    } else {  //Fencing operation was skipped because Host is already in the requested state.
+                    } else { // Fencing operation was skipped because Host is already in the requested state.
                         setStatus(lastStatus);
                     }
                 }
@@ -232,7 +233,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
             // care of that case.
             // VmPoolHandler.ProcessVmPoolOnStopVm(VmId);
 
-            //Handle highly available VMs
+            // Handle highly available VMs
             if (vm.getauto_startup()) {
                 runVmParamsList.add(new RunVmParams(vm.getId(), true));
             }
