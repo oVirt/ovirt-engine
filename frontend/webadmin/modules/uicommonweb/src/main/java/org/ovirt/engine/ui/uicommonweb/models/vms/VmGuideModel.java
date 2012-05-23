@@ -402,6 +402,7 @@ public class VmGuideModel extends GuideModel
         model.setTitle(ConstantsManager.getInstance().getConstants().newVirtualDiskTitle());
         model.setHashName("new_virtual_disk"); //$NON-NLS-1$
         model.setIsNew(true);
+        model.setDatacenterId(getEntity().getstorage_pool_id());
         model.getIsInVm().setEntity(true);
 
         ArrayList<storage_domains> storageDomains = new ArrayList<storage_domains>();
