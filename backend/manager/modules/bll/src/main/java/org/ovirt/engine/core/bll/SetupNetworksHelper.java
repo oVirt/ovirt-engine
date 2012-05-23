@@ -153,19 +153,15 @@ public class SetupNetworksHelper {
     private void extractNetwork(Map<String, network> networks,
             VdsNetworkInterface iface,
             String networkName) {
-        List<String> networksOverBond = new ArrayList<String>();
 
         // check if network exists on cluster
         if (getExistingClusterNetworks().containsKey(networkName)) {
 
             // prevent attaching 2 interfaces to 1 network
-            if (networks.containsKey(networkName) && networksOverBond.contains(networkName) && isBond(iface)) {
+            if (networks.containsKey(networkName)) {
                 violations.add(VdcBllMessages.NETWROK_ALREADY_ATTACHED_TO_INTERFACE);
             } else {
                 networks.put(networkName, getExistingClusterNetworks().get(networkName));
-                if (isBond(iface)) {
-                    networksOverBond.add(networkName);
-                }
             }
 
             // Interface must exist, it was checked before and we can't reach here if it does'nt exist already.

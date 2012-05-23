@@ -193,7 +193,6 @@ public class SetupNetworksHelperTest {
         slave1.setName("eth0");
         slave1.setBondName("bond0");
         slave1.setGateway("1.1.1.1");
-        slave1.setNetworkName("ovirtmgmt");
         nics.add(slave1);
 
         SetupNetworksParameters params = new SetupNetworksParameters();
@@ -206,7 +205,6 @@ public class SetupNetworksHelperTest {
 
         VdsNetworkInterface slave2 = new VdsNetworkInterface();
         slave2.setBondName("bond0");
-        slave2.setNetworkName("ovirtmgmt");
         slave2.setName("eth1");
 
         nics.add(slave2);
