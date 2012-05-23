@@ -535,7 +535,8 @@ public class CommonModel extends ListModel
                 || model.getType() == SystemTreeItemType.System);
 
         volumeList.setIsAvailable(model.getType() == SystemTreeItemType.Cluster_Gluster
-                || model.getType() == SystemTreeItemType.Volume || model.getType() == SystemTreeItemType.Volumes);
+                || model.getType() == SystemTreeItemType.Volume || model.getType() == SystemTreeItemType.Volumes
+                || model.getType() == SystemTreeItemType.System);
 
         if (model.getType() == SystemTreeItemType.Cluster) {
             volumeList.setIsAvailable(false);

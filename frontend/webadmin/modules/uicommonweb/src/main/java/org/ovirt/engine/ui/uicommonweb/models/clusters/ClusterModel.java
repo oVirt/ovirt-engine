@@ -488,10 +488,15 @@ public class ClusterModel extends Model
         setName(new EntityModel());
         setDescription(new EntityModel());
         setEnableOvirtService(new EntityModel());
-        getEnableOvirtService().setEntity(true);
+        getEnableOvirtService().setEntity(ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly));
+        getEnableOvirtService().setIsAvailable(ApplicationModeHelper.getUiMode() != ApplicationMode.VirtOnly
+                && ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly));
+
         setEnableGlusterService(new EntityModel());
-        getEnableGlusterService().setEntity(false);
-        getEnableGlusterService().setIsAvailable(ApplicationModeHelper.getUiMode() == ApplicationMode.AllModes);
+        getEnableGlusterService().setEntity(ApplicationModeHelper.getUiMode() == ApplicationMode.GlusterOnly);
+        getEnableGlusterService().setIsAvailable(ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly
+                && ApplicationModeHelper.isModeSupported(ApplicationMode.GlusterOnly));
+
         setOptimizationNone(new EntityModel());
         setOptimizationForServer(new EntityModel());
         setOptimizationForDesktop(new EntityModel());

@@ -1,5 +1,9 @@
 package org.ovirt.engine.ui.uicommonweb.models;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
@@ -22,10 +26,6 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleQueryAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 
 @SuppressWarnings("unused")
 public class SystemTreeModel extends SearchableListModel implements IFrontendMultipleQueryAsyncCallback
@@ -432,12 +432,16 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
                         }
                     }
                   }
+
+                  if(cluster.supportsVirtService())
+                  {
                     SystemTreeItemModel vmsItem = new SystemTreeItemModel();
                     vmsItem.setType(SystemTreeItemType.VMs);
                     vmsItem.setTitle(ConstantsManager.getInstance().getConstants().vmsTitle());
                     vmsItem.setParent(clusterItem);
                     vmsItem.setEntity(cluster);
                     clusterItem.getChildren().add(vmsItem);
+                  }
                 }
             }
         }

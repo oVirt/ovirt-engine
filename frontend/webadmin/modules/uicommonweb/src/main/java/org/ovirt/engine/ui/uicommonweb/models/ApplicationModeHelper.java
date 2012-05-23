@@ -15,6 +15,11 @@ public class ApplicationModeHelper {
         return (availableModes & UI_MODE.getValue()) > 0;
     }
 
+    public static boolean isModeSupported(ApplicationMode mode)
+    {
+        return (mode.getValue() & UI_MODE.getValue()) > 0;
+    }
+
     public static ApplicationMode getUiMode()
     {
         return UI_MODE;
