@@ -8,14 +8,13 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.ovirt.engine.core.common.action.ImprotVmTemplateParameters;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
@@ -27,7 +26,7 @@ import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.storage_domain_static;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
-import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.DiskImageList;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -38,12 +37,12 @@ import org.ovirt.engine.core.dao.StorageDomainDAO;
 import org.ovirt.engine.core.dao.StorageDomainStaticDAO;
 import org.ovirt.engine.core.dao.StoragePoolDAO;
 import org.ovirt.engine.core.dao.VmTemplateDAO;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.ovirt.engine.core.utils.MockConfigRule;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Config.class, VmTemplateCommand.class })
 public class ImportVmTemplateCommandTest {
+
+    @Rule
+    public MockConfigRule mcr = new MockConfigRule();
 
     @Test
     public void insufficientDiskSpace() {
@@ -132,16 +131,15 @@ public class ImportVmTemplateCommandTest {
             VolumeFormat volumeFormat,
             VolumeType volumeType,
             StorageType storageType) {
-        ConfigMocker cfg = new ConfigMocker();
-        cfg.mockConfigLowDiskSpace(0);
-        cfg.mockConfigLowDiskPct(0);
-        mockVmTemplateCommand();
+        mcr.mockConfigValue(ConfigValues.FreeSpaceCriticalLowInGB, 0);
+        mcr.mockConfigValue(ConfigValues.FreeSpaceLow, 0);
 
         ImportVmTemplateCommand command =
                 spy(new ImportVmTemplateCommand(createParameters()));
 
         Backend backend = mock(Backend.class);
         doReturn(backend).when(command).getBackend();
+        doReturn(false).when(command).isVmTemplateWithSameNameExist();
         mockGetTemplatesFromExportDomainQuery(volumeFormat, volumeType, command);
         mockStorageDomainStatic(command, storageType);
         doReturn(mock(VmTemplateDAO.class)).when(command).getVmTemplateDAO();
@@ -151,7 +149,7 @@ public class ImportVmTemplateCommandTest {
         return command;
     }
 
-    private void mockStorageDomains(ImportVmTemplateCommand command) {
+    private static void mockStorageDomains(ImportVmTemplateCommand command) {
         final ImprotVmTemplateParameters parameters = command.getParameters();
         final StorageDomainDAO dao = mock(StorageDomainDAO.class);
 
@@ -172,7 +170,7 @@ public class ImportVmTemplateCommandTest {
         doReturn(dao).when(command).getStorageDomainDAO();
     }
 
-    private void mockStoragePool(ImportVmTemplateCommand command) {
+    private static void mockStoragePool(ImportVmTemplateCommand command) {
         final StoragePoolDAO dao = mock(StoragePoolDAO.class);
 
         final storage_pool pool = new storage_pool();
@@ -182,7 +180,7 @@ public class ImportVmTemplateCommandTest {
         doReturn(dao).when(command).getStoragePoolDAO();
     }
 
-    private void mockGetTemplatesFromExportDomainQuery(VolumeFormat volumeFormat,
+    private static void mockGetTemplatesFromExportDomainQuery(VolumeFormat volumeFormat,
             VolumeType volumeType,
             ImportVmTemplateCommand command) {
         final VdcQueryReturnValue result = new VdcQueryReturnValue();
@@ -201,7 +199,7 @@ public class ImportVmTemplateCommandTest {
                 any(VdcQueryParametersBase.class))).thenReturn(result);
     }
 
-    private void mockStorageDomainStatic(
+    private static void mockStorageDomainStatic(
             ImportVmTemplateCommand command,
             StorageType storageType) {
         final StorageDomainStaticDAO dao = mock(StorageDomainStaticDAO.class);
@@ -215,10 +213,8 @@ public class ImportVmTemplateCommandTest {
 
     private ImportVmTemplateCommand setupDiskSpaceTest(final int extraDiskSpaceRequired,
             final int pctOfSpaceRequired) {
-        ConfigMocker cfg = new ConfigMocker();
-        cfg.mockConfigLowDiskSpace(extraDiskSpaceRequired);
-        cfg.mockConfigLowDiskPct(pctOfSpaceRequired);
-        mockVmTemplateCommand();
+        mcr.mockConfigValue(ConfigValues.FreeSpaceCriticalLowInGB, extraDiskSpaceRequired);
+        mcr.mockConfigValue(ConfigValues.FreeSpaceLow, pctOfSpaceRequired);
         return new TestHelperImportVmTemplateCommand(createParameters());
     }
 
@@ -228,10 +224,5 @@ public class ImportVmTemplateCommandTest {
         final ImprotVmTemplateParameters p =
                 new ImprotVmTemplateParameters(Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), t);
         return p;
-    }
-
-    protected void mockVmTemplateCommand() {
-        mockStatic(VmTemplateCommand.class);
-        when(VmTemplateCommand.isVmTemlateWithSameNameExist(any(String.class))).thenReturn(false);
     }
 }

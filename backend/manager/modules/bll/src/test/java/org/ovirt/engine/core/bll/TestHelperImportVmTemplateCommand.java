@@ -2,8 +2,8 @@ package org.ovirt.engine.core.bll;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
-import static org.powermock.api.mockito.PowerMockito.mock;
-import static org.powermock.api.mockito.PowerMockito.when;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -89,7 +89,12 @@ public class TestHelperImportVmTemplateCommand extends ImportVmTemplateCommand {
         return source;
     }
 
-    private VdcQueryReturnValue createDiskImageQueryResult() {
+    @Override
+    protected boolean isVmTemplateWithSameNameExist() {
+        return false;
+    }
+
+    private static VdcQueryReturnValue createDiskImageQueryResult() {
         final VdcQueryReturnValue v = new VdcQueryReturnValue();
         Map<VmTemplate, DiskImageList> m = new HashMap<VmTemplate, DiskImageList>();
         VmTemplate t = new VmTemplate();

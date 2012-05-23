@@ -95,7 +95,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImprotVmT
                 DiskImageList images = new DiskImageList();
                 for (VmTemplate t : templates.keySet()) {
                     if (t.getId().equals(getVmTemplate().getId())) {
-                        images =templates.get(t);
+                        images = templates.get(t);
                         getVmTemplate().setInterfaces(t.getInterfaces());
                         break;
                     }
@@ -106,11 +106,12 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImprotVmT
                 ensureDomainMap(getParameters().getImages(), getParameters().getDestDomainId());
                 Map<String, DiskImage> imageMap = new HashMap<String, DiskImage>();
                 for (DiskImage image : list) {
-                    storage_domains storageDomain = getStorageDomain(imageToDestinationDomainMap.get(image.getImageId()));
+                    storage_domains storageDomain =
+                            getStorageDomain(imageToDestinationDomainMap.get(image.getImageId()));
                     StorageDomainValidator validator = new StorageDomainValidator(storageDomain);
                     retVal = validator.isDomainExistAndActive(getReturnValue().getCanDoActionMessages()) &&
                             validator.domainIsValidDestination(getReturnValue().getCanDoActionMessages());
-                    if(!retVal) {
+                    if (!retVal) {
                         break;
                     }
                     storage_domain_static targetDomain = storageDomain.getStorageStaticData();
@@ -142,7 +143,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImprotVmT
                 getReturnValue().getCanDoActionMessages().add(
                         String.format("$TemplateName %1$s", duplicateTemplate.getname()));
                 retVal = false;
-            } else if (VmTemplateCommand.isVmTemlateWithSameNameExist(getParameters().getVmTemplate().getname())) {
+            } else if (isVmTemplateWithSameNameExist()) {
                 addCanDoActionMessage(VdcBllMessages.VM_CANNOT_IMPORT_TEMPLATE_NAME_EXISTS);
                 retVal = false;
             }
@@ -150,8 +151,8 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImprotVmT
 
         // check that template has images
         if (retVal && (getParameters().getImages() == null || getParameters().getImages().size() == 0)) {
-                retVal = false;
-                addCanDoActionMessage(VdcBllMessages.TEMPLATE_IMAGE_NOT_EXIST);
+            retVal = false;
+            addCanDoActionMessage(VdcBllMessages.TEMPLATE_IMAGE_NOT_EXIST);
         }
 
         if (retVal) {
@@ -179,6 +180,10 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImprotVmT
             addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM_TEMPLATE);
         }
         return retVal;
+    }
+
+    protected boolean isVmTemplateWithSameNameExist() {
+        return VmTemplateCommand.isVmTemlateWithSameNameExist(getParameters().getVmTemplate().getname());
     }
 
     private void initImportClonedTemplate() {
@@ -284,9 +289,9 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImprotVmT
                     MoveOrCopyImageGroupParameters p = tempVar;
                     p.setParentParemeters(getParameters());
                     VdcReturnValueBase vdcRetValue = Backend.getInstance().runInternalAction(
-                                    VdcActionType.MoveOrCopyImageGroup,
-                                    p,
-                                    ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
+                            VdcActionType.MoveOrCopyImageGroup,
+                            p,
+                            ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
 
                     if (!vdcRetValue.getSucceeded()) {
                         throw ((vdcRetValue.getFault() != null) ? new VdcBLLException(vdcRetValue.getFault().getError())
@@ -365,7 +370,8 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImprotVmT
     }
 
     protected void RemoveNetwork() {
-        List<VmNetworkInterface> list = DbFacade.getInstance().getVmNetworkInterfaceDAO().getAllForTemplate(getVmTemplateId());
+        List<VmNetworkInterface> list =
+                DbFacade.getInstance().getVmNetworkInterfaceDAO().getAllForTemplate(getVmTemplateId());
         for (VmNetworkInterface iface : list) {
             DbFacade.getInstance().getVmNetworkInterfaceDAO().remove(iface.getId());
         }
@@ -375,7 +381,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImprotVmT
         for (DiskImage image : getParameters().getImages()) {
             DbFacade.getInstance().getDiskImageDynamicDAO().remove(image.getImageId());
             DbFacade.getInstance().getImageDao().remove(image.getImageId());
-            DbFacade.getInstance().getVmDeviceDAO().remove(new VmDeviceId(image.getId(),image.getvm_guid()));
+            DbFacade.getInstance().getVmDeviceDAO().remove(new VmDeviceId(image.getId(), image.getvm_guid()));
             DbFacade.getInstance().getBaseDiskDao().remove(image.getimage_group_id());
         }
     }
