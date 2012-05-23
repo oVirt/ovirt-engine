@@ -19,6 +19,7 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.context.DefaultCompensationContext;
 import org.ovirt.engine.core.bll.context.NoOpCompensationContext;
+import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.session.SessionDataContainer;
@@ -161,9 +162,13 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         if (canPerformRollbackUsingCommand(commandType, params)) {
             params.setExecutionReason(CommandExecutionReason.ROLLBACK_FLOW);
             params.setTransactionScopeOption(TransactionScopeOption.RequiresNew);
-            return Backend.getInstance().runInternalAction(commandType, params, context);
+            return getBackend().runInternalAction(commandType, params, context);
         }
         return new VdcReturnValueBase();
+    }
+
+    protected BackendInternal getBackend() {
+        return Backend.getInstance();
     }
 
     /**
@@ -615,7 +620,8 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         // Skip check if multilevel administration is disabled:
         if (!Config.<Boolean> GetValue(ConfigValues.IsMultilevelAdministrationOn)) {
             if (log.isDebugEnabled()) {
-                log.debugFormat("Permission check for action {0} skipped because multilevel administration is disabled.", getActionType());
+                log.debugFormat("Permission check for action {0} skipped because multilevel administration is disabled.",
+                        getActionType());
             }
             return true;
         }
@@ -1091,7 +1097,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
                     SPMTaskGuidBaseVDSCommandParameters tempVar = new SPMTaskGuidBaseVDSCommandParameters(
                             getStoragePool().getId(), taskId);
                     tempVar.setCompatibilityVersion(getStoragePool().getcompatibility_version().toString());
-                    Backend.getInstance().getResourceManager().RunVdsCommand(VDSCommandType.SPMRevertTask, tempVar);
+                    getBackend().getResourceManager().RunVdsCommand(VDSCommandType.SPMRevertTask, tempVar);
                 }
                 taskIdAsList.clear();
             }
@@ -1219,7 +1225,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      */
     protected VDSReturnValue runVdsCommand(VDSCommandType commandType, VDSParametersBase parameters)
             throws VdcBLLException {
-        return Backend.getInstance().getResourceManager().RunVdsCommand(commandType, parameters);
+        return getBackend().getResourceManager().RunVdsCommand(commandType, parameters);
     }
 
     /**

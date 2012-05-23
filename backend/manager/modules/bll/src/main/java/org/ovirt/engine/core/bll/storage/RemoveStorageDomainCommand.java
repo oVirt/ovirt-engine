@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.bll.storage;
 
-import org.ovirt.engine.core.bll.Backend;
-import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.DetachStorageDomainFromPoolParameters;
 import org.ovirt.engine.core.common.action.RemoveStorageDomainParameters;
@@ -127,10 +125,6 @@ public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters>
 
     protected DbFacade getDb() {
         return DbFacade.getInstance();
-    }
-
-    protected BackendInternal getBackend() {
-        return Backend.getInstance();
     }
 
     protected VDSBrokerFrontend getVdsBroker() {

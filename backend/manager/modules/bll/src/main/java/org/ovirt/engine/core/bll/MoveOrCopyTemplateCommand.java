@@ -10,7 +10,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
-import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.storage.StorageDomainCommandBase;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
@@ -43,7 +42,7 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
 
     protected Map<Guid, Guid> imageToDestinationDomainMap;
     protected Map<Guid, DiskImage> imageFromSourceDomainMap;
-    private  List<PermissionSubject> permissionCheckSubject;
+    private List<PermissionSubject> permissionCheckSubject;
     private List<DiskImage> _templateDisks;
     private storage_domains sourceDomain;
     private Guid sourceDomainId = Guid.Empty;
@@ -74,10 +73,6 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
 
     protected void SetSourceDomainId(Guid storageId) {
         sourceDomainId = storageId;
-    }
-
-    protected BackendInternal getBackend() {
-        return Backend.getInstance();
     }
 
     protected ImageOperation getMoveOrCopyImageOperation() {
@@ -183,9 +178,9 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
                     p.setSourceDomainId(imageFromSourceDomainMap.get(disk.getImageId()).getstorage_ids().get(0));
                     p.setParentParemeters(getParameters());
                     VdcReturnValueBase vdcRetValue = getBackend().runInternalAction(
-                                    VdcActionType.MoveOrCopyImageGroup,
-                                    p,
-                                    ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
+                            VdcActionType.MoveOrCopyImageGroup,
+                            p,
+                            ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
                     getParameters().getImagesParameters().add(p);
 
                     getReturnValue().getTaskIdList().addAll(vdcRetValue.getInternalTaskIdList());
@@ -286,8 +281,8 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
     }
 
     protected Map<storage_domains, Integer> getSpaceRequirementsForStorageDomains(Collection<DiskImage> images) {
-        Map<DiskImage, storage_domains> spaceMap = new HashMap<DiskImage,storage_domains>();
-        for(DiskImage image : images) {
+        Map<DiskImage, storage_domains> spaceMap = new HashMap<DiskImage, storage_domains>();
+        for (DiskImage image : images) {
             storage_domains domain = getStorageDomain(imageToDestinationDomainMap.get(image.getImageId()));
             spaceMap.put(image, domain);
         }
@@ -325,4 +320,4 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
         }
         return permissionCheckSubject;
     }
- }
+}
