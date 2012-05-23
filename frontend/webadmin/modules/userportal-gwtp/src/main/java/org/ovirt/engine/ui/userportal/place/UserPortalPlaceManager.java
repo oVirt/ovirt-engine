@@ -14,27 +14,26 @@ import com.gwtplatform.mvp.client.proxy.TokenFormatter;
 
 public class UserPortalPlaceManager extends ApplicationPlaceManager {
 
-    private final PlaceRequest defaultMainSectionExtendedRequest;
     private final CurrentUserRole userRole;
+
+    private final PlaceRequest defaultMainSectionRequest;
+    private final PlaceRequest defaultMainSectionExtendedRequest;
 
     @Inject
     public UserPortalPlaceManager(EventBus eventBus, TokenFormatter tokenFormatter,
+            CurrentUser user, CurrentUserRole userRole,
             @DefaultLoginSectionPlace String defaultLoginSectionPlace,
             @DefaultMainSectionPlace String defaultMainSectionPlace,
-            @DefaultMainSectionExtendedPlace String defaultMainSectionExtendedPlace,
-            CurrentUser user, CurrentUserRole userRole) {
-        super(eventBus, tokenFormatter, defaultLoginSectionPlace, defaultMainSectionPlace, user);
-        this.defaultMainSectionExtendedRequest = new PlaceRequest(defaultMainSectionExtendedPlace);
+            @DefaultMainSectionExtendedPlace String defaultMainSectionExtendedPlace) {
+        super(eventBus, tokenFormatter, user, new PlaceRequest(defaultLoginSectionPlace));
         this.userRole = userRole;
+        this.defaultMainSectionRequest = new PlaceRequest(defaultMainSectionPlace);
+        this.defaultMainSectionExtendedRequest = new PlaceRequest(defaultMainSectionExtendedPlace);
     }
 
     @Override
-    protected PlaceRequest getDefaultPlace() {
-        if (user.isLoggedIn()) {
-            return userRole.isBasicUser() ? defaultMainSectionRequest : defaultMainSectionExtendedRequest;
-        } else {
-            return defaultLoginSectionRequest;
-        }
+    protected PlaceRequest getDefaultMainSectionPlace() {
+        return userRole.isBasicUser() ? defaultMainSectionRequest : defaultMainSectionExtendedRequest;
     }
 
 }

@@ -7,6 +7,10 @@ import java.lang.annotation.Target;
 
 import com.google.inject.BindingAnnotation;
 
+/**
+ * Similar to {@link org.ovirt.engine.ui.common.section.DefaultMainSectionPlace DefaultMainSectionPlace}, represents the
+ * default place of "main" section for "Extended" main tab.
+ */
 @BindingAnnotation
 @Target({ ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)

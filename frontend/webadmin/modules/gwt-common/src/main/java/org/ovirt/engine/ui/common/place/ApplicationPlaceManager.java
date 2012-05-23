@@ -5,11 +5,8 @@ import java.util.logging.Logger;
 import org.ovirt.engine.ui.common.auth.CurrentUser;
 import org.ovirt.engine.ui.common.auth.UserLoginChangeEvent;
 import org.ovirt.engine.ui.common.auth.UserLoginChangeEvent.UserLoginChangeHandler;
-import org.ovirt.engine.ui.common.section.DefaultLoginSectionPlace;
-import org.ovirt.engine.ui.common.section.DefaultMainSectionPlace;
 
 import com.google.gwt.event.shared.EventBus;
-import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.proxy.PlaceManagerImpl;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.TokenFormatter;
@@ -17,25 +14,20 @@ import com.gwtplatform.mvp.client.proxy.TokenFormatter;
 /**
  * Place manager that handles transitions between different places in the application.
  */
-public class ApplicationPlaceManager extends PlaceManagerImpl implements UserLoginChangeHandler {
+public abstract class ApplicationPlaceManager extends PlaceManagerImpl implements UserLoginChangeHandler {
 
     private static final Logger logger = Logger.getLogger(ApplicationPlaceManager.class.getName());
 
-    protected final PlaceRequest defaultLoginSectionRequest;
-    protected final PlaceRequest defaultMainSectionRequest;
-    protected final CurrentUser user;
+    private final CurrentUser user;
+    private final PlaceRequest defaultLoginSectionRequest;
 
     private PlaceRequest autoLoginRequest;
 
-    @Inject
     public ApplicationPlaceManager(EventBus eventBus, TokenFormatter tokenFormatter,
-            @DefaultLoginSectionPlace String defaultLoginSectionPlace,
-            @DefaultMainSectionPlace String defaultMainSectionPlace,
-            CurrentUser user) {
+            CurrentUser user, PlaceRequest defaultLoginSectionRequest) {
         super(eventBus, tokenFormatter);
-        this.defaultLoginSectionRequest = new PlaceRequest(defaultLoginSectionPlace);
-        this.defaultMainSectionRequest = new PlaceRequest(defaultMainSectionPlace);
         this.user = user;
+        this.defaultLoginSectionRequest = defaultLoginSectionRequest;
         eventBus.addHandler(UserLoginChangeEvent.getType(), this);
     }
 
@@ -45,8 +37,17 @@ public class ApplicationPlaceManager extends PlaceManagerImpl implements UserLog
     }
 
     protected PlaceRequest getDefaultPlace() {
-        return user.isLoggedIn() ? defaultMainSectionRequest : defaultLoginSectionRequest;
+        if (user.isLoggedIn()) {
+            return getDefaultMainSectionPlace();
+        } else {
+            return defaultLoginSectionRequest;
+        }
     }
+
+    /**
+     * Returns the currently valid default "main" section place.
+     */
+    protected abstract PlaceRequest getDefaultMainSectionPlace();
 
     @Override
     public void revealErrorPlace(String invalidHistoryToken) {

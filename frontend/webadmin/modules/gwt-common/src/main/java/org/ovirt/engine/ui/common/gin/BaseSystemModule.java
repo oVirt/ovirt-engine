@@ -6,8 +6,6 @@ import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.auth.CurrentUser;
 import org.ovirt.engine.ui.common.auth.LoggedInGatekeeper;
-import org.ovirt.engine.ui.common.section.DefaultLoginSectionPlace;
-import org.ovirt.engine.ui.common.section.DefaultMainSectionPlace;
 import org.ovirt.engine.ui.common.system.ApplicationFocusManager;
 import org.ovirt.engine.ui.common.system.AsyncCallFailureHandler;
 import org.ovirt.engine.ui.common.system.ClientStorage;
@@ -38,11 +36,6 @@ public abstract class BaseSystemModule extends AbstractGinModule {
         bind(ClientAgentType.class).in(Singleton.class);
         bind(ClientStorage.class).in(Singleton.class);
         bind(ApplicationFocusManager.class).asEagerSingleton();
-    }
-
-    protected void bindPlaceConfiguration(String defaultLoginSectionPlace, String defaultMainSectionPlace) {
-        bindConstant().annotatedWith(DefaultLoginSectionPlace.class).to(defaultLoginSectionPlace);
-        bindConstant().annotatedWith(DefaultMainSectionPlace.class).to(defaultMainSectionPlace);
     }
 
     protected void bindResourceConfiguration(

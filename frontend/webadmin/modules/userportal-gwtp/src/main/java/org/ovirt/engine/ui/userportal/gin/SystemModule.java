@@ -1,6 +1,8 @@
 package org.ovirt.engine.ui.userportal.gin;
 
 import org.ovirt.engine.ui.common.gin.BaseSystemModule;
+import org.ovirt.engine.ui.common.section.DefaultLoginSectionPlace;
+import org.ovirt.engine.ui.common.section.DefaultMainSectionPlace;
 import org.ovirt.engine.ui.userportal.ApplicationConstants;
 import org.ovirt.engine.ui.userportal.ApplicationMessages;
 import org.ovirt.engine.ui.userportal.ApplicationResources;
@@ -35,10 +37,13 @@ public class SystemModule extends BaseSystemModule {
     }
 
     void bindConfiguration() {
-        bindPlaceConfiguration(ApplicationPlaces.DEFAULT_LOGIN_SECTION_PLACE,
-                ApplicationPlaces.DEFAULT_MAIN_SECTION_BASIC_PLACE);
+        bindConstant().annotatedWith(DefaultLoginSectionPlace.class)
+                .to(ApplicationPlaces.DEFAULT_LOGIN_SECTION_PLACE);
+        bindConstant().annotatedWith(DefaultMainSectionPlace.class)
+                .to(ApplicationPlaces.DEFAULT_MAIN_SECTION_BASIC_PLACE);
         bindConstant().annotatedWith(DefaultMainSectionExtendedPlace.class)
                 .to(ApplicationPlaces.DEFAULT_MAIN_SECTION_EXTENDED_PLACE);
+
         bindResourceConfiguration(ApplicationConstants.class, ApplicationMessages.class,
                 ApplicationResources.class, ApplicationTemplates.class);
         bind(ApplicationResourcesWithLookup.class).in(Singleton.class);
