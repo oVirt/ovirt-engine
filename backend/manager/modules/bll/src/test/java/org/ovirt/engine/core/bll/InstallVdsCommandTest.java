@@ -3,27 +3,27 @@ package org.ovirt.engine.core.bll;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
-import static org.mockito.MockitoAnnotations.initMocks;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
+import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.action.InstallVdsParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSType;
-import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VdsDAO;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.ovirt.engine.core.utils.MockConfigRule;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Config.class, DbFacade.class })
+@RunWith(MockitoJUnitRunner.class)
 public class InstallVdsCommandTest {
 
     private static final String OVIRT_ISO_PREFIX = "rhevh";
@@ -33,37 +33,30 @@ public class InstallVdsCommandTest {
     private static final String VALID_OVIRT_VERSION = "6.2";
     private static final String INVALID_OVIRT_VERSION = "5.8";
 
-    @Mock private DbFacade dbFacade;
-    @Mock private VdsDAO vdsDAO;
+    @Rule
+    public static MockConfigRule mcr = new MockConfigRule(
+            mockConfig(ConfigValues.OvirtIsoPrefix, OVIRT_ISO_PREFIX),
+            mockConfig(ConfigValues.DataDir, "."),
+            mockConfig(ConfigValues.oVirtISOsRepositoryPath, OVIRT_ISOS_REPOSITORY_PATH)
+            );
 
-    public InstallVdsCommandTest() {
+    @Mock
+    private VdsDAO vdsDAO;
+
+    private InstallVdsCommand<InstallVdsParameters> createCommand(InstallVdsParameters params) {
+        InstallVdsCommand<InstallVdsParameters> command = spy(new InstallVdsCommand<InstallVdsParameters>(params));
+        doReturn(vdsDAO).when(command).getVdsDAO();
+        return command;
     }
 
     @Before
-    public void setUp() {
-        initMocks(this);
-        mockStatic(Config.class);
-        ConfigMocker cfgMocker = new ConfigMocker();
-        cfgMocker.mockConfigOvirtIsoPrefix(OVIRT_ISO_PREFIX);
-        cfgMocker.mockOVirtISOsRepositoryPath(OVIRT_ISOS_REPOSITORY_PATH);
-
-        mockStatic(DbFacade.class);
-        when(DbFacade.getInstance()).thenReturn(dbFacade);
-        when(dbFacade.getVdsDAO()).thenReturn(vdsDAO);
-        mockVdsDAO();
-    }
-
-    private InstallVdsCommand<InstallVdsParameters> createCommand(InstallVdsParameters params) {
-        return new InstallVdsCommand<InstallVdsParameters>(params);
-    }
-
-    private void mockVdsDAO() {
+    public void mockVdsDAO() {
         VDS vds = new VDS();
         vds.setvds_type(VDSType.oVirtNode);
         when(vdsDAO.get(any(Guid.class))).thenReturn(vds);
     }
 
-    private InstallVdsParameters createParameters() {
+    private static InstallVdsParameters createParameters() {
         InstallVdsParameters param = new InstallVdsParameters(Guid.NewGuid(), null);
         param.setIsReinstallOrUpgrade(true);
         return param;
@@ -76,7 +69,8 @@ public class InstallVdsCommandTest {
         when(vdsDAO.get(any(Guid.class))).thenReturn(vds);
     }
 
-    private void assertFailsWithCanDoActionMessage(InstallVdsCommand<InstallVdsParameters> command, VdcBllMessages message) {
+    private static void assertFailsWithCanDoActionMessage
+            (InstallVdsCommand<InstallVdsParameters> command, VdcBllMessages message) {
         assertFalse(command.canDoAction());
         assertTrue(command.getReturnValue().getCanDoActionMessages().contains(message.name()));
     }
