@@ -4,26 +4,25 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
-import static org.powermock.api.mockito.PowerMockito.when;
+import static org.mockito.Mockito.when;
+import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.action.UpdateVmDiskParameters;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
@@ -32,15 +31,19 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBaseMockU
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.dao.VmDAO;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.ovirt.engine.core.dao.VmNetworkInterfaceDAO;
+import org.ovirt.engine.core.utils.MockConfigRule;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ VmHandler.class, Config.class })
+@RunWith(MockitoJUnitRunner.class)
 public class UpdateVmDiskCommandTest {
+    @Rule
+    public static MockConfigRule mcr = new MockConfigRule(
+            mockConfig(ConfigValues.HotPlugSupportedOsList,
+                    "Windows2008,Windows2008x64,Windows2008R2x64,RHEL5,RHEL5x64,RHEL6,RHEL6x64")
+            );
 
-    private final Guid diskImageGuid = Guid.NewGuid();
-    private final Guid vmId = Guid.NewGuid();
+    private Guid diskImageGuid = Guid.NewGuid();
+    private Guid vmId = Guid.NewGuid();
 
     @Mock
     private VmDAO vmDAO;
@@ -48,20 +51,13 @@ public class UpdateVmDiskCommandTest {
     private VdsDAO vdsDao;
     @Mock
     private DiskDao diskDao;
+    @Mock
+    private VmNetworkInterfaceDAO vmNetworkInterfaceDAO;
 
     /**
      * The command under test.
      */
     protected UpdateVmDiskCommand<UpdateVmDiskParameters> command;
-
-    @Before
-    public void setUp() {
-        mockStatic(Config.class);
-        when(Config.GetValue(ConfigValues.HotPlugSupportedOsList)).
-                thenReturn("Windows2008,Windows2008x64,Windows2008R2x64,RHEL5,RHEL5x64,RHEL6,RHEL6x64");
-        mockStatic(VmHandler.class);
-        MockitoAnnotations.initMocks(this);
-    }
 
     @Test
     public void canDoActionFailedVMNotFound() throws Exception {
@@ -86,13 +82,15 @@ public class UpdateVmDiskCommandTest {
 
     protected void initializeCommand() {
         command = spy(new UpdateVmDiskCommand<UpdateVmDiskParameters>(createParameters()) {
-            private static final long serialVersionUID = 1L;
-
+            // Overridden here and not during spying, since it's called in the constructor
+            @SuppressWarnings("synthetic-access")
             @Override
             protected DiskDao getDiskDao() {
                 return diskDao;
             }
+
         });
+        doReturn(vmNetworkInterfaceDAO).when(command).getVmNetworkInterfaceDAO();
         mockVds();
     }
 
@@ -146,7 +144,7 @@ public class UpdateVmDiskCommandTest {
      * The following method will simulate a situation when disk was not found in DB
      */
     private void createNullDisk() {
-        doReturn(diskDao).when(command).getDiskDao();
+        when(diskDao.get(diskImageGuid)).thenReturn(null);
     }
 
     /**
@@ -161,7 +159,6 @@ public class UpdateVmDiskCommandTest {
         disk.setactive(true);
         disk.setvm_guid(vmId);
         disk.setId(diskImageGuid);
-        doReturn(diskDao).when(command).getDiskDao();
         when(diskDao.get(diskImageGuid)).thenReturn(disk);
         return disk;
     }

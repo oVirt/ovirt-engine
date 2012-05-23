@@ -24,7 +24,6 @@ import org.ovirt.engine.core.common.vdscommands.HotPlugDiskVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskImageDAO;
 import org.ovirt.engine.core.dao.ImageDao;
@@ -47,37 +46,37 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperatinParameterBas
     }
 
     protected void performPlugCommnad(VDSCommandType commandType,
-                Disk disk, VmDevice vmDevice) {
+            Disk disk, VmDevice vmDevice) {
         if (disk.getDiskStorageType() == DiskStorageType.LUN) {
             LunDisk lunDisk = (LunDisk) disk;
             if (commandType == VDSCommandType.HotPlugDisk) {
                 LUNs lun = lunDisk.getLun();
-                lun.setLunConnections(new ArrayList<storage_server_connections>(DbFacade.getInstance()
-                                                .getStorageServerConnectionDAO()
-                                                .getAllForLun(lun.getLUN_id())));
+                lun.setLunConnections(new ArrayList<storage_server_connections>(getDbFacade()
+                        .getStorageServerConnectionDAO()
+                        .getAllForLun(lun.getLUN_id())));
                 if (!StorageHelperDirector.getInstance()
                         .getItem(lun.getLunConnections().get(0).getstorage_type())
-                            .ConnectStorageToLunByVdsId(null,
-                                    getVm().getrun_on_vds().getValue(),
-                                    lun,
-                                    getVm().getstorage_pool_id())) {
+                        .ConnectStorageToLunByVdsId(null,
+                                getVm().getrun_on_vds().getValue(),
+                                lun,
+                                getVm().getstorage_pool_id())) {
                     throw new VdcBLLException(VdcBllErrors.StorageServerConnectionError);
                 }
             }
         }
         runVdsCommand(commandType, new HotPlugDiskVDSParameters(getVm().getrun_on_vds().getValue(),
-                                 getVm().getId(), disk, vmDevice));
+                getVm().getId(), disk, vmDevice));
     }
 
     protected boolean isDiskPassPCIAndIDELimit(Disk diskInfo) {
-        List<VmNetworkInterface> vmInterfaces = getVmNetworkInterfaceDao().getAllForVm(getVmId());
+        List<VmNetworkInterface> vmInterfaces = getVmNetworkInterfaceDAO().getAllForVm(getVmId());
         List<Disk> allVmDisks = new ArrayList<Disk>(getVm().getDiskMap().values());
         allVmDisks.add(diskInfo);
 
         return CheckPCIAndIDELimit(getVm().getnum_of_monitors(),
-                                vmInterfaces,
-                                allVmDisks,
-                                getReturnValue().getCanDoActionMessages());
+                vmInterfaces,
+                allVmDisks,
+                getReturnValue().getCanDoActionMessages());
     }
 
     protected boolean isDiskCanBeAddedToVm(Disk diskInfo) {
@@ -164,26 +163,26 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperatinParameterBas
      * @return The VmNetworkInterfaceDAO
      */
     protected VmNetworkInterfaceDAO getVmNetworkInterfaceDao() {
-        return DbFacade.getInstance().getVmNetworkInterfaceDAO();
+        return getDbFacade().getVmNetworkInterfaceDAO();
     }
 
     protected ImageDao getImageDao() {
-        return DbFacade.getInstance().getImageDao();
+        return getDbFacade().getImageDao();
     }
 
     protected DiskDao getDiskDao() {
-        return DbFacade.getInstance().getDiskDao();
+        return getDbFacade().getDiskDao();
     }
 
     protected DiskImageDAO getDiskImageDao() {
-        return DbFacade.getInstance().getDiskImageDAO();
+        return getDbFacade().getDiskImageDAO();
     }
 
     /**
      * @return The StoragePoolIsoMapDAO
      */
     protected StoragePoolIsoMapDAO getStoragePoolIsoMapDao() {
-        return DbFacade.getInstance().getStoragePoolIsoMapDAO();
+        return getDbFacade().getStoragePoolIsoMapDAO();
     }
 
 }

@@ -44,6 +44,7 @@ import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
+import org.ovirt.engine.core.dao.VmNetworkInterfaceDAO;
 import org.ovirt.engine.core.utils.Pair;
 import org.ovirt.engine.core.utils.linq.Function;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
@@ -89,7 +90,6 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     protected VmCommand(Guid commandId) {
         super(commandId);
     }
-
 
     public VmCommand() {
     }
@@ -193,8 +193,9 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
             }
             for (Disk disk : vm.getDiskMap().values()) {
                 if (disk.isAllowSnapshot()) {
-                    DiskImage diskImage = (DiskImage)disk;
-                    AllVmImages.addAll(ImagesHandler.getAllImageSnapshots(diskImage.getImageId(), diskImage.getit_guid()));
+                    DiskImage diskImage = (DiskImage) disk;
+                    AllVmImages.addAll(ImagesHandler.getAllImageSnapshots(diskImage.getImageId(),
+                            diskImage.getit_guid()));
                 }
             }
             if (StringHelper.isNullOrEmpty(vm.getvmt_name())) {
@@ -415,8 +416,9 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     protected static void handleCustomPropertiesError(List<ValidationError> validationErrors, ArrayList<String> message) {
         String invalidSyntaxMsg = VdcBllMessages.ACTION_TYPE_FAILED_INVALID_CUSTOM_VM_PROPERTIES_INVALID_SYNTAX.name();
 
-        List<String> errorMessages = VmPropertiesUtils.getInstance().generateErrorMessages(validationErrors, invalidSyntaxMsg,
-                failureReasonsToVdcBllMessagesMap, failureReasonsToFormatMessages);
+        List<String> errorMessages =
+                VmPropertiesUtils.getInstance().generateErrorMessages(validationErrors, invalidSyntaxMsg,
+                        failureReasonsToVdcBllMessagesMap, failureReasonsToFormatMessages);
         message.addAll(errorMessages);
     }
 
@@ -447,6 +449,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         // return result
         return nameLengthValid;
     }
+
     /**
      * Lock the VM.<br>
      * If the command is run internally then compensation won't be used, since it might cause a deadlock if the calling
@@ -493,7 +496,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
      * @return
      */
     protected boolean isHotPlugSupported() {
-        if(Config.<Boolean> GetValue(ConfigValues.HotPlugEnabled, getVds().getvds_group_compatibility_version()
+        if (Config.<Boolean> GetValue(ConfigValues.HotPlugEnabled, getVds().getvds_group_compatibility_version()
                 .getValue())) {
             return true;
         }
@@ -518,7 +521,13 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     }
 
     protected VmDeviceDAO getVmDeviceDao() {
-        return DbFacade.getInstance().getVmDeviceDAO();
+        return getDbFacade().getVmDeviceDAO();
+    }
+
+    /** Overriding to allow spying from this package */
+    @Override
+    protected VmNetworkInterfaceDAO getVmNetworkInterfaceDAO() {
+        return super.getVmNetworkInterfaceDAO();
     }
 
     protected boolean checkPayload(VmPayload payload, String isoPath) {
