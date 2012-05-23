@@ -1,16 +1,22 @@
 package org.ovirt.engine.core.bll.storage;
 
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
-import static org.powermock.api.mockito.PowerMockito.mock;
+import static org.ovirt.engine.core.bll.CommandAssertUtils.checkMessages;
+import static org.ovirt.engine.core.bll.CommandAssertUtils.checkSucceeded;
 
 import java.util.ArrayList;
 
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
-import org.ovirt.engine.core.bll.BaseMockitoTest;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.action.DetachStorageDomainFromPoolParameters;
 import org.ovirt.engine.core.common.action.RemoveStorageDomainParameters;
@@ -25,7 +31,6 @@ import org.ovirt.engine.core.common.businessentities.storage_domain_static;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.storage_pool_iso_map;
-import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.vdscommands.FormatStorageDomainVDSCommandParameters;
@@ -43,39 +48,54 @@ import org.ovirt.engine.core.dao.StorageDomainStaticDAO;
 import org.ovirt.engine.core.dao.StoragePoolDAO;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDAO;
 import org.ovirt.engine.core.dao.VdsDAO;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.ovirt.engine.core.utils.MockConfigRule;
 
-@PrepareForTest({ Config.class })
-@RunWith(PowerMockRunner.class)
-public class RemoveStorageDomainTest extends BaseMockitoTest {
+@RunWith(MockitoJUnitRunner.class)
+public class RemoveStorageDomainTest {
+    private static final Version VDS_COMPATIBILITY_VERSION = new Version(2, 2);
 
-    private final Guid STORAGE_DOMAIN_ID = GUIDS[0];
-    private final Guid STORAGE_POOL_ID = GUIDS[1];
-    private final Guid VDS_ID = GUIDS[2];
+    @Rule
+    public static MockConfigRule mcr =
+            new MockConfigRule(
+                    MockConfigRule.mockConfig(ConfigValues.IsNeedSupportForOldVgAPI,
+                            VDS_COMPATIBILITY_VERSION.getValue(),
+                            true)
+            );
+
+    private final Guid STORAGE_DOMAIN_ID = Guid.NewGuid();
+    private final Guid STORAGE_POOL_ID = Guid.NewGuid();
+    private final Guid VDS_ID = Guid.NewGuid();
+
+    @Mock
+    private DbFacade db;
+
+    @Mock
+    private BackendInternal backend;
+
+    protected RemoveStorageDomainCommand<RemoveStorageDomainParameters> createCommand(boolean format) {
+        RemoveStorageDomainCommand<RemoveStorageDomainParameters> cmd =
+                spy(new RemoveStorageDomainCommand<RemoveStorageDomainParameters>(getParams(format)));
+        doReturn(db).when(cmd).getDbFacade();
+        doReturn(backend).when(cmd).getBackend();
+        return cmd;
+    }
 
     @Test
     public void testCanDoAction() {
-        DbFacade db = setUpDB();
-        expectGetStoragePool(db, STORAGE_POOL_ID);
-        expectGetStorageDomain(db,
-                               STORAGE_DOMAIN_ID,
-                               STORAGE_POOL_ID,
-                               StorageDomainType.Data,
-                               StorageType.NFS);
-        expectGetVds(db, VDS_ID);
-        expectGetIsoMap(db, STORAGE_DOMAIN_ID);
+        expectGetStoragePool(STORAGE_POOL_ID);
+        expectGetStorageDomain(STORAGE_DOMAIN_ID, STORAGE_POOL_ID, StorageDomainType.Data, StorageType.NFS);
+        expectGetVds(VDS_ID);
+        expectGetIsoMap(STORAGE_DOMAIN_ID);
 
-        expectBusinessEntitySnapshotDAO(db);
+        expectBusinessEntitySnapshotDAO();
 
-        RemoveStorageDomainCommand cmd = new RemoveStorageDomainCommand(getParams(true));
+        RemoveStorageDomainCommand<RemoveStorageDomainParameters> cmd = createCommand(true);
         assertTrue(cmd.canDoAction());
 
         checkSucceeded(cmd, false);
         checkMessages(cmd,
-                      VdcBllMessages.VAR__TYPE__STORAGE__DOMAIN,
-                      VdcBllMessages.VAR__ACTION__REMOVE);
+                VdcBllMessages.VAR__TYPE__STORAGE__DOMAIN,
+                VdcBllMessages.VAR__ACTION__REMOVE);
     }
 
     @Test
@@ -109,64 +129,41 @@ public class RemoveStorageDomainTest extends BaseMockitoTest {
     }
 
     public void doTestRemove(StorageDomainType type, StorageType storageType, boolean format, boolean failure) {
-        DbFacade db = setUpDB();
-        expectGetStoragePool(db, STORAGE_POOL_ID);
-        storage_domains dom = expectGetStorageDomain(db,
-                                                     STORAGE_DOMAIN_ID,
-                                                     STORAGE_POOL_ID,
-                                                     type,
-                                                     storageType);
-        expectGetVds(db, VDS_ID);
-
-        BackendInternal backend = null;
+        RemoveStorageDomainCommand<RemoveStorageDomainParameters> cmd = createCommand(format);
+        expectGetStoragePool(STORAGE_POOL_ID);
+        storage_domains dom = expectGetStorageDomain(STORAGE_DOMAIN_ID, STORAGE_POOL_ID, type, storageType);
+        expectGetVds(VDS_ID);
 
         if (storageType == StorageType.LOCALFS) {
-            expectGetIsAttached(db, STORAGE_DOMAIN_ID, STORAGE_POOL_ID);
-            if (backend == null) {
-                backend = setUpBackend();
-            }
-            expectDetach(backend, STORAGE_DOMAIN_ID, STORAGE_POOL_ID);
+            expectGetIsAttached(STORAGE_DOMAIN_ID, STORAGE_POOL_ID);
+            expectDetach();
         }
 
         if (format || (type != StorageDomainType.ISO && type != StorageDomainType.ImportExport)) {
-            setUpStorageHelper(dom, storageType, true, failure);
-
-            if (backend == null) {
-                backend = setUpBackend();
-            }
-
-            VDSBrokerFrontend vdsBroker = expectFormat(setUpVdsBroker(backend), failure);
+            setUpStorageHelper(cmd, dom, true, failure);
+            VDSBrokerFrontend vdsBroker = expectFormat(setUpVdsBroker(), failure);
 
             if (storageType == StorageType.ISCSI) {
                 expectRemove(vdsBroker);
             }
 
         } else {
-            setUpStorageHelper(dom, storageType, false, false);
+            setUpStorageHelper(cmd, dom, false, false);
         }
 
         if (!failure) {
-            expectRemoveFromDb(db, STORAGE_DOMAIN_ID);
+            expectRemoveFromDb();
         }
 
-        expectBusinessEntitySnapshotDAO(db);
+        expectBusinessEntitySnapshotDAO();
 
-        expectConfigGetValue();
-
-        RemoveStorageDomainCommand cmd = new RemoveStorageDomainCommand(getParams(format));
         cmd.executeCommand();
 
         checkSucceeded(cmd, !failure);
         checkMessages(cmd);
     }
 
-    private void expectConfigGetValue() {
-        PowerMockito.mockStatic(Config.class);
-        Mockito.when(Config.GetValue(eq(ConfigValues.IsNeedSupportForOldVgAPI), any(String.class)))
-                .thenReturn(Boolean.TRUE);
-    }
-
-    protected VDSBrokerFrontend setUpVdsBroker(BackendInternal backend) {
+    protected VDSBrokerFrontend setUpVdsBroker() {
         VDSBrokerFrontend vdsBroker = mock(VDSBrokerFrontend.class);
         when(backend.getResourceManager()).thenReturn(vdsBroker);
         return vdsBroker;
@@ -176,16 +173,14 @@ public class RemoveStorageDomainTest extends BaseMockitoTest {
         VDSReturnValue ret = new VDSReturnValue();
         ret.setSucceeded(true);
         when(vdsBroker.RunVdsCommand(eq(VDSCommandType.RemoveVG),
-                                               any(RemoveVGVDSCommandParameters.class))).thenReturn(ret);
+                any(RemoveVGVDSCommandParameters.class))).thenReturn(ret);
         return vdsBroker;
     }
 
-    protected IStorageHelper setUpStorageHelper(storage_domains dom,
-                                                StorageType storageType,
-                                                boolean connect,
-                                                boolean failure) {
-        StorageHelperDirector director = mock(StorageHelperDirector.class);
-        when(StorageHelperDirector.getInstance()).thenReturn(director);
+    protected void setUpStorageHelper(RemoveStorageDomainCommand<RemoveStorageDomainParameters> cmd,
+            storage_domains dom,
+            boolean connect,
+            boolean failure) {
         IStorageHelper helper = mock(IStorageHelper.class);
         if (connect) {
             when(helper.ConnectStorageToDomainByVdsId(dom, VDS_ID)).thenReturn(true);
@@ -194,8 +189,7 @@ public class RemoveStorageDomainTest extends BaseMockitoTest {
         if (!failure) {
             when(helper.StorageDomainRemoved(dom.getStorageStaticData())).thenReturn(true);
         }
-        when(director.getItem(storageType)).thenReturn(helper);
-        return helper;
+        doReturn(helper).when(cmd).getStorageHelper(dom);
     }
 
     protected RemoveStorageDomainParameters getParams(boolean format) {
@@ -206,11 +200,11 @@ public class RemoveStorageDomainTest extends BaseMockitoTest {
         return params;
     }
 
-    protected storage_domains expectGetStorageDomain(DbFacade db,
-                                                     Guid domId,
-                                                     Guid poolId,
-                                                     StorageDomainType type,
-                                                     StorageType storageType) {
+    protected storage_domains expectGetStorageDomain(
+            Guid domId,
+            Guid poolId,
+            StorageDomainType type,
+            StorageType storageType) {
         StorageDomainDAO dao = mock(StorageDomainDAO.class);
         when(db.getStorageDomainDAO()).thenReturn(dao);
         storage_domains dom = getStorageDomain(domId, poolId, type, storageType);
@@ -218,78 +212,76 @@ public class RemoveStorageDomainTest extends BaseMockitoTest {
         return dom;
     }
 
-    protected void expectGetStorageDomainStatic(DbFacade db, Guid domId) {
+    protected void expectGetStorageDomainStatic(Guid domId) {
         StorageDomainStaticDAO dao = mock(StorageDomainStaticDAO.class);
         when(db.getStorageDomainStaticDAO()).thenReturn(dao);
         when(dao.get(domId)).thenReturn(getStorageDomainStatic(domId));
     }
 
-    protected void expectGetStoragePool(DbFacade db, Guid id) {
+    protected void expectGetStoragePool(Guid id) {
         StoragePoolDAO dao = mock(StoragePoolDAO.class);
         when(db.getStoragePoolDAO()).thenReturn(dao);
         when(dao.get(id)).thenReturn(getStoragePool(id));
     }
 
-    protected void expectGetIsoMap(DbFacade db, Guid id) {
+    protected void expectGetIsoMap(Guid id) {
         ArrayList<storage_pool_iso_map> ret = new ArrayList<storage_pool_iso_map>();
         StoragePoolIsoMapDAO dao = mock(StoragePoolIsoMapDAO.class);
         when(db.getStoragePoolIsoMapDAO()).thenReturn(dao);
         when(dao.getAllForStorage(id)).thenReturn(ret);
     }
 
-    protected void expectGetVds(DbFacade db, Guid id) {
+    protected void expectGetVds(Guid id) {
         VdsDAO dao = mock(VdsDAO.class);
         when(db.getVdsDAO()).thenReturn(dao);
         when(dao.get(id)).thenReturn(getVds(id));
     }
 
-    protected void expectGetIsAttached(DbFacade db, Guid id, Guid poolId) {
+    protected void expectGetIsAttached(Guid id, Guid poolId) {
         StoragePoolIsoMapDAO dao = mock(StoragePoolIsoMapDAO.class);
         when(db.getStoragePoolIsoMapDAO()).thenReturn(dao);
         when(dao.get(new StoragePoolIsoMapId(id, poolId))).thenReturn(new storage_pool_iso_map());
     }
 
-    protected void expectDetach(BackendInternal backend, Guid id, Guid poolId) {
+    protected void expectDetach() {
         VdcReturnValueBase ret = new VdcReturnValueBase();
         ret.setSucceeded(true);
         when(backend.runInternalAction(eq(VdcActionType.DetachStorageDomainFromPool),
-                                         any(DetachStorageDomainFromPoolParameters.class))).thenReturn(ret);
+                any(DetachStorageDomainFromPoolParameters.class))).thenReturn(ret);
     }
 
     protected VDSBrokerFrontend expectFormat(VDSBrokerFrontend vdsBroker, boolean failure) {
         VDSReturnValue ret = new VDSReturnValue();
         ret.setSucceeded(!failure);
         when(vdsBroker.RunVdsCommand(eq(VDSCommandType.FormatStorageDomain),
-                                       any(FormatStorageDomainVDSCommandParameters.class))).thenReturn(ret);
+                any(FormatStorageDomainVDSCommandParameters.class))).thenReturn(ret);
         return vdsBroker;
     }
 
-    protected void expectBusinessEntitySnapshotDAO(DbFacade db) {
+    protected void expectBusinessEntitySnapshotDAO() {
         BusinessEntitySnapshotDAO dao = mock(BusinessEntitySnapshotDAO.class);
         when(db.getBusinessEntitySnapshotDAO()).thenReturn(dao);
     }
 
-    protected void expectRemoveStaticFromDb(DbFacade db, Guid id) {
+    protected void expectRemoveStaticFromDb() {
         StorageDomainStaticDAO dao = mock(StorageDomainStaticDAO.class);
         when(db.getStorageDomainStaticDAO()).thenReturn(dao);
-        // dao.remove(id);
     }
 
-    protected void expectRemoveDynamicFromDb(DbFacade db, Guid id) {
+    protected void expectRemoveDynamicFromDb() {
         StorageDomainDynamicDAO dao = mock(StorageDomainDynamicDAO.class);
         when(db.getStorageDomainDynamicDAO()).thenReturn(dao);
-        // dao.remove(id);
     }
 
-    protected void expectRemoveFromDb(DbFacade db, Guid id) {
-        expectRemoveDynamicFromDb(db, id);
-        expectRemoveStaticFromDb(db, id);
+    protected void expectRemoveFromDb() {
+        expectRemoveDynamicFromDb();
+        expectRemoveStaticFromDb();
     }
 
     protected storage_domains getStorageDomain(Guid id,
-                                               Guid poolId,
-                                               StorageDomainType type,
-                                               StorageType storageType) {
+            Guid poolId,
+            StorageDomainType type,
+            StorageType storageType) {
         storage_domains dom = new storage_domains();
         dom.setId(id);
         dom.setstorage_pool_id(poolId);
@@ -314,7 +306,7 @@ public class RemoveStorageDomainTest extends BaseMockitoTest {
     protected VDS getVds(Guid id) {
         VDS vds = new VDS();
         vds.setId(id);
-        vds.setvds_group_compatibility_version(new Version(2, 2));
+        vds.setvds_group_compatibility_version(VDS_COMPATIBILITY_VERSION);
         return vds;
     }
 }

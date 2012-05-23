@@ -10,6 +10,7 @@ import java.util.Set;
 
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.CommandBase;
+import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.StoragePoolParametersBase;
@@ -173,11 +174,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
         boolean returnValue = false;
         if (storageDomain != null) {
             // check if there is no pool-domain map
-            returnValue =
-                    DbFacade.getInstance()
-                            .getStoragePoolIsoMapDAO()
-                            .getAllForStorage(storageDomain.getId())
-                            .size() == 0;
+            returnValue = getDbFacade().getStoragePoolIsoMapDAO().getAllForStorage(storageDomain.getId()).isEmpty();
             if (!returnValue) {
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL);
             }
@@ -378,5 +375,17 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
     /** @return The supported storage domain formats, delimited by commas (","). */
     protected String getSupportedStorageFormats(Version version) {
         return Config.<String> GetValue(ConfigValues.SupportedStorageFormats, version.toString());
+    }
+
+    /* Overidden DAO access methods, for easier testing */
+
+    @Override
+    public BackendInternal getBackend() {
+        return super.getBackend();
+    }
+
+    @Override
+    protected DbFacade getDbFacade() {
+        return super.getDbFacade();
     }
 }

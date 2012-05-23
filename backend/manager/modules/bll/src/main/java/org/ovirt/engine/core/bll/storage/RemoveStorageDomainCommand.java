@@ -17,7 +17,6 @@ import org.ovirt.engine.core.common.vdscommands.RemoveVGVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters> extends StorageDomainCommandBase<T> {
     public RemoveStorageDomainCommand(T parameters) {
@@ -52,8 +51,8 @@ public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters>
         }
 
         getStorageHelper(dom).StorageDomainRemoved(dom.getStorageStaticData());
-        getDb().getStorageDomainDynamicDAO().remove(dom.getId());
-        getDb().getStorageDomainStaticDAO().remove(dom.getId());
+        getDbFacade().getStorageDomainDynamicDAO().remove(dom.getId());
+        getDbFacade().getStorageDomainStaticDAO().remove(dom.getId());
 
         setSucceeded(true);
     }
@@ -123,10 +122,6 @@ public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters>
                 getVds().getId());
     }
 
-    protected DbFacade getDb() {
-        return DbFacade.getInstance();
-    }
-
     protected VDSBrokerFrontend getVdsBroker() {
         return getBackend().getResourceManager();
     }
@@ -167,7 +162,7 @@ public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters>
         Guid storageDomainId = storageDomain.getId();
         Guid storagePoolId = storageDomain.getstorage_pool_id().getValue();
 
-        return getDb().getStoragePoolIsoMapDAO()
+        return getDbFacade().getStoragePoolIsoMapDAO()
                 .get(new StoragePoolIsoMapId(storageDomainId, storagePoolId)) != null;
     }
 
