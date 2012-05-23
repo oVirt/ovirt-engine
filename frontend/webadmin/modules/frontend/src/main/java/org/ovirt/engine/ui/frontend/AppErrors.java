@@ -945,7 +945,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot attach Storage Domain.\n-Please attach Data Domain to the Data Center first.")
     String ERROR_CANNOT_ADD_STORAGE_POOL_WITHOUT_DATA_DOMAIN();
 
-    @DefaultStringValue("Cannot remove Data Center with active Storage Domains.\n-Please deactivate all domains before removing the Data Center.")
+    @DefaultStringValue("Cannot remove Data Center which contains active/locked Storage Domains.\n-Please deactivate all domains and wait for tasks to finish before removing the Data Center.")
     String ERROR_CANNOT_REMOVE_POOL_WITH_ACTIVE_DOMAINS();
 
     @DefaultStringValue("Cannot change Data Center association when editing a Cluster.")
