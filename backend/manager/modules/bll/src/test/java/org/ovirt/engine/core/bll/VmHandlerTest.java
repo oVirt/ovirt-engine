@@ -142,6 +142,11 @@ public class VmHandlerTest {
     public void BaseUsbPolicyTest(UsbPolicy usbPolicy, Version version, VmOsType osType, boolean result) {
         VDSGroup vdsGroup = new VDSGroup();
         vdsGroup.setcompatibility_version(version);
+
+        PowerMockito.mockStatic(Config.class);
+        Mockito.when(Config.<Boolean> GetValue(ConfigValues.NativeUSBEnabled, vdsGroup.getcompatibility_version()
+                .getValue())).thenReturn(result);
+
         List<String> messages = new ArrayList<String>();
         if (result) {
             assertTrue(VmHandler.isUsbPolicyLegal(usbPolicy, osType, vdsGroup, messages));
