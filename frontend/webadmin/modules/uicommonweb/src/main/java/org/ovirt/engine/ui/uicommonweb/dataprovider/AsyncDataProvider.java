@@ -22,6 +22,7 @@ import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.TagsType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -917,6 +918,10 @@ public final class AsyncDataProvider {
     }
 
     public static void GetHostList(AsyncQuery aQuery) {
+        GetHostListByStatus(aQuery, null);
+    }
+
+    public static void GetHostListByStatus(AsyncQuery aQuery, VDSStatus status) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -930,7 +935,8 @@ public final class AsyncDataProvider {
                 return new ArrayList<VDS>();
             }
         };
-        SearchParameters searchParameters = new SearchParameters("Host:", SearchType.VDS); //$NON-NLS-1$
+        SearchParameters searchParameters =
+                new SearchParameters("Host: " + (status == null ? "" : ("status=" + status.name())), SearchType.VDS); //$NON-NLS-1$
         searchParameters.setMaxCount(9999);
         Frontend.RunQuery(VdcQueryType.Search, searchParameters, aQuery);
     }
