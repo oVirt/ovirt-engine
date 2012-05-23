@@ -1,11 +1,11 @@
 package org.ovirt.engine.core.bll;
 
-import org.junit.Before;
-import org.mockito.Mockito;
-import org.ovirt.engine.core.common.config.Config;
+import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
+
+import org.junit.Rule;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.config.IConfigUtilsInterface;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
+import org.ovirt.engine.core.utils.MockConfigRule;
 
 /**
  * An abstract class for setting up tests for queries using Sysprep.
@@ -13,13 +13,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
  */
 public abstract class AbstractSysprepQueryTest<P extends VdcQueryParametersBase, Q extends QueriesCommandBase<? extends P>> extends AbstractUserQueryTest<P, Q> {
 
-    @Before
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-        final IConfigUtilsInterface configMock = Mockito.mock(IConfigUtilsInterface.class);
-        Config.setConfigUtils(configMock);
-        Mockito.when(configMock.GetValue(ConfigValues.AdUserName, Config.DefaultConfigurationVersion)).thenReturn("");
-    }
-
+    @Rule
+    public static MockConfigRule mcr = new MockConfigRule(mockConfig(ConfigValues.AdUserName, ""));
 }
