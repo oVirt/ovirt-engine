@@ -7,6 +7,11 @@ import static org.mockito.Mockito.spy;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.when;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,8 +39,8 @@ import org.powermock.modules.junit4.PowerMockRunner;
 @PrepareForTest({ VmHandler.class, Config.class })
 public class UpdateVmDiskCommandTest {
 
-    private Guid diskImageGuid = Guid.NewGuid();
-    private Guid vmId = Guid.NewGuid();
+    private final Guid diskImageGuid = Guid.NewGuid();
+    private final Guid vmId = Guid.NewGuid();
 
     @Mock
     private VmDAO vmDAO;
@@ -93,6 +98,7 @@ public class UpdateVmDiskCommandTest {
 
     private void mockNullVm() {
         AuditLogableBaseMockUtils.mockVmDao(command, vmDAO);
+        mockGetForDisk(null);
         when(vmDAO.get(command.getParameters().getVmId())).thenReturn(null);
     }
 
@@ -104,9 +110,17 @@ public class UpdateVmDiskCommandTest {
         vm.setstatus(VMStatus.Down);
         vm.setguest_os("rhel6");
         AuditLogableBaseMockUtils.mockVmDao(command, vmDAO);
+        mockGetForDisk(new VM());
         when(vmDAO.get(command.getParameters().getVmId())).thenReturn(vm);
-
         return vm;
+    }
+
+    private void mockGetForDisk(VM vm) {
+        List<VM> vms = new ArrayList<VM>();
+        vms.add(vm);
+        Map<Boolean, List<VM>> vmsMap = new HashMap<Boolean, List<VM>>();
+        vmsMap.put(Boolean.TRUE, vms);
+        when(vmDAO.getForDisk(diskImageGuid)).thenReturn(vmsMap);
     }
 
     /**
@@ -133,7 +147,6 @@ public class UpdateVmDiskCommandTest {
      */
     private void createNullDisk() {
         doReturn(diskDao).when(command).getDiskDao();
-        when(diskDao.get(diskImageGuid)).thenReturn(null);
     }
 
     /**

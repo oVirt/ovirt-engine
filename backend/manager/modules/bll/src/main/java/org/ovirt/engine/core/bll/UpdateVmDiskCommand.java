@@ -2,7 +2,9 @@ package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -15,7 +17,9 @@ import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
+import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -34,6 +38,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
     private List<PermissionSubject> listPermissionSubjects;
     private final Disk _oldDisk;
     private boolean shouldUpdateQuotaForDisk;
+    private Map<Guid, String> sharedLockMap;
 
     public UpdateVmDiskCommand(T parameters) {
         super(parameters);
@@ -49,11 +54,35 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
     protected boolean canDoAction() {
         boolean retValue = isVmExist();
         if (retValue) {
-            // Set disk alias name in the disk retrieved from the parameters.
-            ImagesHandler.setDiskAlias(getParameters().getDiskInfo(), getVm());
-            retValue = isDiskExist(_oldDisk) && checkCanPerformRegularUpdate();
+            if (!isDiskExist(_oldDisk)) {
+                return false;
+            }
+
+            List<VM> listVms = getVmDAO().getForDisk(_oldDisk.getId()).get(Boolean.TRUE);
+            buidSharedLockMap(listVms);
+            acquireLockInternal();
+
+            // Check if all VMs are in status down.
+            if (listVms != null && !listVms.isEmpty()) {
+                for (VM vm : listVms) {
+                    if (vm.getstatus() != VMStatus.Down) {
+                        addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL);
+                        return false;
+                    }
+                }
+            }
+            retValue = checkCanPerformRegularUpdate();
         }
         return retValue;
+    }
+
+    private void buidSharedLockMap(List<VM> listVms) {
+        if (listVms != null && !listVms.isEmpty()) {
+            sharedLockMap = new HashMap<Guid, String>();
+            for (VM vm : listVms) {
+                sharedLockMap.put(vm.getId(), LockingGroup.VM.name());
+            }
+        }
     }
 
     @Override
@@ -85,10 +114,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
 
     private boolean checkCanPerformRegularUpdate() {
         boolean retValue = true;
-        if (VM.isStatusUpOrPausedOrSuspended(getVm().getstatus())) {
-            retValue = false;
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL);
-        } else if (_oldDisk.getDiskInterface() != getParameters().getDiskInfo().getDiskInterface()) {
+        if (_oldDisk.getDiskInterface() != getParameters().getDiskInfo().getDiskInterface()) {
             List<VmNetworkInterface> allVmInterfaces = DbFacade.getInstance()
                     .getVmNetworkInterfaceDAO().getAllForVm(getVmId());
 
@@ -128,6 +154,9 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
                 return false;
             }
         }
+
+        // Set disk alias name in the disk retrieved from the parameters.
+        ImagesHandler.setDiskAlias(getParameters().getDiskInfo(), getVm());
         return retValue && validateShareableDisk();
     }
 
@@ -154,7 +183,6 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
         if (!isDiskShareable && isDiskUpdatedToShareable) {
             ((DiskImage)_oldDisk).setvm_snapshot_id(null);
 
-            // TODO : After getForImageGroup will return list of vms, add a check for number of vms.
             List<DiskImage> diskImageList =
                     getDiskImageDao().getAllSnapshotsForImageGroup(_oldDisk.getId());
 
@@ -168,6 +196,11 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
             // Set allow snapshot attribute to be false when disk updated to shareable.
             _oldDisk.setAllowSnapshot(Boolean.FALSE);
         } else if (isDiskShareable && !isDiskUpdatedToShareable) {
+            if (getVmDAO().getVmsListForDisk(_oldDisk.getId()).size() > 1) {
+                addCanDoActionMessage(VdcBllMessages.DISK_IS_ALREADY_SHARED_BETWEEN_VMS);
+                return false;
+            }
+
             // If disk is not floating, then update its vm snapshot id to the active VM snapshot.
             ((DiskImage) _oldDisk).setvm_snapshot_id(DbFacade.getInstance()
                     .getSnapshotDao()
@@ -243,5 +276,10 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
 
     public String getDiskAlias() {
         return _oldDisk.getDiskAlias();
+    }
+
+    @Override
+    protected Map<Guid, String> getSharedLocks() {
+        return sharedLockMap;
     }
 }
