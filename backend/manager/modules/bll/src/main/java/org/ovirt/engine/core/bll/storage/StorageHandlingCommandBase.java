@@ -63,6 +63,10 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
     public static final String DesktopsInStoragePoolQuery = "VMS: DATACENTER = {0}";
 
     public static List<VDS> GetAllRunningVdssInPool(storage_pool pool) {
+        return GetAllRunningVdssInPool(Backend.getInstance(), pool);
+    }
+
+    private static List<VDS> GetAllRunningVdssInPool(BackendInternal backend, storage_pool pool) {
         List<VDS> returnValue = new ArrayList<VDS>();
 
         SearchParameters p = new SearchParameters(MessageFormat.format(UpVdssInStoragePoolQuery, pool.getname()),
@@ -70,8 +74,8 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
         p.setMaxCount(Integer.MAX_VALUE);
 
         @SuppressWarnings("unchecked")
-        Iterable<IVdcQueryable> fromVds = (Iterable<IVdcQueryable>) (Backend.getInstance().runInternalQuery(
-                VdcQueryType.Search, p).getReturnValue());
+        Iterable<IVdcQueryable> fromVds =
+                (Iterable<IVdcQueryable>) (backend.runInternalQuery(VdcQueryType.Search, p).getReturnValue());
         if (fromVds != null) {
             for (IVdcQueryable vds : fromVds) {
                 if (vds instanceof VDS) {
@@ -82,18 +86,18 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
         return returnValue;
     }
 
+    protected List<VDS> getAllRunningVdssInPool() {
+        return GetAllRunningVdssInPool(getBackend(), getStoragePool());
+    }
+
     protected void updateStoragePoolInDiffTransaction() {
-        TransactionSupport.executeInScope(TransactionScopeOption.Suppress, new TransactionMethod<Object>() {
+        executeInScope(TransactionScopeOption.Suppress, new TransactionMethod<Object>() {
             @Override
             public Object runInTransaction() {
                 getStoragePoolDAO().update(getStoragePool());
                 return null;
             }
         });
-    }
-
-    protected List<VDS> getAllRunningVdssInPool() {
-        return GetAllRunningVdssInPool(getStoragePool());
     }
 
     protected Guid getMasterDomainIdFromDb() {
@@ -279,7 +283,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
                 getStoragePool().setspm_vds_id(null);
             }
 
-            TransactionSupport.executeInScope(TransactionScopeOption.Required, new TransactionMethod<storage_pool>() {
+            executeInScope(TransactionScopeOption.Required, new TransactionMethod<storage_pool>() {
                 @Override
                 public storage_pool runInTransaction() {
                     getStoragePoolDAO().update(getStoragePool());
@@ -387,5 +391,11 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
     @Override
     protected DbFacade getDbFacade() {
         return super.getDbFacade();
+    }
+
+    /* Transaction methods */
+
+    protected void executeInScope(TransactionScopeOption scope, TransactionMethod<?> code) {
+        TransactionSupport.executeInScope(scope, code);
     }
 }

@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll.storage;
 
-import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -18,7 +17,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.VdcBllMessages;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.StoragePoolIsoMapDAO;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -47,48 +46,45 @@ public class AttachStorageDomainToPoolCommand<T extends StorageDomainPoolParamet
             if (getStoragePool().getstatus() == StoragePoolStatus.Uninitialized) {
                 StoragePoolWithStoragesParameter parameters = new StoragePoolWithStoragesParameter(getStoragePool(),
                         new java.util.ArrayList<Guid>(
-                                        java.util.Arrays.asList(new Guid[] { getStorageDomain().getId() })),
-                                getParameters().getSessionId());
+                                java.util.Arrays.asList(new Guid[] { getStorageDomain().getId() })),
+                        getParameters().getSessionId());
                 parameters.setIsInternal(true);
                 parameters.setTransactionScopeOption(TransactionScopeOption.Suppress);
-                setSucceeded(Backend.getInstance()
-                        .runInternalAction(VdcActionType.AddStoragePoolWithStorages,
-                                parameters,
-                                new CommandContext(getCompensationContext()))
+                setSucceeded(getBackend().runInternalAction(VdcActionType.AddStoragePoolWithStorages,
+                        parameters,
+                        new CommandContext(getCompensationContext()))
                         .getSucceeded());
 
             } else {
-                map = DbFacade.getInstance()
-                        .getStoragePoolIsoMapDAO().get(new StoragePoolIsoMapId(getStorageDomain().getId(),
-                                getParameters().getStoragePoolId()));
+                map = getStoragePoolIsoMapDAO().get(new StoragePoolIsoMapId(getStorageDomain().getId(),
+                        getParameters().getStoragePoolId()));
                 if (map == null) {
-                    TransactionSupport.executeInNewTransaction(new TransactionMethod<Object>() {
+                    executeInNewTransaction(new TransactionMethod<Object>() {
 
                         @Override
                         public Object runInTransaction() {
                             map = new storage_pool_iso_map(getStorageDomain().getId(), getParameters()
-                                            .getStoragePoolId(), StorageDomainStatus.Locked);
-                            DbFacade.getInstance().getStoragePoolIsoMapDAO().save(map);
+                                    .getStoragePoolId(), StorageDomainStatus.Locked);
+                            getStoragePoolIsoMapDAO().save(map);
                             getCompensationContext().snapshotNewEntity(map);
                             getCompensationContext().stateChanged();
                             return null;
                         }
                     });
                     ConnectAllHostsToPool();
-                    VDSReturnValue returnValue = Backend
-                            .getInstance()
-                            .getResourceManager()
-                            .RunVdsCommand(
-                                    VDSCommandType.AttachStorageDomain,
-                                    new AttachStorageDomainVDSCommandParameters(getParameters().getStoragePoolId(),
-                                            getParameters().getStorageDomainId()));
+                    VDSReturnValue returnValue =
+                            getBackend().getResourceManager()
+                                    .RunVdsCommand(
+                                            VDSCommandType.AttachStorageDomain,
+                                            new AttachStorageDomainVDSCommandParameters(getParameters().getStoragePoolId(),
+                                                    getParameters().getStorageDomainId()));
                     DiconnectAllHostsInPool();
-                    TransactionSupport.executeInNewTransaction(new TransactionMethod<Object>() {
+                    executeInNewTransaction(new TransactionMethod<Object>() {
                         @Override
                         public Object runInTransaction() {
                             getCompensationContext().snapshotEntityStatus(map, map.getstatus());
                             map.setstatus(StorageDomainStatus.Maintenance);
-                            DbFacade.getInstance().getStoragePoolIsoMapDAO().updateStatus(map.getId(), map.getstatus());
+                            getStoragePoolIsoMapDAO().updateStatus(map.getId(), map.getstatus());
                             if (getStorageDomain().getstorage_domain_type() == StorageDomainType.Master) {
                                 CalcStoragePoolStatusByDomainsStatus();
                             }
@@ -101,6 +97,10 @@ public class AttachStorageDomainToPoolCommand<T extends StorageDomainPoolParamet
             }
         }
 
+    }
+
+    protected void executeInNewTransaction(TransactionMethod<?> method) {
+        TransactionSupport.executeInNewTransaction(method);
     }
 
     @Override
@@ -129,5 +129,9 @@ public class AttachStorageDomainToPoolCommand<T extends StorageDomainPoolParamet
             returnValue = CheckMasterDomainIsUp();
         }
         return returnValue;
+    }
+
+    protected StoragePoolIsoMapDAO getStoragePoolIsoMapDAO() {
+        return getDbFacade().getStoragePoolIsoMapDAO();
     }
 }
