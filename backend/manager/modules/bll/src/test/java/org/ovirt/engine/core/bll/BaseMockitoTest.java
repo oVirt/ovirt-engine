@@ -4,8 +4,6 @@ import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mock;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
-import java.util.List;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.runner.RunWith;
@@ -47,18 +45,14 @@ public class BaseMockitoTest extends Assert {
     }
 
     protected void checkSucceeded(QueriesCommandBase<?> query, boolean expected) {
-        assertEquals(expected, query.getQueryReturnValue().getSucceeded());
+        CommandAssertUtils.checkSucceeded(query, expected);
     }
 
     protected void checkSucceeded(CommandBase<?> cmd, boolean expected) {
-        assertEquals(expected, cmd.getReturnValue().getSucceeded());
+        CommandAssertUtils.checkSucceeded(cmd, expected);
     }
 
     protected void checkMessages(CommandBase<?> cmd, VdcBllMessages... expected) {
-        List<String> returned = cmd.getReturnValue().getCanDoActionMessages();
-        assertEquals(expected.length, returned.size());
-        for (int i = 0; i < expected.length; i++) {
-            assertEquals(expected[i].toString(), returned.get(i));
-        }
+        CommandAssertUtils.checkMessages(cmd, expected);
     }
 }
