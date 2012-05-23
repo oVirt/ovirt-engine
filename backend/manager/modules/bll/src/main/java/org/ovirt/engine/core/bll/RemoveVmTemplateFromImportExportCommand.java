@@ -2,12 +2,14 @@ package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.RemoveAllVmImagesParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -30,6 +32,11 @@ import org.ovirt.engine.core.utils.linq.Predicate;
 
 public class RemoveVmTemplateFromImportExportCommand<T extends VmTemplateImportExportParameters> extends
         RemoveVmTemplateCommand<T> {
+
+    private Map<VmTemplate, DiskImageList> templatesFromExport;
+    // this is needed since overriding getVmTemplate()
+    private VmTemplate exportTemplate;
+
     public RemoveVmTemplateFromImportExportCommand(T parameters) {
         super(parameters);
         setStorageDomainId(parameters.getStorageDomainId());
@@ -38,39 +45,25 @@ public class RemoveVmTemplateFromImportExportCommand<T extends VmTemplateImportE
     @Override
     protected boolean canDoAction() {
         boolean retVal = true;
-        GetAllFromExportDomainQueryParamenters tempVar = new GetAllFromExportDomainQueryParamenters(getParameters()
-                    .getStoragePoolId(), getParameters().getStorageDomainId());
-        tempVar.setGetAll(true);
-        VdcQueryReturnValue qretVal = Backend.getInstance().runInternalQuery(
-                    VdcQueryType.GetTemplatesFromExportDomain, tempVar);
-
-        retVal = qretVal.getSucceeded();
-
+        if (getVmTemplate() == null) {
+            retVal = false;
+            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
+        }
         if (retVal) {
-            Map<VmTemplate, DiskImageList> templates = (Map) qretVal.getReturnValue();
-            DiskImageList images = templates.get(LinqUtils.firstOrNull(templates.keySet(),
+            DiskImageList images = templatesFromExport.get(LinqUtils.firstOrNull(templatesFromExport.keySet(),
                         new Predicate<VmTemplate>() {
                             @Override
                             public boolean eval(VmTemplate t) {
                                 return t.getId().equals(getParameters().getVmTemplateId());
                             }
                         }));
-            VmTemplate template = LinqUtils.firstOrNull(templates.keySet(), new Predicate<VmTemplate>() {
-                @Override
-                public boolean eval(VmTemplate t) {
-                    return t.getId().equals(getParameters().getVmTemplateId());
-                }
-            });
-            setVmTemplate(template);
+
             if (images != null) {
                 getParameters().setImages(Arrays.asList(images.getDiskImages()));
             } else {
                 retVal = false;
+                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
             }
-        }
-        if (retVal && getVmTemplate() == null) {
-            retVal = false;
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
         }
         if (retVal && (getParameters().getImages() == null || getParameters().getImages().size() == 0)) {
             addCanDoActionMessage(VdcBllMessages.TEMPLATE_IMAGE_NOT_EXIST);
@@ -157,5 +150,43 @@ public class RemoveVmTemplateFromImportExportCommand<T extends VmTemplateImportE
         setCommandShouldBeLogged(false);
 
         setSucceeded(true);
+    }
+
+    /*
+     * get template from export domain
+     */
+    @Override
+    @SuppressWarnings("unchecked")
+    public VmTemplate getVmTemplate() {
+        if (exportTemplate == null) {
+            GetAllFromExportDomainQueryParamenters tempVar = new GetAllFromExportDomainQueryParamenters(getParameters()
+                    .getStoragePoolId(), getParameters().getStorageDomainId());
+            tempVar.setGetAll(true);
+            VdcQueryReturnValue qretVal = Backend.getInstance().runInternalQuery(
+                    VdcQueryType.GetTemplatesFromExportDomain, tempVar);
+
+            if (qretVal.getSucceeded()) {
+                templatesFromExport = (Map<VmTemplate, DiskImageList>) qretVal.getReturnValue();
+                exportTemplate = LinqUtils.firstOrNull(templatesFromExport.keySet(), new Predicate<VmTemplate>() {
+                    @Override
+                    public boolean eval(VmTemplate t) {
+                        return t.getId().equals(getParameters().getVmTemplateId());
+                    }
+                });
+                setVmTemplate(exportTemplate);
+            }
+        }
+        return exportTemplate;
+    }
+
+    @Override
+    public Map<String, String> getJobMessageProperties() {
+        if (jobProperties == null) {
+            jobProperties = new HashMap<String, String>();
+            jobProperties.put(VdcObjectType.VmTemplate.name().toLowerCase(),
+                    (getVmTemplateName() == null) ? "" : getVmTemplateName());
+            jobProperties.put(VdcObjectType.Storage.name().toLowerCase(), getStorageDomainName());
+        }
+        return jobProperties;
     }
 }

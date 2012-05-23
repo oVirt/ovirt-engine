@@ -2,9 +2,13 @@ package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.RemoveVmFromImportExportParamenters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -21,6 +25,10 @@ import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class RemoveVmFromImportExportCommand<T extends RemoveVmFromImportExportParamenters> extends RemoveVmCommand<T> {
+
+    // this is needed since overriding getVmTemplate()
+    private VM exportVm;
+
     public RemoveVmFromImportExportCommand(T parameters) {
         super(parameters);
         super.setVmId(parameters.getVmId());
@@ -49,26 +57,14 @@ public class RemoveVmFromImportExportCommand<T extends RemoveVmFromImportExportP
             return false;
         }
 
-        GetAllFromExportDomainQueryParamenters tempVar = new GetAllFromExportDomainQueryParamenters(
-                getParameters().getStoragePoolId(), getParameters().getStorageDomainId());
-        tempVar.setGetAll(true);
-        tempVar.setIds(new java.util.ArrayList<Guid>(java.util.Arrays.asList(new Guid[] { getVmId() })));
-        VdcQueryReturnValue qretVal = Backend.getInstance().runInternalQuery(
-                VdcQueryType.GetVmsFromExportDomain, tempVar);
-        if (!qretVal.getSucceeded() || qretVal.getReturnValue() == null) {
+        // getVm() is the vm from the export domain
+        if (getVm() == null) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND_ON_EXPORT_DOMAIN);
             return false;
         }
 
-        java.util.ArrayList<VM> vms = (java.util.ArrayList<VM>) qretVal.getReturnValue();
-        if (vms.size() != 1) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND_ON_EXPORT_DOMAIN);
-            return false;
-        }
-
-        setVm(vms.get(0));
-
-        VM vm = getVmDAO().get(vms.get(0).getId());
+        // not using getVm() since its overridden to get vm from export domain
+        VM vm = getVmDAO().get(getVmId());
         if (vm != null && vm.getstatus() == VMStatus.ImageLocked) {
             if (AsyncTaskManager.getInstance().hasTasksForEntityIdAndAction(vm.getId(), VdcActionType.ExportVm)) {
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_DURING_EXPORT);
@@ -102,5 +98,41 @@ public class RemoveVmFromImportExportCommand<T extends RemoveVmFromImportExportP
         setCommandShouldBeLogged(false);
 
         setSucceeded(true);
+    }
+
+    /*
+     * get vm from export domain
+     */
+    @Override
+    public VM getVm() {
+        if (exportVm == null) {
+            GetAllFromExportDomainQueryParamenters tempVar = new GetAllFromExportDomainQueryParamenters(
+                    getParameters().getStoragePoolId(), getParameters().getStorageDomainId());
+            tempVar.setGetAll(true);
+            tempVar.setIds(new ArrayList<Guid>(Collections.singletonList(getVmId())));
+            VdcQueryReturnValue qretVal = Backend.getInstance().runInternalQuery(
+                    VdcQueryType.GetVmsFromExportDomain, tempVar);
+
+            if (qretVal != null && qretVal.getSucceeded()) {
+                @SuppressWarnings("unchecked")
+                ArrayList<VM> vms = (ArrayList<VM>) qretVal.getReturnValue();
+                if (!vms.isEmpty()) {
+                    exportVm = vms.get(0);
+                    setVm(exportVm);
+                }
+            }
+        }
+        return exportVm;
+    }
+
+    @Override
+    public Map<String, String> getJobMessageProperties() {
+        if (jobProperties == null) {
+            jobProperties = new HashMap<String, String>();
+            jobProperties.put(VdcObjectType.VM.name().toLowerCase(),
+                    (getVmName() == null) ? "" : getVmName());
+            jobProperties.put(VdcObjectType.Storage.name().toLowerCase(), getStorageDomainName());
+        }
+        return jobProperties;
     }
 }
