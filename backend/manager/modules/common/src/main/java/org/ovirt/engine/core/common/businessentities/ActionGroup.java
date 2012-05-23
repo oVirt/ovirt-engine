@@ -92,7 +92,7 @@ public enum ActionGroup {
     private int id;
     private RoleType roleType;
     private VdcObjectType vdcObjectType;
-    private boolean isInheritable;
+    private boolean allowsViewingChildren;
     private static HashMap<Integer, ActionGroup> map = new HashMap<Integer, ActionGroup>(ActionGroup.values().length);
     private static HashMap<VdcObjectType, ArrayList<ActionGroup>> entityToActionGroupsMapping =
             new HashMap<VdcObjectType, ArrayList<ActionGroup>>();
@@ -109,11 +109,11 @@ public enum ActionGroup {
         }
     }
 
-    private ActionGroup(int value, RoleType type, VdcObjectType objectType, boolean isInheritable) {
+    private ActionGroup(int value, RoleType type, VdcObjectType objectType, boolean allowsViewingChildren) {
         id = value;
         roleType = type;
         vdcObjectType = objectType;
-        this.isInheritable = isInheritable;
+        this.allowsViewingChildren = allowsViewingChildren;
     }
 
     private static void initEntitiesMap() {
@@ -129,8 +129,8 @@ public enum ActionGroup {
         return roleType;
     }
 
-    public boolean isInheritable() {
-        return isInheritable;
+    public boolean allowsViewingChildren() {
+        return allowsViewingChildren;
     }
 
     public static ActionGroup forValue(int value) {

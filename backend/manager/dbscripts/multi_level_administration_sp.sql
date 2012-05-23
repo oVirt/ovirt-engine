@@ -155,12 +155,12 @@ Create or replace FUNCTION InsertRole(v_description VARCHAR(4000) ,
 	v_name VARCHAR(126),
 	v_is_readonly BOOLEAN,
 	v_role_type INTEGER,
-        v_is_inheritable BOOLEAN)
+        v_allows_viewing_children BOOLEAN)
 RETURNS VOID
    AS $procedure$
 BEGIN
-INSERT INTO roles(description, id, name, is_readonly, role_type, is_inheritable)
-	VALUES(v_description, v_id, v_name, v_is_readonly, v_role_type, v_is_inheritable);
+INSERT INTO roles(description, id, name, is_readonly, role_type, allows_viewing_children)
+	VALUES(v_description, v_id, v_name, v_is_readonly, v_role_type, v_allows_viewing_children);
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -173,7 +173,7 @@ Create or replace FUNCTION UpdateRole(v_description VARCHAR(4000) ,
 	v_name VARCHAR(126),
 	v_is_readonly BOOLEAN,
 	v_role_type INTEGER,
-        v_is_inheritable BOOLEAN)
+        v_allows_viewing_children BOOLEAN)
 RETURNS VOID
 	--The [roles] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
    AS $procedure$
@@ -183,7 +183,7 @@ BEGIN
           name           = v_name,
           is_readonly    = v_is_readonly,
           role_type      = v_role_type,
-          is_inheritable = v_is_inheritable
+          allows_viewing_children = v_allows_viewing_children
       WHERE id = v_id;
 END; $procedure$
 LANGUAGE plpgsql;

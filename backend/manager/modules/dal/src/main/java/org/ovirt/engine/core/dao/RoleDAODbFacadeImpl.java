@@ -61,7 +61,7 @@ public class RoleDAODbFacadeImpl extends BaseDAODbFacade implements RoleDAO {
                 .addValue("id", role.getId()).addValue("name", role.getname())
                 .addValue("is_readonly", role.getis_readonly())
                 .addValue("role_type", role.getType().getId())
-                .addValue("is_inheritable", role.isInheritable());
+                .addValue("allows_viewing_children", role.allowsViewingChildren());
 
         getCallsHandler().executeModification("InsertRole", parameterSource);
     }
@@ -73,7 +73,7 @@ public class RoleDAODbFacadeImpl extends BaseDAODbFacade implements RoleDAO {
                 .addValue("id", role.getId()).addValue("name", role.getname())
                 .addValue("is_readonly", role.getis_readonly())
                 .addValue("role_type", role.getType().getId())
-                .addValue("is_inheritable", role.isInheritable());
+                .addValue("allows_viewing_children", role.allowsViewingChildren());
 
         getCallsHandler().executeModification("UpdateRole", parameterSource);
     }
