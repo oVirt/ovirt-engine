@@ -1,8 +1,11 @@
 package org.ovirt.engine.core.common.config;
 
+import java.util.Date;
 import java.util.Map;
 
-import org.ovirt.engine.core.compat.*;
+import org.ovirt.engine.core.compat.RefObject;
+import org.ovirt.engine.core.compat.TimeSpan;
+import org.ovirt.engine.core.compat.Version;
 
 /**
  * Config Utils Interface
@@ -49,7 +52,7 @@ public interface IConfigUtilsInterface {
      *            The default value.
      * @return
      */
-    java.util.Date getDateTimeValue(String name, String defaultValue);
+    Date getDateTimeValue(String name, String defaultValue);
 
     /**
      * Gets the time span value.
