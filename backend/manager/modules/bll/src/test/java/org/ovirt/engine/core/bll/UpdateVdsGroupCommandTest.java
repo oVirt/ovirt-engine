@@ -47,8 +47,8 @@ import org.ovirt.engine.core.dao.VdsStaticDAO;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-@PrepareForTest({DbFacade.class, CpuFlagsManagerHandler.class, Config.class, CpuFlagsManagerHandler.class,
-        Backend.class, VersionSupport.class})
+@PrepareForTest({ DbFacade.class, CpuFlagsManagerHandler.class, Config.class, CpuFlagsManagerHandler.class,
+        Backend.class, VersionSupport.class })
 @RunWith(PowerMockRunner.class)
 public class UpdateVdsGroupCommandTest {
 
@@ -57,14 +57,18 @@ public class UpdateVdsGroupCommandTest {
     private static final Version VERSION_1_2 = new Version(1, 2);
     private static final Guid STORAGE_POOL_ID = Guid.NewGuid();
 
-    @Mock private DbFacade dbFacade;
-    @Mock private VdsGroupDAO vdsGroupDAO;
-    @Mock private VdsStaticDAO vdsStaticDAO;
-    @Mock private BackendInternal backendInternal;
-    @Mock private StoragePoolDAO storagePoolDAO;
+    @Mock
+    private DbFacade dbFacade;
+    @Mock
+    private VdsGroupDAO vdsGroupDAO;
+    @Mock
+    private VdsStaticDAO vdsStaticDAO;
+    @Mock
+    private BackendInternal backendInternal;
+    @Mock
+    private StoragePoolDAO storagePoolDAO;
 
     private UpdateVdsGroupCommand<VdsGroupOperationParameters> cmd;
-
 
     @Before
     public void setUp() {
@@ -104,7 +108,7 @@ public class UpdateVdsGroupCommandTest {
 
     @Test
     public void invalidCpuSelection() {
-      canDoActionFailedWithReason(VdcBllMessages.ACTION_TYPE_FAILED_CPU_NOT_FOUND);
+        canDoActionFailedWithReason(VdcBllMessages.ACTION_TYPE_FAILED_CPU_NOT_FOUND);
     }
 
     @Test
@@ -148,7 +152,7 @@ public class UpdateVdsGroupCommandTest {
         cpuManufacturersMatch();
         clusterVersionIsSupported();
         clusterHasVds();
-        CpuFlagsMissing();
+        cpuFlagsMissing();
         canDoActionFailedWithReason(VdcBllMessages.VDS_GROUP_CANNOT_UPDATE_CPU_WITH_LOWER_HOSTS);
     }
 
@@ -247,20 +251,20 @@ public class UpdateVdsGroupCommandTest {
         createCommand(createVdsGroupWithDifferentName());
     }
 
-    private VDSGroup createVdsGroupWithDifferentName() {
+    private static VDSGroup createVdsGroupWithDifferentName() {
         VDSGroup group = new VDSGroup();
         group.setname("BadName");
         return group;
     }
 
-    private VDSGroup createNewVdsGroup() {
+    private static VDSGroup createNewVdsGroup() {
         VDSGroup group = new VDSGroup();
         group.setcompatibility_version(VERSION_1_1);
         group.setname("Default");
         return group;
     }
 
-    private VDSGroup createDefaultVdsGroup() {
+    private static VDSGroup createDefaultVdsGroup() {
         VDSGroup group = new VDSGroup();
         group.setname("Default");
         group.setId(VDSGroup.DEFAULT_VDS_GROUP_ID);
@@ -270,7 +274,7 @@ public class UpdateVdsGroupCommandTest {
         return group;
     }
 
-    private VDSGroup createVdsGroupWithNoCpuName() {
+    private static VDSGroup createVdsGroupWithNoCpuName() {
         VDSGroup group = new VDSGroup();
         group.setname("Default");
         group.setId(VDSGroup.DEFAULT_VDS_GROUP_ID);
@@ -279,37 +283,37 @@ public class UpdateVdsGroupCommandTest {
         return group;
     }
 
-    private VDSGroup createDetachedDefaultVdsGroup() {
+    private static VDSGroup createDetachedDefaultVdsGroup() {
         VDSGroup group = createDefaultVdsGroup();
         group.setstorage_pool_id(null);
         return group;
     }
 
-    private VDSGroup createVdsGroupWithOlderVersion() {
+    private static VDSGroup createVdsGroupWithOlderVersion() {
         VDSGroup group = createNewVdsGroup();
         group.setcompatibility_version(VERSION_1_0);
         return group;
     }
 
-    private VDSGroup createVdsGroupWithBadVersion() {
+    private static VDSGroup createVdsGroupWithBadVersion() {
         VDSGroup group = createNewVdsGroup();
         group.setcompatibility_version(new Version(5, 0));
         return group;
     }
 
-    private VDSGroup createVdsGroupWithDifferentPool() {
+    private static VDSGroup createVdsGroupWithDifferentPool() {
         VDSGroup group = createNewVdsGroup();
         group.setstorage_pool_id(Guid.NewGuid());
         return group;
     }
 
-    private VDSGroup createVdsGroupWithPowerSave() {
+    private static VDSGroup createVdsGroupWithPowerSave() {
         VDSGroup group = createDefaultVdsGroup();
         group.setselection_algorithm(VdsSelectionAlgorithm.PowerSave);
         return group;
     }
 
-    private storage_pool createStoragePoolLocalFS() {
+    private static storage_pool createStoragePoolLocalFS() {
         storage_pool pool = new storage_pool();
         pool.setstorage_pool_type(StorageType.LOCALFS);
         return pool;
@@ -337,12 +341,12 @@ public class UpdateVdsGroupCommandTest {
         VdcQueryReturnValue returnValue = mock(VdcQueryReturnValue.class);
         when(backendInternal.runInternalQuery(any(VdcQueryType.class), argThat(
                 new ArgumentMatcher<VdcQueryParametersBase>() {
-            @Override
-            public boolean matches(final Object o) {
-                SearchParameters param = (SearchParameters) o;
-                return param.getSearchTypeValue().equals(SearchType.VDS);
-            }
-        })))
+                    @Override
+                    public boolean matches(final Object o) {
+                        SearchParameters param = (SearchParameters) o;
+                        return param.getSearchTypeValue().equals(SearchType.VDS);
+                    }
+                })))
                 .thenReturn(returnValue);
         when(returnValue.getReturnValue()).thenReturn(vdsList);
     }
@@ -371,44 +375,44 @@ public class UpdateVdsGroupCommandTest {
         when(returnValue.getReturnValue()).thenReturn(vdsList);
     }
 
-    private void CpuFlagsMissing() {
+    private static void cpuFlagsMissing() {
         List<String> strings = new ArrayList<String>();
         strings.add("foo");
         when(CpuFlagsManagerHandler.missingServerCpuFlags(anyString(), anyString(), any(Version.class)))
                 .thenReturn(strings);
     }
 
-    private void cpuFlagsNotMissing() {
+    private static void cpuFlagsNotMissing() {
         when(CpuFlagsManagerHandler.missingServerCpuFlags(anyString(), anyString(), any(Version.class)))
                 .thenReturn(null);
     }
 
-    private void clusterVersionIsSupported() {
+    private static void clusterVersionIsSupported() {
         mockStatic(VersionSupport.class);
         when(VersionSupport.checkVersionSupported(any(Version.class))).thenReturn(true);
         when(VersionSupport.checkClusterVersionSupported(any(Version.class), any(VDS.class))).thenReturn(true);
     }
 
-    private void cpuManufacturersDontMatch() {
+    private static void cpuManufacturersDontMatch() {
         when(CpuFlagsManagerHandler.CheckIfCpusSameManufacture(anyString(), anyString(), any(Version.class)))
                 .thenReturn(false);
     }
 
-    private void cpuManufacturersMatch() {
+    private static void cpuManufacturersMatch() {
         when(CpuFlagsManagerHandler.CheckIfCpusSameManufacture(anyString(), anyString(), any(Version.class)))
                 .thenReturn(true);
     }
 
-    private void cpuExists() {
+    private static void cpuExists() {
         when(CpuFlagsManagerHandler.CheckIfCpusExist(anyString(), any(Version.class))).thenReturn(true);
     }
 
-    private void setValidCpuVersionMap() {
+    private static void setValidCpuVersionMap() {
         CpuFlagsManagerHandler.InitDictionaries();
         when(Config.GetValue(ConfigValues.SupportedClusterLevels)).thenReturn(createVersionSet());
     }
 
-    private Set<Version> createVersionSet() {
+    private static Set<Version> createVersionSet() {
         Set<Version> versions = new HashSet<Version>();
         versions.add(VERSION_1_0);
         versions.add(VERSION_1_1);
