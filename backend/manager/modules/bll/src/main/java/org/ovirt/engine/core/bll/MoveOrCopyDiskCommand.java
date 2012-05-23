@@ -30,8 +30,11 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogField;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
 
+@CustomLogFields({ @CustomLogField("DiskAlias") })
 @NonTransactiveCommandAttribute
 public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> extends MoveOrCopyImageGroupCommand<T> {
 
@@ -355,4 +358,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
         return sharedLockMap;
     }
 
+    public String getDiskAlias() {
+        return getImage().getDiskAlias();
+    }
 }

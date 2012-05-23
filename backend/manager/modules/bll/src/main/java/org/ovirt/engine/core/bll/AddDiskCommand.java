@@ -47,7 +47,7 @@ import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
 import org.ovirt.engine.core.dao.StorageDomainStaticDAO;
 
-@CustomLogFields({ @CustomLogField("DiskName") })
+@CustomLogFields({ @CustomLogField("DiskAlias") })
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmCommand<T> {
 
@@ -383,5 +383,9 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
     protected List<Class<?>> getValidationGroups() {
         addValidationGroup(UpdateEntity.class);
         return super.getValidationGroups();
+    }
+
+    public String getDiskAlias() {
+        return getParameters().getDiskInfo().getDiskAlias();
     }
 }
