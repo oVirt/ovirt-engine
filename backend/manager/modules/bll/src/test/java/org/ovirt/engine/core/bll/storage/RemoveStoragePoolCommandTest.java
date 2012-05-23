@@ -1,28 +1,23 @@
 package org.ovirt.engine.core.bll.storage;
 
-import static org.powermock.api.mockito.PowerMockito.spy;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
-import org.ovirt.engine.core.bll.BaseMockitoTest;
 import org.ovirt.engine.core.common.action.StoragePoolParametersBase;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
-public class RemoveStoragePoolCommandTest extends BaseMockitoTest {
+public class RemoveStoragePoolCommandTest {
 
-    private RemoveStoragePoolCommand<StoragePoolParametersBase> createCommand(StoragePoolParametersBase param) {
-        RemoveStoragePoolCommand<StoragePoolParametersBase> concrete =
-                new RemoveStoragePoolCommand<StoragePoolParametersBase>(param);
-        return spy(concrete);
+    private static RemoveStoragePoolCommand<StoragePoolParametersBase> createCommand(StoragePoolParametersBase param) {
+        return new RemoveStoragePoolCommand<StoragePoolParametersBase>(param);
     }
 
     @Test
     public void testEmptyDomainList() {
-        DbFacade db = setUpDB();
         StoragePoolParametersBase param = new StoragePoolParametersBase();
         RemoveStoragePoolCommand<StoragePoolParametersBase> cmd = createCommand(param);
         List<storage_domains> domainsList = new ArrayList<storage_domains>();
@@ -35,7 +30,6 @@ public class RemoveStoragePoolCommandTest extends BaseMockitoTest {
      */
     @Test
     public void testActiveDomainInList() {
-        DbFacade db = setUpDB();
         StoragePoolParametersBase param = new StoragePoolParametersBase();
         RemoveStoragePoolCommand<StoragePoolParametersBase> cmd = createCommand(param);
         List<storage_domains> domainsList = new ArrayList<storage_domains>();
@@ -51,7 +45,6 @@ public class RemoveStoragePoolCommandTest extends BaseMockitoTest {
      */
     @Test
     public void testLockedDomainInList() {
-        DbFacade db = setUpDB();
         StoragePoolParametersBase param = new StoragePoolParametersBase();
         RemoveStoragePoolCommand<StoragePoolParametersBase> cmd = createCommand(param);
         List<storage_domains> domainsList = new ArrayList<storage_domains>();
@@ -67,7 +60,6 @@ public class RemoveStoragePoolCommandTest extends BaseMockitoTest {
      */
     @Test
     public void testLockedAndActiveDomainInList() {
-        DbFacade db = setUpDB();
         StoragePoolParametersBase param = new StoragePoolParametersBase();
         RemoveStoragePoolCommand<StoragePoolParametersBase> cmd = createCommand(param);
         List<storage_domains> domainsList = new ArrayList<storage_domains>();
@@ -90,7 +82,6 @@ public class RemoveStoragePoolCommandTest extends BaseMockitoTest {
      */
     @Test
     public void testInActiveDomainInList() {
-        DbFacade db = setUpDB();
         StoragePoolParametersBase param = new StoragePoolParametersBase();
         RemoveStoragePoolCommand<StoragePoolParametersBase> cmd = createCommand(param);
         List<storage_domains> domainsList = new ArrayList<storage_domains>();
@@ -103,5 +94,4 @@ public class RemoveStoragePoolCommandTest extends BaseMockitoTest {
         List<storage_domains> listReturned = cmd.getActiveOrLockedDomainList(domainsList);
         assertTrue(listReturned.isEmpty());
     }
-
 }
