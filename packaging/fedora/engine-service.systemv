@@ -1,0 +1,25 @@
+#!/bin/bash
+#
+# Start/stop oVirt Engine
+#
+# chkconfig: - 65 34
+# description: oVirt Engine
+# pidfile: /var/run/ovirt-engine.pid
+
+# Load the sysconfig file into the environment:
+if [ -f /etc/sysconfig/ovirt-engine ]
+then
+  . /etc/sysconfig/ovirt-engine
+fi
+
+# Export the variables potentially used in the sysconfig
+# configuration file:
+export ENGINE_USER
+export ENGINE_GROUP
+export ENGINE_MIN_HEAP
+export ENGINE_MAX_HEAP
+export ENGINE_DEBUG_ADDRESS
+export ENGINE_VERBOSE_GC
+
+# The service script takes care of the rest:
+exec /usr/share/ovirt-engine/scripts/engine-service.py $*

@@ -13,9 +13,9 @@ DB_PASS_FILE="/root/.pgpass"
 PGPASS_FILE_TEMPLATE="hostname:port:database:username:password"
 JBOSS_SECURITY_DOMAIN="EncryptDBPassword"
 JBOSS_KERB_AUTH="EngineKerberosAuth"
-JBOSS_SERVICE_NAME="jboss-as"
-JBOSS_USER_NAME="jboss-as"
-JBOSS_GROUP_NAME="jboss-as"
+JBOSS_SERVICE_NAME="ovirt-engine"
+JBOSS_USER_NAME="ovirt"
+JBOSS_GROUP_NAME="ovirt"
 HTTPD_SERVICE_NAME="httpd"
 HTTP_PORT_POLICY="http_port_t"
 NFS_SERVICE_NAME="nfs-server"
@@ -48,8 +48,6 @@ DIR_DB_BACKUPS="%s/ovirt-engine/db-backups" % DIR_USR_SHARE
 DIR_ENGINE_CONFIG="%s/ovirt-engine/engine-config/" % DIR_USR_SHARE
 DIR_RHEVM_CONFIG_CONF="/etc/ovirt-engine/engine-config/"
 DIR_OVIRT_PKI="/etc/pki/ovirt-engine"
-DIR_MODULES_SRC="%s/ovirt-engine/resources/jboss/modules" % DIR_USR_SHARE
-DIR_MODULES_DEST="%s/modules" % DIR_JBOSS
 
 
 FILE_INSTALLER_LOG="engine-setup.log"
@@ -63,7 +61,7 @@ FILE_CA_CRT_TEMPLATE="%s/cacert.template"%(DIR_OVIRT_PKI)
 FILE_CERT_TEMPLATE="%s/cert.template"%(DIR_OVIRT_PKI)
 FILE_ENGINE_CERT="%s/certs/engine.cer"%(DIR_OVIRT_PKI)
 FILE_JBOSSAS_CONF="/etc/%s/%s.conf" % (JBOSS_SERVICE_NAME, JBOSS_SERVICE_NAME)
-FILE_JBOSS_STANDALONE="%s/standalone/configuration/standalone.xml" % DIR_JBOSS
+FILE_JBOSS_STANDALONE="/etc/ovirt-engine/engine-service.xml"
 FILE_DB_INSTALL_SCRIPT="engine-db-install.sh"
 FILE_DB_UPGRADE_SCRIPT="upgrade.sh"
 FILE_RHEVM_CONFIG_BIN=os.path.join(DIR_ENGINE_CONFIG, "engine-config")
@@ -84,7 +82,6 @@ FILE_ISOUPLOADER_CONF="/etc/ovirt-engine/isouploader.conf"
 FILE_LOGCOLLECTOR_CONF="/etc/ovirt-engine/logcollector.conf"
 FILE_PSQL_CONF="/var/lib/pgsql/data/postgresql.conf"
 FILE_LIMITS_CONF="/etc/security/limits.conf"
-FILE_JDK_MODULE_XML="%s/modules/sun/jdk/main/module.xml" % DIR_JBOSS
 FILE_OVIRT_HTTPD_CONF="/etc/httpd/conf.d/ovirt-engine.conf"
 FILE_HTTPD_SSL_CONFIG="/etc/httpd/conf.d/ssl.conf"
 FILE_HTTPD_CONF="/etc/httpd/conf/httpd.conf"
@@ -159,6 +156,14 @@ COLORS = (RED, GREEN, BLUE, YELLOW, NO_COLOR)
 #space len size for color print
 SPACE_LEN=70
 
-RPM_LOCK_LIST = "ovirt-engine-genericapi ovirt-engine ovirt-engine-backend \
-ovirt-engine-jboss-deps ovirt-engine-webadmin-portal ovirt-engine-userportal \
-ovirt-engine-restapi ovirt-engine-config ovirt-engine-tools-common ovirt-engine-notification-service"
+RPM_LOCK_LIST = """
+ovirt-engine
+ovirt-engine-backend
+ovirt-engine-config
+ovirt-engine-genericapi
+ovirt-engine-notification-service
+ovirt-engine-restapi
+ovirt-engine-tools-common
+ovirt-engine-userportal
+ovirt-engine-webadmin-portal
+"""

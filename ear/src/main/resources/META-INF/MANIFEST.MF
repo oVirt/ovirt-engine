@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+Dependencies: org.apache.log4j,
+ org.codehaus.jackson.jackson-core-asl,
+ org.codehaus.jackson.jackson-mapper-asl
+

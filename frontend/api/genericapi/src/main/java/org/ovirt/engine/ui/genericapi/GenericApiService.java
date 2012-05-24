@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import javax.interceptor.Interceptors;
 
 import org.ovirt.engine.core.common.action.LoginUserParameters;
 import org.ovirt.engine.core.common.action.LogoutUserParameters;
@@ -21,11 +20,9 @@ import org.ovirt.engine.ui.genericapi.parameters.UIQueryParametersBase;
 import org.ovirt.engine.ui.genericapi.returnvalues.UIQueryReturnValue;
 import org.ovirt.engine.ui.genericapi.uiqueries.UIQueryBase;
 import org.ovirt.engine.ui.genericapi.uiqueries.UIQueryType;
-import org.ovirt.engine.core.utils.CXFContextInterceptor;
 import org.ovirt.engine.core.utils.ThreadLocalParamsContainer;
 
 @Stateless
-@Interceptors({ CXFContextInterceptor.class })
 public class GenericApiService {
 
     @EJB(name = "Backend")

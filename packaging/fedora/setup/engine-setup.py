@@ -96,11 +96,11 @@ def initSequences():
                         'condition'       : [],
                         'condition_match' : [],
                         'steps'           : [ { 'title'     : output_messages.INFO_CONFIG_OVIRT_ENGINE,
-                                                'functions' : [_createJbossProfile, setMaxSharedMemory] },
+                                                'functions' : [setMaxSharedMemory] },
                                               { 'title'     : output_messages.INFO_CREATE_CA,
                                                 'functions' : [_createCA]},
                                               { 'title'     : output_messages.INFO_UPD_JBOSS_CONF,
-                                                'functions' : [configJbossXml, deployJbossModules, _editWebConf] },
+                                                'functions' : [configJbossXml, _editWebConf] },
                                               { 'title'     : output_messages.INFO_SET_DB_CONFIGURATION,
                                                 'functions' : [_updatePgPassFile]}]
                        },
@@ -943,31 +943,6 @@ def _configIptables():
     except:
         logging.error(traceback.format_exc())
         raise Exception(output_messages.ERR_EXP_FAILED_CFG_IPTABLES)
-
-def _createJbossProfile():
-    logging.debug("creating jboss profile")
-    try:
-        dirs = [
-                   {'src'  : basedefs.DIR_ENGINE_EAR,
-                    'dest' : os.path.join(basedefs.DIR_JBOSS, "standalone", "deployments", "engine.ear")}
-                   ]
-
-        for item in dirs:
-            if not os.path.exists(item['dest']):
-                if os.path.islink(item['dest']) and os.readlink(item['dest']) != item['src']:
-                    os.remove(item['dest'])
-                os.symlink(item['src'], item['dest'])
-
-                logging.debug("Successfully created JBoss profile")
-            else:
-                logging.debug("JBoss profile already exists, doing nothing")
-
-            logging.debug("touching .dodeploy file for %s" % item['dest'])
-            open("%s.dodeploy" % item['dest'], 'w').close()
-
-    except:
-        logging.error(traceback.format_exc())
-        raise Exception("Failed to create JBoss profile")
 
 def _createDB():
     """
@@ -1890,43 +1865,6 @@ def stopRhevmDbRelatedServices():
         logging.warn("Failed to start rhevm-notifierd")
         controller.MESSAGES.append(output_messages.ERR_FAILED_START_SERVICE % "rhevm-notifierd")
 
-
-def deployJbossModules():
-    """
-    deploy the postgres module and edit the xml for the jdk module
-    """
-    try:
-
-        # edit module.xml for the jdk module
-        backupFile = "%s.%i" % (basedefs.FILE_JDK_MODULE_XML, random.randint(1000000,9999999))
-        editFile = "%s.%s.%i" % (basedefs.FILE_JDK_MODULE_XML, "EDIT", random.randint(1000000,9999999))
-        logging.debug("Backing up %s into %s", basedefs.FILE_JDK_MODULE_XML, backupFile)
-        utils.copyFile(basedefs.FILE_JDK_MODULE_XML, backupFile)
-        utils.copyFile(basedefs.FILE_JDK_MODULE_XML, editFile)
-
-        logging.debug("loading xml file handler")
-        xmlObj = utils.XMLConfigFileHandler(editFile)
-        xmlObj.open()
-
-        logging.debug("registering name space")
-        xmlObj.registerNs('module', xmlObj.getNs('urn:jboss:module'))
-
-        paths = ['''<path name="sun/security"/>''', '''<path name="sun/security/krb5"/>''', '''<path name="com/sun/jndi/url"/>''', '''<path name="com/sun/jndi/url/dns"/>''' ]
-
-        for path in paths:
-            logging.debug("adding %s as node", path)
-            xmlObj.addNodes("//module:module/module:dependencies/module:system/module:paths", path)
-
-        xmlObj.close()
-
-        shutil.move(editFile, basedefs.FILE_JDK_MODULE_XML)
-        logging.debug("JDK module configuration has been saved")
-
-    except:
-        logging.error("Failed to deploy modules into jboss")
-        logging.error(traceback.format_exc())
-        raise Exception(output_messages.ERR_EXP_FAILED_DEPLOY_MODULES)
-
 def configEncryptedPass():
     """
     push the encrypted password into standalone.xml
@@ -1982,7 +1920,6 @@ def configJbossXml():
         xmlObj.registerNs('domain', xmlObj.getNs('urn:jboss:domain'))
 
         logging.debug("Configuring Jboss")
-        configJbossLogging(xmlObj)
         configJbossDatasource(xmlObj)
         configJbossNetwork(xmlObj)
         configJbossSSL(xmlObj)
@@ -2021,75 +1958,6 @@ def configJbossAjpConnector(xmlObj):
 
     logging.debug("AJP has been configured for jboss")
 
-def configJbossLogging(xmlObj):
-    """
-    Configure the Logging for jboss
-    """
-    logging.debug("Configuring logging for jboss")
-
-    logging.debug("Registering logging namespace")
-    xmlObj.registerNs('logging', xmlObj.getNs('urn:jboss:domain:logging'))
-
-    logging.debug("setting attributes")
-    nodes = xmlObj.xpathEval("//logging:subsystem/logging:console-handler[@name='CONSOLE']")
-    nodes[0].setProp("autoflush", "true")
-
-    logging.debug("Adding level node with attribute: name, value: INFO")
-    nodes = xmlObj.xpathEval("//logging:subsystem/logging:periodic-rotating-file-handler[@name='FILE']")
-    nodes[0].setProp("autoflush", "true")
-
-
-    xmlObj.removeNodes("//logging:subsystem/logging:periodic-rotating-file-handler[@name='FILE']/logging:level")
-    levelStr = '''<level name="INFO" />'''
-    xmlObj.addNodes("//logging:subsystem/logging:periodic-rotating-file-handler[@name='FILE']", levelStr)
-
-    xmlObj.removeNodes("//logging:subsystem/logging:size-rotating-file-handler[@name='ENGINE_LOG']")
-    logging.debug("Adding file handler for ENGINE_LOG")
-    fileHandlerStr = '''
-    <size-rotating-file-handler name="ENGINE_LOG" autoflush="true">
-        <level name="INFO"/>
-        <formatter>
-            <pattern-formatter pattern="%d %-5p [%c] (%t) %s%E%n"/>
-        </formatter>
-        <file path="/var/log/ovirt-engine/engine.log"/>
-        <rotate-size value="1M"/>
-        <max-backup-index value="30"/>
-        <append value="true"/>
-    </size-rotating-file-handler>
-'''
-    xmlObj.addNodes("//logging:subsystem", fileHandlerStr)
-
-    logging.debug("Adding Loggers for ovirt-engine")
-    loggerCats = ["org.ovirt", "org.ovirt.engine.core.bll", "org.ovirt.engine.core.dal.dbbroker.PostgresDbEngineDialect$PostgresJdbcTemplate","org.springframework.ldap"]
-    for loggerCat in loggerCats:
-        xmlObj.removeNodes("//logging:subsystem/logging:logger[@category='%s']" % loggerCat)
-
-    loggers = ['''
-    <logger category="org.ovirt">
-        <level name="INFO"/>
-        <handlers>
-            <handler name="ENGINE_LOG"/>
-        </handlers>
-    </logger>
-    ''','''
-    <logger category="org.ovirt.engine.core.bll">
-        <level name="INFO"/>
-    </logger>
-    ''','''
-    <logger category="org.ovirt.engine.core.dal.dbbroker.PostgresDbEngineDialect$PostgresJdbcTemplate">
-        <level name="WARN"/>
-    </logger>
-    ''','''
-    <logger category="org.springframework.ldap">
-        <level name="ERROR"/>
-    </logger>
-    ''']
-
-    for logger in loggers:
-        xmlObj.addNodes("//logging:subsystem", logger)
-
-    logging.debug("Logging is enabled and configured in jboss's configuration")
-
 def configJbossDatasource(xmlObj):
     """
     configure the datasource for jboss
@@ -2098,7 +1966,6 @@ def configJbossDatasource(xmlObj):
 
     logging.debug("Registering datasource namespaces")
     xmlObj.registerNs('datasource', xmlObj.getNs('urn:jboss:domain:datasources'))
-    xmlObj.registerNs('deployment-scanner', xmlObj.getNs('urn:jboss:domain:deployment-scanner'))
 
     logging.debug("looking for ENGINEDatasource datasource")
 
@@ -2170,12 +2037,6 @@ def configJbossDatasource(xmlObj):
 '''
     xmlObj.addNodes("//datasource:subsystem/datasource:datasources", driversStr)
 
-    logging.debug("configuring deployment-scanner")
-    node = xmlObj.xpathEval("//deployment-scanner:subsystem/deployment-scanner:deployment-scanner")[0]
-    node.setProp("name","default")
-    node.setProp("path","deployments")
-    node.setProp("scan-enabled","true")
-    node.setProp("deployment-timeout","60")
     logging.debug("Datasource has been added into jboss's configuration")
 
 def configJbossSecurity(xmlObj):

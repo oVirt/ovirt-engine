@@ -372,9 +372,6 @@ ERR_EXP_NOT_EMOUGH_MEMORY="Error: Not enough available memory on the Host\n(the 
 #import iso files
 ERR_FAILED_TO_COPY_FILE_TO_ISO_DOMAIN="Failed to copy files to iso domain"
 
-ERR_FAILED_TO_COPY_MODULE="Failed to copy modules into Jboss"
-ERR_EXP_FAILED_DEPLOY_MODULES="Failed to deploy modules into Jboss"
-
 #copy file
 ERR_SOURCE_DIR_NOT_SUPPORTED="Error: function supports copy of files only and not directories"
 

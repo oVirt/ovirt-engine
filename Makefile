@@ -24,7 +24,6 @@
 MVN=$(shell which mvn)
 BUILD_FLAGS=-P gwt-admin,gwt-user
 DEPLOY_FLAGS=-f deploy.xml
-JBOSS_HOME=/usr/share/jboss-as
 EAR_DIR=/usr/share/ovirt-engine/engine.ear
 EAR_SRC_DIR=ear/target/engine
 PY_SITE_PKGS:=$(shell python -c "from distutils.sysconfig import get_python_lib as f;print f()")
@@ -76,7 +75,6 @@ install_without_maven: \
 	common_install
 
 common_install: \
-	install_tools \
 	install_config \
 	install_sysprep \
 	install_notification_service \
@@ -84,7 +82,9 @@ common_install: \
 	install_setup \
 	install_misc \
 	install_sec \
-	install_aio_plugin
+	install_aio_plugin \
+	install_jboss_modules \
+	install_service
 
 # Brew compatibility hack
 # We want both env (local and brew) to work the same
@@ -137,12 +137,19 @@ create_dirs:
 	@install -dm 755 $(PREFIX)/var/log/ovirt-engine/{notifier,engine-manage-domains}
 	@install -dm 755 $(PREFIX)/var/run/ovirt-engine/notifier
 	@install -dm 755 $(PREFIX)/var/lock/ovirt-engine
-	@install -dm 755 $(PREFIX)/etc/{init.d,tmpfiles.d,cron.daily}
+	@install -dm 755 $(PREFIX)/etc/tmpfiles.d
+	@install -dm 755 $(PREFIX)/etc/cron.daily
+	@install -dm 755 $(PREFIX)/etc/rc.d/init.d
 	@install -dm 755 $(PREFIX)/etc/ovirt-engine/{engine-config,engine-manage-domains,sysprep}
 	@install -dm 755 $(PREFIX)$(EAR_DIR)
-	@install -dm 755 $(PREFIX)$(JBOSS_HOME)/modules/org/
 	@install -dm 755 $(PREFIX)/usr/share/ovirt-engine/resources/jboss/modules/org
 	@install -dm 755 $(PREFIX)/etc/pki/ovirt-engine/{keys,private,requests,certs}
+	@install -dm 755 $(PREFIX)/etc/sysconfig
+	@install -dm 755 $(PREFIX)/var/lib/ovirt-engine
+	@install -dm 755 $(PREFIX)/var/lib/ovirt-engine/deployments
+	@install -dm 755 $(PREFIX)/var/lib/ovirt-engine/content
+	@install -dm 755 $(PREFIX)/var/cache/ovirt-engine
+	@install -dm 755 $(PREFIX)/usr/lib/systemd/system
 
 install_ear:
 	@echo "*** Deploying EAR to $(PREFIX)"
@@ -153,12 +160,6 @@ install_brew_ear:
 	@echo "*** Deploying EAR to $(PREFIX)"
 	install -dm 755 $(PREFIX)$(EAR_DIR)
 	unzip $(SOURCE_DIR)/*.ear -d $(PREFIX)$(EAR_DIR)
-
-install_tools:
-	@echo "*** Installing Common Tools"
-	cp -f $(SOURCE_DIR)/engine-tools-common-$(APP_VERSION).jar $(PREFIX)/usr/share/java/
-	rm -f $(PREFIX)/usr/share/java/engine-tools-common.jar
-	ln -s /usr/share/java/engine-tools-common-$(APP_VERSION).jar $(PREFIX)/usr/share/java/engine-tools-common.jar
 
 install_setup:
 	@echo "*** Deploying setup executables"
@@ -193,11 +194,6 @@ install_setup:
 
 	# Configuration file for the index page:
 	install -m 644 packaging/fedora/setup/resources/jboss/web-conf.js $(PREFIX)/etc/ovirt-engine
-
-	# JBoss modules:
-	cp -r deployment/modules/org/* $(PREFIX)/usr/share/ovirt-engine/resources/jboss/modules/org/
-	ln -s /usr/share/java/postgresql-jdbc.jar $(PREFIX)/usr/share/ovirt-engine/resources/jboss/modules/org/postgresql/main/
-	ln -s /usr/share/ovirt-engine/resources/jboss/modules/org/postgresql $(PREFIX)$(JBOSS_HOME)/modules/org/postgresql
 	sed -i "s/MYVERSION/$(RPM_VERSION)-$(RELEASE_VERSION)/" $(PREFIX)$(EAR_DIR)/root.war/engineVersion.js
 
 install_aio_plugin:
@@ -275,7 +271,7 @@ install_notification_service:
 
 	# Main program:
 	install -m 755 backend/manager/tools/engine-notifier/engine-notifier-resources/src/main/resources/notifier.sh $(PREFIX)/usr/share/ovirt-engine/notifier/
-	install -m 755 backend/manager/tools/engine-notifier/engine-notifier-resources/src/main/resources/engine-notifierd $(PREFIX)/etc/init.d/
+	install -m 755 backend/manager/tools/engine-notifier/engine-notifier-resources/src/main/resources/engine-notifierd $(PREFIX)/etc/rc.d/init.d/
 
 install_db_scripts:
 	@echo "*** Deploying Database scripts"
@@ -296,7 +292,69 @@ install_misc:
 	install -m 755 backend/manager/conf/vds_installer.py $(PREFIX)/usr/share/ovirt-engine/scripts/
 	install -m 644 backend/manager/conf/jboss-log4j.xml $(PREFIX)/usr/share/ovirt-engine/conf
 	install -m 644 packaging/fedora/setup/resources/postgres/postgres-ds.xml $(PREFIX)/usr/share/ovirt-engine/conf
-	install -m 644 LICENSE $(PREFIX)/usr/share/ovirt-engine
 	install -m 755 packaging/resources/ovirtlogrot.sh ${PREFIX}/usr/share/ovirt-engine/scripts/
 	install -m 755 packaging/resources/ovirt-cron ${PREFIX}/etc/cron.daily/
 	install -m 644 packaging/resources/ovirt-tmpfilesd ${PREFIX}/etc/tmpfiles.d/ovirt-engine.conf
+
+install_jboss_modules:
+	@echo "*** Deploying JBoss modules"
+
+	# Copy the module definitions:
+	install -dm 755 $(PREFIX)/usr/share/ovirt-engine/modules
+	cp -r deployment/modules/* $(PREFIX)/usr/share/ovirt-engine/modules
+	find $(PREFIX)/usr/share/ovirt-engine/modules -type d -exec chmod 755 {} \;
+	find $(PREFIX)/usr/share/ovirt-engine/modules -type f -exec chmod 644 {} \;
+
+	# PostgreSQL driver:
+	ln -s /usr/share/java/postgresql-jdbc.jar $(PREFIX)/usr/share/ovirt-engine/modules/org/postgresql/main/.
+
+	# Apache commons-codec module:
+	ln -s /usr/share/java/commons-codec.jar $(PREFIX)/usr/share/ovirt-engine/modules/org/apache/commons/codec/main/.
+
+	# Apache HTTP components module:
+	ln -s /usr/share/java/httpcomponents/httpcore.jar $(PREFIX)/usr/share/ovirt-engine/modules/org/apache/httpcomponents/main/.
+	ln -s /usr/share/java/httpcomponents/httpclient.jar $(PREFIX)/usr/share/ovirt-engine/modules/org/apache/httpcomponents/main/.
+	ln -s /usr/share/java/httpcomponents/httpmime.jar $(PREFIX)/usr/share/ovirt-engine/modules/org/apache/httpcomponents/main/.
+
+	# Scannotation module:
+	ln -s /usr/share/java/scannotation.jar $(PREFIX)/usr/share/ovirt-engine/modules/org/scannotation/scannotation/main/.
+
+	# JAXB module:
+	ln -s /usr/share/java/glassfish-jaxb/jaxb-impl.jar $(PREFIX)/usr/share/ovirt-engine/modules/com/sun/xml/bind/main/.
+	ln -s /usr/share/java/glassfish-jaxb/jaxb-xjc.jar $(PREFIX)/usr/share/ovirt-engine/modules/com/sun/xml/bind/main/.
+
+	# JAX-RS API modules:
+	ln -s /usr/share/java/resteasy/jaxrs-api.jar $(PREFIX)/usr/share/ovirt-engine/modules/javax/ws/rs/api/main/.
+
+	# Resteasy modules:
+	ln -s /usr/share/java/resteasy/resteasy-cdi.jar $(PREFIX)/usr/share/ovirt-engine/modules/org/jboss/resteasy/resteasy-cdi/main/.
+	ln -s /usr/share/java/resteasy/resteasy-jettison-provider.jar $(PREFIX)/usr/share/ovirt-engine/modules/org/jboss/resteasy/resteasy-jettison-provider/main/.
+	ln -s /usr/share/java/resteasy/resteasy-atom-provider.jar $(PREFIX)/usr/share/ovirt-engine/modules/org/jboss/resteasy/resteasy-atom-provider/main/.
+	ln -s /usr/share/java/resteasy/resteasy-yaml-provider.jar $(PREFIX)/usr/share/ovirt-engine/modules/org/jboss/resteasy/resteasy-yaml-provider/main/.
+	ln -s /usr/share/java/resteasy/resteasy-multipart-provider.jar $(PREFIX)/usr/share/ovirt-engine/modules/org/jboss/resteasy/resteasy-multipart-provider/main/.
+	ln -s /usr/share/java/resteasy/resteasy-jackson-provider.jar $(PREFIX)/usr/share/ovirt-engine/modules/org/jboss/resteasy/resteasy-jackson-provider/main/.
+	ln -s /usr/share/java/resteasy/resteasy-jaxb-provider.jar $(PREFIX)/usr/share/ovirt-engine/modules/org/jboss/resteasy/resteasy-jaxb-provider/main/.
+	ln -s /usr/share/java/resteasy/resteasy-jaxrs.jar $(PREFIX)/usr/share/ovirt-engine/modules/org/jboss/resteasy/resteasy-jaxrs/main/.
+	ln -s /usr/share/java/resteasy/async-http-servlet-3.0.jar $(PREFIX)/usr/share/ovirt-engine/modules/org/jboss/resteasy/resteasy-jaxrs/main/.
+	ln -s /usr/share/java/resteasy/resteasy-jsapi.jar $(PREFIX)/usr/share/ovirt-engine/modules/org/jboss/resteasy/resteasy-jsapi/main/.
+
+	# Jackson modules:
+	ln -s /usr/share/java/jackson/jackson-jaxrs.jar $(PREFIX)/usr/share/ovirt-engine/modules/org/codehaus/jackson/jackson-jaxrs/main/.
+	ln -s /usr/share/java/jackson/jackson-core-asl.jar $(PREFIX)/usr/share/ovirt-engine/modules/org/codehaus/jackson/jackson-core-asl/main/.
+	ln -s /usr/share/java/jackson/jackson-mapper-asl.jar $(PREFIX)/usr/share/ovirt-engine/modules/org/codehaus/jackson/jackson-mapper-asl/main/.
+	ln -s /usr/share/java/jackson/jackson-xc.jar $(PREFIX)/usr/share/ovirt-engine/modules/org/codehaus/jackson/jackson-xc/main/.
+
+	# Hibernate validator module:
+	ln -s /usr/share/java/hibernate-validator.jar $(PREFIX)/usr/share/ovirt-engine/modules/org/hibernate/validator/main/.
+	ln -s /usr/share/java/jtype.jar $(PREFIX)/usr/share/ovirt-engine/modules/org/hibernate/validator/main/.
+
+install_service:
+	@echo "*** Deploying service"
+
+	# Install the files:
+	install -m 644 packaging/fedora/engine-service.xml $(PREFIX)/etc/ovirt-engine
+	install -m 644 packaging/fedora/engine-service-logging.properties $(PREFIX)/etc/ovirt-engine
+	install -m 644 packaging/fedora/engine-service-users.properties $(PREFIX)/etc/ovirt-engine
+	install -m 644 packaging/fedora/engine-service.sysconfig $(PREFIX)/etc/sysconfig/ovirt-engine
+	install -m 755 packaging/fedora/engine-service.py $(PREFIX)/usr/share/ovirt-engine/scripts
+	install -m 644 packaging/fedora/engine-service.systemd $(PREFIX)/usr/lib/systemd/system/ovirt-engine.service

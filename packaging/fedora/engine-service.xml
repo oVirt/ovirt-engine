@@ -1,0 +1,293 @@
+<?xml version="1.0" ?>
+
+<server xmlns="urn:jboss:domain:1.1">
+
+  <extensions>
+    <extension module="org.jboss.as.connector"/>
+    <extension module="org.jboss.as.deployment-scanner"/>
+    <extension module="org.jboss.as.ee"/>
+    <extension module="org.jboss.as.ejb3"/>
+    <extension module="org.jboss.as.jpa"/>
+    <extension module="org.jboss.as.logging"/>
+    <extension module="org.jboss.as.naming"/>
+    <extension module="org.jboss.as.remoting"/>
+    <extension module="org.jboss.as.security"/>
+    <extension module="org.jboss.as.threads"/>
+    <extension module="org.jboss.as.transactions"/>
+    <extension module="org.jboss.as.web"/>
+  </extensions>
+
+  <management>
+    <security-realms>
+      <security-realm name="ManagementRealm">
+        <authentication>
+          <properties path="/etc/ovirt-engine/engine-service-users.properties"/>
+        </authentication>
+      </security-realm>
+    </security-realms>
+    <management-interfaces>
+      <native-interface security-realm="ManagementRealm">
+        <socket-binding native="management-native"/>
+      </native-interface>
+      <http-interface console-enabled="false" security-realm="ManagementRealm">
+        <socket-binding http="management-http"/>
+      </http-interface>
+    </management-interfaces>
+  </management>
+
+  <profile>
+
+    <subsystem xmlns="urn:jboss:domain:logging:1.1">
+
+      <!-- All the application server messages go here: -->
+      <size-rotating-file-handler name="SERVER">
+        <formatter>
+          <pattern-formatter pattern="%d %-5p [%c] (%t) %s%E%n"/>
+        </formatter>
+        <file path="/var/log/ovirt-engine/server.log"/>
+        <rotate-size value="1M"/>
+        <max-backup-index value="30"/>
+        <append value="true"/>
+      </size-rotating-file-handler>
+
+      <!-- Only the engine messages go here: -->
+      <size-rotating-file-handler name="ENGINE" autoflush="true">
+        <level name="INFO"/>
+        <formatter>
+          <pattern-formatter pattern="%d %-5p [%c] (%t) %s%E%n"/>
+        </formatter>
+        <file path="/var/log/ovirt-engine/engine.log"/>
+        <rotate-size value="1M"/>
+        <max-backup-index value="30"/>
+        <append value="true"/>
+      </size-rotating-file-handler>
+
+      <!-- Loggers for the application server: -->
+      <logger category="com.arjuna">
+        <level name="WARN"/>
+      </logger>
+      <logger category="org.apache.tomcat.util.modeler">
+        <level name="WARN"/>
+      </logger>
+      <logger category="sun.rmi">
+        <level name="WARN"/>
+      </logger>
+
+      <!-- Loggers for the engine: -->
+      <logger category="org.ovirt" use-parent-handlers="false">
+        <level name="INFO"/>
+        <handlers>
+          <handler name="ENGINE"/>
+        </handlers>
+      </logger>
+      <logger category="org.ovirt.engine.core.bll">
+        <level name="INFO"/>
+      </logger>
+      <logger category="org.ovirt.engine.core.dal.dbbroker.PostgresDbEngineDialect$PostgresJdbcTemplate">
+        <level name="WARN"/>
+      </logger>
+      <logger category="org.springframework.ldap">
+        <level name="ERROR"/>
+      </logger>
+
+      <root-logger>
+        <level name="INFO"/>
+        <handlers>
+          <handler name="SERVER"/>
+        </handlers>
+      </root-logger>
+
+    </subsystem>
+
+    <subsystem xmlns="urn:jboss:domain:datasources:1.0">
+
+      <datasources>
+
+        <datasource jndi-name="java:/ENGINEDataSource" pool-name="ENGINEDataSource" enabled="true">
+          <connection-url>jdbc:postgresql://localhost/engine</connection-url>
+          <connection-property name="ssl">false</connection-property>
+          <connection-property name="sslfactory">org.postgresql.ssl.NonValidatingFactory</connection-property>
+          <driver>postgresql</driver>
+          <transaction-isolation>TRANSACTION_READ_COMMITTED</transaction-isolation>
+          <pool>
+            <min-pool-size>1</min-pool-size>
+            <max-pool-size>100</max-pool-size>
+            <prefill>true</prefill>
+          </pool>
+          <security>
+            <user-name>engine</user-name>
+            <security-domain>EncryptDBPassword</security-domain>
+          </security>
+          <statement>
+            <prepared-statement-cache-size>100</prepared-statement-cache-size>
+          </statement>
+        </datasource>
+
+        <drivers>
+          <driver name="postgresql" module="org.postgresql">
+            <xa-datasource-class>org.postgresql.xa.PGXADataSource</xa-datasource-class>
+          </driver>
+        </drivers>
+
+      </datasources>
+
+    </subsystem>
+
+    <subsystem xmlns="urn:jboss:domain:deployment-scanner:1.1">
+      <deployment-scanner scan-interval="5000" path="/var/lib/ovirt-engine/deployments"/>
+    </subsystem>
+
+    <subsystem xmlns="urn:jboss:domain:ee:1.0"/>
+
+    <subsystem xmlns="urn:jboss:domain:ejb3:1.2">
+      <session-bean>
+        <stateless>
+          <bean-instance-pool-ref pool-name="slsb-strict-max-pool"/>
+        </stateless>
+        <stateful default-access-timeout="300000" cache-ref="simple"/>
+        <singleton default-access-timeout="300000"/>
+      </session-bean>
+      <mdb>
+        <resource-adapter-ref resource-adapter-name="hornetq-ra"/>
+        <bean-instance-pool-ref pool-name="mdb-strict-max-pool"/>
+      </mdb>
+      <pools>
+        <bean-instance-pools>
+          <strict-max-pool name="slsb-strict-max-pool" max-pool-size="20" instance-acquisition-timeout="5" instance-acquisition-timeout-unit="MINUTES"/>
+          <strict-max-pool name="mdb-strict-max-pool" max-pool-size="20" instance-acquisition-timeout="5" instance-acquisition-timeout-unit="MINUTES"/>
+        </bean-instance-pools>
+      </pools>
+      <caches>
+        <cache name="simple" aliases="NoPassivationCache"/>
+      </caches>
+      <async thread-pool-name="default"/>
+      <timer-service thread-pool-name="default">
+        <data-store path="/var/lib/ovirt-engine/timer-service-data"/>
+      </timer-service>
+      <remote connector-ref="remoting-connector" thread-pool-name="default"/>
+      <thread-pools>
+        <thread-pool name="default">
+          <max-threads count="10"/>
+          <keepalive-time time="100" unit="milliseconds"/>
+        </thread-pool>
+      </thread-pools>
+    </subsystem>
+
+    <subsystem xmlns="urn:jboss:domain:jca:1.1">
+      <archive-validation enabled="false" fail-on-error="false" fail-on-warn="false"/>
+      <bean-validation enabled="true"/>
+      <default-workmanager>
+        <short-running-threads>
+          <core-threads count="50"/>
+          <queue-length count="50"/>
+          <max-threads count="50"/>
+          <keepalive-time time="10" unit="seconds"/>
+        </short-running-threads>
+        <long-running-threads>
+          <core-threads count="50"/>
+          <queue-length count="50"/>
+          <max-threads count="50"/>
+          <keepalive-time time="10" unit="seconds"/>
+        </long-running-threads>
+      </default-workmanager>
+    </subsystem>
+
+    <subsystem xmlns="urn:jboss:domain:jpa:1.0">
+      <jpa default-datasource=""/>
+    </subsystem>
+
+    <subsystem xmlns="urn:jboss:domain:naming:1.1"/>
+
+    <subsystem xmlns="urn:jboss:domain:remoting:1.1">
+      <connector name="remoting-connector" socket-binding="remoting"/>
+    </subsystem>
+
+    <subsystem xmlns="urn:jboss:domain:resource-adapters:1.0"/>
+
+    <subsystem xmlns="urn:jboss:domain:security:1.1">
+      <security-domains>
+        <security-domain name="other" cache-type="default">
+          <authentication>
+            <login-module code="Remoting" flag="optional">
+              <module-option name="password-stacking" value="useFirstPass"/>
+            </login-module>
+            <login-module code="RealmUsersRoles" flag="required">
+              <module-option name="usersProperties" value="${jboss.server.config.dir}/application-users.properties"/>
+              <module-option name="rolesProperties" value="${jboss.server.config.dir}/application-roles.properties"/>
+              <module-option name="realm" value="ApplicationRealm"/>
+              <module-option name="password-stacking" value="useFirstPass"/>
+            </login-module>
+          </authentication>
+        </security-domain>
+        <security-domain name="jboss-web-policy" cache-type="default">
+          <authorization>
+            <policy-module code="Delegating" flag="required"/>
+          </authorization>
+        </security-domain>
+        <security-domain name="jboss-ejb-policy" cache-type="default">
+          <authorization>
+            <policy-module code="Delegating" flag="required"/>
+          </authorization>
+        </security-domain>
+
+        <security-domain name="EngineKerberosAuth">
+          <authentication>
+            <login-module code="com.sun.security.auth.module.Krb5LoginModule" flag="required"/>
+          </authentication>
+        </security-domain>
+
+        <security-domain name="EncryptDBPassword">
+          <authentication>
+            <login-module code="org.picketbox.datasource.security.SecureIdentityLoginModule" flag="required">
+              <module-option name="username" value="engine"/>
+              <module-option name="password" value=""/>
+              <module-option name="managedConnectionFactoryName" value="jboss.jca:name=ENGINEDataSource,service=LocalTxCM"/>
+            </login-module>
+          </authentication>
+        </security-domain>
+
+      </security-domains>
+    </subsystem>
+
+    <subsystem xmlns="urn:jboss:domain:transactions:1.1">
+      <core-environment>
+        <process-id>
+          <uuid/>
+        </process-id>
+      </core-environment>
+      <recovery-environment socket-binding="txn-recovery-environment" status-socket-binding="txn-status-manager"/>
+      <coordinator-environment default-timeout="300"/>
+    </subsystem>
+
+    <subsystem xmlns="urn:jboss:domain:threads:1.1"/>
+
+    <subsystem xmlns="urn:jboss:domain:web:1.1" native="false" default-virtual-server="default-host">
+      <connector name="http" protocol="HTTP/1.1" scheme="http" socket-binding="http"/>
+      <virtual-server name="default-host" enable-welcome-root="false">
+        <alias name="localhost"/>
+        <rewrite pattern="^/RHEVManager(.*)$" substitution="/OvirtEngine$1" flags="last"/>
+      </virtual-server>
+    </subsystem>
+
+  </profile>
+
+  <interfaces>
+    <interface name="management">
+      <inet-address value="127.0.0.1"/>
+    </interface>
+    <interface name="public">
+      <any-address/>
+    </interface>
+  </interfaces>
+
+  <socket-binding-group name="standard-sockets" default-interface="public">
+    <socket-binding name="http" port="8080"/>
+    <socket-binding name="https" port="8443"/>
+    <socket-binding name="management-native" interface="management" port="9999"/>
+    <socket-binding name="management-http" interface="management" port="9990"/>
+    <socket-binding name="remoting" port="4447"/>
+    <socket-binding name="txn-recovery-environment" port="4712"/>
+    <socket-binding name="txn-status-manager" port="4713"/>
+  </socket-binding-group>
+
+</server>

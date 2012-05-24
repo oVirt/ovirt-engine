@@ -37,7 +37,7 @@ pushd  $JBOSS_HOME
 #        exit 1
 #fi
 
-$JAVA_BIN -cp "./modules/org/jboss/logging/main/jboss-logging-3.1.0.CR2.jar:./modules/org/picketbox/main/picketbox-4.0.6.Beta1.jar" org.picketbox.datasource.security.SecureIdentityLoginModule $1
+$JAVA_BIN -cp `build-classpath jboss-logging picketbox/picketbox` org.picketbox.datasource.security.SecureIdentityLoginModule $1
 
 popd
 

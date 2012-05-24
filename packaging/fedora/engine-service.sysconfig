@@ -1,0 +1,17 @@
+# The names of the user and group that will execute the java virtual machine
+# of the engine:
+#ENGINE_USER=ovirt
+#ENGINE_GROUP=ovirt
+
+# These variables control the amount of memory used by the java virtual machine
+# where the engine runs:
+#ENGINE_MIN_HEAP=1g
+#ENGINE_MAX_HEAP=1g
+
+# Uncomment this if you want to enable remote debugging of the engine java
+# virtual machine.
+#ENGINE_DEBUG_ADDRESS=localhost:8787
+
+# Uncomment the following if you want to enable garbage collection debug
+# information:
+#ENGINE_VERBOSE_GC=true

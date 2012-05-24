@@ -168,6 +168,21 @@
 		<artifactId>spring-aop</artifactId>
 		<version>${spring.version}</version>
 	</dependency>
+
+    <!-- Set the scope of depedencies provided by JBoss so that
+         they are not included in the resulting archive: -->
+    <dependency>
+      <groupId>org.codehaus.jackson</groupId>
+      <artifactId>jackson-core-asl</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.codehaus.jackson</groupId>
+      <artifactId>jackson-mapper-asl</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
   </dependencies>
 
   <build>
@@ -308,6 +323,14 @@
             </ejbModule>
 
           </modules>
+
+          <!-- Add a the manifest that contains the required dependencies
+               for JBoss modules: -->
+          <archive>
+            <addMavenDescriptor>false</addMavenDescriptor>
+            <manifestFile>src/main/resources/META-INF/MANIFEST.MF</manifestFile>
+          </archive>
+
         </configuration>
       </plugin>
 

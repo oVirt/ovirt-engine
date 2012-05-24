@@ -1,0 +1,13 @@
+[Unit]
+Description=oVirt Engine
+After=network.service postgresql.service
+
+[Service]
+Type=forking
+PIDFile=/var/run/ovirt-engine.pid
+EnvironmentFile=/etc/sysconfig/ovirt-engine
+ExecStart=/usr/share/ovirt-engine/scripts/engine-service.py start
+ExecStop=/usr/share/ovirt-engine/scripts/engine-service.py stop
+
+[Install]
+WantedBy=multi-user.target

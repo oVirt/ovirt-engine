@@ -16,11 +16,23 @@ import basedefs
 # Consts
 PRODUCT_NAME="oVirt-Engine"
 #TODO: Work with a real list here
-RPM_LIST = "ovirt-engine-notification-service ovirt-engine-genericapi ovirt-engine \
-ovirt-engine-tools-common ovirt-engine-backend \
-ovirt-engine-iso-uploader ovirt-engine-jboss-deps ovirt-engine-log-collector ovirt-image-uploader \
-ovirt-engine-userportal ovirt-engine-restapi ovirt-engine-config ovirt-engine-setup \
-ovirt-engine-dbscripts vdsm-bootstrap ovirt-engine-webadmin-portal"
+RPM_LIST = """
+ovirt-engine
+ovirt-engine-backend
+ovirt-engine-config
+ovirt-engine-dbscripts
+ovirt-engine-genericapi
+ovirt-engine-notification-service
+ovirt-engine-restapi
+ovirt-engine-setup
+ovirt-engine-tools-common
+ovirt-engine-userportal
+ovirt-engine-webadmin-portal
+ovirt-image-uploader
+ovirt-iso-uploader
+ovirt-log-collector
+vdsm-bootstrap
+"""
 
 RPM_BACKEND = "ovirt-engine-backend"
 RPM_DBSCRIPTS = "ovirt-engine-dbscripts"

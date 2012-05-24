@@ -50,6 +50,7 @@
   <servlet-mapping>
     <servlet-name>engine.ssh.key.txt</servlet-name>
     <url-pattern>/engine.ssh.key.txt</url-pattern>
+    <url-pattern>/rhevm.ssh.key.txt</url-pattern>
   </servlet-mapping>
 
 </web-app>

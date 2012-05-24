@@ -27,13 +27,13 @@ if [ ! "$#" -ge 4 ]; then
 	exit 1
 fi
 
-if [ -z "$6" ]; then
-        EAR_LIB=/usr/share/ovirt-engine/engine.ear/lib
-else
-        EAR_LIB=$6
-fi
-
-CP=$EAR_LIB/engine-encryptutils.jar:$EAR_LIB/engine-compat.jar:/usr/share/java/commons-logging.jar:$EAR_LIB/commons-codec-1.4.jar
+CP=`\
+build-classpath \
+apache-commons-codec \
+apache-commons-logging \
+ovirt-engine/compat \
+ovirt-engine/engineencryptutils \
+`
 
 if [ "$1" == "-pfx" ]; then
 	PKEY_8=privatekey.pkcs8
