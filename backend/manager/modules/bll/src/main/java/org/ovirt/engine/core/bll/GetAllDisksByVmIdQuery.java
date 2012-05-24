@@ -22,21 +22,24 @@ public class GetAllDisksByVmIdQuery<P extends GetAllDisksByVmIdParameters> exten
     protected void executeQueryCommand() {
         List<Disk> allDisks =
                 getDbFacade().getDiskDao().getAllForVm
-                                (getParameters().getVmId(), getUserID(), getParameters().isFiltered());
+                        (getParameters().getVmId(), getUserID(), getParameters().isFiltered());
         Set<Guid> pluggedDiskIds = getPluggedDiskIds();
         List<Disk> disks = new ArrayList<Disk>();
         for (Disk disk : allDisks) {
             disk.setPlugged(pluggedDiskIds.contains(disk.getId()));
             if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
                 DiskImage diskImage = (DiskImage) disk;
-                diskImage.getSnapshots().addAll(
-                            ImagesHandler.getAllImageSnapshots(diskImage.getImageId(), diskImage.getit_guid()));
+                diskImage.getSnapshots().addAll(getAllImageSnapshots(diskImage));
                 disks.add(disk);
             } else {
                 disks.add(disk);
             }
         }
         getQueryReturnValue().setReturnValue(disks);
+    }
+
+    protected List<DiskImage> getAllImageSnapshots(DiskImage diskImage) {
+        return ImagesHandler.getAllImageSnapshots(diskImage.getImageId(), diskImage.getit_guid());
     }
 
     private Set<Guid> getPluggedDiskIds() {
