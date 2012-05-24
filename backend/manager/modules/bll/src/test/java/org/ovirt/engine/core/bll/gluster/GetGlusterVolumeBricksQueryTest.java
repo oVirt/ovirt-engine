@@ -14,12 +14,12 @@ import org.ovirt.engine.core.bll.AbstractQueryTest;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
-import org.ovirt.engine.core.common.queries.gluster.GetGlusterVolumeByIdQueryParameters;
+import org.ovirt.engine.core.common.queries.gluster.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
 
 public class GetGlusterVolumeBricksQueryTest extends
-AbstractQueryTest<GetGlusterVolumeByIdQueryParameters, GetGlusterVolumeBricksQuery<GetGlusterVolumeByIdQueryParameters>> {
+AbstractQueryTest<IdQueryParameters, GetGlusterVolumeBricksQuery<IdQueryParameters>> {
 
     GlusterVolumeEntity expected;
     GlusterBrickDao glusterBrickDaoMock;
@@ -48,7 +48,7 @@ AbstractQueryTest<GetGlusterVolumeByIdQueryParameters, GetGlusterVolumeBricksQue
 
     private void setupMock() {
         // Mock the query's parameters
-        when(getQueryParameters().getVolumeId()).thenReturn(expected.getId());
+        when(getQueryParameters().getId()).thenReturn(expected.getId());
 
         // Mock the DAO
         glusterBrickDaoMock = mock(GlusterBrickDao.class);

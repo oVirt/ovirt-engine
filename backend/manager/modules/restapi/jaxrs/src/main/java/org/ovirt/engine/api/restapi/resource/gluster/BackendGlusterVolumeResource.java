@@ -17,7 +17,7 @@ import org.ovirt.engine.core.common.action.gluster.ResetGlusterVolumeOptionsPara
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeOptionEntity;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.common.queries.gluster.GetGlusterVolumeByIdQueryParameters;
+import org.ovirt.engine.core.common.queries.gluster.IdQueryParameters;
 
 /**
  * Implementation of the "glustervolumes/{id}" resource
@@ -46,7 +46,7 @@ public class BackendGlusterVolumeResource
 
     @Override
     public GlusterVolume get() {
-        return performGet(VdcQueryType.GetGlusterVolumeById, new GetGlusterVolumeByIdQueryParameters(guid));
+        return performGet(VdcQueryType.GetGlusterVolumeById, new IdQueryParameters(guid));
     }
 
     @Override

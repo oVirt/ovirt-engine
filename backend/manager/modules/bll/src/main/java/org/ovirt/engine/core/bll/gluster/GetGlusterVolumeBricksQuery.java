@@ -1,11 +1,11 @@
 package org.ovirt.engine.core.bll.gluster;
 
-import org.ovirt.engine.core.common.queries.gluster.GetGlusterVolumeByIdQueryParameters;
+import org.ovirt.engine.core.common.queries.gluster.IdQueryParameters;
 
 /**
  * Query to fetch a gluster volume bricks of given the volume ID
  */
-public class GetGlusterVolumeBricksQuery<P extends GetGlusterVolumeByIdQueryParameters> extends GlusterQueriesCommandBase<P> {
+public class GetGlusterVolumeBricksQuery<P extends IdQueryParameters> extends GlusterQueriesCommandBase<P> {
 
     public GetGlusterVolumeBricksQuery(P parameters) {
         super(parameters);
@@ -13,6 +13,6 @@ public class GetGlusterVolumeBricksQuery<P extends GetGlusterVolumeByIdQueryPara
 
     @Override
     protected void executeQueryCommand() {
-        getQueryReturnValue().setReturnValue(getGlusterBrickDao().getBricksOfVolume(getParameters().getVolumeId()));
+        getQueryReturnValue().setReturnValue(getGlusterBrickDao().getBricksOfVolume(getParameters().getId()));
     }
 }
