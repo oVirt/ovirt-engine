@@ -1,21 +1,34 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
+import java.util.Iterator;
+
 import org.ovirt.engine.core.common.action.SetVmTicketParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
-import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
+import org.ovirt.engine.core.common.queries.GetVdsByVdsIdParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.uicommonweb.DataProvider;
+import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.TypeResolver;
+import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
+import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
+import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
 @SuppressWarnings("unused")
 public class VncConsoleModel extends ConsoleModel
 {
-    private IVnc vnc;
+    private final IVnc vnc;
+    String otp64 = null;
+    private Model model;
+    private static final int seconds = 120;
 
     public VncConsoleModel()
     {
@@ -29,54 +42,82 @@ public class VncConsoleModel extends ConsoleModel
     {
         if (getEntity() != null)
         {
-            getLogger().Debug("Connecting to VNC console..."); //$NON-NLS-1$
+            getLogger().Debug("VNC console info..."); //$NON-NLS-1$
 
             // Don't connect if there VM is not running on any host.
             if (getEntity().getrun_on_vds() == null)
             {
                 return;
             }
+            Frontend.RunAction(VdcActionType.SetVmTicket, new SetVmTicketParameters(getEntity().getId(),
+                    null,
+                    seconds), new IFrontendActionAsyncCallback() {
 
-            // Determine the display IP.
-            String displayIp = getEntity().getdisplay_ip();
-            if (StringHelper.isNullOrEmpty(getEntity().getdisplay_ip())
-                    || StringHelper.stringsEqual(getEntity().getdisplay_ip(), "0")) //$NON-NLS-1$
-            {
-                VDS host = DataProvider.GetHostById(getEntity().getrun_on_vds().getValue());
-                if (host == null)
-                {
-                    return;
+                @Override
+                public void Executed(FrontendActionAsyncResult result) {
+
+                    VdcReturnValueBase ticketReturnValue = result.getReturnValue();
+                    if (ticketReturnValue != null && ticketReturnValue.getActionReturnValue() != null)
+                    {
+                        otp64 = (String) ticketReturnValue.getActionReturnValue();
+                        // Determine the display IP.
+                        if (StringHelper.isNullOrEmpty(getEntity().getdisplay_ip())
+                                || StringHelper.stringsEqual(getEntity().getdisplay_ip(), "0")) //$NON-NLS-1$
+                        {
+                            AsyncQuery _asyncQuery = new AsyncQuery();
+                            _asyncQuery.setModel(this);
+                            _asyncQuery.asyncCallback = new INewAsyncCallback() {
+                                @Override
+                                public void OnSuccess(Object model, Object ReturnValue)
+                                {
+                                    VncConsoleModel consoleModel = (VncConsoleModel) model;
+                                    Iterable networkInterfaces =
+                                            (Iterable) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
+                                    Iterator networkInterfacesIterator = networkInterfaces.iterator();
+                                    while (networkInterfacesIterator.hasNext())
+                                    {
+                                        VdsNetworkInterface currentNetworkInterface =
+                                                (VdsNetworkInterface) networkInterfacesIterator.next();
+                                        if (currentNetworkInterface == null)
+                                        {
+                                            continue;
+                                        }
+                                        if (currentNetworkInterface.getIsManagement())
+                                        {
+                                            consoleModel.postGetHost(currentNetworkInterface.getAddress());
+                                            return;
+                                        }
+                                    }
+                                }
+                            };
+
+                            Frontend.RunQuery(VdcQueryType.GetVdsInterfacesByVdsId,
+                                    new GetVdsByVdsIdParameters(getEntity().getrun_on_vds().getValue()),
+                                    _asyncQuery);
+                        }
+                        else {
+                            postGetHost(getEntity().getdisplay_ip());
+                        }
+                    }
                 }
-
-                displayIp = host.gethost_name();
-            }
-
-            String otp64 = null;
-            VdcReturnValueBase ticketReturnValue =
-                    Frontend.RunAction(VdcActionType.SetVmTicket, new SetVmTicketParameters(getEntity().getId(),
-                            null,
-                            120));
-
-            if (ticketReturnValue != null && ticketReturnValue.getActionReturnValue() != null)
-            {
-                otp64 = (String) ticketReturnValue.getActionReturnValue();
-            }
-
-            vnc.setHost(displayIp);
-            vnc.setPort((getEntity().getdisplay() == null ? 0 : getEntity().getdisplay()));
-            vnc.setPassword(otp64);
-            vnc.setTitle(getEntity().getvm_name());
-
-            // Try to connect.
-            try
-            {
-                vnc.Connect();
-                UpdateActionAvailability();
-            } catch (RuntimeException ex)
-            {
-                getLogger().Error("Exception on VNC connect", ex); //$NON-NLS-1$
-            }
+            });
         }
+    }
+
+    protected void postGetHost(String hostName) {
+        VncInfoModel infoModel = new VncInfoModel();
+
+        infoModel.setTitle("VNC - " + getEntity().getvm_name()); //$NON-NLS-1$
+        infoModel.getVncMessage().setEntity(ConstantsManager.getInstance()
+                .getMessages()
+                .vncInfoMessage(hostName,
+                        (getEntity().getdisplay() == null ? 0 : getEntity().getdisplay()),
+                        otp64,
+                        seconds));
+        infoModel.setCloseCommand(new UICommand("closeVncInfo", model)); //$NON-NLS-1$
+        infoModel.getCloseCommand().setTitle(ConstantsManager.getInstance().getConstants().close());
+        infoModel.getCommands().add(infoModel.getCloseCommand());
+        model.setWindow(infoModel);
     }
 
     @Override
@@ -90,5 +131,9 @@ public class VncConsoleModel extends ConsoleModel
                 && (getEntity().getstatus() == VMStatus.PoweringUp || getEntity().getstatus() == VMStatus.Up
                         || getEntity().getstatus() == VMStatus.RebootInProgress
                         || getEntity().getstatus() == VMStatus.PoweringDown || getEntity().getstatus() == VMStatus.Paused));
+    }
+
+    public void setModel(Model model) {
+        this.model = model;
     }
 }

@@ -737,6 +737,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
                 SpiceConsoleModel spiceConsoleModel = new SpiceConsoleModel();
                 spiceConsoleModel.getErrorEvent().addListener(this);
                 VncConsoleModel vncConsoleModel = new VncConsoleModel();
+                vncConsoleModel.setModel(this);
                 RdpConsoleModel rdpConsoleModel = new RdpConsoleModel();
 
                 cachedConsoleModels.put(vm.getId(),
@@ -2939,6 +2940,9 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
         else if (StringHelper.stringsEqual(command.getName(), "OnChangeCD")) //$NON-NLS-1$
         {
             OnChangeCD();
+        }
+        else if (command.getName().equals("closeVncInfo")) { //$NON-NLS-1$
+            setWindow(null);
         }
     }
 

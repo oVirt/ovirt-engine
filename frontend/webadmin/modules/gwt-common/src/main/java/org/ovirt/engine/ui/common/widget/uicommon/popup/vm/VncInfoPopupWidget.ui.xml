@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" 
+	xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor">
+
+	<ui:style>
+		.content {
+			float: left;
+		}
+	
+		.messageStyle {
+			height: 100%;
+			width: 100%;
+			margin: 10px;
+		}
+	</ui:style>
+
+	<g:VerticalPanel addStyleNames="{style.content}">
+		<g:HTML ui:field="message" addStyleNames="{style.messageStyle}"/>
+	</g:VerticalPanel>
+
+</ui:UiBinder>

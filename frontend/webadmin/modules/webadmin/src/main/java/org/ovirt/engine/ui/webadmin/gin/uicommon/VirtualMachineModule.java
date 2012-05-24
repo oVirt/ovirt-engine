@@ -29,6 +29,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VmGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmInterfaceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmSnapshotListModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.VncInfoModel;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.ReportPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.AssignTagsPopupPresenterWidget;
@@ -47,6 +48,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmMigratePop
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmRunOncePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmServerNewPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmSnapshotCreatePopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VncInfoPopupPresenterWidget;
 
 import com.google.gwt.inject.client.AbstractGinModule;
 import com.google.inject.Provider;
@@ -71,7 +73,8 @@ public class VirtualMachineModule extends AbstractGinModule {
             final Provider<VmServerNewPopupPresenterWidget> newServerVmPopupProvider,
             final Provider<GuidePopupPresenterWidget> guidePopupProvider,
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider,
-            final Provider<ReportPresenterWidget> reportWindowProvider) {
+            final Provider<ReportPresenterWidget> reportWindowProvider,
+            final Provider<VncInfoPopupPresenterWidget> vncWindoProvider) {
         return new MainTabModelProvider<VM, VmListModel>(ginjector, VmListModel.class) {
             @Override
             public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(VmListModel source,
@@ -105,7 +108,10 @@ public class VirtualMachineModule extends AbstractGinModule {
                     }
                 } else if (lastExecutedCommand == getModel().getGuideCommand()) {
                     return guidePopupProvider.get();
-                } else {
+                } else if (windowModel instanceof VncInfoModel) {
+                    return vncWindoProvider.get();
+                }
+                else {
                     return super.getModelPopup(source, lastExecutedCommand, windowModel);
                 }
             }
@@ -220,7 +226,8 @@ public class VirtualMachineModule extends AbstractGinModule {
                 VmInterfaceListModel.class) {
             @Override
             public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(VmInterfaceListModel source,
-                    UICommand lastExecutedCommand, Model windowModel) {
+                    UICommand lastExecutedCommand,
+                    Model windowModel) {
                 VmInterfaceListModel model = getModel();
 
                 if (lastExecutedCommand == model.getNewCommand()

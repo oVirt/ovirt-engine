@@ -68,6 +68,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmMigratePop
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmRunOncePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmServerNewPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmSnapshotCreatePopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VncInfoPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabClusterPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabDataCenterPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabDiskPresenter;
@@ -220,6 +221,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmMigratePopupVie
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmRunOncePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmServerNewPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmSnapshotCreatePopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VncInfoPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.MainTabClusterView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.MainTabDataCenterView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.MainTabDiskView;
@@ -886,6 +888,11 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(VmExportPopupPresenterWidget.class,
                 VmExportPopupPresenterWidget.ViewDef.class,
                 VmExportPopupView.class);
+
+        // VM VNC info
+        bindPresenterWidget(VncInfoPopupPresenterWidget.class,
+                VncInfoPopupPresenterWidget.ViewDef.class,
+                VncInfoPopupView.class);
 
         // VM Add/Edit Interface
         bindPresenterWidget(VmInterfacePopupPresenterWidget.class,

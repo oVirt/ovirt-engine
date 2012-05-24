@@ -115,5 +115,8 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 
     @DefaultMessage("({0} bricks selected)")
     String noOfBricksSelected(int brickCount);
+    
+    @DefaultMessage("Please use your VNC client to connect to this VM.</BR></BR>Use the following parameters:</BR>IP:Port: {0}:{1}</BR>Password: {2}</BR>(note: this password is valid for {3} seconds)")
+    String vncInfoMessage(String hostIp, int port, String password, int seconds);
 
 }

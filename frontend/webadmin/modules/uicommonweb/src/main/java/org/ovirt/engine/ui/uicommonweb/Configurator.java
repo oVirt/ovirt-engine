@@ -352,7 +352,7 @@ public abstract class Configurator {
     public boolean IsDisplayTypeSupported(DisplayType displayType) {
         switch (displayType) {
         case vnc:
-            return false;
+            return true;
 
         case qxl:
             return (clientOsType().equalsIgnoreCase("Windows") && clientBrowserType().equalsIgnoreCase("Explorer")) || //$NON-NLS-1$ //$NON-NLS-2$
