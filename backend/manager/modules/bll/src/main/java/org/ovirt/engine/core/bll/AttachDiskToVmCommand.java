@@ -24,7 +24,7 @@ public class AttachDiskToVmCommand<T extends AttachDettachVmDiskParameters> exte
 
     private static final long serialVersionUID = -1686587389737849288L;
     private List<PermissionSubject> permsList = null;
-    private Disk disk;
+    private final Disk disk;
 
     public AttachDiskToVmCommand(T parameters) {
         super(parameters);
@@ -45,11 +45,14 @@ public class AttachDiskToVmCommand<T extends AttachDettachVmDiskParameters> exte
             retValue = false;
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_ALREADY_ATTACHED);
         }
-        if (disk.isShareable() && !isVersionSupportedForShareable()) {
+        if (retValue
+                && disk.isShareable()
+                && !isVersionSupportedForShareable(disk, getStoragePoolDAO().get(getVm().getstorage_pool_id())
+                        .getcompatibility_version()
+                        .getValue())) {
             retValue = false;
             addCanDoActionMessage(VdcBllMessages.ACTION_NOT_SUPPORTED_FOR_CLUSTER_POOL_LEVEL);
         }
-
         if (retValue && disk.getDiskStorageType() == DiskStorageType.IMAGE
                 && getStoragePoolIsoMapDao().get(new StoragePoolIsoMapId(
                         ((DiskImage) disk).getstorage_ids().get(0), getVm().getstorage_pool_id())) == null) {

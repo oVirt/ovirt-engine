@@ -89,7 +89,10 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
                 returnValue = false;
                 addCanDoActionMessage(VdcBllMessages.SHAREABLE_DISK_IS_NOT_SUPPORTED_FOR_DISK);
             }
-            if (getParameters().getDiskInfo().isShareable() && !isVersionSupportedForShareable()) {
+            if (returnValue
+                    && getParameters().getDiskInfo().isShareable()
+                    && !isVersionSupportedForShareable(getParameters().getDiskInfo(),
+                            getStoragePool().getcompatibility_version().getValue())) {
                 returnValue = false;
                 addCanDoActionMessage(VdcBllMessages.ACTION_NOT_SUPPORTED_FOR_CLUSTER_POOL_LEVEL);
             }

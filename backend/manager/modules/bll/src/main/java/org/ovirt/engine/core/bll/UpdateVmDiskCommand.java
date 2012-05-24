@@ -190,7 +190,9 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
                 addCanDoActionMessage(VdcBllMessages.SHAREABLE_DISK_IS_NOT_SUPPORTED_FOR_DISK);
                 return false;
             }
-            if (!isVersionSupportedForShareable()) {
+            if (!isVersionSupportedForShareable(_oldDisk, getStoragePoolDAO().get(getVm().getstorage_pool_id())
+                    .getcompatibility_version()
+                    .getValue())) {
                 addCanDoActionMessage(VdcBllMessages.ACTION_NOT_SUPPORTED_FOR_CLUSTER_POOL_LEVEL);
                 return false;
             }
