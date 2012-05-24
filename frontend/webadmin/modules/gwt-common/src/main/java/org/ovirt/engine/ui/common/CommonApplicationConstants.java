@@ -160,7 +160,7 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Approve operation")
     String latchApproveOperationLabel();
 
-    @DefaultStringValue("Permanently remove from storage")
+    @DefaultStringValue("Remove permanently")
     String permanentlyRemoveLabel();
 
     @DefaultStringValue("Approve operation")

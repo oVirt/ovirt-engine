@@ -336,18 +336,6 @@ public class DiskModel extends Model
         privateAttachDisk = value;
     }
 
-    private ListModel attachableDisks;
-
-    public ListModel getAttachableDisks()
-    {
-        return attachableDisks;
-    }
-
-    public void setAttachableDisks(ListModel value)
-    {
-        attachableDisks = value;
-    }
-
     private ListModel internalAttachableDisks;
 
     public ListModel getInternalAttachableDisks()
@@ -479,7 +467,6 @@ public class DiskModel extends Model
 
         setAlias(new EntityModel());
         setDescription(new EntityModel());
-        setAttachableDisks(new ListModel());
         setInternalAttachableDisks(new ListModel());
         setExternalAttachableDisks(new ListModel());
 
@@ -774,28 +761,33 @@ public class DiskModel extends Model
 
     private void AttachDisk_EntityChanged(EventArgs e)
     {
-        if ((Boolean) getAttachDisk().getEntity() && getDatacenterId() != null)
+        if ((Boolean) getAttachDisk().getEntity())
         {
+            // Get internal attachable disks
             AsyncDataProvider.GetAllAttachableDisks(new AsyncQuery(this, new INewAsyncCallback() {
                 @Override
                 public void OnSuccess(Object target, Object returnValue) {
                     DiskModel model = (DiskModel) target;
                     ArrayList<Disk> disks = (ArrayList<Disk>) returnValue;
-                    ArrayList<DiskModel> diskModels = new ArrayList<DiskModel>();
+                    ArrayList<DiskModel> diskModels = Linq.DisksToDiskModelList(disks);
 
-                    for (Disk disk : disks) {
-                        DiskModel diskModel = new DiskModel();
-                        diskModel.setDisk(disk);
-                        diskModels.add(diskModel);
-                    }
-
-                    model.getAttachableDisks().setItems(Linq.ToEntityModelList(diskModels));
                     model.getInternalAttachableDisks().setItems(Linq.ToEntityModelList(
                             Linq.FilterDisksByType(diskModels, DiskStorageType.IMAGE)));
+                }
+            }), getDatacenterId());
+
+            // Get external attachable disks
+            AsyncDataProvider.GetAllAttachableDisks(new AsyncQuery(this, new INewAsyncCallback() {
+                @Override
+                public void OnSuccess(Object target, Object returnValue) {
+                    DiskModel model = (DiskModel) target;
+                    ArrayList<Disk> disks = (ArrayList<Disk>) returnValue;
+                    ArrayList<DiskModel> diskModels = Linq.DisksToDiskModelList(disks);
+
                     model.getExternalAttachableDisks().setItems(Linq.ToEntityModelList(
                             Linq.FilterDisksByType(diskModels, DiskStorageType.LUN)));
                 }
-            }), getDatacenterId());
+            }), null);
         }
     }
 

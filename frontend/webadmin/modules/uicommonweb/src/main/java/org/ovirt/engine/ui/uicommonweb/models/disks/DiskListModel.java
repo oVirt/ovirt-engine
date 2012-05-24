@@ -332,11 +332,9 @@ public class DiskListModel extends ListWithDetailsModel
         for (EntityModel item : disksToAttach)
         {
             DiskModel disk = (DiskModel) item.getEntity();
-            if (disk.getDisk().getDiskStorageType() == DiskStorageType.IMAGE) {
-                AttachDettachVmDiskParameters parameters =
-                    new AttachDettachVmDiskParameters(vm.getId(), disk.getDisk().getId(), (Boolean) model.getIsPlugged().getEntity());
-                paramerterList.add(parameters);
-            }
+            AttachDettachVmDiskParameters parameters = new AttachDettachVmDiskParameters(
+                    vm.getId(), disk.getDisk().getId(), (Boolean) model.getIsPlugged().getEntity());
+            paramerterList.add(parameters);
         }
 
         model.StartProgress(null);
@@ -422,7 +420,7 @@ public class DiskListModel extends ListWithDetailsModel
         ArrayList<String> items = new ArrayList<String>();
         for (Object item : getSelectedItems())
         {
-            DiskImage disk = (DiskImage) item;
+            Disk disk = (Disk) item;
             items.add(disk.getDiskAlias());
         }
         model.setItems(items);
@@ -445,7 +443,7 @@ public class DiskListModel extends ListWithDetailsModel
 
         for (Object item : getSelectedItems())
         {
-            DiskImage disk = (DiskImage) item;
+            Disk disk = (Disk) item;
             VdcActionParametersBase parameters = new RemoveDiskParameters(disk.getId());
             paramerterList.add(parameters);
         }

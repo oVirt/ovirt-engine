@@ -1031,6 +1031,18 @@ public final class Linq
         return diskModel;
     }
 
+    public static ArrayList<DiskModel> DisksToDiskModelList(ArrayList<Disk> disks) {
+        ArrayList<DiskModel> diskModels = new ArrayList<DiskModel>();
+
+        for (Disk disk : disks) {
+            DiskModel diskModel = new DiskModel();
+            diskModel.setDisk(disk);
+            diskModels.add(diskModel);
+        }
+
+        return diskModels;
+    }
+
     public final static class TimeZonePredicate implements IPredicate<Map.Entry<String, String>>
     {
         private final String timeZone;

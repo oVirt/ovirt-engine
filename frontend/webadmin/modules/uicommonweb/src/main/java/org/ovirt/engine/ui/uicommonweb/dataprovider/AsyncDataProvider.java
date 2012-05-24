@@ -10,6 +10,7 @@ import java.util.Set;
 
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
+import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
@@ -1899,7 +1900,7 @@ public final class AsyncDataProvider {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
             {
-                return source != null ? (ArrayList<DiskImage>) source : new ArrayList<DiskImage>();
+                return source != null ? (ArrayList<Disk>) source : new ArrayList<Disk>();
             }
         };
 

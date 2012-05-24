@@ -707,11 +707,9 @@ public class VmDiskListModel extends SearchableListModel
         for (EntityModel item : disksToAttach)
         {
             DiskModel disk = (DiskModel) item.getEntity();
-            if (disk.getDisk().getDiskStorageType() == DiskStorageType.IMAGE) {
-                AttachDettachVmDiskParameters parameters =
-                    new AttachDettachVmDiskParameters(vm.getId(), disk.getDisk().getId(), (Boolean) model.getIsPlugged().getEntity());
-                paramerterList.add(parameters);
-            }
+            AttachDettachVmDiskParameters parameters = new AttachDettachVmDiskParameters(
+                    vm.getId(), disk.getDisk().getId(), (Boolean) model.getIsPlugged().getEntity());
+            paramerterList.add(parameters);
         }
 
         model.StartProgress(null);
