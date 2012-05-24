@@ -44,6 +44,7 @@ import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
+import org.ovirt.engine.core.dao.VmDynamicDAO;
 import org.ovirt.engine.core.dao.VmNetworkInterfaceDAO;
 import org.ovirt.engine.core.utils.Pair;
 import org.ovirt.engine.core.utils.linq.Function;
@@ -247,18 +248,16 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         if (interfaces != null) {
             for (VmNetworkInterface iface : interfaces) {
                 MacPoolManager.getInstance().freeMac(iface.getMacAddress());
-                // \\DbFacade.Instance.RemoveVmInterfaceById(iface.id);
-                // \\DbFacade.Instance.RemoveInterfaceStatistics(iface.id);
             }
         }
     }
 
     protected void RemoveVmDynamic() {
-        DbFacade.getInstance().getVmDynamicDAO().remove(getVmId());
+        getVmDynamicDAO().remove(getVmId());
     }
 
     protected void RemoveVmStatistics() {
-        DbFacade.getInstance().getVmStatisticsDAO().remove(getVmId());
+        getVmStatisticsDAO().remove(getVmId());
     }
 
     protected void RemoveVmUsers() {
@@ -528,6 +527,10 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     @Override
     protected VmNetworkInterfaceDAO getVmNetworkInterfaceDAO() {
         return super.getVmNetworkInterfaceDAO();
+    }
+
+    protected VmDynamicDAO getVmDynamicDAO() {
+        return getDbFacade().getVmDynamicDAO();
     }
 
     protected boolean checkPayload(VmPayload payload, String isoPath) {

@@ -5,19 +5,20 @@ import static junit.framework.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
-import static org.powermock.api.mockito.PowerMockito.spy;
+import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.action.RestoreAllSnapshotsParameters;
 import org.ovirt.engine.core.common.businessentities.Disk;
@@ -30,7 +31,6 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
-import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
@@ -38,19 +38,23 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBaseMockUtils;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
 import org.ovirt.engine.core.dao.VmDAO;
 import org.ovirt.engine.core.dao.VmDynamicDAO;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.ovirt.engine.core.dao.VmNetworkInterfaceDAO;
+import org.ovirt.engine.core.utils.MockConfigRule;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ DbFacade.class, Backend.class, Config.class })
+@RunWith(MockitoJUnitRunner.class)
 public class RestoreAllSnapshotCommandTest {
+    @Rule
+    public static MockConfigRule mcr =
+            new MockConfigRule(
+                    mockConfig(ConfigValues.FreeSpaceLow, 5),
+                    mockConfig(ConfigValues.FreeSpaceCriticalLowInGB, 5)
+            );
 
     @Mock
     private VDSBrokerFrontend vdsBrokerFrontend;
@@ -74,7 +78,7 @@ public class RestoreAllSnapshotCommandTest {
     private SnapshotDao snapshotDao;
 
     @Mock
-    private DbFacade dbFacade;
+    private VmNetworkInterfaceDAO vmNetworkInterfaceDAO;
 
     private Guid vmId = Guid.NewGuid();
     private Guid diskImageId = Guid.NewGuid();
@@ -84,23 +88,18 @@ public class RestoreAllSnapshotCommandTest {
     private Snapshot mockSnapshot;
     private RestoreAllSnapshotsCommand<RestoreAllSnapshotsParameters> spyCommand;
 
-    public RestoreAllSnapshotCommandTest() {
-        MockitoAnnotations.initMocks(this);
-        mockStatic(DbFacade.class);
-        mockStatic(Backend.class);
-        mockStatic(Config.class);
-    }
-
     @Before
     public void setupCommand() {
-        when(Backend.getInstance()).thenReturn(backend);
-        when(backend.getResourceManager()).thenReturn(vdsBrokerFrontend);
-        mockConfig();
         initSpyCommand();
+        mockBackend();
         mockDaos();
-        mockVm(spyCommand);
-
+        mockVm();
         mockIsValidVdsCommand();
+    }
+
+    protected void mockBackend() {
+        doReturn(backend).when(spyCommand).getBackend();
+        when(backend.getResourceManager()).thenReturn(vdsBrokerFrontend);
     }
 
     @Test
@@ -153,29 +152,25 @@ public class RestoreAllSnapshotCommandTest {
                 any(IrsBaseVDSCommandParameters.class))).thenReturn(returnValue);
     }
 
-    private void mockConfig() {
-        when(Config.<Object> GetValue(ConfigValues.FreeSpaceLow)).thenReturn(new Integer("5"));
-        when(Config.<Object> GetValue(ConfigValues.FreeSpaceCriticalLowInGB)).thenReturn(new Integer("5"));
-    }
-
     private void initSpyCommand() {
         RestoreAllSnapshotsParameters parameters = new RestoreAllSnapshotsParameters(vmId, dstSnapshotId);
         List<DiskImage> diskImageList = createDiskImageList();
         parameters.setImagesList(diskImageList);
         spyCommand = spy(new RestoreAllSnapshotsCommand<RestoreAllSnapshotsParameters>(parameters));
+        doReturn(true).when(spyCommand).performImagesChecks();
     }
 
     private void mockDaos() {
-        when(DbFacade.getInstance()).thenReturn(dbFacade);
         mockDiskImageDao();
         mockStorageDomainDao();
         mockDynamicVmDao();
         doReturn(snapshotDao).when(spyCommand).getSnapshotDao();
+        doReturn(vmNetworkInterfaceDAO).when(spyCommand).getVmNetworkInterfaceDAO();
     }
 
     private void mockDynamicVmDao() {
         mockDynamicVm = getVmDynamic();
-        when(dbFacade.getVmDynamicDAO()).thenReturn(vmDynamicDAO);
+        doReturn(vmDynamicDAO).when(spyCommand).getVmDynamicDAO();
         when(vmDynamicDAO.get(vmId)).thenReturn(mockDynamicVm);
     }
 
@@ -187,7 +182,7 @@ public class RestoreAllSnapshotCommandTest {
         DiskImage diskImage = new DiskImage();
         diskImage.setstorage_ids(new ArrayList<Guid>(Arrays.asList(Guid.NewGuid())));
         diskImageList.add(diskImage);
-        when(dbFacade.getDiskDao()).thenReturn(diskDao);
+        doReturn(diskDao).when(spyCommand).getDiskDAO();
         when(diskDao.getAllForVm(vmId)).thenReturn(diskImageList);
     }
 
@@ -196,9 +191,9 @@ public class RestoreAllSnapshotCommandTest {
         storageDomains.setstatus(StorageDomainStatus.Active);
 
         // Variables only for passing the available size check.
-        storageDomains.setavailable_disk_size(new Integer("10000000"));
-        storageDomains.setused_disk_size(new Integer("10"));
-        when(dbFacade.getStorageDomainDAO()).thenReturn(storageDomainDAO);
+        storageDomains.setavailable_disk_size(10000000);
+        storageDomains.setused_disk_size(10);
+        doReturn(storageDomainDAO).when(spyCommand).getStorageDomainDAO();
         when(storageDomainDAO.getForStoragePool(storageDomainId, Guid.Empty)).thenReturn(storageDomains);
         when(storageDomainDAO.get(storageDomainId)).thenReturn(storageDomains);
     }
@@ -206,11 +201,11 @@ public class RestoreAllSnapshotCommandTest {
     /**
      * Mock a VM.
      */
-    private VM mockVm(RestoreAllSnapshotsCommand<RestoreAllSnapshotsParameters> restoreAllSnapshotsCommand) {
+    private VM mockVm() {
         VM vm = new VM();
         vm.setId(vmId);
         vm.setstatus(VMStatus.Down);
-        AuditLogableBaseMockUtils.mockVmDao(restoreAllSnapshotsCommand, vmDAO);
+        AuditLogableBaseMockUtils.mockVmDao(spyCommand, vmDAO);
         when(vmDAO.get(vmId)).thenReturn(vm);
         return vm;
     }

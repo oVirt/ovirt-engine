@@ -26,7 +26,7 @@ import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskImageDAO;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.utils.log.Log;
@@ -178,7 +178,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
                     + getParameters().getDstSnapshotId());
         }
 
-        switch(targetSnapshot.getType()) {
+        switch (targetSnapshot.getType()) {
         case PREVIEW:
             getSnapshotDao().updateStatus(getSnapshotDao().getId(getVmId(),
                     SnapshotType.REGULAR,
@@ -254,11 +254,15 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
     }
 
     protected DiskImageDAO getDiskImageDAO() {
-        return DbFacade.getInstance().getDiskImageDAO();
+        return getDbFacade().getDiskImageDAO();
+    }
+
+    protected DiskDao getDiskDAO() {
+        return getDbFacade().getDiskDao();
     }
 
     protected SnapshotDao getSnapshotDao() {
-        return DbFacade.getInstance().getSnapshotDao();
+        return getDbFacade().getSnapshotDao();
     }
 
     @Override
@@ -292,9 +296,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
                 || !getSnapshotDao().exists(getVmId(), getParameters().getDstSnapshotId())) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_SNAPSHOT_DOES_NOT_EXIST);
         } else {
-            result = ImagesHandler.PerformImagesChecks(getVm(), getReturnValue().getCanDoActionMessages(), getVm()
-                    .getstorage_pool_id(), Guid.Empty, true, true, false, false,
-                    false, false, true, true, getImagesList());
+            result = performImagesChecks();
             if (result && (getVm().getstatus() != VMStatus.Down)) {
                 result = false;
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
@@ -315,6 +317,23 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
             addCanDoActionMessage(VdcBllMessages.VAR__TYPE__SNAPSHOT);
         }
         return result;
+    }
+
+    protected boolean performImagesChecks() {
+        return ImagesHandler.PerformImagesChecks
+                (getVm(),
+                        getReturnValue().getCanDoActionMessages(),
+                        getVm().getstorage_pool_id(),
+                        Guid.Empty,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false,
+                        false,
+                        true,
+                        true,
+                        getImagesList());
     }
 
     @Override
