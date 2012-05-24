@@ -9,7 +9,10 @@ public class IsVmWithSameNameExistQuery<P extends IsVmWithSameNameExistParameter
 
     @Override
     protected void executeQueryCommand() {
-        getQueryReturnValue().setReturnValue(
-                VmHandler.isVmWithSameNameExistStatic(getParameters().getVmName()));
+        getQueryReturnValue().setReturnValue(isVmWithSameNameExistStatic());
+    }
+
+    protected boolean isVmWithSameNameExistStatic() {
+        return VmHandler.isVmWithSameNameExistStatic(getParameters().getVmName());
     }
 }

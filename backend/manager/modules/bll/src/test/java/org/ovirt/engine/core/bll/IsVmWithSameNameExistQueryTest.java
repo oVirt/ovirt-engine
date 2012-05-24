@@ -1,19 +1,14 @@
 package org.ovirt.engine.core.bll;
 
 import static org.junit.Assert.assertEquals;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
-import static org.powermock.api.mockito.PowerMockito.when;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.when;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.ovirt.engine.core.common.queries.IsVmWithSameNameExistParameters;
 import org.ovirt.engine.core.utils.RandomUtils;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 /** A test case for the {@link IsVmWithSameNameExistQuery} class. */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(VmHandler.class)
 public class IsVmWithSameNameExistQueryTest extends AbstractUserQueryTest<IsVmWithSameNameExistParameters, IsVmWithSameNameExistQuery<IsVmWithSameNameExistParameters>> {
 
     @Test
@@ -24,8 +19,7 @@ public class IsVmWithSameNameExistQueryTest extends AbstractUserQueryTest<IsVmWi
 
         // Mock the result
         boolean result = RandomUtils.instance().nextBoolean();
-        mockStatic(VmHandler.class);
-        when(VmHandler.isVmWithSameNameExistStatic(vmName)).thenReturn(result);
+        doReturn(result).when(getQuery()).isVmWithSameNameExistStatic();
 
         // Execute the query
         getQuery().executeQueryCommand();
