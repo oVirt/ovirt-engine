@@ -35,7 +35,6 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
     private DiskImage _destinationImage;
     private DiskImage mImage;
     private Guid mImageId = Guid.Empty;
-    private Guid mImageContainerId = Guid.Empty;
     VM vm;
 
     public BaseImagesCommand(T parameters) {
@@ -43,8 +42,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
         mImageId = parameters.getImageId();
         if (parameters instanceof ImagesContainterParametersBase) {
             ImagesContainterParametersBase tempVar = (ImagesContainterParametersBase) parameters;
-            mImageContainerId = tempVar.getContainerId();
-            super.setVmId(mImageContainerId);
+            super.setVmId(tempVar.getContainerId());
             if (getDiskImage() != null && getDiskImage().getstorage_pool_id() != null) {
                 setStoragePoolId(getDiskImage()
                         .getstorage_pool_id().getValue());
@@ -60,7 +58,6 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
             } else {
                 image = getDiskImageDao().getSnapshotById(getImageId());
                 if (image != null) {
-                    image.setvm_guid(getImageContainerId());
                     mImage = image;
                 }
             }
@@ -86,14 +83,6 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
 
     protected void setImageId(Guid imageId) {
         this.mImageId = imageId;
-    }
-
-    protected Guid getImageContainerId() {
-        return mImageContainerId;
-    }
-
-    protected void setImageContainerId(Guid value) {
-        mImageContainerId = value;
     }
 
     private DiskImage _diskImage;
@@ -154,17 +143,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
 
     @Override
     protected void executeCommand() {
-        InitImageContainer();
         CheckImageValidity();
-    }
-
-    /**
-     * Initialize identity of object, contains image(VM or VmTemplate)
-     */
-    protected void InitImageContainer() {
-        if (mImageContainerId.equals(Guid.Empty)) {
-            mImageContainerId = getImage().getcontainer_guid();
-        }
     }
 
     /**

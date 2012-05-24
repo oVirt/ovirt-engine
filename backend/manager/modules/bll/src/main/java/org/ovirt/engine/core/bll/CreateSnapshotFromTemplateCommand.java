@@ -22,7 +22,6 @@ public class CreateSnapshotFromTemplateCommand<T extends CreateSnapshotFromTempl
     public CreateSnapshotFromTemplateCommand(T parameters) {
         super(parameters);
         super.setVmId(parameters.getVmId());
-        super.setImageContainerId(parameters.getVmId());
         setImageGroupId(Guid.NewGuid());
     }
 

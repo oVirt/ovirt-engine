@@ -20,11 +20,6 @@ public class TryBackToSnapshotCommand<T extends ImagesContainterParametersBase> 
         super.setVmId(parameters.getContainerId());
     }
 
-    @Override
-    protected Guid getImageContainerId() {
-        return getVm().getId();
-    }
-
     /**
      * Remove old image vm map.
      */

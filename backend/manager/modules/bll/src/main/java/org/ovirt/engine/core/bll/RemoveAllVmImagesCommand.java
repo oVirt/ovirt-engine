@@ -46,7 +46,7 @@ public class RemoveAllVmImagesCommand<T extends RemoveAllVmImagesParameters> ext
         boolean noImagesRemovedYet = true;
         for (DiskImage image : images) {
             if (mImagesToBeRemoved.contains(image.getImageId())) {
-                RemoveImageParameters tempVar = new RemoveImageParameters(image.getImageId(), getVmId());
+                RemoveImageParameters tempVar = new RemoveImageParameters(image.getImageId());
                 tempVar.setParentCommand(getParameters().getParentCommand());
                 tempVar.setParentParemeters(getParameters().getParentParameters());
                 tempVar.setDiskImage(image);

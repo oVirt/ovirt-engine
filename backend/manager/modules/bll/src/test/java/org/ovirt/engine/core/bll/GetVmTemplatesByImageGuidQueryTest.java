@@ -7,7 +7,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
 import org.junit.Test;
@@ -29,8 +28,8 @@ public class GetVmTemplatesByImageGuidQueryTest extends AbstractQueryTest<GetVmT
         when(params.getImageGuid()).thenReturn(imageGuid);
 
         // Set up the DAOs
-        Map<Boolean, List<VmTemplate>> expected =
-                Collections.singletonMap(true, Collections.singletonList(new VmTemplate()));
+        Map<Boolean, VmTemplate> expected =
+                Collections.singletonMap(true, new VmTemplate());
         VmTemplateDAO vmTemplateDAOMock = mock(VmTemplateDAO.class);
         when(vmTemplateDAOMock.getAllForImage(imageGuid)).thenReturn(expected);
         when(getDbFacadeMockInstance().getVmTemplateDAO()).thenReturn(vmTemplateDAOMock);

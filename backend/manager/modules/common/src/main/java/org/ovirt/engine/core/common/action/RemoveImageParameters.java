@@ -9,8 +9,8 @@ public class RemoveImageParameters extends ImagesContainterParametersBase implem
     private DiskImage diskImage;
     private boolean removeFromDB;
 
-    public RemoveImageParameters(Guid imageId, Guid containerID) {
-        super(imageId, containerID);
+    public RemoveImageParameters(Guid imageId) {
+        super(imageId, null);
         setForceDelete(false);
         removeFromDB = false;
     }

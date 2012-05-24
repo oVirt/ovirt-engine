@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -361,13 +362,14 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
     private boolean canFindVmOrTemplate() {
         boolean retValue = true;
         if (getParameters().getOperation() == ImageOperation.Copy) {
-            VmTemplate template = getVmTemplateDAO().get(getImage().getvm_guid());
-            if (template == null) {
+            Collection<VmTemplate> templates = getVmTemplateDAO().getAllForImage(getImage().getImageId()).values();
+            if (templates.isEmpty()) {
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
                 retValue = false;
             } else {
-                setVmTemplate(template);
-                sharedLockMap = Collections.singletonMap(getImage().getvm_guid(), LockingGroup.TEMPLATE.name());
+                VmTemplate vmTemplate = templates.iterator().next();
+                setVmTemplate(vmTemplate);
+                sharedLockMap = Collections.singletonMap(vmTemplate.getId(), LockingGroup.TEMPLATE.name());
             }
         } else {
             List<VM> listVms = getVmsForDiskId();

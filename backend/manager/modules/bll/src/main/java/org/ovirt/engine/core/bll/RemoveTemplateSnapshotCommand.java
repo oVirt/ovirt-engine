@@ -23,11 +23,6 @@ public class RemoveTemplateSnapshotCommand<T extends ImagesContainterParametersB
     }
 
     @Override
-    protected Guid getImageContainerId() {
-        return getParameters().getContainerId();
-    }
-
-    @Override
     protected void executeCommand() {
         VDSReturnValue vdsReturnValue = Backend
                 .getInstance()

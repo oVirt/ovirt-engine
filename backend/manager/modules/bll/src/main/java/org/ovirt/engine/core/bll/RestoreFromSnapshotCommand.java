@@ -30,7 +30,6 @@ public class RestoreFromSnapshotCommand<T extends RestoreFromSnapshotParameters>
 
     public RestoreFromSnapshotCommand(T parameters) {
         super(parameters);
-        setImageContainerId(getParameters().getContainerId());
     }
 
     @Override

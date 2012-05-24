@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll;
 
-import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -8,7 +7,7 @@ import org.ovirt.engine.core.common.queries.GetVmTemplatesByImageGuidParameters;
 
 /**
  * A query to retrieve all the VM templates connected to a given image.
- * The return value if a map from the image's plug state (<code>true</code>/<code>false</code>) to a {@link List} of the relevant VM Templates.
+ * The return value if a map from the image's plug state (<code>true</code>/<code>false</code>) to the relevant VM Templates.
  */
 public class GetVmTemplatesByImageGuidQuery<P extends GetVmTemplatesByImageGuidParameters> extends QueriesCommandBase<P> {
     public GetVmTemplatesByImageGuidQuery(P parameters) {
@@ -17,16 +16,13 @@ public class GetVmTemplatesByImageGuidQuery<P extends GetVmTemplatesByImageGuidP
 
     @Override
     protected void executeQueryCommand() {
-        Map<Boolean, List<VmTemplate>> allTemplates =
+        Map<Boolean, VmTemplate> templateMap =
                 getDbFacade().getVmTemplateDAO().getAllForImage(getParameters().getImageGuid());
 
-        for (List<VmTemplate> templates : allTemplates.values()) {
-            for (VmTemplate t : templates) {
-                updateDisksFromDb(t);
-            }
+        if (!templateMap.values().isEmpty()) {
+            updateDisksFromDb(templateMap.values().iterator().next());
         }
-
-        getQueryReturnValue().setReturnValue(allTemplates);
+        getQueryReturnValue().setReturnValue(templateMap);
     }
 
     protected void updateDisksFromDb(VmTemplate t) {

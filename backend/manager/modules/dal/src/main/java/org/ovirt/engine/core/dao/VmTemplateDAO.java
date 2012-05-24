@@ -87,11 +87,11 @@ public interface VmTemplateDAO extends GenericDao<VmTemplate, Guid>, StatusAware
     List<VmTemplate> getTemplatesWithPermittedAction(Guid userId, ActionGroup actionGroup);
 
     /**
-     * Retrieves the templates with the specified image id.
+     * Retrieves the template with the specified image id.
      *
      * @param image
      *            the image id
-     * @return A {@link Map} from the image's plug status to a {@link List} of the templates associated with it.
+     * @return A {@link Map} from the image's plug status to a {@link List} of the template associated with it.
      */
-    Map<Boolean, List<VmTemplate>> getAllForImage(Guid imageId);
+    Map<Boolean, VmTemplate> getAllForImage(Guid imageId);
 }

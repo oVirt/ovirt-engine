@@ -124,7 +124,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
             if (!deletedDisksIds.contains(image.getimage_group_id())) {
                 deletedDisksIds.add(image.getimage_group_id());
                 returnValue = runAsyncTask(VdcActionType.RemoveImage,
-                        new RemoveImageParameters(image.getImageId(), getVmId()));
+                        new RemoveImageParameters(image.getImageId()));
                 if (!returnValue.getSucceeded() && noImagesRemovedYet) {
                     setSucceeded(false);
                     getReturnValue().setFault(returnValue.getFault());

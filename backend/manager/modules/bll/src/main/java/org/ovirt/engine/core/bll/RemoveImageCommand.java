@@ -42,17 +42,6 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
     }
 
     @Override
-    protected Guid getImageContainerId() {
-        switch (getActionState()) {
-        case EXECUTE:
-            return getParameters().getContainerId();
-
-        default:
-            return super.getImageContainerId();
-        }
-    }
-
-    @Override
     protected void executeCommand() {
         if (getDiskImage() != null) {
             VDSReturnValue vdsReturnValue = performImageVdsmOperation();

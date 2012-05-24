@@ -104,8 +104,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
             VmHandler.checkStatusAndLockVm(getVmId(), getCompensationContext());
             freeLock();
             for (DiskImage image : images) {
-                ImagesContainterParametersBase tempVar = new ImagesContainterParametersBase(image.getImageId(),
-                        getVmId());
+                ImagesContainterParametersBase tempVar = new ImagesContainterParametersBase(image.getImageId());
                 tempVar.setParentCommand(VdcActionType.TryBackToAllSnapshotsOfVm);
                 tempVar.setVmSnapshotId(newActiveSnapshotId);
                 tempVar.setEntityId(getParameters().getEntityId());

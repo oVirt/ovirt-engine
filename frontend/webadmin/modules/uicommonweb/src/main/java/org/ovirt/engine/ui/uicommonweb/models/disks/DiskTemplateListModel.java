@@ -1,8 +1,11 @@
 package org.ovirt.engine.ui.uicommonweb.models.disks;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.queries.GetVmTemplatesByImageGuidParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -48,8 +51,10 @@ public class DiskTemplateListModel extends SearchableListModel
             public void OnSuccess(Object model, Object ReturnValue)
             {
                 SearchableListModel searchableListModel = (SearchableListModel) model;
-                HashMap map = (HashMap) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
-                searchableListModel.setItems((Iterable) map.get(true));
+                HashMap<Boolean, VmTemplate> map = (HashMap<Boolean, VmTemplate>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
+                List<VmTemplate> templates = new ArrayList<VmTemplate>();
+                templates.add(map.get(true));
+                searchableListModel.setItems(templates);
             }
         };
 

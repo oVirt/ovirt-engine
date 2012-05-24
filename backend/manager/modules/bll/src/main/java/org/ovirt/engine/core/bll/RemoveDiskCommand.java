@@ -233,9 +233,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
     protected void executeCommand() {
         if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
             DiskImage diskImage = (DiskImage) disk;
-
-            // TODO: Cleanup getVmId(), after refactor to remove container id and image id from image.
-            RemoveImageParameters p = new RemoveImageParameters(diskImage.getImageId(), null);
+            RemoveImageParameters p = new RemoveImageParameters(diskImage.getImageId());
             p.setTransactionScopeOption(TransactionScopeOption.Suppress);
             p.setDiskImage(diskImage);
             p.setParentCommand(VdcActionType.RemoveDisk);

@@ -34,11 +34,6 @@ public class CreateImageTemplateCommand<T extends CreateImageTemplateParameters>
     }
 
     @Override
-    protected Guid getImageContainerId() {
-        return getParameters() != null ? getParameters().getVmTemplateId() : super.getImageContainerId();
-    }
-
-    @Override
     protected void executeCommand() {
         super.executeCommand();
         Guid storagePoolId = getDiskImage().getstorage_pool_id() != null ? getDiskImage().getstorage_pool_id()

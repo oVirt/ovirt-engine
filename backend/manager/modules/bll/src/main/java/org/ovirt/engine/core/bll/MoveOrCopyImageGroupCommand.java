@@ -50,11 +50,6 @@ public class MoveOrCopyImageGroupCommand<T extends MoveOrCopyImageGroupParameter
         }
     }
 
-    @Override
-    protected Guid getImageContainerId() {
-        return getParameters() != null ? getParameters().getContainerId() : super.getImageContainerId();
-    }
-
     protected ImageOperation getMoveOrCopyImageOperation() {
         return getParameters().getOperation();
     }
@@ -192,7 +187,7 @@ public class MoveOrCopyImageGroupCommand<T extends MoveOrCopyImageGroupParameter
         if (getParameters().getParentCommand() == VdcActionType.AddVmFromSnapshot) {
             Guid destImageId = getParameters().getDestinationImageId();
             RemoveImageParameters removeImageParams =
-                    new RemoveImageParameters(destImageId, getParameters().getContainerId());
+                    new RemoveImageParameters(destImageId);
             removeImageParams.setParentParemeters(getParameters());
             removeImageParams.setParentCommand(VdcActionType.MoveOrCopyImageGroup);
             removeImageParams.setEntityId(getDestinationImageId());
