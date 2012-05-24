@@ -666,6 +666,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("$action log off")
     String VAR__ACTION__LOGOFF();
 
+    @DefaultStringValue("$action rebalance")
+    String VAR__ACTION__REBALANCE_START();
+
     @DefaultStringValue("$type Gluster Volume")
     String VAR__TYPE__GLUSTER_VOLUME();
 

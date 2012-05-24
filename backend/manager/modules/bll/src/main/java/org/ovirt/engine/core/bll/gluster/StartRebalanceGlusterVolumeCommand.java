@@ -24,7 +24,7 @@ public class StartRebalanceGlusterVolumeCommand extends GlusterVolumeCommandBase
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__START);
+        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__REBALANCE_START);
         addCanDoActionMessage(VdcBllMessages.VAR__TYPE__GLUSTER_VOLUME);
     }
 
