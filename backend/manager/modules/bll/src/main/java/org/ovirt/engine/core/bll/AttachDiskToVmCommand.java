@@ -76,7 +76,8 @@ public class AttachDiskToVmCommand<T extends AttachDettachVmDiskParameters> exte
                         null,
                         true,
                         getParameters().isPlugUnPlug(),
-                        false);
+                        false,
+                        "");
         getVmDeviceDao().save(vmDevice);
         // update cached image
         List<Disk> imageList = new ArrayList<Disk>();

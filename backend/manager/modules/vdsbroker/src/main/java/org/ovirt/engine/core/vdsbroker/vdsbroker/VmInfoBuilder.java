@@ -108,7 +108,8 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                             (vm.getVmPayload() == null) ? null : vm.getVmPayload().getSpecParams(),
                             true,
                             true,
-                            true);
+                            true,
+                            "");
             struct = new XmlRpcStruct();
             addCdDetails(vmDevice, struct);
             addDevice(struct, vmDevice, "");
@@ -124,7 +125,8 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                             (vm.getVmPayload() == null) ? null : vm.getVmPayload().getSpecParams(),
                             true,
                             true,
-                            true);
+                            true,
+                            "");
             struct = new XmlRpcStruct();
             addCdDetails(vmDevice, struct);
             addDevice(struct, vmDevice, vm.getCdPath());
@@ -169,7 +171,8 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                             (vm.getVmPayload() == null) ? null : vm.getVmPayload().getSpecParams(),
                             true,
                             true,
-                            true);
+                            true,
+                            "");
             XmlRpcStruct struct = new XmlRpcStruct();
             addCdDetails(vmDevice, struct);
             addDevice(struct, vmDevice, "");
@@ -185,7 +188,8 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                             (vm.getVmPayload() == null) ? null : vm.getVmPayload().getSpecParams(),
                             true,
                             true,
-                            true);
+                            true,
+                            "");
             XmlRpcStruct struct = new XmlRpcStruct();
             addFloppyDetails(vmDevice, struct);
             addDevice(struct, vmDevice, vm.getFloppyPath());
@@ -432,7 +436,8 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                         vmPayload.getSpecParams(),
                         true,
                         true,
-                        true);
+                        true,
+                        "");
         XmlRpcStruct struct = new XmlRpcStruct();
         addFloppyDetails(vmDevice, struct);
         addDevice(struct, vmDevice, vm.getFloppyPath());

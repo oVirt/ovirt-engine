@@ -41,7 +41,7 @@ public class VmDeviceDAOTest extends BaseGenericDaoTestCase<VmDeviceId, VmDevice
                 "type:'drive', controller:'0', bus:'0', unit:'1'",
                 2,
                 new HashMap<String, Object>(),
-                true, false, false);
+                true, false, false, "alias");
     }
 
     @Override

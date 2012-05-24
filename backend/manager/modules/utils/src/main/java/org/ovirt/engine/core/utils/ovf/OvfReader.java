@@ -183,6 +183,12 @@ public abstract class OvfReader implements IOvfBuilder {
         } else {
             vmDevice.setAddress("");
         }
+        if (node.SelectSingleNode(OvfProperties.VMD_ALIAS, _xmlNS) != null
+                && !StringHelper.isNullOrEmpty(node.SelectSingleNode(OvfProperties.VMD_ALIAS, _xmlNS).InnerText)) {
+            vmDevice.setAlias(String.valueOf(node.SelectSingleNode(OvfProperties.VMD_ALIAS, _xmlNS).InnerText));
+        } else {
+            vmDevice.setAlias("");
+        }
         XmlNode specParamsNode = node.SelectSingleNode(OvfProperties.VMD_SPEC_PARAMS, _xmlNS);
         if (specParamsNode != null
                 && !StringHelper.isNullOrEmpty(specParamsNode.InnerText)) {

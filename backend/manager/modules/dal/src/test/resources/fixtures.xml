@@ -3042,6 +3042,7 @@
         <column>is_managed</column>
         <column>is_plugged</column>
         <column>is_readonly</column>
+        <column>alias</column>
         <row>
             <value>1b26a52b-b60f-44cb-9f46-3ef333b04a34</value>
             <value>1b85420c-b84c-4f29-997e-0eb674b40b79</value>
@@ -3053,6 +3054,7 @@
             <value>true</value>
             <value>false</value>
             <value>false</value>
+            <value>alias</value>
         </row>
         <row>
             <value>52058975-3d5e-484a-80c1-01c31207f579</value>
@@ -3065,6 +3067,7 @@
             <value>true</value>
             <value>false</value>
             <value>false</value>
+            <value>alias</value>
         </row>
 
         <row>
@@ -3078,6 +3081,7 @@
             <value>true</value>
             <value>false</value>
             <value>false</value>
+            <value>alias</value>
         </row>
         <row>
             <value>e14ed6f0-3b12-11e1-b614-63d00126418d</value>
@@ -3090,6 +3094,7 @@
             <value>true</value>
             <value>false</value>
             <value>false</value>
+            <value>alias</value>
         </row>
         <row>
             <value>52058975-3d5e-484a-80c1-01c31207f578</value>
@@ -3102,6 +3107,7 @@
             <value>true</value>
             <value>false</value>
             <value>false</value>
+            <value>alias</value>
         </row>
         <row>
             <value>e2817b12-f873-4046-b0da-0098293c14fd</value>
@@ -3114,6 +3120,7 @@
             <value>true</value>
             <value>false</value>
             <value>false</value>
+            <value>alias</value>
         </row>
         <row>
             <value>14550e82-1e1f-47b5-ae41-b009348dabfa</value>
@@ -3126,6 +3133,7 @@
             <value>true</value>
             <value>false</value>
             <value>false</value>
+            <value>alias</value>
         </row>
      </table>
 

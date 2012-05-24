@@ -65,6 +65,11 @@ public class VmDevice extends IVdcQueryable implements BusinessEntity<VmDeviceId
 
     private boolean isReadOnly = false;
 
+    /**
+     * The device alias.
+     */
+    private String alias = "";
+
     public VmDevice() {
     }
 
@@ -73,7 +78,8 @@ public class VmDevice extends IVdcQueryable implements BusinessEntity<VmDeviceId
             Map<String, Object> specParams,
             boolean isManaged,
             Boolean isPlugged,
-            boolean isReadOnly) {
+            boolean isReadOnly,
+            String alias) {
         super();
         this.id = id;
         this.type = type;
@@ -84,6 +90,7 @@ public class VmDevice extends IVdcQueryable implements BusinessEntity<VmDeviceId
         this.isManaged = isManaged;
         this.isPlugged = isPlugged;
         this.isReadOnly = isReadOnly;
+        this.alias = alias;
     }
 
     @Override
@@ -186,6 +193,14 @@ public class VmDevice extends IVdcQueryable implements BusinessEntity<VmDeviceId
         this.isReadOnly = isReadOnly;
     }
 
+    public String getAlias() {
+        return alias;
+    }
+
+    public void setAlias(String alias) {
+        this.alias = alias;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -200,6 +215,7 @@ public class VmDevice extends IVdcQueryable implements BusinessEntity<VmDeviceId
         result = prime * result + (isManaged ? 1 : 0);
         result = prime * result + (isPlugged ? 1 : 0);
         result = prime * result + (isReadOnly ? 1 : 0);
+        result = prime * result + alias.hashCode();
         return result;
     }
 
@@ -250,6 +266,9 @@ public class VmDevice extends IVdcQueryable implements BusinessEntity<VmDeviceId
         if (isReadOnly != other.isReadOnly) {
             return false;
         }
+        if (!alias.equals(other.alias)) {
+            return false;
+        }
 
         return true;
     }
@@ -277,6 +296,8 @@ public class VmDevice extends IVdcQueryable implements BusinessEntity<VmDeviceId
         sb.append(getIsPlugged());
         sb.append(",IsReadOnly=");
         sb.append(getIsReadOnly());
+        sb.append(",alias=");
+        sb.append(getAlias());
         return sb.toString();
     }
 }

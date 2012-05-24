@@ -101,7 +101,8 @@ public class GetAllDisksByVmIdQueryTest extends AbstractUserQueryTest<GetAllDisk
                 null,
                 true,
                 true,
-                true);
+                true,
+                "");
     }
 
     private DiskImage createDiskImage() {

@@ -222,7 +222,8 @@ public class VmDeviceUtils {
                     specParams,
                     true,
                     is_plugged,
-                    isReadOnly);
+                    isReadOnly,
+                    "");
         dao.save(managedDevice);
         // If we add Disk/Interface/CD/Floppy, we have to recalculate boot order
         if (type.equals(VmDeviceType.DISK) || type.equals(VmDeviceType.INTERFACE )) {
@@ -312,7 +313,8 @@ public class VmDeviceUtils {
                             Collections.<String, Object> singletonMap(VdsProperties.Path, newVmBase.getiso_path()),
                             true,
                             null,
-                            false);
+                            false,
+                            "");
             dao.save(cd);
         }
     }
@@ -346,10 +348,7 @@ public class VmDeviceUtils {
                     .getVmDeviceDAO()
                     .getVmDeviceByVmIdAndType(newStatic.getId(),
                             VmDeviceType.VIDEO.getName());
-            for (int i = 0; i < (prevNumOfMonitors - newStatic
-                    .getnum_of_monitors()); i++) {
-                dao.remove(list.get(i).getId());
-            }
+            removeNumberOfDevices(list, prevNumOfMonitors - newStatic.getnum_of_monitors());
         }
     }
 
@@ -602,8 +601,15 @@ public class VmDeviceUtils {
 
     private static void removeUsbSlots(VmBase vm, int numberOfSlotsToRemove) {
         List<VmDevice> list = getUsbRedirectDevices(vm);
-        for (int index = 0; index < numberOfSlotsToRemove; index++) {
-            dao.remove(list.get(index).getId());
+        removeNumberOfDevices(list, numberOfSlotsToRemove);
+    }
+
+    private static void removeNumberOfDevices(List<VmDevice> devices, int numberOfDevicesToRemove) {
+        int size = devices.size();
+        for (int index = 1; index <= numberOfDevicesToRemove; index++) {
+            if (size >= index) {
+                dao.remove(devices.get(size - index).getId());
+            }
         }
     }
 

@@ -310,6 +310,9 @@ public abstract class OvfWriter implements IOvfBuilder {
         _writer.WriteStartElement(OvfProperties.VMD_IS_READONLY);
         _writer.WriteRaw(String.valueOf(vmDevice.getIsReadOnly()));
         _writer.WriteEndElement();
+        _writer.WriteStartElement(OvfProperties.VMD_ALIAS);
+        _writer.WriteRaw(String.valueOf(vmDevice.getAlias()));
+        _writer.WriteEndElement();
         if (vmDevice.getSpecParams() != null && vmDevice.getSpecParams().size() != 0) {
             _writer.WriteStartElement(OvfProperties.VMD_SPEC_PARAMS);
             _writer.WriteMap(vmDevice.getSpecParams());

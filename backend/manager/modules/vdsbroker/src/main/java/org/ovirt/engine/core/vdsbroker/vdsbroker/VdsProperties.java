@@ -206,6 +206,7 @@ public final class VdsProperties {
     public static final String Shareable = "shared";
     public static final String SpecParams = "specParams";
     public static final String Address = "address";
+    public static final String Alias = "alias";
     public static final String PropagateErrors = "propagateErrors";
     public static final String Optional = "optional";
     public static final String ReadOnly = "readonly";

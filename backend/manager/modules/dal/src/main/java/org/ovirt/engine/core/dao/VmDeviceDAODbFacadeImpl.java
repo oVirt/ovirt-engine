@@ -45,7 +45,8 @@ public class VmDeviceDAODbFacadeImpl extends
                                 .serialize(entity.getSpecParams()))
                 .addValue("is_managed", entity.getIsManaged())
                 .addValue("is_plugged", entity.getIsPlugged())
-                .addValue("is_readonly", entity.getIsReadOnly());
+                .addValue("is_readonly", entity.getIsReadOnly())
+                .addValue("alias", entity.getAlias());
     }
 
     @Override
@@ -130,6 +131,7 @@ public class VmDeviceDAODbFacadeImpl extends
             vmDevice.setIsManaged(rs.getBoolean("is_managed"));
             vmDevice.setIsPlugged(rs.getBoolean("is_plugged"));
             vmDevice.setIsReadOnly(rs.getBoolean("is_readonly"));
+            vmDevice.setAlias(rs.getString("alias"));
             return vmDevice;
         }
     }

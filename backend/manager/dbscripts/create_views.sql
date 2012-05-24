@@ -1302,5 +1302,5 @@ JOIN         user_flat_groups ON granted_id = ad_element_id;
 CREATE OR REPLACE VIEW vm_device_view
 AS
 SELECT device_id, vm_id, type, device, address, boot_order, spec_params,
-       is_managed, is_plugged, is_readonly
+       is_managed, is_plugged, is_readonly, alias
   FROM vm_device;

@@ -971,7 +971,9 @@ public class VdsUpdateRunTimeInfo {
             if (deviceId == null || vmDevice == null) {
                 deviceId = addNewVmDevice(vmId, device);
             } else {
+                String alias = StringUtils.defaultIfEmpty((String) device.getItem(VdsProperties.Alias), "");
                 vmDevice.setAddress(((Map<String, String>) device.getItem(VdsProperties.Address)).toString());
+                vmDevice.setAlias(alias);
                 addVmDeviceToList(vmDevice);
             }
             processedDevices.add(deviceId);
@@ -1019,6 +1021,7 @@ public class VdsUpdateRunTimeInfo {
         // do not allow null or empty device or type values
         if (!StringUtils.isEmpty(typeName) && !StringUtils.isEmpty(deviceName)) {
             String address = ((Map<String, String>) device.getItem(VdsProperties.Address)).toString();
+            String alias = StringUtils.defaultIfEmpty((String) device.getItem(VdsProperties.Alias), "");
             Object o = device.getItem(VdsProperties.SpecParams);
             newDeviceId = Guid.NewGuid();
             VmDeviceId id = new VmDeviceId(newDeviceId, vmId);
@@ -1027,7 +1030,8 @@ public class VdsUpdateRunTimeInfo {
                         o != null ? (HashMap<String, Object>) o : new HashMap<String, Object>(),
                         false,
                         true,
-                        false);
+                        false,
+                        alias);
             newVmDevices.add(newDevice);
             log.debugFormat("New device was marked for adding to VM {0} Devices : {1}", vmId, newDevice.toString());
         } else {

@@ -11,7 +11,8 @@ Create or replace FUNCTION InsertVmDevice(
     v_spec_params text,
     v_is_managed boolean,
     v_is_plugged boolean,
-    v_is_readonly boolean)
+    v_is_readonly boolean,
+    v_alias varchar(255))
 RETURNS VOID
 AS $procedure$
 BEGIN
@@ -25,7 +26,8 @@ BEGIN
         spec_params,
         is_managed,
         is_plugged,
-        is_readonly)
+        is_readonly,
+        alias)
     VALUES(
         v_device_id ,
         v_vm_id ,
@@ -36,7 +38,8 @@ BEGIN
         v_spec_params,
         v_is_managed,
         v_is_plugged,
-        v_is_readonly);
+        v_is_readonly,
+        v_alias);
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -50,7 +53,8 @@ Create or replace FUNCTION UpdateVmDevice(
     v_spec_params text,
     v_is_managed boolean,
     v_is_plugged boolean,
-    v_is_readonly boolean)
+    v_is_readonly boolean,
+    v_alias varchar(255))
 RETURNS VOID
 AS $procedure$
 BEGIN
@@ -64,6 +68,7 @@ BEGIN
            is_managed = v_is_managed,
            is_plugged = v_is_plugged,
            is_readonly = v_is_readonly,
+           alias = v_alias,
            _update_date = current_timestamp
     WHERE  device_id = v_device_id and vm_id = v_vm_id;
 END; $procedure$
@@ -119,7 +124,8 @@ BEGIN
     RETURN QUERY
     SELECT *
     FROM   vm_device_view
-    WHERE  vm_id = v_vm_id and type = v_type ;
+    WHERE  vm_id = v_vm_id and type = v_type
+    ORDER BY NULLIF(alias,'') NULLS LAST;
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -133,7 +139,8 @@ BEGIN
     WHERE  vm_id = v_vm_id and type = v_type and device = v_device
     AND (NOT v_is_filtered OR EXISTS (SELECT 1
                                       FROM   user_vm_permissions_view
-                                      WHERE  user_id = v_user_id AND entity_id = v_vm_id));
+                                      WHERE  user_id = v_user_id AND entity_id = v_vm_id))
+    ORDER BY NULLIF(alias,'') NULLS LAST;
 
 END; $procedure$
 LANGUAGE plpgsql;
