@@ -137,6 +137,10 @@ public enum NetworkOperation {
                     NetworkInterfaceModel nic1 = (NetworkInterfaceModel) op1;
                     NetworkInterfaceModel nic2 = (NetworkInterfaceModel) op2;
 
+                    // detach possible networks from both nics
+                    clearNetworks(nic1, allNics);
+                    clearNetworks(nic2, allNics);
+
                     // param
                     VdsNetworkInterface bond = (VdsNetworkInterface) params[0];
                     String bondName = bond.getName();
@@ -171,7 +175,7 @@ public enum NetworkOperation {
                     NetworkInterfaceModel nic = (NetworkInterfaceModel) op1;
                     BondNetworkInterfaceModel bond = (BondNetworkInterfaceModel) op2;
 
-                    // detach possible networks form the nic
+                    // detach possible networks from the nic
                     clearNetworks(nic, allNics);
 
                     nic.getEntity().setBondName(bond.getEntity().getName());

@@ -1800,8 +1800,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String statusVolumeBrick();
 
     // Network
-    @DefaultStringValue("no netowrk assigned")
-    String noNetowrkAssigned();
+    @DefaultStringValue("no network assigned")
+    String noNetworkAssigned();
 
     // Item info
     @DefaultStringValue("Name")
@@ -1923,10 +1923,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Bootable")
     String bootableDisk();
-
-    @Override
-    @DefaultStringValue("Description")
-    String descriptionDisk();
 
     // Setup network
     @DefaultStringValue("Drag to make changes")

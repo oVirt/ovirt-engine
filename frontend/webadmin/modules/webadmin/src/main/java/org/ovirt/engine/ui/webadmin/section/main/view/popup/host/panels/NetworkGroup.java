@@ -79,7 +79,7 @@ public class NetworkGroup extends DnDPanel {
             }
         } else {
             SimplePanel emptyPanel = new SimplePanel();
-            Label label = new Label(constants.noNetowrkAssigned());
+            Label label = new Label(constants.noNetworkAssigned());
             label.getElement().getStyle().setPadding(10, Unit.PX);
             emptyPanel.setWidget(label);
             emptyPanel.setStylePrimaryName(style.emptyPanel());

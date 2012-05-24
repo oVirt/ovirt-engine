@@ -83,7 +83,6 @@ public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<Host
         });
 
         uicommonModel.getOperationCandidateEvent().addListener(new IEventListener() {
-
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 OperationCadidateEventArgs evtArgs = (OperationCadidateEventArgs) args;
@@ -93,20 +92,11 @@ public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<Host
                 status.setFadeText(candidate != null ? candidate.getMessage(op1, op2) : constants.noValidActionSetupNetwork());
             }
         });
-
     }
 
     @Override
     public HostSetupNetworksModel flush() {
         return uicommonModel;
-    }
-
-    @Override
-    public void focusInput() {
-    }
-
-    @Override
-    public void setMessage(String message) {
     }
 
     private void updateNetworks(List<LogicalNetworkModel> allNetworks) {
