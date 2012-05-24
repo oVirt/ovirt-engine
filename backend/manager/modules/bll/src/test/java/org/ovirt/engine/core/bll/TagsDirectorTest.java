@@ -8,14 +8,13 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
-import static org.powermock.api.mockito.PowerMockito.spy;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import junit.framework.Assert;
@@ -27,13 +26,15 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.TagsType;
 import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.TagDAO;
 
+@RunWith(MockitoJUnitRunner.class)
 public class TagsDirectorTest {
 
     private TagsDirector tagsDirector;
@@ -54,9 +55,8 @@ public class TagsDirectorTest {
 
     @Before
     public void setup() {
-        MockitoAnnotations.initMocks(this);
         tagsDirector = spy(TagsDirector.getInstance());
-        when(tagDao.getAllForParent(any(Guid.class))).thenReturn((List<tags>) Collections.EMPTY_LIST);
+        when(tagDao.getAllForParent(any(Guid.class))).thenReturn(Collections.<tags> emptyList());
         doReturn(tagDao).when(tagsDirector).getTagDAO();
         doNothing().when(tagsDirector).updateTagInBackend(any(tags.class));
         tagsDirector.init();
@@ -137,7 +137,7 @@ public class TagsDirectorTest {
 
     @Test
     public void testMoveTag() {
-        //let's have two top level tag under root
+        // let's have two top level tag under root
         tags level1obj1 = createTag("level1obj1", "");
         level1obj1.settag_id(Guid.NewGuid());
         level1obj1.setparent_id(tagsDirector.GetRootTag().gettag_id());
@@ -147,25 +147,25 @@ public class TagsDirectorTest {
         level1obj2.setparent_id(tagsDirector.GetRootTag().gettag_id());
         tagsDirector.AddTag(level1obj2);
 
-        //now none of these should have any children
+        // now none of these should have any children
         Assert.assertEquals(0, tagsDirector.GetTagById(level1obj1.gettag_id()).getChildren().size());
         Assert.assertEquals(0, tagsDirector.GetTagById(level1obj2.gettag_id()).getChildren().size());
 
-        //now let's add a child tag o the first top level tag
+        // now let's add a child tag o the first top level tag
         tags level2obj1 = createTag("level2obj1", "");
         level2obj1.settag_id(Guid.NewGuid());
         level2obj1.setparent_id(level1obj1.gettag_id());
         tagsDirector.AddTag(level2obj1);
 
-        //now check the number of children
+        // now check the number of children
         Assert.assertEquals(1, tagsDirector.GetTagById(level1obj1.gettag_id()).getChildren().size());
         Assert.assertEquals(0, tagsDirector.GetTagById(level1obj2.gettag_id()).getChildren().size());
 
-        //should be all right so far.
-        //now let's do the trick: move the second level tag to under the other first level tag
+        // should be all right so far.
+        // now let's do the trick: move the second level tag to under the other first level tag
         tagsDirector.MoveTag(level2obj1.gettag_id(), level1obj2.gettag_id());
 
-        //and now let's recheck, the first top level should have 0 children, the second should have 1
+        // and now let's recheck, the first top level should have 0 children, the second should have 1
         Assert.assertEquals(0, tagsDirector.GetTagById(level1obj1.gettag_id()).getChildren().size());
         Assert.assertEquals(1, tagsDirector.GetTagById(level1obj2.gettag_id()).getChildren().size());
 
@@ -173,7 +173,7 @@ public class TagsDirectorTest {
 
     @Test
     public void testMoveTag_root() {
-        //let's have two top level tag under root
+        // let's have two top level tag under root
         tags level1obj1 = createTag("level1obj1", "");
         level1obj1.settag_id(Guid.NewGuid());
         level1obj1.setparent_id(tagsDirector.GetRootTag().gettag_id());
@@ -183,16 +183,16 @@ public class TagsDirectorTest {
         level1obj2.setparent_id(tagsDirector.GetRootTag().gettag_id());
         tagsDirector.AddTag(level1obj2);
 
-        //now none of these should have any children
+        // now none of these should have any children
         Assert.assertEquals(0, tagsDirector.GetTagById(level1obj1.gettag_id()).getChildren().size());
         Assert.assertEquals(0, tagsDirector.GetTagById(level1obj2.gettag_id()).getChildren().size());
         Assert.assertEquals(2, tagsDirector.GetRootTag().getChildren().size());
 
-        //should be all right so far.
-        //now let's do the trick: move the second level tag to under the other first level tag
+        // should be all right so far.
+        // now let's do the trick: move the second level tag to under the other first level tag
         tagsDirector.MoveTag(level1obj1.gettag_id(), level1obj2.gettag_id());
 
-        //and now let's recheck, the first top level should have 0 children, the second should have 1
+        // and now let's recheck, the first top level should have 0 children, the second should have 1
         Assert.assertEquals(1, tagsDirector.GetTagById(level1obj2.gettag_id()).getChildren().size());
         Assert.assertEquals(1, tagsDirector.GetRootTag().getChildren().size());
 
@@ -213,7 +213,7 @@ public class TagsDirectorTest {
         sub.setparent_id(tag.gettag_id());
         tagsDirector.AddTag(sub);
 
-        //so now the root tag must have 1 child
+        // so now the root tag must have 1 child
         Assert.assertEquals(1, tagsDirector.GetRootTag().getChildren().size());
         Assert.assertEquals(1, tagsDirector.GetTagById(tag.gettag_id()).getChildren().size());
 
@@ -222,11 +222,11 @@ public class TagsDirectorTest {
         tagsDirector.UpdateTag(tag);
 
         // now let's see the number of children in the tag objects
-        //this is the assertion that fails without fix for #732640
+        // this is the assertion that fails without fix for #732640
         Assert.assertEquals(1, tagsDirector.GetRootTag().getChildren().size());
         Assert.assertEquals(1, tagsDirector.GetTagById(tag.gettag_id()).getChildren().size());
 
-        //let's check the same thing on overwriting description
+        // let's check the same thing on overwriting description
         tag.setdescription("TEST TEST TEST TEST");
         tagsDirector.UpdateTag(tag);
 
