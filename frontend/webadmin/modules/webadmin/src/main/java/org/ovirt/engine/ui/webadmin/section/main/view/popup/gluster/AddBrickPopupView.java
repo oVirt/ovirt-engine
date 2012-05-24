@@ -129,7 +129,7 @@ public class AddBrickPopupView extends AbstractModelBoundPopupView<VolumeBrickMo
         serverEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
             @Override
             public String renderNullSafe(Object object) {
-                return ((VDS) object).getvds_name();
+                return ((VDS) object).gethost_name();
             }
         });
 
