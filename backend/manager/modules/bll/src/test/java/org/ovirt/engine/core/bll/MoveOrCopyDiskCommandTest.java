@@ -6,21 +6,18 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
-import static org.powermock.api.mockito.PowerMockito.when;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.ImageOperation;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
@@ -29,7 +26,6 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
-import org.ovirt.engine.core.common.businessentities.storage_domain_static;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
@@ -39,11 +35,8 @@ import org.ovirt.engine.core.dao.StorageDomainDAO;
 import org.ovirt.engine.core.dao.VmDAO;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
 import org.ovirt.engine.core.dao.VmTemplateDAO;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({StorageDomainSpaceChecker.class, ImagesHandler.class, ImagesHandler.class})
+@RunWith(MockitoJUnitRunner.class)
 public class MoveOrCopyDiskCommandTest {
 
     private final Guid diskImageGuid = Guid.NewGuid();
@@ -65,17 +58,6 @@ public class MoveOrCopyDiskCommandTest {
      * The command under test.
      */
     protected MoveOrCopyDiskCommand<MoveOrCopyImageGroupParameters> command;
-
-    @Before
-    public void setUp() {
-        mockStatic(StorageDomainSpaceChecker.class);
-        mockStatic(ImagesHandler.class);
-        when(StorageDomainSpaceChecker.hasSpaceForRequest(any(storage_domains.class), anyLong())).thenReturn(true);
-        when(StorageDomainSpaceChecker.isBelowThresholds(any(storage_domains.class))).thenReturn(true);
-        when(ImagesHandler.getAllImageSnapshots(any(Guid.class), any(Guid.class))).thenReturn(new ArrayList<DiskImage>());
-        when(ImagesHandler.CheckImageConfiguration(any(storage_domain_static.class), any(DiskImageBase.class), any(ArrayList.class))).thenReturn(true);
-        MockitoAnnotations.initMocks(this);
-    }
 
     @Test
     public void canDoActionImageNotFound() throws Exception {
@@ -188,12 +170,22 @@ public class MoveOrCopyDiskCommandTest {
         when(vmDeviceDao.get(any(VmDeviceId.class))).thenReturn(vmDevice);
     }
 
+    @SuppressWarnings("unchecked")
     protected void initializeCommand(ImageOperation operation) {
-        command =
-                spy(new MoveOrCopyDiskCommandDummy(new MoveOrCopyImageGroupParameters(diskImageGuid,
-                        srcStorageId,
-                        destStorageId,
-                        operation)));
+        command = spy(new MoveOrCopyDiskCommandDummy(new MoveOrCopyImageGroupParameters(diskImageGuid,
+                srcStorageId,
+                destStorageId,
+                operation)));
+
+        // Spy away the storage domain checker methods
+        doReturn(true).when(command).isStorageDomainSpaceBelowThresholds();
+        doReturn(true).when(command).doesStorageDomainHaveSpaceForRequest(anyLong());
+
+        // Spy away the image handler methods
+        doReturn(true).when(command).checkImageConfiguration(any(List.class));
+        doReturn(Collections.emptyList()).when(command).getAllImageSnapshots();
+
+        doReturn(false).when(command).acquireLock();
     }
 
     private void initTemplateDiskImage() {

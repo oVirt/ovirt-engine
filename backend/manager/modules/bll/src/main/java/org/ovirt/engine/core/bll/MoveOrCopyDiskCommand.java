@@ -72,15 +72,13 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
                 && validateDestStorage(canDoActionMessages)
                 && checkTemplateInDestStorageDomain()
                 && validateSpaceRequirements()
-                && ImagesHandler.CheckImageConfiguration(getStorageDomain().getStorageStaticData(),
-                        getImage(),
-                        canDoActionMessages)
+                && checkImageConfiguration(canDoActionMessages)
                 && checkCanBeMoveInVm() && checkIfNeedToBeOverride();
     }
 
     protected boolean isSourceAndDestTheSame() {
         if (getParameters().getOperation() == ImageOperation.Move
-                    && getParameters().getSourceDomainId().equals(getParameters().getStorageDomainId())) {
+                && getParameters().getSourceDomainId().equals(getParameters().getStorageDomainId())) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_SOURCE_AND_TARGET_SAME);
             return false;
         }
@@ -146,7 +144,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
     protected boolean validateDestStorage(ArrayList<String> canDoActionMessages) {
         StorageDomainValidator validator = new StorageDomainValidator(getStorageDomain());
         return validator.isDomainExistAndActive(canDoActionMessages)
-                            && validator.domainIsValidDestination(canDoActionMessages);
+                && validator.domainIsValidDestination(canDoActionMessages);
     }
 
     /**
@@ -155,22 +153,31 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
      */
     protected boolean validateSpaceRequirements() {
         boolean retValue = true;
-        if (!StorageDomainSpaceChecker.isBelowThresholds(getStorageDomain())) {
+        if (!isStorageDomainSpaceBelowThresholds()) {
             retValue = false;
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW);
         }
 
         if (retValue) {
-            getImage().getSnapshots().addAll(
-                            ImagesHandler.getAllImageSnapshots(getImage().getImageId(),
-                                    getImage().getit_guid()));
-            if (!StorageDomainSpaceChecker.hasSpaceForRequest(getStorageDomain(),
-                            Math.round(getImage().getActualDiskWithSnapshotsSize()))) {
+            getImage().getSnapshots().addAll(getAllImageSnapshots());
+            if (!doesStorageDomainHaveSpaceForRequest(Math.round(getImage().getActualDiskWithSnapshotsSize()))) {
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW);
                 retValue = false;
             }
         }
         return retValue;
+    }
+
+    protected boolean isStorageDomainSpaceBelowThresholds() {
+        return StorageDomainSpaceChecker.isBelowThresholds(getStorageDomain());
+    }
+
+    protected List<DiskImage> getAllImageSnapshots() {
+        return ImagesHandler.getAllImageSnapshots(getImage().getImageId(), getImage().getit_guid());
+    }
+
+    protected boolean doesStorageDomainHaveSpaceForRequest(long size) {
+        return StorageDomainSpaceChecker.hasSpaceForRequest(getStorageDomain(), size);
     }
 
     protected boolean checkIfNeedToBeOverride() {
@@ -195,9 +202,15 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
             getParameters().setSourceDomainId(sourceDomainId);
         }
         StorageDomainValidator validator =
-                    new StorageDomainValidator(getStorageDomainDAO().getForStoragePool(sourceDomainId.getValue(),
-                            getImage().getstorage_pool_id()));
+                new StorageDomainValidator(getStorageDomainDAO().getForStoragePool(sourceDomainId.getValue(),
+                        getImage().getstorage_pool_id()));
         return validator.isDomainExistAndActive(canDoActionMessages);
+    }
+
+    protected boolean checkImageConfiguration(List<String> canDoActionMessages) {
+        return ImagesHandler.CheckImageConfiguration(getStorageDomain().getStorageStaticData(),
+                getImage(),
+                canDoActionMessages);
     }
 
     /**
@@ -260,9 +273,9 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
     protected void executeCommand() {
         overrideParameters();
         VdcReturnValueBase vdcRetValue = Backend.getInstance().runInternalAction(
-                        VdcActionType.MoveOrCopyImageGroup,
-                        getParameters(),
-                        ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
+                VdcActionType.MoveOrCopyImageGroup,
+                getParameters(),
+                ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
         if (!vdcRetValue.getSucceeded()) {
             setSucceeded(false);
             getReturnValue().setFault(vdcRetValue.getFault());
