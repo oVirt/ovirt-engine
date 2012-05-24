@@ -897,23 +897,8 @@ public final class Linq
     /**
      * Sorts a not typed list. Allows to do a sort on a list containing elements of different types.
      */
-    public static void Sort(List source, Comparator comparer)
-    {
-        int pos = 0;
-        while (pos < source.size())
-        {
-            if (pos == 0 || comparer.compare(source.get(pos), source.get(pos - 1)) >= 1)
-            {
-                pos++;
-            }
-            else
-            {
-                Object temp = source.get(pos);
-                source.set(pos, source.get(pos - 1));
-                source.set(pos - 1, temp);
-                pos--;
-            }
-        }
+    public static void Sort(List source, Comparator comparer) {
+        Collections.sort(source, comparer);
     }
 
     public static List Concat(List... lists)
