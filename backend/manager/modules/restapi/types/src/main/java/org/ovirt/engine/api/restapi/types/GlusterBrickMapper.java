@@ -1,6 +1,7 @@
 package org.ovirt.engine.api.restapi.types;
 
 import org.ovirt.engine.api.model.GlusterBrick;
+import org.ovirt.engine.api.model.GlusterVolume;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -15,9 +16,15 @@ public class GlusterBrickMapper {
     @Mapping(from = GlusterBrick.class, to = GlusterBrickEntity.class)
     public static GlusterBrickEntity map(GlusterBrick fromBrick, GlusterBrickEntity toBrick) {
         GlusterBrickEntity brick = (toBrick == null) ? new GlusterBrickEntity() : toBrick;
+
+        if(fromBrick.isSetId()) {
+            brick.setId(Guid.createGuidFromString(fromBrick.getId()));
+        }
+
         if(fromBrick.isSetServerId()) {
             brick.setServerId(Guid.createGuidFromString(fromBrick.getServerId()));
         }
+
         if(fromBrick.isSetBrickDir()) {
             brick.setBrickDirectory(fromBrick.getBrickDir());
         }
@@ -27,6 +34,10 @@ public class GlusterBrickMapper {
     @Mapping(from = GlusterBrickEntity.class, to = GlusterBrick.class)
     public static GlusterBrick map(GlusterBrickEntity fromBrick, GlusterBrick toBrick) {
         GlusterBrick brick = (toBrick == null) ? new GlusterBrick() : toBrick;
+
+        if(fromBrick.getId() != null) {
+            brick.setId(fromBrick.getId().toString());
+        }
 
         if(fromBrick.getServerId() != null) {
             brick.setServerId(fromBrick.getServerId().toString());
@@ -38,6 +49,11 @@ public class GlusterBrickMapper {
 
         if(fromBrick.getStatus() != null) {
             brick.setState(fromBrick.getStatus().name());
+        }
+
+        if(fromBrick.getVolumeId() != null) {
+            brick.setGlusterVolume(new GlusterVolume());
+            brick.getGlusterVolume().setId(fromBrick.getVolumeId().toString());
         }
         return brick;
     }

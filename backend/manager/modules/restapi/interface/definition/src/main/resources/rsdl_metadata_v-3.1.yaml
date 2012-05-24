@@ -2207,7 +2207,7 @@ actions:
     body:
       parameterType: Action
       signatures:
-      - mandatoryArguments: {action.new_brick.host_id: 'xs:string', action.new_brick.brick_dir: 'xs:string'}
+      - mandatoryArguments: {action.brick.server_id: 'xs:string', action.brick.brick_dir: 'xs:string'}
         optionalArguments: {action.force: 'xs:boolean'}
     urlparams: {}
     headers: {Content-Type: application/xml|json}

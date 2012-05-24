@@ -14,11 +14,11 @@ public class BackendGlusterBricksResource
         extends AbstractBackendCollectionResource<GlusterBrick, GlusterBrickEntity>
         implements GlusterBricksResource {
 
-    private final String volumeId;
+    private BackendGlusterVolumeResource parent;
 
-    public BackendGlusterBricksResource(String volumeId) {
+    public BackendGlusterBricksResource(BackendGlusterVolumeResource parent) {
         super(GlusterBrick.class, GlusterBrickEntity.class);
-        this.volumeId = volumeId;
+        setParent(parent);
     }
 
     @Override
@@ -41,7 +41,15 @@ public class BackendGlusterBricksResource
 
     @Override
     public GlusterBrickResource getGlusterBrickSubResource(String brickId) {
-        return inject(new BackendGlusterBrickResource(brickId));
+        return inject(new BackendGlusterBrickResource(brickId, this));
+    }
+
+    public BackendGlusterVolumeResource getParent() {
+        return parent;
+    }
+
+    public void setParent(BackendGlusterVolumeResource parent) {
+        this.parent = parent;
     }
 
 }

@@ -166,10 +166,12 @@
       <xs:element name="pause" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
       <!-- should migration be forced if VM is pinned to host? -->
       <xs:element name="force" type="xs:boolean" minOccurs="0"/>
-	  <!-- For gluster volume set/reset option action -->
+      <!-- For gluster volume set/reset option action -->
       <xs:element name="option" type="Option" minOccurs="0"/>
-	  <!-- In gluster volume rebalance action, should only fix-layout be performed -->
+      <!-- In gluster volume rebalance action, should only fix-layout be performed -->
       <xs:element name="fix_layout" type="xs:boolean" minOccurs="0"/>
+      <!-- In gluster brick replace action, the new brick that will replace current one -->
+      <xs:element name="brick" type="GlusterBrick" minOccurs="0"/>
       <!-- detach Disk from VM (as opposed to deleting it) -->
       <xs:element name="detach" type="xs:boolean" minOccurs="0"/>
       <!-- ... etc., explicitly enumerate all the parameter types -->
@@ -2637,6 +2639,7 @@
     <xs:complexContent>
       <xs:extension base="BaseResource">
         <xs:sequence>
+          <xs:element ref="gluster_volume" minOccurs="0" maxOccurs="1"/>
           <xs:element name="server_id" type="xs:string" minOccurs="0" maxOccurs="1"/>
           <xs:element name="brick_dir" type="xs:string" minOccurs="0" maxOccurs="1"/>
           <xs:element name="state" type="xs:string" minOccurs="0" maxOccurs="1"/>
