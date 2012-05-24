@@ -17,9 +17,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.VdcBllMessages;
-import org.ovirt.engine.core.dao.StoragePoolIsoMapDAO;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
-import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class AttachStorageDomainToPoolCommand<T extends StorageDomainPoolParametersBase> extends
@@ -99,10 +97,6 @@ public class AttachStorageDomainToPoolCommand<T extends StorageDomainPoolParamet
 
     }
 
-    protected void executeInNewTransaction(TransactionMethod<?> method) {
-        TransactionSupport.executeInNewTransaction(method);
-    }
-
     @Override
     public AuditLogType getAuditLogTypeValue() {
         return getSucceeded() ? AuditLogType.USER_ATTACH_STORAGE_DOMAIN_TO_POOL
@@ -129,9 +123,5 @@ public class AttachStorageDomainToPoolCommand<T extends StorageDomainPoolParamet
             returnValue = CheckMasterDomainIsUp();
         }
         return returnValue;
-    }
-
-    protected StoragePoolIsoMapDAO getStoragePoolIsoMapDAO() {
-        return getDbFacade().getStoragePoolIsoMapDAO();
     }
 }

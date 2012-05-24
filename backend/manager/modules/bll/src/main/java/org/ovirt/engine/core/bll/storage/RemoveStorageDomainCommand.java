@@ -126,10 +126,6 @@ public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters>
         return getBackend().getResourceManager();
     }
 
-    protected IStorageHelper getStorageHelper(storage_domains storageDomain) {
-        return StorageHelperDirector.getInstance().getItem(storageDomain.getstorage_type());
-    }
-
     protected boolean isFCP(storage_domains dom) {
         return dom.getstorage_type() == StorageType.FCP;
     }

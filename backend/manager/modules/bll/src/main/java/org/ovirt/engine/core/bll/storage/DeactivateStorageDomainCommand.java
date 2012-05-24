@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.bll.storage;
 
 import java.util.List;
+import java.util.Map;
 
-import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
@@ -30,7 +30,6 @@ import org.ovirt.engine.core.utils.linq.Predicate;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
-import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParametersBase> extends
@@ -42,7 +41,7 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
         if (_newMaster == null && _newMasterStorageDomainId.equals(Guid.Empty)) {
             _newMaster = electNewMaster();
         } else if (_newMaster == null) {
-            _newMaster = DbFacade.getInstance().getStorageDomainDAO().get(_newMasterStorageDomainId);
+            _newMaster = getStorageDomainDAO().get(_newMasterStorageDomainId);
         }
         return _newMaster;
     }
@@ -78,8 +77,8 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
 
         if (!getParameters().getIsInternal()
                 && getStorageDomain().getstorage_domain_type() == StorageDomainType.Master) {
-            List<storage_domains> domains = DbFacade.getInstance().getStorageDomainDAO().getAllForStoragePool(
-                    getStorageDomain().getstorage_pool_id().getValue());
+            List<storage_domains> domains =
+                    getStorageDomainDAO().getAllForStoragePool(getStorageDomain().getstorage_pool_id().getValue());
 
             List<storage_domains> activeDomains = filterDomainsByStatus(domains, StorageDomainStatus.Active);
 
@@ -101,8 +100,7 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
             }
         }
         if (!getParameters().getIsInternal()
-                && !DbFacade.getInstance()
-                        .getVmDAO()
+                && !getVmDAO()
                         .getAllRunningForStorageDomain(getStorageDomain().getId())
                         .isEmpty()) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DETECTED_RUNNING_VMS);
@@ -111,12 +109,11 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
         try {
             if (getStoragePool().getspm_vds_id() != null
                     && getStorageDomain().getstorage_domain_type() != StorageDomainType.ISO
-                        && !((java.util.HashMap<Guid, AsyncTaskStatus>) Backend
-                                .getInstance()
-                                .getResourceManager()
-                                .RunVdsCommand(VDSCommandType.HSMGetAllTasksStatuses,
-                                        new VdsIdVDSCommandParametersBase(getStoragePool().getspm_vds_id().getValue()))
-                                .getReturnValue()).isEmpty()) {
+                    && !((Map<Guid, AsyncTaskStatus>) getBackend()
+                            .getResourceManager()
+                            .RunVdsCommand(VDSCommandType.HSMGetAllTasksStatuses,
+                                    new VdsIdVDSCommandParametersBase(getStoragePool().getspm_vds_id().getValue()))
+                            .getReturnValue()).isEmpty()) {
                 addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_DEACTIVATE_DOMAIN_WITH_TASKS);
                 return false;
             }
@@ -156,25 +153,22 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
     protected void executeCommand() {
         spm = null;
         if (getStoragePool().getspm_vds_id() != null) {
-            spm = DbFacade.getInstance().getVdsDAO().get(getStoragePool().getspm_vds_id());
+            spm = getVdsDAO().get(getStoragePool().getspm_vds_id());
         }
-        final storage_pool_iso_map map = DbFacade.getInstance()
-                .getStoragePoolIsoMapDAO()
-                .get(new StoragePoolIsoMapId(getParameters().getStorageDomainId(),
-                        getParameters().getStoragePoolId()));
+        final storage_pool_iso_map map =
+                getStoragePoolIsoMapDAO().get
+                        (new StoragePoolIsoMapId(getParameters().getStorageDomainId(),
+                                getParameters().getStoragePoolId()));
         changeStorageDomainStatusInTransaction(map, StorageDomainStatus.Locked);
         ProceedStorageDomainTreatmentByDomainType(false);
 
         if (_isLastMaster) {
-            TransactionSupport.executeInNewTransaction(new TransactionMethod<Object>() {
-
+            executeInNewTransaction(new TransactionMethod<Object>() {
                 @Override
                 public Object runInTransaction() {
                     getCompensationContext().snapshotEntityStatus(getStoragePool(), getStoragePool().getstatus());
                     getStoragePool().setstatus(StoragePoolStatus.Maintanance);
-                    DbFacade.getInstance()
-                            .getStoragePoolDAO()
-                            .updateStatus(getStoragePool().getId(), getStoragePool().getstatus());
+                    getStoragePoolDAO().updateStatus(getStoragePool().getId(), getStoragePool().getstatus());
                     getCompensationContext().stateChanged();
                     return null;
                 }
@@ -185,8 +179,7 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
             getStorageDomain().getStorageDynamicData().setavailable_disk_size(null);
             getStorageDomain().getStorageDynamicData().setused_disk_size(null);
         }
-        boolean succeeded = Backend.getInstance()
-                .getResourceManager()
+        boolean succeeded = getBackend().getResourceManager()
                 .RunVdsCommand(
                         VDSCommandType.DeactivateStorageDomain,
                         new DeactivateStorageDomainVDSCommandParameters(getStoragePool().getId(),
@@ -200,7 +193,7 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
                     _isLastMaster,
                     _newMasterStorageDomainId);
             if (_isLastMaster && spm != null) {
-                final VDSReturnValue stopSpmReturnValue = Backend.getInstance()
+                final VDSReturnValue stopSpmReturnValue = getBackend()
                         .getResourceManager()
                         .RunVdsCommand(VDSCommandType.SpmStopOnIrs,
                                 new IrsBaseVDSCommandParameters(getStoragePool().getId()));
@@ -213,31 +206,26 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
                     setSucceeded(false);
                     return;
                 }
-                Backend.getInstance()
-                        .getResourceManager()
+                getBackend().getResourceManager()
                         .RunVdsCommand(
                                 VDSCommandType.DisconnectStoragePool,
                                 new DisconnectStoragePoolVDSCommandParameters(spm.getId(),
                                         getStoragePool().getId(), spm.getvds_spm_id()));
             }
 
-            StorageHelperDirector.getInstance().getItem(getStorageDomain().getstorage_type())
-                    .DisconnectStorageFromDomainByVdsId(getStorageDomain(), spm.getId());
+            getStorageHelper(getStorageDomain()).DisconnectStorageFromDomainByVdsId(getStorageDomain(), spm.getId());
 
-            TransactionSupport.executeInNewTransaction(new TransactionMethod<Object>() {
-
+            executeInNewTransaction(new TransactionMethod<Object>() {
                 @Override
                 public Object runInTransaction() {
                     getCompensationContext().snapshotEntityStatus(map, map.getstatus());
                     map.setstatus(StorageDomainStatus.Maintenance);
-                    DbFacade.getInstance().getStoragePoolIsoMapDAO().updateStatus(map.getId(), map.getstatus());
+                    getStoragePoolIsoMapDAO().updateStatus(map.getId(), map.getstatus());
                     if (!Guid.Empty.equals(_newMasterStorageDomainId)) {
                         storage_pool_iso_map mapOfNewMaster = getNewMaster().getStoragePoolIsoMapData();
                         getCompensationContext().snapshotEntityStatus(mapOfNewMaster, mapOfNewMaster.getstatus());
                         mapOfNewMaster.setstatus(StorageDomainStatus.Active);
-                        DbFacade.getInstance()
-                                .getStoragePoolIsoMapDAO()
-                                .updateStatus(mapOfNewMaster.getId(), mapOfNewMaster.getstatus());
+                        getStoragePoolIsoMapDAO().updateStatus(mapOfNewMaster.getId(), mapOfNewMaster.getstatus());
                     }
                     getCompensationContext().stateChanged();
                     return null;
@@ -247,7 +235,7 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
         }
     }
 
-    /*
+    /**
      * In case of master domain this method decide if to move master to other domain or move pool to maintenance (since
      * there is no master domain)
      *
@@ -258,7 +246,7 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
         if (getStorageDomain().getstorage_domain_type() == StorageDomainType.Master) {
             if (getNewMaster() != null) {
                 // increase master domain version
-                TransactionSupport.executeInNewTransaction(new TransactionMethod<Object>() {
+                executeInNewTransaction(new TransactionMethod<Object>() {
 
                     @Override
                     public Object runInTransaction() {
@@ -271,9 +259,7 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
                         if (!duringReconstruct) {
                             getCompensationContext().snapshotEntityStatus(newMasterMap, newMasterMap.getstatus());
                             getNewMaster().setstatus(StorageDomainStatus.Locked);
-                            DbFacade.getInstance()
-                                    .getStoragePoolIsoMapDAO()
-                                    .updateStatus(newMasterMap.getId(), newMasterMap.getstatus());
+                            getStoragePoolIsoMapDAO().updateStatus(newMasterMap.getId(), newMasterMap.getstatus());
                         }
                         DbFacade.getInstance()
                                 .getStorageDomainStaticDAO()
@@ -302,5 +288,5 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
                         : AuditLogType.USER_DEACTIVATE_STORAGE_DOMAIN_FAILED;
     }
 
-    private static Log log = LogFactory.getLog(DeactivateStorageDomainCommand.class);
+    private static final Log log = LogFactory.getLog(DeactivateStorageDomainCommand.class);
 }

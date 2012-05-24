@@ -6,7 +6,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.common.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -31,6 +30,11 @@ import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.DiskImageDAO;
+import org.ovirt.engine.core.dao.ImageStorageDomainMapDao;
+import org.ovirt.engine.core.dao.StorageDomainStaticDAO;
+import org.ovirt.engine.core.dao.StoragePoolIsoMapDAO;
+import org.ovirt.engine.core.dao.StorageServerConnectionDAO;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
@@ -82,9 +86,8 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
                 && isMaster()) {
 
             storage_domains storage_domains =
-                    LinqUtils.firstOrNull(DbFacade.getInstance()
-                            .getStorageDomainDAO()
-                            .getAllForStoragePool(getStorageDomain().getstorage_pool_id().getValue()),
+                    LinqUtils.firstOrNull(getStorageDomainDAO().getAllForStoragePool
+                            (getStorageDomain().getstorage_pool_id().getValue()),
                             new Predicate<storage_domains>() {
                                 @Override
                                 public boolean eval(storage_domains a) {
@@ -112,17 +115,14 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
     }
 
     private boolean hasImages() {
-        return DbFacade.getInstance()
-                .getDiskImageDAO()
+        return getDiskImageDAO()
                 .getAllSnapshotsForStorageDomain(getStorageDomain().getId())
                 .size() != 0
-                || DbFacade.getInstance()
-                        .getImageStorageDomainMapDao().getAllByStorageDomainId(getStorageDomain().getId()).size() != 0;
+                || getImageStorageDomainMapDao().getAllByStorageDomainId(getStorageDomain().getId()).size() != 0;
     }
 
     private storage_pool_iso_map getStoragePoolIsoMap() {
-        return DbFacade.getInstance()
-                .getStoragePoolIsoMapDAO()
+        return getStoragePoolIsoMapDAO()
                 .get(new StoragePoolIsoMapId(getStorageDomain().getId(),
                         getStoragePoolId()));
     }
@@ -162,17 +162,15 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
     }
 
     protected boolean checkStorageDomainInDb() {
-        boolean returnValue;
-        returnValue = DbFacade.getInstance().getStorageDomainStaticDAO().get(getStorageDomain().getId()) != null;
-        return returnValue;
+        return getStorageDomainStaticDAO().get(getStorageDomain().getId()) != null;
     }
 
     protected boolean checkStorageDomainStatus(final StorageDomainStatus... statuses) {
         boolean valid = false;
-        if(getStorageDomainStatus() != null) {
+        if (getStorageDomainStatus() != null) {
             valid = Arrays.asList(statuses).contains(getStorageDomainStatus());
         }
-        if(!valid) {
+        if (!valid) {
             addStorageDomainStatusIllegalMessage();
         }
         return valid;
@@ -196,7 +194,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
 
     protected boolean CheckStorageConnection(String storageDomainConnection) {
         boolean returnValue = true;
-        if (DbFacade.getInstance().getStorageServerConnectionDAO().get(storageDomainConnection) == null) {
+        if (getStorageServerConnectionDAO().get(storageDomainConnection) == null) {
             returnValue = false;
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_NOT_EXIST);
         }
@@ -205,8 +203,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
 
     protected boolean CheckMasterDomainIsUp() {
         boolean returnValue = true;
-        List<storage_domains> storageDomains = DbFacade.getInstance().getStorageDomainDAO().getAllForStoragePool(
-                getStoragePool().getId());
+        List<storage_domains> storageDomains = getStorageDomainDAO().getAllForStoragePool(getStoragePool().getId());
         storageDomains = LinqUtils.filter(storageDomains, new Predicate<storage_domains>() {
             @Override
             public boolean eval(storage_domains a) {
@@ -225,9 +222,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
         if (getStorageDomain() != null && getStorageDomain().getstorage_pool_id() != null) {
             storage_pool_iso_map map = getStorageDomain().getStoragePoolIsoMapData();
             getStorageDomain().setstatus(status);
-            DbFacade.getInstance()
-                    .getStoragePoolIsoMapDAO()
-                    .updateStatus(map.getId(), map.getstatus());
+            getStoragePoolIsoMapDAO().updateStatus(map.getId(), map.getstatus());
         }
     }
 
@@ -240,7 +235,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
             tempVar.setSaveToDb(true);
             tempVar.setStorageDomainId(getStorageDomain().getId());
             tempVar.setTransactionScopeOption(TransactionScopeOption.RequiresNew);
-            Backend.getInstance().runInternalAction(VdcActionType.SetNonOperationalVds, tempVar);
+            getBackend().runInternalAction(VdcActionType.SetNonOperationalVds, tempVar);
         }
     }
 
@@ -250,7 +245,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
         }
         for (storage_server_connections connection : lun.getLunConnections()) {
             List<storage_server_connections> connections = DbFacade.getInstance()
-                            .getStorageServerConnectionDAO().getAllForConnection(connection);
+                    .getStorageServerConnectionDAO().getAllForConnection(connection);
             if (connections.isEmpty()) {
                 connection.setid(Guid.NewGuid().toString());
                 connection.setstorage_type(storageType);
@@ -260,11 +255,11 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
                 connection.setid(connections.get(0).getid());
             }
             if (DbFacade.getInstance()
-                            .getStorageServerConnectionLunMapDAO()
-                            .get(new LUN_storage_server_connection_map_id(lun.getLUN_id(),
-                                    connection.getid())) == null) {
+                    .getStorageServerConnectionLunMapDAO()
+                    .get(new LUN_storage_server_connection_map_id(lun.getLUN_id(),
+                            connection.getid())) == null) {
                 DbFacade.getInstance().getStorageServerConnectionLunMapDAO().save(
-                                new LUN_storage_server_connection_map(lun.getLUN_id(), connection.getid()));
+                        new LUN_storage_server_connection_map(lun.getLUN_id(), connection.getid()));
             }
         }
     }
@@ -286,8 +281,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
     protected storage_domains electNewMaster() {
         storage_domains newMaster = null;
         if (getStoragePool() != null) {
-            List<storage_domains> storageDomains = DbFacade.getInstance()
-                    .getStorageDomainDAO().getAllForStoragePool(getStoragePool().getId());
+            List<storage_domains> storageDomains = getStorageDomainDAO().getAllForStoragePool(getStoragePool().getId());
             if (storageDomains.size() > 0) {
                 storage_domains storageDomain = getStorageDomain();
                 for (storage_domains dbStorageDomain : storageDomains) {
@@ -310,19 +304,20 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
 
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
-        return Collections.singletonList(new PermissionSubject(getParameters().getStorageDomainId(), VdcObjectType.Storage,
+        return Collections.singletonList(new PermissionSubject(getParameters().getStorageDomainId(),
+                VdcObjectType.Storage,
                 getActionType().getActionGroup()));
     }
 
     protected void changeStorageDomainStatusInTransaction(final storage_pool_iso_map map,
             final StorageDomainStatus status) {
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<storage_pool_iso_map>() {
+        executeInNewTransaction(new TransactionMethod<storage_pool_iso_map>() {
             @Override
             public storage_pool_iso_map runInTransaction() {
                 CompensationContext context = getCompensationContext();
                 context.snapshotEntityStatus(map, map.getstatus());
                 map.setstatus(status);
-                DbFacade.getInstance().getStoragePoolIsoMapDAO().updateStatus(map.getId(), map.getstatus());
+                getStoragePoolIsoMapDAO().updateStatus(map.getId(), map.getstatus());
                 getCompensationContext().stateChanged();
                 return null;
             }
@@ -339,5 +334,33 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
 
     private void addStorageDomainStatusIllegalMessage() {
         addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL);
+    }
+
+    protected StoragePoolIsoMapDAO getStoragePoolIsoMapDAO() {
+        return getDbFacade().getStoragePoolIsoMapDAO();
+    }
+
+    protected DiskImageDAO getDiskImageDAO() {
+        return getDbFacade().getDiskImageDAO();
+    }
+
+    protected ImageStorageDomainMapDao getImageStorageDomainMapDao() {
+        return getDbFacade().getImageStorageDomainMapDao();
+    }
+
+    protected StorageDomainStaticDAO getStorageDomainStaticDAO() {
+        return getDbFacade().getStorageDomainStaticDAO();
+    }
+
+    protected StorageServerConnectionDAO getStorageServerConnectionDAO() {
+        return getDbFacade().getStorageServerConnectionDAO();
+    }
+
+    protected IStorageHelper getStorageHelper(storage_domains storageDomain) {
+        return StorageHelperDirector.getInstance().getItem(storageDomain.getstorage_type());
+    }
+
+    protected void executeInNewTransaction(TransactionMethod<?> method) {
+        TransactionSupport.executeInNewTransaction(method);
     }
 }
