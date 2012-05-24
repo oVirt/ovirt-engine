@@ -27,21 +27,37 @@ public class XmlTextWriter {
         }
     }
 
+    public void SetPrefix(String prefix, String uri) {
+        try {
+            writer.setPrefix(prefix, uri);
+        } catch (XMLStreamException e) {
+            throw new RuntimeException("Failed to set prefix", e);
+        }
+    }
+
+    public void WriteNamespace(String prefix, String uri) {
+        try {
+            writer.writeNamespace(prefix, uri);
+        } catch (XMLStreamException e) {
+            throw new RuntimeException("Failed to write namespace", e);
+        }
+    }
+
     public void WriteStartDocument(boolean b) {
         // nothing, see ctor
     }
 
-    public void WriteStartElement(String prefix, String localName, String namespaceURI) {
+    public void WriteStartElement(String namespaceURI, String localName) {
         try {
-            writer.writeStartElement(prefix, localName, namespaceURI);
+            writer.writeStartElement(namespaceURI, localName);
         } catch (XMLStreamException e) {
             throw new RuntimeException("Failed to write start element", e);
         }
     }
 
-    public void WriteAttributeString(String prefix, String localName, String namespaceURI, String value) {
+    public void WriteAttributeString(String namespaceURI, String localName, String value) {
         try {
-            writer.writeAttribute(prefix, namespaceURI, localName, value);
+            writer.writeAttribute(namespaceURI, localName, value);
         } catch (XMLStreamException e) {
             throw new RuntimeException("Failed to write attribute", e);
         }
@@ -118,8 +134,8 @@ public class XmlTextWriter {
         }
     }
 
-    public void WriteAttributeString(String prefix, String localName, String namespaceURI, int value) {
-        WriteAttributeString(prefix, namespaceURI, localName, Integer.toString(value));
+    public void WriteAttributeString(String namespaceURI, String localName, int value) {
+        WriteAttributeString(namespaceURI, localName, Integer.toString(value));
     }
 
 }

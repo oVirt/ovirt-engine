@@ -44,13 +44,20 @@ public abstract class OvfWriter implements IOvfBuilder {
         _writer.Formatting = Formatting.Indented;
         _writer.Indentation = 4;
         _writer.WriteStartDocument(false);
-        _writer.WriteStartElement("ovf", "Envelope", OVF_URI);
-        _writer.WriteAttributeString("xmlns", "ovf", null, OVF_URI);
-        _writer.WriteAttributeString("xmlns", "rasd", null, RASD_URI);
-        _writer.WriteAttributeString("xmlns", "vssd", null, VSSD_URI);
-        _writer.WriteAttributeString("xmlns", "xsi", null, XSI_URI);
+
+        _writer.SetPrefix(OVF_PREFIX, OVF_URI);
+        _writer.SetPrefix(RASD_PREFIX, RASD_URI);
+        _writer.SetPrefix(VSSD_PREFIX, VSSD_URI);
+        _writer.SetPrefix(XSI_PREFIX, XSI_URI);
+
+        _writer.WriteStartElement(OVF_URI, "Envelope");
+        _writer.WriteNamespace(OVF_PREFIX, OVF_URI);
+        _writer.WriteNamespace(RASD_PREFIX, RASD_URI);
+        _writer.WriteNamespace(VSSD_PREFIX, VSSD_URI);
+        _writer.WriteNamespace(XSI_PREFIX, XSI_URI);
+
         // Setting the OVF version according to ENGINE (in 2.2 , version was set to "0.9")
-        _writer.WriteAttributeString("ovf", "version", null, Config.<String> GetValue(ConfigValues.VdcVersion));
+        _writer.WriteAttributeString(OVF_URI, "version", Config.<String> GetValue(ConfigValues.VdcVersion));
     }
 
     private void CloseElements() {
@@ -66,16 +73,16 @@ public abstract class OvfWriter implements IOvfBuilder {
         _writer.WriteStartElement("References");
         for (DiskImage image : _images) {
             _writer.WriteStartElement("File");
-            _writer.WriteAttributeString("ovf", "href", null, OvfParser.CreateImageFile(image));
-            _writer.WriteAttributeString("ovf", "id", null, image.getImageId().toString());
-            _writer.WriteAttributeString("ovf", "size", null, (new Long(image.getsize())).toString());
-            _writer.WriteAttributeString("ovf", "description", null, StringUtils.defaultString(image.getdescription()));
+            _writer.WriteAttributeString(OVF_URI, "href", OvfParser.CreateImageFile(image));
+            _writer.WriteAttributeString(OVF_URI, "id", image.getImageId().toString());
+            _writer.WriteAttributeString(OVF_URI, "size", String.valueOf(image.getsize()));
+            _writer.WriteAttributeString(OVF_URI, "description", StringUtils.defaultString(image.getdescription()));
             _writer.WriteEndElement();
 
         }
         for (VmNetworkInterface iface : vmBase.getInterfaces()) {
             _writer.WriteStartElement("Nic");
-            _writer.WriteAttributeString("ovf", "id", null, iface.getId().toString());
+            _writer.WriteAttributeString(OVF_URI, "id", iface.getId().toString());
             _writer.WriteEndElement();
         }
         _writer.WriteEndElement();
@@ -84,12 +91,12 @@ public abstract class OvfWriter implements IOvfBuilder {
     @Override
     public void BuildNetwork() {
         _writer.WriteStartElement("Section");
-        _writer.WriteAttributeString("xsi", "type", null, "ovf:NetworkSection_Type");
+        _writer.WriteAttributeString(XSI_URI, "type", OVF_PREFIX + ":NetworkSection_Type");
         _writer.WriteStartElement("Info");
         _writer.WriteRaw("List of networks");
         _writer.WriteEndElement();
         _writer.WriteStartElement("Network");
-        _writer.WriteAttributeString("ovf", "name", null, "Network 1");
+        _writer.WriteAttributeString(OVF_URI, "name", "Network 1");
         _writer.WriteEndElement();
         _writer.WriteEndElement();
     }
@@ -97,21 +104,20 @@ public abstract class OvfWriter implements IOvfBuilder {
     @Override
     public void BuildDisk() {
         _writer.WriteStartElement("Section");
-        _writer.WriteAttributeString("xsi", "type", null, "ovf:DiskSection_Type");
+        _writer.WriteAttributeString(XSI_URI, "type", OVF_PREFIX + ":DiskSection_Type");
         _writer.WriteStartElement("Info");
         _writer.WriteRaw("List of Virtual Disks");
         _writer.WriteEndElement();
         for (DiskImage image : _images) {
             _writer.WriteStartElement("Disk");
-            _writer.WriteAttributeString("ovf", "diskId", null, image.getImageId().toString());
-            _writer.WriteAttributeString("ovf", "size", null, (new Long(BytesToGigabyte(image.getsize()))).toString());
-            _writer.WriteAttributeString("ovf", "actual_size", null,
-                    (new Long(BytesToGigabyte(image.getactual_size()))).toString());
-            _writer.WriteAttributeString("ovf", "vm_snapshot_id", null, (image.getvm_snapshot_id() != null) ? image
+            _writer.WriteAttributeString(OVF_URI, "diskId", image.getImageId().toString());
+            _writer.WriteAttributeString(OVF_URI, "size", String.valueOf(BytesToGigabyte(image.getsize())));
+            _writer.WriteAttributeString(OVF_URI, "actual_size", String.valueOf(BytesToGigabyte(image.getactual_size())));
+            _writer.WriteAttributeString(OVF_URI, "vm_snapshot_id", (image.getvm_snapshot_id() != null) ? image
                     .getvm_snapshot_id().getValue().toString() : "");
 
             if (image.getParentId().equals(Guid.Empty)) {
-                _writer.WriteAttributeString("ovf", "parentRef", null, "");
+                _writer.WriteAttributeString(OVF_URI, "parentRef", "");
             } else {
                 int i = 0;
                 while (_images.get(i).getImageId().equals(image.getParentId()))
@@ -119,13 +125,13 @@ public abstract class OvfWriter implements IOvfBuilder {
                 List<DiskImage> res = _images.subList(i, _images.size() - 1);
 
                 if (res.size() > 0) {
-                    _writer.WriteAttributeString("ovf", "parentRef", null, OvfParser.CreateImageFile(res.get(0)));
+                    _writer.WriteAttributeString(OVF_URI, "parentRef", OvfParser.CreateImageFile(res.get(0)));
                 } else {
-                    _writer.WriteAttributeString("ovf", "parentRef", null, "");
+                    _writer.WriteAttributeString(OVF_URI, "parentRef", "");
                 }
             }
 
-            _writer.WriteAttributeString("ovf", "fileRef", null, OvfParser.CreateImageFile(image));
+            _writer.WriteAttributeString(OVF_URI, "fileRef", OvfParser.CreateImageFile(image));
 
             String format = "";
             switch (image.getvolume_format()) {
@@ -140,18 +146,18 @@ public abstract class OvfWriter implements IOvfBuilder {
             case Unassigned:
                 break;
             }
-            _writer.WriteAttributeString("ovf", "format", null, format);
-            _writer.WriteAttributeString("ovf", "volume-format", null, image.getvolume_format().toString());
-            _writer.WriteAttributeString("ovf", "volume-type", null, image.getvolume_type().toString());
-            _writer.WriteAttributeString("ovf", "disk-interface", null, image.getDiskInterface().toString());
-            _writer.WriteAttributeString("ovf", "boot", null, (new Boolean(image.isBoot())).toString());
+            _writer.WriteAttributeString(OVF_URI, "format", format);
+            _writer.WriteAttributeString(OVF_URI, "volume-format", image.getvolume_format().toString());
+            _writer.WriteAttributeString(OVF_URI, "volume-type", image.getvolume_type().toString());
+            _writer.WriteAttributeString(OVF_URI, "disk-interface", image.getDiskInterface().toString());
+            _writer.WriteAttributeString(OVF_URI, "boot", String.valueOf(image.isBoot()));
             if (image.getDiskAlias() != null) {
-                _writer.WriteAttributeString("ovf", "disk-alias", null, image.getDiskAlias());
+                _writer.WriteAttributeString(OVF_URI, "disk-alias", image.getDiskAlias());
             }
             if (image.getDiskDescription() != null) {
-                _writer.WriteAttributeString("ovf", "disk-description", null, image.getDiskDescription());
+                _writer.WriteAttributeString(OVF_URI, "disk-description", image.getDiskDescription());
             }
-            _writer.WriteAttributeString("ovf", "wipe-after-delete", null,
+            _writer.WriteAttributeString(OVF_URI, "wipe-after-delete",
                     (new Boolean(image.isWipeAfterDelete())).toString());
             _writer.WriteEndElement();
         }
@@ -162,8 +168,8 @@ public abstract class OvfWriter implements IOvfBuilder {
     public void BuildVirtualSystem() {
         // General Vm
         _writer.WriteStartElement("Content");
-        _writer.WriteAttributeString("ovf", "id", null, "out");
-        _writer.WriteAttributeString("xsi", "type", null, "ovf:VirtualSystem_Type");
+        _writer.WriteAttributeString(OVF_URI, "id", "out");
+        _writer.WriteAttributeString(XSI_URI, "type", OVF_PREFIX + ":VirtualSystem_Type");
 
         // General Data
         WriteGeneralData();
@@ -208,11 +214,11 @@ public abstract class OvfWriter implements IOvfBuilder {
 
         for (VmDevice vmDevice : devices) {
             _writer.WriteStartElement("Item");
-            _writer.WriteStartElement("rasd:ResourceType");
+            _writer.WriteStartElement(RASD_URI, "ResourceType");
             _writer.WriteRaw(OvfHardware.OTHER);
             _writer.WriteEndElement();
-            _writer.WriteStartElement("rasd:InstanceId");
-            _writer.WriteRaw((String.valueOf(vmDevice.getId().getDeviceId())));
+            _writer.WriteStartElement(RASD_URI, "InstanceId");
+            _writer.WriteRaw(vmDevice.getId().getDeviceId().toString());
             _writer.WriteEndElement();
             writeVmDeviceInfo(vmDevice);
             _writer.WriteEndElement(); // item
@@ -226,16 +232,16 @@ public abstract class OvfWriter implements IOvfBuilder {
         for (VmDevice vmDevice : devices) {
             if (vmDevice.getType().equals(VmDeviceType.VIDEO.getName())) {
                 _writer.WriteStartElement("Item");
-                _writer.WriteStartElement("rasd:Caption");
+                _writer.WriteStartElement(RASD_URI, "Caption");
                 _writer.WriteRaw("Graphical Controller");
                 _writer.WriteEndElement();
-                _writer.WriteStartElement("rasd:InstanceId");
-                _writer.WriteRaw((String.valueOf(vmDevice.getId().getDeviceId())));
+                _writer.WriteStartElement(RASD_URI, "InstanceId");
+                _writer.WriteRaw(vmDevice.getId().getDeviceId().toString());
                 _writer.WriteEndElement();
-                _writer.WriteStartElement("rasd:ResourceType");
+                _writer.WriteStartElement(RASD_URI, "ResourceType");
                 _writer.WriteRaw(OvfHardware.Monitor);
                 _writer.WriteEndElement();
-                _writer.WriteStartElement("rasd:VirtualQuantity");
+                _writer.WriteStartElement(RASD_URI, "VirtualQuantity");
                 // we should write number of monitors for each entry for backward compatibility
                 _writer.WriteRaw(String.valueOf(numOfMonitors));
                 _writer.WriteEndElement();
@@ -253,13 +259,13 @@ public abstract class OvfWriter implements IOvfBuilder {
         for (VmDevice vmDevice : devices) {
             if (vmDevice.getType().equals(VmDeviceType.CDROM.getName())) {
                 _writer.WriteStartElement("Item");
-                _writer.WriteStartElement("rasd:Caption");
+                _writer.WriteStartElement(RASD_URI, "Caption");
                 _writer.WriteRaw("CDROM");
                 _writer.WriteEndElement();
-                _writer.WriteStartElement("rasd:InstanceId");
-                _writer.WriteRaw((String.valueOf(vmDevice.getId().getDeviceId())));
+                _writer.WriteStartElement(RASD_URI, "InstanceId");
+                _writer.WriteRaw(vmDevice.getId().getDeviceId().toString());
                 _writer.WriteEndElement();
-                _writer.WriteStartElement("rasd:ResourceType");
+                _writer.WriteStartElement(RASD_URI, "ResourceType");
                 _writer.WriteRaw(OvfHardware.CD);
                 _writer.WriteEndElement();
                 writeVmDeviceInfo(vmDevice);

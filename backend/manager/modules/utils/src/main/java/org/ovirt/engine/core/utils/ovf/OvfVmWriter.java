@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.utils.ovf;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -48,25 +49,25 @@ public class OvfVmWriter extends OvfWriter {
         _writer.WriteRaw(OvfParser.LocalDateToUtcDateString(vmBase.getcreation_date()));
         _writer.WriteEndElement();
         _writer.WriteStartElement("ExportDate");
-        _writer.WriteRaw(OvfParser.LocalDateToUtcDateString(new java.util.Date()));
+        _writer.WriteRaw(OvfParser.LocalDateToUtcDateString(new Date()));
         _writer.WriteEndElement();
         _writer.WriteStartElement("IsInitilized");
-        _writer.WriteRaw((new Boolean(_vm.getStaticData().getis_initialized())).toString());
+        _writer.WriteRaw(String.valueOf(_vm.getStaticData().getis_initialized()));
         _writer.WriteEndElement();
         _writer.WriteStartElement("IsAutoSuspend");
-        _writer.WriteRaw((new Boolean(vmBase.getis_auto_suspend())).toString());
+        _writer.WriteRaw(String.valueOf(vmBase.getis_auto_suspend()));
         _writer.WriteEndElement();
         _writer.WriteStartElement("TimeZone");
         _writer.WriteRaw(vmBase.gettime_zone());
         _writer.WriteEndElement();
         _writer.WriteStartElement("IsStateless");
-        _writer.WriteRaw((new Boolean(vmBase.getis_stateless())).toString());
+        _writer.WriteRaw(String.valueOf(vmBase.getis_stateless()));
         _writer.WriteEndElement();
         _writer.WriteStartElement("Origin");
-        _writer.WriteRaw((new Integer(_vm.getorigin().getValue())).toString());
+        _writer.WriteRaw(String.valueOf(_vm.getorigin().getValue()));
         _writer.WriteEndElement();
         _writer.WriteStartElement("default_boot_sequence");
-        _writer.WriteRaw((new Integer(_vm.getdefault_boot_sequence().getValue())).toString());
+        _writer.WriteRaw(String.valueOf(_vm.getdefault_boot_sequence().getValue()));
         _writer.WriteEndElement();
 
         if (!StringHelper.isNullOrEmpty(_vm.getinitrd_url())) {
@@ -90,14 +91,14 @@ public class OvfVmWriter extends OvfWriter {
             _writer.WriteEndElement();
         }
         _writer.WriteStartElement("VmType");
-        _writer.WriteRaw((new Integer(_vm.getvm_type().getValue())).toString());
+        _writer.WriteRaw(String.valueOf(_vm.getvm_type().getValue()));
         _writer.WriteEndElement();
         _writer.WriteStartElement("DefaultDisplayType");
-        _writer.WriteRaw((new Integer(_vm.getdefault_display_type().getValue())).toString());
+        _writer.WriteRaw(String.valueOf(_vm.getdefault_display_type().getValue()));
         _writer.WriteEndElement();
 
         _writer.WriteStartElement("MinAllocatedMem");
-        _writer.WriteRaw((new Integer(_vm.getMinAllocatedMem())).toString());
+        _writer.WriteRaw(String.valueOf(_vm.getMinAllocatedMem()));
         _writer.WriteEndElement();
 
         OvfLogEventHandler<VmStatic> handler = new VMStaticOvfLogHandler(_vm.getStaticData());
@@ -142,7 +143,7 @@ public class OvfVmWriter extends OvfWriter {
                 }
 
                 _writer.WriteStartElement("ProductSection");
-                _writer.WriteAttributeString("ovf", "class", null, product);
+                _writer.WriteAttributeString(OVF_URI, "class", product);
                 _writer.WriteStartElement("Info");
                 _writer.WriteRaw(app);
                 _writer.WriteEndElement();
@@ -161,9 +162,9 @@ public class OvfVmWriter extends OvfWriter {
     protected void WriteContentItems() {
         // os
         _writer.WriteStartElement("Section");
-        _writer.WriteAttributeString("ovf", "id", null, vmBase.getId().toString());
-        _writer.WriteAttributeString("ovf", "required", null, "false");
-        _writer.WriteAttributeString("xsi", "type", null, "ovf:OperatingSystemSection_Type");
+        _writer.WriteAttributeString(OVF_URI, "id", vmBase.getId().toString());
+        _writer.WriteAttributeString(OVF_URI, "required", "false");
+        _writer.WriteAttributeString(XSI_URI, "type", "ovf:OperatingSystemSection_Type");
         _writer.WriteStartElement("Info");
         _writer.WriteRaw("Guest Operating System");
         _writer.WriteEndElement();
@@ -174,14 +175,14 @@ public class OvfVmWriter extends OvfWriter {
 
         // hardware
         _writer.WriteStartElement("Section");
-        _writer.WriteAttributeString("xsi", "type", null, "ovf:VirtualHardwareSection_Type");
+        _writer.WriteAttributeString(XSI_URI, "type", "ovf:VirtualHardwareSection_Type");
         _writer.WriteStartElement("Info");
         _writer.WriteRaw(String.format("%1$s CPU, %2$s Memeory", _vm.getStaticData().getnum_of_cpus(), _vm
                 .getStaticData().getmem_size_mb()));
         _writer.WriteEndElement();
 
         _writer.WriteStartElement("System");
-        _writer.WriteStartElement("vssd:VirtualSystemType");
+        _writer.WriteStartElement(VSSD_URI, "VirtualSystemType");
         _writer.WriteRaw(String.format("%1$s %2$s", Config.<String> GetValue(ConfigValues.OvfVirtualSystemType),
                 Config.<String> GetValue(ConfigValues.VdcVersion)));
         _writer.WriteEndElement();
@@ -189,127 +190,127 @@ public class OvfVmWriter extends OvfWriter {
 
         // item cpu
         _writer.WriteStartElement("Item");
-        _writer.WriteStartElement("rasd:Caption");
+        _writer.WriteStartElement(RASD_URI, "Caption");
         _writer.WriteRaw(String.format("%1$s virtual cpu", _vm.getStaticData().getnum_of_cpus()));
         _writer.WriteEndElement();
-        _writer.WriteStartElement("rasd:Description");
+        _writer.WriteStartElement(RASD_URI, "Description");
         _writer.WriteRaw("Number of virtual CPU");
         _writer.WriteEndElement();
-        _writer.WriteStartElement("rasd:InstanceId");
-        _writer.WriteRaw(((Integer) (++_instanceId)).toString());
+        _writer.WriteStartElement(RASD_URI, "InstanceId");
+        _writer.WriteRaw(String.valueOf(++_instanceId));
         _writer.WriteEndElement();
-        _writer.WriteStartElement("rasd:ResourceType");
+        _writer.WriteStartElement(RASD_URI, "ResourceType");
         _writer.WriteRaw(OvfHardware.CPU);
         _writer.WriteEndElement();
-        _writer.WriteStartElement("rasd:num_of_sockets");
-        _writer.WriteRaw((new Integer(vmBase.getnum_of_sockets())).toString());
+        _writer.WriteStartElement(RASD_URI, "num_of_sockets");
+        _writer.WriteRaw(String.valueOf(vmBase.getnum_of_sockets()));
         _writer.WriteEndElement();
-        _writer.WriteStartElement("rasd:cpu_per_socket");
-        _writer.WriteRaw((new Integer(vmBase.getcpu_per_socket())).toString());
+        _writer.WriteStartElement(RASD_URI, "cpu_per_socket");
+        _writer.WriteRaw(String.valueOf(vmBase.getcpu_per_socket()));
         _writer.WriteEndElement();
         _writer.WriteEndElement(); // item
 
         // item memory
         _writer.WriteStartElement("Item");
-        _writer.WriteStartElement("rasd:Caption");
+        _writer.WriteStartElement(RASD_URI, "Caption");
         _writer.WriteRaw(String.format("%1$s MB of memory", vmBase.getmem_size_mb()));
         _writer.WriteEndElement();
-        _writer.WriteStartElement("rasd:Description");
+        _writer.WriteStartElement(RASD_URI, "Description");
         _writer.WriteRaw("Memory Size");
         _writer.WriteEndElement();
-        _writer.WriteStartElement("rasd:InstanceId");
-        _writer.WriteRaw(((Integer) (++_instanceId)).toString());
+        _writer.WriteStartElement(RASD_URI, "InstanceId");
+        _writer.WriteRaw(String.valueOf(++_instanceId));
         _writer.WriteEndElement();
-        _writer.WriteStartElement("rasd:ResourceType");
+        _writer.WriteStartElement(RASD_URI, "ResourceType");
         _writer.WriteRaw(OvfHardware.Memory);
         _writer.WriteEndElement();
-        _writer.WriteStartElement("rasd:AllocationUnits");
+        _writer.WriteStartElement(RASD_URI, "AllocationUnits");
         _writer.WriteRaw("MegaBytes");
         _writer.WriteEndElement();
-        _writer.WriteStartElement("rasd:VirtualQuantity");
-        _writer.WriteRaw((new Integer(vmBase.getmem_size_mb())).toString());
+        _writer.WriteStartElement(RASD_URI, "VirtualQuantity");
+        _writer.WriteRaw(String.valueOf(vmBase.getmem_size_mb()));
         _writer.WriteEndElement();
         _writer.WriteEndElement(); // item
 
         // item drive
         for (DiskImage image : _images) {
             _writer.WriteStartElement("Item");
-            _writer.WriteStartElement("rasd:Caption");
-            _writer.WriteRaw(String.format("Drive %1$s", image.getinternal_drive_mapping()));
+            _writer.WriteStartElement(RASD_URI, "Caption");
+            _writer.WriteRaw(String.format("Drive %1$d", image.getInternalDriveMapping()));
             _writer.WriteEndElement();
-            _writer.WriteStartElement("rasd:InstanceId");
+            _writer.WriteStartElement(RASD_URI, "InstanceId");
             _writer.WriteRaw(image.getImageId().toString());
             _writer.WriteEndElement();
-            _writer.WriteStartElement("rasd:ResourceType");
+            _writer.WriteStartElement(RASD_URI, "ResourceType");
             _writer.WriteRaw(OvfHardware.DiskImage);
             _writer.WriteEndElement();
-            _writer.WriteStartElement("rasd:HostResource");
+            _writer.WriteStartElement(RASD_URI, "HostResource");
             _writer.WriteRaw(OvfParser.CreateImageFile(image));
             _writer.WriteEndElement();
-            _writer.WriteStartElement("rasd:Parent");
+            _writer.WriteStartElement(RASD_URI, "Parent");
             _writer.WriteRaw(image.getParentId().toString());
             _writer.WriteEndElement();
-            _writer.WriteStartElement("rasd:Template");
+            _writer.WriteStartElement(RASD_URI, "Template");
             _writer.WriteRaw(image.getit_guid().toString());
             _writer.WriteEndElement();
-            _writer.WriteStartElement("rasd:ApplicationList");
+            _writer.WriteStartElement(RASD_URI, "ApplicationList");
             _writer.WriteRaw(image.getappList());
             _writer.WriteEndElement();
             if (image.getstorage_ids() != null && image.getstorage_ids().size() > 0) {
-                _writer.WriteStartElement("rasd:StorageId");
+                _writer.WriteStartElement(RASD_URI, "StorageId");
                 _writer.WriteRaw(image.getstorage_ids().get(0).toString());
                 _writer.WriteEndElement();
             }
             if (image.getstorage_pool_id() != null) {
-                _writer.WriteStartElement("rasd:StoragePoolId");
+                _writer.WriteStartElement(RASD_URI, "StoragePoolId");
                 _writer.WriteRaw(image.getstorage_pool_id().getValue().toString());
                 _writer.WriteEndElement();
             }
-            _writer.WriteStartElement("rasd:CreationDate");
+            _writer.WriteStartElement(RASD_URI, "CreationDate");
             _writer.WriteRaw(OvfParser.LocalDateToUtcDateString(image.getcreation_date()));
             _writer.WriteEndElement();
-            _writer.WriteStartElement("rasd:LastModified");
+            _writer.WriteStartElement(RASD_URI, "LastModified");
             _writer.WriteRaw(OvfParser.LocalDateToUtcDateString(image.getlastModified()));
             _writer.WriteEndElement();
-            _writer.WriteStartElement("rasd:last_modified_date");
+            _writer.WriteStartElement(RASD_URI, "last_modified_date");
             _writer.WriteRaw(OvfParser.LocalDateToUtcDateString(image.getlast_modified_date()));
             _writer.WriteEndElement();
-            writeManagedDeviceInfo(vmBase, _writer, image.getimage_group_id());
+            writeManagedDeviceInfo(vmBase, _writer, image.getId());
             _writer.WriteEndElement(); // item
         }
 
         // item network
         for (VmNetworkInterface iface : _vm.getInterfaces()) {
             _writer.WriteStartElement("Item");
-            _writer.WriteStartElement("rasd:Caption");
+            _writer.WriteStartElement(RASD_URI, "Caption");
             _writer.WriteRaw("Ethernet adapter on " + iface.getNetworkName());
             _writer.WriteEndElement();
-            _writer.WriteStartElement("rasd:InstanceId");
+            _writer.WriteStartElement(RASD_URI, "InstanceId");
             _writer.WriteRaw(iface.getId().toString());
             _writer.WriteEndElement();
-            _writer.WriteStartElement("rasd:ResourceType");
+            _writer.WriteStartElement(RASD_URI, "ResourceType");
             _writer.WriteRaw(OvfHardware.Network);
             _writer.WriteEndElement();
-            _writer.WriteStartElement("rasd:ResourceSubType");
+            _writer.WriteStartElement(RASD_URI, "ResourceSubType");
             if (iface.getType() != null) {
                 _writer.WriteRaw(iface.getType().toString());
             }
             _writer.WriteEndElement();
-            _writer.WriteStartElement("rasd:Connection");
+            _writer.WriteStartElement(RASD_URI, "Connection");
             _writer.WriteRaw(iface.getNetworkName());
             _writer.WriteEndElement();
-            _writer.WriteStartElement("rasd:Name");
+            _writer.WriteStartElement(RASD_URI, "Name");
             _writer.WriteRaw(iface.getName());
             _writer.WriteEndElement();
-            _writer.WriteStartElement("rasd:MACAddress");
+            _writer.WriteStartElement(RASD_URI, "MACAddress");
             _writer.WriteRaw(iface.getMacAddress());
             _writer.WriteEndElement();
-            _writer.WriteStartElement("rasd:speed");
+            _writer.WriteStartElement(RASD_URI, "speed");
             // version prior to 2.3 may not have speed so we get it by type
             if (iface.getSpeed() != null) {
                 _writer.WriteRaw(iface.getSpeed().toString());
             } else {
-                _writer.WriteRaw(Integer.toString(VmInterfaceType.forValue(
+                _writer.WriteRaw(String.valueOf(VmInterfaceType.forValue(
                         iface.getType()).getSpeed()));
             }
             _writer.WriteEndElement();
@@ -319,16 +320,16 @@ public class OvfVmWriter extends OvfWriter {
 
         // item usb
         _writer.WriteStartElement("Item");
-        _writer.WriteStartElement("rasd:Caption");
+        _writer.WriteStartElement(RASD_URI, "Caption");
         _writer.WriteRaw("USB Controller");
         _writer.WriteEndElement();
-        _writer.WriteStartElement("rasd:InstanceId");
-        _writer.WriteRaw(((Integer) (++_instanceId)).toString());
+        _writer.WriteStartElement(RASD_URI, "InstanceId");
+        _writer.WriteRaw(String.valueOf(++_instanceId));
         _writer.WriteEndElement();
-        _writer.WriteStartElement("rasd:ResourceType");
+        _writer.WriteStartElement(RASD_URI, "ResourceType");
         _writer.WriteRaw(OvfHardware.USB);
         _writer.WriteEndElement();
-        _writer.WriteStartElement("rasd:UsbPolicy");
+        _writer.WriteStartElement(RASD_URI, "UsbPolicy");
         _writer.WriteRaw(vmBase.getusb_policy() != null ? vmBase.getusb_policy().toString() : UsbPolicy.DISABLED.name());
         _writer.WriteEndElement();
         _writer.WriteEndElement(); // item
@@ -357,11 +358,11 @@ public class OvfVmWriter extends OvfWriter {
         }
 
         _writer.WriteStartElement("Section");
-        _writer.WriteAttributeString("xsi", "type", null, "ovf:SnapshotsSection_Type");
+        _writer.WriteAttributeString(XSI_URI, "type", "ovf:SnapshotsSection_Type");
 
         for (Snapshot snapshot : snapshots) {
             _writer.WriteStartElement("Snapshot");
-            _writer.WriteAttributeString("ovf", "id", null, snapshot.getId().toString());
+            _writer.WriteAttributeString(OVF_URI, "id", snapshot.getId().toString());
             _writer.writeElement("Type", snapshot.getType().name());
             _writer.writeElement("Description", snapshot.getDescription());
             _writer.writeElement("CreationDate", OvfParser.LocalDateToUtcDateString(snapshot.getCreationDate()));
