@@ -3,9 +3,9 @@ package org.ovirt.engine.core.bll.storage;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyBoolean;
-import static org.powermock.api.mockito.PowerMockito.doReturn;
-import static org.powermock.api.mockito.PowerMockito.spy;
-import static org.powermock.api.mockito.PowerMockito.when;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -65,14 +65,13 @@ public class StorageDomainCommandBaseTest {
 
     @Test
     public void canDetachMaintenanceDomain() {
-     storageDomainIsMaintenance();
-     storagePoolExists();
-     masterDomainIsUp();
-     isNotLocalData();
-     canDetachDomain();
-     assertTrue(cmd.canDetachDomain(false, false, false));
+        storageDomainIsMaintenance();
+        storagePoolExists();
+        masterDomainIsUp();
+        isNotLocalData();
+        canDetachDomain();
+        assertTrue(cmd.canDetachDomain(false, false, false));
     }
-
 
     private void storagePoolExists() {
         when(cmd.checkStoragePool()).thenReturn(true);
@@ -89,8 +88,6 @@ public class StorageDomainCommandBaseTest {
     private void canDetachDomain() {
         doReturn(true).when(cmd).isDetachAllowed(anyBoolean());
     }
-
-
 
     private boolean commandHasInvalidStatusMessage() {
         return cmd.getReturnValue().getCanDoActionMessages().contains(
@@ -109,7 +106,6 @@ public class StorageDomainCommandBaseTest {
         when(cmd.getStorageDomain()).thenReturn(domain);
     }
 
-
     private void createTestCommand() {
         StorageDomainParametersBase parameters = new StorageDomainParametersBase();
         cmd = spy(new TestStorageCommandBase(parameters));
@@ -120,8 +116,6 @@ public class StorageDomainCommandBaseTest {
         public TestStorageCommandBase(StorageDomainParametersBase parameters) {
             super(parameters);
         }
-
-
 
         @Override
         protected void executeCommand() {
