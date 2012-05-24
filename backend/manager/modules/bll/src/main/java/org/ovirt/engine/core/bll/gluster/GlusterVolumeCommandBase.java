@@ -6,6 +6,8 @@ import java.util.List;
 import org.ovirt.engine.core.common.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeParameters;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickStatus;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
@@ -62,5 +64,11 @@ public abstract class GlusterVolumeCommandBase<T extends GlusterVolumeParameters
                         getParameters().getVolumeId(),
                         VdcObjectType.GlusterVolume,
                         getActionType().getActionGroup()));
+    }
+
+    protected void updateBrickStatus(GlusterBrickStatus status) {
+        for(GlusterBrickEntity brick : getGlusterVolume().getBricks()) {
+            getGlusterBrickDao().updateBrickStatus(brick.getId(), status);
+        }
     }
 }
