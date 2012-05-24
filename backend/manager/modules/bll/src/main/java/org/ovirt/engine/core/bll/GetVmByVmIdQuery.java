@@ -15,10 +15,14 @@ public class GetVmByVmIdQuery<P extends GetVmByVmIdParameters> extends QueriesCo
             // Note that retrieving the VM is already filtered, and if there are no permissions for it, null will be
             // returned.
             // Thus, no additional concern should be given for permissions issues
-            VmHandler.updateDisksFromDb(vm);
-            VmHandler.UpdateVmGuestAgentVersion(vm);
-            VmHandler.updateNetworkInterfacesFromDb(vm);
+            updateVMDetails(vm);
             getQueryReturnValue().setReturnValue(vm);
         }
+    }
+
+    protected void updateVMDetails(VM vm) {
+        VmHandler.updateDisksFromDb(vm);
+        VmHandler.UpdateVmGuestAgentVersion(vm);
+        VmHandler.updateNetworkInterfacesFromDb(vm);
     }
 }
