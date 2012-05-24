@@ -22,10 +22,14 @@ public class GetVmTemplatesByImageGuidQuery<P extends GetVmTemplatesByImageGuidP
 
         for (List<VmTemplate> templates : allTemplates.values()) {
             for (VmTemplate t : templates) {
-                VmTemplateHandler.UpdateDisksFromDb(t);
+                updateDisksFromDb(t);
             }
         }
 
         getQueryReturnValue().setReturnValue(allTemplates);
+    }
+
+    protected void updateDisksFromDb(VmTemplate t) {
+        VmTemplateHandler.UpdateDisksFromDb(t);
     }
 }
