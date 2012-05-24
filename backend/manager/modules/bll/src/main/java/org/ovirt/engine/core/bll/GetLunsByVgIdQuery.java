@@ -7,7 +7,6 @@ import org.ovirt.engine.core.common.businessentities.LUN_storage_server_connecti
 import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage_server_connections;
 import org.ovirt.engine.core.common.queries.GetLunsByVgIdParameters;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 /**
  * A query for retrieving the LUNs composing a storage domain.
@@ -31,10 +30,6 @@ public class GetLunsByVgIdQuery<P extends GetLunsByVgIdParameters> extends Queri
         setReturnValue(luns);
     }
 
-    protected DbFacade getDb() {
-        return DbFacade.getInstance();
-    }
-
     protected void setReturnValue(List<LUNs> luns) {
         getQueryReturnValue().setReturnValue(luns);
     }
@@ -44,15 +39,15 @@ public class GetLunsByVgIdQuery<P extends GetLunsByVgIdParameters> extends Queri
     }
 
     protected List<LUNs> getLunsForVgId(String vgId) {
-        return getDb().getLunDAO().getAllForVolumeGroup(getVgId());
+        return getDbFacade().getLunDAO().getAllForVolumeGroup(getVgId());
     }
 
     protected List<LUN_storage_server_connection_map> getLunsMap(String lunId) {
-        return getDb().getStorageServerConnectionLunMapDAO().getAll(lunId);
+        return getDbFacade().getStorageServerConnectionLunMapDAO().getAll(lunId);
     }
 
     protected storage_server_connections getConnection(String cnxId) {
-        return getDb().getStorageServerConnectionDAO().get(cnxId);
+        return getDbFacade().getStorageServerConnectionDAO().get(cnxId);
     }
 
     protected void addConnection(LUNs lun, storage_server_connections cnx) {

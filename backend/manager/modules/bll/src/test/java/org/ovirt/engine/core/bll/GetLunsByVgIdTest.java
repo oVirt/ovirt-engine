@@ -1,7 +1,11 @@
 package org.ovirt.engine.core.bll;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.powermock.api.mockito.PowerMockito.mock;
+import static org.ovirt.engine.core.bll.CommandAssertUtils.checkSucceeded;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,14 +16,19 @@ import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage_server_connections;
 import org.ovirt.engine.core.common.queries.GetLunsByVgIdParameters;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.LunDAO;
 import org.ovirt.engine.core.dao.StorageServerConnectionDAO;
 import org.ovirt.engine.core.dao.StorageServerConnectionLunMapDAO;
 
-public class GetLunsByVgIdTest extends BaseMockitoTest {
+public class GetLunsByVgIdTest extends AbstractQueryTest<GetLunsByVgIdParameters, GetLunsByVgIdQuery<? extends GetLunsByVgIdParameters>> {
+    private static final Guid[] GUIDS = new Guid[] {
+            new Guid("11111111-1111-1111-1111-111111111111"),
+            new Guid("22222222-2222-2222-2222-222222222222"),
+            new Guid("33333333-3333-3333-3333-333333333333"),
+    };
 
-    private static final String VG_ID = GUIDS[0].toString();
+    private static final String VG_ID = Guid.NewGuid().toString();
 
     private static final String ADDRESS = "foo.bar.com";
     private static final String PORT = "123456";
@@ -27,39 +36,38 @@ public class GetLunsByVgIdTest extends BaseMockitoTest {
 
     @Test
     public void testQuery() {
-        DbFacade db = setUpDB();
+        when(getQueryParameters().getVgId()).thenReturn(VG_ID);
 
-        expectGetLunsForVg(db, VG_ID);
+        expectGetLunsForVg(VG_ID);
 
-        StorageServerConnectionLunMapDAO lunMapDAO = setUpStorageServerConnectionLunMapDAO(db);
-        StorageServerConnectionDAO cnxDAO = setUpStorageServerConnectionDAO(db);
+        StorageServerConnectionLunMapDAO lunMapDAO = setUpStorageServerConnectionLunMapDAO();
+        StorageServerConnectionDAO cnxDAO = setUpStorageServerConnectionDAO();
 
         expectGetLunsMap(lunMapDAO);
         expectGetConnections(cnxDAO);
 
-        GetLunsByVgIdQuery query = new GetLunsByVgIdQuery(getParams());
-        query.setInternalExecution(true);
-        query.ExecuteCommand();
+        getQuery().setInternalExecution(true);
+        getQuery().ExecuteCommand();
 
-        checkSucceeded(query, true);
-        checkReturnValue(query);
+        checkSucceeded(getQuery(), true);
+        checkReturnValue(getQuery());
     }
 
-    protected StorageServerConnectionDAO setUpStorageServerConnectionDAO(DbFacade db) {
+    protected StorageServerConnectionDAO setUpStorageServerConnectionDAO() {
         StorageServerConnectionDAO dao = mock(StorageServerConnectionDAO.class);
-        when(db.getStorageServerConnectionDAO()).thenReturn(dao);
+        when(getDbFacadeMockInstance().getStorageServerConnectionDAO()).thenReturn(dao);
         return dao;
     }
 
-    protected StorageServerConnectionLunMapDAO setUpStorageServerConnectionLunMapDAO(DbFacade db) {
+    protected StorageServerConnectionLunMapDAO setUpStorageServerConnectionLunMapDAO() {
         StorageServerConnectionLunMapDAO dao = mock(StorageServerConnectionLunMapDAO.class);
-        when(db.getStorageServerConnectionLunMapDAO()).thenReturn(dao);
+        when(getDbFacadeMockInstance().getStorageServerConnectionLunMapDAO()).thenReturn(dao);
         return dao;
     }
 
-    protected void expectGetLunsForVg(DbFacade db, String vgId) {
+    protected void expectGetLunsForVg(String vgId) {
         LunDAO dao = mock(LunDAO.class);
-        when(db.getLunDAO()).thenReturn(dao);
+        when(getDbFacadeMockInstance().getLunDAO()).thenReturn(dao);
         when(dao.getAllForVolumeGroup(vgId)).thenReturn(setUpLuns());
     }
 
@@ -97,10 +105,6 @@ public class GetLunsByVgIdTest extends BaseMockitoTest {
     protected storage_server_connections setUpConnection(int idx) {
         return new storage_server_connections(ADDRESS, GUIDS[idx].toString(), IQNS[idx], null,
                 StorageType.ISCSI, null, PORT, null);
-    }
-
-    protected GetLunsByVgIdParameters getParams() {
-        return new GetLunsByVgIdParameters(VG_ID);
     }
 
     @SuppressWarnings("unchecked")
