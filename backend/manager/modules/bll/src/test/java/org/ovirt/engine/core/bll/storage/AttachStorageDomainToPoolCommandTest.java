@@ -15,6 +15,7 @@ import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
+import org.ovirt.engine.core.bll.ExecuteTransactionAnswer;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
@@ -113,19 +114,5 @@ public class AttachStorageDomainToPoolCommandTest {
         cmd.executeCommand();
         assertNotNull(map);
         assertEquals(StorageDomainStatus.Maintenance, map.getstatus());
-    }
-
-    private static class ExecuteTransactionAnswer implements Answer<Object> {
-        private int transactonMethodIndex;
-
-        public ExecuteTransactionAnswer(int transactonMethodIndex) {
-            this.transactonMethodIndex = transactonMethodIndex;
-        }
-
-        @Override
-        public Object answer(InvocationOnMock invocationOnMock) {
-            TransactionMethod<?> method = (TransactionMethod<?>) invocationOnMock.getArguments()[transactonMethodIndex];
-            return method.runInTransaction();
-        }
     }
 }
