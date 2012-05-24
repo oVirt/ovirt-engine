@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.Map;
 
+import org.ovirt.engine.core.ldap.LdapProviderType;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 

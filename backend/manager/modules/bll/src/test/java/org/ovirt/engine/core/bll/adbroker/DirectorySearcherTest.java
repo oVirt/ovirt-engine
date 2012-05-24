@@ -28,6 +28,7 @@ import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.ldap.LdapProviderType;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 /**

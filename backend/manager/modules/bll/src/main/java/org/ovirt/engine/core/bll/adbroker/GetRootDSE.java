@@ -15,6 +15,7 @@ import javax.naming.directory.SearchResult;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.ldap.LdapProviderType;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 
@@ -23,7 +24,7 @@ import org.ovirt.engine.core.utils.log.LogFactory;
  * is needed in order to fetch the base DN and the domain functionality level and does not require authentication
  */
 public class GetRootDSE {
-    private URI ldapURI;
+    private final URI ldapURI;
 
     private Attributes attributes;
 
@@ -116,9 +117,9 @@ public class GetRootDSE {
                 retVal = LdapProviderType.activeDirectory;
             } else if (attributes.get(RHDSRootDSEAttributes.vendorName.name()) != null) {
                 String vendorName = (String) attributes.get(RHDSRootDSEAttributes.vendorName.name()).get(0);
-                if (vendorName.equals(LdapVendorNameEnum.IPAVendorName.getName())) {
+                if (vendorName.equals(LdapProviderType.ipa.getLdapVendorName())) {
                     retVal = LdapProviderType.ipa;
-                } else if (vendorName.equals(LdapVendorNameEnum.RHDSVendorName.getName())) {
+                } else if (vendorName.equals(LdapProviderType.rhds.getLdapVendorName())) {
                     retVal = LdapProviderType.rhds;
                 }
             }

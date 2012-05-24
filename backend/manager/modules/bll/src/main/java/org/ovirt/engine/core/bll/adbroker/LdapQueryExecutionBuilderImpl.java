@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll.adbroker;
 
+import org.ovirt.engine.core.ldap.LdapProviderType;
+
 
 public class LdapQueryExecutionBuilderImpl implements LdapQueryExecutionBuilder {
 

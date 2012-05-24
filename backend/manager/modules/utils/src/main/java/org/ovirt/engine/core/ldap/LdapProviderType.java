@@ -1,10 +1,20 @@
 package org.ovirt.engine.core.ldap;
 
 public enum LdapProviderType {
-    activeDirectory,
-    ipa,
-    rhds;
+    activeDirectory("Microsoft Active Directory"),
+    ipa("389 Project"),
+    rhds("Red Hat"),
+    general("Deprecated - for auto-detection usages"); // for rootDSE purpose
 
+    private String vendorName;
+
+    private LdapProviderType(String vendorName) {
+        this.vendorName = vendorName;
+    }
+
+    public String getLdapVendorName() {
+        return vendorName;
+    }
     public static LdapProviderType valueOfIgnoreCase(String name) {
         if (name == null) {
             throw new NullPointerException("Name is null");

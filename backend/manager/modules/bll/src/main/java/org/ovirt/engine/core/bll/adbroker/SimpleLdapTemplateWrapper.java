@@ -5,6 +5,7 @@ package org.ovirt.engine.core.bll.adbroker;
 
 import javax.naming.directory.SearchControls;
 
+import org.ovirt.engine.core.ldap.LdapProviderType;
 import org.springframework.ldap.core.NameClassPairCallbackHandler;
 import org.springframework.ldap.core.support.DirContextAuthenticationStrategy;
 import org.springframework.ldap.core.support.LdapContextSource;

@@ -3,6 +3,8 @@ package org.ovirt.engine.core.bll.adbroker;
 import javax.naming.NamingException;
 import javax.naming.directory.Attributes;
 
+import org.ovirt.engine.core.ldap.LdapProviderType;
+
 public class RootDSEFactory {
 
     public static RootDSE get(LdapProviderType ldapProviderType, Attributes rootDseRecords) throws NumberFormatException, NamingException {
