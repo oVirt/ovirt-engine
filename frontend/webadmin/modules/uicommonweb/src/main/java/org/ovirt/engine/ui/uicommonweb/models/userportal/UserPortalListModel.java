@@ -530,6 +530,9 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         {
             OnSave();
         }
+        else if (command.getName().equals("closeVncInfo")) { //$NON-NLS-1$
+            setWindow(null);
+        }
     }
 
     private void NewTemplate()
@@ -1741,6 +1744,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                 SpiceConsoleModel spiceConsoleModel = new SpiceConsoleModel();
                 spiceConsoleModel.getErrorEvent().addListener(this);
                 VncConsoleModel vncConsoleModel = new VncConsoleModel();
+                vncConsoleModel.setModel(this);
                 RdpConsoleModel rdpConsoleModel = new RdpConsoleModel();
 
                 cachedConsoleModels.put(vm.getId(),

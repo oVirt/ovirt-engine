@@ -10,12 +10,14 @@ import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.VncInfoModel;
 import org.ovirt.engine.ui.userportal.gin.ClientGinjector;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmChangeCDPopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmDesktopNewPopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmMakeTemplatePopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmRunOncePopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmServerNewPopupPresenterWidget;
+import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VncInfoPopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalDataBoundModelProvider;
 
 import com.google.inject.Inject;
@@ -29,6 +31,7 @@ public class UserPortalListProvider extends UserPortalDataBoundModelProvider<Use
     private final Provider<VmChangeCDPopupPresenterWidget> changeCDPopupProvider;
     private final Provider<VmMakeTemplatePopupPresenterWidget> makeTemplatePopupProvider;
     private final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider;
+    private final Provider<VncInfoPopupPresenterWidget> vncInfoPopupProvider;
 
     @Inject
     public UserPortalListProvider(ClientGinjector ginjector,
@@ -38,6 +41,7 @@ public class UserPortalListProvider extends UserPortalDataBoundModelProvider<Use
             Provider<VmChangeCDPopupPresenterWidget> changeCDPopupProvider,
             Provider<VmMakeTemplatePopupPresenterWidget> makeTemplatePopupProvider,
             Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider,
+            Provider<VncInfoPopupPresenterWidget> vncInfoPopupProvider,
             CurrentUser user) {
         super(ginjector, user);
         this.newDesktopVmPopupProvider = newDesktopVmPopupProvider;
@@ -46,6 +50,7 @@ public class UserPortalListProvider extends UserPortalDataBoundModelProvider<Use
         this.changeCDPopupProvider = changeCDPopupProvider;
         this.makeTemplatePopupProvider = makeTemplatePopupProvider;
         this.removeConfirmPopupProvider = removeConfirmPopupProvider;
+        this.vncInfoPopupProvider = vncInfoPopupProvider;
     }
 
     @Override
@@ -73,7 +78,10 @@ public class UserPortalListProvider extends UserPortalDataBoundModelProvider<Use
             } else {
                 return newServerVmPopupProvider.get();
             }
-        } else {
+        } else if(windowModel instanceof VncInfoModel){
+            return vncInfoPopupProvider.get();
+        }
+        else {
             return super.getModelPopup(source, lastExecutedCommand, windowModel);
         }
     }

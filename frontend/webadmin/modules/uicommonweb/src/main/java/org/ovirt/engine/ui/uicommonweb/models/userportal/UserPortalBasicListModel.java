@@ -1,5 +1,10 @@
 package org.ovirt.engine.ui.uicommonweb.models.userportal;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
@@ -19,6 +24,7 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.DataProvider;
 import org.ovirt.engine.ui.uicommonweb.Linq;
+import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
@@ -26,11 +32,6 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.RdpConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.SpiceConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VncConsoleModel;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
 
 @SuppressWarnings("unused")
 public class UserPortalBasicListModel extends IUserPortalListModel implements IVmPoolResolutionService
@@ -109,7 +110,7 @@ public class UserPortalBasicListModel extends IUserPortalListModel implements IV
         privateSelectedItemNumOfCpuCores = value;
     }
 
-    private HashMap<Guid, ArrayList<ConsoleModel>> cachedConsoleModels;
+    private final HashMap<Guid, ArrayList<ConsoleModel>> cachedConsoleModels;
 
     static
     {
@@ -367,11 +368,12 @@ public class UserPortalBasicListModel extends IUserPortalListModel implements IV
                 SpiceConsoleModel spiceConsoleModel = new SpiceConsoleModel();
                 spiceConsoleModel.getErrorEvent().addListener(this);
                 VncConsoleModel vncConsoleModel = new VncConsoleModel();
+                vncConsoleModel.setModel(this);
                 RdpConsoleModel rdpConsoleModel = new RdpConsoleModel();
 
                 cachedConsoleModels.put(vm.getId(),
                         new ArrayList<ConsoleModel>(Arrays.asList(new ConsoleModel[] {
-                            spiceConsoleModel, vncConsoleModel, rdpConsoleModel})));
+                                spiceConsoleModel, vncConsoleModel, rdpConsoleModel })));
             }
 
             // Getting cached console model
@@ -407,8 +409,18 @@ public class UserPortalBasicListModel extends IUserPortalListModel implements IV
     }
 
     // overridden only to allow the UIBinder to access this
+    @Override
     public UserPortalItemModel getSelectedItem()
     {
         return (UserPortalItemModel) super.getSelectedItem();
+    }
+
+    @Override
+    public void ExecuteCommand(UICommand command) {
+        super.ExecuteCommand(command);
+
+        if (command.getName().equals("closeVncInfo")) { //$NON-NLS-1$
+            setWindow(null);
+        }
     }
 }

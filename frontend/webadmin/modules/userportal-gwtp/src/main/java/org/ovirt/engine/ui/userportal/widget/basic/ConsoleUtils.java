@@ -5,6 +5,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.ui.common.uicommon.ClientAgentType;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.SpiceConsoleModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.VncConsoleModel;
 import org.ovirt.engine.ui.userportal.gin.ClientGinjectorProvider;
 
 import com.google.gwt.core.client.GWT;
@@ -107,6 +108,8 @@ public class ConsoleUtils {
             return ConsoleProtocol.SPICE;
         } else if (item.getHasAdditionalConsole() && isRDPAvailable()) {
             return ConsoleProtocol.RDP;
+        } else if(item.getDefaultConsole() instanceof VncConsoleModel) {
+            return ConsoleProtocol.VNC;
         }
 
         return null;
@@ -121,8 +124,10 @@ public class ConsoleUtils {
                 selectedProtocol.equals(ConsoleProtocol.SPICE) && canOpenSpiceConsole(item);
         boolean isRdpAvailable =
                 (selectedProtocol.equals(ConsoleProtocol.RDP) && canOpenRDPConsole(item));
+        boolean isVncAvailable =
+                (selectedProtocol.equals(ConsoleProtocol.VNC));
 
-        return isSpiceAvailable || isRdpAvailable;
+        return isSpiceAvailable || isRdpAvailable || isVncAvailable;
     }
 
 }

@@ -34,7 +34,15 @@ public class ConsoleManager {
             return showSpiceConsole(model);
         } else if (selectedProtocol == ConsoleProtocol.RDP) {
             return showRpdConsole(model);
+        } else if (selectedProtocol == ConsoleProtocol.VNC) {
+            return showVncConsole(model);
         }
+        return null;
+    }
+
+    private String showVncConsole(UserPortalItemModel model) {
+        model.getDefaultConsole().getConnectCommand().Execute();
+
         return null;
     }
 
