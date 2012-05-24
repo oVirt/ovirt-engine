@@ -47,10 +47,19 @@ public class ReplaceGlusterVolumeBrickCommand extends GlusterVolumeCommandBase<G
             return false;
         }
 
+        if (!updateBrickServerName(getParameters().getExistingBrick(), true)) {
+            return false;
+        }
+
+        if (!updateBrickServerName(getParameters().getNewBrick(), true)) {
+            return false;
+        }
+
         if (!isValidVolumeBrick(getParameters().getExistingBrick())) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NOT_A_GLUSTER_VOLUME_BRICK);
             return false;
         }
+
         return true;
     }
 

@@ -26,6 +26,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.VdsStaticDAO;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -39,6 +40,12 @@ public class ReplaceGlusterVolumeBrickCommandTest {
     @Mock
     GlusterVolumeDao volumeDao;
 
+    @Mock
+    VdsStaticDAO vdsStaticDao;
+
+    private String serverName = "myhost";
+    private Guid clusterId = new Guid("c0dd8ca3-95dd-44ad-a88a-440a6e3d8106");
+    private Guid serverId = new Guid("d7f10a21-bbf2-4ffd-aab6-4da0b3b2ccec");
     private Guid volumeId1 = new Guid("8bc6f108-c0ef-43ab-ba20-ec41107220f5");
     private Guid volumeId2 = new Guid("b2cb2f73-fab3-4a42-93f0-d5e4c069a43e");
     private Guid volumeId3 = Guid.createGuidFromString("000000000000-0000-0000-0000-00000003");
@@ -52,12 +59,21 @@ public class ReplaceGlusterVolumeBrickCommandTest {
         mockStatic(DbFacade.class);
         mockStatic(GlusterVolumeDao.class);
         when(db.getGlusterVolumeDao()).thenReturn(volumeDao);
+        when(db.getVdsStaticDAO()).thenReturn(vdsStaticDao);
         when(DbFacade.getInstance()).thenReturn(db);
         when(volumeDao.getById(volumeId1)).thenReturn(getDistributedVolume(volumeId1));
         when(volumeDao.getById(volumeId2)).thenReturn(getDistributedVolume(volumeId2));
         when(volumeDao.getById(volumeId3)).thenReturn(getReplicatedVolume(volumeId3, 2));
         when(volumeDao.getById(volumeId4)).thenReturn(getReplicatedVolume(volumeId4, 4));
         when(volumeDao.getById(null)).thenReturn(null);
+        when(vdsStaticDao.get(serverId)).thenReturn(getVdsStatic());
+    }
+
+    private VdsStatic getVdsStatic() {
+        VdsStatic vds = new VdsStatic();
+        vds.setvds_group_id(clusterId);
+        vds.sethost_name(serverName);
+        return vds;
     }
 
     private GlusterVolumeEntity getDistributedVolume(Guid volumeId) {
@@ -65,6 +81,7 @@ public class ReplaceGlusterVolumeBrickCommandTest {
         volume.setStatus((volumeId == volumeId1) ? GlusterVolumeStatus.UP : GlusterVolumeStatus.DOWN);
         volume.setBricks(getBricks(volumeId, "distrib", 2));
         volume.setVolumeType(GlusterVolumeType.DISTRIBUTE);
+        volume.setClusterId(clusterId);
         return volume;
     }
 
@@ -74,6 +91,7 @@ public class ReplaceGlusterVolumeBrickCommandTest {
         volume.setBricks(getBricks(volumeId, "repl", brickCount));
         volume.setVolumeType(GlusterVolumeType.REPLICATE);
         volume.setReplicaCount(brickCount);
+        volume.setClusterId(clusterId);
         return volume;
     }
 
@@ -92,7 +110,15 @@ public class ReplaceGlusterVolumeBrickCommandTest {
         for (Integer i = 0; i < n; i++) {
             brick =
                     new GlusterBrickEntity(volumeId,
-                            new VdsStatic("myhost", "127.0.0.1", "0934390834", 20, new Guid(), new Guid(), "myhost", true, VDSType.oVirtNode),
+                            new VdsStatic(serverName,
+                                    "127.0.0.1",
+                                    "0934390834",
+                                    20,
+                                    new Guid(),
+                                    serverId,
+                                    serverName,
+                                    true,
+                                    VDSType.oVirtNode),
                             "/tmp/" + dirPrefix + i.toString(),
                             GlusterBrickStatus.UP);
             bricks.add(brick);

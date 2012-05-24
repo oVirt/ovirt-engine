@@ -15,6 +15,11 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VdsStatic;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
+import org.ovirt.engine.core.dal.VdcBllMessages;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.VdsStaticDAO;
 
 /**
  * Base class for all Gluster commands
@@ -73,5 +78,30 @@ public abstract class GlusterCommandBase<T extends VdcActionParametersBase> exte
         errorType = errType;
         getReturnValue().getExecuteFailedMessages().add(error);
         getReturnValue().getFault().setMessage(error);
+    }
+
+    protected boolean updateBrickServerNames(List<GlusterBrickEntity> bricks, boolean addCanDoActionMessage) {
+        for (GlusterBrickEntity brick : bricks) {
+            if (!updateBrickServerName(brick, addCanDoActionMessage)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    protected boolean updateBrickServerName(GlusterBrickEntity brick, boolean addCanDoActionMessage) {
+        VdsStatic server = getVdsStaticDao().get(brick.getServerId());
+        if ((server == null || !server.getvds_group_id().equals(getVdsGroupId()))) {
+            if (addCanDoActionMessage) {
+                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_INVALID_BRICK_SERVER_ID);
+            }
+            return false;
+        }
+        brick.setServerName(server.gethost_name());
+        return true;
+    }
+
+    private VdsStaticDAO getVdsStaticDao() {
+        return DbFacade.getInstance().getVdsStaticDAO();
     }
 }
