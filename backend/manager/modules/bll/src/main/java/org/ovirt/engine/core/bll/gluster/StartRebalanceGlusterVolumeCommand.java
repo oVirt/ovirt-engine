@@ -43,7 +43,7 @@ public class StartRebalanceGlusterVolumeCommand extends GlusterVolumeCommandBase
         if ((glusterVolume.getVolumeType() == GlusterVolumeType.REPLICATE && glusterVolume.getBricks().size() <= glusterVolume.getReplicaCount())
                 || (glusterVolume.getVolumeType() == GlusterVolumeType.STRIPE && glusterVolume.getBricks().size() <= glusterVolume.getStripeCount())
                 || (glusterVolume.getBricks().size() == 1)) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_VOLUME_IS_NOT_DISTRIBUTED);
+            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_VOLUME_BRICKS_ARE_NOT_DISTRIBUTED);
             return false;
         }
         return true;
