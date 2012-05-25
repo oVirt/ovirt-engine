@@ -66,6 +66,9 @@ public abstract class AbstractModelBoundPopupPresenterWidget<T extends Model, V 
 
     }
 
+    // Indicates whether the popup has been disposed
+    private boolean destroyed = false;
+
     private final ModelBoundPopupHandler<T> popupHandler;
 
     public AbstractModelBoundPopupPresenterWidget(EventBus eventBus, V view) {
@@ -165,7 +168,25 @@ public abstract class AbstractModelBoundPopupPresenterWidget<T extends Model, V 
         }
 
         // Add popup key handlers
-        final DeferredModelCommandInvoker commandInvoker = new DeferredModelCommandInvoker(model);
+        final DeferredModelCommandInvoker commandInvoker = new DeferredModelCommandInvoker(model) {
+            @Override
+            protected void commandFailed(UICommand command) {
+                // Clear Window and ConfirmWindow models when "Cancel" command execution fails
+                if (command.getIsCancel() && command.getTarget() instanceof Model) {
+                    Model source = (Model) command.getTarget();
+                    source.setWindow(null);
+                    source.setConfirmWindow(null);
+                }
+            }
+
+            @Override
+            protected void commandFinished(UICommand command) {
+                // Enforce popup close after executing "Cancel" command
+                if (command.getIsCancel()) {
+                    hideAndUnbind();
+                }
+            }
+        };
         getView().setPopupKeyPressHandler(new PopupNativeKeyPressHandler() {
             @Override
             public void onKeyPress(NativeEvent event) {
@@ -254,8 +275,11 @@ public abstract class AbstractModelBoundPopupPresenterWidget<T extends Model, V 
      * Hides the popup and unbinds the presenter widget, removing all handlers registered via {@link #registerHandler}.
      */
     public void hideAndUnbind() {
-        getView().hide();
-        unbind();
+        if (!destroyed) {
+            getView().hide();
+            unbind();
+            destroyed = true;
+        }
     }
 
     /**

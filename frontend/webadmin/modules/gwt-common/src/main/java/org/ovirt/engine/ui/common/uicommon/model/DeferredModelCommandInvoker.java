@@ -1,5 +1,8 @@
 package org.ovirt.engine.ui.common.uicommon.model;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 
@@ -15,6 +18,8 @@ import com.google.gwt.core.client.Scheduler.ScheduledCommand;
  */
 public class DeferredModelCommandInvoker {
 
+    private static final Logger logger = Logger.getLogger(DeferredModelCommandInvoker.class.getName());
+
     private final Model model;
 
     public DeferredModelCommandInvoker(Model model) {
@@ -22,22 +27,37 @@ public class DeferredModelCommandInvoker {
     }
 
     public void invokeDefaultCommand() {
-        invokeCommand(model.getDefaultCommand());
+        scheduleCommandExecution(model.getDefaultCommand());
     }
 
     public void invokeCancelCommand() {
-        invokeCommand(model.getCancelCommand());
+        scheduleCommandExecution(model.getCancelCommand());
     }
 
-    void invokeCommand(final UICommand command) {
+    void scheduleCommandExecution(final UICommand command) {
         if (command != null) {
             Scheduler.get().scheduleDeferred(new ScheduledCommand() {
                 @Override
                 public void execute() {
-                    command.Execute();
+                    try {
+                        command.Execute();
+                    } catch (Exception ex) {
+                        logger.log(Level.SEVERE, "UICommand execution failed", ex); //$NON-NLS-1$
+                        commandFailed(command);
+                    } finally {
+                        commandFinished(command);
+                    }
                 }
             });
         }
+    }
+
+    protected void commandFailed(UICommand command) {
+        // No-op, override as necessary
+    }
+
+    protected void commandFinished(UICommand command) {
+        // No-op, override as necessary
     }
 
 }
