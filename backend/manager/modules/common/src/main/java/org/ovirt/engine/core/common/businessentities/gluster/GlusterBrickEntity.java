@@ -5,8 +5,8 @@ import javax.validation.constraints.NotNull;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
-import org.ovirt.engine.core.common.validation.group.RemoveEntity;
 import org.ovirt.engine.core.common.validation.group.gluster.AddBrick;
+import org.ovirt.engine.core.common.validation.group.gluster.RemoveBrick;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -21,7 +21,7 @@ import org.ovirt.engine.core.compat.Guid;
 public class GlusterBrickEntity extends IVdcQueryable {
     private static final long serialVersionUID = 7119439284741452278L;
 
-    @NotNull(message = "VALIDATION.GLUSTER.BRICK.ID.NOT_NULL", groups = { RemoveEntity.class })
+    @NotNull(message = "VALIDATION.GLUSTER.BRICK.ID.NOT_NULL", groups = { RemoveBrick.class })
     private Guid id;
 
     @NotNull(message = "VALIDATION.GLUSTER.VOLUME.ID.NOT_NULL", groups = { AddBrick.class })
@@ -144,7 +144,11 @@ public class GlusterBrickEntity extends IVdcQueryable {
      * @return id of the brick
      */
     public Guid getId() {
-        if(id == null) {
+        return getId(true);
+    }
+
+    public Guid getId(boolean generateIfNull) {
+        if(id == null && generateIfNull) {
             id = Guid.NewGuid();
         }
         return id;

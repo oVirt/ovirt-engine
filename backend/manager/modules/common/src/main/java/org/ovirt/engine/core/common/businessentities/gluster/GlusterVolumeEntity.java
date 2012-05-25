@@ -399,6 +399,15 @@ public class GlusterVolumeEntity extends IVdcQueryable implements BusinessEntity
         return true;
     }
 
+    public GlusterBrickEntity getBrickWithId(Guid brickId) {
+        for(GlusterBrickEntity brick : getBricks()) {
+            if(brick.getId().equals(brickId)) {
+                return brick;
+            }
+        }
+        return null;
+    }
+
     private boolean equalIntegers(Integer int1, Integer int2) {
         if(int1 == null) {
             return int2 == null;

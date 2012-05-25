@@ -1896,4 +1896,10 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. There is no available host in the cluster to probe the new host.")
     String ACTION_TYPE_FAILED_NO_GLUSTER_HOST_TO_PEER_PROBE();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Invalid gluster brick.")
+    String ACTION_TYPE_FAILED_GLUSTER_BRICK_INVALID();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Brick ID is required.")
+    String ACTION_TYPE_FAILED_BRICK_ID_REQUIRED();
 }
