@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.NotImplementedException;
-import org.hibernate.annotations.common.util.StringHelper;
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.config.Config;
@@ -115,7 +115,7 @@ public class VdsStaticDAODbFacadeImpl extends BaseDAODbFacade implements VdsStat
     }
 
     public static String encryptPassword(String password) {
-        if (StringHelper.isEmpty(password)) {
+        if (StringUtils.isEmpty(password)) {
             return password;
         }
         String keyFile = Config.resolveKeyStorePath();
@@ -129,7 +129,7 @@ public class VdsStaticDAODbFacadeImpl extends BaseDAODbFacade implements VdsStat
     }
 
     public static String decryptPassword(String password) {
-        if (StringHelper.isEmpty(password)) {
+        if (StringUtils.isEmpty(password)) {
             return password;
         }
         String keyFile = Config.resolveKeyStorePath();
