@@ -191,7 +191,7 @@ public abstract class OvfWriter implements IOvfBuilder {
 
     @Override
     protected void finalize() throws Throwable {
-        Dispose();
+        dispose();
         super.finalize();
     }
 
@@ -274,14 +274,6 @@ public abstract class OvfWriter implements IOvfBuilder {
             }
         }
     }
-    public void Dispose() {
-        if (_writer != null) {
-            CloseElements();
-            _writer.close();
-            _document.Load(_fileName);
-        }
-        deleteTmpFile();
-    }
 
     public void deleteTmpFile() {
         try {
@@ -294,7 +286,12 @@ public abstract class OvfWriter implements IOvfBuilder {
     }
 
     public void dispose() {
-        this.Dispose();
+        if (_writer != null) {
+            CloseElements();
+            _writer.close();
+            _document.Load(_fileName);
+        }
+        deleteTmpFile();
     }
 
     private void writeVmDeviceInfo(VmDevice vmDevice) {

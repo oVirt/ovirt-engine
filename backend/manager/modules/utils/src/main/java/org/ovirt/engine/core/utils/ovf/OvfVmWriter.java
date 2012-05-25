@@ -37,7 +37,7 @@ public class OvfVmWriter extends OvfWriter {
         _writer.WriteRaw(_vm.getStaticData().getvmt_guid().toString());
         _writer.WriteEndElement();
         _writer.WriteStartElement("TemplateName");
-        _writer.WriteRaw(_vm.getvmt_name().toString());
+        _writer.WriteRaw(_vm.getvmt_name());
         _writer.WriteEndElement();
         _writer.WriteStartElement("Description");
         _writer.WriteRaw(vmBase.getdescription());
