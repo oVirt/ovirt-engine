@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.gluster;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.Backend;
@@ -13,6 +14,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeBricksActionVDSParameters;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 
 public class AddBricksToGlusterVolumeCommand extends GlusterVolumeCommandBase<GlusterVolumeBricksActionParameters> {
@@ -74,10 +76,19 @@ public class AddBricksToGlusterVolumeCommand extends GlusterVolumeCommandBase<Gl
 
         if (getSucceeded()) {
             addGlusterVolumeBricksInDb(getParameters().getBricks());
+            getReturnValue().setActionReturnValue(getBrickIds(getParameters().getBricks()));
         } else {
             handleVdsError(AuditLogType.GLUSTER_VOLUME_ADD_BRICK_FAILED, returnValue.getVdsError().getMessage());
             return;
         }
+    }
+
+    private List<Guid> getBrickIds(List<GlusterBrickEntity> bricks) {
+        List<Guid> brickIds = new ArrayList<Guid>();
+        for (GlusterBrickEntity brick : bricks) {
+            brickIds.add(brick.getId());
+        }
+        return brickIds;
     }
 
     private void addGlusterVolumeBricksInDb(List<GlusterBrickEntity> newBricks) {

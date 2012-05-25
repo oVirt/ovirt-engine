@@ -27,11 +27,12 @@ public interface GlusterBricksResource {
 
     /**
      * Adds given list of bricks to the volume, and updates the database accordingly. The properties
-     * {@link GlusterBrick#getServerId()} and {@link GlusterBrick#getBrickDir()} are required.
+     * {@link org.ovirt.engine.api.model.GlusterBrick#getServerId()} and
+     * {@link org.ovirt.engine.api.model.GlusterBrick#getBrickDir()} are required.
      *
      * @param bricks
      *            List of bricks to be added to the volume
-     * @return the new newly created Gluster Volume
+     * @return
      */
     @POST
     @Formatted
@@ -41,8 +42,18 @@ public interface GlusterBricksResource {
     /**
      * Removes the given brick from the volume and deletes it from the database.
      *
+     * @param bricks
+     *            List of bricks to be removed
+     * @return
+     */
+    @DELETE
+    public Response remove(GlusterBricks bricks);
+
+    /**
+     * Removes the given brick from the volume and deletes it from the database.
+     *
      * @param id
-     *            ID of the brick to be removed
+     *            id of the brick to be removed
      * @return
      */
     @DELETE

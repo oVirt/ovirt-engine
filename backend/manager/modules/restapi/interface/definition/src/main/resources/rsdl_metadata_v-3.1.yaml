@@ -2198,9 +2198,20 @@ actions:
       signatures:
       - mandatoryArguments:
           bricks--COLLECTION: {brick.server_id: 'xs:string', brick.brick_dir: 'xs:string'}
-        optionalArguments: {}
+        optionalArguments:
+            bricks--COLLECTION: {replica_count: 'xs:unsignedShort', stripe_count: 'xs:unsignedShort'}
     urlparams: {}
     headers: {Content-Type: application/xml|json, Expect: 201-created}
+- name: /api/clusters/{cluster:id}/glustervolumes/{glustervolume:id}/bricks|rel=delete
+  request:
+    body:
+      parameterType: Bricks
+      signatures:
+      - mandatoryArguments:
+          bricks--COLLECTION: {brick.id: 'xs:string'}
+        optionalArguments: {}
+    urlparams: {}
+    headers: {Content-Type: application/xml|json}
 - name: /api/clusters/{cluster:id}/glustervolumes/{glustervolume:id}/bricks/{brick:id}/replace|rel=replace
   request:
     body:

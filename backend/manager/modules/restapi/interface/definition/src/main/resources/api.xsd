@@ -2681,17 +2681,16 @@
 
   <xs:element name="bricks" type="GlusterBricks"/>
   <xs:complexType name="GlusterBricks">
-    <xs:complexContent>
-      <xs:extension base="BaseResources">
-        <xs:sequence>
-          <xs:annotation>
-            <xs:appinfo>
-                <jaxb:property name="GlusterBricks"/>
-            </xs:appinfo>
-          </xs:annotation>
-          <xs:element ref="brick" minOccurs="0" maxOccurs="unbounded"/>
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
+   <xs:sequence>
+      <xs:element name="replica_count" type="xs:unsignedShort" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="stripe_count" type="xs:unsignedShort" minOccurs="0" maxOccurs="1"/>
+      <xs:element ref="brick" minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:appinfo>
+              <jaxb:property name="GlusterBricks"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
   </xs:complexType>
 </xs:schema>

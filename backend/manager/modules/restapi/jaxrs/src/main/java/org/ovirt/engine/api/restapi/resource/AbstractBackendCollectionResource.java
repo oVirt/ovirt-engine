@@ -90,12 +90,7 @@ public abstract class AbstractBackendCollectionResource<R extends BaseResource, 
                                        boolean block) {
         VdcReturnValueBase createResult;
         try {
-            createResult = backend.RunAction(task, sessionize(taskParams));
-            if (!createResult.getCanDoAction()) {
-                throw new BackendFailureException(localize(createResult.getCanDoActionMessages()));
-            } else if (!createResult.getSucceeded()) {
-                throw new BackendFailureException(localize(createResult.getExecuteFailedMessages()));
-            }
+            createResult = runAction(task, taskParams);
         } catch (Exception e) {
             return handleError(e, false);
         }
@@ -124,6 +119,17 @@ public abstract class AbstractBackendCollectionResource<R extends BaseResource, 
             }
         }
         return response;
+    }
+
+    protected VdcReturnValueBase runAction(VdcActionType task, VdcActionParametersBase taskParams)
+            throws BackendFailureException {
+        VdcReturnValueBase createResult = backend.RunAction(task, sessionize(taskParams));
+        if (!createResult.getCanDoAction()) {
+            throw new BackendFailureException(localize(createResult.getCanDoActionMessages()));
+        } else if (!createResult.getSucceeded()) {
+            throw new BackendFailureException(localize(createResult.getExecuteFailedMessages()));
+        }
+        return createResult;
     }
 
     protected Response performCreation(VdcActionType task,

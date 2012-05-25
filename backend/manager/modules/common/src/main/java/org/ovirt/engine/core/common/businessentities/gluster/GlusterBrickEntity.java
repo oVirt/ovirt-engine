@@ -4,6 +4,7 @@ import javax.validation.constraints.NotNull;
 
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
+import org.ovirt.engine.core.common.utils.gluster.GlusterCoreUtil;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.gluster.AddBrick;
 import org.ovirt.engine.core.common.validation.group.gluster.RemoveBrick;
@@ -110,7 +111,6 @@ public class GlusterBrickEntity extends IVdcQueryable {
         result = prime * result + getId().hashCode();
         result = prime * result + ((volumeId == null) ? 0 : volumeId.hashCode());
         result = prime * result + ((serverId == null) ? 0 : serverId.hashCode());
-        result = prime * result + ((serverName == null) ? 0 : serverName.hashCode());
         result = prime * result + ((brickDirectory == null) ? 0 : brickDirectory.hashCode());
         result = prime * result + ((brickOrder == null) ? 0 : brickOrder.hashCode());
         result = prime * result + ((status == null) ? 0 : status.hashCode());
@@ -125,11 +125,9 @@ public class GlusterBrickEntity extends IVdcQueryable {
 
         GlusterBrickEntity brick = (GlusterBrickEntity) obj;
         return (getId().equals(brick.getId())
-                && (volumeId != null && volumeId.equals(brick.getVolumeId()))
-                && serverId.equals(brick.getServerId())
-                && serverName.equals(brick.getServerName())
-                && brickDirectory.equals(brick.getBrickDirectory())
-                && brickOrder == brick.getBrickOrder()
+                && (GlusterCoreUtil.objectsEqual(volumeId, brick.getVolumeId()))
+                && (GlusterCoreUtil.objectsEqual(serverId, brick.getServerId()))
+                && (GlusterCoreUtil.objectsEqual(brickDirectory, brick.getBrickDirectory()))
                 && status == brick.getStatus());
     }
 

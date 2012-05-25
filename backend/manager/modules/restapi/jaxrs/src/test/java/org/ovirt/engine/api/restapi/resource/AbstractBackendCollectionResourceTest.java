@@ -1,8 +1,14 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static org.easymock.EasyMock.eq;
+import static org.easymock.EasyMock.expect;
+import static org.ovirt.engine.api.restapi.test.util.TestHelper.eqActionParams;
+import static org.ovirt.engine.api.restapi.test.util.TestHelper.eqQueryParams;
+import static org.ovirt.engine.api.restapi.test.util.TestHelper.eqSearchParams;
+
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
-import java.lang.reflect.Method;
 
 import javax.ws.rs.Path;
 import javax.ws.rs.WebApplicationException;
@@ -10,9 +16,9 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import org.junit.Test;
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.Fault;
-
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -25,15 +31,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-
-import org.junit.Test;
-
-import static org.ovirt.engine.api.restapi.test.util.TestHelper.eqActionParams;
-import static org.ovirt.engine.api.restapi.test.util.TestHelper.eqQueryParams;
-import static org.ovirt.engine.api.restapi.test.util.TestHelper.eqSearchParams;
-
-import static org.easymock.classextension.EasyMock.eq;
-import static org.easymock.classextension.EasyMock.expect;
 
 public abstract class AbstractBackendCollectionResourceTest<R extends BaseResource, Q /* extends IVdcQueryable */, C extends AbstractBackendCollectionResource<R, Q>>
         extends AbstractBackendResourceTest<R, Q> {
@@ -53,6 +50,7 @@ public abstract class AbstractBackendCollectionResourceTest<R extends BaseResour
 
     protected abstract List<R> getCollection();
 
+    @Override
     protected void init() {
         initResource(collection);
     }
@@ -291,6 +289,7 @@ public abstract class AbstractBackendCollectionResourceTest<R extends BaseResour
         }
     }
 
+    @Override
     protected void verifyRemove(Response response) {
         assertNotNull(response);
         assertEquals(response.getStatus(), Response.Status.OK.getStatusCode());
