@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab.host;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 
 import javax.inject.Inject;
 
@@ -117,23 +118,47 @@ public class SubTabHostGeneralView extends AbstractSubTabFormView<VDS, HostListM
         // Build a form using the FormBuilder
         formBuilder = new FormBuilder(formPanel, 3, 6);
         formBuilder.setColumnsWidth("230px", "120px", "270px"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        formBuilder.addFormItem(new FormItem(constants.osVersionHostGeneral(), oS, 0, 0));
-        formBuilder.addFormItem(new FormItem(constants.kernelVersionHostGeneral(), kernelVersion, 1, 0));
-        formBuilder.addFormItem(new FormItem(constants.kvmVersionHostGeneral(), kvmVersion, 2, 0));
-        formBuilder.addFormItem(new FormItem(constants.vdsmVersionHostGeneral(), vdsmVersion, 3, 0));
-        formBuilder.addFormItem(new FormItem(constants.spiceVersionHostGeneral(), spiceVersion, 4, 0));
-        formBuilder.addFormItem(new FormItem(constants.isciInitNameHostGeneral(), iScsiInitiatorName, 5, 0));
 
-        formBuilder.addFormItem(new FormItem(constants.activeVmsHostGeneral(), activeVms, 0, 1));
-        formBuilder.addFormItem(new FormItem(constants.memPageSharingHostGeneral(), memoryPageSharing, 1, 1));
-        formBuilder.addFormItem(new FormItem(constants.autoLargePagesHostGeneral(), automaticLargePage, 2, 1));
-        formBuilder.addFormItem(new FormItem(constants.numOfCpusHostGeneral(), numberOfCPUs, 3, 1));
-        formBuilder.addFormItem(new FormItem(constants.cpuNameHostGeneral(), cpuName, 4, 1));
-        formBuilder.addFormItem(new FormItem(constants.cpuTypeHostGeneral(), cpuType, 5, 1));
+        ArrayList<FormItem> formItems = new ArrayList<FormItem>();
 
-        formBuilder.addFormItem(new FormItem(constants.physMemHostGeneral(), physicalMemoryDetails, 0, 2));
-        formBuilder.addFormItem(new FormItem(constants.swapSizeHostGeneral(), swapSizeDetails, 1, 2));
-        formBuilder.addFormItem(new FormItem(constants.sharedMemHostGeneral(), sharedMemory, 2, 2));
+        formItems.add(new FormItem(constants.osVersionHostGeneral(), oS, 0, 0));
+        formItems.add(new FormItem(constants.kernelVersionHostGeneral(), kernelVersion, 1, 0));
+        formItems.add(new FormItem(constants.kvmVersionHostGeneral(), kvmVersion, 2, 0));
+        formItems.add(new FormItem(constants.vdsmVersionHostGeneral(), vdsmVersion, 3, 0));
+        formItems.add(new FormItem(constants.spiceVersionHostGeneral(), spiceVersion, 4, 0));
+        formItems.add(new FormItem(constants.isciInitNameHostGeneral(), iScsiInitiatorName, 5, 0));
+
+        formItems.add(new FormItem(constants.activeVmsHostGeneral(), activeVms, 0, 1));
+        formItems.add(new FormItem(constants.memPageSharingHostGeneral(), memoryPageSharing, 1, 1));
+        formItems.add(new FormItem(constants.autoLargePagesHostGeneral(), automaticLargePage, 2, 1));
+        formItems.add(new FormItem(constants.numOfCpusHostGeneral(), numberOfCPUs, 3, 1));
+        formItems.add(new FormItem(constants.cpuNameHostGeneral(), cpuName, 4, 1));
+        formItems.add(new FormItem(constants.cpuTypeHostGeneral(), cpuType, 5, 1));
+
+        formItems.add(new FormItem(constants.physMemHostGeneral(), physicalMemoryDetails, 0, 2));
+        formItems.add(new FormItem(constants.swapSizeHostGeneral(), swapSizeDetails, 1, 2));
+        formItems.add(new FormItem(constants.sharedMemHostGeneral(), sharedMemory, 2, 2));
+
+        applyModeCustomizations(formItems);
+
+        for (FormItem formItem : formItems)
+        {
+            formBuilder.addFormItem(formItem);
+        }
+    }
+
+    private void applyModeCustomizations(ArrayList<FormItem> formItems)
+    {
+        Iterator<FormItem> iterator = formItems.iterator();
+        while (iterator.hasNext())
+        {
+            FormItem formItem = iterator.next();
+            Widget widget = formItem.getValue();
+            if (widget == kvmVersion || widget == spiceVersion || widget == iScsiInitiatorName || widget == activeVms)
+            {
+                iterator.remove();
+            }
+        }
     }
 
     void initMemorySizeLabels(ApplicationConstants constants) {
