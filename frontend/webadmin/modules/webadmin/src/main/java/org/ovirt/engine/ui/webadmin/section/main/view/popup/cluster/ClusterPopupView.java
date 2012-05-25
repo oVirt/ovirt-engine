@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.cluster;
 
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
@@ -16,6 +17,7 @@ import org.ovirt.engine.ui.common.widget.editor.EntityModelRadioButtonEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
+import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
@@ -163,6 +165,7 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
         addStyles();
         localize(constants);
         Driver.driver.initialize(this);
+        applyModeCustomizations();
     }
 
     private void addStyles() {
@@ -235,6 +238,14 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
             }
         });
 
+    }
+
+    private void applyModeCustomizations() {
+        if (ApplicationModeHelper.getUiMode() == ApplicationMode.GlusterOnly)
+        {
+            memoryOptimizationTab.setVisible(false);
+            resiliencePolicyTab.setVisible(false);
+        }
     }
 
     @Override

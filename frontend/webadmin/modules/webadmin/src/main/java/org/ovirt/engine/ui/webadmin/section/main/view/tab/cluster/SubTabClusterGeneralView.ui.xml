@@ -49,35 +49,47 @@
 		.marginLeft {
 			margin-left: 5px;
 		}
+		.headerLabel {
+			font-weight: bold;
+			padding-left: 5px;
+		}
 	</ui:style>
-	<g:HorizontalPanel addStyleNames="{style.marginLeft}">
-		<g:FlowPanel width="400px">
-			<w:UiCommandButton ui:field="editPolicyButton" addStyleNames="{style.button}" />
-			<g:HorizontalPanel>
-				<g:Label ui:field="policyLabel" addStyleNames="{style.rightMarginStyle}"/>
-				<g:Label ui:field="policyFieldLabel"/>
-			</g:HorizontalPanel>
-			<g:AbsolutePanel ui:field="sliderPanel" addStyleNames="{style.topMarginPanel}">
-				<g:HorizontalPanel addStyleNames="{style.absolutePanel}">
-					<g:SimplePanel ui:field="leftDummySlider" addStyleNames="{style.geryPanel}"/>
-					<f:Slider ui:field="leftSlider"/>
-					<g:SimplePanel addStyleNames="{style.gerySplitPanel}"/>
-					<f:Slider ui:field="rightSlider"/>
+	<g:HorizontalPanel spacing="5">
+		<g:HorizontalPanel ui:field="policyPanel" addStyleNames="{style.marginLeft}">
+			<g:FlowPanel width="400px">
+				<w:UiCommandButton ui:field="editPolicyButton" addStyleNames="{style.button}" />
+				<g:HorizontalPanel>
+					<g:Label ui:field="policyLabel" addStyleNames="{style.rightMarginStyle}"/>
+					<g:Label ui:field="policyFieldLabel"/>
 				</g:HorizontalPanel>
-				<g:SimplePanel addStyleNames="{style.transparent}"/>
-			</g:AbsolutePanel>
-			<g:Label ui:field="policyTimeLabel"/>
-		</g:FlowPanel>
-		<g:FlowPanel addStyleNames="{style.minMaxPanel}">
-			<g:HorizontalPanel >
-				<g:SimplePanel addStyleNames="{style.maxLabel}"/>
-				<g:Label ui:field="maxServiceLevelLabel"/>
-			</g:HorizontalPanel>
-			<g:HorizontalPanel>
-				<g:SimplePanel addStyleNames="{style.minLabel}"/>
-				<g:Label ui:field="minServiceLevelLabel"/>
-			</g:HorizontalPanel>
-		</g:FlowPanel>
+				<g:AbsolutePanel ui:field="sliderPanel" addStyleNames="{style.topMarginPanel}">
+					<g:HorizontalPanel addStyleNames="{style.absolutePanel}">
+						<g:SimplePanel ui:field="leftDummySlider" addStyleNames="{style.geryPanel}"/>
+						<f:Slider ui:field="leftSlider"/>
+						<g:SimplePanel addStyleNames="{style.gerySplitPanel}"/>
+						<f:Slider ui:field="rightSlider"/>
+					</g:HorizontalPanel>
+					<g:SimplePanel addStyleNames="{style.transparent}"/>
+				</g:AbsolutePanel>
+				<g:Label ui:field="policyTimeLabel"/>
+			</g:FlowPanel>
+			<g:FlowPanel addStyleNames="{style.minMaxPanel}">
+				<g:HorizontalPanel >
+					<g:SimplePanel addStyleNames="{style.maxLabel}"/>
+					<g:Label ui:field="maxServiceLevelLabel"/>
+				</g:HorizontalPanel>
+				<g:HorizontalPanel>
+					<g:SimplePanel addStyleNames="{style.minLabel}"/>
+					<g:Label ui:field="minServiceLevelLabel"/>
+				</g:HorizontalPanel>
+			</g:FlowPanel>
+		</g:HorizontalPanel>
+
+		<g:VerticalPanel ui:field="volumeSummaryPanel">
+			<g:Label ui:field="volumeHeaderLabel" addStyleNames="{style.headerLabel}"/>
+			<f:GeneralFormPanel  ui:field="volumeFormPanel">
+			</f:GeneralFormPanel>
+		</g:VerticalPanel>
 	</g:HorizontalPanel>
 </ui:UiBinder>
 	

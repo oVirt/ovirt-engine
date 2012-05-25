@@ -580,6 +580,18 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Edit Policy")
     String clusterPolicyEditPolicyButtonLabel();
 
+    @DefaultStringValue("Volume Details")
+    String clusterVolumesLabel();
+
+    @DefaultStringValue("No. Of Volumes")
+    String clusterVolumesTotalLabel();
+
+    @DefaultStringValue("Up")
+    String clusterVolumesUpLabel();
+
+    @DefaultStringValue("Down")
+    String clusterVolumesDownLabel();
+
     @DefaultStringValue("Policy:")
     String clusterPolicyPolicyLabel();
 

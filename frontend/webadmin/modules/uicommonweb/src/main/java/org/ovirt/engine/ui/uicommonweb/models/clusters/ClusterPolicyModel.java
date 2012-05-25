@@ -1,9 +1,13 @@
 package org.ovirt.engine.ui.uicommonweb.models.clusters;
 
+import java.util.ArrayList;
+
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdsGroupOperationParameters;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VdsSelectionAlgorithm;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeStatus;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -24,6 +28,34 @@ public class ClusterPolicyModel extends EntityModel
     public static Integer lowLimitPowerSaving = null;
     public static Integer highLimitPowerSaving = null;
     public static Integer highLimitEvenlyDistributed = null;
+
+    private Integer noOfVolumesTotal;
+    private Integer noOfVolumesUp;
+    private Integer noOfVolumesDown;
+
+    public String getNoOfVolumesTotal() {
+        return Integer.toString(noOfVolumesTotal);
+    }
+
+    public void setNoOfVolumesTotal(Integer noOfVolumesTotal) {
+        this.noOfVolumesTotal = noOfVolumesTotal;
+    }
+
+    public String getNoOfVolumesUp() {
+        return Integer.toString(noOfVolumesUp);
+    }
+
+    public void setNoOfVolumesUp(Integer noOfVolumesUp) {
+        this.noOfVolumesUp = noOfVolumesUp;
+    }
+
+    public String getNoOfVolumesDown() {
+        return Integer.toString(noOfVolumesDown);
+    }
+
+    public void setNoOfVolumesDown(Integer noOfVolumesDown) {
+        this.noOfVolumesDown = noOfVolumesDown;
+    }
 
     private UICommand privateEditCommand;
 
@@ -160,6 +192,10 @@ public class ClusterPolicyModel extends EntityModel
         setTitle(ConstantsManager.getInstance().getConstants().generalTitle());
         setHashName("general"); //$NON-NLS-1$
 
+        setNoOfVolumesTotal(0);
+        setNoOfVolumesUp(0);
+        setNoOfVolumesDown(0);
+
         setEditCommand(new UICommand("Edit", this)); //$NON-NLS-1$
         setOverCommitTime(new EntityModel());
 
@@ -293,6 +329,7 @@ public class ClusterPolicyModel extends EntityModel
         if (getEntity() != null)
         {
             UpdateProperties();
+            UpdateVolumeDetails();
         }
 
         UpdateActionAvailability();
@@ -320,6 +357,37 @@ public class ClusterPolicyModel extends EntityModel
         getOverCommitTime().setIsChangable(getOverCommitTime().getIsAvailable());
         setHasOverCommitLowLevel(getEntity().getselection_algorithm() == VdsSelectionAlgorithm.PowerSave);
         setHasOverCommitHighLevel(getEntity().getselection_algorithm() != VdsSelectionAlgorithm.None);
+    }
+
+    private void UpdateVolumeDetails()
+    {
+        AsyncQuery _asyncQuery = new AsyncQuery();
+        _asyncQuery.setModel(this);
+        _asyncQuery.asyncCallback = new INewAsyncCallback() {
+            @Override
+            public void OnSuccess(Object model, Object result)
+            {
+                ClusterPolicyModel innerGeneralModel = (ClusterPolicyModel) model;
+                ArrayList<GlusterVolumeEntity> volumeList = (ArrayList<GlusterVolumeEntity>) result;
+                int volumesUp = 0;
+                int volumesDown = 0;
+                for (GlusterVolumeEntity volumeEntity : volumeList)
+                {
+                    if (volumeEntity.getStatus() == GlusterVolumeStatus.UP)
+                    {
+                        volumesUp++;
+                    }
+                    else
+                    {
+                        volumesDown++;
+                    }
+                }
+                setNoOfVolumesTotal(volumeList.size());
+                setNoOfVolumesUp(volumesUp);
+                setNoOfVolumesDown(volumesDown);
+            }
+        };
+        AsyncDataProvider.GetVolumeList(_asyncQuery, getEntity().getname());
     }
 
     private void SelectionAlgorithmChanged()

@@ -4,15 +4,21 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VdsSelectionAlgorithm;
+import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.view.AbstractSubTabFormView;
 import org.ovirt.engine.ui.common.widget.UiCommandButton;
+import org.ovirt.engine.ui.common.widget.form.FormBuilder;
+import org.ovirt.engine.ui.common.widget.form.FormItem;
+import org.ovirt.engine.ui.common.widget.form.GeneralFormPanel;
 import org.ovirt.engine.ui.common.widget.form.Slider;
-import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
+import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
+import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterPolicyModel;
+import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.SubTabClusterGeneralPresenter;
 
@@ -24,8 +30,10 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.AbsolutePanel;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class SubTabClusterGeneralView extends AbstractSubTabFormView<VDSGroup, ClusterListModel, ClusterPolicyModel>
@@ -41,6 +49,9 @@ public class SubTabClusterGeneralView extends AbstractSubTabFormView<VDSGroup, C
     interface ViewUiBinder extends UiBinder<Widget, SubTabClusterGeneralView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
+
+    @UiField
+    HorizontalPanel policyPanel;
 
     @UiField(provided = true)
     Slider leftSlider;
@@ -79,6 +90,22 @@ public class SubTabClusterGeneralView extends AbstractSubTabFormView<VDSGroup, C
     @Ignore
     AbsolutePanel sliderPanel;
 
+    @UiField
+    VerticalPanel volumeSummaryPanel;
+
+    @UiField
+    GeneralFormPanel volumeFormPanel;
+
+    FormBuilder formBuilder;
+
+    @UiField
+    @Ignore
+    Label volumeHeaderLabel;
+
+    TextBoxLabel noOfVolumesTotal = new TextBoxLabel();
+    TextBoxLabel noOfVolumesUp = new TextBoxLabel();
+    TextBoxLabel noOfVolumesDown = new TextBoxLabel();
+
     private final ApplicationConstants constants;
 
     @Inject
@@ -106,6 +133,8 @@ public class SubTabClusterGeneralView extends AbstractSubTabFormView<VDSGroup, C
 
         localize(constants);
         Driver.driver.initialize(this);
+        buildVolumeDetailsPanel();
+        applyModeCustomizations();
     }
 
     private void localize(ApplicationConstants constants) {
@@ -113,6 +142,7 @@ public class SubTabClusterGeneralView extends AbstractSubTabFormView<VDSGroup, C
         maxServiceLevelLabel.setText(constants.clusterPolicyMaxServiceLevelLabel());
         editPolicyButton.setLabel(constants.clusterPolicyEditPolicyButtonLabel());
         policyLabel.setText(constants.clusterPolicyPolicyLabel());
+        volumeHeaderLabel.setText(constants.clusterVolumesLabel());
     }
 
     private void initDummyPanel() {
@@ -153,9 +183,23 @@ public class SubTabClusterGeneralView extends AbstractSubTabFormView<VDSGroup, C
         }
     }
 
+    private void buildVolumeDetailsPanel() {
+        formBuilder = new FormBuilder(volumeFormPanel, 1, 3);
+        formBuilder.addFormItem(new FormItem(constants.clusterVolumesTotalLabel(), noOfVolumesTotal, 0, 0));
+        formBuilder.addFormItem(new FormItem(constants.clusterVolumesUpLabel(), noOfVolumesUp, 1, 0));
+        formBuilder.addFormItem(new FormItem(constants.clusterVolumesDownLabel(), noOfVolumesDown, 2, 0));
+    }
+
+    private void applyModeCustomizations()
+    {
+        volumeSummaryPanel.setVisible(ApplicationModeHelper.isModeSupported(ApplicationMode.GlusterOnly));
+        policyPanel.setVisible(ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly);
+    }
+
     @Override
     public void setMainTabSelectedItem(VDSGroup selectedItem) {
         Driver.driver.edit(getDetailModel());
+        formBuilder.showForm(getDetailModel());
         if (selectedItem.getselection_algorithm().equals(VdsSelectionAlgorithm.PowerSave)) {
             setVisibility(true);
             leftSlider.setValue(selectedItem.getlow_utilization());
