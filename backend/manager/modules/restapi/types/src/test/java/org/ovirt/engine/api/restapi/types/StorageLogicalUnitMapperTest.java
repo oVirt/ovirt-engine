@@ -6,6 +6,7 @@ import org.ovirt.engine.api.model.LogicalUnit;
 import org.ovirt.engine.api.model.Storage;
 import org.ovirt.engine.api.model.StorageType;
 import org.ovirt.engine.core.common.businessentities.LUNs;
+import org.ovirt.engine.core.compat.Guid;
 
 public class StorageLogicalUnitMapperTest extends AbstractInvertibleMappingTest<Storage, LUNs, LUNs> {
 
@@ -41,11 +42,19 @@ public class StorageLogicalUnitMapperTest extends AbstractInvertibleMappingTest<
         model.setProductId("product_id_1");
         model.setLunMapping(5);
         model.setSerial("some_serial");
+        model.setvolume_group_id("volume_group_id_1");
+        model.setStorageDomainId(Guid.Empty);
+        model.setDiskId(Guid.Empty);
+        model.setPartitioned(true);
         LogicalUnit entity = StorageLogicalUnitMapper.map(model, (LogicalUnit)null);
         assertEquals(entity.getVendorId(), "vendor_id_1");
         assertEquals(entity.getProductId(), "product_id_1");
         assertEquals(entity.getSerial(), "some_serial");
         assertEquals(entity.getLunMapping(), new Integer(5));
+        assertEquals(entity.getVolumeGroupId(), "volume_group_id_1");
+        assertEquals(entity.getStorageDomainId(), Guid.Empty.toString());
+        assertEquals(entity.getDiskId(), Guid.Empty.toString());
+        assertEquals(entity.isPartitioned(), true);
     }
 }
 

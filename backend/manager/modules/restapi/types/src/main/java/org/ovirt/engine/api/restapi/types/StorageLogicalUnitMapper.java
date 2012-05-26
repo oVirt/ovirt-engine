@@ -25,8 +25,18 @@ public class StorageLogicalUnitMapper {
         if (entity.getLunMapping()!=null) {
             model.setLunMapping(entity.getLunMapping());
         }
+        if (entity.getvolume_group_id() != null && !entity.getvolume_group_id().isEmpty()) {
+            model.setVolumeGroupId(entity.getvolume_group_id());
+        }
+        if (entity.getStorageDomainId() != null) {
+            model.setStorageDomainId(entity.getStorageDomainId().toString());
+        }
+        if (entity.getDiskId() != null) {
+            model.setDiskId(entity.getDiskId().toString());
+        }
         model.setSize(SizeConverter.gigasToBytes(entity.getDeviceSize()));
         model.setPaths(entity.getPathCount());
+        model.setPartitioned(entity.isPartitioned());
         return model;
     }
 

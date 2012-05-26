@@ -1564,6 +1564,10 @@
       <xs:element name="portal" type="xs:string" minOccurs="0"/>
       <xs:element name="size" type="xs:long" minOccurs="0"/>
       <xs:element name="paths" type="xs:int" minOccurs="0"/>
+      <xs:element name="partitioned" type="xs:boolean" minOccurs="0"/>
+      <xs:element name="volume_group_id" type="xs:string" minOccurs="0"/>
+      <xs:element name="storage_domain_id" type="xs:string" minOccurs="0"/>
+      <xs:element name="disk_id" type="xs:string" minOccurs="0"/>
     </xs:sequence>
   </xs:group>
 
