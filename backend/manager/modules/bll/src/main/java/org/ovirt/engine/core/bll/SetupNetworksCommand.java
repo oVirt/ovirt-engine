@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.vdscommands.SetupNetworksVdsCommandParameter
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersBase;
+import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
@@ -157,7 +158,7 @@ public class SetupNetworksCommand<T extends SetupNetworksParameters> extends Vds
     private void pollVds() {
         FutureVDSCall<VDSReturnValue> task =
                 Backend.getInstance().getResourceManager().runFutureVdsCommand(FutureVDSCommandType.Poll,
-                        new VdsIdAndVdsVDSCommandParametersBase(getVds()));
+                        new VdsIdVDSCommandParametersBase(getVds().getId()));
         try {
             log.debugFormat("polling host {0}", getVdsName());
             task.get(Config.<Integer> GetValue(ConfigValues.SetupNetworksPollingTimeout), TimeUnit.SECONDS);

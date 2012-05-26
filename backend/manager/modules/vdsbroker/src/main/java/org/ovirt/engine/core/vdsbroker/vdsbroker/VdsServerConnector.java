@@ -28,9 +28,6 @@ public interface VdsServerConnector {
 
     public Map<String, Object> getVdsCapabilities();
 
-    @FutureCall(delegeteTo = "getVdsCapabilities")
-    public FutureTask<Map<String, Object>> futureGetCapabilities();
-
     public Map<String, Object> getVdsStats();
 
     public Map<String, Object> desktopLogin(String vmId, String domain, String user, String password);
@@ -220,4 +217,10 @@ public interface VdsServerConnector {
     public Map<String, Object> glusterHostRemove(String hostName, Boolean force);
 
     public Map<String, Object> glusterVolumeReplaceBrickStart(String volumeName, String existingBrickDir, String newBrickDir);
+
+    public Map<String, Object> ping();
+
+    @FutureCall(delegeteTo = "ping")
+    public FutureTask<Map<String, Object>> futurePing();
+
 }
