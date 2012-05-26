@@ -18,6 +18,7 @@ import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.ObservableCollection;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -193,6 +194,38 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
             isAllLunsSelected = value;
             IsAllLunsSelectedChanged();
             OnPropertyChanged(new PropertyChangedEventArgs("IsAllLunsSelected")); //$NON-NLS-1$
+        }
+    }
+
+    private boolean ignoreGrayedOut;
+
+    public boolean isIgnoreGrayedOut()
+    {
+        return ignoreGrayedOut;
+    }
+
+    public void setIgnoreGrayedOut(boolean value)
+    {
+        if (ignoreGrayedOut != value)
+        {
+            ignoreGrayedOut = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("IgnoreGrayedOut")); //$NON-NLS-1$
+        }
+    }
+
+    private String selectedLunWarning;
+
+    public String getSelectedLunWarning()
+    {
+        return selectedLunWarning;
+    }
+
+    public void setSelectedLunWarning(String value)
+    {
+        if (!StringHelper.stringsEqual(selectedLunWarning, value))
+        {
+            selectedLunWarning = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("SelectedLunWarning")); //$NON-NLS-1$
         }
     }
 

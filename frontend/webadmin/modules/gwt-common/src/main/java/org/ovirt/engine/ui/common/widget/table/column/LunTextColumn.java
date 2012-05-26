@@ -13,12 +13,12 @@ public abstract class LunTextColumn extends SafeHtmlColumn<LunModel> {
         String color = ""; //$NON-NLS-1$
 
         if (object != null) {
-            if (object.getIsIncluded() || object.getIsSelected()) {
-                color = "black"; //$NON-NLS-1$
+            if (object.getIsGrayedOut()) {
+                color = "gray"; //$NON-NLS-1$
             } else if (!object.getIsAccessible()) {
                 color = "orange"; //$NON-NLS-1$
             } else {
-                color = "grey"; //$NON-NLS-1$
+                color = "black"; //$NON-NLS-1$
             }
         }
 

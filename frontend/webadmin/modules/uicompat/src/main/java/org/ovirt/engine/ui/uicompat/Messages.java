@@ -2,6 +2,8 @@ package org.ovirt.engine.ui.uicompat;
 
 import java.util.Date;
 
+import com.google.gwt.i18n.client.Messages.DefaultMessage;
+
 public interface Messages extends com.google.gwt.i18n.client.Messages {
 
     @DefaultMessage("{0} Alerts")
@@ -121,5 +123,14 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 
     @DefaultMessage("Press {0} to Release Cursor")
     String pressKeyToReleaseCursor(String key);
+
+    @DefaultMessage("LUN is already part of storage domain: {0}")
+    String lunAlreadyPartOfStorageDomainWarning(String storageDomainName);
+
+    @DefaultMessage("LUN is already used by disk: {0}")
+    String lunUsedByDiskWarning(String diskAlias);
+
+    @DefaultMessage("LUN is already in use: VG ID - {0}")
+    String lunUsedByVGWarning(String vgID);
 
 }

@@ -44,6 +44,10 @@ public class IscsiStorageView extends AbstractStorageView<IscsiStorageModel> imp
     Label message;
 
     @UiField
+    @Path(value = "selectedLunWarning")
+    Label warning;
+
+    @UiField
     DialogTab lunToTargetsTab;
 
     @UiField

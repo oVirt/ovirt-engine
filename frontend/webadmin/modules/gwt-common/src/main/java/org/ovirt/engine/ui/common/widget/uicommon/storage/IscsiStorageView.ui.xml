@@ -47,11 +47,14 @@
 			color: red;
 			margin: 2px;
 			height: 16px;
-		}		
+		}
 	</ui:style>
 	
 	<g:FlowPanel>
-		<g:Label ui:field="message" addStyleNames="{style.errorMessageLabel}" />	
+		<g:VerticalPanel addStyleNames="{style.errorMessageLabel}">
+			<g:Label ui:field="message"/>
+			<g:Label ui:field="warning" />	
+		</g:VerticalPanel>
 		<t:DialogTabPanel ui:field="dialogTabPanel" height="340px" width="100%" addStyleNames="{style.tabPanel}">
 			<t:tab>
 				<t:DialogTab ui:field="targetsToLunTab">

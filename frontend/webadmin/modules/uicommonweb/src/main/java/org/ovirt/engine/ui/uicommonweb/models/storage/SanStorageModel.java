@@ -17,7 +17,9 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
+import org.ovirt.engine.ui.uicompat.Constants;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
+import org.ovirt.engine.ui.uicompat.Messages;
 
 @SuppressWarnings("unused")
 public abstract class SanStorageModel extends SanStorageModelBase
@@ -227,20 +229,23 @@ public abstract class SanStorageModel extends SanStorageModelBase
                     }
                 }
 
-                LunModel tempVar2 = new LunModel();
-                tempVar2.setLunId(a.getLUN_id());
-                tempVar2.setVendorId(a.getVendorId());
-                tempVar2.setProductId(a.getProductId());
-                tempVar2.setSerial(a.getSerial());
-                tempVar2.setMultipathing(a.getPathCount());
-                tempVar2.setTargets(targets);
-                tempVar2.setSize(a.getDeviceSize());
-                tempVar2.setIsAccessible(a.getAccessible());
-                tempVar2.setIsIncluded(isIncluded);
-                tempVar2.setIsSelected(isIncluded);
-                tempVar2.setEntity(a);
-                LunModel lun = tempVar2;
+                LunModel lunModel = new LunModel();
+                lunModel.setLunId(a.getLUN_id());
+                lunModel.setVendorId(a.getVendorId());
+                lunModel.setProductId(a.getProductId());
+                lunModel.setSerial(a.getSerial());
+                lunModel.setMultipathing(a.getPathCount());
+                lunModel.setTargets(targets);
+                lunModel.setSize(a.getDeviceSize());
+                lunModel.setIsAccessible(a.getAccessible());
+                lunModel.setIsIncluded(isIncluded);
+                lunModel.setIsSelected(isIncluded);
+                lunModel.setEntity(a);
+                LunModel lun = lunModel;
                 newItems.add(lun);
+
+                // Update isGrayedOut and grayedOutReason properties
+                UpdateGrayedOut(lun);
 
                 // Remember included LUNs to prevent their removal while updating items.
                 if (isIncluded)
@@ -252,6 +257,36 @@ public abstract class SanStorageModel extends SanStorageModelBase
 
         InitializeItems(newItems, null);
         ProposeDiscover();
+    }
+
+    private void UpdateGrayedOut(LunModel lunModel) {
+        Constants constants = ConstantsManager.getInstance().getConstants();
+        Messages messages = ConstantsManager.getInstance().getMessages();
+
+        LUNs lun = (LUNs) lunModel.getEntity();
+        boolean nonEmpty = lun.isPartitioned() || lun.getStorageDomainId() != null || lun.getDiskId() != null ||
+                (lun.getvolume_group_id() != null && !lun.getvolume_group_id().isEmpty());
+
+        // Graying out LUNs
+        lunModel.setIsGrayedOut(isIgnoreGrayedOut() ? lun.getDiskId() != null : nonEmpty);
+
+        // Adding 'GrayedOutReasons'
+        if (lun.isPartitioned()) {
+            lunModel.getGrayedOutReasons().add(constants.partitionedLUN());
+        }
+
+        if (lun.getStorageDomainId() != null) {
+            lunModel.getGrayedOutReasons().add(
+                    messages.lunAlreadyPartOfStorageDomainWarning(lun.getStorageDomainName()));
+        }
+        else if (lun.getDiskId() != null) {
+            lunModel.getGrayedOutReasons().add(
+                    messages.lunUsedByDiskWarning(lun.getDiskAlias()));
+        }
+        else if (lun.getvolume_group_id() != null) {
+            lunModel.getGrayedOutReasons().add(
+                    messages.lunUsedByVGWarning(lun.getvolume_group_id()));
+        }
     }
 
     private void IsGrouppedByTargetChanged()

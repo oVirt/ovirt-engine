@@ -16,6 +16,12 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("[N/A]")
     String unAvailablePropertyLabel();
 
+    @DefaultStringValue("</br>")
+    String lineBreak();
+
+    @DefaultStringValue(" ")
+    String space();
+
     // Widgets
 
     @DefaultStringValue("Next >>")
@@ -904,4 +910,8 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("Migration is NOT currently supported using SPICE Native USB redirection")
     String nativeUsbSupportWarning();
+
+    @DefaultStringValue("LUN is already in use - attaching it could cause data corruption.")
+    String lunAlreadyUsedWarning();
+
 }

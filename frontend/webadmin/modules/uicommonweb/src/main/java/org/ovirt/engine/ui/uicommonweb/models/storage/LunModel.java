@@ -1,11 +1,11 @@
 package org.ovirt.engine.ui.uicommonweb.models.storage;
 
+import java.util.ArrayList;
+
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
-
-import java.util.ArrayList;
 
 @SuppressWarnings("unused")
 public class LunModel extends EntityModel
@@ -139,6 +139,38 @@ public class LunModel extends EntityModel
         }
     }
 
+    private boolean isGrayedOut;
+
+    public boolean getIsGrayedOut()
+    {
+        return isGrayedOut;
+    }
+
+    public void setIsGrayedOut(boolean value)
+    {
+        if (isGrayedOut != value)
+        {
+            isGrayedOut = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("IsGrayedOut")); //$NON-NLS-1$
+        }
+    }
+
+    private ArrayList<String> grayedOutReasons;
+
+    public ArrayList<String> getGrayedOutReasons()
+    {
+        return grayedOutReasons;
+    }
+
+    public void setGrayedOutReasons(ArrayList<String> value)
+    {
+        if (grayedOutReasons != value)
+        {
+            grayedOutReasons = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("GrayedOutReasons")); //$NON-NLS-1$
+        }
+    }
+
     private ArrayList<SanTargetModel> targets;
 
     public ArrayList<SanTargetModel> getTargets()
@@ -175,6 +207,7 @@ public class LunModel extends EntityModel
     public LunModel()
     {
         setTargetsList(new ListModel());
+        setGrayedOutReasons(new ArrayList<String>());
     }
 
 }

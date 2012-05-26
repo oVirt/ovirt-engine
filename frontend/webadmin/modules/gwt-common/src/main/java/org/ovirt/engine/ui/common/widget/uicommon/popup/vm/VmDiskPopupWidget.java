@@ -450,17 +450,26 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> 
     }
 
     private void revealStorageView(DiskModel disk) {
-        SanStorageModel model = new IscsiStorageModel();
-        model.setIsGrouppedByTarget(true);
-
         StorageModel storageModel = new StorageModel(new NewEditStorageModelBehavior());
         storageModel.setHost(disk.getHost());
+
+        final SanStorageModel model = new IscsiStorageModel();
         model.setContainer(storageModel);
+        model.setIsGrouppedByTarget(true);
+        model.setIgnoreGrayedOut(true);
+
         disk.setSanStorageModel(model);
+        disk.getHost().getItemsChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                model.getUpdateCommand().Execute();
+            }
+        });
 
         AbstractStorageView storageView = null;
         StorageType storageType = (StorageType) disk.getStorageType().getSelectedItem();
 
+        // Reveal view by storge type
         if (storageType == StorageType.ISCSI) {
             storageView = new IscsiStorageView(false, 110, 210, 244, 268, 275, 125, 50, -43);
         }

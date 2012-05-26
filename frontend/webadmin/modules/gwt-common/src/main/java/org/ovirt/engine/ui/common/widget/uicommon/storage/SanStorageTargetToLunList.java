@@ -174,12 +174,17 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
             leafModel.getSelectedItemChangedEvent().addListener(new IEventListener() {
                 @Override
                 public void eventRaised(Event ev, Object sender, EventArgs args) {
+                    LunModel lunModel = (LunModel) leafModel.getSelectedItem();
                     if (leafModel.getSelectedItem() != null) {
                         // Clear current selection
                         for (SanTargetModel item : (List<SanTargetModel>) model.getItems()) {
                             if (item.getLunsList() != leafModel) {
                                 item.getLunsList().setSelectedItem(null);
                             }
+                        }
+
+                        if (model.isIgnoreGrayedOut()) {
+                            updateSelectedLunWarning(lunModel);
                         }
                     }
                 }
@@ -247,6 +252,13 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
         ScrollPanel panel = new ScrollPanel();
         panel.add(table);
         item.setWidget(panel);
+
+        // Display LUNs as grayed-out if needed
+        for (LunModel lunModel : items) {
+            if (lunModel.getIsGrayedOut()) {
+                grayOutItem(lunModel.getGrayedOutReasons(), lunModel, table);
+            }
+        }
 
         return item;
     }

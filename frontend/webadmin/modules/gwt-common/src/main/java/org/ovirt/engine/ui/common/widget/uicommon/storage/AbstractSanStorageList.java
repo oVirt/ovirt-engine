@@ -1,18 +1,25 @@
 package org.ovirt.engine.ui.common.widget.uicommon.storage;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.CommonApplicationMessages;
+import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
+import org.ovirt.engine.ui.uicommonweb.models.storage.LunModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.SanStorageModelBase;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.dom.client.Style.Visibility;
+import com.google.gwt.dom.client.TableRowElement;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.CellTable;
@@ -44,6 +51,7 @@ public abstract class AbstractSanStorageList<M extends EntityModel, L extends Li
     boolean multiSelection;
 
     protected static final CommonApplicationConstants constants = GWT.create(CommonApplicationConstants.class);
+    protected static final CommonApplicationMessages messages = GWT.create(CommonApplicationMessages.class);
 
     public AbstractSanStorageList(SanStorageModelBase model) {
         this(model, false);
@@ -105,6 +113,42 @@ public abstract class AbstractSanStorageList<M extends EntityModel, L extends Li
         }
 
         tree.addItem(rootItem);
+    }
+
+    protected void grayOutItem(ArrayList<String> grayOutReasons,
+            EntityModel model,
+            EntityModelCellTable<ListModel> table) {
+        for (int row = 0; row < table.getRowCount(); row++) {
+            if (table.getVisibleItem(row).equals(model)) {
+                TableRowElement tableRowElement = table.getRowElement(row);
+                Element input = tableRowElement.getElementsByTagName("input").getItem(0); //$NON-NLS-1$
+                input.setPropertyBoolean("disabled", true); //$NON-NLS-1$
+                updateInputTitle(grayOutReasons, input);
+            }
+        }
+    }
+
+    protected void updateInputTitle(ArrayList<String> grayOutReasons, Element input) {
+        String title = constants.empty();
+        for (String reason : grayOutReasons) {
+            title += reason + constants.space();
+        }
+        input.setTitle(title);
+    }
+
+    protected void updateSelectedLunWarning(LunModel lunModel) {
+        LUNs lun = (LUNs) lunModel.getEntity();
+        String warning = constants.empty();
+
+        // Adding 'GrayedOutReasons'
+        if (lun.getStorageDomainId() != null) {
+            warning = messages.lunAlreadyPartOfStorageDomainWarning(lun.getStorageDomainName());
+        }
+        else if (lun.getDiskId() != null) {
+            warning = messages.lunUsedByDiskWarning(lun.getDiskAlias());
+        }
+
+        model.setSelectedLunWarning(warning);
     }
 
     protected void createSanStorageListWidget() {

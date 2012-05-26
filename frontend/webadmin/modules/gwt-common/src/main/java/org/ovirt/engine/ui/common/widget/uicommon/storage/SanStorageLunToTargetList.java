@@ -169,6 +169,10 @@ public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, 
                 else {
                     lunModel.setIsSelected(isSelected);
                 }
+
+                if (isSelected && model.isIgnoreGrayedOut()) {
+                    updateSelectedLunWarning(lunModel);
+                }
             }
         });
 
@@ -180,6 +184,12 @@ public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, 
         HorizontalPanel panel = new HorizontalPanel();
         panel.add(table);
         TreeItem item = new TreeItem(panel);
+
+        // Display LUNs as grayed-out if needed
+        if (rootModel.getIsGrayedOut()) {
+            grayOutItem(rootModel.getGrayedOutReasons(), rootModel, table);
+        }
+
         return item;
     }
 
