@@ -21,6 +21,7 @@ import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.network;
 import org.ovirt.engine.core.common.businessentities.network_cluster;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.SearchType;
@@ -121,6 +122,7 @@ VdsGroupOperationCommandBase<T> {
     @Override
     protected boolean canDoAction() {
         boolean result = super.canDoAction();
+        boolean hasVms = false;
         getReturnValue().getCanDoActionMessages()
                 .add(VdcBllMessages.VAR__ACTION__UPDATE.toString());
         VDSGroup oldGroup = DbFacade.getInstance().getVdsGroupDAO().get(getVdsGroup().getId());
@@ -214,6 +216,9 @@ VdsGroupOperationCommandBase<T> {
 
             List<VM> vmList = (List) Backend.getInstance()
             .runInternalQuery(VdcQueryType.Search, searchParams).getReturnValue();
+            if(vmList.size() > 0) {
+                hasVms = true;
+            }
             int notDownVms = 0;
             int suspendedVms = 0;
             for (VM vm : vmList) {
@@ -291,6 +296,23 @@ VdsGroupOperationCommandBase<T> {
         }
         if (result) {
             result = validateMetrics();
+        }
+        if(result) {
+            if(!(getVdsGroup().supportsGlusterService() || getVdsGroup().supportsVirtService())) {
+                addCanDoActionMessage(VdcBllMessages.VDS_GROUP_AT_LEAST_ONE_SERVICE_MUST_BE_ENABLED);
+                result = false;
+            }
+        }
+        if(result && hasVms && !getVdsGroup().supportsVirtService()) {
+            addCanDoActionMessage(VdcBllMessages.VDS_GROUP_CANNOT_DISABLE_VIRT_WHEN_CLUSTER_CONTAINS_VMS);
+            result = false;
+        }
+        if(result && !getVdsGroup().supportsGlusterService()) {
+            List<GlusterVolumeEntity> volumes = getGlusterVolumeDao().getByClusterId(getVdsGroup().getId());
+            if(volumes != null && volumes.size() > 0) {
+                addCanDoActionMessage(VdcBllMessages.VDS_GROUP_CANNOT_DISABLE_GLUSTER_WHEN_CLUSTER_CONTAINS_VOLUMES);
+                result = false;
+            }
         }
         return result;
     }

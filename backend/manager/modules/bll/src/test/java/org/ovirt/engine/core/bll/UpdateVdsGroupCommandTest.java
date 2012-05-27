@@ -27,9 +27,11 @@ import org.ovirt.engine.core.common.action.VdsGroupOperationParameters;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VdsSelectionAlgorithm;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.SearchType;
@@ -44,6 +46,7 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.StoragePoolDAO;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
 import org.ovirt.engine.core.dao.VdsStaticDAO;
+import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
@@ -67,6 +70,8 @@ public class UpdateVdsGroupCommandTest {
     private BackendInternal backendInternal;
     @Mock
     private StoragePoolDAO storagePoolDAO;
+    @Mock
+    private GlusterVolumeDao glusterVolumeDao;
 
     private UpdateVdsGroupCommand<VdsGroupOperationParameters> cmd;
 
@@ -84,6 +89,7 @@ public class UpdateVdsGroupCommandTest {
         when(dbFacade.getVdsGroupDAO()).thenReturn(vdsGroupDAO);
         when(dbFacade.getVdsStaticDAO()).thenReturn(vdsStaticDAO);
         when(dbFacade.getStoragePoolDAO()).thenReturn(storagePoolDAO);
+        when(dbFacade.getGlusterVolumeDao()).thenReturn(glusterVolumeDao);
         when(vdsGroupDAO.get(any(Guid.class))).thenReturn(createDefaultVdsGroup());
         when(vdsGroupDAO.getByName(anyString())).thenReturn(createDefaultVdsGroup());
         when(Backend.getInstance()).thenReturn(backendInternal);
@@ -208,8 +214,45 @@ public class UpdateVdsGroupCommandTest {
         createCommandWithNoCpuName();
         when(vdsGroupDAO.get(any(Guid.class))).thenReturn(createVdsGroupWithNoCpuName());
         when(vdsGroupDAO.getByName(anyString())).thenReturn(createVdsGroupWithNoCpuName());
+        when(glusterVolumeDao.getByClusterId(any(Guid.class))).thenReturn(new ArrayList<GlusterVolumeEntity>());
         allQueriesEmpty();
         assertTrue(cmd.canDoAction());
+    }
+
+    @Test
+    public void vdsGroupWithNoServiceEnabled() {
+        createCommandWithNoService();
+        when(vdsGroupDAO.get(any(Guid.class))).thenReturn(createVdsGroupWithNoCpuName());
+        when(vdsGroupDAO.getByName(anyString())).thenReturn(createVdsGroupWithNoCpuName());
+        cpuExists();
+        allQueriesEmpty();
+        canDoActionFailedWithReason(VdcBllMessages.VDS_GROUP_AT_LEAST_ONE_SERVICE_MUST_BE_ENABLED);
+    }
+
+    @Test
+    public void disableVirtWhenVmsExist() {
+        createCommandWithGlusterEnabled();
+        when(vdsGroupDAO.get(any(Guid.class))).thenReturn(createVdsGroupWithNoCpuName());
+        when(vdsGroupDAO.getByName(anyString())).thenReturn(createVdsGroupWithNoCpuName());
+        cpuExists();
+        cpuFlagsNotMissing();
+        clusterHasVds();
+        clusterHasVMs();
+
+        canDoActionFailedWithReason(VdcBllMessages.VDS_GROUP_CANNOT_DISABLE_VIRT_WHEN_CLUSTER_CONTAINS_VMS);
+    }
+
+    @Test
+    public void disableGlusterWhenVolumesExist() {
+        createCommandWithVirtEnabled();
+        when(vdsGroupDAO.get(any(Guid.class))).thenReturn(createVdsGroupWithNoCpuName());
+        when(vdsGroupDAO.getByName(anyString())).thenReturn(createVdsGroupWithNoCpuName());
+        cpuExists();
+        cpuFlagsNotMissing();
+        allQueriesEmpty();
+        clusterHasGlusterVolumes();
+
+        canDoActionFailedWithReason(VdcBllMessages.VDS_GROUP_CANNOT_DISABLE_GLUSTER_WHEN_CLUSTER_CONTAINS_VOLUMES);
     }
 
     private void createSimpleCommand() {
@@ -239,6 +282,18 @@ public class UpdateVdsGroupCommandTest {
 
     private void createCommandWithPowerSaveVdsGroup() {
         createCommand(createVdsGroupWithPowerSave());
+    }
+
+    private void createCommandWithNoService() {
+        createCommand(createVdsGroupWith(false, false));
+    }
+
+    private void createCommandWithVirtEnabled() {
+        createCommand(createVdsGroupWith(true, false));
+    }
+
+    private void createCommandWithGlusterEnabled() {
+        createCommand(createVdsGroupWith(false, true));
     }
 
     private void createCommand(final VDSGroup group) {
@@ -313,6 +368,14 @@ public class UpdateVdsGroupCommandTest {
         return group;
     }
 
+    private static VDSGroup createVdsGroupWith(boolean virtService, boolean glusterService) {
+        VDSGroup group = createDefaultVdsGroup();
+        group.setVirtService(virtService);
+        group.setGlusterService(glusterService);
+        group.setcompatibility_version(VERSION_1_1);
+        return group;
+    }
+
     private static storage_pool createStoragePoolLocalFS() {
         storage_pool pool = new storage_pool();
         pool.setstorage_pool_type(StorageType.LOCALFS);
@@ -369,10 +432,47 @@ public class UpdateVdsGroupCommandTest {
         vds.setsupported_cluster_levels(VERSION_1_1.toString());
         List<VDS> vdsList = new ArrayList<VDS>();
         vdsList.add(vds);
+
+
         VdcQueryReturnValue returnValue = mock(VdcQueryReturnValue.class);
-        when(backendInternal.runInternalQuery(any(VdcQueryType.class), any(SearchParameters.class)))
+        when(backendInternal.runInternalQuery(any(VdcQueryType.class), argThat(
+                new ArgumentMatcher<VdcQueryParametersBase>() {
+                    @Override
+                    public boolean matches(final Object o) {
+                        if(o == null) {
+                            return false;
+                        }
+                        SearchParameters param = (SearchParameters) o;
+                        return param.getSearchTypeValue().equals(SearchType.VDS);
+                    }
+                })))
                 .thenReturn(returnValue);
         when(returnValue.getReturnValue()).thenReturn(vdsList);
+    }
+
+    private void clusterHasGlusterVolumes() {
+        List<GlusterVolumeEntity> volumes = new ArrayList<GlusterVolumeEntity>();
+        volumes.add(new GlusterVolumeEntity());
+        when(glusterVolumeDao.getByClusterId(any(Guid.class))).thenReturn(volumes);
+    }
+
+    private void clusterHasVMs() {
+        VM vm = new VM();
+        vm.setvds_group_id(VDSGroup.DEFAULT_VDS_GROUP_ID);
+        List<VM> vmList = new ArrayList<VM>();
+        vmList.add(vm);
+
+        VdcQueryReturnValue returnValue = mock(VdcQueryReturnValue.class);
+        when(backendInternal.runInternalQuery(any(VdcQueryType.class), argThat(
+                new ArgumentMatcher<VdcQueryParametersBase>() {
+                    @Override
+                    public boolean matches(final Object o) {
+                        SearchParameters param = (SearchParameters) o;
+                        return param.getSearchTypeValue().equals(SearchType.VM);
+                    }
+                })))
+                .thenReturn(returnValue);
+        when(returnValue.getReturnValue()).thenReturn(vmList);
     }
 
     private static void cpuFlagsMissing() {

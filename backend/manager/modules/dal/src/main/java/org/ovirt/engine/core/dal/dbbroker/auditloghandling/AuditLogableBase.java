@@ -35,6 +35,7 @@ import org.ovirt.engine.core.dao.VmNetworkInterfaceDAO;
 import org.ovirt.engine.core.dao.VmStaticDAO;
 import org.ovirt.engine.core.dao.VmStatisticsDAO;
 import org.ovirt.engine.core.dao.VmTemplateDAO;
+import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -528,9 +529,13 @@ public class AuditLogableBase extends TimeoutBase {
 
     protected GlusterVolumeEntity getGlusterVolume() {
         if (glusterVolume == null && glusterVolumeId != null) {
-            glusterVolume = getDbFacade().getGlusterVolumeDao().getById(glusterVolumeId.getValue());
+            glusterVolume = getGlusterVolumeDao().getById(glusterVolumeId.getValue());
         }
         return glusterVolume;
+    }
+
+    public GlusterVolumeDao getGlusterVolumeDao() {
+        return getDbFacade().getGlusterVolumeDao();
     }
 
     public StorageDomainDAO getStorageDomainDAO() {

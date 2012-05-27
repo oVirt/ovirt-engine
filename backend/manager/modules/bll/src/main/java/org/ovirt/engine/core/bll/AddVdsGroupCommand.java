@@ -162,6 +162,13 @@ public class AddVdsGroupCommand<T extends VdsGroupOperationParameters> extends
             result = validateMetrics();
         }
 
+        if(result) {
+            if(!(getVdsGroup().supportsGlusterService() || getVdsGroup().supportsVirtService())) {
+                addCanDoActionMessage(VdcBllMessages.VDS_GROUP_AT_LEAST_ONE_SERVICE_MUST_BE_ENABLED);
+                result = false;
+            }
+        }
+
         return result;
     }
 

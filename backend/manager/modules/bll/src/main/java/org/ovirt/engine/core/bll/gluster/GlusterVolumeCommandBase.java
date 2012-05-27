@@ -12,7 +12,6 @@ import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
 import org.ovirt.engine.core.dao.gluster.GlusterOptionDao;
-import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 
 /**
  * Base class for all Gluster Volume related commands
@@ -26,10 +25,6 @@ public abstract class GlusterVolumeCommandBase<T extends GlusterVolumeParameters
         if(getGlusterVolume() != null) {
             setVdsGroupId(getGlusterVolume().getClusterId());
         }
-    }
-
-    protected GlusterVolumeDao getGlusterVolumeDao() {
-        return DbFacade.getInstance().getGlusterVolumeDao();
     }
 
     protected GlusterBrickDao getGlusterBrickDao() {
