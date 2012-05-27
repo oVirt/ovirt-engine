@@ -58,6 +58,12 @@ public class ClusterMapper {
         if (model.isSetErrorHandling() && model.getErrorHandling().isSetOnError()) {
             entity.setMigrateOnError(map(model.getErrorHandling().getOnError(), null));
         }
+        if(model.isSetVirtService()) {
+            entity.setVirtService(model.isVirtService());
+        }
+        if(model.isSetGlusterService()) {
+            entity.setGlusterService(model.isGlusterService());
+        }
         return entity;
     }
 
@@ -85,6 +91,8 @@ public class ClusterMapper {
         model.setMemoryPolicy(map(entity, (MemoryPolicy)null));
         model.setSchedulingPolicy(map(entity, (SchedulingPolicy)null));
         model.setErrorHandling(map(entity.getMigrateOnError(), (ErrorHandling)null));
+        model.setVirtService(entity.supportsVirtService());
+        model.setGlusterService(entity.supportsGlusterService());
         return model;
     }
 

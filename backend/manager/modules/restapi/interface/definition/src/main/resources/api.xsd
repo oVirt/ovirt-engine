@@ -952,6 +952,8 @@
           <xs:element name="version" type="Version" minOccurs="0"/>
           <xs:element name="supported_versions" type="SupportedVersions" minOccurs="0"/>
           <xs:element name="error_handling" type="ErrorHandling" minOccurs="0" maxOccurs="1"/>          
+          <xs:element name="virt_service" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="gluster_service" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
           <!-- Also a rel="networks" link -->
         </xs:sequence>
       </xs:extension>

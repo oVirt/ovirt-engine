@@ -45,6 +45,8 @@ public class ClusterMapperTest extends AbstractInvertibleMappingTest<Cluster, VD
         assertNotNull(transform.getMemoryPolicy());
         assertNotNull(transform.getMemoryPolicy().getTransparentHugepages());
         assertEquals(transform.getMemoryPolicy().getTransparentHugepages().isEnabled(), transform.getMemoryPolicy().getTransparentHugepages().isEnabled());
+        assertEquals(model.isVirtService(), transform.isVirtService());
+        assertEquals(model.isGlusterService(), transform.isGlusterService());
     }
 
     private Mapper<Cluster, VDSGroup> getMapper() {
