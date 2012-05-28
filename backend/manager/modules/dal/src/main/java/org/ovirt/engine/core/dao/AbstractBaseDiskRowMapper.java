@@ -17,7 +17,6 @@ public abstract class AbstractBaseDiskRowMapper<T extends BaseDisk> implements P
         T disk = createDiskEntity();
 
         disk.setId(Guid.createGuidFromString(rs.getString("disk_id")));
-        disk.setInternalDriveMapping(rs.getInt("internal_drive_mapping"));
         disk.setDiskAlias(rs.getString("disk_alias"));
         disk.setDiskDescription(rs.getString("disk_description"));
         String diskInterface = rs.getString("disk_interface");

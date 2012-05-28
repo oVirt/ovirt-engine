@@ -26,7 +26,7 @@ public class DiskImageWidget extends Composite implements HasElementId {
     public DiskImageWidget(DiskImage diskImage) {
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
         diskSize.setText(diskImage.getSizeInGigabytes() + "GB"); //$NON-NLS-1$
-        diskName.setText("Disk " + diskImage.getinternal_drive_mapping() + ':'); //$NON-NLS-1$
+        diskName.setText(diskImage.getDiskAlias() + ':'); //$NON-NLS-1$
     }
 
     @Override

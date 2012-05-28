@@ -88,10 +88,7 @@ public class AddVmFromScratchCommand<T extends AddVmFromScratchParameters> exten
         boolean ret = true;
 
         if (getVmDisks().size() > 0) {
-            int drivesCount = 1;
             for (Disk diskInfo : getVmDisks()) {
-                diskInfo.setInternalDriveMapping(drivesCount);
-
                 VdcReturnValueBase tmpRetValue = null;
                 AddImageFromScratchParameters tempVar = new AddImageFromScratchParameters(itGuid, getParameters()
                             .getVmStaticData().getId(), (DiskImage) diskInfo);
@@ -104,7 +101,6 @@ public class AddVmFromScratchCommand<T extends AddVmFromScratchParameters> exten
                                 VdcActionType.AddImageFromScratch,
                                 tempVar,
                                 ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
-                drivesCount++;
                 if (!tmpRetValue.getSucceeded()) {
                     log.error("AddVmFromScratchCommand::ConcreteAddVmImages: AddImageFromScratch Command failed.");
                     ret = false;

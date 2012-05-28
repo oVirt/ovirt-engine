@@ -104,7 +104,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImprotVmT
                 getParameters().setImages(list);
                 getVmTemplate().setImages(list);
                 ensureDomainMap(getParameters().getImages(), getParameters().getDestDomainId());
-                Map<String, DiskImage> imageMap = new HashMap<String, DiskImage>();
+                Map<Guid, DiskImage> imageMap = new HashMap<Guid, DiskImage>();
                 for (DiskImage image : list) {
                     storage_domains storageDomain =
                             getStorageDomain(imageToDestinationDomainMap.get(image.getImageId()));
@@ -123,7 +123,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImprotVmT
                     } else {
                         image.setstorage_pool_id(getParameters().getStoragePoolId());
                         image.setstorage_ids(new ArrayList<Guid>(Arrays.asList(getParameters().getSourceDomainId())));
-                        imageMap.put(image.getImageId().toString(), image);
+                        imageMap.put(image.getImageId(), image);
                     }
                 }
                 getVmTemplate().setDiskImageMap(imageMap);
@@ -313,13 +313,15 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImprotVmT
         getVmTemplate().setQuotaId(getParameters().getQuotaId());
         DbFacade.getInstance().getVmTemplateDAO().save(getVmTemplate());
         getCompensationContext().snapshotNewEntity(getVmTemplate());
+        int count = 1;
         for (DiskImage image : getParameters().getImages()) {
             image.setvm_guid(getVmTemplateId());
             image.setactive(true);
             BaseImagesCommand.saveImage(image);
             getCompensationContext().snapshotNewEntity(image);
             if (!DbFacade.getInstance().getBaseDiskDao().exists(image.getId())) {
-                image.setDiskAlias(ImagesHandler.getSuggestedDiskAlias(image, getVmTemplateName()));
+                image.setDiskAlias(ImagesHandler.getSuggestedDiskAlias(image, getVmTemplateName(), count));
+                count++;
                 DbFacade.getInstance().getBaseDiskDao().save(image);
                 getCompensationContext().snapshotNewEntity(image);
             }
@@ -381,8 +383,8 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImprotVmT
         for (DiskImage image : getParameters().getImages()) {
             DbFacade.getInstance().getDiskImageDynamicDAO().remove(image.getImageId());
             DbFacade.getInstance().getImageDao().remove(image.getImageId());
-            DbFacade.getInstance().getVmDeviceDAO().remove(new VmDeviceId(image.getId(), image.getvm_guid()));
-            DbFacade.getInstance().getBaseDiskDao().remove(image.getimage_group_id());
+            DbFacade.getInstance().getVmDeviceDAO().remove(new VmDeviceId(image.getId(),image.getvm_guid()));
+            DbFacade.getInstance().getBaseDiskDao().remove(image.getId());
         }
     }
 

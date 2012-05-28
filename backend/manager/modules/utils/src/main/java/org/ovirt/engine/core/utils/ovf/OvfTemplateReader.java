@@ -75,11 +75,7 @@ public class OvfTemplateReader extends OvfReader {
                         return diskImage.getImageId().equals(guid);
                     }
                 });
-                String drive = node.SelectSingleNode("rasd:Caption", _xmlNS).InnerText;
-                if (drive.startsWith("Drive ")) {
-                    image.setinternal_drive_mapping(drive.substring(6));
-                }
-                image.setimage_group_id(OvfParser.GetImageGrupIdFromImageFile(node.SelectSingleNode(
+                image.setId(OvfParser.GetImageGrupIdFromImageFile(node.SelectSingleNode(
                         "rasd:HostResource", _xmlNS).InnerText));
                 if (!StringHelper.isNullOrEmpty(node.SelectSingleNode("rasd:Parent", _xmlNS).InnerText)) {
                     image.setParentId(new Guid(node.SelectSingleNode("rasd:Parent", _xmlNS).InnerText));

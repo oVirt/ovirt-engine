@@ -168,17 +168,6 @@ public final class Linq
 
     }
 
-    public static class DiskByInternalDriveMappingComparer implements Comparator<DiskImage>
-    {
-
-        @Override
-        public int compare(DiskImage x, DiskImage y)
-        {
-            return x.getinternal_drive_mapping().compareTo(y.getinternal_drive_mapping());
-        }
-
-    }
-
     public static class DiskByAliasComparer implements Comparator<Disk>
     {
 
@@ -242,15 +231,6 @@ public final class Linq
         public int compare(network x, network y)
         {
             return x.getname().compareTo(y.getname());
-        }
-    }
-
-    public static class DiskByNameComparer implements Comparator<DiskImage>
-    {
-        @Override
-        public int compare(DiskImage x, DiskImage y)
-        {
-            return x.getinternal_drive_mapping().compareTo(y.getinternal_drive_mapping());
         }
     }
 

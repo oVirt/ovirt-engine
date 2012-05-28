@@ -39,12 +39,6 @@ public interface IrsServerConnector {
             String templateGUID, String templateVolGUID, String templateMeta, String expPath, String collapse,
             String force);
 
-    public Map<String, Object> getImportCandidates(String path, String type, String vmType);
-
-    public Map<String, Object> getImportCandidatesInfo(String path, String type, String vmType);
-
-    public Map<String, Object> getCandidateInfo(String candidateGUID, String path, String type);
-
     public Map<String, Object> importCandidate(String sdUUID, String vmGUID, String templateGUID,
             String templateVolGUID, String path, String type, String force);
 

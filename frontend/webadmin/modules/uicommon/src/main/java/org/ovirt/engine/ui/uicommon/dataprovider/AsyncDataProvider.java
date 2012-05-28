@@ -506,16 +506,6 @@ public final class AsyncDataProvider
 			setDisk(disk);
 		}
 	}
-	public static void GetSnapshotList(AsyncQuery aQuery, Guid vmId, DiskImage disk)
-	{
-		aQuery.setData(new Object[] {disk});
-		aQuery.converterCallback = new IAsyncConverter() { public Object Convert(Object source, AsyncQuery _asyncQuery)
-		{
-			GetAllVmSnapshotsByDriveQueryReturnValue returnValue = (GetAllVmSnapshotsByDriveQueryReturnValue)_asyncQuery.OriginalReturnValue;
-			return new GetSnapshotListQueryResult(returnValue.getTryingImage(), (java.util.ArrayList<DiskImage>)source, (DiskImage)_asyncQuery.Data[0]);
-		} };
-		Frontend.RunQuery(VdcQueryType.GetAllVmSnapshotsByDrive, new GetAllVmSnapshotsByDriveParameters(vmId, disk.getinternal_drive_mapping()), aQuery);
-	}
 
 	public static void GetMaxVmMemSize(AsyncQuery aQuery, boolean is64)
 	{

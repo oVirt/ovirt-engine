@@ -122,8 +122,8 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
             allVmDisks.removeAll(LinqUtils.filter(allVmDisks, new Predicate<Disk>() {
                 @Override
                 public boolean eval(Disk o) {
-                    return o.getinternal_drive_mapping().equals(
-                            _oldDisk.getinternal_drive_mapping());
+                    return o.getId().equals(
+                            _oldDisk.getId());
                 }
             }));
             allVmDisks.add(getParameters().getDiskInfo());
@@ -143,7 +143,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
                     retValue = false;
                     addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_BOOT_IN_USE);
                     getReturnValue().getCanDoActionMessages().add(
-                            String.format("$DiskName %1$s", disk.getinternal_drive_mapping()));
+                            String.format("$DiskName %1$s", disk.getDiskAlias()));
                     break;
                 }
             }

@@ -20,7 +20,6 @@ public class BaseDiskDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<BaseDisk,
     @Override
     protected MapSqlParameterSource createFullParametersMapper(BaseDisk entity) {
         return createIdParameterMapper(entity.getId())
-                .addValue("internal_drive_mapping", entity.getInternalDriveMapping())
                 .addValue("disk_alias", entity.getDiskAlias())
                 .addValue("disk_description", entity.getDiskDescription())
                 .addValue("disk_interface", EnumUtils.nameOrNull(entity.getDiskInterface()))

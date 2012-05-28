@@ -39,7 +39,6 @@ public class AddImageFromScratchCommand<T extends AddImageFromScratchParameters>
         if (ProcessImageInIrs()) {
             mNewCreatedDiskImage = new DiskImage();
             mNewCreatedDiskImage.setImageId(getDestinationImageId());
-            mNewCreatedDiskImage.setInternalDriveMapping(getParameters().getDiskInfo().getInternalDriveMapping());
             mNewCreatedDiskImage.setBoot(getParameters().getDiskInfo().isBoot());
             mNewCreatedDiskImage.setDiskInterface(getParameters().getDiskInfo().getDiskInterface());
             mNewCreatedDiskImage.setPropagateErrors(getParameters().getDiskInfo().getPropagateErrors());

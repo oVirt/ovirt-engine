@@ -1235,7 +1235,7 @@ public class UserVmModel extends Model
 														{
 															DiskModel diskModel = new DiskModel();
 															diskModel.setIsNew(true);
-															diskModel.setName(a.getinternal_drive_mapping());
+															diskModel.setName(a.getDiskAlias());
 															EntityModel tempVar2 = new EntityModel();
 															tempVar2.setEntity(a.getSizeInGigabytes());
 															diskModel.setSize(tempVar2);

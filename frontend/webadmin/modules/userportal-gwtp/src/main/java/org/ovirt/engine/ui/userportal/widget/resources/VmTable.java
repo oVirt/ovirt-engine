@@ -193,7 +193,7 @@ public class VmTable extends Composite implements HasEditorDriver<ResourcesModel
 
             @Override
             public String getValue(EntityModel entity) {
-                return "Disk" + asDisk(entity).getinternal_drive_mapping(); //$NON-NLS-1$
+                return asDisk(entity).getDiskAlias(); //$NON-NLS-1$
             }
         };
 
@@ -303,7 +303,7 @@ public class VmTable extends Composite implements HasEditorDriver<ResourcesModel
         final TextColumnWithTooltip<EntityModel> driveMappingColumn = new TextColumnWithTooltip<EntityModel>() {
             @Override
             public String getValue(EntityModel entity) {
-                return "Disk" + asDisk(entity).getinternal_drive_mapping(); //$NON-NLS-1$
+                return asDisk(entity).getDiskAlias(); //$NON-NLS-1$
             }
         };
 

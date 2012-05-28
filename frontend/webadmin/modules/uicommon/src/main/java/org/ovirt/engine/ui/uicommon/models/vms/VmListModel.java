@@ -2105,7 +2105,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 						DiskModel disk = null;
 						for (DiskModel a : model.getDisks())
 						{
-							if (StringHelper.stringsEqual(a.getName(), templateDisk.getinternal_drive_mapping()))
+							if (StringHelper.stringsEqual(a.getName(), templateDisk.getDiskAlias()))
 							{
 								disk = a;
 								break;

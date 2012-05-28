@@ -18,10 +18,6 @@ public interface IImage extends BusinessEntity<Guid>{
 
     void setsize(long value);
 
-    String getinternal_drive_mapping();
-
-    void setinternal_drive_mapping(String value);
-
     Guid getcontainer_guid();
 
     void setcontainer_guid(Guid value);

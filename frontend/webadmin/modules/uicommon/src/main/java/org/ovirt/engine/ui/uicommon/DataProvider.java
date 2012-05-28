@@ -1808,27 +1808,6 @@ public final class DataProvider
 		return new java.util.ArrayList<VmNetworkInterface>();
 	}
 
-	public static java.util.ArrayList<DiskImage> GetSnapshotList(Guid id, String drive, RefObject<Guid> previewingImageId)
-	{
-		GetAllVmSnapshotsByDriveQueryReturnValue returnValue = null;
-		try
-		{
-			returnValue = (GetAllVmSnapshotsByDriveQueryReturnValue)Frontend.RunQuery(VdcQueryType.GetAllVmSnapshotsByDrive, new GetAllVmSnapshotsByDriveParameters(id, drive));
-		}
-		catch (java.lang.Exception e)
-		{
-		}
-
-		if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
-		{
-			previewingImageId.argvalue = returnValue.getTryingImage();
-			return (java.util.ArrayList<DiskImage>)returnValue.getReturnValue();
-		}
-
-		previewingImageId.argvalue = Guid.Empty;
-		return new java.util.ArrayList<DiskImage>();
-	}
-
 	public static java.util.ArrayList<String> GetFloppyImageList(Guid dataCenterId, boolean forceRefresh)
 	{
 		storage_domains isoDomain = GetIsoDomainByDataCenterId(dataCenterId);

@@ -286,7 +286,7 @@ public class VmDiskListModel extends SearchableListModel
 		for (Object item : getSelectedItems())
 		{
 			DiskImage a = (DiskImage)item;
-            items.add(StringFormat.format("Disk %1$s", a.getinternal_drive_mapping()));
+            items.add(a.getDiskAlias());
 		}
 		model.setItems(items);
 

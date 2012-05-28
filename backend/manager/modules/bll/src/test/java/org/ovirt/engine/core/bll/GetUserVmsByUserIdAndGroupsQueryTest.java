@@ -22,7 +22,6 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.queries.GetUserVmsByUserIdAndGroupsParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmDAO;
-import org.ovirt.engine.core.utils.RandomUtils;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
@@ -162,7 +161,6 @@ public class GetUserVmsByUserIdAndGroupsQueryTest
         final DiskImage expectedDisk = new DiskImage();
         expectedDisk.setImageId(diskGuid);
         expectedDisk.setit_guid(itGuid);
-        expectedDisk.setInternalDriveMapping(RandomUtils.instance().nextInt());
 
         return expectedDisk;
     }

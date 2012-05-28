@@ -102,7 +102,7 @@ public final class ImagesHandler {
             if (vm != null) {
                 vmName = vm.getvm_name();
             }
-            disk.setDiskAlias(getSuggestedDiskAlias(disk, vmName));
+            disk.setDiskAlias(getSuggestedDiskAlias(disk, vmName, vm.getDiskMapCount() + 1));
             return true;
         } else {
             log.errorFormat("Disk object is null");
@@ -118,7 +118,7 @@ public final class ImagesHandler {
      * @param diskPrefix
      *            - The prefix for disk alias if needs to be initialized.
      */
-    public static String getSuggestedDiskAlias(BaseDisk disk, String diskPrefix) {
+    public static String getSuggestedDiskAlias(BaseDisk disk, String diskPrefix, int count) {
         String diskAlias;
         if (disk == null) {
             diskAlias = getDefaultDiskAlias(diskPrefix, DefaultDriveName);
@@ -127,7 +127,7 @@ public final class ImagesHandler {
         } else {
             diskAlias = disk.getDiskAlias();
             if (StringUtils.isEmpty(diskAlias)) {
-                diskAlias = getDefaultDiskAlias(diskPrefix, String.valueOf(disk.getInternalDriveMapping()));
+                diskAlias = getDefaultDiskAlias(diskPrefix, String.valueOf(count));
                 log.infoFormat("Disk alias retrieved from the client is null or empty, the suggested default disk alias to be used is {0}",
                         diskAlias);
             }

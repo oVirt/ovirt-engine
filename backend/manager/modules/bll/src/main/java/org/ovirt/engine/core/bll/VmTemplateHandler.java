@@ -45,10 +45,10 @@ public class VmTemplateHandler {
         List<Disk> diskList = DbFacade.getInstance().getDiskDao().getAllForVm(vmt.getId());
         for (Disk dit : diskList) {
             DiskImage diskImage = (DiskImage) dit;
-            vmt.getDiskMap().put(dit.getinternal_drive_mapping(), diskImage);
+            vmt.getDiskMap().put(dit.getId(), diskImage);
             // Translation from number of sectors to GB.
             vmt.setSizeGB(Double.valueOf(dit.getsize()) / Double.valueOf((1024 * 1024 * 1024)));
-            vmt.getDiskImageMap().put(dit.getinternal_drive_mapping(), diskImage);
+            vmt.getDiskImageMap().put(dit.getId(), diskImage);
             vmt.getDiskList().add(diskImage);
         }
     }

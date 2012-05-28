@@ -153,7 +153,7 @@ public final class Linq
 
 		public int compare(DiskImage x, DiskImage y)
 		{
-			return x.getinternal_drive_mapping().compareTo(y.getinternal_drive_mapping());
+			return 0;
 		}
 
 	}

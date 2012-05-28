@@ -260,8 +260,8 @@ public class CommonVmPoolWithVmsCommandTestAbstract {
         for (DiskImage diskImage : getDiskImageList()) {
             vmTemplate.getDiskList().add(diskImage);
         }
-        Map<String, DiskImage> diskImageTemplate = getDiskImageTempalteList();
-        for (String key : diskImageTemplate.keySet()) {
+        Map<Guid, DiskImage> diskImageTemplate = getDiskImageTempalteList();
+        for (Guid key : diskImageTemplate.keySet()) {
             vmTemplate.getDiskMap().put(key, diskImageTemplate.get(key));
         }
     }
@@ -269,26 +269,26 @@ public class CommonVmPoolWithVmsCommandTestAbstract {
     private List<DiskImage> getDiskImageList() {
         List<DiskImage> diskList = new ArrayList<DiskImage>();
         DiskImage diskImage = new DiskImage();
-        diskImage.setimage_group_id(Guid.NewGuid());
+        diskImage.setId(Guid.NewGuid());
         diskImage.setstorage_ids(new ArrayList<Guid>());
         diskList.add(diskImage);
         diskImage = new DiskImage();
-        diskImage.setimage_group_id(Guid.NewGuid());
+        diskImage.setId(Guid.NewGuid());
         diskImage.setstorage_ids(new ArrayList<Guid>());
         diskList.add(diskImage);
         return diskList;
     }
 
-    private Map<String, DiskImage> getDiskImageTempalteList() {
-        Map<String, DiskImage> diskTemplateList = new HashMap<String, DiskImage>();
+    private Map<Guid, DiskImage> getDiskImageTempalteList() {
+        Map<Guid, DiskImage> diskTemplateList = new HashMap<Guid, DiskImage>();
         DiskImage diskImageTemplate = new DiskImage();
         diskImageTemplate.setImageId(Guid.NewGuid());
         diskImageTemplate.setstorage_ids(new ArrayList<Guid>());
-        diskTemplateList.put(diskImageTemplate.getImageId().toString(), diskImageTemplate);
+        diskTemplateList.put(diskImageTemplate.getImageId(), diskImageTemplate);
         diskImageTemplate = new DiskImage();
         diskImageTemplate.setImageId(Guid.NewGuid());
         diskImageTemplate.setstorage_ids(new ArrayList<Guid>());
-        diskTemplateList.put(diskImageTemplate.getImageId().toString(), diskImageTemplate);
+        diskTemplateList.put(diskImageTemplate.getImageId(), diskImageTemplate);
         return diskTemplateList;
     }
 

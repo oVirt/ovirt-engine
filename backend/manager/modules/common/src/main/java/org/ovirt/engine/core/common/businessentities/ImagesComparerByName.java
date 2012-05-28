@@ -11,7 +11,7 @@ public class ImagesComparerByName implements java.util.Comparator<DiskImage>, Se
     }
 
     public int Compare(DiskImage x, DiskImage y) {
-        return x.getinternal_drive_mapping().compareTo(y.getinternal_drive_mapping());
+        return x.getDiskAlias().compareTo(y.getDiskAlias());
     }
 
     public ImagesComparerByName() {

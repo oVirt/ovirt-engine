@@ -322,10 +322,10 @@ public class SnapshotsManager {
         List<Guid> diskIdsFromSnapshot = new ArrayList<Guid>();
 
         // Sync disks that exist or existed in the snapshot.
+        int count = 1;
         for (DiskImage diskImage : disksFromSnapshot) {
-            diskIdsFromSnapshot.add(diskImage.getimage_group_id());
+            diskIdsFromSnapshot.add(diskImage.getId());
             if (getBaseDiskDao().exists(diskImage.getId())) {
-                diskImage.setDiskAlias(ImagesHandler.getSuggestedDiskAlias(diskImage, vmName));
                 getBaseDiskDao().update(diskImage);
             } else {
                 // If can't find the image, insert it as illegal so that it can't be used and make the device unplugged.
@@ -336,10 +336,10 @@ public class SnapshotsManager {
                     ImagesHandler.addImage(diskImage, true, new image_storage_domain_map(diskImage.getImageId(),
                             diskImage.getstorage_ids().get(0)));
                 }
-
-                diskImage.setDiskAlias(ImagesHandler.getSuggestedDiskAlias(diskImage, vmName));
                 ImagesHandler.addDiskToVm(diskImage, vmId);
             }
+            diskImage.setDiskAlias(ImagesHandler.getSuggestedDiskAlias(diskImage, vmName, count));
+            count++;
         }
         removeDisksNotInSnapshot(vmId, diskIdsFromSnapshot);
     }

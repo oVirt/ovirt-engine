@@ -32,12 +32,6 @@ public interface IIrsServer {
             String templateGUID, String templateVolGUID, String templateMeta, String expPath, String collapse,
             String force);
 
-    IrsVMListReturnForXmlRpc getImportCandidates(String path, String type, String vmType);
-
-    ImportCandidatesInfoReturnForXmlRpc getImportCandidatesInfo(String path, String type, String vmType);
-
-    ImportCandidateInfoReturnForXmlRpc getCandidateInfo(String candidateGUID, String path, String type);
-
     OneUuidReturnForXmlRpc importCandidate(String sdUUID, String vmGUID, String templateGUID, String templateVolGUID,
             String path, String type, String force);
 

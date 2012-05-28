@@ -128,14 +128,6 @@ public class BaseDisk extends IVdcQueryable implements BusinessEntity<Guid> {
         this.id = id;
     }
 
-    public int getInternalDriveMapping() {
-        return internalDriveMapping;
-    }
-
-    public void setInternalDriveMapping(int internalDriveMapping) {
-        this.internalDriveMapping = internalDriveMapping;
-    }
-
     @NotNull(message = "VALIDATION.DISK_INTERFACE.NOT_NULL", groups = { CreateEntity.class, UpdateEntity.class })
     public DiskInterface getDiskInterface() {
         return diskInterface;

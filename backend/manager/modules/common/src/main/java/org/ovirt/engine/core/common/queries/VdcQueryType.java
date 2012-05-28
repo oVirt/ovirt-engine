@@ -2,14 +2,9 @@ package org.ovirt.engine.core.common.queries;
 
 import java.io.Serializable;
 
-@SuppressWarnings("unused")
 public enum VdcQueryType implements Serializable {
     // VM queries
     IsVmWithSameNameExist(VdcQueryAuthType.User),
-    GetImportCandidates,
-    GetImportCandidatesInfo,
-    GetAllImportCandidatesInfo,
-    GetCandidateInfo,
     GetVmByVmId(VdcQueryAuthType.User),
     GetVmsRunningOnVDS,
     GetVmsRunningOnVDSCount,
@@ -77,8 +72,6 @@ public enum VdcQueryType implements Serializable {
     GetSystemPermissions,
 
     // VM Snapshot queries
-    @Deprecated
-    GetAllVmSnapshotsByDrive(VdcQueryAuthType.User),
     GetAllVmSnapshotsByVmId(VdcQueryAuthType.User),
 
     // Images queries

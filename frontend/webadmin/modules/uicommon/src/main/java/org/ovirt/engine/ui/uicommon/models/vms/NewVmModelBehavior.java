@@ -296,7 +296,7 @@ public class NewVmModelBehavior extends IVmModelBehavior
 			{
 				DiskModel diskModel = new DiskModel();
 				diskModel.setIsNew(true);
-				diskModel.setName(a.getinternal_drive_mapping());
+				diskModel.setName(a.getDiskAlias());
 				EntityModel tempVar = new EntityModel();
 				tempVar.setEntity(a.getSizeInGigabytes());
 				diskModel.setSize(tempVar);

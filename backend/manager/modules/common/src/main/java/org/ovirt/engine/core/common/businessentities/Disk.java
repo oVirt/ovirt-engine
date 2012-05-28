@@ -79,18 +79,6 @@ public abstract class Disk extends BaseDisk {
         this.vm_guidField = value;
     }
 
-    @Deprecated
-    public String getinternal_drive_mapping() {
-        return Integer.toString(getInternalDriveMapping());
-    }
-
-    @Deprecated
-    public void setinternal_drive_mapping(String value) {
-        if (value != null) {
-            setInternalDriveMapping(Integer.parseInt(value));
-        }
-    }
-
     public abstract long getsize();
 
     @Override

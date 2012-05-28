@@ -20,7 +20,6 @@ import org.ovirt.engine.core.common.businessentities.PropagateErrors;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.StringHelper;
 
 public class DiskMapper {
 
@@ -107,9 +106,7 @@ public class DiskMapper {
     @Mapping(from = org.ovirt.engine.core.common.businessentities.Disk.class, to = Disk.class)
     public static Disk map(org.ovirt.engine.core.common.businessentities.Disk entity, Disk template) {
         Disk model = template != null ? template : new Disk();
-        if (!StringHelper.isNullOrEmpty(entity.getinternal_drive_mapping()) ) {
-            model.setName("Disk " + entity.getinternal_drive_mapping());
-        }
+        model.setName(entity.getDiskAlias());
         if (!Guid.Empty.equals(entity.getvm_guid())) {
             model.setVm(new VM());
             model.getVm().setId(entity.getvm_guid().toString());

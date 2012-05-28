@@ -21,7 +21,7 @@ import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.TimeZoneInfo;
 import org.ovirt.engine.core.compat.WindowsJavaTimezoneMapping;
 import org.ovirt.engine.core.dal.comparators.DiskImageByBootComparator;
-import org.ovirt.engine.core.dal.comparators.DiskImageByDriveMappingComparator;
+import org.ovirt.engine.core.dal.comparators.DiskImageByDiskAliasComparator;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
@@ -162,7 +162,7 @@ public abstract class VmInfoBuilderBase {
         // drive to be first (important for IDE to be index 0) !
         List<Disk> diskImages = new ArrayList<Disk>(vm.getDiskMap()
                 .values());
-        Collections.sort(diskImages, new DiskImageByDriveMappingComparator());
+        Collections.sort(diskImages, new DiskImageByDiskAliasComparator());
         Collections.sort(diskImages,
                 Collections.reverseOrder(new DiskImageByBootComparator()));
         return diskImages;

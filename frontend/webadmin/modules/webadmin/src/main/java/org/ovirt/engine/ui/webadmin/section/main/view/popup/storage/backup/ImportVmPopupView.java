@@ -345,7 +345,7 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
         TextColumnWithTooltip<DiskImage> nameColumn = new TextColumnWithTooltip<DiskImage>() {
             @Override
             public String getValue(DiskImage object) {
-                return "Disk " + object.getinternal_drive_mapping(); //$NON-NLS-1$
+                return object.getDiskAlias(); //$NON-NLS-1$
             }
         };
         diskTable.addColumn(nameColumn, constants.nameDisk(), "100px"); //$NON-NLS-1$

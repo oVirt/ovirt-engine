@@ -49,7 +49,6 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
         setvolume_type(diskImageBase.getvolume_type());
         setvolume_format(diskImageBase.getvolume_format());
         setsize(diskImageBase.getsize());
-        setInternalDriveMapping(diskImageBase.getInternalDriveMapping());
         setDiskInterface(diskImageBase.getDiskInterface());
         setBoot(diskImageBase.isBoot());
         setWipeAfterDelete(diskImageBase.isWipeAfterDelete());
@@ -85,7 +84,6 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
         this.actualSizeFromDiskImageDynamic = actual_size;
         this.description = description;
         setImageId(image_guid);
-        this.setinternal_drive_mapping(internal_drive_mapping);
         setit_guid(it_guid);
         this.setsize(size);
         setvm_guid(vm_guid);
@@ -374,7 +372,6 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
         di.setvm_snapshot_id(diskImage.getvm_snapshot_id());
         di.mstorage_path = diskImage.mstorage_path;
         di.setId(diskImage.getId());
-        di.setInternalDriveMapping(diskImage.getInternalDriveMapping());
         di.setDiskInterface(diskImage.getDiskInterface());
         di.setWipeAfterDelete(diskImage.isWipeAfterDelete());
         di.setPropagateErrors(diskImage.getPropagateErrors());

@@ -376,7 +376,7 @@ public class VmSnapshotListModel extends ListModel
 			java.util.ArrayList<String> driveMappings = new java.util.ArrayList<String>();
 			for (DiskImage a : data.keySet())
 			{
-				driveMappings.add(StringFormat.format("Disk %1$s", a.getinternal_drive_mapping()));
+				driveMappings.add(a.getDiskAlias());
 			}
 			Collections.sort(driveMappings);
 
@@ -509,18 +509,6 @@ public class VmSnapshotListModel extends ListModel
 		{
 			return;
 		}
-
-
-		new GetAllVmSnapshotsExecutor(vm.getId(), new AsyncQuery(this,
-		new INewAsyncCallback() {
-			@Override
-			public void OnSuccess(Object target1, Object returnValue1) {
-
-			VmSnapshotListModel model = (VmSnapshotListModel)target1;
-			model.PostUpdateData(returnValue1);
-
-			}
-		})).Execute();
 	}
 
 	public void PostUpdateData(Object returnValue)
@@ -741,14 +729,6 @@ public class VmSnapshotListModel extends ListModel
 	{
 		//ParticipantDisks
 		java.util.ArrayList<String> list = new java.util.ArrayList<String>();
-		for (DiskImage a : images)
-		{
-			if (!list.contains(a.getinternal_drive_mapping()))
-			{
-				list.add("Disk " + a.getinternal_drive_mapping());
-			}
-		}
-		Collections.sort(list);
 		return list;
 	}
 

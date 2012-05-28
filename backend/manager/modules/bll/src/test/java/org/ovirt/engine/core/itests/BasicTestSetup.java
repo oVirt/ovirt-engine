@@ -204,7 +204,6 @@ public class BasicTestSetup {
         disk.setvolume_type(VolumeType.Sparse);
         disk.setvolume_format(VolumeFormat.COW);
         disk.setsize(100);
-        disk.setinternal_drive_mapping(Long.toString(AbstractBackendTest.testSequenceNumber));
         disk.setDiskInterface(DiskInterface.IDE);
         disk.setBoot(false);
         disk.setWipeAfterDelete(false);

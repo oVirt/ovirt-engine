@@ -60,8 +60,6 @@ import org.ovirt.engine.core.common.queries.GetAllChildVlanInterfacesQueryParame
 import org.ovirt.engine.core.common.queries.GetAllDisksByVmIdParameters;
 import org.ovirt.engine.core.common.queries.GetAllNetworkQueryParamenters;
 import org.ovirt.engine.core.common.queries.GetAllServerCpuListParameters;
-import org.ovirt.engine.core.common.queries.GetAllVmSnapshotsByDriveParameters;
-import org.ovirt.engine.core.common.queries.GetAllVmSnapshotsByDriveQueryReturnValue;
 import org.ovirt.engine.core.common.queries.GetAvailableClusterVersionsByStoragePoolParameters;
 import org.ovirt.engine.core.common.queries.GetAvailableClusterVersionsParameters;
 import org.ovirt.engine.core.common.queries.GetAvailableStoragePoolVersionsParameters;
@@ -2026,30 +2024,6 @@ public final class DataProvider
         }
 
         return new ArrayList<VmNetworkInterface>();
-    }
-
-    public static ArrayList<DiskImage> GetSnapshotList(Guid id,
-            String drive,
-            RefObject<Guid> previewingImageId)
-    {
-        GetAllVmSnapshotsByDriveQueryReturnValue returnValue = null;
-        try
-        {
-            returnValue =
-                    (GetAllVmSnapshotsByDriveQueryReturnValue) Frontend.RunQuery(VdcQueryType.GetAllVmSnapshotsByDrive,
-                            new GetAllVmSnapshotsByDriveParameters(id, drive));
-        } catch (java.lang.Exception e)
-        {
-        }
-
-        if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
-        {
-            previewingImageId.argvalue = returnValue.getTryingImage();
-            return (ArrayList<DiskImage>) returnValue.getReturnValue();
-        }
-
-        previewingImageId.argvalue = NGuid.Empty;
-        return new ArrayList<DiskImage>();
     }
 
     public static storage_server_connections GetStorageConnectionById(String id)

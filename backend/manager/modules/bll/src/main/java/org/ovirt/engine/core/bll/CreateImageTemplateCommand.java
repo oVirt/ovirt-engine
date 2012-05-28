@@ -80,7 +80,7 @@ public class CreateImageTemplateCommand<T extends CreateImageTemplateParameters>
         newImage.setstorage_ids(new ArrayList<Guid>(Arrays.asList(getParameters().getDestinationStorageDomainId())));
         newImage.setactive(true);
         saveImage(newImage);
-        newImage.setDiskAlias(ImagesHandler.getSuggestedDiskAlias(newImage, getVmTemplateName()));
+        newImage.setDiskAlias(getDiskImage().getDiskAlias());
         getBaseDiskDao().save(newImage);
 
         DiskImageDynamic diskDynamic = new DiskImageDynamic();

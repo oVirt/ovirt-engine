@@ -50,8 +50,6 @@ import org.ovirt.engine.core.common.queries.GetAllImagesListByStoragePoolIdParam
 import org.ovirt.engine.core.common.queries.GetAllNetworkQueryParamenters;
 import org.ovirt.engine.core.common.queries.GetAllServerCpuListParameters;
 import org.ovirt.engine.core.common.queries.GetAllVdsByStoragePoolParameters;
-import org.ovirt.engine.core.common.queries.GetAllVmSnapshotsByDriveParameters;
-import org.ovirt.engine.core.common.queries.GetAllVmSnapshotsByDriveQueryReturnValue;
 import org.ovirt.engine.core.common.queries.GetAvailableClusterVersionsByStoragePoolParameters;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
 import org.ovirt.engine.core.common.queries.GetDomainListParameters;
@@ -784,24 +782,6 @@ public final class AsyncDataProvider {
             setSnapshots(snapshots);
             setDisk(disk);
         }
-    }
-
-    public static void GetSnapshotList(AsyncQuery aQuery, Guid vmId, DiskImage disk) {
-        aQuery.setData(new Object[] { disk });
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery)
-            {
-                GetAllVmSnapshotsByDriveQueryReturnValue returnValue =
-                        (GetAllVmSnapshotsByDriveQueryReturnValue) _asyncQuery.OriginalReturnValue;
-                return new GetSnapshotListQueryResult(returnValue.getTryingImage(),
-                        (ArrayList<DiskImage>) source,
-                        (DiskImage) _asyncQuery.Data[0]);
-            }
-        };
-        Frontend.RunQuery(VdcQueryType.GetAllVmSnapshotsByDrive,
-                new GetAllVmSnapshotsByDriveParameters(vmId, disk.getinternal_drive_mapping()),
-                aQuery);
     }
 
     public static void GetMaxVmMemSize(AsyncQuery aQuery, boolean is64) {

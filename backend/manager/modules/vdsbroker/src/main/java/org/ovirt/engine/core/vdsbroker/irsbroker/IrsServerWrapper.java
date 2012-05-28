@@ -82,24 +82,6 @@ public class IrsServerWrapper implements IIrsServer {
         return wrapper;
     }
 
-    public IrsVMListReturnForXmlRpc getImportCandidates(String path, String type, String vmType) {
-        Map<String, Object> xmlRpcReturnValue = irsServer.getImportCandidates(path, type, vmType);
-        IrsVMListReturnForXmlRpc wrapper = new IrsVMListReturnForXmlRpc(xmlRpcReturnValue);
-        return wrapper;
-    }
-
-    public ImportCandidatesInfoReturnForXmlRpc getImportCandidatesInfo(String path, String type, String vmType) {
-        Map<String, Object> xmlRpcReturnValue = irsServer.getImportCandidatesInfo(path, type, vmType);
-        ImportCandidatesInfoReturnForXmlRpc wrapper = new ImportCandidatesInfoReturnForXmlRpc(xmlRpcReturnValue);
-        return wrapper;
-    }
-
-    public ImportCandidateInfoReturnForXmlRpc getCandidateInfo(String candidateGUID, String path, String type) {
-        Map<String, Object> xmlRpcReturnValue = irsServer.getCandidateInfo(candidateGUID, path, type);
-        ImportCandidateInfoReturnForXmlRpc wrapper = new ImportCandidateInfoReturnForXmlRpc(xmlRpcReturnValue);
-        return wrapper;
-    }
-
     public OneUuidReturnForXmlRpc importCandidate(String sdUUID, String vmGUID, String templateGUID,
             String templateVolGUID, String path, String type, String force) {
         Map<String, Object> xmlRpcReturnValue = irsServer.importCandidate(sdUUID, vmGUID, templateGUID,

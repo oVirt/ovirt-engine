@@ -65,7 +65,7 @@ public class VmImportDiskListModel extends VmDiskListModel
 			{
 			    DiskImage img = (DiskImage)disk;
 				DiskModel model = new DiskModel();
-				model.setName(img.getinternal_drive_mapping());
+				model.setName(img.getDiskAlias());
 				EntityModel tempVar = new EntityModel();
 				tempVar.setEntity(img.getSizeInGigabytes());
 				model.setSize(tempVar);
@@ -112,11 +112,6 @@ public class VmImportDiskListModel extends VmDiskListModel
 				{
 					DiskImage disk = (DiskImage)kvp.getValue();
 					ListModel volumeType = model.getVolumeType();
-					if (StringHelper.stringsEqual(disk.getinternal_drive_mapping(), model.getName()))
-					{
-						disk.setvolume_type((VolumeType)volumeType.getSelectedItem());
-						break;
-					}
 				}
 			}
 		}

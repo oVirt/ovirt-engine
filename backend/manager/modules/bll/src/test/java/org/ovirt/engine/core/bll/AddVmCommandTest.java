@@ -342,21 +342,21 @@ public class AddVmCommandTest {
         return vm;
     }
 
-    private void setNewDisksForTemplate(int numberOfNewDisks, Map<String, DiskImage> disksMap) {
+    private void setNewDisksForTemplate(int numberOfNewDisks, Map<Guid, DiskImage> disksMap) {
         for (int newDiskInd = 0; newDiskInd < numberOfNewDisks; newDiskInd++) {
             DiskImage diskImageTempalte = new DiskImage();
             diskImageTempalte.setImageId(Guid.NewGuid());
-            disksMap.put(Guid.NewGuid().toString(), diskImageTempalte);
+            disksMap.put(Guid.NewGuid(), diskImageTempalte);
         }
     }
 
     private void setNewImageDiskMapForTemplate(AddVmFromTemplateCommand<AddVmFromTemplateParameters> cmd,
             long diskSize,
-            Map<String, DiskImage> diskImageMap) {
+            Map<Guid, DiskImage> diskImageMap) {
         DiskImage diskImage = new DiskImage();
         diskImage.setactual_size(diskSize);
         diskImage.setstorage_ids(new ArrayList<Guid>(Arrays.asList(STORAGE_DOMAIN_ID)));
-        diskImageMap.put(Guid.NewGuid().toString(), diskImage);
+        diskImageMap.put(Guid.NewGuid(), diskImage);
         cmd.storageToDisksMap = new HashMap<Guid, List<DiskImage>>();
         cmd.storageToDisksMap.put(STORAGE_DOMAIN_ID,
                 new ArrayList<DiskImage>(diskImageMap.values()));
@@ -428,9 +428,10 @@ public class AddVmCommandTest {
             vmTemplate = new VmTemplate();
             vmTemplate.setstorage_pool_id(STORAGE_POOL_ID);
             DiskImage image = createDiskImageTemplate();
-            vmTemplate.getDiskMap().put("0", image);
-            Map<String, DiskImage> diskImageMap = new HashMap<String, DiskImage>();
-            diskImageMap.put("disk1", createDiskImage(REQUIRED_DISK_SIZE_GB));
+            vmTemplate.getDiskMap().put(image.getImageId(), image);
+            Map<Guid, DiskImage> diskImageMap = new HashMap<Guid, DiskImage>();
+            DiskImage diskImage = createDiskImage(REQUIRED_DISK_SIZE_GB);
+            diskImageMap.put(diskImage.getId(), diskImage);
             vmTemplate.setDiskImageMap(diskImageMap);
         }
         return vmTemplate;

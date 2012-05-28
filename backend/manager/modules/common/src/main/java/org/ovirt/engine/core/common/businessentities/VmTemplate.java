@@ -74,13 +74,13 @@ public class VmTemplate extends VmBase {
     private DisplayType defaultDisplayType = DisplayType.vnc;
 
     @Transient
-    private Map<String, DiskImage> diskMap = new HashMap<String, DiskImage>();
+    private Map<Guid, DiskImage> diskMap = new HashMap<Guid, DiskImage>();
 
     @Transient
     private ArrayList<DiskImage> diskList = new ArrayList<DiskImage>();
 
     @Transient
-    private HashMap<String, DiskImage> diskTemplateMap = new HashMap<String, DiskImage>();
+    private HashMap<Guid, DiskImage> diskTemplateMap = new HashMap<Guid, DiskImage>();
 
     @Transient
     private double bootDiskSizeGB;
@@ -91,7 +91,7 @@ public class VmTemplate extends VmBase {
     public VmTemplate() {
         setis_auto_suspend(false);
         setnice_level(0);
-        diskTemplateMap = new HashMap<String, DiskImage>();
+        diskTemplateMap = new HashMap<Guid, DiskImage>();
     }
 
     public VmTemplate(int child_count, Date creation_date, String description, int mem_size_mb, String name,
@@ -128,7 +128,7 @@ public class VmTemplate extends VmBase {
                 null,
                 null);
 
-        diskTemplateMap = new HashMap<String, DiskImage>();
+        diskTemplateMap = new HashMap<Guid, DiskImage>();
 
         this.childCount = child_count;
         this.name = name;
@@ -227,7 +227,7 @@ public class VmTemplate extends VmBase {
     }
 
     @JsonIgnore
-    public HashMap<String, DiskImage> getDiskMap() {
+    public HashMap<Guid, DiskImage> getDiskMap() {
         return diskTemplateMap;
     }
 
@@ -260,11 +260,11 @@ public class VmTemplate extends VmBase {
     }
 
     @JsonIgnore
-    public Map<String, DiskImage> getDiskImageMap() {
+    public Map<Guid, DiskImage> getDiskImageMap() {
         return diskMap;
     }
 
-    public void setDiskImageMap(Map<String, DiskImage> value) {
+    public void setDiskImageMap(Map<Guid, DiskImage> value) {
         diskMap = value;
     }
 
