@@ -914,6 +914,16 @@ public class UnitVmModel extends Model {
         _maxMemSize64 = value;
     }
 
+    private EntityModel cpuPinning;
+
+    public EntityModel getCpuPinning() {
+        return cpuPinning;
+    }
+
+    public void setCpuPinning(EntityModel cpuPinning) {
+        this.cpuPinning = cpuPinning;
+    }
+
     public UnitVmModel(VmModelBehaviorBase behavior)
     {
         Frontend.getQueryStartedEvent().addListener(this);
@@ -1045,6 +1055,10 @@ public class UnitVmModel extends Model {
 
         setProvisioningThin_IsSelected(new EntityModel());
         getProvisioningThin_IsSelected().getEntityChangedEvent().addListener(this);
+
+        setCpuPinning(new EntityModel());
+        getCpuPinning().setEntity("");
+        getCpuPinning().setIsAvailable(false);
     }
 
     public void Initialize(SystemTreeItemModel SystemTreeSelectedItem)

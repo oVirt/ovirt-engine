@@ -51,6 +51,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.CellTable.Resources;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RadioButton;
@@ -118,6 +119,10 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
     @UiField(provided = true)
     @Path(value = "totalCPUCores.entity")
     EntityModelSliderWithTextBoxEditor totalCPUCoresEditor;
+
+    @UiField
+    @Ignore
+    HTML cpuPinningLabel;
 
     @UiField(provided = true)
     @Path(value = "numOfSockets.entity")
@@ -218,6 +223,10 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
     @UiField(provided = true)
     @Path(value = "isAutoAssign.entity")
     EntityModelRadioButtonEditor isAutoAssignEditor;
+
+    @UiField
+    @Path(value = "cpuPinning.entity")
+    EntityModelTextBoxEditor cpuPinning;
 
     // ==High Availability Tab==
     @UiField
@@ -515,6 +524,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
         // specificHostEditor.setLabel("Specific");
         runVMOnSpecificHostEditor.setLabel(constants.runOnSelectedHostVmPopup());
         dontMigrateVMEditor.setLabel(constants.allowMigrationOnlyAdminVmPopup());
+        cpuPinning.setLabel(constants.cpuPinningLabel());
+        cpuPinningLabel.setHTML(constants.cpuPinningLabelExplanation());
 
         // High Availability Tab
         isHighlyAvailableEditor.setLabel(constants.highlyAvailableVmPopup());
@@ -767,6 +778,15 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 if (!isAutoAssignEditor.asRadioButton().getValue())
                     specificHost.setValue(true, true);
+            }
+        });
+
+        cpuPinningLabel.setVisible(vm.getCpuPinning().getIsAvailable());
+        vm.getCpuPinning().getPropertyChangedEvent().addListener(new IEventListener() {
+
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                cpuPinningLabel.setVisible(vm.getCpuPinning().getIsAvailable());
             }
         });
 

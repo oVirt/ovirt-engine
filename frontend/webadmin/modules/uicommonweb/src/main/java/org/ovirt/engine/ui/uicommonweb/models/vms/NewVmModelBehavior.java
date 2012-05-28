@@ -188,6 +188,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase
         UpdateMinAllocatedMemory();
         UpdateNumOfSockets();
         updateQuotaByCluster(null);
+        updateCpuPinningVisibility();
     }
 
     @Override

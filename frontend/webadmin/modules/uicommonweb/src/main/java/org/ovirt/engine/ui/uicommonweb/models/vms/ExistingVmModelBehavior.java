@@ -141,6 +141,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
 
         getModel().getCustomProperties().setEntity(vm.getCustomProperties());
         getModel().getCustomPropertySheet().setEntity(vm.getCustomProperties());
+        getModel().getCpuPinning().setEntity(vm.getCpuPinning());
 
         if (vm.getis_initialized())
         {
@@ -194,6 +195,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
         UpdateCustomProperties();
         UpdateNumOfSockets();
         updateQuotaByCluster(vm.getQuotaId());
+        updateCpuPinningVisibility();
     }
 
     @Override

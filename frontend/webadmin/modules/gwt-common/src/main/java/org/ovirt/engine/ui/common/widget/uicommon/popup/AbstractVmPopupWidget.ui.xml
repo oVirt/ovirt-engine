@@ -124,6 +124,16 @@
 			bottom: 10px;
 		}
 
+		.explanationLabel {
+			font-style: italic;
+			margin-left: 40px;
+			margin-bottom: 10px;
+			width: 300px;
+		}
+
+		.cpuPinningStyle {
+		}
+
 	</ui:style>
 
 	<t:DialogTabPanel width="100%" height="100%">
@@ -214,6 +224,8 @@
 							<e:EntityModelCheckBoxEditor ui:field="runVMOnSpecificHostEditor" addStyleNames="{style.checkbox}" />
 							<e:EntityModelCheckBoxEditor ui:field="dontMigrateVMEditor" addStyleNames="{style.checkboxWithLongLabel}" />
 						</g:VerticalPanel>
+						<e:EntityModelTextBoxEditor ui:field="cpuPinning" addStyleNames="{style.cpuPinningStyle}"/>
+						<g:HTML ui:field="cpuPinningLabel" addStyleNames="{style.explanationLabel},generalDialogComment" />
 					</g:FlowPanel>
 				</t:content>
 			</t:DialogTab>

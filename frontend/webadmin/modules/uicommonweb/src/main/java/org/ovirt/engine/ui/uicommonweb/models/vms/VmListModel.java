@@ -2356,6 +2356,9 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
         EntityModel prioritySelectedItem = (EntityModel) model.getPriority().getSelectedItem();
         getcurrentVm().setpriority((Integer) prioritySelectedItem.getEntity());
 
+        getcurrentVm().setCpuPinning((String) model.getCpuPinning()
+                .getEntity());
+
         VDS defaultHost = (VDS) model.getDefaultHost().getSelectedItem();
         if ((Boolean) model.getIsAutoAssign().getEntity())
         {

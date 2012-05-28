@@ -892,4 +892,10 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("N/A")
     String notAvailableLabel();
+
+    @DefaultStringValue("CPU Pinning topology")
+    String cpuPinningLabel();
+
+    @DefaultStringValue("v1#p1_v2#p2_..._v<n>#p<n></br>Examples: 0#0, 1#3, 1#4,^2")
+    String cpuPinningLabelExplanation();
 }

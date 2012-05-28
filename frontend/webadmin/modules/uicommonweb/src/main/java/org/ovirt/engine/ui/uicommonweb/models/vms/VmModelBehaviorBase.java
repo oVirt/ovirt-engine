@@ -25,6 +25,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
 import org.ovirt.engine.core.compat.NGuid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -711,4 +712,15 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                 vm.getvmt_guid());
     }
 
+    protected void updateCpuPinningVisibility() {
+        if (getModel().getCluster().getSelectedItem() != null) {
+            VDSGroup cluster = (VDSGroup) getModel().getCluster().getSelectedItem();
+            boolean hasCpuPinning = cluster.getcompatibility_version().compareTo(new Version(3, 1)) >= 0;
+            getModel().getCpuPinning()
+                    .setIsAvailable(hasCpuPinning);
+            if (!hasCpuPinning) {
+                getModel().getCpuPinning().setEntity("");
+            }
+        }
+    }
 }
