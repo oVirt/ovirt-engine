@@ -388,8 +388,9 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
 
         getspice().setTitle(getEntity().getvm_name()
                 + ":%d" //$NON-NLS-1$
-                + (StringHelper.isNullOrEmpty(releaseCursorKeysTranslated) ? "" : (" - Press " //$NON-NLS-1$ //$NON-NLS-2$
-                        + releaseCursorKeysTranslated + " to Release Cursor"))); //$NON-NLS-1$
+                + (StringHelper.isNullOrEmpty(releaseCursorKeysTranslated) ? "" : (" - " + //$NON-NLS-1$ //$NON-NLS-2$
+                ConstantsManager.getInstance().getMessages().pressKeyToReleaseCursor(releaseCursorKeysTranslated))));
+
 
         // If 'AdminConsole' is true, send true; otherwise, false should be sent only for VMs with SPICE driver
         // installed.
@@ -417,32 +418,30 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
             getspice().setHotKey(releaseCursorKeysParameter + comma + toggleFullScreenKeysParameter);
         }
 
-        getspice().setLocalizedStrings(new String[] { "USB", //$NON-NLS-1$
-                "USB Devices,No USB devices,Client's SPICE USB Redirector is not installed" }); //$NON-NLS-1$
+        getspice().setLocalizedStrings(new String[] { ConstantsManager.getInstance().getConstants().usb(),
+                ConstantsManager.getInstance().getConstants().usbDevicesNoUsbdevicesClientSpiceUsbRedirectorNotInstalled() });
 
         // Create menu.
         int id = 1;
         menu = new SpiceMenu();
 
-        menu.getItems().add(new SpiceMenuCommandItem(ID_SYS_MENU_SEND_CTRL_ALT_DEL, "S&end " + ctrlAltDelTranslated //$NON-NLS-1$
+        menu.getItems().add(new SpiceMenuCommandItem(ID_SYS_MENU_SEND_CTRL_ALT_DEL, ConstantsManager.getInstance().getConstants().send() + " " + ctrlAltDelTranslated //$NON-NLS-1$
                 + "\t" + ctrlAltEndTranslated, "")); //$NON-NLS-1$ //$NON-NLS-2$
-        menu.getItems().add(new SpiceMenuCommandItem(ID_SYS_MENU_TOGGLE_FULL_SCREEN, "&Toggle Full Screen\t" //$NON-NLS-1$
+        menu.getItems().add(new SpiceMenuCommandItem(ID_SYS_MENU_TOGGLE_FULL_SCREEN, ConstantsManager.getInstance().getConstants().toggleFullScreen() + "\t" //$NON-NLS-1$
                 + toggleFullScreenKeysTranslated, "")); //$NON-NLS-1$
 
-        SpiceMenuContainerItem specialKes = new SpiceMenuContainerItem(id, "&Special Keys"); //$NON-NLS-1$
+        SpiceMenuContainerItem specialKes = new SpiceMenuContainerItem(id, ConstantsManager.getInstance().getConstants().specialKeys());
         menu.getItems().add(specialKes);
 
-        specialKes.getItems().add(new SpiceMenuCommandItem(ID_SYS_MENU_SEND_SHIFT_F11, "&" //$NON-NLS-1$
-                + toggleFullScreenKeysTranslated, "")); //$NON-NLS-1$
-        specialKes.getItems().add(new SpiceMenuCommandItem(ID_SYS_MENU_SEND_SHIFT_F12, "&" //$NON-NLS-1$
-                + releaseCursorKeysTranslated, "")); //$NON-NLS-1$
+        specialKes.getItems().add(new SpiceMenuCommandItem(ID_SYS_MENU_SEND_SHIFT_F11, toggleFullScreenKeysTranslated, "")); //$NON-NLS-1$
+        specialKes.getItems().add(new SpiceMenuCommandItem(ID_SYS_MENU_SEND_SHIFT_F12, releaseCursorKeysTranslated, "")); //$NON-NLS-1$
         specialKes.getItems().add(new SpiceMenuCommandItem(ID_SYS_MENU_SEND_CTRL_ALT_END,
-                "&" + ctrlAltEndTranslated, //$NON-NLS-1$
+                ctrlAltEndTranslated,
                 "")); //$NON-NLS-1$
         menu.getItems().add(new SpiceMenuSeparatorItem(id));
         id++;
 
-        SpiceMenuContainerItem changeCDItem = new SpiceMenuContainerItem(id, "Change CD"); //$NON-NLS-1$
+        SpiceMenuContainerItem changeCDItem = new SpiceMenuContainerItem(id, ConstantsManager.getInstance().getConstants().changeCd());
         id++;
 
         ArrayList<String> isos = new ArrayList<String>();
@@ -459,7 +458,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
 
         isos =
                 isos.size() > 0 ? isos
-                        : new ArrayList<String>(Arrays.asList(new String[] { "No CDs" })); //$NON-NLS-1$
+                        : new ArrayList<String>(Arrays.asList(new String[] { ConstantsManager.getInstance().getConstants().noCds() }));
 
         Collections.sort(isos);
 

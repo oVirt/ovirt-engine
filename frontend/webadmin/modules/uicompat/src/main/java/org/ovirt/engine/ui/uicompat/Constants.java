@@ -1340,4 +1340,25 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("At least one transport type should be selected.")
     String volumeTransportTypesValidationMsg();
+
+    @DefaultStringValue("USB")
+    String usb();
+
+    @DefaultStringValue("USB Devices,No USB devices,Client's SPICE USB Redirector is not installed")
+    String usbDevicesNoUsbdevicesClientSpiceUsbRedirectorNotInstalled();
+
+    @DefaultStringValue("Change CD")
+    String changeCd();
+
+    @DefaultStringValue("No CDs")
+    String noCds();
+
+    @DefaultStringValue("Send")
+    String send();
+
+    @DefaultStringValue("Toggle Full Screen")
+    String toggleFullScreen();
+
+    @DefaultStringValue("Special Keys")
+    String specialKeys();
 }

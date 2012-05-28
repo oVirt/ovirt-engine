@@ -120,6 +120,7 @@ import org.ovirt.engine.ui.uicommonweb.models.tags.TagModel;
 import org.ovirt.engine.ui.uicommonweb.models.users.UserPermissionModel;
 import org.ovirt.engine.ui.uicompat.Assembly;
 import org.ovirt.engine.ui.uicompat.ResourceManager;
+import org.ovirt.engine.ui.uicompat.SpiceConstantsManager;
 
 /**
  * Contains method for retrieving common data (mostly via frontend).
@@ -2516,7 +2517,8 @@ public final class DataProvider
 
     public static String GetValueFromSpiceRedKeysResource(String key)
     {
-        return GetValueFromResource("UICommon.Resources.SpiceRedKeys.SpiceRedKeys", key); //$NON-NLS-1$
+        key = key.replaceAll("-", "_"); //$NON-NLS-1$ //$NON-NLS-2$
+        return SpiceConstantsManager.getInstance().getSpiceRedKeys().getString(key);
     }
 
     /**

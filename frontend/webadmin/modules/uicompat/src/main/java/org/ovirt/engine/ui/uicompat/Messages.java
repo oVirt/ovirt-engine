@@ -119,4 +119,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     @DefaultMessage("Please use your VNC client to connect to this VM.</BR></BR>Use the following parameters:</BR>IP:Port: {0}:{1}</BR>Password: {2}</BR>(note: this password is valid for {3} seconds)")
     String vncInfoMessage(String hostIp, int port, String password, int seconds);
 
+    @DefaultMessage("Press {0} to Release Cursor")
+    String pressKeyToReleaseCursor(String key);
+
 }
