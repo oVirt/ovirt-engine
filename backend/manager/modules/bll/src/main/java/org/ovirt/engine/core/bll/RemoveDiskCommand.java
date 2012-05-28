@@ -32,6 +32,7 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
+import org.ovirt.engine.core.common.businessentities.storage_server_connections;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
@@ -276,8 +277,14 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
                         .getDiskLunMapDao()
                         .remove(new DiskLunMapId(disk.getId(), lun.getLUN_id()));
                 DbFacade.getInstance().getBaseDiskDao().remove(disk.getId());
-                StorageHelperDirector.getInstance().getItem(lun.getLunType())
-                        .removeLun(lun);
+
+                lun.setLunConnections(new ArrayList<storage_server_connections>(DbFacade.getInstance()
+                        .getStorageServerConnectionDAO()
+                        .getAllForLun(lun.getLUN_id())));
+
+                StorageHelperDirector.getInstance().getItem(
+                        lun.getLunConnections().get(0).getstorage_type()).removeLun(lun);
+
                 return null;
             }
         });
