@@ -15,7 +15,11 @@
 			padding-top: 6px;
 			padding-bottom: 6px;
 		}
-		
+
+		.generalTabTopDecoratorEmpty {
+			display: none;
+		}
+
 		.explanationLabel {
 			font-style: italic;
 			margin-left: 40px;
@@ -47,7 +51,7 @@
 					<t:DialogTab ui:field="generalTab">
 						<t:content>
 							<g:FlowPanel>
-								<g:FlowPanel addStyleNames="{style.generalTabTopDecorator}">
+								<g:FlowPanel ui:field="dataCenterPanel" addStyleNames="{style.generalTabTopDecorator}">
 									<e:ListModelListBoxEditor ui:field="dataCenterEditor" />
 								</g:FlowPanel>	
 								<e:EntityModelTextBoxEditor ui:field="nameEditor" />

@@ -30,6 +30,7 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.inject.Inject;
 
@@ -53,6 +54,9 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
     @UiField
     @WithElementId
     DialogTab generalTab;
+
+    @UiField
+    FlowPanel dataCenterPanel;
 
     @UiField(provided = true)
     @Path(value = "dataCenter.selectedItem")
@@ -245,6 +249,7 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
         {
             memoryOptimizationTab.setVisible(false);
             resiliencePolicyTab.setVisible(false);
+            dataCenterPanel.addStyleName(style.generalTabTopDecoratorEmpty());
         }
     }
 
@@ -304,6 +309,8 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
 
     interface WidgetStyle extends CssResource {
         String label();
+
+        String generalTabTopDecoratorEmpty();
     }
 
 }

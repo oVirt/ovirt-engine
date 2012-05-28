@@ -594,6 +594,8 @@ public class ClusterModel extends Model
 
         setDataCenter(new ListModel());
         getDataCenter().getSelectedItemChangedEvent().addListener(this);
+        getDataCenter().setIsAvailable(ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly);
+
         setCPU(new ListModel());
         setVersion(new ListModel());
         getVersion().getSelectedItemChangedEvent().addListener(this);
