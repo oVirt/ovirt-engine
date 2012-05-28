@@ -6,6 +6,8 @@ import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeBricksActionParameters;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickStatus;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeStatus;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeBricksActionVDSParameters;
@@ -35,7 +37,7 @@ public class AddBricksToGlusterVolumeCommand extends GlusterVolumeCommandBase<Gl
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_BRICKS_REQUIRED);
             return false;
         }
-        return true;
+        return updateBrickServerNames(getParameters().getBricks(), true);
     }
 
     @Override
@@ -62,6 +64,11 @@ public class AddBricksToGlusterVolumeCommand extends GlusterVolumeCommandBase<Gl
 
     private void addGlusterVolumeBricksInDb(List<GlusterBrickEntity> bricks, int replicaCount, int stripeCount) {
         for (GlusterBrickEntity brick : bricks) {
+            if (getGlusterVolume().getStatus() == GlusterVolumeStatus.UP) {
+                brick.setStatus(GlusterBrickStatus.UP);
+            } else {
+                brick.setStatus(GlusterBrickStatus.DOWN);
+            }
             getGlusterBrickDao().save(brick);
         }
         if (replicaCount != 0) {
