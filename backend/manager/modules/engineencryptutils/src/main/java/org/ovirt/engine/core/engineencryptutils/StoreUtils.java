@@ -140,6 +140,7 @@ public class StoreUtils {
     }
 
     public static void main(String[] args) {
+        int exitCode = 0;
         try {
             CLIParse parser = new CLIParse(args);
             if (parser.hasArg("?") || parser.hasArg("help") || args.length == 0) {
@@ -148,6 +149,7 @@ public class StoreUtils {
             }
 
             if (!validate(parser)) {
+                exitCode = 1;
                 return;
             }
 
@@ -193,6 +195,10 @@ public class StoreUtils {
             }
         } catch (Exception e) {
             System.out.println("Operation failed!");
+            exitCode = 1;
+        }
+        finally {
+            System.exit(exitCode);
         }
     }
 }
