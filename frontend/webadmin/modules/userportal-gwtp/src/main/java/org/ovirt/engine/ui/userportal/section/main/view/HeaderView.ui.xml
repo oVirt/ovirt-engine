@@ -53,7 +53,6 @@
 			right: 0;
 			margin-right: 16px;
 			margin-bottom: 16px;
-			border-bottom: 1px solid black;
 		}
 	</ui:style>
 

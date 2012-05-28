@@ -1,0 +1,21 @@
+.mainBarPanel {
+	padding-top: 7px;
+	height: 24px;
+	border-bottom: 2px solid #719823;
+	margin-left: 2px;
+	margin-right: 2px;
+}
+
+.mainContentPanel {
+	overflow-y: auto;
+	position: absolute !important;
+	top: 33px;
+	bottom: 0px;
+	left: 0px;
+	right: 0px;
+}
+
+.detailsContentPanel {
+	padding-left: 2px;
+	padding-right: 2px;
+}

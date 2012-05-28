@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui">
+
+	<ui:style type="org.ovirt.engine.ui.common.widget.tab.AbstractTab.Style">
+		.tab {
+			text-align: center;
+			overflow: visible;
+			font-family: Arial,sans-serif;
+			line-height: 19px;
+		}
+
+		.left {
+		}
+
+		.activeLeft {
+		}
+
+		.inactiveLeft {
+		}
+
+		.right {
+		}
+
+		.activeRight {
+		}
+
+		.inactiveRight {
+		}
+
+		.middle {
+			background-repeat: repeat-x;
+			height: 21px;
+			width: 85px;
+			margin-left: 0px;
+			margin-right: 5px;
+			padding-left: 5px;
+			padding-right: 5px;
+			border-bottom-width: 0px;
+			border-top-left-radius: 9px;
+			border-top-right-radius: 9px;
+			border-bottom-right-radius: 0px;
+			border-bottom-left-radius: 0px;
+		}
+
+		.activeMiddle {
+		    border: 1px solid #ffffff;
+			background-color: #ffffff;
+			font-size: 12.5px;
+			color: #719823;
+		}
+
+		.inactiveMiddle {
+			border: 1px solid #a8db42;
+			background-color: #719823;
+		}
+
+		a.middleLink {
+			font-size: 12.5px;
+			font-family: Arial,sans-serif;
+		}
+
+		a.activeMiddleLink {
+			color: #719823;
+		}
+
+		a.inactiveMiddleLink {
+		    font-family: Arial,sans-serif;
+			color: #ffe0e0;
+		}
+
+		a.inactiveMiddleLink:hover {
+			color: #ffffff;
+		}
+
+		.arrow {
+		}
+
+		.activeArrow {
+			display: none;
+		}
+
+		.inactiveArrow {
+			display: none;
+		}
+
+		.alignLeft {
+			float: left;
+		}
+
+		.alignRight {
+			float: right;
+		}
+	</ui:style>
+
+	<g:HTMLPanel ui:field="tabContainer" addStyleNames="{style.tab} {style.alignLeft}">
+		<div ui:field="leftElement" class="{style.left} {style.inactiveLeft}" />
+		<div ui:field="rightElement" class="{style.right} {style.inactiveRight}" />
+		<div ui:field="middleElement" class="{style.middle} {style.inactiveMiddle}">
+			<g:InlineHyperlink ui:field="hyperlink" addStyleNames="{style.middleLink} {style.inactiveMiddleLink}"/>
+		</div>
+		<div ui:field="arrowElement" class="{style.arrow} {style.inactiveArrow}" />
+		<div style="clear: both;" />
+	</g:HTMLPanel>
+
+</ui:UiBinder>

@@ -96,6 +96,9 @@ public interface ApplicationResources extends CommonApplicationResources {
     @Source("css/SideTabExtendedVmStyle.css")
     SideTabExtendedVmStyle sideTabExtendedVmStyle();
 
+    @Source("css/SideTabWithDetailsViewStyle.css")
+    SideTabWithDetailsViewStyle sideTabWithDetailsViewStyle();
+
     // resources tab
     @Source("images/general/vm_icon.png")
     ImageResource vmIcon();
@@ -124,4 +127,7 @@ public interface ApplicationResources extends CommonApplicationResources {
 
     @Source("images/splitter/basicViewSplitterSnap.png")
     ImageResource basicViewSplitterSnap();
+
+    @Source("images/splitter/extendedViewSplitterSnap.png")
+    ImageResource extendedViewSplitterSnap();
 }

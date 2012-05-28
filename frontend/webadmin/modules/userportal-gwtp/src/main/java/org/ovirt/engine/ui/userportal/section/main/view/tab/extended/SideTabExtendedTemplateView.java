@@ -8,12 +8,14 @@ import org.ovirt.engine.ui.common.widget.table.column.SafeHtmlColumn;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalTemplateListModel;
 import org.ovirt.engine.ui.userportal.ApplicationConstants;
+import org.ovirt.engine.ui.userportal.ApplicationResources;
 import org.ovirt.engine.ui.userportal.ApplicationTemplates;
 import org.ovirt.engine.ui.userportal.gin.ClientGinjectorProvider;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.SideTabExtendedTemplatePresenter;
 import org.ovirt.engine.ui.userportal.section.main.view.AbstractSideTabWithDetailsView;
 import org.ovirt.engine.ui.userportal.uicommon.model.template.UserPortalTemplateListProvider;
 import org.ovirt.engine.ui.userportal.widget.action.UserPortalButtonDefinition;
+import org.ovirt.engine.ui.userportal.widget.table.column.UserPortalSimpleActionTable;
 import org.ovirt.engine.ui.userportal.widget.table.column.VmImageColumn;
 import org.ovirt.engine.ui.userportal.widget.table.column.VmImageColumn.OsTypeExtractor;
 
@@ -33,15 +35,19 @@ public class SideTabExtendedTemplateView extends AbstractSideTabWithDetailsView<
     private static final TemplateTableResources templateTableResources = GWT.create(TemplateTableResources.class);
 
     @Inject
-    public SideTabExtendedTemplateView(UserPortalTemplateListProvider provider, ApplicationTemplates templates, ApplicationConstants constants) {
-        super(provider);
+    public SideTabExtendedTemplateView(
+            UserPortalTemplateListProvider provider,
+            ApplicationTemplates templates,
+            ApplicationConstants constants,
+            ApplicationResources applicationResources) {
+        super(provider, applicationResources);
         ViewIdHandler.idHandler.generateAndSetIds(this);
         initTable(templates, constants);
     }
 
     @Override
     protected SimpleActionTable<VmTemplate> createActionTable() {
-        return new SimpleActionTable<VmTemplate>(modelProvider,
+        return new UserPortalSimpleActionTable<VmTemplate>(modelProvider,
                 templateTableResources,
                 ClientGinjectorProvider.instance().getEventBus(),
                 ClientGinjectorProvider.instance().getClientStorage());

@@ -73,7 +73,16 @@ public class SimpleActionTable<T> extends AbstractActionTable<T> {
     }
 
     void initStyles() {
-        tableContainer.setStyleName(showDefaultHeader ? style.contentWithDefaultHeader() : style.content());
+        tableContainer.setStyleName(getTableContainerStyleName());
+        barPanel.setStyleName(getBarPanelStyleName());
+    }
+
+    protected String getBarPanelStyleName() {
+        return style.bar();
+    }
+
+    protected String getTableContainerStyleName() {
+        return showDefaultHeader ? style.contentWithDefaultHeader() : style.content();
     }
 
     public void showRefreshButton() {
@@ -108,6 +117,8 @@ public class SimpleActionTable<T> extends AbstractActionTable<T> {
         String contentWithDefaultHeader();
 
         String subTitledButton();
+
+        String bar();
     }
 
 }

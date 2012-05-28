@@ -34,6 +34,7 @@ import org.ovirt.engine.ui.userportal.widget.extended.vm.ImageMaskCell.ShowMask;
 import org.ovirt.engine.ui.userportal.widget.extended.vm.TooltipCell;
 import org.ovirt.engine.ui.userportal.widget.extended.vm.TooltipCell.TooltipProvider;
 import org.ovirt.engine.ui.userportal.widget.extended.vm.UserPortalItemSimpleColumn;
+import org.ovirt.engine.ui.userportal.widget.table.column.UserPortalSimpleActionTable;
 import org.ovirt.engine.ui.userportal.widget.table.column.VmImageColumn;
 import org.ovirt.engine.ui.userportal.widget.table.column.VmImageColumn.OsTypeExtractor;
 import org.ovirt.engine.ui.userportal.widget.table.column.VmStatusColumn;
@@ -79,7 +80,7 @@ public class SideTabExtendedVirtualMachineView extends AbstractSideTabWithDetail
             EventBus eventBus,
             MainTabBasicListItemMessagesTranslator translator,
             ApplicationConstants constants) {
-        super(modelProvider);
+        super(modelProvider, applicationResources);
         this.applicationResources = applicationResources;
         this.consoleManager = consoleManager;
         this.errorPopupManager = errorPopupManager;
@@ -94,7 +95,7 @@ public class SideTabExtendedVirtualMachineView extends AbstractSideTabWithDetail
 
     @Override
     protected SimpleActionTable<UserPortalItemModel> createActionTable() {
-        return new SimpleActionTable<UserPortalItemModel>(modelProvider,
+        return new UserPortalSimpleActionTable<UserPortalItemModel>(modelProvider,
                 vmTableResources,
                 ClientGinjectorProvider.instance().getEventBus(),
                 ClientGinjectorProvider.instance().getClientStorage());

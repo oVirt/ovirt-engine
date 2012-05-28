@@ -4,7 +4,7 @@
 }
 
 .cellTableHeader {
-	border-bottom: 2px solid #719823;
+	display: none;
 }
 
 .cellTableWidget {

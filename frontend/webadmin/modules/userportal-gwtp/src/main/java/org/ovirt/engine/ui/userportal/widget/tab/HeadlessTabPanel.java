@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.userportal.widget.tab;
 
 import org.ovirt.engine.ui.common.widget.tab.AbstractHeadlessTabPanel;
-import org.ovirt.engine.ui.common.widget.tab.SimpleTab;
 import org.ovirt.engine.ui.common.widget.tab.TabDefinition;
 
 import com.google.gwt.core.client.GWT;
@@ -21,7 +20,7 @@ public class HeadlessTabPanel extends AbstractHeadlessTabPanel {
 
     @Override
     protected TabDefinition createNewTab(TabData tabData) {
-        return new SimpleTab(tabData, this);
+        return new UserPortalMainTab(tabData, this);
     }
 
 }
