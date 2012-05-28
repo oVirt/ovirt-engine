@@ -259,7 +259,7 @@ public class VolumeModel extends Model {
         }
         VolumeBrickModel volumeBrickModel = new VolumeBrickModel();
 
-        volumeBrickModel.getVolumeType().setEntity(((GlusterVolumeType) getTypeList().getSelectedItem()).name());
+        volumeBrickModel.getVolumeType().setEntity(getTypeList().getSelectedItem());
 
         volumeBrickModel.getReplicaCount().setEntity(getReplicaCount().getEntity());
         volumeBrickModel.getReplicaCount().setIsChangable(true);

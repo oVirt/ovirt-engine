@@ -511,15 +511,19 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
 
         volume.setAccessControlList((String) volumeModel.getAllowAccess().getEntity());
 
+        volumeModel.StartProgress(null);
+
         CreateGlusterVolumeParameters parameter = new CreateGlusterVolumeParameters(volume);
 
         Frontend.RunAction(VdcActionType.CreateGlusterVolume, parameter, new IFrontendActionAsyncCallback() {
 
             @Override
             public void Executed(FrontendActionAsyncResult result) {
+                VolumeModel localModel = (VolumeModel) result.getState();
+                localModel.StopProgress();
                 cancel();
             }
-        });
+        }, volumeModel);
     }
 
     @Override

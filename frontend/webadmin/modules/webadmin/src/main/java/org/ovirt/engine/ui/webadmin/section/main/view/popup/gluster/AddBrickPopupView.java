@@ -11,6 +11,8 @@ import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelLabelEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
+import org.ovirt.engine.ui.common.widget.parser.EntityModelParser;
+import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.EntityModelTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -48,7 +50,7 @@ public class AddBrickPopupView extends AbstractModelBoundPopupView<VolumeBrickMo
     @UiField
     WidgetStyle style;
 
-    @UiField
+    @UiField(provided = true)
     @Path(value = "volumeType.entity")
     @WithElementId
     EntityModelLabelEditor volumeTypeEditor;
@@ -126,6 +128,7 @@ public class AddBrickPopupView extends AbstractModelBoundPopupView<VolumeBrickMo
     }
 
     private void initListBoxEditors() {
+        volumeTypeEditor = new EntityModelLabelEditor(new EnumRenderer(), new EntityModelParser());
         serverEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
             @Override
             public String renderNullSafe(Object object) {

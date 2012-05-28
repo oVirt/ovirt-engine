@@ -124,7 +124,7 @@ public class VolumeBrickListModel extends SearchableListModel {
         setWindow(volumeBrickModel);
         volumeBrickModel.setTitle(ConstantsManager.getInstance().getConstants().addBricksVolume());
         volumeBrickModel.setHashName("add_bricks"); //$NON-NLS-1$
-        volumeBrickModel.getVolumeType().setEntity(volumeEntity.getVolumeType().name());
+        volumeBrickModel.getVolumeType().setEntity(volumeEntity.getVolumeType());
 
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(volumeBrickModel);
