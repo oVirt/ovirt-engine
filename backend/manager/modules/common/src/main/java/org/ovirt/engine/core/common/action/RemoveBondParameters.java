@@ -1,24 +1,16 @@
 package org.ovirt.engine.core.common.action;
 
-import org.ovirt.engine.core.compat.*;
+import org.ovirt.engine.core.compat.Guid;
 
-public class RemoveBondParameters extends VdsActionParameters {
+public class RemoveBondParameters extends BondParametersBase {
+
     private static final long serialVersionUID = 8082833148763122313L;
-    private String privateBondName;
-
-    public String getBondName() {
-        return privateBondName;
-    }
-
-    private void setBondName(String value) {
-        privateBondName = value;
-    }
-
-    public RemoveBondParameters(Guid vdsId, String bondName) {
-        super(vdsId);
-        setBondName(bondName);
-    }
 
     public RemoveBondParameters() {
     }
+
+    public RemoveBondParameters(Guid vdsId, String bondName) {
+        super(vdsId, bondName);
+    }
+
 }
