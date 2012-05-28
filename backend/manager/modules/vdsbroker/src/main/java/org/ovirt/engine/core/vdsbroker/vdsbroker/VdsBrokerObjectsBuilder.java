@@ -1053,40 +1053,24 @@ public class VdsBrokerObjectsBuilder {
                     }
 
                     // map interface to network
-                    Object[] ports = (Object[]) ((network.getItem("ports") instanceof Object[]) ? network
-                            .getItem("ports") : null);
-                    if (ports != null) {
-                        for (Object port : ports) {
-                            VdsNetworkInterface iface = null;
-                            for (VdsNetworkInterface tempInterface : vds.getInterfaces()) {
-                                if (tempInterface.getName().equals(port.toString())) {
-                                    iface = tempInterface;
-                                    break;
-                                }
-                            }
-                            if (iface != null) {
-                                iface.setNetworkName(net.getname());
-
-                                if (currVlans.containsKey(iface.getName())) {
-                                    networkVlans.put(net.getname(), currVlans.get(iface.getName()));
-                                }
-                                iface.setAddress(net.getaddr());
-
-                                // ifaces is bridged if it is reported as one of the bridge ports
-                                iface.setBridged(true);
-
-                                // set the management ip
-                                if (StringHelper.EqOp(iface.getNetworkName(), NetworkUtils.getEngineNetwork())) {
-                                    iface.setType(iface.getType() | VdsInterfaceType.Management.getValue());
-                                }
-                                iface.setSubnet(net.getsubnet());
-                                iface.setGateway(net.getgateway());
-                                java.util.Map networkConfigAsMap =
-                                        (java.util.Map) ((network.getItem("cfg") instanceof java.util.Map) ? network
-                                                .getItem("cfg") : null);
-                                XmlRpcStruct networkConfig = networkConfigAsMap == null ? null : new XmlRpcStruct(
-                                        networkConfigAsMap);
-                                AddBootProtocol(networkConfig, iface);
+                    if (network.getItem("interface") != null) {
+                        updateNetwrokDetailsInInterface(vds,
+                                currVlans,
+                                networkVlans,
+                                network,
+                                net,
+                                network.getItem("interface").toString());
+                    } else {
+                        Object[] ports = (Object[]) ((network.getItem("ports") instanceof Object[]) ? network
+                                .getItem("ports") : null);
+                        if (ports != null) {
+                            for (Object port : ports) {
+                                updateNetwrokDetailsInInterface(vds,
+                                        currVlans,
+                                        networkVlans,
+                                        network,
+                                        net,
+                                        port.toString());
                             }
                         }
                     }
@@ -1100,6 +1084,64 @@ public class VdsBrokerObjectsBuilder {
 
         // set bonding options
         setBondingOptions(vds, oldInterfaces);
+    }
+
+    /**
+     * Update the network details on the given iface.
+     *
+     * @param vds
+     *            The host (for getting the interface from).
+     * @param currVlans
+     *            Used for checking the VLANs later.
+     * @param networkVlans
+     *            Used for checking the VLANs later.
+     * @param network
+     *            Network struct to get details from.
+     * @param net
+     *            Network to get details from.
+     * @param ifaceName
+     *            The name of the interface to update.
+     */
+    private static void updateNetwrokDetailsInInterface(VDS vds,
+            Map<String, Integer> currVlans,
+            Map<String, Integer> networkVlans,
+            XmlRpcStruct network,
+            network net,
+            String ifaceName) {
+        VdsNetworkInterface iface = null;
+        for (VdsNetworkInterface tempInterface : vds.getInterfaces()) {
+            if (tempInterface.getName().equals(ifaceName)) {
+                iface = tempInterface;
+                break;
+            }
+        }
+        if (iface != null) {
+            iface.setNetworkName(net.getname());
+
+            if (currVlans.containsKey(iface.getName())) {
+                networkVlans.put(net.getname(), currVlans.get(iface.getName()));
+            }
+            iface.setAddress(net.getaddr());
+
+            boolean bridged = false;
+            if (network.getItem("bridged") != null) {
+                bridged = Boolean.parseBoolean(network.getItem("bridged").toString());
+            }
+
+            iface.setBridged(bridged);
+
+            // set the management ip
+            if (StringHelper.EqOp(iface.getNetworkName(), NetworkUtils.getEngineNetwork())) {
+                iface.setType(iface.getType() | VdsInterfaceType.Management.getValue());
+            }
+            iface.setSubnet(net.getsubnet());
+            iface.setGateway(net.getgateway());
+            Map<String, Object> networkConfigAsMap =
+                    (Map<String, Object>) ((network.getItem("cfg") instanceof Map) ? network.getItem("cfg") : null);
+            XmlRpcStruct networkConfig = networkConfigAsMap == null ? null : new XmlRpcStruct(
+                    networkConfigAsMap);
+            AddBootProtocol(networkConfig, iface);
+        }
     }
 
     // we check for old bonding options,
