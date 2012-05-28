@@ -1888,4 +1888,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Replacing brick is not a Gluster volume brick.")
     String ACTION_TYPE_FAILED_NOT_A_GLUSTER_VOLUME_BRICK();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Host having Gluster volume.")
+    String VDS_CANNOT_REMOVE_HOST_HAVING_GLUSTER_VOLUME();
+
 }

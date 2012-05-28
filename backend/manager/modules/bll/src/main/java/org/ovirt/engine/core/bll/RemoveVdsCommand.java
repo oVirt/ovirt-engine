@@ -165,7 +165,7 @@ public class RemoveVdsCommand<T extends VdsActionParameters> extends VdsCommand<
                     runVdsCommand(
                             VDSCommandType.GlusterHostRemove,
                             new GlusterHostRemoveVDSParameters((ClusterUtils.getInstance().getUpServer(getVdsGroupId())).getId(),
-                                    getVdsName(),
+                                    getVds().gethost_name(),
                                     forceAction));
             setSucceeded(returnValue.getSucceeded());
             if (!returnValue.getSucceeded()) {
