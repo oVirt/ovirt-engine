@@ -9,7 +9,6 @@
 
 Create or replace FUNCTION InsertBaseDisk(
     v_disk_id UUID,
-    v_internal_drive_mapping INTEGER,
     v_disk_interface VARCHAR(32),
     v_wipe_after_delete BOOLEAN,
     v_propagate_errors VARCHAR(32),
@@ -23,7 +22,6 @@ AS $procedure$
 BEGIN
     INSERT INTO base_disks(
         disk_id,
-        internal_drive_mapping,
         disk_interface,
         wipe_after_delete,
         propagate_errors,
@@ -34,7 +32,6 @@ BEGIN
         allow_snapshot)
     VALUES(
         v_disk_id,
-        v_internal_drive_mapping,
         v_disk_interface,
         v_wipe_after_delete,
         v_propagate_errors,
@@ -52,7 +49,6 @@ LANGUAGE plpgsql;
 
 Create or replace FUNCTION UpdateBaseDisk(
     v_disk_id UUID,
-    v_internal_drive_mapping INTEGER,
     v_disk_interface VARCHAR(32),
     v_wipe_after_delete BOOLEAN,
     v_propagate_errors VARCHAR(32),
@@ -65,8 +61,7 @@ RETURNS VOID
 AS $procedure$
 BEGIN
     UPDATE base_disks
-    SET    internal_drive_mapping = v_internal_drive_mapping,
-           disk_interface = v_disk_interface,
+    SET    disk_interface = v_disk_interface,
            wipe_after_delete = v_wipe_after_delete,
            propagate_errors = v_propagate_errors,
            disk_alias = v_disk_alias,

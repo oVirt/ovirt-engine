@@ -48,7 +48,6 @@ SELECT images.image_guid as image_guid, vm_device.vm_id as vm_guid,
     base_disks.disk_description as disk_description,
     base_disks.shareable as shareable,
     base_disks.allow_snapshot as allow_snapshot,
-    base_disks.internal_drive_mapping,
     base_disks.disk_interface,
     base_disks.wipe_after_delete as wipe_after_delete,
     base_disks.propagate_errors,
@@ -99,7 +98,7 @@ SELECT     array_to_string(array_agg(storage_id), ',') as storage_id, array_to_s
 					  images_storage_domain_view.storage_pool_id as storage_pool_id, images_storage_domain_view.image_guid as image_guid,
                       images_storage_domain_view.creation_date as creation_date, disk_image_dynamic.actual_size as actual_size, disk_image_dynamic.read_rate as read_rate, disk_image_dynamic.write_rate as write_rate,
                       images_storage_domain_view.size as size, images_storage_domain_view.it_guid as it_guid,
-                      images_storage_domain_view.internal_drive_mapping as internal_drive_mapping, images_storage_domain_view.description as description,
+                      images_storage_domain_view.description as description,
                       images_storage_domain_view.ParentId as ParentId, images_storage_domain_view.imageStatus as imageStatus, images_storage_domain_view.lastModified as lastModified,
                       images_storage_domain_view.app_list as app_list, images_storage_domain_view.vm_snapshot_id as vm_snapshot_id,
                       images_storage_domain_view.volume_type as volume_type, images_storage_domain_view.image_group_id as image_group_id, images_storage_domain_view.vm_guid as vm_guid,
@@ -111,7 +110,7 @@ SELECT     array_to_string(array_agg(storage_id), ',') as storage_id, array_to_s
 FROM         images_storage_domain_view
 INNER JOIN disk_image_dynamic ON images_storage_domain_view.image_guid = disk_image_dynamic.image_id
 WHERE images_storage_domain_view.active = TRUE
-GROUP BY storage_pool_id,image_guid,creation_date,disk_image_dynamic.actual_size,disk_image_dynamic.read_rate,disk_image_dynamic.write_rate,size,it_guid,internal_drive_mapping,description,ParentId,imageStatus,lastModified,app_list,vm_snapshot_id,volume_type,image_group_id,vm_guid,active,volume_format,disk_interface,boot,wipe_after_delete,propagate_errors,entity_type,quota_id,quota_name,is_default_quota,quota_enforcement_type,disk_id,disk_alias,disk_description,shareable,allow_snapshot;
+GROUP BY storage_pool_id,image_guid,creation_date,disk_image_dynamic.actual_size,disk_image_dynamic.read_rate,disk_image_dynamic.write_rate,size,it_guid,description,ParentId,imageStatus,lastModified,app_list,vm_snapshot_id,volume_type,image_group_id,vm_guid,active,volume_format,disk_interface,boot,wipe_after_delete,propagate_errors,entity_type,quota_id,quota_name,is_default_quota,quota_enforcement_type,disk_id,disk_alias,disk_description,shareable,allow_snapshot;
 
 
 
@@ -122,7 +121,6 @@ CREATE OR REPLACE VIEW all_disks
 AS
 SELECT storage_impl.*,
        bd.disk_id, -- Disk fields
-       bd.internal_drive_mapping,
        bd.disk_interface,
        bd.wipe_after_delete,
        bd.propagate_errors,
@@ -867,7 +865,7 @@ CREATE OR REPLACE VIEW vm_images_storage_domains_view
 AS
 SELECT vm_images_view.storage_id, vm_images_view.storage_path, vm_images_view.storage_pool_id,
        vm_images_view.image_guid, vm_images_view.creation_date, vm_images_view.actual_size, vm_images_view.read_rate, vm_images_view.write_rate,
-       vm_images_view.size, vm_images_view.it_guid, vm_images_view.internal_drive_mapping, vm_images_view.description, vm_images_view.parentid,
+       vm_images_view.size, vm_images_view.it_guid, vm_images_view.description, vm_images_view.parentid,
        vm_images_view.imagestatus, vm_images_view.lastmodified, vm_images_view.app_list, vm_images_view.vm_snapshot_id, vm_images_view.volume_type,
        vm_images_view.image_group_id, vm_images_view.vm_guid, vm_images_view.active, vm_images_view.volume_format, vm_images_view.disk_interface,
        vm_images_view.boot, vm_images_view.wipe_after_delete, vm_images_view.propagate_errors, vm_images_view.entity_type, vm_images_view.quota_id,
