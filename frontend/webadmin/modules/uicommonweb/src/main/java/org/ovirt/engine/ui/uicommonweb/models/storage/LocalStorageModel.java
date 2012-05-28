@@ -6,6 +6,9 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.LocalfsLinuxMountPointValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.NonUtfValidation;
 
 @SuppressWarnings("unused")
 public class LocalStorageModel extends Model implements IStorageModel {
@@ -64,7 +67,10 @@ public class LocalStorageModel extends Model implements IStorageModel {
     @Override
     public boolean Validate() {
 
-        getPath().ValidateEntity(new NotEmptyValidation[] { new NotEmptyValidation() });
+        getPath().ValidateEntity(new IValidation[] {
+            new NotEmptyValidation(),
+            new LocalfsLinuxMountPointValidation(),
+            new NonUtfValidation() });
 
         return getPath().getIsValid();
     }

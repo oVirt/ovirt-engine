@@ -720,6 +720,9 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 	@DefaultStringValue("with local Storage Domain. If OK is clicked - this Host will be moved to a new Data Center, and a new Local Storage Domain will be created. Hit Cancel to abort the operation.")
 	String withLocalStorageDomainMsg();
 
+	@DefaultStringValue("Mount path is illegal, please use [/path] convention.")
+	String localfsMountPashIsIllegalMsg();
+
 	@DefaultStringValue("NFS mount path is illegal, please use [IP:/path or FQDN:/path] convention.")
 	String nfsMountPashIsIllegalMsg();
 
