@@ -111,24 +111,52 @@ public class RoleTreeView
         RoleNode tree =
                 new RoleNode(ConstantsManager.getInstance().getConstants().rootRoleTree(),
                         new RoleNode[] {
-                                new RoleNode(ConstantsManager.getInstance().getConstants().systemRoleTree(), new RoleNode(ConstantsManager.getInstance().getConstants().configureSystemRoleTree(), new RoleNode[] {
-                                        new RoleNode(ActionGroup.MANIPULATE_USERS,
-                                                ConstantsManager.getInstance().getConstants().allowToAddRemoveUsersFromTheSystemRoleTreeTooltip()),
-                                        new RoleNode(ActionGroup.MANIPULATE_PERMISSIONS,
-                                                ConstantsManager.getInstance().getConstants().allowToAddRemovePermissionsForUsersOnObjectsInTheSystemRoleTreeTooltip()),
-                                        new RoleNode(ActionGroup.MANIPULATE_ROLES,
-                                                ConstantsManager.getInstance().getConstants().allowToDefineConfigureRolesInTheSystemRoleTreeTooltip()),
-                                        new RoleNode(ActionGroup.CONFIGURE_ENGINE,
-                                                ConstantsManager.getInstance().getConstants().allowToGetOrSetSystemConfigurationRoleTreeTooltip()) })),
-                                new RoleNode(ConstantsManager.getInstance().getConstants().dataCenterRoleTree(), new RoleNode(ConstantsManager.getInstance().getConstants().configureDataCenterRoleTree(), new RoleNode[] {
-                                        new RoleNode(ActionGroup.CREATE_STORAGE_POOL, ConstantsManager.getInstance().getConstants().allowToCreateDataCenterRoleTreeTooltip()),
-                                        new RoleNode(ActionGroup.DELETE_STORAGE_POOL, ConstantsManager.getInstance().getConstants().allowToRemoveDataCenterRoleTreeTooltip()),
-                                        new RoleNode(ActionGroup.EDIT_STORAGE_POOL_CONFIGURATION,
-                                                ConstantsManager.getInstance().getConstants().allowToModifyDataCenterPropertiesRoleTreeTooltip()),
-                                        new RoleNode(ActionGroup.CONFIGURE_STORAGE_POOL_NETWORK,
-                                                ConstantsManager.getInstance().getConstants().allowToConfigureLogicalNetworkPerDataCenterRoleTreeTooltip()) })),
+                                new RoleNode(ConstantsManager.getInstance().getConstants().systemRoleTree(),
+                                        new RoleNode(ConstantsManager.getInstance()
+                                                .getConstants()
+                                                .configureSystemRoleTree(),
+                                                new RoleNode[] {
+                                                        new RoleNode(ActionGroup.MANIPULATE_USERS,
+                                                                ConstantsManager.getInstance()
+                                                                        .getConstants()
+                                                                        .allowToAddRemoveUsersFromTheSystemRoleTreeTooltip()),
+                                                        new RoleNode(ActionGroup.MANIPULATE_PERMISSIONS,
+                                                                ConstantsManager.getInstance()
+                                                                        .getConstants()
+                                                                        .allowToAddRemovePermissionsForUsersOnObjectsInTheSystemRoleTreeTooltip()),
+                                                        new RoleNode(ActionGroup.MANIPULATE_ROLES,
+                                                                ConstantsManager.getInstance()
+                                                                        .getConstants()
+                                                                        .allowToDefineConfigureRolesInTheSystemRoleTreeTooltip()),
+                                                        new RoleNode(ActionGroup.CONFIGURE_ENGINE,
+                                                                ConstantsManager.getInstance()
+                                                                        .getConstants()
+                                                                        .allowToGetOrSetSystemConfigurationRoleTreeTooltip()) })),
+                                new RoleNode(ConstantsManager.getInstance().getConstants().dataCenterRoleTree(),
+                                        new RoleNode(ConstantsManager.getInstance()
+                                                .getConstants()
+                                                .configureDataCenterRoleTree(),
+                                                new RoleNode[] {
+                                                        new RoleNode(ActionGroup.CREATE_STORAGE_POOL,
+                                                                ConstantsManager.getInstance()
+                                                                        .getConstants()
+                                                                        .allowToCreateDataCenterRoleTreeTooltip()),
+                                                        new RoleNode(ActionGroup.DELETE_STORAGE_POOL,
+                                                                ConstantsManager.getInstance()
+                                                                        .getConstants()
+                                                                        .allowToRemoveDataCenterRoleTreeTooltip()),
+                                                        new RoleNode(ActionGroup.EDIT_STORAGE_POOL_CONFIGURATION,
+                                                                ConstantsManager.getInstance()
+                                                                        .getConstants()
+                                                                        .allowToModifyDataCenterPropertiesRoleTreeTooltip()),
+                                                        new RoleNode(ActionGroup.CONFIGURE_STORAGE_POOL_NETWORK,
+                                                                ConstantsManager.getInstance()
+                                                                        .getConstants()
+                                                                        .allowToConfigureLogicalNetworkPerDataCenterRoleTreeTooltip()) })),
                                 new RoleNode(ConstantsManager.getInstance().getConstants().storageDomainRoleTree(),
-                                        new RoleNode(ConstantsManager.getInstance().getConstants().configureStorageDomainRoleTree(),
+                                        new RoleNode(ConstantsManager.getInstance()
+                                                .getConstants()
+                                                .configureStorageDomainRoleTree(),
                                                 new RoleNode[] {
                                                         new RoleNode(ActionGroup.CREATE_STORAGE_DOMAIN,
                                                                 ConstantsManager.getInstance()
@@ -147,7 +175,9 @@ public class RoleTreeView
                                                                         .getConstants()
                                                                         .allowToChangeStorageDomainStatusRoleTreeTooltip()) })),
                                 new RoleNode(ConstantsManager.getInstance().getConstants().clusterRoleTree(),
-                                        new RoleNode(ConstantsManager.getInstance().getConstants().configureClusterRoleTree(),
+                                        new RoleNode(ConstantsManager.getInstance()
+                                                .getConstants()
+                                                .configureClusterRoleTree(),
                                                 new RoleNode[] {
                                                         new RoleNode(ActionGroup.CREATE_CLUSTER,
                                                                 ConstantsManager.getInstance()
@@ -162,27 +192,53 @@ public class RoleTreeView
                                                                         .getConstants()
                                                                         .allowToEditClusterPropertiesRoleTreeTooltip()),
                                                         new RoleNode(ActionGroup.CONFIGURE_CLUSTER_NETWORK,
-                                                                ConstantsManager.getInstance().getConstants().allowToAddRemoveLogicalNetworksForTheClusterRoleTreeTooltip()) })),
+                                                                ConstantsManager.getInstance()
+                                                                        .getConstants()
+                                                                        .allowToAddRemoveLogicalNetworksForTheClusterRoleTreeTooltip()) })),
                                 new RoleNode(ConstantsManager.getInstance().getConstants().glusterRoleTree(),
-                                        new RoleNode(ConstantsManager.getInstance().getConstants().configureVolumesRoleTree(),
+                                        new RoleNode(ConstantsManager.getInstance()
+                                                .getConstants()
+                                                .configureVolumesRoleTree(),
                                                 new RoleNode[] {
-                                        new RoleNode(ActionGroup.CREATE_GLUSTER_VOLUME,
-                                                ConstantsManager.getInstance().getConstants().allowToCreateGlusterVolumesRoleTree()),
-                                        new RoleNode(ActionGroup.MANIPULATE_GLUSTER_VOLUME,
-                                                ConstantsManager.getInstance().getConstants().allowToManipulateGlusterVolumesRoleTree()) })),
-                                new RoleNode(ConstantsManager.getInstance().getConstants().hostRoleTree(), new RoleNode(ConstantsManager.getInstance().getConstants().configureHostRoleTree(), new RoleNode[] {
-                                        new RoleNode(ActionGroup.CREATE_HOST, ConstantsManager.getInstance().getConstants().allowToAddNewHostToTheClusterRoleTreeTooltip()),
-                                        new RoleNode(ActionGroup.DELETE_HOST,
-                                                ConstantsManager.getInstance().getConstants().allowToRemoveExistingHostFromTheClusterRoleTreeTooltip()),
-                                        new RoleNode(ActionGroup.EDIT_HOST_CONFIGURATION,
-                                                ConstantsManager.getInstance().getConstants().allowToEditHostPropertiesRoleTreeTooltip()),
-                                        new RoleNode(ActionGroup.MANIPUTLATE_HOST,
-                                                ConstantsManager.getInstance().getConstants().allowToChangeHostStatusRoleTreeTooltip()),
-                                        new RoleNode(ActionGroup.CONFIGURE_HOST_NETWORK,
-                                                ConstantsManager.getInstance().getConstants().allowToConfigureHostsNetworkPhysicalInterfacesRoleTreeTooltip()) })),
+                                                        new RoleNode(ActionGroup.CREATE_GLUSTER_VOLUME,
+                                                                ConstantsManager.getInstance()
+                                                                        .getConstants()
+                                                                        .allowToCreateGlusterVolumesRoleTree()),
+                                                        new RoleNode(ActionGroup.MANIPULATE_GLUSTER_VOLUME,
+                                                                ConstantsManager.getInstance()
+                                                                        .getConstants()
+                                                                        .allowToManipulateGlusterVolumesRoleTree()) })),
+                                new RoleNode(ConstantsManager.getInstance().getConstants().hostRoleTree(),
+                                        new RoleNode(ConstantsManager.getInstance()
+                                                .getConstants()
+                                                .configureHostRoleTree(),
+                                                new RoleNode[] {
+                                                        new RoleNode(ActionGroup.CREATE_HOST,
+                                                                ConstantsManager.getInstance()
+                                                                        .getConstants()
+                                                                        .allowToAddNewHostToTheClusterRoleTreeTooltip()),
+                                                        new RoleNode(ActionGroup.DELETE_HOST,
+                                                                ConstantsManager.getInstance()
+                                                                        .getConstants()
+                                                                        .allowToRemoveExistingHostFromTheClusterRoleTreeTooltip()),
+                                                        new RoleNode(ActionGroup.EDIT_HOST_CONFIGURATION,
+                                                                ConstantsManager.getInstance()
+                                                                        .getConstants()
+                                                                        .allowToEditHostPropertiesRoleTreeTooltip()),
+                                                        new RoleNode(ActionGroup.MANIPUTLATE_HOST,
+                                                                ConstantsManager.getInstance()
+                                                                        .getConstants()
+                                                                        .allowToChangeHostStatusRoleTreeTooltip()),
+                                                        new RoleNode(ActionGroup.CONFIGURE_HOST_NETWORK,
+                                                                ConstantsManager.getInstance()
+                                                                        .getConstants()
+                                                                        .allowToConfigureHostsNetworkPhysicalInterfacesRoleTreeTooltip()) })),
                                 new RoleNode(ConstantsManager.getInstance().getConstants().templateRoleTree(),
                                         new RoleNode[] {
-                                                new RoleNode(ConstantsManager.getInstance().getConstants().basicOperationsRoleTree(), new RoleNode[] {
+                                                new RoleNode(ConstantsManager.getInstance()
+                                                        .getConstants()
+                                                        .basicOperationsRoleTree(),
+                                                        new RoleNode[] {
                                                                 new RoleNode(ActionGroup.EDIT_TEMPLATE_PROPERTIES,
                                                                         ConstantsManager.getInstance()
                                                                                 .getConstants()
@@ -191,7 +247,9 @@ public class RoleTreeView
                                                                         ConstantsManager.getInstance()
                                                                                 .getConstants()
                                                                                 .allowToConfigureTemlateNetworkRoleTreeTooltip()) }),
-                                                new RoleNode(ConstantsManager.getInstance().getConstants().provisioningOperationsRoleTree(),
+                                                new RoleNode(ConstantsManager.getInstance()
+                                                        .getConstants()
+                                                        .provisioningOperationsRoleTree(),
                                                         ConstantsManager.getInstance()
                                                                 .getConstants()
                                                                 .notePermissionsContainigTheseOperationsShuoldAssociatSdOrAboveRoleTreeTooltip(),
@@ -214,7 +272,10 @@ public class RoleTreeView
                                                                                 .allowToCopyTemplateBetweenStorageDomainsRoleTreeTooltip()) }) }),
                                 new RoleNode(ConstantsManager.getInstance().getConstants().vmRoleTree(),
                                         new RoleNode[] {
-                                                new RoleNode(ConstantsManager.getInstance().getConstants().basicOperationsRoleTree(), new RoleNode[] {
+                                                new RoleNode(ConstantsManager.getInstance()
+                                                        .getConstants()
+                                                        .basicOperationsRoleTree(),
+                                                        new RoleNode[] {
                                                                 new RoleNode(ActionGroup.VM_BASIC_OPERATIONS,
                                                                         ConstantsManager.getInstance()
                                                                                 .getConstants()
@@ -227,7 +288,9 @@ public class RoleTreeView
                                                                         ConstantsManager.getInstance()
                                                                                 .getConstants()
                                                                                 .allowViewingTheVmConsoleScreenRoleTreeTooltip()) }),
-                                                new RoleNode(ConstantsManager.getInstance().getConstants().provisioningOperationsRoleTree(),
+                                                new RoleNode(ConstantsManager.getInstance()
+                                                        .getConstants()
+                                                        .provisioningOperationsRoleTree(),
                                                         ConstantsManager.getInstance()
                                                                 .getConstants()
                                                                 .notePermissionsContainigTheseOperationsShuoldAssociatSdOrAboveRoleTreeTooltip(),
@@ -260,7 +323,9 @@ public class RoleTreeView
                                                                         ConstantsManager.getInstance()
                                                                                 .getConstants()
                                                                                 .allowToCreateDeleteSnapshotsOfTheVmRoleTreeTooltip()) }),
-                                                new RoleNode(ConstantsManager.getInstance().getConstants().administrationOperationsRoleTree(),
+                                                new RoleNode(ConstantsManager.getInstance()
+                                                        .getConstants()
+                                                        .administrationOperationsRoleTree(),
                                                         ConstantsManager.getInstance()
                                                                 .getConstants()
                                                                 .notePermissionsContainigTheseOperationsShuoldAssociatDcOrEqualRoleTreeTooltip(),
@@ -275,12 +340,16 @@ public class RoleTreeView
                                                                                 .allowMigratingVmBetweenHostsInClusterRoleTreeTooltip()) }) }),
                                 new RoleNode(ConstantsManager.getInstance().getConstants().vmPoolRoleTree(),
                                         new RoleNode[] {
-                                                new RoleNode(ConstantsManager.getInstance().getConstants().basicOperationsRoleTree(),
+                                                new RoleNode(ConstantsManager.getInstance()
+                                                        .getConstants()
+                                                        .basicOperationsRoleTree(),
                                                         new RoleNode[] { new RoleNode(ActionGroup.VM_POOL_BASIC_OPERATIONS,
                                                                 ConstantsManager.getInstance()
                                                                         .getConstants()
                                                                         .allowToRunPauseStopVmFromVmPoolRoleTreeTooltip()) }),
-                                                new RoleNode(ConstantsManager.getInstance().getConstants().provisioningOperationsRoleTree(),
+                                                new RoleNode(ConstantsManager.getInstance()
+                                                        .getConstants()
+                                                        .provisioningOperationsRoleTree(),
                                                         ConstantsManager.getInstance()
                                                                 .getConstants()
                                                                 .notePermissionsContainigTheseOperationsShuoldAssociatSdOrAboveRoleTreeTooltip(),
@@ -294,23 +363,39 @@ public class RoleTreeView
                                                                                 .getConstants()
                                                                                 .allowToDeleteVmPoolRoleTreeTooltip()),
                                                                 new RoleNode(ActionGroup.EDIT_VM_POOL_CONFIGURATION,
-                                                                        ConstantsManager.getInstance().getConstants().allowToChangePropertiesOfTheVmPoolRoleTreeTooltip()) }) }),
+                                                                        ConstantsManager.getInstance()
+                                                                                .getConstants()
+                                                                                .allowToChangePropertiesOfTheVmPoolRoleTreeTooltip()) }) }),
 
                                 new RoleNode(ConstantsManager.getInstance().getConstants().diskRoleTree(),
                                         new RoleNode[] {
-                                                new RoleNode( ConstantsManager.getInstance().getConstants().provisioningOperationsRoleTree(),
-                                                        ConstantsManager.getInstance().getConstants().notePermissionsContainingOperationsRoleTreeTooltip(),
+                                                new RoleNode(ConstantsManager.getInstance()
+                                                        .getConstants()
+                                                        .provisioningOperationsRoleTree(),
+                                                        ConstantsManager.getInstance()
+                                                                .getConstants()
+                                                                .notePermissionsContainingOperationsRoleTreeTooltip(),
                                                         new RoleNode[] {
                                                                 new RoleNode(ActionGroup.CREATE_DISK,
-                                                                        ConstantsManager.getInstance().getConstants().allowToCreateDiskRoleTreeTooltip()),
+                                                                        ConstantsManager.getInstance()
+                                                                                .getConstants()
+                                                                                .allowToCreateDiskRoleTreeTooltip()),
                                                                 new RoleNode(ActionGroup.DELETE_DISK,
-                                                                        ConstantsManager.getInstance().getConstants().allowToDeleteDiskRoleTreeTooltip()),
+                                                                        ConstantsManager.getInstance()
+                                                                                .getConstants()
+                                                                                .allowToDeleteDiskRoleTreeTooltip()),
                                                                 new RoleNode(ActionGroup.CONFIGURE_DISK_STORAGE,
-                                                                        ConstantsManager.getInstance().getConstants().allowToMoveDiskToAnotherStorageDomainRoleTreeTooltip()),
+                                                                        ConstantsManager.getInstance()
+                                                                                .getConstants()
+                                                                                .allowToMoveDiskToAnotherStorageDomainRoleTreeTooltip()),
                                                                 new RoleNode(ActionGroup.ATTACH_DISK,
-                                                                        ConstantsManager.getInstance().getConstants().allowToAttachDiskToVmRoleTreeTooltip()),
+                                                                        ConstantsManager.getInstance()
+                                                                                .getConstants()
+                                                                                .allowToAttachDiskToVmRoleTreeTooltip()),
                                                                 new RoleNode(ActionGroup.EDIT_DISK_PROPERTIES,
-                                                                        ConstantsManager.getInstance().getConstants().allowToChangePropertiesOfTheDiskRoleTreeTooltip()) }) }) });
+                                                                        ConstantsManager.getInstance()
+                                                                                .getConstants()
+                                                                                .allowToChangePropertiesOfTheDiskRoleTreeTooltip()) }) }) });
 
         return tree;
     }
