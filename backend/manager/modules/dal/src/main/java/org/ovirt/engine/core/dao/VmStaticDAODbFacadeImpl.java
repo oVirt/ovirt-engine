@@ -19,10 +19,9 @@ public class VmStaticDAODbFacadeImpl extends BaseDAODbFacade implements VmStatic
 
     @Override
     public VmStatic get(Guid id) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("vm_guid", id);
-
-        return getCallsHandler().executeRead("GetVmStaticByVmGuid", VMStaticRowMapper.instance, parameterSource);
+        return getCallsHandler().executeRead("GetVmStaticByVmGuid",
+                VMStaticRowMapper.instance,
+                getIdParamterSource(id));
     }
 
     @Override
@@ -32,61 +31,21 @@ public class VmStaticDAODbFacadeImpl extends BaseDAODbFacade implements VmStatic
 
     @Override
     public void save(VmStatic vm) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("description", vm.getdescription())
-                .addValue("mem_size_mb", vm.getmem_size_mb())
-                .addValue("os", vm.getos())
-                .addValue("vds_group_id", vm.getvds_group_id())
-                .addValue("vm_guid", vm.getId())
-                .addValue("vm_name", vm.getvm_name())
-                .addValue("vmt_guid", vm.getvmt_guid())
-                .addValue("domain", vm.getdomain())
-                .addValue("creation_date", vm.getcreation_date())
-                .addValue("num_of_monitors", vm.getnum_of_monitors())
-                .addValue("is_initialized", vm.getis_initialized())
-                .addValue("is_auto_suspend", vm.getis_auto_suspend())
-                .addValue("num_of_sockets", vm.getnum_of_sockets())
-                .addValue("cpu_per_socket", vm.getcpu_per_socket())
-                .addValue("usb_policy", vm.getusb_policy())
-                .addValue("time_zone", vm.gettime_zone())
-                .addValue("auto_startup", vm.getauto_startup())
-                .addValue("is_stateless", vm.getis_stateless())
-                .addValue("dedicated_vm_for_vds", vm.getdedicated_vm_for_vds())
-                .addValue("fail_back", vm.getfail_back())
-                .addValue("vm_type", vm.getvm_type())
-                .addValue("hypervisor_type", vm.gethypervisor_type())
-                .addValue("operation_mode", vm.getoperation_mode())
-                .addValue("nice_level", vm.getnice_level())
-                .addValue("default_boot_sequence",
-                        vm.getdefault_boot_sequence())
-                .addValue("default_display_type", vm.getdefault_display_type())
-                .addValue("priority", vm.getpriority())
-                .addValue("iso_path", vm.getiso_path())
-                .addValue("origin", vm.getorigin())
-                .addValue("initrd_url", vm.getinitrd_url())
-                .addValue("kernel_url", vm.getkernel_url())
-                .addValue("kernel_params", vm.getkernel_params())
-                .addValue("migration_support",
-                        vm.getMigrationSupport().getValue())
-                .addValue("predefined_properties", vm.getPredefinedProperties())
-                .addValue("userdefined_properties",
-                        vm.getUserDefinedProperties())
-                .addValue("min_allocated_mem", vm.getMinAllocatedMem())
-                .addValue("quota_id", vm.getQuotaId())
-                .addValue("allow_console_reconnect", vm.getAllowConsoleReconnect());
-
-        getCallsHandler().executeModification("InsertVmStatic", parameterSource);
+        getCallsHandler().executeModification("InsertVmStatic", getFullParameterSource(vm));
 
     }
 
     @Override
     public void update(VmStatic vm) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+        getCallsHandler().executeModification("UpdateVmStatic", getFullParameterSource(vm));
+    }
+
+    private MapSqlParameterSource getFullParameterSource(VmStatic vm) {
+        return getIdParamterSource(vm.getId())
                 .addValue("description", vm.getdescription())
                 .addValue("mem_size_mb", vm.getmem_size_mb())
                 .addValue("os", vm.getos())
                 .addValue("vds_group_id", vm.getvds_group_id())
-                .addValue("vm_guid", vm.getId())
                 .addValue("vm_name", vm.getvm_name())
                 .addValue("vmt_guid", vm.getvmt_guid())
                 .addValue("domain", vm.getdomain())
@@ -122,69 +81,57 @@ public class VmStaticDAODbFacadeImpl extends BaseDAODbFacade implements VmStatic
                         vm.getUserDefinedProperties())
                 .addValue("min_allocated_mem", vm.getMinAllocatedMem())
                 .addValue("quota_id", vm.getQuotaId())
-                .addValue("allow_console_reconnect", vm.getAllowConsoleReconnect());
-
-        getCallsHandler().executeModification("UpdateVmStatic", parameterSource);
+                .addValue("allow_console_reconnect", vm.getAllowConsoleReconnect())
+                .addValue("cpu_pinnig", vm.getCpuPinning());
     }
 
     @Override
     public void remove(Guid id) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("vm_guid", id);
+        getCallsHandler().executeModification("DeleteVmStatic", getIdParamterSource(id));
+    }
 
-        getCallsHandler().executeModification("DeleteVmStatic", parameterSource);
+    private MapSqlParameterSource getIdParamterSource(Guid id) {
+        return getCustomMapSqlParameterSource()
+                .addValue("vm_guid", id);
     }
 
     @Override
     public List<VmStatic> getAllByName(String name) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("vm_name", name);
-
-        return getCallsHandler().executeReadList("GetVmStaticByName", VMStaticRowMapper.instance, parameterSource);
+        return getCallsHandler().executeReadList("GetVmStaticByName", VMStaticRowMapper.instance, getCustomMapSqlParameterSource()
+                .addValue("vm_name", name));
 
     }
 
     @Override
     public List<VmStatic> getAllByStoragePoolId(Guid spId) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("sp_id", spId);
-
         return getCallsHandler().executeReadList("GetAllFromVmStaticByStoragePoolId",
                 VMStaticRowMapper.instance,
-                parameterSource);
+                getCustomMapSqlParameterSource()
+                        .addValue("sp_id", spId));
     }
 
     @Override
     public List<VmStatic> getAllByVdsGroup(Guid vdsGroup) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("vds_group_id", vdsGroup);
-
-        return getCallsHandler().executeReadList("GetVmStaticByVdsGroup", VMStaticRowMapper.instance, parameterSource);
+        return getCallsHandler().executeReadList("GetVmStaticByVdsGroup", VMStaticRowMapper.instance, getCustomMapSqlParameterSource()
+                .addValue("vds_group_id", vdsGroup));
     }
 
     @Override
     public List<VmStatic> getAllWithFailbackByVds(Guid vds) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("vds_id", vds);
-
         return getCallsHandler().executeReadList("GetVmStaticWithFailbackByVdsId", VMStaticRowMapper.instance,
-                parameterSource);
+                getCustomMapSqlParameterSource()
+                        .addValue("vds_id", vds));
     }
 
     @Override
     public List<VmStatic> getAllByGroupAndNetworkName(Guid group, String name) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("groupId", group).addValue("networkName", name);
-
         return getCallsHandler().executeReadList("GetvmStaticByGroupIdAndNetwork", VMStaticRowMapper.instance,
-                parameterSource);
+                getCustomMapSqlParameterSource()
+                        .addValue("groupId", group).addValue("networkName", name));
     }
 
     @Override
     public List<String> getAllNamesPinnedToHost(Guid host) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("vds_id", host);
-
         ParameterizedRowMapper<String> mapper = new ParameterizedRowMapper<String>() {
 
             @Override
@@ -194,7 +141,8 @@ public class VmStaticDAODbFacadeImpl extends BaseDAODbFacade implements VmStatic
         };
 
         return getCallsHandler().executeReadList("GetNamesOfVmStaticDedicatedToVds", mapper,
-                parameterSource);
+                getCustomMapSqlParameterSource()
+                        .addValue("vds_id", host));
     }
 
     /**
