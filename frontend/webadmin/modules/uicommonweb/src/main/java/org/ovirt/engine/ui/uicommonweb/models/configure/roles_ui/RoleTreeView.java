@@ -3,6 +3,8 @@ package org.ovirt.engine.ui.uicommonweb.models.configure.roles_ui;
 import java.util.ArrayList;
 
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
+import org.ovirt.engine.core.common.mode.ApplicationMode;
+import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.common.SelectionTreeNodeModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
@@ -397,6 +399,10 @@ public class RoleTreeView
                                                                                 .getConstants()
                                                                                 .allowToChangePropertiesOfTheDiskRoleTreeTooltip()) }) }) });
 
+        //nothing to filter
+        if (!ApplicationModeHelper.getUiMode().equals(ApplicationMode.AllModes)) {
+            ApplicationModeHelper.filterTreeByApplictionMode(tree);
+        }
         return tree;
     }
 }
