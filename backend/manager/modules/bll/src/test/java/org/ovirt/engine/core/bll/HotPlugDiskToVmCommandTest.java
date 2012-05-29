@@ -4,19 +4,21 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
-import static org.powermock.api.mockito.PowerMockito.when;
+import static org.mockito.Mockito.when;
+import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.action.HotPlugDiskToVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -27,7 +29,6 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
-import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
@@ -37,15 +38,22 @@ import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.dao.VmDAO;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.ovirt.engine.core.dao.VmNetworkInterfaceDAO;
+import org.ovirt.engine.core.utils.MockConfigRule;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ VmHandler.class, Config.class })
+@RunWith(MockitoJUnitRunner.class)
 public class HotPlugDiskToVmCommandTest {
 
     protected Guid diskImageGuid = Guid.NewGuid();
     protected Guid vmId = Guid.NewGuid();
+
+    @Rule
+    public static final MockConfigRule mcr = new MockConfigRule(
+            mockConfig
+            (ConfigValues.HotPlugSupportedOsList,
+                    "Windows2008,Windows2008x64,Windows2008R2x64,RHEL5,RHEL5x64,RHEL6,RHEL6x64"),
+            mockConfig(ConfigValues.HotPlugEnabled, "3.1", true)
+            );
 
     @Mock
     private VmDAO vmDAO;
@@ -61,19 +69,8 @@ public class HotPlugDiskToVmCommandTest {
      */
     protected HotPlugDiskToVmCommand<HotPlugDiskToVmParameters> command;
 
-    @Before
-    public void setUp() {
-        mockStatic(Config.class);
-        when(Config.GetValue(ConfigValues.HotPlugSupportedOsList)).
-                thenReturn("Windows2008,Windows2008x64,Windows2008R2x64,RHEL5,RHEL5x64,RHEL6,RHEL6x64");
-        when(Config.GetValue(ConfigValues.HotPlugEnabled, "3.1")).thenReturn(true);
-        mockStatic(VmHandler.class);
-        MockitoAnnotations.initMocks(this);
-    }
-
     @Test
     public void canDoActionFailedVMNotFound() throws Exception {
-        initializeCommand();
         mockNullVm();
         assertFalse(command.canDoAction());
         assertTrue(command.getReturnValue()
@@ -83,7 +80,6 @@ public class HotPlugDiskToVmCommandTest {
 
     @Test
     public void canDoActionFailedVMHasNotDisk() throws Exception {
-        initializeCommand();
         mockVmStatusUp();
         doReturn(diskDao).when(command).getDiskDao();
         when(diskDao.get(diskImageGuid)).thenReturn(null);
@@ -95,7 +91,6 @@ public class HotPlugDiskToVmCommandTest {
 
     @Test
     public void canDoActionFailedVirtIODisk() throws Exception {
-        initializeCommand();
         mockVmStatusUp();
         createNotVirtIODisk();
         assertFalse(command.canDoAction());
@@ -106,7 +101,6 @@ public class HotPlugDiskToVmCommandTest {
 
     @Test
     public void canDoActionFailedWrongPlugStatus() throws Exception {
-        initializeCommand();
         mockVmStatusUp();
         cretaeDiskWrongPlug(true);
         assertFalse(command.canDoAction());
@@ -117,7 +111,6 @@ public class HotPlugDiskToVmCommandTest {
 
     @Test
     public void canDoActionFailedGuestOsIsNotSupported() {
-        initializeCommand();
         VM vm = mockVmStatusUp();
         vm.setvm_os(VmOsType.RHEL3x64);
         cretaeVirtIODisk();
@@ -129,17 +122,26 @@ public class HotPlugDiskToVmCommandTest {
 
     @Test
     public void canDoActionSuccess() {
-        initializeCommand();
         mockVmStatusUp();
         cretaeVirtIODisk();
         assertTrue(command.canDoAction());
         assertTrue(command.getReturnValue().getCanDoActionMessages().isEmpty());
     }
 
-    protected void initializeCommand() {
-        command = spy(new HotPlugDiskToVmCommand<HotPlugDiskToVmParameters>(createParameters()));
+    @Before
+    public void initializeCommand() {
+        command = spy(createCommand());
         mockVds();
-        when(command.getActionType()).thenReturn(VdcActionType.HotPlugDiskToVm);
+        when(command.getActionType()).thenReturn(getCommandActionType());
+        doReturn(mock(VmNetworkInterfaceDAO.class)).when(command).getVmNetworkInterfaceDAO();
+    }
+
+    protected HotPlugDiskToVmCommand<HotPlugDiskToVmParameters> createCommand() {
+        return new HotPlugDiskToVmCommand<HotPlugDiskToVmParameters>(createParameters());
+    }
+
+    protected VdcActionType getCommandActionType() {
+        return VdcActionType.HotPlugDiskToVm;
     }
 
     private void mockNullVm() {

@@ -3,8 +3,7 @@ package org.ovirt.engine.core.bll;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
-import static org.powermock.api.mockito.PowerMockito.when;
+import static org.mockito.Mockito.when;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.action.HotPlugDiskToVmParameters;
@@ -18,7 +17,6 @@ public class HotUnPlugDiskFromVmCommandTest extends HotPlugDiskToVmCommandTest {
     @Override
     @Test
     public void canDoActionFailedWrongPlugStatus() throws Exception {
-        initializeCommand();
         mockVmStatusUp();
         cretaeDiskWrongPlug(false);
         assertFalse(command.canDoAction());
@@ -28,10 +26,13 @@ public class HotUnPlugDiskFromVmCommandTest extends HotPlugDiskToVmCommandTest {
     }
 
     @Override
-    protected void initializeCommand() {
-        command = spy(new HotUnPlugDiskFromVmCommand<HotPlugDiskToVmParameters>(createParameters()));
-        mockVds();
-        when(command.getActionType()).thenReturn(VdcActionType.HotUnPlugDiskFromVm);
+    protected HotUnPlugDiskFromVmCommand<HotPlugDiskToVmParameters> createCommand() {
+        return new HotUnPlugDiskFromVmCommand<HotPlugDiskToVmParameters>(createParameters());
+    }
+
+    @Override
+    protected VdcActionType getCommandActionType() {
+        return VdcActionType.HotUnPlugDiskFromVm;
     }
 
     @Override
