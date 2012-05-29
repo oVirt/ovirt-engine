@@ -2,24 +2,16 @@ package org.ovirt.engine.core.bll;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.powermock.api.mockito.PowerMockito.spy;
-import static org.powermock.api.mockito.PowerMockito.when;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.MockitoAnnotations;
 import org.ovirt.engine.core.common.action.AdElementParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({MultiLevelAdministrationHandler.class})
 public class RemoveAdGroupCommandTest {
-
 
     /**
      * The command under test.
@@ -27,29 +19,22 @@ public class RemoveAdGroupCommandTest {
     private RemoveAdGroupCommand<AdElementParametersBase> command;
     private Guid adElementId = Guid.NewGuid();
 
-    private void initializeCommand() {
+    @Before
+    public void initializeCommand() {
         AdElementParametersBase parameters = createParameters();
         command = spy(new RemoveAdGroupCommand<AdElementParametersBase>(parameters));
-        mockStatic(MultiLevelAdministrationHandler.class);
     }
 
     /**
      * @return Valid parameters for the command.
      */
     private AdElementParametersBase createParameters() {
-        AdElementParametersBase parameters = new AdElementParametersBase(adElementId);
-        return parameters;
-    }
-
-    @Before
-    public void setUp() {
-        MockitoAnnotations.initMocks(this);
-        initializeCommand();
+        return new AdElementParametersBase(adElementId);
     }
 
     @Test
     public void canDoActionFailsOnRemoveLastAdGroupWithSuperUserPrivileges() throws Exception {
-        when(MultiLevelAdministrationHandler.isLastSuperUserGroup(adElementId)).thenReturn(true);
+        mockIsLastSuperUserGroup(true);
         assertFalse(command.canDoAction());
         assertTrue(command.getReturnValue().getCanDoActionMessages().contains(
                 VdcBllMessages.ERROR_CANNOT_REMOVE_LAST_SUPER_USER_ROLE.toString()));
@@ -57,7 +42,11 @@ public class RemoveAdGroupCommandTest {
 
     @Test
     public void canDoActionSucceedsOnRemoveNotLastAdGroupWithSuperUserPrivileges() throws Exception {
-        when(MultiLevelAdministrationHandler.isLastSuperUserGroup(adElementId)).thenReturn(false);
+        mockIsLastSuperUserGroup(false);
         assertTrue(command.canDoAction());
+    }
+
+    private void mockIsLastSuperUserGroup(boolean isLast) {
+        doReturn(isLast).when(command).isLastSuperUserGroup(adElementId);
     }
 }
