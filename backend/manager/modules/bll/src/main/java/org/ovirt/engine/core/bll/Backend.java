@@ -367,7 +367,7 @@ public class Backend implements BackendInternal, BackendRemote {
         return runQueryImpl(actionType, parameters, true);
     }
 
-    private static VdcQueryReturnValue runQueryImpl(VdcQueryType actionType, VdcQueryParametersBase parameters,
+    protected VdcQueryReturnValue runQueryImpl(VdcQueryType actionType, VdcQueryParametersBase parameters,
             boolean isPerformUserCheck) {
         if (isPerformUserCheck) {
             String sessionId = addSessionToContext(parameters);
@@ -379,11 +379,15 @@ public class Backend implements BackendInternal, BackendRemote {
                 return returnValue;
             }
         }
-        QueriesCommandBase<?> command = CommandsFactory.CreateQueryCommand(actionType, parameters);
+        QueriesCommandBase<?> command = createQueryCommand(actionType, parameters);
         command.setInternalExecution(!isPerformUserCheck);
         command.Execute();
         return command.getQueryReturnValue();
 
+    }
+
+    protected QueriesCommandBase<?> createQueryCommand(VdcQueryType actionType, VdcQueryParametersBase parameters) {
+        return CommandsFactory.CreateQueryCommand(actionType, parameters);
     }
 
     private static String addSessionToContext(VdcQueryParametersBase parameters) {
