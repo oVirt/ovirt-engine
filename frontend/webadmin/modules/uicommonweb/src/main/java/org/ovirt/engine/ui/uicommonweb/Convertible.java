@@ -13,4 +13,18 @@ public class Convertible {
     public int Integer() {
         return Integer.parseInt(subject.getEntity().toString());
     }
+
+    public Integer nullableInteger() {
+
+        return subject.getEntity() != null
+            ? Integer.parseInt(subject.getEntity().toString())
+            : null;
+    }
+
+    public Short nullableShort() {
+
+        return subject.getEntity() != null
+            ? Short.parseShort(subject.getEntity().toString())
+            : null;
+    }
 }

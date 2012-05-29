@@ -389,17 +389,35 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
     private IStorageModel PrepareNfsStorageForEdit(storage_domains storage)
     {
-        NfsStorageModel model = new NfsStorageModel();
+        final NfsStorageModel model = new NfsStorageModel();
         model.setRole(storage.getstorage_domain_type());
-        model.getPath().setIsAvailable(false);
+        model.getPath().setIsChangable(false);
+        model.getVersion().setIsChangable(false);
+        model.getRetransmissions().setIsChangable(false);
+        model.getTimeout().setIsChangable(false);
+        model.getMountOptions().setIsChangable(false);
 
-        AsyncDataProvider.GetStorageConnectionById(new AsyncQuery(model, new INewAsyncCallback() {
+        AsyncDataProvider.GetStorageConnectionById(new AsyncQuery(null, new INewAsyncCallback() {
             @Override
             public void OnSuccess(Object target, Object returnValue) {
 
-                NfsStorageModel nfsStorageModel = (NfsStorageModel) target;
                 storage_server_connections connection = (storage_server_connections) returnValue;
-                nfsStorageModel.getPath().setEntity(connection.getconnection());
+                model.getRetransmissions().setEntity(connection.getNfsRetrans());
+                model.getTimeout().setEntity(connection.getNfsTimeo());
+                model.getMountOptions().setEntity(connection.getMountOptions());
+
+                for (Object item : model.getVersion().getItems()) {
+
+                    EntityModel itemModel = (EntityModel) item;
+                    if (itemModel.getEntity() == connection.getNfsVersion()) {
+
+                        model.getVersion().setSelectedItem(item);
+                        model.getVersion().setEntity(itemModel.getTitle());
+                        break;
+                    }
+                }
+
+                model.getPath().setEntity(connection.getconnection());
 
             }
         }), storage.getstorage(), true);
@@ -826,7 +844,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         Task.Create(this, new ArrayList<Object>(Arrays.asList(new Object[] { "SaveLocal" }))).Run(); //$NON-NLS-1$
     }
 
-    private void SaveNfsStorage()
+    private void  SaveNfsStorage()
     {
         if (getWindow().getProgress() != null)
         {
@@ -1206,6 +1224,10 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         storage_server_connections tempVar = new storage_server_connections();
         tempVar.setconnection(path);
         tempVar.setstorage_type(nfsModel.getType());
+        tempVar.setNfsVersion(((EntityModel) nfsModel.getVersion().getSelectedItem()).AsConvertible().nullableShort());
+        tempVar.setNfsRetrans(nfsModel.getRetransmissions().AsConvertible().nullableShort());
+        tempVar.setNfsTimeo(nfsModel.getTimeout().AsConvertible().nullableShort());
+        tempVar.setMountOptions((String) nfsModel.getMountOptions().getEntity());
         connection = tempVar;
 
         ArrayList<VdcActionType> actionTypes = new ArrayList<VdcActionType>();

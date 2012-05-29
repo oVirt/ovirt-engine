@@ -1,75 +1,129 @@
 package org.ovirt.engine.ui.uicommonweb.models.storage;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageType;
+import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.EventDefinition;
+import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.IEventListener;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.IntegerValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LinuxMountPointValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NonUtfValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
+import org.ovirt.engine.ui.uicompat.Constants;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
 public class NfsStorageModel extends Model implements IStorageModel {
 
     public static EventDefinition PathChangedEventDefinition;
-    private Event privatePathChangedEvent;
+    private Event pathChangedEvent;
 
     public Event getPathChangedEvent() {
-        return privatePathChangedEvent;
+        return pathChangedEvent;
     }
 
     private void setPathChangedEvent(Event value) {
-        privatePathChangedEvent = value;
+        pathChangedEvent = value;
     }
 
-    private UICommand privateUpdateCommand;
+    private UICommand updateCommand;
 
     @Override
     public UICommand getUpdateCommand() {
-        return privateUpdateCommand;
+        return updateCommand;
     }
 
     private void setUpdateCommand(UICommand value) {
-        privateUpdateCommand = value;
+        updateCommand = value;
     }
 
-    private StorageModel privateContainer;
+    private StorageModel container;
 
     @Override
     public StorageModel getContainer() {
-        return privateContainer;
+        return container;
     }
 
     @Override
     public void setContainer(StorageModel value) {
-        privateContainer = value;
+        if (container != value) {
+            container = value;
+            containerChanged();
+        }
     }
 
-    private StorageDomainType privateRole = StorageDomainType.values()[0];
+    private StorageDomainType role = StorageDomainType.values()[0];
 
     @Override
     public StorageDomainType getRole() {
-        return privateRole;
+        return role;
     }
 
     @Override
     public void setRole(StorageDomainType value) {
-        privateRole = value;
+        role = value;
     }
 
-    private EntityModel privatePath;
+    private EntityModel path;
 
     public EntityModel getPath() {
-        return privatePath;
+        return path;
     }
 
-    public void setPath(EntityModel value) {
-        privatePath = value;
+    private void setPath(EntityModel value) {
+        path = value;
+    }
+
+    private ListModel version;
+
+    public ListModel getVersion() {
+        return version;
+    }
+
+    private void setVersion(ListModel value) {
+        version = value;
+    }
+
+    private EntityModel retransmissions;
+
+    public EntityModel getRetransmissions() {
+        return retransmissions;
+    }
+
+    private void setRetransmissions(EntityModel value) {
+        retransmissions = value;
+    }
+
+    private EntityModel timeout;
+
+    public EntityModel getTimeout() {
+        return timeout;
+    }
+
+    private void setTimeout(EntityModel value) {
+        timeout = value;
+    }
+
+    private EntityModel mountOptions;
+
+    public EntityModel getMountOptions() {
+        return mountOptions;
+    }
+
+    private void setMountOptions(EntityModel value) {
+        mountOptions = value;
     }
 
 
@@ -86,19 +140,30 @@ public class NfsStorageModel extends Model implements IStorageModel {
 
         setPath(new EntityModel());
         getPath().getEntityChangedEvent().addListener(this);
+
+        Constants constants = ConstantsManager.getInstance().getConstants();
+
+        // Initialize version list.
+        setVersion(new ListModel());
+
+        List<EntityModel> versionItems = new ArrayList<EntityModel>();
+        versionItems.add(new EntityModel(constants.nfsVersionAutoNegotiate(), null));
+        versionItems.add(new EntityModel(constants.nfsVersion3(), (short) 3));
+        versionItems.add(new EntityModel(constants.nfsVersion4(), (short) 4));
+        getVersion().setItems(versionItems);
+
+        setRetransmissions(new EntityModel());
+        setTimeout(new EntityModel());
+        setMountOptions(new EntityModel());
     }
 
     @Override
     public void eventRaised(Event ev, Object sender, EventArgs args) {
         super.eventRaised(ev, sender, args);
-
         if (ev.equals(EntityModel.EntityChangedEventDefinition) && sender == getPath()) {
-            Path_EntityChanged();
+            // Notify about path change.
+            getPathChangedEvent().raise(this, EventArgs.Empty);
         }
-    }
-
-    private void Path_EntityChanged() {
-        getPathChangedEvent().raise(this, EventArgs.Empty);
     }
 
     @Override
@@ -107,13 +172,59 @@ public class NfsStorageModel extends Model implements IStorageModel {
         getPath().ValidateEntity(new IValidation[] {
             new NotEmptyValidation(),
             new LinuxMountPointValidation(),
-            new NonUtfValidation()});
+            new NonUtfValidation()
+        });
 
-        return getPath().getIsValid();
+        getRetransmissions().ValidateEntity(new IValidation[] {
+            new IntegerValidation(0, Integer.MAX_VALUE)
+        });
+
+        getTimeout().ValidateEntity(new IValidation[] {
+            new IntegerValidation(1, Integer.MAX_VALUE)
+        });
+
+        return getPath().getIsValid()
+            && getRetransmissions().getIsValid()
+            && getTimeout().getIsValid();
     }
 
     @Override
     public StorageType getType() {
         return StorageType.NFS;
+    }
+
+    private void containerChanged() {
+        // Subscribe to the data center change.
+        if (getContainer() == null) {
+            return;
+        }
+
+        ListModel dataCenter = getContainer().getDataCenter();
+        dataCenter.getSelectedItemChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+
+                containerDataCenterChanged();
+            }
+        });
+
+        // Call handler if there some data center is already selected.
+        if (dataCenter.getSelectedItem() != null) {
+            containerDataCenterChanged();
+        }
+    }
+
+    private void containerDataCenterChanged() {
+
+        // Show advanced NFS options for <=3.1
+        storage_pool dataCenter = (storage_pool) getContainer().getDataCenter().getSelectedItem();
+        Version ver31 = new Version(3, 1);
+
+        boolean available = dataCenter != null && (dataCenter.getcompatibility_version().compareTo(ver31) >= 0 || dataCenter.getId().equals(Guid.Empty));
+
+        getVersion().setIsAvailable(available);
+        getRetransmissions().setIsAvailable(available);
+        getTimeout().setIsAvailable(available);
+        getMountOptions().setIsAvailable(available);
     }
 }
