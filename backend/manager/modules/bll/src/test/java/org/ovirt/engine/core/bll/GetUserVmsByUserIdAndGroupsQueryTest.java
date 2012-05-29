@@ -2,19 +2,16 @@ package org.ovirt.engine.core.bll;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.powermock.api.mockito.PowerMockito.doAnswer;
-import static org.powermock.api.mockito.PowerMockito.doNothing;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
-import static org.powermock.api.mockito.PowerMockito.verifyStatic;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -22,11 +19,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.queries.GetUserVmsByUserIdAndGroupsParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmDAO;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ VmHandler.class, ImagesHandler.class })
 public class GetUserVmsByUserIdAndGroupsQueryTest
         extends AbstractUserQueryTest<GetUserVmsByUserIdAndGroupsParameters, GetUserVmsByUserIdAndGroupsQuery<GetUserVmsByUserIdAndGroupsParameters>> {
 
@@ -74,10 +67,7 @@ public class GetUserVmsByUserIdAndGroupsQueryTest
 
         // Mock the result of the DAO
         final VM expectedVM = mockVMFromDAO(requestedUser);
-
         final DiskImage expectedDisk = mockDisk();
-        Guid diskGuid = expectedDisk.getImageId();
-        Guid itGuid = expectedDisk.getit_guid();
 
         final ArrayList<DiskImage> snapshots = mockSnapshots();
         DiskImage expectedSnapshot = snapshots.get(0);
@@ -93,15 +83,14 @@ public class GetUserVmsByUserIdAndGroupsQueryTest
 
                     return null;
                 }
-            }).when(VmHandler.class);
-            VmHandler.updateDisksFromDb(expectedVM);
+            }).when(getQuery()).updateDisksFromDB(expectedVM);
 
-            mockStatic(ImagesHandler.class);
-            when(ImagesHandler.getAllImageSnapshots(diskGuid, itGuid)).thenReturn(snapshots);
+            doNothing().when(getQuery()).fillImagesBySnapshots(expectedVM);
         }
 
+        doNothing().when(getQuery()).updateVmGuestAgentVersion(expectedVM);
+
         getQuery().executeQueryCommand();
-        verifyStatic();
 
         @SuppressWarnings("unchecked")
         List<VM> actualVMs = (List<VM>) getQuery().getQueryReturnValue().getReturnValue();
@@ -145,17 +134,12 @@ public class GetUserVmsByUserIdAndGroupsQueryTest
         when(vmDaoMock.getAllForUserWithGroupsAndUserRoles(requestedUser)).thenReturn(Collections.singletonList(expectedVM));
         when(getDbFacadeMockInstance().getVmDAO()).thenReturn(vmDaoMock);
 
-        // Mock the VmHandler
-        mockStatic(VmHandler.class);
-        doNothing().when(VmHandler.class);
-        VmHandler.UpdateVmGuestAgentVersion(expectedVM);
-
         return expectedVM;
     }
 
     /** @return A disk to add to the VM */
     private static DiskImage mockDisk() {
-        // Prepare the disks
+        // Prepare the disk
         Guid diskGuid = Guid.NewGuid();
         Guid itGuid = Guid.NewGuid();
         final DiskImage expectedDisk = new DiskImage();

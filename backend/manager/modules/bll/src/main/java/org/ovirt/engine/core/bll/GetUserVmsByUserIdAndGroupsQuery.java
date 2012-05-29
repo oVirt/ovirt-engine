@@ -16,13 +16,25 @@ public class GetUserVmsByUserIdAndGroupsQuery<P extends GetUserVmsByUserIdAndGro
     protected List<VM> getPrivilegedQueryReturnValue() {
         List<VM> vmList = getDbFacade().getVmDAO().getAllForUserWithGroupsAndUserRoles(getParameters().getUserId());
         for (VM vm : vmList) {
-            VmHandler.UpdateVmGuestAgentVersion(vm);
+            updateVmGuestAgentVersion(vm);
             if (getParameters().getIncludeDiskData()) {
-                VmHandler.updateDisksFromDb(vm);
+                updateDisksFromDB(vm);
                 Collections.sort(vm.getDiskList(), new ImagesComparerByName());
-                ImagesHandler.fillImagesBySnapshots(vm);
+                fillImagesBySnapshots(vm);
             }
         }
         return vmList;
+    }
+
+    protected void fillImagesBySnapshots(VM vm) {
+        ImagesHandler.fillImagesBySnapshots(vm);
+    }
+
+    protected void updateDisksFromDB(VM vm) {
+        VmHandler.updateDisksFromDb(vm);
+    }
+
+    protected void updateVmGuestAgentVersion(VM vm) {
+        VmHandler.UpdateVmGuestAgentVersion(vm);
     }
 }
