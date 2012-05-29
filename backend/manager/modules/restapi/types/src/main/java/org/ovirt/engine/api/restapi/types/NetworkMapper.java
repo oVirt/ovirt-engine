@@ -60,11 +60,10 @@ public class NetworkMapper {
                 networkUsages.add(map(usage,null));
             }
             entity.setis_display(networkUsages.contains(NetworkUsage.DISPLAY));
-            if (model.isSetDisplay()) { // for backward compatibility use display tag or usage tag
-                entity.setis_display(model.isDisplay());
-            } else {
-                entity.setVmNetwork(networkUsages.contains(NetworkUsage.VM));
-            }
+            entity.setVmNetwork(networkUsages.contains(NetworkUsage.VM));
+        }
+        if (model.isSetDisplay()) { // for backward compatibility use display tag or usage tag
+            entity.setis_display(model.isDisplay());
         }
         if (model.isSetMtu()) {
             entity.setMtu(model.getMtu());
