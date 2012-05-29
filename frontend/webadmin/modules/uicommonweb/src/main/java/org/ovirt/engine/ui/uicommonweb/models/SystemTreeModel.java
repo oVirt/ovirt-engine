@@ -9,6 +9,7 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
+import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.StoragePoolQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -260,7 +261,16 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
                                             queryTypeList.add(VdcQueryType.GetStorageDomainsByStoragePoolId);
                                             queryParamList.add(new StoragePoolQueryParametersBase(dataCenter.getId()));
                                         }
-                                        Frontend.RunMultipleQueries(queryTypeList, queryParamList, systemTreeModel3);
+                                        if ((ApplicationModeHelper.getUiMode().getValue() & ApplicationMode.VirtOnly.getValue()) == 0) {
+                                            FrontendMultipleQueryAsyncResult dummyResult =
+                                                    new FrontendMultipleQueryAsyncResult();
+                                            VdcQueryReturnValue value = new VdcQueryReturnValue();
+                                            value.setSucceeded(true);
+                                            dummyResult.getReturnValues().add(value);
+                                            Executed(dummyResult);
+                                        } else {
+                                            Frontend.RunMultipleQueries(queryTypeList, queryParamList, systemTreeModel3);
+                                        }
                                     }
                                 };
                                 AsyncDataProvider.GetVolumeList(_asyncQuery3, null);
@@ -322,7 +332,7 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
     @Override
     public void Executed(FrontendMultipleQueryAsyncResult result)
     {
-        ArrayList<storage_domains> storages;
+        ArrayList<storage_domains> storages = null;
         int count = -1;
 
         // Build tree items.
@@ -338,27 +348,32 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
             {
                 continue;
             }
-            storages = (ArrayList<storage_domains>) returnValue.getReturnValue();
+            if (returnValue.getReturnValue() instanceof storage_domains) {
+                storages = (ArrayList<storage_domains>) returnValue.getReturnValue();
+            }
 
             SystemTreeItemModel dataCenterItem = new SystemTreeItemModel();
             dataCenterItem.setType(SystemTreeItemType.DataCenter);
+            dataCenterItem.setApplicationMode(ApplicationMode.VirtOnly);
             dataCenterItem.setTitle(getDataCenters().get(count).getname());
             dataCenterItem.setEntity(getDataCenters().get(count));
             systemItem.getChildren().add(dataCenterItem);
 
             SystemTreeItemModel storagesItem = new SystemTreeItemModel();
             storagesItem.setType(SystemTreeItemType.Storages);
+            storagesItem.setApplicationMode(ApplicationMode.VirtOnly);
             storagesItem.setTitle(ConstantsManager.getInstance().getConstants().storagesTitle());
             storagesItem.setParent(dataCenterItem);
             storagesItem.setEntity(getDataCenters().get(count));
             dataCenterItem.getChildren().add(storagesItem);
 
-            if (storages.size() > 0)
+            if (storages != null && storages.size() > 0)
             {
                 for (storage_domains storage : storages)
                 {
                     SystemTreeItemModel storageItem = new SystemTreeItemModel();
                     storageItem.setType(SystemTreeItemType.Storage);
+                    storageItem.setApplicationMode(ApplicationMode.VirtOnly);
                     storageItem.setTitle(storage.getstorage_name());
                     storageItem.setParent(dataCenterItem);
                     storageItem.setEntity(storage);
@@ -368,6 +383,7 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
 
             SystemTreeItemModel templatesItem = new SystemTreeItemModel();
             templatesItem.setType(SystemTreeItemType.Templates);
+            templatesItem.setApplicationMode(ApplicationMode.VirtOnly);
             templatesItem.setTitle(ConstantsManager.getInstance().getConstants().templatesTitle());
             templatesItem.setParent(dataCenterItem);
             templatesItem.setEntity(getDataCenters().get(count));
@@ -412,40 +428,46 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
                             hostsItem.getChildren().add(hostItem);
                         }
                     }
-                  if(cluster.supportsGlusterService())
-                  {
-                    SystemTreeItemModel volumesItem = new SystemTreeItemModel();
-                    volumesItem.setType(SystemTreeItemType.Volumes);
-                    volumesItem.setTitle(ConstantsManager.getInstance().getConstants().volumesTitle());
-                    volumesItem.setParent(clusterItem);
-                    volumesItem.setEntity(cluster);
-                    clusterItem.getChildren().add(volumesItem);
+                    if (cluster.supportsGlusterService())
+                    {
+                        SystemTreeItemModel volumesItem = new SystemTreeItemModel();
+                        volumesItem.setType(SystemTreeItemType.Volumes);
+                        volumesItem.setApplicationMode(ApplicationMode.GlusterOnly);
+                        volumesItem.setTitle(ConstantsManager.getInstance().getConstants().volumesTitle());
+                        volumesItem.setParent(clusterItem);
+                        volumesItem.setEntity(cluster);
+                        clusterItem.getChildren().add(volumesItem);
 
-                    if (getVolumeMap().containsKey(cluster.getId())) {
-                        for (GlusterVolumeEntity volume : getVolumeMap().get(cluster.getId())) {
-                            SystemTreeItemModel volumeItem = new SystemTreeItemModel();
-                            volumeItem.setType(SystemTreeItemType.Volume);
-                            volumeItem.setTitle(volume.getName());
-                            volumeItem.setParent(volumesItem);
-                            volumeItem.setEntity(volume);
-                            volumesItem.getChildren().add(volumeItem);
+                        if (getVolumeMap().containsKey(cluster.getId())) {
+                            for (GlusterVolumeEntity volume : getVolumeMap().get(cluster.getId())) {
+                                SystemTreeItemModel volumeItem = new SystemTreeItemModel();
+                                volumeItem.setType(SystemTreeItemType.Volume);
+                                volumeItem.setApplicationMode(ApplicationMode.GlusterOnly);
+                                volumeItem.setTitle(volume.getName());
+                                volumeItem.setParent(volumesItem);
+                                volumeItem.setEntity(volume);
+                                volumesItem.getChildren().add(volumeItem);
+                            }
                         }
                     }
-                  }
 
-                  if(cluster.supportsVirtService())
-                  {
-                    SystemTreeItemModel vmsItem = new SystemTreeItemModel();
-                    vmsItem.setType(SystemTreeItemType.VMs);
-                    vmsItem.setTitle(ConstantsManager.getInstance().getConstants().vmsTitle());
-                    vmsItem.setParent(clusterItem);
-                    vmsItem.setEntity(cluster);
-                    clusterItem.getChildren().add(vmsItem);
-                  }
+                    if (cluster.supportsVirtService())
+                    {
+                        SystemTreeItemModel vmsItem = new SystemTreeItemModel();
+                        vmsItem.setType(SystemTreeItemType.VMs);
+                        vmsItem.setApplicationMode(ApplicationMode.VirtOnly);
+                        vmsItem.setTitle(ConstantsManager.getInstance().getConstants().vmsTitle());
+                        vmsItem.setParent(clusterItem);
+                        vmsItem.setEntity(cluster);
+                        clusterItem.getChildren().add(vmsItem);
+                    }
                 }
             }
         }
-        setItems(new ArrayList<SystemTreeItemModel>(Arrays.asList(new SystemTreeItemModel[] {systemItem})));
+        if (!ApplicationModeHelper.getUiMode().equals(ApplicationMode.AllModes)) {
+            ApplicationModeHelper.filterSystemTreeByApplictionMode(systemItem);
+        }
+        setItems(new ArrayList<SystemTreeItemModel>(Arrays.asList(new SystemTreeItemModel[] { systemItem })));
     }
 
     @Override

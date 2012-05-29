@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.ovirt.engine.core.common.EventNotificationEntity;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
@@ -12,52 +13,41 @@ public class ApplicationModeHelper {
 
     private static ApplicationMode UI_MODE = ApplicationMode.AllModes;
 
-    public static boolean isAvailableInMode(int availableModes)
-    {
+    public static boolean isAvailableInMode(int availableModes) {
         return (availableModes & UI_MODE.getValue()) > 0;
     }
 
-    public static boolean isModeSupported(ApplicationMode mode)
-    {
+    public static boolean isModeSupported(ApplicationMode mode) {
         return (mode.getValue() & UI_MODE.getValue()) > 0;
     }
 
-    public static ApplicationMode getUiMode()
-    {
+    public static ApplicationMode getUiMode() {
         return UI_MODE;
     }
 
-    public static void setUiMode(ApplicationMode uiMode)
-    {
-        if (uiMode != null)
-        {
+    public static void setUiMode(ApplicationMode uiMode) {
+        if (uiMode != null) {
             UI_MODE = uiMode;
         }
     }
 
-    public static ArrayList<EventNotificationEntity> getModeSpecificEventNotificationTypeList()
-    {
+    public static ArrayList<EventNotificationEntity> getModeSpecificEventNotificationTypeList() {
         ArrayList<EventNotificationEntity> subList = new ArrayList<EventNotificationEntity>();
-        for (EventNotificationEntity entity : DataProvider.GetEventNotificationTypeList())
-        {
-            if ((entity.getAvailableInModes() & UI_MODE.getValue()) > 0)
-            {
+        for (EventNotificationEntity entity : DataProvider.GetEventNotificationTypeList()) {
+            if ((entity.getAvailableInModes() & UI_MODE.getValue()) > 0) {
                 subList.add(entity);
             }
         }
         return subList;
     }
 
-    public static boolean filterTreeByApplictionMode(RoleNode tree) {
-        if (UI_MODE.equals(ApplicationMode.AllModes)) {
-            return false;
-        }
+    public static boolean filterActionGroupTreeByApplictionMode(RoleNode tree) {
         ArrayList<RoleNode> list = new ArrayList<RoleNode>();
         for (RoleNode node : tree.getLeafRoles()) {
             if (node.getLeafRoles() == null || node.getLeafRoles().isEmpty()) {
                 return (ActionGroup.valueOf(node.getName()).getAvailableInModes() & getUiMode().getValue()) == 0;
             }
-            if (filterTreeByApplictionMode(node)) {
+            if (filterActionGroupTreeByApplictionMode(node)) {
                 list.add(node);
             }
         }
@@ -68,4 +58,23 @@ public class ApplicationModeHelper {
         return tree.getLeafRoles().size() == 0;
     }
 
+    public static boolean filterSystemTreeByApplictionMode(SystemTreeItemModel systemItem) {
+        List<SystemTreeItemModel> list = new ArrayList<SystemTreeItemModel>();
+        for (SystemTreeItemModel item : systemItem.getChildren()) {
+            if (filterSystemTreeByApplictionMode(item)) {
+                list.add(item);
+            }
+        }
+        if (list.size() == 1
+                && list.size() == systemItem.getChildren().size()
+                && (systemItem.getChildren().get(0).getApplicationMode().getValue() & ApplicationModeHelper.getUiMode()
+                        .getValue()) == 0) {
+            systemItem.setChildren(systemItem.getChildren().get(0).getChildren());
+        }
+
+        for (SystemTreeItemModel systemTreeItemModel : list) {
+            systemItem.getChildren().remove(systemTreeItemModel);
+        }
+        return !((systemItem.getApplicationMode().getValue() & getUiMode().getValue()) > 0);
+    }
 }

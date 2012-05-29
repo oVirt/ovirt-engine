@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.uicompat;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
@@ -15,7 +16,11 @@ public final class FrontendMultipleQueryAsyncResult {
 		setReturnValues(returnValues);
 	}
 
-	private List<VdcQueryType> privateQueryTypes;
+	public FrontendMultipleQueryAsyncResult() {
+	    setReturnValues(new ArrayList<VdcQueryReturnValue>());
+    }
+
+    private List<VdcQueryType> privateQueryTypes;
 
 	public List<VdcQueryType> getQueryTypes() {
 		return privateQueryTypes;

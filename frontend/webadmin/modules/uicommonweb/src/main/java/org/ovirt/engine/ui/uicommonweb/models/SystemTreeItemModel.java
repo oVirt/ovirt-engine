@@ -1,14 +1,24 @@
 package org.ovirt.engine.ui.uicommonweb.models;
 
+import java.util.List;
+
+import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.compat.ObservableCollection;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
-
-import java.util.List;
 
 @SuppressWarnings("unused")
 public class SystemTreeItemModel extends EntityModel
 {
     private SystemTreeItemType type = SystemTreeItemType.values()[0];
+    private ApplicationMode applicationMode = ApplicationMode.AllModes;
+
+    public ApplicationMode getApplicationMode() {
+        return applicationMode;
+    }
+
+    public void setApplicationMode(ApplicationMode applicationMode) {
+        this.applicationMode = applicationMode;
+    }
 
     public SystemTreeItemType getType()
     {

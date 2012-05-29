@@ -40,6 +40,7 @@ import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeOptionInfo;
 import org.ovirt.engine.core.common.interfaces.SearchType;
+import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.CommandVersionsInfo;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetAllAttachableDisks;
@@ -100,6 +101,7 @@ import org.ovirt.engine.ui.frontend.IAsyncConverter;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.DataProvider;
 import org.ovirt.engine.ui.uicommonweb.Linq;
+import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 
 public final class AsyncDataProvider {
 
@@ -217,7 +219,7 @@ public final class AsyncDataProvider {
         };
 
         GetAllImagesListByStoragePoolIdParameters parameters =
-            new GetAllImagesListByStoragePoolIdParameters(storagePoolId);
+                new GetAllImagesListByStoragePoolIdParameters(storagePoolId);
         Frontend.RunQuery(VdcQueryType.GetAllIsoImagesListByStoragePoolId, parameters, aQuery);
     }
 
@@ -954,6 +956,10 @@ public final class AsyncDataProvider {
 
     public static void GetVolumeList(AsyncQuery aQuery, String clusterName) {
 
+        if ((ApplicationModeHelper.getUiMode().getValue() & ApplicationMode.GlusterOnly.getValue()) == 0) {
+            aQuery.asyncCallback.OnSuccess(aQuery.Model, new ArrayList<GlusterVolumeEntity>());
+            return;
+        }
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)

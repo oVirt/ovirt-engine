@@ -401,7 +401,7 @@ public class RoleTreeView
 
         //nothing to filter
         if (!ApplicationModeHelper.getUiMode().equals(ApplicationMode.AllModes)) {
-            ApplicationModeHelper.filterTreeByApplictionMode(tree);
+            ApplicationModeHelper.filterActionGroupTreeByApplictionMode(tree);
         }
         return tree;
     }
