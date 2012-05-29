@@ -410,6 +410,7 @@ select fn_db_update_config_value('VdsFenceOptionMapping','alom:secure=secure,por
 select fn_db_update_config_value('VdsFenceType','alom,apc,bladecenter,drac5,eps,ilo,ilo3,ipmilan,rsa,rsb,wti,cisco_ucs','3.0');
 select fn_db_update_config_value('VdsFenceType','alom,apc,bladecenter,drac5,eps,ilo,ipmilan,rsa,rsb,wti,cisco_ucs','2.2');
 select fn_db_update_config_value('VmGracefulShutdownMessage','The oVirt Engine is shutting down this Virtual Machine','general');
+select fn_db_update_config_value('SupportedVDSMVersions','4.5,4.9,4.10','general');
 
 ------------------------------------------------------------------------------------
 --   Update only if default not changed section
