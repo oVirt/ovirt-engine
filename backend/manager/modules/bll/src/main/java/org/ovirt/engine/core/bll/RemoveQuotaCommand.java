@@ -37,8 +37,7 @@ public class RemoveQuotaCommand<T extends QuotaCRUDParameters> extends CommandBa
         }
 
         // Check if there is attempt to delete the default quota while storage pool enforcement type is disabled.
-        if (getStoragePoolDAO().get(quota.getStoragePoolId()).getQuotaEnforcementType() == QuotaEnforcementTypeEnum.DISABLED && quota.getIsDefaultQuota()) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_QUOTA_CAN_NOT_HAVE_DEFAULT_INDICATION);
+        if (!validDefaultQuota(quota)) {
             return false;
         }
 
@@ -58,6 +57,20 @@ public class RemoveQuotaCommand<T extends QuotaCRUDParameters> extends CommandBa
         return true;
     }
 
+    /**
+     * Validate storage pool is not disabled when user attempt to remove default quota.
+     * @param quota - The quota to be removed
+     * @return - Boolean indication whether the operation is permitted or not.
+     */
+    protected boolean validDefaultQuota(Quota quota) {
+        if (getStoragePoolDAO().get(quota.getStoragePoolId()).getQuotaEnforcementType() == QuotaEnforcementTypeEnum.DISABLED
+                && quota.getIsDefaultQuota()) {
+            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_QUOTA_WITH_DEFAULT_INDICATION_CAN_NOT_BE_REMOVED);
+            return false;
+        }
+        return true;
+    }
+
     @Override
     protected void executeCommand() {
         setQuota(getQuotaDAO().getById(getParameters().getQuotaId()));
@@ -72,6 +85,7 @@ public class RemoveQuotaCommand<T extends QuotaCRUDParameters> extends CommandBa
                 VdcObjectType.Quota, getActionType().getActionGroup()));
     }
 
+    @Override
     protected void setActionMessageParameters() {
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__REMOVE);
         addCanDoActionMessage(VdcBllMessages.VAR__TYPE__QUOTA);
