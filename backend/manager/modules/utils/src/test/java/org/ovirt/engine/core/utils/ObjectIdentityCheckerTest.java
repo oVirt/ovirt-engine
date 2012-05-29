@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.utils;
 
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import junit.framework.TestCase;
 
@@ -17,7 +17,7 @@ public class ObjectIdentityCheckerTest extends TestCase {
         Jedi jedi1 = new Jedi();
         Jedi jedi2 = new Jedi();
 
-        ArrayList<String> changes = ObjectIdentityChecker.GetChangedFields(jedi1, jedi2);
+        List<String> changes = ObjectIdentityChecker.GetChangedFields(jedi1, jedi2);
         assertTrue("Should be no changes", changes.size() == 0);
     }
 
@@ -26,7 +26,7 @@ public class ObjectIdentityCheckerTest extends TestCase {
         Jedi jedi2 = new Jedi();
         jedi2.saberColor = "red"; // Gone to the dark side
 
-        ArrayList<String> changes = ObjectIdentityChecker.GetChangedFields(jedi1, jedi2);
+        List<String> changes = ObjectIdentityChecker.GetChangedFields(jedi1, jedi2);
         assertTrue("Should be 1 changes", changes.size() == 1);
     }
 

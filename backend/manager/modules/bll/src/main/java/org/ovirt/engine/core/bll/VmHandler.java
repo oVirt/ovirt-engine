@@ -62,7 +62,7 @@ public class VmHandler {
                 "quotaEnforcementType", "cpuPinning",
                 "vmPayload", "balloonEnabled" });
         mUpdateVmsStatic.AddFields(
-                Arrays.asList(new Enum[] { VMStatus.Down }),
+                Arrays.asList(new Enum<?>[] { VMStatus.Down }),
                 Arrays.asList(new String[] { "vds_group_id", "time_zone", "is_stateless", "nice_level", "mem_size_mb",
                         "num_of_sockets", "cpu_per_socket", "iso_path", "userDefinedProperties",
                         "predefinedProperties", "customProperties", "images", "interfaces" }));

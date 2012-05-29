@@ -1499,7 +1499,7 @@ public class VdsUpdateRunTimeInfo {
         }
         if (vmToUpdate.argvalue != null) {
             // check if dynamic data changed - update cache and DB
-            java.util.ArrayList<String> props = ObjectIdentityChecker.GetChangedFields(
+            List<String> props = ObjectIdentityChecker.GetChangedFields(
                     vmToUpdate.argvalue.getDynamicData(), vmNewDynamicData);
             // dont check fields:
             props.remove("vm_host");

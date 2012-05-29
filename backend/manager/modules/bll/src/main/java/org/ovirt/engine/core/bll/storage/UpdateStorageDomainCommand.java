@@ -32,7 +32,7 @@ public class UpdateStorageDomainCommand<T extends StorageDomainManagementParamet
         storage_domain_static oldDomain =
                 DbFacade.getInstance().getStorageDomainStaticDAO().get(getStorageDomain().getId());
 
-        java.util.ArrayList<String> props = ObjectIdentityChecker.GetChangedFields(oldDomain, getStorageDomain()
+        List<String> props = ObjectIdentityChecker.GetChangedFields(oldDomain, getStorageDomain()
                 .getStorageStaticData());
         // allow change only to name field
         props.remove("storage_name");

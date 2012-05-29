@@ -47,7 +47,7 @@ public class VdsHandler extends BaseHandler {
         mUpdateVdsStatic.AddPermittedField("PmOptionsMap");
         mUpdateVdsStatic.AddPermittedField("vdsSpmPriority");
         mUpdateVdsStatic.AddFields(
-                java.util.Arrays.asList(new Enum[] { VDSStatus.NonResponsive, VDSStatus.Maintenance, VDSStatus.Down,
+                java.util.Arrays.asList(new Enum<?>[] { VDSStatus.NonResponsive, VDSStatus.Maintenance, VDSStatus.Down,
                         VDSStatus.Unassigned, VDSStatus.InstallFailed, VDSStatus.PendingApproval }),
                 java.util.Arrays.asList(new String[] { "ip", "vds_unique_id", "host_name", "port", "vds_group_id",
                         "otpValidity" }));
