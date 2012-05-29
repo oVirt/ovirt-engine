@@ -2,10 +2,10 @@ package org.ovirt.engine.core.bll.storage;
 
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
 import org.ovirt.engine.core.common.businessentities.StorageType;
-import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.storage_server_connections;
@@ -26,15 +26,17 @@ public class AddStorageServerConnectionCommand<T extends StorageServerConnection
 
     @Override
     protected void executeCommand() {
-        if (getParameters().getVdsId().equals(Guid.Empty)) {
-            for (VDS vds : getAllRunningVdssInPool()) {
-                Connect(vds.getId());
-            }
-        } else {
-            Connect(getVds().getId());
-        }
+        storage_server_connections currConnection = getConnection();
+        boolean isValidConnection = true;
+        isValidConnection = Connect(getVds().getId()).getFirst();
 
-        getReturnValue().setActionReturnValue(getConnection().getid());
+        // Add storage Connection to the database.
+        if (isValidConnection && (StringUtils.isNotEmpty(currConnection.getid())
+                || getDbFacade().getStorageServerConnectionDAO().get(currConnection.getid()) == null)) {
+            currConnection.setid(Guid.NewGuid().toString());
+            getDbFacade().getStorageServerConnectionDAO().save(currConnection);
+        }
+       getReturnValue().setActionReturnValue(getConnection().getid());
         setSucceeded(true);
     }
 
@@ -54,21 +56,12 @@ public class AddStorageServerConnectionCommand<T extends StorageServerConnection
     protected boolean canDoAction() {
         boolean returnValue = true;
         storage_server_connections paramConnection = getParameters().getStorageServerConnection();
-        storage_server_connections currConnection = getConnection();
         if (returnValue && paramConnection.getstorage_type() == StorageType.NFS
                 && !new NfsMountPointConstraint().isValid(paramConnection.getconnection(), null)) {
             returnValue = false;
             addCanDoActionMessage("VALIDATION.STORAGE.CONNECTION.INVALID");
         }
 
-        if (StringHelper.isNullOrEmpty(currConnection.getid())
-                || DbFacade.getInstance().getStorageServerConnectionDAO().get(currConnection.getid()) == null) {
-            /**
-             * Storage Connection not in the database - add
-             */
-            currConnection.setid(Guid.NewGuid().toString());
-            DbFacade.getInstance().getStorageServerConnectionDAO().save(currConnection);
-        }
         if (getParameters().getVdsId().equals(Guid.Empty)) {
             returnValue = InitializeVds();
         } else if (getVds() == null) {
@@ -100,16 +93,6 @@ public class AddStorageServerConnectionCommand<T extends StorageServerConnection
                     addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION);
                 }
             }
-        }
-
-        // if the connection has changed and we are going to execute this command we update the connection in the DB
-        //
-        // NOTE: this check must be the last check in this method
-        //
-        if (returnValue
-                && paramConnection.getstorage_type() != getParameters().getStorageServerConnection().getstorage_type()) {
-            paramConnection.setid(currConnection.getid());
-            DbFacade.getInstance().getStorageServerConnectionDAO().update(paramConnection);
         }
         return returnValue;
     }
