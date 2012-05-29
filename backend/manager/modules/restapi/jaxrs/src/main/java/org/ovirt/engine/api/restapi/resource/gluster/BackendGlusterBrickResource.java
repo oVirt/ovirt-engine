@@ -58,7 +58,7 @@ public class BackendGlusterBrickResource
 
     @Override
     public Response replace(Action action) {
-        validateParameters(action, "newBrick.serverId", "newBrick.brickDir");
+        validateParameters(action, "Brick.serverId", "Brick.brickDir");
         Mapper<GlusterBrick, GlusterBrickEntity> mapper = getMapper(GlusterBrick.class, GlusterBrickEntity.class);
         return doAction(VdcActionType.ReplaceGlusterVolumeBrick,
                 new GlusterVolumeReplaceBrickActionParameters(asGuid(getVolumeId()),

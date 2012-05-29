@@ -69,7 +69,7 @@ public class BackendGlusterBrickResourceTest extends AbstractBackendSubResourceT
         try {
             resource.replace(new Action());
         } catch (WebApplicationException wae) {
-            verifyIncompleteException(wae, "Action", "replace", "newBrick.serverId, newBrick.brickDir");
+            verifyIncompleteException(wae, "Action", "replace", "Brick.serverId, Brick.brickDir");
        }
     }
 
