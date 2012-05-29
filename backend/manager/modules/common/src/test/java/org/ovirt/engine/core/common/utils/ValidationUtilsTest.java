@@ -1,31 +1,10 @@
 package org.ovirt.engine.core.common.utils;
 
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.when;
-import static org.powermock.api.mockito.PowerMockito.mock;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
-import org.hibernate.validator.util.LoggerFactory;
-import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.slf4j.Logger;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ LoggerFactory.class })
 public class ValidationUtilsTest {
-
-    @Before
-    public void setup() throws SecurityException, NoSuchMethodException, Exception {
-        mockStatic(LoggerFactory.class);
-
-        Logger mock = mock(Logger.class);
-        when(LoggerFactory.make()).thenReturn(mock);
-
-    }
-
     @Test
     public void testcontainsIlegalCharacters() {
         String[] straValid = new String[] { "www_redhat_com", "127001", "www_REDHAT_1" };
