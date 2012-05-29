@@ -493,42 +493,55 @@ public class Frontend {
     }
 
     public static void RunMultipleAction(final VdcActionType actionType,
-            final ArrayList<VdcActionParametersBase> prms,
+            final ArrayList<VdcActionParametersBase> parameters,
             final IFrontendMultipleActionAsyncCallback callback,
             final Object state) {
         GenericApiGWTServiceAsync service = GenericApiGWTServiceAsync.Util.getInstance();
 
-        service.RunMultipleActions(actionType, prms, new AsyncCallback<ArrayList<VdcReturnValueBase>>() {
+        service.RunMultipleActions(actionType, parameters, new AsyncCallback<ArrayList<VdcReturnValueBase>>() {
             @Override
             public void onFailure(Throwable caught) {
                 logger.log(Level.SEVERE, "Failed to execute RunAction: " + caught, caught); //$NON-NLS-1$
                 failureEventHandler(caught);
 
-                FrontendMultipleActionAsyncResult f =
-                        new FrontendMultipleActionAsyncResult(actionType, prms, null, state);
-                callback.Executed(f);
+                if (callback != null) {
+                    callback.Executed(new FrontendMultipleActionAsyncResult(actionType, parameters, null, state));
+                }
             }
 
             @Override
             public void onSuccess(ArrayList<VdcReturnValueBase> result) {
                 logger.finer("Frontend: sucessfully executed RunAction, determining result!"); //$NON-NLS-1$
-                ArrayList<Message> messages = new ArrayList<Message>();
-                translateErrors(result);
+
+                ArrayList<VdcReturnValueBase> failed = new ArrayList<VdcReturnValueBase>();
+                ArrayList<VdcFault> faults = new ArrayList<VdcFault>();
+
                 for (VdcReturnValueBase v : result) {
                     if (!v.getCanDoAction()) {
-                        messages.add(new Message(v.getDescription(),
-                                getRunActionErrorMessage(v.getCanDoActionMessages())));
+                        failed.add(v);
+                    } else if (v.getSucceeded() == false) {
+                        VdcFault fault = v.getFault();
+                        fault.setMessage(vdsmErrorsTranslator.TranslateErrorTextSingle(fault.getMessage()));
+                        faults.add(fault);
                     }
                 }
-                if (!messages.isEmpty()) {
-                    failureEventHandler(messages);
+
+                if (!failed.isEmpty() || !faults.isEmpty()) {
+                    translateErrors(failed);
+                    getEventsHandler().runMultipleActionFailed(actionType, failed, faults);
                 }
 
-                FrontendMultipleActionAsyncResult f =
-                        new FrontendMultipleActionAsyncResult(actionType, prms, result, state);
-                callback.Executed(f);
+                if (callback != null) {
+                    callback.Executed(new FrontendMultipleActionAsyncResult(actionType, parameters, result, state));
+                }
             }
         });
+    }
+
+    public static ArrayList<VdcReturnValueBase> RunMultipleAction(VdcActionType actionType,
+            ArrayList<VdcActionParametersBase> parameters) {
+        RunMultipleAction(actionType, parameters, null, null);
+        return null;
     }
 
     public static void RunMultipleActions(final ArrayList<VdcActionType> actionTypes,
@@ -566,42 +579,6 @@ public class Frontend {
                         }
                     }
                 }, state);
-    }
-
-    public static ArrayList<VdcReturnValueBase> RunMultipleAction(VdcActionType actionType,
-            ArrayList<VdcActionParametersBase> prms) {
-        GenericApiGWTServiceAsync service = GenericApiGWTServiceAsync.Util.getInstance();
-
-        service.RunMultipleActions(actionType, prms, new AsyncCallback<ArrayList<VdcReturnValueBase>>() {
-            @Override
-            public void onFailure(Throwable caught) {
-                logger.log(Level.SEVERE, "Failed to execute RunAction: " + caught, caught); //$NON-NLS-1$
-                failureEventHandler(caught);
-                // FrontendActionAsyncResult f = new
-                // FrontendActionAsyncResult(
-                // actionType, parameters, null);
-            }
-
-            @Override
-            public void onSuccess(ArrayList<VdcReturnValueBase> result) {
-                logger.finer("Frontend: sucessfully executed RunAction, determining result!"); //$NON-NLS-1$
-                ArrayList<Message> messages = new ArrayList<Message>();
-                translateErrors(result);
-                for (VdcReturnValueBase v : result) {
-                    if (!v.getCanDoAction()) {
-                        messages.add(new Message(v.getDescription(),
-                                getRunActionErrorMessage(v.getCanDoActionMessages())));
-                    }
-                }
-                if (!messages.isEmpty()) {
-                    failureEventHandler(messages);
-                }
-                // handleActionResult(actionType, parameters, result,
-                // null);
-            }
-        });
-
-        return null;
     }
 
     public static void UnregisterQuery(Guid asyncSearchId) {

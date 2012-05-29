@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.common.uicommon;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -21,6 +22,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
  * Utility class used to format Frontend messages into Strings suitable for displaying in UI.
  */
 public class ErrorMessageFormatter {
+
     private static final CommonApplicationTemplates TEMPLATES = GWT.create(CommonApplicationTemplates.class);
 
     public static String formatMessages(List<Message> values) {
@@ -33,22 +35,14 @@ public class ErrorMessageFormatter {
         }
 
         SafeHtmlBuilder allSb = new SafeHtmlBuilder();
-
-        allSb.append(SafeHtmlUtils.fromTrustedString("</br></br>")); //$NON-NLS-1$
+        allSb.append(SafeHtmlUtils.fromTrustedString("<br/><br/>")); //$NON-NLS-1$
 
         Map<String, Set<String>> desc2msgs = getDescription2MsgMap(values);
-
         for (Map.Entry<String, Set<String>> entry : desc2msgs.entrySet()) {
-            SafeHtmlBuilder listSb = new SafeHtmlBuilder();
             String desc = entry.getKey();
+            SafeHtml sh = buildItemList(entry.getValue());
 
-            for (String msg : entry.getValue()) {
-                listSb.append(TEMPLATES.listItem(SafeHtmlUtils.fromSafeConstant(msg)));
-            }
-
-            SafeHtml sh = TEMPLATES.unsignedList(listSb.toSafeHtml());
-
-            if (!desc.equals("")) { //$NON-NLS-1$
+            if (!"".equals(desc)) { //$NON-NLS-1$
                 allSb.append(SafeHtmlUtils.fromString(desc + ":")); //$NON-NLS-1$
             }
 
@@ -56,6 +50,30 @@ public class ErrorMessageFormatter {
         }
 
         return allSb.toSafeHtml().asString();
+    }
+
+    public static String formatErrorMessages(List<String> values) {
+        if (values.size() == 1) {
+            return values.get(0);
+        }
+
+        SafeHtmlBuilder allSb = new SafeHtmlBuilder();
+        allSb.append(SafeHtmlUtils.fromTrustedString("<br/><br/>")); //$NON-NLS-1$
+
+        SafeHtml sh = buildItemList(values);
+        allSb.append(sh);
+
+        return allSb.toSafeHtml().asString();
+    }
+
+    private static SafeHtml buildItemList(Collection<String> items) {
+        SafeHtmlBuilder itemBuilder = new SafeHtmlBuilder();
+
+        for (String i : items) {
+            itemBuilder.append(TEMPLATES.listItem(SafeHtmlUtils.fromSafeConstant(i)));
+        }
+
+        return TEMPLATES.unsignedList(itemBuilder.toSafeHtml());
     }
 
     public static String formatMessage(Message value) {
@@ -102,4 +120,5 @@ public class ErrorMessageFormatter {
 
         return desc2Msgs;
     }
+
 }

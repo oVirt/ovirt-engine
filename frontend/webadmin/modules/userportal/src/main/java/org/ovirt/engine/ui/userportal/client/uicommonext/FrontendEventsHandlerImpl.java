@@ -48,4 +48,12 @@ public class FrontendEventsHandlerImpl implements IFrontendEventsHandler {
 		// TODO Auto-generated method stub
 
 	}
+
+	@Override
+	public void runMultipleActionFailed(VdcActionType action,
+			List<VdcReturnValueBase> returnValues, List<VdcFault> faults) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

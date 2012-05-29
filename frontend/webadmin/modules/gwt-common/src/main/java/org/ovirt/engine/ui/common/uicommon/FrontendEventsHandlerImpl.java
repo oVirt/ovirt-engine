@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.common.uicommon;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -47,8 +48,29 @@ public class FrontendEventsHandlerImpl implements IFrontendEventsHandler {
         Translator vdcActionTypeTranslator = EnumTranslator.Create(VdcActionType.class);
 
         errorPopupManager.show(
-                messages.uiCommonRunActionExecutionFailed(vdcActionTypeTranslator.containsKey(action) ? vdcActionTypeTranslator.get(action)
-                        : action.toString(), fault.getMessage()));
+                messages.uiCommonRunActionExecutionFailed(vdcActionTypeTranslator.containsKey(action)
+                        ? vdcActionTypeTranslator.get(action) : action.toString(),
+                                fault.getMessage()));
+    }
+
+    @Override
+    public void runMultipleActionFailed(VdcActionType action,
+            List<VdcReturnValueBase> returnValues, List<VdcFault> faults) {
+        Translator vdcActionTypeTranslator = EnumTranslator.Create(VdcActionType.class);
+        String actionStr = vdcActionTypeTranslator.containsKey(action)
+                ? vdcActionTypeTranslator.get(action) : action.toString();
+
+        List<String> errors = new ArrayList<String>();
+
+        for (VdcReturnValueBase v : returnValues) {
+            errors.add(messages.uiCommonRunActionFailed(v.getCanDoActionMessages().iterator().next()));
+        }
+
+        for (VdcFault fault : faults) {
+            errors.add(messages.uiCommonRunActionExecutionFailed(actionStr, fault.getMessage()));
+        }
+
+        errorPopupManager.show(ErrorMessageFormatter.formatErrorMessages(errors));
     }
 
     @Override
