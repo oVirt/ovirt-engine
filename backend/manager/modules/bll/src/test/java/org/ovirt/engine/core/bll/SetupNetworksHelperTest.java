@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -48,7 +49,7 @@ public class SetupNetworksHelperTest {
     @Test
     public void validateBonds() {
         List<VdsNetworkInterface> bonds = new ArrayList<VdsNetworkInterface>();
-        Map<String, VdsNetworkInterface> bondsMap = new HashMap<String, VdsNetworkInterface>();
+        Set<String> bondsSet = new HashSet<String>();
         List<VdsNetworkInterface> slaves = new ArrayList<VdsNetworkInterface>();
         Map<String, List<VdsNetworkInterface>> slavesMap =
                 new HashMap<String, List<VdsNetworkInterface>>();
@@ -59,13 +60,13 @@ public class SetupNetworksHelperTest {
 
         bonds.add(bond0);
         slaves.add(slave);
-        bondsMap.put("bond0", bond0);
+        bondsSet.add("bond0");
         slavesMap.put("bond0", Arrays.asList(slave));
 
         SetupNetworksHelper validator = createHelper(mock(SetupNetworksParameters.class));
         initDaoMocks(bonds, null, validator);
 
-        assertFalse(validator.validateBonds(bondsMap, slavesMap));
+        assertFalse(validator.validateBonds(bondsSet, slavesMap));
         assertTrue(validator.getViolations().contains(VdcBllMessages.NETWORK_BOND_PARAMETERS_INVALID));
     }
 
@@ -245,7 +246,7 @@ public class SetupNetworksHelperTest {
         SetupNetworksHelper helper = createHelper(new SetupNetworksParameters());
         initDaoMocks(null, null, helper);
 
-        Map<String, VdsNetworkInterface> bonds = new HashMap<String, VdsNetworkInterface>();
+        Set<String> bonds = new HashSet<String>();
         String name = "bond5";
         VdsNetworkInterface iface = newBond(name);
         iface.setNetworkName("");
@@ -255,7 +256,7 @@ public class SetupNetworksHelperTest {
 
         iface.setNetworkName("pink");
         helper.extractBond(bonds, iface, name);
-        assertTrue(bonds.containsKey(name));
+        assertTrue(bonds.contains(name));
 
         helper.extractBond(bonds, iface, name);
         assertTrue(bonds.size() == 1);
@@ -295,11 +296,11 @@ public class SetupNetworksHelperTest {
     public void extractRemovedBonds() {
         SetupNetworksHelper helper = createHelper(new SetupNetworksParameters());
 
-        Map<String, VdsNetworkInterface> bonds = new HashMap<String, VdsNetworkInterface>();
+        Set<String> bonds = new HashSet<String>();
         List<VdsNetworkInterface> existingIfaces = new ArrayList<VdsNetworkInterface>();
 
         VdsNetworkInterface bond3 = newBond("bond3");
-        bonds.put(bond3.getName(), bond3);
+        bonds.add(bond3.getName());
 
         VdsNetworkInterface existingBond1 = newBond("bond3");
         VdsNetworkInterface existingBond2 = newBond("bond4");

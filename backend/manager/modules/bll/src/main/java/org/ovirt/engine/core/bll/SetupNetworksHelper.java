@@ -25,10 +25,10 @@ public class SetupNetworksHelper {
     private Map<String, VdsNetworkInterface> existingIfaces;
     private Map<String, network> existingClusterNetworks;
 
-    private List<network> networks;
+    private List<network> modifiedNetworks = new ArrayList<network>();
     private List<String> unmanagedNetworks = new ArrayList<String>();
     private List<String> removeNetworks;
-    private List<VdsNetworkInterface> bonds;
+    private Map<String, VdsNetworkInterface> modifiedBonds = new HashMap<String, VdsNetworkInterface>();
     private List<VdsNetworkInterface> removedBonds;
 
     public SetupNetworksHelper(SetupNetworksParameters parameters, Guid vdsGroupId) {
@@ -52,15 +52,11 @@ public class SetupNetworksHelper {
      */
     public List<VdcBllMessages> validate() {
         Set<String> ifaceNames = new HashSet<String>();
-
-        // key = bond name, value = interface
-        Map<String, VdsNetworkInterface> bonds = new HashMap<String, VdsNetworkInterface>();
+        Set<String> bonds = new HashSet<String>();
+        Set<String> attachedNetworksNames = new HashSet<String>();
 
         // key = master bond name, value = list of interfaces
         Map<String, List<VdsNetworkInterface>> bondSlaves = new HashMap<String, List<VdsNetworkInterface>>();
-
-        // key = network name, vale = interface
-        Map<String, network> networks = new HashMap<String, network>();
 
         for (VdsNetworkInterface iface : params.getInterfaces()) {
             String name = iface.getName();
@@ -91,15 +87,13 @@ public class SetupNetworksHelper {
 
             // validate and extract to network map
             if (violations.isEmpty() && StringUtils.isNotBlank(networkName)) {
-                extractNetwork(networks, iface, networkName);
+                extractNetwork(attachedNetworksNames, iface, networkName);
             }
         }
 
         validateBonds(bonds, bondSlaves);
 
-        this.networks = new ArrayList<network>(networks.values());
-        extractRemoveNetworks(networks.keySet(), getExisitingHostNetworkNames());
-        this.bonds = new ArrayList<VdsNetworkInterface>(bonds.values());
+        extractRemoveNetworks(attachedNetworksNames, getExisitingHostNetworkNames());
         this.removedBonds = extractRemovedBonds(bonds);
 
         return violations;
@@ -143,14 +137,14 @@ public class SetupNetworksHelper {
      * clusterNetworksMap. The desired network is just a key and actual network configuration is taken from the db
      * entity.
      *
-     * @param networks
-     *            map of aggregated networks to add
+     * @param attachedNetworksNames
+     *            Set of names of the networks which are attached to a NIC
      * @param iface
      *            current iterated interface
      * @param networkName
      *            the current network name of iface
      */
-    private void extractNetwork(Map<String, network> networks,
+    private void extractNetwork(Set<String> attachedNetworksNames,
             VdsNetworkInterface iface,
             String networkName) {
 
@@ -158,10 +152,11 @@ public class SetupNetworksHelper {
         if (getExistingClusterNetworks().containsKey(networkName)) {
 
             // prevent attaching 2 interfaces to 1 network
-            if (networks.containsKey(networkName)) {
+            if (attachedNetworksNames.contains(networkName)) {
                 violations.add(VdcBllMessages.NETWROK_ALREADY_ATTACHED_TO_INTERFACE);
             } else {
-                networks.put(networkName, getExistingClusterNetworks().get(networkName));
+                attachedNetworksNames.add(networkName);
+                modifiedNetworks.add(getExistingClusterNetworks().get(networkName));
             }
 
             // Interface must exist, it was checked before and we can't reach here if it does'nt exist already.
@@ -196,22 +191,23 @@ public class SetupNetworksHelper {
         bondSlaves.put(bondName, value);
     }
 
-    protected void extractBond(Map<String, VdsNetworkInterface> bonds, VdsNetworkInterface iface, String name) {
+    protected void extractBond(Set<String> bonds, VdsNetworkInterface iface, String name) {
         if (StringUtils.isBlank(iface.getNetworkName())) {
             violations.add(VdcBllMessages.NETWROK_NOT_EXISTS);
         } else {
-            if (bonds.containsKey(name)) {
+            if (bonds.contains(name)) {
                 violations.add(VdcBllMessages.NETWORK_BOND_NAME_EXISTS);
             } else {
-                bonds.put(name, iface);
+                bonds.add(name);
+                modifiedBonds.put(name, iface);
             }
         }
     }
 
-    protected List<VdsNetworkInterface> extractRemovedBonds(Map<String, VdsNetworkInterface> bonds) {
+    protected List<VdsNetworkInterface> extractRemovedBonds(Set<String> bonds) {
         List<VdsNetworkInterface> removedBonds = new ArrayList<VdsNetworkInterface>();
         for (Entry<String, VdsNetworkInterface> e : getExistingIfaces().entrySet()) {
-            if (isBond(e.getValue()) && !bonds.containsKey(e.getKey())) {
+            if (isBond(e.getValue()) && !bonds.contains(e.getKey())) {
                 removedBonds.add(e.getValue());
             }
         }
@@ -219,10 +215,10 @@ public class SetupNetworksHelper {
         return removedBonds;
     }
 
-    protected boolean validateBonds(Map<String, VdsNetworkInterface> bonds,
+    protected boolean validateBonds(Set<String> bonds,
             Map<String, List<VdsNetworkInterface>> bondSlaves) {
         boolean returnValue = true;
-        for (String bondName : bonds.keySet()) {
+        for (String bondName : bonds) {
             if (bondSlaves.containsKey(bondName) && bondSlaves.get(bondName).size() < 2) {
                 returnValue = false;
                 violations.add(VdcBllMessages.NETWORK_BOND_PARAMETERS_INVALID);
@@ -257,7 +253,7 @@ public class SetupNetworksHelper {
     }
 
     public List<network> getNetworks() {
-        return networks;
+        return modifiedNetworks;
     }
 
     public List<String> getRemoveNetworks() {
@@ -265,7 +261,7 @@ public class SetupNetworksHelper {
     }
 
     public List<VdsNetworkInterface> getBonds() {
-        return bonds;
+        return new ArrayList<VdsNetworkInterface>(modifiedBonds.values());
     }
 
     public List<VdsNetworkInterface> getRemovedBonds() {
