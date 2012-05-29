@@ -1,54 +1,53 @@
 package org.ovirt.engine.core.bll;
 
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
-import static org.mockito.MockitoAnnotations.initMocks;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
-import static org.powermock.api.mockito.PowerMockito.when;
+import static org.mockito.Mockito.when;
+import static org.ovirt.engine.core.bll.CommandAssertUtils.checkSucceeded;
+import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.List;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSType;
-import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.VdsIdParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VdsDAO;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.ovirt.engine.core.utils.MockConfigRule;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Config.class, DbFacade.class })
-public class GetoVirtISOsTest extends BaseMockitoTest {
+@RunWith(MockitoJUnitRunner.class)
+public class GetoVirtISOsTest extends AbstractQueryTest<VdsIdParametersBase, GetoVirtISOsQuery<VdsIdParametersBase>> {
 
     private static final String OVIRT_INIT_SUPPORTED_VERSION = "5.8";
     private static final String OVIRT_ISO_PREFIX = "rhevh";
     private static final String OVIRT_ISOS_REPOSITORY_PATH = "src/test/resources/ovirt-isos";
+    private static final String OVIRT_ISOS_DATA_DIR = ".";
     private static final String AVAILABLE_OVIRT_ISO_VERSION = "RHEV Hypervisor - 6.2 - 20111010.0.el6";
 
-    @Mock
-    private DbFacade dbFacade;
+    @Rule
+    public static MockConfigRule mcr = new MockConfigRule(
+            mockConfig(ConfigValues.oVirtISOsRepositoryPath, OVIRT_ISOS_REPOSITORY_PATH),
+            mockConfig(ConfigValues.DataDir, OVIRT_ISOS_DATA_DIR),
+            mockConfig(ConfigValues.OvirtIsoPrefix, OVIRT_ISO_PREFIX),
+            mockConfig(ConfigValues.OvirtInitialSupportedIsoVersion, OVIRT_INIT_SUPPORTED_VERSION)
+            );
+
     @Mock
     private VdsDAO vdsDAO;
 
     @Override
     @Before
-    public void setUp() {
-        initMocks(this);
-        ConfigMocker cfgMocker = new ConfigMocker();
-        cfgMocker.mockOVirtISOsRepositoryPath(OVIRT_ISOS_REPOSITORY_PATH);
-        cfgMocker.mockConfigOvirtIsoPrefix(OVIRT_ISO_PREFIX);
-        cfgMocker.mockConfigOvirtInitialSupportedIsoVersion(OVIRT_INIT_SUPPORTED_VERSION);
-
-        mockStatic(DbFacade.class);
-        when(DbFacade.getInstance()).thenReturn(dbFacade);
-        when(dbFacade.getVdsDAO()).thenReturn(vdsDAO);
-        when(vdsDAO.get(any(Guid.class))).thenReturn(null);
+    public void setUp() throws Exception {
+        super.setUp();
+        when(getDbFacadeMockInstance().getVdsDAO()).thenReturn(vdsDAO);
     }
 
     @Test
@@ -60,39 +59,48 @@ public class GetoVirtISOsTest extends BaseMockitoTest {
         vds.sethost_os(AVAILABLE_OVIRT_ISO_VERSION);
         when(vdsDAO.get(any(Guid.class))).thenReturn(vds);
 
-        VdsIdParametersBase params = new VdsIdParametersBase(vds.getId());
-        GetoVirtISOsQuery<VdsIdParametersBase> query = new GetoVirtISOsQuery<VdsIdParametersBase>(params);
-        query.setInternalExecution(true);
-        query.ExecuteCommand();
+        when(getQueryParameters().getVdsId()).thenReturn(vdsId);
 
-        checkSucceeded(query, true);
-        checkReturnValue(query);
+        getQuery().setInternalExecution(true);
+        getQuery().ExecuteCommand();
+
+        checkSucceeded(getQuery(), true);
+        checkReturnValue(getQuery());
     }
 
     @Test
     public void testQueryWithNonExistingHostId() {
-        VdsIdParametersBase params = new VdsIdParametersBase(Guid.NewGuid());
-        GetoVirtISOsQuery<VdsIdParametersBase> query = new GetoVirtISOsQuery<VdsIdParametersBase>(params);
-        query.setInternalExecution(true);
-        query.ExecuteCommand();
+        when(getQueryParameters().getVdsId()).thenReturn(Guid.NewGuid());
+        getQuery().setInternalExecution(true);
+        getQuery().ExecuteCommand();
 
-        checkSucceeded(query, true);
-        checkReturnValue(query);
+        checkSucceeded(getQuery(), true);
+        checkReturnValue(getQuery());
     }
 
     @Test
     public void testQueryWithoutHostId() {
-        VdsIdParametersBase params = new VdsIdParametersBase();
-        GetoVirtISOsQuery<VdsIdParametersBase> query = new GetoVirtISOsQuery<VdsIdParametersBase>(params);
-        query.setInternalExecution(true);
-        query.ExecuteCommand();
+        getQuery().setInternalExecution(true);
+        getQuery().ExecuteCommand();
 
-        checkSucceeded(query, true);
-        checkReturnValue(query);
+        checkSucceeded(getQuery(), true);
+        checkReturnValue(getQuery());
     }
 
     @SuppressWarnings("unchecked")
-    private void checkReturnValue(GetoVirtISOsQuery<VdsIdParametersBase> query) {
+    @Test
+    public void testPrefixChange() {
+        mcr.mockConfigValue(ConfigValues.OvirtIsoPrefix, "a different prefix");
+        getQuery().setInternalExecution(true);
+        getQuery().ExecuteCommand();
+
+        checkSucceeded(getQuery(), true);
+        assertTrue("Prefix was changed, no ISOs should be returned",
+                ((List<RpmVersion>) getQuery().getQueryReturnValue().getReturnValue()).isEmpty());
+    }
+
+    @SuppressWarnings("unchecked")
+    private static void checkReturnValue(GetoVirtISOsQuery<VdsIdParametersBase> query) {
         List<RpmVersion> isosList = (List<RpmVersion>) query.getQueryReturnValue().getReturnValue();
         assertTrue(!isosList.isEmpty());
     }

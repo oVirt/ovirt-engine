@@ -28,11 +28,9 @@ import org.ovirt.engine.core.compat.Version;
  * verifies image files exist, and returns list of ISOs sorted by their version.
  */
 public class GetoVirtISOsQuery<P extends VdsIdParametersBase> extends QueriesCommandBase<P> {
-    private static final String OVIRT_ISO_PREFIX = Config.<String> GetValue(ConfigValues.OvirtIsoPrefix);
-    private static final String OVIRT_ISO_PATTERN = OVIRT_ISO_PREFIX + "-.*.iso";
-    private static Pattern isoPattern = Pattern.compile(OVIRT_ISO_PATTERN);
+    private static Pattern isoPattern;
     private static final String OVIRT_ISO_VERSION_PATTERN = "version-.*.txt";
-    private static Pattern isoVersionPattern = Pattern.compile(OVIRT_ISO_VERSION_PATTERN);
+    private static final Pattern isoVersionPattern = Pattern.compile(OVIRT_ISO_VERSION_PATTERN);
 
     public GetoVirtISOsQuery(P parameters) {
         super(parameters);
@@ -122,7 +120,7 @@ public class GetoVirtISOsQuery<P extends VdsIdParametersBase> extends QueriesCom
         RpmVersion isoVersion = null;
         try {
             String rpmLike = isoFileName.replaceFirst(majorVersionStr + "-", majorVersionStr + ".");
-            isoVersion = new RpmVersion(rpmLike, OVIRT_ISO_PREFIX, true);
+            isoVersion = new RpmVersion(rpmLike, getOvirtIsoPrefix(), true);
             isoVersion.setRpmName(isoFileName);
         } catch (RuntimeException e) {
             log.errorFormat("Failed to extract RpmVersion for iso file {0} with major version {1} due to {2}",
@@ -145,7 +143,7 @@ public class GetoVirtISOsQuery<P extends VdsIdParametersBase> extends QueriesCom
 
     private static List<String> getListOfIsoFiles(File directory) {
         List<String> isoFileList = new ArrayList<String>();
-        File[] filterOvirtFiles = filterOvirtFiles(directory, isoPattern);
+        File[] filterOvirtFiles = filterOvirtFiles(directory, getIsoPattern());
         for (File file : filterOvirtFiles) {
             isoFileList.add(file.getName());
         }
@@ -199,6 +197,24 @@ public class GetoVirtISOsQuery<P extends VdsIdParametersBase> extends QueriesCom
             vds = getDbFacade().getVdsDAO().get(vdsId);
         }
         return vds;
+    }
+
+    /** @return The prefix for oVirt ISO files, from the configuration */
+    private static String getOvirtIsoPrefix() {
+        return Config.<String> GetValue(ConfigValues.OvirtIsoPrefix);
+    }
+
+    /**
+     * Returns the pattern for ISO files.
+     * Since the prefix from the configuration may change (reloadable configuration), it is checked each time.
+     * A cached version of pattern is saved, though, to avoid the overhead of re-compiling it.
+     */
+    private static Pattern getIsoPattern() {
+        String expectedPattern = getOvirtIsoPrefix() + "-.*.iso";
+        if (isoPattern == null || !expectedPattern.equals(isoPattern.toString())) {
+            isoPattern = Pattern.compile(expectedPattern);
+        }
+        return isoPattern;
     }
 
 }
