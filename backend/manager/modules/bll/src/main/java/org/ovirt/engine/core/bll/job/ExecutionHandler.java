@@ -195,6 +195,7 @@ public class ExecutionHandler {
                 context.setExecutionMethod(ExecutionMethod.AsJob);
                 context.setJob(job);
                 command.setExecutionContext(context);
+                command.setJobId(job.getId());
                 context.setMonitored(true);
             }
         } catch (Exception e) {
