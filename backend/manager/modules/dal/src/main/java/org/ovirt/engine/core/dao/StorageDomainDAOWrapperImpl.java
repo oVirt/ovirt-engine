@@ -140,15 +140,8 @@ public class StorageDomainDAOWrapperImpl extends BaseDAOWrapperImpl implements S
     }
 
     @Override
-    public List<Guid> getAllStorageDomainsByImageGroup(Guid imageGroupId) {
-        List<storage_domain_static> domains = staticDAO.getAllForImageGroup(imageGroupId);
-        List<Guid> result = new ArrayList<Guid>();
-
-        for (storage_domain_static domain : domains) {
-            result.add(domain.getId());
-        }
-
-        return result;
+    public List<storage_domains> getAllStorageDomainsByImageId(Guid imageId) {
+        throw new NotImplementedException();
     }
 
     @Override

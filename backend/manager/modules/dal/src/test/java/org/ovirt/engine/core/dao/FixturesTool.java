@@ -154,7 +154,8 @@ public class FixturesTool {
     protected static final Guid DISK_ID = new Guid("1b26a52b-b60f-44cb-9f46-3ef333b04a34");
 
     /**
-     * Predefined image on a VM template for testing.
+     * Predefined image on a VM template for testing. <BR/>
+     * The image is defined on storage domain STORAGE_DOAMIN_SCALE_SD5.
      */
     protected static final Guid TEMPLATE_IMAGE_ID = new Guid("52058975-3d5e-484a-80c1-01c31207f578");
 

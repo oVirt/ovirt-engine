@@ -112,12 +112,12 @@ public interface StorageDomainDAO extends DAO, SearchDAO<storage_domains>, AutoR
     List<storage_domains> getAll();
 
     /**
-     * Retrieves all domain which contains any image from provided group
+     * Retrieves all domain which contains image id
      *
-     * @param imageGroupId
-     * @return
+     * @param imageId
+     * @return List of storage domains.
      */
-    List<Guid> getAllStorageDomainsByImageGroup(Guid imageGroupId);
+    List<storage_domains> getAllStorageDomainsByImageId(Guid imageId);
 
     /**
      * Removes the specified storage domain.

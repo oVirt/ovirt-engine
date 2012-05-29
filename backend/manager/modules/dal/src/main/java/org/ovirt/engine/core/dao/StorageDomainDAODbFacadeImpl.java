@@ -98,23 +98,16 @@ public class StorageDomainDAODbFacadeImpl extends BaseDAODbFacade implements Sto
     }
 
     @Override
-    public List<Guid> getAllStorageDomainsByImageGroup(Guid imageGroupId) {
-        return getCallsHandler().executeReadList("Getstorage_domainsId_By_imageGroupId",
-                new ParameterizedRowMapper<Guid>() {
-                    @Override
-                    public Guid mapRow(ResultSet rs, int rowNum)
-                            throws SQLException {
-                        return Guid.createGuidFromString(rs.getString("storage_id"));
-                    }
-                },
-                getCustomMapSqlParameterSource()
-                        .addValue("image_group_id", imageGroupId));
-    }
-
-    @Override
     public void remove(Guid id) {
         getCallsHandler().executeModification("Force_Delete_storage_domain", getCustomMapSqlParameterSource()
                 .addValue("storage_domain_id", id));
+    }
+
+    @Override
+    public List<storage_domains> getAllStorageDomainsByImageId(Guid imageId) {
+        return getCallsHandler().executeReadList("Getstorage_domains_List_By_ImageId",
+                StorageDomainRowMapper.instance,getCustomMapSqlParameterSource()
+                .addValue("image_id", imageId));
     }
 
     /**

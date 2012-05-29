@@ -109,6 +109,28 @@ public class StorageDomainDAOTest extends BaseDAOTestCase {
     }
 
     /**
+     * Test getting storage for existing image id.
+     */
+    @Test
+    public void testGetAllStorageDomainsByImageId() {
+        List<storage_domains> result = dao.getAllStorageDomainsByImageId(FixturesTool.TEMPLATE_IMAGE_ID);
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
+        assertEquals(1, result.size());
+        assertEquals(FixturesTool.STORAGE_DOAMIN_SCALE_SD5, result.get(0).getId());
+    }
+
+    /**
+     * Test getting storage for not existing image id.</BR> The expected result should be an empty list.
+     */
+    @Test
+    public void testGetAllStorageDomainsByNotExistingImageId() {
+        List<storage_domains> result = dao.getAllStorageDomainsByImageId(Guid.NewGuid());
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
+
+    /**
      * Asserts the result of {@link StorageDomainDAO#get(Guid)} returns the correct domain
      * @param result
      */
@@ -303,18 +325,6 @@ public class StorageDomainDAOTest extends BaseDAOTestCase {
         for (storage_domains domain : result) {
             assertEquals(EXISTING_STORAGE_POOL_ID, domain.getstorage_pool_id());
         }
-    }
-
-    /**
-     * Ensures all storages for template returned
-     */
-    @Test
-    public void testGetAllStorageDomainsByImageGroup() {
-        List<Guid> result = dao.getAllStorageDomainsByImageGroup(new Guid("1b26a52b-b60f-44cb-9f46-3ef333b04a34"));
-
-        assertNotNull(result);
-        assertFalse(result.isEmpty());
-        assertEquals(result.get(0), existingDomain.getId());
     }
 
     @Test

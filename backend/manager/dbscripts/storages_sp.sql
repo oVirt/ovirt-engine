@@ -247,6 +247,16 @@ END; $procedure$
 LANGUAGE plpgsql;    
 
 
+Create or replace FUNCTION Getstorage_domains_List_By_ImageId(v_image_id UUID) RETURNS SETOF storage_domains
+   AS $procedure$
+BEGIN
+    RETURN QUERY SELECT *
+    FROM storage_domains
+    WHERE id in (SELECT storage_domain_id
+                 FROM image_storage_domain_map
+                 WHERE image_id = v_image_id);
+END; $procedure$
+LANGUAGE plpgsql;
 
 
 
@@ -536,23 +546,6 @@ BEGIN
 
 END; $procedure$
 LANGUAGE plpgsql;
-
-DROP TYPE IF EXISTS Getstorage_domainsId_By_imageGroupId_rs CASCADE;
-CREATE TYPE Getstorage_domainsId_By_imageGroupId_rs AS (storage_id UUID);
-Create or replace FUNCTION Getstorage_domainsId_By_imageGroupId(v_image_group_id UUID)
-RETURNS SETOF Getstorage_domainsId_By_imageGroupId_rs
-   AS $procedure$
-BEGIN
-   RETURN QUERY SELECT DISTINCT
-   image_storage_domain_map.storage_domain_id AS storage_id 
-   FROM image_storage_domain_map
-   JOIN images ON images.image_guid = image_storage_domain_map.image_id
-   WHERE images.image_group_id = v_image_group_id;
-
-
-END; $procedure$
-LANGUAGE plpgsql;
-
 
 --This SP returns all data centers containing clusters with permissions to run the given action by user
 Create or replace FUNCTION fn_perms_get_storage_pools_with_permitted_action_on_vds_groups(v_user_id UUID, v_action_group_id integer) RETURNS SETOF storage_pool
