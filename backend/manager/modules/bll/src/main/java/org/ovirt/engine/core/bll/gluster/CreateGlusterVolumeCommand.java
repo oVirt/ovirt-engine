@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.AccessProtocol;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeOptionEntity;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.gluster.CreateReplicatedVolume;
@@ -124,12 +125,30 @@ public class CreateGlusterVolumeCommand extends GlusterCommandBase<CreateGluster
 
         // Volume created successfully. Insert it to database.
         GlusterVolumeEntity createdVolume = (GlusterVolumeEntity) returnValue.getReturnValue();
+        setVolumeType(createdVolume);
+        setBrickOrder(createdVolume.getBricks());
         addVolumeToDb(createdVolume);
 
         // set all options of the volume
         setVolumeOptions(createdVolume);
 
         getReturnValue().setActionReturnValue(createdVolume.getId());
+    }
+
+    private void setVolumeType(GlusterVolumeEntity createdVolume) {
+        if (createdVolume.getVolumeType() == GlusterVolumeType.REPLICATE &&
+                createdVolume.getBricks().size() > createdVolume.getReplicaCount()) {
+            createdVolume.setVolumeType(GlusterVolumeType.DISTRIBUTED_REPLICATE);
+        } else if (createdVolume.getVolumeType() == GlusterVolumeType.DISTRIBUTED_REPLICATE &&
+                createdVolume.getBricks().size() == createdVolume.getReplicaCount()) {
+            createdVolume.setVolumeType(GlusterVolumeType.REPLICATE);
+        } else if (createdVolume.getVolumeType() == GlusterVolumeType.STRIPE &&
+                createdVolume.getBricks().size() > createdVolume.getStripeCount()) {
+            createdVolume.setVolumeType(GlusterVolumeType.DISTRIBUTED_STRIPE);
+        } else if (createdVolume.getVolumeType() == GlusterVolumeType.DISTRIBUTED_STRIPE &&
+                createdVolume.getBricks().size() == createdVolume.getStripeCount()) {
+            createdVolume.setVolumeType(GlusterVolumeType.STRIPE);
+        }
     }
 
     /**
@@ -188,8 +207,8 @@ public class CreateGlusterVolumeCommand extends GlusterCommandBase<CreateGluster
             }
             break;
         case DISTRIBUTED_REPLICATE:
-            if (replicaCount < 4) {
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_REPLICA_COUNT_MIN_4);
+            if (replicaCount < 2) {
+                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_REPLICA_COUNT_MIN_2);
                 return false;
             }
             if (brickCount < replicaCount || Math.IEEEremainder(brickCount, replicaCount) != 0) {
@@ -208,8 +227,8 @@ public class CreateGlusterVolumeCommand extends GlusterCommandBase<CreateGluster
             }
             break;
         case DISTRIBUTED_STRIPE:
-            if (stripeCount < 8) {
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STRIPE_COUNT_MIN_8);
+            if (stripeCount < 4) {
+                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STRIPE_COUNT_MIN_4);
                 return false;
             }
             if (brickCount < stripeCount || Math.IEEEremainder(brickCount, stripeCount) != 0) {
@@ -220,6 +239,12 @@ public class CreateGlusterVolumeCommand extends GlusterCommandBase<CreateGluster
         }
 
         return updateBrickServerNames(bricks, true);
+    }
+
+    private void setBrickOrder(List<GlusterBrickEntity> bricks) {
+        for (int i = 0; i < bricks.size(); i++) {
+            bricks.get(i).setBrickOrder(i);
+        }
     }
 
     private void addVolumeToDb(final GlusterVolumeEntity createdVolume) {

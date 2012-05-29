@@ -37,6 +37,8 @@ public class GlusterBrickEntity extends IVdcQueryable {
 
     private GlusterBrickStatus status = GlusterBrickStatus.DOWN;
 
+    private Integer brickOrder;
+
     public GlusterBrickEntity() {
     }
 
@@ -110,6 +112,7 @@ public class GlusterBrickEntity extends IVdcQueryable {
         result = prime * result + ((serverId == null) ? 0 : serverId.hashCode());
         result = prime * result + ((serverName == null) ? 0 : serverName.hashCode());
         result = prime * result + ((brickDirectory == null) ? 0 : brickDirectory.hashCode());
+        result = prime * result + ((brickOrder == null) ? 0 : brickOrder.hashCode());
         result = prime * result + ((status == null) ? 0 : status.hashCode());
         return result;
     }
@@ -126,6 +129,7 @@ public class GlusterBrickEntity extends IVdcQueryable {
                 && serverId.equals(brick.getServerId())
                 && serverName.equals(brick.getServerName())
                 && brickDirectory.equals(brick.getBrickDirectory())
+                && brickOrder == brick.getBrickOrder()
                 && status == brick.getStatus());
     }
 
@@ -135,6 +139,7 @@ public class GlusterBrickEntity extends IVdcQueryable {
         setServerId(brick.getServerId());
         setServerName(brick.getServerName());
         setBrickDirectory(brick.getBrickDirectory());
+        setBrickOrder(brick.getBrickOrder());
         setStatus(brick.getStatus());
     }
 
@@ -161,5 +166,13 @@ public class GlusterBrickEntity extends IVdcQueryable {
     @Override
     public Object getQueryableId() {
         return getId();
+    }
+
+    public Integer getBrickOrder() {
+        return brickOrder;
+    }
+
+    public void setBrickOrder(Integer brickOrder) {
+        this.brickOrder = brickOrder;
     }
 }

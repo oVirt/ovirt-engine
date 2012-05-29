@@ -276,4 +276,17 @@ public class GlusterVolumeDaoDbFacadeImpl extends BaseDAODbFacade implements
     public void updateStripeCount(Guid volumeId, int stripeCount) {
         getCallsHandler().executeModification("UpdateStripeCount", createStripeCountParams(volumeId, stripeCount));
     }
+
+    @Override
+    public void updateGlusterVolume(GlusterVolumeEntity volume) {
+        getCallsHandler().executeModification("UpdateGlusterVolume",
+                getCustomMapSqlParameterSource()
+                        .addValue("id", volume.getId())
+                        .addValue("cluster_id", volume.getClusterId())
+                        .addValue("vol_name", volume.getName())
+                        .addValue("vol_type", EnumUtils.nameOrNull(volume.getVolumeType()))
+                        .addValue("status", EnumUtils.nameOrNull(volume.getStatus()))
+                        .addValue("replica_count", volume.getReplicaCount())
+                        .addValue("stripe_count", volume.getStripeCount()));
+    }
 }

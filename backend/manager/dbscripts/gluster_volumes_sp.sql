@@ -28,12 +28,13 @@ LANGUAGE plpgsql;
 Create or replace FUNCTION InsertGlusterVolumeBrick(v_id UUID, v_volume_id UUID,
                                                     v_server_id UUID,
                                                     v_brick_dir VARCHAR(4096),
+                                                    v_brick_order INTEGER,
                                                     v_status VARCHAR(32))
     RETURNS VOID
     AS $procedure$
 BEGIN
-    INSERT INTO gluster_volume_bricks (id, volume_id, server_id, brick_dir, status)
-    VALUES (v_id, v_volume_id, v_server_id, v_brick_dir, v_status);
+    INSERT INTO gluster_volume_bricks (id, volume_id, server_id, brick_dir, brick_order, status)
+    VALUES (v_id, v_volume_id, v_server_id, v_brick_dir, v_brick_order, v_status);
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -124,7 +125,7 @@ BEGIN
     RETURN QUERY SELECT *
     FROM  gluster_volume_bricks
     WHERE volume_id = v_volume_id
-    ORDER BY _create_date;
+    ORDER BY brick_order;
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -135,7 +136,7 @@ BEGIN
 RETURN QUERY SELECT *
 FROM  gluster_volume_bricks
 WHERE server_id = v_server_id
-ORDER BY _create_date;
+ORDER BY brick_order;
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -297,6 +298,18 @@ Create or replace FUNCTION UpdateGlusterVolumeBrickStatus(v_id UUID,
 BEGIN
     UPDATE  gluster_volume_bricks
     SET     status = v_status,
+            _update_date = LOCALTIMESTAMP
+    WHERE   id = v_id;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+Create or replace FUNCTION UpdateGlusterVolumeBrickOrder(v_id UUID, v_brick_order INTEGER)
+    RETURNS VOID
+    AS $procedure$
+BEGIN
+    UPDATE  gluster_volume_bricks
+    SET     brick_order = v_brick_order,
             _update_date = LOCALTIMESTAMP
     WHERE   id = v_id;
 END; $procedure$

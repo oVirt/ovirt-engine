@@ -7,6 +7,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeBricksActionParameters;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickStatus;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -72,31 +73,102 @@ public class AddBricksToGlusterVolumeCommand extends GlusterVolumeCommandBase<Gl
         setSucceeded(returnValue.getSucceeded());
 
         if (getSucceeded()) {
-            addGlusterVolumeBricksInDb(getParameters().getBricks(),
-                    getParameters().getReplicaCount(),
-                    getParameters().getStripeCount());
+            addGlusterVolumeBricksInDb(getParameters().getBricks());
         } else {
             handleVdsError(AuditLogType.GLUSTER_VOLUME_ADD_BRICK_FAILED, returnValue.getVdsError().getMessage());
             return;
         }
     }
 
-    private void addGlusterVolumeBricksInDb(List<GlusterBrickEntity> bricks, int replicaCount, int stripeCount) {
-        for (GlusterBrickEntity brick : bricks) {
-            if (getGlusterVolume().getStatus() == GlusterVolumeStatus.UP) {
-                brick.setStatus(GlusterBrickStatus.UP);
-            } else {
-                brick.setStatus(GlusterBrickStatus.DOWN);
+    private void addGlusterVolumeBricksInDb(List<GlusterBrickEntity> newBricks) {
+        // Reorder the volume bricks
+        GlusterVolumeEntity volume = getGlusterVolume();
+        List<GlusterBrickEntity> volumeBricks = volume.getBricks();
+        if (isReplicaCountIncreased() || isStripeCountIncreased()) {
+            GlusterBrickEntity brick;
+            int brick_num = 0;
+            int count =
+                    (isReplicaCountIncreased()) ? getParameters().getReplicaCount() : getParameters().getStripeCount();
+
+            // Updating existing brick order
+            for (int i = 0; i < volumeBricks.size(); i++) {
+                if (((i + 1) % count) == 0) {
+                    brick_num++;
+                }
+                brick = volumeBricks.get(i);
+                brick.setBrickOrder(brick_num);
+                brick_num++;
+
+                getGlusterBrickDao().updateBrickOrder(brick.getId(), brick.getBrickOrder());
             }
-            getGlusterBrickDao().save(brick);
+            // Adding new bricks
+            for (int i = 0; i < newBricks.size(); i++) {
+                brick = newBricks.get(i);
+                brick.setBrickOrder((i + 1) * count - 1);
+                brick.setStatus(getBrickStatus());
+                getGlusterBrickDao().save(brick);
+            }
+
+        } else {
+            // No change in the replica/stripe count
+            int brickCount = volumeBricks.get(volumeBricks.size() - 1).getBrickOrder();
+
+            for (GlusterBrickEntity brick : newBricks) {
+                brick.setBrickOrder(++brickCount);
+                brick.setStatus(getBrickStatus());
+                getGlusterBrickDao().save(brick);
+            }
         }
-        if (replicaCount != 0) {
-            getGlusterVolumeDao().updateReplicaCount(bricks.get(0).getVolumeId(), replicaCount);
+
+        // Update the volume replica/stripe count
+        if (isReplicaCountIncreased()) {
+            volume.setReplicaCount(getParameters().getReplicaCount());
         }
-        if (stripeCount != 0) {
-            getGlusterVolumeDao().updateStripeCount(bricks.get(0).getVolumeId(), stripeCount);
+
+        if (volume.getVolumeType() == GlusterVolumeType.REPLICATE
+                && getParameters().getReplicaCount() < (volume.getBricks().size() + getParameters().getBricks()
+                        .size())) {
+            volume.setVolumeType(GlusterVolumeType.DISTRIBUTED_REPLICATE);
+        }
+
+        if (isStripeCountIncreased()) {
+            volume.setStripeCount(getParameters().getStripeCount());
+        }
+
+        if (volume.getVolumeType() == GlusterVolumeType.STRIPE
+                && getParameters().getStripeCount() < (volume.getBricks().size() + getParameters().getBricks()
+                        .size())) {
+            volume.setVolumeType(GlusterVolumeType.DISTRIBUTED_STRIPE);
+        }
+
+        getGlusterVolumeDao().updateGlusterVolume(volume);
+    }
+
+    private boolean isReplicaCountIncreased() {
+        if ((getGlusterVolume().getVolumeType() == GlusterVolumeType.REPLICATE
+                || getGlusterVolume().getVolumeType() == GlusterVolumeType.DISTRIBUTED_REPLICATE)
+                && getParameters().getReplicaCount() > getGlusterVolume().getReplicaCount()) {
+            return true;
+        } else {
+            return false;
         }
     }
+
+    private boolean isStripeCountIncreased() {
+        if ((getGlusterVolume().getVolumeType() == GlusterVolumeType.STRIPE
+                || getGlusterVolume().getVolumeType() == GlusterVolumeType.DISTRIBUTED_STRIPE)
+                && getParameters().getStripeCount() > getGlusterVolume().getStripeCount()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private GlusterBrickStatus getBrickStatus() {
+        return (getGlusterVolume().getStatus() == GlusterVolumeStatus.UP) ? GlusterBrickStatus.UP
+                : GlusterBrickStatus.DOWN;
+    }
+
 
     @Override
     public AuditLogType getAuditLogTypeValue() {

@@ -1876,20 +1876,14 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Replica count must be > 2 for a REPLICATE volume.")
     String ACTION_TYPE_FAILED_REPLICA_COUNT_MIN_2();
 
-    @DefaultStringValue("Cannot ${action} ${type}. Replica count must be > 4 for a DISTRIBUTED REPLICATE volume.")
-    String ACTION_TYPE_FAILED_REPLICA_COUNT_MIN_4();
-
-    @DefaultStringValue("Cannot ${action} ${type}. Number of bricks must be equal to the replica count for a REPLICATE volume.")
-    String ACTION_TYPE_FAILED_INVALID_BRICK_COUNT_FOR_REPLICATE();
-
     @DefaultStringValue("Cannot ${action} ${type}. Number of bricks must be a multiple of replica count for a DISTRIBUTED REPLICATE volume.")
     String ACTION_TYPE_FAILED_INVALID_BRICK_COUNT_FOR_DISTRIBUTED_REPLICATE();
 
-    @DefaultStringValue("Cannot ${action} ${type}. Stripe count must be > 4 for a STRIPE volume.")
-    String ACTION_TYPE_FAILED_STRIPE_COUNT_MIN_4();
+    @DefaultStringValue("Cannot ${action} ${type}. Number of bricks must be equal to the replica count for a REPLICATED volume.")
+    String ACTION_TYPE_FAILED_INVALID_BRICK_COUNT_FOR_REPLICATE();
 
-    @DefaultStringValue("Cannot ${action} ${type}. Stripe count must be > 8 for a DISTRIBUTED STRIPE volume.")
-    String ACTION_TYPE_FAILED_STRIPE_COUNT_MIN_8();
+    @DefaultStringValue("Cannot ${action} ${type}. Stripe count must be > 4 for a STRIPED volume.")
+    String ACTION_TYPE_FAILED_STRIPE_COUNT_MIN_4();
 
     @DefaultStringValue("Cannot ${action} ${type}. Number of bricks must be equal to stripe count for a STRIPE volume.")
     String ACTION_TYPE_FAILED_INVALID_BRICK_COUNT_FOR_STRIPE();

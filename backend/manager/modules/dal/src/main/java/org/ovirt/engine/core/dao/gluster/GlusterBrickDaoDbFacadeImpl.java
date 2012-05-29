@@ -35,7 +35,6 @@ public class GlusterBrickDaoDbFacadeImpl extends BaseDAODbFacade implements Glus
                 getCustomMapSqlParameterSource().addValue("id", oldBrick.getId())
                         .addValue("new_id", newBrick.getId())
                         .addValue("new_server_id", newBrick.getServerId())
-                        .addValue("new_brick_dir", newBrick.getBrickDirectory())
                         .addValue("new_status", EnumUtils.nameOrNull(newBrick.getStatus())));
     }
 
@@ -45,6 +44,14 @@ public class GlusterBrickDaoDbFacadeImpl extends BaseDAODbFacade implements Glus
                 getCustomMapSqlParameterSource()
                 .addValue("id", brickId)
                 .addValue("status", EnumUtils.nameOrNull(status)));
+    }
+
+    @Override
+    public void updateBrickOrder(Guid brickId, int brickOrder) {
+        getCallsHandler().executeModification("UpdateGlusterVolumeBrickOrder",
+                getCustomMapSqlParameterSource()
+                        .addValue("id", brickId)
+                        .addValue("brick_order", brickOrder));
     }
 
     @Override
@@ -67,6 +74,7 @@ public class GlusterBrickDaoDbFacadeImpl extends BaseDAODbFacade implements Glus
                 .addValue("volume_id", brick.getVolumeId())
                 .addValue("server_id", brick.getServerId())
                 .addValue("brick_dir", brick.getBrickDirectory())
+                .addValue("brick_order", (brick.getBrickOrder() == null) ? 0 : brick.getBrickOrder())
                 .addValue("status", EnumUtils.nameOrNull(brick.getStatus()));
     }
 
@@ -88,6 +96,7 @@ public class GlusterBrickDaoDbFacadeImpl extends BaseDAODbFacade implements Glus
             brick.setServerName(getHostNameOfServer(serverId));
 
             brick.setBrickDirectory(rs.getString("brick_dir"));
+            brick.setBrickOrder(rs.getInt("brick_order"));
             brick.setStatus(GlusterBrickStatus.valueOf(rs.getString("status")));
             return brick;
         }

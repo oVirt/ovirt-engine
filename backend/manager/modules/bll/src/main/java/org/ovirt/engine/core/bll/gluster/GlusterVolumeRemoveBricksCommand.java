@@ -80,7 +80,7 @@ public class GlusterVolumeRemoveBricksCommand extends GlusterVolumeCommandBase<G
                                 getGlusterVolumeName(), bricks, replicaCount));
         setSucceeded(returnValue.getSucceeded());
         if (getSucceeded()) {
-            removeBricksFromVolumeInDb(getGlusterVolume(), bricks);
+            removeBricksFromVolumeInDb(bricks);
         } else {
             handleVdsError(AuditLogType.GLUSTER_VOLUME_REMOVE_BRICKS_FAILED, returnValue.getVdsError().getMessage());
             return;
@@ -129,9 +129,31 @@ public class GlusterVolumeRemoveBricksCommand extends GlusterVolumeCommandBase<G
         }
     }
 
-    private void removeBricksFromVolumeInDb(GlusterVolumeEntity volume, List<GlusterBrickEntity> brickList) {
+    private void removeBricksFromVolumeInDb(List<GlusterBrickEntity> brickList) {
+        GlusterVolumeEntity volume = getGlusterVolume();
         for (GlusterBrickEntity brick : brickList) {
             getGlusterBrickDao().removeBrick(brick.getId());
+        }
+
+        // Update volume type and replica/stripe count
+        if (volume.getVolumeType() == GlusterVolumeType.DISTRIBUTED_REPLICATE
+                && volume.getReplicaCount() == (volume.getBricks().size() - brickList.size())) {
+            volume.setVolumeType(GlusterVolumeType.REPLICATE);
+        }
+        if (volume.getVolumeType() == GlusterVolumeType.REPLICATE
+                || volume.getVolumeType() == GlusterVolumeType.DISTRIBUTED_REPLICATE) {
+            int replicaCount =
+                    (getParameters().getReplicaCount() == 0)
+                            ? volume.getReplicaCount()
+                            : getParameters().getReplicaCount();
+            volume.setReplicaCount(replicaCount);
+            getGlusterVolumeDao().updateGlusterVolume(volume);
+        }
+
+        if (volume.getVolumeType() == GlusterVolumeType.DISTRIBUTED_STRIPE
+                && volume.getStripeCount() == (volume.getBricks().size() - brickList.size())) {
+            volume.setVolumeType(GlusterVolumeType.STRIPE);
+            getGlusterVolumeDao().updateGlusterVolume(volume);
         }
     }
 }
