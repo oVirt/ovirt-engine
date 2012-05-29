@@ -24,6 +24,8 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -111,7 +113,16 @@ public class RsdlBuilder {
         for (DetailedLink link : getLinks()) {
             rsdl.getLinks().getLinks().add(link);
         }
+
         uniteDuplicateLinks(rsdl);
+
+        Collections.sort(rsdl.getLinks().getLinks(), new Comparator<DetailedLink>(){
+            public int compare(DetailedLink dl1, DetailedLink dl2) {
+                int res = dl1.getHref().compareTo(dl2.getHref());
+                return res != 0 ? res : dl1.getRel().compareTo(dl2.getRel());
+            }
+          });
+
         return rsdl;
     }
 
