@@ -167,6 +167,12 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
             entity.setBoot(rs.getBoolean("boot"));
             entity.setread_rate(rs.getInt("read_rate"));
             entity.setwrite_rate(rs.getInt("write_rate"));
+            entity.setReadLatency(rs.getObject("read_latency_seconds") != null ? rs.getDouble("read_latency_seconds")
+                    : null);
+            entity.setWriteLatency(rs.getObject("write_latency_seconds") != null ? rs.getDouble("write_latency_seconds")
+                    : null);
+            entity.setFlushLatency(rs.getObject("flush_latency_seconds") != null ? rs.getDouble("flush_latency_seconds")
+                    : null);
             entity.setQuotaId(Guid.createGuidFromString(rs.getString("quota_id")));
             entity.setactive((Boolean) rs.getObject("active"));
             entity.setQuotaName(rs.getString("quota_name"));

@@ -28,6 +28,12 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
     private int readRateFromDiskImageDynamic;
     // TODO comes from DiskImageDynamic
     private int writeRateFromDiskImageDynamic;
+
+    // Latency fields from DiskImageDynamic which are measured in seconds.
+    private Double readLatency;
+    private Double writeLatency;
+    private Double flushLatency;
+
     private String appList;
     // TODO from storage_domain_static
     private NGuid storage_pool_idField;
@@ -167,6 +173,30 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
 
     public void setwrite_rate(int value) {
         this.writeRateFromDiskImageDynamic = value;
+    }
+
+    public Double getReadLatency() {
+        return readLatency;
+    }
+
+    public void setReadLatency(Double readLatency) {
+        this.readLatency = readLatency;
+    }
+
+    public Double getWriteLatency() {
+        return writeLatency;
+    }
+
+    public void setWriteLatency(Double writeLatency) {
+        this.writeLatency = writeLatency;
+    }
+
+    public Double getFlushLatency() {
+        return flushLatency;
+    }
+
+    public void setFlushLatency(Double flushLatency) {
+        this.flushLatency = flushLatency;
     }
 
     private String description;
@@ -359,6 +389,9 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
         di.actualSizeFromDiskImageDynamic = diskImage.actualSizeFromDiskImageDynamic;
         di.readRateFromDiskImageDynamic = diskImage.readRateFromDiskImageDynamic;
         di.writeRateFromDiskImageDynamic = diskImage.writeRateFromDiskImageDynamic;
+        di.readLatency = diskImage.readLatency;
+        di.writeLatency = diskImage.writeLatency;
+        di.flushLatency = diskImage.flushLatency;
         // string is immutable, so no need to deep copy it
         di.description = diskImage.description;
         di.setImageId(new Guid(diskImage.getImageId().getUuid()));
@@ -412,6 +445,12 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
         result = prime * result + ((storage_pool_idField == null) ? 0 : storage_pool_idField.hashCode());
         result = prime * result + ((storagesNames == null) ? 0 : storagesNames.hashCode());
         result = prime * result + writeRateFromDiskImageDynamic;
+        result = prime * result
+                + ((flushLatency == null) ? 0 : flushLatency.hashCode());
+        result = prime * result
+                + ((readLatency == null) ? 0 : readLatency.hashCode());
+        result = prime * result
+                + ((writeLatency == null) ? 0 : writeLatency.hashCode());
         return result;
     }
 
@@ -473,6 +512,21 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
         } else if (!storagesNames.equals(other.storagesNames))
             return false;
         if (writeRateFromDiskImageDynamic != other.writeRateFromDiskImageDynamic)
+            return false;
+        if (readLatency == null) {
+            if (other.readLatency != null)
+                return false;
+        } else if (!readLatency.equals(other.readLatency))
+            return false;
+        if (writeLatency == null) {
+            if (other.writeLatency != null)
+                return false;
+        } else if (!writeLatency.equals(other.writeLatency))
+            return false;
+        if (flushLatency == null) {
+            if (other.flushLatency != null)
+                return false;
+        } else if (!flushLatency.equals(other.flushLatency))
             return false;
         return true;
     }
