@@ -137,4 +137,54 @@ public class VmNetworkInterface extends NetworkInterface<VmNetworkStatistics> {
     public String getMacAddress() {
         return super.getMacAddress();
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + (active ? 1231 : 1237);
+        result = prime * result + ((vmId == null) ? 0 : vmId.hashCode());
+        result = prime * result + ((vmName == null) ? 0 : vmName.hashCode());
+        result = prime * result + ((vmTemplateId == null) ? 0 : vmTemplateId.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!super.equals(obj)) {
+            return false;
+        }
+        if (!(obj instanceof VmNetworkInterface)) {
+            return false;
+        }
+        VmNetworkInterface other = (VmNetworkInterface) obj;
+        if (active != other.active) {
+            return false;
+        }
+        if (vmId == null) {
+            if (other.vmId != null) {
+                return false;
+            }
+        } else if (!vmId.equals(other.vmId)) {
+            return false;
+        }
+        if (vmName == null) {
+            if (other.vmName != null) {
+                return false;
+            }
+        } else if (!vmName.equals(other.vmName)) {
+            return false;
+        }
+        if (vmTemplateId == null) {
+            if (other.vmTemplateId != null) {
+                return false;
+            }
+        } else if (!vmTemplateId.equals(other.vmTemplateId)) {
+            return false;
+        }
+        return true;
+    }
 }
