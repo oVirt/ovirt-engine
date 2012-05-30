@@ -5,10 +5,10 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.argThat;
-import static org.mockito.MockitoAnnotations.initMocks;
-import static org.powermock.api.mockito.PowerMockito.mock;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
-import static org.powermock.api.mockito.PowerMockito.when;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -16,13 +16,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
-import org.ovirt.engine.core.bll.utils.VersionSupport;
 import org.ovirt.engine.core.common.action.VdsGroupOperationParameters;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -32,7 +32,6 @@ import org.ovirt.engine.core.common.businessentities.VdsSelectionAlgorithm;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
-import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
@@ -42,26 +41,23 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.VdcBllMessages;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.StoragePoolDAO;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
 import org.ovirt.engine.core.dao.VdsStaticDAO;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.ovirt.engine.core.utils.MockConfigRule;
 
-@PrepareForTest({ DbFacade.class, CpuFlagsManagerHandler.class, Config.class, CpuFlagsManagerHandler.class,
-        Backend.class, VersionSupport.class })
-@RunWith(PowerMockRunner.class)
+@RunWith(MockitoJUnitRunner.class)
 public class UpdateVdsGroupCommandTest {
+
+    @Rule
+    public static MockConfigRule mcr = new MockConfigRule();
 
     private static final Version VERSION_1_0 = new Version(1, 0);
     private static final Version VERSION_1_1 = new Version(1, 1);
     private static final Version VERSION_1_2 = new Version(1, 2);
     private static final Guid STORAGE_POOL_ID = Guid.NewGuid();
 
-    @Mock
-    private DbFacade dbFacade;
     @Mock
     private VdsGroupDAO vdsGroupDAO;
     @Mock
@@ -75,30 +71,6 @@ public class UpdateVdsGroupCommandTest {
 
     private UpdateVdsGroupCommand<VdsGroupOperationParameters> cmd;
 
-    @Before
-    public void setUp() {
-        initMocks(this);
-
-        mockStatic(DbFacade.class);
-        mockStatic(CpuFlagsManagerHandler.class);
-        mockStatic(Config.class);
-        mockStatic(CpuFlagsManagerHandler.class);
-        mockStatic(Backend.class);
-
-        when(DbFacade.getInstance()).thenReturn(dbFacade);
-        when(dbFacade.getVdsGroupDAO()).thenReturn(vdsGroupDAO);
-        when(dbFacade.getVdsStaticDAO()).thenReturn(vdsStaticDAO);
-        when(dbFacade.getStoragePoolDAO()).thenReturn(storagePoolDAO);
-        when(dbFacade.getGlusterVolumeDao()).thenReturn(glusterVolumeDao);
-        when(vdsGroupDAO.get(any(Guid.class))).thenReturn(createDefaultVdsGroup());
-        when(vdsGroupDAO.getByName(anyString())).thenReturn(createDefaultVdsGroup());
-        when(Backend.getInstance()).thenReturn(backendInternal);
-
-        VdsGroupOperationParameters params = new VdsGroupOperationParameters(createNewVdsGroup());
-        cmd = new UpdateVdsGroupCommand<VdsGroupOperationParameters>(params);
-
-    }
-
     @Test
     public void nameInUse() {
         createSimpleCommand();
@@ -108,12 +80,14 @@ public class UpdateVdsGroupCommandTest {
 
     @Test
     public void invalidVdsGroup() {
+        createSimpleCommand();
         when(vdsGroupDAO.get(any(Guid.class))).thenReturn(null);
         canDoActionFailedWithReason(VdcBllMessages.VDS_CLUSTER_IS_NOT_VALID);
     }
 
     @Test
     public void invalidCpuSelection() {
+        createSimpleCommand();
         canDoActionFailedWithReason(VdcBllMessages.ACTION_TYPE_FAILED_CPU_NOT_FOUND);
     }
 
@@ -156,7 +130,6 @@ public class UpdateVdsGroupCommandTest {
         createSimpleCommand();
         cpuExists();
         cpuManufacturersMatch();
-        clusterVersionIsSupported();
         clusterHasVds();
         cpuFlagsMissing();
         canDoActionFailedWithReason(VdcBllMessages.VDS_GROUP_CANNOT_UPDATE_CPU_WITH_LOWER_HOSTS);
@@ -179,7 +152,6 @@ public class UpdateVdsGroupCommandTest {
         storagePoolIsLocalFS();
         cpuExists();
         cpuManufacturersMatch();
-        clusterVersionIsSupported();
         allQueriesEmpty();
         storagePoolAlreadyHasCluster();
         canDoActionFailedWithReason(VdcBllMessages.VDS_GROUP_CANNOT_ADD_MORE_THEN_ONE_HOST_TO_LOCAL_STORAGE);
@@ -192,7 +164,6 @@ public class UpdateVdsGroupCommandTest {
         storagePoolIsLocalFS();
         cpuExists();
         cpuManufacturersMatch();
-        clusterVersionIsSupported();
         allQueriesEmpty();
         canDoActionFailedWithReason(VdcBllMessages.DEFAULT_CLUSTER_CANNOT_BE_ON_LOCALFS);
     }
@@ -204,7 +175,6 @@ public class UpdateVdsGroupCommandTest {
         storagePoolIsLocalFS();
         cpuExists();
         cpuManufacturersMatch();
-        clusterVersionIsSupported();
         allQueriesEmpty();
         canDoActionFailedWithReason(VdcBllMessages.VDS_GROUP_SELECTION_ALGORITHM_MUST_BE_SET_TO_NONE_ON_LOCAL_STORAGE);
     }
@@ -299,7 +269,19 @@ public class UpdateVdsGroupCommandTest {
     private void createCommand(final VDSGroup group) {
         setValidCpuVersionMap();
         VdsGroupOperationParameters params = new VdsGroupOperationParameters(group);
-        cmd = new UpdateVdsGroupCommand<VdsGroupOperationParameters>(params);
+        cmd = spy(new UpdateVdsGroupCommand<VdsGroupOperationParameters>(params));
+
+        doReturn(0).when(cmd).compareCpuLevels(any(VDSGroup.class));
+
+        doReturn(backendInternal).when(cmd).getBackend();
+
+        doReturn(vdsGroupDAO).when(cmd).getVdsGroupDAO();
+        doReturn(vdsStaticDAO).when(cmd).getVdsStaticDAO();
+        doReturn(storagePoolDAO).when(cmd).getStoragePoolDAO();
+        doReturn(glusterVolumeDao).when(cmd).getGlusterVolumeDao();
+
+        when(vdsGroupDAO.get(any(Guid.class))).thenReturn(createDefaultVdsGroup());
+        when(vdsGroupDAO.getByName(anyString())).thenReturn(createDefaultVdsGroup());
     }
 
     private void createCommandWithDifferentName() {
@@ -433,13 +415,12 @@ public class UpdateVdsGroupCommandTest {
         List<VDS> vdsList = new ArrayList<VDS>();
         vdsList.add(vds);
 
-
         VdcQueryReturnValue returnValue = mock(VdcQueryReturnValue.class);
         when(backendInternal.runInternalQuery(any(VdcQueryType.class), argThat(
                 new ArgumentMatcher<VdcQueryParametersBase>() {
                     @Override
                     public boolean matches(final Object o) {
-                        if(o == null) {
+                        if (o == null) {
                             return false;
                         }
                         SearchParameters param = (SearchParameters) o;
@@ -475,41 +456,30 @@ public class UpdateVdsGroupCommandTest {
         when(returnValue.getReturnValue()).thenReturn(vmList);
     }
 
-    private static void cpuFlagsMissing() {
+    private void cpuFlagsMissing() {
         List<String> strings = new ArrayList<String>();
         strings.add("foo");
-        when(CpuFlagsManagerHandler.missingServerCpuFlags(anyString(), anyString(), any(Version.class)))
-                .thenReturn(strings);
+        doReturn(strings).when(cmd).missingServerCpuFlags(any(VDS.class));
     }
 
-    private static void cpuFlagsNotMissing() {
-        when(CpuFlagsManagerHandler.missingServerCpuFlags(anyString(), anyString(), any(Version.class)))
-                .thenReturn(null);
+    private void cpuFlagsNotMissing() {
+        doReturn(null).when(cmd).missingServerCpuFlags(any(VDS.class));
     }
 
-    private static void clusterVersionIsSupported() {
-        mockStatic(VersionSupport.class);
-        when(VersionSupport.checkVersionSupported(any(Version.class))).thenReturn(true);
-        when(VersionSupport.checkClusterVersionSupported(any(Version.class), any(VDS.class))).thenReturn(true);
+    private void cpuManufacturersDontMatch() {
+        doReturn(false).when(cmd).checkIfCpusSameManufacture(any(VDSGroup.class));
     }
 
-    private static void cpuManufacturersDontMatch() {
-        when(CpuFlagsManagerHandler.CheckIfCpusSameManufacture(anyString(), anyString(), any(Version.class)))
-                .thenReturn(false);
+    private void cpuManufacturersMatch() {
+        doReturn(true).when(cmd).checkIfCpusSameManufacture(any(VDSGroup.class));
     }
 
-    private static void cpuManufacturersMatch() {
-        when(CpuFlagsManagerHandler.CheckIfCpusSameManufacture(anyString(), anyString(), any(Version.class)))
-                .thenReturn(true);
-    }
-
-    private static void cpuExists() {
-        when(CpuFlagsManagerHandler.CheckIfCpusExist(anyString(), any(Version.class))).thenReturn(true);
+    private void cpuExists() {
+        doReturn(true).when(cmd).checkIfCpusExist();
     }
 
     private static void setValidCpuVersionMap() {
-        CpuFlagsManagerHandler.InitDictionaries();
-        when(Config.GetValue(ConfigValues.SupportedClusterLevels)).thenReturn(createVersionSet());
+        mcr.mockConfigValue(ConfigValues.SupportedClusterLevels, createVersionSet());
     }
 
     private static Set<Version> createVersionSet() {
