@@ -130,6 +130,7 @@ public class PoolItemBehavior extends ItemBehavior
                                     }
                                     UserPortalItemModel model = behavior.getItem();
                                     model.setOsType(vm.getvm_os());
+                                    model.setSpiceDriverVersion(vm.getSpiceDriverVersion());
                                     poolToOsType.put(((vm_pools) model.getEntity()).getvm_pool_id(), vm.getvm_os());
                                 }
 

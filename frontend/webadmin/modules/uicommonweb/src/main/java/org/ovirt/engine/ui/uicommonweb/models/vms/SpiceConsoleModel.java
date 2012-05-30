@@ -54,6 +54,8 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
     public static EventDefinition SpiceConnectedEventDefinition;
     public static EventDefinition SpiceMenuItemSelectedEventDefinition;
     public static EventDefinition UsbAutoShareChangedEventDefinition;
+    public static EventDefinition wanColorDepthChangedEventDefinition;
+    public static EventDefinition wanDisableEffectsChangeEventDefinition;
 
     private SpiceMenu menu;
     private ISpice privatespice;
@@ -74,6 +76,8 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
         SpiceConnectedEventDefinition = new EventDefinition("SpiceConnected", SpiceConsoleModel.class); //$NON-NLS-1$
         SpiceMenuItemSelectedEventDefinition = new EventDefinition("SpiceMenuItemSelected", SpiceConsoleModel.class); //$NON-NLS-1$
         UsbAutoShareChangedEventDefinition = new EventDefinition("UsbAutoShareChanged", SpiceConsoleModel.class); //$NON-NLS-1$
+        wanColorDepthChangedEventDefinition = new EventDefinition("ColorDepthChanged", SpiceConsoleModel.class); //$NON-NLS-1$
+        wanDisableEffectsChangeEventDefinition = new EventDefinition("DisableEffectsChange", SpiceConsoleModel.class); //$NON-NLS-1$
     }
 
     public SpiceConsoleModel()
@@ -81,9 +85,14 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
         setTitle(ConstantsManager.getInstance().getConstants().spiceTitle());
 
         setspice((ISpice) TypeResolver.getInstance().Resolve(ISpice.class));
-        getConfigurator().Configure(getspice());
+
+        configureSpice();
 
         getspice().getConnectedEvent().addListener(this);
+    }
+
+    private void configureSpice() {
+        getConfigurator().Configure(getspice());
     }
 
     @Override
@@ -112,6 +121,11 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
             if (getEntity().getrun_on_vds() == null)
             {
                 return;
+            }
+
+            // If it is not windows or SPICE guest agent is not installed, make sure the WAN options are disabled.
+            if (!getEntity().getvm_os().isWindows() || getEntity().getSpiceDriverVersion() == null) {
+                getspice().setIsWanOptionsEnabled(false);
             }
 
             SendVmTicket();
@@ -284,7 +298,8 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
                 {
                     queryTypeList.add(VdcQueryType.GetAllIsoImagesListByStoragePoolId);
 
-                    GetAllImagesListByStoragePoolIdParameters getIsoPamams = new GetAllImagesListByStoragePoolIdParameters(vm.getstorage_pool_id());
+                    GetAllImagesListByStoragePoolIdParameters getIsoPamams =
+                            new GetAllImagesListByStoragePoolIdParameters(vm.getstorage_pool_id());
                     parametersList.add(getIsoPamams);
                 }
 
@@ -389,8 +404,9 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
         getspice().setTitle(getEntity().getvm_name()
                 + ":%d" //$NON-NLS-1$
                 + (StringHelper.isNullOrEmpty(releaseCursorKeysTranslated) ? "" : (" - " + //$NON-NLS-1$ //$NON-NLS-2$
-                ConstantsManager.getInstance().getMessages().pressKeyToReleaseCursor(releaseCursorKeysTranslated))));
-
+                        ConstantsManager.getInstance()
+                                .getMessages()
+                                .pressKeyToReleaseCursor(releaseCursorKeysTranslated))));
 
         // If 'AdminConsole' is true, send true; otherwise, false should be sent only for VMs with SPICE driver
         // installed.
@@ -418,30 +434,42 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
             getspice().setHotKey(releaseCursorKeysParameter + comma + toggleFullScreenKeysParameter);
         }
 
-        getspice().setLocalizedStrings(new String[] { ConstantsManager.getInstance().getConstants().usb(),
-                ConstantsManager.getInstance().getConstants().usbDevicesNoUsbdevicesClientSpiceUsbRedirectorNotInstalled() });
+        getspice().setLocalizedStrings(new String[] {
+                ConstantsManager.getInstance().getConstants().usb(),
+                ConstantsManager.getInstance()
+                        .getConstants()
+                        .usbDevicesNoUsbdevicesClientSpiceUsbRedirectorNotInstalled() });
 
         // Create menu.
         int id = 1;
         menu = new SpiceMenu();
 
-        menu.getItems().add(new SpiceMenuCommandItem(ID_SYS_MENU_SEND_CTRL_ALT_DEL, ConstantsManager.getInstance().getConstants().send() + " " + ctrlAltDelTranslated //$NON-NLS-1$
+        menu.getItems().add(new SpiceMenuCommandItem(ID_SYS_MENU_SEND_CTRL_ALT_DEL, ConstantsManager.getInstance()
+                .getConstants()
+                .send()
+                + " " + ctrlAltDelTranslated //$NON-NLS-1$
                 + "\t" + ctrlAltEndTranslated, "")); //$NON-NLS-1$ //$NON-NLS-2$
-        menu.getItems().add(new SpiceMenuCommandItem(ID_SYS_MENU_TOGGLE_FULL_SCREEN, ConstantsManager.getInstance().getConstants().toggleFullScreen() + "\t" //$NON-NLS-1$
+        menu.getItems().add(new SpiceMenuCommandItem(ID_SYS_MENU_TOGGLE_FULL_SCREEN, ConstantsManager.getInstance()
+                .getConstants()
+                .toggleFullScreen()
+                + "\t" //$NON-NLS-1$
                 + toggleFullScreenKeysTranslated, "")); //$NON-NLS-1$
 
-        SpiceMenuContainerItem specialKes = new SpiceMenuContainerItem(id, ConstantsManager.getInstance().getConstants().specialKeys());
+        SpiceMenuContainerItem specialKes =
+                new SpiceMenuContainerItem(id, ConstantsManager.getInstance().getConstants().specialKeys());
         menu.getItems().add(specialKes);
 
-        specialKes.getItems().add(new SpiceMenuCommandItem(ID_SYS_MENU_SEND_SHIFT_F11, toggleFullScreenKeysTranslated, "")); //$NON-NLS-1$
-        specialKes.getItems().add(new SpiceMenuCommandItem(ID_SYS_MENU_SEND_SHIFT_F12, releaseCursorKeysTranslated, "")); //$NON-NLS-1$
+        specialKes.getItems().add(new SpiceMenuCommandItem(ID_SYS_MENU_SEND_SHIFT_F11,
+                toggleFullScreenKeysTranslated, "")); //$NON-NLS-1$
+        specialKes.getItems()
+                .add(new SpiceMenuCommandItem(ID_SYS_MENU_SEND_SHIFT_F12, releaseCursorKeysTranslated, "")); //$NON-NLS-1$
         specialKes.getItems().add(new SpiceMenuCommandItem(ID_SYS_MENU_SEND_CTRL_ALT_END,
-                ctrlAltEndTranslated,
-                "")); //$NON-NLS-1$
+                ctrlAltEndTranslated, "")); //$NON-NLS-1$
         menu.getItems().add(new SpiceMenuSeparatorItem(id));
         id++;
 
-        SpiceMenuContainerItem changeCDItem = new SpiceMenuContainerItem(id, ConstantsManager.getInstance().getConstants().changeCd());
+        SpiceMenuContainerItem changeCDItem =
+                new SpiceMenuContainerItem(id, ConstantsManager.getInstance().getConstants().changeCd());
         id++;
 
         ArrayList<String> isos = new ArrayList<String>();
@@ -458,7 +486,9 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
 
         isos =
                 isos.size() > 0 ? isos
-                        : new ArrayList<String>(Arrays.asList(new String[] { ConstantsManager.getInstance().getConstants().noCds() }));
+                        : new ArrayList<String>(Arrays.asList(new String[] { ConstantsManager.getInstance()
+                                .getConstants()
+                                .noCds() }));
 
         Collections.sort(isos);
 

@@ -159,6 +159,7 @@ public class VmItemBehavior extends ItemBehavior
         getItem().setIsServer(entity.getvm_type() == VmType.Server);
         getItem().setOsType(entity.getvm_os());
         getItem().setIsFromPool(entity.getVmPoolId() != null);
+        getItem().setSpiceDriverVersion(entity.getSpiceDriverVersion());
 
         // Assign PoolType.
         if (entity.getVmPoolId() != null)

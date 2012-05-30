@@ -18,6 +18,9 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.ChangeCDModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
+import org.ovirt.engine.core.compat.Version;
+
+;
 
 @SuppressWarnings("unused")
 public class UserPortalItemModel extends EntityModel
@@ -311,6 +314,19 @@ public class UserPortalItemModel extends EntityModel
         }
     }
 
+    private Version spiceDriverVersion;
+
+    public Version getSpiceDriverVersion() {
+        return spiceDriverVersion;
+    }
+
+    public void setSpiceDriverVersion(Version spiceDriverVersion) {
+        if (this.spiceDriverVersion != spiceDriverVersion) {
+            this.spiceDriverVersion = spiceDriverVersion;
+            OnPropertyChanged(new PropertyChangedEventArgs("spiceDriverVersion")); //$NON-NLS-1$
+        }
+    }
+
     public boolean getIsFromAutomaticPool()
     {
         return getIsFromPool() && getPoolType() == VmPoolType.Automatic;
@@ -331,7 +347,7 @@ public class UserPortalItemModel extends EntityModel
 
         ChangeCDModel tempVar = new ChangeCDModel();
         tempVar.setTitle(ConstantsManager.getInstance().getConstants().retrievingCDsTitle());
-        setCdImages(new ArrayList<ChangeCDModel>(Arrays.asList(new ChangeCDModel[] {tempVar})));
+        setCdImages(new ArrayList<ChangeCDModel>(Arrays.asList(new ChangeCDModel[] { tempVar })));
     }
 
     @Override

@@ -17,7 +17,7 @@ public class ConsoleUtils {
     private Boolean rdpAvailable;
 
     private static final String VNC_NOT_SUPPORTED_MESSAGE =
-           ClientGinjectorProvider.instance().getApplicationConstants().vncNotSupportedMsg();
+            ClientGinjectorProvider.instance().getApplicationConstants().vncNotSupportedMsg();
 
     private static final String BROWSER_NOT_SUPPORTED_MESSAGE =
             ClientGinjectorProvider.instance().getApplicationConstants().browserNotSupportedMsg();
@@ -108,7 +108,7 @@ public class ConsoleUtils {
             return ConsoleProtocol.SPICE;
         } else if (item.getHasAdditionalConsole() && isRDPAvailable()) {
             return ConsoleProtocol.RDP;
-        } else if(item.getDefaultConsole() instanceof VncConsoleModel) {
+        } else if (item.getDefaultConsole() instanceof VncConsoleModel) {
             return ConsoleProtocol.VNC;
         }
 

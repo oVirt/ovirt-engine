@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.userportal.uicommon;
 
+import java.util.List;
+
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.EventDefinition;
@@ -8,7 +10,13 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.common.uicommon.ClientAgentType;
 import org.ovirt.engine.ui.common.uicommon.model.UiCommonInitEvent;
 import org.ovirt.engine.ui.common.uicommon.model.UiCommonInitEvent.UiCommonInitHandler;
+import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Configurator;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.models.vms.ISpice;
+import org.ovirt.engine.ui.uicommonweb.models.vms.WANDisableEffects;
+import org.ovirt.engine.ui.uicommonweb.models.vms.WanColorDepth;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.MainTabBasicPresenter;
 
 import com.google.gwt.event.shared.EventBus;
@@ -47,6 +55,33 @@ public class UserPortalConfigurator extends Configurator implements IEventListen
 
     public void updateUsbFilter() {
         fetchFile(getSpiceBaseURL() + "consoles/spice/usbfilter.txt", usbFilterFileFetchedEvent); //$NON-NLS-1$
+    }
+
+    @Override
+    public void Configure(ISpice spice) {
+        super.Configure(spice);
+
+        updateWanColorDepthOptions(spice);
+        updateWANDisableEffects(spice);
+    }
+
+    private void updateWANDisableEffects(final ISpice spice) {
+        AsyncDataProvider.GetWANDisableEffects(new AsyncQuery(this, new INewAsyncCallback() {
+            @SuppressWarnings("unchecked")
+            @Override
+            public void OnSuccess(Object target, Object returnValue) {
+                spice.setWANDisableEffects((List<WANDisableEffects>) returnValue);
+            }
+        }));
+    }
+
+    private void updateWanColorDepthOptions(final ISpice spice) {
+        AsyncDataProvider.GetWANColorDepth(new AsyncQuery(this, new INewAsyncCallback() {
+            @Override
+            public void OnSuccess(Object target, Object returnValue) {
+                spice.setWANColorDepth((WanColorDepth) returnValue);
+            }
+        }));
     }
 
     @Override

@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.common.uicommon;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
 import org.ovirt.engine.core.compat.Event;
@@ -7,6 +9,8 @@ import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ISpice;
 import org.ovirt.engine.ui.uicommonweb.models.vms.SpiceConsoleModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.WANDisableEffects;
+import org.ovirt.engine.ui.uicommonweb.models.vms.WanColorDepth;
 
 import com.google.gwt.core.client.GWT;
 
@@ -22,6 +26,12 @@ public class SpiceInterfaceImpl implements ISpice {
             SpiceConsoleModel.SpiceMenuItemSelectedEventDefinition);
     private Event usbAutoShareChangedEvent = new Event(
             SpiceConsoleModel.UsbAutoShareChangedEventDefinition);
+
+    private Event wanColorDepthChangedEvent = new Event(
+            SpiceConsoleModel.wanColorDepthChangedEventDefinition);
+
+    private Event wanDisableEffectsChangeEvent = new Event(
+            SpiceConsoleModel.wanDisableEffectsChangeEventDefinition);
 
     private Version currentVersion = new Version(4, 4);
     private Version desiredVersion = new Version(4, 4);
@@ -47,11 +57,49 @@ public class SpiceInterfaceImpl implements ISpice {
     private boolean sendCtrlAltDelete;
     private boolean usbAutoShare;
     private String usbFilter;
+    private WanColorDepth wanColorDepth;
+    private List<WANDisableEffects> wanDisableEffects;
+    private boolean wanOptionsEnabled;
     ClientAgentType cat = new ClientAgentType();
     private String spiceBaseURL = GWT.getModuleBaseURL();
 
     public SpiceInterfaceImpl() {
         logger.severe("Instantiating GWT Spice Implementation"); //$NON-NLS-1$
+        wanDisableEffects = new ArrayList<WANDisableEffects>();
+        wanOptionsEnabled = false;
+        wanColorDepth = WanColorDepth.depth16;
+    }
+
+    @Override
+    public void setWANDisableEffects(List<WANDisableEffects> disableEffects) {
+        this.wanDisableEffects = disableEffects;
+        getWANDisableEffectsChangeEvent().raise(this, EventArgs.Empty);
+    }
+
+    @Override
+    public void setWANColorDepth(WanColorDepth colorDepth) {
+        this.wanColorDepth = colorDepth;
+        getWANColorDepthChangedEvent().raise(this, EventArgs.Empty);
+    }
+
+    @Override
+    public List<WANDisableEffects> getWANDisableEffects() {
+        return wanDisableEffects;
+    }
+
+    @Override
+    public WanColorDepth getWANColorDepth() {
+        return wanColorDepth;
+    }
+
+    @Override
+    public Event getWANDisableEffectsChangeEvent() {
+        return wanDisableEffectsChangeEvent;
+    }
+
+    @Override
+    public Event getWANColorDepthChangedEvent() {
+        return wanColorDepthChangedEvent;
     }
 
     @Override
@@ -351,6 +399,29 @@ public class SpiceInterfaceImpl implements ISpice {
         this.spiceBaseURL = spiceBaseURL;
     }
 
+    private int colorDepthAsInt() {
+        if (getWANColorDepth() != null) {
+            return getWANColorDepth().asInt();
+        }
+
+        return WanColorDepth.depth16.asInt();
+    }
+
+    private String disbaleEffectsAsString() {
+        StringBuffer disableEffectsBuffer = new StringBuffer("");
+        int countdown = getWANDisableEffects().size();
+        for (WANDisableEffects disabledEffect : getWANDisableEffects()) {
+            disableEffectsBuffer.append(disabledEffect.asString());
+
+            if (countdown != 1) {
+                disableEffectsBuffer.append(", "); //$NON-NLS-1$
+            }
+            countdown--;
+        }
+
+        return disableEffectsBuffer.toString();
+    }
+
     @Override
     public void Connect() {
         logger.warning("Connecting via spice..."); //$NON-NLS-1$
@@ -450,9 +521,12 @@ public class SpiceInterfaceImpl implements ISpice {
                                                var usbFilter = this.@org.ovirt.engine.ui.common.uicommon.SpiceInterfaceImpl::getUsbFilter()();
                                                var disconnectedEvent = this.@org.ovirt.engine.ui.common.uicommon.SpiceInterfaceImpl::getDisconnectedEvent()();
                                                var connectedEvent = this.@org.ovirt.engine.ui.common.uicommon.SpiceInterfaceImpl::getConnectedEvent()();
+                                               var wanOptionsEnabled = this.@org.ovirt.engine.ui.common.uicommon.SpiceInterfaceImpl::getIsWanOptionsEnabled()();
+                                               var colorDepth = this.@org.ovirt.engine.ui.common.uicommon.SpiceInterfaceImpl::colorDepthAsInt()();
+                                               var disableEffects = this.@org.ovirt.engine.ui.common.uicommon.SpiceInterfaceImpl::disbaleEffectsAsString()();
                                                var model = this;
 
-                                               //alert("Host IP ["+hostIp+"], port ["+port+"], fullScreen ["+fullScreen+"], password ["+password+"], numberOfMonitors ["+numberOfMonitors+"], Usb Listen Port ["+usbListenPort+"], Admin Console ["+adminConsole+"], Guest HostName ["+guestHostName+"], Secure Port ["+securePort+"], Ssl Chanels ["+sslChanels+"], cipherSuite ["+cipherSuite+"], Host Subject ["+hostSubject+"], Title [" + title+"], Hot Key ["+hotKey+"], Menu ["+menu+"], GuestID [" + guestID+"], version ["+version+"]");
+                                               //alert("disableEffects ["+disableEffects+"], wanOptionsEnabled ["+wanOptionsEnabled+"], colorDepth ["+colorDepth+"], Host IP ["+hostIp+"], port ["+port+"], fullScreen ["+fullScreen+"], password ["+password+"], numberOfMonitors ["+numberOfMonitors+"], Usb Listen Port ["+usbListenPort+"], Admin Console ["+adminConsole+"], Guest HostName ["+guestHostName+"], Secure Port ["+securePort+"], Ssl Chanels ["+sslChanels+"], cipherSuite ["+cipherSuite+"], Host Subject ["+hostSubject+"], Title [" + title+"], Hot Key ["+hotKey+"], Menu ["+menu+"], GuestID [" + guestID+"], version ["+version+"]");
                                                this.@org.ovirt.engine.ui.common.uicommon.SpiceInterfaceImpl::loadXpi(Ljava/lang/String;)(id);
                                                var client = document.getElementById(id);
                                                client.hostIP = hostIp;
@@ -479,6 +553,10 @@ public class SpiceInterfaceImpl implements ISpice {
                                                client.SendCtrlAltDelete = sendCtrlAltDelete;
                                                client.UsbAutoShare = usbAutoShare;
                                                client.SetUsbFilter(usbFilter);
+                                               if (wanOptionsEnabled) {
+                                                  client.DisableEffects = disableEffects;
+                                                  client.ColorDepth = colorDepth;
+                                               }
                                                client.connect();
 
                                                connectedEvent.@org.ovirt.engine.core.compat.Event::raise(Ljava/lang/Object;Lorg/ovirt/engine/core/compat/EventArgs;)(model, null);
@@ -549,6 +627,9 @@ public class SpiceInterfaceImpl implements ISpice {
                                                    var usbFilter = this.@org.ovirt.engine.ui.common.uicommon.SpiceInterfaceImpl::getUsbFilter()();
                                                    var disconnectedEvent = this.@org.ovirt.engine.ui.common.uicommon.SpiceInterfaceImpl::getDisconnectedEvent()();
                                                    var connectedEvent = this.@org.ovirt.engine.ui.common.uicommon.SpiceInterfaceImpl::getConnectedEvent()();
+                                                   var wanOptionsEnabled = this.@org.ovirt.engine.ui.common.uicommon.SpiceInterfaceImpl::getIsWanOptionsEnabled()();
+                                                   var colorDepth = this.@org.ovirt.engine.ui.common.uicommon.SpiceInterfaceImpl::colorDepthAsInt()();
+                                                   var disableEffects = this.@org.ovirt.engine.ui.common.uicommon.SpiceInterfaceImpl::disbaleEffectsAsString()();
                                                    var codebase = spiceCabURL + "#version=" + version;
                                                    var model = this;
                                                    var id = "SpiceX_" + guestHostName;
@@ -590,6 +671,10 @@ public class SpiceInterfaceImpl implements ISpice {
                                                    client.SendCtrlAltDelete = sendCtrlAltDelete;
                                                    client.UsbAutoShare = usbAutoShare;
                                                    client.SetUsbFilter(usbFilter);
+                                                   if (wanOptionsEnabled) {
+                                                       client.DisableEffects = disableEffects;
+                                                       client.ColorDepth = colorDepth;
+                                                   }
 
                                                    client.attachEvent('ondisconnected', onDisconnected);
                                                    client.connect();
@@ -674,4 +759,15 @@ public class SpiceInterfaceImpl implements ISpice {
 
         return false;
     }
+
+    @Override
+    public boolean getIsWanOptionsEnabled() {
+        return wanOptionsEnabled;
+    }
+
+    @Override
+    public void setIsWanOptionsEnabled(boolean enabled) {
+        this.wanOptionsEnabled = enabled;
+    }
+
 }

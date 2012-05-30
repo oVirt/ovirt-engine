@@ -55,6 +55,12 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<IUserPortalLis
     @UiField
     FlowPanel rdpPanel;
 
+    @UiField
+    FlowPanel wanOptionsPanel;
+
+    @UiField(provided = true)
+    EntityModelValueCheckBoxEditor<ConsoleModel> wanEnabled;
+
     private IUserPortalListModel model;
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, ConsolePopupView> {
@@ -62,12 +68,29 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<IUserPortalLis
     }
 
     @Inject
-    public ConsolePopupView(EventBus eventBus, CommonApplicationResources resources,
-            ApplicationConstants constants, ApplicationMessages messages) {
+    public ConsolePopupView(EventBus eventBus,
+            CommonApplicationResources resources,
+            ApplicationConstants constants,
+            ApplicationMessages messages) {
         super(eventBus, resources);
 
         spiceRadioButton = new EntityModelRadioButtonEditor("1"); //$NON-NLS-1$
         spiceRadioButton.setLabel(constants.spice());
+
+        wanEnabled = new EntityModelValueCheckBoxEditor<ConsoleModel>(Align.RIGHT, new SpiceRenderer() {
+
+            @Override
+            protected void updateModel(ISpice spice, boolean value) {
+                spice.setIsWanOptionsEnabled(value);
+            }
+
+            @Override
+            protected boolean extractBoolean(ISpice spice) {
+                return spice.getIsWanOptionsEnabled();
+            }
+
+        });
+        wanEnabled.setLabel(constants.enableWanOptions());
 
         ctrlAltDel = new EntityModelValueCheckBoxEditor<ConsoleModel>(Align.RIGHT, new SpiceRenderer() {
             @Override
@@ -136,7 +159,7 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<IUserPortalLis
                             }
 
                         });
-        useLocalDrives.setLabel(constants.rdpOptions());
+        useLocalDrives.setLabel(constants.useLocalDrives());
 
         remoteDesktopRadioButton = new EntityModelRadioButtonEditor("1"); //$NON-NLS-1$
         remoteDesktopRadioButton.setLabel(constants.remoteDesktop());
@@ -150,22 +173,45 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<IUserPortalLis
 
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void edit(IUserPortalListModel model) {
         this.model = model;
-        ctrlAltDel.asEditor().getSubEditor().setValue(((UserPortalItemModel)model.getSelectedItem()).getDefaultConsole());
-        enableUsbAutoshare.asEditor().getSubEditor().setValue(((UserPortalItemModel)model.getSelectedItem()).getDefaultConsole());
-        openInFullScreen.asEditor().getSubEditor().setValue(((UserPortalItemModel)model.getSelectedItem()).getDefaultConsole());
-        useLocalDrives.asEditor().getSubEditor().setValue(((UserPortalItemModel)model.getSelectedItem()).getDefaultConsole());
+
+        editCheckBoxes(model,
+                ctrlAltDel,
+                enableUsbAutoshare,
+                openInFullScreen,
+                useLocalDrives,
+                wanEnabled);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public IUserPortalListModel flush() {
-        ctrlAltDel.asEditor().getSubEditor().getValue();
-        enableUsbAutoshare.asEditor().getSubEditor().getValue();
-        openInFullScreen.asEditor().getSubEditor().getValue();
-        useLocalDrives.asEditor().getSubEditor().getValue();
+
+        flushCheckBoxes(
+                ctrlAltDel,
+                enableUsbAutoshare,
+                openInFullScreen,
+                useLocalDrives,
+                wanEnabled);
+
         return model;
+    }
+
+    private void flushCheckBoxes(EntityModelValueCheckBoxEditor<ConsoleModel>... checkBoxes) {
+        for (EntityModelValueCheckBoxEditor<ConsoleModel> checkBox : checkBoxes) {
+            checkBox.asEditor().getSubEditor().getValue();
+        }
+    }
+
+    private void editCheckBoxes(IUserPortalListModel model, EntityModelValueCheckBoxEditor<ConsoleModel>... checkBoxes) {
+        for (EntityModelValueCheckBoxEditor<ConsoleModel> checkBox : checkBoxes) {
+            checkBox.asEditor()
+                    .getSubEditor()
+                    .setValue(((UserPortalItemModel) model.getSelectedItem()).getDefaultConsole());
+        }
     }
 
     @Override
@@ -190,12 +236,12 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<IUserPortalLis
 
     @Override
     public void rdpSelected(boolean selected) {
-        spicePanel.setVisible(selected);
+        rdpPanel.setVisible(selected);
     }
 
     @Override
     public void spiceSelected(boolean selected) {
-        rdpPanel.setVisible(selected);
+        spicePanel.setVisible(selected);
     }
 
     @Override
@@ -244,6 +290,16 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<IUserPortalLis
     @Override
     public void setAdditionalConsoleAvailable(boolean hasAdditionalConsole) {
         useLocalDrives.setVisible(hasAdditionalConsole);
+    }
+
+    @Override
+    public void selectWanOptionsEnabled(boolean selected) {
+        wanEnabled.asCheckBox().setValue(selected);
+    }
+
+    @Override
+    public void setWanOptionsVisible(boolean visible) {
+        wanOptionsPanel.setVisible(visible);
     }
 
 }

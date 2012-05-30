@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.webadmin.uicommon;
 
+import java.util.ArrayList;
+
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.EventDefinition;
@@ -10,6 +12,8 @@ import org.ovirt.engine.ui.common.uicommon.DocumentationPathTranslator;
 import org.ovirt.engine.ui.common.uicommon.model.UiCommonInitEvent;
 import org.ovirt.engine.ui.common.uicommon.model.UiCommonInitEvent.UiCommonInitHandler;
 import org.ovirt.engine.ui.uicommonweb.Configurator;
+import org.ovirt.engine.ui.uicommonweb.models.vms.ISpice;
+import org.ovirt.engine.ui.uicommonweb.models.vms.WANDisableEffects;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
@@ -51,6 +55,13 @@ public class WebAdminConfigurator extends Configurator implements IEventListener
             String documentationPathFileContent = ((FileFetchEventArgs) args).getFileContent();
             DocumentationPathTranslator.init(documentationPathFileContent);
         }
+    }
+
+    @Override
+    public void Configure(ISpice spice) {
+        super.Configure(spice);
+        spice.setWANDisableEffects(new ArrayList<WANDisableEffects>());
+        spice.setIsWanOptionsEnabled(false);
     }
 
     @Override

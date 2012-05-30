@@ -6,6 +6,7 @@ import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.IUserPortalListModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ISpice;
 import org.ovirt.engine.ui.uicommonweb.models.vms.SpiceConsoleModel;
 import org.ovirt.engine.ui.userportal.ApplicationConstants;
@@ -24,6 +25,8 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
 
     private final ConsoleUtils consoleUtils;
     private final ApplicationConstants constants;
+    private IEventListener viewUpdatingListener;
+    private boolean wanOptionsAvailable = false;
 
     @GenEvent
     class ConsoleModelChanged {
@@ -52,6 +55,9 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
 
         void setSpiceConsoleAvailable(boolean available);
 
+        void selectWanOptionsEnabled(boolean selected);
+
+        void setWanOptionsVisible(boolean visible);
     }
 
     @Inject
@@ -73,6 +79,7 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
 
             @Override
             public void onClick(ClickEvent event) {
+                removeListeners(model);
                 hideAndUnbind();
             }
         });
@@ -81,10 +88,13 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
 
             @Override
             public void onClick(ClickEvent event) {
-                ConsoleModelChangedEvent.fire(getEventBus(), (UserPortalItemModel) model.getSelectedItem());
+                removeListeners(model);
                 getView().flush();
+
+                ConsoleModelChangedEvent.fire(getEventBus(), (UserPortalItemModel) model.getSelectedItem());
                 hideAndUnbind();
             }
+
         });
 
         getView().setTitle(constants.consoleOptions());
@@ -96,28 +106,47 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
     }
 
     private void initListeners(final IUserPortalListModel model) {
-        UserPortalItemModel currentItem = (UserPortalItemModel) model.getSelectedItem();
-        if (!(currentItem.getDefaultConsole() instanceof SpiceConsoleModel)) {
+        ISpice spice = extractSpice(model);
+        if (spice == null) {
             return;
         }
-        final ISpice spice = ((SpiceConsoleModel) currentItem.getDefaultConsole()).getspice();
-        spice.getUsbAutoShareChangedEvent().addListener(new IEventListener() {
+
+        viewUpdatingListener = new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 getView().edit(model);
             }
-        });
+        };
+
+        spice.getUsbAutoShareChangedEvent().addListener(viewUpdatingListener);
+        spice.getWANColorDepthChangedEvent().addListener(viewUpdatingListener);
+        spice.getWANDisableEffectsChangeEvent().addListener(viewUpdatingListener);
+
+    }
+
+    private void removeListeners(IUserPortalListModel model) {
+        if (viewUpdatingListener == null) {
+            return;
+        }
+
+        ISpice spice = extractSpice(model);
+        if (spice == null) {
+            return;
+        }
+
+        spice.getUsbAutoShareChangedEvent().removeListener(viewUpdatingListener);
+        spice.getWANColorDepthChangedEvent().removeListener(viewUpdatingListener);
+        spice.getWANDisableEffectsChangeEvent().removeListener(viewUpdatingListener);
     }
 
     private void initView(IUserPortalListModel model) {
 
-        listenOnRadioButtons();
-
+        listenOnRadioButtons(model);
         UserPortalItemModel currentItem = (UserPortalItemModel) model.getSelectedItem();
 
         boolean spiceAvailable =
                 currentItem.getDefaultConsole() instanceof SpiceConsoleModel && consoleUtils.isSpiceAvailable();
-        boolean rdpAvailable = currentItem.getHasAdditionalConsole() && consoleUtils.isRDPAvailable();
+        boolean rdpAvailable = isAdditionalConsoleAvailable(currentItem) && consoleUtils.isRDPAvailable();
 
         getView().setSpiceAvailable(spiceAvailable);
         getView().setRdpAvailable(rdpAvailable);
@@ -129,22 +158,48 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
         } else {
             getView().selectSpice(spiceAvailable);
             getView().selectRdp(rdpAvailable);
-            getView().rdpSelected(spiceAvailable);
-            getView().spiceSelected(rdpAvailable);
+            getView().rdpSelected(rdpAvailable);
+            getView().spiceSelected(spiceAvailable);
         }
 
-        getView().setAdditionalConsoleAvailable(currentItem.getHasAdditionalConsole());
+        ISpice spice = extractSpice(model);
+        if (spice != null) {
+            if (!spice.getIsWanOptionsEnabled()) {
+                getView().selectWanOptionsEnabled(false);
+            }
+        }
+
+        boolean isWindowsVm = asUserPortalItem(model).getOsType().isWindows();
+        boolean spiceGuestAgentInstalled = asUserPortalItem(model).getSpiceDriverVersion() != null;
+
+        wanOptionsAvailable = isWindowsVm && spiceAvailable && spiceGuestAgentInstalled;
+        if (wanOptionsAvailable) {
+            getView().setWanOptionsVisible(true);
+        } else {
+            getView().setWanOptionsVisible(false);
+        }
+
+        getView().setAdditionalConsoleAvailable(rdpAvailable);
         getView().setSpiceConsoleAvailable(currentItem.getDefaultConsole() instanceof SpiceConsoleModel);
 
     }
 
-    protected void listenOnRadioButtons() {
+    protected UserPortalItemModel asUserPortalItem(IUserPortalListModel model) {
+        return (UserPortalItemModel) model.getSelectedItem();
+    }
+
+    protected boolean isAdditionalConsoleAvailable(UserPortalItemModel currentItem) {
+        return currentItem.getHasAdditionalConsole();
+    }
+
+    protected void listenOnRadioButtons(final IUserPortalListModel model) {
         registerHandler(getView().getRdpRadioButton().addValueChangeHandler(new ValueChangeHandler<Boolean>() {
 
             @Override
             public void onValueChange(ValueChangeEvent<Boolean> event) {
                 getView().rdpSelected(event.getValue());
                 getView().spiceSelected(!event.getValue());
+                getView().setWanOptionsVisible(wanOptionsAvailable && !event.getValue());
             }
         }));
 
@@ -153,9 +208,20 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
             @Override
             public void onValueChange(ValueChangeEvent<Boolean> event) {
                 getView().spiceSelected(event.getValue());
+                getView().setWanOptionsVisible(wanOptionsAvailable && event.getValue());
                 getView().rdpSelected(!event.getValue());
             }
         }));
+    }
+
+    protected ISpice extractSpice(IUserPortalListModel model) {
+        ConsoleModel consoleModel = asUserPortalItem(model).getDefaultConsole();
+        if (!(consoleModel instanceof SpiceConsoleModel)) {
+            return null;
+        }
+
+        ISpice spice = ((SpiceConsoleModel) consoleModel).getspice();
+        return spice;
     }
 
 }

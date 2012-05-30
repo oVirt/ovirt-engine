@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
+import java.util.List;
+
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.Version;
 
@@ -20,6 +22,10 @@ public interface ISpice
     Event getMenuItemSelectedEvent();
 
     Event getUsbAutoShareChangedEvent();
+
+    Event getWANDisableEffectsChangeEvent();
+
+    Event getWANColorDepthChangedEvent();
 
     Version getCurrentVersion();
 
@@ -113,6 +119,14 @@ public interface ISpice
 
     void setUsbAutoShare(boolean value);
 
+    void setWANDisableEffects(List<WANDisableEffects> disableEffects);
+
+    List<WANDisableEffects> getWANDisableEffects();
+
+    void setWANColorDepth(WanColorDepth colorDepth);
+
+    WanColorDepth getWANColorDepth();
+
     String getUsbFilter();
 
     void setUsbFilter(String value);
@@ -124,4 +138,9 @@ public interface ISpice
     void setCurrentVersion(Version currentVersion);
 
     void setSpiceBaseURL(String spiceBaseURL);
+
+    boolean getIsWanOptionsEnabled();
+
+    void setIsWanOptionsEnabled(boolean enabled);
+
 }

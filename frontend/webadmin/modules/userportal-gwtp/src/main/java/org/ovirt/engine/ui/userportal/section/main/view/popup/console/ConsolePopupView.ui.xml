@@ -25,7 +25,6 @@ xmlns:w="urn:import:org.ovirt.engine.ui.userportal.widget.popup.console">
 			font-weight: bold;
 			color: #333333;
 		}
-		
 	</ui:style>
 
 	<d:SimpleDialogPanel width="350px" height="380px">
@@ -36,17 +35,21 @@ xmlns:w="urn:import:org.ovirt.engine.ui.userportal.widget.popup.console">
 					<e:EntityModelRadioButtonEditor ui:field="spiceRadioButton" />
 					<e:EntityModelRadioButtonEditor ui:field="remoteDesktopRadioButton" />
 				</g:FlowPanel>
-				
+
 				<g:FlowPanel ui:field="spicePanel" addStyleNames="{style.fullWidth}">
 					<g:Label ui:field="spiceTitle" text="{constants.spiceOptions}" addStyleNames="{style.labelStyle}" />
 					<w:EntityModelValueCheckBoxEditor ui:field="ctrlAltDel" />
 					<w:EntityModelValueCheckBoxEditor ui:field="enableUsbAutoshare" />
 					<w:EntityModelValueCheckBoxEditor ui:field="openInFullScreen" />
 				</g:FlowPanel>
-				
+
 				<g:FlowPanel ui:field="rdpPanel" addStyleNames="{style.fullWidth}">
 					<g:Label text="{constants.rdpOptions}" addStyleNames="{style.labelStyle}" />
 					<w:EntityModelValueCheckBoxEditor ui:field="useLocalDrives" />
+				</g:FlowPanel>
+
+				<g:FlowPanel ui:field="wanOptionsPanel" addStyleNames="{style.fullWidth}">
+					<w:EntityModelValueCheckBoxEditor ui:field="wanEnabled" />
 				</g:FlowPanel>
 			</g:FlowPanel>
 		</d:content>

@@ -48,6 +48,7 @@ import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.RowStyles;
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.gwtplatform.mvp.client.proxy.RevealRootPopupContentEvent;
 
 public class SideTabExtendedVirtualMachineView extends AbstractSideTabWithDetailsView<UserPortalItemModel, UserPortalListModel>
@@ -60,7 +61,7 @@ public class SideTabExtendedVirtualMachineView extends AbstractSideTabWithDetail
     private final ApplicationResources applicationResources;
     private final ConsoleManager consoleManager;
     private final ErrorPopupManager errorPopupManager;
-    private final ConsolePopupPresenterWidget consolePopup;
+    private final Provider<ConsolePopupPresenterWidget> consolePopup;
     private final EventBus eventBus;
 
     private static final VmTableResources vmTableResources = GWT.create(VmTableResources.class);
@@ -74,7 +75,7 @@ public class SideTabExtendedVirtualMachineView extends AbstractSideTabWithDetail
             ConsoleUtils consoleUtils,
             ConsoleManager consoleManager,
             ErrorPopupManager errorPopupManager,
-            ConsolePopupPresenterWidget consolePopup,
+            Provider<ConsolePopupPresenterWidget> consolePopup,
             EventBus eventBus,
             MainTabBasicListItemMessagesTranslator translator,
             ApplicationConstants constants) {
@@ -202,8 +203,9 @@ public class SideTabExtendedVirtualMachineView extends AbstractSideTabWithDetail
 
                     @Override
                     public void execute(UserPortalItemModel model) {
-                        consolePopup.init(getModel());
-                        RevealRootPopupContentEvent.fire(eventBus, consolePopup);
+                        ConsolePopupPresenterWidget consolePopupPresenterWidget = consolePopup.get();
+                        consolePopupPresenterWidget.init(getModel());
+                        RevealRootPopupContentEvent.fire(eventBus, consolePopupPresenterWidget);
                     }
                 });
 

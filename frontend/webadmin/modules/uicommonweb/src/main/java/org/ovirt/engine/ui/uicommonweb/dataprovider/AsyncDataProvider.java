@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.dataprovider;
 
 import java.util.ArrayList;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -101,6 +102,8 @@ import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.DataProvider;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
+import org.ovirt.engine.ui.uicommonweb.models.vms.WANDisableEffects;
+import org.ovirt.engine.ui.uicommonweb.models.vms.WanColorDepth;
 
 public final class AsyncDataProvider {
 
@@ -370,6 +373,51 @@ public final class AsyncDataProvider {
         };
         GetConfigFromCache(
                 new GetConfigurationValueParameters(ConfigurationValues.SpiceUsbAutoShare),
+                aQuery);
+    }
+
+    public static void GetWANColorDepth(AsyncQuery aQuery) {
+        aQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+                return source != null ? WanColorDepth.fromInt(((Integer) source).intValue()) : WanColorDepth.depth16;
+            }
+        };
+        GetConfigFromCache(
+                new GetConfigurationValueParameters(ConfigurationValues.WANColorDepth),
+                aQuery);
+    }
+
+    public static void GetWANDisableEffects(AsyncQuery aQuery) {
+        aQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object Convert(Object source, AsyncQuery _asyncQuery)
+            {
+                if (source == null) {
+                    return new ArrayList<WANDisableEffects>();
+                }
+
+                List<WANDisableEffects> res = new ArrayList<WANDisableEffects>();
+                String fromDb = (String) source;
+                for (String value : fromDb.split(",")) {//$NON-NLS-1$
+                    if (value == null) {
+                        continue;
+                    }
+
+                    String trimmedValue = value.trim();
+                    if ("".equals(trimmedValue)) {
+                        continue;
+                    }
+
+                    res.add(WANDisableEffects.fromString(trimmedValue));
+                }
+
+                return res;
+
+            }
+        };
+        GetConfigFromCache(
+                new GetConfigurationValueParameters(ConfigurationValues.WANDisableEffects),
                 aQuery);
     }
 

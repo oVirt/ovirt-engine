@@ -111,8 +111,14 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Open in Full Screen")
     String openInFullScreen();
 
+    @DefaultStringValue("Enable WAN Options")
+    String enableWanOptions();
+
     @DefaultStringValue("RDP Options")
     String rdpOptions();
+
+    @DefaultStringValue("Use Local Drives")
+    String useLocalDrives();
 
     @DefaultStringValue("Remote Desktop")
     String remoteDesktop();

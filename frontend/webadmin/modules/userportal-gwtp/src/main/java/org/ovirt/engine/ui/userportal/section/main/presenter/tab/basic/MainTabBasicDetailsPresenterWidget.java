@@ -21,13 +21,14 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.gwtplatform.mvp.client.PresenterWidget;
 import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.proxy.RevealRootPopupContentEvent;
 
 public class MainTabBasicDetailsPresenterWidget extends PresenterWidget<MainTabBasicDetailsPresenterWidget.ViewDef> {
 
-    private final ConsolePopupPresenterWidget consolePopup;
+    private final Provider<ConsolePopupPresenterWidget> consolePopup;
     private final ConsoleUtils consoleUtils;
 
     public interface ViewDef extends View, HasEditorDriver<UserPortalBasicListModel> {
@@ -48,7 +49,7 @@ public class MainTabBasicDetailsPresenterWidget extends PresenterWidget<MainTabB
             ViewDef view,
             final UserPortalBasicListProvider modelProvider,
             final ConsoleUtils consoleUtils,
-            ConsolePopupPresenterWidget consolePopup) {
+            Provider<ConsolePopupPresenterWidget> consolePopup) {
         super(eventBus, view);
         this.consoleUtils = consoleUtils;
         this.consolePopup = consolePopup;
@@ -128,9 +129,9 @@ public class MainTabBasicDetailsPresenterWidget extends PresenterWidget<MainTabB
                 if (!isEditConsoleEnabled(modelProvider.getModel().getSelectedItem())) {
                     return;
                 }
-
-                consolePopup.init(modelProvider.getModel());
-                RevealRootPopupContentEvent.fire(getEventBus(), consolePopup);
+                ConsolePopupPresenterWidget consolePopupPresenterWidget = consolePopup.get();
+                consolePopupPresenterWidget.init(modelProvider.getModel());
+                RevealRootPopupContentEvent.fire(getEventBus(), consolePopupPresenterWidget);
             }
         }));
     }
