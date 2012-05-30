@@ -415,6 +415,7 @@ class DB():
         date = utils.getCurrentDateTime()
         self.sqlfile = "%s/%s_%s.sql" % (BACKUP_DIR, BACKUP_FILE, date)
         self.updated = False
+        self.dbrenamed = False
         self.name = basedefs.DB_NAME
 
     def __del__(self):
@@ -434,7 +435,9 @@ class DB():
 
     def restore(self):
         #psql -U postgres -h host -p port -f <backup directory>/<backup_file>
-        if self.updated:
+        # If DB was renamed, restore it
+
+        if self.updated or self.dbrenamed:
             logging.debug("DB Restore started")
 
             # If we're here, upgrade failed. Drop temp DB.
@@ -480,6 +483,8 @@ class DB():
             utils.execRemoteSqlCommand(SERVER_ADMIN, SERVER_NAME, SERVER_PORT, basedefs.DB_POSTGRES, query, True, MSG_ERROR_RENAME_DB)
             # set name to the newname
             self.name = newname
+            # toggle dbrenamed value to TRUE
+            self.dbrenamed = True
         except:
             # if this happened before DB update, remove DB backup file.
             if not self.updated and os.path.exists(self.sqlfile):
