@@ -9,6 +9,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.HeaderPresenterWidget
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Cursor;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.editor.client.Editor.Ignore;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -17,6 +18,7 @@ import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
@@ -36,6 +38,10 @@ public class HeaderView extends AbstractSingleSlotView implements HeaderPresente
     @UiField
     @WithElementId
     InlineLabel userNameLabel;
+
+    @UiField
+    @Ignore
+    Label headerLabel;
 
     @UiField(provided = true)
     final Anchor logoutLink;
@@ -70,6 +76,11 @@ public class HeaderView extends AbstractSingleSlotView implements HeaderPresente
 
         // Ensure proper main tab bar position
         setMainTabBarOffset(mainTabBarInitialOffset);
+        localize(constants);
+    }
+
+    private void localize(ApplicationConstants constants) {
+        headerLabel.setText(constants.mainHeaderLabel());
     }
 
     @Override

@@ -64,6 +64,14 @@
 		.mainTabContainer {
 			min-width: 800px;
 		}
+		
+		.headerLabelStyle {
+			font-weight: bold;
+			color: white;
+			line-height: 35px;
+			width: 300px;
+			float: left;
+		}
 	</ui:style>
 
 	<g:HTMLPanel addStyleNames="{style.wrapperOuter}">
@@ -71,6 +79,7 @@
 
 			<g:HTMLPanel addStyleNames="{style.upperPanel}">
 				<g:HTML addStyleNames="{style.logo}" />
+				<g:Label ui:field="headerLabel" addStyleNames="{style.headerLabelStyle}"/>
 
 				<g:HTMLPanel addStyleNames="{style.menuBar}">
 					<g:InlineLabel text="{constants.loggedInUser}:" />

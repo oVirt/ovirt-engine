@@ -43,6 +43,10 @@ public class LoginPopupView extends AbstractLoginPopupView implements LoginPopup
     @UiField
     SimplePopupPanel popup;
 
+    @UiField
+    @Ignore
+    Label headerLabel;
+
     @UiField(provided = true)
     @Path("userName.entity")
     @WithElementId("userName")
@@ -73,7 +77,6 @@ public class LoginPopupView extends AbstractLoginPopupView implements LoginPopup
     @UiField
     @Ignore
     Panel errorMessagePanel;
-
 
     @Inject
     public LoginPopupView(EventBus eventBus,
@@ -109,7 +112,8 @@ public class LoginPopupView extends AbstractLoginPopupView implements LoginPopup
         }
     }
 
-     private void localize(ApplicationConstants constants) {
+    private void localize(ApplicationConstants constants) {
+        headerLabel.setText(constants.loginHeaderLabel());
         userNameEditor.setLabel(constants.loginFormUserNameLabel());
         passwordEditor.setLabel(constants.loginFormPasswordLabel());
         domainEditor.setLabel(constants.loginFormDomainLabel());
@@ -137,7 +141,7 @@ public class LoginPopupView extends AbstractLoginPopupView implements LoginPopup
     public void setErrorMessage(String text) {
         errorMessage.setText(text);
         errorMessage.setVisible(text != null);
-        if (errorMessage.isVisible()){
+        if (errorMessage.isVisible()) {
             errorMessagePanel.setVisible(true);
         }
     }
