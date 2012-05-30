@@ -24,6 +24,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
+@NonTransactiveCommandAttribute
 public class RemoveVmFromImportExportCommand<T extends RemoveVmFromImportExportParamenters> extends RemoveVmCommand<T> {
 
     // this is needed since overriding getVmTemplate()

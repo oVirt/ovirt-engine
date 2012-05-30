@@ -30,6 +30,7 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 
+@NonTransactiveCommandAttribute
 public class RemoveVmTemplateFromImportExportCommand<T extends VmTemplateImportExportParameters> extends
         RemoveVmTemplateCommand<T> {
 

@@ -25,6 +25,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
  * This command responsible to removing image, contains all created snapshots.
  */
 @InternalCommandAttribute
+@NonTransactiveCommandAttribute
 public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseImagesCommand<T> {
 
     public RemoveImageCommand(T parameters) {
@@ -113,7 +114,7 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
                                 }
                             }
 
-                            getBaseDiskDao().remove(diskImage.getimage_group_id());
+                            getBaseDiskDao().remove(diskImage.getId());
                             DbFacade.getInstance()
                                     .getVmDeviceDAO()
                                     .remove(new VmDeviceId(diskImage.getId(), null));
@@ -162,7 +163,7 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
         try {
             VDSReturnValue returnValue = runVdsCommand(VDSCommandType.DeleteImageGroup,
                     new DeleteImageGroupVDSCommandParameters(getDiskImage().getstorage_pool_id().getValue(),
-                            getStorageDomainId().getValue(), getDiskImage().getimage_group_id()
+                            getStorageDomainId().getValue(), getDiskImage().getId()
                                     .getValue(), getDiskImage().isWipeAfterDelete(), getParameters()
                                     .getForceDelete(), getStoragePool().getcompatibility_version().toString()));
             return returnValue;

@@ -1,6 +1,8 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.action.RemoveAllVmImagesParameters;
@@ -9,7 +11,6 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 /**
@@ -17,6 +18,7 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
  * and Db.
  */
 @InternalCommandAttribute
+@NonTransactiveCommandAttribute
 public class RemoveAllVmImagesCommand<T extends RemoveAllVmImagesParameters> extends VmCommand<T> {
 
     private static final long serialVersionUID = 3577196516027044528L;
@@ -27,7 +29,7 @@ public class RemoveAllVmImagesCommand<T extends RemoveAllVmImagesParameters> ext
 
     @Override
     protected void ExecuteVmCommand() {
-        java.util.ArrayList<Guid> mImagesToBeRemoved = new java.util.ArrayList<Guid>();
+        Set<Guid> mImagesToBeRemoved = new HashSet<Guid>();
         List<DiskImage> images = getParameters().Images;
         if (images == null) {
             images =
@@ -36,7 +38,7 @@ public class RemoveAllVmImagesCommand<T extends RemoveAllVmImagesParameters> ext
                             false);
         }
         for (DiskImage image : images) {
-            if (image.getactive() != null && image.getactive()) {
+            if (Boolean.TRUE.equals(image.getactive())) {
                 mImagesToBeRemoved.add(image.getImageId());
             }
         }
@@ -50,7 +52,6 @@ public class RemoveAllVmImagesCommand<T extends RemoveAllVmImagesParameters> ext
                 tempVar.setDiskImage(image);
                 tempVar.setEntityId(getParameters().getEntityId());
                 tempVar.setForceDelete(getParameters().getForceDelete());
-                tempVar.setTransactionScopeOption(TransactionScopeOption.RequiresNew);
                 tempVar.setParentParemeters(getParameters());
                 VdcReturnValueBase vdcReturnValue =
                         Backend.getInstance().runInternalAction(VdcActionType.RemoveImage,
