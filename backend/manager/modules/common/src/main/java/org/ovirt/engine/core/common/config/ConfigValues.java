@@ -959,7 +959,6 @@ public enum ConfigValues {
     IPTablesConfig(319),
 
     @TypeConverterAttribute(String.class)
-
     @DefaultValueAttribute("")
     CustomPublicConfig_AppsWebSite(320),
 
@@ -1155,6 +1154,14 @@ public enum ConfigValues {
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("false")
     FilteringLUNsEnabled(361),
+
+    @TypeConverterAttribute(String.class)
+    @DefaultValueAttribute("animation")
+    WANDisableEffects(362),
+
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("16")
+    WANColorDepth(363),
 
     Invalid(65535);
 

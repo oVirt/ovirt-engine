@@ -338,6 +338,8 @@ select fn_db_add_config_value('SpiceReleaseCursorKeys','shift+f12','general');
 select fn_db_add_config_value('SpiceToggleFullScreenKeys','shift+f11','general');
 --Handling Enable USB devices sharing by default in SPICE
 select fn_db_add_config_value('SpiceUsbAutoShare','true','general');
+select fn_db_add_config_value('WANDisableEffects','animation','general');
+select fn_db_add_config_value('WANColorDepth','16','general');
 select fn_db_add_config_value('SpmCommandFailOverRetries','3','general');
 select fn_db_add_config_value('SPMFailOverAttempts','3','general');
 select fn_db_add_config_value('SpmVCpuConsumption','1','general');

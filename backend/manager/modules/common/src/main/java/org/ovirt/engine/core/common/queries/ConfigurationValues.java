@@ -73,7 +73,9 @@ public enum ConfigurationValues {
     ManagementNetwork,
     ApplicationMode(ConfigAuthType.User),
     ShareableDiskEnabled(ConfigAuthType.User),
-    DirectLUNDiskEnabled(ConfigAuthType.User);
+    DirectLUNDiskEnabled(ConfigAuthType.User),
+    WANDisableEffects(ConfigAuthType.User),
+    WANColorDepth(ConfigAuthType.User);
 
     public static enum ConfigAuthType {
         Admin,
