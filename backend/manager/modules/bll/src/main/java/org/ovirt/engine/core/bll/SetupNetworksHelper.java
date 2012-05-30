@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
@@ -252,11 +251,22 @@ public class SetupNetworksHelper {
         }
     }
 
+    /**
+     * Extract the bonds to be removed. If a bond was attached to slaves but it's not attached to anything then it
+     * should be removed. Otherwise, no point in removing it: Either it is still a bond, or it isn't attached to any
+     * slaves either way so no need to touch it.
+     *
+     * @param bonds
+     *            Names of all bonds which are present in the new configuration.
+     * @return The bonds to be removed.
+     */
     protected List<VdsNetworkInterface> extractRemovedBonds(Set<String> bonds) {
         List<VdsNetworkInterface> removedBonds = new ArrayList<VdsNetworkInterface>();
-        for (Entry<String, VdsNetworkInterface> e : getExistingIfaces().entrySet()) {
-            if (isBond(e.getValue()) && !bonds.contains(e.getKey())) {
-                removedBonds.add(e.getValue());
+
+        for (VdsNetworkInterface iface : getExistingIfaces().values()) {
+            String bondName = iface.getBondName();
+            if (StringUtils.isNotBlank(bondName) && !bonds.contains(bondName)) {
+                removedBonds.add(getExistingIfaces().get(bondName));
             }
         }
 
