@@ -286,6 +286,7 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 resiliencePolicyTab.setVisible(object.getisResiliencePolicyTabAvailable());
+                applyModeCustomizations();
             }
         });
     }
