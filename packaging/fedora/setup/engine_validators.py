@@ -82,8 +82,8 @@ def validatePort(param, options = []):
         print output_messages.INFO_VAL_PORT_OCCUPIED % (param, process, pid)
         return False
     if isProxyEnabled and not checkAndSetHttpdPortPolicy(param):
-        logging.warn(output_messages.INFO_VAL_FAILED_ADD_PORT_TO_HTTP_POLICY %(port))
-        print output_messages.INFO_VAL_FAILED_ADD_PORT_TO_HTTP_POLICY %(port)
+        logging.warn(output_messages.INFO_VAL_FAILED_ADD_PORT_TO_HTTP_POLICY, port)
+        print output_messages.INFO_VAL_FAILED_ADD_PORT_TO_HTTP_POLICY % port
         return False
     return True
 

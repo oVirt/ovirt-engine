@@ -159,7 +159,8 @@ INFO_VAR_PATH_NOT_EMPTY="Error: directory %s is not empty"
 INFO_VAL_PATH_SPACE="Error: mount point %s contains only %s of available space while a minimum of %s is required"
 INFO_VAL_NOT_INTEGER="Error: value is not an integer"
 INFO_VAL_PORT_NOT_RANGE="Error: port is outside the range of %i - 65535"
-INFO_VAL_FAILED_ADD_PORT_TO_HTTP_POLICY="Failed adding port %d to " + basedefs.HTTP_PORT_POLICY
+INFO_VAL_FAILED_ADD_PORT_TO_HTTP_POLICY="Error: failed adding port %d to " + basedefs.HTTP_PORT_POLICY + " because it is \
+already preallocated in selinux. Choose a different HTTP port."
 INFO_VAL_STRING_EMPTY="Error: can't accept an empty answer for param"
 INFO_VAL_NOT_IN_OPTIONS="Error: response is not part of the following accepted answers: %s"
 INFO_VAL_NOT_DOMAIN="Error: domain is not a valid domain name"
