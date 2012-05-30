@@ -3,6 +3,7 @@ package org.ovirt.engine.core.utils.ovf;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -246,7 +247,8 @@ public class OvfTemplateWriter extends OvfWriter {
         _writer.WriteRaw(OvfHardware.USB);
         _writer.WriteEndElement();
         _writer.WriteStartElement("rasd:UsbPolicy");
-        _writer.WriteRaw(_vmTemplate.getusb_policy().toString());
+        _writer.WriteRaw((_vmTemplate.getusb_policy()) != null ? _vmTemplate.getusb_policy().toString()
+                : UsbPolicy.DISABLED.name());
         _writer.WriteEndElement();
         _writer.WriteEndElement(); // item
 

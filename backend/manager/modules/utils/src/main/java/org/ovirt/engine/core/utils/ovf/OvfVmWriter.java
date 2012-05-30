@@ -6,6 +6,7 @@ import java.util.Map;
 import org.apache.commons.codec.binary.Base64;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
+import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
@@ -328,7 +329,7 @@ public class OvfVmWriter extends OvfWriter {
         _writer.WriteRaw(OvfHardware.USB);
         _writer.WriteEndElement();
         _writer.WriteStartElement("rasd:UsbPolicy");
-        _writer.WriteRaw(vmBase.getusb_policy().toString());
+        _writer.WriteRaw(vmBase.getusb_policy() != null ? vmBase.getusb_policy().toString() : UsbPolicy.DISABLED.name());
         _writer.WriteEndElement();
         _writer.WriteEndElement(); // item
 
