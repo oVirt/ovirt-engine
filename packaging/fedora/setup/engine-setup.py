@@ -537,6 +537,10 @@ def _getInputFromUser(param):
 
                 # If param requires validation
                 if param.getKey("VALIDATION_FUNC")(userInput, param.getKey("OPTION_LIST")):
+                    if "yes" in param.getKey("OPTION_LIST") and userInput.lower() == "y":
+                        userInput = "yes"
+                    if "no" in param.getKey("OPTION_LIST") and userInput.lower() == "n":
+                        userInput = "no"
                     controller.CONF[param.getKey("CONF_NAME")] = userInput
                     loop = False
                 # If validation failed but LOOSE_VALIDATION is true, ask user

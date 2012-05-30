@@ -159,6 +159,10 @@ def validateOptions(param, options=[]):
     logging.info("Validating %s as part of %s"%(param, options))
     if not validateStringNotEmpty(param, options):
         return False
+    if "yes" in options and param.lower() == "y":
+        return True
+    if "no" in options and param.lower() == "n":
+        return True
     if param.lower() in [option.lower() for option in options]:
         return True
     print output_messages.INFO_VAL_NOT_IN_OPTIONS % (", ".join(options))
