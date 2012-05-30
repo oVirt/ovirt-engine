@@ -320,7 +320,7 @@ public class ImportTemplateModel extends ListWithDetailsModel implements IIsObje
 
     public void addToDiskStorageMap(Guid vmId, DiskImage disk, Guid storageId) {
         HashMap<Guid, Guid> vmDiskStorageMap = getDiskStorageMap().get(vmId);
-        vmDiskStorageMap.put(disk.getImageId(), storageId);
+        vmDiskStorageMap.put(disk.getId(), storageId);
     }
 
     private storage_domains getStorageDomainByName(String storageDomainName) {

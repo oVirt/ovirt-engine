@@ -151,7 +151,7 @@ public class BackendVmsResource extends
             for (Disk disk : disks.getDisks()) {
                 DiskImage diskImageFromConfig = imagesFromConfiguration.get(asGuid(disk.getImageId()));
                 DiskImage diskImage = (DiskImage)getMapper(Disk.class, org.ovirt.engine.core.common.businessentities.Disk.class).map(disk, diskImageFromConfig);
-                imagesFromConfiguration.put(diskImage.getImageId(), diskImage);
+                imagesFromConfiguration.put(diskImage.getId(), diskImage);
             }
         }
     }
@@ -159,7 +159,7 @@ public class BackendVmsResource extends
     private HashMap<Guid, DiskImage> getDiskImagesByIdMap(Collection<org.ovirt.engine.core.common.businessentities.Disk> values) {
         HashMap<Guid, DiskImage> result = new HashMap<Guid, DiskImage>();
         for (org.ovirt.engine.core.common.businessentities.Disk diskImage : values) {
-            result.put(((DiskImage) diskImage).getImageId(), (DiskImage) diskImage);
+            result.put(((DiskImage) diskImage).getId(), (DiskImage) diskImage);
         }
         return result;
     }
@@ -202,7 +202,7 @@ public class BackendVmsResource extends
             for (Disk disk : disks.getDisks()) {
                 DiskImage templateDisk = templatesDisksMap.get(asGuid(disk.getId()));
                 if( templateDisk != null ) {
-                    disksMap.put(templateDisk.getImageId(), map(disk, templateDisk));
+                    disksMap.put(templateDisk.getId(), map(disk, templateDisk));
                 } else {
                     throw new WebApplicationException(Response.Status.NOT_FOUND);
                 }

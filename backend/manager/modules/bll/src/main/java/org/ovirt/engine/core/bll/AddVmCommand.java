@@ -386,7 +386,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
                 && !Guid.Empty.equals(getParameters().getStorageDomainId())) {
             Guid storageId = getParameters().getStorageDomainId();
             for (DiskImage image : getImagesToCheckDestinationStorageDomains()) {
-                diskInfoDestinationMap.put(image.getImageId(), makeNewImage(storageId, image));
+                diskInfoDestinationMap.put(image.getId(), makeNewImage(storageId, image));
             }
             return validateProvidedDestinations();
         }
@@ -398,7 +398,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
 
     protected boolean validateIsImagesOnDomains() {
         for (DiskImage image : getImagesToCheckDestinationStorageDomains()) {
-            if (!image.getstorage_ids().containsAll(diskInfoDestinationMap.get(image.getImageId()).getstorage_ids())) {
+            if (!image.getstorage_ids().containsAll(diskInfoDestinationMap.get(image.getId()).getstorage_ids())) {
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_NOT_FOUND_ON_DESTINATION_DOMAIN);
                 return false;
             }
@@ -619,13 +619,13 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
             for (DiskImage dit : getImagesToCheckDestinationStorageDomains()) {
                 CreateSnapshotFromTemplateParameters tempVar = new CreateSnapshotFromTemplateParameters(
                         dit.getImageId(), getParameters().getVmStaticData().getId());
-                tempVar.setDestStorageDomainId(diskInfoDestinationMap.get(dit.getImageId()).getstorage_ids().get(0));
+                tempVar.setDestStorageDomainId(diskInfoDestinationMap.get(dit.getId()).getstorage_ids().get(0));
                 tempVar.setStorageDomainId(dit.getstorage_ids().get(0));
                 tempVar.setVmSnapshotId(getVmSnapshotId());
                 tempVar.setParentCommand(VdcActionType.AddVm);
                 tempVar.setEntityId(getParameters().getEntityId());
                 tempVar.setParentParemeters(getParameters());
-                tempVar.setQuotaId(diskInfoDestinationMap.get(dit.getImageId()).getQuotaId());
+                tempVar.setQuotaId(diskInfoDestinationMap.get(dit.getId()).getQuotaId());
                 VdcReturnValueBase result =
                         Backend.getInstance().runInternalAction(VdcActionType.CreateSnapshotFromTemplate,
                                 tempVar,

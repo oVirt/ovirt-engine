@@ -206,13 +206,13 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
                                 }
                             }
                             if (image.getId().equals(p.getId())
-                                    && !imageToDestinationDomainMap.containsKey(image.getImageId())) {
-                                imageToDestinationDomainMap.put(image.getImageId(),
-                                        imageToDestinationDomainMap.get(p.getImageId()));
+                                    && !imageToDestinationDomainMap.containsKey(image.getId())) {
+                                imageToDestinationDomainMap.put(image.getId(),
+                                        imageToDestinationDomainMap.get(p.getId()));
                             }
                         }
                         retVal =
-                                ImagesHandler.CheckImageConfiguration(domainsMap.get(imageToDestinationDomainMap.get(image.getImageId()))
+                                ImagesHandler.CheckImageConfiguration(domainsMap.get(imageToDestinationDomainMap.get(image.getId()))
                                         .getStorageStaticData(),
                                         image,
                                         canDoActionMessages);
@@ -274,7 +274,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
                         .get(imageBase.getId());
                 if (key != null) {
                     retVal =
-                            ImagesHandler.CheckImageConfiguration(domainsMap.get(imageToDestinationDomainMap.get(key.getImageId()))
+                            ImagesHandler.CheckImageConfiguration(domainsMap.get(imageToDestinationDomainMap.get(key.getId()))
                                     .getStorageStaticData(),
                                     imageBase,
                                     canDoActionMessages);
@@ -506,7 +506,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
     protected void MoveOrCopyAllImageGroups(Guid containerID, Iterable<DiskImage> disks) {
         int i = 0;
         for (DiskImage disk : disks) {
-            Guid destinationDomain = imageToDestinationDomainMap.get(imageGuidList.get(i));
+            Guid destinationDomain = imageToDestinationDomainMap.get(diskGuidList.get(i));
             MoveOrCopyImageGroupParameters p = new MoveOrCopyImageGroupParameters(containerID,
                     diskGuidList.get(i),
                     imageGuidList.get(i),

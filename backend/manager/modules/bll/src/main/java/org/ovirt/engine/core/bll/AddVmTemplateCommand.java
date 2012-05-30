@@ -144,7 +144,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         setQuotaId(QuotaHelper.getInstance().getQuotaIdToConsume(getQuotaId(),
                 getStoragePool()));
         for (DiskImage diskImage : mImages) {
-            DiskImage diskImageForQuota = diskInfoDestinationMap.get(diskImage.getImageId());
+            DiskImage diskImageForQuota = diskInfoDestinationMap.get(diskImage.getId());
             if (diskImageForQuota != null) {
                 diskImage.setQuotaId(QuotaHelper.getInstance()
                         .getQuotaIdToConsume(diskImageForQuota.getQuotaId(),
@@ -223,14 +223,14 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         Map<Guid, List<DiskImage>> sourceImageDomainsImageMap = new HashMap<Guid, List<DiskImage>>();
         for (DiskImage image : mImages) {
             MultiValueMapUtils.addToMap(image.getstorage_ids().get(0), image, sourceImageDomainsImageMap);
-            if (!diskInfoDestinationMap.containsKey(image.getImageId())) {
+            if (!diskInfoDestinationMap.containsKey(image.getId())) {
                 Guid destStorageId =
                         getParameters().getDestinationStorageDomainId() != null ? getParameters().getDestinationStorageDomainId()
                                 : image.getstorage_ids().get(0);
                 ArrayList<Guid> storageIds = new ArrayList<Guid>();
                 storageIds.add(destStorageId);
                 image.setstorage_ids(storageIds);
-                diskInfoDestinationMap.put(image.getImageId(), image);
+                diskInfoDestinationMap.put(image.getId(), image);
             }
         }
 
@@ -366,7 +366,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             createParams.setStorageDomainId(diskImage.getstorage_ids().get(0));
             createParams.setVmSnapshotId(vmSnapshotId);
             createParams.setEntityId(getParameters().getEntityId());
-            createParams.setDestinationStorageDomainId(diskInfoDestinationMap.get(diskImage.getImageId())
+            createParams.setDestinationStorageDomainId(diskInfoDestinationMap.get(diskImage.getId())
                     .getstorage_ids()
                     .get(0));
             createParams.setParentParemeters(getParameters());

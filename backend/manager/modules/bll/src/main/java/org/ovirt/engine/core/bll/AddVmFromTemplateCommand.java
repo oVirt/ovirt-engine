@@ -52,12 +52,11 @@ public class AddVmFromTemplateCommand<T extends AddVmFromTemplateParameters> ext
             }
             VmHandler.LockVm(getVm().getDynamicData(), getCompensationContext());
             for (DiskImage dit : getVmTemplate().getDiskMap().values()) {
-                DiskImageBase diskInfo = null;
-                diskInfo = getParameters().getDiskInfoDestinationMap().get(dit.getImageId());
+                DiskImageBase diskInfo = getParameters().getDiskInfoDestinationMap().get(dit.getId());
                 CreateCloneOfTemplateParameters p = new CreateCloneOfTemplateParameters(dit.getImageId(),
                         getParameters().getVmStaticData().getId(), diskInfo);
                 p.setStorageDomainId(dit.getstorage_ids().get(0));
-                p.setDestStorageDomainId(diskInfoDestinationMap.get(dit.getImageId()).getstorage_ids().get(0));
+                p.setDestStorageDomainId(diskInfoDestinationMap.get(dit.getId()).getstorage_ids().get(0));
                 p.setVmSnapshotId(getVmSnapshotId());
                 p.setParentCommand(VdcActionType.AddVmFromTemplate);
                 p.setEntityId(getParameters().getEntityId());
@@ -87,9 +86,9 @@ public class AddVmFromTemplateCommand<T extends AddVmFromTemplateParameters> ext
         if (retValue) {
             for (DiskImage dit : getVmTemplate().getDiskMap().values()) {
                 retValue =
-                        ImagesHandler.CheckImageConfiguration(destStorages.get(diskInfoDestinationMap.get(dit.getImageId()).getstorage_ids().get(0))
+                        ImagesHandler.CheckImageConfiguration(destStorages.get(diskInfoDestinationMap.get(dit.getId()).getstorage_ids().get(0))
                                 .getStorageStaticData(),
-                                diskInfoDestinationMap.get(dit.getImageId()),
+                                diskInfoDestinationMap.get(dit.getId()),
                                 getReturnValue().getCanDoActionMessages());
                 if (!retValue) {
                     break;

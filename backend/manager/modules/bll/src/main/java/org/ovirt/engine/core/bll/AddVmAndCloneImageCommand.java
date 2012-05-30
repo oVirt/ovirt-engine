@@ -16,7 +16,6 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.CopyVolumeType;
 import org.ovirt.engine.core.common.businessentities.Disk;
-import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageOperation;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
@@ -206,13 +205,11 @@ public abstract class AddVmAndCloneImageCommand<T extends VmManagementParameters
                 }
             }
             for (Disk disk : getDiskImagesToBeCloned()) {
-                if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
-                    DiskImage image = (DiskImage) disk;
-                    for (Guid storageId : image.getstorage_ids()) {
-                        if (storageDomainsMap.containsKey(storageId)) {
-                            diskInfoDestinationMap.put(image.getImageId(), image);
-                            break;
-                        }
+                DiskImage image = (DiskImage) disk;
+                for (Guid storageId : image.getstorage_ids()) {
+                    if (storageDomainsMap.containsKey(storageId)) {
+                        diskInfoDestinationMap.put(image.getId(), image);
+                        break;
                     }
                 }
             }

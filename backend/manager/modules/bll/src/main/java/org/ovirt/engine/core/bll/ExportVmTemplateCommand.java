@@ -42,7 +42,7 @@ public class ExportVmTemplateCommand<T extends MoveOrCopyParameters> extends Mov
                     // the ovf so the import
                     // will set the original format
                     MoveOrCopyImageGroupParameters p = new MoveOrCopyImageGroupParameters(containerID, disk
-                            .getimage_group_id().getValue(), disk.getImageId(), getParameters().getStorageDomainId(),
+                            .getId(), disk.getImageId(), getParameters().getStorageDomainId(),
                             getMoveOrCopyImageOperation());
                     p.setParentCommand(getActionType());
                     p.setParentParemeters(getParameters());
@@ -53,7 +53,7 @@ public class ExportVmTemplateCommand<T extends MoveOrCopyParameters> extends Mov
                     p.setVolumeType(disk.getvolume_type());
                     p.setPostZero(disk.isWipeAfterDelete());
                     p.setForceOverride(getParameters().getForceOverride());
-                    p.setSourceDomainId(imageFromSourceDomainMap.get(disk.getImageId()).getstorage_ids().get(0));
+                    p.setSourceDomainId(imageFromSourceDomainMap.get(disk.getId()).getstorage_ids().get(0));
                     VdcReturnValueBase vdcRetValue = Backend.getInstance().runInternalAction(
                                     VdcActionType.MoveOrCopyImageGroup,
                                     p,

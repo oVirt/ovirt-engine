@@ -89,7 +89,7 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
 
         ensureDomainMap(diskImages, getParameters().getStorageDomainId());
         for(DiskImage disk : diskImages) {
-            imageFromSourceDomainMap.put(disk.getImageId(), disk);
+            imageFromSourceDomainMap.put(disk.getId(), disk);
         }
 
         retValue = retValue && checkTemplateInStorageDomain(diskImages);

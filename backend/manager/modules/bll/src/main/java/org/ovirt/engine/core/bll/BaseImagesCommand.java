@@ -475,12 +475,14 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
      * mapping.
      * @param diskImage
      */
-    static public void saveImage(DiskImage diskImage) {
+    static public image_storage_domain_map saveImage(DiskImage diskImage) {
         DbFacade.getInstance().getImageDao().save(diskImage.getImage());
+        image_storage_domain_map image_storage_domain_map = new image_storage_domain_map(diskImage.getImageId(),
+                diskImage.getstorage_ids()
+                        .get(0));
         DbFacade.getInstance()
                 .getImageStorageDomainMapDao()
-                .save(new image_storage_domain_map(diskImage.getImageId(),
-                        diskImage.getstorage_ids()
-                                .get(0)));
+                .save(image_storage_domain_map);
+        return image_storage_domain_map;
     }
 }
