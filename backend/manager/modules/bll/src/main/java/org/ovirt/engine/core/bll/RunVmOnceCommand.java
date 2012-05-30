@@ -1,7 +1,10 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.bll.job.ExecutionContext;
+import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.action.RunVmOnceParams;
 import org.ovirt.engine.core.common.action.SysPrepParams;
+import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.vdscommands.CreateVmVDSCommandParameters;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 
@@ -36,6 +39,15 @@ public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T>
         sysPrepParams.setSysPrepPassword(runOnceParams.getSysPrepPassword());
         createVmParams.setSysPrepParams(sysPrepParams);
         return createVmParams;
+    }
+
+    @Override
+    public void reportCompleted() {
+        ExecutionContext executionContext = getExecutionContext();
+        executionContext.setShouldEndJob(true);
+        boolean success =
+                getParameters().getRunAndPause() && getVmDynamicDAO().get(getVmId()).getstatus() == VMStatus.Paused;
+        ExecutionHandler.endJob(executionContext, success);
     }
 
 }

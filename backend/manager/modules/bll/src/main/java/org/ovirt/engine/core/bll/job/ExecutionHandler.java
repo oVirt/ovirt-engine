@@ -395,7 +395,7 @@ public class ExecutionHandler {
         try {
             if (context.isMonitored()) {
                 if (context.getExecutionMethod() == ExecutionMethod.AsJob && job != null) {
-                    if (!(job.isAsyncJob() && exitStatus)) {
+                    if (context.shouldEndJob() || !(job.isAsyncJob() && exitStatus)) {
                         context.setCompleted(true);
                         endJob(exitStatus, job);
                     }
