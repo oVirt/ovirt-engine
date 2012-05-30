@@ -555,7 +555,8 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
 
         // System tree dependent actions.
         boolean isAvailable =
-                !(getSystemTreeSelectedItem() != null && getSystemTreeSelectedItem().getType() == SystemTreeItemType.Cluster);
+                !(getSystemTreeSelectedItem() != null &&
+                (getSystemTreeSelectedItem().getType() == SystemTreeItemType.Cluster || getSystemTreeSelectedItem().getType() == SystemTreeItemType.Cluster_Gluster));
 
         getNewCommand().setIsAvailable(isAvailable);
         getRemoveCommand().setIsAvailable(isAvailable);
