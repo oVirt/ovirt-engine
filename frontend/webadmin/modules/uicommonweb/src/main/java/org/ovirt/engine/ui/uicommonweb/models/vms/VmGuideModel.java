@@ -36,6 +36,7 @@ import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -72,6 +73,7 @@ public class VmGuideModel extends GuideModel
     private storage_domains storage;
     private VDSGroup cluster;
     private QuotaEnforcementTypeEnum quotaEnforcementType = null;
+    private boolean isActivateSupported;
 
     @Override
     public VM getEntity()
@@ -79,9 +81,29 @@ public class VmGuideModel extends GuideModel
         return (VM) super.getEntity();
     }
 
-    public void setEntity(VM value)
+    protected void updateIsHotPlugAvailable()
     {
+        if (getEntity() == null)
+        {
+            return;
+        }
+        VM vm = getEntity();
+        Version clusterCompatibilityVersion = vm.getvds_group_compatibility_version() != null
+                ? vm.getvds_group_compatibility_version() : new Version();
+
+        AsyncDataProvider.IsHotPlugAvailable(new AsyncQuery(this,
+                new INewAsyncCallback() {
+                    @Override
+                    public void OnSuccess(Object target, Object returnValue) {
+                       isActivateSupported = (Boolean) returnValue;
+                    }
+                }), clusterCompatibilityVersion.toString());
+    }
+
+    @Override
+    public void setEntity(Object value) {
         super.setEntity(value);
+        updateIsHotPlugAvailable();
     }
 
     @Override
@@ -240,6 +262,14 @@ public class VmGuideModel extends GuideModel
         model.getName().setEntity(newNicName);
         model.getMAC().setIsChangable(false);
 
+        model.getActive().setIsChangable(isActivateSupported);
+
+        if (isActivateSupported){
+            model.getActive().setEntity(true);
+        }else{
+            model.getActive().setEntity(false);
+        }
+
         UICommand tempVar = new UICommand("OnAddNetwork", this); //$NON-NLS-1$
         tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
         tempVar.setIsDefault(true);
@@ -296,6 +326,8 @@ public class VmGuideModel extends GuideModel
             vmNetworkInterface.setMacAddress(model.getMAC().getIsChangable() ? (model.getMAC().getEntity() == null ? null
                     : ((String) (model.getMAC().getEntity())).toLowerCase())
                     : ""); //$NON-NLS-1$
+
+            vmNetworkInterface.setActive((Boolean) model.getActive().getEntity());
 
             AddVmInterfaceParameters parameters =
                     new AddVmInterfaceParameters(getEntity().getId(), vmNetworkInterface);

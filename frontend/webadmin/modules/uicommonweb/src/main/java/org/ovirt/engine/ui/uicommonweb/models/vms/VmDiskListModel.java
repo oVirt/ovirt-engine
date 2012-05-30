@@ -998,7 +998,7 @@ public class VmDiskListModel extends SearchableListModel
         Version clusterCompatibilityVersion = vm.getvds_group_compatibility_version() != null
                 ? vm.getvds_group_compatibility_version() : new Version();
 
-        AsyncDataProvider.IsDiskHotPlugAvailable(new AsyncQuery(this,
+        AsyncDataProvider.IsHotPlugAvailable(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
                     public void OnSuccess(Object target, Object returnValue) {

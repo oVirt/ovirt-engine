@@ -19,6 +19,7 @@ import org.ovirt.engine.core.common.queries.GetVmByVmIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -38,6 +39,8 @@ import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 @SuppressWarnings("unused")
 public class VmInterfaceListModel extends SearchableListModel
 {
+
+    private boolean isActivateSupported;
 
     private UICommand privateNewCommand;
 
@@ -171,7 +174,13 @@ public class VmInterfaceListModel extends SearchableListModel
         model.getNicType().setSelectedItem(DataProvider.GetDefaultNicType(vm.getvm_os()));
         model.getName().setEntity(newNicName);
         model.getMAC().setIsChangable(false);
-        model.getActive().setEntity(true);
+        model.getActive().setIsChangable(isActivateSupported);
+
+        if (isActivateSupported){
+            model.getActive().setEntity(true);
+        }else{
+            model.getActive().setEntity(false);
+        }
 
         final UICommand okCommand = new UICommand("OnSave", this); //$NON-NLS-1$
         okCommand.setTitle(ConstantsManager.getInstance().getConstants().ok());
@@ -514,6 +523,10 @@ public class VmInterfaceListModel extends SearchableListModel
     }
 
     private boolean isActivateCommandAvailable(boolean active) {
+        if (!isActivateSupported){
+            return false;
+        }
+
         ArrayList<VmNetworkInterface> nics =
                 getSelectedItems() != null ? Linq.<VmNetworkInterface> Cast(getSelectedItems()) : new ArrayList<VmNetworkInterface>();
 
@@ -577,5 +590,30 @@ public class VmInterfaceListModel extends SearchableListModel
     {
         super.OnSelectedItemChanged();
         UpdateActionAvailability();
+    }
+
+    protected void updateIsHotPlugAvailable()
+    {
+        if (getEntity() == null)
+        {
+            return;
+        }
+        VM vm = (VM) getEntity();
+        Version clusterCompatibilityVersion = vm.getvds_group_compatibility_version() != null
+                ? vm.getvds_group_compatibility_version() : new Version();
+
+        AsyncDataProvider.IsHotPlugAvailable(new AsyncQuery(this,
+                new INewAsyncCallback() {
+                    @Override
+                    public void OnSuccess(Object target, Object returnValue) {
+                       isActivateSupported = (Boolean) returnValue;
+                    }
+                }), clusterCompatibilityVersion.toString());
+    }
+
+    @Override
+    public void setEntity(Object value) {
+        super.setEntity(value);
+        updateIsHotPlugAvailable();
     }
 }

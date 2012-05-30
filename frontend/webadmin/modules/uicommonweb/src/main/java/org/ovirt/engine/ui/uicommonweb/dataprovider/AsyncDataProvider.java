@@ -1887,7 +1887,7 @@ public final class AsyncDataProvider {
                 aQuery);
     }
 
-    public static void IsDiskHotPlugAvailable(AsyncQuery aQuery, String version) {
+    public static void IsHotPlugAvailable(AsyncQuery aQuery, String version) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
