@@ -4,7 +4,9 @@ import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.LunDisk;
+import org.ovirt.engine.core.common.businessentities.PropagateErrors;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.vdscommands.HotPlugDiskVDSParameters;
 import org.ovirt.engine.core.utils.StringUtils;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStruct;
@@ -34,25 +36,28 @@ public class HotPlugDiskVDSCommand<P extends HotPlugDiskVDSParameters> extends V
         Disk disk = getParameters().getDisk();
         VmDevice vmDevice = getParameters().getVmDevice();
 
-        drive.add("type", "disk");
-        drive.add("device", "disk");
+        drive.add(VdsProperties.Type, "disk");
+        drive.add(VdsProperties.Device, "disk");
         addAddress(drive, getParameters().getVmDevice().getAddress());
-        drive.add("propagateErrors", disk.getPropagateErrors().toString().toLowerCase());
-        drive.add("iface", disk.getDiskInterface().toString().toLowerCase());
-        drive.add("shared", Boolean.FALSE.toString());
-        drive.add("optional", Boolean.FALSE.toString());
-        drive.add("readonly", String.valueOf(vmDevice.getIsReadOnly()));
+        drive.add(VdsProperties.Iface, disk.getDiskInterface().toString().toLowerCase());
+        drive.add(VdsProperties.Shareable, String.valueOf(disk.isShareable()));
+        drive.add(VdsProperties.Optional, Boolean.FALSE.toString());
+        drive.add(VdsProperties.ReadOnly, String.valueOf(vmDevice.getIsReadOnly()));
 
         if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
             DiskImage diskImage = (DiskImage) disk;
-            drive.add("format", diskImage.getvolume_format().toString().toLowerCase());
-            drive.add("domainID", diskImage.getstorage_ids().get(0).toString());
-            drive.add("poolID", diskImage.getstorage_pool_id().toString());
-            drive.add("volumeID", diskImage.getImageId().toString());
-            drive.add("imageID", diskImage.getId().toString());
+            drive.add(VdsProperties.Format, diskImage.getvolume_format().toString().toLowerCase());
+            drive.add(VdsProperties.DomainId, diskImage.getstorage_ids().get(0).toString());
+            drive.add(VdsProperties.PoolId, diskImage.getstorage_pool_id().toString());
+            drive.add(VdsProperties.VolumeId, diskImage.getImageId().toString());
+            drive.add(VdsProperties.ImageId, diskImage.getId().toString());
+            drive.add(VdsProperties.PropagateErrors, disk.getPropagateErrors().toString().toLowerCase());
         } else {
             LunDisk lunDisk = (LunDisk) disk;
-            drive.add("GUID", lunDisk.getLun().getLUN_id());
+            drive.add(VdsProperties.Guid, lunDisk.getLun().getLUN_id());
+            drive.add(VdsProperties.Format, VolumeFormat.RAW.toString().toLowerCase());
+            drive.add(VdsProperties.PropagateErrors, PropagateErrors.Off.toString()
+                    .toLowerCase());
         }
 
         return drive;

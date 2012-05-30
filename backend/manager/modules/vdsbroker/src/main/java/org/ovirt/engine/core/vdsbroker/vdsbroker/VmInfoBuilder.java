@@ -270,7 +270,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                             .toLowerCase());
                 } else {
                     LunDisk lunDisk = (LunDisk) disk;
-                    struct.add("GUID", lunDisk.getLun().getLUN_id());
+                    struct.add(VdsProperties.Guid, lunDisk.getLun().getLUN_id());
                     struct.add(VdsProperties.Format, VolumeFormat.RAW.toString().toLowerCase());
                     struct.add(VdsProperties.PropagateErrors, PropagateErrors.Off.toString()
                             .toLowerCase());
