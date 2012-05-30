@@ -5,6 +5,8 @@
     xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
     xmlns:w="urn:import:org.ovirt.engine.ui.common.widget">
 
+	<ui:with field='resources' type='org.ovirt.engine.ui.common.CommonApplicationResources' />
+
 	<ui:style type="org.ovirt.engine.ui.common.widget.form.key_value.KeyValueLineWidget.WidgetStyle">
 		.fieldWidth {
 				width: 150px;
@@ -20,8 +22,12 @@
 			<e:ListModelListBoxEditor ui:field="keyField" addStyleNames="{style.fieldWidth}"/>
 			<e:EntityModelTextBoxEditor ui:field="valueField" addStyleNames="{style.fieldWidth}"/>
 		</g:HorizontalPanel>
-		<w:UiCommandButton ui:field="plusButton" addStyleNames="{style.buttonStyle}"/>
-		<w:UiCommandButton ui:field="minusButton" addStyleNames="{style.buttonStyle}"/>
+		<g:PushButton ui:field="plusButton" addStyleNames="{style.buttonStyle}">
+			<g:upFace image='{resources.increaseIcon}' />
+		</g:PushButton>
+		<g:PushButton ui:field="minusButton" addStyleNames="{style.buttonStyle}">
+			<g:upFace image='{resources.decreaseIcon}' />
+		</g:PushButton>
 	</g:HorizontalPanel>
 
 </ui:UiBinder>

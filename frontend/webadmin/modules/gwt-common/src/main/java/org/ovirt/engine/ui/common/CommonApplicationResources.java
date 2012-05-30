@@ -184,4 +184,10 @@ public interface CommonApplicationResources extends ClientBundle {
     @Source("images/disk_lun.png")
     ImageResource externalDiskIcon();
 
+    @Source("images/icon_increase.png")
+    ImageResource increaseIcon();
+
+    @Source("images/icon_decrease.png")
+    ImageResource decreaseIcon();
+
 }
