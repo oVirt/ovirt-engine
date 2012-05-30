@@ -210,22 +210,11 @@ public class DBConfigUtils extends ConfigUtilsBase {
 
     @Override
     protected Object GetValue(DataType type, String name, String defaultValue) {
+        // Note that the type parameter is useless, it should be removed (and
+        // maybe all the method) in a future refactoring.
         log.warnFormat("Using old GetValue for {0}.", name);
         ConfigValues value = ConfigValues.valueOf(name);
-        switch (type) {
-        case Bool:
-            return this.<Boolean> GetValue(value, Config.DefaultConfigurationVersion);
-        case DateTime:
-            return this.<java.util.Date> GetValue(value, Config.DefaultConfigurationVersion);
-        case Int:
-            return this.<Integer> GetValue(value, Config.DefaultConfigurationVersion);
-        case Version:
-            return this.<Version> GetValue(value, Config.DefaultConfigurationVersion);
-        case Map:
-            return this.<Map<?, ?>> GetValue(value, Config.DefaultConfigurationVersion);
-        default:
-            return this.<String> GetValue(value, Config.DefaultConfigurationVersion);
-        }
+        return GetValue(value, Config.DefaultConfigurationVersion);
     }
 
     @SuppressWarnings("unchecked")
