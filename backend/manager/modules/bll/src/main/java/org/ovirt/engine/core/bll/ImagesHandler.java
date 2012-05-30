@@ -82,7 +82,7 @@ public final class ImagesHandler {
                     ArrayList<Guid> storageIds = new ArrayList<Guid>();
                     storageIds.add(storageId);
                     image.setstorage_ids(storageIds);
-                    diskInfoDestinationMap.put(image.getImageId(), image);
+                    diskInfoDestinationMap.put(image.getId(), image);
                     break;
                 }
             }
@@ -143,7 +143,7 @@ public final class ImagesHandler {
             Map<Guid, DiskImage> diskInfoDestinationMap) {
         Map<Guid, List<DiskImage>> storageToDisksMap = new HashMap<Guid, List<DiskImage>>();
         for (DiskImage disk : images) {
-            DiskImage diskImage = diskInfoDestinationMap.get(disk.getImageId());
+            DiskImage diskImage = diskInfoDestinationMap.get(disk.getId());
             Guid storageDomainId = diskImage.getstorage_ids().get(0);
             List<DiskImage> diskList = storageToDisksMap.get(storageDomainId);
             if (diskList == null) {

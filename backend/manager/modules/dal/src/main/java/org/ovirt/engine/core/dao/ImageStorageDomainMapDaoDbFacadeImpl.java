@@ -56,6 +56,16 @@ public class ImageStorageDomainMapDaoDbFacadeImpl extends BaseDAODbFacade implem
                         imageId));
     }
 
+    @Override
+    public image_storage_domain_map get(image_storage_domain_map_id id) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public List<image_storage_domain_map> getAll() {
+        throw new UnsupportedOperationException();
+    }
+
     private static ParameterizedRowMapper<image_storage_domain_map> IMAGE_STORAGE_DOMAIN_MAP_MAPPER =
             new ParameterizedRowMapper<image_storage_domain_map>() {
 
@@ -67,5 +77,4 @@ public class ImageStorageDomainMapDaoDbFacadeImpl extends BaseDAODbFacade implem
                     return entity;
                 }
             };
-
 }
