@@ -303,7 +303,7 @@ public class BackendStorageDomainTemplateResourceTest
                                               ArrayList<Guid> asyncTasks,
                                               ArrayList<AsyncTaskStatus> asyncStatuses) {
         String uri = URL_BASE + "/action";
-        return setUpActionExpectations(task, clz, names, values, true, true, null, asyncTasks, asyncStatuses, uri, true);
+        return setUpActionExpectations(task, clz, names, values, true, true, null, asyncTasks, asyncStatuses, null, null, uri, true);
     }
 
     private void verifyActionResponse(Response r) throws Exception {

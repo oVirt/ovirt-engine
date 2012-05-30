@@ -99,4 +99,8 @@ public class BackendSnapshotResource extends AbstractBackendActionableResource<S
     public SnapshotNicsResource getSnapshotNicsResource() {
         return new BackendSnapshotNicsResource(this, id);
     }
+
+    public void setCollectionResource(BackendSnapshotsResource collection) {
+        this.collection = collection;
+    }
 }

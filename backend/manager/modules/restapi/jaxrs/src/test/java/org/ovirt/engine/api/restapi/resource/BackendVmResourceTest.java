@@ -736,7 +736,7 @@ public class BackendVmResourceTest
                                               ArrayList<Guid> asyncTasks,
                                               ArrayList<AsyncTaskStatus> asyncStatuses) {
         String uri = "vms/" + GUIDS[0] + "/action";
-        return setUpActionExpectations(task, clz, names, values, true, true, null, asyncTasks, asyncStatuses, uri, true);
+        return setUpActionExpectations(task, clz, names, values, true, true, null, asyncTasks, asyncStatuses, null, null, uri, true);
     }
 
     private void verifyActionResponse(Response r) throws Exception {

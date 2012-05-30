@@ -538,7 +538,7 @@ public class BackendHostResourceTest
                                               ArrayList<Guid> asyncTasks,
                                               ArrayList<AsyncTaskStatus> asyncStatuses) {
         String uri = "hosts/" + GUIDS[0] + "/action";
-        return setUpActionExpectations(task, clz, names, values, true, true, null, asyncTasks, asyncStatuses, uri, true);
+        return setUpActionExpectations(task, clz, names, values, true, true, null, asyncTasks, asyncStatuses, null, null, uri, true);
     }
 
     protected void setUpGetEntityExpectations(int times) throws Exception {

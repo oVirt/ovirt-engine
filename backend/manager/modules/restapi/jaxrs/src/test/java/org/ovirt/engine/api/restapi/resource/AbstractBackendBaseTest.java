@@ -39,6 +39,9 @@ import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
 import org.ovirt.engine.core.common.interfaces.ErrorTranslator;
 import org.ovirt.engine.core.common.interfaces.SearchType;
+import org.ovirt.engine.core.common.job.Job;
+import org.ovirt.engine.core.common.job.JobExecutionStatus;
+import org.ovirt.engine.core.common.queries.GetJobByJobIdQueryParameters;
 import org.ovirt.engine.core.common.queries.GetTasksStatusesByTasksIDsParameters;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
@@ -227,6 +230,8 @@ public abstract class AbstractBackendBaseTest extends Assert {
                 taskReturn,
                 null,
                 null,
+                null,
+                null,
                 baseUri,
                 replay);
     }
@@ -240,6 +245,8 @@ public abstract class AbstractBackendBaseTest extends Assert {
             Object taskReturn,
             ArrayList<Guid> asyncTasks,
             ArrayList<AsyncTaskStatus> asyncStatuses,
+            Guid jobId,
+            JobExecutionStatus jobStatus,
             String baseUri,
             boolean replay) {
         VdcReturnValueBase result = control.createMock(VdcReturnValueBase.class);
@@ -260,17 +267,13 @@ public abstract class AbstractBackendBaseTest extends Assert {
         }
         expect(backend.RunAction(eq(task), eqActionParams(clz, addSession(names), addSession(values)))).andReturn(result);
 
-        expect(result.getHasAsyncTasks()).andReturn(asyncTasks != null).anyTimes();
-        if (asyncTasks != null) {
-            expect(result.getTaskIdList()).andReturn(asyncTasks).anyTimes();
-            VdcQueryReturnValue monitorResult = control.createMock(VdcQueryReturnValue.class);
-            expect(monitorResult.getSucceeded()).andReturn(success).anyTimes();
-            expect(monitorResult.getReturnValue()).andReturn(asyncStatuses).anyTimes();
-            expect(backend.RunQuery(eq(VdcQueryType.GetTasksStatusesByTasksIDs),
-                    eqQueryParams(GetTasksStatusesByTasksIDsParameters.class,
-                            addSession(new String[] {}),
-                            addSession(new Object[] {})))).andReturn(monitorResult);
-        }
+        VdcQueryReturnValue monitorResult = control.createMock(VdcQueryReturnValue.class);
+        expect(monitorResult.getSucceeded()).andReturn(success).anyTimes();
+
+        expect(result.getHasAsyncTasks()).andReturn(asyncTasks != null || jobId!=null).anyTimes();
+        //simulate polling on async task's statuses, and/or job status.
+        setAsyncTaskStatusExpectations(asyncTasks, asyncStatuses, monitorResult, result);
+        setJobStatusExpectations(jobId, jobStatus, monitorResult, result);
 
         UriInfo uriInfo = setUpBasicUriExpectations();
         if (baseUri != null) {
@@ -401,5 +404,35 @@ public abstract class AbstractBackendBaseTest extends Assert {
         }
         ret[values.length] = sessionHelper.getSessionId();
         return ret;
+    }
+
+    private void setAsyncTaskStatusExpectations(ArrayList<Guid> asyncTasks,
+            ArrayList<AsyncTaskStatus> asyncStatuses,
+            VdcQueryReturnValue monitorResult,
+            VdcReturnValueBase result) {
+        if (asyncTasks != null) {
+            expect(result.getTaskIdList()).andReturn(asyncTasks).anyTimes();
+            expect(monitorResult.getReturnValue()).andReturn(asyncStatuses).anyTimes();
+            expect(backend.RunQuery(eq(VdcQueryType.GetTasksStatusesByTasksIDs),
+                    eqQueryParams(GetTasksStatusesByTasksIDsParameters.class,
+                            addSession(new String[]{}),
+                            addSession(new Object[]{})))).andReturn(monitorResult);
+        }
+    }
+
+    private void setJobStatusExpectations(Guid jobId,
+            JobExecutionStatus jobStatus,
+            VdcQueryReturnValue monitorResult,
+            VdcReturnValueBase result) {
+        expect(result.getJobId()).andReturn(jobId).anyTimes();
+        if (jobId!=null) {
+            Job jobMock = control.createMock(org.ovirt.engine.core.common.job.Job.class);
+            expect(jobMock.getStatus()).andReturn(jobStatus);
+            expect(monitorResult.getReturnValue()).andReturn(jobMock).anyTimes();
+            expect(backend.RunQuery(eq(VdcQueryType.GetJobByJobId),
+                    eqQueryParams(GetJobByJobIdQueryParameters.class,
+                            addSession(new String[]{"JobId"}),
+                            addSession(new Object[]{jobId})))).andReturn(monitorResult);
+        }
     }
 }
