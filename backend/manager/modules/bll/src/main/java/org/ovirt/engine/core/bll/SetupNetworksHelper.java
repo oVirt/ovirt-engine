@@ -73,7 +73,7 @@ public class SetupNetworksHelper {
 
             // if its a bond extract to bonds map
             if (bonded) {
-                extractBond(bonds, iface, name);
+                extractBondIfModified(bonds, iface, name);
             } else {
                 if (StringUtils.isNotBlank(bondName)) {
                     extractBondSlave(bondSlaves, iface, bondName);
@@ -93,10 +93,31 @@ public class SetupNetworksHelper {
 
         validateBonds(bonds, bondSlaves);
 
+        detectSlaveChanges(bondSlaves);
+
         extractRemoveNetworks(attachedNetworksNames, getExisitingHostNetworkNames());
         this.removedBonds = extractRemovedBonds(bonds);
 
         return violations;
+    }
+
+    /**
+     * Detect a bond that it's slaves have changed, to add to the modified bonds list.
+     *
+     * @param bondSlaves
+     *            The bond slaves which were sent.
+     */
+    private void detectSlaveChanges(Map<String, List<VdsNetworkInterface>> bondSlaves) {
+        for (Map.Entry<String, List<VdsNetworkInterface>> bondEntry : bondSlaves.entrySet()) {
+            String bondName = bondEntry.getKey();
+            if (!modifiedBonds.containsKey(bondName)) {
+                for (VdsNetworkInterface bondSlave : bondEntry.getValue()) {
+                    if (interfaceWasModified(bondSlave)) {
+                        modifiedBonds.put(bondName, getExistingIfaces().get(bondName));
+                    }
+                }
+            }
+        }
     }
 
     private Map<String, network> getExistingClusterNetworks() {
@@ -156,7 +177,10 @@ public class SetupNetworksHelper {
                 violations.add(VdcBllMessages.NETWROK_ALREADY_ATTACHED_TO_INTERFACE);
             } else {
                 attachedNetworksNames.add(networkName);
-                modifiedNetworks.add(getExistingClusterNetworks().get(networkName));
+
+                if (interfaceWasModified(iface)) {
+                    modifiedNetworks.add(getExistingClusterNetworks().get(networkName));
+                }
             }
 
             // Interface must exist, it was checked before and we can't reach here if it does'nt exist already.
@@ -165,6 +189,18 @@ public class SetupNetworksHelper {
         } else {
             violations.add(VdcBllMessages.NETWORK_NOT_EXISTS_IN_CURRENT_CLUSTER);
         }
+    }
+
+    /**
+     * Check if the given interface was modified (or added).
+     *
+     * @param iface
+     *            The interface to check.
+     * @return <code>true</code> if the interface was changed, or is a new one. <code>false</code> if it existed and
+     *         didn't change.
+     */
+    private boolean interfaceWasModified(VdsNetworkInterface iface) {
+        return !iface.equals(getExistingIfaces().get(iface.getName()));
     }
 
     private boolean isBond(VdsNetworkInterface iface) {
@@ -191,7 +227,17 @@ public class SetupNetworksHelper {
         bondSlaves.put(bondName, value);
     }
 
-    protected void extractBond(Set<String> bonds, VdsNetworkInterface iface, String name) {
+    /**
+     * Extract the bond to the modified bonds list if it was added or the bond interface config has changed.
+     *
+     * @param bonds
+     *            The bond names which have already been processed.
+     * @param iface
+     *            The interface of the bond.
+     * @param name
+     *            The bond name.
+     */
+    protected void extractBondIfModified(Set<String> bonds, VdsNetworkInterface iface, String name) {
         if (StringUtils.isBlank(iface.getNetworkName())) {
             violations.add(VdcBllMessages.NETWROK_NOT_EXISTS);
         } else {
@@ -199,7 +245,9 @@ public class SetupNetworksHelper {
                 violations.add(VdcBllMessages.NETWORK_BOND_NAME_EXISTS);
             } else {
                 bonds.add(name);
-                modifiedBonds.put(name, iface);
+                if (interfaceWasModified(iface)) {
+                    modifiedBonds.put(name, iface);
+                }
             }
         }
     }

@@ -251,14 +251,14 @@ public class SetupNetworksHelperTest {
         VdsNetworkInterface iface = newBond(name);
         iface.setNetworkName("");
 
-        helper.extractBond(bonds, iface, name);
+        helper.extractBondIfModified(bonds, iface, name);
         assertTrue(bonds.isEmpty());
 
         iface.setNetworkName("pink");
-        helper.extractBond(bonds, iface, name);
+        helper.extractBondIfModified(bonds, iface, name);
         assertTrue(bonds.contains(name));
 
-        helper.extractBond(bonds, iface, name);
+        helper.extractBondIfModified(bonds, iface, name);
         assertTrue(bonds.size() == 1);
     }
 
