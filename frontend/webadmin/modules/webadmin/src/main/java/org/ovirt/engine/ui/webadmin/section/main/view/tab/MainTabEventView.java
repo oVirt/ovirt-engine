@@ -3,10 +3,12 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab;
 import java.util.Date;
 
 import org.ovirt.engine.core.common.businessentities.AuditLog;
+import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.AuditLogSeverityColumn;
 import org.ovirt.engine.ui.common.widget.table.column.FullDateTimeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
+import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.events.EventListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabEventPresenter;
@@ -62,20 +64,25 @@ public class MainTabEventView extends AbstractMainTabTableView<AuditLog, EventLi
     void handleViewButtonClick(ClickEvent event) {
         boolean advancedViewEnabled = advancedViewButton.getValue();
 
-        getTable().ensureColumnPresent(AdvancedViewColumns.logTypeColumn, constants.eventIdEvent(), advancedViewEnabled);
-        getTable().ensureColumnPresent(AdvancedViewColumns.userColumn, constants.userEvent(), advancedViewEnabled);
-        getTable().ensureColumnPresent(AdvancedViewColumns.hostColumn, constants.hostEvent(), advancedViewEnabled);
-        getTable().ensureColumnPresent(AdvancedViewColumns.virtualMachineColumn,
-                constants.vmEvent(),
+        getTable().ensureColumnPresent(AdvancedViewColumns.logTypeColumn, constants.eventIdEvent(),
                 advancedViewEnabled);
-        getTable().ensureColumnPresent(AdvancedViewColumns.templateColumn,
-                constants.templateEvent(),
+        getTable().ensureColumnPresent(AdvancedViewColumns.userColumn, constants.userEvent(),
                 advancedViewEnabled);
-        getTable().ensureColumnPresent(AdvancedViewColumns.dataCenterColumn, constants.dcEvent(), advancedViewEnabled);
-        getTable().ensureColumnPresent(AdvancedViewColumns.storageColumn, constants.storageEvent(), advancedViewEnabled);
-        getTable().ensureColumnPresent(AdvancedViewColumns.clusterColumn, constants.clusterEvent(), advancedViewEnabled);
-        getTable().ensureColumnPresent(AdvancedViewColumns.corrIdColumn,
-                constants.eventCorrelationId(),
+        getTable().ensureColumnPresent(AdvancedViewColumns.hostColumn, constants.hostEvent(),
+                advancedViewEnabled);
+        getTable().ensureColumnPresent(AdvancedViewColumns.virtualMachineColumn, constants.vmEvent(),
+                advancedViewEnabled && ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly));
+        getTable().ensureColumnPresent(AdvancedViewColumns.templateColumn, constants.templateEvent(),
+                advancedViewEnabled && ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly));
+        getTable().ensureColumnPresent(AdvancedViewColumns.dataCenterColumn, constants.dcEvent(),
+                advancedViewEnabled && ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly));
+        getTable().ensureColumnPresent(AdvancedViewColumns.storageColumn, constants.storageEvent(),
+                advancedViewEnabled && ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly));
+        getTable().ensureColumnPresent(AdvancedViewColumns.clusterColumn, constants.clusterEvent(),
+                advancedViewEnabled);
+        getTable().ensureColumnPresent(AdvancedViewColumns.volumeColumn, constants.volumeEvent(),
+                advancedViewEnabled && ApplicationModeHelper.isModeSupported(ApplicationMode.GlusterOnly));
+        getTable().ensureColumnPresent(AdvancedViewColumns.corrIdColumn, constants.eventCorrelationId(),
                 advancedViewEnabled);
     }
 
@@ -156,6 +163,13 @@ class AdvancedViewColumns {
         @Override
         public String getValue(AuditLog object) {
             return object.getvds_group_name();
+        }
+    };
+
+    public static final TextColumnWithTooltip<AuditLog> volumeColumn = new TextColumnWithTooltip<AuditLog>() {
+        @Override
+        public String getValue(AuditLog object) {
+            return object.getGlusterVolumeName();
         }
     };
 

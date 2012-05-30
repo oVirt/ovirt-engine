@@ -1574,6 +1574,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Cluster")
     String clusterEvent();
 
+    @DefaultStringValue("Gluster Volume")
+    String volumeEvent();
+
     @DefaultStringValue("Correlation Id")
     String eventCorrelationId();
 
@@ -1921,6 +1924,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Bootable")
     String bootableDisk();
 
+    @Override
     @DefaultStringValue("Description")
     String descriptionDisk();
 

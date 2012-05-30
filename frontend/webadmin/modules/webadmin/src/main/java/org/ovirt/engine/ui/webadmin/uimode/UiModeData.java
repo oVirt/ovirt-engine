@@ -21,7 +21,11 @@ public final class UiModeData extends JavaScriptObject {
     }-*/;
 
     public ApplicationMode getUiMode() {
-        return ApplicationMode.from(Integer.parseInt(getValue()));
+        try {
+            return ApplicationMode.from(Integer.parseInt(getValue()));
+        } catch (NumberFormatException ex) {
+            return null;
+        }
     }
 
 }
