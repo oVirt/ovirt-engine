@@ -153,9 +153,6 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
                 VolumeModel innerVolumeModel = (VolumeModel) volumeListModel.getWindow();
                 ArrayList<storage_pool> dataCenters = (ArrayList<storage_pool>) result;
 
-                innerVolumeModel.getDataCenter().setItems(dataCenters);
-                innerVolumeModel.getDataCenter().setSelectedItem(Linq.FirstOrDefault(dataCenters));
-
                 if (volumeListModel.getSystemTreeSelectedItem() != null)
                 {
                     switch (volumeListModel.getSystemTreeSelectedItem().getType())
@@ -164,8 +161,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
                     case Cluster:
                     case Cluster_Gluster:
                         VDSGroup cluster = (VDSGroup) volumeListModel.getSystemTreeSelectedItem().getEntity();
-                        for (storage_pool dc : (ArrayList<storage_pool>) innerVolumeModel.getDataCenter()
-                                .getItems())
+                        for (storage_pool dc : dataCenters)
                         {
                             if (dc.getId().equals(cluster.getstorage_pool_id()))
                             {
@@ -199,8 +195,15 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
                                 .cannotChooseVolumesDataCenterinTreeContect());
                         break;
                     default:
+                        innerVolumeModel.getDataCenter().setItems(dataCenters);
+                        innerVolumeModel.getDataCenter().setSelectedItem(Linq.FirstOrDefault(dataCenters));
                         break;
                     }
+                }
+                else
+                {
+                    innerVolumeModel.getDataCenter().setItems(dataCenters);
+                    innerVolumeModel.getDataCenter().setSelectedItem(Linq.FirstOrDefault(dataCenters));
                 }
 
                 UICommand command = new UICommand("onCreateVolume", volumeListModel); //$NON-NLS-1$

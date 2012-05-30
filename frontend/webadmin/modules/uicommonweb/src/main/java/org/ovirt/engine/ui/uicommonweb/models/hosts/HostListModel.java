@@ -567,9 +567,6 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
                 HostModel innerHostModel = (HostModel) hostListModel.getWindow();
                 ArrayList<storage_pool> dataCenters = (ArrayList<storage_pool>) result;
 
-                innerHostModel.getDataCenter().setItems(dataCenters);
-                innerHostModel.getDataCenter().setSelectedItem(Linq.FirstOrDefault(dataCenters));
-
                 if (hostListModel.getSystemTreeSelectedItem() != null)
                 {
                     switch (hostListModel.getSystemTreeSelectedItem().getType())
@@ -581,8 +578,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
                     case Hosts:
                     case Cluster:
                         VDSGroup cluster = (VDSGroup) hostListModel.getSystemTreeSelectedItem().getEntity();
-                        for (storage_pool dc : (ArrayList<storage_pool>) innerHostModel.getDataCenter()
-                                .getItems())
+                        for (storage_pool dc : dataCenters)
                         {
                             if (dc.getId().equals(cluster.getstorage_pool_id()))
                             {
@@ -594,6 +590,8 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
                         }
                         innerHostModel.getDataCenter().setIsChangable(false);
                         innerHostModel.getDataCenter().setInfo("Cannot choose Host's Data Center in tree context"); //$NON-NLS-1$
+                        innerHostModel.getCluster().setItems(Arrays.asList(cluster));
+                        innerHostModel.getCluster().setSelectedItem(cluster);
                         innerHostModel.getCluster().setIsChangable(false);
                         innerHostModel.getCluster().setInfo("Cannot choose Host's Cluster in tree context"); //$NON-NLS-1$
                         break;
@@ -607,8 +605,15 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
                         innerHostModel.getDataCenter().setInfo("Cannot choose Host's Data Center in tree context"); //$NON-NLS-1$
                         break;
                     default:
+                        innerHostModel.getDataCenter().setItems(dataCenters);
+                        innerHostModel.getDataCenter().setSelectedItem(Linq.FirstOrDefault(dataCenters));
                         break;
                     }
+                }
+                else
+                {
+                    innerHostModel.getDataCenter().setItems(dataCenters);
+                    innerHostModel.getDataCenter().setSelectedItem(Linq.FirstOrDefault(dataCenters));
                 }
 
                 UICommand tempVar = new UICommand("OnSaveFalse", hostListModel); //$NON-NLS-1$
