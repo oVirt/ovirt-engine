@@ -74,6 +74,9 @@ public class PoolItemBehavior extends ItemBehavior
                 new IFrontendActionAsyncCallback() {
                     @Override
                     public void Executed(FrontendActionAsyncResult result) {
+                        if (!result.getReturnValue().getSucceeded()) {
+                            return;
+                        }
 
                         PoolItemBehavior behavior = (PoolItemBehavior) result.getState();
                         VdcReturnValueBase returnValueBase = result.getReturnValue();
