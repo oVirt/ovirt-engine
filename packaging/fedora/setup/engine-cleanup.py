@@ -39,7 +39,7 @@ MSG_RC_ERROR = "Return Code is not zero"
 MSG_ERROR_CONNECT_DB = "Error: Couldn't connect to the database server.\
 Check that connection is working and rerun the cleanup utility"
 MSG_ERROR_BACKUP_DB = "Error: Database backup failed"
-MSG_ERROR_DROP_DB = "Error: Database drop failed"
+MSG_ERROR_DROP_DB = "Error: DB drop operation failed. Check that there are no active connection to the '%s' DB"
 MSG_ERROR_CHECK_LOG = "Error: Cleanup failed.\nplease check log at %s"
 MSG_ERR_FAILED_JBOSS_SERVICE_STILL_RUN = "Error: Can't stop jboss service. Please shut it down manually."
 MSG_ERR_FAILED_STP_JBOSS_SERVICE = "Error: Can't stop JBoss"
@@ -270,8 +270,8 @@ class DB():
             ]
             output, rc = utils.execCmd(cmdList=cmd, failOnError=False, msg=MSG_ERROR_DROP_DB)
             if rc:
-                logging.error("DB drop operation failed. Check that there are no active connection to the '%s' DB." % dbname)
-                raise Exception(MSG_ERROR_DROP_DB)
+                logging.error(MSG_ERROR_DROP_DB % dbname)
+                raise Exception(MSG_ERROR_DROP_DB % dbname)
         self.dropped = True
         logging.debug("DB Drop completed successfully")
 
