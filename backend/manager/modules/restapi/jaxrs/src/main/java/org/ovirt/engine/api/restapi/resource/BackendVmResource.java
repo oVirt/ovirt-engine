@@ -30,7 +30,7 @@ import org.ovirt.engine.api.resource.StatisticsResource;
 import org.ovirt.engine.api.resource.VmDisksResource;
 import org.ovirt.engine.api.resource.VmNicsResource;
 import org.ovirt.engine.api.resource.VmResource;
-import org.ovirt.engine.api.resource.utils.UsbResourceUtils;
+import org.ovirt.engine.api.restapi.resource.utils.UsbResourceUtils;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ChangeVMClusterParameters;
 import org.ovirt.engine.core.common.action.HibernateVmParameters;

@@ -23,7 +23,7 @@ import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.api.model.VMs;
 import org.ovirt.engine.api.resource.VmResource;
 import org.ovirt.engine.api.resource.VmsResource;
-import org.ovirt.engine.api.resource.utils.UsbResourceUtils;
+import org.ovirt.engine.api.restapi.resource.utils.UsbResourceUtils;
 import org.ovirt.engine.api.restapi.types.DiskMapper;
 import org.ovirt.engine.api.model.Payload;
 import org.ovirt.engine.api.model.Payloads;

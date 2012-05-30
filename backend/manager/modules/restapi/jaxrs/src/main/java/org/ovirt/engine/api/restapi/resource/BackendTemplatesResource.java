@@ -12,7 +12,7 @@ import org.ovirt.engine.api.model.Templates;
 import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.api.resource.TemplateResource;
 import org.ovirt.engine.api.resource.TemplatesResource;
-import org.ovirt.engine.api.resource.utils.UsbResourceUtils;
+import org.ovirt.engine.api.restapi.resource.utils.UsbResourceUtils;
 
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;

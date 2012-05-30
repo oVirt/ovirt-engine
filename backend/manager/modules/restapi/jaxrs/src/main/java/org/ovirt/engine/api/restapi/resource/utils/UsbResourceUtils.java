@@ -1,4 +1,4 @@
-package org.ovirt.engine.api.resource.utils;
+package org.ovirt.engine.api.restapi.resource.utils;
 
 import org.ovirt.engine.api.model.Usb;
 import org.ovirt.engine.api.model.UsbType;

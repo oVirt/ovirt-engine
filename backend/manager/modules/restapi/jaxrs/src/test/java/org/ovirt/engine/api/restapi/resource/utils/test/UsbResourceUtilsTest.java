@@ -1,7 +1,8 @@
-package org.ovirt.engine.api.resource.utils;
+package org.ovirt.engine.api.restapi.resource.utils.test;
 
 import org.junit.Test;
 import org.ovirt.engine.api.model.Usb;
+import org.ovirt.engine.api.restapi.resource.utils.UsbResourceUtils;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.compat.Version;

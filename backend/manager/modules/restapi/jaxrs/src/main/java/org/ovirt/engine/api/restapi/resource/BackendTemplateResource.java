@@ -14,7 +14,7 @@ import org.ovirt.engine.api.resource.CreationResource;
 import org.ovirt.engine.api.resource.ReadOnlyDevicesResource;
 import org.ovirt.engine.api.resource.TemplateDisksResource;
 import org.ovirt.engine.api.resource.TemplateResource;
-import org.ovirt.engine.api.resource.utils.UsbResourceUtils;
+import org.ovirt.engine.api.restapi.resource.utils.UsbResourceUtils;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.MoveVmParameters;
 import org.ovirt.engine.core.common.action.UpdateVmTemplateParameters;
