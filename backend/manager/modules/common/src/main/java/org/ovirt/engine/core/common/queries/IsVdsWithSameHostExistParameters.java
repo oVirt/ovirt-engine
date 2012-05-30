@@ -13,11 +13,6 @@ public class IsVdsWithSameHostExistParameters extends VdcQueryParametersBase {
         return _hostName;
     }
 
-    @Override
-    public RegisterableQueryReturnDataType GetReturnedDataTypeByVdcQueryType(VdcQueryType queryType) {
-        return RegisterableQueryReturnDataType.UNDEFINED;
-    }
-
     public IsVdsWithSameHostExistParameters() {
     }
 }

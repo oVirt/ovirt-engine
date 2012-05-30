@@ -4,9 +4,7 @@ import java.io.Serializable;
 
 import org.ovirt.engine.core.compat.*;
 
-import org.ovirt.engine.core.common.queries.*;
-
-public class IVdcQueryable extends IRegisterQueryUpdatedData implements Serializable {
+public class IVdcQueryable implements Serializable {
     private static final long serialVersionUID = 4622458656586042539L;
 
     public Object getQueryableId() {

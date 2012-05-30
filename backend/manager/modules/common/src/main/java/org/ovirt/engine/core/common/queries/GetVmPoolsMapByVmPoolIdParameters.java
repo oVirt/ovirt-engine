@@ -9,11 +9,6 @@ public class GetVmPoolsMapByVmPoolIdParameters extends GetVmPoolByIdParametersBa
         super(poolId);
     }
 
-    @Override
-    public RegisterableQueryReturnDataType GetReturnedDataTypeByVdcQueryType(VdcQueryType queryType) {
-        return RegisterableQueryReturnDataType.UNDEFINED;
-    }
-
     public GetVmPoolsMapByVmPoolIdParameters() {
     }
 }

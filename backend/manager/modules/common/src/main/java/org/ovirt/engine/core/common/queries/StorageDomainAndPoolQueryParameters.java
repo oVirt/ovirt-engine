@@ -20,11 +20,6 @@ public class StorageDomainAndPoolQueryParameters extends StorageDomainQueryParam
         setStoragePoolId(storagePoolId);
     }
 
-    @Override
-    public RegisterableQueryReturnDataType GetReturnedDataTypeByVdcQueryType(VdcQueryType queryType) {
-        return RegisterableQueryReturnDataType.IQUERYABLE;
-    }
-
     public StorageDomainAndPoolQueryParameters() {
     }
 }

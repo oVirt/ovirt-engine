@@ -22,11 +22,6 @@ public class GetAllVmSnapshotsByDriveParameters extends VdcQueryParametersBase {
         return _drive;
     }
 
-    @Override
-    public RegisterableQueryReturnDataType GetReturnedDataTypeByVdcQueryType(VdcQueryType queryType) {
-        return RegisterableQueryReturnDataType.UNDEFINED;
-    }
-
     public GetAllVmSnapshotsByDriveParameters() {
     }
 }

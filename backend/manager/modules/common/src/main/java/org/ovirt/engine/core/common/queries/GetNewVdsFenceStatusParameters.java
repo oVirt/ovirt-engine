@@ -95,10 +95,4 @@ public class GetNewVdsFenceStatusParameters extends VdcQueryParametersBase {
     public boolean getIsNewHost() {
         return _isNewHost;
     }
-
-    @Override
-    public RegisterableQueryReturnDataType GetReturnedDataTypeByVdcQueryType(VdcQueryType queryType) {
-        return RegisterableQueryReturnDataType.IQUERYABLE;
-    }
-
 }

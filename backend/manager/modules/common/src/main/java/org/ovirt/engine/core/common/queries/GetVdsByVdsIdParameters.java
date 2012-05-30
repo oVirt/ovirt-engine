@@ -15,16 +15,6 @@ public class GetVdsByVdsIdParameters extends VdcQueryParametersBase {
         return _vdsId;
     }
 
-    @Override
-    public RegisterableQueryReturnDataType GetReturnedDataTypeByVdcQueryType(VdcQueryType queryType) {
-        switch (queryType) {
-        case GetVdsInterfacesByVdsId:
-            return RegisterableQueryReturnDataType.LIST_IQUERYABLE;
-        default:
-            return RegisterableQueryReturnDataType.IQUERYABLE;
-        }
-    }
-
     public GetVdsByVdsIdParameters() {
     }
 }

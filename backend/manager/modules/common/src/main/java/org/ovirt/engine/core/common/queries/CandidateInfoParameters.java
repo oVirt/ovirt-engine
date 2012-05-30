@@ -29,11 +29,6 @@ public class CandidateInfoParameters extends GetImportCandidatesQueryParameters 
         setIsName(isName);
     }
 
-    @Override
-    public RegisterableQueryReturnDataType GetReturnedDataTypeByVdcQueryType(VdcQueryType queryType) {
-        return RegisterableQueryReturnDataType.UNDEFINED;
-    }
-
     public CandidateInfoParameters() {
     }
 }

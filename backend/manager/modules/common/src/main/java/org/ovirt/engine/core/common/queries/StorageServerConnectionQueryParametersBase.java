@@ -17,11 +17,6 @@ public class StorageServerConnectionQueryParametersBase extends VdcQueryParamete
         setServerConnectionId(serverConnectionId);
     }
 
-    @Override
-    public RegisterableQueryReturnDataType GetReturnedDataTypeByVdcQueryType(VdcQueryType queryType) {
-        return RegisterableQueryReturnDataType.UNDEFINED;
-    }
-
     public StorageServerConnectionQueryParametersBase() {
     }
 }

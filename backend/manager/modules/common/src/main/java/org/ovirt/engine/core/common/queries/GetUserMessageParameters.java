@@ -15,11 +15,6 @@ public class GetUserMessageParameters extends VdcQueryParametersBase {
         return _id;
     }
 
-    @Override
-    public RegisterableQueryReturnDataType GetReturnedDataTypeByVdcQueryType(VdcQueryType queryType) {
-        return RegisterableQueryReturnDataType.UNDEFINED;
-    }
-
     public GetUserMessageParameters() {
     }
 }

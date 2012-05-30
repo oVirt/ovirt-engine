@@ -13,11 +13,6 @@ public class IsVdsWithSameNameExistParameters extends VdcQueryParametersBase {
         return _vdsName;
     }
 
-    @Override
-    public RegisterableQueryReturnDataType GetReturnedDataTypeByVdcQueryType(VdcQueryType queryType) {
-        return RegisterableQueryReturnDataType.UNDEFINED;
-    }
-
     public IsVdsWithSameNameExistParameters() {
     }
 }

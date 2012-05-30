@@ -7,11 +7,6 @@ public class GetTagByTagNameParameters extends GetTagByTagNameParametersBase {
         super(tagName);
     }
 
-    @Override
-    public RegisterableQueryReturnDataType GetReturnedDataTypeByVdcQueryType(VdcQueryType queryType) {
-        return RegisterableQueryReturnDataType.UNDEFINED;
-    }
-
     public GetTagByTagNameParameters() {
     }
 }

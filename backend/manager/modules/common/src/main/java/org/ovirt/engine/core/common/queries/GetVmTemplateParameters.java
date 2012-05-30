@@ -15,18 +15,6 @@ public class GetVmTemplateParameters extends VdcQueryParametersBase {
         return _id;
     }
 
-    @Override
-    public RegisterableQueryReturnDataType GetReturnedDataTypeByVdcQueryType(VdcQueryType queryType) {
-        switch (queryType) {
-        case GetVmTemplate:
-            return RegisterableQueryReturnDataType.IQUERYABLE;
-        case GetTemplateInterfacesByTemplateId:
-            return RegisterableQueryReturnDataType.LIST_IQUERYABLE;
-        default:
-            return RegisterableQueryReturnDataType.UNDEFINED;
-        }
-    }
-
     public GetVmTemplateParameters() {
     }
 }

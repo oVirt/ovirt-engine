@@ -7,11 +7,6 @@ public class GetTagUserGroupMapByTagNameParameters extends GetTagByTagNameParame
         super(tagName);
     }
 
-    @Override
-    public RegisterableQueryReturnDataType GetReturnedDataTypeByVdcQueryType(VdcQueryType queryType) {
-        return RegisterableQueryReturnDataType.UNDEFINED;
-    }
-
     public GetTagUserGroupMapByTagNameParameters() {
     }
 }

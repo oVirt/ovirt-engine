@@ -55,9 +55,4 @@ public class GetStorageDomainsByConnectionParameters extends VdcQueryParametersB
     public void setConnection(String connection) {
         this.connection = connection;
     }
-
-    @Override
-    public RegisterableQueryReturnDataType GetReturnedDataTypeByVdcQueryType(VdcQueryType queryType) {
-        return RegisterableQueryReturnDataType.LIST_IQUERYABLE;
-    }
 }

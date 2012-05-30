@@ -24,11 +24,6 @@ public class GetConfigurationValueParameters extends VdcQueryParametersBase {
         privateVersion = value;
     }
 
-    @Override
-    public RegisterableQueryReturnDataType GetReturnedDataTypeByVdcQueryType(VdcQueryType queryType) {
-        return RegisterableQueryReturnDataType.UNDEFINED;
-    }
-
     public GetConfigurationValueParameters() {
     }
 }

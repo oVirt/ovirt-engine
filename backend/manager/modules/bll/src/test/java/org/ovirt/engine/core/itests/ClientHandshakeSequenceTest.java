@@ -9,7 +9,6 @@ import org.ovirt.engine.core.common.action.LoginUserParameters;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.RunVmParams;
-import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -42,46 +41,6 @@ public class ClientHandshakeSequenceTest extends AbstractBackendTest {
                 "client_type"));
         assertTrue(value.getSucceeded());
         assertNotNull(value.getActionReturnValue());
-    }
-
-    @Test
-    public void testRegisterBookmarksQuery() throws InterruptedException {
-        Guid guid = Guid.NewGuid();
-        RegisterQueryParameters params = new RegisterQueryParameters(guid, VdcQueryType.GetAllBookmarks,
-                new VdcQueryParametersBase());
-        VdcQueryReturnValue value = backend.runInternalQuery(VdcQueryType.RegisterQuery, params);
-        assertNotNull(value);
-        assertTrue(value.getSucceeded());
-    }
-
-    @Test
-    public void testRegisterVmsSearch() {
-        Guid guid = Guid.NewGuid();
-        SearchParameters searchParams = new SearchParameters("VM:*", SearchType.VM);
-        RegisterQueryParameters params = new RegisterQueryParameters(guid, VdcQueryType.Search, searchParams);
-        VdcQueryReturnValue value = backend.runInternalQuery(VdcQueryType.RegisterQuery, params);
-        assertNotNull(value);
-        assertTrue(value.getSucceeded());
-    }
-
-    @Test
-    public void testRegisterDatacentersSearch() {
-        Guid guid = Guid.NewGuid();
-        SearchParameters searchParams = new SearchParameters("DATACENTER:*", SearchType.StoragePool);
-        RegisterQueryParameters params = new RegisterQueryParameters(guid, VdcQueryType.Search, searchParams);
-        VdcQueryReturnValue value = backend.runInternalQuery(VdcQueryType.RegisterQuery, params);
-        assertNotNull(value);
-        assertTrue(value.getSucceeded());
-    }
-
-    @Test
-    public void testRegisterHostsSearch() {
-        Guid guid = Guid.NewGuid();
-        SearchParameters searchParams = new SearchParameters("HOST:*", SearchType.VDS);
-        RegisterQueryParameters params = new RegisterQueryParameters(guid, VdcQueryType.Search, searchParams);
-        VdcQueryReturnValue value = backend.runInternalQuery(VdcQueryType.RegisterQuery, params);
-        assertNotNull(value);
-        assertTrue(value.getSucceeded());
     }
 
     @Test

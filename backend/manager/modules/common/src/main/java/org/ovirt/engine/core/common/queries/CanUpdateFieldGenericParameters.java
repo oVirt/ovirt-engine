@@ -27,11 +27,6 @@ public class CanUpdateFieldGenericParameters extends VdcQueryParametersBase {
         return _fieldName;
     }
 
-    @Override
-    public RegisterableQueryReturnDataType GetReturnedDataTypeByVdcQueryType(VdcQueryType queryType) {
-        return RegisterableQueryReturnDataType.UNDEFINED;
-    }
-
     public CanUpdateFieldGenericParameters() {
     }
 }

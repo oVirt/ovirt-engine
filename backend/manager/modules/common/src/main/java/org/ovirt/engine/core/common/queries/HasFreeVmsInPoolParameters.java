@@ -9,11 +9,6 @@ public class HasFreeVmsInPoolParameters extends GetVmPoolByIdParametersBase {
         super(poolId);
     }
 
-    @Override
-    public RegisterableQueryReturnDataType GetReturnedDataTypeByVdcQueryType(VdcQueryType queryType) {
-        return RegisterableQueryReturnDataType.UNDEFINED;
-    }
-
     public HasFreeVmsInPoolParameters() {
     }
 }

@@ -11,7 +11,6 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
-import org.ovirt.engine.core.common.queries.AsyncQueryResults;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -53,12 +52,6 @@ public class GenericApiService {
     public VdcQueryReturnValue RunQuery(VdcQueryType actionType, VdcQueryParametersBase parameters) {
         VdcQueryReturnValue returnValue = backend.RunQuery(actionType, parameters);
         return returnValue;
-    }
-
-    public AsyncQueryResults GetAsyncQueryResults() {
-        // AsyncQueryResults returnValue =
-        // Backend.getInstance().GetAsyncQueryResults();
-        return backend.GetAsyncQueryResults();
     }
 
     public VdcReturnValueBase Login(LoginUserParameters parameters) {

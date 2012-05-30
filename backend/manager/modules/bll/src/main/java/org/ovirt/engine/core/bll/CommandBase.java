@@ -44,7 +44,6 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcFault;
-import org.ovirt.engine.core.common.interfaces.IBackendCallBackServer;
 import org.ovirt.engine.core.common.job.ExternalSystemType;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.job.StepEnum;
@@ -90,7 +89,6 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     protected static final long BYTES_IN_GB = 1024 * 1024 * 1024;
     private T _parameters;
     private VdcReturnValueBase _returnValue;
-    private final IBackendCallBackServer _backendCallBack = CallbackServer.Instance;
     private CommandActionState _actionState = CommandActionState.EXECUTE;
     private VdcActionType actionType;
     private final List<Class<?>> validationGroups = new ArrayList<Class<?>>();
@@ -956,19 +954,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
 
     private void ProcessExceptionToClient(VdcFault fault) {
         fault.setSessionID(getParameters().getSessionId());
-
-        if (getParameters().getMultipleAction()) {
-            if (_backendCallBack != null) {
-                try {
-                    Guid FaultQueryId = _backendCallBack.BackendException(getActionType(), fault);
-                    BackendCallBacksDirector.getInstance().RegisterFaultQuery(FaultQueryId, fault.getSessionID());
-                } catch (RuntimeException ex) {
-                    log.errorFormat("{0}", ex);
-                }
-            }
-        } else {
-            _returnValue.setFault(fault);
-        }
+        _returnValue.setFault(fault);
     }
 
     /**

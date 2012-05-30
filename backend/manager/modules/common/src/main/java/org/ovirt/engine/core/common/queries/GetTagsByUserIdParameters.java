@@ -13,11 +13,6 @@ public class GetTagsByUserIdParameters extends VdcQueryParametersBase {
         return _userId;
     }
 
-    @Override
-    public RegisterableQueryReturnDataType GetReturnedDataTypeByVdcQueryType(VdcQueryType queryType) {
-        return RegisterableQueryReturnDataType.UNDEFINED;
-    }
-
     public GetTagsByUserIdParameters() {
     }
 }

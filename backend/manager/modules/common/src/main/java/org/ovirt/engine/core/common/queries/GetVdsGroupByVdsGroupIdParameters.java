@@ -15,11 +15,6 @@ public class GetVdsGroupByVdsGroupIdParameters extends VdcQueryParametersBase {
         return _vdsGroupId;
     }
 
-    @Override
-    public RegisterableQueryReturnDataType GetReturnedDataTypeByVdcQueryType(VdcQueryType queryType) {
-        return RegisterableQueryReturnDataType.IQUERYABLE;
-    }
-
     public GetVdsGroupByVdsGroupIdParameters() {
     }
 }

@@ -16,11 +16,6 @@ public class GetBookmarkByNameParameters extends VdcQueryParametersBase {
         return _bookmarkName;
     }
 
-    @Override
-    public RegisterableQueryReturnDataType GetReturnedDataTypeByVdcQueryType(VdcQueryType queryType) {
-        return RegisterableQueryReturnDataType.UNDEFINED;
-    }
-
     public GetBookmarkByNameParameters() {
     }
 }

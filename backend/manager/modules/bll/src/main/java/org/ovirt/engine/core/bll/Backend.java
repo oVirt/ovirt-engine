@@ -41,7 +41,6 @@ import org.ovirt.engine.core.common.interfaces.ErrorTranslator;
 import org.ovirt.engine.core.common.interfaces.ITagsHandler;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
-import org.ovirt.engine.core.common.queries.AsyncQueryResults;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
@@ -586,13 +585,6 @@ public class Backend implements BackendInternal, BackendRemote {
     }
 
     @Override
-    public AsyncQueryResults GetAsyncQueryResults() {
-        return BackendCallBacksDirector.getInstance().GetAsyncQueryResults();
-    }
-
-    private static final Log log = LogFactory.getLog(Backend.class);
-
-    @Override
     @ExcludeClassInterceptors
     public VdcReturnValueBase runInternalAction(VdcActionType actionType,
             VdcActionParametersBase parameters,
@@ -600,4 +592,5 @@ public class Backend implements BackendInternal, BackendRemote {
         return runActionImpl(actionType, parameters, true, context);
     }
 
+    private static final Log log = LogFactory.getLog(Backend.class);
 }

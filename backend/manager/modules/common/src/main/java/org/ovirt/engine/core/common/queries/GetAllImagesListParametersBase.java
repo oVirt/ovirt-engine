@@ -16,9 +16,4 @@ public abstract class GetAllImagesListParametersBase extends VdcQueryParametersB
     public void setForceRefresh(boolean forceRefresh) {
         this.forceRefresh = forceRefresh;
     }
-
-    @Override
-    public RegisterableQueryReturnDataType GetReturnedDataTypeByVdcQueryType(VdcQueryType queryType) {
-        return RegisterableQueryReturnDataType.UNDEFINED;
-    }
 }

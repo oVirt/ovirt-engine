@@ -20,11 +20,6 @@ public class VGQueryParametersBase extends VdsIdParametersBase {
         setVGId(vgID);
     }
 
-    @Override
-    public RegisterableQueryReturnDataType GetReturnedDataTypeByVdcQueryType(VdcQueryType queryType) {
-        return RegisterableQueryReturnDataType.UNDEFINED;
-    }
-
     public VGQueryParametersBase() {
     }
 }

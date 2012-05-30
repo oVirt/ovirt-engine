@@ -13,11 +13,6 @@ public class GetPowerClientByClientInfoParameters extends VdcQueryParametersBase
         return _clientIp;
     }
 
-    @Override
-    public RegisterableQueryReturnDataType GetReturnedDataTypeByVdcQueryType(VdcQueryType queryType) {
-        return RegisterableQueryReturnDataType.IQUERYABLE;
-    }
-
     public GetPowerClientByClientInfoParameters() {
     }
 }

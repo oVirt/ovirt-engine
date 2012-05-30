@@ -13,11 +13,6 @@ public class IsStoragePoolWithSameNameExistParameters extends VdcQueryParameters
         return storagePoolName;
     }
 
-    @Override
-    public RegisterableQueryReturnDataType GetReturnedDataTypeByVdcQueryType(VdcQueryType queryType) {
-        return RegisterableQueryReturnDataType.UNDEFINED;
-    }
-
     public IsStoragePoolWithSameNameExistParameters() {
     }
 }

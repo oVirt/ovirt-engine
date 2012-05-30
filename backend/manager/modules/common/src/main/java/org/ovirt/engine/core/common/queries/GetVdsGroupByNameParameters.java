@@ -13,11 +13,6 @@ public class GetVdsGroupByNameParameters extends VdcQueryParametersBase {
         return _name;
     }
 
-    @Override
-    public RegisterableQueryReturnDataType GetReturnedDataTypeByVdcQueryType(VdcQueryType queryType) {
-        return RegisterableQueryReturnDataType.IQUERYABLE;
-    }
-
     public GetVdsGroupByNameParameters() {
     }
 }

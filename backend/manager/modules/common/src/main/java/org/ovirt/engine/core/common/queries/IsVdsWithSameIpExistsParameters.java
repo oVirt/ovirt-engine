@@ -13,11 +13,6 @@ public class IsVdsWithSameIpExistsParameters extends VdcQueryParametersBase {
         return _ipAddress;
     }
 
-    @Override
-    public RegisterableQueryReturnDataType GetReturnedDataTypeByVdcQueryType(VdcQueryType queryType) {
-        return RegisterableQueryReturnDataType.UNDEFINED;
-    }
-
     public IsVdsWithSameIpExistsParameters() {
     }
 }

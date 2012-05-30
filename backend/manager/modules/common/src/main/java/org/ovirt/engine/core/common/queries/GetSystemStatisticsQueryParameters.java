@@ -16,11 +16,6 @@ public class GetSystemStatisticsQueryParameters extends VdcQueryParametersBase {
         setMax(max);
     }
 
-    @Override
-    public RegisterableQueryReturnDataType GetReturnedDataTypeByVdcQueryType(VdcQueryType queryType) {
-        return RegisterableQueryReturnDataType.UNDEFINED;
-    }
-
     public GetSystemStatisticsQueryParameters() {
     }
 }

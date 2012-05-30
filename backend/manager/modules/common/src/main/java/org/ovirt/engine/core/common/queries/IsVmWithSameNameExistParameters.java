@@ -13,11 +13,6 @@ public class IsVmWithSameNameExistParameters extends VdcQueryParametersBase {
         return _vmName;
     }
 
-    @Override
-    public RegisterableQueryReturnDataType GetReturnedDataTypeByVdcQueryType(VdcQueryType queryType) {
-        return RegisterableQueryReturnDataType.UNDEFINED;
-    }
-
     public IsVmWithSameNameExistParameters() {
     }
 }

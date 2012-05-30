@@ -28,10 +28,6 @@ public class VdcQueryParametersBase implements Serializable {
     public VdcQueryParametersBase() {
     }
 
-    public RegisterableQueryReturnDataType GetReturnedDataTypeByVdcQueryType(VdcQueryType queryType) {
-        return RegisterableQueryReturnDataType.LIST_IQUERYABLE;
-    }
-
     public String getSessionId() {
         return sessionId;
     }

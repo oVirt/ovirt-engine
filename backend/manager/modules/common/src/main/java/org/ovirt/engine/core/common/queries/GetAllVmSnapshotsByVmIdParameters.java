@@ -15,11 +15,6 @@ public class GetAllVmSnapshotsByVmIdParameters extends VdcQueryParametersBase {
         this.vmId = vmId;
     }
 
-    @Override
-    public RegisterableQueryReturnDataType GetReturnedDataTypeByVdcQueryType(VdcQueryType queryType) {
-        return RegisterableQueryReturnDataType.LIST_IQUERYABLE;
-    }
-
     public Guid getVmId() {
         return vmId;
     }

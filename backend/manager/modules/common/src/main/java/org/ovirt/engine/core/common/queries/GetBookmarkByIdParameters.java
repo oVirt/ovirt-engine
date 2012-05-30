@@ -18,11 +18,6 @@ public class GetBookmarkByIdParameters extends VdcQueryParametersBase {
         return _bookmarkId;
     }
 
-    @Override
-    public RegisterableQueryReturnDataType GetReturnedDataTypeByVdcQueryType(VdcQueryType queryType) {
-        return RegisterableQueryReturnDataType.UNDEFINED;
-    }
-
     public GetBookmarkByIdParameters() {
     }
 }

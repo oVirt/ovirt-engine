@@ -240,10 +240,6 @@ public enum VdcQueryType implements Serializable {
     GetEventSubscribersBySubscriberId,
     GetEventSubscribersBySubscriberIdGrouped,
 
-    // Query registration
-    RegisterQuery,
-    UnregisterQuery,
-
     // oVirt
     GetoVirtISOs,
 

@@ -19,17 +19,6 @@ public class StorageDomainQueryParametersBase extends VdcQueryParametersBase {
         setStorageDomainId(storageDomainId);
     }
 
-    @Override
-    public RegisterableQueryReturnDataType GetReturnedDataTypeByVdcQueryType(VdcQueryType queryType) {
-        switch (queryType) {
-        case GetStorageDomainListById:
-        case GetStoragePoolsByStorageDomainId:
-            return RegisterableQueryReturnDataType.LIST_IQUERYABLE;
-        default:
-            return RegisterableQueryReturnDataType.IQUERYABLE;
-        }
-    }
-
     public StorageDomainQueryParametersBase() {
     }
 }

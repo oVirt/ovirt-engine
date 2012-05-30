@@ -5,7 +5,6 @@ import org.ovirt.engine.core.common.action.LogoutUserParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
-import org.ovirt.engine.core.common.queries.AsyncQueryResults;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -35,8 +34,6 @@ public interface BackendLocal {
     VdcReturnValueBase Login(LoginUserParameters parameters);
 
     VdcReturnValueBase Logoff(LogoutUserParameters parameters);
-
-    AsyncQueryResults GetAsyncQueryResults();
 
     // for auto backend
     VdcReturnValueBase RunAutoAction(VdcActionType actionType, VdcActionParametersBase parameters);

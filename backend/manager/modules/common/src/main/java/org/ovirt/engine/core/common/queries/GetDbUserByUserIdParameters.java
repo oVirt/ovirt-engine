@@ -15,11 +15,6 @@ public class GetDbUserByUserIdParameters extends VdcQueryParametersBase {
         return _id;
     }
 
-    @Override
-    public RegisterableQueryReturnDataType GetReturnedDataTypeByVdcQueryType(VdcQueryType queryType) {
-        return RegisterableQueryReturnDataType.IQUERYABLE;
-    }
-
     public GetDbUserByUserIdParameters() {
     }
 }

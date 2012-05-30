@@ -27,11 +27,6 @@ public class GetAllImportCandidatesQueryParameters extends VdcQueryParametersBas
         setCandidateType(candidateType);
     }
 
-    @Override
-    public RegisterableQueryReturnDataType GetReturnedDataTypeByVdcQueryType(VdcQueryType queryType) {
-        return RegisterableQueryReturnDataType.UNDEFINED;
-    }
-
     public GetAllImportCandidatesQueryParameters() {
     }
 }
