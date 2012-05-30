@@ -172,6 +172,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
     public void postDataCenterWithClusterSelectedItemChanged()
     {
         updateQuotaByCluster(null, null);
+        updateMemoryBalloon();
     }
 
     @Override

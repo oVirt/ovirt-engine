@@ -185,6 +185,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
         updateCpuPinningVisibility();
         updateTemplate();
         initNetworkInterfaces(networkBehavior, null);
+        updateMemoryBalloon();
     }
 
     private void updateNetworkInterfacesByTemplate(VmTemplate template) {

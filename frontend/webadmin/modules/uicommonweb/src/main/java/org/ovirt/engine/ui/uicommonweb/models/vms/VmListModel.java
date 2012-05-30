@@ -99,6 +99,7 @@ import static org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModelNetworkAsync
 public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTreeContext, UserSelectedDisplayProtocolManager
 {
 
+    public static final Version BALLOON_DEVICE_MIN_VERSION = Version.v3_2;
     private UICommand newVMCommand;
 
     public UICommand getNewVmCommand() {
@@ -1979,6 +1980,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         getcurrentVm().setKernelParams((String) model.getKernel_parameters().getEntity());
 
         getcurrentVm().setCustomProperties(model.getCustomPropertySheet().getEntity());
+        getcurrentVm().setBalloonEnabled(balloonEnabled(model));
 
         EntityModel displayProtocolSelectedItem = (EntityModel) model.getDisplayProtocol().getSelectedItem();
         getcurrentVm().setDefaultDisplayType((DisplayType) displayProtocolSelectedItem.getEntity());
@@ -2037,6 +2039,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                         Guid.Empty);
                 parameters.setSoundDeviceEnabled((Boolean) model.getIsSoundcardEnabled().getEntity());
                 parameters.setConsoleEnabled((Boolean) model.getIsConsoleDeviceEnabled().getEntity());
+                parameters.setBalloonEnabled(balloonEnabled(model));
 
                 setVmWatchdogToParams(model, parameters);
 
@@ -2068,6 +2071,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                                     Guid.Empty);
                             param.setSoundDeviceEnabled((Boolean) model.getIsSoundcardEnabled().getEntity());
                             param.setConsoleEnabled((Boolean) model.getIsConsoleDeviceEnabled().getEntity());
+                            param.setBalloonEnabled(balloonEnabled(model));
 
                             Frontend.RunAction(VdcActionType.AddVmFromTemplate, param, new NetworkCreateOrUpdateFrontendActionAsyncCallback(model, defaultNetworkCreatingManager), vmListModel);
                             param.setCopyTemplatePermissions((Boolean) model.getCopyPermissions().getEntity());
@@ -2100,6 +2104,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                     VmManagementParametersBase params = new VmManagementParametersBase(getcurrentVm());
                     params.setDiskInfoDestinationMap(model.getDisksAllocationModel().getImageToDestinationDomainMap());
                     params.setConsoleEnabled((Boolean) model.getIsConsoleDeviceEnabled().getEntity());
+                    params.setBalloonEnabled(balloonEnabled(model));
 
                     ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
                     parameters.add(params);
@@ -2144,6 +2149,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                                     setVmWatchdogToParams(model, updateVmParams);
                                     updateVmParams.setSoundDeviceEnabled((Boolean) model.getIsSoundcardEnabled()
                                             .getEntity());
+                                    updateVmParams.setBalloonEnabled(balloonEnabled(model));
 
                                     Frontend.RunAction(VdcActionType.UpdateVm,
                                             updateVmParams, new NetworkUpdateFrontendAsyncCallback(model, defaultNetworkCreatingManager, vmListModel.getcurrentVm().getId()), vmListModel);
@@ -2170,9 +2176,15 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                 setVmWatchdogToParams(model, updateVmParams);
                 updateVmParams.setSoundDeviceEnabled((Boolean) model.getIsSoundcardEnabled().getEntity());
                 updateVmParams.setConsoleEnabled((Boolean) model.getIsConsoleDeviceEnabled().getEntity());
+                updateVmParams.setBalloonEnabled(balloonEnabled(model));
                 Frontend.RunAction(VdcActionType.UpdateVm, updateVmParams, new NetworkUpdateFrontendAsyncCallback(model, defaultNetworkCreatingManager, getcurrentVm().getId()), this);
             }
         }
+    }
+
+    private boolean balloonEnabled(UnitVmModel model) {
+        return (Boolean) model.getMemoryBalloonDeviceEnabled().getEntity()
+                && model.getSelectedCluster().getcompatibility_version().compareTo(BALLOON_DEVICE_MIN_VERSION) >= 0;
     }
 
     private void setVmWatchdogToParams(final UnitVmModel model, VmManagementParametersBase updateVmParams) {

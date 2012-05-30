@@ -1551,4 +1551,7 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("SSH PublicKey")
     String hostPublicKeyLable();
+
+    @DefaultStringValue("Memory Balloon Device Enabled")
+    String memoryBalloonDeviceEnabled();
 }

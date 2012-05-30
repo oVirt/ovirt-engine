@@ -195,6 +195,15 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
 
         getModel().getVncKeyboardLayout().setSelectedItem(vm.getVncKeyboardLayout());
 
+        Frontend.RunQuery(VdcQueryType.IsBalloonEnabled, new IdQueryParameters(getVm().getId()), new AsyncQuery(this,
+                new INewAsyncCallback() {
+                    @Override
+                    public void onSuccess(Object model, Object returnValue) {
+                        getModel().getMemoryBalloonDeviceEnabled().setEntity(((VdcQueryReturnValue)returnValue).getReturnValue());
+                    }
+                }
+        ));
+
         if (vm.isInitialized())
         {
             getModel().getTimeZone()
@@ -240,6 +249,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
         updateQuotaByCluster(vm.getQuotaId(), vm.getQuotaName());
         updateCpuPinningVisibility();
         initNetworkInterfaces();
+        updateMemoryBalloon();
     }
 
     private void initNetworkInterfaces() {

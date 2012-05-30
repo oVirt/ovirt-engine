@@ -465,6 +465,10 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     public EntityModelTextBoxEditor minAllocatedMemoryEditor;
 
     @UiField(provided = true)
+    @Path(value = "memoryBalloonDeviceEnabled.entity")
+    EntityModelCheckBoxEditor isMemoryBalloonDeviceEnabled;
+
+    @UiField(provided = true)
     @Path(value = "provisioningThin_IsSelected.entity")
     @WithElementId("provisioningThin")
     public EntityModelRadioButtonEditor provisioningThinEditor;
@@ -587,6 +591,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         allowConsoleReconnectEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         isSoundcardEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         copyTemplatePermissionsEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
+        isMemoryBalloonDeviceEnabled = new EntityModelCheckBoxEditor(Align.RIGHT);
 
         priorityEditor = new EntityModelCellTable<ListModel>(
                 (Resources) GWT.create(ButtonCellTableResources.class));
@@ -891,6 +896,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         isConsoleDeviceEnabledEditor.setLabel(constants.consoleDeviceEnabled());
         copyTemplatePermissionsEditor.setLabel(constants.copyTemplatePermissions());
         isSmartcardEnabledEditor.setLabel(constants.smartcardVmPopup());
+        isMemoryBalloonDeviceEnabled.setLabel(constants.memoryBalloonDeviceEnabled());
 
         // Pools Tab
         poolTab.setLabel(constants.poolVmPopup());

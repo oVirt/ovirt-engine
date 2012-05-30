@@ -652,6 +652,15 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         }
     }
 
+    protected void updateMemoryBalloon() {
+        if (getModel().getSelectedCluster() != null) {
+            VDSGroup cluster = getModel().getSelectedCluster();
+            boolean hasMemoryBalloon = cluster.getcompatibility_version()
+                    .compareTo(VmListModel.BALLOON_DEVICE_MIN_VERSION) >= 0;
+            getModel().getMemoryBalloonDeviceEnabled().setIsAvailable(hasMemoryBalloon);
+        }
+    }
+
     protected void setupTemplate(VM vm, ListModel model) {
         AsyncDataProvider.getTemplateById(new AsyncQuery(getModel(),
                 new INewAsyncCallback() {

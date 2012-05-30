@@ -432,6 +432,7 @@
 						<g:FlowPanel addStyleNames="{style.sectionPanel}">
 							<g:Label addStyleNames="{style.sectionLabel}" text="{constants.memAllocVmPopup}" />
 							<e:EntityModelTextBoxEditor ui:field="minAllocatedMemoryEditor" />
+							<e:EntityModelCheckBoxEditor addStyleNames="{style.checkbox}" ui:field="isMemoryBalloonDeviceEnabled"/>
 						</g:FlowPanel>
 						<g:FlowPanel ui:field="storageAllocationPanel" addStyleNames="{style.sectionPanel}">
 							<g:HorizontalPanel>

@@ -196,6 +196,7 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
             VmTemplate template = (VmTemplate) getModel().getTemplate().getSelectedItem();
             updateQuotaByCluster(template.getQuotaId(), template.getQuotaName());
         }
+        updateMemoryBalloon();
     }
 
     @Override

@@ -678,6 +678,16 @@ public class UnitVmModel extends Model {
         this.copyPermissions = copyPermissions;
     }
 
+    private EntityModel memoryBalloonDeviceEnabled;
+
+    public EntityModel getMemoryBalloonDeviceEnabled() {
+        return memoryBalloonDeviceEnabled;
+    }
+
+    public void setMemoryBalloonDeviceEnabled(EntityModel memoryBalloonDeviceEnabled) {
+        this.memoryBalloonDeviceEnabled = memoryBalloonDeviceEnabled;
+    }
+
     private NotChangableForVmInPoolListModel privateDisplayProtocol;
 
     public ListModel getDisplayProtocol()
@@ -1112,6 +1122,11 @@ public class UnitVmModel extends Model {
 
         setCdImage(new NotChangableForVmInPoolListModel());
         getCdImage().setIsChangable(false);
+
+        setMemoryBalloonDeviceEnabled(new EntityModel());
+        getMemoryBalloonDeviceEnabled().setEntity(true);
+        getMemoryBalloonDeviceEnabled().setIsAvailable(false);
+
 
         setCdAttached(new NotChangableForVmInPoolEntityModel());
         getCdAttached().getEntityChangedEvent().addListener(new IEventListener() {
