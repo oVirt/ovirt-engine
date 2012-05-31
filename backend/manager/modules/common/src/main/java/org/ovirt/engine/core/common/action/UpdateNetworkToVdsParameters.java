@@ -9,31 +9,31 @@ import org.ovirt.engine.core.compat.Guid;
 public class UpdateNetworkToVdsParameters extends AttachNetworkToVdsParameters {
     private static final long serialVersionUID = 5938344434089627682L;
 
-    public UpdateNetworkToVdsParameters(Guid vdsId, network net, java.util.ArrayList<VdsNetworkInterface> interfaces) {
+    private ArrayList<VdsNetworkInterface> interfaces;
+    private String bondName;
+
+    public UpdateNetworkToVdsParameters() {
+    }
+
+    public UpdateNetworkToVdsParameters(Guid vdsId, network net, ArrayList<VdsNetworkInterface> interfaces) {
         super(vdsId, net, null);
         setInterfaces(interfaces);
     }
 
-    private java.util.ArrayList<VdsNetworkInterface> privateInterfaces;
-
-    public java.util.ArrayList<VdsNetworkInterface> getInterfaces() {
-        return privateInterfaces == null ? new ArrayList<VdsNetworkInterface>() : privateInterfaces;
+    public ArrayList<VdsNetworkInterface> getInterfaces() {
+        return interfaces == null ? new ArrayList<VdsNetworkInterface>() : interfaces;
     }
 
-    public void setInterfaces(java.util.ArrayList<VdsNetworkInterface> value) {
-        privateInterfaces = value;
+    public void setInterfaces(ArrayList<VdsNetworkInterface> value) {
+        interfaces = value;
     }
-
-    private String privateBondName;
 
     public String getBondName() {
-        return privateBondName;
+        return bondName;
     }
 
     public void setBondName(String value) {
-        privateBondName = value;
+        bondName = value;
     }
 
-    public UpdateNetworkToVdsParameters() {
-    }
 }

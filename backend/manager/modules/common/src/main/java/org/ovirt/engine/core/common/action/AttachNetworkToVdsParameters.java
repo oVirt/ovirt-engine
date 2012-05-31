@@ -7,94 +7,18 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class AttachNetworkToVdsParameters extends VdsActionParameters {
     private static final long serialVersionUID = 5446434263733512827L;
-    private boolean privateCheckConnectivity;
 
-    public boolean getCheckConnectivity() {
-        return privateCheckConnectivity;
-    }
+    private boolean checkConnectivity;
+    private network network;
+    private String oldNetworkName;
+    private VdsNetworkInterface iface;
+    private String address;
+    private String subnet;
+    private String gateway;
+    private String bondingOptions;
+    private NetworkBootProtocol bootProtocol = NetworkBootProtocol.None;
 
-    public void setCheckConnectivity(boolean value) {
-        privateCheckConnectivity = value;
-    }
-
-    private network privateNetwork;
-
-    public network getNetwork() {
-        return privateNetwork;
-    }
-
-    public void setNetwork(network value) {
-        privateNetwork = value;
-    }
-
-    private String privateOldNetworkName;
-
-    public String getOldNetworkName() {
-        return privateOldNetworkName;
-    }
-
-    public void setOldNetworkName(String value) {
-        privateOldNetworkName = value;
-    }
-
-    private VdsNetworkInterface privateInterface;
-
-    public VdsNetworkInterface getInterface() {
-        return privateInterface;
-    }
-
-    public void setInterface(VdsNetworkInterface value) {
-        privateInterface = value;
-    }
-
-    private String privateAddress;
-
-    public String getAddress() {
-        return privateAddress;
-    }
-
-    public void setAddress(String value) {
-        privateAddress = value;
-    }
-
-    private String privateSubnet;
-
-    public String getSubnet() {
-        return privateSubnet;
-    }
-
-    public void setSubnet(String value) {
-        privateSubnet = value;
-    }
-
-    private String privateGateway;
-
-    public String getGateway() {
-        return privateGateway;
-    }
-
-    public void setGateway(String value) {
-        privateGateway = value;
-    }
-
-    private String privateBondingOptions;
-
-    public String getBondingOptions() {
-        return privateBondingOptions;
-    }
-
-    public void setBondingOptions(String value) {
-        privateBondingOptions = value;
-    }
-
-    private NetworkBootProtocol privateBootProtocol = NetworkBootProtocol.forValue(0);
-
-    public NetworkBootProtocol getBootProtocol() {
-        return privateBootProtocol;
-    }
-
-    public void setBootProtocol(NetworkBootProtocol value) {
-        privateBootProtocol = value;
+    public AttachNetworkToVdsParameters() {
     }
 
     public AttachNetworkToVdsParameters(Guid vdsId, network net, VdsNetworkInterface iface) {
@@ -104,6 +28,75 @@ public class AttachNetworkToVdsParameters extends VdsActionParameters {
         setInterface(iface);
     }
 
-    public AttachNetworkToVdsParameters() {
+    public boolean getCheckConnectivity() {
+        return checkConnectivity;
+    }
+
+    public void setCheckConnectivity(boolean value) {
+        checkConnectivity = value;
+    }
+
+    public network getNetwork() {
+        return network;
+    }
+
+    public void setNetwork(network value) {
+        network = value;
+    }
+
+    public String getOldNetworkName() {
+        return oldNetworkName;
+    }
+
+    public void setOldNetworkName(String value) {
+        oldNetworkName = value;
+    }
+
+    public VdsNetworkInterface getInterface() {
+        return iface;
+    }
+
+    public void setInterface(VdsNetworkInterface value) {
+        iface = value;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String value) {
+        address = value;
+    }
+
+    public String getSubnet() {
+        return subnet;
+    }
+
+    public void setSubnet(String value) {
+        subnet = value;
+    }
+
+    public String getGateway() {
+        return gateway;
+    }
+
+    public void setGateway(String value) {
+        gateway = value;
+    }
+
+    public String getBondingOptions() {
+        return bondingOptions;
+    }
+
+    public void setBondingOptions(String value) {
+        bondingOptions = value;
+    }
+
+    public NetworkBootProtocol getBootProtocol() {
+        return bootProtocol;
+    }
+
+    public void setBootProtocol(NetworkBootProtocol value) {
+        bootProtocol = value;
     }
 }

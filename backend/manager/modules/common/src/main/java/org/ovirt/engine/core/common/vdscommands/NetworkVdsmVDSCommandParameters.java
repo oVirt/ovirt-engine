@@ -7,146 +7,25 @@ import org.ovirt.engine.core.common.businessentities.network;
 import org.ovirt.engine.core.compat.Guid;
 
 public class NetworkVdsmVDSCommandParameters extends VdsIdVDSCommandParametersBase {
-    private String privateNetworkName;
 
-    public String getNetworkName() {
-        return privateNetworkName;
-    }
-
-    private void setNetworkName(String value) {
-        privateNetworkName = value;
-    }
-
-    private String privateOldNetworkName;
-
-    public String getOldNetworkName() {
-        return privateOldNetworkName;
-    }
-
-    public void setOldNetworkName(String value) {
-        privateOldNetworkName = value;
-    }
-
-    private String privateHostAddr;
-
-    public String getHostAddr() {
-        return privateHostAddr;
-    }
-
-    public void setHostAddr(String value) {
-        privateHostAddr = value;
-    }
-
-    private boolean privateCheckConnectivity;
-
-    public boolean getCheckConnectivity() {
-        return privateCheckConnectivity;
-    }
-
-    public void setCheckConnectivity(boolean value) {
-        privateCheckConnectivity = value;
-    }
-
-    private int privateConnectionTimeout;
-
-    public int getConnectionTimeout() {
-        return privateConnectionTimeout;
-    }
-
-    public void setConnectionTimeout(int value) {
-        privateConnectionTimeout = value;
-    }
-
-    private Integer privateVlanId;
-
-    public Integer getVlanId() {
-        return privateVlanId;
-    }
-
-    private void setVlanId(Integer value) {
-        privateVlanId = value;
-    }
-
-    private String privateBondName;
-
-    public String getBondName() {
-        return privateBondName;
-    }
-
-    private void setBondName(String value) {
-        privateBondName = value;
-    }
-
-    private String[] privateNics;
-
-    public String[] getNics() {
-        return privateNics == null ? new String[0] : privateNics;
-    }
-
-    private void setNics(String[] value) {
-        privateNics = value;
-    }
-
-    private String privateInetAddr;
-
-    public String getInetAddr() {
-        return privateInetAddr;
-    }
-
-    private void setInetAddr(String value) {
-        privateInetAddr = value;
-    }
-
-    private String privateNetworkMask;
-
-    public String getNetworkMask() {
-        return privateNetworkMask;
-    }
-
-    private void setNetworkMask(String value) {
-        privateNetworkMask = value;
-    }
-
-    private String privateGateway;
-
-    public String getGateway() {
-        return privateGateway;
-    }
-
-    private void setGateway(String value) {
-        privateGateway = value;
-    }
-
-    private boolean privateStp;
-
-    public boolean getStp() {
-        return privateStp;
-    }
-
-    private void setStp(boolean value) {
-        privateStp = value;
-    }
-
-    private String privateBondingOptions;
-
-    public String getBondingOptions() {
-        return privateBondingOptions;
-    }
-
-    private void setBondingOptions(String value) {
-        privateBondingOptions = value;
-    }
-
-    private NetworkBootProtocol privateBootProtocol = NetworkBootProtocol.forValue(0);
+    private String networkName;
+    private String oldNetworkName;
+    private String hostAddr;
+    private boolean checkConnectivity;
+    private int connectionTimeout;
+    private Integer vlanId;
+    private String bondName;
+    private String[] nics;
+    private String inetAddr;
+    private String networkMask;
+    private String gateway;
+    private boolean stp;
+    private String bondingOptions;
+    private NetworkBootProtocol bootProtocol = NetworkBootProtocol.None;
     private boolean vmNetwork;
     private network network;
 
-    public NetworkBootProtocol getBootProtocol() {
-        return privateBootProtocol;
-    }
-
-    private void setBootProtocol(NetworkBootProtocol value) {
-        privateBootProtocol = value;
+    public NetworkVdsmVDSCommandParameters() {
     }
 
     public NetworkVdsmVDSCommandParameters(Guid vdsId, String networkName, Integer vlanId, String bondName,
@@ -168,6 +47,7 @@ public class NetworkVdsmVDSCommandParameters extends VdsIdVDSCommandParametersBa
     /**
      * use this constructor to pass a network object that holds other 'logical' properties such as mtu, vmNetwork and so
      * on...
+     *
      * @param vdsId
      * @param net
      * @param bondName
@@ -197,7 +77,132 @@ public class NetworkVdsmVDSCommandParameters extends VdsIdVDSCommandParametersBa
         this.setNetwork(net);
     }
 
-    public NetworkVdsmVDSCommandParameters() {
+    public String getNetworkName() {
+        return networkName;
+    }
+
+    private void setNetworkName(String value) {
+        networkName = value;
+    }
+
+    public String getOldNetworkName() {
+        return oldNetworkName;
+    }
+
+    public void setOldNetworkName(String value) {
+        oldNetworkName = value;
+    }
+
+    public String getHostAddr() {
+        return hostAddr;
+    }
+
+    public void setHostAddr(String value) {
+        hostAddr = value;
+    }
+
+    public boolean getCheckConnectivity() {
+        return checkConnectivity;
+    }
+
+    public void setCheckConnectivity(boolean value) {
+        checkConnectivity = value;
+    }
+
+    public int getConnectionTimeout() {
+        return connectionTimeout;
+    }
+
+    public void setConnectionTimeout(int value) {
+        connectionTimeout = value;
+    }
+
+    public Integer getVlanId() {
+        return vlanId;
+    }
+
+    private void setVlanId(Integer value) {
+        vlanId = value;
+    }
+
+    public String getBondName() {
+        return bondName;
+    }
+
+    private void setBondName(String value) {
+        bondName = value;
+    }
+
+    public String[] getNics() {
+        return nics == null ? new String[0] : nics;
+    }
+
+    private void setNics(String[] value) {
+        nics = value;
+    }
+
+    public String getInetAddr() {
+        return inetAddr;
+    }
+
+    private void setInetAddr(String value) {
+        inetAddr = value;
+    }
+
+    public String getNetworkMask() {
+        return networkMask;
+    }
+
+    private void setNetworkMask(String value) {
+        networkMask = value;
+    }
+
+    public String getGateway() {
+        return gateway;
+    }
+
+    private void setGateway(String value) {
+        gateway = value;
+    }
+
+    public boolean getStp() {
+        return stp;
+    }
+
+    private void setStp(boolean value) {
+        stp = value;
+    }
+
+    public String getBondingOptions() {
+        return bondingOptions;
+    }
+
+    private void setBondingOptions(String value) {
+        bondingOptions = value;
+    }
+
+    public NetworkBootProtocol getBootProtocol() {
+        return bootProtocol;
+    }
+
+    private void setBootProtocol(NetworkBootProtocol value) {
+        bootProtocol = value;
+    }
+
+    public boolean isVmNetwork() {
+        return vmNetwork;
+    }
+
+    public void setVmNetwork(boolean vmNetwork) {
+        this.vmNetwork = vmNetwork;
+    }
+
+    public network getNetwork() {
+        return network;
+    }
+
+    public void setNetwork(network network) {
+        this.network = network;
     }
 
     @Override
@@ -221,21 +226,5 @@ public class NetworkVdsmVDSCommandParameters extends VdsIdVDSCommandParametersBa
                 getBondingOptions(),
                 getBootProtocol(),
                 isVmNetwork());
-    }
-
-    public boolean isVmNetwork() {
-        return vmNetwork;
-    }
-
-    public void setVmNetwork(boolean vmNetwork) {
-        this.vmNetwork = vmNetwork;
-    }
-
-    public network getNetwork() {
-        return network;
-    }
-
-    public void setNetwork(network network) {
-        this.network = network;
     }
 }
