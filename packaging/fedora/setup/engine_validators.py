@@ -100,7 +100,10 @@ def checkAndSetHttpdPortPolicy(port):
         return ports
 
     newPort = int(port)
-    out, rc = utils.execCmd([basedefs.EXEC_SEMANAGE, "port", "-l"]) #, "-t", "http_port_t"])
+    cmd = [
+        basedefs.EXEC_SEMANAGE, "port", "-l",
+    ]
+    out, rc = utils.execCmd(cmdList=cmd) #, "-t", "http_port_t"])
     if rc:
         return False
     httpPortsList = []
@@ -113,7 +116,15 @@ def checkAndSetHttpdPortPolicy(port):
     if newPort in httpPortsList:
         return True
     else:
-        out, rc = utils.execCmd([basedefs.EXEC_SEMANAGE, "port", "-a", "-t", "http_port_t", "-p", "tcp", "%d"%(newPort)], None, False, "", [], False, True)
+        cmd = [
+            basedefs.EXEC_SEMANAGE,
+            "port",
+            "-a",
+            "-t", "http_port_t",
+            "-p", "tcp",
+            "%d"%(newPort),
+        ]
+        out, rc = utils.execCmd(cmdList=cmd, failOnError=False, usePipeFiles=True)
         if rc:
             logging.error(out)
             return False
@@ -385,7 +396,12 @@ def validatePing(param, options=[]):
     Check that provided host answers to ping
     """
     if validateStringNotEmpty(param):
-        out, rc = utils.execCmd(["/bin/ping", "-c 1", "%s" % param])
+        cmd = [
+            "/bin/ping",
+            "-c", "1",
+            "%s" % param,
+        ]
+        out, rc = utils.execCmd(cmdList=cmd)
         if rc == 0:
             return True
 

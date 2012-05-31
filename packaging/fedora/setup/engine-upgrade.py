@@ -172,8 +172,10 @@ def checkJbossService():
     false otherwise
     """
     logging.debug("checking the status of jbossas service")
-    cmd = [basedefs.EXEC_SERVICE, basedefs.JBOSS_SERVICE_NAME, "status"]
-    output, rc = utils.execCmd(cmd, None, False)
+    cmd = [
+        basedefs.EXEC_SERVICE, basedefs.JBOSS_SERVICE_NAME, "status",
+    ]
+    output, rc = utils.execCmd(cmdList=cmd, failOnError=False)
 
     if rc == 0:
         logging.debug("jbossas service is up and running")
@@ -249,8 +251,10 @@ class MYum():
     def _validateRpmLockList(self):
         rpmLockList = []
         for rpmName in basedefs.RPM_LOCK_LIST.split():
-            cmd = [basedefs.EXEC_RPM, "-q", rpmName]
-            output, rc = utils.execCmd(cmd)
+            cmd = [
+                basedefs.EXEC_RPM, "-q", rpmName,
+            ]
+            output, rc = utils.execCmd(cmdList=cmd)
             if rc == 0:
                 rpmLockList.append(rpmName)
 
@@ -259,14 +263,13 @@ class MYum():
     def _lock(self):
         logging.debug("Yum lock started")
 
-        # Clear non-installed rpms from lock list
-        verifiedLockList = " ".join(self._validateRpmLockList())
-
         # Create RPM lock list
-        # TODO: Use execCmd
-        cmd = "%s -q %s >> %s" % (basedefs.EXEC_RPM, verifiedLockList, basedefs.FILE_YUM_VERSION_LOCK)
-        output, rc = utils.execExternalCmd(cmd, True, MSG_ERROR_YUM_LOCK)
-
+        cmd = [
+            basedefs.EXEC_RPM, "-q",
+        ] + self._validateRpmLockList()
+        output, rc = utils.execCmd(cmdList=cmd, failOnError=True, msg=MSG_ERROR_YUM_LOCK)
+        with open(basedefs.FILE_YUM_VERSION_LOCK, 'a') as yumlock:
+            yumlock.write(output)
         logging.debug("Yum lock completed successfully")
 
     def _unlock(self):
@@ -291,8 +294,10 @@ class MYum():
             # yum update ovirt-engine
             # TODO: Run test transaction
             logging.debug("Yum update started")
-            cmd = [YUM_EXEC, "update", "-q", "-y"] + RPM_LIST.split()
-            output, rc = utils.execCmd(cmd, None, True, MSG_ERROR_YUM_UPDATE)
+            cmd = [
+                YUM_EXEC, "update", "-q", "-y",
+            ] + RPM_LIST.split()
+            output, rc = utils.execCmd(cmdList=cmd, failOnError=True, msg=MSG_ERROR_YUM_UPDATE)
             logging.debug("Yum update completed successfully")
             self.updated = True
         finally:
@@ -365,8 +370,10 @@ class MYum():
                 # yum history undo 17
                 # Do rollback only if update went well
                 logging.debug("Yum rollback started")
-                cmd = [YUM_EXEC, "history", "-y", "undo", upgradeTid]
-                output, rc = utils.execCmd(cmd, None, True, MSG_ERROR_YUM_HISTORY_UNDO)
+                cmd = [
+                    YUM_EXEC, "history", "-y", "undo", upgradeTid,
+                ]
+                output, rc = utils.execCmd(cmdList=cmd, failOnError=True, msg=MSG_ERROR_YUM_HISTORY_UNDO)
                 logging.debug("Yum rollback completed successfully")
             finally:
                 self._lock()
@@ -378,8 +385,10 @@ class MYum():
         tid = None
 
         # Get the list
-        cmd = [YUM_EXEC, "history", "list", basedefs.ENGINE_RPM_NAME]
-        output, rc = utils.execCmd(cmd, None, True, MSG_ERROR_YUM_HISTORY_LIST)
+        cmd = [
+            YUM_EXEC, "history", "list", basedefs.ENGINE_RPM_NAME,
+        ]
+        output, rc = utils.execCmd(cmdList=cmd, failOnError=True, msg=MSG_ERROR_YUM_HISTORY_LIST)
 
         # Parse last tid
         for line in output.splitlines():
@@ -428,9 +437,20 @@ class DB():
         logging.debug("DB Backup started")
         #cmd = "%s -C -E UTF8 --column-inserts --disable-dollar-quoting  --disable-triggers -U %s -h %s -p %s --format=p -f %s %s"\
             #%(basedefs.EXEC_PGDUMP, SERVER_ADMIN, SERVER_HOST, SERVER_PORT, self.sqlfile, basedefs.DB_NAME)
-        cmd = [basedefs.EXEC_PGDUMP, "-C", "-E", "UTF8", "--column-inserts", "--disable-dollar-quoting", "--disable-triggers",
-                "-U", SERVER_ADMIN, "-h", SERVER_NAME, "-p", SERVER_PORT, "--format=p", "-f", self.sqlfile, basedefs.DB_NAME]
-        output, rc = utils.execCmd(cmd, None, True, MSG_ERROR_BACKUP_DB)
+        cmd = [
+            basedefs.EXEC_PGDUMP,
+            "-C", "-E", "UTF8",
+            "--column-inserts",
+            "--disable-dollar-quoting",
+            "--disable-triggers",
+            "-U", SERVER_ADMIN,
+            "-h", SERVER_NAME,
+            "-p", SERVER_PORT,
+            "--format=p",
+            "-f", self.sqlfile,
+            basedefs.DB_NAME,
+        ]
+        output, rc = utils.execCmd(cmdList=cmd, failOnError=True, msg=MSG_ERROR_BACKUP_DB)
         logging.debug("DB Backup completed successfully")
 
     def restore(self):
@@ -441,12 +461,24 @@ class DB():
             logging.debug("DB Restore started")
 
             # If we're here, upgrade failed. Drop temp DB.
-            cmd = [basedefs.EXEC_DROPDB, "-U", SERVER_ADMIN, "-h", SERVER_NAME, "-p", SERVER_PORT, self.name]
-            output, rc = utils.execCmd(cmd, None, True, MSG_ERROR_DROP_DB)
+            cmd = [
+                basedefs.EXEC_DROPDB,
+                "-U", SERVER_ADMIN,
+                "-h", SERVER_NAME,
+                "-p", SERVER_PORT,
+                self.name,
+            ]
+            output, rc = utils.execCmd(cmdList=cmd, failOnError=True, msg=MSG_ERROR_DROP_DB)
 
             # Restore
-            cmd = [basedefs.EXEC_PSQL, "-U", SERVER_ADMIN, "-h", SERVER_NAME, "-p", SERVER_PORT, "-f", self.sqlfile]
-            output, rc = utils.execCmd(cmd, None, True, MSG_ERROR_RESTORE_DB)
+            cmd = [
+                basedefs.EXEC_PSQL,
+                "-U", SERVER_ADMIN,
+                "-h", SERVER_NAME,
+                "-p", SERVER_PORT,
+                "-f", self.sqlfile,
+            ]
+            output, rc = utils.execCmd(cmdList=cmd, failOnError=True, msg=MSG_ERROR_RESTORE_DB)
             logging.debug("DB Restore completed successfully")
         else:
             logging.debug("No DB Restore needed")
@@ -463,8 +495,14 @@ class DB():
             # Perform the upgrade
             # ./upgrade.sh -s ${SERVERNAME} -p ${PORT} -u ${USERNAME} -d ${DATABASE};
             dbupgrade = os.path.join(basedefs.DIR_DB_SCRIPTS, basedefs.FILE_DB_UPGRADE_SCRIPT)
-            cmd = [dbupgrade, "-s", SERVER_NAME, "-p", SERVER_PORT, "-u", SERVER_ADMIN, "-d", self.name]
-            output, rc = utils.execCmd(cmd, None, True, MSG_ERROR_UPDATE_DB)
+            cmd = [
+                dbupgrade,
+                "-s", SERVER_NAME,
+                "-p", SERVER_PORT,
+                "-u", SERVER_ADMIN,
+                "-d", self.name,
+            ]
+            output, rc = utils.execCmd(cmdList=cmd, failOnError=True, msg=MSG_ERROR_UPDATE_DB)
             logging.debug("DB Update completed successfully")
 
         finally:
@@ -493,8 +531,10 @@ class DB():
 
 def stopJboss():
     logging.debug("stopping jboss service.")
-    cmd = [basedefs.EXEC_SERVICE, basedefs.JBOSS_SERVICE_NAME, "stop"]
-    output, rc = utils. execCmd(cmd, None, True, MSG_ERR_FAILED_STP_JBOSS_SERVICE)
+    cmd = [
+        basedefs.EXEC_SERVICE, basedefs.JBOSS_SERVICE_NAME, "stop",
+    ]
+    output, rc = utils. execCmd(cmdList=cmd, failOnError=True, msg=MSG_ERR_FAILED_STP_JBOSS_SERVICE)
 
     # JBoss service sometimes return zero rc even if service is still up
     if "[FAILED]" in output and "Timeout: Shutdown command was sent, but process is still running" in output:
@@ -502,8 +542,10 @@ def stopJboss():
 
 def startJboss():
     logging.debug("starting jboss service.")
-    cmd = [basedefs.EXEC_SERVICE, basedefs.JBOSS_SERVICE_NAME, "start"]
-    output, rc = utils.execCmd(cmd, None, True, MSG_ERR_FAILED_START_JBOSS_SERVICE)
+    cmd = [
+        basedefs.EXEC_SERVICE, basedefs.JBOSS_SERVICE_NAME, "start",
+    ]
+    output, rc = utils.execCmd(cmdList=cmd, failOnError=True, msg=MSG_ERR_FAILED_START_JBOSS_SERVICE)
 
 def runPost():
     logging.debug("Running post script")

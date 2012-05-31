@@ -9,7 +9,6 @@ import types
 import socket
 import ConfigParser
 from StringIO import StringIO
-import libxml2
 import shutil
 import pwd
 import getpass
@@ -670,8 +669,11 @@ def _backupOldHttpdConfig():
 
 def _configureSelinuxBoolean():
     logging.debug("Enable httpd_can_network_connect boolean")
-    cmd = [basedefs.EXEC_SETSEBOOL,"-P","httpd_can_network_connect","1"]
-    out, rc = utils.execCmd(cmd, None, True, output_messages.ERR_FAILED_UPDATING_SELINUX_BOOLEAN)
+    cmd = [
+        basedefs.EXEC_SETSEBOOL,
+        "-P","httpd_can_network_connect","1",
+    ]
+    out, rc = utils.execCmd(cmdList=cmd, failOnError=True, msg=output_messages.ERR_FAILED_UPDATING_SELINUX_BOOLEAN)
 
 def _configureHttpdSslKeys():
     try:
@@ -686,7 +688,6 @@ def _configureHttpdSslKeys():
     except:
         logging.error(traceback.format_exc())
         raise Exception(output_messages.ERR_EXP_UPD_HTTPD_SSL_CONFIG%(basedefs.FILE_HTTPD_SSL_CONFIG))
-
 
 def _redirectUrl():
     try:
@@ -779,29 +780,51 @@ def _createCA():
             logging.debug("using unique CN: '%s' for CA certificate"%uniqueCN)
 
             # Create the CA
-            cmd = [os.path.join(basedefs.DIR_OVIRT_PKI, "installCA.sh"), controller.CONF["HOST_FQDN"],
-                   basedefs.CONST_CA_COUNTRY, controller.CONF["ORG_NAME"], basedefs.CONST_CA_ALIAS, basedefs.CONST_CA_PASS, date,
-                   basedefs.DIR_OVIRT_PKI, uniqueCN]
+            cmd = [
+                os.path.join(basedefs.DIR_OVIRT_PKI, "installCA.sh"),
+                controller.CONF["HOST_FQDN"],
+                basedefs.CONST_CA_COUNTRY,
+                controller.CONF["ORG_NAME"],
+                basedefs.CONST_CA_ALIAS,
+                basedefs.CONST_CA_PASS,
+                date,
+                basedefs.DIR_OVIRT_PKI,
+                uniqueCN,
+            ]
 
-            out, rc = utils.execCmd(cmd, None, True, output_messages.ERR_RC_CODE, [basedefs.CONST_CA_PASS])
+            out, rc = utils.execCmd(cmdList=cmd, failOnError=True, msg=output_messages.ERR_RC_CODE, maskList=[basedefs.CONST_CA_PASS])
 
             # Generate the ssh key
-            cmd = [os.path.join(basedefs.DIR_OVIRT_PKI, "generate-ssh-keys"), "-s", ksPath, "-p",
-                   basedefs.CONST_CA_PASS, "-a", "engine", "-k",
-                   os.path.join(basedefs.DIR_OVIRT_PKI, "keys", "engine_id_rsa")]
+            cmd = [
+                os.path.join(basedefs.DIR_OVIRT_PKI, "generate-ssh-keys"),
+                "-s", ksPath,
+                "-p", basedefs.CONST_CA_PASS,
+                "-a",
+                "engine",
+                "-k",os.path.join(basedefs.DIR_OVIRT_PKI, "keys", "engine_id_rsa"),
+            ]
 
-            out, rc = utils.execCmd(cmd, None, True, output_messages.ERR_RC_CODE, [basedefs.CONST_CA_PASS])
+            out, rc = utils.execCmd(cmdList=cmd, failOnError=True, msg=output_messages.ERR_RC_CODE, maskList=[basedefs.CONST_CA_PASS])
 
             # Extract CA fingerprint
-            cmd = [basedefs.EXEC_OPENSSL, "x509", "-in", basedefs.FILE_CA_CRT_SRC, "-fingerprint", "-noout"]
+            cmd = [
+                basedefs.EXEC_OPENSSL,
+                "x509",
+                "-in", basedefs.FILE_CA_CRT_SRC,
+                "-fingerprint",
+                "-noout",
+            ]
 
-            finger, rc = utils.execCmd(cmd, None, True)
+            finger, rc = utils.execCmd(cmdList=cmd, failOnError=True)
             msg = output_messages.INFO_CA_SSL_FINGERPRINT%(finger.rstrip().split("=")[1])
             controller.MESSAGES.append(msg)
 
             # ExtractSSH fingerprint
-            cmd = [basedefs.EXEC_SSH_KEYGEN, "-lf", basedefs.FILE_PUBLIC_SSH_KEY]
-            finger, rc = utils.execCmd(cmd, None, True)
+            cmd = [
+                basedefs.EXEC_SSH_KEYGEN,
+                "-lf", basedefs.FILE_PUBLIC_SSH_KEY,
+            ]
+            finger, rc = utils.execCmd(cmdList=cmd, failOnError=True)
             msg = output_messages.INFO_CA_SSH_FINGERPRINT%(finger.split()[1])
             controller.MESSAGES.append(msg)
 
@@ -914,15 +937,18 @@ def _createDB():
     # Set rhevm-db-install.sh args - logfile and db password
     # To handle remote DB installation, we need to pass host/port/user values, and the script needs to handle them.
     scriptHome = os.path.join(basedefs.DIR_DB_SCRIPTS, basedefs.FILE_DB_INSTALL_SCRIPT)
-    cmd = [scriptHome, "-l", dbLogFilename,
-                       "-w", controller.CONF["DB_PASS"],
-                       "-u", getDbAdminUser(),
-                       "-s", getDbHostName(),
-                       "-p", getDbPort(),
-                       "-r", controller.CONF["DB_REMOTE_INSTALL"]]
+    cmd = [
+        scriptHome,
+        "-l", dbLogFilename,
+        "-w", controller.CONF["DB_PASS"],
+        "-u", getDbAdminUser(),
+        "-s", getDbHostName(),
+        "-p", getDbPort(),
+        "-r", controller.CONF["DB_REMOTE_INSTALL"],
+    ]
 
     # Create db using shell command
-    output, rc = utils.execCmd(cmd, None, True, output_messages.ERR_DB_CREATE_FAILED, masked_value_set)
+    output, rc = utils.execCmd(cmdList=cmd, failOnError=True, msg=output_messages.ERR_DB_CREATE_FAILED, maskList=masked_value_set)
     logging.debug("Successfully installed %s db" % basedefs.DB_NAME)
 
 def _upgradeDB():
@@ -946,18 +972,23 @@ def _upgradeDB():
     utils.renameDB(basedefs.DB_NAME, DB_NAME_TEMP)
 
     # if we're here, DB was renamed.
-    logging.debug("upgrading db schema")
-    dbScriptArgs = "-u %s -d %s -s %s -p %s" %(getDbUser(), DB_NAME_TEMP, getDbHostName(), getDbPort())
-    cmd = os.path.join("/bin/sh ", basedefs.DIR_DB_SCRIPTS, basedefs.FILE_DB_UPGRADE_SCRIPT + " " + dbScriptArgs)
-
-    # Upgrade script must run from dbscripts dir
+    # upgrade script must run from dbscripts dir
     currentDir = os.getcwd()
     os.chdir(basedefs.DIR_DB_SCRIPTS)
 
     try:
 
+        logging.debug("upgrading db schema")
+        cmd = [
+            os.path.join(basedefs.DIR_DB_SCRIPTS, basedefs.FILE_DB_UPGRADE_SCRIPT),
+            "-u", getDbUser(),
+            "-d", DB_NAME_TEMP,
+            "-s", getDbHostName(),
+            "-p", getDbPort(),
+        ]
+
         # Run upgrade.sh script to update existing db
-        output, rc = utils.execExternalCmd(cmd, True, output_messages.ERR_DB_UPGRADE_FAILED)
+        output, rc = utils.execCmd(cmdList=cmd, failOnError=True, msg=output_messages.ERR_DB_UPGRADE_FAILED)
 
         # Log the successful upgrade
         logging.debug('Successfully upgraded %s DB'%(basedefs.DB_NAME))
@@ -1061,10 +1092,15 @@ def _updateVDCOptions():
 
 def _getVDCOption(key):
     #running rhevm-config to get values per key
-    cmd = "/bin/sh %s -g %s --cver=%s -p %s" % (basedefs.FILE_RHEVM_CONFIG_BIN, key, basedefs.VDC_OPTION_CVER, basedefs.FILE_RHEVM_EXTENDED_CONF)
     logging.debug("getting vdc option %s" % key)
     msg = output_messages.ERR_EXP_GET_VDC_OPTION % key
-    output, rc = utils.execExternalCmd(cmd, True, msg, masked_value_set)
+    cmd = [
+        basedefs.FILE_RHEVM_CONFIG_BIN,
+        "-g", key,
+        "--cver=" + basedefs.VDC_OPTION_CVER,
+        "-p", basedefs.FILE_RHEVM_EXTENDED_CONF,
+    ]
+    output, rc = utils.execCmd(cmdList=cmd, failOnError=True, msg=msg, maskList=masked_value_set)
     logging.debug("Value of %s is %s" % (key, output))
     return output
 
@@ -1194,12 +1230,14 @@ def _encryptDBPass():
     """
     #run encrypt tool on user give password
     if (os.path.exists(basedefs.EXEC_ENCRYPT_PASS)):
-        cmd = [basedefs.EXEC_ENCRYPT_PASS, controller.CONF["DB_PASS"]]
+        cmd = [
+            basedefs.EXEC_ENCRYPT_PASS, controller.CONF["DB_PASS"],
+        ]
 
         # The encrypt tool needs the jboss home env set
         # Since we cant use the bash way, we need to set it as environ
         os.environ["JBOSS_HOME"] = basedefs.DIR_JBOSS
-        output, rc = utils.execCmd(cmd, None, True, output_messages.ERR_EXP_ENCRYPT_PASS, masked_value_set)
+        output, rc = utils.execCmd(cmdList=cmd, failOnError=True, msg=output_messages.ERR_EXP_ENCRYPT_PASS, maskList=masked_value_set)
 
         #parse the encrypted password from the tool
         controller.CONF["ENCRYPTED_DB_PASS"] = utils.parseStrRegex(output, "Encoded password:\s*(.+)", output_messages.ERR_EXP_PARSING_ENCRYPT_PASS)
@@ -1585,7 +1623,10 @@ def setMaxSharedMemory():
     txtHandler.close()
 
     # Execute sysctl -a
-    utils.execExternalCmd("%s -e -p" % basedefs.EXEC_SYSCTL, True, output_messages.ERR_EXP_FAILED_KERNEL_PARAMS)
+    cmd = [
+        basedefs.EXEC_SYSCTL, "-e", "-p",
+    ]
+    utils.execCmd(cmdList=cmd, failOnError=True, msg=output_messages.ERR_EXP_FAILED_KERNEL_PARAMS)
 
 def _addIsoDomaintoDB(uuid, description):
     logging.debug("Adding iso domain into DB")
@@ -1668,8 +1709,10 @@ def _lockRpmVersion():
     Enters rpm versions into yum version-lock
     """
     logging.debug("Locking rpms in yum-version-lock")
-    cmd = [basedefs.EXEC_RPM, "-q"] + basedefs.RPM_LOCK_LIST.split()
-    output, rc = utils.execCmd(cmd, None, True, output_messages.ERR_YUM_LOCK)
+    cmd = [
+        basedefs.EXEC_RPM, "-q",
+    ] + basedefs.RPM_LOCK_LIST.split()
+    output, rc = utils.execCmd(cmdList=cmd, failOnError=True, msg=output_messages.ERR_YUM_LOCK)
 
     with open(basedefs.FILE_YUM_VERSION_LOCK, "a") as f:
         for rpm in output.splitlines():
@@ -2176,8 +2219,10 @@ def _checkAvailableMemory():
     """
     #execute free -g to get output in GB
     logging.debug("checking total memory")
-    cmd = "%s -g" % basedefs.EXEC_FREE
-    output, rc = utils.execExternalCmd(cmd, True, output_messages.ERR_EXP_FREE_MEM)
+    cmd = [
+        basedefs.EXEC_FREE, "-g"
+    ]
+    output, rc = utils.execCmd(cmdList=cmd, failOnError=True, msg=output_messages.ERR_EXP_FREE_MEM)
 
     #itterate over output and look for the line: "Mem: 1 something"
     #and extract 1 from it (1 is an example to the free memory)

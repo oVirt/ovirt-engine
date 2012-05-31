@@ -258,12 +258,15 @@ def isTcpPortOpen(port):
     and being listened upon.
     if port is open, returns the process name & pid that use it
     """
-    cmd = "%s -i -n -P" % (basedefs.EXEC_LSOF)
     answer = False
     process = False
     pid = False
     logging.debug("Checking if TCP port %s is open by any process" % port)
-    output, rc = execExternalCmd(cmd, True, output_messages.ERR_EXP_LSOF)
+    cmd = [
+        basedefs.EXEC_LSOF,
+        "-i", "-n", "-P",
+    ]
+    output, rc = execCmd(cmdList=cmd, failOnError=True, msg=output_messages.ERR_EXP_LSOF)
 	#regex catches:
 	#java      17564    jboss   90u  IPv4 1251444      0t0  TCP *:3873 (LISTEN)
     pattern=re.compile("^(\w+)\s+(\d+)\s+.+TCP\s\*\:(%s)\s\(LISTEN\)$" % (port))
@@ -276,25 +279,6 @@ def isTcpPortOpen(port):
             answer = True
             logging.debug("TCP port %s is open by process %s, PID %s" % (port, process, pid))
     return (answer, process, pid)
-
-def execExternalCmd(command, failOnError=False, msg=output_messages.ERR_RC_CODE, maskList=[]):
-    """
-    Run External os command
-    Receives maskList to allow passwords masking
-    """
-    logString = _maskString(command, maskList)
-    logging.debug("cmd = %s" % (logString))
-    p = subprocess.Popen(command, shell=True,
-        stdin=subprocess.PIPE, stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE, close_fds=True)
-    out, err = p.communicate()
-    logging.debug("output = %s"%(out))
-    logging.debug("stderr = %s"%(err))
-    logging.debug("retcode = %s"%(p.returncode))
-    output = out + err
-    if failOnError and p.returncode != 0:
-        raise Exception(msg)
-    return ("".join(output.splitlines(True)), p.returncode)
 
 def execCmd(cmdList, cwd=None, failOnError=False, msg=output_messages.ERR_RC_CODE, maskList=[], useShell=False, usePipeFiles=False):
     """
@@ -342,14 +326,26 @@ def execCmd(cmdList, cwd=None, failOnError=False, msg=output_messages.ERR_RC_COD
 
 def execSqlCommand(userName, dbName, sqlQuery, failOnError=False, errMsg=output_messages.ERR_SQL_CODE):
     logging.debug("running sql query \'%s\' on db." % sqlQuery)
-    cmd = "/usr/bin/psql -U %s -d %s -c \"%s\""%(userName, dbName, sqlQuery)
-    return execExternalCmd(cmd, failOnError, errMsg)
+    cmd = [
+        basedefs.EXEC_PSQL,
+        "-U", userName,
+        "-d", dbName,
+        "-c", sqlQuery,
+    ]
+    return execCmd(cmdList=cmd, failOnError=failOnError, msg=errMsg)
 
 #TODO: refactor this and previous functions into same execution.
 def execRemoteSqlCommand(userName, dbHost, dbPort, dbName, sqlQuery, failOnError=False, errMsg=output_messages.ERR_SQL_CODE):
     logging.debug("running sql query '%s' on db server: \'%s\'." % (sqlQuery, dbHost))
-    cmd = "/usr/bin/psql -h %s -p %s -U %s -d %s -c \"%s\"" % (dbHost, dbPort, userName, dbName, sqlQuery)
-    return execExternalCmd(cmd, failOnError, errMsg)
+    cmd = [
+        basedefs.EXEC_PSQL,
+        "-h", dbHost,
+        "-p", dbPort,
+        "-U", userName,
+        "-d", dbName,
+        "-c", sqlQuery,
+    ]
+    return execCmd(cmdList=cmd, failOnError=failOnError, msg=errMsg)
 
 def replaceWithLink(target, link):
     """
@@ -413,16 +409,20 @@ def byLength(word1, word2):
     return len(word1) - len(word2)
 
 def nslookup(address):
-    cmd = "%s %s"%(basedefs.EXEC_NSLOOKUP, address)
+    cmd = [
+        basedefs.EXEC_NSLOOKUP, address,
+    ]
     #since nslookup will return 0 no matter what, the RC is irrelevant
-    output, rc = execExternalCmd(cmd)
+    output, rc = execCmd(cmdList=cmd)
     return output
 
 def getConfiguredIps():
     try:
         iplist=set()
-        cmd = "%s addr"%(basedefs.EXEC_IP)
-        output, rc = execExternalCmd(cmd, True, output_messages.ERR_EXP_GET_CFG_IPS_CODES)
+        cmd = [
+            basedefs.EXEC_IP, "addr",
+        ]
+        output, rc = execCmd(cmdList=cmd, failOnError=True, msg=output_messages.ERR_EXP_GET_CFG_IPS_CODES)
         ipaddrPattern=re.compile('\s+inet (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}).+')
         list=output.splitlines()
         for line in list:
@@ -635,14 +635,21 @@ def backupDB(db, user, backupFile, host="localhost", port="5432"):
            port - db connection port
     """
     logging.debug("%s DB Backup started"%(db))
-    cmd = "%s -C -E UTF8 --column-inserts\
-                         --disable-dollar-quoting\
-                         --disable-triggers\
-                         --format=p -f %s %s\
-                         -U %s -h %s -p %s"\
-        %(basedefs.EXEC_PGDUMP, backupFile, db, user, host, port)
-
-    output, rc = execExternalCmd(cmd, True, output_messages.ERR_DB_BACKUP)
+    cmd = [
+        basedefs.EXEC_PGDUMP,
+        "-C", "-E",
+        "UTF8",
+        "--column-inserts",
+        "--disable-dollar-quoting",
+        "--disable-triggers",
+        "--format=p",
+        "-f", backupFile,
+        "-U", user,
+        "-h", host,
+        "-p", port,
+        db,
+    ]
+    output, rc = execCmd(cmdList=cmd, failOnError=True, msg=output_messages.ERR_DB_BACKUP)
     logging.debug("%s DB Backup completed successfully"%(db))
 
 def restoreDB(user, host, port, backupFile):
@@ -657,8 +664,15 @@ def restoreDB(user, host, port, backupFile):
 
     # Restore
     logging.debug("DB Restore started")
-    cmd = "%s -h %s -p %s -U %s -d %s -f %s"%(basedefs.EXEC_PSQL, host, port, user, basedefs.DB_POSTGRES, backupFile)
-    output, rc = execExternalCmd(cmd, True, output_messages.ERR_DB_RESTORE)
+    cmd = [
+        basedefs.EXEC_PSQL,
+        "-h", host,
+        "-p", port,
+        "-U", user,
+        "-d", basedefs.DB_POSTGRES,
+        "-f", backupFile,
+    ]
+    output, rc = execCmd(cmdList=cmd, failOnError=True, msg=output_messages.ERR_DB_RESTORE)
     logging.debug("DB Restore completed successfully")
 
 def renameDB(oldname, newname):
@@ -681,14 +695,22 @@ def updateVDCOption(key, value, maskList=[]):
     maskList is received to allow
     masking passwords in logging
     """
-    # Running rhevm-config to update values
-    cmd = [basedefs.FILE_RHEVM_CONFIG_BIN, '-s', key + '=' + value, '--cver=' + basedefs.VDC_OPTION_CVER, '-p', basedefs.FILE_RHEVM_EXTENDED_CONF]
 
     # Mask passwords
     logValue = _maskString(value, maskList)
     logging.debug("updating vdc option %s to: %s"%(key, logValue))
     msg = output_messages.ERR_EXP_UPD_VDC_OPTION%(key, logValue)
-    output, rc = execCmd(cmd, None, True, msg, maskList)
+
+    # Running rhevm-config to update values
+    cmd = [
+        basedefs.FILE_RHEVM_CONFIG_BIN,
+        '-s',
+        key + '=' + value,
+        '--cver=' + basedefs.VDC_OPTION_CVER,
+        '-p',
+        basedefs.FILE_RHEVM_EXTENDED_CONF,
+    ]
+    output, rc = execCmd(cmdList=cmd, failOnError=True, msg=msg, maskList=maskList)
 
 def _maskString(string, maskList=[]):
     """
@@ -711,8 +733,13 @@ def getRpmVersion(rpmName=basedefs.ENGINE_RPM_NAME):
     """
     # Update build number on welcome page
     logging.debug("retrieving build number for %s rpm"%(rpmName))
-    cmd = "rpm -q --queryformat '%%{VERSION}-%%{RELEASE}' %s"%(rpmName)
-    rpmVersion, rc = execExternalCmd(cmd, True, msg=output_messages.ERR_READ_RPM_VER%(rpmName))
+    cmd = [
+        basedefs.EXEC_RPM,
+        "-q",
+        "--queryformat", "'%{VERSION}-%{RELEASE}'",
+        rpmName,
+    ]
+    rpmVersion, rc = execCmd(cmdList=cmd, failOnError=True, msg=output_messages.ERR_READ_RPM_VER % rpmName)
 
     # Return rpm version
     return rpmVersion
@@ -774,21 +801,35 @@ def clearDbConnections(dbName):
     # Block new connections first
     logging.info("Closing DB '%s' for new connections" % dbName)
     query = "update pg_database set datallowconn = 'false' where datname = '%s';" % dbName
-    cmd = [basedefs.EXEC_PSQL, "-U", getDbAdminUser(), "-c", query]
-    execCmd(cmd, None, True, output_messages.ERR_DB_CONNECTIONS_BLOCK)
+    cmd = [
+        basedefs.EXEC_PSQL,
+        "-U", getDbAdminUser(),
+        "-c", query,
+    ]
+    execCmd(cmdList=cmd, failOnError=True, msg=output_messages.ERR_DB_CONNECTIONS_BLOCK)
 
     # Disconnect active connections
     logging.info("Disconnect active connections from DB '%s'" % dbName)
     query = "SELECT pg_terminate_backend(procpid) FROM pg_stat_activity WHERE datname = '%s'" % dbName
-    cmd = [basedefs.EXEC_PSQL, "-U", getDbAdminUser(), "-c", query]
-    execCmd(cmd, None, True, output_messages.ERR_DB_CONNECTIONS_CLEAR)
+    cmd = [
+        basedefs.EXEC_PSQL,
+        "-U", getDbAdminUser(),
+        "-c", query,
+    ]
+    execCmd(cmdList=cmd, failOnError=True, msg=output_messages.ERR_DB_CONNECTIONS_CLEAR)
 
 def listTempDbs():
     """ Create a list of temp DB's on the server with regex 'engine_*' """
 
     dbListRemove = [basedefs.DB_NAME]
-    cmd = [basedefs.EXEC_PSQL, "-U", getDbAdminUser(), "-h", getDbHostName(), "-p", getDbPort(), "--list"]
-    output, rc = execCmd(cmd, None, False, output_messages.ERR_DB_TEMP_LIST)
+    cmd = [
+        basedefs.EXEC_PSQL,
+        "-U", getDbAdminUser(),
+        "-h", getDbHostName(),
+        "-p", getDbPort(),
+        "--list",
+    ]
+    output, rc = execCmd(cmdList=cmd, msg=output_messages.ERR_DB_TEMP_LIST)
     if rc:
         logging.error(output_messages.ERR_DB_TEMP_LIST)
         raise Exception ("\n" + output_messages.ERR_DB_TEMP_LIST + "\n")
@@ -834,8 +875,10 @@ class Service():
 
     def autoStart(self, start=True):
         mode = "on" if start else "off"
-        cmd = [basedefs.EXEC_CHKCONFIG, self.name, mode]
-        execCmd(cmd, None, True)
+        cmd = [
+            basedefs.EXEC_CHKCONFIG, self.name, mode,
+        ]
+        execCmd(cmdList=cmd, failOnError=True)
 
     def conditionalStart(self, raiseFailure = False):
         """
@@ -859,7 +902,9 @@ class Service():
         returns: output, rc
         """
         logging.debug("executing action %s on service %s", self.name, action)
-        cmd = [basedefs.EXEC_SERVICE, self.name, action]
+        cmd = [
+            basedefs.EXEC_SERVICE, self.name, action
+        ]
         return execCmd(cmdList=cmd, usePipeFiles=True)
 
 def chown(target,uid, gid):

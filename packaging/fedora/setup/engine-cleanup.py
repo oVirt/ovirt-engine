@@ -235,16 +235,20 @@ class DB():
         """
         # pg_dump -C -E UTF8  --column-inserts --disable-dollar-quoting  --disable-triggers -U postgres --format=p -f $dir/$file  dbname
         logging.debug("DB Backup started")
-        cmd = [basedefs.EXEC_PGDUMP,
-                        "-C", "-E", "UTF8",
-                        "--column-inserts", "--disable-dollar-quoting",  "--disable-triggers",
-                        "-U", DB_ADMIN,
-                        "-h", DB_HOST,
-                        "-p", DB_PORT,
-                        "--format=p",
-                        "-f", self.sqlfile,
-                        basedefs.DB_NAME]
-        utils.execCmd(cmd, None, True, MSG_ERROR_BACKUP_DB, [])
+        cmd = [
+            basedefs.EXEC_PGDUMP,
+            "-C", "-E", "UTF8",
+            "--column-inserts",
+            "--disable-dollar-quoting",
+            "--disable-triggers",
+            "-U", DB_ADMIN,
+            "-h", DB_HOST,
+            "-p", DB_PORT,
+            "--format=p",
+            "-f", self.sqlfile,
+            basedefs.DB_NAME,
+        ]
+        utils.execCmd(cmdList=cmd, failOnError=True, msg=MSG_ERROR_BACKUP_DB)
         logging.debug("DB Backup completed successfully")
 
     def drop(self):
@@ -260,8 +264,15 @@ class DB():
         # Drop DBs - including the tempoarary ones created during upgrade operations
         # go over all dbs in the list of temp DBs and remove them
         for dbname in utils.listTempDbs():
-            cmd = [basedefs.EXEC_DROPDB, "-w", "-U", utils.getDbAdminUser(), "-h", DB_HOST, "-p", DB_PORT, dbname]
-            output, rc = utils.execCmd(cmd, None, False, MSG_ERROR_DROP_DB)
+            cmd = [
+                basedefs.EXEC_DROPDB,
+                "-w",
+                "-U", DB_ADMIN,
+                "-h", DB_HOST,
+                "-p", DB_PORT,
+                dbname,
+            ]
+            output, rc = utils.execCmd(cmdList=cmd, failOnError=False, msg=MSG_ERROR_DROP_DB)
             if rc:
                 logging.error("DB drop operation failed. Check that there are no active connection to the '%s' DB." % dbname)
                 raise Exception(MSG_ERROR_DROP_DB)
@@ -306,8 +317,10 @@ class DB():
 def stopJboss():
     logging.debug("stoping %s service." % basedefs.JBOSS_SERVICE_NAME)
 
-    cmd = [basedefs.EXEC_SERVICE, basedefs.JBOSS_SERVICE_NAME, "stop"]
-    output, rc = utils.execCmd(cmd, None, True, MSG_ERR_FAILED_STP_JBOSS_SERVICE, [])
+    cmd = [
+        basedefs.EXEC_SERVICE, basedefs.JBOSS_SERVICE_NAME, "stop",
+    ]
+    output, rc = utils.execCmd(cmdList=cmd, failOnError=True, msg=MSG_ERR_FAILED_STP_JBOSS_SERVICE)
 
     # JBoss service sometimes return zero rc even if service is still up
     if "[FAILED]" in output and "Timeout: Shutdown command was sent, but process is still running" in output:

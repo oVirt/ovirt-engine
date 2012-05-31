@@ -33,17 +33,25 @@ def addNfsExport(path, authInfo, comment=None, exportFilePath=basedefs.FILE_ETC_
         exportFile.close()
 
 def setSELinuxContextForDir(path, contextName):
-    logging.debug("setting selinux context for %s" % (path))
+    logging.debug("setting selinux context for %s" % path)
     if path.endswith("/"):
         path = path[:-1]
-    pattern = "%s(/.*)?" % (path,)
+    pattern = "%s(/.*)?" % path
 
     # Run semanage
-    cmd = [basedefs.EXEC_SEMANAGE, "fcontext", "-a", "-t", SELINUX_RW_LABEL, pattern]
-    utils.execCmd(cmd, None, True, output_messages.ERR_SET_SELINUX_NFS_SHARE)
+    cmd = [
+        basedefs.EXEC_SEMANAGE,
+        "fcontext",
+        "-a",
+        "-t", SELINUX_RW_LABEL,
+        pattern,
+    ]
+    utils.execCmd(cmdList=cmd, failOnError=True, msg=output_messages.ERR_SET_SELINUX_NFS_SHARE)
 
-    cmd = [basedefs.EXEC_RESTORECON, "-r", path]
-    utils.execCmd(cmd, None, True, output_messages.ERR_REFRESH_SELINUX_CONTEXT)
+    cmd = [
+        basedefs.EXEC_RESTORECON, "-r", path
+    ]
+    utils.execCmd(cmdList=cmd, failOnError=True, msg=output_messages.ERR_REFRESH_SELINUX_CONTEXT)
 
 DEFAULT_MD = {
         "CLASS" : "Iso",
