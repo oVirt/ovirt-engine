@@ -877,7 +877,7 @@ public class VmDiskListModel extends SearchableListModel
                     disk.getDiskStorageType() == DiskStorageType.IMAGE
                             && ((DiskImage) disk).getimageStatus() == ImageStatus.LOCKED;
 
-            if (disk.getPlugged() == plug || disk.getDiskInterface() == DiskInterface.IDE || isLocked)
+            if (disk.getPlugged() == plug || isLocked || (disk.getDiskInterface() == DiskInterface.IDE && !isVmDown()))
             {
                 return false;
             }
