@@ -125,7 +125,7 @@ public class BackendStorageDomainVmResourceTest
         Cluster cluster = new Cluster();
         cluster.setId(GUIDS[1].toString());
         setUpGetDataCenterByStorageDomainExpectations(STORAGE_DOMAIN_ID);
-        doTestImport(storageDomain, cluster, false);
+        doTestImport(storageDomain, cluster, false, false);
     }
 
     @Test
@@ -135,7 +135,7 @@ public class BackendStorageDomainVmResourceTest
         Cluster cluster = new Cluster();
         cluster.setId(GUIDS[1].toString());
         setUpGetDataCenterByStorageDomainExpectations(STORAGE_DOMAIN_ID);
-        doTestImport(storageDomain, cluster, true);
+        doTestImport(storageDomain, cluster, true, false);
     }
 
     @Test
@@ -149,7 +149,7 @@ public class BackendStorageDomainVmResourceTest
         storageDomain.setName(NAMES[2]);
         Cluster cluster = new Cluster();
         cluster.setId(GUIDS[1].toString());
-        doTestImport(storageDomain, cluster, false);
+        doTestImport(storageDomain, cluster, false, false);
     }
 
     @Test
@@ -163,7 +163,17 @@ public class BackendStorageDomainVmResourceTest
         Cluster cluster = new Cluster();
         cluster.setName(NAMES[1]);
         setUpGetDataCenterByStorageDomainExpectations(STORAGE_DOMAIN_ID);
-        doTestImport(storageDomain, cluster, false);
+        doTestImport(storageDomain, cluster, false, false);
+    }
+
+    @Test
+    public void testImportAsNewEntity() throws Exception {
+        StorageDomain storageDomain = new StorageDomain();
+        storageDomain.setId(GUIDS[2].toString());
+        Cluster cluster = new Cluster();
+        cluster.setId(GUIDS[1].toString());
+        setUpGetDataCenterByStorageDomainExpectations(STORAGE_DOMAIN_ID);
+        doTestImport(storageDomain, cluster, false, true);
     }
 
     private void setUpGetDataCenterByStorageDomainExpectations(Guid id) {
@@ -174,12 +184,12 @@ public class BackendStorageDomainVmResourceTest
                 setUpStoragePool());
     }
 
-    public void doTestImport(StorageDomain storageDomain, Cluster cluster, boolean collapseSnapshots) throws Exception {
+    public void doTestImport(StorageDomain storageDomain, Cluster cluster, boolean collapseSnapshots, boolean importAsNewEntity) throws Exception {
         setUpGetEntityExpectations(1, StorageDomainType.ImportExport, GUIDS[2]);
         setUriInfo(setUpActionExpectations(VdcActionType.ImportVm,
                                            ImportVmParameters.class,
-                                           new String[] { "ContainerId", "StorageDomainId", "SourceDomainId", "DestDomainId", "StoragePoolId", "VdsGroupId", "CopyCollapse" },
-                                           new Object[] { VM_ID, GUIDS[2], STORAGE_DOMAIN_ID, GUIDS[2], DATA_CENTER_ID, GUIDS[1], collapseSnapshots }));
+                                           new String[] { "ContainerId", "StorageDomainId", "SourceDomainId", "DestDomainId", "StoragePoolId", "VdsGroupId", "CopyCollapse", "ImportAsNewEntity" },
+                                           new Object[] { VM_ID, GUIDS[2], STORAGE_DOMAIN_ID, GUIDS[2], DATA_CENTER_ID, GUIDS[1], collapseSnapshots, importAsNewEntity }));
 
         Action action = new Action();
         action.setStorageDomain(storageDomain);
@@ -191,6 +201,8 @@ public class BackendStorageDomainVmResourceTest
             vm.getSnapshots().setCollapseSnapshots(collapseSnapshots);
             action.setVm(vm);
         }
+
+        action.setClone(importAsNewEntity);
 
         verifyActionResponse(resource.doImport(action));
     }

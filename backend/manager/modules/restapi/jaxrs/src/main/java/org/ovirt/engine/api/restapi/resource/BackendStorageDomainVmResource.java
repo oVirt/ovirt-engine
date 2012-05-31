@@ -44,6 +44,13 @@ public class BackendStorageDomainVmResource
             params.setCopyCollapse(action.getVm().getSnapshots().isCollapseSnapshots());
         }
 
+        if (action.isSetClone()) {
+            params.setImportAsNewEntity(action.isClone());
+            if(action.isSetVm() && action.getVm().isSetName()) {
+                params.getVm().setvm_name(action.getVm().getName());
+            }
+        }
+
         return doAction(VdcActionType.ImportVm, params, action);
     }
 
