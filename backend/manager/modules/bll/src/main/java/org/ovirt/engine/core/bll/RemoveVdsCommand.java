@@ -162,7 +162,7 @@ public class RemoveVdsCommand<T extends VdsActionParameters> extends VdsCommand<
         // UI will implement forceAction later
         // Now assume that the force option is false
         boolean forceAction = false;
-        if (isGlusterEnabled() && getVdsDAO().getAll().size() > 1 && !hasVolumeOnServer()) {
+        if (isGlusterEnabled() && getVdsDAO().getAllForVdsGroup(getVdsGroupId()).size() > 1 && !hasVolumeOnServer()) {
             VDSReturnValue returnValue =
                     runVdsCommand(
                             VDSCommandType.GlusterHostRemove,
