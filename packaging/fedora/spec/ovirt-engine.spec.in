@@ -503,17 +503,6 @@ then
 fi
 
 
-%post
-#ln -s %{_datadir}/vdsm-bootstrap %{engine_ear}/components.war/vds &> /dev/null || /bin/true
-# TODO: remove copy of vds dir after Jboss7.x will support symbolic links
-if [[ -L %{engine_ear}/components.war/vds ]]; then
-    unlink %{engine_ear}/components.war/vds &> /dev/null || /bin/true
-fi
-
-mkdir -p %{engine_ear}/components.war/vds &> /dev/null || /bin/true
-cp -rpf %{_datadir}/vdsm-bootstrap/* %{engine_ear}/components.war/vds/ &> /dev/null || /bin/true
-
-
 %pre
 %create_engine_user
 
@@ -622,7 +611,6 @@ cp -rpf %{_datadir}/vdsm-bootstrap/* %{engine_ear}/components.war/vds/ &> /dev/n
 %{engine_ear}/engine-scheduler.jar
 %{engine_ear}/ovirtengineweb.war
 %{engine_ear}/ovirtengine.war
-%{engine_ear}/components.war
 
 # Root web application:
 %{root_war}

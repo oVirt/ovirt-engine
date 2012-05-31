@@ -15,7 +15,6 @@
   <modules>
     <module>rm-war</module>
     <module>rmw-war</module>
-    <module>components-war</module>
   </modules>
 
 </project>
