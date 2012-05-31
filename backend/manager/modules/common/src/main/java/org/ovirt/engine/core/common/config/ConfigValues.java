@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum ConfigValues {
+    @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("9b9002d1-ec33-4083-8a7b-31f6b8931648")
     AdUserId(0),
@@ -13,6 +14,7 @@ public enum ConfigValues {
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("5")
     PSAsyncActionTimeOutInMinutes(2),
+    @Deprecated
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("120")
     SelectCommandTimeout(3),
@@ -26,6 +28,7 @@ public enum ConfigValues {
     @DefaultValueAttribute("EXAMPLE.COM:123456")
     @OptionBehaviourAttribute(behaviour = OptionBehaviour.DomainsPasswordMap)
     AdUserPassword(8),
+    @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("123456")
     @OptionBehaviourAttribute(behaviour = OptionBehaviour.Password)
@@ -56,6 +59,7 @@ public enum ConfigValues {
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("5")
     AsyncTaskStatusCachingTimeInMinutes(16),
+    @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("3000")
     AsyncTaskZombieTaskLifeInMinutes(17),
@@ -65,6 +69,7 @@ public enum ConfigValues {
     @TypeConverterAttribute(java.util.Date.class)
     @DefaultValueAttribute("03:35:35")
     AuditLogCleanupTime(19),
+    @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("30")
     AuditLogAgingThreashold(20),
@@ -74,48 +79,62 @@ public enum ConfigValues {
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("100")
     MigrationPortRange(22),
+    @Deprecated
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("false")
     LogXmlRpcData(23),
+    @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("drac5,ilo,ipmilan,rsa,bladecenter,alom,apc,eps,wti,rsb")
     VdsFenceType(24),
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("drac5:secure=yes,ilo:ssl=yes,ipmilan:,rsa:secure=yes,bladecenter:secure=yes,alom:secure=yes,apc:secure=yes,eps:,wti:secure=yes,rsb:")
     VdsFenceOptions(25),
+    @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("alom:secure=secure,port=ipport;apc:secure=secure,port=ipport,slot=port;bladecenter:secure=secure,port=ipport,slot=port;drac5:secure=secure,port=ipport;eps:slot=port;ilo:secure=ssl,port=ipport;ipmilan:;rsa:secure=secure,port=ipport;rsb:;wti:secure=secure,port=ipport,slot=port")
     VdsFenceOptionMapping(26),
+    @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("secure=bool,port=int,slot=int")
     VdsFenceOptionTypes(27),
+    @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("3")
     FenceStopStatusRetries(28),
+    @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("60")
     FenceStopStatusDelayBetweenRetriesInSec(29),
+    @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("180")
     FenceQuietTimeBetweenOperationsInSec(30),
+    @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("/data/updates/ovirt-node-image.iso")
     oVirtUploadPath(32),
+    @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("/usr/share/rhev-hypervisor")
     oVirtISOsRepositoryPath(33),
+    @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("/usr/share/vdsm-reg/vdsm-upgrade")
     oVirtUpgradeScriptName(34),
+    @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("Scripts\\vds_installer.py")
     BootstrapInstallerFileName(35),
+    @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("/usr/share/vdsm-reg/ovirt-vdsm-gen-cert.py")
     CBCCertificateScriptName(36),
+    @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("/usr/share/vdsm-reg/ovirt-vdsm-complete.py")
     CBCCloseCertificateScriptName(37),
+    @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("5")
     VdsCertificateValidityInYears(38),
@@ -144,45 +163,59 @@ public enum ConfigValues {
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
     IncludeDesktop(47),
+    @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("100")
     SearchResultsLimit(48),
+    @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("2")
     VDSAttemptsToResetCount(49),
+    @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("30")
     TimeoutToResetVdsInSeconds(50),
+    @Deprecated
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("VirtualMachineDomainName")
     VirtualMachineDomainName(51),
+    @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
     ProductKey2003(52),
+    @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
     ProductKey2003x64(53),
+    @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
     ProductKey2008(54),
+    @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
     ProductKey2008x64(55),
+    @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
     ProductKey2008R2(56),
+    @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
     ProductKeyWindow7(57),
+    @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
     ProductKeyWindow7x64(58),
+    @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
     ProductKey(59),
+    @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("10")
     FreeSpaceLow(60),
+    @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("5")
     FreeSpaceCriticalLowInGB(61),
@@ -192,12 +225,15 @@ public enum ConfigValues {
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("false")
     HasCluster(63),
+    @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("1.0.0.0")
     VdcVersion(64),
+    @Reloadable
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
     SSLEnabled(65),
+    @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("DEFAULT")
     CipherSuite(66),
@@ -207,9 +243,11 @@ public enum ConfigValues {
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("250")
     MaxVmDiskSize(68),
+    @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("40")
     StoragePoolNameSizeLimit(69),
+    @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("50")
     StorageDomainNameSizeLimit(70),
@@ -219,6 +257,7 @@ public enum ConfigValues {
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("30")
     SlowStorageResponseMessageTimout(72),
+    @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("3")
     NumberOfFailedRunsOnVds(73),
@@ -228,30 +267,39 @@ public enum ConfigValues {
     /**
      * In default rerun Vm on all Available desktops
      */
+    @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("3")
     MaxRerunVmOnVdsCount(75),
+    @Deprecated
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("PerServer")
     AutoMode(78),
+    @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
     SysPrepXPPath(79),
+    @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
     SysPrep2K3Path(80),
+    @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
     SysPrep2K8Path(81),
+    @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
     SysPrep2K8x64Path(82),
+    @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
     SysPrep2K8R2Path(83),
+    @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
     SysPrepWindows7Path(84),
+    @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
     SysPrepWindows7x64Path(85),
@@ -270,22 +318,27 @@ public enum ConfigValues {
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("12:00")
     VmPoolLeaseEndTime(90),
+    @Deprecated
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("WORKGROUP")
     DefaultWorkgroup(91),
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("LDAP")
     AuthenticationMethod(92),
+    @Reloadable
     @TypeConverterAttribute(java.util.List.class)
     @DefaultValueAttribute("1,2,4")
     @OptionBehaviourAttribute(behaviour = OptionBehaviour.CommaSeparatedStringArray)
     ValidNumOfMonitors(93),
+    @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("16")
     MaxNumOfVmCpus(94),
+    @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("16")
     MaxNumOfVmSockets(95),
+    @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("16")
     MaxNumOfCpuPerSocket(96),
@@ -301,16 +354,20 @@ public enum ConfigValues {
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("ca")
     CABaseDirectory(101),
+    @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("certs/engine.cer")
     CertificateFileName(102),
+    @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
     @OptionBehaviourAttribute(behaviour = OptionBehaviour.Password)
     CertificatePassword(103),
+    @Deprecated
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
     CertificateFingerPrint(104),
+    @Deprecated
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
     LicenseCertificateFingerPrint(105),
@@ -320,42 +377,53 @@ public enum ConfigValues {
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
     InstallVds(108),
+    @Reloadable
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
     EnableUSBAsDefault(110),
+    @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("600")
     SSHInactivityTimoutSeconds(111),
+    @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("120")
     ServerRebootTimeout(112),
+    @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("40")
     VmGracefulShutdownTimeout(113),
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("100")
     VmPriorityMaxValue(114),
+    @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("Shutting Down")
     VmGracefulShutdownMessage(115),
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("3")
     SearchesRefreshRateInSeconds(116),
+    @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("smain,sinputs,scursor,splayback,srecord,sdisplay")
     SpiceSecureChannels(117),
+    @Deprecated
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("30")
     AutoSuspendTimeInMinutes(118),
+    @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("shift+f12")
     SpiceReleaseCursorKeys(119),
+    @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("shift+f11")
     SpiceToggleFullScreenKeys(120),
+    @Reloadable
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
     SpiceUsbAutoShare(121),
+    @Deprecated
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
     RDPLoginWithFQN(122),
@@ -365,15 +433,19 @@ public enum ConfigValues {
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("500")
     MaxResultsPageSize(124),
+    @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("oVirt")
     OrganizationName(125),
+    @Reloadable
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
     IsMultilevelAdministrationOn(127),
+    @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("3")
     VdsRecoveryTimeoutInMintues(128),
+    @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("8192")
     MaxBlockDiskSize(129),
@@ -385,15 +457,19 @@ public enum ConfigValues {
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
     UseVdsBrokerInProc(131),
+    @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("RHEV-Agent")
     AgentAppName(132),
+    @Reloadable
     @TypeConverterAttribute(Map.class)
     @DefaultValueAttribute("{\"windows\":\"RHEV-Spice\",\"linux\":\"xorg-x11-drv-qxl\"}")
     SpiceDriverNameInGuest(133),
+    @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("RHEV-toolsSetup_")
     GuestToolsSetupIsoPrefix(134),
+    @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("10")
     VcpuConsumptionPercentage(135),
@@ -406,6 +482,7 @@ public enum ConfigValues {
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("/images/import/")
     ImportDefaultPath(138),
+    @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("None")
     VdsSelectionAlgorithm(139),
@@ -415,50 +492,64 @@ public enum ConfigValues {
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("1")
     VdsLoadBalancingeIntervalInMinutes(141),
+    @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("0")
     LowUtilizationForEvenlyDistribute(142),
+    @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("6")
     LowUtilizationForPowerSave(143),
+    @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("10")
     HighUtilizationForEvenlyDistribute(144),
+    @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("10")
     HighUtilizationForPowerSave(145),
+    @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("80")
     UtilizationThresholdInPercent(146),
+    @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("2")
     CpuOverCommitDurationMinutes(147),
     // a default of 120% memory over commit.
+    @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("120")
     MaxVdsMemOverCommit(148),
     // a default of 120% memory over commit.
+    @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("120")
     MaxVdsMemOverCommitForServers(149),
+    @Deprecated
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("false")
     PowerClientGUI(150),
+    @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("1")
     PowerClientMaxNumberOfConcurrentVMs(151),
+    @Deprecated
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("false")
     PowerClientAllowUsingAsIRS(152),
+    @Reloadable
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("false")
     PowerClientAutoMigrateToPowerClientOnConnect(153),
+    @Reloadable
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("false")
     PowerClientAutoMigrateFromPowerClientToVdsWhenConnectingFromRegularClient(154),
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("false")
     PowerClientAutoMigrateCheckOnRDP(155),
+    @Reloadable
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
     PowerClientSpiceDynamicCompressionManagement(156),
@@ -468,57 +559,72 @@ public enum ConfigValues {
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
     PowerClientAutoAdjustMemoryBaseOnAvailableMemory(158),
+    @Reloadable
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
     PowerClientAutoAdjustMemoryLog(159),
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("256")
     PowerClientAutoAdjustMemoryGeneralReserve(160),
+    @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("100")
     PowerClientAutoAdjustMemorySpicePerSessionReserve(161),
+    @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("50")
     PowerClientAutoAdjustMemorySpicePerMonitorReserve(162),
+    @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("3712")
     PowerClientAutoAdjustMemoryMaxMemory(163),
+    @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("64")
     PowerClientAutoAdjustMemoryModulus(164),
+    @Reloadable
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
     PowerClientAutoInstallCertificateOnApprove(165),
+    @Reloadable
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("false")
     PowerClientAllowRunningGuestsWithoutTools(166),
+    @Reloadable
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("false")
     PowerClientLogDetection(167),
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("false")
     LogVdsRegistration(168),
+    @Reloadable
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
     DebugTimerLogging(169),
+    @Reloadable
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
     DebugSearchLogging(170),
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
     PowerClientAutoApprovePatterns(171),
+    @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("99408929-82CF-4DC7-A532-9D998063FA95")
     PowerClientAutoRegistrationDefaultVdsGroupID(172),
+    @Reloadable
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("false")
     PowerClientRunVmShouldVerifyPendingVMsAsWell(173),
+    @Reloadable
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("false")
     PowerClientDedicatedVmLaunchOnVdsWhilePowerClientStarts(174),
+    @Deprecated
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("false")
     RenewGuestIpOnVdsSubnetChange(176),
+    @Deprecated
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("false")
     RenewGuestIpOnVdsSubnetChangeOnParseError(177),
@@ -528,6 +634,7 @@ public enum ConfigValues {
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("3")
     StoragePoolRefreshTimeInSeconds(179),
+    @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("3")
     StoragePoolNonOperationalResetTimeoutInMin(180),
@@ -550,81 +657,105 @@ public enum ConfigValues {
     @DefaultValueAttribute("")
     @OptionBehaviourAttribute(behaviour = OptionBehaviour.Password)
     ENMailPassword(186),
+    @Deprecated
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
     ENMailDomain(187),
+    @Deprecated
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
     ENMailIsBodyHtml(188),
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
     ENMailEnableSsl(189),
+    @Deprecated
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("false")
     ENMailUseDefaultCredentials(190),
+    @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("System,Sparse,COW,true;Data,Preallocated,RAW,false;Shared,Preallocated,RAW,false;Swap,Preallocated,RAW,false;Temp,Sparse,COW,false")
     DiskConfigurationList(191),
+    @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("3")
     SPMFailOverAttempts(192),
+    @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("ON")
     LockPolicy(193),
+    @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("5")
     LockRenewalIntervalSec(194),
+    @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("30")
     LeaseTimeSec(195),
+    @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("10")
     IoOpTimeoutSec(196),
+    @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("3")
     LeaseRetries(197),
+    @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("en-us")
     VncKeyboardLayout(203),
+    @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("3")
     SpmCommandFailOverRetries(204),
+    @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("1")
     SpmVCpuConsumption(205),
+    @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
     RedirectServletReportsPage(251),
+    @Deprecated
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("Reports not installed, please contact your administrator")
     RedirectServletReportsPageError(252),
+    @Reloadable
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
     EnableSpiceRootCertificateValidation(206),
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("100000")
     MaxMacsCountInPool(207),
+    @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("10")
     NumberOfVmsForTopSizeVms(208),
+    @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("256")
     VMMinMemorySizeInMB(210),
+    @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("20480")
     VM32BitMaxMemorySizeInMB(211),
+    @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("262144")
     VM64BitMaxMemorySizeInMB(212),
+    @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("0")
     BlockMigrationOnSwapUsagePercentage(213),
+    @Reloadable
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
     EnableSwapCheck(214),
+    @Reloadable
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
     SendSMPOnRunVm(215),
+    @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("pc")
     EmulatedMachine(216),
@@ -644,27 +775,35 @@ public enum ConfigValues {
             realValue = "SearchTemplate")
     DBSearchTemplate(219),
     // Do not use those (used internally)
+    @Deprecated
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute(" WHERE RowNum BETWEEN {0} AND {1}")
     SQLServerPagingSyntax(220),
+    @Deprecated
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("Range")
     SQLServerPagingType(221),
+    @Deprecated
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("SELECT * FROM (SELECT *, ROW_NUMBER() OVER({0}) as RowNum FROM ( {1})) as T1 ) as T2 {2}")
     SQLServerSearchTemplate(222),
+    @Deprecated
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute(" OFFSET {0} LIMIT {1}")
     PostgresPagingSyntax(223),
+    @Deprecated
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("Offset")
     PostgresPagingType(224),
+    @Deprecated
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("SELECT * FROM ( {1}) as T1 {2}")
     PostgresSearchTemplate(225),
+    @Deprecated
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("false")
     LogDBCommands(226),
+    @Reloadable
     @TypeConverterAttribute(java.util.HashSet.class)
     @DefaultValueAttribute("4.4,4.5")
     @OptionBehaviourAttribute(behaviour = OptionBehaviour.CommaSeparatedVersionArray)
@@ -673,10 +812,12 @@ public enum ConfigValues {
     @DefaultValueAttribute("2.2,3.0")
     @OptionBehaviourAttribute(behaviour = OptionBehaviour.CommaSeparatedVersionArray)
     SupportedClusterLevels(228),
+    @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("ENGINE")
     OvfVirtualSystemType(229),
 
+    @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("60")
     WaitForVdsInitInSec(230),
@@ -705,10 +846,12 @@ public enum ConfigValues {
     @DefaultValueAttribute("(GMT) GMT Standard Time")
     DefaultTimeZone(260),
 
+    @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("30")
     AsyncPollingCyclesBeforeRefreshSuspend(261),
 
+    @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("120")
     AsyncPollingCyclesBeforeCallbackCleanup(262),
@@ -717,6 +860,7 @@ public enum ConfigValues {
     @DefaultValueAttribute("389")
     LDAPServerPort(263),
 
+    @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("SignReq.bat")
     SignScriptName(264),
@@ -725,10 +869,12 @@ public enum ConfigValues {
     @DefaultValueAttribute("engine")
     CertAlias(265),
 
+    @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("8080")
     PublicURLPort(266),
 
+    @Reloadable
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("false")
     SANWipeAfterDelete(267),
@@ -745,14 +891,17 @@ public enum ConfigValues {
     @DefaultValueAttribute("30")
     UserSessionTimeOutInterval(269),
 
+    @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("/data/images/rhev")
     RhevhLocalFSPath(290),
 
+    @Reloadable
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("false")
     SupportCustomProperties(289),
 
+    @Reloadable
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("false")
     LocalStorageEnabled(270),
@@ -773,46 +922,57 @@ public enum ConfigValues {
     @DefaultValueAttribute("250")
     MaxNumberOfHostsInStoragePool(274),
 
+    @Reloadable
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
     LimitNumberOfNetworkInterfaces(275),
 
+    @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("15")
     MaxVmNameLengthWindows(276),
 
+    @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("64")
     MaxVmNameLengthNonWindows(277),
 
+    @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("255")
     MaxVdsNameLength(278),
 
+    @Reloadable
     @TypeConverterAttribute(Double.class)
     @DefaultValueAttribute("30")
     MaxStorageVdsTimeoutCheckSec(279),
 
+    @Reloadable
     @TypeConverterAttribute(Double.class)
     @DefaultValueAttribute("5")
     MaxStorageVdsDelayCheckSec(280),
 
+    @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("300")
     DisableFenceAtStartupInSec(281),
 
+    @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("60")
     NicDHCPDelayGraceInMS(282),
 
+    @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("3")
     FindFenceProxyRetries(283),
 
+    @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("30")
     FindFenceProxyDelayBetweenRetriesInSec(284),
 
+    @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("1024")
     LogPhysicalMemoryThresholdInMB(285),
@@ -825,6 +985,7 @@ public enum ConfigValues {
     @DefaultValueAttribute("%JBOSS_HOME%\\standalone\\deployments\\engine.ear")
     ENGINEEarLib(287),
 
+    @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("1000")
     LdapQueryPageSize(288),
@@ -833,22 +994,27 @@ public enum ConfigValues {
     @DefaultValueAttribute("100")
     MaxLDAPQueryPartsNumber(289),
 
+    @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("3")
     FenceStartStatusRetries(290),
 
+    @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("60")
     FenceStartStatusDelayBetweenRetriesInSec(291),
 
+    @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("30")
     LDAPQueryTimeout(292),
 
+    @Reloadable
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("false")
     SupportGetDevicesVisibility(293),
 
+    @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("default,ich6")
     DesktopAudioDeviceType(294),
@@ -857,10 +1023,12 @@ public enum ConfigValues {
     @DefaultValueAttribute("false")
     SupportStorageFormat(295),
 
+    @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("0")
     SupportedStorageFormats(296),
 
+    @Reloadable
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("false")
     UseRtl8139_pv(297),
@@ -871,10 +1039,12 @@ public enum ConfigValues {
             realValue = "LikeSyntax")
     DBLikeSyntax(298),
 
+    @Deprecated
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("LIKE")
     SQLServerLikeSyntax(299),
 
+    @Deprecated
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("ILIKE")
     PostgresLikeSyntax(300),
@@ -888,10 +1058,12 @@ public enum ConfigValues {
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("N")
     SQLI18NPrefix(302),
+    @Deprecated
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
     PostgresI18NPrefix(303),
 
+    @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("60000")
     UknownTaskPrePollingLapse(304),
@@ -908,23 +1080,28 @@ public enum ConfigValues {
     @DefaultValueAttribute("3.0.0.0")
     ProductRPMVersion(307),
 
+    @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("10000")
     MaxAuditLogMessageLength(308),
 
+    @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
     SysPrepDefaultUser(309),
 
+    @Reloadable
     @TypeConverterAttribute(String.class)
     @OptionBehaviourAttribute(behaviour = OptionBehaviour.Password)
     @DefaultValueAttribute("")
     SysPrepDefaultPassword(310),
 
+    @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("ilo3=ipmilan")
     FenceAgentMapping(311),
 
+    @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("ilo3:lanplus,power_wait=4")
     FenceAgentDefaultParams(312),
@@ -942,6 +1119,7 @@ public enum ConfigValues {
     @OptionBehaviourAttribute(behaviour = OptionBehaviour.Password)
     AdminPassword(315),
 
+    @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("30")
     SignCertTimeoutInSeconds(316),
@@ -950,14 +1128,17 @@ public enum ConfigValues {
     @DefaultValueAttribute("600")
     OtpExpirationInSeconds(317),
 
+    @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("20")
     ConnectToServerTimeoutInSeconds(318),
 
+    @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
     IPTablesConfig(319),
 
+    @Deprecated
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
     CustomPublicConfig_AppsWebSite(320),
@@ -965,6 +1146,7 @@ public enum ConfigValues {
     /**
      * Lower threshold for disk space on host to be considered low, in MB.
      */
+    @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("1000")
     VdsLocalDisksLowFreeSpace(321),
@@ -972,6 +1154,7 @@ public enum ConfigValues {
     /**
      * Lower threshold for disk space on host to be considered critically low (almost out of space), in MB.
      */
+    @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("500")
     VdsLocalDisksCriticallyLowFreeSpace(322),
@@ -990,18 +1173,22 @@ public enum ConfigValues {
     @DefaultValueAttribute("500")
     DefaultMaxThreadPoolSize(324),
 
+    @Reloadable
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("false")
     IsNeedSupportForOldVgAPI(325),
 
+    @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("1")
     InitStorageSparseSizeInGB(326),
 
+    @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("ovirtmgmt")
     ManagementNetwork(328),
 
+    @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("5.8")
     OvirtInitialSupportedIsoVersion(329),
@@ -1010,18 +1197,22 @@ public enum ConfigValues {
     @DefaultValueAttribute("rhevh")
     OvirtIsoPrefix(330),
 
+    @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("80")
     QuotaThresholdVdsGroup(331),
 
+    @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("80")
     QuotaThresholdStorage(332),
 
+    @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("20")
     QuotaGraceVdsGroup(333),
 
+    @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("20")
     QuotaGraceStorage(334),
@@ -1029,6 +1220,7 @@ public enum ConfigValues {
     /**
      * The base URL for the documentation web-site
      */
+    @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
     DocsURL(335),
@@ -1036,6 +1228,7 @@ public enum ConfigValues {
     // This value indicates devices that although are given to us by VDSM
     // are still treated as managed devices
     // This should be a [device=<device> type=<type>[,]]* string
+    @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
     ManagedDevicesWhiteList(336),
@@ -1047,10 +1240,12 @@ public enum ConfigValues {
     @DefaultValueAttribute("OVIRT")
     OriginType(336),
 
+    @Reloadable
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("false")
     HotPlugEnabled(337),
 
+    @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("Windows7,Windows7x64,Windows2008,Windows2008x64,Windows2008R2x64,RHEL5,RHEL5x64,RHEL6,RHEL6x64")
     HotPlugSupportedOsList(338),
@@ -1059,6 +1254,7 @@ public enum ConfigValues {
     @DefaultValueAttribute("false")
     AllowDuplicateMacAddresses(339),
 
+    @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("3")
     SetupNetworksPollingTimeout(340),
@@ -1075,6 +1271,7 @@ public enum ConfigValues {
     @DefaultValueAttribute("60")
     FailedJobCleanupTimeInMinutes(343),
 
+    @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("100")
     JobPageSize(344),
@@ -1087,6 +1284,7 @@ public enum ConfigValues {
     @DefaultValueAttribute("5")
     VmPoolMonitorIntervalInMinutes(344),
 
+    @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("5")
     VmPoolMonitorBatchSize(345),
