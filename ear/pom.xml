@@ -482,7 +482,9 @@
                   <tasks>
                     <echo>*** Copying ${project.parent.basedir}/deployment/modules to ${jbossHome}/modules</echo>
                     <copy todir="${jbossHome}/modules" verbose="true" overwrite="true">
-                      <fileset dir="${project.parent.basedir}/deployment/modules"/>
+                      <fileset dir="${project.parent.basedir}/deployment/modules">
+                        <include name="org/postgresql/**"/>
+                      </fileset>
                     </copy>
                   </tasks>
                 </configuration>
