@@ -3,8 +3,9 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.ovirt.engine.core.compat.*;
-import org.ovirt.engine.core.common.vdscommands.*;
+import org.ovirt.engine.core.common.businessentities.network;
+import org.ovirt.engine.core.common.vdscommands.NetworkVdsmVDSCommandParameters;
+import org.ovirt.engine.core.compat.StringHelper;
 
 public class EditNetworkVDSCommand<P extends NetworkVdsmVDSCommandParameters> extends VdsBrokerCommand<P> {
     public EditNetworkVDSCommand(P parameters) {
@@ -13,7 +14,7 @@ public class EditNetworkVDSCommand<P extends NetworkVdsmVDSCommandParameters> ex
 
     @Override
     protected void ExecuteVdsBrokerCommand() {
-        String network = (getParameters().getNetworkName() == null) ? "" : getParameters()
+        String networkName = (getParameters().getNetworkName() == null) ? "" : getParameters()
                 .getNetworkName();
         String oldNetwork = (getParameters().getOldNetworkName() == null) ? "" : getParameters()
                 .getOldNetworkName();
@@ -45,11 +46,11 @@ public class EditNetworkVDSCommand<P extends NetworkVdsmVDSCommandParameters> ex
         }
 
         options.put(VdsProperties.stp, (getParameters().getStp()) ? "yes" : "no");
-
         options.put("bridged", Boolean.toString(getParameters().isVmNetwork()));
 
-        if (getParameters().getNetwork().getMtu() != 0) {
-            options.put("mtu", String.valueOf(getParameters().getNetwork().getMtu()));
+        network network = getParameters().getNetwork();
+        if (network != null && network.getMtu() != 0) {
+            options.put("mtu", String.valueOf(network.getMtu()));
         }
 
         // options[VdsProperties.force] = "true";
@@ -59,7 +60,7 @@ public class EditNetworkVDSCommand<P extends NetworkVdsmVDSCommandParameters> ex
                     (new Integer(getParameters().getConnectionTimeout())).toString());
         }
 
-        status = getBroker().editNetwork(oldNetwork, network, vlanId, bond, nics, options);
+        status = getBroker().editNetwork(oldNetwork, networkName, vlanId, bond, nics, options);
         ProceedProxyReturnValue();
     }
 }
