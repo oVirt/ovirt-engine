@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 import java.util.ArrayList;
 import java.util.Date;
 
+import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -686,14 +687,14 @@ public class DiskModel extends Model
             })), getDatacenterId());
         }
         else {
-            AsyncDataProvider.GetDataCenterList(new AsyncQuery(this, new INewAsyncCallback() {
+            AsyncDataProvider.GetDataCentersWithPermittedActionOnClusters(new AsyncQuery(this, new INewAsyncCallback() {
                 @Override
                 public void OnSuccess(Object target, Object returnValue) {
                     DiskModel diskModel = (DiskModel) target;
                     ArrayList<storage_pool> dataCenters = (ArrayList<storage_pool>) returnValue;
                     diskModel.getDataCenter().setItems(dataCenters);
                 }
-            }));
+            }), ActionGroup.CREATE_DISK);
         }
     }
 
