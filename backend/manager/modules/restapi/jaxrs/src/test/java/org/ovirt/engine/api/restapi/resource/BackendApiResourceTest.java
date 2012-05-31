@@ -180,6 +180,9 @@ public class BackendApiResourceTest extends Assert {
         httpHeaders = createMock(HttpHeaders.class);
         List<Locale> locales = new ArrayList<Locale>();
         expect(httpHeaders.getAcceptableLanguages()).andReturn(locales).anyTimes();
+        List<String> filterValue = new ArrayList<String>();
+        filterValue.add("false");
+        expect(httpHeaders.getRequestHeader("filter")).andReturn(filterValue).anyTimes();
         resource.setHttpHeaders(httpHeaders);
     }
 

@@ -81,6 +81,7 @@ public class BackendVmResourceTest
         resource.getParent().backend = backend;
         resource.getParent().sessionHelper = sessionHelper;
         resource.getParent().mappingLocator = resource.mappingLocator;
+        resource.getParent().httpHeaders = httpHeaders;
     }
 
     @Test

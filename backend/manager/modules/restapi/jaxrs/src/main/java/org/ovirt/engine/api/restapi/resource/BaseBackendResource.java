@@ -31,6 +31,9 @@ import org.ovirt.engine.api.restapi.util.SessionHelper;
 
 public class BaseBackendResource {
 
+    private static String USER_FILTER_FIELD = "filter";
+    private Boolean filtered;
+
     protected static final Log LOG = LogFactory.getLog(AbstractBackendResource.class);
 
     protected BackendLocal backend;
@@ -299,5 +302,22 @@ public class BaseBackendResource {
             tail = tail.substring(1);
         }
         return head + "/" + tail;
+    }
+
+    /**
+     * Indicate whether data retrieval should be filtered according to user permissions.
+     *
+     * @return true if data should be filtered, otherwise queries are executed as admin.
+     */
+    protected boolean isFiltered() {
+        if (filtered == null) {
+            List<String> filterVar = getHttpHeaders().getRequestHeader(USER_FILTER_FIELD);
+            if (filterVar != null && filterVar.size() > 0)
+                filtered = Boolean.valueOf(filterVar.iterator().next());
+            else
+                filtered = Boolean.FALSE;
+        }
+
+        return filtered.booleanValue();
     }
 }
