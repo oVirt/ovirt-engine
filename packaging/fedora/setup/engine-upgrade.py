@@ -307,12 +307,13 @@ class MYum():
         try:
             logging.debug("Getting list of packages to upgrade")
             pkgs = self.yumbase.doPackageLists(patterns=rpms)
+            upkgs = self.yumbase.doPackageLists(pkgnarrow="updates", patterns=rpms)
         finally:
             self._lock()
 
         # Save update candidates
-        if pkgs.available:
-            self.upackages = [str(i) for i in sorted(pkgs.available)] # list of rpm names to update
+        if upkgs.updates:
+            self.upackages = [str(i) for i in sorted(upkgs.updates)] # list of rpm names to update
             logging.debug("%s Packages marked for update:"%(len(self.upackages)))
             logging.debug(self.upackages)
         else:
@@ -327,7 +328,7 @@ class MYum():
 
 
         # Return
-        if pkgs.available:
+        if upkgs.updates:
             return True
         else:
             return False
