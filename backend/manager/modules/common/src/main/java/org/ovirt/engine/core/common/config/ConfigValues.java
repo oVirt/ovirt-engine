@@ -1144,6 +1144,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("false")
     ShareableDiskEnabled(358),
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("false")
+    CpuPinningEnabled(359),
+
     Invalid(65535);
 
     private int intValue;

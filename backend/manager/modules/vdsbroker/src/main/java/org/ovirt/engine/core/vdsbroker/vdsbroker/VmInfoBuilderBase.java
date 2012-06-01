@@ -44,18 +44,19 @@ public abstract class VmInfoBuilderBase {
                 (new Integer(vm.getnum_of_cpus())).toString());
         if (Config.<Boolean> GetValue(ConfigValues.SendSMPOnRunVm)) {
             createInfo.add(VdsProperties.cores_per_socket,
-                    (new Integer(vm.getcpu_per_socket())).toString());
+                    (Integer.toString(vm.getcpu_per_socket())));
         }
+        final String compatibilityVersion = vm.getvds_group_compatibility_version().toString();
+        addCpuPinning(compatibilityVersion);
         createInfo.add(VdsProperties.emulatedMachine, Config.<String> GetValue(
-                ConfigValues.EmulatedMachine, vm
-                        .getvds_group_compatibility_version().toString()));
+                ConfigValues.EmulatedMachine, compatibilityVersion));
         // send cipher suite and spice secure channels parameters only if ssl
         // enabled.
         if (Config.<Boolean> GetValue(ConfigValues.SSLEnabled)) {
             createInfo.add(VdsProperties.spiceSslCipherSuite,
                     Config.<String> GetValue(ConfigValues.CipherSuite));
-            createInfo.add(VdsProperties.SpiceSecureChannels,Config.<String> GetValue(
-                    ConfigValues.SpiceSecureChannels, vm.getvds_group_compatibility_version().toString()));
+            createInfo.add(VdsProperties.SpiceSecureChannels, Config.<String> GetValue(
+                    ConfigValues.SpiceSecureChannels, compatibilityVersion));
         }
         createInfo.add(VdsProperties.kvmEnable, vm.getkvm_enable().toString()
                 .toLowerCase());
@@ -63,7 +64,8 @@ public abstract class VmInfoBuilderBase {
                 .toLowerCase());
 
         createInfo.add(VdsProperties.Custom,
-                VmPropertiesUtils.getInstance().getVMProperties(vm.getvds_group_compatibility_version(), vm.getStaticData()));
+                VmPropertiesUtils.getInstance().getVMProperties(vm.getvds_group_compatibility_version(),
+                        vm.getStaticData()));
         createInfo.add(VdsProperties.vm_type, "kvm"); // "qemu", "kvm"
         if (vm.getRunAndPause()) {
             createInfo.add(VdsProperties.launch_paused_param, "true");
@@ -90,6 +92,20 @@ public abstract class VmInfoBuilderBase {
         }
         createInfo.add(VdsProperties.transparent_huge_pages,
                 vm.getTransparentHugePages() ? "true" : "false");
+    }
+
+    private void addCpuPinning(final String compatibilityVersion) {
+        final String cpuPinning = vm.getCpuPinning();
+        if (Boolean.TRUE.equals(Config.<Boolean> GetValue(ConfigValues.CpuPinningEnabled,
+                compatibilityVersion))
+                && cpuPinning != null) {
+            final XmlRpcStruct pinDict = new XmlRpcStruct();
+            for(String pin : cpuPinning.split("_")) {
+                final String[] split = pin.split("#");
+                pinDict.add(split[0], split[1]);
+            }
+            createInfo.add(VdsProperties.cpuPinning, pinDict);
+        }
     }
 
     protected void buildVmNetworkCluster() {
@@ -183,19 +199,19 @@ public abstract class VmInfoBuilderBase {
         if (vm.getvm_type() == VmType.Desktop) {
 
             String soundDeviceTypeConfig = Config.<String> GetValue(
-                        ConfigValues.DesktopAudioDeviceType, vm
-                                .getvds_group_compatibility_version().toString());
+                    ConfigValues.DesktopAudioDeviceType, vm
+                            .getvds_group_compatibility_version().toString());
             String vmOS = vm.getos().name();
 
             Pattern regexPattern = Pattern.compile(String
-                        .format(OS_REGEX, vmOS));
+                    .format(OS_REGEX, vmOS));
             Matcher regexMatcher = regexPattern.matcher(soundDeviceTypeConfig);
 
             if (regexMatcher.find()) {
                 ret = regexMatcher.group(1);
             } else {
                 regexPattern = Pattern.compile(String.format(OS_REGEX,
-                            DEFAULT_TYPE));
+                        DEFAULT_TYPE));
                 regexMatcher = regexPattern.matcher(soundDeviceTypeConfig);
                 if (regexMatcher.find()) {
                     ret = regexMatcher.group(1);

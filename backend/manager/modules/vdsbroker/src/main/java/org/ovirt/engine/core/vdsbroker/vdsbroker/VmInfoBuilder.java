@@ -41,14 +41,13 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
     private static final String USB_BUS = "usb";
     private final static String FIRST_MASTER_MODEL = "ich9-ehci1";
 
-    private final List<XmlRpcStruct> devices;
+    private final List<XmlRpcStruct> devices = new ArrayList<XmlRpcStruct>();
     private List<VmDevice> managedDevices = null;
     private boolean hasNonDefaultBootOrder;
 
     public VmInfoBuilder(VM vm, XmlRpcStruct createInfo) {
         this.vm = vm;
         this.createInfo = createInfo;
-        devices = new ArrayList<XmlRpcStruct>();
         hasNonDefaultBootOrder = (vm.getboot_sequence() != vm.getdefault_boot_sequence());
         if (hasNonDefaultBootOrder) {
             managedDevices = new ArrayList<VmDevice>();

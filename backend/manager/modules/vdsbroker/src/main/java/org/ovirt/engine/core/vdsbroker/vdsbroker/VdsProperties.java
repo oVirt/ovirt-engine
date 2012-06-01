@@ -138,6 +138,7 @@ public final class VdsProperties {
     public static final String num_of_monitors = "spiceMonitors";
     public static final String num_of_cpus = "smp";
     public static final String cores_per_socket = "smpCoresPerSocket";
+    public static final String cpuPinning = "cpuPinning";
     public static final String vm_name = "vmName";
     public static final String vm_guid = "vmId";
     // vm configuration (i.e. VmDynamic)

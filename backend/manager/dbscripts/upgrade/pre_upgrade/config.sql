@@ -22,6 +22,9 @@ PLEASE NOTE THAT THIS SCRIPT MUST REMAIN RE-ENTRANT!
 --                  Add configuration values section
 ------------------------------------------------------------------------------------
 
+select fn_db_add_config_value('CpuPinningEnabled','false','2.2');
+select fn_db_add_config_value('CpuPinningEnabled','false','3.0');
+select fn_db_add_config_value('CpuPinningEnabled','true','3.1');
 select fn_db_add_config_value('AdminDomain','internal','general');
 select fn_db_add_config_value('AdminPassword','','general');
 select fn_db_add_config_value('AdminUser','admin','general');
