@@ -60,7 +60,7 @@ public interface IrsServerConnector {
 
     public Map<String, Object> setStorageDomainDescription(String sdUUID, String description);
 
-    public Map<String, Object> reconstructMaster(String spUUID, String msdUUID, String masterVersion);
+    public Map<String, Object> reconstructMaster(String spUUID, int hostSpmId, String msdUUID, String masterVersion);
 
     public Map<String, Object> extendStorageDomain(String sdUUID, String spUUID, String[] devlist);
 

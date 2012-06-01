@@ -13,6 +13,8 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage_pool_iso_map;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.interfaces.SearchType;
@@ -95,11 +97,16 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
 
         Boolean commandSucceeded = stopSpm();
 
-        commandSucceeded = commandSucceeded && runVdsCommand(
-                VDSCommandType.DisconnectStoragePool,
-                new DisconnectStoragePoolVDSCommandParameters(getVds().getId(),
-                    getStoragePool().getId(), getVds().getvds_spm_id())
-            ).getSucceeded();
+        final List<String> disconnectPoolFormats = Config.<List<String>> GetValue(
+                ConfigValues.DisconnectPoolOnReconstruct);
+
+        if (disconnectPoolFormats.contains(getNewMaster().getStorageFormat().getValue())) {
+            commandSucceeded = commandSucceeded && runVdsCommand(
+                    VDSCommandType.DisconnectStoragePool,
+                    new DisconnectStoragePoolVDSCommandParameters(getVds().getId(),
+                        getStoragePool().getId(), getVds().getvds_spm_id())
+                ).getSucceeded();
+        }
 
         if (!commandSucceeded) {
             return false;
@@ -124,8 +131,8 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
 
         return runVdsCommand(VDSCommandType.ReconstructMaster,
             new ReconstructMasterVDSCommandParameters(getVds().getId(),
-                getStoragePool().getId(), getStoragePool().getname(),
-                _newMasterStorageDomainId, domains,
+                getVds().getvds_spm_id(), getStoragePool().getId(),
+                getStoragePool().getname(), _newMasterStorageDomainId, domains,
                 getStoragePool().getmaster_domain_version())
             ).getSucceeded();
     }

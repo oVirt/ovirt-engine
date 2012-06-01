@@ -1377,6 +1377,11 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     NonVmNetworkSupported(367),
 
+    @TypeConverterAttribute(java.util.List.class)
+    @DefaultValueAttribute("0,2")
+    @OptionBehaviourAttribute(behaviour = OptionBehaviour.CommaSeparatedStringArray)
+    DisconnectPoolOnReconstruct(368),
+
     Invalid(65535);
 
     private int intValue;

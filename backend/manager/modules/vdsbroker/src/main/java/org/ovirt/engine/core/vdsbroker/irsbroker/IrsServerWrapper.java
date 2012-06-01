@@ -147,8 +147,9 @@ public class IrsServerWrapper implements IIrsServer {
         return wrapper;
     }
 
-    public StorageDomainListReturnForXmlRpc reconstructMaster(String spUUID, String msdUUID, String masterVersion) {
-        Map<String, Object> xmlRpcReturnValue = irsServer.reconstructMaster(spUUID, msdUUID, masterVersion);
+    public StorageDomainListReturnForXmlRpc reconstructMaster(String spUUID, int hostSpmId, String msdUUID,
+            String masterVersion) {
+        Map<String, Object> xmlRpcReturnValue = irsServer.reconstructMaster(spUUID, hostSpmId, msdUUID, masterVersion);
         StorageDomainListReturnForXmlRpc wrapper = new StorageDomainListReturnForXmlRpc(xmlRpcReturnValue);
         return wrapper;
     }

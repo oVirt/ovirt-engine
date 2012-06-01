@@ -109,7 +109,7 @@ public interface VdsServerConnector {
 
     public Map<String, Object> reconstructMaster(String spUUID, String poolName, String masterDom,
             Map<String, String> domDict, int masterVersion, String lockPolicy, int lockRenewalIntervalSec,
-            int leaseTimeSec, int ioOpTimeoutSec, int leaseRetries);
+            int leaseTimeSec, int ioOpTimeoutSec, int leaseRetries, int hostSpmId);
 
     public Map<String, Object> getStorageDomainStats(String sdUUID);
 

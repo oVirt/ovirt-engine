@@ -14,7 +14,7 @@ public class ReconstructMasterVDSCommand<P extends ReconstructMasterVDSCommandPa
 
     @Override
     protected void ExecuteVdsBrokerCommand() {
-        Map<String, String> domains = new HashMap<String, String>();
+        final Map<String, String> domains = new HashMap<String, String>();
 
         for (storage_pool_iso_map domain : getParameters().getDomainsList()) {
             domains.put(domain.getstorage_id().toString(),
@@ -24,13 +24,15 @@ public class ReconstructMasterVDSCommand<P extends ReconstructMasterVDSCommandPa
         }
 
         status = getBroker().reconstructMaster(getParameters().getStoragePoolId().toString(),
-                getParameters().getStoragePoolName(),
-                getParameters().getMasterDomainId().toString(), domains,
-                getParameters().getMasterVersion(), Config.<String> GetValue(ConfigValues.LockPolicy),
-                Config.<Integer> GetValue(ConfigValues.LockRenewalIntervalSec),
-                Config.<Integer> GetValue(ConfigValues.LeaseTimeSec),
-                Config.<Integer> GetValue(ConfigValues.IoOpTimeoutSec),
-                Config.<Integer> GetValue(ConfigValues.LeaseRetries));
+            getParameters().getStoragePoolName(),
+            getParameters().getMasterDomainId().toString(), domains,
+            getParameters().getMasterVersion(), Config.<String> GetValue(ConfigValues.LockPolicy),
+            Config.<Integer> GetValue(ConfigValues.LockRenewalIntervalSec),
+            Config.<Integer> GetValue(ConfigValues.LeaseTimeSec),
+            Config.<Integer> GetValue(ConfigValues.IoOpTimeoutSec),
+            Config.<Integer> GetValue(ConfigValues.LeaseRetries),
+            getParameters().getVdsSpmId());
+
         ProceedProxyReturnValue();
     }
 }

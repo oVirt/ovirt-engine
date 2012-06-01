@@ -6,6 +6,16 @@ import org.ovirt.engine.core.common.businessentities.*;
 import java.util.List;
 
 public class ReconstructMasterVDSCommandParameters extends VdsIdVDSCommandParametersBase {
+    private int privateVdsSpmId;
+
+    public int getVdsSpmId() {
+        return privateVdsSpmId;
+    }
+
+    public void setVdsSpmId(int value) {
+        privateVdsSpmId = value;
+    }
+
     private Guid privateStoragePoolId = new Guid();
 
     public Guid getStoragePoolId() {
@@ -56,9 +66,11 @@ public class ReconstructMasterVDSCommandParameters extends VdsIdVDSCommandParame
         privateMasterVersion = value;
     }
 
-    public ReconstructMasterVDSCommandParameters(Guid vdsId, Guid storagePoolId, String storagePoolName,
-            Guid masterDomainId, List<storage_pool_iso_map> domainsList, int masterVersion) {
+    public ReconstructMasterVDSCommandParameters(Guid vdsId, int vdsSpmId, Guid storagePoolId,
+            String storagePoolName, Guid masterDomainId, List<storage_pool_iso_map> domainsList,
+            int masterVersion) {
         super(vdsId);
+        setVdsSpmId(vdsSpmId);
         setStoragePoolId(storagePoolId);
         setStoragePoolName(storagePoolName);
         setMasterDomainId(masterDomainId);
@@ -71,8 +83,11 @@ public class ReconstructMasterVDSCommandParameters extends VdsIdVDSCommandParame
 
     @Override
     public String toString() {
-        return String.format("%s, storagePoolId = %s, storagePoolName = %s, masterDomainId = %s, masterVersion = %s, domainsList = [%s]",
+        return String.format("%s, vdsSpmId = %i, storagePoolId = %s, "
+            + "storagePoolName = %s, masterDomainId = %s, masterVersion = %s, "
+            + "domainsList = [%s]",
                 super.toString(),
+                getVdsSpmId(),
                 getStoragePoolId(),
                 getStoragePoolName(),
                 getMasterDomainId(),

@@ -589,10 +589,11 @@ public class VdsServerWrapper implements IVdsServer {
     @Override
     public StatusOnlyReturnForXmlRpc reconstructMaster(String spUUID, String poolName, String masterDom,
             Map<String, String> domDict, int masterVersion, String lockPolicy, int lockRenewalIntervalSec,
-            int leaseTimeSec, int ioOpTimeoutSec, int leaseRetries) {
+            int leaseTimeSec, int ioOpTimeoutSec, int leaseRetries, int hostSpmId) {
         try {
-            Map<String, Object> xmlRpcReturnValue = vdsServer.reconstructMaster(spUUID, poolName, masterDom, domDict,
-                    masterVersion, lockPolicy, lockRenewalIntervalSec, leaseTimeSec, ioOpTimeoutSec, leaseRetries);
+            Map<String, Object> xmlRpcReturnValue = vdsServer.reconstructMaster(spUUID, poolName, masterDom,
+                    domDict, masterVersion, lockPolicy, lockRenewalIntervalSec, leaseTimeSec, ioOpTimeoutSec,
+                    leaseRetries, hostSpmId);
             StatusOnlyReturnForXmlRpc wrapper = new StatusOnlyReturnForXmlRpc(xmlRpcReturnValue);
             return wrapper;
         } catch (UndeclaredThrowableException ute) {

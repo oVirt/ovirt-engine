@@ -53,7 +53,7 @@ public interface IIrsServer {
 
     StatusOnlyReturnForXmlRpc setStorageDomainDescription(String sdUUID, String description);
 
-    StorageDomainListReturnForXmlRpc reconstructMaster(String spUUID, String msdUUID, String masterVersion);
+    StorageDomainListReturnForXmlRpc reconstructMaster(String spUUID, int hostSpmId, String msdUUID, String masterVersion);
 
     StatusOnlyReturnForXmlRpc extendStorageDomain(String sdUUID, String spUUID, String[] devlist);
 
