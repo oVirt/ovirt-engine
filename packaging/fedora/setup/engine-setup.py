@@ -769,27 +769,6 @@ def _editWebConf():
         logging.error(traceback.format_exc())
         raise Exception(output_messages.ERR_EXP_UPD_WEB_CONF)
 
-def _editExternalConfig():
-    try:
-        exConfigHandler = utils.XMLConfigFileHandler(basedefs.FILE_EXTERNAL_CONFIG)
-        exConfigHandler.open()
-
-        node = utils.getXmlNode(exConfigHandler, "//add[@key='BackendPort']")
-        node.setProp("value", controller.CONF["HTTPS_PORT"])
-        exConfigHandler.close()
-    except:
-        logging.error(traceback.format_exc())
-        raise Exception(output_messages.ERR_EXP_EXTERNAL_CFG%(basedefs.FILE_EXTERNAL_CONFIG))
-
-def _editDefaultHtml():
-    try:
-        utils.findAndReplace(basedefs.FILE_SERVER_PARAMS_JS, "var httpPort.*", 'var httpPort = "%s";'%(controller.CONF["HTTP_PORT"]))
-        utils.findAndReplace(basedefs.FILE_SERVER_PARAMS_JS, "var httpsPort.*", 'var httpsPort = "%s";'%(controller.CONF["HTTPS_PORT"]))
-        utils.findAndReplace(basedefs.FILE_SERVER_PARAMS_JS, "var hostName.*", 'var hostName = "%s";'%(controller.CONF["HOST_FQDN"]))
-    except:
-        logging.error(traceback.format_exc())
-        raise Exception(output_messages.ERR_EXP_UPD_HTML_FILE%(basedefs.FILE_DEFAULT_HTML))
-
 def _createCA():
 
     try:

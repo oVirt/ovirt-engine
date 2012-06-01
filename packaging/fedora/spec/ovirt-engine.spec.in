@@ -610,7 +610,6 @@ fi
 %{engine_ear}/engine-bll.jar
 %{engine_ear}/engine-scheduler.jar
 %{engine_ear}/ovirtengineweb.war
-%{engine_ear}/ovirtengine.war
 
 # Root web application:
 %{root_war}

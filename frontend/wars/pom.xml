@@ -13,7 +13,6 @@
   <name>oVirt WARs</name>
 
   <modules>
-    <module>rm-war</module>
     <module>rmw-war</module>
   </modules>
 
