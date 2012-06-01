@@ -75,6 +75,9 @@ public class AddBricksToGlusterVolumeCommand extends GlusterVolumeCommandBase<Gl
             addGlusterVolumeBricksInDb(getParameters().getBricks(),
                     getParameters().getReplicaCount(),
                     getParameters().getStripeCount());
+        } else {
+            handleVdsError(AuditLogType.GLUSTER_VOLUME_ADD_BRICK_FAILED, returnValue.getVdsError().getMessage());
+            return;
         }
     }
 
@@ -100,7 +103,7 @@ public class AddBricksToGlusterVolumeCommand extends GlusterVolumeCommandBase<Gl
         if (getSucceeded()) {
             return AuditLogType.GLUSTER_VOLUME_ADD_BRICK;
         } else {
-            return AuditLogType.GLUSTER_VOLUME_ADD_BRICK_FAILED;
+            return errorType == null ? AuditLogType.GLUSTER_VOLUME_ADD_BRICK_FAILED : errorType;
         }
     }
 }

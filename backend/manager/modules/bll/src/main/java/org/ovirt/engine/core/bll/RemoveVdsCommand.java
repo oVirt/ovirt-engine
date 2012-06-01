@@ -186,8 +186,11 @@ public class RemoveVdsCommand<T extends VdsActionParameters> extends VdsCommand<
                                     getVds().gethost_name(),
                                     forceAction));
             setSucceeded(returnValue.getSucceeded());
-            if (!returnValue.getSucceeded()) {
+            if (!getSucceeded()) {
+                getReturnValue().getFault().setError(returnValue.getVdsError().getCode());
+                getReturnValue().getFault().setMessage(returnValue.getVdsError().getMessage());
                 errorType = AuditLogType.GLUSTER_HOST_REMOVE_FAILED;
+                return;
             }
         }
     }

@@ -171,6 +171,11 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
                                 new GlusterHostAddVDSParameters(getUpServer().getId(),
                                         hostName));
                 setSucceeded(returnValue.getSucceeded());
+                if (!getSucceeded()) {
+                    getReturnValue().getFault().setError(returnValue.getVdsError().getCode());
+                    getReturnValue().getFault().setMessage(returnValue.getVdsError().getMessage());
+                    return;
+                }
             }
         }
     }

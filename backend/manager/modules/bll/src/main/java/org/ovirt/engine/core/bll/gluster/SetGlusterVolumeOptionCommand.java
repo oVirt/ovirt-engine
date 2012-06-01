@@ -39,6 +39,9 @@ public class SetGlusterVolumeOptionCommand extends GlusterVolumeCommandBase<Glus
         setSucceeded(returnValue.getSucceeded());
         if (getSucceeded()) {
             updateOptionInDb(getParameters().getVolumeOption());
+        } else {
+            handleVdsError(AuditLogType.GLUSTER_VOLUME_OPTION_SET_FAILED, returnValue.getVdsError().getMessage());
+            return;
         }
     }
 
@@ -63,7 +66,7 @@ public class SetGlusterVolumeOptionCommand extends GlusterVolumeCommandBase<Glus
         if (getSucceeded()) {
             return AuditLogType.GLUSTER_VOLUME_OPTION_SET;
         } else {
-            return AuditLogType.GLUSTER_VOLUME_OPTION_SET_FAILED;
+            return errorType == null ? AuditLogType.GLUSTER_VOLUME_OPTION_SET_FAILED : errorType;
         }
     }
 

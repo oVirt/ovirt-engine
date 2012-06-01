@@ -56,7 +56,12 @@ public class StartRebalanceGlusterVolumeCommand extends GlusterVolumeCommandBase
                                         VDSCommandType.StartRebalanceGlusterVolume,
                                         new GlusterVolumeRebalanceVDSParameters(getUpServer().getId(),
                                                 getGlusterVolumeName(), getParameters().isFixLayoutOnly(), getParameters().isForceAction()));
-        setSucceeded(returnValue.getSucceeded());
+        if (getSucceeded()) {
+            setSucceeded(returnValue.getSucceeded());
+        } else {
+            handleVdsError(AuditLogType.GLUSTER_VOLUME_REBALANCE_START_FAILED, returnValue.getVdsError().getMessage());
+            return;
+        }
     }
 
     @Override
@@ -64,7 +69,7 @@ public class StartRebalanceGlusterVolumeCommand extends GlusterVolumeCommandBase
         if (getSucceeded()) {
             return AuditLogType.GLUSTER_VOLUME_REBALANCE_START;
         } else {
-            return AuditLogType.GLUSTER_VOLUME_REBALANCE_START_FAILED;
+            return errorType == null ? AuditLogType.GLUSTER_VOLUME_REBALANCE_START_FAILED : errorType;
         }
     }
 }

@@ -51,7 +51,7 @@ public class DeleteGlusterVolumeCommand extends GlusterVolumeCommandBase<Gluster
         if (getSucceeded()) {
             updateVolumeStatusInDb(getParameters().getVolumeId());
         } else {
-            getReturnValue().getExecuteFailedMessages().add(returnValue.getVdsError().getMessage());
+            handleVdsError(AuditLogType.GLUSTER_VOLUME_DELETE_FAILED, returnValue.getVdsError().getMessage());
             return;
         }
     }
@@ -61,7 +61,7 @@ public class DeleteGlusterVolumeCommand extends GlusterVolumeCommandBase<Gluster
         if (getSucceeded()) {
             return AuditLogType.GLUSTER_VOLUME_DELETE;
         } else {
-            return AuditLogType.GLUSTER_VOLUME_DELETE_FAILED;
+            return errorType == null ? AuditLogType.GLUSTER_VOLUME_DELETE_FAILED : errorType;
         }
     }
 

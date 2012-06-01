@@ -53,7 +53,7 @@ public class StopGlusterVolumeCommand extends GlusterVolumeCommandBase<GlusterVo
         if(getSucceeded()) {
             updateVolumeStatusInDb(getParameters().getVolumeId());
         } else {
-            getReturnValue().getExecuteFailedMessages().add(returnValue.getVdsError().getMessage());
+            handleVdsError(AuditLogType.GLUSTER_VOLUME_STOP_FAILED, returnValue.getVdsError().getMessage());
             return;
         }
     }
@@ -63,7 +63,7 @@ public class StopGlusterVolumeCommand extends GlusterVolumeCommandBase<GlusterVo
         if (getSucceeded()) {
             return AuditLogType.GLUSTER_VOLUME_STOP;
         } else {
-            return AuditLogType.GLUSTER_VOLUME_STOP_FAILED;
+            return errorType == null ? AuditLogType.GLUSTER_VOLUME_STOP_FAILED : errorType;
         }
     }
 

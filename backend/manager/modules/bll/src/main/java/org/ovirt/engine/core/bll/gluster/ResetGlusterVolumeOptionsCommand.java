@@ -44,7 +44,7 @@ public class ResetGlusterVolumeOptionsCommand extends GlusterVolumeCommandBase<R
                 }
             }
         } else {
-            getReturnValue().getExecuteFailedMessages().add(returnValue.getVdsError().getMessage());
+            handleVdsError(AuditLogType.GLUSTER_VOLUME_OPTIONS_RESET_FAILED, returnValue.getVdsError().getMessage());
             return;
         }
     }
@@ -66,7 +66,7 @@ public class ResetGlusterVolumeOptionsCommand extends GlusterVolumeCommandBase<R
         if (getSucceeded()) {
             return AuditLogType.GLUSTER_VOLUME_OPTIONS_RESET;
         } else {
-            return AuditLogType.GLUSTER_VOLUME_OPTIONS_RESET_FAILED;
+            return errorType == null ? AuditLogType.GLUSTER_VOLUME_OPTIONS_RESET_FAILED : errorType;
         }
     }
 

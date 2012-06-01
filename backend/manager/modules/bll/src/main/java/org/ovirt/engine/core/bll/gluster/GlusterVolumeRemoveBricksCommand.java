@@ -82,7 +82,7 @@ public class GlusterVolumeRemoveBricksCommand extends GlusterVolumeCommandBase<G
         if (getSucceeded()) {
             removeBricksFromVolumeInDb(getGlusterVolume(), bricks);
         } else {
-            getReturnValue().getExecuteFailedMessages().add(returnValue.getVdsError().getMessage());
+            handleVdsError(AuditLogType.GLUSTER_VOLUME_REMOVE_BRICKS_FAILED, returnValue.getVdsError().getMessage());
             return;
         }
     }
@@ -125,7 +125,7 @@ public class GlusterVolumeRemoveBricksCommand extends GlusterVolumeCommandBase<G
         if (getSucceeded()) {
             return AuditLogType.GLUSTER_VOLUME_REMOVE_BRICKS;
         } else {
-            return AuditLogType.GLUSTER_VOLUME_REMOVE_BRICKS_FAILED;
+            return errorType == null ? AuditLogType.GLUSTER_VOLUME_REMOVE_BRICKS_FAILED : errorType;
         }
     }
 
