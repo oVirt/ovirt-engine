@@ -1,6 +1,11 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.GetVdsHooksByIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -10,10 +15,6 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 @SuppressWarnings("unused")
 public class HostHooksListModel extends SearchableListModel
@@ -34,6 +35,7 @@ public class HostHooksListModel extends SearchableListModel
     {
         setTitle(ConstantsManager.getInstance().getConstants().hostHooksTitle());
         setHashName("host_hooks"); // $//$NON-NLS-1$
+        setAvailableInModes(ApplicationMode.VirtOnly);
     }
 
     @Override

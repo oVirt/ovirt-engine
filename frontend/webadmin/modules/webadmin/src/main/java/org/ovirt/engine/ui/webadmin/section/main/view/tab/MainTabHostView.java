@@ -6,6 +6,7 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
+import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
@@ -17,6 +18,7 @@ import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.ReportInit;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabHostPresenter;
@@ -262,9 +264,12 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
             }
         });
 
-        getTable().addActionButton(new WebAdminMenuBarButtonDefinition<VDS>(constants.pmHost(),
-            pmSubActions,
-            CommandLocation.OnlyFromToolBar));
+        if (ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly)
+        {
+            getTable().addActionButton(new WebAdminMenuBarButtonDefinition<VDS>(constants.pmHost(),
+                    pmSubActions,
+                    CommandLocation.OnlyFromToolBar));
+        }
 
         getTable().addActionButton(new WebAdminButtonDefinition<VDS>(constants.assignTagsHost()) {
             @Override

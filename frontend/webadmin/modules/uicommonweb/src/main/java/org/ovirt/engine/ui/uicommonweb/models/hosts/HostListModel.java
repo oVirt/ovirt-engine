@@ -28,6 +28,7 @@ import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
+import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.MultilevelAdministrationByAdElementIdParameters;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.ValueObjectMap;
@@ -50,6 +51,7 @@ import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.TagsEqualityComparer;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
@@ -296,6 +298,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         setAssignTagsCommand(new UICommand("AssignTags", this)); //$NON-NLS-1$
         setConfigureLocalStorageCommand(new UICommand("ConfigureLocalStorage", this)); //$NON-NLS-1$
 
+        getConfigureLocalStorageCommand().setAvailableInModes(ApplicationMode.VirtOnly);
         UpdateActionAvailability();
 
         getSearchNextPageCommand().setIsAvailable(true);
@@ -685,21 +688,35 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
 
         if (!((Boolean) model.getIsPm().getEntity()))
         {
-            ConfirmationModel confirmModel = new ConfirmationModel();
-            setConfirmWindow(confirmModel);
-            confirmModel.setTitle(ConstantsManager.getInstance().getConstants().powerManagementConfigurationTitle());
-            confirmModel.setHashName("power_management_configuration"); //$NON-NLS-1$
-            confirmModel.setMessage(ConstantsManager.getInstance().getConstants().youHavntConfigPmMsg());
+            if(ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly)
+            {
+                ConfirmationModel confirmModel = new ConfirmationModel();
+                setConfirmWindow(confirmModel);
+                confirmModel.setTitle(ConstantsManager.getInstance().getConstants().powerManagementConfigurationTitle());
+                confirmModel.setHashName("power_management_configuration"); //$NON-NLS-1$
+                confirmModel.setMessage(ConstantsManager.getInstance().getConstants().youHavntConfigPmMsg());
 
-            UICommand tempVar =
-                    new UICommand(approveInitiated ? "OnSaveInternalFromApprove" : "OnSaveInternalNotFromApprove", this); //$NON-NLS-1$ //$NON-NLS-2$
-            tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
-            tempVar.setIsDefault(true);
-            confirmModel.getCommands().add(tempVar);
-            UICommand tempVar2 = new UICommand("CancelConfirmFocusPM", this); //$NON-NLS-1$
-            tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-            tempVar2.setIsCancel(true);
-            confirmModel.getCommands().add(tempVar2);
+                UICommand tempVar =
+                        new UICommand(approveInitiated ? "OnSaveInternalFromApprove" : "OnSaveInternalNotFromApprove", this); //$NON-NLS-1$ //$NON-NLS-2$
+                tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
+                tempVar.setIsDefault(true);
+                confirmModel.getCommands().add(tempVar);
+                UICommand tempVar2 = new UICommand("CancelConfirmFocusPM", this); //$NON-NLS-1$
+                tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
+                tempVar2.setIsCancel(true);
+                confirmModel.getCommands().add(tempVar2);
+            }
+            else
+            {
+                if(approveInitiated)
+                {
+                    OnSaveInternalFromApprove();
+                }
+                else
+                {
+                    OnSaveInternalNotFromApprove();
+                }
+            }
         }
         else
         {
