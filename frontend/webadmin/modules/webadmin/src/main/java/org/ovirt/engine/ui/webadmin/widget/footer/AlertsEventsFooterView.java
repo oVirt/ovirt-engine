@@ -42,6 +42,7 @@ import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -65,6 +66,9 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
 
     @UiField
     SimplePanel firstRowTablePanel;
+
+    @UiField
+    HorizontalPanel widgetInnerPanel;
 
     @UiField
     ToggleButton alertButton;
@@ -159,6 +163,7 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
         firstRowTablePanel.clear();
         tablePanel.add(eventsTable);
         firstRowTablePanel.add(_eventsTable);
+        widgetInnerPanel.setCellWidth(firstRowTablePanel, "100%"); //$NON-NLS-1$
 
         String image = AbstractImagePrototype.create(resources.alertConfigureImage()).getHTML();
         alertImage = SafeHtmlUtils.fromTrustedString(image);

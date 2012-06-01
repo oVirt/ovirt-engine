@@ -104,7 +104,7 @@
 
 	<g:SimplePanel ui:field="widgetPanel">
 		<g:VerticalPanel addStyleNames="{style.widgetOuterPanel}">
-			<g:HorizontalPanel addStyleNames="{style.widgetInnerPanel}">
+			<g:HorizontalPanel ui:field="widgetInnerPanel" addStyleNames="{style.widgetInnerPanel}">
 				<g:PushButton ui:field="collapseButton" styleName="{style.collapseButton}">
 					<g:upFace image='{resources.collapseAllIcon}' />
 				</g:PushButton>

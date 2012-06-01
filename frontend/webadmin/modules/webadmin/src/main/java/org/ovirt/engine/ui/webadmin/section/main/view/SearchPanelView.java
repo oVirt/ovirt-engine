@@ -11,6 +11,7 @@ import org.ovirt.engine.ui.webadmin.widget.autocomplete.SearchSuggestOracle;
 import org.ovirt.engine.ui.webadmin.widget.autocomplete.SearchSuggestionDisplay;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.dom.client.HasKeyDownHandlers;
@@ -106,6 +107,7 @@ public class SearchPanelView extends AbstractView implements SearchPanelPresente
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         localize(constants);
+        addStyles();
 
         searchStringInput.setSearchBoxPanel(searchBoxPanel);
 
@@ -159,6 +161,11 @@ public class SearchPanelView extends AbstractView implements SearchPanelPresente
 
     void localize(ApplicationConstants constants) {
         searchLabel.setText(constants.searchLabel());
+    }
+
+    void addStyles() {
+        Element postfixElement = searchBoxPanelContainer.getElement().getElementsByTagName("td").getItem(2); //$NON-NLS-1$
+        postfixElement.getStyle().setWidth(100, Unit.PCT);
     }
 
     @Override
