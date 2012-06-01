@@ -21,7 +21,7 @@ public class ServletUtils {
 
     // Anything longer than this is considered a large file and a warning
     // will be generating when serving it:
-    private static final long LARGE = 8192;
+    private static final long LARGE = 1048576; // 1 MiB
 
     public static void sendFile(final HttpServletRequest request, final HttpServletResponse response, final File file, final String type) throws IOException {
         // Make sure the file exits and is readable and send a 404 error
