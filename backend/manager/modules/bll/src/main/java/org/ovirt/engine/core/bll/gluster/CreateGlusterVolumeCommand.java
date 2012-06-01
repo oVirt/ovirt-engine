@@ -79,7 +79,17 @@ public class CreateGlusterVolumeCommand extends GlusterCommandBase<CreateGluster
             return false;
         }
 
+        if (volumeNameExists(volume.getName())) {
+            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_VOLUME_NAME_ALREADY_EXISTS);
+            return false;
+        }
+
         return validateBricks(volume);
+    }
+
+    private boolean volumeNameExists(String volumeName) {
+        GlusterVolumeEntity volumeEntity = getGlusterVolumeDao().getByName(getVdsGroupId(), volumeName);
+        return (volumeEntity == null) ? false : true;
     }
 
     /*

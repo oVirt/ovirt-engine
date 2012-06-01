@@ -1846,6 +1846,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Cluster does not support Gluster service.")
     String ACTION_TYPE_FAILED_CLUSTER_DOES_NOT_SUPPORT_GLUSTER();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Volume name already exists.")
+    String ACTION_TYPE_FAILED_GLUSTER_VOLUME_NAME_ALREADY_EXISTS();
+
     @DefaultStringValue("Cannot ${action} ${type}. Gluster Volume is not valid.")
     String ACTION_TYPE_FAILED_GLUSTER_VOLUME_INVALID();
 
