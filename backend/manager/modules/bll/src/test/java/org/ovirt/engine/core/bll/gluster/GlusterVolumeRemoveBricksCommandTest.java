@@ -42,8 +42,10 @@ public class GlusterVolumeRemoveBricksCommandTest {
 
     private GlusterVolumeRemoveBricksCommand cmd;
 
-    private GlusterVolumeRemoveBricksCommand createTestCommand(Guid volumeId) {
-        return new GlusterVolumeRemoveBricksCommand(new GlusterVolumeRemoveBricksParameters(volumeId, getBricks(volumeId, 1)));
+    private GlusterVolumeRemoveBricksCommand createTestCommand(Guid volumeId, int replicaCount) {
+        return new GlusterVolumeRemoveBricksCommand(new GlusterVolumeRemoveBricksParameters(volumeId,
+                getBricks(volumeId, 1),
+                replicaCount));
     }
 
     private List<GlusterBrickEntity> getBricks(Guid volumeId, int max) {
@@ -97,19 +99,19 @@ public class GlusterVolumeRemoveBricksCommandTest {
 
     @Test
     public void canDoActionSucceeds() {
-        cmd = createTestCommand(volumeId2);
+        cmd = createTestCommand(volumeId2, 0);
         assertTrue(cmd.canDoAction());
     }
 
     @Test
     public void canDoActionFails() {
-        cmd = createTestCommand(volumeId1);
+        cmd = createTestCommand(volumeId1, 0);
         assertFalse(cmd.canDoAction());
     }
 
     @Test
     public void canDoActionFailsOnNull() {
-        cmd = createTestCommand(null);
+        cmd = createTestCommand(null, 0);
         assertFalse(cmd.canDoAction());
     }
 

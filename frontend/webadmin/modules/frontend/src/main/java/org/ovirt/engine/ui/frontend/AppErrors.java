@@ -1935,4 +1935,23 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. Brick ID is required.")
     String ACTION_TYPE_FAILED_BRICK_ID_REQUIRED();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Replica count cannot be reduced by more than one.")
+    String ACTION_TYPE_FAILED_CAN_NOT_REDUCE_REPLICA_COUNT_MORE_THAN_ONE();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Replica count cannot be increased when removing bricks.")
+    String ACTION_TYPE_FAILED_CAN_NOT_INCREASE_REPLICA_COUNT();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Replica count cannot be reduced when adding bricks.")
+    String  ACTION_TYPE_FAILED_CAN_NOT_REDUCE_REPLICA_COUNT();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Replica count cannot be increased by more than one.")
+    String ACTION_TYPE_FAILED_CAN_NOT_INCREASE_REPLICA_COUNT_MORE_THAN_ONE();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Stripe count cannot be increased by more than one.")
+    String ACTION_TYPE_FAILED_CAN_NOT_INCREASE_STRIPE_COUNT_MORE_THAN_ONE();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Stripe count can not be reduced.")
+    String ACTION_TYPE_FAILED_CAN_NOT_REDUCE_STRIPE_COUNT();
+
 }

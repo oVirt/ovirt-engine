@@ -8,6 +8,7 @@ import org.ovirt.engine.core.common.action.gluster.GlusterVolumeBricksActionPara
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeStatus;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeBricksActionVDSParameters;
@@ -36,6 +37,21 @@ public class AddBricksToGlusterVolumeCommand extends GlusterVolumeCommandBase<Gl
         if (getParameters().getBricks() == null || getParameters().getBricks().size() == 0) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_BRICKS_REQUIRED);
             return false;
+        }
+        if (getGlusterVolume().getVolumeType() == GlusterVolumeType.REPLICATE
+                || getGlusterVolume().getVolumeType() == GlusterVolumeType.DISTRIBUTED_REPLICATE) {
+            if (getParameters().getReplicaCount() > getGlusterVolume().getReplicaCount() + 1) {
+                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_CAN_NOT_INCREASE_REPLICA_COUNT_MORE_THAN_ONE);
+            } else if (getParameters().getReplicaCount() < getGlusterVolume().getReplicaCount()) {
+                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_CAN_NOT_REDUCE_REPLICA_COUNT);
+            }
+        } else if (getGlusterVolume().getVolumeType() == GlusterVolumeType.STRIPE
+                || getGlusterVolume().getVolumeType() == GlusterVolumeType.DISTRIBUTED_STRIPE) {
+            if (getParameters().getStripeCount() > getGlusterVolume().getStripeCount() + 1) {
+                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_CAN_NOT_INCREASE_STRIPE_COUNT_MORE_THAN_ONE);
+            } else if (getParameters().getStripeCount() < getGlusterVolume().getStripeCount()) {
+                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_CAN_NOT_REDUCE_STRIPE_COUNT);
+            }
         }
         return updateBrickServerNames(getParameters().getBricks(), true);
     }

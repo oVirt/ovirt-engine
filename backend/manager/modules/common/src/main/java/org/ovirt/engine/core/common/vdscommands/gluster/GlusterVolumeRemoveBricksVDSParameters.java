@@ -15,9 +15,15 @@ public class GlusterVolumeRemoveBricksVDSParameters extends GlusterVolumeVDSPara
 
     private List<GlusterBrickEntity> bricks;
 
-    public GlusterVolumeRemoveBricksVDSParameters(Guid serverId, String volumeName, List<GlusterBrickEntity> bricks) {
+    private int replicaCount;
+
+    public GlusterVolumeRemoveBricksVDSParameters(Guid serverId,
+            String volumeName,
+            List<GlusterBrickEntity> bricks,
+            int replicaCount) {
         super(serverId, volumeName);
         this.bricks = bricks;
+        this.replicaCount = replicaCount;
     }
 
     public List<GlusterBrickEntity> getBricks() {
@@ -35,4 +41,9 @@ public class GlusterVolumeRemoveBricksVDSParameters extends GlusterVolumeVDSPara
         }
         return brickDirectories;
     }
+
+    public int getReplicaCount() {
+        return replicaCount;
+    }
+
 }

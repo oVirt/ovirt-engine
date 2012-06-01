@@ -8,6 +8,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeRemoveBricksParameters;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.validation.group.gluster.RemoveBrick;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -52,17 +53,31 @@ public class GlusterVolumeRemoveBricksCommand extends GlusterVolumeCommandBase<G
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_CAN_NOT_REMOVE_ALL_BRICKS_FROM_VOLUME);
             return false;
         }
+        if (getGlusterVolume().getVolumeType() == GlusterVolumeType.REPLICATE
+                || getGlusterVolume().getVolumeType() == GlusterVolumeType.DISTRIBUTED_REPLICATE) {
+            if (getParameters().getReplicaCount() < getGlusterVolume().getReplicaCount() - 1) {
+                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_CAN_NOT_REDUCE_REPLICA_COUNT_MORE_THAN_ONE);
+                return false;
+            } else if (getParameters().getReplicaCount() > getGlusterVolume().getReplicaCount()) {
+                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_CAN_NOT_INCREASE_REPLICA_COUNT);
+                return false;
+            }
+        }
         return validateBricks(getParameters().getBricks());
     }
 
     @Override
     protected void executeCommand() {
-
+        int replicaCount =
+                (getGlusterVolume().getVolumeType() == GlusterVolumeType.REPLICATE
+                || getGlusterVolume().getVolumeType() == GlusterVolumeType.DISTRIBUTED_REPLICATE)
+                        ? getParameters().getReplicaCount()
+                        : 0;
         VDSReturnValue returnValue =
                 runVdsCommand(
                         VDSCommandType.GlusterVolumeRemoveBricks,
                         new GlusterVolumeRemoveBricksVDSParameters(getUpServer().getId(),
-                                getGlusterVolumeName(), bricks));
+                                getGlusterVolumeName(), bricks, replicaCount));
         setSucceeded(returnValue.getSucceeded());
         if (getSucceeded()) {
             removeBricksFromVolumeInDb(getGlusterVolume(), bricks);

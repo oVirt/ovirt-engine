@@ -203,7 +203,9 @@ public interface VdsServerConnector {
 
     public Map<String, Object> glusterVolumeSetOptionsList();
 
-    public Map<String, Object> glusterVolumeRemoveBrickForce(String volumeName, String[] brickDirectories);
+    public Map<String, Object> glusterVolumeRemoveBrickForce(String volumeName,
+            String[] brickDirectories,
+            int replicaCount);
 
     public Map<String, Object> glusterVolumeBrickAdd(String volumeName,
             String[] bricks,

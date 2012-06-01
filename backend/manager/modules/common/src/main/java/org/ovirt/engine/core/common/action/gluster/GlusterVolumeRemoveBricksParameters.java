@@ -19,9 +19,17 @@ public class GlusterVolumeRemoveBricksParameters extends GlusterVolumeParameters
     @NotNull(message = "VALIDATION.GLUSTER.VOLUME.BRICKS.NOT_NULL")
     private List<GlusterBrickEntity> bricks;
 
+    private int replicaCount = 0;
+
     public GlusterVolumeRemoveBricksParameters(Guid volumeId, List<GlusterBrickEntity> bricks) {
         super(volumeId);
         setBricks(bricks);
+    }
+
+    public GlusterVolumeRemoveBricksParameters(Guid volumeId, List<GlusterBrickEntity> bricks, int replicaCount) {
+        super(volumeId);
+        setBricks(bricks);
+        setReplicaCount(replicaCount);
     }
 
     public List<GlusterBrickEntity> getBricks() {
@@ -30,6 +38,14 @@ public class GlusterVolumeRemoveBricksParameters extends GlusterVolumeParameters
 
     public void setBricks(List<GlusterBrickEntity> bricks) {
         this.bricks = bricks;
+    }
+
+    public int getReplicaCount() {
+        return replicaCount;
+    }
+
+    public void setReplicaCount(int replicaCount) {
+        this.replicaCount = replicaCount;
     }
 
 }
