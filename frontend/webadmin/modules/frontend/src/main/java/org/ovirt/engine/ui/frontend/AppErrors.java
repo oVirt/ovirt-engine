@@ -1906,10 +1906,10 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Replacing brick is not a Gluster volume brick.")
     String ACTION_TYPE_FAILED_NOT_A_GLUSTER_VOLUME_BRICK();
 
-    @DefaultStringValue("Cannot ${action} ${type}. Host having Gluster volume.")
+    @DefaultStringValue("Cannot ${action} ${type}. Server having Gluster volume.")
     String VDS_CANNOT_REMOVE_HOST_HAVING_GLUSTER_VOLUME();
 
-    @DefaultStringValue("Cannot ${action} ${type}. There is no available host in the cluster to probe the new host.")
+    @DefaultStringValue("Cannot ${action} ${type}. There is no available server in the cluster to probe the new server.")
     String ACTION_TYPE_FAILED_NO_GLUSTER_HOST_TO_PEER_PROBE();
 
     @DefaultStringValue("Cannot ${action} ${type}. Invalid gluster brick.")
