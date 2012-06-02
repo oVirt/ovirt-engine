@@ -2,9 +2,11 @@ package org.ovirt.engine.ui.uicommonweb.models.gluster;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
@@ -285,6 +287,14 @@ public class VolumeModel extends Model {
             {
                 VolumeBrickModel volumeBrickModel = (VolumeBrickModel) model;
                 ArrayList<VDS> hostList = (ArrayList<VDS>) result;
+                Iterator<VDS> iterator = hostList.iterator();
+                while (iterator.hasNext())
+                {
+                    if (iterator.next().getstatus() != VDSStatus.Up)
+                    {
+                        iterator.remove();
+                    }
+                }
                 volumeBrickModel.getServers().setItems(hostList);
             }
         };
@@ -399,6 +409,14 @@ public class VolumeModel extends Model {
                     ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) result;
                     VDSGroup oldCluster = (VDSGroup) volumeModel.getCluster().getSelectedItem();
                     storage_pool selectedDataCenter = (storage_pool) getDataCenter().getSelectedItem();
+
+                    Iterator<VDSGroup> iterator = clusters.iterator();
+                    while(iterator.hasNext())
+                    {
+                        if (!iterator.next().supportsGlusterService()) {
+                            iterator.remove();
+                        }
+                    }
 
                     // Update selected cluster only if the returned cluster list is indeed the selected datacenter's
                     // clusters

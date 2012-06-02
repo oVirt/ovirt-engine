@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.gluster;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeBricksActionParameters;
@@ -8,6 +9,7 @@ import org.ovirt.engine.core.common.action.gluster.GlusterVolumeRemoveBricksPara
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeReplaceBrickActionParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterTaskOperation;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
@@ -158,6 +160,15 @@ public class VolumeBrickListModel extends SearchableListModel {
                     {
                         VolumeBrickModel volumeBrickModel = (VolumeBrickModel) model;
                         ArrayList<VDS> hostList = (ArrayList<VDS>) result;
+                        Iterator<VDS> iterator = hostList.iterator();
+                        while (iterator.hasNext())
+                        {
+                            if (iterator.next().getstatus() != VDSStatus.Up)
+                            {
+                                iterator.remove();
+                            }
+                        }
+
                         volumeBrickModel.getServers().setItems(hostList);
                     }
                 };
