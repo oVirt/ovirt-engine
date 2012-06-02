@@ -1954,4 +1954,6 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Stripe count can not be reduced.")
     String ACTION_TYPE_FAILED_CAN_NOT_REDUCE_STRIPE_COUNT();
 
+    @DefaultStringValue("Cannot ${action} ${type}. No server found in Up state.")
+    String ACTION_TYPE_FAILED_NO_UP_SERVER_FOUND();
 }

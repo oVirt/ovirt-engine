@@ -2,8 +2,8 @@ package org.ovirt.engine.core.bll.gluster;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
-import static org.powermock.api.mockito.PowerMockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +13,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeBricksActionParameters;
+import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.gluster.AccessProtocol;
@@ -31,7 +34,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ DbFacade.class, GlusterVolumeDao.class, AddBricksToGlusterVolumeCommand.class })
+@PrepareForTest({ DbFacade.class, GlusterVolumeDao.class, AddBricksToGlusterVolumeCommand.class, ClusterUtils.class })
 public class AddBricksToGlusterVolumeCommandTest {
     @Mock
     DbFacade db;
@@ -42,9 +45,15 @@ public class AddBricksToGlusterVolumeCommandTest {
     @Mock
     VdsStaticDAO vdsStaticDao;
 
+    @Mock
+    ClusterUtils clusterUtils;
+
     private String serverName = "myhost";
+
     private Guid clusterId = new Guid("c0dd8ca3-95dd-44ad-a88a-440a6e3d8106");
+
     private Guid serverId = new Guid("d7f10a21-bbf2-4ffd-aab6-4da0b3b2ccec");
+
     private Guid volumeId1 = new Guid("8bc6f108-c0ef-43ab-ba20-ec41107220f5");
 
     private Guid volumeId2 = new Guid("b2cb2f73-fab3-4a42-93f0-d5e4c069a43e");
@@ -83,11 +92,21 @@ public class AddBricksToGlusterVolumeCommandTest {
         return bricks;
     }
 
+    private VDS getVds(VDSStatus status) {
+        VDS vds = new VDS();
+        vds.setId(Guid.NewGuid());
+        vds.setvds_name("gfs1");
+        vds.setvds_group_id(clusterId);
+        vds.setstatus(status);
+        return vds;
+    }
+
     @Before
     public void mockDbFacadeAndDao() {
         MockitoAnnotations.initMocks(this);
         mockStatic(DbFacade.class);
         mockStatic(GlusterVolumeDao.class);
+        mockStatic(ClusterUtils.class);
         when(db.getGlusterVolumeDao()).thenReturn(volumeDao);
         when(db.getVdsStaticDAO()).thenReturn(vdsStaticDao);
         when(DbFacade.getInstance()).thenReturn(db);
@@ -95,6 +114,8 @@ public class AddBricksToGlusterVolumeCommandTest {
         when(volumeDao.getById(volumeId2)).thenReturn(getMultiBrickVolume(volumeId2));
         when(volumeDao.getById(null)).thenReturn(null);
         when(vdsStaticDao.get(serverId)).thenReturn(getVdsStatic());
+        when(ClusterUtils.getInstance()).thenReturn(clusterUtils);
+        when(clusterUtils.getUpServer(clusterId)).thenReturn(getVds(VDSStatus.Up));
     }
 
     private VdsStatic getVdsStatic() {

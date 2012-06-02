@@ -2,8 +2,8 @@ package org.ovirt.engine.core.bll.gluster;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
-import static org.powermock.api.mockito.PowerMockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +13,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeRemoveBricksParameters;
+import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.AccessProtocol;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickStatus;
@@ -28,7 +31,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ DbFacade.class, GlusterVolumeDao.class, GlusterVolumeRemoveBricksCommand.class })
+@PrepareForTest({ DbFacade.class, GlusterVolumeDao.class, GlusterVolumeRemoveBricksCommand.class, ClusterUtils.class })
 public class GlusterVolumeRemoveBricksCommandTest {
     @Mock
     DbFacade db;
@@ -36,9 +39,14 @@ public class GlusterVolumeRemoveBricksCommandTest {
     @Mock
     GlusterVolumeDao volumeDao;
 
+    @Mock
+    ClusterUtils clusterUtils;
+
     private Guid volumeId1 = new Guid("8bc6f108-c0ef-43ab-ba20-ec41107220f5");
 
     private Guid volumeId2 = new Guid("b2cb2f73-fab3-4a42-93f0-d5e4c069a43e");
+
+    private Guid CLUSTER_ID = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
 
     private GlusterVolumeRemoveBricksCommand cmd;
 
@@ -66,11 +74,23 @@ public class GlusterVolumeRemoveBricksCommandTest {
         MockitoAnnotations.initMocks(this);
         mockStatic(DbFacade.class);
         mockStatic(GlusterVolumeDao.class);
+        mockStatic(ClusterUtils.class);
         when(db.getGlusterVolumeDao()).thenReturn(volumeDao);
         when(DbFacade.getInstance()).thenReturn(db);
         when(volumeDao.getById(volumeId1)).thenReturn(getSingleBrickVolume(volumeId1));
         when(volumeDao.getById(volumeId2)).thenReturn(getMultiBrickVolume(volumeId2));
         when(volumeDao.getById(null)).thenReturn(null);
+        when(ClusterUtils.getInstance()).thenReturn(clusterUtils);
+        when(clusterUtils.getUpServer(CLUSTER_ID)).thenReturn(getVds(VDSStatus.Up));
+    }
+
+    private VDS getVds(VDSStatus status) {
+        VDS vds = new VDS();
+        vds.setId(Guid.NewGuid());
+        vds.setvds_name("gfs1");
+        vds.setvds_group_id(CLUSTER_ID);
+        vds.setstatus(status);
+        return vds;
     }
 
     private GlusterVolumeEntity getSingleBrickVolume(Guid volumeId) {
