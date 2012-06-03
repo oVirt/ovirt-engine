@@ -65,12 +65,13 @@ import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.timer.SchedulerUtil;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 
-// Here we use a Singleton bean
+// Here we use a Singleton Bean
 // The @Startup annotation is to make sure the bean is initialized on startup.
 // @ConcurrencyManagement - we use bean managed concurrency:
-// Singletons that use bean-managed concurrency allow full concurrent access to all the
-// business and timeout methods in the singleton.
-// The developer of the singleton is responsible for ensuring that the state of the singleton is synchronized across all clients.
+// Singletons that use bean-managed concurrency allow full concurrent access
+// to all the business and timeout methods in the singleton.
+// The developer of the singleton is responsible for ensuring that the state
+// of the singleton is synchronized across all clients.
 @Local({ BackendLocal.class, BackendInternal.class })
 @Interceptors({ ThreadLocalSessionCleanerInterceptor.class })
 @Singleton
@@ -341,6 +342,7 @@ public class Backend implements BackendInternal, BackendRemote {
         }
     }
 
+    @Override
     public VdcReturnValueBase EndAction(VdcActionType actionType, VdcActionParametersBase parameters) {
         return endAction(actionType, parameters, null);
     }
@@ -382,13 +384,6 @@ public class Backend implements BackendInternal, BackendRemote {
         command.Execute();
         return command.getQueryReturnValue();
 
-    }
-
-    @Override
-    public void RunAsyncQuery(VdcQueryType actionType, VdcQueryParametersBase parameters) {
-        addSessionToContext(parameters);
-        QueriesCommandBase<?> command = CommandsFactory.CreateQueryCommand(actionType, parameters);
-        command.Execute();
     }
 
     private static String addSessionToContext(VdcQueryParametersBase parameters) {
@@ -455,6 +450,7 @@ public class Backend implements BackendInternal, BackendRemote {
         return runMultipleActionsImpl(actionType, parameters, isInternal, null);
     }
 
+    @Override
     @ExcludeClassInterceptors
     public ErrorTranslator getErrorsTranslator() {
         return errorsTranslator;

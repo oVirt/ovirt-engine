@@ -15,11 +15,11 @@ import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.core.utils.ThreadLocalParamsContainer;
 import org.ovirt.engine.ui.genericapi.parameters.UIQueryParametersBase;
 import org.ovirt.engine.ui.genericapi.returnvalues.UIQueryReturnValue;
 import org.ovirt.engine.ui.genericapi.uiqueries.UIQueryBase;
 import org.ovirt.engine.ui.genericapi.uiqueries.UIQueryType;
-import org.ovirt.engine.core.utils.ThreadLocalParamsContainer;
 
 @Stateless
 public class GenericApiService {
@@ -35,11 +35,6 @@ public class GenericApiService {
     public VdcReturnValueBase RunAction(VdcActionType actionType, VdcActionParametersBase parameters) {
         VdcReturnValueBase returnValue = backend.RunAction(actionType, parameters);
         return returnValue;
-    }
-
-    public void RunAsyncQuery(VdcQueryType actionType, VdcQueryParametersBase parameters) {
-        backend.RunAsyncQuery(actionType, parameters);
-
     }
 
     public ArrayList<VdcReturnValueBase> RunMultipleActions(VdcActionType actionType,
@@ -88,18 +83,19 @@ public class GenericApiService {
         return query.getReturnValue();
     }
 
-    public ArrayList<VdcQueryReturnValue> RunMultipleQueries(ArrayList<VdcQueryType> queryTypeList, ArrayList<VdcQueryParametersBase> queryParamsList) {
+    public ArrayList<VdcQueryReturnValue> RunMultipleQueries(ArrayList<VdcQueryType> queryTypeList,
+            ArrayList<VdcQueryParametersBase> queryParamsList) {
         ArrayList<VdcQueryReturnValue> ret = new ArrayList<VdcQueryReturnValue>();
 
-        if(queryTypeList == null || queryParamsList == null) {
+        if (queryTypeList == null || queryParamsList == null) {
             // TODO: LOG: "queryTypeList and/or queryParamsList is null."
         }
 
-        else if(queryTypeList.size() != queryParamsList.size()) {
+        else if (queryTypeList.size() != queryParamsList.size()) {
             // TODO: LOG: "queryTypeList and queryParamsList don't have the same amount of items."
         }
 
-        else if(queryTypeList.size() == 0) {
+        else if (queryTypeList.size() == 0) {
             // TODO: LOG: no queries to execute.
         }
 
@@ -107,15 +103,16 @@ public class GenericApiService {
             // TODO: next section is a temporary hack for setting the session ID
             // for all queries to be the correct one.
             VdcQueryParametersBase firstParams = queryParamsList.get(0);
-            if(StringHelper.isNullOrEmpty(firstParams.getHttpSessionId()) && StringHelper.isNullOrEmpty(firstParams.getSessionId())) {
+            if (StringHelper.isNullOrEmpty(firstParams.getHttpSessionId())
+                    && StringHelper.isNullOrEmpty(firstParams.getSessionId())) {
                 String sessionID = ThreadLocalParamsContainer.getHttpSessionId();
-                for(VdcQueryParametersBase queryParams : queryParamsList) {
+                for (VdcQueryParametersBase queryParams : queryParamsList) {
                     queryParams.setSessionId(sessionID);
                     queryParams.setHttpSessionId(sessionID);
                 }
             }
 
-            for(int i=0; i<queryTypeList.size() ; i++) {
+            for (int i = 0; i < queryTypeList.size(); i++) {
                 ret.add(RunQuery(queryTypeList.get(i), queryParamsList.get(i)));
             }
         }

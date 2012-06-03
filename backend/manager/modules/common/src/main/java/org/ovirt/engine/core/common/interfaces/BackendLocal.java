@@ -19,13 +19,11 @@ public interface BackendLocal {
     public VdcReturnValueBase EndAction(VdcActionType actionType, VdcActionParametersBase parameters);
 
     ErrorTranslator getErrorsTranslator();
-    ErrorTranslator getVdsErrorsTranslator();
 
-    void RunAsyncQuery(VdcQueryType actionType, VdcQueryParametersBase parameters);
+    ErrorTranslator getVdsErrorsTranslator();
 
     java.util.ArrayList<VdcReturnValueBase> RunMultipleActions(VdcActionType actionType,
             java.util.ArrayList<VdcActionParametersBase> parameters);
-
 
     void Initialize();
 
@@ -39,10 +37,4 @@ public interface BackendLocal {
     VdcReturnValueBase RunAutoAction(VdcActionType actionType, VdcActionParametersBase parameters);
 
     VdcQueryReturnValue RunAutoQuery(VdcQueryType actionType, VdcQueryParametersBase parameters);
-
-    // for ISession
-    // void SetSessionDataBySessionId(String sessionId, String key, Object
-    // value);
-    //
-    // void SetSessionData(String key, Object value);
 }
