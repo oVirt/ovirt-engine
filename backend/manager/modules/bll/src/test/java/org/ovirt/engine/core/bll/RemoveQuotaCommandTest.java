@@ -6,7 +6,6 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +14,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.action.QuotaCRUDParameters;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
@@ -25,22 +24,16 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBaseMockUtils;
 import org.ovirt.engine.core.dao.QuotaDAO;
 import org.ovirt.engine.core.dao.StoragePoolDAO;
 import org.ovirt.engine.core.dao.VmDAO;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ DbFacade.class })
+@RunWith(MockitoJUnitRunner.class)
 public class RemoveQuotaCommandTest {
 
     private final Guid generalGuidQuota = Guid.NewGuid();
     private final Guid storagePoolUUID = Guid.NewGuid();
-
-    @Mock
-    private DbFacade db;
 
     @Mock
     private QuotaDAO quotaDAO;
@@ -56,28 +49,20 @@ public class RemoveQuotaCommandTest {
      */
     private RemoveQuotaCommand<QuotaCRUDParameters> command;
 
-    public RemoveQuotaCommandTest() {
-        MockitoAnnotations.initMocks(this);
-        mockStatic(DbFacade.class);
-    }
-
     @Before
     public void testSetup() {
         mockQuotaDAO();
         mockVmDAO();
+        mockStoragePoolDAO();
     }
 
     private void mockVmDAO() {
-        when(db.getVmDAO()).thenReturn(vmDAO);
-        when(DbFacade.getInstance()).thenReturn(db);
-
         // Mock VM Dao getAllVmsRelatedToQuotaId.
         List<VM> newList = new ArrayList<VM>();
         when(vmDAO.getAllVmsRelatedToQuotaId(generalGuidQuota)).thenReturn(newList);
     }
 
     private void mockQuotaDAO() {
-        when(db.getQuotaDAO()).thenReturn(quotaDAO);
         when(quotaDAO.getById(any(Guid.class))).thenReturn(mockGeneralStorageQuota());
         List<Quota> quotaList = new ArrayList<Quota>();
         quotaList.add(new Quota());
@@ -91,14 +76,12 @@ public class RemoveQuotaCommandTest {
 
     @Test
     public void testExecuteCommand() throws Exception {
-        mockStoragePoolDAO();
         RemoveQuotaCommand<QuotaCRUDParameters> removeQuotaCommand = createCommand();
         removeQuotaCommand.executeCommand();
     }
 
     @Test
     public void testCanDoActionCommand() throws Exception {
-        mockStoragePoolDAO();
         RemoveQuotaCommand<QuotaCRUDParameters> removeQuotaCommand = createCommand();
         assertTrue(removeQuotaCommand.canDoAction());
     }
@@ -144,6 +127,7 @@ public class RemoveQuotaCommandTest {
         command = spy(new RemoveQuotaCommand<QuotaCRUDParameters>(param));
         doReturn(storagePoolDAO).when(command).getStoragePoolDAO();
         doReturn(quotaDAO).when(command).getQuotaDAO();
+        AuditLogableBaseMockUtils.mockVmDao(command, vmDAO);
         return command;
     }
 
