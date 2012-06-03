@@ -8,6 +8,7 @@ import javax.validation.constraints.Pattern;
 
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
+import org.ovirt.engine.core.common.validation.group.UpdateVmNic;
 import org.ovirt.engine.core.compat.NGuid;
 
 /**
@@ -15,6 +16,8 @@ import org.ovirt.engine.core.compat.NGuid;
  *
  */
 public class VmNetworkInterface extends NetworkInterface<VmNetworkStatistics> {
+    private static final String VALID_MAC_ADDRESS_FORMAT = "(\\p{XDigit}{2}:){5}\\p{XDigit}{2}";
+
     private static final long serialVersionUID = 7428150502868988886L;
 
     protected static final String VALIDATION_MESSAGE_MAC_ADDRESS_NOT_NULL =
@@ -114,16 +117,22 @@ public class VmNetworkInterface extends NetworkInterface<VmNetworkStatistics> {
         this.active = active;
     }
 
-    @NotNull(message = VmNetworkInterface.VALIDATION_MESSAGE_NAME_NOT_NULL)
+    @NotNull(message = VmNetworkInterface.VALIDATION_MESSAGE_NAME_NOT_NULL, groups = { CreateEntity.class,
+            UpdateEntity.class })
     @Override
     public String getName() {
         return super.getName();
     }
 
-    @NotNull(message = VmNetworkInterface.VALIDATION_MESSAGE_MAC_ADDRESS_NOT_NULL)
-    @Pattern(regexp = "(\\p{XDigit}{2}:){5}\\p{XDigit}{2}",
-            message = VmNetworkInterface.VALIDATION_MESSAGE_MAC_ADDRESS_INVALID, groups = { CreateEntity.class,
-                    UpdateEntity.class })
+    @NotNull(message = VmNetworkInterface.VALIDATION_MESSAGE_MAC_ADDRESS_NOT_NULL, groups = { UpdateVmNic.class })
+    @Pattern.List({
+            @Pattern(regexp = "(^$)|(" + VALID_MAC_ADDRESS_FORMAT + ")",
+                    message = VmNetworkInterface.VALIDATION_MESSAGE_MAC_ADDRESS_INVALID,
+                    groups = { CreateEntity.class }),
+            @Pattern(regexp = VALID_MAC_ADDRESS_FORMAT,
+                    message = VmNetworkInterface.VALIDATION_MESSAGE_MAC_ADDRESS_INVALID,
+                    groups = { UpdateEntity.class })
+    })
     @Override
     public String getMacAddress() {
         return super.getMacAddress();

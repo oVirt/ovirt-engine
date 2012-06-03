@@ -1458,7 +1458,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("MAC address is required.")
     String VALIDATION_VM_NETWORK_MAC_ADDRESS_NOT_NULL();
 
-    @DefaultStringValue("Network name is required.")
+    @DefaultStringValue("Interface name is required.")
     String VALIDATION_VM_NETWORK_NAME_NOT_NULL();
 
     @DefaultStringValue("Invalid ISO image path")

@@ -14,7 +14,7 @@ import org.ovirt.engine.core.common.businessentities.network;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
-import org.ovirt.engine.core.common.validation.group.UpdateEntity;
+import org.ovirt.engine.core.common.validation.group.UpdateVmNic;
 import org.ovirt.engine.core.compat.Regex;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.VdcBllMessages;
@@ -149,7 +149,7 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
 
     @Override
     protected List<Class<?>> getValidationGroups() {
-        addValidationGroup(UpdateEntity.class);
+        addValidationGroup(UpdateVmNic.class);
         return super.getValidationGroups();
     }
 
