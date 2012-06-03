@@ -155,6 +155,7 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
         qModel.getGraceStorage().setEntity(newQuota.getGraceStoragePercentage());
         qModel.getThresholdStorage().setEntity(newQuota.getThresholdStoragePercentage());
         setWindow(qModel);
+        qModel.StartProgress(null);
 
         AsyncDataProvider.GetDataCenterList(new AsyncQuery(this, new INewAsyncCallback() {
 
@@ -202,7 +203,9 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
                             quotaVdsGroup = new QuotaVdsGroup();
                             quotaVdsGroup.setVdsGroupId(vdsGroup.getId());
                             quotaVdsGroup.setVdsGroupName(vdsGroup.getname());
+                            quotaVdsGroup.setMemSizeMB(null);
                             quotaVdsGroup.setMemSizeMBUsage((long) 0);
+                            quotaVdsGroup.setVirtualCpu(null);
                             quotaVdsGroup.setVirtualCpuUsage(0);
                             quotaClusterList.add(quotaVdsGroup);
                         }
@@ -229,10 +232,12 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
                             quotaStorage = new QuotaStorage();
                             quotaStorage.setStorageId(storage.getId());
                             quotaStorage.setStorageName(storage.getstorage_name());
+                            quotaStorage.setStorageSizeGB(null);
                             quotaStorage.setStorageSizeGBUsage((double) 0);
                             quotaStorageList.add(quotaStorage);
                         }
                         qModel.getAllDataCenterStorages().setItems(quotaStorageList);
+                        qModel.StopProgress();
                     }
                 }), selectedDataCenter.getId());
 
@@ -380,6 +385,8 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
         command.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         qModel.getCommands().add(command);
         setWindow(qModel);
+        qModel.StartProgress(null);
+
         AsyncQuery asyncQuery = new AsyncQuery();
         asyncQuery.Model = this;
         asyncQuery.asyncCallback = new INewAsyncCallback() {
@@ -477,6 +484,8 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
                                         }
                                     }
                                     if (!containCluster) {
+                                        quotaVdsGroup.setMemSizeMB(null);
+                                        quotaVdsGroup.setVirtualCpu(null);
                                         quotaVdsGroup.setMemSizeMBUsage((long) 0);
                                         quotaVdsGroup.setVirtualCpuUsage(0);
                                     }
@@ -518,11 +527,13 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
                                         }
                                     }
                                     if (!containStorage) {
+                                        quotaStorage.setStorageSizeGB(null);
                                         quotaStorage.setStorageSizeGBUsage(0.0);
                                     }
                                     quotaStorageList.add(quotaStorage);
                                 }
                                 quotaModel.getAllDataCenterStorages().setItems(quotaStorageList);
+                                quotaModel.StopProgress();
                             }
                         }), selectedDataCenter.getId());
 
