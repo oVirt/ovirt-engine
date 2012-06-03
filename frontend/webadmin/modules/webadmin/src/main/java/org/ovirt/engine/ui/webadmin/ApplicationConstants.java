@@ -1221,6 +1221,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Creation Date")
     String creationDateVm();
 
+    @DefaultStringValue("Export Date")
+    String exportDateVm();
+
     @DefaultStringValue("Detach")
     String detachVm();
 
@@ -1264,6 +1267,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Creation Date")
     String creationDateTemplate();
+
+    @DefaultStringValue("Export Date")
+    String exportDateTemplate();
 
     @DefaultStringValue("Status")
     String statusTemplate();

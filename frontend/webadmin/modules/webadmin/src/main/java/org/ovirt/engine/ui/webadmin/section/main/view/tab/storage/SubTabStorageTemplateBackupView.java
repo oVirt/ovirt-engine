@@ -84,6 +84,15 @@ public class SubTabStorageTemplateBackupView extends AbstractSubTabTableView<sto
                 };
         getTable().addColumn(creationDateColumn, constants.creationDateTemplate());
 
+        TextColumnWithTooltip<VmTemplate> exportDateColumn =
+            new GeneralDateTimeColumn<VmTemplate>() {
+                @Override
+                protected Date getRawValue(VmTemplate object) {
+                    return object.getExportDate();
+                }
+            };
+        getTable().addColumn(exportDateColumn, constants.exportDateTemplate());
+
         getTable().addActionButton(new WebAdminButtonDefinition<VmTemplate>(constants.restoreVm()) {
             @Override
             protected UICommand resolveCommand() {
