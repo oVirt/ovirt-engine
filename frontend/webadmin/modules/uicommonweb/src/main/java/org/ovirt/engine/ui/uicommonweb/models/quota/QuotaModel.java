@@ -190,9 +190,13 @@ public class QuotaModel extends EntityModel {
         setDataCenter(new ListModel());
 
         setGraceCluster(new EntityModel());
+        getGraceCluster().setEntity(20);
         setThresholdCluster(new EntityModel());
+        getThresholdCluster().setEntity(80);
         setGraceStorage(new EntityModel());
+        getGraceStorage().setEntity(20);
         setThresholdStorage(new EntityModel());
+        getThresholdStorage().setEntity(80);
 
         setGlobalClusterQuota(new EntityModel());
         setSpecificClusterQuota(new EntityModel());

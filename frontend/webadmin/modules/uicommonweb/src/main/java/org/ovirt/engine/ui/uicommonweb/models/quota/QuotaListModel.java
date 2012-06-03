@@ -150,10 +150,6 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
         qModel.setHashName("new_quota"); //$NON-NLS-1$
         Quota newQuota = new Quota();
         qModel.setEntity(newQuota);
-        qModel.getGraceCluster().setEntity(newQuota.getGraceVdsGroupPercentage());
-        qModel.getThresholdCluster().setEntity(newQuota.getThresholdVdsGroupPercentage());
-        qModel.getGraceStorage().setEntity(newQuota.getGraceStoragePercentage());
-        qModel.getThresholdStorage().setEntity(newQuota.getThresholdStoragePercentage());
         setWindow(qModel);
         qModel.StartProgress(null);
 

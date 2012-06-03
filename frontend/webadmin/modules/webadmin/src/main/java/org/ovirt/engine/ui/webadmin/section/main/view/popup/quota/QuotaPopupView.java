@@ -18,6 +18,8 @@ import org.ovirt.engine.ui.common.widget.editor.EntityModelRadioButtonEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.IVdcQueryableCellTable;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
+import org.ovirt.engine.ui.common.widget.form.Slider;
+import org.ovirt.engine.ui.common.widget.form.Slider.SliderValueChange;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -40,7 +42,19 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.inject.Inject;
 
-public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> implements QuotaPopupPresenterWidget.ViewDef {
+public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> implements QuotaPopupPresenterWidget.ViewDef, SliderValueChange {
+
+    private static final String GRACE_CLUSTER = "GRACE_CLUSTER"; //$NON-NLS-1$
+
+    private static final String THRESHOLD_CLUSTER = "THRESHOLD_CLUSTER"; //$NON-NLS-1$
+
+    private static final String GRACE_STORAGE = "GRACE_STORAGE"; //$NON-NLS-1$
+
+    private static final String THRESHOLD_STORAGE = "THRESHOLD_STORAGE"; //$NON-NLS-1$
+
+    private static final String MAX_COLOR = "#4E9FDD"; //$NON-NLS-1$
+
+    private static final String MIN_COLOR = "#AFBF27"; //$NON-NLS-1$
 
     @UiField
     WidgetStyle style;
@@ -61,32 +75,40 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
     ListModelListBoxEditor<Object> dataCenterEditor;
 
     @UiField
-    @Path(value = "graceCluster.entity")
-    @WithElementId
-    EntityModelTextBoxEditor graceClusterEditor;
-
-    @UiField
-    @Path(value = "thresholdCluster.entity")
-    @WithElementId
-    EntityModelTextBoxEditor thresholdClusterEditor;
-
-    @UiField
-    @Path(value = "graceStorage.entity")
-    @WithElementId
-    EntityModelTextBoxEditor graceStorageEditor;
-
-    @UiField
-    @Path(value = "thresholdStorage.entity")
-    @WithElementId
-    EntityModelTextBoxEditor thresholdStorageEditor;
-
-    @UiField
     @Ignore
     Label memAndCpuLabel;
 
     @UiField
     @Ignore
     Label storageLabel;
+
+    @UiField(provided = true)
+    Slider clusterGraceSlider;
+
+    @UiField(provided = true)
+    Slider clusterThresholdSlider;
+
+    @UiField
+    @Ignore
+    Label clusterThresholdLabel;
+
+    @UiField
+    @Ignore
+    Label clusterGraceLabel;
+
+    @UiField(provided = true)
+    Slider storageGraceSlider;
+
+    @UiField(provided = true)
+    Slider storageThresholdSlider;
+
+    @UiField
+    @Ignore
+    Label storageThresholdLabel;
+
+    @UiField
+    @Ignore
+    Label storageGraceLabel;
 
     @UiField(provided = true)
     @Path(value = "globalClusterQuota.entity")
@@ -149,6 +171,7 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
         super(eventBus, resources);
         initListBoxEditors();
         initRadioButtonEditors();
+        initSliders();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
         localize(constants);
@@ -158,10 +181,18 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
     }
 
     private void addStyles() {
-        graceClusterEditor.addContentWidgetStyleName(style.textBoxWidth());
-        graceStorageEditor.addContentWidgetStyleName(style.textBoxWidth());
-        thresholdClusterEditor.addContentWidgetStyleName(style.textBoxWidth());
-        thresholdStorageEditor.addContentWidgetStyleName(style.textBoxWidth());
+    }
+
+    private void initSliders() {
+        clusterThresholdSlider = new Slider(2, 0, 100, 80, MIN_COLOR);
+        clusterThresholdSlider.setSliderValueChange(THRESHOLD_CLUSTER, this);
+        clusterGraceSlider = new Slider(2, 101, 200, 120, MAX_COLOR);
+        clusterGraceSlider.setSliderValueChange(GRACE_CLUSTER, this);
+
+        storageThresholdSlider = new Slider(2, 0, 100, 80, MIN_COLOR);
+        storageThresholdSlider.setSliderValueChange(THRESHOLD_STORAGE, this);
+        storageGraceSlider = new Slider(2, 101, 200, 120, MAX_COLOR);
+        storageGraceSlider.setSliderValueChange(GRACE_STORAGE, this);
     }
 
     private void initTables(ApplicationConstants constants) {
@@ -371,16 +402,16 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
         nameEditor.setLabel(constants.nameQuotaPopup());
         descriptionEditor.setLabel(constants.descriptionQuotaPopup());
         dataCenterEditor.setLabel(constants.dataCenterQuotaPopup());
-        thresholdClusterEditor.setLabel(constants.quotaClusterThreshold());
-        graceClusterEditor.setLabel(constants.quotaClusterGrace());
-        thresholdStorageEditor.setLabel(constants.quotaStorageThreshold());
-        graceStorageEditor.setLabel(constants.quotaStorageGrace());
         memAndCpuLabel.setText(constants.memAndCpuQuotaPopup());
         storageLabel.setText(constants.storageQuotaPopup());
         globalClusterQuotaRadioButtonEditor.setLabel(constants.ultQuotaForAllClustersQuotaPopup());
         specificClusterQuotaRadioButtonEditor.setLabel(constants.useQuotaSpecificClusterQuotaPopup());
         globalStorageQuotaRadioButtonEditor.setLabel(constants.utlQuotaAllStoragesQuotaPopup());
         specificStorageQuotaRadioButtonEditor.setLabel(constants.usedQuotaSpecStoragesQuotaPopup());
+        clusterGraceLabel.setText(constants.quotaClusterGrace());
+        clusterThresholdLabel.setText(constants.quotaClusterThreshold());
+        storageGraceLabel.setText(constants.quotaStorageGrace());
+        storageThresholdLabel.setText(constants.quotaStorageThreshold());
     }
 
     @Override
@@ -389,6 +420,7 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
         if (!firstTime) {
             registerHandlers();
             firstTime = true;
+            updateSliders();
         }
 
         quotaClusterTable.edit(object.getQuotaClusters());
@@ -457,5 +489,25 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
 
     interface WidgetStyle extends CssResource {
         String textBoxWidth();
+    }
+
+    private void updateSliders() {
+        clusterThresholdSlider.setValue((Integer) model.getThresholdCluster().getEntity());
+        clusterGraceSlider.setValue((Integer) model.getGraceCluster().getEntity() + 100);
+        storageThresholdSlider.setValue((Integer) model.getThresholdStorage().getEntity());
+        storageGraceSlider.setValue((Integer) model.getGraceStorage().getEntity() + 100);
+    }
+
+    @Override
+    public void onSliderValueChange(String name, int value) {
+        if (name.equals(THRESHOLD_CLUSTER)) {
+            model.getThresholdCluster().setEntity(value);
+        } else if (name.equals(GRACE_CLUSTER)) {
+            model.getGraceCluster().setEntity(value - 100);
+        } else if (name.equals(THRESHOLD_STORAGE)) {
+            model.getThresholdStorage().setEntity(value);
+        } else if (name.equals(GRACE_STORAGE)) {
+            model.getGraceStorage().setEntity(value - 100);
+        }
     }
 }
