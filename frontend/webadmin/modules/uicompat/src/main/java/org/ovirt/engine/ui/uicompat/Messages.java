@@ -2,8 +2,6 @@ package org.ovirt.engine.ui.uicompat;
 
 import java.util.Date;
 
-import com.google.gwt.i18n.client.Messages.DefaultMessage;
-
 public interface Messages extends com.google.gwt.i18n.client.Messages {
 
     @DefaultMessage("{0} Alerts")
@@ -111,7 +109,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 
     @DefaultMessage("({0} bricks selected)")
     String noOfBricksSelected(int brickCount);
-    
+
     @DefaultMessage("Please use your VNC client to connect to this VM.</BR></BR>Use the following parameters:</BR>IP:Port: {0}:{1}</BR>Password: {2}</BR>(note: this password is valid for {3} seconds)")
     String vncInfoMessage(String hostIp, int port, String password, int seconds);
 
@@ -127,4 +125,6 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     @DefaultMessage("LUN is already in use: VG ID - {0}")
     String lunUsedByVGWarning(String vgID);
 
+    @DefaultMessage("Replica count will be reduced from {0} to {1} on removing the following bricks. Are you sure want to continue?")
+    String removeBricksReplicateVolumeMessage(int oldReplicaCount, int newReplicaCount);
 }

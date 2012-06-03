@@ -384,7 +384,7 @@ public class VolumeBrickModel extends Model {
         bricks.setSelectedItems(selectedItems);
     }
 
-    public boolean validateBrickCount(GlusterVolumeType selectedVolumeType) {
+    public boolean validateBrickCount(GlusterVolumeType selectedVolumeType, boolean isCreateVolume) {
 
         int brickCount = 0;
 
@@ -396,27 +396,27 @@ public class VolumeBrickModel extends Model {
         int replicaCount = getReplicaCountValue();
         int stripeCount = getStripeCountValue();
 
-        return validateBrickCount(selectedVolumeType, brickCount, replicaCount, stripeCount);
+        return validateBrickCount(selectedVolumeType, brickCount, replicaCount, stripeCount, isCreateVolume);
 
     }
 
     public static boolean validateBrickCount(GlusterVolumeType selectedVolumeType,
             ListModel bricks,
             int replicaCount,
-            int stripeCount) {
+            int stripeCount, boolean isCreateVolume) {
         int brickCount = 0;
 
         if (bricks.getItems() != null)
         {
             brickCount = ((List<?>) bricks.getItems()).size();
         }
-        return validateBrickCount(selectedVolumeType, brickCount, replicaCount, stripeCount);
+        return validateBrickCount(selectedVolumeType, brickCount, replicaCount, stripeCount, isCreateVolume);
     }
 
     public static boolean validateBrickCount(GlusterVolumeType selectedVolumeType,
             int brickCount,
             int replicaCount,
-            int stripeCount) {
+            int stripeCount, boolean isCreateVolume) {
 
         if (brickCount < 1)
         {
@@ -424,6 +424,21 @@ public class VolumeBrickModel extends Model {
         }
 
         boolean valid = true;
+
+        // At the time extending a volume, stripe volume can be converted to a distributed stripe volume
+        // and a replicate volume can be converted to a distributed replicate volume
+        // so the validation will be performed for the corresponding distributed types
+        if (!isCreateVolume)
+        {
+            if (selectedVolumeType == GlusterVolumeType.REPLICATE)
+            {
+                selectedVolumeType = GlusterVolumeType.DISTRIBUTED_REPLICATE;
+            }
+            else if (selectedVolumeType == GlusterVolumeType.STRIPE)
+            {
+                selectedVolumeType = GlusterVolumeType.DISTRIBUTED_STRIPE;
+            }
+        }
 
         switch (selectedVolumeType)
         {
@@ -450,14 +465,14 @@ public class VolumeBrickModel extends Model {
             break;
 
         case DISTRIBUTED_REPLICATE:
-            if ((brickCount % replicaCount) != 0)
+            if (brickCount < replicaCount || (brickCount % replicaCount) != 0)
             {
                 valid = false;
             }
             break;
 
         case DISTRIBUTED_STRIPE:
-            if ((brickCount % stripeCount) != 0)
+            if (brickCount < stripeCount || (brickCount % stripeCount) != 0)
             {
                 valid = false;
             }
@@ -467,9 +482,21 @@ public class VolumeBrickModel extends Model {
         return valid;
     }
 
-    public static String getValidationFailedMsg(GlusterVolumeType selectedVolumeType)
+    public static String getValidationFailedMsg(GlusterVolumeType selectedVolumeType, boolean isCreateVolume)
     {
         String validationMsg = null;
+
+        if (!isCreateVolume)
+        {
+            if (selectedVolumeType == GlusterVolumeType.REPLICATE)
+            {
+                selectedVolumeType = GlusterVolumeType.DISTRIBUTED_REPLICATE;
+            }
+            else if (selectedVolumeType == GlusterVolumeType.STRIPE)
+            {
+                selectedVolumeType = GlusterVolumeType.DISTRIBUTED_STRIPE;
+            }
+        }
 
         switch (selectedVolumeType)
         {

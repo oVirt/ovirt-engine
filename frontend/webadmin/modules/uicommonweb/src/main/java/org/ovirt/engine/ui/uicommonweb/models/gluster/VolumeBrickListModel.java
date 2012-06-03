@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.gluster;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -24,6 +25,7 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
+import org.ovirt.engine.ui.uicommonweb.models.volumes.VolumeListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
@@ -96,7 +98,29 @@ public class VolumeBrickListModel extends SearchableListModel {
 
     private void updateActionAvailability()
     {
-        getRemoveBricksCommand().setIsExecutionAllowed(getSelectedItems() != null && getSelectedItems().size() > 0);
+        GlusterVolumeEntity volumeEntity = (GlusterVolumeEntity) getEntity();
+
+        if (volumeEntity.getVolumeType() == GlusterVolumeType.STRIPE
+                || getSelectedItems() == null || getSelectedItems().size() == 0
+                || getSelectedItems().size() == volumeEntity.getBricks().size())
+        {
+            getRemoveBricksCommand().setIsExecutionAllowed(false);
+        }
+        else if(volumeEntity.getVolumeType() == GlusterVolumeType.REPLICATE
+                && volumeEntity.getBricks().size() == VolumeListModel.REPLICATE_COUNT_DEFAULT)
+        {
+            getRemoveBricksCommand().setIsExecutionAllowed(false);
+        }
+        else if (volumeEntity.getVolumeType() == GlusterVolumeType.REPLICATE && getSelectedItems() == null
+                && getSelectedItems().size() > 1)
+        {
+            getRemoveBricksCommand().setIsExecutionAllowed(false);
+        }
+        else
+        {
+            getRemoveBricksCommand().setIsExecutionAllowed(true);
+        }
+
         getReplaceBrickCommand().setIsExecutionAllowed(getSelectedItems() != null && getSelectedItems().size() == 1);
     }
 
@@ -221,6 +245,11 @@ public class VolumeBrickListModel extends SearchableListModel {
 
         volumeBrickModel.setMessage(null);
 
+        if (!validateReplicaStripeCount(volumeEntity, volumeBrickModel))
+        {
+            return;
+        }
+
         if (brickList.size() == 0)
         {
             volumeBrickModel.setMessage(ConstantsManager.getInstance().getConstants().emptyAddBricksMsg());
@@ -229,9 +258,10 @@ public class VolumeBrickListModel extends SearchableListModel {
 
         if (!VolumeBrickModel.validateBrickCount(volumeEntity.getVolumeType(), volumeEntity.getBricks().size()
                 + brickList.size(),
-                volumeBrickModel.getReplicaCountValue(), volumeBrickModel.getStripeCountValue()))
+                volumeBrickModel.getReplicaCountValue(), volumeBrickModel.getStripeCountValue(),
+                false))
         {
-            volumeBrickModel.setMessage(VolumeBrickModel.getValidationFailedMsg(volumeEntity.getVolumeType()));
+            volumeBrickModel.setMessage(VolumeBrickModel.getValidationFailedMsg(volumeEntity.getVolumeType(), false));
             return;
         }
 
@@ -267,6 +297,35 @@ public class VolumeBrickListModel extends SearchableListModel {
         setWindow(null);
     }
 
+    private boolean validateReplicaStripeCount(GlusterVolumeEntity volumeEntity, VolumeBrickModel volumeBrickModel)
+    {
+        if (volumeEntity.getVolumeType() == GlusterVolumeType.REPLICATE
+                || volumeEntity.getVolumeType() == GlusterVolumeType.DISTRIBUTED_REPLICATE)
+        {
+            int newReplicaCount = volumeBrickModel.getReplicaCountValue();
+            if (newReplicaCount > (volumeEntity.getReplicaCount() + 1))
+            {
+                volumeBrickModel.setMessage(ConstantsManager.getInstance()
+                        .getConstants()
+                        .addBricksReplicaCountIncreaseValidationMsg());
+                return false;
+            }
+        }
+        else if (volumeEntity.getVolumeType() == GlusterVolumeType.STRIPE
+                || volumeEntity.getVolumeType() == GlusterVolumeType.DISTRIBUTED_STRIPE)
+        {
+            int newStripeCount = volumeBrickModel.getStripeCountValue();
+            if (newStripeCount > (volumeEntity.getStripeCount() + 1))
+            {
+                volumeBrickModel.setMessage(ConstantsManager.getInstance()
+                        .getConstants()
+                        .addBricksStripeCountIncreaseValidationMsg());
+                return false;
+            }
+        }
+        return true;
+    }
+
     private void removeBricks()
     {
         if (getSelectedItems() == null || getSelectedItems().isEmpty())
@@ -279,11 +338,47 @@ public class VolumeBrickListModel extends SearchableListModel {
             return;
         }
 
+        GlusterVolumeEntity volumeEntity = (GlusterVolumeEntity) getEntity();
+
+        RemoveBrickModel removeBrickModel = new RemoveBrickModel();
+        removeBrickModel.setReplicaCount(volumeEntity.getReplicaCount());
+        removeBrickModel.setStripeCount(volumeEntity.getStripeCount());
+
+        if (!canRemoveBricks(volumeEntity.getVolumeType(),
+                Linq.<GlusterBrickEntity> Cast(getSelectedItems()),
+                volumeEntity.getBricks(),
+                removeBrickModel))
+        {
+            ConfirmationModel model = new ConfirmationModel();
+            setWindow(model);
+            model.setEntity(removeBrickModel.isReduceReplica());
+            model.setTitle(ConstantsManager.getInstance().getConstants().removeBricksTitle());
+            model.setMessage(removeBrickModel.getValidationMessage());
+            model.setHashName("remove_bricks_invalid"); //$NON-NLS-1$
+
+            UICommand command2 = new UICommand("Cancel", this); //$NON-NLS-1$
+            command2.setTitle(ConstantsManager.getInstance().getConstants().close());
+            command2.setIsCancel(true);
+            model.getCommands().add(command2);
+            return;
+        }
+
         ConfirmationModel model = new ConfirmationModel();
         setWindow(model);
+        model.setEntity(removeBrickModel.isReduceReplica());
         model.setTitle(ConstantsManager.getInstance().getConstants().removeBricksTitle());
         model.setHashName("remove_bricks"); //$NON-NLS-1$
-        model.setMessage(ConstantsManager.getInstance().getConstants().removeBricksMessage());
+        if (removeBrickModel.isReduceReplica())
+        {
+            model.setMessage(ConstantsManager.getInstance()
+                    .getMessages()
+                    .removeBricksReplicateVolumeMessage(volumeEntity.getReplicaCount(),
+                            volumeEntity.getReplicaCount() - 1));
+        }
+        else
+        {
+            model.setMessage(ConstantsManager.getInstance().getConstants().removeBricksMessage());
+        }
 
         java.util.ArrayList<String> list = new java.util.ArrayList<String>();
         for (GlusterBrickEntity item : Linq.<GlusterBrickEntity> Cast(getSelectedItems()))
@@ -301,6 +396,124 @@ public class VolumeBrickListModel extends SearchableListModel {
         command2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         command2.setIsCancel(true);
         model.getCommands().add(command2);
+    }
+
+    public boolean canRemoveBricks(GlusterVolumeType volumeType,
+            List<GlusterBrickEntity> selectedBricks,
+            List<GlusterBrickEntity> brickList,
+            RemoveBrickModel removeBrickModel)
+    {
+        boolean valid = true;
+
+        switch (volumeType)
+        {
+        case REPLICATE:
+            if (selectedBricks.size() > 1)
+            {
+                valid = false;
+                removeBrickModel.setValidationMessage(ConstantsManager.getInstance()
+                        .getConstants()
+                        .cannotRemoveBricksReplicateVolume());
+            }
+            removeBrickModel.setReplicaCount(removeBrickModel.getReplicaCount() - 1);
+            removeBrickModel.setReduceReplica(true);
+            break;
+
+        case DISTRIBUTED_REPLICATE:
+            valid = validateDistriputedReplicateRemove(volumeType, selectedBricks, brickList, removeBrickModel);
+            if (!valid)
+            {
+                removeBrickModel.setValidationMessage(ConstantsManager.getInstance()
+                        .getConstants()
+                        .cannotRemoveBricksDistributedReplicateVolume());
+            }
+            break;
+
+        case DISTRIBUTED_STRIPE:
+            valid = validateDistriputedStripeRemove(volumeType, selectedBricks, brickList, removeBrickModel);
+            if (!valid)
+            {
+                removeBrickModel.setValidationMessage(ConstantsManager.getInstance()
+                        .getConstants()
+                        .cannotRemoveBricksDistributedStripeVolume());
+            }
+            break;
+
+        default:
+            break;
+        }
+
+        return valid;
+    }
+
+    public boolean validateDistriputedReplicateRemove(GlusterVolumeType volumeType,
+            List<GlusterBrickEntity> selectedBricks,
+            List<GlusterBrickEntity> brickList,
+            RemoveBrickModel removeBrickModel)
+    {
+        int replicaCount = removeBrickModel.getReplicaCount();
+        int distributions = brickList.size() / replicaCount;
+
+        if (selectedBricks.size() != replicaCount && selectedBricks.size() != distributions)
+        {
+            return false;
+        }
+
+        for (int i = 0; i < distributions; i++)
+        {
+            List<GlusterBrickEntity> subBrickList =
+                    brickList.subList((i * replicaCount), (i * replicaCount) + replicaCount);
+            if (subBrickList.containsAll(selectedBricks))
+            {
+                return true;
+            }
+            int count = 0;
+            for (GlusterBrickEntity brick : selectedBricks)
+            {
+                if (subBrickList.contains(brick))
+                {
+                    count++;
+                }
+            }
+            if (count == 1 && i == (distributions - 1))
+            {
+                removeBrickModel.setReplicaCount(removeBrickModel.getReplicaCount() - 1);
+                removeBrickModel.setReduceReplica(true);
+                return true;
+            }
+            else if (count > 1)
+            {
+                return false;
+            }
+        }
+
+        return false;
+    }
+
+    public boolean validateDistriputedStripeRemove(GlusterVolumeType volumeType,
+            List<GlusterBrickEntity> selectedBricks,
+            List<GlusterBrickEntity> brickList,
+            RemoveBrickModel removeBrickModel)
+    {
+        int stripeCount = removeBrickModel.getStripeCount();
+        int distributions = brickList.size() / stripeCount;
+
+        if (selectedBricks.size() != stripeCount)
+        {
+            return false;
+        }
+
+        for (int i = 0; i < distributions; i++)
+        {
+            List<GlusterBrickEntity> subBrickList =
+                    brickList.subList((i * stripeCount), (i * stripeCount) + stripeCount);
+            if (subBrickList.containsAll(selectedBricks))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private void onRemoveBricks() {
@@ -324,6 +537,23 @@ public class VolumeBrickListModel extends SearchableListModel {
 
         GlusterVolumeRemoveBricksParameters parameter =
                 new GlusterVolumeRemoveBricksParameters(volumeEntity.getId(), getSelectedItems());
+
+        if (volumeEntity.getVolumeType() == GlusterVolumeType.REPLICATE)
+        {
+            parameter.setReplicaCount(volumeEntity.getReplicaCount() - 1);
+        }
+        else if (volumeEntity.getVolumeType() == GlusterVolumeType.DISTRIBUTED_REPLICATE)
+        {
+            if ((Boolean) model.getEntity())
+            {
+                parameter.setReplicaCount(volumeEntity.getReplicaCount() - 1);
+            }
+            else
+            {
+                parameter.setReplicaCount(volumeEntity.getReplicaCount());
+            }
+        }
+
         model.StartProgress(null);
 
         Frontend.RunAction(VdcActionType.GlusterVolumeRemoveBricks, parameter, new IFrontendActionAsyncCallback() {

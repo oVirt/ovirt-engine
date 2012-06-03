@@ -1385,4 +1385,19 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Shareable Disk is not supported by the Data Center Compatibility Version")
     String shareableDiskNotSupported();
+
+    @DefaultStringValue("Cannot remove more than one brick from a Replicate volume at a time")
+    String cannotRemoveBricksReplicateVolume();
+
+    @DefaultStringValue("Incorrect bricks selected for the removel in Distributed Replicate volume. Either all the bricks should be from the same sub volume or one brick each for every sub volume!")
+    String cannotRemoveBricksDistributedReplicateVolume();
+
+    @DefaultStringValue("Incorrect bricks selected for the removel in Distributed Stripe volume. Selected bricks should be from the same sub volume!")
+    String cannotRemoveBricksDistributedStripeVolume();
+
+    @DefaultStringValue("Replica count can be increased by only one")
+    String addBricksReplicaCountIncreaseValidationMsg();
+
+    @DefaultStringValue("Stripe count can be increased by only one")
+    String addBricksStripeCountIncreaseValidationMsg();
 }

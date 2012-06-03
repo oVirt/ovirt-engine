@@ -335,10 +335,10 @@ public class VolumeModel extends Model {
             return;
         }
 
-        if (!volumeBrickModel.validateBrickCount((GlusterVolumeType) getTypeList().getSelectedItem()))
+        if (!volumeBrickModel.validateBrickCount((GlusterVolumeType) getTypeList().getSelectedItem(), true))
         {
             String validationMsg =
-                    volumeBrickModel.getValidationFailedMsg((GlusterVolumeType) getTypeList().getSelectedItem());
+                    volumeBrickModel.getValidationFailedMsg((GlusterVolumeType) getTypeList().getSelectedItem(), true);
             if (validationMsg != null)
             {
                 volumeBrickModel.setMessage(validationMsg);
@@ -379,13 +379,15 @@ public class VolumeModel extends Model {
         return VolumeBrickModel.validateBrickCount((GlusterVolumeType) getTypeList().getSelectedItem(),
                 getBricks(),
                 getReplicaCountValue(),
-                getStripeCountValue());
+                getStripeCountValue(),
+                true);
     }
 
     public boolean validate() {
         if (!validateBrickCount())
         {
-            setMessage(VolumeBrickModel.getValidationFailedMsg((GlusterVolumeType) getTypeList().getSelectedItem()));
+            setMessage(VolumeBrickModel.getValidationFailedMsg((GlusterVolumeType) getTypeList().getSelectedItem(),
+                    true));
             return false;
         }
 
