@@ -99,10 +99,12 @@ public final class ImagesHandler {
     public static boolean setDiskAlias(BaseDisk disk, VM vm) {
         if (disk != null) {
             String vmName = "";
+            int count = 1;
             if (vm != null) {
                 vmName = vm.getvm_name();
+                count = vm.getDiskMapCount() + 1;
             }
-            disk.setDiskAlias(getSuggestedDiskAlias(disk, vmName, vm.getDiskMapCount() + 1));
+            disk.setDiskAlias(getSuggestedDiskAlias(disk, vmName, count));
             return true;
         } else {
             log.errorFormat("Disk object is null");
