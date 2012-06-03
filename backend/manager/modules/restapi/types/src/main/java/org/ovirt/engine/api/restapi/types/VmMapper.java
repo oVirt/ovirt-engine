@@ -121,12 +121,17 @@ public class VmMapper {
         if (vm.isSetCluster() && vm.getCluster().getId() != null) {
             staticVm.setvds_group_id(new Guid(vm.getCluster().getId()));
         }
-        if (vm.isSetCpu() && vm.getCpu().isSetTopology()) {
-            if (vm.getCpu().getTopology().getCores()!=null) {
-                staticVm.setcpu_per_socket(vm.getCpu().getTopology().getCores());
+        if (vm.isSetCpu()) {
+            if (vm.getCpu().isSetTopology()) {
+                if (vm.getCpu().getTopology().getCores()!=null) {
+                    staticVm.setcpu_per_socket(vm.getCpu().getTopology().getCores());
+                }
+                if (vm.getCpu().getTopology().getSockets()!=null) {
+                    staticVm.setnum_of_sockets(vm.getCpu().getTopology().getSockets());
+                }
             }
-            if (vm.getCpu().getTopology().getSockets()!=null) {
-                staticVm.setnum_of_sockets(vm.getCpu().getTopology().getSockets());
+            if (vm.getCpu().isSetCpuTune()) {
+                staticVm.setCpuPinning(cpuTuneToString(vm.getCpu().getCpuTune()));
             }
         }
         if (vm.isSetOs()) {
@@ -211,9 +216,6 @@ public class VmMapper {
         }
         if (vm.isSetQuota() && vm.getQuota().isSetId()) {
             staticVm.setQuotaId(new Guid(vm.getQuota().getId()));
-        }
-        if(vm.isSetCpu() && vm.getCpu().isSetCpuTune()) {
-            staticVm.setCpuPinning(cpuTuneToString(vm.getCpu().getCpuTune()));
         }
         return staticVm;
     }
@@ -908,7 +910,7 @@ public class VmMapper {
      * @return
      */
     static CpuTune stringToCpuTune(String cpuPinning) {
-        if(cpuPinning == null) {
+        if(cpuPinning == null || cpuPinning.equals("")) {
             return null;
         }
         final CpuTune cpuTune = new CpuTune();
