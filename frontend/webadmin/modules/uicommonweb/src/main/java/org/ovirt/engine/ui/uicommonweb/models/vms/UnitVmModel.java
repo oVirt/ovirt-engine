@@ -1787,11 +1787,11 @@ public class UnitVmModel extends Model {
         {
             VmOsType osType = (VmOsType) getOSType().getSelectedItem();
 
-            String nameExpr;
+            String nameExpr = "^[-\\w\\.]{1,"; //$NON-NLS-1$
             String nameMsg;
             if (DataProvider.IsWindowsOsType(osType))
             {
-                nameExpr = "^[0-9a-zA-Z-_]{1," + WINDOWS_VM_NAME_MAX_LIMIT + "}$"; //$NON-NLS-1$ //$NON-NLS-2$
+                nameExpr += WINDOWS_VM_NAME_MAX_LIMIT;
                 nameMsg =
                         ConstantsManager.getInstance()
                                 .getMessages()
@@ -1799,12 +1799,14 @@ public class UnitVmModel extends Model {
             }
             else
             {
-                nameExpr = "^[-\\w]{1," + NON_WINDOWS_VM_NAME_MAX_LIMIT + "}$"; //$NON-NLS-1$ //$NON-NLS-2$
+                nameExpr += NON_WINDOWS_VM_NAME_MAX_LIMIT;
                 nameMsg =
-                        ConstantsManager.getInstance()
-                                .getMessages()
-                                .nameCannotContainBlankOrSpecialChars(NON_WINDOWS_VM_NAME_MAX_LIMIT);
+                    ConstantsManager.getInstance()
+                            .getMessages()
+                            .nameMustConataionOnlyAlphanumericChars(NON_WINDOWS_VM_NAME_MAX_LIMIT);
             }
+
+            nameExpr +=  "}$"; //$NON-NLS-1$
 
             getName().ValidateEntity(
                     new IValidation[] {

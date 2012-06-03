@@ -65,11 +65,8 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     @DefaultMessage("Minimum memory size is {0} MB.")
     String minMemSizeIs(int minMemSize);
 
-    @DefaultMessage("Name must contain only alphanumeric characters. Maximum length: {0}.")
+    @DefaultMessage("Name must contain only alphanumeric characters, \"-\", \"_\" or \".\". Maximum length: {0}.")
     String nameMustConataionOnlyAlphanumericChars(int maxLen);
-
-    @DefaultMessage("Name cannot contain blanks or special characters. Maximum length: {0}.")
-    String nameCannotContainBlankOrSpecialChars(int maxLen);
 
     @DefaultMessage("New name (with suffix) cannot contain blanks or special characters. Maximum length: {0}.")
     String newNameWithSuffixCannotContainBlankOrSpecialChars(int maxLen);

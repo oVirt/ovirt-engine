@@ -29,7 +29,6 @@ import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.job.StepEnum;
 import org.ovirt.engine.core.common.queries.IsVmWithSameNameExistParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
@@ -192,17 +191,6 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
     @Override
     protected boolean canDoAction() {
         if (!super.canDoAction()) {
-            return false;
-        }
-        String vmPoolName = getParameters().getVmPool().getvm_pool_name();
-        if (vmPoolName == null || vmPoolName.isEmpty()) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NAME_MAY_NOT_BE_EMPTY);
-            return false;
-        } else if (!isVmPoolNameValidLength(vmPoolName)) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NAME_LENGTH_IS_TOO_LONG);
-            return false;
-        } else if (ValidationUtils.containsIlegalCharacters(vmPoolName)) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NAME_MAY_NOT_CONTAIN_SPECIAL_CHARS);
             return false;
         }
 

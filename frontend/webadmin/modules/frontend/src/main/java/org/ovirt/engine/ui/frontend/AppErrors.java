@@ -1434,7 +1434,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Disk type is required")
     String VALIDATION_DISK_TYPE_NOT_NULL();
 
-    @DefaultStringValue("Disk alias name must be formed of \"a-z0-9A-Z\" and \"-_\"")
+    @DefaultStringValue("Disk alias name must be formed of \"a-z0-9A-Z\" and \"-_.\"")
     String VALIDATION_DISK_ALIAS_INVALID();
 
     @DefaultStringValue("Volume format is required")
@@ -1542,7 +1542,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Can not ${action} ${type}. The given name is empty.")
     String ACTION_TYPE_FAILED_NAME_MAY_NOT_BE_EMPTY();
 
-    @DefaultStringValue("Can not ${action} ${type}. The given name contains special characters. Only lower-case and upper-case letters, numbers, '_', '-' allowed.")
+    @DefaultStringValue("Can not ${action} ${type}. The given name contains special characters. Only lower-case and upper-case letters, numbers, '_', '-', '.' are allowed.")
     String ACTION_TYPE_FAILED_NAME_MAY_NOT_CONTAIN_SPECIAL_CHARS();
 
     @DefaultStringValue("Can not ${action} ${type}. The given name contains special characters. Only lower-case and upper-case letters, numbers, '_', allowed.")
