@@ -11,10 +11,11 @@
         .label {
             color: #333333;
             margin: 0px 5px;
+            font-family: Verdana, sans-serif;
         }
 
 		.pathEditorContent {
-			width: 575px;
+			width: 565px;
 		}
 
 		.pathHintLabel {
