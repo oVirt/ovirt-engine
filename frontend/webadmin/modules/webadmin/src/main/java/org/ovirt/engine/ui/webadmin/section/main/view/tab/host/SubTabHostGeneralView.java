@@ -8,6 +8,7 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VdsTransparentHugePagesState;
+import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.view.AbstractSubTabFormView;
 import org.ovirt.engine.ui.common.widget.form.FormBuilder;
@@ -17,6 +18,7 @@ import org.ovirt.engine.ui.common.widget.label.BooleanLabel;
 import org.ovirt.engine.ui.common.widget.label.EnumLabel;
 import org.ovirt.engine.ui.common.widget.label.MemorySizeLabel;
 import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
+import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -149,6 +151,11 @@ public class SubTabHostGeneralView extends AbstractSubTabFormView<VDS, HostListM
 
     private void applyModeCustomizations(ArrayList<FormItem> formItems)
     {
+        if (ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly)
+        {
+            return;
+        }
+
         Iterator<FormItem> iterator = formItems.iterator();
         while (iterator.hasNext())
         {

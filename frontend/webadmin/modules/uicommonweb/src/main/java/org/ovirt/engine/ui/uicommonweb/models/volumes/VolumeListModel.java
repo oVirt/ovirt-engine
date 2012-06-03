@@ -114,6 +114,8 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
         setStopCommand(new UICommand("Stop", this)); //$NON-NLS-1$
         setRebalanceCommand(new UICommand("Rebalance", this)); //$NON-NLS-1$
 
+        getRebalanceCommand().setIsAvailable(false);
+
         getRemoveVolumeCommand().setIsExecutionAllowed(false);
         getStartCommand().setIsExecutionAllowed(false);
         getStopCommand().setIsExecutionAllowed(false);

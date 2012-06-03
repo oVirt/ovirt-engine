@@ -41,6 +41,7 @@ public class VolumeBrickListModel extends SearchableListModel {
         setAddBricksCommand(new UICommand("Add Bricks", this)); //$NON-NLS-1$
         setRemoveBricksCommand(new UICommand("Remove Bricks", this)); //$NON-NLS-1$
         setReplaceBrickCommand(new UICommand("Replace Brick", this)); //$NON-NLS-1$
+        getReplaceBrickCommand().setIsAvailable(false);
     }
 
     private UICommand addBricksCommand;
