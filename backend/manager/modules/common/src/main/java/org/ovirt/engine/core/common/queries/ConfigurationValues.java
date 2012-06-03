@@ -71,7 +71,9 @@ public enum ConfigurationValues {
     DocsURL(ConfigAuthType.User),
     HotPlugEnabled(ConfigAuthType.User),
     ManagementNetwork,
-    ApplicationMode(ConfigAuthType.User);
+    ApplicationMode(ConfigAuthType.User),
+    ShareableDiskEnabled(ConfigAuthType.User),
+    DirectLUNDiskEnabled(ConfigAuthType.User);
 
     public static enum ConfigAuthType {
         Admin,

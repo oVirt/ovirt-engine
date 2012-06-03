@@ -1148,6 +1148,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("false")
     CpuPinningEnabled(359),
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("false")
+    DirectLUNDiskEnabled(360),
+
     Invalid(65535);
 
     private int intValue;
