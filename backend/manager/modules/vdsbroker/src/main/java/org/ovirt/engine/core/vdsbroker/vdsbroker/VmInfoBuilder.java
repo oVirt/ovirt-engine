@@ -490,7 +490,9 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
     private void addDevice(XmlRpcStruct struct, VmDevice vmDevice, String path) {
         Map<String, Object> specParams =
                 (vmDevice.getSpecParams() == null) ? Collections.<String, Object> emptyMap() : vmDevice.getSpecParams();
-        struct.add(VdsProperties.Path, path);
+        if (path != null) {
+            struct.add(VdsProperties.Path, path);
+        }
         struct.add(VdsProperties.SpecParams, specParams);
         struct.add(VdsProperties.DeviceId, String.valueOf(vmDevice.getId().getDeviceId()));
         addBootOrder(vmDevice, struct);
@@ -555,6 +557,49 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
     protected void buildVmUsbDevices() {
         buildVmUsbControllers();
         buildVmUsbSlots();
+    }
+
+    @Override
+    protected void buildVmMemoryBalloon() {
+        if (vm.isRunOnce() && vm.isBalloonEnabled()) {
+            Map<String, Object> specParams = new HashMap<String, Object>();
+            specParams.put(VdsProperties.Model, VdsProperties.Virtio);
+            VmDevice vmDevice =
+                    new VmDevice(new VmDeviceId(Guid.NewGuid(), vm.getId()),
+                            VmDeviceType.BALLOON.getName(),
+                            VmDeviceType.MEMBALLOON.getName(),
+                            "",
+                            0,
+                            specParams,
+                            true,
+                            true,
+                            true,
+                            "");
+            addMemBalloonDevice(vmDevice);
+        } else {
+            // get vm device for this Balloon from DB
+            List<VmDevice> vmDevices =
+                    DbFacade.getInstance()
+                            .getVmDeviceDAO()
+                            .getVmDeviceByVmIdTypeAndDevice(vm.getId(),
+                                    VmDeviceType.BALLOON.getName(),
+                                    VmDeviceType.MEMBALLOON.getName());
+            for (VmDevice vmDevice : vmDevices) {
+                // skip unamanged devices (handled separtely)
+                if (!vmDevice.getIsManaged()) {
+                    continue;
+                }
+                addMemBalloonDevice(vmDevice);
+                break; // only one memory balloon should exist
+            }
+        }
+    }
+
+    private void addMemBalloonDevice(VmDevice vmDevice) {
+        XmlRpcStruct struct = new XmlRpcStruct();
+        struct.add(VdsProperties.Type, vmDevice.getType());
+        struct.add(VdsProperties.Device, vmDevice.getDevice());
+        addDevice(struct, vmDevice, null);
     }
 
     private void setVdsPropertiesFromSpecParams(Map<String,Object> specParams, XmlRpcStruct struct) {

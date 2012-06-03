@@ -10,6 +10,7 @@ import java.util.List;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
+import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -115,5 +116,15 @@ public class VmDeviceDAOTest extends BaseGenericDaoTestCase<VmDeviceId, VmDevice
         List<VmDevice> devices =
                 dao.getUnmanagedDevicesByVmId(EXISTING_VM_ID);
         assertTrue(devices.isEmpty());
+    }
+
+    @Test
+    public void testIsBalloonEnabled() {
+        boolean queryRes = dao.isMemBalloonEnabled(EXISTING_VM_ID);
+        List<VmDevice> devices =
+                dao.getVmDeviceByVmIdTypeAndDevice(EXISTING_VM_ID,
+                        VmDeviceType.BALLOON.getName(),
+                        VmDeviceType.MEMBALLOON.getName());
+        assertTrue((queryRes && !devices.isEmpty()) || (!queryRes && devices.isEmpty()));
     }
 }

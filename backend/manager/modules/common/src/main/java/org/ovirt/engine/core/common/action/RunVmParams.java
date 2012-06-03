@@ -30,6 +30,7 @@ public class RunVmParams extends VmOperationParameterBase implements INotifyProp
     private String kernel_url;
     private String kernel_params;
     private VmPayload payload;
+    private boolean balloonEnabled;
 
     public RunVmParams() {
     }
@@ -227,5 +228,13 @@ public class RunVmParams extends VmOperationParameterBase implements INotifyProp
 
     public void setCustomProperties(String customProperties) {
         this.customProperties = customProperties;
+    }
+
+    public boolean isBalloonEnabled() {
+        return this.balloonEnabled;
+    }
+
+    public void setBalloonEnabled(boolean isBalloonEnabled) {
+        this.balloonEnabled = isBalloonEnabled;
     }
 }

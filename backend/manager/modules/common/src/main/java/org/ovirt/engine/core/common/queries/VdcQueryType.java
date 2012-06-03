@@ -13,6 +13,7 @@ public enum VdcQueryType implements Serializable {
     GetVmConfigurationBySnapshot(VdcQueryAuthType.User),
     GetVmsByDiskGuid,
     GetVmPayload,
+    IsBalloonEnabled,
 
     // Vds queries
     IsVdsWithSameNameExist,

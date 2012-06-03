@@ -216,4 +216,9 @@ public class VmOldInfoBuilder extends VmInfoBuilderBase {
     protected void buildVmUsbDevices() {
         // Not supported in old code
     }
+
+    @Override
+    protected void buildVmMemoryBalloon() {
+     // Not supported in old code
+    }
 }

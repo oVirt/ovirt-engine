@@ -156,3 +156,18 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION isMemBalloonEnabled(v_vm_id UUID)
+  RETURNS boolean AS
+$BODY$
+declare
+    result boolean := false;
+begin
+    if exists (select 1 from vm_device where vm_id = v_vm_id and type = 'balloon' and device = 'memballoon') then
+        result := true;
+    end if;
+    return result;
+end;
+$BODY$
+LANGUAGE 'plpgsql';
+
+

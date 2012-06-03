@@ -26,6 +26,8 @@ public interface VmDeviceDAO extends GenericDao<VmDevice, VmDeviceId>, MassOpera
 
     List<VmDevice> getUnmanagedDevicesByVmId(Guid vmId);
 
+    boolean isMemBalloonEnabled(Guid vmId);
+
     void removeAll(List<VmDeviceId> removedDeviceIds);
 
     void saveAll(List<VmDevice> newVmDevices);

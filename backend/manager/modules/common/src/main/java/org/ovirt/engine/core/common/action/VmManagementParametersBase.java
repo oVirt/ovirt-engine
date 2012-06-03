@@ -4,9 +4,9 @@ import java.util.HashMap;
 
 import javax.validation.Valid;
 
-import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -21,6 +21,7 @@ public class VmManagementParametersBase extends VmOperationParameterBase {
     private boolean privateDontCheckTemplateImages;
     private HashMap<Guid, DiskImage> diskInfoDestinationMap;
     private VmPayload payload;
+    private boolean balloonEnabled = true;
 
     public VmManagementParametersBase() {
     }
@@ -100,5 +101,13 @@ public class VmManagementParametersBase extends VmOperationParameterBase {
 
     public void setVmPayload(VmPayload value) {
         this.payload = value;
+    }
+
+    public boolean isBalloonEnabled() {
+        return balloonEnabled;
+    }
+
+    public void setBalloonEnabled(boolean isBallonEnabled) {
+        this.balloonEnabled = isBallonEnabled;
     }
 }

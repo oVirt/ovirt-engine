@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -12,6 +13,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.SerializationFactory;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
+import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 
 public class VmDeviceDAODbFacadeImpl extends
         MassOperationsGenericDaoDbFacade<VmDevice, VmDeviceId> implements VmDeviceDAO {
@@ -102,6 +104,21 @@ public class VmDeviceDAODbFacadeImpl extends
                 .addValue("vm_id", vmId);
         return getCallsHandler().executeReadList("GetVmUnmanagedDevicesByVmId",
                 createEntityRowMapper(), parameterSource);
+    }
+
+    @Override
+    public boolean isMemBalloonEnabled(Guid vmId) {
+
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("vm_id", vmId);
+
+        Map<String, Object> dbResults =
+                new SimpleJdbcCall(jdbcTemplate).withFunctionName("isMemBalloonEnabled").execute(
+                        parameterSource);
+
+        String resultKey = dialect.getFunctionReturnKey();
+        return dbResults.get(resultKey) != null ? ((Boolean) dbResults.get(resultKey)).booleanValue() : false;
+
     }
 
     private static class VmDeviceRowMapper implements ParameterizedRowMapper<VmDevice> {

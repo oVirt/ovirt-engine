@@ -26,6 +26,7 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
     private VmDynamic mVmDynamic;
     private VmStatistics mVmStatistics;
     private VmPayload vmPayload;
+    private boolean balloonEnabled = true;
 
     @Valid
     private List<Snapshot> snapshots = new ArrayList<Snapshot>();
@@ -1553,4 +1554,12 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         mVmStatic.setCpuPinning(cpuPinning);
     }
 
+    public boolean isBalloonEnabled() {
+        return balloonEnabled;
+    }
+
+    public void setBalloonEnabled(boolean isBallonEnabled) {
+        balloonEnabled = isBallonEnabled;
+        OnPropertyChanged(new PropertyChangedEventArgs("is_balloon_enabled"));
+    }
 }

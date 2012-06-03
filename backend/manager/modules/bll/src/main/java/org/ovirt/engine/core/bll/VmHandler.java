@@ -60,7 +60,7 @@ public class VmHandler {
                 "dedicated_vm_for_vds", "default_display_type", "priority", "default_boot_sequence", "initrd_url",
                 "kernel_url", "kernel_params", "migrationSupport", "minAllocatedMem", "quotaId", "quotaName",
                 "quotaEnforcementType", "cpuPinning",
-                "vmPayload" });
+                "vmPayload", "balloonEnabled" });
         mUpdateVmsStatic.AddFields(
                 Arrays.asList(new Enum[] { VMStatus.Down }),
                 Arrays.asList(new String[] { "vds_group_id", "time_zone", "is_stateless", "nice_level", "mem_size_mb",

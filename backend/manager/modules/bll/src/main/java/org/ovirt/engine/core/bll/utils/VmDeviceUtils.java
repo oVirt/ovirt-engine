@@ -11,6 +11,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.VmHandler;
+import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.BaseDisk;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -21,7 +22,6 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
-import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -29,12 +29,14 @@ import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.VmDAO;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VmInfoBuilderBase;
 
 public class VmDeviceUtils {
     private static VmDeviceDAO dao = DbFacade.getInstance().getVmDeviceDAO();
+    private static VmDAO vmDao = DbFacade.getInstance().getVmDAO();
     private final static String VRAM = "vram";
     private final static String EHCI_MODEL = "ich9-ehci";
     private final static String UHCI_MODEL = "ich9-uhci";
@@ -45,19 +47,20 @@ public class VmDeviceUtils {
     /**
      * Update the vm devices according to changes made in vm static for existing VM
      */
-    public static <T extends VmBase> void updateVmDevices(T entity, VmBase oldVmBase) {
-        VmBase newVmBase = getBaseObject(entity, oldVmBase.getId());
-        if (newVmBase != null) {
-            updateCdInVmDevice(oldVmBase, newVmBase);
-            if (oldVmBase.getdefault_boot_sequence() != newVmBase
+    public static void updateVmDevices(VmManagementParametersBase params, VmBase oldVmBase) {
+        VmBase entity = params.getVmStaticData();
+        if (entity != null) {
+            updateCdInVmDevice(oldVmBase, entity);
+            if (oldVmBase.getdefault_boot_sequence() != entity
                     .getdefault_boot_sequence()) {
-                updateBootOrderInVmDevice(newVmBase);
+                updateBootOrderInVmDevice(entity);
             }
-            if (oldVmBase.getnum_of_monitors() != newVmBase
+            if (oldVmBase.getnum_of_monitors() != entity
                     .getnum_of_monitors()) {
-                updateNumOfMonitorsInVmDevice(oldVmBase, newVmBase);
+                updateNumOfMonitorsInVmDevice(oldVmBase, entity);
             }
-            updateUSBSlots(oldVmBase, newVmBase);
+            updateUSBSlots(oldVmBase, entity);
+            updateMemoryBalloon(oldVmBase, entity, params.isBalloonEnabled());
         }
     }
 
@@ -65,9 +68,8 @@ public class VmDeviceUtils {
      * Update the vm devices according to changes made configuration
      */
     public static <T extends VmBase> void updateVmDevices(T entity) {
-        VmBase vmBase = getBaseObject(entity, entity.getId());
-        if (vmBase != null) {
-            updateUSBSlots(vmBase, vmBase);
+        if (entity != null) {
+            updateUSBSlots(entity, entity);
         }
     }
 
@@ -76,12 +78,12 @@ public class VmDeviceUtils {
      */
 
     public static <T extends VmBase> void updateVmDevices(T entity, Guid newId) {
-        VmBase newVmBase = getBaseObject(entity, newId);
-        if (newVmBase != null) {
-            updateCdInVmDevice(newVmBase);
-            updateBootOrderInVmDevice(newVmBase);
-            updateNumOfMonitorsInVmDevice(null, newVmBase);
-            updateUSBSlots(null, newVmBase);
+        if (entity != null) {
+            updateCdInVmDevice(entity);
+            updateBootOrderInVmDevice(entity);
+            updateNumOfMonitorsInVmDevice(null, entity);
+            updateUSBSlots(null, entity);
+            updateMemoryBalloon(null, entity, true);
         }
     }
 
@@ -95,7 +97,8 @@ public class VmDeviceUtils {
      */
     public static void copyVmDevices(Guid srcId, Guid dstId, List<DiskImage> disks, List<VmNetworkInterface> ifaces) {
         Guid id;
-        VmBase vmBase = DbFacade.getInstance().getVmStaticDAO().get(dstId);
+        VM vm = DbFacade.getInstance().getVmDAO().get(dstId);
+        VmBase vmBase = (vm != null) ? vm.getStaticData() : null;
         int diskCount = 0;
         int ifaceCount = 0;
         boolean isVm = (vmBase != null);
@@ -122,6 +125,9 @@ public class VmDeviceUtils {
                 }
                 // updating USB slots
                 updateUSBSlots(null, vmBase);
+                // add mem balloon if defined
+                updateMemoryBalloon(null, vmBase, vm.isBalloonEnabled());
+
                 break; // skip other Blank template devices
             }
             if (VmDeviceType.DISK.getName().equals(device.getType())
@@ -140,7 +146,7 @@ public class VmDeviceUtils {
                     && VmDeviceType.CDROM.getName().equals(device.getDevice())) {
                 // check here is source VM had CD (Vm from snapshot)
                 String srcCdPath = (String) device.getSpecParams().get(VdsProperties.Path);
-                shouldHaveCD = (!srcCdPath.isEmpty() || shouldHaveCD);
+                shouldHaveCD = (!StringUtils.isEmpty(srcCdPath) || shouldHaveCD);
                 if (!hasAlreadyCD && shouldHaveCD) {
                     setCdPath(specParams, srcCdPath, isoPath);
                 }
@@ -163,7 +169,6 @@ public class VmDeviceUtils {
             if (vmBase.getvm_type() == VmType.Desktop) {
                 List<VmDevice> list = DbFacade.getInstance().getVmDeviceDAO().getVmDeviceByVmIdAndType(vmBase.getId(), VmDeviceType.SOUND.getName());
                 if (list.size() == 0) {
-                    VM vm = DbFacade.getInstance().getVmDAO().get(vmBase.getId());
                     String soundDevice = VmInfoBuilderBase.getSoundDevice(vm);
                     addManagedDevice(new VmDeviceId(Guid.NewGuid(), vmBase.getId()),
                             VmDeviceType.SOUND,
@@ -408,24 +413,6 @@ public class VmDeviceUtils {
         return numOfcontrollers;
     }
     /**
-     * Returns a VmBase object for the given entity and passed id.
-     * @param entity
-     *            the entity, may be VmStatic or VmTemplate
-     * @param newId
-     *            entity Guid
-     * @return
-     */
-    private static <T extends VmBase> VmBase getBaseObject(T entity, Guid newId) {
-        VmBase newVmBase = null;
-        if (entity instanceof VmStatic) {
-            newVmBase = DbFacade.getInstance().getVmDAO().get(newId).getStaticData();
-        } else if (entity instanceof VmTemplate) {
-            newVmBase = DbFacade.getInstance().getVmTemplateDAO().get(newId);
-        }
-        return newVmBase;
-    }
-
-    /**
      * Adds imported disks to VM devices
      * @param entity
      */
@@ -633,5 +620,27 @@ public class VmDeviceUtils {
                 true);
     }
 
+    private static void updateMemoryBalloon(VmBase oldVm, VmBase newVm, boolean shouldHaveBalloon) {
+        Guid id = newVm.getId();
+        VM vm = vmDao.get(id);
+        boolean hasBalloon = dao.isMemBalloonEnabled(id);
+        if (hasBalloon != shouldHaveBalloon) {
+            if (!hasBalloon && shouldHaveBalloon) {
+                // add a balloon device
+                Map<String,Object> specParams = new HashMap<String, Object>();
+                specParams.put(VdsProperties.Model, VdsProperties.Virtio);
+                addManagedDevice(new VmDeviceId(Guid.NewGuid(),newVm.getId()) , VmDeviceType.BALLOON, VmDeviceType.MEMBALLOON, specParams, true, true);
+            }
+            else {
+                // remove the balloon device
+                List<VmDevice> list = DbFacade
+                .getInstance()
+                .getVmDeviceDAO()
+                .getVmDeviceByVmIdAndType(newVm.getId(),
+                        VmDeviceType.BALLOON.getName());
+                removeNumberOfDevices(list,1);
+            }
+        }
+    }
 }
 

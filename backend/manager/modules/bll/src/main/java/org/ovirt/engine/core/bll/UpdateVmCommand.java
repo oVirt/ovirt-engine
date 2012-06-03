@@ -74,7 +74,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                 UpdateVmNetworks();
                 UpdateVmData();
                 updateVmPayload();
-                VmDeviceUtils.updateVmDevices(getVm().getStaticData(), mOldVmStatic);
+                VmDeviceUtils.updateVmDevices(getParameters(), mOldVmStatic);
                 if (((Boolean) Backend
                         .getInstance()
                         .getResourceManager()
