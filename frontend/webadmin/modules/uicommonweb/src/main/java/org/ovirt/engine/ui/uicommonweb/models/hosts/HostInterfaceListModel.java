@@ -1338,7 +1338,7 @@ public class HostInterfaceListModel extends SearchableListModel
                 VDS host = hostInterfaceListModel.getEntity();
                 // Allow change gateway if there one of the selected interfaces connected to engine network.
                 boolean isAnyManagement = false;
-                for (VdsNetworkInterface innerItem : hostInterfaceListModel.getSelectedItems())
+                for (VdsNetworkInterface innerItem : hostInterfaceListModel.getSelectedItemsWithVlans())
                 {
                     if (innerItem.getIsManagement())
                     {
@@ -1407,9 +1407,12 @@ public class HostInterfaceListModel extends SearchableListModel
                             networksToAdd.add(unAttachedNetwork);
                         }
                     }
+                    innerBondModel.getNetwork().setItems(networksToAdd);
                 }
-
-                innerBondModel.getNetwork().setItems(networksToAdd);
+                else
+                {
+                    innerBondModel.getNetwork().setItems(new ArrayList<network>(Arrays.asList(selectedNetwork)));
+                }
 
                 if (selectedNetwork == null && networksToAdd.size() > 0)
                 {
@@ -1450,7 +1453,7 @@ public class HostInterfaceListModel extends SearchableListModel
                             // ((List<Interface>)model.Bond.Options).Sort(a => a.name);
                             bModel.getBond().setSelectedItem(Linq.FirstOrDefault(bonds));
                             boolean hasManagement = false;
-                            for (VdsNetworkInterface innerItem : innerHostInterfaceListModel.getSelectedItems())
+                            for (VdsNetworkInterface innerItem : innerHostInterfaceListModel.getSelectedItemsWithVlans())
                             {
                                 if (innerItem.getIsManagement())
                                 {
@@ -1482,7 +1485,7 @@ public class HostInterfaceListModel extends SearchableListModel
             boolean isAnyManagement)
     {
         ArrayList<NetworkInterface> baseSelectedItems =
-                Linq.VdsNetworkInterfaceListToBase(getSelectedItems());
+                Linq.VdsNetworkInterfaceListToBase(getSelectedItemsWithVlans());
         VdsNetworkInterface interfaceWithNetwork =
                 (VdsNetworkInterface) Linq.FindInterfaceNetworkNameNotEmpty(baseSelectedItems);
 
