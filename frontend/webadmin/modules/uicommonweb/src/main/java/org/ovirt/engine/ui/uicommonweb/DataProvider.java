@@ -1729,32 +1729,29 @@ public final class DataProvider
         return new ArrayList<DiskImageBase>();
     }
 
-    public static VolumeFormat GetDiskVolumeFormat(VolumeType volumeType, StorageType storageType)
-    {
-        switch (storageType)
-        {
-        case NFS:
-            return VolumeFormat.RAW;
+    public static VolumeFormat GetDiskVolumeFormat(VolumeType volumeType, StorageType storageType) {
 
-        case ISCSI:
-        case FCP:
-            switch (volumeType)
-            {
-            case Sparse:
-                return VolumeFormat.COW;
-
-            case Preallocated:
+        switch (storageType) {
+            case NFS:
+            case LOCALFS:
+            case POSIXFS:
                 return VolumeFormat.RAW;
+
+            case ISCSI:
+            case FCP:
+                switch (volumeType) {
+                    case Sparse:
+                        return VolumeFormat.COW;
+
+                    case Preallocated:
+                        return VolumeFormat.RAW;
+
+                    default:
+                        return VolumeFormat.Unassigned;
+                }
 
             default:
                 return VolumeFormat.Unassigned;
-            }
-
-        case LOCALFS:
-            return VolumeFormat.RAW;
-
-        default:
-            return VolumeFormat.Unassigned;
         }
     }
 
