@@ -42,7 +42,7 @@ public class ReportsListModel extends SearchableListModel {
         setFlowId();
 
         String currentLocale = LocaleInfo.getCurrentLocale().getLocaleName();
-        htmlParams.setParameter("userLocale", (currentLocale.equals("default") ? "en-US" : currentLocale)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        htmlParams.setParameter("userLocale", (currentLocale.equals("default") ? "en_US" : currentLocale)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
         setDefaultSearchString("Reports:"); //$NON-NLS-1$
         setSearchString(getDefaultSearchString());
