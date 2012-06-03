@@ -252,7 +252,6 @@ actions:
       - mandatoryArguments: {}
         optionalArguments:
           size: xs:int
-          disk.type: xs:string
           disk.interface: xs:string
           disk.format: xs:string
           disk.sparse: xs:boolean
@@ -268,7 +267,7 @@ actions:
     body:
       parameterType: Disk
       signatures:
-      - mandatoryArguments: {size: 'xs:int', disk.type: 'xs:string', disk.interface: 'xs:string', disk.format: 'xs:string'}
+      - mandatoryArguments: {size: 'xs:int', disk.interface: 'xs:string', disk.format: 'xs:string'}
         optionalArguments:
           disk.sparse: xs:boolean
           disk.bootable: xs:boolean
@@ -535,7 +534,6 @@ actions:
       - mandatoryArguments: {}
         optionalArguments:
           size: xs:int
-          disk.type: xs:string
           disk.interface: xs:string
           disk.format: xs:string
           disk.sparse: xs:boolean
@@ -551,7 +549,7 @@ actions:
     body:
       parameterType: Disk
       signatures:
-      - mandatoryArguments: {size: 'xs:int', disk.type: 'xs:string', disk.interface: 'xs:string', disk.format: 'xs:string'}
+      - mandatoryArguments: {size: 'xs:int', disk.interface: 'xs:string', disk.format: 'xs:string'}
         optionalArguments:
           disk.sparse: xs:boolean
           disk.bootable: xs:boolean
