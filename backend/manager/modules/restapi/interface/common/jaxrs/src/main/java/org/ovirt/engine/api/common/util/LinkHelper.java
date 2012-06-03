@@ -96,7 +96,6 @@ import org.ovirt.engine.api.resource.GroupResource;
 import org.ovirt.engine.api.resource.GroupsResource;
 import org.ovirt.engine.api.resource.NetworkResource;
 import org.ovirt.engine.api.resource.NetworksResource;
-import org.ovirt.engine.api.resource.NicResource;
 import org.ovirt.engine.api.resource.PermissionResource;
 import org.ovirt.engine.api.resource.AssignedPermissionsResource;
 import org.ovirt.engine.api.resource.PermitResource;
@@ -120,6 +119,7 @@ import org.ovirt.engine.api.resource.UserResource;
 import org.ovirt.engine.api.resource.UsersResource;
 import org.ovirt.engine.api.resource.VmDiskResource;
 import org.ovirt.engine.api.resource.VmDisksResource;
+import org.ovirt.engine.api.resource.VmNicResource;
 import org.ovirt.engine.api.resource.VmPoolResource;
 import org.ovirt.engine.api.resource.VmPoolsResource;
 import org.ovirt.engine.api.resource.VmResource;
@@ -222,7 +222,7 @@ public class LinkHelper {
         map.add(DeviceResource.class, DevicesResource.class, VM.class);
         map.add(DeviceResource.class, DevicesResource.class, Template.class);
         map.add(ReadOnlyDeviceResource.class, ReadOnlyDevicesResource.class, Template.class);
-        map.add(NicResource.class, DevicesResource.class, VM.class);
+        map.add(VmNicResource.class, DevicesResource.class, VM.class);
         TYPES.put(NIC.class, map);
 
         map = new ParentToCollectionMap(PermitResource.class, PermitsResource.class, Role.class);
