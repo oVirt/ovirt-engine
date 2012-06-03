@@ -37,7 +37,7 @@ actions:
           vm.cluster.id|name: xs:string
           vm.timezone: xs:string
           vm.os.boot.dev: xs:string
-          vm.custom_properties.custom_property--COLLECTION: {name: 'xs:string', value: 'xs:string'}
+          vm.custom_properties.custom_property--COLLECTION: {custom_property.name: 'xs:string', custom_property.value: 'xs:string'}
           vm.os.type: xs:string
           vm.usb.enabled: xs:boolean
           vm.usb.type: xs:string
@@ -275,7 +275,7 @@ actions:
           disk.allow_snapshot: xs:boolean
           disk.propagate_errors: xs:boolean
           disk.wipe_after_delete: xs:boolean
-          disk.storage_domains--COLLECTION: {storage_domain.id|name: 'xs:string'}
+          disk.storage_domains.storage_domain--COLLECTION: {storage_domain.id|name: 'xs:string'}
       - mandatoryArguments: {disk.id: 'xs:string'}
         optionalArguments: {disk.active: 'xs:boolean'}
     urlparams: {}
@@ -557,7 +557,7 @@ actions:
           disk.allow_snapshot: xs:boolean
           disk.propagate_errors: xs:boolean
           disk.wipe_after_delete: xs:boolean
-          disk.storage_domains--COLLECTION: {storage_domain.id|name: 'xs:string'}
+          disk.storage_domains.storage_domain--COLLECTION: {storage_domain.id|name: 'xs:string'}
     urlparams: {}
     headers: {Content-Type: application/xml|json, Expect: 201-created}
 - name: /api/capabilities|rel=get
@@ -699,7 +699,7 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {action.cluster.id|name: 'xs:string'}
-        optionalArguments: {action.storage_domain.id|name: 'xs:string', action.clone: 'xs:boolen', action.vm.disks.disk--COLLECTION: {id: 'xs:string'}}
+        optionalArguments: {action.storage_domain.id|name: 'xs:string', action.clone: 'xs:boolen', action.vm.disks.disk--COLLECTION: {disk.id: 'xs:string'}}
     urlparams: {}
     headers: {Content-Type: application/xml|json}
 - name: /api/storagedomains/{storagedomain:id}/vms|rel=get
@@ -722,7 +722,7 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {action.cluster.id|name: 'xs:string'}
-        optionalArguments: {action.storage_domain.id|name: 'xs:string', action.vm.snapshots.collapse_snapshots: 'xs:boolean', action.clone: 'xs:boolen', action.vm.disks.disk--COLLECTION: {id: 'xs:string'}}
+        optionalArguments: {action.storage_domain.id|name: 'xs:string', action.vm.snapshots.collapse_snapshots: 'xs:boolean', action.clone: 'xs:boolen', action.vm.disks.disk--COLLECTION: {disk.id: 'xs:string'}}
     urlparams: {}
     headers: {Content-Type: application/xml|json}
 - name: /api/clusters|rel=get
@@ -800,7 +800,7 @@ actions:
       parameterType: Network
       signatures:
       - mandatoryArguments: {}
-        optionalArguments: {network.display: 'xs:boolean', network.usages--COLLECTION: {usage: 'xs:string'}}
+        optionalArguments: {network.display: 'xs:boolean', network.usages.usage--COLLECTION: {usage: 'xs:string'}}
     urlparams: {}
     headers: {Content-Type: application/xml|json}
 - name: /api/clusters/{cluster:id}/networks|rel=add
@@ -1243,7 +1243,7 @@ actions:
         optionalArguments: {host.name: 'xs:string', host.address: 'xs:string', host.root_password: 'xs:string', host.cluster.id: 'xs:string',
           host.port: 'xs:int', host.storage_manager.priority: 'xs:int', host.power_management.type: 'xs:string',
           host.power_management.enabled: 'xs:boolean', host.power_management.address: 'xs:string', host.power_management.user_name: 'xs:string',
-          host.power_management.password: 'xs:string', host.power_management.options.option--COLLECTION: {name: 'xs:string', value: 'xs:string'}}
+          host.power_management.password: 'xs:string', host.power_management.options.option--COLLECTION: {option.name: 'xs:string', option.value: 'xs:string'}}
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers: {Content-Type: application/xml|json}
@@ -1602,7 +1602,7 @@ actions:
       parameterType: Role
       signatures:
       - mandatoryArguments: {}
-        optionalArguments: {role.permits.permit--COLLECTION: {id: 'xs:string'}, role.description: 'xs:string'}
+        optionalArguments: {role.permits.permit--COLLECTION: {permit.id: 'xs:string'}, role.description: 'xs:string'}
     urlparams: {}
     headers: {Content-Type: application/xml|json}
 - name: /api/roles/{role:id}/permits|rel=get
@@ -1720,7 +1720,7 @@ actions:
           template.stateless: 'xs:boolean'
           template.placement_policy.affinity: xs:string
           template.description: xs:string
-          template.custom_properties.custom_property--COLLECTION: {name: 'xs:string', value: 'xs:string'}
+          template.custom_properties.custom_property--COLLECTION: {custom_property.name: 'xs:string', custom_property.value: 'xs:string'}
           template.os.type: xs:string
           template.os.boot.dev: xs:string
           template.cpu.topology.sockets: xs:int
@@ -1763,7 +1763,7 @@ actions:
           template.os.initRd: xs:string
           template.usb.enabled: xs:boolean
           template.usb.type: xs:string
-          template.vm.disks.disk--COLLECTION: {id: 'xs:string', storage_domains.storage_domain--COLLECTION: {id: 'xs:string'}}
+          template.vm.disks.disk--COLLECTION: {disk.id: 'xs:string', storage_domains.storage_domain--COLLECTION: {storage_domain.id: 'xs:string'}}
     urlparams: {}
     headers: {Content-Type: application/xml|json}
 - name: /api/templates/{template:id}/export|rel=export
@@ -2127,14 +2127,14 @@ actions:
       - mandatoryArguments:
           gluster_volume.name: 'xs:string'
           gluster_volume.volume_type: 'xs:string'
-          gluster_volume.bricks--COLLECTION: {brick.server_id: 'xs:string', brick.brick_dir: 'xs:string'}
+          gluster_volume.bricks.brick--COLLECTION: {brick.server_id: 'xs:string', brick.brick_dir: 'xs:string'}
         optionalArguments:
           gluster_volume.transport_types--COLLECTION: {transport_type: 'xs:string'}
           gluster_volume.replica_count: 'xs:unsignedShort'
           gluster_volume.stripe_count: 'xs:unsignedShort'
           gluster_volume.access_protocols--COLLECTION: {access_protocol: 'xs:string'}
           gluster_volume.access_control_list--COLLECTION: {ip: 'xs:string'}
-          gluster_volume.options--COLLECTION: {option.name: 'xs:string', option.value: 'xs:string'}
+          gluster_volume.options.option--COLLECTION: {option.name: 'xs:string', option.value: 'xs:string'}
     urlparams: {}
     headers: {Content-Type: application/xml|json, Expect: 201-created}
 - name: /api/clusters/{cluster:id}/glustervolumes/{glustervolume:id}/start|rel=start
@@ -2197,9 +2197,9 @@ actions:
       parameterType: Bricks
       signatures:
       - mandatoryArguments:
-          bricks--COLLECTION: {brick.server_id: 'xs:string', brick.brick_dir: 'xs:string'}
+          bricks.brick--COLLECTION: {brick.server_id: 'xs:string', brick.brick_dir: 'xs:string'}
         optionalArguments:
-            bricks--COLLECTION: {replica_count: 'xs:unsignedShort', stripe_count: 'xs:unsignedShort'}
+          bricks.brick--COLLECTION: {brick.replica_count: 'xs:unsignedShort', brick.stripe_count: 'xs:unsignedShort'}
     urlparams: {}
     headers: {Content-Type: application/xml|json, Expect: 201-created}
 - name: /api/clusters/{cluster:id}/glustervolumes/{glustervolume:id}/bricks|rel=delete
