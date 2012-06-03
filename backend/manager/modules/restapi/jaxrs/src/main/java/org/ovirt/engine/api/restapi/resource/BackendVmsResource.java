@@ -399,7 +399,7 @@ public class BackendVmsResource extends
         if (details.contains(Detail.STATISTICS)) {
             addInlineStatistics(model);
         }
-        setPayload(model);
+//        setPayload(model); //TODO: removed due to (potential) performance issue, but we will need to find another way to get payload information for *all* VMs, such as a designated backend query.
         return model;
     }
 }

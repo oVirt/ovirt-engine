@@ -83,7 +83,6 @@ public class BackendVmsResourceTest
                         new Object[] { GUIDS[i] },
                         vm);
             }
-            setUpGetPayloadsExpectations(3);
             setUpQueryExpectations("");
             collection.setUriInfo(uriInfo);
             List<VM> vms = getCollection();
@@ -208,7 +207,6 @@ public class BackendVmsResourceTest
                                      new String[] { "Id" },
                                      new Object[] { GUIDS[0] },
                                      getTemplateEntity(0));
-        setUpGetPayloadExpectations(0);
         setUpCreationExpectations(VdcActionType.AddVmFromScratch,
                                   AddVmFromScratchParameters.class,
                                   new String[] { "StorageDomainId"},
@@ -252,8 +250,6 @@ public class BackendVmsResourceTest
                 new String[] { "VdsGroupId" },
                 new Object[] { GUIDS[1] },
                 getVdsGroupEntity());
-        setUpGetPayloadExpectations(0);
-        setUpGetPayloadExpectations(0);
         setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
                                      GetVmTemplateParameters.class,
                                      new String[] { "Id" },
@@ -304,8 +300,6 @@ public class BackendVmsResourceTest
                 new String[] { "VdsGroupId" },
                 new Object[] { GUIDS[1] },
                 getVdsGroupEntity());
-        setUpGetPayloadExpectations(0);
-        setUpGetPayloadExpectations(0);
         setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
                                      GetVmTemplateParameters.class,
                                      new String[] { "Id" },
@@ -356,8 +350,6 @@ public class BackendVmsResourceTest
                 new String[] { "VdsGroupId" },
                 new Object[] { GUIDS[1] },
                 getVdsGroupEntity());
-        setUpGetPayloadExpectations(0);
-        setUpGetPayloadExpectations(0);
         setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
                                      GetVmTemplateParameters.class,
                                      new String[] { "Id" },
@@ -446,7 +438,6 @@ public class BackendVmsResourceTest
                 new String[] { "VdsGroupId" },
                 new Object[] { GUIDS[2] },
                 getVdsGroupEntity());
-        setUpGetPayloadExpectations(2);
         setUpCreationExpectations(VdcActionType.AddVmFromTemplate,
                                   AddVmFromTemplateParameters.class,
                                   new String[] { "StorageDomainId" },
@@ -494,7 +485,6 @@ public class BackendVmsResourceTest
                 new String[] { "VdsGroupId" },
                 new Object[] { GUIDS[2] },
                 getVdsGroupEntity());
-        setUpGetPayloadExpectations(2);
         setUpCreationExpectations(VdcActionType.AddVmFromSnapshot,
                                   AddVmFromSnapshotParameters.class,
                                   new String[] { "StorageDomainId" },
@@ -527,7 +517,6 @@ public class BackendVmsResourceTest
                 new String[] { "VdsGroupId" },
                 new Object[] { GUIDS[2] },
                 getVdsGroupEntity());
-        setUpGetPayloadExpectations(2);
         setUpCreationExpectations(VdcActionType.AddVmFromTemplate,
                                   AddVmFromTemplateParameters.class,
                                   new String[] { "StorageDomainId" },
@@ -560,7 +549,6 @@ public class BackendVmsResourceTest
                                     new String[] { "VdsGroupId" },
                                     new Object[] { GUIDS[2] },
                                     getVdsGroupEntity());
-        setUpGetPayloadExpectations(2);
         setUpCreationExpectations(VdcActionType.AddVm,
                                   VmManagementParametersBase.class,
                                   new String[] { "StorageDomainId" },
@@ -595,7 +583,6 @@ public class BackendVmsResourceTest
                 new String[] { "VdsGroupId" },
                 new Object[] { GUIDS[2] },
                 getVdsGroupEntity());
-        setUpGetPayloadExpectations(2);
         setUpCreationExpectations(VdcActionType.AddVm,
                                   VmManagementParametersBase.class,
                                   new String[] { "StorageDomainId" },
@@ -638,7 +625,6 @@ public class BackendVmsResourceTest
                 new String[] { "VdsGroupId" },
                 new Object[] { GUIDS[2] },
                 getVdsGroupEntity());
-        setUpGetPayloadExpectations(2);
         setUpCreationExpectations(VdcActionType.AddVm,
                                   VmManagementParametersBase.class,
                                   new String[] { "StorageDomainId" },
@@ -674,7 +660,6 @@ public class BackendVmsResourceTest
                 new String[] { "VdsGroupId" },
                 new Object[] { GUIDS[2] },
                 getVdsGroupEntity());
-        setUpGetPayloadExpectations(2);
         setUpGetEntityExpectations("Cluster: name=" + NAMES[2],
                                    SearchType.Cluster,
                                    setUpVDSGroup(GUIDS[2]));
@@ -719,7 +704,6 @@ public class BackendVmsResourceTest
     public void testList() throws Exception {
         UriInfo uriInfo = setUpUriExpectations(null);
 
-        setUpGetPayloadsExpectations(3);
         setUpQueryExpectations("");
         collection.setUriInfo(uriInfo);
         verifyCollection(getCollection());
@@ -730,7 +714,6 @@ public class BackendVmsResourceTest
     public void testQuery() throws Exception {
         UriInfo uriInfo = setUpUriExpectations(QUERY);
 
-        setUpGetPayloadsExpectations(3);
         setUpQueryExpectations(QUERY);
         collection.setUriInfo(uriInfo);
         verifyCollection(getCollection());
@@ -957,12 +940,6 @@ public class BackendVmsResourceTest
                                    new String[] { "Id" },
                                    new Object[] { GUIDS[index] },
                                    payload);
-    }
-
-    protected void setUpGetPayloadsExpectations(int times) throws Exception {
-        for (int i=0; i<times; i++) {
-            setUpGetPayloadExpectations(i);
-        }
     }
 
     private void setUpGetBallooningExpectations() throws Exception {
