@@ -282,13 +282,15 @@ public class CommonVmPoolWithVmsCommandTestAbstract {
     private Map<Guid, DiskImage> getDiskImageTempalteList() {
         Map<Guid, DiskImage> diskTemplateList = new HashMap<Guid, DiskImage>();
         DiskImage diskImageTemplate = new DiskImage();
+        diskImageTemplate.setId(Guid.NewGuid());
         diskImageTemplate.setImageId(Guid.NewGuid());
         diskImageTemplate.setstorage_ids(new ArrayList<Guid>());
-        diskTemplateList.put(diskImageTemplate.getImageId(), diskImageTemplate);
+        diskTemplateList.put(diskImageTemplate.getId(), diskImageTemplate);
         diskImageTemplate = new DiskImage();
+        diskImageTemplate.setId(Guid.NewGuid());
         diskImageTemplate.setImageId(Guid.NewGuid());
         diskImageTemplate.setstorage_ids(new ArrayList<Guid>());
-        diskTemplateList.put(diskImageTemplate.getImageId(), diskImageTemplate);
+        diskTemplateList.put(diskImageTemplate.getId(), diskImageTemplate);
         return diskTemplateList;
     }
 
