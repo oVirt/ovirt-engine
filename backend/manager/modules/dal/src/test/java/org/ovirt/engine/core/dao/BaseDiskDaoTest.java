@@ -30,7 +30,6 @@ public class BaseDiskDaoTest extends BaseGenericDaoTestCase<Guid, BaseDisk, Base
     @Override
     protected BaseDisk generateNewEntity() {
         return new BaseDisk(Guid.NewGuid(),
-                1,
                 DiskInterface.SCSI,
                 true,
                 PropagateErrors.Off,

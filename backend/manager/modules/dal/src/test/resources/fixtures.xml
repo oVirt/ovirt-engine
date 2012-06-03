@@ -1877,7 +1877,6 @@
 
     <table name="base_disks">
         <column>disk_id</column>
-        <column>internal_drive_mapping</column>
         <column>disk_interface</column>
         <column>wipe_after_delete</column>
         <column>propagate_errors</column>
@@ -1888,7 +1887,6 @@
         <column>allow_snapshot</column>
         <row>
             <value>1b26a52b-b60f-44cb-9f46-3ef333b04a34</value>
-            <value>2</value>
             <value>VirtIO</value>
             <value>1</value>
             <value>Off</value>
@@ -1900,23 +1898,28 @@
         </row>
         <row>
             <value>1b26a52b-b60f-44cb-9f46-3ef333b04a35</value>
-            <value>2</value>
             <value>VirtIO</value>
             <value>1</value>
             <value>Off</value>
+            <value>New Disk Alias Name</value>
+            <value>New Description</value>
             <value>false</value>
+            <value>false</value>
+            <value>true</value>
         </row>
         <row>
             <value>1b26a52b-b60f-44cb-9f46-3ef333b04a36</value>
-            <value>2</value>
             <value>VirtIO</value>
             <value>1</value>
             <value>Off</value>
+            <value>New Disk Alias Name</value>
+            <value>New Description</value>
             <value>false</value>
+            <value>false</value>
+            <value>true</value>
         </row>
         <row>
             <value>1b26a52b-b60f-44cb-9f46-3ef333b04a37</value>
-            <value>2</value>
             <value>VirtIO</value>
             <value>1</value>
             <value>Off</value>

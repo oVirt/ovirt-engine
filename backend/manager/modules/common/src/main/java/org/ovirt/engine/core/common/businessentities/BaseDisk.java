@@ -37,11 +37,6 @@ public class BaseDisk extends IVdcQueryable implements BusinessEntity<Guid> {
     private Guid id;
 
     /**
-     * The order of the drive in the VM/Template.
-     */
-    private int internalDriveMapping;
-
-    /**
      * The alias name of the disk.
      */
     @Size(min = 0, max = BusinessEntitiesDefinitions.GENERAL_NAME_SIZE, groups = { CreateEntity.class })
@@ -86,7 +81,6 @@ public class BaseDisk extends IVdcQueryable implements BusinessEntity<Guid> {
     }
 
     public BaseDisk(Guid id,
-            int internalDriveMapping,
             DiskInterface diskInterface,
             boolean wipeAfterDelete,
             PropagateErrors propagateErrors,
@@ -97,7 +91,6 @@ public class BaseDisk extends IVdcQueryable implements BusinessEntity<Guid> {
             boolean allowSnapshot) {
         super();
         this.id = id;
-        this.internalDriveMapping = internalDriveMapping;
         this.diskInterface = diskInterface;
         this.wipeAfterDelete = wipeAfterDelete;
         this.propagateErrors = propagateErrors;
@@ -193,7 +186,6 @@ public class BaseDisk extends IVdcQueryable implements BusinessEntity<Guid> {
         result = prime * result + ((diskDescription == null) ? 0 : diskDescription.hashCode());
         result = prime * result + ((diskInterface == null) ? 0 : diskInterface.hashCode());
         result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + internalDriveMapping;
         result = prime * result + ((propagateErrors == null) ? 0 : propagateErrors.hashCode());
         result = prime * result + (shareable ? 1231 : 1237);
         result = prime * result + (allowSnapshot ? 1231 : 1237);
@@ -227,8 +219,6 @@ public class BaseDisk extends IVdcQueryable implements BusinessEntity<Guid> {
             if (other.id != null)
                 return false;
         } else if (!id.equals(other.id))
-            return false;
-        if (internalDriveMapping != other.internalDriveMapping)
             return false;
         if (propagateErrors != other.propagateErrors)
             return false;

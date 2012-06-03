@@ -27,7 +27,6 @@ public abstract class Disk extends BaseDisk {
     }
 
     public Disk(Guid id,
-            int internalDriveMapping,
             DiskInterface diskInterface,
             boolean wipeAfterDelete,
             PropagateErrors propagateErrors,
@@ -38,7 +37,6 @@ public abstract class Disk extends BaseDisk {
             boolean boot,
             boolean allowSnapshot) {
         super(id,
-                internalDriveMapping,
                 diskInterface,
                 wipeAfterDelete,
                 propagateErrors,

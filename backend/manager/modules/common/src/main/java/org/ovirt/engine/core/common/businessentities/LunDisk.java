@@ -18,7 +18,6 @@ public class LunDisk extends Disk {
     }
 
     public LunDisk(Guid id,
-            int internalDriveMapping,
             DiskInterface diskInterface,
             boolean wipeAfterDelete,
             PropagateErrors propagateErrors,
@@ -29,7 +28,6 @@ public class LunDisk extends Disk {
             boolean boot,
             LUNs lun) {
         super(id,
-                internalDriveMapping,
                 diskInterface,
                 wipeAfterDelete,
                 propagateErrors,
