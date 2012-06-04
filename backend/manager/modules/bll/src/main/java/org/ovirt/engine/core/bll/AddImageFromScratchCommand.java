@@ -20,8 +20,11 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.utils.transaction.TransactionMethod;
+import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @InternalCommandAttribute
+@NonTransactiveCommandAttribute(forceCompensation=true)
 public class AddImageFromScratchCommand<T extends AddImageFromScratchParameters> extends CreateSnapshotCommand<T> {
 
     public AddImageFromScratchCommand(T parameters) {
@@ -35,46 +38,48 @@ public class AddImageFromScratchCommand<T extends AddImageFromScratchParameters>
             setImageContainerId(getVm().getvmt_guid());
         }
         setImageGroupId(getParameters().getDiskInfo().getId());
+        setDestinationImageId(Guid.NewGuid());
 
-        if (ProcessImageInIrs()) {
-            mNewCreatedDiskImage = new DiskImage();
-            mNewCreatedDiskImage.setImageId(getDestinationImageId());
-            mNewCreatedDiskImage.setBoot(getParameters().getDiskInfo().isBoot());
-            mNewCreatedDiskImage.setDiskInterface(getParameters().getDiskInfo().getDiskInterface());
-            mNewCreatedDiskImage.setPropagateErrors(getParameters().getDiskInfo().getPropagateErrors());
-            mNewCreatedDiskImage.setWipeAfterDelete(getParameters().getDiskInfo().isWipeAfterDelete());
-            mNewCreatedDiskImage.setDiskAlias(getParameters().getDiskInfo().getDiskAlias());
-            mNewCreatedDiskImage.setDiskDescription(getParameters().getDiskInfo().getDiskDescription());
-            mNewCreatedDiskImage.setShareable(getParameters().getDiskInfo().isShareable());
-            mNewCreatedDiskImage.setAllowSnapshot(getParameters().getDiskInfo().isAllowSnapshot());
-            mNewCreatedDiskImage.setvm_guid(getParameters().getMasterVmId());
-            mNewCreatedDiskImage.setId(getImageGroupId());
-            mNewCreatedDiskImage.setstorage_pool_id(getParameters().getStoragePoolId());
-            mNewCreatedDiskImage.setstorage_ids(new ArrayList<Guid>(Arrays.asList(getParameters().getStorageDomainId())));
-            mNewCreatedDiskImage.setsize(getParameters().getDiskInfo().getsize());
-            mNewCreatedDiskImage.setvolume_type(getParameters().getDiskInfo().getvolume_type());
-            mNewCreatedDiskImage.setvolume_format(getParameters().getDiskInfo().getvolume_format());
-            mNewCreatedDiskImage.setdescription("");
-            mNewCreatedDiskImage.setcreation_date(new Date());
-            mNewCreatedDiskImage.setlastModified(new Date());
-            mNewCreatedDiskImage.setactive(true);
-            mNewCreatedDiskImage.setimageStatus(ImageStatus.LOCKED);
-            mNewCreatedDiskImage.setvm_snapshot_id(getParameters().getVmSnapshotId());
-            mNewCreatedDiskImage.setQuotaId(getParameters().getQuotaId());
+        mNewCreatedDiskImage = new DiskImage();
+        mNewCreatedDiskImage.setImageId(getDestinationImageId());
+        mNewCreatedDiskImage.setBoot(getParameters().getDiskInfo().isBoot());
+        mNewCreatedDiskImage.setDiskInterface(getParameters().getDiskInfo().getDiskInterface());
+        mNewCreatedDiskImage.setPropagateErrors(getParameters().getDiskInfo().getPropagateErrors());
+        mNewCreatedDiskImage.setWipeAfterDelete(getParameters().getDiskInfo().isWipeAfterDelete());
+        mNewCreatedDiskImage.setDiskAlias(getParameters().getDiskInfo().getDiskAlias());
+        mNewCreatedDiskImage.setDiskDescription(getParameters().getDiskInfo().getDiskDescription());
+        mNewCreatedDiskImage.setShareable(getParameters().getDiskInfo().isShareable());
+        mNewCreatedDiskImage.setAllowSnapshot(getParameters().getDiskInfo().isAllowSnapshot());
+        mNewCreatedDiskImage.setvm_guid(getParameters().getMasterVmId());
+        mNewCreatedDiskImage.setId(getImageGroupId());
+        mNewCreatedDiskImage.setstorage_pool_id(getParameters().getStoragePoolId());
+        mNewCreatedDiskImage.setstorage_ids(new ArrayList<Guid>(Arrays.asList(getParameters().getStorageDomainId())));
+        mNewCreatedDiskImage.setsize(getParameters().getDiskInfo().getsize());
+        mNewCreatedDiskImage.setvolume_type(getParameters().getDiskInfo().getvolume_type());
+        mNewCreatedDiskImage.setvolume_format(getParameters().getDiskInfo().getvolume_format());
+        mNewCreatedDiskImage.setdescription("");
+        mNewCreatedDiskImage.setcreation_date(new Date());
+        mNewCreatedDiskImage.setlastModified(new Date());
+        mNewCreatedDiskImage.setactive(true);
+        mNewCreatedDiskImage.setimageStatus(ImageStatus.LOCKED);
+        mNewCreatedDiskImage.setvm_snapshot_id(getParameters().getVmSnapshotId());
+        mNewCreatedDiskImage.setQuotaId(getParameters().getQuotaId());
 
-            AddDiskImageToDb(mNewCreatedDiskImage);
-            getReturnValue().setActionReturnValue(mNewCreatedDiskImage);
-            setSucceeded(true);
-        }
+        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
+            @Override
+            public Void runInTransaction() {
+                AddDiskImageToDb(mNewCreatedDiskImage, getCompensationContext());
+                return null;
+            }
+        });
+        freeLock();
+        ProcessImageInIrs();
+        getReturnValue().setActionReturnValue(mNewCreatedDiskImage);
+        setSucceeded(true);
     }
 
     protected boolean ProcessImageInIrs() {
-        setDestinationImageId(Guid.NewGuid());
-
-        VDSReturnValue vdsReturnValue = Backend
-                .getInstance()
-                .getResourceManager()
-                .RunVdsCommand(
+        VDSReturnValue vdsReturnValue = runVdsCommand(
                         VDSCommandType.CreateImage,
                         new CreateImageVDSCommandParameters(getParameters().getStoragePoolId(), getParameters()
                                 .getStorageDomainId(), getImageGroupId(), getParameters().getDiskInfo().getsize(),

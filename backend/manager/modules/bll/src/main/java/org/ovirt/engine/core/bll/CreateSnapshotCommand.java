@@ -54,7 +54,7 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
                  * Vitaly TODO: think about transactivity in DB
                  */
                 ProcessOldImageFromDb();
-                AddDiskImageToDb(mNewCreatedDiskImage);
+                AddDiskImageToDb(mNewCreatedDiskImage, null);
                 setActionReturnValue(mNewCreatedDiskImage);
                 setSucceeded(true);
             }

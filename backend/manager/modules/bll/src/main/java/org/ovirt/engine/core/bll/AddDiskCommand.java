@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
@@ -33,6 +34,7 @@ import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
@@ -46,6 +48,8 @@ import org.ovirt.engine.core.dao.DiskLunMapDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
 import org.ovirt.engine.core.dao.StorageDomainStaticDAO;
+import org.ovirt.engine.core.utils.transaction.TransactionMethod;
+import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @CustomLogFields({ @CustomLogField("DiskAlias") })
 @NonTransactiveCommandAttribute(forceCompensation = true)
@@ -274,10 +278,6 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
 
     @Override
     protected void ExecuteVmCommand() {
-        // NOTE: Assuming that we need to lock the vm before adding a disk!
-        if (getVm() != null) {
-            VmHandler.checkStatusAndLockVm(getVm().getId(), getCompensationContext());
-        }
         ImagesHandler.setDiskAlias(getParameters().getDiskInfo(), getVm());
         if (DiskStorageType.IMAGE == getParameters().getDiskInfo().getDiskStorageType()) {
             setAllowSnapshotForDisk();
@@ -288,19 +288,24 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
     }
 
     private void createDiskBasedOnLun() {
-        LUNs lun = ((LunDisk) getParameters().getDiskInfo()).getLun();
-        StorageDomainCommandBase.proceedLUNInDb(lun, lun.getLunType());
-        getBaseDiskDao().save(getParameters().getDiskInfo());
-        getDiskLunMapDao().save(new DiskLunMap(getParameters().getDiskInfo().getId(), lun.getLUN_id()));
-        if (getVm() != null) {
-            VmDeviceUtils.addManagedDevice(new VmDeviceId(getParameters().getDiskInfo().getId(), getVmId()),
-                    VmDeviceType.DISK,
-                    VmDeviceType.DISK,
-                    null,
-                    true,
-                    false);
-        }
-        VmHandler.unlockVm(getVm().getDynamicData(), getCompensationContext());
+        final LUNs lun = ((LunDisk) getParameters().getDiskInfo()).getLun();
+        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
+            @Override
+            public Void runInTransaction() {
+                StorageDomainCommandBase.proceedLUNInDb(lun, lun.getLunType());
+                getBaseDiskDao().save(getParameters().getDiskInfo());
+                getDiskLunMapDao().save(new DiskLunMap(getParameters().getDiskInfo().getId(), lun.getLUN_id()));
+                if (getVm() != null) {
+                    VmDeviceUtils.addManagedDevice(new VmDeviceId(getParameters().getDiskInfo().getId(), getVmId()),
+                            VmDeviceType.DISK,
+                            VmDeviceType.DISK,
+                            null,
+                            true,
+                            false);
+                }
+                return null;
+            }
+        });
         setSucceeded(true);
     }
 
@@ -319,17 +324,20 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         parameters.setParentParemeters(getParameters());
         if (getVm() != null) {
             setVmSnapshotIdForDisk(parameters);
-            VmDeviceUtils.addManagedDevice(new VmDeviceId(getParameters().getDiskInfo().getId(), getVmId()),
+            getCompensationContext().snapshotNewEntity(VmDeviceUtils.addManagedDevice(new VmDeviceId(getParameters().getDiskInfo()
+                    .getId(),
+                    getVmId()),
                     VmDeviceType.DISK,
                     VmDeviceType.DISK,
                     null,
                     true,
-                    false);
+                    false));
+            getCompensationContext().stateChanged();
         }
         VdcReturnValueBase tmpRetValue =
                 Backend.getInstance().runInternalAction(VdcActionType.AddImageFromScratch,
                         parameters,
-                        ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
+                        ExecutionHandler.createDefaultContexForTasks(getExecutionContext(), getLock()));
         getReturnValue().getTaskIdList().addAll(tmpRetValue.getInternalTaskIdList());
         if (tmpRetValue.getActionReturnValue() != null) {
             DiskImage diskImage = (DiskImage) tmpRetValue.getActionReturnValue();
@@ -393,7 +401,20 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         return super.getValidationGroups();
     }
 
-    public String getDiskAlias() {
-        return getParameters().getDiskInfo().getDiskAlias();
+    @Override
+    protected Map<Guid, String> getExclusiveLocks() {
+        if (getParameters().getDiskInfo().isBoot() && getParameters().getVmId() != null
+                && !Guid.Empty.equals(getParameters().getVmId())) {
+            return Collections.singletonMap(getParameters().getVmId(), LockingGroup.VM_DISK_BOOT.name());
+        }
+        return null;
+    }
+
+    @Override
+    protected Map<Guid, String> getSharedLocks() {
+        if (getParameters().getVmId() != null && !Guid.Empty.equals(getParameters().getVmId())) {
+            return Collections.singletonMap(getParameters().getVmId(), LockingGroup.VM.name());
+        }
+        return null;
     }
 }

@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.NotImplementedException;
+import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.storage.StorageDomainCommandBase;
 import org.ovirt.engine.core.common.action.ImagesActionsParametersBase;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
@@ -315,28 +316,28 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
         to.setWipeAfterDelete(from.isWipeAfterDelete());
     }
 
-    protected void AddDiskImageToDb(DiskImage image) {
-        // TODO handle creation date & the difference between direct parent &
-        // image template
-        // TODO - transaction
-        // Adding new disk to the image table in the DB
-        try {
-            image.setactive(true);
-            getImageDao().save(image.getImage());
-            DiskImageDynamic diskDynamic = new DiskImageDynamic();
-            diskDynamic.setId(image.getImageId());
-            diskDynamic.setactual_size(image.getactual_size());
-            DbFacade.getInstance().getDiskImageDynamicDAO().save(diskDynamic);
-            DbFacade.getInstance()
+    protected void AddDiskImageToDb(DiskImage image, CompensationContext compensationContext) {
+        image.setactive(true);
+        getImageDao().save(image.getImage());
+        DiskImageDynamic diskDynamic = new DiskImageDynamic();
+        diskDynamic.setId(image.getImageId());
+        diskDynamic.setactual_size(image.getactual_size());
+        DbFacade.getInstance().getDiskImageDynamicDAO().save(diskDynamic);
+        image_storage_domain_map image_storage_domain_map = new image_storage_domain_map(image.getImageId(),
+                    image.getstorage_ids().get(0));
+        DbFacade.getInstance()
                     .getImageStorageDomainMapDao()
-                    .save(new image_storage_domain_map(image.getImageId(),
-                            image.getstorage_ids().get(0)));
-            saveDiskIfNotExists(image);
-        } catch (RuntimeException ex) {
-            log.error("AddDiskImageToDB::Failed adding new created snapshot into the db", ex);
-            throw new VdcBLLException(VdcBllErrors.DB, ex);
+                    .save(image_storage_domain_map);
+        boolean isDiskAdded = saveDiskIfNotExists(image);
+        if (compensationContext != null) {
+            compensationContext.snapshotNewEntity(image.getImage());
+            compensationContext.snapshotNewEntity(diskDynamic);
+            compensationContext.snapshotNewEntity(image_storage_domain_map);
+            if (isDiskAdded) {
+                compensationContext.snapshotNewEntity(image);
+            }
+            compensationContext.stateChanged();
         }
-
     }
 
     /**
@@ -344,10 +345,12 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
      * @param image
      *            The image to take the disk's details from.
      */
-    protected void saveDiskIfNotExists(DiskImage image) {
+    protected boolean saveDiskIfNotExists(DiskImage image) {
         if (!getBaseDiskDao().exists(image.getId())) {
             getBaseDiskDao().save(image);
+            return true;
         }
+        return false;
     }
 
     protected BaseDiskDao getBaseDiskDao() {

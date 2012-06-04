@@ -4,6 +4,7 @@ public enum LockingGroup {
 
     VM,
     TEMPLATE,
-    DISK;
+    DISK,
+    VM_DISK_BOOT;
 
 }
