@@ -597,8 +597,10 @@ public class ClusterModel extends Model
         getDataCenter().setIsAvailable(ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly);
 
         setCPU(new ListModel());
+        getCPU().setIsAvailable(ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly);
         setVersion(new ListModel());
         getVersion().getSelectedItemChangedEvent().addListener(this);
+        getVersion().setIsAvailable(ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly);
         setMigrateOnErrorOption(MigrateOnErrorOptions.YES);
 
         setIsGeneralTabValid(true);
