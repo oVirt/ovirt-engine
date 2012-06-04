@@ -329,6 +329,11 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
                 returnValue = false;
         }
 
+        //check cpuPinning
+        if(returnValue && !isCpuPinningValid(getParameters().getVm().getCpuPinning())) {
+            returnValue = false;
+            addCanDoActionMessage(VdcBllMessages.VM_PINNING_FORMAT_INVALID);
+        }
         return returnValue && checkCpuSockets();
     }
 

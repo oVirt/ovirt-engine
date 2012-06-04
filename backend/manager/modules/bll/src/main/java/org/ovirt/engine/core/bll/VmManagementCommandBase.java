@@ -1,7 +1,9 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
@@ -56,6 +58,14 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
                     .add(VdcBllMessages.ACTION_TYPE_FAILED_DEDICATED_VDS_NOT_IN_SAME_CLUSTER.toString());
         }
         return result;
+    }
+
+    private final static Pattern cpuPinningPattern =
+            Pattern.compile("\\d#(\\^\\d+|\\d+\\-\\d+|\\d+)(,(\\^\\d+|\\d+\\-\\d+|\\d+))*" +
+                    "(_\\d#(\\^\\d+|\\d+\\-\\d+|\\d+)(,(\\^\\d+|\\d+\\-\\d+|\\d+))*)*");
+
+    static boolean isCpuPinningValid(final String cpuPinning) {
+        return StringUtils.isEmpty(cpuPinning) || cpuPinningPattern.matcher(cpuPinning).matches();
     }
 
 }

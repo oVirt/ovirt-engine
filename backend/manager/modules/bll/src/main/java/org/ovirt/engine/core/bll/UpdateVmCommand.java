@@ -285,6 +285,12 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                 if (retValue) {
                     retValue = VmHandler.isUsbPolicyLegal(getParameters().getVm().getusb_policy(), getParameters().getVm().getos(), getVdsGroup(), getReturnValue().getCanDoActionMessages());
                 }
+
+                //check cpuPinning
+                if(retValue && !isCpuPinningValid(getParameters().getVm().getCpuPinning())) {
+                    retValue = false;
+                    addCanDoActionMessage(VdcBllMessages.VM_PINNING_FORMAT_INVALID);
+                }
             }
         }
         return retValue;
