@@ -519,14 +519,10 @@ public class Frontend {
                 for (VdcReturnValueBase v : result) {
                     if (!v.getCanDoAction()) {
                         failed.add(v);
-                    } else if (v.getIsSyncronious() && v.getSucceeded() == false) {
-                        VdcFault fault = v.getFault();
-                        fault.setMessage(vdsmErrorsTranslator.TranslateErrorTextSingle(fault.getMessage()));
-                        faults.add(fault);
                     }
                 }
 
-                if (!failed.isEmpty() || !faults.isEmpty()) {
+                if (!failed.isEmpty()) {
                     translateErrors(failed);
                     getEventsHandler().runMultipleActionFailed(actionType, failed, faults);
                 }
