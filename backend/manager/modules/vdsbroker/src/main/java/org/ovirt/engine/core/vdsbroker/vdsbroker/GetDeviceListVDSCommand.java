@@ -14,6 +14,7 @@ public class GetDeviceListVDSCommand<P extends GetDeviceListVDSCommandParameters
 
     protected static final String DEVTYPE_VALUE_FCP = "fcp";
     protected static final String DEVTYPE_FIELD = "devtype";
+    protected static final String PARTITIONED = "partitioned";
 
     private LUNListReturnForXmlRpc _result;
 
@@ -23,9 +24,14 @@ public class GetDeviceListVDSCommand<P extends GetDeviceListVDSCommandParameters
 
     @Override
     protected void ExecuteVdsBrokerCommand() {
-        _result = getBroker()
-                .getDeviceList(
-                        (int) getParameters().getStorageType().getValue());
+        boolean filteringLUNsEnabled = getParameters().isFilteringLUNsEnabled();
+
+        XmlRpcStruct options = new XmlRpcStruct();
+        options.add(VdsProperties.includePartitioned, Boolean.toString(filteringLUNsEnabled));
+
+        int storageType = (int) getParameters().getStorageType().getValue();
+        _result = getBroker().getDeviceList(storageType, options);
+
         ProceedProxyReturnValue();
         setReturnValue(ParseLUNList(_result.lunList));
     }
@@ -122,6 +128,9 @@ public class GetDeviceListVDSCommand<P extends GetDeviceListVDSCommandParameters
             if (!DEVTYPE_VALUE_FCP.equalsIgnoreCase(devtype)) {
                 lun.setLunType(StorageType.ISCSI);
             }
+        }
+        if (xlun.contains(PARTITIONED)) {
+            lun.setPartitioned(Boolean.valueOf(xlun.getItem(PARTITIONED).toString()));
         }
         return lun;
     }

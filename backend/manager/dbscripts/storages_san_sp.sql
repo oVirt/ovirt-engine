@@ -49,11 +49,11 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetAllFromLUNs() RETURNS SETOF LUNs
+Create or replace FUNCTION GetAllFromLUNs() RETURNS SETOF luns_view
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
-   FROM LUNs LUNs;
+   FROM luns_view;
 
 END; $procedure$
 LANGUAGE plpgsql;
@@ -62,13 +62,13 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetLUNsBystorage_server_connection(v_storage_server_connection VARCHAR(50)) RETURNS SETOF LUNs
+Create or replace FUNCTION GetLUNsBystorage_server_connection(v_storage_server_connection VARCHAR(50)) RETURNS SETOF luns_view
    AS $procedure$
 BEGIN
-   RETURN QUERY SELECT  LUNs.*
-   FROM LUNs LUNs INNER JOIN
+   RETURN QUERY SELECT luns_view.*
+   FROM luns_view INNER JOIN
    LUN_storage_server_connection_map
-   ON LUN_storage_server_connection_map.LUN_id = LUNs.LUN_id
+   ON LUN_storage_server_connection_map.LUN_id = luns_view.LUN_id
    WHERE LUN_storage_server_connection_map.storage_server_connection = v_storage_server_connection;
 
 END; $procedure$
@@ -79,11 +79,11 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetLUNsByVolumeGroupId(v_volume_group_id VARCHAR(50))
-RETURNS SETOF LUNs
+RETURNS SETOF luns_view
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
-   FROM LUNs LUNs
+   FROM luns_view
    WHERE volume_group_id = v_volume_group_id; 
 
 END; $procedure$
@@ -94,11 +94,11 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetLUNByLUNId(v_LUN_id VARCHAR(50)) 
-RETURNS SETOF LUNs
+RETURNS SETOF luns_view
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
-   FROM LUNs LUNs
+   FROM luns_view
    WHERE LUN_id = v_LUN_id; 
 
 END; $procedure$

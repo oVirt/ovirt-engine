@@ -11,6 +11,8 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 
+import org.ovirt.engine.core.compat.NGuid;
+
 @Entity
 @Table(name = "luns")
 @NamedQueries({ @NamedQuery(
@@ -44,6 +46,11 @@ public class LUNs implements Serializable {
         result = prime * result + ((serial == null) ? 0 : serial.hashCode());
         result = prime * result + ((vendorId == null) ? 0 : vendorId.hashCode());
         result = prime * result + ((volumeGroupId == null) ? 0 : volumeGroupId.hashCode());
+        result = prime * result + (partitioned ? 1231 : 1237);
+        result = prime * result + ((diskId == null) ? 0 : storageDomainId.hashCode());
+        result = prime * result + ((diskAlias == null) ? 0 : diskAlias.hashCode());
+        result = prime * result + ((storageDomainId == null) ? 0 : storageDomainId.hashCode());
+        result = prime * result + ((storageDomainName == null) ? 0 : storageDomainName.hashCode());
         return result;
     }
 
@@ -109,6 +116,28 @@ public class LUNs implements Serializable {
             if (other.volumeGroupId != null)
                 return false;
         } else if (!volumeGroupId.equals(other.volumeGroupId))
+            return false;
+        if (partitioned != other.partitioned)
+            return false;
+        if (diskId == null) {
+            if (other.diskId != null)
+                return false;
+        } else if (!diskId.equals(other.diskId))
+            return false;
+        if (diskAlias == null) {
+            if (other.diskAlias != null)
+                return false;
+        } else if (!diskAlias.equals(other.diskAlias))
+            return false;
+        if (storageDomainId == null) {
+            if (other.storageDomainId != null)
+                return false;
+        } else if (!storageDomainId.equals(other.storageDomainId))
+            return false;
+        if (storageDomainName == null) {
+            if (other.storageDomainName != null)
+                return false;
+        } else if (!storageDomainName.equals(other.storageDomainName))
             return false;
         return true;
     }
@@ -265,6 +294,65 @@ public class LUNs implements Serializable {
 
     public void setLunType(StorageType value) {
         lunType = value;
+    }
+
+    /**
+     * A flag indicating whether the LUN device contains partitions
+     */
+    private boolean partitioned;
+
+    public boolean isPartitioned() {
+        return partitioned;
+    }
+
+    public void setPartitioned(boolean value) {
+        partitioned = value;
+    }
+
+    /**
+     * Disk ID - using NGuid since diskId is nullable
+     */
+    private NGuid diskId;
+
+    public NGuid getDiskId() {
+        return diskId;
+    }
+
+    public void setDiskId(NGuid value) {
+        diskId = value;
+    }
+
+    private String diskAlias;
+
+    public String getDiskAlias() {
+        return diskAlias;
+    }
+
+    public void setDiskAlias(String value) {
+        diskAlias = value;
+    }
+
+    /**
+     * Storage Domain ID - using storageDomainId since diskId is nullable
+     */
+    private NGuid storageDomainId;
+
+    public NGuid getStorageDomainId() {
+        return storageDomainId;
+    }
+
+    public void setStorageDomainId(NGuid value) {
+        storageDomainId = value;
+    }
+
+    private String storageDomainName;
+
+    public String getStorageDomainName() {
+        return storageDomainName;
+    }
+
+    public void setStorageDomainName(String value) {
+        storageDomainName = value;
     }
 
     /**

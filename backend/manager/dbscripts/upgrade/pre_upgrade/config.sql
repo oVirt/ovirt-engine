@@ -104,6 +104,9 @@ select fn_db_add_config_value('FenceStartStatusDelayBetweenRetriesInSec','60','g
 select fn_db_add_config_value('FenceStartStatusRetries','3','general');
 select fn_db_add_config_value('FenceStopStatusDelayBetweenRetriesInSec','60','general');
 select fn_db_add_config_value('FenceStopStatusRetries','3','general');
+select fn_db_add_config_value('FilteringLUNsEnabled','true','2.2');
+select fn_db_add_config_value('FilteringLUNsEnabled','true','3.0');
+select fn_db_add_config_value('FilteringLUNsEnabled','false','3.1');
 select fn_db_add_config_value('FindFenceProxyDelayBetweenRetriesInSec','30','general');
 select fn_db_add_config_value('FindFenceProxyRetries','3','general');
 select fn_db_add_config_value('FreeSpaceLow','10','general');

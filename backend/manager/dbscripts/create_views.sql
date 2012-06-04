@@ -279,6 +279,18 @@ storage_domain_static
 INNER JOIN storage_domain_dynamic ON storage_domain_static.id = storage_domain_dynamic.id;
 
 
+CREATE OR REPLACE VIEW luns_view
+AS
+SELECT
+luns.*, storage_domain_static.id as storage_id, storage_domain_static.storage_name as storage_name,
+        disk_lun_map.disk_id as disk_id, all_disks.disk_alias as disk_alias
+FROM luns
+LEFT OUTER JOIN storage_domain_static ON luns.volume_group_id = storage_domain_static.storage
+LEFT OUTER JOIN disk_lun_map ON luns.lun_id = disk_lun_map.lun_id
+LEFT OUTER JOIN all_disks ON disk_lun_map.disk_id = all_disks.disk_id;
+
+
+
 CREATE OR REPLACE VIEW vm_templates_view
 AS
 

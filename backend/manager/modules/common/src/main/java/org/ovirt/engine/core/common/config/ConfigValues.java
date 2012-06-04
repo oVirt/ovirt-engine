@@ -1152,6 +1152,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("false")
     DirectLUNDiskEnabled(360),
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("false")
+    FilteringLUNsEnabled(361),
+
     Invalid(65535);
 
     private int intValue;

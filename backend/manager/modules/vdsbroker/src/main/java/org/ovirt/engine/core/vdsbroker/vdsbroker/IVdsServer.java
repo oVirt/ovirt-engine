@@ -136,7 +136,7 @@ public interface IVdsServer {
 
     OneVGReturnForXmlRpc getVGInfo(String vgUUID);
 
-    LUNListReturnForXmlRpc getDeviceList(int storageType);
+    LUNListReturnForXmlRpc getDeviceList(int storageType, XmlRpcStruct options);
 
     OneLUNReturnForXmlRpc getDeviceInfo(String devGUID);
 
