@@ -315,7 +315,7 @@ public class VmHandler {
      */
     public static boolean isMemorySizeLegal(VmOsType osType,
             int memSizeInMB,
-            ArrayList<String> reasons,
+            List<String> reasons,
             String clsuter_version) {
         boolean result = VmValidationUtils.isMemorySizeLegal(osType, memSizeInMB, clsuter_version);
         if (!result) {

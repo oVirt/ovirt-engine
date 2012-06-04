@@ -235,7 +235,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
     }
 
     public static boolean CheckCpuSockets(int num_of_sockets, int cpu_per_socket, String compatibility_version,
-            java.util.ArrayList<String> CanDoActionMessages) {
+            List<String> CanDoActionMessages) {
         boolean retValue = true;
         if (retValue
                 && (num_of_sockets * cpu_per_socket) > Config.<Integer> GetValue(ConfigValues.MaxNumOfVmCpus,
@@ -524,7 +524,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
                 _vmInterfaces);
     }
 
-    protected static boolean IsLegalClusterId(Guid clusterId, java.util.ArrayList<String> reasons) {
+    protected static boolean IsLegalClusterId(Guid clusterId, List<String> reasons) {
         // check given cluster id
         VDSGroup vdsGroup = DbFacade.getInstance().getVdsGroupDAO().get(clusterId);
         boolean legalClusterId = (vdsGroup != null);
@@ -534,7 +534,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         return legalClusterId;
     }
 
-    protected boolean areParametersLegal(java.util.ArrayList<String> reasons) {
+    protected boolean areParametersLegal(List<String> reasons) {
         boolean returnValue = false;
         VmStatic vmStaticData = getParameters().getVmStaticData();
 

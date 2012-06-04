@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -86,7 +87,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                     // We want to get the VM current data that was updated to the DB.
                     setVm(null);
                     UpdateVmInSpm(getVm().getstorage_pool_id(),
-                            new java.util.ArrayList<VM>(java.util.Arrays.asList(new VM[] { getVm() })));
+                            new ArrayList<VM>(Arrays.asList(new VM[] { getVm() })));
                 }
                 setSucceeded(true);
             }
