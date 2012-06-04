@@ -38,7 +38,7 @@ public class ManageDomains {
         "WARNING: No permissions were added to the Engine. Login either with the internal admin user or with another configured user.";
 
     private final String SERVICE_RESTART_MESSAGE =
-            "oVirt Engine restart is required in order for the changes to take place (service jbossas restart).";
+            "oVirt Engine restart is required in order for the changes to take place (service ovirt-engine restart).";
     private final String DELETE_DOMAIN_SUCCESS =
             "Successfully deleted domain %1$s. Please remove all users and groups of this domain using the Administration portal or the API. "
                     + SERVICE_RESTART_MESSAGE;
