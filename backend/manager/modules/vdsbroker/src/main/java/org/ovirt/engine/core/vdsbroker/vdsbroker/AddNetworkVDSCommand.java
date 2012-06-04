@@ -3,12 +3,13 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.ovirt.engine.core.common.businessentities.network;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.vdscommands.NetworkVdsmVDSCommandParameters;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.TransactiveAttribute;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 @TransactiveAttribute
 public class AddNetworkVDSCommand<P extends NetworkVdsmVDSCommandParameters> extends VdsBrokerCommand<P> {
@@ -18,7 +19,7 @@ public class AddNetworkVDSCommand<P extends NetworkVdsmVDSCommandParameters> ext
 
     @Override
     protected void ExecuteVdsBrokerCommand() {
-        String network = (getParameters().getNetworkName() == null) ? "" : getParameters()
+        String networkName = (getParameters().getNetworkName() == null) ? "" : getParameters()
                 .getNetworkName();
         String vlanId = (getParameters().getVlanId() != null) ? getParameters().getVlanId().toString()
                 : "";
@@ -54,11 +55,12 @@ public class AddNetworkVDSCommand<P extends NetworkVdsmVDSCommandParameters> ext
 
         options.put("bridged", Boolean.toString(getParameters().isVmNetwork()));
 
-        if (getParameters().getNetwork().getMtu() != 0) {
-            options.put("mtu", String.valueOf(getParameters().getNetwork().getMtu()));
+        network network = getParameters().getNetwork();
+        if (network != null && network.getMtu() != 0) {
+            options.put("mtu", String.valueOf(network.getMtu()));
         }
 
-        status = getBroker().addNetwork(network, vlanId, bond, nics, options);
+        status = getBroker().addNetwork(networkName, vlanId, bond, nics, options);
         ProceedProxyReturnValue();
     }
 
