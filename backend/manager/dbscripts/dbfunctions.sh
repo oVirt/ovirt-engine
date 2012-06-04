@@ -14,6 +14,8 @@ execute_command () {
     printf "${command}\n" > $filename
 
     execute_file $filename $dbname $dbhost $dbport
+
+    rm $filename
 }
 
 # $1 - the file to execute
