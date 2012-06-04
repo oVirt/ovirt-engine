@@ -153,7 +153,7 @@ public class VolumeModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<AuditLog, VolumeListModel, VolumeEventListModel> getHostEventListProvider(ClientGinjector ginjector) {
+    public SearchableDetailModelProvider<AuditLog, VolumeListModel, VolumeEventListModel> getVolumeEventListProvider(ClientGinjector ginjector) {
         return new SearchableDetailTabModelProvider<AuditLog, VolumeListModel, VolumeEventListModel>(ginjector,
                 VolumeListModel.class,
                 VolumeEventListModel.class);

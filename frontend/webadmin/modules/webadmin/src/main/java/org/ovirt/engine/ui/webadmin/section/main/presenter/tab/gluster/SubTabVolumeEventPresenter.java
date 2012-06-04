@@ -37,7 +37,7 @@ public class SubTabVolumeEventPresenter extends AbstractSubTabPresenter<GlusterV
     @TabInfo(container = VolumeSubTabPanelPresenter.class)
     static TabData getTabData(ClientGinjector ginjector) {
         return new ModelBoundTabData(ginjector.getApplicationConstants().volumeEventSubTabLabel(), 4,
-                ginjector.getSubTabDataCenterEventModelProvider(), Align.RIGHT);
+                ginjector.getSubTabVolumeEventModelProvider(), Align.RIGHT);
     }
 
     @Inject
@@ -58,7 +58,7 @@ public class SubTabVolumeEventPresenter extends AbstractSubTabPresenter<GlusterV
     }
 
     @ProxyEvent
-    public void onDataCenterSelectionChange(VolumeSelectionChangeEvent event) {
+    public void onVolumeSelectionChange(VolumeSelectionChangeEvent event) {
         updateMainTabSelection(event.getSelectedItems());
     }
 
