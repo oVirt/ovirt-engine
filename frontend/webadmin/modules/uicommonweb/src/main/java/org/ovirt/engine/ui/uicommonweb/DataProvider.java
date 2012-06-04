@@ -39,7 +39,6 @@ import org.ovirt.engine.core.common.businessentities.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
@@ -78,7 +77,6 @@ import org.ovirt.engine.core.common.queries.GetVdsByVdsIdParameters;
 import org.ovirt.engine.core.common.queries.GetVdsGroupByIdParameters;
 import org.ovirt.engine.core.common.queries.GetVmByVmIdParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
-import org.ovirt.engine.core.common.queries.GetVmTemplatesByStoragePoolIdParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplatesDisksParameters;
 import org.ovirt.engine.core.common.queries.IsStoragePoolWithSameNameExistParameters;
 import org.ovirt.engine.core.common.queries.IsVdsGroupWithSameNameExistParameters;
@@ -416,43 +414,6 @@ public final class DataProvider
         }
 
         return 262144;
-    }
-
-    public static ArrayList<VmTemplate> GetTemplateList(Guid storagePoolId)
-    {
-        VdcQueryReturnValue returnValue =
-                Frontend.RunQuery(VdcQueryType.GetVmTemplatesByStoragePoolId,
-                        new GetVmTemplatesByStoragePoolIdParameters(storagePoolId));
-        if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
-        {
-            // var list = ((List<VmTemplate>)returnValue.ReturnValue)
-            // .Where(a => a.status == VmTemplateStatus.OK)
-            // .OrderBy(a => a.name)
-            // .ToList();
-            VmTemplate blankTemplate = new VmTemplate();
-            ArrayList<VmTemplate> list = new ArrayList<VmTemplate>();
-            for (VmTemplate template : (ArrayList<VmTemplate>) returnValue.getReturnValue())
-            {
-                if (template.getId().equals(NGuid.Empty))
-                {
-                    blankTemplate = template;
-                }
-                else if (template.getstatus() == VmTemplateStatus.OK)
-                {
-                    list.add(template);
-                }
-            }
-
-            Collections.sort(list, new Linq.VmTemplateByNameComparer());
-            list.add(0, blankTemplate);
-            // VmTemplate blankTemplate = list.First(a => (Guid)a.vmt_guid == Guid.Empty);
-            // list.Remove(blankTemplate);
-            // list.Insert(0, blankTemplate);
-
-            return list;
-        }
-
-        return new ArrayList<VmTemplate>();
     }
 
     public static VmTemplate GetTemplateByID(Guid templateGUID)

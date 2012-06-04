@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -525,33 +526,7 @@ public final class AsyncDataProvider {
     }
 
     public static void GetTemplateListByDataCenter(AsyncQuery aQuery, Guid dataCenterId) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery)
-            {
-                ArrayList<VmTemplate> list = new ArrayList<VmTemplate>();
-                if (source != null)
-                {
-                    VmTemplate blankTemplate = new VmTemplate();
-                    for (VmTemplate template : (ArrayList<VmTemplate>) source)
-                    {
-                        if (template.getId().equals(Guid.Empty))
-                        {
-                            blankTemplate = template;
-                        }
-                        else if (template.getstatus() == VmTemplateStatus.OK)
-                        {
-                            list.add(template);
-                        }
-                    }
-
-                    Collections.sort(list, new Linq.VmTemplateByNameComparer());
-                    list.add(0, blankTemplate);
-                }
-
-                return list;
-            }
-        };
+        aQuery.converterCallback = new TemplateConverter();
         Frontend.RunQuery(VdcQueryType.GetVmTemplatesByStoragePoolId,
                 new GetVmTemplatesByStoragePoolIdParameters(dataCenterId),
                 aQuery);
@@ -1126,33 +1101,7 @@ public final class AsyncDataProvider {
     }
 
     public static void GetVmTemplatesWithPermittedAction(AsyncQuery aQuery, ActionGroup actionGroup) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery)
-            {
-                ArrayList<VmTemplate> list = new ArrayList<VmTemplate>();
-                if (source != null)
-                {
-                    VmTemplate blankTemplate = new VmTemplate();
-                    for (VmTemplate template : (ArrayList<VmTemplate>) source)
-                    {
-                        if (template.getId().equals(Guid.Empty))
-                        {
-                            blankTemplate = template;
-                        }
-                        else if (template.getstatus() == VmTemplateStatus.OK)
-                        {
-                            list.add(template);
-                        }
-                    }
-
-                    Collections.sort(list, new Linq.VmTemplateByNameComparer());
-                    list.add(0, blankTemplate);
-                }
-
-                return list;
-            }
-        };
+        aQuery.converterCallback = new TemplateConverter();
 
         GetEntitiesWithPermittedActionParameters getEntitiesWithPermittedActionParameters =
                 new GetEntitiesWithPermittedActionParameters();
@@ -1976,7 +1925,6 @@ public final class AsyncDataProvider {
 
     /**
      * Get the Management Network Name
-     *
      * @param aQuery
      *            result callback
      */
@@ -1986,7 +1934,6 @@ public final class AsyncDataProvider {
 
     /**
      * method to get an item from config while caching it (config is not supposed to change during a session)
-     *
      * @param aQuery
      *            an async query
      * @param parameters
@@ -2034,7 +1981,6 @@ public final class AsyncDataProvider {
 
     /**
      * method to get an item from config while caching it (config is not supposed to change during a session)
-     *
      * @param aQuery
      *            an async query
      * @param configValue
@@ -2053,5 +1999,30 @@ public final class AsyncDataProvider {
 
     public static void clearCache() {
         cachedConfigValues.clear();
+    }
+
+    private static class TemplateConverter implements IAsyncConverter {
+
+        @Override
+        public Object Convert(Object source, AsyncQuery asyncQuery) {
+            List<VmTemplate> list = new ArrayList<VmTemplate>();
+            if (source != null) {
+                VmTemplate blankTemplate = null;
+                for (VmTemplate template : (List<VmTemplate>) source) {
+                    if (template.getId().equals(Guid.Empty)) {
+                        blankTemplate = template;
+                    } else if (template.getstatus() == VmTemplateStatus.OK) {
+                        list.add(template);
+                    }
+                }
+
+                Collections.sort(list, new Linq.VmTemplateByNameComparer());
+                if (blankTemplate != null) {
+                    list.add(0, blankTemplate);
+                }
+            }
+
+            return list;
+        }
     }
 }

@@ -122,7 +122,7 @@ public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements 
     {
         // Filter templates list (include only templates that belong to the selected datacenter)
         ArrayList<VmTemplate> templatesList = new ArrayList<VmTemplate>();
-        VmTemplate blankTemplate = new VmTemplate();
+        VmTemplate blankTemplate = null;
         storage_pool selectedDataCenter = (storage_pool) getModel().getDataCenter().getSelectedItem();
         Guid selectedDataCenterId = selectedDataCenter.getId().getValue();
 
@@ -147,7 +147,7 @@ public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements 
 
         // Sort list and position "Blank" template as first
         Collections.sort(templatesList, new Linq.VmTemplateByNameComparer());
-        if (templates.contains(blankTemplate))
+        if (blankTemplate != null && templates.contains(blankTemplate))
         {
             templatesList.add(0, blankTemplate);
         }
