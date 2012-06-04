@@ -16,6 +16,8 @@ import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.Disks;
 import org.ovirt.engine.api.model.Nics;
+import org.ovirt.engine.api.model.Payload;
+import org.ovirt.engine.api.model.Payloads;
 import org.ovirt.engine.api.model.Snapshots;
 import org.ovirt.engine.api.model.Statistics;
 import org.ovirt.engine.api.model.Tags;
@@ -25,9 +27,6 @@ import org.ovirt.engine.api.resource.VmResource;
 import org.ovirt.engine.api.resource.VmsResource;
 import org.ovirt.engine.api.restapi.resource.utils.UsbResourceUtils;
 import org.ovirt.engine.api.restapi.types.DiskMapper;
-import org.ovirt.engine.api.model.Payload;
-import org.ovirt.engine.api.model.Payloads;
-
 import org.ovirt.engine.core.common.action.AddVmFromScratchParameters;
 import org.ovirt.engine.core.common.action.AddVmFromSnapshotParameters;
 import org.ovirt.engine.core.common.action.AddVmFromTemplateParameters;
@@ -43,12 +42,14 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetAllDisksByVmIdParameters;
+import org.ovirt.engine.core.common.queries.GetUserVmsByUserIdAndGroupsParameters;
 import org.ovirt.engine.core.common.queries.GetVdsGroupByVdsGroupIdParameters;
 import org.ovirt.engine.core.common.queries.GetVmByVmIdParameters;
 import org.ovirt.engine.core.common.queries.GetVmConfigurationBySnapshotQueryParams;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplatesDisksParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.compat.Guid;
 
 
@@ -64,6 +65,10 @@ public class BackendVmsResource extends
 
     @Override
     public VMs list() {
+        if (isFiltered())
+            return mapCollection(getBackendCollection(VdcQueryType.GetUserVmsByUserIdAndGroups,
+                    new GetUserVmsByUserIdAndGroupsParameters(getCurrent().get(VdcUser.class).getUserId())));
+        else
          return mapCollection(getBackendCollection(SearchType.VM));
     }
 

@@ -9,7 +9,6 @@ import org.ovirt.engine.api.model.VmPool;
 import org.ovirt.engine.api.model.VmPools;
 import org.ovirt.engine.api.resource.VmPoolResource;
 import org.ovirt.engine.api.resource.VmPoolsResource;
-
 import org.ovirt.engine.core.common.action.AddVmPoolWithVmsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmPoolParametersBase;
@@ -19,9 +18,11 @@ import org.ovirt.engine.core.common.businessentities.VmPoolType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
 import org.ovirt.engine.core.common.interfaces.SearchType;
+import org.ovirt.engine.core.common.queries.GetAllVmPoolsAttachedToUserParameters;
 import org.ovirt.engine.core.common.queries.GetVmPoolByIdParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.users.VdcUser;
 
 public class BackendVmPoolsResource
     extends AbstractBackendCollectionResource<VmPool, vm_pools>
@@ -35,7 +36,12 @@ public class BackendVmPoolsResource
 
     @Override
     public VmPools list() {
-        return mapCollection(getBackendCollection(SearchType.VmPools));
+        if (isFiltered()) {
+            GetAllVmPoolsAttachedToUserParameters params = new GetAllVmPoolsAttachedToUserParameters(getCurrent().get(VdcUser.class).getUserId());
+            return mapCollection(getBackendCollection(VdcQueryType.GetAllVmPoolsAttachedToUser, params));
+        } else {
+            return mapCollection(getBackendCollection(SearchType.VmPools));
+        }
     }
 
     @Override
