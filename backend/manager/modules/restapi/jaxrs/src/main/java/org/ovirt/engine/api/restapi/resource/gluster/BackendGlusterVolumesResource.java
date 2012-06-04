@@ -9,6 +9,7 @@ import org.ovirt.engine.api.common.util.QueryHelper;
 import org.ovirt.engine.api.model.GlusterBrick;
 import org.ovirt.engine.api.model.GlusterVolume;
 import org.ovirt.engine.api.model.GlusterVolumes;
+import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.resource.ClusterResource;
 import org.ovirt.engine.api.resource.gluster.GlusterVolumeResource;
 import org.ovirt.engine.api.resource.gluster.GlusterVolumesResource;
@@ -66,7 +67,8 @@ public class BackendGlusterVolumesResource
 
     @Override
     protected GlusterVolume addParents(GlusterVolume volume) {
-        volume.setCluster(parent.get());
+        volume.setCluster(new Cluster());
+        volume.getCluster().setId(parent.get().getId());
         return volume;
     }
 
