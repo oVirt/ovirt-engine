@@ -10,12 +10,14 @@ public class FormItem extends Composite {
     private int row;
     private int column;
     private String isVisiblePropertyName;
+    private boolean isAvailable;
 
     public FormItem(String name, Widget value, int row, int column) {
         this.name = name;
         this.value = value;
         this.row = row;
         this.column = column;
+        this.isAvailable = true;
     }
 
     public FormItem(String name, Widget value, int row, int column, String isVisiblePropertyName) {
@@ -70,4 +72,12 @@ public class FormItem extends Composite {
         this.isVisiblePropertyName = isVisiblePropertyName;
     }
 
+    public void setIsAvailable(boolean isAvailable)
+    {
+        this.isAvailable = isAvailable;
+    }
+
+    public boolean getIsAvailable() {
+        return isAvailable;
+    }
 }

@@ -50,7 +50,7 @@ public class FormBuilder {
 
         // Add each FormItem to the form panel if the item should be visible
         for (FormItem item : formItems) {
-            if (item.isVisible()) {
+            if (item.getIsAvailable() && item.isVisible()) {
                 formPanel.addFormItem(item);
             }
         }
@@ -69,7 +69,7 @@ public class FormBuilder {
                 // Update the item that is correlated to the property name:
                 // remove the old item and add the new one if it should be visible
                 formPanel.removeFormItem(item);
-                if (item.isVisible()) {
+                if (item.getIsAvailable() && item.isVisible()) {
                     formPanel.addFormItem(item);
                 }
             }
@@ -79,5 +79,4 @@ public class FormBuilder {
     public void setColumnsWidth(String... columnsWidth) {
         formPanel.setColumnsWidth(columnsWidth);
     }
-
 }

@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.gluster;
 
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
+import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
@@ -8,6 +9,7 @@ public class VolumeGeneralModel extends EntityModel {
     private String name;
     private String volumeType;
     private String replicaCount;
+    private String stripeCount;
     private String numOfBricks;
     private String glusterMountPoint;
     private String nfsMountPoint;
@@ -26,6 +28,11 @@ public class VolumeGeneralModel extends EntityModel {
 
     public void setVolumeType(String volumeType) {
         this.volumeType = volumeType;
+        OnPropertyChanged(new PropertyChangedEventArgs("VolumeType")); //$NON-NLS-1$
+    }
+
+    public void setVolumeTypeSilently(String volumeType) {
+        this.volumeType = volumeType;
     }
 
     public String getReplicaCount() {
@@ -34,6 +41,14 @@ public class VolumeGeneralModel extends EntityModel {
 
     public void setReplicaCount(String replicaCount) {
         this.replicaCount = replicaCount;
+    }
+
+    public String getStripeCount() {
+        return stripeCount;
+    }
+
+    public void setStripeCount(String stripeCount) {
+        this.stripeCount = stripeCount;
     }
 
     public String getNumOfBricks() {
@@ -79,6 +94,7 @@ public class VolumeGeneralModel extends EntityModel {
         setName(entity.getName());
         setVolumeType(entity.getVolumeType().toString());
         setReplicaCount(Integer.toString(entity.getReplicaCount()));
+        setStripeCount(Integer.toString(entity.getStripeCount()));
         setNumOfBricks(Integer.toString(entity.getBricks().size()));
     }
 
