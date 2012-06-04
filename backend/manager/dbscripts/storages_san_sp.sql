@@ -330,14 +330,18 @@ Create or replace FUNCTION Insertstorage_server_connections(v_connection VARCHAR
 	v_storage_type INTEGER,
 	v_user_name VARCHAR(50),
 	v_mount_options VARCHAR(500),
-	v_vfs_type VARCHAR(128))
+	v_vfs_type VARCHAR(128),
+	v_nfs_version smallint,
+	v_nfs_timeo smallint,
+	v_nfs_retrans smallint)
+
 
 RETURNS VOID
    AS $procedure$
 BEGIN
 INSERT INTO storage_server_connections(connection, id, iqn, port,portal,
-	password, storage_type, user_name,mount_options,vfs_type)
-	VALUES(v_connection, v_id, v_iqn,v_port,v_portal, v_password, v_storage_type, v_user_name,v_mount_options,v_vfs_type);
+	password, storage_type, user_name,mount_options,vfs_type,nfs_version,nfs_timeo,nfs_retrans)
+	VALUES(v_connection, v_id, v_iqn,v_port,v_portal, v_password, v_storage_type, v_user_name,v_mount_options,v_vfs_type,v_nfs_version,v_nfs_timeo,v_nfs_retrans);
 END; $procedure$
 LANGUAGE plpgsql;    
 
@@ -354,7 +358,11 @@ Create or replace FUNCTION Updatestorage_server_connections(v_connection VARCHAR
 	v_portal VARCHAR(50) ,
 	v_user_name VARCHAR(50),
 	v_mount_options VARCHAR(500),
-	v_vfs_type VARCHAR(128))
+	v_vfs_type VARCHAR(128),
+	v_nfs_version smallint,
+	v_nfs_timeo smallint,
+	v_nfs_retrans smallint)
+
 RETURNS VOID
 
 	--The [storage_server_connections] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -362,7 +370,7 @@ RETURNS VOID
 BEGIN
       UPDATE storage_server_connections
       SET connection = v_connection,iqn = v_iqn,password = v_password,port = v_port, 
-      portal = v_portal,storage_type = v_storage_type,user_name = v_user_name,mount_options = v_mount_options, vfs_type = v_vfs_type
+      portal = v_portal,storage_type = v_storage_type,user_name = v_user_name,mount_options = v_mount_options, vfs_type = v_vfs_type, nfs_version = v_nfs_version, nfs_timeo = v_nfs_timeo, nfs_retrans = v_nfs_retrans
       WHERE id = v_id;
 END; $procedure$
 LANGUAGE plpgsql;
