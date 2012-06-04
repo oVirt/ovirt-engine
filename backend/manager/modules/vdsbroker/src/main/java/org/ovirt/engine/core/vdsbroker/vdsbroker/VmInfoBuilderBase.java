@@ -8,6 +8,7 @@ import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -96,11 +97,12 @@ public abstract class VmInfoBuilderBase {
 
     private void addCpuPinning(final String compatibilityVersion) {
         final String cpuPinning = vm.getCpuPinning();
-        if (Boolean.TRUE.equals(Config.<Boolean> GetValue(ConfigValues.CpuPinningEnabled,
-                compatibilityVersion))
+        if (!StringUtils.isEmpty(cpuPinning)
+                && Boolean.TRUE.equals(Config.<Boolean> GetValue(ConfigValues.CpuPinningEnabled,
+                        compatibilityVersion))
                 && cpuPinning != null) {
             final XmlRpcStruct pinDict = new XmlRpcStruct();
-            for(String pin : cpuPinning.split("_")) {
+            for (String pin : cpuPinning.split("_")) {
                 final String[] split = pin.split("#");
                 pinDict.add(split[0], split[1]);
             }
