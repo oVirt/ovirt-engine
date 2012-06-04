@@ -74,7 +74,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
 
     @Override
     protected boolean canDoAction() {
-        boolean returnValue = isVmExist();
+        boolean returnValue = isVmExist() && acquireLockInternal();
         VM vm = getVm();
         if (returnValue && (vm != null && vm.getstatus() != VMStatus.Down)) {
             returnValue = false;

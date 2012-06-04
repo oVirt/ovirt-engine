@@ -1,7 +1,9 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.PermissionSubject;
@@ -15,6 +17,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
+import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
@@ -33,13 +36,13 @@ public class AttachDiskToVmCommand<T extends AttachDettachVmDiskParameters> exte
 
     @Override
     protected boolean canDoAction() {
-        boolean retValue = isVmExist() && isVmUpOrDown();
-        if (retValue && disk == null) {
+        boolean retValue = true;
+        if (disk == null) {
             retValue = false;
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_IMAGE_DOES_NOT_EXIST);
         }
         retValue =
-                retValue && isDiskCanBeAddedToVm(disk)
+                retValue && acquireLockInternal() && isVmExist() && isVmUpOrDown() && isDiskCanBeAddedToVm(disk)
                         && isDiskPassPCIAndIDELimit(disk);
         if (retValue && (getVmDeviceDao().exists(new VmDeviceId(disk.getId(), getVmId())) && !disk.isShareable())) {
             retValue = false;
@@ -108,6 +111,14 @@ public class AttachDiskToVmCommand<T extends AttachDettachVmDiskParameters> exte
             permsList.add(new PermissionSubject(diskId, VdcObjectType.Disk, ActionGroup.ATTACH_DISK));
         }
         return permsList;
+    }
+
+    @Override
+    protected Map<Guid, String> getExclusiveLocks() {
+        if (disk.isBoot()) {
+            return Collections.singletonMap(getParameters().getVmId(), LockingGroup.VM_DISK_BOOT.name());
+        }
+        return null;
     }
 
 }

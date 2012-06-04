@@ -17,6 +17,7 @@ import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -207,7 +208,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
 
     @Override
     protected Map<Guid, String> getExclusiveLocks() {
-        return Collections.singletonMap(getVmId(), getClass().getName());
+        return Collections.singletonMap(getVmId(), LockingGroup.VM.name());
     }
 
     protected void RemoveVmFromDb() {

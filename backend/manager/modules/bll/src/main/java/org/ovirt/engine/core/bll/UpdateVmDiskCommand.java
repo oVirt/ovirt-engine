@@ -39,6 +39,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
     private final Disk _oldDisk;
     private boolean shouldUpdateQuotaForDisk;
     private Map<Guid, String> sharedLockMap;
+    private Map<Guid, String> exclusiveLockMap;
 
     public UpdateVmDiskCommand(T parameters) {
         super(parameters);
@@ -60,6 +61,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
 
             List<VM> listVms = getVmDAO().getForDisk(_oldDisk.getId()).get(Boolean.TRUE);
             buidSharedLockMap(listVms);
+            buidExclusiveLockMap(listVms);
             acquireLockInternal();
 
             // Check if all VMs are in status down.
@@ -81,6 +83,15 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
             sharedLockMap = new HashMap<Guid, String>();
             for (VM vm : listVms) {
                 sharedLockMap.put(vm.getId(), LockingGroup.VM.name());
+            }
+        }
+    }
+
+    private void buidExclusiveLockMap(List<VM> listVms) {
+        if (getParameters().getDiskInfo().isBoot() && listVms != null && !listVms.isEmpty()) {
+            exclusiveLockMap = new HashMap<Guid, String>();
+            for (VM vm : listVms) {
+                exclusiveLockMap.put(vm.getId(), LockingGroup.VM_DISK_BOOT.name());
             }
         }
     }
@@ -286,5 +297,10 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
     @Override
     protected Map<Guid, String> getSharedLocks() {
         return sharedLockMap;
+    }
+
+    @Override
+    protected Map<Guid, String> getExclusiveLocks() {
+        return exclusiveLockMap;
     }
 }
