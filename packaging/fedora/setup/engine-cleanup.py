@@ -44,6 +44,7 @@ MSG_ERROR_CHECK_LOG = "Error: Cleanup failed.\nplease check log at %s"
 MSG_ERR_FAILED_JBOSS_SERVICE_STILL_RUN = "Error: Can't stop jboss service. Please shut it down manually."
 MSG_ERR_FAILED_STP_JBOSS_SERVICE = "Error: Can't stop JBoss"
 MSG_ERR_FAILED_STATUS_JBOSS_SERVICE = "Error: Can't get JBoss service status"
+MSG_ERR_CANT_FIND_PGPASS_FILE="Could not find DB password file %s. Skipping DB cleanup" % basedefs.DB_PASS_FILE
 
 MSG_INFO_DONE = "DONE"
 MSG_INFO_ERROR = "ERROR"
@@ -174,8 +175,17 @@ def _verifyUserPermissions():
         sys.exit(1)
 
 class CA():
+
+    def exists(self):
+        if not os.path.exists(PKI_DIR):
+            logging.info("PKI folder %s was not found. Skipping CA cleanup", PKI_DIR)
+            return False
+
+        return True
+
     def backup(self):
         logging.debug("CA backup started")
+
         if not os.path.isdir(PKI_BACKUP_DIR):
             os.mkdir(PKI_BACKUP_DIR)
 
@@ -264,6 +274,12 @@ class DB():
         """
         logging.debug("verifying that db '%s' exists" % (basedefs.DB_NAME))
 
+        # Checking whether pgpass file exists. If not,
+        # we cannot cleanup DB, so return False.
+        if not os.path.exists(basedefs.DB_PASS_FILE):
+            logging.info(MSG_ERR_CANT_FIND_PGPASS_FILE)
+            return False
+
         # Making sure postgresql service is up - only on local installation
         if utils.localHost(DB_HOST):
             postgresql = utils.Service("postgresql")
@@ -271,7 +287,7 @@ class DB():
 
         try:
             # We want to make check that we can connect to basedefs.DB_NAME DB
-            logging.debug("making sure postgresql service is up")
+            logging.debug("Checking that DB '%s' exists", basedefs.DB_NAME)
             utils.retry(utils.checkIfDbIsUp, tries=5, timeout=15, sleep=3)
         except:
             # If we're here, it means something is wrong, either there is a real db error
@@ -353,7 +369,7 @@ def main(options):
         runFunc([db.backup, db.drop], MSG_INFO_REMOVE_DB)
 
     # Remove CA
-    if options.remove_ca:
+    if ca.exists() and options.remove_ca:
         runFunc([ca.backup, ca.remove], MSG_INFO_REMOVE_CA)
 
     # Unlink ear link in JBoss
