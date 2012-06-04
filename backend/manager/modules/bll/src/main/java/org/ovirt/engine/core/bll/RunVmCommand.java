@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -145,6 +146,8 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
         if (!StringHelper.isNullOrEmpty(runVmParameters.getCustomProperties())) {
             getVm().setCustomProperties(runVmParameters.getCustomProperties());
         }
+
+        getVm().setLastStartTime(new Date());
     }
 
     private void refreshBootSequenceParameter(RunVmParams runVmParameters) {

@@ -263,8 +263,7 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
             entity.setvm_ip(rs.getString("vm_ip"));
             entity.setvm_host(rs.getString("vm_host"));
             entity.setvm_pid((Integer) rs.getObject("vm_pid"));
-            entity.setvm_last_up_time(DbFacadeUtils.fromDate(rs.getTimestamp("vm_last_up_time")));
-            entity.setvm_last_boot_time(DbFacadeUtils.fromDate(rs.getTimestamp("vm_last_boot_time")));
+            entity.setLastStartTime(DbFacadeUtils.fromDate(rs.getTimestamp("last_start_time")));
             entity.setguest_cur_user_name(rs.getString("guest_cur_user_name"));
             entity.setguest_last_login_time(DbFacadeUtils.fromDate(rs.getTimestamp("guest_last_login_time")));
             entity.setguest_cur_user_id(NGuid.createGuidFromString(rs.getString("guest_cur_user_id")));

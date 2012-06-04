@@ -135,8 +135,7 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         this.setvm_ip(vm_ip);
         this.setvm_host(vm_host);
         this.setvm_pid(vm_pid);
-        this.setvm_last_up_time(vm_last_up_time);
-        this.setvm_last_boot_time(vm_last_boot_time);
+        this.setLastStartTime(vm_last_boot_time);
         this.setguest_cur_user_name(guest_cur_user_name);
         this.setguest_last_login_time(guest_last_login_time);
         this.setguest_cur_user_id(guest_cur_user_id);
@@ -534,20 +533,12 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         this.mVmDynamic.setvm_pid(value);
     }
 
-    public Date getvm_last_up_time() {
-        return this.mVmDynamic.getvm_last_up_time();
+    public Date getLastStartTime() {
+        return this.mVmDynamic.getLastStartTime();
     }
 
-    public void setvm_last_up_time(Date value) {
-        this.mVmDynamic.setvm_last_up_time(value);
-    }
-
-    public Date getvm_last_boot_time() {
-        return this.mVmDynamic.getvm_last_boot_time();
-    }
-
-    public void setvm_last_boot_time(Date value) {
-        this.mVmDynamic.setvm_last_boot_time(value);
+    public void setLastStartTime(Date value) {
+        this.mVmDynamic.setLastStartTime(value);
     }
 
     public String getguest_cur_user_name() {

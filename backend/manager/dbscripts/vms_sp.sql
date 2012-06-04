@@ -105,8 +105,7 @@ Create or replace FUNCTION InsertVmDynamic(v_app_list VARCHAR(4000) ,
 	v_vm_guid UUID,
 	v_vm_host VARCHAR(255) ,
 	v_vm_ip VARCHAR(255) ,
-	v_vm_last_boot_time TIMESTAMP WITH TIME ZONE ,
-	v_vm_last_up_time TIMESTAMP WITH TIME ZONE ,
+	v_last_start_time TIMESTAMP WITH TIME ZONE ,
 	v_vm_pid INTEGER ,
 	v_display INTEGER ,
 	v_acpi_enable BOOLEAN ,
@@ -127,8 +126,8 @@ Create or replace FUNCTION InsertVmDynamic(v_app_list VARCHAR(4000) ,
 RETURNS VOID
    AS $procedure$
 BEGIN
-INSERT INTO vm_dynamic(app_list,	guest_cur_user_id, guest_cur_user_name, guest_last_login_time, guest_last_logout_time, console_user_id, guest_os, migrating_to_vds, RUN_ON_VDS, status, vm_guid, vm_host, vm_ip, vm_last_boot_time, vm_last_up_time, vm_pid, display, acpi_enable, session, display_ip, display_type, kvm_enable, boot_sequence, display_secure_port, utc_diff, last_vds_run_on, client_ip, guest_requested_memory, hibernation_vol_handle,exit_status,pause_status,exit_message)
-	VALUES(v_app_list, v_guest_cur_user_id, v_guest_cur_user_name, v_guest_last_login_time, v_guest_last_logout_time, v_console_user_id, v_guest_os, v_migrating_to_vds, v_run_on_vds, v_status, v_vm_guid, v_vm_host, v_vm_ip, v_vm_last_boot_time, v_vm_last_up_time, v_vm_pid, v_display, v_acpi_enable, v_session, v_display_ip, v_display_type, v_kvm_enable, v_boot_sequence, v_display_secure_port, v_utc_diff, v_last_vds_run_on, v_client_ip, v_guest_requested_memory, v_hibernation_vol_handle, v_exit_status, v_pause_status, v_exit_message);
+INSERT INTO vm_dynamic(app_list,	guest_cur_user_id, guest_cur_user_name, guest_last_login_time, guest_last_logout_time, console_user_id, guest_os, migrating_to_vds, RUN_ON_VDS, status, vm_guid, vm_host, vm_ip, last_start_time, vm_pid, display, acpi_enable, session, display_ip, display_type, kvm_enable, boot_sequence, display_secure_port, utc_diff, last_vds_run_on, client_ip, guest_requested_memory, hibernation_vol_handle,exit_status,pause_status,exit_message)
+	VALUES(v_app_list, v_guest_cur_user_id, v_guest_cur_user_name, v_guest_last_login_time, v_guest_last_logout_time, v_console_user_id, v_guest_os, v_migrating_to_vds, v_run_on_vds, v_status, v_vm_guid, v_vm_host, v_vm_ip, v_last_start_time, v_vm_pid, v_display, v_acpi_enable, v_session, v_display_ip, v_display_type, v_kvm_enable, v_boot_sequence, v_display_secure_port, v_utc_diff, v_last_vds_run_on, v_client_ip, v_guest_requested_memory, v_hibernation_vol_handle, v_exit_status, v_pause_status, v_exit_message);
 END; $procedure$
 LANGUAGE plpgsql;    
 
@@ -149,8 +148,7 @@ Create or replace FUNCTION UpdateVmDynamic(v_app_list VARCHAR(4000) ,
 	v_vm_guid UUID,
 	v_vm_host VARCHAR(255) ,
 	v_vm_ip VARCHAR(255) ,
-	v_vm_last_boot_time TIMESTAMP WITH TIME ZONE ,
-	v_vm_last_up_time TIMESTAMP WITH TIME ZONE ,
+	v_last_start_time TIMESTAMP WITH TIME ZONE ,
 	v_vm_pid INTEGER ,
 	v_display INTEGER ,
 	v_acpi_enable BOOLEAN ,
@@ -181,7 +179,7 @@ BEGIN
       console_user_id = v_console_user_id,
       guest_os = v_guest_os,migrating_to_vds = v_migrating_to_vds,RUN_ON_VDS = v_run_on_vds, 
       status = v_status,vm_host = v_vm_host,vm_ip = v_vm_ip, 
-      vm_last_boot_time = v_vm_last_boot_time,vm_last_up_time = v_vm_last_up_time, 
+      last_start_time = v_last_start_time, 
       vm_pid = v_vm_pid,display = v_display,acpi_enable = v_acpi_enable, 
       session = v_session,display_ip = v_display_ip, 
       display_type = v_display_type,kvm_enable = v_kvm_enable,boot_sequence = v_boot_sequence, 

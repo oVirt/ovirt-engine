@@ -174,8 +174,7 @@ public final class Cloner
         vm.setId(instance.getId());
         vm.setvm_host(instance.getvm_host());
         vm.setvm_ip(instance.getvm_ip());
-        vm.setvm_last_boot_time(instance.getvm_last_boot_time());
-        vm.setvm_last_up_time(instance.getvm_last_up_time());
+        vm.setLastStartTime(instance.getLastStartTime());
         vm.setvm_mem_size_mb(instance.getvm_mem_size_mb());
         vm.setvm_name(instance.getvm_name());
         vm.setvm_os(instance.getvm_os());

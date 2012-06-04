@@ -259,8 +259,7 @@ SELECT
 	cast(c.cpu_sys as smallint) as system_cpu_usage_percent,
 	cast(c.cpu_user as smallint) as user_cpu_usage_percent,
 	c.disks_usage,
-	b.vm_last_up_time,
-	b.vm_last_boot_time,
+	b.last_start_time,
 	b.vm_ip,
 	b.guest_cur_user_name as current_user_name,
 	b.run_on_vds as currently_running_on_host

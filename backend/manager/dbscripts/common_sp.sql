@@ -53,6 +53,25 @@ begin
 END; $procedure$
 LANGUAGE plpgsql;
 
+-- rename a column for a given table
+Create or replace FUNCTION fn_db_rename_column(v_table varchar(128), v_column varchar(128), v_new_name varchar(128))
+returns void
+AS $procedure$
+declare
+v_sql text;
+
+begin
+	if (exists (select 1 from information_schema.columns where table_name ilike v_table and column_name ilike v_column)) then
+	    begin
+		v_sql := 'ALTER TABLE ' || v_table || ' RENAME COLUMN ' || v_column || ' TO ' || v_new_name;
+		EXECUTE v_sql;
+            end;
+	end if;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+
 -- Adds a value to vdc_options (if not exists)
 create or replace FUNCTION fn_db_add_config_value(v_option_name varchar(100), v_option_value varchar(4000),
                                                   v_version varchar(40))

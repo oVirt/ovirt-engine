@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.common.businessentities;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -42,8 +44,8 @@ public class VmDynamic implements BusinessEntity<Guid> {
     @Column(name = "vm_last_up_time")
     private java.util.Date vm_last_up_time;
 
-    @Column(name = "vm_last_boot_time")
-    private java.util.Date vm_last_boot_time;
+    @Column(name = "last_start_time")
+    private Date lastStartTime;
 
     @Column(name = "guest_cur_user_name")
     private String guest_cur_user_name;
@@ -223,8 +225,8 @@ public class VmDynamic implements BusinessEntity<Guid> {
                 + ((vm_ip == null) ? 0 : vm_ip.hashCode());
         result = prime
                 * result
-                + ((vm_last_boot_time == null) ? 0
-                        : vm_last_boot_time.hashCode());
+                + ((lastStartTime == null) ? 0
+                        : lastStartTime.hashCode());
         result = prime
                 * result
                 + ((vm_last_up_time == null) ? 0 : vm_last_up_time
@@ -383,10 +385,10 @@ public class VmDynamic implements BusinessEntity<Guid> {
                 return false;
         } else if (!vm_ip.equals(other.vm_ip))
             return false;
-        if (vm_last_boot_time == null) {
-            if (other.vm_last_boot_time != null)
+        if (lastStartTime == null) {
+            if (other.lastStartTime != null)
                 return false;
-        } else if (!vm_last_boot_time.equals(other.vm_last_boot_time))
+        } else if (!lastStartTime.equals(other.lastStartTime))
             return false;
         if (vm_last_up_time == null) {
             if (other.vm_last_up_time != null)
@@ -452,7 +454,7 @@ public class VmDynamic implements BusinessEntity<Guid> {
     public VmDynamic(String app_list, NGuid guest_cur_user_id, String guest_cur_user_name,
             java.util.Date guest_last_login_time, java.util.Date guest_last_logout_time, String guest_os,
             NGuid migrating_to_vds, NGuid run_on_vds, int status, Guid vm_guid, String vm_host, String vm_ip,
-            java.util.Date vm_last_boot_time, java.util.Date vm_last_up_time, Integer vm_pid, Integer display,
+            java.util.Date lastStartTime, java.util.Date vm_last_up_time, Integer vm_pid, Integer display,
             Boolean acpi_enable, String display_ip, Integer display_type, Boolean kvm_enable, Integer session,
             Integer boot_sequence, Integer display_secure_port, Integer utc_diff, Guid last_vds_run_on,
             String client_ip, Integer guest_requested_memory) {
@@ -471,7 +473,7 @@ public class VmDynamic implements BusinessEntity<Guid> {
         this.id = vm_guid;
         this.vm_host = vm_host;
         this.vm_ip = vm_ip;
-        this.vm_last_boot_time = vm_last_boot_time;
+        this.lastStartTime = lastStartTime;
         this.vm_last_up_time = vm_last_up_time;
         this.vm_pid = vm_pid;
         this.display = display;
@@ -592,20 +594,12 @@ public class VmDynamic implements BusinessEntity<Guid> {
         this.vm_ip = value;
     }
 
-    public java.util.Date getvm_last_boot_time() {
-        return this.vm_last_boot_time;
+    public Date getLastStartTime() {
+        return this.lastStartTime;
     }
 
-    public void setvm_last_boot_time(java.util.Date value) {
-        this.vm_last_boot_time = value;
-    }
-
-    public java.util.Date getvm_last_up_time() {
-        return this.vm_last_up_time;
-    }
-
-    public void setvm_last_up_time(java.util.Date value) {
-        this.vm_last_up_time = value;
+    public void setLastStartTime(Date value) {
+        this.lastStartTime = value;
     }
 
     public Integer getvm_pid() {

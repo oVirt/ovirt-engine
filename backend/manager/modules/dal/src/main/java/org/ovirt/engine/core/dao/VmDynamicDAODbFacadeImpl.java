@@ -84,8 +84,7 @@ public class VmDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<V
                 .addValue("status", vm.getstatus())
                 .addValue("vm_host", vm.getvm_host())
                 .addValue("vm_ip", vm.getvm_ip())
-                .addValue("vm_last_boot_time", vm.getvm_last_boot_time())
-                .addValue("vm_last_up_time", vm.getvm_last_up_time())
+                .addValue("vm_last_boot_time", vm.getLastStartTime())
                 .addValue("vm_pid", vm.getvm_pid())
                 .addValue("display", vm.getdisplay())
                 .addValue("acpi_enable", vm.getacpi_enable())
@@ -135,10 +134,8 @@ public class VmDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<V
                         .getString("vm_guid")));
                 entity.setvm_host(rs.getString("vm_host"));
                 entity.setvm_ip(rs.getString("vm_ip"));
-                entity.setvm_last_boot_time(DbFacadeUtils.fromDate(rs
-                        .getTimestamp("vm_last_boot_time")));
-                entity.setvm_last_up_time(DbFacadeUtils.fromDate(rs
-                        .getTimestamp("vm_last_up_time")));
+                entity.setLastStartTime(DbFacadeUtils.fromDate(rs
+                        .getTimestamp("last_start_time")));
                 entity.setvm_pid((Integer) rs.getObject("vm_pid"));
                 entity.setdisplay((Integer) rs.getObject("display"));
                 entity.setacpi_enable((Boolean) rs.getObject("acpi_enable"));
