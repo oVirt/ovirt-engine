@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.AbstractView;
+import org.ovirt.engine.ui.uicommonweb.models.CommonModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.SearchPanelPresenterWidget;
@@ -44,6 +45,26 @@ public class SearchPanelView extends AbstractView implements SearchPanelPresente
 
     interface ViewIdHandler extends ElementIdHandler<SearchPanelView> {
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
+    }
+
+    protected interface Style extends CssResource {
+
+        String searchBoxLeft();
+
+        String searchBoxLeft_HasSelectedTags();
+
+        String searchBoxRight();
+
+        String searchBoxRight_HasSelectedTags();
+
+        String searchBoxPanel();
+
+        String searchBoxPanel_HasSelectedTags();
+
+        String searchBoxClear();
+
+        String searchBoxClear_HasSelectedTags();
+
     }
 
     @UiField
@@ -239,24 +260,9 @@ public class SearchPanelView extends AbstractView implements SearchPanelPresente
         ((SearchSuggestionDisplay) searchStringInput.getSuggestionDisplay()).hideSuggestions();
     }
 
-    protected interface Style extends CssResource {
-
-        String searchBoxLeft();
-
-        String searchBoxLeft_HasSelectedTags();
-
-        String searchBoxRight();
-
-        String searchBoxRight_HasSelectedTags();
-
-        String searchBoxPanel();
-
-        String searchBoxPanel_HasSelectedTags();
-
-        String searchBoxClear();
-
-        String searchBoxClear_HasSelectedTags();
-
+    @Override
+    public void setCommonModel(CommonModel commonModel) {
+        oracle.setCommonModel(commonModel);
     }
 
 }

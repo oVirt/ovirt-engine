@@ -18,7 +18,7 @@ public class ApplicationModeHelper {
     }
 
     public static boolean isModeSupported(ApplicationMode mode) {
-        return (mode.getValue() & UI_MODE.getValue()) > 0;
+        return isAvailableInMode(mode.getValue());
     }
 
     public static ApplicationMode getUiMode() {
@@ -77,4 +77,5 @@ public class ApplicationModeHelper {
         }
         return !((systemItem.getApplicationMode().getValue() & getUiMode().getValue()) > 0);
     }
+
 }

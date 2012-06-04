@@ -23,6 +23,7 @@ import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.core.compat.ObservableCollection;
+import org.ovirt.engine.core.searchbackend.SearchObjects;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -82,6 +83,7 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
 
         setDefaultSearchString("Quota:"); //$NON-NLS-1$
         setSearchString(getDefaultSearchString());
+        setSearchObjects(new String[] { SearchObjects.QUOTA_OBJ_NAME, SearchObjects.QUOTA_PLU_OBJ_NAME });
 
         setCreateQuotaCommand(new UICommand("Create", this)); //$NON-NLS-1$
         setEditQuotaCommand(new UICommand("Edit", this)); //$NON-NLS-1$

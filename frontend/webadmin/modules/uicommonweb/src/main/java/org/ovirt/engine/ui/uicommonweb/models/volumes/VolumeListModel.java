@@ -21,6 +21,7 @@ import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.ObservableCollection;
+import org.ovirt.engine.core.searchbackend.SearchObjects;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -106,6 +107,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
 
         setDefaultSearchString("Volumes:"); //$NON-NLS-1$
         setSearchString(getDefaultSearchString());
+        setSearchObjects(new String[] { SearchObjects.GLUSTER_VOLUME_OBJ_NAME, SearchObjects.GLUSTER_VOLUME_PLU_OBJ_NAME });
         setAvailableInModes(ApplicationMode.GlusterOnly);
 
         setCreateVolumeCommand(new UICommand("Create Volume", this)); //$NON-NLS-1$

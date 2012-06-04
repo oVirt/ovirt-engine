@@ -1,8 +1,11 @@
 package org.ovirt.engine.ui.webadmin.widget.autocomplete;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import org.ovirt.engine.ui.uicommonweb.models.CommonModel;
+import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.autocomplete.SearchSuggestModel;
 import org.ovirt.engine.ui.uicommonweb.models.autocomplete.SuggestItemPartModel;
 
@@ -15,6 +18,8 @@ public class SearchSuggestOracle extends MultiWordSuggestOracle {
 
     private String searchStringPrefix;
 
+    private CommonModel commonModel;
+
     public SearchSuggestOracle() {
         searchSuggestModel = new SearchSuggestModel();
         searchStringPrefix = ""; //$NON-NLS-1$
@@ -23,7 +28,6 @@ public class SearchSuggestOracle extends MultiWordSuggestOracle {
     @SuppressWarnings({ "rawtypes", "unchecked" })
     @Override
     public void requestSuggestions(SuggestOracle.Request request, SuggestOracle.Callback callback) {
-
         // Search string
         String search = request.getQuery();
 
@@ -31,6 +35,7 @@ public class SearchSuggestOracle extends MultiWordSuggestOracle {
         List<SearchSuggestion> suggestions = new ArrayList<SearchSuggestion>();
 
         // Invoke model update options by search string method
+        searchSuggestModel.setSearchObjectFilter(getSearchObjectFilter());
         searchSuggestModel.UpdateOptionsAsync(searchStringPrefix + search);
 
         // Get options list
@@ -49,8 +54,31 @@ public class SearchSuggestOracle extends MultiWordSuggestOracle {
         callback.onSuggestionsReady(request, new Response(suggestions));
     }
 
+    /**
+     * Returns search object suggestions that should be excluded due to their model being not available.
+     */
+    private String[] getSearchObjectFilter() {
+        List<String> filter = new ArrayList<String>();
+
+        for (SearchableListModel list : commonModel.getItems()) {
+            if (list != null && !list.getIsAvailable()) {
+                String[] searchObjects = list.getSearchObjects();
+
+                if (searchObjects != null) {
+                    filter.addAll(Arrays.asList(searchObjects));
+                }
+            }
+        }
+
+        return filter.toArray(new String[0]);
+    }
+
     public void setSearchPrefix(String searchStringPrefix) {
         this.searchStringPrefix = searchStringPrefix;
+    }
+
+    public void setCommonModel(CommonModel commonModel) {
+        this.commonModel = commonModel;
     }
 
 }

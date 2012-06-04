@@ -32,6 +32,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.ObservableCollection;
 import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.core.searchbackend.SearchObjects;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -124,6 +125,7 @@ public class DiskListModel extends ListWithDetailsModel
 
         setDefaultSearchString("Disks:"); //$NON-NLS-1$
         setSearchString(getDefaultSearchString());
+        setSearchObjects(new String[] { SearchObjects.DISK_OBJ_NAME, SearchObjects.DISK_PLU_OBJ_NAME });
         setAvailableInModes(ApplicationMode.VirtOnly);
 
         setNewCommand(new UICommand("New", this)); //$NON-NLS-1$

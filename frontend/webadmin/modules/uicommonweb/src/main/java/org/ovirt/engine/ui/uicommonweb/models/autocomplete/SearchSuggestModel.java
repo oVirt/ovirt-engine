@@ -6,6 +6,7 @@ import org.ovirt.engine.core.searchbackend.ISyntaxChecker;
 import org.ovirt.engine.core.searchbackend.SyntaxCheckerFactory;
 import org.ovirt.engine.core.searchbackend.SyntaxContainer;
 import org.ovirt.engine.core.searchbackend.SyntaxError;
+import org.ovirt.engine.core.searchbackend.SyntaxObjectType;
 import org.ovirt.engine.ui.uicommonweb.DataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ITaskTarget;
@@ -16,7 +17,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-@SuppressWarnings("unused")
 public class SearchSuggestModel extends SearchableListModel implements ITaskTarget
 {
     private ISyntaxChecker syntaxChecker;
@@ -57,6 +57,18 @@ public class SearchSuggestModel extends SearchableListModel implements ITaskTarg
     public void setFilter(String[] value)
     {
         privateFilter = value;
+    }
+
+    private String[] searchObjectFilter;
+
+    public String[] getSearchObjectFilter()
+    {
+        return searchObjectFilter;
+    }
+
+    public void setSearchObjectFilter(String[] value)
+    {
+        searchObjectFilter = value;
     }
 
     public SearchSuggestModel()
@@ -100,13 +112,42 @@ public class SearchSuggestModel extends SearchableListModel implements ITaskTarg
         String pf = search.substring(0, lastHandledIndex);
         String notHandled = search.substring(lastHandledIndex);
 
+        String[] suggestedItems = syntax.getCompletionArray();
+
+        // Ensure that filtered search objects will invalidate the whole search query
+        if (getSearchObjectFilter() != null && syntax.getState() != SyntaxObjectType.BEGIN) {
+            for (String value : getSearchObjectFilter()) {
+                if (pf.toLowerCase().equals(value.toLowerCase()) || pf.toLowerCase().startsWith(value.toLowerCase() + ":")) { //$NON-NLS-1$
+                    addSuggestItem("", SuggestItemPartType.Valid, search, SuggestItemPartType.Erroneous); //$NON-NLS-1$
+                    return;
+                }
+            }
+        }
+
         if (syntax.getError() == SyntaxError.NO_ERROR)
         {
-            String[] items = syntax.getCompletionArray();
+            List<String> actualItems = new ArrayList<String>(Arrays.asList(suggestedItems));
 
-            for (String item : items)
+            // Filter search object suggestions
+            if (getSearchObjectFilter() != null && syntax.getState() == SyntaxObjectType.BEGIN) {
+                for (String value : getSearchObjectFilter()) {
+                    for (String item : suggestedItems) {
+                        if (item.toLowerCase().equals(value.toLowerCase())) {
+                            actualItems.remove(item);
+                        }
+                    }
+                }
+
+                // Ensure that empty search suggestion list invalidates the search query
+                if (actualItems.isEmpty()) {
+                    addSuggestItem("", SuggestItemPartType.Valid, search, SuggestItemPartType.Erroneous); //$NON-NLS-1$
+                    return;
+                }
+            }
+
+            for (String item : actualItems)
             {
-                // Apply filter.
+                // Apply filter
                 if (getFilter() != null)
                 {
                     boolean skipItem = false;
@@ -135,34 +176,28 @@ public class SearchSuggestModel extends SearchableListModel implements ITaskTarg
                 // Patch: monitor-desktop
                 if (!item.trim().toLowerCase().startsWith("monitor-desktop")) //$NON-NLS-1$
                 {
-                    SuggestItemPartModel tempVar = new SuggestItemPartModel();
-                    tempVar.setPartString(StringHelper.trimEnd(pf));
-                    tempVar.setPartType(SuggestItemPartType.Valid);
-                    SuggestItemPartModel tempVar2 = new SuggestItemPartModel();
-                    tempVar2.setPartString(space + item.trim());
-                    tempVar2.setPartType(SuggestItemPartType.New);
-                    ArrayList<SuggestItemPartModel> parts =
-                            new ArrayList<SuggestItemPartModel>(Arrays.asList(new SuggestItemPartModel[] {
-                                    tempVar, tempVar2 }));
-
-                    getItems().add(parts);
+                    addSuggestItem(StringHelper.trimEnd(pf), SuggestItemPartType.Valid, space + item.trim(), SuggestItemPartType.New);
                 }
             }
         }
         else
         {
-            SuggestItemPartModel tempVar3 = new SuggestItemPartModel();
-            tempVar3.setPartString(pf);
-            tempVar3.setPartType(SuggestItemPartType.Valid);
-            SuggestItemPartModel tempVar4 = new SuggestItemPartModel();
-            tempVar4.setPartString(notHandled);
-            tempVar4.setPartType(SuggestItemPartType.Erroneous);
-            ArrayList<SuggestItemPartModel> parts =
-                    new ArrayList<SuggestItemPartModel>(Arrays.asList(new SuggestItemPartModel[] {
-                        tempVar3, tempVar4}));
-
-            getItems().add(parts);
+            addSuggestItem(pf, SuggestItemPartType.Valid, notHandled, SuggestItemPartType.Erroneous);
         }
+    }
+
+    private void addSuggestItem(String firstPart, SuggestItemPartType firstPartType,
+            String secondPart, SuggestItemPartType secondPartType) {
+        SuggestItemPartModel tempVar = new SuggestItemPartModel();
+        tempVar.setPartString(firstPart);
+        tempVar.setPartType(firstPartType);
+        SuggestItemPartModel tempVar2 = new SuggestItemPartModel();
+        tempVar2.setPartString(secondPart);
+        tempVar2.setPartType(secondPartType);
+        ArrayList<SuggestItemPartModel> parts =
+                new ArrayList<SuggestItemPartModel>(Arrays.asList(new SuggestItemPartModel[] {
+                        tempVar, tempVar2 }));
+        getItems().add(parts);
     }
 
     @Override

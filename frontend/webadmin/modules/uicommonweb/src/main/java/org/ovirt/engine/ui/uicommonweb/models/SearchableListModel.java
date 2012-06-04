@@ -167,6 +167,18 @@ public abstract class SearchableListModel extends ListModel implements GridContr
         privateDefaultSearchString = value;
     }
 
+    private String[] searchObjects;
+
+    public String[] getSearchObjects()
+    {
+        return searchObjects;
+    }
+
+    public void setSearchObjects(String[] value)
+    {
+        searchObjects = value;
+    }
+
     private int privateSearchPageSize;
 
     public int getSearchPageSize()

@@ -61,6 +61,7 @@ import org.ovirt.engine.core.compat.ObservableCollection;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.searchbackend.SearchObjects;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -447,6 +448,7 @@ public class VmListModel extends ListWithDetailsModel implements ISupportSystemT
 
         setDefaultSearchString("Vms:"); //$NON-NLS-1$
         setSearchString(getDefaultSearchString());
+        setSearchObjects(new String[] { SearchObjects.VM_OBJ_NAME, SearchObjects.VM_PLU_OBJ_NAME });
         setAvailableInModes(ApplicationMode.VirtOnly);
 
         cachedConsoleModels = new HashMap<Guid, ArrayList<ConsoleModel>>();

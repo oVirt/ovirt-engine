@@ -47,6 +47,8 @@ public class SearchPanelPresenterWidget extends PresenterWidget<SearchPanelPrese
 
         void hideSuggestionBox();
 
+        void setCommonModel(CommonModel commonModel);
+
     }
 
     private CommonModel commonModel;
@@ -68,6 +70,7 @@ public class SearchPanelPresenterWidget extends PresenterWidget<SearchPanelPrese
 
     void updateCommonModel() {
         this.commonModel = CommonModelManager.instance();
+        getView().setCommonModel(commonModel);
     }
 
     void addCommonModelListeners() {
