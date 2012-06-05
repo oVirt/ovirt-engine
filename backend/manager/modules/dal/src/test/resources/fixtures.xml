@@ -1321,7 +1321,7 @@
         <column>vm_ip</column>
         <column>vm_host</column>
         <column>vm_pid</column>
-        <column>last_update_time</column>
+        <column>last_start_time</column>
         <column>guest_cur_user_name</column>
         <column>guest_cur_user_id</column>
         <column>guest_last_login_time</column>
