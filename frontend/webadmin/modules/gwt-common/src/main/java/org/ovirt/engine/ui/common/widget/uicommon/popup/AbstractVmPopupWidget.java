@@ -7,6 +7,7 @@ import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.Quota;
+import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -186,7 +187,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
 
     @UiField(provided = true)
     @Path(value = "usbPolicy.selectedItem")
-    ListModelListBoxEditor<Object> usbPolicyEditor;
+    ListModelListBoxEditor<Object> usbSupportEditor;
 
     @UiField(provided = true)
     @Path(value = "numOfMonitors.selectedItem")
@@ -313,6 +314,10 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
     @Path(value = "kernel_parameters.entity")
     EntityModelTextBoxEditor kernel_parametersEditor;
 
+    @UiField
+    @Ignore
+    Label nativeUsbWarningMessage;
+
     // @UiField
     // @Path(value = "isHighlyAvailable.entity")
     // EntityModelCheckBoxEditor ;
@@ -431,8 +436,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
             }
         });
 
-        usbPolicyEditor = new ListModelListBoxEditor<Object>(new EnumRenderer());
-
+        usbSupportEditor = new ListModelListBoxEditor<Object>(new EnumRenderer());
         numOfMonitorsEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
             @Override
             public String renderNullSafe(Object object) {
@@ -514,7 +518,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
         // Console Tab
         consoleTab.setLabel(constants.consoleVmPopup());
         displayProtocolEditor.setLabel(constants.protocolVmPopup());
-        usbPolicyEditor.setLabel(constants.usbPolicyVmPopup());
+        usbSupportEditor.setLabel(constants.usbPolicyVmPopup());
         numOfMonitorsEditor.setLabel(constants.monitorsVmPopup());
         allowConsoleReconnectEditor.setLabel(constants.allowConsoleReconnect());
 
@@ -633,6 +637,24 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
                 }
             }
         });
+
+        object.getUsbPolicy().getPropertyChangedEvent().addListener(new IEventListener() {
+
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                PropertyChangedEventArgs e = (PropertyChangedEventArgs) args;
+
+                if (e.PropertyName == "SelectedItem") { //$NON-NLS-1$
+                    updateUsbNativeMessageVisibility(object);
+                }
+            }
+        });
+
+        updateUsbNativeMessageVisibility(object);
+    }
+
+    protected void updateUsbNativeMessageVisibility(final UnitVmModel object) {
+        nativeUsbWarningMessage.setVisible(object.getUsbPolicy().getSelectedItem() == UsbPolicy.ENABLED_NATIVE);
     }
 
     private void addDiskAllocation(UnitVmModel model) {
@@ -726,7 +748,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
                     if (vm.getDisks() != null) {
                         for (DiskModel diskModel : vm.getDisks()) {
                             if (diskModel.getDisk().getDiskStorageType() == DiskStorageType.IMAGE &&
-                                ((DiskImage) diskModel.getDisk()).getimageStatus() == ImageStatus.ILLEGAL) {
+                                    ((DiskImage) diskModel.getDisk()).getimageStatus() == ImageStatus.ILLEGAL) {
                                 generalWarningMessage.setText(constants.illegalDisksInVm());
                                 return;
                             }

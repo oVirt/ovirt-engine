@@ -211,13 +211,13 @@ public interface CommonApplicationConstants extends Constants {
     String numOfMonitorsVm();
 
     @DefaultStringValue(
-        "Allow a user to connect to the console of this VM when a different " +
-        "user has also connected since the last boot." +
-        "Note: With this option selected, the VM will not need to be " +
-        "rebooted before allowing a new user to connect. This may result in " +
-        "exposure of the previous user's session under certain conditions."
-    )
-    String allowConsoleReconnect();
+            "Allow a user to connect to the console of this VM when a different " +
+                    "user has also connected since the last boot." +
+                    "Note: With this option selected, the VM will not need to be " +
+                    "rebooted before allowing a new user to connect. This may result in " +
+                    "exposure of the previous user's session under certain conditions."
+            )
+            String allowConsoleReconnect();
 
     @DefaultStringValue("USB Policy")
     String usbPolicyVm();
@@ -313,7 +313,7 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Protocol")
     String protocolVmPopup();
 
-    @DefaultStringValue("USB Policy")
+    @DefaultStringValue("USB Support")
     String usbPolicyVmPopup();
 
     @DefaultStringValue("Monitors")
@@ -901,4 +901,7 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("v1#p1_v2#p2_..._v<n>#p<n></br>Examples: 0#0, 1#3, 1#4,^2")
     String cpuPinningLabelExplanation();
+
+    @DefaultStringValue("Migration is NOT currently supported using SPICE Native USB redirection")
+    String nativeUsbSupportWarning();
 }

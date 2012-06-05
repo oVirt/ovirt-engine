@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
+import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
@@ -930,7 +931,8 @@ public class UnitVmModel extends Model {
         Frontend.getQueryCompleteEvent().addListener(this);
 
         Frontend.Subscribe(new VdcQueryType[] { VdcQueryType.GetStorageDomainsByStoragePoolId,
-                VdcQueryType.GetAllIsoImagesListByStoragePoolId, VdcQueryType.GetTimeZones, VdcQueryType.GetDefualtTimeZone,
+                VdcQueryType.GetAllIsoImagesListByStoragePoolId, VdcQueryType.GetTimeZones,
+                VdcQueryType.GetDefualtTimeZone,
                 VdcQueryType.GetDomainList, VdcQueryType.GetConfigurationValue,
                 VdcQueryType.GetVdsGroupsByStoragePoolId, VdcQueryType.GetVmTemplatesByStoragePoolId,
                 VdcQueryType.GetVmTemplatesDisks, VdcQueryType.GetStorageDomainsByVmTemplateId,
@@ -1081,7 +1083,6 @@ public class UnitVmModel extends Model {
 
         getCdImage().setIsChangable(false);
 
-        InitUsbPolicy();
         InitOSType();
         InitDisplayProtocol();
         InitFirstBootDevice();
@@ -1121,6 +1122,7 @@ public class UnitVmModel extends Model {
             else if (sender == getCluster())
             {
                 Cluster_SelectedItemChanged(sender, args);
+                InitUsbPolicy();
             }
             else if (sender == getTimeZone())
             {
@@ -1133,6 +1135,7 @@ public class UnitVmModel extends Model {
             else if (sender == getOSType())
             {
                 OSType_SelectedItemChanged(sender, args);
+                InitUsbPolicy();
             }
             else if (sender == getFirstBootDevice())
             {
@@ -1141,6 +1144,7 @@ public class UnitVmModel extends Model {
             else if (sender == getDisplayProtocol())
             {
                 DisplayProtocol_SelectedItemChanged(sender, args);
+                InitUsbPolicy();
             }
         }
         else if (ev.equals(EntityModel.EntityChangedEventDefinition))
@@ -1248,9 +1252,51 @@ public class UnitVmModel extends Model {
         getOSType().setSelectedItem(VmOsType.Unassigned);
     }
 
-    private void InitUsbPolicy()
-    {
-        getUsbPolicy().setItems(DataProvider.GetUsbPolicyList());
+    private void InitUsbPolicy() {
+        VDSGroup cluster = (VDSGroup) getCluster().getSelectedItem();
+        VmOsType osType = (VmOsType) getOSType().getSelectedItem();
+        DisplayType displayType = (DisplayType) (getDisplayProtocol().getSelectedItem() != null ?
+                ((EntityModel) getDisplayProtocol().getSelectedItem()).getEntity() : null);
+
+        if (osType == null || cluster == null || displayType == null) {
+            return;
+        }
+
+        getUsbPolicy().setIsChangable(true);
+        if (Version.v3_1.compareTo(cluster.getcompatibility_version()) > 0) {
+            if (osType.isWindows()) {
+                getUsbPolicy().setItems(Arrays.asList(
+                        UsbPolicy.DISABLED,
+                        UsbPolicy.ENABLED_LEGACY
+                        ));
+            } else {
+                getUsbPolicy().setItems(Arrays.asList(UsbPolicy.DISABLED));
+                getUsbPolicy().setSelectedItem(UsbPolicy.DISABLED);
+                getUsbPolicy().setIsChangable(false);
+            }
+        }
+
+        if (Version.v3_1.compareTo(cluster.getcompatibility_version()) <= 0) {
+            if (osType.isLinux()) {
+                getUsbPolicy().setItems(Arrays.asList(
+                        UsbPolicy.DISABLED,
+                        UsbPolicy.ENABLED_NATIVE
+                        ));
+            } else {
+                getUsbPolicy().setItems(
+                        Arrays.asList(
+                                UsbPolicy.DISABLED,
+                                UsbPolicy.ENABLED_LEGACY,
+                                UsbPolicy.ENABLED_NATIVE
+                                ));
+            }
+        }
+
+        if (displayType != DisplayType.qxl) {
+            getUsbPolicy().setIsChangable(false);
+        }
+
+        getUsbPolicy().setSelectedItem(UsbPolicy.DISABLED);
     }
 
     private void InitMinimalVmMemSize()

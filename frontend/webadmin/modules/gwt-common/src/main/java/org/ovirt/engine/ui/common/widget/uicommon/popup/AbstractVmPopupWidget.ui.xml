@@ -200,9 +200,10 @@
 				<t:content>
 					<g:FlowPanel>
 						<e:ListModelListBoxEditor ui:field="displayProtocolEditor" />
-						<e:ListModelListBoxEditor ui:field="usbPolicyEditor" />
+						<e:ListModelListBoxEditor ui:field="usbSupportEditor" />
 						<e:ListModelListBoxEditor ui:field="numOfMonitorsEditor" />
 						<e:EntityModelCheckBoxEditor ui:field="allowConsoleReconnectEditor" addStyleNames="{style.checkboxWithLongLabel}" />
+						<g:Label ui:field="nativeUsbWarningMessage" text="{constants.nativeUsbSupportWarning}" addStyleNames="{style.warningMessageLabel}" />
 					</g:FlowPanel>
 				</t:content>
 			</t:DialogTab>
