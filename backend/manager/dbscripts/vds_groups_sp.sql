@@ -96,17 +96,17 @@ LANGUAGE plpgsql;
 
 
 
-
-
-Create or replace FUNCTION GetAllFromVdsGroups() RETURNS SETOF vds_groups
+Create or replace FUNCTION GetAllFromVdsGroups(v_user_id UUID, v_is_filtered BOOLEAN) RETURNS SETOF vds_groups
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT vds_groups.*
-      FROM vds_groups;
+      FROM vds_groups
+      WHERE (NOT v_is_filtered OR EXISTS (SELECT 1
+                                          FROM   user_vds_groups_permissions_view
+                                          WHERE  user_id = v_user_id and entity_id = vds_group_id));
+
 END; $procedure$
 LANGUAGE plpgsql;
-
-
 
 
 

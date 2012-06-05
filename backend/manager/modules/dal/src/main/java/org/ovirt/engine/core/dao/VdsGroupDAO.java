@@ -81,6 +81,17 @@ public interface VdsGroupDAO extends DAO, SearchDAO<VDSGroup> {
     List<VDSGroup> getAll();
 
     /**
+     * Retrieves all VDS groups.
+     *
+     * @param userID
+     *            the ID of the user requesting the information
+     * @param isFiltered
+     *            Whether the results should be filtered according to the user's permissions
+     * @return the list of groups
+     */
+    List<VDSGroup> getAll(Guid userID, boolean isFiltered);
+
+    /**
      * Saves the supplied group.
      *
      * @param group

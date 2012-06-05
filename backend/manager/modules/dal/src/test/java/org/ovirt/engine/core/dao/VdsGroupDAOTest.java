@@ -17,6 +17,7 @@ import org.ovirt.engine.core.compat.Version;
 
 public class VdsGroupDAOTest extends BaseDAOTestCase {
     private static final int NUMBER_OF_GROUPS = 7;
+    private static final int NUMBER_OF_GROUPS_FOR_PRIVELEGED_USER = 1;
 
     private VdsGroupDAO dao;
     private VDS existingVds;
@@ -121,7 +122,9 @@ public class VdsGroupDAOTest extends BaseDAOTestCase {
 
     /**
      * Asserts that the given {@link VDSGroup} is indeed the existing VDS Group the test uses.
-     * @param group The group to check
+     *
+     * @param group
+     *            The group to check
      */
     private void assertCorrectVDSGroup(VDSGroup group) {
         assertNotNull(group);
@@ -195,6 +198,7 @@ public class VdsGroupDAOTest extends BaseDAOTestCase {
 
     /**
      * Asserts the result of a invalid call to {@link VdsGroupDAO#getAllForStoragePool(Guid, Guid, boolean)}
+     *
      * @param result
      */
     private static void assertGetAllForStoragePoolInvalidResult(List<VDSGroup> result) {
@@ -204,6 +208,7 @@ public class VdsGroupDAOTest extends BaseDAOTestCase {
 
     /**
      * Asserts the result of a valid call to {@link VdsGroupDAO#getAllForStoragePool(Guid, Guid, boolean)}
+     *
      * @param result
      */
     private void assertGetAllForStoragePoolValidResult(List<VDSGroup> result) {
@@ -221,9 +226,41 @@ public class VdsGroupDAOTest extends BaseDAOTestCase {
     public void testGetAll() {
         List<VDSGroup> result = dao.getAll();
 
+        assertCorrectGetAllResult(result);
+    }
+
+    /**
+     * Ensures that retrieving VDS groups works as expected for a privileged user.
+     */
+    @Test
+    public void testGetAllWithPermissionsPrivilegedUser() {
+        List<VDSGroup> result = dao.getAll(PRIVILEGED_USER_ID, true);
+
         assertNotNull(result);
         assertFalse(result.isEmpty());
-        assertEquals(NUMBER_OF_GROUPS, result.size());
+        assertEquals(NUMBER_OF_GROUPS_FOR_PRIVELEGED_USER, result.size());
+        assertEquals(result.iterator().next(), existingVdsGroup);
+    }
+
+    /**
+     * Ensures that retrieving VDS groups works as expected with filtering disabled for an unprivileged user.
+     */
+    @Test
+    public void testGetAllWithPermissionsDisabledUnprivilegedUser() {
+        List<VDSGroup> result = dao.getAll(UNPRIVILEGED_USER_ID, false);
+
+        assertCorrectGetAllResult(result);
+    }
+
+    /**
+     * Ensures that no VDS group is retrieved for an unprivileged user with filtering enabled.
+     */
+    @Test
+    public void testGetWithPermissionsUnprivilegedUser() {
+        List<VDSGroup> result = dao.getAll(UNPRIVILEGED_USER_ID, true);
+
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
     }
 
     /**
@@ -271,5 +308,16 @@ public class VdsGroupDAOTest extends BaseDAOTestCase {
         VDSGroup result = dao.get(groupWithNoRunningVms.getId());
 
         assertNull(result);
+    }
+
+    /**
+     * Asserts the result from {@link VdsGroupDAO#getAll()} is correct without filtering
+     *
+     * @param result
+     */
+    private void assertCorrectGetAllResult(List<VDSGroup> result) {
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
+        assertEquals(NUMBER_OF_GROUPS, result.size());
     }
 }
