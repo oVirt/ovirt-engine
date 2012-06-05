@@ -90,7 +90,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             @Override
             public void OnSuccess(Object target, Object returnValue) {
                 UnitVmModel model = (UnitVmModel) target;
-                List<String> images = ((List<String>) ((VdcQueryReturnValue) returnValue).getReturnValue());
+                List<String> images = (List<String>) returnValue;
                 setImagesToModel(model, images);
             }
 

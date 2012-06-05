@@ -1130,7 +1130,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
             {
                 UserPortalListModel userPortalListModel = (UserPortalListModel) model1;
                 AttachCdModel _attachCdModel = (AttachCdModel) userPortalListModel.getWindow();
-                List<String> images = (List<String>) ((VdcQueryReturnValue) result).getReturnValue();
+                List<String> images = (List<String>) result;
                 if (images.size() > 0)
                 {
                     images.add(0, ConsoleModel.EjectLabel);
