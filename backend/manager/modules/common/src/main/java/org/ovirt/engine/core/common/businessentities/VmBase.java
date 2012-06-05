@@ -117,7 +117,7 @@ public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, Bus
 
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
     @Column(name = "iso_path", length = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
-    private String isoPath;
+    private String isoPath = "";
 
     @Column(name = "origin")
     @Enumerated
