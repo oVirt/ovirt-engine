@@ -400,6 +400,10 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
 	String VdcActionType___UpdateVmDisk();
 
+	String VdcActionType___AttachDiskToVm();
+
+	String VdcActionType___DetachDiskFromVm();
+
 	String VdcActionType___MoveVm();
 
 	String VdcActionType___AddVmAndAttachToUser();
