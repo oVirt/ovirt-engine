@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network;
 import org.ovirt.engine.core.common.vdscommands.SetupNetworksVdsCommandParameters;
@@ -15,6 +16,8 @@ import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStruct;
 
 public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters> extends FutureVDSCommand<T> {
 
+    protected static final String BONDING_OPTIONS = "BONDING_OPTS";
+    protected static final String SLAVES = "nics";
     private static final Map<String, String> REMOVE_OBJ = Collections.singletonMap("remove", Boolean.TRUE.toString());
 
     public SetupNetworksVDSCommand(T parameters) {
@@ -45,15 +48,9 @@ public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters
                 opts.put(VdsProperties.bootproto, VdsProperties.dhcp);
                 break;
             case StaticIp:
-                if (!StringHelper.isNullOrEmpty(i.getAddress())) {
-                    opts.put("ipaddr", i.getAddress());
-                }
-                if (!StringHelper.isNullOrEmpty(i.getSubnet())) {
-                    opts.put("netmask", i.getSubnet());
-                }
-                if (!StringHelper.isNullOrEmpty(i.getGateway())) {
-                    opts.put("gateway", i.getGateway());
-                }
+                putIfNotEmpty(opts, "ipaddr", i.getAddress());
+                putIfNotEmpty(opts, "netmask", i.getSubnet());
+                putIfNotEmpty(opts, "gateway", i.getGateway());
                 break;
             }
 
@@ -77,10 +74,10 @@ public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters
 
         for (VdsNetworkInterface bond : getParameters().getBonds()) {
             XmlRpcStruct opts = new XmlRpcStruct();
-            opts.add("nics", getBondNics(bond, getParameters().getInterfaces()));
+            opts.add(SLAVES, getBondNics(bond, getParameters().getInterfaces()));
 
             if (!StringHelper.isNullOrEmpty(bond.getBondOptions())) {
-                opts.add("BONDING_OPTS", bond.getBondOptions());
+                opts.add(BONDING_OPTIONS, bond.getBondOptions());
             }
             bonds.add(bond.getName(), opts);
         }
@@ -95,18 +92,18 @@ public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters
     private XmlRpcStruct generateOptions() {
         XmlRpcStruct options = new XmlRpcStruct();
 
-        if (getParameters().isCheckConnectivity()) {
-            options.add(VdsProperties.connectivityCheck, "true");
-        }
-        else {
-            options.add(VdsProperties.connectivityCheck, "false");
-        }
+        options.add(VdsProperties.connectivityCheck, Boolean.toString(getParameters().isCheckConnectivity()));
 
         if (getParameters().getConectivityTimeout() >= 0) {
-            options.add(VdsProperties.connectivityTimeout,
-                    (new Integer(getParameters().getConectivityTimeout())).toString());
+            options.add(VdsProperties.connectivityTimeout, getParameters().getConectivityTimeout());
         }
         return options;
+    }
+
+    private static void putIfNotEmpty(Map<String, String> map, String key, String value) {
+        if (!StringUtils.isEmpty(value)) {
+            map.put(key, value);
+        }
     }
 
     private List<String> getBondNics(VdsNetworkInterface bond, List<VdsNetworkInterface> interfaces) {

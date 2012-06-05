@@ -69,13 +69,13 @@ public class SetupNetworksVDSCommandTest {
         Map<String, Object> bondStruct = (Map<String, Object>) bondingStruct.getItem(bond.getName());
         assertNotNull("Bond " + bond.getName() + " should've been sent but wasn't.", bondStruct);
 
-        List<String> nicsInStruct = (List<String>) bondStruct.get("nics");
+        List<String> nicsInStruct = (List<String>) bondStruct.get(SetupNetworksVDSCommand.SLAVES);
         for (VdsNetworkInterface slave : slaves) {
             assertTrue("Slave " + slave.getName() + " should've been sent but wasn't.",
                     nicsInStruct.contains(slave.getName()));
         }
 
-        assertEquals(bond.getBondOptions(), bondStruct.get("BONDING_OPTS"));
+        assertEquals(bond.getBondOptions(), bondStruct.get(SetupNetworksVDSCommand.BONDING_OPTIONS));
     }
 
     private SetupNetworksVDSCommand<SetupNetworksVdsCommandParameters> createCommand(
