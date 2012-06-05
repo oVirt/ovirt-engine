@@ -1066,11 +1066,11 @@ public class VdsBrokerObjectsBuilder {
             }
             iface.setAddress(net.getaddr());
 
-            boolean bridged = false;
+            // if vdsm doesn't report the 'bridged' property, we assumes bridge-less network isn't supported
+            boolean bridged = true;
             if (network.get("bridged") != null) {
                 bridged = Boolean.parseBoolean(network.get("bridged").toString());
             }
-
             iface.setBridged(bridged);
 
             // set the management ip
