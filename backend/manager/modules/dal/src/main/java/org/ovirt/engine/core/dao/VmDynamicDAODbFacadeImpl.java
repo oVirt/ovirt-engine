@@ -84,7 +84,7 @@ public class VmDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<V
                 .addValue("status", vm.getstatus())
                 .addValue("vm_host", vm.getvm_host())
                 .addValue("vm_ip", vm.getvm_ip())
-                .addValue("vm_last_boot_time", vm.getLastStartTime())
+                .addValue("last_start_time", vm.getLastStartTime())
                 .addValue("vm_pid", vm.getvm_pid())
                 .addValue("display", vm.getdisplay())
                 .addValue("acpi_enable", vm.getacpi_enable())

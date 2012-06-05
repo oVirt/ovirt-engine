@@ -1321,8 +1321,7 @@
         <column>vm_ip</column>
         <column>vm_host</column>
         <column>vm_pid</column>
-        <column>vm_last_up_time</column>
-        <column>vm_last_boot_time</column>
+        <column>last_update_time</column>
         <column>guest_cur_user_name</column>
         <column>guest_cur_user_id</column>
         <column>guest_last_login_time</column>
@@ -1351,7 +1350,6 @@
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4356</value>
             <value>5</value>
-            <null />
             <null />
             <null />
             <null />
@@ -1393,7 +1391,6 @@
             <null />
             <null />
             <null />
-            <null />
             <value>9bf7c640-b620-456f-a550-0348f366544a</value> <!-- console_user_id -->
             <null />
             <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
@@ -1419,7 +1416,6 @@
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4354</value>
             <value>1</value>
-            <null />
             <null />
             <null />
             <null />
