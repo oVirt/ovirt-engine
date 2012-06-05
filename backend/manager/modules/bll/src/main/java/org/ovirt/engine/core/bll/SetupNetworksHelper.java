@@ -61,8 +61,6 @@ public class SetupNetworksHelper {
             String name = iface.getName();
             String networkName = iface.getNetworkName();
             String bondName = iface.getBondName();
-            boolean bonded = isBond(iface);
-
             if (ifaceNames.contains(name)) {
                 violations.add(VdcBllMessages.NETWORK_INTERFACE_NAME_ALREADY_IN_USE);
                 continue;
@@ -70,8 +68,7 @@ public class SetupNetworksHelper {
                 ifaceNames.add(name);
             }
 
-            // if its a bond extract to bonds map
-            if (bonded) {
+            if (isBond(iface)) {
                 extractBondIfModified(bonds, iface, name);
             } else {
                 if (StringUtils.isNotBlank(bondName)) {
@@ -237,16 +234,12 @@ public class SetupNetworksHelper {
      *            The bond name.
      */
     protected void extractBondIfModified(Set<String> bonds, VdsNetworkInterface iface, String name) {
-        if (StringUtils.isBlank(iface.getNetworkName())) {
-            violations.add(VdcBllMessages.NETWROK_NOT_EXISTS);
+        if (bonds.contains(name)) {
+            violations.add(VdcBllMessages.NETWORK_BOND_NAME_EXISTS);
         } else {
-            if (bonds.contains(name)) {
-                violations.add(VdcBllMessages.NETWORK_BOND_NAME_EXISTS);
-            } else {
-                bonds.add(name);
-                if (interfaceWasModified(iface)) {
-                    modifiedBonds.put(name, iface);
-                }
+            bonds.add(name);
+            if (interfaceWasModified(iface)) {
+                modifiedBonds.put(name, iface);
             }
         }
     }

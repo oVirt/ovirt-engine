@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -10,6 +11,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -34,6 +36,9 @@ import org.ovirt.engine.core.dao.VdsDAO;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SetupNetworksHelperTest {
+
+    @Mock
+    private DbFacade dbFacade;
 
     @Mock
     private VdsDAO vdsDAO;
@@ -253,7 +258,7 @@ public class SetupNetworksHelperTest {
         iface.setNetworkName("");
 
         helper.extractBondIfModified(bonds, iface, name);
-        assertTrue(bonds.isEmpty());
+        assertFalse(bonds.isEmpty());
 
         iface.setNetworkName("pink");
         helper.extractBondIfModified(bonds, iface, name);
@@ -313,6 +318,136 @@ public class SetupNetworksHelperTest {
 
         List<VdsNetworkInterface> removedBonds = helper.extractRemovedBonds(bonds);
         assertTrue(removedBonds.get(0).getName().equals("bond4"));
+    }
+
+    @Test
+    public void bondWithNoNetowrkAttached() {
+        VdsNetworkInterface bond = createVdsInterface("bond0", true, null, null, null);
+        List<VdsNetworkInterface> ifacesToBond = createInterfacesToBond();
+        SetupNetworksParameters parameters = createParametersForBond(bond, ifacesToBond);
+
+        SetupNetworksHelper helper = createHelper(parameters);
+        mockDaos(helper);
+        mockExistingIfacesWithBond(bond, ifacesToBond);
+
+        when(networkDAO.getAllForCluster(any(Guid.class))).thenReturn(Collections.<network> emptyList());
+
+        List<VdcBllMessages> violations = helper.validate();
+        assertNoViolations(violations);
+        assertEquals(1, helper.getBonds().size());
+        assertEquals(bond, helper.getBonds().get(0));
+        assertEquals(0, helper.getNetworks().size());
+    }
+
+    @Test
+    public void vlanOverBond() {
+        VdsNetworkInterface bond = createVdsInterface("bond0", true, null, null, null);
+        List<VdsNetworkInterface> ifacesToBond = createInterfacesToBond();
+        SetupNetworksParameters parameters = createParametersForBond(bond, ifacesToBond);
+
+        String networkName = "net";
+        parameters.getInterfaces().add(createVdsInterface(bond.getName() + ".100", false, null, 100, networkName));
+
+        SetupNetworksHelper helper = createHelper(parameters);
+        mockDaos(helper);
+        mockExistingIfacesWithBond(bond, ifacesToBond);
+        network network = mockExistingNetwork(networkName);
+
+        List<VdcBllMessages> violations = helper.validate();
+        assertNoViolations(violations);
+        assertEquals(1, helper.getBonds().size());
+        assertEquals(bond, helper.getBonds().get(0));
+        assertEquals(1, helper.getNetworks().size());
+        assertEquals(network, helper.getNetworks().get(0));
+    }
+
+    @Test
+    public void vlanBondNameMismatch() {
+        VdsNetworkInterface bond = createVdsInterface("bond0", true, null, null, null);
+        List<VdsNetworkInterface> ifacesToBond = createInterfacesToBond();
+        SetupNetworksParameters parameters = createParametersForBond(bond, ifacesToBond);
+
+        String networkName = "net";
+        parameters.getInterfaces().add(createVdsInterface(bond.getName() + "0.100", false, null, 100, networkName));
+
+        SetupNetworksHelper helper = createHelper(parameters);
+        mockDaos(helper);
+        mockExistingIfacesWithBond(bond, ifacesToBond);
+        mockExistingNetwork(networkName);
+
+        assertTrue(helper.validate().contains(VdcBllMessages.NETWORK_INTERFACE_NOT_EXISTS));
+    }
+
+    private network mockExistingNetwork(String networkName) {
+        List<network> existingNets = new ArrayList<network>();
+        network network = new network("", "", Guid.NewGuid(), networkName, "", "", 0, 100, false, 0, true);
+        existingNets.add(network);
+        when(networkDAO.getAllForCluster(any(Guid.class))).thenReturn(existingNets);
+
+        return network;
+    }
+
+    private void mockExistingIfacesWithBond(VdsNetworkInterface bond, List<VdsNetworkInterface> ifacesToBond) {
+        List<VdsNetworkInterface> existingIfaces = new ArrayList<VdsNetworkInterface>(ifacesToBond);
+        existingIfaces.add(createVdsInterface(bond.getName(), true, null, null, null));
+        when(interfaceDAO.getAllInterfacesForVds(any(Guid.class))).thenReturn(existingIfaces);
+    }
+
+    private void assertNoViolations(List<VdcBllMessages> violations) {
+        assertTrue("Expecting no violations, but got: " + violations, violations.isEmpty());
+    }
+
+    /**
+     * @return List of existing interfaces which will be used for bonding.
+     */
+    private List<VdsNetworkInterface> createInterfacesToBond() {
+        List<VdsNetworkInterface> existingIfaces = new ArrayList<VdsNetworkInterface>();
+        existingIfaces.add(createVdsInterface("eth0", false, null, null, null));
+        existingIfaces.add(createVdsInterface("eth1", false, null, null, null));
+        return existingIfaces;
+    }
+
+    /**
+     * Create parameters for the given bond over the given interfaces.
+     *
+     * @param bond
+     *            The bond to use in parameters.
+     * @param bondedIfaces
+     *            The interfaces to use as bond slaves.
+     * @return Parameters that define a bond over 2 interfaces.
+     */
+    private SetupNetworksParameters createParametersForBond(VdsNetworkInterface bond,
+            List<VdsNetworkInterface> bondedIfaces) {
+        SetupNetworksParameters parameters = new SetupNetworksParameters();
+        parameters.getInterfaces().add(bond);
+
+        for (VdsNetworkInterface iface : bondedIfaces) {
+            parameters.getInterfaces().add(createVdsInterface(iface.getName(), false, bond.getName(), null, null));
+        }
+
+        return parameters;
+    }
+
+    private void mockDaos(SetupNetworksHelper helper) {
+        doReturn(dbFacade).when(helper).getDbFacade();
+        doReturn(interfaceDAO).when(dbFacade).getInterfaceDAO();
+        doReturn(vdsDAO).when(dbFacade).getVdsDAO();
+        doReturn(networkDAO).when(dbFacade).getNetworkDAO();
+    }
+
+    private VdsNetworkInterface createVdsInterface(String name,
+            Boolean bonded,
+            String bondName,
+            Integer vlanId,
+            String networkName) {
+        VdsNetworkInterface iface = new VdsNetworkInterface();
+        iface.setId(Guid.NewGuid());
+        iface.setName(name);
+        iface.setBonded(bonded);
+        iface.setBondName(bondName);
+        iface.setVlanId(vlanId);
+        iface.setNetworkName(networkName);
+        return iface;
     }
 
     private VdsNetworkInterface newBond(String name) {
