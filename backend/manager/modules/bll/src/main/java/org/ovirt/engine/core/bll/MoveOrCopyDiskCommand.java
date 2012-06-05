@@ -320,7 +320,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
             permsList = new ArrayList<PermissionSubject>();
 
             DiskImage image = getImage();
-            Guid diskId = image == null ? Guid.Empty : image.getimage_group_id();
+            Guid diskId = image == null ? Guid.Empty : image.getId();
             permsList.add(new PermissionSubject(diskId, VdcObjectType.Disk, ActionGroup.CONFIGURE_DISK_STORAGE));
 
             addStoragePermissionByQuotaMode(permsList,
@@ -383,7 +383,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
 
     @Override
     protected Map<Guid, String> getExclusiveLocks() {
-        return Collections.singletonMap(getParameters().getImageId(), LockingGroup.DISK.name());
+        return Collections.singletonMap(getImage().getId(), LockingGroup.DISK.name());
     }
 
     @Override
