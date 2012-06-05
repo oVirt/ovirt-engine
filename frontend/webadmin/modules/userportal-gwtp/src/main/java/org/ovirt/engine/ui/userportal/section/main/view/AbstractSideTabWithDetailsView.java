@@ -90,6 +90,11 @@ public abstract class AbstractSideTabWithDetailsView<T, M extends SearchableList
         return table.getSelectionModel();
     }
 
+    @Override
+    public void resetTableScrollPosition() {
+        table.resetTableScrollPosition();
+    }
+
     protected M getModel() {
         return modelProvider.getModel();
     }

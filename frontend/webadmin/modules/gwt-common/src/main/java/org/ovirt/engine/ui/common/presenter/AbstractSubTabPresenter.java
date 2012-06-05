@@ -55,6 +55,11 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
         OrderedMultiSelectionModel<?> getTableSelectionModel();
 
         /**
+         * Resets the scroll position of the sub tab table widget.
+         */
+        void resetTableScrollPosition();
+
+        /**
          * Sets the loading state of the sub tab view.
          */
         void setLoadingState(LoadingState state);
@@ -124,6 +129,8 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
 
         // Clear table selection before starting
         clearSelection();
+
+        getView().resetTableScrollPosition();
     }
 
     @Override

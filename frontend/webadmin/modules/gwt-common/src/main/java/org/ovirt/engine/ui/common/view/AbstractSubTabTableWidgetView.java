@@ -58,6 +58,11 @@ public class AbstractSubTabTableWidgetView<I, T, M extends ListWithDetailsModel,
     }
 
     @Override
+    public void resetTableScrollPosition() {
+        getTable().resetTableScrollPosition();
+    }
+
+    @Override
     public void setLoadingState(LoadingState state) {
         getTable().setLoadingState(state);
     }

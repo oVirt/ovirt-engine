@@ -1,61 +1,60 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
-<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:r="urn:import:org.ovirt.engine.ui.common.widget.refresh">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:r="urn:import:org.ovirt.engine.ui.common.widget.refresh">
 
 	<ui:with field='resources' type='org.ovirt.engine.ui.common.CommonApplicationResources' />
 
 	<ui:style type="org.ovirt.engine.ui.common.widget.table.SimpleActionTable.Style">
 		.panel {
-		overflow: auto;
-		height: 100%;
+			overflow: auto;
+			height: 100%;
 		}
 
 		.bar {
-		padding-top: 7px;
-		height: 24px;
+			padding-top: 7px;
+			height: 24px;
 		}
 
 		.refreshButton {
-		float: right;
-		font-size: 12px;
-		height: 14px;
-		width: 12px;
-		margin-right: 5px;
-		background: transparent;
-		border: 1px solid transparent;
+			float: right;
+			font-size: 12px;
+			height: 14px;
+			width: 12px;
+			margin-right: 5px;
+			background: transparent;
+			border: 1px solid transparent;
 		}
 
 		.refreshPanel {
-		float: right;
-		cursor: hand;
-		cursor: pointer;
-		border: 1px solid transparent;
-		display: table-cell;
+			float: right;
+			cursor: hand;
+			cursor: pointer;
+			border: 1px solid transparent;
+			display: table-cell;
 		}
 
 		.content {
-		overflow-y: scroll;
-		position: absolute !important;
-		top: 59px;
-		bottom: 0px;
-		left: 0px;
-		right: 0px;
+			overflow-y: scroll;
+			position: absolute !important;
+			top: 59px;
+			bottom: 0px;
+			left: 0px;
+			right: 0px;
 		}
 
 		.contentWithDefaultHeader {
-
 		}
 
 		.headerContainer {
-		position: absolute;
-		height: 28px;
-		top: 34px;
-		bottom: 0px;
-		left: 0px;
-		right: 0px;
-		padding-right: 17px;
-		background-color: #F0F2FF;
+			position: absolute;
+			height: 28px;
+			top: 34px;
+			bottom: 0px;
+			left: 0px;
+			right: 0px;
+			padding-right: 17px;
+			background-color: #F0F2FF;
 		}
 
 		.prevButtonStyle {
@@ -66,6 +65,7 @@
 			border: 0px;
 			background: transparent;
 		}
+
 		.nextButtonStyle {
 			width: 10px;
 			float: right;
@@ -74,6 +74,7 @@
 			border: 0px;
 			background: transparent;
 		}
+
 		.itemsCountLabelStyle {
 			font-weight: bold;
 			float: right;
@@ -81,29 +82,28 @@
 			margin-left: 5px;
 			min-width: 30px;
 			text-align: center;
-			font-family: Ariel,verdana,sans-serif;
+			font-family: Arial, verdana, sans-serif;
 			font-size: 11px;
 			color: #666
 		}
 
 		.subTitledButton {
-		padding-left: 30px !important;
+			padding-left: 30px !important;
 		}
-
 	</ui:style>
 
 	<g:FlowPanel addStyleNames="{style.panel}">
 		<g:HTMLPanel ui:field="barPanel" addStyleNames="{style.bar}">
 			<g:FlowPanel ui:field="actionPanel" />
 			<g:PushButton ui:field="nextPageButton" addStyleNames="{style.nextButtonStyle}">
-					<g:upFace image='{resources.pageNextEnable}' />
-					<g:upDisabledFace image='{resources.pageNextDisable}' />
+				<g:upFace image='{resources.pageNextEnable}' />
+				<g:upDisabledFace image='{resources.pageNextDisable}' />
 			</g:PushButton>
 			<g:PushButton ui:field="prevPageButton" addStyleNames="{style.prevButtonStyle}">
-					<g:upFace image='{resources.pagePrevEnable}' />
-					<g:upDisabledFace image='{resources.pagePrevDisable}' />
+				<g:upFace image='{resources.pagePrevEnable}' />
+				<g:upDisabledFace image='{resources.pagePrevDisable}' />
 			</g:PushButton>
-			<g:Label ui:field="itemsCountLabel" addStyleNames="{style.itemsCountLabelStyle}"/>
+			<g:Label ui:field="itemsCountLabel" addStyleNames="{style.itemsCountLabelStyle}" />
 			<r:RefreshPanel ui:field="refreshPanel" addStyleNames="{style.refreshPanel}" />
 			<div style="clear: both;" />
 		</g:HTMLPanel>

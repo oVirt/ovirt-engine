@@ -32,8 +32,13 @@ public abstract class AbstractSubTabFormView<T, M extends ListWithDetailsModel, 
 
     @Override
     public OrderedMultiSelectionModel<?> getTableSelectionModel() {
-        // Form-based sub tab views have no table selection model
+        // Form-based sub tab views have no table widget
         return null;
+    }
+
+    @Override
+    public void resetTableScrollPosition() {
+        // Form-based sub tab views have no table widget
     }
 
     @Override

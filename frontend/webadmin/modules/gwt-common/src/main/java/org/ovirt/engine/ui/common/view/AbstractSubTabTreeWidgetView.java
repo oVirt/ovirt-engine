@@ -119,6 +119,10 @@ public class AbstractSubTabTreeWidgetView<I, T, M extends ListWithDetailsModel, 
         return null;
     }
 
+    @Override
+    public void resetTableScrollPosition() {
+    }
+
     private void updateStyles() {
         treeContainer.addStyleName(style.actionTreeContainer());
     }

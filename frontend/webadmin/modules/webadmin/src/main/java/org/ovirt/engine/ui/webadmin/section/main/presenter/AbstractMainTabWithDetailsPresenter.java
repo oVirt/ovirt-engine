@@ -36,6 +36,11 @@ public abstract class AbstractMainTabWithDetailsPresenter<T, M extends ListWithD
          */
         OrderedMultiSelectionModel<T> getTableSelectionModel();
 
+        /**
+         * Resets the scroll position of the main tab table widget.
+         */
+        void resetTableScrollPosition();
+
     }
 
     public AbstractMainTabWithDetailsPresenter(EventBus eventBus, V view, P proxy,
@@ -74,11 +79,14 @@ public abstract class AbstractMainTabWithDetailsPresenter<T, M extends ListWithD
     protected void onReveal() {
         super.onReveal();
 
+        // Clear table selection and update sub tab panel visibility
         if (hasSelection()) {
             clearSelection();
         } else {
             updateLayout();
         }
+
+        getView().resetTableScrollPosition();
     }
 
     /**

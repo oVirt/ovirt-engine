@@ -14,19 +14,7 @@
 }
 
 .cellTableHeader {
-	border-top: 1px solid #8D8D8D;
-	border-bottom: 1px solid #8D8D8D;
-	border-left: 1px solid #666666;
-	padding: 0px 0px;
-	padding-left: 3px;
-	text-align: left;
-	color: #111111;
-	font-family: Arial,sans-serif;
-	font-size: 11px;
-	background-color: #666666;
-	height: 26px !important;
 	display: none;
-	width: 100%;
 }
 
 .cellTableCell {

@@ -25,4 +25,9 @@ public abstract class AbstractMainTabWithDetailsTableView<T, M extends ListWithD
         return getTable().getSelectionModel();
     }
 
+    @Override
+    public void resetTableScrollPosition() {
+        getTable().resetTableScrollPosition();
+    }
+
 }

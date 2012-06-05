@@ -13,17 +13,6 @@
 }
 
 .cellTableHeader {
-	border-top: 1px solid #E3EDF6;
-	border-bottom: 1px solid #E3EDF6;
-	border-left: 1px solid #D7D7E1;
-	padding: 0px 0px;
-	padding-left: 3px;
-	text-align: left;
-	color: #111111;
-	font-family: Arial,sans-serif;
-	font-size: 11px;
-	background-color: #F0F2FF;
-	height: 28px;
 	display: none;
 }
 

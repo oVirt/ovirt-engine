@@ -43,6 +43,11 @@ public abstract class AbstractSideTabWithDetailsPresenter<T, M extends ListWithD
          */
         OrderedMultiSelectionModel<T> getTableSelectionModel();
 
+        /**
+         * Resets the scroll position of the side tab table widget.
+         */
+        void resetTableScrollPosition();
+
     }
 
     private final PlaceManager placeManager;
@@ -89,11 +94,14 @@ public abstract class AbstractSideTabWithDetailsPresenter<T, M extends ListWithD
     protected void onReveal() {
         super.onReveal();
 
+        // Clear table selection and update sub tab panel visibility
         if (hasSelection()) {
             clearSelection();
         } else {
             updateLayout();
         }
+
+        getView().resetTableScrollPosition();
     }
 
     /**

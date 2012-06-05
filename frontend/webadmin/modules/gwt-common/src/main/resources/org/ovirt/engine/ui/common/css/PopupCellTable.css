@@ -26,7 +26,8 @@
 	font-family: Arial,sans-serif;
 	font-size: 11px;
 	background-color: #F0F2FF;
-	height: 28px;	
+	height: 28px;
+	white-space: nowrap;
 }
 
 .cellTableCell {
