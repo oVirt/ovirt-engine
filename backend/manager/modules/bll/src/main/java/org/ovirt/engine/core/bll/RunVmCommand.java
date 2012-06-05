@@ -3,7 +3,10 @@ package org.ovirt.engine.core.bll;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -33,6 +36,8 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -851,12 +856,14 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
         // we can not use only the command Internal flag and remove this flag from RunVmParams
         // since canRunVm is static and can not call non-static method isInternalExecution
         getParameters().setIsInternal(isInternalExecution());
+
         boolean canDoAction = CanRunVm(getVm(),
                 getReturnValue().getCanDoActionMessages(),
                 getParameters(),
                 getVdsSelector(),
-                getSnapshotsValidator(), getVmPropertiesUtils()) &&
-                isVmInterfacesAttachedToVmNetworks();
+                getSnapshotsValidator(), getVmPropertiesUtils());
+
+        canDoAction = canDoAction && validateNetworkInterfaces();
 
         // check for Vm Payload
         if (canDoAction && getParameters().getVmPayload() != null) {
@@ -979,18 +986,71 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
     }
 
     /**
+     * @return true if all VM network interfaces are valid
+     */
+    private boolean validateNetworkInterfaces() {
+        Map<String,VmNetworkInterface> interfaceNetworkMap = Entities.interfacesByNetworkName(getVm().getInterfaces());
+        Set<String> interfaceNetworkNames = interfaceNetworkMap.keySet();
+        List<network> clusterNetworks = getNetworkDAO().getAllForCluster(getVm().getvds_group_id());
+        Set<String> clusterNetworksNames = Entities.objectNames(clusterNetworks);
+
+        // Checking that the interface are all configured
+        // and they are attached to networks that are attached to the cluster
+        // and they are attached to VM networks
+        return isVmInterfacesConfigured(interfaceNetworkMap) &&
+               isVmInterfacesAttachedToClusterNetworks(clusterNetworksNames, interfaceNetworkNames) &&
+               isVmInterfacesAttachedToVmNetworks(clusterNetworks, interfaceNetworkNames);
+    }
+
+    /**
+     * @param interfaceNetworkNames
+     *            VM interface network names
+     * @return true if all VM network interfaces are attached to existing cluster networks
+     */
+    private boolean isVmInterfacesConfigured(Map<String,VmNetworkInterface> interfacesMap) {
+        if (interfacesMap.containsKey(StringUtils.EMPTY)) {
+            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_INTERFACE_NETWORK_NOT_CONFIGURED);
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * @param clusterNetworksNames
+     *            cluster logical networks names
+     * @param interfaceNetworkNames
+     *            VM interface network names
+     * @return true if all VM network interfaces are attached to existing cluster networks
+     */
+    private boolean isVmInterfacesAttachedToClusterNetworks(final Set<String> clusterNetworkNames, final Set<String> interfaceNetworkNames) {
+
+        Set<String> result = new HashSet<String>(interfaceNetworkNames);
+        result.removeAll(clusterNetworkNames);
+
+        // If after removing the cluster network names we still have objects, then we have interface on networks that aren't
+        // attached to the cluster
+        if (result.size() > 0) {
+            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_NOT_IN_CLUSTER);
+            addCanDoActionMessage(String.format("$networks %1$s", StringUtils.join(result, ",")));
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * @param clusterNetworks
+     *            cluster logical networks
+     * @param interfaceNetworkNames
+     *            VM interface network names
      * @return true if all VM network interfaces are attached to VM networks
      */
-    private boolean isVmInterfacesAttachedToVmNetworks() {
+    private boolean isVmInterfacesAttachedToVmNetworks(final List<network> clusterNetworks, Set<String> interfaceNetworkNames) {
         List<String> nonVmNetworkNames =
-                NetworkUtils.filterNonVmNetworkNames(DbFacade.getInstance()
-                        .getNetworkDAO()
-                        .getAllForCluster(getVm().getvds_group_id()),
-                        Entities.interfacesByNetworkName(getVm().getInterfaces()).keySet());
+                NetworkUtils.filterNonVmNetworkNames(clusterNetworks, interfaceNetworkNames);
 
         if (nonVmNetworkNames.size() > 0) {
-            AddCustomValue("Networks", StringUtils.join(nonVmNetworkNames, ","));
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NOT_A_VM_NETWORK);
+            addCanDoActionMessage(String.format("$networks %1$s", StringUtils.join(nonVmNetworkNames, ",")));
             return false;
         }
         return true;

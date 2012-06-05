@@ -1,8 +1,10 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import junit.framework.Assert;
 
@@ -38,6 +40,24 @@ public class EntitiesTest {
         Assert.assertTrue(businessEntitiesById.containsKey(id2));
 
         Assert.assertFalse(businessEntitiesById.containsKey(new VmDeviceId(GUIDs[0], GUIDs[3])));
+    }
+
+    @Test
+    public void objectNames() {
+        List<network> list = new ArrayList<network>();
+        network n1 = new network();
+        n1.setname("network1");
+        network n2 = new network();
+        n2.setname("network2");
+        list.add(n1);
+        list.add(n2);
+        Set<String> names = Entities.objectNames(list);
+        Assert.assertTrue(names.size() == 2);
+        Assert.assertTrue(names.contains("network1"));
+        Assert.assertTrue(names.contains("network2"));
+        Assert.assertFalse(names.contains("network3"));
+        Assert.assertTrue(Entities.objectNames(null).equals(Collections.emptySet()));
+        Assert.assertTrue(Entities.objectNames(new ArrayList<network>()).equals(Collections.emptySet()));
     }
 
 }

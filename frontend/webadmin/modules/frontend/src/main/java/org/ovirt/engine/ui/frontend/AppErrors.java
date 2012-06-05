@@ -1821,8 +1821,14 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Template disks cannot be moved.")
     String ACTION_TYPE_FAILED_CANNOT_MOVE_TEMPLATE_DISK();
 
-    @DefaultStringValue("Failed ${action} ${type} the network/s ${Networks} is/are not a VM network.")
+    @DefaultStringValue("Failed ${action} ${type}. The following networks (${networks}) are not defined as VM networks.")
     String ACTION_TYPE_FAILED_NOT_A_VM_NETWORK();
+
+    @DefaultStringValue("Failed ${action} ${type}. The following networks (${networks}) are not defined in the cluster.")
+    String ACTION_TYPE_FAILED_NETWORK_NOT_IN_CLUSTER();
+
+    @DefaultStringValue("Failed ${action} ${type}. One or more network interfaces have incomplete network configuration. Please configure these interfaces and try again.")
+    String ACTION_TYPE_FAILED_INTERFACE_NETWORK_NOT_CONFIGURED();
 
     @DefaultStringValue(" Non VM networks is not supported for this (compatibility) version of Data Center.")
     String NON_VM_NETWORK_NOT_SUPPORTED_FOR_POOL_LEVEL();

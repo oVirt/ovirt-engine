@@ -3,8 +3,10 @@ package org.ovirt.engine.core.common.businessentities;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * General utility class for common entities functions
@@ -50,6 +52,18 @@ public class Entities {
             return map;
         } else {
             return Collections.emptyMap();
+        }
+    }
+
+    public static <E extends Nameable> Set<String> objectNames(List<E> entityList) {
+        if (entityList != null && !entityList.isEmpty()) {
+            Set<String> names = new HashSet<String>();
+            for (E e : entityList) {
+                names.add(e.getName());
+            }
+            return names;
+        } else {
+            return Collections.emptySet();
         }
     }
 
