@@ -16,8 +16,8 @@ import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStruct;
 
 public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters> extends FutureVDSCommand<T> {
 
-    protected static final String DHCP_BOOT_PROTOCOL = VdsProperties.dhcp;
-    protected static final String BOOT_PROTOCOL = VdsProperties.bootproto;
+    protected static final String DHCP_BOOT_PROTOCOL = "dhcp";
+    protected static final String BOOT_PROTOCOL = "bootproto";
     protected static final String BONDING_OPTIONS = "options";
     protected static final String SLAVES = "nics";
     private static final Map<String, String> REMOVE_OBJ = Collections.singletonMap("remove", Boolean.TRUE.toString());
