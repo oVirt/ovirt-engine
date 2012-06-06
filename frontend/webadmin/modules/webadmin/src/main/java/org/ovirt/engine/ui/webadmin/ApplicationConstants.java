@@ -917,6 +917,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Cluster")
     String clusterHost();
 
+    @DefaultStringValue("Data Center")
+    String dcHost();
+
     @DefaultStringValue("Status")
     String statusHost();
 
@@ -1122,6 +1125,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Cluster")
     String clusterVm();
 
+    @DefaultStringValue("Data Center")
+    String dcVm();
+
     @DefaultStringValue("Host")
     String hostVm();
 
@@ -1276,6 +1282,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Cluster")
     String clusterTemplate();
+
+    @DefaultStringValue("Data Center")
+    String dcTemplate();
 
     @DefaultStringValue("Description")
     String descriptionTemplate();

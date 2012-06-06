@@ -67,6 +67,14 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
         };
         getTable().addColumn(clusterColumn, constants.clusterVm(), "100px"); //$NON-NLS-1$
 
+        TextColumnWithTooltip<VM> dcColumn = new TextColumnWithTooltip<VM>() {
+            @Override
+            public String getValue(VM object) {
+                return object.getstorage_pool_name();
+            }
+        };
+        getTable().addColumn(dcColumn, constants.dcVm(), "100px"); //$NON-NLS-1$
+
         TextColumnWithTooltip<VM> hostColumn = new TextColumnWithTooltip<VM>() {
             @Override
             public String getValue(VM object) {

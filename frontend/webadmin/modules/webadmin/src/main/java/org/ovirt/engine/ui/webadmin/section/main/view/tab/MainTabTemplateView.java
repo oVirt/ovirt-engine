@@ -74,6 +74,14 @@ public class MainTabTemplateView extends AbstractMainTabWithDetailsTableView<VmT
         };
         getTable().addColumn(clusterColumn, constants.clusterTemplate());
 
+        TextColumnWithTooltip<VmTemplate> dcColumn = new TextColumnWithTooltip<VmTemplate>() {
+            @Override
+            public String getValue(VmTemplate object) {
+                return object.getstorage_pool_name();
+            }
+        };
+        getTable().addColumn(dcColumn, constants.dcTemplate());
+
         TextColumnWithTooltip<VmTemplate> descriptionColumn = new TextColumnWithTooltip<VmTemplate>() {
             @Override
             public String getValue(VmTemplate object) {
