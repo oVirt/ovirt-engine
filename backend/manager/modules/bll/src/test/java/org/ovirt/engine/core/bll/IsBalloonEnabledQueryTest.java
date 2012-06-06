@@ -11,7 +11,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
 
-public class IsBalloonEnabledQueryTest extends AbstractUserQueryTest<GetVmByVmIdParameters, IsBalloonEnabledQuery<GetVmByVmIdParameters>> {
+public class IsBalloonEnabledQueryTest extends AbstractQueryTest<GetVmByVmIdParameters, IsBalloonEnabledQuery<GetVmByVmIdParameters>> {
 
     /** The {@link VmDeviceDAO} mocked for the test */
     private VmDeviceDAO vmDeviceDAOMock;
