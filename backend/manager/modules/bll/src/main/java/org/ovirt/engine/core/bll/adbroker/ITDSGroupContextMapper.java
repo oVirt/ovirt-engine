@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll.adbroker;
 
-import static org.ovirt.engine.core.bll.adbroker.ITDSDSGroupAttributes.uniqueIdentifier;
-import static org.ovirt.engine.core.bll.adbroker.ITDSDSGroupAttributes.uniqueMember;
+import static org.ovirt.engine.core.bll.adbroker.ITDSGroupAttributes.uniqueIdentifier;
+import static org.ovirt.engine.core.bll.adbroker.ITDSGroupAttributes.uniqueMember;
 
 import java.util.ArrayList;
 import java.util.List;
