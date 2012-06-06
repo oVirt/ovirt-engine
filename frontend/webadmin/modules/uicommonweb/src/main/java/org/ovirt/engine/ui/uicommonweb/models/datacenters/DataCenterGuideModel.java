@@ -593,7 +593,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                         VDS localHost = (VDS) returnValue;
 
                         model.getHost()
-                                .setItems(new ArrayList<VDS>(Arrays.asList(new VDS[] {localHost})));
+                                .setItems(new ArrayList<VDS>(Arrays.asList(new VDS[] { localHost })));
                         model.getHost().setSelectedItem(localHost);
                         model.getDataCenter()
                                 .setItems(new ArrayList<storage_pool>(Arrays.asList(new storage_pool[] { getEntity() })));
@@ -627,6 +627,9 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         setWindow(model);
         model.setTitle(title);
         model.setHashName("new_domain"); //$NON-NLS-1$
+        ArrayList<storage_pool> dataCenters = new ArrayList<storage_pool>();
+        dataCenters.add(getEntity());
+        model.getDataCenter().setItems(dataCenters);
         model.getDataCenter().setSelectedItem(getEntity());
         model.getDataCenter().setIsChangable(false);
 

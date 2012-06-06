@@ -24,6 +24,9 @@ public class NewEditStorageModelBehavior extends StorageModelBehavior
             Model model = (Model) item;
 
             storage_pool dataCenter = (storage_pool) getModel().getDataCenter().getSelectedItem();
+            if (dataCenter == null) {
+                return;
+            }
 
             if (item.getRole() == StorageDomainType.ISO)
             {
