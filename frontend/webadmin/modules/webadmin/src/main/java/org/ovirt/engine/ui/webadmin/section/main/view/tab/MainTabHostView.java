@@ -128,19 +128,21 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
         };
         getTable().addColumn(statusColumn, constants.statusHost());
 
-        ProgressBarColumn<VDS> loadColumn = new ProgressBarColumn<VDS>() {
-            @Override
-            protected String getProgressText(VDS object) {
-                int numOfActiveVMs = object.getvm_active() != null ? object.getvm_active() : 0;
-                return numOfActiveVMs + " VMs"; //$NON-NLS-1$
-            }
+        if (ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly) {
+            ProgressBarColumn<VDS> loadColumn = new ProgressBarColumn<VDS>() {
+                @Override
+                protected String getProgressText(VDS object) {
+                    int numOfActiveVMs = object.getvm_active() != null ? object.getvm_active() : 0;
+                    return numOfActiveVMs + " VMs"; //$NON-NLS-1$
+                }
 
-            @Override
-            protected Integer getProgressValue(VDS object) {
-                return object.getvm_active();
-            }
-        };
-        getTable().addColumn(loadColumn, constants.loadHost(), "100px"); //$NON-NLS-1$
+                @Override
+                protected Integer getProgressValue(VDS object) {
+                    return object.getvm_active();
+                }
+            };
+            getTable().addColumn(loadColumn, constants.loadHost(), "100px"); //$NON-NLS-1$
+        }
 
         PercentColumn<VDS> memColumn = new PercentColumn<VDS>() {
             @Override
@@ -166,36 +168,39 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
         };
         getTable().addColumn(netColumn, constants.networkHost(), "60px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<VDS> spmColumn = new TextColumnWithTooltip<VDS>() {
-            @Override
-            public String getValue(VDS object) {
+        if (ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly) {
 
-                int value = object.getVdsSpmPriority();
-                int lowValue = defaultSpmPriority / 2;
-                int highValue = defaultSpmPriority + (maxSpmPriority - defaultSpmPriority) / 2;
+            TextColumnWithTooltip<VDS> spmColumn = new TextColumnWithTooltip<VDS>() {
+                @Override
+                public String getValue(VDS object) {
 
-                if (value == -1) {
-                    return constants.spmNeverText();
-                } else if (value == lowValue) {
-                    return constants.spmLowText() + " (" + lowValue + ")"; //$NON-NLS-1$ //$NON-NLS-2$
-                } else if (value == defaultSpmPriority) {
-                    return constants.spmNormalText() + " (" + defaultSpmPriority + ")"; //$NON-NLS-1$ //$NON-NLS-2$
-                } else if (value == highValue) {
-                    return constants.spmHighText() + " (" + highValue + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+                    int value = object.getVdsSpmPriority();
+                    int lowValue = defaultSpmPriority / 2;
+                    int highValue = defaultSpmPriority + (maxSpmPriority - defaultSpmPriority) / 2;
+
+                    if (value == -1) {
+                        return constants.spmNeverText();
+                    } else if (value == lowValue) {
+                        return constants.spmLowText() + " (" + lowValue + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+                    } else if (value == defaultSpmPriority) {
+                        return constants.spmNormalText() + " (" + defaultSpmPriority + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+                    } else if (value == highValue) {
+                        return constants.spmHighText() + " (" + highValue + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+                    }
+
+                    return "Custom (" + value + ")"; //$NON-NLS-1$ //$NON-NLS-2$
                 }
+            };
+            getTable().addColumn(spmColumn, constants.spmPriorityHost(), "80px"); //$NON-NLS-1$
 
-                return "Custom (" + value + ")"; //$NON-NLS-1$ //$NON-NLS-2$
-            }
-        };
-        getTable().addColumn(spmColumn, constants.spmPriorityHost(), "80px"); //$NON-NLS-1$
-
-        TextColumnWithTooltip<VDS> spmStatusColumn = new EnumColumn<VDS, VdsSpmStatus>() {
-            @Override
-            public VdsSpmStatus getRawValue(VDS object) {
-                return object.getspm_status();
-            }
-        };
-        getTable().addColumn(spmStatusColumn, constants.spmStatusHost());
+            TextColumnWithTooltip<VDS> spmStatusColumn = new EnumColumn<VDS, VdsSpmStatus>() {
+                @Override
+                public VdsSpmStatus getRawValue(VDS object) {
+                    return object.getspm_status();
+                }
+            };
+            getTable().addColumn(spmStatusColumn, constants.spmStatusHost());
+        }
 
         getTable().addActionButton(new WebAdminButtonDefinition<VDS>(constants.newHost()) {
             @Override

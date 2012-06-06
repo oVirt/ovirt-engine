@@ -1269,13 +1269,13 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Stop Volume")
     String confirmStopVolume();
 
-    @DefaultStringValue("Are you sure you want to stop the following volumes?")
+    @DefaultStringValue("Are you sure want to stop the following Volume(s)?")
     String stopVolumeMessage();
 
 	@DefaultStringValue("Remove Volume")
     String removeVolumesTitle();
 
-    @DefaultStringValue("Are you sure you want to remove the following Volumes")
+    @DefaultStringValue("Are you sure want to remove the following Volume(s)?")
     String removeVolumesMessage();
 
     @DefaultStringValue("Remove Bricks")
@@ -1284,7 +1284,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Replace Brick")
     String replaceBrickTitle();
 
-    @DefaultStringValue("Are you sure you want to remove the following Brick(s)?")
+    @DefaultStringValue("Are you sure want to remove the following Brick(s)?")
     String removeBricksMessage();
 
     @DefaultStringValue("Brick with the same details already exist")
