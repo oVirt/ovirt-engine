@@ -19,6 +19,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.common.businessentities.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network;
 import org.ovirt.engine.core.common.vdscommands.SetupNetworksVdsCommandParameters;
@@ -29,6 +30,7 @@ import org.ovirt.engine.core.utils.RandomUtils;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStruct;
 
 @RunWith(MockitoJUnitRunner.class)
+@SuppressWarnings("unchecked")
 public class SetupNetworksVDSCommandTest {
 
     @Mock
@@ -37,17 +39,59 @@ public class SetupNetworksVDSCommandTest {
     @Captor
     private ArgumentCaptor<XmlRpcStruct> bondingCaptor;
 
-    @SuppressWarnings("unchecked")
+    @Captor
+    private ArgumentCaptor<XmlRpcStruct> networksCaptor;
+
+    @Test
+    public void networkWithDhcp() {
+        List<network> networks = new ArrayList<network>();
+        network net = new network("",
+                        "",
+                        Guid.NewGuid(),
+                        RandomUtils.instance().nextString(10),
+                        "",
+                        "",
+                        0,
+                        null,
+                        false,
+                        0,
+                        true);
+        networks.add(net);
+        List<VdsNetworkInterface> ifaces = new ArrayList<VdsNetworkInterface>();
+        VdsNetworkInterface nic =
+                createVdsInterface("eth0", false, null, null, NetworkBootProtocol.Dhcp, net.getName());
+        ifaces.add(nic);
+
+        SetupNetworksVdsCommandParameters parameters =
+                new SetupNetworksVdsCommandParameters(Guid.NewGuid(),
+                        networks,
+                        Collections.<String> emptyList(),
+                        Collections.<VdsNetworkInterface> emptyList(),
+                        Collections.<VdsNetworkInterface> emptyList(),
+                        ifaces);
+
+        createCommand(parameters).Execute();
+
+        verify(server).setupNetworks(networksCaptor.capture(), any(XmlRpcStruct.class), any(XmlRpcStruct.class));
+        XmlRpcStruct networksStruct = networksCaptor.getValue();
+        Map<String, String> networkStruct = (Map<String, String>) networksStruct.getItem(net.getName());
+        assertNotNull("Network " + net.getName() + " should've been sent but wasn't.", networkStruct);
+
+        assertEquals(nic.getName(), networkStruct.get("nic"));
+        assertEquals(SetupNetworksVDSCommand.DHCP_BOOT_PROTOCOL,
+                networkStruct.get(SetupNetworksVDSCommand.BOOT_PROTOCOL));
+    }
+
     @Test
     public void bondModified() {
         List<VdsNetworkInterface> bonds = new ArrayList<VdsNetworkInterface>();
-        VdsNetworkInterface bond = createVdsInterface("bond0", true, null, RandomUtils.instance().nextString(100));
+        VdsNetworkInterface bond = createVdsInterface("bond0", true, null, RandomUtils.instance().nextString(100), null, null);
         bonds.add(bond);
 
         int slaveCount = RandomUtils.instance().nextInt(2, 100);
         List<VdsNetworkInterface> slaves = new ArrayList<VdsNetworkInterface>(slaveCount);
         for (int i = 0; i < slaveCount; i++) {
-            slaves.add(createVdsInterface("eth" + i, false, bond.getName(), null));
+            slaves.add(createVdsInterface("eth" + i, false, bond.getName(), null, null, null));
         }
 
         List<VdsNetworkInterface> ifaces = new ArrayList<VdsNetworkInterface>(slaveCount + 1);
@@ -103,13 +147,17 @@ public class SetupNetworksVDSCommandTest {
     private VdsNetworkInterface createVdsInterface(String name,
             Boolean bonded,
             String bondName,
-            String bondOptions) {
+            String bondOptions,
+            NetworkBootProtocol bootProtocol,
+            String networkName) {
         VdsNetworkInterface iface = new VdsNetworkInterface();
         iface.setId(Guid.NewGuid());
         iface.setName(name);
         iface.setBonded(bonded);
         iface.setBondName(bondName);
         iface.setBondOptions(bondOptions);
+        iface.setBootProtocol(bootProtocol);
+        iface.setNetworkName(networkName);
         return iface;
     }
 }

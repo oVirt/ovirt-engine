@@ -16,6 +16,8 @@ import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStruct;
 
 public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters> extends FutureVDSCommand<T> {
 
+    protected static final String DHCP_BOOT_PROTOCOL = VdsProperties.dhcp;
+    protected static final String BOOT_PROTOCOL = VdsProperties.bootproto;
     protected static final String BONDING_OPTIONS = "options";
     protected static final String SLAVES = "nics";
     private static final Map<String, String> REMOVE_OBJ = Collections.singletonMap("remove", Boolean.TRUE.toString());
@@ -45,7 +47,7 @@ public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters
             // TODO: add bootproto to network object
             switch (i.getBootProtocol()) {
             case Dhcp:
-                opts.put(VdsProperties.bootproto, VdsProperties.dhcp);
+                opts.put(BOOT_PROTOCOL, DHCP_BOOT_PROTOCOL);
                 break;
             case StaticIp:
                 putIfNotEmpty(opts, "ipaddr", i.getAddress());
