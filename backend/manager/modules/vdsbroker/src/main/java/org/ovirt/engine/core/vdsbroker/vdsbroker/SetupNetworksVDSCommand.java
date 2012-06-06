@@ -16,7 +16,7 @@ import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStruct;
 
 public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters> extends FutureVDSCommand<T> {
 
-    protected static final String BONDING_OPTIONS = "BONDING_OPTS";
+    protected static final String BONDING_OPTIONS = "options";
     protected static final String SLAVES = "nics";
     private static final Map<String, String> REMOVE_OBJ = Collections.singletonMap("remove", Boolean.TRUE.toString());
 
