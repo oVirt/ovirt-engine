@@ -1,23 +1,29 @@
 package org.ovirt.engine.core.bll.network;
 
 import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.core.bll.MacPoolManager;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.VmNetworkInterfaceDAO;
 import org.ovirt.engine.core.dao.VmNetworkStatisticsDAO;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 /**
  * Helper class to use for adding/removing {@link VmNetworkInterface}s.
  */
 public class VmInterfaceManager {
 
+    protected Log log = LogFactory.getLog(getClass());
     /**
      * Add a {@link VmNetworkInterface} to the VM, trying to acquire a MAC from the {@link MacPoolManager}.<br>
      * If the MAC is already in use, a warning will be sent to the user.
@@ -38,7 +44,6 @@ public class VmInterfaceManager {
         } else {
             macAdded = getMacPoolManager().AddMac(iface.getMacAddress());
         }
-
         getVmNetworkInterfaceDAO().save(iface);
         getVmNetworkStatisticsDAO().save(iface.getStatistics());
         compensationContext.snapshotNewEntity(iface);
@@ -67,6 +72,21 @@ public class VmInterfaceManager {
                 getVmNetworkStatisticsDAO().remove(iface.getId());
             }
         }
+    }
+
+    /**
+     * Checks if a Network belongs to the cluster and is a VM Network
+     * @param iface
+     * @param clusterId
+     * @return
+     */
+    public static boolean isValidVmNetwork(VmNetworkInterface iface, Guid clusterId) {
+        Map<String, network> networksByName =
+            Entities.entitiesByName(DbFacade.getInstance()
+                    .getNetworkDAO()
+                    .getAllForCluster(clusterId));
+        String networkName = iface.getNetworkName();
+        return (networksByName.containsKey(networkName) && networksByName.get(networkName).isVmNetwork());
     }
 
     /**

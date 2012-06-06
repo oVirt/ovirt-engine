@@ -27,7 +27,6 @@ import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
-import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
@@ -41,7 +40,6 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
-import org.ovirt.engine.core.common.businessentities.network;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -907,15 +905,10 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
      */
     private void auditInvalidInterfaces() {
         List<VmNetworkInterface> interfaces = getVm().getInterfaces();
-        Map<String, network> networksByName =
-                Entities.entitiesByName(DbFacade.getInstance()
-                        .getNetworkDAO()
-                        .getAllForCluster(getVm().getvds_group_id()));
         StringBuilder networks = new StringBuilder();
         StringBuilder ifaces = new StringBuilder();
         for (VmNetworkInterface iface : interfaces) {
-            if (networksByName.containsKey(iface.getNetworkName()) &&
-                    !networksByName.get(iface.getNetworkName()).isVmNetwork()) {
+            if (!VmInterfaceManager.isValidVmNetwork(iface, getVm().getvds_group_id())) {
                 networks.append(iface.getNetworkName()).append(",");
                 ifaces.append(iface.getName()).append(",");
             }

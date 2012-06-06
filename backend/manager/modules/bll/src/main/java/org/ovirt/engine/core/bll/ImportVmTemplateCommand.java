@@ -6,8 +6,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.network.VmInterfaceManager;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -337,10 +339,12 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImprotVmT
 
     protected void AddVmInterfaces() {
         List<VmNetworkInterface> interfaces = getVmTemplate().getInterfaces();
+        String networkName;
         for (VmNetworkInterface iface : interfaces) {
             if (iface.getId() == null) {
                 iface.setId(Guid.NewGuid());
             }
+            networkName = iface.getNetworkName();
             iface.setVmId(getVmTemplateId());
             VmNetworkInterface iDynamic = new VmNetworkInterface();
             VmNetworkStatistics iStat = new VmNetworkStatistics();
@@ -350,7 +354,13 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImprotVmT
             iStat.setVmId(getVmTemplateId());
             iDynamic.setVmTemplateId(getVmTemplateId());
             iDynamic.setName(iface.getName());
-            iDynamic.setNetworkName(iface.getNetworkName());
+            if (VmInterfaceManager.isValidVmNetwork(iface, getVmTemplate().getvds_group_id())) {
+                iDynamic.setNetworkName(networkName);
+            }
+            else {
+                log.warnFormat("Imported template interface {0} has an invalid network name {1}, network name was set to empty string" , iface.getName(), networkName);
+                iDynamic.setNetworkName(StringUtils.EMPTY);
+            }
             iDynamic.setSpeed(iface.getSpeed());
             iDynamic.setType(iface.getType());
 
