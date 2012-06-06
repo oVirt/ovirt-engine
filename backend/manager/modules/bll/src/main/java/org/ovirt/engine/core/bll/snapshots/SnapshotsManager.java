@@ -218,14 +218,25 @@ public class SnapshotsManager {
             synchronizeNics(vm.getId(), vm.getInterfaces(), compensationContext);
 
             for (VmDevice vmDevice : getVmDeviceDao().getVmDeviceByVmId(vm.getId())) {
-                if (vmDevice.getDevice().equals(VmDeviceType.DISK.getName())
-                        && getDiskDao().get(vmDevice.getDeviceId()).isAllowSnapshot()) {
+                if (deviceCanBeRemoved(vmDevice)) {
                     getVmDeviceDao().remove(vmDevice.getId());
                 }
             }
 
             VmDeviceUtils.addImportedDevices(vm.getStaticData());
         }
+    }
+
+    /**
+     * @param vmDevice
+     * @return true if the device can be removed (disk which allows snapshot can be removed as it is part
+     * of the snapshot. Other disks shouldn't be removed as they are not part of the snapshot).
+     */
+    private boolean deviceCanBeRemoved(VmDevice vmDevice) {
+        if (!vmDevice.getDevice().equals(VmDeviceType.DISK.getName())) {
+            return true;
+        }
+        return getDiskDao().get(vmDevice.getDeviceId()).isAllowSnapshot();
     }
 
     /**
