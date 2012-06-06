@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms.key_value;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,6 +13,7 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.RegexValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.ValidationResult;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public class KeyValueModel extends EntityModel implements IModifyLines {
@@ -21,6 +23,7 @@ public class KeyValueModel extends EntityModel implements IModifyLines {
 
     ListModel keyValueLines;
     Map<String, String> allKeyValueMap;
+    Map<String, List<String>> allRegExKeys;
     private Map<String, String> keyValueMap_used = new HashMap<String, String>();
     boolean disableEvent = false;
     private Object saveEntity;
@@ -33,13 +36,35 @@ public class KeyValueModel extends EntityModel implements IModifyLines {
                 return;
             }
             ListModel listModel = (ListModel) sender;
+            String key = null;
+            if (listModel.getSelectedItem() != null) {
+                key = (String) listModel.getSelectedItem();
+            }
             boolean keySelected = listModel != null &&
-                    listModel.getSelectedItem() != null &&
-                    !((String) listModel.getSelectedItem()).equals(KeyValueModel.SELECT_KEY) &&
-                    !((String) listModel.getSelectedItem()).equals(KeyValueModel.NO_KEYS);
-            ((EntityModel) listModel.getEntity()).setIsAvailable(keySelected);
-            if (!keySelected) {
-                ((EntityModel) listModel.getEntity()).setEntity("");
+                    key != null &&
+                    !key.equals(KeyValueModel.SELECT_KEY) &&
+                    !key.equals(KeyValueModel.NO_KEYS);
+            List<KeyValueLineModel> list =
+                    new ArrayList<KeyValueLineModel>((List<KeyValueLineModel>) getKeyValueLines().getItems());
+            for (KeyValueLineModel keyValueLineModel : list) {
+                if (((String) keyValueLineModel.getKeys().getSelectedItem()).equals(key)) {
+                    if (keySelected) {
+                        if (allRegExKeys.containsKey(key)) {
+                            keyValueLineModel.getValue().setIsAvailable(false);
+                            keyValueLineModel.getValues().setIsAvailable(true);
+                            keyValueLineModel.getValues().setItems(allRegExKeys.get(key));
+                        } else {
+                            keyValueLineModel.getValue().setIsAvailable(true);
+                            keyValueLineModel.getValues().setIsAvailable(false);
+                        }
+                    } else {
+                        keyValueLineModel.getValue().setIsAvailable(keySelected);
+                        keyValueLineModel.getValues().setIsAvailable(keySelected);
+                        keyValueLineModel.getValue().setEntity("");
+                        keyValueLineModel.getValues().setSelectedItem(null);
+                        keyValueLineModel.getValues().setItems(null);
+                    }
+                }
             }
             updateKeys();
         }
@@ -91,7 +116,14 @@ public class KeyValueModel extends EntityModel implements IModifyLines {
                 lineModel = new KeyValueLineModel(this);
                 lineModel.getKeys().setItems(getAvailbleKeys(key));
                 lineModel.getKeys().setSelectedItem(key);
-                lineModel.getValue().setEntity(keyValueMap_used.get(key));
+                if (allRegExKeys.containsKey(key)) {
+                    lineModel.getValue().setIsAvailable(false);
+                    lineModel.getValues().setIsAvailable(true);
+                    lineModel.getValues().setItems(allRegExKeys.get(key));
+                    lineModel.getValues().setSelectedItem(keyValueMap_used.get(key));
+                } else {
+                    lineModel.getValue().setEntity(keyValueMap_used.get(key));
+                }
                 list.add(lineModel);
             }
         } else {
@@ -108,14 +140,24 @@ public class KeyValueModel extends EntityModel implements IModifyLines {
 
     public void setKeyValueString(List<String> lines) {
         allKeyValueMap = new HashMap<String, String>();
-
+        allRegExKeys = new HashMap<String, List<String>>();
+        RegexValidation regexValidation = new RegexValidation();
+        regexValidation.setExpression("\\^\\((([a-zA-Z0-9_]+[|]+)*)[a-zA-Z0-9_]+\\)\\$"); //$NON-NLS-1$
         String[] splitLine;
         for (String line : lines) {
             if (line.isEmpty()) {
                 continue;
             }
             splitLine = line.split("="); //$NON-NLS-1$
-            allKeyValueMap.put(splitLine[0], splitLine[1]);
+            String key = splitLine[0];
+            allKeyValueMap.put(key, splitLine[1]);
+            ValidationResult valid = regexValidation.Validate(allKeyValueMap.get(key));
+            if (valid.getSuccess()) {
+                String[] values = allKeyValueMap.get(key)
+                        .substring(2, allKeyValueMap.get(key).length() - 2)
+                        .split("\\|"); //$NON-NLS-1$
+                allRegExKeys.put(splitLine[0], Arrays.asList(values));
+            }
         }
 
         setEntity(saveEntity);
@@ -223,7 +265,11 @@ public class KeyValueModel extends EntityModel implements IModifyLines {
             }
             builder.append(key);
             builder.append("="); //$NON-NLS-1$
-            builder.append(keyValueLineModel.getValue().getEntity());
+            if (keyValueLineModel.getValue().getIsAvailable()) {
+                builder.append(keyValueLineModel.getValue().getEntity());
+            } else if (keyValueLineModel.getValues().getIsAvailable()) {
+                builder.append(keyValueLineModel.getValues().getSelectedItem());
+            }
             builder.append(";"); //$NON-NLS-1$
         }
         return builder.toString();

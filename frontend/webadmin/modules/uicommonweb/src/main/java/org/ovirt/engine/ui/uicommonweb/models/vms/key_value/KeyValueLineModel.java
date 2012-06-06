@@ -59,7 +59,6 @@ public class KeyValueLineModel extends EntityModel {
         this.modifyLines = modifyLines;
         setKeys(new ListModel());
         setValue(new EntityModel());
-        getKeys().setEntity(getValue());
         setValues(new ListModel());
         getValues().setIsAvailable(false);
         setRemoveLine(new UICommand("remove", this)); //$NON-NLS-1$

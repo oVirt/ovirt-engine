@@ -21,6 +21,7 @@
 		<g:HorizontalPanel width="350px">
 			<e:ListModelListBoxEditor ui:field="keyField" addStyleNames="{style.fieldWidth}"/>
 			<e:EntityModelTextBoxEditor ui:field="valueField" addStyleNames="{style.fieldWidth}"/>
+			<e:ListModelListBoxEditor ui:field="valuesField" addStyleNames="{style.fieldWidth}"/>
 		</g:HorizontalPanel>
 		<g:PushButton ui:field="plusButton" addStyleNames="{style.buttonStyle}">
 			<g:upFace image='{resources.increaseIcon}' />

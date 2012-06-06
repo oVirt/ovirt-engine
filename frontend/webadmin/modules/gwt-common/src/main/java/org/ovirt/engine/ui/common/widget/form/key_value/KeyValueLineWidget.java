@@ -38,6 +38,10 @@ public class KeyValueLineWidget extends Composite implements HasEditorDriver<Key
     EntityModelTextBoxEditor valueField;
 
     @UiField
+    @Path(value = "values.selectedItem")
+    ListModelListBoxEditor<Object> valuesField;
+
+    @UiField
     @Ignore
     PushButton plusButton;
 
@@ -54,12 +58,14 @@ public class KeyValueLineWidget extends Composite implements HasEditorDriver<Key
     private void addStyles() {
         keyField.addContentWidgetStyleName(style.fieldWidth());
         valueField.addContentWidgetStyleName(style.fieldWidth());
+        valuesField.addContentWidgetStyleName(style.fieldWidth());
         hideLabels();
     }
 
     private void hideLabels() {
         keyField.hideLabel();
         valueField.hideLabel();
+        valuesField.hideLabel();
     }
 
     @Override
