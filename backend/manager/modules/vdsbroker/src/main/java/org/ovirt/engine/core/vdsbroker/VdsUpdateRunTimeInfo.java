@@ -1250,6 +1250,7 @@ public class VdsUpdateRunTimeInfo {
                     }
                 }
                 if (vmToUpdate != null) {
+                    logVmStatusTransition(vmToUpdate, runningVm);
                     // open spice for dedicated VMs
                     if (vmToUpdate.getstatus() != VMStatus.Up && runningVm.getstatus() == VMStatus.Up
                             || vmToUpdate.getstatus() != VMStatus.PoweringUp
@@ -1274,6 +1275,9 @@ public class VdsUpdateRunTimeInfo {
                             && runningVm.getstatus() == VMStatus.Up) {
                         // Vm moved to Up status - remove its record from Async
                         // running handling
+                        if (log.isDebugEnabled()) {
+                            log.debugFormat("removing VM {0} from successful run VMs list", vmToUpdate.getId());
+                        }
                         if (!_succededToRunVms.contains(vmToUpdate.getId())) {
                             _succededToRunVms.add(vmToUpdate.getId());
                         }
@@ -1346,6 +1350,16 @@ public class VdsUpdateRunTimeInfo {
         removeVmsFromCache(running);
     }
 
+    private void logVmStatusTransition(VM vmToUpdate, VmDynamic runningVm) {
+        if (vmToUpdate.getstatus() != runningVm.getstatus()) {
+            log.infoFormat("VM {0} {1} moved from {2} --> {3}",
+                    vmToUpdate.getvm_name(),
+                    vmToUpdate.getId(),
+                    vmToUpdate.getstatus().name(),
+                    runningVm.getstatus().name());
+        }
+    }
+
     // del from cache all vms that not in vdsm
     private void removeVmsFromCache(java.util.List<VM> running) {
         Guid vmGuid;
@@ -1359,6 +1373,7 @@ public class VdsUpdateRunTimeInfo {
             if (vmToRemove.getstatus() == VMStatus.MigratingFrom) {
                 isInMigration = true;
                 vmToRemove.setrun_on_vds(vmToRemove.getmigrating_to_vds());
+                log.infoFormat("Setting VM {0} {1} to status unknown", vmToRemove.getvm_name(), vmToRemove.getId());
                 ResourceManager.getInstance().InternalSetVmStatus(vmToRemove, VMStatus.Unknown);
                 AddVmDynamicToList(vmToRemove.getDynamicData());
                 AddVmStatisticsToList(vmToRemove.getStatisticsData());
@@ -1420,6 +1435,7 @@ public class VdsUpdateRunTimeInfo {
 
         if (oldVmStatus == VMStatus.MigratingFrom && VM.isGuestUp(runningVm.getstatus())) {
             _vmsToRerun.add(runningVm.getId());
+            log.infoFormat("adding VM {0} to re-run list", runningVm.getId());
             vmToUpdate.setmigrating_to_vds(null);
         }
     }
