@@ -230,16 +230,24 @@ CP=/etc/ovirt-engine/notifier/.
 
 # Add the required jar files from the system wide jars directory:
 jar_names='
-    commons-logging
-    commons-collections
-    commons-lang
-    log4j
+    antlr
     commons-codec
+    commons-collections
     commons-configuration
     commons-jxpath
-    postgresql-jdbc
+    commons-lang
+    commons-logging
+    dom4j
+    hibernate-jpa-2.0-api
     javamail
-    engine-tools-common
+    log4j
+    ovirt-engine/common
+    ovirt-engine/compat
+    ovirt-engine/engineencryptutils
+    ovirt-engine/engine-notifier-service
+    ovirt-engine/engine-tools-common
+    postgresql-jdbc
+    slf4j/api
 '
 for jar_name in ${jar_names}
 do
@@ -256,22 +264,12 @@ done
 # in order to make the script less dependent on the version of oVirt Engine
 # installed:
 jar_names='
-    stax-api
-    jaxb-api
-    slf4j-api
-    validation-api
-    hibernate-validator
+    hibernate-annotations
     hibernate-commons-annotations
     hibernate-core
-    antlr
-    dom4j
-    xml-apis
-    ejb3-persistence
-    hibernate-annotations
+    hibernate-validator
     jaxb-impl
-    engine-common
-    engine-compat
-    engine-encryptutils
+    validation-api
 '
 for jar_name in ${jar_names}
 do
@@ -279,20 +277,6 @@ do
     if [ -z "${jar_file}" -o ! -s "${jar_file}" ]
     then
         die "Error: can't run without missing JAR file: ${engineLib}/${jar_name}*.jar\n" 5
-    fi
-    CP=${CP}:${jar_file}
-done
-
-# Add the jar files specific to the notifier:
-jar_names='
-    engine-notifier
-'
-for jar_name in ${jar_names}
-do
-    jar_file=${NOTIFIER_HOME}/${jar_name}.jar
-    if [ ! -s "${jar_file}" ]
-    then
-        die "Error: can't run without missing JAR file: ${jar_file}\n" 5
     fi
     CP=${CP}:${jar_file}
 done
