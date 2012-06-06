@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.vdscommands.RemoveVdsVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -56,9 +57,20 @@ public class RemoveVdsCommand<T extends VdsActionParameters> extends VdsCommand<
             }
         }
 
-        if (isGlusterEnabled() && hasVolumeOnServer()) {
-            addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_REMOVE_HOST_HAVING_GLUSTER_VOLUME);
-            returnValue = false;
+        if (isGlusterEnabled()) {
+            if (hasVolumeOnServer()) {
+                addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_REMOVE_HOST_HAVING_GLUSTER_VOLUME);
+                returnValue = false;
+            }
+
+            if (getVdsDAO().getAllForVdsGroup(getVdsGroupId()).size() > 1) {
+                try {
+                    getClusterUtils().getUpServer(getVdsGroupId());
+                } catch (VdcBLLException e) {
+                    addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NO_UP_SERVER_FOUND);
+                    returnValue = false;
+                }
+            }
         }
 
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__REMOVE);
@@ -158,6 +170,10 @@ public class RemoveVdsCommand<T extends VdsActionParameters> extends VdsCommand<
         }
     }
 
+    public ClusterUtils getClusterUtils() {
+        return ClusterUtils.getInstance();
+    }
+
     private void glusterHostRemove() {
         // UI will implement forceAction later
         // Now assume that the force option is false
@@ -166,7 +182,7 @@ public class RemoveVdsCommand<T extends VdsActionParameters> extends VdsCommand<
             VDSReturnValue returnValue =
                     runVdsCommand(
                             VDSCommandType.GlusterHostRemove,
-                            new GlusterHostRemoveVDSParameters((ClusterUtils.getInstance().getUpServer(getVdsGroupId())).getId(),
+                            new GlusterHostRemoveVDSParameters((getClusterUtils().getUpServer(getVdsGroupId())).getId(),
                                     getVds().gethost_name(),
                                     forceAction));
             setSucceeded(returnValue.getSucceeded());

@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
@@ -16,6 +17,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -53,10 +55,14 @@ public class RemoveVdsCommandTest {
     @Mock
     private VdsGroupDAO vdsGroupDao;
 
+    ClusterUtils clusterUtils;
+
     /**
      * The command under test.
      */
     private RemoveVdsCommand<VdsActionParameters> command;
+
+    private Guid CLUSTER_ID = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
 
     @Before
     public void setUp() {
@@ -64,6 +70,7 @@ public class RemoveVdsCommandTest {
 
         VdsActionParameters parameters = createParameters();
         command = spy(new RemoveVdsCommand<VdsActionParameters>(parameters));
+        clusterUtils = mock(ClusterUtils.class);
 
         doReturn(vdsDAO).when(command).getVdsDAO();
         doReturn(vmStaticDAO).when(command).getVmStaticDAO();
@@ -72,7 +79,19 @@ public class RemoveVdsCommandTest {
         doReturn(glusterBrickDao).when(command).getGlusterBrickDao();
         doReturn(vdsGroupDao).when(command).getVdsGroupDAO();
         doReturn(vdsGroup).when(vdsGroupDao).get(Mockito.any(Guid.class));
+        doReturn(clusterUtils).when(command).getClusterUtils();
+        when(clusterUtils.getUpServer(CLUSTER_ID)).thenReturn(getVds(VDSStatus.Up));
     }
+
+    private VDS getVds(VDSStatus status) {
+        VDS vds = new VDS();
+        vds.setId(Guid.NewGuid());
+        vds.setvds_name("gfs1");
+        vds.setvds_group_id(CLUSTER_ID);
+        vds.setstatus(status);
+        return vds;
+        }
+
 
     @Test
     public void canDoActionSucceeds() throws Exception {
