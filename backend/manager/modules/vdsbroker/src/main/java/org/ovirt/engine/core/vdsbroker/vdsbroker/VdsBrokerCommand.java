@@ -8,9 +8,10 @@ import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.ApplicationException;
+import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.VdsManager;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcRunTimeException;
@@ -26,7 +27,9 @@ public abstract class VdsBrokerCommand<P extends VdsIdVDSCommandParametersBase> 
      *            The parameters of the command.
      */
     public VdsBrokerCommand(P parameters) {
-        this(parameters, DbFacade.getInstance().getVdsDAO().get(parameters.getVdsId()));
+        super(parameters);
+        mVdsBroker = initializeVdsBroker(parameters.getVdsId());
+        mVds = getDbFacade().getVdsDAO().get(parameters.getVdsId());
     }
 
     /**
@@ -39,13 +42,17 @@ public abstract class VdsBrokerCommand<P extends VdsIdVDSCommandParametersBase> 
      */
     protected VdsBrokerCommand(P parameters, VDS vds) {
         super(parameters);
-        VdsManager vdsmanager = ResourceManager.getInstance().GetVdsManager(parameters.getVdsId());
+        mVdsBroker = initializeVdsBroker(parameters.getVdsId());
+        mVds = vds;
+    }
+
+    protected IVdsServer initializeVdsBroker(Guid vdsId) {
+        VdsManager vdsmanager = ResourceManager.getInstance().GetVdsManager(vdsId);
         if (vdsmanager == null) {
             throw new VdcBLLException(VdcBllErrors.RESOURCE_MANAGER_VDS_NOT_FOUND,
-                    String.format("Vds with id: %1$s was not found", parameters.getVdsId()));
+                    String.format("Vds with id: %1$s was not found", vdsId));
         }
-        mVdsBroker = vdsmanager.getVdsProxy();
-        mVds = vds;
+        return vdsmanager.getVdsProxy();
     }
 
     protected IVdsServer getBroker() {
@@ -67,6 +74,10 @@ public abstract class VdsBrokerCommand<P extends VdsIdVDSCommandParametersBase> 
 
     protected void setVds(VDS value) {
         mVds = value;
+    }
+
+    protected DbFacade getDbFacade() {
+        return DbFacade.getInstance();
     }
 
     @Override
