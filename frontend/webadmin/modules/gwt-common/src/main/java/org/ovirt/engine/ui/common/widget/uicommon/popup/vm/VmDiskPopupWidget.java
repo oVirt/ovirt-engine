@@ -141,6 +141,9 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> 
     @UiField
     HorizontalPanel topPanel;
 
+    @UiField
+    HorizontalPanel diskTypePanel;
+
     @UiField(provided = true)
     @Ignore
     EntityModelCellTable<ListModel> internalDiskTable;
@@ -152,7 +155,11 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> 
     @UiField
     Label message;
 
-    public VmDiskPopupWidget(CommonApplicationConstants constants, CommonApplicationResources resources) {
+    boolean isNewLunDiskEnabled;
+
+    public VmDiskPopupWidget(CommonApplicationConstants constants, CommonApplicationResources resources,
+            boolean isLunDiskEnabled) {
+        this.isNewLunDiskEnabled = isLunDiskEnabled;
         initManualWidgets();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         localize(constants);
@@ -241,6 +248,15 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> 
         };
         internalDiskTable.addColumn(aliasColumn, constants.aliasVmDiskTable());
 
+        TextColumnWithTooltip<EntityModel> idColumn = new TextColumnWithTooltip<EntityModel>() {
+            @Override
+            public String getValue(EntityModel object) {
+                DiskImage diskImage = (DiskImage) (((DiskModel) (object.getEntity())).getDisk());
+                return diskImage.getId().toString();
+            }
+        };
+        internalDiskTable.addColumn(idColumn, constants.idVmDiskTable());
+
         DiskSizeColumn<EntityModel> sizeColumn = new DiskSizeColumn<EntityModel>() {
             @Override
             protected Long getRawValue(EntityModel object) {
@@ -300,6 +316,15 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> 
         };
         externalDiskTable.addColumn(lunIdColumn, constants.lunIdSanStorage());
 
+        TextColumnWithTooltip<EntityModel> idColumn = new TextColumnWithTooltip<EntityModel>() {
+            @Override
+            public String getValue(EntityModel object) {
+                LunDisk disk = (LunDisk) (((DiskModel) (object.getEntity())).getDisk());
+                return disk.getId().toString();
+            }
+        };
+        externalDiskTable.addColumn(idColumn, constants.idVmDiskTable());
+
         DiskSizeColumn<EntityModel> sizeColumn = new DiskSizeColumn<EntityModel>() {
             @Override
             protected Long getRawValue(EntityModel object) {
@@ -307,7 +332,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> 
                 return (long) disk.getLun().getDeviceSize();
             }
         };
-        externalDiskTable.addColumn(sizeColumn, constants.devSizeSanStorage()); //$NON-NLS-1$
+        externalDiskTable.addColumn(sizeColumn, constants.devSizeSanStorage());
 
         TextColumnWithTooltip<EntityModel> pathColumn = new TextColumnWithTooltip<EntityModel>() {
             @Override
@@ -389,13 +414,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> 
             @Override
             public void onClick(ClickEvent event) {
                 disk.getIsInternal().setEntity(true);
-
-                if ((Boolean) disk.getAttachDisk().getEntity()) {
-                    revealDiskPanel(disk);
-                }
-                else {
-                    externalDiskPanel.setVisible(false);
-                }
+                revealDiskPanel(disk);
             }
         });
         externalDiskRadioButton.addClickHandler(new ClickHandler() {
@@ -403,14 +422,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> 
             public void onClick(ClickEvent event) {
                 disk.getIsInternal().setEntity(false);
                 revealStorageView(disk);
-
-                if ((Boolean) disk.getAttachDisk().getEntity()) {
-                    revealDiskPanel(disk);
-                }
-                else {
-                    externalDiskPanel.setVisible(true);
-                }
-
+                revealDiskPanel(disk);
             }
         });
         internalDiskRadioButton.setValue(disk.getIsNew() ? true
@@ -432,20 +444,31 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> 
     }
 
     private void revealDiskPanel(final DiskModel disk) {
+        boolean isAttachDisk = (Boolean) disk.getAttachDisk().getEntity();
+        boolean isInternal = internalDiskRadioButton.getValue();
+
+        // Hide tables
         internalDiskTable.setVisible(false);
         externalDiskTable.setVisible(false);
 
-        if (!(Boolean) disk.getAttachDisk().getEntity()) {
-            return;
-        }
+        // Disk type (internal/external) selection panel is visible only when
+        // 'Attach disk' mode is enabled or new LunDisk creation is enabled
+        diskTypePanel.setVisible(isAttachDisk || isNewLunDiskEnabled);
 
-        if (internalDiskRadioButton.getValue()) {
-            internalDiskTable.setVisible(true);
-            internalDiskTable.edit(disk.getInternalAttachableDisks());
+        if (isAttachDisk) {
+            if (isInternal) {
+                // Show and edit internal disk table
+                internalDiskTable.setVisible(true);
+                internalDiskTable.edit(disk.getInternalAttachableDisks());
+            }
+            else {
+                // Show and edit external disk table
+                externalDiskTable.setVisible(true);
+                externalDiskTable.edit(disk.getExternalAttachableDisks());
+            }
         }
         else {
-            externalDiskTable.setVisible(true);
-            externalDiskTable.edit(disk.getExternalAttachableDisks());
+            externalDiskPanel.setVisible(isNewLunDiskEnabled && !isInternal);
         }
     }
 
