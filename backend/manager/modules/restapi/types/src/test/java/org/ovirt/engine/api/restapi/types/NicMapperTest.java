@@ -1,10 +1,13 @@
 package org.ovirt.engine.api.restapi.types;
 
+import org.junit.Test;
 import org.ovirt.engine.api.model.NIC;
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.Networks;
 import org.ovirt.engine.api.model.NicInterface;
+import org.ovirt.engine.api.model.PortMirroring;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
+import org.ovirt.engine.core.compat.Guid;
 
 public class NicMapperTest extends AbstractInvertibleMappingTest<NIC, VmNetworkInterface, VmNetworkInterface> {
 
@@ -15,15 +18,6 @@ public class NicMapperTest extends AbstractInvertibleMappingTest<NIC, VmNetworkI
     @Override
     protected NIC postPopulate(NIC model) {
         model.setInterface(MappingTestHelper.shuffle(NicInterface.class).value());
-        Network network = new Network();
-        network.setName("rhel");
-        Networks networks = new Networks();
-        Network net = new Network();
-        net.setName("rhel");
-        model.getPortMirroring().setNetworks(networks);
-        model.getPortMirroring().getNetworks().getNetworks().add(net);
-        model.setNetwork(network);
-
         return model;
     }
 
@@ -39,20 +33,26 @@ public class NicMapperTest extends AbstractInvertibleMappingTest<NIC, VmNetworkI
         assertNotNull(transform.getMac());
         assertEquals(model.getMac().getAddress(), transform.getMac().getAddress());
         assertEquals(model.getInterface(), transform.getInterface());
+    }
 
-        assertEquals(model.isSetPortMirroring(), transform.isSetPortMirroring());
-        if (model.isSetPortMirroring()) {
-            assertEquals(model.getPortMirroring().isSetNetworks(), transform.getPortMirroring().isSetNetworks());
-            if (model.getPortMirroring().isSetNetworks()) {
-                assertEquals(model.getPortMirroring().getNetworks().isSetNetworks(),
-                            transform.getPortMirroring().getNetworks().isSetNetworks());
-                if (transform.getPortMirroring().getNetworks().isSetNetworks()) {
-                    assertEquals(model.getPortMirroring().getNetworks().getNetworks().size(),
-                                transform.getPortMirroring().getNetworks().getNetworks().size());
-                    assertEquals(model.getPortMirroring().getNetworks().getNetworks().get(0).getName(),
-                                transform.getPortMirroring().getNetworks().getNetworks().get(0).getName());
-                }
-            }
-        }
+    @Test
+    public void testPortMirorringMapping() {
+        NIC nic = new NIC();
+        String netId = Guid.NewGuid().toString();
+        Network network = new Network();
+        network.setId(netId);
+        Networks networks = new Networks();
+        Network net = new Network();
+        network.setId(netId);
+        nic.setPortMirroring(new PortMirroring());
+        nic.getPortMirroring().setNetworks(networks);
+        nic.getPortMirroring().getNetworks().getNetworks().add(net);
+        nic.setNetwork(network);
+        VmNetworkInterface entity = NicMapper.map(nic, null);
+        assertTrue(entity.isPortMirroring());
+
+        nic.getPortMirroring().setNetworks(null);
+        entity = NicMapper.map(nic, null);
+        assertFalse(entity.isPortMirroring());
     }
 }
