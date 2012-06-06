@@ -251,7 +251,8 @@ actions:
       signatures:
       - mandatoryArguments: {}
         optionalArguments:
-          size: xs:int
+          size: xs:int #deprecated, replaced by 'provisioned_size'
+          provisioned_size: xs:int
           disk.interface: xs:string
           disk.format: xs:string
           disk.sparse: xs:boolean
@@ -267,8 +268,9 @@ actions:
     body:
       parameterType: Disk
       signatures:
-      - mandatoryArguments: {size: 'xs:int', disk.interface: 'xs:string', disk.format: 'xs:string'}
+      - mandatoryArguments: {provisioned_size: 'xs:int', disk.interface: 'xs:string', disk.format: 'xs:string'}
         optionalArguments:
+          disk.size: xs:int #deprecated, replaced by 'provisioned_size'
           disk.sparse: xs:boolean
           disk.bootable: xs:boolean
           disk.shareable: xs:boolean
@@ -533,7 +535,8 @@ actions:
       signatures:
       - mandatoryArguments: {}
         optionalArguments:
-          size: xs:int
+          size: xs:int #deprecated, replaced by 'provisioned_size'
+          provisioned_size: xs:int
           disk.interface: xs:string
           disk.format: xs:string
           disk.sparse: xs:boolean
@@ -549,8 +552,9 @@ actions:
     body:
       parameterType: Disk
       signatures:
-      - mandatoryArguments: {size: 'xs:int', disk.interface: 'xs:string', disk.format: 'xs:string'}
+      - mandatoryArguments: {provisioned_size: 'xs:int', disk.interface: 'xs:string', disk.format: 'xs:string'}
         optionalArguments:
+          disk.size: xs:int #deprecated, replaced by 'provisioned_size'
           disk.sparse: xs:boolean
           disk.bootable: xs:boolean
           disk.shareable: xs:boolean

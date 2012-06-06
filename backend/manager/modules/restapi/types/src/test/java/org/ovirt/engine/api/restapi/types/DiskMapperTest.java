@@ -34,7 +34,6 @@ public class DiskMapperTest extends AbstractInvertibleMappingTest<Disk, DiskImag
         assertNotNull(transform);
         assertEquals(model.getId(), transform.getId());
         assertEquals(model.getImageId(), transform.getImageId());
-        assertEquals(model.getSize(), transform.getSize());
         assertEquals(model.getFormat(), transform.getFormat());
         assertEquals(model.getInterface(), transform.getInterface());
         assertEquals(model.isActive(), transform.isActive());
@@ -63,5 +62,22 @@ public class DiskMapperTest extends AbstractInvertibleMappingTest<Disk, DiskImag
         Disk transform = back.map(inverse, null);
         verify(model, transform);
         verifyAll();
+    }
+
+    @Test
+    public void testSizeMapping() throws Exception {
+        Disk model = new Disk();
+        //only <size>
+        model.setSize((long)576576);
+        org.ovirt.engine.core.common.businessentities.Disk entity = DiskMapper.map(model, null);
+        assertEquals(entity.getsize(), 576576);
+        //<size> and <provisioned_size> - the latter should be dominant
+        model.setProvisionedSize((long)888888);
+        entity = DiskMapper.map(model, null);
+        assertEquals(entity.getsize(), 888888);
+        //only <provisioned_size>
+        model.setSize(null);
+        entity = DiskMapper.map(model, null);
+        assertEquals(entity.getsize(), 888888);
     }
 }
