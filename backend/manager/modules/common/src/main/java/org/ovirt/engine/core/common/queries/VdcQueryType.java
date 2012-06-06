@@ -65,7 +65,7 @@ public enum VdcQueryType implements Serializable {
     // VM Templates queries
     IsVmTemlateWithSameNameExist,
     GetVmTemplate(VdcQueryAuthType.User),
-    GetAllVmTemplates,
+    GetAllVmTemplates(VdcQueryAuthType.User),
     GetVmsByVmTemplateGuid,
     GetVmTemplatesDisks(VdcQueryAuthType.User),
     GetVmTemplatesByStoragePoolId,

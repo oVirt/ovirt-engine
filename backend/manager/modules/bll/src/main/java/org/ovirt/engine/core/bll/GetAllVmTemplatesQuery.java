@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class GetAllVmTemplatesQuery<P extends VdcQueryParametersBase> extends QueriesCommandBase<P> {
     public GetAllVmTemplatesQuery(P parameters) {
@@ -13,7 +12,8 @@ public class GetAllVmTemplatesQuery<P extends VdcQueryParametersBase> extends Qu
 
     @Override
     protected void executeQueryCommand() {
-        List<VmTemplate> retval = DbFacade.getInstance().getVmTemplateDAO().getAll();
+        List<VmTemplate> retval =
+                getDbFacade().getVmTemplateDAO().getAll(getUserID(), getParameters().isFiltered());
         for (VmTemplate template : retval) {
             AnonymousMethod1(template);
         }

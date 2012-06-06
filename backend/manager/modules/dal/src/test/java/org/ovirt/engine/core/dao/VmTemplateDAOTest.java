@@ -15,6 +15,8 @@ import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.compat.Guid;
 
 public class VmTemplateDAOTest extends BaseDAOTestCase {
+    private static final int NUMBER_OF_TEMPLATES = 3;
+    private static final int NUMBER_OF_TEMPLATES_FOR_PRIVELEGED_USER = 1;
     private static final Guid EXISTING_TEMPLATE_ID = new Guid("1b85420c-b84c-4f29-997e-0eb674b40b79");
     private static final Guid DELETABLE_TEMPLATE_ID = new Guid("1b85420c-b84c-4f29-997e-0eb674b40b80");
     private static final Guid STORAGE_DOMAIN_ID = new Guid("72e3a666-89e1-4005-a7ca-f7548004a9ab");
@@ -68,6 +70,37 @@ public class VmTemplateDAOTest extends BaseDAOTestCase {
         List<VmTemplate> result = dao.getAll();
 
         assertGetAllResult(result);
+    }
+
+    /**
+     * Asserts that the right collection containing the vm templates is returned for a privileged user with filtering enabled
+     */
+    @Test
+    public void testGetAllWithPermissionsForPriviligedUser() {
+        List<VmTemplate> result = dao.getAll(PRIVILEGED_USER_ID, true);
+
+        assertNotNull(result);
+        assertEquals(NUMBER_OF_TEMPLATES_FOR_PRIVELEGED_USER, result.size());
+        assertEquals(result.iterator().next(), existingTemplate);
+    }
+
+    /**
+     * Asserts that the right collection containing the vm templates is returned for a non privileged user with filtering disabled
+     */
+    @Test
+    public void testGetAllWithPermissionsDisabledForUnpriviligedUser() {
+        List<VmTemplate> result = dao.getAll(UNPRIVILEGED_USER_ID, false);
+        assertGetAllResult(result);
+    }
+
+    /**
+     * Asserts that an empty collection is returned for a non privileged user with filtering enabled
+     */
+    @Test
+    public void testGetAllWithPermissionsForUnpriviligedUser() {
+        List<VmTemplate> result = dao.getAll(UNPRIVILEGED_USER_ID, true);
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
     }
 
     /**
