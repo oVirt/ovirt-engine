@@ -316,7 +316,7 @@ public class VmMapper {
         }
         if (entity.getdisplay_type() != null) {
             model.setDisplay(new Display());
-            model.getDisplay().setType(map(entity.getdisplay_type(), null));
+            model.getDisplay().setType(map(entity.getdefault_display_type(), null));
             model.getDisplay().setAddress(entity.getdisplay_ip());
             Integer displayPort = entity.getdisplay();
             model.getDisplay().setPort(displayPort==null || displayPort==-1 ? null : displayPort);
