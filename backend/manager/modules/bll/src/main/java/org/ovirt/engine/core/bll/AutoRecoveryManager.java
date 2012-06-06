@@ -88,7 +88,9 @@ public class AutoRecoveryManager {
         log.info("Checking autorecoverable " + logMsg);
         final List<T> fails = dao.listFailedAutorecoverables();
         final BackendInternal backend = getBackend();
+        log.info("Autorecovering " + fails.size() + " " + logMsg);
         for (final T fail : fails) {
+            log.info("Autorecovering " + logMsg + ": " + fail.getId());
             final VdcActionParametersBase actionParams = paramsCallback.doWith(fail);
             actionParams.setShouldBeLogged(true);
             backend.runInternalAction(actionType, actionParams);
