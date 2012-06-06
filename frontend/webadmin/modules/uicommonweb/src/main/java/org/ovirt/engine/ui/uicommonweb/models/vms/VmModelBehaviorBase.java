@@ -85,6 +85,16 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         return true;
     }
 
+    private int maxVmsInPool = 1000;
+
+    public int getMaxVmsInPool() {
+        return maxVmsInPool;
+    }
+
+    public void setMaxVmsInPool(int maxVmsInPool) {
+        this.maxVmsInPool = maxVmsInPool;
+    }
+
     protected void updateUserCdImage(Guid storagePoolId) {
         AsyncDataProvider.GetIrsImageList(new AsyncQuery(getModel(), new INewAsyncCallback() {
             @Override
@@ -437,13 +447,25 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                         {
                             model.getNumOfSockets().setEntity(1);
                         }
-                        behavior.PostUpdateNumOfSockets();
+                        behavior.UpdataMaxVmsInPool();
 
                     }
                 }, getModel().getHash()), version);
     }
 
-    public void PostUpdateNumOfSockets()
+    public void UpdataMaxVmsInPool() {
+        AsyncDataProvider.GetMaxVmsInPool(new AsyncQuery(this,
+                new INewAsyncCallback() {
+                    @Override
+                    public void OnSuccess(Object target, Object returnValue) {
+                        VmModelBehaviorBase behavior = (VmModelBehaviorBase) target;
+                        behavior.setMaxVmsInPool((Integer) returnValue);
+                        behavior.UpdateMaxNumOfVmCpus();
+                    }
+                }));
+    }
+
+    public void UpdateMaxNumOfVmCpus()
     {
         VDSGroup cluster = (VDSGroup) getModel().getCluster().getSelectedItem();
         String version = cluster.getcompatibility_version().toString();

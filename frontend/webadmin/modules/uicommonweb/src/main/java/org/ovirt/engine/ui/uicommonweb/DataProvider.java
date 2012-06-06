@@ -2369,19 +2369,6 @@ public final class DataProvider
         return 2047;
     }
 
-    public static int GetMaxVmsInPool()
-    {
-        VdcQueryReturnValue returnValue =
-                GetConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.MaxVmsInPool));
-
-        if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
-        {
-            return (Integer) returnValue.getReturnValue();
-        }
-
-        return 1000;
-    }
-
     public static ArrayList<VM> GetUserVmList(Guid userId, String groupNames)
     {
         VdcQueryReturnValue returnValue =

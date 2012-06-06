@@ -448,6 +448,19 @@ public final class AsyncDataProvider {
                 aQuery);
     }
 
+    public static void GetMaxVmsInPool(AsyncQuery aQuery) {
+        aQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object Convert(Object source, AsyncQuery _asyncQuery)
+            {
+                return source != null ? ((Integer) source).intValue() : 1000;
+            }
+        };
+        GetConfigFromCache(
+                new GetConfigurationValueParameters(ConfigurationValues.MaxVmsInPool),
+                aQuery);
+    }
+
     public static void GetMaxNumOfVmSockets(AsyncQuery aQuery, String version) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override

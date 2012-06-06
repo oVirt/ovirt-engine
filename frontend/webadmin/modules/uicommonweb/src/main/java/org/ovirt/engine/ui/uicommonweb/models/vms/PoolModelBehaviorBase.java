@@ -17,7 +17,6 @@ import org.ovirt.engine.core.compat.KeyValuePairCompat;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
-import org.ovirt.engine.ui.uicommonweb.DataProvider;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -303,7 +302,7 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
         // VmOsType os = (VmOsType) getModel().getOSType().getSelectedItem();
 
         boolean isNew = getModel().getIsNew();
-        int maxAllowedVms = DataProvider.GetMaxVmsInPool(); // TODO: Make async call to get that value.
+        int maxAllowedVms = getMaxVmsInPool();
         int assignedVms = getModel().getAssignedVms().AsConvertible().Integer();
 
         getModel().getNumOfDesktops().ValidateEntity(
