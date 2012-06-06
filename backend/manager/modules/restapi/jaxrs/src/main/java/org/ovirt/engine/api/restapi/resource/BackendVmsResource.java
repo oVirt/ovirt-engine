@@ -194,6 +194,9 @@ public class BackendVmsResource extends
     private Response cloneVmFromTemplate(VmStatic staticVm, VM vm, Guid templateId) {
         AddVmFromTemplateParameters params = new AddVmFromTemplateParameters(staticVm, getDisksToClone(vm.getDisks(), templateId), Guid.Empty);
         params.setVmPayload(getPayload(vm));
+        if (vm.isSetMemoryPolicy() && vm.getMemoryPolicy().isSetBallooning()) {
+            params.setBalloonEnabled(vm.getMemoryPolicy().isBallooning());
+        }
         return performCreation(VdcActionType.AddVmFromTemplate,
                                params,
                                new QueryIdResolver(VdcQueryType.GetVmByVmId, GetVmByVmIdParameters.class));
@@ -235,6 +238,9 @@ public class BackendVmsResource extends
     protected Response addVm(VmStatic staticVm, VM vm, Guid storageDomainId, Guid templateId) {
         VmManagementParametersBase params = new VmManagementParametersBase(staticVm);
         params.setVmPayload(getPayload(vm));
+        if (vm.isSetMemoryPolicy() && vm.getMemoryPolicy().isSetBallooning()) {
+            params.setBalloonEnabled(vm.getMemoryPolicy().isBallooning());
+        }
         params.setStorageDomainId(storageDomainId);
         params.setDiskInfoDestinationMap(getDisksToClone(vm.getDisks(), templateId));
         return performCreation(VdcActionType.AddVm,
@@ -245,6 +251,9 @@ public class BackendVmsResource extends
     protected Response addVmFromScratch(VmStatic staticVm, VM vm, Guid storageDomainId) {
         AddVmFromScratchParameters params = new AddVmFromScratchParameters(staticVm, mapDisks(vm.getDisks()), Guid.Empty);
         params.setVmPayload(getPayload(vm));
+        if (vm.isSetMemoryPolicy() && vm.getMemoryPolicy().isSetBallooning()) {
+            params.setBalloonEnabled(vm.getMemoryPolicy().isBallooning());
+        }
         params.setStorageDomainId(storageDomainId);
         return performCreation(VdcActionType.AddVmFromScratch,
                                params,

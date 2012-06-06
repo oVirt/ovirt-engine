@@ -917,6 +917,7 @@
   <xs:complexType name="MemoryPolicy">
     <xs:sequence>
       <xs:element name="guaranteed" type="xs:long" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="ballooning" type="xs:boolean" minOccurs="0"/>
       <xs:element name="overcommit" type="MemoryOverCommit" minOccurs="0" maxOccurs="1">
         <xs:annotation>
           <xs:appinfo>

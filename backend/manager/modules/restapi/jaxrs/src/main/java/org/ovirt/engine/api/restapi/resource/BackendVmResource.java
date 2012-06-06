@@ -16,6 +16,7 @@ import org.ovirt.engine.api.common.util.LinkHelper;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.CdRom;
 import org.ovirt.engine.api.model.CdRoms;
+import org.ovirt.engine.api.model.MemoryPolicy;
 import org.ovirt.engine.api.model.Statistic;
 import org.ovirt.engine.api.model.Statistics;
 import org.ovirt.engine.api.model.Ticket;
@@ -323,7 +324,20 @@ public class BackendVmResource extends
         parent.addInlineDetails(details, model);
         addStatistics(model, entity, uriInfo, httpHeaders);
         parent.setPayload(model);
+        setBallooning(model);
         return model;
+    }
+
+    protected void setBallooning(VM vm) {
+        Boolean balloonEnabled = getEntity(Boolean.class,
+                VdcQueryType.IsBalloonEnabled,
+                new GetVmByVmIdParameters(new Guid(vm.getId())),
+                null,
+                true);
+        if (!vm.isSetMemoryPolicy()) {
+            vm.setMemoryPolicy(new MemoryPolicy());
+        }
+        vm.getMemoryPolicy().setBallooning(balloonEnabled);
     }
 
     VM addStatistics(VM model, org.ovirt.engine.core.common.businessentities.VM entity, UriInfo ui, HttpHeaders httpHeaders) {
@@ -357,7 +371,9 @@ public class BackendVmResource extends
             if (incoming.isSetPayloads()) {
                 params.setVmPayload(parent.getPayload(incoming));
             }
-
+            if (incoming.isSetMemoryPolicy() && incoming.getMemoryPolicy().isSetBallooning()) {
+               params.setBalloonEnabled(incoming.getMemoryPolicy().isBallooning());
+            }
             return params;
         }
     }

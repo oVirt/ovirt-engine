@@ -113,6 +113,7 @@ public class BackendVmResourceTest
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1);
         setUpGetPayloadExpectations(0);
+        setUpGetBallooningExpectations();
         control.replay();
         verifyModel(resource.get(), 0);
     }
@@ -124,6 +125,7 @@ public class BackendVmResourceTest
             setUriInfo(setUpBasicUriExpectations());
             setUpGetEntityExpectations(1);
             setUpGetPayloadExpectations(0);
+            setUpGetBallooningExpectations();
             control.replay();
 
             VM vm = resource.get();
@@ -158,7 +160,8 @@ public class BackendVmResourceTest
 
         setUpGetPayloadExpectations(0);
         setUpGetPayloadExpectations(0);
-
+        setUpGetBallooningExpectations();
+        setUpGetBallooningExpectations();
         setUriInfo(setUpActionExpectations(VdcActionType.UpdateVm,
                                            VmManagementParametersBase.class,
                                            new String[] {},
@@ -184,6 +187,8 @@ public class BackendVmResourceTest
 
         setUpGetPayloadExpectations(0);
         setUpGetPayloadExpectations(0);
+        setUpGetBallooningExpectations();
+        setUpGetBallooningExpectations();
         setUpGetEntityExpectations("Hosts: name=" + NAMES[1],
                 SearchType.VDS,
                 getHost());
@@ -218,6 +223,8 @@ public class BackendVmResourceTest
 
         setUpGetPayloadExpectations(0);
         setUpGetPayloadExpectations(0);
+        setUpGetBallooningExpectations();
+        setUpGetBallooningExpectations();
         setUriInfo(setUpActionExpectations(VdcActionType.ChangeVMCluster,
                                            ChangeVMClusterParameters.class,
                                            new String[] {"ClusterId", "VmId"},
@@ -259,7 +266,7 @@ public class BackendVmResourceTest
                 getVdsGroupEntity());
 
         setUpGetPayloadExpectations(0);
-
+        setUpGetBallooningExpectations();
         setUriInfo(setUpActionExpectations(VdcActionType.UpdateVm,
                                            VmManagementParametersBase.class,
                                            new String[] {},
@@ -280,6 +287,7 @@ public class BackendVmResourceTest
         setUpGetEntityExpectations(2);
 
         setUpGetPayloadExpectations(0);
+        setUpGetBallooningExpectations();
 
         setUriInfo(setUpBasicUriExpectations());
         control.replay();
@@ -767,6 +775,14 @@ public class BackendVmResourceTest
                                    new String[] { "Id" },
                                    new Object[] { GUIDS[index] },
                                    payload);
+    }
+
+    private void setUpGetBallooningExpectations() throws Exception {
+        setUpGetEntityExpectations(VdcQueryType.IsBalloonEnabled,
+                GetVmByVmIdParameters.class,
+                new String[] { "Id" },
+                new Object[] { GUIDS[0] },
+                true);
     }
 
 }

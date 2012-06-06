@@ -99,6 +99,7 @@ public class BackendVmsResourceTest
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations();
         setUpGetPayloadExpectations(0);
+        setUpGetBallooningExpectations();
         setUpActionExpectations(VdcActionType.RemoveVm, RemoveVmParameters.class, new String[] {
                 "VmId", "Force" }, new Object[] { GUIDS[0], Boolean.FALSE }, true, true);
         verifyRemove(collection.remove(GUIDS[0].toString()));
@@ -109,6 +110,7 @@ public class BackendVmsResourceTest
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations();
         setUpGetPayloadExpectations(0);
+        setUpGetBallooningExpectations();
         setUpActionExpectations(VdcActionType.RemoveVm, RemoveVmParameters.class, new String[] {
             "VmId", "Force" }, new Object[] { GUIDS[0], Boolean.TRUE }, true, true);
         verifyRemove(collection.remove(GUIDS[0].toString(), new Action(){{setForce(true);}}));
@@ -119,6 +121,7 @@ public class BackendVmsResourceTest
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations();
         setUpGetPayloadExpectations(0);
+        setUpGetBallooningExpectations();
         setUpActionExpectations(VdcActionType.RemoveVm, RemoveVmParameters.class, new String[] {
                                 "VmId", "Force" }, new Object[] { GUIDS[0], Boolean.FALSE }, true, true);
         verifyRemove(collection.remove(GUIDS[0].toString(), new Action(){{}}));
@@ -162,6 +165,7 @@ public class BackendVmsResourceTest
     protected void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
         setUpGetEntityExpectations();
         setUpGetPayloadExpectations(0);
+        setUpGetBallooningExpectations();
         setUriInfo(setUpActionExpectations(VdcActionType.RemoveVm,
                                            RemoveVmParameters.class,
                                            new String[] { "VmId", "Force" },
@@ -959,5 +963,13 @@ public class BackendVmsResourceTest
         for (int i=0; i<times; i++) {
             setUpGetPayloadExpectations(i);
         }
+    }
+
+    private void setUpGetBallooningExpectations() throws Exception {
+        setUpGetEntityExpectations(VdcQueryType.IsBalloonEnabled,
+                GetVmByVmIdParameters.class,
+                new String[] { "Id" },
+                new Object[] { GUIDS[0] },
+                true);
     }
 }
