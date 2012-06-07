@@ -95,6 +95,11 @@ public class DirectorySearcher {
                 if (queryExecution.getBaseDN() != null && !queryExecution.getBaseDN().isEmpty()) {
                     setExplicitBaseDN(queryExecution.getBaseDN());
                 }
+
+                log.debug("find() : LDAP filter = " + queryExecution.getFilter() +
+                          ", baseDN = " + queryExecution.getBaseDN() +
+                          ", explicitBaseDN = " + explicitBaseDN + ", domain = " + queryExecution.getDomain() );
+
                 LDAPTemplateWrapper ldapTemplate = prepareLdapConnectionTask.call();
                 if (ldapTemplate == null) {
                     return Collections.emptyList();
