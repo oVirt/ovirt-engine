@@ -382,7 +382,11 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                     statusChanged = true;
                 } else if (domainPoolMap.getstatus() != StorageDomainStatus.Locked
                         && domainPoolMap.getstatus() != data.getstatus()) {
-                    DbFacade.getInstance().getStoragePoolIsoMapDAO().update(data.getStoragePoolIsoMapData());
+                    if (domainPoolMap.getstatus() != StorageDomainStatus.Maintenance
+                            || data.getstatus() != StorageDomainStatus.InActive) {
+                        DbFacade.getInstance().getStoragePoolIsoMapDAO().update(data.getStoragePoolIsoMapData());
+                        statusChanged = true;
+                    }
                     if (data.getstatus() != null && (data.getstatus() == StorageDomainStatus.InActive ||
                             data.getstatus() == StorageDomainStatus.Maintenance)
                             && domainFromDb.getstorage_domain_type() == StorageDomainType.Master) {
@@ -395,7 +399,6 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                                     .storagePoolStatusChanged(pool.getId(), StoragePoolStatus.Maintanance);
                         }
                     }
-                    statusChanged = true;
                 }
                 // if status didn't change and still not active no need to
                 // update dynamic data
