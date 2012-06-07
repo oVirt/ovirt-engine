@@ -1686,14 +1686,14 @@ actions:
     urlparams: 
       search: {context: query, type: 'xs:string', value: query, required: false}
       case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
-    headers: {}
+    headers: {filter: true|false}
 - name: /api/templates/{template:id}|rel=get
   request:
     body:
       parameterType: null
       signatures: []
     urlparams: {}
-    headers: {}
+    headers: {filter: true|false}
 - name: /api/templates/{template:id}|rel=delete
   request:
     body:

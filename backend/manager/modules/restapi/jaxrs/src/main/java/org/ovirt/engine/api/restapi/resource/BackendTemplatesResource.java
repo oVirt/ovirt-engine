@@ -13,7 +13,6 @@ import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.api.resource.TemplateResource;
 import org.ovirt.engine.api.resource.TemplatesResource;
 import org.ovirt.engine.api.restapi.resource.utils.UsbResourceUtils;
-
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmTemplateParametersBase;
@@ -26,6 +25,7 @@ import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetVdsGroupByVdsGroupIdParameters;
 import org.ovirt.engine.core.common.queries.GetVmByVmIdParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -41,7 +41,11 @@ public class BackendTemplatesResource
 
     @Override
     public Templates list() {
-        return mapCollection(getBackendCollection(SearchType.VmTemplate));
+        if (isFiltered())
+            return mapCollection(getBackendCollection(VdcQueryType.GetAllVmTemplates,
+                    new VdcQueryParametersBase()));
+        else
+            return mapCollection(getBackendCollection(SearchType.VmTemplate));
     }
 
     @Override
