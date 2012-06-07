@@ -70,7 +70,7 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
                         defaultQuota.getId(),
                         defaultQuota.getStoragePoolId());
             } else {
-                defaultQuota.setQuotaName(getQutoaHelper().getDefaultQuotaName(getStoragePool()));
+                defaultQuota.setQuotaName(getQutoaHelper().generateDefaultQuotaName(getStoragePool()));
             }
             getQutoaHelper().saveOrUpdateQuotaForUser(defaultQuota,
                     MultiLevelAdministrationHandler.EVERYONE_OBJECT_ID,
