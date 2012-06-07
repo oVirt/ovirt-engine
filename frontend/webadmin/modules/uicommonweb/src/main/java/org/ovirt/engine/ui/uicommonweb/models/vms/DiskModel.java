@@ -695,6 +695,18 @@ public class DiskModel extends Model
                 diskModel.getHost().setItems(hosts);
             }
         }), datacenter.getId());
+
+        AsyncDataProvider.IsShareableDiskEnabled(new AsyncQuery(this, new INewAsyncCallback() {
+            @Override
+            public void OnSuccess(Object target, Object returnValue) {
+                DiskModel diskModel = (DiskModel) target;
+                boolean isShareableDiskEnabled = (Boolean) returnValue;
+
+                diskModel.getIsShareable().setIsChangable(isShareableDiskEnabled);
+                diskModel.getIsShareable().getChangeProhibitionReasons().add(
+                        ConstantsManager.getInstance().getConstants().shareableDiskNotSupported());
+            }
+        }), datacenter.getcompatibility_version().getValue());
     }
 
     private void UpdateWipeAfterDelete(StorageType storageType, EntityModel wipeAfterDeleteModel)

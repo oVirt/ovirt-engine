@@ -1376,10 +1376,13 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("V4")
     String nfsVersion4();
-    
+
     @DefaultStringValue("LUN includes partitions")
     String partitionedLUN();
 
     @DefaultStringValue("DirectLUN disk is not supported by the Data Center Compatibility Version")
     String directLUNDiskNotSupported();
+
+    @DefaultStringValue("Shareable Disk is not supported by the Data Center Compatibility Version")
+    String shareableDiskNotSupported();
 }

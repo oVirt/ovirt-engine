@@ -1844,6 +1844,20 @@ public final class AsyncDataProvider {
         GetConfigFromCache(params, aQuery);
     }
 
+    public static void IsShareableDiskEnabled(AsyncQuery aQuery, String version) {
+        aQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object Convert(Object source, AsyncQuery _asyncQuery)
+            {
+                return source != null ? ((Boolean) source).booleanValue() : true;
+            }
+        };
+        GetConfigurationValueParameters params =
+                new GetConfigurationValueParameters(ConfigurationValues.ShareableDiskEnabled);
+        params.setVersion(version);
+        GetConfigFromCache(params, aQuery);
+    }
+
     public static void GetAllAttachableDisks(AsyncQuery aQuery, Guid storagePoolId) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
