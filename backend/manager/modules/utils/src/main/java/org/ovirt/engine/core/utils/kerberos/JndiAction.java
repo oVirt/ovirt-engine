@@ -101,7 +101,11 @@ public class JndiAction implements PrivilegedAction {
 
                     while (answer.hasMoreElements()) {
                         // Print the objectGUID for the user
-                        userGuid.append(guidFromResults(answer.next()));
+                        String guid = guidFromResults(answer.next());
+                        if (guid == null) {
+                            break;
+                        }
+                        userGuid.append(guid);
                         log.debug("User guid is: " + userGuid.toString());
                         return AuthenticationResult.OK;
                     }
@@ -148,19 +152,24 @@ public class JndiAction implements PrivilegedAction {
     private String guidFromResults(SearchResult sr) throws NamingException {
         String guidString = "";
 
-        if (ldapProviderType.equals(LdapProviderType.ipa)) {
-            String ipaUniqueId = (String) sr.getAttributes().get("ipaUniqueId").get();
-            guidString += ipaUniqueId;
-        } else if (ldapProviderType.equals(LdapProviderType.rhds)) {
-            String nsUniqueId = (String) sr.getAttributes().get("nsUniqueId").get();
-            guidString += RHDSUserContextMapper.getGuidFromNsUniqueId(nsUniqueId);
-        } else if (ldapProviderType.equals(LdapProviderType.itds)) {
-            String uniqueId = (String) sr.getAttributes().get("uniqueIdentifier").get();
-            guidString += uniqueId;
-        } else {
-            Object objectGuid = sr.getAttributes().get("objectGUID").get();
-            byte[] guid = (byte[]) objectGuid;
-            guidString += ((new org.ovirt.engine.core.compat.Guid(guid, false)).toString());
+        try {
+            if (ldapProviderType.equals(LdapProviderType.ipa)) {
+                String ipaUniqueId = (String) sr.getAttributes().get("ipaUniqueId").get();
+                guidString += ipaUniqueId;
+            } else if (ldapProviderType.equals(LdapProviderType.rhds)) {
+                String nsUniqueId = (String) sr.getAttributes().get("nsUniqueId").get();
+                guidString += RHDSUserContextMapper.getGuidFromNsUniqueId(nsUniqueId);
+            } else if (ldapProviderType.equals(LdapProviderType.itds)) {
+                String uniqueId = (String) sr.getAttributes().get("uniqueIdentifier").get();
+                guidString += uniqueId;
+            } else {
+                Object objectGuid = sr.getAttributes().get("objectGUID").get();
+                byte[] guid = (byte[]) objectGuid;
+                guidString += ((new org.ovirt.engine.core.compat.Guid(guid, false)).toString());
+            }
+        } catch (NullPointerException ne) {
+            System.out.println("LDAP connection successful. But no guid found");
+            guidString = null;
         }
         return guidString;
     }
