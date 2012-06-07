@@ -2269,12 +2269,19 @@ public class HostInterfaceListModel extends SearchableListModel
                 && host.getstatus() != VDSStatus.NonResponsive && selectedItems.size() == 1
                 && selectedItem != null && selectedItem.getIsManagement());
 
-        // Setup Networks is only available on 3.1 Clusters
+        // Setup Networks is only available on 3.1 Clusters, all the other commands (except save network configuration) available only on less than 3.1 Clusters
         if (host != null) {
             Version v31 = new Version(3, 1);
             boolean isLessThan31 = host.getvds_group_compatibility_version().compareTo(v31) < 0;
-            UICommand setupNetworksCommand = getSetupNetworksCommand();
-            setupNetworksCommand.setIsExecutionAllowed(!isLessThan31);
+
+            getSetupNetworksCommand().setIsAvailable(!isLessThan31);
+
+            getSaveNetworkConfigCommand().setIsAvailable(true);
+
+            getEditCommand().setIsAvailable(isLessThan31);
+            getBondCommand().setIsAvailable(isLessThan31);
+            getDetachCommand().setIsAvailable(isLessThan31);
+            getEditManagementNetworkCommand().setIsAvailable(isLessThan31) ;
         }
     }
 

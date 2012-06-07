@@ -110,16 +110,17 @@ public class SubTabHostInterfaceView extends AbstractSubTabFormView<VDS, HostLis
             }
         });
         // TODO: separator
-        table.addActionButton(new WebAdminButtonDefinition<HostInterfaceLineModel>(constants.saveNetConfigInterface()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getDetailModel().getSaveNetworkConfigCommand();
-            }
-        });
         table.addActionButton(new WebAdminButtonDefinition<HostInterfaceLineModel>(constants.setupHostNetworksInterface()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getSetupNetworksCommand();
+            }
+        });
+
+        table.addActionButton(new WebAdminButtonDefinition<HostInterfaceLineModel>(constants.saveNetConfigInterface()) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getDetailModel().getSaveNetworkConfigCommand();
             }
         });
 
