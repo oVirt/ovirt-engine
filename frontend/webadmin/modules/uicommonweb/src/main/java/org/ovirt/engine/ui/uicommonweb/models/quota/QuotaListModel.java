@@ -218,6 +218,7 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
                         ArrayList<storage_domains> storageList = (ArrayList<storage_domains>) returnValue;
                         if (storageList == null || storageList.size() == 0) {
                             qModel.getAllDataCenterStorages().setItems(new ArrayList<QuotaStorage>());
+                            qModel.StopProgress();
                             return;
                         }
                         ArrayList<QuotaStorage> quotaStorageList = new ArrayList<QuotaStorage>();
@@ -501,6 +502,7 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
 
                                 if (storageList == null || storageList.size() == 0) {
                                     quotaModel.getAllDataCenterStorages().setItems(new ArrayList<QuotaStorage>());
+                                    quotaModel.StopProgress();
                                     return;
                                 }
                                 ArrayList<QuotaStorage> quotaStorageList = new ArrayList<QuotaStorage>();
