@@ -8,6 +8,7 @@ import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.common.widget.HasAccess;
+import org.ovirt.engine.ui.common.widget.HasEnabled;
 import org.ovirt.engine.ui.common.widget.HasValidation;
 import org.ovirt.engine.ui.common.widget.editor.TakesConstrainedValueEditor;
 import org.ovirt.engine.ui.common.widget.editor.WidgetWithLabelEditor;
@@ -24,7 +25,6 @@ import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.user.client.ui.HasEnabled;
 
 public class UiCommonEditorVisitor<M extends Model> extends EditorVisitor {
 
@@ -203,7 +203,7 @@ public class UiCommonEditorVisitor<M extends Model> extends EditorVisitor {
 
     void onIsChangablePropertyChange(HasEnabled editor, EntityModel model) {
         boolean isChangable = model.getIsChangable();
-        editor.setEnabled(isChangable);
+        editor.setEnabled(isChangable, model.getChangeProhibitionReasons());
     }
 
     void onIsAvailablePropertyChange(HasAccess editor, EntityModel model) {

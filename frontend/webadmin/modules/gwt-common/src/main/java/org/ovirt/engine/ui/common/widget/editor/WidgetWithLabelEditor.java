@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.ovirt.engine.ui.common.widget.AbstractValidatedWidgetWithLabel;
 import org.ovirt.engine.ui.common.widget.HasAccess;
+import org.ovirt.engine.ui.common.widget.HasEnabled;
 import org.ovirt.engine.ui.common.widget.HasValidation;
 
 import com.google.gwt.editor.client.LeafValueEditor;
@@ -15,7 +16,6 @@ import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.Focusable;
-import com.google.gwt.user.client.ui.HasEnabled;
 
 /**
  * Composite editor that exposes {@link AbstractValidatedWidgetWithLabel} functionality for the given sub-Editor.
@@ -69,6 +69,11 @@ public class WidgetWithLabelEditor<T, W extends AbstractValidatedWidgetWithLabel
     @Override
     public void setEnabled(boolean enabled) {
         widgetWithLabel.setEnabled(enabled);
+    }
+
+    @Override
+    public void setEnabled(boolean enabled, List<String> disabilityHints) {
+        widgetWithLabel.setEnabled(enabled, disabilityHints);
     }
 
     @Override

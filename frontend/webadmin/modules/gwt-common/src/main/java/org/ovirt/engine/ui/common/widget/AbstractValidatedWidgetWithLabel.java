@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.common.widget;
 
+import java.util.List;
+
 import org.ovirt.engine.ui.common.idhandler.HasElementId;
 import org.ovirt.engine.ui.common.widget.editor.EditorWidget;
 
@@ -17,7 +19,6 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.HasEnabled;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -181,6 +182,22 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
         } else {
             labelElement.replaceClassName(style.labelEnabled(), style.labelDisabled());
         }
+
+        updateWidgetTitle(null);
+    }
+
+    @Override
+    public void setEnabled(boolean enabled, List<String> disabilityHints) {
+        setEnabled(enabled);
+        updateWidgetTitle(enabled ? null : getDisabilityTitle(disabilityHints));
+    }
+
+    private void updateWidgetTitle(String title) {
+        contentWidget.asWidget().setTitle(title);
+    }
+
+    private String getDisabilityTitle(List<String> disabilityHints) {
+        return disabilityHints != null && disabilityHints.size() > 0 ? disabilityHints.get(0) : null;
     }
 
     public void addContentWidgetStyleName(String styleName) {
