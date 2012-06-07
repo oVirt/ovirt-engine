@@ -669,6 +669,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("$action rebalance")
     String VAR__ACTION__REBALANCE_START();
 
+    @DefaultStringValue("$hostStatus Up")
+    String VAR__HOST_STATUS__UP();
+
     @DefaultStringValue("$type Gluster Volume")
     String VAR__TYPE__GLUSTER_VOLUME();
 
@@ -1110,7 +1113,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Bookmark ID is not valid.")
     String ACTION_TYPE_FAILED_BOOKMARK_INVALID_ID();
 
-    @DefaultStringValue("Cannot ${action} ${type}. Operation can be performed only when Host status is Up.")
+    @DefaultStringValue("Cannot ${action} ${type}. Operation can be performed only when Host status is ${hostStatus}.")
     String ACTION_TYPE_FAILED_VDS_STATUS_ILLEGAL();
 
     @DefaultStringValue("Cannot ${action} ${type}. VM can be migrated only between Hosts in the same Cluster.\n-Please select target Host in the same Cluster to run the VM.")

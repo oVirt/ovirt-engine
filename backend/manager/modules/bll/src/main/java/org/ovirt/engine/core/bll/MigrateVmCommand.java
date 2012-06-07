@@ -186,6 +186,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
                 reasons.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_RUNNING.toString());
             } else if (getDestinationVds() != null && getDestinationVds().getstatus() != VDSStatus.Up) {
                 retValue = false;
+                reasons.add(VdcBllMessages.VAR__HOST_STATUS__UP.toString());
                 reasons.add(VdcBllMessages.ACTION_TYPE_FAILED_VDS_STATUS_ILLEGAL.toString());
             }
 

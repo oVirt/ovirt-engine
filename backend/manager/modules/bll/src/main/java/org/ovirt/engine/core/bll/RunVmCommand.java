@@ -728,6 +728,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T> {
                                 if (vds.getstatus() != VDSStatus.Up) {
                                     retValue = false;
                                     if (message != null) {
+                                        message.add(VdcBllMessages.VAR__HOST_STATUS__UP.toString());
                                         message.add(VdcBllMessages.ACTION_TYPE_FAILED_VDS_STATUS_ILLEGAL.toString());
                                     }
                                 }
