@@ -9,7 +9,6 @@ import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.UpdateVmDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmDiskOperatinParameterBase;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Disk;
@@ -49,9 +48,7 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.LunModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
 @SuppressWarnings("unused")
@@ -682,16 +679,19 @@ public class VmDiskListModel extends SearchableListModel
             actionType = VdcActionType.UpdateVmDisk;
         }
 
-        Frontend.RunAction(actionType, parameters,
-                new IFrontendActionAsyncCallback() {
+        ArrayList<VdcActionParametersBase> paramerterList = new ArrayList<VdcActionParametersBase>();
+        paramerterList.add(parameters);
+
+        Frontend.RunMultipleAction(actionType, paramerterList,
+                new IFrontendMultipleActionAsyncCallback() {
                     @Override
-                    public void Executed(FrontendActionAsyncResult result) {
-
+                    public void Executed(FrontendMultipleActionAsyncResult result) {
                         VmDiskListModel localModel = (VmDiskListModel) result.getState();
-                        localModel.PostOnSaveInternal(result.getReturnValue());
-
+                        localModel.getWindow().StopProgress();
+                        Cancel();
                     }
-                }, this);
+                },
+                this);
     }
 
     private void OnAttachDisks()
@@ -724,18 +724,6 @@ public class VmDiskListModel extends SearchableListModel
                     }
                 },
                 this);
-    }
-
-    public void PostOnSaveInternal(VdcReturnValueBase returnValue)
-    {
-        DiskModel model = (DiskModel) getWindow();
-
-        model.StopProgress();
-
-        if (returnValue != null && returnValue.getSucceeded())
-        {
-            Cancel();
-        }
     }
 
     private void Plug(boolean plug) {

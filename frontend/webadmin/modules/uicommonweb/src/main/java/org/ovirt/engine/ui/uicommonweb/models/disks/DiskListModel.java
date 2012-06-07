@@ -8,7 +8,6 @@ import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.UpdateVmDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmDiskOperatinParameterBase;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
@@ -48,9 +47,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.MoveDiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.RemoveDiskModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
 @SuppressWarnings("unused")
@@ -312,13 +309,19 @@ public class DiskListModel extends ListWithDetailsModel
 
         model.StartProgress(null);
 
-        Frontend.RunAction(actionType, parameters, new IFrontendActionAsyncCallback() {
-            @Override
-            public void Executed(FrontendActionAsyncResult result) {
-                DiskListModel localModel = (DiskListModel) result.getState();
-                localModel.PostOnSaveInternal(result.getReturnValue());
-            }
-        }, this);
+        ArrayList<VdcActionParametersBase> paramerterList = new ArrayList<VdcActionParametersBase>();
+        paramerterList.add(parameters);
+
+        Frontend.RunMultipleAction(actionType, paramerterList,
+                new IFrontendMultipleActionAsyncCallback() {
+                    @Override
+                    public void Executed(FrontendMultipleActionAsyncResult result) {
+                        DiskListModel localModel = (DiskListModel) result.getState();
+                        localModel.getWindow().StopProgress();
+                        Cancel();
+                    }
+                },
+                this);
     }
 
     private void OnAttachDisks()
@@ -351,18 +354,6 @@ public class DiskListModel extends ListWithDetailsModel
                     }
                 },
                 this);
-    }
-
-    public void PostOnSaveInternal(VdcReturnValueBase returnValue)
-    {
-        DiskModel model = (DiskModel) getWindow();
-
-        model.StopProgress();
-
-        if (returnValue != null && returnValue.getSucceeded())
-        {
-            Cancel();
-        }
     }
 
     private void Move()
