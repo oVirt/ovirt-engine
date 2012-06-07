@@ -37,7 +37,6 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
-@SuppressWarnings("unused")
 public class TemplateBackupModel extends ManageBackupModel
 {
 
@@ -286,29 +285,36 @@ public class TemplateBackupModel extends ManageBackupModel
                                 (ArrayList<VdcReturnValueBase>) result.getReturnValue();
                         if (retVals != null && templateBackupModel.getSelectedItems().size() == retVals.size())
                         {
-                            ConfirmationModel confirmModel = new ConfirmationModel();
-                            templateBackupModel.setConfirmWindow(confirmModel);
-                            confirmModel.setTitle(ConstantsManager.getInstance().getConstants().importTemplatesTitle());
-                            confirmModel.setHashName("import_template"); //$NON-NLS-1$
+
                             String importedTemplates = ""; //$NON-NLS-1$
                             int counter = 0;
+                            boolean toShowConfirmWindow = false;
                             for (Object a : templateBackupModel.getSelectedItems())
                             {
                                 VmTemplate template = (VmTemplate) a;
-                                if (retVals.get(counter) != null && retVals.get(counter).getSucceeded()) {
+                                if (retVals.get(counter) != null && retVals.get(counter).getCanDoAction()) {
                                     importedTemplates += template.getname() + ", "; //$NON-NLS-1$
+                                    toShowConfirmWindow = true;
                                 }
                                 counter++;
                             }
-                            StringHelper.trimEnd(importedTemplates.trim(), ',');
-                            confirmModel.setMessage(ConstantsManager.getInstance()
-                                    .getMessages()
-                                    .importProcessHasBegunForTemplates(importedTemplates));
-                            UICommand tempVar = new UICommand("CancelConfirm", templateBackupModel); //$NON-NLS-1$
-                            tempVar.setTitle(ConstantsManager.getInstance().getConstants().close());
-                            tempVar.setIsDefault(true);
-                            tempVar.setIsCancel(true);
-                            confirmModel.getCommands().add(tempVar);
+                            if (toShowConfirmWindow) {
+                                ConfirmationModel confirmModel = new ConfirmationModel();
+                                templateBackupModel.setConfirmWindow(confirmModel);
+                                confirmModel.setTitle(ConstantsManager.getInstance()
+                                        .getConstants()
+                                        .importTemplatesTitle());
+                                confirmModel.setHashName("import_template"); //$NON-NLS-1$
+                                StringHelper.trimEnd(importedTemplates.trim(), ',');
+                                confirmModel.setMessage(ConstantsManager.getInstance()
+                                        .getMessages()
+                                        .importProcessHasBegunForTemplates(importedTemplates));
+                                UICommand tempVar = new UICommand("CancelConfirm", templateBackupModel); //$NON-NLS-1$
+                                tempVar.setTitle(ConstantsManager.getInstance().getConstants().close());
+                                tempVar.setIsDefault(true);
+                                tempVar.setIsCancel(true);
+                                confirmModel.getCommands().add(tempVar);
+                            }
                         }
 
                     }
