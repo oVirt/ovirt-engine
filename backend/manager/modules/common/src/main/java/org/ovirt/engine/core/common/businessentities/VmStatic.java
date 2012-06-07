@@ -121,6 +121,7 @@ public class VmStatic extends VmBase {
                 vmStatic.getQuotaId());
         name = vmStatic.getvm_name();
         vmt_guid = vmStatic.getvmt_guid();
+        setCustomProperties(vmStatic.getCustomProperties());
         setnum_of_monitors(vmStatic.getnum_of_monitors());
         setis_initialized(vmStatic.getis_initialized());
         setdefault_display_type(vmStatic.getdefault_display_type());
