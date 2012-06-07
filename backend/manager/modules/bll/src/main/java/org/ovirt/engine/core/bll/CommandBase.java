@@ -1048,8 +1048,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             ThreadPoolUtil.execute(new Runnable() {
                 @Override
                 public void run() {
-                    String threadName = Thread.currentThread().getName();
-                    Thread.currentThread().setName("Rollback-" + threadName);
+                    log.infoFormat("Rollback for command: {0}.", CommandBase.this.getClass().getName());
                     TransactionSupport.executeInNewTransaction(new TransactionMethod<Object>() {
                         @Override
                         public Object runInTransaction() {
