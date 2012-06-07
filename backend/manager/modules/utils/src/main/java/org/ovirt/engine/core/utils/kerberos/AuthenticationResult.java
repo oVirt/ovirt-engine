@@ -28,7 +28,7 @@ public enum AuthenticationResult {
             "USER_FAILED_TO_AUTHENTICATE_DNS_ERROR",
             17),
     CONNECTION_TIMED_OUT(
-            "Authentication Failed. Connection to Active-Directory server has timed out. Please contact your system administrator",
+            "Authentication Failed. Connection to LDAP server has timed out. Please contact your system administrator",
             "USER_FAILED_TO_AUTHENTICATE_CONNECTION_TIMED_OUT",
             18),
     WRONG_REALM(
