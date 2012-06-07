@@ -338,6 +338,8 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
                 Backend.getInstance().runInternalAction(VdcActionType.AddImageFromScratch,
                         parameters,
                         ExecutionHandler.createDefaultContexForTasks(getExecutionContext(), getLock()));
+        // Setting lock to null because the lock is released in the child command
+        setLock(null);
         getReturnValue().getTaskIdList().addAll(tmpRetValue.getInternalTaskIdList());
         if (tmpRetValue.getActionReturnValue() != null) {
             DiskImage diskImage = (DiskImage) tmpRetValue.getActionReturnValue();
