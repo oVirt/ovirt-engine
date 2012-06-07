@@ -16,6 +16,7 @@ public enum VdcBllMessages {
     VAR__TYPE__ROLE,
     VAR__TYPE__INTERFACE,
     VAR__TYPE__NETWORK,
+    VAR__TYPE__NETWORKS,
     VAR__TYPE__VM_DISK,
     VAR__TYPE__BOOKMARK,
     VAR__TYPE__VM_TICKET,
@@ -53,6 +54,7 @@ public enum VdcBllMessages {
     VAR__ACTION__EJECT_CD,
     VAR__ACTION__ALLOCATE_AND_RUN,
     VAR__ACTION__SET,
+    VAR__ACTION__SETUP,
     VAR__ACTION__RESET,
     VAR__ACTION__HOT_PLUG,
     VAR__ACTION__HOT_UNPLUG,
@@ -62,6 +64,7 @@ public enum VdcBllMessages {
 
     // Host statuses replacements
     VAR__HOST_STATUS__UP,
+    VAR__HOST_STATUS__UP_MAINTENANCE_OR_NON_OPERATIONAL,
 
     ACTION_LIST_CANNOT_BE_EMPTY,
     ACTION_TYPE_FAILED_VM_MAX_RESOURCE_EXEEDED,

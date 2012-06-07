@@ -1,13 +1,13 @@
 package org.ovirt.engine.core.bll;
 
-import static org.ovirt.engine.core.common.businessentities.VDSStatus.Maintenance;
-
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import org.ovirt.engine.core.common.action.SetupNetworksParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network;
 import org.ovirt.engine.core.common.config.Config;
@@ -28,12 +28,20 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 @NonTransactiveCommandAttribute
 public class SetupNetworksCommand<T extends SetupNetworksParameters> extends VdsCommand<T> {
 
+    private static final List<VDSStatus> SUPPORTED_HOST_STATUSES =
+            Arrays.asList(VDSStatus.Maintenance, VDSStatus.Up, VDSStatus.NonOperational);
     private static Log log = LogFactory.getLog(SetupNetworksCommand.class);
     private SetupNetworksHelper helper;
 
     public SetupNetworksCommand(T parameters) {
         super(parameters);
         setVdsId(parameters.getVdsId());
+    }
+
+    @Override
+    protected void setActionMessageParameters() {
+        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__SETUP);
+        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__NETWORKS);
     }
 
     @Override
@@ -45,8 +53,9 @@ public class SetupNetworksCommand<T extends SetupNetworksParameters> extends Vds
             return false;
         }
 
-        if (vds.getstatus() != Maintenance) {
-            addCanDoActionMessage(VdcBllMessages.VDS_STATUS_NOT_VALID_FOR_UPDATE);
+        if (!SUPPORTED_HOST_STATUSES.contains(vds.getstatus())) {
+            addCanDoActionMessage(VdcBllMessages.VAR__HOST_STATUS__UP_MAINTENANCE_OR_NON_OPERATIONAL);
+            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VDS_STATUS_ILLEGAL);
             return false;
         }
 

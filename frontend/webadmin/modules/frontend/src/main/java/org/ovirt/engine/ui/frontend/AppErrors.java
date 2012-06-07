@@ -495,6 +495,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("$type Host")
     String VAR__TYPE__HOST();
 
+    @DefaultStringValue("$type Networks")
+    String VAR__TYPE__NETWORKS();
+
     @DefaultStringValue("$type Network")
     String VAR__TYPE__NETWORK();
 
@@ -627,6 +630,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("$action confirm 'Host has been rebooted'")
     String VAR__ACTION__MANUAL_FENCE();
 
+    @DefaultStringValue("$action setup")
+    String VAR__ACTION__SETUP();
+
     @DefaultStringValue("$action set")
     String VAR__ACTION__SET();
 
@@ -671,6 +677,9 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("$hostStatus Up")
     String VAR__HOST_STATUS__UP();
+
+    @DefaultStringValue("$hostStatus Up, Maintenance or Non operational")
+    String VAR__HOST_STATUS__UP_MAINTENANCE_OR_NON_OPERATIONAL();
 
     @DefaultStringValue("$type Gluster Volume")
     String VAR__TYPE__GLUSTER_VOLUME();
