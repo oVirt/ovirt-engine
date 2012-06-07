@@ -85,6 +85,14 @@ public class VolumeModel extends Model {
         getDataCenter().setIsAvailable(ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly);
 
         setCluster(new ListModel());
+        getCluster().getSelectedItemsChangedEvent().addListener(new IEventListener() {
+
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                clusterSelectedItemChanged();
+            }
+        });
+
         setName(new EntityModel());
 
         setTypeList(new ListModel());
@@ -263,6 +271,7 @@ public class VolumeModel extends Model {
         {
             return;
         }
+
         VolumeBrickModel volumeBrickModel = new VolumeBrickModel();
 
         volumeBrickModel.getVolumeType().setEntity(getTypeList().getSelectedItem());
@@ -313,7 +322,7 @@ public class VolumeModel extends Model {
 
         command = new UICommand("Cancel", this); //$NON-NLS-1$
         command.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        command.setIsDefault(true);
+        command.setIsCancel(true);
         volumeBrickModel.getCommands().add(command);
 
     }
@@ -392,6 +401,18 @@ public class VolumeModel extends Model {
         }
 
         return getName().getIsValid() && validTransportTypes;
+    }
+
+    private void clusterSelectedItemChanged()
+    {
+        if (getCluster().getSelectedItem() != null)
+        {
+            getAddBricksCommand().setIsExecutionAllowed(true);
+        }
+        else
+        {
+            getAddBricksCommand().setIsExecutionAllowed(false);
+        }
     }
 
     private void dataCenter_SelectedItemChanged()

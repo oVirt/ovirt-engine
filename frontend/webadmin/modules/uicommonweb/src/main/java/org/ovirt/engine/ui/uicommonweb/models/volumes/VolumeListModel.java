@@ -5,6 +5,7 @@ import java.util.Arrays;
 
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.gluster.CreateGlusterVolumeParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeActionParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeRebalanceParameters;
@@ -216,7 +217,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
                 innerVolumeModel.getCommands().add(command);
                 command = new UICommand("Cancel", volumeListModel);  //$NON-NLS-1$
                 command.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-                command.setIsDefault(true);
+                command.setIsCancel(true);
                 innerVolumeModel.getCommands().add(command);
             }
         };
@@ -526,11 +527,22 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
 
             @Override
             public void Executed(FrontendActionAsyncResult result) {
-                VolumeModel localModel = (VolumeModel) result.getState();
-                localModel.StopProgress();
-                cancel();
+                VolumeListModel localModel = (VolumeListModel) result.getState();
+                localModel.postOnCreateVolume(result.getReturnValue());
             }
-        }, volumeModel);
+        }, this);
+    }
+
+    public void postOnCreateVolume(VdcReturnValueBase returnValue)
+    {
+        VolumeModel model = (VolumeModel) getWindow();
+
+        model.StopProgress();
+
+        if (returnValue != null && returnValue.getSucceeded())
+        {
+            cancel();
+        }
     }
 
     @Override

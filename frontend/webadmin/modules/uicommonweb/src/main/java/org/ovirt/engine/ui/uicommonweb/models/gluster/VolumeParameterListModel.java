@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.gluster;
 import java.util.ArrayList;
 
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeOptionParameters;
 import org.ovirt.engine.core.common.action.gluster.ResetGlusterVolumeOptionsParameters;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
@@ -127,7 +128,7 @@ public class VolumeParameterListModel extends SearchableListModel {
                 innerParameterModel.getCommands().add(command);
                 command = new UICommand("OnCancel", volumeParameterListModel); //$NON-NLS-1$
                 command.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-                command.setIsDefault(true);
+                command.setIsCancel(true);
                 innerParameterModel.getCommands().add(command);
             }
         };
@@ -153,16 +154,30 @@ public class VolumeParameterListModel extends SearchableListModel {
         option.setKey(((GlusterVolumeOptionInfo) model.getKeyList().getSelectedItem()).getKey());
         option.setValue((String) model.getValue().getEntity());
 
+        model.StartProgress(null);
+
         Frontend.RunAction(VdcActionType.SetGlusterVolumeOption,
                 new GlusterVolumeOptionParameters(option),
                 new IFrontendActionAsyncCallback() {
 
                     @Override
                     public void Executed(FrontendActionAsyncResult result) {
-
+                        VolumeParameterListModel localModel = (VolumeParameterListModel) result.getState();
+                        localModel.postOnSetParameter(result.getReturnValue());
                     }
-                });
-        setWindow(null);
+                }, this);
+    }
+
+    public void postOnSetParameter(VdcReturnValueBase returnValue)
+    {
+        VolumeParameterModel model = (VolumeParameterModel) getWindow();
+
+        model.StopProgress();
+
+        if (returnValue != null && returnValue.getSucceeded())
+        {
+            cancel();
+        }
     }
 
     private void cancel() {
@@ -216,7 +231,7 @@ public class VolumeParameterListModel extends SearchableListModel {
                 innerParameterModel.getCommands().add(command);
                 command = new UICommand("OnCancel", volumeParameterListModel); //$NON-NLS-1$
                 command.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-                command.setIsDefault(true);
+                command.setIsCancel(true);
                 innerParameterModel.getCommands().add(command);
             }
         };

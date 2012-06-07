@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeBricksActionParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeRemoveBricksParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeReplaceBrickActionParameters;
@@ -188,7 +189,7 @@ public class VolumeBrickListModel extends SearchableListModel {
 
         command = new UICommand("Cancel", this); //$NON-NLS-1$
         command.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        command.setIsDefault(true);
+        command.setIsCancel(true);
         volumeBrickModel.getCommands().add(command);
     }
 
@@ -243,11 +244,27 @@ public class VolumeBrickListModel extends SearchableListModel {
 
             @Override
             public void Executed(FrontendActionAsyncResult result) {
-                VolumeBrickModel localModel = (VolumeBrickModel) result.getState();
-                localModel.StopProgress();
-                setWindow(null);
+                VolumeBrickListModel localModel = (VolumeBrickListModel) result.getState();
+                localModel.postOnAddBricks(result.getReturnValue());
+
             }
-        }, volumeBrickModel);
+        }, this);
+    }
+
+    public void postOnAddBricks(VdcReturnValueBase returnValue)
+    {
+        VolumeBrickModel model = (VolumeBrickModel) getWindow();
+
+        model.StopProgress();
+
+        if (returnValue != null && returnValue.getSucceeded())
+        {
+            cancel();
+        }
+    }
+
+    public void cancel() {
+        setWindow(null);
     }
 
     private void removeBricks()
