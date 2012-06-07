@@ -494,4 +494,19 @@ public class QuotaDAODbFacadeImpl extends BaseDAODbFacade implements QuotaDAO {
     public List<Quota> getAllWithQuery(String query) {
         return new SimpleJdbcTemplate(jdbcTemplate).query(query, getQuotaMetaDataFromResultSet());
     }
+
+    @Override
+    public String getDefaultQuotaName(String quotaName) {
+        MapSqlParameterSource quotaParameterSource = getCustomMapSqlParameterSource();
+        quotaParameterSource.addValue("quota_name", quotaName);
+        return getCallsHandler().executeRead("generate_quota_default_name",
+                new ParameterizedRowMapper<String>() {
+
+                    @Override
+                    public String mapRow(ResultSet rs, int rowNum) throws SQLException {
+                        return rs.getString(1);
+                    }
+                },
+                        quotaParameterSource);
+    }
 }

@@ -168,4 +168,13 @@ public interface QuotaDAO extends DAO, SearchDAO<Quota> {
      * not the usage data.
      */
     public List<Quota> getAllRelevantQuotasForVdsGroup(Guid vdsGroupId);
+
+    /**
+     * generate a new default quota name according to the available default quota name:
+     * for input A, and existing quota names A, A1, A2, the function will return A3
+     * for input A, and existing quota names B the function will return A
+     * @param quotaName
+     * @return new default quota name
+     */
+    public String getDefaultQuotaName(String quotaName);
 }

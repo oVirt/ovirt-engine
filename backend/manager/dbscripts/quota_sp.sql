@@ -237,3 +237,22 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
+Create or replace FUNCTION generate_quota_default_name(v_quota_name varchar)
+RETURNS varchar
+    AS $function$
+    DECLARE
+    v_name varchar;
+BEGIN
+    SELECT v_quota_name || coalesce (cast(max(cast (CASE WHEN length(suffix) > 0 THEN suffix ELSE '0' END AS integer)) + 1 AS varchar), '')
+    INTO v_name
+    from (
+        SELECT replace(quota_name, v_quota_name,'') AS suffix
+        FROM quota
+        WHERE quota_name LIKE v_quota_name || '%'
+    ) AS inner_quota_query;
+
+return v_name;
+
+END; $function$
+LANGUAGE plpgsql;
+

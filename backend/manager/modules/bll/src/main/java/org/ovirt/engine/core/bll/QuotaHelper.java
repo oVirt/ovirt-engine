@@ -172,7 +172,7 @@ public class QuotaHelper {
         Guid quotaId = Guid.NewGuid();
         quota.setId(quotaId);
         quota.setStoragePoolId(storagePool.getId());
-        quota.setQuotaName(getDefaultQuotaName(storagePool));
+        quota.setQuotaName(generateDefaultQuotaName(storagePool));
         quota.setDescription("Automatic generated Quota for Data Center " + storagePool.getname());
         quota.setThresholdVdsGroupPercentage(getQuotaThresholdVdsGroup());
         quota.setThresholdStoragePercentage(getQuotaThresholdStorage());
@@ -193,6 +193,16 @@ public class QuotaHelper {
         quota.setGlobalQuotaVdsGroup(quotaVdsGroup);
 
         return quota;
+    }
+
+    /**
+     * generate a new name for default quota that not exists in the system
+     * @param storagePool
+     * @return new default quota name name
+     */
+    private String generateDefaultQuotaName(storage_pool storagePool) {
+        String quotaName = getDefaultQuotaName(storagePool.getname());
+        return getQuotaDAO().getDefaultQuotaName(quotaName);
     }
 
     public String getDefaultQuotaName(storage_pool storagePool) {
