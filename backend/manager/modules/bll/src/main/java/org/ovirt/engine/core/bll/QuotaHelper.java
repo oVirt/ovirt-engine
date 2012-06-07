@@ -198,9 +198,9 @@ public class QuotaHelper {
     /**
      * generate a new name for default quota that not exists in the system
      * @param storagePool
-     * @return new default quota name name
+     * @return new unused default quota name
      */
-    private String generateDefaultQuotaName(storage_pool storagePool) {
+    public String generateDefaultQuotaName(storage_pool storagePool) {
         String quotaName = getDefaultQuotaName(storagePool.getname());
         return getQuotaDAO().getDefaultQuotaName(quotaName);
     }

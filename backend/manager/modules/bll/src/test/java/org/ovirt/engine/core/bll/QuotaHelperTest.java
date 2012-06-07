@@ -115,6 +115,8 @@ public class QuotaHelperTest {
     @Test
     public void testGetDefaultQuotaForDCWithDefaultQuota() throws Exception {
         when(quotaDAO.getDefaultQuotaByStoragePoolId(storagePoolUUID)).thenReturn(mockGeneralStorageQuota());
+        String defaultQuotaName = quotaHelper.getDefaultQuotaName(storagePool.getname());
+        when(quotaHelper.generateDefaultQuotaName(storagePool)).thenReturn(defaultQuotaName);
         Quota quotaUnlimited = quotaHelper.getUnlimitedQuota(mockStoragePool(), true);
         assertQuotaUnlimited(quotaUnlimited);
         assertQuotaUnlimitedName(quotaUnlimited);
@@ -122,6 +124,8 @@ public class QuotaHelperTest {
 
     @Test
     public void testGetDefaultQuotaForDCWithDefaultQuotaWithNoReuse() throws Exception {
+        String defaultQuotaName = quotaHelper.getDefaultQuotaName(storagePool.getname());
+        when(quotaHelper.generateDefaultQuotaName(storagePool)).thenReturn(defaultQuotaName);
         when(quotaDAO.getDefaultQuotaByStoragePoolId(storagePoolUUID)).thenReturn(mockGeneralStorageQuota());
         Quota quotaUnlimited = quotaHelper.getUnlimitedQuota(mockStoragePool(), true, false).getFirst();
         assertQuotaUnlimited(quotaUnlimited);
@@ -137,6 +141,8 @@ public class QuotaHelperTest {
 
     @Test
     public void testGetDefaultQuotaToDCWithoutDefaultQuota() throws Exception {
+        String defaultQuotaName = quotaHelper.getDefaultQuotaName(storagePool.getname());
+        when(quotaHelper.generateDefaultQuotaName(storagePool)).thenReturn(defaultQuotaName);
         Quota quotaUnlimited = quotaHelper.getUnlimitedQuota(mockStoragePool(), true);
         assertQuotaUnlimited(quotaUnlimited);
         assertQuotaUnlimitedName(quotaUnlimited);
@@ -144,6 +150,8 @@ public class QuotaHelperTest {
 
     @Test
     public void testGetDefaultQuotaToDCWithoutDefaultQuotaWithNoReuse() throws Exception {
+        String defaultQuotaName = quotaHelper.getDefaultQuotaName(storagePool.getname());
+        when(quotaHelper.generateDefaultQuotaName(storagePool)).thenReturn(defaultQuotaName);
         Quota quotaUnlimited = quotaHelper.getUnlimitedQuota(mockStoragePool(), true, false).getFirst();
         assertQuotaUnlimited(quotaUnlimited);
         assertQuotaUnlimitedName(quotaUnlimited);
