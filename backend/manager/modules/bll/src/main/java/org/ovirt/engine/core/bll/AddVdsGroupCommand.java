@@ -106,8 +106,10 @@ public class AddVdsGroupCommand<T extends VdsGroupOperationParameters> extends
         if (DbFacade.getInstance().getVdsGroupDAO().getByName(getVdsGroup().getname()) != null) {
             addCanDoActionMessage(VdcBllMessages.VDS_GROUP_CANNOT_DO_ACTION_NAME_IN_USE);
             result = false;
-        } else if (!CpuFlagsManagerHandler.CheckIfCpusExist(getVdsGroup().getcpu_name(),
-                getVdsGroup().getcompatibility_version())) {
+        } else if (getVdsGroup().supportsVirtService()
+                && !CpuFlagsManagerHandler.CheckIfCpusExist(getVdsGroup().getcpu_name(),
+                        getVdsGroup().getcompatibility_version())) {
+            // cpu check required only if the cluster supports Virt service
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_CPU_NOT_FOUND);
             result = false;
         } else if (!VersionSupport.checkVersionSupported(getVdsGroup().getcompatibility_version()
