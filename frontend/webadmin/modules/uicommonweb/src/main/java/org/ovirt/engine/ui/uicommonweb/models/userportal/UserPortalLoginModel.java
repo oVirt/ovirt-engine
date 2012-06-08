@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.userportal;
 
-import org.ovirt.engine.core.common.VdcObjectType;
+import java.util.ArrayList;
+
 import org.ovirt.engine.core.common.action.ChangeUserPasswordParameters;
 import org.ovirt.engine.core.common.action.LoginUserParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -25,9 +26,6 @@ import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
-import java.util.ArrayList;
-
-@SuppressWarnings("unused")
 public class UserPortalLoginModel extends LoginModel
 {
 
@@ -97,7 +95,6 @@ public class UserPortalLoginModel extends LoginModel
 
     public static final String ENGINEUserRoleId = "00000000-0000-0000-0001-000000000001"; //$NON-NLS-1$
     public Guid Everyone = new Guid("eee00000-0000-0000-0000-123456789eee"); //$NON-NLS-1$
-    public Guid Blank = new Guid("00000000-0000-0000-0000-000000000000"); //$NON-NLS-1$
     public Guid UserTemplateBasedVM = new Guid("def00009-0000-0000-0000-def000000009"); //$NON-NLS-1$
 
     private VdcUser privateLoggedUser;
@@ -313,20 +310,11 @@ public class UserPortalLoginModel extends LoginModel
 
                         ArrayList<permissions> permissions = (ArrayList<permissions>) returnValue;
                         ArrayList<Guid> roleIdList = new ArrayList<Guid>();
-                        boolean everyoneBlankPermission = false;
-                        for (permissions permission : permissions)
-                        {
-                            if (!everyoneBlankPermission)
-                            {
-                                everyoneBlankPermission =
-                                        permission.getad_element_id().getValue().equals(Everyone)
-                                                && permission.getObjectId().getValue().equals(Blank)
-                                                && permission.getrole_id().getValue().equals(UserTemplateBasedVM)
-                                                && permission.getObjectType().equals(VdcObjectType.VmTemplate);
-                                if (everyoneBlankPermission)
-                                {
-                                    continue;
-                                }
+                        for (permissions permission : permissions) {
+
+                            // ignore ALL Everyone/UserPoralBasedVM permissions
+                            if (isEveyoneUserPortalBasedVmPermission(permission)) {
+                                continue;
                             }
                             if (!roleIdList.contains(permission.getrole_id()))
                             {
@@ -345,6 +333,11 @@ public class UserPortalLoginModel extends LoginModel
                             CheckIsENGINEUser(loginModel1);
                         }
 
+                    }
+
+                    private boolean isEveyoneUserPortalBasedVmPermission(permissions permission) {
+                        return permission.getad_element_id().getValue().equals(Everyone)
+                                && permission.getrole_id().getValue().equals(UserTemplateBasedVM);
                     }
                 }), loginModel.getLoggedUser().getUserId());
     }
