@@ -47,7 +47,7 @@ public class LUNs implements Serializable {
         result = prime * result + ((vendorId == null) ? 0 : vendorId.hashCode());
         result = prime * result + ((volumeGroupId == null) ? 0 : volumeGroupId.hashCode());
         result = prime * result + (partitioned ? 1231 : 1237);
-        result = prime * result + ((diskId == null) ? 0 : storageDomainId.hashCode());
+        result = prime * result + ((diskId == null) ? 0 : diskId.hashCode());
         result = prime * result + ((diskAlias == null) ? 0 : diskAlias.hashCode());
         result = prime * result + ((storageDomainId == null) ? 0 : storageDomainId.hashCode());
         result = prime * result + ((storageDomainName == null) ? 0 : storageDomainName.hashCode());

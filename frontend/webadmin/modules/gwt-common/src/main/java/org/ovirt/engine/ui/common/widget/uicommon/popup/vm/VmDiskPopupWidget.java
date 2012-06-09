@@ -410,6 +410,14 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> 
             }
         });
 
+        disk.getIsDirectLunDiskAvaialable().getEntityChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                boolean isDirectLunDiskAvaialable = (Boolean) ((EntityModel) sender).getEntity();
+                externalDiskPanel.setVisible(isDirectLunDiskAvaialable);
+            }
+        });
+
         internalDiskRadioButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {

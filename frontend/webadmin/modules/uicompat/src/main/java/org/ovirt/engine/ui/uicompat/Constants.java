@@ -1144,8 +1144,11 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 	@DefaultStringValue("The following templates are missing on the target Export Domain:")
 	String theFollowingTemplatesAreMissingOnTargetExportDomainMsg();
 
-	@DefaultStringValue("There is no active Storage Domain in the selected Datacenter. Please activate a Storage Domain or select a different Datacenter.")
-	String noActiveStorageDomainInDcMsg();
+	@DefaultStringValue("There is no active Storage Domain to create the Disk in. Please activate a Storage Domain.")
+	String noActiveStorageDomains();
+
+	@DefaultStringValue("Error in retrieving the relevant Storage Domain.")
+    String errorRetrievingStorageDomains();
 
 	@DefaultStringValue("Host name can't contain blanks or special characters, must be at least one character long, and contain 'a-z', '0-9', '_' or '.' characters.")
 	String hostNameValidationMsg();
@@ -1376,4 +1379,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     
     @DefaultStringValue("LUN includes partitions")
     String partitionedLUN();
+
+    @DefaultStringValue("DirectLUN disk is not supported by the Data Center Compatibility Version")
+    String directLUNDiskNotSupported();
 }

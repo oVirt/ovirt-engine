@@ -15,6 +15,7 @@
 			color: #CD2127;
 			width: 100%;
 			text-align: center;
+			margin-top: 10px;
 		}
 		
 		.topPanel {
@@ -46,7 +47,6 @@
 		
 		.externalDiskPanel {			
 			width: 100%;
-			margin-top: 10px;	
 		}
 	</ui:style>
 

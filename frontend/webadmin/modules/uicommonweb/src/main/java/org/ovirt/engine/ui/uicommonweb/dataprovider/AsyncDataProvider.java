@@ -1830,7 +1830,7 @@ public final class AsyncDataProvider {
         GetConfigFromCache(tempVar, aQuery);
     }
 
-    public static void IsDirectLUNDiskEnabled(AsyncQuery aQuery, String version) {
+    public static void IsDirectLunDiskEnabled(AsyncQuery aQuery, String version) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)

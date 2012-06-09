@@ -385,6 +385,18 @@ public class DiskModel extends Model
         isInVm = value;
     }
 
+    private EntityModel isVmHasDisks;
+
+    public EntityModel getIsVmHasDisks()
+    {
+        return isVmHasDisks;
+    }
+
+    public void setIsVmHasDisks(EntityModel value)
+    {
+        isVmHasDisks = value;
+    }
+
     private EntityModel isInternal;
 
     public EntityModel getIsInternal()
@@ -395,6 +407,18 @@ public class DiskModel extends Model
     public void setIsInternal(EntityModel value)
     {
         isInternal = value;
+    }
+
+    private EntityModel isDirectLunDiskAvaialable;
+
+    public EntityModel getIsDirectLunDiskAvaialable()
+    {
+        return isDirectLunDiskAvaialable;
+    }
+
+    public void setIsDirectLunDiskAvaialable(EntityModel value)
+    {
+        isDirectLunDiskAvaialable = value;
     }
 
     private SanStorageModel sanStorageModel;
@@ -477,6 +501,12 @@ public class DiskModel extends Model
         setIsInternal(new EntityModel());
         getIsInternal().setEntity(true);
         getIsInternal().getEntityChangedEvent().addListener(this);
+
+        setIsVmHasDisks(new EntityModel());
+        getIsVmHasDisks().setEntity(true);
+
+        setIsDirectLunDiskAvaialable(new EntityModel());
+        getIsDirectLunDiskAvaialable().setEntity(true);
 
         setIsNew(true);
 
@@ -610,6 +640,8 @@ public class DiskModel extends Model
                 Linq.Sort(filteredStorageDomains, new Linq.StorageDomainByNameComparer());
                 storage_domains storage = Linq.FirstOrDefault(filteredStorageDomains);
                 StorageType storageType = storage == null ? StorageType.UNKNOWN : storage.getstorage_type();
+                storage_pool datacenter = (storage_pool) diskModel.getDataCenter().getSelectedItem();
+                boolean isInternal = (Boolean) getIsInternal().getEntity();
 
                 diskModel.getStorageDomain().setItems(filteredStorageDomains);
                 diskModel.getStorageDomain().setSelectedItem(storage);
@@ -618,8 +650,10 @@ public class DiskModel extends Model
                     UpdateWipeAfterDelete(storage.getstorage_type(), diskModel.getWipeAfterDelete());
                     diskModel.setMessage(""); //$NON-NLS-1$
                 }
-                else {
-                    diskModel.setMessage(ConstantsManager.getInstance().getConstants().noActiveStorageDomainInDcMsg());
+                else if (isInternal) {
+                    diskModel.setMessage((Boolean) getIsVmHasDisks().getEntity() ?
+                            ConstantsManager.getInstance().getConstants().errorRetrievingStorageDomains() :
+                            ConstantsManager.getInstance().getConstants().noActiveStorageDomains());
                 }
 
                 AsyncDataProvider.GetDiskPresetList(new AsyncQuery(diskModel, new INewAsyncCallback() {
@@ -635,6 +669,20 @@ public class DiskModel extends Model
                         diskModel1.getPreset().setSelectedItem(preset);
                     }
                 }), VmType.Server, storageType);
+
+                if (!isInternal) {
+                    AsyncDataProvider.IsDirectLunDiskEnabled(new AsyncQuery(diskModel, new INewAsyncCallback() {
+                        @Override
+                        public void OnSuccess(Object target, Object returnValue) {
+                            DiskModel diskModel1 = (DiskModel) target;
+                            boolean isDirectLUNDiskkEnabled = (Boolean) returnValue;
+
+                            getIsDirectLunDiskAvaialable().setEntity(isDirectLUNDiskkEnabled);
+                            diskModel1.setMessage(!isDirectLUNDiskkEnabled ?
+                                    ConstantsManager.getInstance().getConstants().directLUNDiskNotSupported() : ""); //$NON-NLS-1$
+                        }
+                    }), datacenter.getcompatibility_version().toString());
+                }
             }
         }), datacenter.getId());
 
@@ -719,8 +767,8 @@ public class DiskModel extends Model
         if (!isInternal) {
             isWipeAfterDeleteChangable = getWipeAfterDelete().getIsChangable();
             isQuotaAvailable = getQuota().getIsAvailable();
-            UpdateDatacenters();
         }
+        UpdateDatacenters();
         getWipeAfterDelete().setIsChangable(isInternal ? isWipeAfterDeleteChangable : true);
         getQuota().setIsAvailable(isInternal ? isQuotaAvailable : false);
     }

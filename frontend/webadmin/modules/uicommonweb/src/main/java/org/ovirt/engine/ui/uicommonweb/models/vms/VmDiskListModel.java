@@ -335,6 +335,7 @@ public class VmDiskListModel extends SearchableListModel
         ArrayList<Disk> disks =
                 getItems() != null ? Linq.<Disk> Cast(getItems()) : new ArrayList<Disk>();
         boolean hasDisks = disks.size() > 0;
+        diskModel.getIsVmHasDisks().setEntity(hasDisks);
 
         diskModel.getInterface().setItems(DataProvider.GetDiskInterfaceList(
                 getEntity().getvm_os(), getEntity().getvds_group_compatibility_version()));
@@ -348,8 +349,8 @@ public class VmDiskListModel extends SearchableListModel
         else
         {
             String cantCreateMessage =
-                    hasDisks ? ConstantsManager.getInstance().getMessages().errorRetrievingStorageDomains()
-                            : ConstantsManager.getInstance().getMessages().noActiveStorageDomains();
+                    hasDisks ? ConstantsManager.getInstance().getConstants().errorRetrievingStorageDomains()
+                            : ConstantsManager.getInstance().getConstants().noActiveStorageDomains();
 
             diskModel.setMessage(cantCreateMessage);
         }

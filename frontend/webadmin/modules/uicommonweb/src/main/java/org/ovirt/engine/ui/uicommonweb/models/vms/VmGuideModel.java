@@ -516,6 +516,7 @@ public class VmGuideModel extends GuideModel
     private void AddDiskPostGetDiskPresets(ArrayList<DiskImageBase> presets) {
         DiskModel model = (DiskModel) getWindow();
         boolean hasDisks = !disks.isEmpty();
+        model.getIsVmHasDisks().setEntity(hasDisks);
 
         model.getPreset().setItems(presets);
         for (DiskImageBase a : presets)
