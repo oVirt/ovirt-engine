@@ -22,6 +22,7 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetVdsByVdsIdParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -36,7 +37,11 @@ public class BackendHostsResource extends AbstractBackendCollectionResource<Host
 
     @Override
     public Hosts list() {
-        return mapCollection(getBackendCollection(SearchType.VDS));
+        if (isFiltered())
+            return mapCollection(getBackendCollection(VdcQueryType.GetAllHosts,
+                            new VdcQueryParametersBase()));
+        else
+            return mapCollection(getBackendCollection(SearchType.VDS));
     }
 
     @Override
