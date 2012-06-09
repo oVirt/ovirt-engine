@@ -33,6 +33,7 @@ public enum VdcQueryType implements Serializable {
     GetVlanParanet,
     GetVdsHooksById,
     GetVdsHooksById2,
+    GetAllHosts(VdcQueryAuthType.User),
     GetHostsByClusterId(VdcQueryAuthType.User),
     GetAllVdsByStoragePool(VdcQueryAuthType.User),
 

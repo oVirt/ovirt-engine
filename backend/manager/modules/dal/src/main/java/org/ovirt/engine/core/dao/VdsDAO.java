@@ -102,6 +102,17 @@ public interface VdsDAO extends DAO, SearchDAO<VDS>, AutoRecoverDAO<VDS> {
     /**
      * Retrieves all VDS instances.
      *
+     * @param userID
+     *            the ID of the user requesting the information
+     * @param isFiltered
+     *            Whether the results should be filtered according to the user's permissions
+     * @return the list of VDS instances
+     */
+    List<VDS> getAll(Guid userID, boolean isFiltered);
+
+    /**
+     * Retrieves all VDS instances.
+     *
      * @return the list of VDS instances
      */
     List<VDS> getAll();

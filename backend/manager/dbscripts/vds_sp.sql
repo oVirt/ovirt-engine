@@ -556,14 +556,19 @@ END; $procedure$
 
 
 
-Create or replace FUNCTION GetAllFromVds() RETURNS SETOF vds
+
+
+
+Create or replace FUNCTION GetAllFromVds(v_user_id UUID, v_is_filtered BOOLEAN) RETURNS SETOF vds
    AS $procedure$
 BEGIN
 BEGIN
       RETURN QUERY SELECT DISTINCT vds.*
-      FROM vds;
+      FROM vds
+      WHERE (NOT v_is_filtered OR EXISTS (SELECT 1
+                                          FROM user_vds_permissions_view
+                                          WHERE user_id = v_user_id AND entity_id = vds_id));
    END;
-	
 
    RETURN;
 END; $procedure$

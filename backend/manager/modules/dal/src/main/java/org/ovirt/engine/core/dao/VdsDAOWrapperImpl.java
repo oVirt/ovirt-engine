@@ -130,6 +130,12 @@ public class VdsDAOWrapperImpl extends BaseDAOWrapperImpl implements VdsDAO {
     }
 
     @Override
+    public List<VDS> getAll(Guid userID, boolean isFiltered) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
     public List<VDS> getAll() {
         List<VdsStatic> found = vdsStaticDAO.getAll();
 

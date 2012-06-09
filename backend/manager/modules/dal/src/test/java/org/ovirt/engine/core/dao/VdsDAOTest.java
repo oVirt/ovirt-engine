@@ -13,7 +13,6 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
-
 public class VdsDAOTest extends BaseDAOTestCase {
     private static final Guid EXISTING_VDS_ID = new Guid("afce7a39-8e8c-4819-ba9c-796d316592e7");
 
@@ -231,8 +230,40 @@ public class VdsDAOTest extends BaseDAOTestCase {
     public void testGetAll() {
         List<VDS> result = dao.getAll();
 
+        assertCorrectGetAllResult(result);
+    }
+
+    /**
+     * Ensures that retrieving VDS works as expected for a privileged user.
+     */
+    @Test
+    public void testGetAllWithPermissionsPrivilegedUser() {
+        List<VDS> result = dao.getAll(PRIVILEGED_USER_ID, true);
+
         assertNotNull(result);
         assertFalse(result.isEmpty());
+        assertTrue(result.contains(existingVds));
+    }
+
+    /**
+     * Ensures that retrieving VDS works as expected with filtering disabled for an unprivileged user.
+     */
+    @Test
+    public void testGetAllWithPermissionsDisabledUnprivilegedUser() {
+        List<VDS> result = dao.getAll(UNPRIVILEGED_USER_ID, false);
+
+        assertCorrectGetAllResult(result);
+    }
+
+    /**
+     * Ensures that no VDS is retrieved for an unprivileged user with filtering enabled.
+     */
+    @Test
+    public void testGetAllWithPermissionsUnprivilegedUser() {
+        List<VDS> result = dao.getAll(UNPRIVILEGED_USER_ID, true);
+
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
     }
 
     /**
@@ -352,5 +383,10 @@ public class VdsDAOTest extends BaseDAOTestCase {
         for (VDS vds : result) {
             assertEquals("Wrong storage pool for VDS", existingVds.getstorage_pool_id(), vds.getstorage_pool_id());
         }
+    }
+
+    private void assertCorrectGetAllResult(List<VDS> result) {
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
     }
 }
