@@ -248,6 +248,8 @@ public class ApplicationPlaces {
 
     public static final String diskTemplateSubTabPlace = diskMainTabPlace + SUB_TAB_PREFIX + "templates"; //$NON-NLS-1$
 
+    public static final String diskStorageSubTabPlace = diskMainTabPlace + SUB_TAB_PREFIX + "storage"; //$NON-NLS-1$
+
     public static final String diskPermissionSubTabPlace = diskMainTabPlace + SUB_TAB_PREFIX + "permissions"; //$NON-NLS-1$
 
     // Default places

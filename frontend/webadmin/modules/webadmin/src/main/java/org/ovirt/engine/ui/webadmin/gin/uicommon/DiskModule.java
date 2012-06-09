@@ -4,6 +4,7 @@ import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.permissions;
+import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.RemoveConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
@@ -18,6 +19,7 @@ import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.disks.DiskGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.disks.DiskListModel;
+import org.ovirt.engine.ui.uicommonweb.models.disks.DiskStorageListModel;
 import org.ovirt.engine.ui.uicommonweb.models.disks.DiskTemplateListModel;
 import org.ovirt.engine.ui.uicommonweb.models.disks.DiskVmListModel;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
@@ -95,6 +97,14 @@ public class DiskModule extends AbstractGinModule {
         return new SearchableDetailTabModelProvider<VmTemplate, DiskListModel, DiskTemplateListModel>(ginjector,
                 DiskListModel.class,
                 DiskTemplateListModel.class);
+    }
+
+    @Provides
+    @Singleton
+    public SearchableDetailModelProvider<storage_domains, DiskListModel, DiskStorageListModel> getDiskStorageModelProvider(ClientGinjector ginjector) {
+        return new SearchableDetailTabModelProvider<storage_domains, DiskListModel, DiskStorageListModel>(ginjector,
+                DiskListModel.class,
+                DiskStorageListModel.class);
     }
 
     @Provides

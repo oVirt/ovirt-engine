@@ -115,6 +115,7 @@ public class DiskListModel extends ListWithDetailsModel
 
     private ListModel diskVmListModel;
     private ListModel diskTemplateListModel;
+    private ListModel diskStorageListModel;
 
     public DiskListModel()
     {
@@ -168,10 +169,14 @@ public class DiskListModel extends ListWithDetailsModel
         diskTemplateListModel = new DiskTemplateListModel();
         diskTemplateListModel.setIsAvailable(false);
 
+        diskStorageListModel = new DiskStorageListModel();
+        diskStorageListModel.setIsAvailable(false);
+
         ObservableCollection<EntityModel> list = new ObservableCollection<EntityModel>();
         list.add(new DiskGeneralModel());
         list.add(diskVmListModel);
         list.add(diskTemplateListModel);
+        list.add(diskStorageListModel);
         list.add(new PermissionListModel());
         setDetailModels(list);
     }
@@ -185,6 +190,7 @@ public class DiskListModel extends ListWithDetailsModel
 
             diskVmListModel.setIsAvailable(disk.getVmEntityType() != VmEntityType.TEMPLATE);
             diskTemplateListModel.setIsAvailable(disk.getVmEntityType() == VmEntityType.TEMPLATE);
+            diskStorageListModel.setIsAvailable(disk.getDiskStorageType() == DiskStorageType.IMAGE);
         }
     }
 

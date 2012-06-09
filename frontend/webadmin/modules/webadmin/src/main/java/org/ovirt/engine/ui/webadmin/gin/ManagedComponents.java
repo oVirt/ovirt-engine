@@ -42,6 +42,7 @@ import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterQuotaListMod
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterStorageListModel;
 import org.ovirt.engine.ui.uicommonweb.models.disks.DiskGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.disks.DiskListModel;
+import org.ovirt.engine.ui.uicommonweb.models.disks.DiskStorageListModel;
 import org.ovirt.engine.ui.uicommonweb.models.disks.DiskTemplateListModel;
 import org.ovirt.engine.ui.uicommonweb.models.disks.DiskVmListModel;
 import org.ovirt.engine.ui.uicommonweb.models.events.EventListModel;
@@ -140,6 +141,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTab
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.disk.DiskSubTabPanelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.disk.SubTabDiskGeneralPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.disk.SubTabDiskPermissionPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.disk.SubTabDiskStoragePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.disk.SubTabDiskTemplatePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.disk.SubTabDiskVmPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.SubTabVolumeBrickPresenter;
@@ -602,6 +604,10 @@ public interface ManagedComponents {
     AsyncProvider<SubTabDiskTemplatePresenter> getSubTabDiskTemplatePresenter();
 
     SearchableDetailModelProvider<VmTemplate, DiskListModel, DiskTemplateListModel> getSubTabDiskTemplateModelProvider();
+
+    AsyncProvider<SubTabDiskStoragePresenter> getSubTabDiskStoragePresenter();
+
+    SearchableDetailModelProvider<storage_domains, DiskListModel, DiskStorageListModel> getSubTabDiskStorageModelProvider();
 
     AsyncProvider<SubTabDiskPermissionPresenter> getSubTabDiskPermissionPresenter();
 

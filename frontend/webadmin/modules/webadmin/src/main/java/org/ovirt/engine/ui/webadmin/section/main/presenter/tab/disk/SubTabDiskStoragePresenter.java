@@ -1,12 +1,12 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.disk;
 
 import org.ovirt.engine.core.common.businessentities.Disk;
-import org.ovirt.engine.core.common.businessentities.permissions;
+import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
-import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.disks.DiskListModel;
+import org.ovirt.engine.ui.uicommonweb.models.disks.DiskStorageListModel;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
 import org.ovirt.engine.ui.webadmin.place.ApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.DiskSelectionChangeEvent;
@@ -23,11 +23,11 @@ import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
-public class SubTabDiskPermissionPresenter extends AbstractSubTabPresenter<Disk, DiskListModel, PermissionListModel, SubTabDiskPermissionPresenter.ViewDef, SubTabDiskPermissionPresenter.ProxyDef> {
+public class SubTabDiskStoragePresenter extends AbstractSubTabPresenter<Disk, DiskListModel, DiskStorageListModel, SubTabDiskStoragePresenter.ViewDef, SubTabDiskStoragePresenter.ProxyDef> {
 
     @ProxyCodeSplit
-    @NameToken(ApplicationPlaces.diskPermissionSubTabPlace)
-    public interface ProxyDef extends TabContentProxyPlace<SubTabDiskPermissionPresenter> {
+    @NameToken(ApplicationPlaces.diskStorageSubTabPlace)
+    public interface ProxyDef extends TabContentProxyPlace<SubTabDiskStoragePresenter> {
     }
 
     public interface ViewDef extends AbstractSubTabPresenter.ViewDef<Disk> {
@@ -35,14 +35,14 @@ public class SubTabDiskPermissionPresenter extends AbstractSubTabPresenter<Disk,
 
     @TabInfo(container = DiskSubTabPanelPresenter.class)
     static TabData getTabData(ClientGinjector ginjector) {
-        return new ModelBoundTabData(ginjector.getApplicationConstants().diskPermissionSubTabLabel(), 4,
-                ginjector.getSubTabDiskPermissionModelProvider());
+        return new ModelBoundTabData(ginjector.getApplicationConstants().diskStorageSubTabLabel(), 3,
+                ginjector.getSubTabDiskStorageModelProvider());
     }
 
     @Inject
-    public SubTabDiskPermissionPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
+    public SubTabDiskStoragePresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager,
-            SearchableDetailModelProvider<permissions, DiskListModel, PermissionListModel> modelProvider) {
+            SearchableDetailModelProvider<storage_domains, DiskListModel, DiskStorageListModel> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider);
     }
 

@@ -816,6 +816,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Templates")
     String diskTemplateSubTabLabel();
 
+    @DefaultStringValue("Storage")
+    String diskStorageSubTabLabel();
+
     // DC
     @DefaultStringValue("New")
     String newDC();
