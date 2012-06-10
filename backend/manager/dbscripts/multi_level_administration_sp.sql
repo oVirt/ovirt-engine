@@ -265,9 +265,18 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
+Create or replace FUNCTION GetAllRolesByUserIdAndGroupIds(v_user_id UUID, v_group_ids text)
+RETURNS SETOF roles
+   AS $procedure$
+BEGIN
+   RETURN QUERY SELECT roles.*
+   FROM roles INNER JOIN
+   permissions ON permissions.role_id = roles.id
+   WHERE permissions.ad_element_id = v_user_id
+   or permissions.ad_element_id in(select id from getElementIdsByIdAndGroups(v_user_id, v_group_ids));
 
-
-
+END; $procedure$
+LANGUAGE plpgsql;
 
 Create or replace FUNCTION GetRolesByAdElementId(v_ad_element_id UUID)
 RETURNS SETOF roles

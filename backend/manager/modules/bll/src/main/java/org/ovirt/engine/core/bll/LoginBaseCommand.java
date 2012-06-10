@@ -192,7 +192,7 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
             // affect MLA later on
             authenticated = UserCommandBase.persistAuthenticatedUser(_adUser) != null;
 
-            // After updating the database user, retreive it's MLA admin status
+            // Retrieve the MLA admin status of the user.
             // This may be redundant in some use-cases, but looking forward to Single Sign On,
             // we will want this info
             boolean isAdmin = MultiLevelAdministrationHandler.isAdminUser(_adUser.getUserId());

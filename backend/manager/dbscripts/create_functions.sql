@@ -521,6 +521,34 @@ END; $function$
 LANGUAGE plpgsql;
 
 
+CREATE OR REPLACE FUNCTION getElementIdsByIdAndGroups(v_id UUID,v_group_ids text)
+RETURNS SETOF idUuidType
+   AS $function$
+   DECLARE
+   SWV_Rs idUuidType;
+BEGIN
+   BEGIN
+      CREATE GLOBAL TEMPORARY TABLE tt_LDAP_ELEMENT_IDS
+      (
+         id UUID
+      ) WITH OIDS;
+      exception when others then
+         truncate table tt_LDAP_ELEMENT_IDS;
+   END;
+   insert INTO tt_LDAP_ELEMENT_IDS
+   select ID from fnsplitteruuid(v_group_ids)
+   UNION
+   select v_id
+   UNION
+   -- user is also member of 'Everyone'
+   select 'EEE00000-0000-0000-0000-123456789EEE';
+   FOR SWV_Rs IN(SELECT * FROM  tt_LDAP_ELEMENT_IDS) LOOP
+      RETURN NEXT SWV_Rs;
+   END LOOP;
+   RETURN;
+END; $function$
+LANGUAGE plpgsql;
+
 -----------------------
 -- Quota Functions ----
 -----------------------
