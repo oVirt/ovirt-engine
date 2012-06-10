@@ -46,6 +46,16 @@ public class RoleDAODbFacadeImpl extends BaseDAODbFacade implements RoleDAO {
         return getCallsHandler().executeReadList("GetAllRolesByAdElementId", RolesRowMapper.instance, parameterSource);
     }
 
+    public List<roles> getAllForUserAndGroups(Guid id, String groupIds) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("user_id", id)
+                .addValue("group_ids", groupIds);
+        return getCallsHandler().executeReadList("GetAllRolesByUserIdAndGroupIds",
+                RolesRowMapper.instance,
+                parameterSource);
+
+    }
+
     @Override
     public List<roles> getForAdElement(Guid id) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()

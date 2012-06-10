@@ -3,6 +3,7 @@ package org.ovirt.engine.core.dao;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.NotImplementedException;
 import org.hibernate.Query;
 
 import org.ovirt.engine.core.common.businessentities.DbUser;
@@ -77,5 +78,10 @@ public class RoleDAOHibernateImpl extends BaseDAOHibernateImpl<roles, Guid> impl
         query.setParameter("id", id);
 
         return query.list();
+    }
+
+    @Override
+    public List<roles> getAllForUserAndGroups(Guid userId, String groupIds) {
+        throw new NotImplementedException();
     }
 }

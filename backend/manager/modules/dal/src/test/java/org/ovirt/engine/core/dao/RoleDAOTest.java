@@ -14,7 +14,8 @@ import org.ovirt.engine.core.common.businessentities.roles;
 import org.ovirt.engine.core.compat.Guid;
 
 public class RoleDAOTest extends BaseDAOTestCase {
-    private static final Guid AD_ELEMENT_ID = new Guid("9bf7c640-b620-456f-a550-0348f366544b");
+    private static final String GROUP_IDS = "26df4393-659b-4b8a-b0f6-3ee94d32e82f,08963ba9-b1c8-498d-989f-75cf8142eab7";
+    private static final Guid USER_ID = new Guid("9bf7c640-b620-456f-a550-0348f366544b");
     private static final int ROLE_COUNT = 3;
 
     private RoleDAO dao;
@@ -106,7 +107,7 @@ public class RoleDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllRolesForAdElement() {
-        List<roles> result = dao.getAllForAdElement(AD_ELEMENT_ID);
+        List<roles> result = dao.getAllForAdElement(USER_ID);
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
@@ -128,11 +129,33 @@ public class RoleDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllRolesForUserAndGroupByAdElement() {
-        List<roles> result = dao.getAllForAdElement(AD_ELEMENT_ID);
+        List<roles> result = dao.getAllForAdElement(USER_ID);
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
     }
+
+    /**
+     * Ensures the right collection of roles is returned
+     */
+    @Test
+    public void testGetAllForUsersAndGroups() {
+        List<roles> result = dao.getAllForUserAndGroups(USER_ID,
+                GROUP_IDS);
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
+
+    }
+
+    @Test
+    public void testGetAllForUsersAndGroupsInvalidUserAndGroups() {
+        List<roles> result = dao.getAllForUserAndGroups(Guid.NewGuid(),
+                Guid.NewGuid().toString());
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+
+    }
+
 
     /**
      * Ensures that saving a role works as expected.
