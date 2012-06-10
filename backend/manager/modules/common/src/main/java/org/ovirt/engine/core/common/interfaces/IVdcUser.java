@@ -38,4 +38,8 @@ public interface IVdcUser {
     boolean isAdmin();
 
     void setAdmin(boolean isAdmin);
+
+    String getGroupIds();
+
+    void setGroupIds(String groupIds);
 }

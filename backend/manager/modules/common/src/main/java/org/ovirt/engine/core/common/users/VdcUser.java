@@ -14,6 +14,16 @@ public class VdcUser implements IVdcUser, Serializable {
     private String mDomainControler;
     private String mBrowser;
     private String mGroupNames;
+    private String groupIds;
+
+    public String getGroupIds() {
+        return groupIds;
+    }
+
+    public void setGroupIds(String groupIds) {
+        this.groupIds = groupIds;
+    }
+
     private String mFirstName;
     private String mSurName;
     private boolean mIsAdmin = false;
@@ -31,6 +41,7 @@ public class VdcUser implements IVdcUser, Serializable {
         mFirstName = adUser.getName();
         mSurName = adUser.getSurName();
         mIsAdmin = isAdmin;
+        groupIds = adUser.getGroupIds();
     }
 
     public VdcUser() {
