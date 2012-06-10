@@ -13,6 +13,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
@@ -412,9 +413,9 @@ public class VdsUpdateRunTimeInfo {
                 }
             } else {
                 // refresh dynamic data
-                RefObject<Boolean> tempRefObj = new RefObject<Boolean>(processHardwareCapsNeeded);
-                VDSStatus refreshReturnStatus = _vdsManager.refreshCapabilities(tempRefObj, _vds);
-                processHardwareCapsNeeded = tempRefObj.argvalue;
+                final AtomicBoolean processHardwareNeededAtomic = new AtomicBoolean();
+                VDSStatus refreshReturnStatus = _vdsManager.refreshCapabilities(processHardwareNeededAtomic, _vds);
+                processHardwareCapsNeeded = processHardwareNeededAtomic.get();
                 refreshedCapabilities = true;
                 if (refreshReturnStatus != VDSStatus.NonOperational) {
                     _vdsManager.setStatus(VDSStatus.Up, _vds);
@@ -806,9 +807,9 @@ public class VdsUpdateRunTimeInfo {
     private void beforeFirstRefreshTreatment(boolean isVdsUpOrGoingToMaintanance) {
         if (_vdsManager.getbeforeFirstRefresh()) {
             boolean flagsChanged = false;
-            RefObject<Boolean> tempRefObject = new RefObject<Boolean>(flagsChanged);
-            _vdsManager.refreshCapabilities(tempRefObject, _vds);
-            flagsChanged = tempRefObject.argvalue;
+            final AtomicBoolean processHardwareCapsNeededTemp = new AtomicBoolean();
+            _vdsManager.refreshCapabilities(processHardwareCapsNeededTemp, _vds);
+            flagsChanged = processHardwareCapsNeededTemp.get();
             _vdsManager.setbeforeFirstRefresh(false);
             refreshedCapabilities = true;
             _saveVdsDynamic = true;
