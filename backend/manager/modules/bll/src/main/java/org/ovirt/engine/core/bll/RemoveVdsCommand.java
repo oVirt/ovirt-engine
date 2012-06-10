@@ -1,6 +1,8 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
@@ -11,6 +13,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.vdscommands.RemoveVdsVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -32,7 +35,6 @@ public class RemoveVdsCommand<T extends VdsActionParameters> extends VdsCommand<
     @Override
     protected void executeCommand() {
         if (getVdsIdRef() != null && CanBeRemoved(getVdsId())) {
-            Guid vdsGroupId = getVds().getvds_group_id();
             glusterHostRemove();
             RemoveVdsStatisticsFromDb();
             RemoveVdsDynamicFromDb();
@@ -172,5 +174,10 @@ public class RemoveVdsCommand<T extends VdsActionParameters> extends VdsCommand<
                 errorType = AuditLogType.GLUSTER_HOST_REMOVE_FAILED;
             }
         }
+    }
+
+    @Override
+    protected Map<Guid, String> getExclusiveLocks() {
+        return Collections.singletonMap(getParameters().getVdsId(), LockingGroup.VDS.name());
     }
 }

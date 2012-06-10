@@ -1,6 +1,8 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -9,6 +11,7 @@ import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.network;
+import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.vdscommands.ActivateVdsVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -18,6 +21,7 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
+@LockIdNameAttribute
 public class ActivateVdsCommand<T extends VdsActionParameters> extends VdsCommand<T> {
     public ActivateVdsCommand(T parameters) {
         super(parameters);
@@ -45,32 +49,28 @@ public class ActivateVdsCommand<T extends VdsActionParameters> extends VdsComman
     protected void executeCommand() {
 
         final VDS vds = getVds();
-        if (vds == null) {
-            setSucceeded(false);
-        } else {
-            ExecutionHandler.updateSpecificActionJobCompleted(vds.getId(), VdcActionType.MaintananceVds, false);
-            TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
+        ExecutionHandler.updateSpecificActionJobCompleted(vds.getId(), VdcActionType.MaintananceVds, false);
+        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
 
-                @Override
-                public Void runInTransaction() {
-                    getCompensationContext().snapshotEntityStatus(vds.getDynamicData(), vds.getstatus());
-                    Backend.getInstance().getResourceManager().RunVdsCommand(VDSCommandType.SetVdsStatus,
-                            new SetVdsStatusVDSCommandParameters(getVdsId(), VDSStatus.Unassigned));
-                    getCompensationContext().stateChanged();
-                    return null;
-                }
-            });
+            @Override
+            public Void runInTransaction() {
+                getCompensationContext().snapshotEntityStatus(vds.getDynamicData(), vds.getstatus());
+                Backend.getInstance().getResourceManager().RunVdsCommand(VDSCommandType.SetVdsStatus,
+                        new SetVdsStatusVDSCommandParameters(getVdsId(), VDSStatus.Unassigned));
+                getCompensationContext().stateChanged();
+                return null;
+            }
+        });
 
-            setSucceeded(Backend.getInstance().getResourceManager()
-                    .RunVdsCommand(VDSCommandType.ActivateVds, new ActivateVdsVDSCommandParameters(getVdsId()))
-                    .getSucceeded());
-            if (getSucceeded()) {
-                // set network to operational / non-operational
-                List<network> networks = DbFacade.getInstance().getNetworkDAO()
-                        .getAllForCluster(vds.getvds_group_id());
-                for (network net : networks) {
-                    AttachNetworkToVdsGroupCommand.SetNetworkStatus(vds.getvds_group_id(), net);
-                }
+        setSucceeded(Backend.getInstance().getResourceManager()
+                .RunVdsCommand(VDSCommandType.ActivateVds, new ActivateVdsVDSCommandParameters(getVdsId()))
+                .getSucceeded());
+        if (getSucceeded()) {
+            // set network to operational / non-operational
+            List<network> networks = DbFacade.getInstance().getNetworkDAO()
+                    .getAllForCluster(vds.getvds_group_id());
+            for (network net : networks) {
+                AttachNetworkToVdsGroupCommand.SetNetworkStatus(vds.getvds_group_id(), net);
             }
         }
     }
@@ -82,10 +82,15 @@ public class ActivateVdsCommand<T extends VdsActionParameters> extends VdsComman
             addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_ACTIVATE_VDS_NOT_EXIST);
             returnValue = false;
         }
-        if (getVds().getstatus() == VDSStatus.Up) {
+        if (returnValue && getVds().getstatus() == VDSStatus.Up) {
             addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_ACTIVATE_VDS_ALREADY_UP);
             returnValue = false;
         }
         return returnValue;
+    }
+
+    @Override
+    protected Map<Guid, String> getExclusiveLocks() {
+        return Collections.singletonMap(getParameters().getVdsId(), LockingGroup.VDS.name());
     }
 }
