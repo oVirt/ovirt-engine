@@ -2,9 +2,9 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
 import static junit.framework.Assert.assertEquals;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
-import static org.powermock.api.mockito.PowerMockito.spy;
+import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -14,35 +14,43 @@ import java.util.Map;
 
 import javax.transaction.TransactionManager;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network;
-import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.AuditLogDAO;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
 import org.ovirt.engine.core.dao.VmDAO;
+import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.ejb.ContainerManagedResourceType;
+import org.ovirt.engine.core.utils.ejb.EJBUtilsStrategy;
 import org.ovirt.engine.core.utils.ejb.EjbUtils;
-import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.AuditLogDaoMocker;
+import org.ovirt.engine.core.vdsbroker.MonitoringStrategy;
 import org.ovirt.engine.core.vdsbroker.VdsUpdateRunTimeInfo;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Config.class, DbFacade.class, TransactionSupport.class, EjbUtils.class, AuditLogDirector.class })
+@RunWith(MockitoJUnitRunner.class)
 public class VdsUpdateRunTimeInfoTest {
+    public static MockConfigRule mcr = new MockConfigRule(
+            mockConfig(ConfigValues.VdsLocalDisksLowFreeSpace, 0),
+            mockConfig(ConfigValues.VdsLocalDisksCriticallyLowFreeSpace, 0),
+            mockConfig(ConfigValues.VdsRefreshRate, 3000),
+            mockConfig(ConfigValues.TimeToReduceFailedRunOnVdsInMinutes, 30),
+            mockConfig(ConfigValues.VdsRecoveryTimeoutInMintues, 3)
+            );
 
     private VDS vds;
 
@@ -68,16 +76,35 @@ public class VdsUpdateRunTimeInfoTest {
 
     AuditLogDAO mockAuditLogDao = new AuditLogDaoMocker();
 
+    @Mock
+    EJBUtilsStrategy mockStrategy;
+
+    private EJBUtilsStrategy origEjbStrategy;
+
     @Before
     public void setup() {
         initVds();
-        initStaticMocks();
-        spy(TransactionSupport.class);
-        spy(AuditLogDirector.class);
-        mockConfigVals();
-        MockitoAnnotations.initMocks(this);
+        mockEjbStrategy();
         initConditions();
-        updater = spy(new VdsUpdateRunTimeInfo(null, vds));
+        updater = new VdsUpdateRunTimeInfo(null, vds) {
+
+            @Override
+            public DbFacade getDbFacade() {
+                return dbFacade;
+            }
+
+            @Override
+            protected MonitoringStrategy getMonitoringStrategyForVds(VDS param) {
+                return mock(MonitoringStrategy.class);
+            }
+
+            @Override
+            protected void auditLog(AuditLogableBase auditLogable, AuditLogType logType) {
+                AuditLog al = new AuditLog();
+                al.setlog_type(logType);
+                mockAuditLogDao.save(al);
+            }
+        };
     }
 
     @Test
@@ -107,22 +134,12 @@ public class VdsUpdateRunTimeInfoTest {
     }
 
     private void initConditions() {
-        when(DbFacade.getInstance()).thenReturn(dbFacade);
         when(dbFacade.getVdsGroupDAO()).thenReturn(groupDAO);
         when(dbFacade.getVmDAO()).thenReturn(vmDAO);
         when(dbFacade.getAuditLogDAO()).thenReturn(mockAuditLogDao);
         when(groupDAO.get((Guid) any())).thenReturn(cluster);
-        when(ejbUtils.findResource(ContainerManagedResourceType.TRANSACTION_MANAGER)).thenReturn(tm);
         Map<Guid, VM> emptyMap = Collections.emptyMap();
         when(vmDAO.getAllRunningByVds(vds.getId())).thenReturn(emptyMap);
-    }
-
-    private static void initStaticMocks() {
-        mockStatic(DbFacade.class);
-        mockStatic(Config.class);
-        mockStatic(TransactionSupport.class);
-        mockStatic(EjbUtils.class);
-        mockStatic(AuditLogDirector.class);
     }
 
     private void initVds() {
@@ -131,12 +148,14 @@ public class VdsUpdateRunTimeInfoTest {
 
     }
 
-    private static void mockConfigVals() {
-        when(Config.<Integer> GetValue(ConfigValues.VdsLocalDisksLowFreeSpace)).thenReturn(0);
-        when(Config.<Integer> GetValue(ConfigValues.VdsLocalDisksCriticallyLowFreeSpace)).thenReturn(0);
-        when(Config.<Integer> GetValue(ConfigValues.VdsRefreshRate)).thenReturn(3000);
-        when(Config.<Integer> GetValue(ConfigValues.TimeToReduceFailedRunOnVdsInMinutes)).thenReturn(30);
-        when(Config.<Integer> GetValue(ConfigValues.VdsRecoveryTimeoutInMintues)).thenReturn(3);
+    public void mockEjbStrategy() {
+        origEjbStrategy = EjbUtils.getStrategy();
+        EjbUtils.setStrategy(mockStrategy);
+        when(mockStrategy.findResource(ContainerManagedResourceType.TRANSACTION_MANAGER)).thenReturn(tm);
     }
 
+    @After
+    public void unmockEjbStrategy() {
+        EjbUtils.setStrategy(origEjbStrategy);
+    }
 }

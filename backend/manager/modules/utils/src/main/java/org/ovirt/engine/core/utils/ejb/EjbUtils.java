@@ -45,4 +45,11 @@ public class EjbUtils {
     public static void setStrategy(EJBUtilsStrategy strategyToSet) {
         strategy = strategyToSet;
     }
+
+    /**
+     * @return the strategy object that will affect the behavior of EJB utils lookup
+     */
+    public static EJBUtilsStrategy getStrategy() {
+        return strategy;
+    }
 }

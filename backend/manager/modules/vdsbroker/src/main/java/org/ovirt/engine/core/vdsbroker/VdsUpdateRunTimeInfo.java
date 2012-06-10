@@ -135,15 +135,15 @@ public class VdsUpdateRunTimeInfo {
 
                             @Override
                             public Void runInTransaction() {
-                                DbFacade.getInstance().getInterfaceDAO().massUpdateStatisticsForVds(statistics);
+                                getDbFacade().getInterfaceDAO().massUpdateStatisticsForVds(statistics);
                                 return null;
                             }
                         });
             }
         }
 
-        updateAllInTransaction(_vmDynamicToSave.values(), DbFacade.getInstance().getVmDynamicDAO());
-        updateAllInTransaction(_vmStatisticsToSave.values(), DbFacade.getInstance().getVmStatisticsDAO());
+        updateAllInTransaction(_vmDynamicToSave.values(), getDbFacade().getVmDynamicDAO());
+        updateAllInTransaction(_vmStatisticsToSave.values(), getDbFacade().getVmStatisticsDAO());
 
         final List<VmNetworkStatistics> allVmInterfaceStatistics = new LinkedList<VmNetworkStatistics>();
         for (List<VmNetworkInterface> list : _vmInterfaceStatisticsToSave.values()) {
@@ -152,14 +152,14 @@ public class VdsUpdateRunTimeInfo {
             }
         }
 
-        updateAllInTransaction(allVmInterfaceStatistics, DbFacade.getInstance().getVmNetworkStatisticsDAO());
-        updateAllInTransaction(_vmDiskImageDynamicToSave.values(), DbFacade.getInstance().getDiskImageDynamicDAO());
+        updateAllInTransaction(allVmInterfaceStatistics, getDbFacade().getVmNetworkStatisticsDAO());
+        updateAllInTransaction(_vmDiskImageDynamicToSave.values(), getDbFacade().getDiskImageDynamicDAO());
         saveVmDevicesToDb();
     }
 
     private void saveVmDevicesToDb() {
 
-        updateAllInTransaction(vmDeviceToSave.values(), DbFacade.getInstance().getVmDeviceDAO());
+        updateAllInTransaction(vmDeviceToSave.values(), getDbFacade().getVmDeviceDAO());
 
         if (!removedDeviceIds.isEmpty()) {
             TransactionSupport.executeInScope(TransactionScopeOption.Required,
@@ -167,7 +167,7 @@ public class VdsUpdateRunTimeInfo {
 
                         @Override
                         public Void runInTransaction() {
-                            DbFacade.getInstance().getVmDeviceDAO().removeAll(removedDeviceIds);
+                            getDbFacade().getVmDeviceDAO().removeAll(removedDeviceIds);
                             return null;
                         }
                     });
@@ -179,7 +179,7 @@ public class VdsUpdateRunTimeInfo {
 
                         @Override
                         public Void runInTransaction() {
-                            DbFacade.getInstance().getVmDeviceDAO().saveAll(newVmDevices);
+                            getDbFacade().getVmDeviceDAO().saveAll(newVmDevices);
                             return null;
                         }
                     });
@@ -226,7 +226,7 @@ public class VdsUpdateRunTimeInfo {
             logable.AddCustomValue("HostName", _vds.getvds_name());
             logable.AddCustomValue("AvailableMemory", stat.getmem_available().toString());
             logable.AddCustomValue("Threshold", threshold.toString());
-            AuditLogDirector.log(logable, AuditLogType.VDS_LOW_MEM);
+            auditLog(logable, AuditLogType.VDS_LOW_MEM);
         }
     }
 
@@ -234,13 +234,13 @@ public class VdsUpdateRunTimeInfo {
         _vdsManager = vdsManager;
         _vds = vds;
         _firstStatus = _vds.getstatus();
-        monitoringStrategy = MonitoringStrategyFactory.getMonitoringStrategyForVds(vds);
+        monitoringStrategy = getMonitoringStrategyForVds(vds);
         _vmDict =
                 TransactionSupport.executeInScope(TransactionScopeOption.Suppress,
                         new TransactionMethod<Map<Guid, VM>>() {
                             @Override
                             public Map<Guid, VM> runInTransaction() {
-                                return DbFacade.getInstance().getVmDAO().getAllRunningByVds(_vds.getId());
+                                return getDbFacade().getVmDAO().getAllRunningByVds(_vds.getId());
                             }
                         });
 
@@ -249,6 +249,10 @@ public class VdsUpdateRunTimeInfo {
                 runningVmsInTransition++;
             }
         }
+    }
+
+    protected MonitoringStrategy getMonitoringStrategyForVds(VDS vds) {
+        return MonitoringStrategyFactory.getMonitoringStrategyForVds(vds);
     }
 
     public void Refresh() {
@@ -384,7 +388,7 @@ public class VdsUpdateRunTimeInfo {
 
     private void markIsSetNonOperationalExecuted() {
         if (!_vdsManager.isSetNonOperationalExecuted()) {
-            VdsDynamic vdsDynamic = DbFacade.getInstance().getVdsDynamicDAO().get(_vds.getId());
+            VdsDynamic vdsDynamic = getDbFacade().getVdsDynamicDAO().get(_vds.getId());
             if (vdsDynamic.getstatus() == VDSStatus.NonOperational) {
                 _vdsManager.setIsSetNonOperationalExecuted(true);
             }
@@ -521,7 +525,7 @@ public class VdsUpdateRunTimeInfo {
             AuditLogableBase logable = new AuditLogableBase(_vds.getId());
             logable.AddCustomValue("DiskSpace", lowSpaceThreshold.toString());
             logable.AddCustomValue("Disks", StringUtils.join(disksWithLowSpace, ", "));
-            AuditLogDirector.log(logable, logType);
+            auditLog(logable, logType);
         }
     }
 
@@ -532,7 +536,7 @@ public class VdsUpdateRunTimeInfo {
             return;
         }
         Map<String, Boolean> activeBonds = new HashMap<String, Boolean>();
-        List<network> clusterNetworks = DbFacade.getInstance().getNetworkDAO()
+        List<network> clusterNetworks = getDbFacade().getNetworkDAO()
                 .getAllForCluster(_vds.getvds_group_id());
         boolean setHostDown = false;
         List<String> networks = new ArrayList<String>();
@@ -614,7 +618,7 @@ public class VdsUpdateRunTimeInfo {
                     AuditLogableBase logable = new AuditLogableBase(_vds.getId());
                     logable.AddCustomValue("Networks", StringHelper.trimEnd(sNetworks.toString(), ',', ' '));
                     logable.AddCustomValue("Interfaces", StringHelper.trimEnd(sNics.toString(), ',', ' '));
-                    AuditLogDirector.log(logable, AuditLogType.VDS_SET_NONOPERATIONAL_IFACE_DOWN);
+                    auditLog(logable, AuditLogType.VDS_SET_NONOPERATIONAL_IFACE_DOWN);
                 } catch (Exception e) {
                     log.error(String.format("checkInterface: Failure on moving host: %s to non-operational.",
                             _vds.getvds_name()),
@@ -643,7 +647,7 @@ public class VdsUpdateRunTimeInfo {
             logable.AddCustomValue(HostNetworkMTU, String.valueOf(iface.getMtu()));
             logable.AddCustomValue(LogicalNetworkMTU,
                     String.valueOf(clusterNetworkByName.get(iface.getNetworkName()).getMtu()));
-            AuditLogDirector.log(logable, AuditLogType.VDS_NETWORK_MTU_DIFFER_FROM_LOGICAL_NETWORK);
+            auditLog(logable, AuditLogType.VDS_NETWORK_MTU_DIFFER_FROM_LOGICAL_NETWORK);
         }
     }
 
@@ -816,7 +820,7 @@ public class VdsUpdateRunTimeInfo {
         }
         AuditLogableBase logable = new AuditLogableBase(_vds.getId());
         logable.AddCustomValue("VdsStatus", EnumUtils.ConvertToStringWithSpaces(_vds.getstatus().toString()));
-        AuditLogDirector.log(logable, AuditLogType.VDS_DETECTED);
+        auditLog(logable, AuditLogType.VDS_DETECTED);
     }
 
     private void refreshVmStats() {
@@ -953,7 +957,7 @@ public class VdsUpdateRunTimeInfo {
         Guid vmId = new Guid((String) vm.getItem(VdsProperties.vm_guid));
         HashSet<Guid> processedDevices = new HashSet<Guid>();
         Object[] objects = (Object[]) vm.getItem(VdsProperties.Devices);
-        List<VmDevice> devices = DbFacade.getInstance().getVmDeviceDAO().getVmDeviceByVmId(vmId);
+        List<VmDevice> devices = getDbFacade().getVmDeviceDAO().getVmDeviceByVmId(vmId);
         Map<VmDeviceId, VmDevice> deviceMap = new HashMap<VmDeviceId, VmDevice>();
         for (VmDevice device : devices) {
             deviceMap.put(device.getId(), device);
@@ -1026,12 +1030,12 @@ public class VdsUpdateRunTimeInfo {
             newDeviceId = Guid.NewGuid();
             VmDeviceId id = new VmDeviceId(newDeviceId, vmId);
             VmDevice newDevice = new VmDevice(id, typeName, deviceName, address,
-                        0,
-                        o != null ? (HashMap<String, Object>) o : new HashMap<String, Object>(),
-                        false,
-                        true,
-                        false,
-                        alias);
+                    0,
+                    o != null ? (HashMap<String, Object>) o : new HashMap<String, Object>(),
+                    false,
+                    true,
+                    false,
+                    alias);
             newVmDevices.add(newDevice);
             log.debugFormat("New device was marked for adding to VM {0} Devices : {1}", vmId, newDevice.toString());
         } else {
@@ -1111,7 +1115,7 @@ public class VdsUpdateRunTimeInfo {
                 clearVm(vmTo);
             }
 
-            VmStatistics vmStatistics = DbFacade.getInstance().getVmStatisticsDAO().get(vm.getId());
+            VmStatistics vmStatistics = getDbFacade().getVmStatisticsDAO().get(vm.getId());
             if (vmStatistics != null) {
                 DestroyVDSCommand<DestroyVmVDSCommandParameters> vdsBrokerCommand =
                         new DestroyVDSCommand<DestroyVmVDSCommandParameters>(new DestroyVmVDSCommandParameters(
@@ -1133,12 +1137,12 @@ public class VdsUpdateRunTimeInfo {
         String exitMessage = vmDynamic.getExitMessage();
 
         // Generate an error or information event according to the exit status:
-        AuditLogType type = exitStatus == VmExitStatus.Normal? AuditLogType.VM_DOWN: AuditLogType.VM_DOWN_ERROR;
+        AuditLogType type = exitStatus == VmExitStatus.Normal ? AuditLogType.VM_DOWN : AuditLogType.VM_DOWN_ERROR;
         AuditLogableBase logable = new AuditLogableBase(_vds.getId(), vmStatistics.getId());
         if (exitMessage != null) {
             logable.AddCustomValue("ExitMessage", "Exit message: " + exitMessage);
         }
-        AuditLogDirector.log(logable, type);
+        auditLog(logable, type);
 
         if (exitStatus != VmExitStatus.Normal) {
             /**
@@ -1173,7 +1177,7 @@ public class VdsUpdateRunTimeInfo {
                 : AuditLogType.USER_FAILED_SUSPEND_VM;
 
         AuditLogableBase logable = new AuditLogableBase(_vds.getId(), vm.getId());
-        AuditLogDirector.log(logable, type);
+        auditLog(logable, type);
         ResourceManager.getInstance().RemoveAsyncRunningVm(vm.getId());
     }
 
@@ -1219,7 +1223,7 @@ public class VdsUpdateRunTimeInfo {
             break;
         }
         if (type != AuditLogType.UNASSIGNED) {
-            AuditLogDirector.log(logable, type);
+            auditLog(logable, type);
         }
     }
 
@@ -1268,7 +1272,7 @@ public class VdsUpdateRunTimeInfo {
                     // "Up" as this means that the power down operation failed:
                     if (vmToUpdate.getstatus() == VMStatus.PoweringDown && runningVm.getstatus() == VMStatus.Up) {
                         AuditLogableBase logable = new AuditLogableBase(_vds.getId(), vmToUpdate.getId());
-                        AuditLogDirector.log(logable, AuditLogType.VM_POWER_DOWN_FAILED);
+                        auditLog(logable, AuditLogType.VM_POWER_DOWN_FAILED);
                     }
 
                     if (vmToUpdate.getstatus() != VMStatus.Up && vmToUpdate.getstatus() != VMStatus.MigratingFrom
@@ -1287,7 +1291,7 @@ public class VdsUpdateRunTimeInfo {
                     if (vmToUpdate.getstatus() != VMStatus.NotResponding
                             && runningVm.getstatus() == VMStatus.NotResponding) {
                         AuditLogableBase logable = new AuditLogableBase(_vds.getId(), vmToUpdate.getId());
-                        AuditLogDirector.log(logable, AuditLogType.VM_NOT_RESPONDING);
+                        auditLog(logable, AuditLogType.VM_NOT_RESPONDING);
                     }
                     /**
                      * check if vm is suspended and remove it from async list
@@ -1312,7 +1316,7 @@ public class VdsUpdateRunTimeInfo {
                                 logType = AuditLogType.VM_PAUSED_ERROR;
                             }
                             if (logType != AuditLogType.UNASSIGNED) {
-                                AuditLogDirector.log(logable, logType);
+                                auditLog(logable, logType);
                             }
                         }
 
@@ -1340,7 +1344,7 @@ public class VdsUpdateRunTimeInfo {
                     running.add(vmToUpdate);
                 }
 
-                VmDynamic vmDynamic = DbFacade.getInstance().getVmDynamicDAO().get(runningVm.getId());
+                VmDynamic vmDynamic = getDbFacade().getVmDynamicDAO().get(runningVm.getId());
                 if (vmDynamic == null || vmDynamic.getstatus() != VMStatus.Unknown) {
                     _vmDynamicToSave.remove(runningVm.getId());
                 }
@@ -1416,7 +1420,7 @@ public class VdsUpdateRunTimeInfo {
             returnValue = true;
         } else if ((vmToUpdate == null && runningVm.getstatus() != VMStatus.MigratingFrom)) {
             // check if the vm exists on another vds
-            VmDynamic vmDynamic = DbFacade.getInstance().getVmDynamicDAO().get(runningVm.getId());
+            VmDynamic vmDynamic = getDbFacade().getVmDynamicDAO().get(runningVm.getId());
             if (vmDynamic != null && vmDynamic.getrun_on_vds() != null
                     && !vmDynamic.getrun_on_vds().equals(_vds.getId()) && runningVm.getstatus() != VMStatus.Up) {
                 log.infoFormat(
@@ -1496,12 +1500,12 @@ public class VdsUpdateRunTimeInfo {
     private boolean UpdateVmRunTimeInfo(RefObject<VM> vmToUpdate, VmDynamic vmNewDynamicData) {
         boolean returnValue = false;
         if (vmToUpdate.argvalue == null) {
-            vmToUpdate.argvalue = DbFacade.getInstance().getVmDAO().get(vmNewDynamicData.getId());
+            vmToUpdate.argvalue = getDbFacade().getVmDAO().get(vmNewDynamicData.getId());
             // if vm exists in db update info
             if (vmToUpdate.argvalue != null) {
                 // TODO: This is done to keep consistency with VmDAO.getById(Guid).
                 // It should probably be removed, but some research is required.
-                vmToUpdate.argvalue.setInterfaces(DbFacade.getInstance()
+                vmToUpdate.argvalue.setInterfaces(getDbFacade()
                         .getVmNetworkInterfaceDAO()
                         .getAllForVm(vmToUpdate.argvalue.getId()));
 
@@ -1570,7 +1574,7 @@ public class VdsUpdateRunTimeInfo {
         }
 
         if (vm.getInterfaces() == null || vm.getInterfaces().isEmpty()) {
-            vm.setInterfaces(DbFacade.getInstance().getVmNetworkInterfaceDAO().getAllForVm(vm.getId()));
+            vm.setInterfaces(getDbFacade().getVmNetworkInterfaceDAO().getAllForVm(vm.getId()));
         }
         java.util.ArrayList<String> macs = new java.util.ArrayList<String>();
 
@@ -1682,5 +1686,13 @@ public class VdsUpdateRunTimeInfo {
         }
     }
 
-    private static Log log = LogFactory.getLog(VdsUpdateRunTimeInfo.class);
+    protected void auditLog(AuditLogableBase auditLogable, AuditLogType logType) {
+        AuditLogDirector.log(auditLogable, logType);
+    }
+
+    public DbFacade getDbFacade() {
+        return DbFacade.getInstance();
+    }
+
+    private static final Log log = LogFactory.getLog(VdsUpdateRunTimeInfo.class);
 }
