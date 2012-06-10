@@ -1,6 +1,10 @@
 package org.ovirt.engine.core.bll.storage;
 
+import java.util.Collections;
+import java.util.Map;
+
 import org.ovirt.engine.core.bll.Backend;
+import org.ovirt.engine.core.bll.LockIdNameAttribute;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ReconstructMasterParameters;
 import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
@@ -8,6 +12,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
+import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.vdscommands.DetachStorageDomainVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -15,9 +20,8 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 
+@LockIdNameAttribute
 public class ForceRemoveStorageDomainCommand<T extends StorageDomainParametersBase> extends StorageDomainCommandBase<T> {
     public ForceRemoveStorageDomainCommand(T parameters) {
         super(parameters);
@@ -95,5 +99,8 @@ public class ForceRemoveStorageDomainCommand<T extends StorageDomainParametersBa
         return returnValue;
     }
 
-    private static Log log = LogFactory.getLog(ForceRemoveStorageDomainCommand.class);
+    @Override
+    protected Map<Guid, String> getExclusiveLocks() {
+        return Collections.singletonMap(getParameters().getStorageDomainId(), LockingGroup.STORAGE.name());
+    }
 }

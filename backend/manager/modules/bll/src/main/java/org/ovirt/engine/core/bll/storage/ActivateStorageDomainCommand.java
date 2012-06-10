@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.storage_pool_iso_map;
+import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.vdscommands.ActivateStorageDomainVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
@@ -113,7 +114,7 @@ public class ActivateStorageDomainCommand<T extends StorageDomainPoolParametersB
 
     @Override
     protected Map<Guid, String> getExclusiveLocks() {
-        return Collections.singletonMap(getStorageDomainId().getValue(), getClass().getName());
+        return Collections.singletonMap(getStorageDomainId().getValue(), LockingGroup.STORAGE.name());
     }
 
     private boolean storageDomainStatusIsValid() {

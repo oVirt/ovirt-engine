@@ -5,7 +5,7 @@ import org.ovirt.engine.core.compat.Guid;
 public class StorageDomainParametersBase extends StoragePoolParametersBase {
     private static final long serialVersionUID = -3426166529161499883L;
 
-    private Guid storageDomainId = new Guid();
+    private Guid storageDomainId = Guid.Empty;
     private boolean isInternal;
     private Guid quotaId;
 
