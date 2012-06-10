@@ -41,6 +41,11 @@ public class StoragePoolDAOHibernateImpl extends BaseDAOHibernateImpl<storage_po
     }
 
     @Override
+    public List<storage_pool> getAll(Guid userID, boolean isFiltered) {
+        throw new NotImplementedException();
+    }
+
+    @Override
     public List<storage_pool> getAllOfType(final StorageType type) {
         return findByCriteria(Restrictions.eq("storagePoolType", type.getValue()));
     }

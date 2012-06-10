@@ -162,7 +162,13 @@ public class StoragePoolDAODbFacadeImpl extends BaseDAODbFacade implements Stora
 
     @Override
     public List<storage_pool> getAll() {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource();
+        return getAll(null, false);
+    }
+
+    @Override
+    public List<storage_pool> getAll(Guid userID, boolean isFiltered) {
+        MapSqlParameterSource parameterSource =
+                getCustomMapSqlParameterSource().addValue("user_id", userID).addValue("is_filtered", isFiltered);
 
         ParameterizedRowMapper<storage_pool> mapper = new ParameterizedRowMapper<storage_pool>() {
             @Override

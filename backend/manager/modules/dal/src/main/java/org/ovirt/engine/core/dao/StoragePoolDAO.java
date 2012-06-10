@@ -55,6 +55,15 @@ public interface StoragePoolDAO extends GenericDao<storage_pool, Guid>, StatusAw
     storage_pool getForVdsGroup(Guid vdsGroup);
 
     /**
+     *  @param userID
+     *            the ID of the user requesting the information
+     * @param isFiltered
+     *            Whether the results should be filtered according to the user's permissions
+     * @return The list of storage pool
+     */
+    List<storage_pool> getAll(Guid userID, boolean isFiltered);
+
+    /**
      * Retrieves the list of all storage pools of a given type.
      *
      * @param type

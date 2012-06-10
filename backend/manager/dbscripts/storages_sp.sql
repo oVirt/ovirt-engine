@@ -115,11 +115,14 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetAllFromstorage_pool() RETURNS SETOF storage_pool
+Create or replace FUNCTION GetAllFromstorage_pool(v_user_id UUID, v_is_filtered BOOLEAN) RETURNS SETOF storage_pool
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
-   FROM storage_pool;
+   FROM storage_pool
+   WHERE (NOT v_is_filtered OR EXISTS (SELECT 1
+                                       FROM   user_storage_pool_permissions_view
+                                       WHERE  user_id = v_user_id AND entity_id = id));
 END; $procedure$
 LANGUAGE plpgsql;
 

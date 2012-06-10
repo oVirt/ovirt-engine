@@ -18,6 +18,8 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 
 public class StoragePoolDAOTest extends BaseDAOTestCase {
+    private static final int NUMBER_OF_POOLS_FOR_PRIVELEGED_USER = 1;
+
     private StoragePoolDAO dao;
     private storage_pool existingPool;
     private Guid vds;
@@ -141,8 +143,41 @@ public class StoragePoolDAOTest extends BaseDAOTestCase {
     public void testGetAll() {
         List<storage_pool> result = dao.getAll();
 
+        assertCorrectGetAllResult(result);
+    }
+
+    /**
+     * Ensures that retrieving storage pools works as expected for a privileged user.
+     */
+    @Test
+    public void testGetAllWithPermissionsPrivilegedUser() {
+        List<storage_pool> result = dao.getAll(PRIVILEGED_USER_ID, true);
+
         assertNotNull(result);
         assertFalse(result.isEmpty());
+        assertEquals(NUMBER_OF_POOLS_FOR_PRIVELEGED_USER, result.size());
+        assertEquals(result.iterator().next(), existingPool);
+    }
+
+    /**
+     * Ensures that retrieving storage pools works as expected with filtering disabled for an unprivileged user.
+     */
+    @Test
+    public void testGetAllWithPermissionsDisabledUnprivilegedUser() {
+        List<storage_pool> result = dao.getAll(UNPRIVILEGED_USER_ID, false);
+
+        assertCorrectGetAllResult(result);
+    }
+
+    /**
+     * Ensures that no storage pool retrieved for an unprivileged user with filtering enabled.
+     */
+    @Test
+    public void testGetAllWithPermissionsUnprivilegedUser() {
+        List<storage_pool> result = dao.getAll(UNPRIVILEGED_USER_ID, true);
+
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
     }
 
     /**
@@ -246,4 +281,13 @@ public class StoragePoolDAOTest extends BaseDAOTestCase {
         assertNull(result);
     }
 
+    /**
+     * Asserts the result from {@link StoragePoolDAO#getAll()} is correct without filtering
+     *
+     * @param result A list of storage pools to assert
+     */
+    private static void assertCorrectGetAllResult(List<storage_pool> result) {
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
+    }
 }
