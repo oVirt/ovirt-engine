@@ -77,29 +77,29 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsBrokerCommand;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStruct;
 
+@SuppressWarnings({ "synthetic-access", "unchecked" })
 public class VdsUpdateRunTimeInfo {
-    private java.util.HashMap<Guid, java.util.Map.Entry<VmDynamic, VmStatistics>> _runningVms;
-    private final java.util.HashMap<Guid, VmDynamic> _vmDynamicToSave = new java.util.HashMap<Guid, VmDynamic>();
-    private final java.util.HashMap<Guid, VmStatistics> _vmStatisticsToSave =
-            new java.util.HashMap<Guid, VmStatistics>();
-    private final java.util.HashMap<Guid, List<VmNetworkInterface>> _vmInterfaceStatisticsToSave =
-            new java.util.HashMap<Guid, List<VmNetworkInterface>>();
-    private final java.util.HashMap<Guid, DiskImageDynamic> _vmDiskImageDynamicToSave =
-            new java.util.HashMap<Guid, DiskImageDynamic>();
-    private final HashMap<VmDeviceId, VmDevice> vmDeviceToSave = new HashMap<VmDeviceId, VmDevice>();
+    private Map<Guid, Entry<VmDynamic, VmStatistics>> _runningVms;
+    private final Map<Guid, VmDynamic> _vmDynamicToSave = new HashMap<Guid, VmDynamic>();
+    private final Map<Guid, VmStatistics> _vmStatisticsToSave = new HashMap<Guid, VmStatistics>();
+    private final Map<Guid, List<VmNetworkInterface>> _vmInterfaceStatisticsToSave =
+            new HashMap<Guid, List<VmNetworkInterface>>();
+    private final Map<Guid, DiskImageDynamic> _vmDiskImageDynamicToSave =
+            new HashMap<Guid, DiskImageDynamic>();
+    private final Map<VmDeviceId, VmDevice> vmDeviceToSave = new HashMap<VmDeviceId, VmDevice>();
     private final List<VmDevice> newVmDevices = new ArrayList<VmDevice>();
     private final List<VmDeviceId> removedDeviceIds = new ArrayList<VmDeviceId>();
-    private final java.util.HashMap<VM, VmDynamic> _vmsClientIpChanged = new java.util.HashMap<VM, VmDynamic>();
-    private final java.util.ArrayList<VmDynamic> _poweringUpVms = new java.util.ArrayList<VmDynamic>();
-    private final java.util.ArrayList<Guid> _vmsToRerun = new java.util.ArrayList<Guid>();
-    private final java.util.ArrayList<Guid> _autoVmsToRun = new java.util.ArrayList<Guid>();
-    private final java.util.ArrayList<Guid> _vmsMovedToDown = new java.util.ArrayList<Guid>();
-    private final java.util.ArrayList<Guid> _vmsToRemoveFromAsync = new java.util.ArrayList<Guid>();
-    private final java.util.ArrayList<Guid> _succededToRunVms = new java.util.ArrayList<Guid>();
+    private final Map<VM, VmDynamic> _vmsClientIpChanged = new HashMap<VM, VmDynamic>();
+    private final List<VmDynamic> _poweringUpVms = new ArrayList<VmDynamic>();
+    private final List<Guid> _vmsToRerun = new ArrayList<Guid>();
+    private final List<Guid> _autoVmsToRun = new ArrayList<Guid>();
+    private final List<Guid> _vmsMovedToDown = new ArrayList<Guid>();
+    private final List<Guid> _vmsToRemoveFromAsync = new ArrayList<Guid>();
+    private final List<Guid> _succededToRunVms = new ArrayList<Guid>();
     private boolean _saveVdsDynamic;
     private VDSStatus _firstStatus = VDSStatus.forValue(0);
     private boolean _saveVdsStatistics;
-    private java.util.ArrayList<Guid> _vdssToRefresh;
+    private List<Guid> _vdssToRefresh;
     private VdsManager _vdsManager;
     private MonitoringStrategy monitoringStrategy;
     private VDS _vds;
@@ -164,7 +164,6 @@ public class VdsUpdateRunTimeInfo {
         if (!removedDeviceIds.isEmpty()) {
             TransactionSupport.executeInScope(TransactionScopeOption.Required,
                     new TransactionMethod<Void>() {
-
                         @Override
                         public Void runInTransaction() {
                             getDbFacade().getVmDeviceDAO().removeAll(removedDeviceIds);
@@ -197,8 +196,8 @@ public class VdsUpdateRunTimeInfo {
      * @param dao
      *            The DAO used for updating.
      */
-    private <T extends BusinessEntity<?>> void updateAllInTransaction(final Collection<T> entities,
-            final MassOperationsDao<T> dao) {
+    private static <T extends BusinessEntity<?>> void updateAllInTransaction
+            (final Collection<T> entities, final MassOperationsDao<T> dao) {
         if (!entities.isEmpty()) {
             TransactionSupport.executeInScope(TransactionScopeOption.Required,
                     new TransactionMethod<Void>() {
@@ -354,7 +353,7 @@ public class VdsUpdateRunTimeInfo {
             }
 
             // process all vms that their ip changed.
-            for (java.util.Map.Entry<VM, VmDynamic> pair : _vmsClientIpChanged.entrySet()) {
+            for (Entry<VM, VmDynamic> pair : _vmsClientIpChanged.entrySet()) {
                 ResourceManager.getInstance().getEventListener()
                         .processOnClientIpChange(_vds, pair.getValue().getId());
             }
@@ -543,7 +542,7 @@ public class VdsUpdateRunTimeInfo {
         List<String> nics = new ArrayList<String>();
         Map<String, List<String>> bondNics = new HashMap<String, List<String>>();
 
-        ArrayList<VdsNetworkInterface> interfaces = _vds.getInterfaces();
+        List<VdsNetworkInterface> interfaces = _vds.getInterfaces();
         Map<String, network> networksByName = NetworkUtils.networksByName(clusterNetworks);
 
         try {
@@ -584,6 +583,7 @@ public class VdsUpdateRunTimeInfo {
                     return;
                 } else {
                     int delay = Config.<Integer> GetValue(ConfigValues.NicDHCPDelayGraceInMS) * 1000;
+
                     if (System.currentTimeMillis() < hostDownTimes.get(_vds.getId()) + delay) {
                         // if less then 1 minutes, still waiting for DHCP
                         return;
@@ -678,8 +678,7 @@ public class VdsUpdateRunTimeInfo {
                 networks.remove(networkName);
             }
             if (!bondNics.containsKey(iface.getBondName())) {
-                bondNics.put(iface.getBondName(),
-                        new ArrayList<String>());
+                bondNics.put(iface.getBondName(), new ArrayList<String>());
             }
             bondNics.get(iface.getBondName()).add(iface.getName());
         }
@@ -836,11 +835,10 @@ public class VdsUpdateRunTimeInfo {
             command = new GetAllVmStatsVDSCommand<VdsIdAndVdsVDSCommandParametersBase>(
                     new VdsIdAndVdsVDSCommandParametersBase(_vds));
         }
-        _runningVms = (java.util.HashMap<Guid, java.util.Map.Entry<VmDynamic, VmStatistics>>) command
-                .ExecuteWithReturnValue();
+        _runningVms = (Map<Guid, Entry<VmDynamic, VmStatistics>>) command.ExecuteWithReturnValue();
 
         if (command.getVDSReturnValue().getSucceeded()) {
-            java.util.List<VM> running = checkVmsStatusChanged();
+            List<VM> running = checkVmsStatusChanged();
 
             proceedDownVms();
 
@@ -891,7 +889,7 @@ public class VdsUpdateRunTimeInfo {
      */
     private void handleVmDeviceChange() {
         List<String> vmsToUpdate = new ArrayList<String>();
-        for (Map.Entry<VmDynamic, VmStatistics> vmHelper : _runningVms.values()) {
+        for (Entry<VmDynamic, VmStatistics> vmHelper : _runningVms.values()) {
             VmDynamic vmDynamic = vmHelper.getKey();
             if (vmDynamic != null) {
                 VM vm = _vmDict.get(vmDynamic.getId());
@@ -1017,7 +1015,6 @@ public class VdsUpdateRunTimeInfo {
      * @param vmId
      * @param device
      */
-    @SuppressWarnings("unchecked")
     private Guid addNewVmDevice(Guid vmId, XmlRpcStruct device) {
         Guid newDeviceId = Guid.Empty;
         String typeName = (String) device.getItem(VdsProperties.Type);
@@ -1031,7 +1028,7 @@ public class VdsUpdateRunTimeInfo {
             VmDeviceId id = new VmDeviceId(newDeviceId, vmId);
             VmDevice newDevice = new VmDevice(id, typeName, deviceName, address,
                     0,
-                    o != null ? (HashMap<String, Object>) o : new HashMap<String, Object>(),
+                    o != null ? (Map<String, Object>) o : new HashMap<String, Object>(),
                     false,
                     true,
                     false,
@@ -1049,17 +1046,17 @@ public class VdsUpdateRunTimeInfo {
      * @param device
      * @return
      */
-    private Guid getDeviceId(XmlRpcStruct device) {
+    private static Guid getDeviceId(XmlRpcStruct device) {
         String deviceId = (String) device.getItem(VdsProperties.DeviceId);
         return deviceId == null ? null : new Guid(deviceId);
     }
 
     // if not statistics check if status changed and add to running list
-    private java.util.List<VM> checkVmsStatusChanged() {
-        java.util.List<VM> running = new java.util.ArrayList<VM>();
+    private List<VM> checkVmsStatusChanged() {
+        List<VM> running = new ArrayList<VM>();
         if (!_vdsManager.getRefreshStatistics()) {
-            java.util.ArrayList<VmDynamic> tempRunningList = new java.util.ArrayList<VmDynamic>();
-            for (java.util.Map.Entry<VmDynamic, VmStatistics> runningVm : _runningVms.values()) {
+            List<VmDynamic> tempRunningList = new ArrayList<VmDynamic>();
+            for (Entry<VmDynamic, VmStatistics> runningVm : _runningVms.values()) {
                 tempRunningList.add(runningVm.getKey());
             }
             for (VmDynamic runningVm : tempRunningList) {
@@ -1075,7 +1072,7 @@ public class VdsUpdateRunTimeInfo {
                     command.Execute();
                     if (command.getVDSReturnValue().getSucceeded()) {
                         _runningVms.put(runningVm.getId(),
-                                (java.util.Map.Entry<VmDynamic, VmStatistics>) command.getReturnValue());
+                                (Entry<VmDynamic, VmStatistics>) command.getReturnValue());
                     } else {
                         _runningVms.remove(runningVm.getId());
                     }
@@ -1093,7 +1090,7 @@ public class VdsUpdateRunTimeInfo {
      * Delete all vms with status Down
      */
     private void proceedDownVms() {
-        for (java.util.Map.Entry<VmDynamic, VmStatistics> vm_helper : _runningVms.values()) {
+        for (Entry<VmDynamic, VmStatistics> vm_helper : _runningVms.values()) {
             VmDynamic vm = vm_helper.getKey();
             if (vm.getstatus() != VMStatus.Down) {
                 continue;
@@ -1191,8 +1188,13 @@ public class VdsUpdateRunTimeInfo {
                 migratingFromTreatment(curVm);
             } else {
                 if (curVm.getmigrating_to_vds() != null) {
-                    DestroyVmVDSCommand destroyCmd = new DestroyVmVDSCommand(new DestroyVmVDSCommandParameters(
-                            new Guid(curVm.getmigrating_to_vds().toString()), curVm.getId(), true, false, 0));
+                    DestroyVmVDSCommand<DestroyVmVDSCommandParameters> destroyCmd =
+                            new DestroyVmVDSCommand<DestroyVmVDSCommandParameters>
+                            (new DestroyVmVDSCommandParameters(new Guid(curVm.getmigrating_to_vds().toString()),
+                                    curVm.getId(),
+                                    true,
+                                    false,
+                                    0));
                     destroyCmd.Execute();
                     if (destroyCmd.getVDSReturnValue().getSucceeded()) {
                         log.infoFormat("Stopped migrating vm: {0} on vds: {1}", curVm.getvm_name(),
@@ -1230,7 +1232,7 @@ public class VdsUpdateRunTimeInfo {
     private void migratingFromTreatment(VM curVm) {
         if (curVm.getmigrating_to_vds() != null) {
             if (_vdssToRefresh == null) {
-                _vdssToRefresh = new java.util.ArrayList<Guid>();
+                _vdssToRefresh = new ArrayList<Guid>();
             }
             if (!_vdssToRefresh.contains(curVm.getmigrating_to_vds())) {
                 _vdssToRefresh.add(new Guid(curVm.getmigrating_to_vds().toString()));
@@ -1238,8 +1240,8 @@ public class VdsUpdateRunTimeInfo {
         }
     }
 
-    private void updateRepository(java.util.List<VM> running) {
-        for (java.util.Map.Entry<VmDynamic, VmStatistics> vm_helper : _runningVms.values()) {
+    private void updateRepository(List<VM> running) {
+        for (Entry<VmDynamic, VmStatistics> vm_helper : _runningVms.values()) {
             VmDynamic runningVm = vm_helper.getKey();
             VM vmToUpdate = null;
             vmToUpdate = _vmDict.get(runningVm.getId());
@@ -1354,7 +1356,7 @@ public class VdsUpdateRunTimeInfo {
         removeVmsFromCache(running);
     }
 
-    private void logVmStatusTransition(VM vmToUpdate, VmDynamic runningVm) {
+    private static void logVmStatusTransition(VM vmToUpdate, VmDynamic runningVm) {
         if (vmToUpdate.getstatus() != runningVm.getstatus()) {
             log.infoFormat("VM {0} {1} moved from {2} --> {3}",
                     vmToUpdate.getvm_name(),
@@ -1365,7 +1367,7 @@ public class VdsUpdateRunTimeInfo {
     }
 
     // del from cache all vms that not in vdsm
-    private void removeVmsFromCache(java.util.List<VM> running) {
+    private void removeVmsFromCache(List<VM> running) {
         Guid vmGuid;
         for (VM vmToRemove : _vmDict.values()) {
             if (running.contains(vmToRemove))
@@ -1576,7 +1578,7 @@ public class VdsUpdateRunTimeInfo {
         if (vm.getInterfaces() == null || vm.getInterfaces().isEmpty()) {
             vm.setInterfaces(getDbFacade().getVmNetworkInterfaceDAO().getAllForVm(vm.getId()));
         }
-        java.util.ArrayList<String> macs = new java.util.ArrayList<String>();
+        List<String> macs = new ArrayList<String>();
 
         vm.setusage_network_percent(0);
 
@@ -1593,31 +1595,29 @@ public class VdsUpdateRunTimeInfo {
             if (vmIface == null) {
                 continue;
             }
-            if (vmIface != null) {
 
-                // RX rate and TX rate are reported by VDSM in % (minimum value
-                // 0, maximum value 100)
-                // Rx drop and TX drop are reported in packet numbers
+            // RX rate and TX rate are reported by VDSM in % (minimum value
+            // 0, maximum value 100)
+            // Rx drop and TX drop are reported in packet numbers
 
-                // if rtl+pv it will get here 2 times (we take the max one)
-                if (firstTime) {
+            // if rtl+pv it will get here 2 times (we take the max one)
+            if (firstTime) {
 
-                    vmIface.getStatistics().setReceiveRate(ifStats.getStatistics().getReceiveRate());
-                    vmIface.getStatistics().setReceiveDropRate(ifStats.getStatistics().getReceiveDropRate());
-                    vmIface.getStatistics().setTransmitRate(ifStats.getStatistics().getTransmitRate());
-                    vmIface.getStatistics().setTransmitDropRate(ifStats.getStatistics().getTransmitDropRate());
-                } else {
-                    vmIface.getStatistics().setReceiveRate(Math.max(vmIface.getStatistics().getReceiveRate(),
-                            ifStats.getStatistics().getReceiveRate()));
-                    vmIface.getStatistics().setReceiveDropRate(Math.max(vmIface.getStatistics().getReceiveDropRate(),
-                            ifStats.getStatistics().getReceiveDropRate()));
-                    vmIface.getStatistics().setTransmitRate(Math.max(vmIface.getStatistics().getTransmitRate(),
-                            ifStats.getStatistics().getTransmitRate()));
-                    vmIface.getStatistics().setTransmitDropRate(Math.max(vmIface.getStatistics().getTransmitDropRate(),
-                            ifStats.getStatistics().getTransmitDropRate()));
-                }
-                vmIface.setVmId(vm.getId());
+                vmIface.getStatistics().setReceiveRate(ifStats.getStatistics().getReceiveRate());
+                vmIface.getStatistics().setReceiveDropRate(ifStats.getStatistics().getReceiveDropRate());
+                vmIface.getStatistics().setTransmitRate(ifStats.getStatistics().getTransmitRate());
+                vmIface.getStatistics().setTransmitDropRate(ifStats.getStatistics().getTransmitDropRate());
+            } else {
+                vmIface.getStatistics().setReceiveRate(Math.max(vmIface.getStatistics().getReceiveRate(),
+                        ifStats.getStatistics().getReceiveRate()));
+                vmIface.getStatistics().setReceiveDropRate(Math.max(vmIface.getStatistics().getReceiveDropRate(),
+                        ifStats.getStatistics().getReceiveDropRate()));
+                vmIface.getStatistics().setTransmitRate(Math.max(vmIface.getStatistics().getTransmitRate(),
+                        ifStats.getStatistics().getTransmitRate()));
+                vmIface.getStatistics().setTransmitDropRate(Math.max(vmIface.getStatistics().getTransmitDropRate(),
+                        ifStats.getStatistics().getTransmitDropRate()));
             }
+            vmIface.setVmId(vm.getId());
 
             if (ifStats.getSpeed() != null && vmIface.getStatistics().getReceiveRate() != null
                     && vmIface.getStatistics().getReceiveRate() > 0) {
