@@ -52,12 +52,18 @@ LOG_FILE = "ovirt-engine-upgrade.log"
 YUM_EXEC = "/usr/bin/yum"
 ETL_SERVICE="/etc/init.d/ovirt-engine-etl"
 
+# Versions
+UNSUPPORTED_VERSION = "2.2"
+
 #MSGS
 MSG_ERROR_USER_NOT_ROOT = "Error: insufficient permissions for user %s, you must run with user root."
 MSG_NO_ROLLBACK = "Error: Current installation "
 MSG_RC_ERROR = "Return Code is not zero"
 MSG_INFO_NO_UPGRADE_AVAIL = "No updates available"
 MSG_INFO_UPGRADE_AVAIL = "%d Updates available:"
+MSG_ERROR_INCOMPATIBLE_UPGRADE = "\nError: a data center or cluster version %s were found on the system.\n\
+Such upgrade flow is not supported. Upgrade all %s data centers and clusters and rerun the upgrade utility.\n" \
+% (UNSUPPORTED_VERSION, UNSUPPORTED_VERSION)
 MSG_ERROR_NO_ROLLBACK_AVAIL = "Error: Installed packages are missing from the yum repositories\n\
 Please check your yum repositories or use --no-yum-rollback"
 MSG_ERROR_NEW_SETUP_AVAIL="\nError: New %s rpm available via yum.\n\
@@ -75,6 +81,7 @@ MSG_ERROR_YUM_LOCK = "Error: Can't edit yum lock file"
 MSG_ERROR_RPM_QUERY = "Error: Unable to retrieve rpm versions"
 MSG_ERROR_YUM_UPDATE = "Error: Yum update failed"
 MSG_ERROR_CHECK_LOG = "Error: Upgrade failed.\nplease check log at %s"
+MSG_ERROR_CONNECT_DB = "Error: Failed to connect to database"
 MSG_ERR_FAILED_START_JBOSS_SERVICE = "Error: Can't start JBoss"
 MSG_ERR_FAILED_JBOSS_SERVICE_STILL_RUN = "Error: Can't stop jboss service. Please shut it down manually."
 MSG_ERR_FAILED_STP_JBOSS_SERVICE = "Error: Can't stop JBoss"
@@ -664,10 +671,45 @@ def startDbRelatedServices(etlService, notificationService):
             logging.warn("Failed to start ovirt-engine-notifierd: exit code %d" % rc)
             messages.append(MSG_ERR_FAILED_START_SERVICE % "ovirt-engine-notifierd")
 
+def unsupportedVersionsPresent(oldversion=UNSUPPORTED_VERSION):
+    """ Check whether there are UNSUPPORTED_VERSION
+    objects present. If yes, throw an Exception
+    """
+    queryCheckDCVersions="SELECT compatibility_version FROM storage_pool;"
+    dcVersions, rc = utils.execRemoteSqlCommand(
+        SERVER_ADMIN,
+        SERVER_NAME,
+        SERVER_PORT,
+        basedefs.DB_NAME,
+        queryCheckDCVersions,
+        True,
+        MSG_ERROR_CONNECT_DB,
+    )
+    queryCheckClusterVersions="SELECT compatibility_version FROM vds_groups;"
+    clusterVersions, rc = utils.execRemoteSqlCommand(
+        SERVER_ADMIN,
+        SERVER_NAME,
+        SERVER_PORT,
+        basedefs.DB_NAME,
+        queryCheckClusterVersions,
+        True,
+        MSG_ERROR_CONNECT_DB
+    )
+
+    for versions in dcVersions, clusterVersions:
+        if oldversion in versions:
+            return True
+
+    return False
+
 def main(options):
     rhyum = MYum()
     db = DB()
     DB_NAME_TEMP = "%s_%s" % (basedefs.DB_NAME, utils.getCurrentDateTime())
+
+    if unsupportedVersionsPresent():
+        print MSG_ERROR_INCOMPATIBLE_UPGRADE
+        raise Exception(MSG_ERROR_INCOMPATIBLE_UPGRADE)
 
     # Check for upgrade, else exit
     print MSG_INFO_CHECK_UPDATE
