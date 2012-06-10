@@ -78,7 +78,7 @@ public class SpmStopVDSCommand<P extends SpmStopVDSCommandParameters> extends Vd
         if (vdsStatus == VDSStatus.Down || vdsStatus == VDSStatus.Reboot) {
             vdsStatus = getVds().getprevious_status();
         }
-        return vdsStatus != VDSStatus.NonResponsive && getVds().getstatus() != VDSStatus.Problematic;
+        return vdsStatus != VDSStatus.NonResponsive && getVds().getstatus() != VDSStatus.Connecting;
     }
 
     @Override

@@ -31,7 +31,7 @@ public class HostStatusCell extends AbstractCell<VDS> {
         case Unassigned:
         case NonResponsive:
         case InstallFailed:
-        case Problematic:
+        case Connecting:
         case Down:
             statusImage = resources.downImage();
             break;

@@ -85,7 +85,7 @@ public interface Enums extends LocalizedEnums {
 
     String VDSStatus___Up();
 
-    String VDSStatus___Problematic();
+    String VDSStatus___Connecting();
 
     String VdsTransparentHugePages___Never();
 

@@ -601,9 +601,9 @@ public class VdsManager {
                     || mLastUpdate.AddSeconds(Config.<Integer> GetValue(ConfigValues.TimeoutToResetVdsInSeconds))
                             .compareTo(new java.util.Date()) > 0) {
                 boolean result = false;
-                if (vds.getstatus() != VDSStatus.Problematic && vds.getstatus() != VDSStatus.PreparingForMaintenance
+                if (vds.getstatus() != VDSStatus.Connecting && vds.getstatus() != VDSStatus.PreparingForMaintenance
                         && vds.getstatus() != VDSStatus.NonResponsive) {
-                    setStatus(VDSStatus.Problematic, vds);
+                    setStatus(VDSStatus.Connecting, vds);
                     result = true;
                 }
                 mUnrespondedAttempts.incrementAndGet();

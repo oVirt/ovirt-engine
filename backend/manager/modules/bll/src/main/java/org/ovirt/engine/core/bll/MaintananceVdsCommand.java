@@ -60,7 +60,7 @@ public class MaintananceVdsCommand<T extends MaintananceVdsParameters> extends V
              * if non responsive move directly to maintenance
              */
             if (getVds().getstatus() == VDSStatus.NonResponsive
-                    || getVds().getstatus() == VDSStatus.Problematic
+                    || getVds().getstatus() == VDSStatus.Connecting
                     || getVds().getstatus() == VDSStatus.Down) {
                 Backend.getInstance()
                         .getResourceManager()

@@ -232,7 +232,7 @@ public class HostMapper {
             return HostStatus.PENDING_APPROVAL;
         case Initializing:
             return HostStatus.INITIALIZING;
-        case Problematic:
+        case Connecting:
             return HostStatus.CONNECTING;
         default:
             return null;

@@ -75,7 +75,7 @@ public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends
                 }
             }
         } else {
-            if (_problematicVds.getstatus() == VDSStatus.Problematic) {
+            if (_problematicVds.getstatus() == VDSStatus.Connecting) {
                 returnValue = false;
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VDS_INTERMITENT_CONNECTIVITY);
 

@@ -16,7 +16,7 @@ public enum VDSStatus {
     NonOperational(10),
     PendingApproval(11),
     Initializing(12),
-    Problematic(13);
+    Connecting(13);
 
     private static HashMap<Integer, VDSStatus> mappings = new HashMap<Integer, VDSStatus>();
     private int intValue;

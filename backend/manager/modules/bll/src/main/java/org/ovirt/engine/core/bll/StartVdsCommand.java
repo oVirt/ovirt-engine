@@ -21,7 +21,7 @@ public class StartVdsCommand<T extends FenceVdsActionParameters> extends FenceVd
         VDS vds = getVds();
         if (vds != null) {
             VDSStatus vdsStatus = vds.getstatus();
-            if (vdsStatus == VDSStatus.Problematic) {
+            if (vdsStatus == VDSStatus.Connecting) {
                 retValue = false;
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VDS_INTERMITENT_CONNECTIVITY);
 

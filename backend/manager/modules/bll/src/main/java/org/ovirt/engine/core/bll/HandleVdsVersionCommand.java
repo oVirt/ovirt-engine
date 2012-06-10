@@ -37,7 +37,7 @@ public class HandleVdsVersionCommand<T extends VdsActionParameters> extends VdsC
         if (getVds() == null) {
             addCanDoActionMessage(VdcBllMessages.VDS_INVALID_SERVER_ID);
             result = false;
-        } else if (getVds().getstatus() == VDSStatus.Problematic || getVds().getstatus() == VDSStatus.NonResponsive) {
+        } else if (getVds().getstatus() == VDSStatus.Connecting || getVds().getstatus() == VDSStatus.NonResponsive) {
             addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_CHECK_VERSION_HOST_NON_RESPONSIVE);
             result = false;
         }

@@ -198,7 +198,7 @@ public class ResourceManager implements IVdsEventListener {
                 break;
             case Reboot:
             case NonResponsive:
-            case Problematic:
+            case Connecting:
             case Installing:
                 status = VDSStatus.Unassigned;
                 break;

@@ -85,7 +85,7 @@ public final class VdcActionUtils {
                 VDSStatus.InstallFailed,
                 new HashSet<VdcActionType>(Arrays.asList(VdcActionType.ApproveVds)));
         vdsMatrix.put(
-                VDSStatus.Problematic,
+                VDSStatus.Connecting,
                 new HashSet<VdcActionType>(Arrays.asList(VdcActionType.MaintananceVds, VdcActionType.RemoveVds,
                         VdcActionType.ActivateVds, VdcActionType.ApproveVds)));
         vdsMatrix.put(
