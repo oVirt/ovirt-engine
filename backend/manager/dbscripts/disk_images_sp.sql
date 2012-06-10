@@ -146,8 +146,11 @@ BEGIN
            WHERE images_storage_domain_view.storage_id = v_storage_id AND images_storage_domain_view.entity_type::text = 'TEMPLATE'::text;
       ELSE
            RETURN QUERY SELECT images_storage_domain_view.*
-           FROM images_storage_domain_view 
-           WHERE images_storage_domain_view.storage_id = v_storage_id AND images_storage_domain_view.vm_guid = v_template_id AND images_storage_domain_view.entity_type::text = 'TEMPLATE'::text;
+           FROM images_storage_domain_view
+           JOIN vm_device ON vm_device.device_id = images_storage_domain_view.disk_id
+           WHERE images_storage_domain_view.storage_id = v_storage_id
+             AND vm_device.vm_id = v_template_id
+             AND images_storage_domain_view.entity_type::text = 'TEMPLATE'::text;
       END IF;     
 END; $procedure$
 LANGUAGE plpgsql;

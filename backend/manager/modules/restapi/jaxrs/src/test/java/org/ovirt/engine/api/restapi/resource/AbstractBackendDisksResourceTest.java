@@ -43,6 +43,7 @@ public class AbstractBackendDisksResourceTest<T extends AbstractBackendReadOnlyD
         this.queryIdName = queryIdName;
     }
 
+    @Override
     @Test
     @Ignore
     public void testQuery() throws Exception {
@@ -50,11 +51,13 @@ public class AbstractBackendDisksResourceTest<T extends AbstractBackendReadOnlyD
         // over DiskImages is unsupported by the backend
     }
 
+    @Override
     protected void setUpQueryExpectations(String query) throws Exception {
         setUpEntityQueryExpectations(1);
         control.replay();
     }
 
+    @Override
     protected void setUpQueryExpectations(String query, Object failure) throws Exception {
         setUpEntityQueryExpectations(1, failure);
         control.replay();
@@ -83,6 +86,7 @@ public class AbstractBackendDisksResourceTest<T extends AbstractBackendReadOnlyD
         return entities;
     }
 
+    @Override
     protected org.ovirt.engine.core.common.businessentities.Disk getEntity(int index) {
         return setUpEntityExpectations(control.createMock(DiskImage.class), index);
     }
@@ -90,7 +94,6 @@ public class AbstractBackendDisksResourceTest<T extends AbstractBackendReadOnlyD
     static org.ovirt.engine.core.common.businessentities.Disk setUpEntityExpectations(DiskImage entity, int index) {
         expect(entity.getId()).andReturn(GUIDS[index]).anyTimes();
         expect(entity.getvm_snapshot_id()).andReturn(GUIDS[2]).anyTimes();
-        expect(entity.getvm_guid()).andReturn(PARENT_ID).anyTimes();
         expect(entity.getvolume_format()).andReturn(VolumeFormat.RAW).anyTimes();
         expect(entity.getDiskInterface()).andReturn(DiskInterface.VirtIO).anyTimes();
         expect(entity.getimageStatus()).andReturn(ImageStatus.OK).anyTimes();
@@ -111,6 +114,7 @@ public class AbstractBackendDisksResourceTest<T extends AbstractBackendReadOnlyD
         return entity;
     }
 
+    @Override
     protected List<Disk> getCollection() {
         return collection.list().getDisks();
     }
@@ -126,6 +130,7 @@ public class AbstractBackendDisksResourceTest<T extends AbstractBackendReadOnlyD
         return model;
     }
 
+    @Override
     protected void verifyModel(Disk model, int index) {
         verifyModelSpecific(model, index);
         verifyLinks(model);

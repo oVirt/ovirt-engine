@@ -11,7 +11,6 @@ import org.ovirt.engine.api.model.Quota;
 import org.ovirt.engine.api.model.Storage;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.StorageDomains;
-import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
@@ -35,9 +34,6 @@ public class DiskMapper {
         }
         if (disk.isSetName()) {
             engineDisk.setDiskAlias(disk.getName());
-        }
-        if (disk.isSetVm() && disk.getVm().isSetId()) {
-            engineDisk.setvm_guid(new Guid(disk.getVm().getId()));
         }
         if (disk.isSetId()) {
             engineDisk.setId(new Guid(disk.getId()));
@@ -121,10 +117,6 @@ public class DiskMapper {
     public static Disk map(org.ovirt.engine.core.common.businessentities.Disk entity, Disk template) {
         Disk model = template != null ? template : new Disk();
         model.setName(entity.getDiskAlias());
-        if (entity.getvm_guid()!=null && !Guid.Empty.equals(entity.getvm_guid())) {
-            model.setVm(new VM());
-            model.getVm().setId(entity.getvm_guid().toString());
-        }
         if (entity.getId() != null) {
             model.setId(entity.getId().toString());
         }

@@ -41,7 +41,6 @@ public class HotUnPlugDiskFromVmCommandTest extends HotPlugDiskToVmCommandTest {
         disk.setImageId(diskImageGuid);
         disk.setDiskInterface(DiskInterface.VirtIO);
         disk.setactive(true);
-        disk.setvm_guid(vmId);
         doReturn(diskDao).when(command).getDiskDao();
         when(diskDao.get(diskImageGuid)).thenReturn(disk);
         mockVmDevice(true);

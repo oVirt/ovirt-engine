@@ -78,7 +78,7 @@ public abstract class AddVmAndCloneImageCommand<T extends VmManagementParameters
             for (VdcActionParametersBase param : imageParams) {
                 DiskImage diskImage = getDiskImageToRemoveByParam((MoveOrCopyImageGroupParameters) param);
                 if (diskImage != null) {
-                    ImagesHandler.removeDiskImage(diskImage);
+                    ImagesHandler.removeDiskImage(diskImage, getVmId());
                 }
             }
         }
@@ -94,7 +94,7 @@ public abstract class AddVmAndCloneImageCommand<T extends VmManagementParameters
             Guid srcImageGroupId,
             Guid srcImageId, VdcActionType parentCommandType) {
         MoveOrCopyImageGroupParameters params =
-                new MoveOrCopyImageGroupParameters(diskImage.getvm_guid(),
+                new MoveOrCopyImageGroupParameters(getVmId(),
                         srcImageGroupId,
                         srcImageId,
                         diskImage.getId(),
@@ -140,7 +140,6 @@ public abstract class AddVmAndCloneImageCommand<T extends VmManagementParameters
         retDiskImage.setParentId(Guid.Empty);
         retDiskImage.setit_guid(Guid.Empty);
         retDiskImage.setvm_snapshot_id(getVmSnapshotId());
-        retDiskImage.setvm_guid(newVmId);
         retDiskImage.setId(newImageGroupId);
         retDiskImage.setlast_modified_date(new Date());
         retDiskImage.setvolume_format(srcDiskImage.getvolume_format());
@@ -245,9 +244,7 @@ public abstract class AddVmAndCloneImageCommand<T extends VmManagementParameters
     protected DiskImage getDiskImageToRemoveByParam(MoveOrCopyImageGroupParameters param) {
         Guid imageGroupId = param.getDestImageGroupId();
         Guid imageId = param.getDestinationImageId();
-        Guid vmId = param.getContainerId();
         DiskImage diskImage = new DiskImage();
-        diskImage.setvm_guid(vmId);
         diskImage.setId(imageGroupId);
         diskImage.setImageId(imageId);
         return diskImage;

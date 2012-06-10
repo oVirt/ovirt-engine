@@ -646,7 +646,6 @@ public class VmDiskListModel extends SearchableListModel
                 luns.setLunType((StorageType) model.getStorageType().getSelectedItem());
                 lunDisk = new LunDisk();
                 lunDisk.setLun(luns);
-                lunDisk.setvm_guid(vm.getId());
             }
             else {
                 lunDisk = (LunDisk) getSelectedItem();

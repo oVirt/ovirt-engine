@@ -177,13 +177,15 @@ public class SnapshotsManager {
      * Remove all illegal disks which were associated with the given snapshot. This is done in order to be able to
      * switch correctly between snapshots where illegal images might be present.
      *
+     * @param vmId
+     *            The vm ID the disk is associated with.
      * @param snapshotId
      *            The ID of the snapshot for who to remove illegal images for.
      */
-    public void removeAllIllegalDisks(Guid snapshotId) {
+    public void removeAllIllegalDisks(Guid snapshotId, Guid vmId) {
         for (DiskImage diskImage : getDiskImageDao().getAllSnapshotsForVmSnapshot(snapshotId)) {
             if (diskImage.getimageStatus() == ImageStatus.ILLEGAL) {
-                ImagesHandler.removeDiskImage(diskImage);
+                ImagesHandler.removeDiskImage(diskImage, vmId);
             }
         }
     }

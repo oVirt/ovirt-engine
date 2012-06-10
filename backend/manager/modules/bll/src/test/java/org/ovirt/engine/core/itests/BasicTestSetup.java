@@ -196,11 +196,10 @@ public class BasicTestSetup {
                         Guid.NewGuid(),
                         100,
                         vmId,
-                        vmId,
                         ImageStatus.OK,
                         now,
                         "",
-                        VmEntityType.VM, null, null, QuotaEnforcementTypeEnum.DISABLED, false);
+                        VmEntityType.VM, 1, null, null, QuotaEnforcementTypeEnum.DISABLED, false);
         disk.setvolume_type(VolumeType.Sparse);
         disk.setvolume_format(VolumeFormat.COW);
         disk.setsize(100);
@@ -212,7 +211,6 @@ public class BasicTestSetup {
         DiskImage image = new DiskImage(disk);
         image.setImageId(ImageId);
         image.setimageStatus(ImageStatus.OK);
-        image.setvm_guid(vmId);
         image.setcreation_date(now);
 
         AddImageFromScratchParameters addImageParams = new AddImageFromScratchParameters(ImageId, vmId, disk);

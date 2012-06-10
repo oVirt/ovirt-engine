@@ -228,7 +228,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
             VmDevice vmDevice =
                     DbFacade.getInstance()
                             .getVmDeviceDAO()
-                            .get(new VmDeviceId(disk.getId(), disk.getvm_guid()));
+                            .get(new VmDeviceId(disk.getId(), vm.getId()));
             // skip unamanged devices (handled separtely)
             if (!vmDevice.getIsManaged()) {
                 continue;

@@ -31,6 +31,7 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
+import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.compat.Guid;
@@ -151,7 +152,21 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
                 }
             }
         } else if (disk.getVmEntityType() == VmEntityType.TEMPLATE) {
-            sharedLockMap = Collections.singletonMap(disk.getvm_guid().toString(), LockingGroup.TEMPLATE.name());
+            setVmTemplateIdParameter();
+            sharedLockMap = Collections.singletonMap(getVmTemplateId().toString(), LockingGroup.TEMPLATE.name());
+        }
+    }
+
+    /**
+     * Set the parent parameter vmTemplateId, based on the disk image id.
+     */
+    private void setVmTemplateIdParameter() {
+        Map<Boolean, VmTemplate> templateMap =
+                // Disk image is the only disk type that can be part of the template disks.
+                getDbFacade().getVmTemplateDAO().getAllForImage(((DiskImage) disk).getImageId());
+
+        if (!templateMap.isEmpty()) {
+            setVmTemplateId(templateMap.values().iterator().next().getId());
         }
     }
 
@@ -169,7 +184,6 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
     private boolean canRemoveTemplateDisk() {
         boolean retValue = true;
         DiskImage diskImage = (DiskImage) disk;
-        setVmTemplateId(diskImage.getvm_guid());
         if (getVmTemplate().getstatus() == VmTemplateStatus.Locked) {
             retValue = false;
             addCanDoActionMessage(VdcBllMessages.VM_TEMPLATE_IMAGE_IS_LOCKED);

@@ -122,7 +122,6 @@ public class RemoveImageCommandTest {
         disk.setstorage_pool_id(vm.getstorage_pool_id());
         disk.setactive(Boolean.TRUE);
         disk.setvm_snapshot_id(snapshotId);
-        disk.setvm_guid(vm.getId());
         disk.setimageStatus(ImageStatus.OK);
         disk.setappList("");
         disk.setdescription("");

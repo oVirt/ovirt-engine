@@ -525,29 +525,39 @@ BEGIN
    END;
 
    BEGIN
-      CREATE GLOBAL TEMPORARY TABLE tt_TEMPTEMPLATESTABLE AS select vm_guid
-         from images_storage_domain_view where entity_type = 'TEMPLATE' and storage_id = v_storage_domain_id;
+      CREATE GLOBAL TEMPORARY TABLE TEMPLATES_IDS_TEMPORARY_TABLE AS select vm_device.vm_id as vm_guid
+         from images_storage_domain_view
+         JOIN vm_device ON vm_device.device_id = images_storage_domain_view.disk_id
+         where entity_type = 'TEMPLATE' and storage_id = v_storage_domain_id;
       exception when others then
-         truncate table tt_TEMPTEMPLATESTABLE;
-         insert into tt_TEMPTEMPLATESTABLE select vm_guid
-         from images_storage_domain_view where entity_type = 'TEMPLATE' and storage_id = v_storage_domain_id;
+         truncate table TEMPLATES_IDS_TEMPORARY_TABLE;
+         insert into TEMPLATES_IDS_TEMPORARY_TABLE select vm_device.vm_id as vm_guid
+         from images_storage_domain_view
+         JOIN vm_device ON vm_device.device_id = images_storage_domain_view.disk_id
+         where entity_type = 'TEMPLATE' and storage_id = v_storage_domain_id;
    END;
 
    delete FROM image_storage_domain_map where storage_domain_id = v_storage_domain_id;
 
-   delete FROM permissions where object_id in (select vm_guid from vm_images_view where v_storage_domain_id in (SELECT id FROM fnsplitteruuid(storage_id)));
-   delete FROM snapshots WHERE vm_id in (select vm_guid from vm_images_view where v_storage_domain_id in (SELECT id FROM fnsplitteruuid(storage_id)));
+   delete FROM permissions where object_id in (select vm_id as vm_guid from vm_images_view
+                                                              JOIN vm_device ON vm_device.device_id = vm_images_view.disk_id
+                                                              where v_storage_domain_id in (SELECT id FROM fnsplitteruuid(storage_id)));
+   delete FROM snapshots WHERE vm_id in (select vm_id as vm_guid from vm_images_view
+                                         JOIN vm_device ON vm_device.device_id = vm_images_view.disk_id
+                                         where v_storage_domain_id in (SELECT id FROM fnsplitteruuid(storage_id)));
    delete FROM images where image_guid in (select image_id from tt_TEMPSTORAGEDOMAINMAPTABLE);
-   delete FROM vm_interface where vmt_guid in(select vm_guid from tt_TEMPTEMPLATESTABLE);
-   delete FROM permissions where object_id in (select vm_guid from tt_TEMPTEMPLATESTABLE);
+   delete FROM vm_interface where vmt_guid in(select vm_guid from TEMPLATES_IDS_TEMPORARY_TABLE);
+   delete FROM permissions where object_id in (select vm_guid from TEMPLATES_IDS_TEMPORARY_TABLE);
    delete FROM permissions where object_id = v_storage_domain_id;
-   delete FROM vm_static where vm_guid in(select vm_guid from vm_images_view where v_storage_domain_id in (SELECT id FROM fnsplitteruuid(storage_id)) and vm_images_view.entity_type <> 'TEMPLATE');
+   delete FROM vm_static where vm_guid in(select vm_id as vm_guid from vm_images_view
+                                          JOIN vm_device ON vm_device.device_id = vm_images_view.disk_id
+                                          where v_storage_domain_id in (SELECT id FROM fnsplitteruuid(storage_id)) and vm_images_view.entity_type <> 'TEMPLATE');
 
    -- Delete pools and snapshots of pools based on templates from the storage domain to be removed
-   delete FROM snapshots where vm_id in (select vm_guid FROM vm_static where vmt_guid in (select vm_guid from tt_TEMPTEMPLATESTABLE));
-   delete FROM vm_static where vmt_guid in (select vm_guid from tt_TEMPTEMPLATESTABLE);
+   delete FROM snapshots where vm_id in (select vm_guid FROM vm_static where vmt_guid in (select vm_guid from TEMPLATES_IDS_TEMPORARY_TABLE));
+   delete FROM vm_static where vmt_guid in (select vm_guid from TEMPLATES_IDS_TEMPORARY_TABLE);
 
-   delete FROM vm_static where vm_guid in(select vm_guid from tt_TEMPTEMPLATESTABLE);
+   delete FROM vm_static where vm_guid in(select vm_guid from TEMPLATES_IDS_TEMPORARY_TABLE);
    delete FROM storage_domain_dynamic where id  = v_storage_domain_id;
    delete FROM storage_domain_static where id  = v_storage_domain_id;
 

@@ -275,8 +275,9 @@ BEGIN
 
         -- get data center, storage domain and vm
         SELECT INTO ds_id, v_storage_id, v_vm_id
-                    storage_pool_id, storage_id, vm_guid
+                    storage_pool_id, storage_id, vm_id
         FROM images_storage_domain_view
+        LEFT OUTER JOIN vm_device ON vm_device.device_id = images_storage_domain_view.disk_id
         WHERE image_group_id = v_entity_id;
 
         -- get cluster

@@ -19,13 +19,20 @@ FROM        storage_domain_static LEFT OUTER JOIN
 storage_pool_iso_map on storage_pool_iso_map.storage_id = storage_domain_static.id
 LEFT OUTER JOIN storage_pool ON storage_pool.id = storage_pool_iso_map.storage_pool_id;
 
+CREATE OR REPLACE VIEW vms_for_disk_view
+AS
+SELECT array_agg(vm_name) as array_vm_names,device_id,entity_type
+FROM vm_static
+JOIN vm_device ON vm_static.vm_guid = vm_device.vm_id
+WHERE device = 'disk'
+GROUP BY device_id, entity_type;
 
 
 CREATE OR REPLACE VIEW images_storage_domain_view
 AS
 
 -- TODO: Change code to treat disks values directly instead of through this view.
-SELECT images.image_guid as image_guid, vm_device.vm_id as vm_guid,
+SELECT images.image_guid as image_guid,
     storage_domain_static_view.storage_name as storage_name,
     storage_domain_static_view.storage as storage_path,
 	storage_domain_static_view.storage_pool_id as storage_pool_id,
@@ -43,7 +50,9 @@ SELECT images.image_guid as image_guid, vm_device.vm_id as vm_guid,
     images.imageStatus as imageStatus,
     images.image_group_id as image_group_id,
     images.active,
-    vm_static.entity_type as entity_type,
+    vms_for_disk_view.entity_type as entity_type,
+    array_to_string(vms_for_disk_view.array_vm_names, ',') as vm_names,
+    COALESCE(array_upper(vms_for_disk_view.array_vm_names,1),0) as number_of_vms,
     base_disks.disk_id,
     base_disks.disk_alias as disk_alias,
     base_disks.disk_description as disk_description,
@@ -64,7 +73,8 @@ SELECT images.image_guid as image_guid, vm_device.vm_id as vm_guid,
 FROM
 images
 left outer join disk_image_dynamic on images.image_guid = disk_image_dynamic.image_id
-LEFT OUTER JOIN base_disks ON images.image_group_id = base_disks.disk_id left outer JOIN vm_device on vm_device.device_id = images.image_group_id left outer join vm_static on vm_static.vm_guid = vm_device.vm_id
+LEFT OUTER JOIN base_disks ON images.image_group_id = base_disks.disk_id
+LEFT OUTER JOIN vms_for_disk_view on vms_for_disk_view.device_id = images.image_group_id
 LEFT JOIN image_storage_domain_map ON image_storage_domain_map.image_id = images.image_guid
 LEFT OUTER JOIN storage_domain_static_view ON image_storage_domain_map.storage_domain_id = storage_domain_static_view.id
 LEFT OUTER JOIN snapshots ON images.vm_snapshot_id = snapshots.snapshot_id
@@ -105,10 +115,10 @@ SELECT     array_to_string(array_agg(storage_id), ',') as storage_id, array_to_s
                       images_storage_domain_view.description as description,
                       images_storage_domain_view.ParentId as ParentId, images_storage_domain_view.imageStatus as imageStatus, images_storage_domain_view.lastModified as lastModified,
                       images_storage_domain_view.app_list as app_list, images_storage_domain_view.vm_snapshot_id as vm_snapshot_id,
-                      images_storage_domain_view.volume_type as volume_type, images_storage_domain_view.image_group_id as image_group_id, images_storage_domain_view.vm_guid as vm_guid,
+                      images_storage_domain_view.volume_type as volume_type, images_storage_domain_view.image_group_id as image_group_id,
                       images_storage_domain_view.active as active, images_storage_domain_view.volume_format as volume_format,
                       images_storage_domain_view.disk_interface as disk_interface, images_storage_domain_view.boot as boot, images_storage_domain_view.wipe_after_delete as wipe_after_delete, images_storage_domain_view.propagate_errors as propagate_errors,
-                      images_storage_domain_view.entity_type as entity_type,
+                      images_storage_domain_view.entity_type as entity_type,images_storage_domain_view.number_of_vms as number_of_vms,images_storage_domain_view.vm_names as vm_names,
                       images_storage_domain_view.quota_id as quota_id, images_storage_domain_view.quota_name as quota_name, images_storage_domain_view.quota_enforcement_type,
                       images_storage_domain_view.disk_id, images_storage_domain_view.disk_alias as disk_alias, images_storage_domain_view.disk_description as disk_description,images_storage_domain_view.shareable as shareable
 FROM         images_storage_domain_view
@@ -119,8 +129,8 @@ disk_image_dynamic.actual_size,disk_image_dynamic.read_rate,
 disk_image_dynamic.read_latency_seconds, disk_image_dynamic.write_latency_seconds,
 disk_image_dynamic.flush_latency_seconds,disk_image_dynamic.write_rate,size,
 it_guid,description,ParentId,imageStatus,lastModified,app_list,vm_snapshot_id,volume_type,
-image_group_id,vm_guid,active,volume_format,disk_interface,boot,wipe_after_delete,propagate_errors,
-entity_type,quota_id,quota_name,quota_enforcement_type,disk_id,disk_alias,disk_description,shareable;
+image_group_id,active,volume_format,disk_interface,boot,wipe_after_delete,propagate_errors,number_of_vms,
+entity_type,vm_names,quota_id,quota_name,quota_enforcement_type,disk_id,disk_alias,disk_description,shareable;
 
 
 
@@ -165,8 +175,9 @@ FROM
            app_list,
            vm_snapshot_id,
            active,
-           vm_guid, -- VM fields
            entity_type,
+           number_of_vms,
+           vm_names,
            quota_id, -- Quota fields
            quota_name,
            quota_enforcement_type,
@@ -180,7 +191,7 @@ FROM
            null AS device_size
     FROM images_storage_domain_view
     WHERE active = TRUE
-    GROUP BY storage_pool_id,image_guid,creation_date,actual_size,read_rate,write_rate,read_latency_seconds,write_latency_seconds,flush_latency_seconds,size,it_guid,imageStatus,lastModified,volume_type,volume_format,image_group_id,boot,description,ParentId,app_list,vm_snapshot_id,active,vm_guid,entity_type,quota_id,quota_name,quota_enforcement_type
+    GROUP BY storage_pool_id,image_guid,creation_date,actual_size,read_rate,write_rate,read_latency_seconds,write_latency_seconds,flush_latency_seconds,size,it_guid,imageStatus,lastModified,volume_type,volume_format,image_group_id,boot,description,ParentId,app_list,vm_snapshot_id,active,entity_type,number_of_vms,vm_names,quota_id,quota_name,quota_enforcement_type
     UNION
     SELECT 1 AS disk_storage_type,
            null AS storage_id, -- Storage domain fields
@@ -207,8 +218,9 @@ FROM
            null AS app_list,
            null AS vm_snapshot_id,
            null AS active,
-           vm_guid, -- VM fields
-           entity_type,
+           vms_for_disk_view.entity_type,
+           COALESCE(array_upper(vms_for_disk_view.array_vm_names,1),0) as number_of_vms,
+           array_to_string(vms_for_disk_view.array_vm_names, ',') as vm_names,
            null AS quota_id, -- Quota fields
            null AS quota_name,
            null AS quota_enforcement_type,
@@ -222,13 +234,9 @@ FROM
            l.device_size
     FROM disk_lun_map dlm
     JOIN luns l ON l.lun_id = dlm.lun_id
-    LEFT JOIN vm_device vd ON vd.device_id = dlm.disk_id
-    LEFT JOIN vm_static vs ON vs.vm_guid = vd.vm_id
+    LEFT JOIN vms_for_disk_view on vms_for_disk_view.device_id = dlm.disk_id
 ) AS storage_impl
 JOIN base_disks bd ON bd.disk_id = storage_impl.image_group_id;
-
-
-
 
 
 CREATE OR REPLACE VIEW storage_domains
@@ -881,8 +889,8 @@ SELECT vm_images_view.storage_id, vm_images_view.storage_path, vm_images_view.st
        vm_images_view.image_guid, vm_images_view.creation_date, vm_images_view.actual_size, vm_images_view.read_rate, vm_images_view.write_rate,
        vm_images_view.size, vm_images_view.it_guid, vm_images_view.description, vm_images_view.parentid,
        vm_images_view.imagestatus, vm_images_view.lastmodified, vm_images_view.app_list, vm_images_view.vm_snapshot_id, vm_images_view.volume_type,
-       vm_images_view.image_group_id, vm_images_view.vm_guid, vm_images_view.active, vm_images_view.volume_format, vm_images_view.disk_interface,
-       vm_images_view.boot, vm_images_view.wipe_after_delete, vm_images_view.propagate_errors, vm_images_view.entity_type, vm_images_view.quota_id,
+       vm_images_view.image_group_id, vm_images_view.active, vm_images_view.volume_format, vm_images_view.disk_interface,
+       vm_images_view.boot, vm_images_view.wipe_after_delete, vm_images_view.propagate_errors, vm_images_view.entity_type, vm_images_view.number_of_vms, vm_images_view.vm_names, vm_images_view.quota_id,
        vm_images_view.quota_name, vm_images_view.disk_alias, vm_images_view.disk_description,
        storage_domains_with_hosts_view.id, storage_domains_with_hosts_view.storage, storage_domains_with_hosts_view.storage_name,
        storage_domains_with_hosts_view.available_disk_size, storage_domains_with_hosts_view.used_disk_size,

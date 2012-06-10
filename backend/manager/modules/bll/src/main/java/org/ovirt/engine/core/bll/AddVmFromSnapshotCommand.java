@@ -211,9 +211,8 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
                 diskImage.setId(Guid.NewGuid());
                 diskImage.setParentId(Guid.Empty);
                 diskImage.setit_guid(Guid.Empty);
-                diskImage.setvm_guid(getVmId());
                 ImagesHandler.setDiskAlias(diskImage, getVm());
-                ImagesHandler.addDiskImage(diskImage);
+                ImagesHandler.addDiskImage(diskImage, getVmId());
                 return null;
             }
         });

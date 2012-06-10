@@ -23,6 +23,8 @@ public class DiskConditionFieldAutoCompleter extends BaseConditionFieldAutoCompl
         mVerbs.put("FORMAT", "FORMAT");
         mVerbs.put("STATUS", "STATUS");
         mVerbs.put("DISK_TYPE", "DISK_TYPE");
+        mVerbs.put("NUMBER_OF_VMS", "NUMBER_OF_VMS");
+        mVerbs.put("VM_NAMES", "VM_NAMES");
 
         // Building the autoCompletion dict.
         buildCompletions();
@@ -39,6 +41,9 @@ public class DiskConditionFieldAutoCompleter extends BaseConditionFieldAutoCompl
         getTypeDictionary().put("FORMAT", VolumeFormat.class);
         getTypeDictionary().put("STATUS", ImageStatus.class);
         getTypeDictionary().put("DISK_TYPE", DiskStorageType.class);
+        getTypeDictionary().put("NUMBER_OF_VMS", Integer.class);
+        getTypeDictionary().put("VM_NAMES", String.class);
+
 
         // building the ColumnName dict.
         mColumnNameDict.put("ALIAS", "disk_alias");
@@ -52,6 +57,8 @@ public class DiskConditionFieldAutoCompleter extends BaseConditionFieldAutoCompl
         mColumnNameDict.put("FORMAT", "volume_format");
         mColumnNameDict.put("STATUS", "imageStatus");
         mColumnNameDict.put("DISK_TYPE", "disk_storage_type");
+        mColumnNameDict.put("NUMBER_OF_VMS", "number_of_vms");
+        mColumnNameDict.put("VM_NAMES", "vm_names");
 
         // Building the validation dict.
         buildBasicValidationTable();
@@ -61,6 +68,7 @@ public class DiskConditionFieldAutoCompleter extends BaseConditionFieldAutoCompl
     public IAutoCompleter getFieldRelationshipAutoCompleter(String fieldName) {
         IAutoCompleter retval;
         if (StringHelper.EqOp(fieldName, "CREATIONDATE") || StringHelper.EqOp(fieldName, "SIZE")
+                || StringHelper.EqOp(fieldName, "NUMBER_OF_VMS")
                 || StringHelper.EqOp(fieldName, "ACTUAL_SIZE")
                 || StringHelper.EqOp(fieldName, "PROVISIONED_SIZE")) {
             retval = BiggerOrSmallerRelationAutoCompleter.INTSANCE;

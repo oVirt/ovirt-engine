@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.common.businessentities;
 
+import java.util.ArrayList;
+
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -19,9 +21,9 @@ public abstract class Disk extends BaseDisk {
      * The VM Type is indicated by this field, or <code>null</code> if it is detached.
      */
     private VmEntityType vmEntityType;
+    private int numberOfVms;
+    private ArrayList<String> vmNames;
     private Boolean plugged;
-    // TODO comes from image_vm_map
-    private Guid vm_guidField = Guid.Empty;
 
     public Disk() {
     }
@@ -31,6 +33,8 @@ public abstract class Disk extends BaseDisk {
             boolean wipeAfterDelete,
             PropagateErrors propagateErrors,
             VmEntityType vmEntityType,
+            int numberOfVms,
+            ArrayList<String> vmNames,
             String diskAlias,
             String diskDescription,
             boolean shareable,
@@ -44,6 +48,8 @@ public abstract class Disk extends BaseDisk {
                 shareable,
                 boot);
         this.vmEntityType = vmEntityType;
+        this.numberOfVms = numberOfVms;
+        this.vmNames = vmNames;
     }
 
     /**
@@ -72,23 +78,16 @@ public abstract class Disk extends BaseDisk {
         this.plugged = plugged;
     }
 
-    public Guid getvm_guid() {
-        return this.vm_guidField;
-    }
-
-    public void setvm_guid(Guid value) {
-        this.vm_guidField = value;
-    }
-
     public abstract long getsize();
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();
+        result = prime * result + numberOfVms;
         result = prime * result + ((plugged == null) ? 0 : plugged.hashCode());
         result = prime * result + ((vmEntityType == null) ? 0 : vmEntityType.hashCode());
-        result = prime * result + ((vm_guidField == null) ? 0 : vm_guidField.hashCode());
+        result = prime * result + ((vmNames == null) ? 0 : vmNames.hashCode());
         return result;
     }
 
@@ -106,14 +105,32 @@ public abstract class Disk extends BaseDisk {
                 return false;
         } else if (!plugged.equals(other.plugged))
             return false;
+        if (vmNames == null) {
+            if (other.vmNames != null)
+                return false;
+        } else if (!vmNames.equals(other.vmNames))
+            return false;
         if (vmEntityType != other.vmEntityType)
             return false;
-        if (vm_guidField == null) {
-            if (other.vm_guidField != null)
-                return false;
-        } else if (!vm_guidField.equals(other.vm_guidField))
+        if (numberOfVms != other.numberOfVms)
             return false;
         return true;
+    }
+
+    public int getNumberOfVms() {
+        return numberOfVms;
+    }
+
+    public void setNumberOfVms(int numberOfVms) {
+        this.numberOfVms = numberOfVms;
+    }
+
+    public ArrayList<String> getVmNames() {
+        return vmNames;
+    }
+
+    public void setVmNames(ArrayList<String> vmNames) {
+        this.vmNames = vmNames;
     }
 
     /**

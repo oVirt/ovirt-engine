@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.common.businessentities;
 
+import java.util.ArrayList;
+
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -22,6 +24,8 @@ public class LunDisk extends Disk {
             boolean wipeAfterDelete,
             PropagateErrors propagateErrors,
             VmEntityType vmEntityType,
+            int numberOfVms,
+            ArrayList<String> vmNames,
             String diskAlias,
             String diskDescription,
             boolean shareable,
@@ -32,6 +36,8 @@ public class LunDisk extends Disk {
                 wipeAfterDelete,
                 propagateErrors,
                 vmEntityType,
+                numberOfVms,
+                vmNames,
                 diskAlias,
                 diskDescription,
                 shareable,

@@ -197,7 +197,6 @@ public class MoveOrCopyDiskCommandTest {
     private void initVmDiskImage() {
         DiskImage diskImage = new DiskImage();
         diskImage.setVmEntityType(VmEntityType.VM);
-        diskImage.setvm_guid(Guid.NewGuid());
         when(diskImageDao.get(any(Guid.class))).thenReturn(diskImage);
     }
 

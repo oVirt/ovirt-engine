@@ -178,10 +178,10 @@ public final class ImagesHandler {
      * @param imageStorageDomainMap
      *            storage domain map entry to map between the image and its storage domain
      */
-    public static void addDiskImage(DiskImage image, boolean active, image_storage_domain_map imageStorageDomainMap) {
+    public static void addDiskImage(DiskImage image, boolean active, image_storage_domain_map imageStorageDomainMap, Guid vmId) {
         try {
             addImage(image, active, imageStorageDomainMap);
-            addDiskToVmIfNotExists(image, image.getvm_guid());
+            addDiskToVmIfNotExists(image, vmId);
         } catch (RuntimeException ex) {
             log.error("Failed adding new disk image and related entities to db", ex);
             throw new VdcBLLException(VdcBllErrors.DB, ex);
@@ -266,9 +266,9 @@ public final class ImagesHandler {
      * @param image
      *            DiskImage to add
      */
-    public static void addDiskImage(DiskImage image) {
+    public static void addDiskImage(DiskImage image, Guid vmId) {
         addDiskImage(image, image.getactive(), new image_storage_domain_map(image.getImageId(), image.getstorage_ids()
-                .get(0)));
+                .get(0)), vmId);
     }
 
     /**
@@ -636,9 +636,9 @@ public final class ImagesHandler {
         return lunDisks;
     }
 
-    public static void removeDiskImage(DiskImage diskImage) {
+    public static void removeDiskImage(DiskImage diskImage, Guid vmId) {
         try {
-            removeDiskFromVm(diskImage.getvm_guid(), diskImage.getId());
+            removeDiskFromVm(vmId, diskImage.getId());
             removeImage(diskImage);
         } catch (RuntimeException ex) {
             log.error("Failed adding new disk image and related entities to db", ex);

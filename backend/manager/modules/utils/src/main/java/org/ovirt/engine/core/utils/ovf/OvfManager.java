@@ -61,10 +61,6 @@ public class OvfManager {
             throw new OvfReaderException("Error parsing OVF:\r\n\r\n" + ovfstring, ex, name);
         }
         Guid id = vm.getStaticData().getId();
-        // this is static data for all images:
-        for (DiskImage image : images) {
-            image.setvm_guid(id);
-        }
         for (VmNetworkInterface iface : interfaces) {
             iface.setVmId(id);
         }
@@ -83,11 +79,6 @@ public class OvfManager {
         } catch (Exception ex) {
             String name = (ovf == null) ? OvfVmReader.EmptyName : ovf.getName();
             throw new OvfReaderException("Error parsing OVF:\r\n\r\n" + ovfstring, ex, name);
-        }
-
-        // this is static data for all images:
-        for (DiskImage image : images) {
-            image.setcontainer_guid(vmTemplate.getId());
         }
     }
 

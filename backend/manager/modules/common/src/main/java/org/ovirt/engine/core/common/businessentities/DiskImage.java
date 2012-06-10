@@ -74,12 +74,12 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
             String internal_drive_mapping,
             Guid it_guid,
             long size,
-            Guid vm_guid,
             Guid parentId,
             ImageStatus imageStatus,
             Date lastModified,
             String appList,
             VmEntityType vmEntityType,
+            int numberOfVms,
             Guid quotaId,
             String quotaName,
             QuotaEnforcementTypeEnum quotaEnforcementType,
@@ -92,12 +92,12 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
         setImageId(image_guid);
         setit_guid(it_guid);
         this.setsize(size);
-        setvm_guid(vm_guid);
         this.setParentId(parentId);
         this.setimageStatus(imageStatus);
         this.setlastModified(lastModified);
         this.setappList(appList);
         this.setVmEntityType(vmEntityType);
+        this.setNumberOfVms(numberOfVms);
         this.setQuotaId(quotaId);
         this.setQuotaName(quotaName);
         setQuotaEnforcementType(quotaEnforcementType);
@@ -335,16 +335,6 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
     }
 
     @Override
-    public Guid getcontainer_guid() {
-        return getvm_guid();
-    }
-
-    @Override
-    public void setcontainer_guid(Guid value) {
-        setvm_guid(value);
-    }
-
-    @Override
     public int getread_rate_kb_per_sec() {
         return mReadRateKbPerSec;
     }
@@ -397,7 +387,6 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
         di.setImageId(new Guid(diskImage.getImageId().getUuid()));
         di.appList = diskImage.appList;
         di.setit_guid(new Guid(diskImage.getit_guid().getUuid()));
-        di.setvm_guid(diskImage.getvm_guid());
         di.setParentId(new Guid(diskImage.getParentId().getUuid()));
         di.setimageStatus(diskImage.getimageStatus());
         di.setlastModified(new Date(diskImage.getlastModified().getTime()));
@@ -405,6 +394,7 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
         di.setvm_snapshot_id(diskImage.getvm_snapshot_id());
         di.mstorage_path = diskImage.mstorage_path;
         di.setId(diskImage.getId());
+        di.setNumberOfVms(diskImage.getNumberOfVms());
         di.setDiskInterface(diskImage.getDiskInterface());
         di.setWipeAfterDelete(diskImage.isWipeAfterDelete());
         di.setPropagateErrors(diskImage.getPropagateErrors());

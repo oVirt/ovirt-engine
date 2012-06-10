@@ -320,7 +320,6 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
         getCompensationContext().snapshotNewEntity(getVmTemplate());
         int count = 1;
         for (DiskImage image : getParameters().getImages()) {
-            image.setvm_guid(getVmTemplateId());
             image.setactive(true);
             image_storage_domain_map map = BaseImagesCommand.saveImage(image);
             getCompensationContext().snapshotNewEntity(image.getImage());
@@ -398,7 +397,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
             DbFacade.getInstance().getDiskImageDynamicDAO().remove(image.getImageId());
             DbFacade.getInstance().getImageStorageDomainMapDao().remove(image.getImageId());
             DbFacade.getInstance().getImageDao().remove(image.getImageId());
-            DbFacade.getInstance().getVmDeviceDAO().remove(new VmDeviceId(image.getId(),image.getvm_guid()));
+            DbFacade.getInstance().getVmDeviceDAO().remove(new VmDeviceId(image.getId(), null));
             DbFacade.getInstance().getBaseDiskDao().remove(image.getId());
         }
     }

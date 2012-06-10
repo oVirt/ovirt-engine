@@ -211,7 +211,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
         SnapshotsManager snapshotsManager = new SnapshotsManager();
         removedSnapshotId = getSnapshotDao().getId(getVmId(), SnapshotType.ACTIVE);
         snapshotsToRemove.add(removedSnapshotId);
-        snapshotsManager.removeAllIllegalDisks(removedSnapshotId);
+        snapshotsManager.removeAllIllegalDisks(removedSnapshotId, getVmId());
 
         snapshotsManager.attempToRestoreVmConfigurationFromSnapshot(getVm(),
                 targetSnapshot,

@@ -147,7 +147,6 @@ public class UpdateVmDiskCommandTest {
         disk.setDiskInterface(DiskInterface.VirtIO);
         disk.setPlugged(false);
         disk.setactive(true);
-        disk.setvm_guid(vmId);
         disk.setId(diskImageGuid);
         when(diskDao.get(diskImageGuid)).thenReturn(disk);
         return disk;

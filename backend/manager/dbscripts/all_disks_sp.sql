@@ -38,10 +38,10 @@ Create or replace FUNCTION GetDisksVmGuid(v_vm_guid UUID, v_user_id UUID, v_is_f
 RETURNS SETOF all_disks
    AS $procedure$
 BEGIN
-      RETURN QUERY SELECT *
+      RETURN QUERY SELECT all_disks.*
       FROM all_disks
-      WHERE
-      vm_guid = v_vm_guid
+      LEFT JOIN vm_device on vm_device.device_id = all_disks.image_group_id
+      WHERE vm_device.vm_id = v_vm_guid
       AND (NOT v_is_filtered OR EXISTS (SELECT 1
                                         FROM   user_disk_permissions_view
                                         WHERE  user_id = v_user_id AND entity_id = all_disks.disk_id));
@@ -56,11 +56,11 @@ Create or replace FUNCTION GetAllAttachableDisksByPoolId(v_storage_pool_id UUID,
 RETURNS SETOF all_disks
    AS $procedure$
 BEGIN
-    RETURN QUERY SELECT all_disks.*
+    RETURN QUERY SELECT distinct all_disks.*
     FROM all_disks
     WHERE (v_storage_pool_id IS NULL OR all_disks.storage_pool_id = v_storage_pool_id)
-    AND (all_disks.vm_guid IS NULL OR all_disks.shareable)
-    AND (v_vm_id IS NULL OR all_disks.vm_guid IS NULL OR v_vm_id != all_disks.vm_guid)
+    AND (all_disks.number_of_vms = 0 OR all_disks.shareable)
+    AND (v_vm_id IS NULL OR v_vm_id NOT IN (SELECT vm_id FROM vm_device WHERE vm_device.device_id = all_disks.image_group_id))
     AND   (NOT v_is_filtered OR EXISTS (SELECT 1
                                         FROM   user_disk_permissions_view
                                         WHERE  user_id = v_user_id AND entity_id = disk_id));

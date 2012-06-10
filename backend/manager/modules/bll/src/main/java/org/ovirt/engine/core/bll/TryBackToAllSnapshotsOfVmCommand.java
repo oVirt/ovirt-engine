@@ -114,7 +114,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
                         getVm(),
                         getCompensationContext());
                 snapshotsManager.addActiveSnapshot(newActiveSnapshotId, getVm(), getCompensationContext());
-                snapshotsManager.removeAllIllegalDisks(previousActiveSnapshotId);
+                snapshotsManager.removeAllIllegalDisks(previousActiveSnapshotId, getVm().getId());
                 getCompensationContext().stateChanged();
                 return previousActiveSnapshotId;
             }

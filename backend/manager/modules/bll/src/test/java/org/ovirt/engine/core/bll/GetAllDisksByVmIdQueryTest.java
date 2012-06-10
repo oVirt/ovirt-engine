@@ -116,11 +116,10 @@ public class GetAllDisksByVmIdQueryTest extends AbstractUserQueryTest<GetAllDisk
                 "2",
                 Guid.NewGuid(),
                 1L,
-                vmID,
                 Guid.NewGuid(),
                 ImageStatus.OK,
                 new Date(),
-                "", VmEntityType.VM, null, null, QuotaEnforcementTypeEnum.DISABLED, false);
+                "", VmEntityType.VM, 1, null, null, QuotaEnforcementTypeEnum.DISABLED, false);
     }
 
     private DiskImage createDiskSnapshot(Guid diskId) {
@@ -134,11 +133,10 @@ public class GetAllDisksByVmIdQueryTest extends AbstractUserQueryTest<GetAllDisk
                 "2",
                 Guid.NewGuid(),
                 1L,
-                vmID,
                 diskId,
                 ImageStatus.OK,
                 new Date(),
-                "", VmEntityType.VM, null, null, QuotaEnforcementTypeEnum.DISABLED, false);
+                "", VmEntityType.VM, 1, null, null, QuotaEnforcementTypeEnum.DISABLED, false);
     }
 
     @Test
