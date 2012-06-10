@@ -1320,16 +1320,19 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
             new IFrontendActionAsyncCallback() {
                 @Override
                 public void Executed(FrontendActionAsyncResult result) {
+                        StorageListModel storageListModel = (StorageListModel) result.getState();
+                        StorageModel storageModel = (StorageModel) storageListModel.getWindow();
+                        if (!result.getReturnValue().getSucceeded()) {
+                            storageListModel.OnFinish(storageListModel.context, false, storageListModel.storageModel);
+                            return;
+                        }
 
-                    StorageListModel storageListModel = (StorageListModel) result.getState();
-                    StorageModel storageModel = (StorageModel) storageListModel.getWindow();
-                    storage_pool dataCenter = (storage_pool) storageModel.getDataCenter().getSelectedItem();
-
-                    if (!dataCenter.getId().equals(StorageModel.UnassignedDataCenterId)) {
-                        VdcReturnValueBase returnValue = result.getReturnValue();
-                        NGuid storageId = (NGuid) returnValue.getActionReturnValue();
-                        storageListModel.AttachStorageToDataCenter((Guid) storageId, dataCenter.getId());
-                    }
+                        storage_pool dataCenter = (storage_pool) storageModel.getDataCenter().getSelectedItem();
+                        if (!dataCenter.getId().equals(StorageModel.UnassignedDataCenterId)) {
+                            VdcReturnValueBase returnValue = result.getReturnValue();
+                            NGuid storageId = (NGuid) returnValue.getActionReturnValue();
+                            storageListModel.AttachStorageToDataCenter((Guid) storageId, dataCenter.getId());
+                        }
 
                     storageListModel.OnFinish(storageListModel.context, true, storageListModel.storageModel);
                 }
