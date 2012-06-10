@@ -1,12 +1,23 @@
 package org.ovirt.engine.core.bll.storage;
 
-import org.ovirt.engine.core.compat.*;
-import org.ovirt.engine.core.common.businessentities.*;
+import java.lang.reflect.Constructor;
+import java.util.EnumMap;
+import java.util.Map;
+
+import org.ovirt.engine.core.common.businessentities.StorageType;
+import org.ovirt.engine.core.compat.ApplicationException;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class StorageHelperDirector {
+    private static final String ACTION_TYPE_PACKAGE = "org.ovirt.engine.core.bll.storage";
+    private static final String ACTION_TYPE_CLASS = "StorageHelper";
+
+    private static final Log log = LogFactory.getLog(StorageHelperDirector.class);
+
     private static StorageHelperDirector _instance = new StorageHelperDirector();
-    private java.util.HashMap<StorageType, IStorageHelper> _helpers =
-            new java.util.HashMap<StorageType, IStorageHelper>();
+    private Map<StorageType, IStorageHelper> _helpers =
+            new EnumMap<StorageType, IStorageHelper>(StorageType.class);
 
     public static StorageHelperDirector getInstance() {
         return _instance;
@@ -18,28 +29,29 @@ public class StorageHelperDirector {
 
     private void InitializeHelpers() {
         try {
-            for (String helperName : EnumCompat.GetNames(StorageType.class)) {
-                java.lang.Class<?> actionType = null;
+            for (StorageType storageType : StorageType.values()) {
+                Class<?> actionType = null;
+                String formattedClassName = String.format("%1$s.%2$s%3$s",
+                        ACTION_TYPE_PACKAGE,
+                        storageType.name(),
+                        ACTION_TYPE_CLASS);
                 try {
-                    actionType = java.lang.Class.forName(String.format("%1$s.%2$s%3$s", "org.ovirt.engine.core.bll.storage",
-                            helperName, "StorageHelper"));
+                    actionType = Class.forName(formattedClassName);
                 } catch (ClassNotFoundException cnfe) {
-                    // eat it
+                    log.error("StorageHelperDirector Error:: the lookup for following class has failed: "
+                            + formattedClassName, cnfe);
                 }
-                /**
-                 * if action type not exist - operation valid
-                 */
+
+                // if action type not exist - operation invalid
                 if (actionType != null) {
-                    java.lang.reflect.Constructor<?> info = actionType.getConstructors()[0];
-                    Object tempVar = info.newInstance(null);
-                    IStorageHelper currentHelper = (IStorageHelper) ((tempVar instanceof IStorageHelper) ? tempVar
-                            : null);
-                    if (currentHelper != null) {
-                        _helpers.put(StorageType.valueOf(helperName), currentHelper);
-                    }
+                    Constructor<?> info = actionType.getConstructors()[0];
+                    IStorageHelper currentHelper = (IStorageHelper) info.newInstance(null);
+                    _helpers.put(storageType, currentHelper);
                 }
             }
         } catch (Exception ex) {
+            log.error("StorageHelperDirector Error:: exception was encountered during InitializeHelpers() execution",
+                    ex);
             throw new ApplicationException("JTODO missing exception", ex);
         }
     }
