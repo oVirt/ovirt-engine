@@ -1232,7 +1232,7 @@ INNER JOIN vds_groups ON vds_groups.vds_group_id = vm_static.vds_group_id
 INNER JOIN permissions_view ON object_id = storage_pool_id AND object_type_id = 14 AND allows_viewing_children
 -- Or the user has permissions on system
 UNION ALL
-SELECT     vmt_guid, ad_element_id
+SELECT     vm_guid, ad_element_id
 FROM       permissions_view
 CROSS JOIN vm_static
 WHERE      object_type_id = 1 AND allows_viewing_children AND vm_static.entity_type::text = 'TEMPLATE'::text;
