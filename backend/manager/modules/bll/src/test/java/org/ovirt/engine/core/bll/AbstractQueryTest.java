@@ -8,10 +8,8 @@ import static org.mockito.Mockito.spy;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.ParameterizedType;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -26,11 +24,6 @@ public abstract class AbstractQueryTest<P extends VdcQueryParametersBase, Q exte
     public void setUp() throws Exception {
         setUpMockQueryParameters();
         setUpSpyQuery();
-    }
-
-    @After
-    public void cleanConfig() {
-        Config.setConfigUtils(null);
     }
 
     /** Sets up a mock for {@link #params} */
@@ -85,6 +78,8 @@ public abstract class AbstractQueryTest<P extends VdcQueryParametersBase, Q exte
 
     @Test
     public void testQueryType() throws IllegalArgumentException, IllegalAccessException {
-        assertNotSame("The query can't be found in the enum VdcQueryType", VdcQueryType.Unknown, TestHelperQueriesCommandType.getQueryTypeFieldValue(query));
+        assertNotSame("The query can't be found in the enum VdcQueryType",
+                VdcQueryType.Unknown,
+                TestHelperQueriesCommandType.getQueryTypeFieldValue(query));
     }
 }
