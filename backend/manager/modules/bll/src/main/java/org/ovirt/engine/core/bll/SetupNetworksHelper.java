@@ -26,9 +26,18 @@ public class SetupNetworksHelper {
 
     private List<network> modifiedNetworks = new ArrayList<network>();
     private List<String> unmanagedNetworks = new ArrayList<String>();
-    private List<String> removeNetworks;
+    private List<String> removedNetworks = new ArrayList<String>();
     private Map<String, VdsNetworkInterface> modifiedBonds = new HashMap<String, VdsNetworkInterface>();
-    private List<VdsNetworkInterface> removedBonds;
+    private List<VdsNetworkInterface> removedBonds = new ArrayList<VdsNetworkInterface>();
+
+    /** All interface`s names that were processed by the helper. */
+    private Set<String> ifaceNames = new HashSet<String>();
+
+    /** Map of all bonds which were processed by the helper. Key = bond name, Value = list of slave NICs. */
+    private Map<String, List<VdsNetworkInterface>> bonds = new HashMap<String, List<VdsNetworkInterface>>();
+
+    /** All network`s names that are attached to some sort of interface. */
+    private Set<String> attachedNetworksNames = new HashSet<String>();
 
     public SetupNetworksHelper(SetupNetworksParameters parameters, Guid vdsGroupId) {
         params = parameters;
@@ -50,61 +59,64 @@ public class SetupNetworksHelper {
      * @return List of violations encountered (if none, list is empty).
      */
     public List<VdcBllMessages> validate() {
-        Set<String> ifaceNames = new HashSet<String>();
-        Set<String> bonds = new HashSet<String>();
-        Set<String> attachedNetworksNames = new HashSet<String>();
-
-        // key = master bond name, value = list of interfaces
-        Map<String, List<VdsNetworkInterface>> bondSlaves = new HashMap<String, List<VdsNetworkInterface>>();
-
         for (VdsNetworkInterface iface : params.getInterfaces()) {
             String name = iface.getName();
-            String networkName = iface.getNetworkName();
-            String bondName = iface.getBondName();
-            if (ifaceNames.contains(name)) {
-                violations.add(VdcBllMessages.NETWORK_INTERFACE_NAME_ALREADY_IN_USE);
-                continue;
-            } else {
-                ifaceNames.add(name);
-            }
+            if (addInterfaceToProcessedList(iface)) {
+                if (isBond(iface)) {
+                    extractBondIfModified(iface, name);
+                } else {
+                    if (StringUtils.isNotBlank(iface.getBondName())) {
+                        extractBondSlave(iface);
+                    }
 
-            if (isBond(iface)) {
-                extractBondIfModified(bonds, iface, name);
-            } else {
-                if (StringUtils.isNotBlank(bondName)) {
-                    extractBondSlave(bondSlaves, iface, bondName);
+                    // validate the nic exists on host
+                    if (!getExistingIfaces().containsKey(NetworkUtils.StripVlan(name))) {
+                        violations.add(VdcBllMessages.NETWORK_INTERFACE_NOT_EXISTS);
+                    }
                 }
 
-                // validate the nic exists on host
-                if (!getExistingIfaces().containsKey(NetworkUtils.StripVlan(name))) {
-                    violations.add(VdcBllMessages.NETWORK_INTERFACE_NOT_EXISTS);
+                // validate and extract to network map
+                if (violations.isEmpty() && StringUtils.isNotBlank(iface.getNetworkName())) {
+                    extractNetwork(iface);
                 }
-            }
-
-            // validate and extract to network map
-            if (violations.isEmpty() && StringUtils.isNotBlank(networkName)) {
-                extractNetwork(attachedNetworksNames, iface, networkName);
             }
         }
 
-        validateBonds(bonds, bondSlaves);
-
-        detectSlaveChanges(bondSlaves);
-
-        extractRemoveNetworks(attachedNetworksNames, getExisitingHostNetworkNames());
-        this.removedBonds = extractRemovedBonds(bonds);
+        validateBondSlavesCount();
+        detectSlaveChanges();
+        extractRemovedNetworks();
+        extractRemovedBonds();
 
         return violations;
     }
 
     /**
-     * Detect a bond that it's slaves have changed, to add to the modified bonds list.
+     * Add the given interface to the list of processed interfaces, failing if it already existed.
      *
-     * @param bondSlaves
-     *            The bond slaves which were sent.
+     * @param iface
+     *            The interface to add.
+     * @return <code>true</code> if interface wasn't in the list and was added to it, otherwise <code>false</code>.
      */
-    private void detectSlaveChanges(Map<String, List<VdsNetworkInterface>> bondSlaves) {
-        for (Map.Entry<String, List<VdsNetworkInterface>> bondEntry : bondSlaves.entrySet()) {
+    private boolean addInterfaceToProcessedList(VdsNetworkInterface iface) {
+        if (ifaceNames.contains(iface.getName())) {
+            if (isBond(iface)) {
+                violations.add(VdcBllMessages.NETWORK_BOND_NAME_EXISTS);
+            } else {
+                violations.add(VdcBllMessages.NETWORK_INTERFACE_NAME_ALREADY_IN_USE);
+            }
+
+            return false;
+        }
+
+        ifaceNames.add(iface.getName());
+        return true;
+    }
+
+    /**
+     * Detect a bond that it's slaves have changed, to add to the modified bonds list.
+     */
+    private void detectSlaveChanges() {
+        for (Map.Entry<String, List<VdsNetworkInterface>> bondEntry : bonds.entrySet()) {
             String bondName = bondEntry.getKey();
             if (!modifiedBonds.containsKey(bondName)) {
                 for (VdsNetworkInterface bondSlave : bondEntry.getValue()) {
@@ -138,52 +150,35 @@ public class SetupNetworksHelper {
         return DbFacade.getInstance();
     }
 
-    private List<String> getExisitingHostNetworkNames() {
-        List<String> list = new ArrayList<String>(getExistingIfaces().size());
-        for (VdsNetworkInterface iface : getExistingIfaces().values()) {
-            if (StringUtils.isNotBlank(iface.getNetworkName())) {
-                list.add(iface.getNetworkName());
-            }
-        }
-
-        return list;
-    }
-
     /**
      * extracting a network is done by matching the desired network name with the network details from db on
      * clusterNetworksMap. The desired network is just a key and actual network configuration is taken from the db
      * entity.
      *
-     * @param attachedNetworksNames
-     *            Set of names of the networks which are attached to a NIC
      * @param iface
      *            current iterated interface
-     * @param networkName
-     *            the current network name of iface
      */
-    private void extractNetwork(Set<String> attachedNetworksNames,
-            VdsNetworkInterface iface,
-            String networkName) {
+    private void extractNetwork(VdsNetworkInterface iface) {
+        String networkName = iface.getNetworkName();
 
-        // check if network exists on cluster
-        if (getExistingClusterNetworks().containsKey(networkName)) {
+        // prevent attaching 2 interfaces to 1 network
+        if (attachedNetworksNames.contains(networkName)) {
+            violations.add(VdcBllMessages.NETWROK_ALREADY_ATTACHED_TO_INTERFACE);
+        } else {
+            attachedNetworksNames.add(networkName);
 
-            // prevent attaching 2 interfaces to 1 network
-            if (attachedNetworksNames.contains(networkName)) {
-                violations.add(VdcBllMessages.NETWROK_ALREADY_ATTACHED_TO_INTERFACE);
-            } else {
-                attachedNetworksNames.add(networkName);
-
+            // check if network exists on cluster
+            if (getExistingClusterNetworks().containsKey(networkName)) {
                 if (interfaceWasModified(iface)) {
                     modifiedNetworks.add(getExistingClusterNetworks().get(networkName));
                 }
-            }
 
-            // Interface must exist, it was checked before and we can't reach here if it does'nt exist already.
-        } else if (networkName.equals(getExistingIfaces().get(iface.getName()).getNetworkName())) {
-            unmanagedNetworks.add(networkName);
-        } else {
-            violations.add(VdcBllMessages.NETWORK_NOT_EXISTS_IN_CURRENT_CLUSTER);
+                // Interface must exist, it was checked before and we can't reach here if it does'nt exist already.
+            } else if (networkName.equals(getExistingIfaces().get(iface.getName()).getNetworkName())) {
+                unmanagedNetworks.add(networkName);
+            } else {
+                violations.add(VdcBllMessages.NETWORK_NOT_EXISTS_IN_CURRENT_CLUSTER);
+            }
         }
     }
 
@@ -207,40 +202,33 @@ public class SetupNetworksHelper {
      * build mapping of the bond name - > list of slaves. slaves are interfaces with a pointer to the master bond by
      * bondName.
      *
-     * @param bondSlaves
      * @param iface
-     * @param bondName
      */
-    protected void extractBondSlave(Map<String, List<VdsNetworkInterface>> bondSlaves,
-            VdsNetworkInterface iface,
-            String bondName) {
-        List<VdsNetworkInterface> value = new ArrayList<VdsNetworkInterface>();
-        value.add(iface);
-        if (bondSlaves.containsKey(bondName)) {
-            value.addAll(bondSlaves.get(bondName));
+    private void extractBondSlave(VdsNetworkInterface iface) {
+        List<VdsNetworkInterface> slaves = bonds.get(iface.getBondName());
+        if (slaves == null) {
+            slaves = new ArrayList<VdsNetworkInterface>();
+            bonds.put(iface.getBondName(), slaves);
         }
 
-        bondSlaves.put(bondName, value);
+        slaves.add(iface);
     }
 
     /**
      * Extract the bond to the modified bonds list if it was added or the bond interface config has changed.
      *
-     * @param bonds
-     *            The bond names which have already been processed.
      * @param iface
      *            The interface of the bond.
-     * @param name
+     * @param bondName
      *            The bond name.
      */
-    protected void extractBondIfModified(Set<String> bonds, VdsNetworkInterface iface, String name) {
-        if (bonds.contains(name)) {
-            violations.add(VdcBllMessages.NETWORK_BOND_NAME_EXISTS);
-        } else {
-            bonds.add(name);
-            if (interfaceWasModified(iface)) {
-                modifiedBonds.put(name, iface);
-            }
+    private void extractBondIfModified(VdsNetworkInterface iface, String bondName) {
+        if (!bonds.containsKey(bondName)) {
+            bonds.put(bondName, new ArrayList<VdsNetworkInterface>());
+        }
+
+        if (interfaceWasModified(iface)) {
+            modifiedBonds.put(bondName, iface);
         }
     }
 
@@ -248,29 +236,20 @@ public class SetupNetworksHelper {
      * Extract the bonds to be removed. If a bond was attached to slaves but it's not attached to anything then it
      * should be removed. Otherwise, no point in removing it: Either it is still a bond, or it isn't attached to any
      * slaves either way so no need to touch it.
-     *
-     * @param bonds
-     *            Names of all bonds which are present in the new configuration.
-     * @return The bonds to be removed.
      */
-    protected List<VdsNetworkInterface> extractRemovedBonds(Set<String> bonds) {
-        List<VdsNetworkInterface> removedBonds = new ArrayList<VdsNetworkInterface>();
-
+    private void extractRemovedBonds() {
         for (VdsNetworkInterface iface : getExistingIfaces().values()) {
             String bondName = iface.getBondName();
-            if (StringUtils.isNotBlank(bondName) && !bonds.contains(bondName)) {
+            if (StringUtils.isNotBlank(bondName) && !bonds.containsKey(bondName)) {
                 removedBonds.add(getExistingIfaces().get(bondName));
             }
         }
-
-        return removedBonds;
     }
 
-    protected boolean validateBonds(Set<String> bonds,
-            Map<String, List<VdsNetworkInterface>> bondSlaves) {
+    private boolean validateBondSlavesCount() {
         boolean returnValue = true;
-        for (String bondName : bonds) {
-            if (bondSlaves.containsKey(bondName) && bondSlaves.get(bondName).size() < 2) {
+        for (Map.Entry<String, List<VdsNetworkInterface>> bondEntry : bonds.entrySet()) {
+            if (bondEntry.getValue().size() < 2) {
                 returnValue = false;
                 violations.add(VdcBllMessages.NETWORK_BOND_PARAMETERS_INVALID);
             }
@@ -282,25 +261,14 @@ public class SetupNetworksHelper {
     /**
      * Calculate the networks that should be removed - If the network was attached to a NIC and is no longer attached to
      * it, then it will be removed.
-     *
-     * @param networkNames
-     *            The names of managed networks which are still attached to a NIC.
-     * @param exisitingHostNetworksNames
-     *            The names of networks that were attached to NICs before the changes.
      */
-    protected void extractRemoveNetworks(Set<String> networkNames,
-            List<String> exisitingHostNetworksNames) {
-        removeNetworks = new ArrayList<String>();
-
-        for (String net : exisitingHostNetworksNames) {
-            if (!networkNames.contains(net) && !unmanagedNetworks.contains(net)) {
-                removeNetworks.add(net);
+    private void extractRemovedNetworks() {
+        for (VdsNetworkInterface iface : getExistingIfaces().values()) {
+            String net = iface.getNetworkName();
+            if (StringUtils.isNotBlank(net) && !attachedNetworksNames.contains(net)) {
+                removedNetworks.add(net);
             }
         }
-    }
-
-    public List<VdcBllMessages> getViolations() {
-        return violations;
     }
 
     public List<network> getNetworks() {
@@ -308,7 +276,7 @@ public class SetupNetworksHelper {
     }
 
     public List<String> getRemoveNetworks() {
-        return removeNetworks;
+        return removedNetworks;
     }
 
     public List<VdsNetworkInterface> getBonds() {
