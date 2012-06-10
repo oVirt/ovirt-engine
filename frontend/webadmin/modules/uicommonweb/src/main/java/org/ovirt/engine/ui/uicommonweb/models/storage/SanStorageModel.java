@@ -274,8 +274,7 @@ public abstract class SanStorageModel extends SanStorageModelBase
         if (lun.isPartitioned()) {
             lunModel.getGrayedOutReasons().add(constants.partitionedLUN());
         }
-
-        if (lun.getStorageDomainId() != null) {
+        else if (lun.getStorageDomainId() != null) {
             lunModel.getGrayedOutReasons().add(
                     messages.lunAlreadyPartOfStorageDomainWarning(lun.getStorageDomainName()));
         }
@@ -283,7 +282,7 @@ public abstract class SanStorageModel extends SanStorageModelBase
             lunModel.getGrayedOutReasons().add(
                     messages.lunUsedByDiskWarning(lun.getDiskAlias()));
         }
-        else if (lun.getvolume_group_id() != null) {
+        else if (lun.getvolume_group_id() != null && !lun.getvolume_group_id().isEmpty()) {
             lunModel.getGrayedOutReasons().add(
                     messages.lunUsedByVGWarning(lun.getvolume_group_id()));
         }
