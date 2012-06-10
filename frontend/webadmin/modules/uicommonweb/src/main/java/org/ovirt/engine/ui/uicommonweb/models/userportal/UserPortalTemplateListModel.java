@@ -15,6 +15,7 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.UserPortalPermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateListModel;
+import org.ovirt.engine.ui.uicommonweb.models.templates.UserPortalTemplateDiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.UserPortalTemplateEventListModel;
 
 public class UserPortalTemplateListModel extends TemplateListModel
@@ -53,6 +54,7 @@ public class UserPortalTemplateListModel extends TemplateListModel
 
     @Override
     protected void addCustomModelsDetailModelList(ObservableCollection<EntityModel> list) {
+        list.add(2, new UserPortalTemplateDiskListModel());
         list.add(new UserPortalTemplateEventListModel());
         list.add(new UserPortalPermissionListModel());
     }

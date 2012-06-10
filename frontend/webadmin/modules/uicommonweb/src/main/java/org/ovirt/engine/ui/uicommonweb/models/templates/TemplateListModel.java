@@ -428,13 +428,13 @@ public class TemplateListModel extends ListWithDetailsModel implements ISupportS
         list.add(new TemplateGeneralModel());
         list.add(new TemplateVmListModel());
         list.add(new TemplateInterfaceListModel());
-        list.add(new TemplateDiskListModel());
         list.add(new TemplateStorageListModel());
         addCustomModelsDetailModelList(list);
         setDetailModels(list);
     }
 
     protected void addCustomModelsDetailModelList(ObservableCollection<EntityModel> list) {
+        list.add(3, new TemplateDiskListModel());
         list.add(new TemplateEventListModel());
         list.add(new PermissionListModel());
     }

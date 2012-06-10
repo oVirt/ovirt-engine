@@ -14,10 +14,10 @@ import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateDiskListModel;
 
 import com.google.gwt.event.shared.EventBus;
 
-public class TemplateDiskListModelTable extends AbstractModelBoundTableWidget<DiskImage, TemplateDiskListModel> {
+public class TemplateDiskListModelTable<T extends TemplateDiskListModel> extends AbstractModelBoundTableWidget<DiskImage, T> {
 
     public TemplateDiskListModelTable(
-            SearchableTableModelProvider<DiskImage, TemplateDiskListModel> modelProvider,
+            SearchableTableModelProvider<DiskImage, T> modelProvider,
             EventBus eventBus, ClientStorage clientStorage, CommonApplicationConstants constants) {
         super(modelProvider, eventBus, clientStorage, false);
     }

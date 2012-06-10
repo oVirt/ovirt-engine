@@ -41,6 +41,8 @@ public class TemplateDiskListModel extends SearchableListModel
         return (VmTemplate) ((super.getEntity() instanceof VmTemplate) ? super.getEntity() : null);
     }
 
+    protected boolean ignoreStorageDomains;
+
     ArrayList<storage_domains> storageDomains;
 
     public ArrayList<storage_domains> getStorageDomains() {
@@ -112,7 +114,7 @@ public class TemplateDiskListModel extends SearchableListModel
     @Override
     public void setItems(Iterable value)
     {
-        if (!getStorageDomains().isEmpty())
+        if (!getStorageDomains().isEmpty() || ignoreStorageDomains)
         {
             ArrayList<DiskImage> disks =
                     value != null ? Linq.<DiskImage> Cast(value) : new ArrayList<DiskImage>();
