@@ -6,13 +6,14 @@ import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.RoleType;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.businessentities.roles;
+import org.ovirt.engine.core.common.interfaces.IVdcUser;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DbUserDAO;
 import org.ovirt.engine.core.dao.PermissionDAO;
 import org.ovirt.engine.core.dao.RoleDAO;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 /**
  * This class caches config values for used with many commands
@@ -43,8 +44,8 @@ public class MultiLevelAdministrationHandler {
      * @param userId
      * @return True if user is admin
      */
-    public static boolean isAdminUser(Guid userId) {
-        List<roles> userRoles = getRoleDAO().getAllForAdElement(userId);
+    public static boolean isAdminUser(IVdcUser user) {
+        List<roles> userRoles = getRoleDAO().getAllForUserAndGroups(user.getUserId(), user.getGroupIds());
 
         for (roles r : userRoles) {
             if (r.getType() == RoleType.ADMIN) {

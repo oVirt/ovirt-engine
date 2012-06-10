@@ -17,6 +17,7 @@ import org.mockito.MockitoAnnotations;
 import org.ovirt.engine.core.common.businessentities.RoleType;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.businessentities.roles;
+import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.PermissionDAO;
@@ -60,8 +61,11 @@ public class MultiLevelAdministrationHandlerTest {
         roles role = new roles("admin role", adElementId, "admin");
         role.setType(RoleType.ADMIN);
         roles.add(role);
-        when(DbFacade.getInstance().getRoleDAO().getAllForAdElement(adElementId)).thenReturn(roles);
-        assertTrue(MultiLevelAdministrationHandler.isAdminUser(adElementId));
+        when(DbFacade.getInstance().getRoleDAO().getAllForUserAndGroups(adElementId, "")).thenReturn(roles);
+        VdcUser user = new VdcUser();
+        user.setGroupIds("");
+        user.setUserId(adElementId);
+        assertTrue(MultiLevelAdministrationHandler.isAdminUser(user));
     }
 
     @Test
@@ -70,8 +74,11 @@ public class MultiLevelAdministrationHandlerTest {
         roles role = new roles("user role", adElementId, "user");
         role.setType(RoleType.USER);
         roles.add(role);
-        when(DbFacade.getInstance().getRoleDAO().getAllForAdElement(adElementId)).thenReturn(roles);
-        assertFalse(MultiLevelAdministrationHandler.isAdminUser(adElementId));
+        when(DbFacade.getInstance().getRoleDAO().getAllForUserAndGroups(adElementId, "")).thenReturn(roles);
+        VdcUser user = new VdcUser();
+        user.setGroupIds("");
+        user.setUserId(adElementId);
+        assertFalse(MultiLevelAdministrationHandler.isAdminUser(user));
     }
 
     // Tests for isLastSuperUserGroup Method

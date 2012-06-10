@@ -49,7 +49,7 @@ public abstract class AdminOperationCommandBase<T extends VdcActionParametersBas
         }
 
         if (getCurrentUser() != null) {
-            if (MultiLevelAdministrationHandler.isAdminUser(getCurrentUser().getUserId())) {
+            if (MultiLevelAdministrationHandler.isAdminUser(getCurrentUser())) {
                 return true;
             }
             addCanDoActionMessage(VdcBllMessages.USER_NOT_AUTHORIZED_TO_PERFORM_ACTION);

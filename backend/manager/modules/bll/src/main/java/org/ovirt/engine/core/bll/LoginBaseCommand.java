@@ -131,6 +131,8 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
         // todo : insert correct values of all arguments, separate
         HandleUserSession(_adUser);
         setActionReturnValue(getCurrentUser());
+        // Persist the most updated version of the user
+        UserCommandBase.persistAuthenticatedUser(_adUser);
         getReturnValue().setLoginResult(LoginResult.Autheticated);
         // Permissions for this user might been changed since last login so
         // update his isAdmin flag accordingly
@@ -188,17 +190,14 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
             addCanDoActionMessage(VdcBllMessages.USER_IS_ALREADY_LOGGED_IN);
         }
         if (authenticated) {
-            // Persist the most updated version of the user, as received from AD, as this may
-            // affect MLA later on
-            authenticated = UserCommandBase.persistAuthenticatedUser(_adUser) != null;
 
             // Retrieve the MLA admin status of the user.
             // This may be redundant in some use-cases, but looking forward to Single Sign On,
             // we will want this info
-            boolean isAdmin = MultiLevelAdministrationHandler.isAdminUser(_adUser.getUserId());
-            log.infoFormat("Checking if user {0} is an admin, result {1}", _adUser.getUserName(), isAdmin);
-
-            VdcUser currentUser = new VdcUser(_adUser, isAdmin);
+            VdcUser currentUser = new VdcUser(_adUser);
+            boolean isAdmin = MultiLevelAdministrationHandler.isAdminUser(currentUser);
+            log.infoFormat("Checking if user {0} is an admin, result {1}", currentUser.getUserName(), isAdmin);
+            currentUser.setAdmin(isAdmin);
             setCurrentUser(currentUser);
         }
         return authenticated;
