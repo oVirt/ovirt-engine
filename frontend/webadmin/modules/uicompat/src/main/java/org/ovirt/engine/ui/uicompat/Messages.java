@@ -71,6 +71,9 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     @DefaultMessage("Name cannot contain blanks or special characters. Maximum length: {0}.")
     String nameCannotContainBlankOrSpecialChars(int maxLen);
 
+    @DefaultMessage("New name (with suffix) cannot contain blanks or special characters. Maximum length: {0}.")
+    String newNameWithSuffixCannotContainBlankOrSpecialChars(int maxLen);
+
     @DefaultMessage("Import process has begun for VM(s): {0}.\nYou can check import status in the ''Events'' tab of the specific destination storage domain, or in the main ''Events'' tab")
     String importProcessHasBegunForVms(String importedVms);
 

@@ -31,6 +31,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.IIsObjectInSetup;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.RegexValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
@@ -215,6 +216,34 @@ public class ImportTemplateModel extends ListWithDetailsModel implements IIsObje
         getCloneTemplatesSuffix().setIsValid(true);
         if (getCloneTemplatesSuffix().getIsAvailable()) {
             getCloneTemplatesSuffix().ValidateEntity(new IValidation[] { new NotEmptyValidation() });
+            if (!getCloneTemplatesSuffix().getIsValid()) {
+                return false;
+            }
+            List<VmTemplate> list = (List<VmTemplate>) getItems();
+            for (VmTemplate template : list) {
+                String newTemplateName = template.getname() + getCloneTemplatesSuffix().getEntity();
+
+                String nameExpr;
+                String nameMsg;
+                nameExpr = "^[0-9a-zA-Z-_]{1," + 49 + "}$"; //$NON-NLS-1$ //$NON-NLS-2$
+                nameMsg =
+                        ConstantsManager.getInstance()
+                                .getMessages()
+                                .newNameWithSuffixCannotContainBlankOrSpecialChars(40);
+                EntityModel temp = new EntityModel();
+                temp.setIsValid(true);
+                temp.setEntity(newTemplateName);
+                temp.ValidateEntity(
+                        new IValidation[] {
+                                new NotEmptyValidation(),
+                                new RegexValidation(nameExpr, nameMsg)
+                        });
+                if (!temp.getIsValid()) {
+                    getCloneTemplatesSuffix().setInvalidityReasons(temp.getInvalidityReasons());
+                    getCloneTemplatesSuffix().setIsValid(false);
+                    return false;
+                }
+            }
         }
 
         return getDestinationStorage().getIsValid() && getCluster().getIsValid()

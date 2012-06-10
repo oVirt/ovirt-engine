@@ -11,6 +11,7 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.storage_domain_static;
@@ -32,6 +33,7 @@ import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.uicommonweb.DataProvider;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -39,6 +41,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.RegexValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
@@ -534,6 +537,46 @@ public class ImportVmModel extends ListWithDetailsModel implements IIsObjectInSe
         getCloneVMsSuffix().setIsValid(true);
         if (getCloneVMsSuffix().getIsAvailable()) {
             getCloneVMsSuffix().ValidateEntity(new IValidation[] { new NotEmptyValidation() });
+            if (!getCloneVMsSuffix().getIsValid()) {
+                return false;
+            }
+            List<VM> list = (List<VM>) getItems();
+            for (VM vm : list) {
+                String newVmName = vm.getvm_name() + getCloneVMsSuffix().getEntity();
+                VmOsType osType = vm.getos();
+
+                String nameExpr;
+                String nameMsg;
+                if (DataProvider.IsWindowsOsType(osType))
+                {
+                    nameExpr = "^[0-9a-zA-Z-_]{1," + UnitVmModel.WINDOWS_VM_NAME_MAX_LIMIT + "}$"; //$NON-NLS-1$ //$NON-NLS-2$
+                    nameMsg =
+                            ConstantsManager.getInstance()
+                                    .getMessages()
+                                    .newNameWithSuffixCannotContainBlankOrSpecialChars(UnitVmModel.WINDOWS_VM_NAME_MAX_LIMIT);
+                }
+                else
+                {
+                    nameExpr = "^[-\\w]{1," + UnitVmModel.NON_WINDOWS_VM_NAME_MAX_LIMIT + "}$"; //$NON-NLS-1$ //$NON-NLS-2$
+                    nameMsg =
+                            ConstantsManager.getInstance()
+                                    .getMessages()
+                                    .newNameWithSuffixCannotContainBlankOrSpecialChars(UnitVmModel.NON_WINDOWS_VM_NAME_MAX_LIMIT);
+                }
+                EntityModel temp = new EntityModel();
+                temp.setIsValid(true);
+                temp.setEntity(newVmName);
+                temp.ValidateEntity(
+                        new IValidation[] {
+                                new NotEmptyValidation(),
+                                new RegexValidation(nameExpr, nameMsg)
+                        });
+                if (!temp.getIsValid()) {
+                    getCloneVMsSuffix().setInvalidityReasons(temp.getInvalidityReasons());
+                    getCloneVMsSuffix().setIsValid(false);
+                    return false;
+                }
+            }
         }
 
         return getDestinationStorage().getIsValid()
