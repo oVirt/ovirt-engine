@@ -451,7 +451,6 @@ public class HostSetupNetworksModel extends EntityModel {
 
         // pass over all nics
         for (VdsNetworkInterface nic : allNics) {
-            final Boolean isBonded = ((nic.getBonded() != null) && nic.getBonded() && nic.getName().indexOf('.') < 0);
             // is this a management nic? (comes from backend)
             boolean isNicManagement = nic.getIsManagement();
             final String nicName = nic.getName();
@@ -495,10 +494,6 @@ public class HostSetupNetworksModel extends EntityModel {
                 String ifName;
                 if (dotpos > 0) {
                     ifName = nicName.substring(0, dotpos);
-                    // get stripped nic
-                    VdsNetworkInterface iface = nicMap.get(ifName);
-                    // pass the bond onto this nic
-                    nic.setBonded(iface.getBonded());
                 } else {
                     ifName = nicName;
                 }
