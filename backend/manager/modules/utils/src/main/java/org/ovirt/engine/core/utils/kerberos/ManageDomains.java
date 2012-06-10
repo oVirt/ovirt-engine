@@ -44,6 +44,7 @@ public class ManageDomains {
                     + SERVICE_RESTART_MESSAGE;
     private final String SUCCESSFULLY_COMPLETED_ACTION_ON_DOMAIN =
             "Successfully %1$s domain %2$s. " + SERVICE_RESTART_MESSAGE;
+    private final String ILLEGAL_PASSWORD_CHARACTERS = ",";
 
     private final String DEFAULT_AUTH_MODE = LdapAuthModeEnum.GSSAPI.name();
     private final String DOMAIN_SEPERATOR = ",";
@@ -298,7 +299,15 @@ public class ManageDomains {
             pass = readPasswordInteractively();
         }
 
+        validatePassword(pass);
+
         return pass;
+    }
+
+    private void validatePassword(String pass) throws ManageDomainsResult {
+        if (StringUtils.containsAny(pass, ILLEGAL_PASSWORD_CHARACTERS)) {
+            throw new ManageDomainsResult(ManageDomainsResultEnum.ILLEGAL_PASSWORD);
+        }
     }
 
     private String readPasswordInteractively() {

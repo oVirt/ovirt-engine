@@ -28,6 +28,7 @@ public enum ManageDomainsResultEnum {
     FAILURE_CREATING_KERBEROS_CONFIGURATION("Failure while applying Kerberos configuration. Details: %1$s",
             16),
     PROPERTIES_FILE_IS_NOT_SPECIFIED("engine-config properties file is not specified.", 17),
+    ILLEGAL_PASSWORD("Password contains illegal characters.", 18),
     UNKNOWN_ERROR(
             "Operation failed due to exception. Details: %1$s",
             20),
