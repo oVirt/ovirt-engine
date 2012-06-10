@@ -641,6 +641,8 @@ public interface VdsmErrors extends ConstantsWithLookup {
 
     String HOST_ALREADY_EXISTS();
 
+    String NO_ACTIVE_ISO_DOMAIN_IN_DATA_CENTER();
+
     String MIGRATION_DEST_INVALID_HOSTNAME();
 
     String MIGRATION_CANCEL_ERROR();

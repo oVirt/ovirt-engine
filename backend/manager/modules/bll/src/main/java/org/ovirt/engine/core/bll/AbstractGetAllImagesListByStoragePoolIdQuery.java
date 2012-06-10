@@ -1,5 +1,8 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.List;
+
+import org.ovirt.engine.core.common.businessentities.RepoFileMetaData;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.queries.GetAllImagesListByStoragePoolIdParameters;
 import org.ovirt.engine.core.compat.Guid;
@@ -20,6 +23,14 @@ public abstract class AbstractGetAllImagesListByStoragePoolIdQuery<P extends Get
             return getDbFacade().getStorageDomainDAO().getIsoStorageDomainIdForPool(getStoragePoolId());
         }
         return null;
+    }
+
+    @Override
+    protected List<RepoFileMetaData> getUserRequestForStorageDomainRepoFileList() {
+        return IsoDomainListSyncronizer.getInstance().getUserRequestForStoragePoolAndDomainRepoFileList
+                (getStoragePoolId(), getStorageDomainId(),
+                        getFileTypeExtension(),
+                        getParameters().getForceRefresh());
     }
 
     /**

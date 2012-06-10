@@ -154,15 +154,50 @@ public class IsoDomainListSyncronizer {
             boolean forceRefresh) {
         // The result list we send back.
         List<RepoFileMetaData> repoList = null;
-
-        // Check storage pool Id validity.
-        if (storageDomainId == null) {
-            log.error("Storage domain ID recieved from command query is null.");
+        if (! isStorageDomainValid(storageDomainId, fileTypeExtension, forceRefresh)){
             return null;
         }
+        // At any case, if refreshed or not, get Iso list from the cache.
+        repoList = getCachedIsoListByDomainId(storageDomainId, fileTypeExtension);
 
+        // Return list of repository files.
+        return repoList;
+    }
+
+    /**
+     * Returns a RepoFilesMetaData list with Iso file names for storage domain Id and with file type extension.<BR>
+     * If user choose to refresh the cache, and a problem occurs, then returns null.
+     *
+     * @param storagePoolId
+     *            - The storage pool Id
+     * @param storageDomainId
+     *            - The storage domain Id, which we fetch the Iso list from.
+     * @param fileTypeExtension
+     *            - The fileTypeExtension we want to fetch the files from the cache.
+     * @param forceRefresh
+     *            - Indicates if the domain should be refreshed from VDSM.
+     * @return List of RepoFilesMetaData files or null (If fetch from VDSM failed).
+     */
+    public List<RepoFileMetaData> getUserRequestForStoragePoolAndDomainRepoFileList(Guid storagePoolId,
+            Guid storageDomainId,
+            FileTypeExtension fileTypeExtension,
+            boolean forceRefresh) {
+        // The result list we send back.
+        List<RepoFileMetaData> repoList = null;
+
+        if (! isStorageDomainValid(storageDomainId, fileTypeExtension, forceRefresh)){
+            return null;
+        }
+        // At any case, if refreshed or not, get Iso list from the cache.
+        repoList = getCachedIsoListByStoragePoolAndDomainId(storagePoolId, storageDomainId);
+
+        // Return list of repository files.
+        return repoList;
+    }
+
+    private boolean refreshRepos(Guid storageDomainId, FileTypeExtension fileTypeExtension, boolean forceRefresh) {
+        boolean res = true;
         List<RepoFileMetaData> tempProblematicRepoFileList = new ArrayList<RepoFileMetaData>();
-
         // If user choose to force refresh.
         if (forceRefresh) {
             // Add an audit log if refresh succeeded.
@@ -176,15 +211,10 @@ public class IsoDomainListSyncronizer {
             } else {
                 // Print log Indicating the problematic pools.
                 handleErrorLog(tempProblematicRepoFileList);
-                return null;
+                res=false;
             }
         }
-
-        // At any case, if refreshed or not, get Iso list from the cache.
-        repoList = getCachedIsoListByDomainId(storageDomainId, fileTypeExtension);
-
-        // Return list of repository files.
-        return repoList;
+        return res;
     }
 
     /**
@@ -346,10 +376,10 @@ public class IsoDomainListSyncronizer {
      *            - The storage pool Id we want to get the file list from.
      * @return List of Iso file fetched from DB, if parameter is invalid returns an empty list.
      */
-    public List<RepoFileMetaData> getCachedIsoListByPoolAndDomainId(Guid isoStoragePoolId, Guid isoStorageDomainId) {
+    public List<RepoFileMetaData> getCachedIsoListByStoragePoolAndDomainId(Guid isoStoragePoolId, Guid isoStorageDomainId) {
         List<RepoFileMetaData> fileListMD = new ArrayList<RepoFileMetaData>();
         // Check validation of parameters.
-        if (isoStorageDomainId != null && isoStoragePoolId != null) {
+        if (isoStorageDomainId != null && isoStoragePoolId != null && VmRunHandler.getInstance().findActiveISODomain(isoStoragePoolId) != null) {
             // Get all the Iso files of storage and domain ID.
             fileListMD = repoStorageDom.getRepoListForStorageDomainAndStoragePool(isoStoragePoolId, isoStorageDomainId,
                     FileTypeExtension.ISO);
@@ -716,4 +746,16 @@ public class IsoDomainListSyncronizer {
     }
 
     private static final Log log = LogFactory.getLog(IsoDomainListSyncronizer.class);
+
+    private boolean isStorageDomainValid(Guid storageDomainId, FileTypeExtension fileTypeExtension, boolean forceRefresh) {
+        // Check storage domain Id validity.
+        if (storageDomainId == null) {
+            log.error("Storage domain ID recieved from command query is null.");
+            return false;
+        }
+        if (!refreshRepos(storageDomainId, fileTypeExtension, forceRefresh)) {
+            return false;
+        }
+        return true;
+    }
 }

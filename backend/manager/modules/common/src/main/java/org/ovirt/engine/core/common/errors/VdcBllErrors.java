@@ -368,6 +368,7 @@ public enum VdcBllErrors {
     CANT_RECONSTRUCT_WHEN_A_DOMAIN_IN_POOL_IS_LOCKED(5025),
     NO_PARAMETERS_FOR_TASK(5026),
     HOST_ALREADY_EXISTS(5027),
+    NO_ACTIVE_ISO_DOMAIN_IN_DATA_CENTER(5028),
     // Gluster errors
     NO_UP_SERVER_FOUND(7000),
     // error to indicate backend does not recognize the session

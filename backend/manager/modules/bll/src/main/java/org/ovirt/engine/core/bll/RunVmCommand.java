@@ -301,7 +301,8 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             }
         } else if (!StringUtils.isEmpty(getVm().getiso_path())) {
             getVm().setCdPath("");
-            log.error("Can not attach CD without active ISO domain");
+            setSucceeded(false);
+            throw new VdcBLLException(VdcBllErrors.NO_ACTIVE_ISO_DOMAIN_IN_DATA_CENTER);
         }
 
     }
