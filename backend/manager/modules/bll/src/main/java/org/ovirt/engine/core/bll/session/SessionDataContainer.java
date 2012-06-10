@@ -39,12 +39,12 @@ public class SessionDataContainer {
      *            - the internal key
      * @return
      */
-    public final Object GetData(String key) {
+    public final Object GetData(String key, boolean refresh) {
         String sessionId = ThreadLocalParamsContainer.getHttpSessionId();
         if (sessionId == null) {
             return null;
         }
-        return GetData(sessionId, key);
+        return GetData(sessionId, key, refresh);
     }
 
     /**
@@ -60,19 +60,6 @@ public class SessionDataContainer {
         }
         SetData(sessionId, key, value);
         return true;
-    }
-
-    /**
-     * Get data by session and internal key
-     *
-     * @param sessionId
-     *            - id of session
-     * @param key
-     *            - the internal key
-     * @return
-     */
-    public final Object GetData(String sessionId, String key) {
-        return GetData(sessionId, key, true);
     }
 
     /**
@@ -199,14 +186,14 @@ public class SessionDataContainer {
      * @param sessionId
      *            -id of session
      */
-    public IVdcUser addUserToThreadContext(String sessionId) {
+    public IVdcUser addUserToThreadContext(String sessionId, boolean refresh) {
         IVdcUser vdcUser = ThreadLocalParamsContainer.getVdcUser();
         if (vdcUser == null) {
             if (!StringHelper.isNullOrEmpty(sessionId)) {
-                vdcUser = getUser(sessionId);
+                vdcUser = getUser(sessionId, refresh);
                 ThreadLocalParamsContainer.setHttpSessionId(sessionId);
             } else {
-                vdcUser = getUser();
+                vdcUser = getUser(refresh);
             }
             ThreadLocalParamsContainer.setVdcUser(vdcUser);
         }
@@ -239,16 +226,8 @@ public class SessionDataContainer {
         return (IVdcUser) GetData(sessionId, VDC_USER_PARAMETER_NAME, refresh);
     }
 
-    /**
-     * @param sessionId The session to get the user for
-     * @return The user set for the given {@link #session}
-     */
-    public IVdcUser getUser(String sessionId) {
-        return (IVdcUser) GetData(sessionId, VDC_USER_PARAMETER_NAME);
-    }
-
     /** @return The user set in the current session */
-    public IVdcUser getUser() {
-        return (IVdcUser) GetData(VDC_USER_PARAMETER_NAME);
+    public IVdcUser getUser(boolean refresh) {
+        return (IVdcUser) GetData(VDC_USER_PARAMETER_NAME, refresh);
     }
 }

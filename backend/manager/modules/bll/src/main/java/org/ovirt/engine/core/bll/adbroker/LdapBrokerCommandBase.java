@@ -9,10 +9,10 @@ import org.ovirt.engine.core.bll.session.SessionDataContainer;
 import org.ovirt.engine.core.common.businessentities.AdUser;
 import org.ovirt.engine.core.common.businessentities.ad_groups;
 import org.ovirt.engine.core.common.interfaces.IVdcUser;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 public abstract class LdapBrokerCommandBase extends BrokerCommandBase {
     @Override
@@ -33,9 +33,9 @@ public abstract class LdapBrokerCommandBase extends BrokerCommandBase {
     protected void initCredentials(String domain) {
         IVdcUser curUser;
         if (StringHelper.isNullOrEmpty(getParameters().getSessionId())) {
-            curUser = SessionDataContainer.getInstance().getUser();
+            curUser = SessionDataContainer.getInstance().getUser(false);
         } else {
-            curUser = SessionDataContainer.getInstance().getUser(getParameters().getSessionId());
+            curUser = SessionDataContainer.getInstance().getUser(getParameters().getSessionId(), false);
         }
         // verify that in auto login mode , user is not taken from session.
         if (curUser != null && !StringHelper.isNullOrEmpty(curUser.getPassword())) {

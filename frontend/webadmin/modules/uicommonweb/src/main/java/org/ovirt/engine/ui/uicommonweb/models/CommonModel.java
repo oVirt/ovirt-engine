@@ -718,13 +718,11 @@ public class CommonModel extends ListModel
             _asyncQuery.setModel(this);
             _asyncQuery.asyncCallback = new INewAsyncCallback() {
                 @Override
-                public void OnSuccess(Object model, Object ReturnValue)
-                {
-                    CommonModel commonModel = (CommonModel) model;
-                    commonModel.setLoggedInUser(null);
-                    commonModel.getSignedOutEvent().raise(commonModel, EventArgs.Empty);
+                public void OnSuccess(Object model, Object ReturnValue) {
                 }
             };
+            setLoggedInUser(null);
+            getSignedOutEvent().raise(this, EventArgs.Empty);
 
             Frontend.LogoffAsync(Frontend.getLoggedInUser(), _asyncQuery);
         }

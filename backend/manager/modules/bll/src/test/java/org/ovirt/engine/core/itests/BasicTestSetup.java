@@ -139,7 +139,7 @@ public class BasicTestSetup {
      * @return The user that was stored on the session - automatically been set by {@link #generateUserSession()}
      */
     public VdcUser getUserBySessionId(String sessionId) {
-        VdcUser user = (VdcUser) SessionDataContainer.getInstance().getUser(sessionId);
+        VdcUser user = (VdcUser) SessionDataContainer.getInstance().getUser(sessionId, false);
         return user;
     }
 

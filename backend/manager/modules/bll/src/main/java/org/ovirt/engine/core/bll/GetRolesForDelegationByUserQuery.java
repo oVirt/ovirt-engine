@@ -46,7 +46,7 @@ public class GetRolesForDelegationByUserQuery<P extends VdcQueryParametersBase> 
         String sessionId = getParameters().getSessionId();
         IVdcUser user = null;
         if (!StringHelper.isNullOrEmpty(sessionId)) {
-            user = SessionDataContainer.getInstance().getUser(sessionId);
+            user = SessionDataContainer.getInstance().getUser(sessionId, false);
         }
         return user;
     }

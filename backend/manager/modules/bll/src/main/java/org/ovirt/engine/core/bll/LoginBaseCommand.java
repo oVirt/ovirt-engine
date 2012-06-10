@@ -158,7 +158,7 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
 
     protected boolean isUserCanBeAuthenticated() {
         boolean authenticated = false;
-        IVdcUser vdcUser = SessionDataContainer.getInstance().getUser();
+        IVdcUser vdcUser = SessionDataContainer.getInstance().getUser(false);
         if (vdcUser == null) {
             boolean domainFound = false;
             List<String> vdcDomains = LdapBrokerUtils.getDomainsList();

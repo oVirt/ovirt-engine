@@ -252,6 +252,7 @@ public class RoleListModel extends ListWithDetailsModel
         MultilevelAdministrationsQueriesParameters tempVar = new MultilevelAdministrationsQueriesParameters();
         tempVar.setRefresh(getIsQueryFirstTime());
         Frontend.RunQuery(VdcQueryType.GetAllRoles, tempVar, _asyncQuery);
+        setIsQueryFirstTime(false);
     }
 
     private void SearchAllRoles()

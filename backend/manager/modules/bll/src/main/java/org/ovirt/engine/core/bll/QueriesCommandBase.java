@@ -57,7 +57,8 @@ public abstract class QueriesCommandBase<P extends VdcQueryParametersBase> exten
     }
 
     private final IVdcUser initUser() {
-        return SessionDataContainer.getInstance().addUserToThreadContext(parameters.getSessionId());
+        return SessionDataContainer.getInstance().addUserToThreadContext(parameters.getSessionId(),
+                parameters.getRefresh());
     }
 
     @Override

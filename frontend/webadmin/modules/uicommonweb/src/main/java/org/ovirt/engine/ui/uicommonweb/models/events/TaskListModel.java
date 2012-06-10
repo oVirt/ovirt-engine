@@ -157,6 +157,8 @@ public class TaskListModel extends SearchableListModel {
         tempVar.setRefresh(getIsQueryFirstTime());
         Frontend.RunQuery(VdcQueryType.GetJobsByOffset,
                 tempVar, _asyncQuery);
+
+        setIsQueryFirstTime(false);
     }
 
     @Override

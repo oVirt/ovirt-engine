@@ -38,7 +38,7 @@ public class ValidateSessionQuery<P extends VdcQueryParametersBase> extends Quer
     }
 
     protected Object getSessionUser(String sessionID) {
-        return SessionDataContainer.getInstance().getUser(sessionID);
+        return SessionDataContainer.getInstance().getUser(sessionID, false);
     }
 
     private final static Log log = LogFactory.getLog(ValidateSessionQuery.class);

@@ -116,7 +116,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
 
     protected CommandBase(T parameters) {
         _parameters = parameters;
-        setCurrentUser(SessionDataContainer.getInstance().addUserToThreadContext(parameters.getSessionId()));
+        setCurrentUser(SessionDataContainer.getInstance().addUserToThreadContext(parameters.getSessionId(), true));
         // correlation ID thread local variable is set for non multi-action
         if (!parameters.getMultipleAction()) {
             ThreadLocalParamsContainer.setCorrelationId(parameters.getCorrelationId());
