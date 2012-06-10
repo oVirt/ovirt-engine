@@ -122,6 +122,7 @@ public class JndiAction implements PrivilegedAction {
                 result = parser.parse(ex.toString());
                 String errorMsg = result.getDetailedMessage().replace("Authentication Failed", "LDAP query Failed");
                 System.out.println(InstallerConstants.ERROR_PREFIX + errorMsg);
+                log.error("Error from Kerberos: " + ex.getMessage());
             } catch (Exception ex) {
                 System.out.println("General error has occured" + ex.getMessage());
                 ex.printStackTrace();
