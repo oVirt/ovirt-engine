@@ -1375,6 +1375,15 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         MoveHost model = new MoveHost();
         model.setTitle(ConstantsManager.getInstance().getConstants().selectHostTitle());
         model.setHashName("select_host"); //$NON-NLS-1$
+
+        // In case of local storage, do not show the cluster selection in host select menu as there can be only one cluster in that case
+        //also only one host is allowed in the cluster so we should disable multi selection
+        boolean isMultiHostDC = getEntity().getstorage_pool_type() == StorageType.LOCALFS;
+        if (isMultiHostDC) {
+            model.getCluster().setIsAvailable(false);
+            model.setMultiSelection(false);
+        }
+
         setWindow(model);
 
         AsyncDataProvider.GetClusterList(new AsyncQuery(new Object[] { this, model },

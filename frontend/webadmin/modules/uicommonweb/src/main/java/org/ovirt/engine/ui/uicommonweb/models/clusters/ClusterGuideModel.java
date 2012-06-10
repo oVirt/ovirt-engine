@@ -260,6 +260,12 @@ public class ClusterGuideModel extends GuideModel
         MoveHost model = new MoveHost();
         model.setTitle(ConstantsManager.getInstance().getConstants().selectHostTitle());
         model.setHashName("select_host"); //$NON-NLS-1$
+
+        // In case of local storage, only one host is allowed in the cluster so we should disable multi selection
+        boolean isMultiHostDC = dataCenter.getstorage_pool_type() == StorageType.LOCALFS;
+        if (isMultiHostDC)
+            model.setMultiSelection(false);
+
         setWindow(model);
         model.getCluster().setItems(clusters);
         model.getCluster().setSelectedItem(Linq.FirstOrDefault(clusters));

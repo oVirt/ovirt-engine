@@ -23,6 +23,7 @@ import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.view.client.SingleSelectionModel;
 import com.google.inject.Inject;
 
 public class MoveHostPopupView extends AbstractModelBoundPopupView<MoveHost> implements MoveHostPopupPresenterWidget.ViewDef {
@@ -103,6 +104,9 @@ public class MoveHostPopupView extends AbstractModelBoundPopupView<MoveHost> imp
 
     @Override
     public void edit(MoveHost object) {
+        if (!object.isMultiSelection())
+            table.setSelectionModel(new SingleSelectionModel<EntityModel>());
+
         Driver.driver.edit(object);
         table.edit(object);
     }

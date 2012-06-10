@@ -46,6 +46,16 @@ public class MoveHost extends ListModel
         privateSelectedHosts = value;
     }
 
+    private boolean isMultiSelection = true;
+
+    public boolean isMultiSelection() {
+        return isMultiSelection;
+    }
+
+    public void setMultiSelection(boolean isMultiSelection) {
+        this.isMultiSelection = isMultiSelection;
+    }
+
     public MoveHost()
     {
         setCluster(new ListModel());
