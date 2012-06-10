@@ -121,6 +121,17 @@ public class SetupNetworksHelperTest {
     /* --- Tests for bonds functionality --- */
 
     @Test
+    public void bondWithNoSlaves() {
+        VdsNetworkInterface bond = createBond(BOND_NAME, null);
+
+        mockExistingIfaces(bond);
+
+        SetupNetworksHelper helper = createHelper(createParametersForNics(bond));
+
+        validateAndExpectViolation(helper, VdcBllMessages.NETWORK_BOND_PARAMETERS_INVALID);
+    }
+
+    @Test
     public void onlyOneSlaveForBonding() {
         VdsNetworkInterface bond = createBond(BOND_NAME, null);
         List<VdsNetworkInterface> slaves = Arrays.asList(createNic("nic0", null));
