@@ -11,4 +11,8 @@ public class DiskSizeLabel<T extends Number> extends ValueLabel<T> {
         super(new DiskSizeRenderer<T>(DiskSizeUnit.GIGABYTE));
     }
 
+    public DiskSizeLabel(DiskSizeUnit diskSizeUnit) {
+        super(new DiskSizeRenderer<T>(diskSizeUnit));
+    }
+
 }

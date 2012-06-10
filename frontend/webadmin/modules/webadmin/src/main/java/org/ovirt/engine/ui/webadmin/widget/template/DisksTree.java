@@ -13,6 +13,7 @@ import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.label.DiskSizeLabel;
 import org.ovirt.engine.ui.common.widget.label.EnumLabel;
 import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
+import org.ovirt.engine.ui.common.widget.renderer.DiskSizeRenderer.DiskSizeUnit;
 import org.ovirt.engine.ui.common.widget.table.column.EmptyColumn;
 import org.ovirt.engine.ui.common.widget.tree.AbstractSubTabTree;
 import org.ovirt.engine.ui.uicommonweb.Linq;
@@ -50,6 +51,7 @@ public class DisksTree extends AbstractSubTabTree<TemplateDiskListModel, DiskIma
         addItemToPanel(panel, new Image(resources.diskImage()), "25px"); //$NON-NLS-1$
         addTextBoxToPanel(panel, new TextBoxLabel(), disk.getDiskAlias(), ""); //$NON-NLS-1$
         addValueLabelToPanel(panel, new DiskSizeLabel<Long>(), disk.getSizeInGigabytes(), "120px"); //$NON-NLS-1$
+        addValueLabelToPanel(panel, new DiskSizeLabel<Long>(DiskSizeUnit.BYTE), disk.getactual_size(), "120px"); //$NON-NLS-1$
         addValueLabelToPanel(panel, new EnumLabel<ImageStatus>(), disk.getimageStatus(), "120px"); //$NON-NLS-1$
         addValueLabelToPanel(panel, new EnumLabel<VolumeType>(), disk.getvolume_type(), "120px"); //$NON-NLS-1$
         addValueLabelToPanel(panel, new EnumLabel<DiskInterface>(), disk.getDiskInterface(), "120px"); //$NON-NLS-1$

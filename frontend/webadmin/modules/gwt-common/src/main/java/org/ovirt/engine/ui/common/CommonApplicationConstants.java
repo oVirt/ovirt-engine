@@ -570,7 +570,7 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Alias")
     String aliasDisk();
 
-    @DefaultStringValue("Provisioned Size")
+    @DefaultStringValue("Virtual Size")
     String provisionedSizeDisk();
 
     @DefaultStringValue("Source")
@@ -726,7 +726,7 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("ID")
     String idVmDiskTable();
 
-    @DefaultStringValue("Provisioned Size")
+    @DefaultStringValue("Virtual Size")
     String provisionedSizeVmDiskTable();
 
     @DefaultStringValue("Actual Size")

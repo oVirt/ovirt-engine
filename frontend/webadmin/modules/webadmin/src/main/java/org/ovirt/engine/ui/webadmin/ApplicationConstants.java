@@ -1221,7 +1221,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Disks")
     String disksVm();
 
-    @DefaultStringValue("V-Size")
+    @DefaultStringValue("Virtual Size")
     String vSizeVm();
 
     @DefaultStringValue("Actual Size")
@@ -1306,6 +1306,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Disks")
     String disksTemplate();
+
+    @DefaultStringValue("Virtual Size")
+    String provisionedSizeTemplate();
 
     @DefaultStringValue("Actual Size")
     String actualSizeTemplate();
