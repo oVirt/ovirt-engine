@@ -89,7 +89,6 @@ select fn_db_add_config_value('DesktopAudioDeviceType','WindowsXP,ac97,RHEL4,ac9
 select fn_db_add_config_value('DesktopAudioDeviceType','WindowsXP,ac97,RHEL4,ac97,RHEL3,ac97,Windows2003x64,ac97,RHEL4x64,ac97,RHEL3x64,ac97,OtherLinux,ac97,Other,ac97,default,ich6','3.1');
 select fn_db_add_config_value('DisableFenceAtStartupInSec','300','general');
 select fn_db_add_config_value('DiskConfigurationList','System,Sparse,COW,true;Data,Preallocated,RAW,false;Shared,Preallocated,RAW,false;Swap,Preallocated,RAW,false;Temp,Sparse,COW,false','general');
-<<<<<<< HEAD
 select fn_db_add_config_value('DirectLUNDiskEnabled','false','2.2');
 select fn_db_add_config_value('DirectLUNDiskEnabled','false','3.0');
 select fn_db_add_config_value('DirectLUNDiskEnabled','true','3.1');
